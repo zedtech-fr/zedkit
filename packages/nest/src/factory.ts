@@ -21,7 +21,7 @@ import {
   ThrottlerModule,
   type ThrottlerStorage,
 } from "@nestjs/throttler";
-import type { FastifyServerOptions } from "fastify";
+import type { FastifyBodyParser, FastifyServerOptions } from "fastify";
 import { Logger as PinoLogger, LoggerModule } from "nestjs-pino";
 import type { DestinationStream } from "pino";
 import { randomUUID } from "node:crypto";
@@ -51,6 +51,12 @@ export interface DocsOptions {
   description?: string | undefined;
   /** Serve path for the UI and `<path>-json`. Defaults to `docs`. */
   path?: string | undefined;
+  /**
+   * Extra absolute paths serving the same JSON document (stable
+   * contract URLs beyond the swagger-default `<path>-json`). Served
+   * raw (no guards), like the default JSON route.
+   */
+  aliases?: string[] | undefined;
 }
 
 /**
@@ -125,6 +131,15 @@ export interface NestBootstrapOptions {
    * domain errors pass their own filter class here.
    */
   exceptionFilter?: Type<object> | undefined;
+  /**
+   * Custom body parsers by content type, installed through the
+   * adapter's standard `useBodyParser` (rawBody capture included)
+   * before Nest registers its defaults — so a custom
+   * `application/json` parser replaces the default instead of
+   * conflicting with it. Receives the raw buffer; `done(null, value)`
+   * sets `@Body()`, `done(error)` with `statusCode` rejects.
+   */
+  bodyParsers?: Record<string, FastifyBodyParser<Buffer>> | undefined;
 }
 
 const DEFAULT_THROTTLE: ThrottleOptions = { ttlMs: 60_000, limit: 100 };
@@ -230,15 +245,20 @@ export async function createNestApp(
   })
   class BootstrapRootModule {}
 
+  const bodyLimit = options.bodyLimit ?? DEFAULT_BODY_LIMIT;
+  const adapter = new FastifyAdapter({
+    bodyLimit,
+    genReqId: (req: IncomingMessage | Http2ServerRequest) =>
+      requestIdOf(req as IncomingMessage),
+    // exactOptionalPropertyTypes: only pass the key when set.
+    ...(options.trustProxy === undefined ? {} : { trustProxy: options.trustProxy }),
+  });
+  for (const [contentType, parser] of Object.entries(options.bodyParsers ?? {})) {
+    adapter.useBodyParser(contentType, options.rawBody ?? true, { bodyLimit }, parser);
+  }
   const app = await NestFactory.create<NestFastifyApplication>(
     BootstrapRootModule,
-    new FastifyAdapter({
-      bodyLimit: options.bodyLimit ?? DEFAULT_BODY_LIMIT,
-      genReqId: (req: IncomingMessage | Http2ServerRequest) =>
-        requestIdOf(req as IncomingMessage),
-      // exactOptionalPropertyTypes: only pass the key when set.
-      ...(options.trustProxy === undefined ? {} : { trustProxy: options.trustProxy }),
-    }),
+    adapter,
     {
       rawBody: options.rawBody ?? true,
       bufferLogs: true,
@@ -274,11 +294,12 @@ export async function createNestApp(
     while (docsStart < docsEnd && rawDocsPath[docsStart] === "/") docsStart += 1;
     while (docsEnd > docsStart && rawDocsPath[docsEnd - 1] === "/") docsEnd -= 1;
     const docsPath = rawDocsPath.slice(docsStart, docsEnd) || "docs";
-    SwaggerModule.setup(
-      docsPath,
-      app,
-      SwaggerModule.createDocument(app, builder.build()),
-    );
+    const document = SwaggerModule.createDocument(app, builder.build());
+    SwaggerModule.setup(docsPath, app, document);
+    const fastify = app.getHttpAdapter().getInstance();
+    for (const alias of docs.aliases ?? []) {
+      fastify.get(alias, (_req, reply) => reply.send(document));
+    }
   }
   return app;
 }

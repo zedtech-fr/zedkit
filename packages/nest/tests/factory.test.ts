@@ -281,6 +281,36 @@ describe("createNestApp", () => {
     expect((await request(url).get("/docs-json")).status).toBe(200);
   });
 
+  it("serves the same OpenAPI document from its aliases", async () => {
+    const { url } = await boot({ docs: { title: "T", version: "1", aliases: ["/contract.json"] } });
+    const res = await request(url).get("/contract.json");
+    expect(res.status).toBe(200);
+    expect(Object.keys((res.body as { paths: Record<string, unknown> }).paths)).toContain("/items");
+    expect(JSON.stringify(res.body)).toContain("CreateItemDto");
+  });
+
+  it("replaces the default JSON parser with a custom one, rawBody included", async () => {
+    const { url } = await boot({
+      bodyParsers: {
+        "application/json": (_req, body, done) => {
+          const parsed = JSON.parse(body.toString("utf8")) as Record<string, unknown>;
+          if (typeof parsed.name === "string") parsed.name = parsed.name.toUpperCase();
+          done(null, parsed);
+        },
+      },
+    });
+    const created = await request(url).post("/items").send({ name: "widget", quantity: 3 });
+    expect(created.status).toBe(201);
+    expect(created.body).toMatchObject({ name: "WIDGET", quantity: 3 });
+    const exact = '{"a":1}';
+    const echo = await request(url)
+      .post("/echo-raw")
+      .set("content-type", "application/json")
+      .send(exact);
+    expect(echo.status).toBe(200);
+    expect(echo.body).toEqual({ sha256: expect.any(String), bytes: Buffer.byteLength(exact, "utf8") });
+  });
+
   it("delegates throttle counting to a custom storage", async () => {
     let calls = 0;
     const storage: ThrottlerStorage = {
