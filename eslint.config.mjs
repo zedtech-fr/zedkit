@@ -37,5 +37,15 @@ export default tseslint.config(
     files: ["packages/core/src/try-catch.ts"],
     rules: { "no-restricted-syntax": "off" },
   },
-  { ignores: ["**/dist/**", "**/node_modules/**", "**/coverage/**"] },
+  // Vendored third-party skills are verbatim upstream copies: never linted.
+  {
+    ignores: [
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/coverage/**",
+      ".agents/**",
+      ".claude/**",
+      ".cursor/**",
+    ],
+  },
 );
