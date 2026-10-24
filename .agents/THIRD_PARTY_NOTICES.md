@@ -1,7 +1,8 @@
 # Third-party notices — vendored agent skills
 
 All skills in `.agents/skills/` are verbatim, unmodified copies from their
-upstream repositories (verified by diff at vendoring time). Each upstream's
+upstream repositories (verified by diff at vendoring time), except
+`use-zedkit`, which is first-party and not covered here. Each upstream's
 licence file is kept next to the skills: see `skills/LICENSE-*-*`.
 
 ## Ponytail skills (6) — MIT

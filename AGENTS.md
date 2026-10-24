@@ -37,8 +37,17 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 
 - Small PRs from fresh `main`, never stacked. One package per PR.
 - Each package PR updates the root README package table, adds a
-  Changeset file, and records the module's origin in the package README
-  ("original work by the same author" — never a project name or path).
+  Changeset file, records the module's origin in the package README
+  ("original work by the same author" — never a project name or path),
+  documents every need in `packages/<pkg>/CATALOG.md`, regenerates
+  `catalog.json` (`pnpm catalog:build`), and links the catalog from the
+  [catalog index](docs/catalog/README.md).
+- Advice, not law: the [golden rule](docs/golden-rule.md) (wrap
+  third-party libraries thinly) and the
+  [use-zedkit skill](.agents/skills/use-zedkit/SKILL.md) ("check zedkit
+  first, then npm, and wrap what you adopt").
+- Keep the root minimal (README, LICENSE, AGENTS.md, llms.txt, config);
+  docs go under `docs/` or inside the package they concern.
 - Review with `code-review` + `ponytail-review` before merge; merge only
   on green CI.
 - New modules ship with vitest unit tests; deterministic, no network.

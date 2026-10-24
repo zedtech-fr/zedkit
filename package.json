@@ -14,7 +14,9 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "changeset": "changeset",
-    "changeset:status": "changeset status --verbose"
+    "changeset:status": "changeset status --verbose",
+    "catalog:build": "node scripts/catalog.mjs build",
+    "catalog:check": "node scripts/catalog.mjs check"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",

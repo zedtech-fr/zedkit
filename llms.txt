@@ -1,0 +1,11 @@
+# zedkit
+
+Open-source building blocks for modern apps.
+
+## Docs
+
+- [README](README.md)
+- [Catalog index](docs/catalog/README.md)
+- [Golden rule](docs/golden-rule.md)
+- [Contributing](docs/contributing.md)
+- [Agent instructions](AGENTS.md)

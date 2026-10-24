@@ -14,5 +14,9 @@ Vendored skills (copied verbatim, update by re-copy; licences and credits in
   to-tickets, handoff, wayfinder, pr, … — 19 total, `ask-matt` excluded),
   MIT © Matt Pocock: https://github.com/mattpocock/skills
 
+Plus our own first-party skill (no third-party notice needed):
+
+- use-zedkit: search the catalog by need before writing any helper.
+
 Default workflow: tdd for behaviour, code-review + ponytail-review before
 every merge, handoff when stopping.
