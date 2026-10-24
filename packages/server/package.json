@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Server helpers: in-process rate limiting, secret redaction. Original work by the same author.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/server"
+  },
   "type": "module",
   "sideEffects": false,
   "imports": {

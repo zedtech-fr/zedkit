@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Generic NestJS bootstrap factory: platform, config, logging, validation, errors, throttling, docs, shutdown. Original work by the same author.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/nest"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
