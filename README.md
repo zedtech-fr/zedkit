@@ -7,7 +7,7 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 
 | Package | What | Status |
 |---|---|---|
-| `@zedkit/core` | `Result`, `tryCatch`, prefixed IDs | planned |
+| [`@zedkit/core`](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | stable |
 | `@zedkit/server` | rate limiting, secret redaction | planned |
 
 A package exists only when real, used code backs it — no placeholders.

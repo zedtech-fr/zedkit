@@ -1,4 +1,31 @@
 {
   "_generated": "Do not edit. Generated from packages/*/CATALOG.md by `pnpm catalog:build`.",
-  "packages": {}
+  "packages": {
+    "@zedkit/core": {
+      "catalog": "packages/core/CATALOG.md",
+      "needs": [
+        {
+          "need": "Model success or failure without throwing",
+          "import": "`@zedkit/core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { isOk, ok, unwrapOr } from \"@zedkit/core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;"
+        },
+        {
+          "need": "Handle errors without try/catch",
+          "import": "`@zedkit/core` — `tryCatch`, `tryCatchAsync`, `normalizeThrown`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { tryCatch } from \"@zedkit/core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);"
+        },
+        {
+          "need": "Generate prefixed unique IDs",
+          "import": "`@zedkit/core` — `newPrefixedId`, `isPrefixedId`",
+          "wraps": "`ulid`",
+          "status": "stable",
+          "example": "import { isPrefixedId, newPrefixedId } from \"@zedkit/core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
+        }
+      ]
+    }
+  }
 }

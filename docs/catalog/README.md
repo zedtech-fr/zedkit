@@ -10,12 +10,12 @@ paragraph of advice that explains why every catalog entry wraps something.
 
 ## Packages
 
-No package catalogs yet. Each package PR adds its row here, following
+Each package PR adds its row here, following
 [contributing a helper](../contributing.md).
 
 | Package | Domain | Catalog |
 |---|---|---|
-| — | — | — |
+| `@zedkit/core` | results, error handling, IDs | [packages/core/CATALOG.md](../../packages/core/CATALOG.md) |
 
 ## Entry format
 
