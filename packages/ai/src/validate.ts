@@ -124,6 +124,30 @@ function checkLineEndings(root: string, issues: Issue[]): void {
   }
 }
 
+const LADDER_SKILLS = ["plan", "implement", "review", "ponytail-review"];
+
+// The ponytail ladder must survive in the skills that ask it and in the
+// template every setup inherits. Only checked where the file exists, so
+// minimal or foreign layouts are unaffected.
+function checkLadder(root: string, issues: Issue[]): void {
+  for (const name of LADDER_SKILLS) {
+    const file = join(root, "skills", name, "SKILL.md");
+    if (existsSync(file) && !read(file).toLowerCase().includes("ladder")) {
+      issues.push({
+        path: relative(root, file),
+        message: "must state the ponytail ladder (regression: the 7 questions vanished)",
+      });
+    }
+  }
+  const template = join(root, "AGENTS.template.md");
+  if (existsSync(template) && !read(template).toLowerCase().includes("ladder")) {
+    issues.push({
+      path: "AGENTS.template.md",
+      message: "must state the ponytail ladder (every setup inherits this file)",
+    });
+  }
+}
+
 function checkManifest(root: string, issues: Issue[]): void {
   if (!existsSync(join(root, "kit.json"))) return;
   const manifest = readManifest(root);
@@ -172,6 +196,7 @@ function collect(root: string): Issue[] {
     }
   }
   checkManifest(root, issues);
+  checkLadder(root, issues);
   checkLineEndings(root, issues);
   return issues;
 }

@@ -26,6 +26,19 @@ comment and the examples below that do not apply. -->
 - **Never commit build artifacts.** Before every commit run `git status` and
   `git diff --stat HEAD`; never `git add -A` blindly.
 
+## Before writing any code
+
+Climb the ladder for every new piece of code, file, or dependency — stop
+at the first rung that holds (skill `ponytail-review` has the full text):
+
+1. Does this need to exist at all? If not, say so in one line.
+2. Already in this codebase? Reuse the helper or pattern.
+3. Does the standard library do it?
+4. Does a native platform feature or a standard tool cover it?
+5. Does an already-installed dependency solve it? Never add one for a few lines.
+6. Can it be one line?
+7. Only then: the minimum code that works.
+
 ## How to work
 
 - **Verify, do not guess.** Read the source before relying on an API, shape,

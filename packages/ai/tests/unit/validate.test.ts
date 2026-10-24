@@ -192,6 +192,24 @@ describe("validateKit", () => {
     expect(checkDrift(root, agents)).toEqual([]);
   });
 
+  it("flags ladder skills that lost the ladder", () => {
+    const root = tempDir();
+    put(root, "skills/plan/SKILL.md", SKILL("plan"));
+    put(root, "skills/implement/SKILL.md", `${SKILL("implement")}\nClimb the ladder.\n`);
+    put(root, "AGENTS.template.md", "# Template\n");
+    const found = messages(root);
+    expect(found).toContainEqual(expect.stringContaining("ponytail ladder"));
+    expect(found.some((m) => m.includes("skills/plan/SKILL.md"))).toBe(true);
+    expect(found.some((m) => m.includes("AGENTS.template.md"))).toBe(true);
+    expect(found.some((m) => m.includes("skills/implement/SKILL.md"))).toBe(false);
+  });
+
+  it("ignores the ladder check for layouts without those files", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    expect(validateKit(root)).toEqual([]);
+  });
+
   it("reports an unreadable entry instead of throwing", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));

@@ -10,6 +10,7 @@ plan wastes implementation effort.
 
 1. Run the `plan-challenger` subagent on the plan: needed parts only,
    verified claims, production failure modes. Ranked objections, no code.
+   Reject a plan whose ladder table is missing or weak.
 2. Check the domain language with `domain-modeling` (terms sharp, glossary
    and ADRs current) and the module shape with `codebase-design` (deep
    modules, seams in the right place).

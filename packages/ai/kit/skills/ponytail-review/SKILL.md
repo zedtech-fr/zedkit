@@ -13,7 +13,24 @@ Order of importance: correct, safe, holds under load, tested, fast, lean.
 Lean still matters: every extra line must be read, tested and fixed later.
 This is a report the user asked for, so give it in full.
 
-## 1. Understand first
+## 1. The ladder: does this code deserve to exist?
+
+For every piece of new code, new file, or new dependency in the diff,
+climb down and stop at the first rung that holds. Name the rung.
+A piece that skipped a higher rung is a finding.
+
+1. Does this need to exist at all? Skip what nobody asked for; say so in
+   one line.
+2. Already in this codebase? Reuse the helper, component, service, pattern.
+3. Does the standard library do it? Use it.
+4. Does a native platform feature or a standard tool cover it? A DB
+   constraint beats app code; a CLI generator beats hand-written files.
+5. Does an already-installed dependency solve it? Never add one for a few
+   lines.
+6. Can it be one line a reader gets at a glance? One line.
+7. Only then: the minimum code that works.
+
+## 2. Understand first
 
 - Review what the user names: uncommitted or staged changes, a branch, a PR
   link, or files. Nothing named: the uncommitted changes, or the last commit
@@ -27,7 +44,7 @@ This is a report the user asked for, so give it in full.
   running a script, or many users and processes at once. Judge scale against
   that, and say which load you assumed.
 
-## 2. Look for
+## 3. Look for
 
 1. **Bug:** wrong result, crash, missed edge case (empty, zero, last item,
    rounding, time zones), a caller broken by the change, a fix applied in one
@@ -43,7 +60,8 @@ This is a report the user asked for, so give it in full.
    test, not coverage.
 5. **Speed:** big slowdowns are problems. Small wins (work repeated in a hot
    loop) are suggestions; some software counts every millisecond.
-6. **Lean:** code that should not exist or should be smaller.
+6. **Lean:** code that should not exist or should be smaller. Climb the
+   ladder in section 1 first and name the first rung that holds.
    - delete: dead code, unused options, speculative features
    - reuse: the repo already has this helper (name the path)
    - stdlib / native: the standard library or platform already does it; a
@@ -54,7 +72,7 @@ This is a report the user asked for, so give it in full.
      or test. Split by job, never by line count, and never into helpers that
      exist only to make a function shorter.
 
-## 3. Check before you report
+## 4. Check before you report
 
 - Every finding needs a concrete case: "this input or situation leads to this
   wrong result". No case, no finding.
@@ -66,7 +84,7 @@ This is a report the user asked for, so give it in full.
   add layers, frameworks or config the problem does not need.
 - No style taste, no "consider", no vague worries.
 
-## 4. Output
+## 5. Output
 
 Very simple English: short sentences, everyday words. Explain a technical
 term the first time you use it. The reader may never have seen this code.

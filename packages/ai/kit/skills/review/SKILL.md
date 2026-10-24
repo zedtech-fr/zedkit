@@ -27,7 +27,8 @@ One subagent per lens, all in parallel (see `parallel-work` for the pattern;
 skip the fan-out and run inline when the diff is a few lines). Every brief is
 self-contained: the diff command, the lens skill to apply, and the evidence
 rule from `ground-truth` — every finding cites `file:line`, or it is not a
-finding.
+finding. When the change implements a plan with a ladder table, brief
+`code-review` to verify the table against the diff.
 
 ## 4. Merge
 

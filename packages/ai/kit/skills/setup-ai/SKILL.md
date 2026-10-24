@@ -57,6 +57,7 @@ In **improve** mode, audit each existing file and report before you edit:
 | Too long for always-loaded | root file over about 100 lines, nested file over about 60, skill over about 150; or details only one folder needs |
 | Missing trigger | skills or agents whose `description` does not say when to use them |
 | Unenforced | prose rules a tool could check. Before calling a rule unenforced, open the lint, type and CI configs and search them for it. |
+| Missing ladder | root `AGENTS.md`, or the `plan` / `implement` / `review` skills, does not state the 7-question ladder. Search for the ladder section or the 7 rungs; an existing `AGENTS.md` without it is a gap like any other. |
 
 In both modes, list **gaps**: repo facts an agent would otherwise get wrong. Examples: a non-obvious test command, a generated folder not to edit, a module boundary, a migration procedure, a naming rule the linter misses, a service that must be running.
 
@@ -86,7 +87,7 @@ Shared source first, provider layers after. `zedkit-ai init --provider <names>` 
 | `codex` | none: reads `AGENTS.md` and `.agents/skills` directly |
 | `muse` | none: reads `.agents/` directly |
 
-- **Root `AGENTS.md`**: start from the kit template if there is none. Replace every `<placeholder>` with a verified fact or delete the line. Non-negotiables name how each is enforced.
+- **Root `AGENTS.md`**: start from the kit template if there is none; when one exists, keep it and add the missing ladder section (the same 7 questions as the template). Replace every `<placeholder>` with a verified fact or delete the line. Non-negotiables name how each is enforced.
 - **Role and style**: fill it from evidence, not taste. Role and audience from the README (who the project serves); reply language from the language of the docs and commit messages; tone from commit style (terse or explanatory). If the evidence is missing or mixed, ask the user exactly one question covering what is unknown (for example reply language and audience) before writing; with nobody to ask, default to English replies and mark the choice `UNVERIFIED`.
 - **Nested `AGENTS.md`**: only what differs from the root. Link, do not copy.
 - **Repo skills**: folder `.agents/skills/<name>/SKILL.md`. The `description` says when to use it. Steps use this repo's real paths and commands, end with the command that proves the result, and point at an existing example file as the model. Follow `rules-upkeep` for format.
@@ -122,7 +123,8 @@ each child keeps its own.
 - **Root `AGENTS.md` says**: this is a workspace of separate checkouts;
   work inside one repo at a time; the nested `AGENTS.md` wins over the
   root; which repo owns what; visibility rules (which repos are public or
-  private, and what may reference what); how to sync every checkout.
+  private, and what may reference what); how to sync every checkout;
+  and the 7-question ladder (same section as the kit template).
 - **Children are proposals, not targets**: for each child without a setup,
   propose running `setup-ai` inside it. Never write inside a child repo
   without asking, and never audit child files from the root as if the root

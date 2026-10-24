@@ -16,7 +16,12 @@ covered here: `ground-truth`, `parallel-work`, `definition-of-done`,
   (`skills/LICENSE-ponytail-MIT`, copy of upstream `LICENSE`)
 - Skills: `ponytail`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`,
   `ponytail-help`, `ponytail-review` (upstream `skills/ponytail*`)
-- Modifications: none.
+- Modifications: `ponytail/SKILL.md`: the "smallest complete change" list
+  is the 7-rung ladder (the upstream stdlib-or-platform rung is split into
+  standard library, then native platform feature or standard tool).
+  `ponytail-review/SKILL.md` prepends that 7-rung ladder as its first
+  section; the reviewer names the first rung that holds for every new
+  piece of code, file, or dependency. Everything else is verbatim.
 
 ## Matt Pocock engineering skills (19) — MIT
 
@@ -31,7 +36,7 @@ covered here: `ground-truth`, `parallel-work`, `definition-of-done`,
   `to-tickets`, `triage`, `wayfinder`, `writing-for-agents`
   (upstream `skills/engineering/*`, `skills/productivity/*`,
   `skills/in-progress/setup-ts-deep-modules`)
-- Modifications: three example passages are reworded to name no vendor or business domain (this repo bans them): `domain-modeling/ADR-FORMAT.md`, `domain-modeling/GLOSSARY-FORMAT.md` (invoice example), `setup-matt-pocock-skills/SKILL.md`. `code-review/SKILL.md`: the Standards axis applies the `ponytail-review` skill instead of the upstream smell baseline (one reusable review, referenced not copied). `implement/SKILL.md`: refuses an unchallenged plan (runs `challenge`/`plan` first), then passes `definition-of-done` and calls `review` instead of `code-review`. Everything else is verbatim.
+- Modifications: three example passages are reworded to name no vendor or business domain (this repo bans them): `domain-modeling/ADR-FORMAT.md`, `domain-modeling/GLOSSARY-FORMAT.md` (invoice example), `setup-matt-pocock-skills/SKILL.md`. `code-review/SKILL.md`: the Standards axis applies the `ponytail-review` skill instead of the upstream smell baseline (one reusable review, referenced not copied), and its ladder is now part of that checklist by reference. `implement/SKILL.md`: refuses an unchallenged plan (runs `challenge`/`plan` first), climbs the `ponytail-review` ladder before writing code, then passes `definition-of-done` and calls `review` instead of `code-review`. `implement-spec/SKILL.md`: implementer subagents re-ask the ladder before writing each piece. Everything else is verbatim.
 
 ## Borrowed excerpt inside `pr` — Apache-2.0
 

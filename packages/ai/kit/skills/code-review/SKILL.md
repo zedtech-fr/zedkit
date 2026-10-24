@@ -35,7 +35,7 @@ Look for the originating spec, in this order:
 
 Search the repo for every file that documents how code should be written. When `CODING_STANDARDS.md` or `CONTRIBUTING.md` exists, it must be on the list.
 
-On top of whatever the repo documents, the Standards axis always applies the **`ponytail-review` skill**: correctness, safety, behavior under load, tested risk, speed, and whether every line is needed. It replaces any ad-hoc smell list — one reusable review skill, referenced here, never copied. Two rules bind it:
+On top of whatever the repo documents, the Standards axis always applies the **`ponytail-review` skill**: correctness, safety, behavior under load, tested risk, speed, and whether every line is needed. It replaces any ad-hoc smell list — one reusable review skill, referenced here, never copied. Its ladder is part of the checklist: every new piece of code, file, or dependency in the diff must name the first rung that holds. Two rules bind it:
 
 - **The repo overrides.** A documented repo standard always wins; where it endorses something the review would flag, suppress the finding.
 - **Always a judgement call.** Each finding is a labelled heuristic ("possible Feature Envy"), never a hard violation. Like any standard here, skip anything tooling already enforces.
@@ -48,13 +48,13 @@ Issue both sub-agent calls together, in the foreground, and aggregate the report
 
 - The full diff command and commit list.
 - The list of standards-source files you found in step 3, **plus the instruction to apply the `ponytail-review` skill** (the sub-agent reads it itself from the installed skills).
-- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) the `ponytail-review` findings: name the check and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but `ponytail-review` findings are always judgement calls, and a documented repo standard overrides them. Skip anything tooling enforces. Under 400 words."
+- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) the `ponytail-review` findings: name the check and quote the hunk, including the ladder verdict per new piece (first rung that holds). Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but `ponytail-review` findings are always judgement calls, and a documented repo standard overrides them. Skip anything tooling enforces. Under 400 words."
 
 **Spec sub-agent prompt** should include:
 
 - The diff command and commit list.
 - The path or fetched contents of the spec.
-- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
+- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong; (d) when the spec/plan carries a ladder table, each built piece verified against its row — a piece that skipped a higher rung is a finding. Quote the spec line for each finding. Under 400 words."
 
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 

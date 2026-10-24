@@ -47,15 +47,56 @@ describe("installKit", () => {
     expect(validateKit(join(dest, ".agents"))).toEqual([]);
   });
 
-  it("never overwrites: a second run only skips, and local edits survive", () => {
+  it("never overwrites: local edits survive, and a ladder-less AGENTS.md gets the section appended", () => {
     const dest = tempDir();
     install(dest);
     writeFileSync(join(dest, "AGENTS.md"), "mine\n");
     writeFileSync(join(dest, ".agents/skills/ground-truth/SKILL.md"), "edited\n");
     const again = install(dest);
-    expect(again.every((a) => a.kind === "skip")).toBe(true);
-    expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toBe("mine\n");
+    expect(again.find((a) => a.path === "AGENTS.md")).toEqual({
+      kind: "append",
+      path: "AGENTS.md",
+      note: "ladder section",
+    });
+    const agents = readFileSync(join(dest, "AGENTS.md"), "utf8");
+    expect(agents.startsWith("mine\n")).toBe(true);
+    expect(agents).toContain("## Before writing any code");
+    expect(again.filter((a) => a.path !== "AGENTS.md").every((a) => a.kind === "skip")).toBe(true);
     expect(readFileSync(join(dest, ".agents/skills/ground-truth/SKILL.md"), "utf8")).toBe("edited\n");
+    // Third run: the ladder is there now, so everything skips.
+    expect(install(dest).every((a) => a.kind === "skip")).toBe(true);
+  });
+
+  it("dry run reports the ladder append without writing it", () => {
+    const dest = tempDir();
+    put(dest, "AGENTS.md", "mine\n");
+    const planned = install(dest, { dryRun: true });
+    expect(planned.find((a) => a.path === "AGENTS.md")?.kind).toBe("append");
+    expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toBe("mine\n");
+    const done = install(dest);
+    expect(done).toEqual(planned);
+    expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toContain("## Before writing any code");
+  });
+
+  it("skips AGENTS.md when the ladder is already there", () => {
+    const dest = tempDir();
+    put(dest, "AGENTS.md", "# Mine\n\nClimb the ladder.\n");
+    const actions = install(dest);
+    expect(actions.find((a) => a.path === "AGENTS.md")?.kind).toBe("skip");
+    expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toBe("# Mine\n\nClimb the ladder.\n");
+  });
+
+  it("skips the append when the kit template has no ladder section", () => {
+    const kit = tempDir();
+    put(kit, "kit.json", JSON.stringify({ presets: { core: ["alpha"] }, agents: [] }));
+    put(kit, "skills/alpha/SKILL.md", "x");
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    put(dest, "AGENTS.md", "mine\n");
+    const actions = install(dest, { kit });
+    expect(actions.find((a) => a.path === "AGENTS.md")?.kind).toBe("skip");
+    expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toBe("mine\n");
   });
 
   it("keeps a pre-existing real folder instead of replacing it with a link", () => {
@@ -239,9 +280,9 @@ describe("installKit", () => {
 
   it("links CLAUDE.md to an AGENTS.md the project already had", () => {
     const dest = tempDir();
-    writeFileSync(join(dest, "AGENTS.md"), "mine\n");
+    writeFileSync(join(dest, "AGENTS.md"), "mine\n\nClimb the ladder.\n");
     install(dest);
-    expect(readFileSync(join(dest, "CLAUDE.md"), "utf8")).toBe("mine\n");
+    expect(readFileSync(join(dest, "CLAUDE.md"), "utf8")).toBe("mine\n\nClimb the ladder.\n");
   });
 
   it("dry run reports the same actions as the real run", () => {
@@ -294,6 +335,13 @@ describe("installKit", () => {
     expect(text.toLowerCase()).toContain("shared source");
     expect(text).toContain("which of cursor, claude, codex, muse");
     expect(text).toContain("setup-ai cursor");
+  });
+
+  it("setup-ai audits the ladder gap in existing setups and workspace roots", () => {
+    const text = readFileSync(join(kitRoot(), "skills", "setup-ai", "SKILL.md"), "utf8");
+    expect(text).toContain("Missing ladder");
+    expect(text).toContain("add the missing ladder section");
+    expect(text).toContain("the 7-question ladder (same section as the kit template)");
   });
 
   it("setup-ai covers multi-repo workspace roots and leaves children alone", () => {

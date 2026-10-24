@@ -12,7 +12,8 @@ const USAGE = `zedkit-ai <command>
   init [dir] [--preset core|full] [--provider ...] [--dry-run]
       Copy skills, subagents, commands and an AGENTS.md template into dir
       (default .), then wire the providers (default all). Never overwrites
-      existing files. --provider takes cursor,claude,codex,muse,all;
+      existing files (an existing AGENTS.md without the ladder gets the
+      ladder section appended). --provider takes cursor,claude,codex,muse,all;
       --target is an alias of --provider.
   validate [dir]
       Check skills, subagents and commands, plus provider-copy drift
