@@ -11,6 +11,7 @@ pieces and returns the app ready to `listen()`:
   boot fails fast with one readable error).
 - Request-id JSON logs (`nestjs-pino`): honors `x-request-id`,
   generates a UUID otherwise; one id across logs and error bodies.
+  `Authorization` and cookies are redacted from logs by default.
 - Strict global `ValidationPipe` (whitelist, forbid non-whitelisted,
   transform; implicit conversion off — see below).
 - One global error shape: `{ code, message, requestId }` (+ status).
@@ -19,7 +20,9 @@ pieces and returns the app ready to `listen()`:
   in-memory, single process — set `trustProxy` before running behind a
   proxy or every client shares one bucket).
 - Generated OpenAPI (`@nestjs/swagger`), served as raw Fastify routes:
-  public by design, guards do not apply. Shutdown hooks.
+  public by design, guards do not apply. Enabled by default except in
+  production (`NODE_ENV=production`) — opt back in explicitly if you
+  serve docs in prod. Shutdown hooks.
 
 ```ts
 import "reflect-metadata";

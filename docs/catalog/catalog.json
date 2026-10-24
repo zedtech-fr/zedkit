@@ -38,6 +38,13 @@
           "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
         },
         {
+          "need": "Ship request logs without leaking credentials",
+          "import": "`@zedkit/nest` — `LoggerOptions`",
+          "wraps": "`nestjs-pino`",
+          "status": "stable",
+          "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
+        },
+        {
           "need": "Return uniform error bodies",
           "import": "`@zedkit/nest` — `AllExceptionsFilter`, `ErrorBody`",
           "wraps": "`(none)`",

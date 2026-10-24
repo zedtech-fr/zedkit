@@ -1,7 +1,21 @@
 // Original work by the same author.
 import type { Type } from "@nestjs/common";
 import { plainToInstance } from "class-transformer";
-import { validateSync } from "class-validator";
+import { validateSync, type ValidationError } from "class-validator";
+
+function flattenErrors(errors: ValidationError[], prefix = ""): string[] {
+  return errors.flatMap((error) => {
+    const path = prefix ? `${prefix}.${error.property}` : error.property;
+    const reasons = Object.values(error.constraints ?? {}).join(", ");
+    const self = reasons ? [`${path}: ${reasons}`] : [];
+    // Unreachable via flat process env today (nested objects never arrive
+    // from env files), but the walk keeps the message readable if a nested
+    // schema ever validates nested input.
+    const children =
+      error.children?.length ? flattenErrors(error.children, path) : [];
+    return [...self, ...children];
+  });
+}
 
 /**
  * `ConfigModule` validate hook (documented Nest recipe): instantiate the
@@ -18,13 +32,7 @@ export function validateEnv(
   const instance = plainToInstance(schema, config);
   const errors = validateSync(instance);
   if (errors.length > 0) {
-    const details = errors
-      .map((error) => {
-        const reasons = Object.values(error.constraints ?? {}).join(", ");
-        return `${error.property}: ${reasons}`;
-      })
-      .join("; ");
-    throw new Error(`Invalid environment: ${details}`);
+    throw new Error(`Invalid environment: ${flattenErrors(errors).join("; ")}`);
   }
   return instance as unknown as Record<string, unknown>;
 }

@@ -12,6 +12,20 @@ const app = await createNestApp({ module: AppModule, envSchema: AppEnv });
 await app.listen(3000);
 ```
 
+## Ship request logs without leaking credentials
+
+- Import: `@zedkit/nest` — `LoggerOptions`
+- Wraps: `nestjs-pino`
+- Status: stable
+
+```ts
+import { createNestApp } from "@zedkit/nest";
+const app = await createNestApp({
+  module: AppModule,
+  logger: { level: "info" }, // default: auth header + cookies redacted
+});
+```
+
 ## Return uniform error bodies
 
 - Import: `@zedkit/nest` — `AllExceptionsFilter`, `ErrorBody`

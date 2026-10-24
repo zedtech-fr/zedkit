@@ -4,10 +4,10 @@
    validated env, request-id logs, strict validation, uniform errors,
    throttling, OpenAPI, shutdown. Zero product names or logic in `src`;
    test fixtures stay product-free too (the `inventory` domain).
-2. TypeScript strict, ESM, Node 22, pnpm. Deps use `catalog:` only.
-   Framework pieces are peer dependencies (one copy per app — Nest DI
-   breaks across duplicates); this package has zero runtime deps of
-   its own.
+2. TypeScript strict, ESM, Node 22, pnpm. Dev deps use `catalog:`
+   pins; peerDependencies use `^` ranges from the same pins (one copy
+   per app — Nest DI breaks across duplicates). This package has zero
+   runtime deps of its own.
 3. No raw `try`/`catch`: use `tryCatch`/`tryCatchAsync` from
    `@zedkit/core` (add a `workspace:*` dep if a module ever needs it).
 4. Explicit named exports from `src/index.ts` (no `export *`, no default

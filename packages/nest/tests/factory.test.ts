@@ -1,41 +1,16 @@
 import "reflect-metadata";
-import type { INestApplication } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { afterEach, describe, expect, it, onTestFinished } from "vitest";
+import type { ThrottlerStorage } from "@nestjs/throttler";
+import { describe, expect, it, onTestFinished } from "vitest";
 import request from "supertest";
 import { createHash } from "node:crypto";
 import http from "node:http";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import {
-  createNestApp,
-  type ErrorBody,
-  type NestBootstrapOptions,
-} from "../src/index.js";
-import { FixtureEnv, InventoryModule } from "./fixtures/inventory.module.js";
-
-const apps: INestApplication[] = [];
-afterEach(async () => {
-  while (apps.length > 0) {
-    const app = apps.pop();
-    if (app) await app.close();
-  }
-});
-
-async function boot(
-  options?: Partial<NestBootstrapOptions>,
-): Promise<{ app: INestApplication; url: string }> {
-  const app = await createNestApp({
-    module: InventoryModule,
-    logger: { level: "silent" },
-    ...options,
-  });
-  apps.push(app);
-  await app.listen(0, "127.0.0.1");
-  const url = await app.getUrl();
-  return { app, url };
-}
+import { AllExceptionsFilter, type ErrorBody } from "../src/index.js";
+import { FixtureEnv } from "./fixtures/inventory.module.js";
+import { boot } from "./helpers.js";
 
 function saveEnv(name: string): void {
   const previous = process.env[name];
@@ -237,6 +212,86 @@ describe("createNestApp", () => {
     expect(
       (await request(plainUrl).get("/items").set("X-Forwarded-For", "10.0.0.2")).status,
     ).toBe(429);
+  });
+
+  it("maps unsupported media types to 415", async () => {
+    const { url } = await boot();
+    const res = await request(url)
+      .post("/echo-raw")
+      .set("content-type", "text/csv")
+      .send("a,b");
+    expect(res.status).toBe(415);
+    expect((res.body as ErrorBody).code).toBe("unsupported_media_type");
+  });
+
+  it("serves no docs in production unless asked", async () => {
+    saveEnv("NODE_ENV");
+    process.env.NODE_ENV = "production";
+    const bare = await boot();
+    expect((await request(bare.url).get("/docs-json")).status).toBe(404);
+    const explicit = await boot({ docs: { title: "Prod", version: "1" } });
+    expect((await request(explicit.url).get("/docs-json")).status).toBe(200);
+  });
+
+  it("tolerates slashes in the docs path", async () => {
+    const { url } = await boot({ docs: { title: "T", version: "1", path: "docs/" } });
+    expect((await request(url).get("/docs-json")).status).toBe(200);
+  });
+
+  it("delegates throttle counting to a custom storage", async () => {
+    let calls = 0;
+    const storage: ThrottlerStorage = {
+      increment: () => {
+        calls++;
+        return Promise.resolve({
+          totalHits: calls,
+          timeToExpire: 60_000,
+          isBlocked: false,
+          timeToBlockExpire: 0,
+        });
+      },
+    };
+    const { url } = await boot({ throttle: { ttlMs: 60_000, limit: 100, storage } });
+    expect((await request(url).get("/items")).status).toBe(200);
+    expect((await request(url).get("/items")).status).toBe(200);
+    expect(calls).toBe(2);
+  });
+
+  it("accepts a trust function for proxies", async () => {
+    const { url } = await boot({
+      throttle: { ttlMs: 60_000, limit: 1 },
+      trustProxy: () => true,
+    });
+    const first = await request(url).get("/items").set("X-Forwarded-For", "10.0.0.1");
+    const second = await request(url).get("/items").set("X-Forwarded-For", "10.0.0.2");
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+  });
+
+  it("restricts CORS origins when given an object", async () => {
+    // Array form: a plain string origin is echoed unconditionally.
+    const { url } = await boot({ cors: { origin: ["https://allowed.example"] } });
+    const allowed = await request(url).get("/items").set("Origin", "https://allowed.example");
+    expect(allowed.headers["access-control-allow-origin"]).toBe("https://allowed.example");
+    const denied = await request(url).get("/items").set("Origin", "https://evil.example");
+    expect(denied.headers["access-control-allow-origin"]).toBeUndefined();
+  });
+
+  it("skips sending when the reply already went out", () => {
+    const filter = new AllExceptionsFilter();
+    const sent: unknown[] = [];
+    const reply = {
+      sent: true,
+      status: () => ({ send: (body: unknown) => void sent.push(body) }),
+    };
+    const host = {
+      switchToHttp: () => ({
+        getRequest: () => ({ id: "r", method: "GET", url: "/" }),
+        getResponse: () => reply,
+      }),
+    };
+    filter.catch(new Error("mid-stream"), host as never);
+    expect(sent).toEqual([]);
   });
 
   it("omits raw bodies, docs, and throttling when disabled", async () => {

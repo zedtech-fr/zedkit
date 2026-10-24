@@ -4,9 +4,6 @@
   "description": "Generic NestJS bootstrap factory: platform, config, logging, validation, errors, throttling, docs, shutdown. Original work by the same author.",
   "license": "MIT",
   "type": "module",
-  "imports": {
-    "#*": "./src/*"
-  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

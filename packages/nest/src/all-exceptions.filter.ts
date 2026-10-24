@@ -27,6 +27,7 @@ const STATUS_CODES: Record<number, string> = {
   404: "not_found",
   409: "conflict",
   413: "payload_too_large",
+  415: "unsupported_media_type",
   429: "rate_limited",
   500: "internal",
   503: "unavailable",
@@ -41,6 +42,7 @@ function fastifyBodyErrorStatus(exception: unknown): number | null {
   if (typeof exception !== "object" || exception === null) return null;
   if (!("code" in exception) || typeof exception.code !== "string") return null;
   if (exception.code === "FST_ERR_CTP_BODY_TOO_LARGE") return 413;
+  if (exception.code === "FST_ERR_CTP_INVALID_MEDIA_TYPE") return 415;
   if (exception.code.startsWith("FST_ERR_CTP_")) return 400;
   return null;
 }
@@ -80,15 +82,21 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message =
         status === 413
           ? "body exceeds the configured limit"
-          : status === 400
-            ? "invalid request body"
-            : "internal error";
+          : status === 415
+            ? "unsupported media type"
+            : status === 400
+              ? "invalid request body"
+              : "internal error";
     }
     if (status >= 500) {
       this.logger.error(
         `Unhandled error on ${req.method} ${req.url}: ${String(exception)}`,
+        exception instanceof Error ? exception.stack : undefined,
       );
     }
+    // A streaming handler that throws after the first flush already sent
+    // the reply: sending again would raise inside the filter itself.
+    if (reply.sent) return;
     const code = STATUS_CODES[status] ?? `http_${status}`;
     reply.status(status).send({ code, message, requestId } satisfies ErrorBody);
   }

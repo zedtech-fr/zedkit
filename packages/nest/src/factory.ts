@@ -1,9 +1,14 @@
-// Original work by the same author. Extraction adaptations vs the donor:
+// Original work by the same author. Design notes:
 // - `envFilePath` option (default `[".env"]`) instead of a hardcoded
 //   monorepo-relative lookup.
 // - `trustProxy` passthrough so the documented proxy guidance works.
 import "reflect-metadata";
-import { Module, ValidationPipe, type Type } from "@nestjs/common";
+import {
+  Module,
+  ValidationPipe,
+  type INestApplication,
+  type Type,
+} from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER, APP_GUARD, APP_PIPE, NestFactory } from "@nestjs/core";
 import {
@@ -11,8 +16,14 @@ import {
   type NestFastifyApplication,
 } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import {
+  ThrottlerGuard,
+  ThrottlerModule,
+  type ThrottlerStorage,
+} from "@nestjs/throttler";
+import type { FastifyServerOptions } from "fastify";
 import { Logger as PinoLogger, LoggerModule } from "nestjs-pino";
+import type { DestinationStream } from "pino";
 import { randomUUID } from "node:crypto";
 import type { Http2ServerRequest } from "node:http2";
 import type { IncomingMessage } from "node:http";
@@ -22,9 +33,17 @@ import { validateEnv } from "./validate-env.js";
 /** Incoming request-id header honored by the logger and error bodies. */
 export const REQUEST_ID_HEADER = "x-request-id";
 
+/** Whatever `app.enableCors()` accepts (`true` allows any origin). */
+type CorsSetting = Parameters<INestApplication["enableCors"]>[0];
+
 export interface ThrottleOptions {
   ttlMs: number;
   limit: number;
+  /**
+   * Custom hit counter (e.g. shared across replicas). Defaults to the
+   * in-memory store: correct for a single process only.
+   */
+  storage?: ThrottlerStorage | undefined;
 }
 
 export interface DocsOptions {
@@ -35,8 +54,19 @@ export interface DocsOptions {
   path?: string | undefined;
 }
 
+/**
+ * Request-logging options. The logger is process-wide: when several apps
+ * boot in one process (tests), the first app's logger options win.
+ */
 export interface LoggerOptions {
   level?: string | undefined;
+  /**
+   * pino redact paths. Defaults to the Authorization header and cookies:
+   * request logs must never carry credentials.
+   */
+  redact?: string[] | undefined;
+  /** Log destination (pino passthrough). Defaults to stdout. */
+  stream?: DestinationStream | undefined;
 }
 
 export interface NestBootstrapOptions {
@@ -55,9 +85,10 @@ export interface NestBootstrapOptions {
    */
   envFilePath?: string[] | undefined;
   /**
-   * Generated OpenAPI. Enabled by default: every app from this bootstrap
-   * is API-first, so its contract is always browsable. Pass `false` for
-   * apps without HTTP (workers).
+   * Generated OpenAPI. Enabled by default except when
+   * `NODE_ENV=production` (a public endpoint inventory is a gift to
+   * attackers — opt back in explicitly if you serve docs in prod). Pass
+   * `false` for apps without HTTP (workers).
    */
   docs?: DocsOptions | false | undefined;
   /**
@@ -73,12 +104,18 @@ export interface NestBootstrapOptions {
    * Trust proxy headers (Fastify passthrough). Set this before running
    * behind a proxy or every client shares one throttle bucket.
    */
-  trustProxy?: boolean | string | string[] | undefined;
-  cors?: boolean | undefined;
+  trustProxy?: FastifyServerOptions["trustProxy"] | undefined;
+  /**
+   * `true` allows any origin; pass an object to restrict it. Note: a
+   * plain string origin is echoed unconditionally — use an array or
+   * function to actually restrict.
+   */
+  cors?: CorsSetting | undefined;
   logger?: LoggerOptions | undefined;
 }
 
 const DEFAULT_THROTTLE: ThrottleOptions = { ttlMs: 60_000, limit: 100 };
+const DEFAULT_LOG_REDACT = ["req.headers.authorization", "req.headers.cookie"];
 const DEFAULT_BODY_LIMIT = 1024 * 1024;
 const DEFAULT_DOCS: DocsOptions = {
   title: "API",
@@ -88,11 +125,12 @@ const DEFAULT_DOCS: DocsOptions = {
 
 function requestIdOf(req: IncomingMessage): string {
   const header = req.headers[REQUEST_ID_HEADER];
-  if (typeof header === "string") {
-    // Node joins repeated headers with ", "; the first value wins.
-    const first = header.split(",")[0]?.trim();
-    if (first) return first;
-  }
+  // Node joins repeated HTTP/1 headers with ", "; HTTP/2 may deliver an
+  // array. Either way the first value wins.
+  const first = Array.isArray(header)
+    ? header[0]?.trim()
+    : header?.split(",")[0]?.trim();
+  if (first) return first;
   return randomUUID();
 }
 
@@ -132,13 +170,34 @@ export async function createNestApp(
           : {}),
       }),
       LoggerModule.forRoot({
-        pinoHttp: {
-          level: options.logger?.level ?? "info",
-          genReqId: (req) => pinoReqId(req as IncomingMessage),
-        },
+        // nestjs-pino takes the destination as a tuple, not an option key.
+        pinoHttp:
+          options.logger?.stream === undefined
+            ? {
+                level: options.logger?.level ?? "info",
+                genReqId: (req) => pinoReqId(req as IncomingMessage),
+                redact: options.logger?.redact ?? DEFAULT_LOG_REDACT,
+              }
+            : [
+                {
+                  level: options.logger.level ?? "info",
+                  genReqId: (req) => pinoReqId(req as IncomingMessage),
+                  redact: options.logger.redact ?? DEFAULT_LOG_REDACT,
+                },
+                options.logger.stream,
+              ],
       }),
       ...(throttle
-        ? [ThrottlerModule.forRoot([{ ttl: throttle.ttlMs, limit: throttle.limit }])]
+        ? [
+            ThrottlerModule.forRoot(
+              throttle.storage
+                ? {
+                    storage: throttle.storage,
+                    throttlers: [{ ttl: throttle.ttlMs, limit: throttle.limit }],
+                  }
+                : [{ ttl: throttle.ttlMs, limit: throttle.limit }],
+            ),
+          ]
         : []),
       options.module,
     ],
@@ -178,9 +237,14 @@ export async function createNestApp(
   app.useLogger(app.get(PinoLogger));
   app.enableShutdownHooks();
   if (options.cors) {
-    app.enableCors();
+    app.enableCors(options.cors === true ? undefined : options.cors);
   }
-  const docs = options.docs === undefined ? DEFAULT_DOCS : options.docs;
+  const docs =
+    options.docs === undefined
+      ? process.env.NODE_ENV === "production"
+        ? false
+        : DEFAULT_DOCS
+      : options.docs;
   if (docs) {
     const builder = new DocumentBuilder()
       .setTitle(docs.title)
@@ -188,8 +252,10 @@ export async function createNestApp(
     if (docs.description) {
       builder.setDescription(docs.description);
     }
+    // Tolerate "docs/" or "/docs": the JSON route is derived by suffix.
+    const docsPath = (docs.path ?? "docs").replace(/^\/+|\/+$/g, "") || "docs";
     SwaggerModule.setup(
-      docs.path ?? "docs",
+      docsPath,
       app,
       SwaggerModule.createDocument(app, builder.build()),
     );
