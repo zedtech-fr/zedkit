@@ -80,6 +80,31 @@ describe("installKit", () => {
     expect(existsSync(join(dest, ".cursor"))).toBe(false);
   });
 
+  it("copies commands to .agents and links them per target", () => {
+    const dest = tempDir();
+    install(dest);
+    expect(readFileSync(join(dest, ".agents/commands/review.md"), "utf8")).toContain("`review`");
+    expect(readlinkSync(join(dest, ".claude/commands"))).toBe("../.agents/commands");
+    expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(true);
+    expect(readlinkSync(join(dest, ".cursor/commands"))).toBe("../.agents/commands");
+    expect(existsSync(join(dest, ".cursor/commands/plan.md"))).toBe(true);
+    const cursorOnly = tempDir();
+    install(cursorOnly, { targets: ["cursor"] });
+    expect(existsSync(join(cursorOnly, ".cursor/commands/review.md"))).toBe(true);
+    expect(existsSync(join(cursorOnly, ".claude"))).toBe(false);
+  });
+
+  it("installs no commands when the manifest lists none", () => {
+    const kit = tempDir();
+    put(kit, "kit.json", JSON.stringify({ presets: { core: ["alpha"] }, agents: [] }));
+    put(kit, "skills/alpha/SKILL.md", "x");
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    install(dest, { kit });
+    expect(existsSync(join(dest, ".agents/commands"))).toBe(false);
+  });
+
   it("returns an error for an unknown preset and writes no skills", () => {
     const dest = tempDir();
     const result = installKit({ dest, preset: "nope" });
@@ -208,6 +233,23 @@ describe("installKit", () => {
     expect(text).toContain("exactly one question");
     for (const source of ["README", "commit"]) {
       expect(text).toContain(source);
+    }
+  });
+
+  it("keeps one thin command file per manifest command, each running its skill", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const listed = manifest.value.commands ?? [];
+    expect(listed.length).toBeGreaterThan(0);
+    const onDisk = readdirSync(join(kitRoot(), "commands")).filter((f) => f.endsWith(".md"));
+    expect(onDisk.sort()).toEqual(listed.map((name) => `${name}.md`).sort());
+    for (const name of listed) {
+      const text = readFileSync(join(kitRoot(), "commands", `${name}.md`), "utf8");
+      const lines = text.trimEnd().split("\n").length;
+      expect(lines, `${name} is ${lines} lines`).toBeGreaterThanOrEqual(3);
+      expect(lines, `${name} is ${lines} lines`).toBeLessThanOrEqual(6);
+      expect(text).toContain(`\`${name}\``);
+      expect(text).toContain("$ARGUMENTS");
     }
   });
 

@@ -20,11 +20,12 @@ describe("cli", () => {
     expect(unknown.text).toBe("");
   });
 
-  it("lists presets and agents", () => {
+  it("lists presets, agents and commands", () => {
     const { code, text } = run("list");
     expect(code).toBe(0);
     expect(text).toContain("preset core:");
     expect(text).toContain("agents: explorer");
+    expect(text).toContain("commands: review");
   });
 
   it("init installs into the given directory", () => {

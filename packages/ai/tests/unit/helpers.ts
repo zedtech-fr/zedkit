@@ -26,3 +26,6 @@ export const SKILL = (name: string): string =>
 
 export const AGENT = (name: string, extra = ""): string =>
   `---\nname: ${name}\ndescription: "Agent ${name}. Use when needed."\n${extra}---\n\nBody.\n`;
+
+export const COMMAND = (skill: string, description = "Runs a skill."): string =>
+  `---\ndescription: ${description}\n---\n\nRun the \`${skill}\` skill on \`$ARGUMENTS\`.\n`;

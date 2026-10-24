@@ -5,7 +5,7 @@
       "catalog": "packages/ai/CATALOG.md",
       "needs": [
         {
-          "need": "Set up AI agent instructions, skills and subagents in a repo",
+          "need": "Set up AI agent instructions, skills, subagents and commands in a repo",
           "import": "`@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Target`",
           "wraps": "`(none)`",
           "status": "stable",
@@ -16,7 +16,7 @@
           "import": "`@zedkit/ai` — `validateKit`, `Issue`",
           "wraps": "`yaml`",
           "status": "stable",
-          "example": "import { validateKit } from \"@zedkit/ai\";\nconst issues = validateKit(\".agents\"); // skills/<name>/SKILL.md, agents/<name>.md\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
+          "example": "import { validateKit } from \"@zedkit/ai\";\nconst issues = validateKit(\".agents\"); // skills/<name>/SKILL.md, agents/<name>.md, commands/<name>.md\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
         }
       ]
     },

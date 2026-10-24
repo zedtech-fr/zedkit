@@ -74,6 +74,7 @@ evidence.
 - `AGENTS.md` (this file) and nested `AGENTS.md`: instructions.
 - `.agents/skills/`: workflows. `.claude/skills` and `.cursor/skills` point to it.
 - `.agents/agents/`: subagents. `.claude/agents` and `.cursor/agents` point to it.
+- `.agents/commands/`: one-keystroke commands. `.claude/commands` and `.cursor/commands` point to it.
 - Subagent `model`: leave it unset (inherits). Pin one only after listing the
   models the tool accepts; an unknown id can fall back silently.
 - Tailor this file to the repo with the `setup-ai` skill.

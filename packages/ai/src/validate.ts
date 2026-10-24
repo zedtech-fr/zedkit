@@ -91,6 +91,29 @@ function checkAgent(root: string, file: string, issues: Issue[]): void {
   }
 }
 
+function checkCommand(root: string, file: string, skills: Set<string>, issues: Issue[]): void {
+  const path = join("commands", file);
+  const base = file.replace(/\.md$/, "");
+  if (!NAME.test(base) || base.length > MAX_NAME) {
+    issues.push({ path, message: `name must be lowercase-hyphen, at most ${MAX_NAME} characters` });
+  }
+  const text = read(join(root, path));
+  const parsed = parseFrontmatter(text);
+  if (!parsed.ok) {
+    issues.push({ path, message: parsed.error.message });
+    return;
+  }
+  checkDescription(parsed.value.data.description, path, issues);
+  if (!isSingleLineDescription(parsed.value.raw)) {
+    issues.push({ path, message: "description must be a single line (no `>` or `|` block, no continuation lines)" });
+  }
+  // A command runs a skill by name: it must name at least one installed one.
+  const names = [...skills].filter((name) => text.includes(`\`${name}\``));
+  if (names.length === 0) {
+    issues.push({ path, message: "names no installed skill (a command runs a `skill` by name)" });
+  }
+}
+
 function checkLineEndings(root: string, issues: Issue[]): void {
   const entries = readdirSync(root, { recursive: true, encoding: "utf8" });
   for (const entry of entries) {
@@ -122,15 +145,30 @@ function checkManifest(root: string, issues: Issue[]): void {
   for (const name of manifest.value.agents) {
     if (!agents.has(name)) issues.push({ path: "kit.json", message: `lists missing agent "${name}"` });
   }
+  const commands = new Set(
+    existsSync(join(root, "commands"))
+      ? readdirSync(join(root, "commands")).map((f) => f.replace(/\.md$/, ""))
+      : [],
+  );
+  for (const name of manifest.value.commands ?? []) {
+    if (!commands.has(name)) issues.push({ path: "kit.json", message: `lists missing command "${name}"` });
+  }
 }
 
 function collect(root: string): Issue[] {
   const issues: Issue[] = [];
-  for (const name of dirsIn(join(root, "skills"))) checkSkill(root, name, issues);
+  const skills = new Set(dirsIn(join(root, "skills")));
+  for (const name of skills) checkSkill(root, name, issues);
   const agentsDir = join(root, "agents");
   if (existsSync(agentsDir)) {
     for (const file of readdirSync(agentsDir).filter((f) => f.endsWith(".md"))) {
       checkAgent(root, file, issues);
+    }
+  }
+  const commandsDir = join(root, "commands");
+  if (existsSync(commandsDir)) {
+    for (const file of readdirSync(commandsDir).filter((f) => f.endsWith(".md"))) {
+      checkCommand(root, file, skills, issues);
     }
   }
   checkManifest(root, issues);
@@ -139,10 +177,10 @@ function collect(root: string): Issue[] {
 }
 
 /**
- * Check a directory laid out as `skills/<name>/SKILL.md`, `agents/<name>.md`
- * and optionally `kit.json`. Returns every problem found; empty means valid.
- * An unreadable entry (dangling symlink, permissions) is reported as a
- * problem instead of throwing.
+ * Check a directory laid out as `skills/<name>/SKILL.md`, `agents/<name>.md`,
+ * `commands/<name>.md` and optionally `kit.json`. Returns every problem
+ * found; empty means valid. An unreadable entry (dangling symlink,
+ * permissions) is reported as a problem instead of throwing.
  */
 export function validateKit(root: string): Issue[] {
   if (!existsSync(root)) {
