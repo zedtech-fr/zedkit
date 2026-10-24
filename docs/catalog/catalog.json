@@ -6,17 +6,17 @@
       "needs": [
         {
           "need": "Set up AI agent instructions, skills, subagents and commands in a repo",
-          "import": "`@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Target`",
+          "import": "`@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`",
           "wraps": "`(none)`",
           "status": "stable",
-          "example": "import { installKit } from \"@zedkit/ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", targets: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
+          "example": "import { installKit } from \"@zedkit/ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
         },
         {
-          "need": "Check that skills and subagents are valid for every tool",
-          "import": "`@zedkit/ai` — `validateKit`, `Issue`",
+          "need": "Check that skills, subagents, commands and provider copies are valid",
+          "import": "`@zedkit/ai` — `validateKit`, `checkDrift`, `Issue`",
           "wraps": "`yaml`",
           "status": "stable",
-          "example": "import { validateKit } from \"@zedkit/ai\";\nconst issues = validateKit(\".agents\"); // skills/<name>/SKILL.md, agents/<name>.md, commands/<name>.md\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
+          "example": "import { checkDrift, validateKit } from \"@zedkit/ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
         }
       ]
     },

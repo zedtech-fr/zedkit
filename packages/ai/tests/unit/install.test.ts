@@ -73,25 +73,47 @@ describe("installKit", () => {
     expect(readdirSync(dest)).toEqual([]);
   });
 
-  it("wires only the requested targets", () => {
+  it("wires only the requested providers (--target still works as an alias)", () => {
     const dest = tempDir();
     install(dest, { targets: ["claude"] });
     expect(existsSync(join(dest, ".claude"))).toBe(true);
     expect(existsSync(join(dest, ".cursor"))).toBe(false);
+    const cursorOnly = tempDir();
+    install(cursorOnly, { providers: ["cursor"] });
+    expect(existsSync(join(cursorOnly, ".cursor"))).toBe(true);
+    expect(existsSync(join(cursorOnly, ".claude"))).toBe(false);
   });
 
-  it("copies commands to .agents and links them per target", () => {
+  it("links commands for claude but copies them as real files for cursor", () => {
     const dest = tempDir();
     install(dest);
     expect(readFileSync(join(dest, ".agents/commands/review.md"), "utf8")).toContain("`review`");
     expect(readlinkSync(join(dest, ".claude/commands"))).toBe("../.agents/commands");
     expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(true);
-    expect(readlinkSync(join(dest, ".cursor/commands"))).toBe("../.agents/commands");
-    expect(existsSync(join(dest, ".cursor/commands/plan.md"))).toBe(true);
-    const cursorOnly = tempDir();
-    install(cursorOnly, { targets: ["cursor"] });
-    expect(existsSync(join(cursorOnly, ".cursor/commands/review.md"))).toBe(true);
-    expect(existsSync(join(cursorOnly, ".claude"))).toBe(false);
+    expect(lstatSync(join(dest, ".cursor/commands")).isSymbolicLink()).toBe(false);
+    expect(readFileSync(join(dest, ".cursor/commands/plan.md"), "utf8")).toContain("`plan`");
+    expect(lstatSync(join(dest, ".cursor/agents")).isSymbolicLink()).toBe(false);
+    expect(readFileSync(join(dest, ".cursor/agents/verifier.md"), "utf8")).toContain("verifier");
+  });
+
+  it("never overwrites the cursor copies: edits survive a second run", () => {
+    const dest = tempDir();
+    install(dest, { providers: ["cursor"] });
+    writeFileSync(join(dest, ".cursor/commands/review.md"), "mine\n");
+    const again = install(dest, { providers: ["cursor"] });
+    expect(again.every((a) => a.kind === "skip")).toBe(true);
+    expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe("mine\n");
+  });
+
+  it("adds no provider layer for codex and muse: they read the shared source", () => {
+    const dest = tempDir();
+    const actions = install(dest, { providers: ["codex", "muse"] });
+    expect(existsSync(join(dest, "AGENTS.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/skills/ground-truth/SKILL.md"))).toBe(true);
+    for (const dir of [".claude", ".cursor", ".codex", ".muse"]) {
+      expect(existsSync(join(dest, dir)), dir).toBe(false);
+    }
+    expect(actions.some((a) => a.path !== "AGENTS.md" && !a.path.startsWith(".agents/"))).toBe(false);
   });
 
   it("installs no commands when the manifest lists none", () => {
@@ -111,6 +133,20 @@ describe("installKit", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.message).toContain('unknown preset "nope"');
     expect(existsSync(join(dest, ".agents/skills"))).toBe(false);
+  });
+
+  it("returns an error when the kit manifest lists a missing command or a bad commands value", () => {
+    const missing = tempDir();
+    put(missing, "kit.json", JSON.stringify({ presets: { core: ["alpha"] }, agents: [], commands: ["ghost"] }));
+    put(missing, "skills/alpha/SKILL.md", "x");
+    const result = installKit({ dest: tempDir(), kit: missing });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.message).toContain('kit has no command "ghost"');
+    const bad = tempDir();
+    put(bad, "kit.json", JSON.stringify({ presets: { core: [] }, agents: [], commands: "nope" }));
+    const badResult = installKit({ dest: tempDir(), kit: bad });
+    expect(badResult.ok).toBe(false);
+    if (!badResult.ok) expect(badResult.error.message).toContain("must be a string list");
   });
 
   it("returns an error when the kit manifest lists a missing skill", () => {
@@ -251,6 +287,13 @@ describe("installKit", () => {
       expect(text).toContain(`\`${name}\``);
       expect(text).toContain("$ARGUMENTS");
     }
+  });
+
+  it("setup-ai is provider-aware: shared source first, one ask when providers are unknown", () => {
+    const text = readFileSync(join(kitRoot(), "skills", "setup-ai", "SKILL.md"), "utf8");
+    expect(text.toLowerCase()).toContain("shared source");
+    expect(text).toContain("which of cursor, claude, codex, muse");
+    expect(text).toContain("setup-ai cursor");
   });
 
   it("keeps orchestrator skills short: they reference siblings, never copy them", () => {

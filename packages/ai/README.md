@@ -28,12 +28,30 @@ Not published to npm yet. From a zedkit checkout, build once and call the
 binary directly: `pnpm --filter @zedkit/ai build`, then
 `node packages/ai/dist/bin.js init <dir>`.
 
-`init` options: `--preset core|full`, `--target claude,cursor`, `--dry-run`.
-It copies files (you own them afterwards) and never overwrites an existing
-one. It also skips `.cursor/rules/project.mdc` (with a skip line naming the
-rule) when another rule in `.cursor/rules/` is already always on
-(`alwaysApply: true`), instead of adding a second one. Run `zedkit-ai list`
-to see presets and subagents.
+`init` options: `--preset core|full`, `--provider cursor,claude,codex,muse,all`
+(`--target` is an alias), `--dry-run`. It copies files (you own them
+afterwards) and never overwrites an existing one. It also skips
+`.cursor/rules/project.mdc` (with a skip line naming the rule) when another
+rule in `.cursor/rules/` is already always on (`alwaysApply: true`), instead
+of adding a second one. Run `zedkit-ai list` to see presets, subagents and
+commands.
+
+## Providers
+
+One shared source (`.agents/`), then a thin layer per provider:
+
+| Provider | Layer | Reads |
+|---|---|---|
+| `cursor` | `.cursor/rules/project.mdc`, `.cursor/skills` link, agents and commands as real-file copies | its `.cursor/` layer |
+| `claude` | `CLAUDE.md` link, `.claude/{skills,agents,commands}` links | its `.claude/` layer |
+| `codex` | none | `AGENTS.md` and `.agents/skills` directly |
+| `muse` | none | `.agents/` directly |
+
+Cursor gets copies because a symlinked folder shows up empty there. Copies
+can drift when `.agents/` changes: `zedkit-ai validate` reports each missing
+or drifted copy — fix it by copying the file over (init never overwrites).
+`setup-ai` takes provider names (`setup-ai cursor claude`) and asks once
+which providers to wire when it cannot tell.
 
 ## What you get
 
@@ -44,7 +62,8 @@ CLAUDE.md -> AGENTS.md
 .agents/agents/            subagents
 .agents/commands/          one-keystroke commands (thin: each runs a skill)
 .claude/{skills,agents,commands}  symlinks to .agents/
-.cursor/{skills,agents,commands}  symlinks to .agents/
+.cursor/skills             symlink to .agents/skills
+.cursor/{agents,commands}  real-file copies (a link shows up empty)
 .cursor/rules/project.mdc  one always-on rule pointing at AGENTS.md
 ```
 

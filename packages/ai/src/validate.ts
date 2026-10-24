@@ -1,5 +1,5 @@
 // Original work by the same author.
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { tryCatch } from "@zedkit/core";
 import { readManifest } from "./kit.js";
@@ -188,4 +188,40 @@ export function validateKit(root: string): Issue[] {
   }
   const result = tryCatch(() => collect(root));
   return result.ok ? result.value : [{ path: root, message: `cannot read: ${result.error.message}` }];
+}
+
+function isRealDir(path: string): boolean {
+  const stat = tryCatch(() => lstatSync(path));
+  return stat.ok && stat.value.isDirectory();
+}
+
+/**
+ * Compare the provider copies (`.cursor/agents`, `.cursor/commands`) against
+ * the shared `source` (usually the project's `.agents/`). Copies are real
+ * files because that provider does not follow a symlinked folder here; when
+ * the source changes they go stale, and init never overwrites them. Reports
+ * each missing or drifted copy. Links and missing folders cannot drift and
+ * are skipped silently, as are extra files on the provider side (the user's
+ * own). Paths are relative to `projectRoot`.
+ */
+export function checkDrift(projectRoot: string, source: string): Issue[] {
+  const run = tryCatch(() => {
+    const issues: Issue[] = [];
+    for (const kind of ["agents", "commands"]) {
+      const from = join(source, kind);
+      const to = join(projectRoot, ".cursor", kind);
+      if (!isRealDir(from) || !isRealDir(to)) continue;
+      for (const file of readdirSync(from).filter((f) => f.endsWith(".md"))) {
+        const target = join(to, file);
+        const want = relative(projectRoot, join(from, file));
+        if (!existsSync(target)) {
+          issues.push({ path: relative(projectRoot, target), message: `copy missing: copy it from ${want} or re-run init` });
+        } else if (read(target) !== read(join(from, file))) {
+          issues.push({ path: relative(projectRoot, target), message: `drifted from ${want}: copy it over (init never overwrites)` });
+        }
+      }
+    }
+    return issues;
+  });
+  return run.ok ? run.value : [{ path: projectRoot, message: `cannot check drift: ${run.error.message}` }];
 }
