@@ -37,6 +37,28 @@ exists; otherwise adopt a mature npm package behind a thin wrapper;
 otherwise propose adding it to zedkit with its domain.
 ```
 
+## 5-minute quickstart
+
+Prerequisites: Node ≥ 22 and pnpm 9.
+
+The packages are not on npm yet, so install them from packed tarballs.
+Build and pack once from a checkout:
+
+```sh
+git clone https://github.com/zedtech-fr/zedkit && cd zedkit
+pnpm install && pnpm build
+for p in ai core; do (cd packages/$p && pnpm pack --pack-destination /tmp/zedkit-pack); done
+```
+
+Then in your own repo (npm resolves the sibling tarballs; pnpm does not):
+
+```sh
+npm install --no-save /tmp/zedkit-pack/*.tgz
+npx zedkit-ai init . --provider cursor   # cursor, claude, codex, muse, all
+# then ask your agent: "run the setup-ai skill"
+npx zedkit-ai validate                   # must print: ok
+```
+
 ## Tooling
 
 - pnpm workspaces with a pinned `packageManager` and a shared `catalog`
