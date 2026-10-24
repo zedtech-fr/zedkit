@@ -25,7 +25,7 @@ Find helpers by need in [CATALOG.md](CATALOG.md).
 
 ## Install or copy?
 
-Both modules are small and dependency-free: source-copying the two files
+These modules are small and dependency-free: source-copying the files
 is a sane alternative to installing (MIT allows it). Install the package
 for versioned updates.
 

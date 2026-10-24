@@ -42,4 +42,24 @@ describe("webhook signatures", () => {
     expect(verifyWebhookSignatureHeader(SECRET, BODY, header, at(1760000300_001))).toBe(false);
     expect(verifyWebhookSignatureHeader(SECRET, BODY, header, at(1759999999_000))).toBe(false);
   });
+
+  it("accepts old signatures when freshness is not asked", () => {
+    const header = webhookSignatureHeader(SECRET, BODY, "1000000000");
+    expect(verifyWebhookSignatureHeader(SECRET, BODY, header)).toBe(true);
+  });
+
+  it("fails closed on invalid maxAge and missing inputs", () => {
+    const header = webhookSignatureHeader(SECRET, BODY, TS);
+    const old = { maxAgeSeconds: Number.NaN, now: () => 1760000000_000 + 25 * 365 * 24 * 3600 * 1000 };
+    expect(verifyWebhookSignatureHeader(SECRET, BODY, header, old)).toBe(false);
+    expect(
+      verifyWebhookSignatureHeader(SECRET, BODY, header, { maxAgeSeconds: -1 }),
+    ).toBe(false);
+    expect(
+      verifyWebhookSignatureHeader(SECRET, null as unknown as Buffer, header),
+    ).toBe(false);
+    expect(
+      verifyWebhookSignatureHeader(null as unknown as Buffer, BODY, header),
+    ).toBe(false);
+  });
 });

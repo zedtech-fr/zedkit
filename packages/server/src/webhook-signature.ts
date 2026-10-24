@@ -38,6 +38,7 @@ export function verifyWebhookSignatureHeader(
   options: VerifyWebhookOptions = {},
 ): boolean {
   if (!header) return false;
+  if (secret == null || body == null) return false;
   const match = /^t=(\d+),v1=([0-9a-f]+)$/.exec(header);
   if (!match) return false;
   const timestamp = match[1];
@@ -47,6 +48,11 @@ export function verifyWebhookSignatureHeader(
   const b = Buffer.from(expected, "utf8");
   if (a.length !== b.length || !timingSafeEqual(a, b)) return false;
   if (options.maxAgeSeconds !== undefined) {
+    // A NaN or negative maxAge (e.g. from config parsing) must fail closed,
+    // never silently disable replay protection.
+    if (!Number.isFinite(options.maxAgeSeconds) || options.maxAgeSeconds < 0) {
+      return false;
+    }
     const now = options.now ? options.now() : Date.now();
     const ageMs = now - Number(timestamp) * 1000;
     if (!Number.isFinite(ageMs) || ageMs < 0 || ageMs > options.maxAgeSeconds * 1000) {

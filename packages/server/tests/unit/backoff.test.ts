@@ -25,5 +25,11 @@ describe("computeBackoffMs", () => {
   it("rejects non-positive attempt numbers", () => {
     expect(() => computeBackoffMs(0, () => 0.5)).toThrow(/attempt/);
     expect(() => computeBackoffMs(-1, () => 0.5)).toThrow(/attempt/);
+    expect(() => computeBackoffMs(1.5, () => 0.5)).toThrow(/attempt/);
+  });
+
+  it("stays capped with full jitter and falls back on broken RNG", () => {
+    expect(computeBackoffMs(10, () => 1)).toBe(3_600_000);
+    expect(computeBackoffMs(1, () => Number.NaN)).toBe(2_000);
   });
 });
