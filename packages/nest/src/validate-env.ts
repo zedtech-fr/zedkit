@@ -1,0 +1,30 @@
+// Original work by the same author.
+import type { Type } from "@nestjs/common";
+import { plainToInstance } from "class-transformer";
+import { validateSync } from "class-validator";
+
+/**
+ * `ConfigModule` validate hook (documented Nest recipe): instantiate the
+ * schema class so field defaults and `@Type()` coercions apply, then fail
+ * fast with one readable error when a declared variable is invalid.
+ * Undeclared variables pass through untouched, so unrelated env (PATH,
+ * CI flags, other tools) never breaks boot. Returns the instance, so
+ * `ConfigService` serves defaults and coerced numbers.
+ */
+export function validateEnv(
+  schema: Type<object>,
+  config: Record<string, unknown>,
+): Record<string, unknown> {
+  const instance = plainToInstance(schema, config);
+  const errors = validateSync(instance);
+  if (errors.length > 0) {
+    const details = errors
+      .map((error) => {
+        const reasons = Object.values(error.constraints ?? {}).join(", ");
+        return `${error.property}: ${reasons}`;
+      })
+      .join("; ");
+    throw new Error(`Invalid environment: ${details}`);
+  }
+  return instance as unknown as Record<string, unknown>;
+}

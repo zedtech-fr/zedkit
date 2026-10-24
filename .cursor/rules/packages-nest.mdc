@@ -1,0 +1,7 @@
+---
+description: zedkit nest package rules
+globs:
+  - "packages/nest/**"
+---
+
+When working in packages/nest, also read and follow packages/nest/AGENTS.md if present, in addition to the root /AGENTS.md.

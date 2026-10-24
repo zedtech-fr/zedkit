@@ -9,6 +9,7 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 |---|---|---|
 | [`@zedkit/core`](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | stable |
 | [`@zedkit/server`](packages/server/README.md) | rate limiting, redaction, backoff, webhook signatures | stable |
+| [`@zedkit/nest`](packages/nest/README.md) | NestJS bootstrap factory | stable |
 
 A package exists only when real, used code backs it — no placeholders.
 Each package README records its origin ("original work by the same
