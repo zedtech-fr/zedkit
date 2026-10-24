@@ -27,6 +27,32 @@
         }
       ]
     },
+    "@zedkit/nest": {
+      "catalog": "packages/nest/CATALOG.md",
+      "needs": [
+        {
+          "need": "Bootstrap a Nest app",
+          "import": "`@zedkit/nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `REQUEST_ID_HEADER`",
+          "wraps": "`@nestjs/platform-fastify`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/throttler`, `nestjs-pino`, `class-validator`",
+          "status": "stable",
+          "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
+        },
+        {
+          "need": "Ship request logs without leaking credentials",
+          "import": "`@zedkit/nest` — `LoggerOptions`",
+          "wraps": "`nestjs-pino`",
+          "status": "stable",
+          "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
+        },
+        {
+          "need": "Return uniform error bodies",
+          "import": "`@zedkit/nest` — `AllExceptionsFilter`, `ErrorBody`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { AllExceptionsFilter } from \"@zedkit/nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());"
+        }
+      ]
+    },
     "@zedkit/server": {
       "catalog": "packages/server/CATALOG.md",
       "needs": [
