@@ -8,7 +8,8 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 | Package | What | Status |
 |---|---|---|
 | [`@zedkit/core`](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | stable |
-| [`@zedkit/server`](packages/server/README.md) | rate limiting, secret redaction | stable |
+| [`@zedkit/server`](packages/server/README.md) | rate limiting, redaction, backoff, webhook signatures | stable |
+| [`@zedkit/nest`](packages/nest/README.md) | NestJS bootstrap factory | stable |
 | [`@zedkit/ai`](packages/ai/README.md) | agent-agnostic AI setup: `AGENTS.md`, skills, subagents, installer, validator | stable |
 
 A package exists only when real, used code backs it — no placeholders.

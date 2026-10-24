@@ -16,7 +16,8 @@ Each package PR adds its row here, following
 | Package | Domain | Catalog |
 |---|---|---|
 | `@zedkit/core` | results, error handling, IDs | [packages/core/CATALOG.md](../../packages/core/CATALOG.md) |
-| `@zedkit/server` | rate limiting, secret redaction | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
+| `@zedkit/server` | rate limiting, redaction, backoff, webhook signatures | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
+| `@zedkit/nest` | NestJS bootstrap factory | [packages/nest/CATALOG.md](../../packages/nest/CATALOG.md) |
 | `@zedkit/ai` | AI agent setup: instructions, skills, subagents | [packages/ai/CATALOG.md](../../packages/ai/CATALOG.md) |
 
 ## Entry format
