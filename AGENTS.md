@@ -61,6 +61,8 @@ pnpm lint                   # turbo: eslint everywhere
 pnpm build                  # turbo: tsc build everywhere
 pnpm test                   # turbo: vitest run everywhere
 pnpm changeset:status       # versioning dry-run (no publish)
+pnpm catalog:build          # regenerate docs/catalog/catalog.json
+pnpm catalog:check          # exports covered + json fresh (CI runs this)
 bash scripts/check-no-artifacts.sh
 bash scripts/check-no-private-refs.sh
 ```

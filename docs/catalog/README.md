@@ -43,7 +43,7 @@ import { a } from "@zedkit/core";
   module is dependency-free by design.
 - **Status** is `stable` (shipped, safe to use) or `planned` (documented
   shape, not implemented yet).
-- The example is TypeScript, five lines, copy-paste runnable.
+- The example is TypeScript, about five lines, copy-paste runnable.
 
 Regenerate after any catalog edit: `pnpm catalog:build`, then commit the
 result. CI fails when `catalog.json` drifts from the package catalogs.

@@ -16,16 +16,40 @@
 //   ...5-line example...
 //   ```
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_ROOT = resolve(HERE, "..");
 
+function usage() {
+  return "Usage: node scripts/catalog.mjs build|check [--root DIR]";
+}
+
 function parseArgs(argv) {
-  const mode = argv[2] === "check" ? "check" : "build";
-  const rootFlag = argv.indexOf("--root");
-  const root = rootFlag === -1 ? DEFAULT_ROOT : resolve(argv[rootFlag + 1]);
+  const args = argv.slice(2);
+  let mode = null;
+  let root = DEFAULT_ROOT;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--root") {
+      const value = args[i + 1];
+      if (!value || value.startsWith("-")) {
+        console.error(`${usage()}\nerror: --root needs a directory.`);
+        process.exit(2);
+      }
+      root = resolve(value);
+      i++;
+    } else if ((args[i] === "build" || args[i] === "check") && !mode) {
+      mode = args[i];
+    } else {
+      console.error(`${usage()}\nerror: unexpected argument "${args[i]}".`);
+      process.exit(2);
+    }
+  }
+  if (!mode) {
+    console.error(`${usage()}\nerror: missing mode (build|check).`);
+    process.exit(2);
+  }
   return { mode, root };
 }
 
@@ -39,7 +63,8 @@ function packageDirs(root) {
 
 function readIfExists(path) {
   if (!existsSync(path)) return null;
-  return readFileSync(path, "utf8");
+  // Normalize CRLF so Windows checkouts parse identically.
+  return readFileSync(path, "utf8").replace(/\r\n/g, "\n");
 }
 
 // Parse `## <need>` sections: Import / Wraps / Status fields + first ts example.
@@ -76,13 +101,39 @@ function parseCatalog(text, catalogPath, errors) {
   return needs;
 }
 
+// Strip // comments, ignoring // inside strings (e.g. "https://...").
+function stripLineComments(code) {
+  return code
+    .split("\n")
+    .map((line) => {
+      let quote = null;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (quote) {
+          if (ch === "\\") i++;
+          else if (ch === quote) quote = null;
+        } else if (ch === '"' || ch === "'" || ch === "`") {
+          quote = ch;
+        } else if (ch === "/" && line[i + 1] === "/") {
+          return line.slice(0, i);
+        }
+      }
+      return line;
+    })
+    .join("\n");
+}
+
 // Exported symbol names from a barrel file with explicit named exports.
 function parseBarrelExports(text, indexPath, errors) {
-  if (/export\s*\*\s*from/.test(text)) {
+  const code = stripLineComments(text.replace(/\/\*[\s\S]*?\*\//g, ""));
+  if (/^\s*export\s*\*/m.test(code)) {
     errors.push(`${indexPath}: \`export *\` is not allowed; list named exports explicitly so the catalog check can verify them.`);
   }
+  if (/^\s*export\s+default\b/m.test(code)) {
+    errors.push(`${indexPath}: \`export default\` is not allowed in the barrel; use named exports so the catalog check can verify them.`);
+  }
   const names = new Set();
-  for (const match of text.matchAll(/export\s*\{([\s\S]*?)\}/g)) {
+  for (const match of code.matchAll(/^\s*export\s*(?:type\s*)?\{([\s\S]*?)\}/gm)) {
     for (let part of match[1].split(",")) {
       part = part.trim().replace(/^type\s+/, "");
       if (!part) continue;
@@ -90,10 +141,30 @@ function parseBarrelExports(text, indexPath, errors) {
       names.add(alias[alias.length - 1].trim());
     }
   }
-  for (const match of text.matchAll(/export\s+(?:async\s+function|function|class|const|type|interface|enum)\s+(\w+)/g)) {
+  for (const match of code.matchAll(/^\s*export\s+(?:async\s+function|function|class|const|type|interface|enum)\s+(\w+)/gm)) {
     names.add(match[1]);
   }
   return [...names];
+}
+
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Text where a symbol mention counts as catalog coverage: Import lines,
+// fenced code blocks, and inline code spans. Prose mentions do not count.
+function catalogSearchText(catalogText) {
+  const chunks = [];
+  for (const match of catalogText.matchAll(/^-\s*Import:\s*(.+)$/gm)) {
+    chunks.push(match[1]);
+  }
+  for (const match of catalogText.matchAll(/```[\s\S]*?```/g)) {
+    chunks.push(match[0]);
+  }
+  for (const match of catalogText.matchAll(/`([^`]+)`/g)) {
+    chunks.push(match[1]);
+  }
+  return chunks.join("\n");
 }
 
 function collectPackages(root, errors) {
@@ -106,9 +177,10 @@ function collectPackages(root, errors) {
     const catalogPath = join(dir, "CATALOG.md");
     const catalogText = readIfExists(catalogPath);
     const indexText = readIfExists(join(dir, "src", "index.ts"));
-    const subpaths = Object.keys(manifest.exports ?? { ".": "" }).map((key) =>
-      key === "." ? manifest.name : `${manifest.name}${key.slice(1)}`,
-    );
+    const subpaths = Object.keys(manifest.exports ?? { ".": "" })
+      // Non-code entries need no catalog line.
+      .filter((key) => key !== "./package.json")
+      .map((key) => (key === "." ? manifest.name : `${manifest.name}${key.slice(1)}`));
     collected.push({
       name: manifest.name,
       dir,
@@ -130,7 +202,7 @@ function renderCatalogJson(packages) {
   };
   for (const pkg of [...packages].sort((a, b) => a.name.localeCompare(b.name))) {
     out.packages[pkg.name] = {
-      catalog: `packages/${pkg.dir.split("/").pop()}/CATALOG.md`,
+      catalog: `packages/${basename(pkg.dir)}/CATALOG.md`,
       needs: pkg.needs,
     };
   }
@@ -144,9 +216,10 @@ function check(packages, root, errors) {
       continue;
     }
     if (!pkg.catalogText) continue;
+    const searchText = catalogSearchText(pkg.catalogText);
     for (const symbol of pkg.symbols) {
-      if (!pkg.catalogText.includes(symbol)) {
-        errors.push(`${pkg.catalogPath}: export \`${symbol}\` is not mentioned (every public export must appear in its package CATALOG.md).`);
+      if (!new RegExp(`\\b${escapeRegExp(symbol)}\\b`).test(searchText)) {
+        errors.push(`${pkg.catalogPath}: export \`${symbol}\` is not mentioned in an Import line, example, or code span (every public export must appear in its package CATALOG.md).`);
       }
     }
     for (const subpath of pkg.subpaths) {
@@ -166,7 +239,7 @@ function check(packages, root, errors) {
   const readme = readIfExists(join(root, "README.md"));
   if (skill && readme) {
     const quoted = skill.match(/(?:^> .+\n?)+/m);
-    const fenced = readme.match(/```md\n([\s\S]*?)```/);
+    const fenced = readme.match(/<!-- use-zedkit-snippet:[^>]*-->\s*```md\n([\s\S]*?)```/);
     const normalize = (s) => s.replace(/^> /gm, "").trim();
     if (!quoted || !fenced || normalize(quoted[0]) !== normalize(fenced[1])) {
       errors.push("README consumer snippet drifted from .agents/skills/use-zedkit/SKILL.md core rule; keep them in sync.");

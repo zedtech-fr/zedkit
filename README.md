@@ -26,6 +26,8 @@ re-exports it, instead of importing it directly all over the code — see
 Consumer projects: paste this into your agent instructions (canonical text:
 `.agents/skills/use-zedkit/SKILL.md` — keep in sync):
 
+<!-- use-zedkit-snippet: must match .agents/skills/use-zedkit/SKILL.md core rule -->
+
 ```md
 Before writing any helper, check zedkit first, then npm, and wrap what
 you adopt: search the zedkit catalog by need and import from zedkit if it

@@ -12,6 +12,7 @@ export { ulid as newPrefixedId } from "ulid";
 
 // consumer — imports the wrapper, never the library
 import { newPrefixedId } from "@zedkit/core";
+const id = newPrefixedId("order");
 ```
 
 This keeps flexibility: you can swap, upgrade, patch, or pin the library
