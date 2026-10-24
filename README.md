@@ -10,9 +10,9 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 | `@zedkit/core` | `Result`, `tryCatch`, prefixed IDs | landing in #4 |
 | `@zedkit/server` | rate limiting, secret redaction | landing in #5 |
 
-A package exists only when real, used code backs it — no placeholders. See
-[docs/extraction-map.md](docs/extraction-map.md) for where each module came
-from and what was deliberately left out.
+A package exists only when real, used code backs it — no placeholders.
+Each package README records its origin ("original work by the same
+author") and what it deliberately leaves out.
 
 ## Tooling
 

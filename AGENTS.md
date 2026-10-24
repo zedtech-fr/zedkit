@@ -7,7 +7,9 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 
 - **Public repo.** No secrets, customer data, internal URLs, or private
   names/endpoints/domain terms from other projects. Check every ported file
-  for them before committing.
+  for them before committing. Never name a private project anywhere (code,
+  docs, comments, PRs, issues); say "an upstream consumer". Enforced by
+  `scripts/check-no-private-refs.sh` in CI.
 - **No raw try/catch.** Use `tryCatch`/`tryCatchAsync` from
   `@zedkit/core` (sole exception: core's own implementation). Enforced by
   the `no-restricted-syntax` ban in [eslint.config.mjs](eslint.config.mjs).
@@ -30,13 +32,13 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   own README, AGENTS.md, tests, and exports map (ESM + types).
 - `.agents/skills` — vendored agent skills (single source of truth;
   `.claude/skills` and `.cursor/skills` symlink to it).
-- `docs/extraction-map.md` — which upstream file each module replaces.
 
 ## How to work
 
 - Small PRs from fresh `main`, never stacked. One package per PR.
-- Each package PR updates `docs/extraction-map.md` and the root README
-  package table, and adds a Changeset file.
+- Each package PR updates the root README package table, adds a
+  Changeset file, and records the module's origin in the package README
+  ("original work by the same author" — never a project name or path).
 - Review with `code-review` + `ponytail-review` before merge; merge only
   on green CI.
 - New modules ship with vitest unit tests; deterministic, no network.
@@ -51,4 +53,5 @@ pnpm build                  # turbo: tsc build everywhere
 pnpm test                   # turbo: vitest run everywhere
 pnpm changeset:status       # versioning dry-run (no publish)
 bash scripts/check-no-artifacts.sh
+bash scripts/check-no-private-refs.sh
 ```
