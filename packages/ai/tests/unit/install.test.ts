@@ -145,6 +145,37 @@ describe("installKit", () => {
     expect(existsSync(join(dest, "CLAUDE.md"))).toBe(false);
   });
 
+  it("skips project.mdc when another always-on rule exists, in dry run and for real", () => {
+    for (const dryRun of [true, false]) {
+      const dest = tempDir();
+      put(dest, ".cursor/rules/own.mdc", "---\ndescription: mine\nalwaysApply: true\n---\n\nMine.\n");
+      const actions = install(dest, { dryRun });
+      const rule = actions.find((a) => a.path === join(".cursor", "rules", "project.mdc"));
+      expect(rule?.kind, `dryRun=${dryRun}`).toBe("skip");
+      expect(rule?.note).toContain("own.mdc");
+      expect(existsSync(join(dest, ".cursor/rules/project.mdc"))).toBe(false);
+      // The rest of the install still happens.
+      expect(existsSync(join(dest, ".cursor/skills")) || dryRun).toBe(true);
+    }
+  });
+
+  it("skips project.mdc when AGENTS.md already exists and an always-on rule references it", () => {
+    const dest = tempDir();
+    put(dest, "AGENTS.md", "mine\n");
+    put(dest, ".cursor/rules/own.mdc", "---\nalwaysApply: true\n---\n\nRead /AGENTS.md.\n");
+    const actions = install(dest);
+    expect(actions.find((a) => a.path === join(".cursor", "rules", "project.mdc"))?.kind).toBe("skip");
+    expect(existsSync(join(dest, ".cursor/rules/project.mdc"))).toBe(false);
+  });
+
+  it("still writes project.mdc when the other rules are not always on", () => {
+    const dest = tempDir();
+    put(dest, ".cursor/rules/manual.mdc", "---\nalwaysApply: false\n---\n\nManual.\n");
+    put(dest, ".cursor/rules/plain.mdc", "no frontmatter\n");
+    install(dest);
+    expect(readFileSync(join(dest, ".cursor/rules/project.mdc"), "utf8")).toContain("alwaysApply: true");
+  });
+
   it("links CLAUDE.md to an AGENTS.md the project already had", () => {
     const dest = tempDir();
     writeFileSync(join(dest, "AGENTS.md"), "mine\n");

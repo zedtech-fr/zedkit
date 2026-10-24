@@ -6,6 +6,7 @@ import {
   lstatSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   readlinkSync,
   statSync,
   symlinkSync,
@@ -13,6 +14,7 @@ import {
 } from "node:fs";
 import { dirname, join, sep } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedkit/core";
+import { parseFrontmatter } from "./frontmatter.js";
 import { kitDir, readManifest, type KitManifest } from "./kit.js";
 
 export type Target = "claude" | "cursor";
@@ -145,6 +147,35 @@ function agentsMdReady(ctx: Ctx): boolean {
   return stat.ok && stat.value.isFile();
 }
 
+// Name of another rule in .cursor/rules/ that is already always on, if any.
+// A second always-on rule would only duplicate (or fight) it, so the
+// installer skips project.mdc then. Reads the disk only, so dry runs agree.
+function existingAlwaysOnRule(ctx: Ctx): string | undefined {
+  const dir = join(ctx.dest, ".cursor", "rules");
+  const entries = tryCatch(() => readdirSync(dir, { withFileTypes: true }));
+  if (!entries.ok) return undefined;
+  for (const entry of entries.value) {
+    if (!entry.isFile() || !entry.name.endsWith(".mdc") || entry.name === "project.mdc") continue;
+    const read = tryCatch(() => readFileSync(join(dir, entry.name), "utf8"));
+    if (!read.ok) continue;
+    const front = parseFrontmatter(read.value);
+    if (front.ok && front.value.data.alwaysApply === true) return entry.name;
+  }
+  return undefined;
+}
+
+function writeCursorRule(ctx: Ctx): void {
+  const rel = join(".cursor", "rules", "project.mdc");
+  if (obstacle(ctx, rel) === undefined) {
+    const existing = existingAlwaysOnRule(ctx);
+    if (existing !== undefined) {
+      ctx.actions.push({ kind: "skip", path: rel, note: `always-on rule ${existing} already exists` });
+      return;
+    }
+  }
+  place(ctx, "write", rel, () => writeFileSync(join(ctx.dest, rel), CURSOR_RULE));
+}
+
 function wireTarget(ctx: Ctx, target: Target): void {
   const dir = target === "claude" ? ".claude" : ".cursor";
   link(ctx, join(dir, "skills"), "../.agents/skills");
@@ -154,9 +185,7 @@ function wireTarget(ctx: Ctx, target: Target): void {
     if (agentsMdReady(ctx)) link(ctx, "CLAUDE.md", "AGENTS.md");
     else ctx.actions.push({ kind: "skip", path: "CLAUDE.md", note: "AGENTS.md is not a file" });
   } else {
-    place(ctx, "write", join(".cursor", "rules", "project.mdc"), () =>
-      writeFileSync(join(ctx.dest, ".cursor", "rules", "project.mdc"), CURSOR_RULE),
-    );
+    writeCursorRule(ctx);
   }
 }
 
