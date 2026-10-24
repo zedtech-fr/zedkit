@@ -2,60 +2,16 @@
 # Fails if private project names or private customer/domain/vendor terms
 # appear in tracked file contents, tracked file paths, or untracked (but not
 # ignored) file contents. This is a PUBLIC repo: they must never appear in
-# code, docs, comments, paths, or config. The patterns are stored base64-encoded and decoded only
-# in memory, so this file itself never spells them out. To extend the list,
-# append the base64 of the new pattern (without trailing newline) to ENCODED.
+# code, docs, comments, paths, or config. Patterns live in
+# denylist-patterns.sh (shared with check-pack.sh).
 set -uo pipefail
+
+# shellcheck source=denylist-patterns.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/denylist-patterns.sh"
 
 cd "$(git rev-parse --show-toplevel)"
 
-ENCODED=(
-  'emVkb3M='
-  'emVkYnJpZGdl'
-  'bGl0dGxlLj9iaWNlcHM='
-  'cm9tYWlu'
-  # Customer, domain and vendor terms of private work. Same rule: never here.
-  'a29sZWN0bw=='
-  'b2QtP3BkcA=='
-  'ZS0/ZmFjdHU='
-  'ZS0/aW52b2lj'
-  'ZmFjdHVyLT94'
-  'c2VyZW5zaWE='
-  'ZG94YWxsaWE='
-  'ZGF0YWRvZw=='
-  'bG9jYWxzdGFjaw=='
-  'ZXZlbnRicmlkZ2U='
-  'KF58W15hLXpdKWF3cyhbXmEtel18JCk='
-  'KF58W15hLXpdKXNxcyhbXmEtel18JCk='
-  'YmFjay0/b2ZmaWNl'
-  'bm90aW9u'
-  'ZmFjdHVyYXRpb24='
-  'c3FsWyAtXWFzWyAtXWFbIC1dc2VydmljZQ=='
-  'ZW5yb2xs'
-  'KF58W15hLXpdKShwdXJjaGFzZXxzYWxlcykoW15hLXpdfCQp'
-  'amlyYQ=='
-  'YXRsYXNzaWFu'
-  'cG9zdG1hbg=='
-  'ZmlyZWhvc2U='
-)
-
-b64decode() {
-  # GNU coreutils uses -d; older macOS uses -D.
-  if printf '' | base64 -d >/dev/null 2>&1; then
-    base64 -d
-  else
-    base64 -D
-  fi
-}
-
-# Decode one blob per line: a single base64 -d call would fuse the blobs
-# (decoder ignores newlines in its input).
-patterns=$(
-  for enc in "${ENCODED[@]}"; do
-    printf '%s' "$enc" | b64decode
-    echo
-  done | paste -sd'|' -
-)
+patterns="$(denylist_pattern)"
 
 fail=0
 
