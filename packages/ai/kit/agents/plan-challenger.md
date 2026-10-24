@@ -2,7 +2,6 @@
 name: plan-challenger
 description: "Pre-mortem for a plan, run before any code is written: is each part needed, is each claim verified, what fails in production. Use after the architect's plan or on any non-trivial design. Reports ranked objections; never writes code."
 model: inherit
-readonly: true
 disallowedTools: Write, Edit, NotebookEdit
 ---
 

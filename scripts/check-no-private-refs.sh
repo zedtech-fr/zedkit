@@ -59,7 +59,10 @@ patterns=$(
 
 fail=0
 
-hits=$(git grep -inE -e "$patterns" -- . || true)
+# pnpm-lock.yaml is machine-generated: integrity hashes are random base64 and
+# will eventually contain any short word pattern. Excluded from the content
+# scan (it cannot carry a prose reference).
+hits=$(git grep -inE -e "$patterns" -- . ':!pnpm-lock.yaml' || true)
 if [ -n "$hits" ]; then
   echo "private project references in tracked file contents:"
   echo "$hits"

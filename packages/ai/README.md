@@ -2,8 +2,8 @@
 
 An agent-agnostic AI setup for a code repo: an `AGENTS.md` template, skills,
 subagents, and a small installer and validator. Works with Claude Code,
-Cursor, Codex and any tool that reads `AGENTS.md` or Agent Skills. Original
-work by the same author, plus vendored MIT skills (see
+Cursor, Codex, Muse and any tool that reads `AGENTS.md` or Agent Skills.
+Original work by the same author, plus vendored MIT skills (see
 [kit/THIRD_PARTY_NOTICES.md](kit/THIRD_PARTY_NOTICES.md)).
 
 ## Use it
@@ -60,6 +60,14 @@ per-folder rules.
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`.
 
+**Entry points (one command per phase):** `review` (pins the diff, fans out
+`code-review` + `persona-review` + `adversarial-tests`/`security-reviewer`
+when relevant, one verdict), `plan` (`to-spec`/`to-tickets`/`wayfinder`, then
+`challenge`), `challenge` (`plan-challenger` + domain/design checks),
+`implement` (extended: challenged plan in, `definition-of-done`, `review`).
+All four live in the `core` preset; the detailed skills stay reusable and are
+never copied into them.
+
 **Skills vendored (MIT):** `ponytail` (+ review, audit, debt, gain, help) and
 the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,
 `handoff`, `pr`, `to-spec`, `triage`, ...).
@@ -81,15 +89,23 @@ installed; their files are only read when one is used.
   your tool accepts. The validator rejects any other value in the kit.
 - Subagent `description` is one line: a block (`>`) can be shown literally and
   the agent is then never chosen. The validator checks it.
-- Read-only subagents set both `readonly: true` (Cursor) and
-  `disallowedTools: Write, Edit` (Claude Code). Each tool ignores the other's
-  field.
+- Read-only subagents say so in their prompt body and set
+  `disallowedTools: Write, Edit` (Claude Code honors it; other tools tolerate
+  the key). There is deliberately no `readonly:` key: at least one tool
+  silently drops a subagent file with an unknown field, so the validator
+  rejects it.
 - Cursor reads `.cursor/agents`, `.claude/agents` and `.codex/agents`
   ([docs](https://cursor.com/docs/subagents), checked 2026-10-24); the installer
   links `.cursor/agents` anyway so a Cursor-only repo needs nothing else.
 - Codex reads `.agents/skills` (it follows symlinks) and `AGENTS.md`
   ([docs](https://developers.openai.com/codex/skills), checked 2026-10-24), so
   it needs no adapter. The subagent files are not wired for Codex.
+- Muse reads `AGENTS.md`, `.agents/skills` and `.agents/agents` directly
+  (verified empirically 2026-10-24 with `muse skills list` and a headless
+  `muse exec` run: every core skill and all 6 subagents load), so it needs
+  no adapter either. It ignores the `.claude/` and `.cursor/` links. This is
+  how the `readonly:` ban above was found: files setting it never appear in
+  its agent list.
 - Symlinks need a filesystem that supports them (Windows: developer mode or
   WSL).
 

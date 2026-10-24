@@ -73,6 +73,12 @@ describe("validateKit", () => {
     expect(messages(root)).toEqual([expect.stringContaining("model must be omitted")]);
   });
 
+  it("flags subagents that set readonly", () => {
+    const root = tempDir();
+    put(root, "agents/beta.md", AGENT("beta", "readonly: true\n"));
+    expect(messages(root)).toEqual([expect.stringContaining("readonly is not portable")]);
+  });
+
   it("flags a subagent whose name differs from its file", () => {
     const root = tempDir();
     put(root, "agents/beta.md", AGENT("gamma"));

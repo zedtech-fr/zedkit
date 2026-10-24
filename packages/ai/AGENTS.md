@@ -22,5 +22,5 @@
 7. Installer never overwrites. New behavior needs a test in
    `tests/unit/install.test.ts`.
 8. Explicit named exports in `src/index.ts`, each in `CATALOG.md`.
-9. Definition of done: `pnpm --filter @zedkit/ai typecheck lint build test`
+9. Definition of done: `pnpm --filter @zedkit/ai typecheck && pnpm --filter @zedkit/ai lint && pnpm --filter @zedkit/ai build && pnpm --filter @zedkit/ai test`
    green (each separately), `pnpm catalog:check` green.

@@ -2,7 +2,6 @@
 name: architect
 description: "Design agent that produces a file-level implementation plan, never code. Use before a feature, new module, integration or cross-cutting change; runs a requirement check, a state-machine analysis, a test strategy and a cold review of its own plan."
 model: inherit
-readonly: true
 disallowedTools: Write, Edit, NotebookEdit
 ---
 

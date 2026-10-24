@@ -2,7 +2,6 @@
 name: explorer
 description: "Read-only codebase lookup. Use to find files, symbols, usages, producers and consumers of an event or API, or where a config is read. Returns paths and matching lines only, no analysis."
 model: inherit
-readonly: true
 disallowedTools: Write, Edit, NotebookEdit
 ---
 

@@ -4,7 +4,8 @@ The skills named below are copies from their upstream
 repositories (verified by diff at vendoring time; changes are listed under Modifications). Every other skill and
 every subagent in this kit is first-party zedkit work (MIT) and is not
 covered here: `ground-truth`, `parallel-work`, `definition-of-done`,
-`adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`. Each upstream's licence file is kept next to the skills: see
+`adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
+`review`, `plan`, `challenge`. Each upstream's licence file is kept next to the skills: see
 `skills/LICENSE-*-*`.
 
 ## Ponytail skills (6) — MIT
@@ -30,7 +31,7 @@ covered here: `ground-truth`, `parallel-work`, `definition-of-done`,
   `to-tickets`, `triage`, `wayfinder`, `writing-for-agents`
   (upstream `skills/engineering/*`, `skills/productivity/*`,
   `skills/in-progress/setup-ts-deep-modules`)
-- Modifications: three example passages are reworded to name no vendor or business domain (this repo bans them): `domain-modeling/ADR-FORMAT.md`, `domain-modeling/GLOSSARY-FORMAT.md` (invoice example), `setup-matt-pocock-skills/SKILL.md`. Everything else is verbatim.
+- Modifications: three example passages are reworded to name no vendor or business domain (this repo bans them): `domain-modeling/ADR-FORMAT.md`, `domain-modeling/GLOSSARY-FORMAT.md` (invoice example), `setup-matt-pocock-skills/SKILL.md`. `code-review/SKILL.md`: the Standards axis applies the `ponytail-review` skill instead of the upstream smell baseline (one reusable review, referenced not copied). `implement/SKILL.md`: refuses an unchallenged plan (runs `challenge`/`plan` first), then passes `definition-of-done` and calls `review` instead of `code-review`. Everything else is verbatim.
 
 ## Borrowed excerpt inside `pr` — Apache-2.0
 

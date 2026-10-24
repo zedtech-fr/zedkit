@@ -15,6 +15,9 @@ for (const action of result.value) console.log(action.kind, action.path);
 
 CLI equivalent: `zedkit-ai init .`
 
+Presets: `core` (most projects; includes the `review`/`plan`/`challenge`/
+`implement` entry points), `full` (every skill).
+
 ## Check that skills and subagents are valid for every tool
 
 - Import: `@zedkit/ai` — `validateKit`, `Issue`

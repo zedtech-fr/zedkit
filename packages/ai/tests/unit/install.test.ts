@@ -158,6 +158,14 @@ describe("installKit", () => {
     expect(planned).toEqual(done);
   });
 
+  it("keeps orchestrator skills short: they reference siblings, never copy them", () => {
+    for (const name of ["review", "plan", "challenge"]) {
+      const file = join(kitRoot(), "skills", name, "SKILL.md");
+      const lines = readFileSync(file, "utf8").split("\n").length;
+      expect(lines, `${name} is ${lines} lines`).toBeLessThan(60);
+    }
+  });
+
   it("keeps the first-party content closed over the core preset: it only names skills and agents that core installs", () => {
     const dest = tempDir();
     install(dest);
@@ -186,6 +194,9 @@ const FIRST_PARTY_SKILLS = [
   "rules-upkeep",
   "persona-review",
   "setup-ai",
+  "review",
+  "plan",
+  "challenge",
 ];
 
 function kitRoot(): string {

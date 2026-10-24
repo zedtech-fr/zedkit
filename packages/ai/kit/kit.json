@@ -15,7 +15,15 @@
       "persona-review",
       "codebase-design",
       "pr",
-      "setup-ai"
+      "setup-ai",
+      "review",
+      "plan",
+      "challenge",
+      "implement",
+      "to-spec",
+      "to-tickets",
+      "wayfinder",
+      "domain-modeling"
     ],
     "full": "*"
   },

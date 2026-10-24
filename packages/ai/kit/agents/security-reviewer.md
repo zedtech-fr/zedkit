@@ -2,7 +2,6 @@
 name: security-reviewer
 description: "Security and data-exposure auditor. Use for changes touching auth, tenancy, secrets, user data, logging, input parsing, or external calls. Reports severity-ranked findings with the exact fix; never applies fixes."
 model: inherit
-readonly: true
 disallowedTools: Write, Edit, NotebookEdit
 ---
 

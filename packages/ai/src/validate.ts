@@ -83,6 +83,12 @@ function checkAgent(root: string, file: string, issues: Issue[]): void {
   if (data.model !== undefined && data.model !== "inherit") {
     issues.push({ path, message: 'model must be omitted or "inherit" (pin a model in your project, after listing what your tool accepts)' });
   }
+  // `readonly` is a single-tool field, and at least one tool drops the
+  // whole definition when it sees an unknown key. Read-only stays in the
+  // prompt body plus `disallowedTools`, which every tool tolerates.
+  if (data.readonly !== undefined) {
+    issues.push({ path, message: "readonly is not portable: some tools skip agent files that set it (use disallowedTools instead)" });
+  }
 }
 
 function checkLineEndings(root: string, issues: Issue[]): void {
