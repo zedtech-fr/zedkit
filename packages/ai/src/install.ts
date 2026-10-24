@@ -17,14 +17,19 @@ import { err, ok, tryCatch, type Result } from "@zedkit/core";
 import { parseFrontmatter } from "./frontmatter.js";
 import { kitDir, readManifest, type KitManifest } from "./kit.js";
 
-export type Target = "claude" | "cursor";
+export type Provider = "claude" | "cursor" | "codex" | "muse";
+
+/** @deprecated Use {@link Provider}. Kept so `--target` and old callers keep working. */
+export type Target = Provider;
 
 export type InstallOptions = {
   /** Project directory to install into. */
   dest: string;
   /** Preset name from kit.json. Default `core`. */
   preset?: string;
-  /** Tool adapters to wire. Default: all. */
+  /** Providers to wire. Default: all. */
+  providers?: Provider[];
+  /** @deprecated Use `providers`. */
   targets?: Target[];
   /** Report what would happen without touching the disk. */
   dryRun?: boolean;
@@ -39,7 +44,7 @@ export type Action = {
   note?: string;
 };
 
-const ALL_TARGETS: Target[] = ["claude", "cursor"];
+const ALL_PROVIDERS: Provider[] = ["claude", "cursor", "codex", "muse"];
 
 const CURSOR_RULE = `---
 description: Project rules
@@ -183,25 +188,43 @@ function writeCursorRule(ctx: Ctx): void {
   place(ctx, "write", rel, () => writeFileSync(join(ctx.dest, rel), CURSOR_RULE));
 }
 
-function wireTarget(ctx: Ctx, target: Target): void {
-  const dir = target === "claude" ? ".claude" : ".cursor";
-  link(ctx, join(dir, "skills"), "../.agents/skills");
-  link(ctx, join(dir, "agents"), "../.agents/agents");
-  link(ctx, join(dir, "commands"), "../.agents/commands");
-  if (target === "claude") {
-    // Only when AGENTS.md is (or will be) a real file: never a dangling link.
-    if (agentsMdReady(ctx)) link(ctx, "CLAUDE.md", "AGENTS.md");
-    else ctx.actions.push({ kind: "skip", path: "CLAUDE.md", note: "AGENTS.md is not a file" });
-  } else {
-    writeCursorRule(ctx);
+function wireClaude(ctx: Ctx): void {
+  link(ctx, join(".claude", "skills"), "../.agents/skills");
+  link(ctx, join(".claude", "agents"), "../.agents/agents");
+  link(ctx, join(".claude", "commands"), "../.agents/commands");
+  // Only when AGENTS.md is (or will be) a real file: never a dangling link.
+  if (agentsMdReady(ctx)) link(ctx, "CLAUDE.md", "AGENTS.md");
+  else ctx.actions.push({ kind: "skip", path: "CLAUDE.md", note: "AGENTS.md is not a file" });
+}
+
+function wireCursor(ctx: Ctx, content: ReturnType<typeof plan>): void {
+  link(ctx, join(".cursor", "skills"), "../.agents/skills");
+  // Real files, not links: a symlinked folder shows up empty here, so the
+  // copies are authoritative for Cursor. They can drift from .agents/;
+  // checkDrift reports that, and init never overwrites them.
+  for (const name of content.agents) {
+    copyFile(ctx, join(ctx.kit, "agents", `${name}.md`), join(".cursor", "agents", `${name}.md`));
   }
+  for (const name of content.commands) {
+    copyFile(ctx, join(ctx.kit, "commands", `${name}.md`), join(".cursor", "commands", `${name}.md`));
+  }
+  writeCursorRule(ctx);
+}
+
+function wireProvider(ctx: Ctx, provider: Provider, content: ReturnType<typeof plan>): void {
+  if (provider === "claude") wireClaude(ctx);
+  else if (provider === "cursor") wireCursor(ctx, content);
+  // codex and muse read the shared source directly (AGENTS.md plus
+  // .agents/): no per-provider layer to generate.
 }
 
 /**
- * Install the kit into a project. Skills and subagents are copied (the
- * project owns them from then on); tool folders are symlinks to `.agents/`.
- * Existing files are never overwritten: they are reported as skipped. A bad
- * preset or kit fails before anything is written.
+ * Install the kit into a project. The shared source (skills, subagents,
+ * commands, AGENTS.md) is copied into `.agents/` (the project owns it from
+ * then on); each chosen provider then gets its thin layer, links where the
+ * provider follows them, real files where it does not. Existing files are
+ * never overwritten: they are reported as skipped. A bad preset or kit
+ * fails before anything is written.
  */
 export function installKit(options: InstallOptions): Result<Action[]> {
   const kit = options.kit ?? kitDir();
@@ -211,7 +234,9 @@ export function installKit(options: InstallOptions): Result<Action[]> {
   const run = tryCatch(() => {
     const content = plan(kit, manifest.value, options.preset ?? "core");
     installContent(ctx, content);
-    for (const target of options.targets ?? ALL_TARGETS) wireTarget(ctx, target);
+    for (const provider of options.providers ?? options.targets ?? ALL_PROVIDERS) {
+      wireProvider(ctx, provider, content);
+    }
   });
   return run.ok ? ok(ctx.actions) : err(run.error);
 }

@@ -1,21 +1,25 @@
 // Original work by the same author.
 import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { err, ok, tryCatch, type Result } from "@zedkit/core";
-import { installKit, type Target } from "./install.js";
+import { installKit, type Provider } from "./install.js";
 import { readManifest } from "./kit.js";
-import { validateKit } from "./validate.js";
+import { checkDrift, validateKit } from "./validate.js";
 
 const USAGE = `zedkit-ai <command>
 
-  init [dir] [--preset core|full] [--target claude,cursor] [--dry-run]
+  init [dir] [--preset core|full] [--provider ...] [--dry-run]
       Copy skills, subagents, commands and an AGENTS.md template into dir
-      (default .), and link the tool folders. Never overwrites existing files.
+      (default .), then wire the providers (default all). Never overwrites
+      existing files. --provider takes cursor,claude,codex,muse,all;
+      --target is an alias of --provider.
   validate [dir]
-      Check skills and subagents (default dir: .agents). Exit 1 on problems.
+      Check skills, subagents and commands, plus provider-copy drift
+      (default dir: .agents; a project root is accepted too). Exit 1
+      on problems.
   list
-      Show presets and subagents.
+      Show presets, subagents and commands.
 `;
 
 /** Where the CLI writes: normal lines and error lines. */
@@ -25,6 +29,7 @@ type Parsed = { values: Record<string, string | boolean | undefined>; positional
 
 const OPTIONS = {
   preset: { type: "string" },
+  provider: { type: "string" },
   target: { type: "string" },
   "dry-run": { type: "boolean" },
 } as const;
@@ -38,11 +43,13 @@ function parse(args: string[], options: Record<string, never> | typeof OPTIONS, 
   return ok(parsed.value as Parsed);
 }
 
-function parseTargets(value: string | boolean | undefined): Result<Target[] | undefined> {
+function parseProviders(value: string | boolean | undefined): Result<Provider[] | undefined> {
   if (value === undefined) return ok(undefined);
   const names = String(value).split(",").map((s) => s.trim());
-  const bad = names.find((n) => n !== "claude" && n !== "cursor");
-  return bad !== undefined ? err(new Error(`unknown target "${bad}" (claude, cursor)`)) : ok(names as Target[]);
+  if (names.includes("all")) return ok(undefined);
+  const bad = names.find((n) => n !== "claude" && n !== "cursor" && n !== "codex" && n !== "muse");
+  if (bad !== undefined) return err(new Error(`unknown provider "${bad}" (cursor, claude, codex, muse, all)`));
+  return ok(names as Provider[]);
 }
 
 function fail(message: string, sinks: Sinks): number {
@@ -54,14 +61,14 @@ function runInit(args: string[], sinks: Sinks): number {
   const parsed = parse(args, OPTIONS, 1);
   if (!parsed.ok) return fail(parsed.error.message, sinks);
   const { values, positionals } = parsed.value;
-  const targets = parseTargets(values.target);
-  if (!targets.ok) return fail(targets.error.message, sinks);
+  const providers = parseProviders(values.provider ?? values.target);
+  if (!providers.ok) return fail(providers.error.message, sinks);
   const dryRun = values["dry-run"] === true;
   const preset = typeof values.preset === "string" ? values.preset : undefined;
   const result = installKit({
     dest: resolve(positionals[0] ?? "."),
     ...(preset !== undefined && { preset }),
-    ...(targets.value !== undefined && { targets: targets.value }),
+    ...(providers.value !== undefined && { providers: providers.value }),
     dryRun,
   });
   if (!result.ok) return fail(result.error.message, sinks);
@@ -77,7 +84,12 @@ function runValidate(args: string[], sinks: Sinks): number {
   if (!parsed.ok) return fail(parsed.error.message, sinks);
   const dir = resolve(parsed.value.positionals[0] ?? ".agents");
   if (!existsSync(dir)) return fail(`no such directory: ${dir}`, sinks);
-  const issues = validateKit(dir);
+  // A project root points at its .agents/; an .agents/ dir drifts against
+  // its own parent. Any other dir just has nothing to drift against.
+  const nested = join(dir, ".agents");
+  const agentsDir = existsSync(nested) ? nested : dir;
+  const projectRoot = agentsDir === dir ? dirname(dir) : dir;
+  const issues = [...validateKit(agentsDir), ...checkDrift(projectRoot, agentsDir)];
   for (const issue of issues) sinks.out(`${issue.path}: ${issue.message}`);
   sinks.out(issues.length === 0 ? "ok" : `${issues.length} problem(s)`);
   return issues.length === 0 ? 0 : 1;

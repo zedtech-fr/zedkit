@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
-import { put, SKILL, tempDir } from "./helpers.js";
+import { COMMAND, put, SKILL, tempDir } from "./helpers.js";
 
 function run(...argv: string[]): { code: number; text: string; errors: string } {
   const out: string[] = [];
@@ -45,6 +45,24 @@ describe("cli", () => {
     expect(existsSync(join(dest, ".claude"))).toBe(false);
   });
 
+  it("init --provider selects providers, all wires everything", () => {
+    const codex = tempDir();
+    expect(run("init", codex, "--provider", "codex").code).toBe(0);
+    expect(existsSync(join(codex, "AGENTS.md"))).toBe(true);
+    expect(existsSync(join(codex, ".claude"))).toBe(false);
+    expect(existsSync(join(codex, ".cursor"))).toBe(false);
+    const all = tempDir();
+    expect(run("init", all, "--provider", "all").code).toBe(0);
+    expect(existsSync(join(all, ".claude/commands/review.md"))).toBe(true);
+    expect(existsSync(join(all, ".cursor/commands/review.md"))).toBe(true);
+  });
+
+  it("init rejects an unknown provider", () => {
+    const result = run("init", tempDir(), "--provider", "pilot");
+    expect(result.code).toBe(2);
+    expect(result.errors).toContain('unknown provider "pilot"');
+  });
+
   it("init --dry-run writes nothing", () => {
     const dest = tempDir();
     const { code, text } = run("init", dest, "--dry-run");
@@ -81,6 +99,20 @@ describe("cli", () => {
     const result = run("validate", bad);
     expect(result.code).toBe(1);
     expect(result.text).toContain("1 problem(s)");
+  });
+
+  it("validate accepts a project root and reports provider-copy drift", () => {
+    const root = tempDir();
+    put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, ".agents/commands/run.md", COMMAND("alpha"));
+    put(root, ".cursor/commands/run.md", COMMAND("alpha"));
+    expect(run("validate", root)).toEqual({ code: 0, text: "ok", errors: "" });
+    put(root, ".cursor/commands/run.md", COMMAND("alpha", "Edited."));
+    for (const dir of [root, join(root, ".agents")]) {
+      const result = run("validate", dir);
+      expect(result.code, dir).toBe(1);
+      expect(result.text, dir).toContain("drifted");
+    }
   });
 
   it("validate fails on a missing directory and on unexpected arguments", () => {

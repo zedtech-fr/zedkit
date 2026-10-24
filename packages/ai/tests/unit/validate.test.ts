@@ -1,7 +1,7 @@
 import { symlinkSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { validateKit } from "#validate.js";
+import { checkDrift, validateKit } from "#validate.js";
 import { kitDir } from "#kit.js";
 import { AGENT, COMMAND, put, SKILL, tempDir } from "./helpers.js";
 
@@ -163,6 +163,33 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "agents/beta.md", '---\nname: beta\ndescription: "Use when: needed"\n---\n');
     expect(validateKit(root)).toEqual([]);
+  });
+
+  it("reports missing and drifted provider copies", () => {
+    const root = tempDir();
+    put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, ".agents/agents/beta.md", AGENT("beta"));
+    put(root, ".agents/commands/run.md", COMMAND("alpha"));
+    put(root, ".cursor/commands/run.md", COMMAND("alpha", "Edited."));
+    put(root, ".cursor/agents/mine.md", "mine\n");
+    const found = checkDrift(root, join(root, ".agents")).map((i) => `${i.path}: ${i.message}`);
+    expect(found).toContainEqual(expect.stringContaining("copy missing"));
+    expect(found.some((m) => m.includes("copy missing") && m.includes("beta.md"))).toBe(true);
+    expect(found).toContainEqual(expect.stringContaining("drifted"));
+    expect(found.some((m) => m.includes("drifted") && m.includes("run.md"))).toBe(true);
+    expect(found.some((m) => m.includes("mine.md"))).toBe(false);
+  });
+
+  it("drift is clean when copies match, and skipped for links and missing folders", () => {
+    const root = tempDir();
+    put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, ".agents/agents/beta.md", AGENT("beta"));
+    put(root, ".agents/commands/run.md", COMMAND("alpha"));
+    const agents = join(root, ".agents");
+    expect(checkDrift(root, agents)).toEqual([]);
+    put(root, ".cursor/commands/run.md", COMMAND("alpha"));
+    symlinkSync(join(agents, "agents"), join(root, ".cursor", "agents"));
+    expect(checkDrift(root, agents)).toEqual([]);
   });
 
   it("reports an unreadable entry instead of throwing", () => {

@@ -1,6 +1,6 @@
 ---
 name: setup-ai
-description: "Set up or improve this repo's AI setup from what the repo actually contains: explores code, docs and CI, then writes or upgrades AGENTS.md, nested rules, and repo-specific skills and subagents. Use when asked to set up AI, onboard agents, audit or improve existing agent instructions, or after installing the kit."
+description: "Set up or improve this repo's AI setup from what the repo actually contains: explores code, docs and CI, then writes or upgrades AGENTS.md, nested rules, and repo-specific skills and subagents. Use when asked to set up AI, onboard agents, audit or improve existing agent instructions, or after installing the kit. Takes provider names (setup-ai cursor claude); with none, asks once which providers to wire."
 ---
 
 # Setup AI
@@ -8,6 +8,8 @@ description: "Set up or improve this repo's AI setup from what the repo actually
 Make the AI setup of **this** repo true and specific. Generic advice is already in the kit; your job is what only this repo can say: its commands, its layout, its traps, its repeated workflows.
 
 Two modes, decided in step 1: **fresh** (little or nothing exists) and **improve** (a setup exists: keep it, fix it, extend it).
+
+One shared source, then thin provider layers. The audit (steps 1-3) is provider-neutral. Write the shared source first (`AGENTS.md`, `.agents/`), then wire only the chosen providers (step 5). Providers: `cursor`, `claude`, `codex`, `muse`.
 
 ## Rules for the whole run
 
@@ -25,6 +27,7 @@ List, with paths: `AGENTS.md` (root and nested), `CLAUDE.md`, `GEMINI.md`, `.cur
 - Anything real: **improve**. Read all of it first. Note what each file is for and which tool reads it.
 - Audit only files the repo owns. A vendored or symlinked kit (for example `.agents/skills` pointing into a package) is listed once and not audited.
 - Note uncommitted changes. Treat the current working state as the baseline and do not revert anything.
+- Settle the providers: the names given after `setup-ai` win; otherwise reuse the providers the repo already wires (`.cursor/`, `.claude/`, `CLAUDE.md`, docs saying so). If neither tells you, ask exactly one question — which of cursor, claude, codex, muse (several allowed) — before writing; with nobody to ask, wire all four.
 
 ## 2. Explore in parallel
 
@@ -73,6 +76,15 @@ Present the plan as a table: artifact, path, why (with evidence), action (create
 
 ## 5. Write
 
+Shared source first, provider layers after. `zedkit-ai init --provider <names>` does the mechanical part; you do the repo-specific part.
+
+| Provider | Layer on top of `AGENTS.md` + `.agents/` |
+|---|---|
+| `cursor` | `.cursor/rules/project.mdc` (skip it when an always-on rule exists), `.cursor/skills` link, agents and commands as real-file copies (a linked folder shows up empty there) |
+| `claude` | `CLAUDE.md` link, `.claude/{skills,agents,commands}` links |
+| `codex` | none: reads `AGENTS.md` and `.agents/skills` directly |
+| `muse` | none: reads `.agents/` directly |
+
 - **Root `AGENTS.md`**: start from the kit template if there is none. Replace every `<placeholder>` with a verified fact or delete the line. Non-negotiables name how each is enforced.
 - **Role and style**: fill it from evidence, not taste. Role and audience from the README (who the project serves); reply language from the language of the docs and commit messages; tone from commit style (terse or explanatory). If the evidence is missing or mixed, ask the user exactly one question covering what is unknown (for example reply language and audience) before writing; with nobody to ask, default to English replies and mark the choice `UNVERIFIED`.
 - **Nested `AGENTS.md`**: only what differs from the root. Link, do not copy.
@@ -85,7 +97,7 @@ Present the plan as a table: artifact, path, why (with evidence), action (create
 - Every command in the written files was run, or is marked `UNVERIFIED` with the reason.
 - Every path and link exists: check each one (`test -e`).
 - No placeholder like `<Project>` is left.
-- `zedkit-ai validate` is clean, and the tool folders (`.claude/`, `.cursor/`) resolve to `.agents/`.
+- `zedkit-ai validate` is clean, the tool folders (`.claude/`, `.cursor/`) resolve, and the `.cursor` copies match `.agents/` (no drift).
 - A fresh reader, or a subagent given only the new files, can answer: how do I run the tests, where does X live, what must I never do here?
 
 ## 7. Report
