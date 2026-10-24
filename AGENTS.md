@@ -30,8 +30,10 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 
 - `packages/*` — one publishable package per usage domain, each with its
   own README, AGENTS.md, tests, and exports map (ESM + types).
-- `.agents/skills` — vendored agent skills (single source of truth;
-  `.claude/skills` and `.cursor/skills` symlink to it).
+- `packages/ai/kit` — the AI kit and the single source of truth for this
+  repo's own skills and subagents: `.agents/skills` and `.agents/agents`
+  symlink into it, and `.claude/` and `.cursor/` symlink to `.agents/`.
+  Edit skills there; `pnpm --filter @zedkit/ai test` validates them.
 
 ## How to work
 

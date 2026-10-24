@@ -1,9 +1,11 @@
 # Third-party notices — vendored agent skills
 
-All skills in `.agents/skills/` are verbatim, unmodified copies from their
-upstream repositories (verified by diff at vendoring time), except
-`use-zedkit`, which is first-party and not covered here. Each upstream's
-licence file is kept next to the skills: see `skills/LICENSE-*-*`.
+The skills named below are copies from their upstream
+repositories (verified by diff at vendoring time; changes are listed under Modifications). Every other skill and
+every subagent in this kit is first-party zedkit work (MIT) and is not
+covered here: `ground-truth`, `parallel-work`, `definition-of-done`,
+`adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`. Each upstream's licence file is kept next to the skills: see
+`skills/LICENSE-*-*`.
 
 ## Ponytail skills (6) — MIT
 
@@ -28,7 +30,7 @@ licence file is kept next to the skills: see `skills/LICENSE-*-*`.
   `to-tickets`, `triage`, `wayfinder`, `writing-for-agents`
   (upstream `skills/engineering/*`, `skills/productivity/*`,
   `skills/in-progress/setup-ts-deep-modules`)
-- Modifications: none.
+- Modifications: three example passages are reworded to name no vendor or business domain (this repo bans them): `domain-modeling/ADR-FORMAT.md`, `domain-modeling/GLOSSARY-FORMAT.md` (invoice example), `setup-matt-pocock-skills/SKILL.md`. Everything else is verbatim.
 
 ## Borrowed excerpt inside `pr` — Apache-2.0
 

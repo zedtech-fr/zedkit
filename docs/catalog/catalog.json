@@ -1,6 +1,25 @@
 {
   "_generated": "Do not edit. Generated from packages/*/CATALOG.md by `pnpm catalog:build`.",
   "packages": {
+    "@zedkit/ai": {
+      "catalog": "packages/ai/CATALOG.md",
+      "needs": [
+        {
+          "need": "Set up AI agent instructions, skills and subagents in a repo",
+          "import": "`@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Target`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { installKit } from \"@zedkit/ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", targets: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
+        },
+        {
+          "need": "Check that skills and subagents are valid for every tool",
+          "import": "`@zedkit/ai` — `validateKit`, `Issue`",
+          "wraps": "`yaml`",
+          "status": "stable",
+          "example": "import { validateKit } from \"@zedkit/ai\";\nconst issues = validateKit(\".agents\"); // skills/<name>/SKILL.md, agents/<name>.md\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
+        }
+      ]
+    },
     "@zedkit/core": {
       "catalog": "packages/core/CATALOG.md",
       "needs": [

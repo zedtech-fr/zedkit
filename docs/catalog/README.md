@@ -17,6 +17,7 @@ Each package PR adds its row here, following
 |---|---|---|
 | `@zedkit/core` | results, error handling, IDs | [packages/core/CATALOG.md](../../packages/core/CATALOG.md) |
 | `@zedkit/server` | rate limiting, secret redaction | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
+| `@zedkit/ai` | AI agent setup: instructions, skills, subagents | [packages/ai/CATALOG.md](../../packages/ai/CATALOG.md) |
 
 ## Entry format
 

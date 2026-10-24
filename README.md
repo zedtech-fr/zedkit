@@ -9,6 +9,7 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 |---|---|---|
 | [`@zedkit/core`](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | stable |
 | [`@zedkit/server`](packages/server/README.md) | rate limiting, secret redaction | stable |
+| [`@zedkit/ai`](packages/ai/README.md) | agent-agnostic AI setup: `AGENTS.md`, skills, subagents, installer, validator | stable |
 
 A package exists only when real, used code backs it — no placeholders.
 Each package README records its origin ("original work by the same
@@ -53,4 +54,4 @@ pnpm typecheck && pnpm lint && pnpm build && pnpm test
 - No secrets, no customer data, no internal URLs.
 - No private names, endpoints, or domain terms from other projects.
 - Third-party material (e.g. vendored skills) requires its licence file and a
-  row in `.agents/THIRD_PARTY_NOTICES.md`.
+  row in `packages/ai/kit/THIRD_PARTY_NOTICES.md`.
