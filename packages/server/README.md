@@ -21,9 +21,11 @@ logger.info({ event: "login", user: redactValue(user) });
 - `redactValue(value, key?)` — recursively replace credential-looking
   material with placeholders before logging. Secret-like keys become
   `"[redacted]"`, bearer/basic tokens become `"<scheme> [redacted]"`,
-  strings over 64 code points are truncated, cyclic references become
-  `"[circular]"`. Dates pass through; Maps, Sets, prototypes, and symbol
-  keys are preserved.
+  cyclic references become `"[circular]"`. Scrubbing applies to every
+  field; truncation is volume control only, so `msg`/`message`/`stack`
+  are never truncated and everything else is bounded at 512 code points.
+  Dates pass through; Maps, Sets, prototypes, and symbol keys are
+  preserved.
 - `computeBackoffMs(attemptNo, random?)` — exponential retry backoff
   (2s × 3^(n-1), ±20% jitter, 1s floor, 1h cap).
 - `webhookSignatureHeader(secret, body, timestamp)` /
