@@ -5,20 +5,25 @@
  * Recursively replace credential-looking material with placeholders, so a
  * structure is safe to log. Objects keep their shape and prototype; values
  * under secret-like keys become "[redacted]", bearer/basic tokens become
- * "<scheme> [redacted]", strings over 64 code points are truncated, and
- * cyclic references become "[circular]". Dates and regexes pass through
- * untouched; Maps, Sets, and symbol keys are preserved.
+ * "<scheme> [redacted]", and cyclic references become "[circular]".
+ * Scrubbing applies to every field; truncation is volume control only (a
+ * cut secret still leaks its head), so human-text fields (`msg`,
+ * `message`, `stack`) are never truncated and everything else is bounded
+ * at 512 code points. Dates and regexes pass through untouched; Maps,
+ * Sets, and symbol keys are preserved.
  */
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
 const AUTH_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi;
-const LONG_VALUE_MAX = 64;
+const HUMAN_TEXT_KEYS = new Set(["msg", "message", "stack"]);
+const LONG_VALUE_MAX = 512;
 
-function redactString(value: string): string {
+function redactString(value: string, key: string | undefined): string {
   const scrubbed = value.replace(
     AUTH_TOKEN_PATTERN,
     (match) => `${match.split(/\s/, 1)[0]} [redacted]`,
   );
+  if (key !== undefined && HUMAN_TEXT_KEYS.has(key.toLowerCase())) return scrubbed;
   // Count in code points so truncation never splits a surrogate pair.
   const chars = Array.from(scrubbed);
   if (chars.length > LONG_VALUE_MAX) {
@@ -36,7 +41,7 @@ function redactInner(value: unknown, key: string | undefined, seen: Set<object>)
     return "[redacted]";
   }
   if (typeof value === "string") {
-    return redactString(value);
+    return redactString(value, key);
   }
   if (value === null || typeof value !== "object") {
     return value;

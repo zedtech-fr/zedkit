@@ -15,11 +15,32 @@ describe("redactValue", () => {
     );
   });
 
-  it("truncates long strings", () => {
-    const long = "x".repeat(100);
-    const out = redactValue(long) as string;
-    expect(out).toBe(`${"x".repeat(64)}…`);
+  it("bounds ordinary long values instead of cutting everyday strings", () => {
+    const everyday = `endpoint https://hooks.example.com/tenant-42/inbound delivery queued`;
+    expect(redactValue({ url: everyday })).toEqual({ url: everyday });
+    const out = redactValue("x".repeat(600)) as string;
+    expect(out).toBe(`${"x".repeat(512)}…`);
     expect(redactValue("short")).toBe("short");
+  });
+
+  it("never truncates human-text fields", () => {
+    const msg = "worker tick: claimed=3 attempted=12 delivered=11 failed=1 reconciled=0";
+    const redacted = redactValue({
+      msg,
+      err: { message: `${msg} failed`, stack: `Error: boom\n    at f (${"y".repeat(600)})` },
+    }) as { msg: string; err: { message: string; stack: string } };
+    expect(redacted.msg).toBe(msg);
+    expect(redacted.err.message).toBe(`${msg} failed`);
+    expect(redacted.err.stack).toContain("y".repeat(600));
+  });
+
+  it("still scrubs tokens inside human-text fields", () => {
+    const redacted = redactValue({
+      msg: `call to https://hooks.example.com/x failed with Bearer abcdef123456 attached`,
+    }) as { msg: string };
+    expect(redacted.msg).not.toContain("abcdef123456");
+    expect(redacted.msg).toContain("Bearer [redacted]");
+    expect(redacted.msg).toContain("call to https://hooks.example.com/x failed");
   });
 
   it("recurses into objects and arrays, keeping shape", () => {
@@ -89,7 +110,7 @@ describe("redactValue", () => {
   });
 
   it("does not split surrogate pairs when truncating", () => {
-    expect(redactValue("x".repeat(63) + "😀")).toBe("x".repeat(63) + "😀");
-    expect(redactValue("x".repeat(64) + "😀")).toBe(`${"x".repeat(64)}…`);
+    expect(redactValue("x".repeat(511) + "😀")).toBe("x".repeat(511) + "😀");
+    expect(redactValue("x".repeat(512) + "😀")).toBe(`${"x".repeat(512)}…`);
   });
 });
