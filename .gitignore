@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+*.tgz
+.DS_Store
+
+# build output and caches
+.turbo/
+.pnpm-store/
