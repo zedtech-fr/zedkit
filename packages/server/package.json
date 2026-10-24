@@ -27,6 +27,7 @@
     "lint": "eslint src tests"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

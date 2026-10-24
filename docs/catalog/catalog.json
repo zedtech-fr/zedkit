@@ -43,6 +43,20 @@
           "wraps": "`(none)`",
           "status": "stable",
           "example": "import { redactValue } from \"@zedkit/server\";\nlogger.info(redactValue({ user, token, headers }));"
+        },
+        {
+          "need": "Retry with exponential backoff",
+          "import": "`@zedkit/server` — `computeBackoffMs`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { computeBackoffMs } from \"@zedkit/server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
+        },
+        {
+          "need": "Sign and verify webhook deliveries",
+          "import": "`@zedkit/server` — `webhookSignatureHeader`, `verifyWebhookSignatureHeader`, `VerifyWebhookOptions`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedkit/server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
         }
       ]
     }

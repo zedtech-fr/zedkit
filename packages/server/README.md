@@ -14,6 +14,12 @@ same author. Zero runtime dependencies.
   strings over 64 code points are truncated, cyclic references become
   `"[circular]"`. Dates pass through; Maps, Sets, prototypes, and symbol
   keys are preserved.
+- `computeBackoffMs(attemptNo, random?)` — exponential retry backoff
+  (2s × 3^(n-1), ±20% jitter, 1s floor, 1h cap).
+- `webhookSignatureHeader(secret, body, timestamp)` /
+  `verifyWebhookSignatureHeader(secret, body, header, options?)` —
+  Stripe-style `t=…,v1=…` HMAC signatures over exact body bytes, with an
+  optional freshness check. Bring your own secret.
 
 Find helpers by need in [CATALOG.md](CATALOG.md).
 
