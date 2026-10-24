@@ -296,6 +296,21 @@ describe("installKit", () => {
     expect(text).toContain("setup-ai cursor");
   });
 
+  it("setup-ai covers multi-repo workspace roots and leaves children alone", () => {
+    const text = readFileSync(join(kitRoot(), "skills", "setup-ai", "SKILL.md"), "utf8");
+    expect(text).toContain("## Workspace mode");
+    for (const phrase of [
+      "one repo at a time",
+      "nested `AGENTS.md` wins",
+      "visibility rules",
+      "how to sync",
+      "Map cross-repo dependencies",
+      "Never write inside a child repo\n  without asking",
+    ]) {
+      expect(text).toContain(phrase);
+    }
+  });
+
   it("keeps orchestrator skills short: they reference siblings, never copy them", () => {
     for (const name of ["review", "plan", "challenge"]) {
       const file = join(kitRoot(), "skills", name, "SKILL.md");
