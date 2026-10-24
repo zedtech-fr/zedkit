@@ -20,6 +20,9 @@ same author. Zero runtime dependencies.
   `verifyWebhookSignatureHeader(secret, body, header, options?)` —
   Stripe-style `t=…,v1=…` HMAC signatures over exact body bytes, with an
   optional freshness check. Bring your own secret.
+- `pgErrorCode(error)` — read the Postgres error code (`23505`
+  unique, `23503` FK, ...) from a thrown value, or `null` when it
+  has none. Lets callers decide conflict-vs-bug.
 
 Find helpers by need in [CATALOG.md](CATALOG.md).
 

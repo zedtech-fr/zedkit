@@ -47,3 +47,19 @@ if (!verify(secret, rawBody, headers["webhook-signature"], { maxAgeSeconds: 300 
   return unauthorized();
 }
 ```
+
+## Tell a Postgres conflict from a bug
+
+- Import: `@zedkit/server` — `pgErrorCode`
+- Wraps: `(none)`
+- Status: stable
+
+```ts
+import { pgErrorCode } from "@zedkit/server";
+try {
+  await db.insert(users).values(row);
+} catch (error) {
+  if (pgErrorCode(error) === "23505") return conflict();
+  throw error;
+}
+```
