@@ -39,4 +39,57 @@ describe("redactValue", () => {
     expect(redactValue(undefined)).toBe(undefined);
     expect(redactValue(true)).toBe(true);
   });
+
+  it("redacts common secret key names", () => {
+    for (const key of ["privateKey", "private_key", "credentials", "passwd"]) {
+      expect(redactValue("SUPERSECRET", key)).toBe("[redacted]");
+    }
+  });
+
+  it("returns [circular] for cyclic structures", () => {
+    const obj: Record<string, unknown> = {};
+    obj.self = obj;
+    expect(redactValue(obj)).toEqual({ self: "[circular]" });
+    const arr: unknown[] = [];
+    arr.push(arr);
+    expect(redactValue(arr)).toEqual(["[circular]"]);
+  });
+
+  it("redacts basic credentials in strings", () => {
+    expect(redactValue("Authorization: Basic dXNlcjpwYXNz")).toBe(
+      "Authorization: Basic [redacted]",
+    );
+  });
+
+  it("preserves dates, maps, sets, and symbol keys", () => {
+    const date = new Date("2026-01-01T00:00:00Z");
+    expect(redactValue(date)).toBe(date);
+    const sym = Symbol("s");
+    const out = redactValue({
+      at: date,
+      m: new Map([["token", "t"]]),
+      s: new Set(["Bearer abc"]),
+      [sym]: "v",
+    }) as { m: Map<string, string>; s: Set<string> } & Record<symbol, unknown>;
+    expect(out.m).toBeInstanceOf(Map);
+    expect(out.m.get("token")).toBe("[redacted]");
+    expect([...out.s][0]).toBe("Bearer [redacted]");
+    expect(out[sym]).toBe("v");
+  });
+
+  it("keeps class instances usable", () => {
+    class Creds {
+      token = "t";
+      user = "u";
+    }
+    const out = redactValue(new Creds()) as Creds;
+    expect(out).toBeInstanceOf(Creds);
+    expect(out.token).toBe("[redacted]");
+    expect(out.user).toBe("u");
+  });
+
+  it("does not split surrogate pairs when truncating", () => {
+    expect(redactValue("x".repeat(63) + "😀")).toBe("x".repeat(63) + "😀");
+    expect(redactValue("x".repeat(64) + "😀")).toBe(`${"x".repeat(64)}…`);
+  });
 });
