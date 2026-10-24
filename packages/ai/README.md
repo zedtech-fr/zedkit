@@ -22,7 +22,10 @@ rules, skills and subagents. If a setup already exists (`AGENTS.md`,
 duplicated, too long) and improves it in place instead of replacing it.
 `setup-ai` also fills the template's `Role and style` section (role, tone,
 reply language) from repo evidence — docs language, commit style — asking a
-single question when the evidence cannot tell.
+single question when the evidence cannot tell. At a multi-repo workspace
+root (several child checkouts) it switches to workspace mode: it inventories
+each repo, maps cross-repo dependencies, and writes a root `AGENTS.md`
+without touching the children unasked.
 
 Not published to npm yet. From a zedkit checkout, build once and call the
 binary directly: `pnpm --filter @zedkit/ai build`, then

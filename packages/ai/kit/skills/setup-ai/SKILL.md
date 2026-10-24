@@ -28,6 +28,7 @@ List, with paths: `AGENTS.md` (root and nested), `CLAUDE.md`, `GEMINI.md`, `.cur
 - Audit only files the repo owns. A vendored or symlinked kit (for example `.agents/skills` pointing into a package) is listed once and not audited.
 - Note uncommitted changes. Treat the current working state as the baseline and do not revert anything.
 - Settle the providers: the names given after `setup-ai` win; otherwise reuse the providers the repo already wires (`.cursor/`, `.claude/`, `CLAUDE.md`, docs saying so). If neither tells you, ask exactly one question — which of cursor, claude, codex, muse (several allowed) — before writing; with nobody to ask, wire all four.
+- Workspace check: two or more child directories that are themselves git checkouts, or a manifest listing member projects, means a multi-repo workspace root: switch to Workspace mode below instead of steps 2-5.
 
 ## 2. Explore in parallel
 
@@ -103,3 +104,34 @@ Shared source first, provider layers after. `zedkit-ai init --provider <names>` 
 ## 7. Report
 
 Short: what you created or changed, what you left alone and why, the findings you did not fix (failing commands, contradictions needing a human decision), and everything marked `UNVERIFIED`.
+
+## Workspace mode
+
+For a multi-repo workspace root (a folder or meta repo holding several
+separate git checkouts). The root gets a workspace setup, not a repo setup;
+each child keeps its own.
+
+- **Inventory each child** (read-only): path, git remote, stack, package
+  manager, real commands (run the read-only ones to verify), and whether
+  it already has `AGENTS.md` or rules of its own. One row per repo.
+- **Map cross-repo dependencies from evidence**: manifests depending on a
+  sibling's package name, git remotes in the same group, docs and CI
+  referencing another child, shared tooling and scripts. Write them as a
+  small table in the root `AGENTS.md`; if the workspace already has a map
+  doc, put the table there and link it from `AGENTS.md`.
+- **Root `AGENTS.md` says**: this is a workspace of separate checkouts;
+  work inside one repo at a time; the nested `AGENTS.md` wins over the
+  root; which repo owns what; visibility rules (which repos are public or
+  private, and what may reference what); how to sync every checkout.
+- **Children are proposals, not targets**: for each child without a setup,
+  propose running `setup-ai` inside it. Never write inside a child repo
+  without asking, and never audit child files from the root as if the root
+  owned them.
+
+Example: a `workspace/` root holding `services-api/` and `services-web/`
+(each with its own `.git`) gets a root `AGENTS.md` declaring the workspace,
+a two-row inventory, and:
+
+| Repo | Depends on | Evidence |
+|---|---|---|
+| `services-web` | `services-api` | `package.json` needs `@example/api-client`, same git group |
