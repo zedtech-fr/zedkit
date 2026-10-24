@@ -40,6 +40,7 @@ jobs:
       - run: pnpm exec eslint .
       - run: pnpm run catalog:check
       - run: pnpm exec turbo run build
+      - run: bash scripts/check-pack.sh
       - run: pnpm exec turbo run test
       # Versioning dry-run only: publishing to npm is a later, explicit
       # decision. This just proves the Changesets metadata is sane.
