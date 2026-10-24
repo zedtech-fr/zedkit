@@ -16,6 +16,7 @@ Each package PR adds its row here, following
 | Package | Domain | Catalog |
 |---|---|---|
 | `@zedkit/core` | results, error handling, IDs | [packages/core/CATALOG.md](../../packages/core/CATALOG.md) |
+| `@zedkit/server` | rate limiting, secret redaction | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
 
 ## Entry format
 

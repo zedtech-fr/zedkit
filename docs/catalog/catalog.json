@@ -26,6 +26,25 @@
           "example": "import { isPrefixedId, newPrefixedId } from \"@zedkit/core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
         }
       ]
+    },
+    "@zedkit/server": {
+      "catalog": "packages/server/CATALOG.md",
+      "needs": [
+        {
+          "need": "Rate-limit calls per key",
+          "import": "`@zedkit/server` — `MemoryRateLimiter`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { MemoryRateLimiter } from \"@zedkit/server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
+        },
+        {
+          "need": "Redact secrets before logging",
+          "import": "`@zedkit/server` — `redactValue`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { redactValue } from \"@zedkit/server\";\nlogger.info(redactValue({ user, token, headers }));"
+        }
+      ]
     }
   }
 }
