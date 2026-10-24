@@ -38,9 +38,9 @@ export type InstallOptions = {
 };
 
 export type Action = {
-  kind: "copy" | "link" | "write" | "skip";
+  kind: "copy" | "link" | "write" | "append" | "skip";
   path: string;
-  /** Why it was skipped, or what a link points to. */
+  /** Why it was skipped, what was appended, or what a link points to. */
   note?: string;
 };
 
@@ -131,6 +131,44 @@ function plan(kit: string, manifest: KitManifest, preset: string) {
   return { skills, licences, agents: manifest.agents, commands };
 }
 
+// The ladder section every AGENTS.md must carry, lifted from the bundled
+// template so the wording has a single home. Undefined when the kit has
+// no template or no ladder section (foreign kits keep working).
+function ladderSection(kit: string): string | undefined {
+  const template = tryCatch(() => readFileSync(join(kit, "AGENTS.template.md"), "utf8"));
+  if (!template.ok) return undefined;
+  const start = template.value.indexOf("## Before writing any code");
+  if (start < 0) return undefined;
+  const rest = template.value.slice(start);
+  const next = rest.indexOf("\n## ", 1);
+  return `${(next < 0 ? rest : rest.slice(0, next)).trimEnd()}\n`;
+}
+
+// Fresh projects get the whole template; an existing AGENTS.md is never
+// overwritten, but when it lacks the ladder the section is appended (and
+// reported as `append`, so dry runs agree with real ones).
+function installAgentsMd(ctx: Ctx): void {
+  const blocked = obstacle(ctx, "AGENTS.md");
+  if (blocked === undefined) {
+    copyFile(ctx, join(ctx.kit, "AGENTS.template.md"), "AGENTS.md");
+    return;
+  }
+  const current = tryCatch(() => readFileSync(join(ctx.dest, "AGENTS.md"), "utf8"));
+  if (!current.ok || current.value.toLowerCase().includes("ladder")) {
+    ctx.actions.push({ kind: "skip", path: "AGENTS.md", note: blocked });
+    return;
+  }
+  const section = ladderSection(ctx.kit);
+  if (section === undefined) {
+    ctx.actions.push({ kind: "skip", path: "AGENTS.md", note: blocked });
+    return;
+  }
+  ctx.actions.push({ kind: "append", path: "AGENTS.md", note: "ladder section" });
+  if (ctx.dryRun) return;
+  const gap = current.value === "" ? "" : current.value.endsWith("\n") ? "\n" : "\n\n";
+  writeFileSync(join(ctx.dest, "AGENTS.md"), `${current.value}${gap}${section}`);
+}
+
 function installContent(ctx: Ctx, content: ReturnType<typeof plan>): void {
   for (const name of content.skills) {
     const rel = join(".agents", "skills", name);
@@ -150,7 +188,7 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): void {
   for (const name of content.commands) {
     copyFile(ctx, join(ctx.kit, "commands", `${name}.md`), join(".agents", "commands", `${name}.md`));
   }
-  copyFile(ctx, join(ctx.kit, "AGENTS.template.md"), "AGENTS.md");
+  installAgentsMd(ctx);
 }
 
 function agentsMdReady(ctx: Ctx): boolean {
@@ -223,8 +261,10 @@ function wireProvider(ctx: Ctx, provider: Provider, content: ReturnType<typeof p
  * commands, AGENTS.md) is copied into `.agents/` (the project owns it from
  * then on); each chosen provider then gets its thin layer, links where the
  * provider follows them, real files where it does not. Existing files are
- * never overwritten: they are reported as skipped. A bad preset or kit
- * fails before anything is written.
+ * never overwritten: they are reported as skipped, except an existing
+ * AGENTS.md missing the ladder, which gets the ladder section appended
+ * (reported as `append`). A bad preset or kit fails before anything is
+ * written.
  */
 export function installKit(options: InstallOptions): Result<Action[]> {
   const kit = options.kit ?? kitDir();

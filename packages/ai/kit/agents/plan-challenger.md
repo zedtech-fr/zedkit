@@ -30,6 +30,7 @@ For each story say which part of the plan allows it and the smallest change that
 ## Rules
 
 - Rank objections: BLOCKER (do not start until resolved), SHOULD (fix in this change), COULD (note it). Report low-probability findings as COULD instead of dropping them.
+- Reject (BLOCKER) a plan whose ladder table is missing, or weak: a piece hand-made at rung 7 with no one-line justification while rung 3–5 could cover it. Verify the table's claims against the repo before accepting them.
 - Never accept a contract or shape you have not seen in source.
 - Do not pad. Five sharp objections beat twenty vague ones.
 

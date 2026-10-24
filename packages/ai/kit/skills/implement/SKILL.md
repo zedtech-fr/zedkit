@@ -10,6 +10,12 @@ Refuse a missing or unchallenged plan: run `challenge` (or `plan`, when there is
 
 If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 
+Before writing code, climb the `ponytail-review` ladder for every new piece
+of code, file, or dependency — need to exist? in this codebase? standard
+library? native platform feature or a standard tool? installed dependency?
+one line? else the minimum code that works — and stop at the first rung that
+holds. Stop and replan any piece where a higher rung holds.
+
 Call the Skill tool with "tdd" where possible, at pre-agreed seams.
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
