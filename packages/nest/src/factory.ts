@@ -10,7 +10,7 @@ import {
   type Type,
 } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { APP_FILTER, APP_GUARD, APP_PIPE, NestFactory } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE, NestFactory } from "@nestjs/core";
 import {
   FastifyAdapter,
   type NestFastifyApplication,
@@ -28,10 +28,9 @@ import { randomUUID } from "node:crypto";
 import type { Http2ServerRequest } from "node:http2";
 import type { IncomingMessage } from "node:http";
 import { AllExceptionsFilter } from "./all-exceptions.filter.js";
+import { REQUEST_ID_HEADER } from "./request-id.js";
+import { RequestIdInterceptor } from "./request-id.interceptor.js";
 import { validateEnv } from "./validate-env.js";
-
-/** Incoming request-id header honored by the logger and error bodies. */
-export const REQUEST_ID_HEADER = "x-request-id";
 
 /** Whatever `app.enableCors()` accepts (`true` allows any origin). */
 type CorsSetting = Parameters<INestApplication["enableCors"]>[0];
@@ -67,6 +66,13 @@ export interface LoggerOptions {
   redact?: string[] | undefined;
   /** Log destination (pino passthrough). Defaults to stdout. */
   stream?: DestinationStream | undefined;
+}
+
+export interface ValidationOptions {
+  /** Strip properties with no decorators. Defaults to true. */
+  whitelist?: boolean | undefined;
+  /** Reject (400) unknown properties instead of stripping. Defaults to true. */
+  forbidNonWhitelisted?: boolean | undefined;
 }
 
 export interface NestBootstrapOptions {
@@ -112,6 +118,13 @@ export interface NestBootstrapOptions {
    */
   cors?: CorsSetting | undefined;
   logger?: LoggerOptions | undefined;
+  /** Global ValidationPipe shape. Defaults to strict (strip + forbid). */
+  validation?: ValidationOptions | undefined;
+  /**
+   * Global error filter. Defaults to AllExceptionsFilter; apps with
+   * domain errors pass their own filter class here.
+   */
+  exceptionFilter?: Type<object> | undefined;
 }
 
 const DEFAULT_THROTTLE: ThrottleOptions = { ttlMs: 60_000, limit: 100 };
@@ -205,12 +218,13 @@ export async function createNestApp(
       {
         provide: APP_PIPE,
         useValue: new ValidationPipe({
-          whitelist: true,
-          forbidNonWhitelisted: true,
+          whitelist: options.validation?.whitelist ?? true,
+          forbidNonWhitelisted: options.validation?.forbidNonWhitelisted ?? true,
           transform: true,
         }),
       },
-      { provide: APP_FILTER, useClass: AllExceptionsFilter },
+      { provide: APP_FILTER, useClass: options.exceptionFilter ?? AllExceptionsFilter },
+      { provide: APP_INTERCEPTOR, useClass: RequestIdInterceptor },
       ...(throttle ? [{ provide: APP_GUARD, useClass: ThrottlerGuard }] : []),
     ],
   })

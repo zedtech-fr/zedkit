@@ -51,7 +51,7 @@
       "needs": [
         {
           "need": "Bootstrap a Nest app",
-          "import": "`@zedkit/nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `REQUEST_ID_HEADER`",
+          "import": "`@zedkit/nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`",
           "wraps": "`@nestjs/platform-fastify`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/throttler`, `nestjs-pino`, `class-validator`",
           "status": "stable",
           "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"

@@ -13,9 +13,12 @@ pieces and returns the app ready to `listen()`:
   generates a UUID otherwise; one id across logs and error bodies.
   `Authorization` and cookies are redacted from logs by default.
 - Strict global `ValidationPipe` (whitelist, forbid non-whitelisted,
-  transform; implicit conversion off — see below).
+  transform; implicit conversion off — see below). Relax per app with
+  `validation: { whitelist: false, forbidNonWhitelisted: false }`.
 - One global error shape: `{ code, message, requestId }` (+ status).
-  4xx carries the safe message; 5xx never leaks internals.
+  4xx carries the safe message; 5xx never leaks internals. Every response
+  echoes `x-request-id` (interceptor on handled routes, filter otherwise).
+  Apps with domain errors pass their own filter via `exceptionFilter`.
 - Optional global throttler (`@nestjs/throttler`, default 100/min;
   in-memory, single process — set `trustProxy` before running behind a
   proxy or every client shares one bucket).

@@ -1,6 +1,8 @@
 import "reflect-metadata";
+import { type ArgumentsHost, Catch, type ExceptionFilter } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import type { ThrottlerStorage } from "@nestjs/throttler";
+import type { FastifyReply } from "fastify";
 import { describe, expect, it, onTestFinished } from "vitest";
 import request from "supertest";
 import { createHash } from "node:crypto";
@@ -43,6 +45,16 @@ describe("createNestApp", () => {
     expect(typeof body.requestId).toBe("string");
   });
 
+  it("passes unknown DTO fields through when validation is relaxed", async () => {
+    const { url } = await boot({ validation: { whitelist: false, forbidNonWhitelisted: false } });
+    const created = await request(url).post("/items").send({ name: "widget", quantity: 3, extra: 1 });
+    expect(created.status).toBe(201);
+    expect(created.body).toMatchObject({ name: "widget", quantity: 3 });
+    // Relaxed shape, still validated: constraint violations keep failing.
+    const bad = await request(url).post("/items").send({ name: "", quantity: 1 });
+    expect(bad.status).toBe(400);
+  });
+
   it("exposes the exact raw bytes alongside the parsed body", async () => {
     const { url } = await boot();
     // Odd spacing and key order: the hash must cover these exact bytes.
@@ -69,6 +81,19 @@ describe("createNestApp", () => {
       message: "internal error",
       requestId: expect.any(String) as string,
     });
+  });
+
+  it("uses a custom global error filter when given", async () => {
+    @Catch()
+    class MarkerFilter implements ExceptionFilter {
+      catch(_exception: unknown, host: ArgumentsHost): void {
+        host.switchToHttp().getResponse<FastifyReply>().status(418).send({ custom: true });
+      }
+    }
+    const { url } = await boot({ exceptionFilter: MarkerFilter });
+    const res = await request(url).get("/items/boom");
+    expect(res.status).toBe(418);
+    expect(res.body).toEqual({ custom: true });
   });
 
   it("maps unknown routes to a structured 404", async () => {
@@ -99,6 +124,24 @@ describe("createNestApp", () => {
     const generated = (withoutId.body as ErrorBody).requestId;
     expect(typeof generated).toBe("string");
     expect(generated.length).toBeGreaterThan(0);
+  });
+
+  it("echoes the request id on success, handler errors and unknown routes", async () => {
+    const { url } = await boot();
+    const created = await request(url)
+      .post("/items")
+      .set("x-request-id", "req-ok")
+      .send({ name: "widget", quantity: 3 });
+    expect(created.status).toBe(201);
+    expect(created.headers["x-request-id"]).toBe("req-ok");
+    // The interceptor sets the header before the handler runs.
+    const boom = await request(url).get("/items/boom").set("x-request-id", "req-boom");
+    expect(boom.status).toBe(500);
+    expect(boom.headers["x-request-id"]).toBe("req-boom");
+    // Unknown routes never reach the interceptor: the filter echoes.
+    const missing = await request(url).get("/no-such-route").set("x-request-id", "req-404");
+    expect(missing.status).toBe(404);
+    expect(missing.headers["x-request-id"]).toBe("req-404");
   });
 
   it("serves generated OpenAPI for the app module", async () => {
