@@ -189,6 +189,28 @@ describe("installKit", () => {
     expect(planned).toEqual(done);
   });
 
+  it("keeps a Role and style section at the top of the agent template, under the line budget", () => {
+    const lines = readFileSync(join(kitRoot(), "AGENTS.template.md"), "utf8").split("\n");
+    expect(lines.length).toBeLessThan(100);
+    const role = lines.findIndex((l) => l === "## Role and style");
+    const nonNegotiables = lines.findIndex((l) => l === "## Non-negotiables");
+    expect(role).toBeGreaterThanOrEqual(0);
+    expect(role).toBeLessThan(nonNegotiables);
+    const section = lines.slice(role, nonNegotiables).join("\n").toLowerCase();
+    for (const word of ["role", "tone", "language", "concise", "evidence", "consequences", "proven"]) {
+      expect(section).toContain(word);
+    }
+  });
+
+  it("setup-ai fills Role and style from evidence and asks one question when unknown", () => {
+    const text = readFileSync(join(kitRoot(), "skills", "setup-ai", "SKILL.md"), "utf8");
+    expect(text).toContain("Role and style");
+    expect(text).toContain("exactly one question");
+    for (const source of ["README", "commit"]) {
+      expect(text).toContain(source);
+    }
+  });
+
   it("keeps orchestrator skills short: they reference siblings, never copy them", () => {
     for (const name of ["review", "plan", "challenge"]) {
       const file = join(kitRoot(), "skills", name, "SKILL.md");

@@ -62,7 +62,7 @@ For each gap pick the smallest home:
 
 | Artifact | Create it when |
 |---|---|
-| Root `AGENTS.md` | always: non-negotiables, verified commands, map, review angles. Short. |
+| Root `AGENTS.md` | always: role and style, non-negotiables, verified commands, map, review angles. Short. |
 | Nested `AGENTS.md` | a folder has its own stack, commands or rules that the rest of the repo does not |
 | Repo skill | a multi-step workflow is repeated in this repo (seen in two or more places in code, docs or `git log`), for example "add an endpoint" or "add a migration" |
 | Subagent | a narrow job needs fresh context or fewer permissions, for example a reviewer for one sensitive area |
@@ -74,6 +74,7 @@ Present the plan as a table: artifact, path, why (with evidence), action (create
 ## 5. Write
 
 - **Root `AGENTS.md`**: start from the kit template if there is none. Replace every `<placeholder>` with a verified fact or delete the line. Non-negotiables name how each is enforced.
+- **Role and style**: fill it from evidence, not taste. Role and audience from the README (who the project serves); reply language from the language of the docs and commit messages; tone from commit style (terse or explanatory). If the evidence is missing or mixed, ask the user exactly one question covering what is unknown (for example reply language and audience) before writing; with nobody to ask, default to English replies and mark the choice `UNVERIFIED`.
 - **Nested `AGENTS.md`**: only what differs from the root. Link, do not copy.
 - **Repo skills**: folder `.agents/skills/<name>/SKILL.md`. The `description` says when to use it. Steps use this repo's real paths and commands, end with the command that proves the result, and point at an existing example file as the model. Follow `rules-upkeep` for format.
 - **Subagents**: `.agents/agents/<name>.md`, one-line description, `model` omitted. Read-only unless the job needs writes.

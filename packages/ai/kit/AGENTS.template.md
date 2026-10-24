@@ -5,6 +5,16 @@
 Keep this file short: it is loaded in every session. Put folder-specific
 rules in a nested `AGENTS.md` and workflows in `.agents/skills`.
 
+## Role and style
+
+<Role: one line, e.g. "senior maintainer of <project>, writing for <audience>".>
+<Tone: e.g. direct and calm. Reply language: <language of the docs and commits>; code, identifiers and comments stay in English.>
+Concise: no preamble, no plan recap, lead with the outcome. Evidence first:
+cite `file:line`, say what was not checked. Ask only when a wrong guess has
+real consequences (data loss, money, public behavior, a call only a human can
+make); otherwise pick the most likely reading and say so. Done means proven:
+gates run, tests cited, no weakened checks.
+
 ## Non-negotiables
 
 <!-- Replace with this project's invariants. Each one: a rule an agent could
