@@ -44,3 +44,11 @@ licence file is kept next to the skills: see `skills/LICENSE-*-*`.
   that are not vendored here (`grill-with-docs`, `grill-me`, `grilling`,
   `prototype`), so it would be a broken router. Install from upstream if
   needed: https://github.com/mattpocock/skills
+- `grilling` (upstream `skills/productivity/grilling`) and `prototype`
+  (upstream `skills/engineering/prototype`): not vendored. Three vendored
+  skills invoke them via the Skill tool (`wayfinder`, `triage` and
+  `improve-codebase-architecture` call `grilling`; `wayfinder` also calls
+  `prototype`; other `prototype` mentions elsewhere are prose, not skill
+  calls). On machines without these skills installed personally those calls
+  fail — install them from https://github.com/mattpocock/skills if you use
+  those three skills.

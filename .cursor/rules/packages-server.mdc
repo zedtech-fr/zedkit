@@ -4,4 +4,4 @@ globs:
   - "packages/server/**"
 ---
 
-When working in packages/server, also read and follow packages/server/AGENTS.md (landing with #5) in addition to the root /AGENTS.md.
+When working in packages/server, also read and follow packages/server/AGENTS.md if present, in addition to the root /AGENTS.md.

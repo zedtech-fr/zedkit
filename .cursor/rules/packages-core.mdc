@@ -4,4 +4,4 @@ globs:
   - "packages/core/**"
 ---
 
-When working in packages/core, also read and follow packages/core/AGENTS.md (landing with #4) in addition to the root /AGENTS.md.
+When working in packages/core, also read and follow packages/core/AGENTS.md if present, in addition to the root /AGENTS.md.
