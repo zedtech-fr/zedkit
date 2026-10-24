@@ -25,7 +25,11 @@ pieces and returns the app ready to `listen()`:
 - Generated OpenAPI (`@nestjs/swagger`), served as raw Fastify routes:
   public by design, guards do not apply. Enabled by default except in
   production (`NODE_ENV=production`) — opt back in explicitly if you
-  serve docs in prod. Shutdown hooks.
+  serve docs in prod. `docs.aliases` serves the same JSON from extra
+  absolute paths. Shutdown hooks.
+- Custom body parsers per content type (`bodyParsers`), installed
+  before Nest's defaults so an `application/json` entry replaces the
+  default parser; rawBody capture included.
 
 ```ts
 import "reflect-metadata";
