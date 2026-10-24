@@ -17,7 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # changeset status diffs against main; a shallow clone breaks it.
+          # changeset status diffs against origin/main (see baseBranch in
+          # .changeset/config.json); a shallow clone, or no local main
+          # branch, breaks it.
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
