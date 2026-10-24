@@ -253,7 +253,13 @@ export async function createNestApp(
       builder.setDescription(docs.description);
     }
     // Tolerate "docs/" or "/docs": the JSON route is derived by suffix.
-    const docsPath = (docs.path ?? "docs").replace(/^\/+|\/+$/g, "") || "docs";
+    // Manual trim (no regex): the path is deployer-controlled input.
+    const rawDocsPath = docs.path ?? "docs";
+    let docsStart = 0;
+    let docsEnd = rawDocsPath.length;
+    while (docsStart < docsEnd && rawDocsPath[docsStart] === "/") docsStart += 1;
+    while (docsEnd > docsStart && rawDocsPath[docsEnd - 1] === "/") docsEnd -= 1;
+    const docsPath = rawDocsPath.slice(docsStart, docsEnd) || "docs";
     SwaggerModule.setup(
       docsPath,
       app,
