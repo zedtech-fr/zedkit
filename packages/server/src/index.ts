@@ -1,3 +1,4 @@
+export { pgErrorCode } from "./pg-error.js";
 export { MemoryRateLimiter } from "./rate-limit.js";
 export { redactValue } from "./redaction.js";
 export { computeBackoffMs } from "./backoff.js";

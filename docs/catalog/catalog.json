@@ -102,6 +102,13 @@
           "wraps": "`(none)`",
           "status": "stable",
           "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedkit/server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
+        },
+        {
+          "need": "Tell a Postgres conflict from a bug",
+          "import": "`@zedkit/server` — `pgErrorCode`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { pgErrorCode } from \"@zedkit/server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
         }
       ]
     }
