@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Agent-agnostic AI setup kit: AGENTS.md template, skills, subagents, installer and validator. Original work by the same author.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/ai"
+  },
   "type": "module",
   "sideEffects": false,
   "imports": {
