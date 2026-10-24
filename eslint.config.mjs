@@ -24,7 +24,7 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ["../../*", "../../../*"],
+              group: ["../..", "../../*", "../../../*"],
               message:
                 "Deep relative imports are banned. Use the `#*` subpath import for this package.",
             },

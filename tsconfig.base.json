@@ -1,1 +1,21 @@
-{"compilerOptions":{"declaration":true,"declarationMap":true,"esModuleInterop":true,"exactOptionalPropertyTypes":true,"forceConsistentCasingInFileNames":true,"lib":["ES2022"],"module":"NodeNext","moduleResolution":"NodeNext","noFallthroughCasesInSwitch":true,"noUncheckedIndexedAccess":true,"noUnusedLocals":true,"noUnusedParameters":true,"resolveJsonModule":true,"skipLibCheck":true,"sourceMap":true,"strict":true,"target":"ES2022"}}
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  }
+}

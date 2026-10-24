@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: ["**"]
+    branches: ["main"]
   pull_request:
 
 jobs:
@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # changeset status diffs against main; a shallow clone breaks it.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -29,6 +32,9 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       # Sequential phases: build output is read by later phases.
       - run: pnpm exec turbo run typecheck lint
+      # Smoke-test the shared ESLint config itself: with zero packages turbo
+      # runs no lint task, so a broken config would otherwise stay green.
+      - run: pnpm exec eslint .
       - run: pnpm exec turbo run build
       - run: pnpm exec turbo run test
       # Versioning dry-run only: publishing to npm is a later, explicit

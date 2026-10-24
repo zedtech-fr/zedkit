@@ -6,6 +6,7 @@ coverage/
 .env.*
 !.env.example
 *.log
+*.tgz
 .DS_Store
 
 # build output and caches

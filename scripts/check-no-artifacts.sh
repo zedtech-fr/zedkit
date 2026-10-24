@@ -17,7 +17,9 @@ if [ -n "$artifacts" ]; then
 fi
 
 # 2. Nothing tracked may match .gitignore (catches force-added ignores).
-ignored_but_tracked=$(git ls-files | git check-ignore --stdin || true)
+# --no-index is required: without it check-ignore stays silent on tracked
+# files, so this step could never fire.
+ignored_but_tracked=$(git ls-files | git check-ignore --stdin --no-index || true)
 if [ -n "$ignored_but_tracked" ]; then
   echo "tracked files that match .gitignore:"
   echo "$ignored_but_tracked"

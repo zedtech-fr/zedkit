@@ -7,8 +7,8 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 
 | Package | What | Status |
 |---|---|---|
-| [@zedkit/core](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | landing in #4 |
-| [@zedkit/server](packages/server/README.md) | rate limiting, secret redaction | landing in #5 |
+| `@zedkit/core` | `Result`, `tryCatch`, prefixed IDs | landing in #4 |
+| `@zedkit/server` | rate limiting, secret redaction | landing in #5 |
 
 A package exists only when real, used code backs it — no placeholders. See
 [docs/extraction-map.md](docs/extraction-map.md) for where each module came

@@ -1,1 +1,27 @@
-{"devDependencies":{"@changesets/cli":"catalog:","@eslint/js":"catalog:","eslint":"catalog:","turbo":"catalog:","typescript":"catalog:","typescript-eslint":"catalog:"},"engines":{"node":">=22"},"name":"zedkit","packageManager":"pnpm@9.15.9","private":true,"scripts":{"build":"turbo run build","changeset":"changeset","changeset:status":"changeset status --verbose","lint":"turbo run lint","test":"turbo run test","typecheck":"turbo run typecheck"},"type":"module","version":"0.0.0"}
+{
+  "name": "zedkit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Open-source building blocks for modern apps.",
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "changeset": "changeset",
+    "changeset:status": "changeset status --verbose"
+  },
+  "devDependencies": {
+    "@changesets/cli": "catalog:",
+    "@eslint/js": "catalog:",
+    "eslint": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

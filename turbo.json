@@ -1,1 +1,18 @@
-{"$schema":"https://turbo.build/schema.json","globalDependencies":["pnpm-lock.yaml","tsconfig.base.json"],"tasks":{"build":{"dependsOn":["^build"],"outputs":["dist/**"]},"lint":{},"test":{"dependsOn":["^build"],"cache":false},"typecheck":{"dependsOn":["^build"]}}}
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["pnpm-lock.yaml", "tsconfig.base.json", "eslint.config.mjs"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "lint": {},
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
