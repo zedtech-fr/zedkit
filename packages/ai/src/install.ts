@@ -118,8 +118,12 @@ function plan(kit: string, manifest: KitManifest, preset: string) {
   for (const name of manifest.agents) {
     if (!existsSync(join(kit, "agents", `${name}.md`))) throw new Error(`kit has no agent "${name}"`);
   }
+  const commands = manifest.commands ?? [];
+  for (const name of commands) {
+    if (!existsSync(join(kit, "commands", `${name}.md`))) throw new Error(`kit has no command "${name}"`);
+  }
   const licences = readdirSync(join(kit, "skills")).filter((f) => f.startsWith("LICENSE-"));
-  return { skills, licences, agents: manifest.agents };
+  return { skills, licences, agents: manifest.agents, commands };
 }
 
 function installContent(ctx: Ctx, content: ReturnType<typeof plan>): void {
@@ -137,6 +141,9 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): void {
   copyFile(ctx, join(ctx.kit, "THIRD_PARTY_NOTICES.md"), join(".agents", "THIRD_PARTY_NOTICES.md"));
   for (const name of content.agents) {
     copyFile(ctx, join(ctx.kit, "agents", `${name}.md`), join(".agents", "agents", `${name}.md`));
+  }
+  for (const name of content.commands) {
+    copyFile(ctx, join(ctx.kit, "commands", `${name}.md`), join(".agents", "commands", `${name}.md`));
   }
   copyFile(ctx, join(ctx.kit, "AGENTS.template.md"), "AGENTS.md");
 }
@@ -180,6 +187,7 @@ function wireTarget(ctx: Ctx, target: Target): void {
   const dir = target === "claude" ? ".claude" : ".cursor";
   link(ctx, join(dir, "skills"), "../.agents/skills");
   link(ctx, join(dir, "agents"), "../.agents/agents");
+  link(ctx, join(dir, "commands"), "../.agents/commands");
   if (target === "claude") {
     // Only when AGENTS.md is (or will be) a real file: never a dangling link.
     if (agentsMdReady(ctx)) link(ctx, "CLAUDE.md", "AGENTS.md");

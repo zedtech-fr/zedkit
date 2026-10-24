@@ -10,8 +10,8 @@ import { validateKit } from "./validate.js";
 const USAGE = `zedkit-ai <command>
 
   init [dir] [--preset core|full] [--target claude,cursor] [--dry-run]
-      Copy skills, subagents and an AGENTS.md template into dir (default .),
-      and link the tool folders. Never overwrites existing files.
+      Copy skills, subagents, commands and an AGENTS.md template into dir
+      (default .), and link the tool folders. Never overwrites existing files.
   validate [dir]
       Check skills and subagents (default dir: .agents). Exit 1 on problems.
   list
@@ -92,6 +92,7 @@ function runList(args: string[], sinks: Sinks): number {
     sinks.out(`preset ${name}: ${skills === "*" ? "every skill" : skills.join(", ")}`);
   }
   sinks.out(`agents: ${manifest.value.agents.join(", ")}`);
+  sinks.out(`commands: ${(manifest.value.commands ?? []).join(", ") || "(none)"}`);
   return 0;
 }
 

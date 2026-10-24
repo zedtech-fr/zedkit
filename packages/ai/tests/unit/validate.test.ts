@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { validateKit } from "#validate.js";
 import { kitDir } from "#kit.js";
-import { AGENT, put, SKILL, tempDir } from "./helpers.js";
+import { AGENT, COMMAND, put, SKILL, tempDir } from "./helpers.js";
 
 function messages(root: string): string[] {
   return validateKit(root).map((i) => `${i.path}: ${i.message}`);
@@ -29,6 +29,27 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", SKILL("other"));
     expect(messages(root)).toEqual([expect.stringContaining('name must equal "alpha"')]);
+  });
+
+  it("accepts a command that names an installed skill", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/run.md", COMMAND("alpha"));
+    expect(validateKit(root)).toEqual([]);
+  });
+
+  it("flags a command that names no installed skill", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/run.md", COMMAND("ghost"));
+    expect(messages(root)).toEqual([expect.stringContaining("names no installed skill")]);
+  });
+
+  it("flags a command without a description", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/run.md", "---\n---\n\nRun the `alpha` skill.\n");
+    expect(messages(root)).toEqual([expect.stringContaining("description is required")]);
   });
 
   it("flags a skill folder without SKILL.md", () => {
@@ -98,11 +119,16 @@ describe("validateKit", () => {
     put(
       root,
       "kit.json",
-      JSON.stringify({ presets: { core: ["alpha", "ghost"], full: "*" }, agents: ["phantom"] }),
+      JSON.stringify({
+        presets: { core: ["alpha", "ghost"], full: "*" },
+        agents: ["phantom"],
+        commands: ["specter"],
+      }),
     );
     const found = messages(root);
     expect(found).toContain('kit.json: preset "core" lists missing skill "ghost"');
     expect(found).toContain('kit.json: lists missing agent "phantom"');
+    expect(found).toContain('kit.json: lists missing command "specter"');
   });
 
   it("flags an unreadable manifest", () => {

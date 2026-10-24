@@ -1,6 +1,6 @@
 # Catalog — @zedkit/ai
 
-## Set up AI agent instructions, skills and subagents in a repo
+## Set up AI agent instructions, skills, subagents and commands in a repo
 
 - Import: `@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Target`
 - Wraps: `(none)`
@@ -26,7 +26,7 @@ Presets: `core` (most projects; includes the `review`/`plan`/`challenge`/
 
 ```ts
 import { validateKit } from "@zedkit/ai";
-const issues = validateKit(".agents"); // skills/<name>/SKILL.md, agents/<name>.md
+const issues = validateKit(".agents"); // skills/<name>/SKILL.md, agents/<name>.md, commands/<name>.md
 for (const issue of issues) console.error(`${issue.path}: ${issue.message}`);
 ```
 

@@ -34,5 +34,14 @@
     "verifier",
     "improver",
     "security-reviewer"
+  ],
+  "commands": [
+    "review",
+    "plan",
+    "challenge",
+    "implement",
+    "setup-ai",
+    "pr",
+    "handoff"
   ]
 }
