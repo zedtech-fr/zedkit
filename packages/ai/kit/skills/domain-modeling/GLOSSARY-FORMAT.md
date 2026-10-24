@@ -11,11 +11,11 @@
 
 **Order**:
 {A one or two sentence description of the term}
-_Avoid_: Purchase, transaction
+_Avoid_: Booking, transaction
 
-**Invoice**:
-A request for payment sent to a customer after delivery.
-_Avoid_: Bill, payment request
+**Receipt**:
+A confirmation of payment sent to a customer after delivery.
+_Avoid_: Bill, proof
 
 **Customer**:
 A person or organization that places orders.
@@ -41,13 +41,13 @@ _Avoid_: Client, buyer, account
 ## Contexts
 
 - [Ordering](./src/ordering/GLOSSARY.md): receives and tracks customer orders
-- [Billing](./src/billing/GLOSSARY.md): generates invoices and processes payments
+- [Billing](./src/billing/GLOSSARY.md): generates receipts and processes payments
 - [Fulfillment](./src/fulfillment/GLOSSARY.md): manages warehouse picking and shipping
 
 ## Relationships
 
 - **Ordering → Fulfillment**: Ordering emits `OrderPlaced` events; Fulfillment consumes them to start picking
-- **Fulfillment → Billing**: Fulfillment emits `ShipmentDispatched` events; Billing consumes them to generate invoices
+- **Fulfillment → Billing**: Fulfillment emits `ShipmentDispatched` events; Billing consumes them to generate receipts
 - **Ordering ↔ Billing**: Shared types for `CustomerId` and `Money`
 ```
 

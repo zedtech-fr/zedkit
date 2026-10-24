@@ -1,0 +1,38 @@
+{
+  "presets": {
+    "core": [
+      "ponytail",
+      "ponytail-review",
+      "ground-truth",
+      "parallel-work",
+      "definition-of-done",
+      "adversarial-tests",
+      "rules-upkeep",
+      "tdd",
+      "code-review",
+      "diagnosing-bugs",
+      "handoff",
+      "persona-review",
+      "codebase-design",
+      "pr",
+      "setup-ai",
+      "review",
+      "plan",
+      "challenge",
+      "implement",
+      "to-spec",
+      "to-tickets",
+      "wayfinder",
+      "domain-modeling"
+    ],
+    "full": "*"
+  },
+  "agents": [
+    "explorer",
+    "architect",
+    "plan-challenger",
+    "verifier",
+    "improver",
+    "security-reviewer"
+  ]
+}

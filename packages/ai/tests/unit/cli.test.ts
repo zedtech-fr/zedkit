@@ -1,0 +1,91 @@
+import { existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import { main } from "#cli.js";
+import { put, SKILL, tempDir } from "./helpers.js";
+
+function run(...argv: string[]): { code: number; text: string; errors: string } {
+  const out: string[] = [];
+  const errors: string[] = [];
+  const code = main(argv, { out: (line) => out.push(line), err: (line) => errors.push(line) });
+  return { code, text: out.join("\n"), errors: errors.join("\n") };
+}
+
+describe("cli", () => {
+  it("prints usage with no arguments (exit 0) and for unknown commands (exit 2)", () => {
+    expect(run().code).toBe(0);
+    const unknown = run("nope");
+    expect(unknown.code).toBe(2);
+    expect(unknown.errors).toContain("zedkit-ai <command>");
+    expect(unknown.text).toBe("");
+  });
+
+  it("lists presets and agents", () => {
+    const { code, text } = run("list");
+    expect(code).toBe(0);
+    expect(text).toContain("preset core:");
+    expect(text).toContain("agents: explorer");
+  });
+
+  it("init installs into the given directory", () => {
+    const dest = tempDir();
+    const { code, text } = run("init", dest, "--target", "claude");
+    expect(code).toBe(0);
+    expect(text).toContain("AGENTS.md");
+    expect(existsSync(join(dest, ".agents/skills/ground-truth/SKILL.md"))).toBe(true);
+    expect(existsSync(join(dest, "CLAUDE.md"))).toBe(true);
+    expect(existsSync(join(dest, ".cursor"))).toBe(false);
+  });
+
+  it("init wires cursor when asked", () => {
+    const dest = tempDir();
+    expect(run("init", dest, "--target", "cursor").code).toBe(0);
+    expect(existsSync(join(dest, ".cursor/rules/project.mdc"))).toBe(true);
+    expect(existsSync(join(dest, ".claude"))).toBe(false);
+  });
+
+  it("init --dry-run writes nothing", () => {
+    const dest = tempDir();
+    const { code, text } = run("init", dest, "--dry-run");
+    expect(code).toBe(0);
+    expect(text).toContain("dry run");
+    expect(existsSync(join(dest, "AGENTS.md"))).toBe(false);
+  });
+
+  it("init rejects an unknown or empty target, an unknown preset, option and extra argument, on stderr", () => {
+    const dest = tempDir();
+    for (const args of [
+      ["--target", "emacs"],
+      ["--target", ""],
+      ["--target", "claude,"],
+      ["--preset", "nope"],
+      ["--preset", "constructor"],
+      ["--wat"],
+    ]) {
+      const result = run("init", dest, ...args);
+      expect(result.code, args.join(" ")).toBe(2);
+      expect(result.errors, args.join(" ")).toContain("error:");
+      expect(result.text, args.join(" ")).toBe("");
+    }
+    expect(run("init", dest, "extra").errors).toContain('unexpected argument "extra"');
+    expect(readdirSync(dest)).toEqual([]);
+  });
+
+  it("validate exits 0 on a good dir and 1 on a bad one", () => {
+    const good = tempDir();
+    put(good, "skills/alpha/SKILL.md", SKILL("alpha"));
+    expect(run("validate", good)).toEqual({ code: 0, text: "ok", errors: "" });
+    const bad = tempDir();
+    put(bad, "skills/alpha/SKILL.md", SKILL("wrong"));
+    const result = run("validate", bad);
+    expect(result.code).toBe(1);
+    expect(result.text).toContain("1 problem(s)");
+  });
+
+  it("validate fails on a missing directory and on unexpected arguments", () => {
+    expect(run("validate", "/definitely/not/here").code).toBe(2);
+    expect(run("validate", "a", "b").code).toBe(2);
+    expect(run("validate", "--help").code).toBe(2);
+    expect(run("list", "--foo").code).toBe(2);
+  });
+});

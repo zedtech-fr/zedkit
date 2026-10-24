@@ -87,6 +87,9 @@ catalogs:
     vitest:
       specifier: 2.1.9
       version: 2.1.9
+    yaml:
+      specifier: 2.9.1
+      version: 2.9.1
 
 importers:
 
@@ -110,6 +113,25 @@ importers:
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.72.0(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/ai:
+    dependencies:
+      '@zedkit/core':
+        specifier: workspace:*
+        version: link:../core
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.5
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.9(@types/node@22.20.5)
 
   packages/core:
     dependencies:

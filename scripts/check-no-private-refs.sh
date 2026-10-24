@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Fails if private project names appear in tracked file contents, tracked
-# file paths, or untracked (but not ignored) file contents. This is a PUBLIC
-# repo: private project names must never appear in code, docs, comments,
-# paths, or config. The patterns are stored base64-encoded and decoded only
+# Fails if private project names or private customer/domain/vendor terms
+# appear in tracked file contents, tracked file paths, or untracked (but not
+# ignored) file contents. This is a PUBLIC repo: they must never appear in
+# code, docs, comments, paths, or config. The patterns are stored base64-encoded and decoded only
 # in memory, so this file itself never spells them out. To extend the list,
 # append the base64 of the new pattern (without trailing newline) to ENCODED.
 set -uo pipefail
@@ -14,6 +14,29 @@ ENCODED=(
   'emVkYnJpZGdl'
   'bGl0dGxlLj9iaWNlcHM='
   'cm9tYWlu'
+  # Customer, domain and vendor terms of private work. Same rule: never here.
+  'a29sZWN0bw=='
+  'b2QtP3BkcA=='
+  'ZS0/ZmFjdHU='
+  'ZS0/aW52b2lj'
+  'ZmFjdHVyLT94'
+  'c2VyZW5zaWE='
+  'ZG94YWxsaWE='
+  'ZGF0YWRvZw=='
+  'bG9jYWxzdGFjaw=='
+  'ZXZlbnRicmlkZ2U='
+  'KF58W15hLXpdKWF3cyhbXmEtel18JCk='
+  'KF58W15hLXpdKXNxcyhbXmEtel18JCk='
+  'YmFjay0/b2ZmaWNl'
+  'bm90aW9u'
+  'ZmFjdHVyYXRpb24='
+  'c3FsWyAtXWFzWyAtXWFbIC1dc2VydmljZQ=='
+  'ZW5yb2xs'
+  'KF58W15hLXpdKShwdXJjaGFzZXxzYWxlcykoW15hLXpdfCQp'
+  'amlyYQ=='
+  'YXRsYXNzaWFu'
+  'cG9zdG1hbg=='
+  'ZmlyZWhvc2U='
 )
 
 b64decode() {
@@ -31,12 +54,15 @@ patterns=$(
   for enc in "${ENCODED[@]}"; do
     printf '%s' "$enc" | b64decode
     echo
-  done | paste -sd'|'
+  done | paste -sd'|' -
 )
 
 fail=0
 
-hits=$(git grep -inE -e "$patterns" -- . || true)
+# pnpm-lock.yaml is machine-generated: integrity hashes are random base64 and
+# will eventually contain any short word pattern. Excluded from the content
+# scan (it cannot carry a prose reference).
+hits=$(git grep -inE -e "$patterns" -- . ':!pnpm-lock.yaml' || true)
 if [ -n "$hits" ]; then
   echo "private project references in tracked file contents:"
   echo "$hits"

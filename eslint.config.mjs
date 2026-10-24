@@ -45,9 +45,11 @@ export default tseslint.config(
     },
   },
   // Vendored third-party skills are verbatim upstream copies: never linted.
+  // The ai kit ships them (and their helper scripts) as data, not as source.
   {
     ignores: [
       "**/dist/**",
+      "**/kit/**",
       "**/node_modules/**",
       "**/coverage/**",
       ".agents/**",

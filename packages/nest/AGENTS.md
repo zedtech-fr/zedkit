@@ -25,5 +25,5 @@
    over rewriting it; keep the options surface minimal.
 8. Every new export needs a CATALOG.md entry; regenerate `catalog.json`
    (`pnpm catalog:build` from the root).
-9. Definition of done: `pnpm --filter @zedkit/nest typecheck lint build test`
+9. Definition of done: `pnpm --filter @zedkit/nest typecheck && pnpm --filter @zedkit/nest lint && pnpm --filter @zedkit/nest build && pnpm --filter @zedkit/nest test`
    green (each command separately), `pnpm catalog:check` green.

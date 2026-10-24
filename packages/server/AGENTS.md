@@ -15,5 +15,5 @@
    no network. Typecheck covers `src` and `tests`.
 7. Every new export needs a CATALOG.md entry; regenerate `catalog.json`
    (`pnpm catalog:build` from the root).
-8. Definition of done: `pnpm --filter @zedkit/server typecheck lint build test`
+8. Definition of done: `pnpm --filter @zedkit/server typecheck && pnpm --filter @zedkit/server lint && pnpm --filter @zedkit/server build && pnpm --filter @zedkit/server test`
    green (each command separately), `pnpm catalog:check` green.

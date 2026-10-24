@@ -1,0 +1,42 @@
+{
+  "name": "@zedkit/ai",
+  "version": "0.1.0",
+  "description": "Agent-agnostic AI setup kit: AGENTS.md template, skills, subagents, installer and validator. Original work by the same author.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "zedkit-ai": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "kit"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests"
+  },
+  "dependencies": {
+    "@zedkit/core": "workspace:*",
+    "yaml": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
