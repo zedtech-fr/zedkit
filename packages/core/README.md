@@ -3,6 +3,17 @@
 Foundational helpers with a stable public surface. Original work by the
 same author.
 
+```sh
+pnpm add @zedkit/core
+```
+
+```ts
+import { tryCatch } from "@zedkit/core";
+
+const parsed = tryCatch(() => JSON.parse(input));
+if (!parsed.ok) return fallback(parsed.error);
+```
+
 ## API
 
 - `Result<T, E = Error>` — `{ ok: true, value: T } | { ok: false, error: E }`
