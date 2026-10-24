@@ -27,7 +27,10 @@ binary directly: `pnpm --filter @zedkit/ai build`, then
 
 `init` options: `--preset core|full`, `--target claude,cursor`, `--dry-run`.
 It copies files (you own them afterwards) and never overwrites an existing
-one. Run `zedkit-ai list` to see presets and subagents.
+one. It also skips `.cursor/rules/project.mdc` (with a skip line naming the
+rule) when another rule in `.cursor/rules/` is already always on
+(`alwaysApply: true`), instead of adding a second one. Run `zedkit-ai list`
+to see presets and subagents.
 
 ## What you get
 
