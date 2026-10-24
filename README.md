@@ -7,12 +7,33 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 
 | Package | What | Status |
 |---|---|---|
-| `@zedkit/core` | `Result`, `tryCatch`, prefixed IDs | landing in #4 |
-| `@zedkit/server` | rate limiting, secret redaction | landing in #5 |
+| `@zedkit/core` | `Result`, `tryCatch`, prefixed IDs | planned |
+| `@zedkit/server` | rate limiting, secret redaction | planned |
 
 A package exists only when real, used code backs it — no placeholders.
 Each package README records its origin ("original work by the same
 author") and what it deliberately leaves out.
+
+## Looking for something?
+
+"I want X, what do you have to do it?" — search the
+[catalog index](docs/catalog/README.md) by need (machine-readable:
+[docs/catalog/catalog.json](docs/catalog/catalog.json)). Golden rule
+(advice): reach every third-party library through a thin wrapper that
+re-exports it, instead of importing it directly all over the code — see
+[docs/golden-rule.md](docs/golden-rule.md).
+
+Consumer projects: paste this into your agent instructions (canonical text:
+`.agents/skills/use-zedkit/SKILL.md` — keep in sync):
+
+<!-- use-zedkit-snippet: must match .agents/skills/use-zedkit/SKILL.md core rule -->
+
+```md
+Before writing any helper, check zedkit first, then npm, and wrap what
+you adopt: search the zedkit catalog by need and import from zedkit if it
+exists; otherwise adopt a mature npm package behind a thin wrapper;
+otherwise propose adding it to zedkit with its domain.
+```
 
 ## Tooling
 

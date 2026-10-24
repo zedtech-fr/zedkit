@@ -37,6 +37,13 @@ export default tseslint.config(
     files: ["packages/core/src/try-catch.ts"],
     rules: { "no-restricted-syntax": "off" },
   },
+  {
+    // Root scripts are plain Node tooling: no DOM, Node globals available.
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: { console: "readonly", process: "readonly" },
+    },
+  },
   // Vendored third-party skills are verbatim upstream copies: never linted.
   {
     ignores: [

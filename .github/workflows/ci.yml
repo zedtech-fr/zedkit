@@ -38,6 +38,7 @@ jobs:
       # Smoke-test the shared ESLint config itself: with zero packages turbo
       # runs no lint task, so a broken config would otherwise stay green.
       - run: pnpm exec eslint .
+      - run: pnpm run catalog:check
       - run: pnpm exec turbo run build
       - run: pnpm exec turbo run test
       # Versioning dry-run only: publishing to npm is a later, explicit
