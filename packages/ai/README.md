@@ -8,10 +8,16 @@ Original work by the same author, plus vendored MIT skills (see
 
 ## Use it
 
+Not published to npm yet. From a zedkit checkout, pack the tarballs;
+then in your own repo, install and run with `npx` (`npm` resolves the
+sibling tarballs below; `pnpm` does not):
+
 ```sh
-zedkit-ai init .               # copy the core kit into this repo
+for p in ai core; do (cd packages/$p && pnpm pack --pack-destination /tmp/zedkit-pack); done
+npm install --no-save /tmp/zedkit-pack/*.tgz   # in your own repo
+npx zedkit-ai init .               # copy the core kit into this repo
 # then ask your agent: "run the setup-ai skill"
-zedkit-ai validate             # check skills and subagents
+npx zedkit-ai validate             # check skills and subagents
 ```
 
 `init` installs generic instructions. The `setup-ai` skill makes them specific:
@@ -27,8 +33,8 @@ root (several child checkouts) it switches to workspace mode: it inventories
 each repo, maps cross-repo dependencies, and writes a root `AGENTS.md`
 without touching the children unasked.
 
-Not published to npm yet. From a zedkit checkout, build once and call the
-binary directly: `pnpm --filter @zedkit/ai build`, then
+Developing the kit itself? From a zedkit checkout, build once and call
+the binary directly: `pnpm --filter @zedkit/ai build`, then
 `node packages/ai/dist/bin.js init <dir>`.
 
 `init` options: `--preset core|full`, `--provider cursor,claude,codex,muse,all`
