@@ -50,13 +50,25 @@ pnpm install && pnpm build
 for p in ai core; do (cd packages/$p && pnpm pack --pack-destination /tmp/zedkit-pack); done
 ```
 
-Then in your own repo (npm resolves the sibling tarballs; pnpm does not):
+Then in your own repo:
 
 ```sh
 npm install --no-save /tmp/zedkit-pack/*.tgz
 npx zedkit-ai init . --provider cursor   # cursor, claude, codex, muse, all
 # then ask your agent: "run the setup-ai skill"
 npx zedkit-ai validate                   # must print: ok
+```
+
+With pnpm instead of npm, pin the unpacked core tarball first (pnpm
+resolves each tarball's dependencies independently, so the sibling
+tarball is invisible to it — this goes away once the packages publish):
+
+```sh
+mkdir -p /tmp/zedkit-core && tar -xzf /tmp/zedkit-pack/zedkit-core-*.tgz -C /tmp/zedkit-core
+# package.json: { "pnpm": { "overrides": { "@zedkit/core": "file:/tmp/zedkit-core/package" } } }
+pnpm add /tmp/zedkit-pack/zedkit-ai-0.1.0.tgz
+./node_modules/.bin/zedkit-ai init . --provider cursor
+./node_modules/.bin/zedkit-ai validate   # must print: ok
 ```
 
 ## Tooling
