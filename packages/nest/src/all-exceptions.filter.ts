@@ -7,6 +7,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { REQUEST_ID_HEADER } from "./request-id.js";
 
 /**
  * Global error shape for every Nest app from this bootstrap:
@@ -98,6 +99,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // the reply: sending again would raise inside the filter itself.
     if (reply.sent) return;
     const code = STATUS_CODES[status] ?? `http_${status}`;
+    reply.header(REQUEST_ID_HEADER, requestId);
     reply.status(status).send({ code, message, requestId } satisfies ErrorBody);
   }
 }
