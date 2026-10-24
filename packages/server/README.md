@@ -3,6 +3,16 @@
 Server-side helpers with a stable public surface. Original work by the
 same author. Zero runtime dependencies.
 
+```sh
+pnpm add @zedkit/server
+```
+
+```ts
+import { redactValue } from "@zedkit/server";
+
+logger.info({ event: "login", user: redactValue(user) });
+```
+
 ## API
 
 - `MemoryRateLimiter` — fixed-window, in-process rate limiting:
