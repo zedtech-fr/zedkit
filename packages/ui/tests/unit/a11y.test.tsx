@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
+import { stubDrawerJsdom } from "./drawer-fixture.js";
 import { RegionSelect, stubSelectJsdom } from "./select-fixture.js";
 
 beforeAll(() => {
   stubSelectJsdom();
+  stubDrawerJsdom();
 });
 
 import {
@@ -30,6 +32,11 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
   Field,
   FieldContent,
   FieldDescription,
@@ -44,6 +51,7 @@ import {
   LivePulse,
   OptionCards,
   PageHeader,
+  RouteModal,
   SecretField,
   Section,
   Separator,
@@ -164,6 +172,32 @@ describe("a11y", () => {
     await expectNoViolations(container);
   });
 
+  it("open right drawer", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer direction="right">
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+          <DrawerDescription>Tracking and timeline.</DrawerDescription>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    await expectNoViolations(document.body);
+  });
+
+  it("open route modal", async () => {
+    render(
+      <RouteModal title="Delivery" description="Tracking details." onClose={vi.fn()}>
+        <Text>Shared detail view.</Text>
+      </RouteModal>,
+    );
+    await expectNoViolations(document.body);
+  });
+
   it("open dialog", async () => {
     render(
       <Dialog defaultOpen>
@@ -227,7 +261,7 @@ describe("a11y", () => {
     await expectNoViolations(container);
   });
 
-  it("data table with rows, and its empty state", async () => {
+  it("data table with rows, empty, loading, and error states", async () => {
     const helper = createDataTableColumns<{ name: string }>();
     const columns = [helper.accessor("name", { header: "Name" })];
     const { container, unmount } = render(<DataTable columns={columns} data={[{ name: "Ada" }]} />);
@@ -235,6 +269,12 @@ describe("a11y", () => {
     unmount();
     const empty = render(<DataTable columns={columns} data={[]} />);
     await expectNoViolations(empty.container);
+    empty.unmount();
+    const loading = render(<DataTable columns={columns} data={[]} loading />);
+    await expectNoViolations(loading.container);
+    loading.unmount();
+    const error = render(<DataTable columns={columns} data={[]} error="Could not load rows." />);
+    await expectNoViolations(error.container);
   });
 
   it("app shell with header", async () => {
