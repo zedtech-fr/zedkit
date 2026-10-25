@@ -4,7 +4,10 @@
 //   1. every catalog need maps to exactly one generated page;
 //   2. every manifest key matches a catalog need heading exactly;
 //   3. every manifest component/props exists in @zedtech/zedkit-ui exports;
-//   4. every manifest demo exists in components/demos.tsx exports.
+//   4. every manifest demo exists in components/demos.tsx exports;
+//   5. the home gallery covers every UI need exactly once, with the
+//      manifest demo (or null);
+//   6. the gallery stats match the catalog counts.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -35,8 +38,9 @@ const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"
 const rich = manifest.rich ?? {};
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages } = generate(tmp);
+const { pages, gallery, stats, uiPackage } = generate(tmp);
 rmSync(tmp, { recursive: true, force: true });
+rmSync(join(tmpdir(), "gallery.ts"), { force: true });
 
 const needs = [];
 for (const [pkg, entry] of Object.entries(catalog.packages)) {
@@ -44,6 +48,31 @@ for (const [pkg, entry] of Object.entries(catalog.packages)) {
 }
 if (pages !== needs.length) {
   errors.push(`generator emitted ${pages} pages for ${needs.length} catalog needs.`);
+}
+
+if (!uiPackage) {
+  errors.push("gallery: no package with short name \"ui\" in the catalog.");
+} else {
+  const uiNeeds = catalog.packages[uiPackage].needs;
+  if (gallery.length !== uiNeeds.length) {
+    errors.push(`gallery holds ${gallery.length} cards for ${uiNeeds.length} UI needs.`);
+  }
+  const byTitle = new Map(gallery.map((card) => [card.title, card]));
+  for (const need of uiNeeds) {
+    const card = byTitle.get(need.need);
+    if (!card) {
+      errors.push(`gallery: missing card for "${need.need}".`);
+      continue;
+    }
+    const wantDemo = rich[need.need]?.demo ?? null;
+    if (card.demo !== wantDemo) {
+      errors.push(`gallery: "${need.need}" demo is ${JSON.stringify(card.demo)}, manifest says ${JSON.stringify(wantDemo)}.`);
+    }
+  }
+}
+const totalNeeds = Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0);
+if (stats.packages !== Object.keys(catalog.packages).length || stats.needs !== totalNeeds) {
+  errors.push(`gallery: stale stats ${JSON.stringify(stats)}.`);
 }
 
 const headings = new Set(needs.map((n) => n.need));
@@ -74,5 +103,5 @@ if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`docs: ok (${pages} pages cover ${needs.length} needs, ${Object.keys(rich).length} rich).`);
+  console.log(`docs: ok (${pages} pages cover ${needs.length} needs, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`);
 }
