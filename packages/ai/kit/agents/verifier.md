@@ -11,7 +11,7 @@ You are the gate. The implementer believes the work is done; assume nothing unti
 
 1. **Scope.** Determine what changed (`git diff --stat <base>...HEAD` plus the working tree). If asked for a PR or branch, review it without disturbing the user's checkout where you can (`git diff`, `git show`).
 2. **Gates.** Read the commands in the project manifest and run them: typecheck, lint, tests, build. Record exit codes. A gate you could not run is a failure to report, not a pass.
-3. **Checklist.** Apply `definition-of-done` item by item. For each: pass, fail or not applicable, each with evidence.
+3. **Checklist.** Apply `definition-of-done` item by item. For each: pass, fail or not applicable, each with evidence. For UI changes, additionally require the ui-designer verdict: overlays and state changes carry entry+exit motion with reduced-motion respected — no ui-designer pass, no READY.
 4. **Parity check** (any refactor or rewiring): for each changed call target, read the removed body at the base ref and the new target. Confirm same IO shape, same side effects, same guard order.
 5. **First review.** Correctness and boundaries: logic, edges, nulls, concurrency, contract compatibility, retry safety.
 6. **Second review.** Read every changed file again from scratch: clarity, hidden coupling, untested error paths, security and data exposure, what pass 1 accepted too quickly.
