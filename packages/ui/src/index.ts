@@ -22,6 +22,7 @@ export {
 } from "./dialog.js";
 export { Input } from "./input.js";
 export { Label } from "./label.js";
+export { OptionCards, type OptionCard, type OptionCardsProps } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
 export { Separator } from "./separator.js";
@@ -36,5 +37,6 @@ export {
   TableHeader,
   TableRow,
 } from "./table.js";
+export { WizardSteps, type WizardStepsProps } from "./wizard-steps.js";
 export { Toaster } from "./sonner.js";
 export { cn } from "./utils.js";
