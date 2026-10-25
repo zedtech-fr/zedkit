@@ -14,7 +14,7 @@ export function KitVersionLabel({
     <Stack direction="horizontal" gap={2} className="items-center">
       <LivePulse />
       <Link href={changelogHref} target="_blank" rel="noreferrer" aria-label={label}>
-        <Text variant="muted" className="text-sm font-mono">
+        <Text variant="muted" className="font-mono text-sm">
           v{version}
         </Text>
       </Link>
