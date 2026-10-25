@@ -39,6 +39,7 @@
   --sidebar-border: 240 5.9% 90%;
   --sidebar-accent: 240 4.8% 95.9%;
   --ring-width: 2px;
+  --ring-width-control: 1px;
   --ring-offset-width: 2px;
 }
 
@@ -143,6 +144,16 @@
     box-shadow:
       0 0 0 var(--ring-offset-width) hsl(var(--background)),
       0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring));
+  }
+}
+
+/* Controls (Button, Input, …): keep the prior 1px focus weight via tokens. */
+@utility focus-ring-control {
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 var(--ring-offset-width) hsl(var(--background)),
+      0 0 0 calc(var(--ring-offset-width) + var(--ring-width-control)) hsl(var(--ring));
   }
 }
 

@@ -26,9 +26,10 @@ axe suite and the preview smoke run.
 - No `style` attributes. No raw `px` font sizes; use the type scale
   (`text-xs` … `text-2xl`) and spacing scale (`p-4`, `gap-2`, …).
 - New token? Add it to the theme in both light and dark, then use it.
-- Focus ring width/offset: `--ring-width`, `--ring-offset-width` in
-  `styles.css`; use the `focus-ring` utility instead of raw `ring-*`
-  widths on kit primitives during the component refactor.
+- Focus ring width/offset: `--ring-width`, `--ring-width-control`,
+  `--ring-offset-width` in `styles.css`; use `focus-ring` (2px, Badge)
+  or `focus-ring-control` (1px, Button/inputs) instead of raw `ring-*`
+  widths during the component refactor.
 
 ## Dark / light
 
