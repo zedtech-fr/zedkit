@@ -257,9 +257,9 @@ import { Alert, AlertDescription, AlertTitle } from "@zedkit/ui";
 
 ## Pick one option from a dropdown
 
-- Import: `@zedkit/ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`
+- Import: `@zedkit/ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
 - Wraps: `@radix-ui/react-select`
-- Status: stable
+- Status: alpha
 
 ```ts
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@zedkit/ui";
