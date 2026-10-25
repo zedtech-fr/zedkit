@@ -1,5 +1,13 @@
 # @zedtech/zedkit-ai
 
+## 0.5.0
+
+### Minor Changes
+
+- 4024c51: Add the `docs-writer` agent (docs author for README/AGENTS.md/catalog entries; grounded examples, de-drift) and wire it in the lens registry and agents catalog.
+- ca6694c: Add the `researcher` read-only reuse-by-design scout (adopt/wrap/build with sources); the `research` skill now delegates to it and the lens row names it.
+- 16ef547: Add the `test-writer` agent (adversarial test author; test files only) and wire it in the lens registry and agents catalog.
+
 ## 0.4.0
 
 ### Minor Changes
