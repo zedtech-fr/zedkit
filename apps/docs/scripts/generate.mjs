@@ -4,7 +4,8 @@
 //   as an MDX page (badge, install tabs with the changesets version,
 //   catalog example, wraps line) plus per-folder meta.json nav files.
 // - Needs listed in docs-manifest.json also get a live preview (the
-//   REAL workspace component via components/demos.tsx) and a props
+//   REAL workspace component via components/component-preview.tsx, which
+//   resolves the demo through components/demos/registry.ts) and a props
 //   table resolved at build by fumadocs-typescript AutoTypeTable
 //   (via components/props-table.tsx, inherited props expanded).
 // - Also writes public/llms.txt (same source, always current).
@@ -49,12 +50,21 @@ function pageMdx(pkg, need, version, rich) {
     "",
     `import { Badge } from "@zedtech/zedkit-ui";`,
   ];
-  if (rich) head.push(`import { ${rich.demo} } from "../../../components/demos";`);
+  if (rich) head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
   if (rich && rich.propsFile && rich.propsName) {
     head.push(`import { PropsTable } from "../../../components/props-table";`);
   }
   head.push("", `<Badge>${need.status}</Badge>`, "");
-  if (rich) head.push("## Preview", "", `<${rich.demo} />`, "");
+  if (rich) {
+    const detail = need.import.replace(/`/g, "");
+    const hasProps = Boolean(rich.propsFile && rich.propsName);
+    head.push(
+      "## Preview",
+      "",
+      `<ComponentPreview demo="${rich.demo}" detail={${JSON.stringify(detail)}} hasProps={${JSON.stringify(hasProps)}} />`,
+      "",
+    );
+  }
   head.push(
     "## Install",
     "",
