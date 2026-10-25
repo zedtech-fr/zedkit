@@ -29,7 +29,7 @@ the version). Releases run on Changesets; nothing publishes by hand.
    stored as a repo secret.
 3. This setup merged; the Version PR computes the first cut
    (`@zedtech/zedkit-ui` 0.1.0 alone — the other inits are held in
-   `.changeset/hold/` for the second cut, minimal blast radius).
+   `.changeset-hold/` for the second cut, minimal blast radius).
 4. Merge the Version PR only after 1–2 are confirmed, then verify:
    `npm view @zedtech/zedkit-ui version` and an install from a scratch
    consumer (`pnpm add @zedtech/zedkit-ui`, typecheck + render once).
