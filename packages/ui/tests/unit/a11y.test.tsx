@@ -30,6 +30,14 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
   Heading,
   Input,
   Label,
@@ -42,6 +50,14 @@ import {
   Skeleton,
   Stack,
   Switch,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tabs,
   TabsContent,
   TabsList,
@@ -272,6 +288,52 @@ describe("a11y", () => {
           onChange={() => {}}
         />
       </>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("field set with labeled input, description, and error", async () => {
+    const { container } = render(
+      <FieldSet>
+        <FieldLegend>Profile</FieldLegend>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="field-name">Name</FieldLabel>
+            <FieldContent>
+              <Input id="field-name" aria-describedby="field-name-hint" />
+              <FieldDescription id="field-name-hint">Shown on invoices.</FieldDescription>
+              <FieldError errors={[{ message: "Too short." }]} />
+            </FieldContent>
+          </Field>
+        </FieldGroup>
+      </FieldSet>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("table with caption, header, body, and footer", async () => {
+    const { container } = render(
+      <Table>
+        <TableCaption>Monthly totals.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Month</TableHead>
+            <TableHead>Total</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>January</TableCell>
+            <TableCell>12</TableCell>
+          </TableRow>
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell>Total</TableCell>
+            <TableCell>12</TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>,
     );
     await expectNoViolations(container);
   });
