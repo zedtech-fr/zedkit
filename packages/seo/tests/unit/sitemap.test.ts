@@ -28,4 +28,18 @@ describe("buildSitemapEntries", () => {
       },
     ]);
   });
+
+  it("lists each page once without locale prefixes when localeInPath is false", () => {
+    expect(
+      buildSitemapEntries({
+        siteUrl: "https://zedkit.app",
+        locales: ["en"],
+        localeInPath: false,
+        pages: [{ path: "" }, { path: "/docs/ui/button" }],
+      }),
+    ).toEqual([
+      { url: "https://zedkit.app/" },
+      { url: "https://zedkit.app/docs/ui/button" },
+    ]);
+  });
 });

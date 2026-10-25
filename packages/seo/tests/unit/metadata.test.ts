@@ -51,4 +51,19 @@ describe("buildPageMetadata", () => {
     });
     expect(meta.robots).toMatchObject({ index: false, follow: true });
   });
+
+  it("omits locale segments when localeInPath is false", () => {
+    const single = { name: "Docs", url: "https://zedkit.app", defaultLocale: "en", locales: ["en"] };
+    const meta = buildPageMetadata({
+      site: single,
+      page: { title: "Button", description: "Button component." },
+      locale: "en",
+      pathname: "/docs/ui/button",
+      localeInPath: false,
+      ogImage: { url: "https://zedkit.app/og.png", width: 1200, height: 630 },
+    });
+    expect(meta.alternates?.canonical).toBe("/docs/ui/button");
+    expect(meta.openGraph?.url).toBe("https://zedkit.app/docs/ui/button");
+    expect(meta.alternates?.languages).toEqual({ "x-default": "/docs/ui/button" });
+  });
 });

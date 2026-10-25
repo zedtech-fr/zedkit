@@ -74,6 +74,8 @@ export interface BuildPageMetadataOptions {
   openGraphLocale?: string;
   /** Page-level robots overrides (e.g. `{ index: false }` for drafts). */
   robots?: { index?: boolean; follow?: boolean };
+  /** When false, canonical and social URLs use `pathname` as-is (no `/${locale}` prefix). Default true. */
+  localeInPath?: boolean;
 }
 
 function stripLocale(pathname: string, locales: string[]): string {
@@ -87,16 +89,27 @@ function stripLocale(pathname: string, locales: string[]): string {
 
 export function buildPageMetadata(options: BuildPageMetadataOptions): PageMetadata {
   const { site, page, locale } = options;
-  const barePath = stripLocale(options.pathname, site.locales);
-  const suffix = barePath === "/" ? "" : barePath;
+  const localeInPath = options.localeInPath ?? true;
+  const barePath = localeInPath ? stripLocale(options.pathname, site.locales) : options.pathname || "/";
+  const suffix = barePath === "/" ? "" : barePath.startsWith("/") ? barePath : `/${barePath}`;
+  const canonical = localeInPath ? `/${locale}${suffix}` : suffix === "" ? "/" : suffix;
   const languages: Record<string, string> = {};
-  for (const available of site.locales) {
-    languages[available] = `/${available}${suffix}`;
+  if (localeInPath) {
+    for (const available of site.locales) {
+      languages[available] = `/${available}${suffix}`;
+    }
+    languages["x-default"] = `/${site.defaultLocale}${suffix}`;
+  } else {
+    languages["x-default"] = canonical;
   }
-  languages["x-default"] = `/${site.defaultLocale}${suffix}`;
+  const baseUrl = site.url.replace(/\/$/, "");
+  const absoluteUrl = canonical === "/" ? `${baseUrl}/` : `${baseUrl}${canonical}`;
   const index = options.robots?.index ?? true;
   const follow = options.robots?.follow ?? true;
   const image = options.ogImage;
+  const ogLocale =
+    options.openGraphLocale ??
+    (locale.length > 0 ? `${locale}_${locale.toUpperCase()}` : "en_US");
   return {
     title: page.title,
     description: page.description,
@@ -106,13 +119,13 @@ export function buildPageMetadata(options: BuildPageMetadataOptions): PageMetada
     publisher: site.name,
     metadataBase: new URL(site.url),
     alternates: {
-      canonical: `/${locale}${suffix}`,
+      canonical,
       languages,
     },
     openGraph: {
       type: "website",
-      locale: options.openGraphLocale ?? `${locale}_${locale.toUpperCase()}`,
-      url: `${site.url.replace(/\/$/, "")}/${locale}${suffix}`,
+      locale: ogLocale,
+      url: absoluteUrl,
       siteName: site.name,
       title: page.title,
       description: page.description,
