@@ -32,7 +32,14 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards).
 - Detail: `DetailPanel` (key-value rows), `LivePulse` (live indicator).
-- Planned next: preview gallery, frontend guardrails.
+
+## Provenance
+
+Files marked `Derived from shadcn/ui (<item>)` are adapted from the
+official shadcn/ui registry; the matching catalog entries carry
+`- Derived from:`. Unmarked files are kit-authored. Derived files are
+the only tolerated third-party-shaped exception: each migrates to
+custom code only when customization needs it.
 
 ## Develop
 

@@ -1,3 +1,4 @@
+// Derived from shadcn/ui (label) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 "use client";
 
 import * as React from "react";

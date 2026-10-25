@@ -15,6 +15,8 @@
 //     start at alpha — see docs/catalog/README.md for the promotion
 //     criteria)
 //   - Replaced by: `other-symbol` (required when Status is deprecated)
+//   - Derived from: `shadcn/ui` (+ optional item, e.g. `shadcn/ui
+//     (dialog)`); omit for kit-authored entries (absence means kit)
 //   ```ts
 //   ...5-line example...
 //   ```
@@ -84,11 +86,18 @@ function parseCatalog(text, catalogPath, errors) {
       const match = body.match(new RegExp(`^- ${name}:\\s*(.+)$`, "m"));
       return match ? match[1].trim() : null;
     };
+    const derivedFrom = field("Derived from");
+    if (derivedFrom !== null && !derivedFrom.startsWith("shadcn/ui")) {
+      errors.push(
+        `${catalogPath}: need "${need}" has Derived from "${derivedFrom}" (want "shadcn/ui" + optional item; omit the line for kit-authored entries).`,
+      );
+    }
     const entry = {
       need,
       import: field("Import"),
       wraps: field("Wraps"),
       status: field("Status"),
+      derivedFrom,
       example: null,
     };
     const example = body.match(/```ts\n([\s\S]*?)```/);

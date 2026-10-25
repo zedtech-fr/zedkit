@@ -5,6 +5,7 @@
 - Import: `@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)
 - Wraps: `tailwindcss` (v4 CSS-first)
 - Status: beta
+- Derived from: shadcn/ui (theme)
 
 ```ts
 import "@zedtech/zedkit-ui/styles.css"; // tokens + theme, once per app
@@ -18,6 +19,7 @@ import "@zedtech/zedkit-ui/styles.css"; // tokens + theme, once per app
 - Import: `@zedtech/zedkit-ui` — `cn`
 - Wraps: `clsx`, `tailwind-merge`
 - Status: beta
+- Derived from: shadcn/ui (utils)
 
 ```ts
 import { cn } from "@zedtech/zedkit-ui";
@@ -30,6 +32,7 @@ cn("px-4", "px-2"); // "px-2" — last conflicting utility wins
 - Import: `@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`
 - Wraps: `@radix-ui/react-slot`, `class-variance-authority`
 - Status: beta
+- Derived from: shadcn/ui (button)
 
 ```ts
 import { Button } from "@zedtech/zedkit-ui";
@@ -43,6 +46,7 @@ import { Button } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`
 - Wraps: `class-variance-authority`
 - Status: beta
+- Derived from: shadcn/ui (badge)
 
 ```ts
 import { Badge } from "@zedtech/zedkit-ui";
@@ -55,6 +59,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Input`, `Label`
 - Wraps: `@radix-ui/react-label`
 - Status: beta
+- Derived from: shadcn/ui (input, label)
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
@@ -67,6 +72,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Separator`
 - Wraps: `@radix-ui/react-separator`
 - Status: beta
+- Derived from: shadcn/ui (separator)
 
 ```ts
 import { Separator } from "@zedtech/zedkit-ui";
@@ -79,6 +85,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Skeleton`
 - Wraps: `(none)`
 - Status: beta
+- Derived from: shadcn/ui (skeleton)
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
@@ -90,6 +97,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
 - Wraps: `@radix-ui/react-dialog`
 - Status: beta
+- Derived from: shadcn/ui (dialog)
 
 ```ts
 import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedtech/zedkit-ui";
@@ -116,6 +124,7 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Toaster`
 - Wraps: `sonner`
 - Status: beta
+- Derived from: shadcn/ui (sonner)
 
 ```ts
 import { Toaster } from "@zedtech/zedkit-ui";
@@ -192,6 +201,7 @@ import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`
 - Wraps: `react-hook-form`, `@hookform/resolvers`, `zod`
 - Status: beta
+- Derived from: shadcn/ui (form); kit (useValidatedForm, FormSubmit)
 
 ```ts
 import { Form, FormField, FormSubmit, Input, useValidatedForm } from "@zedtech/zedkit-ui";
@@ -206,6 +216,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 - Import: `@zedtech/zedkit-ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`
 - Wraps: none (presentational over `Label`, `Separator`)
 - Status: beta
+- Derived from: shadcn/ui (field)
 
 ```ts
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedtech/zedkit-ui";
@@ -219,6 +230,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 - Import: `@zedtech/zedkit-ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
 - Wraps: none (presentational, theme tokens only)
 - Status: beta
+- Derived from: shadcn/ui (card)
 
 ```ts
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedtech/zedkit-ui";
@@ -258,6 +270,7 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`
 - Wraps: `class-variance-authority`
 - Status: beta
+- Derived from: shadcn/ui (alert)
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
@@ -272,6 +285,7 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
 - Wraps: `@radix-ui/react-select`
 - Status: alpha
+- Derived from: shadcn/ui (select)
 
 ```ts
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@zedtech/zedkit-ui";
@@ -285,6 +299,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 - Import: `@zedtech/zedkit-ui` — `Textarea`
 - Wraps: none (styled native `textarea`)
 - Status: alpha
+- Derived from: shadcn/ui (textarea)
 
 ```ts
 import { Label, Textarea } from "@zedtech/zedkit-ui";
@@ -297,6 +312,7 @@ import { Label, Textarea } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Checkbox`, `Switch`
 - Wraps: `@radix-ui/react-checkbox`, `@radix-ui/react-switch`
 - Status: alpha
+- Derived from: shadcn/ui (checkbox, switch)
 
 ```ts
 import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
@@ -310,6 +326,7 @@ import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`
 - Wraps: `@radix-ui/react-tabs`
 - Status: alpha
+- Derived from: shadcn/ui (tabs)
 
 ```ts
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";

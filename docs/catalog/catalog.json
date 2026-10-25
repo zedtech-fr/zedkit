@@ -9,6 +9,7 @@
           "import": "`@zedtech/zedkit-ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { installKit } from \"@zedtech/zedkit-ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
         },
         {
@@ -16,6 +17,7 @@
           "import": "`@zedtech/zedkit-ai` — `validateKit`, `checkDrift`, `Issue`",
           "wraps": "`yaml`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { checkDrift, validateKit } from \"@zedtech/zedkit-ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
         }
       ]
@@ -28,6 +30,7 @@
           "import": "`@zedtech/zedkit-core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { isOk, ok, unwrapOr } from \"@zedtech/zedkit-core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;"
         },
         {
@@ -35,6 +38,7 @@
           "import": "`@zedtech/zedkit-core` — `tryCatch`, `tryCatchAsync`, `normalizeThrown`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { tryCatch } from \"@zedtech/zedkit-core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);"
         },
         {
@@ -42,6 +46,7 @@
           "import": "`@zedtech/zedkit-core` — `newPrefixedId`, `isPrefixedId`",
           "wraps": "`ulid`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { isPrefixedId, newPrefixedId } from \"@zedtech/zedkit-core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
         }
       ]
@@ -54,6 +59,7 @@
           "import": "`@zedtech/zedkit-nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`",
           "wraps": "`@nestjs/platform-fastify`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/throttler`, `nestjs-pino`, `class-validator`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
         },
         {
@@ -61,6 +67,7 @@
           "import": "`@zedtech/zedkit-nest` — `LoggerOptions`",
           "wraps": "`nestjs-pino`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
         },
         {
@@ -68,6 +75,7 @@
           "import": "`@zedtech/zedkit-nest` — `AllExceptionsFilter`, `ErrorBody`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { AllExceptionsFilter } from \"@zedtech/zedkit-nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());"
         }
       ]
@@ -80,6 +88,7 @@
           "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
           "wraps": "`payload` (peer, types only)",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
         },
         {
@@ -87,6 +96,7 @@
           "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
         }
       ]
@@ -99,6 +109,7 @@
           "import": "`@zedtech/zedkit-seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { buildRobots } from \"@zedtech/zedkit-seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}"
         },
         {
@@ -106,6 +117,7 @@
           "import": "`@zedtech/zedkit-seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { buildSitemapEntries } from \"@zedtech/zedkit-seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });"
         },
         {
@@ -113,6 +125,7 @@
           "import": "`@zedtech/zedkit-seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { buildVideoSitemap } from \"@zedtech/zedkit-seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });"
         },
         {
@@ -120,6 +133,7 @@
           "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`",
           "wraps": "`schema-dts`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
         },
         {
@@ -127,6 +141,7 @@
           "import": "`@zedtech/zedkit-seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { buildPageMetadata } from \"@zedtech/zedkit-seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });"
         },
         {
@@ -134,6 +149,7 @@
           "import": "`@zedtech/zedkit-seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { llmsTextResponse } from \"@zedtech/zedkit-seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}"
         },
         {
@@ -141,6 +157,7 @@
           "import": "`@zedtech/zedkit-seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { normalizeSlug, resolveDescription } from \"@zedtech/zedkit-seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });"
         }
       ]
@@ -153,6 +170,7 @@
           "import": "`@zedtech/zedkit-server` — `MemoryRateLimiter`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { MemoryRateLimiter } from \"@zedtech/zedkit-server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
         },
         {
@@ -160,6 +178,7 @@
           "import": "`@zedtech/zedkit-server` — `redactValue`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { redactValue } from \"@zedtech/zedkit-server\";\nlogger.info(redactValue({ user, token, headers }));"
         },
         {
@@ -167,6 +186,7 @@
           "import": "`@zedtech/zedkit-server` — `computeBackoffMs`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { computeBackoffMs } from \"@zedtech/zedkit-server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
         },
         {
@@ -174,6 +194,7 @@
           "import": "`@zedtech/zedkit-server` — `webhookSignatureHeader`, `verifyWebhookSignatureHeader`, `VerifyWebhookOptions`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedtech/zedkit-server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
         },
         {
@@ -181,6 +202,7 @@
           "import": "`@zedtech/zedkit-server` — `pgErrorCode`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { pgErrorCode } from \"@zedtech/zedkit-server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
         }
       ]
@@ -193,6 +215,7 @@
           "import": "`@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)",
           "wraps": "`tailwindcss` (v4 CSS-first)",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (theme)",
           "example": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
         },
         {
@@ -200,6 +223,7 @@
           "import": "`@zedtech/zedkit-ui` — `cn`",
           "wraps": "`clsx`, `tailwind-merge`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (utils)",
           "example": "import { cn } from \"@zedtech/zedkit-ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
         },
         {
@@ -207,6 +231,7 @@
           "import": "`@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`",
           "wraps": "`@radix-ui/react-slot`, `class-variance-authority`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (button)",
           "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>"
         },
         {
@@ -214,6 +239,7 @@
           "import": "`@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (badge)",
           "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>"
         },
         {
@@ -221,6 +247,7 @@
           "import": "`@zedtech/zedkit-ui` — `Input`, `Label`",
           "wraps": "`@radix-ui/react-label`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (input, label)",
           "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
         },
         {
@@ -228,6 +255,7 @@
           "import": "`@zedtech/zedkit-ui` — `Separator`",
           "wraps": "`@radix-ui/react-separator`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (separator)",
           "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
         },
         {
@@ -235,6 +263,7 @@
           "import": "`@zedtech/zedkit-ui` — `Skeleton`",
           "wraps": "`(none)`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (skeleton)",
           "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
         },
         {
@@ -242,6 +271,7 @@
           "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (dialog)",
           "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
         },
         {
@@ -249,6 +279,7 @@
           "import": "`@zedtech/zedkit-ui` — `ConfirmDialog`, `ConfirmDialogProps`",
           "wraps": "`@radix-ui/react-dialog` (via Dialog)",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
         },
         {
@@ -256,6 +287,7 @@
           "import": "`@zedtech/zedkit-ui` — `Toaster`",
           "wraps": "`sonner`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (sonner)",
           "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
         },
         {
@@ -263,6 +295,7 @@
           "import": "`@zedtech/zedkit-ui` — `SecretField`, `SecretFieldProps`",
           "wraps": "`lucide-react`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
         },
         {
@@ -270,6 +303,7 @@
           "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
         },
         {
@@ -277,6 +311,7 @@
           "import": "`@zedtech/zedkit-ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
         },
         {
@@ -284,6 +319,7 @@
           "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
           "wraps": "none (native inputs + theme tokens)",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
         },
         {
@@ -291,6 +327,7 @@
           "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
         },
         {
@@ -298,6 +335,7 @@
           "import": "`@zedtech/zedkit-ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
           "wraps": "`react-hook-form`, `@hookform/resolvers`, `zod`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (form); kit (useValidatedForm, FormSubmit)",
           "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedtech/zedkit-ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>"
         },
         {
@@ -305,6 +343,7 @@
           "import": "`@zedtech/zedkit-ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
           "wraps": "none (presentational over `Label`, `Separator`)",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (field)",
           "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
         },
         {
@@ -312,6 +351,7 @@
           "import": "`@zedtech/zedkit-ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`",
           "wraps": "none (presentational, theme tokens only)",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (card)",
           "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
         },
         {
@@ -319,6 +359,7 @@
           "import": "`@zedtech/zedkit-ui` — `Stack`, `stackVariants`, `StackProps`, `Section`, `SectionProps`",
           "wraps": "none (flex/gap utilities over `Heading`, `Text`)",
           "status": "alpha",
+          "derivedFrom": null,
           "example": "import { Section, Stack } from \"@zedtech/zedkit-ui\";\n<Section title=\"Team\" description=\"Who can access.\">\n<Stack direction=\"horizontal\" gap={2}>...</Stack>"
         },
         {
@@ -326,6 +367,7 @@
           "import": "`@zedtech/zedkit-ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`",
           "wraps": "`class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)",
           "status": "beta",
+          "derivedFrom": null,
           "example": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
         },
         {
@@ -333,6 +375,7 @@
           "import": "`@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
+          "derivedFrom": "shadcn/ui (alert)",
           "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
         },
         {
@@ -340,6 +383,7 @@
           "import": "`@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
           "wraps": "`@radix-ui/react-select`",
           "status": "alpha",
+          "derivedFrom": "shadcn/ui (select)",
           "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>"
         },
         {
@@ -347,6 +391,7 @@
           "import": "`@zedtech/zedkit-ui` — `Textarea`",
           "wraps": "none (styled native `textarea`)",
           "status": "alpha",
+          "derivedFrom": "shadcn/ui (textarea)",
           "example": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
         },
         {
@@ -354,6 +399,7 @@
           "import": "`@zedtech/zedkit-ui` — `Checkbox`, `Switch`",
           "wraps": "`@radix-ui/react-checkbox`, `@radix-ui/react-switch`",
           "status": "alpha",
+          "derivedFrom": "shadcn/ui (checkbox, switch)",
           "example": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />"
         },
         {
@@ -361,6 +407,7 @@
           "import": "`@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`",
           "wraps": "`@radix-ui/react-tabs`",
           "status": "alpha",
+          "derivedFrom": "shadcn/ui (tabs)",
           "example": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>"
         }
       ]
