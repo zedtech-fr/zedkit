@@ -13,9 +13,11 @@ proposals (message key + FR/EN text); the caller applies them.
 1. **Collect strings.** List every user-visible string in the change: UI
    labels, errors, empty states, CTAs, tooltips, emails. Read each in
    context (`file:line`), not from the diff alone.
-2. **Keys, not hard-coded text.** Every string must live behind a message
-   key. A hard-coded user-visible string is a finding: propose the key
-   (feature area + purpose, e.g. `checkout.empty.title`) and the text.
+2. **Keys, not hard-coded text.** In products with i18n, every string must
+   live behind a message key. A hard-coded user-visible string is a finding:
+   propose the key (feature area + purpose, e.g. `checkout.empty.title`)
+   and the text. Dev tools without i18n infra keep plain strings — the tone
+   and next-step rules still apply.
 3. **Tone.** Plain words, no jargon, no exclamation, no blame ("you
    failed" -> what happened + the next step). Errors say what happened,
    why it matters, and the one next step. Consistent voice with the

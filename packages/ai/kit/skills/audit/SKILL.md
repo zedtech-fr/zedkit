@@ -14,7 +14,7 @@ around it: issues, small fixes, and a rule per miss.
 2. **Audit.** Run `ponytail-audit` and keep its ranked report. Every finding
    needs its concrete case — no case, no issue.
 3. **Issues.** One issue per surviving finding: title, the four parts
-   (what / problem / fix / if-skipped), owning lane, and the miss-to-rule
+   (what / problem / fix / if-skipped), owner, and the miss-to-rule
    line (which lint/test/AGENTS.md rule would have caught it).
 4. **Fix.** Per issue, smallest first: brief `implement` (or the `improver`
    agent when the fix is review-shaped), then `verifier`, then one small PR.
