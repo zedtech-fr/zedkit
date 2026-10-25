@@ -1,3 +1,6 @@
+import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
+
+import { JsonLd } from "@/components/json-ld";
 import {
   catalogStats,
   featuredPackage,
@@ -7,6 +10,7 @@ import {
   uiGalleryStats,
 } from "@/content/gallery";
 import { homeScenarios } from "@/content/home-scenarios";
+import { homePage, pageUrl } from "@/lib/site";
 import { HomeView } from "@/ui/home/home-view";
 
 const themeHref =
@@ -14,8 +18,15 @@ const themeHref =
   "/docs/ui/theme-an-admin-app-dark-light-included";
 
 export default function Home() {
+  const jsonLd = buildWebPageJsonLd({
+    title: homePage.title,
+    description: homePage.description,
+    url: pageUrl("/"),
+  });
   return (
-    <HomeView
+    <>
+      <JsonLd data={jsonLd} />
+      <HomeView
       gallery={gallery}
       stats={catalogStats}
       featuredPackage={featuredPackage}
@@ -25,5 +36,6 @@ export default function Home() {
       scenarios={homeScenarios}
       themeHref={themeHref}
     />
+    </>
   );
 }

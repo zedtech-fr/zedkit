@@ -43,6 +43,9 @@ function assertMeta(htmlPath, label, canonicalHref, { requireJsonLd = true } = {
       fail(`${label}: missing meta property ${prop}`);
     }
   }
+  if (!html.includes('name="twitter:card"')) {
+    fail(`${label}: missing twitter:card meta`);
+  }
   if (requireJsonLd && !html.includes("application/ld+json")) {
     fail(`${label}: missing JSON-LD script`);
   }
@@ -105,7 +108,18 @@ if (llmsPath) {
 
 const homePath = requireFile("index.html");
 if (homePath) {
-  assertMeta(homePath, "index.html", `${base}/`, { requireJsonLd: false });
+  assertMeta(homePath, "index.html", `${base}/`);
+}
+
+const notFoundPath = requireFile("404.html");
+if (notFoundPath) {
+  const html = readFileSync(notFoundPath, "utf8");
+  if (!html.includes('content="noindex')) {
+    fail("404.html: expected robots noindex metadata");
+  }
+  if (html.includes("application/ld+json")) {
+    fail("404.html: must not ship indexable JSON-LD");
+  }
 }
 
 const docsIndex = requireFile("docs.html");
