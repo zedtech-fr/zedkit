@@ -14,5 +14,15 @@
     "plugins": [{ "name": "next" }],
     "paths": { "#*": ["./app/*"], "@/*": ["./*"] }
   },
-  "include": ["app", "components", "ui", "content/gallery.ts", "source.config.ts", "mdx-components.tsx", "next.config.mjs", "postcss.config.mjs"]
+  "include": [
+    "app",
+    "components",
+    "lib",
+    "ui",
+    "content/gallery.ts",
+    "source.config.ts",
+    "mdx-components.tsx",
+    "next.config.mjs",
+    "postcss.config.mjs"
+  ]
 }

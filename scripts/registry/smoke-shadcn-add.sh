@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Persona / CI evidence: install Badge from built registry JSON into a fresh
+# Next app and compile. Requires network (create-next-app, npm deps).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+OUT="${ROOT}/apps/docs/public/r"
+WORK="${TMPDIR:-/tmp}/zedkit-registry-smoke-$$"
+SHADCN="${SHADCN_VERSION:-4.22.1}"
+
+cleanup() { rm -rf "$WORK"; }
+trap cleanup EXIT
+
+if [[ ! -f "${OUT}/badge.json" ]]; then
+  echo "smoke-shadcn-add: missing ${OUT}/badge.json (run pnpm registry:build)" >&2
+  exit 1
+fi
+
+pnpm dlx "create-next-app@${CREATE_NEXT_APP_VERSION:-16.4.3}" "$WORK" \
+  --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-pnpm --yes
+
+cd "$WORK"
+pnpm dlx "shadcn@${SHADCN}" init -d
+pnpm dlx "shadcn@${SHADCN}" add "${OUT}/badge.json" -y
+pnpm exec next build
+
+echo "smoke-shadcn-add: ok (badge installed, next build)"

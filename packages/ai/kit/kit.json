@@ -39,7 +39,9 @@
     "copywriter",
     "seo-auditor",
     "a11y-auditor",
-    "dependency-auditor"
+    "dependency-auditor",
+    "docs-writer",
+    "researcher"
   ],
   "commands": [
     "review",
