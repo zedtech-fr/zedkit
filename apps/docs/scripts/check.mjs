@@ -70,12 +70,36 @@ function mdxFiles(dir) {
   return out;
 }
 
+const legacyDescription =
+  /^@zedtech\/[\w-]+ — (alpha|beta|stable|deprecated|planned)$/;
+const descriptionsSeen = new Map();
+
+function readFrontmatterDescription(text) {
+  const match = text.match(/^description: (.+)$/m);
+  if (!match) return null;
+  return JSON.parse(match[1]);
+}
+
 // Every need page carries install tabs (memorized package-manager
 // choice) and a titled TSX example — never bare pill blocks.
 for (const file of mdxFiles(tmp)) {
   const rel = file.slice(tmp.length + 1);
   if (!rel.includes("/")) continue;
   const text = readFileSync(file, "utf8");
+  const description = readFrontmatterDescription(text);
+  if (description === null) {
+    errors.push(`generator: ${rel} lacks description frontmatter.`);
+  } else {
+    if (legacyDescription.test(description)) {
+      errors.push(`generator: ${rel} uses legacy package — status description.`);
+    }
+    const prior = descriptionsSeen.get(description);
+    if (prior) {
+      errors.push(`generator: duplicate description on ${rel} and ${prior}.`);
+    } else {
+      descriptionsSeen.set(description, rel);
+    }
+  }
   if (text.includes("<ComponentPage")) continue;
   if (!text.includes('<Tabs groupId="package-manager"')) {
     errors.push(`generator: ${file.slice(tmp.length + 1)} lacks install tabs.`);
@@ -205,6 +229,16 @@ if (existsSync(snippetsDir)) {
 if (guidePages < 2) errors.push(`guides: expected at least getting-started.mdx and index.mdx (got ${guidePages}).`);
 for (const slug of GUIDE_NAV_SLUGS) {
   if (!existsSync(join(tmp, `${slug}.mdx`))) errors.push(`guides: generated /docs/${slug} missing.`);
+}
+
+const llmsPath = join(APP, "public", "llms.txt");
+if (existsSync(llmsPath)) {
+  const llmsStatusTail = /\) — (alpha|beta|stable|deprecated|planned)$/;
+  for (const line of readFileSync(llmsPath, "utf8").split("\n")) {
+    if (line.startsWith("- [") && llmsStatusTail.test(line)) {
+      errors.push(`llms.txt: legacy status-only entry: ${line.slice(0, 80)}…`);
+    }
+  }
 }
 
 rmSync(tmp, { recursive: true, force: true });
