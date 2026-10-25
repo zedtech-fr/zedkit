@@ -21,6 +21,11 @@ already has — search it first.
    split one per file behind a registry.
 3. **States.** Every view needs empty, loading and error states; every form
    a disabled and an invalid state. Missing or dead-end states are findings.
+   Loading and feedback: zero naked spinners, zero generic 'loading' — every
+   wait is named and localized (what loads, what updates, save feedback like
+   'saved 3s ago'), skeletons match the real content shape, shell instant,
+   background updates badge the affected card, no blank screens, no layout
+   shift, retry keeps state.
 4. **Responsive and themes.** Check the phone width (no sideways scroll, tap
    targets, readable sizes) and both themes (contrast, no hard-coded color
    outside tokens). One broken theme or width is a finding.
