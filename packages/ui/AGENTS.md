@@ -21,6 +21,13 @@ Rules:
   in both `:root` and `.dark`.
 - React 19, no `forwardRef` in NEW code (ref-as-prop); copied
   shadcn code keeps its shape until shadcn itself migrates.
-- No `any`, no `ts-ignore`, no eslint-disable: fix the type.
+- No `any`, no `ts-ignore`; no eslint-disable except with a cited
+  upstream reason in the comment (one exists: TanStack's own
+  `ColumnDef<TData, any>` for mixed-value columns).
+- UI PRs: the PR body carries the four lenses plus a UX pass as a
+  lazy, distracted, doubtful end user (can they finish the flow
+  half-asleep?), and attaches a gallery screenshot showing the
+  change (`pnpm --filter @zedkit/ui smoke` writes them to
+  test-results/, never committed).
 - Public repo: generic wording only, no private project names
   anywhere (CI denylist enforces it).
