@@ -170,31 +170,39 @@ export function generate(outDir) {
   // Gallery data: one card per UI need (live demo first, then the rest),
   // catalog stats, and the featured install package — single source.
   const uiPackage = Object.keys(catalog.packages).find((pkg) => shortName(pkg) === "ui") ?? null;
+  if (!uiPackage) throw new Error('gallery: no package with short name "ui" in the catalog.');
   const live = [];
   const rest = [];
-  if (uiPackage) {
-    for (const need of catalog.packages[uiPackage].needs) {
-      const spec = rich[need.need];
-      const placed = slugsByNeed.get(`${uiPackage} ${need.need}`);
-      if (!placed) continue;
-      const card = {
-        href: `/docs/${placed.folder}/${placed.slug}`,
-        title: need.need,
-        status: need.status,
-        detail: need.import.replace(/`/g, ""),
-        demo: spec ? spec.demo : null,
-      };
-      (spec ? live : rest).push(card);
-    }
+  for (const need of catalog.packages[uiPackage].needs) {
+    const spec = rich[need.need];
+    const placed = slugsByNeed.get(`${uiPackage} ${need.need}`);
+    if (!placed) continue;
+    const card = {
+      href: `/docs/${placed.folder}/${placed.slug}`,
+      title: cardTitle(need, spec),
+      need: need.need,
+      status: need.status,
+      detail: need.import.replace(/`/g, ""),
+      demo: spec ? spec.demo : null,
+    };
+    (spec ? live : rest).push(card);
   }
   const gallery = [...live, ...rest];
   const stats = {
     packages: Object.keys(catalog.packages).length,
     needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
   };
-  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n`;
-  writeFileSync(join(outDir, "..", "gallery.ts"), galleryModule);
-  return { pages, folders, gallery, stats, uiPackage };
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n`;
+  return { pages, folders, gallery, stats, uiPackage, galleryModule };
+}
+
+// Gallery titles are short component names: the curated manifest
+// component when rich, else the first symbol in the import line,
+// else the need phrase (non-component needs like theming).
+function cardTitle(need, spec) {
+  if (spec?.component) return spec.component;
+  const match = /`([A-Za-z_$][A-Za-z0-9_$]*)`/.exec(need.import ?? "");
+  return match ? match[1] : need.need;
 }
 
 const invoked = process.argv[1] ? resolve(process.argv[1]) : null;
@@ -204,7 +212,8 @@ if (invoked === fileURLToPath(import.meta.url)) {
     console.error("error: docs/catalog/catalog.json missing (run pnpm catalog:build at the root).");
     process.exitCode = 1;
   } else {
-    const { pages, folders } = generate(outDir);
+    const { pages, folders, galleryModule } = generate(outDir);
+    writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }
 }

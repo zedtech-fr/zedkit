@@ -6,8 +6,8 @@
 //   3. every manifest component/props exists in @zedtech/zedkit-ui exports;
 //   4. every manifest demo exists in components/demos/registry.ts and its
 //      demo file exports the demo;
-//   5. pages stay thin: app/** imports no demo file directly (registry
-//      only) and uses no namespace imports;
+//   5. pages and views stay thin: app/** and ui/** import no demo file
+//      directly (registry only) and use no namespace imports;
 //   6. demos and frame use kit layout modules only (no raw <div>/<span>);
 //   7. every page carries install tabs + a titled TSX example;
 //   8. the home gallery covers every UI need exactly once, with the
@@ -67,7 +67,6 @@ for (const file of mdxFiles(tmp)) {
   }
 }
 rmSync(tmp, { recursive: true, force: true });
-rmSync(join(tmpdir(), "gallery.ts"), { force: true });
 
 const needs = [];
 for (const [pkg, entry] of Object.entries(catalog.packages)) {
@@ -77,24 +76,21 @@ if (pages !== needs.length) {
   errors.push(`generator emitted ${pages} pages for ${needs.length} catalog needs.`);
 }
 
-if (!uiPackage) {
-  errors.push("gallery: no package with short name \"ui\" in the catalog.");
-} else {
-  const uiNeeds = catalog.packages[uiPackage].needs;
-  if (gallery.length !== uiNeeds.length) {
-    errors.push(`gallery holds ${gallery.length} cards for ${uiNeeds.length} UI needs.`);
+// generate() throws when no "ui" package exists, so uiPackage is set here.
+const uiNeeds = catalog.packages[uiPackage].needs;
+if (gallery.length !== uiNeeds.length) {
+  errors.push(`gallery holds ${gallery.length} cards for ${uiNeeds.length} UI needs.`);
+}
+const byNeed = new Map(gallery.map((card) => [card.need, card]));
+for (const need of uiNeeds) {
+  const card = byNeed.get(need.need);
+  if (!card) {
+    errors.push(`gallery: missing card for "${need.need}".`);
+    continue;
   }
-  const byTitle = new Map(gallery.map((card) => [card.title, card]));
-  for (const need of uiNeeds) {
-    const card = byTitle.get(need.need);
-    if (!card) {
-      errors.push(`gallery: missing card for "${need.need}".`);
-      continue;
-    }
-    const wantDemo = rich[need.need]?.demo ?? null;
-    if (card.demo !== wantDemo) {
-      errors.push(`gallery: "${need.need}" demo is ${JSON.stringify(card.demo)}, manifest says ${JSON.stringify(wantDemo)}.`);
-    }
+  const wantDemo = rich[need.need]?.demo ?? null;
+  if (card.demo !== wantDemo) {
+    errors.push(`gallery: "${need.need}" demo is ${JSON.stringify(card.demo)}, manifest says ${JSON.stringify(wantDemo)}.`);
   }
 }
 const totalNeeds = Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0);
@@ -150,14 +146,17 @@ function tsxFiles(dir) {
   return out;
 }
 
-for (const file of tsxFiles(join(APP, "app"))) {
-  const rel = file.slice(APP.length + 1);
-  for (const line of readFileSync(file, "utf8").split("\n")) {
-    if (/from\s+["'].*components\/demos\//.test(line) && !line.includes("components/demos/registry")) {
-      errors.push(`${rel}: import demos through components/demos/registry, never directly.`);
-    }
-    if (/^import\s+\*\s+as\s+/.test(line)) {
-      errors.push(`${rel}: namespace imports are banned in pages; use named imports.`);
+for (const dir of ["app", "ui"]) {
+  if (!existsSync(join(APP, dir))) continue;
+  for (const file of tsxFiles(join(APP, dir))) {
+    const rel = file.slice(APP.length + 1);
+    for (const line of readFileSync(file, "utf8").split("\n")) {
+      if (/from\s+["'].*components\/demos\//.test(line) && !line.includes("components/demos/registry")) {
+        errors.push(`${rel}: import demos through components/demos/registry, never directly.`);
+      }
+      if (/^import\s+\*\s+as\s+/.test(line)) {
+        errors.push(`${rel}: namespace imports are banned in pages; use named imports.`);
+      }
     }
   }
 }
