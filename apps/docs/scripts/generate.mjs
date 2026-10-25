@@ -1,4 +1,4 @@
-// Docs content generator (spike): catalog.json -> Fumadocs MDX pages.
+// Docs content generator: catalog.json -> Fumadocs MDX pages.
 //
 // - `node scripts/generate.mjs [outDir]` regenerates every catalog need
 //   as an MDX page (badge, At-a-glance guidance block from the catalog

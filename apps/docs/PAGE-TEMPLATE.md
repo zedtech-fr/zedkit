@@ -3,7 +3,12 @@
 Every catalog need becomes one docs URL: `/docs/<folder>/<slug>`. The page is
 assembled at build time from generated blocks plus optional hand-written prose.
 
-## Section order
+**Two layouts.** Most needs use the section order below (`pageMdx` in
+`scripts/generate.mjs`). Needs with a `registry` brick in `docs-manifest.json`
+render through `ComponentPage` instead — different section order; see
+[COMPONENT-PAGE.md](./COMPONENT-PAGE.md).
+
+## Section order (non-registry catalog pages)
 
 | Section | Source | Required |
 | --- | --- | --- |
@@ -27,7 +32,7 @@ Path: `apps/docs/prose/<folder>/<slug>.mdx`
 - No YAML front matter.
 - Start with `## Your section title` (at least one `##` section).
 - Use real snippets from the repo; facts must match the implementation.
-- Prose is merged after **Example** and before **Props**.
+- Prose is merged after **Example** and before **Props** (non-registry pages only).
 
 Orphan prose (no matching catalog page) or prose that renames a generated section fails `pnpm docs:check`.
 
