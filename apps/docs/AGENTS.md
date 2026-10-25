@@ -1,0 +1,57 @@
+# AGENTS.md — apps/docs
+
+Public documentation site (Next.js). Renders the catalog: generated
+pages per need, live kit previews, props tables, maturity badges.
+Neutral, professional tone throughout (a CI check bans
+self-promotional marketing terms — see scripts/check-tone.sh).
+
+## Purpose and role
+
+Reading surface of the kit: a developer reads a need, sees the live
+component, copies the example. Reads `docs/catalog/` + the workspace
+packages; owns no component logic. Out of scope: kit components
+themselves (live in `packages/ui`), catalog content (lives in each
+package `CATALOG.md`).
+
+## Mental model
+
+Manifest-driven: `docs-manifest.json` maps catalog needs to demos;
+the generator embeds demos by key; the docs check fails on drift
+(missing demo, renamed need). Demos render the REAL workspace
+components (same import a consumer writes), inside one shared frame.
+
+## Demo rules (blocking — the `ui` lens fails the review otherwise)
+
+1. One demo = one file in `components/demos/<name>.tsx` (or
+   colocated with its doc). Never a grab-bag module.
+2. Every demo renders inside the shared frame (title, description,
+   light/dark preview, shown source, props link) and registers in
+   the demo registry (key -> demo). Doc pages import the registry,
+   never dozens of components directly.
+3. Doc pages stay thin: load content + doc layout only.
+4. Zero raw structural HTML, zero ad-hoc styles (`div flex gap…`):
+   `Stack`/`Section`/`Heading`/`Text` from the kit, tokens only.
+   The same bar as `packages/ui` applies here.
+5. The bulk-import ban (lint rule or test) must fail on the grab-bag
+   it replaces and pass after — keep that proof green.
+
+## Work on it
+
+- `pnpm --filter @zedtech/zedkit-docs dev` (or root `pnpm dev`, :3100).
+- Gates: `typecheck`, `lint`, `build` on the filter; docs check runs
+  in CI (`docs: ok (N pages cover N needs)`).
+- Done = gates green + manifest/check in sync + screenshots for
+  visual changes + demo rules respected (lint proves it).
+
+## Boundaries
+
+- Always: demo rules above, manifest keys matching catalog needs.
+- Ask first: new docs deps, new preview harness, deployment changes.
+- Never: component logic here; unexported types promised in props
+  tables; weakening the docs check or the bulk-import ban to fit.
+
+## Related
+
+- Root [AGENTS.md](../../AGENTS.md), kit [CATALOG.md](../../packages/ui/CATALOG.md).
+- Lens registry: `packages/ai/kit/skills/review/lenses.md`
+  (Frontend rules section — same text, reviewer side).
