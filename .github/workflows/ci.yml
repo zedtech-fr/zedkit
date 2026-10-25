@@ -112,5 +112,8 @@ jobs:
           curl -sf http://127.0.0.1:3100/ | grep -q "Create app"
           curl -sf -o /dev/null http://127.0.0.1:3100/docs
           curl -sf -o /dev/null http://127.0.0.1:3100/api/search
+          curl -sf -o /dev/null http://127.0.0.1:3100/robots.txt
+          curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
+          curl -sf -o /dev/null http://127.0.0.1:3100/llms.txt
           pnpm --filter @zedtech/zedkit-docs run smoke
           kill "$(cat /tmp/docs.pid)"
