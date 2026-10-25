@@ -15,6 +15,9 @@ jobs:
       - run: bash scripts/check-breaking-changeset.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: bash scripts/check-pr-lenses.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   checks:
     runs-on: ubuntu-latest
