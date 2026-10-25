@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
   Checkbox,
+  Checkmark,
   ConfirmDialog,
   DataTable,
   DetailPanel,
@@ -26,8 +27,10 @@ import {
   LivePulse,
   Section,
   Stack,
+  StatusDot,
   OptionCards,
   PageHeader,
+  ProgressBar,
   SecretField,
   Select,
   SelectContent,
@@ -118,6 +121,18 @@ export function Gallery() {
             <Badge variant="secondary">Secondary</Badge>
             <Badge variant="outline">Outline</Badge>
             <Badge variant="destructive">Destructive</Badge>
+          </div>
+          <div className="flex items-center gap-3" aria-label="Status dots">
+            <StatusDot tone="active" />
+            <StatusDot tone="idle" />
+            <StatusDot tone="success" />
+            <StatusDot tone="warning" />
+            <StatusDot tone="danger" />
+            <Checkmark label="Saved" />
+          </div>
+          <div className="max-w-sm space-y-2">
+            <ProgressBar value={65} label="Uploading report" />
+            <ProgressBar value={100} label="Sync complete" />
           </div>
           <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-name">Name</Label>

@@ -1,3 +1,4 @@
+import { StatusDot } from "./status-dot.js";
 import { cn } from "./utils.js";
 
 export interface LivePulseProps {
@@ -13,14 +14,7 @@ export function LivePulse({ active = true, label = "Live", className }: LivePuls
       aria-label={active ? label : "Idle"}
       className={cn("inline-flex items-center gap-1.5 text-xs text-muted-foreground", className)}
     >
-      <span className="relative flex size-2">
-        {active ? (
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
-        ) : null}
-        <span
-          className={cn("relative inline-flex size-2 rounded-full", active ? "bg-success" : "bg-muted-foreground/40")}
-        />
-      </span>
+      <StatusDot tone={active ? "success" : "idle"} pulse={active} />
       {active ? label : "Idle"}
     </span>
   );

@@ -116,3 +116,17 @@
       ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
 }
+
+/*
+ * Kit-authored motion (not shadcn): one draw-on keyframe for the
+ * Checkmark state icon. The path carries the animation only under
+ * `motion-safe:`, so reduced motion shows the static full check.
+ */
+@keyframes zk-check-draw {
+  from {
+    stroke-dashoffset: 8;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
