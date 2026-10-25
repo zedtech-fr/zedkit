@@ -23,8 +23,9 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   confirm no binaries, caches, build output, or files over 200KB are
   staged. CI enforces this via `scripts/check-no-artifacts.sh`; if you
   extend `.gitignore`, extend the script to match.
-- **Do not publish to npm.** Changesets are prepared and dry-run in CI
-  only; publishing is a later decision by the owner.
+- **Publishing is live.** Changesets version the packages; merging a
+  Version PR publishes public packages to npm via the release workflow.
+  Never publish from a laptop (`npm publish` by hand).
 
 ## Layout
 
