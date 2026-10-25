@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { siteHeaderLinks } from "@/lib/site-header-links";
 import { KitVersionLabel } from "@/ui/kit-version-label";
+import { SitePageShell } from "@/ui/site-page-shell";
 
 /** Shared marketing shell: nav, search, theme toggle, GitHub link. */
 export function SiteLayout({
@@ -21,11 +23,11 @@ export function SiteLayout({
         children: <KitVersionLabel version={version} changelogHref={changelogHref} />,
       }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
-      links={[{ text: "Documentation", url: "/docs" }]}
+      links={siteHeaderLinks(changelogHref)}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
     >
-      {children}
+      <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
     </HomeLayout>
   );
 }
