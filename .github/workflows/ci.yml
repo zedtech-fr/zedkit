@@ -42,6 +42,18 @@ jobs:
       - run: pnpm exec turbo run build
       - run: bash scripts/check-pack.sh
       - run: pnpm exec turbo run test
+      # Gallery smoke: real chromium over the built ui gallery (both
+      # themes, zero console errors), screenshots kept as artifacts.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @zedkit/ui smoke
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ui-gallery
+          path: packages/ui/test-results/*.png
       # Versioning dry-run only: publishing to npm is a later, explicit
       # decision. This just proves the Changesets metadata is sane.
       - run: pnpm run changeset:status

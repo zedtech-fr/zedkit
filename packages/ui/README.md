@@ -44,4 +44,6 @@ Component tests render with Testing Library + jsdom.
 `pnpm --filter @zedkit/ui preview` builds and serves a static gallery
 of every component in every state at http://127.0.0.1:4123/ (`/dark`
 for the dark theme). Static server render for visual review only —
-behavior stays covered by unit tests.
+behavior stays covered by unit tests. `pnpm --filter @zedkit/ui
+smoke` runs the Playwright smoke over both themes (sections render,
+zero console errors) and writes screenshots to test-results/.
