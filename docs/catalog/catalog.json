@@ -31,6 +31,12 @@
           "whenNotToUse": "When you only need one provider's config — write that provider's file by hand instead.",
           "derivedFrom": null,
           "example": "import { installKit } from \"@zedtech/zedkit-ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { installKit } from \"@zedtech/zedkit-ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
+            }
+          ],
           "seeAlso": [
             "Check that skills, subagents, commands and provider copies are valid"
           ]
@@ -47,6 +53,12 @@
           "whenNotToUse": "For one-off local edits — run the install command again instead of validating by hand.",
           "derivedFrom": null,
           "example": "import { checkDrift, validateKit } from \"@zedtech/zedkit-ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { checkDrift, validateKit } from \"@zedtech/zedkit-ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
+            }
+          ],
           "seeAlso": [
             "Set up AI agent instructions, skills, subagents and commands in a repo"
           ]
@@ -81,6 +93,12 @@
           "whenNotToUse": "For truly exceptional programmer bugs — throw (or assert) instead of returning `err`.",
           "derivedFrom": null,
           "example": "import { isOk, ok, unwrapOr } from \"@zedtech/zedkit-core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { isOk, ok, unwrapOr } from \"@zedtech/zedkit-core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;"
+            }
+          ],
           "seeAlso": [
             "Handle errors without try/catch"
           ]
@@ -97,6 +115,12 @@
           "whenNotToUse": "Inside code that already returns Results — compose with `mapResult` instead.",
           "derivedFrom": null,
           "example": "import { tryCatch } from \"@zedtech/zedkit-core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { tryCatch } from \"@zedtech/zedkit-core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);"
+            }
+          ],
           "seeAlso": [
             "Model success or failure without throwing"
           ]
@@ -112,7 +136,13 @@
           "whenToUse": "For public-facing or log-friendly IDs where the prefix disambiguates the kind.",
           "whenNotToUse": "For database primary keys — use the database's native id/uuid default instead.",
           "derivedFrom": null,
-          "example": "import { isPrefixedId, newPrefixedId } from \"@zedtech/zedkit-core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
+          "example": "import { isPrefixedId, newPrefixedId } from \"@zedtech/zedkit-core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { isPrefixedId, newPrefixedId } from \"@zedtech/zedkit-core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
+            }
+          ]
         }
       ]
     },
@@ -146,6 +176,12 @@
           "whenNotToUse": "For an existing app with its own bootstrap — adopt single pieces (logger, filter) instead.",
           "derivedFrom": null,
           "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
+            }
+          ],
           "seeAlso": [
             "Ship request logs without leaking credentials",
             "Return uniform error bodies"
@@ -163,6 +199,12 @@
           "whenNotToUse": "For full-fidelity debug of auth flows — reproduce locally with redaction off instead.",
           "derivedFrom": null,
           "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
+            }
+          ],
           "seeAlso": [
             "Bootstrap a Nest app",
             "Redact secrets before logging"
@@ -180,6 +222,12 @@
           "whenNotToUse": "For domain validation errors with field detail — return those from the handler instead.",
           "derivedFrom": null,
           "example": "import { AllExceptionsFilter } from \"@zedtech/zedkit-nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { AllExceptionsFilter } from \"@zedtech/zedkit-nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());"
+            }
+          ],
           "seeAlso": [
             "Bootstrap a Nest app"
           ]
@@ -215,6 +263,12 @@
           "whenNotToUse": "For a single-locale site — use plain text fields plus `zedkit-seo` builders instead.",
           "derivedFrom": null,
           "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
+            }
+          ],
           "seeAlso": [
             "Validate editor-entered title/description lengths",
             "Build localized page metadata"
@@ -232,6 +286,12 @@
           "whenNotToUse": "For hard truncation at render time — use `resolveDescription` from `@zedtech/zedkit-seo` instead.",
           "derivedFrom": null,
           "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
+            }
+          ],
           "seeAlso": [
             "Add a localized SEO tab to a Payload collection",
             "Derive descriptions, slugs, and localized fields"
@@ -269,6 +329,12 @@
           "whenNotToUse": "For access control — robots.txt is advisory; gate private content with auth instead.",
           "derivedFrom": null,
           "example": "import { buildRobots } from \"@zedtech/zedkit-seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { buildRobots } from \"@zedtech/zedkit-seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}"
+            }
+          ],
           "seeAlso": [
             "List localized pages in a sitemap"
           ]
@@ -285,6 +351,12 @@
           "whenNotToUse": "For pages behind auth — keep them out of the sitemap entirely.",
           "derivedFrom": null,
           "example": "import { buildSitemapEntries } from \"@zedtech/zedkit-seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { buildSitemapEntries } from \"@zedtech/zedkit-seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });"
+            }
+          ],
           "seeAlso": [
             "Serve robots.txt content",
             "Serve a Google video sitemap"
@@ -302,6 +374,12 @@
           "whenNotToUse": "For plain pages — use the regular sitemap instead.",
           "derivedFrom": null,
           "example": "import { buildVideoSitemap } from \"@zedtech/zedkit-seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { buildVideoSitemap } from \"@zedtech/zedkit-seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });"
+            }
+          ],
           "seeAlso": [
             "List localized pages in a sitemap"
           ]
@@ -318,6 +396,12 @@
           "whenNotToUse": "For data with no matching schema.org type — skip structured data instead of forcing it.",
           "derivedFrom": null,
           "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
+            }
+          ],
           "seeAlso": [
             "Build localized page metadata"
           ]
@@ -334,6 +418,12 @@
           "whenNotToUse": "For CMS-managed per-field validation — validate at edit time instead.",
           "derivedFrom": null,
           "example": "import { buildPageMetadata } from \"@zedtech/zedkit-seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { buildPageMetadata } from \"@zedtech/zedkit-seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });"
+            }
+          ],
           "seeAlso": [
             "Emit typed JSON-LD structured data",
             "Derive descriptions, slugs, and localized fields"
@@ -351,6 +441,12 @@
           "whenNotToUse": "For private content — keep it out of llms.txt like out of the sitemap.",
           "derivedFrom": null,
           "example": "import { llmsTextResponse } from \"@zedtech/zedkit-seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { llmsTextResponse } from \"@zedtech/zedkit-seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}"
+            }
+          ],
           "seeAlso": [
             "Serve robots.txt content"
           ]
@@ -367,6 +463,12 @@
           "whenNotToUse": "For validating editor input — validate at edit time instead of fixing at render.",
           "derivedFrom": null,
           "example": "import { normalizeSlug, resolveDescription } from \"@zedtech/zedkit-seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { normalizeSlug, resolveDescription } from \"@zedtech/zedkit-seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });"
+            }
+          ],
           "seeAlso": [
             "Build localized page metadata",
             "Validate editor-entered title/description lengths"
@@ -403,7 +505,13 @@
           "whenToUse": "For single-instance services and per-IP/per-user throttling.",
           "whenNotToUse": "Across multiple instances — use a shared-store (Redis) limiter instead.",
           "derivedFrom": null,
-          "example": "import { MemoryRateLimiter } from \"@zedtech/zedkit-server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
+          "example": "import { MemoryRateLimiter } from \"@zedtech/zedkit-server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { MemoryRateLimiter } from \"@zedtech/zedkit-server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
+            }
+          ]
         },
         {
           "need": "Redact secrets before logging",
@@ -417,6 +525,12 @@
           "whenNotToUse": "When you need the real values — debug locally, never in shared logs.",
           "derivedFrom": null,
           "example": "import { redactValue } from \"@zedtech/zedkit-server\";\nlogger.info(redactValue({ user, token, headers }));",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { redactValue } from \"@zedtech/zedkit-server\";\nlogger.info(redactValue({ user, token, headers }));"
+            }
+          ],
           "seeAlso": [
             "Ship request logs without leaking credentials"
           ]
@@ -432,7 +546,13 @@
           "whenToUse": "Around retries of transient failures (network, 429, 503).",
           "whenNotToUse": "For permanent errors (4xx validation) — fail fast instead of retrying.",
           "derivedFrom": null,
-          "example": "import { computeBackoffMs } from \"@zedtech/zedkit-server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
+          "example": "import { computeBackoffMs } from \"@zedtech/zedkit-server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { computeBackoffMs } from \"@zedtech/zedkit-server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
+            }
+          ]
         },
         {
           "need": "Sign and verify webhook deliveries",
@@ -445,7 +565,13 @@
           "whenToUse": "For every webhook endpoint exposed to a third party.",
           "whenNotToUse": "For internal service-to-service calls — use mTLS or network policy instead.",
           "derivedFrom": null,
-          "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedtech/zedkit-server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
+          "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedtech/zedkit-server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { verifyWebhookSignatureHeader as verify } from \"@zedtech/zedkit-server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
+            }
+          ]
         },
         {
           "need": "Tell a Postgres conflict from a bug",
@@ -459,6 +585,12 @@
           "whenNotToUse": "For query building or migrations — use your ORM or migration tool instead.",
           "derivedFrom": null,
           "example": "import { pgErrorCode } from \"@zedtech/zedkit-server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { pgErrorCode } from \"@zedtech/zedkit-server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
+            }
+          ],
           "seeAlso": [
             "Return uniform error bodies"
           ]
@@ -496,6 +628,12 @@
           "whenNotToUse": "For apps with their own design system — use your tokens instead of fighting these.",
           "derivedFrom": "shadcn/ui (theme)",
           "example": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme.",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
+            }
+          ],
           "seeAlso": [
             "Merge class names without conflicts"
           ]
@@ -511,7 +649,13 @@
           "whenToUse": "Whenever classes are conditional or come from props.",
           "whenNotToUse": "For static class strings — write them directly instead.",
           "derivedFrom": "shadcn/ui (utils)",
-          "example": "import { cn } from \"@zedtech/zedkit-ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
+          "example": "import { cn } from \"@zedtech/zedkit-ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { cn } from \"@zedtech/zedkit-ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
+            }
+          ]
         },
         {
           "need": "Trigger actions with buttons",
@@ -525,6 +669,12 @@
           "whenNotToUse": "For navigation menus — use links or tabs instead.",
           "derivedFrom": "shadcn/ui (button)",
           "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>"
+            }
+          ],
           "seeAlso": [
             "Confirm destructive actions"
           ]
@@ -540,7 +690,24 @@
           "whenToUse": "For short labels next to the thing they describe.",
           "whenNotToUse": "For long text or actions — use Text or Button instead.",
           "derivedFrom": "shadcn/ui (badge)",
-          "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>",
+          "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>"
+            },
+            {
+              "title": "Variants",
+              "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge variant=\"outline\">3 retries</Badge>\n<Badge variant=\"destructive\">failed</Badge>"
+            },
+            {
+              "title": "In a table row",
+              "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<tr>\n  <td>sync</td>\n  <td><Badge variant=\"secondary\">queued</Badge></td>\n</tr>"
+            }
+          ],
+          "registry": "badge",
+          "a11y": "Renders a `div` (not a live region). Keep labels short; do not put interactive controls inside. Focus ring appears when the badge is focusable via `tabIndex={0}`.",
+          "troubleshooting": "Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.",
           "seeAlso": [
             "Indicate status with a dot"
           ]
@@ -557,6 +724,12 @@
           "whenNotToUse": "For long text — use Textarea instead.",
           "derivedFrom": "shadcn/ui (input, label)",
           "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
+            }
+          ],
           "seeAlso": [
             "Collect multi-line text input",
             "Build validated forms with labels, errors, and pending state"
@@ -574,6 +747,12 @@
           "whenNotToUse": "For spacing alone — use Stack gap instead.",
           "derivedFrom": "shadcn/ui (separator)",
           "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+            }
+          ],
           "seeAlso": [
             "Stack content and group titled sections"
           ]
@@ -590,6 +769,12 @@
           "whenNotToUse": "For progress with a known percentage — use ProgressBar instead.",
           "derivedFrom": "shadcn/ui (skeleton)",
           "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
+            }
+          ],
           "seeAlso": [
             "Show determinate progress"
           ]
@@ -606,6 +791,12 @@
           "whenNotToUse": "As the only state signal — pair it with text, never color alone.",
           "derivedFrom": null,
           "example": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text"
+            }
+          ],
           "seeAlso": [
             "Show a status or count badge",
             "Show key-value details and a live indicator"
@@ -623,6 +814,12 @@
           "whenNotToUse": "For unknown-shape loading — use Skeleton instead.",
           "derivedFrom": null,
           "example": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={40} label=\"Uploading report\" /> // role=progressbar, value clamped to 0..max",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={40} label=\"Uploading report\" /> // role=progressbar, value clamped to 0..max"
+            }
+          ],
           "seeAlso": [
             "Show loading placeholder blocks"
           ]
@@ -639,6 +836,12 @@
           "whenNotToUse": "As a persistent status icon — use StatusDot or Badge instead.",
           "derivedFrom": null,
           "example": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark label=\"Saved\" /> // draws once, static under reduced motion; omit label when decorative",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark label=\"Saved\" /> // draws once, static under reduced motion; omit label when decorative"
+            }
+          ],
           "seeAlso": [
             "Show toast notifications"
           ]
@@ -655,6 +858,12 @@
           "whenNotToUse": "For freeform blocks — use a plain `Skeleton`; for named operations — use `StatusLabel`.",
           "derivedFrom": null,
           "example": "import { Suspense } from \"react\";\nimport { CardSkeleton } from \"@zedtech/zedkit-ui\";\n<Suspense fallback={<CardSkeleton label=\"Loading report\" />}>\n  <ReportCard />\n</Suspense>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Suspense } from \"react\";\nimport { CardSkeleton } from \"@zedtech/zedkit-ui\";\n<Suspense fallback={<CardSkeleton label=\"Loading report\" />}>\n  <ReportCard />\n</Suspense>"
+            }
+          ],
           "seeAlso": [
             "Show loading placeholder blocks"
           ]
@@ -671,6 +880,12 @@
           "whenNotToUse": "For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.",
           "derivedFrom": null,
           "example": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status"
+            }
+          ],
           "seeAlso": [
             "Stamp data with its age"
           ]
@@ -687,6 +902,12 @@
           "whenNotToUse": "For absolute timestamps — render a `<time dateTime>` instead.",
           "derivedFrom": null,
           "example": "import { UpdatedAgo } from \"@zedtech/zedkit-ui\";\n<UpdatedAgo date={updatedAt} /> // \"Updated 3 minutes ago\" via Intl.RelativeTimeFormat",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { UpdatedAgo } from \"@zedtech/zedkit-ui\";\n<UpdatedAgo date={updatedAt} /> // \"Updated 3 minutes ago\" via Intl.RelativeTimeFormat"
+            }
+          ],
           "seeAlso": [
             "Name an operation in progress"
           ]
@@ -703,6 +924,12 @@
           "whenNotToUse": "For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.",
           "derivedFrom": "shadcn/ui (dialog)",
           "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
+            }
+          ],
           "seeAlso": [
             "Confirm destructive actions",
             "Slide in a drawer panel"
@@ -720,6 +947,12 @@
           "whenNotToUse": "For reversible or trivial actions — do it and offer undo (toast) instead.",
           "derivedFrom": null,
           "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
+            }
+          ],
           "seeAlso": [
             "Open modal dialogs"
           ]
@@ -736,6 +969,12 @@
           "whenNotToUse": "For multi-step flows — use a full page or wizard instead.",
           "derivedFrom": "shadcn/ui (drawer)",
           "example": "import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>"
+            }
+          ],
           "seeAlso": [
             "Open modal dialogs",
             "Show key-value details and a live indicator"
@@ -753,6 +992,12 @@
           "whenNotToUse": "For state-driven modals — use `Dialog`/`Drawer` directly with local state.",
           "derivedFrom": null,
           "example": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>"
+            }
+          ],
           "seeAlso": [
             "Slide in a drawer panel",
             "Open modal dialogs",
@@ -771,6 +1016,12 @@
           "whenNotToUse": "For errors needing action — use Alert or Dialog instead.",
           "derivedFrom": "shadcn/ui (sonner)",
           "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+            }
+          ],
           "seeAlso": [
             "Call out a notice or an error state"
           ]
@@ -787,6 +1038,12 @@
           "whenNotToUse": "For passwords the user typed — use a password Input instead.",
           "derivedFrom": null,
           "example": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
+            }
+          ],
           "seeAlso": [
             "Collect text input with a label"
           ]
@@ -803,6 +1060,12 @@
           "whenNotToUse": "For a handful of static rows — map a simple table instead.",
           "derivedFrom": null,
           "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
+            }
+          ],
           "seeAlso": [
             "Show key-value details and a live indicator"
           ]
@@ -819,6 +1082,12 @@
           "whenNotToUse": "For public marketing pages — use your site layout instead.",
           "derivedFrom": null,
           "example": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
+            }
+          ],
           "seeAlso": [
             "Group content in a card section"
           ]
@@ -835,6 +1104,12 @@
           "whenNotToUse": "For single forms — use Form instead of inventing steps.",
           "derivedFrom": null,
           "example": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
+            }
+          ],
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state"
           ]
@@ -851,6 +1126,12 @@
           "whenNotToUse": "For editable records — use Form instead.",
           "derivedFrom": null,
           "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+            }
+          ],
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"
@@ -868,6 +1149,12 @@
           "whenNotToUse": "For a single search box — use Input directly instead.",
           "derivedFrom": "shadcn/ui (form); kit (useValidatedForm, FormSubmit)",
           "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedtech/zedkit-ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedtech/zedkit-ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>"
+            }
+          ],
           "seeAlso": [
             "Lay out fieldsets, fields, and error lists",
             "Collect text input with a label"
@@ -885,6 +1172,12 @@
           "whenNotToUse": "For validation logic itself — pair with Form instead.",
           "derivedFrom": "shadcn/ui (field)",
           "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
+            }
+          ],
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state"
           ]
@@ -901,6 +1194,12 @@
           "whenNotToUse": "For page-level layout — use AppShell and Stack instead.",
           "derivedFrom": "shadcn/ui (card)",
           "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
+            }
+          ],
           "seeAlso": [
             "Stack content and group titled sections"
           ]
@@ -917,6 +1216,12 @@
           "whenNotToUse": "For complex grids — use CSS grid directly instead.",
           "derivedFrom": null,
           "example": "import { Section, Stack } from \"@zedtech/zedkit-ui\";\n<Section title=\"Team\" description=\"Who can access.\">\n<Stack direction=\"horizontal\" gap={2}>...</Stack>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Section, Stack } from \"@zedtech/zedkit-ui\";\n<Section title=\"Team\" description=\"Who can access.\">\n<Stack direction=\"horizontal\" gap={2}>...</Stack>"
+            }
+          ],
           "seeAlso": [
             "Render headings and body text without raw tags",
             "Group content in a card section"
@@ -934,6 +1239,12 @@
           "whenNotToUse": "For raw HTML emails or markdown — style those separately.",
           "derivedFrom": null,
           "example": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
+            }
+          ],
           "seeAlso": [
             "Stack content and group titled sections"
           ]
@@ -950,6 +1261,12 @@
           "whenNotToUse": "For transient confirmations — use Toaster instead.",
           "derivedFrom": "shadcn/ui (alert)",
           "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
+            }
+          ],
           "seeAlso": [
             "Show toast notifications"
           ]
@@ -966,6 +1283,12 @@
           "whenNotToUse": "For 2–3 visible options — use radio inputs or OptionCards instead.",
           "derivedFrom": "shadcn/ui (select)",
           "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\nconst items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>);\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent>{items.length === 0 ? <SelectItem value=\"none\" disabled>No regions available</SelectItem> : items}</SelectContent>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\nconst items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>);\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent>{items.length === 0 ? <SelectItem value=\"none\" disabled>No regions available</SelectItem> : items}</SelectContent>"
+            }
+          ],
           "seeAlso": [
             "Toggle a checkbox or a switch",
             "Guide a multi-step flow with selectable option cards"
@@ -983,6 +1306,12 @@
           "whenNotToUse": "For single-line values — use Input instead.",
           "derivedFrom": "shadcn/ui (textarea)",
           "example": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
+            }
+          ],
           "seeAlso": [
             "Collect text input with a label"
           ]
@@ -999,6 +1328,12 @@
           "whenNotToUse": "For exclusive choices — use Select or radio inputs instead.",
           "derivedFrom": "shadcn/ui (checkbox, switch)",
           "example": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />"
+            }
+          ],
           "seeAlso": [
             "Pick one option from a dropdown"
           ]
@@ -1015,6 +1350,12 @@
           "whenNotToUse": "For sequential steps — use WizardSteps instead.",
           "derivedFrom": "shadcn/ui (tabs)",
           "example": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>"
+            }
+          ],
           "seeAlso": [
             "Guide a multi-step flow with selectable option cards"
           ]

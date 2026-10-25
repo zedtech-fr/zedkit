@@ -127,8 +127,20 @@ function parseCatalog(text, catalogPath, errors) {
       derivedFrom,
       example: null,
     };
-    const example = body.match(/```ts\n([\s\S]*?)```/);
-    if (example) entry.example = example[1].trim();
+    const exampleBlocks = [...body.matchAll(/```ts\n([\s\S]*?)```/g)].map((m) => m[1].trim());
+    if (exampleBlocks.length > 0) entry.example = exampleBlocks[0];
+    const exampleTitles = field("Examples");
+    const titles = exampleTitles ? exampleTitles.split(/,\s*/).map((t) => t.trim()).filter(Boolean) : [];
+    entry.examples = exampleBlocks.map((code, i) => ({
+      title: titles[i] ?? (i === 0 ? "Simple" : `Example ${i + 1}`),
+      code,
+    }));
+    const registry = field("Registry");
+    if (registry) entry.registry = registry;
+    const a11y = field("A11y");
+    if (a11y) entry.a11y = a11y;
+    const troubleshooting = field("Troubleshooting");
+    if (troubleshooting) entry.troubleshooting = troubleshooting;
     for (const key of ["import", "wraps", "status", "shortName", "audience", "purpose", "whenToUse", "whenNotToUse", "example"]) {
       if (!entry[key]) {
         errors.push(`${catalogPath}: need "${need}" is missing ${key}.`);
