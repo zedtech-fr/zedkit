@@ -182,6 +182,10 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): void {
     copyFile(ctx, join(ctx.kit, "skills", file), join(".agents", "skills", file));
   }
   copyFile(ctx, join(ctx.kit, "THIRD_PARTY_NOTICES.md"), join(".agents", "THIRD_PARTY_NOTICES.md"));
+  // Project personas for persona-review; an existing file is left untouched.
+  if (existsSync(join(ctx.kit, "personas.template.md"))) {
+    copyFile(ctx, join(ctx.kit, "personas.template.md"), join(".agents", "personas.md"));
+  }
   for (const name of content.agents) {
     copyFile(ctx, join(ctx.kit, "agents", `${name}.md`), join(".agents", "agents", `${name}.md`));
   }

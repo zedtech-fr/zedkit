@@ -32,6 +32,23 @@ describe("installKit", () => {
     expect(readFileSync(join(dest, ".cursor/rules/project.mdc"), "utf8")).toContain("alwaysApply: true");
   });
 
+  it("installs personas.md from the template, keeps an existing one", () => {
+    const fresh = tempDir();
+    install(fresh);
+    const installed = readFileSync(join(fresh, ".agents/personas.md"), "utf8");
+    expect(installed).toContain("Lazy end client");
+    expect(installed).toContain("Integrating developer");
+    expect(installed).toContain("Maintainer / operator");
+    const kept = tempDir();
+    mkdirSync(join(kept, ".agents"), { recursive: true });
+    writeFileSync(join(kept, ".agents/personas.md"), "custom personas");
+    const actions = install(kept);
+    expect(readFileSync(join(kept, ".agents/personas.md"), "utf8")).toBe("custom personas");
+    expect(actions).toContainEqual(
+      expect.objectContaining({ kind: "skip", path: join(".agents", "personas.md") }),
+    );
+  });
+
   it("copies only the preset's skills, and the full preset copies all", () => {
     const core = tempDir();
     install(core);

@@ -91,6 +91,7 @@ Shared source first, provider layers after. `zedkit-ai init --provider <names>` 
 - **Role and style**: fill it from evidence, not taste. Role and audience from the README (who the project serves); reply language from the language of the docs and commit messages; tone from commit style (terse or explanatory). If the evidence is missing or mixed, ask the user exactly one question covering what is unknown (for example reply language and audience) before writing; with nobody to ask, default to English replies and mark the choice `UNVERIFIED`.
 - **Nested `AGENTS.md`**: only what differs from the root. Link, do not copy.
 - **Repo skills**: folder `.agents/skills/<name>/SKILL.md`. The `description` says when to use it. Steps use this repo's real paths and commands, end with the command that proves the result, and point at an existing example file as the model. Follow `rules-upkeep` for format.
+- **Personas**: `.agents/personas.md` starts from the kit template (init installs it); customize the names and bars from repo evidence (README audience, real users), one row each for end client, integrator and operator. `persona-review` reads this file.
 - **Subagents**: `.agents/agents/<name>.md`, one-line description, `model` omitted. Read-only unless the job needs writes.
 - **Improve mode**: edit in place, smallest change, keep the author's wording where it is correct. Log what changed.
 
