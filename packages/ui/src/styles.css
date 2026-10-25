@@ -130,3 +130,64 @@
     stroke-dashoffset: 0;
   }
 }
+
+/*
+ * Motion tokens: every overlay animation references these durations
+ * and easings — apps never hardcode transition styles.
+ */
+:root {
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 250ms;
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes zk-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes zk-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zk-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes zk-zoom-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/*
+ * Vaul (drawer) ships its own slide keyframes at 500ms with no
+ * reduced-motion guard: retune to the kit tokens, disable fully
+ * when motion is reduced. `!important` beats vaul's injected
+ * high-specificity state selectors — deliberately, in one place.
+ */
+html [data-vaul-drawer] {
+  animation-duration: var(--motion-slow);
+  transition-duration: var(--motion-slow);
+}
+
+html [data-vaul-overlay] {
+  animation-duration: var(--motion-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html [data-vaul-drawer],
+  html [data-vaul-overlay] {
+    animation: none !important;
+    transition: none !important;
+  }
+}

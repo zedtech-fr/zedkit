@@ -6,10 +6,13 @@
 //   3. every manifest component/props exists in @zedtech/zedkit-ui exports;
 //   4. every manifest demo exists in components/demos/registry.ts and its
 //      demo file exports the demo;
-//   5. pages stay thin: app/** imports no demo file directly (registry
-//      only) and uses no namespace imports;
+//   5. pages and views stay thin: app/** and ui/** import no demo file
+//      directly (registry only) and use no namespace imports;
 //   6. demos and frame use kit layout modules only (no raw <div>/<span>);
-//   7. every page carries install tabs + a titled TSX example.
+//   7. every page carries install tabs + a titled TSX example;
+//   8. the home gallery covers every UI need exactly once, with the
+//      manifest demo (or null);
+//   9. the gallery stats match the catalog counts.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -40,7 +43,7 @@ const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"
 const rich = manifest.rich ?? {};
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages } = generate(tmp);
+const { pages, gallery, stats, uiPackage } = generate(tmp);
 
 function mdxFiles(dir) {
   const out = [];
@@ -71,6 +74,28 @@ for (const [pkg, entry] of Object.entries(catalog.packages)) {
 }
 if (pages !== needs.length) {
   errors.push(`generator emitted ${pages} pages for ${needs.length} catalog needs.`);
+}
+
+// generate() throws when no "ui" package exists, so uiPackage is set here.
+const uiNeeds = catalog.packages[uiPackage].needs;
+if (gallery.length !== uiNeeds.length) {
+  errors.push(`gallery holds ${gallery.length} cards for ${uiNeeds.length} UI needs.`);
+}
+const byNeed = new Map(gallery.map((card) => [card.need, card]));
+for (const need of uiNeeds) {
+  const card = byNeed.get(need.need);
+  if (!card) {
+    errors.push(`gallery: missing card for "${need.need}".`);
+    continue;
+  }
+  const wantDemo = rich[need.need]?.demo ?? null;
+  if (card.demo !== wantDemo) {
+    errors.push(`gallery: "${need.need}" demo is ${JSON.stringify(card.demo)}, manifest says ${JSON.stringify(wantDemo)}.`);
+  }
+}
+const totalNeeds = Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0);
+if (stats.packages !== Object.keys(catalog.packages).length || stats.needs !== totalNeeds) {
+  errors.push(`gallery: stale stats ${JSON.stringify(stats)}.`);
 }
 
 const headings = new Set(needs.map((n) => n.need));
@@ -121,14 +146,17 @@ function tsxFiles(dir) {
   return out;
 }
 
-for (const file of tsxFiles(join(APP, "app"))) {
-  const rel = file.slice(APP.length + 1);
-  for (const line of readFileSync(file, "utf8").split("\n")) {
-    if (/from\s+["'].*components\/demos\//.test(line) && !line.includes("components/demos/registry")) {
-      errors.push(`${rel}: import demos through components/demos/registry, never directly.`);
-    }
-    if (/^import\s+\*\s+as\s+/.test(line)) {
-      errors.push(`${rel}: namespace imports are banned in pages; use named imports.`);
+for (const dir of ["app", "ui"]) {
+  if (!existsSync(join(APP, dir))) continue;
+  for (const file of tsxFiles(join(APP, dir))) {
+    const rel = file.slice(APP.length + 1);
+    for (const line of readFileSync(file, "utf8").split("\n")) {
+      if (/from\s+["'].*components\/demos\//.test(line) && !line.includes("components/demos/registry")) {
+        errors.push(`${rel}: import demos through components/demos/registry, never directly.`);
+      }
+      if (/^import\s+\*\s+as\s+/.test(line)) {
+        errors.push(`${rel}: namespace imports are banned in pages; use named imports.`);
+      }
     }
   }
 }
@@ -146,5 +174,5 @@ if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`docs: ok (${pages} pages cover ${needs.length} needs, ${Object.keys(rich).length} rich).`);
+  console.log(`docs: ok (${pages} pages cover ${needs.length} needs, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`);
 }
