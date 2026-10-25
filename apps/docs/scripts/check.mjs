@@ -111,7 +111,7 @@ const uiExports = barrelExports(join(ROOT, "packages", "ui", "src", "index.ts"))
 const registryText = readFileSync(join(APP, "components", "demos", "registry.ts"), "utf8");
 const registryEntries = new Map();
 for (const line of registryText.split("\n")) {
-  const match = /^ {2}(\w+): \{ Demo: \w+, file: "([^"]+)" \},?$/.exec(line);
+  const match = /^ {2}(\w+): \{ Demo: \w+, file: "([^"]+)"(?:, center: true)? \},?$/.exec(line);
   if (match) registryEntries.set(match[1], match[2]);
 }
 for (const [key, spec] of Object.entries(rich)) {
