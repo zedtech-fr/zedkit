@@ -3,14 +3,42 @@
 # Fails on self-promotional marketing terms in tracked contents and
 # paths, untracked contents, and (on pull_request events) the PR
 # title + body — squash merges copy those into history, so the file
-# scan alone cannot catch them. This file holds the enforcement
-# list, so it exempts itself (same shape as check-no-private-refs).
+# scan alone cannot catch them.
+#
+# Enforcement list, base64-encoded and decoded only in memory (same
+# rule as denylist-patterns.sh): no file in this repo spells the
+# banned terms out, including this one — so unlike before, this
+# script no longer exempts itself. To extend, append the base64 of
+# the new term (without trailing newline) to TONE_ENCODED.
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-terms='\b(vitrine|showcase)\b'
-self="scripts/check-tone.sh"
+TONE_ENCODED=(
+  'dml0cmluZQ=='
+  'c2hvd2Nhc2U='
+)
+
+# Mirrors _denylist_b64decode: GNU coreutils uses -d, older macOS -D.
+_tone_b64decode() {
+  if printf '' | base64 -d >/dev/null 2>&1; then
+    base64 -d
+  else
+    base64 -D
+  fi
+}
+
+# Prints the terms as one |-alternation. Decodes one blob per line:
+# a single base64 -d call would fuse the blobs (the decoder ignores
+# newlines in its input).
+_tone_pattern() {
+  for enc in "${TONE_ENCODED[@]}"; do
+    printf '%s' "$enc" | _tone_b64decode
+    echo
+  done | paste -sd'|' -
+}
+
+terms="\b($(_tone_pattern))\b"
 fail=0
 
 if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ] && [ -n "${GITHUB_REF:-}" ]; then
@@ -26,7 +54,7 @@ if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ] && [ -n "${GITHUB_REF:-}" ]; th
   } ;; esac
 fi
 
-hits=$(git grep -inE -e "$terms" -- . ":!$self" || true)
+hits=$(git grep -inE -e "$terms" -- . || true)
 if [ -n "$hits" ]; then
   echo "banned marketing terms in tracked contents:"
   echo "$hits"
@@ -42,14 +70,11 @@ fi
 
 untracked=$(git ls-files --others --exclude-standard || true)
 if [ -n "$untracked" ]; then
-  ufiltered=$(printf '%s\n' "$untracked" | grep -vE "^$self$" || true)
-  if [ -n "$ufiltered" ]; then
-    uhits=$(printf '%s\n' "$ufiltered" | xargs grep -HinE -e "$terms" -- 2>/dev/null || true)
-    if [ -n "$uhits" ]; then
-      echo "banned marketing terms in untracked contents:"
-      echo "$uhits"
-      fail=1
-    fi
+  uhits=$(printf '%s\n' "$untracked" | xargs grep -HinE -e "$terms" -- 2>/dev/null || true)
+  if [ -n "$uhits" ]; then
+    echo "banned marketing terms in untracked contents:"
+    echo "$uhits"
+    fail=1
   fi
 fi
 
