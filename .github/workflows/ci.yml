@@ -51,6 +51,7 @@ jobs:
       - run: pnpm exec turbo run build
       - run: bash scripts/check-pack.sh
       - run: pnpm exec turbo run test
+      - run: pnpm test:registry
       # Gallery smoke: real chromium over the built ui gallery (both
       # themes, zero console errors), screenshots kept as artifacts.
       - uses: actions/cache@v4

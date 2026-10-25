@@ -35,6 +35,14 @@ components (same import a consumer writes), inside one shared frame.
 5. The bulk-import ban (lint rule or test) must fail on the grab-bag
    it replaces and pass after — keep that proof green.
 
+## Registry (`/r/*.json`)
+
+Copy-paste install payloads for the official shadcn CLI (#187). `pnpm
+registry:build` (root) rewrites `packages/ui` imports, runs `shadcn
+build`, and writes gitignored JSON under `public/r/`. Docs `prebuild`
+runs that step; `registry:check` asserts rewritten imports and
+`shadcn registry validate`.
+
 ## Work on it
 
 - `pnpm --filter @zedtech/zedkit-docs dev` (or root `pnpm dev`, :3100).
