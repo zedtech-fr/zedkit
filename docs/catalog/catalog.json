@@ -3,6 +3,21 @@
   "packages": {
     "@zedtech/zedkit-ai": {
       "catalog": "packages/ai/CATALOG.md",
+      "keywords": [
+        "ai",
+        "agents",
+        "agents-md",
+        "skills",
+        "subagents",
+        "cursor",
+        "claude-code",
+        "codex",
+        "coding-assistant",
+        "setup",
+        "scaffolding",
+        "opencode"
+      ],
+      "audience": "Teams running coding agents (Cursor, Claude, Codex and more) who want one shared setup.",
       "needs": [
         {
           "need": "Set up AI agent instructions, skills, subagents and commands in a repo",
@@ -24,6 +39,19 @@
     },
     "@zedtech/zedkit-core": {
       "catalog": "packages/core/CATALOG.md",
+      "keywords": [
+        "typescript",
+        "utilities",
+        "result-type",
+        "error-handling",
+        "typed-errors",
+        "ulid",
+        "unique-id",
+        "prefixed-id",
+        "hashing",
+        "functional"
+      ],
+      "audience": "TypeScript developers tired of untyped throws and ad-hoc helpers.",
       "needs": [
         {
           "need": "Model success or failure without throwing",
@@ -53,6 +81,21 @@
     },
     "@zedtech/zedkit-nest": {
       "catalog": "packages/nest/CATALOG.md",
+      "keywords": [
+        "nestjs",
+        "nest",
+        "bootstrap",
+        "typescript",
+        "api",
+        "validation",
+        "logging",
+        "openapi",
+        "swagger",
+        "throttling",
+        "health-check",
+        "graceful-shutdown"
+      ],
+      "audience": "Teams starting a production NestJS API who want secure defaults, not a blank schematic.",
       "needs": [
         {
           "need": "Bootstrap a Nest app",
@@ -82,6 +125,20 @@
     },
     "@zedtech/zedkit-payload-seo": {
       "catalog": "packages/payload-seo/CATALOG.md",
+      "keywords": [
+        "payloadcms",
+        "payload",
+        "seo",
+        "cms",
+        "meta-tags",
+        "json-ld",
+        "open-graph",
+        "localization",
+        "i18n",
+        "nextjs",
+        "typescript"
+      ],
+      "audience": "Payload CMS developers shipping localized marketing sites.",
       "needs": [
         {
           "need": "Add a localized SEO tab to a Payload collection",
@@ -103,6 +160,21 @@
     },
     "@zedtech/zedkit-seo": {
       "catalog": "packages/seo/CATALOG.md",
+      "keywords": [
+        "seo",
+        "sitemap",
+        "robots-txt",
+        "json-ld",
+        "structured-data",
+        "metadata",
+        "open-graph",
+        "hreflang",
+        "llms-txt",
+        "slug",
+        "nextjs",
+        "typescript"
+      ],
+      "audience": "Developers who want correct SEO primitives without becoming SEO experts.",
       "needs": [
         {
           "need": "Serve robots.txt content",
@@ -164,6 +236,21 @@
     },
     "@zedtech/zedkit-server": {
       "catalog": "packages/server/CATALOG.md",
+      "keywords": [
+        "nodejs",
+        "server",
+        "rate-limit",
+        "rate-limiting",
+        "redaction",
+        "pii",
+        "secrets",
+        "logging",
+        "hkdf",
+        "crypto",
+        "http",
+        "zero-dependency"
+      ],
+      "audience": "Node server developers who need hardening without a framework.",
       "needs": [
         {
           "need": "Rate-limit calls per key",
@@ -209,6 +296,22 @@
     },
     "@zedtech/zedkit-ui": {
       "catalog": "packages/ui/CATALOG.md",
+      "keywords": [
+        "react",
+        "react-components",
+        "ui-kit",
+        "design-system",
+        "admin",
+        "dashboard",
+        "tailwindcss",
+        "tailwind-v4",
+        "radix-ui",
+        "shadcn",
+        "dark-mode",
+        "accessible",
+        "nextjs"
+      ],
+      "audience": "Teams building admin consoles and dashboards on React 19 + Tailwind v4.",
       "needs": [
         {
           "need": "Theme an admin app (dark/light included)",

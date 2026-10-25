@@ -73,3 +73,26 @@ re-checks the criteria below.
 
 Regenerate after any catalog edit: `pnpm catalog:build`, then commit the
 result. CI fails when `catalog.json` drifts from the package catalogs.
+
+## Package header
+
+Above the first `## <need>`, every package `CATALOG.md` carries a header
+that is the single source for its npm discoverability fields —
+`description`, `keywords`, `homepage`, `bugs`, `repository.directory`:
+
+```md
+# Catalog — @zedtech/zedkit-core
+
+- Keywords: typescript, utilities, result-type, ...
+- Audience: Who the package is for, in plain words.
+- Purpose: What it does, in plain words (becomes the npm description).
+- Attribution: Original work by the same author. (optional, appended to
+  the description; keep the origin note here, never a project path)
+```
+
+`pnpm catalog:build` writes those fields into `package.json` (8–12
+English keywords per package); `pnpm catalog:check` fails a public
+package whose manifest is missing them or drifts from the header. Edit
+the header, never the manifest fields directly. `catalog.json` also
+carries `keywords` and `audience` per package for the docs site and
+agents.

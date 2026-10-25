@@ -5,7 +5,25 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Generic SEO bricks: robots, sitemaps, typed JSON-LD, metadata, llms.txt, slugs.",
+  "description": "Ship sitemaps, robots, typed JSON-LD, metadata, hreflang, slugs and llms.txt without thinking about the specs.",
+  "keywords": [
+    "seo",
+    "sitemap",
+    "robots-txt",
+    "json-ld",
+    "structured-data",
+    "metadata",
+    "open-graph",
+    "hreflang",
+    "llms-txt",
+    "slug",
+    "nextjs",
+    "typescript"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/seo",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -1,10 +1,24 @@
 // Catalog generator + checker.
 //
 // - `node scripts/catalog.mjs build [--root DIR]` regenerates
-//   docs/catalog/catalog.json from packages/*/CATALOG.md.
+//   docs/catalog/catalog.json from packages/*/CATALOG.md and syncs the
+//   discoverability fields (description, keywords, homepage, bugs,
+//   repository.directory) from each CATALOG.md into its package.json.
 // - `node scripts/catalog.mjs check [--root DIR]` verifies that every
-//   public export of each package appears in that package's CATALOG.md
-//   and that catalog.json is up to date (CI runs this).
+//   public export of each package appears in that package's CATALOG.md,
+//   that catalog.json is up to date, and that every public package.json
+//   matches its CATALOG.md metadata (CI runs this).
+//
+// CATALOG.md header format (before the first `## <need>`; single source
+// for the npm discoverability fields of public packages):
+//
+//   # Catalog — @zedtech/zedkit-core
+//
+//   - Keywords: typescript, utilities, result-type, ...
+//   - Audience: Who the package is for, in plain words.
+//   - Purpose: What it does, in plain words (becomes the npm description).
+//   - Attribution: Original work by the same author. (optional, appended
+//     to the description; keep the origin note here, never a project path)
 //
 // CATALOG.md entry format (one `## <need>` section per need):
 //
@@ -191,6 +205,39 @@ function catalogSearchText(catalogText) {
   return chunks.join("\n");
 }
 
+// Discoverability metadata from the CATALOG.md header (before `## `).
+function parsePackageMeta(catalogText) {
+  const header = catalogText.split(/^## /m)[0];
+  const field = (name) => {
+    const match = header.match(new RegExp(`^- ${name}:\\s*(.+)$`, "m"));
+    return match ? match[1].trim() : null;
+  };
+  const keywords = field("Keywords");
+  return {
+    keywords: keywords ? keywords.split(",").map((k) => k.trim()).filter(Boolean) : null,
+    audience: field("Audience"),
+    purpose: field("Purpose"),
+    attribution: field("Attribution"),
+  };
+}
+
+const REPO_URL = "https://github.com/zedtech-fr/zedkit";
+
+// Expected npm discoverability fields, derived from the catalog header.
+function expectedManifestFields(pkg) {
+  const directory = `packages/${basename(pkg.dir)}`;
+  const description = pkg.meta.attribution
+    ? `${pkg.meta.purpose} ${pkg.meta.attribution}`
+    : pkg.meta.purpose;
+  return {
+    description,
+    keywords: pkg.meta.keywords,
+    homepage: `${REPO_URL}/tree/main/${directory}`,
+    bugs: { url: `${REPO_URL}/issues` },
+    repositoryDirectory: directory,
+  };
+}
+
 function collectPackages(root, errors) {
   const collected = [];
   for (const dir of packageDirs(root)) {
@@ -208,8 +255,12 @@ function collectPackages(root, errors) {
     collected.push({
       name: manifest.name,
       dir,
+      manifest,
+      manifestPath,
+      isPrivate: manifest.private === true,
       catalogPath,
       catalogText,
+      meta: catalogText ? parsePackageMeta(catalogText) : null,
       needs: catalogText ? parseCatalog(catalogText, catalogPath, errors) : [],
       symbols: indexText ? parseBarrelExports(indexText, join(dir, "src", "index.ts"), errors) : [],
       subpaths,
@@ -227,10 +278,68 @@ function renderCatalogJson(packages) {
   for (const pkg of [...packages].sort((a, b) => a.name.localeCompare(b.name))) {
     out.packages[pkg.name] = {
       catalog: `packages/${basename(pkg.dir)}/CATALOG.md`,
+      keywords: pkg.meta?.keywords ?? [],
+      audience: pkg.meta?.audience ?? null,
       needs: pkg.needs,
     };
   }
   return `${JSON.stringify(out, null, 2)}\n`;
+}
+
+function checkManifestFields(pkg, errors) {
+  if (pkg.isPrivate || !pkg.meta) return;
+  for (const key of ["keywords", "audience", "purpose"]) {
+    if (!pkg.meta[key] || pkg.meta[key].length === 0) {
+      errors.push(`${pkg.catalogPath}: package header is missing "${key}" (single source for the npm discoverability fields).`);
+      return;
+    }
+  }
+  const expected = expectedManifestFields(pkg);
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const mismatch = (field, actual) =>
+    `${pkg.manifestPath}: ${field} does not match ${pkg.catalogPath}. Run \`pnpm catalog:build\` and commit the result. (actual: ${JSON.stringify(actual)})`;
+  if (!same(pkg.manifest.description, expected.description)) errors.push(mismatch("description", pkg.manifest.description));
+  if (!same(pkg.manifest.keywords, expected.keywords)) errors.push(mismatch("keywords", pkg.manifest.keywords));
+  if (!same(pkg.manifest.homepage, expected.homepage)) errors.push(mismatch("homepage", pkg.manifest.homepage));
+  if (!same(pkg.manifest.bugs, expected.bugs)) errors.push(mismatch("bugs", pkg.manifest.bugs));
+  if (!same(pkg.manifest.repository?.directory, expected.repositoryDirectory)) {
+    errors.push(mismatch("repository.directory", pkg.manifest.repository?.directory));
+  }
+}
+
+// Write the discoverability fields into package.json, keeping every other
+// key (and their relative order) untouched. New keys land in the
+// conventional slot: after publishConfig/description, before license.
+function syncManifestFields(pkg) {
+  if (pkg.isPrivate || !pkg.meta?.keywords || !pkg.meta.audience || !pkg.meta.purpose) return false;
+  const expected = expectedManifestFields(pkg);
+  const ordered = {};
+  let inserted = false;
+  for (const [key, value] of Object.entries(pkg.manifest)) {
+    if (key === "description" || key === "keywords" || key === "homepage" || key === "bugs") continue;
+    if (!inserted && key !== "name" && key !== "version" && key !== "publishConfig") {
+      ordered.description = expected.description;
+      ordered.keywords = expected.keywords;
+      ordered.homepage = expected.homepage;
+      ordered.bugs = expected.bugs;
+      inserted = true;
+    }
+    ordered[key] = value;
+  }
+  if (!inserted) {
+    ordered.description = expected.description;
+    ordered.keywords = expected.keywords;
+    ordered.homepage = expected.homepage;
+    ordered.bugs = expected.bugs;
+  }
+  const repo = ordered.repository;
+  const repoObject = typeof repo === "string" ? { type: "git", url: repo } : (repo ?? {});
+  ordered.repository = { ...repoObject, directory: expected.repositoryDirectory };
+  const next = `${JSON.stringify(ordered, null, 2)}\n`;
+  if (next === `${JSON.stringify(pkg.manifest, null, 2)}\n`) return false;
+  // Preserve the original trailing-newline style (all manifests end with \n).
+  writeFileSync(pkg.manifestPath, next);
+  return true;
 }
 
 function check(packages, root, errors) {
@@ -240,6 +349,7 @@ function check(packages, root, errors) {
       continue;
     }
     if (!pkg.catalogText) continue;
+    checkManifestFields(pkg, errors);
     const searchText = catalogSearchText(pkg.catalogText);
     for (const symbol of pkg.symbols) {
       if (!new RegExp(`\\b${escapeRegExp(symbol)}\\b`).test(searchText)) {
@@ -284,7 +394,11 @@ if (invoked === fileURLToPath(import.meta.url)) {
       const jsonPath = join(root, "docs", "catalog", "catalog.json");
       mkdirSync(dirname(jsonPath), { recursive: true });
       writeFileSync(jsonPath, renderCatalogJson(packages));
-      console.log(`catalog: wrote ${jsonPath} (${packages.length} packages).`);
+      let synced = 0;
+      for (const pkg of packages) {
+        if (syncManifestFields(pkg)) synced++;
+      }
+      console.log(`catalog: wrote ${jsonPath} (${packages.length} packages, ${synced} manifests synced).`);
     }
   }
   if (mode === "check") {

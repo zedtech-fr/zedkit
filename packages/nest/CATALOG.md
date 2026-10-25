@@ -1,5 +1,11 @@
 # Catalog — @zedtech/zedkit-nest
 
+- Keywords: nestjs, nest, bootstrap, typescript, api, validation, logging, openapi, swagger, throttling, health-check, graceful-shutdown
+- Audience: Teams starting a production NestJS API who want secure defaults, not a blank schematic.
+- Purpose: Boot a production-ready NestJS app from one factory call: validation, logging, docs, throttling, errors and shutdown included.
+- Attribution: Original work by the same author.
+
+
 ## Bootstrap a Nest app
 
 - Import: `@zedtech/zedkit-nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`

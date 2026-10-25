@@ -1,5 +1,11 @@
 # Catalog — @zedtech/zedkit-server
 
+- Keywords: nodejs, server, rate-limit, rate-limiting, redaction, pii, secrets, logging, hkdf, crypto, http, zero-dependency
+- Audience: Node server developers who need hardening without a framework.
+- Purpose: Harden any Node server in minutes: in-process rate limiting, secret/PII redaction for logs, HKDF crypto and HTTP helpers.
+- Attribution: Original work by the same author.
+
+
 ## Rate-limit calls per key
 
 - Import: `@zedtech/zedkit-server` — `MemoryRateLimiter`

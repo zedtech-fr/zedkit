@@ -1,34 +1,26 @@
 # @zedtech/zedkit-ai
 
-An agent-agnostic AI setup for a code repo: an `AGENTS.md` template, skills,
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-ai.svg)](https://www.npmjs.com/package/@zedtech/zedkit-ai)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
+
+Give every coding agent the same setup: an `AGENTS.md` template, skills,
 subagents, and a small installer and validator. Works with Claude Code,
 Cursor, Codex, Muse and any tool that reads `AGENTS.md` or Agent Skills.
 Original work by the same author, plus vendored MIT skills (see
 [kit/THIRD_PARTY_NOTICES.md](kit/THIRD_PARTY_NOTICES.md)).
 
-## Use it
-
-Not published to npm yet. From a zedkit checkout, pack the tarballs;
-then in your own repo, install and run with `npx`:
+## Install
 
 ```sh
-for p in ai core; do (cd packages/$p && pnpm pack --pack-destination /tmp/zedkit-pack); done
-npm install --no-save /tmp/zedkit-pack/*.tgz   # in your own repo
-npx zedkit-ai init .               # copy the core kit into this repo
-# then ask your agent: "run the setup-ai skill"
-npx zedkit-ai validate             # check skills and subagents
+pnpm add -D @zedtech/zedkit-ai
 ```
 
-With pnpm instead of npm, pin the unpacked core tarball first (pnpm
-resolves each tarball's dependencies independently — this goes away once
-the packages publish):
+## Usage
 
 ```sh
-mkdir -p /tmp/zedkit-core && tar -xzf /tmp/zedkit-pack/zedkit-core-*.tgz -C /tmp/zedkit-core
-# package.json: { "pnpm": { "overrides": { "@zedtech/zedkit-core": "file:/tmp/zedkit-core/package" } } }
-pnpm add /tmp/zedkit-pack/zedtech-zedkit-ai-0.1.0.tgz
-./node_modules/.bin/zedkit-ai init . --provider cursor
-./node_modules/.bin/zedkit-ai validate   # must print: ok
+npx zedkit-ai init . --provider cursor   # copy the core kit into this repo
+# then ask your agent: "run the setup-ai skill"
+npx zedkit-ai validate                   # must print: ok
 ```
 
 `init` installs generic instructions. The `setup-ai` skill makes them specific:
@@ -57,6 +49,13 @@ appended (reported as `append`). It also skips
 rule in `.cursor/rules/` is already always on (`alwaysApply: true`), instead
 of adding a second one. Run `zedkit-ai list` to see presets, subagents and
 commands.
+
+## When to use
+
+Reach for this package when a repo is read by coding agents (or several
+different ones) and you want one verified, provider-agnostic setup
+instead of per-tool folklore. If you only need runtime helpers, install
+the other kit packages instead.
 
 ## Providers
 

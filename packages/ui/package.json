@@ -5,7 +5,26 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Admin UI kit: design tokens, dark/light theme, shadcn/ui-based components (MIT, see THIRD_PARTY_NOTICES.md).",
+  "description": "Ship a calm admin UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).",
+  "keywords": [
+    "react",
+    "react-components",
+    "ui-kit",
+    "design-system",
+    "admin",
+    "dashboard",
+    "tailwindcss",
+    "tailwind-v4",
+    "radix-ui",
+    "shadcn",
+    "dark-mode",
+    "accessible",
+    "nextjs"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/ui",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

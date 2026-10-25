@@ -5,7 +5,24 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Localized Payload SEO group field with length validation.",
+  "description": "Drop-in localized SEO group field: meta tags, JSON-LD and length validation, ready for i18n sites.",
+  "keywords": [
+    "payloadcms",
+    "payload",
+    "seo",
+    "cms",
+    "meta-tags",
+    "json-ld",
+    "open-graph",
+    "localization",
+    "i18n",
+    "nextjs",
+    "typescript"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/payload-seo",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

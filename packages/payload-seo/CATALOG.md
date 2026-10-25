@@ -1,5 +1,10 @@
 # Catalog — @zedtech/zedkit-payload-seo
 
+- Keywords: payloadcms, payload, seo, cms, meta-tags, json-ld, open-graph, localization, i18n, nextjs, typescript
+- Audience: Payload CMS developers shipping localized marketing sites.
+- Purpose: Drop-in localized SEO group field: meta tags, JSON-LD and length validation, ready for i18n sites.
+
+
 ## Add a localized SEO tab to a Payload collection
 
 - Import: `@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`

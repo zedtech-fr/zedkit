@@ -5,7 +5,25 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Server helpers: in-process rate limiting, secret redaction. Original work by the same author.",
+  "description": "Harden any Node server in minutes: in-process rate limiting, secret/PII redaction for logs, HKDF crypto and HTTP helpers. Original work by the same author.",
+  "keywords": [
+    "nodejs",
+    "server",
+    "rate-limit",
+    "rate-limiting",
+    "redaction",
+    "pii",
+    "secrets",
+    "logging",
+    "hkdf",
+    "crypto",
+    "http",
+    "zero-dependency"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/server",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

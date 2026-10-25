@@ -1,12 +1,19 @@
 # @zedtech/zedkit-seo
 
-Generic SEO bricks: robots, sitemaps, typed JSON-LD, page metadata,
-llms.txt, slugs. Pure functions, options-driven, no brand, no CMS.
-Original work by the same author.
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-seo.svg)](https://www.npmjs.com/package/@zedtech/zedkit-seo)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
+
+Ship sitemaps, robots, typed JSON-LD, metadata, hreflang, slugs and
+llms.txt without thinking about the specs. Pure functions,
+options-driven, no brand, no CMS. Original work by the same author.
+
+## Install
 
 ```sh
 pnpm add @zedtech/zedkit-seo
 ```
+
+## Usage
 
 ```ts
 import { buildRobots, buildSitemapEntries } from "@zedtech/zedkit-seo";
@@ -18,6 +25,12 @@ export function robots() {
   return buildRobots({ siteUrl });
 }
 ```
+
+## When to use
+
+Reach for this package when you render SEO outputs (robots, sitemaps,
+metadata, JSON-LD) from plain data. It never talks to a CMS: pair it
+with `@zedtech/zedkit-payload-seo` when your content lives in Payload.
 
 Return shapes follow the Next.js Metadata API (`MetadataRoute.Robots`,
 `MetadataRoute.Sitemap`, `Metadata`) so builders drop straight into

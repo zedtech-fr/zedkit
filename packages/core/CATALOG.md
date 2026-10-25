@@ -1,5 +1,11 @@
 # Catalog — @zedtech/zedkit-core
 
+- Keywords: typescript, utilities, result-type, error-handling, typed-errors, ulid, unique-id, prefixed-id, hashing, functional
+- Audience: TypeScript developers tired of untyped throws and ad-hoc helpers.
+- Purpose: Typed Result helpers, safe try/catch wrappers, prefixed IDs and hashing — stop writing the same utilities in every repo.
+- Attribution: Original work by the same author.
+
+
 ## Model success or failure without throwing
 
 - Import: `@zedtech/zedkit-core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`

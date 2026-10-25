@@ -1,6 +1,25 @@
 # @zedtech/zedkit-nest
 
-Generic NestJS bootstrap factory. Original work by the same author.
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-nest.svg)](https://www.npmjs.com/package/@zedtech/zedkit-nest)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
+
+Boot a production-ready NestJS API from one factory call: validation,
+logging, docs, throttling, errors and graceful shutdown included.
+Original work by the same author.
+
+## Install
+
+Framework pieces are peer dependencies (one copy per app — required for
+Nest DI). Install them alongside:
+
+```sh
+pnpm add @zedtech/zedkit-nest @fastify/static @nestjs/common @nestjs/config \
+  @nestjs/core @nestjs/platform-fastify @nestjs/swagger @nestjs/throttler \
+  class-transformer class-validator fastify nestjs-pino pino pino-http \
+  reflect-metadata
+```
+
+## Usage
 
 `createNestApp({ module, envSchema, docs, ... })` wires only standard
 pieces and returns the app ready to `listen()`:
@@ -43,15 +62,12 @@ const app = await createNestApp({
 await app.listen(3000);
 ```
 
-Framework pieces are peer dependencies (one copy per app — required for
-Nest DI). Install them alongside:
+## When to use
 
-```sh
-pnpm add @zedtech/zedkit-nest @fastify/static @nestjs/common @nestjs/config \
-  @nestjs/core @nestjs/platform-fastify @nestjs/swagger @nestjs/throttler \
-  class-transformer class-validator fastify nestjs-pino pino pino-http \
-  reflect-metadata
-```
+Reach for this package when you start a NestJS API and want secure,
+observable defaults instead of a blank schematic. For framework-free
+server helpers (rate limiting, redaction) see
+`@zedtech/zedkit-server` instead.
 
 Rules (non-negotiable):
 
