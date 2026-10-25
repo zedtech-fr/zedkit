@@ -1,4 +1,4 @@
-# @zedkit/ui
+# @zedtech/zedkit-ui
 
 Admin UI kit: design tokens, dark/light theme, and shadcn/ui-based
 building blocks (MIT, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
@@ -9,12 +9,12 @@ from a packed tarball.
 
 ```css
 /* app/globals.css (Tailwind v4, PostCSS or Vite plugin) */
-@import "@zedkit/ui/styles.css";
-@source "../node_modules/@zedkit/ui/src/**/*.{ts,tsx}";
+@import "@zedtech/zedkit-ui/styles.css";
+@source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
 ```
 
 ```tsx
-import { cn } from "@zedkit/ui"; // components land per slice; see CATALOG.md
+import { cn } from "@zedtech/zedkit-ui"; // components land per slice; see CATALOG.md
 ```
 
 Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
@@ -36,14 +36,14 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 
 ## Develop
 
-`pnpm --filter @zedkit/ui test|typecheck|lint|build`.
+`pnpm --filter @zedtech/zedkit-ui test|typecheck|lint|build`.
 Component tests render with Testing Library + jsdom.
 
 ## Gallery
 
-`pnpm --filter @zedkit/ui preview` builds and serves a static gallery
+`pnpm --filter @zedtech/zedkit-ui preview` builds and serves a static gallery
 of every component in every state at http://127.0.0.1:4123/ (`/dark`
 for the dark theme). Static server render for visual review only —
-behavior stays covered by unit tests. `pnpm --filter @zedkit/ui
+behavior stays covered by unit tests. `pnpm --filter @zedtech/zedkit-ui
 smoke` runs the Playwright smoke over both themes (sections render,
 zero console errors) and writes screenshots to test-results/.

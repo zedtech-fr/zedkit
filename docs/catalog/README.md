@@ -15,13 +15,13 @@ Each package PR adds its row here, following
 
 | Package | Domain | Catalog |
 |---|---|---|
-| `@zedkit/core` | results, error handling, IDs | [packages/core/CATALOG.md](../../packages/core/CATALOG.md) |
-| `@zedkit/server` | rate limiting, redaction, backoff, webhook signatures | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
-| `@zedkit/nest` | NestJS bootstrap factory | [packages/nest/CATALOG.md](../../packages/nest/CATALOG.md) |
-| `@zedkit/ai` | AI agent setup: instructions, skills, subagents | [packages/ai/CATALOG.md](../../packages/ai/CATALOG.md) |
-| `@zedkit/ui` | admin UI kit: tokens, theme, components | [packages/ui/CATALOG.md](../../packages/ui/CATALOG.md) |
-| `@zedkit/seo` | robots, sitemaps, JSON-LD, metadata, llms.txt, slugs | [packages/seo/CATALOG.md](../../packages/seo/CATALOG.md) |
-| `@zedkit/payload-seo` | Payload SEO group field | [packages/payload-seo/CATALOG.md](../../packages/payload-seo/CATALOG.md) |
+| `@zedtech/zedkit-core` | results, error handling, IDs | [packages/core/CATALOG.md](../../packages/core/CATALOG.md) |
+| `@zedtech/zedkit-server` | rate limiting, redaction, backoff, webhook signatures | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
+| `@zedtech/zedkit-nest` | NestJS bootstrap factory | [packages/nest/CATALOG.md](../../packages/nest/CATALOG.md) |
+| `@zedtech/zedkit-ai` | AI agent setup: instructions, skills, subagents | [packages/ai/CATALOG.md](../../packages/ai/CATALOG.md) |
+| `@zedtech/zedkit-ui` | admin UI kit: tokens, theme, components | [packages/ui/CATALOG.md](../../packages/ui/CATALOG.md) |
+| `@zedtech/zedkit-seo` | robots, sitemaps, JSON-LD, metadata, llms.txt, slugs | [packages/seo/CATALOG.md](../../packages/seo/CATALOG.md) |
+| `@zedtech/zedkit-payload-seo` | Payload SEO group field | [packages/payload-seo/CATALOG.md](../../packages/payload-seo/CATALOG.md) |
 
 ## Entry format
 
@@ -32,12 +32,12 @@ keep it exact:
 ```md
 ## Do X without Y
 
-- Import: `@zedkit/core` — `a`, `b`
+- Import: `@zedtech/zedkit-core` — `a`, `b`
 - Wraps: `some-npm-package`
 - Status: beta
 
 \`\`\`ts
-import { a } from "@zedkit/core";
+import { a } from "@zedtech/zedkit-core";
 // ...5-line example...
 \`\`\`
 ```

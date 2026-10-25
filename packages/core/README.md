@@ -1,14 +1,14 @@
-# @zedkit/core
+# @zedtech/zedkit-core
 
 Foundational helpers with a stable public surface. Original work by the
 same author.
 
 ```sh
-pnpm add @zedkit/core
+pnpm add @zedtech/zedkit-core
 ```
 
 ```ts
-import { tryCatch } from "@zedkit/core";
+import { tryCatch } from "@zedtech/zedkit-core";
 
 const parsed = tryCatch(() => JSON.parse(input));
 if (!parsed.ok) return fallback(parsed.error);
@@ -38,5 +38,5 @@ dependency) or versioned updates.
 ## Verify
 
 ```sh
-pnpm --filter @zedkit/core typecheck && pnpm --filter @zedkit/core lint && pnpm --filter @zedkit/core build && pnpm --filter @zedkit/core test
+pnpm --filter @zedtech/zedkit-core typecheck && pnpm --filter @zedtech/zedkit-core lint && pnpm --filter @zedtech/zedkit-core build && pnpm --filter @zedtech/zedkit-core test
 ```

@@ -1,5 +1,5 @@
 {
-  "name": "@zedkit/seo",
+  "name": "@zedtech/zedkit-seo",
   "version": "0.1.0",
   "description": "Generic SEO bricks: robots, sitemaps, typed JSON-LD, metadata, llms.txt, slugs.",
   "license": "MIT",

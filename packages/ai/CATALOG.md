@@ -1,13 +1,13 @@
-# Catalog — @zedkit/ai
+# Catalog — @zedtech/zedkit-ai
 
 ## Set up AI agent instructions, skills, subagents and commands in a repo
 
-- Import: `@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`
+- Import: `@zedtech/zedkit-ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { installKit } from "@zedkit/ai";
+import { installKit } from "@zedtech/zedkit-ai";
 const result = installKit({ dest: ".", preset: "core", providers: ["claude", "cursor"] });
 if (!result.ok) throw result.error;
 for (const action of result.value) console.log(action.kind, action.path);
@@ -24,12 +24,12 @@ layer: they read the shared source directly).
 
 ## Check that skills, subagents, commands and provider copies are valid
 
-- Import: `@zedkit/ai` — `validateKit`, `checkDrift`, `Issue`
+- Import: `@zedtech/zedkit-ai` — `validateKit`, `checkDrift`, `Issue`
 - Wraps: `yaml`
 - Status: beta
 
 ```ts
-import { checkDrift, validateKit } from "@zedkit/ai";
+import { checkDrift, validateKit } from "@zedtech/zedkit-ai";
 const issues = [...validateKit(".agents"), ...checkDrift(".", ".agents")];
 for (const issue of issues) console.error(`${issue.path}: ${issue.message}`);
 ```

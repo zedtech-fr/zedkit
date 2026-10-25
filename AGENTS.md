@@ -11,7 +11,7 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   docs, comments, PRs, issues); say "an upstream consumer". Enforced by
   `scripts/check-no-private-refs.sh` in CI.
 - **No raw try/catch.** Use `tryCatch`/`tryCatchAsync` from
-  `@zedkit/core` (sole exception: core's own implementation). Enforced by
+  `@zedtech/zedkit-core` (sole exception: core's own implementation). Enforced by
   the `no-restricted-syntax` ban in [eslint.config.mjs](eslint.config.mjs).
 - **No deep relative imports.** Inside a package use its `#*` subpath
   import; `../../*` and deeper are banned by `no-restricted-imports`.
@@ -33,7 +33,7 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - `packages/ai/kit` — the AI kit and the single source of truth for this
   repo's own skills and subagents: `.agents/skills` and `.agents/agents`
   symlink into it, and `.claude/` and `.cursor/` symlink to `.agents/`.
-  Edit skills there; `pnpm --filter @zedkit/ai test` validates them.
+  Edit skills there; `pnpm --filter @zedtech/zedkit-ai test` validates them.
 
 ## How to work
 

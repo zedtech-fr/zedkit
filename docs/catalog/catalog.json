@@ -1,346 +1,346 @@
 {
   "_generated": "Do not edit. Generated from packages/*/CATALOG.md by `pnpm catalog:build`.",
   "packages": {
-    "@zedkit/ai": {
+    "@zedtech/zedkit-ai": {
       "catalog": "packages/ai/CATALOG.md",
       "needs": [
         {
           "need": "Set up AI agent instructions, skills, subagents and commands in a repo",
-          "import": "`@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`",
+          "import": "`@zedtech/zedkit-ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { installKit } from \"@zedkit/ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
+          "example": "import { installKit } from \"@zedtech/zedkit-ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
         },
         {
           "need": "Check that skills, subagents, commands and provider copies are valid",
-          "import": "`@zedkit/ai` — `validateKit`, `checkDrift`, `Issue`",
+          "import": "`@zedtech/zedkit-ai` — `validateKit`, `checkDrift`, `Issue`",
           "wraps": "`yaml`",
           "status": "beta",
-          "example": "import { checkDrift, validateKit } from \"@zedkit/ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
+          "example": "import { checkDrift, validateKit } from \"@zedtech/zedkit-ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
         }
       ]
     },
-    "@zedkit/core": {
+    "@zedtech/zedkit-core": {
       "catalog": "packages/core/CATALOG.md",
       "needs": [
         {
           "need": "Model success or failure without throwing",
-          "import": "`@zedkit/core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`",
+          "import": "`@zedtech/zedkit-core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { isOk, ok, unwrapOr } from \"@zedkit/core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;"
+          "example": "import { isOk, ok, unwrapOr } from \"@zedtech/zedkit-core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;"
         },
         {
           "need": "Handle errors without try/catch",
-          "import": "`@zedkit/core` — `tryCatch`, `tryCatchAsync`, `normalizeThrown`",
+          "import": "`@zedtech/zedkit-core` — `tryCatch`, `tryCatchAsync`, `normalizeThrown`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { tryCatch } from \"@zedkit/core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);"
+          "example": "import { tryCatch } from \"@zedtech/zedkit-core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);"
         },
         {
           "need": "Generate prefixed unique IDs",
-          "import": "`@zedkit/core` — `newPrefixedId`, `isPrefixedId`",
+          "import": "`@zedtech/zedkit-core` — `newPrefixedId`, `isPrefixedId`",
           "wraps": "`ulid`",
           "status": "beta",
-          "example": "import { isPrefixedId, newPrefixedId } from \"@zedkit/core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
+          "example": "import { isPrefixedId, newPrefixedId } from \"@zedtech/zedkit-core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
         }
       ]
     },
-    "@zedkit/nest": {
+    "@zedtech/zedkit-nest": {
       "catalog": "packages/nest/CATALOG.md",
       "needs": [
         {
           "need": "Bootstrap a Nest app",
-          "import": "`@zedkit/nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`",
+          "import": "`@zedtech/zedkit-nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`",
           "wraps": "`@nestjs/platform-fastify`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/throttler`, `nestjs-pino`, `class-validator`",
           "status": "beta",
-          "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
+          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
         },
         {
           "need": "Ship request logs without leaking credentials",
-          "import": "`@zedkit/nest` — `LoggerOptions`",
+          "import": "`@zedtech/zedkit-nest` — `LoggerOptions`",
           "wraps": "`nestjs-pino`",
           "status": "beta",
-          "example": "import { createNestApp } from \"@zedkit/nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
+          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
         },
         {
           "need": "Return uniform error bodies",
-          "import": "`@zedkit/nest` — `AllExceptionsFilter`, `ErrorBody`",
+          "import": "`@zedtech/zedkit-nest` — `AllExceptionsFilter`, `ErrorBody`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { AllExceptionsFilter } from \"@zedkit/nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());"
+          "example": "import { AllExceptionsFilter } from \"@zedtech/zedkit-nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());"
         }
       ]
     },
-    "@zedkit/payload-seo": {
+    "@zedtech/zedkit-payload-seo": {
       "catalog": "packages/payload-seo/CATALOG.md",
       "needs": [
         {
           "need": "Add a localized SEO tab to a Payload collection",
-          "import": "`@zedkit/payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
+          "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
           "wraps": "`payload` (peer, types only)",
           "status": "beta",
-          "example": "import { seoGroupField } from \"@zedkit/payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
+          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
         },
         {
           "need": "Validate editor-entered title/description lengths",
-          "import": "`@zedkit/payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
+          "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedkit/payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
+          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
         }
       ]
     },
-    "@zedkit/seo": {
+    "@zedtech/zedkit-seo": {
       "catalog": "packages/seo/CATALOG.md",
       "needs": [
         {
           "need": "Serve robots.txt content",
-          "import": "`@zedkit/seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`",
+          "import": "`@zedtech/zedkit-seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { buildRobots } from \"@zedkit/seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}"
+          "example": "import { buildRobots } from \"@zedtech/zedkit-seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}"
         },
         {
           "need": "List localized pages in a sitemap",
-          "import": "`@zedkit/seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`",
+          "import": "`@zedtech/zedkit-seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { buildSitemapEntries } from \"@zedkit/seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });"
+          "example": "import { buildSitemapEntries } from \"@zedtech/zedkit-seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });"
         },
         {
           "need": "Serve a Google video sitemap",
-          "import": "`@zedkit/seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`",
+          "import": "`@zedtech/zedkit-seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { buildVideoSitemap } from \"@zedkit/seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });"
+          "example": "import { buildVideoSitemap } from \"@zedtech/zedkit-seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });"
         },
         {
           "need": "Emit typed JSON-LD structured data",
-          "import": "`@zedkit/seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`",
+          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`",
           "wraps": "`schema-dts`",
           "status": "beta",
-          "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedkit/seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
+          "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
         },
         {
           "need": "Build localized page metadata",
-          "import": "`@zedkit/seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`",
+          "import": "`@zedtech/zedkit-seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { buildPageMetadata } from \"@zedkit/seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });"
+          "example": "import { buildPageMetadata } from \"@zedtech/zedkit-seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });"
         },
         {
           "need": "Serve llms.txt for AI agents",
-          "import": "`@zedkit/seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`",
+          "import": "`@zedtech/zedkit-seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { llmsTextResponse } from \"@zedkit/seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}"
+          "example": "import { llmsTextResponse } from \"@zedtech/zedkit-seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}"
         },
         {
           "need": "Derive descriptions, slugs, and localized fields",
-          "import": "`@zedkit/seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`",
+          "import": "`@zedtech/zedkit-seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { normalizeSlug, resolveDescription } from \"@zedkit/seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });"
+          "example": "import { normalizeSlug, resolveDescription } from \"@zedtech/zedkit-seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });"
         }
       ]
     },
-    "@zedkit/server": {
+    "@zedtech/zedkit-server": {
       "catalog": "packages/server/CATALOG.md",
       "needs": [
         {
           "need": "Rate-limit calls per key",
-          "import": "`@zedkit/server` — `MemoryRateLimiter`",
+          "import": "`@zedtech/zedkit-server` — `MemoryRateLimiter`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { MemoryRateLimiter } from \"@zedkit/server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
+          "example": "import { MemoryRateLimiter } from \"@zedtech/zedkit-server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
         },
         {
           "need": "Redact secrets before logging",
-          "import": "`@zedkit/server` — `redactValue`",
+          "import": "`@zedtech/zedkit-server` — `redactValue`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { redactValue } from \"@zedkit/server\";\nlogger.info(redactValue({ user, token, headers }));"
+          "example": "import { redactValue } from \"@zedtech/zedkit-server\";\nlogger.info(redactValue({ user, token, headers }));"
         },
         {
           "need": "Retry with exponential backoff",
-          "import": "`@zedkit/server` — `computeBackoffMs`",
+          "import": "`@zedtech/zedkit-server` — `computeBackoffMs`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { computeBackoffMs } from \"@zedkit/server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
+          "example": "import { computeBackoffMs } from \"@zedtech/zedkit-server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
         },
         {
           "need": "Sign and verify webhook deliveries",
-          "import": "`@zedkit/server` — `webhookSignatureHeader`, `verifyWebhookSignatureHeader`, `VerifyWebhookOptions`",
+          "import": "`@zedtech/zedkit-server` — `webhookSignatureHeader`, `verifyWebhookSignatureHeader`, `VerifyWebhookOptions`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedkit/server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
+          "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedtech/zedkit-server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
         },
         {
           "need": "Tell a Postgres conflict from a bug",
-          "import": "`@zedkit/server` — `pgErrorCode`",
+          "import": "`@zedtech/zedkit-server` — `pgErrorCode`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { pgErrorCode } from \"@zedkit/server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
+          "example": "import { pgErrorCode } from \"@zedtech/zedkit-server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
         }
       ]
     },
-    "@zedkit/ui": {
+    "@zedtech/zedkit-ui": {
       "catalog": "packages/ui/CATALOG.md",
       "needs": [
         {
           "need": "Theme an admin app (dark/light included)",
-          "import": "`@zedkit/ui/styles.css` (+ one `@source` line, see README)",
+          "import": "`@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)",
           "wraps": "`tailwindcss` (v4 CSS-first)",
           "status": "beta",
-          "example": "import \"@zedkit/ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedkit/ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
+          "example": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
         },
         {
           "need": "Merge class names without conflicts",
-          "import": "`@zedkit/ui` — `cn`",
+          "import": "`@zedtech/zedkit-ui` — `cn`",
           "wraps": "`clsx`, `tailwind-merge`",
           "status": "beta",
-          "example": "import { cn } from \"@zedkit/ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
+          "example": "import { cn } from \"@zedtech/zedkit-ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
         },
         {
           "need": "Trigger actions with buttons",
-          "import": "`@zedkit/ui` — `Button`, `buttonVariants`, `ButtonProps`",
+          "import": "`@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`",
           "wraps": "`@radix-ui/react-slot`, `class-variance-authority`",
           "status": "beta",
-          "example": "import { Button } from \"@zedkit/ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>"
+          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>"
         },
         {
           "need": "Show a status or count badge",
-          "import": "`@zedkit/ui` — `Badge`, `badgeVariants`, `BadgeProps`",
+          "import": "`@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
-          "example": "import { Badge } from \"@zedkit/ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>"
+          "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>"
         },
         {
           "need": "Collect text input with a label",
-          "import": "`@zedkit/ui` — `Input`, `Label`",
+          "import": "`@zedtech/zedkit-ui` — `Input`, `Label`",
           "wraps": "`@radix-ui/react-label`",
           "status": "beta",
-          "example": "import { Input, Label } from \"@zedkit/ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
+          "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
         },
         {
           "need": "Separate content horizontally or vertically",
-          "import": "`@zedkit/ui` — `Separator`",
+          "import": "`@zedtech/zedkit-ui` — `Separator`",
           "wraps": "`@radix-ui/react-separator`",
           "status": "beta",
-          "example": "import { Separator } from \"@zedkit/ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+          "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
         },
         {
           "need": "Show loading placeholder blocks",
-          "import": "`@zedkit/ui` — `Skeleton`",
+          "import": "`@zedtech/zedkit-ui` — `Skeleton`",
           "wraps": "`(none)`",
           "status": "beta",
-          "example": "import { Skeleton } from \"@zedkit/ui\";\n<Skeleton className=\"h-4 w-24\" />"
+          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
         },
         {
           "need": "Open modal dialogs",
-          "import": "`@zedkit/ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
+          "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
           "status": "beta",
-          "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedkit/ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
+          "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
         },
         {
           "need": "Confirm destructive actions",
-          "import": "`@zedkit/ui` — `ConfirmDialog`, `ConfirmDialogProps`",
+          "import": "`@zedtech/zedkit-ui` — `ConfirmDialog`, `ConfirmDialogProps`",
           "wraps": "`@radix-ui/react-dialog` (via Dialog)",
           "status": "beta",
-          "example": "import { Button, ConfirmDialog } from \"@zedkit/ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
+          "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
         },
         {
           "need": "Show toast notifications",
-          "import": "`@zedkit/ui` — `Toaster`",
+          "import": "`@zedtech/zedkit-ui` — `Toaster`",
           "wraps": "`sonner`",
           "status": "beta",
-          "example": "import { Toaster } from \"@zedkit/ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+          "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
         },
         {
           "need": "Display a shown-once secret with copy",
-          "import": "`@zedkit/ui` — `SecretField`, `SecretFieldProps`",
+          "import": "`@zedtech/zedkit-ui` — `SecretField`, `SecretFieldProps`",
           "wraps": "`lucide-react`",
           "status": "beta",
-          "example": "import { Label, SecretField } from \"@zedkit/ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
+          "example": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
-          "import": "`@zedkit/ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
+          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
-          "example": "import { DataTable, createDataTableColumns } from \"@zedkit/ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
+          "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
         },
         {
           "need": "Lay out an admin page (sidebar + topbar + header)",
-          "import": "`@zedkit/ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`",
+          "import": "`@zedtech/zedkit-ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
-          "example": "import { AppShell, PageHeader } from \"@zedkit/ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
+          "example": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
         },
         {
           "need": "Guide a multi-step flow with selectable option cards",
-          "import": "`@zedkit/ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
+          "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
           "wraps": "none (native inputs + theme tokens)",
           "status": "beta",
-          "example": "import { OptionCards, WizardSteps } from \"@zedkit/ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
+          "example": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
         },
         {
           "need": "Show key-value details and a live indicator",
-          "import": "`@zedkit/ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
+          "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
-          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedkit/ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
         },
         {
           "need": "Build validated forms with labels, errors, and pending state",
-          "import": "`@zedkit/ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
+          "import": "`@zedtech/zedkit-ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
           "wraps": "`react-hook-form`, `@hookform/resolvers`, `zod`",
           "status": "beta",
-          "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedkit/ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>"
+          "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedtech/zedkit-ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>"
         },
         {
           "need": "Lay out fieldsets, fields, and error lists",
-          "import": "`@zedkit/ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
+          "import": "`@zedtech/zedkit-ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
           "wraps": "none (presentational over `Label`, `Separator`)",
           "status": "beta",
-          "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedkit/ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
+          "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
         },
         {
           "need": "Group content in a card section",
-          "import": "`@zedkit/ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`",
+          "import": "`@zedtech/zedkit-ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`",
           "wraps": "none (presentational, theme tokens only)",
           "status": "beta",
-          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedkit/ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
+          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
         },
         {
           "need": "Render headings and body text without raw tags",
-          "import": "`@zedkit/ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`",
+          "import": "`@zedtech/zedkit-ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`",
           "wraps": "`class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)",
           "status": "beta",
-          "example": "import { Heading, Text } from \"@zedkit/ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
+          "example": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
         },
         {
           "need": "Call out a notice or an error state",
-          "import": "`@zedkit/ui` — `Alert`, `AlertTitle`, `AlertDescription`",
+          "import": "`@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
-          "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedkit/ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
+          "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
         },
         {
           "need": "Pick one option from a dropdown",
-          "import": "`@zedkit/ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
+          "import": "`@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
           "wraps": "`@radix-ui/react-select`",
           "status": "alpha",
-          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedkit/ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>"
+          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>"
         },
         {
           "need": "Collect multi-line text input",
-          "import": "`@zedkit/ui` — `Textarea`",
+          "import": "`@zedtech/zedkit-ui` — `Textarea`",
           "wraps": "none (styled native `textarea`)",
           "status": "alpha",
-          "example": "import { Label, Textarea } from \"@zedkit/ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
+          "example": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
         }
       ]
     }

@@ -1,14 +1,14 @@
-# @zedkit/server
+# @zedtech/zedkit-server
 
 Server-side helpers with a stable public surface. Original work by the
 same author. Zero runtime dependencies.
 
 ```sh
-pnpm add @zedkit/server
+pnpm add @zedtech/zedkit-server
 ```
 
 ```ts
-import { redactValue } from "@zedkit/server";
+import { redactValue } from "@zedtech/zedkit-server";
 
 logger.info({ event: "login", user: redactValue(user) });
 ```
@@ -47,5 +47,5 @@ for versioned updates.
 ## Verify
 
 ```sh
-pnpm --filter @zedkit/server typecheck && pnpm --filter @zedkit/server lint && pnpm --filter @zedkit/server build && pnpm --filter @zedkit/server test
+pnpm --filter @zedtech/zedkit-server typecheck && pnpm --filter @zedtech/zedkit-server lint && pnpm --filter @zedtech/zedkit-server build && pnpm --filter @zedtech/zedkit-server test
 ```

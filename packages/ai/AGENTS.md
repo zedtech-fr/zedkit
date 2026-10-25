@@ -1,7 +1,7 @@
-# AGENTS.md — @zedkit/ai
+# AGENTS.md — @zedtech/zedkit-ai
 
 1. Two parts: `kit/` (markdown and JSON shipped as data) and `src/` (a
-   small installer, validator and CLI). Runtime deps: `@zedkit/core`,
+   small installer, validator and CLI). Runtime deps: `@zedtech/zedkit-core`,
    `yaml`.
 2. `kit/` is the single source of truth for this repo's own skills and
    subagents too (`.agents/skills` and `.agents/agents` are symlinks into
@@ -22,5 +22,5 @@
 7. Installer never overwrites. New behavior needs a test in
    `tests/unit/install.test.ts`.
 8. Explicit named exports in `src/index.ts`, each in `CATALOG.md`.
-9. Definition of done: `pnpm --filter @zedkit/ai typecheck && pnpm --filter @zedkit/ai lint && pnpm --filter @zedkit/ai build && pnpm --filter @zedkit/ai test`
+9. Definition of done: `pnpm --filter @zedtech/zedkit-ai typecheck && pnpm --filter @zedtech/zedkit-ai lint && pnpm --filter @zedtech/zedkit-ai build && pnpm --filter @zedtech/zedkit-ai test`
    green (each separately), `pnpm catalog:check` green.

@@ -1,4 +1,4 @@
-# AGENTS.md — @zedkit/ui
+# AGENTS.md — @zedtech/zedkit-ui
 
 Admin UI kit. shadcn/ui-based (Radix + Tailwind v4, copied in —
 see THIRD_PARTY_NOTICES.md), lucide icons, sonner toasts, TanStack
@@ -27,7 +27,7 @@ Rules:
 - UI PRs: the PR body carries the four lenses plus a UX pass as a
   lazy, distracted, doubtful end user (can they finish the flow
   half-asleep?), and attaches a gallery screenshot showing the
-  change (`pnpm --filter @zedkit/ui smoke` writes them to
+  change (`pnpm --filter @zedtech/zedkit-ui smoke` writes them to
   test-results/, never committed).
 - Public repo: generic wording only, no private project names
   anywhere (CI denylist enforces it).

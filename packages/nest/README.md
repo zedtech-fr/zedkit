@@ -1,4 +1,4 @@
-# @zedkit/nest
+# @zedtech/zedkit-nest
 
 Generic NestJS bootstrap factory. Original work by the same author.
 
@@ -33,7 +33,7 @@ pieces and returns the app ready to `listen()`:
 
 ```ts
 import "reflect-metadata";
-import { createNestApp } from "@zedkit/nest";
+import { createNestApp } from "@zedtech/zedkit-nest";
 
 const app = await createNestApp({
   module: AppModule,
@@ -47,7 +47,7 @@ Framework pieces are peer dependencies (one copy per app — required for
 Nest DI). Install them alongside:
 
 ```sh
-pnpm add @zedkit/nest @fastify/static @nestjs/common @nestjs/config \
+pnpm add @zedtech/zedkit-nest @fastify/static @nestjs/common @nestjs/config \
   @nestjs/core @nestjs/platform-fastify @nestjs/swagger @nestjs/throttler \
   class-transformer class-validator fastify nestjs-pino pino pino-http \
   reflect-metadata
@@ -79,5 +79,5 @@ dependencies), not suitable for source-copying.
 ## Verify
 
 ```sh
-pnpm --filter @zedkit/nest typecheck && pnpm --filter @zedkit/nest lint && pnpm --filter @zedkit/nest build && pnpm --filter @zedkit/nest test
+pnpm --filter @zedtech/zedkit-nest typecheck && pnpm --filter @zedtech/zedkit-nest lint && pnpm --filter @zedtech/zedkit-nest build && pnpm --filter @zedtech/zedkit-nest test
 ```

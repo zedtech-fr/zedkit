@@ -1,4 +1,4 @@
-# AGENTS.md — @zedkit/core
+# AGENTS.md — @zedtech/zedkit-core
 
 1. Foundational package: `Result`, `tryCatch`/`tryCatchAsync`, prefixed
    IDs. Zero business logic; the only runtime dependency is `ulid`.
@@ -15,5 +15,5 @@
    no network. Typecheck covers `src` and `tests`.
 7. Every new export needs a CATALOG.md entry; regenerate `catalog.json`
    (`pnpm catalog:build` from the root).
-8. Definition of done: `pnpm --filter @zedkit/core typecheck && pnpm --filter @zedkit/core lint && pnpm --filter @zedkit/core build && pnpm --filter @zedkit/core test`
+8. Definition of done: `pnpm --filter @zedtech/zedkit-core typecheck && pnpm --filter @zedtech/zedkit-core lint && pnpm --filter @zedtech/zedkit-core build && pnpm --filter @zedtech/zedkit-core test`
    green (each command separately), `pnpm catalog:check` green.

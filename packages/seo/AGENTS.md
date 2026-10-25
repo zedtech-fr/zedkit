@@ -1,4 +1,4 @@
-# AGENTS.md — @zedkit/seo
+# AGENTS.md — @zedtech/zedkit-seo
 
 Generic SEO builders. Pure functions, options-driven: every builder
 takes a site/page/entries input and returns content. No brand, no
