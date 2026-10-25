@@ -1,5 +1,6 @@
 {
   "_comment": "Rich doc pages: catalog needs that get a live preview + generated props table. Every other need still gets a generated page (badge, install, example). Keys must match catalog need headings exactly; the docs check fails otherwise.",
+  "_deferred": "Show toast notifications (needs sonner toast() import — new docs dep) and Build validated forms (needs zod + react-hook-form — new docs deps) land with the interactive-demos batch. Theme (styles.css) and Merge class names (cn function) are not components and stay preview-free by design.",
   "rich": {
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
@@ -16,12 +17,138 @@
       "demo": "BadgeDemo",
       "_note": "preview-only: BadgeProps is not exported from the ui barrel (unlike ButtonProps/LivePulseProps); docs never promise unexported types. Upstream may export it (one line) to unlock the table."
     },
+    "Collect text input with a label": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Input",
+      "props": null,
+      "source": "input.tsx",
+      "demo": "InputDemo"
+    },
+    "Separate content horizontally or vertically": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Separator",
+      "props": null,
+      "source": "separator.tsx",
+      "demo": "SeparatorDemo"
+    },
+    "Show loading placeholder blocks": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Skeleton",
+      "props": null,
+      "source": "skeleton.tsx",
+      "demo": "SkeletonDemo"
+    },
+    "Open modal dialogs": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Dialog",
+      "props": null,
+      "source": "dialog.tsx",
+      "demo": "DialogDemo"
+    },
+    "Confirm destructive actions": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ConfirmDialog",
+      "props": "ConfirmDialogProps",
+      "source": "confirm-dialog.tsx",
+      "demo": "ConfirmDialogDemo"
+    },
+    "Display a shown-once secret with copy": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "SecretField",
+      "props": "SecretFieldProps",
+      "source": "secret-field.tsx",
+      "demo": "SecretFieldDemo"
+    },
+    "Show a sortable, filterable, paginated data table": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DataTable",
+      "props": "DataTableProps",
+      "source": "data-table.tsx",
+      "demo": "DataTableDemo"
+    },
+    "Lay out an admin page (sidebar + topbar + header)": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "AppShell",
+      "props": "AppShellProps",
+      "source": "app-shell.tsx",
+      "demo": "AppShellDemo"
+    },
+    "Guide a multi-step flow with selectable option cards": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "WizardSteps",
+      "props": "WizardStepsProps",
+      "source": "wizard-steps.tsx",
+      "demo": "WizardDemo"
+    },
     "Show key-value details and a live indicator": {
       "package": "@zedtech/zedkit-ui",
-      "component": "LivePulse",
-      "props": "LivePulseProps",
-      "source": "live-pulse.tsx",
-      "demo": "LivePulseDemo"
+      "component": "DetailPanel",
+      "props": "DetailPanelProps",
+      "source": "detail-panel.tsx",
+      "demo": "DetailsDemo"
+    },
+    "Lay out fieldsets, fields, and error lists": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "FieldSet",
+      "props": null,
+      "source": "field.tsx",
+      "demo": "FieldDemo"
+    },
+    "Group content in a card section": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Card",
+      "props": null,
+      "source": "card.tsx",
+      "demo": "CardDemo"
+    },
+    "Stack content and group titled sections": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Stack",
+      "props": "StackProps",
+      "source": "layout.tsx",
+      "demo": "StackDemo"
+    },
+    "Render headings and body text without raw tags": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Heading",
+      "props": "HeadingProps",
+      "source": "typography.tsx",
+      "demo": "TypographyDemo"
+    },
+    "Call out a notice or an error state": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Alert",
+      "props": null,
+      "source": "alert.tsx",
+      "demo": "AlertDemo"
+    },
+    "Pick one option from a dropdown": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Select",
+      "props": null,
+      "source": "select.tsx",
+      "demo": "SelectDemo"
+    },
+    "Collect multi-line text input": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Textarea",
+      "props": null,
+      "source": "textarea.tsx",
+      "demo": "TextareaDemo"
+    },
+    "Toggle a checkbox or a switch": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Checkbox",
+      "props": null,
+      "source": "checkbox.tsx",
+      "demo": "ToggleDemo"
+    },
+    "Switch between tabbed panels": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Tabs",
+      "props": null,
+      "source": "tabs.tsx",
+      "demo": "TabsDemo"
     }
   }
 }
