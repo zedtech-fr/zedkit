@@ -229,7 +229,32 @@
             }
           ],
           "seeAlso": [
-            "Bootstrap a Nest app"
+            "Bootstrap a Nest app",
+            "Start a safe NestJS API"
+          ]
+        },
+        {
+          "need": "Start a safe NestJS API",
+          "import": "`@zedtech/zedkit-nest` — `createNestApp`, `ErrorBody`; `@zedtech/zedkit-core` — `newPrefixedId`",
+          "wraps": "`@nestjs/platform-fastify`, `nestjs-pino`, `@nestjs/throttler`, `class-validator`",
+          "status": "beta",
+          "shortName": "Safe API tutorial",
+          "audience": "Backend developers shipping a first HTTP API with validation, logging, rate limits, and stable error JSON.",
+          "purpose": "End-to-end tutorial: boot with `createNestApp`, validate DTOs, return prefixed ids, and exercise the documented error shape with `curl`.",
+          "whenToUse": "When you want one walkthrough that wires nest, core ids, and the global error filter together.",
+          "whenNotToUse": "When you only need a single piece — use the focused needs (`Bootstrap a Nest app`, `Return uniform error bodies`) instead.",
+          "derivedFrom": null,
+          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nimport { newPrefixedId } from \"@zedtech/zedkit-core\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);\n// Walkthrough sources: packages/nest/examples/safe-api (compiled in @zedtech/zedkit-nest tests).",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nimport { newPrefixedId } from \"@zedtech/zedkit-core\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);\n// Walkthrough sources: packages/nest/examples/safe-api (compiled in @zedtech/zedkit-nest tests)."
+            }
+          ],
+          "seeAlso": [
+            "Bootstrap a Nest app",
+            "Return uniform error bodies",
+            "Generate prefixed unique IDs"
           ]
         }
       ]

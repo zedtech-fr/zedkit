@@ -386,6 +386,9 @@ importers:
       '@types/supertest':
         specifier: 'catalog:'
         version: 7.2.1
+      '@zedtech/zedkit-core':
+        specifier: workspace:*
+        version: link:../core
       class-transformer:
         specifier: 'catalog:'
         version: 0.5.1
