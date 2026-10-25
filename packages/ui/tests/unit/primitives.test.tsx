@@ -9,6 +9,7 @@ import { Label } from "#index.js";
 import { Separator } from "#index.js";
 import { Skeleton } from "#index.js";
 import { Heading, Text } from "#index.js";
+import { Textarea } from "#index.js";
 
 describe("primitives", () => {
   it("renders a button with its variant classes", () => {
@@ -90,6 +91,11 @@ describe("primitives", () => {
     const alerts = screen.getAllByRole("alert");
     expect(alerts).toHaveLength(2);
     expect(alerts[1]?.className).toContain("text-destructive");
+  });
+
+  it("renders a textarea with its placeholder", () => {
+    render(<Textarea placeholder="A few words." aria-label="Bio" />);
+    expect(screen.getByLabelText("Bio")).toHaveProperty("placeholder", "A few words.");
   });
 
   it("renders a card with header, content, and footer", () => {

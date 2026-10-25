@@ -39,6 +39,7 @@ import {
   Separator,
   Skeleton,
   Text,
+  Textarea,
   Toaster,
   WizardSteps,
   createDataTableColumns,
@@ -72,6 +73,16 @@ describe("a11y", () => {
         <Heading level={2}>Section</Heading>
         <Text>Body copy.</Text>
         <Text variant="muted">Muted copy.</Text>
+      </>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("labeled textarea", async () => {
+    const { container } = render(
+      <>
+        <Label htmlFor="bio">Bio</Label>
+        <Textarea id="bio" placeholder="A few words." />
       </>,
     );
     await expectNoViolations(container);
