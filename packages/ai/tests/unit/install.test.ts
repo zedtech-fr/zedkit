@@ -210,6 +210,14 @@ describe("installKit", () => {
     expect(readdirSync(dest)).toEqual([]);
   });
 
+  it("rejects a preset value that is neither a list nor a star", () => {
+    const kit = tempDir();
+    put(kit, "kit.json", JSON.stringify({ presets: { core: 42 }, agents: [] }));
+    const result = readManifest(kit);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.message).toContain('preset "core" must be a string list or "*"');
+  });
+
   it("rejects prototype keys as presets", () => {
     for (const preset of ["constructor", "__proto__", "toString"]) {
       const result = installKit({ dest: tempDir(), preset });
