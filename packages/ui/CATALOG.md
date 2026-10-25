@@ -97,6 +97,39 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 <Skeleton className="h-4 w-24" />
 ```
 
+## Indicate status with a dot
+
+- Import: `@zedtech/zedkit-ui` — `StatusDot`, `StatusDotProps`, `StatusDotTone`
+- Wraps: `(none)`
+- Status: alpha
+
+```ts
+import { StatusDot } from "@zedtech/zedkit-ui";
+<StatusDot tone="active" /> // active | idle | success | warning | danger; decorative, pair with text
+```
+
+## Show determinate progress
+
+- Import: `@zedtech/zedkit-ui` — `ProgressBar`, `ProgressBarProps`
+- Wraps: `(none)`
+- Status: alpha
+
+```ts
+import { ProgressBar } from "@zedtech/zedkit-ui";
+<ProgressBar value={40} label="Uploading report" /> // role=progressbar, value clamped to 0..max
+```
+
+## Celebrate completion with a checkmark
+
+- Import: `@zedtech/zedkit-ui` — `Checkmark`, `CheckmarkProps`
+- Wraps: `(none)`
+- Status: alpha
+
+```ts
+import { Checkmark } from "@zedtech/zedkit-ui";
+<Checkmark label="Saved" /> // draws once, static under reduced motion; omit label when decorative
+```
+
 ## Open modal dialogs
 
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
