@@ -1,16 +1,25 @@
+import { spawnSync } from "node:child_process";
+import process from "node:process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { main } from "../../../packages/ai/dist/cli.js";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+
+const CLI = join(ROOT, "packages", "ai", "dist", "bin.js");
 
 function capture(argv) {
-  const out = [];
-  const err = [];
-  const code = main(argv, {
-    out: (line) => out.push(line),
-    err: (line) => err.push(line),
+  const result = spawnSync(process.execPath, [CLI, ...argv], {
+    cwd: ROOT,
+    encoding: "utf8",
+    env: process.env,
   });
-  return { code, out: out.join("\n"), err: err.join("\n") };
+  return {
+    code: result.status ?? 1,
+    out: result.stdout ?? "",
+    err: result.stderr ?? "",
+  };
 }
 
 /** Same flow as the set-up-your-coding-agents tutorial (empty scratch repo). */
@@ -49,9 +58,6 @@ export function runExistingAgentsTutorial(dir) {
 
 export function withScratchDir(fn) {
   const dir = mkdtempSync(join(tmpdir(), "zedkit-ai-tutorial-"));
-  try {
-    fn(dir);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
+  fn(dir);
+  rmSync(dir, { recursive: true, force: true });
 }
