@@ -1,0 +1,27 @@
+{
+  "_comment": "Rich doc pages: catalog needs that get a live preview + generated props table. Every other need still gets a generated page (badge, install, example). Keys must match catalog need headings exactly; the docs check fails otherwise.",
+  "rich": {
+    "Trigger actions with buttons": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Button",
+      "props": "ButtonProps",
+      "source": "button.tsx",
+      "demo": "ButtonDemo"
+    },
+    "Show a status or count badge": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Badge",
+      "props": null,
+      "source": null,
+      "demo": "BadgeDemo",
+      "_note": "preview-only: BadgeProps is not exported from the ui barrel (unlike ButtonProps/LivePulseProps); docs never promise unexported types. Upstream may export it (one line) to unlock the table."
+    },
+    "Show key-value details and a live indicator": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "LivePulse",
+      "props": "LivePulseProps",
+      "source": "live-pulse.tsx",
+      "demo": "LivePulseDemo"
+    }
+  }
+}

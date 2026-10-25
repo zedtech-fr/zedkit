@@ -45,6 +45,7 @@ export default tseslint.config(
     files: [
       "scripts/**/*.mjs",
       "eslint/**/*.mjs",
+      "apps/docs/scripts/*.mjs",
       "packages/ui/preview/*.mjs",
       "packages/ui/playwright.config.ts",
     ],
@@ -60,6 +61,7 @@ export default tseslint.config(
   {
     ignores: [
       "**/.next/**",
+      "**/.source/**",
       "**/dist/**",
       "**/kit/**",
       "**/node_modules/**",

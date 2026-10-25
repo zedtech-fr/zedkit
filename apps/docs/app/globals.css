@@ -1,2 +1,6 @@
 @import "tailwindcss";
+@import "@zedtech/zedkit-ui/styles.css";
 @import "fumadocs-ui/style.css";
+
+/* Scan the workspace kit sources so preview components get their classes. */
+@source "../../../packages/ui/src";

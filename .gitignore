@@ -15,6 +15,11 @@ coverage/
 .next/
 next-env.d.ts
 
+# docs spike: generated content + MDX index (regenerated on install/build)
+apps/docs/content/
+apps/docs/.source/
+apps/docs/public/llms.txt
+
 # playwright smoke output (screenshots land here, never committed)
 test-results/
 playwright-report/
