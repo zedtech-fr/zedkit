@@ -1,4 +1,4 @@
-// Docs coverage check (spike): fails CI when a catalog need has no doc
+// Docs coverage check: fails CI when a catalog need has no doc
 // page or a manifest reference goes stale. Runs the generator to a temp
 // dir (never touching the build output) and asserts:
 //   1. every catalog need maps to exactly one generated page;

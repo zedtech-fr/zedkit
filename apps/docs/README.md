@@ -1,10 +1,37 @@
-# @zedtech/zedkit-docs (shell)
+# @zedtech/zedkit-docs
 
-Public documentation site for the kit. This PR is the shell only:
-workspace membership, pinned docs dependencies (Next.js + Fumadocs),
-and a building app with the Fumadocs provider and styles wired.
+Public documentation site for the kit ([zedkit.app](https://zedkit.app)).
+Next.js + Fumadocs; catalog pages are generated from
+`docs/catalog/catalog.json`, with live `@zedtech/zedkit-ui` previews,
+props tables, and CI coverage checks.
 
-The follow-up spike PR adds the MDX source (generated from
-`docs/catalog/catalog.json`), live `@zedtech/zedkit-ui` previews, props
-tables, and the docs-coverage CI check. Framework choice is
-documented in `docs/spike-docs-framework.md` (lands with the spike).
+## Local dev
+
+From the repo root:
+
+```sh
+pnpm dev          # catalog build + docs on http://localhost:3100
+```
+
+From this package:
+
+```sh
+pnpm --filter @zedtech/zedkit-docs dev
+pnpm docs:generate   # regenerate content/docs from catalog + prose
+pnpm docs:check      # coverage, prose rules, gallery, guides
+```
+
+`apps/docs/content/` is generated on install and build — edit sources under
+`prose/`, `docs-manifest.json`, and the scripts in `scripts/`, not the output.
+
+## Page types
+
+| Kind | Doc |
+| --- | --- |
+| Catalog need (default) | [PAGE-TEMPLATE.md](./PAGE-TEMPLATE.md) |
+| UI registry brick (`registry` in manifest) | [COMPONENT-PAGE.md](./COMPONENT-PAGE.md) |
+| Standalone guides (`prose/guides/`) | PAGE-TEMPLATE.md § Guide pages |
+
+Agent workflow: [AGENTS.md](./AGENTS.md).
+
+Framework choice record (historical): [docs/spike-docs-framework.md](../../docs/spike-docs-framework.md).
