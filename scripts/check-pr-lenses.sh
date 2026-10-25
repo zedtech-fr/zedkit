@@ -37,11 +37,11 @@ require_personas() {
     echo "PR #$pr must include a ## Personas section with verdicts and proof"
     exit 1
   }
-  echo "$body" | grep -qE '\|[^|\n]+\| *(OK|reservations|blocking|réserves|bloquant|Reservations|Blocking) *\|' || {
+  echo "$body" | grep -qE '\|[^|]+\| *(OK|reservations|blocking|réserves|bloquant|Reservations|Blocking) *\|' || {
     echo "PR #$pr Personas table needs at least one verdict (OK / reservations / blocking) per row"
     exit 1
   }
-  filled="$(echo "$body" | grep -cE '\|[^|\n]+\| *(OK|reservations|blocking|réserves|bloquant|Reservations|Blocking) *\|' || true)"
+  filled="$(echo "$body" | grep -cE '\|[^|]+\| *(OK|reservations|blocking|réserves|bloquant|Reservations|Blocking) *\|' || true)"
   if [ "${filled:-0}" -lt 5 ]; then
     echo "PR #$pr Personas table looks incomplete (expected several filled verdict rows, got ${filled:-0})"
     exit 1
