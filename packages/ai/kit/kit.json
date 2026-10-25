@@ -35,7 +35,8 @@
     "improver",
     "security-reviewer",
     "skeptic",
-    "ui-designer"
+    "ui-designer",
+    "copywriter"
   ],
   "commands": [
     "review",

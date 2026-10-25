@@ -17,7 +17,7 @@ When to call which agent, and the chains they form. Agents live in
 | `verifier` | before calling work done or merging; runs gates + definition of done + two review passes | no |
 | `security-reviewer` | the change touches auth, tenancy, secrets, user data, logging, input parsing or external calls | no |
 | `ui-designer` | the change touches components, pages, styles or previews | no |
-| `copywriter` | user-visible strings changed (microcopy, errors, empty states, CTAs); i18n-first | no (planned) |
+| `copywriter` | user-visible strings changed (microcopy, errors, empty states, CTAs); i18n-first | no |
 | `a11y-auditor` | components, forms, tables or pages changed; WCAG basics | no (planned) |
 | `seo-auditor` | pages, metadata, sitemap, redirects or the seo package changed | no (planned) |
 | `dependency-auditor` | `package.json`, lockfiles or catalogs changed; new or updated deps | no (planned) |
