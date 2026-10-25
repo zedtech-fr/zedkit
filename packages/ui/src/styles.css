@@ -39,6 +39,7 @@
   --sidebar-border: 240 5.9% 90%;
   --sidebar-accent: 240 4.8% 95.9%;
   --ring-width: 2px;
+  --ring-width-control: 1px;
   --ring-offset-width: 2px;
 }
 
@@ -107,6 +108,13 @@
   --radius-sm: calc(var(--radius) - 4px);
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
+  --spacing-control-height: 2.25rem;
+  --spacing-control-height-sm: 2rem;
+  --spacing-control-height-lg: 2.5rem;
+  --spacing-button-inline: 1rem;
+  --spacing-button-inline-sm: 0.75rem;
+  --spacing-button-inline-lg: 2rem;
+  --spacing-icon-control: 1rem;
 }
 
 @layer base {
@@ -136,6 +144,16 @@
     box-shadow:
       0 0 0 var(--ring-offset-width) hsl(var(--background)),
       0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring));
+  }
+}
+
+/* Controls (Button, Input, …): keep the prior 1px focus weight via tokens. */
+@utility focus-ring-control {
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 var(--ring-offset-width) hsl(var(--background)),
+      0 0 0 calc(var(--ring-offset-width) + var(--ring-width-control)) hsl(var(--ring));
   }
 }
 

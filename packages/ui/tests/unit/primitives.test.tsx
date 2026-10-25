@@ -18,6 +18,17 @@ describe("primitives", () => {
     expect(button.className).toContain("bg-destructive");
   });
 
+  it("merges button styles onto asChild link", () => {
+    render(
+      <Button asChild variant="outline">
+        <a href="/save">Save</a>
+      </Button>,
+    );
+    const link = screen.getByRole("link", { name: "Save" });
+    expect(link.className).toContain("border-input");
+    expect(link.getAttribute("href")).toBe("/save");
+  });
+
   it("renders a badge with its text", () => {
     render(<Badge variant="outline">live</Badge>);
     expect(screen.getByText("live").className).toContain("border");

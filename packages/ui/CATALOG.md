@@ -61,6 +61,9 @@ import { Button } from "@zedtech/zedkit-ui";
 <Button>Save</Button>
 <Button variant="destructive" size="sm">Delete</Button>
 <Button variant="outline" size="icon" aria-label="Close">×</Button>
+<Button asChild variant="secondary">
+  <a href="/docs">Read the docs</a>
+</Button>
 ```
 
 ## Show a status or count badge
