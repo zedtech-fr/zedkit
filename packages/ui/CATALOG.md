@@ -254,3 +254,16 @@ import { Alert, AlertDescription, AlertTitle } from "@zedkit/ui";
 <Alert variant="destructive"><AlertTitle>Failed</AlertTitle>
 <AlertDescription>Something went wrong.</AlertDescription></Alert>
 ```
+
+## Pick one option from a dropdown
+
+- Import: `@zedkit/ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
+- Wraps: `@radix-ui/react-select`
+- Status: alpha
+
+```ts
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@zedkit/ui";
+<Select onValueChange={setRegion}>
+<SelectTrigger><SelectValue placeholder="Pick a region" /></SelectTrigger>
+<SelectContent><SelectItem value="eu">Europe</SelectItem></SelectContent>
+```

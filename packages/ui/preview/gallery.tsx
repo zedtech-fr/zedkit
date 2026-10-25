@@ -26,6 +26,13 @@ import {
   OptionCards,
   PageHeader,
   SecretField,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
   Separator,
   Skeleton,
   Text,
@@ -185,6 +192,18 @@ export function Gallery() {
 
         <Section id="forms" title="Forms">
           <FormDemo />
+          <Select>
+            <SelectTrigger className="max-w-sm">
+              <SelectValue placeholder="Pick a region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Regions</SelectLabel>
+                <SelectItem value="eu">Europe</SelectItem>
+                <SelectItem value="us">Americas</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </Section>
 
         <Section id="wizard" title="Wizard">

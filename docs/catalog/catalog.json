@@ -327,6 +327,13 @@
           "wraps": "`class-variance-authority`",
           "status": "beta",
           "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedkit/ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
+        },
+        {
+          "need": "Pick one option from a dropdown",
+          "import": "`@zedkit/ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
+          "wraps": "`@radix-ui/react-select`",
+          "status": "alpha",
+          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedkit/ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>"
         }
       ]
     }

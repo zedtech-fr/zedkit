@@ -1,7 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
+import { RegionSelect, stubSelectJsdom } from "./select-fixture.js";
+
+beforeAll(() => {
+  stubSelectJsdom();
+});
 
 import {
   Alert,
@@ -118,6 +123,14 @@ describe("a11y", () => {
   it("toaster region", async () => {
     const { container } = render(<Toaster />);
     await expectNoViolations(container);
+  });
+
+  it("open select", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+    await user.click(screen.getByRole("combobox", { name: "Region" }));
+    await screen.findByRole("option", { name: "Europe" });
+    await expectNoViolations(document.body);
   });
 
   it("default and destructive alerts", async () => {

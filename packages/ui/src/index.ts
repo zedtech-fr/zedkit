@@ -53,6 +53,18 @@ export { LivePulse, type LivePulseProps } from "./live-pulse.js";
 export { OptionCards, type OptionCard, type OptionCardsProps } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./select.js";
 export { Separator } from "./separator.js";
 export { Skeleton } from "./skeleton.js";
 export {
