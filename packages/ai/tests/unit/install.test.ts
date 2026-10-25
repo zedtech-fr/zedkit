@@ -39,6 +39,9 @@ describe("installKit", () => {
     expect(installed).toContain("Lazy end client");
     expect(installed).toContain("Integrating developer");
     expect(installed).toContain("Maintainer / operator");
+    expect(installed).toContain("continue where you left off");
+    expect(installed).toContain("flaky network");
+    expect(installed).toContain("Stressed user");
     const kept = tempDir();
     mkdirSync(join(kept, ".agents"), { recursive: true });
     writeFileSync(join(kept, ".agents/personas.md"), "custom personas");
