@@ -31,6 +31,11 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
+      # Build BEFORE the action: `changeset publish` packs each package as-is,
+      # and npm silently skips missing `files` entries — without this step the
+      # tarballs ship without dist/ while `main` points into it (0.1.0 had to
+      # be re-released for exactly this).
+      - run: pnpm build
       - name: Create Version PR or publish to npm
         uses: changesets/action@v1
         with:
