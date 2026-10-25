@@ -4,6 +4,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { checkRegistryThemeDrift } from "./theme-tokens.mjs";
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const outDir = join(root, "apps/docs/public/r");
 
@@ -32,6 +34,8 @@ if (validate.status !== 0) {
   );
 }
 
+errors.push(...checkRegistryThemeDrift(root));
+
 if (errors.length) {
   for (const msg of errors) {
     console.error(msg);
@@ -39,4 +43,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("registry: ok (badge, drawer, confirm-dialog, validate)");
+console.log("registry: ok (badge, drawer, confirm-dialog, validate, theme tokens)");
