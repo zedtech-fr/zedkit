@@ -67,4 +67,14 @@ describe("lens registry", () => {
       expect(runnerExists(row.runner), `lens ${row.lens}`).toBe(true);
     }
   });
+
+  it("release lens is wired to the release-manager agent", () => {
+    const row = registry().find((r) => r.lens === "release");
+    expect(row?.status).toBe("exists");
+    expect(row?.runner).toContain("agent `release-manager`");
+    expect(row?.trigger).toContain(".changeset");
+    expect(
+      existsSync(join(kitDir(), "agents", "release-manager.md")),
+    ).toBe(true);
+  });
 });
