@@ -1,7 +1,8 @@
 // Docs content generator (spike): catalog.json -> Fumadocs MDX pages.
 //
 // - `node scripts/generate.mjs [outDir]` regenerates every catalog need
-//   as an MDX page (badge, install tabs with the changesets version,
+//   as an MDX page (badge, At-a-glance guidance block from the catalog
+//   guidance fields, install tabs with the changesets version,
 //   catalog example, wraps line) plus per-folder meta.json nav files.
 // - Needs listed in docs-manifest.json also get a live preview (the
 //   REAL workspace component via components/component-preview.tsx, which
@@ -38,7 +39,24 @@ function packageVersion(pkgDir) {
   return JSON.parse(text).version ?? "0.0.0";
 }
 
-function pageMdx(pkg, need, version, rich) {
+// "At a glance" block, generated from the catalog guidance fields
+// (Audience/Purpose/When to use/When not to use/See also) so every
+// page answers who/what/when with zero hand-written prose.
+function guidanceBlock(need, seeAlsoLinks) {
+  const lines = [
+    "## At a glance",
+    "",
+    `- **Who:** ${need.audience}`,
+    `- **What:** ${need.purpose}`,
+    `- **Use when:** ${need.whenToUse}`,
+    `- **Avoid when:** ${need.whenNotToUse}`,
+  ];
+  if (seeAlsoLinks.length > 0) lines.push(`- **See also:** ${seeAlsoLinks.join(", ")}`);
+  lines.push("");
+  return lines;
+}
+
+function pageMdx(pkg, need, version, rich, seeAlsoLinks) {
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
@@ -56,6 +74,7 @@ function pageMdx(pkg, need, version, rich) {
     head.push(`import { PropsTable } from "../../../components/props-table";`);
   }
   head.push("", `<Badge>${need.status}</Badge>`, "");
+  head.push(...guidanceBlock(need, seeAlsoLinks));
   if (rich) {
     const detail = need.import.replace(/`/g, "");
     const hasProps = Boolean(rich.propsFile && rich.propsName);
@@ -114,27 +133,40 @@ export function generate(outDir) {
   const catalog = JSON.parse(readFileSync(join(ROOT, "docs", "catalog", "catalog.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"));
   const rich = manifest.rich ?? {};
+  const sorted = Object.entries(catalog.packages).sort(([a], [b]) => a.localeCompare(b));
 
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
+
+  // First pass: folder + slug per need heading, so "See also" targets
+  // (plain need headings, unique across the catalog per catalog:check)
+  // resolve to links before any page is written.
+  const placementByNeed = new Map();
+  for (const [pkg, entry] of sorted) {
+    const folder = shortName(pkg);
+    const seen = new Set();
+    for (const need of entry.needs) {
+      let slug = slugify(need.need);
+      for (let i = 2; seen.has(slug); i++) slug = `${slugify(need.need)}-${i}`;
+      seen.add(slug);
+      placementByNeed.set(need.need, { folder, slug });
+    }
+  }
 
   let pages = 0;
   const folders = [];
   const slugsByNeed = new Map();
   const llms = ["# zedkit docs", "", "> GENERATED from docs/catalog/catalog.json — do not edit.", ""];
-  for (const [pkg, entry] of Object.entries(catalog.packages).sort(([a], [b]) => a.localeCompare(b))) {
+  for (const [pkg, entry] of sorted) {
     const folder = shortName(pkg);
     const dir = join(outDir, folder);
     mkdirSync(dir, { recursive: true });
     folders.push(folder);
     const version = packageVersion(folder);
     const slugs = [];
-    const seen = new Set();
     llms.push(`## ${pkg}`, "");
     for (const need of entry.needs) {
-      let slug = slugify(need.need);
-      for (let i = 2; seen.has(slug); i++) slug = `${slugify(need.need)}-${i}`;
-      seen.add(slug);
+      const { slug } = placementByNeed.get(need.need);
       slugs.push(slug);
       slugsByNeed.set(`${pkg} ${need.need}`, { folder, slug });
       const spec = rich[need.need];
@@ -142,7 +174,14 @@ export function generate(outDir) {
       if (spec) {
         richBlock = { demo: spec.demo, propsFile: spec.source ?? null, propsName: spec.props ?? null };
       }
-      writeFileSync(join(dir, `${slug}.mdx`), pageMdx(pkg, need, version, richBlock));
+      // catalog:check rejects unknown See also targets, so a miss here
+      // is a generator bug — fail loudly instead of emitting dead links.
+      const links = (need.seeAlso ?? []).map((target) => {
+        const placed = placementByNeed.get(target);
+        if (!placed) throw new Error(`generator: "${need.need}" links unknown need "${target}" in See also.`);
+        return `[${target}](/docs/${placed.folder}/${placed.slug})`;
+      });
+      writeFileSync(join(dir, `${slug}.mdx`), pageMdx(pkg, need, version, richBlock, links));
       pages += 1;
       llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${need.status}`);
     }
