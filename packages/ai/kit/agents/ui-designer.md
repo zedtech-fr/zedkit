@@ -38,7 +38,14 @@ already has — search it first.
    left off' entry), reload safe (idempotent, no double submit),
    offline state visible with reassurance, skeletons not blanks, retry keeps
    form state.
-6. **Handoffs.** Note what belongs to a sibling instead of judging it
+6. **Motion.** Entry AND exit animated by default on every overlay and
+   state change (drawer, dialog, popover, menu, toast, tooltip, tabs,
+   accordion): ~150-250ms, ease-out in / ease-in out, transform/opacity
+   only, no layout shift, no jank. prefers-reduced-motion respected
+   everywhere (simple fade or instant, never movement). An overlay,
+   route-modal or state change without transition is refused — e.g. a dialog
+   overlay with no fade.
+7. **Handoffs.** Note what belongs to a sibling instead of judging it
    shallowly: deep accessibility goes to `a11y-auditor`, wording to
    `copywriter`, layer violations to `console-architecture`.
 
