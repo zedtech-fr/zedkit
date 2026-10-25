@@ -13,13 +13,14 @@ missing) and capture it once: `git diff <fixed-point>...HEAD` plus
 `git log <fixed-point>..HEAD --oneline`. Fail fast here on a bad ref or an
 empty diff — never inside the subagents.
 
-## 2. Pick the lenses
+## 2. Pick the lenses (route over `lenses.md`)
 
-Always: `code-review` (its Standards and Spec axes; Standards applies
-`ponytail-review`, never ad-hoc smells) and `persona-review` (does the change
-serve its real audience). Add `adversarial-tests` when logic, handlers or
-endpoints changed; add the `security-reviewer` subagent when auth, secrets,
-tenancy, user data or external calls are touched.
+Read the registry in `lenses.md` (same folder). Minimum on every review:
+`code`, `ponytail`, `persona`, `quality gate`. Add each lens whose Trigger
+matches the pinned diff (e.g. `packages/ui/**` -> `ui` + `a11y` + `copy`;
+`package.json`/lockfile -> `dependencies`; public API -> `release`).
+A lens whose runner is `planned` reports skipped-planned (not a blocker);
+skipping a mandatory lens whose runner exists IS a blocker — say so.
 
 ## 3. Fan out
 
@@ -34,4 +35,12 @@ finding. When the change implements a plan with a ladder table, brief
 
 Dedupe across lenses (same location and issue keep the strongest wording),
 rank by severity, and end with exactly one verdict: ship, fix-then-ship (list
-the blockers), or rework. One report, no per-lens sections.
+the blockers), or rework. One report, no per-lens sections — but it opens
+with the lenses-run table (every lens: ran or skipped + reason), so a
+missing mandatory lens is visible at a glance:
+
+```
+| Lens | Ran? | Evidence |
+| code | yes | <top finding or "clean"> |
+| ui | skipped, no UI paths | — |
+```
