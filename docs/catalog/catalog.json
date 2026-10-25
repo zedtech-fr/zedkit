@@ -759,6 +759,7 @@
               "code": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
             }
           ],
+          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus.",
           "seeAlso": [
             "Collect multi-line text input",
             "Build validated forms with labels, errors, and pending state"
@@ -1355,6 +1356,7 @@
               "code": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
             }
           ],
+          "a11y": "`min-h-textarea-min-height` from theme tokens; `focus-ring-control` on keyboard focus.",
           "seeAlso": [
             "Collect text input with a label"
           ]

@@ -121,6 +121,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
@@ -651,6 +652,7 @@ const items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</S
 - When to use: For free text longer than one line.
 - When not to use: For single-line values — use Input instead.
 - See also: `Collect text input with a label`
+- A11y: `min-h-textarea-min-height` from theme tokens; `focus-ring-control` on keyboard focus.
 
 ```ts
 import { Label, Textarea } from "@zedtech/zedkit-ui";
