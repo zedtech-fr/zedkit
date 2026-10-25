@@ -114,3 +114,9 @@ jobs:
           curl -sf -o /dev/null http://127.0.0.1:3100/llms.txt
           pnpm --filter @zedtech/zedkit-docs run smoke
           kill "$(cat /tmp/docs.pid)"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: docs-home-smoke
+          path: apps/docs/test-results/*.png
+          if-no-files-found: ignore
