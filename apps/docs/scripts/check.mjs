@@ -170,6 +170,26 @@ for (const file of tsxFiles(join(APP, "components"))) {
   }
 }
 
+const nextConfig = readFileSync(join(APP, "next.config.mjs"), "utf8");
+if (nextConfig.includes('output: "export"')) {
+  const staticExportRoutes = [
+    "app/robots.ts",
+    "app/sitemap.ts",
+    "app/opengraph-image.tsx",
+    "app/api/search/route.ts",
+  ];
+  const forceStatic = /export const dynamic = "force-static"/;
+  for (const rel of staticExportRoutes) {
+    const file = join(APP, rel);
+    const text = readFileSync(file, "utf8");
+    if (!forceStatic.test(text)) {
+      errors.push(
+        `${rel}: missing export const dynamic = "force-static" (required with output: "export").`,
+      );
+    }
+  }
+}
+
 if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
