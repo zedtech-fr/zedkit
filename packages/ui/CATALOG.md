@@ -209,6 +209,40 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 </Suspense>
 ```
 
+## Name an operation in progress
+
+- Import: `@zedtech/zedkit-ui` — `StatusLabel`, `StatusLabelProps`, `StatusLabelTone`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: StatusLabel
+- Audience: Developers naming a background or foreground operation for the user.
+- Purpose: A named live-region label for the current operation state (loading, saved, error…).
+- When to use: Next to the content an operation affects, while it runs or right after.
+- When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
+- See also: `Stamp data with its age`
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="loading">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status
+```
+
+## Stamp data with its age
+
+- Import: `@zedtech/zedkit-ui` — `UpdatedAgo`, `UpdatedAgoProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: UpdatedAgo
+- Audience: Developers stamping cached or polled data with its freshness.
+- Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
+- When to use: Under data that refreshes (polling, SWR, manual refetch).
+- When not to use: For absolute timestamps — render a `<time dateTime>` instead.
+- See also: `Name an operation in progress`
+
+```ts
+import { UpdatedAgo } from "@zedtech/zedkit-ui";
+<UpdatedAgo date={updatedAt} /> // "Updated 3 minutes ago" via Intl.RelativeTimeFormat
+```
+
 ## Open modal dialogs
 
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`

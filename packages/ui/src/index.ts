@@ -68,6 +68,8 @@ export { LivePulse, type LivePulseProps } from "./live-pulse.js";
 export { StatusDot, type StatusDotProps, type StatusDotTone } from "./status-dot.js";
 export { ProgressBar, type ProgressBarProps } from "./progress-bar.js";
 export { Checkmark, type CheckmarkProps } from "./checkmark.js";
+export { StatusLabel, type StatusLabelProps, type StatusLabelTone } from "./status-label.js";
+export { UpdatedAgo, type UpdatedAgoProps } from "./updated-ago.js";
 export { OptionCards, type OptionCard, type OptionCardsProps } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
