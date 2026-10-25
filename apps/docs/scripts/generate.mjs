@@ -231,8 +231,44 @@ export function generate(outDir) {
     packages: Object.keys(catalog.packages).length,
     needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
   };
-  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n`;
-  return { pages, folders, gallery, stats, uiPackage, galleryModule };
+  const uiVersion = packageVersion("ui");
+  const uiChangelogUrl =
+    "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
+    components: gallery.length,
+    livePreviews: gallery.filter((card) => card.demo).length,
+  })};\n`;
+  const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
+  const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
+  return { pages, folders, gallery, stats, uiPackage, galleryModule, homeScenarios, scenariosModule };
+}
+
+function buildHomeScenarios(slugsByNeed, catalog) {
+  const sourcePath = join(APP, "home-scenarios.json");
+  if (!existsSync(sourcePath)) {
+    throw new Error("home-scenarios.json missing (apps/docs/home-scenarios.json).");
+  }
+  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
+  const scenarios = [];
+  for (const row of source) {
+    let pkg = null;
+    for (const [name, entry] of Object.entries(catalog.packages)) {
+      if (entry.needs.some((need) => need.need === row.catalogNeed)) {
+        pkg = name;
+        break;
+      }
+    }
+    if (!pkg) throw new Error(`home-scenarios.json: "${row.catalogNeed}" matches no catalog need.`);
+    const placed = slugsByNeed.get(`${pkg} ${row.catalogNeed}`);
+    if (!placed) throw new Error(`home-scenarios.json: no doc slug for "${row.catalogNeed}".`);
+    scenarios.push({
+      situation: row.situation,
+      goal: row.goal,
+      action: row.action,
+      href: `/docs/${placed.folder}/${placed.slug}`,
+    });
+  }
+  return scenarios;
 }
 
 // Gallery titles are short component names: the curated manifest
@@ -251,8 +287,9 @@ if (invoked === fileURLToPath(import.meta.url)) {
     console.error("error: docs/catalog/catalog.json missing (run pnpm catalog:build at the root).");
     process.exitCode = 1;
   } else {
-    const { pages, folders, galleryModule } = generate(outDir);
+    const { pages, folders, galleryModule, scenariosModule } = generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
+    writeFileSync(join(APP, "content", "home-scenarios.ts"), scenariosModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }
 }
