@@ -1,5 +1,17 @@
 # @zedtech/zedkit-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- 5e9305e: Add `Drawer` (slide-in panel, `direction` top/right/bottom/left, side drawers full-width on mobile) wrapping `vaul` with the shadcn/ui drawer shape.
+- 48fa6d8: Add state icons: `StatusDot` (motion-safe status dot), `ProgressBar` (determinate, `role=progressbar`), `Checkmark` (draw-once success check, static under reduced motion). `LivePulse` is rebased on `StatusDot` with identical output plus the reduced-motion guard.
+
+### Patch Changes
+
+- 59a12be: Discoverability: benefit-oriented descriptions, 8–12 npm keywords, homepage and bugs links per package (single-sourced from the CATALOG.md header, enforced by `pnpm catalog:check`), plus README badges and Install/Usage/When-to-use sections.
+- c9c35aa: Mark shadcn-derived files (provenance header comments) and catalog entries (`Derived from:` flag, also in catalog.json); unmarked files are kit-authored.
+
 ## 0.1.1
 
 ### Patch Changes
