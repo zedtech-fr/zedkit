@@ -13,6 +13,8 @@ jobs:
       - run: bash scripts/check-no-artifacts.sh
       - run: bash scripts/check-no-private-refs.sh
       - run: bash scripts/check-tone.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bash scripts/check-breaking-changeset.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
