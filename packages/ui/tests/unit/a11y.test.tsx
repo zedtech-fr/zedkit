@@ -21,6 +21,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Checkbox,
   ConfirmDialog,
   DataTable,
   DetailPanel,
@@ -38,6 +39,7 @@ import {
   SecretField,
   Separator,
   Skeleton,
+  Switch,
   Text,
   Textarea,
   Toaster,
@@ -73,6 +75,18 @@ describe("a11y", () => {
         <Heading level={2}>Section</Heading>
         <Text>Body copy.</Text>
         <Text variant="muted">Muted copy.</Text>
+      </>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("labeled checkbox and switch, checked and unchecked", async () => {
+    const { container } = render(
+      <>
+        <Checkbox id="terms" defaultChecked aria-label="Accept the terms" />
+        <Checkbox id="news" aria-label="Subscribe" />
+        <Switch id="notify" defaultChecked aria-label="Notify me" />
+        <Switch id="quiet" aria-label="Stay quiet" />
       </>,
     );
     await expectNoViolations(container);

@@ -279,3 +279,16 @@ import { Label, Textarea } from "@zedkit/ui";
 <Label htmlFor="bio">Bio</Label>
 <Textarea id="bio" placeholder="A few words." />
 ```
+
+## Toggle a checkbox or a switch
+
+- Import: `@zedkit/ui` — `Checkbox`, `Switch`
+- Wraps: `@radix-ui/react-checkbox`, `@radix-ui/react-switch`
+- Status: alpha
+
+```ts
+import { Checkbox, Label, Switch } from "@zedkit/ui";
+<Checkbox id="terms" />
+<Label htmlFor="terms">Accept the terms</Label>
+<Switch id="notify" aria-label="Notify me" />
+```
