@@ -28,6 +28,43 @@ describe("overlays", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it("animates dialog content in through the motion tokens", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.getAttribute("data-state")).toBe("open");
+    expect(dialog.className).toContain("zk-zoom-in");
+    expect(dialog.className).toContain("var(--motion-base)");
+  });
+
+  it("animates the dialog overlay through the motion tokens", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const overlay = document.querySelector(".bg-overlay\\/80");
+    expect(overlay?.getAttribute("data-state")).toBe("open");
+    expect(overlay?.getAttribute("class")).toContain("zk-fade-in");
+  });
+
   it("confirms destructive actions and closes", async () => {
     const user = userEvent.setup();
     const onConfirm = vi.fn();
