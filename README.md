@@ -83,9 +83,12 @@ pnpm add /tmp/zedkit-pack/zedtech-zedkit-ai-0.1.0.tgz
 - TypeScript strict, ESM + types, vitest, ESLint (raw `try`/`catch` is banned;
   use `tryCatch` from `@zedtech/zedkit-core`)
 - Changesets for versioning (dry-run only — publishing is a later decision)
+- Docs site: `pnpm dev` rebuilds the catalog, then serves `apps/docs` with
+  hot reload at <http://localhost:3100> (docs at `/docs`)
 
 ```sh
 pnpm install
+pnpm dev                                     # docs site, http://localhost:3100
 pnpm typecheck && pnpm lint && pnpm build && pnpm test
 ```
 

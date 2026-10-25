@@ -66,3 +66,27 @@ jobs:
       # `status` always reports "changed packages, no changesets" there.
       - run: pnpm run changeset:status
         if: github.head_ref != 'changeset-release/main'
+
+  docs-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      # Scoped build (turbo builds workspace deps first), then serve the
+      # production build and prove the home renders with live demos.
+      - run: pnpm exec turbo run build --filter=@zedtech/zedkit-docs
+      - run: |
+          pnpm --filter @zedtech/zedkit-docs exec next start -p 3100 >/tmp/docs-start.log 2>&1 &
+          echo $! > /tmp/docs.pid
+          for _ in $(seq 1 24); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
+            [ "$code" = "200" ] && break
+            sleep 5
+          done
+          curl -sf http://127.0.0.1:3100/ | grep -q "Create app"
+          curl -sf -o /dev/null http://127.0.0.1:3100/docs
+          kill "$(cat /tmp/docs.pid)"
