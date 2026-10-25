@@ -10,6 +10,7 @@
   "scripts": {
     "docs:generate": "node scripts/generate.mjs",
     "docs:check": "node scripts/check.mjs",
+    "docs:check-seo-export": "node scripts/check-seo-export.mjs",
     "postinstall": "pnpm docs:generate && fumadocs-mdx",
     "predev": "pnpm docs:generate && pnpm -w registry:build && pnpm --filter @zedtech/zedkit-docs^... build",
     "dev": "next dev -p 3100",
