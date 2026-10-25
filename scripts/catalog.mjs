@@ -11,7 +11,10 @@
 //   ## Do X without Y
 //   - Import: `@zedkit/core` — `a`, `b`
 //   - Wraps: `some-npm-package` (or `(none)`)
-//   - Status: stable (or `planned`)
+//   - Status: beta (planned|alpha|beta|stable|deprecated; new entries
+//     start at alpha — see docs/catalog/README.md for the promotion
+//     criteria)
+//   - Replaced by: `other-symbol` (required when Status is deprecated)
 //   ```ts
 //   ...5-line example...
 //   ```
@@ -68,6 +71,8 @@ function readIfExists(path) {
 }
 
 // Parse `## <need>` sections: Import / Wraps / Status fields + first ts example.
+const STATUSES = ["planned", "alpha", "beta", "stable", "deprecated"];
+
 function parseCatalog(text, catalogPath, errors) {
   const needs = [];
   const sections = text.split(/^## /m).slice(1);
@@ -93,8 +98,16 @@ function parseCatalog(text, catalogPath, errors) {
         errors.push(`${catalogPath}: need "${need}" is missing ${key}.`);
       }
     }
-    if (entry.status && entry.status !== "stable" && entry.status !== "planned") {
-      errors.push(`${catalogPath}: need "${need}" has status "${entry.status}" (want stable|planned).`);
+    if (entry.status && !STATUSES.includes(entry.status)) {
+      errors.push(`${catalogPath}: need "${need}" has status "${entry.status}" (want ${STATUSES.join("|")}).`);
+    }
+    const replacedBy = field("Replaced by");
+    if (entry.status === "deprecated") {
+      if (!replacedBy) {
+        errors.push(`${catalogPath}: need "${need}" is deprecated but names no replacement ("- Replaced by: ...").`);
+      } else {
+        entry.replacedBy = replacedBy;
+      }
     }
     needs.push(entry);
   }

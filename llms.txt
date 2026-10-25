@@ -9,3 +9,7 @@ Open-source building blocks for modern apps.
 - [Golden rule](docs/golden-rule.md)
 - [Contributing](docs/contributing.md)
 - [Agent instructions](AGENTS.md)
+
+## Catalog (machine-readable)
+
+- [catalog.json](docs/catalog/catalog.json): every need with `status` (planned|alpha|beta|stable|deprecated) for maturity badges.

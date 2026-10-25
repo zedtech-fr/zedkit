@@ -4,7 +4,7 @@
 
 - Import: `@zedkit/seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { buildRobots } from "@zedkit/seo";
@@ -17,7 +17,7 @@ export function robots() {
 
 - Import: `@zedkit/seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { buildSitemapEntries } from "@zedkit/seo";
@@ -29,7 +29,7 @@ return buildSitemapEntries({ siteUrl, locales: ["en", "fr"], pages });
 
 - Import: `@zedkit/seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { buildVideoSitemap } from "@zedkit/seo";
@@ -41,7 +41,7 @@ return new Response(xml, { headers: { "Content-Type": "application/xml" } });
 
 - Import: `@zedkit/seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`
 - Wraps: `schema-dts`
-- Status: stable
+- Status: beta
 
 ```ts
 import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@zedkit/seo";
@@ -53,7 +53,7 @@ const jsonLd = buildArticleJsonLd({ title, description, url, datePublished });
 
 - Import: `@zedkit/seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { buildPageMetadata } from "@zedkit/seo";
@@ -64,7 +64,7 @@ return buildPageMetadata({ site, page, locale, pathname, ogImage });
 
 - Import: `@zedkit/seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { llmsTextResponse } from "@zedkit/seo";
@@ -78,7 +78,7 @@ export async function GET() {
 
 - Import: `@zedkit/seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { normalizeSlug, resolveDescription } from "@zedkit/seo";

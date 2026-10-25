@@ -10,9 +10,9 @@ Short rule for adding a helper to zedkit:
 3. **Tests.** Vitest unit tests through the public interface, deterministic,
    no network.
 4. **Catalog entry.** Document the need in the package `CATALOG.md`
-   (format: [catalog index](catalog/README.md)), regenerate
-   `catalog.json` (`pnpm catalog:build`), and link the catalog from the
-   [catalog index](catalog/README.md).
+   (format: [catalog index](catalog/README.md)), starting at Status
+   `alpha`, regenerate `catalog.json` (`pnpm catalog:build`), and link
+   the catalog from the [catalog index](catalog/README.md).
 5. **Wrap, don't embed.** Follow the [golden rule](golden-rule.md): a
    mature npm package underneath gets a thin wrapper, never a direct
    import scattered through consumers.

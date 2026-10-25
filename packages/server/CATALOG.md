@@ -4,7 +4,7 @@
 
 - Import: `@zedkit/server` — `MemoryRateLimiter`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { MemoryRateLimiter } from "@zedkit/server";
@@ -16,7 +16,7 @@ if (!limiter.allow(clientIp, 100)) return tooManyRequests();
 
 - Import: `@zedkit/server` — `redactValue`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { redactValue } from "@zedkit/server";
@@ -27,7 +27,7 @@ logger.info(redactValue({ user, token, headers }));
 
 - Import: `@zedkit/server` — `computeBackoffMs`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { computeBackoffMs } from "@zedkit/server";
@@ -39,7 +39,7 @@ await sleep(waitMs);
 
 - Import: `@zedkit/server` — `webhookSignatureHeader`, `verifyWebhookSignatureHeader`, `VerifyWebhookOptions`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { verifyWebhookSignatureHeader as verify } from "@zedkit/server";
@@ -52,7 +52,7 @@ if (!verify(secret, rawBody, headers["webhook-signature"], { maxAgeSeconds: 300 
 
 - Import: `@zedkit/server` — `pgErrorCode`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { pgErrorCode } from "@zedkit/server";

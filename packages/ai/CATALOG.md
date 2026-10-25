@@ -4,7 +4,7 @@
 
 - Import: `@zedkit/ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { installKit } from "@zedkit/ai";
@@ -26,7 +26,7 @@ layer: they read the shared source directly).
 
 - Import: `@zedkit/ai` — `validateKit`, `checkDrift`, `Issue`
 - Wraps: `yaml`
-- Status: stable
+- Status: beta
 
 ```ts
 import { checkDrift, validateKit } from "@zedkit/ai";
