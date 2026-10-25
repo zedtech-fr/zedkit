@@ -9,7 +9,10 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   names/endpoints/domain terms from other projects. Check every ported file
   for them before committing. Never name a private project anywhere (code,
   docs, comments, PRs, issues); say "an upstream consumer". Enforced by
-  `scripts/check-no-private-refs.sh` in CI.
+  `scripts/check-no-private-refs.sh` in CI. Never name internal review
+  lanes, coding-agent product names, or private workflow labels in
+  titles, PR bodies, comments, commits, or files (kit `--provider` ids
+  stay). Enforced by `scripts/check-tone.sh`.
 - **No raw try/catch.** Use `tryCatch`/`tryCatchAsync` from
   `@zedtech/zedkit-core` (sole exception: core's own implementation). Enforced by
   the `no-restricted-syntax` ban in [eslint.config.mjs](eslint.config.mjs).
