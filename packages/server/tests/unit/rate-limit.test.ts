@@ -37,5 +37,17 @@ describe("MemoryRateLimiter", () => {
       vi.advanceTimersByTime(60_000);
       expect(limiter.allow("k", 1)).toBe(true);
     });
+
+    it("drops expired windows past the key cap", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+      const limiter = new MemoryRateLimiter();
+      for (let i = 0; i < 10_001; i++) limiter.allow(`k${i}`, 1);
+      vi.advanceTimersByTime(61_000);
+      expect(limiter.allow("fresh", 1)).toBe(true);
+      // White-box: eviction is memory-only, invisible through allow().
+      const windows = (limiter as unknown as { windows: Map<string, unknown> }).windows;
+      expect(windows.size).toBe(1);
+    });
   });
 });
