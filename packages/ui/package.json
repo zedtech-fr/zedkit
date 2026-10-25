@@ -60,8 +60,10 @@
     "@testing-library/user-event": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "axe-core": "catalog:",
     "jsdom": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vitest-axe": "catalog:"
   }
 }

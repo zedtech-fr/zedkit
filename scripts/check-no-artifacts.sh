@@ -30,8 +30,12 @@ fi
 # an innocent name). If a legitimate file ever exceeds this, allowlist it
 # explicitly here with a comment — never by raising the limit silently.
 limit=204800
+# Allowlist: the lockfile is required for frozen installs and grows with
+# the catalog; it is reviewed as text, not a binary or cache.
+allowlisted='^(pnpm-lock\.yaml)$'
 while IFS= read -r -d '' file; do
   [ -f "$file" ] || continue
+  if [[ "$file" =~ $allowlisted ]]; then continue; fi
   size=$(wc -c <"$file")
   if [ "$size" -gt "$limit" ]; then
     echo "tracked file over 200KB: $file ($size bytes)"
