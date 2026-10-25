@@ -27,7 +27,7 @@ const GUIDES_DIR = join(PROSE_DIR, "guides");
 const GUIDE_SNIPPETS_DIR = join(GUIDES_DIR, "snippets");
 
 /** Standalone guide pages (not catalog needs), first in docs nav when listed here. */
-export const GUIDE_NAV_SLUGS = ["getting-started"];
+export const GUIDE_NAV_SLUGS = ["getting-started", "add-seo-to-nextjs"];
 
 /** Section titles owned by the generator — prose must not repeat them. */
 export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props"]);
@@ -66,9 +66,9 @@ function guidanceBlock(need, seeAlsoLinks) {
   return lines;
 }
 
-function componentPageMdx(pkg, need, version, spec, related) {
+function componentPageMdx(pkg, need, version, spec, related, prose) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
-  return [
+  const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
     `description: ${JSON.stringify(`${pkg} — ${need.status}`)}`,
@@ -97,7 +97,9 @@ function componentPageMdx(pkg, need, version, spec, related) {
     `  related={${JSON.stringify(related)}}`,
     "/>",
     "",
-  ].join("\n");
+  ];
+  if (prose) head.push(prose);
+  return head.join("\n");
 }
 
 /** Valid `folder/slug` keys for every catalog need page. */
@@ -252,6 +254,7 @@ export function generate(outDir) {
     "> GENERATED from docs/catalog/catalog.json — do not edit.",
     "",
     "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
+    "- [Add SEO to a Next.js app](/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
     "",
   ];
   for (const [pkg, entry] of sorted) {
@@ -286,7 +289,7 @@ export function generate(outDir) {
       if (prose) prosePages += 1;
       const body =
         richBlock?.registry
-          ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related)
+          ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related, prose)
           : pageMdx(pkg, need, version, richBlock, links, prose);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
