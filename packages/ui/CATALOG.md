@@ -213,3 +213,16 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 <FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>
 <FieldError errors={[{ message: "Too short." }]} />
 ```
+
+## Group content in a card section
+
+- Import: `@zedkit/ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
+- Wraps: none (presentational, theme tokens only)
+- Status: stable
+
+```ts
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedkit/ui";
+<Card><CardHeader><CardTitle>Server</CardTitle>
+<CardDescription>Connection details.</CardDescription></CardHeader>
+<CardContent>Body.</CardContent></Card>
+```

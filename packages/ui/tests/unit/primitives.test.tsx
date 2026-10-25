@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Badge } from "#index.js";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#index.js";
 import { Button } from "#index.js";
 import { Input } from "#index.js";
 import { Label } from "#index.js";
@@ -44,5 +45,22 @@ describe("primitives", () => {
     const { container } = render(<Skeleton className="h-4 w-24" data-testid="sk" />);
     const skeleton = container.querySelector('[data-testid="sk"]');
     expect(skeleton?.className).toContain("animate-pulse");
+  });
+
+  it("renders a card with header, content, and footer", () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Server</CardTitle>
+          <CardDescription>Connection details.</CardDescription>
+        </CardHeader>
+        <CardContent>Body text.</CardContent>
+        <CardFooter>Footer text.</CardFooter>
+      </Card>,
+    );
+    expect(screen.getByText("Server")).not.toBeNull();
+    expect(screen.getByText("Connection details.")).not.toBeNull();
+    expect(screen.getByText("Body text.")).not.toBeNull();
+    expect(screen.getByText("Footer text.")).not.toBeNull();
   });
 });

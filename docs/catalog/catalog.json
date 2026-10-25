@@ -306,6 +306,13 @@
           "wraps": "none (presentational over `Label`, `Separator`)",
           "status": "stable",
           "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedkit/ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
+        },
+        {
+          "need": "Group content in a card section",
+          "import": "`@zedkit/ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`",
+          "wraps": "none (presentational, theme tokens only)",
+          "status": "stable",
+          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedkit/ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
         }
       ]
     }
