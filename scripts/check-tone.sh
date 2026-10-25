@@ -10,10 +10,9 @@
 # rule as denylist-patterns.sh): no file in this repo spells the
 # banned terms out, including this one. To extend, append the base64
 # of the new term (without trailing newline) to the right list.
-# Marketing terms are case-insensitive; actor spellings are
-# case-sensitive so plain provider names ("Cursor", "Claude Code")
-# stay legal. Lane ids matching muse[0-9]+ are case-insensitive.
-# Kit --provider ids (lowercase, no digit suffix) stay allowed.
+# Marketing terms and lane-id patterns are case-insensitive; actor
+# spellings are case-sensitive so plain kit --provider names stay
+# legal. Never spell a banned term in this file; encoded lists only.
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
