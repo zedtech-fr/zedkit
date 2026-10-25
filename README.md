@@ -29,13 +29,13 @@ need per package (criteria: [docs/catalog/README.md](docs/catalog/README.md)).
 
 | Package | Version | Maturity |
 |---|---|---|
-| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 0.4.0 | beta |
+| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 0.5.0 | beta |
 | [`@zedtech/zedkit-core`](packages/core/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-core)) | 0.1.2 | beta |
 | [`@zedtech/zedkit-nest`](packages/nest/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-nest)) | 0.1.2 | beta |
 | [`@zedtech/zedkit-payload-seo`](packages/payload-seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-payload-seo)) | 0.1.2 | beta |
-| [`@zedtech/zedkit-seo`](packages/seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-seo)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-seo`](packages/seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-seo)) | 0.1.3 | beta |
 | [`@zedtech/zedkit-server`](packages/server/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-server)) | 0.1.2 | beta |
-| [`@zedtech/zedkit-ui`](packages/ui/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ui)) | 0.3.0 | alpha |
+| [`@zedtech/zedkit-ui`](packages/ui/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ui)) | 0.4.0 | alpha |
 
 <!-- /packages-table -->
 

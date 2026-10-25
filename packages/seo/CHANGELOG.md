@@ -1,5 +1,11 @@
 # @zedtech/zedkit-seo
 
+## 0.1.3
+
+### Patch Changes
+
+- 818bb02: Add `localeInPath` for single-locale sites whose URLs omit a locale prefix.
+
 ## 0.1.2
 
 ### Patch Changes
