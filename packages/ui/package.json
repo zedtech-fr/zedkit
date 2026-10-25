@@ -44,6 +44,7 @@
     "tailwindcss": "catalog:"
   },
   "dependencies": {
+    "@hookform/resolvers": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
@@ -55,8 +56,10 @@
     "clsx": "catalog:",
     "lucide-react": "catalog:",
     "next-themes": "catalog:",
+    "react-hook-form": "catalog:",
     "sonner": "catalog:",
-    "tailwind-merge": "catalog:"
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:",
