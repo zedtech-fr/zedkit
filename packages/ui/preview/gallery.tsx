@@ -36,6 +36,7 @@ import {
   Separator,
   Skeleton,
   Text,
+  Textarea,
   Toaster,
   WizardSteps,
   createDataTableColumns,
@@ -113,6 +114,10 @@ export function Gallery() {
           <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-name">Name</Label>
             <Input id="gallery-name" placeholder="Ada" />
+          </div>
+          <div className="max-w-sm space-y-2">
+            <Label htmlFor="gallery-bio">Bio</Label>
+            <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
           <Separator />
           <Skeleton className="h-4 w-48" />

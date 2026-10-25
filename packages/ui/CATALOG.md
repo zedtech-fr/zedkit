@@ -267,3 +267,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 <SelectTrigger><SelectValue placeholder="Pick a region" /></SelectTrigger>
 <SelectContent><SelectItem value="eu">Europe</SelectItem></SelectContent>
 ```
+
+## Collect multi-line text input
+
+- Import: `@zedkit/ui` — `Textarea`
+- Wraps: none (styled native `textarea`)
+- Status: alpha
+
+```ts
+import { Label, Textarea } from "@zedkit/ui";
+<Label htmlFor="bio">Bio</Label>
+<Textarea id="bio" placeholder="A few words." />
+```

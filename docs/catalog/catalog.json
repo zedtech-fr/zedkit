@@ -334,6 +334,13 @@
           "wraps": "`@radix-ui/react-select`",
           "status": "alpha",
           "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedkit/ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>"
+        },
+        {
+          "need": "Collect multi-line text input",
+          "import": "`@zedkit/ui` — `Textarea`",
+          "wraps": "none (styled native `textarea`)",
+          "status": "alpha",
+          "example": "import { Label, Textarea } from \"@zedkit/ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
         }
       ]
     }
