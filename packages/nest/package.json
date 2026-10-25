@@ -66,6 +66,7 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
+    "@zedtech/zedkit-core": "workspace:*",
     "@fastify/static": "catalog:",
     "@nestjs/common": "catalog:",
     "@nestjs/config": "catalog:",
