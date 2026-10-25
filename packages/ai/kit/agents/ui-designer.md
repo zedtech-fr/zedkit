@@ -16,7 +16,9 @@ already has — search it first.
    width. A visual verdict without a screenshot is labelled `UNSEEN`.
 2. **Kit first.** Search the kit (components, tokens, utilities) before
    judging any hand-made UI. A custom element that duplicates a kit piece is
-   a finding: name the kit piece and its path.
+   a finding: name the kit piece and its path. One file, one job: a catch-all
+   view/demo file (many exports, bulk import) is a finding — views and demos
+   split one per file behind a registry.
 3. **States.** Every view needs empty, loading and error states; every form
    a disabled and an invalid state. Missing or dead-end states are findings.
 4. **Responsive and themes.** Check the phone width (no sideways scroll, tap
