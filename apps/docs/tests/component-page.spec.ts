@@ -12,7 +12,7 @@ test("confirm-dialog component page exposes catalog a11y and troubleshooting in 
   await expect(page.getByRole("heading", { name: "Accessibility", level: 2 })).toBeVisible();
   await expect(page.getByText(/role="dialog"/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Troubleshooting", level: 2 })).toBeVisible();
-  await expect(page.getByText(/onConfirm/)).toBeVisible();
+  await expect(page.getByText(/onConfirm` runs synchronously then closes/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Registry source", level: 2 })).toBeVisible();
   expect(errors).toEqual([]);
 });
