@@ -2,6 +2,12 @@ import {
   AppShell,
   Badge,
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   ConfirmDialog,
   DataTable,
   DetailPanel,
@@ -134,6 +140,18 @@ export function Gallery() {
         </Section>
 
         <Section id="layout" title="Layout">
+          <Card className="max-w-sm">
+            <CardHeader>
+              <CardTitle>Server</CardTitle>
+              <CardDescription>Connection details.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm">Body text.</p>
+            </CardContent>
+            <CardFooter>
+              <p className="text-sm text-muted-foreground">Footer text.</p>
+            </CardFooter>
+          </Card>
           <DetailPanel
             items={[
               { label: "Name", value: "Ada" },

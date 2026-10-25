@@ -7,6 +7,12 @@ import {
   AppShell,
   Badge,
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   ConfirmDialog,
   DataTable,
   DetailPanel,
@@ -123,6 +129,20 @@ describe("a11y", () => {
 
   it("detailPanel", async () => {
     const { container } = render(<DetailPanel items={[{ label: "Name", value: "Ada" }]} />);
+    await expectNoViolations(container);
+  });
+
+  it("card with header, content, and footer", async () => {
+    const { container } = render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Server</CardTitle>
+          <CardDescription>Connection details.</CardDescription>
+        </CardHeader>
+        <CardContent>Body text.</CardContent>
+        <CardFooter>Footer text.</CardFooter>
+      </Card>,
+    );
     await expectNoViolations(container);
   });
 

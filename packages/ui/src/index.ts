@@ -2,6 +2,7 @@ export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card.js";
 export {
   DataTable,
   createDataTableColumns,
