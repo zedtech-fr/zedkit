@@ -424,8 +424,18 @@ function syncManifestFields(pkg) {
 
 function check(packages, root, errors) {
   const headings = new Set();
+  const owners = new Map();
   for (const pkg of packages) {
-    for (const need of pkg.needs) headings.add(need.need);
+    for (const need of pkg.needs) {
+      headings.add(need.need);
+      if (owners.has(need.need)) {
+        errors.push(
+          `${pkg.catalogPath}: need "${need.need}" is also defined in ${owners.get(need.need)} (need headings must be unique across the catalog: docs "See also" links resolve by heading).`,
+        );
+      } else {
+        owners.set(need.need, pkg.catalogPath);
+      }
+    }
   }
   for (const pkg of packages) {
     if (pkg.hasCode && !pkg.catalogText) {
