@@ -22,6 +22,7 @@
     "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs",
     "registry:build": "node scripts/registry/build.mjs",
     "registry:check": "node scripts/registry/check.mjs",
+    "registry:smoke": "bash scripts/registry/smoke-shadcn-add.sh",
     "test:registry": "node --test scripts/registry/*.test.mjs"
   },
   "devDependencies": {
