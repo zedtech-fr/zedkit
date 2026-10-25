@@ -303,6 +303,27 @@ import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger 
 </Drawer>
 ```
 
+## Render a route as a modal over the list
+
+- Import: `@zedtech/zedkit-ui` — `RouteModal`, `RouteModalProps`, `RouteModalDirection`, `RouteModalSize`, `RouteModalVariant`, `closeRoute`, `CloseRouteOptions`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: RouteModal
+- Audience: Developers opening list details in an overlay with a shareable URL (Next.js parallel/intercepting routes).
+- Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
+- When to use: Inside an intercepting `@modal` slot, with `onClose` wired to `closeRoute`.
+- When not to use: For state-driven modals — use `Dialog`/`Drawer` directly with local state.
+- See also: `Slide in a drawer panel`, `Open modal dialogs`, `Confirm destructive actions`
+
+```ts
+import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
+import { useRouter } from "next/navigation";
+const router = useRouter();
+<RouteModal title="Delivery" onClose={() => closeRoute({ ...router, fallback: "/items" })}>
+  <DetailView />
+</RouteModal>
+```
+
 ## Show toast notifications
 
 - Import: `@zedtech/zedkit-ui` — `Toaster`
