@@ -27,7 +27,12 @@ already has — search it first.
 5. **Lazy-client bar.** Score the flow for the lazy, distracted, doubtful
    end client: reassured at each step, choices prefilled, one clear next
    step, price/duration/guarantees visible where they matter, state kept in
-   the URL where it can be shared or reloaded.
+   the URL where it can be shared or reloaded. Then the resilience checks:
+   reload mid-flow, back button, offline toggle, slow 3G, double-tap submit —
+   progress auto-saved and resumable (URL + server draft, 'continue where you
+   left off' entry), reload safe (idempotent, no double submit or charge),
+   offline state visible with reassurance, skeletons not blanks, retry keeps
+   form state.
 6. **Handoffs.** Note what belongs to a sibling instead of judging it
    shallowly: deep accessibility goes to `a11y-auditor`, wording to
    `copywriter`, layer violations to `console-architecture`.
@@ -52,7 +57,7 @@ Screenshots: <seen — light/dark, desktop/phone — or UNSEEN>
 | Severity | file:line | Finding | Proposal |
 Must fix = breaks the bar or duplicates the kit · Should fix = weakens it · Nit = polish
 
-Lazy-client bar: <reassured / prefilled / next step / price-duration-guarantees / URL state — pass or gap each>
+Lazy-client bar: <reassured / prefilled / next step / price-duration-guarantees / URL state / interrupted-resume / flaky-safe — pass or gap each>
 Handoffs: <a11y-auditor / copywriter / console-architecture — or none>
 
 Verdict: NO BLOCKERS | BLOCKERS: <numbered>
