@@ -1,5 +1,7 @@
 # zedkit
 
+[![ci](https://github.com/zedtech-fr/zedkit/actions/workflows/ci.yml/badge.svg)](https://github.com/zedtech-fr/zedkit/actions/workflows/ci.yml)
+
 Open-source building blocks for modern apps: small, dependency-light TypeScript
 packages. MIT licensed; see [LICENSE](LICENSE).
 
