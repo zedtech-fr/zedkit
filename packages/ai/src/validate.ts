@@ -1,7 +1,7 @@
 // Original work by the same author.
 import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import { tryCatch } from "@zedkit/core";
+import { tryCatch } from "@zedtech/zedkit-core";
 import { readManifest } from "./kit.js";
 import { parseFrontmatter } from "./frontmatter.js";
 

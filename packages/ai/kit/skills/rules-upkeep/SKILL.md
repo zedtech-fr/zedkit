@@ -45,7 +45,7 @@ Do not write down what the code already shows (file lists, signatures). Write on
 | Any file | LF line endings | a trailing `\r` breaks YAML values |
 | Subagent `model` | omit it, or `inherit` | an unknown model id can fall back silently; list the models the tool accepts before pinning one |
 
-Run `zedkit-ai validate` (package `@zedkit/ai`, or the repo's equivalent) after editing. It checks these.
+Run `zedkit-ai validate` (package `@zedtech/zedkit-ai`, or the repo's equivalent) after editing. It checks these.
 
 ## Writing for agents
 

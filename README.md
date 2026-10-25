@@ -9,13 +9,13 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 
 | Package | What | Status |
 |---|---|---|
-| [`@zedkit/core`](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | stable |
-| [`@zedkit/server`](packages/server/README.md) | rate limiting, redaction, backoff, webhook signatures, pg-error codes | stable |
-| [`@zedkit/nest`](packages/nest/README.md) | NestJS bootstrap factory | stable |
-| [`@zedkit/ai`](packages/ai/README.md) | agent-agnostic AI setup: `AGENTS.md`, skills, subagents, commands, installer, validator | stable |
-| [`@zedkit/ui`](packages/ui/README.md) | admin UI kit: tokens + dark/light theme, shadcn/ui-based components | stable |
-| [`@zedkit/seo`](packages/seo/README.md) | robots, sitemaps, typed JSON-LD, metadata, llms.txt, slugs | stable |
-| [`@zedkit/payload-seo`](packages/payload-seo/README.md) | localized Payload SEO group field | stable |
+| [`@zedtech/zedkit-core`](packages/core/README.md) | `Result`, `tryCatch`, prefixed IDs | stable |
+| [`@zedtech/zedkit-server`](packages/server/README.md) | rate limiting, redaction, backoff, webhook signatures, pg-error codes | stable |
+| [`@zedtech/zedkit-nest`](packages/nest/README.md) | NestJS bootstrap factory | stable |
+| [`@zedtech/zedkit-ai`](packages/ai/README.md) | agent-agnostic AI setup: `AGENTS.md`, skills, subagents, commands, installer, validator | stable |
+| [`@zedtech/zedkit-ui`](packages/ui/README.md) | admin UI kit: tokens + dark/light theme, shadcn/ui-based components | stable |
+| [`@zedtech/zedkit-seo`](packages/seo/README.md) | robots, sitemaps, typed JSON-LD, metadata, llms.txt, slugs | stable |
+| [`@zedtech/zedkit-payload-seo`](packages/payload-seo/README.md) | localized Payload SEO group field | stable |
 
 A package exists only when real, used code backs it — no placeholders.
 Each package README records its origin ("original work by the same
@@ -70,8 +70,8 @@ tarball is invisible to it — this goes away once the packages publish):
 
 ```sh
 mkdir -p /tmp/zedkit-core && tar -xzf /tmp/zedkit-pack/zedkit-core-*.tgz -C /tmp/zedkit-core
-# package.json: { "pnpm": { "overrides": { "@zedkit/core": "file:/tmp/zedkit-core/package" } } }
-pnpm add /tmp/zedkit-pack/zedkit-ai-0.1.0.tgz
+# package.json: { "pnpm": { "overrides": { "@zedtech/zedkit-core": "file:/tmp/zedkit-core/package" } } }
+pnpm add /tmp/zedkit-pack/zedtech-zedkit-ai-0.1.0.tgz
 ./node_modules/.bin/zedkit-ai init . --provider cursor
 ./node_modules/.bin/zedkit-ai validate   # must print: ok
 ```
@@ -81,7 +81,7 @@ pnpm add /tmp/zedkit-pack/zedkit-ai-0.1.0.tgz
 - pnpm workspaces with a pinned `packageManager` and a shared `catalog`
 - Turbo pipelines: `typecheck`, `lint`, `build`, `test`
 - TypeScript strict, ESM + types, vitest, ESLint (raw `try`/`catch` is banned;
-  use `tryCatch` from `@zedkit/core`)
+  use `tryCatch` from `@zedtech/zedkit-core`)
 - Changesets for versioning (dry-run only — publishing is a later decision)
 
 ```sh

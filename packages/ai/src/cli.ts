@@ -2,7 +2,7 @@
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { err, ok, tryCatch, type Result } from "@zedkit/core";
+import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { installKit, type Provider } from "./install.js";
 import { readManifest } from "./kit.js";
 import { checkDrift, validateKit } from "./validate.js";

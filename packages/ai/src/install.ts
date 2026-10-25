@@ -13,7 +13,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join, sep } from "node:path";
-import { err, ok, tryCatch, type Result } from "@zedkit/core";
+import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { parseFrontmatter } from "./frontmatter.js";
 import { kitDir, readManifest, type KitManifest } from "./kit.js";
 

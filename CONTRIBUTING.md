@@ -13,7 +13,7 @@ Rules:
   typecheck, lint, test, build, and the public-safety checks.
 - Merge on green CI (squash). No force-push to `main`.
 - TypeScript strict, ESM + types, vitest. Raw `try`/`catch` is banned —
-  use `tryCatch` from `@zedkit/core`.
+  use `tryCatch` from `@zedtech/zedkit-core`.
 - Public repo: no secrets, no customer data, no internal URLs, no
   private names or domain terms from other projects. Third-party
   material needs its licence file plus a row in the package's

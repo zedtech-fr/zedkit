@@ -1,15 +1,15 @@
-# @zedkit/seo
+# @zedtech/zedkit-seo
 
 Generic SEO bricks: robots, sitemaps, typed JSON-LD, page metadata,
 llms.txt, slugs. Pure functions, options-driven, no brand, no CMS.
 Original work by the same author.
 
 ```sh
-pnpm add @zedkit/seo
+pnpm add @zedtech/zedkit-seo
 ```
 
 ```ts
-import { buildRobots, buildSitemapEntries } from "@zedkit/seo";
+import { buildRobots, buildSitemapEntries } from "@zedtech/zedkit-seo";
 
 export async function GET() {
   return Response.json(buildSitemapEntries({ siteUrl, locales, pages }));

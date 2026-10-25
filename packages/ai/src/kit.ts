@@ -1,7 +1,7 @@
 // Original work by the same author.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { err, ok, tryCatch, type Result } from "@zedkit/core";
+import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 
 export type KitManifest = {
   /** Preset name -> skill names, or "*" for every skill in the kit. */

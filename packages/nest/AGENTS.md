@@ -1,4 +1,4 @@
-# AGENTS.md — @zedkit/nest
+# AGENTS.md — @zedtech/zedkit-nest
 
 1. Generic NestJS bootstrap factory: `createNestApp` wires Fastify,
    validated env, request-id logs, strict validation, uniform errors,
@@ -9,7 +9,7 @@
    per app — Nest DI breaks across duplicates). This package has zero
    runtime deps of its own.
 3. No raw `try`/`catch`: use `tryCatch`/`tryCatchAsync` from
-   `@zedkit/core` (add a `workspace:*` dep if a module ever needs it).
+   `@zedtech/zedkit-core` (add a `workspace:*` dep if a module ever needs it).
 4. Explicit named exports from `src/index.ts` (no `export *`, no default
    exports) — the catalog check verifies each one appears in CATALOG.md.
 5. No `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, or `any`
@@ -25,5 +25,5 @@
    over rewriting it; keep the options surface minimal.
 8. Every new export needs a CATALOG.md entry; regenerate `catalog.json`
    (`pnpm catalog:build` from the root).
-9. Definition of done: `pnpm --filter @zedkit/nest typecheck && pnpm --filter @zedkit/nest lint && pnpm --filter @zedkit/nest build && pnpm --filter @zedkit/nest test`
+9. Definition of done: `pnpm --filter @zedtech/zedkit-nest typecheck && pnpm --filter @zedtech/zedkit-nest lint && pnpm --filter @zedtech/zedkit-nest build && pnpm --filter @zedtech/zedkit-nest test`
    green (each command separately), `pnpm catalog:check` green.

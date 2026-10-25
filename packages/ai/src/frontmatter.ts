@@ -1,5 +1,5 @@
 // Original work by the same author.
-import { err, ok, tryCatch, type Result } from "@zedkit/core";
+import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { parse } from "yaml";
 
 export type Frontmatter = {

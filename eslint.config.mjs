@@ -9,14 +9,14 @@ export default tseslint.config(
   {
     rules: {
       // Raw try/catch is banned everywhere: use tryCatch/tryCatchAsync from
-      // @zedkit/core so thrown values are normalized to Error with cause
+      // @zedtech/zedkit-core so thrown values are normalized to Error with cause
       // preserved. Sole exception: the file that implements the wrappers.
       "no-restricted-syntax": [
         "error",
         {
           selector: "TryStatement",
           message:
-            "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedkit/core.",
+            "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
         },
       ],
       // Deep relative imports are banned: use the package `#*` subpath

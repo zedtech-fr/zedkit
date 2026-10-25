@@ -1,4 +1,4 @@
-# @zedkit/ai
+# @zedtech/zedkit-ai
 
 An agent-agnostic AI setup for a code repo: an `AGENTS.md` template, skills,
 subagents, and a small installer and validator. Works with Claude Code,
@@ -25,8 +25,8 @@ the packages publish):
 
 ```sh
 mkdir -p /tmp/zedkit-core && tar -xzf /tmp/zedkit-pack/zedkit-core-*.tgz -C /tmp/zedkit-core
-# package.json: { "pnpm": { "overrides": { "@zedkit/core": "file:/tmp/zedkit-core/package" } } }
-pnpm add /tmp/zedkit-pack/zedkit-ai-0.1.0.tgz
+# package.json: { "pnpm": { "overrides": { "@zedtech/zedkit-core": "file:/tmp/zedkit-core/package" } } }
+pnpm add /tmp/zedkit-pack/zedtech-zedkit-ai-0.1.0.tgz
 ./node_modules/.bin/zedkit-ai init . --provider cursor
 ./node_modules/.bin/zedkit-ai validate   # must print: ok
 ```
@@ -45,7 +45,7 @@ each repo, maps cross-repo dependencies, and writes a root `AGENTS.md`
 without touching the children unasked.
 
 Developing the kit itself? From a zedkit checkout, build once and call
-the binary directly: `pnpm --filter @zedkit/ai build`, then
+the binary directly: `pnpm --filter @zedtech/zedkit-ai build`, then
 `node packages/ai/dist/bin.js init <dir>`.
 
 `init` options: `--preset core|full`, `--provider cursor,claude,codex,muse,all`
@@ -170,7 +170,7 @@ installed; their files are only read when one is used.
 ## Verify
 
 ```sh
-pnpm --filter @zedkit/ai typecheck && pnpm --filter @zedkit/ai lint && pnpm --filter @zedkit/ai build && pnpm --filter @zedkit/ai test
+pnpm --filter @zedtech/zedkit-ai typecheck && pnpm --filter @zedtech/zedkit-ai lint && pnpm --filter @zedtech/zedkit-ai build && pnpm --filter @zedtech/zedkit-ai test
 ```
 
 The tests also validate the whole bundled kit.

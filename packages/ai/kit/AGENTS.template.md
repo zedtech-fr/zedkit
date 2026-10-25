@@ -93,4 +93,4 @@ evidence.
 - Subagent `model`: leave it unset (inherits). Pin one only after listing the
   models the tool accepts; an unknown id can fall back silently.
 - Tailor this file to the repo with the `setup-ai` skill.
-- Validate after editing: `zedkit-ai validate` (package `@zedkit/ai`).
+- Validate after editing: `zedkit-ai validate` (package `@zedtech/zedkit-ai`).

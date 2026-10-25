@@ -1,5 +1,5 @@
 {
-  "name": "@zedkit/core",
+  "name": "@zedtech/zedkit-core",
   "version": "0.1.0",
   "description": "Foundational helpers: Result, tryCatch, prefixed IDs. Original work by the same author.",
   "license": "MIT",

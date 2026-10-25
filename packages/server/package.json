@@ -1,5 +1,5 @@
 {
-  "name": "@zedkit/server",
+  "name": "@zedtech/zedkit-server",
   "version": "0.1.0",
   "description": "Server helpers: in-process rate limiting, secret redaction. Original work by the same author.",
   "license": "MIT",
