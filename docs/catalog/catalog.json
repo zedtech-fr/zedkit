@@ -943,11 +943,11 @@
           "status": "alpha",
           "shortName": "Select",
           "audience": "Form builders offering 4+ exclusive options in little space.",
-          "purpose": "Accessible dropdown select with trigger, value and items.",
+          "purpose": "Accessible dropdown select with trigger, value and items; empty lists render a disabled message item.",
           "whenToUse": "For long option lists where radio groups would sprawl.",
           "whenNotToUse": "For 2–3 visible options — use radio inputs or OptionCards instead.",
           "derivedFrom": "shadcn/ui (select)",
-          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>",
+          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\nconst items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>);\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent>{items.length === 0 ? <SelectItem value=\"none\" disabled>No regions available</SelectItem> : items}</SelectContent>",
           "seeAlso": [
             "Toggle a checkbox or a switch",
             "Guide a multi-step flow with selectable option cards"
