@@ -40,6 +40,10 @@ import {
   Separator,
   Skeleton,
   Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Text,
   Textarea,
   Toaster,
@@ -76,6 +80,20 @@ describe("a11y", () => {
         <Text>Body copy.</Text>
         <Text variant="muted">Muted copy.</Text>
       </>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("tab list with two panels", async () => {
+    const { container } = render(
+      <Tabs defaultValue="one">
+        <TabsList aria-label="Demo">
+          <TabsTrigger value="one">First</TabsTrigger>
+          <TabsTrigger value="two">Second</TabsTrigger>
+        </TabsList>
+        <TabsContent value="one">First panel.</TabsContent>
+        <TabsContent value="two">Second panel.</TabsContent>
+      </Tabs>,
     );
     await expectNoViolations(container);
   });
