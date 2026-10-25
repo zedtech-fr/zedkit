@@ -27,8 +27,9 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 - Primitives: `Button`, `Badge`, `Input`, `Label`, `Separator`,
   `Skeleton` (see CATALOG.md for usage).
 - Overlays: `Dialog` set, `ConfirmDialog`, `Toaster`, `SecretField`.
-- Planned next: data table, app shell, wizard stepper — one slice
-  each.
+- Data: `DataTable` (sortable, empty/loading/error states) + `Table`
+  primitives. Filter + pagination arrive in the next slice.
+- Planned next: app shell, wizard stepper — one slice each.
 
 ## Develop
 
