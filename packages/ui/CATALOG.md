@@ -313,7 +313,7 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 - When not to use: For multi-step flows — use a full page or wizard instead.
 - See also: `Open modal dialogs`, `Show key-value details and a live indicator`
 - Examples: Right detail panel, Bottom sheet
-- A11y: Built on vaul (focus trap, Escape to close, `aria-modal` on the dialog surface). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Pair the drag handle with a visible close control for keyboard users.
+- A11y: Built on vaul / Radix Dialog: focus trap, Escape to close, rest of the page hidden from assistive tech while open (`role="dialog"`). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Pair the drag handle with a visible close control for keyboard users.
 - Troubleshooting: Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. On small screens a `direction="right"` drawer spans the width by design.
 
 ```ts
