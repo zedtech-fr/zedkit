@@ -30,7 +30,6 @@ export function HomeInstallCommands({
             value={`pnpm add ${npmPackage}`}
             aria-label="pnpm install command"
             copyLabel="Copy pnpm command"
-            className="max-w-full min-w-0"
           />
         </Tab>
 <<<<<<< HEAD
@@ -42,7 +41,6 @@ export function HomeInstallCommands({
             value={commands.shadcn}
             aria-label="shadcn add command"
             copyLabel="Copy shadcn command"
-            className="max-w-full min-w-0"
           />
 >>>>>>> 118897a (fix(docs): contain home overflow on narrow viewports)
         </Tab>
