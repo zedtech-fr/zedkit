@@ -174,3 +174,15 @@ const [picked, setPicked] = useState(["a", "b"]);
 <WizardSteps steps={["Pick", "Configure", "Test"]} current={0} />
 <OptionCards options={options} selected={picked} onChange={setPicked} />
 ```
+
+## Show key-value details and a live indicator
+
+- Import: `@zedkit/ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`
+- Wraps: none (theme tokens only)
+- Status: stable
+
+```ts
+import { DetailPanel, LivePulse, PageHeader } from "@zedkit/ui";
+<PageHeader title="Server" actions={<LivePulse />} />
+<DetailPanel items={[{ label: "Region", value: "eu" }]} />
+```

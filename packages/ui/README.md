@@ -31,7 +31,8 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards).
-- Planned next: detail panel, live pulse, preview.
+- Detail: `DetailPanel` (key-value rows), `LivePulse` (live indicator).
+- Planned next: preview gallery, frontend guardrails.
 
 ## Develop
 
