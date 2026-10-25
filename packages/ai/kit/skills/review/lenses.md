@@ -22,7 +22,7 @@ exists IS a blocker.
 | dependencies | agent `dependency-auditor` | exists | `package.json`, lockfiles, catalogs, `Dockerfile` | when triggered | need/size/license/maintenance/duplicates |
 | docs | agent `docs-writer` | exists | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills, agents, commands | when triggered | drift + fixes, compiling examples |
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status`, `package.json` metadata | when triggered | semver + migration-note + package-metadata (keywords/homepage/bugs/README) check |
-| research | skill `research` | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |
+| research | agent `researcher` (method: skill `research`) | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |
 | frontend-quality | agents `ui-designer` + `console-architecture` | planned | app routes, views, `**/*.tsx`, styles, preview/gallery | when triggered | layer + composition + one-file-one-job findings, file:line |
 | doc-demos | agent `docs-writer` (demos: `ui-designer`) | planned | doc apps, `**/demos/**`, preview registries, generated pages | when triggered | registry + frame + drift findings per §Frontend rules, file:line |
 

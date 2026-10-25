@@ -9,7 +9,7 @@ When to call which agent, and the chains they form. Agents live in
 |---|---|---|
 | `architect` | before a feature, module, integration or cross-cutting change; produces the plan | no |
 | `explorer` | you need files, symbols, usages, producers/consumers — paths and lines only | no |
-| `researcher` | before building, to scout prior art and mature packages (adopt/wrap/build) | no (planned) |
+| `researcher` | before building, to scout prior art and mature packages (adopt/wrap/build) | no |
 | `skeptic` | after a plan or decision, before building; one angle per brief (plan, ui/ux, security, scope, data/ops, copy) | no |
 | `plan-challenger` | deprecated alias of `skeptic` (angle: plan); new briefs must name `skeptic` | no |
 | `test-writer` | with or after implementation, to add adversarial tests (skill: `adversarial-tests`) | tests only (planned) |
