@@ -35,7 +35,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.tests.json",
     "lint": "eslint src tests preview",
     "preview:build": "pnpm build && node ./preview/build.mjs",
-    "preview": "pnpm preview:build && node ./preview/serve.mjs"
+    "preview": "pnpm preview:build && node ./preview/serve.mjs",
+    "smoke": "playwright test"
   },
   "peerDependencies": {
     "react": "catalog:",

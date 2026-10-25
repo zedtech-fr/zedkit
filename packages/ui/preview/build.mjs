@@ -2,14 +2,16 @@
 // renders preview/gallery.tsx to preview/dist/{index,dark}.html.
 // Run from packages/ui: `pnpm preview:build` (builds the package first,
 // the gallery imports from dist). No bundler: the gallery is transpiled
-// with the installed TypeScript compiler API.
+// with the installed TypeScript compiler API, then rendered with
+// react-dom/client inside jsdom (same environment as the unit tests)
+// so effect-gated output like Radix portals is included.
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import postcss from "postcss";
 import tailwindcss from "@tailwindcss/postcss";
-import { renderToStaticMarkup } from "react-dom/server";
-import { createElement } from "react";
+import { JSDOM } from "jsdom";
+import { act, createElement } from "react";
 import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from "typescript";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -51,11 +53,49 @@ const galleryCompiled = transpileModule(gallerySource, {
 );
 const tmpFile = join(here, "dist-gallery.tmp.mjs");
 writeFileSync(tmpFile, galleryCompiled);
+
+// jsdom globals BEFORE importing the gallery: Radix snapshots
+// `document` at module load (layout-effect shim), so it must exist.
+const dom = new JSDOM("<!doctype html><html><body></body></html>", {
+  // A real origin (not opaque) so storage getters do not throw.
+  url: "http://localhost/",
+  pretendToBeVisual: true,
+});
+// Node ships its own Event classes; jsdom's document only accepts
+// jsdom's, so those overwrite even when already present.
+const DOM_EVENTS = [
+  "Event",
+  "CustomEvent",
+  "MouseEvent",
+  "KeyboardEvent",
+  "FocusEvent",
+  "PointerEvent",
+  "TouchEvent",
+  "UIEvent",
+  "InputEvent",
+  "WheelEvent",
+  "DragEvent",
+  "SubmitEvent",
+];
+for (const key of Object.getOwnPropertyNames(dom.window)) {
+  if (!(key in globalThis) || DOM_EVENTS.includes(key)) {
+    globalThis[key] = dom.window[key];
+  }
+}
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 const { Gallery } = await import(pathToFileURL(tmpFile).href);
 rmSync(tmpFile);
 
 mkdirSync(outDir, { recursive: true });
-const body = renderToStaticMarkup(createElement(Gallery));
+const { createRoot } = await import("react-dom/client");
+const reactRoot = createRoot(dom.window.document.body);
+await act(async () => {
+  reactRoot.render(createElement(Gallery));
+});
+const body = dom.window.document.body.innerHTML;
+await act(async () => {
+  reactRoot.unmount();
+});
 writeFileSync(join(outDir, "index.html"), page({ title: "UI gallery", body, css, dark: false }));
 writeFileSync(join(outDir, "dark.html"), page({ title: "UI gallery (dark)", body, css, dark: true }));
 console.log(`gallery: wrote ${outDir}/index.html + dark.html`);

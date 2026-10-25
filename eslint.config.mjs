@@ -42,7 +42,12 @@ export default tseslint.config(
   {
     // Root scripts, shareable presets, and the ui gallery tooling are
     // plain Node tooling: no DOM, Node globals available.
-    files: ["scripts/**/*.mjs", "eslint/**/*.mjs", "packages/ui/preview/*.mjs"],
+    files: [
+      "scripts/**/*.mjs",
+      "eslint/**/*.mjs",
+      "packages/ui/preview/*.mjs",
+      "packages/ui/playwright.config.ts",
+    ],
     languageOptions: {
       globals: { console: "readonly", process: "readonly", URL: "readonly" },
     },

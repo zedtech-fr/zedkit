@@ -99,13 +99,15 @@ export function Gallery() {
         </Section>
 
         <Section id="overlays" title="Overlays">
-          <Dialog defaultOpen>
+          {/* Closed on purpose: an open modal would dim the whole
+              review surface. Open behavior is covered by unit tests. */}
+          <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">Open dialog</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogTitle>Details</DialogTitle>
-              <DialogDescription>An open dialog, rendered for the gallery.</DialogDescription>
+              <DialogDescription>Dialog content.</DialogDescription>
             </DialogContent>
           </Dialog>
           <ConfirmDialog
