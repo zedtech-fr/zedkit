@@ -1,5 +1,11 @@
 # @zedtech/zedkit-server
 
+## 0.1.2
+
+### Patch Changes
+
+- 03cacd0: Catalog: every need documents its short name, audience, purpose, when to (not) use it, and related needs (single-sourced from CATALOG.md, enforced by `pnpm catalog:check`), feeding the doc pages.
+
 ## 0.1.1
 
 ### Patch Changes

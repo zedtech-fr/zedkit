@@ -1,5 +1,17 @@
 # @zedtech/zedkit-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- 1ee655e: Add faithful loading skeletons (`PageHeaderSkeleton`, `CardSkeleton`, `DataTableSkeleton`, `DetailPanelSkeleton`, each a named `role=status` zone) and pulse the base `Skeleton` only when motion is safe.
+- a884cb5: Add `StatusLabel` (named inline operation status, `role=status`) and `UpdatedAgo` (stale-while-revalidate age stamp via `Intl.RelativeTimeFormat`).
+
+### Patch Changes
+
+- 03cacd0: Catalog: every need documents its short name, audience, purpose, when to (not) use it, and related needs (single-sourced from CATALOG.md, enforced by `pnpm catalog:check`), feeding the doc pages.
+- b2c3c0f: Animate overlays by default: Dialog fades/scales in and out, Drawer slides on kit motion tokens with a reduced-motion guard. No API change.
+
 ## 0.2.0
 
 ### Minor Changes
