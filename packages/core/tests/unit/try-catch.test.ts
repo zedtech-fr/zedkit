@@ -77,4 +77,16 @@ describe("tryCatchAsync", () => {
       expect(r.error.cause).toBe("reject-string");
     }
   });
+
+  it("returns err when fn throws before returning a promise", async () => {
+    // Pins the deferred call: fn runs inside .then, so a sync throw
+    // becomes a rejection instead of escaping.
+    const r = await tryCatchAsync(() => {
+      throw new Error("sync");
+    });
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.error.message).toBe("sync");
+    }
+  });
 });
