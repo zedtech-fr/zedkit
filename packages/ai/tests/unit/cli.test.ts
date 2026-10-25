@@ -20,6 +20,15 @@ describe("cli", () => {
     expect(unknown.text).toBe("");
   });
 
+  it("prints usage on stdout for --help and -h (exit 0)", () => {
+    for (const flag of ["--help", "-h"]) {
+      const result = run(flag);
+      expect(result.code, flag).toBe(0);
+      expect(result.text, flag).toContain("zedkit-ai <command>");
+      expect(result.errors, flag).toBe("");
+    }
+  });
+
   it("lists presets, agents and commands", () => {
     const { code, text } = run("list");
     expect(code).toBe(0);

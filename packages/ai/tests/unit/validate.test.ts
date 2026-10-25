@@ -67,6 +67,19 @@ describe("validateKit", () => {
     expect(found.some((m) => m.includes("invalid YAML"))).toBe(true);
   });
 
+  it("flags frontmatter that parses but is not a mapping", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", "---\n- just\n- a list\n---\n");
+    expect(messages(root)).toEqual([expect.stringContaining("must be a YAML mapping")]);
+  });
+
+  it("flags names over the length cap even when the shape is right", () => {
+    const root = tempDir();
+    const long = "a".repeat(65);
+    put(root, `skills/${long}/SKILL.md`, SKILL(long));
+    expect(messages(root)).toEqual([expect.stringContaining("at most 64 characters")]);
+  });
+
   it("requires a non-empty description and caps its length", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", "---\nname: alpha\n---\n");
