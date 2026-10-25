@@ -17,7 +17,7 @@
     "prebuild": "pnpm docs:generate && pnpm -w registry:build && pnpm --filter @zedtech/zedkit-docs^... build",
     "build": "next build && pnpm -w registry:check",
     "start": "next start",
-    "smoke": "playwright test tests/search.spec.ts tests/home.spec.ts",
+    "smoke": "playwright test tests/search.spec.ts tests/home.spec.ts tests/getting-started.spec.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint app components lib ui scripts source.config.ts mdx-components.tsx"
   },

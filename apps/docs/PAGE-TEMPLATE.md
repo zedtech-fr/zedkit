@@ -30,3 +30,11 @@ Path: `apps/docs/prose/<folder>/<slug>.mdx`
 - Prose is merged after **Example** and before **Props**.
 
 Orphan prose (no matching catalog page) or prose that renames a generated section fails `pnpm docs:check`.
+
+## Guide pages
+
+Path: `apps/docs/prose/guides/<slug>.mdx` (plus `index.mdx` for `/docs`).
+
+- Full MDX with YAML front matter; not merged into catalog pages.
+- Code fences may use `{{snippet:name}}` to inline files from `prose/guides/snippets/` at generate time.
+- `GUIDE_NAV_SLUGS` in `scripts/generate.mjs` controls sidebar order before package folders.

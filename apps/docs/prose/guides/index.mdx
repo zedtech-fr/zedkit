@@ -1,0 +1,41 @@
+---
+title: Documentation
+description: Getting started, four package areas, and catalog pages generated from docs/catalog/catalog.json.
+---
+
+## Start here
+
+New to zedkit? Read [Getting started](/docs/getting-started) first: choose a package,
+run the quickstart commands, and reach either `zedkit-ai validate` printing `ok` or a
+rendered UI control.
+
+## Four areas
+
+### Admin UI (`@zedtech/zedkit-ui`)
+
+Components, layout, forms, tables, and theme tokens for internal admin surfaces.
+Browse the **ui** section in the sidebar or start from [Trigger actions with buttons](/docs/ui/trigger-actions-with-buttons).
+
+### Backend (`core`, `server`, `nest`)
+
+Shared error handling, IDs, logging, rate limits, and Nest bootstrap helpers.
+Open **core**, **server**, or **nest** in the sidebar — for APIs, [Bootstrap a Nest app](/docs/nest/bootstrap-a-nest-app) is a common entry.
+
+### SEO (`seo`, `payload-seo`)
+
+Metadata, JSON-LD, sitemaps, robots, and Payload CMS SEO tabs.
+See **seo** and **payload-seo** folders; [Build localized page metadata](/docs/seo/build-localized-page-metadata) covers Next.js metadata.
+
+### Coding agents (`ai`)
+
+Installer, validator, and the skill/subagent kit copied into your repo.
+See **ai** in the sidebar or [Set up AI agent instructions](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo).
+
+## Catalog reference
+
+Every sidebar page under a package folder is generated from the kit catalog: maturity badge,
+**At a glance** (who / what / when), install commands pinned to the published version, and
+a usage example. Optional prose under `apps/docs/prose/<folder>/` merges after **Example**
+on those pages (see [PAGE-TEMPLATE.md](https://github.com/zedtech-fr/zedkit/blob/main/apps/docs/PAGE-TEMPLATE.md)).
+
+Search the site header or read [`llms.txt`](https://zedkit.app/llms.txt) for the same link list.

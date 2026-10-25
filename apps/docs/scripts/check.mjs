@@ -30,7 +30,13 @@ import { fileURLToPath } from "node:url";
 // impossible here and the relative import stays.
 // eslint-disable-next-line no-restricted-imports -- see above
 import { parseBarrelExports } from "../../../scripts/catalog.mjs";
-import { catalogPageKeys, GENERATED_DOC_SECTIONS, generate } from "./generate.mjs";
+import {
+  catalogPageKeys,
+  expandGuideSnippets,
+  GENERATED_DOC_SECTIONS,
+  GUIDE_NAV_SLUGS,
+  generate,
+} from "./generate.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -47,7 +53,7 @@ const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"
 const rich = manifest.rich ?? {};
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages, prosePages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
+const { pages, prosePages, guidePages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
 const livePageKeys = catalogPageKeys(catalog);
 
 function mdxFiles(dir) {
@@ -63,6 +69,8 @@ function mdxFiles(dir) {
 // Every need page carries install tabs (memorized package-manager
 // choice) and a titled TSX example — never bare pill blocks.
 for (const file of mdxFiles(tmp)) {
+  const rel = file.slice(tmp.length + 1);
+  if (!rel.includes("/")) continue;
   const text = readFileSync(file, "utf8");
   if (text.includes("<ComponentPage")) continue;
   if (!text.includes('<Tabs groupId="package-manager"')) {
@@ -95,7 +103,7 @@ function proseMdxFiles() {
   if (!existsSync(root)) return [];
   const out = [];
   for (const folderEntry of readdirSync(root, { withFileTypes: true })) {
-    if (!folderEntry.isDirectory()) continue;
+    if (!folderEntry.isDirectory() || folderEntry.name === "guides") continue;
     const folderDir = join(root, folderEntry.name);
     for (const fileEntry of readdirSync(folderDir, { withFileTypes: true })) {
       if (fileEntry.isFile() && fileEntry.name.endsWith(".mdx")) {
@@ -135,6 +143,56 @@ for (const prose of proseMdxFiles()) {
   if (!merged.includes(`## ${titles[0]}`)) {
     errors.push(`prose: ${prose.rel} first section "## ${titles[0]}" missing from merged page.`);
   }
+}
+
+const guidesDir = join(APP, "prose", "guides");
+const snippetsDir = join(guidesDir, "snippets");
+const guideRequiredSections = {
+  "getting-started.mdx": [
+    "Who this is for",
+    "When to use zedkit",
+    "Choose a package",
+    "Prerequisites",
+    "Quickstart",
+    "Scenario",
+    "Troubleshooting",
+    "Next steps",
+  ],
+  "index.mdx": ["Start here", "Four areas", "Catalog reference"],
+};
+for (const [file, sections] of Object.entries(guideRequiredSections)) {
+  const sourcePath = join(guidesDir, file);
+  if (!existsSync(sourcePath)) {
+    errors.push(`guides: missing ${file}.`);
+    continue;
+  }
+  const expanded = expandGuideSnippets(readFileSync(sourcePath, "utf8"));
+  for (const section of sections) {
+    if (!expanded.includes(`## ${section}`)) {
+      errors.push(`guides: ${file} must include "## ${section}".`);
+    }
+  }
+}
+if (existsSync(snippetsDir)) {
+  const snippetRefs = new Set();
+  for (const entry of readdirSync(guidesDir, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith(".mdx")) continue;
+    const raw = readFileSync(join(guidesDir, entry.name), "utf8");
+    for (const match of raw.matchAll(/\{\{snippet:([a-zA-Z0-9._-]+)\}\}/g)) snippetRefs.add(match[1]);
+  }
+  for (const entry of readdirSync(snippetsDir, { withFileTypes: true })) {
+    if (!entry.isFile()) continue;
+    if (!snippetRefs.has(entry.name)) {
+      errors.push(`guides/snippets/${entry.name} is not referenced from guide MDX (use {{snippet:${entry.name}}}).`);
+    }
+  }
+  for (const id of snippetRefs) {
+    if (!existsSync(join(snippetsDir, id))) errors.push(`guides: snippet "${id}" has no file under prose/guides/snippets/.`);
+  }
+}
+if (guidePages < 2) errors.push(`guides: expected at least getting-started.mdx and index.mdx (got ${guidePages}).`);
+for (const slug of GUIDE_NAV_SLUGS) {
+  if (!existsSync(join(tmp, `${slug}.mdx`))) errors.push(`guides: generated /docs/${slug} missing.`);
 }
 
 rmSync(tmp, { recursive: true, force: true });
@@ -307,6 +365,6 @@ if (errors.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    `docs: ok (${pages} pages cover ${needs.length} needs, ${prosePages} with prose, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`,
+    `docs: ok (${pages} pages cover ${needs.length} needs, ${guidePages} guides, ${prosePages} with prose, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`,
   );
 }
