@@ -111,6 +111,25 @@
           "example": "import { pgErrorCode } from \"@zedkit/server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
         }
       ]
+    },
+    "@zedkit/ui": {
+      "catalog": "packages/ui/CATALOG.md",
+      "needs": [
+        {
+          "need": "Theme an admin app (dark/light included)",
+          "import": "`@zedkit/ui/styles.css` (+ one `@source` line, see README)",
+          "wraps": "`tailwindcss` (v4 CSS-first)",
+          "status": "stable",
+          "example": "import \"@zedkit/ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedkit/ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
+        },
+        {
+          "need": "Merge class names without conflicts",
+          "import": "`@zedkit/ui` — `cn`",
+          "wraps": "`clsx`, `tailwind-merge`",
+          "status": "stable",
+          "example": "import { cn } from \"@zedkit/ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
+        }
+      ]
     }
   }
 }
