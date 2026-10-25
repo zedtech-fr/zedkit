@@ -5,7 +5,7 @@
 // with the installed TypeScript compiler API, then rendered with
 // react-dom/client inside jsdom (same environment as the unit tests)
 // so effect-gated output like Radix portals is included.
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import postcss from "postcss";
@@ -37,20 +37,39 @@ const css = (
   await postcss([tailwindcss()]).process(cssInput, { from: join(root, "src", "styles.css") })
 ).css;
 
-const gallerySource = readFileSync(join(here, "gallery.tsx"), "utf8");
-const galleryCompiled = transpileModule(gallerySource, {
-  compilerOptions: {
-    jsx: JsxEmit.ReactJSX,
-    module: ModuleKind.ESNext,
-    target: ScriptTarget.ES2022,
-  },
-}).outputText.replaceAll(
-  // The gallery typechecks against src via #index.js; at runtime node
-  // cannot load .tsx, so render the built package instead (preview:build
-  // runs the package build first). Path is relative to the tmp file below.
-  '"#index.js"',
-  '"../dist/index.js"',
-);
+function compilePreview(source) {
+  return transpileModule(source, {
+    compilerOptions: {
+      jsx: JsxEmit.ReactJSX,
+      module: ModuleKind.ESNext,
+      target: ScriptTarget.ES2022,
+    },
+  }).outputText.replaceAll(
+    // Preview files typecheck against src via #index.js; at runtime
+    // node cannot load .tsx, so render the built package instead
+    // (preview:build runs the package build first). Path is relative
+    // to the tmp files below.
+    '"#index.js"',
+    '"../dist/index.js"',
+  );
+}
+
+// Sibling demo modules shared with the unit tests (form-demo, ...)
+// compile to tmp files next to the gallery tmp file below.
+const tmpFiles = [];
+for (const entry of readdirSync(here)) {
+  if (!entry.endsWith(".tsx") || entry === "gallery.tsx") continue;
+  const base = entry.slice(0, -".tsx".length);
+  const tmpName = `dist-${base}.tmp.mjs`;
+  writeFileSync(join(here, tmpName), compilePreview(readFileSync(join(here, entry), "utf8")));
+  tmpFiles.push(tmpName);
+}
+
+let galleryCompiled = compilePreview(readFileSync(join(here, "gallery.tsx"), "utf8"));
+for (const tmpName of tmpFiles) {
+  const base = tmpName.slice("dist-".length, -".tmp.mjs".length);
+  galleryCompiled = galleryCompiled.replaceAll(`"./${base}.js"`, `"./${tmpName}"`);
+}
 const tmpFile = join(here, "dist-gallery.tmp.mjs");
 writeFileSync(tmpFile, galleryCompiled);
 
@@ -85,6 +104,7 @@ for (const key of Object.getOwnPropertyNames(dom.window)) {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 const { Gallery } = await import(pathToFileURL(tmpFile).href);
 rmSync(tmpFile);
+for (const tmpName of tmpFiles) rmSync(join(here, tmpName));
 
 mkdirSync(outDir, { recursive: true });
 const { createRoot } = await import("react-dom/client");

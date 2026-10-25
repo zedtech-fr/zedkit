@@ -13,7 +13,8 @@
     "*.css"
   ],
   "imports": {
-    "#*": "./src/*"
+    "#*": "./src/*",
+    "#preview/*": "./preview/*"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -63,6 +64,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:",
+    "@zedkit/core": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/react": "catalog:",

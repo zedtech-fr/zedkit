@@ -27,6 +27,7 @@ import {
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
+import { FormDemo } from "#preview/form-demo.js";
 
 // Page-level rules (landmarks, document title/lang) belong to the page,
 // not to a component in isolation, so they stay out of this suite.
@@ -131,6 +132,11 @@ describe("a11y", () => {
     unmount();
     const idle = render(<LivePulse active={false} />);
     await expectNoViolations(idle.container);
+  });
+
+  it("validated form demo", async () => {
+    const { container } = render(<FormDemo />);
+    await expectNoViolations(container);
   });
 
   it("wizard steps and option cards", async () => {

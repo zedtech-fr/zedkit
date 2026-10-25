@@ -22,6 +22,7 @@ import {
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
+import { FormDemo } from "./form-demo.js";
 
 type Person = { name: string; age: number };
 
@@ -39,6 +40,7 @@ const SECTIONS = [
   ["data-table", "Data table"],
   ["layout", "Layout"],
   ["wizard", "Wizard"],
+  ["forms", "Forms"],
 ] as const;
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
@@ -142,6 +144,10 @@ export function Gallery() {
             <LivePulse />
             <LivePulse active={false} />
           </div>
+        </Section>
+
+        <Section id="forms" title="Forms">
+          <FormDemo />
         </Section>
 
         <Section id="wizard" title="Wizard">
