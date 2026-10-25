@@ -72,6 +72,25 @@
         }
       ]
     },
+    "@zedkit/payload-seo": {
+      "catalog": "packages/payload-seo/CATALOG.md",
+      "needs": [
+        {
+          "need": "Add a localized SEO tab to a Payload collection",
+          "import": "`@zedkit/payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
+          "wraps": "`payload` (peer, types only)",
+          "status": "stable",
+          "example": "import { seoGroupField } from \"@zedkit/payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
+        },
+        {
+          "need": "Validate editor-entered title/description lengths",
+          "import": "`@zedkit/payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedkit/payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
+        }
+      ]
+    },
     "@zedkit/seo": {
       "catalog": "packages/seo/CATALOG.md",
       "needs": [

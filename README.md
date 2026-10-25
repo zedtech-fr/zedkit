@@ -15,6 +15,7 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 | [`@zedkit/ai`](packages/ai/README.md) | agent-agnostic AI setup: `AGENTS.md`, skills, subagents, commands, installer, validator | stable |
 | [`@zedkit/ui`](packages/ui/README.md) | admin UI kit: tokens + dark/light theme, shadcn/ui-based components | stable |
 | [`@zedkit/seo`](packages/seo/README.md) | robots, sitemaps, typed JSON-LD, metadata, llms.txt, slugs | stable |
+| [`@zedkit/payload-seo`](packages/payload-seo/README.md) | localized Payload SEO group field | stable |
 
 A package exists only when real, used code backs it — no placeholders.
 Each package README records its origin ("original work by the same

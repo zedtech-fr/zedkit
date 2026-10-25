@@ -57,6 +57,7 @@ catalog:
   "@testing-library/react": 16.3.3
   "@testing-library/user-event": 14.6.8
   schema-dts: 2.1.0
+  payload: 3.92.0
   eslint-plugin-jsx-a11y: 6.10.2
   eslint-plugin-better-tailwindcss: 4.10.0
   vitest-axe: 0.1.0
