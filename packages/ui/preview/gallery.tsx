@@ -20,6 +20,12 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHandle,
+  DrawerTitle,
+  DrawerTrigger,
   Heading,
   Input,
   Label,
@@ -155,6 +161,27 @@ export function Gallery() {
             description="This cannot be undone."
             onConfirm={() => {}}
           />
+          <div className="flex flex-wrap gap-2">
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="outline">Open sheet</Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHandle />
+                <DrawerTitle>Filters</DrawerTitle>
+                <DrawerDescription>Bottom sheet content.</DrawerDescription>
+              </DrawerContent>
+            </Drawer>
+            <Drawer direction="right">
+              <DrawerTrigger asChild>
+                <Button variant="outline">Open drawer</Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerTitle>Details</DrawerTitle>
+                <DrawerDescription>Side panel content.</DrawerDescription>
+              </DrawerContent>
+            </Drawer>
+          </div>
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
           <Alert className="max-w-sm">
             <AlertTitle>Heads up</AlertTitle>

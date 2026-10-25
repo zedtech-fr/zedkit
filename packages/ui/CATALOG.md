@@ -119,6 +119,21 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
   description="This cannot be undone." onConfirm={remove} />
 ```
 
+## Slide in a drawer panel
+
+- Import: `@zedtech/zedkit-ui` — `Drawer`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerHandle`, `DrawerClose`, `DrawerOverlay`, `DrawerPortal`
+- Wraps: `vaul`
+- Status: alpha
+- Derived from: shadcn/ui (drawer)
+
+```ts
+import { Button, Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
+<Drawer direction="right"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets
+  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>
+  <DrawerContent><DrawerTitle>Details</DrawerTitle></DrawerContent>
+</Drawer>
+```
+
 ## Show toast notifications
 
 - Import: `@zedtech/zedkit-ui` — `Toaster`

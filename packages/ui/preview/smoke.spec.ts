@@ -14,6 +14,8 @@ test("gallery renders every section with no errors (light)", async ({ page }) =>
   }
   await expect(page.locator("text=Page 1 of 0")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Open dialog" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open drawer" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open sheet" })).toBeVisible();
   expect(problems).toEqual([]);
   await page.screenshot({ path: "test-results/gallery-light.png", fullPage: true });
 });
@@ -28,4 +30,19 @@ test("gallery renders the dark theme with no errors", async ({ page }) => {
   }
   expect(problems).toEqual([]);
   await page.screenshot({ path: "test-results/gallery-dark.png", fullPage: true });
+});
+
+test.describe("mobile viewport", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("gallery renders the drawer triggers with no errors", async ({ page }) => {
+    const problems: string[] = [];
+    page.on("pageerror", (error) => problems.push(String(error)));
+    await page.goto("/");
+    await expect(page.locator("#overlays")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open drawer" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open sheet" })).toBeVisible();
+    expect(problems).toEqual([]);
+    await page.screenshot({ path: "test-results/gallery-mobile.png", fullPage: true });
+  });
 });
