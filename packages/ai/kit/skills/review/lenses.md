@@ -15,7 +15,7 @@ exists IS a blocker.
 | adversarial-tests | skill `adversarial-tests` | exists | logic, handlers, endpoints, state machines | when triggered | edge cases + missing tests |
 | security | agent `security-reviewer` | exists | auth, secrets, tenancy, user data, external calls, crypto | when triggered | threats + fixes, file:line |
 | skeptic | agent `skeptic` (angle per brief: plan, ui/ux, security, scope, data/ops, copy) | exists | plans, specs, ADRs, estimates, product/UI/scope decisions | when triggered | pre-mortem + ranked objections |
-| ui | agent `ui-designer` | planned | `packages/ui/**`, `**/*.tsx`, styles, preview/gallery | when triggered | kit/a11y/state findings + persona(lazy client) |
+| ui | agent `ui-designer` | exists | `packages/ui/**`, `**/*.tsx`, styles, preview/gallery | when triggered | kit/a11y/state findings + persona(lazy client) |
 | copy | agent `copywriter` | planned | user-visible strings, messages, errors, CTAs | when triggered | keys + FR/EN proposals |
 | a11y | agent `a11y-auditor` | planned | `**/*.tsx`, components, forms, tables | when triggered | WCAG findings + fixes, file:line |
 | seo | agent `seo-auditor` | planned | `packages/seo/**`, pages, metadata, sitemap, redirects | when triggered | rule findings + fixes |
@@ -24,4 +24,18 @@ exists IS a blocker.
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status` | when triggered | semver + migration-note check |
 | research | skill `research` | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |
 | frontend-quality | agents `ui-designer` + `console-architecture` | planned | app routes, views, `**/*.tsx`, styles, preview/gallery | when triggered | layer + composition + one-file-one-job findings, file:line |
-| doc-demos | agent `docs-writer` (demos: `ui-designer`) | planned | doc apps, `**/demos/**`, preview registries, generated pages | when triggered | registry + frame + drift findings, file:line |
+| doc-demos | agent `docs-writer` (demos: `ui-designer`) | planned | doc apps, `**/demos/**`, preview registries, generated pages | when triggered | registry + frame + drift findings per §Frontend rules, file:line |
+
+## Frontend rules (the `ui` lens fails the review on any of these)
+
+1. One demo = one file (`demos/<name>.tsx` or colocated with its doc).
+   No grab-bag module importing dozens of components.
+2. Demos render inside one shared frame (title, description,
+   light/dark preview, shown source, props link), consumed by the doc
+   through a demo registry (key -> demo), never by direct page imports.
+3. Doc pages stay thin: load content + doc layout only. No direct
+   imports of dozens of components.
+4. Zero raw structural HTML and zero ad-hoc styles in demos and doc
+   pages: `Stack`/`Section`/`Heading`/`Text` from the kit, tokens only.
+5. A lint rule or test bans bulk imports in doc pages (it fails on the
+   grab-bag it replaces, passes after).

@@ -90,7 +90,8 @@ CLAUDE.md -> AGENTS.md
 ```
 
 One source (`.agents/`), thin per-tool links. Nested `AGENTS.md` files hold
-per-folder rules.
+per-folder rules. When to call which subagent: the
+[agents catalog](../../docs/agents-catalog.md).
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
 `handoff`, `audit`) are 3-6 line files: each runs its skill on the command arguments

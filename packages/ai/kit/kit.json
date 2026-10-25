@@ -34,7 +34,8 @@
     "verifier",
     "improver",
     "security-reviewer",
-    "skeptic"
+    "skeptic",
+    "ui-designer"
   ],
   "commands": [
     "review",
