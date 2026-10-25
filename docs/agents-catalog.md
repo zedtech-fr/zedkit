@@ -21,7 +21,7 @@ When to call which agent, and the chains they form. Agents live in
 | `a11y-auditor` | components, forms, tables or pages changed; WCAG basics | no |
 | `seo-auditor` | pages, metadata, sitemap, redirects or the seo package changed | no |
 | `dependency-auditor` | `package.json`, lockfiles or catalogs changed; new or updated deps | no |
-| `docs-writer` | README, AGENTS.md, catalog entries or docs changed; drift and compiling examples | yes (planned) |
+| `docs-writer` | README, AGENTS.md, catalog entries or docs changed; drift and compiling examples | yes |
 | `release-manager` | public API, changesets or catalog Status changed; semver + migration notes | no (planned) |
 | `console-architecture` | frontend changes; checks route/view/data layer boundaries | no (planned) |
 | `product-director` | you need a delivery brief for the director over a scope (branch, PRs, milestone) | no (planned) |
