@@ -40,10 +40,11 @@ export default tseslint.config(
     rules: { "no-restricted-syntax": "off" },
   },
   {
-    // Root scripts are plain Node tooling: no DOM, Node globals available.
-    files: ["scripts/**/*.mjs"],
+    // Root scripts and the shareable presets are plain Node tooling:
+    // no DOM, Node globals available.
+    files: ["scripts/**/*.mjs", "eslint/**/*.mjs"],
     languageOptions: {
-      globals: { console: "readonly", process: "readonly" },
+      globals: { console: "readonly", process: "readonly", URL: "readonly" },
     },
   },
   // UI preset last: for .tsx/.jsx its no-restricted-syntax (try/catch +
