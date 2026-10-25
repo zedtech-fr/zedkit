@@ -281,6 +281,11 @@ describe("createNestApp", () => {
     expect((await request(url).get("/docs-json")).status).toBe(200);
   });
 
+  it("falls back to docs when the path is all slashes", async () => {
+    const { url } = await boot({ docs: { title: "T", version: "1", path: "///" } });
+    expect((await request(url).get("/docs-json")).status).toBe(200);
+  });
+
   it("serves the same OpenAPI document from its aliases", async () => {
     const { url } = await boot({ docs: { title: "T", version: "1", aliases: ["/contract.json"] } });
     const res = await request(url).get("/contract.json");
