@@ -5,7 +5,17 @@ import Link from "next/link";
 import { highlight } from "fumadocs-core/highlight";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
-import { Section, Stack, Text } from "@zedtech/zedkit-ui";
+import {
+  Section,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Text,
+} from "@zedtech/zedkit-ui";
 import { docsSite } from "../lib/site";
 import { roleForExportSymbol, symbolsFromImport } from "../lib/import-symbols";
 import { ComponentPreview } from "./component-preview";
@@ -115,22 +125,22 @@ export async function ComponentPage({
 
       <Section title="Exports">
         <Stack gap={3}>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left">
-                <th className="py-2 pr-4 font-medium">Symbol</th>
-                <th className="py-2 font-medium">Role</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Symbol</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {symbols.map((name) => (
-                <tr key={name} className="border-b border-border/60">
-                  <td className="py-2 pr-4 font-mono text-xs">{name}</td>
-                  <td className="py-2 text-muted-foreground">{roleForExportSymbol(name)}</td>
-                </tr>
+                <TableRow key={name}>
+                  <TableCell className="font-mono text-xs">{name}</TableCell>
+                  <TableCell className="text-muted-foreground">{roleForExportSymbol(name)}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
           <Text variant="muted">Wraps: {wraps}</Text>
         </Stack>
       </Section>
