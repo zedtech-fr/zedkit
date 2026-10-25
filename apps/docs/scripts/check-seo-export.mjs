@@ -7,6 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
+import { SITE_CHANGELOG_URL, siteFooterLinkSpecs } from "../lib/site-links.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -164,6 +165,26 @@ function walkHtml(dir) {
   }
 }
 walkHtml(OUT);
+
+function assertSiteShellLinks(htmlPath, label) {
+  const html = readFileSync(htmlPath, "utf8");
+  if (!html.includes("Maintained by ZED TECH")) {
+    fail(`${label}: missing maintainer footer text`);
+  }
+  for (const { label: linkLabel, href } of siteFooterLinkSpecs(SITE_CHANGELOG_URL)) {
+    if (!html.includes(href)) {
+      fail(`${label}: missing footer link ${linkLabel} (${href})`);
+    }
+  }
+  if (!html.includes('href="/docs"')) {
+    fail(`${label}: missing Documentation nav link`);
+  }
+}
+
+if (homePath) assertSiteShellLinks(homePath, "index.html");
+if (notFoundPath) assertSiteShellLinks(notFoundPath, "404.html");
+if (docsIndex) assertSiteShellLinks(docsIndex, "docs.html");
+if (sampleDoc) assertSiteShellLinks(sampleDoc, "sample doc page");
 
 if (errors.length > 0) {
   console.error(errors.join("\n"));

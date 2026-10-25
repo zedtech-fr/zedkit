@@ -40,6 +40,11 @@ import {
   GUIDE_NAV_SLUGS,
   generate,
 } from "./generate.mjs";
+import {
+  SITE_CHANGELOG_URL,
+  SITE_HEADER_INTERNAL_PATHS,
+  siteFooterLinkSpecs,
+} from "../lib/site-links.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -206,6 +211,12 @@ if (existsSync(snippetsDir)) {
 if (guidePages < 2) errors.push(`guides: expected at least getting-started.mdx and index.mdx (got ${guidePages}).`);
 for (const slug of GUIDE_NAV_SLUGS) {
   if (!existsSync(join(tmp, `${slug}.mdx`))) errors.push(`guides: generated /docs/${slug} missing.`);
+}
+for (const path of SITE_HEADER_INTERNAL_PATHS) {
+  const rel = path === "/docs" ? "index.mdx" : `${path.replace(/^\/docs\//, "")}.mdx`;
+  if (!existsSync(join(tmp, rel))) {
+    errors.push(`site-nav: internal header path ${path} has no generated page (${rel}).`);
+  }
 }
 
 rmSync(tmp, { recursive: true, force: true });
@@ -387,6 +398,19 @@ if (nextConfig.includes('output: "export"')) {
       );
     }
   }
+}
+
+for (const { href, external } of siteFooterLinkSpecs(SITE_CHANGELOG_URL)) {
+  if (external && !href.startsWith("https://")) {
+    errors.push(`site-footer: ${href} must be an https URL.`);
+  }
+}
+const siteLayout = readFileSync(join(APP, "ui", "site-layout.tsx"), "utf8");
+if (!siteLayout.includes("siteHeaderLinks")) {
+  errors.push("site-layout: expected shared siteHeaderLinks in the marketing shell.");
+}
+if (!existsSync(join(APP, "ui", "site-footer.tsx"))) {
+  errors.push("site-footer: missing ui/site-footer.tsx.");
 }
 
 if (errors.length > 0) {
