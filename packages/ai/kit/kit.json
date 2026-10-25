@@ -41,7 +41,8 @@
     "a11y-auditor",
     "dependency-auditor",
     "docs-writer",
-    "researcher"
+    "researcher",
+    "test-writer"
   ],
   "commands": [
     "review",
