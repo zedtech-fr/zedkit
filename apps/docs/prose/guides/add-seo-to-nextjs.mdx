@@ -1,0 +1,129 @@
+---
+title: Add SEO to a Next.js app
+description: Wire metadata, robots.txt, sitemap.xml, and JSON-LD with @zedtech/zedkit-seo on a small App Router site.
+---
+
+Hand-written tutorial. Snippets match `apps/docs/fixtures/seo-next-tutorial.mjs` (compiled in CI via `verify-seo-tutorial.mjs`).
+
+## Who this is for
+
+You ship a public Next.js site and want sitemap, robots, page metadata, and one JSON-LD graph per page without hand-writing spec strings.
+
+## Prerequisites
+
+- Node.js 22+
+- Next.js App Router project
+- `pnpm add @zedtech/zedkit-seo`
+
+## Wire the site
+
+### 1. Describe the site once
+
+```ts
+import type { SiteMetadata } from "@zedtech/zedkit-seo";
+
+export const site: SiteMetadata = {
+  name: "Example",
+  url: "https://example.com",
+  defaultLocale: "en",
+  locales: ["en"],
+};
+```
+
+### 2. `app/robots.ts`
+
+```ts
+import type { MetadataRoute } from "next";
+import { buildRobots } from "@zedtech/zedkit-seo";
+
+import { site } from "@/lib/site";
+
+export const dynamic = "force-static";
+
+export default function robots(): MetadataRoute.Robots {
+  return buildRobots({ siteUrl: site.url });
+}
+```
+
+### 3. `app/sitemap.ts`
+
+```ts
+import type { MetadataRoute } from "next";
+import { buildSitemapEntries } from "@zedtech/zedkit-seo";
+
+import { site } from "@/lib/site";
+
+export const dynamic = "force-static";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return buildSitemapEntries({
+    siteUrl: site.url,
+    locales: site.locales,
+    localeInPath: false,
+    pages: [{ path: "" }, { path: "/about" }],
+  });
+}
+```
+
+### 4. Page metadata (`generateMetadata`)
+
+```ts
+import { buildPageMetadata } from "@zedtech/zedkit-seo";
+
+import { site } from "@/lib/site";
+
+export function generateMetadata() {
+  return buildPageMetadata({
+    site,
+    page: { title: "About", description: "About this example site." },
+    locale: "en",
+    pathname: "/about",
+    localeInPath: false,
+    openGraphLocale: "en_US",
+  });
+}
+```
+
+### 5. JSON-LD on the page
+
+```tsx
+import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
+
+const jsonLd = buildWebPageJsonLd({
+  title: "About",
+  description: "About this example site.",
+  url: "https://example.com/about",
+});
+
+export default function About() {
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <main>...</main>
+    </>
+  );
+}
+```
+
+With `output: "export"`, keep `export const dynamic = "force-static"` on every metadata route (see the zedkit docs site).
+
+## Verify
+
+- `pnpm build`, then open `/robots.txt` and `/sitemap.xml` on your preview host.
+- View source on `/about`: one canonical, Open Graph tags, and one `application/ld+json` script.
+- This repo runs `node apps/docs/scripts/verify-seo-tutorial.mjs` in `docs:check`.
+
+## Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| Build fails on `/robots.txt` with static export | Add `export const dynamic = "force-static"` to `robots.ts`, `sitemap.ts`, and other route handlers. |
+| Duplicate JSON-LD graphs | Emit one script per page; nest breadcrumbs via `buildWebPageJsonLd({ breadcrumb })`. |
+| Wrong canonical on locale-prefixed sites | Pass `localeInPath: true` and paths that include the locale segment. |
+
+## Next steps
+
+- [Build localized page metadata](/docs/seo/build-localized-page-metadata)
+- [Emit typed JSON-LD structured data](/docs/seo/emit-typed-json-ld-structured-data)
+- [Serve llms.txt for AI agents](/docs/seo/serve-llms-txt-for-ai-agents)
+- Optional CMS fields: `@zedtech/zedkit-payload-seo` (Payload plugin)

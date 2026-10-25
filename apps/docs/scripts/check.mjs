@@ -20,6 +20,7 @@
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -159,6 +160,14 @@ const guideRequiredSections = {
     "Next steps",
   ],
   "index.mdx": ["Start here", "Four areas", "Catalog reference"],
+  "add-seo-to-nextjs.mdx": [
+    "Who this is for",
+    "Prerequisites",
+    "Wire the site",
+    "Verify",
+    "Troubleshooting",
+    "Next steps",
+  ],
 };
 for (const [file, sections] of Object.entries(guideRequiredSections)) {
   const sourcePath = join(guidesDir, file);
@@ -364,6 +373,23 @@ if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
+  const seoBuild = spawnSync("pnpm", ["--filter", "@zedtech/zedkit-seo", "build"], {
+    cwd: ROOT,
+    stdio: "pipe",
+  });
+  if (seoBuild.status !== 0) {
+    console.error("docs:check: @zedtech/zedkit-seo build failed.");
+    process.exitCode = 1;
+  } else {
+    const tutorial = spawnSync("node", [join(HERE, "verify-seo-tutorial.mjs")], {
+      cwd: APP,
+      stdio: "inherit",
+    });
+    if (tutorial.status !== 0) process.exitCode = 1;
+  }
+}
+
+if (process.exitCode !== 1) {
   console.log(
     `docs: ok (${pages} pages cover ${needs.length} needs, ${guidePages} guides, ${prosePages} with prose, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`,
   );
