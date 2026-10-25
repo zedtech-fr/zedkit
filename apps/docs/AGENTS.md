@@ -41,7 +41,8 @@ Copy-paste install payloads for the official shadcn CLI (#187). `pnpm
 registry:build` (root) rewrites `packages/ui` imports, runs `shadcn
 build`, and writes gitignored JSON under `public/r/`. Docs `prebuild`
 runs that step; `registry:check` asserts rewritten imports and
-`shadcn registry validate`.
+`shadcn registry validate`. CI job `registry-smoke` runs
+`pnpm registry:smoke` (fresh Next + `shadcn add` for Badge and Drawer).
 
 ## Work on it
 

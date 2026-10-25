@@ -11,17 +11,19 @@ SHADCN="${SHADCN_VERSION:-4.22.1}"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
-if [[ ! -f "${OUT}/badge.json" ]]; then
-  echo "smoke-shadcn-add: missing ${OUT}/badge.json (run pnpm registry:build)" >&2
-  exit 1
-fi
+for item in badge drawer; do
+  if [[ ! -f "${OUT}/${item}.json" ]]; then
+    echo "smoke-shadcn-add: missing ${OUT}/${item}.json (run pnpm registry:build)" >&2
+    exit 1
+  fi
+done
 
 pnpm dlx "create-next-app@${CREATE_NEXT_APP_VERSION:-16.4.3}" "$WORK" \
   --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-pnpm --yes
 
 cd "$WORK"
 pnpm dlx "shadcn@${SHADCN}" init -d
-pnpm dlx "shadcn@${SHADCN}" add "${OUT}/badge.json" -y
+pnpm dlx "shadcn@${SHADCN}" add "${OUT}/badge.json" "${OUT}/drawer.json" -y
 pnpm exec next build
 
-echo "smoke-shadcn-add: ok (badge installed, next build)"
+echo "smoke-shadcn-add: ok (badge + drawer installed, next build)"
