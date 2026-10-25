@@ -13,6 +13,7 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 | [`@zedkit/server`](packages/server/README.md) | rate limiting, redaction, backoff, webhook signatures, pg-error codes | stable |
 | [`@zedkit/nest`](packages/nest/README.md) | NestJS bootstrap factory | stable |
 | [`@zedkit/ai`](packages/ai/README.md) | agent-agnostic AI setup: `AGENTS.md`, skills, subagents, commands, installer, validator | stable |
+| [`@zedkit/ui`](packages/ui/README.md) | admin UI kit: tokens + dark/light theme, shadcn/ui-based components | stable |
 
 A package exists only when real, used code backs it — no placeholders.
 Each package README records its origin ("original work by the same
