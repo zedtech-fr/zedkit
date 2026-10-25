@@ -17,8 +17,8 @@ exists IS a blocker.
 | skeptic | agent `skeptic` (angle per brief: plan, ui/ux, security, scope, data/ops, copy) | exists | plans, specs, ADRs, estimates, product/UI/scope decisions | when triggered | pre-mortem + ranked objections |
 | ui | agent `ui-designer` | exists | `packages/ui/**`, `**/*.tsx`, styles, preview/gallery | when triggered | kit/a11y/state findings + persona(lazy client) |
 | copy | agent `copywriter` | exists | user-visible strings, messages, errors, CTAs | when triggered | keys + FR/EN proposals |
-| a11y | agent `a11y-auditor` | planned | `**/*.tsx`, components, forms, tables | when triggered | WCAG findings + fixes, file:line |
-| seo | agent `seo-auditor` | planned | `packages/seo/**`, pages, metadata, sitemap, redirects | when triggered | rule findings + fixes |
+| a11y | agent `a11y-auditor` | exists | `**/*.tsx`, components, forms, tables | when triggered | WCAG findings + fixes, file:line |
+| seo | agent `seo-auditor` | exists | `packages/seo/**`, pages, metadata, sitemap, redirects | when triggered | rule findings + fixes |
 | dependencies | agent `dependency-auditor` | planned | `package.json`, lockfiles, catalogs, `Dockerfile` | when triggered | need/size/license/maintenance/duplicates |
 | docs | agent `docs-writer` | planned | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills, agents, commands | when triggered | drift + fixes, compiling examples |
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status` | when triggered | semver + migration-note check |

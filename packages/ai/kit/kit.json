@@ -36,7 +36,9 @@
     "security-reviewer",
     "skeptic",
     "ui-designer",
-    "copywriter"
+    "copywriter",
+    "seo-auditor",
+    "a11y-auditor"
   ],
   "commands": [
     "review",
