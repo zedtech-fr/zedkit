@@ -3,6 +3,8 @@ import { Badge, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text }
 import { demoRegistry, type DemoKey } from "@/components/demos/registry";
 import type { GalleryCard } from "@/content/gallery";
 import type { HomeScenario } from "@/content/home-scenarios";
+import type { HomeEntryPoint } from "@/content/home-entry-points";
+import { HomeEntryPointsSection } from "@/ui/home/home-entry-points-section";
 import { HomeHero } from "@/ui/home/home-hero";
 import { HomeProofs } from "@/ui/home/home-proofs";
 import { HomeScenariosSection } from "@/ui/home/home-scenarios-section";
@@ -36,6 +38,7 @@ export function HomeView({
   changelogHref,
   uiGalleryStats,
   scenarios,
+  entryPoints,
   themeHref,
 }: {
   gallery: GalleryCard[];
@@ -45,11 +48,13 @@ export function HomeView({
   changelogHref: string;
   uiGalleryStats: { components: number; livePreviews: number };
   scenarios: HomeScenario[];
+  entryPoints: HomeEntryPoint[];
   themeHref: string;
 }) {
   return (
-    <Stack gap={8} className="mx-auto w-full max-w-5xl px-6 py-12">
+    <Stack gap={8} className="mx-auto w-full max-w-5xl min-w-0 overflow-x-hidden px-6 py-12">
       <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
+      <HomeEntryPointsSection entryPoints={entryPoints} />
       <HomeScenariosSection scenarios={scenarios} />
       <HomeProofs
         packages={stats.packages}

@@ -18,7 +18,7 @@ export function HomeInstallCommands({
   const shadcnAdd = `npx shadcn@latest add ${base}/r/${featuredBrick}.json`;
   const brickList = registryBricks.join(", ");
   return (
-    <Stack gap={2} className="w-full">
+    <Stack gap={2} className="w-full min-w-0">
       <Tabs items={["npm", "shadcn"]} className="w-full">
         <Tab value="npm">
           <SecretField
@@ -28,7 +28,11 @@ export function HomeInstallCommands({
           />
         </Tab>
         <Tab value="shadcn">
-          <SecretField value={shadcnAdd} aria-label="shadcn add command" copyLabel="Copy shadcn command" />
+          <SecretField
+            value={shadcnAdd}
+            aria-label="shadcn add command"
+            copyLabel="Copy shadcn command"
+          />
         </Tab>
       </Tabs>
       <Text variant="muted" className="text-sm">

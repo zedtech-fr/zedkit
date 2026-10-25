@@ -2,18 +2,56 @@ import { expect, test } from "@playwright/test";
 
 const BASE = "http://127.0.0.1:3100";
 
-test("home shows scenarios and reaches a doc page", async ({ page }) => {
+test("home explains the product and four entry areas", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
   await page.goto(BASE, { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "zedkit", level: 1 })).toBeVisible();
-  await expect(page.getByRole("link", { name: /UI kit version .+, view changelog/ }).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Start from your situation" })).toBeVisible();
-  const scenarioLink = page.getByRole("link", { name: "Open the doc page" }).first();
+  await expect(
+    page.getByRole("heading", {
+      name: "Build the parts you need. Keep the rest of your app.",
+      level: 1,
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Choose an area" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open UI docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open backend docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const entry = page.getByRole("link", { name: "Open UI docs" });
+  await entry.click();
+  await page.waitForURL("**/docs/ui/**", { timeout: 10000 });
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("home scenario links have unique accessible names", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const scenarioLink = page.getByRole("link", { name: "Read docs: New admin UI in an existing app" });
   await expect(scenarioLink).toBeVisible();
   await scenarioLink.click();
   await page.waitForURL("**/docs/**", { timeout: 10000 });
-  expect(errors).toEqual([]);
+});
+
+test("home has no nested interactive elements", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const nested = await page.evaluate(() => {
+    const bad: string[] = [];
+    for (const anchor of document.querySelectorAll("a")) {
+      if (anchor.querySelector("button")) bad.push(`anchor>button: ${anchor.textContent?.trim()}`);
+    }
+    for (const button of document.querySelectorAll("button")) {
+      const parentAnchor = button.closest("a");
+      if (parentAnchor && parentAnchor.querySelector("button") === button) {
+        bad.push(`button inside anchor: ${button.textContent?.trim()}`);
+      }
+    }
+    return bad;
+  });
+  expect(nested).toEqual([]);
 });
 
 test("home search opens from the header", async ({ page }) => {
@@ -22,13 +60,12 @@ test("home search opens from the header", async ({ page }) => {
   await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10000 });
 });
 
-test("home keyboard: tab reaches scenario CTA", async ({ page }) => {
+test("home keyboard: tab reaches an entry-point CTA", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "domcontentloaded" });
-  await page.keyboard.press("Tab");
   let found = false;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 50; i++) {
     const active = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
-    if (active.includes("Open the doc page")) {
+    if (active.includes("Open UI docs")) {
       found = true;
       break;
     }

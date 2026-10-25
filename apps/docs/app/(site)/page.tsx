@@ -9,6 +9,7 @@ import {
   gallery,
   uiGalleryStats,
 } from "@/content/gallery";
+import { homeEntryPoints } from "@/content/home-entry-points";
 import { homeScenarios } from "@/content/home-scenarios";
 import { homePage, pageUrl } from "@/lib/site";
 import { HomeView } from "@/ui/home/home-view";
@@ -34,6 +35,7 @@ export default function Home() {
       changelogHref={featuredPackageChangelogUrl}
       uiGalleryStats={uiGalleryStats}
       scenarios={homeScenarios}
+      entryPoints={homeEntryPoints}
       themeHref={themeHref}
     />
     </>
