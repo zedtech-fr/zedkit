@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,25 +11,25 @@ const errors = [];
 
 for (const name of ["badge", "drawer", "registry"]) {
   const path = join(outDir, `${name}.json`);
-  let raw;
-  try {
-    raw = readFileSync(path, "utf8");
-  } catch {
+  if (!existsSync(path)) {
     errors.push(`missing ${path} (run pnpm registry:build)`);
     continue;
   }
+  const raw = readFileSync(path, "utf8");
   if (name !== "registry" && raw.includes('from "./utils.js"')) {
     errors.push(`${name}.json still contains relative ./utils.js imports`);
   }
 }
 
-try {
-  execFileSync("pnpm", ["exec", "shadcn", "registry", "validate", "registry.json"], {
-    cwd: root,
-    stdio: "pipe",
-  });
-} catch (e) {
-  errors.push(`shadcn registry validate failed: ${e.stderr?.toString() ?? e.message}`);
+const validate = spawnSync(
+  "pnpm",
+  ["exec", "shadcn", "registry", "validate", "registry.json"],
+  { cwd: root, encoding: "utf8" },
+);
+if (validate.status !== 0) {
+  errors.push(
+    `shadcn registry validate failed: ${validate.stderr || validate.stdout || `exit ${validate.status}`}`,
+  );
 }
 
 if (errors.length) {
