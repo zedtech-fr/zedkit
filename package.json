@@ -15,6 +15,7 @@
     "test": "turbo run test",
     "changeset": "changeset",
     "changeset:status": "changeset status --verbose",
+    "changeset:version": "changeset version",
     "catalog:build": "node scripts/catalog.mjs build",
     "catalog:check": "node scripts/catalog.mjs check"
   },
