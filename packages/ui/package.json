@@ -56,12 +56,14 @@
     "tailwind-merge": "catalog:"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "axe-core": "catalog:",
     "jsdom": "catalog:",
+    "postcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vitest-axe": "catalog:"
