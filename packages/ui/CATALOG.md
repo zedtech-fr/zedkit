@@ -134,3 +134,16 @@ import { Label, SecretField } from "@zedkit/ui";
 <Label htmlFor="key">API key (shown once)</Label>
 <SecretField id="key" value={key} />
 ```
+
+## Show a sortable data table with loading and error states
+
+- Import: `@zedkit/ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
+- Wraps: `@tanstack/react-table`
+- Status: stable
+
+```ts
+import { DataTable, createDataTableColumns } from "@zedkit/ui";
+const helper = createDataTableColumns<Item>();
+const columns = [helper.accessor("name", { header: "Name" })];
+<DataTable columns={columns} data={items} loading={isLoading} error={error} />
+```

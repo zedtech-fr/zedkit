@@ -1,0 +1,53 @@
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+
+import { DataTable, createDataTableColumns } from "#index.js";
+
+type Person = { name: string; age: number };
+
+const helper = createDataTableColumns<Person>();
+const columns = [helper.accessor("name", { header: "Name" }), helper.accessor("age", { header: "Age" })];
+const data: Person[] = [
+  { name: "Bob", age: 30 },
+  { name: "Ada", age: 36 },
+];
+
+function bodyRowTexts(): string[] {
+  return screen
+    .getAllByRole("row")
+    .slice(1)
+    .map((row) => row.textContent ?? "");
+}
+
+describe("DataTable", () => {
+  it("renders one row per item", () => {
+    render(<DataTable columns={columns} data={data} />);
+    expect(bodyRowTexts()).toEqual(["Bob30", "Ada36"]);
+  });
+
+  it("sorts ascending then descending when a sortable header is clicked", async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} />);
+    await user.click(screen.getByRole("button", { name: /Name/ }));
+    expect(bodyRowTexts()).toEqual(["Ada36", "Bob30"]);
+    await user.click(screen.getByRole("button", { name: /Name/ }));
+    expect(bodyRowTexts()).toEqual(["Bob30", "Ada36"]);
+  });
+
+  it("shows the empty message when there is no data", () => {
+    render(<DataTable columns={columns} data={[]} emptyMessage="Nothing here." />);
+    expect(screen.getByText("Nothing here.").textContent).toBe("Nothing here.");
+  });
+
+  it("shows loading placeholders while loading", () => {
+    render(<DataTable columns={columns} data={data} loading />);
+    expect(screen.getAllByLabelText("Loading")).toHaveLength(6);
+    expect(screen.queryByText("Ada")).toBeNull();
+  });
+
+  it("shows the error message when one is set", () => {
+    render(<DataTable columns={columns} data={data} error="Could not load rows." />);
+    expect(screen.getByRole("alert").textContent).toBe("Could not load rows.");
+  });
+});
