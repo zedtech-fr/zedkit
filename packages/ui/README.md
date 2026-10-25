@@ -29,7 +29,8 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 - Overlays: `Dialog` set, `ConfirmDialog`, `Toaster`, `SecretField`.
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
-- Planned next: app shell, wizard stepper — one slice each.
+- Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
+- Planned next: wizard stepper, detail panel, live pulse, preview.
 
 ## Develop
 

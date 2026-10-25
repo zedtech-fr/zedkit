@@ -1,3 +1,4 @@
+export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
@@ -21,6 +22,7 @@ export {
 } from "./dialog.js";
 export { Input } from "./input.js";
 export { Label } from "./label.js";
+export { PageHeader, type PageHeaderProps } from "./page-header.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
 export { Separator } from "./separator.js";
 export { Skeleton } from "./skeleton.js";

@@ -148,3 +148,16 @@ const columns = [helper.accessor("name", { header: "Name" })];
 <DataTable columns={columns} data={items} loading={isLoading}
   error={error} pageSize={20} />
 ```
+
+## Lay out an admin page (sidebar + topbar + header)
+
+- Import: `@zedkit/ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`
+- Wraps: none (theme tokens only)
+- Status: stable
+
+```ts
+import { AppShell, PageHeader } from "@zedkit/ui";
+<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>
+  <PageHeader title="Items" description="All items." />
+</AppShell>
+```

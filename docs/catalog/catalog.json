@@ -198,6 +198,13 @@
           "wraps": "`@tanstack/react-table`",
           "status": "stable",
           "example": "import { DataTable, createDataTableColumns } from \"@zedkit/ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
+        },
+        {
+          "need": "Lay out an admin page (sidebar + topbar + header)",
+          "import": "`@zedkit/ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`",
+          "wraps": "none (theme tokens only)",
+          "status": "stable",
+          "example": "import { AppShell, PageHeader } from \"@zedkit/ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
         }
       ]
     }
