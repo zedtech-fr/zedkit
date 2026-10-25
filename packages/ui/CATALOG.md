@@ -84,3 +84,53 @@ import { Separator } from "@zedkit/ui";
 import { Skeleton } from "@zedkit/ui";
 <Skeleton className="h-4 w-24" />
 ```
+
+## Open modal dialogs
+
+- Import: `@zedkit/ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
+- Wraps: `@radix-ui/react-dialog`
+- Status: stable
+
+```ts
+import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedkit/ui";
+<Dialog>
+  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>
+  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>
+</Dialog>
+```
+
+## Confirm destructive actions
+
+- Import: `@zedkit/ui` — `ConfirmDialog`, `ConfirmDialogProps`
+- Wraps: `@radix-ui/react-dialog` (via Dialog)
+- Status: stable
+
+```ts
+import { Button, ConfirmDialog } from "@zedkit/ui";
+<ConfirmDialog trigger={<Button>Delete</Button>} title="Delete item?"
+  description="This cannot be undone." onConfirm={remove} />
+```
+
+## Show toast notifications
+
+- Import: `@zedkit/ui` — `Toaster`
+- Wraps: `sonner`
+- Status: stable
+
+```ts
+import { Toaster } from "@zedkit/ui";
+import { toast } from "sonner";
+<Toaster /> // once near the root, then toast("Saved") anywhere
+```
+
+## Display a shown-once secret with copy
+
+- Import: `@zedkit/ui` — `SecretField`, `SecretFieldProps`
+- Wraps: `lucide-react`
+- Status: stable
+
+```ts
+import { Label, SecretField } from "@zedkit/ui";
+<Label htmlFor="key">API key (shown once)</Label>
+<SecretField id="key" value={key} />
+```

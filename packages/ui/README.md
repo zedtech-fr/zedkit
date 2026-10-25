@@ -26,8 +26,9 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 - `cn()`: classnames merge.
 - Primitives: `Button`, `Badge`, `Input`, `Label`, `Separator`,
   `Skeleton` (see CATALOG.md for usage).
-- Planned next: dialog, toast, data table, app shell, wizard
-  stepper — one slice each.
+- Overlays: `Dialog` set, `ConfirmDialog`, `Toaster`, `SecretField`.
+- Planned next: data table, app shell, wizard stepper — one slice
+  each.
 
 ## Develop
 
