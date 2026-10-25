@@ -1,0 +1,11 @@
+## Local drawer vs route-driven overlay
+
+| Need | Use |
+|---|---|
+| Filters, pickers, short forms on the current page | `Drawer` + `DrawerTrigger` (local open state) |
+| List row opens a shareable `/items/[id]` URL | `RouteModal` inside Next parallel + intercepting routes |
+
+The route recipe (file tree, `@modal` slot, `closeRoute`) lives on the
+[Render a route as a modal over the list](/docs/ui/render-a-route-as-a-modal-over-the-list)
+page. Use `direction="right"` for a list-detail panel; default bottom +
+`DrawerHandle` for mobile sheets.
