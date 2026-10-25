@@ -44,7 +44,8 @@
     "researcher",
     "test-writer",
     "release-manager",
-    "console-architecture"
+    "console-architecture",
+    "product-director"
   ],
   "commands": [
     "review",
