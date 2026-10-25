@@ -115,3 +115,11 @@ export { CardSkeleton, type CardSkeletonProps } from "./card-skeleton.js";
 export { DataTableSkeleton, type DataTableSkeletonProps } from "./data-table-skeleton.js";
 export { DetailPanelSkeleton, type DetailPanelSkeletonProps } from "./detail-panel-skeleton.js";
 export { PageHeaderSkeleton, type PageHeaderSkeletonProps } from "./page-header-skeleton.js";
+export { closeRoute, type CloseRouteOptions } from "./close-route.js";
+export {
+  RouteModal,
+  type RouteModalDirection,
+  type RouteModalProps,
+  type RouteModalSize,
+  type RouteModalVariant,
+} from "./route-modal.js";

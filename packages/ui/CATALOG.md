@@ -303,6 +303,27 @@ import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger 
 </Drawer>
 ```
 
+## Render a route as a modal over the list
+
+- Import: `@zedtech/zedkit-ui` — `RouteModal`, `RouteModalProps`, `RouteModalDirection`, `RouteModalSize`, `RouteModalVariant`, `closeRoute`, `CloseRouteOptions`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: RouteModal
+- Audience: Developers opening list details in an overlay with a shareable URL (Next.js parallel/intercepting routes).
+- Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
+- When to use: Inside an intercepting `@modal` slot, with `onClose` wired to `closeRoute`.
+- When not to use: For state-driven modals — use `Dialog`/`Drawer` directly with local state.
+- See also: `Slide in a drawer panel`, `Open modal dialogs`, `Confirm destructive actions`
+
+```ts
+import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
+import { useRouter } from "next/navigation";
+const router = useRouter();
+<RouteModal title="Delivery" onClose={() => closeRoute({ ...router, fallback: "/items" })}>
+  <DetailView />
+</RouteModal>
+```
+
 ## Show toast notifications
 
 - Import: `@zedtech/zedkit-ui` — `Toaster`
@@ -544,16 +565,17 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 - Derived from: shadcn/ui (select)
 - Short name: Select
 - Audience: Form builders offering 4+ exclusive options in little space.
-- Purpose: Accessible dropdown select with trigger, value and items.
+- Purpose: Accessible dropdown select with trigger, value and items; empty lists render a disabled message item.
 - When to use: For long option lists where radio groups would sprawl.
 - When not to use: For 2–3 visible options — use radio inputs or OptionCards instead.
 - See also: `Toggle a checkbox or a switch`, `Guide a multi-step flow with selectable option cards`
 
 ```ts
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@zedtech/zedkit-ui";
+const items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>);
 <Select onValueChange={setRegion}>
 <SelectTrigger><SelectValue placeholder="Pick a region" /></SelectTrigger>
-<SelectContent><SelectItem value="eu">Europe</SelectItem></SelectContent>
+<SelectContent>{items.length === 0 ? <SelectItem value="none" disabled>No regions available</SelectItem> : items}</SelectContent>
 ```
 
 ## Collect multi-line text input

@@ -56,11 +56,26 @@ export default tseslint.config(
   // UI preset last: for .tsx/.jsx its no-restricted-syntax (try/catch +
   // style-attribute bans) intentionally wins over the root block above.
   ...uiPreset,
+  {
+    // next/og ImageResponse requires inline styles; not user-facing UI.
+    files: ["apps/docs/app/opengraph-image.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TryStatement",
+          message:
+            "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
+        },
+      ],
+    },
+  },
   // Vendored third-party skills are verbatim upstream copies: never linted.
   // The ai kit ships them (and their helper scripts) as data, not as source.
   {
     ignores: [
       "**/.next/**",
+      "**/out/**",
       "**/.source/**",
       "**/dist/**",
       "**/kit/**",

@@ -40,6 +40,8 @@
     "seo-auditor",
     "a11y-auditor",
     "dependency-auditor",
+    "docs-writer",
+    "researcher",
     "test-writer"
   ],
   "commands": [

@@ -41,11 +41,11 @@ inputs first — the package never talks to a CMS.
 ## API
 
 - `buildRobots({ siteUrl, extraSitemaps?, disallow?, allow? })`
-- `buildSitemapEntries({ siteUrl, locales, pages })`
+- `buildSitemapEntries({ siteUrl, locales, pages, localeInPath? })`
 - `buildVideoSitemap({ videos })`, `escapeXml(value)`
 - `buildOrganizationJsonLd`, `buildWebPageJsonLd`,
   `buildBreadcrumbJsonLd`, `buildArticleJsonLd`
-- `buildPageMetadata({ site, page, locale, pathname, ogImage?, robots? })`
+- `buildPageMetadata({ site, page, locale, pathname, ogImage?, robots?, localeInPath? })`
 - `llmsTextResponse({ body })`, `normalizeLlmsBody`, `buildLlmsFull`
 - `truncateDescription`, `resolveDescription`, `resolveLocalizedField`
 - `normalizeSlug`, `isDraftSlug`
