@@ -33,13 +33,19 @@ function DrawerContent({
   className,
   children,
   ref,
+  modal = true,
   ...props
 }: React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> & {
   ref?: React.Ref<HTMLDivElement>;
+  /**
+   * Mirror of the `Drawer` root `modal` prop: `false` renders no
+   * overlay so the background stays interactive. Defaults to `true`.
+   */
+  modal?: boolean;
 }) {
   return (
     <DrawerPortal>
-      <DrawerOverlay />
+      {modal ? <DrawerOverlay /> : null}
       <DrawerPrimitive.Content
         ref={ref}
         className={cn(

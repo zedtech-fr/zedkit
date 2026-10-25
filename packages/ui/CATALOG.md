@@ -127,10 +127,10 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 - Derived from: shadcn/ui (drawer)
 
 ```ts
-import { Button, Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
+import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
 <Drawer direction="right"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets
   <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>
-  <DrawerContent><DrawerTitle>Details</DrawerTitle></DrawerContent>
+  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>
 </Drawer>
 ```
 

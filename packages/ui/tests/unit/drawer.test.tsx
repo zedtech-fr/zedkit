@@ -69,6 +69,108 @@ describe("drawer", () => {
     expect(screen.getByRole("dialog", { name: "Delivery details" }).className).toContain("w-full");
   });
 
+  it("positions on top with top-0", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="top" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("top");
+    expect(dialog.className).toContain("top-0");
+  });
+
+  it("positions on the left with left-0", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="left" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("left");
+    expect(dialog.className).toContain("left-0");
+  });
+
+  it("defaults to the bottom when direction is omitted", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("bottom");
+    expect(dialog.className).toContain("bottom-0");
+  });
+
+  it("renders open when controlled open is true", () => {
+    render(
+      <Drawer open onOpenChange={() => {}}>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+  });
+
+  it("ignores the trigger when controlled open is false", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer open={false} onOpenChange={() => {}}>
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("renders no overlay when modal is false", () => {
+    render(
+      <Drawer defaultOpen modal={false}>
+        <DrawerContent modal={false}>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    expect(document.querySelector("[data-vaul-overlay]")).toBeNull();
+  });
+
+  it("stays open on overlay click when not dismissible", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer dismissible={false}>
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const overlay = document.querySelector("[data-vaul-overlay]");
+    expect(overlay).not.toBeNull();
+    await user.click(overlay as HTMLElement);
+    expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+  });
+
+  it("exposes an unnamed dialog when the title is omitted", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer>
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerDescription>Untitled panel.</DrawerDescription>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    expect(screen.getByRole("dialog")).not.toBeNull();
+    expect(screen.queryByRole("dialog", { name: "Delivery details" })).toBeNull();
+  });
+
   it("notifies open state changes", async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();

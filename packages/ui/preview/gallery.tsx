@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHandle,
@@ -55,6 +56,7 @@ import {
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
+import { X } from "lucide-react";
 import { FormDemo } from "./form-demo.js";
 
 type Person = { name: string; age: number };
@@ -177,6 +179,16 @@ export function Gallery() {
                 <Button variant="outline">Open drawer</Button>
               </DrawerTrigger>
               <DrawerContent>
+                <DrawerClose asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Close details"
+                    className="absolute top-4 right-4"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </DrawerClose>
                 <DrawerTitle>Details</DrawerTitle>
                 <DrawerDescription>Side panel content.</DrawerDescription>
               </DrawerContent>

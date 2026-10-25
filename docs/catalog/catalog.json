@@ -288,7 +288,7 @@
           "wraps": "`vaul`",
           "status": "alpha",
           "derivedFrom": "shadcn/ui (drawer)",
-          "example": "import { Button, Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>"
+          "example": "import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>"
         },
         {
           "need": "Show toast notifications",
