@@ -20,6 +20,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
+import { truncateDescription } from "@zedtech/zedkit-seo";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -51,6 +52,14 @@ function packageVersion(pkgDir) {
   return JSON.parse(text).version ?? "0.0.0";
 }
 
+function metaDescription(need) {
+  const purpose = (need.purpose ?? "").trim();
+  if (purpose.length === 0) {
+    throw new Error(`generator: catalog need "${need.need}" is missing purpose.`);
+  }
+  return truncateDescription(purpose);
+}
+
 // "At a glance" block, generated from the catalog guidance fields
 // (Audience/Purpose/When to use/When not to use/See also) so every
 // page answers who/what/when with zero hand-written prose.
@@ -73,7 +82,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
-    `description: ${JSON.stringify(`${pkg} — ${need.status}`)}`,
+    `description: ${JSON.stringify(metaDescription(need))}`,
     `status: ${need.status}`,
     "---",
     "",
@@ -152,7 +161,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
-    `description: ${JSON.stringify(`${pkg} — ${need.status}`)}`,
+    `description: ${JSON.stringify(metaDescription(need))}`,
     `status: ${need.status}`,
     "---",
     "",
@@ -296,7 +305,7 @@ export function generate(outDir) {
           : pageMdx(pkg, need, version, richBlock, links, prose);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
-      llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${need.status}`);
+      llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${metaDescription(need)}`);
     }
     llms.push("");
     writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: slugs }, null, 2)}\n`);

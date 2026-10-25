@@ -33,6 +33,7 @@ import { fileURLToPath } from "node:url";
 import { parseBarrelExports } from "../../../scripts/catalog.mjs";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
+import { SEO_DESCRIPTION_MAX } from "@zedtech/zedkit-seo";
 import {
   catalogPageKeys,
   expandGuideSnippets,
@@ -76,12 +77,39 @@ function mdxFiles(dir) {
   return out;
 }
 
+const legacyDescription =
+  /^@zedtech\/[\w-]+ — (alpha|beta|stable|deprecated|planned)$/;
+const descriptionsSeen = new Map();
+
+function readFrontmatterDescription(text) {
+  const match = text.match(/^description: (.+)$/m);
+  if (!match) return null;
+  return JSON.parse(match[1]);
+}
+
 // Every need page carries install tabs (memorized package-manager
 // choice) and a titled TSX example — never bare pill blocks.
 for (const file of mdxFiles(tmp)) {
   const rel = file.slice(tmp.length + 1);
   if (!rel.includes("/")) continue;
   const text = readFileSync(file, "utf8");
+  const description = readFrontmatterDescription(text);
+  if (description === null) {
+    errors.push(`generator: ${rel} lacks description frontmatter.`);
+  } else {
+    if (legacyDescription.test(description)) {
+      errors.push(`generator: ${rel} uses legacy package — status description.`);
+    }
+    if (description.length > SEO_DESCRIPTION_MAX) {
+      errors.push(`generator: ${rel} description exceeds ${SEO_DESCRIPTION_MAX} characters.`);
+    }
+    const prior = descriptionsSeen.get(description);
+    if (prior) {
+      errors.push(`generator: duplicate description on ${rel} and ${prior}.`);
+    } else {
+      descriptionsSeen.set(description, rel);
+    }
+  }
   if (text.includes("<ComponentPage")) continue;
   if (!text.includes('<Tabs groupId="package-manager"')) {
     errors.push(`generator: ${file.slice(tmp.length + 1)} lacks install tabs.`);
@@ -216,6 +244,16 @@ for (const path of SITE_HEADER_INTERNAL_PATHS) {
   const rel = path === "/docs" ? "index.mdx" : `${path.replace(/^\/docs\//, "")}.mdx`;
   if (!existsSync(join(tmp, rel))) {
     errors.push(`site-nav: internal header path ${path} has no generated page (${rel}).`);
+  }
+}
+
+const llmsPath = join(APP, "public", "llms.txt");
+if (existsSync(llmsPath)) {
+  const llmsStatusTail = /\) — (alpha|beta|stable|deprecated|planned)$/;
+  for (const line of readFileSync(llmsPath, "utf8").split("\n")) {
+    if (line.startsWith("- [") && llmsStatusTail.test(line)) {
+      errors.push(`llms.txt: legacy status-only entry: ${line.slice(0, 80)}…`);
+    }
   }
 }
 
