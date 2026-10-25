@@ -28,6 +28,7 @@
   --success-foreground: 0 0% 98%;
   --warning: 32 95% 44%;
   --warning-foreground: 0 0% 98%;
+  --overlay: 0 0% 0%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 240 5% 64.9%;
@@ -59,6 +60,7 @@
   --success-foreground: 240 10% 3.9%;
   --warning: 38 92% 50%;
   --warning-foreground: 240 10% 3.9%;
+  --overlay: 0 0% 0%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
   --ring: 240 4.9% 83.9%;
@@ -89,6 +91,7 @@
   --color-success-foreground: hsl(var(--success-foreground));
   --color-warning: hsl(var(--warning));
   --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-overlay: hsl(var(--overlay));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
