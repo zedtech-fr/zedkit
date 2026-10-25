@@ -25,6 +25,19 @@ export {
 } from "./dialog.js";
 export { DetailPanel, type DetailItem, type DetailPanelProps } from "./detail-panel.js";
 export {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHandle,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./drawer.js";
+export {
   Field,
   FieldContent,
   FieldDescription,

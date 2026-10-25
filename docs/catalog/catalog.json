@@ -283,6 +283,14 @@
           "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
         },
         {
+          "need": "Slide in a drawer panel",
+          "import": "`@zedtech/zedkit-ui` — `Drawer`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerHandle`, `DrawerClose`, `DrawerOverlay`, `DrawerPortal`",
+          "wraps": "`vaul`",
+          "status": "alpha",
+          "derivedFrom": "shadcn/ui (drawer)",
+          "example": "import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>"
+        },
+        {
           "need": "Show toast notifications",
           "import": "`@zedtech/zedkit-ui` — `Toaster`",
           "wraps": "`sonner`",

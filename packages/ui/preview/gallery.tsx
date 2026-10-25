@@ -20,6 +20,13 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHandle,
+  DrawerTitle,
+  DrawerTrigger,
   Heading,
   Input,
   Label,
@@ -49,6 +56,7 @@ import {
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
+import { X } from "lucide-react";
 import { FormDemo } from "./form-demo.js";
 
 type Person = { name: string; age: number };
@@ -155,6 +163,37 @@ export function Gallery() {
             description="This cannot be undone."
             onConfirm={() => {}}
           />
+          <div className="flex flex-wrap gap-2">
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="outline">Open sheet</Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHandle />
+                <DrawerTitle>Filters</DrawerTitle>
+                <DrawerDescription>Bottom sheet content.</DrawerDescription>
+              </DrawerContent>
+            </Drawer>
+            <Drawer direction="right">
+              <DrawerTrigger asChild>
+                <Button variant="outline">Open drawer</Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerClose asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Close details"
+                    className="absolute top-4 right-4"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </DrawerClose>
+                <DrawerTitle>Details</DrawerTitle>
+                <DrawerDescription>Side panel content.</DrawerDescription>
+              </DrawerContent>
+            </Drawer>
+          </div>
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
           <Alert className="max-w-sm">
             <AlertTitle>Heads up</AlertTitle>
