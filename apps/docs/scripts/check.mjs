@@ -215,6 +215,14 @@ const guideRequiredSections = {
     "Troubleshooting",
     "Next steps",
   ],
+  "build-an-admin-dashboard.mdx": [
+    "Who this is for",
+    "Prerequisites",
+    "Steps",
+    "Final result",
+    "Troubleshooting",
+    "Next steps",
+  ],
 };
 for (const [file, sections] of Object.entries(guideRequiredSections)) {
   const sourcePath = join(guidesDir, file);
@@ -504,6 +512,11 @@ if (errors.length > 0) {
           stdio: "inherit",
         });
         if (aiTutorial.status !== 0) process.exitCode = 1;
+        const adminTutorial = spawnSync("node", [join(HERE, "verify-admin-dashboard-tutorial.mjs")], {
+          cwd: APP,
+          stdio: "inherit",
+        });
+        if (adminTutorial.status !== 0) process.exitCode = 1;
       }
     }
   }

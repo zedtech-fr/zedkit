@@ -25,6 +25,7 @@
     "source.config.ts",
     "mdx-components.tsx",
     "next.config.mjs",
-    "postcss.config.mjs"
+    "postcss.config.mjs",
+    "prose/guides/snippets/**/*.tsx"
   ]
 }
