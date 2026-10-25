@@ -1,0 +1,112 @@
+---
+title: Set up your coding agents
+description: Install @zedtech/zedkit-ai, run init for your editor, validate the kit layout, and undo changes — independent from the UI package.
+---
+
+Hand-written tutorial. Commands match `prose/guides/snippets/ai-tutorial-*.sh`; CI runs the same flow in `verify-ai-agent-tutorial.mjs` against a temp directory.
+
+This guide is **optional**: you can use `@zedtech/zedkit-ui` or the backend packages without installing the AI kit.
+
+## Who this is for
+
+You use Cursor, Claude Code, Codex, or similar tools and want a repo-local copy of skills, subagents, commands, and `AGENTS.md` without maintaining separate trees per vendor.
+
+## Prerequisites
+
+- Node.js 22+ and a git repository (any stack).
+- One provider for `init`: `cursor`, `claude`, `codex`, `muse`, or `all` (see `zedkit-ai init --help` in [`packages/ai/src/cli.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/cli.ts)).
+
+## Install
+
+In your repo root:
+
+```sh
+{{snippet:ai-add.sh}}
+```
+
+## Steps
+
+### 1. See what the kit ships
+
+```sh
+{{snippet:ai-tutorial-list.sh}}
+```
+
+You should see preset names, subagents (for example `explorer`), and commands (for example `review`) printed on stdout — same checks as `packages/ai/tests/unit/cli.test.ts` (`list`).
+
+### 2. Copy the kit into the repo
+
+```sh
+{{snippet:ai-tutorial-init.sh}}
+```
+
+`init` **never overwrites** existing files; it skips paths that already exist ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). This tutorial uses `--preset full` so every bundled command (for example `audit`) has its skill on disk — `validate` checks that link ([`kit.json`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/kit/kit.json)). For Cursor it adds `.cursor/rules/project.mdc` and copies skills into `.agents/`.
+
+Preview without writing:
+
+```sh
+npx zedkit-ai init . --provider cursor --dry-run
+```
+
+Stdout ends with `dry run: nothing written` and no new files on disk.
+
+### 3. Validate
+
+```sh
+{{snippet:ai-tutorial-validate.sh}}
+```
+
+**Expected result:** exit code `0` and a single line on stdout:
+
+```text
+ok
+```
+
+If skills, commands, or provider copies drift, you get `path: message` lines and a non-zero exit (see `validate` in [`cli.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/cli.ts)).
+
+`validate` checks file shape and drift — it does **not** run your coding agent. After init, use your tool’s normal workflow to open the repo; the wired rules and skills are the files `init` created.
+
+### 4. Optional project instructions
+
+Ask your agent to run the bundled `setup-ai` skill (copied under `.agents/skills/`) so `AGENTS.md` reflects this repository. That step is interactive and is not part of CI.
+
+## Scenario — repo that already has `AGENTS.md`
+
+You already maintain team rules at the root:
+
+```md
+# Team rules
+
+Use our internal style guide.
+```
+
+Run the same `init` command. When `AGENTS.md` exists but lacks the kit ladder section, `init` **appends** the ladder instead of replacing your text ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). Run `validate` again; stdout should still be `ok`. CI covers this in `runExistingAgentsTutorial` (`apps/docs/fixtures/ai-agent-tutorial.mjs`).
+
+## Undo
+
+`init` only adds or appends files. To remove the kit:
+
+1. Delete `.agents/` if you no longer want project-owned skills and commands.
+2. Remove provider wiring you do not need (for example `.cursor/`, `.claude/`, or symlinks listed in the init log).
+3. Revert changes to `AGENTS.md` with git if you only wanted the ladder append temporarily.
+
+There is no uninstall command; keep a commit before `init` so you can roll back.
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| `validate` prints problems | Run from the repo root; paths are listed as `relative/path: message`. Fix or restore the file, or re-run `init` on a clean branch. |
+| `init` skips files | Expected when paths already exist — remove or rename the conflicting file, or use `--dry-run` to preview. |
+| Unknown provider | Use `cursor`, `claude`, `codex`, `muse`, or `all` only (`cli.test.ts` rejects unknown providers). |
+| Agent ignores instructions | Out of scope for `validate` — confirm your tool loads `.cursor/rules` or the provider copy `init` created. |
+
+## Verify in this repo
+
+`pnpm catalog:check` builds `@zedtech/zedkit-ai` and runs `node apps/docs/scripts/verify-ai-agent-tutorial.mjs`.
+
+## Next steps
+
+- [Getting started](/docs/getting-started) — UI and other packages (separate install)
+- [Check that skills, subagents, commands and provider copies are valid](/docs/ai/check-that-skills-subagents-commands-and-provider-copies-are-valid) — catalog reference for `validate`
+- [Set up AI agent instructions](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo) — full catalog need (install tabs + API)
