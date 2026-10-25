@@ -61,18 +61,20 @@ Intercept page (reuses the shared view so drawer and full page never drift):
 // app/items/@modal/(.)[id]/page.tsx
 "use client";
 
+import { use } from "react";
 import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
 import { useRouter } from "next/navigation";
 import { DetailView } from "../../_detail-view";
 
-export default function ItemModal({ params }: { params: { id: string } }) {
+export default function ItemModal({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   return (
     <RouteModal
       title="Item"
       onClose={() => closeRoute({ ...router, fallback: "/items" })}
     >
-      <DetailView id={params.id} />
+      <DetailView id={id} />
     </RouteModal>
   );
 }
@@ -93,8 +95,13 @@ Full-page detail (same `DetailView`):
 // app/items/[id]/page.tsx
 import { DetailView } from "../_detail-view";
 
-export default function ItemPage({ params }: { params: { id: string } }) {
-  return <DetailView id={params.id} />;
+export default async function ItemPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <DetailView id={id} />;
 }
 ```
 
@@ -121,3 +128,6 @@ not raw `router.back`, so the panel finishes closing before navigation.
   params) on `page.tsx`, not only in React state, so `back` restores it.
 - **Modal and full page look different** — Import the same detail
   component in both `[id]/page.tsx` and `@modal/(.)[id]/page.tsx`.
+- **`Cannot find module '../_detail-view'`** — From `@modal/(.)[id]/page.tsx` use
+  `../../_detail-view` (the file sits on `items/`, not under `@modal/`). From
+  `[id]/page.tsx` use `../_detail-view`.

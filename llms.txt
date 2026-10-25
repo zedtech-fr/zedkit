@@ -7,7 +7,7 @@ Open-source building blocks for modern apps.
 - [README](README.md)
 - [Catalog index](docs/catalog/README.md)
 - [Golden rule](docs/golden-rule.md)
-- [Route modals](docs/route-modals.md) (drawer vs dialog vs page, Next intercept recipe)
+- [Route modals](docs/route-modals.md) (pointer to the live catalog recipe)
 - [Contributing](docs/contributing.md)
 - [Agent instructions](AGENTS.md)
 - [Docs site source](apps/docs) (run locally: `pnpm dev`, http://localhost:3100)
