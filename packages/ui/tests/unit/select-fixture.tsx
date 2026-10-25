@@ -26,18 +26,38 @@ export function stubSelectJsdom(): void {
   };
 }
 
-export function RegionSelect({ onChange }: { onChange?: (value: string) => void }) {
+const DEFAULT_REGIONS = [
+  { value: "eu", label: "Europe" },
+  { value: "us", label: "Americas" },
+];
+
+export function RegionSelect({
+  onChange,
+  regions = DEFAULT_REGIONS,
+}: {
+  onChange?: (value: string) => void;
+  regions?: { value: string; label: string }[];
+}) {
   return (
     <Select onValueChange={onChange}>
       <SelectTrigger aria-label="Region">
         <SelectValue placeholder="Pick a region" />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Regions</SelectLabel>
-          <SelectItem value="eu">Europe</SelectItem>
-          <SelectItem value="us">Americas</SelectItem>
-        </SelectGroup>
+        {regions.length === 0 ? (
+          <SelectItem value="none" disabled>
+            No regions available
+          </SelectItem>
+        ) : (
+          <SelectGroup>
+            <SelectLabel>Regions</SelectLabel>
+            {regions.map((region) => (
+              <SelectItem key={region.value} value={region.value}>
+                {region.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        )}
       </SelectContent>
     </Select>
   );
