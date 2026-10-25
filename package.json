@@ -9,6 +9,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev": "pnpm catalog:build && turbo run dev --filter=@zedtech/zedkit-docs",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "build": "turbo run build",

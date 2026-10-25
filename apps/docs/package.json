@@ -12,7 +12,7 @@
     "docs:check": "node scripts/check.mjs",
     "postinstall": "pnpm docs:generate && fumadocs-mdx",
     "predev": "pnpm docs:generate",
-    "dev": "next dev",
+    "dev": "next dev -p 3100",
     "prebuild": "pnpm docs:generate",
     "build": "next build",
     "start": "next start",
