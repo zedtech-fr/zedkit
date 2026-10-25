@@ -94,7 +94,7 @@ per-folder rules. When to call which subagent: the
 [agents catalog](../../docs/agents-catalog.md).
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
-`handoff`) are 3-6 line files: each runs its skill on the command arguments
+`handoff`, `audit`) are 3-6 line files: each runs its skill on the command arguments
 (or the current context). Both tools also list skills as `/` commands
 nowadays; the files stay as the explicit one-keystroke path and as fallback
 when the skills link is not followed.
