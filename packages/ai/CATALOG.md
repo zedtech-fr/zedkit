@@ -1,5 +1,11 @@
 # Catalog — @zedtech/zedkit-ai
 
+- Keywords: ai, agents, agents-md, skills, subagents, cursor, claude-code, codex, coding-assistant, setup, scaffolding, opencode
+- Audience: Teams running coding agents (Cursor, Claude, Codex and more) who want one shared setup.
+- Purpose: Install one agent-agnostic setup (AGENTS.md, skills, subagents, commands) with a single CLI, instead of maintaining per-tool config.
+- Attribution: Original work by the same author.
+
+
 ## Set up AI agent instructions, skills, subagents and commands in a repo
 
 - Import: `@zedtech/zedkit-ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`

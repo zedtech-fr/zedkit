@@ -5,7 +5,25 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Agent-agnostic AI setup kit: AGENTS.md template, skills, subagents, installer and validator. Original work by the same author.",
+  "description": "Install one agent-agnostic setup (AGENTS.md, skills, subagents, commands) with a single CLI, instead of maintaining per-tool config. Original work by the same author.",
+  "keywords": [
+    "ai",
+    "agents",
+    "agents-md",
+    "skills",
+    "subagents",
+    "cursor",
+    "claude-code",
+    "codex",
+    "coding-assistant",
+    "setup",
+    "scaffolding",
+    "opencode"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/ai",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

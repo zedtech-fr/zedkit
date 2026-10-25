@@ -1,11 +1,26 @@
 # @zedtech/zedkit-ui
 
-Admin UI kit: design tokens, dark/light theme, and shadcn/ui-based
-building blocks (MIT, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
-Neutral and calm by default. Not published to npm yet — install
-from a packed tarball.
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-ui.svg)](https://www.npmjs.com/package/@zedtech/zedkit-ui)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
 
-## Adopt in 3 lines
+Ship a calm admin UI fast: dark/light design tokens plus accessible
+React building blocks (data tables, forms, dialogs, toasts),
+shadcn/ui-based (MIT, see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Neutral and calm by
+default.
+
+## Install
+
+```sh
+pnpm add @zedtech/zedkit-ui
+```
+
+Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
+`.dark` class strategy for dark mode (`next-themes` recommended).
+
+## Usage
+
+Adopt in 3 lines:
 
 ```css
 /* app/globals.css (Tailwind v4, PostCSS or Vite plugin) */
@@ -14,11 +29,15 @@ from a packed tarball.
 ```
 
 ```tsx
-import { cn } from "@zedtech/zedkit-ui"; // components land per slice; see CATALOG.md
+import { Button } from "@zedtech/zedkit-ui"; // see CATALOG.md for every component
 ```
 
-Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
-`.dark` class strategy for dark mode (`next-themes` recommended).
+## When to use
+
+Reach for this package when you build an admin console or dashboard on
+React + Tailwind v4 and want tokens, theme, and states
+(empty/loading/error) handled once. For non-UI helpers see the other
+kit packages.
 
 ## Contents
 

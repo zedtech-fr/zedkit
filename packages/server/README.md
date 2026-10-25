@@ -1,17 +1,31 @@
 # @zedtech/zedkit-server
 
-Server-side helpers with a stable public surface. Original work by the
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-server.svg)](https://www.npmjs.com/package/@zedtech/zedkit-server)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
+
+Harden any Node server in minutes: in-process rate limiting, secret/PII
+redaction for logs, HKDF crypto and HTTP helpers. Original work by the
 same author. Zero runtime dependencies.
+
+## Install
 
 ```sh
 pnpm add @zedtech/zedkit-server
 ```
+
+## Usage
 
 ```ts
 import { redactValue } from "@zedtech/zedkit-server";
 
 logger.info({ event: "login", user: redactValue(user) });
 ```
+
+## When to use
+
+Reach for this package when you rate-limit, redact logs, sign webhooks,
+or read database error codes on a Node server. For typed errors and IDs
+see `@zedtech/zedkit-core` instead.
 
 ## API
 

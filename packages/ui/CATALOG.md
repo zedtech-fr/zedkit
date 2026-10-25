@@ -1,5 +1,10 @@
 # Catalog — @zedtech/zedkit-ui
 
+- Keywords: react, react-components, ui-kit, design-system, admin, dashboard, tailwindcss, tailwind-v4, radix-ui, shadcn, dark-mode, accessible, nextjs
+- Audience: Teams building admin consoles and dashboards on React 19 + Tailwind v4.
+- Purpose: Ship a calm admin UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).
+
+
 ## Theme an admin app (dark/light included)
 
 - Import: `@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)

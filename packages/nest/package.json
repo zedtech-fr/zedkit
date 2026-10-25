@@ -5,7 +5,25 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Generic NestJS bootstrap factory: platform, config, logging, validation, errors, throttling, docs, shutdown. Original work by the same author.",
+  "description": "Boot a production-ready NestJS app from one factory call: validation, logging, docs, throttling, errors and shutdown included. Original work by the same author.",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "bootstrap",
+    "typescript",
+    "api",
+    "validation",
+    "logging",
+    "openapi",
+    "swagger",
+    "throttling",
+    "health-check",
+    "graceful-shutdown"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/nest",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

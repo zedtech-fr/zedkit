@@ -1,11 +1,19 @@
 # @zedtech/zedkit-payload-seo
 
-Localized Payload SEO group field with length validation.
-Original work by the same author.
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-payload-seo.svg)](https://www.npmjs.com/package/@zedtech/zedkit-payload-seo)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
+
+Drop-in localized SEO group field for Payload CMS: meta tags, JSON-LD
+and length validation, ready for i18n sites. Original work by the same
+author.
+
+## Install
 
 ```sh
 pnpm add @zedtech/zedkit-payload-seo
 ```
+
+## Usage
 
 ```ts
 import { seoGroupField } from "@zedtech/zedkit-payload-seo";
@@ -15,6 +23,12 @@ export const Page = {
   fields: [/* ... */, seoGroupField()],
 };
 ```
+
+## When to use
+
+Reach for this package when your Payload collections need per-locale
+SEO fields. To render the stored values (metadata, sitemaps, JSON-LD),
+pair it with `@zedtech/zedkit-seo`.
 
 `seoFields()` returns the nine leaf fields (meta title/description,
 keywords, canonical URL, OG title/description/image, robots

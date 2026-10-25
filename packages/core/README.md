@@ -1,11 +1,19 @@
 # @zedtech/zedkit-core
 
-Foundational helpers with a stable public surface. Original work by the
+[![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-core.svg)](https://www.npmjs.com/package/@zedtech/zedkit-core)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
+
+Typed Result helpers, safe try/catch wrappers, prefixed IDs and hashing —
+stop writing the same utilities in every repo. Original work by the
 same author.
+
+## Install
 
 ```sh
 pnpm add @zedtech/zedkit-core
 ```
+
+## Usage
 
 ```ts
 import { tryCatch } from "@zedtech/zedkit-core";
@@ -13,6 +21,12 @@ import { tryCatch } from "@zedtech/zedkit-core";
 const parsed = tryCatch(() => JSON.parse(input));
 if (!parsed.ok) return fallback(parsed.error);
 ```
+
+## When to use
+
+Reach for this package when you handle errors, generate IDs, or hash
+values in TypeScript. For server hardening (rate limiting, log
+redaction) see `@zedtech/zedkit-server` instead.
 
 ## API
 

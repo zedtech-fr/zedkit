@@ -1,5 +1,10 @@
 # Catalog — @zedtech/zedkit-seo
 
+- Keywords: seo, sitemap, robots-txt, json-ld, structured-data, metadata, open-graph, hreflang, llms-txt, slug, nextjs, typescript
+- Audience: Developers who want correct SEO primitives without becoming SEO experts.
+- Purpose: Ship sitemaps, robots, typed JSON-LD, metadata, hreflang, slugs and llms.txt without thinking about the specs.
+
+
 ## Serve robots.txt content
 
 - Import: `@zedtech/zedkit-seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`
