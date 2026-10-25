@@ -19,15 +19,15 @@ export function HomeInstallCommands({
   const brickList = registryBricks.join(", ");
   return (
     <Stack gap={2} className="w-full min-w-0">
-      <Tabs items={["npm", "shadcn"]} className="w-full">
-        <Tab value="npm">
+      <Tabs items={["pnpm (recommended)", "shadcn registry"]} className="w-full">
+        <Tab value="pnpm (recommended)">
           <SecretField
             value={`pnpm add ${npmPackage}`}
             aria-label="pnpm install command"
             copyLabel="Copy pnpm command"
           />
         </Tab>
-        <Tab value="shadcn">
+        <Tab value="shadcn registry">
           <SecretField
             value={shadcnAdd}
             aria-label="shadcn add command"

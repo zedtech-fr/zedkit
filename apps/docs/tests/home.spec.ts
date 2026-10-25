@@ -54,6 +54,23 @@ test("home has no nested interactive elements", async ({ page }) => {
   expect(nested).toEqual([]);
 });
 
+test("home UI quickstart lists prerequisites before install copy", async ({ page }) => {
+  await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
+  await expect(page.getByRole("heading", { name: "Prerequisites" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "2. Install the package" })).toBeVisible();
+  const order = await page.evaluate(() => {
+    const headings = [...document.querySelectorAll("h3")].map((el) => el.textContent?.trim() ?? "");
+    const pre = headings.findIndex((t) => t === "Prerequisites");
+    const install = headings.findIndex((t) => t.startsWith("2. Install"));
+    return { pre, install };
+  });
+  expect(order.pre).toBeGreaterThanOrEqual(0);
+  expect(order.install).toBeGreaterThan(order.pre);
+  await expect(page.getByLabel("Copy globals.css")).toBeVisible();
+  await expect(page.getByLabel("Copy pnpm command")).toBeVisible();
+  await expect(page.getByLabel("Copy page.tsx")).toBeVisible();
+});
+
 test("home search opens from the header", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
   await page.keyboard.press("Control+k");

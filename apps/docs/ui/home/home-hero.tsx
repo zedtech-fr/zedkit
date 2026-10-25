@@ -3,7 +3,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Heading, Stack, Text 
 import { demoRegistry } from "@/components/demos/registry";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
-import { HomeInstallCommands } from "@/ui/home/home-install-commands";
+import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 
 export function HomeHero({
@@ -42,17 +42,12 @@ export function HomeHero({
           <Link href="#components">Browse components</Link>
         </Button>
       </Stack>
-      <Stack gap={4} className="w-full max-w-2xl">
-        <Heading level={2} className="text-base font-semibold">
-          Install
-        </Heading>
-        <HomeInstallCommands
-          npmPackage={featuredPackage}
-          siteUrl={docsSite.url}
-          featuredBrick={featuredRegistryBrick}
-          registryBricks={registryBrickNames}
-        />
-      </Stack>
+      <HomeUiQuickstartSection
+        npmPackage={featuredPackage}
+        siteUrl={docsSite.url}
+        featuredBrick={featuredRegistryBrick}
+        registryBricks={registryBrickNames}
+      />
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle>Button variants (live)</CardTitle>
