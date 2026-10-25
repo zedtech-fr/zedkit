@@ -292,6 +292,20 @@
           "wraps": "none (theme tokens only)",
           "status": "stable",
           "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedkit/ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+        },
+        {
+          "need": "Build validated forms with labels, errors, and pending state",
+          "import": "`@zedkit/ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
+          "wraps": "`react-hook-form`, `@hookform/resolvers`, `zod`",
+          "status": "stable",
+          "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedkit/ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>"
+        },
+        {
+          "need": "Lay out fieldsets, fields, and error lists",
+          "import": "`@zedkit/ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
+          "wraps": "none (presentational over `Label`, `Separator`)",
+          "status": "stable",
+          "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedkit/ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
         }
       ]
     }

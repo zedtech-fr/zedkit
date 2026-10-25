@@ -432,6 +432,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
+      '@zedkit/core':
+        specifier: workspace:*
+        version: link:../core
       axe-core:
         specifier: 'catalog:'
         version: 4.14.0

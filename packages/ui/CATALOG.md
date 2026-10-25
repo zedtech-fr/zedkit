@@ -186,3 +186,30 @@ import { DetailPanel, LivePulse, PageHeader } from "@zedkit/ui";
 <PageHeader title="Server" actions={<LivePulse />} />
 <DetailPanel items={[{ label: "Region", value: "eu" }]} />
 ```
+
+## Build validated forms with labels, errors, and pending state
+
+- Import: `@zedkit/ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`
+- Wraps: `react-hook-form`, `@hookform/resolvers`, `zod`
+- Status: stable
+
+```ts
+import { Form, FormField, FormSubmit, Input, useValidatedForm } from "@zedkit/ui";
+const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
+// <Form {...form}><form onSubmit={form.handleSubmit(save)}>
+// <FormField control={form.control} name="name" render={...} />
+// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>
+```
+
+## Lay out fieldsets, fields, and error lists
+
+- Import: `@zedkit/ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`
+- Wraps: none (presentational over `Label`, `Separator`)
+- Status: stable
+
+```ts
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedkit/ui";
+<FieldSet><FieldGroup><Field>
+<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>
+<FieldError errors={[{ message: "Too short." }]} />
+```
