@@ -41,8 +41,8 @@ kit packages.
 
 ## Guides
 
-- [Route modals](../../docs/route-modals.md): drawer vs dialog vs page,
-  Next.js parallel and intercepting routes, `RouteModal` and `closeRoute`.
+- [Route modals](../../docs/route-modals.md): pointer to the catalog recipe
+  (drawer vs dialog vs page, `RouteModal`, `closeRoute`).
 
 ## Contents
 
