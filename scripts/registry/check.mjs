@@ -9,7 +9,7 @@ const outDir = join(root, "apps/docs/public/r");
 
 const errors = [];
 
-for (const name of ["badge", "drawer", "registry"]) {
+for (const name of ["badge", "drawer", "confirm-dialog", "registry"]) {
   const path = join(outDir, `${name}.json`);
   if (!existsSync(path)) {
     errors.push(`missing ${path} (run pnpm registry:build)`);
@@ -39,4 +39,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("registry: ok (badge, drawer, validate)");
+console.log("registry: ok (badge, drawer, confirm-dialog, validate)");

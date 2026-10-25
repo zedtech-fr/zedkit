@@ -55,6 +55,7 @@
     "Confirm destructive actions": {
       "package": "@zedtech/zedkit-ui",
       "component": "ConfirmDialog",
+      "registry": "confirm-dialog",
       "props": "ConfirmDialogProps",
       "source": "confirm-dialog.tsx",
       "demo": "ConfirmDialogDemo"

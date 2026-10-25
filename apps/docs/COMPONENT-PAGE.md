@@ -33,4 +33,4 @@ Run `pnpm catalog:build` after edits.
 
 ## Rollout
 
-Badge and Drawer use this template when `registry` is set in the manifest. Later PRs: other bricks as they ship in `public/r/`.
+Badge, Drawer, and ConfirmDialog use this template when `registry` is set in the manifest. Enable other `registry` bricks in `public/r/` one PR at a time.
