@@ -15,7 +15,7 @@
 // `prose/<folder>/<slug>.mdx` is merged after Example (see PAGE-TEMPLATE.md).
 // The docs check (scripts/check.mjs) runs this to a temp dir and asserts
 // full coverage plus prose rules.
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -23,6 +23,11 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
 const ROOT = join(APP, "..", "..");
 const PROSE_DIR = join(APP, "prose");
+const GUIDES_DIR = join(PROSE_DIR, "guides");
+const GUIDE_SNIPPETS_DIR = join(GUIDES_DIR, "snippets");
+
+/** Standalone guide pages (not catalog needs), first in docs nav when listed here. */
+export const GUIDE_NAV_SLUGS = ["getting-started"];
 
 /** Section titles owned by the generator — prose must not repeat them. */
 export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props"]);
@@ -117,6 +122,26 @@ function readProse(folder, slug) {
   const text = readFileSync(path, "utf8").trim();
   if (text.length === 0) return null;
   return `${text}\n`;
+}
+
+export function expandGuideSnippets(text) {
+  return text.replace(/\{\{snippet:([a-zA-Z0-9._-]+)\}\}/g, (_, id) => {
+    const path = join(GUIDE_SNIPPETS_DIR, id);
+    if (!existsSync(path)) throw new Error(`guide snippet missing: ${id}`);
+    return readFileSync(path, "utf8").trimEnd();
+  });
+}
+
+function writeGuidePages(outDir) {
+  if (!existsSync(GUIDES_DIR)) return 0;
+  let count = 0;
+  for (const entry of readdirSync(GUIDES_DIR, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith(".mdx")) continue;
+    const body = expandGuideSnippets(readFileSync(join(GUIDES_DIR, entry.name), "utf8"));
+    writeFileSync(join(outDir, entry.name), body.endsWith("\n") ? body : `${body}\n`);
+    count += 1;
+  }
+  return count;
 }
 
 function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
@@ -221,7 +246,14 @@ export function generate(outDir) {
   let prosePages = 0;
   const folders = [];
   const slugsByNeed = new Map();
-  const llms = ["# zedkit docs", "", "> GENERATED from docs/catalog/catalog.json — do not edit.", ""];
+  const llms = [
+    "# zedkit docs",
+    "",
+    "> GENERATED from docs/catalog/catalog.json — do not edit.",
+    "",
+    "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
+    "",
+  ];
   for (const [pkg, entry] of sorted) {
     const folder = shortName(pkg);
     const dir = join(outDir, folder);
@@ -263,20 +295,19 @@ export function generate(outDir) {
     llms.push("");
     writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: slugs }, null, 2)}\n`);
   }
-  writeFileSync(join(outDir, "meta.json"), `${JSON.stringify({ title: "Docs", pages: folders }, null, 2)}\n`);
+  const guidePages = writeGuidePages(outDir);
+  if (guidePages === 0) throw new Error("prose/guides: expected getting-started.mdx and index.mdx.");
+  for (const slug of GUIDE_NAV_SLUGS) {
+    if (!existsSync(join(outDir, `${slug}.mdx`))) {
+      throw new Error(`prose/guides/${slug}.mdx missing (required guide page).`);
+    }
+  }
+  if (!existsSync(join(outDir, "index.mdx"))) {
+    throw new Error("prose/guides/index.mdx missing (docs index).");
+  }
   writeFileSync(
-    join(outDir, "index.mdx"),
-    [
-      "---",
-      'title: "Documentation"',
-      'description: "Generated from the kit catalog — every page carries its maturity badge."',
-      "---",
-      "",
-      "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
-      "",
-      "Every page below is generated from the catalog: badges, install commands, and examples cannot drift.",
-      "",
-    ].join("\n"),
+    join(outDir, "meta.json"),
+    `${JSON.stringify({ title: "Docs", pages: [...GUIDE_NAV_SLUGS, ...folders] }, null, 2)}\n`,
   );
   const publicDir = join(APP, "public");
   mkdirSync(publicDir, { recursive: true });
@@ -315,7 +346,18 @@ export function generate(outDir) {
   })};\n`;
   const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
-  return { pages, prosePages, folders, gallery, stats, uiPackage, galleryModule, homeScenarios, scenariosModule };
+  return {
+    pages,
+    prosePages,
+    guidePages,
+    folders,
+    gallery,
+    stats,
+    uiPackage,
+    galleryModule,
+    homeScenarios,
+    scenariosModule,
+  };
 }
 
 function buildHomeScenarios(slugsByNeed, catalog) {
