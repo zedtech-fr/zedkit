@@ -40,9 +40,9 @@ export default tseslint.config(
     rules: { "no-restricted-syntax": "off" },
   },
   {
-    // Root scripts and the shareable presets are plain Node tooling:
-    // no DOM, Node globals available.
-    files: ["scripts/**/*.mjs", "eslint/**/*.mjs"],
+    // Root scripts, shareable presets, and the ui gallery tooling are
+    // plain Node tooling: no DOM, Node globals available.
+    files: ["scripts/**/*.mjs", "eslint/**/*.mjs", "packages/ui/preview/*.mjs"],
     languageOptions: {
       globals: { console: "readonly", process: "readonly", URL: "readonly" },
     },

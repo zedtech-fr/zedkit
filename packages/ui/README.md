@@ -38,3 +38,10 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 
 `pnpm --filter @zedkit/ui test|typecheck|lint|build`.
 Component tests render with Testing Library + jsdom.
+
+## Gallery
+
+`pnpm --filter @zedkit/ui preview` builds and serves a static gallery
+of every component in every state at http://127.0.0.1:4123/ (`/dark`
+for the dark theme). Static server render for visual review only —
+behavior stays covered by unit tests.
