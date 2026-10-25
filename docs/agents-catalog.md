@@ -24,7 +24,7 @@ When to call which agent, and the chains they form. Agents live in
 | `docs-writer` | README, AGENTS.md, catalog entries or docs changed; drift and compiling examples | yes |
 | `release-manager` | public API, changesets or catalog Status changed; semver + migration notes | no |
 | `console-architecture` | frontend changes; checks route/view/data layer boundaries | no |
-| `product-director` | you need a delivery brief for the director over a scope (branch, PRs, milestone) | no (planned) |
+| `product-director` | you need a delivery brief for the director over a scope (branch, PRs, milestone) | no |
 
 Planned rows land one PR at a time; each PR flips its row. Read-only agents
 carry `disallowedTools: Write, Edit, NotebookEdit` and never apply fixes.
