@@ -32,6 +32,8 @@ export function HomeView({
   gallery,
   stats,
   featuredPackage,
+  version,
+  changelogHref,
   uiGalleryStats,
   scenarios,
   themeHref,
@@ -39,13 +41,15 @@ export function HomeView({
   gallery: GalleryCard[];
   stats: { packages: number; needs: number };
   featuredPackage: string;
+  version: string;
+  changelogHref: string;
   uiGalleryStats: { components: number; livePreviews: number };
   scenarios: HomeScenario[];
   themeHref: string;
 }) {
   return (
     <Stack gap={8} className="mx-auto w-full max-w-5xl px-6 py-12">
-      <HomeHero featuredPackage={featuredPackage} />
+      <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
       <HomeScenariosSection scenarios={scenarios} />
       <HomeProofs
         packages={stats.packages}

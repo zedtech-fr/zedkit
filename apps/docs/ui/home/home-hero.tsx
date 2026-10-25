@@ -2,13 +2,25 @@ import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { demoRegistry } from "@/components/demos/registry";
 import { HomeInstallCommands } from "@/ui/home/home-install-commands";
+import { KitVersionLabel } from "@/ui/kit-version-label";
 
-export function HomeHero({ featuredPackage }: { featuredPackage: string }) {
+export function HomeHero({
+  featuredPackage,
+  version,
+  changelogHref,
+}: {
+  featuredPackage: string;
+  version: string;
+  changelogHref: string;
+}) {
   const { Demo: ButtonDemoLive } = demoRegistry.ButtonDemo;
   return (
     <Stack gap={6} className="items-start">
       <Stack gap={3} className="items-start">
-        <Heading level={1}>zedkit</Heading>
+        <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
+          <Heading level={1}>zedkit</Heading>
+          <KitVersionLabel version={version} changelogHref={changelogHref} />
+        </Stack>
         <Text className="max-w-2xl text-lg">
           Open-source TypeScript packages and an admin UI kit. Doc pages, maturity badges, and
           install commands are generated from the catalog so they stay aligned with the code.

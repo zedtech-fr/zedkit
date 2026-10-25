@@ -7,6 +7,7 @@ test("home shows scenarios and reaches a doc page", async ({ page }) => {
   page.on("pageerror", (event) => errors.push(String(event)));
   await page.goto(BASE, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "zedkit", level: 1 })).toBeVisible();
+  await expect(page.getByRole("link", { name: /UI kit version .+, view changelog/ }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "Start from your situation" })).toBeVisible();
   const scenarioLink = page.getByRole("link", { name: "Open the doc page" }).first();
   await expect(scenarioLink).toBeVisible();

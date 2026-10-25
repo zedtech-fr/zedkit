@@ -1,4 +1,11 @@
-import { catalogStats, featuredPackage, gallery, uiGalleryStats } from "@/content/gallery";
+import {
+  catalogStats,
+  featuredPackage,
+  featuredPackageChangelogUrl,
+  featuredPackageVersion,
+  gallery,
+  uiGalleryStats,
+} from "@/content/gallery";
 import { homeScenarios } from "@/content/home-scenarios";
 import { HomeView } from "@/ui/home/home-view";
 
@@ -12,6 +19,8 @@ export default function Home() {
       gallery={gallery}
       stats={catalogStats}
       featuredPackage={featuredPackage}
+      version={featuredPackageVersion}
+      changelogHref={featuredPackageChangelogUrl}
       uiGalleryStats={uiGalleryStats}
       scenarios={homeScenarios}
       themeHref={themeHref}

@@ -98,6 +98,15 @@ const totalNeeds = Object.values(catalog.packages).reduce((n, entry) => n + entr
 if (stats.packages !== Object.keys(catalog.packages).length || stats.needs !== totalNeeds) {
   errors.push(`gallery: stale stats ${JSON.stringify(stats)}.`);
 }
+const uiPkgJson = JSON.parse(
+  readFileSync(join(ROOT, "packages", "ui", "package.json"), "utf8"),
+);
+const galleryFile = existsSync(join(APP, "content", "gallery.ts"))
+  ? readFileSync(join(APP, "content", "gallery.ts"), "utf8")
+  : "";
+if (galleryFile && !galleryFile.includes(`featuredPackageVersion: string = ${JSON.stringify(uiPkgJson.version)}`)) {
+  errors.push("content/gallery.ts: featuredPackageVersion does not match packages/ui/package.json.");
+}
 
 const scenariosPath = join(APP, "content", "home-scenarios.ts");
 if (!existsSync(scenariosPath)) {

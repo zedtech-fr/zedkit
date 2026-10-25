@@ -192,7 +192,10 @@ export function generate(outDir) {
     packages: Object.keys(catalog.packages).length,
     needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
   };
-  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
+  const uiVersion = packageVersion("ui");
+  const uiChangelogUrl =
+    "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
     components: gallery.length,
     livePreviews: gallery.filter((card) => card.demo).length,
   })};\n`;
