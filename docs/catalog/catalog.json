@@ -355,6 +355,13 @@
           "wraps": "`@radix-ui/react-checkbox`, `@radix-ui/react-switch`",
           "status": "alpha",
           "example": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />"
+        },
+        {
+          "need": "Switch between tabbed panels",
+          "import": "`@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`",
+          "wraps": "`@radix-ui/react-tabs`",
+          "status": "alpha",
+          "example": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>"
         }
       ]
     }

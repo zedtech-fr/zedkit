@@ -39,6 +39,10 @@ import {
   Separator,
   Skeleton,
   Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Text,
   Textarea,
   Toaster,
@@ -193,6 +197,14 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
+          <Tabs defaultValue="one" className="max-w-sm">
+            <TabsList>
+              <TabsTrigger value="one">First</TabsTrigger>
+              <TabsTrigger value="two">Second</TabsTrigger>
+            </TabsList>
+            <TabsContent value="one">First panel.</TabsContent>
+            <TabsContent value="two">Second panel.</TabsContent>
+          </Tabs>
           <Section title="Team" description="Who can access the workspace.">
             <Stack direction="horizontal" gap={2}>
               <Badge>Ada</Badge>

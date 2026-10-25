@@ -12,6 +12,8 @@ coverage/
 # build output and caches
 .turbo/
 .pnpm-store/
+.next/
+next-env.d.ts
 
 # playwright smoke output (screenshots land here, never committed)
 test-results/

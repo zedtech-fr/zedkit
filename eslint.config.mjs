@@ -59,6 +59,7 @@ export default tseslint.config(
   // The ai kit ships them (and their helper scripts) as data, not as source.
   {
     ignores: [
+      "**/.next/**",
       "**/dist/**",
       "**/kit/**",
       "**/node_modules/**",
