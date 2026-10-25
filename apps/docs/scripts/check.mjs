@@ -4,11 +4,15 @@
 //   1. every catalog need maps to exactly one generated page;
 //   2. every manifest key matches a catalog need heading exactly;
 //   3. every manifest component/props exists in @zedtech/zedkit-ui exports;
-//   4. every manifest demo exists in components/demos.tsx exports.
+//   4. every manifest demo exists in components/demos/registry.ts and its
+//      demo file exports the demo;
+//   5. pages stay thin: app/** imports no demo file directly (registry
+//      only) and uses no namespace imports;
+//   6. demos and frame use kit layout modules only (no raw <div>/<span>).
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -56,7 +60,12 @@ function barrelExports(indexPath) {
 }
 
 const uiExports = barrelExports(join(ROOT, "packages", "ui", "src", "index.ts"));
-const demoExports = barrelExports(join(APP, "components", "demos.tsx"));
+const registryText = readFileSync(join(APP, "components", "demos", "registry.ts"), "utf8");
+const registryEntries = new Map();
+for (const line of registryText.split("\n")) {
+  const match = /^ {2}(\w+): \{ Demo: \w+, file: "([^"]+)" \},?$/.exec(line);
+  if (match) registryEntries.set(match[1], match[2]);
+}
 for (const [key, spec] of Object.entries(rich)) {
   if (!uiExports.has(spec.component)) {
     errors.push(`docs-manifest.json: "${key}" references missing @zedtech/zedkit-ui export \`${spec.component}\`.`);
@@ -64,9 +73,49 @@ for (const [key, spec] of Object.entries(rich)) {
   if (spec.props && !uiExports.has(spec.props)) {
     errors.push(`docs-manifest.json: "${key}" references missing @zedtech/zedkit-ui export \`${spec.props}\`.`);
   }
-  if (!demoExports.has(spec.demo)) errors.push(`docs-manifest.json: "${key}" references missing demo export \`${spec.demo}\`.`);
+  if (!registryEntries.has(spec.demo)) {
+    errors.push(`docs-manifest.json: "${key}" references missing registry demo \`${spec.demo}\`.`);
+  } else {
+    const demoPath = join(APP, "components", "demos", registryEntries.get(spec.demo));
+    if (!existsSync(demoPath)) {
+      errors.push(`registry: demo file \`${demoPath.slice(APP.length + 1)}\` missing for \`${spec.demo}\`.`);
+    } else if (!readFileSync(demoPath, "utf8").includes(`export function ${spec.demo}`)) {
+      errors.push(`registry: \`${demoPath.slice(APP.length + 1)}\` does not export \`${spec.demo}\`.`);
+    }
+  }
   if (spec.source && !existsSync(join(ROOT, "packages", "ui", "src", spec.source))) {
     errors.push(`docs-manifest.json: "${key}" references missing source file \`${spec.source}\`.`);
+  }
+}
+
+function tsxFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...tsxFiles(path));
+    else if (entry.name.endsWith(".tsx")) out.push(path);
+  }
+  return out;
+}
+
+for (const file of tsxFiles(join(APP, "app"))) {
+  const rel = file.slice(APP.length + 1);
+  for (const line of readFileSync(file, "utf8").split("\n")) {
+    if (/from\s+["'].*components\/demos\//.test(line) && !line.includes("components/demos/registry")) {
+      errors.push(`${rel}: import demos through components/demos/registry, never directly.`);
+    }
+    if (/^import\s+\*\s+as\s+/.test(line)) {
+      errors.push(`${rel}: namespace imports are banned in pages; use named imports.`);
+    }
+  }
+}
+
+for (const file of tsxFiles(join(APP, "components"))) {
+  const rel = file.slice(APP.length + 1);
+  for (const line of readFileSync(file, "utf8").split("\n")) {
+    if (/<(div|span)[\s>/]/.test(line)) {
+      errors.push(`${rel}: raw <${/<(div|span)[\s>/]/.exec(line)[1]}> is banned; use kit Stack/Text/Section/Heading.`);
+    }
   }
 }
 

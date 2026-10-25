@@ -1,53 +1,52 @@
 import Link from "next/link";
-import { Badge, Button, LivePulse } from "@zedtech/zedkit-ui";
-import * as demos from "../components/demos";
+import { Badge, Button, Heading, LivePulse, Stack, Text } from "@zedtech/zedkit-ui";
+import { demoRegistry, type DemoKey } from "../components/demos/registry";
 import { richCards } from "@/content/rich-cards";
 
 interface RichCard {
   href: string;
   title: string;
   status: string;
-  demo: keyof typeof demos;
+  demo: DemoKey;
 }
 
 function RichCard({ href, title, status, demo }: RichCard) {
-  const Demo = demos[demo];
+  const entry = demoRegistry[demo];
   return (
-    <Link
-      href={href}
-      className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 no-underline"
-    >
-      <span className="flex items-center justify-between gap-2">
-        <strong>{title}</strong>
+    <Stack gap={3} className="rounded-lg border border-border bg-card p-4">
+      <Stack direction="horizontal" gap={2} className="justify-between">
+        <Link href={href}>
+          <strong>{title}</strong>
+        </Link>
         <Badge>{status}</Badge>
-      </span>
-      <Demo />
-    </Link>
+      </Stack>
+      {entry ? <entry.Demo /> : null}
+    </Stack>
   );
 }
 
 export default function Home() {
-  const cards = richCards as (Omit<RichCard, "demo"> & { demo: keyof typeof demos })[];
+  const cards = richCards as RichCard[];
   const buttonHref = cards.find((card) => card.title === "Button")?.href ?? "/docs";
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-10 px-6 py-16">
       <section className="flex flex-col items-start gap-4">
-        <span className="flex items-center gap-3">
-          <h1 className="text-4xl font-bold">zedkit</h1>
+        <Stack direction="horizontal" gap={3}>
+          <Heading level={1}>zedkit</Heading>
           <LivePulse />
-        </span>
-        <p className="text-lg text-muted-foreground">
+        </Stack>
+        <Text className="text-lg">
           Open-source building blocks for modern apps. Every page below is generated from the kit
           catalog — badges, install commands, and examples cannot drift.
-        </p>
-        <span className="flex gap-2">
+        </Text>
+        <Stack direction="horizontal" gap={2}>
           <Link href="/docs">
             <Button>Browse the docs</Button>
           </Link>
           <Link href={buttonHref}>
             <Button variant="outline">Live Button demo</Button>
           </Link>
-        </span>
+        </Stack>
       </section>
       <section className="grid gap-4 md:grid-cols-3">
         {cards.map((card) => (
