@@ -13,6 +13,7 @@ export function docsPageMetadata(
     locale: "en",
     pathname,
     localeInPath: false,
+    openGraphLocale: "en_US",
     ogImage: defaultOgImage(),
     ...(robots === undefined ? {} : { robots }),
   });
