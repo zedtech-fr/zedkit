@@ -978,10 +978,17 @@
           "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Delete confirmation",
               "code": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
+            },
+            {
+              "title": "Custom button labels",
+              "code": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog\n  trigger={<Button variant=\"outline\">Revoke</Button>}\n  title=\"Revoke access?\"\n  description=\"API keys stop working immediately.\"\n  confirmLabel=\"Revoke\"\n  cancelLabel=\"Keep access\"\n  onConfirm={() => revoke()}\n/>"
             }
           ],
+          "registry": "confirm-dialog",
+          "a11y": "Opens a Radix dialog (`role=\"dialog\"`) with `DialogTitle` and `DialogDescription`; focus stays inside while open; Escape and Cancel dismiss without calling `onConfirm`. vitest-axe covers the open state in `packages/ui/tests/unit/a11y.test.tsx` (\"confirm dialog after opening\").",
+          "troubleshooting": "`onConfirm` runs synchronously then closes — start async work inside the handler if needed. `trigger` must be one element (use `Button` asChild target). Registry install lists `button` and `dialog` as shadcn dependencies — use `pnpm add @zedtech/zedkit-ui` when you want one dependency graph.",
           "seeAlso": [
             "Open modal dialogs"
           ]

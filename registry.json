@@ -50,6 +50,17 @@
           "overlay": "0 0% 0%"
         }
       }
+    },
+    {
+      "name": "confirm-dialog",
+      "type": "registry:ui",
+      "registryDependencies": ["button", "dialog", "utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/confirm-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

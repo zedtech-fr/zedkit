@@ -293,17 +293,33 @@ import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedt
 - Import: `@zedtech/zedkit-ui` — `ConfirmDialog`, `ConfirmDialogProps`
 - Wraps: `@radix-ui/react-dialog` (via Dialog)
 - Status: beta
+- Registry: confirm-dialog
 - Short name: ConfirmDialog
 - Audience: Developers guarding delete/revoke/remove actions.
 - Purpose: A one-call destructive confirmation (trigger, title, description, onConfirm).
 - When to use: Before any irreversible action.
 - When not to use: For reversible or trivial actions — do it and offer undo (toast) instead.
 - See also: `Open modal dialogs`
+- Examples: Delete confirmation, Custom button labels
+- A11y: Opens a Radix dialog (`role="dialog"`) with `DialogTitle` and `DialogDescription`; focus stays inside while open; Escape and Cancel dismiss without calling `onConfirm`. vitest-axe covers the open state in `packages/ui/tests/unit/a11y.test.tsx` ("confirm dialog after opening").
+- Troubleshooting: `onConfirm` runs synchronously then closes — start async work inside the handler if needed. `trigger` must be one element (use `Button` asChild target). Registry install lists `button` and `dialog` as shadcn dependencies — use `pnpm add @zedtech/zedkit-ui` when you want one dependency graph.
 
 ```ts
 import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 <ConfirmDialog trigger={<Button>Delete</Button>} title="Delete item?"
   description="This cannot be undone." onConfirm={remove} />
+```
+
+```ts
+import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
+<ConfirmDialog
+  trigger={<Button variant="outline">Revoke</Button>}
+  title="Revoke access?"
+  description="API keys stop working immediately."
+  confirmLabel="Revoke"
+  cancelLabel="Keep access"
+  onConfirm={() => revoke()}
+/>
 ```
 
 ## Slide in a drawer panel
