@@ -120,6 +120,17 @@ describe("primitives", () => {
     expect(screen.getByLabelText("Bio")).toHaveProperty("placeholder", "A few words.");
   });
 
+  it("applies control spacing tokens on input and textarea", () => {
+    render(
+      <>
+        <Input aria-label="Name" />
+        <Textarea aria-label="Bio" />
+      </>,
+    );
+    expect(screen.getByLabelText("Name").className).toContain("h-control-height");
+    expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
+  });
+
   it("renders a card with header, content, and footer", () => {
     render(
       <Card>

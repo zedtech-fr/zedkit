@@ -3,18 +3,12 @@ import * as React from "react";
 
 import { cn } from "./utils.js";
 
+const textareaClassName =
+  "flex min-h-textarea-min-height w-full rounded-md border border-input bg-transparent px-control-inline py-control-block-lg text-base shadow-sm placeholder:text-muted-foreground focus-ring-control disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
+
 const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
   ({ className, ...props }, ref) => {
-    return (
-      <textarea
-        className={cn(
-          "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          className,
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
+    return <textarea className={cn(textareaClassName, className)} ref={ref} {...props} />;
   },
 );
 Textarea.displayName = "Textarea";
