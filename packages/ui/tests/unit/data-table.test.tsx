@@ -38,6 +38,7 @@ describe("DataTable", () => {
   it("shows the empty message when there is no data", () => {
     render(<DataTable columns={columns} data={[]} emptyMessage="Nothing here." />);
     expect(screen.getByText("Nothing here.").textContent).toBe("Nothing here.");
+    expect(screen.getByText("Page 1 of 1").textContent).toBe("Page 1 of 1");
   });
 
   it("shows loading placeholders while loading", () => {

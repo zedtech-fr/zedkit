@@ -150,7 +150,7 @@ export function DataTable<TData extends RowData>({
       </Table>
       <div className="flex items-center justify-end gap-2">
         <span className="text-sm text-muted-foreground">
-          Page {pageIndex + 1} of {table.getPageCount()}
+          Page {pageIndex + 1} of {Math.max(table.getPageCount(), 1)}
         </span>
         <Button
           variant="outline"
