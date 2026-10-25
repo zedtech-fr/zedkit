@@ -24,3 +24,4 @@ apps/docs/public/llms.txt
 test-results/
 playwright-report/
 blob-report/
+apps/docs/out/

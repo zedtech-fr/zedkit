@@ -79,11 +79,12 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       # Scoped build (turbo builds workspace deps first), then serve the
-      # production build and prove the home renders with live demos.
+      # static export (apps/docs/out, same files Caddy serves in prod)
+      # and prove the home renders with live demos.
       - run: pnpm exec turbo run build --filter=@zedtech/zedkit-docs
       - run: pnpm exec playwright install --with-deps chromium
       - run: |
-          pnpm --filter @zedtech/zedkit-docs exec next start -p 3100 >/tmp/docs-start.log 2>&1 &
+          pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
           echo $! > /tmp/docs.pid
           for _ in $(seq 1 24); do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
