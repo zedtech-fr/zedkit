@@ -84,6 +84,32 @@ jobs:
       - run: pnpm registry:build
       - run: pnpm registry:smoke
 
+  docs-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec turbo run build --filter=@zedtech/zedkit-docs
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: |
+          pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-e2e.log 2>&1 &
+          echo $! > /tmp/docs-e2e.pid
+          for _ in $(seq 1 24); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
+            [ "$code" = "200" ] && break
+            sleep 5
+          done
+          pnpm --filter @zedtech/zedkit-docs run e2e
+          kill "$(cat /tmp/docs-e2e.pid)"
+
   docs-smoke:
     runs-on: ubuntu-latest
     steps:
