@@ -1,3 +1,4 @@
+// Derived from shadcn/ui (badge) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils.js";
