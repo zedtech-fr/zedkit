@@ -25,9 +25,9 @@ Each package PR adds its row here, following
 
 ## Entry format
 
-Every `## <need>` section in a package `CATALOG.md` carries the same four
+Every `## <need>` section in a package `CATALOG.md` carries the same
 fields plus a short example. This is the contract the generator parses —
-keep it exact:
+keep it exact (one line per field, before the example):
 
 ```md
 ## Do X without Y
@@ -35,6 +35,12 @@ keep it exact:
 - Import: `@zedtech/zedkit-core` — `a`, `b`
 - Wraps: `some-npm-package`
 - Status: beta
+- Short name: ShortName
+- Audience: Who the need is for, in plain words.
+- Purpose: The problem it solves, in one sentence.
+- When to use: When to reach for it.
+- When not to use: When to avoid it (+ the alternative).
+- See also: `Other need`, `Another need`
 
 \`\`\`ts
 import { a } from "@zedtech/zedkit-core";
@@ -50,6 +56,12 @@ import { a } from "@zedtech/zedkit-core";
 - **Status** is one of `planned | alpha | beta | stable | deprecated`
   (CI validates the value; see Maturity below). A deprecated entry also
   carries `- Replaced by: ...` naming the replacement.
+- **Short name** is the compact display name (doc sidebar, cards).
+- **Audience**, **Purpose**, **When to use**, **When not to use** feed the
+  "what is this for" block on the doc page; all four are required and CI
+  fails when one is missing.
+- **See also** is optional; each backticked target must name a real
+  catalog need heading (any package) — CI fails on unknown targets.
 - The example is TypeScript, about five lines, copy-paste runnable.
 
 ## Maturity
