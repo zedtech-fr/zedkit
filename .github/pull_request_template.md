@@ -30,3 +30,8 @@ persona blocks the merge. Other PRs: delete the rows that do not apply, keep the
 | Mobile (readable, no sideways scroll, measured weight) | | |
 | Coding agent (install + use from llms.txt/AGENTS.md/registry alone) | | |
 | Open-source maintainer (readable PR, tests, changelog, stable API) | | |
+
+## Merge
+
+Squash merge only after **MERGE-OK** from rv-kit/Muse3 on the latest PR head
+commit and CI is green. A blocking lens or persona blocks MERGE-OK.

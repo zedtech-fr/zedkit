@@ -11,7 +11,10 @@ Rules:
 - Small PRs from fresh `main`, one package per PR, never stacked.
 - Each PR adds a Changeset file (`.changeset/<name>.md`); CI runs
   typecheck, lint, test, build, and the public-safety checks.
-- Merge on green CI (squash). No force-push to `main`.
+- Merge on green CI (squash) after a reviewer posts **MERGE-OK** on the
+  latest commit. PRs that touch `packages/*` or docs/README/registry must
+  include the Lenses run and Personas tables from the PR template (CI
+  checks). No force-push to `main`.
 - TypeScript strict, ESM + types, vitest. Raw `try`/`catch` is banned —
   use `tryCatch` from `@zedtech/zedkit-core`.
 - Public repo: no secrets, no customer data, no internal URLs, no
