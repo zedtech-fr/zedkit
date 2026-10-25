@@ -11,9 +11,10 @@
 //   (via components/props-table.tsx, inherited props expanded).
 // - Also writes public/llms.txt (same source, always current).
 //
-// Pure derivation: no hand-written content per need, so pages cannot
-// drift from the catalog. The docs check (scripts/check.mjs) runs this
-// to a temp dir and asserts full coverage.
+// Catalog fields drive the fixed sections; optional prose under
+// `prose/<folder>/<slug>.mdx` is merged after Example (see PAGE-TEMPLATE.md).
+// The docs check (scripts/check.mjs) runs this to a temp dir and asserts
+// full coverage plus prose rules.
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,6 +22,10 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
 const ROOT = join(APP, "..", "..");
+const PROSE_DIR = join(APP, "prose");
+
+/** Section titles owned by the generator — prose must not repeat them. */
+export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props"]);
 
 function slugify(need) {
   const slug = need
@@ -90,7 +95,31 @@ function componentPageMdx(pkg, need, version, spec, related) {
   ].join("\n");
 }
 
-function pageMdx(pkg, need, version, rich, seeAlsoLinks) {
+/** Valid `folder/slug` keys for every catalog need page. */
+export function catalogPageKeys(catalog) {
+  const keys = new Set();
+  for (const [pkg, entry] of Object.entries(catalog.packages)) {
+    const folder = shortName(pkg);
+    const seen = new Set();
+    for (const need of entry.needs) {
+      let slug = slugify(need.need);
+      for (let i = 2; seen.has(slug); i++) slug = `${slugify(need.need)}-${i}`;
+      seen.add(slug);
+      keys.add(`${folder}/${slug}`);
+    }
+  }
+  return keys;
+}
+
+function readProse(folder, slug) {
+  const path = join(PROSE_DIR, folder, `${slug}.mdx`);
+  if (!existsSync(path)) return null;
+  const text = readFileSync(path, "utf8").trim();
+  if (text.length === 0) return null;
+  return `${text}\n`;
+}
+
+function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
@@ -157,6 +186,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks) {
     `Wraps: ${need.wraps}`,
     "",
   );
+  if (prose) head.push(prose);
   if (rich && rich.propsFile && rich.propsName) {
     head.push("## Props", "", `<PropsTable file="${rich.propsFile}" name="${rich.propsName}" />`, "");
   }
@@ -188,6 +218,7 @@ export function generate(outDir) {
   }
 
   let pages = 0;
+  let prosePages = 0;
   const folders = [];
   const slugsByNeed = new Map();
   const llms = ["# zedkit docs", "", "> GENERATED from docs/catalog/catalog.json — do not edit.", ""];
@@ -219,10 +250,12 @@ export function generate(outDir) {
         return { title: target, href: `/docs/${placed.folder}/${placed.slug}` };
       });
       const links = related.map((r) => `[${r.title}](${r.href})`);
+      const prose = readProse(folder, slug);
+      if (prose) prosePages += 1;
       const body =
         richBlock?.registry
           ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related)
-          : pageMdx(pkg, need, version, richBlock, links);
+          : pageMdx(pkg, need, version, richBlock, links, prose);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
       llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${need.status}`);
@@ -282,7 +315,7 @@ export function generate(outDir) {
   })};\n`;
   const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
-  return { pages, folders, gallery, stats, uiPackage, galleryModule, homeScenarios, scenariosModule };
+  return { pages, prosePages, folders, gallery, stats, uiPackage, galleryModule, homeScenarios, scenariosModule };
 }
 
 function buildHomeScenarios(slugsByNeed, catalog) {
