@@ -37,8 +37,10 @@ import {
   OptionCards,
   PageHeader,
   SecretField,
+  Section,
   Separator,
   Skeleton,
+  Stack,
   Switch,
   Text,
   Textarea,
@@ -76,6 +78,18 @@ describe("a11y", () => {
         <Text>Body copy.</Text>
         <Text variant="muted">Muted copy.</Text>
       </>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("titled section with stacked badges", async () => {
+    const { container } = render(
+      <Section title="Team" description="Who can access the workspace.">
+        <Stack direction="horizontal" gap={2}>
+          <Badge>Ada</Badge>
+          <Badge variant="secondary">Bob</Badge>
+        </Stack>
+      </Section>,
     );
     await expectNoViolations(container);
   });

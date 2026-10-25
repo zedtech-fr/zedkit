@@ -227,6 +227,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedt
 <CardContent>Body.</CardContent></Card>
 ```
 
+## Stack content and group titled sections
+
+- Import: `@zedtech/zedkit-ui` — `Stack`, `stackVariants`, `StackProps`, `Section`, `SectionProps`
+- Wraps: none (flex/gap utilities over `Heading`, `Text`)
+- Status: alpha
+
+```ts
+import { Section, Stack } from "@zedtech/zedkit-ui";
+<Section title="Team" description="Who can access.">
+<Stack direction="horizontal" gap={2}>...</Stack>
+```
+
 ## Render headings and body text without raw tags
 
 - Import: `@zedtech/zedkit-ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`

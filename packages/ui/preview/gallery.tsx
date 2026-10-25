@@ -24,6 +24,8 @@ import {
   Input,
   Label,
   LivePulse,
+  Section,
+  Stack,
   OptionCards,
   PageHeader,
   SecretField,
@@ -64,7 +66,7 @@ const SECTIONS = [
   ["forms", "Forms"],
 ] as const;
 
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function GallerySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="space-y-4 border-b pb-8 last:border-0">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
@@ -98,7 +100,7 @@ export function Gallery() {
         description="Every component in every state. Static render for visual review; behavior is covered by unit tests."
       />
       <div className="space-y-8">
-        <Section id="primitives" title="Primitives">
+        <GallerySection id="primitives" title="Primitives">
           <div className="flex flex-wrap gap-2">
             <Button>Default</Button>
             <Button variant="secondary">Secondary</Button>
@@ -129,9 +131,9 @@ export function Gallery() {
             <Text>Body copy for paragraphs.</Text>
             <Text variant="muted">Muted secondary copy.</Text>
           </div>
-        </Section>
+        </GallerySection>
 
-        <Section id="overlays" title="Overlays">
+        <GallerySection id="overlays" title="Overlays">
           {/* Closed on purpose: an open modal would dim the whole
               review surface. Open behavior is covered by unit tests. */}
           <Dialog>
@@ -159,9 +161,9 @@ export function Gallery() {
             <AlertDescription>Something went wrong.</AlertDescription>
           </Alert>
           <Toaster />
-        </Section>
+        </GallerySection>
 
-        <Section id="data-table" title="Data table">
+        <GallerySection id="data-table" title="Data table">
           <h3 className="text-sm font-medium text-muted-foreground">With rows</h3>
           <DataTable columns={columns} data={rows} pageSize={2} />
           <h3 className="text-sm font-medium text-muted-foreground">Empty</h3>
@@ -170,9 +172,9 @@ export function Gallery() {
           <DataTable columns={columns} data={[]} loading />
           <h3 className="text-sm font-medium text-muted-foreground">Error</h3>
           <DataTable columns={columns} data={[]} error="Could not load rows." />
-        </Section>
+        </GallerySection>
 
-        <Section id="layout" title="Layout">
+        <GallerySection id="layout" title="Layout">
           <Card className="max-w-sm">
             <CardHeader>
               <CardTitle>Server</CardTitle>
@@ -191,13 +193,19 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
+          <Section title="Team" description="Who can access the workspace.">
+            <Stack direction="horizontal" gap={2}>
+              <Badge>Ada</Badge>
+              <Badge variant="secondary">Bob</Badge>
+            </Stack>
+          </Section>
           <div className="flex gap-4">
             <LivePulse />
             <LivePulse active={false} />
           </div>
-        </Section>
+        </GallerySection>
 
-        <Section id="forms" title="Forms">
+        <GallerySection id="forms" title="Forms">
           <FormDemo />
           <Select>
             <SelectTrigger className="max-w-sm">
@@ -219,9 +227,9 @@ export function Gallery() {
             <Switch id="gallery-notify" defaultChecked />
             <Label htmlFor="gallery-notify">Notify me</Label>
           </div>
-        </Section>
+        </GallerySection>
 
-        <Section id="wizard" title="Wizard">
+        <GallerySection id="wizard" title="Wizard">
           <WizardSteps steps={["Pick", "Configure", "Test"]} current={1} />
           <OptionCards
             options={[
@@ -231,7 +239,7 @@ export function Gallery() {
             selected={["a"]}
             onChange={() => {}}
           />
-        </Section>
+        </GallerySection>
       </div>
     </AppShell>
   );
