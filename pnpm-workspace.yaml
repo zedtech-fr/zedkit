@@ -39,6 +39,7 @@ catalog:
   "@types/react-dom": 19.3.0
   tailwindcss: 4.3.3
   "@tailwindcss/postcss": 4.3.3
+  postcss: 8.5.31
   class-variance-authority: 0.7.1
   tailwind-merge: 3.7.0
   clsx: 2.1.1
