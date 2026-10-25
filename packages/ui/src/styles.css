@@ -107,6 +107,13 @@
   --radius-sm: calc(var(--radius) - 4px);
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
+  --spacing-control-height: 2.25rem;
+  --spacing-control-height-sm: 2rem;
+  --spacing-control-height-lg: 2.5rem;
+  --spacing-button-inline: 1rem;
+  --spacing-button-inline-sm: 0.75rem;
+  --spacing-button-inline-lg: 2rem;
+  --spacing-icon-control: 1rem;
 }
 
 @layer base {

@@ -7,6 +7,9 @@ export function ButtonDemo() {
       <Button variant="secondary">Cancel</Button>
       <Button variant="outline">Details</Button>
       <Button variant="destructive">Delete</Button>
+      <Button asChild variant="ghost">
+        <a href="#button-demo">Docs link</a>
+      </Button>
     </Stack>
   );
 }
