@@ -72,6 +72,60 @@
         }
       ]
     },
+    "@zedkit/seo": {
+      "catalog": "packages/seo/CATALOG.md",
+      "needs": [
+        {
+          "need": "Serve robots.txt content",
+          "import": "`@zedkit/seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { buildRobots } from \"@zedkit/seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}"
+        },
+        {
+          "need": "List localized pages in a sitemap",
+          "import": "`@zedkit/seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { buildSitemapEntries } from \"@zedkit/seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });"
+        },
+        {
+          "need": "Serve a Google video sitemap",
+          "import": "`@zedkit/seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { buildVideoSitemap } from \"@zedkit/seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });"
+        },
+        {
+          "need": "Emit typed JSON-LD structured data",
+          "import": "`@zedkit/seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`",
+          "wraps": "`schema-dts`",
+          "status": "stable",
+          "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedkit/seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
+        },
+        {
+          "need": "Build localized page metadata",
+          "import": "`@zedkit/seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { buildPageMetadata } from \"@zedkit/seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });"
+        },
+        {
+          "need": "Serve llms.txt for AI agents",
+          "import": "`@zedkit/seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { llmsTextResponse } from \"@zedkit/seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}"
+        },
+        {
+          "need": "Derive descriptions, slugs, and localized fields",
+          "import": "`@zedkit/seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { normalizeSlug, resolveDescription } from \"@zedkit/seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });"
+        }
+      ]
+    },
     "@zedkit/server": {
       "catalog": "packages/server/CATALOG.md",
       "needs": [
