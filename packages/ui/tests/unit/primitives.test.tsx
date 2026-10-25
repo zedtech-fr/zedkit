@@ -7,6 +7,7 @@ import { Input } from "#index.js";
 import { Label } from "#index.js";
 import { Separator } from "#index.js";
 import { Skeleton } from "#index.js";
+import { Heading, Text } from "#index.js";
 
 describe("primitives", () => {
   it("renders a button with its variant classes", () => {
@@ -45,6 +46,31 @@ describe("primitives", () => {
     const { container } = render(<Skeleton className="h-4 w-24" data-testid="sk" />);
     const skeleton = container.querySelector('[data-testid="sk"]');
     expect(skeleton?.className).toContain("animate-pulse");
+  });
+
+  it("renders headings at the level tag with size classes", () => {
+    render(
+      <>
+        <Heading level={1}>Title</Heading>
+        <Heading level={3}>Section</Heading>
+        <Heading level={2} as="div">
+          Plain
+        </Heading>
+      </>,
+    );
+    expect(screen.getByRole("heading", { name: "Title", level: 1 }).className).toContain("text-4xl");
+    expect(screen.getByRole("heading", { name: "Section", level: 3 }).className).toContain("text-2xl");
+    expect(screen.getByText("Plain").tagName).toBe("DIV");
+  });
+
+  it("renders body and muted text", () => {
+    render(
+      <>
+        <Text>Body copy.</Text>
+        <Text variant="muted">Secondary copy.</Text>
+      </>,
+    );
+    expect(screen.getByText("Secondary copy.").className).toContain("text-muted-foreground");
   });
 
   it("renders a card with header, content, and footer", () => {

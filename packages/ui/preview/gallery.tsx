@@ -16,6 +16,7 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Heading,
   Input,
   Label,
   LivePulse,
@@ -24,6 +25,7 @@ import {
   SecretField,
   Separator,
   Skeleton,
+  Text,
   Toaster,
   WizardSteps,
   createDataTableColumns,
@@ -104,6 +106,12 @@ export function Gallery() {
           </div>
           <Separator />
           <Skeleton className="h-4 w-48" />
+          <div className="space-y-2">
+            <Heading level={1}>Page title</Heading>
+            <Heading level={2}>Section title</Heading>
+            <Text>Body copy for paragraphs.</Text>
+            <Text variant="muted">Muted secondary copy.</Text>
+          </div>
         </Section>
 
         <Section id="overlays" title="Overlays">
