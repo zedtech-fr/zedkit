@@ -315,6 +315,13 @@
           "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
         },
         {
+          "need": "Stack content and group titled sections",
+          "import": "`@zedtech/zedkit-ui` — `Stack`, `stackVariants`, `StackProps`, `Section`, `SectionProps`",
+          "wraps": "none (flex/gap utilities over `Heading`, `Text`)",
+          "status": "alpha",
+          "example": "import { Section, Stack } from \"@zedtech/zedkit-ui\";\n<Section title=\"Team\" description=\"Who can access.\">\n<Stack direction=\"horizontal\" gap={2}>...</Stack>"
+        },
+        {
           "need": "Render headings and body text without raw tags",
           "import": "`@zedtech/zedkit-ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`",
           "wraps": "`class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)",
