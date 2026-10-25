@@ -1,6 +1,5 @@
 ---
 "@zedtech/zedkit-ui": patch
-"@zedtech/zedkit-docs": patch
 ---
 
-Drawer component doc page with registry install/source (part of #187 rollout).
+Export DrawerProps and catalog fields for the drawer registry doc page (part of #187).
