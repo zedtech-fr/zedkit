@@ -21,6 +21,7 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Heading,
   Input,
   Label,
   LivePulse,
@@ -29,6 +30,7 @@ import {
   SecretField,
   Separator,
   Skeleton,
+  Text,
   Toaster,
   WizardSteps,
   createDataTableColumns,
@@ -55,6 +57,18 @@ async function expectNoViolations(element: HTMLElement): Promise<void> {
 }
 
 describe("a11y", () => {
+  it("headings and text", async () => {
+    const { container } = render(
+      <>
+        <Heading level={1}>Title</Heading>
+        <Heading level={2}>Section</Heading>
+        <Text>Body copy.</Text>
+        <Text variant="muted">Muted copy.</Text>
+      </>,
+    );
+    await expectNoViolations(container);
+  });
+
   it("button, badge, input+label, separator, skeleton", async () => {
     const { container } = render(
       <>

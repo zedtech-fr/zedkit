@@ -66,4 +66,12 @@ export {
 } from "./table.js";
 export { WizardSteps, type WizardStepsProps } from "./wizard-steps.js";
 export { Toaster } from "./sonner.js";
+export {
+  Heading,
+  headingVariants,
+  Text,
+  textVariants,
+  type HeadingProps,
+  type TextProps,
+} from "./typography.js";
 export { cn } from "./utils.js";

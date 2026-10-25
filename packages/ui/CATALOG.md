@@ -226,3 +226,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedk
 <CardDescription>Connection details.</CardDescription></CardHeader>
 <CardContent>Body.</CardContent></Card>
 ```
+
+## Render headings and body text without raw tags
+
+- Import: `@zedkit/ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`
+- Wraps: `class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)
+- Status: stable
+
+```ts
+import { Heading, Text } from "@zedkit/ui";
+<Heading level={1}>Page title</Heading>
+<Heading level={2} as="div">Styled as h2, neutral tag</Heading>
+<Text>Body copy.</Text>
+<Text variant="muted">Secondary copy.</Text>
+```
