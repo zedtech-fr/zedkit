@@ -76,8 +76,8 @@ import { Button } from "@zedtech/zedkit-ui";
 - When to use: For short labels next to the thing they describe.
 - When not to use: For long text or actions — use Text or Button instead.
 - See also: `Indicate status with a dot`
-- Examples: Simple, Variants, In a table row
-- A11y: Renders a `div` (not a live region). Keep labels short; do not put interactive controls inside. Focus ring appears when the badge is focusable via `tabIndex={0}`.
+- Examples: Simple, Variants, In a table row, As a link (asChild)
+- A11y: Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short.
 - Troubleshooting: Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.
 
 ```ts
@@ -97,6 +97,13 @@ import { Badge } from "@zedtech/zedkit-ui";
   <td>sync</td>
   <td><Badge variant="secondary">queued</Badge></td>
 </tr>
+```
+
+```ts
+import { Badge } from "@zedtech/zedkit-ui";
+<Badge asChild variant="secondary">
+  <a href="/status">all systems go</a>
+</Badge>
 ```
 
 ## Collect text input with a label

@@ -23,6 +23,17 @@ describe("primitives", () => {
     expect(screen.getByText("live").className).toContain("border");
   });
 
+  it("merges badge styles onto asChild link", () => {
+    render(
+      <Badge asChild variant="secondary">
+        <a href="/docs">docs</a>
+      </Badge>,
+    );
+    const link = screen.getByRole("link", { name: "docs" });
+    expect(link.className).toContain("bg-secondary");
+    expect(link.getAttribute("href")).toBe("/docs");
+  });
+
   it("links a label to its input", () => {
     render(
       <>
