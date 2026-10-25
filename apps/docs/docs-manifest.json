@@ -55,7 +55,8 @@
     "Slide in a drawer panel": {
       "package": "@zedtech/zedkit-ui",
       "component": "Drawer",
-      "props": null,
+      "registry": "drawer",
+      "props": "DrawerProps",
       "source": "drawer.tsx",
       "demo": "DrawerDemo"
     },

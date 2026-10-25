@@ -8,6 +8,8 @@ import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "./utils.js";
 
+type DrawerProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Root>;
+
 const Drawer = DrawerPrimitive.Root;
 const DrawerTrigger = DrawerPrimitive.Trigger;
 const DrawerClose = DrawerPrimitive.Close;
@@ -127,6 +129,7 @@ function DrawerDescription({
 
 export {
   Drawer,
+  type DrawerProps,
   DrawerClose,
   DrawerContent,
   DrawerDescription,

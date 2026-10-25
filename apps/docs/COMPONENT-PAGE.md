@@ -33,4 +33,4 @@ Run `pnpm catalog:build` after edits.
 
 ## Rollout
 
-PR1: this template + Badge pilot (#227). Later PRs: enable `registry` on other bricks as they ship in `public/r/`.
+Badge and Drawer use this template when `registry` is set in the manifest. Later PRs: other bricks as they ship in `public/r/`.

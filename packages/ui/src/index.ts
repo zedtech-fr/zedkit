@@ -26,6 +26,7 @@ export {
 export { DetailPanel, type DetailItem, type DetailPanelProps } from "./detail-panel.js";
 export {
   Drawer,
+  type DrawerProps,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
