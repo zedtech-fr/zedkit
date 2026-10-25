@@ -20,8 +20,10 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
+export { DetailPanel, type DetailItem, type DetailPanelProps } from "./detail-panel.js";
 export { Input } from "./input.js";
 export { Label } from "./label.js";
+export { LivePulse, type LivePulseProps } from "./live-pulse.js";
 export { OptionCards, type OptionCard, type OptionCardsProps } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";

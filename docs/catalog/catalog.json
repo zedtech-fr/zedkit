@@ -212,6 +212,13 @@
           "wraps": "none (native inputs + theme tokens)",
           "status": "stable",
           "example": "import { OptionCards, WizardSteps } from \"@zedkit/ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
+        },
+        {
+          "need": "Show key-value details and a live indicator",
+          "import": "`@zedkit/ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
+          "wraps": "none (theme tokens only)",
+          "status": "stable",
+          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedkit/ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
         }
       ]
     }
