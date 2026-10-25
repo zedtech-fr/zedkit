@@ -67,6 +67,7 @@
     "react-hook-form": "catalog:",
     "sonner": "catalog:",
     "tailwind-merge": "catalog:",
+    "vaul": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
