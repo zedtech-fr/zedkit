@@ -1,5 +1,18 @@
 # @zedtech/zedkit-ai
 
+## 0.4.0
+
+### Minor Changes
+
+- 9167ada: Add the `dependency-auditor` agent (need/size/license/maintenance/duplicates/supply-chain checks for new or updated deps) and wire it in the lens registry and agents catalog.
+- 9618386: Gentle motion by default + reduced-motion everywhere: requirement in `ui-designer`, rule 6 of the ui lens (with refusal example), both personas, and the `verifier` gate; content test locks it.
+
+### Patch Changes
+
+- 03cacd0: Catalog: every need documents its short name, audience, purpose, when to (not) use it, and related needs (single-sourced from CATALOG.md, enforced by `pnpm catalog:check`), feeding the doc pages.
+- Updated dependencies [03cacd0]
+  - @zedtech/zedkit-core@0.1.2
+
 ## 0.3.0
 
 ### Minor Changes

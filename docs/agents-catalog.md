@@ -20,7 +20,7 @@ When to call which agent, and the chains they form. Agents live in
 | `copywriter` | user-visible strings changed (microcopy, errors, empty states, CTAs); i18n-first | no |
 | `a11y-auditor` | components, forms, tables or pages changed; WCAG basics | no |
 | `seo-auditor` | pages, metadata, sitemap, redirects or the seo package changed | no |
-| `dependency-auditor` | `package.json`, lockfiles or catalogs changed; new or updated deps | no (planned) |
+| `dependency-auditor` | `package.json`, lockfiles or catalogs changed; new or updated deps | no |
 | `docs-writer` | README, AGENTS.md, catalog entries or docs changed; drift and compiling examples | yes (planned) |
 | `release-manager` | public API, changesets or catalog Status changed; semver + migration notes | no (planned) |
 | `console-architecture` | frontend changes; checks route/view/data layer boundaries | no (planned) |

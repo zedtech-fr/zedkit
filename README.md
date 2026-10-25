@@ -1,9 +1,24 @@
 # zedkit
 
 [![ci](https://github.com/zedtech-fr/zedkit/actions/workflows/ci.yml/badge.svg)](https://github.com/zedtech-fr/zedkit/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![docs](https://img.shields.io/badge/docs-zedkit.app-blue.svg)](https://zedkit.app)
 
 Open-source building blocks for modern apps: small, dependency-light TypeScript
 packages. MIT licensed; see [LICENSE](LICENSE).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/ui-proof/readme-gallery-dark.png">
+  <img alt="zedkit UI gallery: buttons, badges, status labels, inputs and typography" src="docs/ui-proof/readme-gallery-light.png">
+</picture>
+
+```sh
+pnpm add @zedtech/zedkit-ui          # admin UI components (React + Tailwind v4)
+pnpm add -D @zedtech/zedkit-ai       # one agent setup for Cursor, Claude, Codex…
+```
+
+Docs with live examples: [zedkit.app](https://zedkit.app). Full catalog by need
+below; five-minute start in [5-minute quickstart](#5-minute-quickstart).
 
 ## Packages
 
@@ -14,13 +29,13 @@ need per package (criteria: [docs/catalog/README.md](docs/catalog/README.md)).
 
 | Package | Version | Maturity |
 |---|---|---|
-| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 0.3.0 | beta |
-| [`@zedtech/zedkit-core`](packages/core/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-core)) | 0.1.1 | beta |
-| [`@zedtech/zedkit-nest`](packages/nest/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-nest)) | 0.1.1 | beta |
-| [`@zedtech/zedkit-payload-seo`](packages/payload-seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-payload-seo)) | 0.1.1 | beta |
-| [`@zedtech/zedkit-seo`](packages/seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-seo)) | 0.1.1 | beta |
-| [`@zedtech/zedkit-server`](packages/server/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-server)) | 0.1.1 | beta |
-| [`@zedtech/zedkit-ui`](packages/ui/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ui)) | 0.2.0 | alpha |
+| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 0.4.0 | beta |
+| [`@zedtech/zedkit-core`](packages/core/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-core)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-nest`](packages/nest/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-nest)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-payload-seo`](packages/payload-seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-payload-seo)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-seo`](packages/seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-seo)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-server`](packages/server/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-server)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-ui`](packages/ui/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ui)) | 0.3.0 | alpha |
 
 <!-- /packages-table -->
 
