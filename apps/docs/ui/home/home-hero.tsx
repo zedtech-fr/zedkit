@@ -20,13 +20,27 @@ export function HomeHero({
     <Stack gap={6} className="items-start">
       <Stack gap={3} className="items-start">
         <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-          <Heading level={1}>zedkit</Heading>
+          <Text variant="muted" className="text-sm font-medium tracking-wide uppercase">zedkit</Text>
           <KitVersionLabel version={version} changelogHref={changelogHref} />
         </Stack>
+        <Heading level={1} className="max-w-3xl text-balance">
+          Build the parts you need. Keep the rest of your app.
+        </Heading>
         <Text className="max-w-2xl text-lg">
-          Open-source TypeScript packages and an admin UI kit. Doc pages, maturity badges, and
-          install commands are generated from the catalog so they stay aligned with the code.
+          TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
+          need documented from the same catalog as the site.
         </Text>
+      </Stack>
+      <Stack direction="horizontal" gap={2} className="flex-wrap">
+        <Button asChild>
+          <Link href="#entry-points">Explore examples</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/docs">Open documentation</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="#components">Browse components</Link>
+        </Button>
       </Stack>
       <Stack gap={4} className="w-full max-w-2xl">
         <Heading level={2} className="text-base font-semibold">
@@ -47,17 +61,6 @@ export function HomeHero({
           <ButtonDemoLive />
         </CardContent>
       </Card>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
-        <Link href="/docs">
-          <Button>Read the docs</Button>
-        </Link>
-        <Link href="#scenarios">
-          <Button variant="outline">Pick a scenario</Button>
-        </Link>
-        <Link href="#components">
-          <Button variant="outline">Browse components</Button>
-        </Link>
-      </Stack>
     </Stack>
   );
 }

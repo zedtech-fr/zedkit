@@ -350,7 +350,9 @@ export function generate(outDir) {
     livePreviews: gallery.filter((card) => card.demo).length,
   })};\n`;
   const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
-  const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
+  const homeEntryPoints = buildHomeEntryPoints(catalog, slugsByNeed);
+  const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n  linkLabel: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
+  const entryPointsModule = `// GENERATED from home-entry-points.json + catalog — do not edit.\nexport interface HomeEntryPoint {\n  title: string;\n  summary: string;\n  href: string;\n  needCount: number;\n  linkLabel: string;\n}\n\nexport const homeEntryPoints: HomeEntryPoint[] = ${JSON.stringify(homeEntryPoints, null, 2)};\n`;
   const registryBricks = loadRegistryBrickNames(ROOT);
   const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks[0])};\n`;
   return {
@@ -364,6 +366,8 @@ export function generate(outDir) {
     galleryModule,
     homeScenarios,
     scenariosModule,
+    homeEntryPoints,
+    entryPointsModule,
     registrySiteModule,
   };
 }
@@ -391,9 +395,61 @@ function buildHomeScenarios(slugsByNeed, catalog) {
       goal: row.goal,
       action: row.action,
       href: `/docs/${placed.folder}/${placed.slug}`,
+      linkLabel: `Read docs: ${row.situation}`,
     });
   }
   return scenarios;
+}
+
+function buildHomeEntryPoints(catalog, slugsByNeed) {
+  const sourcePath = join(APP, "home-entry-points.json");
+  if (!existsSync(sourcePath)) {
+    throw new Error("home-entry-points.json missing (apps/docs/home-entry-points.json).");
+  }
+  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
+  const entryPoints = [];
+  for (const row of source) {
+    let needCount = 0;
+    let href = null;
+    for (const pkg of row.packages) {
+      const entry = catalog.packages[pkg];
+      if (!entry) throw new Error(`home-entry-points.json: unknown package "${pkg}".`);
+      needCount += entry.needs.length;
+    }
+    if (row.guideSlug) {
+      if (!GUIDE_NAV_SLUGS.includes(row.guideSlug)) {
+        throw new Error(`home-entry-points.json: guideSlug "${row.guideSlug}" is not a guide page.`);
+      }
+      href = `/docs/${row.guideSlug}`;
+    } else if (row.need) {
+      let pkg = null;
+      for (const name of row.packages) {
+        const entry = catalog.packages[name];
+        if (entry?.needs.some((need) => need.need === row.need)) {
+          pkg = name;
+          break;
+        }
+      }
+      if (!pkg) {
+        throw new Error(`home-entry-points.json: "${row.title}" need "${row.need}" matches no listed package.`);
+      }
+      const placed = slugsByNeed.get(`${pkg} ${row.need}`);
+      if (!placed) {
+        throw new Error(`home-entry-points.json: no doc slug for "${row.need}".`);
+      }
+      href = `/docs/${placed.folder}/${placed.slug}`;
+    } else {
+      throw new Error(`home-entry-points.json: "${row.title}" needs need or guideSlug.`);
+    }
+    entryPoints.push({
+      title: row.title,
+      summary: row.summary,
+      href,
+      needCount,
+      linkLabel: `Browse ${row.title} docs`,
+    });
+  }
+  return entryPoints;
 }
 
 // Gallery titles are short component names: the curated manifest
@@ -412,9 +468,11 @@ if (invoked === fileURLToPath(import.meta.url)) {
     console.error("error: docs/catalog/catalog.json missing (run pnpm catalog:build at the root).");
     process.exitCode = 1;
   } else {
-    const { pages, folders, galleryModule, scenariosModule, registrySiteModule } = generate(outDir);
+    const { pages, folders, galleryModule, scenariosModule, entryPointsModule, registrySiteModule } =
+      generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
     writeFileSync(join(APP, "content", "home-scenarios.ts"), scenariosModule);
+    writeFileSync(join(APP, "content", "home-entry-points.ts"), entryPointsModule);
     writeFileSync(join(APP, "content", "registry-site.ts"), registrySiteModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }

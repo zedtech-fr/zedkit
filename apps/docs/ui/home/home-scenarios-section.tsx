@@ -40,9 +40,9 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
                     </Heading>
                     <Text className="text-sm">{scenario.action}</Text>
                   </Stack>
-                  <Link href={scenario.href}>
-                    <Button variant="secondary" size="sm">Open the doc page</Button>
-                  </Link>
+                  <Button asChild variant="secondary" size="sm">
+                    <Link href={scenario.href}>{scenario.linkLabel}</Link>
+                  </Button>
                 </Stack>
               </CardContent>
             </Card>

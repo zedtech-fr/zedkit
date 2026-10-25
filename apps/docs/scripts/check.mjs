@@ -57,7 +57,8 @@ const rich = manifest.rich ?? {};
 const registryBricks = new Set(loadRegistryBrickNames(ROOT));
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages, prosePages, guidePages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
+const { pages, prosePages, guidePages, gallery, stats, uiPackage, homeScenarios, homeEntryPoints } =
+  generate(tmp);
 const livePageKeys = catalogPageKeys(catalog);
 
 function mdxFiles(dir) {
@@ -256,6 +257,17 @@ if (!existsSync(scenariosPath)) {
   const expected = JSON.stringify(homeScenarios, null, 2);
   if (!onDisk.includes(expected)) {
     errors.push("content/home-scenarios.ts is stale (run pnpm docs:generate).");
+  }
+}
+
+const entryPointsPath = join(APP, "content", "home-entry-points.ts");
+if (!existsSync(entryPointsPath)) {
+  errors.push("content/home-entry-points.ts missing (run pnpm docs:generate).");
+} else {
+  const onDisk = readFileSync(entryPointsPath, "utf8");
+  const expected = JSON.stringify(homeEntryPoints, null, 2);
+  if (!onDisk.includes(expected)) {
+    errors.push("content/home-entry-points.ts is stale (run pnpm docs:generate).");
   }
 }
 
