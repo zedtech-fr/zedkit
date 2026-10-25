@@ -1,6 +1,24 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-const SECTIONS = ["primitives", "overlays", "data-table", "layout", "wizard"];
+const SECTIONS = ["primitives", "overlays", "data-table", "layout", "loading", "forms", "wizard"];
+
+/** No sideways scroll: every section fits its viewport (mobile persona). */
+async function expectNoOverflow(page: Page): Promise<void> {
+  const offenders = await page.evaluate(() => {
+    const bad: string[] = [];
+    for (const section of document.querySelectorAll("section[id]")) {
+      for (const el of section.querySelectorAll("*")) {
+        const box = el.getBoundingClientRect();
+        if (box.right > window.innerWidth + 1 || box.left < -1) {
+          bad.push(`${section.id}: <${el.tagName.toLowerCase()}> overflows`);
+          break;
+        }
+      }
+    }
+    return bad;
+  });
+  expect(offenders).toEqual([]);
+}
 
 test("gallery renders every section with no errors (light)", async ({ page }) => {
   const problems: string[] = [];
@@ -17,6 +35,7 @@ test("gallery renders every section with no errors (light)", async ({ page }) =>
   await expect(page.getByRole("button", { name: "Open drawer" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Open sheet" })).toBeVisible();
   expect(problems).toEqual([]);
+  await expectNoOverflow(page);
   await page.screenshot({ path: "test-results/gallery-light.png", fullPage: true });
 });
 
@@ -29,6 +48,7 @@ test("gallery renders the dark theme with no errors", async ({ page }) => {
     await expect(page.locator(`#${id}`)).toBeVisible();
   }
   expect(problems).toEqual([]);
+  await expectNoOverflow(page);
   await page.screenshot({ path: "test-results/gallery-dark.png", fullPage: true });
 });
 
@@ -43,6 +63,7 @@ test.describe("mobile viewport", () => {
     await expect(page.getByRole("button", { name: "Open drawer" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Open sheet" })).toBeVisible();
     expect(problems).toEqual([]);
+    await expectNoOverflow(page);
     await page.screenshot({ path: "test-results/gallery-mobile.png", fullPage: true });
   });
 });
