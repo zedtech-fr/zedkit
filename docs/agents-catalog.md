@@ -23,7 +23,7 @@ When to call which agent, and the chains they form. Agents live in
 | `dependency-auditor` | `package.json`, lockfiles or catalogs changed; new or updated deps | no |
 | `docs-writer` | README, AGENTS.md, catalog entries or docs changed; drift and compiling examples | yes |
 | `release-manager` | public API, changesets or catalog Status changed; semver + migration notes | no |
-| `console-architecture` | frontend changes; checks route/view/data layer boundaries | no (planned) |
+| `console-architecture` | frontend changes; checks route/view/data layer boundaries | no |
 | `product-director` | you need a delivery brief for the director over a scope (branch, PRs, milestone) | no (planned) |
 
 Planned rows land one PR at a time; each PR flips its row. Read-only agents

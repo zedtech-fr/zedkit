@@ -43,7 +43,8 @@
     "docs-writer",
     "researcher",
     "test-writer",
-    "release-manager"
+    "release-manager",
+    "console-architecture"
   ],
   "commands": [
     "review",
