@@ -22,7 +22,7 @@ test("home explains the product and four entry areas", async ({ page }) => {
 
 test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const entry = page.getByRole("link", { name: "Browse Build an admin UI docs" });
+  const entry = page.getByRole("link", { name: "Open UI docs" });
   await entry.click();
   await page.waitForURL("**/docs/ui/**", { timeout: 10000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

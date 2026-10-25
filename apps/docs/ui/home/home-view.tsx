@@ -52,7 +52,11 @@ export function HomeView({
   themeHref: string;
 }) {
   return (
+<<<<<<< HEAD
     <Stack gap={8} className="mx-auto w-full min-w-0 max-w-5xl overflow-x-hidden px-6 py-12">
+=======
+    <Stack gap={8} className="mx-auto w-full max-w-5xl min-w-0 overflow-x-hidden px-6 py-12">
+>>>>>>> e17b143 (fix(docs): contain home overflow on narrow viewports)
       <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
       <HomeEntryPointsSection entryPoints={entryPoints} />
       <HomeScenariosSection scenarios={scenarios} />
