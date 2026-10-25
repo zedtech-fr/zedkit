@@ -52,7 +52,7 @@ export function HomeView({
   themeHref: string;
 }) {
   return (
-    <Stack gap={8} className="mx-auto w-full min-w-0 max-w-5xl overflow-x-hidden px-6 py-12">
+    <Stack gap={8} className="mx-auto w-full max-w-5xl min-w-0 overflow-x-hidden px-6 py-12">
       <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
       <HomeEntryPointsSection entryPoints={entryPoints} />
       <HomeScenariosSection scenarios={scenarios} />
