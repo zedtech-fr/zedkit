@@ -12,7 +12,7 @@ export function HomeInstallCommands({ npmPackage }: { npmPackage: string }) {
   };
   return (
     <Stack gap={2} className="w-full">
-      <Tabs items={["npm", "shadcn"]} className="w-full">
+      <Tabs items={["npm", "shadcn (preview)"]} className="w-full">
         <Tab value="npm">
           <SecretField
             value={commands.npm}
@@ -20,7 +20,7 @@ export function HomeInstallCommands({ npmPackage }: { npmPackage: string }) {
             copyLabel="Copy pnpm command"
           />
         </Tab>
-        <Tab value="shadcn">
+        <Tab value="shadcn (preview)">
           <SecretField
             value={commands.shadcn}
             aria-label="shadcn add command"

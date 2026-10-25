@@ -20,3 +20,33 @@ test("home search opens from the header", async ({ page }) => {
   await page.keyboard.press("Control+k");
   await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10000 });
 });
+
+test("home keyboard: tab reaches scenario CTA", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "domcontentloaded" });
+  await page.keyboard.press("Tab");
+  let found = false;
+  for (let i = 0; i < 40; i++) {
+    const active = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
+    if (active.includes("Open the doc page")) {
+      found = true;
+      break;
+    }
+    await page.keyboard.press("Tab");
+  }
+  expect(found).toBe(true);
+});
+
+test.describe("persona evidence screenshots", () => {
+  test("capture desktop and mobile home", async ({ page }) => {
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.screenshot({ path: "test-results/home-desktop-light.png", fullPage: true });
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.screenshot({ path: "test-results/home-desktop-dark.png", fullPage: true });
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: "test-results/home-mobile-light.png", fullPage: true });
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+  });
+});
