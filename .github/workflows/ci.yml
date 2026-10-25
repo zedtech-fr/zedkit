@@ -49,8 +49,14 @@ jobs:
       - run: pnpm exec eslint .
       - run: pnpm run catalog:check
       - run: pnpm exec turbo run build
+      - name: Docs static export artifacts
+        run: |
+          test -f apps/docs/out/robots.txt
+          test -f apps/docs/out/sitemap.xml
+          test -f apps/docs/out/llms.txt
       - run: bash scripts/check-pack.sh
       - run: pnpm exec turbo run test
+      - run: pnpm test:registry
       # Gallery smoke: real chromium over the built ui gallery (both
       # themes, zero console errors), screenshots kept as artifacts.
       - uses: actions/cache@v4

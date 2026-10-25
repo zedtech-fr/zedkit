@@ -9,7 +9,8 @@
 //   5. pages and views stay thin: app/** and ui/** import no demo file
 //      directly (registry only) and use no namespace imports;
 //   6. demos and frame use kit layout modules only (no raw <div>/<span>);
-//   7. every page carries install tabs + a titled TSX example;
+//   7. every page carries install tabs + a titled TSX example +
+//      the At-a-glance guidance block (Who/What/Use when/Avoid when);
 //   8. the home gallery covers every UI need exactly once, with the
 //      manifest demo (or null);
 //   9. the gallery stats match the catalog counts.
@@ -64,6 +65,14 @@ for (const file of mdxFiles(tmp)) {
   }
   if (!text.includes('```tsx title="Usage"')) {
     errors.push(`generator: ${file.slice(tmp.length + 1)} lacks a titled TSX example.`);
+  }
+  if (!text.includes("## At a glance")) {
+    errors.push(`generator: ${file.slice(tmp.length + 1)} lacks the At-a-glance guidance block.`);
+  }
+  for (const label of ["- **Who:**", "- **What:**", "- **Use when:**", "- **Avoid when:**"]) {
+    if (!text.includes(label)) {
+      errors.push(`generator: ${file.slice(tmp.length + 1)} lacks guidance bullet "${label}".`);
+    }
   }
 }
 rmSync(tmp, { recursive: true, force: true });

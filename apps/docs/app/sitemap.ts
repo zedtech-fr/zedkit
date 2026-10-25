@@ -4,6 +4,8 @@ import { buildSitemapEntries } from "@zedtech/zedkit-seo";
 import { docsSite } from "@/lib/site";
 import { source } from "#source";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [{ path: "" }, { path: "/docs" }];
   for (const param of source.generateParams()) {
