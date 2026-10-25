@@ -42,7 +42,8 @@
     "dependency-auditor",
     "docs-writer",
     "researcher",
-    "test-writer"
+    "test-writer",
+    "release-manager"
   ],
   "commands": [
     "review",
