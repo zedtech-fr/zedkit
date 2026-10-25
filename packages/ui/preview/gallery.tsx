@@ -11,6 +11,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Checkbox,
   ConfirmDialog,
   DataTable,
   DetailPanel,
@@ -35,6 +36,7 @@ import {
   SelectValue,
   Separator,
   Skeleton,
+  Switch,
   Text,
   Textarea,
   Toaster,
@@ -209,6 +211,14 @@ export function Gallery() {
               </SelectGroup>
             </SelectContent>
           </Select>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="gallery-terms" defaultChecked />
+            <Label htmlFor="gallery-terms">Accept the terms</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="gallery-notify" defaultChecked />
+            <Label htmlFor="gallery-notify">Notify me</Label>
+          </div>
         </Section>
 
         <Section id="wizard" title="Wizard">

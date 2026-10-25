@@ -341,6 +341,13 @@
           "wraps": "none (styled native `textarea`)",
           "status": "alpha",
           "example": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
+        },
+        {
+          "need": "Toggle a checkbox or a switch",
+          "import": "`@zedtech/zedkit-ui` — `Checkbox`, `Switch`",
+          "wraps": "`@radix-ui/react-checkbox`, `@radix-ui/react-switch`",
+          "status": "alpha",
+          "example": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />"
         }
       ]
     }
