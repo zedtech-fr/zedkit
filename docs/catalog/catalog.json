@@ -205,6 +205,13 @@
           "wraps": "none (theme tokens only)",
           "status": "stable",
           "example": "import { AppShell, PageHeader } from \"@zedkit/ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
+        },
+        {
+          "need": "Guide a multi-step flow with selectable option cards",
+          "import": "`@zedkit/ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
+          "wraps": "none (native inputs + theme tokens)",
+          "status": "stable",
+          "example": "import { OptionCards, WizardSteps } from \"@zedkit/ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
         }
       ]
     }

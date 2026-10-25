@@ -30,7 +30,8 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
-- Planned next: wizard stepper, detail panel, live pulse, preview.
+- Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards).
+- Planned next: detail panel, live pulse, preview.
 
 ## Develop
 

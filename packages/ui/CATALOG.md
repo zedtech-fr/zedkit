@@ -161,3 +161,16 @@ import { AppShell, PageHeader } from "@zedkit/ui";
   <PageHeader title="Items" description="All items." />
 </AppShell>
 ```
+
+## Guide a multi-step flow with selectable option cards
+
+- Import: `@zedkit/ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`
+- Wraps: none (native inputs + theme tokens)
+- Status: stable
+
+```ts
+import { OptionCards, WizardSteps } from "@zedkit/ui";
+const [picked, setPicked] = useState(["a", "b"]);
+<WizardSteps steps={["Pick", "Configure", "Test"]} current={0} />
+<OptionCards options={options} selected={picked} onChange={setPicked} />
+```
