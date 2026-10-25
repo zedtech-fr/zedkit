@@ -20,6 +20,7 @@
     "lib",
     "ui",
     "content/gallery.ts",
+    "content/home-scenarios.ts",
     "source.config.ts",
     "mdx-components.tsx",
     "next.config.mjs",

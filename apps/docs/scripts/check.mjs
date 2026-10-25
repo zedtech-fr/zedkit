@@ -13,7 +13,8 @@
 //      the At-a-glance guidance block (Who/What/Use when/Avoid when);
 //   8. the home gallery covers every UI need exactly once, with the
 //      manifest demo (or null);
-//   9. the gallery stats match the catalog counts.
+//   9. the gallery stats match the catalog counts;
+//  10. home scenarios resolve to catalog needs and current doc slugs.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -44,7 +45,7 @@ const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"
 const rich = manifest.rich ?? {};
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages, gallery, stats, uiPackage } = generate(tmp);
+const { pages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
 
 function mdxFiles(dir) {
   const out = [];
@@ -105,6 +106,26 @@ for (const need of uiNeeds) {
 const totalNeeds = Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0);
 if (stats.packages !== Object.keys(catalog.packages).length || stats.needs !== totalNeeds) {
   errors.push(`gallery: stale stats ${JSON.stringify(stats)}.`);
+}
+const uiPkgJson = JSON.parse(
+  readFileSync(join(ROOT, "packages", "ui", "package.json"), "utf8"),
+);
+const galleryFile = existsSync(join(APP, "content", "gallery.ts"))
+  ? readFileSync(join(APP, "content", "gallery.ts"), "utf8")
+  : "";
+if (galleryFile && !galleryFile.includes(`featuredPackageVersion: string = ${JSON.stringify(uiPkgJson.version)}`)) {
+  errors.push("content/gallery.ts: featuredPackageVersion does not match packages/ui/package.json.");
+}
+
+const scenariosPath = join(APP, "content", "home-scenarios.ts");
+if (!existsSync(scenariosPath)) {
+  errors.push("content/home-scenarios.ts missing (run pnpm docs:generate).");
+} else {
+  const onDisk = readFileSync(scenariosPath, "utf8");
+  const expected = JSON.stringify(homeScenarios, null, 2);
+  if (!onDisk.includes(expected)) {
+    errors.push("content/home-scenarios.ts is stale (run pnpm docs:generate).");
+  }
 }
 
 const headings = new Set(needs.map((n) => n.need));

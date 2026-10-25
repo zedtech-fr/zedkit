@@ -1,0 +1,38 @@
+[
+  {
+    "situation": "New admin UI in an existing app",
+    "goal": "Install the UI kit and turn on light/dark theme",
+    "action": "Follow the theme page: tokens, `.dark` class, no extra CSS framework",
+    "catalogNeed": "Theme an admin app (dark/light included)"
+  },
+  {
+    "situation": "Repo needs consistent agent instructions",
+    "goal": "Wire skills, subagents, and provider copies with validation",
+    "action": "Use the AI kit setup page, then run the validate command from the same package",
+    "catalogNeed": "Set up AI agent instructions, skills, subagents and commands in a repo"
+  },
+  {
+    "situation": "Create/edit form with validation",
+    "goal": "Labels, field errors, and pending submit without bespoke wiring",
+    "action": "Start from the Form need page (react-hook-form + zod via the kit)",
+    "catalogNeed": "Build validated forms with labels, errors, and pending state"
+  },
+  {
+    "situation": "List page with sort and pagination",
+    "goal": "Table with loading, empty, and error states built in",
+    "action": "Open the DataTable page and copy the column helper pattern",
+    "catalogNeed": "Show a sortable, filterable, paginated data table"
+  },
+  {
+    "situation": "Detail or short task beside a list",
+    "goal": "Slide-in panel without losing list context",
+    "action": "Use the Drawer page (vaul-based, focus-trapped)",
+    "catalogNeed": "Slide in a drawer panel"
+  },
+  {
+    "situation": "Primary actions on a screen",
+    "goal": "Variants and sizes that match the rest of the kit",
+    "action": "See Button on the live preview below and in its doc page",
+    "catalogNeed": "Trigger actions with buttons"
+  }
+]
