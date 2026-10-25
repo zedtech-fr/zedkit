@@ -137,7 +137,9 @@ function stripLineComments(code) {
 }
 
 // Exported symbol names from a barrel file with explicit named exports.
-function parseBarrelExports(text, indexPath, errors) {
+// Exported for reuse (apps/docs/scripts/check.mjs); the CLI runner below
+// is import-guarded so importing this module has no side effects.
+export function parseBarrelExports(text, indexPath, errors) {
   const code = stripLineComments(text.replace(/\/\*[\s\S]*?\*\//g, ""));
   if (/^\s*export\s*\*/m.test(code)) {
     errors.push(`${indexPath}: \`export *\` is not allowed; list named exports explicitly so the catalog check can verify them.`);
@@ -260,26 +262,29 @@ function check(packages, root, errors) {
   }
 }
 
-const { mode, root } = parseArgs(process.argv);
-const errors = [];
-const packages = collectPackages(root, errors);
-if (mode === "build") {
-  if (errors.length > 0) {
-    console.error(errors.join("\n"));
-    process.exitCode = 1;
-  } else {
-    const jsonPath = join(root, "docs", "catalog", "catalog.json");
-    mkdirSync(dirname(jsonPath), { recursive: true });
-    writeFileSync(jsonPath, renderCatalogJson(packages));
-    console.log(`catalog: wrote ${jsonPath} (${packages.length} packages).`);
+const invoked = process.argv[1] ? resolve(process.argv[1]) : null;
+if (invoked === fileURLToPath(import.meta.url)) {
+  const { mode, root } = parseArgs(process.argv);
+  const errors = [];
+  const packages = collectPackages(root, errors);
+  if (mode === "build") {
+    if (errors.length > 0) {
+      console.error(errors.join("\n"));
+      process.exitCode = 1;
+    } else {
+      const jsonPath = join(root, "docs", "catalog", "catalog.json");
+      mkdirSync(dirname(jsonPath), { recursive: true });
+      writeFileSync(jsonPath, renderCatalogJson(packages));
+      console.log(`catalog: wrote ${jsonPath} (${packages.length} packages).`);
+    }
   }
-}
-if (mode === "check") {
-  check(packages, root, errors);
-  if (errors.length > 0) {
-    console.error(errors.join("\n"));
-    process.exitCode = 1;
-  } else {
-    console.log(`catalog: ok (${packages.length} packages).`);
+  if (mode === "check") {
+    check(packages, root, errors);
+    if (errors.length > 0) {
+      console.error(errors.join("\n"));
+      process.exitCode = 1;
+    } else {
+      console.log(`catalog: ok (${packages.length} packages).`);
+    }
   }
 }

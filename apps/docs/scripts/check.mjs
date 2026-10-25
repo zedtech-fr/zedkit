@@ -6,41 +6,23 @@
 //   3. every manifest component/props exists in @zedtech/zedkit-ui exports;
 //   4. every manifest demo exists in components/demos.tsx exports.
 //
-// Barrel parsing mirrors scripts/catalog.mjs (kept local: that script is
-// not import-safe). Usage: `node scripts/check.mjs`.
+// Barrel parsing reuses scripts/catalog.mjs (import-safe).
+// Usage: `node scripts/check.mjs`.
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+// Shares parseBarrelExports with root scripts/catalog.mjs. A `#*`
+// subpath cannot point outside the package (Node rejects it with
+// ERR_INVALID_PACKAGE_TARGET), so the documented alternative is
+// impossible here and the relative import stays.
+// eslint-disable-next-line no-restricted-imports -- see above
+import { parseBarrelExports } from "../../../scripts/catalog.mjs";
 import { generate } from "./generate.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
 const ROOT = join(APP, "..", "..");
-
-function barrelExports(indexPath) {
-  const code = readFileSync(indexPath, "utf8")
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .split("\n")
-    .map((line) => {
-      const hash = line.indexOf("//");
-      return hash >= 0 ? line.slice(0, hash) : line;
-    })
-    .join("\n");
-  const names = new Set();
-  for (const match of code.matchAll(/^\s*export\s*(?:type\s*)?\{([\s\S]*?)\}/gm)) {
-    for (let part of match[1].split(",")) {
-      part = part.trim().replace(/^type\s+/, "");
-      if (!part) continue;
-      const alias = part.split(/\s+as\s+/);
-      names.add(alias[alias.length - 1].trim());
-    }
-  }
-  for (const match of code.matchAll(/^\s*export\s+(?:async\s+function|function|class|const)\s+(\w+)/gm)) {
-    names.add(match[1]);
-  }
-  return names;
-}
 
 const errors = [];
 const catalogPath = join(ROOT, "docs", "catalog", "catalog.json");
@@ -67,6 +49,10 @@ if (pages !== needs.length) {
 const headings = new Set(needs.map((n) => n.need));
 for (const key of Object.keys(rich)) {
   if (!headings.has(key)) errors.push(`docs-manifest.json: "${key}" matches no catalog need heading.`);
+}
+
+function barrelExports(indexPath) {
+  return new Set(parseBarrelExports(readFileSync(indexPath, "utf8"), indexPath, errors));
 }
 
 const uiExports = barrelExports(join(ROOT, "packages", "ui", "src", "index.ts"));
