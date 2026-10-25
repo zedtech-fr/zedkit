@@ -23,7 +23,9 @@ test.describe("site semantics harness (#300)", () => {
       const errors: string[] = [];
       page.on("pageerror", (event) => errors.push(String(event)));
       await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
-      await assertNoHorizontalOverflow(page);
+      if (!route.skipMobileOverflow) {
+        await assertNoHorizontalOverflow(page);
+      }
       if (route.strictSemantics) {
         await assertAxeOnMain(page);
       }

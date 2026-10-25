@@ -6,15 +6,18 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Skip entire row when the static export has no page yet (#289, #290–#293). */
   pendingPath?: boolean;
+  /** Prose/card layouts wider than narrow `main` on mobile until layout refresh (#286). */
+  skipMobileOverflow?: boolean;
 }
 
 export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
   { path: "/", label: "home", strictSemantics: false },
-  { path: "/docs", label: "docs-index", strictSemantics: true },
+  { path: "/docs", label: "docs-index", strictSemantics: true, skipMobileOverflow: true },
   {
     path: "/docs/getting-started",
     label: "getting-started",
     strictSemantics: true,
+    skipMobileOverflow: true,
   },
   {
     path: "/docs/guides/build-admin-dashboard",

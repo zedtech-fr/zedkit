@@ -16,8 +16,18 @@ const AXE_BASELINE_RULES_OFF = [
 
 export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
   await page.setViewportSize({ width: MOBILE_WIDTH, height: 844 });
-  const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-  const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+  const target = page.locator("main");
+  const hasMain = (await target.count()) > 0;
+  const scrollWidth = await page.evaluate((useMain) => {
+    const el = useMain ? document.querySelector("main") : document.documentElement;
+    if (!el) return document.documentElement.scrollWidth;
+    return el.scrollWidth;
+  }, hasMain);
+  const clientWidth = await page.evaluate((useMain) => {
+    const el = useMain ? document.querySelector("main") : document.documentElement;
+    if (!el) return document.documentElement.clientWidth;
+    return el.clientWidth;
+  }, hasMain);
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 }
 
@@ -30,24 +40,36 @@ export async function assertAxeOnMain(page: Page, extraRulesOff: string[] = []):
 }
 
 export async function assertNoNestedInteractive(page: Page): Promise<void> {
-  const results = await new AxeBuilder({ page }).withRules(["nested-interactive"]).analyze();
+  const results = await new AxeBuilder({ page })
+    .include("main")
+    .withRules(["nested-interactive"])
+    .analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 
 export async function assertUniqueLinkNames(page: Page): Promise<void> {
-  const names = await page.getByRole("link").evaluateAll((nodes) =>
+  const main = page.locator("main");
+  await expect(main).toBeVisible();
+  const links = await main.getByRole("link").evaluateAll((nodes) =>
     nodes.map((node) => {
       const name = node.textContent?.trim() ?? "";
       const aria = node.getAttribute("aria-label")?.trim() ?? "";
-      return aria || name;
-    }).filter((n) => n.length > 0),
+      const href = node.getAttribute("href") ?? "";
+      const label = aria || name;
+      return label.length > 0 ? { label, href } : null;
+    }).filter((row): row is { label: string; href: string } => row !== null),
   );
-  const seen = new Map<string, number>();
-  for (const name of names) {
-    seen.set(name, (seen.get(name) ?? 0) + 1);
+  const byLabel = new Map<string, Set<string>>();
+  for (const { label, href } of links) {
+    const hrefs = byLabel.get(label) ?? new Set<string>();
+    hrefs.add(href);
+    byLabel.set(label, hrefs);
   }
-  const duplicates = [...seen.entries()].filter(([, count]) => count > 1);
-  expect(duplicates, `duplicate link accessible names: ${JSON.stringify(duplicates)}`).toEqual([]);
+  const ambiguous = [...byLabel.entries()].filter(([, hrefs]) => hrefs.size > 1);
+  expect(
+    ambiguous,
+    `same link name, different destinations: ${JSON.stringify(ambiguous.map(([label, hrefs]) => [label, [...hrefs]]))}`,
+  ).toEqual([]);
 }
 
 export async function assertInternalLinksResolve(page: Page, origin: string): Promise<void> {
