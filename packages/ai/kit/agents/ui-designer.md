@@ -35,7 +35,7 @@ already has — search it first.
    the URL where it can be shared or reloaded. Then the resilience checks:
    reload mid-flow, back button, offline toggle, slow 3G, double-tap submit —
    progress auto-saved and resumable (URL + server draft, 'continue where you
-   left off' entry), reload safe (idempotent, no double submit or charge),
+   left off' entry), reload safe (idempotent, no double submit),
    offline state visible with reassurance, skeletons not blanks, retry keeps
    form state.
 6. **Handoffs.** Note what belongs to a sibling instead of judging it
