@@ -130,6 +130,11 @@ if (docsIndex) {
   assertMeta(docsIndex, "docs.html", `${base}/docs`);
 }
 
+const catalogPath = requireFile("catalog.html");
+if (catalogPath) {
+  assertMeta(catalogPath, "catalog.html", `${base}/catalog`);
+}
+
 const sampleDoc = firstDocHtml();
 if (!sampleDoc) {
   fail("docs export: no sample .html page under docs/");

@@ -62,8 +62,18 @@ const rich = manifest.rich ?? {};
 const registryBricks = new Set(loadRegistryBrickNames(ROOT));
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages, prosePages, guidePages, gallery, stats, uiPackage, homeScenarios, homeEntryPoints } =
-  generate(tmp);
+const {
+  pages,
+  prosePages,
+  guidePages,
+  gallery,
+  stats,
+  uiPackage,
+  homeScenarios,
+  homeEntryPoints,
+  catalogIndex,
+  homeCuratedGallery,
+} = generate(tmp);
 const livePageKeys = catalogPageKeys(catalog);
 
 function mdxFiles(dir) {
@@ -258,6 +268,18 @@ const galleryFile = existsSync(join(APP, "content", "gallery.ts"))
   : "";
 if (galleryFile && !galleryFile.includes(`featuredPackageVersion: string = ${JSON.stringify(uiPkgJson.version)}`)) {
   errors.push("content/gallery.ts: featuredPackageVersion does not match packages/ui/package.json.");
+}
+
+if (catalogIndex.length !== totalNeeds) {
+  errors.push(`catalog index holds ${catalogIndex.length} entries for ${totalNeeds} catalog needs.`);
+}
+if (homeCuratedGallery.length < 4 || homeCuratedGallery.length > 8) {
+  errors.push(`home-curated.json: expected 4–8 UI previews, got ${homeCuratedGallery.length}.`);
+}
+for (const card of homeCuratedGallery) {
+  if (!byNeed.has(card.need)) {
+    errors.push(`home-curated: "${card.need}" is not in the UI gallery.`);
+  }
 }
 
 const scenariosPath = join(APP, "content", "home-scenarios.ts");

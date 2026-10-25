@@ -1,0 +1,10 @@
+{
+  "catalogNeeds": [
+    "Trigger actions with buttons",
+    "Show a status or count badge",
+    "Collect text input with a label",
+    "Slide in a drawer panel",
+    "Confirm destructive actions",
+    "Theme an admin app (dark/light included)"
+  ]
+}
