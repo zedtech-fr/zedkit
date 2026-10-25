@@ -33,6 +33,7 @@ import { fileURLToPath } from "node:url";
 import { parseBarrelExports } from "../../../scripts/catalog.mjs";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
+import { SEO_DESCRIPTION_MAX } from "@zedtech/zedkit-seo";
 import {
   catalogPageKeys,
   expandGuideSnippets,
@@ -92,6 +93,9 @@ for (const file of mdxFiles(tmp)) {
   } else {
     if (legacyDescription.test(description)) {
       errors.push(`generator: ${rel} uses legacy package — status description.`);
+    }
+    if (description.length > SEO_DESCRIPTION_MAX) {
+      errors.push(`generator: ${rel} description exceeds ${SEO_DESCRIPTION_MAX} characters.`);
     }
     const prior = descriptionsSeen.get(description);
     if (prior) {

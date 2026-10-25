@@ -20,7 +20,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
-import { SEO_DESCRIPTION_MAX, truncateDescription } from "@zedtech/zedkit-seo";
+import { truncateDescription } from "@zedtech/zedkit-seo";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
