@@ -39,3 +39,6 @@ exists IS a blocker.
    pages: `Stack`/`Section`/`Heading`/`Text` from the kit, tokens only.
 5. A lint rule or test bans bulk imports in doc pages (it fails on the
    grab-bag it replaces, passes after).
+6. Gentle motion by default with reduced-motion respected: overlays and
+   state changes animate entry AND exit (~150-250ms, transform/opacity, no
+   shift). Example refusal: an overlay without transition.

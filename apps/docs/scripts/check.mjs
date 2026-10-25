@@ -8,7 +8,8 @@
 //      demo file exports the demo;
 //   5. pages stay thin: app/** imports no demo file directly (registry
 //      only) and uses no namespace imports;
-//   6. demos and frame use kit layout modules only (no raw <div>/<span>).
+//   6. demos and frame use kit layout modules only (no raw <div>/<span>);
+//   7. every page carries install tabs + a titled TSX example.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -40,6 +41,28 @@ const rich = manifest.rich ?? {};
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
 const { pages } = generate(tmp);
+
+function mdxFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...mdxFiles(path));
+    else if (entry.name.endsWith(".mdx") && entry.name !== "index.mdx") out.push(path);
+  }
+  return out;
+}
+
+// Every need page carries install tabs (memorized package-manager
+// choice) and a titled TSX example — never bare pill blocks.
+for (const file of mdxFiles(tmp)) {
+  const text = readFileSync(file, "utf8");
+  if (!text.includes('<Tabs groupId="package-manager"')) {
+    errors.push(`generator: ${file.slice(tmp.length + 1)} lacks install tabs.`);
+  }
+  if (!text.includes('```tsx title="Usage"')) {
+    errors.push(`generator: ${file.slice(tmp.length + 1)} lacks a titled TSX example.`);
+  }
+}
 rmSync(tmp, { recursive: true, force: true });
 
 const needs = [];

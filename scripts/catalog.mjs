@@ -20,7 +20,8 @@
 //   - Attribution: Original work by the same author. (optional, appended
 //     to the description; keep the origin note here, never a project path)
 //
-// CATALOG.md entry format (one `## <need>` section per need):
+// CATALOG.md entry format (one `## <need>` section per need; every
+// field is a single `- Name: value` line before the example):
 //
 //   ## Do X without Y
 //   - Import: `@zedtech/zedkit-core` — `a`, `b`
@@ -28,6 +29,13 @@
 //   - Status: beta (planned|alpha|beta|stable|deprecated; new entries
 //     start at alpha — see docs/catalog/README.md for the promotion
 //     criteria)
+//   - Short name: ShortName (compact display: sidebars, cards)
+//   - Audience: Who the need is for, in plain words.
+//   - Purpose: The problem it solves, in one sentence.
+//   - When to use: When to reach for it.
+//   - When not to use: When to avoid it (+ the alternative).
+//   - See also: `Other need`, `Another need` (optional; must name
+//     real catalog need headings)
 //   - Replaced by: `other-symbol` (required when Status is deprecated)
 //   - Derived from: `shadcn/ui` (+ optional item, e.g. `shadcn/ui
 //     (dialog)`); omit for kit-authored entries (absence means kit)
@@ -111,14 +119,28 @@ function parseCatalog(text, catalogPath, errors) {
       import: field("Import"),
       wraps: field("Wraps"),
       status: field("Status"),
+      shortName: field("Short name"),
+      audience: field("Audience"),
+      purpose: field("Purpose"),
+      whenToUse: field("When to use"),
+      whenNotToUse: field("When not to use"),
       derivedFrom,
       example: null,
     };
     const example = body.match(/```ts\n([\s\S]*?)```/);
     if (example) entry.example = example[1].trim();
-    for (const key of ["import", "wraps", "status", "example"]) {
+    for (const key of ["import", "wraps", "status", "shortName", "audience", "purpose", "whenToUse", "whenNotToUse", "example"]) {
       if (!entry[key]) {
         errors.push(`${catalogPath}: need "${need}" is missing ${key}.`);
+      }
+    }
+    const seeAlso = field("See also");
+    if (seeAlso !== null) {
+      const targets = [...seeAlso.matchAll(/`([^`]+)`/g)].map((m) => m[1].trim()).filter(Boolean);
+      if (targets.length === 0) {
+        errors.push(`${catalogPath}: need "${need}" has a See also line with no backticked need headings.`);
+      } else {
+        entry.seeAlso = targets;
       }
     }
     if (entry.status && !STATUSES.includes(entry.status)) {
@@ -343,6 +365,10 @@ function syncManifestFields(pkg) {
 }
 
 function check(packages, root, errors) {
+  const headings = new Set();
+  for (const pkg of packages) {
+    for (const need of pkg.needs) headings.add(need.need);
+  }
   for (const pkg of packages) {
     if (pkg.hasCode && !pkg.catalogText) {
       errors.push(`${pkg.name}: has src/index.ts but no CATALOG.md.`);
@@ -359,6 +385,15 @@ function check(packages, root, errors) {
     for (const subpath of pkg.subpaths) {
       if (!pkg.catalogText.includes(subpath)) {
         errors.push(`${pkg.catalogPath}: import path \`${subpath}\` is not mentioned.`);
+      }
+    }
+    for (const need of pkg.needs) {
+      for (const target of need.seeAlso ?? []) {
+        if (target === need.need) {
+          errors.push(`${pkg.catalogPath}: need "${need.need}" links to itself in See also.`);
+        } else if (!headings.has(target)) {
+          errors.push(`${pkg.catalogPath}: need "${need.need}" links unknown need "${target}" in See also.`);
+        }
       }
     }
   }
