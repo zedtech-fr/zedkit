@@ -30,18 +30,20 @@ import { WizardDemo } from "./wizard-demo";
 export interface DemoEntry {
   Demo: ComponentType;
   file: string;
+  /** Narrow widget demos center in the preview viewport; panels fill. */
+  center?: boolean;
 }
 
 export const demoRegistry = {
   AlertDemo: { Demo: AlertDemo, file: "alert-demo.tsx" },
   AppShellDemo: { Demo: AppShellDemo, file: "app-shell-demo.tsx" },
-  BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx" },
-  ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx" },
+  BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx", center: true },
+  ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx", center: true },
   CardDemo: { Demo: CardDemo, file: "card-demo.tsx" },
-  ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx" },
+  ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
-  DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx" },
+  DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
@@ -51,7 +53,7 @@ export const demoRegistry = {
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
   TabsDemo: { Demo: TabsDemo, file: "tabs-demo.tsx" },
   TextareaDemo: { Demo: TextareaDemo, file: "textarea-demo.tsx" },
-  ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx" },
+  ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx", center: true },
   TypographyDemo: { Demo: TypographyDemo, file: "typography-demo.tsx" },
   WizardDemo: { Demo: WizardDemo, file: "wizard-demo.tsx" },
 } as const satisfies Record<string, DemoEntry>;
