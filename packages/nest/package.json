@@ -1,5 +1,5 @@
 {
-  "name": "@zedkit/nest",
+  "name": "@zedtech/zedkit-nest",
   "version": "0.1.0",
   "description": "Generic NestJS bootstrap factory: platform, config, logging, validation, errors, throttling, docs, shutdown. Original work by the same author.",
   "license": "MIT",

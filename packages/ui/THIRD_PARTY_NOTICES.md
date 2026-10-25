@@ -1,4 +1,4 @@
-# Third-party notices — @zedkit/ui
+# Third-party notices — @zedtech/zedkit-ui
 
 ## shadcn/ui
 

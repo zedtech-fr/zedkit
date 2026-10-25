@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { z } from "zod";
-import { tryCatchAsync } from "@zedkit/core";
+import { tryCatchAsync } from "@zedtech/zedkit-core";
 
 import {
   Form,

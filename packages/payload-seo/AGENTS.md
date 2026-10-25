@@ -1,4 +1,4 @@
-# AGENTS.md — @zedkit/payload-seo
+# AGENTS.md — @zedtech/zedkit-payload-seo
 
 Payload field factory for the shared SEO leaf set. `payload` is a
 peer dependency (types only — the factory returns plain field
@@ -11,7 +11,7 @@ Rules:
 - Every public export gets a `## <need>` entry in CATALOG.md
   (format in `docs/catalog/README.md`), then run
   `pnpm catalog:build` from the root.
-- Keep the leaf set in sync with `@zedkit/seo`'s metadata inputs:
+- Keep the leaf set in sync with `@zedtech/zedkit-seo`'s metadata inputs:
   every stored value must have a consumer (meta title/description,
   keywords, canonical, OG tags, robots flags).
 - No custom admin UI here: editor guidance lives in `admin`

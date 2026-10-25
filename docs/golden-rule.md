@@ -11,7 +11,7 @@ importing the library directly all over the code.
 export { ulid as newPrefixedId } from "ulid";
 
 // consumer — imports the wrapper, never the library
-import { newPrefixedId } from "@zedkit/core";
+import { newPrefixedId } from "@zedtech/zedkit-core";
 const id = newPrefixedId("order");
 ```
 

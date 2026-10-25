@@ -1,13 +1,13 @@
-# Catalog — @zedkit/seo
+# Catalog — @zedtech/zedkit-seo
 
 ## Serve robots.txt content
 
-- Import: `@zedkit/seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`
+- Import: `@zedtech/zedkit-seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { buildRobots } from "@zedkit/seo";
+import { buildRobots } from "@zedtech/zedkit-seo";
 export function robots() {
   return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });
 }
@@ -15,59 +15,59 @@ export function robots() {
 
 ## List localized pages in a sitemap
 
-- Import: `@zedkit/seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`
+- Import: `@zedtech/zedkit-seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { buildSitemapEntries } from "@zedkit/seo";
+import { buildSitemapEntries } from "@zedtech/zedkit-seo";
 const pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));
 return buildSitemapEntries({ siteUrl, locales: ["en", "fr"], pages });
 ```
 
 ## Serve a Google video sitemap
 
-- Import: `@zedkit/seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`
+- Import: `@zedtech/zedkit-seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { buildVideoSitemap } from "@zedkit/seo";
+import { buildVideoSitemap } from "@zedtech/zedkit-seo";
 const xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });
 return new Response(xml, { headers: { "Content-Type": "application/xml" } });
 ```
 
 ## Emit typed JSON-LD structured data
 
-- Import: `@zedkit/seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`
+- Import: `@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`
 - Wraps: `schema-dts`
 - Status: beta
 
 ```ts
-import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@zedkit/seo";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd } from "@zedtech/zedkit-seo";
 const jsonLd = buildArticleJsonLd({ title, description, url, datePublished });
 <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
 ```
 
 ## Build localized page metadata
 
-- Import: `@zedkit/seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`
+- Import: `@zedtech/zedkit-seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { buildPageMetadata } from "@zedkit/seo";
+import { buildPageMetadata } from "@zedtech/zedkit-seo";
 return buildPageMetadata({ site, page, locale, pathname, ogImage });
 ```
 
 ## Serve llms.txt for AI agents
 
-- Import: `@zedkit/seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`
+- Import: `@zedtech/zedkit-seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { llmsTextResponse } from "@zedkit/seo";
+import { llmsTextResponse } from "@zedtech/zedkit-seo";
 export async function GET() {
   const settings = await loadSettings();
   return llmsTextResponse({ body: settings.llmsTxt ?? "" });
@@ -76,12 +76,12 @@ export async function GET() {
 
 ## Derive descriptions, slugs, and localized fields
 
-- Import: `@zedkit/seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`
+- Import: `@zedtech/zedkit-seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`
 - Wraps: `(none)`
 - Status: beta
 
 ```ts
-import { normalizeSlug, resolveDescription } from "@zedkit/seo";
+import { normalizeSlug, resolveDescription } from "@zedtech/zedkit-seo";
 const slug = normalizeSlug(title);
 const description = resolveDescription({ custom: seo.metaDescription, bodyText, title });
 ```

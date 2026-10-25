@@ -9,7 +9,7 @@
 // CATALOG.md entry format (one `## <need>` section per need):
 //
 //   ## Do X without Y
-//   - Import: `@zedkit/core` — `a`, `b`
+//   - Import: `@zedtech/zedkit-core` — `a`, `b`
 //   - Wraps: `some-npm-package` (or `(none)`)
 //   - Status: beta (planned|alpha|beta|stable|deprecated; new entries
 //     start at alpha — see docs/catalog/README.md for the promotion

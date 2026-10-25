@@ -69,7 +69,7 @@ export const uiPreset = [
         "error",
         {
           selector: "TryStatement",
-          message: "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedkit/core.",
+          message: "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
         },
         {
           selector: 'JSXAttribute[name.name="style"]',

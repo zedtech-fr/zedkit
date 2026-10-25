@@ -1,5 +1,5 @@
 {
-  "name": "@zedkit/payload-seo",
+  "name": "@zedtech/zedkit-payload-seo",
   "version": "0.1.0",
   "description": "Localized Payload SEO group field with length validation.",
   "license": "MIT",
