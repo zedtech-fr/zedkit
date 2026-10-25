@@ -33,7 +33,8 @@
     "plan-challenger",
     "verifier",
     "improver",
-    "security-reviewer"
+    "security-reviewer",
+    "skeptic"
   ],
   "commands": [
     "review",
