@@ -20,6 +20,6 @@ exists IS a blocker.
 | a11y | agent `a11y-auditor` | planned | `**/*.tsx`, components, forms, tables | when triggered | WCAG findings + fixes, file:line |
 | seo | agent `seo-auditor` | planned | `packages/seo/**`, pages, metadata, sitemap, redirects | when triggered | rule findings + fixes |
 | dependencies | agent `dependency-auditor` | planned | `package.json`, lockfiles, catalogs, `Dockerfile` | when triggered | need/size/license/maintenance/duplicates |
-| docs | agent `docs-writer` | planned | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills | when triggered | drift + fixes, compiling examples |
+| docs | agent `docs-writer` | planned | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills, agents, commands | when triggered | drift + fixes, compiling examples |
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status` | when triggered | semver + migration-note check |
 | research | skill `research` | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |
