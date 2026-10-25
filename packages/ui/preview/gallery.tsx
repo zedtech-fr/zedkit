@@ -38,6 +38,8 @@ import {
   Section,
   Stack,
   StatusDot,
+  StatusLabel,
+  UpdatedAgo,
   OptionCards,
   PageHeader,
   PageHeaderSkeleton,
@@ -146,6 +148,12 @@ export function Gallery() {
           <div className="max-w-sm space-y-2">
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <StatusLabel tone="loading">Saving report…</StatusLabel>
+            <StatusLabel tone="saved">Saved</StatusLabel>
+            <StatusLabel tone="error">Could not save</StatusLabel>
+            <UpdatedAgo date={Date.now() - 3 * 60_000} />
           </div>
           <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-name">Name</Label>

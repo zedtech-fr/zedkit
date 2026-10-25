@@ -660,6 +660,38 @@
           ]
         },
         {
+          "need": "Name an operation in progress",
+          "import": "`@zedtech/zedkit-ui` — `StatusLabel`, `StatusLabelProps`, `StatusLabelTone`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "StatusLabel",
+          "audience": "Developers naming a background or foreground operation for the user.",
+          "purpose": "A named live-region label for the current operation state (loading, saved, error…).",
+          "whenToUse": "Next to the content an operation affects, while it runs or right after.",
+          "whenNotToUse": "For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.",
+          "derivedFrom": null,
+          "example": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status",
+          "seeAlso": [
+            "Stamp data with its age"
+          ]
+        },
+        {
+          "need": "Stamp data with its age",
+          "import": "`@zedtech/zedkit-ui` — `UpdatedAgo`, `UpdatedAgoProps`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "UpdatedAgo",
+          "audience": "Developers stamping cached or polled data with its freshness.",
+          "purpose": "A relative \"Updated N minutes ago\" stamp via `Intl.RelativeTimeFormat`, no date library.",
+          "whenToUse": "Under data that refreshes (polling, SWR, manual refetch).",
+          "whenNotToUse": "For absolute timestamps — render a `<time dateTime>` instead.",
+          "derivedFrom": null,
+          "example": "import { UpdatedAgo } from \"@zedtech/zedkit-ui\";\n<UpdatedAgo date={updatedAt} /> // \"Updated 3 minutes ago\" via Intl.RelativeTimeFormat",
+          "seeAlso": [
+            "Name an operation in progress"
+          ]
+        },
+        {
           "need": "Open modal dialogs",
           "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
