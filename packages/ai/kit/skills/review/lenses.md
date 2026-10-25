@@ -23,3 +23,5 @@ exists IS a blocker.
 | docs | agent `docs-writer` | planned | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills, agents, commands | when triggered | drift + fixes, compiling examples |
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status` | when triggered | semver + migration-note check |
 | research | skill `research` | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |
+| frontend-quality | agents `ui-designer` + `console-architecture` | planned | app routes, views, `**/*.tsx`, styles, preview/gallery | when triggered | layer + composition + one-file-one-job findings, file:line |
+| doc-demos | agent `docs-writer` (demos: `ui-designer`) | planned | doc apps, `**/demos/**`, preview registries, generated pages | when triggered | registry + frame + drift findings, file:line |

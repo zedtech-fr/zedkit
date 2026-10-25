@@ -44,3 +44,12 @@ missing mandatory lens is visible at a glance:
 | code | yes | <top finding or "clean"> |
 | ui | skipped, no UI paths | — |
 ```
+
+## 5. Turn the miss into a rule
+
+Every miss becomes a rule, so it never returns. For each finding ask what
+automatic rule would have caught it: a lint rule, a test, or an AGENTS.md
+line, in that order — prefer what runs by itself. Propose the smallest such
+rule with each fix; file it or add it in the same change when it is trivial.
+A fix without its rule is incomplete until the rule exists or is filed as an
+issue.
