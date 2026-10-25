@@ -12,6 +12,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: bash scripts/check-no-artifacts.sh
       - run: bash scripts/check-no-private-refs.sh
+      - run: bash scripts/check-breaking-changeset.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   checks:
     runs-on: ubuntu-latest

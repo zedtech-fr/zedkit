@@ -20,3 +20,19 @@ Rules:
   `THIRD_PARTY_NOTICES.md`.
 - Adding a helper? Read [docs/contributing.md](docs/contributing.md)
   first: generic only, one domain, tests, catalog entry, thin wrappers.
+
+## Versioning (0.x, published)
+
+Breaking changes are allowed but never silent:
+
+1. Ship them as a `minor` changeset with a one-line migration note
+   (`OldThing -> NewThing`).
+2. Never remove outright: first mark the export `deprecated` in its
+   package catalog status (name the replacement).
+3. Consumers pin `~0.x.y` and bump deliberately; the catalog `Status`
+   field is the promise — `alpha`/`beta` may change freely, `stable`
+   follows semver strictly.
+
+Label such PRs `breaking`: CI fails the PR unless it carries a
+minor-or-major changeset with a migration note
+(`scripts/check-breaking-changeset.sh`).
