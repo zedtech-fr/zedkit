@@ -1,9 +1,24 @@
 # zedkit
 
 [![ci](https://github.com/zedtech-fr/zedkit/actions/workflows/ci.yml/badge.svg)](https://github.com/zedtech-fr/zedkit/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![docs](https://img.shields.io/badge/docs-zedkit.app-blue.svg)](https://zedkit.app)
 
 Open-source building blocks for modern apps: small, dependency-light TypeScript
 packages. MIT licensed; see [LICENSE](LICENSE).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/ui-proof/readme-gallery-dark.png">
+  <img alt="zedkit UI gallery: buttons, badges, status labels, inputs and typography" src="docs/ui-proof/readme-gallery-light.png">
+</picture>
+
+```sh
+pnpm add @zedtech/zedkit-ui          # admin UI components (React + Tailwind v4)
+pnpm add -D @zedtech/zedkit-ai       # one agent setup for Cursor, Claude, Codex…
+```
+
+Docs with live examples: [zedkit.app](https://zedkit.app). Full catalog by need
+below; five-minute start in [5-minute quickstart](#5-minute-quickstart).
 
 ## Packages
 
