@@ -23,3 +23,17 @@ exists IS a blocker.
 | docs | agent `docs-writer` | planned | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills, agents, commands | when triggered | drift + fixes, compiling examples |
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status` | when triggered | semver + migration-note check |
 | research | skill `research` | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |
+
+## Frontend rules (the `ui` lens fails the review on any of these)
+
+1. One demo = one file (`demos/<name>.tsx` or colocated with its doc).
+   No grab-bag module importing dozens of components.
+2. Demos render inside one shared frame (title, description,
+   light/dark preview, shown source, props link), consumed by the doc
+   through a demo registry (key -> demo), never by direct page imports.
+3. Doc pages stay thin: load content + doc layout only. No direct
+   imports of dozens of components.
+4. Zero raw structural HTML and zero ad-hoc styles in demos and doc
+   pages: `Stack`/`Section`/`Heading`/`Text` from the kit, tokens only.
+5. A lint rule or test bans bulk imports in doc pages (it fails on the
+   grab-bag it replaces, passes after).
