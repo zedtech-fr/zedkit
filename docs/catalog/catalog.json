@@ -128,6 +128,41 @@
           "wraps": "`clsx`, `tailwind-merge`",
           "status": "stable",
           "example": "import { cn } from \"@zedkit/ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
+        },
+        {
+          "need": "Trigger actions with buttons",
+          "import": "`@zedkit/ui` — `Button`, `buttonVariants`, `ButtonProps`",
+          "wraps": "`@radix-ui/react-slot`, `class-variance-authority`",
+          "status": "stable",
+          "example": "import { Button } from \"@zedkit/ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>"
+        },
+        {
+          "need": "Show a status or count badge",
+          "import": "`@zedkit/ui` — `Badge`, `badgeVariants`, `BadgeProps`",
+          "wraps": "`class-variance-authority`",
+          "status": "stable",
+          "example": "import { Badge } from \"@zedkit/ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>"
+        },
+        {
+          "need": "Collect text input with a label",
+          "import": "`@zedkit/ui` — `Input`, `Label`",
+          "wraps": "`@radix-ui/react-label`",
+          "status": "stable",
+          "example": "import { Input, Label } from \"@zedkit/ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
+        },
+        {
+          "need": "Separate content horizontally or vertically",
+          "import": "`@zedkit/ui` — `Separator`",
+          "wraps": "`@radix-ui/react-separator`",
+          "status": "stable",
+          "example": "import { Separator } from \"@zedkit/ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+        },
+        {
+          "need": "Show loading placeholder blocks",
+          "import": "`@zedkit/ui` — `Skeleton`",
+          "wraps": "`(none)`",
+          "status": "stable",
+          "example": "import { Skeleton } from \"@zedkit/ui\";\n<Skeleton className=\"h-4 w-24\" />"
         }
       ]
     }

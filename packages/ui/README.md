@@ -22,10 +22,12 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 
 ## Contents
 
-- `styles.css`: tokens + dark/light theme preset (this slice).
-- `cn()`: classnames merge (this slice).
-- Planned next: button, badge, input, dialog, toast, data table,
-  app shell, wizard stepper — one slice each.
+- `styles.css`: tokens + dark/light theme preset.
+- `cn()`: classnames merge.
+- Primitives: `Button`, `Badge`, `Input`, `Label`, `Separator`,
+  `Skeleton` (see CATALOG.md for usage).
+- Planned next: dialog, toast, data table, app shell, wizard
+  stepper — one slice each.
 
 ## Develop
 
