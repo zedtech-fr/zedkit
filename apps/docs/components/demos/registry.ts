@@ -8,7 +8,9 @@ import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
+import { DrawerDemo } from "./drawer-demo";
 import { FieldDemo } from "./field-demo";
+import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
 import { SecretFieldDemo } from "./secret-field-demo";
 import { SelectDemo } from "./select-demo";
@@ -44,8 +46,10 @@ export const demoRegistry = {
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
+  DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
+  RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
   SelectDemo: { Demo: SelectDemo, file: "select-demo.tsx" },
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },
