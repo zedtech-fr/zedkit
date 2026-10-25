@@ -25,7 +25,6 @@ export function HomeInstallCommands({
             value={`pnpm add ${npmPackage}`}
             aria-label="pnpm install command"
             copyLabel="Copy pnpm command"
-            className="max-w-full min-w-0"
           />
         </Tab>
         <Tab value="shadcn">
@@ -33,7 +32,6 @@ export function HomeInstallCommands({
             value={shadcnAdd}
             aria-label="shadcn add command"
             copyLabel="Copy shadcn command"
-            className="max-w-full min-w-0"
           />
         </Tab>
       </Tabs>
