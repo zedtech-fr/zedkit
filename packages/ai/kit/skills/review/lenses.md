@@ -19,7 +19,7 @@ exists IS a blocker.
 | copy | agent `copywriter` | exists | user-visible strings, messages, errors, CTAs | when triggered | keys + FR/EN proposals |
 | a11y | agent `a11y-auditor` | exists | `**/*.tsx`, components, forms, tables | when triggered | WCAG findings + fixes, file:line |
 | seo | agent `seo-auditor` | exists | `packages/seo/**`, pages, metadata, sitemap, redirects | when triggered | rule findings + fixes |
-| dependencies | agent `dependency-auditor` | planned | `package.json`, lockfiles, catalogs, `Dockerfile` | when triggered | need/size/license/maintenance/duplicates |
+| dependencies | agent `dependency-auditor` | exists | `package.json`, lockfiles, catalogs, `Dockerfile` | when triggered | need/size/license/maintenance/duplicates |
 | docs | agent `docs-writer` | planned | `README.md`, `AGENTS.md`, `CATALOG.md`, `docs/**`, skills, agents, commands | when triggered | drift + fixes, compiling examples |
 | release | agent `release-manager` | planned | `.changeset/**`, public API, catalog `Status`, `package.json` metadata | when triggered | semver + migration-note + package-metadata (keywords/homepage/bugs/README) check |
 | research | skill `research` | exists | new capability with no in-repo precedent | optional | adopt/wrap/build + sources |

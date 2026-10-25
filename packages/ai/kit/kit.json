@@ -38,7 +38,8 @@
     "ui-designer",
     "copywriter",
     "seo-auditor",
-    "a11y-auditor"
+    "a11y-auditor",
+    "dependency-auditor"
   ],
   "commands": [
     "review",
