@@ -67,7 +67,7 @@ only). Workspace-only imports are not a UI copy-paste blocker.
 | Relative `./foo.js` | every UI file | Broken unless rewritten in the payload. |
 | Extra tokens `success`, `warning`, `overlay` | `styles.css`; `StatusDot`, `Checkmark`, `Drawer`, `Dialog` | Missing utilities unless a theme item or `cssVars` ships them. Spike Drawer declared `overlay`; CLI wrote `--overlay: hsl(0 0% 0%)` and `bg-overlay` appeared in the built CSS. `success` / `warning` were absent. |
 | Token format | kit: HSL channels + `@theme inline { --color-*: hsl(var(--*)) }`; shadcn v4: oklch on `:root` + `--color-*: var(--*)` | Mixed CSS. Prefer oklch (or full `hsl(...)`) in `cssVars` so the CLI output matches v4. |
-| `zk-check-draw` keyframe | `styles.css`, used by `Checkmark` | Animation missing unless the item’s `css` field ships the keyframe. `motion-safe:animate-ping` on `StatusDot` is stock Tailwind. Vaul injects its own CSS on import. |
+| Kit motion CSS | `styles.css`: `--motion-*`, `zk-check-draw`, `zk-fade-in`/`out`, `zk-zoom-in`/`out`, vaul duration + reduced-motion override | `Checkmark` and `Dialog` classes reference those keyframes; a copied `Drawer` keeps vaul’s 500ms slide and loses the reduced-motion guard unless the `theme` item ships this CSS. `motion-safe:animate-ping` on `StatusDot` is stock Tailwind. |
 | Hard-coded English | `DataTable` (Page/Previous/Next), `LivePulse` (`Live`/`Idle`), `SecretField` (`Copy to clipboard`), `ConfirmDialog` defaults | Copied files are English-only. `FormSubmit` already takes labels from the caller. |
 | Composed files | `SecretField` → Button+Input; `ConfirmDialog` → Button+Dialog; `DataTable` → Button+Input+Skeleton+Table; `LivePulse` → StatusDot; `Field` → Label+Separator | Each needs `registryDependencies` on **kit** addresses, not bare shadcn names (kit Button is Radix `Slot`, not Base UI). |
 | Base UI vs Radix | shadcn `init -d` vs kit | Two button implementations can coexist. Document it; do not silently depend on the official `button` for kit compositions. |
@@ -107,8 +107,9 @@ npx shadcn@latest registry add @zedkit=https://<docs-host>/r/{name}.json
 npx shadcn@latest add @zedkit/badge
 ```
 
-Ship a `theme` item (type `registry:theme`) with `success`, `warning`, `overlay`
-(and the Checkmark keyframe) so composed items do not each repeat tokens.
+Ship a `theme` item (type `registry:theme`) with `success`, `warning`, `overlay`,
+the motion tokens/keyframes, and the vaul reduced-motion override so composed
+items do not each repeat CSS.
 
 ### 2. Docs site: `/r/<name>.json`
 
@@ -178,8 +179,9 @@ The npm CLI stays for `validate` and provider wiring. Copy mode is files only.
    the ignore list grows.
 5. **Fresh-app CI is slow and networked.** Worth it for two items; do not run
    create-next-app per component.
-6. **i18n and Checkmark motion** are kit bugs/limits, not registry features.
-   Track them on UI PRs; the theme item only carries tokens + the one keyframe.
+6. **i18n** is a kit limit, not a registry feature. Track it on UI PRs. The
+   `theme` item carries extra color tokens, motion tokens/keyframes, and the
+   vaul reduced-motion override.
 7. **#159 (quality package)** is the opposite move (versioned npm, no copies).
    Do not fold quality/eslint into this registry.
 
