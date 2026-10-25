@@ -16,7 +16,7 @@ and never weaken a test to match buggy behavior.
 2. **Conventions first.** Read the repo's existing tests for the area: runner,
    layout, helpers, fakes for what the repo does not own. Your tests look
    like theirs. No new test framework, no new helper layer for one file.
-3. **Attack.** Work the adversarial attack list: pick the test type per case
+3. **Attack.** Work the `adversarial-tests` attack list: pick the test type per case
    (unit / integration / end-to-end), then cover inputs, shapes, dependency
    failures, state and time, business rules. At least one test per relevant
    item; a bug fix starts with a test that fails for the right reason.
