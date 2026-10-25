@@ -1,7 +1,8 @@
 # Route modals (Next.js parallel + intercepting routes)
 
-Verified against `@zedtech/zedkit-ui` 0.3.0 and Next from the docs
-workspace catalog at writing time.
+Verified against `@zedtech/zedkit-ui` 0.4.0 and Next from the docs
+workspace catalog at writing time. The same recipe is merged into the
+RouteModal catalog page on the docs site (`apps/docs/prose/ui/render-a-route-as-a-modal-over-the-list.mdx`).
 
 Open a list detail in an overlay without leaving the list: the URL
 stays shareable (direct access renders the full page), closing
