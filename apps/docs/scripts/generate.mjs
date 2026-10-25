@@ -167,25 +167,34 @@ export function generate(outDir) {
   const publicDir = join(APP, "public");
   mkdirSync(publicDir, { recursive: true });
   writeFileSync(join(publicDir, "llms.txt"), `${llms.join("\n")}\n`);
-  // Landing grid data: slug + status + demo per rich need (single source).
-  const richCards = [];
-  for (const [pkg, entry] of Object.entries(catalog.packages)) {
-    for (const need of entry.needs) {
+  // Gallery data: one card per UI need (live demo first, then the rest),
+  // catalog stats, and the featured install package — single source.
+  const uiPackage = Object.keys(catalog.packages).find((pkg) => shortName(pkg) === "ui") ?? null;
+  const live = [];
+  const rest = [];
+  if (uiPackage) {
+    for (const need of catalog.packages[uiPackage].needs) {
       const spec = rich[need.need];
-      const placed = slugsByNeed.get(`${pkg} ${need.need}`);
-      if (spec && placed) {
-        richCards.push({
-          href: `/docs/${placed.folder}/${placed.slug}`,
-          title: spec.component,
-          status: need.status,
-          demo: spec.demo,
-        });
-      }
+      const placed = slugsByNeed.get(`${uiPackage} ${need.need}`);
+      if (!placed) continue;
+      const card = {
+        href: `/docs/${placed.folder}/${placed.slug}`,
+        title: need.need,
+        status: need.status,
+        detail: need.import.replace(/`/g, ""),
+        demo: spec ? spec.demo : null,
+      };
+      (spec ? live : rest).push(card);
     }
   }
-  const cardsModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface RichCardData {\n  href: string;\n  title: string;\n  status: string;\n  demo: string;\n}\n\nexport const richCards: RichCardData[] = ${JSON.stringify(richCards, null, 2)};\n`;
-  writeFileSync(join(outDir, "..", "rich-cards.ts"), cardsModule);
-  return { pages, folders };
+  const gallery = [...live, ...rest];
+  const stats = {
+    packages: Object.keys(catalog.packages).length,
+    needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
+  };
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n`;
+  writeFileSync(join(outDir, "..", "gallery.ts"), galleryModule);
+  return { pages, folders, gallery, stats, uiPackage };
 }
 
 const invoked = process.argv[1] ? resolve(process.argv[1]) : null;

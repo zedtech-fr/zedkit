@@ -1,58 +1,87 @@
 import Link from "next/link";
-import { Badge, Button, Heading, LivePulse, Stack, Text } from "@zedtech/zedkit-ui";
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import { Badge, Button, Heading, LivePulse, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { demoRegistry, type DemoKey } from "../components/demos/registry";
-import { richCards } from "@/content/rich-cards";
+import { catalogStats, featuredPackage, gallery, type GalleryCard } from "@/content/gallery";
 
-interface RichCard {
-  href: string;
-  title: string;
-  status: string;
-  demo: DemoKey;
+function isDemoKey(value: string | null): value is DemoKey {
+  return value !== null && value in demoRegistry;
 }
 
-function RichCard({ href, title, status, demo }: RichCard) {
-  const entry = demoRegistry[demo];
+function GalleryEntry({ card }: { card: GalleryCard }) {
+  const entry = isDemoKey(card.demo) ? demoRegistry[card.demo] : null;
   return (
     <Stack gap={3} className="rounded-lg border border-border bg-card p-4">
       <Stack direction="horizontal" gap={2} className="justify-between">
-        <Link href={href}>
-          <strong>{title}</strong>
+        <Link href={card.href}>
+          <Text as="span" className="font-semibold">
+            {card.title}
+          </Text>
         </Link>
-        <Badge>{status}</Badge>
+        <Badge>{card.status}</Badge>
       </Stack>
-      {entry ? <entry.Demo /> : null}
+      {entry ? <entry.Demo /> : <Text variant="muted">{card.detail}</Text>}
     </Stack>
   );
 }
 
 export default function Home() {
-  const cards = richCards as RichCard[];
-  const buttonHref = cards.find((card) => card.title === "Button")?.href ?? "/docs";
+  const install = {
+    pnpm: `pnpm add ${featuredPackage}`,
+    npm: `npm install ${featuredPackage}`,
+    yarn: `yarn add ${featuredPackage}`,
+  };
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-10 px-6 py-16">
-      <section className="flex flex-col items-start gap-4">
+    <Stack gap={8} className="mx-auto w-full max-w-4xl px-6 py-16">
+      <Stack gap={4} className="items-start">
         <Stack direction="horizontal" gap={3}>
           <Heading level={1}>zedkit</Heading>
           <LivePulse />
         </Stack>
         <Text className="text-lg">
-          Open-source building blocks for modern apps. Every page below is generated from the kit
-          catalog — badges, install commands, and examples cannot drift.
+          Open-source building blocks for modern apps. {catalogStats.needs} needs across{" "}
+          {catalogStats.packages} packages — every page below is generated from the kit catalog,
+          so badges, install commands, and examples cannot drift.
+        </Text>
+        <Tabs items={["pnpm", "npm", "yarn"]} className="w-full">
+          <Tab value="pnpm">
+            <Stack className="rounded-lg bg-muted p-3">
+              <Text className="font-mono text-sm">{install.pnpm}</Text>
+            </Stack>
+          </Tab>
+          <Tab value="npm">
+            <Stack className="rounded-lg bg-muted p-3">
+              <Text className="font-mono text-sm">{install.npm}</Text>
+            </Stack>
+          </Tab>
+          <Tab value="yarn">
+            <Stack className="rounded-lg bg-muted p-3">
+              <Text className="font-mono text-sm">{install.yarn}</Text>
+            </Stack>
+          </Tab>
+        </Tabs>
+        <Text variant="muted">
+          Start with the UI kit — every doc page shows its own install command.
         </Text>
         <Stack direction="horizontal" gap={2}>
           <Link href="/docs">
             <Button>Browse the docs</Button>
           </Link>
-          <Link href={buttonHref}>
-            <Button variant="outline">Live Button demo</Button>
+          <Link href="#components">
+            <Button variant="outline">Browse components</Button>
           </Link>
         </Stack>
-      </section>
-      <section className="grid gap-4 md:grid-cols-3">
-        {cards.map((card) => (
-          <RichCard key={card.href} href={card.href} title={card.title} status={card.status} demo={card.demo} />
-        ))}
-      </section>
-    </main>
+      </Stack>
+      <Section title="Components" id="components">
+        {/* grid via className: Stack supplies the element, grid the layout.
+            No base grid-cols-*: our utilities emit after Fumadocs' prebuilt
+            md: rules, so a base template would override md:grid-cols-3. */}
+        <Stack className="grid gap-4 md:grid-cols-3">
+          {gallery.map((card) => (
+            <GalleryEntry key={card.href} card={card} />
+          ))}
+        </Stack>
+      </Section>
+    </Stack>
   );
 }

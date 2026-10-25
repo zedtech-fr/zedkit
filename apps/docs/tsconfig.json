@@ -14,5 +14,5 @@
     "plugins": [{ "name": "next" }],
     "paths": { "#*": ["./app/*"], "@/*": ["./*"] }
   },
-  "include": ["app", "components", "content/rich-cards.ts", "source.config.ts", "mdx-components.tsx", "next.config.mjs", "postcss.config.mjs"]
+  "include": ["app", "components", "content/gallery.ts", "source.config.ts", "mdx-components.tsx", "next.config.mjs", "postcss.config.mjs"]
 }
