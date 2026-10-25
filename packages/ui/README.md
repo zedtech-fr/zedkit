@@ -39,6 +39,11 @@ React + Tailwind v4 and want tokens, theme, and states
 (empty/loading/error) handled once. For non-UI helpers see the other
 kit packages.
 
+## Guides
+
+- [Route modals](../../docs/route-modals.md): drawer vs dialog vs page,
+  Next.js parallel and intercepting routes, `RouteModal` and `closeRoute`.
+
 ## Contents
 
 - `styles.css`: tokens + dark/light theme preset.

@@ -52,6 +52,20 @@
       "source": "confirm-dialog.tsx",
       "demo": "ConfirmDialogDemo"
     },
+    "Slide in a drawer panel": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Drawer",
+      "props": null,
+      "source": "drawer.tsx",
+      "demo": "DrawerDemo"
+    },
+    "Render a route as a modal over the list": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "RouteModal",
+      "props": "RouteModalProps",
+      "source": "route-modal.tsx",
+      "demo": "RouteModalDemo"
+    },
     "Display a shown-once secret with copy": {
       "package": "@zedtech/zedkit-ui",
       "component": "SecretField",
