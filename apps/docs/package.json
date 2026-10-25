@@ -29,9 +29,11 @@
     "next": "catalog:",
     "next-themes": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "yaml": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",
