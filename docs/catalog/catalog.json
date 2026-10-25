@@ -703,10 +703,14 @@
             {
               "title": "In a table row",
               "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<tr>\n  <td>sync</td>\n  <td><Badge variant=\"secondary\">queued</Badge></td>\n</tr>"
+            },
+            {
+              "title": "As a link (asChild)",
+              "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge asChild variant=\"secondary\">\n  <a href=\"/status\">all systems go</a>\n</Badge>"
             }
           ],
           "registry": "badge",
-          "a11y": "Renders a `div` (not a live region). Keep labels short; do not put interactive controls inside. Focus ring appears when the badge is focusable via `tabIndex={0}`.",
+          "a11y": "Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short.",
           "troubleshooting": "Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.",
           "seeAlso": [
             "Indicate status with a dot"

@@ -6,14 +6,30 @@
     {
       "name": "badge",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority"],
+      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
       "registryDependencies": ["utils"],
       "files": [
         {
           "path": "registry/generated/ui/badge.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "cssVars": {
+        "theme": {
+          "ring-width": "2px",
+          "ring-offset-width": "2px",
+          "spacing-badge-inline": "0.625rem",
+          "spacing-badge-block": "0.125rem"
+        }
+      },
+      "css": {
+        "@utility focus-ring": {
+          "&:focus-visible": {
+            "outline": "none",
+            "box-shadow": "0 0 0 var(--ring-offset-width) hsl(var(--background)), 0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring))"
+          }
+        }
+      }
     },
     {
       "name": "drawer",

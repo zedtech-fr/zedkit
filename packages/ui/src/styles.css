@@ -38,6 +38,8 @@
   --sidebar-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
   --sidebar-accent: 240 4.8% 95.9%;
+  --ring-width: 2px;
+  --ring-offset-width: 2px;
 }
 
 .dark {
@@ -103,6 +105,8 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --spacing-badge-inline: 0.625rem;
+  --spacing-badge-block: 0.125rem;
 }
 
 @layer base {
@@ -122,6 +126,19 @@
  * Checkmark state icon. The path carries the animation only under
  * `motion-safe:`, so reduced motion shows the static full check.
  */
+/*
+ * Shared focus ring for controls that need a visible keyboard focus
+ * (badge links, tabs, etc.). Width and offset come from theme tokens.
+ */
+@utility focus-ring {
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 var(--ring-offset-width) hsl(var(--background)),
+      0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring));
+  }
+}
+
 @keyframes zk-check-draw {
   from {
     stroke-dashoffset: 8;
