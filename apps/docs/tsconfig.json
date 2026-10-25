@@ -20,6 +20,7 @@
     "lib",
     "ui",
     "content/gallery.ts",
+    "content/catalog-index.ts",
     "content/home-scenarios.ts",
     "source.config.ts",
     "mdx-components.tsx",

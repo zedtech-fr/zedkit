@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Badge, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { demoRegistry, type DemoKey } from "@/components/demos/registry";
 import type { GalleryCard } from "@/content/gallery";
 import type { HomeScenario } from "@/content/home-scenarios";
@@ -31,7 +31,8 @@ function GalleryEntry({ card }: { card: GalleryCard }) {
 }
 
 export function HomeView({
-  gallery,
+  curatedGallery,
+  galleryCount,
   stats,
   featuredPackage,
   version,
@@ -41,7 +42,8 @@ export function HomeView({
   entryPoints,
   themeHref,
 }: {
-  gallery: GalleryCard[];
+  curatedGallery: GalleryCard[];
+  galleryCount: number;
   stats: { packages: number; needs: number };
   featuredPackage: string;
   version: string;
@@ -66,13 +68,17 @@ export function HomeView({
       <Section title="Components" id="components">
         <Stack gap={4}>
           <Text variant="muted">
-            Full UI catalog — same cards as the generator; maturity badge on every entry.
+            Curated UI previews ({curatedGallery.length} of {galleryCount} components). Open the catalog to filter
+            every need across UI, backend, SEO, and agents.
           </Text>
           <Stack className="grid gap-4 md:grid-cols-3">
-            {gallery.map((card) => (
+            {curatedGallery.map((card) => (
               <GalleryEntry key={card.href} card={card} />
             ))}
           </Stack>
+          <Button asChild variant="outline">
+            <Link href="/catalog">Browse full catalog</Link>
+          </Button>
         </Stack>
       </Section>
     </Stack>

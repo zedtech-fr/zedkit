@@ -348,6 +348,8 @@ export function generate(outDir) {
     (spec ? live : rest).push(card);
   }
   const gallery = [...live, ...rest];
+  const homeCuratedGallery = buildHomeCuratedGallery(gallery);
+  const catalogIndex = buildCatalogIndex(sorted, slugsByNeed, rich);
   const stats = {
     packages: Object.keys(catalog.packages).length,
     needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
@@ -355,10 +357,11 @@ export function generate(outDir) {
   const uiVersion = packageVersion("ui");
   const uiChangelogUrl =
     "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
-  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const homeCuratedGallery: GalleryCard[] = ${JSON.stringify(homeCuratedGallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
     components: gallery.length,
     livePreviews: gallery.filter((card) => card.demo).length,
   })};\n`;
+  const catalogIndexModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport type CatalogArea = "ui" | "backend" | "seo" | "agents";\n\nexport interface CatalogIndexEntry {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  area: CatalogArea;\n  package: string;\n}\n\nexport const catalogIndex: CatalogIndexEntry[] = ${JSON.stringify(catalogIndex, null, 2)};\n`;
   const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
   const homeEntryPoints = buildHomeEntryPoints(catalog, slugsByNeed);
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n  linkLabel: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
@@ -379,7 +382,68 @@ export function generate(outDir) {
     homeEntryPoints,
     entryPointsModule,
     registrySiteModule,
+    catalogIndex,
+    catalogIndexModule,
+    homeCuratedGallery,
   };
+}
+
+const CATALOG_AREA_BY_FOLDER = {
+  ui: "ui",
+  ai: "agents",
+  seo: "seo",
+  "payload-seo": "seo",
+  core: "backend",
+  server: "backend",
+  nest: "backend",
+};
+
+function catalogAreaForFolder(folder) {
+  const area = CATALOG_AREA_BY_FOLDER[folder];
+  if (!area) throw new Error(`catalog index: unmapped docs folder "${folder}"`);
+  return area;
+}
+
+function buildCatalogIndex(sorted, slugsByNeed, rich) {
+  const entries = [];
+  for (const [pkg, entry] of sorted) {
+    const folder = shortName(pkg);
+    const area = catalogAreaForFolder(folder);
+    for (const need of entry.needs) {
+      const placed = slugsByNeed.get(`${pkg} ${need.need}`);
+      if (!placed) continue;
+      const spec = rich[need.need];
+      entries.push({
+        href: `/docs/${placed.folder}/${placed.slug}`,
+        title: cardTitle(need, spec),
+        need: need.need,
+        status: need.status,
+        area,
+        package: folder,
+      });
+    }
+  }
+  return entries.sort((a, b) => a.title.localeCompare(b.title, "en"));
+}
+
+function buildHomeCuratedGallery(gallery) {
+  const sourcePath = join(APP, "home-curated.json");
+  if (!existsSync(sourcePath)) {
+    throw new Error("home-curated.json missing (apps/docs/home-curated.json).");
+  }
+  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
+  const needs = source.catalogNeeds;
+  if (!Array.isArray(needs)) {
+    throw new Error("home-curated.json: catalogNeeds must be an array.");
+  }
+  const byNeed = new Map(gallery.map((card) => [card.need, card]));
+  const curated = [];
+  for (const need of needs) {
+    const card = byNeed.get(need);
+    if (!card) throw new Error(`home-curated.json: "${need}" is not a UI gallery entry.`);
+    curated.push(card);
+  }
+  return curated;
 }
 
 function buildHomeScenarios(slugsByNeed, catalog) {
@@ -481,12 +545,20 @@ if (invoked === fileURLToPath(import.meta.url)) {
     console.error("error: docs/catalog/catalog.json missing (run pnpm catalog:build at the root).");
     process.exitCode = 1;
   } else {
-    const { pages, folders, galleryModule, scenariosModule, entryPointsModule, registrySiteModule } =
-      generate(outDir);
+    const {
+      pages,
+      folders,
+      galleryModule,
+      scenariosModule,
+      entryPointsModule,
+      registrySiteModule,
+      catalogIndexModule,
+    } = generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
     writeFileSync(join(APP, "content", "home-scenarios.ts"), scenariosModule);
     writeFileSync(join(APP, "content", "home-entry-points.ts"), entryPointsModule);
     writeFileSync(join(APP, "content", "registry-site.ts"), registrySiteModule);
+    writeFileSync(join(APP, "content", "catalog-index.ts"), catalogIndexModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }
 }

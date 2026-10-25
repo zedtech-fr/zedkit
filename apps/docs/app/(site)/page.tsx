@@ -7,6 +7,7 @@ import {
   featuredPackageChangelogUrl,
   featuredPackageVersion,
   gallery,
+  homeCuratedGallery,
   uiGalleryStats,
 } from "@/content/gallery";
 import { homeEntryPoints } from "@/content/home-entry-points";
@@ -28,7 +29,8 @@ export default function Home() {
     <>
       <JsonLd data={jsonLd} />
       <HomeView
-      gallery={gallery}
+      curatedGallery={homeCuratedGallery}
+      galleryCount={gallery.length}
       stats={catalogStats}
       featuredPackage={featuredPackage}
       version={featuredPackageVersion}
