@@ -1,0 +1,51 @@
+## Scenario
+
+You issue a new primary key when a client creates a resource over HTTP. The
+prefix keeps log lines and support tickets greppable (`order_…` vs `user_…`)
+without a central ID service. Generate the id in the handler, persist it, and
+return it in the response body.
+
+```ts
+import { newPrefixedId } from "@zedtech/zedkit-core";
+
+export function createOrder() {
+  const id = newPrefixedId("order");
+  // persist { id, ... } then return id
+  return id;
+}
+```
+
+When you accept an id from a client (query param, path segment, JSON field),
+validate shape before touching storage:
+
+```ts
+import { isPrefixedId } from "@zedtech/zedkit-core";
+
+export function loadOrder(id: string) {
+  if (!isPrefixedId(id, "order")) {
+    throw new Error("order id required");
+  }
+  // load by id
+}
+```
+
+`isPrefixedId` checks prefix and ULID shape (26 Crockford base32 chars). It
+does not prove the row exists.
+
+## Troubleshooting
+
+**`invalid id prefix … expected a non-empty string without "_"`** — Prefixes
+must be non-empty and cannot contain `_` (the separator is always
+`prefix_ulid`). Use `order`, not `order_v2`.
+
+**`isPrefixedId` is false for a value you just generated** — The prefix
+argument must match the one passed to `newPrefixedId`. `isPrefixedId(id,
+"orders")` rejects `order_…`.
+
+**`isPrefixedId` is true but the database has no row** — The helper only
+validates string shape. Missing rows are an application concern; return 404
+after the lookup fails.
+
+**Collisions** — IDs are ULIDs under a prefix; treat them as unique without
+extra coordination. If you need human-readable serials, use a different scheme;
+this API is for opaque, greppable identifiers.

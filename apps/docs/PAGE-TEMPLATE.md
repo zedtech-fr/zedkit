@@ -1,0 +1,32 @@
+# Catalog page template
+
+Every catalog need becomes one docs URL: `/docs/<folder>/<slug>`. The page is
+assembled at build time from generated blocks plus optional hand-written prose.
+
+## Section order
+
+| Section | Source | Required |
+| --- | --- | --- |
+| Front matter (`title`, `description`, `status`) | Generated | yes |
+| Maturity badge | Generated | yes |
+| At a glance (Who / What / Use when / Avoid when / See also) | Generated from catalog | when fields exist |
+| Preview | Generated | when `docs-manifest.json` lists the need |
+| Install | Generated | yes |
+| Example | Generated from catalog | yes |
+| Deep sections (Scenario, Troubleshooting, …) | Prose | optional |
+| Props | Generated | when manifest lists props |
+
+Do not duplicate generated section titles in prose. CI rejects them.
+
+## Prose files
+
+Path: `apps/docs/prose/<folder>/<slug>.mdx`
+
+- `<folder>` is the package short name (`core`, `ui`, …), same as the generated folder.
+- `<slug>` is the slug derived from the catalog need heading (see `slugify` in `scripts/generate.mjs`).
+- No YAML front matter.
+- Start with `## Your section title` (at least one `##` section).
+- Use real snippets from the repo; facts must match the implementation.
+- Prose is merged after **Example** and before **Props**.
+
+Orphan prose (no matching catalog page) or prose that renames a generated section fails `pnpm docs:check`.

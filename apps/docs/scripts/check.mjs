@@ -14,7 +14,9 @@
 //   8. the home gallery covers every UI need exactly once, with the
 //      manifest demo (or null);
 //   9. the gallery stats match the catalog counts;
-//  10. home scenarios resolve to catalog needs and current doc slugs.
+//  10. home scenarios resolve to catalog needs and current doc slugs;
+//  11. prose files match live pages, avoid generated section titles,
+//      and their first section appears in the merged output.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -28,7 +30,7 @@ import { fileURLToPath } from "node:url";
 // impossible here and the relative import stays.
 // eslint-disable-next-line no-restricted-imports -- see above
 import { parseBarrelExports } from "../../../scripts/catalog.mjs";
-import { generate } from "./generate.mjs";
+import { catalogPageKeys, GENERATED_DOC_SECTIONS, generate } from "./generate.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -45,7 +47,8 @@ const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"
 const rich = manifest.rich ?? {};
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
-const { pages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
+const { pages, prosePages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
+const livePageKeys = catalogPageKeys(catalog);
 
 function mdxFiles(dir) {
   const out = [];
@@ -77,6 +80,63 @@ for (const file of mdxFiles(tmp)) {
     }
   }
 }
+
+function proseSectionTitles(text) {
+  const titles = [];
+  for (const line of text.split("\n")) {
+    const match = /^## (.+)$/.exec(line);
+    if (match) titles.push(match[1]);
+  }
+  return titles;
+}
+
+function proseMdxFiles() {
+  const root = join(APP, "prose");
+  if (!existsSync(root)) return [];
+  const out = [];
+  for (const folderEntry of readdirSync(root, { withFileTypes: true })) {
+    if (!folderEntry.isDirectory()) continue;
+    const folderDir = join(root, folderEntry.name);
+    for (const fileEntry of readdirSync(folderDir, { withFileTypes: true })) {
+      if (fileEntry.isFile() && fileEntry.name.endsWith(".mdx")) {
+        out.push({
+          rel: `${folderEntry.name}/${fileEntry.name}`,
+          key: `${folderEntry.name}/${fileEntry.name.replace(/\.mdx$/, "")}`,
+          path: join(folderDir, fileEntry.name),
+        });
+      }
+    }
+  }
+  return out;
+}
+
+for (const prose of proseMdxFiles()) {
+  if (!livePageKeys.has(prose.key)) {
+    errors.push(`prose: ${prose.rel} has no catalog page at /docs/${prose.key}.`);
+    continue;
+  }
+  const source = readFileSync(prose.path, "utf8");
+  const titles = proseSectionTitles(source);
+  if (titles.length === 0) {
+    errors.push(`prose: ${prose.rel} must define at least one "## " section.`);
+    continue;
+  }
+  for (const title of titles) {
+    if (GENERATED_DOC_SECTIONS.has(title)) {
+      errors.push(`prose: ${prose.rel} redefines generated section "## ${title}".`);
+    }
+  }
+  const mergedPath = join(tmp, `${prose.key}.mdx`);
+  if (!existsSync(mergedPath)) {
+    errors.push(`prose: merged page missing for ${prose.key} (generator bug).`);
+    continue;
+  }
+  const merged = readFileSync(mergedPath, "utf8");
+  if (!merged.includes(`## ${titles[0]}`)) {
+    errors.push(`prose: ${prose.rel} first section "## ${titles[0]}" missing from merged page.`);
+  }
+}
+
 rmSync(tmp, { recursive: true, force: true });
 
 const needs = [];
@@ -246,5 +306,7 @@ if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`docs: ok (${pages} pages cover ${needs.length} needs, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`);
+  console.log(
+    `docs: ok (${pages} pages cover ${needs.length} needs, ${prosePages} with prose, ${Object.keys(rich).length} rich, gallery ${gallery.length}).`,
+  );
 }
