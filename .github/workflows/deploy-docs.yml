@@ -1,0 +1,46 @@
+name: deploy-docs
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "apps/docs/**"
+      - "packages/**"
+      - "docs/**"
+      - "deploy/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @zedtech/zedkit-docs build
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DOCS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Deploy
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: deploy/deploy.sh "$TARGET"

@@ -61,6 +61,7 @@ export default tseslint.config(
   {
     ignores: [
       "**/.next/**",
+      "**/out/**",
       "**/.source/**",
       "**/dist/**",
       "**/kit/**",
