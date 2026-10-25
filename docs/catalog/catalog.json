@@ -644,6 +644,22 @@
           ]
         },
         {
+          "need": "Load each zone with a faithful skeleton",
+          "import": "`@zedtech/zedkit-ui` — `CardSkeleton`, `CardSkeletonProps`, `DataTableSkeleton`, `DataTableSkeletonProps`, `DetailPanelSkeleton`, `DetailPanelSkeletonProps`, `PageHeaderSkeleton`, `PageHeaderSkeletonProps`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "Skeletons",
+          "audience": "Developers loading async zones without layout shift (pages, cards, tables, panels).",
+          "purpose": "One faithful loading skeleton per kit component shape, each a named live zone.",
+          "whenToUse": "As a `Suspense` fallback matching the component that will land.",
+          "whenNotToUse": "For freeform blocks — use a plain `Skeleton`; for named operations — use `StatusLabel`.",
+          "derivedFrom": null,
+          "example": "import { Suspense } from \"react\";\nimport { CardSkeleton } from \"@zedtech/zedkit-ui\";\n<Suspense fallback={<CardSkeleton label=\"Loading report\" />}>\n  <ReportCard />\n</Suspense>",
+          "seeAlso": [
+            "Show loading placeholder blocks"
+          ]
+        },
+        {
           "need": "Open modal dialogs",
           "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",

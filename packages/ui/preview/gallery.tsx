@@ -10,12 +10,15 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
+  CardSkeleton,
   CardTitle,
   Checkbox,
   Checkmark,
   ConfirmDialog,
   DataTable,
+  DataTableSkeleton,
   DetailPanel,
+  DetailPanelSkeleton,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -37,6 +40,7 @@ import {
   StatusDot,
   OptionCards,
   PageHeader,
+  PageHeaderSkeleton,
   ProgressBar,
   SecretField,
   Select,
@@ -77,6 +81,7 @@ const SECTIONS = [
   ["overlays", "Overlays"],
   ["data-table", "Data table"],
   ["layout", "Layout"],
+  ["loading", "Loading"],
   ["wizard", "Wizard"],
   ["forms", "Forms"],
 ] as const;
@@ -269,6 +274,15 @@ export function Gallery() {
             <LivePulse />
             <LivePulse active={false} />
           </div>
+        </GallerySection>
+
+        <GallerySection id="loading" title="Loading">
+          <PageHeaderSkeleton label="Loading page" />
+          <div className="max-w-sm">
+            <CardSkeleton label="Loading card" />
+          </div>
+          <DetailPanelSkeleton label="Loading details" rows={2} />
+          <DataTableSkeleton label="Loading table" columns={3} rows={2} />
         </GallerySection>
 
         <GallerySection id="forms" title="Forms">
