@@ -490,6 +490,22 @@ if (errors.length > 0) {
       stdio: "inherit",
     });
     if (tutorial.status !== 0) process.exitCode = 1;
+    else {
+      const aiBuild = spawnSync("pnpm", ["--filter", "@zedtech/zedkit-ai", "build"], {
+        cwd: ROOT,
+        stdio: "pipe",
+      });
+      if (aiBuild.status !== 0) {
+        console.error("docs:check: @zedtech/zedkit-ai build failed.");
+        process.exitCode = 1;
+      } else {
+        const aiTutorial = spawnSync("node", [join(HERE, "verify-ai-agent-tutorial.mjs")], {
+          cwd: APP,
+          stdio: "inherit",
+        });
+        if (aiTutorial.status !== 0) process.exitCode = 1;
+      }
+    }
   }
 }
 
