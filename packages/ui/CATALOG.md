@@ -292,3 +292,16 @@ import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
 <Label htmlFor="terms">Accept the terms</Label>
 <Switch id="notify" aria-label="Notify me" />
 ```
+
+## Switch between tabbed panels
+
+- Import: `@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`
+- Wraps: `@radix-ui/react-tabs`
+- Status: alpha
+
+```ts
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
+<Tabs defaultValue="one"><TabsList>
+<TabsTrigger value="one">First</TabsTrigger>
+</TabsList><TabsContent value="one">First panel.</TabsContent></Tabs>
+```
