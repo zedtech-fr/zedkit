@@ -43,6 +43,9 @@ build`, and writes gitignored JSON under `public/r/`. Docs `prebuild`
 runs that step; `registry:check` asserts rewritten imports and
 `shadcn registry validate`. CI job `registry-smoke` runs
 `pnpm registry:smoke` (fresh Next + `shadcn add` for Badge and Drawer).
+Home install copy comes from `registry.json` via `content/registry-site.ts`
+(`docs:generate`). `check-registry-urls.mjs` and `check-seo-export.mjs`
+reject dead `/r/<name>.json` links.
 
 ## Work on it
 

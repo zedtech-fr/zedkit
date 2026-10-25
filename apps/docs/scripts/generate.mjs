@@ -18,6 +18,8 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+// eslint-disable-next-line no-restricted-imports -- repo-root registry.json
+import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -349,6 +351,8 @@ export function generate(outDir) {
   })};\n`;
   const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
+  const registryBricks = loadRegistryBrickNames(ROOT);
+  const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks[0])};\n`;
   return {
     pages,
     prosePages,
@@ -360,6 +364,7 @@ export function generate(outDir) {
     galleryModule,
     homeScenarios,
     scenariosModule,
+    registrySiteModule,
   };
 }
 
@@ -407,9 +412,10 @@ if (invoked === fileURLToPath(import.meta.url)) {
     console.error("error: docs/catalog/catalog.json missing (run pnpm catalog:build at the root).");
     process.exitCode = 1;
   } else {
-    const { pages, folders, galleryModule, scenariosModule } = generate(outDir);
+    const { pages, folders, galleryModule, scenariosModule, registrySiteModule } = generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
     writeFileSync(join(APP, "content", "home-scenarios.ts"), scenariosModule);
+    writeFileSync(join(APP, "content", "registry-site.ts"), registrySiteModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }
 }

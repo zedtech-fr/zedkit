@@ -3,37 +3,38 @@
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { SecretField, Stack, Text } from "@zedtech/zedkit-ui";
 
-/** Copyable install commands for the home hero (npm + shadcn registry URL). */
-export function HomeInstallCommands({ npmPackage }: { npmPackage: string }) {
-  const registryBrick = "badge";
-  const commands = {
-    npm: `pnpm add ${npmPackage}`,
-    shadcn: `npx shadcn@latest add https://zedkit.app/r/${registryBrick}.json`,
-  };
+export function HomeInstallCommands({
+  npmPackage,
+  siteUrl,
+  featuredBrick,
+  registryBricks,
+}: {
+  npmPackage: string;
+  siteUrl: string;
+  featuredBrick: string;
+  registryBricks: string[];
+}) {
+  const base = siteUrl.replace(/\/$/, "");
+  const shadcnAdd = `npx shadcn@latest add ${base}/r/${featuredBrick}.json`;
+  const brickList = registryBricks.join(", ");
   return (
     <Stack gap={2} className="w-full">
-      <Tabs items={["npm", "shadcn (preview)"]} className="w-full">
+      <Tabs items={["npm", "shadcn"]} className="w-full">
         <Tab value="npm">
           <SecretField
-            value={commands.npm}
+            value={`pnpm add ${npmPackage}`}
             aria-label="pnpm install command"
             copyLabel="Copy pnpm command"
           />
         </Tab>
-        <Tab value="shadcn (preview)">
-          <SecretField
-            value={commands.shadcn}
-            aria-label="shadcn add command"
-            copyLabel="Copy shadcn command"
-          />
+        <Tab value="shadcn">
+          <SecretField value={shadcnAdd} aria-label="shadcn add command" copyLabel="Copy shadcn command" />
         </Tab>
       </Tabs>
       <Text variant="muted" className="text-sm">
-        npm install works today. The shadcn URL targets{" "}
-        <Text as="span" className="font-mono text-sm">
-          /r/{registryBrick}.json
-        </Text>{" "}
-        on this host once the registry lane publishes those files.
+        npm install adds the full package. The shadcn tab copies one brick ({featuredBrick}); published
+        registry items on this host: {brickList} (
+        <Text as="span" className="font-mono text-sm">/r/&lt;name&gt;.json</Text>).
       </Text>
     </Stack>
   );
