@@ -29,7 +29,7 @@ const GUIDES_DIR = join(PROSE_DIR, "guides");
 const GUIDE_SNIPPETS_DIR = join(GUIDES_DIR, "snippets");
 
 /** Standalone guide pages (not catalog needs), first in docs nav when listed here. */
-export const GUIDE_NAV_SLUGS = ["getting-started", "add-seo-to-nextjs"];
+export const GUIDE_NAV_SLUGS = ["getting-started", "zedkit-and-shadcn", "add-seo-to-nextjs"];
 
 /** Section titles owned by the generator — prose must not repeat them. */
 export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props"]);
@@ -256,6 +256,7 @@ export function generate(outDir) {
     "> GENERATED from docs/catalog/catalog.json — do not edit.",
     "",
     "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
+    "- [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
     "- [Add SEO to a Next.js app](/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
     "",
   ];
