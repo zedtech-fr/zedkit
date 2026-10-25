@@ -12,6 +12,11 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+// Shares parseBarrelExports with root scripts/catalog.mjs. A `#*`
+// subpath cannot point outside the package (Node rejects it with
+// ERR_INVALID_PACKAGE_TARGET), so the documented alternative is
+// impossible here and the relative import stays.
+// eslint-disable-next-line no-restricted-imports -- see above
 import { parseBarrelExports } from "../../../scripts/catalog.mjs";
 import { generate } from "./generate.mjs";
 
