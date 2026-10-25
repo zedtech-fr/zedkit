@@ -58,6 +58,9 @@ catalog:
   "@testing-library/user-event": 14.6.8
   schema-dts: 2.1.0
   payload: 3.92.0
+  react-hook-form: 7.91.0
+  "@hookform/resolvers": 6.0.0
+  zod: 4.6.7
   eslint-plugin-jsx-a11y: 6.10.2
   eslint-plugin-better-tailwindcss: 4.10.0
   vitest-axe: 0.1.0
