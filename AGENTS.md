@@ -59,6 +59,7 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 ```sh
 pnpm install                # install (CI uses --frozen-lockfile)
 pnpm dev                    # catalog build + docs site at http://localhost:3100
+pnpm docs                   # alias for pnpm dev
 pnpm typecheck               # turbo: tsc --noEmit everywhere
 pnpm lint                   # turbo: eslint everywhere
 pnpm build                  # turbo: tsc build everywhere
