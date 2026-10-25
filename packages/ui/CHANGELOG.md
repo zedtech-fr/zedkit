@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ui
 
+## 0.1.1
+
+### Patch Changes
+
+- 889d207: Re-release with build output: 0.1.0 shipped without dist/ (the release job published before building) and is unusable; use 0.1.1.
+
 ## 0.1.0
 
 ### Minor Changes
