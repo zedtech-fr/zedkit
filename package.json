@@ -19,7 +19,10 @@
     "changeset:status": "changeset status --verbose",
     "changeset:version": "changeset version",
     "catalog:build": "node scripts/catalog.mjs build",
-    "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs"
+    "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs",
+    "registry:build": "node scripts/registry/build.mjs",
+    "registry:check": "node scripts/registry/check.mjs",
+    "test:registry": "node --test scripts/registry/*.test.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
@@ -28,6 +31,7 @@
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "eslint-plugin-jsx-a11y": "catalog:",
+    "shadcn": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"

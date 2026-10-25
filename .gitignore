@@ -19,6 +19,10 @@ next-env.d.ts
 apps/docs/content/
 apps/docs/.source/
 apps/docs/public/llms.txt
+apps/docs/public/r/
+
+# shadcn registry: transformed UI sources (fed to `shadcn build`)
+registry/generated/
 
 # playwright smoke output (screenshots land here, never committed)
 test-results/
