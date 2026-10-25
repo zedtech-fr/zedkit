@@ -23,7 +23,7 @@ export function HomeHero({
           <Text variant="muted" className="text-sm font-medium tracking-wide uppercase">zedkit</Text>
           <KitVersionLabel version={version} changelogHref={changelogHref} />
         </Stack>
-        <Heading level={1} className="max-w-3xl text-balance">
+        <Heading level={1} className="max-w-3xl text-3xl text-balance md:text-4xl">
           Build the parts you need. Keep the rest of your app.
         </Heading>
         <Text className="max-w-2xl text-lg">

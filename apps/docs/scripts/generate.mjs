@@ -416,6 +416,9 @@ function buildHomeEntryPoints(catalog, slugsByNeed) {
       if (!entry) throw new Error(`home-entry-points.json: unknown package "${pkg}".`);
       needCount += entry.needs.length;
     }
+    if (!row.linkLabel) {
+      throw new Error(`home-entry-points.json: "${row.title}" needs linkLabel.`);
+    }
     if (row.guideSlug) {
       if (!GUIDE_NAV_SLUGS.includes(row.guideSlug)) {
         throw new Error(`home-entry-points.json: guideSlug "${row.guideSlug}" is not a guide page.`);
@@ -446,7 +449,7 @@ function buildHomeEntryPoints(catalog, slugsByNeed) {
       summary: row.summary,
       href,
       needCount,
-      linkLabel: `Browse ${row.title} docs`,
+      linkLabel: row.linkLabel,
     });
   }
   return entryPoints;

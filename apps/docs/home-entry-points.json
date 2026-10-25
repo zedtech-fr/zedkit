@@ -3,24 +3,28 @@
     "title": "Build an admin UI",
     "summary": "Theme, forms, data tables, overlays, and layout primitives for admin apps.",
     "packages": ["@zedtech/zedkit-ui"],
-    "need": "Trigger actions with buttons"
+    "need": "Trigger actions with buttons",
+    "linkLabel": "Open UI docs"
   },
   {
     "title": "Build a backend",
     "summary": "Result types, Nest bootstrap, structured logs, rate limits, and webhook signing.",
     "packages": ["@zedtech/zedkit-core", "@zedtech/zedkit-nest", "@zedtech/zedkit-server"],
-    "need": "Bootstrap a Nest app"
+    "need": "Bootstrap a Nest app",
+    "linkLabel": "Open backend docs"
   },
   {
     "title": "Improve SEO",
     "summary": "Localized metadata, sitemaps, JSON-LD, and Payload SEO validation.",
     "packages": ["@zedtech/zedkit-seo", "@zedtech/zedkit-payload-seo"],
-    "guideSlug": "add-seo-to-nextjs"
+    "guideSlug": "add-seo-to-nextjs",
+    "linkLabel": "Open SEO docs"
   },
   {
     "title": "Set up coding agents",
     "summary": "Skills, subagents, and provider copies validated from one manifest.",
     "packages": ["@zedtech/zedkit-ai"],
-    "need": "Set up AI agent instructions, skills, subagents and commands in a repo"
+    "need": "Set up AI agent instructions, skills, subagents and commands in a repo",
+    "linkLabel": "Open agent setup docs"
   }
 ]

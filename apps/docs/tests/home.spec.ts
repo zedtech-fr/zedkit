@@ -13,10 +13,10 @@ test("home explains the product and four entry areas", async ({ page }) => {
     }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Choose an area" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Browse Build an admin UI docs" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Browse Build a backend docs" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Browse Improve SEO docs" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Browse Set up coding agents docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open UI docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open backend docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -65,7 +65,7 @@ test("home keyboard: tab reaches an entry-point CTA", async ({ page }) => {
   let found = false;
   for (let i = 0; i < 50; i++) {
     const active = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
-    if (active.includes("Browse Build an admin UI docs")) {
+    if (active.includes("Open UI docs")) {
       found = true;
       break;
     }
