@@ -38,6 +38,13 @@
       "source": "skeleton.tsx",
       "demo": "SkeletonDemo"
     },
+    "Load each zone with a faithful skeleton": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "CardSkeleton",
+      "props": "CardSkeletonProps",
+      "source": "card-skeleton.tsx",
+      "demo": "LoadingZonesDemo"
+    },
     "Open modal dialogs": {
       "package": "@zedtech/zedkit-ui",
       "component": "Dialog",

@@ -12,6 +12,7 @@ import { DrawerDemo } from "./drawer-demo";
 import { FieldDemo } from "./field-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
+import { LoadingZonesDemo } from "./loading-zones-demo";
 import { SecretFieldDemo } from "./secret-field-demo";
 import { SelectDemo } from "./select-demo";
 import { SeparatorDemo } from "./separator-demo";
@@ -49,6 +50,7 @@ export const demoRegistry = {
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
+  LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
   RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
   SelectDemo: { Demo: SelectDemo, file: "select-demo.tsx" },
