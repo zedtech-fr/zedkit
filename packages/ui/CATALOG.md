@@ -135,7 +135,7 @@ import { Label, SecretField } from "@zedkit/ui";
 <SecretField id="key" value={key} />
 ```
 
-## Show a sortable data table with loading and error states
+## Show a sortable, filterable, paginated data table
 
 - Import: `@zedkit/ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
@@ -145,5 +145,6 @@ import { Label, SecretField } from "@zedkit/ui";
 import { DataTable, createDataTableColumns } from "@zedkit/ui";
 const helper = createDataTableColumns<Item>();
 const columns = [helper.accessor("name", { header: "Name" })];
-<DataTable columns={columns} data={items} loading={isLoading} error={error} />
+<DataTable columns={columns} data={items} loading={isLoading}
+  error={error} pageSize={20} />
 ```

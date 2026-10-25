@@ -193,11 +193,11 @@
           "example": "import { Label, SecretField } from \"@zedkit/ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
         },
         {
-          "need": "Show a sortable data table with loading and error states",
+          "need": "Show a sortable, filterable, paginated data table",
           "import": "`@zedkit/ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "stable",
-          "example": "import { DataTable, createDataTableColumns } from \"@zedkit/ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading} error={error} />"
+          "example": "import { DataTable, createDataTableColumns } from \"@zedkit/ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
         }
       ]
     }
