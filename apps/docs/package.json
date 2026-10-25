@@ -18,9 +18,10 @@
     "start": "next start",
     "smoke": "playwright test tests/search.spec.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint app components ui scripts source.config.ts mdx-components.tsx"
+    "lint": "eslint app components lib ui scripts source.config.ts mdx-components.tsx"
   },
   "dependencies": {
+    "@zedtech/zedkit-seo": "workspace:*",
     "@zedtech/zedkit-ui": "workspace:*",
     "fumadocs-core": "catalog:",
     "fumadocs-mdx": "catalog:",

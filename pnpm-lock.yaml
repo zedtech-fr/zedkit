@@ -254,6 +254,9 @@ importers:
 
   apps/docs:
     dependencies:
+      '@zedtech/zedkit-seo':
+        specifier: workspace:*
+        version: link:../../packages/seo
       '@zedtech/zedkit-ui':
         specifier: workspace:*
         version: link:../../packages/ui
