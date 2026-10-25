@@ -5,7 +5,8 @@
 //   catalog example, wraps line) plus per-folder meta.json nav files.
 // - Needs listed in docs-manifest.json also get a live preview (the
 //   REAL workspace component via components/demos.tsx) and a props
-//   table parsed from the TypeScript interface (verbatim types).
+//   table resolved at build by fumadocs-typescript AutoTypeTable
+//   (via components/props-table.tsx, inherited props expanded).
 // - Also writes public/llms.txt (same source, always current).
 //
 // Pure derivation: no hand-written content per need, so pages cannot
@@ -14,7 +15,6 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import ts from "typescript";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -37,46 +37,6 @@ function packageVersion(pkgDir) {
   return JSON.parse(text).version ?? "0.0.0";
 }
 
-// Syntax-level props extraction (verbatim annotated types + JSDoc).
-// Full type resolution (CVA/inherited expansion) is a follow-up.
-function parseProps(sourcePath, interfaceName) {
-  const text = readFileSync(sourcePath, "utf8");
-  const file = ts.createSourceFile(sourcePath, text, ts.ScriptTarget.Latest, true);
-  const rows = [];
-  const heritage = [];
-  const visit = (node) => {
-    if (ts.isInterfaceDeclaration(node) && node.name.text === interfaceName) {
-      for (const member of node.members) {
-        if (!ts.isPropertySignature(member) || !member.name) continue;
-        const name = member.name.getText(file);
-        const type = member.type ? member.type.getText(file) : "unknown";
-        const required = member.questionToken === undefined;
-        const docs = ts.getJSDocCommentsAndTags(member).map((d) => d.comment ?? "");
-        const jsdoc = Array.isArray(docs) ? docs.filter(Boolean).join(" ") : "";
-        rows.push({ name, type, required, description: typeof jsdoc === "string" ? jsdoc : "" });
-      }
-      for (const clause of node.heritageClauses ?? []) {
-        for (const t of clause.types) heritage.push(t.getText(file));
-      }
-    }
-    ts.forEachChild(node, visit);
-  };
-  visit(file);
-  return { rows, heritage };
-}
-
-function propsTable(parsed) {
-  const lines = ["| Prop | Type | Required | Description |", "|---|---|---|---|"];
-  for (const row of parsed.rows) {
-    const safe = (s) => String(s).replace(/\|/g, "\\|").replace(/\n/g, " ");
-    lines.push(`| \`${safe(row.name)}\` | \`${safe(row.type)}\` | ${row.required ? "yes" : "no"} | ${safe(row.description)} |`);
-  }
-  if (parsed.heritage.length > 0) {
-    lines.push("", `Also inherits: ${parsed.heritage.map((h) => `\`${h}\``).join(", ")}.`);
-  }
-  return lines.join("\n");
-}
-
 function pageMdx(pkg, need, version, rich) {
   const head = [
     "---",
@@ -90,6 +50,9 @@ function pageMdx(pkg, need, version, rich) {
     `import { Badge } from "@zedtech/zedkit-ui";`,
   ];
   if (rich) head.push(`import { ${rich.demo} } from "../../../components/demos";`);
+  if (rich && rich.propsFile && rich.propsName) {
+    head.push(`import { PropsTable } from "../../../components/props-table";`);
+  }
   head.push("", `<Badge>${need.status}</Badge>`, "");
   if (rich) head.push("## Preview", "", `<${rich.demo} />`, "");
   head.push(
@@ -118,8 +81,8 @@ function pageMdx(pkg, need, version, rich) {
     `Wraps: ${need.wraps}`,
     "",
   );
-  if (rich && rich.propsTable) {
-    head.push("## Props", "", rich.propsTable, "");
+  if (rich && rich.propsFile && rich.propsName) {
+    head.push("## Props", "", `<PropsTable file="${rich.propsFile}" name="${rich.propsName}" />`, "");
   }
   return head.join("\n");
 }
@@ -128,7 +91,6 @@ export function generate(outDir) {
   const catalog = JSON.parse(readFileSync(join(ROOT, "docs", "catalog", "catalog.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"));
   const rich = manifest.rich ?? {};
-  const uiDir = join(ROOT, "packages", "ui", "src");
 
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
@@ -155,9 +117,7 @@ export function generate(outDir) {
       const spec = rich[need.need];
       let richBlock = null;
       if (spec) {
-        const table =
-          spec.props && spec.source ? propsTable(parseProps(join(uiDir, spec.source), spec.props)) : null;
-        richBlock = { demo: spec.demo, propsTable: table };
+        richBlock = { demo: spec.demo, propsFile: spec.source ?? null, propsName: spec.props ?? null };
       }
       writeFileSync(join(dir, `${slug}.mdx`), pageMdx(pkg, need, version, richBlock));
       pages += 1;
