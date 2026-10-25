@@ -34,7 +34,7 @@ keep it exact:
 
 - Import: `@zedkit/core` — `a`, `b`
 - Wraps: `some-npm-package`
-- Status: stable
+- Status: beta
 
 \`\`\`ts
 import { a } from "@zedkit/core";
@@ -47,9 +47,29 @@ import { a } from "@zedkit/core";
   checks it (`pnpm catalog:check`).
 - **Wraps** names the mature npm package underneath, or `(none)` when the
   module is dependency-free by design.
-- **Status** is `stable` (shipped, safe to use) or `planned` (documented
-  shape, not implemented yet).
+- **Status** is one of `planned | alpha | beta | stable | deprecated`
+  (CI validates the value; see Maturity below). A deprecated entry also
+  carries `- Replaced by: ...` naming the replacement.
 - The example is TypeScript, about five lines, copy-paste runnable.
+
+## Maturity
+
+Every need carries an honest maturity badge (also in
+[`catalog.json`](catalog.json) as `status`, for docs badges and agents).
+New entries start at `alpha`; promotion is a deliberate small PR that
+re-checks the criteria below.
+
+- `planned` — documented shape, not implemented yet. No code, no tests.
+- `alpha` — implemented, but the API may still change. Proof is thin:
+  missing tests, docs, or review.
+- `beta` — tested through the public interface, documented with an
+  example, reviewed — and for UI also covered by a11y checks and the
+  gallery. API settling, ready for a first adoption. Not yet proven in
+  a real app.
+- `stable` — proven in real apps: adopted by at least two consumers,
+  API protected by semver (breaking changes are a major), documented.
+- `deprecated` — do not adopt; the entry names its replacement and will
+  be removed in a future major.
 
 Regenerate after any catalog edit: `pnpm catalog:build`, then commit the
 result. CI fails when `catalog.json` drifts from the package catalogs.

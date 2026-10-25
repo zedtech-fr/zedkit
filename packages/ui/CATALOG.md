@@ -4,7 +4,7 @@
 
 - Import: `@zedkit/ui/styles.css` (+ one `@source` line, see README)
 - Wraps: `tailwindcss` (v4 CSS-first)
-- Status: stable
+- Status: beta
 
 ```ts
 import "@zedkit/ui/styles.css"; // tokens + theme, once per app
@@ -17,7 +17,7 @@ import "@zedkit/ui/styles.css"; // tokens + theme, once per app
 
 - Import: `@zedkit/ui` — `cn`
 - Wraps: `clsx`, `tailwind-merge`
-- Status: stable
+- Status: beta
 
 ```ts
 import { cn } from "@zedkit/ui";
@@ -29,7 +29,7 @@ cn("px-4", "px-2"); // "px-2" — last conflicting utility wins
 
 - Import: `@zedkit/ui` — `Button`, `buttonVariants`, `ButtonProps`
 - Wraps: `@radix-ui/react-slot`, `class-variance-authority`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Button } from "@zedkit/ui";
@@ -42,7 +42,7 @@ import { Button } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Badge`, `badgeVariants`, `BadgeProps`
 - Wraps: `class-variance-authority`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Badge } from "@zedkit/ui";
@@ -54,7 +54,7 @@ import { Badge } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Input`, `Label`
 - Wraps: `@radix-ui/react-label`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Input, Label } from "@zedkit/ui";
@@ -66,7 +66,7 @@ import { Input, Label } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Separator`
 - Wraps: `@radix-ui/react-separator`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Separator } from "@zedkit/ui";
@@ -78,7 +78,7 @@ import { Separator } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Skeleton`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Skeleton } from "@zedkit/ui";
@@ -89,7 +89,7 @@ import { Skeleton } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
 - Wraps: `@radix-ui/react-dialog`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedkit/ui";
@@ -103,7 +103,7 @@ import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedk
 
 - Import: `@zedkit/ui` — `ConfirmDialog`, `ConfirmDialogProps`
 - Wraps: `@radix-ui/react-dialog` (via Dialog)
-- Status: stable
+- Status: beta
 
 ```ts
 import { Button, ConfirmDialog } from "@zedkit/ui";
@@ -115,7 +115,7 @@ import { Button, ConfirmDialog } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Toaster`
 - Wraps: `sonner`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Toaster } from "@zedkit/ui";
@@ -127,7 +127,7 @@ import { toast } from "sonner";
 
 - Import: `@zedkit/ui` — `SecretField`, `SecretFieldProps`
 - Wraps: `lucide-react`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Label, SecretField } from "@zedkit/ui";
@@ -139,7 +139,7 @@ import { Label, SecretField } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
-- Status: stable
+- Status: beta
 
 ```ts
 import { DataTable, createDataTableColumns } from "@zedkit/ui";
@@ -153,7 +153,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 
 - Import: `@zedkit/ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`
 - Wraps: none (theme tokens only)
-- Status: stable
+- Status: beta
 
 ```ts
 import { AppShell, PageHeader } from "@zedkit/ui";
@@ -166,7 +166,7 @@ import { AppShell, PageHeader } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`
 - Wraps: none (native inputs + theme tokens)
-- Status: stable
+- Status: beta
 
 ```ts
 import { OptionCards, WizardSteps } from "@zedkit/ui";
@@ -179,7 +179,7 @@ const [picked, setPicked] = useState(["a", "b"]);
 
 - Import: `@zedkit/ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`
 - Wraps: none (theme tokens only)
-- Status: stable
+- Status: beta
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedkit/ui";
@@ -191,7 +191,7 @@ import { DetailPanel, LivePulse, PageHeader } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`
 - Wraps: `react-hook-form`, `@hookform/resolvers`, `zod`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Form, FormField, FormSubmit, Input, useValidatedForm } from "@zedkit/ui";
@@ -205,7 +205,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 
 - Import: `@zedkit/ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`
 - Wraps: none (presentational over `Label`, `Separator`)
-- Status: stable
+- Status: beta
 
 ```ts
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedkit/ui";
@@ -218,7 +218,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 
 - Import: `@zedkit/ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
 - Wraps: none (presentational, theme tokens only)
-- Status: stable
+- Status: beta
 
 ```ts
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedkit/ui";
@@ -231,7 +231,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedk
 
 - Import: `@zedkit/ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`
 - Wraps: `class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)
-- Status: stable
+- Status: beta
 
 ```ts
 import { Heading, Text } from "@zedkit/ui";
@@ -245,7 +245,7 @@ import { Heading, Text } from "@zedkit/ui";
 
 - Import: `@zedkit/ui` — `Alert`, `AlertTitle`, `AlertDescription`
 - Wraps: `class-variance-authority`
-- Status: stable
+- Status: beta
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedkit/ui";

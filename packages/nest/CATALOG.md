@@ -4,7 +4,7 @@
 
 - Import: `@zedkit/nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`
 - Wraps: `@nestjs/platform-fastify`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/throttler`, `nestjs-pino`, `class-validator`
-- Status: stable
+- Status: beta
 
 ```ts
 import { createNestApp } from "@zedkit/nest";
@@ -16,7 +16,7 @@ await app.listen(3000);
 
 - Import: `@zedkit/nest` — `LoggerOptions`
 - Wraps: `nestjs-pino`
-- Status: stable
+- Status: beta
 
 ```ts
 import { createNestApp } from "@zedkit/nest";
@@ -30,7 +30,7 @@ const app = await createNestApp({
 
 - Import: `@zedkit/nest` — `AllExceptionsFilter`, `ErrorBody`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { AllExceptionsFilter } from "@zedkit/nest";

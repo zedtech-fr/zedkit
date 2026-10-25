@@ -4,7 +4,7 @@
 
 - Import: `@zedkit/core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { isOk, ok, unwrapOr } from "@zedkit/core";
@@ -17,7 +17,7 @@ const name = unwrapOr(found, { name: "?" }).name;
 
 - Import: `@zedkit/core` — `tryCatch`, `tryCatchAsync`, `normalizeThrown`
 - Wraps: `(none)`
-- Status: stable
+- Status: beta
 
 ```ts
 import { tryCatch } from "@zedkit/core";
@@ -29,7 +29,7 @@ if (!parsed.ok) return fallback(parsed.error);
 
 - Import: `@zedkit/core` — `newPrefixedId`, `isPrefixedId`
 - Wraps: `ulid`
-- Status: stable
+- Status: beta
 
 ```ts
 import { isPrefixedId, newPrefixedId } from "@zedkit/core";
