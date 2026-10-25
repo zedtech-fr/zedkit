@@ -16,6 +16,7 @@
     "prebuild": "pnpm docs:generate && pnpm --filter @zedtech/zedkit-docs^... build",
     "build": "next build",
     "start": "next start",
+    "smoke": "playwright test tests/search.spec.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint app components scripts source.config.ts mdx-components.tsx"
   },

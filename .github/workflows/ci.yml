@@ -81,6 +81,7 @@ jobs:
       # Scoped build (turbo builds workspace deps first), then serve the
       # production build and prove the home renders with live demos.
       - run: pnpm exec turbo run build --filter=@zedtech/zedkit-docs
+      - run: pnpm exec playwright install --with-deps chromium
       - run: |
           pnpm --filter @zedtech/zedkit-docs exec next start -p 3100 >/tmp/docs-start.log 2>&1 &
           echo $! > /tmp/docs.pid
@@ -91,4 +92,6 @@ jobs:
           done
           curl -sf http://127.0.0.1:3100/ | grep -q "Create app"
           curl -sf -o /dev/null http://127.0.0.1:3100/docs
+          curl -sf -o /dev/null http://127.0.0.1:3100/api/search
+          pnpm --filter @zedtech/zedkit-docs run smoke
           kill "$(cat /tmp/docs.pid)"

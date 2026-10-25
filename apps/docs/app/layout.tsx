@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
-import { RootProvider } from "fumadocs-ui/provider/next";
+import { Provider } from "./provider";
 import "./globals.css";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <RootProvider>{children}</RootProvider>
+        <Provider>{children}</Provider>
       </body>
     </html>
   );
