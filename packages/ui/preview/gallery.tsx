@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   AppShell,
   Badge,
   Button,
@@ -133,6 +136,14 @@ export function Gallery() {
             onConfirm={() => {}}
           />
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
+          <Alert className="max-w-sm">
+            <AlertTitle>Heads up</AlertTitle>
+            <AlertDescription>Something worth knowing.</AlertDescription>
+          </Alert>
+          <Alert variant="destructive" className="max-w-sm">
+            <AlertTitle>Failed</AlertTitle>
+            <AlertDescription>Something went wrong.</AlertDescription>
+          </Alert>
           <Toaster />
         </Section>
 

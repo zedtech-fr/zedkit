@@ -240,3 +240,17 @@ import { Heading, Text } from "@zedkit/ui";
 <Text>Body copy.</Text>
 <Text variant="muted">Secondary copy.</Text>
 ```
+
+## Call out a notice or an error state
+
+- Import: `@zedkit/ui` — `Alert`, `AlertTitle`, `AlertDescription`
+- Wraps: `class-variance-authority`
+- Status: stable
+
+```ts
+import { Alert, AlertDescription, AlertTitle } from "@zedkit/ui";
+<Alert><AlertTitle>Heads up</AlertTitle>
+<AlertDescription>Something worth knowing.</AlertDescription></Alert>
+<Alert variant="destructive"><AlertTitle>Failed</AlertTitle>
+<AlertDescription>Something went wrong.</AlertDescription></Alert>
+```

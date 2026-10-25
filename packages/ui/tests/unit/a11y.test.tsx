@@ -4,6 +4,9 @@ import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   AppShell,
   Badge,
   Button,
@@ -114,6 +117,22 @@ describe("a11y", () => {
 
   it("toaster region", async () => {
     const { container } = render(<Toaster />);
+    await expectNoViolations(container);
+  });
+
+  it("default and destructive alerts", async () => {
+    const { container } = render(
+      <>
+        <Alert>
+          <AlertTitle>Heads up</AlertTitle>
+          <AlertDescription>Something worth knowing.</AlertDescription>
+        </Alert>
+        <Alert variant="destructive">
+          <AlertTitle>Failed</AlertTitle>
+          <AlertDescription>Something went wrong.</AlertDescription>
+        </Alert>
+      </>,
+    );
     await expectNoViolations(container);
   });
 
