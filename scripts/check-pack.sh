@@ -2,8 +2,10 @@
 # Pack readiness: for every package, pack it and verify the tarball holds
 # everything a consumer needs (manifest, LICENSE, README, every `files`
 # entry, every exports/bin/types target) with no private terms inside, and
-# that versions and repository fields stay consistent. Needs dist/ built
-# first (CI runs this after build); publishes nothing.
+# that repository fields stay consistent. Versions are owned by changesets
+# and legitimately diverge (independent versioning, e.g. ui-first release),
+# so they are required but never compared. Needs dist/ built first (CI runs
+# this after build); publishes nothing.
 set -uo pipefail
 
 # shellcheck source=denylist-patterns.sh
@@ -36,7 +38,6 @@ console.log([...new Set(out.filter((t) => typeof t === 'string' && !t.startsWith
 " 2>/dev/null
 }
 
-versions=""
 repo_url=""
 
 for dir in packages/*/; do
@@ -81,12 +82,8 @@ for dir in packages/*/; do
     fail=1
   fi
 
-  # Versions equal across packages; same repo URL; directory matches the path.
-  version="$(manifest_field "$pkg" "version")"
-  if [ -z "$versions" ]; then versions="$version"; elif [ "$versions" != "$version" ]; then
-    echo "$name: version $version differs from $versions"
-    fail=1
-  fi
+  # Same repo URL; directory matches the path. (Version is checked for
+  # presence above; values diverge by design, changesets owns them.)
   url="$(manifest_field "$pkg" "repository.url")"
   directory="$(manifest_field "$pkg" "repository.directory")"
   if [ "$url" = "null" ] || [ "$directory" = "null" ]; then
