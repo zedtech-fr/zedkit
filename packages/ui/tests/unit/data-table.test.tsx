@@ -41,8 +41,9 @@ describe("DataTable", () => {
   });
 
   it("shows loading placeholders while loading", () => {
-    render(<DataTable columns={columns} data={data} loading />);
-    expect(screen.getAllByLabelText("Loading")).toHaveLength(6);
+    const { container } = render(<DataTable columns={columns} data={data} loading />);
+    expect(screen.getByLabelText("Loading").tagName).toBe("TABLE");
+    expect(container.querySelectorAll(".animate-pulse")).toHaveLength(6);
     expect(screen.queryByText("Ada")).toBeNull();
   });
 

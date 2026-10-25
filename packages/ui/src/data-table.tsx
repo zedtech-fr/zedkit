@@ -89,7 +89,7 @@ export function DataTable<TData extends RowData>({
         className="max-w-sm"
         aria-label={filterPlaceholder}
       />
-      <Table>
+      <Table aria-busy={loading || undefined} aria-label={loading ? "Loading" : undefined}>
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
           <TableRow key={group.id}>
@@ -124,7 +124,7 @@ export function DataTable<TData extends RowData>({
             <TableRow key={row}>
               {columns.map((_column, index) => (
                 <TableCell key={index}>
-                  <Skeleton className="h-4 w-full" aria-label="Loading" />
+                  <Skeleton className="h-4 w-full" />
                 </TableCell>
               ))}
             </TableRow>
