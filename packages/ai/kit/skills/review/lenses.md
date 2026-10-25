@@ -15,7 +15,7 @@ exists IS a blocker.
 | adversarial-tests | skill `adversarial-tests` | exists | logic, handlers, endpoints, state machines | when triggered | edge cases + missing tests |
 | security | agent `security-reviewer` | exists | auth, secrets, tenancy, user data, external calls, crypto | when triggered | threats + fixes, file:line |
 | skeptic | agent `skeptic` (angle per brief: plan, ui/ux, security, scope, data/ops, copy) | exists | plans, specs, ADRs, estimates, product/UI/scope decisions | when triggered | pre-mortem + ranked objections |
-| ui | agent `ui-designer` | planned | `packages/ui/**`, `**/*.tsx`, styles, preview/gallery | when triggered | kit/a11y/state findings + persona(lazy client) |
+| ui | agent `ui-designer` | exists | `packages/ui/**`, `**/*.tsx`, styles, preview/gallery | when triggered | kit/a11y/state findings + persona(lazy client) |
 | copy | agent `copywriter` | planned | user-visible strings, messages, errors, CTAs | when triggered | keys + FR/EN proposals |
 | a11y | agent `a11y-auditor` | planned | `**/*.tsx`, components, forms, tables | when triggered | WCAG findings + fixes, file:line |
 | seo | agent `seo-auditor` | planned | `packages/seo/**`, pages, metadata, sitemap, redirects | when triggered | rule findings + fixes |
