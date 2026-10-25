@@ -163,6 +163,34 @@
           "wraps": "`(none)`",
           "status": "stable",
           "example": "import { Skeleton } from \"@zedkit/ui\";\n<Skeleton className=\"h-4 w-24\" />"
+        },
+        {
+          "need": "Open modal dialogs",
+          "import": "`@zedkit/ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
+          "wraps": "`@radix-ui/react-dialog`",
+          "status": "stable",
+          "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedkit/ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
+        },
+        {
+          "need": "Confirm destructive actions",
+          "import": "`@zedkit/ui` — `ConfirmDialog`, `ConfirmDialogProps`",
+          "wraps": "`@radix-ui/react-dialog` (via Dialog)",
+          "status": "stable",
+          "example": "import { Button, ConfirmDialog } from \"@zedkit/ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
+        },
+        {
+          "need": "Show toast notifications",
+          "import": "`@zedkit/ui` — `Toaster`",
+          "wraps": "`sonner`",
+          "status": "stable",
+          "example": "import { Toaster } from \"@zedkit/ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+        },
+        {
+          "need": "Display a shown-once secret with copy",
+          "import": "`@zedkit/ui` — `SecretField`, `SecretFieldProps`",
+          "wraps": "`lucide-react`",
+          "status": "stable",
+          "example": "import { Label, SecretField } from \"@zedkit/ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
         }
       ]
     }
