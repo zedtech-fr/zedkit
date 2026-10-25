@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Button, Card, CardContent, CardHeader, CardTitle, Heading, Stack, Text } from "@zedtech/zedkit-ui";
-import { demoRegistry } from "@/components/demos/registry";
+import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
+import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 
@@ -15,7 +15,6 @@ export function HomeHero({
   version: string;
   changelogHref: string;
 }) {
-  const { Demo: ButtonDemoLive } = demoRegistry.ButtonDemo;
   return (
     <Stack gap={6} className="items-start">
       <Stack gap={3} className="items-start">
@@ -48,14 +47,7 @@ export function HomeHero({
         featuredBrick={featuredRegistryBrick}
         registryBricks={registryBrickNames}
       />
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle>Button variants (live)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ButtonDemoLive />
-        </CardContent>
-      </Card>
+      <HomeHeroDashboard />
     </Stack>
   );
 }
