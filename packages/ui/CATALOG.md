@@ -130,6 +130,20 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 <Checkmark label="Saved" /> // draws once, static under reduced motion; omit label when decorative
 ```
 
+## Load each zone with a faithful skeleton
+
+- Import: `@zedtech/zedkit-ui` — `CardSkeleton`, `CardSkeletonProps`, `DataTableSkeleton`, `DataTableSkeletonProps`, `DetailPanelSkeleton`, `DetailPanelSkeletonProps`, `PageHeaderSkeleton`, `PageHeaderSkeletonProps`
+- Wraps: `(none)`
+- Status: alpha
+
+```ts
+import { Suspense } from "react";
+import { CardSkeleton } from "@zedtech/zedkit-ui";
+<Suspense fallback={<CardSkeleton label="Loading report" />}>
+  <ReportCard />
+</Suspense>
+```
+
 ## Open modal dialogs
 
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`

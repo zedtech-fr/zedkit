@@ -44,10 +44,10 @@ describe("primitives", () => {
     expect(separators).toHaveLength(2);
   });
 
-  it("renders a pulsing skeleton block", () => {
+  it("renders a skeleton block that pulses only when motion is safe", () => {
     const { container } = render(<Skeleton className="h-4 w-24" data-testid="sk" />);
     const skeleton = container.querySelector('[data-testid="sk"]');
-    expect(skeleton?.className).toContain("animate-pulse");
+    expect(skeleton?.className).toContain("motion-safe:animate-pulse");
   });
 
   it("renders headings at the level tag with size classes", () => {
