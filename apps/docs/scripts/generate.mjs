@@ -34,6 +34,7 @@ export const GUIDE_NAV_SLUGS = [
   "getting-started",
   "build-an-admin-dashboard",
   "set-up-your-coding-agents",
+  "maturity-and-compatibility",
   "zedkit-and-shadcn",
   "add-seo-to-nextjs",
 ];
@@ -66,6 +67,72 @@ function metaDescription(need) {
   return truncateDescription(purpose);
 }
 
+function loadPnpmCatalogVersions() {
+  const versions = new Map();
+  const lines = readFileSync(join(ROOT, "pnpm-workspace.yaml"), "utf8").split("\n");
+  let inCatalog = false;
+  for (const line of lines) {
+    if (line === "catalog:") {
+      inCatalog = true;
+      continue;
+    }
+    if (inCatalog && /^\S/.test(line) && !line.startsWith(" ")) inCatalog = false;
+    if (!inCatalog) continue;
+    if (!line.startsWith("  ") || !line.includes(":")) continue;
+    const body = line.slice(2);
+    const colon = body.indexOf(":");
+    if (colon < 0) continue;
+    const key = body.slice(0, colon).replace(/^"|"$/g, "").trim();
+    const value = body.slice(colon + 1).trim();
+    if (key.length > 0) versions.set(key, value);
+  }
+  return versions;
+}
+
+function formatPeerDependencies(peerDeps, catalogVersions) {
+  if (!peerDeps || Object.keys(peerDeps).length === 0) return "—";
+  return Object.entries(peerDeps)
+    .map(([name, range]) => {
+      if (range === "catalog:") {
+        const resolved = catalogVersions.get(name);
+        return resolved ? `${name} ${resolved}` : `${name} (catalog)`;
+      }
+      return `${name} ${range}`;
+    })
+    .join("; ");
+}
+
+function buildMaturityCompatibility(catalog) {
+  const rootPkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
+  const catalogVersions = loadPnpmCatalogVersions();
+  const maturityCounts = { planned: 0, alpha: 0, beta: 0, stable: 0, deprecated: 0 };
+  for (const entry of Object.values(catalog.packages)) {
+    for (const need of entry.needs) {
+      maturityCounts[need.status] = (maturityCounts[need.status] ?? 0) + 1;
+    }
+  }
+  const compatibilityRows = Object.keys(catalog.packages)
+    .sort()
+    .map((pkg) => {
+      const dir = shortName(pkg);
+      const manifest = JSON.parse(readFileSync(join(ROOT, "packages", dir, "package.json"), "utf8"));
+      return {
+        package: pkg,
+        version: manifest.version ?? "0.0.0",
+        node: manifest.engines?.node ?? rootPkg.engines?.node ?? "—",
+        peers: formatPeerDependencies(manifest.peerDependencies, catalogVersions),
+      };
+    });
+  const workspaceToolchain = {
+    node: rootPkg.engines?.node ?? "—",
+    packageManager: rootPkg.packageManager ?? "—",
+  };
+  const catalogMaturityReadmeUrl =
+    "https://github.com/zedtech-fr/zedkit/blob/main/docs/catalog/README.md#maturity";
+  const maturityDocHref = "/docs/maturity-and-compatibility";
+  return `// GENERATED from docs/catalog/catalog.json + package manifests — do not edit.\nexport const maturityDocHref: string = ${JSON.stringify(maturityDocHref)};\n\nexport const catalogMaturityReadmeUrl: string = ${JSON.stringify(catalogMaturityReadmeUrl)};\n\nexport const maturityCounts: Record<string, number> = ${JSON.stringify(maturityCounts, null, 2)};\n\nexport interface CompatibilityRow {\n  package: string;\n  version: string;\n  node: string;\n  peers: string;\n}\n\nexport const compatibilityRows: CompatibilityRow[] = ${JSON.stringify(compatibilityRows, null, 2)};\n\nexport const workspaceToolchain: { node: string; packageManager: string } = ${JSON.stringify(workspaceToolchain)};\n`;
+}
+
 // "At a glance" block, generated from the catalog guidance fields
 // (Audience/Purpose/When to use/When not to use/See also) so every
 // page answers who/what/when with zero hand-written prose.
@@ -94,10 +161,10 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
-    `import { Badge } from "@zedtech/zedkit-ui";`,
+    `import { MaturityBadge } from "../../../components/maturity-badge";`,
     `import { ComponentPage } from "../../../components/component-page";`,
     "",
-    `<Badge>${need.status}</Badge>`,
+    `<MaturityBadge status={${JSON.stringify(need.status)}} />`,
     "",
     "<ComponentPage",
     `  packageName={${JSON.stringify(pkg)}}`,
@@ -173,14 +240,14 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
-    `import { Badge } from "@zedtech/zedkit-ui";`,
+    `import { MaturityBadge } from "../../../components/maturity-badge";`,
     `import { Tab, Tabs } from "fumadocs-ui/components/tabs";`,
   ];
   if (rich) head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
   if (rich && rich.propsFile && rich.propsName) {
     head.push(`import { PropsTable } from "../../../components/props-table";`);
   }
-  head.push("", `<Badge>${need.status}</Badge>`, "");
+  head.push("", `<MaturityBadge status={${JSON.stringify(need.status)}} />`, "");
   head.push(...guidanceBlock(need, seeAlsoLinks));
   if (rich) {
     const detail = need.import.replace(/`/g, "");
@@ -272,6 +339,7 @@ export function generate(outDir) {
     "",
     "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
     "- [Set up your coding agents](/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
+    "- [Maturity and compatibility](/docs/maturity-and-compatibility) — badge legend link and package matrix",
     "- [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
     "- [Add SEO to a Next.js app](/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
     "",
@@ -375,6 +443,7 @@ export function generate(outDir) {
   const entryPointsModule = `// GENERATED from home-entry-points.json + catalog — do not edit.\nexport interface HomeEntryPoint {\n  title: string;\n  summary: string;\n  href: string;\n  needCount: number;\n  linkLabel: string;\n}\n\nexport const homeEntryPoints: HomeEntryPoint[] = ${JSON.stringify(homeEntryPoints, null, 2)};\n`;
   const registryBricks = loadRegistryBrickNames(ROOT);
   const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks[0])};\n`;
+  const maturityModule = buildMaturityCompatibility(catalog);
   return {
     pages,
     prosePages,
@@ -392,6 +461,7 @@ export function generate(outDir) {
     catalogIndex,
     catalogIndexModule,
     homeCuratedGallery,
+    maturityModule,
   };
 }
 
@@ -560,12 +630,14 @@ if (invoked === fileURLToPath(import.meta.url)) {
       entryPointsModule,
       registrySiteModule,
       catalogIndexModule,
+      maturityModule,
     } = generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
     writeFileSync(join(APP, "content", "home-scenarios.ts"), scenariosModule);
     writeFileSync(join(APP, "content", "home-entry-points.ts"), entryPointsModule);
     writeFileSync(join(APP, "content", "registry-site.ts"), registrySiteModule);
     writeFileSync(join(APP, "content", "catalog-index.ts"), catalogIndexModule);
+    writeFileSync(join(APP, "content", "maturity-compatibility.ts"), maturityModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }
 }
