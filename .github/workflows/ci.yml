@@ -57,6 +57,8 @@ jobs:
         with:
           name: ui-gallery
           path: packages/ui/test-results/*.png
-      # Versioning dry-run only: publishing to npm is a later, explicit
-      # decision. This just proves the Changesets metadata is sane.
+      # Versioning dry-run only: proves the Changesets metadata is sane.
+      # Skipped on the Version PR itself: it consumed the changesets, so
+      # `status` always reports "changed packages, no changesets" there.
       - run: pnpm run changeset:status
+        if: github.head_ref != 'changeset-release/main'
