@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Badge } from "#index.js";
+import { Alert, AlertDescription, AlertTitle } from "#index.js";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#index.js";
 import { Button } from "#index.js";
 import { Input } from "#index.js";
@@ -71,6 +72,24 @@ describe("primitives", () => {
       </>,
     );
     expect(screen.getByText("Secondary copy.").className).toContain("text-muted-foreground");
+  });
+
+  it("renders default and destructive alerts", () => {
+    render(
+      <>
+        <Alert>
+          <AlertTitle>Heads up</AlertTitle>
+          <AlertDescription>Something worth knowing.</AlertDescription>
+        </Alert>
+        <Alert variant="destructive">
+          <AlertTitle>Failed</AlertTitle>
+          <AlertDescription>Something went wrong.</AlertDescription>
+        </Alert>
+      </>,
+    );
+    const alerts = screen.getAllByRole("alert");
+    expect(alerts).toHaveLength(2);
+    expect(alerts[1]?.className).toContain("text-destructive");
   });
 
   it("renders a card with header, content, and footer", () => {

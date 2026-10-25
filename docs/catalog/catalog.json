@@ -320,6 +320,13 @@
           "wraps": "`class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)",
           "status": "stable",
           "example": "import { Heading, Text } from \"@zedkit/ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
+        },
+        {
+          "need": "Call out a notice or an error state",
+          "import": "`@zedkit/ui` — `Alert`, `AlertTitle`, `AlertDescription`",
+          "wraps": "`class-variance-authority`",
+          "status": "stable",
+          "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedkit/ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
         }
       ]
     }
