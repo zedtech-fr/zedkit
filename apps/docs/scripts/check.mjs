@@ -307,6 +307,19 @@ const galleryFile = existsSync(join(APP, "content", "gallery.ts"))
 if (galleryFile && !galleryFile.includes(`featuredPackageVersion: string = ${JSON.stringify(uiPkgJson.version)}`)) {
   errors.push("content/gallery.ts: featuredPackageVersion does not match packages/ui/package.json.");
 }
+const homeInstallSnippet = join(APP, "home-quickstart", "snippets", "install.sh");
+if (galleryFile && existsSync(homeInstallSnippet)) {
+  const featuredMatch = /featuredPackage: string = (.+);\n/.exec(galleryFile);
+  const featuredPackage = featuredMatch ? JSON.parse(featuredMatch[1]) : null;
+  const install = readFileSync(homeInstallSnippet, "utf8").trim();
+  if (featuredPackage && install !== `pnpm add ${featuredPackage}`) {
+    errors.push(`home-quickstart/snippets/install.sh must be exactly: pnpm add ${featuredPackage}`);
+  }
+}
+for (const name of ["globals.css", "page.tsx"]) {
+  const path = join(APP, "home-quickstart", "snippets", name);
+  if (!existsSync(path)) errors.push(`home-quickstart/snippets/${name} missing.`);
+}
 
 if (catalogIndex.length !== totalNeeds) {
   errors.push(`catalog index holds ${catalogIndex.length} entries for ${totalNeeds} catalog needs.`);
