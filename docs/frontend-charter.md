@@ -1,8 +1,9 @@
 # Frontend charter
 
 Short concrete rules for every UI built on this kit. Anything marked
-**lint** is enforced by the shared ESLint preset; **test** by the axe
-suite and the preview smoke run.
+**lint** is enforced by the shared ESLint preset
+(`eslint/ui-preset.mjs`, copy it into your project); **test** by the
+axe suite and the preview smoke run.
 
 ## Components
 

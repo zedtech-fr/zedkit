@@ -1,6 +1,8 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
+import { uiPreset } from "./eslint/ui-preset.mjs";
+
 export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -44,6 +46,9 @@ export default tseslint.config(
       globals: { console: "readonly", process: "readonly" },
     },
   },
+  // UI preset last: for .tsx/.jsx its no-restricted-syntax (try/catch +
+  // style-attribute bans) intentionally wins over the root block above.
+  ...uiPreset,
   // Vendored third-party skills are verbatim upstream copies: never linted.
   // The ai kit ships them (and their helper scripts) as data, not as source.
   {
