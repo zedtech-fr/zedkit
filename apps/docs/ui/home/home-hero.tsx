@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { demoRegistry } from "@/components/demos/registry";
+import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
+import { docsSite } from "@/lib/site";
 import { HomeInstallCommands } from "@/ui/home/home-install-commands";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 
@@ -30,7 +32,12 @@ export function HomeHero({
         <Heading level={2} className="text-base font-semibold">
           Install
         </Heading>
-        <HomeInstallCommands npmPackage={featuredPackage} />
+        <HomeInstallCommands
+          npmPackage={featuredPackage}
+          siteUrl={docsSite.url}
+          featuredBrick={featuredRegistryBrick}
+          registryBricks={registryBrickNames}
+        />
       </Stack>
       <Card className="w-full max-w-2xl">
         <CardHeader>

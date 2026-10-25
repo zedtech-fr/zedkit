@@ -31,6 +31,8 @@ import { fileURLToPath } from "node:url";
 // impossible here and the relative import stays.
 // eslint-disable-next-line no-restricted-imports -- see above
 import { parseBarrelExports } from "../../../scripts/catalog.mjs";
+// eslint-disable-next-line no-restricted-imports -- repo-root registry.json
+import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import {
   catalogPageKeys,
   expandGuideSnippets,
@@ -52,6 +54,7 @@ if (!existsSync(catalogPath)) {
 const catalog = JSON.parse(readFileSync(catalogPath, "utf8"));
 const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"));
 const rich = manifest.rich ?? {};
+const registryBricks = new Set(loadRegistryBrickNames(ROOT));
 
 const tmp = mkdtempSync(join(tmpdir(), "docs-check-"));
 const { pages, prosePages, guidePages, gallery, stats, uiPackage, homeScenarios } = generate(tmp);
@@ -274,6 +277,11 @@ for (const line of registryText.split("\n")) {
 }
 for (const needEntry of Object.values(catalog.packages).flatMap((p) => p.needs)) {
   const spec = rich[needEntry.need];
+  if (needEntry.registry && !registryBricks.has(needEntry.registry)) {
+    errors.push(
+      `catalog: "${needEntry.need}" Registry "${needEntry.registry}" is missing from registry.json.`,
+    );
+  }
   if (!spec?.registry) continue;
   if (needEntry.registry !== spec.registry) {
     errors.push(

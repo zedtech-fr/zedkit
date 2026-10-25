@@ -5,6 +5,8 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+// eslint-disable-next-line no-restricted-imports -- repo-root registry.json
+import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -135,9 +137,39 @@ if (!sampleDoc) {
   assertMeta(sampleDoc, rel, `${base}${rel}`);
 }
 
+const registryRoot = join(HERE, "..", "..", "..");
+const brickNames = loadRegistryBrickNames(registryRoot);
+for (const name of brickNames) {
+  const rel = join("r", `${name}.json`);
+  if (!existsSync(join(OUT, rel))) {
+    fail(`missing static export ${rel} (run registry:build before docs export).`);
+  }
+}
+
+const registryUrlRe = /\/r\/([a-z][a-z0-9-]*)\.json/g;
+function walkHtml(dir) {
+  if (!existsSync(dir)) return;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) walkHtml(path);
+    else if (entry.name.endsWith(".html")) {
+      const html = readFileSync(path, "utf8");
+      for (const match of html.matchAll(registryUrlRe)) {
+        const brick = match[1];
+        if (!existsSync(join(OUT, "r", `${brick}.json`))) {
+          fail(`export HTML links to /r/${brick}.json but ${join("r", `${brick}.json`)} is missing.`);
+        }
+      }
+    }
+  }
+}
+walkHtml(OUT);
+
 if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`docs-seo-export: ok (${OUT}, ${sitemapUrlCount} sitemap URLs checked).`);
+  console.log(
+    `docs-seo-export: ok (${OUT}, ${sitemapUrlCount} sitemap URLs, ${brickNames.length} registry JSON).`,
+  );
 }
