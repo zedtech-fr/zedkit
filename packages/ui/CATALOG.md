@@ -308,22 +308,40 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 
 ## Slide in a drawer panel
 
-- Import: `@zedtech/zedkit-ui` — `Drawer`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerHandle`, `DrawerClose`, `DrawerOverlay`, `DrawerPortal`
+- Import: `@zedtech/zedkit-ui` — `Drawer`, `DrawerProps`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerHandle`, `DrawerClose`, `DrawerOverlay`, `DrawerPortal`
 - Wraps: `vaul`
 - Status: alpha
 - Derived from: shadcn/ui (drawer)
+- Registry: drawer
 - Short name: Drawer
 - Audience: Developers showing detail views beside a list without navigation.
 - Purpose: Slide-in panels (right-side detail on desktop, bottom sheet on mobile).
 - When to use: For list-detail previews and short side forms.
 - When not to use: For multi-step flows — use a full page or wizard instead.
 - See also: `Open modal dialogs`, `Show key-value details and a live indicator`
+- Examples: Right detail panel, Bottom sheet
+- A11y: Built on vaul / Radix Dialog: focus trap, Escape to close, rest of the page hidden from assistive tech while open (`role="dialog"`). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Pair the drag handle with a visible close control for keyboard users.
+- Troubleshooting: Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. On small screens a `direction="right"` drawer spans the width by design.
 
 ```ts
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
-<Drawer direction="right"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets
+<Drawer direction="right">
   <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>
-  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>
+  <DrawerContent>
+    <DrawerClose asChild><Button variant="ghost" size="sm">Close</Button></DrawerClose>
+    <DrawerTitle>Details</DrawerTitle>
+  </DrawerContent>
+</Drawer>
+```
+
+```ts
+import { Button, Drawer, DrawerContent, DrawerHandle, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
+<Drawer>
+  <DrawerTrigger asChild><Button variant="outline">Filters</Button></DrawerTrigger>
+  <DrawerContent>
+    <DrawerHandle />
+    <DrawerTitle>Filters</DrawerTitle>
+  </DrawerContent>
 </Drawer>
 ```
 
