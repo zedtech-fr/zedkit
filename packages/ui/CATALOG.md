@@ -69,17 +69,34 @@ import { Button } from "@zedtech/zedkit-ui";
 - Wraps: `class-variance-authority`
 - Status: beta
 - Derived from: shadcn/ui (badge)
+- Registry: badge
 - Short name: Badge
 - Audience: Developers flagging state or counts inline (lists, headers, tables).
 - Purpose: Small status/count pills with semantic variants.
 - When to use: For short labels next to the thing they describe.
 - When not to use: For long text or actions — use Text or Button instead.
 - See also: `Indicate status with a dot`
+- Examples: Simple, Variants, In a table row
+- A11y: Renders a `div` (not a live region). Keep labels short; do not put interactive controls inside. Focus ring appears when the badge is focusable via `tabIndex={0}`.
+- Troubleshooting: Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.
 
 ```ts
 import { Badge } from "@zedtech/zedkit-ui";
 <Badge>live</Badge>
+```
+
+```ts
+import { Badge } from "@zedtech/zedkit-ui";
 <Badge variant="outline">3 retries</Badge>
+<Badge variant="destructive">failed</Badge>
+```
+
+```ts
+import { Badge } from "@zedtech/zedkit-ui";
+<tr>
+  <td>sync</td>
+  <td><Badge variant="secondary">queued</Badge></td>
+</tr>
 ```
 
 ## Collect text input with a label

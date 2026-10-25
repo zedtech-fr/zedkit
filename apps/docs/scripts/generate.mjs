@@ -56,6 +56,40 @@ function guidanceBlock(need, seeAlsoLinks) {
   return lines;
 }
 
+function componentPageMdx(pkg, need, version, spec, related) {
+  const examples = need.examples ?? [{ title: "Simple", code: need.example }];
+  return [
+    "---",
+    `title: ${JSON.stringify(need.need)}`,
+    `description: ${JSON.stringify(`${pkg} — ${need.status}`)}`,
+    `status: ${need.status}`,
+    "---",
+    "",
+    "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
+    "",
+    `import { Badge } from "@zedtech/zedkit-ui";`,
+    `import { ComponentPage } from "../../../components/component-page";`,
+    "",
+    `<Badge>${need.status}</Badge>`,
+    "",
+    "<ComponentPage",
+    `  packageName={${JSON.stringify(pkg)}}`,
+    `  version={${JSON.stringify(version)}}`,
+    `  importLine={${JSON.stringify(need.import)}}`,
+    `  wraps={${JSON.stringify(need.wraps)}}`,
+    `  registry={${JSON.stringify(spec.registry)}}`,
+    `  demo={${JSON.stringify(spec.demo)}}`,
+    `  propsFile={${JSON.stringify(spec.propsFile)}}`,
+    `  propsName={${JSON.stringify(spec.propsName)}}`,
+    `  examples={${JSON.stringify(examples)}}`,
+    `  a11y={${JSON.stringify(need.a11y ?? "")}}`,
+    `  troubleshooting={${JSON.stringify(need.troubleshooting ?? "")}}`,
+    `  related={${JSON.stringify(related)}}`,
+    "/>",
+    "",
+  ].join("\n");
+}
+
 function pageMdx(pkg, need, version, rich, seeAlsoLinks) {
   const head = [
     "---",
@@ -172,16 +206,24 @@ export function generate(outDir) {
       const spec = rich[need.need];
       let richBlock = null;
       if (spec) {
-        richBlock = { demo: spec.demo, propsFile: spec.source ?? null, propsName: spec.props ?? null };
+        richBlock = {
+          demo: spec.demo,
+          propsFile: spec.source ?? null,
+          propsName: spec.props ?? null,
+          registry: spec.registry ?? null,
+        };
       }
-      // catalog:check rejects unknown See also targets, so a miss here
-      // is a generator bug — fail loudly instead of emitting dead links.
-      const links = (need.seeAlso ?? []).map((target) => {
+      const related = (need.seeAlso ?? []).map((target) => {
         const placed = placementByNeed.get(target);
         if (!placed) throw new Error(`generator: "${need.need}" links unknown need "${target}" in See also.`);
-        return `[${target}](/docs/${placed.folder}/${placed.slug})`;
+        return { title: target, href: `/docs/${placed.folder}/${placed.slug}` };
       });
-      writeFileSync(join(dir, `${slug}.mdx`), pageMdx(pkg, need, version, richBlock, links));
+      const links = related.map((r) => `[${r.title}](${r.href})`);
+      const body =
+        richBlock?.registry
+          ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related)
+          : pageMdx(pkg, need, version, richBlock, links);
+      writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
       llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${need.status}`);
     }

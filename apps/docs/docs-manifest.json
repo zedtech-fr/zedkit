@@ -12,10 +12,10 @@
     "Show a status or count badge": {
       "package": "@zedtech/zedkit-ui",
       "component": "Badge",
-      "props": null,
-      "source": null,
-      "demo": "BadgeDemo",
-      "_note": "preview-only: BadgeProps is not exported from the ui barrel (unlike ButtonProps/LivePulseProps); docs never promise unexported types. Upstream may export it (one line) to unlock the table."
+      "registry": "badge",
+      "props": "BadgeProps",
+      "source": "badge.tsx",
+      "demo": "BadgeDemo"
     },
     "Collect text input with a label": {
       "package": "@zedtech/zedkit-ui",

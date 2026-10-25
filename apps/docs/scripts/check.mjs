@@ -61,6 +61,7 @@ function mdxFiles(dir) {
 // choice) and a titled TSX example — never bare pill blocks.
 for (const file of mdxFiles(tmp)) {
   const text = readFileSync(file, "utf8");
+  if (text.includes("<ComponentPage")) continue;
   if (!text.includes('<Tabs groupId="package-manager"')) {
     errors.push(`generator: ${file.slice(tmp.length + 1)} lacks install tabs.`);
   }
@@ -144,6 +145,27 @@ for (const line of registryText.split("\n")) {
   const match = /^ {2}(\w+): \{ Demo: \w+, file: "([^"]+)"(?:, center: true)? \},?$/.exec(line);
   if (match) registryEntries.set(match[1], match[2]);
 }
+for (const needEntry of Object.values(catalog.packages).flatMap((p) => p.needs)) {
+  const spec = rich[needEntry.need];
+  if (!spec?.registry) continue;
+  if (needEntry.registry !== spec.registry) {
+    errors.push(
+      `docs-manifest.json: "${needEntry.need}" registry "${spec.registry}" does not match catalog Registry "${needEntry.registry ?? "(missing)"}".`,
+    );
+  }
+  const examples = needEntry.examples ?? [];
+  if (examples.length < 2) {
+    errors.push(`catalog: "${needEntry.need}" component page needs at least 2 examples (has ${examples.length}).`);
+  }
+  if (!needEntry.a11y) errors.push(`catalog: "${needEntry.need}" component page is missing A11y.`);
+  if (!needEntry.troubleshooting) {
+    errors.push(`catalog: "${needEntry.need}" component page is missing Troubleshooting.`);
+  }
+  if (!spec.props || !spec.source) {
+    errors.push(`docs-manifest.json: "${needEntry.need}" registry page needs props + source for AutoTypeTable.`);
+  }
+}
+
 for (const [key, spec] of Object.entries(rich)) {
   if (!uiExports.has(spec.component)) {
     errors.push(`docs-manifest.json: "${key}" references missing @zedtech/zedkit-ui export \`${spec.component}\`.`);
