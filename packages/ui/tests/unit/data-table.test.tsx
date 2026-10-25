@@ -50,4 +50,26 @@ describe("DataTable", () => {
     render(<DataTable columns={columns} data={data} error="Could not load rows." />);
     expect(screen.getByRole("alert").textContent).toBe("Could not load rows.");
   });
+
+  it("filters rows by the filter input", async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} />);
+    await user.type(screen.getByLabelText("Filter…"), "Ada");
+    expect(bodyRowTexts()).toEqual(["Ada36"]);
+    await user.clear(screen.getByLabelText("Filter…"));
+    expect(bodyRowTexts()).toEqual(["Bob30", "Ada36"]);
+  });
+
+  it("paginates with Previous/Next and shows the page count", async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} pageSize={1} />);
+    expect(bodyRowTexts()).toEqual(["Bob30"]);
+    expect(screen.getByText("Page 1 of 2").textContent).toBe("Page 1 of 2");
+    expect((screen.getByRole("button", { name: "Previous" }) as HTMLButtonElement).disabled).toBe(true);
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(bodyRowTexts()).toEqual(["Ada36"]);
+    expect(screen.getByText("Page 2 of 2").textContent).toBe("Page 2 of 2");
+    await user.click(screen.getByRole("button", { name: "Previous" }));
+    expect(bodyRowTexts()).toEqual(["Bob30"]);
+  });
 });

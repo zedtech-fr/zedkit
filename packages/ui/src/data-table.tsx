@@ -1,6 +1,12 @@
+import * as React from "react";
 import {
+  columnFilteringFeature,
   createColumnHelper,
+  createFilteredRowModel,
+  createPaginatedRowModel,
   createSortedRowModel,
+  globalFilteringFeature,
+  rowPaginationFeature,
   rowSortingFeature,
   tableFeatures,
   useTable,
@@ -11,13 +17,20 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
+import { Button } from "./button.js";
+import { Input } from "./input.js";
 import { Skeleton } from "./skeleton.js";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table.js";
 import { cn } from "./utils.js";
 
 const features = tableFeatures({
   rowSortingFeature,
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowPaginationFeature,
   sortedRowModel: createSortedRowModel(),
+  filteredRowModel: createFilteredRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
 });
 
 export type DataTableColumn<TData extends RowData, TValue extends CellData> = ColumnDef<
@@ -39,6 +52,8 @@ export interface DataTableProps<TData extends RowData> {
   loading?: boolean;
   error?: string | null;
   emptyMessage?: string;
+  filterPlaceholder?: string;
+  pageSize?: number;
 }
 
 function SortIcon({ direction }: { direction: SortDirection | false }) {
@@ -54,12 +69,27 @@ export function DataTable<TData extends RowData>({
   loading = false,
   error = null,
   emptyMessage = "No results.",
+  filterPlaceholder = "Filter…",
+  pageSize = 10,
 }: DataTableProps<TData>) {
   const table = useTable({ features, columns, data });
   const rows = table.getRowModel().rows;
+  const { pageIndex } = table.state.pagination;
+
+  React.useEffect(() => {
+    table.setPageSize(pageSize);
+  }, [table, pageSize]);
 
   return (
-    <Table>
+    <div className="space-y-4">
+      <Input
+        placeholder={filterPlaceholder}
+        value={table.state.globalFilter ?? ""}
+        onChange={(event) => table.setGlobalFilter(event.target.value)}
+        className="max-w-sm"
+        aria-label={filterPlaceholder}
+      />
+      <Table>
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
           <TableRow key={group.id}>
@@ -117,6 +147,28 @@ export function DataTable<TData extends RowData>({
           ))
         )}
       </TableBody>
-    </Table>
+      </Table>
+      <div className="flex items-center justify-end gap-2">
+        <span className="text-sm text-muted-foreground">
+          Page {pageIndex + 1} of {table.getPageCount()}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
   );
 }
