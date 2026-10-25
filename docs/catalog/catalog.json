@@ -24,16 +24,32 @@
           "import": "`@zedtech/zedkit-ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Agent setup",
+          "audience": "Teams onboarding a coding agent (Cursor, Claude, Codex) on a shared repo.",
+          "purpose": "Install one agent-agnostic setup (instructions, skills, subagents, commands) with a single CLI call.",
+          "whenToUse": "When every developer and agent should share the same instructions and review workflow.",
+          "whenNotToUse": "When you only need one provider's config — write that provider's file by hand instead.",
           "derivedFrom": null,
-          "example": "import { installKit } from \"@zedtech/zedkit-ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);"
+          "example": "import { installKit } from \"@zedtech/zedkit-ai\";\nconst result = installKit({ dest: \".\", preset: \"core\", providers: [\"claude\", \"cursor\"] });\nif (!result.ok) throw result.error;\nfor (const action of result.value) console.log(action.kind, action.path);",
+          "seeAlso": [
+            "Check that skills, subagents, commands and provider copies are valid"
+          ]
         },
         {
           "need": "Check that skills, subagents, commands and provider copies are valid",
           "import": "`@zedtech/zedkit-ai` — `validateKit`, `checkDrift`, `Issue`",
           "wraps": "`yaml`",
           "status": "beta",
+          "shortName": "Kit validation",
+          "audience": "Teams keeping an installed agent setup healthy across providers.",
+          "purpose": "Validate installed skills, subagents and commands, and report drift between providers.",
+          "whenToUse": "In CI and after editing shared agent files, to catch invalid or drifted copies.",
+          "whenNotToUse": "For one-off local edits — run the install command again instead of validating by hand.",
           "derivedFrom": null,
-          "example": "import { checkDrift, validateKit } from \"@zedtech/zedkit-ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);"
+          "example": "import { checkDrift, validateKit } from \"@zedtech/zedkit-ai\";\nconst issues = [...validateKit(\".agents\"), ...checkDrift(\".\", \".agents\")];\nfor (const issue of issues) console.error(`${issue.path}: ${issue.message}`);",
+          "seeAlso": [
+            "Set up AI agent instructions, skills, subagents and commands in a repo"
+          ]
         }
       ]
     },
@@ -58,22 +74,43 @@
           "import": "`@zedtech/zedkit-core` — `Result`, `ok`, `err`, `isOk`, `isErr`, `mapResult`, `unwrapOr`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Result",
+          "audience": "TypeScript developers who want typed outcomes instead of try/catch everywhere.",
+          "purpose": "Return `ok`/`err` Results so failures are values the compiler forces you to handle.",
+          "whenToUse": "For fallible operations (parsing, lookups, validation) where the caller must handle failure.",
+          "whenNotToUse": "For truly exceptional programmer bugs — throw (or assert) instead of returning `err`.",
           "derivedFrom": null,
-          "example": "import { isOk, ok, unwrapOr } from \"@zedtech/zedkit-core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;"
+          "example": "import { isOk, ok, unwrapOr } from \"@zedtech/zedkit-core\";\nconst found = ok({ name: \"zed\" });\nif (isOk(found)) console.log(found.value.name);\nconst name = unwrapOr(found, { name: \"?\" }).name;",
+          "seeAlso": [
+            "Handle errors without try/catch"
+          ]
         },
         {
           "need": "Handle errors without try/catch",
           "import": "`@zedtech/zedkit-core` — `tryCatch`, `tryCatchAsync`, `normalizeThrown`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "tryCatch",
+          "audience": "TypeScript developers wrapping throwing calls (JSON, IO, third-party SDKs).",
+          "purpose": "Turn any throwing call into a typed Result without a try/catch block.",
+          "whenToUse": "At the boundary with throwing code you do not control.",
+          "whenNotToUse": "Inside code that already returns Results — compose with `mapResult` instead.",
           "derivedFrom": null,
-          "example": "import { tryCatch } from \"@zedtech/zedkit-core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);"
+          "example": "import { tryCatch } from \"@zedtech/zedkit-core\";\nconst parsed = tryCatch(() => JSON.parse(input));\nif (!parsed.ok) return fallback(parsed.error);",
+          "seeAlso": [
+            "Model success or failure without throwing"
+          ]
         },
         {
           "need": "Generate prefixed unique IDs",
           "import": "`@zedtech/zedkit-core` — `newPrefixedId`, `isPrefixedId`",
           "wraps": "`ulid`",
           "status": "beta",
+          "shortName": "Prefixed IDs",
+          "audience": "Developers who want readable, sortable, collision-free IDs (orders, jobs, keys).",
+          "purpose": "Generate ULID-based IDs with a type prefix (`order_...`) plus a prefix check.",
+          "whenToUse": "For public-facing or log-friendly IDs where the prefix disambiguates the kind.",
+          "whenNotToUse": "For database primary keys — use the database's native id/uuid default instead.",
           "derivedFrom": null,
           "example": "import { isPrefixedId, newPrefixedId } from \"@zedtech/zedkit-core\";\nconst id = newPrefixedId(\"order\"); // order_01M5Q75SHJ9CVV6E3RBF0FGEM1\nif (!isPrefixedId(id, \"order\")) throw new Error(\"bad id\");"
         }
@@ -102,24 +139,50 @@
           "import": "`@zedtech/zedkit-nest` — `createNestApp`, `NestBootstrapOptions`, `ThrottleOptions`, `DocsOptions`, `LoggerOptions`, `ValidationOptions`, `REQUEST_ID_HEADER`, `RequestIdInterceptor`",
           "wraps": "`@nestjs/platform-fastify`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/throttler`, `nestjs-pino`, `class-validator`",
           "status": "beta",
+          "shortName": "Bootstrap",
+          "audience": "Teams starting a production NestJS API with secure defaults.",
+          "purpose": "Boot a hardened Nest app (validation, logging, docs, throttling, errors, shutdown) from one factory call.",
+          "whenToUse": "For every new Nest service that needs production defaults on day one.",
+          "whenNotToUse": "For an existing app with its own bootstrap — adopt single pieces (logger, filter) instead.",
           "derivedFrom": null,
-          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);"
+          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({ module: AppModule, envSchema: AppEnv });\nawait app.listen(3000);",
+          "seeAlso": [
+            "Ship request logs without leaking credentials",
+            "Return uniform error bodies"
+          ]
         },
         {
           "need": "Ship request logs without leaking credentials",
           "import": "`@zedtech/zedkit-nest` — `LoggerOptions`",
           "wraps": "`nestjs-pino`",
           "status": "beta",
+          "shortName": "Safe logs",
+          "audience": "API developers who log requests but must never leak auth headers or cookies.",
+          "purpose": "Request logging with auth headers and cookies redacted by default.",
+          "whenToUse": "Whenever request logs leave the process (files, collectors, consoles).",
+          "whenNotToUse": "For full-fidelity debug of auth flows — reproduce locally with redaction off instead.",
           "derivedFrom": null,
-          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});"
+          "example": "import { createNestApp } from \"@zedtech/zedkit-nest\";\nconst app = await createNestApp({\n  module: AppModule,\n  logger: { level: \"info\" }, // default: auth header + cookies redacted\n});",
+          "seeAlso": [
+            "Bootstrap a Nest app",
+            "Redact secrets before logging"
+          ]
         },
         {
           "need": "Return uniform error bodies",
           "import": "`@zedtech/zedkit-nest` — `AllExceptionsFilter`, `ErrorBody`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Error bodies",
+          "audience": "API developers who want one error shape for every failure.",
+          "purpose": "A global exception filter that returns the same error body for all failures.",
+          "whenToUse": "As the last-resort error mapper in front of API clients.",
+          "whenNotToUse": "For domain validation errors with field detail — return those from the handler instead.",
           "derivedFrom": null,
-          "example": "import { AllExceptionsFilter } from \"@zedtech/zedkit-nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());"
+          "example": "import { AllExceptionsFilter } from \"@zedtech/zedkit-nest\";\n// wired globally by createNestApp; reuse standalone:\napp.useGlobalFilters(new AllExceptionsFilter());",
+          "seeAlso": [
+            "Bootstrap a Nest app"
+          ]
         }
       ]
     },
@@ -145,16 +208,34 @@
           "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
           "wraps": "`payload` (peer, types only)",
           "status": "beta",
+          "shortName": "SEO group field",
+          "audience": "Payload CMS developers shipping localized marketing sites.",
+          "purpose": "A drop-in SEO group field (meta, OG, robots, JSON-LD) with localization and length validation.",
+          "whenToUse": "On every collection with public pages in more than one locale.",
+          "whenNotToUse": "For a single-locale site — use plain text fields plus `zedkit-seo` builders instead.",
           "derivedFrom": null,
-          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
+          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated",
+          "seeAlso": [
+            "Validate editor-entered title/description lengths",
+            "Build localized page metadata"
+          ]
         },
         {
           "need": "Validate editor-entered title/description lengths",
           "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Length validation",
+          "audience": "Payload developers who want editors warned before over-long titles ship.",
+          "purpose": "Friendly max-length validators and constants for SEO titles and descriptions.",
+          "whenToUse": "On every editor-entered SEO text field.",
+          "whenNotToUse": "For hard truncation at render time — use `resolveDescription` from `@zedtech/zedkit-seo` instead.",
           "derivedFrom": null,
-          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
+          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over",
+          "seeAlso": [
+            "Add a localized SEO tab to a Payload collection",
+            "Derive descriptions, slugs, and localized fields"
+          ]
         }
       ]
     },
@@ -181,56 +262,115 @@
           "import": "`@zedtech/zedkit-seo` — `buildRobots`, `BuildRobotsOptions`, `RobotsConfig`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "robots.txt",
+          "audience": "Developers who want a correct robots.txt without memorizing the syntax.",
+          "purpose": "Build robots.txt content (allows, disallows, sitemap links) from typed options.",
+          "whenToUse": "For every public site, served from `/robots.txt`.",
+          "whenNotToUse": "For access control — robots.txt is advisory; gate private content with auth instead.",
           "derivedFrom": null,
-          "example": "import { buildRobots } from \"@zedtech/zedkit-seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}"
+          "example": "import { buildRobots } from \"@zedtech/zedkit-seo\";\nexport function robots() {\n  return buildRobots({ siteUrl, extraSitemaps: [`${siteUrl}/video-sitemap.xml`] });\n}",
+          "seeAlso": [
+            "List localized pages in a sitemap"
+          ]
         },
         {
           "need": "List localized pages in a sitemap",
           "import": "`@zedtech/zedkit-seo` — `buildSitemapEntries`, `BuildSitemapOptions`, `SitemapEntry`, `SitemapPage`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Sitemap",
+          "audience": "Developers shipping multi-locale sites that search engines should crawl fully.",
+          "purpose": "Build sitemap entries with hreflang alternates from a page list.",
+          "whenToUse": "For every locale of every public page, regenerated on content change.",
+          "whenNotToUse": "For pages behind auth — keep them out of the sitemap entirely.",
           "derivedFrom": null,
-          "example": "import { buildSitemapEntries } from \"@zedtech/zedkit-seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });"
+          "example": "import { buildSitemapEntries } from \"@zedtech/zedkit-seo\";\nconst pages = docs.map((d) => ({ path: `/${d.slug}`, lastModified: d.updatedAt }));\nreturn buildSitemapEntries({ siteUrl, locales: [\"en\", \"fr\"], pages });",
+          "seeAlso": [
+            "Serve robots.txt content",
+            "Serve a Google video sitemap"
+          ]
         },
         {
           "need": "Serve a Google video sitemap",
           "import": "`@zedtech/zedkit-seo` — `buildVideoSitemap`, `BuildVideoSitemapOptions`, `VideoSitemapEntry`, `escapeXml`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Video sitemap",
+          "audience": "Sites embedding video that should appear in Google video search.",
+          "purpose": "Build a Google video sitemap (page, thumbnail, title, description) from typed entries.",
+          "whenToUse": "When video pages should be discoverable via video search.",
+          "whenNotToUse": "For plain pages — use the regular sitemap instead.",
           "derivedFrom": null,
-          "example": "import { buildVideoSitemap } from \"@zedtech/zedkit-seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });"
+          "example": "import { buildVideoSitemap } from \"@zedtech/zedkit-seo\";\nconst xml = buildVideoSitemap({ videos: [{ pageUrl, thumbnailUrl, title, description }] });\nreturn new Response(xml, { headers: { \"Content-Type\": \"application/xml\" } });",
+          "seeAlso": [
+            "List localized pages in a sitemap"
+          ]
         },
         {
           "need": "Emit typed JSON-LD structured data",
           "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`",
           "wraps": "`schema-dts`",
           "status": "beta",
+          "shortName": "JSON-LD",
+          "audience": "Developers who want rich results without hand-writing schema.org JSON.",
+          "purpose": "Typed builders for Organization, WebPage, Breadcrumb and Article JSON-LD.",
+          "whenToUse": "On pages eligible for rich results (articles, org pages, breadcrumbs).",
+          "whenNotToUse": "For data with no matching schema.org type — skip structured data instead of forcing it.",
           "derivedFrom": null,
-          "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
+          "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>",
+          "seeAlso": [
+            "Build localized page metadata"
+          ]
         },
         {
           "need": "Build localized page metadata",
           "import": "`@zedtech/zedkit-seo` — `buildPageMetadata`, `BuildPageMetadataOptions`, `SiteMetadata`, `PageContent`, `PageMetadata`, `OpenGraphImage`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Page metadata",
+          "audience": "Developers wiring titles, descriptions and OG tags across locales.",
+          "purpose": "Build complete localized page metadata (title, description, canonical, OG) from site + page data.",
+          "whenToUse": "For every public page render, with the request locale.",
+          "whenNotToUse": "For CMS-managed per-field validation — validate at edit time instead.",
           "derivedFrom": null,
-          "example": "import { buildPageMetadata } from \"@zedtech/zedkit-seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });"
+          "example": "import { buildPageMetadata } from \"@zedtech/zedkit-seo\";\nreturn buildPageMetadata({ site, page, locale, pathname, ogImage });",
+          "seeAlso": [
+            "Emit typed JSON-LD structured data",
+            "Derive descriptions, slugs, and localized fields"
+          ]
         },
         {
           "need": "Serve llms.txt for AI agents",
           "import": "`@zedtech/zedkit-seo` — `llmsTextResponse`, `LlmsTextResponseOptions`, `normalizeLlmsBody`, `buildLlmsFull`, `LlmsFullSection`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "llms.txt",
+          "audience": "Sites that want AI agents and assistants to understand their content.",
+          "purpose": "Serve a valid llms.txt (full or scoped) from stored settings.",
+          "whenToUse": "For documentation and marketing sites consumed by AI tools.",
+          "whenNotToUse": "For private content — keep it out of llms.txt like out of the sitemap.",
           "derivedFrom": null,
-          "example": "import { llmsTextResponse } from \"@zedtech/zedkit-seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}"
+          "example": "import { llmsTextResponse } from \"@zedtech/zedkit-seo\";\nexport async function GET() {\n  const settings = await loadSettings();\n  return llmsTextResponse({ body: settings.llmsTxt ?? \"\" });\n}",
+          "seeAlso": [
+            "Serve robots.txt content"
+          ]
         },
         {
           "need": "Derive descriptions, slugs, and localized fields",
           "import": "`@zedtech/zedkit-seo` — `truncateDescription`, `SEO_DESCRIPTION_MAX`, `resolveDescription`, `DescriptionSource`, `resolveLocalizedField`, `LocalizedField`, `normalizeSlug`, `isDraftSlug`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Slugs & descriptions",
+          "audience": "Developers normalizing CMS or user content for URLs and meta tags.",
+          "purpose": "Resolve descriptions with fallback, normalize slugs, and pick localized field values.",
+          "whenToUse": "At render time, when content may be missing, over-long, or untranslated.",
+          "whenNotToUse": "For validating editor input — validate at edit time instead of fixing at render.",
           "derivedFrom": null,
-          "example": "import { normalizeSlug, resolveDescription } from \"@zedtech/zedkit-seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });"
+          "example": "import { normalizeSlug, resolveDescription } from \"@zedtech/zedkit-seo\";\nconst slug = normalizeSlug(title);\nconst description = resolveDescription({ custom: seo.metaDescription, bodyText, title });",
+          "seeAlso": [
+            "Build localized page metadata",
+            "Validate editor-entered title/description lengths"
+          ]
         }
       ]
     },
@@ -257,6 +397,11 @@
           "import": "`@zedtech/zedkit-server` — `MemoryRateLimiter`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Rate limiting",
+          "audience": "Node developers protecting endpoints from abuse without infrastructure.",
+          "purpose": "In-process per-key rate limiting with a two-line check.",
+          "whenToUse": "For single-instance services and per-IP/per-user throttling.",
+          "whenNotToUse": "Across multiple instances — use a shared-store (Redis) limiter instead.",
           "derivedFrom": null,
           "example": "import { MemoryRateLimiter } from \"@zedtech/zedkit-server\";\nconst limiter = new MemoryRateLimiter();\nif (!limiter.allow(clientIp, 100)) return tooManyRequests();"
         },
@@ -265,14 +410,27 @@
           "import": "`@zedtech/zedkit-server` — `redactValue`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Redaction",
+          "audience": "Server developers who log objects that may contain tokens or PII.",
+          "purpose": "Deep-redact secrets and PII from any value before it reaches the logs.",
+          "whenToUse": "On every object logged outside a trusted debug session.",
+          "whenNotToUse": "When you need the real values — debug locally, never in shared logs.",
           "derivedFrom": null,
-          "example": "import { redactValue } from \"@zedtech/zedkit-server\";\nlogger.info(redactValue({ user, token, headers }));"
+          "example": "import { redactValue } from \"@zedtech/zedkit-server\";\nlogger.info(redactValue({ user, token, headers }));",
+          "seeAlso": [
+            "Ship request logs without leaking credentials"
+          ]
         },
         {
           "need": "Retry with exponential backoff",
           "import": "`@zedtech/zedkit-server` — `computeBackoffMs`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Backoff",
+          "audience": "Developers calling flaky dependencies (APIs, queues, databases).",
+          "purpose": "Compute exponential-backoff delays with jitter from the attempt number.",
+          "whenToUse": "Around retries of transient failures (network, 429, 503).",
+          "whenNotToUse": "For permanent errors (4xx validation) — fail fast instead of retrying.",
           "derivedFrom": null,
           "example": "import { computeBackoffMs } from \"@zedtech/zedkit-server\";\nconst waitMs = computeBackoffMs(failedAttemptNo);\nawait sleep(waitMs);"
         },
@@ -281,6 +439,11 @@
           "import": "`@zedtech/zedkit-server` — `webhookSignatureHeader`, `verifyWebhookSignatureHeader`, `VerifyWebhookOptions`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Webhook signatures",
+          "audience": "Developers receiving webhooks who must prove the sender and freshness.",
+          "purpose": "Sign outgoing and verify incoming webhook payloads (HMAC + timestamp window).",
+          "whenToUse": "For every webhook endpoint exposed to a third party.",
+          "whenNotToUse": "For internal service-to-service calls — use mTLS or network policy instead.",
           "derivedFrom": null,
           "example": "import { verifyWebhookSignatureHeader as verify } from \"@zedtech/zedkit-server\";\nif (!verify(secret, rawBody, headers[\"webhook-signature\"], { maxAgeSeconds: 300 })) {\n  return unauthorized();\n}"
         },
@@ -289,8 +452,16 @@
           "import": "`@zedtech/zedkit-server` — `pgErrorCode`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Postgres errors",
+          "audience": "Developers mapping Postgres driver errors to HTTP responses.",
+          "purpose": "Extract the Postgres error code so unique violations map to 409, not 500.",
+          "whenToUse": "Around writes where a conflict is an expected outcome (signup, idempotent creates).",
+          "whenNotToUse": "For query building or migrations — use your ORM or migration tool instead.",
           "derivedFrom": null,
-          "example": "import { pgErrorCode } from \"@zedtech/zedkit-server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}"
+          "example": "import { pgErrorCode } from \"@zedtech/zedkit-server\";\ntry {\n  await db.insert(users).values(row);\n} catch (error) {\n  if (pgErrorCode(error) === \"23505\") return conflict();\n  throw error;\n}",
+          "seeAlso": [
+            "Return uniform error bodies"
+          ]
         }
       ]
     },
@@ -318,14 +489,27 @@
           "import": "`@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)",
           "wraps": "`tailwindcss` (v4 CSS-first)",
           "status": "beta",
+          "shortName": "Theme",
+          "audience": "Teams starting a React admin app who want dark/light design tokens without setup.",
+          "purpose": "One CSS import plus a source line gives the full token set and theme switching.",
+          "whenToUse": "As the first install in every app using the kit.",
+          "whenNotToUse": "For apps with their own design system — use your tokens instead of fighting these.",
           "derivedFrom": "shadcn/ui (theme)",
-          "example": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
+          "example": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme.",
+          "seeAlso": [
+            "Merge class names without conflicts"
+          ]
         },
         {
           "need": "Merge class names without conflicts",
           "import": "`@zedtech/zedkit-ui` — `cn`",
           "wraps": "`clsx`, `tailwind-merge`",
           "status": "beta",
+          "shortName": "cn",
+          "audience": "Developers composing conditional Tailwind classes.",
+          "purpose": "Merge class lists so conflicting utilities resolve to the last one.",
+          "whenToUse": "Whenever classes are conditional or come from props.",
+          "whenNotToUse": "For static class strings — write them directly instead.",
           "derivedFrom": "shadcn/ui (utils)",
           "example": "import { cn } from \"@zedtech/zedkit-ui\";\ncn(\"px-4\", isActive && \"bg-accent\"); // \"px-4 bg-accent\"\ncn(\"px-4\", \"px-2\"); // \"px-2\" — last conflicting utility wins"
         },
@@ -334,216 +518,440 @@
           "import": "`@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`",
           "wraps": "`@radix-ui/react-slot`, `class-variance-authority`",
           "status": "beta",
+          "shortName": "Button",
+          "audience": "Anyone placing actions in an admin UI.",
+          "purpose": "Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.",
+          "whenToUse": "For every clickable action, including links styled as buttons.",
+          "whenNotToUse": "For navigation menus — use links or tabs instead.",
           "derivedFrom": "shadcn/ui (button)",
-          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>"
+          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>",
+          "seeAlso": [
+            "Confirm destructive actions"
+          ]
         },
         {
           "need": "Show a status or count badge",
           "import": "`@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
+          "shortName": "Badge",
+          "audience": "Developers flagging state or counts inline (lists, headers, tables).",
+          "purpose": "Small status/count pills with semantic variants.",
+          "whenToUse": "For short labels next to the thing they describe.",
+          "whenNotToUse": "For long text or actions — use Text or Button instead.",
           "derivedFrom": "shadcn/ui (badge)",
-          "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>"
+          "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>\n<Badge variant=\"outline\">3 retries</Badge>",
+          "seeAlso": [
+            "Indicate status with a dot"
+          ]
         },
         {
           "need": "Collect text input with a label",
           "import": "`@zedtech/zedkit-ui` — `Input`, `Label`",
           "wraps": "`@radix-ui/react-label`",
           "status": "beta",
+          "shortName": "Input",
+          "audience": "Form builders collecting single-line text.",
+          "purpose": "Labelled text input with consistent styling and focus states.",
+          "whenToUse": "For names, emails, search boxes and other single-line values.",
+          "whenNotToUse": "For long text — use Textarea instead.",
           "derivedFrom": "shadcn/ui (input, label)",
-          "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
+          "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />",
+          "seeAlso": [
+            "Collect multi-line text input",
+            "Build validated forms with labels, errors, and pending state"
+          ]
         },
         {
           "need": "Separate content horizontally or vertically",
           "import": "`@zedtech/zedkit-ui` — `Separator`",
           "wraps": "`@radix-ui/react-separator`",
           "status": "beta",
+          "shortName": "Separator",
+          "audience": "Developers dividing stacked or inline content.",
+          "purpose": "Accessible horizontal/vertical divider lines.",
+          "whenToUse": "Between sections, menu groups, or inline items.",
+          "whenNotToUse": "For spacing alone — use Stack gap instead.",
           "derivedFrom": "shadcn/ui (separator)",
-          "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+          "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />",
+          "seeAlso": [
+            "Stack content and group titled sections"
+          ]
         },
         {
           "need": "Show loading placeholder blocks",
           "import": "`@zedtech/zedkit-ui` — `Skeleton`",
           "wraps": "`(none)`",
           "status": "beta",
+          "shortName": "Skeleton",
+          "audience": "Developers covering loading states without layout shift.",
+          "purpose": "Animated placeholder blocks that hold layout while data loads.",
+          "whenToUse": "For content areas with known approximate shape.",
+          "whenNotToUse": "For progress with a known percentage — use ProgressBar instead.",
           "derivedFrom": "shadcn/ui (skeleton)",
-          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
+          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />",
+          "seeAlso": [
+            "Show determinate progress"
+          ]
         },
         {
           "need": "Indicate status with a dot",
           "import": "`@zedtech/zedkit-ui` — `StatusDot`, `StatusDotProps`, `StatusDotTone`",
           "wraps": "`(none)`",
           "status": "alpha",
+          "shortName": "StatusDot",
+          "audience": "Developers showing compact live state (lists, headers, realtime panels).",
+          "purpose": "A small status dot with semantic tones (active, idle, success, warning, danger).",
+          "whenToUse": "Beside a label that names the state (the dot is decorative).",
+          "whenNotToUse": "As the only state signal — pair it with text, never color alone.",
           "derivedFrom": null,
-          "example": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text"
+          "example": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text",
+          "seeAlso": [
+            "Show a status or count badge",
+            "Show key-value details and a live indicator"
+          ]
         },
         {
           "need": "Show determinate progress",
           "import": "`@zedtech/zedkit-ui` — `ProgressBar`, `ProgressBarProps`",
           "wraps": "`(none)`",
           "status": "alpha",
+          "shortName": "ProgressBar",
+          "audience": "Developers reporting measurable progress (uploads, jobs, wizards).",
+          "purpose": "An accessible progressbar with clamped value and label.",
+          "whenToUse": "When you can report a percentage or fraction done.",
+          "whenNotToUse": "For unknown-shape loading — use Skeleton instead.",
           "derivedFrom": null,
-          "example": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={40} label=\"Uploading report\" /> // role=progressbar, value clamped to 0..max"
+          "example": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={40} label=\"Uploading report\" /> // role=progressbar, value clamped to 0..max",
+          "seeAlso": [
+            "Show loading placeholder blocks"
+          ]
         },
         {
           "need": "Celebrate completion with a checkmark",
           "import": "`@zedtech/zedkit-ui` — `Checkmark`, `CheckmarkProps`",
           "wraps": "`(none)`",
           "status": "alpha",
+          "shortName": "Checkmark",
+          "audience": "Developers confirming a completed action (saved, sent, done).",
+          "purpose": "An animated checkmark that draws once (static under reduced motion).",
+          "whenToUse": "For success confirmations right after the action completes.",
+          "whenNotToUse": "As a persistent status icon — use StatusDot or Badge instead.",
           "derivedFrom": null,
-          "example": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark label=\"Saved\" /> // draws once, static under reduced motion; omit label when decorative"
+          "example": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark label=\"Saved\" /> // draws once, static under reduced motion; omit label when decorative",
+          "seeAlso": [
+            "Show toast notifications"
+          ]
         },
         {
           "need": "Open modal dialogs",
           "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
           "status": "beta",
+          "shortName": "Dialog",
+          "audience": "Developers interrupting the flow for focused input or decisions.",
+          "purpose": "Accessible modal dialogs (trigger, content, title, footer) with focus trap and Escape.",
+          "whenToUse": "For short tasks that need full attention (confirm, edit one thing).",
+          "whenNotToUse": "For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.",
           "derivedFrom": "shadcn/ui (dialog)",
-          "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
+          "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>",
+          "seeAlso": [
+            "Confirm destructive actions",
+            "Slide in a drawer panel"
+          ]
         },
         {
           "need": "Confirm destructive actions",
           "import": "`@zedtech/zedkit-ui` — `ConfirmDialog`, `ConfirmDialogProps`",
           "wraps": "`@radix-ui/react-dialog` (via Dialog)",
           "status": "beta",
+          "shortName": "ConfirmDialog",
+          "audience": "Developers guarding delete/revoke/remove actions.",
+          "purpose": "A one-call destructive confirmation (trigger, title, description, onConfirm).",
+          "whenToUse": "Before any irreversible action.",
+          "whenNotToUse": "For reversible or trivial actions — do it and offer undo (toast) instead.",
           "derivedFrom": null,
-          "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />"
+          "example": "import { Button, ConfirmDialog } from \"@zedtech/zedkit-ui\";\n<ConfirmDialog trigger={<Button>Delete</Button>} title=\"Delete item?\"\n  description=\"This cannot be undone.\" onConfirm={remove} />",
+          "seeAlso": [
+            "Open modal dialogs"
+          ]
         },
         {
           "need": "Slide in a drawer panel",
           "import": "`@zedtech/zedkit-ui` — `Drawer`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerHandle`, `DrawerClose`, `DrawerOverlay`, `DrawerPortal`",
           "wraps": "`vaul`",
           "status": "alpha",
+          "shortName": "Drawer",
+          "audience": "Developers showing detail views beside a list without navigation.",
+          "purpose": "Slide-in panels (right-side detail on desktop, bottom sheet on mobile).",
+          "whenToUse": "For list-detail previews and short side forms.",
+          "whenNotToUse": "For multi-step flows — use a full page or wizard instead.",
           "derivedFrom": "shadcn/ui (drawer)",
-          "example": "import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>"
+          "example": "import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"right\"> // right = admin detail panel (full-width on mobile); default bottom + DrawerHandle for sheets\n  <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>\n  <DrawerContent><DrawerClose asChild><Button>Close</Button></DrawerClose><DrawerTitle>Details</DrawerTitle></DrawerContent>\n</Drawer>",
+          "seeAlso": [
+            "Open modal dialogs",
+            "Show key-value details and a live indicator"
+          ]
         },
         {
           "need": "Show toast notifications",
           "import": "`@zedtech/zedkit-ui` — `Toaster`",
           "wraps": "`sonner`",
           "status": "beta",
+          "shortName": "Toaster",
+          "audience": "Developers confirming background outcomes (saved, failed, copied).",
+          "purpose": "A root toaster plus toast() calls for transient notifications.",
+          "whenToUse": "For outcomes that do not need the user's reply.",
+          "whenNotToUse": "For errors needing action — use Alert or Dialog instead.",
           "derivedFrom": "shadcn/ui (sonner)",
-          "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+          "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
+          "seeAlso": [
+            "Call out a notice or an error state"
+          ]
         },
         {
           "need": "Display a shown-once secret with copy",
           "import": "`@zedtech/zedkit-ui` — `SecretField`, `SecretFieldProps`",
           "wraps": "`lucide-react`",
           "status": "beta",
+          "shortName": "SecretField",
+          "audience": "Developers displaying API keys and tokens shown only once.",
+          "purpose": "A masked secret field with reveal and copy controls.",
+          "whenToUse": "Right after creating a credential the user must store.",
+          "whenNotToUse": "For passwords the user typed — use a password Input instead.",
           "derivedFrom": null,
-          "example": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
+          "example": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />",
+          "seeAlso": [
+            "Collect text input with a label"
+          ]
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
           "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
+          "shortName": "DataTable",
+          "audience": "Developers listing queryable records (deliveries, users, orders).",
+          "purpose": "Tables with sorting, filtering, pagination plus loading/error/empty states.",
+          "whenToUse": "For record lists over ~20 rows or needing search.",
+          "whenNotToUse": "For a handful of static rows — map a simple table instead.",
           "derivedFrom": null,
-          "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
+          "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />",
+          "seeAlso": [
+            "Show key-value details and a live indicator"
+          ]
         },
         {
           "need": "Lay out an admin page (sidebar + topbar + header)",
           "import": "`@zedtech/zedkit-ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
+          "shortName": "AppShell",
+          "audience": "Teams scaffolding a consistent admin layout.",
+          "purpose": "Sidebar + topbar shell with page header (title, description, actions).",
+          "whenToUse": "As the frame of every admin page.",
+          "whenNotToUse": "For public marketing pages — use your site layout instead.",
           "derivedFrom": null,
-          "example": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
+          "example": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>",
+          "seeAlso": [
+            "Group content in a card section"
+          ]
         },
         {
           "need": "Guide a multi-step flow with selectable option cards",
           "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
           "wraps": "none (native inputs + theme tokens)",
           "status": "beta",
+          "shortName": "WizardSteps",
+          "audience": "Developers building onboarding, setup, or checkout flows.",
+          "purpose": "Step indicator plus selectable option cards with state.",
+          "whenToUse": "For 2–6 step flows with choices per step.",
+          "whenNotToUse": "For single forms — use Form instead of inventing steps.",
           "derivedFrom": null,
-          "example": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
+          "example": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />",
+          "seeAlso": [
+            "Build validated forms with labels, errors, and pending state"
+          ]
         },
         {
           "need": "Show key-value details and a live indicator",
           "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
+          "shortName": "DetailPanel",
+          "audience": "Developers rendering record details (drawers, side panels, headers).",
+          "purpose": "Key-value detail lists plus an optional live pulse.",
+          "whenToUse": "For read-only record summaries next to the list.",
+          "whenNotToUse": "For editable records — use Form instead.",
           "derivedFrom": null,
-          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
+          "seeAlso": [
+            "Show a sortable, filterable, paginated data table",
+            "Slide in a drawer panel"
+          ]
         },
         {
           "need": "Build validated forms with labels, errors, and pending state",
           "import": "`@zedtech/zedkit-ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
           "wraps": "`react-hook-form`, `@hookform/resolvers`, `zod`",
           "status": "beta",
+          "shortName": "Form",
+          "audience": "Developers collecting validated input with accessible errors.",
+          "purpose": "Validated forms (schema, field errors, pending submit) on react-hook-form + zod.",
+          "whenToUse": "For any form needing validation or async submit.",
+          "whenNotToUse": "For a single search box — use Input directly instead.",
           "derivedFrom": "shadcn/ui (form); kit (useValidatedForm, FormSubmit)",
-          "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedtech/zedkit-ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>"
+          "example": "import { Form, FormField, FormSubmit, Input, useValidatedForm } from \"@zedtech/zedkit-ui\";\nconst form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });\n// <Form {...form}><form onSubmit={form.handleSubmit(save)}>\n// <FormField control={form.control} name=\"name\" render={...} />\n// <FormMessage /> shows the error; <FormSubmit pendingLabel={t.saving}>",
+          "seeAlso": [
+            "Lay out fieldsets, fields, and error lists",
+            "Collect text input with a label"
+          ]
         },
         {
           "need": "Lay out fieldsets, fields, and error lists",
           "import": "`@zedtech/zedkit-ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
           "wraps": "none (presentational over `Label`, `Separator`)",
           "status": "beta",
+          "shortName": "FieldSet",
+          "audience": "Developers structuring long or grouped forms.",
+          "purpose": "Fieldsets, field rows, labels, descriptions and error lists.",
+          "whenToUse": "To group related fields with legends and per-field errors.",
+          "whenNotToUse": "For validation logic itself — pair with Form instead.",
           "derivedFrom": "shadcn/ui (field)",
-          "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
+          "example": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />",
+          "seeAlso": [
+            "Build validated forms with labels, errors, and pending state"
+          ]
         },
         {
           "need": "Group content in a card section",
           "import": "`@zedtech/zedkit-ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`",
           "wraps": "none (presentational, theme tokens only)",
           "status": "beta",
+          "shortName": "Card",
+          "audience": "Developers grouping related content in bordered sections.",
+          "purpose": "Cards with header/title/description/content/footer slots.",
+          "whenToUse": "For self-contained blocks (panels, summaries, previews).",
+          "whenNotToUse": "For page-level layout — use AppShell and Stack instead.",
           "derivedFrom": "shadcn/ui (card)",
-          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
+          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>",
+          "seeAlso": [
+            "Stack content and group titled sections"
+          ]
         },
         {
           "need": "Stack content and group titled sections",
           "import": "`@zedtech/zedkit-ui` — `Stack`, `stackVariants`, `StackProps`, `Section`, `SectionProps`",
           "wraps": "none (flex/gap utilities over `Heading`, `Text`)",
           "status": "alpha",
+          "shortName": "Stack",
+          "audience": "Developers laying out kit pages without raw divs.",
+          "purpose": "Gap-based vertical/horizontal stacks plus titled sections.",
+          "whenToUse": "For all kit-page layout instead of hand-written flex.",
+          "whenNotToUse": "For complex grids — use CSS grid directly instead.",
           "derivedFrom": null,
-          "example": "import { Section, Stack } from \"@zedtech/zedkit-ui\";\n<Section title=\"Team\" description=\"Who can access.\">\n<Stack direction=\"horizontal\" gap={2}>...</Stack>"
+          "example": "import { Section, Stack } from \"@zedtech/zedkit-ui\";\n<Section title=\"Team\" description=\"Who can access.\">\n<Stack direction=\"horizontal\" gap={2}>...</Stack>",
+          "seeAlso": [
+            "Render headings and body text without raw tags",
+            "Group content in a card section"
+          ]
         },
         {
           "need": "Render headings and body text without raw tags",
           "import": "`@zedtech/zedkit-ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`",
           "wraps": "`class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)",
           "status": "beta",
+          "shortName": "Typography",
+          "audience": "Developers writing kit pages with consistent type.",
+          "purpose": "Heading levels and Text variants with theme-aware styles.",
+          "whenToUse": "For every heading and paragraph in kit UI.",
+          "whenNotToUse": "For raw HTML emails or markdown — style those separately.",
           "derivedFrom": null,
-          "example": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
+          "example": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>",
+          "seeAlso": [
+            "Stack content and group titled sections"
+          ]
         },
         {
           "need": "Call out a notice or an error state",
           "import": "`@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
+          "shortName": "Alert",
+          "audience": "Developers surfacing notices, warnings and errors inline.",
+          "purpose": "Notice/error callouts with title and description.",
+          "whenToUse": "For states tied to page content (load errors, warnings).",
+          "whenNotToUse": "For transient confirmations — use Toaster instead.",
           "derivedFrom": "shadcn/ui (alert)",
-          "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
+          "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>",
+          "seeAlso": [
+            "Show toast notifications"
+          ]
         },
         {
           "need": "Pick one option from a dropdown",
           "import": "`@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
           "wraps": "`@radix-ui/react-select`",
           "status": "alpha",
+          "shortName": "Select",
+          "audience": "Form builders offering 4+ exclusive options in little space.",
+          "purpose": "Accessible dropdown select with trigger, value and items.",
+          "whenToUse": "For long option lists where radio groups would sprawl.",
+          "whenNotToUse": "For 2–3 visible options — use radio inputs or OptionCards instead.",
           "derivedFrom": "shadcn/ui (select)",
-          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>"
+          "example": "import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@zedtech/zedkit-ui\";\n<Select onValueChange={setRegion}>\n<SelectTrigger><SelectValue placeholder=\"Pick a region\" /></SelectTrigger>\n<SelectContent><SelectItem value=\"eu\">Europe</SelectItem></SelectContent>",
+          "seeAlso": [
+            "Toggle a checkbox or a switch",
+            "Guide a multi-step flow with selectable option cards"
+          ]
         },
         {
           "need": "Collect multi-line text input",
           "import": "`@zedtech/zedkit-ui` — `Textarea`",
           "wraps": "none (styled native `textarea`)",
           "status": "alpha",
+          "shortName": "Textarea",
+          "audience": "Form builders collecting paragraphs (bios, notes, messages).",
+          "purpose": "Labelled multi-line textarea with consistent styling.",
+          "whenToUse": "For free text longer than one line.",
+          "whenNotToUse": "For single-line values — use Input instead.",
           "derivedFrom": "shadcn/ui (textarea)",
-          "example": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />"
+          "example": "import { Label, Textarea } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"bio\">Bio</Label>\n<Textarea id=\"bio\" placeholder=\"A few words.\" />",
+          "seeAlso": [
+            "Collect text input with a label"
+          ]
         },
         {
           "need": "Toggle a checkbox or a switch",
           "import": "`@zedtech/zedkit-ui` — `Checkbox`, `Switch`",
           "wraps": "`@radix-ui/react-checkbox`, `@radix-ui/react-switch`",
           "status": "alpha",
+          "shortName": "Checkbox",
+          "audience": "Form builders collecting booleans and on/off settings.",
+          "purpose": "Accessible checkbox and switch toggles.",
+          "whenToUse": "Checkbox for agreements and multi-picks, switch for instant on/off settings.",
+          "whenNotToUse": "For exclusive choices — use Select or radio inputs instead.",
           "derivedFrom": "shadcn/ui (checkbox, switch)",
-          "example": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />"
+          "example": "import { Checkbox, Label, Switch } from \"@zedtech/zedkit-ui\";\n<Checkbox id=\"terms\" />\n<Label htmlFor=\"terms\">Accept the terms</Label>\n<Switch id=\"notify\" aria-label=\"Notify me\" />",
+          "seeAlso": [
+            "Pick one option from a dropdown"
+          ]
         },
         {
           "need": "Switch between tabbed panels",
           "import": "`@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`",
           "wraps": "`@radix-ui/react-tabs`",
           "status": "alpha",
+          "shortName": "Tabs",
+          "audience": "Developers grouping related panels under one heading.",
+          "purpose": "Accessible tabs (list, triggers, content panels).",
+          "whenToUse": "For sibling views that share context (settings groups, code variants).",
+          "whenNotToUse": "For sequential steps — use WizardSteps instead.",
           "derivedFrom": "shadcn/ui (tabs)",
-          "example": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>"
+          "example": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>",
+          "seeAlso": [
+            "Guide a multi-step flow with selectable option cards"
+          ]
         }
       ]
     }

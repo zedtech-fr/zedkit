@@ -11,6 +11,12 @@
 - Import: `@zedtech/zedkit-ai` — `installKit`, `InstallOptions`, `Action`, `Provider`, `Target`
 - Wraps: `(none)`
 - Status: beta
+- Short name: Agent setup
+- Audience: Teams onboarding a coding agent (Cursor, Claude, Codex) on a shared repo.
+- Purpose: Install one agent-agnostic setup (instructions, skills, subagents, commands) with a single CLI call.
+- When to use: When every developer and agent should share the same instructions and review workflow.
+- When not to use: When you only need one provider's config — write that provider's file by hand instead.
+- See also: `Check that skills, subagents, commands and provider copies are valid`
 
 ```ts
 import { installKit } from "@zedtech/zedkit-ai";
@@ -33,6 +39,12 @@ layer: they read the shared source directly).
 - Import: `@zedtech/zedkit-ai` — `validateKit`, `checkDrift`, `Issue`
 - Wraps: `yaml`
 - Status: beta
+- Short name: Kit validation
+- Audience: Teams keeping an installed agent setup healthy across providers.
+- Purpose: Validate installed skills, subagents and commands, and report drift between providers.
+- When to use: In CI and after editing shared agent files, to catch invalid or drifted copies.
+- When not to use: For one-off local edits — run the install command again instead of validating by hand.
+- See also: `Set up AI agent instructions, skills, subagents and commands in a repo`
 
 ```ts
 import { checkDrift, validateKit } from "@zedtech/zedkit-ai";
