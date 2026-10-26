@@ -29,6 +29,9 @@ restyles the kit, this documentation site and your own screens without changing 
 Use the identity control in the site header (or the sidebar footer on documentation pages) to
 try them. The choice is kept in `localStorage` under `zk-identity`.
 
+Code blocks, tables, focused links and the documentation navbar and sidebar follow the same
+tokens in every non-default identity: the default identity keeps the stock rendering.
+
 ## Add the switcher to your app
 
 Import the stylesheet once. It already includes the identities and the motion tokens:
@@ -138,7 +141,7 @@ surface). The built-in identities are checked with an automated accessibility te
 | `--zk-font-sans` | Body text and `font-sans`. |
 | `--zk-font-display` | `h1` to `h4` and `font-display`. |
 | `--zk-font-mono` | Code and `font-mono`. |
-| `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform` | Heading weight, letter spacing and case. |
+| `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform`, `--zk-heading-leading` | Heading weight, letter spacing, case and line height. |
 
 Fonts are not bundled by the kit. Load them in your app (this site uses the self-hosted Fontsource
 packages for Inter, Space Grotesk, Space Mono, Geist, Cormorant, Jost and JetBrains Mono, all under the SIL Open Font License 1.1) and name the

@@ -109,6 +109,63 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
   expect(back.bodyFont).toBe(soft.bodyFont);
 });
 
+test("code blocks, tables and chrome follow the identity tokens", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+
+  async function surfaces() {
+    return page.evaluate(() => {
+      const pre = document.querySelector("main pre");
+      const th = document.querySelector("main th");
+      const nav = document.querySelector("#nd-nav") ?? document.querySelector("header");
+      const preStyle = pre ? getComputedStyle(pre) : null;
+      return {
+        preRadius: preStyle ? parseFloat(preStyle.borderTopLeftRadius) : -1,
+        preBorder: preStyle ? parseFloat(preStyle.borderTopWidth) : -1,
+        thTransform: th ? getComputedStyle(th).textTransform : "",
+        navBorder: nav ? parseFloat(getComputedStyle(nav).borderBottomWidth) : -1,
+      };
+    });
+  }
+
+  await page.goto(GUIDE, { waitUntil: "networkidle" });
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "soft");
+  const soft = await surfaces();
+  expect(soft.thTransform, "soft keeps the stock table head").not.toBe("uppercase");
+
+  await identitySelect(page).selectOption("retro-square");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "retro-square");
+  const retro = await surfaces();
+  expect(retro.preRadius, "retro pre radius").toBe(0);
+  expect(retro.preBorder, "retro pre border").toBe(2);
+  expect(retro.thTransform, "retro table head").toBe("uppercase");
+  expect(retro.navBorder, "retro nav border").toBe(2);
+
+  await identitySelect(page).selectOption("luxe");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "luxe");
+  const luxe = await surfaces();
+  expect(luxe.preRadius, "luxe pre radius").toBe(2);
+  expect(luxe.preBorder, "luxe pre border").toBe(1);
+  expect(luxe.navBorder, "luxe nav border").toBe(1);
+});
+
+test("code blocks and chrome follow the identity in dark mode", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await seed(page, "luxe", "dark");
+  await page.goto(GUIDE, { waitUntil: "networkidle" });
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "luxe");
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  const got = await page.evaluate(() => {
+    const pre = document.querySelector("main pre");
+    const nav = document.querySelector("#nd-nav") ?? document.querySelector("header");
+    return {
+      preBorder: pre ? parseFloat(getComputedStyle(pre).borderTopWidth) : -1,
+      navBorder: nav ? parseFloat(getComputedStyle(nav).borderBottomWidth) : -1,
+    };
+  });
+  expect(got.preBorder, "luxe dark pre border").toBe(1);
+  expect(got.navBorder, "luxe dark nav border").toBe(1);
+});
+
 test("stored identity is applied before first paint", async ({ page }) => {
   await seed(page, "retro-square", "light");
   await page.goto(GUIDE, { waitUntil: "commit" });
