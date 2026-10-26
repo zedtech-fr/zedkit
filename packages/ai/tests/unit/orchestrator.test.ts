@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { parseFrontmatter } from "#frontmatter.js";
 import { installKit } from "#install.js";
 import { readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
@@ -19,21 +20,6 @@ function install(dest: string, options: Parameters<typeof installKit>[0] extends
   const result = installKit({ dest, ...options });
   if (!result.ok) throw result.error;
   return result.value;
-}
-
-function parseFrontmatter(text: string): Record<string, string> {
-  const match = /^---\n([\s\S]*?)\n---/.exec(text);
-  if (!match) return {};
-  const out: Record<string, string> = {};
-  for (const line of (match[1] ?? "").split("\n")) {
-    const idx = line.indexOf(":");
-    if (idx === -1) continue;
-    const key = line.slice(0, idx).trim();
-    let val = line.slice(idx + 1).trim();
-    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-    out[key] = val;
-  }
-  return out;
 }
 
 function routingNamesFromOrchestrator(): string[] {
@@ -78,7 +64,9 @@ describe("orchestrator agent", () => {
 
   it("ships frontmatter guards on the orchestrator agent", () => {
     const text = readFileSync(join(kitRoot(), "agents", "orchestrator.md"), "utf8");
-    const fm = parseFrontmatter(text);
+    const parsed = parseFrontmatter(text);
+    if (!parsed.ok) throw parsed.error;
+    const fm = parsed.value.data as Record<string, string>;
     expect(fm.name).toBe("orchestrator");
     expect(fm.description).toMatch(/^Coordinates a task/);
     expect(fm.description).not.toContain("\n");

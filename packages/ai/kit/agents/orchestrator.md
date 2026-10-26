@@ -53,7 +53,7 @@ Specialists (subagents):
 |---|---|
 | Repo lookup | `explorer` |
 | File-level plan | `architect` |
-| Plan attack (alias) | `plan-challenger` |
+| Plan attack | `skeptic` (angle: plan) |
 | Pre-mortem | `skeptic` |
 | Gates before done | `verifier` |
 | Apply findings | `improver` |

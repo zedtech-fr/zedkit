@@ -427,7 +427,8 @@ describe("installKit", () => {
     const core = manifest.value.presets.core;
     if (!Array.isArray(core)) throw new Error("core preset must list skills");
     // Hard cap (#443): adding a core skill must bump this number explicitly.
-    expect(core.length).toBeLessThanOrEqual(25);
+    // 26 since #440 (`orchestrate`: core's own setup-ai routes follow-ups to /orchestrate).
+    expect(core.length).toBeLessThanOrEqual(26);
   });
 
   it("core-installed skills only name skills and agents that core installs", () => {
