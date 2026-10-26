@@ -1,4 +1,4 @@
-import { DetailPanel, LivePulse, Stack } from "@zedtech/zedkit-ui";
+import { DetailPanel, DetailPanelRow, LivePulse, Stack } from "@zedtech/zedkit-ui";
 
 export function DetailsDemo() {
   return (
@@ -9,6 +9,9 @@ export function DetailsDemo() {
           { label: "Plan", value: "team" },
         ]}
       />
+      <dl className="divide-y divide-border rounded-lg border">
+        <DetailPanelRow label="Region" value="eu" />
+      </dl>
       <Stack direction="horizontal" gap={4}>
         <LivePulse />
         <LivePulse active={false} />

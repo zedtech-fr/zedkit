@@ -1185,7 +1185,7 @@
         },
         {
           "need": "Show key-value details and a live indicator",
-          "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
+          "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `DetailPanelRow`, `DetailPanelRowProps`, `LivePulse`, `LivePulseProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
           "shortName": "DetailPanel",
@@ -1199,8 +1199,13 @@
             {
               "title": "Simple",
               "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+            },
+            {
+              "title": "Composed rows",
+              "code": "import { DetailPanelRow } from \"@zedtech/zedkit-ui\";\n<dl>\n  <DetailPanelRow label=\"Region\" value=\"eu\" />\n</dl>"
             }
           ],
+          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

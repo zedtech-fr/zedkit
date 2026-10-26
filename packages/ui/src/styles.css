@@ -117,6 +117,9 @@
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
   --spacing-heading-scroll: 5rem;
+  --spacing-detail-panel-gap: 1rem;
+  --spacing-detail-panel-inline: 1rem;
+  --spacing-detail-panel-block: 0.75rem;
   --spacing-wizard-steps-gap: 0.75rem;
   --spacing-wizard-steps-row-gap: 0.5rem;
   --spacing-wizard-step-gap: 0.5rem;
