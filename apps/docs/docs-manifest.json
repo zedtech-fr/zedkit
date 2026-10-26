@@ -1,7 +1,14 @@
 {
   "_comment": "Rich doc pages: catalog needs that get a live preview (ComponentPreview frame resolving through components/demos/registry.ts) + generated props table. Every other need still gets a generated page (badge, install, example). Keys must match catalog need headings exactly; the docs check fails otherwise.",
-  "_deferred": "Theme (styles.css) and Merge class names (cn function) are not components and stay preview-free by design.",
+  "_deferred": "Theme (styles.css) and Merge class names (cn function) are not components and stay preview-free by design. CSS-only needs (motion.css) set component to null and point source at their stylesheet.",
   "rich": {
+    "Animate entrances and hover feedback with CSS utilities": {
+      "package": "@zedtech/zedkit-ui",
+      "component": null,
+      "props": null,
+      "source": "motion.css",
+      "demo": "MotionDemo"
+    },
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
       "component": "Button",

@@ -43,6 +43,41 @@ cn("px-4", isActive && "bg-accent"); // "px-4 bg-accent"
 cn("px-4", "px-2"); // "px-2" — last conflicting utility wins
 ```
 
+## Animate entrances and hover feedback with CSS utilities
+
+- Import: `@zedtech/zedkit-ui/styles.css` (utilities `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `stagger-*`, `hover-lift`, `hover-press`, `marquee-track`; attributes `data-reveal`, `data-stagger`)
+- Wraps: `tailwindcss` (v4 `@utility` and `@theme`)
+- Status: alpha
+- Short name: Motion
+- Audience: Developers adding calm entrance and hover motion to kit pages.
+- Purpose: Token-driven entrance, stagger, hover and marquee utilities that switch off under reduced motion.
+- When to use: For first-paint entrances, staggered lists, card lift and button press feedback.
+- When not to use: For gesture or layout animation (drag, shared-element transitions) — use a motion library instead.
+- See also: `Theme an admin app (dark/light included)`, `Group content in a card section`
+- Examples: Entrance with stagger, Hover feedback, Staggered children
+- A11y: Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. Hover lift only applies on devices that hover, so it never sticks after a tap.
+- Troubleshooting: Nothing animates — check the OS reduced-motion setting first. Content stays hidden — `data-reveal="pending"` and `data-stagger="pending"` hide content until your code sets them to `"in"`. Stagger has no delay — `stagger-*` delays an animation class (`animate-fade-up stagger-2`), not a transition.
+
+```ts
+import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
+<Card className="animate-fade-up stagger-1">First</Card>
+<Card className="animate-fade-up stagger-2">Second</Card>
+```
+
+```ts
+<Card className="hover-lift">Lifts on hover (devices that hover)</Card>
+<Button className="hover-press">Presses down on click</Button>
+```
+
+```ts
+// Children enter one after another; set "pending" first to hide them
+// until they scroll into view, then switch to "in".
+<Stack data-stagger="in">
+  <Text>One</Text>
+  <Text>Two</Text>
+</Stack>
+```
+
 ## Trigger actions with buttons
 
 - Import: `@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`

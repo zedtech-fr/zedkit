@@ -3,7 +3,8 @@
 // dir (never touching the build output) and asserts:
 //   1. every catalog need maps to exactly one generated page;
 //   2. every manifest key matches a catalog need heading exactly;
-//   3. every manifest component/props exists in @zedtech/zedkit-ui exports;
+//   3. every manifest component/props exists in @zedtech/zedkit-ui exports
+//      (CSS-only needs: component null + a .css source, no props);
 //   4. every manifest demo exists in components/demos/registry.ts and its
 //      demo file exports the demo;
 //   5. pages and views stay thin: app/** and ui/** import no demo file
@@ -450,7 +451,12 @@ for (const needEntry of Object.values(catalog.packages).flatMap((p) => p.needs))
 }
 
 for (const [key, spec] of Object.entries(rich)) {
-  if (!uiExports.has(spec.component)) {
+  // CSS-only needs (utilities, no component) set component to null and
+  // must point source at their stylesheet; they get no props table.
+  const cssOnly = spec.component === null && typeof spec.source === "string" && spec.source.endsWith(".css");
+  if (spec.component === null && (!cssOnly || spec.props || spec.registry)) {
+    errors.push(`docs-manifest.json: "${key}" has component null but is not a CSS-only need (want a .css source, no props, no registry).`);
+  } else if (!cssOnly && !uiExports.has(spec.component)) {
     errors.push(`docs-manifest.json: "${key}" references missing @zedtech/zedkit-ui export \`${spec.component}\`.`);
   }
   if (spec.props && !uiExports.has(spec.props)) {
