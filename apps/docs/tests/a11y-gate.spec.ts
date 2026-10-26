@@ -36,6 +36,12 @@ async function openWithTheme(
     document.documentElement.classList.toggle("dark", mode === "dark");
     document.documentElement.style.colorScheme = mode;
   }, theme);
+  if (theme === "light") {
+    await page.waitForFunction(() => {
+      const muted = getComputedStyle(document.documentElement).getPropertyValue("--muted-foreground");
+      return muted.includes("32%");
+    });
+  }
 }
 
 test.describe("a11y gate (#396)", () => {
