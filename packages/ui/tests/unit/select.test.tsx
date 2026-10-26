@@ -3,6 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { RegionSelect, stubSelectJsdom } from "./select-fixture.js";
+import { assertNoValueArbitraries } from "./no-arbitraries.js";
 
 beforeAll(() => {
   stubSelectJsdom();
@@ -84,8 +85,7 @@ describe("select", () => {
     const listbox = await screen.findByRole("listbox");
     const option = screen.getByRole("option", { name: "Europe" });
     for (const className of [trigger.className, listbox.className, option.className]) {
-      const withoutAllowlist = className.replace(/\[--radix-[^\]]*\]|\[var\(--radix-[^)]*\)\]/g, "");
-      expect(withoutAllowlist).not.toMatch(/\[[-\d#]/);
+      assertNoValueArbitraries(className);
     }
   });
 

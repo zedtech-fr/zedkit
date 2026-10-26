@@ -35,7 +35,8 @@
     "Show loading placeholder blocks": {
       "package": "@zedtech/zedkit-ui",
       "component": "Skeleton",
-      "props": null,
+      "registry": "skeleton",
+      "props": "SkeletonProps",
       "source": "skeleton.tsx",
       "demo": "SkeletonDemo"
     },
