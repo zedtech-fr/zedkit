@@ -1,7 +1,8 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { readManifest } from "#kit.js";
+import { kitDir, readManifest } from "#kit.js";
 
 function catalogRows(): string[] {
   const raw = readFileSync(
@@ -21,6 +22,26 @@ describe("agents catalog", () => {
     const rows = catalogRows();
     for (const agent of manifest.value.agents) {
       expect(rows, agent).toContain(agent);
+    }
+  });
+
+  it("resolves every Typical chains name to a skill, agent or command", () => {
+    const raw = readFileSync(
+      fileURLToPath(new URL("../../../../docs/agents-catalog.md", import.meta.url)),
+      "utf8",
+    );
+    const chains = raw.split("## Typical chains")[1] ?? "";
+    expect(chains.trim().length).toBeGreaterThan(0);
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const skills = readdirSync(join(kitDir(), "skills"));
+    const names = new Set(
+      manifest.value.agents.concat(manifest.value.commands ?? [], skills),
+    );
+    for (const match of chains.matchAll(/`([^`]+)`/g)) {
+      const name = (match[1] ?? "").replace(/^\//, "");
+      if (name === "" || name.includes(" ")) continue;
+      expect([...names], `chain name ${name}`).toContain(name);
     }
   });
 });
