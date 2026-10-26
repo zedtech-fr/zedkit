@@ -3,10 +3,9 @@ import { Badge, Button, Card, Stack, Text } from "@zedtech/zedkit-ui";
 const SWATCHES = ["bg-primary", "bg-secondary", "bg-accent", "bg-muted", "bg-destructive"] as const;
 
 /**
- * Hero visual: the same kit components, drawn by whichever identity the
- * hero is showing. It is part of the hero's identity crossfade (see
- * `IdentityCycle` in the hero), decorative only, so it is hidden from
- * assistive tech, cannot be focused and ignores the pointer.
+ * Hero visual: the same kit components, drawn by the page's current
+ * identity. Decorative only, so it is hidden from assistive tech, cannot
+ * be focused and ignores the pointer.
  */
 export function HomeHeroPreview() {
   return (

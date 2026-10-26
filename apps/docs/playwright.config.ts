@@ -9,7 +9,7 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:3100",
     // The home hero preview crossfades through every identity on each load.
-    // Specs run with reduced motion so it stays off; identity-cycle.spec.ts opts out.
+    // Specs run with reduced motion so it stays off; home-use-cases.spec.ts opts out where it checks motion.
     reducedMotion: "reduce",
   },
 });

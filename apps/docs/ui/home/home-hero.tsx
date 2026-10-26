@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Button, Heading, IdentityCycle, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
 import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
 import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
+import { HomeUseCasesSection } from "@/ui/home/home-use-cases-section";
 import { HomeInstallOrCopySection } from "@/ui/home/home-install-or-copy-section";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
@@ -21,9 +22,8 @@ export function HomeHero({
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
-      {/* The whole hero crosses the identities on every load; its text never changes. */}
-      <IdentityCycle backdrop className="w-full">
-        <Stack gap={HOME_SECTION_CONTENT_GAP} className="items-start">
+      <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0 items-start">
+        <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0 items-start">
           <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
             <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
               <Text variant="muted" className="text-xs">zedkit</Text>
@@ -51,7 +51,8 @@ export function HomeHero({
           </Stack>
           <HomeHeroPreview />
         </Stack>
-      </IdentityCycle>
+      </Stack>
+      <HomeUseCasesSection />
       <HomeAiSetupSection />
       <HomeInstallOrCopySection npmPackage={featuredPackage} />
       <HomeUiQuickstartSection
