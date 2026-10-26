@@ -15,7 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       nav={{ title: <SiteBrand />, url: "/" }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
       links={siteHeaderLinks(featuredPackageChangelogUrl)}
-      sidebar={{ footer: <IdentitySwitcher /> }}
+      sidebar={{ footer: <div className="hidden lg:block"><IdentitySwitcher /></div> }}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
       slots={{ ...docsChromeSlots, header: DocsHeader }}

@@ -2,7 +2,8 @@
 
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { GitBranch, Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
+import { GithubIcon } from "@/ui/github-icon";
 import { useTheme } from "next-themes";
 import { useSidebar } from "fumadocs-ui/components/sidebar/base";
 import {
@@ -112,7 +113,7 @@ export function MobileHeader({
         <div className="flex items-center justify-self-end">
           <ThemeButton />
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
-            <GitBranch aria-hidden="true" className="size-icon-control" />
+            <GithubIcon className="size-icon-control" />
           </a>
           {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton links={links} />}
         </div>
