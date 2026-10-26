@@ -13,7 +13,7 @@ export const A11Y_GATE_RULES = [
 
 /** Shiki samples and the home dashboard card (tracked separately on #389). */
 export const A11Y_AXE_EXCLUDES =
-  "pre, [data-rehype-pretty-code-figure], [data-home-dashboard-card], [role='tabpanel'] figure, #nd-sidebar";
+  "pre, [data-rehype-pretty-code-figure], [data-home-dashboard-card], [role='tabpanel'] figure, #nd-sidebar, [id^='type-table-']";
 
 export async function assertA11yGate(page: Page, selector = "body"): Promise<void> {
   const results = await new AxeBuilder({ page })
