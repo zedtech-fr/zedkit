@@ -9,10 +9,11 @@ export function SitePageShell({
   children: ReactNode;
   changelogHref: string;
 }) {
+  // Rendered inside fumadocs HomeLayout's <main>: no top-level landmark.
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] flex-col">
       <div className="flex-1">{children}</div>
-      <SiteMaintainerFooter changelogHref={changelogHref} />
+      <SiteMaintainerFooter changelogHref={changelogHref} embeddedInMain />
     </div>
   );
 }

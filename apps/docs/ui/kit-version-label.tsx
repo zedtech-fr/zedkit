@@ -9,7 +9,7 @@ export function KitVersionLabel({
   version: string;
   changelogHref: string;
 }) {
-  const label = `UI kit version ${version}, view changelog`;
+  const label = `v${version} (UI kit changelog)`;
   return (
     <Stack direction="horizontal" gap={2} className="items-center">
       <LivePulse />

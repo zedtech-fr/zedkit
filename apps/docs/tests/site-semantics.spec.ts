@@ -41,8 +41,7 @@ test.describe("site semantics harness (#300)", () => {
     await assertKeyboardReachesFirstMainCta(page);
   });
 
-  test("home: axe on layout (after #286/#287)", async ({ page }) => {
-    test.skip(true, "Enable when home demo and hero land (#286, #287).");
+  test("home: axe on layout", async ({ page }) => {
     await page.goto(BASE, { waitUntil: "networkidle" });
     await assertAxeOnMain(page);
   });
