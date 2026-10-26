@@ -17,9 +17,9 @@
  */
 
 @theme inline {
-  --animate-fade-up: zk-reveal-up var(--zk-reveal-duration, 600ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
-  --animate-fade-in: zk-reveal-fade var(--zk-reveal-duration, 600ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
-  --animate-pop-in: zk-reveal-pop var(--zk-reveal-duration, 600ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
+  --animate-fade-up: zk-reveal-up var(--zk-reveal-duration, 300ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
+  --animate-fade-in: zk-reveal-fade var(--zk-reveal-duration, 300ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
+  --animate-pop-in: zk-reveal-pop var(--zk-reveal-duration, 300ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
   --animate-float: zk-float 9s ease-in-out infinite;
   --animate-marquee: zk-marquee 40s linear infinite;
   --animate-blink: zk-blink 1.1s steps(2, jump-none) infinite;
@@ -76,7 +76,7 @@
   scale: 0.96;
 }
 [data-reveal="in"] {
-  animation: zk-reveal-up var(--zk-reveal-duration, 600ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
+  animation: zk-reveal-up var(--zk-reveal-duration, 300ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
   animation-delay: calc(var(--zk-reveal-delay, 0) * var(--zk-stagger-step, 70ms));
 }
 [data-reveal="in"][data-reveal-variant="fade"] {
@@ -98,7 +98,7 @@
   translate: 0 var(--zk-reveal-distance, 0.75rem);
 }
 [data-stagger="in"] > * {
-  animation: zk-reveal-up var(--zk-reveal-duration, 600ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
+  animation: zk-reveal-up var(--zk-reveal-duration, 300ms) var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1)) backwards;
 }
 [data-stagger="in"] > :nth-child(1) { animation-delay: calc(0 * var(--zk-stagger-step, 70ms)); }
 [data-stagger="in"] > :nth-child(2) { animation-delay: calc(1 * var(--zk-stagger-step, 70ms)); }
@@ -113,11 +113,14 @@
 /* Hover feedback: lift for cards, press for buttons. */
 @utility hover-lift {
   transition:
-    translate var(--zk-lift-duration, 220ms) var(--zk-lift-ease, ease),
-    box-shadow var(--zk-lift-duration, 220ms) var(--zk-lift-ease, ease);
-  &:hover {
-    translate: var(--zk-lift-translate, 0 -2px);
-    box-shadow: var(--zk-lift-shadow, var(--shadow-md));
+    translate var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease),
+    box-shadow var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease);
+  /* Literal :hover, so guard it like the hover variant: no stuck lift after a tap. */
+  @media (hover: hover) {
+    &:hover {
+      translate: var(--zk-lift-translate, 0 -2px);
+      box-shadow: var(--zk-lift-shadow, var(--shadow-md));
+    }
   }
   &:active {
     translate: none;
@@ -126,8 +129,8 @@
 }
 @utility hover-press {
   transition:
-    translate var(--zk-lift-duration, 220ms) var(--zk-lift-ease, ease),
-    box-shadow var(--zk-lift-duration, 220ms) var(--zk-lift-ease, ease);
+    translate var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease),
+    box-shadow var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease);
   &:active {
     translate: var(--zk-press-translate, 0 1px);
     box-shadow: none;
