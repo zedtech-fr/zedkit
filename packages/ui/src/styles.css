@@ -157,6 +157,7 @@
   --spacing-card-section: 1rem;
   --spacing-card-lines: 0.5rem;
   --spacing-separator-thickness: 0.0625rem;
+  --spacing-live-pulse-gap: 0.375rem;
 }
 
 @layer base {
