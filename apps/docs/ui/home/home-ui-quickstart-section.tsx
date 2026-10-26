@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { Heading, Stack } from "@zedtech/zedkit-ui";
+import { Section } from "@zedtech/zedkit-ui";
 
 import { HomeUiQuickstartCopy } from "@/ui/home/home-ui-quickstart-copy";
 
@@ -28,10 +28,7 @@ export function HomeUiQuickstartSection({
     throw new Error(`home-quickstart install.sh must be exactly: ${expectedInstall}`);
   }
   return (
-    <Stack gap={4} className="w-full max-w-2xl" id="quickstart">
-      <Heading level={2} className="text-base font-semibold">
-        UI quickstart (about five minutes)
-      </Heading>
+    <Section id="quickstart" title="UI quickstart (about five minutes)" className="w-full max-w-2xl">
       <HomeUiQuickstartCopy
         globalsCss={loadSnippet("globals.css")}
         pageTsx={loadSnippet("page.tsx")}
@@ -40,6 +37,6 @@ export function HomeUiQuickstartSection({
         featuredBrick={featuredBrick}
         registryBricks={registryBricks}
       />
-    </Stack>
+    </Section>
   );
 }
