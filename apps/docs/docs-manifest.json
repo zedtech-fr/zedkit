@@ -176,6 +176,7 @@
     "Render headings and body text without raw tags": {
       "package": "@zedtech/zedkit-ui",
       "component": "Heading",
+      "registry": "typography",
       "props": "HeadingProps",
       "source": "typography.tsx",
       "demo": "TypographyDemo"

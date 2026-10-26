@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { DataTable, DataTablePagination, createDataTableColumns } from "#index.js";
+import { DataTable, DataTableEmpty, DataTablePagination, DataTableToolbar, Table, TableBody, createDataTableColumns } from "#index.js";
 
 type Person = { name: string; age: number };
 
@@ -77,6 +77,19 @@ describe("DataTable", () => {
     expect(screen.queryByText(/Page \d+ of/)).toBeNull();
   });
 
+  it("composes the empty row standalone with spanning cell", () => {
+    render(
+      <Table>
+        <TableBody>
+          <DataTableEmpty colSpan={3} message="Nothing here." />
+        </TableBody>
+      </Table>,
+    );
+    const cell = screen.getByText("Nothing here.");
+    expect(cell.tagName).toBe("TD");
+    expect(cell.getAttribute("colspan")).toBe("3");
+  });
+
   it("hides pagination when every row fits on one page", () => {
     render(<DataTable columns={columns} data={data} pageSize={10} />);
     expect(screen.queryByText(/Page \d+ of/)).toBeNull();
@@ -137,5 +150,18 @@ describe("DataTablePagination", () => {
     await user.click(screen.getByRole("button", { name: "Previous" }));
     expect(onPrevious).toHaveBeenCalledTimes(1);
     expect(onNext).not.toHaveBeenCalled();
+  });
+});
+
+describe("DataTableToolbar", () => {
+  it("composes a standalone labelled filter input with token width", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<DataTableToolbar value="" onChange={onChange} placeholder="Filter…" />);
+    const input = screen.getByLabelText("Filter…");
+    expect(input.tagName).toBe("INPUT");
+    expect(input.classList.contains("max-w-data-table-filter-width")).toBe(true);
+    await user.type(input, "A");
+    expect(onChange).toHaveBeenCalledWith("A");
   });
 });

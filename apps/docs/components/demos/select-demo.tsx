@@ -9,7 +9,7 @@ import {
 export function SelectDemo() {
   return (
     <Select>
-      <SelectTrigger>
+      <SelectTrigger aria-label="Pick a region">
         <SelectValue placeholder="Pick a region" />
       </SelectTrigger>
       <SelectContent>

@@ -705,6 +705,25 @@
           ]
         },
         {
+          "need": "Icon-only actions with a visible name",
+          "import": "`@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`",
+          "wraps": "`Button` (same variants and sizes; `size` defaults to `icon`)",
+          "status": "beta",
+          "shortName": "IconButton",
+          "audience": "Developers adding icon-only header or toolbar controls in an admin UI.",
+          "purpose": "Icon-only controls with matching `aria-label` and `title` from one `label` prop.",
+          "whenToUse": "Toolbar or header controls where the glyph alone is not enough for screen readers.",
+          "whenNotToUse": "Actions with visible text — use `Button` instead.",
+          "derivedFrom": null,
+          "example": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>"
+            }
+          ]
+        },
+        {
           "need": "Show a status or count badge",
           "import": "`@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`",
           "wraps": "`class-variance-authority`",
@@ -1147,7 +1166,7 @@
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
-          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
+          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
           "shortName": "DataTable",
@@ -1165,6 +1184,14 @@
             {
               "title": "Standalone pagination",
               "code": "import { DataTablePagination } from \"@zedtech/zedkit-ui\";\nconst [page, setPage] = useState(2);\n<DataTablePagination page={page} pageCount={4}\n  canPrevious={page > 1} canNext={page < 4}\n  onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />"
+            },
+            {
+              "title": "Standalone empty row",
+              "code": "import { DataTableEmpty, Table, TableBody } from \"@zedtech/zedkit-ui\";\n<Table><TableBody>\n  <DataTableEmpty colSpan={3} message=\"Nothing here.\" />\n</TableBody></Table>"
+            },
+            {
+              "title": "Standalone toolbar",
+              "code": "import { DataTableToolbar } from \"@zedtech/zedkit-ui\";\nconst [query, setQuery] = useState(\"\");\n<DataTableToolbar value={query} onChange={setQuery} />"
             }
           ],
           "a11y": "Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.",
@@ -1370,7 +1397,9 @@
               "code": "import { Heading } from \"@zedtech/zedkit-ui\";\n<Heading level={2} asChild>\n  <a href=\"#section\">Section title as a link</a>\n</Heading>"
             }
           ],
+          "registry": "typography",
           "a11y": "Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.",
+          "troubleshooting": "Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]
