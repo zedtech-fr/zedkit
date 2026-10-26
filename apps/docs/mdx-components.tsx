@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 
 function PreWithScroll({ className, ...props }: ComponentProps<"pre">) {
   return (
-    <Stack className="min-w-0 max-w-full overflow-x-auto">
+    <Stack className="max-w-full min-w-0 overflow-x-auto">
       <pre className={cn(className)} {...props} />
     </Stack>
   );
