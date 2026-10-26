@@ -189,14 +189,16 @@ export function DataTable<TData extends RowData>({
         )}
       </TableBody>
       </Table>
-      <DataTablePagination
-        page={pageIndex + 1}
-        pageCount={table.getPageCount()}
-        canPrevious={table.getCanPreviousPage()}
-        canNext={table.getCanNextPage()}
-        onPrevious={() => table.previousPage()}
-        onNext={() => table.nextPage()}
-      />
+      {table.getPageCount() > 1 ? (
+        <DataTablePagination
+          page={pageIndex + 1}
+          pageCount={table.getPageCount()}
+          canPrevious={table.getCanPreviousPage()}
+          canNext={table.getCanNextPage()}
+          onPrevious={() => table.previousPage()}
+          onNext={() => table.nextPage()}
+        />
+      ) : null}
     </div>
   );
 }
