@@ -5,9 +5,13 @@ import { vi } from "vitest";
  * lacks so open/close behaves (no layout is asserted). Called from
  * `beforeAll` in the suites that open a drawer.
  */
-export function stubDrawerJsdom(): void {
-  window.matchMedia ??= (query: string) => ({
-    matches: false,
+export function stubDrawerJsdom(matches = false): void {
+  Object.defineProperty(window, "innerWidth", {
+    configurable: true,
+    value: matches ? 390 : 1024,
+  });
+  window.matchMedia = (query: string) => ({
+    matches,
     media: query,
     onchange: null,
     addListener: vi.fn(),
