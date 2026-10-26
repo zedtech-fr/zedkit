@@ -102,5 +102,6 @@ describe("form brick", () => {
     expect(screen.getByText("First problem.")).not.toBeNull();
     expect(screen.getByText("Second problem.")).not.toBeNull();
     expect(screen.getByRole("alert")).not.toBeNull();
+    expect(document.querySelector("[data-slot=field-set]")?.className).toContain("gap-field-set");
   });
 });

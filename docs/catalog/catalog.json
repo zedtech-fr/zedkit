@@ -1222,6 +1222,7 @@
               "code": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
             }
           ],
+          "a11y": "`FieldError` uses `role=\"alert\"`; spacing uses `gap-field-*` theme tokens (not raw spacing literals).",
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state"
           ]
