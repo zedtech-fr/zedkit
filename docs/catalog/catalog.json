@@ -892,7 +892,9 @@
               "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark /> // decorative, pair with visible text"
             }
           ],
+          "registry": "checkmark",
           "a11y": "Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.",
+          "troubleshooting": "No draw animation — the path animates only under `motion-safe`; reduced motion shows the static check by design. Announced twice — pass `label` once (it names the `role=\"img\"`); nearby text should not repeat it. Registry copies without the theme show the static check (the `zk-check-draw` keyframes live in `styles.css`).",
           "seeAlso": [
             "Show toast notifications"
           ]
