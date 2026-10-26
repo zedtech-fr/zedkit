@@ -70,6 +70,18 @@ function flatten(items: ReadonlyArray<SearchResultRecord | { type: "table"; rows
   return items.flatMap((item) => (item.type === "table" ? item.rows : [item]));
 }
 
+/** Drop markdown markers so phone results read like desktop snippets. */
+function plainResultText(text: string): string {
+  return text
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/^#+\s*/gm, "")
+    .trim();
+}
+
 /** Search field and results. Mounted only while open, so the index is fetched on demand. */
 function PillBody({ onClose }: { onClose: () => void }) {
   const { search, onSearchChange, data, isLoading } = useStaticSearch({ search: { tolerance: 1 } });
@@ -118,7 +130,9 @@ function PillBody({ onClose }: { onClose: () => void }) {
                     onClick={onClose}
                     className="flex min-h-tap flex-col justify-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none"
                   >
-                    <span className={result.type === "page" ? "font-medium" : "text-muted-foreground"}>{result.content}</span>
+                    <span className={result.type === "page" ? "font-medium" : "text-muted-foreground"}>
+                      {plainResultText(result.content)}
+                    </span>
                     {result.breadcrumbs && result.breadcrumbs.length > 0 ? (
                       <span className="text-xs text-muted-foreground">{result.breadcrumbs.join(" › ")}</span>
                     ) : null}
@@ -189,7 +203,7 @@ export function SearchPill() {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div className="md:hidden" data-search-pill>
       {open ? (
         <button
           type="button"
@@ -201,7 +215,7 @@ export function SearchPill() {
       ) : null}
       <div
         ref={lifted}
-        className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay flex justify-end"
+        className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex justify-end"
       >
         <div
           role="search"

@@ -2,6 +2,17 @@
 @import "@zedtech/zedkit-ui/styles.css";
 @import "fumadocs-ui/style.css";
 
+@media (pointer: coarse) {
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="tab"] {
+    touch-action: manipulation;
+  }
+}
+
 /* Scan the workspace kit sources so preview components get their classes. */
 @source "../../../packages/ui/src";
 
@@ -156,4 +167,14 @@ html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
 /* Home install commands: fade long values at the trailing edge instead of clipping abruptly. */
 [data-home-command-field] input {
   mask-image: linear-gradient(to right, #000 90%, transparent);
+}
+
+body:has([data-vaul-drawer][data-state="open"]) [data-search-pill] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-search-pill] button:hover {
+    filter: brightness(1.02);
+  }
 }
