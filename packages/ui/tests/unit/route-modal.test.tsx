@@ -99,6 +99,18 @@ describe("route modal", () => {
     expect(dialog.className).not.toContain("sm:max-w-sm");
   });
 
+  it("positions the drawer close button from theme tokens", () => {
+    const close = render(
+      <RouteModal title="Delivery" onClose={vi.fn()}>
+        x
+      </RouteModal>,
+    );
+    const button = close.getByRole("button", { name: "Close" });
+    expect(button.className).toContain("top-route-modal-close-offset");
+    expect(button.className).toContain("right-route-modal-close-offset");
+    expect(button.innerHTML).toContain("size-icon-control");
+  });
+
   it("plays the exit before calling onClose on Escape", () => {
     vi.useFakeTimers();
     const onClose = vi.fn();
@@ -224,7 +236,7 @@ describe("route modal", () => {
       </RouteModal>,
     );
     const drawerDialog = drawer.getByRole("dialog");
-    expect(drawerDialog.className).toContain("sm:max-w-lg!");
+    expect(drawerDialog.className).toContain("sm:max-w-route-modal-drawer-lg!");
     drawer.unmount();
     const dialog = render(
       <RouteModal title="Delete item?" variant="dialog" size="sm" onClose={() => {}}>
@@ -232,8 +244,8 @@ describe("route modal", () => {
       </RouteModal>,
     );
     const dialogDialog = dialog.getByRole("dialog");
-    expect(dialogDialog.className).toContain("max-w-sm");
-    expect(dialogDialog.className).not.toContain("max-w-lg");
+    expect(dialogDialog.className).toContain("max-w-route-modal-sm");
+    expect(dialogDialog.className).not.toContain("max-w-route-modal-dialog-lg");
   });
 
   it("has no axe violations when open", async () => {

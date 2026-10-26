@@ -167,6 +167,10 @@
   --spacing-page-header-title-gap: 0.25rem;
   --spacing-dialog-center: 50%;
   --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --container-route-modal-sm: 24rem;
+  --container-route-modal-drawer-lg: 32rem;
+  --container-route-modal-dialog-lg: 42rem;
+  --spacing-route-modal-close-offset: 1rem;
 }
 
 @layer base {
