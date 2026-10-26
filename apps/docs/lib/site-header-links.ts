@@ -1,4 +1,6 @@
+import { createElement } from "react";
 import type { LinkItemType } from "fumadocs-ui/layouts/shared";
+import { IdentitySwitcher } from "@zedtech/zedkit-ui";
 
 /** Global marketing/docs header links (GitHub comes from `githubUrl` on the layout). */
 export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
@@ -13,5 +15,6 @@ export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
       ],
     },
     { text: "Changelog", url: changelogHref, external: true },
+    { type: "custom", secondary: true, children: createElement(IdentitySwitcher) },
   ];
 }

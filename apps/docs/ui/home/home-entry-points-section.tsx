@@ -7,6 +7,7 @@ import {
   CardTitle,
   Section,
   Stack,
+  Stagger,
   Text,
 } from "@zedtech/zedkit-ui";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
@@ -19,9 +20,9 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
           Four package families in the catalog — counts come from the generated index, not
           hand-maintained numbers.
         </Text>
-        <Stack className="grid min-w-0 gap-4 md:grid-cols-2">
+        <Stagger className="grid min-w-0 gap-4 md:grid-cols-2">
           {entryPoints.map((entry) => (
-            <Card key={entry.href}>
+            <Card key={entry.href} className="hover-lift">
               <CardHeader>
                 <CardTitle>{entry.title}</CardTitle>
               </CardHeader>
@@ -38,7 +39,7 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
               </CardContent>
             </Card>
           ))}
-        </Stack>
+        </Stagger>
       </Stack>
     </Section>
   );

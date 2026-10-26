@@ -1,0 +1,184 @@
+---
+title: Identities and theming
+description: Switch the whole look of the UI kit with one attribute, and add your own identity by overriding CSS variables. Light and dark work with every identity.
+---
+
+Hand-written guide. Every claim points at
+[`identities.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/identities.css),
+[`motion.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/motion.css) or the
+[`styles.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/styles.css) entry that imports them.
+
+## What an identity is
+
+An identity is a block of CSS variables selected by `data-identity` on `<html>`. It is a second
+axis next to light and dark: the `.dark` class picks the mode, `data-identity` picks the look, and
+every identity defines both modes.
+
+Components never read the identity. They use tokens (`bg-card`, `rounded-xl`, `shadow-md`,
+`font-sans`, `border`), and the identity decides what each token means. Switching identity
+restyles the kit, this documentation site and your own screens without changing a component.
+
+| Identity | `data-identity` | Look |
+| --- | --- | --- |
+| Soft | `soft` (default, attribute optional) | Neutral palette, rounded corners, light shadows, system fonts, long easing. |
+| Retro square | `retro-square` | Square corners, 2px borders, hard offset shadows, warm paper palette, Play and Inter fonts, stepped motion. |
+
+Use the identity control in the site header (or the sidebar footer on documentation pages) to
+try them. The choice is kept in `localStorage` under `zk-identity`.
+
+## Add the switcher to your app
+
+Import the stylesheet once. It already includes the identities and the motion tokens:
+
+```css
+@import "tailwindcss";
+@import "@zedtech/zedkit-ui/styles.css";
+@source "../node_modules/@zedtech/zedkit-ui/src";
+```
+
+Render `IdentityScript` in the root layout `<head>` so the stored identity is applied before the
+first paint, then place `IdentitySwitcher` anywhere in the UI:
+
+```tsx
+import { IdentityScript, IdentitySwitcher } from "@zedtech/zedkit-ui";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <IdentityScript />
+      </head>
+      <body>
+        {children}
+        <IdentitySwitcher />
+      </body>
+    </html>
+  );
+}
+```
+
+`IdentitySwitcher` is a labelled native `<select>` (accessible name "Identity", override with the
+`label` prop). Pass `identities` to list your own entries. Light and dark keep working through your
+existing theme provider.
+
+## Create your own identity
+
+Copy the `retro-square` block into your own stylesheet, rename the attribute value and change the
+values. Declare it after the kit import. For the dark palette add a second block with the `.dark`
+class.
+
+```css
+:root[data-identity="calm-blue"] {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  /* …every color token, see the list below… */
+  --radius: 0.75rem;
+  --zk-radius-card: 1rem;
+  --zk-font-display: "Your Display Font", var(--zk-font-sans);
+}
+
+:root[data-identity="calm-blue"].dark {
+  --background: 222 47% 8%;
+  --foreground: 210 40% 98%;
+  /* … */
+}
+```
+
+Then register it so the switcher and the pre-paint script know about it:
+
+```tsx
+const mine = [
+  { id: "soft", label: "Soft" },
+  { id: "calm-blue", label: "Calm blue" },
+];
+
+<IdentityScript ids={mine.map((item) => item.id)} />
+<IdentitySwitcher identities={mine} />
+```
+
+## Tokens to override
+
+### Colors (HSL triplets, for light and for dark)
+
+`--background`, `--foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`,
+`--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--muted`,
+`--muted-foreground`, `--accent`, `--accent-foreground`, `--destructive`,
+`--destructive-foreground`, `--success`, `--success-foreground`, `--warning`,
+`--warning-foreground`, `--overlay`, `--border`, `--input`, `--ring`, and the `--sidebar*` set.
+
+Keep text pairs at 4.5:1 or more (`foreground` on `background`, `card` and `muted`;
+`muted-foreground` on `background`, `card`, `muted` and `secondary`; each `*-foreground` on its
+surface). The built-in identities are checked with an automated accessibility test in both modes.
+
+### Shape and depth
+
+| Token | Controls |
+| --- | --- |
+| `--radius` | Base radius for controls (`rounded-md`, `rounded-lg`, `rounded-sm` derive from it). |
+| `--zk-radius-card` | Cards and large surfaces (`rounded-xl`, `rounded-2xl`). |
+| `--zk-border-width` | Width of `border`, `border-t`, `border-b`, `border-l`, `border-r`. |
+| `--zk-shadow-xs` … `--zk-shadow-lg`, `--zk-shadow-overlay` | The `shadow-*` scale. Use hard offsets for a flat look. |
+| `--zk-shadow-color` | Color of hard shadows (HSL triplet). |
+
+### Typography
+
+| Token | Controls |
+| --- | --- |
+| `--zk-font-sans` | Body text and `font-sans`. |
+| `--zk-font-display` | `h1` to `h4` and `font-display`. |
+| `--zk-font-mono` | Code and `font-mono`. |
+| `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform` | Heading weight, letter spacing and case. |
+
+Fonts are not bundled by the kit. Load them in your app (this site uses the self-hosted Fontsource
+packages for Inter, Play and JetBrains Mono, all under the SIL Open Font License 1.1) and name the
+families in the tokens, with fallbacks. A font that no active identity names is never downloaded.
+
+### Motion
+
+| Token | Controls |
+| --- | --- |
+| `--zk-reveal-duration`, `--zk-reveal-distance`, `--zk-reveal-ease` | Entrance animations (`animate-fade-up`, `Reveal`, `Stagger`). |
+| `--zk-stagger-step` | Delay between staggered items. |
+| `--zk-lift-duration`, `--zk-lift-ease`, `--zk-lift-translate`, `--zk-lift-shadow` | `hover-lift` on cards. |
+| `--zk-press-translate` | `hover-press` on buttons. |
+| `--motion-fast`, `--motion-base`, `--motion-slow` | Dialog, drawer and menu transitions. |
+| `--zk-deco-ticker` | Whether the decorative ticker on the home page shows (`none` or `flex`). |
+
+## Motion utilities and wrappers
+
+Animations are classes and tokens, so they follow the identity:
+
+- `animate-fade-up`, `animate-fade-in`, `animate-pop-in` with `stagger-1` to `stagger-12` for
+  content above the fold (pure CSS, no flash).
+- `hover-lift` for cards and `hover-press` for buttons.
+- `Reveal` and `Stagger` for content below the fold: visible without JavaScript, revealed once
+  when scrolled into view.
+
+```tsx
+import { Reveal, Stagger } from "@zedtech/zedkit-ui";
+
+<Reveal>
+  <SectionContent />
+</Reveal>
+
+<Stagger className="grid gap-4 md:grid-cols-3">
+  <Card className="hover-lift">One</Card>
+  <Card className="hover-lift">Two</Card>
+  <Card className="hover-lift">Three</Card>
+</Stagger>
+```
+
+Under `prefers-reduced-motion: reduce` every entrance and hover animation is turned off and
+content is shown immediately.
+
+## Limits
+
+- `rounded-full` is a fixed Tailwind value, so pills and switch thumbs stay round in every identity.
+- A component that hard-codes a color, radius or shadow outside the token scales will not follow
+  an identity; the kit components use tokens only.
+- The shadcn registry theme item is generated from the soft palette; identities ship with the npm package.
+
+## Next steps
+
+- [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included)
+- [Documentation index](/docs)

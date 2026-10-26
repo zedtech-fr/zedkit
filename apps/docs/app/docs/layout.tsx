@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { IdentitySwitcher } from "@zedtech/zedkit-ui";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { source } from "#source";
 import { featuredPackageChangelogUrl } from "@/content/gallery";
@@ -11,6 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       nav={{ title: "zedkit", url: "/" }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
       links={siteHeaderLinks(featuredPackageChangelogUrl)}
+      sidebar={{ footer: <IdentitySwitcher /> }}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
     >
