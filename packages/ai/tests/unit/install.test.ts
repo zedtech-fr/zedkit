@@ -421,6 +421,15 @@ describe("installKit", () => {
     }
   });
 
+  it("core preset stays capped: every skill name loads into context up front", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const core = manifest.value.presets.core;
+    if (!Array.isArray(core)) throw new Error("core preset must list skills");
+    // Hard cap (#443): adding a core skill must bump this number explicitly.
+    expect(core.length).toBeLessThanOrEqual(25);
+  });
+
   it("core-installed skills only name skills and agents that core installs", () => {
     const dest = tempDir();
     install(dest, { preset: "core" });
