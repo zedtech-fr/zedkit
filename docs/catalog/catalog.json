@@ -1094,6 +1094,7 @@
               "code": "import { Label, SecretField } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"key\">API key (shown once)</Label>\n<SecretField id=\"key\" value={key} />"
             }
           ],
+          "a11y": "Read-only input needs `aria-label` (or an external `Label` via `id`); the copy button is labelled. Layout from `--spacing-secret-field-gap` plus the shared control tokens.",
           "seeAlso": [
             "Collect text input with a label"
           ]

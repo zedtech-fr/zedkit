@@ -423,6 +423,7 @@ import { toast } from "sonner";
 - Purpose: A masked secret field with reveal and copy controls.
 - When to use: Right after creating a credential the user must store.
 - When not to use: For passwords the user typed — use a password Input instead.
+- A11y: Read-only input needs `aria-label` (or an external `Label` via `id`); the copy button is labelled. Layout from `--spacing-secret-field-gap` plus the shared control tokens.
 - See also: `Collect text input with a label`
 
 ```ts

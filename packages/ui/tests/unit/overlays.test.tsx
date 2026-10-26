@@ -126,5 +126,11 @@ describe("overlays", () => {
       await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
       expect(screen.getByRole("button", { name: "Copy to clipboard" })).not.toBeNull();
     });
+
+    it("spaces input and copy button from theme tokens", () => {
+      const { container } = render(<SecretField id="key" value="zbk_secret" />);
+      expect(container.innerHTML).toContain("gap-secret-field-gap");
+      expect(container.innerHTML).toContain("size-icon-control");
+    });
   });
 });
