@@ -119,6 +119,11 @@
   --spacing-control-block: 0.25rem;
   --spacing-control-block-lg: 0.5rem;
   --spacing-textarea-min-height: 3.75rem;
+  --spacing-alert-inline: 1rem;
+  --spacing-alert-block: 0.75rem;
+  --spacing-alert-icon-offset: 1rem;
+  --spacing-alert-icon-nudge: 0.1875rem;
+  --spacing-alert-content-indent: 1.75rem;
 }
 
 @layer base {

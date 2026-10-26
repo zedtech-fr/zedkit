@@ -1,4 +1,4 @@
-export { Alert, AlertDescription, AlertTitle } from "./alert.js";
+export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./alert.js";
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
