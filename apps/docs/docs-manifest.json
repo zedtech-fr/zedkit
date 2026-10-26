@@ -144,6 +144,7 @@
     "Name an operation in progress": {
       "package": "@zedtech/zedkit-ui",
       "component": "StatusLabel",
+      "registry": "status-label",
       "props": "StatusLabelProps",
       "source": "status-label.tsx",
       "demo": "StatusLabelDemo"
