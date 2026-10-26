@@ -96,10 +96,10 @@ describe("checkmark", () => {
     expect(container.querySelector("path")?.getAttribute("stroke-dasharray")).toBe("8");
   });
 
-  it("styles size and motion from design tokens", () => {
+  it("styles size from the canonical scale and motion from tokens", () => {
     const { container } = render(<Checkmark />);
-    expect(container.firstElementChild?.classList.contains("size-checkmark")).toBe(true);
-    expect(container.firstElementChild?.getAttribute("class")).not.toMatch(/(^|\s)size-4(\s|$)/);
+    expect(container.firstElementChild?.classList.contains("size-4")).toBe(true);
+    expect(container.firstElementChild?.getAttribute("class")).not.toContain("size-checkmark");
     const path = container.querySelector("path");
     expect(path?.getAttribute("class")).toContain("motion-safe:animate-check-draw");
     expect(path?.getAttribute("class")).not.toContain("animate-[");
