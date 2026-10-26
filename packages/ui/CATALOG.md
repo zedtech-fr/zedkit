@@ -698,7 +698,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 
 ## Group content in a card section
 
-- Import: `@zedtech/zedkit-ui` — `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
+- Import: `@zedtech/zedkit-ui` — `Card`, `CardProps`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
 - Wraps: none (presentational, theme tokens only)
 - Status: beta
 - Derived from: shadcn/ui (card)
@@ -709,12 +709,21 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 - When not to use: For page-level layout — use AppShell and Stack instead.
 - A11y: Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; `CardSkeleton` mirrors the same tokens so async content lands without shifting.
 - See also: `Stack content and group titled sections`
+- Examples: Simple, With footer
+- Registry: card
+- Troubleshooting: Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`pt-0` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
 
 ```ts
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedtech/zedkit-ui";
 <Card><CardHeader><CardTitle>Server</CardTitle>
 <CardDescription>Connection details.</CardDescription></CardHeader>
 <CardContent>Body.</CardContent></Card>
+```
+
+```ts
+import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
+<Card><CardContent>Body.</CardContent>
+<CardFooter>Actions go here.</CardFooter></Card>
 ```
 
 ## Stack content and group titled sections
