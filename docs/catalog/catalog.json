@@ -759,7 +759,7 @@
               "code": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
             }
           ],
-          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus.",
+          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention.",
           "seeAlso": [
             "Collect multi-line text input",
             "Build validated forms with labels, errors, and pending state"

@@ -121,7 +121,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
-- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus.
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";

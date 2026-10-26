@@ -55,6 +55,18 @@ describe("primitives", () => {
     expect(screen.getByLabelText("Name")).toHaveProperty("placeholder", "Ada");
   });
 
+  it("dims the label with the kit disabled convention", () => {
+    render(
+      <>
+        <Input id="name" placeholder="Ada" disabled className="peer" />
+        <Label htmlFor="name">Name</Label>
+      </>,
+    );
+    const label = screen.getByText("Name");
+    expect(label.className).toContain("peer-disabled:cursor-not-allowed");
+    expect(label.className).toContain("peer-disabled:opacity-50");
+  });
+
   it("renders horizontal and vertical separators", () => {
     const { container } = render(
       <>
