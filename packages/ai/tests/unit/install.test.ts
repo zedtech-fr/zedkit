@@ -420,6 +420,27 @@ describe("installKit", () => {
       }
     }
   });
+
+  it("core-installed skills only name skills and agents that core installs", () => {
+    const dest = tempDir();
+    install(dest, { preset: "core" });
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const installed = new Set(readdirSync(join(dest, ".agents/skills")).concat(manifest.value.agents));
+    const everything = new Set(readdirSync(join(kitRoot(), "skills")).concat(manifest.value.agents));
+    const skills = readdirSync(join(dest, ".agents/skills"))
+      .map((name) => join(dest, ".agents/skills", name, "SKILL.md"))
+      .filter(existsSync);
+    // Backticked names only: the kit convention for runnable skill/agent
+    // names. Quoted or /slash mentions in vendored prose are not calls.
+    for (const file of skills) {
+      const text = readFileSync(file, "utf8");
+      for (const name of everything) {
+        const referenced = new RegExp("`" + name + "`").test(text);
+        if (referenced) expect(installed.has(name), `${file} references ${name}`).toBe(true);
+      }
+    }
+  });
 });
 
 const FIRST_PARTY_SKILLS = [
