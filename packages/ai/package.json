@@ -63,6 +63,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

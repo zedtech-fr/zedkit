@@ -8,7 +8,7 @@
     "#*": "./app/*"
   },
   "scripts": {
-    "docs:generate": "pnpm --filter @zedtech/zedkit-seo build && node scripts/generate.mjs",
+    "docs:generate": "pnpm --filter @zedtech/zedkit-quality build && pnpm --filter @zedtech/zedkit-seo build && node scripts/generate.mjs",
     "docs:check": "node scripts/check.mjs",
     "docs:check-seo-export": "node scripts/check-seo-export.mjs",
     "postinstall": "pnpm docs:generate && fumadocs-mdx",
@@ -52,6 +52,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }
