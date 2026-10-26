@@ -7,8 +7,10 @@ function tableFirstColumn(path: string): string[] {
   const raw = readFileSync(join(kitDir(), path), "utf8");
   return raw
     .split("\n")
+    // Header row only: the `|---` separator never matches `| `, so slice(1)
+    // keeps every data row (slice(2) would silently drop the first persona).
     .filter((line) => line.startsWith("| "))
-    .slice(2)
+    .slice(1)
     .map((line) => line.split("|")[1]?.trim() ?? "");
 }
 
