@@ -17,6 +17,14 @@ describe("skeletons", () => {
     expect(screen.getByRole("status", { name: "Loading" })).not.toBeNull();
   });
 
+  it("shares the card spacing tokens so content lands without shifting", () => {
+    render(<CardSkeleton />);
+    const zone = screen.getByRole("status");
+    expect(zone.className).toContain("p-card-padding");
+    expect(zone.querySelector(".space-y-card-stack")).not.toBeNull();
+    expect(zone.querySelector(".mt-card-section.space-y-card-lines")).not.toBeNull();
+  });
+
   it("sizes the table skeleton to its columns and rows", () => {
     const { container } = render(<DataTableSkeleton columns={3} rows={2} />);
     expect(container.querySelectorAll("tbody tr").length).toBe(2);
