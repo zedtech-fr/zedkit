@@ -1241,7 +1241,9 @@
               "code": "import { DetailPanelRow } from \"@zedtech/zedkit-ui\";\n<dl>\n  <DetailPanelRow label=\"Region\" value=\"eu\" />\n</dl>"
             }
           ],
+          "registry": "detail-panel",
           "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

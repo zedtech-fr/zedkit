@@ -30,6 +30,8 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   assert.deepEqual(alert.cssVars, expected.alert.cssVars);
   const typo = registry.items.find((item) => item.name === "typography");
   assert.deepEqual(typo.cssVars, expected.typography.cssVars);
+  const detail = registry.items.find((item) => item.name === "detail-panel");
+  assert.deepEqual(detail.cssVars, expected["detail-panel"].cssVars);
 });
 
 test("checkRegistryThemeDrift is clean on the repo", () => {

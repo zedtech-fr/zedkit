@@ -123,6 +123,15 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "detail-panel": {
+      cssVars: {
+        theme: {
+          "spacing-detail-panel-gap": varFromBlock(theme, "spacing-detail-panel-gap"),
+          "spacing-detail-panel-inline": varFromBlock(theme, "spacing-detail-panel-inline"),
+          "spacing-detail-panel-block": varFromBlock(theme, "spacing-detail-panel-block"),
+        },
+      },
+    },
   };
 }
 
