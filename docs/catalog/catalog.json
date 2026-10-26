@@ -1367,6 +1367,29 @@
           ]
         },
         {
+          "need": "Switch the visual identity with one attribute",
+          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`",
+          "wraps": "none (CSS variables in `styles.css`, `identities.css`, `motion.css`)",
+          "status": "alpha",
+          "shortName": "Identities",
+          "audience": "Teams that want to change the whole look of an app, or offer a choice, without touching components.",
+          "purpose": "`data-identity` on the root swaps radius, borders, shadows, fonts, palette and motion tokens, combined with light and dark; a labelled switcher persists the choice and a head script applies it before first paint.",
+          "whenToUse": "To rebrand or offer several looks from one set of components.",
+          "whenNotToUse": "For a single fixed brand — edit the base tokens in `styles.css` instead.",
+          "derivedFrom": null,
+          "example": "import { IdentityScript, IdentitySwitcher, Reveal } from \"@zedtech/zedkit-ui\";\n// <head><IdentityScript /></head> applies the stored identity before paint\n<IdentitySwitcher />\n<Reveal>{children}</Reveal>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { IdentityScript, IdentitySwitcher, Reveal } from \"@zedtech/zedkit-ui\";\n// <head><IdentityScript /></head> applies the stored identity before paint\n<IdentitySwitcher />\n<Reveal>{children}</Reveal>"
+            }
+          ],
+          "a11y": "native labelled `select`; entrance animations are disabled under `prefers-reduced-motion`.",
+          "seeAlso": [
+            "Theme an admin app (dark/light included)"
+          ]
+        },
+        {
           "need": "Pick one option from a dropdown",
           "import": "`@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
           "wraps": "`@radix-ui/react-select`",

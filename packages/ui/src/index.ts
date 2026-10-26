@@ -146,3 +146,13 @@ export {
   type RouteModalSize,
   type RouteModalVariant,
 } from "./route-modal.js";
+export { Reveal, Stagger, type RevealProps, type StaggerProps } from "./reveal.js";
+export {
+  DEFAULT_IDENTITY,
+  IDENTITY_STORAGE_KEY,
+  IdentityScript,
+  identities,
+  type IdentityOption,
+  type IdentityScriptProps,
+} from "./identity.js";
+export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";

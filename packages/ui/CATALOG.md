@@ -702,6 +702,26 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 </Alert>
 ```
 
+## Switch the visual identity with one attribute
+
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`
+- Wraps: none (CSS variables in `styles.css`, `identities.css`, `motion.css`)
+- Status: alpha
+- Short name: Identities
+- Audience: Teams that want to change the whole look of an app, or offer a choice, without touching components.
+- Purpose: `data-identity` on the root swaps radius, borders, shadows, fonts, palette and motion tokens, combined with light and dark; a labelled switcher persists the choice and a head script applies it before first paint.
+- When to use: To rebrand or offer several looks from one set of components.
+- When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
+- See also: `Theme an admin app (dark/light included)`
+- A11y: native labelled `select`; entrance animations are disabled under `prefers-reduced-motion`.
+
+```ts
+import { IdentityScript, IdentitySwitcher, Reveal } from "@zedtech/zedkit-ui";
+// <head><IdentityScript /></head> applies the stored identity before paint
+<IdentitySwitcher />
+<Reveal>{children}</Reveal>
+```
+
 ## Pick one option from a dropdown
 
 - Import: `@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`

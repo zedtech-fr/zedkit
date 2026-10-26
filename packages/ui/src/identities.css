@@ -1,0 +1,225 @@
+/*
+ * zedkit identities: a second theming axis next to light/dark.
+ *
+ * An identity is a block of CSS variables selected by `data-identity`
+ * on <html>. It is independent from the `.dark` class: every identity
+ * defines a light and a dark palette. Components never read the
+ * identity; they read tokens (`bg-card`, `rounded-xl`, `shadow-md`,
+ * `font-sans`, `border`), and this file decides what the tokens mean.
+ *
+ * Imported by `styles.css`: consumers import that one file.
+ *
+ * Built in:
+ *   soft          current default look (no attribute needed).
+ *   retro-square  square corners, hard borders and offset shadows,
+ *                 warm paper palette, snappier motion.
+ *
+ * To add one, copy a block below and override the tokens listed in
+ * the "Identities and theming" docs page.
+ */
+
+/* ---------------------------------------------------------------
+ * 1. Indirection: map Tailwind theme scales onto identity tokens.
+ *    Defaults reproduce the stock Tailwind values, so the soft
+ *    identity renders exactly as before.
+ * ------------------------------------------------------------- */
+@theme inline {
+  --radius-xl: var(--zk-radius-card);
+  --radius-2xl: calc(var(--zk-radius-card) + 0.25rem);
+  --shadow-xs: var(--zk-shadow-xs);
+  --shadow-sm: var(--zk-shadow-sm);
+  --shadow-md: var(--zk-shadow-md);
+  --shadow-lg: var(--zk-shadow-lg);
+  --font-sans: var(--zk-font-sans);
+  --font-display: var(--zk-font-display);
+  --font-mono: var(--zk-font-mono);
+}
+
+/* ---------------------------------------------------------------
+ * 2. Identity: soft (default). Palette lives in styles.css.
+ * ------------------------------------------------------------- */
+:root {
+  /* Typography */
+  --zk-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --zk-font-display: var(--zk-font-sans);
+  --zk-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --zk-heading-weight: inherit;
+  --zk-heading-tracking: inherit;
+  --zk-heading-transform: none;
+  /* Shape */
+  --zk-radius-card: 0.75rem;
+  --zk-border-width: 1px;
+  /* Depth */
+  --zk-shadow-color: 240 10% 4%;
+  --zk-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --zk-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --zk-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --zk-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --zk-shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Motion personality (see motion.css) */
+  --zk-reveal-duration: 600ms;
+  --zk-reveal-distance: 0.75rem;
+  --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-stagger-step: 70ms;
+  --zk-lift-duration: 220ms;
+  --zk-lift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-lift-translate: 0 -2px;
+  --zk-lift-shadow: 0 10px 20px -8px rgb(0 0 0 / 0.18);
+  --zk-press-translate: 0 1px;
+  /* Decorative layers: which one an identity shows */
+  --zk-deco-ticker: none;
+}
+
+.dark {
+  --zk-shadow-color: 0 0% 0%;
+  --zk-lift-shadow: 0 10px 20px -8px rgb(0 0 0 / 0.6);
+}
+
+/* ---------------------------------------------------------------
+ * 3. Identity: retro-square.
+ *    Palette: navy ink on warm paper, coral accents. Light text
+ *    pairs are checked >= 4.5:1; see the docs page for the list.
+ * ------------------------------------------------------------- */
+:root[data-identity="retro-square"] {
+  --background: 32 48% 93%;
+  --foreground: 222 41% 19%;
+  --card: 34 100% 98%;
+  --card-foreground: 222 41% 19%;
+  --popover: 34 100% 98%;
+  --popover-foreground: 222 41% 19%;
+  --primary: 222 41% 19%;
+  --primary-foreground: 32 48% 93%;
+  --secondary: 30 40% 88%;
+  --secondary-foreground: 222 41% 19%;
+  --muted: 30 38% 89%;
+  --muted-foreground: 222 22% 36%;
+  --accent: 14 100% 88%;
+  --accent-foreground: 222 41% 19%;
+  --destructive: 4 78% 40%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 150 70% 26%;
+  --success-foreground: 0 0% 100%;
+  --warning: 30 95% 34%;
+  --warning-foreground: 0 0% 100%;
+  --overlay: 222 41% 19%;
+  --border: 222 41% 19%;
+  --input: 222 41% 19%;
+  --ring: 12 70% 42%;
+  --radius: 0.125rem;
+  --sidebar: 32 48% 91%;
+  --sidebar-foreground: 222 41% 19%;
+  --sidebar-border: 222 41% 19%;
+  --sidebar-accent: 14 100% 88%;
+
+  --zk-font-sans: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: Play, "Inter Variable", Inter, ui-sans-serif, system-ui, sans-serif;
+  --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --zk-heading-weight: 700;
+  --zk-heading-tracking: 0;
+  --zk-heading-transform: none;
+
+  --zk-radius-card: 0px;
+  --zk-border-width: 2px;
+
+  --zk-shadow-color: 222 41% 19%;
+  --zk-shadow-xs: 1px 1px 0 0 hsl(var(--zk-shadow-color));
+  --zk-shadow-sm: 2px 2px 0 0 hsl(var(--zk-shadow-color));
+  --zk-shadow-md: 4px 4px 0 0 hsl(var(--zk-shadow-color));
+  --zk-shadow-lg: 6px 6px 0 0 hsl(var(--zk-shadow-color));
+  --zk-shadow-overlay: 8px 8px 0 0 hsl(var(--zk-shadow-color));
+
+  --motion-fast: 90ms;
+  --motion-base: 130ms;
+  --motion-slow: 170ms;
+  --zk-reveal-duration: 480ms;
+  --zk-reveal-distance: 0.5rem;
+  --zk-reveal-ease: steps(6, jump-end);
+  --zk-stagger-step: 90ms;
+  --zk-lift-duration: 120ms;
+  --zk-lift-ease: steps(3, jump-end);
+  --zk-lift-translate: -3px -3px;
+  --zk-lift-shadow: 7px 7px 0 0 hsl(var(--zk-shadow-color));
+  --zk-press-translate: 2px 2px;
+
+  --zk-deco-ticker: flex;
+}
+
+:root[data-identity="retro-square"].dark {
+  --background: 224 42% 11%;
+  --foreground: 32 48% 93%;
+  --card: 224 38% 15%;
+  --card-foreground: 32 48% 93%;
+  --popover: 224 38% 15%;
+  --popover-foreground: 32 48% 93%;
+  --primary: 12 72% 70%;
+  --primary-foreground: 224 42% 11%;
+  --secondary: 222 30% 22%;
+  --secondary-foreground: 32 48% 93%;
+  --muted: 222 30% 20%;
+  --muted-foreground: 30 25% 74%;
+  --accent: 222 32% 26%;
+  --accent-foreground: 32 48% 93%;
+  --destructive: 2 75% 62%;
+  --destructive-foreground: 224 42% 11%;
+  --success: 145 55% 52%;
+  --success-foreground: 224 42% 11%;
+  --warning: 38 92% 56%;
+  --warning-foreground: 224 42% 11%;
+  --overlay: 224 42% 6%;
+  --border: 30 25% 62%;
+  --input: 30 25% 62%;
+  --ring: 12 72% 70%;
+  --sidebar: 224 42% 13%;
+  --sidebar-foreground: 32 48% 93%;
+  --sidebar-border: 30 25% 62%;
+  --sidebar-accent: 222 32% 26%;
+
+  --zk-shadow-color: 12 72% 70%;
+  --zk-lift-shadow: 7px 7px 0 0 hsl(var(--zk-shadow-color));
+}
+
+/* ---------------------------------------------------------------
+ * 4. Token consumers that Tailwind utilities cannot reach.
+ * ------------------------------------------------------------- */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--zk-font-display);
+    font-weight: var(--zk-heading-weight);
+    letter-spacing: var(--zk-heading-tracking);
+    text-transform: var(--zk-heading-transform);
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--zk-font-mono);
+  }
+}
+
+/* `border` is a fixed 1px utility: let an identity set the width. */
+.border {
+  border-width: var(--zk-border-width);
+}
+.border-t {
+  border-top-width: var(--zk-border-width);
+}
+.border-b {
+  border-bottom-width: var(--zk-border-width);
+}
+.border-l {
+  border-left-width: var(--zk-border-width);
+}
+.border-r {
+  border-right-width: var(--zk-border-width);
+}
+
+/*
+ * Decorative layer an identity opts into (display token).
+ * !important: the layer's own layout utilities (flex, block) must not win.
+ */
+@utility identity-ticker {
+  display: var(--zk-deco-ticker) !important;
+}
