@@ -7,6 +7,7 @@ import { IdentityScript } from "@zedtech/zedkit-ui";
 import { Provider } from "./provider";
 import "./globals.css";
 import "./docs-shell-tokens.css";
+import "./fonts";
 
 const baseMetadata = docsPageMetadata("/", homePage);
 

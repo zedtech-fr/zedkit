@@ -15,9 +15,13 @@
  * wrapped: some apps ship a precompiled stylesheet that reads them
  * through var(). Overriding them restyles both stylesheets at once.
  *
- * This file holds the foundation only: the stock values every identity
- * starts from, and the bridge for utilities that bake their values in.
- * An identity is one more block that overrides the tokens below.
+ * This file holds the foundation (the stock values every identity starts
+ * from, and the bridge for utilities that bake their values in), then one
+ * block per identity that overrides the stock tokens.
+ *
+ * Built in:
+ *   mist   calm and soft: the stock look set in Inter, with a visible
+ *          text selection.
  */
 
 /* ---------------------------------------------------------------
@@ -206,6 +210,36 @@
     outline-offset: var(--ring-offset-width);
     border-radius: var(--radius-sm);
   }
+}
+
+/* ---------------------------------------------------------------
+ * Identity: mist.
+ *
+ *    The stock shapes, depth and motion, set in Inter. The family is
+ *    the self-hosted Inter Variable when the app ships it, then its
+ *    metric-aligned fallback (font-fallbacks.css) so the swap does not
+ *    shift the layout, then the system stack.
+ *
+ *    This block sits after the bridge on purpose: its selection rule has
+ *    the same specificity as the bridge one and must win by order.
+ * ------------------------------------------------------------- */
+:root[data-identity="mist"],
+[data-identity-scope][data-identity="mist"] {
+  --zk-font-sans:
+    "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --zk-font-display: var(--zk-font-sans);
+}
+
+/*
+ * Mist selects in its accent pair, inverted: its accent is a whisper
+ * grey, so the plain pair would be invisible on the page.
+ */
+:root[data-identity="mist"] ::selection,
+:root[data-identity="mist"]::selection,
+[data-identity-scope][data-identity="mist"] ::selection {
+  background: hsl(var(--accent-foreground));
+  color: hsl(var(--accent));
 }
 
 /*
