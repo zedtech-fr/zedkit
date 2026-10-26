@@ -94,6 +94,27 @@ describe("installKit", () => {
     expect(install(dest).every((a) => a.kind === "skip")).toBe(true);
   });
 
+  it("upgrades: a re-run adds new kit files and never touches edited ones", () => {
+    const v1 = tempDir();
+    put(v1, "kit.json", JSON.stringify({ presets: { core: ["alpha"] }, agents: [] }));
+    put(v1, "skills/alpha/SKILL.md", "v1\n");
+    put(v1, "AGENTS.template.md", "t");
+    put(v1, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    install(dest, { kit: v1 });
+    writeFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "edited\n");
+    const v2 = tempDir();
+    put(v2, "kit.json", JSON.stringify({ presets: { core: ["alpha", "beta"] }, agents: [] }));
+    put(v2, "skills/alpha/SKILL.md", "v2\n");
+    put(v2, "skills/beta/SKILL.md", "new\n");
+    put(v2, "AGENTS.template.md", "t");
+    put(v2, "THIRD_PARTY_NOTICES.md", "n");
+    const again = install(dest, { kit: v2 });
+    expect(readFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "utf8")).toBe("edited\n");
+    expect(readFileSync(join(dest, ".agents/skills/beta/SKILL.md"), "utf8")).toBe("new\n");
+    expect(again.find((a) => a.path === join(".agents", "skills", "beta"))?.kind).toBe("copy");
+  });
+
   it("dry run reports the ladder append without writing it", () => {
     const dest = tempDir();
     put(dest, "AGENTS.md", "mine\n");
