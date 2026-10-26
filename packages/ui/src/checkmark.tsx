@@ -18,7 +18,7 @@ export function Checkmark({ label, className }: CheckmarkProps) {
       {...(label === undefined
         ? { "aria-hidden": true as const }
         : { role: "img" as const, "aria-label": label })}
-      className={cn("size-4 text-success", className)}
+      className={cn("size-checkmark text-success", className)}
     >
       <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
       <path
@@ -27,7 +27,8 @@ export function Checkmark({ label, className }: CheckmarkProps) {
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="[stroke-dasharray:8] motion-safe:animate-[zk-check-draw_0.45s_ease-out_forwards]"
+        strokeDasharray={8}
+        className="motion-safe:animate-check-draw"
       />
     </svg>
   );

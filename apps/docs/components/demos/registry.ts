@@ -4,6 +4,7 @@ import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { ButtonDemo } from "./button-demo";
 import { CardDemo } from "./card-demo";
+import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DetailsDemo } from "./details-demo";
@@ -45,6 +46,7 @@ export const demoRegistry = {
   BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx", center: true },
   ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx", center: true },
   CardDemo: { Demo: CardDemo, file: "card-demo.tsx" },
+  CheckmarkDemo: { Demo: CheckmarkDemo, file: "checkmark-demo.tsx" },
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },

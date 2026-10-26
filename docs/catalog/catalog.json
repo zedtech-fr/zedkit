@@ -876,8 +876,13 @@
             {
               "title": "Simple",
               "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark label=\"Saved\" /> // draws once, static under reduced motion; omit label when decorative"
+            },
+            {
+              "title": "Decorative",
+              "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark /> // decorative, pair with visible text"
             }
           ],
+          "a11y": "Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.",
           "seeAlso": [
             "Show toast notifications"
           ]
