@@ -4,3 +4,11 @@
 
 /* Scan the workspace kit sources so preview components get their classes. */
 @source "../../../packages/ui/src";
+
+/* Wide prose/code must not widen `main` on narrow viewports (site-semantics harness). */
+@layer base {
+  main {
+    min-width: 0;
+    overflow-x: clip;
+  }
+}

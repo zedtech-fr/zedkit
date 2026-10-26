@@ -6,6 +6,7 @@ import {
   assertNoHorizontalOverflow,
   assertNoNestedInteractive,
   assertUniqueLinkNames,
+  SITE_AUDIT_MOBILE_VIEWPORT,
 } from "./site-audit-helpers";
 import { REGISTRY_SMOKE_URLS, SITE_AUDIT_ROUTES } from "./site-routes";
 
@@ -16,6 +17,7 @@ test.describe("site semantics harness (#300)", () => {
     test(`${route.label}: mobile width, axe on main, links resolve`, async ({ page }) => {
       const errors: string[] = [];
       page.on("pageerror", (event) => errors.push(String(event)));
+      await page.setViewportSize(SITE_AUDIT_MOBILE_VIEWPORT);
       await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
       await assertNoHorizontalOverflow(page);
       if (route.strictSemantics) {

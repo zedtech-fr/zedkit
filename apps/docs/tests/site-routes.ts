@@ -19,13 +19,11 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     path: "/docs",
     label: "docs-index",
     strictSemantics: true,
-    // Overflow check flaky here (verified 2026-10-26); mobile lane owns the fix.
   },
   {
     path: "/docs/getting-started",
     label: "getting-started",
     strictSemantics: true,
-    // Still overflows at phone width (verified 2026-10-26); mobile lane owns the fix.
   },
   {
     path: "/docs/build-an-admin-dashboard",
@@ -36,7 +34,6 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     path: "/docs/set-up-your-coding-agents",
     label: "tutorial-agents",
     strictSemantics: true,
-    // Overflows in CI while green locally (verified 2026-10-26); mobile lane owns the fix.
   },
   {
     path: "/docs/nest/start-a-safe-nestjs-api",

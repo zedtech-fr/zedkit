@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page } from "@playwright/test";
 
-const MOBILE_WIDTH = 375;
+export const SITE_AUDIT_MOBILE_VIEWPORT = { width: 375, height: 844 };
 
 /**
  * Baseline axe on `main` (#300 harness). `color-contrast` stays off: enabling
@@ -16,8 +16,9 @@ const AXE_BASELINE_RULES_OFF = [
   "color-contrast",
 ] as const;
 
+/** Caller should set `SITE_AUDIT_MOBILE_VIEWPORT` before navigation so Fumadocs reflows `main`. */
 export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
-  await page.setViewportSize({ width: MOBILE_WIDTH, height: 844 });
+  await page.setViewportSize(SITE_AUDIT_MOBILE_VIEWPORT);
   const target = page.locator("main");
   const hasMain = (await target.count()) > 0;
   const scrollWidth = await page.evaluate((useMain) => {
