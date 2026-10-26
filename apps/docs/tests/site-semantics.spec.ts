@@ -33,7 +33,7 @@ test.describe("site semantics harness (#300)", () => {
       expect(errors).toEqual([]);
     });
 
-    if (route.strictSemantics) {
+    if (route.strictSemantics || route.linkAndInteractiveAudit) {
       test(`${route.label}: no nested interactive, unique link names`, async ({ page }) => {
         if (route.pendingPath) {
           const probe = await page.request.get(`${BASE}${route.path}`);

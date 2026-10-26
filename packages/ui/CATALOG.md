@@ -602,7 +602,7 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 
 ## Call out a notice or an error state
 
-- Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`
+- Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`, `alertVariants`, `AlertProps`
 - Wraps: `class-variance-authority`
 - Status: beta
 - Derived from: shadcn/ui (alert)
@@ -612,6 +612,8 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 - When to use: For states tied to page content (load errors, warnings).
 - When not to use: For transient confirmations — use Toaster instead.
 - See also: `Show toast notifications`
+- Examples: Simple, As a section (asChild)
+- A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
@@ -619,6 +621,16 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 <AlertDescription>Something worth knowing.</AlertDescription></Alert>
 <Alert variant="destructive"><AlertTitle>Failed</AlertTitle>
 <AlertDescription>Something went wrong.</AlertDescription></Alert>
+```
+
+```ts
+import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
+<Alert asChild>
+  <section aria-label="Maintenance notice">
+    <AlertTitle>Scheduled maintenance</AlertTitle>
+    <AlertDescription>Sunday 02:00–03:00 UTC.</AlertDescription>
+  </section>
+</Alert>
 ```
 
 ## Pick one option from a dropdown

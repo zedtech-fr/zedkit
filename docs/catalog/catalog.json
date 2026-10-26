@@ -1297,7 +1297,7 @@
         },
         {
           "need": "Call out a notice or an error state",
-          "import": "`@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`",
+          "import": "`@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`, `alertVariants`, `AlertProps`",
           "wraps": "`class-variance-authority`",
           "status": "beta",
           "shortName": "Alert",
@@ -1311,8 +1311,13 @@
             {
               "title": "Simple",
               "code": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>"
+            },
+            {
+              "title": "As a section (asChild)",
+              "code": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert asChild>\n  <section aria-label=\"Maintenance notice\">\n    <AlertTitle>Scheduled maintenance</AlertTitle>\n    <AlertDescription>Sunday 02:00–03:00 UTC.</AlertDescription>\n  </section>\n</Alert>"
             }
           ],
+          "a11y": "Root carries `role=\"alert\"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.",
           "seeAlso": [
             "Show toast notifications"
           ]
