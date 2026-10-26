@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import "./identities.css";
 @import "./font-fallbacks.css";
+@import "./identities/tide.css";
 @import "./motion.css";
 
 /*

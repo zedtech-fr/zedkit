@@ -19,9 +19,9 @@
  * from, and the bridge for utilities that bake their values in), then one
  * block per identity that overrides the stock tokens.
  *
- * Built in:
- *   mist   calm and soft: the stock look set in Inter, with a visible
- *          text selection.
+ * Built in: `mist` (below), then one file per identity in `identities/`,
+ * imported by `styles.css`. Each block opens with what the look is for.
+ * Identity selectors are attribute-scoped, so file order does not matter.
  */
 
 /* ---------------------------------------------------------------
