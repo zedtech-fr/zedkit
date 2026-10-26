@@ -40,7 +40,9 @@ export {
 export {
   Drawer,
   type DrawerProps,
+  DrawerBody,
   DrawerClose,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -75,6 +77,7 @@ export {
 } from "./form.js";
 export { FormSubmit, type FormSubmitProps } from "./form-submit.js";
 export { useValidatedForm } from "./use-validated-form.js";
+export { IconLabel, type IconLabelProps } from "./icon-label.js";
 export { Input } from "./input.js";
 export { Label, type LabelProps } from "./label.js";
 export { Section, Stack, stackVariants, type SectionProps, type StackProps } from "./layout.js";

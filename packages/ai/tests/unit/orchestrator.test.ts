@@ -105,7 +105,10 @@ describe("orchestrator agent", () => {
     expect(countMatch).not.toBeNull();
     expect(Number(countMatch![1])).toBe(agents.length);
     for (const name of agents) {
-      expect(prose, `prose agents table missing ${name}`).toMatch(new RegExp(`\\| \`${name}\` \\|`));
+      // The table cell is either inline code or the docs <AgentName> component.
+      expect(prose, `prose agents table missing ${name}`).toMatch(
+        new RegExp(`\\| (?:\`${name}\`|<AgentName name="${name}" />) \\|`),
+      );
     }
   });
 });

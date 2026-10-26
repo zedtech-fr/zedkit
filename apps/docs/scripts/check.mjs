@@ -580,6 +580,13 @@ if (errors.length > 0) {
           stdio: "inherit",
         });
         if (adminTutorial.status !== 0) process.exitCode = 1;
+        else {
+          const agentIcons = spawnSync("node", [join(HERE, "check-agent-icons.mjs")], {
+            cwd: APP,
+            stdio: "inherit",
+          });
+          if (agentIcons.status !== 0) process.exitCode = 1;
+        }
       }
     }
   }
