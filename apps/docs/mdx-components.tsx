@@ -11,10 +11,19 @@ function PreWithScroll({ className, ...props }: ComponentProps<"pre">) {
   );
 }
 
+function TableWithScroll({ className, ...props }: ComponentProps<"table">) {
+  return (
+    <Stack className="max-w-full min-w-0 overflow-x-auto">
+      <table className={cn(className)} {...props} />
+    </Stack>
+  );
+}
+
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
     pre: PreWithScroll,
+    table: TableWithScroll,
     ...components,
   };
 }
