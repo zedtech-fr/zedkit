@@ -11,7 +11,7 @@ export interface IconButtonProps extends ButtonProps {
 /** Icon-only control with matching `aria-label` and `title`. */
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ label, children, size = "icon", ...props }, ref) => (
-    <Button ref={ref} type="button" size={size} aria-label={label} title={label} {...props}>
+    <Button ref={ref} type="button" size={size} {...props} aria-label={label} title={label}>
       {children}
     </Button>
   ),
