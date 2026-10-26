@@ -341,6 +341,26 @@ if (galleryFile && existsSync(homeInstallSnippet)) {
     errors.push(`home-quickstart/snippets/install.sh must be exactly: pnpm add ${featuredPackage}`);
   }
 }
+const registrySitePath = join(APP, "content", "registry-site.ts");
+if (existsSync(registrySitePath)) {
+  const registrySite = readFileSync(registrySitePath, "utf8");
+  const featuredBrick = /featuredRegistryBrick: string = "([^"]+)"/.exec(registrySite)?.[1];
+  const publicSiteUrl = "https://zedkit.app";
+  if (featuredBrick) {
+    const expectedRegistryAdd = `npx shadcn@latest add ${publicSiteUrl}/r/${featuredBrick}.json`;
+    const registrySnippetPaths = [
+      join(APP, "home-quickstart", "snippets", "registry-add.sh"),
+      join(APP, "prose", "guides", "snippets", "registry-add.sh"),
+    ];
+    for (const path of registrySnippetPaths) {
+      if (!existsSync(path)) {
+        errors.push(`${path} missing.`);
+      } else if (readFileSync(path, "utf8").trim() !== expectedRegistryAdd) {
+        errors.push(`${path} must be exactly: ${expectedRegistryAdd}`);
+      }
+    }
+  }
+}
 for (const name of ["globals.css", "page.tsx"]) {
   const path = join(APP, "home-quickstart", "snippets", name);
   if (!existsSync(path)) errors.push(`home-quickstart/snippets/${name} missing.`);

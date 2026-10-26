@@ -6,8 +6,6 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Nested-interactive + link names without axe (home until layout axe is stable). */
   linkAndInteractiveAudit?: boolean;
-  /** Wide MDX tables/code: #385 column width is covered by docs-mobile-layout.spec.ts. */
-  skipMobileOverflow?: boolean;
 }
 
 export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
@@ -22,14 +20,12 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     label: "docs-index",
     strictSemantics: true,
     // Overflow check flaky here (verified 2026-10-26); mobile lane owns the fix.
-    skipMobileOverflow: true,
   },
   {
     path: "/docs/getting-started",
     label: "getting-started",
     strictSemantics: true,
     // Still overflows at phone width (verified 2026-10-26); mobile lane owns the fix.
-    skipMobileOverflow: true,
   },
   {
     path: "/docs/build-an-admin-dashboard",
@@ -41,7 +37,6 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     label: "tutorial-agents",
     strictSemantics: true,
     // Overflows in CI while green locally (verified 2026-10-26); mobile lane owns the fix.
-    skipMobileOverflow: true,
   },
   {
     path: "/docs/nest/start-a-safe-nestjs-api",

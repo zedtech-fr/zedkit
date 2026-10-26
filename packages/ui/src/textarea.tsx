@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "./utils.js";
 
 const textareaClassName =
-  "flex min-h-textarea-min-height w-full rounded-md border border-input bg-transparent px-control-inline py-control-block-lg text-base shadow-sm placeholder:text-muted-foreground focus-ring-control disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
+  "flex min-h-textarea-min-height w-full rounded-md border border-input bg-transparent px-control-inline py-control-block-lg text-control shadow-sm placeholder:text-muted-foreground focus-ring-control disabled:cursor-not-allowed disabled:opacity-50";
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
   ({ className, ...props }, ref) => {

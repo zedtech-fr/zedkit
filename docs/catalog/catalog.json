@@ -865,7 +865,9 @@
               "code": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={100} label=\"Upload complete\" />"
             }
           ],
+          "registry": "progress-bar",
           "a11y": "Root carries `role=\"progressbar\"` with clamped value; keep the label screen-only and pair with visible text.",
+          "troubleshooting": "Bar looks empty — `NaN` and out-of-range values clamp (negative to 0, over max to full). Screen reader silent — the bar is a plain progressbar; announce milestones with a `StatusLabel` beside it.",
           "seeAlso": [
             "Show loading placeholder blocks"
           ]
@@ -947,6 +949,7 @@
               "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"offline\">You are offline</StatusLabel>"
             }
           ],
+          "registry": "status-label",
           "a11y": "`role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.",
           "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
           "seeAlso": [
@@ -1385,7 +1388,9 @@
               "code": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert asChild>\n  <section aria-label=\"Maintenance notice\">\n    <AlertTitle>Scheduled maintenance</AlertTitle>\n    <AlertDescription>Sunday 02:00–03:00 UTC.</AlertDescription>\n  </section>\n</Alert>"
             }
           ],
+          "registry": "alert",
           "a11y": "Root carries `role=\"alert\"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.",
+          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
           "seeAlso": [
             "Show toast notifications"
           ]

@@ -36,7 +36,7 @@ describe("select", () => {
     render(<RegionSelect />);
 
     const trigger = screen.getByRole("combobox", { name: "Region" });
-    for (const token of ["h-control-height", "px-control-inline", "py-control-block-lg", "focus-ring-control"]) {
+    for (const token of ["h-control-height", "px-control-inline", "py-control-block-lg", "focus-ring-control", "text-control"]) {
       expect(trigger.className).toContain(token);
     }
     expect(trigger.className).not.toMatch(/(^|\s)(h-9|px-3|py-2)(\s|$)/);
