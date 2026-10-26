@@ -122,6 +122,13 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  /*
+   * Spacing convention (#367): one canonical name per value. A value used
+   * by 2+ tokens is canonicalized to its Tailwind scale step — new code
+   * uses default utilities (p-4, gap-2) instead of minting another alias.
+   * Single-use values keep their semantic token. The full value → tokens
+   * map is scripts/registry/spacing-aliases.json, enforced by its test.
+   */
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
   --spacing-control-height: 2.25rem;
