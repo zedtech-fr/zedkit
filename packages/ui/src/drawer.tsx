@@ -17,7 +17,9 @@ function readMobileViewport(): boolean {
   if (typeof window === "undefined") {
     return false;
   }
-  return window.innerWidth < 640 || window.matchMedia(MOBILE_MEDIA).matches;
+  // Some prerender and test environments ship a `window` without matchMedia.
+  const query = typeof window.matchMedia === "function" ? window.matchMedia(MOBILE_MEDIA) : null;
+  return window.innerWidth < 640 || Boolean(query?.matches);
 }
 
 function useMobileViewport(): boolean {
@@ -26,6 +28,9 @@ function useMobileViewport(): boolean {
   React.useLayoutEffect(() => {
     const sync = () => setIsMobile(readMobileViewport());
     sync();
+    if (typeof window.matchMedia !== "function") {
+      return;
+    }
     const mql = window.matchMedia(MOBILE_MEDIA);
     mql.addEventListener("change", sync);
     return () => mql.removeEventListener("change", sync);
