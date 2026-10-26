@@ -165,6 +165,8 @@
   --spacing-live-pulse-gap: 0.375rem;
   --spacing-secret-field-gap: 0.5rem;
   --spacing-page-header-title-gap: 0.25rem;
+  --spacing-dialog-center: 50%;
+  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 @layer base {
@@ -195,6 +197,17 @@
       0 0 0 var(--ring-offset-width) hsl(var(--background)),
       0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring));
   }
+}
+
+/*
+ * Overlay centering (dialog content): replaces the top-[50%] /
+ * translate-[-50%] arbitraries. Uses the `translate` property (not
+ * `transform`) so the zk-zoom enter/exit keyframes compose with it.
+ */
+@utility dialog-center {
+  top: var(--spacing-dialog-center);
+  left: var(--spacing-dialog-center);
+  translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
 }
 
 /* Controls (Button, Input, …): keep the prior 1px focus weight via tokens. */
