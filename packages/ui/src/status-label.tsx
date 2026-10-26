@@ -21,7 +21,7 @@ function ToneIcon({ tone }: { tone: StatusLabelTone }) {
     case "error":
       return <StatusDot tone="danger" />;
     case "offline":
-      return <WifiOff aria-hidden className="size-status-label-icon text-muted-foreground" />;
+      return <WifiOff aria-hidden className="size-icon-sm text-muted-foreground" />;
     case "loading":
     case "updating":
     case "syncing":
