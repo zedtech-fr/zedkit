@@ -66,6 +66,23 @@ import { Button } from "@zedtech/zedkit-ui";
 </Button>
 ```
 
+## Icon-only actions with a visible name
+
+- Import: `@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`
+- Wraps: `Button` (same variants and sizes; `size` defaults to `icon`)
+- Status: beta
+- Short name: IconButton
+- Audience: Developers adding icon-only header or toolbar controls in an admin UI.
+- Purpose: Icon-only controls with matching `aria-label` and `title` from one `label` prop.
+- When to use: Toolbar or header controls where the glyph alone is not enough for screen readers.
+- When not to use: Actions with visible text — use `Button` instead.
+- Examples: Simple
+
+```ts
+import { IconButton } from "@zedtech/zedkit-ui";
+<IconButton label="Open menu">☰</IconButton>
+```
+
 ## Show a status or count badge
 
 - Import: `@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`
@@ -494,7 +511,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 
 ## Show a sortable, filterable, paginated data table
 
-- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
+- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
 - Status: beta
 - Short name: DataTable
@@ -504,7 +521,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 - When not to use: For a handful of static rows — map a simple table instead.
 - A11y: Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.
 - See also: `Show key-value details and a live indicator`
-- Examples: Simple, Standalone pagination
+- Examples: Simple, Standalone pagination, Standalone empty row, Standalone toolbar
 
 ```ts
 import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
@@ -520,6 +537,19 @@ const [page, setPage] = useState(2);
 <DataTablePagination page={page} pageCount={4}
   canPrevious={page > 1} canNext={page < 4}
   onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />
+```
+
+```ts
+import { DataTableEmpty, Table, TableBody } from "@zedtech/zedkit-ui";
+<Table><TableBody>
+  <DataTableEmpty colSpan={3} message="Nothing here." />
+</TableBody></Table>
+```
+
+```ts
+import { DataTableToolbar } from "@zedtech/zedkit-ui";
+const [query, setQuery] = useState("");
+<DataTableToolbar value={query} onChange={setQuery} />
 ```
 
 ## Lay out an admin page (sidebar + topbar + header)
@@ -700,6 +730,8 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - See also: `Stack content and group titled sections`
 - Examples: Simple, Heading styles on a link (asChild)
 - A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
+- Registry: typography
+- Troubleshooting: Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.
 
 ```ts
 import { Heading, Text } from "@zedtech/zedkit-ui";

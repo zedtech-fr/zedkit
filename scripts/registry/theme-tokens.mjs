@@ -116,6 +116,13 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    typography: {
+      cssVars: {
+        theme: {
+          "spacing-heading-scroll": varFromBlock(theme, "spacing-heading-scroll"),
+        },
+      },
+    },
     "detail-panel": {
       cssVars: {
         theme: {
