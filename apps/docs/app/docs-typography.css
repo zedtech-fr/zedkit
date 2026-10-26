@@ -14,3 +14,9 @@ main h2 {
   line-height: 1.4;
   font-weight: 600;
 }
+
+/* Badge links inside prose keep the badge look: no link underline. */
+.prose a[data-badge-link],
+.prose a[data-badge-link]:hover {
+  text-decoration-line: none;
+}

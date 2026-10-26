@@ -87,3 +87,16 @@ test("mobile doc links and badges meet 44px targets", async ({ page }) => {
   });
   expect(small).toEqual([]);
 });
+
+for (const identity of IDENTITIES) {
+  test(`maturity badge link has no underline (${identity}, dark)`, async ({ page }) => {
+    await page.addInitScript((id) => {
+      localStorage.setItem("zk-identity", id);
+      localStorage.setItem("theme", "dark");
+    }, identity);
+    await page.goto(`${BASE}/docs/ui/collect-text-input-with-a-label/`, { waitUntil: "networkidle" });
+    const badge = page.locator("main a").filter({ hasText: /^(alpha|beta|stable|experimental)$/i }).first();
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveCSS("text-decoration-line", "none");
+  });
+}
