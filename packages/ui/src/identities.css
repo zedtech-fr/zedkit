@@ -179,7 +179,7 @@
   --font-mono: var(--zk-font-mono);
   --font-display: var(--zk-font-display);
   --font-weight-medium: 500;
-  --font-weight-semibold: 700;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --tracking-tight: -0.01em;
   --tracking-wide: 0.06em;
@@ -224,7 +224,7 @@
   --zk-shadow-md: 0 0 0 0 transparent;
   --zk-shadow-lg: 0 0 0 0 transparent;
   --zk-shadow-xl: 0 0 0 0 transparent;
-  --zk-shadow-overlay: 0 18px 32px -22px hsl(var(--zk-shadow-color) / 0.4);
+  --zk-shadow-overlay: 0 0 0 1px hsl(var(--border)), 0 18px 32px -22px hsl(var(--zk-shadow-color) / 0.4);
 
   /* Page texture */
   --zk-bg-pattern: none;
@@ -383,10 +383,10 @@
   --zk-bg-repeat: no-repeat;
   --zk-bg-attach: fixed;
 
-  /* Motion */
-  --motion-fast: 200ms;
-  --motion-base: 300ms;
-  --motion-slow: 500ms;
+  /* Motion: capped like every identity (fast/base <= 200ms, slow <= 300ms) */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
   --zk-reveal-duration: 300ms;
   --zk-reveal-distance: 1.5rem;
   --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -493,7 +493,7 @@
   --font-weight-bold: 700;
   --tracking-tight: -0.03em;
   --tracking-wide: 0.1em;
-  --text-xs: 0.6875rem;
+  --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
   --text-base: 0.9375rem;
   --text-lg: 1.0625rem;
@@ -702,11 +702,11 @@
   --zk-bg-repeat: no-repeat;
   --zk-bg-attach: scroll;
 
-  /* Motion */
-  --motion-fast: 250ms;
-  --motion-base: 400ms;
-  --motion-slow: 700ms;
-  --zk-reveal-duration: 300ms;
+  /* Motion: interactions capped (fast/base <= 200ms, slow <= 300ms); the slow maison feel lives in reveals only */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --zk-reveal-duration: 450ms;
   --zk-reveal-distance: 1rem;
   --zk-reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --zk-stagger-step: 60ms;
@@ -815,11 +815,11 @@
   --font-weight-bold: 700;
   --tracking-tight: -0.02em;
   --tracking-wide: 0.04em;
-  --text-xs: 0.78rem;
-  --text-sm: 0.9rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
   --text-base: 1rem;
-  --text-lg: 1.15rem;
-  --text-xl: 1.3rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
   --text-2xl: 1.625rem;
   --text-3xl: 1.875rem;
   --text-4xl: 2.5rem;
@@ -876,10 +876,10 @@
   --zk-bg-repeat: no-repeat;
   --zk-bg-attach: scroll;
 
-  /* Motion */
-  --motion-fast: 160ms;
-  --motion-base: 260ms;
-  --motion-slow: 460ms;
+  /* Motion: capped like every identity (fast/base <= 200ms, slow <= 300ms) */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
   --zk-reveal-duration: 300ms;
   --zk-reveal-distance: 1rem;
   --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);

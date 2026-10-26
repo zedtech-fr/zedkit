@@ -11,7 +11,7 @@ import { cn } from "./utils.js";
 const headingVariants = cva("scroll-m-heading-scroll tracking-tight", {
   variants: {
     level: {
-      1: "text-4xl font-extrabold lg:text-5xl",
+      1: "text-4xl font-semibold lg:text-5xl",
       2: "text-3xl font-semibold",
       3: "text-2xl font-semibold",
       4: "text-xl font-semibold",
@@ -43,7 +43,7 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
 );
 Heading.displayName = "Heading";
 
-const textVariants = cva("leading-7", {
+const textVariants = cva("leading-body", {
   variants: {
     variant: {
       body: "",

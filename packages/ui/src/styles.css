@@ -35,14 +35,15 @@
   --overlay: 0 0% 0%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
-  --ring: 240 5% 64.9%;
+  /* Focus ring, dark enough for 3:1 on light surfaces. */
+  --ring: 240 4% 46%;
   --radius: 0.5rem;
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
   --sidebar-accent: 240 4.8% 95.9%;
   --ring-width: 2px;
-  --ring-width-control: 1px;
+  --ring-width-control: 2px;
   --ring-offset-width: 2px;
   /*
    * Text size of every field a user types into (Input, Textarea,
@@ -258,6 +259,12 @@
   --text-form-hint: 0.8rem;
   --text-control: var(--zk-input-font-size);
   --text-control--line-height: 1.25rem;
+  /*
+   * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
+   * not a spacing multiple: every identity redefines `--spacing`, so a
+   * `leading-N` utility would drift from 1.57 to 2.1 between identities.
+   */
+  --leading-body: var(--zk-body-leading, 1.6);
   --spacing-drawer-max-height: 96dvh;
   --spacing-drawer-sheet-max-height: 88dvh;
   --spacing-drawer-safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -320,7 +327,7 @@
   translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
 }
 
-/* Controls (Button, Input, …): keep the prior 1px focus weight via tokens. */
+/* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
 @utility focus-ring-control {
   &:focus-visible {
     outline: none;
