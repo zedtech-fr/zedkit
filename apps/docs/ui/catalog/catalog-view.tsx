@@ -9,7 +9,7 @@ import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 const AREAS: { id: CatalogArea | "all"; label: string }[] = [
   { id: "all", label: "All areas" },
   { id: "ui", label: "UI" },
-  { id: "backend", label: "Backend" },
+  { id: "backend", label: "Core & server" },
   { id: "seo", label: "SEO" },
   { id: "agents", label: "Agents" },
 ];

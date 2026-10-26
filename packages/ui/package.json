@@ -5,13 +5,12 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Ship a calm admin UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).",
+  "description": "Ship a calm React UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).",
   "keywords": [
     "react",
     "react-components",
     "ui-kit",
     "design-system",
-    "admin",
     "dashboard",
     "tailwindcss",
     "tailwind-v4",
@@ -19,7 +18,8 @@
     "shadcn",
     "dark-mode",
     "accessible",
-    "nextjs"
+    "nextjs",
+    "sites"
   ],
   "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/ui",
   "bugs": {

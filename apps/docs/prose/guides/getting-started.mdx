@@ -7,7 +7,7 @@ Hand-written guide. Commands below are copied from tested snippet files under `p
 
 ## Who this is for
 
-You ship TypeScript apps (often React admin UIs, APIs, or content sites) and want small,
+You ship TypeScript apps (React UIs, APIs, content sites, or scripts) and want small,
 versioned packages instead of copying utilities from blog posts. You are fine installing
 from npm and reading one catalog page when you know which need you have.
 
@@ -27,8 +27,8 @@ kit wraps, registry install vs npm, and when to stay on upstream shadcn.
 
 | Area | Packages | Typical first page |
 | --- | --- | --- |
-| Admin UI | `@zedtech/zedkit-ui` | [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) |
-| Backend helpers | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Bootstrap a Nest app](/docs/nest/bootstrap-a-nest-app) |
+| UI | `@zedtech/zedkit-ui` | [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) |
+| Core & server | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Model success or failure without throwing](/docs/core/model-success-or-failure-without-throwing) |
 | SEO | `@zedtech/zedkit-seo`, `@zedtech/zedkit-payload-seo` | [Build localized page metadata](/docs/seo/build-localized-page-metadata) |
 | Coding agents | `@zedtech/zedkit-ai` | [Set up AI agent instructions](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo) |
 
@@ -72,7 +72,7 @@ Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts
 
 **First result:** the validate command prints `ok`. If it does not, see [Troubleshooting](#troubleshooting).
 
-### Path B — admin UI button (install only on this page)
+### Path B — UI button (install only on this page)
 
 In your app:
 

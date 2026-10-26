@@ -1,17 +1,17 @@
 [
   {
-    "title": "Build an admin UI",
-    "summary": "Theme, forms, data tables, overlays, and layout primitives for admin apps.",
+    "title": "Build a UI",
+    "summary": "Components, layout, forms, tables, and theme tokens for any React UI — sites, apps, dashboards, and admin tools.",
     "packages": ["@zedtech/zedkit-ui"],
     "need": "Trigger actions with buttons",
     "linkLabel": "Open UI docs"
   },
   {
-    "title": "Build a backend",
-    "summary": "Result types, Nest bootstrap, structured logs, rate limits, and webhook signing.",
+    "title": "Core & server",
+    "summary": "Result helpers and tryCatch for any JS/TS project; Nest bootstrap, structured logs, rate limits, and webhook signing on server and nest.",
     "packages": ["@zedtech/zedkit-core", "@zedtech/zedkit-nest", "@zedtech/zedkit-server"],
     "need": "Bootstrap a Nest app",
-    "linkLabel": "Open backend docs"
+    "linkLabel": "Open core & server docs"
   },
   {
     "title": "Improve SEO",

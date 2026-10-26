@@ -13,7 +13,7 @@ packages. MIT licensed; see [LICENSE](LICENSE).
 </picture>
 
 ```sh
-pnpm add @zedtech/zedkit-ui          # admin UI components (React + Tailwind v4)
+pnpm add @zedtech/zedkit-ui          # React UI components (Tailwind v4)
 pnpm add -D @zedtech/zedkit-ai       # one agent setup for Cursor, Claude, Codex…
 ```
 

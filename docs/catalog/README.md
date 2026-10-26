@@ -19,7 +19,7 @@ Each package PR adds its row here, following
 | `@zedtech/zedkit-server` | rate limiting, redaction, backoff, webhook signatures | [packages/server/CATALOG.md](../../packages/server/CATALOG.md) |
 | `@zedtech/zedkit-nest` | NestJS bootstrap factory | [packages/nest/CATALOG.md](../../packages/nest/CATALOG.md) |
 | `@zedtech/zedkit-ai` | AI agent setup: instructions, skills, subagents | [packages/ai/CATALOG.md](../../packages/ai/CATALOG.md) |
-| `@zedtech/zedkit-ui` | admin UI kit: tokens, theme, components | [packages/ui/CATALOG.md](../../packages/ui/CATALOG.md) |
+| `@zedtech/zedkit-ui` | UI kit: tokens, theme, components | [packages/ui/CATALOG.md](../../packages/ui/CATALOG.md) |
 | `@zedtech/zedkit-seo` | robots, sitemaps, JSON-LD, metadata, llms.txt, slugs | [packages/seo/CATALOG.md](../../packages/seo/CATALOG.md) |
 | `@zedtech/zedkit-payload-seo` | Payload SEO group field | [packages/payload-seo/CATALOG.md](../../packages/payload-seo/CATALOG.md) |
 
