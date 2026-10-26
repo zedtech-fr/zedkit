@@ -458,6 +458,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 - Purpose: Tables with sorting, filtering, pagination plus loading/error/empty states.
 - When to use: For record lists over ~20 rows or needing search.
 - When not to use: For a handful of static rows — map a simple table instead.
+- A11y: Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.
 - See also: `Show key-value details and a live indicator`
 
 ```ts

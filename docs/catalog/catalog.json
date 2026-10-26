@@ -1129,6 +1129,7 @@
               "code": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
             }
           ],
+          "a11y": "Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.",
           "seeAlso": [
             "Show key-value details and a live indicator"
           ]
