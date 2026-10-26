@@ -212,6 +212,12 @@
   --text-form-hint: 0.8rem;
   --spacing-drawer-max-height: 96dvh;
   --container-drawer-side: 28rem;
+  --spacing-drawer-handle-offset: 1rem;
+  --spacing-drawer-handle-thickness: 0.375rem;
+  --spacing-drawer-handle-length: 3rem;
+  --spacing-drawer-header-gap: 0.375rem;
+  --spacing-drawer-footer-gap: 0.5rem;
+  --spacing-drawer-chrome-padding: 1rem;
 }
 
 @layer base {

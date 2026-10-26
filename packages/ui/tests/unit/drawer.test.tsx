@@ -12,7 +12,9 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHandle,
+  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "#index.js";
@@ -225,6 +227,30 @@ describe("drawer", () => {
     const panel = screen.getByRole("dialog", { name: "Delivery details" });
     expect(panel.className).toContain("sm:max-w-drawer-side");
     expect(panel.className).not.toContain("sm:max-w-md");
+  });
+
+  it("spaces handle, header, and footer from chrome tokens", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="bottom" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const sheet = screen.getByRole("dialog", { name: "Delivery details" });
+    const handle = sheet.querySelector("[data-vaul-handle]");
+    expect(handle?.className).toContain("mt-drawer-handle-offset");
+    expect(handle?.className).toContain("h-drawer-handle-thickness");
+    expect(handle?.className).toContain("w-drawer-handle-length");
+    expect(handle?.className).not.toMatch(/(^|\s)(mt-4|h-1\.5|w-12)(\s|$)/);
+
+    const { container: headerContainer } = render(<DrawerHeader>Title</DrawerHeader>);
+    const header = headerContainer.firstElementChild;
+    expect(header?.className).toContain("gap-drawer-header-gap");
+    expect(header?.className).toContain("p-drawer-chrome-padding");
+    expect(header?.className).not.toMatch(/(^|\s)(gap-1\.5|p-4)(\s|$)/);
+
+    const { container: footerContainer } = render(<DrawerFooter>Actions</DrawerFooter>);
+    const footer = footerContainer.firstElementChild;
+    expect(footer?.className).toContain("gap-drawer-footer-gap");
+    expect(footer?.className).toContain("p-drawer-chrome-padding");
+    expect(footer?.className).not.toMatch(/(^|\s)(gap-2|p-4)(\s|$)/);
   });
 
   it("renders open on mount with defaultOpen", () => {
