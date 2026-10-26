@@ -209,33 +209,36 @@ import { Reveal, Stagger } from "@zedtech/zedkit-ui";
 Under `prefers-reduced-motion: reduce` every entrance and hover animation is turned off and
 content is shown immediately.
 
-## Preview every identity on a first visit
+## Preview every identity in the hero
 
-`IdentityTour` cycles through every identity for about one second each when a visitor first lands
-on the page, then settles on their own identity (the stored choice, or the default). It adds a small
-card at the bottom of the screen with the name and one line about the identity on screen, and a
-Skip button.
+`IdentityCycle` crossfades a hero-sized scene through every identity, then settles on the
+visitor's own (the stored choice, or the default). It is meant for the entry page, next to a title,
+a promise and a main call to action that stay fixed.
 
 ```tsx
-import { IdentityTour } from "@zedtech/zedkit-ui";
+import { IdentityCycle } from "@zedtech/zedkit-ui";
 
-// On the entry page only. Everything is optional.
-<IdentityTour stepMs={1000} skipLabel="Skip" />
+// Pass the scene as children. It is rendered once for real, and once more per identity while it plays.
+<IdentityCycle className="h-56">
+  <PreviewCard />
+</IdentityCycle>
 ```
 
-- It plays once per browser (`localStorage` key `zk-identity-tour`) and never under
-  `prefers-reduced-motion`.
-- It waits for the page to finish loading and for the identities' fonts, so it never competes with
-  the first paint.
-- A click, a tap or any key press skips it. The Skip button is a real button, never focused for you.
-- Spacing, density and the type scale are held at the final identity's values while it plays, so
-  the content around the card does not move. Only colours, shapes, shadows and fonts change.
-- It never writes the persisted identity, and the switcher follows the identity on screen.
-- Screen readers get one short announcement when it starts and nothing else. The card is excluded
-  from search snippets (`data-nosnippet`).
+- It plays on every load of the page, in about three and a half seconds for six identities.
+- The page never changes while it plays: `data-identity` on `<html>` is untouched, nothing is written
+  to `localStorage`, and the switcher keeps showing the visitor's identity. Only the scene changes.
+- Each identity is drawn by an `IdentityScope`, a wrapper that applies an identity to its subtree
+  (`<IdentityScope identity="press">`). You can use it on its own for a preview or a comparison.
+- It waits for the page to finish loading, for the browser to be idle and for the identities' fonts, so
+  it never delays the first paint. The real scene is always in the page flow, and the animated layers
+  are absolutely positioned on top of it, so nothing moves.
+- A click, a tap, a key press, a wheel or a touch stops it at once. Under `prefers-reduced-motion:
+  reduce` it never plays.
+- The animated layers are hidden from assistive technology and cannot take focus.
+- Keep the text and the buttons of the page outside of it: only decoration belongs in the scene.
+  A scoped identity does not re-skin overlays that portal out of the scene (dialogs, popovers).
 
-Use `useIdentityTour()` for a custom card: it returns `running`, `step`, `total`, `current` and
-`skip`. Pass `identities`, `defaultIdentity`, `storageKey` or `enabled` to adapt it.
+Pass `identities`, `stepMs`, `defaultIdentity` or `enabled` to adapt it.
 
 ## Limits
 

@@ -12,7 +12,6 @@ for (const size of SIZES) {
       await page.setViewportSize(size);
       await page.addInitScript((id) => {
         localStorage.setItem("zk-identity", id);
-        localStorage.setItem("zk-identity-tour", "1");
       }, identity);
       await page.goto("/docs/identities-and-theming");
       const magnifier = page.getByRole("button", { name: "Search the documentation" });

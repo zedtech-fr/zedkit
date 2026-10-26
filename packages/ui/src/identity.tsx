@@ -2,15 +2,15 @@
 const IDENTITY_STORAGE_KEY = "zk-identity";
 /** Identity applied when nothing is stored (the stock look). */
 const DEFAULT_IDENTITY = "mist";
-/** Window event fired after the identity attribute changes (switcher, tour). */
+/** Window event fired after the identity attribute changes (switcher). */
 const IDENTITY_CHANGE_EVENT = "zk-identity-change";
 
 type IdentityOption = {
   id: string;
   label: string;
-  /** One line that says what the look is for (shown by `IdentityTour`). */
+  /** One line that says what the look is for. */
   description?: string;
-  /** Font families the identity names, so `IdentityTour` can fetch them before it starts. */
+  /** Font families the identity names, so `IdentityCycle` can fetch them before it starts. */
   fonts?: readonly string[];
 };
 

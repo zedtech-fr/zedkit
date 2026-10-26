@@ -757,7 +757,7 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `IdentityTour`, `IdentityTourProps`, `IdentityTourOptions`, `IdentityTourState`, `useIdentityTour`, `IDENTITY_TOUR_STORAGE_KEY`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `IdentityCycle`, `IdentityCycleProps`, `IdentityScope`, `IdentityScopeProps`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`
 - Wraps: none (CSS variables in `styles.css`, `identities.css`, `motion.css`)
 - Status: alpha
 - Short name: Identities

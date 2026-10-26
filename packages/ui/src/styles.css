@@ -1,7 +1,6 @@
 /* Derived from shadcn/ui (theme) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it. */
 @import "tailwindcss";
 @import "./identities.css";
-@import "./identity-tour.css";
 @import "./motion.css";
 
 /*
@@ -11,7 +10,8 @@
  * line so Tailwind scans the components. System font stack on
  * purpose: no font dependency, no layout shift.
  */
-:root {
+:root,
+[data-identity-scope][data-identity="mist"] {
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
@@ -46,7 +46,8 @@
   --ring-offset-width: 2px;
 }
 
-.dark {
+.dark,
+.dark [data-identity-scope][data-identity="mist"] {
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   --card: 240 10% 3.9%;

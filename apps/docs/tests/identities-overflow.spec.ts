@@ -21,7 +21,6 @@ for (const identity of IDENTITIES) {
         test(`no horizontal overflow on ${path}`, async ({ page }) => {
           await page.addInitScript((id) => {
             localStorage.setItem("zk-identity", id);
-            localStorage.setItem("zk-identity-tour", "1");
           }, identity);
           await page.goto(path, { waitUntil: "networkidle" });
 

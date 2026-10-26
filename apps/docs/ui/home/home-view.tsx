@@ -5,7 +5,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  IdentityTour,
   Section,
   Stack,
   Text,
@@ -108,7 +107,6 @@ export function HomeView({
           </Stack>
         </Section>
       </Stack>
-      <IdentityTour />
     </>
   );
 }

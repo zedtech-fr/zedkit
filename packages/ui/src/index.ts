@@ -161,11 +161,9 @@ export {
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
 export { IdentityPicker, type IdentityPickerProps } from "./identity-picker.js";
 export {
-  IDENTITY_TOUR_STORAGE_KEY,
-  IdentityTour,
-  useIdentityTour,
-  type IdentityTourOptions,
-  type IdentityTourProps,
-  type IdentityTourState,
-} from "./identity-tour.js";
+  IdentityCycle,
+  IdentityScope,
+  type IdentityCycleProps,
+  type IdentityScopeProps,
+} from "./identity-cycle.js";
 export { Logo, type LogoProps } from "./logo.js";
