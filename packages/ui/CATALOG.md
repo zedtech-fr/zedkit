@@ -325,6 +325,10 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - When to use: As a `Suspense` fallback matching the component that will land.
 - When not to use: For freeform blocks — use a plain `Skeleton`; for named operations — use `StatusLabel`.
 - See also: `Show loading placeholder blocks`
+- Examples: In Suspense, Standalone
+- A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
+- Registry: card-skeleton
+- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts.
 
 ```ts
 import { Suspense } from "react";
@@ -332,6 +336,11 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 <Suspense fallback={<CardSkeleton label="Loading report" />}>
   <ReportCard />
 </Suspense>
+```
+
+```ts
+import { CardSkeleton } from "@zedtech/zedkit-ui";
+{loading ? <CardSkeleton label="Loading report" /> : <ReportCard />}
 ```
 
 ## Name an operation in progress
