@@ -20,24 +20,24 @@ Subagents installed from `kit.json` (18). Read-only unless noted.
 
 | Agent | Role |
 |---|---|
-| `explorer` | codebase lookup: files, symbols, usages |
-| `architect` | file-level implementation plan, never code |
-| `plan-challenger` | deprecated alias of `skeptic` (angle: plan) |
-| `verifier` | quality gate: runs gates + definition of done |
-| `improver` | applies review findings, smallest diff first (writes) |
-| `security-reviewer` | auth, tenancy, secrets, user data, input parsing |
-| `skeptic` | pre-mortem, one angle per brief |
-| `ui-designer` | UI review: kit reuse, tokens, states, lazy-client bar |
-| `copywriter` | i18n-first microcopy review (writes nothing) |
-| `seo-auditor` | pages, metadata, sitemap, redirects |
-| `a11y-auditor` | WCAG basics for components, forms, pages |
-| `dependency-auditor` | need, size, license, maintenance, duplicates |
-| `docs-writer` | README/AGENTS.md/catalog prose, compiling examples (writes docs) |
-| `researcher` | reuse scout: adopt/wrap/build with sources |
-| `test-writer` | adversarial tests, behavior-named (writes tests) |
-| `release-manager` | semver 0.x rules, changesets, migration notes, maturity |
-| `console-architecture` | route/view/data layer boundaries |
-| `product-director` | one-page delivery brief with links |
+| <AgentName name="explorer" /> | codebase lookup: files, symbols, usages |
+| <AgentName name="architect" /> | file-level implementation plan, never code |
+| <AgentName name="plan-challenger" /> | deprecated alias of `skeptic` (angle: plan) |
+| <AgentName name="verifier" /> | quality gate: runs gates + definition of done |
+| <AgentName name="improver" /> | applies review findings, smallest diff first (writes) |
+| <AgentName name="security-reviewer" /> | auth, tenancy, secrets, user data, input parsing |
+| <AgentName name="skeptic" /> | pre-mortem, one angle per brief |
+| <AgentName name="ui-designer" /> | UI review: kit reuse, tokens, states, lazy-client bar |
+| <AgentName name="copywriter" /> | i18n-first microcopy review (writes nothing) |
+| <AgentName name="seo-auditor" /> | pages, metadata, sitemap, redirects |
+| <AgentName name="a11y-auditor" /> | WCAG basics for components, forms, pages |
+| <AgentName name="dependency-auditor" /> | need, size, license, maintenance, duplicates |
+| <AgentName name="docs-writer" /> | README/AGENTS.md/catalog prose, compiling examples (writes docs) |
+| <AgentName name="researcher" /> | reuse scout: adopt/wrap/build with sources |
+| <AgentName name="test-writer" /> | adversarial tests, behavior-named (writes tests) |
+| <AgentName name="release-manager" /> | semver 0.x rules, changesets, migration notes, maturity |
+| <AgentName name="console-architecture" /> | route/view/data layer boundaries |
+| <AgentName name="product-director" /> | one-page delivery brief with links |
 
 Each file starts with frontmatter (`name`, one-line `description`,
 `model: inherit`, `disallowedTools` for read-only agents) at
