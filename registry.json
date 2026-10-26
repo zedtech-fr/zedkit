@@ -162,6 +162,24 @@
           "spacing-alert-content-indent": "1.75rem"
         }
       }
+    },
+    {
+      "name": "detail-panel",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/detail-panel.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-detail-panel-gap": "1rem",
+          "spacing-detail-panel-inline": "1rem",
+          "spacing-detail-panel-block": "0.75rem"
+        }
+      }
     }
   ]
 }
