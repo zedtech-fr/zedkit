@@ -196,6 +196,7 @@
   --spacing-dialog-header-stack: 0.375rem;
   --spacing-dialog-footer-gap: 0.5rem;
   --spacing-overlay-close-offset: 1rem;
+  --spacing-overlay-touch-target: 2.75rem;
   --spacing-app-shell-sidebar: 16rem;
   --spacing-app-shell-padding: 1rem;
   --spacing-app-shell-padding-md: 1.5rem;
@@ -210,6 +211,9 @@
   --spacing-form-item-gap: 0.5rem;
   --text-form-hint: 0.8rem;
   --spacing-drawer-max-height: 96dvh;
+  --spacing-drawer-sheet-max-height: 88dvh;
+  --spacing-drawer-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --spacing-drawer-footer-safe: calc(var(--spacing-drawer-chrome-padding) + env(safe-area-inset-bottom, 0px));
   --container-drawer-side: 28rem;
   --spacing-drawer-handle-top: 1rem;
   --spacing-drawer-handle-height: 0.375rem;
@@ -337,9 +341,12 @@ html [data-vaul-overlay] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html [data-vaul-drawer],
+  html [data-vaul-drawer] {
+    animation: zk-fade-in var(--motion-base) var(--ease-enter) !important;
+    transition: opacity var(--motion-base) var(--ease-enter) !important;
+  }
   html [data-vaul-overlay] {
-    animation: none !important;
-    transition: none !important;
+    animation: zk-fade-in var(--motion-base) var(--ease-enter) !important;
+    transition: opacity var(--motion-base) var(--ease-enter) !important;
   }
 }

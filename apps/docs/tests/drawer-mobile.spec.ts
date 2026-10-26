@@ -1,0 +1,68 @@
+import AxeBuilder from "@axe-core/playwright";
+import { devices, expect, test } from "@playwright/test";
+
+const DRAWER_PAGE = "/docs/ui/slide-in-a-drawer-panel";
+
+test.describe("drawer mobile sheet (refs #425)", () => {
+  test.use({
+    ...devices["iPhone 13"],
+    hasTouch: true,
+    isMobile: true,
+  });
+
+  test("opens as a bottom sheet with motion, context, and close target", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (event) => errors.push(String(event)));
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    await page.goto(DRAWER_PAGE, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Open drawer" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible({ timeout: 10_000 });
+    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "bottom");
+
+    const viewport = page.viewportSize();
+    expect(viewport).not.toBeNull();
+    const box = await dialog.boundingBox();
+    expect(box).not.toBeNull();
+    if (box && viewport) {
+      expect(box.height).toBeLessThanOrEqual(viewport.height * 0.92);
+      expect(box.y).toBeGreaterThan(0);
+    }
+
+    const overlay = page.locator("[data-vaul-overlay]");
+    await expect(overlay).toBeVisible();
+    const transition = await dialog.evaluate((el) => getComputedStyle(el).transitionDuration);
+    expect(transition).not.toBe("0s");
+
+    const close = dialog.getByRole("button", { name: "Close" });
+    const closeBox = await close.boundingBox();
+    expect(closeBox).not.toBeNull();
+    if (closeBox) {
+      expect(closeBox.width).toBeGreaterThanOrEqual(44);
+      expect(closeBox.height).toBeGreaterThanOrEqual(44);
+    }
+
+    const axe = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
+    expect(axe.violations, JSON.stringify(axe.violations, null, 2)).toEqual([]);
+
+    await overlay.click({ position: { x: 8, y: 8 } });
+    await expect(dialog).toBeHidden();
+    const scrollAfter = await page.evaluate(() => window.scrollY);
+    expect(Math.abs(scrollAfter - scrollBefore)).toBeLessThan(2);
+    expect(errors).toEqual([]);
+  });
+});
+
+test.describe("drawer desktop side panel", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
+  test("right drawer on wide viewport", async ({ page }) => {
+    await page.goto(DRAWER_PAGE, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Open drawer" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "right");
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  });
+});
