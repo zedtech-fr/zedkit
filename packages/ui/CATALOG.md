@@ -899,7 +899,7 @@ import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
 
 ## Switch between tabbed panels
 
-- Import: `@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`
+- Import: `@zedtech/zedkit-ui` — `Tabs`, `TabsProps`, `TabsList`, `TabsTrigger`, `TabsContent`
 - Wraps: `@radix-ui/react-tabs`
 - Status: alpha
 - Derived from: shadcn/ui (tabs)
@@ -909,10 +909,19 @@ import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
 - When to use: For sibling views that share context (settings groups, code variants).
 - When not to use: For sequential steps — use WizardSteps instead.
 - See also: `Guide a multi-step flow with selectable option cards`
+- Examples: Simple, Controlled
+- A11y: Arrow keys move between triggers (Radix roving tabindex); keep trigger text short so accessible names stay clear.
+- Registry: tabs
+- Troubleshooting: Panels not switching — each `TabsTrigger`/`TabsContent` pair shares one `value`; the root needs `defaultValue` (uncontrolled) or `value` + `onValueChange` (controlled). Focus ring missing — triggers use the `focus-ring` utility shipped in the brick css.
 
 ```ts
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 <Tabs defaultValue="one"><TabsList>
 <TabsTrigger value="one">First</TabsTrigger>
 </TabsList><TabsContent value="one">First panel.</TabsContent></Tabs>
+```
+
+```ts
+import { Tabs } from "@zedtech/zedkit-ui";
+<Tabs value={tab} onValueChange={setTab}> // controlled: you own the state
 ```
