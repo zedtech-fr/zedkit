@@ -1,0 +1,190 @@
+/*
+ * Identity: press.
+ *
+ *    Editorial: paper and ink, square corners, 1px rules, no shadows,
+ *    serif display type (Newsreader) over a grotesque body (Space
+ *    Grotesk), code in JetBrains Mono. Overlays keep a drawn 1px edge
+ *    instead of a soft shadow; shadow buttons get a drawn edge too.
+ *
+ *    Inert until `data-identity="press"` is set on <html> (or on an
+ *    element carrying `data-identity-scope`). The families are the
+ *    self-hosted variable fonts when the app ships them, then a
+ *    metric-aligned fallback face (below) so the swap does not shift the
+ *    layout, then the system stack.
+ */
+:root[data-identity="press"],
+[data-identity-scope][data-identity="press"] {
+  --background: 45 35% 94%;
+  --foreground: 0 0% 5%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 5%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 5%;
+  --primary: 0 0% 5%;
+  --primary-foreground: 45 35% 94%;
+  --secondary: 50 24% 80%;
+  --secondary-foreground: 0 0% 5%;
+  --muted: 47 22% 88%;
+  --muted-foreground: 0 0% 25%;
+  --accent: 160 55% 72%;
+  --accent-foreground: 0 0% 5%;
+  --destructive: 4 80% 38%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 162 85% 21%;
+  --success-foreground: 0 0% 100%;
+  --warning: 28 95% 32%;
+  --warning-foreground: 0 0% 100%;
+  --overlay: 0 0% 5%;
+  --border: 0 0% 18%;
+  --input: 0 0% 30%;
+  --ring: 166 85% 26%;
+  --sidebar: 47 30% 91%;
+  --sidebar-foreground: 0 0% 5%;
+  --sidebar-border: 0 0% 18%;
+  --sidebar-accent: 160 55% 72%;
+  --radius: 0px;
+
+  /* Typography: families, scale, weight, tracking */
+  --zk-font-sans: "Space Grotesk Variable", "Space Grotesk", "Space Grotesk Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: "Newsreader Variable", Newsreader, "Newsreader Variable Fallback", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--zk-font-sans);
+  --font-mono: var(--zk-font-mono);
+  --font-display: var(--zk-font-display);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --tracking-tight: -0.01em;
+  --tracking-wide: 0.06em;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.875rem;
+  --text-5xl: 3.25rem;
+  --zk-heading-weight: 600;
+  --zk-heading-tracking: -0.015em;
+  --zk-heading-transform: none;
+  --zk-heading-leading: 1.1;
+  --zk-label-transform: uppercase;
+  --zk-label-tracking: 0.08em;
+
+  /* Spacing: base unit */
+  --spacing: 0.26rem;
+
+  /* Shape: every Tailwind radius step */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --zk-border-width: 1px;
+  --ring-width: 2px;
+  --ring-width-control: 2px;
+  --ring-offset-width: 2px;
+
+  /* Depth */
+  --zk-shadow-color: 0 0% 5%;
+  --zk-shadow-xs: 0 0 0 0 transparent;
+  --zk-shadow-sm: 0 0 0 0 transparent;
+  --zk-shadow-md: 0 0 0 0 transparent;
+  --zk-shadow-lg: 0 0 0 0 transparent;
+  --zk-shadow-xl: 0 0 0 0 transparent;
+  --zk-shadow-overlay: 0 0 0 1px hsl(var(--border)), 0 18px 32px -22px hsl(var(--zk-shadow-color) / 0.4);
+
+  /* Page texture */
+  --zk-bg-pattern: none;
+  --zk-bg-size: auto;
+  --zk-bg-repeat: repeat;
+  --zk-bg-attach: scroll;
+
+  /* Motion */
+  --motion-fast: 80ms;
+  --motion-base: 110ms;
+  --motion-slow: 150ms;
+  --zk-reveal-duration: 300ms;
+  --zk-reveal-distance: 0.375rem;
+  --zk-reveal-ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --zk-stagger-step: 60ms;
+  --zk-lift-duration: 110ms;
+  --zk-lift-ease: ease-out;
+  --zk-lift-translate: 0 0;
+  --zk-lift-shadow: 0 0 0 1px hsl(var(--zk-shadow-color));
+  --zk-press-translate: 0 1px;
+  --zk-btn-ease: ease-out;
+  --zk-btn-hover-translate: 0 0;
+  --zk-btn-hover-shadow: 0 0 0 0 transparent;
+  --zk-btn-press-shadow: 0 0 0 0 transparent;
+  --zk-deco-ticker: flex;
+}
+
+:root[data-identity="press"].dark,
+.dark [data-identity-scope][data-identity="press"] {
+  --background: 0 0% 6%;
+  --foreground: 45 35% 94%;
+  --card: 0 0% 10%;
+  --card-foreground: 45 35% 94%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 45 35% 94%;
+  --primary: 164 62% 56%;
+  --primary-foreground: 0 0% 5%;
+  --secondary: 0 0% 18%;
+  --secondary-foreground: 45 35% 94%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 45 12% 72%;
+  --accent: 164 40% 22%;
+  --accent-foreground: 45 35% 94%;
+  --destructive: 4 80% 62%;
+  --destructive-foreground: 0 0% 5%;
+  --success: 150 60% 52%;
+  --success-foreground: 0 0% 5%;
+  --warning: 38 92% 56%;
+  --warning-foreground: 0 0% 5%;
+  --overlay: 0 0% 0%;
+  --border: 45 8% 30%;
+  --input: 45 8% 40%;
+  --ring: 164 62% 56%;
+  --sidebar: 0 0% 8%;
+  --sidebar-foreground: 45 35% 94%;
+  --sidebar-border: 45 8% 30%;
+  --sidebar-accent: 164 40% 22%;
+  --zk-shadow-color: 164 62% 56%;
+  --zk-lift-shadow: 7px 7px 0 0 hsl(var(--zk-shadow-color));
+}
+
+/* Shadow buttons get a drawn edge in the shadow colour. */
+:root[data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm):where(:not([data-identity-scope] *)),
+[data-identity-scope][data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
+  border: var(--zk-border-width) solid hsl(var(--zk-shadow-color));
+}
+
+/*
+ * Metric-aligned fallback faces (see font-fallbacks.css for the method):
+ * the local font the browser would use anyway, with the webfont's ascent,
+ * descent and line gap. The serif face omits size-adjust (no Georgia
+ * metrics available offline); press titles are single-line, where width
+ * is free.
+ */
+@font-face {
+  font-family: "Space Grotesk Variable Fallback";
+  src: local("Arial"), local("Liberation Sans");
+  font-display: swap;
+  ascent-override: 98.4%;
+  descent-override: 29.2%;
+  line-gap-override: 0%;
+  size-adjust: 96.45%;
+}
+
+@font-face {
+  font-family: "Newsreader Variable Fallback";
+  src: local("Georgia"), local("DejaVu Serif");
+  font-display: swap;
+  ascent-override: 73.5%;
+  descent-override: 26.5%;
+  line-gap-override: 0%;
+}

@@ -5,3 +5,6 @@
  * identity uses that family, and only the subsets the text needs.
  */
 import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/newsreader";
+import "@fontsource-variable/space-grotesk";
