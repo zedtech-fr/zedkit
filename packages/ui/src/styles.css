@@ -117,6 +117,9 @@
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
   --spacing-heading-scroll: 5rem;
+  --spacing-option-cards-gap: 0.75rem;
+  --spacing-option-card-gap: 0.75rem;
+  --spacing-option-card-padding: 1rem;
   --spacing-detail-panel-gap: 1rem;
   --spacing-detail-panel-inline: 1rem;
   --spacing-detail-panel-block: 0.75rem;

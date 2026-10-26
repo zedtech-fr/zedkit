@@ -489,7 +489,7 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 
 ## Guide a multi-step flow with selectable option cards
 
-- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`
+- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`
 - Wraps: none (native inputs + theme tokens)
 - Status: beta
 - Short name: WizardSteps
@@ -498,8 +498,8 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 - When to use: For 2–6 step flows with choices per step.
 - When not to use: For single forms — use Form instead of inventing steps.
 - See also: `Build validated forms with labels, errors, and pending state`
-- Examples: Simple, Composed steps
-- A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`.
+- Examples: Simple, Composed steps, Solo card
+- A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`. Cards are native checkboxes in labels.
 
 ```ts
 import { OptionCards, WizardSteps } from "@zedtech/zedkit-ui";
@@ -514,6 +514,12 @@ import { Wizard, WizardStep } from "@zedtech/zedkit-ui";
   <WizardStep step="Pick" index={0} state="done" showConnector />
   <WizardStep step="Configure" index={1} state="current" />
 </Wizard>
+```
+
+```ts
+import { OptionCard } from "@zedtech/zedkit-ui";
+const [solo, setSolo] = useState(false);
+<OptionCard title="Solo option" checked={solo} onChange={() => setSolo(!solo)} />
 ```
 
 ## Show key-value details and a live indicator
