@@ -3,6 +3,7 @@ import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
 import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
+import { HomeInstallOrCopySection } from "@/ui/home/home-install-or-copy-section";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { KitVersionLabel } from "@/ui/kit-version-label";
@@ -45,6 +46,7 @@ export function HomeHero({
         </Button>
       </Stack>
       <HomeAiSetupSection />
+      <HomeInstallOrCopySection npmPackage={featuredPackage} />
       <HomeUiQuickstartSection
         npmPackage={featuredPackage}
         siteUrl={docsSite.url}

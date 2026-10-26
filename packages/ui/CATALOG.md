@@ -221,6 +221,8 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - See also: `Show loading placeholder blocks`
 - Examples: Simple, Complete
 - A11y: Root carries `role="progressbar"` with clamped value; keep the label screen-only and pair with visible text.
+- Registry: progress-bar
+- Troubleshooting: Bar looks empty — `NaN` and out-of-range values clamp (negative to 0, over max to full). Screen reader silent — the bar is a plain progressbar; announce milestones with a `StatusLabel` beside it.
 
 ```ts
 import { ProgressBar } from "@zedtech/zedkit-ui";
@@ -291,6 +293,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
+- Registry: status-label
 - Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts

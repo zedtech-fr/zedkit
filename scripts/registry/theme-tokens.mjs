@@ -88,6 +88,23 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "status-label": {
+      cssVars: {
+        theme: {
+          "spacing-status-label-gap": varFromBlock(theme, "spacing-status-label-gap"),
+          "spacing-status-label-box": varFromBlock(theme, "spacing-status-label-box"),
+          "spacing-icon-sm": varFromBlock(theme, "spacing-icon-sm"),
+        },
+      },
+    },
+    "progress-bar": {
+      cssVars: {
+        theme: {
+          "spacing-progress-bar-gap": varFromBlock(theme, "spacing-progress-bar-gap"),
+          "spacing-progress-bar-height": varFromBlock(theme, "spacing-progress-bar-height"),
+        },
+      },
+    },
     separator: {
       cssVars: {
         theme: {
