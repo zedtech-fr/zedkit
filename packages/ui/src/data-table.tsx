@@ -59,7 +59,7 @@ export interface DataTableProps<TData extends RowData> {
 }
 
 function SortIcon({ direction }: { direction: SortDirection | false }) {
-  const className = "size-3.5 opacity-60";
+  const className = "size-data-table-sort-icon opacity-60";
   if (direction === "asc") return <ArrowUp className={className} aria-hidden />;
   if (direction === "desc") return <ArrowDown className={className} aria-hidden />;
   return <ArrowUpDown className={className} aria-hidden />;
@@ -83,12 +83,12 @@ export function DataTable<TData extends RowData>({
   }, [table, pageSize]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-data-table-stack">
       <Input
         placeholder={filterPlaceholder}
         value={table.state.globalFilter ?? ""}
         onChange={(event) => table.setGlobalFilter(event.target.value)}
-        className="max-w-sm"
+        className="max-w-data-table-filter-width"
         aria-label={filterPlaceholder}
       />
       <Table aria-busy={loading || undefined} aria-label={loading ? "Loading" : undefined}>
@@ -103,7 +103,7 @@ export function DataTable<TData extends RowData>({
                   <button
                     type="button"
                     onClick={header.column.getToggleSortingHandler()}
-                    className={cn("inline-flex items-center gap-1 hover:text-foreground")}
+                    className={cn("inline-flex items-center gap-data-table-sort-gap hover:text-foreground")}
                   >
                     <table.FlexRender header={header} />
                     <SortIcon direction={header.column.getIsSorted()} />
@@ -126,7 +126,7 @@ export function DataTable<TData extends RowData>({
             <TableRow key={row}>
               {columns.map((_column, index) => (
                 <TableCell key={index}>
-                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-data-table-skeleton-height w-full" />
                 </TableCell>
               ))}
             </TableRow>
@@ -150,7 +150,7 @@ export function DataTable<TData extends RowData>({
         )}
       </TableBody>
       </Table>
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-end gap-data-table-pagination-gap">
         <span className="text-sm text-muted-foreground">
           Page {pageIndex + 1} of {Math.max(table.getPageCount(), 1)}
         </span>
