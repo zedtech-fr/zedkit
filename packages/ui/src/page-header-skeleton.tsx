@@ -22,14 +22,14 @@ export function PageHeaderSkeleton({
     <div
       role="status"
       aria-label={label}
-      className={cn("mb-6 flex flex-wrap items-start justify-between gap-4", className)}
+      className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-page-header-gap", className)}
     >
       <div className="space-y-1">
         <Skeleton className="h-7 w-48" />
         {description ? <Skeleton className="h-4 w-64" /> : null}
       </div>
       {actions ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-page-header-actions-gap">
           <Skeleton className="h-9 w-24" />
           <Skeleton className="h-9 w-24" />
         </div>
