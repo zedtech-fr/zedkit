@@ -9,11 +9,13 @@ export {
   DataTable,
   DataTableEmpty,
   DataTablePagination,
+  DataTableToolbar,
   createDataTableColumns,
   type DataTableColumn,
   type DataTableEmptyProps,
   type DataTablePaginationProps,
   type DataTableProps,
+  type DataTableToolbarProps,
 } from "./data-table.js";
 export {
   Dialog,

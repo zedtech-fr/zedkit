@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { DataTable, DataTableEmpty, DataTablePagination, Table, TableBody, createDataTableColumns } from "#index.js";
+import { DataTable, DataTableEmpty, DataTablePagination, DataTableToolbar, Table, TableBody, createDataTableColumns } from "#index.js";
 
 type Person = { name: string; age: number };
 
@@ -150,5 +150,18 @@ describe("DataTablePagination", () => {
     await user.click(screen.getByRole("button", { name: "Previous" }));
     expect(onPrevious).toHaveBeenCalledTimes(1);
     expect(onNext).not.toHaveBeenCalled();
+  });
+});
+
+describe("DataTableToolbar", () => {
+  it("composes a standalone labelled filter input with token width", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<DataTableToolbar value="" onChange={onChange} placeholder="Filter…" />);
+    const input = screen.getByLabelText("Filter…");
+    expect(input.tagName).toBe("INPUT");
+    expect(input.classList.contains("max-w-data-table-filter-width")).toBe(true);
+    await user.type(input, "A");
+    expect(onChange).toHaveBeenCalledWith("A");
   });
 });

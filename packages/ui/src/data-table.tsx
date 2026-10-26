@@ -123,6 +123,28 @@ export function DataTablePagination({
   );
 }
 
+export interface DataTableToolbarProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}
+
+/**
+ * Global-filter input. `DataTable` wires it to the table state;
+ * compose directly for custom table chrome.
+ */
+export function DataTableToolbar({ value, onChange, placeholder = "Filter…" }: DataTableToolbarProps) {
+  return (
+    <Input
+      placeholder={placeholder}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className="max-w-data-table-filter-width"
+      aria-label={placeholder}
+    />
+  );
+}
+
 export function DataTable<TData extends RowData>({
   columns,
   data,
@@ -142,12 +164,10 @@ export function DataTable<TData extends RowData>({
 
   return (
     <div className="space-y-data-table-stack">
-      <Input
-        placeholder={filterPlaceholder}
+      <DataTableToolbar
         value={table.state.globalFilter ?? ""}
-        onChange={(event) => table.setGlobalFilter(event.target.value)}
-        className="max-w-data-table-filter-width"
-        aria-label={filterPlaceholder}
+        onChange={(value) => table.setGlobalFilter(value)}
+        placeholder={filterPlaceholder}
       />
       <Table aria-busy={loading || undefined} aria-label={loading ? "Loading" : undefined}>
       <TableHeader>
