@@ -93,7 +93,7 @@ per-folder rules. When to call which subagent: the
 [agents catalog](../../docs/agents-catalog.md).
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
-`handoff`, `audit`) are 3-6 line files: each runs its skill on the command arguments
+`handoff`, `audit`, `orchestrate`, `research`) are 3-6 line files: each runs its skill on the command arguments
 (or the current context). Both tools also list skills as `/` commands
 nowadays; the files stay as the explicit one-keystroke path and as fallback
 when the skills link is not followed.
@@ -107,13 +107,14 @@ when the skills link is not followed.
 - *Smallest complete change* (`ponytail`, MIT, vendored): reuse before adding.
 - *Parallel and context-aware* (`parallel-work`): fan out independent work to
   subagents with self-contained briefs; contract first, disjoint files.
+  Multi-step work can go through the `orchestrator` agent or `/orchestrate`.
 - *Proven done* (`definition-of-done`, agent `verifier`): gates on the final
   state, no weakened tests, refactor parity by reading bodies, cold second
   review.
 
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
-`review`, `plan`, `challenge`, `audit`.
+`review`, `plan`, `challenge`, `audit`, `orchestrate`.
 
 **Entry points (one command per phase):** `review` (pins the diff, fans out
 `code-review` + `persona-review` + `adversarial-tests`/`security-reviewer`
