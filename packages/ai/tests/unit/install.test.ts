@@ -423,6 +423,7 @@ describe("installKit", () => {
 });
 
 const FIRST_PARTY_SKILLS = [
+  "audit",
   "ground-truth",
   "parallel-work",
   "definition-of-done",
