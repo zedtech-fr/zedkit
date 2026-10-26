@@ -1,36 +1,148 @@
-/* Accessible syntax tokens on kit card backgrounds (light and dark). */
+/*
+ * GitHub-light/dark Shiki tokens remapped for >= 4.5:1 on code block backgrounds
+ * (mist #f1f1f1 light, identity card tones dark). Match inline --shiki-* hex values.
+ */
+
+/* --- light mode (page and light-scoped previews) --- */
+figure.shiki span[style*="24292E"],
+figure.shiki span[style*="24292e"] {
+  --shiki-light: hsl(240 10% 12%) !important;
+  color: hsl(240 10% 12%) !important;
+}
+
 figure.shiki span[style*="6a737d"],
 figure.shiki span[style*="6A737D"] {
   --shiki-light: hsl(240 6% 30%) !important;
-  --shiki-dark: hsl(240 5% 72%) !important;
   color: hsl(240 6% 30%) !important;
+}
+
+figure.shiki span[style*="22863a"],
+figure.shiki span[style*="22863A"] {
+  --shiki-light: hsl(142 55% 28%) !important;
+  color: hsl(142 55% 28%) !important;
+}
+
+figure.shiki span[style*="005cc5"],
+figure.shiki span[style*="005CC5"] {
+  --shiki-light: hsl(215 75% 32%) !important;
+  color: hsl(215 75% 32%) !important;
+}
+
+figure.shiki span[style*="032f62"],
+figure.shiki span[style*="032F62"] {
+  --shiki-light: hsl(215 85% 22%) !important;
+  color: hsl(215 85% 22%) !important;
+}
+
+figure.shiki span[style*="6f42c1"],
+figure.shiki span[style*="6F42C1"] {
+  --shiki-light: hsl(270 55% 38%) !important;
+  color: hsl(270 55% 38%) !important;
 }
 
 figure.shiki span[style*="e36209"],
 figure.shiki span[style*="E36209"] {
   --shiki-light: hsl(24 75% 35%) !important;
-  --shiki-dark: hsl(32 90% 68%) !important;
   color: hsl(24 75% 35%) !important;
 }
 
 figure.shiki span[style*="d73a49"],
 figure.shiki span[style*="D73A49"] {
   --shiki-light: hsl(350 65% 40%) !important;
-  --shiki-dark: hsl(350 75% 72%) !important;
   color: hsl(350 65% 40%) !important;
+}
+
+figure.shiki span[style*="9c4c16"],
+figure.shiki span[style*="9C4C16"] {
+  --shiki-light: hsl(28 70% 32%) !important;
+  color: hsl(28 70% 32%) !important;
+}
+
+figure.shiki span[style*="a8243a"],
+figure.shiki span[style*="A8243A"] {
+  --shiki-light: hsl(350 70% 32%) !important;
+  color: hsl(350 70% 32%) !important;
+}
+
+figure.shiki span[style*="484851"] {
+  --shiki-light: hsl(240 6% 30%) !important;
+  color: hsl(240 6% 30%) !important;
+}
+
+/* --- dark mode --- */
+html.dark figure.shiki span[style*="e1e4e8"],
+html.dark figure.shiki span[style*="E1E4E8"] {
+  --shiki-dark: hsl(220 12% 90%) !important;
+  color: hsl(220 12% 90%) !important;
 }
 
 html.dark figure.shiki span[style*="6a737d"],
 html.dark figure.shiki span[style*="6A737D"] {
+  --shiki-dark: hsl(240 5% 72%) !important;
   color: hsl(240 5% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="e36209"],
-html.dark figure.shiki span[style*="E36209"] {
+html.dark figure.shiki span[style*="79b8ff"],
+html.dark figure.shiki span[style*="79B8FF"] {
+  --shiki-dark: hsl(210 90% 78%) !important;
+  color: hsl(210 90% 78%) !important;
+}
+
+html.dark figure.shiki span[style*="9ecbff"],
+html.dark figure.shiki span[style*="9ECBFF"] {
+  --shiki-dark: hsl(210 95% 82%) !important;
+  color: hsl(210 95% 82%) !important;
+}
+
+html.dark figure.shiki span[style*="85e89d"],
+html.dark figure.shiki span[style*="85E89D"] {
+  --shiki-dark: hsl(140 55% 72%) !important;
+  color: hsl(140 55% 72%) !important;
+}
+
+html.dark figure.shiki span[style*="b392f0"],
+html.dark figure.shiki span[style*="B392F0"] {
+  --shiki-dark: hsl(270 70% 78%) !important;
+  color: hsl(270 70% 78%) !important;
+}
+
+html.dark figure.shiki span[style*="f97583"],
+html.dark figure.shiki span[style*="F97583"] {
+  --shiki-dark: hsl(350 75% 72%) !important;
+  color: hsl(350 75% 72%) !important;
+}
+
+html.dark figure.shiki span[style*="ffab70"],
+html.dark figure.shiki span[style*="FFAB70"] {
+  --shiki-dark: hsl(28 90% 72%) !important;
+  color: hsl(28 90% 72%) !important;
+}
+
+html.dark figure.shiki span[style*="b4b4bb"] {
+  --shiki-dark: hsl(240 5% 72%) !important;
+  color: hsl(240 5% 72%) !important;
+}
+
+html.dark figure.shiki span[style*="ed8294"],
+html.dark figure.shiki span[style*="ED8294"] {
+  --shiki-dark: hsl(350 75% 72%) !important;
+  color: hsl(350 75% 72%) !important;
+}
+
+html.dark figure.shiki span[style*="f7b264"] {
+  --shiki-dark: hsl(32 90% 68%) !important;
   color: hsl(32 90% 68%) !important;
 }
 
-html.dark figure.shiki span[style*="d73a49"],
-html.dark figure.shiki span[style*="D73A49"] {
-  color: hsl(350 75% 72%) !important;
+/* Preview islands scoped `.dark` without `html.dark` */
+figure.shiki.dark span[style*="e1e4e8"],
+figure.shiki.dark span[style*="E1E4E8"] {
+  --shiki-dark: hsl(220 12% 90%) !important;
+  color: hsl(220 12% 90%) !important;
+}
+
+figure.shiki.dark span[style*="6a737d"],
+figure.shiki.dark span[style*="6A737D"] {
+  --shiki-dark: hsl(240 5% 72%) !important;
+  color: hsl(240 5% 72%) !important;
 }
