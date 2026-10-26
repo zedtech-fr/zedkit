@@ -6,6 +6,7 @@ import { homePage } from "@/lib/site";
 import { Provider } from "./provider";
 import "./globals.css";
 import "./docs-shell-tokens.css";
+import "./fonts";
 
 const baseMetadata = docsPageMetadata("/", homePage);
 
