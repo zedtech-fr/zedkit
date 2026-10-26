@@ -121,6 +121,7 @@
     "Stamp data with its age": {
       "package": "@zedtech/zedkit-ui",
       "component": "UpdatedAgo",
+      "registry": "updated-ago",
       "props": "UpdatedAgoProps",
       "source": "updated-ago.tsx",
       "demo": "UpdatedAgoDemo"
