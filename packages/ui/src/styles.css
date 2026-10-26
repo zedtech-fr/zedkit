@@ -116,6 +116,11 @@
   --spacing-button-inline-lg: 2rem;
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
+  --spacing-switch-track-height: 1.25rem;
+  --spacing-switch-track-width: 2.25rem;
+  --spacing-switch-thumb: 1rem;
+  /* Checked-state thumb travel: track width − thumb − transparent borders. */
+  --spacing-switch-travel: 1rem;
   --spacing-control-inline: 0.75rem;
   --spacing-control-block: 0.25rem;
   --spacing-control-block-lg: 0.5rem;
