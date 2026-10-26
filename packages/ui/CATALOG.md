@@ -478,6 +478,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - Purpose: Sidebar + topbar shell with page header (title, description, actions).
 - When to use: As the frame of every admin page.
 - When not to use: For public marketing pages — use your site layout instead.
+- A11y: Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
 - See also: `Group content in a card section`
 
 ```ts
