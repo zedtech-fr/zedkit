@@ -131,6 +131,13 @@
       "source": "checkmark.tsx",
       "demo": "CheckmarkDemo"
     },
+    "Name an operation in progress": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StatusLabel",
+      "props": "StatusLabelProps",
+      "source": "status-label.tsx",
+      "demo": "StatusLabelDemo"
+    },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",
