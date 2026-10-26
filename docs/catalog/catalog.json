@@ -1140,7 +1140,7 @@
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
-          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
+          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
           "shortName": "DataTable",
@@ -1158,6 +1158,10 @@
             {
               "title": "Standalone pagination",
               "code": "import { DataTablePagination } from \"@zedtech/zedkit-ui\";\nconst [page, setPage] = useState(2);\n<DataTablePagination page={page} pageCount={4}\n  canPrevious={page > 1} canNext={page < 4}\n  onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />"
+            },
+            {
+              "title": "Standalone empty row",
+              "code": "import { DataTableEmpty, Table, TableBody } from \"@zedtech/zedkit-ui\";\n<Table><TableBody>\n  <DataTableEmpty colSpan={3} message=\"Nothing here.\" />\n</TableBody></Table>"
             }
           ],
           "a11y": "Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.",
