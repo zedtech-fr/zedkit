@@ -279,10 +279,23 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
+- Examples: Loading operation, Saved and error states, Offline state
+- Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts
 import { StatusLabel } from "@zedtech/zedkit-ui";
 <StatusLabel tone="loading">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status
+```
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="saved">All changes saved</StatusLabel>
+<StatusLabel tone="error">Could not save</StatusLabel>
+```
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="offline">You are offline</StatusLabel>
 ```
 
 ## Stamp data with its age
