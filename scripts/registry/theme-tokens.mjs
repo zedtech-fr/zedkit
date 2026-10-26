@@ -149,6 +149,20 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "wizard-steps": {
+      cssVars: {
+        theme: {
+          "spacing-icon-sm": varFromBlock(theme, "spacing-icon-sm"),
+          "spacing-wizard-steps-gap": varFromBlock(theme, "spacing-wizard-steps-gap"),
+          "spacing-wizard-steps-row-gap": varFromBlock(theme, "spacing-wizard-steps-row-gap"),
+          "spacing-wizard-step-gap": varFromBlock(theme, "spacing-wizard-step-gap"),
+          "spacing-wizard-step-badge": varFromBlock(theme, "spacing-wizard-step-badge"),
+          "spacing-wizard-step-connector-gap": varFromBlock(theme, "spacing-wizard-step-connector-gap"),
+          "spacing-wizard-step-connector-thickness": varFromBlock(theme, "spacing-wizard-step-connector-thickness"),
+          "spacing-wizard-step-connector": varFromBlock(theme, "spacing-wizard-step-connector"),
+        },
+      },
+    },
   };
 }
 

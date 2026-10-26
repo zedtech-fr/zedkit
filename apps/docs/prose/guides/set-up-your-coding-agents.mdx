@@ -70,6 +70,13 @@ If skills, commands, or provider copies drift, you get `path: message` lines and
 
 Ask your agent to run the bundled `setup-ai` skill (copied under `.agents/skills/`) so `AGENTS.md` reflects this repository. That step is interactive and is not part of CI.
 
+### 5. Hand it a bigger task
+
+When the work spans several steps or review lenses, use `/orchestrate` with the
+goal in one line (for example `/orchestrate add auth and document the API`). The
+orchestrator agent frames the work, dispatches specialists, and returns one
+aggregated report without editing files itself.
+
 ## Scenario — repo that already has `AGENTS.md`
 
 You already maintain team rules at the root:
@@ -91,8 +98,8 @@ AGENTS.md                 # root instructions (template or appended ladder)
 CLAUDE.md                 # symlink to AGENTS.md
 .agents/
   skills/                 # bundled skills (including setup-ai)
-  agents/                 # subagent briefs
-  commands/               # slash-command sources
+  agents/                 # subagent briefs (including orchestrator.md)
+  commands/               # slash-command sources (including orchestrate.md)
   personas.md
 .cursor/
   rules/project.mdc       # always-on Cursor rules
