@@ -8,7 +8,7 @@ zedkit-ai validate .
 ```
 
 A clean setup prints `ok` and exits 0. Problems print as
-`<path>: <message>` followed by `N problem(s)`, exit 1 — wire it as a CI
+`<path>: <message>` followed by `1 problem` / `N problems`, exit 1 — wire it as a CI
 step so drifted provider copies never merge.
 
 Real output with a drifted Cursor copy (plus a core-preset gap):
@@ -16,7 +16,7 @@ Real output with a drifted Cursor copy (plus a core-preset gap):
 ```text
 commands/audit.md: names no installed skill (a command runs a `skill` by name)
 .cursor/agents/verifier.md: drifted from .agents/agents/verifier.md: copy it over (init never overwrites)
-2 problem(s)
+2 problems
 ```
 
 `validate` accepts a project root (drifts against its `.agents/`) or an
