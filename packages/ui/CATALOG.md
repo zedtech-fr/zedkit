@@ -1041,3 +1041,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 import { Tabs } from "@zedtech/zedkit-ui";
 <Tabs value={tab} onValueChange={setTab}> // controlled: you own the state
 ```
+
+## Switch the visual identity with one attribute
+
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `useIdentity`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`
+- Wraps: none (CSS variables in `identities.css`)
+- Status: alpha
+- Short name: Identities
+- Audience: Teams that want to change the whole look of an app, or offer a choice, without touching components.
+- Purpose: `data-identity` on the root swaps the identity tokens next to light and dark; a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose.
+- When to use: To rebrand or offer several looks from one set of components.
+- When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
+- See also: `Theme an admin app (dark/light included)`
+- A11y: `IdentitySwitcher` is a native labelled `select`; `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose.
+- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher. A stored id is ignored — it must be in `ids`. The kit ships no identity yet, so pass your own list to the script and the switcher.
+
+```ts
+import { IdentityScript, IdentitySwitcher } from "@zedtech/zedkit-ui";
+const looks = [{ id: "calm", label: "Calm" }, { id: "bold", label: "Bold" }];
+// <head><IdentityScript ids={looks.map((l) => l.id)} /></head>
+<IdentitySwitcher identities={looks} />
+```
