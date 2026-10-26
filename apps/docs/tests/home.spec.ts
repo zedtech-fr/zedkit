@@ -30,7 +30,7 @@ test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ 
 
 test("home scenario links have unique accessible names", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const scenarioLink = page.getByRole("link", { name: "Read docs: New admin UI in an existing app" });
+  const scenarioLink = page.getByRole("link", { name: "Read the docs: New admin UI in an existing app" });
   await expect(scenarioLink).toBeVisible();
   await scenarioLink.click();
   await page.waitForURL("**/docs/**", { timeout: 10000 });
