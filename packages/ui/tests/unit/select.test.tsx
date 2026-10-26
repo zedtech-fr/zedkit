@@ -55,6 +55,7 @@ describe("select", () => {
       expect(option.className).toContain(token);
     }
     expect(option.className).not.toMatch(/(^|\s)(py-1\.5|pr-8|pl-2)(\s|$)/);
+    expect(option.querySelector("span.absolute")?.className).toContain("size-icon-sm");
   });
 
   it("styles viewport padding and popper offsets from tokens", async () => {
