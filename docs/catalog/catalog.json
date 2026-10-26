@@ -876,8 +876,13 @@
             {
               "title": "Simple",
               "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark label=\"Saved\" /> // draws once, static under reduced motion; omit label when decorative"
+            },
+            {
+              "title": "Decorative",
+              "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark /> // decorative, pair with visible text"
             }
           ],
+          "a11y": "Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.",
           "seeAlso": [
             "Show toast notifications"
           ]
@@ -1078,6 +1083,7 @@
               "code": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
             }
           ],
+          "a11y": "The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.",
           "seeAlso": [
             "Call out a notice or an error state"
           ]

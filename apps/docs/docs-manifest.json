@@ -124,6 +124,13 @@
       "source": "updated-ago.tsx",
       "demo": "UpdatedAgoDemo"
     },
+    "Celebrate completion with a checkmark": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Checkmark",
+      "props": "CheckmarkProps",
+      "source": "checkmark.tsx",
+      "demo": "CheckmarkDemo"
+    },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",

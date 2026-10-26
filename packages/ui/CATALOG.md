@@ -219,10 +219,17 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - When to use: For success confirmations right after the action completes.
 - When not to use: As a persistent status icon — use StatusDot or Badge instead.
 - See also: `Show toast notifications`
+- Examples: Simple, Decorative
+- A11y: Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.
 
 ```ts
 import { Checkmark } from "@zedtech/zedkit-ui";
 <Checkmark label="Saved" /> // draws once, static under reduced motion; omit label when decorative
+```
+
+```ts
+import { Checkmark } from "@zedtech/zedkit-ui";
+<Checkmark /> // decorative, pair with visible text
 ```
 
 ## Load each zone with a faithful skeleton
@@ -413,6 +420,7 @@ const router = useRouter();
 - Purpose: A root toaster plus toast() calls for transient notifications.
 - When to use: For outcomes that do not need the user's reply.
 - When not to use: For errors needing action — use Alert or Dialog instead.
+- A11y: The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.
 - See also: `Call out a notice or an error state`
 
 ```ts
