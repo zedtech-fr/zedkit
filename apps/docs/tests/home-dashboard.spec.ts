@@ -12,22 +12,23 @@ async function axeDashboard(page: import("@playwright/test").Page) {
 
 test("home dashboard: create, edit, delete with axe on ready state", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.getByLabel("Interactive admin dashboard demo");
   await axeDashboard(page);
 
-  await page.getByRole("button", { name: "Add app" }).click();
+  await demo.getByRole("button", { name: "Add app" }).click();
   await page.getByRole("dialog").getByLabel("Name").fill("playwright-app");
   await page.getByRole("button", { name: "Create app" }).click();
-  await expect(page.getByRole("cell", { name: "playwright-app" })).toBeVisible();
+  await expect(demo.getByRole("cell", { name: "playwright-app", exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "Edit playwright-app" }).click();
+  await demo.getByRole("button", { name: "Edit playwright-app" }).click();
   await page.getByRole("dialog").getByLabel("Name").fill("playwright-app-edited");
   await page.getByRole("button", { name: "Save changes" }).click();
-  await expect(page.getByRole("cell", { name: "playwright-app-edited" })).toBeVisible();
+  await expect(demo.getByRole("cell", { name: "playwright-app-edited", exact: true })).toBeVisible();
 
-  const row = page.getByRole("row", { name: /playwright-app-edited/ });
+  const row = demo.getByRole("row", { name: /playwright-app-edited/ });
   await row.getByRole("button", { name: "Delete playwright-app-edited" }).click();
   await page.getByRole("button", { name: "Delete" }).click();
-  await expect(page.getByRole("cell", { name: "playwright-app-edited" })).toHaveCount(0);
+  await expect(demo.getByRole("cell", { name: "playwright-app-edited", exact: true })).toHaveCount(0);
 });
 
 test("home dashboard: preview modes are keyboard reachable", async ({ page }) => {
