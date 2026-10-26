@@ -46,7 +46,7 @@ test.describe("docs mobile main column (#385)", () => {
     test(`${path} uses full main width for title and intro`, async ({ page }) => {
       await page.goto(path, { waitUntil: "networkidle" });
       await assertDocsMainTypographyWidth(page);
-      await expect(page.getByRole("contentinfo")).toBeVisible();
+      await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
     });
   }
 });
