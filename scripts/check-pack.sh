@@ -5,7 +5,8 @@
 # that repository fields stay consistent. Versions are owned by changesets
 # and legitimately diverge (independent versioning, e.g. ui-first release),
 # so they are required but never compared. Needs dist/ built first (CI runs
-# this after build); publishes nothing.
+# this after build), except packages declaring `"zedkit": { "noBuild": true }`,
+# which ship committed source and pack without a build; publishes nothing.
 set -uo pipefail
 
 # shellcheck source=denylist-patterns.sh
@@ -44,7 +45,13 @@ for dir in packages/*/; do
   pkg="${dir}package.json"
   [ -f "$pkg" ] || continue
   name="$(basename "$dir")"
-  [ -d "${dir}dist" ] || { echo "$name: dist/ missing, run build first"; fail=1; continue; }
+  if [ ! -d "${dir}dist" ]; then
+    if [ "$(manifest_field "$pkg" "zedkit.noBuild")" = "true" ]; then
+      echo "$name: no dist/ (declared no-build), packing source"
+    else
+      echo "$name: dist/ missing, run build first"; fail=1; continue
+    fi
+  fi
 
   mkdir -p "$tmp/$name"
   if ! (cd "$dir" && pnpm pack --pack-destination "$tmp/$name" >/dev/null 2>&1); then

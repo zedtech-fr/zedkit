@@ -33,28 +33,34 @@
   "imports": {
     "#*": "./src/*"
   },
-  "main": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./src/index.mjs",
+  "types": "./src/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./src/index.d.mts",
+      "import": "./src/index.mjs"
     },
     "./eslint": {
-      "types": "./dist/eslint.d.mts",
-      "import": "./dist/eslint.mjs"
+      "types": "./src/eslint.d.mts",
+      "import": "./src/eslint.mjs"
     },
-    "./tsconfig": "./dist/tsconfig.base.json",
+    "./tsconfig": "./tsconfig.base.json",
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "src/index.mjs",
+    "src/index.d.mts",
+    "src/eslint.mjs",
+    "src/eslint.d.mts",
+    "tsconfig.base.json"
   ],
+  "zedkit": {
+    "noBuild": true
+  },
   "scripts": {
-    "build": "node scripts/build.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint src tests scripts"
+    "lint": "eslint src tests"
   },
   "peerDependencies": {
     "eslint": "catalog:",

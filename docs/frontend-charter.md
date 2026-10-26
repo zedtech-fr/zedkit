@@ -2,7 +2,8 @@
 
 Short concrete rules for every UI built on this kit. Anything marked
 **lint** is enforced by the shared ESLint preset
-(`eslint/ui-preset.mjs`, copy it into your project); **test** by the
+(`@zedtech/zedkit-quality`, install it and pass your Tailwind entry —
+no copy); **test** by the
 axe suite and the preview smoke run.
 
 ## Components

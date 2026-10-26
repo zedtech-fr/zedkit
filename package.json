@@ -29,6 +29,7 @@
     "@changesets/cli": "catalog:",
     "@eslint/js": "catalog:",
     "@playwright/test": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "eslint-plugin-jsx-a11y": "catalog:",

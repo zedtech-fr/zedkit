@@ -1,7 +1,7 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
-import { uiPreset } from "./eslint/ui-preset.mjs";
+import { uiPreset } from "@zedtech/zedkit-quality";
 
 export default tseslint.config(
   js.configs.recommended,
@@ -40,11 +40,11 @@ export default tseslint.config(
     rules: { "no-restricted-syntax": "off" },
   },
   {
-    // Root scripts, shareable presets, and the ui gallery tooling are
-    // plain Node tooling: no DOM, Node globals available.
+    // Root config and tooling scripts are plain Node: no DOM, Node
+    // globals available.
     files: [
+      "eslint.config.mjs",
       "scripts/**/*.mjs",
-      "eslint/**/*.mjs",
       "apps/docs/scripts/*.mjs",
       "packages/ui/preview/*.mjs",
       "packages/ui/playwright.config.ts",
@@ -55,7 +55,11 @@ export default tseslint.config(
   },
   // UI preset last: for .tsx/.jsx its no-restricted-syntax (try/catch +
   // style-attribute bans) intentionally wins over the root block above.
-  ...uiPreset,
+  // Dogfood: the repo consumes its own published preset (source-mapped
+  // exports, so this resolves with zero build).
+  ...uiPreset({
+    entryPoint: new URL("./packages/ui/src/styles.css", import.meta.url).pathname,
+  }),
   {
     // next/og ImageResponse requires inline styles; not user-facing UI.
     files: ["apps/docs/app/opengraph-image.tsx"],

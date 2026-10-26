@@ -73,5 +73,5 @@ drifts silently. Versioned updates propagate through normal bump PRs.
 ## Verify
 
 ```sh
-pnpm --filter @zedtech/zedkit-quality typecheck && pnpm --filter @zedtech/zedkit-quality lint && pnpm --filter @zedtech/zedkit-quality build && pnpm --filter @zedtech/zedkit-quality test
+pnpm --filter @zedtech/zedkit-quality typecheck && pnpm --filter @zedtech/zedkit-quality lint && pnpm --filter @zedtech/zedkit-quality test
 ```
