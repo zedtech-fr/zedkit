@@ -606,11 +606,21 @@ const [query, setQuery] = useState("");
 - When not to use: For public marketing pages — use your site layout instead.
 - A11y: Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
 - See also: `Group content in a card section`
+- Examples: Simple, Without topbar
+- Registry: app-shell
+- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding comes from the `--spacing-app-shell-padding` / `--spacing-app-shell-padding-md` theme tokens.
 
 ```ts
 import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 <AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>
   <PageHeader title="Items" description="All items." />
+</AppShell>
+```
+
+```ts
+import { AppShell } from "@zedtech/zedkit-ui";
+<AppShell sidebar={<OrgNav />}> // topbar is optional
+  <p>Content.</p>
 </AppShell>
 ```
 
