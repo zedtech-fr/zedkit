@@ -96,6 +96,34 @@ describe("drawer", () => {
     stubDrawerJsdom();
   });
 
+  it("gives bare content side gutters and a safe-area bottom inset, and tags the kit slots", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer direction="bottom">
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHandle />
+          <DrawerHeader>
+            <DrawerTitle>Delivery details</DrawerTitle>
+          </DrawerHeader>
+          <DrawerBody>Body</DrawerBody>
+          <DrawerFooter>Footer</DrawerFooter>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    // Bare children (anything but the kit slots, the handle, and buttons) pick up the shared gutters.
+    expect(dialog.className).toContain("px-drawer-chrome-padding");
+    expect(dialog.className).toContain("pb-drawer-footer-safe");
+    // The slots carry their own spacing, so they are excluded from that net.
+    for (const slot of ["drawer-handle", "drawer-header", "drawer-body", "drawer-footer"]) {
+      expect(dialog.querySelector(`[data-slot="${slot}"]`), slot).not.toBeNull();
+    }
+  });
+
   it("styles the close button from the overlay touch target token", () => {
     render(
       <Drawer defaultOpen>

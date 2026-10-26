@@ -9,9 +9,13 @@ import {
   ConfirmDialog,
   DataTable,
   Drawer,
+  DrawerBody,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
+  DrawerHandle,
+  DrawerHeader,
   DrawerTitle,
   Form,
   FormControl,
@@ -179,54 +183,59 @@ export function AdminDashboardDemoApp() {
 
       <Drawer open={drawerOpen} onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())} direction="right">
         <DrawerContent>
-          <DrawerTitle>{editingId ? "Edit app" : "Add app"}</DrawerTitle>
-          <DrawerDescription>Name and region are stored in local state only.</DrawerDescription>
+          <DrawerHandle />
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <Stack gap={4}>
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} autoComplete="off" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="region"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Region</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+              <DrawerHeader>
+                <DrawerTitle>{editingId ? "Edit app" : "Add app"}</DrawerTitle>
+                <DrawerDescription>Name and region are stored in local state only.</DrawerDescription>
+              </DrawerHeader>
+              <DrawerBody>
+                <Stack gap={4} className="py-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pick a region" />
-                          </SelectTrigger>
+                          <Input {...field} autoComplete="off" />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="eu">eu</SelectItem>
-                          <SelectItem value="us">us</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Stack direction="horizontal" gap={2}>
-                  <FormSubmit>{editingId ? "Save changes" : "Create app"}</FormSubmit>
-                  <DrawerClose asChild>
-                    <Button type="button" variant="outline">
-                      Cancel
-                    </Button>
-                  </DrawerClose>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="region"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Region</FormLabel>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pick a region" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="eu">eu</SelectItem>
+                            <SelectItem value="us">us</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </Stack>
-              </Stack>
+              </DrawerBody>
+              <DrawerFooter>
+                <FormSubmit>{editingId ? "Save changes" : "Create app"}</FormSubmit>
+                <DrawerClose asChild>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
             </form>
           </Form>
         </DrawerContent>
