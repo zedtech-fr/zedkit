@@ -76,10 +76,6 @@ export interface DataTablePaginationProps {
   className?: string;
 }
 
-/**
- * Page label plus previous/next controls. `DataTable` wires these to
- * the table state; compose directly for custom table chrome.
- */
 export interface DataTableEmptyProps {
   colSpan: number;
   message?: React.ReactNode;
@@ -99,6 +95,10 @@ export function DataTableEmpty({ colSpan, message = "No results." }: DataTableEm
   );
 }
 
+/**
+ * Page label plus previous/next controls. `DataTable` wires these to
+ * the table state; compose directly for custom table chrome.
+ */
 export function DataTablePagination({
   page,
   pageCount,
