@@ -1,6 +1,6 @@
 # AGENTS.md — @zedtech/zedkit-ui
 
-Admin UI kit. shadcn/ui-based (Radix + Tailwind v4, copied in —
+UI kit. shadcn/ui-based (Radix + Tailwind v4, copied in —
 see THIRD_PARTY_NOTICES.md), lucide icons, sonner toasts, TanStack
 Table. Neutral/calm look; no custom component may replace a
 mature primitive (ladder rung 5).
