@@ -473,6 +473,7 @@ const CATALOG_AREA_BY_FOLDER = {
   core: "backend",
   server: "backend",
   nest: "backend",
+  quality: "backend",
 };
 
 function catalogAreaForFolder(folder) {

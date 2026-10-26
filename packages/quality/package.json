@@ -1,0 +1,71 @@
+{
+  "name": "@zedtech/zedkit-quality",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Shared quality setup: UI lint preset, route/view/data layer boundaries, and one strict TypeScript base — consume, do not copy. Original work by the same author.",
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "tsconfig",
+    "typescript",
+    "strict",
+    "layers",
+    "architecture",
+    "a11y",
+    "tailwindcss",
+    "code-quality"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/quality",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/quality"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./eslint": {
+      "types": "./dist/eslint.d.mts",
+      "import": "./dist/eslint.mjs"
+    },
+    "./tsconfig": "./dist/tsconfig.base.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint src tests scripts"
+  },
+  "peerDependencies": {
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:"
+  },
+  "devDependencies": {
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

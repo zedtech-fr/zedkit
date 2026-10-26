@@ -324,6 +324,90 @@
         }
       ]
     },
+    "@zedtech/zedkit-quality": {
+      "catalog": "packages/quality/CATALOG.md",
+      "keywords": [
+        "eslint",
+        "eslint-config",
+        "tsconfig",
+        "typescript",
+        "strict",
+        "layers",
+        "architecture",
+        "a11y",
+        "tailwindcss",
+        "code-quality"
+      ],
+      "audience": "Teams keeping the same quality gates across repos.",
+      "needs": [
+        {
+          "need": "Lint UI files for accessibility, Tailwind and tokens",
+          "import": "`@zedtech/zedkit-quality/eslint` — `uiPreset`",
+          "wraps": "`eslint-plugin-jsx-a11y`, `eslint-plugin-better-tailwindcss`",
+          "status": "alpha",
+          "shortName": "UiPreset",
+          "audience": "Frontend teams linting tsx/jsx everywhere the same way.",
+          "purpose": "Enforce a11y, Tailwind hygiene and tokens-only classes on every UI file.",
+          "whenToUse": "When UI rules must match across repos without copying a preset file.",
+          "whenNotToUse": "When the repo has no Tailwind theme (the entryPoint has nothing to read).",
+          "derivedFrom": null,
+          "example": "import { uiPreset } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [...uiPreset({ entryPoint: \"./app/globals.css\" })];",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { uiPreset } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [...uiPreset({ entryPoint: \"./app/globals.css\" })];"
+            }
+          ],
+          "seeAlso": [
+            "Enforce route, view and data layer boundaries"
+          ]
+        },
+        {
+          "need": "Enforce route, view and data layer boundaries",
+          "import": "`@zedtech/zedkit-quality/eslint` — `defineLayers`",
+          "wraps": "`eslint`",
+          "status": "alpha",
+          "shortName": "DefineLayers",
+          "audience": "Frontend teams keeping routes thin, views presentational and data UI-free.",
+          "purpose": "Ban cross-layer imports (route to kit, view to data client, data to UI) at lint time.",
+          "whenToUse": "When features map onto route/view/data folders and bypasses must fail the gate.",
+          "whenNotToUse": "When the repo has no layered folders (nothing to map the globs onto).",
+          "derivedFrom": null,
+          "example": "import { defineLayers } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [\n  ...defineLayers({\n    kitPackage: \"@acme/ui\",\n    viewDirs: [\"app/**/ui/**\"],\n    dataDirs: [\"lib/**\"],\n    actionPatterns: [\"@/lib/*\", \"**/actions\", \"**/actions/**\"],\n  }),\n];",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { defineLayers } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [\n  ...defineLayers({\n    kitPackage: \"@acme/ui\",\n    viewDirs: [\"app/**/ui/**\"],\n    dataDirs: [\"lib/**\"],\n    actionPatterns: [\"@/lib/*\", \"**/actions\", \"**/actions/**\"],\n  }),\n];"
+            }
+          ],
+          "seeAlso": [
+            "Lint UI files for accessibility, Tailwind and tokens"
+          ]
+        },
+        {
+          "need": "Share one strict TypeScript base",
+          "import": "`@zedtech/zedkit-quality/tsconfig`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "TsconfigBase",
+          "audience": "TypeScript repos that want the same strictness without copying a file.",
+          "purpose": "One strict base (`strict`, exact optionals, unchecked indexed access, unused checks) every tsconfig extends.",
+          "whenToUse": "When several tsconfigs must stay strict and identical.",
+          "whenNotToUse": "When the repo needs looser settings (extend and override instead).",
+          "derivedFrom": null,
+          "example": "// tsconfig.json\n{\n  \"extends\": \"@zedtech/zedkit-quality/tsconfig\",\n  \"compilerOptions\": { \"outDir\": \"dist\", \"rootDir\": \"src\" },\n  \"include\": [\"src\"]\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "// tsconfig.json\n{\n  \"extends\": \"@zedtech/zedkit-quality/tsconfig\",\n  \"compilerOptions\": { \"outDir\": \"dist\", \"rootDir\": \"src\" },\n  \"include\": [\"src\"]\n}"
+            }
+          ],
+          "seeAlso": [
+            "Lint UI files for accessibility, Tailwind and tokens"
+          ]
+        }
+      ]
+    },
     "@zedtech/zedkit-seo": {
       "catalog": "packages/seo/CATALOG.md",
       "keywords": [
