@@ -32,4 +32,11 @@ describe("PageHeader", () => {
     expect(screen.getByText("All items.").textContent).toBe("All items.");
     expect(screen.getByRole("button", { name: "New" }).textContent).toBe("New");
   });
+
+  it("uses the token-driven title spacing with no arbitrary values", () => {
+    const { container } = render(<PageHeader title="Items" description="All items." />);
+    const titleBlock = screen.getByRole("heading", { name: "Items" }).parentElement;
+    expect(titleBlock?.className).toContain("space-y-page-header-title-gap");
+    expect(container.firstElementChild?.className).not.toContain("[");
+  });
 });
