@@ -212,7 +212,8 @@
     "Switch between tabbed panels": {
       "package": "@zedtech/zedkit-ui",
       "component": "Tabs",
-      "props": null,
+      "registry": "tabs",
+      "props": "TabsProps",
       "source": "tabs.tsx",
       "demo": "TabsDemo"
     },
