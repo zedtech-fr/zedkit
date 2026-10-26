@@ -121,7 +121,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
-- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus.
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
@@ -176,6 +176,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
 - When to use: Beside a label that names the state (the dot is decorative).
 - When not to use: As the only state signal — pair it with text, never color alone.
+- A11y: `aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
 
 ```ts
@@ -194,10 +195,17 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - When to use: When you can report a percentage or fraction done.
 - When not to use: For unknown-shape loading — use Skeleton instead.
 - See also: `Show loading placeholder blocks`
+- Examples: Simple, Complete
+- A11y: Root carries `role="progressbar"` with clamped value; keep the label screen-only and pair with visible text.
 
 ```ts
 import { ProgressBar } from "@zedtech/zedkit-ui";
 <ProgressBar value={40} label="Uploading report" /> // role=progressbar, value clamped to 0..max
+```
+
+```ts
+import { ProgressBar } from "@zedtech/zedkit-ui";
+<ProgressBar value={100} label="Upload complete" />
 ```
 
 ## Celebrate completion with a checkmark
@@ -592,6 +600,8 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - When to use: For every heading and paragraph in kit UI.
 - When not to use: For raw HTML emails or markdown — style those separately.
 - See also: `Stack content and group titled sections`
+- Examples: Simple, Heading styles on a link (asChild)
+- A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
 
 ```ts
 import { Heading, Text } from "@zedtech/zedkit-ui";
@@ -599,6 +609,13 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 <Heading level={2} as="div">Styled as h2, neutral tag</Heading>
 <Text>Body copy.</Text>
 <Text variant="muted">Secondary copy.</Text>
+```
+
+```ts
+import { Heading } from "@zedtech/zedkit-ui";
+<Heading level={2} asChild>
+  <a href="#section">Section title as a link</a>
+</Heading>
 ```
 
 ## Call out a notice or an error state

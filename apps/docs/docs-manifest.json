@@ -110,6 +110,13 @@
       "source": "detail-panel.tsx",
       "demo": "DetailsDemo"
     },
+    "Show determinate progress": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ProgressBar",
+      "props": "ProgressBarProps",
+      "source": "progress-bar.tsx",
+      "demo": "ProgressBarDemo"
+    },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",

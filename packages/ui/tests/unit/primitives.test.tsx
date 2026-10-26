@@ -55,6 +55,18 @@ describe("primitives", () => {
     expect(screen.getByLabelText("Name")).toHaveProperty("placeholder", "Ada");
   });
 
+  it("dims the label with the kit disabled convention", () => {
+    render(
+      <>
+        <Input id="name" placeholder="Ada" disabled className="peer" />
+        <Label htmlFor="name">Name</Label>
+      </>,
+    );
+    const label = screen.getByText("Name");
+    expect(label.className).toContain("peer-disabled:cursor-not-allowed");
+    expect(label.className).toContain("peer-disabled:opacity-50");
+  });
+
   it("renders horizontal and vertical separators", () => {
     const { container } = render(
       <>
@@ -64,12 +76,22 @@ describe("primitives", () => {
     );
     const separators = container.querySelectorAll('[data-orientation]');
     expect(separators).toHaveLength(2);
+    expect(separators[0]?.className).toContain("h-separator-thickness");
+    expect(separators[1]?.className).toContain("w-separator-thickness");
   });
 
   it("renders a skeleton block that pulses only when motion is safe", () => {
     const { container } = render(<Skeleton className="h-4 w-24" data-testid="sk" />);
     const skeleton = container.querySelector('[data-testid="sk"]');
     expect(skeleton?.className).toContain("motion-safe:animate-pulse");
+  });
+
+  it("keeps skeleton styles token-driven with no arbitrary values", () => {
+    const { container } = render(<Skeleton data-testid="sk-token" />);
+    const className = container.querySelector('[data-testid="sk-token"]')?.className ?? "";
+    expect(className).toContain("rounded-md");
+    expect(className).toContain("bg-muted");
+    expect(className).not.toContain("[");
   });
 
   it("renders headings at the level tag with size classes", () => {
@@ -95,6 +117,29 @@ describe("primitives", () => {
       </>,
     );
     expect(screen.getByText("Secondary copy.").className).toContain("text-muted-foreground");
+  });
+
+  it("merges heading styles onto asChild link", () => {
+    render(
+      <Heading level={2} asChild>
+        <a href="#section">Section</a>
+      </Heading>,
+    );
+    const link = screen.getByRole("link", { name: "Section" });
+    expect(link.className).toContain("text-3xl");
+    expect(link.className).toContain("scroll-m-heading-scroll");
+    expect(link.getAttribute("href")).toBe("#section");
+  });
+
+  it("merges text styles onto asChild child", () => {
+    render(
+      <Text variant="muted" asChild>
+        <span>Secondary copy.</span>
+      </Text>,
+    );
+    const copy = screen.getByText("Secondary copy.");
+    expect(copy.tagName).toBe("SPAN");
+    expect(copy.className).toContain("text-muted-foreground");
   });
 
   it("renders default and destructive alerts", () => {

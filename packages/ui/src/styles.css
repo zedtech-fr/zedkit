@@ -116,6 +116,14 @@
   --spacing-button-inline-lg: 2rem;
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
+  --spacing-heading-scroll: 5rem;
+  --spacing-progress-bar-gap: 0.125rem;
+  --spacing-progress-bar-height: 0.375rem;
+  --spacing-tabs-list-height: 2.25rem;
+  --spacing-tabs-list-inset: 0.25rem;
+  --spacing-tabs-trigger-inline: 0.75rem;
+  --spacing-tabs-trigger-block: 0.25rem;
+  --spacing-tabs-content-gap: 0.5rem;
   --spacing-switch-track-height: 1.25rem;
   --spacing-switch-track-width: 2.25rem;
   --spacing-switch-thumb: 1rem;
@@ -124,6 +132,7 @@
   --spacing-status-label-gap: 0.375rem;
   --spacing-status-label-icon: 0.875rem;
   --spacing-status-label-box: 1rem;
+  --spacing-status-dot: 0.5rem;
   --spacing-control-inline: 0.75rem;
   --spacing-control-block: 0.25rem;
   --spacing-control-block-lg: 0.5rem;
@@ -150,6 +159,8 @@
   --spacing-card-stack: 0.375rem;
   --spacing-card-section: 1rem;
   --spacing-card-lines: 0.5rem;
+  --spacing-separator-thickness: 0.0625rem;
+  --spacing-live-pulse-gap: 0.375rem;
 }
 
 @layer base {
