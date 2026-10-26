@@ -5,13 +5,18 @@ import { kitDir } from "#kit.js";
 
 function tableFirstColumn(path: string): string[] {
   const raw = readFileSync(join(kitDir(), path), "utf8");
-  return raw
-    .split("\n")
-    // Header row only: the `|---` separator never matches `| `, so slice(1)
-    // keeps every data row (slice(2) would silently drop the first persona).
-    .filter((line) => line.startsWith("| "))
-    .slice(1)
-    .map((line) => line.split("|")[1]?.trim() ?? "");
+  const lines = raw.split("\n");
+  // Only the persona table: rows under the `| Persona |` header, stopping at
+  // the first non-table line, so a later table never mixes its rows in.
+  // The `|---` separator never matches `| `, so no row is skipped.
+  const head = lines.findIndex((line) => line.startsWith("| Persona |"));
+  if (head < 0) throw new Error(`${path} has no persona table`);
+  const rows: string[] = [];
+  for (const line of lines.slice(head + 1)) {
+    if (!line.startsWith("|")) break;
+    if (line.startsWith("| ")) rows.push(line.split("|")[1]?.trim() ?? "");
+  }
+  return rows;
 }
 
 describe("persona-review fallback generics", () => {
