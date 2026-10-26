@@ -224,7 +224,8 @@ describe("route modal", () => {
       </RouteModal>,
     );
     const drawerDialog = drawer.getByRole("dialog");
-    expect(drawerDialog.className).toContain("sm:max-w-lg!");
+    expect(drawerDialog.className).toContain("sm:max-w-route-modal-drawer-lg!");
+    expect(drawerDialog.className).not.toContain("max-w-lg!");
     drawer.unmount();
     const dialog = render(
       <RouteModal title="Delete item?" variant="dialog" size="sm" onClose={() => {}}>
@@ -232,8 +233,8 @@ describe("route modal", () => {
       </RouteModal>,
     );
     const dialogDialog = dialog.getByRole("dialog");
-    expect(dialogDialog.className).toContain("max-w-sm");
-    expect(dialogDialog.className).not.toContain("max-w-lg");
+    expect(dialogDialog.className).toContain("max-w-route-modal-sm");
+    expect(dialogDialog.className).not.toContain("max-w-route-modal-dialog-lg");
   });
 
   it("has no axe violations when open", async () => {
