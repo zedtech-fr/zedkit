@@ -1,0 +1,123 @@
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+import { installKit } from "#install.js";
+import { readManifest } from "#kit.js";
+import { validateKit } from "#validate.js";
+import { tempDir } from "./helpers.js";
+
+function kitRoot(): string {
+  return fileURLToPath(new URL("../../kit/", import.meta.url));
+}
+
+function repoRoot(): string {
+  return fileURLToPath(new URL("../../../../", import.meta.url));
+}
+
+function install(dest: string, options: Parameters<typeof installKit>[0] extends infer O ? Partial<O> : never = {}) {
+  const result = installKit({ dest, ...options });
+  if (!result.ok) throw result.error;
+  return result.value;
+}
+
+function parseFrontmatter(text: string): Record<string, string> {
+  const match = /^---\n([\s\S]*?)\n---/.exec(text);
+  if (!match) return {};
+  const out: Record<string, string> = {};
+  for (const line of (match[1] ?? "").split("\n")) {
+    const idx = line.indexOf(":");
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim();
+    let val = line.slice(idx + 1).trim();
+    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+    out[key] = val;
+  }
+  return out;
+}
+
+function routingNamesFromOrchestrator(): string[] {
+  const text = readFileSync(join(kitRoot(), "agents", "orchestrator.md"), "utf8");
+  const start = text.indexOf("## Routing");
+  expect(start).toBeGreaterThan(-1);
+  const section = text.slice(start);
+  const names = new Set<string>();
+  for (const m of section.matchAll(/`([a-z][a-z0-9-]*)`/g)) {
+    if (m[1]) names.add(m[1]);
+  }
+  return [...names].sort();
+}
+
+describe("orchestrator agent", () => {
+  it("is listed in the embedded manifest", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    expect(manifest.value.agents).toContain("orchestrator");
+    expect(manifest.value.commands).toContain("orchestrate");
+    expect(manifest.value.commands).toContain("research");
+    const core = manifest.value.presets.core;
+    expect(core).toContain("orchestrate");
+  });
+
+  it("installs orchestrator files for core and full presets (cursor and claude)", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    for (const preset of ["core", "full"] as const) {
+      for (const providers of [["cursor"] as const, ["claude"] as const]) {
+        const dest = tempDir();
+        install(dest, { preset, providers: [...providers] });
+        expect(existsSync(join(dest, ".agents/agents/orchestrator.md"))).toBe(true);
+        expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(true);
+        for (const provider of providers) {
+          expect(existsSync(join(dest, `.${provider}/agents/orchestrator.md`))).toBe(true);
+        }
+        expect(validateKit(join(dest, ".agents"))).toEqual([]);
+      }
+    }
+  });
+
+  it("ships frontmatter guards on the orchestrator agent", () => {
+    const text = readFileSync(join(kitRoot(), "agents", "orchestrator.md"), "utf8");
+    const fm = parseFrontmatter(text);
+    expect(fm.name).toBe("orchestrator");
+    expect(fm.description).toMatch(/^Coordinates a task/);
+    expect(fm.description).not.toContain("\n");
+    expect(fm.model === undefined || fm.model === "inherit").toBe(true);
+    expect(fm.disallowedTools).toContain("Write");
+    expect(fm.disallowedTools).toContain("Edit");
+  });
+
+  it("routing table names only reference kit agents and skills", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const skills = new Set(readdirSync(join(kitRoot(), "skills")));
+    const agents = new Set(manifest.value.agents);
+    for (const name of routingNamesFromOrchestrator()) {
+      expect(skills.has(name) || agents.has(name), `unknown routing target: ${name}`).toBe(true);
+    }
+    expect(routingNamesFromOrchestrator().length).toBeGreaterThan(5);
+  });
+
+  it("keeps docs/agent prose in sync with kit.json agents", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const agents = manifest.value.agents;
+    const catalog = readFileSync(join(repoRoot(), "docs/agents-catalog.md"), "utf8");
+    for (const name of agents) {
+      expect(catalog, `agents-catalog missing ${name}`).toContain(`| \`${name}\` |`);
+    }
+    const prose = readFileSync(
+      join(
+        repoRoot(),
+        "apps/docs/prose/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo.mdx",
+      ),
+      "utf8",
+    );
+    const countMatch = /Subagents installed from `kit\.json` \((\d+)\)/.exec(prose);
+    expect(countMatch).not.toBeNull();
+    expect(Number(countMatch![1])).toBe(agents.length);
+    for (const name of agents) {
+      expect(prose, `prose agents table missing ${name}`).toMatch(new RegExp(`\\| \`${name}\` \\|`));
+    }
+  });
+});
