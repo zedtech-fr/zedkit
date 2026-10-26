@@ -5,7 +5,7 @@ import { maturityDocHref } from "@/content/maturity-compatibility";
 export function MaturityBadge({ status }: { status: string }) {
   return (
     <Badge asChild>
-      <Link href={maturityDocHref}>{status}</Link>
+      <Link href={maturityDocHref} className="text-primary-foreground! no-underline">{status}</Link>
     </Badge>
   );
 }
