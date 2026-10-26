@@ -3,6 +3,7 @@
 @import "./identities.css";
 @import "./font-fallbacks.css";
 @import "./motion.css";
+@import "./identities/volt.css";
 
 /*
  * Hover styles only apply where a hover exists: without this guard the
