@@ -32,6 +32,14 @@ describe("status label", () => {
     expect(container.querySelector(".lucide-wifi-off")).not.toBeNull();
   });
 
+  it("spaces icon and text from theme tokens", () => {
+    const { container } = render(<StatusLabel tone="loading">Saving report…</StatusLabel>);
+    expect(container.innerHTML).toContain("gap-status-label-gap");
+    expect(container.innerHTML).toContain("size-status-label-box");
+    const offline = render(<StatusLabel tone="offline">You are offline</StatusLabel>);
+    expect(offline.container.innerHTML).toContain("size-status-label-icon");
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(<StatusLabel tone="updating">Refreshing events…</StatusLabel>);
     const results = await axe(container, {

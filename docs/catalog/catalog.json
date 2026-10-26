@@ -916,6 +916,7 @@
               "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status"
             }
           ],
+          "a11y": "`role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.",
           "seeAlso": [
             "Stamp data with its age"
           ]
