@@ -1062,7 +1062,7 @@
         },
         {
           "need": "Show toast notifications",
-          "import": "`@zedtech/zedkit-ui` — `Toaster`",
+          "import": "`@zedtech/zedkit-ui` — `Toaster`, `toast`",
           "wraps": "`sonner`",
           "status": "beta",
           "shortName": "Toaster",
@@ -1071,11 +1071,11 @@
           "whenToUse": "For outcomes that do not need the user's reply.",
           "whenNotToUse": "For errors needing action — use Alert or Dialog instead.",
           "derivedFrom": "shadcn/ui (sonner)",
-          "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
+          "example": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+              "code": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
             }
           ],
           "seeAlso": [

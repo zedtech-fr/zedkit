@@ -1,6 +1,6 @@
 {
   "_comment": "Rich doc pages: catalog needs that get a live preview (ComponentPreview frame resolving through components/demos/registry.ts) + generated props table. Every other need still gets a generated page (badge, install, example). Keys must match catalog need headings exactly; the docs check fails otherwise.",
-  "_deferred": "Show toast notifications (needs sonner toast() import — new docs dep) and Build validated forms (needs zod + react-hook-form — new docs deps) land with the interactive-demos batch. Theme (styles.css) and Merge class names (cn function) are not components and stay preview-free by design.",
+  "_deferred": "Build validated forms (needs zod + react-hook-form — new docs deps) lands with the interactive-demos batch. Theme (styles.css) and Merge class names (cn function) are not components and stay preview-free by design.",
   "rich": {
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
@@ -186,6 +186,13 @@
       "props": null,
       "source": "tabs.tsx",
       "demo": "TabsDemo"
+    },
+    "Show toast notifications": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Toaster",
+      "props": null,
+      "source": "sonner.tsx",
+      "demo": "ToasterDemo"
     }
   }
 }

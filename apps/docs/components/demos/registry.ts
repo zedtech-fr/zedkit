@@ -21,6 +21,7 @@ import { SkeletonDemo } from "./skeleton-demo";
 import { StackDemo } from "./stack-demo";
 import { TabsDemo } from "./tabs-demo";
 import { TextareaDemo } from "./textarea-demo";
+import { ToasterDemo } from "./toaster-demo";
 import { ToggleDemo } from "./toggle-demo";
 import { TypographyDemo } from "./typography-demo";
 import { UpdatedAgoDemo } from "./updated-ago-demo";
@@ -62,6 +63,7 @@ export const demoRegistry = {
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
   TabsDemo: { Demo: TabsDemo, file: "tabs-demo.tsx" },
   TextareaDemo: { Demo: TextareaDemo, file: "textarea-demo.tsx" },
+  ToasterDemo: { Demo: ToasterDemo, file: "toaster-demo.tsx", center: true },
   ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx", center: true },
   TypographyDemo: { Demo: TypographyDemo, file: "typography-demo.tsx" },
   UpdatedAgoDemo: { Demo: UpdatedAgoDemo, file: "updated-ago-demo.tsx" },

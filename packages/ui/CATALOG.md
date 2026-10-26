@@ -404,7 +404,7 @@ const router = useRouter();
 
 ## Show toast notifications
 
-- Import: `@zedtech/zedkit-ui` — `Toaster`
+- Import: `@zedtech/zedkit-ui` — `Toaster`, `toast`
 - Wraps: `sonner`
 - Status: beta
 - Derived from: shadcn/ui (sonner)
@@ -416,8 +416,7 @@ const router = useRouter();
 - See also: `Call out a notice or an error state`
 
 ```ts
-import { Toaster } from "@zedtech/zedkit-ui";
-import { toast } from "sonner";
+import { Toaster, toast } from "@zedtech/zedkit-ui";
 <Toaster /> // once near the root, then toast("Saved") anywhere
 ```
 

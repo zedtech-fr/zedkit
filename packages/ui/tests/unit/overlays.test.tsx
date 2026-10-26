@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { toast } from "sonner";
 import { Button } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "#index.js";
 import { SecretField } from "#index.js";
-import { Toaster } from "#index.js";
+import { Toaster, toast } from "#index.js";
 
 describe("overlays", () => {
   it("opens and closes a dialog", async () => {
@@ -103,6 +102,17 @@ describe("overlays", () => {
     render(<Toaster />);
     toast("Saved");
     expect(await screen.findByText("Saved")).not.toBeNull();
+  });
+
+  it("maps toast theme to token classes with no arbitrary values", async () => {
+    render(<Toaster />);
+    toast("Themed");
+    const toastNode = await screen.findByText("Themed");
+    const toastRoot = toastNode.closest("[data-sonner-toast]");
+    expect(toastRoot?.className).toContain("bg-background");
+    expect(toastRoot?.className).toContain("text-foreground");
+    expect(toastRoot?.className).toContain("border-border");
+    expect(toastRoot?.className).not.toContain("[");
   });
 
   describe("secret field", () => {
