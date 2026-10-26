@@ -518,7 +518,7 @@ import { Wizard, WizardStep } from "@zedtech/zedkit-ui";
 
 ## Show key-value details and a live indicator
 
-- Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`
+- Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `DetailPanelRow`, `DetailPanelRowProps`, `LivePulse`, `LivePulseProps`
 - Wraps: none (theme tokens only)
 - Status: beta
 - Short name: DetailPanel
@@ -527,11 +527,20 @@ import { Wizard, WizardStep } from "@zedtech/zedkit-ui";
 - When to use: For read-only record summaries next to the list.
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
+- Examples: Simple, Composed rows
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
 <PageHeader title="Server" actions={<LivePulse />} />
 <DetailPanel items={[{ label: "Region", value: "eu" }]} />
+```
+
+```ts
+import { DetailPanelRow } from "@zedtech/zedkit-ui";
+<dl>
+  <DetailPanelRow label="Region" value="eu" />
+</dl>
 ```
 
 ## Build validated forms with labels, errors, and pending state

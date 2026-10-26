@@ -23,7 +23,13 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
-export { DetailPanel, type DetailItem, type DetailPanelProps } from "./detail-panel.js";
+export {
+  DetailPanel,
+  DetailPanelRow,
+  type DetailItem,
+  type DetailPanelProps,
+  type DetailPanelRowProps,
+} from "./detail-panel.js";
 export {
   Drawer,
   type DrawerProps,
