@@ -75,7 +75,7 @@ const SelectContent = React.forwardRef<
         // Allowed arbitraries (Radix runtime vars, unsettable at build
         // time, so no theme token can replace them): content max-height,
         // transform origin, trigger height/width below.
-        "relative z-overlay max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md",
+        "relative z-overlay max-h-[--radix-select-content-available-height] min-w-select-content-min origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md",
         position === "popper" &&
           "data-[side=bottom]:translate-y-select-separator data-[side=left]:-translate-x-select-separator data-[side=right]:translate-x-select-separator data-[side=top]:-translate-y-select-separator",
         className,
@@ -118,7 +118,7 @@ const SelectItem = React.forwardRef<
     )}
     {...props}
   >
-    <span className="absolute right-select-item-inline flex size-select-item-indicator items-center justify-center">
+    <span className="absolute right-select-item-inline flex size-icon-sm items-center justify-center">
       <SelectPrimitive.ItemIndicator>
         <Check className="size-icon-control" />
       </SelectPrimitive.ItemIndicator>
