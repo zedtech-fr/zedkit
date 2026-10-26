@@ -11,6 +11,7 @@ import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { FieldDemo } from "./field-demo";
+import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
@@ -54,6 +55,7 @@ export const demoRegistry = {
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
+  HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },

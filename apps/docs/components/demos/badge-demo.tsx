@@ -6,9 +6,7 @@ export function BadgeDemo() {
       <Badge>beta</Badge>
       <Badge variant="secondary">12 events</Badge>
       <Badge variant="outline">stable</Badge>
-      <Badge asChild variant="destructive">
-        <a href="#badge-demo">action link</a>
-      </Badge>
+      <Badge variant="destructive">deprecated</Badge>
     </Stack>
   );
 }
