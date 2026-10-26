@@ -46,6 +46,17 @@ describe("select", () => {
     await screen.findByRole("listbox");
   });
 
+  it("styles label, item, and indicator from item tokens", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+    await user.click(screen.getByRole("combobox", { name: "Region" }));
+    const option = await screen.findByRole("option", { name: "Europe" });
+    for (const token of ["py-select-item-block", "pr-select-item-indicator-gap", "pl-select-item-inline"]) {
+      expect(option.className).toContain(token);
+    }
+    expect(option.className).not.toMatch(/(^|\s)(py-1\.5|pr-8|pl-2)(\s|$)/);
+  });
+
   it("shows a disabled message and reports nothing when there are no options", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
