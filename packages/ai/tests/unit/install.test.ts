@@ -434,6 +434,7 @@ const FIRST_PARTY_SKILLS = [
   "review",
   "plan",
   "challenge",
+  "use-zedkit",
 ];
 
 function kitRoot(): string {
