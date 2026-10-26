@@ -14,9 +14,12 @@ A change can be correct and still useless to the person it is for. Name the audi
 
 | Persona | Question |
 |---|---|
-| New user | Can I do the task from the README and examples alone? |
-| Integrating developer or coding agent | Are the contract, errors and failure semantics clear without reading the implementation? |
-| Operator or maintainer | Can I see what happened, repair it, and replay it without losing data? |
+| Stressed user (rushed, anxious) | Can I get through fast without losing anything, see that it is saved, and never face a naked spinner? |
+| Lazy end client (distracted, doubtful) | Can I finish on a phone, interrupted, on flaky network, and resume where I left off? |
+| Integrating developer | Can I adopt it from the README and examples alone? |
+| Coding agent | Can I consume it programmatically, with stable names and runnable examples? |
+| Maintainer / operator | Can I see what happened, repair it, and replay it without losing data? |
+| New contributor | Can I make a first correct change from discoverable conventions and runnable tests? |
 | Security reviewer | Can I verify isolation, authorization and secret handling from tests and code? |
 | Business owner | Does it solve the stated problem, and what does it cost to adopt? |
 
