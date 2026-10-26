@@ -96,6 +96,17 @@
       }
     },
     {
+      "name": "updated-ago",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/updated-ago.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "status-label",
       "type": "registry:ui",
       "dependencies": ["lucide-react"],
