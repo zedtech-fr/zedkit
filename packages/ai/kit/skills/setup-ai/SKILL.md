@@ -92,7 +92,7 @@ Shared source first, provider layers after. `zedkit-ai init --provider <names>` 
 - **Nested `AGENTS.md`**: only what differs from the root. Link, do not copy.
 - **Repo skills**: folder `.agents/skills/<name>/SKILL.md`. The `description` says when to use it. Steps use this repo's real paths and commands, end with the command that proves the result, and point at an existing example file as the model. Follow `rules-upkeep` for format.
 - **Personas**: `.agents/personas.md` starts from the kit template (init installs it); customize the names and bars from repo evidence (README audience, real users), one row each for end client, integrator and operator. `persona-review` reads this file.
-- **Subagents**: `.agents/agents/<name>.md`, one-line description, `model` omitted. Read-only unless the job needs writes.
+- **Subagents**: `.agents/agents/<name>.md`, one-line description, `model` omitted or `inherit`. Read-only unless the job needs writes.
 - **Improve mode**: edit in place, smallest change, keep the author's wording where it is correct. Log what changed.
 
 ## 6. Verify

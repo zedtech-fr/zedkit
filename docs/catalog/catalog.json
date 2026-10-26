@@ -1395,7 +1395,9 @@
               "code": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert asChild>\n  <section aria-label=\"Maintenance notice\">\n    <AlertTitle>Scheduled maintenance</AlertTitle>\n    <AlertDescription>Sunday 02:00–03:00 UTC.</AlertDescription>\n  </section>\n</Alert>"
             }
           ],
+          "registry": "alert",
           "a11y": "Root carries `role=\"alert\"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.",
+          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
           "seeAlso": [
             "Show toast notifications"
           ]
