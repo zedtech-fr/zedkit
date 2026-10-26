@@ -4,11 +4,13 @@ import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { source } from "#source";
 import { featuredPackageChangelogUrl } from "@/content/gallery";
 import { SiteBrand } from "@/ui/site-brand";
+import { DocsHeader } from "@/ui/site-headers";
 import { siteHeaderLinks } from "@/lib/site-header-links";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
+      slots={{ header: DocsHeader }}
       tree={source.pageTree}
       nav={{ title: <SiteBrand />, url: "/" }}
       githubUrl="https://github.com/zedtech-fr/zedkit"

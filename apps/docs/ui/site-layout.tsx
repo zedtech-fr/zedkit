@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { siteHeaderLinks } from "@/lib/site-header-links";
 import { SiteBrand } from "@/ui/site-brand";
+import { SiteHeader } from "@/ui/site-headers";
 import { SitePageShell } from "@/ui/site-page-shell";
 
 /** Shared marketing shell: nav, search, theme toggle, GitHub link. */
@@ -14,6 +15,7 @@ export function SiteLayout({
 }) {
   return (
     <HomeLayout
+      slots={{ header: SiteHeader }}
       nav={{
         title: <SiteBrand />,
         url: "/",

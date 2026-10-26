@@ -11,7 +11,7 @@ for (const identity of IDENTITIES) {
     await page.addInitScript((id) => window.localStorage.setItem("zk-identity", id), identity);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
-    const card = page.locator("#scenarios").locator("div.rounded-lg").first();
+    const card = page.locator("#scenarios").locator("div.bg-card").first();
     await card.scrollIntoViewIfNeeded();
     const size = (loc: ReturnType<typeof card.locator>) =>
       loc.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
