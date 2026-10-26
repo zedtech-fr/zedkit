@@ -42,6 +42,7 @@
     "Load each zone with a faithful skeleton": {
       "package": "@zedtech/zedkit-ui",
       "component": "CardSkeleton",
+      "registry": "card-skeleton",
       "props": "CardSkeletonProps",
       "source": "card-skeleton.tsx",
       "demo": "LoadingZonesDemo"

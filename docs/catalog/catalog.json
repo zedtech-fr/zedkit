@@ -941,10 +941,17 @@
           "example": "import { Suspense } from \"react\";\nimport { CardSkeleton } from \"@zedtech/zedkit-ui\";\n<Suspense fallback={<CardSkeleton label=\"Loading report\" />}>\n  <ReportCard />\n</Suspense>",
           "examples": [
             {
-              "title": "Simple",
+              "title": "In Suspense",
               "code": "import { Suspense } from \"react\";\nimport { CardSkeleton } from \"@zedtech/zedkit-ui\";\n<Suspense fallback={<CardSkeleton label=\"Loading report\" />}>\n  <ReportCard />\n</Suspense>"
+            },
+            {
+              "title": "Standalone",
+              "code": "import { CardSkeleton } from \"@zedtech/zedkit-ui\";\n{loading ? <CardSkeleton label=\"Loading report\" /> : <ReportCard />}"
             }
           ],
+          "registry": "card-skeleton",
+          "a11y": "`role=\"status\"` with `aria-label` from the `label` prop (default \"Loading\") — screen readers announce the zone; the label is never shown visually.",
+          "troubleshooting": "Generic announcement — pass a specific `label` per zone (default is \"Loading\"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts.",
           "seeAlso": [
             "Show loading placeholder blocks"
           ]

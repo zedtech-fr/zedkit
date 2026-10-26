@@ -154,6 +154,16 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "card-skeleton": {
+      cssVars: {
+        theme: {
+          "spacing-card-padding": varFromBlock(theme, "spacing-card-padding"),
+          "spacing-card-stack": varFromBlock(theme, "spacing-card-stack"),
+          "spacing-card-section": varFromBlock(theme, "spacing-card-section"),
+          "spacing-card-lines": varFromBlock(theme, "spacing-card-lines"),
+        },
+      },
+    },
   };
 }
 
