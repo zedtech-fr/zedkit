@@ -21,24 +21,25 @@ Node and peer requirements per package.
 
 ## Four areas
 
-### Admin UI (`@zedtech/zedkit-ui`)
+### UI (`@zedtech/zedkit-ui`)
 
-Components, layout, forms, tables, and theme tokens for internal admin surfaces.
-Start with [Build an admin dashboard](/docs/build-an-admin-dashboard), then browse **ui** in the sidebar or [Trigger actions with buttons](/docs/ui/trigger-actions-with-buttons).
+Components, layout, forms, tables, and theme tokens for any React UI: sites, apps, dashboards, and admin tools.
+Start with [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included), browse **ui** in the sidebar or [Trigger actions with buttons](/docs/ui/trigger-actions-with-buttons); [Build an admin dashboard](/docs/build-an-admin-dashboard) is one worked example.
 
-### Backend (`core`, `server`, `nest`)
+### Core & server (`core`, `server`, `nest`)
 
-Shared error handling, IDs, logging, rate limits, and Nest bootstrap helpers.
+`core` is plain TypeScript for any JS/TS project (front end, back end, scripts, edge): Result helpers, `tryCatch` / `tryCatchAsync`, and prefixed IDs.
+`server` adds Node hardening (rate limiting, log redaction, crypto); `nest` adds NestJS bootstrap and API helpers.
 Open **core**, **server**, or **nest** in the sidebar — for APIs, follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api) or [Bootstrap a Nest app](/docs/nest/bootstrap-a-nest-app).
 
 ### SEO (`seo`, `payload-seo`)
 
-Metadata, JSON-LD, sitemaps, robots, and Payload CMS SEO tabs.
+Metadata, hreflang, slugs, sitemaps, robots, typed JSON-LD, and `llms.txt` for any TypeScript site; `payload-seo` adds localized SEO fields for Payload CMS.
 Start with [Add SEO to a Next.js app](/docs/add-seo-to-nextjs), then open **seo** and **payload-seo** in the sidebar for each catalog need.
 
 ### Coding agents (`ai`)
 
-Installer, validator, and the skill/subagent kit copied into your repo.
+One agent-agnostic setup copied into your repo: installer, validator, and the skill/subagent kit.
 See **ai** in the sidebar or [Set up AI agent instructions](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo).
 
 ## Catalog reference

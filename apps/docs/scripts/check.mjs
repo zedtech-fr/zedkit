@@ -260,6 +260,21 @@ if (guidePages < 2) errors.push(`guides: expected at least getting-started.mdx a
 for (const slug of GUIDE_NAV_SLUGS) {
   if (!existsSync(join(tmp, `${slug}.mdx`))) errors.push(`guides: generated /docs/${slug} missing.`);
 }
+const indexGuidePath = join(guidesDir, "index.mdx");
+if (existsSync(indexGuidePath)) {
+  const indexText = expandGuideSnippets(readFileSync(indexGuidePath, "utf8"));
+  for (const heading of [
+    "### UI (`@zedtech/zedkit-ui`)",
+    "### Core & server (`core`, `server`, `nest`)",
+  ]) {
+    if (!indexText.includes(heading)) {
+      errors.push(`guides: index.mdx must include "${heading}".`);
+    }
+  }
+  if (/### Admin UI|### Backend \(`core`/.test(indexText)) {
+    errors.push("guides: index.mdx uses deprecated Admin UI / Backend area headings.");
+  }
+}
 for (const path of SITE_HEADER_INTERNAL_PATHS) {
   const rel = path === "/docs" ? "index.mdx" : `${path.replace(/^\/docs\//, "")}.mdx`;
   if (!existsSync(join(tmp, rel))) {

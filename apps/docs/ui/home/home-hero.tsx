@@ -29,7 +29,7 @@ export function HomeHero({
           Build the parts you need. Keep the rest of your app.
         </Heading>
         <Text className="max-w-2xl">
-          TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
+          TypeScript packages for UI, core & server helpers, SEO, and coding-agent setup — each
           need documented from the same catalog as the site, with{" "}
           <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
         </Text>
