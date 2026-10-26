@@ -63,6 +63,10 @@ function checkSkill(root: string, name: string, issues: Issue[]): void {
   }
   checkName(parsed.value.data.name, name, path, issues);
   checkDescription(parsed.value.data.description, path, issues);
+  // No single-line check here, deliberately: skill descriptions are read
+  // through YAML-aware loaders (this kit's `yaml` parse, providers), so a
+  // folded block always renders single-line. The raw-text rule exists only
+  // for agent/command lists shown by naive parsers. See #484.
 }
 
 function checkAgent(root: string, file: string, issues: Issue[]): void {

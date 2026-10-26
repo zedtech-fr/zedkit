@@ -58,6 +58,12 @@ describe("validateKit", () => {
     expect(messages(root)).toEqual([expect.stringContaining("no SKILL.md")]);
   });
 
+  it("accepts a skill with a folded multi-line description (#484)", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", "---\nname: alpha\ndescription: >\n  folded line one\n  folded line two\n---\n");
+    expect(validateKit(root)).toEqual([]);
+  });
+
   it("flags missing or broken frontmatter", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", "# no frontmatter\n");
