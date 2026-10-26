@@ -106,7 +106,7 @@ export {
   SelectValue,
 } from "./select.js";
 export { Separator } from "./separator.js";
-export { Skeleton } from "./skeleton.js";
+export { Skeleton, type SkeletonProps } from "./skeleton.js";
 export {
   Table,
   TableBody,

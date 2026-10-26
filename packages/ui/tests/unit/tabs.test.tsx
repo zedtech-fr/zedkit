@@ -45,4 +45,11 @@ describe("tabs", () => {
     expect(panel.className).toContain("focus-ring");
     expect(panel.className).not.toMatch(/(^|\s)(mt-2|ring-2)(\s|$)/);
   });
+
+  it("scrolls horizontally instead of clipping on narrow widths", () => {
+    render(<DemoTabs />);
+    const list = screen.getByRole("tablist");
+    expect(list.classList.contains("max-w-full")).toBe(true);
+    expect(list.classList.contains("overflow-x-auto")).toBe(true);
+  });
 });

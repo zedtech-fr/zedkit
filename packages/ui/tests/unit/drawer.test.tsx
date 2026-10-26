@@ -3,6 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
+import { assertNoValueArbitraries } from "./no-arbitraries.js";
 import { Button } from "#index.js";
 
 beforeAll(() => {
@@ -264,7 +265,7 @@ describe("drawer", () => {
       document.querySelector("[data-vaul-overlay]")?.className ?? "",
     ];
     for (const className of classes) {
-      expect(className).not.toMatch(/\[[-\d#]/);
+      assertNoValueArbitraries(className);
     }
   });
 
