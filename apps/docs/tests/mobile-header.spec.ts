@@ -45,8 +45,7 @@ for (const path of PAGES) {
       expect((box?.x ?? 0) + (box?.width ?? 0)).toBeGreaterThan(390 - 40);
       expect((box?.y ?? 0) + (box?.height ?? 0)).toBeGreaterThan(844 - 40);
       await fab.click();
-      await expect(page.getByRole("dialog")).toBeVisible();
-      await expect(page.getByRole("dialog").getByRole("combobox")).toBeFocused();
+      await expect(page.getByRole("searchbox")).toBeFocused();
     });
   });
 }

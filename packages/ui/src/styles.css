@@ -120,6 +120,8 @@
   --spacing-icon-control: 1rem;
   /* Minimum touch target (WCAG 2.5.5): not density-scaled. */
   --spacing-tap: 2.75rem;
+  /* Text entered in a field: 16px on phones in every identity (below that, iOS zooms the page on focus). */
+  --text-field: 1rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
    * across components; per-component `--spacing-<component>-*` aliases

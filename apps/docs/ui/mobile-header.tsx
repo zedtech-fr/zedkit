@@ -2,9 +2,8 @@
 
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { GitBranch, Menu, Moon, Search, Sun } from "lucide-react";
+import { GitBranch, Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useSearchContext } from "fumadocs-ui/contexts/search";
 import { useSidebar } from "fumadocs-ui/components/sidebar/base";
 import {
   Drawer,
@@ -16,27 +15,13 @@ import {
   IdentityPicker,
   Logo,
 } from "@zedtech/zedkit-ui";
+import { SearchPill } from "@/ui/search-pill";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 
 const iconButtonClassName =
   "inline-flex min-h-tap min-w-tap items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
 
 type MobileLink = { text: string; href: string; external?: boolean };
-
-/** Search button fixed at the bottom-right of the viewport (phones only). */
-function SearchFab() {
-  const { setOpenSearch } = useSearchContext();
-  return (
-    <button
-      type="button"
-      aria-label="Search the documentation"
-      onClick={() => setOpenSearch(true)}
-      className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay inline-flex min-h-tap min-w-tap items-center justify-center rounded-full border bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95 in-data-[identity-tour]:invisible motion-reduce:transition-none md:hidden"
-    >
-      <Search aria-hidden="true" className="size-icon-control" />
-    </button>
-  );
-}
 
 const noop = () => () => {};
 
@@ -132,7 +117,7 @@ export function MobileHeader({
           {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton links={links} />}
         </div>
       </header>
-      <SearchFab />
+      <SearchPill />
     </>
   );
 }
