@@ -1020,6 +1020,29 @@
           ]
         },
         {
+          "need": "Quiet icon beside inline text",
+          "import": "`@zedtech/zedkit-ui` — `IconLabel`, `IconLabelProps`",
+          "wraps": "`lucide-react` (icon slot)",
+          "status": "beta",
+          "shortName": "IconLabel",
+          "audience": "Developers pairing a small decorative icon with a text label (chips, table cells).",
+          "purpose": "Fixed-size muted icon + label row; icon is `aria-hidden`, label stays readable.",
+          "whenToUse": "Recognition hints next to names or actions, not in running prose.",
+          "whenNotToUse": "Standalone icons — use the Lucide component directly; primary actions — use `Button`.",
+          "derivedFrom": null,
+          "example": "import { Search } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n<IconLabel icon={Search}><code>explorer</code></IconLabel>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Search } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n<IconLabel icon={Search}><code>explorer</code></IconLabel>"
+            }
+          ],
+          "a11y": "Icon is decorative; put the readable name in `children`.",
+          "seeAlso": [
+            "Celebrate completion with a checkmark"
+          ]
+        },
+        {
           "need": "Celebrate completion with a checkmark",
           "import": "`@zedtech/zedkit-ui` — `Checkmark`, `CheckmarkProps`",
           "wraps": "`(none)`",
