@@ -5,7 +5,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Typed Result helpers, safe try/catch wrappers, prefixed IDs and hashing — stop writing the same utilities in every repo. Original work by the same author.",
+  "description": "Typed Result helpers, safe try/catch wrappers, and prefixed IDs for any JS/TS project — stop writing the same utilities in every repo. Original work by the same author.",
   "keywords": [
     "typescript",
     "utilities",
@@ -15,8 +15,8 @@
     "ulid",
     "unique-id",
     "prefixed-id",
-    "hashing",
-    "functional"
+    "functional",
+    "try-catch"
   ],
   "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/core",
   "bugs": {

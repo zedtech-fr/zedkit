@@ -11,6 +11,11 @@ describe("cn", () => {
     expect(cn("bg-red-500", "bg-blue-500")).toBe("bg-blue-500");
   });
 
+  it("treats the input font-size token as a font size, not a text color", () => {
+    expect(cn("text-control", "text-lg")).toBe("text-lg");
+    expect(cn("text-foreground", "text-control")).toBe("text-foreground text-control");
+  });
+
   it("keeps non-conflicting utilities from every input", () => {
     expect(cn("text-sm font-medium", "px-4")).toBe("text-sm font-medium px-4");
   });

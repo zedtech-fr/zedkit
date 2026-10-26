@@ -76,8 +76,8 @@
         "ulid",
         "unique-id",
         "prefixed-id",
-        "hashing",
-        "functional"
+        "functional",
+        "try-catch"
       ],
       "audience": "TypeScript developers tired of untyped throws and ad-hoc helpers.",
       "needs": [
@@ -629,7 +629,6 @@
         "react-components",
         "ui-kit",
         "design-system",
-        "admin",
         "dashboard",
         "tailwindcss",
         "tailwind-v4",
@@ -637,9 +636,10 @@
         "shadcn",
         "dark-mode",
         "accessible",
-        "nextjs"
+        "nextjs",
+        "sites"
       ],
-      "audience": "Teams building admin consoles and dashboards on React 19 + Tailwind v4.",
+      "audience": "Teams building React 19 + Tailwind v4 UIs — sites, apps, dashboards, and admin tools.",
       "needs": [
         {
           "need": "Theme an admin app (dark/light included)",
@@ -702,6 +702,25 @@
           ],
           "seeAlso": [
             "Confirm destructive actions"
+          ]
+        },
+        {
+          "need": "Icon-only actions with a visible name",
+          "import": "`@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`",
+          "wraps": "`Button` (same variants and sizes; `size` defaults to `icon`)",
+          "status": "beta",
+          "shortName": "IconButton",
+          "audience": "Developers adding icon-only header or toolbar controls in an admin UI.",
+          "purpose": "Icon-only controls with matching `aria-label` and `title` from one `label` prop.",
+          "whenToUse": "Toolbar or header controls where the glyph alone is not enough for screen readers.",
+          "whenNotToUse": "Actions with visible text — use `Button` instead.",
+          "derivedFrom": null,
+          "example": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>"
+            }
           ]
         },
         {
@@ -789,7 +808,7 @@
         },
         {
           "need": "Show loading placeholder blocks",
-          "import": "`@zedtech/zedkit-ui` — `Skeleton`",
+          "import": "`@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`",
           "wraps": "`(none)`",
           "status": "beta",
           "shortName": "Skeleton",
@@ -803,8 +822,15 @@
             {
               "title": "Simple",
               "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
+            },
+            {
+              "title": "Text lines",
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-full\" /> // stack lines for text blocks; shape is all className"
             }
           ],
+          "registry": "skeleton",
+          "a11y": "Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container.",
+          "troubleshooting": "No pulse — the pulse is `motion-safe:animate-pulse`: static under reduced-motion, and it needs Tailwind's default theme. Wrong shape — size comes only from your `className`; the brick ships no dimensions.",
           "seeAlso": [
             "Show determinate progress"
           ]
@@ -865,7 +891,9 @@
               "code": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={100} label=\"Upload complete\" />"
             }
           ],
+          "registry": "progress-bar",
           "a11y": "Root carries `role=\"progressbar\"` with clamped value; keep the label screen-only and pair with visible text.",
+          "troubleshooting": "Bar looks empty — `NaN` and out-of-range values clamp (negative to 0, over max to full). Screen reader silent — the bar is a plain progressbar; announce milestones with a `StatusLabel` beside it.",
           "seeAlso": [
             "Show loading placeholder blocks"
           ]
@@ -970,6 +998,7 @@
               "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"offline\">You are offline</StatusLabel>"
             }
           ],
+          "registry": "status-label",
           "a11y": "`role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.",
           "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
           "seeAlso": [
@@ -1115,7 +1144,7 @@
         },
         {
           "need": "Show toast notifications",
-          "import": "`@zedtech/zedkit-ui` — `Toaster`, `toast`",
+          "import": "`@zedtech/zedkit-ui` — `Toaster`, `ToasterProps`, `toast`",
           "wraps": "`sonner`",
           "status": "beta",
           "shortName": "Toaster",
@@ -1129,9 +1158,15 @@
             {
               "title": "Simple",
               "code": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+            },
+            {
+              "title": "Error toast",
+              "code": "import { toast } from \"@zedtech/zedkit-ui\";\ntoast.error(\"Upload failed\"); // typed variants: success | error | info | warning"
             }
           ],
+          "registry": "sonner",
           "a11y": "The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.",
+          "troubleshooting": "No toast appears — render `<Toaster />` once near the app root, then call `toast()`. Wrong colors — toast slots map to semantic theme tokens, so the theme stylesheet must be loaded.",
           "seeAlso": [
             "Call out a notice or an error state"
           ]
@@ -1160,7 +1195,7 @@
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
-          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
+          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
           "shortName": "DataTable",
@@ -1178,6 +1213,14 @@
             {
               "title": "Standalone pagination",
               "code": "import { DataTablePagination } from \"@zedtech/zedkit-ui\";\nconst [page, setPage] = useState(2);\n<DataTablePagination page={page} pageCount={4}\n  canPrevious={page > 1} canNext={page < 4}\n  onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />"
+            },
+            {
+              "title": "Standalone empty row",
+              "code": "import { DataTableEmpty, Table, TableBody } from \"@zedtech/zedkit-ui\";\n<Table><TableBody>\n  <DataTableEmpty colSpan={3} message=\"Nothing here.\" />\n</TableBody></Table>"
+            },
+            {
+              "title": "Standalone toolbar",
+              "code": "import { DataTableToolbar } from \"@zedtech/zedkit-ui\";\nconst [query, setQuery] = useState(\"\");\n<DataTableToolbar value={query} onChange={setQuery} />"
             }
           ],
           "a11y": "Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.",
@@ -1261,7 +1304,9 @@
               "code": "import { DetailPanelRow } from \"@zedtech/zedkit-ui\";\n<dl>\n  <DetailPanelRow label=\"Region\" value=\"eu\" />\n</dl>"
             }
           ],
+          "registry": "detail-panel",
           "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"
@@ -1381,7 +1426,9 @@
               "code": "import { Heading } from \"@zedtech/zedkit-ui\";\n<Heading level={2} asChild>\n  <a href=\"#section\">Section title as a link</a>\n</Heading>"
             }
           ],
+          "registry": "typography",
           "a11y": "Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.",
+          "troubleshooting": "Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]
@@ -1408,7 +1455,9 @@
               "code": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert asChild>\n  <section aria-label=\"Maintenance notice\">\n    <AlertTitle>Scheduled maintenance</AlertTitle>\n    <AlertDescription>Sunday 02:00–03:00 UTC.</AlertDescription>\n  </section>\n</Alert>"
             }
           ],
+          "registry": "alert",
           "a11y": "Root carries `role=\"alert\"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.",
+          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
           "seeAlso": [
             "Show toast notifications"
           ]

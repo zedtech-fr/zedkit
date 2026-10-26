@@ -7,6 +7,7 @@ import { IdentityScript } from "@zedtech/zedkit-ui";
 import { Provider } from "./provider";
 import "./fonts";
 import "./globals.css";
+import "./docs-shell-tokens.css";
 
 const baseMetadata = docsPageMetadata("/", homePage);
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-docs-shell suppressHydrationWarning>
       <head>
         <IdentityScript />
       </head>

@@ -23,15 +23,15 @@
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --muted-foreground: 240 5% 32%;
   --accent: 240 4.8% 95.9%;
   --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 72.2% 50.6%;
+  --destructive: 0 72.2% 47%;
   --destructive-foreground: 0 0% 98%;
   --success: 142.1 76.2% 36.3%;
   --success-foreground: 0 0% 98%;
   --warning: 32 95% 44%;
-  --warning-foreground: 0 0% 98%;
+  --warning-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
@@ -44,6 +44,22 @@
   --ring-width: 2px;
   --ring-width-control: 1px;
   --ring-offset-width: 2px;
+  /*
+   * Text size of every field a user types into (Input, Textarea,
+   * Select trigger, SecretField, DataTable filter). Touch and narrow
+   * screens raise it to 16px minimum below: iOS Safari zooms the whole
+   * page on focus when a field computes smaller than that, and the zoom
+   * stays. Identities and apps change this token, never a field's
+   * font-size, and inherit the floor for free.
+   */
+  --zk-input-font-size: 0.875rem;
+}
+
+/* Touch or phone-width screens: 16px floor, desktop keeps the design size. */
+@media (pointer: coarse), (max-width: 767px) {
+  :root {
+    --zk-input-font-size: max(16px, 0.875rem);
+  }
 }
 
 .dark,
@@ -62,12 +78,12 @@
   --muted-foreground: 240 5% 64.9%;
   --accent: 240 3.7% 15.9%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 50.6%;
+  --destructive: 0 72.2% 45%;
   --destructive-foreground: 0 0% 98%;
   --success: 142.1 70.6% 45.3%;
   --success-foreground: 240 10% 3.9%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 240 10% 3.9%;
+  --warning: 32 95% 32%;
+  --warning-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
@@ -120,6 +136,13 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  /*
+   * Spacing convention (#367): one canonical name per value. A value used
+   * by 2+ tokens is canonicalized to its Tailwind scale step — new code
+   * uses default utilities (p-4, gap-2) instead of minting another alias.
+   * Single-use values keep their semantic token. The full value → tokens
+   * map is scripts/registry/spacing-aliases.json, enforced by its test.
+   */
   --spacing-badge-inline: calc(0.625rem * var(--zk-density, 1));
   --spacing-badge-block: calc(0.125rem * var(--zk-density, 1));
   --spacing-control-height: max(var(--zk-tap-min), calc(2.25rem * var(--zk-control-scale, 1)));
@@ -128,11 +151,10 @@
   --spacing-button-inline: calc(1rem * var(--zk-density, 1));
   --spacing-button-inline-sm: calc(0.75rem * var(--zk-density, 1));
   --spacing-button-inline-lg: calc(2rem * var(--zk-density, 1));
+  --spacing-button-gap: 0.5rem;
   --spacing-icon-control: 1rem;
   /* Minimum touch target (WCAG 2.5.5): not density-scaled. */
   --spacing-tap: 2.75rem;
-  /* Text entered in a field: 16px on phones in every identity (below that, iOS zooms the page on focus). */
-  --text-field: 1rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
    * across components; per-component `--spacing-<component>-*` aliases
@@ -209,6 +231,9 @@
   --spacing-live-pulse-gap: 0.375rem;
   --spacing-secret-field-gap: 0.5rem;
   --spacing-page-header-title-gap: calc(0.25rem * var(--zk-density, 1));
+  --spacing-page-header-offset: calc(1.5rem * var(--zk-density, 1));
+  --spacing-page-header-gap: calc(1rem * var(--zk-density, 1));
+  --spacing-page-header-actions-gap: calc(0.5rem * var(--zk-density, 1));
   --spacing-dialog-center: 50%;
   --shadow-overlay: var(--zk-shadow-overlay);
   --spacing-dialog-gap: calc(1rem * var(--zk-density, 1));
@@ -229,6 +254,8 @@
   --container-route-modal-dialog-lg: 42rem;
   --spacing-form-item-gap: calc(0.5rem * var(--zk-density, 1));
   --text-form-hint: 0.8rem;
+  --text-control: var(--zk-input-font-size);
+  --text-control--line-height: 1.25rem;
   --spacing-drawer-max-height: 96dvh;
   --container-drawer-side: 28rem;
   --spacing-drawer-handle-top: 1rem;

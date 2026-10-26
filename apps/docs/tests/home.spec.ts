@@ -14,7 +14,7 @@ test("home explains the product and four entry areas", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Choose an area" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open UI docs" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Open backend docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open core & server docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
   expect(errors).toEqual([]);

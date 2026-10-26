@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { Badge, Button, Heading, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { maturityBadgeVariant } from "@/lib/maturity-status";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
 const AREAS: { id: CatalogArea | "all"; label: string }[] = [
   { id: "all", label: "All areas" },
   { id: "ui", label: "UI" },
-  { id: "backend", label: "Backend" },
+  { id: "backend", label: "Core & server" },
   { id: "seo", label: "SEO" },
   { id: "agents", label: "Agents" },
 ];
@@ -153,7 +154,7 @@ export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
                 </Stack>
                 <Stack direction="horizontal" gap={2} className="items-center">
                   <Badge variant="outline">{entry.area}</Badge>
-                  <Badge>{entry.status}</Badge>
+                  <Badge variant={maturityBadgeVariant(entry.status)}>{entry.status}</Badge>
                 </Stack>
               </Stack>
             ))}

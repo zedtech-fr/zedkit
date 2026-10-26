@@ -4,6 +4,7 @@ import { siteHeaderLinks } from "@/lib/site-header-links";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteHeader } from "@/ui/site-headers";
 import { SitePageShell } from "@/ui/site-page-shell";
+import { siteChromeSlots } from "@/ui/site-chrome";
 
 /** Shared marketing shell: nav, search, theme toggle, GitHub link. */
 export function SiteLayout({
@@ -24,6 +25,7 @@ export function SiteLayout({
       links={siteHeaderLinks(changelogHref)}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
+      slots={siteChromeSlots}
     >
       <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
     </HomeLayout>

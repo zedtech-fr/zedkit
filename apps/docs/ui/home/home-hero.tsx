@@ -4,6 +4,7 @@ import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-si
 import { docsSite } from "@/lib/site";
 import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
 import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
+import { HomeInstallOrCopySection } from "@/ui/home/home-install-or-copy-section";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { KitVersionLabel } from "@/ui/kit-version-label";
@@ -32,7 +33,7 @@ export function HomeHero({
               Build the parts you need. Keep the rest of your app.
             </Heading>
             <Text className="max-w-2xl">
-              TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
+              TypeScript packages for UI, core & server helpers, SEO, and coding-agent setup — each
               need documented from the same catalog as the site, with{" "}
               <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
             </Text>
@@ -52,6 +53,7 @@ export function HomeHero({
         </Stack>
       </IdentityCycle>
       <HomeAiSetupSection />
+      <HomeInstallOrCopySection npmPackage={featuredPackage} />
       <HomeUiQuickstartSection
         npmPackage={featuredPackage}
         siteUrl={docsSite.url}

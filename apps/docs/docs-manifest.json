@@ -34,7 +34,8 @@
     "Show loading placeholder blocks": {
       "package": "@zedtech/zedkit-ui",
       "component": "Skeleton",
-      "props": null,
+      "registry": "skeleton",
+      "props": "SkeletonProps",
       "source": "skeleton.tsx",
       "demo": "SkeletonDemo"
     },
@@ -106,6 +107,7 @@
     "Show key-value details and a live indicator": {
       "package": "@zedtech/zedkit-ui",
       "component": "DetailPanel",
+      "registry": "detail-panel",
       "props": "DetailPanelProps",
       "source": "detail-panel.tsx",
       "demo": "DetailsDemo"
@@ -113,6 +115,7 @@
     "Show determinate progress": {
       "package": "@zedtech/zedkit-ui",
       "component": "ProgressBar",
+      "registry": "progress-bar",
       "props": "ProgressBarProps",
       "source": "progress-bar.tsx",
       "demo": "ProgressBarDemo"
@@ -144,6 +147,7 @@
     "Name an operation in progress": {
       "package": "@zedtech/zedkit-ui",
       "component": "StatusLabel",
+      "registry": "status-label",
       "props": "StatusLabelProps",
       "source": "status-label.tsx",
       "demo": "StatusLabelDemo"
@@ -172,6 +176,7 @@
     "Render headings and body text without raw tags": {
       "package": "@zedtech/zedkit-ui",
       "component": "Heading",
+      "registry": "typography",
       "props": "HeadingProps",
       "source": "typography.tsx",
       "demo": "TypographyDemo"
@@ -179,7 +184,8 @@
     "Call out a notice or an error state": {
       "package": "@zedtech/zedkit-ui",
       "component": "Alert",
-      "props": null,
+      "registry": "alert",
+      "props": "AlertProps",
       "source": "alert.tsx",
       "demo": "AlertDemo"
     },
@@ -214,7 +220,8 @@
     "Show toast notifications": {
       "package": "@zedtech/zedkit-ui",
       "component": "Toaster",
-      "props": null,
+      "registry": "sonner",
+      "props": "ToasterProps",
       "source": "sonner.tsx",
       "demo": "ToasterDemo"
     },

@@ -18,6 +18,14 @@ describe("primitives", () => {
     expect(button.className).toContain("bg-destructive");
   });
 
+  it("spaces button content from control tokens", () => {
+    render(<Button>Save</Button>);
+    const button = screen.getByRole("button", { name: "Save" });
+    expect(button.className).toContain("gap-button-gap");
+    expect(button.className).toContain("py-control-block-lg");
+    expect(button.className).not.toMatch(/(^|\s)(gap-2|py-2)(\s|$)/);
+  });
+
   it("merges button styles onto asChild link", () => {
     render(
       <Button asChild variant="outline">
@@ -187,6 +195,22 @@ describe("primitives", () => {
     );
     expect(screen.getByLabelText("Name").className).toContain("h-control-height");
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
+  });
+
+  it("sizes every text field from the input font-size token, never a fixed text-* size", () => {
+    render(
+      <>
+        <Input aria-label="Name" />
+        <Textarea aria-label="Bio" />
+      </>,
+    );
+    for (const label of ["Name", "Bio"]) {
+      const classes = screen.getByLabelText(label).className.split(/\s+/);
+      expect(classes).toContain("text-control");
+      expect(classes).not.toContain("text-sm");
+      expect(classes).not.toContain("text-xs");
+      expect(classes).not.toContain("md:text-sm");
+    }
   });
 
   it("renders a card with header, content, and footer", () => {

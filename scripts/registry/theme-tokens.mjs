@@ -88,6 +88,50 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "status-label": {
+      cssVars: {
+        theme: {
+          "spacing-status-label-gap": varFromBlock(theme, "spacing-status-label-gap"),
+          "spacing-status-label-box": varFromBlock(theme, "spacing-status-label-box"),
+          "spacing-icon-sm": varFromBlock(theme, "spacing-icon-sm"),
+        },
+      },
+    },
+    "progress-bar": {
+      cssVars: {
+        theme: {
+          "spacing-progress-bar-gap": varFromBlock(theme, "spacing-progress-bar-gap"),
+          "spacing-progress-bar-height": varFromBlock(theme, "spacing-progress-bar-height"),
+        },
+      },
+    },
+    alert: {
+      cssVars: {
+        theme: {
+          "spacing-alert-inline": varFromBlock(theme, "spacing-alert-inline"),
+          "spacing-alert-block": varFromBlock(theme, "spacing-alert-block"),
+          "spacing-alert-icon-offset": varFromBlock(theme, "spacing-alert-icon-offset"),
+          "spacing-alert-icon-nudge": varFromBlock(theme, "spacing-alert-icon-nudge"),
+          "spacing-alert-content-indent": varFromBlock(theme, "spacing-alert-content-indent"),
+        },
+      },
+    },
+    typography: {
+      cssVars: {
+        theme: {
+          "spacing-heading-scroll": varFromBlock(theme, "spacing-heading-scroll"),
+        },
+      },
+    },
+    "detail-panel": {
+      cssVars: {
+        theme: {
+          "spacing-detail-panel-gap": varFromBlock(theme, "spacing-detail-panel-gap"),
+          "spacing-detail-panel-inline": varFromBlock(theme, "spacing-detail-panel-inline"),
+          "spacing-detail-panel-block": varFromBlock(theme, "spacing-detail-panel-block"),
+        },
+      },
+    },
   };
 }
 

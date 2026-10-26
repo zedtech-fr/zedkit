@@ -18,6 +18,10 @@ const AXE_BASELINE_RULES_OFF = [
 
 export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
   await page.setViewportSize({ width: MOBILE_WIDTH, height: 844 });
+  // Settle webfonts + layout before measuring: scrollWidth races font swap
+  // and flakes in CI without this (see #412 follow-ups).
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  await page.waitForTimeout(500);
   const target = page.locator("main");
   const hasMain = (await target.count()) > 0;
   const scrollWidth = await page.evaluate((useMain) => {
@@ -33,11 +37,14 @@ export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 }
 
-export async function assertAxeOnMain(page: Page, extraRulesOff: string[] = []): Promise<void> {
-  const results = await new AxeBuilder({ page })
-    .include("main")
-    .disableRules([...AXE_BASELINE_RULES_OFF, ...extraRulesOff])
-    .analyze();
+export async function assertAxeOnMain(
+  page: Page,
+  extraRulesOff: string[] = [],
+  exclude?: string,
+): Promise<void> {
+  let builder = new AxeBuilder({ page }).include("main");
+  if (exclude) builder = builder.exclude(exclude);
+  const results = await builder.disableRules([...AXE_BASELINE_RULES_OFF, ...extraRulesOff]).analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 

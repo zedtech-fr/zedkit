@@ -7,7 +7,7 @@ Hand-written guide. Commands below are copied from tested snippet files under `p
 
 ## Who this is for
 
-You ship TypeScript apps (often React admin UIs, APIs, or content sites) and want small,
+You ship TypeScript apps (React UIs, APIs, content sites, or scripts) and want small,
 versioned packages instead of copying utilities from blog posts. You are fine installing
 from npm and reading one catalog page when you know which need you have.
 
@@ -27,12 +27,23 @@ kit wraps, registry install vs npm, and when to stay on upstream shadcn.
 
 | Area | Packages | Typical first page |
 | --- | --- | --- |
-| Admin UI | `@zedtech/zedkit-ui` | [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) |
-| Backend helpers | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Bootstrap a Nest app](/docs/nest/bootstrap-a-nest-app) |
+| UI | `@zedtech/zedkit-ui` | [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) |
+| Core & server | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Model success or failure without throwing](/docs/core/model-success-or-failure-without-throwing) |
 | SEO | `@zedtech/zedkit-seo`, `@zedtech/zedkit-payload-seo` | [Build localized page metadata](/docs/seo/build-localized-page-metadata) |
 | Coding agents | `@zedtech/zedkit-ai` | [Set up AI agent instructions](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo) |
 
 Install only the packages you need. The docs index groups every catalog entry under these folders.
+
+## Install or copy
+
+For **admin UI**, you can install the npm package or copy individual bricks with the shadcn CLI (your app needs a `components.json`). The registry list grows over time; everything else stays npm-only.
+
+| Path | When to choose it | Command | What you get | Updates |
+| --- | --- | --- | --- | --- |
+| Install packages | Full kit, one import surface, theme tokens from the package | `{{snippet:ui-add.sh}}` | `@zedtech/zedkit-ui` (and peers you add) | Semver via your package manager |
+| Copy via shadcn registry | Files in your repo, full control of one brick | `{{snippet:registry-add.sh}}` | Component source, its npm deps, and CSS variables in your globals | Manual — copied files are yours; the URL tracks the latest published brick |
+
+See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for registry vs npm trade-offs.
 
 ## Prerequisites
 
@@ -61,7 +72,7 @@ Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts
 
 **First result:** the validate command prints `ok`. If it does not, see [Troubleshooting](#troubleshooting).
 
-### Path B — admin UI button (install only on this page)
+### Path B — UI button (install only on this page)
 
 In your app:
 

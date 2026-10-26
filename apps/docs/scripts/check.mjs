@@ -260,6 +260,21 @@ if (guidePages < 2) errors.push(`guides: expected at least getting-started.mdx a
 for (const slug of GUIDE_NAV_SLUGS) {
   if (!existsSync(join(tmp, `${slug}.mdx`))) errors.push(`guides: generated /docs/${slug} missing.`);
 }
+const indexGuidePath = join(guidesDir, "index.mdx");
+if (existsSync(indexGuidePath)) {
+  const indexText = expandGuideSnippets(readFileSync(indexGuidePath, "utf8"));
+  for (const heading of [
+    "### UI (`@zedtech/zedkit-ui`)",
+    "### Core & server (`core`, `server`, `nest`)",
+  ]) {
+    if (!indexText.includes(heading)) {
+      errors.push(`guides: index.mdx must include "${heading}".`);
+    }
+  }
+  if (/### Admin UI|### Backend \(`core`/.test(indexText)) {
+    errors.push("guides: index.mdx uses deprecated Admin UI / Backend area headings.");
+  }
+}
 for (const path of SITE_HEADER_INTERNAL_PATHS) {
   const rel = path === "/docs" ? "index.mdx" : `${path.replace(/^\/docs\//, "")}.mdx`;
   if (!existsSync(join(tmp, rel))) {
@@ -324,6 +339,26 @@ if (galleryFile && existsSync(homeInstallSnippet)) {
   const install = readFileSync(homeInstallSnippet, "utf8").trim();
   if (featuredPackage && install !== `pnpm add ${featuredPackage}`) {
     errors.push(`home-quickstart/snippets/install.sh must be exactly: pnpm add ${featuredPackage}`);
+  }
+}
+const registrySitePath = join(APP, "content", "registry-site.ts");
+if (existsSync(registrySitePath)) {
+  const registrySite = readFileSync(registrySitePath, "utf8");
+  const featuredBrick = /featuredRegistryBrick: string = "([^"]+)"/.exec(registrySite)?.[1];
+  const publicSiteUrl = "https://zedkit.app";
+  if (featuredBrick) {
+    const expectedRegistryAdd = `npx shadcn@latest add ${publicSiteUrl}/r/${featuredBrick}.json`;
+    const registrySnippetPaths = [
+      join(APP, "home-quickstart", "snippets", "registry-add.sh"),
+      join(APP, "prose", "guides", "snippets", "registry-add.sh"),
+    ];
+    for (const path of registrySnippetPaths) {
+      if (!existsSync(path)) {
+        errors.push(`${path} missing.`);
+      } else if (readFileSync(path, "utf8").trim() !== expectedRegistryAdd) {
+        errors.push(`${path} must be exactly: ${expectedRegistryAdd}`);
+      }
+    }
   }
 }
 for (const name of ["globals.css", "page.tsx"]) {

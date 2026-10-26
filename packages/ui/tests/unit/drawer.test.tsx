@@ -3,6 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
+import { assertNoValueArbitraries } from "./no-arbitraries.js";
 import { Button } from "#index.js";
 
 beforeAll(() => {
@@ -252,6 +253,20 @@ describe("drawer", () => {
     const footer = screen.getByTestId("footer");
     expect(footer.className).toContain("gap-drawer-footer-gap");
     expect(footer.className).toContain("p-drawer-chrome-padding");
+  });
+
+  it("carries no value arbitraries on content, overlay, or chrome", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="bottom" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    const classes = [
+      dialog.className,
+      document.querySelector("[data-vaul-overlay]")?.className ?? "",
+    ];
+    for (const className of classes) {
+      assertNoValueArbitraries(className);
+    }
   });
 
   it("renders open on mount with defaultOpen", () => {

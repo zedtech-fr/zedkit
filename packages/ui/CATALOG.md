@@ -1,8 +1,8 @@
 # Catalog — @zedtech/zedkit-ui
 
-- Keywords: react, react-components, ui-kit, design-system, admin, dashboard, tailwindcss, tailwind-v4, radix-ui, shadcn, dark-mode, accessible, nextjs
-- Audience: Teams building admin consoles and dashboards on React 19 + Tailwind v4.
-- Purpose: Ship a calm admin UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).
+- Keywords: react, react-components, ui-kit, design-system, dashboard, tailwindcss, tailwind-v4, radix-ui, shadcn, dark-mode, accessible, nextjs, sites
+- Audience: Teams building React 19 + Tailwind v4 UIs — sites, apps, dashboards, and admin tools.
+- Purpose: Ship a calm React UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).
 
 
 ## Theme an admin app (dark/light included)
@@ -64,6 +64,23 @@ import { Button } from "@zedtech/zedkit-ui";
 <Button asChild variant="secondary">
   <a href="/docs">Read the docs</a>
 </Button>
+```
+
+## Icon-only actions with a visible name
+
+- Import: `@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`
+- Wraps: `Button` (same variants and sizes; `size` defaults to `icon`)
+- Status: beta
+- Short name: IconButton
+- Audience: Developers adding icon-only header or toolbar controls in an admin UI.
+- Purpose: Icon-only controls with matching `aria-label` and `title` from one `label` prop.
+- When to use: Toolbar or header controls where the glyph alone is not enough for screen readers.
+- When not to use: Actions with visible text — use `Button` instead.
+- Examples: Simple
+
+```ts
+import { IconButton } from "@zedtech/zedkit-ui";
+<IconButton label="Open menu">☰</IconButton>
 ```
 
 ## Show a status or count badge
@@ -150,7 +167,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 ## Show loading placeholder blocks
 
-- Import: `@zedtech/zedkit-ui` — `Skeleton`
+- Import: `@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`
 - Wraps: `(none)`
 - Status: beta
 - Derived from: shadcn/ui (skeleton)
@@ -160,10 +177,19 @@ import { Separator } from "@zedtech/zedkit-ui";
 - When to use: For content areas with known approximate shape.
 - When not to use: For progress with a known percentage — use ProgressBar instead.
 - See also: `Show determinate progress`
+- Examples: Simple, Text lines
+- A11y: Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container.
+- Registry: skeleton
+- Troubleshooting: No pulse — the pulse is `motion-safe:animate-pulse`: static under reduced-motion, and it needs Tailwind's default theme. Wrong shape — size comes only from your `className`; the brick ships no dimensions.
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
 <Skeleton className="h-4 w-24" />
+```
+
+```ts
+import { Skeleton } from "@zedtech/zedkit-ui";
+<Skeleton className="h-4 w-full" /> // stack lines for text blocks; shape is all className
 ```
 
 ## Indicate status with a dot
@@ -212,6 +238,8 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - See also: `Show loading placeholder blocks`
 - Examples: Simple, Complete
 - A11y: Root carries `role="progressbar"` with clamped value; keep the label screen-only and pair with visible text.
+- Registry: progress-bar
+- Troubleshooting: Bar looks empty — `NaN` and out-of-range values clamp (negative to 0, over max to full). Screen reader silent — the bar is a plain progressbar; announce milestones with a `StatusLabel` beside it.
 
 ```ts
 import { ProgressBar } from "@zedtech/zedkit-ui";
@@ -301,6 +329,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
+- Registry: status-label
 - Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts
@@ -465,7 +494,7 @@ const router = useRouter();
 
 ## Show toast notifications
 
-- Import: `@zedtech/zedkit-ui` — `Toaster`, `toast`
+- Import: `@zedtech/zedkit-ui` — `Toaster`, `ToasterProps`, `toast`
 - Wraps: `sonner`
 - Status: beta
 - Derived from: shadcn/ui (sonner)
@@ -476,10 +505,18 @@ const router = useRouter();
 - When not to use: For errors needing action — use Alert or Dialog instead.
 - A11y: The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.
 - See also: `Call out a notice or an error state`
+- Examples: Simple, Error toast
+- Registry: sonner
+- Troubleshooting: No toast appears — render `<Toaster />` once near the app root, then call `toast()`. Wrong colors — toast slots map to semantic theme tokens, so the theme stylesheet must be loaded.
 
 ```ts
 import { Toaster, toast } from "@zedtech/zedkit-ui";
 <Toaster /> // once near the root, then toast("Saved") anywhere
+```
+
+```ts
+import { toast } from "@zedtech/zedkit-ui";
+toast.error("Upload failed"); // typed variants: success | error | info | warning
 ```
 
 ## Display a shown-once secret with copy
@@ -502,7 +539,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 
 ## Show a sortable, filterable, paginated data table
 
-- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
+- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
 - Status: beta
 - Short name: DataTable
@@ -512,7 +549,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 - When not to use: For a handful of static rows — map a simple table instead.
 - A11y: Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.
 - See also: `Show key-value details and a live indicator`
-- Examples: Simple, Standalone pagination
+- Examples: Simple, Standalone pagination, Standalone empty row, Standalone toolbar
 
 ```ts
 import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
@@ -528,6 +565,19 @@ const [page, setPage] = useState(2);
 <DataTablePagination page={page} pageCount={4}
   canPrevious={page > 1} canNext={page < 4}
   onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />
+```
+
+```ts
+import { DataTableEmpty, Table, TableBody } from "@zedtech/zedkit-ui";
+<Table><TableBody>
+  <DataTableEmpty colSpan={3} message="Nothing here." />
+</TableBody></Table>
+```
+
+```ts
+import { DataTableToolbar } from "@zedtech/zedkit-ui";
+const [query, setQuery] = useState("");
+<DataTableToolbar value={query} onChange={setQuery} />
 ```
 
 ## Lay out an admin page (sidebar + topbar + header)
@@ -598,6 +648,8 @@ const [solo, setSolo] = useState(false);
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
 - Examples: Simple, Composed rows
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
+- Registry: detail-panel
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -706,6 +758,8 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - See also: `Stack content and group titled sections`
 - Examples: Simple, Heading styles on a link (asChild)
 - A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
+- Registry: typography
+- Troubleshooting: Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.
 
 ```ts
 import { Heading, Text } from "@zedtech/zedkit-ui";
@@ -736,6 +790,8 @@ import { Heading } from "@zedtech/zedkit-ui";
 - See also: `Show toast notifications`
 - Examples: Simple, As a section (asChild)
 - A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
+- Registry: alert
+- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role="alert"` per notice; repeated renders re-announce.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";

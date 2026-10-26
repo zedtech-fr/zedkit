@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-ui.svg)](https://www.npmjs.com/package/@zedtech/zedkit-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
 
-Ship a calm admin UI fast: dark/light design tokens plus accessible
+Ship a calm React UI fast: dark/light design tokens plus accessible
 React building blocks (data tables, forms, dialogs, toasts),
 shadcn/ui-based (MIT, see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Neutral and calm by

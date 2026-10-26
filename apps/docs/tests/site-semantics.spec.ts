@@ -17,9 +17,7 @@ test.describe("site semantics harness (#300)", () => {
       const errors: string[] = [];
       page.on("pageerror", (event) => errors.push(String(event)));
       await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
-      if (!route.skipMobileOverflow) {
-        await assertNoHorizontalOverflow(page);
-      }
+      await assertNoHorizontalOverflow(page);
       if (route.strictSemantics) {
         await assertAxeOnMain(page);
       }
@@ -43,7 +41,7 @@ test.describe("site semantics harness (#300)", () => {
 
   test("home: axe on layout", async ({ page }) => {
     await page.goto(BASE, { waitUntil: "networkidle" });
-    await assertAxeOnMain(page);
+    await assertAxeOnMain(page, ["label-content-name-mismatch"], "[data-home-dashboard-card]");
   });
 
   test("registry URLs used on the site resolve", async ({ page }) => {

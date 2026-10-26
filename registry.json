@@ -105,6 +105,120 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "status-label",
+      "type": "registry:ui",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["checkmark", "status-dot", "utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/status-label.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-status-label-gap": "0.375rem",
+          "spacing-status-label-box": "1rem",
+          "spacing-icon-sm": "0.875rem"
+        }
+      }
+    },
+    {
+      "name": "progress-bar",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/progress-bar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-progress-bar-gap": "0.125rem",
+          "spacing-progress-bar-height": "0.375rem"
+        }
+      }
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-alert-inline": "1rem",
+          "spacing-alert-block": "0.75rem",
+          "spacing-alert-icon-offset": "1rem",
+          "spacing-alert-icon-nudge": "0.1875rem",
+          "spacing-alert-content-indent": "1.75rem"
+        }
+      }
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "dependencies": ["sonner"],
+      "files": [
+        {
+          "path": "registry/generated/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "typography",
+      "type": "registry:ui",
+      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/typography.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-heading-scroll": "5rem"
+        }
+      }
+    },
+    {
+      "name": "detail-panel",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/detail-panel.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-detail-panel-gap": "1rem",
+          "spacing-detail-panel-inline": "1rem",
+          "spacing-detail-panel-block": "0.75rem"
+        }
+      }
     }
   ]
 }
