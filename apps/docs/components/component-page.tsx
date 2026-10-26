@@ -47,7 +47,7 @@ export interface ComponentPageProps {
   related: RelatedLink[];
 }
 
-async function highlightedTs(code: string, title: string) {
+async function highlightedTs(code: string, title?: string) {
   const highlighted = await highlight(code, { lang: "tsx", components: { pre: Pre } });
   return (
     <CodeBlock title={title} allowCopy>
@@ -94,16 +94,16 @@ export async function ComponentPage({
         <Stack gap={4}>
           <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn", "registry"]}>
             <Tab value="pnpm">
-              {await highlightedTs(`pnpm add ${packageName}`, "pnpm")}
+              {await highlightedTs(`pnpm add ${packageName}`)}
             </Tab>
             <Tab value="npm">
-              {await highlightedTs(`npm install ${packageName}`, "npm")}
+              {await highlightedTs(`npm install ${packageName}`)}
             </Tab>
             <Tab value="yarn">
-              {await highlightedTs(`yarn add ${packageName}`, "yarn")}
+              {await highlightedTs(`yarn add ${packageName}`)}
             </Tab>
             <Tab value="registry">
-              {await highlightedTs(shadcnAdd, "shadcn")}
+              {await highlightedTs(shadcnAdd)}
             </Tab>
           </Tabs>
           <Text variant="muted">Package version: {version} (changesets).</Text>
@@ -111,7 +111,7 @@ export async function ComponentPage({
       </Section>
 
       <Section title="Import">
-        {await highlightedTs(importSnippet(importLine), "import")}
+        {await highlightedTs(importSnippet(importLine))}
       </Section>
 
       {source ? (

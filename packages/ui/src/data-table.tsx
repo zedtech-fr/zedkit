@@ -142,7 +142,7 @@ export function DataTable<TData extends RowData>({
                   <button
                     type="button"
                     onClick={header.column.getToggleSortingHandler()}
-                    className={cn("inline-flex items-center gap-data-table-sort-gap hover:text-foreground")}
+                    className={cn("inline-flex min-h-(--zk-tap-min) items-center gap-data-table-sort-gap hover:text-foreground")}
                   >
                     <table.FlexRender header={header} />
                     <SortIcon direction={header.column.getIsSorted()} />

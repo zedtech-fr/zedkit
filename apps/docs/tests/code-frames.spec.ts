@@ -35,3 +35,29 @@ for (const identity of IDENTITIES) {
     expect(result.docOverflow).toBeLessThanOrEqual(0);
   });
 }
+
+// A component page stacks install tabs, an import line and the registry source: none of them may sit in a second frame.
+for (const identity of IDENTITIES) {
+  test(`component page code blocks have no frame inside a frame (${identity}, 390px)`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript((id) => localStorage.setItem("zk-identity", id), identity);
+    await page.goto("/docs/ui/call-out-a-notice-or-an-error-state");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
+    await expect(page.locator("figure.shiki").first()).toBeVisible();
+    const nested = await page.evaluate(() => {
+      const framed = (el: Element) => {
+        const s = getComputedStyle(el);
+        return parseFloat(s.borderTopWidth) > 0 && s.borderTopStyle !== "none" && s.borderTopColor !== "rgba(0, 0, 0, 0)";
+      };
+      return [...document.querySelectorAll("figure.shiki, [role='tabpanel'] figure, [role='tablist']")]
+        .filter((el) => el.matches("figure") && framed(el))
+        .filter((el) => {
+          for (let parent = el.parentElement, depth = 0; parent && depth < 4; parent = parent.parentElement, depth += 1) {
+            if (parent.tagName !== "MAIN" && framed(parent)) return true;
+          }
+          return false;
+        }).length;
+    });
+    expect(nested).toBe(0);
+  });
+}

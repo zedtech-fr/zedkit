@@ -77,6 +77,16 @@
   --sidebar-accent: 240 3.7% 15.9%;
 }
 
+/* Touch devices and phones: controls never drop below the 44px target. Larger screens keep the identity's own heights. */
+:root {
+  --zk-tap-min: 0px;
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  :root {
+    --zk-tap-min: 2.75rem;
+  }
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -111,9 +121,9 @@
   --radius-sm: calc(var(--radius) - 4px);
   --spacing-badge-inline: calc(0.625rem * var(--zk-density, 1));
   --spacing-badge-block: calc(0.125rem * var(--zk-density, 1));
-  --spacing-control-height: calc(2.25rem * var(--zk-control-scale, 1));
-  --spacing-control-height-sm: calc(2rem * var(--zk-control-scale, 1));
-  --spacing-control-height-lg: calc(2.5rem * var(--zk-control-scale, 1));
+  --spacing-control-height: max(var(--zk-tap-min), calc(2.25rem * var(--zk-control-scale, 1)));
+  --spacing-control-height-sm: max(var(--zk-tap-min), calc(2rem * var(--zk-control-scale, 1)));
+  --spacing-control-height-lg: max(var(--zk-tap-min), calc(2.5rem * var(--zk-control-scale, 1)));
   --spacing-button-inline: calc(1rem * var(--zk-density, 1));
   --spacing-button-inline-sm: calc(0.75rem * var(--zk-density, 1));
   --spacing-button-inline-lg: calc(2rem * var(--zk-density, 1));
@@ -155,7 +165,7 @@
   --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
   --spacing-progress-bar-gap: 0.125rem;
   --spacing-progress-bar-height: 0.375rem;
-  --spacing-tabs-list-height: calc(2.25rem * var(--zk-control-scale, 1));
+  --spacing-tabs-list-height: max(calc(var(--zk-tap-min) + 0.5rem), calc(2.25rem * var(--zk-control-scale, 1)));
   --spacing-tabs-list-inset: 0.25rem;
   --spacing-tabs-trigger-inline: calc(0.75rem * var(--zk-density, 1));
   --spacing-tabs-trigger-block: calc(0.25rem * var(--zk-density, 1));

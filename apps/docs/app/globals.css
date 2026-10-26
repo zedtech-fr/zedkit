@@ -46,6 +46,21 @@
 }
 
 
+/* Phones and touch: fumadocs' own tabs and copy buttons reach the 44px target. */
+@media (pointer: coarse), (max-width: 40rem) {
+  [role="tablist"] > [role="tab"] {
+    min-height: 2.75rem;
+  }
+  figure.shiki > div:first-child {
+    top: 0;
+    right: 0;
+  }
+  figure.shiki button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
 /* Code blocks: one frame (the figure), never a frame inside a frame; the scroll area stays inside it. */
 :root[data-identity]:not([data-identity="mist"]) {
   figure.shiki {
@@ -65,6 +80,15 @@
   figure.shiki > div:first-child {
     background: hsl(var(--card));
     border-radius: var(--radius-md);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Inside a tab group the group is the frame: its code block carries no border of its own. */
+  [role="tabpanel"] > figure.shiki:only-child {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
