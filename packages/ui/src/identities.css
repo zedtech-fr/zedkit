@@ -546,7 +546,7 @@
   --secondary: 38 25% 93%;
   --secondary-foreground: 30 10% 12%;
   --muted: 40 22% 95%;
-  --muted-foreground: 30 7% 36%;
+  --muted-foreground: 30 7% 33%;
   --accent: 38 45% 88%;
   --accent-foreground: 30 10% 12%;
   --destructive: 4 55% 40%;
@@ -588,6 +588,7 @@
   --zk-heading-weight: 500;
   --zk-heading-tracking: 0.005em;
   --zk-heading-transform: none;
+  --zk-heading-leading: 1.12;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.18em;
 
