@@ -16,7 +16,7 @@ overwrites existing files; `validate` reports drifted provider copies.
 
 ## Agents
 
-Subagents installed from `kit.json` (18). Read-only unless noted.
+Subagents installed from `kit.json` (19). Read-only unless noted.
 
 | Agent | Role |
 |---|---|
@@ -37,7 +37,25 @@ Subagents installed from `kit.json` (18). Read-only unless noted.
 | `test-writer` | adversarial tests, behavior-named (writes tests) |
 | `release-manager` | semver 0.x rules, changesets, migration notes, maturity |
 | `console-architecture` | route/view/data layer boundaries |
+| `orchestrator` | multi-step coordination: frame, dispatch, aggregate, verify |
 | `product-director` | one-page delivery brief with links |
+
+### Orchestrator
+
+The `orchestrator` agent owns tasks that need several steps or lenses (plan,
+review, implementation, audit, research, or a mix). It reads repo context and
+the installed agent roster, decomposes work, dispatches self-contained briefs
+(see `parallel-work`), aggregates evidence, and runs `verifier` before closing.
+It never edits files. Limits by default: six subagents per wave, twelve total,
+depth one, one retry per failed unit; no destructive git or deploy actions
+without explicit approval. Invoke it via the `orchestrate` skill or `/orchestrate`.
+
+### Commands
+
+Bundled slash commands (each runs its skill on the command arguments):
+
+`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`, `handoff`,
+`audit`, `orchestrate`, `research`.
 
 Each file starts with frontmatter (`name`, one-line `description`,
 `model: inherit`, `disallowedTools` for read-only agents) at
