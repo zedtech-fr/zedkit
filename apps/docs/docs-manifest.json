@@ -131,6 +131,14 @@
       "source": "checkmark.tsx",
       "demo": "CheckmarkDemo"
     },
+    "Indicate status with a dot": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StatusDot",
+      "registry": "status-dot",
+      "props": "StatusDotProps",
+      "source": "status-dot.tsx",
+      "demo": "StatusDotDemo"
+    },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",

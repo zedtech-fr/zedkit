@@ -823,11 +823,21 @@
           "example": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Single tone",
               "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text"
+            },
+            {
+              "title": "All tones with labels",
+              "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"success\" /> // Saved\n<StatusDot tone=\"warning\" /> // Retrying…\n<StatusDot tone=\"danger\" /> // Failed"
+            },
+            {
+              "title": "Static ping override",
+              "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" pulse={false} /> // static dot, no ping"
             }
           ],
+          "registry": "status-dot",
           "a11y": "`aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.",
+          "troubleshooting": "Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.",
           "seeAlso": [
             "Show a status or count badge",
             "Show key-value details and a live indicator"
