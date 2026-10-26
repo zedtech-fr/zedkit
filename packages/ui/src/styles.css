@@ -393,12 +393,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html [data-vaul-drawer] {
-    animation: zk-fade-in var(--motion-base) var(--ease-enter) !important;
-    transition: opacity var(--motion-base) var(--ease-enter) !important;
-  }
+  html [data-vaul-drawer],
   html [data-vaul-overlay] {
-    animation: zk-fade-in var(--motion-base) var(--ease-enter) !important;
-    transition: opacity var(--motion-base) var(--ease-enter) !important;
+    animation: none !important;
+    transition: none !important;
   }
 }
