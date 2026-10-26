@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { DataTable, createDataTableColumns } from "#index.js";
+import { DataTable, DataTablePagination, createDataTableColumns } from "#index.js";
 
 type Person = { name: string; age: number };
 
@@ -109,5 +109,28 @@ describe("DataTable", () => {
     expect(screen.getByText("Page 2 of 2").textContent).toBe("Page 2 of 2");
     await user.click(screen.getByRole("button", { name: "Previous" }));
     expect(bodyRowTexts()).toEqual(["Bob30"]);
+  });
+});
+
+describe("DataTablePagination", () => {
+  it("composes standalone paging with explicit state", async () => {
+    const user = userEvent.setup();
+    const onPrevious = vi.fn();
+    const onNext = vi.fn();
+    render(
+      <DataTablePagination
+        page={2}
+        pageCount={4}
+        canPrevious
+        canNext={false}
+        onPrevious={onPrevious}
+        onNext={onNext}
+      />,
+    );
+    expect(screen.getByText("Page 2 of 4")).not.toBeNull();
+    expect((screen.getByRole("button", { name: "Next" }) as HTMLButtonElement).disabled).toBe(true);
+    await user.click(screen.getByRole("button", { name: "Previous" }));
+    expect(onPrevious).toHaveBeenCalledTimes(1);
+    expect(onNext).not.toHaveBeenCalled();
   });
 });

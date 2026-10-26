@@ -7,8 +7,10 @@ export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export { Checkbox } from "./checkbox.js";
 export {
   DataTable,
+  DataTablePagination,
   createDataTableColumns,
   type DataTableColumn,
+  type DataTablePaginationProps,
   type DataTableProps,
 } from "./data-table.js";
 export {
