@@ -97,6 +97,14 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "progress-bar": {
+      cssVars: {
+        theme: {
+          "spacing-progress-bar-gap": varFromBlock(theme, "spacing-progress-bar-gap"),
+          "spacing-progress-bar-height": varFromBlock(theme, "spacing-progress-bar-height"),
+        },
+      },
+    },
   };
 }
 

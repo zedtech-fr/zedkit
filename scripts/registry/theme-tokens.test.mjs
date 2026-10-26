@@ -24,6 +24,8 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   assert.deepEqual(check.cssVars, expected.checkmark.cssVars);
   const label = registry.items.find((item) => item.name === "status-label");
   assert.deepEqual(label.cssVars, expected["status-label"].cssVars);
+  const bar = registry.items.find((item) => item.name === "progress-bar");
+  assert.deepEqual(bar.cssVars, expected["progress-bar"].cssVars);
 });
 
 test("checkRegistryThemeDrift is clean on the repo", () => {

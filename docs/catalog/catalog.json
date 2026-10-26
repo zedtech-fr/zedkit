@@ -865,7 +865,9 @@
               "code": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={100} label=\"Upload complete\" />"
             }
           ],
+          "registry": "progress-bar",
           "a11y": "Root carries `role=\"progressbar\"` with clamped value; keep the label screen-only and pair with visible text.",
+          "troubleshooting": "Bar looks empty — `NaN` and out-of-range values clamp (negative to 0, over max to full). Screen reader silent — the bar is a plain progressbar; announce milestones with a `StatusLabel` beside it.",
           "seeAlso": [
             "Show loading placeholder blocks"
           ]

@@ -113,6 +113,7 @@
     "Show determinate progress": {
       "package": "@zedtech/zedkit-ui",
       "component": "ProgressBar",
+      "registry": "progress-bar",
       "props": "ProgressBarProps",
       "source": "progress-bar.tsx",
       "demo": "ProgressBarDemo"
