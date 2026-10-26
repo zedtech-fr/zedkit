@@ -76,7 +76,7 @@ export {
 export { FormSubmit, type FormSubmitProps } from "./form-submit.js";
 export { useValidatedForm } from "./use-validated-form.js";
 export { Input } from "./input.js";
-export { Label } from "./label.js";
+export { Label, type LabelProps } from "./label.js";
 export { Section, Stack, stackVariants, type SectionProps, type StackProps } from "./layout.js";
 export { LivePulse, type LivePulseProps } from "./live-pulse.js";
 export { StatusDot, type StatusDotProps, type StatusDotTone } from "./status-dot.js";

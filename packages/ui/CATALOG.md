@@ -126,6 +126,35 @@ import { Badge } from "@zedtech/zedkit-ui";
 </Badge>
 ```
 
+## Label a form control
+
+- Import: `@zedtech/zedkit-ui` — `Label`, `LabelProps`
+- Wraps: `@radix-ui/react-label`
+- Status: alpha
+- Derived from: shadcn/ui (label)
+- Short name: Label
+- Audience: Developers naming inputs accessibly.
+- Purpose: Accessible labels that pair with any control via `htmlFor`.
+- When to use: For every visible input name.
+- When not to use: For placeholder-only inputs — use `aria-label` instead; for headings — use Heading.
+- See also: `Collect text input with a label`, `Build validated forms with labels, errors, and pending state`
+- Examples: Simple, Required mark
+- A11y: Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`.
+- Registry: label
+- Troubleshooting: Clicking the label does nothing — the control needs a matching `id` for `htmlFor`. Label not dimming with a disabled control — `peer-disabled` needs the control as a preceding `peer` sibling.
+
+```ts
+import { Input, Label } from "@zedtech/zedkit-ui";
+<Label htmlFor="name">Name</Label>
+<Input id="name" placeholder="Ada" />
+```
+
+```ts
+import { Input, Label } from "@zedtech/zedkit-ui";
+<Label htmlFor="email">Email <span aria-hidden="true">*</span></Label>
+<Input id="email" required />
+```
+
 ## Collect text input with a label
 
 - Import: `@zedtech/zedkit-ui` — `Input`, `Label`

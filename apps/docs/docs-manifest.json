@@ -17,6 +17,14 @@
       "source": "badge.tsx",
       "demo": "BadgeDemo"
     },
+    "Label a form control": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Label",
+      "registry": "label",
+      "props": "LabelProps",
+      "source": "label.tsx",
+      "demo": "LabelDemo"
+    },
     "Collect text input with a label": {
       "package": "@zedtech/zedkit-ui",
       "component": "Input",
