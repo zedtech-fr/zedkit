@@ -159,7 +159,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - When not to use: For spacing alone — use Stack gap instead.
 - See also: `Stack content and group titled sections`
 - Examples: Horizontal rule, Vertical divider
-- A11y: Decorative by default (`aria-hidden`); pass `decorative={false}` with an accessible name when it separates named regions.
+- A11y: Decorative by default (`role="none"`); pass `decorative={false}` with an accessible name when it separates named regions.
 - Registry: separator
 - Troubleshooting: Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.
 
@@ -171,7 +171,6 @@ import { Separator } from "@zedtech/zedkit-ui";
 ```ts
 import { Separator } from "@zedtech/zedkit-ui";
 <Separator orientation="vertical" className="h-6" />
-```
 ```
 
 ## Show loading placeholder blocks
