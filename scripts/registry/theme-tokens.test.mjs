@@ -17,6 +17,7 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   const drawer = registry.items.find((item) => item.name === "drawer");
   const dot = registry.items.find((item) => item.name === "status-dot");
   const check = registry.items.find((item) => item.name === "checkmark");
+  const sep = registry.items.find((item) => item.name === "separator");
   assert.deepEqual(badge.cssVars, expected.badge.cssVars);
   assert.deepEqual(badge.css, expected.badge.css);
   assert.deepEqual(drawer.cssVars, expected.drawer.cssVars);
@@ -26,6 +27,7 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   assert.deepEqual(label.cssVars, expected["status-label"].cssVars);
   const bar = registry.items.find((item) => item.name === "progress-bar");
   assert.deepEqual(bar.cssVars, expected["progress-bar"].cssVars);
+  assert.deepEqual(sep.cssVars, expected.separator.cssVars);
   const alert = registry.items.find((item) => item.name === "alert");
   assert.deepEqual(alert.cssVars, expected.alert.cssVars);
   const typo = registry.items.find((item) => item.name === "typography");

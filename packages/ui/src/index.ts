@@ -107,7 +107,7 @@ export {
   SelectTrigger,
   SelectValue,
 } from "./select.js";
-export { Separator } from "./separator.js";
+export { Separator, type SeparatorProps } from "./separator.js";
 export { Skeleton, type SkeletonProps } from "./skeleton.js";
 export {
   Table,
