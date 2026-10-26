@@ -8,7 +8,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      "font-size": ["text-form-hint"],
+      "font-size": ["text-form-hint", "text-control"],
     },
   },
 });

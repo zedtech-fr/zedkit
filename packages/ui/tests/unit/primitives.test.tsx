@@ -189,6 +189,22 @@ describe("primitives", () => {
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
   });
 
+  it("sizes every text field from the input font-size token, never a fixed text-* size", () => {
+    render(
+      <>
+        <Input aria-label="Name" />
+        <Textarea aria-label="Bio" />
+      </>,
+    );
+    for (const label of ["Name", "Bio"]) {
+      const classes = screen.getByLabelText(label).className.split(/\s+/);
+      expect(classes).toContain("text-control");
+      expect(classes).not.toContain("text-sm");
+      expect(classes).not.toContain("text-xs");
+      expect(classes).not.toContain("md:text-sm");
+    }
+  });
+
   it("renders a card with header, content, and footer", () => {
     render(
       <Card>
