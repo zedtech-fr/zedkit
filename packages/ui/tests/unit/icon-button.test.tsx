@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
 import { IconButton } from "#index.js";
 
 describe("IconButton", () => {
