@@ -105,6 +105,16 @@ describe("overlays", () => {
     expect(await screen.findByText("Saved")).not.toBeNull();
   });
 
+  it("maps toast theme to CSS-var tokens only", async () => {
+    const { container } = render(<Toaster />);
+    toast("Saved");
+    await screen.findByText("Saved");
+    for (const token of ["bg-background", "text-foreground", "border-border"]) {
+      expect(container.innerHTML).toContain(token);
+    }
+    expect(container.innerHTML).not.toMatch(/bg-(red|blue|green|amber)-/);
+  });
+
   describe("secret field", () => {
     afterEach(() => {
       vi.unstubAllGlobals();

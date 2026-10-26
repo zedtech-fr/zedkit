@@ -413,6 +413,7 @@ const router = useRouter();
 - Purpose: A root toaster plus toast() calls for transient notifications.
 - When to use: For outcomes that do not need the user's reply.
 - When not to use: For errors needing action — use Alert or Dialog instead.
+- A11y: The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.
 - See also: `Call out a notice or an error state`
 
 ```ts

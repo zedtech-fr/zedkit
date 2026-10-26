@@ -1078,6 +1078,7 @@
               "code": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
             }
           ],
+          "a11y": "The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.",
           "seeAlso": [
             "Call out a notice or an error state"
           ]
