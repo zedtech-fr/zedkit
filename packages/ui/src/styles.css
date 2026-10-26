@@ -130,6 +130,7 @@
   --spacing-button-inline: 1rem;
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
+  --spacing-button-gap: 0.5rem;
   --spacing-icon-control: 1rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
