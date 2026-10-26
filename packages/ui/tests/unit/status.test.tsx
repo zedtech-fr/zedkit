@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
+import { act } from "react";
 import { StatusLabel } from "#index.js";
 import { UpdatedAgo } from "#index.js";
+import { OfflineNote, useOnlineStatus } from "#index.js";
 
 describe("status label", () => {
   it("announces the named operation", () => {
@@ -88,5 +90,71 @@ describe("updated ago", () => {
   it("styles the stamp with muted text tokens only", () => {
     const { container } = render(<UpdatedAgo date={Date.now() - 3_000} />);
     expect(container.firstElementChild?.className).toBe("text-xs text-muted-foreground");
+  });
+});
+
+describe("online status", () => {
+  function Probe() {
+    const online = useOnlineStatus();
+    return <span data-testid="probe">{online ? "online" : "offline"}</span>;
+  }
+
+  it("starts online and flips on window online/offline events", () => {
+    render(<Probe />);
+    expect(screen.getByTestId("probe").textContent).toBe("online");
+    act(() => {
+      window.dispatchEvent(new Event("offline"));
+    });
+    expect(screen.getByTestId("probe").textContent).toBe("offline");
+    act(() => {
+      window.dispatchEvent(new Event("online"));
+    });
+    expect(screen.getByTestId("probe").textContent).toBe("online");
+  });
+
+  it("renders online on the server without browser APIs", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    expect(renderToStaticMarkup(<Probe />)).toContain("online");
+  });
+
+  it("removes both listeners on unmount", () => {
+    const spy = vi.spyOn(window, "removeEventListener");
+    const { unmount } = render(<Probe />);
+    unmount();
+    const types = spy.mock.calls.map((call) => call[0]);
+    spy.mockRestore();
+    expect(types).toContain("online");
+    expect(types).toContain("offline");
+  });
+});
+
+describe("offline note", () => {
+  it("announces offline state with default wording", () => {
+    render(<OfflineNote />);
+    const note = screen.getByRole("alert");
+    expect(note.textContent).toContain("You're offline.");
+    expect(note.textContent).toContain("Changes will sync when you reconnect.");
+    expect(note.querySelector(".lucide-wifi-off")).not.toBeNull();
+  });
+
+  it("accepts overridden wording", () => {
+    render(<OfflineNote title="No connection">Try again later.</OfflineNote>);
+    const note = screen.getByRole("alert");
+    expect(note.textContent).toContain("No connection");
+    expect(note.textContent).toContain("Try again later.");
+    expect(note.textContent).not.toContain("You're offline.");
+  });
+
+  it("has no axe violations", async () => {
+    const { container } = render(<OfflineNote />);
+    const results = await axe(container, {
+      rules: {
+        region: { enabled: false },
+        "landmark-one-main": { enabled: false },
+        "document-title": { enabled: false },
+        "html-has-lang": { enabled: false },
+      },
+    });
+    expect(results.violations).toEqual([]);
   });
 });

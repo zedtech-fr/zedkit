@@ -100,6 +100,7 @@
     "Guide a multi-step flow with selectable option cards": {
       "package": "@zedtech/zedkit-ui",
       "component": "WizardSteps",
+      "registry": "wizard-steps",
       "props": "WizardStepsProps",
       "source": "wizard-steps.tsx",
       "demo": "WizardDemo"

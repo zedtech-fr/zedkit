@@ -84,6 +84,8 @@ export { ProgressBar, type ProgressBarProps } from "./progress-bar.js";
 export { Checkmark, type CheckmarkProps } from "./checkmark.js";
 export { StatusLabel, type StatusLabelProps, type StatusLabelTone } from "./status-label.js";
 export { UpdatedAgo, type UpdatedAgoProps } from "./updated-ago.js";
+export { OfflineNote, type OfflineNoteProps } from "./offline-note.js";
+export { useOnlineStatus } from "./use-online-status.js";
 export {
   OptionCard,
   OptionCards,

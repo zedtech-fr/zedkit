@@ -25,7 +25,8 @@
       "wayfinder",
       "domain-modeling",
       "audit",
-      "research"
+      "research",
+      "orchestrate"
     ],
     "full": "*"
   },
@@ -47,6 +48,7 @@
     "test-writer",
     "release-manager",
     "console-architecture",
+    "orchestrator",
     "product-director"
   ],
   "commands": [
@@ -57,6 +59,8 @@
     "setup-ai",
     "pr",
     "handoff",
-    "audit"
+    "audit",
+    "orchestrate",
+    "research"
   ]
 }
