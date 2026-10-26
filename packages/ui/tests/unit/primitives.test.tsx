@@ -97,6 +97,29 @@ describe("primitives", () => {
     expect(screen.getByText("Secondary copy.").className).toContain("text-muted-foreground");
   });
 
+  it("merges heading styles onto asChild link", () => {
+    render(
+      <Heading level={2} asChild>
+        <a href="#section">Section</a>
+      </Heading>,
+    );
+    const link = screen.getByRole("link", { name: "Section" });
+    expect(link.className).toContain("text-3xl");
+    expect(link.className).toContain("scroll-m-heading-scroll");
+    expect(link.getAttribute("href")).toBe("#section");
+  });
+
+  it("merges text styles onto asChild child", () => {
+    render(
+      <Text variant="muted" asChild>
+        <span>Secondary copy.</span>
+      </Text>,
+    );
+    const copy = screen.getByText("Secondary copy.");
+    expect(copy.tagName).toBe("SPAN");
+    expect(copy.className).toContain("text-muted-foreground");
+  });
+
   it("renders default and destructive alerts", () => {
     render(
       <>

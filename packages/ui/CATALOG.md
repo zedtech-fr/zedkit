@@ -591,6 +591,8 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - When to use: For every heading and paragraph in kit UI.
 - When not to use: For raw HTML emails or markdown — style those separately.
 - See also: `Stack content and group titled sections`
+- Examples: Simple, Heading styles on a link (asChild)
+- A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
 
 ```ts
 import { Heading, Text } from "@zedtech/zedkit-ui";
@@ -598,6 +600,13 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 <Heading level={2} as="div">Styled as h2, neutral tag</Heading>
 <Text>Body copy.</Text>
 <Text variant="muted">Secondary copy.</Text>
+```
+
+```ts
+import { Heading } from "@zedtech/zedkit-ui";
+<Heading level={2} asChild>
+  <a href="#section">Section title as a link</a>
+</Heading>
 ```
 
 ## Call out a notice or an error state

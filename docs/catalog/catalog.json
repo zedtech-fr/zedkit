@@ -1289,8 +1289,13 @@
             {
               "title": "Simple",
               "code": "import { Heading, Text } from \"@zedtech/zedkit-ui\";\n<Heading level={1}>Page title</Heading>\n<Heading level={2} as=\"div\">Styled as h2, neutral tag</Heading>\n<Text>Body copy.</Text>\n<Text variant=\"muted\">Secondary copy.</Text>"
+            },
+            {
+              "title": "Heading styles on a link (asChild)",
+              "code": "import { Heading } from \"@zedtech/zedkit-ui\";\n<Heading level={2} asChild>\n  <a href=\"#section\">Section title as a link</a>\n</Heading>"
             }
           ],
+          "a11y": "Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]
