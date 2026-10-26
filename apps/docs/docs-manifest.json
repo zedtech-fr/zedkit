@@ -117,6 +117,13 @@
       "source": "progress-bar.tsx",
       "demo": "ProgressBarDemo"
     },
+    "Stamp data with its age": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "UpdatedAgo",
+      "props": "UpdatedAgoProps",
+      "source": "updated-ago.tsx",
+      "demo": "UpdatedAgoDemo"
+    },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",

@@ -23,6 +23,7 @@ import { TabsDemo } from "./tabs-demo";
 import { TextareaDemo } from "./textarea-demo";
 import { ToggleDemo } from "./toggle-demo";
 import { TypographyDemo } from "./typography-demo";
+import { UpdatedAgoDemo } from "./updated-ago-demo";
 import { WizardDemo } from "./wizard-demo";
 
 /**
@@ -63,6 +64,7 @@ export const demoRegistry = {
   TextareaDemo: { Demo: TextareaDemo, file: "textarea-demo.tsx" },
   ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx", center: true },
   TypographyDemo: { Demo: TypographyDemo, file: "typography-demo.tsx" },
+  UpdatedAgoDemo: { Demo: UpdatedAgoDemo, file: "updated-ago-demo.tsx" },
   WizardDemo: { Demo: WizardDemo, file: "wizard-demo.tsx" },
 } as const satisfies Record<string, DemoEntry>;
 

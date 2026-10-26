@@ -275,10 +275,16 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - When not to use: For absolute timestamps — render a `<time dateTime>` instead.
 - A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.
 - See also: `Name an operation in progress`
+- Examples: Simple, Custom prefix
 
 ```ts
 import { UpdatedAgo } from "@zedtech/zedkit-ui";
 <UpdatedAgo date={updatedAt} /> // "Updated 3 minutes ago" via Intl.RelativeTimeFormat
+```
+
+```ts
+import { UpdatedAgo } from "@zedtech/zedkit-ui";
+<UpdatedAgo date={syncedAt} prefix="Synced" />
 ```
 
 ## Open modal dialogs
