@@ -75,7 +75,7 @@ export function HomeView({
       <Section
         title="Components"
         id="components"
-        description={`Curated UI previews (${curatedGallery.length} of ${galleryCount} components). Open the catalog to filter every need across UI, backend, SEO, and agents.`}
+        description={`Curated UI previews (${curatedGallery.length} of ${galleryCount} components). Open the catalog to filter every need across UI, core & server, SEO, and agents.`}
       >
         <Stack gap={HOME_SECTION_CONTENT_GAP}>
           <Stack className={HOME_CARD_GRID_THREE_COL}>

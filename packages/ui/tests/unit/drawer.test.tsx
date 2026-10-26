@@ -254,6 +254,20 @@ describe("drawer", () => {
     expect(footer.className).toContain("p-drawer-chrome-padding");
   });
 
+  it("carries no value arbitraries on content, overlay, or chrome", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="bottom" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    const classes = [
+      dialog.className,
+      document.querySelector("[data-vaul-overlay]")?.className ?? "",
+    ];
+    for (const className of classes) {
+      expect(className).not.toMatch(/\[[-\d#]/);
+    }
+  });
+
   it("renders open on mount with defaultOpen", () => {
     render(
       <Drawer defaultOpen>

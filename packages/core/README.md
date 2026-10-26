@@ -3,9 +3,8 @@
 [![npm version](https://img.shields.io/npm/v/@zedtech/zedkit-core.svg)](https://www.npmjs.com/package/@zedtech/zedkit-core)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zedtech-fr/zedkit/blob/main/LICENSE)
 
-Typed Result helpers, safe try/catch wrappers, prefixed IDs and hashing —
-stop writing the same utilities in every repo. Original work by the
-same author.
+Typed Result helpers, safe try/catch wrappers, and prefixed IDs for any
+JS/TS project. Original work by the same author.
 
 ## Install
 

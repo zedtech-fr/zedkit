@@ -76,8 +76,8 @@
         "ulid",
         "unique-id",
         "prefixed-id",
-        "hashing",
-        "functional"
+        "functional",
+        "try-catch"
       ],
       "audience": "TypeScript developers tired of untyped throws and ad-hoc helpers.",
       "needs": [
@@ -629,7 +629,6 @@
         "react-components",
         "ui-kit",
         "design-system",
-        "admin",
         "dashboard",
         "tailwindcss",
         "tailwind-v4",
@@ -637,9 +636,10 @@
         "shadcn",
         "dark-mode",
         "accessible",
-        "nextjs"
+        "nextjs",
+        "sites"
       ],
-      "audience": "Teams building admin consoles and dashboards on React 19 + Tailwind v4.",
+      "audience": "Teams building React 19 + Tailwind v4 UIs — sites, apps, dashboards, and admin tools.",
       "needs": [
         {
           "need": "Theme an admin app (dark/light included)",
