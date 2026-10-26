@@ -18,6 +18,10 @@ const AXE_BASELINE_RULES_OFF = [
 
 export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
   await page.setViewportSize({ width: MOBILE_WIDTH, height: 844 });
+  // Settle webfonts + layout before measuring: scrollWidth races font swap
+  // and flakes in CI without this (see #412 follow-ups).
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  await page.waitForTimeout(500);
   const target = page.locator("main");
   const hasMain = (await target.count()) > 0;
   const scrollWidth = await page.evaluate((useMain) => {
