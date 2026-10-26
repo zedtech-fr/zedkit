@@ -162,6 +162,23 @@
           "spacing-alert-content-indent": "1.75rem"
         }
       }
+    },
+    {
+      "name": "typography",
+      "type": "registry:ui",
+      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/typography.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-heading-scroll": "5rem"
+        }
+      }
     }
   ]
 }

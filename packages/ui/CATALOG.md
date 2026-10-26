@@ -690,6 +690,8 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - See also: `Stack content and group titled sections`
 - Examples: Simple, Heading styles on a link (asChild)
 - A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
+- Registry: typography
+- Troubleshooting: Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.
 
 ```ts
 import { Heading, Text } from "@zedtech/zedkit-ui";
