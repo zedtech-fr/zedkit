@@ -94,6 +94,17 @@
           "animate-check-draw": "zk-check-draw 0.45s ease-out forwards"
         }
       }
+    },
+    {
+      "name": "updated-ago",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/updated-ago.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }
