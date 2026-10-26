@@ -26,8 +26,9 @@ When to call which agent, and the chains they form. Agents live in
 | `console-architecture` | frontend changes; checks route/view/data layer boundaries | no |
 | `product-director` | you need a delivery brief for the director over a scope (branch, PRs, milestone) | no |
 
-Planned rows land one PR at a time; each PR flips its row. Read-only agents
-carry `disallowedTools: Write, Edit, NotebookEdit` and never apply fixes.
+All rows are shipped. The table stays in sync with `kit.json` (agent list)
+and the lens registry (triggers). Read-only agents carry
+`disallowedTools: Write, Edit, NotebookEdit` and never apply fixes.
 
 ## Typical chains
 
