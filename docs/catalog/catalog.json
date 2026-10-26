@@ -1390,7 +1390,7 @@
         },
         {
           "need": "Switch the visual identity with one attribute",
-          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`",
+          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `IdentityTour`, `IdentityTourProps`, `IdentityTourOptions`, `IdentityTourState`, `useIdentityTour`, `IDENTITY_TOUR_STORAGE_KEY`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`",
           "wraps": "none (CSS variables in `styles.css`, `identities.css`, `motion.css`)",
           "status": "alpha",
           "shortName": "Identities",
@@ -1409,6 +1409,29 @@
           "a11y": "native labelled `select`; entrance animations are disabled under `prefers-reduced-motion`.",
           "seeAlso": [
             "Theme an admin app (dark/light included)"
+          ]
+        },
+        {
+          "need": "Show the zedkit logo",
+          "import": "`@zedtech/zedkit-ui` — `Logo`, `LogoProps`",
+          "wraps": "none (inline SVG)",
+          "status": "alpha",
+          "shortName": "Logo",
+          "audience": "Teams building a header, a footer or a share image for a zedkit-based site.",
+          "purpose": "The zedkit mark as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.",
+          "whenToUse": "Next to the product name in a site header, or anywhere a small brand mark is needed.",
+          "whenNotToUse": "For your own brand — ship your own mark instead.",
+          "derivedFrom": null,
+          "example": "import { Logo } from \"@zedtech/zedkit-ui\";\n<Logo className=\"h-6 text-foreground\" title=\"\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Logo } from \"@zedtech/zedkit-ui\";\n<Logo className=\"h-6 text-foreground\" title=\"\" />"
+            }
+          ],
+          "a11y": "named image (\"zedkit\") by default; pass `title=\"\"` to hide it when the name is written next to it.",
+          "seeAlso": [
+            "Switch the visual identity with one attribute"
           ]
         },
         {

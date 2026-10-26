@@ -47,9 +47,9 @@ kit packages.
 ## Contents
 
 - `styles.css`: tokens + dark/light theme preset, plus selectable identities
-  (`data-identity`: `mist`, `press`, `tide`, `volt`, `gilt`) and motion tokens. Fonts are not
-  bundled; the docs app loads Inter, Play and JetBrains Mono from Fontsource (SIL OFL 1.1).
-- `IdentityScript`, `IdentitySwitcher`, `Reveal`, `Stagger`: identity switching and
+  (`data-identity`: `mist`, `press`, `tide`, `volt`, `maison`, `glass`) and motion tokens. Fonts are not
+  bundled; the docs app loads Inter, Space Grotesk, Geist, Cormorant, Jost and JetBrains Mono from Fontsource (SIL OFL 1.1).
+- `IdentityScript`, `IdentitySwitcher`, `IdentityPicker`, `IdentityTour`, `Reveal`, `Stagger`: identity switching, first-visit preview and
   scroll-reveal wrappers.
 - `cn()`: classnames merge.
 - Primitives: `Button`, `Badge`, `Input`, `Label`, `Separator`,

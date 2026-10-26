@@ -11,10 +11,10 @@ export function KitVersionLabel({
 }) {
   const label = `v${version} (UI kit changelog)`;
   return (
-    <Stack direction="horizontal" gap={2} className="items-center">
+    <Stack direction="horizontal" gap={2} className="items-center leading-none">
       <LivePulse />
       <Link href={changelogHref} target="_blank" rel="noreferrer" aria-label={label}>
-        <Text variant="muted" className="font-mono text-sm">
+        <Text variant="muted" className="font-mono text-xs font-normal tabular-nums">
           v{version}
         </Text>
       </Link>

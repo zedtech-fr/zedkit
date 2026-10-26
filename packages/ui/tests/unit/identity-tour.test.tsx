@@ -53,7 +53,7 @@ describe("IdentityTour", () => {
     await advance(2500);
     expect(root.getAttribute("data-identity-tour")).toBe("running");
     expect(screen.getByRole("status").textContent).toMatch(
-      /Previewing 5 visual identities/,
+      /Previewing 6 visual identities/,
     );
     expect(localStorage.getItem(IDENTITY_TOUR_STORAGE_KEY)).toBe("1");
     await advance(6000);
@@ -62,7 +62,8 @@ describe("IdentityTour", () => {
       "press",
       "tide",
       "volt",
-      "gilt",
+      "maison",
+      "glass",
       "mist",
     ]);
     expect(root.getAttribute("data-identity")).toBe("mist");

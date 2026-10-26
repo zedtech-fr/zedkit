@@ -36,10 +36,16 @@ const identities: readonly IdentityOption[] = [
     fonts: ["Geist Variable", "JetBrains Mono Variable"],
   },
   {
-    id: "gilt",
-    label: "Gilt",
-    description: "Ivory and serif: quiet luxury.",
+    id: "maison",
+    label: "Maison",
+    description: "Brand boutique: ivory, serif, airy.",
     fonts: ["Cormorant Variable", "Jost Variable", "JetBrains Mono Variable"],
+  },
+  {
+    id: "glass",
+    label: "Glass",
+    description: "Frosted glass: translucent layers over soft colour.",
+    fonts: ["Space Grotesk Variable", "Inter Variable", "JetBrains Mono Variable"],
   },
 ];
 
@@ -53,7 +59,8 @@ const legacyIdentityIds: Readonly<Record<string, string>> = {
   "retro-square": "press",
   studio: "tide",
   deep: "volt",
-  luxe: "gilt",
+  luxe: "maison",
+  gilt: "maison",
 };
 
 type IdentityScriptProps = {

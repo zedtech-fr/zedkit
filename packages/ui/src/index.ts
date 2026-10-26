@@ -158,6 +158,7 @@ export {
   type IdentityScriptProps,
 } from "./identity.js";
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
+export { IdentityPicker, type IdentityPickerProps } from "./identity-picker.js";
 export {
   IDENTITY_TOUR_STORAGE_KEY,
   IdentityTour,
@@ -166,3 +167,4 @@ export {
   type IdentityTourProps,
   type IdentityTourState,
 } from "./identity-tour.js";
+export { Logo, type LogoProps } from "./logo.js";

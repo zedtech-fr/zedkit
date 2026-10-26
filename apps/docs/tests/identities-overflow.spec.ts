@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
  * them may push content past the right edge of a phone screen: the page
  * and every block inside it must fit the viewport at 390px and 360px.
  */
-const IDENTITIES = ["mist", "press", "tide", "volt", "gilt"] as const;
+const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
 const WIDTHS = [390, 360] as const;
 const PAGES = ["/", "/docs/identities-and-theming", "/docs/ui/theme-an-admin-app-dark-light-included"] as const;
 

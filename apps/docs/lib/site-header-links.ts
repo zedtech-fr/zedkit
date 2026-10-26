@@ -15,6 +15,6 @@ export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
       ],
     },
     { text: "Changelog", url: changelogHref, external: true },
-    { type: "custom", secondary: true, children: createElement(IdentitySwitcher) },
+    { type: "custom", secondary: true, children: createElement("li", { className: "list-none" }, createElement(IdentitySwitcher)) },
   ];
 }

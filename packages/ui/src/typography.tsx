@@ -48,6 +48,8 @@ const textVariants = cva("leading-7", {
     variant: {
       body: "",
       muted: "text-sm text-muted-foreground",
+      /** Eyebrow above a value: small, muted, capitals. Never larger than the text it labels. */
+      label: "text-xs leading-5 font-medium tracking-wide text-muted-foreground uppercase",
     },
   },
   defaultVariants: {

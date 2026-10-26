@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const BASE = "http://127.0.0.1:3100";
 const GUIDE = `${BASE}/docs/identities-and-theming`;
-const IDENTITIES = ["mist", "press", "tide", "volt", "gilt"] as const;
+const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
 const MODES = ["light", "dark"] as const;
 
 async function seed(page: Page, identity: string, mode: string) {
@@ -62,7 +62,8 @@ const SIGNATURES: Record<
   press: { body: "Space Grotesk", heading: "Space Mono", radius: 0, border: 2, padding: 16.64, shadow: /4px 4px 0px 0px/ },
   tide: { body: "Inter Variable", heading: "Inter Variable", radius: 24, border: 1, padding: 16.64, shadow: /32px|12px/ },
   volt: { body: "Geist Variable", heading: "Geist Variable", radius: 6, border: 1, padding: 14.4, shadow: /0px 8px 20px -8px/ },
-  gilt: { body: "Jost Variable", heading: "Cormorant Variable", radius: 2, border: 1, padding: 19.2, shadow: /28px|-18px/ },
+  glass: { body: "Inter Variable", heading: "Space Grotesk Variable", radius: 20, border: 1, padding: 16.64, shadow: /30px|44px/ },
+  maison: { body: "Jost Variable", heading: "Cormorant Variable", radius: 2, border: 1, padding: 19.2, shadow: /28px|-18px/ },
 };
 
 test("switcher lists every identity, changes tokens, and persists", async ({ page }) => {
@@ -95,11 +96,11 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
     expect(got.bodyFont, identity).not.toBe(mist.bodyFont);
   }
 
-  await identitySelect(page).selectOption("gilt");
+  await identitySelect(page).selectOption("maison");
   await page.reload({ waitUntil: "networkidle" });
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "gilt");
-  await expect(identitySelect(page)).toHaveValue("gilt");
-  expect(await page.evaluate(() => localStorage.getItem("zk-identity"))).toBe("gilt");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "maison");
+  await expect(identitySelect(page)).toHaveValue("maison");
+  expect(await page.evaluate(() => localStorage.getItem("zk-identity"))).toBe("maison");
 
   await identitySelect(page).selectOption("mist");
   await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
@@ -110,7 +111,7 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
 });
 
 test("an identity id stored before the rename is migrated", async ({ page }) => {
-  const legacy: Record<string, string> = { soft: "mist", "retro-square": "press", studio: "tide", deep: "volt", luxe: "gilt" };
+  const legacy: Record<string, string> = { soft: "mist", "retro-square": "press", studio: "tide", deep: "volt", luxe: "maison", gilt: "maison" };
   for (const [oldId, newId] of Object.entries(legacy)) {
     const context = await page.context().browser()!.newContext();
     const fresh = await context.newPage();
@@ -120,6 +121,63 @@ test("an identity id stored before the rename is migrated", async ({ page }) => 
     expect(await fresh.evaluate(() => localStorage.getItem("zk-identity")), oldId).toBe(newId);
     await context.close();
   }
+});
+
+test("code blocks, tables and chrome follow the identity tokens", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+
+  async function surfaces() {
+    return page.evaluate(() => {
+      const pre = document.querySelector("main pre");
+      const th = document.querySelector("main th");
+      const nav = document.querySelector("#nd-nav") ?? document.querySelector("header");
+      const preStyle = pre ? getComputedStyle(pre) : null;
+      return {
+        preRadius: preStyle ? parseFloat(preStyle.borderTopLeftRadius) : -1,
+        preBorder: preStyle ? parseFloat(preStyle.borderTopWidth) : -1,
+        thTransform: th ? getComputedStyle(th).textTransform : "",
+        navBorder: nav ? parseFloat(getComputedStyle(nav).borderBottomWidth) : -1,
+      };
+    });
+  }
+
+  await page.goto(GUIDE, { waitUntil: "networkidle" });
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+  const mist = await surfaces();
+  expect(mist.thTransform, "mist keeps the stock table head").not.toBe("uppercase");
+
+  await identitySelect(page).selectOption("press");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+  const press = await surfaces();
+  expect(press.preRadius, "press pre radius").toBe(0);
+  expect(press.preBorder, "press pre border").toBe(2);
+  expect(press.thTransform, "press table head").toBe("uppercase");
+  expect(press.navBorder, "press nav border").toBe(2);
+
+  await identitySelect(page).selectOption("maison");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "maison");
+  const maison = await surfaces();
+  expect(maison.preRadius, "maison pre radius").toBe(2);
+  expect(maison.preBorder, "maison pre border").toBe(1);
+  expect(maison.navBorder, "maison nav border").toBe(1);
+});
+
+test("code blocks and chrome follow the identity in dark mode", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await seed(page, "maison", "dark");
+  await page.goto(GUIDE, { waitUntil: "networkidle" });
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "maison");
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  const got = await page.evaluate(() => {
+    const pre = document.querySelector("main pre");
+    const nav = document.querySelector("#nd-nav") ?? document.querySelector("header");
+    return {
+      preBorder: pre ? parseFloat(getComputedStyle(pre).borderTopWidth) : -1,
+      navBorder: nav ? parseFloat(getComputedStyle(nav).borderBottomWidth) : -1,
+    };
+  });
+  expect(got.preBorder, "maison dark pre border").toBe(1);
+  expect(got.navBorder, "maison dark nav border").toBe(1);
 });
 
 test("stored identity is applied before first paint", async ({ page }) => {

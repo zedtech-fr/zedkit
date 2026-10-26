@@ -28,13 +28,13 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
           {entryPoints.map((entry) => (
             <Card key={entry.href} className="min-w-0">
               <CardHeader>
-                <CardTitle>{entry.title}</CardTitle>
+                <CardTitle className="text-lg">{entry.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Stack gap={HOME_CARD_CONTENT_GAP}>
                   <Text variant="muted">{entry.summary}</Text>
                   <Text variant="muted">{entry.needCount} documented needs in the catalog</Text>
-                  <Button asChild variant="ghost" size="sm" className="w-fit">
+                  <Button asChild variant="outline" className="min-h-tap w-fit">
                     <Link href={entry.href}>{entry.linkLabel}</Link>
                   </Button>
                 </Stack>

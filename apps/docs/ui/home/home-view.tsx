@@ -35,7 +35,7 @@ function GalleryEntry({ card }: { card: GalleryCard }) {
   return (
     <Card className="min-w-0">
       <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle>
+        <CardTitle className="text-lg">
           <Link href={card.href}>{card.title}</Link>
         </CardTitle>
         <MaturityBadge status={card.status} />

@@ -22,8 +22,10 @@
  *          long eased reveals.
  *   volt   dense near-black, tight type, hairline borders, layered depth,
  *          one acid accent.
- *   gilt   airy ivory, serif display, very fine borders, generous spacing,
- *          slow motion.
+ *   maison airy ivory, serif display, very fine borders, generous spacing,
+ *          slow motion: a brand boutique.
+ *   glass  frosted translucent surfaces (backdrop blur) over colour halos,
+ *          large radii, soft shadows, hairline edges.
  *
  * To add one, copy a block below and override the tokens listed in
  * the "Identities and theming" docs page.
@@ -84,7 +86,7 @@
   --secondary: 50 24% 80%;
   --secondary-foreground: 0 0% 5%;
   --muted: 47 22% 88%;
-  --muted-foreground: 0 0% 28%;
+  --muted-foreground: 0 0% 25%;
   --accent: 160 55% 72%;
   --accent-foreground: 0 0% 5%;
   --destructive: 4 80% 38%;
@@ -121,11 +123,12 @@
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.625rem;
   --zk-heading-weight: 700;
   --zk-heading-tracking: -0.02em;
   --zk-heading-transform: none;
+  --zk-heading-leading: 1.05;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.08em;
 
@@ -167,9 +170,9 @@
   --motion-base: 110ms;
   --motion-slow: 150ms;
   --zk-reveal-duration: 420ms;
-  --zk-reveal-distance: 0.5rem;
+  --zk-reveal-distance: 0.375rem;
   --zk-reveal-ease: steps(5, jump-end);
-  --zk-stagger-step: 80ms;
+  --zk-stagger-step: 70ms;
   --zk-lift-duration: 110ms;
   --zk-lift-ease: steps(3, jump-end);
   --zk-lift-translate: -3px -3px;
@@ -231,7 +234,7 @@
   --secondary: 31 47% 94%;
   --secondary-foreground: 221 41% 21%;
   --muted: 31 40% 95%;
-  --muted-foreground: 218 17% 38%;
+  --muted-foreground: 218 17% 35%;
   --accent: 14 100% 90%;
   --accent-foreground: 221 41% 21%;
   --destructive: 4 72% 42%;
@@ -273,6 +276,7 @@
   --zk-heading-weight: 800;
   --zk-heading-tracking: -0.035em;
   --zk-heading-transform: none;
+  --zk-heading-leading: 1.02;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.12em;
 
@@ -314,7 +318,7 @@
   --motion-base: 300ms;
   --motion-slow: 500ms;
   --zk-reveal-duration: 800ms;
-  --zk-reveal-distance: 2.5rem;
+  --zk-reveal-distance: 1.5rem;
   --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --zk-stagger-step: 110ms;
   --zk-lift-duration: 300ms;
@@ -386,7 +390,7 @@
   --secondary: 0 0% 90%;
   --secondary-foreground: 0 0% 4%;
   --muted: 0 0% 92%;
-  --muted-foreground: 0 0% 32%;
+  --muted-foreground: 0 0% 29%;
   --accent: 72 90% 60%;
   --accent-foreground: 0 0% 4%;
   --destructive: 0 80% 40%;
@@ -428,6 +432,7 @@
   --zk-heading-weight: 600;
   --zk-heading-tracking: -0.04em;
   --zk-heading-transform: none;
+  --zk-heading-leading: 1.08;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.1em;
 
@@ -528,10 +533,10 @@
 }
 
 /* ---------------------------------------------------------------
- * Identity: gilt.
+ * Identity: maison.
  *   Airy ivory, serif display, very fine borders, generous spacing, slow motion.
  * ------------------------------------------------------------- */
-:root[data-identity="gilt"] {
+:root[data-identity="maison"] {
   --background: 40 33% 98%;
   --foreground: 30 10% 12%;
   --card: 0 0% 100%;
@@ -543,7 +548,7 @@
   --secondary: 38 25% 93%;
   --secondary-foreground: 30 10% 12%;
   --muted: 40 22% 95%;
-  --muted-foreground: 30 7% 36%;
+  --muted-foreground: 30 7% 33%;
   --accent: 38 45% 88%;
   --accent-foreground: 30 10% 12%;
   --destructive: 4 55% 40%;
@@ -585,6 +590,7 @@
   --zk-heading-weight: 500;
   --zk-heading-tracking: 0.005em;
   --zk-heading-transform: none;
+  --zk-heading-leading: 1.12;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.18em;
 
@@ -641,7 +647,7 @@
   --zk-deco-ticker: none;
 }
 
-:root[data-identity="gilt"].dark {
+:root[data-identity="maison"].dark {
   --background: 30 12% 7%;
   --foreground: 40 30% 92%;
   --card: 30 10% 10%;
@@ -682,6 +688,186 @@
 }
 
 /* ---------------------------------------------------------------
+ * Identity: glass.
+ *   Frosted, translucent surfaces over soft colour halos: backdrop blur,
+ *   hairline edges, generous radii, gentle shadows. Cards, popovers, code
+ *   blocks and the docs chrome read the --zk-glass-* tokens (see the
+ *   "glass" consumer block below); the `glass-surface` utility gives your
+ *   own panels the same treatment.
+ * ------------------------------------------------------------- */
+:root[data-identity="glass"] {
+  --background: 220 60% 97%;
+  --foreground: 224 45% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 224 45% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 45% 12%;
+  --primary: 243 70% 46%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 45% 92%;
+  --secondary-foreground: 224 45% 12%;
+  --muted: 220 40% 94%;
+  --muted-foreground: 222 18% 32%;
+  --accent: 262 85% 93%;
+  --accent-foreground: 255 50% 20%;
+  --destructive: 4 70% 42%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 152 60% 24%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 90% 28%;
+  --warning-foreground: 0 0% 100%;
+  --overlay: 232 40% 8%;
+  --border: 220 35% 82%;
+  --input: 220 30% 72%;
+  --ring: 243 70% 46%;
+  --sidebar: 220 60% 97%;
+  --sidebar-foreground: 224 45% 12%;
+  --sidebar-border: 220 35% 85%;
+  --sidebar-accent: 262 85% 94%;
+  --radius: 1rem;
+
+  /* Typography: families, scale, weight, tracking */
+  --zk-font-sans: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: "Space Grotesk Variable", "Space Grotesk", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--zk-font-sans);
+  --font-mono: var(--zk-font-mono);
+  --font-display: var(--zk-font-display);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.04em;
+  --text-xs: 0.78rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.3rem;
+  --text-2xl: 1.625rem;
+  --text-3xl: 2.125rem;
+  --text-4xl: 2.75rem;
+  --zk-heading-weight: 600;
+  --zk-heading-tracking: -0.03em;
+  --zk-heading-transform: none;
+  --zk-heading-leading: 1.1;
+  --zk-label-transform: none;
+  --zk-label-tracking: 0.01em;
+
+  /* Spacing and density */
+  --spacing: 0.26rem;
+  --zk-density: 1.1;
+  --zk-control-scale: 1.06;
+
+  /* Shape: generous radii, hairline edges */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --zk-border-width: 1px;
+  --ring-width: 2px;
+  --ring-width-control: 2px;
+  --ring-offset-width: 2px;
+
+  /* Glass: how translucent surfaces look. Alpha 1 and blur 0 make them solid. */
+  --zk-glass-alpha: 0.66;
+  --zk-glass-blur: 18px;
+  --zk-glass-saturate: 1.6;
+  --zk-glass-edge: 0 0% 100%;
+  --zk-glass-edge-alpha: 0.7;
+  --zk-glass-filter: blur(var(--zk-glass-blur)) saturate(var(--zk-glass-saturate));
+  --zk-glass-highlight: inset 0 1px 0 hsl(0 0% 100% / 0.65);
+
+  /* Depth: soft and wide, tinted by the page */
+  --zk-shadow-color: 232 40% 24%;
+  --zk-shadow-xs: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-sm: 0 2px 8px -2px hsl(var(--zk-shadow-color) / 0.1), var(--zk-glass-highlight);
+  --zk-shadow-md: 0 10px 30px -10px hsl(var(--zk-shadow-color) / 0.2), var(--zk-glass-highlight);
+  --zk-shadow-lg: 0 18px 44px -14px hsl(var(--zk-shadow-color) / 0.26), var(--zk-glass-highlight);
+  --zk-shadow-xl: 0 28px 64px -18px hsl(var(--zk-shadow-color) / 0.3), var(--zk-glass-highlight);
+  --zk-shadow-overlay: 0 24px 60px -16px hsl(var(--zk-shadow-color) / 0.34), var(--zk-glass-highlight);
+
+  /* Page texture: three colour halos behind the glass */
+  --zk-bg-pattern:
+    radial-gradient(38rem 30rem at 6% 6rem, hsl(262 90% 78% / 0.4), transparent 70%),
+    radial-gradient(34rem 28rem at 94% 24rem, hsl(190 90% 68% / 0.34), transparent 70%),
+    radial-gradient(36rem 30rem at 24% 70rem, hsl(330 90% 82% / 0.28), transparent 70%);
+  --zk-bg-size: 100% 100%;
+  --zk-bg-repeat: no-repeat;
+  --zk-bg-attach: scroll;
+
+  /* Motion */
+  --motion-fast: 160ms;
+  --motion-base: 260ms;
+  --motion-slow: 460ms;
+  --zk-reveal-duration: 750ms;
+  --zk-reveal-distance: 1rem;
+  --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-stagger-step: 90ms;
+  --zk-lift-duration: 320ms;
+  --zk-lift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-lift-translate: 0 -3px;
+  --zk-lift-shadow: 0 20px 44px -14px hsl(243 70% 46% / 0.3), var(--zk-glass-highlight);
+  --zk-press-translate: 0 1px;
+  --zk-btn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-btn-hover-translate: 0 -1px;
+  --zk-btn-hover-shadow: 0 12px 28px -10px hsl(243 70% 46% / 0.45);
+  --zk-btn-press-shadow: 0 2px 6px -2px hsl(243 70% 46% / 0.3);
+  --zk-deco-ticker: none;
+}
+
+:root[data-identity="glass"].dark {
+  --background: 232 38% 8%;
+  --foreground: 220 40% 94%;
+  --card: 232 30% 14%;
+  --card-foreground: 220 40% 94%;
+  --popover: 232 30% 14%;
+  --popover-foreground: 220 40% 94%;
+  --primary: 252 95% 78%;
+  --primary-foreground: 232 38% 8%;
+  --secondary: 232 26% 19%;
+  --secondary-foreground: 220 40% 94%;
+  --muted: 232 28% 16%;
+  --muted-foreground: 225 20% 74%;
+  --accent: 255 40% 26%;
+  --accent-foreground: 255 80% 95%;
+  --destructive: 4 85% 70%;
+  --destructive-foreground: 232 38% 8%;
+  --success: 150 55% 58%;
+  --success-foreground: 232 38% 8%;
+  --warning: 38 90% 62%;
+  --warning-foreground: 232 38% 8%;
+  --overlay: 232 50% 3%;
+  --border: 230 25% 28%;
+  --input: 230 25% 34%;
+  --ring: 252 95% 78%;
+  --sidebar: 232 38% 8%;
+  --sidebar-foreground: 220 40% 94%;
+  --sidebar-border: 230 25% 20%;
+  --sidebar-accent: 255 40% 22%;
+  --zk-glass-alpha: 0.58;
+  --zk-glass-edge: 220 60% 90%;
+  --zk-glass-edge-alpha: 0.16;
+  --zk-glass-highlight: inset 0 1px 0 hsl(0 0% 100% / 0.08);
+  --zk-shadow-color: 232 60% 2%;
+  --zk-shadow-xs: none;
+  --zk-shadow-sm: 0 2px 8px -2px rgb(0 0 0 / 0.5), var(--zk-glass-highlight);
+  --zk-shadow-md: 0 10px 30px -10px rgb(0 0 0 / 0.6), var(--zk-glass-highlight);
+  --zk-shadow-lg: 0 18px 44px -14px rgb(0 0 0 / 0.65), var(--zk-glass-highlight);
+  --zk-shadow-xl: 0 28px 64px -18px rgb(0 0 0 / 0.7), var(--zk-glass-highlight);
+  --zk-shadow-overlay: 0 24px 60px -16px rgb(0 0 0 / 0.75), var(--zk-glass-highlight);
+  --zk-lift-shadow: 0 20px 44px -14px hsl(252 95% 78% / 0.22), var(--zk-glass-highlight);
+  --zk-btn-hover-shadow: 0 12px 28px -10px hsl(252 95% 78% / 0.4);
+  --zk-btn-press-shadow: 0 2px 6px -2px hsl(252 95% 78% / 0.3);
+  --zk-bg-pattern:
+    radial-gradient(38rem 30rem at 6% 6rem, hsl(262 90% 60% / 0.26), transparent 70%),
+    radial-gradient(34rem 28rem at 94% 24rem, hsl(190 90% 46% / 0.2), transparent 70%),
+    radial-gradient(36rem 30rem at 24% 70rem, hsl(330 85% 56% / 0.16), transparent 70%);
+}
+
+/* ---------------------------------------------------------------
  * Token consumers that theme variables cannot reach.
  *
  *    Some stylesheets (fumadocs ships a precompiled one) and some
@@ -700,6 +886,7 @@
     font-family: var(--zk-font-display);
     font-weight: var(--zk-heading-weight);
     letter-spacing: var(--zk-heading-tracking);
+    line-height: var(--zk-heading-leading, 1.1);
     text-transform: var(--zk-heading-transform);
   }
   code,
@@ -785,11 +972,91 @@
     background: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
   }
+
+  /* Code blocks and inline code sit on the card surface */
+  pre {
+    background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
+    border: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--zk-shadow-sm);
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+  }
+  :not(pre) > code {
+    background-color: hsl(var(--muted));
+    border: var(--zk-border-width) solid hsl(var(--border));
+    border-radius: var(--radius-sm);
+  }
+
+  /* Tables: head reads as a label band, rows answer on hover */
+  thead th {
+    background-color: hsl(var(--muted));
+    border-bottom: var(--zk-border-width) solid hsl(var(--border));
+  }
+  tbody tr {
+    transition-property: background-color;
+    transition-duration: var(--motion-base);
+    transition-timing-function: var(--zk-btn-ease, ease);
+  }
+  tbody tr:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Links keep a clear keyboard focus in every identity */
+  a:focus-visible {
+    outline: var(--ring-width) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+    border-radius: var(--radius-sm);
+  }
 }
 
 /* Press: buttons get a drawn edge in the shadow colour. */
 :root[data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
   border: var(--zk-border-width) solid hsl(var(--zk-shadow-color));
+}
+
+/*
+ * Glass: translucent surfaces. Cards, popovers, code blocks and the docs
+ * chrome take the card colour at --zk-glass-alpha with a backdrop blur and
+ * a hairline edge (code blocks: see "Token consumers"; navbar and sidebar:
+ * apps/docs globals.css). Fallbacks keep the text readable:
+ * no backdrop-filter, or a request for less transparency, gives solid surfaces.
+ */
+/* `:where()` keeps the specificity low so a state utility (hover:bg-accent) still wins. */
+:root[data-identity="glass"] :where(.bg-card, .bg-popover) {
+  background-color: hsl(var(--card) / var(--zk-glass-alpha));
+  border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
+  -webkit-backdrop-filter: var(--zk-glass-filter);
+  backdrop-filter: var(--zk-glass-filter);
+}
+/* Phones: a smaller blur radius keeps scrolling smooth. */
+@media (max-width: 640px) {
+  :root[data-identity="glass"] {
+    --zk-glass-blur: 10px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-identity="glass"] {
+    --zk-glass-alpha: 0.97;
+    --zk-glass-blur: 0px;
+    --zk-glass-saturate: 1;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-identity="glass"] {
+    --zk-glass-alpha: 0.97;
+  }
+}
+
+/* Reusable panel: the same glass treatment for your own components. */
+@utility glass-surface {
+  background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
+  border: var(--zk-border-width, 1px) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+  border-radius: var(--radius-xl);
+  box-shadow: var(--zk-shadow-md, none);
+  -webkit-backdrop-filter: var(--zk-glass-filter, none);
+  backdrop-filter: var(--zk-glass-filter, none);
 }
 
 /*

@@ -24,16 +24,21 @@ restyles the kit, this documentation site and your own screens without changing 
 | Press | `press` | Space Grotesk, Space Mono | 0 | 2px | +12% | Hard 4px offset, no blur. |
 | Tide | `tide` | Inter, heavy weights | 24px (cards) | 1px | +12% | Large soft glows. |
 | Volt | `volt` | Geist | 6px (cards) | 1px | -12% (dense) | Layered, with an inner edge in dark. |
-| Gilt | `gilt` | Cormorant, Jost | 2px (cards) | 1px | +30% (airy) | Almost none, very soft. |
+| Maison | `maison` | Cormorant, Jost | 2px (cards) | 1px | +30% (airy) | Almost none, very soft. |
+| Glass | `glass` | Space Grotesk, Inter | 20px (cards) | 1px, translucent | +10% | Wide and soft, with an inner highlight. |
 
 Use the identity control in the site header (or the sidebar footer on documentation pages) to
 try them. The choice is kept in `localStorage` under `zk-identity`.
 
 The built-in names are short on purpose: **Mist** is calm and soft, **Press** is letterpress (ink on
 paper, square edges), **Tide** is navy and coral, **Volt** is dense and dark with one electric
-accent, **Gilt** is ivory and serif. `IdentityScript` also maps ids used before these names
-(`soft`, `retro-square`, `studio`, `deep`, `luxe`) to the new ones and rewrites the stored value, so
-a returning visitor keeps their choice. Pass `legacyIds` to map the ids of your own renamed identities.
+accent, **Maison** is a brand boutique (ivory, serif, airy), **Glass** is frosted translucent surfaces
+over soft colour halos. `IdentityScript` also maps ids used before these names (`soft`,
+`retro-square`, `studio`, `deep`, `luxe`, `gilt`) to the new ones and rewrites the stored value, so a
+returning visitor keeps their choice. Pass `legacyIds` to map the ids of your own renamed identities.
+
+Code blocks, tables, focused links and the documentation navbar and sidebar follow the same
+tokens in every non-default identity: the default identity keeps the stock rendering.
 
 ## Add the switcher to your app
 
@@ -144,11 +149,25 @@ surface). The built-in identities are checked with an automated accessibility te
 | `--zk-font-sans` | Body text and `font-sans`. |
 | `--zk-font-display` | `h1` to `h4` and `font-display`. |
 | `--zk-font-mono` | Code and `font-mono`. |
-| `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform` | Heading weight, letter spacing and case. |
+| `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform`, `--zk-heading-leading` | Heading weight, letter spacing, case and line height. |
 
 Fonts are not bundled by the kit. Load them in your app (this site uses the self-hosted Fontsource
 packages for Inter, Space Grotesk, Space Mono, Geist, Cormorant, Jost and JetBrains Mono, all under the SIL Open Font License 1.1) and name the
 families in the tokens, with fallbacks. A font that no active identity names is never downloaded.
+
+### Glass (translucent surfaces)
+
+| Token | Controls |
+| --- | --- |
+| `--zk-glass-alpha` | Opacity of cards, popovers, code blocks, navbar and sidebar (1 is solid). |
+| `--zk-glass-blur`, `--zk-glass-saturate`, `--zk-glass-filter` | The `backdrop-filter` behind those surfaces. |
+| `--zk-glass-edge`, `--zk-glass-edge-alpha` | Colour and opacity of the hairline edge. |
+| `--zk-glass-highlight` | Inner top highlight used in the shadow tokens. |
+
+The `glass-surface` utility applies the same treatment to your own panels. Surfaces become solid
+when the browser has no `backdrop-filter` or when the visitor asks for less transparency
+(`prefers-reduced-transparency`), and the blur radius is smaller on phones. Cards, text and
+controls keep a 4.5:1 contrast ratio in light and dark.
 
 ### Motion
 
@@ -189,6 +208,34 @@ import { Reveal, Stagger } from "@zedtech/zedkit-ui";
 
 Under `prefers-reduced-motion: reduce` every entrance and hover animation is turned off and
 content is shown immediately.
+
+## Preview every identity on a first visit
+
+`IdentityTour` cycles through every identity for about one second each when a visitor first lands
+on the page, then settles on their own identity (the stored choice, or the default). It adds a small
+card at the bottom of the screen with the name and one line about the identity on screen, and a
+Skip button.
+
+```tsx
+import { IdentityTour } from "@zedtech/zedkit-ui";
+
+// On the entry page only. Everything is optional.
+<IdentityTour stepMs={1000} skipLabel="Skip" />
+```
+
+- It plays once per browser (`localStorage` key `zk-identity-tour`) and never under
+  `prefers-reduced-motion`.
+- It waits for the page to finish loading and for the identities' fonts, so it never competes with
+  the first paint.
+- A click, a tap or any key press skips it. The Skip button is a real button, never focused for you.
+- Spacing, density and the type scale are held at the final identity's values while it plays, so
+  the content around the card does not move. Only colours, shapes, shadows and fonts change.
+- It never writes the persisted identity, and the switcher follows the identity on screen.
+- Screen readers get one short announcement when it starts and nothing else. The card is excluded
+  from search snippets (`data-nosnippet`).
+
+Use `useIdentityTour()` for a custom card: it returns `running`, `step`, `total`, `current` and
+`skip`. Pass `identities`, `defaultIdentity`, `storageKey` or `enabled` to adapt it.
 
 ## Limits
 

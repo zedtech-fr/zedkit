@@ -736,7 +736,7 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `IdentityTour`, `IdentityTourProps`, `IdentityTourOptions`, `IdentityTourState`, `useIdentityTour`, `IDENTITY_TOUR_STORAGE_KEY`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`
 - Wraps: none (CSS variables in `styles.css`, `identities.css`, `motion.css`)
 - Status: alpha
 - Short name: Identities
@@ -752,6 +752,24 @@ import { IdentityScript, IdentitySwitcher, Reveal } from "@zedtech/zedkit-ui";
 // <head><IdentityScript /></head> applies the stored identity before paint
 <IdentitySwitcher />
 <Reveal>{children}</Reveal>
+```
+
+## Show the zedkit logo
+
+- Import: `@zedtech/zedkit-ui` — `Logo`, `LogoProps`
+- Wraps: none (inline SVG)
+- Status: alpha
+- Short name: Logo
+- Audience: Teams building a header, a footer or a share image for a zedkit-based site.
+- Purpose: The zedkit mark as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.
+- When to use: Next to the product name in a site header, or anywhere a small brand mark is needed.
+- When not to use: For your own brand — ship your own mark instead.
+- See also: `Switch the visual identity with one attribute`
+- A11y: named image ("zedkit") by default; pass `title=""` to hide it when the name is written next to it.
+
+```ts
+import { Logo } from "@zedtech/zedkit-ui";
+<Logo className="h-6 text-foreground" title="" />
 ```
 
 ## Pick one option from a dropdown

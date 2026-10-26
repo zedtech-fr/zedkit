@@ -21,7 +21,7 @@ export function HomeHero({
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
         <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-          <Text variant="muted">zedkit</Text>
+          <Text variant="muted" className="text-xs">zedkit</Text>
           <KitVersionLabel version={version} changelogHref={changelogHref} />
         </Stack>
         <Heading level={1} className="max-w-3xl text-balance">

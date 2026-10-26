@@ -47,13 +47,13 @@ export function HomeProofs({
         {items.map((item) => (
           <Card key={item.title} className="min-w-0">
             <CardHeader>
-              <CardTitle>{item.title}</CardTitle>
+              <CardTitle className="text-lg">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <Stack gap={HOME_CARD_CONTENT_GAP}>
                 <Text variant="muted">{item.body}</Text>
                 {item.href ? (
-                  <Button asChild variant="ghost" size="sm" className="w-fit">
+                  <Button asChild variant="outline" className="min-h-tap w-fit">
                     <Link
                       href={item.href}
                       {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
