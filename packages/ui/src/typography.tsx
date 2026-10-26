@@ -43,7 +43,7 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
 );
 Heading.displayName = "Heading";
 
-const textVariants = cva("leading-7", {
+const textVariants = cva("leading-body", {
   variants: {
     variant: {
       body: "",
