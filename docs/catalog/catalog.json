@@ -789,7 +789,7 @@
         },
         {
           "need": "Show loading placeholder blocks",
-          "import": "`@zedtech/zedkit-ui` — `Skeleton`",
+          "import": "`@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`",
           "wraps": "`(none)`",
           "status": "beta",
           "shortName": "Skeleton",
@@ -803,8 +803,15 @@
             {
               "title": "Simple",
               "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
+            },
+            {
+              "title": "Text lines",
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-full\" /> // stack lines for text blocks; shape is all className"
             }
           ],
+          "registry": "skeleton",
+          "a11y": "Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container.",
+          "troubleshooting": "No pulse — the pulse is `motion-safe:animate-pulse`: static under reduced-motion, and it needs Tailwind's default theme. Wrong shape — size comes only from your `className`; the brick ships no dimensions.",
           "seeAlso": [
             "Show determinate progress"
           ]

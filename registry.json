@@ -162,6 +162,17 @@
           "spacing-alert-content-indent": "1.75rem"
         }
       }
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }
