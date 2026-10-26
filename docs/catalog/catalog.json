@@ -1068,7 +1068,7 @@
         },
         {
           "need": "Show toast notifications",
-          "import": "`@zedtech/zedkit-ui` — `Toaster`",
+          "import": "`@zedtech/zedkit-ui` — `Toaster`, `toast`",
           "wraps": "`sonner`",
           "status": "beta",
           "shortName": "Toaster",
@@ -1077,11 +1077,11 @@
           "whenToUse": "For outcomes that do not need the user's reply.",
           "whenNotToUse": "For errors needing action — use Alert or Dialog instead.",
           "derivedFrom": "shadcn/ui (sonner)",
-          "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
+          "example": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+              "code": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
             }
           ],
           "a11y": "The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.",
@@ -1158,7 +1158,7 @@
         },
         {
           "need": "Guide a multi-step flow with selectable option cards",
-          "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
+          "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
           "wraps": "none (native inputs + theme tokens)",
           "status": "beta",
           "shortName": "WizardSteps",
@@ -1172,8 +1172,13 @@
             {
               "title": "Simple",
               "code": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
+            },
+            {
+              "title": "Composed steps",
+              "code": "import { Wizard, WizardStep } from \"@zedtech/zedkit-ui\";\n<Wizard>\n  <WizardStep step=\"Pick\" index={0} state=\"done\" showConnector />\n  <WizardStep step=\"Configure\" index={1} state=\"current\" />\n</Wizard>"
             }
           ],
+          "a11y": "List carries `aria-label=\"Progress\"`; current step gets `aria-current=\"step\"`.",
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state"
           ]
