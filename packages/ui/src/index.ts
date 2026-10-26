@@ -124,7 +124,7 @@ export {
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
 export { Textarea } from "./textarea.js";
-export { Toaster, toast } from "./sonner.js";
+export { Toaster, toast, type ToasterProps } from "./sonner.js";
 export {
   Heading,
   headingVariants,

@@ -162,6 +162,17 @@
           "spacing-alert-content-indent": "1.75rem"
         }
       }
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "dependencies": ["sonner"],
+      "files": [
+        {
+          "path": "registry/generated/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }
