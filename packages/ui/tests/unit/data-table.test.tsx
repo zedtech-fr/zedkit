@@ -26,6 +26,18 @@ describe("DataTable", () => {
     expect(bodyRowTexts()).toEqual(["Bob30", "Ada36"]);
   });
 
+  it("uses token-driven cell padding with no value arbitraries", () => {
+    const { container } = render(<DataTable columns={columns} data={data} />);
+    const head = container.querySelector("th");
+    expect(head?.className).toContain("px-table-cell");
+    expect(head?.className).toContain("h-table-head-height");
+    const cell = container.querySelector("td");
+    expect(cell?.className).toContain("p-table-cell");
+    for (const el of [head, cell]) {
+      expect(el?.className).not.toMatch(/\[[-\d#]/);
+    }
+  });
+
   it("sorts ascending then descending when a sortable header is clicked", async () => {
     const user = userEvent.setup();
     render(<DataTable columns={columns} data={data} />);

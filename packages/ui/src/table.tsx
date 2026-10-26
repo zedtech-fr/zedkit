@@ -1,4 +1,8 @@
 // Derived from shadcn/ui (table) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
+//
+// Allowed arbitraries: structural selectors only ([&_tr], :last-child,
+// data-[state=selected], :has([role=checkbox])). They carry no values,
+// so no theme token can replace them. All sizes/paddings use tokens.
 import * as React from "react";
 
 import { cn } from "./utils.js";
@@ -44,7 +48,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "h-table-head-height px-table-cell text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-table-checkbox-nudge",
         className,
       )}
       {...props}
@@ -56,14 +60,14 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)}
+      className={cn("p-table-cell align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-table-checkbox-nudge", className)}
       {...props}
     />
   );
 }
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
-  return <caption data-slot="table-caption" className={cn("mt-4 text-sm text-muted-foreground", className)} {...props} />;
+  return <caption data-slot="table-caption" className={cn("mt-table-caption-gap text-sm text-muted-foreground", className)} {...props} />;
 }
 
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };

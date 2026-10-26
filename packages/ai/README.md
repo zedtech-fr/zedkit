@@ -112,7 +112,8 @@ when the skills link is not followed.
   review.
 
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
-`adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`.
+`adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
+`review`, `plan`, `challenge`, `audit`.
 
 **Entry points (one command per phase):** `review` (pins the diff, fans out
 `code-review` + `persona-review` + `adversarial-tests`/`security-reviewer`
@@ -126,9 +127,9 @@ never copied into them.
 the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,
 `handoff`, `pr`, `to-spec`, `triage`, ...).
 
-**Subagents:** `explorer` (read-only lookup), `architect` (plan, never code),
-`plan-challenger` (pre-mortem and ranked objections), `verifier` (gate),
-`improver` (apply review findings, smallest diff), `security-reviewer`.
+**Subagents:** lookup, plan, review/audit specialists, writers, release and
+director briefs — the full table (role + when to call) lives in
+`docs/agents-catalog.md`, the installed set in `kit.json`.
 
 **Presets:** `core` (the skills most projects benefit from; `zedkit-ai list`
 shows them) and `full` (all). Keep the skill count low: every skill's name and

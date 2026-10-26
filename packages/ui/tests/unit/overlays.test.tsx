@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { toast } from "sonner";
 import { Button } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "#index.js";
 import { SecretField } from "#index.js";
-import { Toaster } from "#index.js";
+import { Toaster, toast } from "#index.js";
 
 describe("overlays", () => {
   it("opens and closes a dialog", async () => {
@@ -150,6 +149,22 @@ describe("overlays", () => {
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onConfirm).not.toHaveBeenCalled();
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("renders any trigger element via the asChild slot", async () => {
+    const user = userEvent.setup();
+    render(
+      <ConfirmDialog
+        trigger={<a href="/items">Delete item</a>}
+        title="Delete item?"
+        description="This cannot be undone."
+        onConfirm={() => {}}
+      />,
+    );
+    const trigger = screen.getByRole("link", { name: "Delete item" });
+    expect(trigger.getAttribute("href")).toBe("/items");
+    await user.click(trigger);
+    expect(screen.getByRole("dialog")).not.toBeNull();
   });
 
   it("shows a toast through the themed viewport", async () => {

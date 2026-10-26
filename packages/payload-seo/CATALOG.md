@@ -7,7 +7,7 @@
 
 ## Add a localized SEO tab to a Payload collection
 
-- Import: `@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`
+- Import: `@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`, `SeoFieldLabels`, `SeoFieldLabelKey`
 - Wraps: `payload` (peer, types only)
 - Status: beta
 - Short name: SEO group field
@@ -19,13 +19,20 @@
 
 ```ts
 import { seoGroupField } from "@zedtech/zedkit-payload-seo";
-fields: [seoGroupField({ mediaSlug: "media" })]
+fields: [
+  seoGroupField({
+    mediaSlug: "media",
+    labels: { group: { en: "SEO", fr: "Référencement" }, metaTitle: { en: "Title", fr: "Titre" } },
+    keywordsAsText: true,
+    validationMessages: { maxLength: { en: "Max {max} chars (now {length})." } },
+  }),
+];
 // meta/OG/robots leaves, localized, length-validated
 ```
 
 ## Validate editor-entered title/description lengths
 
-- Import: `@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`
+- Import: `@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`, `SEO_VALIDATION_MESSAGES`, `formatMaxLengthMessage`, `resolveLocale`, `SeoValidationMessages`
 - Wraps: `(none)`
 - Status: beta
 - Short name: Length validation
@@ -36,7 +43,15 @@ fields: [seoGroupField({ mediaSlug: "media" })]
 - See also: `Add a localized SEO tab to a Payload collection`, `Derive descriptions, slugs, and localized fields`
 
 ```ts
-import { SEO_TITLE_MAX, maxLengthValidator } from "@zedtech/zedkit-payload-seo";
-validate: maxLengthValidator(SEO_TITLE_MAX)
-// true when fine, friendly message when over
+import {
+  SEO_TITLE_MAX,
+  SEO_VALIDATION_MESSAGES,
+  formatMaxLengthMessage,
+  resolveLocale,
+  maxLengthValidator,
+  type SeoValidationMessages,
+} from "@zedtech/zedkit-payload-seo";
+validate: maxLengthValidator(SEO_TITLE_MAX);
+formatMaxLengthMessage(SEO_VALIDATION_MESSAGES.maxLength.en, 70, 80);
+resolveLocale(req);
 ```

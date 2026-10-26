@@ -23,7 +23,13 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
-export { DetailPanel, type DetailItem, type DetailPanelProps } from "./detail-panel.js";
+export {
+  DetailPanel,
+  DetailPanelRow,
+  type DetailItem,
+  type DetailPanelProps,
+  type DetailPanelRowProps,
+} from "./detail-panel.js";
 export {
   Drawer,
   type DrawerProps,
@@ -71,7 +77,13 @@ export { ProgressBar, type ProgressBarProps } from "./progress-bar.js";
 export { Checkmark, type CheckmarkProps } from "./checkmark.js";
 export { StatusLabel, type StatusLabelProps, type StatusLabelTone } from "./status-label.js";
 export { UpdatedAgo, type UpdatedAgoProps } from "./updated-ago.js";
-export { OptionCards, type OptionCard, type OptionCardsProps } from "./option-cards.js";
+export {
+  OptionCard,
+  OptionCards,
+  type OptionCardData,
+  type OptionCardProps,
+  type OptionCardsProps,
+} from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
 export {
@@ -98,11 +110,19 @@ export {
   TableHeader,
   TableRow,
 } from "./table.js";
-export { WizardSteps, type WizardStepsProps } from "./wizard-steps.js";
+export {
+  Wizard,
+  WizardStep,
+  WizardSteps,
+  type WizardProps,
+  type WizardStepProps,
+  type WizardStepState,
+  type WizardStepsProps,
+} from "./wizard-steps.js";
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
 export { Textarea } from "./textarea.js";
-export { Toaster } from "./sonner.js";
+export { Toaster, toast } from "./sonner.js";
 export {
   Heading,
   headingVariants,
