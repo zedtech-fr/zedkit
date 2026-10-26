@@ -2,6 +2,7 @@ export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } f
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
+export { IconButton, type IconButtonProps } from "./icon-button.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card.js";
 export { Checkbox } from "./checkbox.js";

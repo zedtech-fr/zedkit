@@ -1,0 +1,66 @@
+import { expect, test } from "@playwright/test";
+import { assertA11yGate, readComputedContrast } from "./a11y-helpers";
+
+const BASE = "http://127.0.0.1:3100";
+
+const A11Y_ROUTES = [
+  { path: "/", label: "home" },
+  { path: "/docs", label: "docs-index" },
+  { path: "/docs/getting-started", label: "getting-started" },
+  { path: "/docs/ui/indicate-status-with-a-dot", label: "component-alpha" },
+  { path: "/docs/set-up-your-coding-agents", label: "tutorial-agents" },
+  {
+    path: "/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo",
+    label: "ai-guide",
+  },
+  { path: "/docs/ui/pick-one-option-from-a-dropdown", label: "component-select" },
+  { path: "/docs/ui/call-out-a-notice-or-an-error-state", label: "component-alert" },
+  { path: "/docs/maturity-and-compatibility", label: "maturity-table" },
+] as const;
+
+const VIEWPORTS = [
+  { width: 390, height: 844, name: "mobile" },
+  { width: 1280, height: 900, name: "desktop" },
+] as const;
+
+async function setTheme(page: import("@playwright/test").Page, theme: "light" | "dark") {
+  await page.evaluate((mode) => {
+    document.documentElement.classList.toggle("dark", mode === "dark");
+    document.documentElement.style.colorScheme = mode;
+  }, theme);
+}
+
+test.describe("a11y gate (#396)", () => {
+  for (const route of A11Y_ROUTES) {
+    for (const viewport of VIEWPORTS) {
+      for (const theme of ["light", "dark"] as const) {
+        test(`${route.label} ${viewport.name} ${theme}: axe gate rules`, async ({ page }) => {
+          await page.setViewportSize({ width: viewport.width, height: viewport.height });
+          await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
+          await setTheme(page, theme);
+          await assertA11yGate(page);
+        });
+      }
+    }
+  }
+
+  const maturitySamples: { path: string; name: string }[] = [
+    { path: "/docs/ui/indicate-status-with-a-dot", name: "alpha" },
+    { path: "/catalog", name: "beta" },
+  ];
+
+  for (const theme of ["light", "dark"] as const) {
+    for (const sample of maturitySamples) {
+      test(`maturity ${sample.name} badge ${theme}: contrast >= 4.5:1`, async ({ page }) => {
+        await page.goto(`${BASE}${sample.path}`, { waitUntil: "networkidle" });
+        await setTheme(page, theme);
+        const badge =
+          sample.name === "alpha"
+            ? page.locator("a.bg-warning", { hasText: sample.name })
+            : page.getByText(sample.name, { exact: true }).first();
+        const ratio = await readComputedContrast(page, badge);
+        expect(ratio).toBeGreaterThanOrEqual(4.5);
+      });
+    }
+  }
+});

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- Table scroll container is focusable per scrollable-region-focusable (#396). */
 // Derived from shadcn/ui (table) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 //
 // Allowed arbitraries: structural selectors only ([&_tr], :last-child,
@@ -7,9 +8,20 @@ import * as React from "react";
 
 import { cn } from "./utils.js";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+export interface TableProps extends React.ComponentProps<"table"> {
+  /** Accessible name for the horizontal scroll region (axe scrollable-region-focusable). */
+  scrollAriaLabel?: string;
+}
+
+function Table({ className, scrollAriaLabel = "Scrollable table", ...props }: TableProps) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <div
+      role="region"
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+      tabIndex={0}
+      aria-label={scrollAriaLabel}
+    >
       <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   );

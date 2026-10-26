@@ -46,4 +46,18 @@ describe("table primitives", () => {
     expect(container.innerHTML).toContain("translate-y-table-checkbox-nudge");
     expect(container.innerHTML).not.toContain("translate-y-[2px]");
   });
+
+  it("exposes a focusable scroll region with an accessible name", () => {
+    render(
+      <Table scrollAriaLabel="Team roster">
+        <TableBody>
+          <TableRow>
+            <TableCell>Ada</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const region = screen.getByRole("region", { name: "Team roster" });
+    expect(region.getAttribute("tabindex")).toBe("0");
+  });
 });

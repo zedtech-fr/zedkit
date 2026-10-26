@@ -11,7 +11,8 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-background text-foreground",
-        destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+        destructive:
+          "border-destructive/50 bg-destructive/90 text-destructive-foreground dark:border-destructive [&_div]:text-destructive-foreground [&_h2]:text-destructive-foreground [&>svg]:text-destructive-foreground",
       },
     },
     defaultVariants: {
@@ -40,9 +41,9 @@ const AlertTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTM
   // Children are explicit (not part of the props spread) so the
   // heading-has-content rule can see them; renders identically.
   ({ className, children, ...props }, ref) => (
-    <h5 ref={ref} className={cn("mb-1 leading-none font-medium tracking-tight", className)} {...props}>
+    <h2 ref={ref} className={cn("mb-1 text-base leading-none font-medium tracking-tight", className)} {...props}>
       {children}
-    </h5>
+    </h2>
   ),
 );
 AlertTitle.displayName = "AlertTitle";
