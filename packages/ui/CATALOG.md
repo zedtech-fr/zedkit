@@ -212,6 +212,8 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - See also: `Show loading placeholder blocks`
 - Examples: Simple, Complete
 - A11y: Root carries `role="progressbar"` with clamped value; keep the label screen-only and pair with visible text.
+- Registry: progress-bar
+- Troubleshooting: Bar looks empty — `NaN` and out-of-range values clamp (negative to 0, over max to full). Screen reader silent — the bar is a plain progressbar; announce milestones with a `StatusLabel` beside it.
 
 ```ts
 import { ProgressBar } from "@zedtech/zedkit-ui";

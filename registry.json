@@ -94,6 +94,23 @@
           "animate-check-draw": "zk-check-draw 0.45s ease-out forwards"
         }
       }
+    },
+    {
+      "name": "progress-bar",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/progress-bar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-progress-bar-gap": "0.125rem",
+          "spacing-progress-bar-height": "0.375rem"
+        }
+      }
     }
   ]
 }
