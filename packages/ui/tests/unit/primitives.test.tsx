@@ -64,6 +64,8 @@ describe("primitives", () => {
     );
     const separators = container.querySelectorAll('[data-orientation]');
     expect(separators).toHaveLength(2);
+    expect(separators[0]?.className).toContain("h-separator-thickness");
+    expect(separators[1]?.className).toContain("w-separator-thickness");
   });
 
   it("renders a skeleton block that pulses only when motion is safe", () => {
