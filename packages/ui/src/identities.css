@@ -1046,7 +1046,7 @@
 
   /* Buttons: hover and press motion come from the identity's tokens */
   :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
-    transition-property: translate, box-shadow, background-color, color;
+    transition-property: translate, scale, box-shadow, background-color, color;
     transition-duration: var(--motion-base);
     transition-timing-function: var(--zk-btn-ease);
   }

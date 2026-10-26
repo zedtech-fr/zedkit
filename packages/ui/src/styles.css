@@ -5,6 +5,12 @@
 @import "./motion.css";
 
 /*
+ * Hover styles only apply where a hover exists: without this guard the
+ * hover state sticks after a tap on touch screens.
+ */
+@custom-variant hover (@media (hover: hover) { &:hover });
+
+/*
  * zedkit admin theme: neutral, calm, readable. Dark/light via the
  * `.dark` class on <html> (next-themes `attribute="class"`).
  * Consumers import this file once (see README) and add one `@source`
@@ -299,6 +305,22 @@
     color: var(--color-foreground);
     font-family: var(--zk-font-sans);
   }
+  /* No double-tap zoom delay on controls; panning and pinch still work. */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  label,
+  summary,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="combobox"],
+  [role="option"] {
+    touch-action: manipulation;
+  }
 }
 
 /*
@@ -340,6 +362,21 @@
   }
 }
 
+/*
+ * Button motion: colour, shadow and translate transitions, plus a shrink
+ * to `--zk-press-scale` while held. Non-mist shadow buttons layer their
+ * identity motion on top (see identities.css); the properties compose.
+ * Applied behind `motion-safe:` so reduced motion keeps instant states.
+ */
+@utility button-press {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow, translate, scale;
+  transition-duration: var(--motion-base);
+  transition-timing-function: var(--zk-btn-ease, ease);
+  &:active:not(:disabled) {
+    scale: var(--zk-press-scale);
+  }
+}
+
 @keyframes zk-check-draw {
   from {
     stroke-dashoffset: 8;
@@ -359,6 +396,8 @@
   --motion-slow: 250ms;
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Pressed-state shrink for buttons (see the button-press utility). */
+  --zk-press-scale: 0.97;
 }
 
 @keyframes zk-fade-in {
