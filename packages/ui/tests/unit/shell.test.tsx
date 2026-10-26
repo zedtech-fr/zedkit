@@ -23,6 +23,17 @@ describe("AppShell", () => {
     );
     expect(container.querySelector("header")).toBeNull();
   });
+
+  it("sizes sidebar and main padding from theme tokens", () => {
+    const { container } = render(
+      <AppShell sidebar={<nav>Nav</nav>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    expect(container.querySelector("aside")?.className).toContain("w-app-shell-sidebar");
+    expect(container.querySelector("main")?.className).toContain("p-app-shell-padding");
+    expect(container.querySelector("main")?.className).toContain("md:p-app-shell-padding-md");
+  });
 });
 
 describe("PageHeader", () => {
@@ -31,5 +42,12 @@ describe("PageHeader", () => {
     expect(screen.getByRole("heading", { name: "Items" }).textContent).toBe("Items");
     expect(screen.getByText("All items.").textContent).toBe("All items.");
     expect(screen.getByRole("button", { name: "New" }).textContent).toBe("New");
+  });
+
+  it("uses the token-driven title spacing with no arbitrary values", () => {
+    const { container } = render(<PageHeader title="Items" description="All items." />);
+    const titleBlock = screen.getByRole("heading", { name: "Items" }).parentElement;
+    expect(titleBlock?.className).toContain("space-y-page-header-title-gap");
+    expect(container.firstElementChild?.className).not.toContain("[");
   });
 });

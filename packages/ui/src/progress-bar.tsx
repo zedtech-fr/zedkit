@@ -28,14 +28,14 @@ export function ProgressBar({ value, max = 100, label, className }: ProgressBarP
       aria-valuemin={0}
       aria-valuemax={safeMax}
       aria-valuenow={Math.round(safeValue)}
-      className={cn("flex w-full gap-0.5", className)}
+      className={cn("flex w-full gap-progress-bar-gap", className)}
     >
       {Array.from({ length: SEGMENTS }, (_, index) => (
         <span
           key={index}
           aria-hidden
           className={cn(
-            "h-1.5 flex-1 rounded-full motion-safe:transition-colors",
+            "h-progress-bar-height flex-1 rounded-full motion-safe:transition-colors",
             index < filled ? "bg-primary" : "bg-muted",
           )}
         />

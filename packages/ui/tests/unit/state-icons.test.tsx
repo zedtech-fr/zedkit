@@ -35,6 +35,12 @@ describe("status dot", () => {
     expect(container.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
   });
 
+  it("sizes the dot from theme tokens", () => {
+    const { container } = render(<StatusDot tone="active" />);
+    expect(container.innerHTML).toContain("size-status-dot");
+    expect(container.innerHTML).not.toContain("size-2");
+  });
+
   it("renders without a color when the tone is unknown", () => {
     const { container } = render(<StatusDot tone={"bogus" as "active"} />);
     expect(container.innerHTML).not.toContain("undefined");
@@ -65,6 +71,16 @@ describe("progress bar", () => {
     expect(filled.length).toBe(4);
   });
 
+  it("styles gap and segment height from design tokens", () => {
+    const { container } = render(<ProgressBar value={40} label="Uploading report" />);
+    const bar = screen.getByRole("progressbar", { name: "Uploading report" });
+    expect(bar.classList.contains("gap-progress-bar-gap")).toBe(true);
+    expect(bar.className).not.toMatch(/(^|\s)gap-0\.5(\s|$)/);
+    const segment = container.querySelector("span[aria-hidden]");
+    expect(segment?.classList.contains("h-progress-bar-height")).toBe(true);
+    expect(segment?.className).not.toMatch(/(^|\s)h-1\.5(\s|$)/);
+  });
+
   it("treats non-finite input as empty with a sane scale", () => {
     render(<ProgressBar value={Number.NaN} max={Number.NaN} label="Sync" />);
     const bar = screen.getByRole("progressbar");
@@ -77,7 +93,16 @@ describe("checkmark", () => {
   it("is decorative without a label", () => {
     const { container } = render(<Checkmark />);
     expect(container.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
-    expect(container.querySelector("path")?.getAttribute("class")).toContain("stroke-dasharray");
+    expect(container.querySelector("path")?.getAttribute("stroke-dasharray")).toBe("8");
+  });
+
+  it("styles size and motion from design tokens", () => {
+    const { container } = render(<Checkmark />);
+    expect(container.firstElementChild?.classList.contains("size-checkmark")).toBe(true);
+    expect(container.firstElementChild?.getAttribute("class")).not.toMatch(/(^|\s)size-4(\s|$)/);
+    const path = container.querySelector("path");
+    expect(path?.getAttribute("class")).toContain("motion-safe:animate-check-draw");
+    expect(path?.getAttribute("class")).not.toContain("animate-[");
   });
 
   it("names itself with a label", () => {

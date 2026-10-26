@@ -2,8 +2,10 @@
 export interface SiteAuditRoute {
   path: string;
   label: string;
-  /** Nested-interactive + unique link names (blocked on home until #286). */
+  /** Axe on `main`, nested-interactive, and ambiguous link names in `main`. */
   strictSemantics: boolean;
+  /** Nested-interactive + link names without axe (home until layout axe is stable). */
+  linkAndInteractiveAudit?: boolean;
   /** Skip entire row when the static export has no page yet. */
   pendingPath?: boolean;
   /** Prose/card layouts wider than narrow `main` on mobile until layout refresh (#286). */
@@ -11,7 +13,12 @@ export interface SiteAuditRoute {
 }
 
 export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
-  { path: "/", label: "home", strictSemantics: false },
+  {
+    path: "/",
+    label: "home",
+    strictSemantics: false,
+    linkAndInteractiveAudit: true,
+  },
   { path: "/docs", label: "docs-index", strictSemantics: true, skipMobileOverflow: true },
   {
     path: "/docs/getting-started",
@@ -52,4 +59,4 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
 ];
 
 /** Registry URLs advertised on doc pages; must stay 200 on the served export. */
-export const REGISTRY_SMOKE_URLS = ["/r/badge.json", "/r/drawer.json"] as const;
+export const REGISTRY_SMOKE_URLS = ["/r/badge.json", "/r/drawer.json", "/r/confirm-dialog.json"] as const;

@@ -1,4 +1,4 @@
-export { Alert, AlertDescription, AlertTitle } from "./alert.js";
+export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./alert.js";
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
@@ -23,7 +23,13 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
-export { DetailPanel, type DetailItem, type DetailPanelProps } from "./detail-panel.js";
+export {
+  DetailPanel,
+  DetailPanelRow,
+  type DetailItem,
+  type DetailPanelProps,
+  type DetailPanelRowProps,
+} from "./detail-panel.js";
 export {
   Drawer,
   type DrawerProps,
@@ -98,11 +104,19 @@ export {
   TableHeader,
   TableRow,
 } from "./table.js";
-export { WizardSteps, type WizardStepsProps } from "./wizard-steps.js";
+export {
+  Wizard,
+  WizardStep,
+  WizardSteps,
+  type WizardProps,
+  type WizardStepProps,
+  type WizardStepState,
+  type WizardStepsProps,
+} from "./wizard-steps.js";
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
 export { Textarea } from "./textarea.js";
-export { Toaster } from "./sonner.js";
+export { Toaster, toast } from "./sonner.js";
 export {
   Heading,
   headingVariants,

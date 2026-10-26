@@ -115,10 +115,81 @@
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
   --spacing-icon-control: 1rem;
+  --spacing-checkbox: 1rem;
+  --spacing-heading-scroll: 5rem;
+  --spacing-detail-panel-gap: 1rem;
+  --spacing-detail-panel-inline: 1rem;
+  --spacing-detail-panel-block: 0.75rem;
+  --spacing-wizard-steps-gap: 0.75rem;
+  --spacing-wizard-steps-row-gap: 0.5rem;
+  --spacing-wizard-step-gap: 0.5rem;
+  --spacing-wizard-step-badge: 1.5rem;
+  --spacing-wizard-step-icon: 0.875rem;
+  --spacing-wizard-step-connector-gap: 0.25rem;
+  --spacing-wizard-step-connector-thickness: 1px;
+  --spacing-wizard-step-connector: 1.5rem;
+  --spacing-checkmark: 1rem;
+  --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
+  --spacing-progress-bar-gap: 0.125rem;
+  --spacing-progress-bar-height: 0.375rem;
+  --spacing-tabs-list-height: 2.25rem;
+  --spacing-tabs-list-inset: 0.25rem;
+  --spacing-tabs-trigger-inline: 0.75rem;
+  --spacing-tabs-trigger-block: 0.25rem;
+  --spacing-tabs-content-gap: 0.5rem;
+  --spacing-switch-track-height: 1.25rem;
+  --spacing-switch-track-width: 2.25rem;
+  --spacing-switch-thumb: 1rem;
+  /* Checked-state thumb travel: track width − thumb − transparent borders. */
+  --spacing-switch-travel: 1rem;
+  --spacing-status-label-gap: 0.375rem;
+  --spacing-status-label-icon: 0.875rem;
+  --spacing-status-label-box: 1rem;
+  --spacing-status-dot: 0.5rem;
   --spacing-control-inline: 0.75rem;
   --spacing-control-block: 0.25rem;
   --spacing-control-block-lg: 0.5rem;
   --spacing-textarea-min-height: 3.75rem;
+  --spacing-alert-inline: 1rem;
+  --spacing-alert-block: 0.75rem;
+  --spacing-alert-icon-offset: 1rem;
+  --spacing-alert-icon-nudge: 0.1875rem;
+  --spacing-alert-content-indent: 1.75rem;
+  --spacing-field-set: 1.5rem;
+  --spacing-field-group: 1.75rem;
+  --spacing-field-group-compact: 0.75rem;
+  --spacing-field-group-nested: 1rem;
+  --spacing-field: 0.75rem;
+  --spacing-field-content: 0.375rem;
+  --spacing-field-inline: 0.5rem;
+  --spacing-field-legend-bottom: 0.75rem;
+  --spacing-field-label-inset: 1rem;
+  --spacing-field-separator: 1.25rem;
+  --spacing-field-separator-inline: 0.5rem;
+  --spacing-field-error-indent: 1rem;
+  --spacing-field-error-gap: 0.25rem;
+  --spacing-card-padding: 1.5rem;
+  --spacing-card-stack: 0.375rem;
+  --spacing-card-section: 1rem;
+  --spacing-card-lines: 0.5rem;
+  --spacing-separator-thickness: 0.0625rem;
+  --spacing-live-pulse-gap: 0.375rem;
+  --spacing-secret-field-gap: 0.5rem;
+  --spacing-page-header-title-gap: 0.25rem;
+  --spacing-dialog-center: 50%;
+  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --spacing-app-shell-sidebar: 16rem;
+  --spacing-app-shell-padding: 1rem;
+  --spacing-app-shell-padding-md: 1.5rem;
+  --z-index-overlay: 50;
+  --spacing-table-cell: 0.5rem;
+  --spacing-table-head-height: 2.5rem;
+  --spacing-table-checkbox-nudge: 0.125rem;
+  --spacing-table-caption-gap: 1rem;
+  --spacing-route-modal-close-offset: 1rem;
+  --container-route-modal-sm: 24rem;
+  --container-route-modal-drawer-lg: 32rem;
+  --container-route-modal-dialog-lg: 42rem;
 }
 
 @layer base {
@@ -149,6 +220,17 @@
       0 0 0 var(--ring-offset-width) hsl(var(--background)),
       0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring));
   }
+}
+
+/*
+ * Overlay centering (dialog content): replaces the top-[50%] /
+ * translate-[-50%] arbitraries. Uses the `translate` property (not
+ * `transform`) so the zk-zoom enter/exit keyframes compose with it.
+ */
+@utility dialog-center {
+  top: var(--spacing-dialog-center);
+  left: var(--spacing-dialog-center);
+  translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
 }
 
 /* Controls (Button, Input, …): keep the prior 1px focus weight via tokens. */
