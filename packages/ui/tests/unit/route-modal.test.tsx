@@ -23,6 +23,7 @@ function stubNavigationApi(entries: { id: string; sameDocument: boolean }[], cur
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
+  document.documentElement.style.removeProperty("--motion-slow");
 });
 
 describe("closeRoute", () => {
@@ -108,6 +109,22 @@ describe("route modal", () => {
       </RouteModal>,
     );
     pressEscape();
+    expect(onClose).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(250);
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it("honors a themed motion token for the exit", () => {
+    vi.useFakeTimers();
+    document.documentElement.style.setProperty("--motion-slow", "500ms");
+    const onClose = vi.fn();
+    render(
+      <RouteModal title="Delivery" onClose={onClose}>
+        x
+      </RouteModal>,
+    );
+    pressEscape();
+    vi.advanceTimersByTime(250);
     expect(onClose).not.toHaveBeenCalled();
     vi.advanceTimersByTime(250);
     expect(onClose).toHaveBeenCalledOnce();
