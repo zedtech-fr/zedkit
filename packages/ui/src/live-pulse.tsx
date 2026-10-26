@@ -12,7 +12,7 @@ export function LivePulse({ active = true, label = "Live", className }: LivePuls
     <span
       role="status"
       aria-label={active ? label : "Idle"}
-      className={cn("inline-flex items-center gap-1.5 text-xs text-muted-foreground", className)}
+      className={cn("inline-flex items-center gap-live-pulse-gap text-xs text-muted-foreground", className)}
     >
       <StatusDot tone={active ? "success" : "idle"} pulse={active} />
       {active ? label : "Idle"}

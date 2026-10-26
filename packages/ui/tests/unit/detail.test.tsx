@@ -21,4 +21,11 @@ describe("LivePulse", () => {
     render(<LivePulse active={false} />);
     expect(screen.getByRole("status").textContent).toContain("Idle");
   });
+
+  it("uses the token-driven gap with no arbitrary values", () => {
+    render(<LivePulse />);
+    const className = screen.getByRole("status").className;
+    expect(className).toContain("gap-live-pulse-gap");
+    expect(className).not.toContain("[");
+  });
 });
