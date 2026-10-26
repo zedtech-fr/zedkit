@@ -64,7 +64,7 @@ test.describe("a11y gate (#396)", () => {
         await openWithTheme(page, sample.path, theme);
         const badge =
           sample.name === "alpha"
-            ? page.locator("a.bg-warning", { hasText: sample.name })
+            ? page.getByRole("link", { name: sample.name, exact: true })
             : page.getByText(sample.name, { exact: true }).first();
         const ratio = await readComputedContrast(page, badge);
         expect(ratio).toBeGreaterThanOrEqual(4.5);
