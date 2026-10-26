@@ -19,18 +19,35 @@ describe("IdentitySwitcher", () => {
   it("sets data-identity on the root and persists the choice", async () => {
     const user = userEvent.setup();
     render(<IdentitySwitcher />);
-    await user.selectOptions(screen.getByLabelText("Identity"), "retro-square");
-    expect(document.documentElement.getAttribute("data-identity")).toBe("retro-square");
-    expect(localStorage.getItem(IDENTITY_STORAGE_KEY)).toBe("retro-square");
+    await user.selectOptions(screen.getByLabelText("Identity"), "press");
+    expect(document.documentElement.getAttribute("data-identity")).toBe("press");
+    expect(localStorage.getItem(IDENTITY_STORAGE_KEY)).toBe("press");
   });
 });
 
 describe("IdentityScript", () => {
   it("renders an inline script restricted to the allowed ids", () => {
-    const { container } = render(<IdentityScript ids={["soft", "calm"]} />);
+    const { container } = render(<IdentityScript ids={["mist", "calm"]} />);
     const code = container.querySelector("script")?.innerHTML ?? "";
-    expect(code).toContain('["soft","calm"]');
+    expect(code).toContain('["mist","calm"]');
     expect(code).toContain("data-identity");
+  });
+
+  it("maps an id stored before the rename to its new id", () => {
+    const { container } = render(<IdentityScript />);
+    const code = container.querySelector("script")?.innerHTML ?? "";
+    localStorage.setItem(IDENTITY_STORAGE_KEY, "retro-square");
+    new Function(code)();
+    expect(document.documentElement.getAttribute("data-identity")).toBe("press");
+    expect(localStorage.getItem(IDENTITY_STORAGE_KEY)).toBe("press");
+  });
+
+  it("falls back to the default for an unknown stored id", () => {
+    const { container } = render(<IdentityScript />);
+    const code = container.querySelector("script")?.innerHTML ?? "";
+    localStorage.setItem(IDENTITY_STORAGE_KEY, "nope");
+    new Function(code)();
+    expect(document.documentElement.getAttribute("data-identity")).toBe("mist");
   });
 });
 

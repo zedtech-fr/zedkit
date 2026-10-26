@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const BASE = "http://127.0.0.1:3100";
 const GUIDE = `${BASE}/docs/identities-and-theming`;
-const IDENTITIES = ["soft", "retro-square", "studio", "deep", "luxe"] as const;
+const IDENTITIES = ["mist", "press", "tide", "volt", "gilt"] as const;
 const MODES = ["light", "dark"] as const;
 
 async function seed(page: Page, identity: string, mode: string) {
@@ -59,10 +59,10 @@ const SIGNATURES: Record<
   string,
   { body: string; heading: string; radius: number; border: number; padding: number; shadow: RegExp }
 > = {
-  "retro-square": { body: "Space Grotesk", heading: "Space Mono", radius: 0, border: 2, padding: 16.64, shadow: /4px 4px 0px 0px/ },
-  studio: { body: "Inter Variable", heading: "Inter Variable", radius: 24, border: 1, padding: 16.64, shadow: /32px|12px/ },
-  deep: { body: "Geist Variable", heading: "Geist Variable", radius: 6, border: 1, padding: 14.4, shadow: /0px 8px 20px -8px/ },
-  luxe: { body: "Jost Variable", heading: "Cormorant Variable", radius: 2, border: 1, padding: 19.2, shadow: /28px|-18px/ },
+  press: { body: "Space Grotesk", heading: "Space Mono", radius: 0, border: 2, padding: 16.64, shadow: /4px 4px 0px 0px/ },
+  tide: { body: "Inter Variable", heading: "Inter Variable", radius: 24, border: 1, padding: 16.64, shadow: /32px|12px/ },
+  volt: { body: "Geist Variable", heading: "Geist Variable", radius: 6, border: 1, padding: 14.4, shadow: /0px 8px 20px -8px/ },
+  gilt: { body: "Jost Variable", heading: "Cormorant Variable", radius: 2, border: 1, padding: 19.2, shadow: /28px|-18px/ },
 };
 
 test("switcher lists every identity, changes tokens, and persists", async ({ page }) => {
@@ -71,17 +71,17 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
 
   const switcher = identitySelect(page);
   await expect(switcher).toBeVisible();
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "soft");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
   expect(await switcher.locator("option").evaluateAll((o) => o.map((e) => (e as HTMLOptionElement).value))).toEqual([
     ...IDENTITIES,
   ]);
 
-  const soft = await measure(page);
-  expect(soft.radius).toBe(12);
-  expect(soft.border).toBe(1);
-  expect(soft.padding).toBe(16);
+  const mist = await measure(page);
+  expect(mist.radius).toBe(12);
+  expect(mist.border).toBe(1);
+  expect(mist.padding).toBe(16);
 
-  for (const identity of IDENTITIES.filter((i) => i !== "soft")) {
+  for (const identity of IDENTITIES.filter((i) => i !== "mist")) {
     await identitySelect(page).selectOption(identity);
     await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
     const sig = SIGNATURES[identity]!;
@@ -92,31 +92,44 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
     expect(got.border, identity).toBe(sig.border);
     expect(got.padding, identity).toBeCloseTo(sig.padding, 1);
     expect(got.shadow, identity).toMatch(sig.shadow);
-    expect(got.bodyFont, identity).not.toBe(soft.bodyFont);
+    expect(got.bodyFont, identity).not.toBe(mist.bodyFont);
   }
 
-  await identitySelect(page).selectOption("luxe");
+  await identitySelect(page).selectOption("gilt");
   await page.reload({ waitUntil: "networkidle" });
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "luxe");
-  await expect(identitySelect(page)).toHaveValue("luxe");
-  expect(await page.evaluate(() => localStorage.getItem("zk-identity"))).toBe("luxe");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "gilt");
+  await expect(identitySelect(page)).toHaveValue("gilt");
+  expect(await page.evaluate(() => localStorage.getItem("zk-identity"))).toBe("gilt");
 
-  await identitySelect(page).selectOption("soft");
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "soft");
+  await identitySelect(page).selectOption("mist");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
   const back = await measure(page);
-  expect(back.radius).toBe(soft.radius);
-  expect(back.padding).toBe(soft.padding);
-  expect(back.bodyFont).toBe(soft.bodyFont);
+  expect(back.radius).toBe(mist.radius);
+  expect(back.padding).toBe(mist.padding);
+  expect(back.bodyFont).toBe(mist.bodyFont);
+});
+
+test("an identity id stored before the rename is migrated", async ({ page }) => {
+  const legacy: Record<string, string> = { soft: "mist", "retro-square": "press", studio: "tide", deep: "volt", luxe: "gilt" };
+  for (const [oldId, newId] of Object.entries(legacy)) {
+    const context = await page.context().browser()!.newContext();
+    const fresh = await context.newPage();
+    await fresh.addInitScript((id) => localStorage.setItem("zk-identity", id), oldId);
+    await fresh.goto(GUIDE, { waitUntil: "networkidle" });
+    await expect(fresh.locator("html"), oldId).toHaveAttribute("data-identity", newId);
+    expect(await fresh.evaluate(() => localStorage.getItem("zk-identity")), oldId).toBe(newId);
+    await context.close();
+  }
 });
 
 test("stored identity is applied before first paint", async ({ page }) => {
-  await seed(page, "retro-square", "light");
+  await seed(page, "press", "light");
   await page.goto(GUIDE, { waitUntil: "commit" });
   await page.waitForFunction(() => document.documentElement.hasAttribute("data-identity"), undefined, {
     polling: "raf",
   });
   const first = await page.evaluate(() => document.documentElement.getAttribute("data-identity"));
-  expect(first).toBe("retro-square");
+  expect(first).toBe("press");
 });
 
 test("light and dark combine with each identity", async ({ page }) => {
@@ -150,7 +163,7 @@ for (const identity of IDENTITIES) {
         for (const selector of CONTRAST_EXCLUDES) scan = scan.exclude(selector);
         // The default identity renders the stock fumadocs palette and the stock maturity badge:
         // unchanged from before identities existed, so their muted text is tracked apart.
-        if (identity === "soft") {
+        if (identity === "mist") {
           for (const selector of [".px-badge-inline", ".text-fd-muted-foreground", ".text-muted-foreground"]) {
             scan = scan.exclude(selector);
           }

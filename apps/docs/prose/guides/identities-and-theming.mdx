@@ -20,14 +20,20 @@ restyles the kit, this documentation site and your own screens without changing 
 
 | Identity | `data-identity` | Fonts | Radius | Border | Spacing | Shadow |
 | --- | --- | --- | --- | --- | --- | --- |
-| Soft | `soft` (default, attribute optional) | System sans | 12px (cards) | 1px | stock | Light, diffuse. |
-| Retro square | `retro-square` | Space Grotesk, Space Mono | 0 | 2px | +12% | Hard 4px offset, no blur. |
-| Studio | `studio` | Inter, heavy weights | 24px (cards) | 1px | +12% | Large soft glows. |
-| Deep | `deep` | Geist | 6px (cards) | 1px | -12% (dense) | Layered, with an inner edge in dark. |
-| Luxe | `luxe` | Cormorant, Jost | 2px (cards) | 1px | +30% (airy) | Almost none, very soft. |
+| Mist | `mist` (default, attribute optional) | System sans | 12px (cards) | 1px | stock | Light, diffuse. |
+| Press | `press` | Space Grotesk, Space Mono | 0 | 2px | +12% | Hard 4px offset, no blur. |
+| Tide | `tide` | Inter, heavy weights | 24px (cards) | 1px | +12% | Large soft glows. |
+| Volt | `volt` | Geist | 6px (cards) | 1px | -12% (dense) | Layered, with an inner edge in dark. |
+| Gilt | `gilt` | Cormorant, Jost | 2px (cards) | 1px | +30% (airy) | Almost none, very soft. |
 
 Use the identity control in the site header (or the sidebar footer on documentation pages) to
 try them. The choice is kept in `localStorage` under `zk-identity`.
+
+The built-in names are short on purpose: **Mist** is calm and soft, **Press** is letterpress (ink on
+paper, square edges), **Tide** is navy and coral, **Volt** is dense and dark with one electric
+accent, **Gilt** is ivory and serif. `IdentityScript` also maps ids used before these names
+(`soft`, `retro-square`, `studio`, `deep`, `luxe`) to the new ones and rewrites the stored value, so
+a returning visitor keeps their choice. Pass `legacyIds` to map the ids of your own renamed identities.
 
 ## Add the switcher to your app
 
@@ -91,7 +97,7 @@ Then register it so the switcher and the pre-paint script know about it:
 
 ```tsx
 const mine = [
-  { id: "soft", label: "Soft" },
+  { id: "mist", label: "Mist" },
   { id: "calm-blue", label: "Calm blue" },
 ];
 
@@ -189,7 +195,7 @@ content is shown immediately.
 - `rounded-full` is a fixed Tailwind value, so pills and switch thumbs stay round in every identity.
 - A component that hard-codes a color, radius or shadow outside the token scales will not follow
   an identity; the kit components use tokens only.
-- The shadcn registry theme item is generated from the soft palette; identities ship with the npm package.
+- The shadcn registry theme item is generated from the mist palette; identities ship with the npm package.
 
 ## Next steps
 

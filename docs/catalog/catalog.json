@@ -1390,7 +1390,7 @@
         },
         {
           "need": "Switch the visual identity with one attribute",
-          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`",
+          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityOption`, `identities`, `DEFAULT_IDENTITY`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `legacyIdentityIds`, `Reveal`, `RevealProps`, `Stagger`, `StaggerProps`",
           "wraps": "none (CSS variables in `styles.css`, `identities.css`, `motion.css`)",
           "status": "alpha",
           "shortName": "Identities",

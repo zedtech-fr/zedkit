@@ -3,10 +3,14 @@
 import * as React from "react";
 import { Palette } from "lucide-react";
 
-import { DEFAULT_IDENTITY, IDENTITY_STORAGE_KEY, identities as builtInIdentities, type IdentityOption } from "./identity.js";
+import {
+  DEFAULT_IDENTITY,
+  IDENTITY_CHANGE_EVENT,
+  IDENTITY_STORAGE_KEY,
+  identities as builtInIdentities,
+  type IdentityOption,
+} from "./identity.js";
 import { cn } from "./utils.js";
-
-const CHANGE_EVENT = "zk-identity-change";
 
 type IdentitySwitcherProps = Omit<React.ComponentProps<"select">, "value" | "defaultValue" | "onChange" | "children"> & {
   /** Choices to offer. Default: the identities shipped in `identities.css`. */
@@ -22,10 +26,10 @@ type IdentitySwitcherProps = Omit<React.ComponentProps<"select">, "value" | "def
 
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
-  window.addEventListener(CHANGE_EVENT, callback);
+  window.addEventListener(IDENTITY_CHANGE_EVENT, callback);
   return () => {
     window.removeEventListener("storage", callback);
-    window.removeEventListener(CHANGE_EVENT, callback);
+    window.removeEventListener(IDENTITY_CHANGE_EVENT, callback);
   };
 }
 
@@ -57,7 +61,7 @@ function IdentitySwitcher({
   function choose(next: string) {
     document.documentElement.setAttribute("data-identity", next);
     window.localStorage.setItem(storageKey, next);
-    window.dispatchEvent(new Event(CHANGE_EVENT));
+    window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
     onIdentityChange?.(next);
   }
 

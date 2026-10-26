@@ -15,25 +15,25 @@
  * through var(). Overriding them restyles both stylesheets at once.
  *
  * Built in (listed in `identity.tsx`, selectable with <IdentitySwitcher />):
- *   soft          current default look (no attribute needed).
- *   retro-square  paper and ink, square corners, 2px borders, hard offset
- *                 shadows, mono display type, stepped motion.
- *   studio        navy and coral, Inter at heavy weights, large radii,
- *                 soft glows, long eased reveals.
- *   deep          dense near-black, tight type, hairline borders, layered
- *                 depth, one acid accent.
- *   luxe          airy ivory, serif display, very fine borders, generous
- *                 spacing, slow motion.
+ *   mist   current default look (no attribute needed): calm, soft corners.
+ *   press  letterpress: paper and ink, square corners, 2px borders, hard
+ *          offset shadows, mono display type, stepped motion.
+ *   tide   navy and coral, Inter at heavy weights, large radii, soft glows,
+ *          long eased reveals.
+ *   volt   dense near-black, tight type, hairline borders, layered depth,
+ *          one acid accent.
+ *   gilt   airy ivory, serif display, very fine borders, generous spacing,
+ *          slow motion.
  *
  * To add one, copy a block below and override the tokens listed in
  * the "Identities and theming" docs page.
  */
 
 /* ---------------------------------------------------------------
- * 2. Identity: soft (default). Palette lives in styles.css.
+ * Identity: mist (default). Palette lives in styles.css.
  * ------------------------------------------------------------- */
 :root {
-  /* Typography: soft keeps the stock font stacks (see styles.css). */
+  /* Typography: mist keeps the stock font stacks (see styles.css). */
   --zk-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-display: var(--zk-font-sans);
   /* Shape */
@@ -69,10 +69,10 @@
 }
 
 /* ---------------------------------------------------------------
- * Identity: retro-square.
+ * Identity: press.
  *   Paper and ink, square corners, 2px borders, hard offset shadows, mono display type, stepped motion.
  * ------------------------------------------------------------- */
-:root[data-identity="retro-square"] {
+:root[data-identity="press"] {
   --background: 45 35% 94%;
   --foreground: 0 0% 5%;
   --card: 0 0% 100%;
@@ -182,7 +182,7 @@
   --zk-deco-ticker: flex;
 }
 
-:root[data-identity="retro-square"].dark {
+:root[data-identity="press"].dark {
   --background: 0 0% 6%;
   --foreground: 45 35% 94%;
   --card: 0 0% 10%;
@@ -216,10 +216,10 @@
 }
 
 /* ---------------------------------------------------------------
- * Identity: studio.
+ * Identity: tide.
  *   Navy and coral, Inter at heavy weights, large radii, soft glows, long eased reveals.
  * ------------------------------------------------------------- */
-:root[data-identity="studio"] {
+:root[data-identity="tide"] {
   --background: 20 60% 99%;
   --foreground: 0 0% 10%;
   --card: 0 0% 100%;
@@ -329,7 +329,7 @@
   --zk-deco-ticker: none;
 }
 
-:root[data-identity="studio"].dark {
+:root[data-identity="tide"].dark {
   --background: 222 47% 11%;
   --foreground: 0 0% 98%;
   --card: 218 33% 17%;
@@ -371,10 +371,10 @@
 }
 
 /* ---------------------------------------------------------------
- * Identity: deep.
+ * Identity: volt.
  *   Dense near-black, tight type, hairline borders, layered depth, one acid accent.
  * ------------------------------------------------------------- */
-:root[data-identity="deep"] {
+:root[data-identity="volt"] {
   --background: 0 0% 96%;
   --foreground: 0 0% 4%;
   --card: 0 0% 100%;
@@ -484,7 +484,7 @@
   --zk-deco-ticker: none;
 }
 
-:root[data-identity="deep"].dark {
+:root[data-identity="volt"].dark {
   --background: 0 0% 3%;
   --foreground: 0 0% 96%;
   --card: 0 0% 7%;
@@ -528,10 +528,10 @@
 }
 
 /* ---------------------------------------------------------------
- * Identity: luxe.
+ * Identity: gilt.
  *   Airy ivory, serif display, very fine borders, generous spacing, slow motion.
  * ------------------------------------------------------------- */
-:root[data-identity="luxe"] {
+:root[data-identity="gilt"] {
   --background: 40 33% 98%;
   --foreground: 30 10% 12%;
   --card: 0 0% 100%;
@@ -641,7 +641,7 @@
   --zk-deco-ticker: none;
 }
 
-:root[data-identity="luxe"].dark {
+:root[data-identity="gilt"].dark {
   --background: 30 12% 7%;
   --foreground: 40 30% 92%;
   --card: 30 10% 10%;
@@ -688,10 +688,10 @@
  *    Tailwind utilities (shadows, border width) bake their values in,
  *    so a variable override alone is not enough. This block maps those
  *    utilities onto identity tokens. It only applies when an identity
- *    other than the default is active: `soft` renders the stock output
+ *    other than the default is active: `mist` renders the stock output
  *    untouched.
  * ------------------------------------------------------------- */
-:root[data-identity]:not([data-identity="soft"]) {
+:root[data-identity]:not([data-identity="mist"]) {
   /* Headings and code take the identity's families */
   h1,
   h2,
@@ -787,8 +787,8 @@
   }
 }
 
-/* Retro square: buttons get a drawn edge in the shadow colour. */
-:root[data-identity="retro-square"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
+/* Press: buttons get a drawn edge in the shadow colour. */
+:root[data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
   border: var(--zk-border-width) solid hsl(var(--zk-shadow-color));
 }
 

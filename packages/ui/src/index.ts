@@ -149,8 +149,10 @@ export {
 export { Reveal, Stagger, type RevealProps, type StaggerProps } from "./reveal.js";
 export {
   DEFAULT_IDENTITY,
+  IDENTITY_CHANGE_EVENT,
   IDENTITY_STORAGE_KEY,
   IdentityScript,
+  legacyIdentityIds,
   identities,
   type IdentityOption,
   type IdentityScriptProps,
