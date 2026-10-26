@@ -223,6 +223,25 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 <ProgressBar value={100} label="Upload complete" />
 ```
 
+## Quiet icon beside inline text
+
+- Import: `@zedtech/zedkit-ui` — `IconLabel`, `IconLabelProps`
+- Wraps: `lucide-react` (icon slot)
+- Status: beta
+- Short name: IconLabel
+- Audience: Developers pairing a small decorative icon with a text label (chips, table cells).
+- Purpose: Fixed-size muted icon + label row; icon is `aria-hidden`, label stays readable.
+- When to use: Recognition hints next to names or actions, not in running prose.
+- When not to use: Standalone icons — use the Lucide component directly; primary actions — use `Button`.
+- See also: `Celebrate completion with a checkmark`
+- A11y: Icon is decorative; put the readable name in `children`.
+
+```ts
+import { Search } from "lucide-react";
+import { IconLabel } from "@zedtech/zedkit-ui";
+<IconLabel icon={Search}><code>explorer</code></IconLabel>
+```
+
 ## Celebrate completion with a checkmark
 
 - Import: `@zedtech/zedkit-ui` — `Checkmark`, `CheckmarkProps`
