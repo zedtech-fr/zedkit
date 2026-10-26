@@ -705,6 +705,25 @@
           ]
         },
         {
+          "need": "Icon-only actions with a visible name",
+          "import": "`@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`",
+          "wraps": "`Button` (same variants and sizes; `size` defaults to `icon`)",
+          "status": "beta",
+          "shortName": "IconButton",
+          "audience": "Developers adding icon-only header or toolbar controls in an admin UI.",
+          "purpose": "Icon-only controls with matching `aria-label` and `title` from one `label` prop.",
+          "whenToUse": "Toolbar or header controls where the glyph alone is not enough for screen readers.",
+          "whenNotToUse": "Actions with visible text — use `Button` instead.",
+          "derivedFrom": null,
+          "example": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>"
+            }
+          ]
+        },
+        {
           "need": "Show a status or count badge",
           "import": "`@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`",
           "wraps": "`class-variance-authority`",
