@@ -105,6 +105,17 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    alert: {
+      cssVars: {
+        theme: {
+          "spacing-alert-inline": varFromBlock(theme, "spacing-alert-inline"),
+          "spacing-alert-block": varFromBlock(theme, "spacing-alert-block"),
+          "spacing-alert-icon-offset": varFromBlock(theme, "spacing-alert-icon-offset"),
+          "spacing-alert-icon-nudge": varFromBlock(theme, "spacing-alert-icon-nudge"),
+          "spacing-alert-content-indent": varFromBlock(theme, "spacing-alert-content-indent"),
+        },
+      },
+    },
   };
 }
 

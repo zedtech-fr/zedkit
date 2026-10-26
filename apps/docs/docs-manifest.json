@@ -181,7 +181,8 @@
     "Call out a notice or an error state": {
       "package": "@zedtech/zedkit-ui",
       "component": "Alert",
-      "props": null,
+      "registry": "alert",
+      "props": "AlertProps",
       "source": "alert.tsx",
       "demo": "AlertDemo"
     },
