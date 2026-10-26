@@ -943,6 +943,10 @@
             {
               "title": "Simple",
               "code": "import { UpdatedAgo } from \"@zedtech/zedkit-ui\";\n<UpdatedAgo date={updatedAt} /> // \"Updated 3 minutes ago\" via Intl.RelativeTimeFormat"
+            },
+            {
+              "title": "Custom prefix",
+              "code": "import { UpdatedAgo } from \"@zedtech/zedkit-ui\";\n<UpdatedAgo date={syncedAt} prefix=\"Synced\" />"
             }
           ],
           "a11y": "Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.",
