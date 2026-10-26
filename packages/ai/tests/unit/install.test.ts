@@ -464,6 +464,7 @@ const FIRST_PARTY_SKILLS = [
   "review",
   "plan",
   "challenge",
+  "orchestrate",
   "use-zedkit",
 ];
 
