@@ -1,6 +1,6 @@
 ---
 name: plan-challenger
-description: "Deprecated alias of the skeptic agent (angle: plan). Kept for one release so existing briefs keep working; new briefs must name skeptic with an angle."
+description: "Deprecated alias of the skeptic agent (angle: plan). Removed in 0.6.0; new briefs must name skeptic with an angle."
 model: inherit
 disallowedTools: Write, Edit, NotebookEdit
 ---
