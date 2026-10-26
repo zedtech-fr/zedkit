@@ -1012,6 +1012,33 @@
           ]
         },
         {
+          "need": "Flag offline state with a live note",
+          "import": "`@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "OfflineNote",
+          "audience": "Developers telling the user the app lost connectivity.",
+          "purpose": "A hook reporting browser online state plus an alert-style note with overridable wording.",
+          "whenToUse": "At the top of a page or panel when `useOnlineStatus()` is false.",
+          "whenNotToUse": "For inline operation states — use `StatusLabel`.",
+          "derivedFrom": null,
+          "example": "import { OfflineNote } from \"@zedtech/zedkit-ui\";\n<OfflineNote />",
+          "examples": [
+            {
+              "title": "Offline note",
+              "code": "import { OfflineNote } from \"@zedtech/zedkit-ui\";\n<OfflineNote />"
+            },
+            {
+              "title": "Wired to online state",
+              "code": "import { OfflineNote, useOnlineStatus } from \"@zedtech/zedkit-ui\";\nconst online = useOnlineStatus();\n{online ? null : <OfflineNote title=\"No connection\">Try again when you are back.</OfflineNote>}"
+            }
+          ],
+          "a11y": "`role=alert` announces the note; icon positioning comes from `--spacing-alert-*` theme tokens.",
+          "seeAlso": [
+            "Name an operation in progress"
+          ]
+        },
+        {
           "need": "Open modal dialogs",
           "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
