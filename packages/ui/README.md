@@ -47,7 +47,7 @@ kit packages.
 ## Contents
 
 - `styles.css`: tokens + dark/light theme preset, plus selectable identities
-  (`data-identity`: `soft`, `retro-square`) and motion tokens. Fonts are not
+  (`data-identity`: `soft`, `retro-square`, `studio`, `deep`, `luxe`) and motion tokens. Fonts are not
   bundled; the docs app loads Inter, Play and JetBrains Mono from Fontsource (SIL OFL 1.1).
 - `IdentityScript`, `IdentitySwitcher`, `Reveal`, `Stagger`: identity switching and
   scroll-reveal wrappers.

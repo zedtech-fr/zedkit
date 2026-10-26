@@ -9,6 +9,9 @@ type IdentityOption = { id: string; label: string };
 const identities: readonly IdentityOption[] = [
   { id: "soft", label: "Soft" },
   { id: "retro-square", label: "Retro square" },
+  { id: "studio", label: "Studio" },
+  { id: "deep", label: "Deep" },
+  { id: "luxe", label: "Luxe" },
 ];
 
 type IdentityScriptProps = {

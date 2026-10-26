@@ -23,9 +23,13 @@
     "lint": "eslint app components lib ui scripts source.config.ts mdx-components.tsx"
   },
   "dependencies": {
+    "@fontsource-variable/cormorant": "catalog:",
+    "@fontsource-variable/geist": "catalog:",
     "@fontsource-variable/inter": "catalog:",
     "@fontsource-variable/jetbrains-mono": "catalog:",
-    "@fontsource/play": "catalog:",
+    "@fontsource-variable/jost": "catalog:",
+    "@fontsource-variable/space-grotesk": "catalog:",
+    "@fontsource/space-mono": "catalog:",
     "@zedtech/zedkit-seo": "workspace:*",
     "@zedtech/zedkit-ui": "workspace:*",
     "fumadocs-core": "catalog:",

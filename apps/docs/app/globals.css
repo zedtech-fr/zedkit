@@ -8,10 +8,10 @@
 /*
  * Docs chrome follows the kit tokens: fumadocs colors are bridged to the
  * active identity (light or dark), so one identity switch restyles the
- * whole site. Declared after fumadocs' own palette on purpose.
+ * whole site. Declared after fumadocs' own palette on purpose. The default
+ * identity is excluded so it keeps the stock fumadocs palette, unchanged.
  */
-:root,
-.dark {
+:root[data-identity]:not([data-identity="soft"]) {
   --color-fd-background: hsl(var(--background));
   --color-fd-foreground: hsl(var(--foreground));
   --color-fd-muted: hsl(var(--muted));

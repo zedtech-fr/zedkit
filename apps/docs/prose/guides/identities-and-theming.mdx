@@ -18,10 +18,13 @@ Components never read the identity. They use tokens (`bg-card`, `rounded-xl`, `s
 `font-sans`, `border`), and the identity decides what each token means. Switching identity
 restyles the kit, this documentation site and your own screens without changing a component.
 
-| Identity | `data-identity` | Look |
-| --- | --- | --- |
-| Soft | `soft` (default, attribute optional) | Neutral palette, rounded corners, light shadows, system fonts, long easing. |
-| Retro square | `retro-square` | Square corners, 2px borders, hard offset shadows, warm paper palette, Play and Inter fonts, stepped motion. |
+| Identity | `data-identity` | Fonts | Radius | Border | Spacing | Shadow |
+| --- | --- | --- | --- | --- | --- | --- |
+| Soft | `soft` (default, attribute optional) | System sans | 12px (cards) | 1px | stock | Light, diffuse. |
+| Retro square | `retro-square` | Space Grotesk, Space Mono | 0 | 2px | +12% | Hard 4px offset, no blur. |
+| Studio | `studio` | Inter, heavy weights | 24px (cards) | 1px | +12% | Large soft glows. |
+| Deep | `deep` | Geist | 6px (cards) | 1px | -12% (dense) | Layered, with an inner edge in dark. |
+| Luxe | `luxe` | Cormorant, Jost | 2px (cards) | 1px | +30% (airy) | Almost none, very soft. |
 
 Use the identity control in the site header (or the sidebar footer on documentation pages) to
 try them. The choice is kept in `localStorage` under `zk-identity`.
@@ -63,7 +66,7 @@ existing theme provider.
 
 ## Create your own identity
 
-Copy the `retro-square` block into your own stylesheet, rename the attribute value and change the
+Copy one of the blocks into your own stylesheet, rename the attribute value and change the
 values. Declare it after the kit import. For the dark palette add a second block with the `.dark`
 class.
 
@@ -73,7 +76,7 @@ class.
   --foreground: 222 47% 11%;
   /* …every color token, see the list below… */
   --radius: 0.75rem;
-  --zk-radius-card: 1rem;
+  --radius-xl: 1rem;
   --zk-font-display: "Your Display Font", var(--zk-font-sans);
 }
 
@@ -114,11 +117,19 @@ surface). The built-in identities are checked with an automated accessibility te
 
 | Token | Controls |
 | --- | --- |
-| `--radius` | Base radius for controls (`rounded-md`, `rounded-lg`, `rounded-sm` derive from it). |
-| `--zk-radius-card` | Cards and large surfaces (`rounded-xl`, `rounded-2xl`). |
-| `--zk-border-width` | Width of `border`, `border-t`, `border-b`, `border-l`, `border-r`. |
-| `--zk-shadow-xs` … `--zk-shadow-lg`, `--zk-shadow-overlay` | The `shadow-*` scale. Use hard offsets for a flat look. |
+| `--radius` | Base radius token read by the kit. |
+| `--radius-xs` … `--radius-3xl` | The Tailwind radius scale (`rounded-md`, `rounded-xl`, …). Overriding the stock names also restyles the documentation framework, which reads the same variables. |
+| `--zk-border-width` | Width of `border`, `border-t`, `border-b`, `border-l`, `border-r`, `border-x`, `border-y`. |
+| `--zk-shadow-xs` … `--zk-shadow-xl`, `--zk-shadow-overlay` | The `shadow-*` scale. Use hard offsets for a flat look. |
 | `--zk-shadow-color` | Color of hard shadows (HSL triplet). |
+
+### Spacing and density
+
+| Token | Controls |
+| --- | --- |
+| `--spacing` | Tailwind's base unit: every `p-*`, `gap-*`, `m-*` utility scales with it. |
+| `--zk-density` | Multiplier on the kit's own padding and gap tokens (1 = stock). |
+| `--zk-control-scale` | Multiplier on control heights (buttons, inputs). |
 
 ### Typography
 
@@ -130,7 +141,7 @@ surface). The built-in identities are checked with an automated accessibility te
 | `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform` | Heading weight, letter spacing and case. |
 
 Fonts are not bundled by the kit. Load them in your app (this site uses the self-hosted Fontsource
-packages for Inter, Play and JetBrains Mono, all under the SIL Open Font License 1.1) and name the
+packages for Inter, Space Grotesk, Space Mono, Geist, Cormorant, Jost and JetBrains Mono, all under the SIL Open Font License 1.1) and name the
 families in the tokens, with fallbacks. A font that no active identity names is never downloaded.
 
 ### Motion
@@ -142,6 +153,8 @@ families in the tokens, with fallbacks. A font that no active identity names is 
 | `--zk-lift-duration`, `--zk-lift-ease`, `--zk-lift-translate`, `--zk-lift-shadow` | `hover-lift` on cards. |
 | `--zk-press-translate` | `hover-press` on buttons. |
 | `--motion-fast`, `--motion-base`, `--motion-slow` | Dialog, drawer and menu transitions. |
+| `--zk-btn-ease`, `--zk-btn-hover-translate`, `--zk-btn-hover-shadow`, `--zk-btn-press-shadow` | Hover and press on buttons. |
+| `--zk-bg-pattern`, `--zk-bg-size`, `--zk-bg-repeat`, `--zk-bg-attach` | Page background texture or gradient. |
 | `--zk-deco-ticker` | Whether the decorative ticker on the home page shows (`none` or `flex`). |
 
 ## Motion utilities and wrappers

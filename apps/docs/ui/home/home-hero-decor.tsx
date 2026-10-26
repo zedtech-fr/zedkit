@@ -4,7 +4,7 @@ const tickerItems = ["admin ui", "backend", "seo", "coding agents", "zedkit-ui",
 
 /**
  * Decorative ticker: an identity opts in through the `--zk-deco-ticker`
- * display token (retro-square shows it, soft hides it). Purely visual,
+ * display token (retro-square shows it, the others hide it). Purely visual,
  * hidden from assistive tech.
  */
 export function HomeHeroDecor() {

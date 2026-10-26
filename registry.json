@@ -18,8 +18,8 @@
         "theme": {
           "ring-width": "2px",
           "ring-offset-width": "2px",
-          "spacing-badge-inline": "0.625rem",
-          "spacing-badge-block": "0.125rem"
+          "spacing-badge-inline": "calc(0.625rem * var(--zk-density, 1))",
+          "spacing-badge-block": "calc(0.125rem * var(--zk-density, 1))"
         }
       },
       "css": {
