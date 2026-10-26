@@ -50,4 +50,17 @@ describe("PageHeader", () => {
     expect(titleBlock?.className).toContain("space-y-page-header-title-gap");
     expect(container.firstElementChild?.className).not.toContain("[");
   });
+
+  it("spaces chrome from page-header tokens", () => {
+    const { container } = render(
+      <PageHeader title="Items" description="All items." actions={<button type="button">New</button>} />,
+    );
+    const root = container.firstElementChild;
+    expect(root?.className).toContain("mb-page-header-offset");
+    expect(root?.className).toContain("gap-page-header-gap");
+    expect(root?.className).not.toMatch(/(^|\s)(mb-6|gap-4)(\s|$)/);
+    const actions = screen.getByRole("button", { name: "New" }).parentElement;
+    expect(actions?.className).toContain("gap-page-header-actions-gap");
+    expect(actions?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);
+  });
 });

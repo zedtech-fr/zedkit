@@ -17,6 +17,14 @@ describe("skeletons", () => {
     expect(screen.getByRole("status", { name: "Loading" })).not.toBeNull();
   });
 
+  it("shares the page-header chrome tokens so content lands without shifting", () => {
+    render(<PageHeaderSkeleton label="Loading report" />);
+    const root = screen.getByRole("status", { name: "Loading report" });
+    expect(root.className).toContain("mb-page-header-offset");
+    expect(root.className).toContain("gap-page-header-gap");
+    expect(root.className).not.toMatch(/(^|\s)(mb-6|gap-4)(\s|$)/);
+  });
+
   it("shares the card spacing tokens so content lands without shifting", () => {
     render(<CardSkeleton />);
     const zone = screen.getByRole("status");
