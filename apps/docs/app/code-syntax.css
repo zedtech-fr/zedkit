@@ -1,30 +1,36 @@
 /* Accessible syntax tokens on kit card backgrounds (light and dark). */
-figure.shiki span[style*="color:#6a737d"],
-figure.shiki span[style*="color: #6a737d"] {
-  color: hsl(240 5% 32%) !important;
+figure.shiki span[style*="6a737d"],
+figure.shiki span[style*="6A737D"] {
+  --shiki-light: hsl(240 6% 30%) !important;
+  --shiki-dark: hsl(240 5% 72%) !important;
+  color: hsl(240 6% 30%) !important;
 }
 
-figure.shiki span[style*="color:#e36209"],
-figure.shiki span[style*="color: #e36209"] {
+figure.shiki span[style*="e36209"],
+figure.shiki span[style*="E36209"] {
+  --shiki-light: hsl(24 75% 35%) !important;
+  --shiki-dark: hsl(32 90% 68%) !important;
   color: hsl(24 75% 35%) !important;
 }
 
-figure.shiki span[style*="color:#d73a49"],
-figure.shiki span[style*="color: #d73a49"] {
+figure.shiki span[style*="d73a49"],
+figure.shiki span[style*="D73A49"] {
+  --shiki-light: hsl(350 65% 40%) !important;
+  --shiki-dark: hsl(350 75% 72%) !important;
   color: hsl(350 65% 40%) !important;
 }
 
-html.dark figure.shiki span[style*="color:#6a737d"],
-html.dark figure.shiki span[style*="color: #6a737d"] {
+html.dark figure.shiki span[style*="6a737d"],
+html.dark figure.shiki span[style*="6A737D"] {
   color: hsl(240 5% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="color:#e36209"],
-html.dark figure.shiki span[style*="color: #e36209"] {
+html.dark figure.shiki span[style*="e36209"],
+html.dark figure.shiki span[style*="E36209"] {
   color: hsl(32 90% 68%) !important;
 }
 
-html.dark figure.shiki span[style*="color:#d73a49"],
-html.dark figure.shiki span[style*="color: #d73a49"] {
+html.dark figure.shiki span[style*="d73a49"],
+html.dark figure.shiki span[style*="D73A49"] {
   color: hsl(350 75% 72%) !important;
 }
