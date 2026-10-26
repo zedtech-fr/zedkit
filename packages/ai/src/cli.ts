@@ -39,7 +39,7 @@ function parse(args: string[], options: Record<string, never> | typeof OPTIONS, 
   const parsed = tryCatch(() => parseArgs({ args, allowPositionals: true, options }));
   if (!parsed.ok) return err(parsed.error);
   if (parsed.value.positionals.length > maxPositionals) {
-    return err(new Error(`unexpected argument "${parsed.value.positionals[maxPositionals]}"`));
+    return err(new Error(`unexpected argument "${parsed.value.positionals[maxPositionals]}" (run 'zedkit-ai --help' for usage)`));
   }
   return ok(parsed.value as Parsed);
 }
@@ -84,7 +84,7 @@ function runValidate(args: string[], sinks: Sinks): number {
   const parsed = parse(args, {}, 1);
   if (!parsed.ok) return fail(parsed.error.message, sinks);
   const dir = resolve(parsed.value.positionals[0] ?? ".agents");
-  if (!existsSync(dir)) return fail(`no such directory: ${dir}`, sinks);
+  if (!existsSync(dir)) return fail(`no such directory: ${dir} (run from the project root, or 'zedkit-ai init' to create it)`, sinks);
   // A project root points at its .agents/; an .agents/ dir drifts against
   // its own parent. Any other dir just has nothing to drift against.
   const nested = join(dir, ".agents");
