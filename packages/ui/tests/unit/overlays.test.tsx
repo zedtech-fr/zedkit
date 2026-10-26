@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { toast } from "sonner";
 import { Button } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "#index.js";
 import { SecretField } from "#index.js";
-import { Toaster } from "#index.js";
+import { Toaster, toast } from "#index.js";
 
 describe("overlays", () => {
   it("opens and closes a dialog", async () => {
