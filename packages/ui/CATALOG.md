@@ -305,7 +305,7 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 - Purpose: Accessible modal dialogs (trigger, content, title, footer) with focus trap and Escape.
 - When to use: For short tasks that need full attention (confirm, edit one thing).
 - When not to use: For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.
-- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`.
+- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button carries the shared `focus-ring`.
 - See also: `Confirm destructive actions`, `Slide in a drawer panel`
 
 ```ts
