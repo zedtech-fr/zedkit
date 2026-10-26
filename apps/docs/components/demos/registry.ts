@@ -10,6 +10,7 @@ import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { FieldDemo } from "./field-demo";
+import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
 import { LoadingZonesDemo } from "./loading-zones-demo";
@@ -51,6 +52,7 @@ export const demoRegistry = {
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
+  ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
   RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
   SelectDemo: { Demo: SelectDemo, file: "select-demo.tsx" },

@@ -71,6 +71,16 @@ describe("progress bar", () => {
     expect(filled.length).toBe(4);
   });
 
+  it("styles gap and segment height from design tokens", () => {
+    const { container } = render(<ProgressBar value={40} label="Uploading report" />);
+    const bar = screen.getByRole("progressbar", { name: "Uploading report" });
+    expect(bar.classList.contains("gap-progress-bar-gap")).toBe(true);
+    expect(bar.className).not.toMatch(/(^|\s)gap-0\.5(\s|$)/);
+    const segment = container.querySelector("span[aria-hidden]");
+    expect(segment?.classList.contains("h-progress-bar-height")).toBe(true);
+    expect(segment?.className).not.toMatch(/(^|\s)h-1\.5(\s|$)/);
+  });
+
   it("treats non-finite input as empty with a sane scale", () => {
     render(<ProgressBar value={Number.NaN} max={Number.NaN} label="Sync" />);
     const bar = screen.getByRole("progressbar");
