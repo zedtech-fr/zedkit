@@ -43,7 +43,7 @@ export function WizardStep({ step, index, state, showConnector = false, classNam
           state === "todo" && "text-muted-foreground",
         )}
       >
-        {state === "done" ? <CheckIcon className="size-wizard-step-icon" /> : index + 1}
+        {state === "done" ? <CheckIcon className="size-icon-sm" /> : index + 1}
       </span>
       <span className={cn(state === "current" ? "font-medium" : "text-muted-foreground")}>{step}</span>
       {showConnector ? (
