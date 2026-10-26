@@ -34,11 +34,11 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
               <CardContent>
                 <Stack gap={HOME_CARD_CONTENT_GAP}>
                   <Stack gap={1}>
-                    <Heading level={4}>You want</Heading>
+                    <Heading level={4} as="h3">You want</Heading>
                     <Text variant="muted">{scenario.goal}</Text>
                   </Stack>
                   <Stack gap={1}>
-                    <Heading level={4}>Do this</Heading>
+                    <Heading level={4} as="h3">Do this</Heading>
                     <Text variant="muted">{scenario.action}</Text>
                   </Stack>
                   <Button asChild variant="ghost" size="sm" className="w-fit">
