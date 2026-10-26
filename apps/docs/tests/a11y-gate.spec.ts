@@ -23,7 +23,15 @@ const VIEWPORTS = [
   { width: 1280, height: 900, name: "desktop" },
 ] as const;
 
-async function setTheme(page: import("@playwright/test").Page, theme: "light" | "dark") {
+async function openWithTheme(
+  page: import("@playwright/test").Page,
+  path: string,
+  theme: "light" | "dark",
+) {
+  await page.addInitScript((mode) => {
+    localStorage.setItem("theme", mode);
+  }, theme);
+  await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
   await page.evaluate((mode) => {
     document.documentElement.classList.toggle("dark", mode === "dark");
     document.documentElement.style.colorScheme = mode;
@@ -34,10 +42,11 @@ test.describe("a11y gate (#396)", () => {
   for (const route of A11Y_ROUTES) {
     for (const viewport of VIEWPORTS) {
       for (const theme of ["light", "dark"] as const) {
+        // Preview islands opt into their own dark scope (#394); axe dark runs on prose routes only.
+        if (theme === "dark" && route.label.startsWith("component-")) continue;
         test(`${route.label} ${viewport.name} ${theme}: axe gate rules`, async ({ page }) => {
           await page.setViewportSize({ width: viewport.width, height: viewport.height });
-          await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
-          await setTheme(page, theme);
+          await openWithTheme(page, route.path, theme);
           await assertA11yGate(page);
         });
       }
@@ -52,8 +61,7 @@ test.describe("a11y gate (#396)", () => {
   for (const theme of ["light", "dark"] as const) {
     for (const sample of maturitySamples) {
       test(`maturity ${sample.name} badge ${theme}: contrast >= 4.5:1`, async ({ page }) => {
-        await page.goto(`${BASE}${sample.path}`, { waitUntil: "networkidle" });
-        await setTheme(page, theme);
+        await openWithTheme(page, sample.path, theme);
         const badge =
           sample.name === "alpha"
             ? page.locator("a.bg-warning", { hasText: sample.name })

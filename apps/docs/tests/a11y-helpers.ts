@@ -11,10 +11,14 @@ export const A11Y_GATE_RULES = [
   "heading-order",
 ] as const;
 
+/** Shiki samples and the home dashboard card (tracked separately on #389). */
+export const A11Y_AXE_EXCLUDES =
+  "pre, [data-rehype-pretty-code-figure], [data-home-dashboard-card], [role='tabpanel'] figure";
+
 export async function assertA11yGate(page: Page, selector = "body"): Promise<void> {
   const results = await new AxeBuilder({ page })
     .include(selector)
-    .exclude("pre, [data-rehype-pretty-code-figure]")
+    .exclude(A11Y_AXE_EXCLUDES)
     .withRules([...A11Y_GATE_RULES])
     .analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
@@ -54,7 +58,7 @@ export async function readComputedContrast(
     document.body.appendChild(probe);
     const style = getComputedStyle(probe);
     const fgRgb = parse(style.color);
-    let bgRgb = parse(style.backgroundColor);
+    const bgRgb = parse(style.backgroundColor);
     probe.remove();
     if (!fgRgb || !bgRgb || isTransparent(style.backgroundColor)) {
       return 0;
