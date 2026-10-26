@@ -23,7 +23,8 @@
       "to-spec",
       "to-tickets",
       "wayfinder",
-      "domain-modeling"
+      "domain-modeling",
+      "audit"
     ],
     "full": "*"
   },
