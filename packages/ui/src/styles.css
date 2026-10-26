@@ -41,6 +41,22 @@
   --ring-width: 2px;
   --ring-width-control: 1px;
   --ring-offset-width: 2px;
+  /*
+   * Text size of every field a user types into (Input, Textarea,
+   * Select trigger, SecretField, DataTable filter). Touch and narrow
+   * screens raise it to 16px minimum below: iOS Safari zooms the whole
+   * page on focus when a field computes smaller than that, and the zoom
+   * stays. Identities and apps change this token, never a field's
+   * font-size, and inherit the floor for free.
+   */
+  --zk-input-font-size: 0.875rem;
+}
+
+/* Touch or phone-width screens: 16px floor, desktop keeps the design size. */
+@media (pointer: coarse), (max-width: 767px) {
+  :root {
+    --zk-input-font-size: max(16px, 0.875rem);
+  }
 }
 
 .dark {
@@ -114,6 +130,7 @@
   --spacing-button-inline: 1rem;
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
+  --spacing-button-gap: 0.5rem;
   --spacing-icon-control: 1rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
@@ -209,6 +226,8 @@
   --container-route-modal-dialog-lg: 42rem;
   --spacing-form-item-gap: 0.5rem;
   --text-form-hint: 0.8rem;
+  --text-control: var(--zk-input-font-size);
+  --text-control--line-height: 1.25rem;
   --spacing-drawer-max-height: 96dvh;
   --container-drawer-side: 28rem;
   --spacing-drawer-handle-top: 1rem;
