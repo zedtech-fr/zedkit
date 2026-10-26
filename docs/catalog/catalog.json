@@ -767,6 +767,39 @@
           ]
         },
         {
+          "need": "Animate entrances and hover feedback with CSS utilities",
+          "import": "`@zedtech/zedkit-ui/styles.css` (utilities `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `stagger-*`, `hover-lift`, `hover-press`, `marquee-track`; attributes `data-reveal`, `data-stagger`)",
+          "wraps": "`tailwindcss` (v4 `@utility` and `@theme`)",
+          "status": "alpha",
+          "shortName": "Motion",
+          "audience": "Developers adding calm entrance and hover motion to kit pages.",
+          "purpose": "Token-driven entrance, stagger, hover and marquee utilities that switch off under reduced motion.",
+          "whenToUse": "For first-paint entrances, staggered lists, card lift and button press feedback.",
+          "whenNotToUse": "For gesture or layout animation (drag, shared-element transitions) — use a motion library instead.",
+          "derivedFrom": null,
+          "example": "import \"@zedtech/zedkit-ui/styles.css\"; // motion utilities ship with the theme\n<Card className=\"animate-fade-up stagger-1\">First</Card>\n<Card className=\"animate-fade-up stagger-2\">Second</Card>",
+          "examples": [
+            {
+              "title": "Entrance with stagger",
+              "code": "import \"@zedtech/zedkit-ui/styles.css\"; // motion utilities ship with the theme\n<Card className=\"animate-fade-up stagger-1\">First</Card>\n<Card className=\"animate-fade-up stagger-2\">Second</Card>"
+            },
+            {
+              "title": "Hover feedback",
+              "code": "<Card className=\"hover-lift\">Lifts on hover (devices that hover)</Card>\n<Button className=\"hover-press\">Presses down on click</Button>"
+            },
+            {
+              "title": "Staggered children",
+              "code": "// Children enter one after another; set \"pending\" first to hide them\n// until they scroll into view, then switch to \"in\".\n<Stack data-stagger=\"in\">\n  <Text>One</Text>\n  <Text>Two</Text>\n</Stack>"
+            }
+          ],
+          "a11y": "Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. Hover lift only applies on devices that hover, so it never sticks after a tap.",
+          "troubleshooting": "Nothing animates — check the OS reduced-motion setting first. Content stays hidden — `data-reveal=\"pending\"` and `data-stagger=\"pending\"` hide content until your code sets them to `\"in\"`. Stagger has no delay — `stagger-*` delays an animation class (`animate-fade-up stagger-2`), not a transition.",
+          "seeAlso": [
+            "Theme an admin app (dark/light included)",
+            "Group content in a card section"
+          ]
+        },
+        {
           "need": "Trigger actions with buttons",
           "import": "`@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`",
           "wraps": "`@radix-ui/react-slot`, `class-variance-authority`",

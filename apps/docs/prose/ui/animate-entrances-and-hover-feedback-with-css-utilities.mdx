@@ -1,0 +1,66 @@
+## Tokens that drive motion
+
+Every utility reads CSS custom properties with a fallback, so a page or a
+future identity can change how things move without touching a component.
+
+| Token | Default | Used by |
+| --- | --- | --- |
+| `--zk-reveal-duration` | `300ms` | `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `data-reveal`, `data-stagger` |
+| `--zk-reveal-distance` | `0.75rem` | upward travel of fade-up and reveal |
+| `--zk-reveal-ease` | `cubic-bezier(0.22, 1, 0.36, 1)` | entrance easing |
+| `--zk-stagger-step` | `70ms` | `stagger-*`, `data-reveal-delay`, `data-stagger` children |
+| `--zk-lift-duration` | `200ms` | `hover-lift`, `hover-press` |
+| `--zk-lift-translate` | `0 -2px` | `hover-lift` offset |
+| `--zk-press-translate` | `0 1px` | `hover-press` offset |
+| `--zk-marquee-duration` | `40s` | `marquee-track` loop |
+
+```css title="globals.css"
+:root {
+  --zk-reveal-duration: 400ms; /* slower entrances across the app */
+  --zk-stagger-step: 90ms;
+}
+```
+
+## Reveal on scroll
+
+`data-reveal` and `data-stagger` are plain attributes: the kit styles them,
+your code decides when content is visible. Render `"pending"` (hidden), then
+switch to `"in"` once the element enters the viewport.
+
+```tsx title="reveal-on-scroll.tsx"
+"use client";
+import { useEffect, useId, useState } from "react";
+import { Stack, Text } from "@zedtech/zedkit-ui";
+
+export function RevealList() {
+  const id = useId();
+  const [state, setState] = useState<"pending" | "in">("pending");
+  useEffect(() => {
+    const node = document.getElementById(id);
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setState("in");
+        observer.disconnect();
+      }
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [id]);
+  return (
+    <Stack id={id} data-stagger={state}>
+      <Text>One</Text>
+      <Text>Two</Text>
+    </Stack>
+  );
+}
+```
+
+Variants: `data-reveal-variant="fade"` or `"pop"` on a `data-reveal` element;
+`data-reveal-delay="1"` to `"6"` offsets it by that many stagger steps.
+
+## Marquee
+
+`marquee-track` scrolls its children in a loop. Render the content twice in
+the track so the `-50%` translate wraps seamlessly, and keep the duplicate out
+of the accessibility tree with `aria-hidden`.

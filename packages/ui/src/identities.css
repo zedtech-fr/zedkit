@@ -1,0 +1,217 @@
+/*
+ * zedkit identities: a second theming axis next to light/dark.
+ *
+ * An identity is a block of CSS variables selected by `data-identity`
+ * on <html> (or on an element carrying `data-identity-scope`). It is
+ * independent from the `.dark` class: every identity defines a light
+ * and a dark palette. Components never read the identity; they read
+ * tokens (`bg-card`, `rounded-xl`, `shadow-md`, `font-sans`, `border`),
+ * and this file decides what the tokens mean.
+ *
+ * Imported by `styles.css`: consumers import that one file.
+ *
+ * Why the stock Tailwind variable names (--radius-xl, --font-mono,
+ * --text-sm, --spacing, ...) are overridden by identities and not
+ * wrapped: some apps ship a precompiled stylesheet that reads them
+ * through var(). Overriding them restyles both stylesheets at once.
+ *
+ * This file holds the foundation only: the stock values every identity
+ * starts from, and the bridge for utilities that bake their values in.
+ * An identity is one more block that overrides the tokens below.
+ */
+
+/* ---------------------------------------------------------------
+ * Stock tokens: what the kit renders with no identity selected.
+ * ------------------------------------------------------------- */
+:root {
+  /* Typography: system stacks, no font dependency */
+  --zk-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: var(--zk-font-sans);
+  --zk-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Shape */
+  --zk-border-width: 1px;
+  /* Depth */
+  --zk-shadow-color: 240 10% 4%;
+  --zk-shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --zk-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --zk-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --zk-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --zk-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --zk-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  /* Page texture: none by default */
+  --zk-bg-pattern: none;
+  --zk-bg-size: auto;
+  --zk-bg-repeat: repeat;
+  --zk-bg-attach: scroll;
+  /* Motion personality (see motion.css). Interaction durations are
+   * capped for every identity: fast/base <= 200ms, slow <= 300ms. */
+  --zk-reveal-duration: 300ms;
+  --zk-reveal-distance: 0.75rem;
+  --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-stagger-step: 70ms;
+  --zk-lift-duration: 200ms;
+  --zk-lift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-lift-translate: 0 -2px;
+  --zk-lift-shadow: 0 10px 20px -8px rgb(0 0 0 / 0.18);
+  --zk-press-translate: 0 1px;
+  /* Decorative layers: which one an identity shows */
+  --zk-deco-ticker: none;
+}
+
+.dark {
+  --zk-shadow-color: 0 0% 0%;
+  --zk-lift-shadow: 0 10px 20px -8px rgb(0 0 0 / 0.6);
+}
+
+/* ---------------------------------------------------------------
+ * Token consumers that theme variables cannot reach.
+ *
+ *    Some stylesheets (fumadocs ships a precompiled one) and some
+ *    Tailwind utilities (shadows, border width) bake their values in,
+ *    so a variable override alone is not enough. This block maps those
+ *    utilities onto identity tokens. It only applies once a
+ *    `data-identity` attribute is set: without one, the stock output
+ *    renders untouched.
+ * ------------------------------------------------------------- */
+:root[data-identity],
+[data-identity-scope][data-identity] {
+  /* Headings and code take the identity's families */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--zk-font-display);
+    font-weight: var(--zk-heading-weight);
+    letter-spacing: var(--zk-heading-tracking);
+    line-height: var(--zk-heading-leading, 1.1);
+    text-transform: var(--zk-heading-transform);
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--zk-font-mono);
+  }
+
+  /* Page texture */
+  body {
+    background-image: var(--zk-bg-pattern);
+    background-size: var(--zk-bg-size);
+    background-repeat: var(--zk-bg-repeat);
+    background-attachment: var(--zk-bg-attach);
+  }
+
+  /* Border width follows the identity */
+  .border {
+    border-width: var(--zk-border-width);
+  }
+  .border-t {
+    border-top-width: var(--zk-border-width);
+  }
+  .border-b {
+    border-bottom-width: var(--zk-border-width);
+  }
+  .border-l {
+    border-left-width: var(--zk-border-width);
+  }
+  .border-r {
+    border-right-width: var(--zk-border-width);
+  }
+  .border-x {
+    border-inline-width: var(--zk-border-width);
+  }
+  .border-y {
+    border-block-width: var(--zk-border-width);
+  }
+
+  /* Shadow utilities (values are baked into the compiled utilities) */
+  .shadow-xs {
+    --tw-shadow: var(--zk-shadow-xs);
+  }
+  .shadow-sm,
+  .shadow {
+    --tw-shadow: var(--zk-shadow-sm);
+  }
+  .shadow-md {
+    --tw-shadow: var(--zk-shadow-md);
+  }
+  .shadow-lg {
+    --tw-shadow: var(--zk-shadow-lg);
+  }
+  .shadow-xl,
+  .shadow-2xl {
+    --tw-shadow: var(--zk-shadow-xl);
+  }
+
+  /* Badges and table heads read as labels */
+  [class*="px-badge-inline"],
+  th {
+    text-transform: var(--zk-label-transform);
+    letter-spacing: var(--zk-label-tracking);
+  }
+
+  /* Buttons: hover and press motion come from the identity's tokens */
+  :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
+    transition-property: translate, scale, box-shadow, background-color, color;
+    transition-duration: var(--motion-base);
+    transition-timing-function: var(--zk-btn-ease);
+  }
+  :is(button, a).focus-ring-control:is(.shadow, .shadow-sm):hover:not(:disabled) {
+    --tw-shadow: var(--zk-btn-hover-shadow);
+    translate: var(--zk-btn-hover-translate);
+  }
+  :is(button, a).focus-ring-control:is(.shadow, .shadow-sm):active:not(:disabled) {
+    --tw-shadow: var(--zk-btn-press-shadow);
+    translate: var(--zk-press-translate);
+  }
+
+  ::selection {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Code blocks and inline code sit on the card surface */
+  pre:not(figure.shiki pre) {
+    background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
+    border: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--zk-shadow-sm);
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+  }
+  :not(pre) > code {
+    background-color: hsl(var(--muted));
+    border: var(--zk-border-width) solid hsl(var(--border));
+    border-radius: var(--radius-sm);
+  }
+
+  /* Tables: head reads as a label band, rows answer on hover */
+  thead th {
+    background-color: hsl(var(--muted));
+    border-bottom: var(--zk-border-width) solid hsl(var(--border));
+  }
+  tbody tr {
+    transition-property: background-color;
+    transition-duration: var(--motion-base);
+    transition-timing-function: var(--zk-btn-ease, ease);
+  }
+  tbody tr:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Links keep a clear keyboard focus in every identity */
+  a:focus-visible {
+    outline: var(--ring-width) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+    border-radius: var(--radius-sm);
+  }
+}
+
+/*
+ * Decorative layer an identity opts into (display token).
+ * !important: the layer's own layout utilities (flex, block) must not win.
+ */
+@utility identity-ticker {
+  display: var(--zk-deco-ticker) !important;
+}

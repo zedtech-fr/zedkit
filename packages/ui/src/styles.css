@@ -1,12 +1,21 @@
 /* Derived from shadcn/ui (theme) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it. */
 @import "tailwindcss";
+@import "./identities.css";
+@import "./motion.css";
+
+/*
+ * Hover styles only apply where a hover exists: without this guard the
+ * hover state sticks after a tap on touch screens.
+ */
+@custom-variant hover (@media (hover: hover) { &:hover });
 
 /*
  * zedkit admin theme: neutral, calm, readable. Dark/light via the
  * `.dark` class on <html> (next-themes `attribute="class"`).
  * Consumers import this file once (see README) and add one `@source`
- * line so Tailwind scans the components. System font stack on
- * purpose: no font dependency, no layout shift.
+ * line so Tailwind scans the components. Families, density, depth and
+ * motion personality come from identities.css (stock values: system
+ * font stack, no font dependency, no layout shift).
  */
 :root {
   --background: 0 0% 100%;
@@ -32,14 +41,15 @@
   --overlay: 0 0% 0%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
-  --ring: 240 5% 64.9%;
+  /* Focus ring, dark enough for 3:1 on light surfaces. */
+  --ring: 240 4% 46%;
   --radius: 0.5rem;
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
   --sidebar-accent: 240 4.8% 95.9%;
   --ring-width: 2px;
-  --ring-width-control: 1px;
+  --ring-width-control: 2px;
   --ring-offset-width: 2px;
   /*
    * Text size of every field a user types into (Input, Textarea,
@@ -217,7 +227,7 @@
   --spacing-page-header-gap: 1rem;
   --spacing-page-header-actions-gap: 0.5rem;
   --spacing-dialog-center: 50%;
-  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-overlay: var(--zk-shadow-overlay);
   --spacing-dialog-gap: 1rem;
   --spacing-dialog-padding: 1.5rem;
   --spacing-dialog-header-stack: 0.375rem;
@@ -239,6 +249,12 @@
   --text-form-hint: 0.8rem;
   --text-control: var(--zk-input-font-size);
   --text-control--line-height: 1.25rem;
+  /*
+   * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
+   * not a spacing multiple: an identity may redefine `--spacing`, and a
+   * `leading-N` utility would then drift with it.
+   */
+  --leading-body: var(--zk-body-leading, 1.6);
   --spacing-drawer-max-height: 96dvh;
   --spacing-drawer-sheet-max-height: 88dvh;
   --spacing-drawer-safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -268,8 +284,23 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family:
-      ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--zk-font-sans);
+  }
+  /* No double-tap zoom delay on controls; panning and pinch still work. */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  label,
+  summary,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="combobox"],
+  [role="option"] {
+    touch-action: manipulation;
   }
 }
 
@@ -302,7 +333,7 @@
   translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
 }
 
-/* Controls (Button, Input, …): keep the prior 1px focus weight via tokens. */
+/* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
 @utility focus-ring-control {
   &:focus-visible {
     outline: none;
