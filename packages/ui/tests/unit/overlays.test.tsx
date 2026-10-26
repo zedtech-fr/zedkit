@@ -47,6 +47,26 @@ describe("overlays", () => {
     expect(dialog.className).toContain("var(--motion-base)");
   });
 
+  it("centers dialog content with token-driven position and shadow", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("dialog-center");
+    expect(dialog.className).toContain("shadow-overlay");
+    expect(dialog.className).not.toContain("top-[");
+    expect(dialog.className).not.toContain("translate-");
+  });
+
   it("animates the dialog overlay through the motion tokens", async () => {
     const user = userEvent.setup();
     render(
