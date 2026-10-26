@@ -80,6 +80,25 @@ export interface DataTablePaginationProps {
  * Page label plus previous/next controls. `DataTable` wires these to
  * the table state; compose directly for custom table chrome.
  */
+export interface DataTableEmptyProps {
+  colSpan: number;
+  message?: React.ReactNode;
+}
+
+/**
+ * Single centered row for the no-results state. `DataTable` renders
+ * this when rows are empty; compose directly for custom table bodies.
+ */
+export function DataTableEmpty({ colSpan, message = "No results." }: DataTableEmptyProps) {
+  return (
+    <TableRow>
+      <TableCell colSpan={colSpan} className="text-center text-muted-foreground">
+        {message}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export function DataTablePagination({
   page,
   pageCount,
@@ -191,11 +210,7 @@ export function DataTable<TData extends RowData>({
             </TableRow>
           ))
         ) : rows.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
-              {emptyMessage}
-            </TableCell>
-          </TableRow>
+          <DataTableEmpty colSpan={columns.length} message={emptyMessage} />
         ) : (
           rows.map((row) => (
             <TableRow key={row.id}>

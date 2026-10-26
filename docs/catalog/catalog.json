@@ -1140,7 +1140,7 @@
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
-          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
+          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
           "shortName": "DataTable",
@@ -1158,6 +1158,10 @@
             {
               "title": "Standalone pagination",
               "code": "import { DataTablePagination } from \"@zedtech/zedkit-ui\";\nconst [page, setPage] = useState(2);\n<DataTablePagination page={page} pageCount={4}\n  canPrevious={page > 1} canNext={page < 4}\n  onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />"
+            },
+            {
+              "title": "Standalone empty row",
+              "code": "import { DataTableEmpty, Table, TableBody } from \"@zedtech/zedkit-ui\";\n<Table><TableBody>\n  <DataTableEmpty colSpan={3} message=\"Nothing here.\" />\n</TableBody></Table>"
             },
             {
               "title": "Standalone toolbar",
@@ -1245,7 +1249,9 @@
               "code": "import { DetailPanelRow } from \"@zedtech/zedkit-ui\";\n<dl>\n  <DetailPanelRow label=\"Region\" value=\"eu\" />\n</dl>"
             }
           ],
+          "registry": "detail-panel",
           "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

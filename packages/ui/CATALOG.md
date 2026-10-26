@@ -486,7 +486,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 
 ## Show a sortable, filterable, paginated data table
 
-- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
+- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
 - Status: beta
 - Short name: DataTable
@@ -496,7 +496,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 - When not to use: For a handful of static rows — map a simple table instead.
 - A11y: Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.
 - See also: `Show key-value details and a live indicator`
-- Examples: Simple, Standalone pagination, Standalone toolbar
+- Examples: Simple, Standalone pagination, Standalone empty row, Standalone toolbar
 
 ```ts
 import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
@@ -512,6 +512,13 @@ const [page, setPage] = useState(2);
 <DataTablePagination page={page} pageCount={4}
   canPrevious={page > 1} canNext={page < 4}
   onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />
+```
+
+```ts
+import { DataTableEmpty, Table, TableBody } from "@zedtech/zedkit-ui";
+<Table><TableBody>
+  <DataTableEmpty colSpan={3} message="Nothing here." />
+</TableBody></Table>
 ```
 
 ```ts
@@ -588,6 +595,8 @@ const [solo, setSolo] = useState(false);
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
 - Examples: Simple, Composed rows
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
+- Registry: detail-panel
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";

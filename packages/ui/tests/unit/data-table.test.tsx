@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { DataTable, DataTablePagination, DataTableToolbar, createDataTableColumns } from "#index.js";
+import { DataTable, DataTableEmpty, DataTablePagination, DataTableToolbar, Table, TableBody, createDataTableColumns } from "#index.js";
 
 type Person = { name: string; age: number };
 
@@ -75,6 +75,19 @@ describe("DataTable", () => {
     render(<DataTable columns={columns} data={[]} emptyMessage="Nothing here." />);
     expect(screen.getByText("Nothing here.").textContent).toBe("Nothing here.");
     expect(screen.queryByText(/Page \d+ of/)).toBeNull();
+  });
+
+  it("composes the empty row standalone with spanning cell", () => {
+    render(
+      <Table>
+        <TableBody>
+          <DataTableEmpty colSpan={3} message="Nothing here." />
+        </TableBody>
+      </Table>,
+    );
+    const cell = screen.getByText("Nothing here.");
+    expect(cell.tagName).toBe("TD");
+    expect(cell.getAttribute("colspan")).toBe("3");
   });
 
   it("hides pagination when every row fits on one page", () => {
