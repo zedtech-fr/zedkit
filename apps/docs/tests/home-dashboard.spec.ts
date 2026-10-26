@@ -15,12 +15,12 @@ test("home dashboard: create, edit, delete with axe on ready state", async ({ pa
   await axeDashboard(page);
 
   await page.getByRole("button", { name: "Add app" }).click();
-  await page.getByLabel("Name").fill("playwright-app");
+  await page.getByRole("dialog").getByLabel("Name").fill("playwright-app");
   await page.getByRole("button", { name: "Create app" }).click();
   await expect(page.getByRole("cell", { name: "playwright-app" })).toBeVisible();
 
   await page.getByRole("row", { name: /playwright-app/ }).getByRole("button", { name: "Edit" }).click();
-  await page.getByLabel("Name").fill("playwright-app-edited");
+  await page.getByRole("dialog").getByLabel("Name").fill("playwright-app-edited");
   await page.getByRole("button", { name: "Save changes" }).click();
   await expect(page.getByRole("cell", { name: "playwright-app-edited" })).toBeVisible();
 

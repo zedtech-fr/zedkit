@@ -4,7 +4,6 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import {
-  AppShell,
   Button,
   ConfirmDialog,
   DataTable,
@@ -137,55 +136,59 @@ export function AdminDashboardDemoApp() {
         className="max-h-[32rem] w-full min-w-0 overflow-auto rounded-lg border border-border"
         aria-label="Interactive admin dashboard demo"
       >
-        <AppShell
-          sidebar={
+        {/* AppShell layout without landmarks: this island already sits inside the page main. */}
+        <div className="flex min-h-svh w-full">
+          <div className="hidden w-64 shrink-0 border-r bg-muted/40 md:block">
             <Stack className="p-4" gap={2}>
               <Text className="text-sm font-semibold">Apps</Text>
               <Text variant="muted" className="text-sm">Demo nav</Text>
             </Stack>
-          }
-          topbar={
-            <Stack direction="horizontal" gap={3} className="flex-wrap items-center justify-between p-4">
-              <Text className="text-sm font-medium">Project apps</Text>
-              <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
-                <Stack direction="horizontal" gap={2} className="items-center">
-                  <Text variant="muted" className="text-sm" id="demo-preview-label">
-                    Table preview
-                  </Text>
-                  <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
-                    <SelectTrigger className="w-[9.5rem]" aria-labelledby="demo-preview-label">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ready">Ready</SelectItem>
-                      <SelectItem value="loading">Loading</SelectItem>
-                      <SelectItem value="empty">Empty</SelectItem>
-                      <SelectItem value="error">Error</SelectItem>
-                    </SelectContent>
-                  </Select>
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
+              <Stack direction="horizontal" gap={3} className="flex-wrap items-center justify-between p-4">
+                <Text className="text-sm font-medium">Project apps</Text>
+                <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+                  <Stack direction="horizontal" gap={2} className="items-center">
+                    <Text variant="muted" className="text-sm" id="demo-preview-label">
+                      Table preview
+                    </Text>
+                    <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
+                      <SelectTrigger className="w-[9.5rem]" aria-labelledby="demo-preview-label">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ready">Ready</SelectItem>
+                        <SelectItem value="loading">Loading</SelectItem>
+                        <SelectItem value="empty">Empty</SelectItem>
+                        <SelectItem value="error">Error</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Stack>
+                  <Button type="button" onClick={openCreate}>
+                    Add app
+                  </Button>
                 </Stack>
-                <Button type="button" onClick={openCreate}>
-                  Add app
-                </Button>
               </Stack>
-            </Stack>
-          }
-        >
-          <Stack gap={4}>
-            <PageHeader
-              title="Apps"
-              description="Add, edit, or delete rows. Switch the preview to see loading, empty, and error states."
-            />
-            <DataTable
-              columns={columns}
-              data={tableData}
-              loading={loading}
-              error={error}
-              emptyMessage="No apps yet. Choose Ready and click Add app."
-              pageSize={5}
-            />
-          </Stack>
-        </AppShell>
+            </div>
+            <div className="flex-1 p-4 md:p-6">
+              <Stack gap={4}>
+                <PageHeader
+                  title="Apps"
+                  description="Add, edit, or delete rows. Switch the preview to see loading, empty, and error states."
+                />
+                <DataTable
+                  columns={columns}
+                  data={tableData}
+                  loading={loading}
+                  error={error}
+                  emptyMessage="No apps yet. Choose Ready and click Add app."
+                  pageSize={5}
+                />
+              </Stack>
+            </div>
+          </div>
+        </div>
       </Stack>
 
       <Drawer open={drawerOpen} onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())} direction="right">
