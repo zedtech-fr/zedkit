@@ -77,6 +77,11 @@ export function expectedRegistryThemeFromStyles(cssText) {
 }
 
 function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const keys = Object.keys(value).sort();
+    return `{${keys.map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}}`;
+  }
   return JSON.stringify(value);
 }
 
@@ -91,7 +96,14 @@ export function checkRegistryThemeDrift(root) {
 
   for (const item of registry.items ?? []) {
     const expected = expectedByBrick[item.name];
-    if (!expected) continue;
+    if (!expected) {
+      if (item.cssVars || item.css) {
+        errors.push(
+          `${item.name}: registry theme tokens are not covered by theme-tokens.mjs (register expected cssVars/css).`,
+        );
+      }
+      continue;
+    }
     if (item.cssVars && stableJson(item.cssVars) !== stableJson(expected.cssVars)) {
       errors.push(
         `${item.name}: registry.json cssVars does not match ${STYLES_REL} (run expectedRegistryThemeFromStyles or update registry).`,

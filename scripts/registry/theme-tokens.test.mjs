@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -21,4 +22,54 @@ test("expectedRegistryThemeFromStyles matches registry.json badge and drawer", (
 
 test("checkRegistryThemeDrift is clean on the repo", () => {
   assert.deepEqual(checkRegistryThemeDrift(root), []);
+});
+
+function fixtureRoot(mutateRegistry) {
+  const dir = mkdtempSync(join(tmpdir(), "theme-drift-"));
+  mkdirSync(join(dir, "packages/ui/src"), { recursive: true });
+  writeFileSync(
+    join(dir, "packages/ui/src/styles.css"),
+    readFileSync(join(root, "packages/ui/src/styles.css"), "utf8"),
+  );
+  const registry = JSON.parse(readFileSync(join(root, "registry.json"), "utf8"));
+  mutateRegistry(registry);
+  writeFileSync(join(dir, "registry.json"), JSON.stringify(registry));
+  return dir;
+}
+
+test("checkRegistryThemeDrift fails on a drifted value", () => {
+  const dir = fixtureRoot((registry) => {
+    registry.items.find((item) => item.name === "badge").cssVars.theme["ring-width"] = "99px";
+  });
+  const errors = checkRegistryThemeDrift(dir);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /badge: registry\.json cssVars does not match/);
+});
+
+test("checkRegistryThemeDrift fails on unregistered brick tokens", () => {
+  const dir = fixtureRoot((registry) => {
+    registry.items.push({ name: "next-brick", cssVars: { theme: { "some-token": "1px" } } });
+  });
+  const errors = checkRegistryThemeDrift(dir);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /next-brick: registry theme tokens are not covered/);
+});
+
+test("checkRegistryThemeDrift fails on missing required tokens", () => {
+  const dir = fixtureRoot((registry) => {
+    delete registry.items.find((item) => item.name === "badge").cssVars;
+  });
+  const errors = checkRegistryThemeDrift(dir);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /badge: registry\.json missing cssVars required/);
+});
+
+test("checkRegistryThemeDrift ignores key order", () => {
+  const dir = fixtureRoot((registry) => {
+    const theme = registry.items.find((item) => item.name === "badge").cssVars.theme;
+    const reordered = {};
+    for (const key of Object.keys(theme).reverse()) reordered[key] = theme[key];
+    registry.items.find((item) => item.name === "badge").cssVars.theme = reordered;
+  });
+  assert.deepEqual(checkRegistryThemeDrift(dir), []);
 });
