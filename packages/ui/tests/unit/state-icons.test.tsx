@@ -93,7 +93,16 @@ describe("checkmark", () => {
   it("is decorative without a label", () => {
     const { container } = render(<Checkmark />);
     expect(container.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
-    expect(container.querySelector("path")?.getAttribute("class")).toContain("stroke-dasharray");
+    expect(container.querySelector("path")?.getAttribute("stroke-dasharray")).toBe("8");
+  });
+
+  it("styles size and motion from design tokens", () => {
+    const { container } = render(<Checkmark />);
+    expect(container.firstElementChild?.classList.contains("size-checkmark")).toBe(true);
+    expect(container.firstElementChild?.getAttribute("class")).not.toMatch(/(^|\s)size-4(\s|$)/);
+    const path = container.querySelector("path");
+    expect(path?.getAttribute("class")).toContain("motion-safe:animate-check-draw");
+    expect(path?.getAttribute("class")).not.toContain("animate-[");
   });
 
   it("names itself with a label", () => {
