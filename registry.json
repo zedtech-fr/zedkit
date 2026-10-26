@@ -34,8 +34,8 @@
     {
       "name": "drawer",
       "type": "registry:ui",
-      "dependencies": ["vaul"],
-      "registryDependencies": ["utils"],
+      "dependencies": ["vaul", "lucide-react"],
+      "registryDependencies": ["button", "utils"],
       "files": [
         {
           "path": "registry/generated/ui/drawer.tsx",

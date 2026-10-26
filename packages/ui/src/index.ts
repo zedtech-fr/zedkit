@@ -40,7 +40,9 @@ export {
 export {
   Drawer,
   type DrawerProps,
+  DrawerBody,
   DrawerClose,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,

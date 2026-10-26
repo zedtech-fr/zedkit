@@ -43,4 +43,72 @@ test.describe("home dashboard mobile (#388)", () => {
     await expect(page.getByText("Page 1 of 1")).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   });
+
+  test("edit sheet keeps side gutters, a visible handle, and clears the bottom edge", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Edit console" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible({ timeout: 10_000 });
+    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "bottom");
+    // Wait for the arrival animation to settle before measuring.
+    await expect
+      .poll(async () => dialog.evaluate((el) => el.getAnimations().length + (getComputedStyle(el).transform === "none" ? 0 : 1)))
+      .toBeLessThanOrEqual(1);
+    await page.waitForTimeout(600);
+
+    const sheet = await dialog.boundingBox();
+    expect(sheet).not.toBeNull();
+    if (!sheet) return;
+    expect(sheet.y + sheet.height).toBeGreaterThanOrEqual(MOBILE.height - 1);
+
+    const targets = [
+      dialog.getByRole("heading", { name: "Edit app" }),
+      dialog.getByText("Name and region are stored in local state only."),
+      dialog.getByLabel("Name"),
+      dialog.getByRole("combobox", { name: "Region" }),
+      dialog.getByRole("button", { name: "Save changes" }),
+      dialog.getByRole("button", { name: "Cancel" }),
+    ];
+    for (const target of targets) {
+      // Visible edges: the padding box of plain text blocks is not what the reader sees, so measure their content.
+      const edges = await target.evaluate((el) => {
+        const rect = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        const isControl = el.matches("input, button, select, [role=combobox]");
+        const padLeft = isControl ? 0 : Number.parseFloat(style.paddingLeft);
+        const padRight = isControl ? 0 : Number.parseFloat(style.paddingRight);
+        return { label: (el.textContent ?? el.tagName).slice(0, 30), left: rect.left + padLeft, right: rect.right - padRight };
+      });
+      expect(edges.left - sheet.x, `left gutter of ${edges.label}`).toBeGreaterThanOrEqual(12);
+      expect(sheet.x + sheet.width - edges.right, `right gutter of ${edges.label}`).toBeGreaterThanOrEqual(12);
+    }
+
+    // Actions: clear of the bottom edge of the viewport.
+    for (const name of ["Save changes", "Cancel"]) {
+      const box = await dialog.getByRole("button", { name }).boundingBox();
+      expect(box).not.toBeNull();
+      if (!box) continue;
+      expect(MOBILE.height - (box.y + box.height), `${name} distance to the bottom edge`).toBeGreaterThanOrEqual(12);
+    }
+
+    // Fields keep the 16px floor (no iOS zoom on focus).
+    const fieldSizes = await dialog.evaluate((root) =>
+      [...root.querySelectorAll("input, select, [role=combobox]")].map((el) => Number.parseFloat(getComputedStyle(el).fontSize)),
+    );
+    expect(fieldSizes.length).toBeGreaterThanOrEqual(2);
+    for (const size of fieldSizes) expect(size).toBeGreaterThanOrEqual(16);
+
+    // The grab handle is drawn and big enough to see.
+    const handle = dialog.locator("[data-vaul-handle]");
+    await expect(handle).toBeVisible();
+    const handleBox = await handle.boundingBox();
+    expect(handleBox?.width ?? 0).toBeGreaterThanOrEqual(32);
+    expect(handleBox?.height ?? 0).toBeGreaterThanOrEqual(4);
+
+    // The page behind does not overflow sideways while the sheet is open.
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  });
 });

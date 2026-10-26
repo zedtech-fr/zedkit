@@ -11,6 +11,8 @@ beforeAll(() => {
 });
 import {
   Drawer,
+  DrawerBody,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -65,11 +67,144 @@ describe("drawer", () => {
     expect(dialog.className).toContain("right-0");
   });
 
-  it("renders full-width on small screens when on the side", async () => {
+  it("renders a full-height side panel narrower than the screen when mobile is side", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer mobile="side" direction="right">
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const panel = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(panel.className).toContain("w-drawer-side-mobile-width");
+    expect(panel.className).toContain("inset-y-0");
+  });
+
+  it("maps right drawers to bottom on narrow viewports when mobile is sheet", async () => {
+    stubDrawerJsdom(true);
     const user = userEvent.setup();
     render(<OpenDrawer direction="right" />);
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
-    expect(screen.getByRole("dialog", { name: "Delivery details" }).className).toContain("w-full");
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("bottom");
+    expect(dialog.className).toContain("bottom-0");
+    stubDrawerJsdom();
+  });
+
+  it("gives bare content side gutters and a safe-area bottom inset, and tags the kit slots", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer direction="bottom">
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHandle />
+          <DrawerHeader>
+            <DrawerTitle>Delivery details</DrawerTitle>
+          </DrawerHeader>
+          <DrawerBody>Body</DrawerBody>
+          <DrawerFooter>Footer</DrawerFooter>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    // Bare children (anything but the kit slots, the handle, and buttons) pick up the shared gutters.
+    expect(dialog.className).toContain("px-drawer-chrome-padding");
+    expect(dialog.className).toContain("pb-drawer-footer-safe");
+    // The slots carry their own spacing, so they are excluded from that net.
+    for (const slot of ["drawer-handle", "drawer-header", "drawer-body", "drawer-footer"]) {
+      expect(dialog.querySelector(`[data-slot="${slot}"]`), slot).not.toBeNull();
+    }
+  });
+
+  it("styles the close button from the overlay touch target token", () => {
+    render(
+      <Drawer defaultOpen>
+        <DrawerContent>
+          <DrawerCloseButton data-testid="close" />
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    expect(screen.getByTestId("close").className).toContain("size-overlay-touch-target");
+  });
+
+  it("keeps the side panel on a narrow viewport when mobile is side", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    render(
+      <Drawer mobile="side" direction="left">
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("left");
+    expect(dialog.className).toContain("w-drawer-side-mobile-width");
+    stubDrawerJsdom();
+  });
+
+  it("respects the safe-area insets on every edge it touches", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="top" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    expect(screen.getByRole("dialog", { name: "Delivery details" }).className).toContain("pt-drawer-safe-top");
+  });
+
+  it("hides the handle on side drawers and moves it to the far edge of a top drawer", () => {
+    render(
+      <Drawer defaultOpen>
+        <DrawerContent>
+          <DrawerHandle data-testid="handle" />
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    const handle = screen.getByTestId("handle");
+    expect(handle.className).toContain("in-data-[vaul-drawer-direction=left]:hidden");
+    expect(handle.className).toContain("in-data-[vaul-drawer-direction=right]:hidden");
+    expect(handle.className).toContain("in-data-[vaul-drawer-direction=top]:order-last");
+  });
+
+  it("scrolls its body inside the drawer without chaining to the page", () => {
+    render(
+      <Drawer defaultOpen>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+          <DrawerBody data-testid="body">content</DrawerBody>
+        </DrawerContent>
+      </Drawer>,
+    );
+    const body = screen.getByTestId("body");
+    expect(body.className).toContain("overflow-y-auto");
+    expect(body.className).toContain("overscroll-y-contain");
+    expect(body.className).toContain("min-h-0");
+  });
+
+  it("closes from the close button", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer defaultOpen>
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("positions on top with top-0", async () => {
@@ -83,7 +218,16 @@ describe("drawer", () => {
 
   it("positions on the left with left-0", async () => {
     const user = userEvent.setup();
-    render(<OpenDrawer direction="left" />);
+    render(
+      <Drawer mobile="side" direction="left">
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("left");
@@ -216,7 +360,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const sheet = screen.getByRole("dialog", { name: "Delivery details" });
     expect(sheet.className).toContain("z-overlay");
-    expect(sheet.className).toContain("max-h-drawer-max-height");
+    expect(sheet.className).toContain("max-h-drawer-sheet-max-height");
     expect(sheet.className).not.toContain("96dvh");
     expect(document.querySelector("[data-vaul-overlay]")?.className).toContain("z-overlay");
   });
@@ -252,7 +396,8 @@ describe("drawer", () => {
     expect(header.className).toContain("p-drawer-chrome-padding");
     const footer = screen.getByTestId("footer");
     expect(footer.className).toContain("gap-drawer-footer-gap");
-    expect(footer.className).toContain("p-drawer-chrome-padding");
+    expect(footer.className).toContain("px-drawer-chrome-padding");
+    expect(footer.className).toContain("pb-drawer-footer-safe");
   });
 
   it("carries no value arbitraries on content, overlay, or chrome", async () => {
