@@ -65,6 +65,45 @@ function SortIcon({ direction }: { direction: SortDirection | false }) {
   return <ArrowUpDown className={className} aria-hidden />;
 }
 
+export interface DataTablePaginationProps {
+  /** 1-based current page for display. */
+  page: number;
+  pageCount: number;
+  canPrevious: boolean;
+  canNext: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+  className?: string;
+}
+
+/**
+ * Page label plus previous/next controls. `DataTable` wires these to
+ * the table state; compose directly for custom table chrome.
+ */
+export function DataTablePagination({
+  page,
+  pageCount,
+  canPrevious,
+  canNext,
+  onPrevious,
+  onNext,
+  className,
+}: DataTablePaginationProps) {
+  return (
+    <div className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
+      <span className="text-sm text-muted-foreground">
+        Page {page} of {Math.max(pageCount, 1)}
+      </span>
+      <Button variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
+        Previous
+      </Button>
+      <Button variant="outline" size="sm" onClick={onNext} disabled={!canNext}>
+        Next
+      </Button>
+    </div>
+  );
+}
+
 export function DataTable<TData extends RowData>({
   columns,
   data,
@@ -150,27 +189,14 @@ export function DataTable<TData extends RowData>({
         )}
       </TableBody>
       </Table>
-      <div className="flex items-center justify-end gap-data-table-pagination-gap">
-        <span className="text-sm text-muted-foreground">
-          Page {pageIndex + 1} of {Math.max(table.getPageCount(), 1)}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      <DataTablePagination
+        page={pageIndex + 1}
+        pageCount={table.getPageCount()}
+        canPrevious={table.getCanPreviousPage()}
+        canNext={table.getCanNextPage()}
+        onPrevious={() => table.previousPage()}
+        onNext={() => table.nextPage()}
+      />
     </div>
   );
 }

@@ -1113,7 +1113,7 @@
         },
         {
           "need": "Show a sortable, filterable, paginated data table",
-          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
+          "import": "`@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`",
           "wraps": "`@tanstack/react-table`",
           "status": "beta",
           "shortName": "DataTable",
@@ -1127,6 +1127,10 @@
             {
               "title": "Simple",
               "code": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
+            },
+            {
+              "title": "Standalone pagination",
+              "code": "import { DataTablePagination } from \"@zedtech/zedkit-ui\";\nconst [page, setPage] = useState(2);\n<DataTablePagination page={page} pageCount={4}\n  canPrevious={page > 1} canNext={page < 4}\n  onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />"
             }
           ],
           "a11y": "Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.",
