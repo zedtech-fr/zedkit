@@ -90,7 +90,7 @@ evidence.
   holds copies (a linked folder shows up empty there).
 - `.agents/commands/`: one-keystroke commands. `.claude/commands` points to it;
   `.cursor/commands` holds copies for the same reason.
-- Subagent `model`: leave it unset (inherits). Pin one only after listing the
+- Subagent `model`: omit it, or `inherit`. Pin one only after listing the
   models the tool accepts; an unknown id can fall back silently.
 - Tailor this file to the repo with the `setup-ai` skill.
 - Validate after editing: `zedkit-ai validate` (package `@zedtech/zedkit-ai`).
