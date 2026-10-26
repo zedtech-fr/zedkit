@@ -173,7 +173,7 @@ describe("DataTable tokens", () => {
       .map((el) => el.getAttribute("class") ?? "")
       .join(" ");
     expect(classes.length).toBeGreaterThan(0);
-    expect(classes).not.toMatch(/\[[-\\d#]/);
+    expect(classes).not.toMatch(/\[[-\d#]/);
     unmount();
   });
 });
