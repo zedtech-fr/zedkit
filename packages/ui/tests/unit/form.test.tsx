@@ -104,4 +104,18 @@ describe("form brick", () => {
     expect(screen.getByRole("alert")).not.toBeNull();
     expect(document.querySelector("[data-slot=field-set]")?.className).toContain("gap-field-set");
   });
+
+  it("styles form item, description, and message from design tokens", async () => {
+    const user = userEvent.setup();
+    render(<FormDemo messages={messages} onSave={vi.fn(async () => {})} />);
+    const description = screen.getByText(messages.nameDescription);
+    expect(description.className).toContain("text-form-hint");
+    expect(description.parentElement?.className).toContain("space-y-form-item-gap");
+
+    await user.type(screen.getByLabelText(messages.nameLabel), "x");
+    await user.click(screen.getByRole("button", { name: messages.save }));
+    const error = await screen.findByText(messages.nameTooShort);
+    expect(error.className).toContain("text-form-hint");
+    expect(error.className).toContain("text-destructive");
+  });
 });
