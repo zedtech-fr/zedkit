@@ -944,6 +944,7 @@
               "code": "import { UpdatedAgo } from \"@zedtech/zedkit-ui\";\n<UpdatedAgo date={updatedAt} /> // \"Updated 3 minutes ago\" via Intl.RelativeTimeFormat"
             }
           ],
+          "a11y": "Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.",
           "seeAlso": [
             "Name an operation in progress"
           ]

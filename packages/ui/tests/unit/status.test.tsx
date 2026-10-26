@@ -76,4 +76,9 @@ describe("updated ago", () => {
     const { container } = render(<UpdatedAgo date={Date.now() - 3_000} prefix="Synced" />);
     expect(container.textContent).toBe("Synced just now");
   });
+
+  it("styles the stamp with muted text tokens only", () => {
+    const { container } = render(<UpdatedAgo date={Date.now() - 3_000} />);
+    expect(container.firstElementChild?.className).toBe("text-xs text-muted-foreground");
+  });
 });
