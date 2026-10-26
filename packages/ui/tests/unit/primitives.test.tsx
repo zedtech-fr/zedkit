@@ -72,6 +72,14 @@ describe("primitives", () => {
     expect(skeleton?.className).toContain("motion-safe:animate-pulse");
   });
 
+  it("keeps skeleton styles token-driven with no arbitrary values", () => {
+    const { container } = render(<Skeleton data-testid="sk-token" />);
+    const className = container.querySelector('[data-testid="sk-token"]')?.className ?? "";
+    expect(className).toContain("rounded-md");
+    expect(className).toContain("bg-muted");
+    expect(className).not.toContain("[");
+  });
+
   it("renders headings at the level tag with size classes", () => {
     render(
       <>
