@@ -15,6 +15,7 @@ import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
+import { LabelDemo } from "./label-demo";
 import { LoadingZonesDemo } from "./loading-zones-demo";
 import { SecretFieldDemo } from "./secret-field-demo";
 import { SelectDemo } from "./select-demo";
@@ -60,6 +61,7 @@ export const demoRegistry = {
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
   HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
+  LabelDemo: { Demo: LabelDemo, file: "label-demo.tsx" },
   LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
   RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },

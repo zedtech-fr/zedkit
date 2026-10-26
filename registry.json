@@ -326,6 +326,18 @@
       }
     },
     {
+      "name": "label",
+      "type": "registry:ui",
+      "dependencies": ["class-variance-authority", "@radix-ui/react-label"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "card-skeleton",
       "type": "registry:ui",
       "registryDependencies": ["skeleton", "utils"],
