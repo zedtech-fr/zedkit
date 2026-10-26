@@ -1,8 +1,9 @@
 # AGENTS.md — @zedtech/zedkit-quality
 
 1. Config-only package: an ESLint entry (`.mjs` + hand-written `.d.mts`,
-   shipped as source) and a strict `tsconfig.base.json`. No compilation;
-   `build` only copies into `dist/` for the pack gate.
+   shipped as source) and a strict `tsconfig.base.json`. No build step
+   (`"zedkit": { "noBuild": true }`, exempt from the pack gate's dist
+   requirement); config must be consumable with zero build.
 2. Node 22, pnpm, ESM. Deps use `catalog:` only. Peer deps (`eslint`,
    `eslint-plugin-jsx-a11y`, `eslint-plugin-better-tailwindcss`) are also
    devDeps so the tests load the real plugins.
@@ -19,6 +20,6 @@
    `entryPoint` is a parameter); `defineLayers` encodes the
    route/view/data doctrine from the `console-architecture` agent.
 8. Definition of done: `pnpm --filter @zedtech/zedkit-quality typecheck
-   && pnpm --filter @zedtech/zedkit-quality lint && pnpm --filter @zedtech/zedkit-quality build
+   && pnpm --filter @zedtech/zedkit-quality lint
    && pnpm --filter @zedtech/zedkit-quality test` green (each command
    separately), `pnpm catalog:check` green.
