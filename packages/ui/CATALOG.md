@@ -282,6 +282,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
+- Registry: status-label
 - Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts
