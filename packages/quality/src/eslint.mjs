@@ -27,6 +27,9 @@ const COLOR_UTILS =
  * @returns {import("eslint").Linter.Config[]} Flat config blocks.
  */
 export function uiPreset({ entryPoint }) {
+  if (typeof entryPoint !== "string" || entryPoint === "") {
+    throw new Error("uiPreset: `entryPoint` is required (path to your Tailwind CSS entry).");
+  }
   return [
     {
       name: "zedkit/ui-a11y",

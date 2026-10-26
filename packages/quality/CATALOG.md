@@ -3,7 +3,6 @@
 - Keywords: eslint, eslint-config, tsconfig, typescript, strict, layers, architecture, a11y, tailwindcss, code-quality
 - Audience: Teams keeping the same quality gates across repos.
 - Purpose: Shared quality setup: UI lint preset, route/view/data layer boundaries, and one strict TypeScript base — consume, do not copy.
-- Attribution: Original work by the same author.
 
 
 ## Lint UI files for accessibility, Tailwind and tokens

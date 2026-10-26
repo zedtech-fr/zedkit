@@ -7,6 +7,10 @@ describe("uiPreset", () => {
     const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
     expect(tailwind.settings["better-tailwindcss"].entryPoint).toBe("/repo/app/globals.css");
   });
+
+  it("fails fast when entryPoint is missing", () => {
+    expect(() => uiPreset({})).toThrow("entryPoint");
+  });
 });
 
 describe("defineLayers", () => {
