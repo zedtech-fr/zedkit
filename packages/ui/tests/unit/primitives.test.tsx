@@ -160,4 +160,21 @@ describe("primitives", () => {
     expect(screen.getByText("Body text.")).not.toBeNull();
     expect(screen.getByText("Footer text.")).not.toBeNull();
   });
+
+  it("spaces card slots from theme tokens", () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Server</CardTitle>
+        </CardHeader>
+        <CardContent>Body text.</CardContent>
+        <CardFooter>Footer text.</CardFooter>
+      </Card>,
+    );
+    const title = screen.getByText("Server");
+    expect(title.parentElement?.className).toContain("p-card-padding");
+    expect(title.parentElement?.className).toContain("space-y-card-stack");
+    expect(screen.getByText("Body text.").className).toContain("p-card-padding");
+    expect(screen.getByText("Footer text.").className).toContain("p-card-padding");
+  });
 });

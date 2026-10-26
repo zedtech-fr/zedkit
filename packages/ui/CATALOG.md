@@ -532,6 +532,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 - When to use: To group related fields with legends and per-field errors.
 - When not to use: For validation logic itself — pair with Form instead.
 - See also: `Build validated forms with labels, errors, and pending state`
+- A11y: `FieldError` uses `role="alert"`; spacing uses `gap-field-*` theme tokens (not raw spacing literals).
 
 ```ts
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedtech/zedkit-ui";
@@ -551,6 +552,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 - Purpose: Cards with header/title/description/content/footer slots.
 - When to use: For self-contained blocks (panels, summaries, previews).
 - When not to use: For page-level layout — use AppShell and Stack instead.
+- A11y: Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; `CardSkeleton` mirrors the same tokens so async content lands without shifting.
 - See also: `Stack content and group titled sections`
 
 ```ts
