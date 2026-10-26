@@ -54,7 +54,15 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
   return (
     <>
       <JsonLd data={jsonLd} />
-      <DocsPage toc={page.data.toc}>
+      <DocsPage
+        toc={page.data.toc}
+        tableOfContentPopover={{
+          trigger: {
+            "aria-label": "Table of contents",
+            title: "Table of contents",
+          },
+        }}
+      >
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription>{page.data.description}</DocsDescription>
         <DocsBody>

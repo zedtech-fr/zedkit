@@ -37,11 +37,14 @@ export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 }
 
-export async function assertAxeOnMain(page: Page, extraRulesOff: string[] = []): Promise<void> {
-  const results = await new AxeBuilder({ page })
-    .include("main")
-    .disableRules([...AXE_BASELINE_RULES_OFF, ...extraRulesOff])
-    .analyze();
+export async function assertAxeOnMain(
+  page: Page,
+  extraRulesOff: string[] = [],
+  exclude?: string,
+): Promise<void> {
+  let builder = new AxeBuilder({ page }).include("main");
+  if (exclude) builder = builder.exclude(exclude);
+  const results = await builder.disableRules([...AXE_BASELINE_RULES_OFF, ...extraRulesOff]).analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 

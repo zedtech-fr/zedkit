@@ -5,6 +5,7 @@ import { docsPageMetadata } from "@/lib/docs-metadata";
 import { homePage } from "@/lib/site";
 import { Provider } from "./provider";
 import "./globals.css";
+import "./docs-shell-tokens.css";
 
 const baseMetadata = docsPageMetadata("/", homePage);
 
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-docs-shell suppressHydrationWarning>
       <body>
         <Provider>{children}</Provider>
       </body>

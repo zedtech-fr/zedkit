@@ -66,6 +66,23 @@ import { Button } from "@zedtech/zedkit-ui";
 </Button>
 ```
 
+## Icon-only actions with a visible name
+
+- Import: `@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`
+- Wraps: `Button` (same variants and sizes; `size` defaults to `icon`)
+- Status: beta
+- Short name: IconButton
+- Audience: Developers adding icon-only header or toolbar controls in an admin UI.
+- Purpose: Icon-only controls with matching `aria-label` and `title` from one `label` prop.
+- When to use: Toolbar or header controls where the glyph alone is not enough for screen readers.
+- When not to use: Actions with visible text — use `Button` instead.
+- Examples: Simple
+
+```ts
+import { IconButton } from "@zedtech/zedkit-ui";
+<IconButton label="Open menu">☰</IconButton>
+```
+
 ## Show a status or count badge
 
 - Import: `@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`
