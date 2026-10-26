@@ -117,7 +117,7 @@ export function MobileHeader({
         id="nd-mobile-nav"
         className={
           className ??
-          "sticky top-0 z-40 grid h-14 grid-cols-[1fr_auto_1fr] items-center border-b bg-background/80 px-2 backdrop-blur-sm md:hidden"
+          "sticky top-0 z-40 grid h-14 grid-cols-[1fr_auto_1fr] items-center border-b bg-background px-2 md:hidden"
         }
       >
         <Link href="/" aria-label="zedkit home" className={`${iconButtonClassName} justify-self-start text-foreground`}>

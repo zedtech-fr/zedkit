@@ -20,8 +20,8 @@ const identities: readonly IdentityOption[] = [
   {
     id: "press",
     label: "Press",
-    description: "Letterpress: ink on paper, square edges.",
-    fonts: ["Space Grotesk Variable", "Space Mono", "JetBrains Mono Variable"],
+    description: "Editorial: ink on paper, fine rules, serif titles.",
+    fonts: ["Space Grotesk Variable", "Newsreader Variable", "JetBrains Mono Variable"],
   },
   {
     id: "tide",

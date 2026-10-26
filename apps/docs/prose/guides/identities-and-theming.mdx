@@ -21,7 +21,7 @@ restyles the kit, this documentation site and your own screens without changing 
 | Identity | `data-identity` | Fonts | Radius | Border | Spacing | Shadow |
 | --- | --- | --- | --- | --- | --- | --- |
 | Mist | `mist` (default, attribute optional) | System sans | 12px (cards) | 1px | stock | Light, diffuse. |
-| Press | `press` | Space Grotesk, Space Mono | 0 | 2px | +12% | Hard 4px offset, no blur. |
+| Press | `press` | Space Grotesk, Newsreader | 0 | 1px | +12% | No shadows: fine ink rules. |
 | Tide | `tide` | Inter, heavy weights | 24px (cards) | 1px | +12% | Large soft glows. |
 | Volt | `volt` | Geist | 6px (cards) | 1px | -12% (dense) | Layered, with an inner edge in dark. |
 | Maison | `maison` | Cormorant, Jost | 2px (cards) | 1px | +30% (airy) | Almost none, very soft. |
@@ -30,8 +30,8 @@ restyles the kit, this documentation site and your own screens without changing 
 Use the identity control in the site header (or the sidebar footer on documentation pages) to
 try them. The choice is kept in `localStorage` under `zk-identity`.
 
-The built-in names are short on purpose: **Mist** is calm and soft, **Press** is letterpress (ink on
-paper, square edges), **Tide** is navy and coral, **Volt** is dense and dark with one electric
+The built-in names are short on purpose: **Mist** is calm and soft, **Press** is editorial (ink on
+paper, fine rules, serif titles), **Tide** is navy and coral, **Volt** is dense and dark with one electric
 accent, **Maison** is a brand boutique (ivory, serif, airy), **Glass** is frosted translucent surfaces
 over soft colour halos. `IdentityScript` also maps ids used before these names (`soft`,
 `retro-square`, `studio`, `deep`, `luxe`, `gilt`) to the new ones and rewrites the stored value, so a
@@ -152,7 +152,7 @@ surface). The built-in identities are checked with an automated accessibility te
 | `--zk-heading-weight`, `--zk-heading-tracking`, `--zk-heading-transform`, `--zk-heading-leading` | Heading weight, letter spacing, case and line height. |
 
 Fonts are not bundled by the kit. Load them in your app (this site uses the self-hosted Fontsource
-packages for Inter, Space Grotesk, Space Mono, Geist, Cormorant, Jost and JetBrains Mono, all under the SIL Open Font License 1.1) and name the
+packages for Inter, Space Grotesk, Newsreader, Geist, Cormorant, Jost and JetBrains Mono, all under the SIL Open Font License 1.1) and name the
 families in the tokens, with fallbacks. A font that no active identity names is never downloaded.
 
 ### Glass (translucent surfaces)

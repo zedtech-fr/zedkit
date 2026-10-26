@@ -59,7 +59,7 @@ const SIGNATURES: Record<
   string,
   { body: string; heading: string; radius: number; border: number; padding: number; shadow: RegExp }
 > = {
-  press: { body: "Space Grotesk", heading: "Space Mono", radius: 0, border: 2, padding: 16.64, shadow: /4px 4px 0px 0px/ },
+  press: { body: "Space Grotesk", heading: "Newsreader", radius: 0, border: 1, padding: 16.64, shadow: /0px 0px 0px 0px/ },
   tide: { body: "Inter Variable", heading: "Inter Variable", radius: 24, border: 1, padding: 16.64, shadow: /32px|12px/ },
   volt: { body: "Geist Variable", heading: "Geist Variable", radius: 6, border: 1, padding: 14.4, shadow: /0px 8px 20px -8px/ },
   glass: { body: "Inter Variable", heading: "Space Grotesk Variable", radius: 20, border: 1, padding: 16.64, shadow: /30px|44px/ },
@@ -128,7 +128,7 @@ test("code blocks, tables and chrome follow the identity tokens", async ({ page 
 
   async function surfaces() {
     return page.evaluate(() => {
-      const pre = document.querySelector("main pre");
+      const pre = (document.querySelector("main figure.shiki") ?? document.querySelector("main pre"));
       const th = document.querySelector("main th");
       const nav = document.querySelector("#nd-nav") ?? document.querySelector("header");
       const preStyle = pre ? getComputedStyle(pre) : null;
@@ -150,9 +150,9 @@ test("code blocks, tables and chrome follow the identity tokens", async ({ page 
   await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
   const press = await surfaces();
   expect(press.preRadius, "press pre radius").toBe(0);
-  expect(press.preBorder, "press pre border").toBe(2);
+  expect(press.preBorder, "press pre border").toBe(1);
   expect(press.thTransform, "press table head").toBe("uppercase");
-  expect(press.navBorder, "press nav border").toBe(2);
+  expect(press.navBorder, "press nav border").toBe(1);
 
   await identitySelect(page).selectOption("maison");
   await expect(page.locator("html")).toHaveAttribute("data-identity", "maison");
@@ -169,7 +169,7 @@ test("code blocks and chrome follow the identity in dark mode", async ({ page })
   await expect(page.locator("html")).toHaveAttribute("data-identity", "maison");
   await expect(page.locator("html")).toHaveClass(/dark/);
   const got = await page.evaluate(() => {
-    const pre = document.querySelector("main pre");
+    const pre = (document.querySelector("main figure.shiki") ?? document.querySelector("main pre"));
     const nav = document.querySelector("#nd-nav") ?? document.querySelector("header");
     return {
       preBorder: pre ? parseFloat(getComputedStyle(pre).borderTopWidth) : -1,

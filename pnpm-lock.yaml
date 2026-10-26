@@ -33,10 +33,10 @@ catalogs:
     '@fontsource-variable/jost':
       specifier: 5.3.0
       version: 5.3.0
-    '@fontsource-variable/space-grotesk':
+    '@fontsource-variable/newsreader':
       specifier: 5.3.0
       version: 5.3.0
-    '@fontsource/space-mono':
+    '@fontsource-variable/space-grotesk':
       specifier: 5.3.0
       version: 5.3.0
     '@hookform/resolvers':
@@ -299,10 +299,10 @@ importers:
       '@fontsource-variable/jost':
         specifier: 'catalog:'
         version: 5.3.0
-      '@fontsource-variable/space-grotesk':
+      '@fontsource-variable/newsreader':
         specifier: 'catalog:'
         version: 5.3.0
-      '@fontsource/space-mono':
+      '@fontsource-variable/space-grotesk':
         specifier: 'catalog:'
         version: 5.3.0
       '@zedtech/zedkit-seo':
@@ -1316,11 +1316,11 @@ packages:
   '@fontsource-variable/jost@5.3.0':
     resolution: {integrity: sha512-9FS8iBMJnfyPqQOi9dfMjSwYBIWd0kBD3/jl8VvtbIMY2pK+CSp3oAaTLS1V60rDoM7AfyPvuT+IUfJfGeCTKg==}
 
+  '@fontsource-variable/newsreader@5.3.0':
+    resolution: {integrity: sha512-rrzYi43qMpbzwuFtf9OkWH8sxAPVPcQQQEwXpPtwaKYeJ8yVg5aLs5kawmo1f2Q1t1M38TLmEKCkGVDsYwgdFw==}
+
   '@fontsource-variable/space-grotesk@5.3.0':
     resolution: {integrity: sha512-2IxmvfB08i9vnGB3Ym/AXvhRE+8XOjWMXIyDum03c+tPwH0FUoMNQfGpU8NXPxjbws0Vvss3AH0Zqt4oJBBAdw==}
-
-  '@fontsource/space-mono@5.3.0':
-    resolution: {integrity: sha512-FrpBMOVWn3PRdRHlrZWC55X3kZG/2BTH7SM5ZyS/bky3iKya2BturI5lk+t0RoDQL2JyHzURsVq/EisCsxpI5A==}
 
   '@fuma-translate/react@1.0.2':
     resolution: {integrity: sha512-uOiOtBx3nRXR8Nu1GzBf1tApgF1FErDBTHxRIAQeyQdyOoZbrNRN6H4kDCWObY4qyGeGbHydG0DHzgeUgFDMIw==}
@@ -7201,9 +7201,9 @@ snapshots:
 
   '@fontsource-variable/jost@5.3.0': {}
 
-  '@fontsource-variable/space-grotesk@5.3.0': {}
+  '@fontsource-variable/newsreader@5.3.0': {}
 
-  '@fontsource/space-mono@5.3.0': {}
+  '@fontsource-variable/space-grotesk@5.3.0': {}
 
   '@fuma-translate/react@1.0.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
