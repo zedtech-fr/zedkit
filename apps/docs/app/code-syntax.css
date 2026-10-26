@@ -1,0 +1,30 @@
+/* Accessible syntax tokens on kit card backgrounds (light and dark). */
+figure.shiki span[style*="color:#6a737d"],
+figure.shiki span[style*="color: #6a737d"] {
+  color: hsl(240 5% 32%) !important;
+}
+
+figure.shiki span[style*="color:#e36209"],
+figure.shiki span[style*="color: #e36209"] {
+  color: hsl(24 75% 35%) !important;
+}
+
+figure.shiki span[style*="color:#d73a49"],
+figure.shiki span[style*="color: #d73a49"] {
+  color: hsl(350 65% 40%) !important;
+}
+
+html.dark figure.shiki span[style*="color:#6a737d"],
+html.dark figure.shiki span[style*="color: #6a737d"] {
+  color: hsl(240 5% 72%) !important;
+}
+
+html.dark figure.shiki span[style*="color:#e36209"],
+html.dark figure.shiki span[style*="color: #e36209"] {
+  color: hsl(32 90% 68%) !important;
+}
+
+html.dark figure.shiki span[style*="color:#d73a49"],
+html.dark figure.shiki span[style*="color: #d73a49"] {
+  color: hsl(350 75% 72%) !important;
+}

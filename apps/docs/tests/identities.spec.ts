@@ -26,7 +26,8 @@ function identitySelect(page: Page) {
  * syntax-highlighted code, the generated props table and inactive code-tab labels
  * (muted token of the default identity, tracked separately).
  */
-const CONTRAST_EXCLUDES = ["pre", '[role="tab"]', '[id^="type-table"]'];
+/** Inactive package-manager tabs stay muted; syntax and props tables are in scope. */
+const CONTRAST_EXCLUDES = ['[role="tab"][aria-selected="false"]'];
 
 function rootVar(page: Page, name: string) {
   return page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name);
