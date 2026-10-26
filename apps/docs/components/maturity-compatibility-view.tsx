@@ -1,5 +1,15 @@
 import Link from "next/link";
-import { Section, Stack, Text } from "@zedtech/zedkit-ui";
+import {
+  Section,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Text,
+} from "@zedtech/zedkit-ui";
 import {
   catalogMaturityReadmeUrl,
   compatibilityRows,
@@ -10,49 +20,47 @@ import {
 function CountsTable() {
   const rows = Object.entries(maturityCounts).filter(([, n]) => n > 0);
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Catalog needs</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Status</TableHead>
+          <TableHead>Catalog needs</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {rows.map(([status, count]) => (
-          <tr key={status}>
-            <td>{status}</td>
-            <td>{count}</td>
-          </tr>
+          <TableRow key={status}>
+            <TableCell>{status}</TableCell>
+            <TableCell>{count}</TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }
 
 function CompatibilityTable() {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Package</th>
-          <th>Version</th>
-          <th>Node</th>
-          <th>Peer dependencies</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Package</TableHead>
+          <TableHead>Version</TableHead>
+          <TableHead>Node</TableHead>
+          <TableHead>Peer dependencies</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {compatibilityRows.map((row) => (
-          <tr key={row.package}>
-            <td>
-              <code>{row.package}</code>
-            </td>
-            <td>{row.version}</td>
-            <td>{row.node}</td>
-            <td>{row.peers}</td>
-          </tr>
+          <TableRow key={row.package}>
+            <TableCell className="font-mono text-xs">{row.package}</TableCell>
+            <TableCell>{row.version}</TableCell>
+            <TableCell>{row.node}</TableCell>
+            <TableCell className="text-muted-foreground">{row.peers}</TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }
 
@@ -74,26 +82,21 @@ export function MaturityCompatibilityView() {
           </Text>
         </Stack>
       </Section>
-      <Section>
-        <Stack gap={3}>
-          <h2 className="text-lg font-semibold">Current catalog counts</h2>
-          <CountsTable />
-        </Stack>
+      <Section title="Current catalog counts">
+        <CountsTable />
       </Section>
-      <Section>
+      <Section title="Workspace toolchain">
+        <Text>
+          Node {workspaceToolchain.node}, {workspaceToolchain.packageManager}. UI work expects React
+          19 and Tailwind CSS v4 (see{" "}
+          <Link href="/docs/ui/theme-an-admin-app-dark-light-included">theme doc</Link>).
+        </Text>
+      </Section>
+      <Section title="Package compatibility">
         <Stack gap={3}>
-          <h2 className="text-lg font-semibold">Workspace toolchain</h2>
-          <Text>
-            Node {workspaceToolchain.node}, {workspaceToolchain.packageManager}. UI work expects
-            React 19 and Tailwind CSS v4 (see{" "}
-            <Link href="/docs/ui/theme-an-admin-app-dark-light-included">theme doc</Link>).
+          <Text variant="muted">
+            Generated from each package <code>package.json</code> on every docs build.
           </Text>
-        </Stack>
-      </Section>
-      <Section>
-        <Stack gap={3}>
-          <h2 className="text-lg font-semibold">Package compatibility</h2>
-          <Text variant="muted">Generated from each package <code>package.json</code> on every docs build.</Text>
           <CompatibilityTable />
         </Stack>
       </Section>
