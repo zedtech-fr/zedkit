@@ -39,6 +39,8 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   assert.deepEqual(tabs.css, expected.tabs.css);
   const card = registry.items.find((item) => item.name === "card");
   assert.deepEqual(card.cssVars, expected.card.cssVars);
+  const shell = registry.items.find((item) => item.name === "app-shell");
+  assert.deepEqual(shell.cssVars, expected["app-shell"].cssVars);
   const wizard = registry.items.find((item) => item.name === "wizard-steps");
   assert.deepEqual(wizard.cssVars, expected["wizard-steps"].cssVars);
   const cardSkel = registry.items.find((item) => item.name === "card-skeleton");

@@ -1262,9 +1262,15 @@
             {
               "title": "Simple",
               "code": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
+            },
+            {
+              "title": "Without topbar",
+              "code": "import { AppShell } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />}> // topbar is optional\n  <p>Content.</p>\n</AppShell>"
             }
           ],
+          "registry": "app-shell",
           "a11y": "Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.",
+          "troubleshooting": "Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding comes from the `--spacing-app-shell-padding` / `--spacing-app-shell-padding-md` theme tokens.",
           "seeAlso": [
             "Group content in a card section"
           ]
