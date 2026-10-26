@@ -77,7 +77,7 @@ const SelectContent = React.forwardRef<
         // transform origin, trigger height/width below.
         "relative z-overlay max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md",
         position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+          "data-[side=bottom]:translate-y-select-separator data-[side=left]:-translate-x-select-separator data-[side=right]:translate-x-select-separator data-[side=top]:-translate-y-select-separator",
         className,
       )}
       position={position}
@@ -86,7 +86,7 @@ const SelectContent = React.forwardRef<
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
-          "p-1",
+          "p-select-separator",
           position === "popper" && "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
         )}
       >
