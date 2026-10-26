@@ -93,7 +93,7 @@ describe("overlays", () => {
       "sm:space-x-dialog-footer-gap",
     );
     const close = screen.getByRole("button", { name: "Close" });
-    expect(close.className).toContain("top-dialog-close-offset");
+    expect(close.className).toContain("top-overlay-close-offset");
     expect(close.className).toContain("focus-ring");
     expect(close.className).toContain("opacity-50");
     expect(close.innerHTML).toContain("size-icon-control");

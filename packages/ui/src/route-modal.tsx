@@ -137,7 +137,7 @@ export function RouteModal({
     <Drawer open={open} onOpenChange={handleOpenChange} direction={direction}>
       <DrawerContent className={cn(drawerSizeClass, className)}>
         <DrawerClose asChild>
-          <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-route-modal-close-offset right-route-modal-close-offset">
+          <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-overlay-close-offset right-overlay-close-offset">
             <X className="size-icon-control" />
           </Button>
         </DrawerClose>
