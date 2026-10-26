@@ -246,5 +246,61 @@
     "tokens": [
       "--spacing-wizard-step-connector-thickness"
     ]
+  },
+  {
+    "canonical": "--spacing-overlay-touch-target",
+    "value": "2.75rem",
+    "tokens": [
+      "--spacing-overlay-touch-target"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-sheet-max-height",
+    "value": "88dvh",
+    "tokens": [
+      "--spacing-drawer-sheet-max-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-safe-bottom",
+    "value": "env(safe-area-inset-bottom, 0px)",
+    "tokens": [
+      "--spacing-drawer-safe-bottom"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-safe-top",
+    "value": "env(safe-area-inset-top, 0px)",
+    "tokens": [
+      "--spacing-drawer-safe-top"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-safe-left",
+    "value": "env(safe-area-inset-left, 0px)",
+    "tokens": [
+      "--spacing-drawer-safe-left"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-safe-right",
+    "value": "env(safe-area-inset-right, 0px)",
+    "tokens": [
+      "--spacing-drawer-safe-right"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-side-mobile-width",
+    "value": "90%",
+    "tokens": [
+      "--spacing-drawer-side-mobile-width"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-footer-safe",
+    "value": "calc(var(--spacing-drawer-chrome-padding) + env(safe-area-inset-bottom, 0px))",
+    "tokens": [
+      "--spacing-drawer-footer-safe"
+    ]
   }
 ]

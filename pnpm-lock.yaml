@@ -18,6 +18,27 @@ catalogs:
     '@fastify/static':
       specifier: 10.1.7
       version: 10.1.7
+    '@fontsource-variable/cormorant':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/geist':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/inter':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/jetbrains-mono':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/jost':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/newsreader':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/space-grotesk':
+      specifier: 5.3.0
+      version: 5.3.0
     '@hookform/resolvers':
       specifier: 6.0.0
       version: 6.0.0
@@ -263,6 +284,27 @@ importers:
 
   apps/docs:
     dependencies:
+      '@fontsource-variable/cormorant':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/geist':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/inter':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/jetbrains-mono':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/jost':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/newsreader':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@fontsource-variable/space-grotesk':
+        specifier: 'catalog:'
+        version: 5.3.0
       '@zedtech/zedkit-seo':
         specifier: workspace:*
         version: link:../../packages/seo
@@ -324,6 +366,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../../packages/quality
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -343,6 +388,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.20.5
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -356,6 +404,9 @@ importers:
         specifier: 'catalog:'
         version: 3.0.2
     devDependencies:
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -398,6 +449,9 @@ importers:
       '@zedtech/zedkit-core':
         specifier: workspace:*
         version: link:../core
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       class-transformer:
         specifier: 'catalog:'
         version: 0.5.1
@@ -434,6 +488,9 @@ importers:
 
   packages/payload-seo:
     devDependencies:
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       payload:
         specifier: 'catalog:'
         version: 3.92.0(graphql@16.14.2)(typescript@5.9.3)
@@ -468,6 +525,9 @@ importers:
         specifier: 'catalog:'
         version: 2.1.0
     devDependencies:
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -480,6 +540,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.20.5
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -577,6 +640,9 @@ importers:
       '@zedtech/zedkit-core':
         specifier: workspace:*
         version: link:../core
+      '@zedtech/zedkit-quality':
+        specifier: workspace:*
+        version: link:../quality
       axe-core:
         specifier: 'catalog:'
         version: 4.14.0
@@ -1276,6 +1342,27 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource-variable/cormorant@5.3.0':
+    resolution: {integrity: sha512-S3/jFZ2+Erx8ML5+lo71rYKqVpJF13CZ3yWX7xfjQk1wFcPhT9Gp+l2tnNSLOx5Mzjn3mQmVPutpvx91O2VqpQ==}
+
+  '@fontsource-variable/geist@5.3.0':
+    resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
+
+  '@fontsource-variable/inter@5.3.0':
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
+
+  '@fontsource-variable/jetbrains-mono@5.3.0':
+    resolution: {integrity: sha512-F32xpS2NsGYoQi2ADSkKTgpJj7ozajsGgDJ8woTnqjmIB+dxDIqImjl4pXZVEExu8UFZ2ndhmX18EBS/hdz3Lw==}
+
+  '@fontsource-variable/jost@5.3.0':
+    resolution: {integrity: sha512-9FS8iBMJnfyPqQOi9dfMjSwYBIWd0kBD3/jl8VvtbIMY2pK+CSp3oAaTLS1V60rDoM7AfyPvuT+IUfJfGeCTKg==}
+
+  '@fontsource-variable/newsreader@5.3.0':
+    resolution: {integrity: sha512-rrzYi43qMpbzwuFtf9OkWH8sxAPVPcQQQEwXpPtwaKYeJ8yVg5aLs5kawmo1f2Q1t1M38TLmEKCkGVDsYwgdFw==}
+
+  '@fontsource-variable/space-grotesk@5.3.0':
+    resolution: {integrity: sha512-2IxmvfB08i9vnGB3Ym/AXvhRE+8XOjWMXIyDum03c+tPwH0FUoMNQfGpU8NXPxjbws0Vvss3AH0Zqt4oJBBAdw==}
 
   '@fuma-translate/react@1.0.2':
     resolution: {integrity: sha512-uOiOtBx3nRXR8Nu1GzBf1tApgF1FErDBTHxRIAQeyQdyOoZbrNRN6H4kDCWObY4qyGeGbHydG0DHzgeUgFDMIw==}
@@ -7145,6 +7232,20 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource-variable/cormorant@5.3.0': {}
+
+  '@fontsource-variable/geist@5.3.0': {}
+
+  '@fontsource-variable/inter@5.3.0': {}
+
+  '@fontsource-variable/jetbrains-mono@5.3.0': {}
+
+  '@fontsource-variable/jost@5.3.0': {}
+
+  '@fontsource-variable/newsreader@5.3.0': {}
+
+  '@fontsource-variable/space-grotesk@5.3.0': {}
 
   '@fuma-translate/react@1.0.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:

@@ -55,6 +55,7 @@
     "ulid": "catalog:"
   },
   "devDependencies": {
+    "@zedtech/zedkit-quality": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
