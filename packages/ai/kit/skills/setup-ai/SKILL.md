@@ -105,7 +105,7 @@ Shared source first, provider layers after. `zedkit-ai init --provider <names>` 
 
 ## 7. Report
 
-Short: what you created or changed, what you left alone and why, the findings you did not fix (failing commands, contradictions needing a human decision), and everything marked `UNVERIFIED`.
+Short: what you created or changed, what you left alone and why, the findings you did not fix (failing commands, contradictions needing a human decision), and everything marked `UNVERIFIED`. For a bigger follow-up task, point the user at `/orchestrate` with the goal in one line.
 
 ## Workspace mode
 

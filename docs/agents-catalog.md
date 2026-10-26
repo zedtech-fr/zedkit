@@ -24,6 +24,7 @@ When to call which agent, and the chains they form. Agents live in
 | `docs-writer` | README, AGENTS.md, catalog entries or docs changed; drift and compiling examples | yes |
 | `release-manager` | public API, changesets or catalog Status changed; semver + migration notes | no |
 | `console-architecture` | frontend changes; checks route/view/data layer boundaries | no |
+| `orchestrator` | a task spans several steps or lenses and needs one coordinator (plan, review, implement, audit, research, or a mix) | no |
 | `product-director` | you need a delivery brief for the director over a scope (branch, PRs, milestone) | no |
 
 All rows are shipped. The table stays in sync with `kit.json` (agent list)
@@ -43,3 +44,5 @@ and the lens registry (triggers). Read-only agents carry
 - Release: `release-manager` (changeset, semver, migration notes, maturity)
   before the version PR.
 - Status: `product-director` over the merged scope, any time.
+- Multi-step task: `orchestrator` (frames, dispatches playbooks and specialists,
+  aggregates, verifies) — or `/orchestrate` with the task text.
