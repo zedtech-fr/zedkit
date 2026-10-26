@@ -6,8 +6,13 @@
     {
       "name": "badge",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/badge.tsx",
@@ -34,8 +39,12 @@
     {
       "name": "drawer",
       "type": "registry:ui",
-      "dependencies": ["vaul"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "vaul"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/drawer.tsx",
@@ -54,7 +63,11 @@
     {
       "name": "confirm-dialog",
       "type": "registry:ui",
-      "registryDependencies": ["button", "dialog", "utils"],
+      "registryDependencies": [
+        "button",
+        "dialog",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/confirm-dialog.tsx",
@@ -65,7 +78,9 @@
     {
       "name": "status-dot",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/status-dot.tsx",
@@ -81,7 +96,9 @@
     {
       "name": "checkmark",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/checkmark.tsx",
@@ -98,7 +115,9 @@
     {
       "name": "updated-ago",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/updated-ago.tsx",
@@ -109,8 +128,14 @@
     {
       "name": "status-label",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["checkmark", "status-dot", "utils"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkmark",
+        "status-dot",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/status-label.tsx",
@@ -128,7 +153,9 @@
     {
       "name": "progress-bar",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/progress-bar.tsx",
@@ -145,8 +172,13 @@
     {
       "name": "alert",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/alert.tsx",
@@ -166,7 +198,9 @@
     {
       "name": "skeleton",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/skeleton.tsx",
@@ -177,7 +211,9 @@
     {
       "name": "sonner",
       "type": "registry:ui",
-      "dependencies": ["sonner"],
+      "dependencies": [
+        "sonner"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/sonner.tsx",
@@ -188,8 +224,13 @@
     {
       "name": "typography",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/typography.tsx",
@@ -205,7 +246,9 @@
     {
       "name": "detail-panel",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/detail-panel.tsx",
@@ -221,10 +264,33 @@
       }
     },
     {
+      "name": "card",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/generated/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-card-stack": "0.375rem",
+          "spacing-card-padding": "1.5rem"
+        }
+      }
+    },
+    {
       "name": "wizard-steps",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/wizard-steps.tsx",

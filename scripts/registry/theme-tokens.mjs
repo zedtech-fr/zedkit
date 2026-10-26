@@ -132,6 +132,14 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    card: {
+      cssVars: {
+        theme: {
+          "spacing-card-stack": varFromBlock(theme, "spacing-card-stack"),
+          "spacing-card-padding": varFromBlock(theme, "spacing-card-padding"),
+        },
+      },
+    },
     "wizard-steps": {
       cssVars: {
         theme: {
