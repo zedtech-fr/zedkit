@@ -1070,6 +1070,7 @@
               "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>"
             }
           ],
+          "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live.",
           "seeAlso": [
             "Slide in a drawer panel",
             "Open modal dialogs",

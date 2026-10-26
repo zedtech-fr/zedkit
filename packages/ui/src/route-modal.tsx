@@ -41,9 +41,25 @@ export interface RouteModalProps {
   className?: string;
 }
 
-// Exit durations mirror the motion tokens (--motion-slow/base): the
-// modal closes visually first, then onClose navigates.
-const EXIT_MS: Record<RouteModalVariant, number> = { drawer: 250, dialog: 200 };
+// Fallback exit durations (ms) when the motion tokens are unavailable:
+// same values as --motion-slow/--motion-base.
+const EXIT_MS_FALLBACK: Record<RouteModalVariant, number> = { drawer: 250, dialog: 200 };
+
+/**
+ * Exit duration for the variant, read live from the motion tokens so a
+ * themed `--motion-slow`/`--motion-base` stays in sync with the exit
+ * animation. Falls back to the token defaults when unset (or SSR).
+ */
+function exitMs(variant: RouteModalVariant): number {
+  const fallback = EXIT_MS_FALLBACK[variant];
+  if (typeof document === "undefined") return fallback;
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue(variant === "drawer" ? "--motion-slow" : "--motion-base")
+    .trim();
+  const value = Number.parseFloat(raw);
+  if (!Number.isFinite(value)) return fallback;
+  return raw.endsWith("ms") ? value : value * 1000;
+}
 
 const DRAWER_SIZES: Record<RouteModalSize, string | undefined> = {
   // Important: DrawerContent bakes direction-scoped max-widths at higher
@@ -89,7 +105,7 @@ export function RouteModal({
       onClose();
       return;
     }
-    timer.current = window.setTimeout(onClose, EXIT_MS[variant]);
+    timer.current = window.setTimeout(onClose, exitMs(variant));
   }, [onClose, variant]);
 
   const handleOpenChange = React.useCallback(

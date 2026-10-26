@@ -414,6 +414,8 @@ import { Button, Drawer, DrawerContent, DrawerHandle, DrawerTitle, DrawerTrigger
 - Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
 - When to use: Inside an intercepting `@modal` slot, with `onClose` wired to `closeRoute`.
 - When not to use: For state-driven modals — use `Dialog`/`Drawer` directly with local state.
+- A11y: Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live.
+- Composition: Variant props kept deliberately — the variant selects between two Radix roots sharing one exit orchestration, which slots cannot express; custom layouts compose `Dialog`/`Drawer` directly.
 - See also: `Slide in a drawer panel`, `Open modal dialogs`, `Confirm destructive actions`
 
 ```ts
