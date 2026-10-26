@@ -1,0 +1,57 @@
+import { expect, test, type Page } from "@playwright/test";
+
+// Relative paths: the config baseURL decides the port.
+const PAGE = "/docs/ui/trigger-actions-with-buttons";
+
+function themeColors(page: Page) {
+  return page.evaluate(() =>
+    [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')].map((meta) => meta.content),
+  );
+}
+
+function background(page: Page) {
+  return page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+}
+
+/** Compare colours as the browser resolves them (hsl() and #hex both become rgb()). */
+function resolve(page: Page, color: string) {
+  return page.evaluate((value) => {
+    const probe = document.createElement("div");
+    probe.style.color = value;
+    document.body.appendChild(probe);
+    const rgb = getComputedStyle(probe).color;
+    probe.remove();
+    return rgb;
+  }, color);
+}
+
+test("no identity is applied while the kit ships none, even with a stored id", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("zk-identity", "anything"));
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  await expect(page.locator("html")).not.toHaveAttribute("data-identity", /.*/);
+  await expect(page.getByRole("combobox", { name: "Identity" })).toHaveCount(0);
+});
+
+for (const mode of ["light", "dark"] as const) {
+  test(`theme-color follows the ${mode} page background`, async ({ page }) => {
+    await page.addInitScript((theme) => localStorage.setItem("theme", theme), mode);
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    const colors = await themeColors(page);
+    expect(colors.length).toBeGreaterThan(0);
+    const expected = await background(page);
+    for (const color of colors) expect(await resolve(page, color)).toBe(expected);
+  });
+}
+
+test("theme-color updates when the theme is toggled", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("theme", "light"));
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  const before = await resolve(page, (await themeColors(page))[0]!);
+  await page.evaluate(() => {
+    document.documentElement.classList.add("dark");
+  });
+  await expect
+    .poll(async () => resolve(page, (await themeColors(page))[0]!))
+    .not.toBe(before);
+  expect(await resolve(page, (await themeColors(page))[0]!)).toBe(await background(page));
+});
