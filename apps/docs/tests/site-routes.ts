@@ -4,7 +4,7 @@ export interface SiteAuditRoute {
   label: string;
   /** Nested-interactive + unique link names (blocked on home until #286). */
   strictSemantics: boolean;
-  /** Skip entire row when the static export has no page yet (#289, #290–#293). */
+  /** Skip entire row when the static export has no page yet. */
   pendingPath?: boolean;
   /** Prose/card layouts wider than narrow `main` on mobile until layout refresh (#286). */
   skipMobileOverflow?: boolean;
@@ -20,28 +20,34 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/build-admin-dashboard",
+    path: "/docs/build-an-admin-dashboard",
     label: "tutorial-dashboard",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/coding-agents",
+    path: "/docs/set-up-your-coding-agents",
     label: "tutorial-agents",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/nestjs-api",
+    path: "/docs/nest/start-a-safe-nestjs-api",
     label: "tutorial-nest",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/nextjs-seo",
+    path: "/docs/add-seo-to-nextjs",
     label: "tutorial-seo",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
+  },
+  {
+    path: "/docs/zedkit-and-shadcn",
+    label: "tutorial-shadcn",
+    strictSemantics: true,
+    skipMobileOverflow: true,
   },
 ];
 
