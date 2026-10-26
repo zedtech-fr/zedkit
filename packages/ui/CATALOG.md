@@ -272,6 +272,7 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
 - When to use: Under data that refreshes (polling, SWR, manual refetch).
 - When not to use: For absolute timestamps — render a `<time dateTime>` instead.
+- A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.
 - See also: `Name an operation in progress`
 
 ```ts
