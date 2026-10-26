@@ -1,0 +1,62 @@
+---
+title: Build an admin dashboard
+description: AppShell, DataTable, a drawer form, ConfirmDialog, and theme tokens in a small Next.js admin screen.
+---
+
+Hand-written tutorial. UI snippets live under `prose/guides/snippets/` and are type-checked with the docs app (`verify-admin-dashboard-tutorial.mjs` in `docs:check`).
+
+## Who this is for
+
+You build internal admin tools in React and want one screen that combines layout, data table, side-panel editing, and destructive confirmation — using the same components as the live docs demos.
+
+## Prerequisites
+
+- Node.js 22+, a Next.js App Router app, React 19, Tailwind CSS v4.
+- Theme wired first: follow [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) (`.dark` class + kit globals).
+- Keyboard: tab through the table actions; the drawer traps focus until closed.
+
+## Steps
+
+### 1. Install the UI kit
+
+```sh
+{{snippet:ui-add.sh}}
+```
+
+### 2. Add the dashboard view
+
+Create `app/admin-dashboard-page.tsx` (or colocate with your route) with the composed screen:
+
+```tsx title="Admin dashboard"
+{{snippet:admin-dashboard-page.tsx}}
+```
+
+**Visible result:** sidebar + top bar, a table with two rows, **Edit** opens a drawer with a name field, **Delete** opens a confirm dialog.
+
+### 3. Mount the page
+
+In `app/page.tsx` (or `app/admin/page.tsx`):
+
+```tsx title="Route entry"
+{{snippet:admin-dashboard-mount.tsx}}
+```
+
+Run `pnpm dev` and open the route. Toggle light/dark using your theme control — tokens come from the theme step above.
+
+## Final result
+
+One route renders `AppShell`, `DataTable`, `Drawer` + `Field`/`Input`, and `ConfirmDialog` without nested `<button>` inside `<a>`. Copy patterns from the catalog pages for [Lay out an admin page](/docs/ui/lay-out-an-admin-page-sidebar-topbar-header), [Show a sortable, filterable, paginated data table](/docs/ui/show-a-sortable-filterable-paginated-data-table), [Slide in a drawer panel](/docs/ui/slide-in-a-drawer-panel), and [Confirm destructive actions](/docs/ui/confirm-destructive-actions).
+
+## Troubleshooting
+
+**Unstyled controls** — Kit CSS and Tailwind `@source` for `@zedtech/zedkit-ui` are missing. Re-run the theme guide; the table and buttons should use design tokens, not browser defaults.
+
+**Hydration warnings** — Keep `"use client"` on the dashboard module (drawer and dialog use client state). The route file can stay a server component that imports the client view.
+
+**Focus lost after closing the drawer** — Use `DrawerClose` (as in the snippet) so focus returns to the trigger; avoid unmounting the drawer with a bare conditional that skips the close animation.
+
+## Next steps
+
+- Add real data fetching in the route and pass rows as props into the view.
+- Replace the drawer field with your validation library; see [Lay out fieldsets, fields, and error lists](/docs/ui/lay-out-fieldsets-fields-and-error-lists).
+- On mobile, the drawer goes full width — scroll the table horizontally only when columns overflow (`min-w-0` on the shell content).
