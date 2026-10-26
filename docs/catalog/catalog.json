@@ -310,11 +310,11 @@
           "whenToUse": "On every editor-entered SEO text field.",
           "whenNotToUse": "For hard truncation at render time — use `resolveDescription` from `@zedtech/zedkit-seo` instead.",
           "derivedFrom": null,
-          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over",
+          "example": "import {\n  SEO_TITLE_MAX,\n  SEO_VALIDATION_MESSAGES,\n  formatMaxLengthMessage,\n  resolveLocale,\n  maxLengthValidator,\n  type SeoValidationMessages,\n} from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX);\nformatMaxLengthMessage(SEO_VALIDATION_MESSAGES.maxLength.en, 70, 80);\nresolveLocale(req);",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
+              "code": "import {\n  SEO_TITLE_MAX,\n  SEO_VALIDATION_MESSAGES,\n  formatMaxLengthMessage,\n  resolveLocale,\n  maxLengthValidator,\n  type SeoValidationMessages,\n} from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX);\nformatMaxLengthMessage(SEO_VALIDATION_MESSAGES.maxLength.en, 70, 80);\nresolveLocale(req);"
             }
           ],
           "seeAlso": [

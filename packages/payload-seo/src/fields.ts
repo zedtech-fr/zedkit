@@ -1,4 +1,4 @@
-import type { Field, Validate } from "payload";
+import type { Field } from "payload";
 
 import {
   formatMaxLengthMessage,
@@ -52,11 +52,11 @@ function withLabel<T extends Field>(field: T, labels: SeoFieldLabels | undefined
 export function maxLengthValidator(
   max: number,
   messages: Record<string, string> = SEO_VALIDATION_MESSAGES.maxLength,
-): Validate<string> {
-  return (value, { req }) => {
+): (value: unknown, options?: { req?: { locale?: unknown; fallbackLocale?: unknown } }) => string | true {
+  return (value, options?) => {
     if (typeof value !== "string" || value.length === 0) return true;
     if (value.length <= max) return true;
-    const locale = resolveLocale(req);
+    const locale = resolveLocale(options?.req);
     const template = messages[locale] ?? messages.en ?? SEO_VALIDATION_MESSAGES.maxLength.en;
     return formatMaxLengthMessage(template, max, value.length);
   };

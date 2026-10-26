@@ -32,6 +32,13 @@ describe("maxLengthValidator", () => {
     expect(validate("abcd", ctxEn)).toBe("Must be 3 characters or fewer (now 4).");
   });
 
+  it("keeps working when called directly without Payload options", () => {
+    const validate = maxLengthValidator(3);
+    expect(validate("abc")).toBe(true);
+    expect(validate("abcd")).toBe("Must be 3 characters or fewer (now 4).");
+    expect(validate("abcd", {})).toBe("Must be 3 characters or fewer (now 4).");
+  });
+
   it("uses French copy when req.locale is fr", () => {
     const validate = maxLengthValidator(3);
     expect(validate("abcd", ctxFr)).toBe("Maximum 3 caractères (actuellement 4).");
