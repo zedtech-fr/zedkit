@@ -80,6 +80,14 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    checkmark: {
+      cssVars: {
+        theme: {
+          "spacing-checkmark": varFromBlock(theme, "spacing-checkmark"),
+          "animate-check-draw": varFromBlock(theme, "animate-check-draw"),
+        },
+      },
+    },
   };
 }
 

@@ -127,6 +127,7 @@
     "Celebrate completion with a checkmark": {
       "package": "@zedtech/zedkit-ui",
       "component": "Checkmark",
+      "registry": "checkmark",
       "props": "CheckmarkProps",
       "source": "checkmark.tsx",
       "demo": "CheckmarkDemo"

@@ -236,6 +236,8 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - See also: `Show toast notifications`
 - Examples: Simple, Decorative
 - A11y: Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.
+- Registry: checkmark
+- Troubleshooting: No draw animation — the path animates only under `motion-safe`; reduced motion shows the static check by design. Announced twice — pass `label` once (it names the `role="img"`); nearby text should not repeat it. Registry copies without the theme show the static check (the `zk-check-draw` keyframes live in `styles.css`).
 
 ```ts
 import { Checkmark } from "@zedtech/zedkit-ui";
