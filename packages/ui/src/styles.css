@@ -210,6 +210,8 @@
   --container-route-modal-dialog-lg: 42rem;
   --spacing-form-item-gap: 0.5rem;
   --text-form-hint: 0.8rem;
+  --spacing-drawer-max-height: 96dvh;
+  --container-drawer-side: 28rem;
 }
 
 @layer base {

@@ -207,6 +207,26 @@ describe("drawer", () => {
     expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
   });
 
+  it("stacks and sizes content from theme tokens", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="bottom" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const sheet = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(sheet.className).toContain("z-overlay");
+    expect(sheet.className).toContain("max-h-drawer-max-height");
+    expect(sheet.className).not.toContain("96dvh");
+    expect(document.querySelector("[data-vaul-overlay]")?.className).toContain("z-overlay");
+  });
+
+  it("sizes side drawers from the side-width token", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer direction="right" />);
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const panel = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(panel.className).toContain("sm:max-w-drawer-side");
+    expect(panel.className).not.toContain("sm:max-w-md");
+  });
+
   it("renders open on mount with defaultOpen", () => {
     render(
       <Drawer defaultOpen>
