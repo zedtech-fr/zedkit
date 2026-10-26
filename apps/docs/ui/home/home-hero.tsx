@@ -22,8 +22,11 @@ export function HomeHero({
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
-      <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0 items-start">
-        <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0 items-start">
+      <Stack
+        gap={HOME_SECTION_CONTENT_GAP}
+        className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
+      >
+        <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
           <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
             <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
               <Text variant="muted" className="text-xs">zedkit</Text>
@@ -32,25 +35,25 @@ export function HomeHero({
             <Heading level={1} className="max-w-3xl text-balance">
               Build the parts you need. Keep the rest of your app.
             </Heading>
-            <Text className="max-w-2xl">
+            <Text variant="muted" className="max-w-2xl">
               TypeScript packages for UI, core & server helpers, SEO, and coding-agent setup — each
               need documented from the same catalog as the site, with{" "}
               <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
             </Text>
           </Stack>
-          <Stack direction="horizontal" gap={2} className="flex-wrap">
+          <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
             <Button asChild>
               <Link href="#ai-setup">Set up your AI agent</Link>
             </Button>
-            <Button asChild>
+            <Button asChild variant="outline">
               <Link href="#quickstart">UI quickstart</Link>
             </Button>
-            <Button asChild variant="outline">
+            <Button asChild variant="ghost" size="sm" className="w-fit">
               <Link href="/docs">Open documentation</Link>
             </Button>
           </Stack>
-          <HomeHeroPreview />
         </Stack>
+        <HomeHeroPreview />
       </Stack>
       <HomeUseCasesSection />
       <HomeAiSetupSection />

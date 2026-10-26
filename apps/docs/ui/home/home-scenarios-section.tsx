@@ -26,12 +26,12 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_TWO_COL}>
           {scenarios.map((scenario) => (
-            <Card key={scenario.href} className="min-w-0">
+            <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
               <CardHeader>
                 <CardTitle className="text-lg">{scenario.situation}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Stack gap={HOME_CARD_CONTENT_GAP}>
+              <CardContent className="flex flex-1 flex-col">
+                <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
                   <Stack gap={1}>
                     <Text variant="label" as="span">You want</Text>
                     <Text variant="muted">{scenario.goal}</Text>
@@ -40,7 +40,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
                     <Text variant="label" as="span">Do this</Text>
                     <Text className="text-sm">{scenario.action}</Text>
                   </Stack>
-                  <Button asChild variant="outline" className="min-h-tap w-fit">
+                  <Button asChild variant="outline" className="mt-auto min-h-tap w-fit">
                     <Link href={scenario.href} aria-label={`Read the docs: ${scenario.situation}`}>
                       Read the docs
                     </Link>

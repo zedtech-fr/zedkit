@@ -26,15 +26,15 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_TWO_COL}>
           {entryPoints.map((entry) => (
-            <Card key={entry.href} className="min-w-0">
+            <Card key={entry.href} className="flex h-full min-w-0 flex-col">
               <CardHeader>
                 <CardTitle className="text-lg">{entry.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Stack gap={HOME_CARD_CONTENT_GAP}>
+              <CardContent className="flex flex-1 flex-col">
+                <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
                   <Text variant="muted">{entry.summary}</Text>
                   <Text variant="muted">{entry.needCount} documented needs in the catalog</Text>
-                  <Button asChild variant="outline" className="min-h-tap w-fit">
+                  <Button asChild variant="outline" className="mt-auto min-h-tap w-fit">
                     <Link href={entry.href}>{entry.linkLabel}</Link>
                   </Button>
                 </Stack>

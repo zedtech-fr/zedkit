@@ -18,7 +18,7 @@ export function HomeInstallCommands({
   const shadcnAdd = `npx shadcn@latest add ${base}/r/${featuredBrick}.json`;
   const brickList = registryBricks.join(", ");
   return (
-    <Stack gap={2} className="w-full min-w-0">
+    <Stack gap={2} className="w-full min-w-0" data-home-command-field>
       <Tabs items={["pnpm (recommended)", "shadcn registry"]} className="w-full">
         <Tab value="pnpm (recommended)">
           <SecretField

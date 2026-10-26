@@ -14,11 +14,15 @@ export function HomeAiSetupCopy({ initCommand }: { initCommand: string }) {
       </Text>
       <Stack gap={HOME_CARD_CONTENT_GAP}>
         <Heading level={3}>1. In your project folder, run</Heading>
-        <SecretField value={initCommand} aria-label="AI init command" copyLabel="Copy init command" />
+        <Stack data-home-command-field className="w-full">
+          <SecretField value={initCommand} aria-label="AI init command" copyLabel="Copy init command" />
+        </Stack>
       </Stack>
       <Stack gap={HOME_CARD_CONTENT_GAP}>
         <Heading level={3}>2. Open the project in Cursor or Claude Code and run</Heading>
-        <SecretField value={setupAiSlash} aria-label="setup-ai slash command" copyLabel="Copy setup-ai command" />
+        <Stack data-home-command-field className="w-full">
+          <SecretField value={setupAiSlash} aria-label="setup-ai slash command" copyLabel="Copy setup-ai command" />
+        </Stack>
         <Text variant="muted">
           The agent reads your repo, runs the commands it finds and fills AGENTS.md with what it
           verified. If you already have a setup, it audits it first and improves it in place.

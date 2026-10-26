@@ -17,6 +17,7 @@ import {
   Text,
   identities,
 } from "@zedtech/zedkit-ui";
+import { HomeAdminScene } from "@/ui/home/home-admin-scene";
 import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP, HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
 
 type UseCaseId = "admin" | "shop" | "editorial" | "launch" | "monitoring" | "mobile";
@@ -98,27 +99,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 function Scene({ id }: { id: UseCaseId }) {
   switch (id) {
     case "admin":
-      return (
-        <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Stack direction="horizontal" gap={2} className="items-center justify-between">
-            <Badge>Orders</Badge>
-            <StatusLabel tone="saved">All changes saved</StatusLabel>
-          </Stack>
-          <Text className={SCENE_TITLE_CLASS}>128 open orders this week</Text>
-          <Stack direction="horizontal" gap={6} className="flex-wrap">
-            <Stat value="94%" label="On time" />
-            <Stat value="12" label="To review" />
-            <Stat value="3" label="Late" />
-          </Stack>
-          <ProgressBar value={72} label="Fulfilment this week" />
-          <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button size="sm">Approve selected</Button>
-            <Button size="sm" variant="outline">
-              Export CSV
-            </Button>
-          </Stack>
-        </Stack>
-      );
+      return <HomeAdminScene />;
     case "shop":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>

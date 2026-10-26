@@ -123,7 +123,7 @@ export function AdminDashboardDemoApp() {
           </Button>
           <ConfirmDialog
             trigger={
-              <Button type="button" variant="destructive" size="icon" aria-label={`Delete ${row.original.name}`}>
+              <Button type="button" variant="outline" size="icon" aria-label={`Delete ${row.original.name}`}>
                 <Trash2 className="size-icon-control" aria-hidden />
               </Button>
             }

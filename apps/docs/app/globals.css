@@ -152,3 +152,8 @@ html.dark [class*="bg-muted/40"]:not(.dark) {
 html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
   color: hsl(var(--foreground));
 }
+
+/* Home install commands: fade long values at the trailing edge instead of clipping abruptly. */
+[data-home-command-field] input {
+  mask-image: linear-gradient(to right, #000 90%, transparent);
+}
