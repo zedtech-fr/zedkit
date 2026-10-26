@@ -99,6 +99,27 @@ describe("overlays", () => {
     expect(close.innerHTML).toContain("size-icon-control");
   });
 
+  it("keeps the dialog off phone edges with a full-size close target", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("max-w-dialog-mobile");
+    expect(dialog.className).toContain("sm:max-w-lg");
+    expect(dialog.className).not.toContain("sm:rounded-lg");
+    const close = screen.getByRole("button", { name: "Close" });
+    expect(close.className).toContain("size-overlay-touch-target");
+  });
+
   it("animates the dialog overlay through the motion tokens", async () => {
     const user = userEvent.setup();
     render(

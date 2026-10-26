@@ -60,4 +60,19 @@ describe("table primitives", () => {
     const region = screen.getByRole("region", { name: "Team roster" });
     expect(region.getAttribute("tabindex")).toBe("0");
   });
+
+  it("marks no cut edge on a fitted table", () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell>Ada</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const region = screen.getByRole("region", { name: "Scrollable table" });
+    expect(region.hasAttribute("data-edge-left")).toBe(false);
+    expect(region.hasAttribute("data-edge-right")).toBe(false);
+  });
 });

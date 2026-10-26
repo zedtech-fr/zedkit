@@ -166,7 +166,10 @@ export function DataTable<TData extends RowData>({
     <div className="space-y-data-table-stack">
       <DataTableToolbar
         value={table.state.globalFilter ?? ""}
-        onChange={(value) => table.setGlobalFilter(value)}
+        onChange={(value) => {
+          table.setGlobalFilter(value);
+          table.setPageIndex(0);
+        }}
         placeholder={filterPlaceholder}
       />
       <Table aria-busy={loading || undefined} aria-label={loading ? "Loading" : undefined}>
@@ -224,7 +227,7 @@ export function DataTable<TData extends RowData>({
         )}
       </TableBody>
       </Table>
-      {table.getPageCount() > 1 ? (
+      {rows.length > 0 && table.getPageCount() > 1 ? (
         <DataTablePagination
           page={pageIndex + 1}
           pageCount={table.getPageCount()}

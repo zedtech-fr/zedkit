@@ -129,6 +129,27 @@ describe("DataTable", () => {
     await user.click(screen.getByRole("button", { name: "Previous" }));
     expect(bodyRowTexts()).toEqual(["Bob30"]);
   });
+
+  it("hides pagination when the filter empties every row", async () => {
+    const user = userEvent.setup();
+    const trio: Person[] = [...data, { name: "Ana", age: 28 }];
+    render(<DataTable columns={columns} data={trio} pageSize={1} />);
+    expect(screen.queryByText(/Page \d+ of/)).not.toBeNull();
+    await user.type(screen.getByLabelText("Filter…"), "zzz");
+    expect(screen.getByText("No results.")).not.toBeNull();
+    expect(screen.queryByText(/Page \d+ of/)).toBeNull();
+  });
+
+  it("returns to page 1 when the filter changes", async () => {
+    const user = userEvent.setup();
+    const trio: Person[] = [...data, { name: "Ana", age: 28 }];
+    render(<DataTable columns={columns} data={trio} pageSize={1} />);
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByText("Page 2 of 3").textContent).toBe("Page 2 of 3");
+    await user.type(screen.getByLabelText("Filter…"), "a");
+    expect(bodyRowTexts()).toEqual(["Ada36"]);
+    expect(screen.getByText("Page 1 of 2").textContent).toBe("Page 1 of 2");
+  });
 });
 
 describe("DataTablePagination", () => {

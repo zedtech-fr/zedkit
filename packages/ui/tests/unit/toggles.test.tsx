@@ -32,6 +32,13 @@ describe("toggles", () => {
     expect(icon?.getAttribute("aria-hidden")).toBe("true");
   });
 
+  it("extends the checkbox pointer target without growing the box", () => {
+    render(<Checkbox aria-label="Accept the terms" />);
+    const box = screen.getByRole("checkbox", { name: "Accept the terms" });
+    expect(box.classList.contains("hit-target")).toBe(true);
+    expect(box.classList.contains("size-checkbox")).toBe(true);
+  });
+
   it("flips a labeled switch", async () => {
     const user = userEvent.setup();
     render(
@@ -57,5 +64,12 @@ describe("toggles", () => {
     expect(thumb?.classList.contains("size-switch-thumb")).toBe(true);
     expect(thumb?.className).toContain("translate-x-switch-travel");
     expect(thumb?.className).not.toContain("translate-x-4");
+  });
+
+  it("extends the switch pointer target without growing the track", () => {
+    render(<Switch aria-label="Notify me" />);
+    const toggle = screen.getByRole("switch", { name: "Notify me" });
+    expect(toggle.classList.contains("hit-target")).toBe(true);
+    expect(toggle.classList.contains("w-switch-track-width")).toBe(true);
   });
 });
