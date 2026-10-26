@@ -118,7 +118,7 @@ when the skills link is not followed.
 **Entry points (one command per phase):** `review` (pins the diff, fans out
 `code-review` + `persona-review` + `adversarial-tests`/`security-reviewer`
 when relevant, one verdict), `plan` (`to-spec`/`to-tickets`/`wayfinder`, then
-`challenge`), `challenge` (`plan-challenger` + domain/design checks),
+`challenge`), `challenge` (`skeptic` angle plan + domain/design checks),
 `implement` (extended: challenged plan in, `definition-of-done`, `review`).
 All four live in the `core` preset; the detailed skills stay reusable and are
 never copied into them.
