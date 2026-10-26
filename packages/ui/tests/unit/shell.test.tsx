@@ -23,6 +23,17 @@ describe("AppShell", () => {
     );
     expect(container.querySelector("header")).toBeNull();
   });
+
+  it("sizes sidebar and main padding from theme tokens", () => {
+    const { container } = render(
+      <AppShell sidebar={<nav>Nav</nav>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    expect(container.querySelector("aside")?.className).toContain("w-app-shell-sidebar");
+    expect(container.querySelector("main")?.className).toContain("p-app-shell-padding");
+    expect(container.querySelector("main")?.className).toContain("md:p-app-shell-padding-md");
+  });
 });
 
 describe("PageHeader", () => {
