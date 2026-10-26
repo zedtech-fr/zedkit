@@ -30,7 +30,9 @@ describe("agents catalog", () => {
       fileURLToPath(new URL("../../../../docs/agents-catalog.md", import.meta.url)),
       "utf8",
     );
-    const chains = raw.split("## Typical chains")[1] ?? "";
+    // Bounded to this section: a later `## ` section must never leak its
+    // code spans into the chains check.
+    const chains = raw.split("## Typical chains")[1]?.split("\n## ")[0] ?? "";
     expect(chains.trim().length).toBeGreaterThan(0);
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
