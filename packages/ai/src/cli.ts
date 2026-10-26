@@ -92,7 +92,11 @@ function runValidate(args: string[], sinks: Sinks): number {
   const projectRoot = agentsDir === dir ? dirname(dir) : dir;
   const issues = [...validateKit(agentsDir), ...checkDrift(projectRoot, agentsDir)];
   for (const issue of issues) sinks.out(`${issue.path}: ${issue.message}`);
-  sinks.out(issues.length === 0 ? "ok" : `${issues.length} problem(s)`);
+  const summary =
+    issues.length === 0
+      ? "ok"
+      : `${issues.length} ${issues.length === 1 ? "problem" : "problems"}`;
+  sinks.out(summary);
   return issues.length === 0 ? 0 : 1;
 }
 
