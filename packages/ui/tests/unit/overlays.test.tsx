@@ -4,7 +4,7 @@ import { userEvent } from "@testing-library/user-event";
 import { toast } from "sonner";
 import { Button } from "#index.js";
 import { ConfirmDialog } from "#index.js";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "#index.js";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "#index.js";
 import { SecretField } from "#index.js";
 import { Toaster } from "#index.js";
 
@@ -65,6 +65,39 @@ describe("overlays", () => {
     expect(dialog.className).toContain("shadow-overlay");
     expect(dialog.className).not.toContain("top-[");
     expect(dialog.className).not.toContain("translate-");
+  });
+
+  it("spaces dialog slots from theme tokens", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Details</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("z-overlay");
+    expect(dialog.className).toContain("gap-dialog-gap");
+    expect(dialog.className).toContain("p-dialog-padding");
+    expect(screen.getByText("Details").parentElement?.className).toContain("space-y-dialog-header-stack");
+    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain(
+      "sm:space-x-dialog-footer-gap",
+    );
+    const close = screen.getByRole("button", { name: "Close" });
+    expect(close.className).toContain("top-dialog-close-offset");
+    expect(close.className).toContain("focus-ring");
+    expect(close.className).toContain("opacity-50");
+    expect(close.innerHTML).toContain("size-icon-control");
   });
 
   it("animates the dialog overlay through the motion tokens", async () => {
