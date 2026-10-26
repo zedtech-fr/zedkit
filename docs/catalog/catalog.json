@@ -278,7 +278,7 @@
       "needs": [
         {
           "need": "Add a localized SEO tab to a Payload collection",
-          "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
+          "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`, `SeoFieldLabels`, `SeoFieldLabelKey`",
           "wraps": "`payload` (peer, types only)",
           "status": "beta",
           "shortName": "SEO group field",
@@ -287,11 +287,11 @@
           "whenToUse": "On every collection with public pages in more than one locale.",
           "whenNotToUse": "For a single-locale site — use plain text fields plus `zedkit-seo` builders instead.",
           "derivedFrom": null,
-          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated",
+          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [\n  seoGroupField({\n    mediaSlug: \"media\",\n    labels: { group: { en: \"SEO\", fr: \"Référencement\" }, metaTitle: { en: \"Title\", fr: \"Titre\" } },\n    keywordsAsText: true,\n    validationMessages: { maxLength: { en: \"Max {max} chars (now {length}).\" } },\n  }),\n];\n// meta/OG/robots leaves, localized, length-validated",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
+              "code": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [\n  seoGroupField({\n    mediaSlug: \"media\",\n    labels: { group: { en: \"SEO\", fr: \"Référencement\" }, metaTitle: { en: \"Title\", fr: \"Titre\" } },\n    keywordsAsText: true,\n    validationMessages: { maxLength: { en: \"Max {max} chars (now {length}).\" } },\n  }),\n];\n// meta/OG/robots leaves, localized, length-validated"
             }
           ],
           "seeAlso": [
@@ -301,7 +301,7 @@
         },
         {
           "need": "Validate editor-entered title/description lengths",
-          "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
+          "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`, `SEO_VALIDATION_MESSAGES`, `formatMaxLengthMessage`, `resolveLocale`, `SeoValidationMessages`",
           "wraps": "`(none)`",
           "status": "beta",
           "shortName": "Length validation",
@@ -310,11 +310,11 @@
           "whenToUse": "On every editor-entered SEO text field.",
           "whenNotToUse": "For hard truncation at render time — use `resolveDescription` from `@zedtech/zedkit-seo` instead.",
           "derivedFrom": null,
-          "example": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over",
+          "example": "import {\n  SEO_TITLE_MAX,\n  SEO_VALIDATION_MESSAGES,\n  formatMaxLengthMessage,\n  resolveLocale,\n  maxLengthValidator,\n  type SeoValidationMessages,\n} from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX);\nformatMaxLengthMessage(SEO_VALIDATION_MESSAGES.maxLength.en, 70, 80);\nresolveLocale(req);",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { SEO_TITLE_MAX, maxLengthValidator } from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX)\n// true when fine, friendly message when over"
+              "code": "import {\n  SEO_TITLE_MAX,\n  SEO_VALIDATION_MESSAGES,\n  formatMaxLengthMessage,\n  resolveLocale,\n  maxLengthValidator,\n  type SeoValidationMessages,\n} from \"@zedtech/zedkit-payload-seo\";\nvalidate: maxLengthValidator(SEO_TITLE_MAX);\nformatMaxLengthMessage(SEO_VALIDATION_MESSAGES.maxLength.en, 70, 80);\nresolveLocale(req);"
             }
           ],
           "seeAlso": [
@@ -1068,7 +1068,7 @@
         },
         {
           "need": "Show toast notifications",
-          "import": "`@zedtech/zedkit-ui` — `Toaster`",
+          "import": "`@zedtech/zedkit-ui` — `Toaster`, `toast`",
           "wraps": "`sonner`",
           "status": "beta",
           "shortName": "Toaster",
@@ -1077,11 +1077,11 @@
           "whenToUse": "For outcomes that do not need the user's reply.",
           "whenNotToUse": "For errors needing action — use Alert or Dialog instead.",
           "derivedFrom": "shadcn/ui (sonner)",
-          "example": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
+          "example": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Toaster } from \"@zedtech/zedkit-ui\";\nimport { toast } from \"sonner\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+              "code": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
             }
           ],
           "a11y": "The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.",
@@ -1152,13 +1152,14 @@
               "code": "import { AppShell, PageHeader } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<OrgNav />} topbar={<UserMenu />}>\n  <PageHeader title=\"Items\" description=\"All items.\" />\n</AppShell>"
             }
           ],
+          "a11y": "Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.",
           "seeAlso": [
             "Group content in a card section"
           ]
         },
         {
           "need": "Guide a multi-step flow with selectable option cards",
-          "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`",
+          "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`",
           "wraps": "none (native inputs + theme tokens)",
           "status": "beta",
           "shortName": "WizardSteps",
@@ -1172,15 +1173,24 @@
             {
               "title": "Simple",
               "code": "import { OptionCards, WizardSteps } from \"@zedtech/zedkit-ui\";\nconst [picked, setPicked] = useState([\"a\", \"b\"]);\n<WizardSteps steps={[\"Pick\", \"Configure\", \"Test\"]} current={0} />\n<OptionCards options={options} selected={picked} onChange={setPicked} />"
+            },
+            {
+              "title": "Composed steps",
+              "code": "import { Wizard, WizardStep } from \"@zedtech/zedkit-ui\";\n<Wizard>\n  <WizardStep step=\"Pick\" index={0} state=\"done\" showConnector />\n  <WizardStep step=\"Configure\" index={1} state=\"current\" />\n</Wizard>"
+            },
+            {
+              "title": "Solo card",
+              "code": "import { OptionCard } from \"@zedtech/zedkit-ui\";\nconst [solo, setSolo] = useState(false);\n<OptionCard title=\"Solo option\" checked={solo} onChange={() => setSolo(!solo)} />"
             }
           ],
+          "a11y": "List carries `aria-label=\"Progress\"`; current step gets `aria-current=\"step\"`. Cards are native checkboxes in labels.",
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state"
           ]
         },
         {
           "need": "Show key-value details and a live indicator",
-          "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`",
+          "import": "`@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `DetailPanelRow`, `DetailPanelRowProps`, `LivePulse`, `LivePulseProps`",
           "wraps": "none (theme tokens only)",
           "status": "beta",
           "shortName": "DetailPanel",
@@ -1194,8 +1204,13 @@
             {
               "title": "Simple",
               "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+            },
+            {
+              "title": "Composed rows",
+              "code": "import { DetailPanelRow } from \"@zedtech/zedkit-ui\";\n<dl>\n  <DetailPanelRow label=\"Region\" value=\"eu\" />\n</dl>"
             }
           ],
+          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

@@ -11,6 +11,7 @@ import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { FieldDemo } from "./field-demo";
+import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
@@ -22,6 +23,7 @@ import { SkeletonDemo } from "./skeleton-demo";
 import { StackDemo } from "./stack-demo";
 import { TabsDemo } from "./tabs-demo";
 import { TextareaDemo } from "./textarea-demo";
+import { ToasterDemo } from "./toaster-demo";
 import { ToggleDemo } from "./toggle-demo";
 import { TypographyDemo } from "./typography-demo";
 import { UpdatedAgoDemo } from "./updated-ago-demo";
@@ -53,6 +55,7 @@ export const demoRegistry = {
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
+  HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
@@ -64,6 +67,7 @@ export const demoRegistry = {
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
   TabsDemo: { Demo: TabsDemo, file: "tabs-demo.tsx" },
   TextareaDemo: { Demo: TextareaDemo, file: "textarea-demo.tsx" },
+  ToasterDemo: { Demo: ToasterDemo, file: "toaster-demo.tsx", center: true },
   ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx", center: true },
   TypographyDemo: { Demo: TypographyDemo, file: "typography-demo.tsx" },
   UpdatedAgoDemo: { Demo: UpdatedAgoDemo, file: "updated-ago-demo.tsx" },

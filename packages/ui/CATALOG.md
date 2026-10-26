@@ -412,7 +412,7 @@ const router = useRouter();
 
 ## Show toast notifications
 
-- Import: `@zedtech/zedkit-ui` — `Toaster`
+- Import: `@zedtech/zedkit-ui` — `Toaster`, `toast`
 - Wraps: `sonner`
 - Status: beta
 - Derived from: shadcn/ui (sonner)
@@ -425,8 +425,7 @@ const router = useRouter();
 - See also: `Call out a notice or an error state`
 
 ```ts
-import { Toaster } from "@zedtech/zedkit-ui";
-import { toast } from "sonner";
+import { Toaster, toast } from "@zedtech/zedkit-ui";
 <Toaster /> // once near the root, then toast("Saved") anywhere
 ```
 
@@ -479,6 +478,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - Purpose: Sidebar + topbar shell with page header (title, description, actions).
 - When to use: As the frame of every admin page.
 - When not to use: For public marketing pages — use your site layout instead.
+- A11y: Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
 - See also: `Group content in a card section`
 
 ```ts
@@ -490,7 +490,7 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 
 ## Guide a multi-step flow with selectable option cards
 
-- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`
+- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`
 - Wraps: none (native inputs + theme tokens)
 - Status: beta
 - Short name: WizardSteps
@@ -499,6 +499,8 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 - When to use: For 2–6 step flows with choices per step.
 - When not to use: For single forms — use Form instead of inventing steps.
 - See also: `Build validated forms with labels, errors, and pending state`
+- Examples: Simple, Composed steps, Solo card
+- A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`. Cards are native checkboxes in labels.
 
 ```ts
 import { OptionCards, WizardSteps } from "@zedtech/zedkit-ui";
@@ -507,9 +509,23 @@ const [picked, setPicked] = useState(["a", "b"]);
 <OptionCards options={options} selected={picked} onChange={setPicked} />
 ```
 
+```ts
+import { Wizard, WizardStep } from "@zedtech/zedkit-ui";
+<Wizard>
+  <WizardStep step="Pick" index={0} state="done" showConnector />
+  <WizardStep step="Configure" index={1} state="current" />
+</Wizard>
+```
+
+```ts
+import { OptionCard } from "@zedtech/zedkit-ui";
+const [solo, setSolo] = useState(false);
+<OptionCard title="Solo option" checked={solo} onChange={() => setSolo(!solo)} />
+```
+
 ## Show key-value details and a live indicator
 
-- Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`
+- Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `DetailPanelRow`, `DetailPanelRowProps`, `LivePulse`, `LivePulseProps`
 - Wraps: none (theme tokens only)
 - Status: beta
 - Short name: DetailPanel
@@ -518,11 +534,20 @@ const [picked, setPicked] = useState(["a", "b"]);
 - When to use: For read-only record summaries next to the list.
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
+- Examples: Simple, Composed rows
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
 <PageHeader title="Server" actions={<LivePulse />} />
 <DetailPanel items={[{ label: "Region", value: "eu" }]} />
+```
+
+```ts
+import { DetailPanelRow } from "@zedtech/zedkit-ui";
+<dl>
+  <DetailPanelRow label="Region" value="eu" />
+</dl>
 ```
 
 ## Build validated forms with labels, errors, and pending state

@@ -50,6 +50,12 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     strictSemantics: true,
     skipMobileOverflow: true,
   },
+  {
+    path: "/docs/zedkit-and-shadcn",
+    label: "tutorial-shadcn",
+    strictSemantics: true,
+    skipMobileOverflow: true,
+  },
 ];
 
 /** Registry URLs advertised on doc pages; must stay 200 on the served export. */

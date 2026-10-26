@@ -23,7 +23,7 @@
   --muted-foreground: 240 3.8% 46.1%;
   --accent: 240 4.8% 95.9%;
   --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 72.2% 50.6%;
   --destructive-foreground: 0 0% 98%;
   --success: 142.1 76.2% 36.3%;
   --success-foreground: 0 0% 98%;
@@ -117,6 +117,20 @@
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
   --spacing-heading-scroll: 5rem;
+  --spacing-option-cards-gap: 0.75rem;
+  --spacing-option-card-gap: 0.75rem;
+  --spacing-option-card-padding: 1rem;
+  --spacing-detail-panel-gap: 1rem;
+  --spacing-detail-panel-inline: 1rem;
+  --spacing-detail-panel-block: 0.75rem;
+  --spacing-wizard-steps-gap: 0.75rem;
+  --spacing-wizard-steps-row-gap: 0.5rem;
+  --spacing-wizard-step-gap: 0.5rem;
+  --spacing-wizard-step-badge: 1.5rem;
+  --spacing-wizard-step-icon: 0.875rem;
+  --spacing-wizard-step-connector-gap: 0.25rem;
+  --spacing-wizard-step-connector-thickness: 1px;
+  --spacing-wizard-step-connector: 1.5rem;
   --spacing-checkmark: 1rem;
   --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
   --spacing-progress-bar-gap: 0.125rem;
@@ -167,10 +181,18 @@
   --spacing-page-header-title-gap: 0.25rem;
   --spacing-dialog-center: 50%;
   --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --spacing-app-shell-sidebar: 16rem;
+  --spacing-app-shell-padding: 1rem;
+  --spacing-app-shell-padding-md: 1.5rem;
+  --z-index-overlay: 50;
+  --spacing-table-cell: 0.5rem;
   --spacing-table-head-height: 2.5rem;
-  --spacing-table-cell-padding: 0.5rem;
-  --spacing-table-caption-top: 1rem;
   --spacing-table-checkbox-nudge: 0.125rem;
+  --spacing-table-caption-gap: 1rem;
+  --spacing-route-modal-close-offset: 1rem;
+  --container-route-modal-sm: 24rem;
+  --container-route-modal-drawer-lg: 32rem;
+  --container-route-modal-dialog-lg: 42rem;
 }
 
 @layer base {

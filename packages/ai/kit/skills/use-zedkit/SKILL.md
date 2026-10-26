@@ -23,10 +23,10 @@ Core rule (mirrored in the root README consumer snippet — keep in sync):
 3. **If not, adopt a mature npm package behind a thin wrapper.**
    Done when: exactly one wrapper module re-exports the library and every
    consumer imports the wrapper (see the
-   [golden rule](../../../docs/golden-rule.md)).
+   [golden rule](https://github.com/zedtech-fr/zedkit/blob/main/docs/golden-rule.md)).
 4. **If nothing fits, propose adding it to zedkit.** Name the package
    (domain), the need, and a 5-line example, per
-   [contributing](../../../docs/contributing.md).
+   [contributing](https://github.com/zedtech-fr/zedkit/blob/main/docs/contributing.md).
    Done when: the proposal names package + need + example.
 
 Never add a private name, secret, or consumer domain term to zedkit.

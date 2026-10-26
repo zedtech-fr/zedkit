@@ -72,7 +72,10 @@ const SelectContent = React.forwardRef<
         // No animate/fade/zoom/slide utilities: the kit ships without
         // the animation plugin (same as dialog), where they would be
         // dead classes. Kept: positioning, overflow, theme, popper offsets.
-        "relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md",
+        // Allowed arbitraries (Radix runtime vars, unsettable at build
+        // time, so no theme token can replace them): content max-height,
+        // transform origin, trigger height/width below.
+        "relative z-overlay max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
