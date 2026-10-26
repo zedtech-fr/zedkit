@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { toast } from "sonner";
+
 import {
   Button,
   ConfirmDialog,
@@ -30,6 +30,7 @@ import {
   Text,
   Toaster,
   createDataTableColumns,
+  toast,
   useValidatedForm,
 } from "@zedtech/zedkit-ui";
 
