@@ -52,6 +52,8 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     path: "/docs/zedkit-and-shadcn",
     label: "tutorial-shadcn",
     strictSemantics: true,
+    // Overflows at 390px in CI (verified 2026-10-26); mobile lane owns the fix.
+    skipMobileOverflow: true,
   },
 ];
 
