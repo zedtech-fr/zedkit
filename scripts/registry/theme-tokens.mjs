@@ -123,6 +123,22 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    typography: {
+      cssVars: {
+        theme: {
+          "spacing-heading-scroll": varFromBlock(theme, "spacing-heading-scroll"),
+        },
+      },
+    },
+    "detail-panel": {
+      cssVars: {
+        theme: {
+          "spacing-detail-panel-gap": varFromBlock(theme, "spacing-detail-panel-gap"),
+          "spacing-detail-panel-inline": varFromBlock(theme, "spacing-detail-panel-inline"),
+          "spacing-detail-panel-block": varFromBlock(theme, "spacing-detail-panel-block"),
+        },
+      },
+    },
   };
 }
 

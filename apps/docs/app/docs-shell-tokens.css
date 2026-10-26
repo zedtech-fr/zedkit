@@ -1,0 +1,20 @@
+/* Unlayered overrides: Fumadocs shadcn theme must not win over kit contrast (#396). */
+:root {
+  --muted-foreground: 240 5% 32% !important;
+  --color-fd-muted-foreground: hsl(240 5% 32%) !important;
+}
+
+:root.dark,
+html.dark {
+  --muted-foreground: 240 5% 64.9% !important;
+  --color-fd-muted-foreground: hsl(240 5% 64.9%) !important;
+}
+
+.text-fd-muted-foreground {
+  color: hsl(240 5% 32%) !important;
+}
+
+:root.dark .text-fd-muted-foreground,
+html.dark .text-fd-muted-foreground {
+  color: hsl(240 5% 64.9%) !important;
+}

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { DataTable, DataTablePagination, createDataTableColumns } from "#index.js";
+import { DataTable, DataTableEmpty, DataTablePagination, DataTableToolbar, Table, TableBody, createDataTableColumns } from "#index.js";
 
 type Person = { name: string; age: number };
 
@@ -77,6 +77,19 @@ describe("DataTable", () => {
     expect(screen.queryByText(/Page \d+ of/)).toBeNull();
   });
 
+  it("composes the empty row standalone with spanning cell", () => {
+    render(
+      <Table>
+        <TableBody>
+          <DataTableEmpty colSpan={3} message="Nothing here." />
+        </TableBody>
+      </Table>,
+    );
+    const cell = screen.getByText("Nothing here.");
+    expect(cell.tagName).toBe("TD");
+    expect(cell.getAttribute("colspan")).toBe("3");
+  });
+
   it("hides pagination when every row fits on one page", () => {
     render(<DataTable columns={columns} data={data} pageSize={10} />);
     expect(screen.queryByText(/Page \d+ of/)).toBeNull();
@@ -137,5 +150,43 @@ describe("DataTablePagination", () => {
     await user.click(screen.getByRole("button", { name: "Previous" }));
     expect(onPrevious).toHaveBeenCalledTimes(1);
     expect(onNext).not.toHaveBeenCalled();
+  });
+});
+
+describe("DataTable tokens", () => {
+  it.each([
+    ["rows", <DataTable columns={columns} data={data} pageSize={1} />],
+    ["empty", <DataTable columns={columns} data={[]} />],
+    ["loading", <DataTable columns={columns} data={data} loading />],
+    ["error", <DataTable columns={columns} data={data} error="Boom" />],
+    [
+      "standalone",
+      <Table>
+        <TableBody>
+          <DataTableEmpty colSpan={3} message="Nothing here." />
+        </TableBody>
+      </Table>,
+    ],
+  ])("carries no value arbitraries (%s)", (_label, ui) => {
+    const { container, unmount } = render(ui);
+    const classes = [...container.querySelectorAll("[class]")]
+      .map((el) => el.getAttribute("class") ?? "")
+      .join(" ");
+    expect(classes.length).toBeGreaterThan(0);
+    expect(classes).not.toMatch(/\[[-\d#]/);
+    unmount();
+  });
+});
+
+describe("DataTableToolbar", () => {
+  it("composes a standalone labelled filter input with token width", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<DataTableToolbar value="" onChange={onChange} placeholder="Filter…" />);
+    const input = screen.getByLabelText("Filter…");
+    expect(input.tagName).toBe("INPUT");
+    expect(input.classList.contains("max-w-data-table-filter-width")).toBe(true);
+    await user.type(input, "A");
+    expect(onChange).toHaveBeenCalledWith("A");
   });
 });

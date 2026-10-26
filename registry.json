@@ -179,6 +179,52 @@
           "spacing-alert-content-indent": "1.75rem"
         }
       }
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "dependencies": ["sonner"],
+      "files": [
+        {
+          "path": "registry/generated/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "typography",
+      "type": "registry:ui",
+      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/typography.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-heading-scroll": "5rem"
+        }
+      }
+    },
+    {
+      "name": "detail-panel",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/detail-panel.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-detail-panel-gap": "1rem",
+          "spacing-detail-panel-inline": "1rem",
+          "spacing-detail-panel-block": "0.75rem"
+        }
+      }
     }
   ]
 }

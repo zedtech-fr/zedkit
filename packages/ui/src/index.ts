@@ -2,16 +2,21 @@ export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } f
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
+export { IconButton, type IconButtonProps } from "./icon-button.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card.js";
 export { Checkbox } from "./checkbox.js";
 export {
   DataTable,
+  DataTableEmpty,
   DataTablePagination,
+  DataTableToolbar,
   createDataTableColumns,
   type DataTableColumn,
+  type DataTableEmptyProps,
   type DataTablePaginationProps,
   type DataTableProps,
+  type DataTableToolbarProps,
 } from "./data-table.js";
 export {
   Dialog,
@@ -124,7 +129,7 @@ export {
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
 export { Textarea } from "./textarea.js";
-export { Toaster, toast } from "./sonner.js";
+export { Toaster, toast, type ToasterProps } from "./sonner.js";
 export {
   Heading,
   headingVariants,

@@ -20,15 +20,15 @@
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --muted-foreground: 240 5% 32%;
   --accent: 240 4.8% 95.9%;
   --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 72.2% 50.6%;
+  --destructive: 0 72.2% 47%;
   --destructive-foreground: 0 0% 98%;
   --success: 142.1 76.2% 36.3%;
   --success-foreground: 0 0% 98%;
   --warning: 32 95% 44%;
-  --warning-foreground: 0 0% 98%;
+  --warning-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
@@ -74,12 +74,12 @@
   --muted-foreground: 240 5% 64.9%;
   --accent: 240 3.7% 15.9%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 50.6%;
+  --destructive: 0 72.2% 45%;
   --destructive-foreground: 0 0% 98%;
   --success: 142.1 70.6% 45.3%;
   --success-foreground: 240 10% 3.9%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 240 10% 3.9%;
+  --warning: 32 95% 32%;
+  --warning-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
@@ -122,6 +122,13 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  /*
+   * Spacing convention (#367): one canonical name per value. A value used
+   * by 2+ tokens is canonicalized to its Tailwind scale step — new code
+   * uses default utilities (p-4, gap-2) instead of minting another alias.
+   * Single-use values keep their semantic token. The full value → tokens
+   * map is scripts/registry/spacing-aliases.json, enforced by its test.
+   */
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
   --spacing-control-height: 2.25rem;
@@ -206,6 +213,9 @@
   --spacing-live-pulse-gap: 0.375rem;
   --spacing-secret-field-gap: 0.5rem;
   --spacing-page-header-title-gap: 0.25rem;
+  --spacing-page-header-offset: 1.5rem;
+  --spacing-page-header-gap: 1rem;
+  --spacing-page-header-actions-gap: 0.5rem;
   --spacing-dialog-center: 50%;
   --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --spacing-dialog-gap: 1rem;

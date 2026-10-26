@@ -32,12 +32,12 @@ and the lens registry (triggers). Read-only agents carry
 
 ## Typical chains
 
-- New feature: `researcher` -> `architect` -> `skeptic` -> implement ->
+- New feature: `researcher` -> `architect` -> `skeptic` -> `implement` ->
   `verifier` + `security-reviewer` (+ `ui-designer` when UI changed) ->
   `improver` -> `verifier` again.
-- UI change: implement -> `ui-designer` -> `a11y-auditor` + `copywriter` ->
+- UI change: `implement` -> `ui-designer` -> `a11y-auditor` + `copywriter` ->
   `improver` -> `verifier`.
-- New dependency: `researcher` -> `dependency-auditor` -> implement ->
+- New dependency: `researcher` -> `dependency-auditor` -> `implement` ->
   `verifier`.
 - Docs change: `docs-writer` -> `verifier` (drift check).
 - Release: `release-manager` (changeset, semver, migration notes, maturity)

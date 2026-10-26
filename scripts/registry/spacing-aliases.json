@@ -1,0 +1,250 @@
+[
+  {
+    "canonical": "0.5",
+    "value": "0.125rem",
+    "tokens": [
+      "--spacing-badge-block",
+      "--spacing-progress-bar-gap",
+      "--spacing-table-checkbox-nudge"
+    ]
+  },
+  {
+    "canonical": "1",
+    "value": "0.25rem",
+    "tokens": [
+      "--spacing-control-block",
+      "--spacing-data-table-sort-gap",
+      "--spacing-field-error-gap",
+      "--spacing-page-header-title-gap",
+      "--spacing-select-separator",
+      "--spacing-tabs-list-inset",
+      "--spacing-tabs-trigger-block",
+      "--spacing-wizard-step-connector-gap"
+    ]
+  },
+  {
+    "canonical": "1.5",
+    "value": "0.375rem",
+    "tokens": [
+      "--spacing-card-stack",
+      "--spacing-dialog-header-stack",
+      "--spacing-drawer-handle-height",
+      "--spacing-drawer-header-gap",
+      "--spacing-field-content",
+      "--spacing-live-pulse-gap",
+      "--spacing-progress-bar-height",
+      "--spacing-select-item-block",
+      "--spacing-status-label-gap"
+    ]
+  },
+  {
+    "canonical": "2",
+    "value": "0.5rem",
+    "tokens": [
+      "--spacing-button-gap",
+      "--spacing-card-lines",
+      "--spacing-control-block-lg",
+      "--spacing-data-table-pagination-gap",
+      "--spacing-dialog-footer-gap",
+      "--spacing-drawer-footer-gap",
+      "--spacing-field-inline",
+      "--spacing-field-separator-inline",
+      "--spacing-form-item-gap",
+      "--spacing-page-header-actions-gap",
+      "--spacing-secret-field-gap",
+      "--spacing-select-item-inline",
+      "--spacing-status-dot",
+      "--spacing-table-cell",
+      "--spacing-tabs-content-gap",
+      "--spacing-wizard-step-gap",
+      "--spacing-wizard-steps-row-gap"
+    ]
+  },
+  {
+    "canonical": "3",
+    "value": "0.75rem",
+    "tokens": [
+      "--spacing-alert-block",
+      "--spacing-button-inline-sm",
+      "--spacing-control-inline",
+      "--spacing-detail-panel-block",
+      "--spacing-field",
+      "--spacing-field-group-compact",
+      "--spacing-field-legend-bottom",
+      "--spacing-option-card-gap",
+      "--spacing-option-cards-gap",
+      "--spacing-tabs-trigger-inline",
+      "--spacing-wizard-steps-gap"
+    ]
+  },
+  {
+    "canonical": "4",
+    "value": "1rem",
+    "tokens": [
+      "--spacing-alert-icon-offset",
+      "--spacing-alert-inline",
+      "--spacing-app-shell-padding",
+      "--spacing-button-inline",
+      "--spacing-card-section",
+      "--spacing-checkbox",
+      "--spacing-checkmark",
+      "--spacing-data-table-skeleton-height",
+      "--spacing-data-table-stack",
+      "--spacing-detail-panel-gap",
+      "--spacing-detail-panel-inline",
+      "--spacing-dialog-gap",
+      "--spacing-drawer-chrome-padding",
+      "--spacing-drawer-handle-top",
+      "--spacing-field-error-indent",
+      "--spacing-field-group-nested",
+      "--spacing-field-label-inset",
+      "--spacing-icon-control",
+      "--spacing-option-card-padding",
+      "--spacing-overlay-close-offset",
+      "--spacing-page-header-gap",
+      "--spacing-status-label-box",
+      "--spacing-switch-thumb",
+      "--spacing-switch-travel",
+      "--spacing-table-caption-gap"
+    ]
+  },
+  {
+    "canonical": "5",
+    "value": "1.25rem",
+    "tokens": [
+      "--spacing-field-separator",
+      "--spacing-switch-track-height"
+    ]
+  },
+  {
+    "canonical": "6",
+    "value": "1.5rem",
+    "tokens": [
+      "--spacing-app-shell-padding-md",
+      "--spacing-card-padding",
+      "--spacing-dialog-padding",
+      "--spacing-field-set",
+      "--spacing-page-header-offset",
+      "--spacing-wizard-step-badge",
+      "--spacing-wizard-step-connector"
+    ]
+  },
+  {
+    "canonical": "7",
+    "value": "1.75rem",
+    "tokens": [
+      "--spacing-alert-content-indent",
+      "--spacing-field-group"
+    ]
+  },
+  {
+    "canonical": "8",
+    "value": "2rem",
+    "tokens": [
+      "--spacing-button-inline-lg",
+      "--spacing-control-height-sm",
+      "--spacing-select-item-indicator-gap"
+    ]
+  },
+  {
+    "canonical": "9",
+    "value": "2.25rem",
+    "tokens": [
+      "--spacing-control-height",
+      "--spacing-switch-track-width",
+      "--spacing-tabs-list-height"
+    ]
+  },
+  {
+    "canonical": "10",
+    "value": "2.5rem",
+    "tokens": [
+      "--spacing-control-height-lg",
+      "--spacing-table-head-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-alert-icon-nudge",
+    "value": "0.1875rem",
+    "tokens": [
+      "--spacing-alert-icon-nudge"
+    ]
+  },
+  {
+    "canonical": "--spacing-app-shell-sidebar",
+    "value": "16rem",
+    "tokens": [
+      "--spacing-app-shell-sidebar"
+    ]
+  },
+  {
+    "canonical": "--spacing-badge-inline",
+    "value": "0.625rem",
+    "tokens": [
+      "--spacing-badge-inline"
+    ]
+  },
+  {
+    "canonical": "--spacing-data-table-filter-width",
+    "value": "24rem",
+    "tokens": [
+      "--spacing-data-table-filter-width"
+    ]
+  },
+  {
+    "canonical": "--spacing-dialog-center",
+    "value": "50%",
+    "tokens": [
+      "--spacing-dialog-center"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-handle-width",
+    "value": "3rem",
+    "tokens": [
+      "--spacing-drawer-handle-width"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-max-height",
+    "value": "96dvh",
+    "tokens": [
+      "--spacing-drawer-max-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-heading-scroll",
+    "value": "5rem",
+    "tokens": [
+      "--spacing-heading-scroll"
+    ]
+  },
+  {
+    "canonical": "--spacing-icon-sm",
+    "value": "0.875rem",
+    "tokens": [
+      "--spacing-icon-sm"
+    ]
+  },
+  {
+    "canonical": "--spacing-separator-thickness",
+    "value": "0.0625rem",
+    "tokens": [
+      "--spacing-separator-thickness"
+    ]
+  },
+  {
+    "canonical": "--spacing-textarea-min-height",
+    "value": "3.75rem",
+    "tokens": [
+      "--spacing-textarea-min-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-wizard-step-connector-thickness",
+    "value": "1px",
+    "tokens": [
+      "--spacing-wizard-step-connector-thickness"
+    ]
+  }
+]
