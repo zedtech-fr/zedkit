@@ -827,6 +827,7 @@
               "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text"
             }
           ],
+          "a11y": "`aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.",
           "seeAlso": [
             "Show a status or count badge",
             "Show key-value details and a live indicator"

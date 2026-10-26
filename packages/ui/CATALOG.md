@@ -176,6 +176,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
 - When to use: Beside a label that names the state (the dot is decorative).
 - When not to use: As the only state signal — pair it with text, never color alone.
+- A11y: `aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
 
 ```ts

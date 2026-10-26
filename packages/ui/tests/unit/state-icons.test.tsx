@@ -35,6 +35,12 @@ describe("status dot", () => {
     expect(container.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
   });
 
+  it("sizes the dot from theme tokens", () => {
+    const { container } = render(<StatusDot tone="active" />);
+    expect(container.innerHTML).toContain("size-status-dot");
+    expect(container.innerHTML).not.toContain("size-2");
+  });
+
   it("renders without a color when the tone is unknown", () => {
     const { container } = render(<StatusDot tone={"bogus" as "active"} />);
     expect(container.innerHTML).not.toContain("undefined");
