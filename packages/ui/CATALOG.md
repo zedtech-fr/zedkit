@@ -591,6 +591,8 @@ const [solo, setSolo] = useState(false);
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
 - Examples: Simple, Composed rows
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
+- Registry: detail-panel
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
