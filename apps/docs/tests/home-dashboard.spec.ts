@@ -19,30 +19,30 @@ test("home dashboard: create, edit, delete with axe on ready state", async ({ pa
   await page.getByRole("button", { name: "Create app" }).click();
   await expect(page.getByRole("cell", { name: "playwright-app" })).toBeVisible();
 
-  await page.getByRole("row", { name: /playwright-app/ }).getByRole("button", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Edit playwright-app" }).click();
   await page.getByRole("dialog").getByLabel("Name").fill("playwright-app-edited");
   await page.getByRole("button", { name: "Save changes" }).click();
   await expect(page.getByRole("cell", { name: "playwright-app-edited" })).toBeVisible();
 
   const row = page.getByRole("row", { name: /playwright-app-edited/ });
-  await row.getByRole("button", { name: "Delete" }).click();
+  await row.getByRole("button", { name: "Delete playwright-app-edited" }).click();
   await page.getByRole("button", { name: "Delete" }).click();
   await expect(page.getByRole("cell", { name: "playwright-app-edited" })).toHaveCount(0);
 });
 
 test("home dashboard: preview modes are keyboard reachable", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  await page.getByLabel("Table preview").click();
+  await page.getByLabel("Table preview mode").click();
   await page.getByRole("option", { name: "Loading" }).click();
   await expect(page.getByRole("table", { name: "Loading" })).toBeVisible();
   await axeDashboard(page);
 
-  await page.getByLabel("Table preview").click();
+  await page.getByLabel("Table preview mode").click();
   await page.getByRole("option", { name: "Empty" }).click();
   await expect(page.getByText("No apps yet. Choose Ready and click Add app.")).toBeVisible();
   await axeDashboard(page);
 
-  await page.getByLabel("Table preview").click();
+  await page.getByLabel("Table preview mode").click();
   await page.getByRole("option", { name: "Error" }).click();
   await expect(page.getByText("Could not load apps.")).toBeVisible();
   await axeDashboard(page);

@@ -1,5 +1,6 @@
 "use client";
 
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 
@@ -19,8 +20,8 @@ import {
   FormLabel,
   FormMessage,
   FormSubmit,
+  Heading,
   Input,
-  PageHeader,
   Select,
   SelectContent,
   SelectItem,
@@ -110,14 +111,20 @@ export function AdminDashboardDemoApp() {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Stack direction="horizontal" gap={2} className="flex-wrap">
-          <Button type="button" variant="outline" size="sm" onClick={() => openEdit(row.original)}>
-            Edit
+        <Stack direction="horizontal" gap={1} className="flex-nowrap justify-end" data-demo-row-actions>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={`Edit ${row.original.name}`}
+            onClick={() => openEdit(row.original)}
+          >
+            <Pencil className="size-icon-control" aria-hidden />
           </Button>
           <ConfirmDialog
             trigger={
-              <Button type="button" variant="destructive" size="sm">
-                Delete
+              <Button type="button" variant="destructive" size="icon" aria-label={`Delete ${row.original.name}`}>
+                <Trash2 className="size-icon-control" aria-hidden />
               </Button>
             }
             title="Delete app?"
@@ -133,62 +140,40 @@ export function AdminDashboardDemoApp() {
   return (
     <>
       <Toaster />
-      <Stack
-        className="max-h-[32rem] w-full min-w-0 overflow-auto rounded-lg border border-border"
-        aria-label="Interactive admin dashboard demo"
-      >
-        {/* AppShell layout without landmarks: this island already sits inside the page main. */}
-        <Stack direction="horizontal" className="min-h-svh w-full gap-0">
-          <Stack className="hidden w-64 shrink-0 gap-0 border-r bg-muted/40 md:block">
-            <Stack className="p-4" gap={2}>
-              <Text className="text-sm font-semibold">Apps</Text>
-              <Text variant="muted" className="text-sm">Demo nav</Text>
-            </Stack>
+      <Stack className="w-full min-w-0" aria-label="Interactive admin dashboard demo">
+        <Stack gap={3} className="border-b border-border p-4" data-demo-toolbar>
+          <Heading level={2} className="text-lg font-semibold tracking-tight">
+            Project apps
+          </Heading>
+          <Text variant="muted" className="text-sm">
+            Add, edit, or delete rows. Switch the preview to see loading, empty, and error states.
+          </Text>
+          <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
+            <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
+              <SelectTrigger className="min-w-0 flex-1" aria-label="Table preview mode">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ready">Ready</SelectItem>
+                <SelectItem value="loading">Loading</SelectItem>
+                <SelectItem value="empty">Empty</SelectItem>
+                <SelectItem value="error">Error</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button type="button" className="shrink-0" onClick={openCreate}>
+              Add app
+            </Button>
           </Stack>
-          <Stack className="min-w-0 flex-1 gap-0">
-            <Stack className="sticky top-0 z-10 gap-0 border-b bg-background/95 backdrop-blur">
-              <Stack direction="horizontal" gap={3} className="flex-wrap items-center justify-between p-4">
-                <Text className="text-sm font-medium">Project apps</Text>
-                <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
-                  <Stack direction="horizontal" gap={2} className="items-center">
-                    <Text variant="muted" className="text-sm" id="demo-preview-label">
-                      Table preview
-                    </Text>
-                    <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
-                      <SelectTrigger className="w-[9.5rem]" aria-labelledby="demo-preview-label">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ready">Ready</SelectItem>
-                        <SelectItem value="loading">Loading</SelectItem>
-                        <SelectItem value="empty">Empty</SelectItem>
-                        <SelectItem value="error">Error</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Stack>
-                  <Button type="button" onClick={openCreate}>
-                    Add app
-                  </Button>
-                </Stack>
-              </Stack>
-            </Stack>
-            <Stack className="flex-1 gap-0 p-4 md:p-6">
-              <Stack gap={4}>
-                <PageHeader
-                  title="Apps"
-                  description="Add, edit, or delete rows. Switch the preview to see loading, empty, and error states."
-                />
-                <DataTable
-                  columns={columns}
-                  data={tableData}
-                  loading={loading}
-                  error={error}
-                  emptyMessage="No apps yet. Choose Ready and click Add app."
-                  pageSize={5}
-                />
-              </Stack>
-            </Stack>
-          </Stack>
+        </Stack>
+        <Stack className="min-w-0 p-4">
+          <DataTable
+            columns={columns}
+            data={tableData}
+            loading={loading}
+            error={error}
+            emptyMessage="No apps yet. Choose Ready and click Add app."
+            pageSize={5}
+          />
         </Stack>
       </Stack>
 

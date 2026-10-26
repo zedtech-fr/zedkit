@@ -39,7 +39,7 @@ describe("DataTable", () => {
   });
 
   it("styles chrome (filter, sort, loading, pagination) from design tokens", () => {
-    const { container } = render(<DataTable columns={columns} data={data} />);
+    const { container } = render(<DataTable columns={columns} data={data} pageSize={1} />);
     const root = container.firstElementChild;
     expect(root?.classList.contains("space-y-data-table-stack")).toBe(true);
     expect(root?.className).not.toMatch(/(^|\s)space-y-4(\s|$)/);
@@ -74,7 +74,12 @@ describe("DataTable", () => {
   it("shows the empty message when there is no data", () => {
     render(<DataTable columns={columns} data={[]} emptyMessage="Nothing here." />);
     expect(screen.getByText("Nothing here.").textContent).toBe("Nothing here.");
-    expect(screen.getByText("Page 1 of 1").textContent).toBe("Page 1 of 1");
+    expect(screen.queryByText(/Page \d+ of/)).toBeNull();
+  });
+
+  it("hides pagination when every row fits on one page", () => {
+    render(<DataTable columns={columns} data={data} pageSize={10} />);
+    expect(screen.queryByText(/Page \d+ of/)).toBeNull();
   });
 
   it("shows loading placeholders while loading", () => {
