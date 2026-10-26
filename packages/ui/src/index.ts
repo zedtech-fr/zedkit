@@ -106,7 +106,7 @@ export {
   SelectValue,
 } from "./select.js";
 export { Separator } from "./separator.js";
-export { Skeleton } from "./skeleton.js";
+export { Skeleton, type SkeletonProps } from "./skeleton.js";
 export {
   Table,
   TableBody,
@@ -129,7 +129,7 @@ export {
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger, type TabsProps } from "./tabs.js";
 export { Textarea } from "./textarea.js";
-export { Toaster, toast } from "./sonner.js";
+export { Toaster, toast, type ToasterProps } from "./sonner.js";
 export {
   Heading,
   headingVariants,

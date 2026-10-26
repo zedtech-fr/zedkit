@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { assertNoValueArbitraries } from "./no-arbitraries.js";
 
 import { DataTable, DataTableEmpty, DataTablePagination, DataTableToolbar, Table, TableBody, createDataTableColumns } from "#index.js";
 
@@ -34,7 +35,7 @@ describe("DataTable", () => {
     const cell = container.querySelector("td");
     expect(cell?.className).toContain("p-table-cell");
     for (const el of [head, cell]) {
-      expect(el?.className).not.toMatch(/\[[-\d#]/);
+      assertNoValueArbitraries(el?.className ?? "");
     }
   });
 
@@ -173,7 +174,7 @@ describe("DataTable tokens", () => {
       .map((el) => el.getAttribute("class") ?? "")
       .join(" ");
     expect(classes.length).toBeGreaterThan(0);
-    expect(classes).not.toMatch(/\[[-\d#]/);
+    assertNoValueArbitraries(classes);
     unmount();
   });
 });

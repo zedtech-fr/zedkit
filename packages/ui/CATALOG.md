@@ -167,7 +167,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 ## Show loading placeholder blocks
 
-- Import: `@zedtech/zedkit-ui` — `Skeleton`
+- Import: `@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`
 - Wraps: `(none)`
 - Status: beta
 - Derived from: shadcn/ui (skeleton)
@@ -177,10 +177,19 @@ import { Separator } from "@zedtech/zedkit-ui";
 - When to use: For content areas with known approximate shape.
 - When not to use: For progress with a known percentage — use ProgressBar instead.
 - See also: `Show determinate progress`
+- Examples: Simple, Text lines
+- A11y: Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container.
+- Registry: skeleton
+- Troubleshooting: No pulse — the pulse is `motion-safe:animate-pulse`: static under reduced-motion, and it needs Tailwind's default theme. Wrong shape — size comes only from your `className`; the brick ships no dimensions.
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
 <Skeleton className="h-4 w-24" />
+```
+
+```ts
+import { Skeleton } from "@zedtech/zedkit-ui";
+<Skeleton className="h-4 w-full" /> // stack lines for text blocks; shape is all className
 ```
 
 ## Indicate status with a dot
@@ -466,7 +475,7 @@ const router = useRouter();
 
 ## Show toast notifications
 
-- Import: `@zedtech/zedkit-ui` — `Toaster`, `toast`
+- Import: `@zedtech/zedkit-ui` — `Toaster`, `ToasterProps`, `toast`
 - Wraps: `sonner`
 - Status: beta
 - Derived from: shadcn/ui (sonner)
@@ -477,10 +486,18 @@ const router = useRouter();
 - When not to use: For errors needing action — use Alert or Dialog instead.
 - A11y: The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.
 - See also: `Call out a notice or an error state`
+- Examples: Simple, Error toast
+- Registry: sonner
+- Troubleshooting: No toast appears — render `<Toaster />` once near the app root, then call `toast()`. Wrong colors — toast slots map to semantic theme tokens, so the theme stylesheet must be loaded.
 
 ```ts
 import { Toaster, toast } from "@zedtech/zedkit-ui";
 <Toaster /> // once near the root, then toast("Saved") anywhere
+```
+
+```ts
+import { toast } from "@zedtech/zedkit-ui";
+toast.error("Upload failed"); // typed variants: success | error | info | warning
 ```
 
 ## Display a shown-once secret with copy

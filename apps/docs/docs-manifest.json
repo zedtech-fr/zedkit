@@ -34,7 +34,8 @@
     "Show loading placeholder blocks": {
       "package": "@zedtech/zedkit-ui",
       "component": "Skeleton",
-      "props": null,
+      "registry": "skeleton",
+      "props": "SkeletonProps",
       "source": "skeleton.tsx",
       "demo": "SkeletonDemo"
     },
@@ -220,7 +221,8 @@
     "Show toast notifications": {
       "package": "@zedtech/zedkit-ui",
       "component": "Toaster",
-      "props": null,
+      "registry": "sonner",
+      "props": "ToasterProps",
       "source": "sonner.tsx",
       "demo": "ToasterDemo"
     },

@@ -164,6 +164,28 @@
       }
     },
     {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "dependencies": ["sonner"],
+      "files": [
+        {
+          "path": "registry/generated/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "typography",
       "type": "registry:ui",
       "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
