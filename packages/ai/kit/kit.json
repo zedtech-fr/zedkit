@@ -3,6 +3,7 @@
     "core": [
       "ponytail",
       "ponytail-review",
+      "ponytail-audit",
       "ground-truth",
       "parallel-work",
       "definition-of-done",

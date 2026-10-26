@@ -3,7 +3,7 @@
 The skills named below are copies from their upstream
 repositories (verified by diff at vendoring time; changes are listed under Modifications). Every other skill and
 every subagent in this kit is first-party zedkit work (MIT) and is not
-covered here: `ground-truth`, `parallel-work`, `definition-of-done`,
+covered here: `audit`, `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
 `review`, `plan`, `challenge`. Each upstream's licence file is kept next to the skills: see
 `skills/LICENSE-*-*`.
