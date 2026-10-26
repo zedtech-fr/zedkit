@@ -61,6 +61,22 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "status-dot",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/status-dot.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-status-dot": "0.5rem"
+        }
+      }
     }
   ]
 }

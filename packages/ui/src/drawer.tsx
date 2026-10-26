@@ -76,7 +76,7 @@ function DrawerHandle({
   return (
     <DrawerPrimitive.Handle
       ref={ref}
-      className={cn("mx-auto mt-4 h-1.5 w-12 shrink-0 rounded-full bg-muted", className)}
+      className={cn("mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted", className)}
       {...props}
     />
   );
@@ -85,14 +85,14 @@ function DrawerHandle({
 function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 p-4 text-center sm:text-left", className)}
+      className={cn("flex flex-col gap-drawer-header-gap p-drawer-chrome-padding text-center sm:text-left", className)}
       {...props}
     />
   );
 }
 
 function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} {...props} />;
+  return <div className={cn("mt-auto flex flex-col gap-drawer-footer-gap p-drawer-chrome-padding", className)} {...props} />;
 }
 
 function DrawerTitle({

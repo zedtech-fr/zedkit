@@ -12,7 +12,9 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHandle,
+  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "#index.js";
@@ -225,6 +227,31 @@ describe("drawer", () => {
     const panel = screen.getByRole("dialog", { name: "Delivery details" });
     expect(panel.className).toContain("sm:max-w-drawer-side");
     expect(panel.className).not.toContain("sm:max-w-md");
+  });
+
+  it("styles handle, header, and footer from theme tokens", () => {
+    render(
+      <Drawer defaultOpen>
+        <DrawerContent>
+          <DrawerHandle data-testid="handle" />
+          <DrawerHeader data-testid="header">
+            <DrawerTitle>Delivery details</DrawerTitle>
+          </DrawerHeader>
+          <DrawerFooter data-testid="footer">actions</DrawerFooter>
+        </DrawerContent>
+      </Drawer>,
+    );
+    const handle = screen.getByTestId("handle");
+    expect(handle.className).toContain("mt-drawer-handle-top");
+    expect(handle.className).toContain("h-drawer-handle-height");
+    expect(handle.className).toContain("w-drawer-handle-width");
+    expect(handle.className).not.toMatch(/(^|\s)(mt-4|h-1\.5|w-12)(\s|$)/);
+    const header = screen.getByTestId("header");
+    expect(header.className).toContain("gap-drawer-header-gap");
+    expect(header.className).toContain("p-drawer-chrome-padding");
+    const footer = screen.getByTestId("footer");
+    expect(footer.className).toContain("gap-drawer-footer-gap");
+    expect(footer.className).toContain("p-drawer-chrome-padding");
   });
 
   it("renders open on mount with defaultOpen", () => {

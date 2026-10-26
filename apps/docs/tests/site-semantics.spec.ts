@@ -14,12 +14,6 @@ const BASE = "http://127.0.0.1:3100";
 test.describe("site semantics harness (#300)", () => {
   for (const route of SITE_AUDIT_ROUTES) {
     test(`${route.label}: mobile width, axe on main, links resolve`, async ({ page }) => {
-      if (route.pendingPath) {
-        const probe = await page.request.get(`${BASE}${route.path}`);
-        if (probe.status() === 404) {
-          test.skip(true, `path not published yet (${route.path})`);
-        }
-      }
       const errors: string[] = [];
       page.on("pageerror", (event) => errors.push(String(event)));
       await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
@@ -35,10 +29,6 @@ test.describe("site semantics harness (#300)", () => {
 
     if (route.strictSemantics || route.linkAndInteractiveAudit) {
       test(`${route.label}: no nested interactive, unique link names`, async ({ page }) => {
-        if (route.pendingPath) {
-          const probe = await page.request.get(`${BASE}${route.path}`);
-          if (probe.status() === 404) test.skip(true, `path not published yet (${route.path})`);
-        }
         await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
         await assertNoNestedInteractive(page);
         await assertUniqueLinkNames(page);
@@ -51,8 +41,7 @@ test.describe("site semantics harness (#300)", () => {
     await assertKeyboardReachesFirstMainCta(page);
   });
 
-  test("home: axe on layout (after #286/#287)", async ({ page }) => {
-    test.skip(true, "Enable when home demo and hero land (#286, #287).");
+  test("home: axe on layout", async ({ page }) => {
     await page.goto(BASE, { waitUntil: "networkidle" });
     await assertAxeOnMain(page);
   });
