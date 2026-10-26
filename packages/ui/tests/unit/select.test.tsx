@@ -76,6 +76,19 @@ describe("select", () => {
     expect(listbox.className).not.toContain("min-w-[8rem]");
   });
 
+  it("carries no value arbitraries on trigger, content, or items", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+    const trigger = screen.getByRole("combobox", { name: "Region" });
+    await user.click(trigger);
+    const listbox = await screen.findByRole("listbox");
+    const option = screen.getByRole("option", { name: "Europe" });
+    for (const className of [trigger.className, listbox.className, option.className]) {
+      const withoutAllowlist = className.replace(/\[--radix-[^\]]*\]|\[var\(--radix-[^)]*\)\]/g, "");
+      expect(withoutAllowlist).not.toMatch(/\[[-\d#]/);
+    }
+  });
+
   it("shows a disabled message and reports nothing when there are no options", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
