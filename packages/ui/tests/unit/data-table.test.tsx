@@ -153,6 +153,31 @@ describe("DataTablePagination", () => {
   });
 });
 
+describe("DataTable tokens", () => {
+  it.each([
+    ["rows", <DataTable columns={columns} data={data} pageSize={1} />],
+    ["empty", <DataTable columns={columns} data={[]} />],
+    ["loading", <DataTable columns={columns} data={data} loading />],
+    ["error", <DataTable columns={columns} data={data} error="Boom" />],
+    [
+      "standalone",
+      <Table>
+        <TableBody>
+          <DataTableEmpty colSpan={3} message="Nothing here." />
+        </TableBody>
+      </Table>,
+    ],
+  ])("carries no value arbitraries (%s)", (_label, ui) => {
+    const { container, unmount } = render(ui);
+    const classes = [...container.querySelectorAll("[class]")]
+      .map((el) => el.getAttribute("class") ?? "")
+      .join(" ");
+    expect(classes.length).toBeGreaterThan(0);
+    expect(classes).not.toMatch(/\[[-\\d#]/);
+    unmount();
+  });
+});
+
 describe("DataTableToolbar", () => {
   it("composes a standalone labelled filter input with token width", async () => {
     const user = userEvent.setup();
