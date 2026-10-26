@@ -11,37 +11,40 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 import type { HomeScenario } from "@/content/home-scenarios";
+import {
+  HOME_CARD_CONTENT_GAP,
+  HOME_CARD_GRID_TWO_COL,
+  HOME_SECTION_CONTENT_GAP,
+} from "@/ui/home/home-rhythm";
 
 export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] }) {
   return (
-    <Section title="Start from your situation" id="scenarios">
-      <Stack gap={4}>
-        <Text variant="muted">
-          Each card links to a generated doc page (install command, example, and live preview when
-          available).
-        </Text>
-        <Stack className="grid gap-4 md:grid-cols-2">
+    <Section
+      title="Start from your situation"
+      id="scenarios"
+      description="Each card links to a generated doc page (install command, example, and live preview when available)."
+    >
+      <Stack gap={HOME_SECTION_CONTENT_GAP}>
+        <Stack className={HOME_CARD_GRID_TWO_COL}>
           {scenarios.map((scenario) => (
-            <Card key={scenario.href}>
+            <Card key={scenario.href} className="min-w-0">
               <CardHeader>
                 <CardTitle>{scenario.situation}</CardTitle>
               </CardHeader>
               <CardContent>
-                <Stack gap={3}>
+                <Stack gap={HOME_CARD_CONTENT_GAP}>
                   <Stack gap={1}>
-                    <Heading level={3} className="text-sm font-medium">
-                      You want
-                    </Heading>
-                    <Text className="text-sm">{scenario.goal}</Text>
+                    <Heading level={4}>You want</Heading>
+                    <Text variant="muted">{scenario.goal}</Text>
                   </Stack>
                   <Stack gap={1}>
-                    <Heading level={3} className="text-sm font-medium">
-                      Do this
-                    </Heading>
-                    <Text className="text-sm">{scenario.action}</Text>
+                    <Heading level={4}>Do this</Heading>
+                    <Text variant="muted">{scenario.action}</Text>
                   </Stack>
-                  <Button asChild variant="secondary" size="sm">
-                    <Link href={scenario.href}>{scenario.linkLabel}</Link>
+                  <Button asChild variant="ghost" size="sm" className="w-fit">
+                    <Link href={scenario.href} aria-label={`Read the docs: ${scenario.situation}`}>
+                      Read the docs
+                    </Link>
                   </Button>
                 </Stack>
               </CardContent>

@@ -5,6 +5,7 @@ import { docsSite } from "@/lib/site";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { KitVersionLabel } from "@/ui/kit-version-label";
+import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
 export function HomeHero({
   featuredPackage,
@@ -16,16 +17,16 @@ export function HomeHero({
   changelogHref: string;
 }) {
   return (
-    <Stack gap={6} className="items-start">
-      <Stack gap={3} className="items-start">
+    <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
+      <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
         <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-          <Text variant="muted" className="text-sm font-medium tracking-wide uppercase">zedkit</Text>
+          <Text variant="muted">zedkit</Text>
           <KitVersionLabel version={version} changelogHref={changelogHref} />
         </Stack>
-        <Heading level={1} className="max-w-3xl text-3xl text-balance md:text-4xl">
+        <Heading level={1} className="max-w-3xl text-balance">
           Build the parts you need. Keep the rest of your app.
         </Heading>
-        <Text className="max-w-2xl text-lg">
+        <Text className="max-w-2xl">
           TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
           need documented from the same catalog as the site, with{" "}
           <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.

@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import {
+  HOME_CARD_CONTENT_GAP,
+  HOME_CARD_GRID_TWO_COL,
+} from "@/ui/home/home-rhythm";
 
 export function HomeProofs({
   packages,
@@ -38,22 +42,25 @@ export function HomeProofs({
     },
   ];
   return (
-    <Section title="What you can verify">
-      <Stack className="grid gap-4 md:grid-cols-2">
+    <Section title="What you can verify" id="proofs">
+      <Stack className={HOME_CARD_GRID_TWO_COL}>
         {items.map((item) => (
-          <Card key={item.title}>
+          <Card key={item.title} className="min-w-0">
             <CardHeader>
               <CardTitle>{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Stack gap={2}>
-                <Text className="text-sm">{item.body}</Text>
+              <Stack gap={HOME_CARD_CONTENT_GAP}>
+                <Text variant="muted">{item.body}</Text>
                 {item.href ? (
-                  <Link href={item.href} {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}>
-                    <Text className="text-sm font-medium underline-offset-4 hover:underline">
+                  <Button asChild variant="ghost" size="sm" className="w-fit">
+                    <Link
+                      href={item.href}
+                      {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                    >
                       {item.linkLabel}
-                    </Text>
-                  </Link>
+                    </Link>
+                  </Button>
                 ) : null}
               </Stack>
             </CardContent>
