@@ -892,7 +892,9 @@
               "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark /> // decorative, pair with visible text"
             }
           ],
+          "registry": "checkmark",
           "a11y": "Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.",
+          "troubleshooting": "No draw animation — the path animates only under `motion-safe`; reduced motion shows the static check by design. Announced twice — pass `label` once (it names the `role=\"img\"`); nearby text should not repeat it. Registry copies without the theme show the static check (the `zk-check-draw` keyframes live in `styles.css`).",
           "seeAlso": [
             "Show toast notifications"
           ]
@@ -933,11 +935,20 @@
           "example": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Loading operation",
               "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status"
+            },
+            {
+              "title": "Saved and error states",
+              "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"saved\">All changes saved</StatusLabel>\n<StatusLabel tone=\"error\">Could not save</StatusLabel>"
+            },
+            {
+              "title": "Offline state",
+              "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"offline\">You are offline</StatusLabel>"
             }
           ],
           "a11y": "`role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.",
+          "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
           "seeAlso": [
             "Stamp data with its age"
           ]

@@ -236,6 +236,8 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - See also: `Show toast notifications`
 - Examples: Simple, Decorative
 - A11y: Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.
+- Registry: checkmark
+- Troubleshooting: No draw animation — the path animates only under `motion-safe`; reduced motion shows the static check by design. Announced twice — pass `label` once (it names the `role="img"`); nearby text should not repeat it. Registry copies without the theme show the static check (the `zk-check-draw` keyframes live in `styles.css`).
 
 ```ts
 import { Checkmark } from "@zedtech/zedkit-ui";
@@ -279,10 +281,23 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
+- Examples: Loading operation, Saved and error states, Offline state
+- Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts
 import { StatusLabel } from "@zedtech/zedkit-ui";
 <StatusLabel tone="loading">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status
+```
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="saved">All changes saved</StatusLabel>
+<StatusLabel tone="error">Could not save</StatusLabel>
+```
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="offline">You are offline</StatusLabel>
 ```
 
 ## Stamp data with its age

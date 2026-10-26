@@ -195,7 +195,7 @@
   --spacing-dialog-padding: 1.5rem;
   --spacing-dialog-header-stack: 0.375rem;
   --spacing-dialog-footer-gap: 0.5rem;
-  --spacing-dialog-close-offset: 1rem;
+  --spacing-overlay-close-offset: 1rem;
   --spacing-app-shell-sidebar: 16rem;
   --spacing-app-shell-padding: 1rem;
   --spacing-app-shell-padding-md: 1.5rem;
@@ -204,7 +204,6 @@
   --spacing-table-head-height: 2.5rem;
   --spacing-table-checkbox-nudge: 0.125rem;
   --spacing-table-caption-gap: 1rem;
-  --spacing-route-modal-close-offset: 1rem;
   --container-route-modal-sm: 24rem;
   --container-route-modal-drawer-lg: 32rem;
   --container-route-modal-dialog-lg: 42rem;
@@ -218,6 +217,11 @@
   --spacing-drawer-header-gap: 0.375rem;
   --spacing-drawer-footer-gap: 0.5rem;
   --spacing-drawer-chrome-padding: 1rem;
+  --spacing-select-item-inline: 0.5rem;
+  --spacing-select-item-block: 0.375rem;
+  --spacing-select-item-indicator-gap: 2rem;
+  --spacing-select-item-indicator: 0.875rem;
+  --spacing-select-separator: 0.25rem;
 }
 
 @layer base {
