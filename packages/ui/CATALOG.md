@@ -720,6 +720,8 @@ import { Heading } from "@zedtech/zedkit-ui";
 - See also: `Show toast notifications`
 - Examples: Simple, As a section (asChild)
 - A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
+- Registry: alert
+- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role="alert"` per notice; repeated renders re-announce.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";

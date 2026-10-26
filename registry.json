@@ -141,6 +141,27 @@
           "spacing-progress-bar-height": "0.375rem"
         }
       }
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-alert-inline": "1rem",
+          "spacing-alert-block": "0.75rem",
+          "spacing-alert-icon-offset": "1rem",
+          "spacing-alert-icon-nudge": "0.1875rem",
+          "spacing-alert-content-indent": "1.75rem"
+        }
+      }
     }
   ]
 }
