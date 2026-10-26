@@ -117,6 +117,14 @@
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
   --spacing-heading-scroll: 5rem;
+  --spacing-wizard-steps-gap: 0.75rem;
+  --spacing-wizard-steps-row-gap: 0.5rem;
+  --spacing-wizard-step-gap: 0.5rem;
+  --spacing-wizard-step-badge: 1.5rem;
+  --spacing-wizard-step-icon: 0.875rem;
+  --spacing-wizard-step-connector-gap: 0.25rem;
+  --spacing-wizard-step-connector-thickness: 1px;
+  --spacing-wizard-step-connector: 1.5rem;
   --spacing-checkmark: 1rem;
   --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
   --spacing-progress-bar-gap: 0.125rem;
