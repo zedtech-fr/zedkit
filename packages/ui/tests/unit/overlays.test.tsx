@@ -126,5 +126,13 @@ describe("overlays", () => {
       await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
       expect(screen.getByRole("button", { name: "Copy to clipboard" })).not.toBeNull();
     });
+
+    it("uses token-driven gap and icon size with no arbitrary values", () => {
+      const { container } = render(<SecretField id="key" value="zbk_secret" />);
+      const root = container.firstElementChild;
+      expect(root?.className).toContain("gap-secret-field-gap");
+      expect(root?.className).not.toContain("[");
+      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-icon-control");
+    });
   });
 });
