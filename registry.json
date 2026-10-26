@@ -219,6 +219,30 @@
           "spacing-detail-panel-block": "0.75rem"
         }
       }
+    },
+    {
+      "name": "wizard-steps",
+      "type": "registry:ui",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/wizard-steps.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-icon-sm": "0.875rem",
+          "spacing-wizard-steps-gap": "0.75rem",
+          "spacing-wizard-steps-row-gap": "0.5rem",
+          "spacing-wizard-step-gap": "0.5rem",
+          "spacing-wizard-step-badge": "1.5rem",
+          "spacing-wizard-step-connector-gap": "0.25rem",
+          "spacing-wizard-step-connector-thickness": "1px",
+          "spacing-wizard-step-connector": "1.5rem"
+        }
+      }
     }
   ]
 }
