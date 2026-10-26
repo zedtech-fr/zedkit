@@ -139,6 +139,18 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    tabs: {
+      cssVars: {
+        theme: {
+          "spacing-tabs-list-height": varFromBlock(theme, "spacing-tabs-list-height"),
+          "spacing-tabs-list-inset": varFromBlock(theme, "spacing-tabs-list-inset"),
+          "spacing-tabs-trigger-inline": varFromBlock(theme, "spacing-tabs-trigger-inline"),
+          "spacing-tabs-trigger-block": varFromBlock(theme, "spacing-tabs-trigger-block"),
+          "spacing-tabs-content-gap": varFromBlock(theme, "spacing-tabs-content-gap"),
+        },
+      },
+      css: expectedFocusRingCss(cssText),
+    },
     card: {
       cssVars: {
         theme: {

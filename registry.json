@@ -238,6 +238,35 @@
       }
     },
     {
+      "name": "tabs",
+      "type": "registry:ui",
+      "dependencies": ["@radix-ui/react-tabs"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-tabs-list-height": "2.25rem",
+          "spacing-tabs-list-inset": "0.25rem",
+          "spacing-tabs-trigger-inline": "0.75rem",
+          "spacing-tabs-trigger-block": "0.25rem",
+          "spacing-tabs-content-gap": "0.5rem"
+        }
+      },
+      "css": {
+        "@utility focus-ring": {
+          "&:focus-visible": {
+            "outline": "none",
+            "box-shadow": "0 0 0 var(--ring-offset-width) hsl(var(--background)), 0 0 0 calc(var(--ring-offset-width) + var(--ring-width)) hsl(var(--ring))"
+          }
+        }
+      }
+    },
+    {
       "name": "card",
       "type": "registry:ui",
       "registryDependencies": ["utils"],

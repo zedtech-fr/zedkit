@@ -6,6 +6,8 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 import { cn } from "./utils.js";
 
+type TabsProps = React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>;
+
 const Tabs = TabsPrimitive.Root;
 
 const TabsList = React.forwardRef<
@@ -50,4 +52,4 @@ const TabsContent = React.forwardRef<
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsList, TabsTrigger, TabsContent, type TabsProps };
