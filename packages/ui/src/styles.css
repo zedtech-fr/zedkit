@@ -119,6 +119,19 @@
   --spacing-control-block: 0.25rem;
   --spacing-control-block-lg: 0.5rem;
   --spacing-textarea-min-height: 3.75rem;
+  --spacing-field-set: 1.5rem;
+  --spacing-field-group: 1.75rem;
+  --spacing-field-group-compact: 0.75rem;
+  --spacing-field-group-nested: 1rem;
+  --spacing-field: 0.75rem;
+  --spacing-field-content: 0.375rem;
+  --spacing-field-inline: 0.5rem;
+  --spacing-field-legend-bottom: 0.75rem;
+  --spacing-field-label-inset: 1rem;
+  --spacing-field-separator: 1.25rem;
+  --spacing-field-separator-inline: 0.5rem;
+  --spacing-field-error-indent: 1rem;
+  --spacing-field-error-gap: 0.25rem;
 }
 
 @layer base {
