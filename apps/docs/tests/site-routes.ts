@@ -8,7 +8,7 @@ export interface SiteAuditRoute {
   linkAndInteractiveAudit?: boolean;
   /** Skip entire row when the static export has no page yet. */
   pendingPath?: boolean;
-  /** Prose/card layouts wider than narrow `main` on mobile until layout refresh (#286). */
+  /** Wide MDX tables/code: #385 column width is covered by docs-mobile-layout.spec.ts. */
   skipMobileOverflow?: boolean;
 }
 
