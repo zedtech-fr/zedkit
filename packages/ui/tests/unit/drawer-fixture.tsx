@@ -6,6 +6,9 @@ import { vi } from "vitest";
  * `beforeAll` in the suites that open a drawer.
  */
 export function stubDrawerJsdom(matches = false): void {
+  // Vaul captures the pointer on press; jsdom has no pointer capture.
+  Element.prototype.setPointerCapture = vi.fn();
+  Element.prototype.releasePointerCapture = vi.fn();
   Object.defineProperty(window, "innerWidth", {
     configurable: true,
     value: matches ? 390 : 1024,

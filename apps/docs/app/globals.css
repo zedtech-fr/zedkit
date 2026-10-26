@@ -59,6 +59,10 @@
     min-width: 2.75rem;
     min-height: 2.75rem;
   }
+  /* Props table rows (fumadocs type table) are buttons too. */
+  main button.group[aria-expanded] {
+    min-height: 2.75rem;
+  }
 }
 
 /* Code blocks: one frame (the figure), never a frame inside a frame; the scroll area stays inside it. */
@@ -113,6 +117,7 @@
 /* Live preview islands stay on light kit tokens when the site shell is dark (#396). */
 html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   color-scheme: light;
+  color: hsl(var(--foreground));
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
@@ -136,4 +141,9 @@ html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 240 5% 64.9%;
+}
+
+/* The island tint is opaque: a translucent light tint over the dark page reads as mid-grey under the light tokens. */
+html.dark [class*="bg-muted/40"]:not(.dark) {
+  background-color: color-mix(in srgb, hsl(var(--muted)) 40%, hsl(var(--background)));
 }

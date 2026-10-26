@@ -34,8 +34,8 @@
     {
       "name": "drawer",
       "type": "registry:ui",
-      "dependencies": ["vaul"],
-      "registryDependencies": ["utils"],
+      "dependencies": ["vaul", "lucide-react"],
+      "registryDependencies": ["button", "utils"],
       "files": [
         {
           "path": "registry/generated/ui/drawer.tsx",
@@ -155,8 +155,8 @@
       ],
       "cssVars": {
         "theme": {
-          "spacing-alert-inline": "1rem",
-          "spacing-alert-block": "0.75rem",
+          "spacing-alert-inline": "calc(1rem * var(--zk-density, 1))",
+          "spacing-alert-block": "calc(0.75rem * var(--zk-density, 1))",
           "spacing-alert-icon-offset": "1rem",
           "spacing-alert-icon-nudge": "0.1875rem",
           "spacing-alert-content-indent": "1.75rem"
@@ -214,9 +214,9 @@
       ],
       "cssVars": {
         "theme": {
-          "spacing-detail-panel-gap": "1rem",
-          "spacing-detail-panel-inline": "1rem",
-          "spacing-detail-panel-block": "0.75rem"
+          "spacing-detail-panel-gap": "calc(1rem * var(--zk-density, 1))",
+          "spacing-detail-panel-inline": "calc(1rem * var(--zk-density, 1))",
+          "spacing-detail-panel-block": "calc(0.75rem * var(--zk-density, 1))"
         }
       }
     }

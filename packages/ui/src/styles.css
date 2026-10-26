@@ -57,7 +57,8 @@
 
 /* Touch or phone-width screens: 16px floor, desktop keeps the design size. */
 @media (pointer: coarse), (max-width: 767px) {
-  :root {
+  :root,
+  [data-identity-scope][data-identity="mist"] {
     --zk-input-font-size: max(16px, 0.875rem);
   }
 }
@@ -260,6 +261,10 @@
   --spacing-drawer-max-height: 96dvh;
   --spacing-drawer-sheet-max-height: 88dvh;
   --spacing-drawer-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --spacing-drawer-safe-top: env(safe-area-inset-top, 0px);
+  --spacing-drawer-safe-left: env(safe-area-inset-left, 0px);
+  --spacing-drawer-safe-right: env(safe-area-inset-right, 0px);
+  --spacing-drawer-side-mobile-width: 90%;
   --spacing-drawer-footer-safe: calc(var(--spacing-drawer-chrome-padding) + env(safe-area-inset-bottom, 0px));
   --container-drawer-side: 28rem;
   --spacing-drawer-handle-top: 1rem;
@@ -385,6 +390,24 @@ html [data-vaul-drawer] {
 
 html [data-vaul-overlay] {
   animation-duration: var(--motion-base);
+}
+
+/*
+ * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
+ * vanishes on dark and tinted identities. Draw it from the kit tokens
+ * so it reads on every surface. The 44px hit area is vaul's own.
+ */
+html [data-vaul-handle] {
+  width: var(--spacing-drawer-handle-width);
+  height: var(--spacing-drawer-handle-height);
+  background-color: hsl(var(--muted-foreground) / 0.5);
+  opacity: 1;
+}
+
+/* Side drawers close by dragging the panel itself: no handle (vaul sets display: block unlayered). */
+html [data-vaul-drawer-direction="left"] [data-vaul-handle],
+html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -9,12 +9,35 @@ import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { Button } from "./button.js";
 import { cn } from "./utils.js";
-import { useMobileViewport } from "./use-mobile-viewport.js";
+
+/** Matches Tailwind `sm` (640px): phones and narrow viewports. */
+const MOBILE_MEDIA = "(max-width: 639px)";
+
+function readMobileViewport(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  return window.innerWidth < 640 || window.matchMedia(MOBILE_MEDIA).matches;
+}
+
+function useMobileViewport(): boolean {
+  const [isMobile, setIsMobile] = React.useState(readMobileViewport);
+
+  React.useLayoutEffect(() => {
+    const sync = () => setIsMobile(readMobileViewport());
+    sync();
+    const mql = window.matchMedia(MOBILE_MEDIA);
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, []);
+
+  return isMobile;
+}
 
 type DrawerRootProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Root> & {
   /**
-   * On narrow viewports, map left/right drawers to a bottom sheet (`sheet`) or keep a side panel (`side`).
-   * Defaults to `sheet` so list-detail drawers do not cover the full screen on phones.
+   * On narrow viewports, map left/right drawers to a bottom sheet (`sheet`) or keep a side panel (`side`,
+   * full height, up to 90% of the width so the dimmed page stays tappable). Defaults to `sheet`.
    */
   mobile?: "sheet" | "side";
 };
@@ -92,9 +115,9 @@ function DrawerContent({
         className={cn(
           "fixed z-overlay flex flex-col border bg-background outline-none",
           "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
-          "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl",
-          "data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:top-0 data-[vaul-drawer-direction=right]:max-sm:bottom-auto data-[vaul-drawer-direction=right]:max-sm:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=right]:max-sm:w-full data-[vaul-drawer-direction=right]:sm:inset-y-0 data-[vaul-drawer-direction=right]:sm:h-full data-[vaul-drawer-direction=right]:sm:max-h-none data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
-          "data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:top-0 data-[vaul-drawer-direction=left]:max-sm:bottom-auto data-[vaul-drawer-direction=left]:max-sm:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=left]:max-sm:w-full data-[vaul-drawer-direction=left]:sm:inset-y-0 data-[vaul-drawer-direction=left]:sm:h-full data-[vaul-drawer-direction=left]:sm:max-h-none data-[vaul-drawer-direction=left]:sm:max-w-drawer-side",
+          "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:pt-drawer-safe-top",
+          "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-drawer-side-mobile-width data-[vaul-drawer-direction=right]:pt-drawer-safe-top data-[vaul-drawer-direction=right]:pr-drawer-safe-right data-[vaul-drawer-direction=right]:max-sm:rounded-l-xl data-[vaul-drawer-direction=right]:sm:w-full data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
+          "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-drawer-side-mobile-width data-[vaul-drawer-direction=left]:pt-drawer-safe-top data-[vaul-drawer-direction=left]:pl-drawer-safe-left data-[vaul-drawer-direction=left]:max-sm:rounded-r-xl data-[vaul-drawer-direction=left]:sm:w-full data-[vaul-drawer-direction=left]:sm:max-w-drawer-side",
           className,
         )}
         {...props}
@@ -116,7 +139,9 @@ function DrawerHandle({
     <DrawerPrimitive.Handle
       ref={ref}
       className={cn(
-        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted",
+        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
+        "in-data-[vaul-drawer-direction=left]:hidden in-data-[vaul-drawer-direction=right]:hidden",
+        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-0 in-data-[vaul-drawer-direction=top]:mb-drawer-handle-top",
         className,
       )}
       {...props}
@@ -139,7 +164,7 @@ function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-drawer-chrome-padding", className)}
+      className={cn("min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-drawer-chrome-padding last:pb-drawer-safe-bottom", className)}
       {...props}
     />
   );

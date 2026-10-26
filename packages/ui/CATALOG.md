@@ -439,13 +439,13 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 - Registry: drawer
 - Short name: Drawer
 - Audience: Developers showing detail views beside a list without navigation.
-- Purpose: Slide-in panels (right-side detail on desktop, bottom sheet on mobile).
+- Purpose: Slide-in panels from any edge (right-side detail on desktop, bottom sheet on mobile, left, right, or top on demand).
 - When to use: For list-detail previews and short side forms.
 - When not to use: For multi-step flows — use a full page or wizard instead.
 - See also: `Open modal dialogs`, `Show key-value details and a live indicator`
-- Examples: Right detail panel, Bottom sheet
-- A11y: Built on vaul / Radix Dialog: focus trap, Escape to close, rest of the page hidden from assistive tech while open (`role="dialog"`). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Use `DrawerCloseButton` (44px touch target) plus `DrawerHandle` for swipe-down. Sticky `DrawerHeader` / `DrawerFooter` keep title and actions visible; `DrawerBody` scrolls with `overscroll-behavior: contain`.
-- Troubleshooting: Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. `direction="right"` with default `mobile="sheet"` becomes a bottom sheet under 640px; pass `mobile="side"` to keep a side panel on phones.
+- Examples: Right detail panel, Bottom sheet, Side panel on every screen
+- A11y: Built on vaul / Radix Dialog: focus trap, Escape to close, rest of the page hidden from assistive tech while open (`role="dialog"`). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Use `DrawerCloseButton` (44px touch target) plus `DrawerHandle` for swipe-down; the handle hides itself on left and right drawers and moves to the bottom edge of a top drawer. Every direction closes by dragging toward its edge, tapping the dimmed area, or pressing Escape. Safe-area insets are respected, and fields inside a drawer stay at 16px on touch screens. Sticky `DrawerHeader` / `DrawerFooter` keep title and actions visible; `DrawerBody` scrolls with `overscroll-behavior: contain`.
+- Troubleshooting: Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. `direction="right"` with default `mobile="sheet"` becomes a bottom sheet under 640px; pass `mobile="side"` to keep a full-height side panel on phones (up to 90% of the width, so the dimmed page stays tappable).
 
 ```ts
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
@@ -465,6 +465,20 @@ import { Button, Drawer, DrawerContent, DrawerHandle, DrawerTitle, DrawerTrigger
   <DrawerContent>
     <DrawerHandle />
     <DrawerTitle>Filters</DrawerTitle>
+  </DrawerContent>
+</Drawer>
+```
+
+```ts
+import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@zedtech/zedkit-ui";
+<Drawer direction="left" mobile="side">
+  <DrawerTrigger asChild><Button variant="outline">Menu</Button></DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Menu</DrawerTitle>
+      <DrawerCloseButton />
+    </DrawerHeader>
+    <DrawerBody>Links</DrawerBody>
   </DrawerContent>
 </Drawer>
 ```

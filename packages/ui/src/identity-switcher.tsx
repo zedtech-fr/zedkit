@@ -76,7 +76,7 @@ function IdentitySwitcher({
         value={current}
         onChange={(event) => choose(event.target.value)}
         className={cn(
-          "h-control-height-sm rounded-md border border-input bg-background px-3 text-sm text-foreground focus-ring-control",
+          "h-control-height-sm rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control",
           className,
         )}
         {...props}

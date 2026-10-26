@@ -11,7 +11,6 @@ import { docsChromeSlots } from "@/ui/site-chrome";
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
-      slots={{ header: DocsHeader }}
       tree={source.pageTree}
       nav={{ title: <SiteBrand />, url: "/" }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
@@ -19,7 +18,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       sidebar={{ footer: <IdentitySwitcher /> }}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
-      slots={docsChromeSlots}
+      slots={{ ...docsChromeSlots, header: DocsHeader }}
     >
       {children}
     </DocsLayout>

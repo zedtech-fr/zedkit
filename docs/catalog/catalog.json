@@ -1094,7 +1094,7 @@
           "status": "alpha",
           "shortName": "Drawer",
           "audience": "Developers showing detail views beside a list without navigation.",
-          "purpose": "Slide-in panels (right-side detail on desktop, bottom sheet on mobile).",
+          "purpose": "Slide-in panels from any edge (right-side detail on desktop, bottom sheet on mobile, left, right, or top on demand).",
           "whenToUse": "For list-detail previews and short side forms.",
           "whenNotToUse": "For multi-step flows — use a full page or wizard instead.",
           "derivedFrom": "shadcn/ui (drawer)",
@@ -1107,11 +1107,15 @@
             {
               "title": "Bottom sheet",
               "code": "import { Button, Drawer, DrawerContent, DrawerHandle, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer>\n  <DrawerTrigger asChild><Button variant=\"outline\">Filters</Button></DrawerTrigger>\n  <DrawerContent>\n    <DrawerHandle />\n    <DrawerTitle>Filters</DrawerTitle>\n  </DrawerContent>\n</Drawer>"
+            },
+            {
+              "title": "Side panel on every screen",
+              "code": "import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from \"@zedtech/zedkit-ui\";\n<Drawer direction=\"left\" mobile=\"side\">\n  <DrawerTrigger asChild><Button variant=\"outline\">Menu</Button></DrawerTrigger>\n  <DrawerContent>\n    <DrawerHeader>\n      <DrawerTitle>Menu</DrawerTitle>\n      <DrawerCloseButton />\n    </DrawerHeader>\n    <DrawerBody>Links</DrawerBody>\n  </DrawerContent>\n</Drawer>"
             }
           ],
           "registry": "drawer",
-          "a11y": "Built on vaul / Radix Dialog: focus trap, Escape to close, rest of the page hidden from assistive tech while open (`role=\"dialog\"`). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Use `DrawerCloseButton` (44px touch target) plus `DrawerHandle` for swipe-down. Sticky `DrawerHeader` / `DrawerFooter` keep title and actions visible; `DrawerBody` scrolls with `overscroll-behavior: contain`.",
-          "troubleshooting": "Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. `direction=\"right\"` with default `mobile=\"sheet\"` becomes a bottom sheet under 640px; pass `mobile=\"side\"` to keep a side panel on phones.",
+          "a11y": "Built on vaul / Radix Dialog: focus trap, Escape to close, rest of the page hidden from assistive tech while open (`role=\"dialog\"`). Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Use `DrawerCloseButton` (44px touch target) plus `DrawerHandle` for swipe-down; the handle hides itself on left and right drawers and moves to the bottom edge of a top drawer. Every direction closes by dragging toward its edge, tapping the dimmed area, or pressing Escape. Safe-area insets are respected, and fields inside a drawer stay at 16px on touch screens. Sticky `DrawerHeader` / `DrawerFooter` keep title and actions visible; `DrawerBody` scrolls with `overscroll-behavior: contain`.",
+          "troubleshooting": "Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. `direction=\"right\"` with default `mobile=\"sheet\"` becomes a bottom sheet under 640px; pass `mobile=\"side\"` to keep a full-height side panel on phones (up to 90% of the width, so the dimmed page stays tappable).",
           "seeAlso": [
             "Open modal dialogs",
             "Show key-value details and a live indicator"

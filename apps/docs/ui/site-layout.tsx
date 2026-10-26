@@ -16,7 +16,6 @@ export function SiteLayout({
 }) {
   return (
     <HomeLayout
-      slots={{ header: SiteHeader }}
       nav={{
         title: <SiteBrand />,
         url: "/",
@@ -25,7 +24,7 @@ export function SiteLayout({
       links={siteHeaderLinks(changelogHref)}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
-      slots={siteChromeSlots}
+      slots={{ ...siteChromeSlots, header: SiteHeader }}
     >
       <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
     </HomeLayout>
