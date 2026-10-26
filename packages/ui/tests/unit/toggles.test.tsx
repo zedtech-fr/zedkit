@@ -21,6 +21,17 @@ describe("toggles", () => {
     expect(box.getAttribute("data-state")).toBe("unchecked");
   });
 
+  it("styles the checkbox from design tokens", () => {
+    render(<Checkbox aria-label="Accept the terms" defaultChecked />);
+    const box = screen.getByRole("checkbox", { name: "Accept the terms" });
+    expect(box.classList.contains("size-checkbox")).toBe(true);
+    expect(box.classList.contains("focus-ring-control")).toBe(true);
+    expect(box.className).not.toMatch(/(^|\s)(h-4|w-4|ring-1)(\s|$)/);
+    const icon = box.querySelector("svg");
+    expect(icon?.classList.contains("size-checkbox")).toBe(true);
+    expect(icon?.getAttribute("aria-hidden")).toBe("true");
+  });
+
   it("flips a labeled switch", async () => {
     const user = userEvent.setup();
     render(
