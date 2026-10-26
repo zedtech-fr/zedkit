@@ -8,6 +8,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 
 const CLI = join(ROOT, "packages", "ai", "dist", "bin.js");
+const HOME_INIT_SNIPPET = join(ROOT, "apps", "docs", "home-quickstart", "snippets", "ai-init.sh");
+const HOME_INIT_COMMAND = "npx @zedtech/zedkit-ai init";
 
 function capture(argv) {
   const result = spawnSync(process.execPath, [CLI, ...argv], {
@@ -53,6 +55,42 @@ export function runExistingAgentsTutorial(dir) {
   const validate = capture(["validate", dir]);
   if (validate.code !== 0 || validate.out.trim() !== "ok") {
     throw new Error(`validate after append failed: ${validate.out}`);
+  }
+}
+
+/** Home page command (snippet) run via workspace CLI in an empty folder — no git, no package.json. */
+export function runHomeSnippetInit(dir) {
+  const snippet = readFileSync(HOME_INIT_SNIPPET, "utf8").trim();
+  if (snippet !== HOME_INIT_COMMAND) {
+    throw new Error(`home-quickstart/snippets/ai-init.sh must be exactly: ${HOME_INIT_COMMAND}`);
+  }
+  const init = capture(["init", dir]);
+  if (init.code !== 0) {
+    throw new Error(`home init failed: ${init.err || init.out}`);
+  }
+  const required = [
+    "AGENTS.md",
+    ".agents/skills/setup-ai/SKILL.md",
+    ".cursor/commands/setup-ai.md",
+    ".claude/commands/setup-ai.md",
+    ".cursor/rules/project.mdc",
+  ];
+  for (const rel of required) {
+    if (!existsSync(join(dir, rel))) {
+      throw new Error(`home init missing ${rel}`);
+    }
+  }
+  const again = capture(["init", dir]);
+  if (again.code !== 0) {
+    throw new Error(`home init re-run failed: ${again.err || again.out}`);
+  }
+  const combined = `${again.out}\n${again.err}`;
+  if (!/skip/i.test(combined)) {
+    throw new Error("home init re-run should skip existing files");
+  }
+  const validate = capture(["validate", dir]);
+  if (validate.code !== 0 || validate.out.trim() !== "ok") {
+    throw new Error(`home init validate failed: ${validate.out} ${validate.err}`);
   }
 }
 

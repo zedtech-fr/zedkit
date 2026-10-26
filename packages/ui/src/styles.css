@@ -217,6 +217,11 @@
   --spacing-drawer-header-gap: 0.375rem;
   --spacing-drawer-footer-gap: 0.5rem;
   --spacing-drawer-chrome-padding: 1rem;
+  --spacing-select-item-inline: 0.5rem;
+  --spacing-select-item-block: 0.375rem;
+  --spacing-select-item-indicator-gap: 2rem;
+  --spacing-select-item-indicator: 0.875rem;
+  --spacing-select-separator: 0.25rem;
 }
 
 @layer base {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
+import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { KitVersionLabel } from "@/ui/kit-version-label";
@@ -34,15 +35,16 @@ export function HomeHero({
       </Stack>
       <Stack direction="horizontal" gap={2} className="flex-wrap">
         <Button asChild>
-          <Link href="#entry-points">Explore examples</Link>
+          <Link href="#ai-setup">Set up your AI agent</Link>
+        </Button>
+        <Button asChild>
+          <Link href="#quickstart">UI quickstart</Link>
         </Button>
         <Button asChild variant="outline">
           <Link href="/docs">Open documentation</Link>
         </Button>
-        <Button asChild variant="outline">
-          <Link href="#components">Browse components</Link>
-        </Button>
       </Stack>
+      <HomeAiSetupSection />
       <HomeUiQuickstartSection
         npmPackage={featuredPackage}
         siteUrl={docsSite.url}
