@@ -222,6 +222,7 @@
   --spacing-select-item-indicator-gap: 2rem;
   --spacing-select-item-indicator: 0.875rem;
   --spacing-select-separator: 0.25rem;
+  --container-select-content-min: 8rem;
 }
 
 @layer base {
