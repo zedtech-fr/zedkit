@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { MaturityBadge } from "@/components/maturity-badge";
 import { demoRegistry, type DemoKey } from "@/components/demos/registry";
 import type { GalleryCard } from "@/content/gallery";
 import type { HomeScenario } from "@/content/home-scenarios";
@@ -21,7 +22,7 @@ function GalleryEntry({ card }: { card: GalleryCard }) {
         <CardTitle>
           <Link href={card.href}>{card.title}</Link>
         </CardTitle>
-        <Badge>{card.status}</Badge>
+        <MaturityBadge status={card.status} />
       </CardHeader>
       <CardContent>
         {entry ? <entry.Demo /> : <Text variant="muted">{card.detail}</Text>}
