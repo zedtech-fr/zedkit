@@ -88,6 +88,13 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    separator: {
+      cssVars: {
+        theme: {
+          "spacing-separator-thickness": varFromBlock(theme, "spacing-separator-thickness"),
+        },
+      },
+    },
   };
 }
 

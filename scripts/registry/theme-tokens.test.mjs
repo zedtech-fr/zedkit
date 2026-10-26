@@ -17,11 +17,13 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   const drawer = registry.items.find((item) => item.name === "drawer");
   const dot = registry.items.find((item) => item.name === "status-dot");
   const check = registry.items.find((item) => item.name === "checkmark");
+  const sep = registry.items.find((item) => item.name === "separator");
   assert.deepEqual(badge.cssVars, expected.badge.cssVars);
   assert.deepEqual(badge.css, expected.badge.css);
   assert.deepEqual(drawer.cssVars, expected.drawer.cssVars);
   assert.deepEqual(dot.cssVars, expected["status-dot"].cssVars);
   assert.deepEqual(check.cssVars, expected.checkmark.cssVars);
+  assert.deepEqual(sep.cssVars, expected.separator.cssVars);
 });
 
 test("checkRegistryThemeDrift is clean on the repo", () => {

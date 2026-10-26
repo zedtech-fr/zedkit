@@ -767,7 +767,7 @@
         },
         {
           "need": "Separate content horizontally or vertically",
-          "import": "`@zedtech/zedkit-ui` — `Separator`",
+          "import": "`@zedtech/zedkit-ui` — `Separator`, `SeparatorProps`",
           "wraps": "`@radix-ui/react-separator`",
           "status": "beta",
           "shortName": "Separator",
@@ -776,13 +776,20 @@
           "whenToUse": "Between sections, menu groups, or inline items.",
           "whenNotToUse": "For spacing alone — use Stack gap instead.",
           "derivedFrom": "shadcn/ui (separator)",
-          "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />",
+          "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />",
           "examples": [
             {
-              "title": "Simple",
-              "code": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+              "title": "Horizontal rule",
+              "code": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />"
+            },
+            {
+              "title": "Vertical divider",
+              "code": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator orientation=\"vertical\" className=\"h-6\" />"
             }
           ],
+          "registry": "separator",
+          "a11y": "Decorative by default (`aria-hidden`); pass `decorative={false}` with an accessible name when it separates named regions.",
+          "troubleshooting": "Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]

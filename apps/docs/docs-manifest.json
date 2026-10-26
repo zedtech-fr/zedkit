@@ -27,7 +27,8 @@
     "Separate content horizontally or vertically": {
       "package": "@zedtech/zedkit-ui",
       "component": "Separator",
-      "props": null,
+      "registry": "separator",
+      "props": "SeparatorProps",
       "source": "separator.tsx",
       "demo": "SeparatorDemo"
     },
