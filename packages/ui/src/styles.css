@@ -1,6 +1,7 @@
 /* Derived from shadcn/ui (theme) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it. */
 @import "tailwindcss";
 @import "./identities.css";
+@import "./identity-tour.css";
 @import "./motion.css";
 
 /*

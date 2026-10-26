@@ -158,3 +158,11 @@ export {
   type IdentityScriptProps,
 } from "./identity.js";
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
+export {
+  IDENTITY_TOUR_STORAGE_KEY,
+  IdentityTour,
+  useIdentityTour,
+  type IdentityTourOptions,
+  type IdentityTourProps,
+  type IdentityTourState,
+} from "./identity-tour.js";

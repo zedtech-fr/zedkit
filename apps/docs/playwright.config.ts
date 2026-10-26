@@ -8,5 +8,11 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: "http://127.0.0.1:3100",
+    // The first-visit identity tour would change the page under every other
+    // spec, so they start as a returning visitor. identity-tour.spec.ts opts out.
+    storageState: {
+      cookies: [],
+      origins: [{ origin: "http://127.0.0.1:3100", localStorage: [{ name: "zk-identity-tour", value: "1" }] }],
+    },
   },
 });
