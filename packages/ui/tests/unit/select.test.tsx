@@ -67,6 +67,15 @@ describe("select", () => {
     expect(listbox.querySelector("[data-radix-select-viewport]")?.className).toContain("p-select-separator");
   });
 
+  it("sizes content min-width from the container token", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+    await user.click(screen.getByRole("combobox", { name: "Region" }));
+    const listbox = await screen.findByRole("listbox");
+    expect(listbox.className).toContain("min-w-select-content-min");
+    expect(listbox.className).not.toContain("min-w-[8rem]");
+  });
+
   it("shows a disabled message and reports nothing when there are no options", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

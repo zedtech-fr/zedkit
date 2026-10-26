@@ -120,6 +120,7 @@
     "Stamp data with its age": {
       "package": "@zedtech/zedkit-ui",
       "component": "UpdatedAgo",
+      "registry": "updated-ago",
       "props": "UpdatedAgoProps",
       "source": "updated-ago.tsx",
       "demo": "UpdatedAgoDemo"
@@ -143,6 +144,7 @@
     "Name an operation in progress": {
       "package": "@zedtech/zedkit-ui",
       "component": "StatusLabel",
+      "registry": "status-label",
       "props": "StatusLabelProps",
       "source": "status-label.tsx",
       "demo": "StatusLabelDemo"

@@ -282,6 +282,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
+- Registry: status-label
 - Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts
@@ -313,6 +314,8 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.
 - See also: `Name an operation in progress`
 - Examples: Simple, Custom prefix
+- Registry: updated-ago
+- Troubleshooting: Stamp never changes — it renders once per render; re-render from your polling tick or SWR refresh. Future dates read as “just now” (clamped, never “in 5 minutes”).
 
 ```ts
 import { UpdatedAgo } from "@zedtech/zedkit-ui";
