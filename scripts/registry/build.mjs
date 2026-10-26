@@ -11,7 +11,7 @@ const generatedDir = join(root, "registry/generated/ui");
 const outDir = join(root, "apps/docs/public/r");
 
 /** UI bricks published in the first registry slice (#187). */
-const REGISTRY_UI_FILES = ["badge.tsx", "drawer.tsx", "confirm-dialog.tsx"];
+const REGISTRY_UI_FILES = ["badge.tsx", "drawer.tsx", "confirm-dialog.tsx", "status-dot.tsx"];
 
 function stageTransformedSources() {
   rmSync(generatedDir, { recursive: true, force: true });

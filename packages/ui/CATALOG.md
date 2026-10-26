@@ -171,6 +171,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `StatusDot`, `StatusDotProps`, `StatusDotTone`
 - Wraps: `(none)`
 - Status: alpha
+- Registry: status-dot
 - Short name: StatusDot
 - Audience: Developers showing compact live state (lists, headers, realtime panels).
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
@@ -178,10 +179,24 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - When not to use: As the only state signal — pair it with text, never color alone.
 - A11y: `aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
+- Examples: Single tone, All tones with labels, Static ping override
+- Troubleshooting: Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.
 
 ```ts
 import { StatusDot } from "@zedtech/zedkit-ui";
 <StatusDot tone="active" /> // active | idle | success | warning | danger; decorative, pair with text
+```
+
+```ts
+import { StatusDot } from "@zedtech/zedkit-ui";
+<StatusDot tone="success" /> // Saved
+<StatusDot tone="warning" /> // Retrying…
+<StatusDot tone="danger" /> // Failed
+```
+
+```ts
+import { StatusDot } from "@zedtech/zedkit-ui";
+<StatusDot tone="active" pulse={false} /> // static dot, no ping
 ```
 
 ## Show determinate progress
