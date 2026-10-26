@@ -211,34 +211,36 @@ content is shown immediately.
 
 ## Preview every identity in the hero
 
-`IdentityCycle` crossfades a hero-sized scene through every identity, then settles on the
-visitor's own (the stored choice, or the default). It is meant for the entry page, next to a title,
-a promise and a main call to action that stay fixed.
+`IdentityCycle` crossfades a whole hero through every identity (background, type, colours, cards,
+visuals and buttons), then settles on the visitor's own (the stored choice, or the default). The
+title, the promise and the main call to action keep the same words in every identity.
 
 ```tsx
 import { IdentityCycle } from "@zedtech/zedkit-ui";
 
-// Pass the scene as children. It is rendered once for real, and once more per identity while it plays.
-<IdentityCycle className="h-56">
-  <PreviewCard />
+// Pass the whole hero as children. It is rendered once for real, and once more per identity while it plays.
+<IdentityCycle backdrop>
+  <Hero />
 </IdentityCycle>
 ```
 
 - It plays on every load of the page, in about three and a half seconds for six identities.
 - The page never changes while it plays: `data-identity` on `<html>` is untouched, nothing is written
-  to `localStorage`, and the switcher keeps showing the visitor's identity. Only the scene changes.
+  to `localStorage`, and the switcher keeps showing the visitor's identity. Only the hero changes.
 - Each identity is drawn by an `IdentityScope`, a wrapper that applies an identity to its subtree
   (`<IdentityScope identity="press">`). You can use it on its own for a preview or a comparison.
+- `backdrop` paints each identity's own page background behind the scene, edge to edge of the window
+  and a little beyond its top and bottom. Leave it off for a card.
 - It waits for the page to finish loading, for the browser to be idle and for the identities' fonts, so
   it never delays the first paint. The real scene is always in the page flow, and the animated layers
   are absolutely positioned on top of it, so nothing moves.
 - A click, a tap, a key press, a wheel or a touch stops it at once. Under `prefers-reduced-motion:
   reduce` it never plays.
-- The animated layers are hidden from assistive technology and cannot take focus.
-- Keep the text and the buttons of the page outside of it: only decoration belongs in the scene.
+- The animated layers are hidden from assistive technology and cannot take focus: keep the words
+  identical in every identity, and the real links and buttons in the real scene.
   A scoped identity does not re-skin overlays that portal out of the scene (dialogs, popovers).
 
-Pass `identities`, `stepMs`, `defaultIdentity` or `enabled` to adapt it.
+Pass `identities`, `stepMs`, `defaultIdentity`, `backdrop` or `enabled` to adapt it.
 
 ## Limits
 

@@ -1092,7 +1092,7 @@
 }
 
 /* Press: buttons get a drawn edge in the shadow colour. */
-:root[data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm),
+:root[data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm):where(:not([data-identity-scope] *)),
 [data-identity-scope][data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
   border: var(--zk-border-width) solid hsl(var(--zk-shadow-color));
 }
@@ -1105,12 +1105,33 @@
  * no backdrop-filter, or a request for less transparency, gives solid surfaces.
  */
 /* `:where()` keeps the specificity low so a state utility (hover:bg-accent) still wins. */
-:root[data-identity="glass"] :where(.bg-card, .bg-popover),
+:root[data-identity="glass"] :where(.bg-card, .bg-popover):where(:not([data-identity-scope] *)),
 [data-identity-scope][data-identity="glass"] :where(.bg-card, .bg-popover) {
   background-color: hsl(var(--card) / var(--zk-glass-alpha));
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
   -webkit-backdrop-filter: var(--zk-glass-filter);
   backdrop-filter: var(--zk-glass-filter);
+}
+/*
+ * Scoped backdrop (IdentityCycle `backdrop`): the identity's own page
+ * background behind a scoped hero, reaching both window edges. The
+ * distances to the edges are set by the component.
+ */
+[data-identity-scope][data-identity-backdrop] {
+  isolation: isolate;
+}
+[data-identity-scope][data-identity-backdrop]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--zk-cycle-bleed-l, 0px) * -1);
+  right: calc(var(--zk-cycle-bleed-r, 0px) * -1);
+  background-color: hsl(var(--background));
+  background-image: var(--zk-bg-pattern);
+  background-size: var(--zk-bg-size);
+  background-repeat: var(--zk-bg-repeat);
 }
 /* Phones: a smaller blur radius keeps scrolling smooth. */
 @media (max-width: 640px) {

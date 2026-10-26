@@ -14,7 +14,7 @@ const FONT_WAIT_MS = 1500;
 /** Wait before the first fade, so the hidden layers are laid out at opacity 0 first. */
 const ARM_MS = 80;
 /** Time the last identity stays on screen before the layers are removed. */
-const HOLD_MS = 250;
+const HOLD_MS = 150;
 /** Duration of one crossfade. Matches `duration-400` below. */
 const FADE_MS = 400;
 
@@ -103,40 +103,53 @@ type IdentityCycleProps = {
   children: React.ReactNode;
   /** Identities to cross through. Default: the built-in set. */
   identities?: readonly IdentityOption[];
-  /** Time between two identities, in milliseconds. Default 550 (six identities play in about 3.5 seconds). */
+  /** Time between two identities, in milliseconds. Default 500 (six identities play in about 3.5 seconds). */
   stepMs?: number;
   /** Identity the scene settles on when `data-identity` is absent from `<html>`. */
   defaultIdentity?: string;
   /** Set to false to never play. */
   enabled?: boolean;
+  /**
+   * Paint each identity's own background behind the scene, edge to edge of
+   * the window, a little beyond the scene's top and bottom. For a whole
+   * hero, not for a card.
+   */
+  backdrop?: boolean;
   className?: string;
 };
 
 /**
- * Hero-sized preview that crossfades through every identity, then
- * settles on the visitor's own. The scene is rendered once for real
- * (always there, in the page flow, so nothing is delayed or moved) and,
- * while the animation plays, once more per identity in an absolutely
- * positioned, hidden-from-assistive-tech layer wrapped in an
- * `IdentityScope`. Only opacity changes.
+ * Hero-sized scene that crossfades through every identity, then settles
+ * on the visitor's own. The scene is rendered once for real (always
+ * there, in the page flow, so nothing is delayed or moved) and, while the
+ * animation plays, once more per identity in an absolutely positioned,
+ * hidden-from-assistive-tech layer wrapped in an `IdentityScope`. Each
+ * layer fades in over the previous one, so colours, backgrounds, type,
+ * radii and shadows all change together and nothing dips in between;
+ * the last layer is the visitor's own identity, and fading the layers out
+ * reveals the real scene.
  *
  * It plays on every mount, after the page has loaded and gone idle. It
  * never changes `data-identity` on `<html>` and never touches
  * localStorage. A pointer press, key press, wheel or touch stops it;
- * `prefers-reduced-motion: reduce` turns it off. Keep the text and the
- * calls to action of the page outside of it: only decoration belongs
- * in the scene.
+ * `prefers-reduced-motion: reduce` turns it off. The layers repeat the
+ * scene's text unchanged: keep it identical in every identity, and
+ * keep interactive content in the real scene (the layers are inert).
  */
 function IdentityCycle({
   children,
   identities = builtInIdentities,
-  stepMs = 550,
+  stepMs = 500,
   defaultIdentity = DEFAULT_IDENTITY,
   enabled = true,
+  backdrop = false,
   className,
 }: IdentityCycleProps) {
   const [layers, setLayers] = React.useState<readonly IdentityOption[]>([]);
+  // Layers up to `active` are shown; the stack fades out from `keepFrom` once settling.
   const [active, setActive] = React.useState(-1);
+  const [keepFrom, setKeepFrom] = React.useState<number | null>(null);
+  const rootRef = React.useRef<HTMLDivElement>(null);
   const optionsRef = React.useRef({ identities, stepMs, defaultIdentity });
   optionsRef.current = { identities, stepMs, defaultIdentity };
 
@@ -157,6 +170,7 @@ function IdentityCycle({
 
     let cancelled = false;
     let ended = false;
+    let shown = -1;
     const timers: number[] = [];
     const later = (callback: () => void, ms: number) =>
       timers.push(window.setTimeout(callback, ms));
@@ -168,29 +182,28 @@ function IdentityCycle({
       for (const timer of timers) window.clearTimeout(timer);
       timers.length = 0;
     };
-    // Last step done: the top layer already looks like the page, so removing the layers changes nothing.
-    function finish() {
+    // Fade the top layers out over the real scene; the ones beneath are fully covered, so they just go.
+    function settle(from: number) {
       ended = true;
       detach();
       clear();
-      setLayers([]);
-      setActive(-1);
+      setKeepFrom(Math.max(0, from));
+      later(() => {
+        setLayers([]);
+        setActive(-1);
+        setKeepFrom(null);
+      }, FADE_MS + 50);
     }
-    // First gesture: fade back to the real scene, then drop the layers.
+    // First gesture: fade back to the real scene.
     function cut() {
       if (ended) return;
-      ended = true;
-      detach();
-      clear();
-      setActive(-1);
-      later(() => setLayers([]), FADE_MS + 50);
+      settle(shown - 1);
     }
     const show = (index: number) => {
+      shown = index;
       setActive(index);
-      later(
-        index + 1 < order.length ? () => show(index + 1) : finish,
-        index + 1 < order.length ? step : FADE_MS + HOLD_MS,
-      );
+      if (index + 1 < order.length) later(() => show(index + 1), step);
+      else later(() => settle(index), FADE_MS + HOLD_MS);
     };
 
     void (async () => {
@@ -198,6 +211,16 @@ function IdentityCycle({
       await preloadFonts(order);
       await whenVisible();
       if (cancelled) return;
+      const root = rootRef.current;
+      if (root) {
+        // The backdrop reaches both window edges: say how far they are from the scene.
+        const box = root.getBoundingClientRect();
+        root.style.setProperty("--zk-cycle-bleed-l", `${Math.max(0, box.left)}px`);
+        root.style.setProperty(
+          "--zk-cycle-bleed-r",
+          `${Math.max(0, document.documentElement.clientWidth - box.right)}px`,
+        );
+      }
       for (const name of GESTURES)
         document.addEventListener(name, cut, { capture: true, passive: true });
       setLayers(order);
@@ -212,19 +235,13 @@ function IdentityCycle({
     };
   }, [enabled]);
 
-  const running = layers.length > 0;
   return (
-    <div className={cn("relative", className)} data-identity-cycle="">
-      <div
-        data-identity-cycle-base=""
-        className={cn(
-          running &&
-            "transition-opacity duration-400 ease-in-out motion-reduce:transition-none",
-          running && active >= 0 && "opacity-0",
-        )}
-      >
-        {children}
-      </div>
+    <div
+      ref={rootRef}
+      className={cn("relative", className)}
+      data-identity-cycle=""
+    >
+      {children}
       {layers.map((item, index) => (
         <IdentityScope
           key={item.id}
@@ -232,12 +249,28 @@ function IdentityCycle({
           aria-hidden="true"
           inert
           data-identity-cycle-layer={item.id}
+          data-identity-backdrop={backdrop ? "" : undefined}
           className={cn(
-            "pointer-events-none absolute inset-0 transition-opacity duration-400 ease-in-out motion-reduce:transition-none",
-            index === active ? "opacity-100" : "opacity-0",
+            "pointer-events-none absolute inset-x-0 transition-opacity duration-400 ease-in-out motion-reduce:transition-none",
+            backdrop ? "-inset-y-3" : "inset-y-0",
+            keepFrom === null
+              ? index <= active
+                ? "opacity-100"
+                : "opacity-0"
+              : index < keepFrom
+                ? "hidden"
+                : "opacity-0",
           )}
         >
-          {children}
+          {/* contain: paint keeps the copy out of the page's largest-contentful-paint candidates. */}
+          <div
+            className={cn(
+              "absolute contain-paint",
+              backdrop ? "-inset-x-3 inset-y-0 px-3 py-3" : "inset-0",
+            )}
+          >
+            {children}
+          </div>
         </IdentityScope>
       ))}
     </div>

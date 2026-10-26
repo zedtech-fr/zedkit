@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Heading, IdentityCycle, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
 import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
@@ -20,32 +20,37 @@ export function HomeHero({
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
-      <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
-        <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-          <Text variant="muted" className="text-xs">zedkit</Text>
-          <KitVersionLabel version={version} changelogHref={changelogHref} />
+      {/* The whole hero crosses the identities on every load; its text never changes. */}
+      <IdentityCycle backdrop className="w-full">
+        <Stack gap={HOME_SECTION_CONTENT_GAP} className="items-start">
+          <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
+            <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
+              <Text variant="muted" className="text-xs">zedkit</Text>
+              <KitVersionLabel version={version} changelogHref={changelogHref} />
+            </Stack>
+            <Heading level={1} className="max-w-3xl text-balance">
+              Build the parts you need. Keep the rest of your app.
+            </Heading>
+            <Text className="max-w-2xl">
+              TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
+              need documented from the same catalog as the site, with{" "}
+              <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
+            </Text>
+          </Stack>
+          <Stack direction="horizontal" gap={2} className="flex-wrap">
+            <Button asChild>
+              <Link href="#ai-setup">Set up your AI agent</Link>
+            </Button>
+            <Button asChild>
+              <Link href="#quickstart">UI quickstart</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/docs">Open documentation</Link>
+            </Button>
+          </Stack>
+          <HomeHeroPreview />
         </Stack>
-        <Heading level={1} className="max-w-3xl text-balance">
-          Build the parts you need. Keep the rest of your app.
-        </Heading>
-        <Text className="max-w-2xl">
-          TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
-          need documented from the same catalog as the site, with{" "}
-          <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
-        </Text>
-      </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
-        <Button asChild>
-          <Link href="#ai-setup">Set up your AI agent</Link>
-        </Button>
-        <Button asChild>
-          <Link href="#quickstart">UI quickstart</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/docs">Open documentation</Link>
-        </Button>
-      </Stack>
-      <HomeHeroPreview />
+      </IdentityCycle>
       <HomeAiSetupSection />
       <HomeUiQuickstartSection
         npmPackage={featuredPackage}
