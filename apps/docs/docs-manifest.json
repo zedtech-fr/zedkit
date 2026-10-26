@@ -161,7 +161,8 @@
     "Group content in a card section": {
       "package": "@zedtech/zedkit-ui",
       "component": "Card",
-      "props": null,
+      "registry": "card",
+      "props": "CardProps",
       "source": "card.tsx",
       "demo": "CardDemo"
     },
