@@ -40,6 +40,7 @@ import {
   StatusDot,
   StatusLabel,
   UpdatedAgo,
+  OfflineNote,
   OptionCards,
   PageHeader,
   PageHeaderSkeleton,
@@ -154,6 +155,9 @@ export function Gallery() {
             <StatusLabel tone="saved">Saved</StatusLabel>
             <StatusLabel tone="error">Could not save</StatusLabel>
             <UpdatedAgo date={Date.now() - 3 * 60_000} />
+          </div>
+          <div className="max-w-sm space-y-2">
+            <OfflineNote />
           </div>
           <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-name">Name</Label>

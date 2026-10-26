@@ -363,6 +363,31 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 <UpdatedAgo date={syncedAt} prefix="Synced" />
 ```
 
+## Flag offline state with a live note
+
+- Import: `@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: OfflineNote
+- Audience: Developers telling the user the app lost connectivity.
+- Purpose: A hook reporting browser online state plus an alert-style note with overridable wording.
+- When to use: At the top of a page or panel when `useOnlineStatus()` is false.
+- When not to use: For inline operation states — use `StatusLabel`.
+- A11y: `role=alert` announces the note; icon positioning comes from `--spacing-alert-*` theme tokens.
+- See also: `Name an operation in progress`
+- Examples: Offline note, Wired to online state
+
+```ts
+import { OfflineNote } from "@zedtech/zedkit-ui";
+<OfflineNote />
+```
+
+```ts
+import { OfflineNote, useOnlineStatus } from "@zedtech/zedkit-ui";
+const online = useOnlineStatus();
+{online ? null : <OfflineNote title="No connection">Try again when you are back.</OfflineNote>}
+```
+
 ## Open modal dialogs
 
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
@@ -602,6 +627,8 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 - See also: `Build validated forms with labels, errors, and pending state`
 - Examples: Simple, Composed steps, Solo card
 - A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`. Cards are native checkboxes in labels.
+- Registry: wizard-steps
+- Troubleshooting: Steps stuck done/todo — `current` is a 0-based index; past the last step everything reads done. Missing connector — composed `WizardStep` rows show one only with `showConnector` (automatic in `WizardSteps`).
 
 ```ts
 import { OptionCards, WizardSteps } from "@zedtech/zedkit-ui";
