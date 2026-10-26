@@ -16,7 +16,12 @@ type IdentityOption = {
 
 /** Identities shipped in `identities.css`. */
 const identities: readonly IdentityOption[] = [
-  { id: "mist", label: "Mist", description: "Calm and soft: the stock look." },
+  {
+    id: "mist",
+    label: "Mist",
+    description: "Calm and soft: the stock look.",
+    fonts: ["Inter Variable"],
+  },
   {
     id: "press",
     label: "Press",

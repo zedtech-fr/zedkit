@@ -83,6 +83,10 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
   expect(mist.border).toBe(1);
   expect(mist.padding).toBe(16);
 
+  // Mist shares its body font with tide and glass: distinctness is judged on
+  // the whole signature (fonts, radius, spacing), not the body font alone.
+  const signature = (m: Awaited<ReturnType<typeof measure>>) =>
+    [m.bodyFont, m.headingFont, m.radius, m.padding].join("|");
   for (const identity of IDENTITIES.filter((i) => i !== "mist")) {
     await identitySelect(page).selectOption(identity);
     await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
@@ -94,7 +98,7 @@ test("switcher lists every identity, changes tokens, and persists", async ({ pag
     expect(got.border, identity).toBe(sig.border);
     expect(got.padding, identity).toBeCloseTo(sig.padding, 1);
     expect(got.shadow, identity).toMatch(sig.shadow);
-    expect(got.bodyFont, identity).not.toBe(mist.bodyFont);
+    expect(signature(got), identity).not.toBe(signature(mist));
   }
 
   await identitySelect(page).selectOption("maison");

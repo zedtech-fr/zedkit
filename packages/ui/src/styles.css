@@ -1,5 +1,6 @@
 /* Derived from shadcn/ui (theme) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it. */
 @import "tailwindcss";
+@import "./font-fallbacks.css";
 @import "./identities.css";
 @import "./motion.css";
 
@@ -7,8 +8,10 @@
  * zedkit admin theme: neutral, calm, readable. Dark/light via the
  * `.dark` class on <html> (next-themes `attribute="class"`).
  * Consumers import this file once (see README) and add one `@source`
- * line so Tailwind scans the components. System font stack on
- * purpose: no font dependency, no layout shift.
+ * line so Tailwind scans the components. The kit ships no font files:
+ * identities name self-hosted variable fonts when the app provides them
+ * (the docs site does) and every stack carries a metric-aligned local
+ * fallback (see font-fallbacks.css), so the swap keeps line boxes stable.
  */
 :root,
 [data-identity-scope][data-identity="mist"] {
