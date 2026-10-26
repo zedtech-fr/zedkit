@@ -6,8 +6,6 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Nested-interactive + link names without axe (home until layout axe is stable). */
   linkAndInteractiveAudit?: boolean;
-  /** Skip entire row when the static export has no page yet. */
-  pendingPath?: boolean;
   /** Wide MDX tables/code: #385 column width is covered by docs-mobile-layout.spec.ts. */
   skipMobileOverflow?: boolean;
 }
@@ -19,42 +17,46 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     strictSemantics: false,
     linkAndInteractiveAudit: true,
   },
-  { path: "/docs", label: "docs-index", strictSemantics: true, skipMobileOverflow: true },
+  {
+    path: "/docs",
+    label: "docs-index",
+    strictSemantics: true,
+    // Overflow check flaky here (verified 2026-10-26); mobile lane owns the fix.
+    skipMobileOverflow: true,
+  },
   {
     path: "/docs/getting-started",
     label: "getting-started",
     strictSemantics: true,
+    // Still overflows at phone width (verified 2026-10-26); mobile lane owns the fix.
     skipMobileOverflow: true,
   },
   {
     path: "/docs/build-an-admin-dashboard",
     label: "tutorial-dashboard",
     strictSemantics: true,
-    skipMobileOverflow: true,
   },
   {
     path: "/docs/set-up-your-coding-agents",
     label: "tutorial-agents",
     strictSemantics: true,
+    // Overflows in CI while green locally (verified 2026-10-26); mobile lane owns the fix.
     skipMobileOverflow: true,
   },
   {
     path: "/docs/nest/start-a-safe-nestjs-api",
     label: "tutorial-nest",
     strictSemantics: true,
-    skipMobileOverflow: true,
   },
   {
     path: "/docs/add-seo-to-nextjs",
     label: "tutorial-seo",
     strictSemantics: true,
-    skipMobileOverflow: true,
   },
   {
     path: "/docs/zedkit-and-shadcn",
     label: "tutorial-shadcn",
     strictSemantics: true,
-    skipMobileOverflow: true,
   },
 ];
 

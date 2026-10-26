@@ -7,39 +7,41 @@ import {
   CardTitle,
   Section,
   Stack,
-  Stagger,
   Text,
 } from "@zedtech/zedkit-ui";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
+import {
+  HOME_CARD_CONTENT_GAP,
+  HOME_CARD_GRID_TWO_COL,
+  HOME_SECTION_CONTENT_GAP,
+} from "@/ui/home/home-rhythm";
 
 export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntryPoint[] }) {
   return (
-    <Section title="Choose an area" id="entry-points">
-      <Stack gap={4}>
-        <Text variant="muted">
-          Four package families in the catalog — counts come from the generated index, not
-          hand-maintained numbers.
-        </Text>
-        <Stagger className="grid min-w-0 gap-4 md:grid-cols-2">
+    <Section
+      title="Choose an area"
+      id="entry-points"
+      description="Four package families in the catalog — counts come from the generated index, not hand-maintained numbers."
+    >
+      <Stack gap={HOME_SECTION_CONTENT_GAP}>
+        <Stack className={HOME_CARD_GRID_TWO_COL}>
           {entryPoints.map((entry) => (
-            <Card key={entry.href} className="hover-lift">
+            <Card key={entry.href} className="min-w-0">
               <CardHeader>
                 <CardTitle>{entry.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <Stack gap={3}>
-                  <Text className="text-sm">{entry.summary}</Text>
-                  <Text variant="muted" className="text-sm">
-                    {entry.needCount} documented needs in the catalog
-                  </Text>
-                  <Button asChild variant="secondary" size="sm" className="max-w-full whitespace-normal">
-                    <Link href={entry.href} className="text-center">{entry.linkLabel}</Link>
+                <Stack gap={HOME_CARD_CONTENT_GAP}>
+                  <Text variant="muted">{entry.summary}</Text>
+                  <Text variant="muted">{entry.needCount} documented needs in the catalog</Text>
+                  <Button asChild variant="ghost" size="sm" className="w-fit">
+                    <Link href={entry.href}>{entry.linkLabel}</Link>
                   </Button>
                 </Stack>
               </CardContent>
             </Card>
           ))}
-        </Stagger>
+        </Stack>
       </Stack>
     </Section>
   );

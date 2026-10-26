@@ -171,6 +171,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `StatusDot`, `StatusDotProps`, `StatusDotTone`
 - Wraps: `(none)`
 - Status: alpha
+- Registry: status-dot
 - Short name: StatusDot
 - Audience: Developers showing compact live state (lists, headers, realtime panels).
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
@@ -178,10 +179,24 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - When not to use: As the only state signal — pair it with text, never color alone.
 - A11y: `aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
+- Examples: Single tone, All tones with labels, Static ping override
+- Troubleshooting: Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.
 
 ```ts
 import { StatusDot } from "@zedtech/zedkit-ui";
 <StatusDot tone="active" /> // active | idle | success | warning | danger; decorative, pair with text
+```
+
+```ts
+import { StatusDot } from "@zedtech/zedkit-ui";
+<StatusDot tone="success" /> // Saved
+<StatusDot tone="warning" /> // Retrying…
+<StatusDot tone="danger" /> // Failed
+```
+
+```ts
+import { StatusDot } from "@zedtech/zedkit-ui";
+<StatusDot tone="active" pulse={false} /> // static dot, no ping
 ```
 
 ## Show determinate progress
@@ -221,6 +236,8 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - See also: `Show toast notifications`
 - Examples: Simple, Decorative
 - A11y: Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.
+- Registry: checkmark
+- Troubleshooting: No draw animation — the path animates only under `motion-safe`; reduced motion shows the static check by design. Announced twice — pass `label` once (it names the `role="img"`); nearby text should not repeat it. Registry copies without the theme show the static check (the `zk-check-draw` keyframes live in `styles.css`).
 
 ```ts
 import { Checkmark } from "@zedtech/zedkit-ui";
@@ -264,10 +281,23 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
 - A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
+- Examples: Loading operation, Saved and error states, Offline state
+- Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
 
 ```ts
 import { StatusLabel } from "@zedtech/zedkit-ui";
 <StatusLabel tone="loading">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status
+```
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="saved">All changes saved</StatusLabel>
+<StatusLabel tone="error">Could not save</StatusLabel>
+```
+
+```ts
+import { StatusLabel } from "@zedtech/zedkit-ui";
+<StatusLabel tone="offline">You are offline</StatusLabel>
 ```
 
 ## Stamp data with its age
@@ -399,6 +429,8 @@ import { Button, Drawer, DrawerContent, DrawerHandle, DrawerTitle, DrawerTrigger
 - Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
 - When to use: Inside an intercepting `@modal` slot, with `onClose` wired to `closeRoute`.
 - When not to use: For state-driven modals — use `Dialog`/`Drawer` directly with local state.
+- A11y: Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live.
+- Composition: Variant props kept deliberately — the variant selects between two Radix roots sharing one exit orchestration, which slots cannot express; custom layouts compose `Dialog`/`Drawer` directly.
 - See also: `Slide in a drawer panel`, `Open modal dialogs`, `Confirm destructive actions`
 
 ```ts

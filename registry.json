@@ -61,6 +61,39 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "status-dot",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/status-dot.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-status-dot": "0.5rem"
+        }
+      }
+    },
+    {
+      "name": "checkmark",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/checkmark.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-checkmark": "1rem",
+          "animate-check-draw": "zk-check-draw 0.45s ease-out forwards"
+        }
+      }
     }
   ]
 }

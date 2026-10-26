@@ -22,7 +22,9 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ fontSize: 96, fontWeight: 600, letterSpacing: "-0.04em" }}>zedkit</div>
-        <div style={{ fontSize: 32, marginTop: 16, opacity: 0.75 }}>Open-source TypeScript packages</div>
+        <div style={{ fontSize: 32, marginTop: 16, opacity: 0.75 }}>
+          TypeScript packages and coding-agent setup for your repo
+        </div>
       </div>
     ),
     { ...size },

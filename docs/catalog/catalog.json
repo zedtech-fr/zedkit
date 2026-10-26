@@ -823,11 +823,21 @@
           "example": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Single tone",
               "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" /> // active | idle | success | warning | danger; decorative, pair with text"
+            },
+            {
+              "title": "All tones with labels",
+              "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"success\" /> // Saved\n<StatusDot tone=\"warning\" /> // Retrying…\n<StatusDot tone=\"danger\" /> // Failed"
+            },
+            {
+              "title": "Static ping override",
+              "code": "import { StatusDot } from \"@zedtech/zedkit-ui\";\n<StatusDot tone=\"active\" pulse={false} /> // static dot, no ping"
             }
           ],
+          "registry": "status-dot",
           "a11y": "`aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.",
+          "troubleshooting": "Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.",
           "seeAlso": [
             "Show a status or count badge",
             "Show key-value details and a live indicator"
@@ -882,7 +892,9 @@
               "code": "import { Checkmark } from \"@zedtech/zedkit-ui\";\n<Checkmark /> // decorative, pair with visible text"
             }
           ],
+          "registry": "checkmark",
           "a11y": "Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.",
+          "troubleshooting": "No draw animation — the path animates only under `motion-safe`; reduced motion shows the static check by design. Announced twice — pass `label` once (it names the `role=\"img\"`); nearby text should not repeat it. Registry copies without the theme show the static check (the `zk-check-draw` keyframes live in `styles.css`).",
           "seeAlso": [
             "Show toast notifications"
           ]
@@ -923,11 +935,20 @@
           "example": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Loading operation",
               "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"loading\">Saving report…</StatusLabel> // loading|updating|syncing|saved|retry|error|offline, role=status"
+            },
+            {
+              "title": "Saved and error states",
+              "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"saved\">All changes saved</StatusLabel>\n<StatusLabel tone=\"error\">Could not save</StatusLabel>"
+            },
+            {
+              "title": "Offline state",
+              "code": "import { StatusLabel } from \"@zedtech/zedkit-ui\";\n<StatusLabel tone=\"offline\">You are offline</StatusLabel>"
             }
           ],
           "a11y": "`role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.",
+          "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
           "seeAlso": [
             "Stamp data with its age"
           ]
@@ -1060,6 +1081,7 @@
               "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>"
             }
           ],
+          "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live.",
           "seeAlso": [
             "Slide in a drawer panel",
             "Open modal dialogs",

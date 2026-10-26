@@ -73,6 +73,21 @@ export function expectedRegistryThemeFromStyles(cssText) {
         dark: { overlay: varFromBlock(dark, "overlay") },
       },
     },
+    "status-dot": {
+      cssVars: {
+        theme: {
+          "spacing-status-dot": varFromBlock(theme, "spacing-status-dot"),
+        },
+      },
+    },
+    checkmark: {
+      cssVars: {
+        theme: {
+          "spacing-checkmark": varFromBlock(theme, "spacing-checkmark"),
+          "animate-check-draw": varFromBlock(theme, "animate-check-draw"),
+        },
+      },
+    },
   };
 }
 

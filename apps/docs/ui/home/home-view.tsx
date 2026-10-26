@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, Card, CardContent, CardHeader, CardTitle, Reveal, Section, Stack, Stagger, Text } from "@zedtech/zedkit-ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { MaturityBadge } from "@/components/maturity-badge";
 import { demoRegistry, type DemoKey } from "@/components/demos/registry";
 import type { GalleryCard } from "@/content/gallery";
@@ -9,6 +9,12 @@ import { HomeEntryPointsSection } from "@/ui/home/home-entry-points-section";
 import { HomeHero } from "@/ui/home/home-hero";
 import { HomeProofs } from "@/ui/home/home-proofs";
 import { HomeScenariosSection } from "@/ui/home/home-scenarios-section";
+import {
+  HOME_CARD_GRID_THREE_COL,
+  HOME_PAGE_SECTION_GAP,
+  HOME_PAGE_SHELL_CLASS,
+  HOME_SECTION_CONTENT_GAP,
+} from "@/ui/home/home-rhythm";
 
 function isDemoKey(value: string | null): value is DemoKey {
   return value !== null && value in demoRegistry;
@@ -17,7 +23,7 @@ function isDemoKey(value: string | null): value is DemoKey {
 function GalleryEntry({ card }: { card: GalleryCard }) {
   const entry = isDemoKey(card.demo) ? demoRegistry[card.demo] : null;
   return (
-    <Card className="hover-lift">
+    <Card className="min-w-0">
       <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle>
           <Link href={card.href}>{card.title}</Link>
@@ -55,14 +61,10 @@ export function HomeView({
   themeHref: string;
 }) {
   return (
-    <Stack gap={8} className="relative isolate mx-auto w-full max-w-5xl min-w-0 overflow-x-hidden px-6 py-12">
+    <Stack id="home-page" gap={HOME_PAGE_SECTION_GAP} className={HOME_PAGE_SHELL_CLASS}>
       <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
-      <Reveal>
-        <HomeEntryPointsSection entryPoints={entryPoints} />
-      </Reveal>
-      <Reveal>
-        <HomeScenariosSection scenarios={scenarios} />
-      </Reveal>
+      <HomeEntryPointsSection entryPoints={entryPoints} />
+      <HomeScenariosSection scenarios={scenarios} />
       <HomeProofs
         packages={stats.packages}
         needs={stats.needs}
@@ -70,17 +72,17 @@ export function HomeView({
         livePreviews={uiGalleryStats.livePreviews}
         themeHref={themeHref}
       />
-      <Section title="Components" id="components">
-        <Stack gap={4}>
-          <Text variant="muted">
-            Curated UI previews ({curatedGallery.length} of {galleryCount} components). Open the catalog to filter
-            every need across UI, backend, SEO, and agents.
-          </Text>
-          <Stagger className="grid gap-4 md:grid-cols-3">
+      <Section
+        title="Components"
+        id="components"
+        description={`Curated UI previews (${curatedGallery.length} of ${galleryCount} components). Open the catalog to filter every need across UI, backend, SEO, and agents.`}
+      >
+        <Stack gap={HOME_SECTION_CONTENT_GAP}>
+          <Stack className={HOME_CARD_GRID_THREE_COL}>
             {curatedGallery.map((card) => (
               <GalleryEntry key={card.href} card={card} />
             ))}
-          </Stagger>
+          </Stack>
           <Button asChild variant="outline">
             <Link href="/catalog">Browse full catalog</Link>
           </Button>

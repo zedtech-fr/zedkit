@@ -197,7 +197,7 @@
   --spacing-dialog-padding: calc(1.5rem * var(--zk-density, 1));
   --spacing-dialog-header-stack: calc(0.375rem * var(--zk-density, 1));
   --spacing-dialog-footer-gap: calc(0.5rem * var(--zk-density, 1));
-  --spacing-dialog-close-offset: 1rem;
+  --spacing-overlay-close-offset: 1rem;
   --spacing-app-shell-sidebar: 16rem;
   --spacing-app-shell-padding: calc(1rem * var(--zk-density, 1));
   --spacing-app-shell-padding-md: calc(1.5rem * var(--zk-density, 1));
@@ -206,12 +206,24 @@
   --spacing-table-head-height: calc(2.5rem * var(--zk-control-scale, 1));
   --spacing-table-checkbox-nudge: 0.125rem;
   --spacing-table-caption-gap: calc(1rem * var(--zk-density, 1));
-  --spacing-route-modal-close-offset: 1rem;
   --container-route-modal-sm: 24rem;
   --container-route-modal-drawer-lg: 32rem;
   --container-route-modal-dialog-lg: 42rem;
   --spacing-form-item-gap: calc(0.5rem * var(--zk-density, 1));
   --text-form-hint: 0.8rem;
+  --spacing-drawer-max-height: 96dvh;
+  --container-drawer-side: 28rem;
+  --spacing-drawer-handle-top: 1rem;
+  --spacing-drawer-handle-height: 0.375rem;
+  --spacing-drawer-handle-width: 3rem;
+  --spacing-drawer-header-gap: 0.375rem;
+  --spacing-drawer-footer-gap: 0.5rem;
+  --spacing-drawer-chrome-padding: 1rem;
+  --spacing-select-item-inline: 0.5rem;
+  --spacing-select-item-block: 0.375rem;
+  --spacing-select-item-indicator-gap: 2rem;
+  --spacing-select-item-indicator: 0.875rem;
+  --spacing-select-separator: 0.25rem;
 }
 
 @layer base {

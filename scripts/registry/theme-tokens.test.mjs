@@ -9,15 +9,19 @@ import { checkRegistryThemeDrift, expectedRegistryThemeFromStyles } from "./them
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
-test("expectedRegistryThemeFromStyles matches registry.json badge and drawer", () => {
+test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and status-dot", () => {
   const css = readFileSync(join(root, "packages/ui/src/styles.css"), "utf8");
   const registry = JSON.parse(readFileSync(join(root, "registry.json"), "utf8"));
   const expected = expectedRegistryThemeFromStyles(css);
   const badge = registry.items.find((item) => item.name === "badge");
   const drawer = registry.items.find((item) => item.name === "drawer");
+  const dot = registry.items.find((item) => item.name === "status-dot");
+  const check = registry.items.find((item) => item.name === "checkmark");
   assert.deepEqual(badge.cssVars, expected.badge.cssVars);
   assert.deepEqual(badge.css, expected.badge.css);
   assert.deepEqual(drawer.cssVars, expected.drawer.cssVars);
+  assert.deepEqual(dot.cssVars, expected["status-dot"].cssVars);
+  assert.deepEqual(check.cssVars, expected.checkmark.cssVars);
 });
 
 test("checkRegistryThemeDrift is clean on the repo", () => {

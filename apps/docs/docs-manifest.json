@@ -127,9 +127,25 @@
     "Celebrate completion with a checkmark": {
       "package": "@zedtech/zedkit-ui",
       "component": "Checkmark",
+      "registry": "checkmark",
       "props": "CheckmarkProps",
       "source": "checkmark.tsx",
       "demo": "CheckmarkDemo"
+    },
+    "Indicate status with a dot": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StatusDot",
+      "registry": "status-dot",
+      "props": "StatusDotProps",
+      "source": "status-dot.tsx",
+      "demo": "StatusDotDemo"
+    },
+    "Name an operation in progress": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StatusLabel",
+      "props": "StatusLabelProps",
+      "source": "status-label.tsx",
+      "demo": "StatusLabelDemo"
     },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",

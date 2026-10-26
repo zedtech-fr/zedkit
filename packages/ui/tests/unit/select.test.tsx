@@ -46,6 +46,26 @@ describe("select", () => {
     await screen.findByRole("listbox");
   });
 
+  it("styles label, item, and indicator from item tokens", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+    await user.click(screen.getByRole("combobox", { name: "Region" }));
+    const option = await screen.findByRole("option", { name: "Europe" });
+    for (const token of ["py-select-item-block", "pr-select-item-indicator-gap", "pl-select-item-inline"]) {
+      expect(option.className).toContain(token);
+    }
+    expect(option.className).not.toMatch(/(^|\s)(py-1\.5|pr-8|pl-2)(\s|$)/);
+  });
+
+  it("styles viewport padding and popper offsets from tokens", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+    await user.click(screen.getByRole("combobox", { name: "Region" }));
+    const listbox = await screen.findByRole("listbox");
+    expect(listbox.className).toContain("translate-y-select-separator");
+    expect(listbox.querySelector("[data-radix-select-viewport]")?.className).toContain("p-select-separator");
+  });
+
   it("shows a disabled message and reports nothing when there are no options", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

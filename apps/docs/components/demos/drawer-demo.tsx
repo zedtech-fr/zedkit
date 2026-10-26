@@ -6,6 +6,9 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
+  DrawerHandle,
+  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@zedtech/zedkit-ui";
@@ -17,11 +20,16 @@ export function DrawerDemo() {
         <Button variant="outline">Open drawer</Button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerClose asChild>
-          <Button variant="ghost" size="sm">Close</Button>
-        </DrawerClose>
-        <DrawerTitle>Details</DrawerTitle>
-        <DrawerDescription>Side panel beside the list (full width on small screens).</DrawerDescription>
+        <DrawerHandle />
+        <DrawerHeader>
+          <DrawerTitle>Details</DrawerTitle>
+          <DrawerDescription>Side panel beside the list (full width on small screens).</DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button variant="ghost" size="sm">Close</Button>
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
