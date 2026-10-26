@@ -140,6 +140,15 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "app-shell": {
+      cssVars: {
+        theme: {
+          "spacing-app-shell-sidebar": varFromBlock(theme, "spacing-app-shell-sidebar"),
+          "spacing-app-shell-padding": varFromBlock(theme, "spacing-app-shell-padding"),
+          "spacing-app-shell-padding-md": varFromBlock(theme, "spacing-app-shell-padding-md"),
+        },
+      },
+    },
   };
 }
 

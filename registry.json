@@ -236,6 +236,24 @@
           "spacing-card-padding": "1.5rem"
         }
       }
+    },
+    {
+      "name": "app-shell",
+      "type": "registry:ui",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/app-shell.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-app-shell-sidebar": "16rem",
+          "spacing-app-shell-padding": "1rem",
+          "spacing-app-shell-padding-md": "1.5rem"
+        }
+      }
     }
   ]
 }

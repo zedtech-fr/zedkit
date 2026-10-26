@@ -93,6 +93,7 @@
     "Lay out an admin page (sidebar + topbar + header)": {
       "package": "@zedtech/zedkit-ui",
       "component": "AppShell",
+      "registry": "app-shell",
       "props": "AppShellProps",
       "source": "app-shell.tsx",
       "demo": "AppShellDemo"
