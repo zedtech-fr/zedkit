@@ -93,13 +93,17 @@ const JS_BRACE = "{ts,tsx,mts,cts,js,jsx,mjs,cjs}";
 
 // Flat-config `files` never matches a bare directory (`app/ui/**` matches
 // nothing): dir-style entries become `dir/**/*.{exts}`. Entries that
-// already name files (`**/*.tsx`, braces) pass through untouched.
+// already name files (`**/*.tsx`, braces) pass through untouched. A leaf
+// containing a dot counts as a file pattern, so a directory whose own
+// name has a dot must use a trailing `/**` to be treated as a folder.
 function asFiles(patterns) {
-  return patterns.map((entry) =>
-    /(\{[^}]*\}|\*\.[*a-z0-9]+|\.[a-z0-9]+)$/i.test(entry)
-      ? entry
-      : `${entry.replace(/\/\*\*$/, "").replace(/\/?$/, "")}/**/*.${JS_BRACE}`,
-  );
+  return patterns.map((entry) => {
+    const leaf = entry.slice(entry.lastIndexOf("/") + 1);
+    if (entry.endsWith("}") || leaf.includes(".")) return entry;
+    const stripped = entry.endsWith("/**") ? entry.slice(0, -3) : entry;
+    const dir = stripped.endsWith("/") ? stripped.slice(0, -1) : stripped;
+    return `${dir}/**/*.${JS_BRACE}`;
+  });
 }
 
 /**
