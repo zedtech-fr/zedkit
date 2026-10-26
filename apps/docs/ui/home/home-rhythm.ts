@@ -6,3 +6,7 @@ export const HOME_CARD_CONTENT_GAP = 3;
 export const HOME_PAGE_SHELL_CLASS = "mx-auto w-full min-w-0 max-w-5xl px-card-padding py-8";
 export const HOME_CARD_GRID_TWO_COL = "grid min-w-0 gap-4 md:grid-cols-2";
 export const HOME_CARD_GRID_THREE_COL = "grid min-w-0 gap-4 md:grid-cols-3";
+
+/** Soft enter animation; static when prefers-reduced-motion (kit motion tokens). */
+export const HOME_SECTION_REVEAL_CLASS =
+  "motion-safe:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]";

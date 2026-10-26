@@ -82,6 +82,29 @@ Use our internal style guide.
 
 Run the same `init` command. When `AGENTS.md` exists but lacks the kit ladder section, `init` **appends** the ladder instead of replacing your text ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). Run `validate` again; stdout should still be `ok`. CI covers this in `runExistingAgentsTutorial` (`apps/docs/fixtures/ai-agent-tutorial.mjs`).
 
+## What gets installed
+
+After `npx @zedtech/zedkit-ai init` (same command as the [home page](/#ai-setup)), you get a project-owned tree the agent tools read:
+
+```text
+AGENTS.md                 # root instructions (template or appended ladder)
+CLAUDE.md                 # symlink to AGENTS.md
+.agents/
+  skills/                 # bundled skills (including setup-ai)
+  agents/                 # subagent briefs
+  commands/               # slash-command sources
+  personas.md
+.cursor/
+  rules/project.mdc       # always-on Cursor rules
+  commands/setup-ai.md    # runs the setup-ai skill
+  skills/                 # symlink into .agents/skills
+.claude/
+  commands/setup-ai.md
+  skills/                 # symlink into .agents/skills
+```
+
+`init` logs every path it creates. It never overwrites an existing file.
+
 ## Undo
 
 `init` only adds or appends files. To remove the kit:
