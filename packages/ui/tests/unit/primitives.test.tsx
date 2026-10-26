@@ -117,6 +117,19 @@ describe("primitives", () => {
     expect(alerts[1]?.className).toContain("text-destructive");
   });
 
+  it("merges alert styles onto an asChild section", () => {
+    render(
+      <Alert asChild>
+        <section aria-label="Maintenance notice">
+          <AlertTitle>Scheduled maintenance</AlertTitle>
+        </section>
+      </Alert>,
+    );
+    const section = screen.getByRole("alert", { name: "Maintenance notice" });
+    expect(section.tagName).toBe("SECTION");
+    expect(section.className).toContain("px-alert-inline");
+  });
+
   it("renders a textarea with its placeholder", () => {
     render(<Textarea placeholder="A few words." aria-label="Bio" />);
     expect(screen.getByLabelText("Bio")).toHaveProperty("placeholder", "A few words.");
