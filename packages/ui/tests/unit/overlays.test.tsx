@@ -118,6 +118,22 @@ describe("overlays", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it("renders any trigger element via the asChild slot", async () => {
+    const user = userEvent.setup();
+    render(
+      <ConfirmDialog
+        trigger={<a href="/items">Delete item</a>}
+        title="Delete item?"
+        description="This cannot be undone."
+        onConfirm={() => {}}
+      />,
+    );
+    const trigger = screen.getByRole("link", { name: "Delete item" });
+    expect(trigger.getAttribute("href")).toBe("/items");
+    await user.click(trigger);
+    expect(screen.getByRole("dialog")).not.toBeNull();
+  });
+
   it("shows a toast through the themed viewport", async () => {
     render(<Toaster />);
     toast("Saved");
