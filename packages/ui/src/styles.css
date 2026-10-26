@@ -179,6 +179,10 @@
   --spacing-app-shell-padding: 1rem;
   --spacing-app-shell-padding-md: 1.5rem;
   --z-index-overlay: 50;
+  --spacing-table-cell: 0.5rem;
+  --spacing-table-head-height: 2.5rem;
+  --spacing-table-checkbox-nudge: 0.125rem;
+  --spacing-table-caption-gap: 1rem;
 }
 
 @layer base {
