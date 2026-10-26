@@ -6,6 +6,10 @@ import { vi } from "vitest";
  * `beforeAll` in the suites that open a drawer.
  */
 export function stubDrawerJsdom(matches = false): void {
+  Object.defineProperty(window, "innerWidth", {
+    configurable: true,
+    value: matches ? 390 : 1024,
+  });
   window.matchMedia = (query: string) => ({
     matches,
     media: query,

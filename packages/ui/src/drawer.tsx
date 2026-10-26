@@ -36,7 +36,13 @@ function resolveDrawerDirection(
 function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
   const isMobile = useMobileViewport();
   const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
-  return <DrawerPrimitive.Root direction={resolvedDirection} {...props} />;
+  return (
+    <DrawerPrimitive.Root
+      key={`${resolvedDirection}-${isMobile ? "narrow" : "wide"}`}
+      direction={resolvedDirection}
+      {...props}
+    />
+  );
 }
 
 const DrawerTrigger = DrawerPrimitive.Trigger;
@@ -87,8 +93,8 @@ function DrawerContent({
           "fixed z-overlay flex flex-col border bg-background outline-none",
           "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
           "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl",
-          "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:h-auto data-[vaul-drawer-direction=right]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=right]:w-full data-[vaul-drawer-direction=right]:sm:h-full data-[vaul-drawer-direction=right]:sm:max-h-none data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
-          "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:h-auto data-[vaul-drawer-direction=left]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=left]:w-full data-[vaul-drawer-direction=left]:sm:h-full data-[vaul-drawer-direction=left]:sm:max-h-none data-[vaul-drawer-direction=left]:sm:max-w-drawer-side",
+          "data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:top-0 data-[vaul-drawer-direction=right]:max-sm:bottom-auto data-[vaul-drawer-direction=right]:max-sm:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=right]:max-sm:w-full data-[vaul-drawer-direction=right]:sm:inset-y-0 data-[vaul-drawer-direction=right]:sm:h-full data-[vaul-drawer-direction=right]:sm:max-h-none data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
+          "data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:top-0 data-[vaul-drawer-direction=left]:max-sm:bottom-auto data-[vaul-drawer-direction=left]:max-sm:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=left]:max-sm:w-full data-[vaul-drawer-direction=left]:sm:inset-y-0 data-[vaul-drawer-direction=left]:sm:h-full data-[vaul-drawer-direction=left]:sm:max-h-none data-[vaul-drawer-direction=left]:sm:max-w-drawer-side",
           className,
         )}
         {...props}

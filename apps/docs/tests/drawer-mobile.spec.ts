@@ -16,8 +16,6 @@ test.describe("drawer mobile sheet (refs #425)", () => {
     await page.getByRole("button", { name: "Open drawer" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible({ timeout: 10_000 });
-    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "bottom");
-
     const viewport = page.viewportSize();
     expect(viewport).not.toBeNull();
     const box = await dialog.boundingBox();
@@ -25,7 +23,9 @@ test.describe("drawer mobile sheet (refs #425)", () => {
     if (box && viewport) {
       expect(box.height).toBeLessThanOrEqual(viewport.height * 0.92);
       expect(box.y).toBeGreaterThan(0);
+      expect(box.height).toBeLessThan(viewport.height);
     }
+    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "bottom");
 
     const overlay = page.locator("[data-vaul-overlay]");
     await expect(overlay).toBeVisible();
