@@ -6,9 +6,13 @@ import {
   ConfirmDialog,
   DataTable,
   Drawer,
+  DrawerBody,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
+  DrawerHandle,
+  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
   Field,
@@ -46,16 +50,23 @@ export function AdminDashboardPage() {
               <Button variant="outline" size="sm">Edit</Button>
             </DrawerTrigger>
             <DrawerContent>
-              <DrawerClose asChild>
-                <Button variant="ghost" size="sm">Close</Button>
-              </DrawerClose>
-              <DrawerTitle>Edit {row.original.name}</DrawerTitle>
-              <DrawerDescription>Update the display name. Focus returns here when you close the drawer.</DrawerDescription>
-              <Field>
-                <FieldLabel htmlFor={`name-${row.id}`}>Name</FieldLabel>
-                <Input id={`name-${row.id}`} defaultValue={row.original.name} />
-              </Field>
-              <Button type="button">Save</Button>
+              <DrawerHandle />
+              <DrawerHeader>
+                <DrawerTitle>Edit {row.original.name}</DrawerTitle>
+                <DrawerDescription>Update the display name. Focus returns here when you close the drawer.</DrawerDescription>
+              </DrawerHeader>
+              <DrawerBody>
+                <Field>
+                  <FieldLabel htmlFor={`name-${row.id}`}>Name</FieldLabel>
+                  <Input id={`name-${row.id}`} defaultValue={row.original.name} />
+                </Field>
+              </DrawerBody>
+              <DrawerFooter>
+                <Button type="button">Save</Button>
+                <DrawerClose asChild>
+                  <Button type="button" variant="outline">Close</Button>
+                </DrawerClose>
+              </DrawerFooter>
             </DrawerContent>
           </Drawer>
           <ConfirmDialog

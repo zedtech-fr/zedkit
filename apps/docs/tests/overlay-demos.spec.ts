@@ -35,7 +35,7 @@ test.describe("docs live overlay demos", () => {
       await page.getByRole("button", { name: trigger }).click();
       const overlay = page.getByRole("dialog");
       await expect(overlay).toBeVisible({ timeout: 10_000 });
-      await expect(overlay.getByText("Details")).toBeVisible();
+      await expect(overlay.getByRole("heading", { name: "Details" })).toBeVisible();
       await expectNoAxeViolations(page, '[role="dialog"]');
       await page.keyboard.press("Escape");
       await expect(overlay).toBeHidden();

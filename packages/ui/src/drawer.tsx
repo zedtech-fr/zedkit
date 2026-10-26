@@ -1,16 +1,73 @@
 // Derived from shadcn/ui (drawer) — see Provenance in packages/ui/README.md. Adapted: direction-aware
 // positioning via data variants (vaul sets data-vaul-drawer-direction on the content), drag handle and
 // close left to the consumer to compose, ref-as-prop (React 19). Vaul injects its own base CSS
-// (drag transitions, open/close keyframes) at import; the kit adds no drawer CSS.
+// (drag transitions, open/close keyframes) at import; the kit retunes motion in styles.css.
 "use client";
 
 import * as React from "react";
+import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
+import { Button } from "./button.js";
 import { cn } from "./utils.js";
 
-type DrawerProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Root>;
+/** Matches Tailwind `sm` (640px): phones and narrow viewports. */
+const MOBILE_MEDIA = "(max-width: 639px)";
 
-const Drawer = DrawerPrimitive.Root;
+function readMobileViewport(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  return window.innerWidth < 640 || window.matchMedia(MOBILE_MEDIA).matches;
+}
+
+function useMobileViewport(): boolean {
+  const [isMobile, setIsMobile] = React.useState(readMobileViewport);
+
+  React.useLayoutEffect(() => {
+    const sync = () => setIsMobile(readMobileViewport());
+    sync();
+    const mql = window.matchMedia(MOBILE_MEDIA);
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, []);
+
+  return isMobile;
+}
+
+type DrawerRootProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Root> & {
+  /**
+   * On narrow viewports, map left/right drawers to a bottom sheet (`sheet`) or keep a side panel (`side`,
+   * full height, up to 90% of the width so the dimmed page stays tappable). Defaults to `sheet`.
+   */
+  mobile?: "sheet" | "side";
+};
+
+function resolveDrawerDirection(
+  direction: DrawerRootProps["direction"],
+  mobile: DrawerRootProps["mobile"],
+  isMobile: boolean,
+): DrawerRootProps["direction"] {
+  if (!isMobile || mobile === "side") {
+    return direction;
+  }
+  if (direction === "left" || direction === "right") {
+    return "bottom";
+  }
+  return direction;
+}
+
+function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
+  const isMobile = useMobileViewport();
+  const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
+  return (
+    <DrawerPrimitive.Root
+      key={`${resolvedDirection}-${isMobile ? "narrow" : "wide"}`}
+      direction={resolvedDirection}
+      {...props}
+    />
+  );
+}
+
 const DrawerTrigger = DrawerPrimitive.Trigger;
 const DrawerClose = DrawerPrimitive.Close;
 const DrawerPortal = DrawerPrimitive.Portal;
@@ -25,7 +82,12 @@ function DrawerOverlay({
   return (
     <DrawerPrimitive.Overlay
       ref={ref}
-      className={cn("fixed inset-0 z-overlay bg-overlay/80", className)}
+      className={cn(
+        "fixed inset-0 z-overlay bg-overlay/80",
+        "motion-safe:data-[state=open]:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]",
+        "motion-safe:data-[state=closed]:animate-[zk-fade-out_var(--motion-base)_var(--ease-exit)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -51,11 +113,15 @@ function DrawerContent({
       <DrawerPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed z-overlay flex flex-col border bg-background",
-          "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:max-h-drawer-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
-          "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:max-h-drawer-max-height data-[vaul-drawer-direction=top]:rounded-b-xl",
-          "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-full data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
-          "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-full data-[vaul-drawer-direction=left]:sm:max-w-drawer-side",
+          "fixed z-overlay flex flex-col border bg-background outline-none",
+          // Safety net for content composed without DrawerHeader/Body/Footer (a bare form, text, a list): it still
+          // gets the shared side gutters and a bottom inset that clears the home indicator. Buttons and the
+          // kit slots keep their own spacing.
+          "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-drawer-chrome-padding [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
+          "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
+          "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:pt-drawer-safe-top",
+          "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-drawer-side-mobile-width data-[vaul-drawer-direction=right]:pt-drawer-safe-top data-[vaul-drawer-direction=right]:pr-drawer-safe-right data-[vaul-drawer-direction=right]:max-sm:rounded-l-xl data-[vaul-drawer-direction=right]:sm:w-full data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
+          "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-drawer-side-mobile-width data-[vaul-drawer-direction=left]:pt-drawer-safe-top data-[vaul-drawer-direction=left]:pl-drawer-safe-left data-[vaul-drawer-direction=left]:max-sm:rounded-r-xl data-[vaul-drawer-direction=left]:sm:w-full data-[vaul-drawer-direction=left]:sm:max-w-drawer-side",
           className,
         )}
         {...props}
@@ -76,7 +142,13 @@ function DrawerHandle({
   return (
     <DrawerPrimitive.Handle
       ref={ref}
-      className={cn("mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted", className)}
+      data-slot="drawer-handle"
+      className={cn(
+        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
+        "in-data-[vaul-drawer-direction=left]:hidden in-data-[vaul-drawer-direction=right]:hidden",
+        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-0 in-data-[vaul-drawer-direction=top]:mb-drawer-handle-top",
+        className,
+      )}
       {...props}
     />
   );
@@ -85,14 +157,61 @@ function DrawerHandle({
 function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col gap-drawer-header-gap p-drawer-chrome-padding text-center sm:text-left", className)}
+      data-slot="drawer-header"
+      className={cn(
+        "sticky top-0 z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border bg-background p-drawer-chrome-padding text-center sm:text-left",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      data-slot="drawer-body"
+      className={cn("min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-drawer-chrome-padding last:pb-drawer-safe-bottom", className)}
       {...props}
     />
   );
 }
 
 function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-auto flex flex-col gap-drawer-footer-gap p-drawer-chrome-padding", className)} {...props} />;
+  return (
+    <div
+      data-slot="drawer-footer"
+      className={cn(
+        "sticky bottom-0 z-10 mt-auto flex shrink-0 flex-col gap-drawer-footer-gap border-t border-border bg-background px-drawer-chrome-padding pt-drawer-chrome-padding pb-drawer-footer-safe",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function DrawerCloseButton({
+  className,
+  ref,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof Button> & {
+  ref?: React.Ref<HTMLButtonElement>;
+}) {
+  return (
+    <DrawerClose asChild>
+      <Button
+        ref={ref}
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Close"
+        className={cn("size-overlay-touch-target shrink-0", className)}
+        {...props}
+      >
+        <X className="size-icon-control" />
+      </Button>
+    </DrawerClose>
+  );
 }
 
 function DrawerTitle({
@@ -127,10 +246,14 @@ function DrawerDescription({
   );
 }
 
+type DrawerProps = DrawerRootProps;
+
 export {
   Drawer,
   type DrawerProps,
+  DrawerBody,
   DrawerClose,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
