@@ -12,6 +12,9 @@ function subscribe(onChange: () => void): () => void {
 }
 
 function getSnapshot(): boolean {
+  if (typeof window.innerWidth === "number" && window.innerWidth < 640) {
+    return true;
+  }
   return window.matchMedia(MOBILE_MEDIA).matches;
 }
 

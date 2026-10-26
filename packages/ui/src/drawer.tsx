@@ -35,7 +35,7 @@ function resolveDrawerDirection(
 
 function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
   const isMobile = useMobileViewport();
-  const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile);
+  const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
   return <DrawerPrimitive.Root direction={resolvedDirection} {...props} />;
 }
 
