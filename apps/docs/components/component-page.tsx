@@ -8,16 +8,11 @@ import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import {
   Section,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
   Text,
 } from "@zedtech/zedkit-ui";
 import { docsSite } from "../lib/site";
-import { roleForExportSymbol, symbolsFromImport } from "../lib/import-symbols";
+import { symbolsFromImport } from "../lib/import-symbols";
+import { ComponentExportsPanel } from "./component-exports-panel";
 import { ComponentPreview } from "./component-preview";
 import { PropsTable } from "./props-table";
 
@@ -124,25 +119,7 @@ export async function ComponentPage({
       ) : null}
 
       <Section title="Exports">
-        <Stack gap={3}>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Symbol</TableHead>
-                <TableHead>Role</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {symbols.map((name) => (
-                <TableRow key={name}>
-                  <TableCell className="font-mono text-xs">{name}</TableCell>
-                  <TableCell className="text-muted-foreground">{roleForExportSymbol(name)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Text variant="muted">Wraps: {wraps}</Text>
-        </Stack>
+        <ComponentExportsPanel symbols={symbols} wraps={wraps} />
       </Section>
 
       <Section title="Preview">
