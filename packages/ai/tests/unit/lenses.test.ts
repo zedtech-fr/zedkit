@@ -68,6 +68,14 @@ describe("lens registry", () => {
     }
   });
 
+  it("roadmap complete: no planned lens rows remain", () => {
+    const planned = registry().filter((r) => r.status === "planned");
+    expect(
+      planned.map((r) => r.lens),
+      "planned lenses",
+    ).toEqual([]);
+  });
+
   it("release lens is wired to the release-manager agent", () => {
     const row = registry().find((r) => r.lens === "release");
     expect(row?.status).toBe("exists");
