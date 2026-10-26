@@ -9,6 +9,9 @@ import { Search, X } from "lucide-react";
 const iconButtonClassName =
   "inline-flex min-h-tap min-w-tap flex-none items-center justify-center rounded-full focus-ring-control";
 
+/** Extra air (px) between the pill and the top of the keyboard or its toolbar, on top of the resting 16px offset. */
+const KEYBOARD_GAP = 16;
+
 /** Lifts `target` above the part of the software keyboard that covers the layout viewport (iOS and Android). */
 function useKeyboardLift(active: boolean, target: RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -17,14 +20,20 @@ function useKeyboardLift(active: boolean, target: RefObject<HTMLElement | null>)
     if (!active || !viewport || !element) return;
     const update = () => {
       const inset = Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop));
-      element.style.translate = inset > 0 ? `0 -${inset}px` : "";
+      // The keyboard's own toolbar (iOS) is not part of the visual viewport: keep extra air above it.
+      element.style.translate = inset > 0 ? `0 -${inset + KEYBOARD_GAP}px` : "";
     };
     update();
+    // iOS finishes the keyboard animation and toolbar after the first resize event.
+    const settle = [120, 320, 640].map((delay) => window.setTimeout(update, delay));
     viewport.addEventListener("resize", update);
     viewport.addEventListener("scroll", update);
+    window.addEventListener("focusin", update);
     return () => {
+      settle.forEach((id) => window.clearTimeout(id));
       viewport.removeEventListener("resize", update);
       viewport.removeEventListener("scroll", update);
+      window.removeEventListener("focusin", update);
       element.style.translate = "";
     };
   }, [active, target]);
