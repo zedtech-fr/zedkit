@@ -31,6 +31,21 @@ describe("select", () => {
     expect(listbox.className).not.toContain("z-50");
   });
 
+  it("sizes the trigger from control tokens with a token focus ring", async () => {
+    const user = userEvent.setup();
+    render(<RegionSelect />);
+
+    const trigger = screen.getByRole("combobox", { name: "Region" });
+    for (const token of ["h-control-height", "px-control-inline", "py-control-block-lg", "focus-ring-control"]) {
+      expect(trigger.className).toContain(token);
+    }
+    expect(trigger.className).not.toMatch(/(^|\s)(h-9|px-3|py-2)(\s|$)/);
+    expect(trigger.className).not.toContain("focus:ring-1");
+    expect(trigger.querySelector("svg")?.classList.contains("size-icon-control")).toBe(true);
+    await user.click(trigger);
+    await screen.findByRole("listbox");
+  });
+
   it("shows a disabled message and reports nothing when there are no options", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
