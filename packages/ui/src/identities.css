@@ -704,6 +704,7 @@
     font-family: var(--zk-font-display);
     font-weight: var(--zk-heading-weight);
     letter-spacing: var(--zk-heading-tracking);
+    line-height: var(--zk-heading-leading, 1.1);
     text-transform: var(--zk-heading-transform);
   }
   code,
@@ -788,6 +789,41 @@
   ::selection {
     background: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
+  }
+
+  /* Code blocks and inline code sit on the card surface */
+  pre {
+    background-color: hsl(var(--card));
+    border: var(--zk-border-width) solid hsl(var(--border));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--zk-shadow-sm);
+  }
+  :not(pre) > code {
+    background-color: hsl(var(--muted));
+    border: var(--zk-border-width) solid hsl(var(--border));
+    border-radius: var(--radius-sm);
+  }
+
+  /* Tables: head reads as a label band, rows answer on hover */
+  thead th {
+    background-color: hsl(var(--muted));
+    border-bottom: var(--zk-border-width) solid hsl(var(--border));
+  }
+  tbody tr {
+    transition-property: background-color;
+    transition-duration: var(--motion-base);
+    transition-timing-function: var(--zk-btn-ease, ease);
+  }
+  tbody tr:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Links keep a clear keyboard focus in every identity */
+  a:focus-visible {
+    outline: var(--ring-width) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+    border-radius: var(--radius-sm);
   }
 }
 
