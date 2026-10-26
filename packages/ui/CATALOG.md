@@ -475,7 +475,7 @@ const router = useRouter();
 
 ## Show toast notifications
 
-- Import: `@zedtech/zedkit-ui` — `Toaster`, `toast`
+- Import: `@zedtech/zedkit-ui` — `Toaster`, `ToasterProps`, `toast`
 - Wraps: `sonner`
 - Status: beta
 - Derived from: shadcn/ui (sonner)
@@ -486,10 +486,18 @@ const router = useRouter();
 - When not to use: For errors needing action — use Alert or Dialog instead.
 - A11y: The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.
 - See also: `Call out a notice or an error state`
+- Examples: Simple, Error toast
+- Registry: sonner
+- Troubleshooting: No toast appears — render `<Toaster />` once near the app root, then call `toast()`. Wrong colors — toast slots map to semantic theme tokens, so the theme stylesheet must be loaded.
 
 ```ts
 import { Toaster, toast } from "@zedtech/zedkit-ui";
 <Toaster /> // once near the root, then toast("Saved") anywhere
+```
+
+```ts
+import { toast } from "@zedtech/zedkit-ui";
+toast.error("Upload failed"); // typed variants: success | error | info | warning
 ```
 
 ## Display a shown-once secret with copy

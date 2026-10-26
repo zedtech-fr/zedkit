@@ -1121,7 +1121,7 @@
         },
         {
           "need": "Show toast notifications",
-          "import": "`@zedtech/zedkit-ui` — `Toaster`, `toast`",
+          "import": "`@zedtech/zedkit-ui` — `Toaster`, `ToasterProps`, `toast`",
           "wraps": "`sonner`",
           "status": "beta",
           "shortName": "Toaster",
@@ -1135,9 +1135,15 @@
             {
               "title": "Simple",
               "code": "import { Toaster, toast } from \"@zedtech/zedkit-ui\";\n<Toaster /> // once near the root, then toast(\"Saved\") anywhere"
+            },
+            {
+              "title": "Error toast",
+              "code": "import { toast } from \"@zedtech/zedkit-ui\";\ntoast.error(\"Upload failed\"); // typed variants: success | error | info | warning"
             }
           ],
+          "registry": "sonner",
           "a11y": "The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.",
+          "troubleshooting": "No toast appears — render `<Toaster />` once near the app root, then call `toast()`. Wrong colors — toast slots map to semantic theme tokens, so the theme stylesheet must be loaded.",
           "seeAlso": [
             "Call out a notice or an error state"
           ]
