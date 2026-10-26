@@ -144,6 +144,14 @@ export function expectedRegistryThemeFromStyles(cssText) {
       },
       css: expectedFocusRingCss(cssText),
     },
+    card: {
+      cssVars: {
+        theme: {
+          "spacing-card-stack": varFromBlock(theme, "spacing-card-stack"),
+          "spacing-card-padding": varFromBlock(theme, "spacing-card-padding"),
+        },
+      },
+    },
   };
 }
 
