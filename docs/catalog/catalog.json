@@ -278,7 +278,7 @@
       "needs": [
         {
           "need": "Add a localized SEO tab to a Payload collection",
-          "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`",
+          "import": "`@zedtech/zedkit-payload-seo` — `seoGroupField`, `seoFields`, `SeoFieldsOptions`, `SeoFieldLabels`, `SeoFieldLabelKey`",
           "wraps": "`payload` (peer, types only)",
           "status": "beta",
           "shortName": "SEO group field",
@@ -287,11 +287,11 @@
           "whenToUse": "On every collection with public pages in more than one locale.",
           "whenNotToUse": "For a single-locale site — use plain text fields plus `zedkit-seo` builders instead.",
           "derivedFrom": null,
-          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated",
+          "example": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [\n  seoGroupField({\n    mediaSlug: \"media\",\n    labels: { group: { en: \"SEO\", fr: \"Référencement\" }, metaTitle: { en: \"Title\", fr: \"Titre\" } },\n    keywordsAsText: true,\n    validationMessages: { maxLength: { en: \"Max {max} chars (now {length}).\" } },\n  }),\n];\n// meta/OG/robots leaves, localized, length-validated",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [seoGroupField({ mediaSlug: \"media\" })]\n// meta/OG/robots leaves, localized, length-validated"
+              "code": "import { seoGroupField } from \"@zedtech/zedkit-payload-seo\";\nfields: [\n  seoGroupField({\n    mediaSlug: \"media\",\n    labels: { group: { en: \"SEO\", fr: \"Référencement\" }, metaTitle: { en: \"Title\", fr: \"Titre\" } },\n    keywordsAsText: true,\n    validationMessages: { maxLength: { en: \"Max {max} chars (now {length}).\" } },\n  }),\n];\n// meta/OG/robots leaves, localized, length-validated"
             }
           ],
           "seeAlso": [
@@ -301,7 +301,7 @@
         },
         {
           "need": "Validate editor-entered title/description lengths",
-          "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`",
+          "import": "`@zedtech/zedkit-payload-seo` — `maxLengthValidator`, `SEO_TITLE_MAX`, `SEO_DESCRIPTION_MAX`, `SEO_VALIDATION_MESSAGES`, `formatMaxLengthMessage`, `resolveLocale`, `SeoValidationMessages`",
           "wraps": "`(none)`",
           "status": "beta",
           "shortName": "Length validation",
