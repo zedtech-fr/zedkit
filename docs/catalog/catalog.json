@@ -849,8 +849,13 @@
             {
               "title": "Simple",
               "code": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={40} label=\"Uploading report\" /> // role=progressbar, value clamped to 0..max"
+            },
+            {
+              "title": "Complete",
+              "code": "import { ProgressBar } from \"@zedtech/zedkit-ui\";\n<ProgressBar value={100} label=\"Upload complete\" />"
             }
           ],
+          "a11y": "Root carries `role=\"progressbar\"` with clamped value; keep the label screen-only and pair with visible text.",
           "seeAlso": [
             "Show loading placeholder blocks"
           ]

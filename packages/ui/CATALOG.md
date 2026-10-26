@@ -195,10 +195,17 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - When to use: When you can report a percentage or fraction done.
 - When not to use: For unknown-shape loading — use Skeleton instead.
 - See also: `Show loading placeholder blocks`
+- Examples: Simple, Complete
+- A11y: Root carries `role="progressbar"` with clamped value; keep the label screen-only and pair with visible text.
 
 ```ts
 import { ProgressBar } from "@zedtech/zedkit-ui";
 <ProgressBar value={40} label="Uploading report" /> // role=progressbar, value clamped to 0..max
+```
+
+```ts
+import { ProgressBar } from "@zedtech/zedkit-ui";
+<ProgressBar value={100} label="Upload complete" />
 ```
 
 ## Celebrate completion with a checkmark
