@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { OptionCards, Stack, Wizard, WizardStep, WizardSteps } from "@zedtech/zedkit-ui";
+import { OptionCard, OptionCards, Stack, Wizard, WizardStep, WizardSteps } from "@zedtech/zedkit-ui";
 
 export function WizardDemo() {
   const [picked, setPicked] = useState(["a"]);
+  const [solo, setSolo] = useState(false);
   return (
     <Stack gap={4}>
       <WizardSteps steps={["Pick", "Configure", "Test"]} current={0} />
@@ -20,6 +21,7 @@ export function WizardDemo() {
         selected={picked}
         onChange={setPicked}
       />
+      <OptionCard title="Solo option" description="Composed directly." checked={solo} onChange={() => setSolo(!solo)} />
     </Stack>
   );
 }

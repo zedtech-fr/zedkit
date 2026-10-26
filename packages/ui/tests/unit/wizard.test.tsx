@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { OptionCards, Wizard, WizardStep, WizardSteps } from "#index.js";
+import { OptionCard, OptionCards, Wizard, WizardStep, WizardSteps } from "#index.js";
 
 describe("WizardSteps", () => {
   it("marks the current step and checks off earlier ones", () => {
@@ -61,5 +61,28 @@ describe("OptionCards", () => {
     rerender(<OptionCards options={options} selected={["a", "b"]} onChange={onChange} />);
     await user.click(screen.getByText("Alpha"));
     expect(onChange).toHaveBeenCalledWith(["b"]);
+  });
+
+  it("styles group and cards from design tokens", () => {
+    const { container } = render(<OptionCards options={options} selected={["a"]} onChange={() => {}} />);
+    const group = container.querySelector('[role="group"]');
+    expect(group?.classList.contains("gap-option-cards-gap")).toBe(true);
+    expect(group?.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
+    const card = screen.getByText("Alpha").closest("label");
+    expect(card?.classList.contains("gap-option-card-gap")).toBe(true);
+    expect(card?.classList.contains("p-option-card-padding")).toBe(true);
+    expect(card?.className).not.toMatch(/(^|\s)(gap-3|p-4)(\s|$)/);
+  });
+});
+
+describe("OptionCard", () => {
+  it("composes a standalone selectable card", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<OptionCard title="Alpha" description="First." checked={false} onChange={onChange} />);
+    const box = screen.getByRole("checkbox", { name: /Alpha/ });
+    expect((box as HTMLInputElement).checked).toBe(false);
+    await user.click(screen.getByText("Alpha"));
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
 });
