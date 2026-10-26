@@ -489,7 +489,7 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 
 ## Guide a multi-step flow with selectable option cards
 
-- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`
+- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`
 - Wraps: none (native inputs + theme tokens)
 - Status: beta
 - Short name: WizardSteps
@@ -498,12 +498,22 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 - When to use: For 2–6 step flows with choices per step.
 - When not to use: For single forms — use Form instead of inventing steps.
 - See also: `Build validated forms with labels, errors, and pending state`
+- Examples: Simple, Composed steps
+- A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`.
 
 ```ts
 import { OptionCards, WizardSteps } from "@zedtech/zedkit-ui";
 const [picked, setPicked] = useState(["a", "b"]);
 <WizardSteps steps={["Pick", "Configure", "Test"]} current={0} />
 <OptionCards options={options} selected={picked} onChange={setPicked} />
+```
+
+```ts
+import { Wizard, WizardStep } from "@zedtech/zedkit-ui";
+<Wizard>
+  <WizardStep step="Pick" index={0} state="done" showConnector />
+  <WizardStep step="Configure" index={1} state="current" />
+</Wizard>
 ```
 
 ## Show key-value details and a live indicator

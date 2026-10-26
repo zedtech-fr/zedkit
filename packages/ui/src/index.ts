@@ -98,7 +98,15 @@ export {
   TableHeader,
   TableRow,
 } from "./table.js";
-export { WizardSteps, type WizardStepsProps } from "./wizard-steps.js";
+export {
+  Wizard,
+  WizardStep,
+  WizardSteps,
+  type WizardProps,
+  type WizardStepProps,
+  type WizardStepState,
+  type WizardStepsProps,
+} from "./wizard-steps.js";
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
 export { Textarea } from "./textarea.js";
