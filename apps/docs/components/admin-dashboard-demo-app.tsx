@@ -137,15 +137,15 @@ export function AdminDashboardDemoApp() {
         aria-label="Interactive admin dashboard demo"
       >
         {/* AppShell layout without landmarks: this island already sits inside the page main. */}
-        <div className="flex min-h-svh w-full">
-          <div className="hidden w-64 shrink-0 border-r bg-muted/40 md:block">
+        <Stack direction="horizontal" className="min-h-svh w-full gap-0">
+          <Stack className="hidden w-64 shrink-0 gap-0 border-r bg-muted/40 md:block">
             <Stack className="p-4" gap={2}>
               <Text className="text-sm font-semibold">Apps</Text>
               <Text variant="muted" className="text-sm">Demo nav</Text>
             </Stack>
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
+          </Stack>
+          <Stack className="min-w-0 flex-1 gap-0">
+            <Stack className="sticky top-0 z-10 gap-0 border-b bg-background/95 backdrop-blur">
               <Stack direction="horizontal" gap={3} className="flex-wrap items-center justify-between p-4">
                 <Text className="text-sm font-medium">Project apps</Text>
                 <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
@@ -170,8 +170,8 @@ export function AdminDashboardDemoApp() {
                   </Button>
                 </Stack>
               </Stack>
-            </div>
-            <div className="flex-1 p-4 md:p-6">
+            </Stack>
+            <Stack className="flex-1 gap-0 p-4 md:p-6">
               <Stack gap={4}>
                 <PageHeader
                   title="Apps"
@@ -186,9 +186,9 @@ export function AdminDashboardDemoApp() {
                   pageSize={5}
                 />
               </Stack>
-            </div>
-          </div>
-        </div>
+            </Stack>
+          </Stack>
+        </Stack>
       </Stack>
 
       <Drawer open={drawerOpen} onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())} direction="right">
