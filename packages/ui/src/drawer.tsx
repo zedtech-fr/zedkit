@@ -7,7 +7,7 @@
 import * as React from "react";
 import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { Button } from "./button.js";
+import { buttonVariants } from "./button.js";
 import { cn } from "./utils.js";
 
 /** Matches Tailwind `sm` (640px): phones and narrow viewports. */
@@ -190,26 +190,29 @@ function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
   );
 }
 
+// Styled with buttonVariants rather than `asChild` so the copied registry file
+// compiles with whichever Button flavour the target project ships (Slot or render prop).
 function DrawerCloseButton({
   className,
+  children,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof Button> & {
+}: React.ComponentPropsWithoutRef<typeof DrawerClose> & {
   ref?: React.Ref<HTMLButtonElement>;
 }) {
   return (
-    <DrawerClose asChild>
-      <Button
-        ref={ref}
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label="Close"
-        className={cn("size-overlay-touch-target shrink-0", className)}
-        {...props}
-      >
-        <X className="size-icon-control" />
-      </Button>
+    <DrawerClose
+      ref={ref}
+      type="button"
+      aria-label="Close"
+      className={cn(
+        buttonVariants({ variant: "ghost", size: "icon" }),
+        "size-overlay-touch-target shrink-0",
+        className,
+      )}
+      {...props}
+    >
+      {children ?? <X className="size-icon-control" />}
     </DrawerClose>
   );
 }

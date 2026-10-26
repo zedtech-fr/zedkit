@@ -14,7 +14,6 @@ test.describe("drawer mobile sheet (refs #425)", () => {
     await page.evaluate(() => window.scrollTo(0, 400));
     await page.getByRole("button", { name: "Open drawer" }).click();
     await page.waitForTimeout(300);
-    const scrollBefore = await page.evaluate(() => window.scrollY);
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible({ timeout: 10_000 });
     const viewport = page.viewportSize();
@@ -46,6 +45,10 @@ test.describe("drawer mobile sheet (refs #425)", () => {
 
     await overlay.click({ position: { x: 8, y: 8 } });
     await expect(dialog).toBeHidden();
+    // Let the overlay finish fading out: a click on a still-covered trigger makes the
+    // test runner retry with a different scroll alignment, which is not the drawer's doing.
+    await expect(overlay).toHaveCount(0);
+    const scrollBefore = await page.evaluate(() => window.scrollY);
 
     await page.getByRole("button", { name: "Open drawer" }).click();
     await expect(dialog).toBeVisible();
@@ -71,7 +74,6 @@ test.describe("drawer desktop side panel", () => {
   });
 });
 
-const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
 const DIRECTIONS = ["bottom", "left", "right", "top"] as const;
 const LABEL = { bottom: "Bottom", left: "Left", right: "Right", top: "Top" } as const;
 const PHONES = [
