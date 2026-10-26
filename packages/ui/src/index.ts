@@ -8,10 +8,12 @@ export { Checkbox } from "./checkbox.js";
 export {
   DataTable,
   DataTablePagination,
+  DataTableToolbar,
   createDataTableColumns,
   type DataTableColumn,
   type DataTablePaginationProps,
   type DataTableProps,
+  type DataTableToolbarProps,
 } from "./data-table.js";
 export {
   Dialog,

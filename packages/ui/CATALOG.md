@@ -486,7 +486,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 
 ## Show a sortable, filterable, paginated data table
 
-- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
+- Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
 - Status: beta
 - Short name: DataTable
@@ -496,7 +496,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 - When not to use: For a handful of static rows — map a simple table instead.
 - A11y: Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.
 - See also: `Show key-value details and a live indicator`
-- Examples: Simple, Standalone pagination
+- Examples: Simple, Standalone pagination, Standalone toolbar
 
 ```ts
 import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
@@ -512,6 +512,12 @@ const [page, setPage] = useState(2);
 <DataTablePagination page={page} pageCount={4}
   canPrevious={page > 1} canNext={page < 4}
   onPrevious={() => setPage(page - 1)} onNext={() => setPage(page + 1)} />
+```
+
+```ts
+import { DataTableToolbar } from "@zedtech/zedkit-ui";
+const [query, setQuery] = useState("");
+<DataTableToolbar value={query} onChange={setQuery} />
 ```
 
 ## Lay out an admin page (sidebar + topbar + header)
