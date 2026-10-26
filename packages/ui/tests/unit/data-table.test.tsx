@@ -38,6 +38,30 @@ describe("DataTable", () => {
     }
   });
 
+  it("styles chrome (filter, sort, loading, pagination) from design tokens", () => {
+    const { container } = render(<DataTable columns={columns} data={data} />);
+    const root = container.firstElementChild;
+    expect(root?.classList.contains("space-y-data-table-stack")).toBe(true);
+    expect(root?.className).not.toMatch(/(^|\s)space-y-4(\s|$)/);
+    const filter = container.querySelector("input");
+    expect(filter?.classList.contains("max-w-data-table-filter-width")).toBe(true);
+    expect(filter?.className).not.toMatch(/(^|\s)max-w-sm(\s|$)/);
+    const sortButton = screen.getByRole("button", { name: /Name/ });
+    expect(sortButton.classList.contains("gap-data-table-sort-gap")).toBe(true);
+    expect(sortButton.className).not.toMatch(/(^|\s)gap-1(\s|$)/);
+    expect(sortButton.querySelector("svg")?.classList.contains("size-data-table-sort-icon")).toBe(true);
+    const pager = screen.getByText(/Page 1 of/).parentElement;
+    expect(pager?.classList.contains("gap-data-table-pagination-gap")).toBe(true);
+    expect(pager?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);
+  });
+
+  it("styles loading skeletons from design tokens", () => {
+    const { container } = render(<DataTable columns={columns} data={data} loading />);
+    const skeleton = container.querySelector(".motion-safe\\:animate-pulse");
+    expect(skeleton?.classList.contains("h-data-table-skeleton-height")).toBe(true);
+    expect(skeleton?.className).not.toMatch(/(^|\s)h-4(\s|$)/);
+  });
+
   it("sorts ascending then descending when a sortable header is clicked", async () => {
     const user = userEvent.setup();
     render(<DataTable columns={columns} data={data} />);

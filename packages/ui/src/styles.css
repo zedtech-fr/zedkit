@@ -117,6 +117,12 @@
   --spacing-icon-control: 1rem;
   --spacing-checkbox: 1rem;
   --spacing-heading-scroll: 5rem;
+  --spacing-data-table-stack: 1rem;
+  --spacing-data-table-filter-width: 24rem;
+  --spacing-data-table-sort-gap: 0.25rem;
+  --spacing-data-table-sort-icon: 0.875rem;
+  --spacing-data-table-skeleton-height: 1rem;
+  --spacing-data-table-pagination-gap: 0.5rem;
   --spacing-option-cards-gap: 0.75rem;
   --spacing-option-card-gap: 0.75rem;
   --spacing-option-card-padding: 1rem;
