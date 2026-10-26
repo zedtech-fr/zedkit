@@ -169,7 +169,8 @@ html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
   mask-image: linear-gradient(to right, #000 90%, transparent);
 }
 
-body:has([data-vaul-drawer][data-state="open"]) [data-search-pill] {
+body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
+body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   display: none;
 }
 

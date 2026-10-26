@@ -215,7 +215,7 @@ export function SearchPill() {
       ) : null}
       <div
         ref={lifted}
-        className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex justify-end"
+        className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay flex justify-end"
       >
         <div
           role="search"
