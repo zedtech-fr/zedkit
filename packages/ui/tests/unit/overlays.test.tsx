@@ -42,8 +42,33 @@ describe("overlays", () => {
     await user.click(screen.getByRole("button", { name: "Open" }));
     const dialog = screen.getByRole("dialog");
     expect(dialog.getAttribute("data-state")).toBe("open");
-    expect(dialog.className).toContain("zk-zoom-in");
-    expect(dialog.className).toContain("var(--motion-base)");
+    expect(dialog.className).toContain("animate-dialog-content-show");
+    expect(dialog.className).not.toContain("animate-[");
+  });
+
+  it("styles dialog geometry from design tokens", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.classList.contains("max-w-dialog-content-width")).toBe(true);
+    expect(dialog.classList.contains("gap-dialog-content-gap")).toBe(true);
+    expect(dialog.classList.contains("p-dialog-content-padding")).toBe(true);
+    expect(dialog.className).not.toMatch(/(^|\s)(max-w-lg|gap-4|p-6)(\s|$)/);
+    const close = dialog.querySelector("button");
+    expect(close?.classList.contains("top-dialog-close-offset")).toBe(true);
+    expect(close?.classList.contains("right-dialog-close-offset")).toBe(true);
+    expect(close?.className).not.toMatch(/(^|\s)(top-4|right-4)(\s|$)/);
+    expect(close?.querySelector("svg")?.classList.contains("size-dialog-close-icon")).toBe(true);
   });
 
   it("centers dialog content with token-driven position and shadow", async () => {
@@ -81,7 +106,8 @@ describe("overlays", () => {
     await user.click(screen.getByRole("button", { name: "Open" }));
     const overlay = document.querySelector(".bg-overlay\\/80");
     expect(overlay?.getAttribute("data-state")).toBe("open");
-    expect(overlay?.getAttribute("class")).toContain("zk-fade-in");
+    expect(overlay?.getAttribute("class")).toContain("animate-dialog-overlay-show");
+    expect(overlay?.getAttribute("class")).not.toContain("animate-[");
   });
 
   it("confirms destructive actions and closes", async () => {
