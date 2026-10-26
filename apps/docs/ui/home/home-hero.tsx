@@ -27,7 +27,8 @@ export function HomeHero({
         </Heading>
         <Text className="max-w-2xl text-lg">
           TypeScript packages for admin UI, backend helpers, SEO, and coding-agent setup — each
-          need documented from the same catalog as the site.
+          need documented from the same catalog as the site, with{" "}
+          <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
         </Text>
       </Stack>
       <Stack direction="horizontal" gap={2} className="flex-wrap">

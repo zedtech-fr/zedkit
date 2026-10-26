@@ -3,6 +3,7 @@
     "core": [
       "ponytail",
       "ponytail-review",
+      "ponytail-audit",
       "ground-truth",
       "parallel-work",
       "definition-of-done",
@@ -23,7 +24,8 @@
       "to-spec",
       "to-tickets",
       "wayfinder",
-      "domain-modeling"
+      "domain-modeling",
+      "audit"
     ],
     "full": "*"
   },

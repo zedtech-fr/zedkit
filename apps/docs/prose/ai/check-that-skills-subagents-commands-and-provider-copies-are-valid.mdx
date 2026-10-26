@@ -1,0 +1,41 @@
+## Scenario
+
+You edit a shared skill under `.agents/skills/`, then run `validate` from the
+project root before committing:
+
+```sh
+zedkit-ai validate .
+```
+
+A clean setup prints `ok` and exits 0. Problems print as
+`<path>: <message>` followed by `N problem(s)`, exit 1 — wire it as a CI
+step so drifted provider copies never merge.
+
+Real output with a drifted Cursor copy (plus a core-preset gap):
+
+```text
+commands/audit.md: names no installed skill (a command runs a `skill` by name)
+.cursor/agents/verifier.md: drifted from .agents/agents/verifier.md: copy it over (init never overwrites)
+2 problem(s)
+```
+
+`validate` accepts a project root (drifts against its `.agents/`) or an
+`.agents/` dir directly (drifts against its parent). The same checks are
+available programmatically via `validateKit` + `checkDrift`, which return
+`Issue[]` (`{ path, message }`) instead of exiting.
+
+## Troubleshooting
+
+- `drifted from …: copy it over (init never overwrites)` — a provider copy
+  (Cursor keeps real-file copies) no longer matches `.agents/`. Copy the
+  file over by hand; re-running `init` will not touch it.
+- `copy missing: copy it from … or re-run init` — a provider file was
+  deleted. Either restore that one file or re-run `init`.
+- `names no installed skill` — the installed preset does not ship that
+  skill (for example `audit` needs `--preset full`). Re-run `init` with the
+  wider preset, or remove the command.
+- `kit.json … lists missing …` — the manifest names a skill, agent or
+  command with no file on disk. Add the file or drop the entry, then
+  re-validate.
+- `no such directory` — the path argument does not exist. Run from the
+  project root with `.` or point at `.agents/`.

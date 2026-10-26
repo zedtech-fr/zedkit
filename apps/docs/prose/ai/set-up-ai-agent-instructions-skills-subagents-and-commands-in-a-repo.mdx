@@ -1,0 +1,71 @@
+## What gets installed
+
+One shared source plus a thin layer per provider. With
+`preset: "core", providers: ["claude", "cursor"]`, `installKit` reports 87
+actions and creates:
+
+```text
+.agents/            # shared source: skills/, agents/, commands/, personas.md
+.claude/            # links into .agents (skills, agents, commands)
+.cursor/            # rules/project.mdc + skills link, agents/commands as copies
+```
+
+`full` adds the remaining skills and `AGENTS.md`/`CLAUDE.md` templates.
+Supported providers: `claude`, `cursor`, `codex`, `muse`. `init` never
+overwrites existing files; `validate` reports drifted provider copies.
+
+## Agents
+
+Subagents installed from `kit.json` (18). Read-only unless noted.
+
+| Agent | Role |
+|---|---|
+| `explorer` | codebase lookup: files, symbols, usages |
+| `architect` | file-level implementation plan, never code |
+| `plan-challenger` | deprecated alias of `skeptic` (angle: plan) |
+| `verifier` | quality gate: runs gates + definition of done |
+| `improver` | applies review findings, smallest diff first (writes) |
+| `security-reviewer` | auth, tenancy, secrets, user data, input parsing |
+| `skeptic` | pre-mortem, one angle per brief |
+| `ui-designer` | UI review: kit reuse, tokens, states, lazy-client bar |
+| `copywriter` | i18n-first microcopy review (writes nothing) |
+| `seo-auditor` | pages, metadata, sitemap, redirects |
+| `a11y-auditor` | WCAG basics for components, forms, pages |
+| `dependency-auditor` | need, size, license, maintenance, duplicates |
+| `docs-writer` | README/AGENTS.md/catalog prose, compiling examples (writes docs) |
+| `researcher` | reuse scout: adopt/wrap/build with sources |
+| `test-writer` | adversarial tests, behavior-named (writes tests) |
+| `release-manager` | semver 0.x rules, changesets, migration notes, maturity |
+| `console-architecture` | route/view/data layer boundaries |
+| `product-director` | one-page delivery brief with links |
+
+Each file starts with frontmatter (`name`, one-line `description`,
+`model: inherit`, `disallowedTools` for read-only agents) at
+`packages/ai/kit/agents/<name>.md`. Full trigger table:
+`docs/agents-catalog.md`.
+
+## Review lenses
+
+`review` pins the diff once, then routes paths to lenses
+(`packages/ai/kit/skills/review/lenses.md`). Always mandatory: `code`,
+`ponytail`, `persona`, `quality gate`. Triggered by what changed:
+`adversarial-tests`, `security`, `skeptic`, `ui`, `copy`, `a11y`, `seo`,
+`dependencies`, `docs`, `release`, `research`, `frontend-quality`,
+`doc-demos`. Every verdict needs evidence (`file:line`, command, screenshot).
+
+## Personas
+
+`persona-review` picks 2–4 personas per change from the repo's
+`.agents/personas.md` (template: 8 rows — Stressed user, Lazy end client,
+Integrating developer, Coding agent, Maintainer / operator, New
+contributor, Security reviewer, Business owner) and requires evidence for
+every Pass/Rough/Fail. Customize names and bars per project.
+
+## Customize
+
+- Add or remove an agent or skill: edit the `.md` file plus the `kit.json`
+  lists, re-run `init`, then `validate` to catch drift.
+- Repo rules live in `AGENTS.md` (the ladder section is appended, never
+  overwritten).
+- Upgrade: re-run `init` and diff `.agents/`; the `verifier` agent plus the
+  definition of done is the CI-side quality gate.

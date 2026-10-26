@@ -25,6 +25,10 @@ export interface ConfirmDialogProps {
 /**
  * Destructive-action confirmation: trigger opens a dialog, Confirm
  * runs the callback and closes. Cancel and backdrop dismiss.
+ *
+ * Intentionally a props bag, not a compound: this covers the single
+ * destructive-confirm task; custom layouts compose `Dialog` directly.
+ * The component carries no styles of its own (Dialog + Button only).
  */
 function ConfirmDialog({
   trigger,

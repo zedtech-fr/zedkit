@@ -21,6 +21,17 @@ describe("toggles", () => {
     expect(box.getAttribute("data-state")).toBe("unchecked");
   });
 
+  it("styles the checkbox from design tokens", () => {
+    render(<Checkbox aria-label="Accept the terms" defaultChecked />);
+    const box = screen.getByRole("checkbox", { name: "Accept the terms" });
+    expect(box.classList.contains("size-checkbox")).toBe(true);
+    expect(box.classList.contains("focus-ring-control")).toBe(true);
+    expect(box.className).not.toMatch(/(^|\s)(h-4|w-4|ring-1)(\s|$)/);
+    const icon = box.querySelector("svg");
+    expect(icon?.classList.contains("size-checkbox")).toBe(true);
+    expect(icon?.getAttribute("aria-hidden")).toBe("true");
+  });
+
   it("flips a labeled switch", async () => {
     const user = userEvent.setup();
     render(
@@ -33,5 +44,18 @@ describe("toggles", () => {
     expect(toggle.getAttribute("data-state")).toBe("unchecked");
     await user.click(toggle);
     expect(toggle.getAttribute("data-state")).toBe("checked");
+  });
+
+  it("styles the switch from design tokens", () => {
+    render(<Switch aria-label="Notify me" defaultChecked />);
+    const toggle = screen.getByRole("switch", { name: "Notify me" });
+    expect(toggle.classList.contains("h-switch-track-height")).toBe(true);
+    expect(toggle.classList.contains("w-switch-track-width")).toBe(true);
+    expect(toggle.classList.contains("focus-ring")).toBe(true);
+    expect(toggle.className).not.toMatch(/(^|\s)(h-5|w-9|ring-2)(\s|$)/);
+    const thumb = toggle.querySelector("span");
+    expect(thumb?.classList.contains("size-switch-thumb")).toBe(true);
+    expect(thumb?.className).toContain("translate-x-switch-travel");
+    expect(thumb?.className).not.toContain("translate-x-4");
   });
 });

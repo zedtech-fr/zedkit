@@ -2,16 +2,23 @@
 export interface SiteAuditRoute {
   path: string;
   label: string;
-  /** Nested-interactive + unique link names (blocked on home until #286). */
+  /** Axe on `main`, nested-interactive, and ambiguous link names in `main`. */
   strictSemantics: boolean;
-  /** Skip entire row when the static export has no page yet (#289, #290–#293). */
+  /** Nested-interactive + link names without axe (home until layout axe is stable). */
+  linkAndInteractiveAudit?: boolean;
+  /** Skip entire row when the static export has no page yet. */
   pendingPath?: boolean;
   /** Prose/card layouts wider than narrow `main` on mobile until layout refresh (#286). */
   skipMobileOverflow?: boolean;
 }
 
 export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
-  { path: "/", label: "home", strictSemantics: false },
+  {
+    path: "/",
+    label: "home",
+    strictSemantics: false,
+    linkAndInteractiveAudit: true,
+  },
   { path: "/docs", label: "docs-index", strictSemantics: true, skipMobileOverflow: true },
   {
     path: "/docs/getting-started",
@@ -20,30 +27,30 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/build-admin-dashboard",
+    path: "/docs/build-an-admin-dashboard",
     label: "tutorial-dashboard",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/coding-agents",
+    path: "/docs/set-up-your-coding-agents",
     label: "tutorial-agents",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/nestjs-api",
+    path: "/docs/nest/start-a-safe-nestjs-api",
     label: "tutorial-nest",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
   {
-    path: "/docs/guides/nextjs-seo",
+    path: "/docs/add-seo-to-nextjs",
     label: "tutorial-seo",
     strictSemantics: true,
-    pendingPath: true,
+    skipMobileOverflow: true,
   },
 ];
 
 /** Registry URLs advertised on doc pages; must stay 200 on the served export. */
-export const REGISTRY_SMOKE_URLS = ["/r/badge.json", "/r/drawer.json"] as const;
+export const REGISTRY_SMOKE_URLS = ["/r/badge.json", "/r/drawer.json", "/r/confirm-dialog.json"] as const;

@@ -28,4 +28,21 @@ describe("tabs", () => {
     expect(await screen.findByText("Second panel.")).not.toBeNull();
     expect(screen.getByRole("tab", { name: "Second" }).getAttribute("data-state")).toBe("active");
   });
+
+  it("styles list, trigger, and content from design tokens", () => {
+    render(<DemoTabs />);
+    const list = screen.getByRole("tablist");
+    expect(list.classList.contains("h-tabs-list-height")).toBe(true);
+    expect(list.classList.contains("p-tabs-list-inset")).toBe(true);
+    expect(list.className).not.toMatch(/(^|\s)(h-9|p-1)(\s|$)/);
+    const trigger = screen.getByRole("tab", { name: "First" });
+    expect(trigger.classList.contains("px-tabs-trigger-inline")).toBe(true);
+    expect(trigger.classList.contains("py-tabs-trigger-block")).toBe(true);
+    expect(trigger.classList.contains("focus-ring")).toBe(true);
+    expect(trigger.className).not.toMatch(/(^|\s)(px-3|py-1|ring-2)(\s|$)/);
+    const panel = screen.getByText("First panel.");
+    expect(panel.className).toContain("mt-tabs-content-gap");
+    expect(panel.className).toContain("focus-ring");
+    expect(panel.className).not.toMatch(/(^|\s)(mt-2|ring-2)(\s|$)/);
+  });
 });

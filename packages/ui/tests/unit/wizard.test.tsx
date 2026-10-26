@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { OptionCards, WizardSteps } from "#index.js";
+import { OptionCards, Wizard, WizardStep, WizardSteps } from "#index.js";
 
 describe("WizardSteps", () => {
   it("marks the current step and checks off earlier ones", () => {
@@ -10,6 +10,33 @@ describe("WizardSteps", () => {
     expect(screen.getByText("Two").closest("li")?.getAttribute("aria-current")).toBe("step");
     expect(screen.getByText("One").closest("li")?.getAttribute("aria-current")).toBeNull();
     expect(screen.getByText("Three").closest("li")?.textContent).toContain("3");
+  });
+
+  it("styles list and steps from design tokens", () => {
+    const { container } = render(<WizardSteps steps={["One", "Two"]} current={0} />);
+    const list = container.querySelector("ol");
+    expect(list?.classList.contains("gap-x-wizard-steps-gap")).toBe(true);
+    expect(list?.classList.contains("gap-y-wizard-steps-row-gap")).toBe(true);
+    expect(list?.className).not.toMatch(/(^|\s)(gap-x-3|gap-y-2)(\s|$)/);
+    const item = screen.getByText("One").closest("li");
+    expect(item?.classList.contains("gap-wizard-step-gap")).toBe(true);
+    expect(item?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);
+    const badge = item?.querySelector("span[aria-hidden]");
+    expect(badge?.classList.contains("size-wizard-step-badge")).toBe(true);
+    expect(badge?.className).not.toMatch(/(^|\s)size-6(\s|$)/);
+  });
+});
+
+describe("WizardStep", () => {
+  it("composes a custom step with explicit state", () => {
+    render(
+      <Wizard>
+        <WizardStep step="One" index={0} state="done" showConnector />
+        <WizardStep step="Two" index={1} state="current" />
+      </Wizard>,
+    );
+    expect(screen.getByText("Two").closest("li")?.getAttribute("aria-current")).toBe("step");
+    expect(screen.getByText("One").closest("li")?.querySelector(".lucide-check")).not.toBeNull();
   });
 });
 

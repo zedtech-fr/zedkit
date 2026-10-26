@@ -2,7 +2,7 @@
   "name": "@zedtech/zedkit-docs",
   "version": "0.1.0",
   "private": true,
-  "description": "Public documentation site (spike).",
+  "description": "Public documentation site for zedkit (zedkit.app).",
   "type": "module",
   "imports": {
     "#*": "./app/*"
@@ -35,7 +35,6 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "sonner": "catalog:",
-    "yaml": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

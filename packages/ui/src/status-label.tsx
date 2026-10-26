@@ -21,7 +21,7 @@ function ToneIcon({ tone }: { tone: StatusLabelTone }) {
     case "error":
       return <StatusDot tone="danger" />;
     case "offline":
-      return <WifiOff aria-hidden className="size-3.5 text-muted-foreground" />;
+      return <WifiOff aria-hidden className="size-status-label-icon text-muted-foreground" />;
     case "loading":
     case "updating":
     case "syncing":
@@ -39,12 +39,12 @@ export function StatusLabel({ tone, children, className }: StatusLabelProps) {
     <span
       role="status"
       className={cn(
-        "inline-flex items-center gap-1.5 text-xs",
+        "inline-flex items-center gap-status-label-gap text-xs",
         tone === "error" ? "text-destructive" : "text-muted-foreground",
         className,
       )}
     >
-      <span className="flex size-4 shrink-0 items-center justify-center">
+      <span className="flex size-status-label-box shrink-0 items-center justify-center">
         <ToneIcon tone={tone} />
       </span>
       {children}

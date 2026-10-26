@@ -74,6 +74,7 @@ const {
   homeEntryPoints,
   catalogIndex,
   homeCuratedGallery,
+  maturityModule,
 } = generate(tmp);
 const livePageKeys = catalogPageKeys(catalog);
 
@@ -223,6 +224,7 @@ const guideRequiredSections = {
     "Troubleshooting",
     "Next steps",
   ],
+  "maturity-and-compatibility.mdx": ["Next steps"],
 };
 for (const [file, sections] of Object.entries(guideRequiredSections)) {
   const sourcePath = join(guidesDir, file);
@@ -361,6 +363,13 @@ if (!existsSync(entryPointsPath)) {
   if (!onDisk.includes(expected)) {
     errors.push("content/home-entry-points.ts is stale (run pnpm docs:generate).");
   }
+}
+
+const maturityPath = join(APP, "content", "maturity-compatibility.ts");
+if (!existsSync(maturityPath)) {
+  errors.push("content/maturity-compatibility.ts missing (run pnpm docs:generate).");
+} else if (readFileSync(maturityPath, "utf8") !== maturityModule) {
+  errors.push("content/maturity-compatibility.ts is stale (run pnpm docs:generate).");
 }
 
 const headings = new Set(needs.map((n) => n.need));

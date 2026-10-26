@@ -1,3 +1,5 @@
+import type * as React from "react";
+
 import { CheckIcon } from "lucide-react";
 
 import { cn } from "./utils.js";
@@ -9,32 +11,86 @@ export interface WizardStepsProps {
   className?: string;
 }
 
+export type WizardStepState = "done" | "current" | "todo";
+
+export interface WizardStepProps {
+  step: string;
+  /** 0-based position; shown as a number when not done. */
+  index: number;
+  state: WizardStepState;
+  /** Trailing connector to the next step (omit on the last step). */
+  showConnector?: boolean;
+  className?: string;
+}
+
+/**
+ * One step row (badge + label + optional connector). Compose custom
+ * step lists with these inside your own `<ol>`; `WizardSteps` covers
+ * the plain `steps[]` case.
+ */
+export function WizardStep({ step, index, state, showConnector = false, className }: WizardStepProps) {
+  return (
+    <li
+      aria-current={state === "current" ? "step" : undefined}
+      className={cn("flex items-center gap-wizard-step-gap text-sm", className)}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "flex size-wizard-step-badge items-center justify-center rounded-full border text-xs font-medium",
+          state === "done" && "border-primary bg-primary text-primary-foreground",
+          state === "current" && "border-primary text-primary",
+          state === "todo" && "text-muted-foreground",
+        )}
+      >
+        {state === "done" ? <CheckIcon className="size-wizard-step-icon" /> : index + 1}
+      </span>
+      <span className={cn(state === "current" ? "font-medium" : "text-muted-foreground")}>{step}</span>
+      {showConnector ? (
+        <span
+          aria-hidden
+          className="ml-wizard-step-connector-gap h-wizard-step-connector-thickness w-wizard-step-connector bg-border"
+        />
+      ) : null}
+    </li>
+  );
+}
+
+export interface WizardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Step list container for composed `WizardStep` rows. `WizardSteps`
+ * covers the plain `steps[]` case with the same markup.
+ */
+export function Wizard({ children, className }: WizardProps) {
+  return (
+    <ol className={cn("flex flex-wrap items-center gap-x-wizard-steps-gap gap-y-wizard-steps-row-gap", className)} aria-label="Progress">
+      {children}
+    </ol>
+  );
+}
+
+function stepState(index: number, current: number): WizardStepState {
+  if (index < current) return "done";
+  if (index === current) return "current";
+  return "todo";
+}
+
 export function WizardSteps({ steps, current, className }: WizardStepsProps) {
   return (
-    <ol className={cn("flex flex-wrap items-center gap-x-3 gap-y-2", className)} aria-label="Progress">
+    <Wizard {...(className === undefined ? {} : { className })}>
       {steps.map((step, index) => (
-        <li
+        <WizardStep
           key={step}
-          aria-current={index === current ? "step" : undefined}
-          className="flex items-center gap-2 text-sm"
-        >
-          <span
-            aria-hidden
-            className={cn(
-              "flex size-6 items-center justify-center rounded-full border text-xs font-medium",
-              index < current && "border-primary bg-primary text-primary-foreground",
-              index === current && "border-primary text-primary",
-              index > current && "text-muted-foreground",
-            )}
-          >
-            {index < current ? <CheckIcon className="size-3.5" /> : index + 1}
-          </span>
-          <span className={cn(index === current ? "font-medium" : "text-muted-foreground")}>{step}</span>
-          {index < steps.length - 1 ? (
-            <span aria-hidden className="ml-1 h-px w-6 bg-border" />
-          ) : null}
-        </li>
+          step={step}
+          index={index}
+          state={stepState(index, current)}
+          showConnector={index < steps.length - 1}
+        />
       ))}
-    </ol>
+    </Wizard>
   );
 }

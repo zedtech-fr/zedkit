@@ -121,7 +121,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
-- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus.
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
@@ -176,6 +176,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
 - When to use: Beside a label that names the state (the dot is decorative).
 - When not to use: As the only state signal — pair it with text, never color alone.
+- A11y: `aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
 
 ```ts
@@ -194,10 +195,17 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - When to use: When you can report a percentage or fraction done.
 - When not to use: For unknown-shape loading — use Skeleton instead.
 - See also: `Show loading placeholder blocks`
+- Examples: Simple, Complete
+- A11y: Root carries `role="progressbar"` with clamped value; keep the label screen-only and pair with visible text.
 
 ```ts
 import { ProgressBar } from "@zedtech/zedkit-ui";
 <ProgressBar value={40} label="Uploading report" /> // role=progressbar, value clamped to 0..max
+```
+
+```ts
+import { ProgressBar } from "@zedtech/zedkit-ui";
+<ProgressBar value={100} label="Upload complete" />
 ```
 
 ## Celebrate completion with a checkmark
@@ -211,10 +219,17 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - When to use: For success confirmations right after the action completes.
 - When not to use: As a persistent status icon — use StatusDot or Badge instead.
 - See also: `Show toast notifications`
+- Examples: Simple, Decorative
+- A11y: Draws once under `motion-safe` (static full check under reduced motion); omit `label` when decorative.
 
 ```ts
 import { Checkmark } from "@zedtech/zedkit-ui";
 <Checkmark label="Saved" /> // draws once, static under reduced motion; omit label when decorative
+```
+
+```ts
+import { Checkmark } from "@zedtech/zedkit-ui";
+<Checkmark /> // decorative, pair with visible text
 ```
 
 ## Load each zone with a faithful skeleton
@@ -247,6 +262,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - Purpose: A named live-region label for the current operation state (loading, saved, error…).
 - When to use: Next to the content an operation affects, while it runs or right after.
 - When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
+- A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
 - See also: `Stamp data with its age`
 
 ```ts
@@ -264,11 +280,18 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
 - When to use: Under data that refreshes (polling, SWR, manual refetch).
 - When not to use: For absolute timestamps — render a `<time dateTime>` instead.
+- A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.
 - See also: `Name an operation in progress`
+- Examples: Simple, Custom prefix
 
 ```ts
 import { UpdatedAgo } from "@zedtech/zedkit-ui";
 <UpdatedAgo date={updatedAt} /> // "Updated 3 minutes ago" via Intl.RelativeTimeFormat
+```
+
+```ts
+import { UpdatedAgo } from "@zedtech/zedkit-ui";
+<UpdatedAgo date={syncedAt} prefix="Synced" />
 ```
 
 ## Open modal dialogs
@@ -282,6 +305,7 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 - Purpose: Accessible modal dialogs (trigger, content, title, footer) with focus trap and Escape.
 - When to use: For short tasks that need full attention (confirm, edit one thing).
 - When not to use: For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.
+- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`.
 - See also: `Confirm destructive actions`, `Slide in a drawer panel`
 
 ```ts
@@ -388,7 +412,7 @@ const router = useRouter();
 
 ## Show toast notifications
 
-- Import: `@zedtech/zedkit-ui` — `Toaster`
+- Import: `@zedtech/zedkit-ui` — `Toaster`, `toast`
 - Wraps: `sonner`
 - Status: beta
 - Derived from: shadcn/ui (sonner)
@@ -397,11 +421,11 @@ const router = useRouter();
 - Purpose: A root toaster plus toast() calls for transient notifications.
 - When to use: For outcomes that do not need the user's reply.
 - When not to use: For errors needing action — use Alert or Dialog instead.
+- A11y: The viewport announces via an `aria-live` polite region — keep toasts short, one outcome each. Styling maps toast slots to theme tokens only.
 - See also: `Call out a notice or an error state`
 
 ```ts
-import { Toaster } from "@zedtech/zedkit-ui";
-import { toast } from "sonner";
+import { Toaster, toast } from "@zedtech/zedkit-ui";
 <Toaster /> // once near the root, then toast("Saved") anywhere
 ```
 
@@ -453,6 +477,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - Purpose: Sidebar + topbar shell with page header (title, description, actions).
 - When to use: As the frame of every admin page.
 - When not to use: For public marketing pages — use your site layout instead.
+- A11y: Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
 - See also: `Group content in a card section`
 
 ```ts
@@ -464,7 +489,7 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 
 ## Guide a multi-step flow with selectable option cards
 
-- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `OptionCards`, `OptionCardsProps`, `OptionCard`
+- Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`
 - Wraps: none (native inputs + theme tokens)
 - Status: beta
 - Short name: WizardSteps
@@ -473,6 +498,8 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 - When to use: For 2–6 step flows with choices per step.
 - When not to use: For single forms — use Form instead of inventing steps.
 - See also: `Build validated forms with labels, errors, and pending state`
+- Examples: Simple, Composed steps
+- A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`.
 
 ```ts
 import { OptionCards, WizardSteps } from "@zedtech/zedkit-ui";
@@ -481,9 +508,17 @@ const [picked, setPicked] = useState(["a", "b"]);
 <OptionCards options={options} selected={picked} onChange={setPicked} />
 ```
 
+```ts
+import { Wizard, WizardStep } from "@zedtech/zedkit-ui";
+<Wizard>
+  <WizardStep step="Pick" index={0} state="done" showConnector />
+  <WizardStep step="Configure" index={1} state="current" />
+</Wizard>
+```
+
 ## Show key-value details and a live indicator
 
-- Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `LivePulse`, `LivePulseProps`
+- Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `DetailPanelRow`, `DetailPanelRowProps`, `LivePulse`, `LivePulseProps`
 - Wraps: none (theme tokens only)
 - Status: beta
 - Short name: DetailPanel
@@ -492,11 +527,20 @@ const [picked, setPicked] = useState(["a", "b"]);
 - When to use: For read-only record summaries next to the list.
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
+- Examples: Simple, Composed rows
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
 <PageHeader title="Server" actions={<LivePulse />} />
 <DetailPanel items={[{ label: "Region", value: "eu" }]} />
+```
+
+```ts
+import { DetailPanelRow } from "@zedtech/zedkit-ui";
+<dl>
+  <DetailPanelRow label="Region" value="eu" />
+</dl>
 ```
 
 ## Build validated forms with labels, errors, and pending state
@@ -532,6 +576,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 - When to use: To group related fields with legends and per-field errors.
 - When not to use: For validation logic itself — pair with Form instead.
 - See also: `Build validated forms with labels, errors, and pending state`
+- A11y: `FieldError` uses `role="alert"`; spacing uses `gap-field-*` theme tokens (not raw spacing literals).
 
 ```ts
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedtech/zedkit-ui";
@@ -551,6 +596,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 - Purpose: Cards with header/title/description/content/footer slots.
 - When to use: For self-contained blocks (panels, summaries, previews).
 - When not to use: For page-level layout — use AppShell and Stack instead.
+- A11y: Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; `CardSkeleton` mirrors the same tokens so async content lands without shifting.
 - See also: `Stack content and group titled sections`
 
 ```ts
@@ -589,6 +635,8 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - When to use: For every heading and paragraph in kit UI.
 - When not to use: For raw HTML emails or markdown — style those separately.
 - See also: `Stack content and group titled sections`
+- Examples: Simple, Heading styles on a link (asChild)
+- A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
 
 ```ts
 import { Heading, Text } from "@zedtech/zedkit-ui";
@@ -598,9 +646,16 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 <Text variant="muted">Secondary copy.</Text>
 ```
 
+```ts
+import { Heading } from "@zedtech/zedkit-ui";
+<Heading level={2} asChild>
+  <a href="#section">Section title as a link</a>
+</Heading>
+```
+
 ## Call out a notice or an error state
 
-- Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`
+- Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`, `alertVariants`, `AlertProps`
 - Wraps: `class-variance-authority`
 - Status: beta
 - Derived from: shadcn/ui (alert)
@@ -610,6 +665,8 @@ import { Heading, Text } from "@zedtech/zedkit-ui";
 - When to use: For states tied to page content (load errors, warnings).
 - When not to use: For transient confirmations — use Toaster instead.
 - See also: `Show toast notifications`
+- Examples: Simple, As a section (asChild)
+- A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
@@ -617,6 +674,16 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 <AlertDescription>Something worth knowing.</AlertDescription></Alert>
 <Alert variant="destructive"><AlertTitle>Failed</AlertTitle>
 <AlertDescription>Something went wrong.</AlertDescription></Alert>
+```
+
+```ts
+import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
+<Alert asChild>
+  <section aria-label="Maintenance notice">
+    <AlertTitle>Scheduled maintenance</AlertTitle>
+    <AlertDescription>Sunday 02:00–03:00 UTC.</AlertDescription>
+  </section>
+</Alert>
 ```
 
 ## Pick one option from a dropdown

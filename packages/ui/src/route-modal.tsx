@@ -48,15 +48,15 @@ const EXIT_MS: Record<RouteModalVariant, number> = { drawer: 250, dialog: 200 };
 const DRAWER_SIZES: Record<RouteModalSize, string | undefined> = {
   // Important: DrawerContent bakes direction-scoped max-widths at higher
   // specificity, so bare overrides would lose the cascade.
-  sm: "sm:max-w-sm!",
+  sm: "sm:max-w-route-modal-sm!",
   md: undefined,
-  lg: "sm:max-w-lg!",
+  lg: "sm:max-w-route-modal-drawer-lg!",
 };
 
 const DIALOG_SIZES: Record<RouteModalSize, string | undefined> = {
-  sm: "max-w-sm",
+  sm: "max-w-route-modal-sm",
   md: undefined,
-  lg: "max-w-2xl",
+  lg: "max-w-route-modal-dialog-lg",
 };
 
 /**
@@ -121,8 +121,8 @@ export function RouteModal({
     <Drawer open={open} onOpenChange={handleOpenChange} direction={direction}>
       <DrawerContent className={cn(drawerSizeClass, className)}>
         <DrawerClose asChild>
-          <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-4 right-4">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-route-modal-close-offset right-route-modal-close-offset">
+            <X className="size-icon-control" />
           </Button>
         </DrawerClose>
         <DrawerHeader>

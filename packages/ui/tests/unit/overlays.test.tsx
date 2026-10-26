@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { toast } from "sonner";
 import { Button } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "#index.js";
 import { SecretField } from "#index.js";
-import { Toaster } from "#index.js";
+import { Toaster, toast } from "#index.js";
 
 describe("overlays", () => {
   it("opens and closes a dialog", async () => {
@@ -45,6 +44,26 @@ describe("overlays", () => {
     expect(dialog.getAttribute("data-state")).toBe("open");
     expect(dialog.className).toContain("zk-zoom-in");
     expect(dialog.className).toContain("var(--motion-base)");
+  });
+
+  it("centers dialog content with token-driven position and shadow", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.className).toContain("dialog-center");
+    expect(dialog.className).toContain("shadow-overlay");
+    expect(dialog.className).not.toContain("top-[");
+    expect(dialog.className).not.toContain("translate-");
   });
 
   it("animates the dialog overlay through the motion tokens", async () => {
@@ -99,10 +118,36 @@ describe("overlays", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it("renders any trigger element via the asChild slot", async () => {
+    const user = userEvent.setup();
+    render(
+      <ConfirmDialog
+        trigger={<a href="/items">Delete item</a>}
+        title="Delete item?"
+        description="This cannot be undone."
+        onConfirm={() => {}}
+      />,
+    );
+    const trigger = screen.getByRole("link", { name: "Delete item" });
+    expect(trigger.getAttribute("href")).toBe("/items");
+    await user.click(trigger);
+    expect(screen.getByRole("dialog")).not.toBeNull();
+  });
+
   it("shows a toast through the themed viewport", async () => {
     render(<Toaster />);
     toast("Saved");
     expect(await screen.findByText("Saved")).not.toBeNull();
+  });
+
+  it("maps toast theme to CSS-var tokens only", async () => {
+    const { container } = render(<Toaster />);
+    toast("Saved");
+    await screen.findByText("Saved");
+    for (const token of ["bg-background", "text-foreground", "border-border"]) {
+      expect(container.innerHTML).toContain(token);
+    }
+    expect(container.innerHTML).not.toMatch(/bg-(red|blue|green|amber)-/);
   });
 
   describe("secret field", () => {
@@ -125,6 +170,14 @@ describe("overlays", () => {
       render(<SecretField id="key" value="zbk_secret" />);
       await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
       expect(screen.getByRole("button", { name: "Copy to clipboard" })).not.toBeNull();
+    });
+
+    it("uses token-driven gap and icon size with no arbitrary values", () => {
+      const { container } = render(<SecretField id="key" value="zbk_secret" />);
+      const root = container.firstElementChild;
+      expect(root?.className).toContain("gap-secret-field-gap");
+      expect(root?.className).not.toContain("[");
+      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-icon-control");
     });
   });
 });

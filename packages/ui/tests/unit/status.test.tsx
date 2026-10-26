@@ -32,6 +32,14 @@ describe("status label", () => {
     expect(container.querySelector(".lucide-wifi-off")).not.toBeNull();
   });
 
+  it("spaces icon and text from theme tokens", () => {
+    const { container } = render(<StatusLabel tone="loading">Saving report…</StatusLabel>);
+    expect(container.innerHTML).toContain("gap-status-label-gap");
+    expect(container.innerHTML).toContain("size-status-label-box");
+    const offline = render(<StatusLabel tone="offline">You are offline</StatusLabel>);
+    expect(offline.container.innerHTML).toContain("size-status-label-icon");
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(<StatusLabel tone="updating">Refreshing events…</StatusLabel>);
     const results = await axe(container, {
@@ -75,5 +83,10 @@ describe("updated ago", () => {
   it("accepts a custom prefix", () => {
     const { container } = render(<UpdatedAgo date={Date.now() - 3_000} prefix="Synced" />);
     expect(container.textContent).toBe("Synced just now");
+  });
+
+  it("styles the stamp with muted text tokens only", () => {
+    const { container } = render(<UpdatedAgo date={Date.now() - 3_000} />);
+    expect(container.firstElementChild?.className).toBe("text-xs text-muted-foreground");
   });
 });

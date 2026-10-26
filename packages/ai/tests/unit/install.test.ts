@@ -32,6 +32,13 @@ describe("installKit", () => {
     expect(readFileSync(join(dest, ".cursor/rules/project.mdc"), "utf8")).toContain("alwaysApply: true");
   });
 
+  it("core preset validates clean: every command resolves to an installed skill", () => {
+    const dest = tempDir();
+    install(dest, { preset: "core" });
+    const issues = validateKit(join(dest, ".agents"));
+    expect(issues).toEqual([]);
+  });
+
   it("installs personas.md from the template, keeps an existing one", () => {
     const fresh = tempDir();
     install(fresh);
@@ -416,6 +423,7 @@ describe("installKit", () => {
 });
 
 const FIRST_PARTY_SKILLS = [
+  "audit",
   "ground-truth",
   "parallel-work",
   "definition-of-done",
@@ -426,6 +434,7 @@ const FIRST_PARTY_SKILLS = [
   "review",
   "plan",
   "challenge",
+  "use-zedkit",
 ];
 
 function kitRoot(): string {
