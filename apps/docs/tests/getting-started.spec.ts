@@ -12,6 +12,12 @@ test("getting started is first stop from docs index", async ({ page }) => {
   await expect(page.getByText("zedkit-ai validate")).toBeVisible();
 });
 
+test("getting started documents install or copy paths", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started#install-or-copy`, { waitUntil: "networkidle" });
+  await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Command" })).toBeVisible();
+});
+
 test("getting started links to a catalog page", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   await page
