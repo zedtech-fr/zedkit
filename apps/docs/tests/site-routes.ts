@@ -6,8 +6,6 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Nested-interactive + link names without axe (home until layout axe is stable). */
   linkAndInteractiveAudit?: boolean;
-  /** Skip entire row when the static export has no page yet. */
-  pendingPath?: boolean;
   /** Wide MDX tables/code: #385 column width is covered by docs-mobile-layout.spec.ts. */
   skipMobileOverflow?: boolean;
 }
