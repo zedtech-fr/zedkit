@@ -2,10 +2,14 @@ import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@zedtech/zedkit-seo";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
 
+import { Stack } from "@zedtech/zedkit-ui";
+
 import { JsonLd } from "@/components/json-ld";
+import { featuredPackageChangelogUrl } from "@/content/gallery";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
 import { getMDXComponents } from "@/mdx-components";
+import { SiteMaintainerFooter } from "@/ui/site-footer";
 import { source } from "#source";
 
 export async function generateStaticParams() {
@@ -56,6 +60,9 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         <DocsBody>
           <MDX components={getMDXComponents()} />
         </DocsBody>
+        <Stack className="mt-16">
+          <SiteMaintainerFooter changelogHref={featuredPackageChangelogUrl} embeddedInMain />
+        </Stack>
       </DocsPage>
     </>
   );
