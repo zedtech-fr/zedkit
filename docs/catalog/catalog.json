@@ -1371,7 +1371,9 @@
               "code": "import { Heading } from \"@zedtech/zedkit-ui\";\n<Heading level={2} asChild>\n  <a href=\"#section\">Section title as a link</a>\n</Heading>"
             }
           ],
+          "registry": "typography",
           "a11y": "Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.",
+          "troubleshooting": "Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]
