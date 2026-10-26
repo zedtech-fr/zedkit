@@ -129,7 +129,7 @@ export {
   type WizardStepsProps,
 } from "./wizard-steps.js";
 export { Switch } from "./switch.js";
-export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.js";
+export { Tabs, TabsContent, TabsList, TabsTrigger, type TabsProps } from "./tabs.js";
 export { Textarea } from "./textarea.js";
 export { Toaster, toast, type ToasterProps } from "./sonner.js";
 export {

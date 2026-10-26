@@ -1557,7 +1557,7 @@
         },
         {
           "need": "Switch between tabbed panels",
-          "import": "`@zedtech/zedkit-ui` — `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`",
+          "import": "`@zedtech/zedkit-ui` — `Tabs`, `TabsProps`, `TabsList`, `TabsTrigger`, `TabsContent`",
           "wraps": "`@radix-ui/react-tabs`",
           "status": "alpha",
           "shortName": "Tabs",
@@ -1571,8 +1571,15 @@
             {
               "title": "Simple",
               "code": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@zedtech/zedkit-ui\";\n<Tabs defaultValue=\"one\"><TabsList>\n<TabsTrigger value=\"one\">First</TabsTrigger>\n</TabsList><TabsContent value=\"one\">First panel.</TabsContent></Tabs>"
+            },
+            {
+              "title": "Controlled",
+              "code": "import { Tabs } from \"@zedtech/zedkit-ui\";\n<Tabs value={tab} onValueChange={setTab}> // controlled: you own the state"
             }
           ],
+          "registry": "tabs",
+          "a11y": "Arrow keys move between triggers (Radix roving tabindex); keep trigger text short so accessible names stay clear.",
+          "troubleshooting": "Panels not switching — each `TabsTrigger`/`TabsContent` pair shares one `value`; the root needs `defaultValue` (uncontrolled) or `value` + `onValueChange` (controlled). Focus ring missing — triggers use the `focus-ring` utility shipped in the brick css.",
           "seeAlso": [
             "Guide a multi-step flow with selectable option cards"
           ]

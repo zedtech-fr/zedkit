@@ -96,6 +96,7 @@ describe("cli", () => {
       expect(result.text, args.join(" ")).toBe("");
     }
     expect(run("init", dest, "extra").errors).toContain('unexpected argument "extra"');
+    expect(run("init", dest, "extra").errors).toContain("zedkit-ai --help");
     expect(readdirSync(dest)).toEqual([]);
   });
 
@@ -128,7 +129,9 @@ describe("cli", () => {
   });
 
   it("validate fails on a missing directory and on unexpected arguments", () => {
-    expect(run("validate", "/definitely/not/here").code).toBe(2);
+    const missing = run("validate", "/definitely/not/here");
+    expect(missing.code).toBe(2);
+    expect(missing.errors).toContain("zedkit-ai init");
     expect(run("validate", "a", "b").code).toBe(2);
     expect(run("validate", "--help").code).toBe(2);
     expect(run("list", "--foo").code).toBe(2);
