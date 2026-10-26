@@ -190,6 +190,8 @@
   --container-route-modal-sm: 24rem;
   --container-route-modal-drawer-lg: 32rem;
   --container-route-modal-dialog-lg: 42rem;
+  --spacing-option-cards-gap: 0.75rem;
+  --spacing-option-cards-padding: 1rem;
 }
 
 @layer base {

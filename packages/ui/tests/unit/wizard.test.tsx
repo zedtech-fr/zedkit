@@ -62,4 +62,15 @@ describe("OptionCards", () => {
     await user.click(screen.getByText("Alpha"));
     expect(onChange).toHaveBeenCalledWith(["b"]);
   });
+
+  it("styles grid and cards from design tokens", () => {
+    const { container } = render(<OptionCards options={options} selected={["a"]} onChange={() => {}} />);
+    const group = screen.getByRole("group", { name: "Options" });
+    expect(group.classList.contains("gap-option-cards-gap")).toBe(true);
+    expect(group.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
+    const card = container.querySelector("label");
+    expect(card?.classList.contains("gap-option-cards-gap")).toBe(true);
+    expect(card?.classList.contains("p-option-cards-padding")).toBe(true);
+    expect(card?.className).not.toMatch(/(^|\s)(gap-3|p-4)(\s|$)/);
+  });
 });

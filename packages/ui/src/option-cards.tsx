@@ -22,11 +22,11 @@ export function OptionCards({ options, selected, onChange, label = "Options", cl
   }
 
   return (
-    <div role="group" aria-label={label} className={cn("grid gap-3 sm:grid-cols-2", className)}>
+    <div role="group" aria-label={label} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
       {options.map((option) => (
         <label
           key={option.id}
-          className="flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
+          className="flex cursor-pointer gap-option-cards-gap rounded-lg border p-option-cards-padding transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
         >
           <input
             type="checkbox"
