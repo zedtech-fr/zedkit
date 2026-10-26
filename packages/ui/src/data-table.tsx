@@ -59,7 +59,7 @@ export interface DataTableProps<TData extends RowData> {
 }
 
 function SortIcon({ direction }: { direction: SortDirection | false }) {
-  const className = "size-data-table-sort-icon opacity-60";
+  const className = "size-icon-sm opacity-60";
   if (direction === "asc") return <ArrowUp className={className} aria-hidden />;
   if (direction === "desc") return <ArrowDown className={className} aria-hidden />;
   return <ArrowUpDown className={className} aria-hidden />;

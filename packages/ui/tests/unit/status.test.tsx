@@ -37,7 +37,7 @@ describe("status label", () => {
     expect(container.innerHTML).toContain("gap-status-label-gap");
     expect(container.innerHTML).toContain("size-status-label-box");
     const offline = render(<StatusLabel tone="offline">You are offline</StatusLabel>);
-    expect(offline.container.innerHTML).toContain("size-status-label-icon");
+    expect(offline.container.innerHTML).toContain("size-icon-sm");
   });
 
   it("has no axe violations", async () => {
