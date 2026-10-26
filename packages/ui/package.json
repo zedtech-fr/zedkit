@@ -92,6 +92,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:",
     "@zedtech/zedkit-core": "workspace:*",
+    "@zedtech/zedkit-quality": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/react": "catalog:",

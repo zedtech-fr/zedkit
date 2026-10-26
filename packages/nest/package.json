@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@zedtech/zedkit-core": "workspace:*",
+    "@zedtech/zedkit-quality": "workspace:*",
     "@fastify/static": "catalog:",
     "@nestjs/common": "catalog:",
     "@nestjs/config": "catalog:",

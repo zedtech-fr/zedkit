@@ -57,6 +57,7 @@
     "schema-dts": "catalog:"
   },
   "devDependencies": {
+    "@zedtech/zedkit-quality": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
