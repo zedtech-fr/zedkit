@@ -25,7 +25,8 @@
       "to-tickets",
       "wayfinder",
       "domain-modeling",
-      "audit"
+      "audit",
+      "research"
     ],
     "full": "*"
   },
