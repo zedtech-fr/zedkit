@@ -9,7 +9,7 @@ export function ConfirmDialogDemo() {
     <Stack gap={3} className="min-w-0 items-start">
       <Stack direction="horizontal" gap={2} className="items-center">
         <Text className="font-medium">Website relaunch</Text>
-        <Badge variant={deleted ? "secondary" : "success"}>{deleted ? "Deleted" : "Active"}</Badge>
+        <Badge variant={deleted ? "secondary" : "outline"}>{deleted ? "Deleted" : "Active"}</Badge>
       </Stack>
       {deleted ? (
         <Stack gap={2} className="items-start">

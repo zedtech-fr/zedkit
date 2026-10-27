@@ -9,7 +9,7 @@ export function ConfirmDialogLabelsDemo() {
     <Stack gap={3} className="min-w-0 items-start">
       <Stack direction="horizontal" gap={2} className="items-center">
         <Text className="font-medium">Production key, created 12 March</Text>
-        <Badge variant={revoked ? "secondary" : "success"}>{revoked ? "Revoked" : "In use"}</Badge>
+        <Badge variant={revoked ? "secondary" : "outline"}>{revoked ? "Revoked" : "In use"}</Badge>
       </Stack>
       {revoked ? (
         <Button variant="outline" size="sm" onClick={() => setRevoked(false)}>
