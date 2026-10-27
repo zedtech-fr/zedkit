@@ -41,12 +41,19 @@ export function lensTableRows(): string[][] {
     .filter((cells) => cells[1] !== "Lens" && cells[1] !== "---");
 }
 
+/** Skill directory names only: stray files (LICENSE-*) never count as skills. */
+export function skillDirs(): string[] {
+  return readdirSync(join(kitDir(), "skills"), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+}
+
 /** Every installable name: agents + commands + skill dirs (+ presets when asked). */
 export function shippedNames(includePresets = false): Set<string> {
   const manifest = readManifest();
   if (!manifest.ok) throw manifest.error;
   const extra = includePresets ? Object.keys(manifest.value.presets) : [];
   return new Set(
-    manifest.value.agents.concat(manifest.value.commands ?? [], readdirSync(join(kitDir(), "skills")), extra),
+    manifest.value.agents.concat(manifest.value.commands ?? [], skillDirs(), extra),
   );
 }
