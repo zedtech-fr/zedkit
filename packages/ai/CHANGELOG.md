@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.7.1
+
+### Patch Changes
+
+- 43afbd0: Refactor test name resolvers into one shared helper with identical behavior.
+
 ## 0.7.0
 
 ### Minor Changes
