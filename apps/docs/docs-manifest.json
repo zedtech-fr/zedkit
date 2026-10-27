@@ -259,7 +259,8 @@
       "component": "BrandLogo",
       "props": "BrandLogoProps",
       "source": "brand-logo.tsx",
-      "demo": "BrandLogoDemo"
+      "demo": "BrandLogoDemo",
+      "examples": { "Header link to the home page": "BrandLogoHeaderDemo" }
     }
   }
 }

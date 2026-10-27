@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { AlertDemo } from "./alert-demo";
 import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
-import { BrandLogoDemo } from "./brand-logo-demo";
+import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
 import { ButtonDemo } from "./button-demo";
 import { CardDemo } from "./card-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
@@ -58,6 +58,7 @@ export const demoRegistry = {
   CheckmarkDemo: { Demo: CheckmarkDemo, file: "checkmark-demo.tsx" },
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
+  BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },

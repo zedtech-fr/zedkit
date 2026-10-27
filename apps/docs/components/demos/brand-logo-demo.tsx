@@ -15,6 +15,17 @@ function HarborMark({ className, title = "" }: { className?: string; title?: str
 
 const stay = (event: MouseEvent) => event.preventDefault();
 
+export function BrandLogoHeaderDemo() {
+  return (
+    <a href="/" onClick={stay} className="flex min-w-0 items-center gap-2 text-foreground">
+      <HarborMark className="h-6 text-primary" />
+      <Text as="span" className="truncate font-semibold">
+        Harbor Studio
+      </Text>
+    </a>
+  );
+}
+
 export function BrandLogoDemo() {
   return (
     <Stack gap={4} className="min-w-0">

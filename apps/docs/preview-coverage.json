@@ -41,7 +41,6 @@
     "Show determinate progress::Complete",
     "Show key-value details and a live indicator::Composed rows",
     "Show loading placeholder blocks::Text lines",
-    "Show the zedkit logo::Simple",
     "Slide in a drawer panel::Bottom sheet",
     "Slide in a drawer panel::Side panel on every screen",
     "Stamp data with its age::Custom prefix",
