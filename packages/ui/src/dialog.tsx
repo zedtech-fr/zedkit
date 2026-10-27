@@ -37,7 +37,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed dialog-center z-overlay grid w-full max-w-lg gap-dialog-gap border bg-background p-dialog-padding shadow-overlay sm:rounded-lg",
+        "fixed dialog-center z-overlay grid w-full max-w-dialog-mobile gap-dialog-gap rounded-lg border bg-background p-dialog-padding shadow-overlay sm:max-w-lg",
         "motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)]",
         "motion-safe:data-[state=closed]:animate-[zk-zoom-out_var(--motion-base)_var(--ease-exit)]",
         className,
@@ -45,7 +45,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+      <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <X className="size-icon-control" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>

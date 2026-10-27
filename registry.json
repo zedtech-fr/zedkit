@@ -250,7 +250,7 @@
       ],
       "cssVars": {
         "theme": {
-          "spacing-tabs-list-height": "2.25rem",
+          "spacing-tabs-list-height": "max(calc(var(--zk-tap-min, 0px) + 0.5rem), 2.25rem)",
           "spacing-tabs-list-inset": "0.25rem",
           "spacing-tabs-trigger-inline": "0.75rem",
           "spacing-tabs-trigger-block": "0.25rem",

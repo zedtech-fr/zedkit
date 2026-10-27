@@ -106,6 +106,18 @@
   --sidebar-accent: 240 3.7% 15.9%;
 }
 
+/* Touch devices and phones: controls never drop below the 44px target. Larger screens keep the design heights. */
+:root {
+  --zk-tap-min: 0px;
+  /* Width of the table scroll hint fade on each cut edge. */
+  --zk-table-fade: 1.5rem;
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  :root {
+    --zk-tap-min: 2.75rem;
+  }
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -147,14 +159,16 @@
    */
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
-  --spacing-control-height: 2.25rem;
-  --spacing-control-height-sm: 2rem;
-  --spacing-control-height-lg: 2.5rem;
+  --spacing-control-height: max(var(--zk-tap-min, 0px), 2.25rem);
+  --spacing-control-height-sm: max(var(--zk-tap-min, 0px), 2rem);
+  --spacing-control-height-lg: max(var(--zk-tap-min, 0px), 2.5rem);
   --spacing-button-inline: 1rem;
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
   --spacing-button-gap: 0.5rem;
   --spacing-icon-control: 1rem;
+  /* Minimum touch target (WCAG 2.5.5). */
+  --spacing-tap: 2.75rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
    * across components; per-component `--spacing-<component>-*` aliases
@@ -186,7 +200,7 @@
   --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
   --spacing-progress-bar-gap: 0.125rem;
   --spacing-progress-bar-height: 0.375rem;
-  --spacing-tabs-list-height: 2.25rem;
+  --spacing-tabs-list-height: max(calc(var(--zk-tap-min, 0px) + 0.5rem), 2.25rem);
   --spacing-tabs-list-inset: 0.25rem;
   --spacing-tabs-trigger-inline: 0.75rem;
   --spacing-tabs-trigger-block: 0.25rem;
@@ -240,6 +254,8 @@
   --spacing-dialog-footer-gap: 0.5rem;
   --spacing-overlay-close-offset: 1rem;
   --spacing-overlay-touch-target: 2.75rem;
+  /* Dialog width on phones: full width minus thumb gutters each side. */
+  --container-dialog-mobile: calc(100% - 2rem);
   --spacing-app-shell-sidebar: 16rem;
   --spacing-app-shell-padding: 1rem;
   --spacing-app-shell-padding-md: 1.5rem;
@@ -349,6 +365,92 @@
   }
 }
 
+/*
+ * Button motion: colour, shadow and translate transitions, plus a shrink
+ * to `--zk-press-scale` while held. Applied behind `motion-safe:` so reduced motion keeps instant states.
+ */
+@utility button-press {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow, translate, scale;
+  transition-duration: var(--motion-base);
+  transition-timing-function: var(--zk-btn-ease, ease);
+  &:active:not(:disabled) {
+    scale: var(--zk-press-scale);
+  }
+}
+
+/*
+ * Pointer target for small standalone controls (checkbox, switch): the
+ * visible box keeps its size while an invisible pseudo-element carries
+ * an exact tap-size hit area. Gated like --zk-tap-min (touch or narrow
+ * screens); mouse users keep pixel-precise targets.
+ */
+@utility hit-target {
+  position: relative;
+  @media (pointer: coarse), (max-width: 40rem) {
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: var(--spacing-tap);
+      height: var(--spacing-tap);
+    }
+  }
+}
+
+/*
+ * Link badges keep their small visual size; their pointer target reaches
+ * the tap size in both axes (badge heights vary by identity, so the
+ * overflow is generous rather than exact).
+ */
+a[class*="px-badge-inline"] {
+  position: relative;
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  a[class*="px-badge-inline"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 100%;
+    height: 100%;
+    min-width: var(--spacing-tap);
+    min-height: var(--spacing-tap);
+  }
+}
+
+/*
+ * Table scroll hints: the Table edge observer sets data-edge-left/right
+ * when the first or last column is cut off, and the cut edge fades over
+ * --zk-table-fade. No attributes, no fade: fitted tables stay crisp.
+ */
+[data-slot="table-container"][data-edge-left] {
+  -webkit-mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+  mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+}
+[data-slot="table-container"][data-edge-right] {
+  -webkit-mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+  mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+}
+[data-slot="table-container"][data-edge-left][data-edge-right] {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--zk-table-fade),
+    black calc(100% - var(--zk-table-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--zk-table-fade),
+    black calc(100% - var(--zk-table-fade)),
+    transparent
+  );
+}
+
 @keyframes zk-check-draw {
   from {
     stroke-dashoffset: 8;
@@ -368,6 +470,8 @@
   --motion-slow: 250ms;
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Pressed-state shrink for buttons (see the button-press utility). */
+  --zk-press-scale: 0.97;
 }
 
 @keyframes zk-fade-in {
