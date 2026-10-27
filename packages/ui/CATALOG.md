@@ -952,6 +952,25 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 </Alert>
 ```
 
+## Show the zedkit logo
+
+- Import: `@zedtech/zedkit-ui` — `Logo`, `LogoProps`
+- Wraps: none (inline SVG)
+- Status: alpha
+- Short name: Logo
+- Audience: Teams building a header, a footer or a share image for a zedkit-based site.
+- Purpose: The zedkit mark as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.
+- When to use: Next to the product name in a site header, or anywhere a small brand mark is needed.
+- When not to use: For your own brand — ship your own mark instead.
+- See also: `Switch the visual identity with one attribute`
+- A11y: named image ("zedkit") by default; pass `title=""` to hide it when the name is written next to it.
+
+```ts
+import { Logo } from "@zedtech/zedkit-ui";
+<Logo className="h-6 text-foreground" title="" />
+```
+
+
 ## Pick one option from a dropdown
 
 - Import: `@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
