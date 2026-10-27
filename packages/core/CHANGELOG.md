@@ -1,5 +1,11 @@
 # @zedtech/zedkit-core
 
+## 0.1.3
+
+### Patch Changes
+
+- 4a1b579: docs: accurate npm descriptions — UI kit is not admin-only; core is not backend-only.
+
 ## 0.1.2
 
 ### Patch Changes
