@@ -1,5 +1,12 @@
 # @zedtech/zedkit-ui
 
+## 0.6.1
+
+### Patch Changes
+
+- af05b51: Glass identity: drawer and dialog panels are translucent, tinted and blurred, with a lighter scrim; they fall back to near-solid without backdrop-filter, with reduced transparency, or in forced colors. Drawer and dialog parts carry data-slot hooks.
+- 001f6aa: Catalog: ten UI needs move from alpha to beta (metadata only, no code change).
+
 ## 0.6.0
 
 ### Minor Changes
