@@ -5,6 +5,35 @@
 /* Scan the workspace kit sources so preview components get their classes. */
 @source "../../../packages/ui/src";
 
+@media (pointer: coarse) {
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="tab"] {
+    touch-action: manipulation;
+  }
+}
+
+/* Phones and touch: fumadocs' own tabs, copy buttons and props rows reach the 44px target. */
+@media (pointer: coarse), (max-width: 40rem) {
+  [role="tablist"] > [role="tab"] {
+    min-height: 2.75rem;
+  }
+  figure.shiki > div:first-child {
+    top: 0;
+    right: 0;
+  }
+  figure.shiki button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+  main button.group[aria-expanded] {
+    min-height: 2.75rem;
+  }
+}
+
 /* Mobile TOC: decorative ring must not register as an unnamed progressbar. */
 [data-toc-popover-trigger] svg[role="progressbar"] {
   display: none;

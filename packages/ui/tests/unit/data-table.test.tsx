@@ -129,6 +129,31 @@ describe("DataTable", () => {
     await user.click(screen.getByRole("button", { name: "Previous" }));
     expect(bodyRowTexts()).toEqual(["Bob30"]);
   });
+  it("returns to the first page when the filter changes", async () => {
+    const user = userEvent.setup();
+    const many: Person[] = [
+      { name: "Ada", age: 36 },
+      { name: "Bob", age: 30 },
+      { name: "Cy", age: 41 },
+      { name: "Ada Two", age: 22 },
+    ];
+    render(<DataTable columns={columns} data={many} pageSize={1} />);
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByText("Page 3 of 4").textContent).toBe("Page 3 of 4");
+    await user.type(screen.getByLabelText("Filter…"), "Ada");
+    expect(bodyRowTexts()).toEqual(["Ada36"]);
+    expect(screen.getByText("Page 1 of 2").textContent).toBe("Page 1 of 2");
+  });
+
+  it("hides pagination when the filter leaves no rows", async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} pageSize={1} />);
+    expect(screen.getByRole("button", { name: "Next" })).toBeTruthy();
+    await user.type(screen.getByLabelText("Filter…"), "nobody");
+    expect(screen.queryByRole("button", { name: "Next" })).toBeNull();
+    expect(screen.queryByText(/Page \d+ of/)).toBeNull();
+  });
 });
 
 describe("DataTablePagination", () => {

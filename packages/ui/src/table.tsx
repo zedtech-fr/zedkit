@@ -4,6 +4,8 @@
 // Allowed arbitraries: structural selectors only ([&_tr], :last-child,
 // data-[state=selected], :has([role=checkbox])). They carry no values,
 // so no theme token can replace them. All sizes/paddings use tokens.
+"use client";
+
 import * as React from "react";
 
 import { cn } from "./utils.js";
@@ -13,16 +15,61 @@ export interface TableProps extends React.ComponentProps<"table"> {
   scrollAriaLabel?: string;
 }
 
-function Table({ className, scrollAriaLabel = "Scrollable table", ...props }: TableProps) {
+/** Edge hidden by more than this overhang counts as cut off (faded). */
+const EDGE_CUT_PX = 0.5;
+
+function Table({ className, scrollAriaLabel = "Scrollable table", children, ...props }: TableProps) {
+  const regionRef = React.useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = React.useState({ left: false, right: false });
+
+  // Scroll hints: compare the first row's edge cells against the scroll
+  // region. A cut edge fades (see the data-edge selectors in styles.css);
+  // fitted tables stay crisp. Edge-based, so cells wider than the viewport
+  // still resolve correctly.
+  React.useEffect(() => {
+    const region = regionRef.current;
+    if (!region) return;
+    const update = () => {
+      const firstRow = region.querySelector("table tr");
+      const firstCell = firstRow?.querySelector(":scope > *:first-child") ?? null;
+      const lastCell = firstRow?.querySelector(":scope > *:last-child") ?? null;
+      if (!firstCell || !lastCell) return;
+      const box = region.getBoundingClientRect();
+      const first = firstCell.getBoundingClientRect();
+      const last = lastCell.getBoundingClientRect();
+      const next = {
+        left: first.left < box.left - EDGE_CUT_PX,
+        right: last.right > box.right + EDGE_CUT_PX,
+      };
+      setEdges((previous) => (next.left === previous.left && next.right === previous.right ? previous : next));
+    };
+    update();
+    region.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    // Layout-driven width changes (a sidebar toggling) do not fire window resize.
+    const resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
+    resizeObserver?.observe(region);
+    return () => {
+      region.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      resizeObserver?.disconnect();
+    };
+  }, [children]);
+
   return (
     <div
       role="region"
+      ref={regionRef}
       data-slot="table-container"
+      data-edge-left={edges.left || undefined}
+      data-edge-right={edges.right || undefined}
       className="relative w-full overflow-x-auto"
       tabIndex={0}
       aria-label={scrollAriaLabel}
     >
-      <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props} />
+      <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props}>
+        {children}
+      </table>
     </div>
   );
 }
