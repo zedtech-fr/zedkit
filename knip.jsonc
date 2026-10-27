@@ -1,0 +1,48 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  // Exports used in the same file (slot maps, typed helpers, fixture classes)
+  // are live; knip would otherwise list them as unused.
+  "ignoreExportsUsedInFile": true,
+  "ignore": [
+    // Copied onto consumer repos by the skill; not executed here.
+    "**/setup-ts-deep-modules/dependency-cruiser.config.cjs"
+  ],
+  "workspaces": {
+    ".": {
+      // Root scripts. `shadcn` is a CLI (`pnpm exec shadcn`), not an import.
+      "entry": ["scripts/**/*.{mjs,sh}"],
+      "ignoreDependencies": ["shadcn"]
+    },
+    "apps/docs": {
+      // Next/fumadocs special files plus surfaces knip cannot see:
+      // generated MDX imports ComponentPage; check.mjs spawns the verify
+      // scripts; snippets and fixtures are read by path, not imported.
+      "entry": [
+        "app/viewport.ts",
+        "source.config.ts",
+        "mdx-components.tsx",
+        "scripts/**/*.mjs",
+        "components/component-page.tsx",
+        "components/maturity-compatibility-view.tsx",
+        "home-quickstart/snippets/**",
+        "prose/guides/snippets/**",
+        "fixtures/**/*.mjs"
+      ]
+    },
+    "packages/ui": {
+      // gallery.tsx is compiled by preview/build.mjs (string read, not import).
+      "entry": ["preview/gallery.tsx", "preview/*.mjs"],
+      "ignoreDependencies": [
+        // Wanted by DropdownMenu (#627); not imported yet.
+        "@radix-ui/react-dropdown-menu"
+      ]
+    },
+    "packages/quality": {
+      // Fixtures compiled by the tsconfig unit test; usage.ts is the typecheck probe.
+      "entry": ["tests/fixtures/tsconfig/*.ts", "tests/types/usage.ts"]
+    },
+    "packages/nest": {
+      "entry": ["tests/**/*.ts", "examples/**/*.ts"]
+    }
+  }
+}

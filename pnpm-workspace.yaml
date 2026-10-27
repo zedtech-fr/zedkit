@@ -83,7 +83,6 @@ catalog:
   eslint-plugin-jsx-a11y: 6.10.2
   eslint-plugin-better-tailwindcss: 4.10.0
   vitest-axe: 0.1.0
-  axe-core: 4.14.0
   "@axe-core/playwright": 4.14.0
   "@playwright/test": 1.64.1
   shadcn: 4.22.1

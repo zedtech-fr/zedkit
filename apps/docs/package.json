@@ -41,7 +41,6 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "sonner": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -53,6 +52,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@zedtech/zedkit-quality": "workspace:*",
+    "postcss": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }
