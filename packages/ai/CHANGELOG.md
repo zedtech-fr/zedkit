@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.6.2
+
+### Patch Changes
+
+- 79c3dbc: Test that the README vendored paragraph names only shipped skills.
+
 ## 0.6.1
 
 ### Patch Changes
