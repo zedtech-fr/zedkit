@@ -1,9 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 /**
  * Home: the hero stays calm (one identity, nothing cycling) and the
- * second section scrolls through one kit in six identities, each scene with
- * its own identity and content.
+ * second section scrolls through one kit in six identities on a pinned
+ * stage, each scene with its own identity and content.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -29,9 +29,25 @@ test("the use cases section follows the hero, before the AI setup section", asyn
 });
 
 const ORDER = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
-const BLOCK = "#use-cases [data-use-case]";
+const BLOCK = "#use-cases [data-scroll-scene]";
 
-test("no tabs: six blocks, one per identity, each with its name, a line of text and a scene", async ({ page }) => {
+/** Scroll the page so the pinned stage sits on scene `index` (middle of its slice). */
+async function scrollToScene(page: Page, index: number) {
+  await page.evaluate((i) => {
+    const track = document.querySelector<HTMLElement>("#use-cases [data-scroll-scenes]");
+    const stage = track?.firstElementChild as HTMLElement | null;
+    if (!track || !stage) throw new Error("no scenes");
+    const count = track.querySelectorAll("[data-scroll-scene]").length;
+    const pinned = track.offsetHeight - stage.offsetHeight;
+    const start = track.getBoundingClientRect().top + window.scrollY - (parseFloat(getComputedStyle(stage).top) || 0);
+    window.scrollTo(0, start + (pinned * (i + 0.5)) / count);
+  }, index);
+}
+
+const opacities = (page: Page) =>
+  page.locator(BLOCK).evaluateAll((nodes) => nodes.map((el) => Number(getComputedStyle(el).opacity)));
+
+test("no tabs: six scenes, one per identity, each with its name, a line of text and examples", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#use-cases").getByRole("tab")).toHaveCount(0);
   await expect(page.locator("#use-cases").getByRole("tablist")).toHaveCount(0);
@@ -66,13 +82,14 @@ test("no tabs: six blocks, one per identity, each with its name, a line of text 
 });
 
 test("scrolling through the scenes: each shows its own look, the page identity stays", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
   const pageIdentity = await page.locator("html").getAttribute("data-identity");
   const seen: { identity: string; font: string; radius: string }[] = [];
   const blocks = page.locator(BLOCK);
   for (let index = 0; index < 6; index++) {
+    await scrollToScene(page, index);
     const scene = blocks.nth(index).locator("[data-use-case-scene]");
-    await scene.scrollIntoViewIfNeeded();
     await expect(scene).toBeInViewport();
     seen.push(
       await scene.evaluate((el) => {
@@ -95,27 +112,76 @@ test("scrolling through the scenes: each shows its own look, the page identity s
 test.describe("motion", () => {
   test.use({ reducedMotion: "no-preference" });
 
-  test("a scene eases in with the scroll and is fully opaque once in view", async ({ page }) => {
+  test("the stage is pinned and one scene at a time is shown while scrolling", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 664 });
     await page.goto("/");
-    const scene = page.locator("[data-use-case-scene]").nth(2);
-    const animation = await scene.evaluate((el) => {
-      const style = getComputedStyle(el);
-      return { name: style.animationName, timeline: style.animationTimeline };
+    const stage = page.locator("#use-cases [data-scroll-scenes-stage]");
+    expect(await stage.evaluate((el) => getComputedStyle(el).position)).toBe("sticky");
+    for (let index = 0; index < 6; index++) {
+      await scrollToScene(page, index);
+      await expect.poll(async () => (await opacities(page))[index]).toBeGreaterThanOrEqual(0.99);
+      const others = (await opacities(page)).filter((_, other) => other !== index);
+      for (const value of others) expect(value).toBeLessThanOrEqual(0.01);
+      // The stage stays put under the header while the scenes change.
+      const top = await stage.evaluate((el) => Math.round(el.getBoundingClientRect().top));
+      expect(top).toBe(72);
+    }
+  });
+
+  test("scenes never show on top of each other: no double exposure between two scenes", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 664 });
+    await page.goto("/");
+    await scrollToScene(page, 0);
+    const start = await page.evaluate(() => scrollY);
+    for (let step = 0; step <= 40; step++) {
+      await page.evaluate((y) => window.scrollTo(0, y), start + step * 40);
+      const values = await opacities(page);
+      expect(values.reduce((sum, value) => sum + value, 0)).toBeLessThanOrEqual(1.05);
+    }
+  });
+
+  test("no layout shift and no sideways scroll across the whole pinned scroll", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 664 });
+    await page.addInitScript(() => {
+      (window as unknown as { __cls: number }).__cls = 0;
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as unknown as { value: number; hadRecentInput: boolean }[]) {
+          if (!entry.hadRecentInput) (window as unknown as { __cls: number }).__cls += entry.value;
+        }
+      }).observe({ type: "layout-shift", buffered: true });
     });
-    expect(animation.name).not.toBe("none");
-    expect(animation.timeline).not.toBe("auto");
-    await scene.evaluate((el) => el.scrollIntoView({ block: "center" }));
-    await expect.poll(() => scene.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeGreaterThanOrEqual(0.99);
-    // Soft by construction: never a fade from nothing, so the text stays readable.
-    const first = await page.locator("[data-use-case-scene]").nth(5).evaluate((el) => Number(getComputedStyle(el).opacity));
-    expect(first).toBeGreaterThanOrEqual(0.35);
+    await page.goto("/");
+    const height = await page.evaluate(() => document.documentElement.scrollHeight);
+    for (let index = 0; index < 6; index++) {
+      await scrollToScene(page, index);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    }
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(height);
+    expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.01);
+  });
+
+  test("the captions stay in the page for assistive tech in every scene", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("#use-cases h3")).toHaveCount(6);
+    for (const heading of await page.locator("#use-cases h3").all()) {
+      expect(await heading.evaluate((el) => getComputedStyle(el).visibility)).toBe("visible");
+      expect(await heading.evaluate((el) => getComputedStyle(el).display)).not.toBe("none");
+    }
+    // Native scrolling only: the page scrolls with the keyboard like anywhere else.
+    const before = await page.evaluate(() => scrollY);
+    await page.keyboard.press("PageDown");
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before);
   });
 });
 
-test("reduced motion: the scenes appear without animation", async ({ page }) => {
+test("reduced motion: the scenes sit one under the other, nothing is pinned or animated", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const states = await page.locator("[data-use-case-scene]").evaluateAll((nodes) =>
+  const stage = page.locator("#use-cases [data-scroll-scenes-stage]");
+  expect(await stage.evaluate((el) => getComputedStyle(el).position)).toBe("static");
+  expect(await page.locator("#use-cases [data-scroll-scenes-progress]").evaluate((el) => getComputedStyle(el).display)).toBe("none");
+  const states = await page.locator(BLOCK).evaluateAll((nodes) =>
     nodes.map((el) => ({ name: getComputedStyle(el).animationName, opacity: getComputedStyle(el).opacity })),
   );
   expect(states).toHaveLength(6);
@@ -123,6 +189,9 @@ test("reduced motion: the scenes appear without animation", async ({ page }) => 
     expect(state.name).toBe("none");
     expect(state.opacity).toBe("1");
   }
+  const tops = await page.locator(BLOCK).evaluateAll((nodes) => nodes.map((el) => el.getBoundingClientRect().top));
+  expect([...tops].sort((a, b) => a - b)).toEqual(tops);
+  expect(new Set(tops).size).toBe(6);
 });
 
 test("a scene keeps its own look under any page identity", async ({ page }) => {
@@ -172,7 +241,7 @@ for (const identity of ORDER) {
       const before = await page.evaluate(() => document.documentElement.scrollHeight);
       const blocks = page.locator(BLOCK);
       for (let index = 0; index < 6; index++) {
-        await blocks.nth(index).scrollIntoViewIfNeeded();
+        await scrollToScene(page, index);
         const fits = await blocks.nth(index).evaluate((el) => {
           const box = el.getBoundingClientRect();
           return box.left >= 0 && box.right <= document.documentElement.clientWidth;
