@@ -27,6 +27,7 @@ import { CardDemo } from "./card-demo";
 import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
+import { ConfirmDialogLabelsDemo } from "./confirm-dialog-labels-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DataTableEmptyDemo } from "./data-table-empty-demo";
 import { DataTablePaginationDemo } from "./data-table-pagination-demo";
@@ -34,7 +35,9 @@ import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
+import { DrawerBottomSheetDemo } from "./drawer-bottom-sheet-demo";
 import { DrawerDemo } from "./drawer-demo";
+import { DrawerSideMenuDemo } from "./drawer-side-menu-demo";
 import { FieldDemo } from "./field-demo";
 import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
@@ -109,6 +112,7 @@ export const demoRegistry = {
   GuideSaveRowDemo: { Demo: GuideSaveRowDemo, file: "guide-save-row-demo.tsx" },
   AdminDashboardGuideDemo: { Demo: AdminDashboardGuideDemo, file: "admin-dashboard-guide-demo.tsx" },
   RevealOnScrollDemo: { Demo: RevealOnScrollDemo, file: "reveal-on-scroll-demo.tsx" },
+  ConfirmDialogLabelsDemo: { Demo: ConfirmDialogLabelsDemo, file: "confirm-dialog-labels-demo.tsx", center: true },
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
@@ -129,6 +133,8 @@ export const demoRegistry = {
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
+  DrawerBottomSheetDemo: { Demo: DrawerBottomSheetDemo, file: "drawer-bottom-sheet-demo.tsx", center: true },
+  DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
   HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },

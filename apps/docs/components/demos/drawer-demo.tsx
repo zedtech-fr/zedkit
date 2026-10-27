@@ -2,7 +2,9 @@
 
 import * as React from "react";
 import {
+  Badge,
   Button,
+  DetailPanel,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -28,11 +30,13 @@ const DIRECTIONS: readonly { value: DemoDirection; label: string; hint: string }
   { value: "top", label: "Top", hint: "Top panel: the handle sits at the bottom edge. Swipe up to close." },
 ];
 
-const FILLER = [
-  "The header and the actions stay in place while this area scrolls.",
-  "Scrolling here never moves the page behind the drawer.",
-  "Drag the handle, or the panel itself, toward the edge it came from to close it.",
-  "Tap the dimmed area, press Escape, or use the close button to go back.",
+const ACTIVITY = [
+  "Camille moved the task to In review.",
+  "Hugo attached the homepage mockups (v3).",
+  "Inès commented: the hero image is too heavy on mobile.",
+  "Camille changed the due date to 30 October.",
+  "Hugo replied: compressed to 180 KB, ready for another look.",
+  "Inès approved the copy on the pricing section.",
 ] as const;
 
 export function DrawerDemo() {
@@ -79,25 +83,31 @@ export function DrawerDemo() {
           <DrawerHeader>
             <Stack direction="horizontal" gap={2} className="items-start justify-between">
               <Stack gap={1} className="min-w-0 flex-1 text-left">
-                <DrawerTitle>Details</DrawerTitle>
-                <DrawerDescription>Opened from the {choice === "auto" ? "default" : choice} edge.</DrawerDescription>
+                <DrawerTitle>Task details</DrawerTitle>
+                <DrawerDescription>Website relaunch · opened from the {choice === "auto" ? "default" : choice} edge.</DrawerDescription>
               </Stack>
               <DrawerCloseButton className="shrink-0" />
             </Stack>
           </DrawerHeader>
           <DrawerBody>
             <Stack gap={3} className="py-3">
-              {FILLER.map((line) => (
+              <Text className="font-medium">Review the homepage mockups</Text>
+              <DetailPanel
+                items={[
+                  { label: "Assignee", value: "Camille Rousseau" },
+                  { label: "Due", value: "30 October" },
+                  { label: "Status", value: <Badge variant="warning">In review</Badge> },
+                ]}
+              />
+              <Text variant="muted" className="text-xs font-medium">
+                Activity
+              </Text>
+              {ACTIVITY.map((line) => (
                 <Text key={line} variant="muted">
                   {line}
                 </Text>
               ))}
-              <Input aria-label="Note" placeholder="Type a note (the field stays in view)" />
-              {FILLER.map((line) => (
-                <Text key={`more-${line}`} variant="muted">
-                  {line}
-                </Text>
-              ))}
+              <Input aria-label="Note" placeholder="Add a note for the team" />
             </Stack>
           </DrawerBody>
           <DrawerFooter>

@@ -97,7 +97,10 @@
       "registry": "confirm-dialog",
       "props": "ConfirmDialogProps",
       "source": "confirm-dialog.tsx",
-      "demo": "ConfirmDialogDemo"
+      "demo": "ConfirmDialogDemo",
+      "examples": {
+        "Custom button labels": "ConfirmDialogLabelsDemo"
+      }
     },
     "Slide in a drawer panel": {
       "package": "@zedtech/zedkit-ui",
@@ -105,7 +108,11 @@
       "registry": "drawer",
       "props": "DrawerProps",
       "source": "drawer.tsx",
-      "demo": "DrawerDemo"
+      "demo": "DrawerDemo",
+      "examples": {
+        "Bottom sheet": "DrawerBottomSheetDemo",
+        "Side panel on every screen": "DrawerSideMenuDemo"
+      }
     },
     "Render a route as a modal over the list": {
       "package": "@zedtech/zedkit-ui",
