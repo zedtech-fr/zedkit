@@ -71,3 +71,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # One env for every package (smaller than publishConfig.provenance
+          # on each package.json). Needs id-token: write, already set above.
+          NPM_CONFIG_PROVENANCE: "true"
