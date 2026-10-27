@@ -30,17 +30,19 @@ const stackVariants = cva("flex", {
   },
 });
 
-export type StackProps = React.HTMLAttributes<HTMLDivElement> &
+export type StackProps = React.ComponentProps<"div"> &
   VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
     gap?: 1 | 2 | 3 | 4 | 6 | 8;
   };
 
 function Stack({ direction, gap, className, ...props }: StackProps) {
-  return <div className={cn(stackVariants({ direction, gap }), className)} {...props} />;
+  return (
+    <div data-slot="stack" className={cn(stackVariants({ direction, gap }), className)} {...props} />
+  );
 }
 
-export type SectionProps = React.HTMLAttributes<HTMLElement> & {
+export type SectionProps = React.ComponentProps<"section"> & {
   /** Section title, rendered as a level-2 heading. */
   title?: React.ReactNode;
   /** Muted description under the title. */
@@ -51,7 +53,7 @@ export type SectionProps = React.HTMLAttributes<HTMLElement> & {
 
 function Section({ title, description, actions, children, className, ...props }: SectionProps) {
   return (
-    <section className={cn("space-y-4", className)} {...props}>
+    <section data-slot="section" className={cn("space-y-4", className)} {...props}>
       {(title || actions) && (
         <div className="flex items-start justify-between gap-4">
           <div>

@@ -38,7 +38,7 @@ function SecretField({ id, value, copyLabel = "Copy to clipboard", "aria-label":
     );
   };
   return (
-    <div className="flex w-full items-center gap-secret-field-gap">
+    <div data-slot="secret-field" className="flex w-full items-center gap-secret-field-gap">
       <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
       <Button type="button" variant="outline" size="icon" aria-label={copyLabel} onClick={copy}>
         {copied ? <Check className="size-icon-control" /> : <Copy className="size-icon-control" />}

@@ -23,6 +23,7 @@ export function ProgressBar({ value, max = 100, label, className }: ProgressBarP
   const filled = Math.round((safeValue / safeMax) * SEGMENTS);
   return (
     <div
+      data-slot="progress-bar"
       role="progressbar"
       aria-label={label}
       aria-valuemin={0}

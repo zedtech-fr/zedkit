@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Button, type ButtonProps } from "./button.js";
 
 export interface IconButtonProps extends ButtonProps {
@@ -9,11 +8,10 @@ export interface IconButtonProps extends ButtonProps {
 }
 
 /** Icon-only control with matching `aria-label` and `title`. */
-export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ label, children, size = "icon", ...props }, ref) => (
-    <Button ref={ref} type="button" size={size} {...props} aria-label={label} title={label}>
+export function IconButton({ label, children, size = "icon", ...props }: IconButtonProps) {
+  return (
+    <Button data-slot="icon-button" type="button" size={size} {...props} aria-label={label} title={label}>
       {children}
     </Button>
-  ),
-);
-IconButton.displayName = "IconButton";
+  );
+}

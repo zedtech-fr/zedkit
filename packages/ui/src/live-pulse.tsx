@@ -10,6 +10,7 @@ export interface LivePulseProps {
 export function LivePulse({ active = true, label = "Live", className }: LivePulseProps) {
   return (
     <span
+      data-slot="live-pulse"
       role="status"
       aria-label={active ? label : "Idle"}
       className={cn("inline-flex items-center gap-1.5 text-xs text-muted-foreground", className)}

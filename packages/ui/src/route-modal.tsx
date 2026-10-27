@@ -158,7 +158,7 @@ export function RouteModal({
 
   if (variant === "dialog") {
     return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
+      <Dialog data-slot="route-modal" open={open} onOpenChange={handleOpenChange}>
         <DialogContent className={cn(DIALOG_SIZES[size], className)}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -186,7 +186,7 @@ export function RouteModal({
   // mount-autofocus is what lets the modal trap engage per WAI-APG.
   return (
     // eslint-disable-next-line jsx-a11y/no-autofocus -- see above (#507)
-    <Drawer open={open} onOpenChange={handleOpenChange} direction={direction} autoFocus>
+    <Drawer data-slot="route-modal" open={open} onOpenChange={handleOpenChange} direction={direction} autoFocus>
       <DrawerContent className={cn(drawerSizeClass, className)}>
         <DrawerClose asChild>
           <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-overlay-close-offset right-overlay-close-offset">

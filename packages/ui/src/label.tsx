@@ -1,7 +1,7 @@
 // Derived from shadcn/ui (label) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils.js";
@@ -10,12 +10,10 @@ const labelVariants = cva(
   "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
 );
 
-type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
-  VariantProps<typeof labelVariants>;
+type LabelProps = React.ComponentProps<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>;
 
-const Label = React.forwardRef<React.ElementRef<typeof LabelPrimitive.Root>, LabelProps>(({ className, ...props }, ref) => (
-  <LabelPrimitive.Root ref={ref} className={cn(labelVariants(), className)} {...props} />
-));
-Label.displayName = LabelPrimitive.Root.displayName;
+function Label({ className, ...props }: LabelProps) {
+  return <LabelPrimitive.Root data-slot="label" className={cn(labelVariants(), className)} {...props} />;
+}
 
 export { Label, type LabelProps };

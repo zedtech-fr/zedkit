@@ -40,7 +40,7 @@ function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [open, setOpen] = React.useState(false);
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog data-slot="confirm-dialog" open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>

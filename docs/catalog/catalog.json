@@ -347,7 +347,7 @@
           "status": "beta",
           "shortName": "UiPreset",
           "audience": "Frontend teams linting tsx/jsx everywhere the same way.",
-          "purpose": "Enforce a11y, Tailwind hygiene and tokens-only classes on every UI file.",
+          "purpose": "Enforce a11y, Tailwind hygiene, tokens-only classes, no inline style, and no forwardRef on every UI file.",
           "whenToUse": "When UI rules must match across repos without copying a preset file.",
           "whenNotToUse": "When the repo has no Tailwind theme (the entryPoint has nothing to read).",
           "derivedFrom": null,
@@ -820,11 +820,11 @@
           "whenToUse": "For every clickable action, including links styled as buttons.",
           "whenNotToUse": "For navigation menus — use links or tabs instead.",
           "derivedFrom": "shadcn/ui (button)",
-          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>",
+          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>"
+              "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>"
             }
           ],
           "seeAlso": [

@@ -16,6 +16,9 @@ axe suite and the preview smoke run.
   (clsx + tailwind-merge). No variant prop means one sensible default.
 - Copy primitives from the official shadcn/ui registry; compose in the
   kit; never fork a Radix behavior by hand.
+- Host components take `React.ComponentProps<"el">` (ref is a prop, no
+  `forwardRef`; lint) and set `data-slot` on the exported root (see
+  `packages/ui/src/button.tsx`).
 
 ## Tokens only (lint)
 

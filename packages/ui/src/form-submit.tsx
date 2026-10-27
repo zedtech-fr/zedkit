@@ -22,7 +22,7 @@ export function FormSubmit({ pendingLabel, children, disabled, ...props }: FormS
   const { formState } = useFormContext();
   const pending = formState.isSubmitting;
   return (
-    <Button type="submit" disabled={disabled === true || pending} {...props}>
+    <Button data-slot="form-submit" type="submit" disabled={disabled === true || pending} {...props}>
       {pending && pendingLabel !== undefined ? pendingLabel : children}
     </Button>
   );

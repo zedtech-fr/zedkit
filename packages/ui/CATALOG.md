@@ -143,7 +143,7 @@ import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
 
 ```ts
 import { Button } from "@zedtech/zedkit-ui";
-<Button>Save</Button>
+<Button ref={saveRef}>Save</Button>
 <Button variant="destructive" size="sm">Delete</Button>
 <Button variant="outline" size="icon" aria-label="Close">×</Button>
 <Button asChild variant="secondary">

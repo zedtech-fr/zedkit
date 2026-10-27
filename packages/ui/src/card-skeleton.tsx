@@ -13,6 +13,7 @@ export interface CardSkeletonProps {
 export function CardSkeleton({ label = "Loading", className }: CardSkeletonProps) {
   return (
     <div
+      data-slot="card-skeleton"
       role="status"
       aria-label={label}
       className={cn("rounded-xl border bg-card p-card-padding shadow", className)}

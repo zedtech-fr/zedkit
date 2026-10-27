@@ -11,6 +11,34 @@ describe("uiPreset", () => {
   it("fails fast when entryPoint is missing", () => {
     expect(() => uiPreset({})).toThrow("entryPoint");
   });
+
+  it("bans forwardRef and points at the button example", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    const syntax = tailwind.rules["no-restricted-syntax"];
+    const linter = new Linter({ configType: "flat" });
+    const config = { files: ["**/*.tsx"], rules: { "no-restricted-syntax": syntax } };
+    const member = linter.verify(
+      "const X = React.forwardRef((props, ref) => props);\n",
+      config,
+      "button.tsx",
+    );
+    expect(member).toHaveLength(1);
+    expect(member[0].ruleId).toBe("no-restricted-syntax");
+    expect(member[0].message).toContain("packages/ui/src/button.tsx");
+    const named = linter.verify(
+      "const X = forwardRef((props, ref) => props);\n",
+      config,
+      "button.tsx",
+    );
+    expect(named).toHaveLength(1);
+    expect(named[0].message).toContain("ComponentProps");
+    const imported = linter.verify(
+      'import { forwardRef } from "react";\n',
+      config,
+      "button.tsx",
+    );
+    expect(imported.some((entry) => entry.message.includes("forwardRef"))).toBe(true);
+  });
 });
 
 describe("defineLayers", () => {

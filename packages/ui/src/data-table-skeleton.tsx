@@ -23,7 +23,7 @@ export function DataTableSkeleton({
   className,
 }: DataTableSkeletonProps) {
   return (
-    <div role="status" aria-label={label} className={cn("space-y-4", className)}>
+    <div data-slot="data-table-skeleton" role="status" aria-label={label} className={cn("space-y-4", className)}>
       {filter ? <Skeleton className="h-9 max-w-sm" /> : null}
       {/* Decorative shape only — the zone label above carries the meaning. */}
       <Table aria-hidden>

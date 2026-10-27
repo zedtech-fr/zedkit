@@ -13,6 +13,7 @@ export interface CheckmarkProps {
 export function Checkmark({ label, className }: CheckmarkProps) {
   return (
     <svg
+      data-slot="checkmark"
       viewBox="0 0 16 16"
       fill="none"
       {...(label === undefined
