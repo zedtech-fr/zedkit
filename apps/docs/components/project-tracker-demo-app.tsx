@@ -434,9 +434,8 @@ export function ProjectTrackerDemoApp() {
         ))}
       </Stack>
       <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-y-auto rounded-lg border border-border bg-background">
-        {/* The sidebar hides below md by itself; the explicit variants keep it correct in the Mobile frame and win over the base hidden rule. */}
         <AppShell
-          className={cn("min-h-0", mobile ? "[&>aside]:hidden" : "md:[&>aside]:block")}
+          className={cn("min-h-0", mobile && "[&>aside]:hidden")}
           sidebar={<Sidebar />}
           topbar={<TopBar />}
         >
