@@ -10,17 +10,30 @@ import type { Linter } from 'eslint';
 export function defineLayers(options: DefineLayersOptions): Linter.Config[];
 
 // @public (undocumented)
-export interface DefineLayersOptions {
-    readonly actionPatterns: readonly string[];
+export type DefineLayersOptions =
+| {
+    readonly preset?: undefined;
+    readonly kitPackage: string;
+    readonly viewDirs: readonly string[];
     readonly dataDirs: readonly string[];
+    readonly actionPatterns: readonly string[];
     readonly extraPatterns?: {
         readonly kitScope?: readonly RestrictedImportPattern[];
         readonly viewData?: readonly RestrictedImportPattern[];
         readonly dataUi?: readonly RestrictedImportPattern[];
     };
-    readonly kitPackage: string;
-    readonly viewDirs: readonly string[];
 }
+| {
+    readonly preset: "feature-folders";
+    readonly kitPackage: string;
+    readonly featureRoot: string;
+    readonly extraPatterns?: {
+        readonly kitScope?: readonly RestrictedImportPattern[];
+        readonly viewData?: readonly RestrictedImportPattern[];
+        readonly dataUi?: readonly RestrictedImportPattern[];
+        readonly model?: readonly RestrictedImportPattern[];
+    };
+};
 
 // @public (undocumented)
 export function uiPreset(options: UiPresetOptions): Linter.Config[];
@@ -32,7 +45,7 @@ export interface UiPresetOptions {
 
 // Warnings were encountered during analysis:
 //
-// src/eslint.d.mts:33:5 - (ae-forgotten-export) The symbol "RestrictedImportPattern" needs to be exported by the entry point index.d.mts
+// src/eslint.d.mts:35:9 - (ae-forgotten-export) The symbol "RestrictedImportPattern" needs to be exported by the entry point index.d.mts
 
 // (No @packageDocumentation comment for this package)
 

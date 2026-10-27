@@ -32,8 +32,8 @@ export default [...uiPreset({ entryPoint: "./app/globals.css" })];
 - Audience: Frontend teams keeping routes thin, views presentational and data UI-free.
 - Purpose: Ban cross-layer imports (route to kit, view to data client, data to UI) at lint time.
 - When to use: When features map onto route/view/data folders and bypasses must fail the gate.
-- When not to use: When the repo has no layered folders (nothing to map the globs onto).
-- See also: `Lint UI files for accessibility, Tailwind and tokens`
+- When not to use: When the repo has no layered folders (nothing to map the globs onto), or when features live in `features/<name>/{ui,ports,adapters,model}` (use `Enforce feature-folder ports and adapters`).
+- See also: `Lint UI files for accessibility, Tailwind and tokens`, `Enforce feature-folder ports and adapters`
 
 ```ts
 import { defineLayers } from "@zedtech/zedkit-quality/eslint";
@@ -44,6 +44,30 @@ export default [
     viewDirs: ["app/**/ui/**"],
     dataDirs: ["lib/**"],
     actionPatterns: ["@/lib/*", "**/actions", "**/actions/**"],
+  }),
+];
+```
+
+## Enforce feature-folder ports and adapters
+
+- Import: `@zedtech/zedkit-quality/eslint` — `defineLayers`
+- Wraps: `eslint`
+- Status: beta
+- Short name: FeatureFolders
+- Audience: Teams that colocate each feature as `features/<name>/{ui,ports,adapters,model}`.
+- Purpose: Ban UI→adapter imports, keep the model pure, and leave adapter injection to the composition root.
+- When to use: When each feature owns ui/ports/adapters/model folders and bypasses must fail the gate.
+- When not to use: When the repo maps onto route/view/data folders (use `Enforce route, view and data layer boundaries`).
+- See also: `Enforce route, view and data layer boundaries`
+
+```ts
+import { defineLayers } from "@zedtech/zedkit-quality/eslint";
+
+export default [
+  ...defineLayers({
+    preset: "feature-folders",
+    kitPackage: "@acme/ui",
+    featureRoot: "features",
   }),
 ];
 ```

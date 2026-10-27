@@ -15,25 +15,40 @@ export interface RestrictedImportPattern {
   readonly allowTypeImports?: boolean;
 }
 
-export interface DefineLayersOptions {
-  /** UI kit specifier (e.g. `@acme/ui`). */
-  readonly kitPackage: string;
-  /** Minimatch globs for view folders. */
-  readonly viewDirs: readonly string[];
-  /** Minimatch globs for data-access folders. */
-  readonly dataDirs: readonly string[];
-  /** Import specifiers for data clients and server actions. May be empty. */
-  readonly actionPatterns: readonly string[];
-  /**
-   * Consumer bans merged into each block's own patterns (flat-config
-   * rules replace per key, so a consumer block setting
-   * `no-restricted-imports` would otherwise drop these).
-   */
-  readonly extraPatterns?: {
-    readonly kitScope?: readonly RestrictedImportPattern[];
-    readonly viewData?: readonly RestrictedImportPattern[];
-    readonly dataUi?: readonly RestrictedImportPattern[];
-  };
-}
+export type DefineLayersOptions =
+  | {
+      readonly preset?: undefined;
+      /** UI kit specifier (e.g. `@acme/ui`). */
+      readonly kitPackage: string;
+      /** Minimatch globs for view folders. */
+      readonly viewDirs: readonly string[];
+      /** Minimatch globs for data-access folders. */
+      readonly dataDirs: readonly string[];
+      /** Import specifiers for data clients and server actions. May be empty. */
+      readonly actionPatterns: readonly string[];
+      /**
+       * Consumer bans merged into each block's own patterns (flat-config
+       * rules replace per key, so a consumer block setting
+       * `no-restricted-imports` would otherwise drop these).
+       */
+      readonly extraPatterns?: {
+        readonly kitScope?: readonly RestrictedImportPattern[];
+        readonly viewData?: readonly RestrictedImportPattern[];
+        readonly dataUi?: readonly RestrictedImportPattern[];
+      };
+    }
+  | {
+      readonly preset: "feature-folders";
+      /** UI kit specifier (e.g. `@acme/ui`). */
+      readonly kitPackage: string;
+      /** Feature-folder root (e.g. `features`). Bans apply only under this tree. */
+      readonly featureRoot: string;
+      readonly extraPatterns?: {
+        readonly kitScope?: readonly RestrictedImportPattern[];
+        readonly viewData?: readonly RestrictedImportPattern[];
+        readonly dataUi?: readonly RestrictedImportPattern[];
+        readonly model?: readonly RestrictedImportPattern[];
+      };
+    };
 
 export function defineLayers(options: DefineLayersOptions): Linter.Config[];

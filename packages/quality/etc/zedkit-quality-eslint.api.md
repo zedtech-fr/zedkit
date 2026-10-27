@@ -10,17 +10,30 @@ import type { Linter } from 'eslint';
 export function defineLayers(options: DefineLayersOptions): Linter.Config[];
 
 // @public (undocumented)
-export interface DefineLayersOptions {
-    readonly actionPatterns: readonly string[];
+export type DefineLayersOptions =
+| {
+    readonly preset?: undefined;
+    readonly kitPackage: string;
+    readonly viewDirs: readonly string[];
     readonly dataDirs: readonly string[];
+    readonly actionPatterns: readonly string[];
     readonly extraPatterns?: {
         readonly kitScope?: readonly RestrictedImportPattern[];
         readonly viewData?: readonly RestrictedImportPattern[];
         readonly dataUi?: readonly RestrictedImportPattern[];
     };
-    readonly kitPackage: string;
-    readonly viewDirs: readonly string[];
 }
+| {
+    readonly preset: "feature-folders";
+    readonly kitPackage: string;
+    readonly featureRoot: string;
+    readonly extraPatterns?: {
+        readonly kitScope?: readonly RestrictedImportPattern[];
+        readonly viewData?: readonly RestrictedImportPattern[];
+        readonly dataUi?: readonly RestrictedImportPattern[];
+        readonly model?: readonly RestrictedImportPattern[];
+    };
+};
 
 // @public
 export interface RestrictedImportPattern {

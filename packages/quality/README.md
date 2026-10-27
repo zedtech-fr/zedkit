@@ -62,6 +62,11 @@ subagents, commands) see `@zedtech/zedkit-ai` instead.
   `{ kitScope?, viewData?, dataUi? }`) merges your own bans into each
   block — use it instead of a second `no-restricted-imports` block,
   which would replace these per flat-config key semantics.
+- `defineLayers({ preset: "feature-folders", kitPackage, featureRoot })` —
+  same helper, feature-folder mapping: UI imports ports (not adapters),
+  adapters are injected at the composition root, model is pure. Bans
+  apply only under `featureRoot`. Live example:
+  `apps/docs/features/note-list` (running at `/examples/note-list`).
 - `@zedtech/zedkit-quality/tsconfig` — the strict base (`strict`,
   `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
   `noUnusedLocals`, and more). Extend it, do not copy it.

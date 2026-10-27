@@ -409,7 +409,7 @@
           "audience": "Frontend teams keeping routes thin, views presentational and data UI-free.",
           "purpose": "Ban cross-layer imports (route to kit, view to data client, data to UI) at lint time.",
           "whenToUse": "When features map onto route/view/data folders and bypasses must fail the gate.",
-          "whenNotToUse": "When the repo has no layered folders (nothing to map the globs onto).",
+          "whenNotToUse": "When the repo has no layered folders (nothing to map the globs onto), or when features live in `features/<name>/{ui,ports,adapters,model}` (use `Enforce feature-folder ports and adapters`).",
           "derivedFrom": null,
           "example": "import { defineLayers } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [\n  ...defineLayers({\n    kitPackage: \"@acme/ui\",\n    viewDirs: [\"app/**/ui/**\"],\n    dataDirs: [\"lib/**\"],\n    actionPatterns: [\"@/lib/*\", \"**/actions\", \"**/actions/**\"],\n  }),\n];",
           "examples": [
@@ -419,7 +419,30 @@
             }
           ],
           "seeAlso": [
-            "Lint UI files for accessibility, Tailwind and tokens"
+            "Lint UI files for accessibility, Tailwind and tokens",
+            "Enforce feature-folder ports and adapters"
+          ]
+        },
+        {
+          "need": "Enforce feature-folder ports and adapters",
+          "import": "`@zedtech/zedkit-quality/eslint` — `defineLayers`",
+          "wraps": "`eslint`",
+          "status": "beta",
+          "shortName": "FeatureFolders",
+          "audience": "Teams that colocate each feature as `features/<name>/{ui,ports,adapters,model}`.",
+          "purpose": "Ban UI→adapter imports, keep the model pure, and leave adapter injection to the composition root.",
+          "whenToUse": "When each feature owns ui/ports/adapters/model folders and bypasses must fail the gate.",
+          "whenNotToUse": "When the repo maps onto route/view/data folders (use `Enforce route, view and data layer boundaries`).",
+          "derivedFrom": null,
+          "example": "import { defineLayers } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [\n  ...defineLayers({\n    preset: \"feature-folders\",\n    kitPackage: \"@acme/ui\",\n    featureRoot: \"features\",\n  }),\n];",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { defineLayers } from \"@zedtech/zedkit-quality/eslint\";\n\nexport default [\n  ...defineLayers({\n    preset: \"feature-folders\",\n    kitPackage: \"@acme/ui\",\n    featureRoot: \"features\",\n  }),\n];"
+            }
+          ],
+          "seeAlso": [
+            "Enforce route, view and data layer boundaries"
           ]
         },
         {

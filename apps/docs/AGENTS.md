@@ -23,7 +23,9 @@ components (same import a consumer writes), inside one shared frame.
 ## Demo rules (blocking — the `ui` lens fails the review otherwise)
 
 1. One demo = one file in `components/demos/<name>.tsx` (or
-   colocated with its doc). Never a grab-bag module.
+   colocated with its doc). Never a grab-bag module. Feature-folder
+   examples live under `features/<name>/`, not under `components/demos`;
+   they are not kit demos and skip the shared frame and demo registry.
 2. Every demo renders inside the shared frame (title, description,
    light/dark preview, shown source, props link) and registers in
    the demo registry (key -> demo). Doc pages import the registry,
