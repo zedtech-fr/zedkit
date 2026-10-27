@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/json-ld";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { homePage, pageUrl } from "@/lib/site";
-import { CatalogView } from "@/ui/catalog/catalog-view";
+import { CatalogView, CatalogViewFromUrl, CATALOG_DEFAULT_FILTERS } from "@/ui/catalog/catalog-view";
 
 export const dynamic = "force-static";
 
@@ -23,8 +23,17 @@ export default function CatalogPage() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <Suspense fallback={null}>
-        <CatalogView entries={catalogIndex} />
+      <Suspense
+        fallback={
+          <CatalogView
+            entries={catalogIndex}
+            area={CATALOG_DEFAULT_FILTERS.area}
+            status={CATALOG_DEFAULT_FILTERS.status}
+            q={CATALOG_DEFAULT_FILTERS.q}
+          />
+        }
+      >
+        <CatalogViewFromUrl entries={catalogIndex} />
       </Suspense>
     </>
   );

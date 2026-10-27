@@ -15,6 +15,8 @@ const AREAS: { id: CatalogArea | "all"; label: string }[] = [
   { id: "agents", label: "Agents" },
 ];
 
+export const CATALOG_DEFAULT_FILTERS = { area: "all" as const, status: "all", q: "" };
+
 function readFilter(
   searchParams: URLSearchParams,
   entries: CatalogIndexEntry[],
@@ -28,12 +30,19 @@ function readFilter(
   return { area, status, q };
 }
 
-export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const { area, status, q } = readFilter(searchParams, entries);
-
+export function CatalogView({
+  entries,
+  area,
+  status,
+  q,
+  onFilters,
+}: {
+  entries: CatalogIndexEntry[];
+  area: CatalogArea | "all";
+  status: string;
+  q: string;
+  onFilters?: (next: { area?: string; status?: string; q?: string }) => void;
+}) {
   const statuses = useMemo(() => [...new Set(entries.map((entry) => entry.status))].sort(), [entries]);
 
   const filtered = useMemo(() => {
@@ -48,14 +57,7 @@ export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
   }, [entries, area, status, q]);
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
-    const params = new URLSearchParams(searchParams.toString());
-    for (const [key, value] of Object.entries(next)) {
-      if (value === undefined) continue;
-      if (value === "" || value === "all") params.delete(key);
-      else params.set(key, value);
-    }
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    onFilters?.(next);
   }
 
   return (
@@ -163,4 +165,25 @@ export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
       </Section>
     </Stack>
   );
+}
+
+/** Reads filter state from the URL. Must sit in a Suspense boundary. */
+export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { area, status, q } = readFilter(searchParams, entries);
+
+  function setFilters(next: { area?: string; status?: string; q?: string }) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(next)) {
+      if (value === undefined) continue;
+      if (value === "" || value === "all") params.delete(key);
+      else params.set(key, value);
+    }
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
+
+  return <CatalogView entries={entries} area={area} status={status} q={q} onFilters={setFilters} />;
 }
