@@ -22,6 +22,7 @@ function kitMarkdown(): string[] {
 
 describe("role mentions", () => {
   it("resolves every `name` skill|agent|command|lens mention to that kind", () => {
+    // Singular or plural role word; each name still resolves to that kind.
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const byKind = {
@@ -34,7 +35,7 @@ describe("role mentions", () => {
     for (const file of kitMarkdown()) {
       const raw = readFileSync(file, "utf8");
       const mentions = new Set(
-        [...raw.matchAll(/`([a-z][a-z0-9-]*)` (skill|agent|command|lens)/gu)]
+        [...raw.matchAll(/`([a-z][a-z0-9-]*)` (skill|agent|command|lens)s?/gu)]
           .map((m) => `${m[1] ?? ""} ${m[2] ?? ""}`)
           .filter((key) => !UPSTREAM.has(key.split(" ")[0] ?? "")),
       );
