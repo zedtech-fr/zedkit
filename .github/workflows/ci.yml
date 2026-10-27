@@ -52,6 +52,7 @@ jobs:
       - name: Docs static export SEO check
         run: node apps/docs/scripts/check-seo-export.mjs
       - run: bash scripts/check-pack.sh
+      - run: bash scripts/check-e2e-registered.sh
       - run: pnpm exec turbo run test
       - run: pnpm test:registry
       # Gallery smoke: real chromium over the built ui gallery (both
