@@ -736,13 +736,23 @@
           "whenToUse": "As the first install in every app using the kit.",
           "whenNotToUse": "For apps with their own design system — use your tokens instead of fighting these.",
           "derivedFrom": "shadcn/ui (theme)",
-          "example": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme.",
+          "example": "// app/globals.css\n//   @import \"@zedtech/zedkit-ui/styles.css\";\n//   @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\nimport \"./globals.css\";\nimport { ThemeProvider } from \"next-themes\";\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <ThemeProvider attribute=\"class\" defaultTheme=\"system\" enableSystem>\n          {children}\n        </ThemeProvider>\n      </body>\n    </html>\n  );\n}",
           "examples": [
             {
-              "title": "Simple",
-              "code": "import \"@zedtech/zedkit-ui/styles.css\"; // tokens + theme, once per app\n// globals.css also needs this line so Tailwind scans components:\n// @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\n// .dark on <html> (next-themes recommended) flips the theme."
+              "title": "Set up the theme",
+              "code": "// app/globals.css\n//   @import \"@zedtech/zedkit-ui/styles.css\";\n//   @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\nimport \"./globals.css\";\nimport { ThemeProvider } from \"next-themes\";\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <ThemeProvider attribute=\"class\" defaultTheme=\"system\" enableSystem>\n          {children}\n        </ThemeProvider>\n      </body>\n    </html>\n  );\n}"
+            },
+            {
+              "title": "Tokens in your own component",
+              "code": "import { ArrowUpRight } from \"lucide-react\";\nimport { Badge, Text } from \"@zedtech/zedkit-ui\";\n\nexport function ReleaseRow({ name }: { name: string }) {\n  return (\n    <li className=\"flex items-center justify-between gap-3 border-b border-border bg-muted px-3 py-2 text-sm\">\n      <Text as=\"span\" className=\"min-w-0 truncate\">{name}</Text>\n      <Badge variant=\"success\" className=\"gap-1\">\n        <ArrowUpRight className=\"size-3\" aria-hidden />\n        Deployed\n      </Badge>\n    </li>\n  );\n}"
+            },
+            {
+              "title": "Dark theme button",
+              "code": "\"use client\";\n\nimport { useTheme } from \"next-themes\";\nimport { Button } from \"@zedtech/zedkit-ui\";\n\nexport function DarkThemeButton() {\n  const { resolvedTheme, setTheme } = useTheme();\n  const dark = resolvedTheme === \"dark\";\n  return (\n    <Button variant=\"outline\" aria-pressed={dark} onClick={() => setTheme(dark ? \"light\" : \"dark\")}>\n      Dark theme\n    </Button>\n  );\n}"
             }
           ],
+          "a11y": "Text and control colours keep at least 4.5:1 contrast (3:1 for focus rings and borders) in light and dark, and the checks run on each preview. Dark mode is chosen by the `dark` class, so it follows the setting you store, not only the system. Use the semantic utilities (`text-muted-foreground`, `text-destructive`), never a fixed colour, so both themes keep their contrast. Do not rely on colour alone: the status words in the examples (\"Deployed\", \"Rolled back\") carry the meaning.",
+          "troubleshooting": "Components render unstyled — the `@source` line is missing in `globals.css`, so Tailwind never scans the kit. Dark mode does nothing — the `dark` class must be on `<html>` (next-themes `attribute=\"class\"`), not on `<body>`. A flash of the wrong theme on load — keep `suppressHydrationWarning` on `<html>` and let `ThemeProvider` set the class before paint. Utilities such as `bg-primary` have no effect — `styles.css` already imports Tailwind, so import it once and do not add a second `@import \"tailwindcss\"`. A colour looks wrong in dark — a fixed colour (`text-gray-500`) was used; switch to a semantic token. Red text is unreadable on a dark surface — `destructive` is a fill colour, so `text-destructive` on `bg-muted` fails contrast in dark mode; show status with `Badge variant=\"destructive\"` or `Alert`.",
           "seeAlso": [
             "Merge class names without conflicts"
           ]
@@ -1206,18 +1216,24 @@
           "whenToUse": "At the top of a page or panel when `useOnlineStatus()` is false.",
           "whenNotToUse": "For inline operation states — use `StatusLabel`.",
           "derivedFrom": null,
-          "example": "import { OfflineNote } from \"@zedtech/zedkit-ui\";\n<OfflineNote />",
+          "example": "import { Heading, OfflineNote } from \"@zedtech/zedkit-ui\";\n\n<OfflineNote />\n<Heading level={3}>Invoice drafts</Heading>\n// …the list of drafts, each marked \"Waiting to sync\"",
           "examples": [
             {
               "title": "Offline note",
-              "code": "import { OfflineNote } from \"@zedtech/zedkit-ui\";\n<OfflineNote />"
+              "code": "import { Heading, OfflineNote } from \"@zedtech/zedkit-ui\";\n\n<OfflineNote />\n<Heading level={3}>Invoice drafts</Heading>\n// …the list of drafts, each marked \"Waiting to sync\""
             },
             {
               "title": "Wired to online state",
-              "code": "import { OfflineNote, useOnlineStatus } from \"@zedtech/zedkit-ui\";\nconst online = useOnlineStatus();\n{online ? null : <OfflineNote title=\"No connection\">Try again when you are back.</OfflineNote>}"
+              "code": "\"use client\";\n\nimport { Button, OfflineNote, useOnlineStatus } from \"@zedtech/zedkit-ui\";\n\nexport function DeliveryNote({ onSave }: { onSave: () => void }) {\n  const online = useOnlineStatus();\n  return (\n    <>\n      {online ? null : <OfflineNote title=\"No connection\">Try again when you are back.</OfflineNote>}\n      <Button disabled={!online} onClick={onSave}>\n        Save note\n      </Button>\n    </>\n  );\n}"
+            },
+            {
+              "title": "Custom wording",
+              "code": "import { Button, OfflineNote } from \"@zedtech/zedkit-ui\";\n\n<OfflineNote title=\"No connection\">Your cart is saved on this device. Reconnect to pay.</OfflineNote>\n<Button disabled>Pay now</Button>"
             }
           ],
-          "a11y": "`role=alert` announces the note; icon positioning comes from `--spacing-alert-*` theme tokens.",
+          "registry": "offline-note",
+          "a11y": "`role=alert` announces the note as soon as it appears, so render it only when the state changes, not on every page load. The wifi icon is hidden from assistive technology (`aria-hidden`); the title and the text carry the message, so write both. Say what is kept and what to do next (\"Your cart is saved on this device. Reconnect to pay.\") and disable the actions that cannot work offline so a keyboard user does not trigger a failing request. Icon positioning comes from `--spacing-alert-*` theme tokens.",
+          "troubleshooting": "The note never shows — `useOnlineStatus()` starts `true` and syncs after mount, so it stays hidden during server render and on a connected device; test with the browser devtools Offline switch. The note shows nothing on a device with a dead server — `navigator.onLine` only reports whether a network interface is up (a captive portal still reads online), so also handle failed requests. The note is announced twice — it already has `role=\"alert\"`; do not wrap it in another live region. The hook is used in a server component — it needs a client component (`\"use client\"`). Default wording does not fit — pass `title` and `children` (or only one of them).",
           "seeAlso": [
             "Name an operation in progress"
           ]

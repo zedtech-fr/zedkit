@@ -17,12 +17,62 @@
 - When to use: As the first install in every app using the kit.
 - When not to use: For apps with their own design system — use your tokens instead of fighting these.
 - See also: `Merge class names without conflicts`
+- Examples: Set up the theme, Tokens in your own component, Dark theme button
+- A11y: Text and control colours keep at least 4.5:1 contrast (3:1 for focus rings and borders) in light and dark, and the checks run on each preview. Dark mode is chosen by the `dark` class, so it follows the setting you store, not only the system. Use the semantic utilities (`text-muted-foreground`, `text-destructive`), never a fixed colour, so both themes keep their contrast. Do not rely on colour alone: the status words in the examples ("Deployed", "Rolled back") carry the meaning.
+- Troubleshooting: Components render unstyled — the `@source` line is missing in `globals.css`, so Tailwind never scans the kit. Dark mode does nothing — the `dark` class must be on `<html>` (next-themes `attribute="class"`), not on `<body>`. A flash of the wrong theme on load — keep `suppressHydrationWarning` on `<html>` and let `ThemeProvider` set the class before paint. Utilities such as `bg-primary` have no effect — `styles.css` already imports Tailwind, so import it once and do not add a second `@import "tailwindcss"`. A colour looks wrong in dark — a fixed colour (`text-gray-500`) was used; switch to a semantic token. Red text is unreadable on a dark surface — `destructive` is a fill colour, so `text-destructive` on `bg-muted` fails contrast in dark mode; show status with `Badge variant="destructive"` or `Alert`.
 
 ```ts
-import "@zedtech/zedkit-ui/styles.css"; // tokens + theme, once per app
-// globals.css also needs this line so Tailwind scans components:
-// @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
-// .dark on <html> (next-themes recommended) flips the theme.
+// app/globals.css
+//   @import "@zedtech/zedkit-ui/styles.css";
+//   @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+import "./globals.css";
+import { ThemeProvider } from "next-themes";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+```ts
+import { ArrowUpRight } from "lucide-react";
+import { Badge, Text } from "@zedtech/zedkit-ui";
+
+export function ReleaseRow({ name }: { name: string }) {
+  return (
+    <li className="flex items-center justify-between gap-3 border-b border-border bg-muted px-3 py-2 text-sm">
+      <Text as="span" className="min-w-0 truncate">{name}</Text>
+      <Badge variant="success" className="gap-1">
+        <ArrowUpRight className="size-3" aria-hidden />
+        Deployed
+      </Badge>
+    </li>
+  );
+}
+```
+
+```ts
+"use client";
+
+import { useTheme } from "next-themes";
+import { Button } from "@zedtech/zedkit-ui";
+
+export function DarkThemeButton() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const dark = resolvedTheme === "dark";
+  return (
+    <Button variant="outline" aria-pressed={dark} onClick={() => setTheme(dark ? "light" : "dark")}>
+      Dark theme
+    </Button>
+  );
+}
 ```
 
 ## Merge class names without conflicts
@@ -465,19 +515,43 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 - Purpose: A hook reporting browser online state plus an alert-style note with overridable wording.
 - When to use: At the top of a page or panel when `useOnlineStatus()` is false.
 - When not to use: For inline operation states — use `StatusLabel`.
-- A11y: `role=alert` announces the note; icon positioning comes from `--spacing-alert-*` theme tokens.
+- A11y: `role=alert` announces the note as soon as it appears, so render it only when the state changes, not on every page load. The wifi icon is hidden from assistive technology (`aria-hidden`); the title and the text carry the message, so write both. Say what is kept and what to do next ("Your cart is saved on this device. Reconnect to pay.") and disable the actions that cannot work offline so a keyboard user does not trigger a failing request. Icon positioning comes from `--spacing-alert-*` theme tokens.
 - See also: `Name an operation in progress`
-- Examples: Offline note, Wired to online state
+- Registry: offline-note
+- Examples: Offline note, Wired to online state, Custom wording
+- Troubleshooting: The note never shows — `useOnlineStatus()` starts `true` and syncs after mount, so it stays hidden during server render and on a connected device; test with the browser devtools Offline switch. The note shows nothing on a device with a dead server — `navigator.onLine` only reports whether a network interface is up (a captive portal still reads online), so also handle failed requests. The note is announced twice — it already has `role="alert"`; do not wrap it in another live region. The hook is used in a server component — it needs a client component (`"use client"`). Default wording does not fit — pass `title` and `children` (or only one of them).
 
 ```ts
-import { OfflineNote } from "@zedtech/zedkit-ui";
+import { Heading, OfflineNote } from "@zedtech/zedkit-ui";
+
 <OfflineNote />
+<Heading level={3}>Invoice drafts</Heading>
+// …the list of drafts, each marked "Waiting to sync"
 ```
 
 ```ts
-import { OfflineNote, useOnlineStatus } from "@zedtech/zedkit-ui";
-const online = useOnlineStatus();
-{online ? null : <OfflineNote title="No connection">Try again when you are back.</OfflineNote>}
+"use client";
+
+import { Button, OfflineNote, useOnlineStatus } from "@zedtech/zedkit-ui";
+
+export function DeliveryNote({ onSave }: { onSave: () => void }) {
+  const online = useOnlineStatus();
+  return (
+    <>
+      {online ? null : <OfflineNote title="No connection">Try again when you are back.</OfflineNote>}
+      <Button disabled={!online} onClick={onSave}>
+        Save note
+      </Button>
+    </>
+  );
+}
+```
+
+```ts
+import { Button, OfflineNote } from "@zedtech/zedkit-ui";
+
+<OfflineNote title="No connection">Your cart is saved on this device. Reconnect to pay.</OfflineNote>
+<Button disabled>Pay now</Button>
 ```
 
 ## Open modal dialogs

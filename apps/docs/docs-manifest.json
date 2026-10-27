@@ -1,6 +1,6 @@
 {
   "_comment": "Rich doc pages: catalog needs that get a live preview (ComponentPreview frame resolving through components/demos/registry.ts) + generated props table. Every other need still gets a generated page (badge, install, example). Keys must match catalog need headings exactly; the docs check fails otherwise.",
-  "_deferred": "Theme (styles.css) and Merge class names (cn function) are not components and stay preview-free by design. CSS-only needs (motion.css) set component to null and point source at their stylesheet.",
+  "_deferred": "Merge class names (cn function) is not a component and stays preview-free by design. CSS-only needs (motion.css, styles.css) set component to null and point source at their stylesheet.",
   "rich": {
     "Animate entrances and hover feedback with CSS utilities": {
       "package": "@zedtech/zedkit-ui",
@@ -326,6 +326,29 @@
       "demo": "BrandLogoDemo",
       "examples": {
         "Header link to the home page": "BrandLogoHeaderDemo"
+      }
+    },
+    "Flag offline state with a live note": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "OfflineNote",
+      "registry": "offline-note",
+      "props": "OfflineNoteProps",
+      "source": "offline-note.tsx",
+      "demo": "OfflineNoteDemo",
+      "examples": {
+        "Wired to online state": "OfflineNoteWiredDemo",
+        "Custom wording": "OfflineNoteWordingDemo"
+      }
+    },
+    "Theme an admin app (dark/light included)": {
+      "package": "@zedtech/zedkit-ui",
+      "component": null,
+      "props": null,
+      "source": "styles.css",
+      "demo": "ThemeDemo",
+      "examples": {
+        "Tokens in your own component": "ThemeTokensDemo",
+        "Dark theme button": "ThemeToggleDemo"
       }
     }
   }

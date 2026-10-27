@@ -355,6 +355,28 @@
           "spacing-card-lines": "0.5rem"
         }
       }
+    },
+    {
+      "name": "use-online-status",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "registry/generated/ui/use-online-status.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "offline-note",
+      "type": "registry:ui",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["alert"],
+      "files": [
+        {
+          "path": "registry/generated/ui/offline-note.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

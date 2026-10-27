@@ -64,6 +64,8 @@ import { UpdatedAgoDemo } from "./updated-ago-demo";
 import { WizardComposedDemo } from "./wizard-composed-demo";
 import { WizardDemo } from "./wizard-demo";
 import { WizardSoloDemo } from "./wizard-solo-demo";
+import { OfflineNoteDemo, OfflineNoteWiredDemo, OfflineNoteWordingDemo } from "./offline-note-demo";
+import { ThemeDemo, ThemeTokensDemo, ThemeToggleDemo } from "./theme-demo";
 
 /**
  * Single seam between doc pages and live demos. Pages and MDX never
@@ -108,6 +110,12 @@ export const demoRegistry = {
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
+  OfflineNoteDemo: { Demo: OfflineNoteDemo, file: "offline-note-demo.tsx" },
+  OfflineNoteWiredDemo: { Demo: OfflineNoteWiredDemo, file: "offline-note-demo.tsx" },
+  OfflineNoteWordingDemo: { Demo: OfflineNoteWordingDemo, file: "offline-note-demo.tsx" },
+  ThemeDemo: { Demo: ThemeDemo, file: "theme-demo.tsx" },
+  ThemeTokensDemo: { Demo: ThemeTokensDemo, file: "theme-demo.tsx" },
+  ThemeToggleDemo: { Demo: ThemeToggleDemo, file: "theme-demo.tsx" },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DataTablePaginationDemo: { Demo: DataTablePaginationDemo, file: "data-table-pagination-demo.tsx" },
   DataTableEmptyDemo: { Demo: DataTableEmptyDemo, file: "data-table-empty-demo.tsx" },
