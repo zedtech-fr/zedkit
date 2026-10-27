@@ -32,15 +32,15 @@ function readFilter(
 
 export function CatalogView({
   entries,
-  area,
-  status,
-  q,
+  area = CATALOG_DEFAULT_FILTERS.area,
+  status = CATALOG_DEFAULT_FILTERS.status,
+  q = CATALOG_DEFAULT_FILTERS.q,
   onFilters,
 }: {
   entries: CatalogIndexEntry[];
-  area: CatalogArea | "all";
-  status: string;
-  q: string;
+  area?: CatalogArea | "all";
+  status?: string;
+  q?: string;
   onFilters?: (next: { area?: string; status?: string; q?: string }) => void;
 }) {
   const statuses = useMemo(() => [...new Set(entries.map((entry) => entry.status))].sort(), [entries]);
