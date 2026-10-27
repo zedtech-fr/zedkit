@@ -1,18 +1,12 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { kitDir, readManifest } from "#kit.js";
+import { kitDir } from "#kit.js";
+import { shippedNames } from "./helpers.js";
 
 // Bare words that are prose, not kit references.
 const GENERIC = new Set(["inherit", "model"]);
 const BARE = /^[a-z][a-z0-9-]*$/u;
-
-function knownNames(): Set<string> {
-  const manifest = readManifest();
-  if (!manifest.ok) throw manifest.error;
-  const skills = readdirSync(join(kitDir(), "skills"));
-  return new Set(manifest.value.agents.concat(manifest.value.commands ?? [], skills));
-}
 
 function bareTokens(path: string): string[] {
   const raw = readFileSync(join(kitDir(), path), "utf8");
@@ -23,7 +17,7 @@ function bareTokens(path: string): string[] {
 describe("template references", () => {
   for (const file of ["AGENTS.template.md", "personas.template.md"]) {
     it(`resolves every bare name in ${file} to a skill, agent or command`, () => {
-      const names = knownNames();
+      const names = shippedNames();
       const tokens = bareTokens(file);
       expect(tokens.length).toBeGreaterThan(0);
       for (const token of tokens) {

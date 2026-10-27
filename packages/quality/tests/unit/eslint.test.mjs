@@ -46,4 +46,57 @@ describe("defineLayers", () => {
     expect(react).toHaveLength(1);
     expect(react[0].message).toContain("UI-free");
   });
+
+  it("merges extraPatterns into each block without dropping the preset bans", () => {
+    const withExtras = defineLayers({
+      kitPackage: "@acme/ui",
+      viewDirs: ["app/**/ui/**"],
+      dataDirs: ["lib/**"],
+      actionPatterns: ["@/lib/*"],
+      extraPatterns: {
+        kitScope: [{ group: ["payload"], message: "no payload core here" }],
+        viewData: [{ group: ["node:fs"], message: "no fs in views" }],
+        dataUi: [{ group: ["@acme/admin"], message: "no admin in data" }],
+      },
+    });
+    // Extra + preset ban coexist in the kit-scope block.
+    const payload = linter.verify('import x from "payload";\n', withExtras, "app/page.ts");
+    expect(payload).toHaveLength(1);
+    expect(payload[0].message).toContain("no payload core");
+    const kit = linter.verify(kitImport, withExtras, "app/page.ts");
+    expect(kit).toHaveLength(1);
+    expect(kit[0].message).toContain("only allowed from view files");
+    // Extras land in their own block only.
+    expect(linter.verify('import x from "payload";\n', withExtras, "app/ui/card-view.ts")).toEqual([]);
+    const fs = linter.verify('import x from "node:fs";\n', withExtras, "app/ui/card-view.ts");
+    expect(fs).toHaveLength(1);
+    expect(fs[0].message).toContain("no fs in views");
+    const admin = linter.verify('import x from "@acme/admin";\n', withExtras, "lib/db.ts");
+    expect(admin).toHaveLength(1);
+    expect(admin[0].message).toContain("no admin in data");
+  });
+
+  it("fails fast on unknown extraPatterns keys", () => {
+    expect(() =>
+      defineLayers({
+        kitPackage: "@acme/ui",
+        viewDirs: ["app/**/ui/**"],
+        dataDirs: ["lib/**"],
+        actionPatterns: ["@/lib/*"],
+        extraPatterns: { kitcope: [] },
+      }),
+    ).toThrow('unknown extraPatterns key "kitcope"');
+  });
+
+  it("fails fast on non-list extraPatterns values", () => {
+    expect(() =>
+      defineLayers({
+        kitPackage: "@acme/ui",
+        viewDirs: ["app/**/ui/**"],
+        dataDirs: ["lib/**"],
+        actionPatterns: ["@/lib/*"],
+        extraPatterns: { kitScope: "payload" },
+      }),
+    ).toThrow("extraPatterns.kitScope must be a list");
+  });
 });

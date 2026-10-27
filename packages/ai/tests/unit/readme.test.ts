@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { kitDir, readManifest } from "#kit.js";
+import { shippedNames } from "./helpers.js";
 
 function readmeCommands(): string[] {
   const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
@@ -34,16 +35,7 @@ describe("package README", () => {
     const paragraph = readme.slice(at, readme.indexOf("\n\n", at));
     const names = [...new Set([...paragraph.matchAll(/`([a-z][a-z0-9-]*)`/g)].map((m) => m[1] ?? ""))];
     expect(names.length).toBeGreaterThan(0);
-    const manifest = readManifest();
-    if (!manifest.ok) throw manifest.error;
-    const skills = readdirSync(`${kitDir()}/skills`);
-    const known = new Set(
-      manifest.value.agents.concat(
-        manifest.value.commands ?? [],
-        skills,
-        Object.keys(manifest.value.presets),
-      ),
-    );
+    const known = shippedNames(true);
     for (const name of names) {
       expect([...known], `entry point ${name}`).toContain(name);
     }

@@ -55,10 +55,13 @@ subagents, commands) see `@zedtech/zedkit-ai` instead.
   jsx-a11y recommended, Tailwind hygiene, tokens-only classes, no `style`
   attributes, no raw `try`/`catch`. `entryPoint` (your Tailwind CSS
   entry) is required: it is the one thing that varies per repo.
-- `defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns })` —
+- `defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, extraPatterns })` —
   `no-restricted-imports` blocks for routes -> views -> data: the UI kit
   is only imported from views, views never import data clients or
-  actions, data files import no UI.
+  actions, data files import no UI. `extraPatterns` (optional,
+  `{ kitScope?, viewData?, dataUi? }`) merges your own bans into each
+  block — use it instead of a second `no-restricted-imports` block,
+  which would replace these per flat-config key semantics.
 - `@zedtech/zedkit-quality/tsconfig` — the strict base (`strict`,
   `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`,
   `noUnusedLocals`, and more). Extend it, do not copy it.
