@@ -8,6 +8,12 @@
   "engines": {
     "node": ">=22"
   },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "0.28.2",
+      "vite": "6.4.4"
+    }
+  },
   "scripts": {
     "dev": "pnpm catalog:build && echo \"docs: http://localhost:3100\" && turbo run dev --filter=@zedtech/zedkit-docs",
     "docs": "pnpm run dev",
@@ -36,6 +42,7 @@
     "shadcn": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "vite": "catalog:"
   }
 }
