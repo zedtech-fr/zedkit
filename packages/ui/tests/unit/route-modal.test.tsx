@@ -290,11 +290,71 @@ describe("route modal", () => {
     }
   });
 
-  // NOTE: return-focus-on-unmount is not asserted here — jsdom
-  // + abrupt rerender-unmount reproduces it for NEITHER variant
-  // (verified against the untouched dialog variant), while real
+  // The trigger element must survive the modal mount (same slot,
+  // like the list page under an intercepted route): wrapping it in
+  // a fragment only at rerender time would replace the node and
+  // drop focus to body before the modal ever mounts.
+  function Harness({ show, trigger = true }: { show: boolean; trigger?: boolean }) {
+    return (
+      <>
+        {trigger ? <button type="button">trigger</button> : null}
+        {show ? (
+          <RouteModal title="Delivery" onClose={vi.fn()}>
+            <button type="button">inside</button>
+          </RouteModal>
+        ) : null}
+      </>
+    );
+  }
+
+  it("returns focus to the trigger when the drawer closes", () => {
+    vi.useFakeTimers();
+    const view = render(<Harness show={false} />);
+    const trigger = screen.getByRole("button", { name: "trigger" });
+    trigger.focus();
+    view.rerender(<Harness show />);
+    // Focus moved inside on open (Vaul autoFocus).
+    expect(screen.getByRole("dialog").contains(document.activeElement)).toBe(true);
+    pressEscape();
+    // The restore is deferred past the unmount commit (the trap
+    // would steal back a synchronous focus).
+    vi.advanceTimersByTime(0);
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("still returns focus after re-renders (Vaul re-captures per render)", () => {
+    vi.useFakeTimers();
+    const view = render(<Harness show={false} />);
+    const trigger = screen.getByRole("button", { name: "trigger" });
+    trigger.focus();
+    view.rerender(<Harness show />);
+    // Vaul re-renders on drag state, snap points, resize: each one
+    // re-runs the Radix capture from inside without the fix.
+    view.rerender(<Harness show />);
+    view.rerender(<Harness show />);
+    pressEscape();
+    vi.advanceTimersByTime(0);
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("does not throw when the opener left the DOM before close", () => {
+    vi.useFakeTimers();
+    const view = render(<Harness show={false} />);
+    screen.getByRole("button", { name: "trigger" }).focus();
+    view.rerender(<Harness show />);
+    // The list re-rendered under the modal: React removes the
+    // opener node (out-of-band .remove() would corrupt the commit).
+    view.rerender(<Harness show trigger={false} />);
+    pressEscape();
+    expect(() => vi.advanceTimersByTime(0)).not.toThrow();
+  });
+
+  // NOTE: return-focus for the DIALOG variant is not asserted here —
+  // it relies on the Radix default restore, which jsdom does not
+  // reproduce (verified against the untouched variant), while real
   // browsers restore per Radix. That leg stays covered by
-  // browser-level consumer tests.
+  // browser-level consumer tests. The drawer leg above IS asserted:
+  // the kit restores the opener synchronously in requestClose.
 
   it("has no axe violations when open", async () => {
     render(

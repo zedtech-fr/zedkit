@@ -94,19 +94,51 @@ export function RouteModal({
   const [open, setOpen] = React.useState(true);
   const closing = React.useRef(false);
   const timer = React.useRef(0);
+  const focusTimer = React.useRef(0);
+  // The element that had focus when the modal mounted (the trigger
+  // that opened it). Captured in a lazy state initializer — NOT in an
+  // effect — because Vaul's mount-autofocus effect runs before any
+  // effect of ours (children first) and would already have moved
+  // focus inside. See #557.
+  const [opener] = React.useState<HTMLElement | null>(() =>
+    typeof document === "undefined" ? null : document.activeElement instanceof HTMLElement ? document.activeElement : null,
+  );
 
-  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+  React.useEffect(
+    () => () => {
+      window.clearTimeout(timer.current);
+      window.clearTimeout(focusTimer.current);
+    },
+    [],
+  );
 
   const requestClose = React.useCallback(() => {
     if (closing.current) return;
     closing.current = true;
     setOpen(false);
+    // Drawer variant only: return focus to the opener ourselves
+    // instead of relying on the Radix close-restore. Vaul
+    // re-creates its inline onOpenAutoFocus closure on every
+    // render, which re-runs the FocusScope capture from INSIDE the
+    // drawer, so the default restore targets a detached node
+    // (no-op) and focus falls to body — and Vaul keeps the scope
+    // mounted past the close, so onCloseAutoFocus fires too late
+    // to help. Deferred past the unmount commit: focusing now
+    // would hit the still-mounted trap (which steals it back) and
+    // the background is still hidden. When the opener left the DOM
+    // (list re-rendered under the modal), skip: nothing better
+    // than the default exists.
+    if (variant === "drawer" && opener) {
+      focusTimer.current = window.setTimeout(() => {
+        if (document.contains(opener)) opener.focus();
+      }, 0);
+    }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       onClose();
       return;
     }
     timer.current = window.setTimeout(onClose, exitMs(variant));
-  }, [onClose, variant]);
+  }, [onClose, variant, opener]);
 
   const handleOpenChange = React.useCallback(
     (next: boolean) => {
