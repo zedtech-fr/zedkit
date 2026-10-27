@@ -1,5 +1,21 @@
 import type { ComponentType } from "react";
 import { AlertDemo } from "./alert-demo";
+import { BadgeVariantsDemo } from "./badge-variants-demo";
+import { BadgeTableRowDemo } from "./badge-table-row-demo";
+import { BadgeLinkDemo } from "./badge-link-demo";
+import { SeparatorVerticalDemo } from "./separator-vertical-demo";
+import { SkeletonTextDemo } from "./skeleton-text-demo";
+import { StatusDotTonesDemo } from "./status-dot-tones-demo";
+import { StatusDotStaticDemo } from "./status-dot-static-demo";
+import { ProgressCompleteDemo } from "./progress-complete-demo";
+import { CheckmarkDecorativeDemo } from "./checkmark-decorative-demo";
+import { CardSkeletonStandaloneDemo } from "./card-skeleton-standalone-demo";
+import { StatusLabelSavedErrorDemo } from "./status-label-saved-error-demo";
+import { StatusLabelOfflineDemo } from "./status-label-offline-demo";
+import { UpdatedAgoCustomDemo } from "./updated-ago-custom-demo";
+import { AlertSectionDemo } from "./alert-section-demo";
+import { HeadingLinkDemo } from "./heading-link-demo";
+import { AppShellNoTopbarDemo } from "./app-shell-no-topbar-demo";
 import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
@@ -67,6 +83,22 @@ export const demoRegistry = {
   CardDemo: { Demo: CardDemo, file: "card-demo.tsx" },
   CardFooterDemo: { Demo: CardFooterDemo, file: "card-footer-demo.tsx" },
   CheckmarkDemo: { Demo: CheckmarkDemo, file: "checkmark-demo.tsx" },
+  BadgeVariantsDemo: { Demo: BadgeVariantsDemo, file: "badge-variants-demo.tsx" },
+  BadgeTableRowDemo: { Demo: BadgeTableRowDemo, file: "badge-table-row-demo.tsx" },
+  BadgeLinkDemo: { Demo: BadgeLinkDemo, file: "badge-link-demo.tsx" },
+  SeparatorVerticalDemo: { Demo: SeparatorVerticalDemo, file: "separator-vertical-demo.tsx" },
+  SkeletonTextDemo: { Demo: SkeletonTextDemo, file: "skeleton-text-demo.tsx" },
+  StatusDotTonesDemo: { Demo: StatusDotTonesDemo, file: "status-dot-tones-demo.tsx" },
+  StatusDotStaticDemo: { Demo: StatusDotStaticDemo, file: "status-dot-static-demo.tsx" },
+  ProgressCompleteDemo: { Demo: ProgressCompleteDemo, file: "progress-complete-demo.tsx" },
+  CheckmarkDecorativeDemo: { Demo: CheckmarkDecorativeDemo, file: "checkmark-decorative-demo.tsx" },
+  CardSkeletonStandaloneDemo: { Demo: CardSkeletonStandaloneDemo, file: "card-skeleton-standalone-demo.tsx" },
+  StatusLabelSavedErrorDemo: { Demo: StatusLabelSavedErrorDemo, file: "status-label-saved-error-demo.tsx" },
+  StatusLabelOfflineDemo: { Demo: StatusLabelOfflineDemo, file: "status-label-offline-demo.tsx" },
+  UpdatedAgoCustomDemo: { Demo: UpdatedAgoCustomDemo, file: "updated-ago-custom-demo.tsx" },
+  AlertSectionDemo: { Demo: AlertSectionDemo, file: "alert-section-demo.tsx" },
+  HeadingLinkDemo: { Demo: HeadingLinkDemo, file: "heading-link-demo.tsx" },
+  AppShellNoTopbarDemo: { Demo: AppShellNoTopbarDemo, file: "app-shell-no-topbar-demo.tsx" },
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
