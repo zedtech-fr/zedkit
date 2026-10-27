@@ -1,0 +1,192 @@
+/*
+ * Identity: maison.
+ *
+ *    Airy ivory, serif display type (Cormorant) over a geometric body
+ *    (Jost), very fine borders, small radii, generous spacing. Code in
+ *    JetBrains Mono. Interactions stay within the motion caps; the slow,
+ *    unhurried feel is reserved for reveals (longer duration and travel).
+ *
+ *    Inert until `data-identity="maison"` is set on <html> (or on an
+ *    element carrying `data-identity-scope`). The families are the
+ *    self-hosted variable fonts when the app ships them, then a
+ *    metric-aligned fallback face (below) so the swap does not shift the
+ *    layout, then the system stack.
+ */
+:root[data-identity="maison"],
+[data-identity-scope][data-identity="maison"] {
+  --background: 40 33% 98%;
+  --foreground: 30 10% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 30 10% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 30 10% 12%;
+  --primary: 30 10% 12%;
+  --primary-foreground: 40 33% 98%;
+  --secondary: 38 25% 93%;
+  --secondary-foreground: 30 10% 12%;
+  --muted: 40 22% 95%;
+  --muted-foreground: 30 7% 33%;
+  --accent: 38 45% 88%;
+  --accent-foreground: 30 10% 12%;
+  --destructive: 4 55% 40%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 150 40% 26%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 70% 32%;
+  --warning-foreground: 0 0% 100%;
+  --overlay: 30 10% 8%;
+  --border: 36 18% 86%;
+  --input: 36 18% 80%;
+  --ring: 36 55% 36%;
+  --sidebar: 40 30% 96%;
+  --sidebar-foreground: 30 10% 12%;
+  --sidebar-border: 36 18% 88%;
+  --sidebar-accent: 38 45% 90%;
+  --radius: 2px;
+
+  /* Typography: families, scale, weight, tracking */
+  --zk-font-sans: "Jost Variable", Jost, "Jost Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: "Cormorant Variable", Cormorant, "Cormorant Variable Fallback", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--zk-font-sans);
+  --font-mono: var(--zk-font-mono);
+  --font-display: var(--zk-font-display);
+  --font-weight-medium: 400;
+  --font-weight-semibold: 500;
+  --font-weight-bold: 600;
+  --tracking-tight: 0.005em;
+  --tracking-wide: 0.14em;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+  --text-5xl: 3.75rem;
+  --zk-heading-weight: 500;
+  --zk-heading-tracking: 0.005em;
+  --zk-heading-transform: none;
+  --zk-heading-leading: 1.12;
+  --zk-label-transform: uppercase;
+  --zk-label-tracking: 0.18em;
+
+  /* Spacing and density: base unit plus the kit's token multipliers */
+  --spacing: 0.3rem;
+  --zk-density: 1.3;
+  --zk-control-scale: 1.12;
+
+  /* Shape: every Tailwind radius step */
+  --radius-xs: 0px;
+  --radius-sm: 1px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 3px;
+  --radius-3xl: 4px;
+  --zk-border-width: 1px;
+  --ring-width: 2px;
+  --ring-width-control: 2px;
+  --ring-offset-width: 2px;
+
+  /* Depth */
+  --zk-shadow-color: 30 10% 12%;
+  --zk-shadow-xs: 0 1px 1px hsl(var(--zk-shadow-color) / 0.04);
+  --zk-shadow-sm: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 1px 3px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 12px 28px -18px hsl(var(--zk-shadow-color) / 0.2);
+  --zk-shadow-lg: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -24px hsl(var(--zk-shadow-color) / 0.24);
+  --zk-shadow-xl: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 28px 64px -28px hsl(var(--zk-shadow-color) / 0.28);
+  --zk-shadow-overlay: 0 24px 56px -24px hsl(var(--zk-shadow-color) / 0.26);
+
+  /* Page texture */
+  --zk-bg-pattern: linear-gradient(180deg, hsl(38 45% 90% / 0.55), transparent 28rem);
+  --zk-bg-size: 100% 100%;
+  --zk-bg-repeat: no-repeat;
+  --zk-bg-attach: scroll;
+
+  /* Motion: interactions stay within the caps (fast/base <= 200ms,
+   * slow <= 300ms); the slow maison feel lives in reveals only. */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --zk-reveal-duration: 450ms;
+  --zk-reveal-distance: 1rem;
+  --zk-reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --zk-stagger-step: 60ms;
+  --zk-lift-duration: 200ms;
+  --zk-lift-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --zk-lift-translate: 0 -2px;
+  --zk-lift-shadow: 0 22px 44px -26px hsl(var(--zk-shadow-color) / 0.3);
+  --zk-press-translate: 0 1px;
+  --zk-btn-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --zk-btn-hover-translate: 0 -1px;
+  --zk-btn-hover-shadow: 0 10px 24px -14px hsl(var(--zk-shadow-color) / 0.35);
+  --zk-btn-press-shadow: 0 1px 2px hsl(var(--zk-shadow-color) / 0.1);
+  --zk-deco-ticker: none;
+}
+
+:root[data-identity="maison"].dark,
+.dark [data-identity-scope][data-identity="maison"] {
+  --background: 30 12% 7%;
+  --foreground: 40 30% 92%;
+  --card: 30 10% 10%;
+  --card-foreground: 40 30% 92%;
+  --popover: 30 10% 10%;
+  --popover-foreground: 40 30% 92%;
+  --primary: 38 45% 70%;
+  --primary-foreground: 30 12% 8%;
+  --secondary: 30 8% 16%;
+  --secondary-foreground: 40 30% 92%;
+  --muted: 30 8% 14%;
+  --muted-foreground: 38 12% 68%;
+  --accent: 30 10% 18%;
+  --accent-foreground: 40 30% 92%;
+  --destructive: 4 60% 64%;
+  --destructive-foreground: 30 12% 8%;
+  --success: 150 40% 56%;
+  --success-foreground: 30 12% 8%;
+  --warning: 38 70% 60%;
+  --warning-foreground: 30 12% 8%;
+  --overlay: 30 12% 3%;
+  --border: 34 10% 22%;
+  --input: 34 10% 28%;
+  --ring: 38 45% 70%;
+  --sidebar: 30 12% 8%;
+  --sidebar-foreground: 40 30% 92%;
+  --sidebar-border: 34 10% 18%;
+  --sidebar-accent: 30 10% 16%;
+  --zk-shadow-color: 30 12% 2%;
+  --zk-shadow-xs: none;
+  --zk-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.4);
+  --zk-shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 28px -16px rgb(0 0 0 / 0.7);
+  --zk-shadow-lg: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -22px rgb(0 0 0 / 0.75);
+  --zk-shadow-xl: 0 1px 2px rgb(0 0 0 / 0.4), 0 28px 64px -26px rgb(0 0 0 / 0.8);
+  --zk-shadow-overlay: 0 24px 56px -22px rgb(0 0 0 / 0.8);
+  --zk-lift-shadow: 0 22px 44px -24px rgb(0 0 0 / 0.8);
+  --zk-bg-pattern: radial-gradient(50rem 24rem at 50% -10%, hsl(38 45% 70% / 0.08), transparent 65%);
+}
+
+/*
+ * Metric-aligned fallback faces (see font-fallbacks.css for the method).
+ * The serif face omits size-adjust (no Georgia metrics available
+ * offline); maison titles are short, where width is free.
+ */
+@font-face {
+  font-family: "Jost Variable Fallback";
+  src: local("Arial"), local("Liberation Sans");
+  font-display: swap;
+  ascent-override: 107%;
+  descent-override: 37.5%;
+  line-gap-override: 0%;
+  size-adjust: 94.2%;
+}
+
+@font-face {
+  font-family: "Cormorant Variable Fallback";
+  src: local("Georgia"), local("DejaVu Serif");
+  font-display: swap;
+  ascent-override: 92.4%;
+  descent-override: 28.7%;
+  line-gap-override: 0%;
+}
