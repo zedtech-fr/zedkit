@@ -24,7 +24,6 @@ import {
 export const AGENT_ICONS: Record<string, LucideIcon> = {
   explorer: Search,
   architect: Blocks,
-  "plan-challenger": ShieldQuestion,
   verifier: BadgeCheck,
   improver: Wrench,
   "security-reviewer": ShieldCheck,

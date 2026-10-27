@@ -16,13 +16,12 @@ overwrites existing files; `validate` reports drifted provider copies.
 
 ## Agents
 
-Subagents installed from `kit.json` (19). Read-only unless noted.
+Subagents installed from `kit.json` (18). Read-only unless noted.
 
 | Agent | Role |
 |---|---|
 | <AgentName name="explorer" /> | codebase lookup: files, symbols, usages |
 | <AgentName name="architect" /> | file-level implementation plan, never code |
-| <AgentName name="plan-challenger" /> | deprecated alias of `skeptic` (angle: plan) |
 | <AgentName name="verifier" /> | quality gate: runs gates + definition of done |
 | <AgentName name="improver" /> | applies review findings, smallest diff first (writes) |
 | <AgentName name="security-reviewer" /> | auth, tenancy, secrets, user data, input parsing |

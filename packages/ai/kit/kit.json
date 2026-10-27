@@ -33,7 +33,6 @@
   "agents": [
     "explorer",
     "architect",
-    "plan-challenger",
     "verifier",
     "improver",
     "security-reviewer",

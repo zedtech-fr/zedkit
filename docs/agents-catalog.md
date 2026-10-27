@@ -11,7 +11,6 @@ When to call which agent, and the chains they form. Agents live in
 | `explorer` | you need files, symbols, usages, producers/consumers — paths and lines only | no |
 | `researcher` | before building, to scout prior art and mature packages (adopt/wrap/build) | no |
 | `skeptic` | after a plan or decision, before building; one angle per brief (plan, ui/ux, security, scope, data/ops, copy) | no |
-| `plan-challenger` | deprecated alias of `skeptic` (angle: plan), removed in 0.6.0; new briefs must name `skeptic` | no |
 | `test-writer` | with or after implementation, to add adversarial tests (skill: `adversarial-tests`) | tests only |
 | `improver` | after a review returned findings; applies the smallest diff in risk order | yes |
 | `verifier` | before calling work done or merging; runs gates + definition of done + two review passes | no |
