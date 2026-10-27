@@ -1,8 +1,8 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { kitDir, readManifest } from "#kit.js";
+import { readManifest } from "#kit.js";
+import { shippedNames } from "./helpers.js";
 
 function catalogRows(): string[] {
   const raw = readFileSync(
@@ -43,12 +43,7 @@ describe("agents catalog", () => {
     // code spans into the chains check.
     const chains = raw.split("## Typical chains")[1]?.split("\n## ")[0] ?? "";
     expect(chains.trim().length).toBeGreaterThan(0);
-    const manifest = readManifest();
-    if (!manifest.ok) throw manifest.error;
-    const skills = readdirSync(join(kitDir(), "skills"));
-    const names = new Set(
-      manifest.value.agents.concat(manifest.value.commands ?? [], skills),
-    );
+    const names = shippedNames();
     for (const match of chains.matchAll(/`([^`]+)`/g)) {
       const name = (match[1] ?? "").replace(/^\//, "");
       if (name === "" || name.includes(" ")) continue;
