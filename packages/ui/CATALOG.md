@@ -161,11 +161,32 @@ import { Button } from "@zedtech/zedkit-ui";
 - Purpose: Icon-only controls with matching `aria-label` and `title` from one `label` prop.
 - When to use: Toolbar or header controls where the glyph alone is not enough for screen readers.
 - When not to use: Actions with visible text — use `Button` instead.
-- Examples: Simple
+- Registry: icon-button
+- Examples: Project toolbar, Row actions in a list
+- A11y: `label` becomes both `aria-label` and `title`, so screen readers and hover/long-press tooltips read the same name. Native `button` with `type="button"` (never submits a form by accident); a visible focus ring shows on keyboard focus. Decorative glyphs inside should be icons, not text the reader would announce twice.
+- Troubleshooting: A TypeScript error about a missing `label` — it is required on purpose, an icon-only control without a name is unusable with a screen reader. Several identical buttons in a list — put the row name in the label (`Delete ${task.title}`) so each is distinct. Button feels too big for a dense toolbar — the size defaults to `icon`; pass `size="sm"` for a compact one (the glyph keeps the kit icon size). The button submits a form — it should not (`type="button"`); pass `type="submit"` explicitly if you really want that.
 
 ```ts
+import { Archive, RefreshCw, Share2 } from "lucide-react";
 import { IconButton } from "@zedtech/zedkit-ui";
-<IconButton label="Open menu">☰</IconButton>
+
+<IconButton label="Refresh tasks" variant="ghost" onClick={refresh}><RefreshCw /></IconButton>
+<IconButton label="Share project" variant="ghost" onClick={share}><Share2 /></IconButton>
+<IconButton label="Archive project" variant="outline" onClick={archive}><Archive /></IconButton>
+```
+
+```ts
+import { Copy, Pencil, Trash2 } from "lucide-react";
+import { IconButton } from "@zedtech/zedkit-ui";
+
+{tasks.map((task) => (
+  <li key={task.id}>
+    {task.title}
+    <IconButton label={`Edit ${task.title}`} variant="ghost"><Pencil /></IconButton>
+    <IconButton label={`Duplicate ${task.title}`} variant="ghost"><Copy /></IconButton>
+    <IconButton label={`Delete ${task.title}`} variant="ghost" onClick={() => remove(task.id)}><Trash2 /></IconButton>
+  </li>
+))}
 ```
 
 ## Show a status or count badge
@@ -384,12 +405,28 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - When to use: Recognition hints next to names or actions, not in running prose.
 - When not to use: Standalone icons — use the Lucide component directly; primary actions — use `Button`.
 - See also: `Celebrate completion with a checkmark`
-- A11y: Icon is decorative; put the readable name in `children`.
+- A11y: Icon is decorative (`aria-hidden`, not focusable); put the readable name in `children`. The muted colour keeps normal text contrast on every identity, but do not rely on the icon alone to carry meaning — the state or name must also be written.
+- Registry: icon-label
+- Examples: Project details, In an order list
+- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is fixed by the `--spacing-icon-control` token (1rem); change that token, not each icon. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
 
 ```ts
-import { Search } from "lucide-react";
+import { Calendar, FolderOpen, MessageSquare, Users } from "lucide-react";
 import { IconLabel } from "@zedtech/zedkit-ui";
-<IconLabel icon={Search}><code>explorer</code></IconLabel>
+
+<IconLabel icon={FolderOpen}>Harbor Studio</IconLabel>
+<IconLabel icon={Calendar}>Due Nov 14</IconLabel>
+<IconLabel icon={Users}>4 members</IconLabel>
+<IconLabel icon={MessageSquare}>12 comments</IconLabel>
+```
+
+```ts
+import { Package, RotateCcw, Truck } from "lucide-react";
+import { IconLabel } from "@zedtech/zedkit-ui";
+
+<IconLabel icon={Truck}>Shipped Oct 25</IconLabel>
+<IconLabel icon={Package}>Packing</IconLabel>
+<IconLabel icon={RotateCcw}>Return requested</IconLabel>
 ```
 
 ## Celebrate completion with a checkmark

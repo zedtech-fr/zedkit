@@ -350,6 +350,28 @@
         "Tokens in your own component": "ThemeTokensDemo",
         "Dark theme button": "ThemeToggleDemo"
       }
+    },
+    "Icon-only actions with a visible name": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "IconButton",
+      "registry": "icon-button",
+      "props": "IconButtonProps",
+      "source": "icon-button.tsx",
+      "demo": "IconButtonDemo",
+      "examples": {
+        "Row actions in a list": "IconButtonRowsDemo"
+      }
+    },
+    "Quiet icon beside inline text": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "IconLabel",
+      "registry": "icon-label",
+      "props": "IconLabelProps",
+      "source": "icon-label.tsx",
+      "demo": "IconLabelDemo",
+      "examples": {
+        "In an order list": "IconLabelOrdersDemo"
+      }
     }
   }
 }
