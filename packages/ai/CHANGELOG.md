@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.7.2
+
+### Patch Changes
+
+- 1cd249f: Test that no shipped agent pins a concrete model (omitted or inherit only).
+
 ## 0.7.1
 
 ### Patch Changes
