@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ui
 
+## 0.6.3
+
+### Patch Changes
+
+- 2df4776: IdentitySwitcher and IdentityPicker mark the identity passed as `defaultIdentity` ("(default)" in the select, "Default" in the sheet), so a site that applies a default through IdentityScript can say so.
+
 ## 0.6.2
 
 ### Patch Changes
