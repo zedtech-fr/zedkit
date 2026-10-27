@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ui
 
+## 0.6.0
+
+### Minor Changes
+
+- d3d6a8c: Add ScrollScenes (alpha): a pinned stage that fades from scene to scene as the page scrolls, in pure CSS with native scrolling. Scenes sit one under the other under reduced motion and where scroll timelines are unsupported.
+
 ## 0.5.1
 
 ### Patch Changes
