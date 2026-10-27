@@ -14,7 +14,7 @@ import {
   type IdentityOption,
 } from "#index.js";
 
-/** Consumer-defined identities: the kit ships none yet. */
+/** Consumer-defined identities, passed instead of the built-in list. */
 const looks: readonly IdentityOption[] = [
   { id: "calm", label: "Calm", description: "Soft and quiet." },
   { id: "bold", label: "Bold", description: "Loud and square." },
@@ -54,8 +54,20 @@ describe("IdentityScript", () => {
     expect(document.documentElement.getAttribute("data-identity")).toBe("calm");
   });
 
-  it("allows no id by default while the kit ships no identity", () => {
-    expect(identities).toEqual([]);
+  it("ships the six built-in identities, each with a label, a description and fonts", () => {
+    expect(identities.map((item) => item.id)).toEqual(["mist", "press", "tide", "volt", "maison", "glass"]);
+    for (const item of identities) {
+      expect(item.label).toBeTruthy();
+      expect(item.description).toBeTruthy();
+      expect(item.fonts?.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("applies a stored built-in id by default and ignores anything else", () => {
+    localStorage.setItem(IDENTITY_STORAGE_KEY, "press");
+    runScript(<IdentityScript />);
+    expect(document.documentElement.getAttribute("data-identity")).toBe("press");
+    document.documentElement.removeAttribute("data-identity");
     localStorage.setItem(IDENTITY_STORAGE_KEY, "bold");
     runScript(<IdentityScript />);
     expect(document.documentElement.hasAttribute("data-identity")).toBe(false);
@@ -70,8 +82,14 @@ describe("IdentityScript", () => {
 
 describe("IdentitySwitcher", () => {
   it("renders nothing without identities", () => {
-    const { container } = render(<IdentitySwitcher />);
+    const { container } = render(<IdentitySwitcher identities={[]} />);
     expect(container.innerHTML).toBe("");
+  });
+
+  it("offers the built-in identities by default", () => {
+    render(<IdentitySwitcher />);
+    const options = [...(screen.getByLabelText("Identity") as HTMLSelectElement).options].map((option) => option.value);
+    expect(options).toEqual(identities.map((item) => item.id));
   });
 
   it("has an accessible name and no axe violations", async () => {
@@ -99,7 +117,7 @@ describe("IdentitySwitcher", () => {
 
 describe("IdentityPicker", () => {
   it("renders nothing without identities", () => {
-    const { container } = render(<IdentityPicker />);
+    const { container } = render(<IdentityPicker identities={[]} />);
     expect(container.innerHTML).toBe("");
   });
 

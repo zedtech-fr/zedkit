@@ -17,11 +17,48 @@ type IdentityOption = {
 };
 
 /**
- * Identities shipped in `identities.css`. Empty until the first identity
- * lands: pass your own list (ids matching your `[data-identity]` CSS) to
- * `IdentityScript`, `IdentitySwitcher` and `IdentityPicker` meanwhile.
+ * Identities shipped in `identities.css`, offered by default by
+ * `IdentityScript`, `IdentitySwitcher` and `IdentityPicker`. Pass your own
+ * list (ids matching your `[data-identity]` CSS) to offer other looks.
  */
-const identities: readonly IdentityOption[] = [];
+const identities: readonly IdentityOption[] = [
+  {
+    id: "mist",
+    label: "Mist",
+    description: "Calm and soft: the everyday look.",
+    fonts: ["Inter Variable"],
+  },
+  {
+    id: "press",
+    label: "Press",
+    description: "Editorial: ink on paper, fine rules, serif titles.",
+    fonts: ["Space Grotesk Variable", "Newsreader Variable", "JetBrains Mono Variable"],
+  },
+  {
+    id: "tide",
+    label: "Tide",
+    description: "Navy and coral: bold, round, lively.",
+    fonts: ["Inter Variable", "JetBrains Mono Variable"],
+  },
+  {
+    id: "volt",
+    label: "Volt",
+    description: "Dense and dark: one electric accent.",
+    fonts: ["Geist Variable", "JetBrains Mono Variable"],
+  },
+  {
+    id: "maison",
+    label: "Maison",
+    description: "Brand boutique: ivory, serif, airy.",
+    fonts: ["Cormorant Variable", "Jost Variable", "JetBrains Mono Variable"],
+  },
+  {
+    id: "glass",
+    label: "Glass",
+    description: "Frosted glass: translucent layers over soft colour.",
+    fonts: ["Space Grotesk Variable", "Inter Variable", "JetBrains Mono Variable"],
+  },
+];
 
 type IdentityScriptProps = {
   /** Allowed ids; anything else stored is ignored. Default: built-in identities. */
