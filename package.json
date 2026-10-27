@@ -25,7 +25,7 @@
     "changeset:status": "changeset status --verbose",
     "changeset:version": "changeset version && node scripts/catalog.mjs build",
     "catalog:build": "node scripts/catalog.mjs build",
-    "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs && node apps/docs/scripts/check-registry-urls.mjs",
+    "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs && node apps/docs/scripts/check-previews.mjs && node apps/docs/scripts/check-registry-urls.mjs",
     "registry:build": "node scripts/registry/build.mjs",
     "registry:check": "node scripts/registry/check.mjs",
     "registry:smoke": "bash scripts/registry/smoke-shadcn-add.sh && bash scripts/registry/smoke-ui-quickstart.sh",
