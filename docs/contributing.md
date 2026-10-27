@@ -25,3 +25,20 @@ ever required to use zedkit.
 
 Small PRs from fresh `main`, one package per PR, each with a Changeset
 file. `code-review` + `ponytail-review` before merge; merge on green CI.
+
+## Public API reports
+
+`packages/{core,server,ui,quality}/etc/*.api.md` are the committed
+export surfaces (plus `zedkit-quality-eslint.api.md` for the `./eslint`
+subpath). CI runs `bash scripts/check-api-report.sh` after build and
+fails when a report drifts. `core`/`ui`/`quality` use API Extractor;
+`server` dumps the `tsc` `.d.ts` graph (Extractor 7.60 cannot follow
+`Buffer` with its bundled TypeScript 6).
+
+After adding, removing or renaming a public export:
+
+1. `pnpm exec turbo run build` (skip for `quality`, it ships source).
+2. `bash scripts/check-api-report.sh --write`
+3. Add a Changeset for that package. A removed or renamed export is
+   a `minor` bump on `0.x` (breaking before 1.0). Additions can be
+   `patch`.
