@@ -1,0 +1,228 @@
+/*
+ * ScrollScenes: a pinned stage whose scene crossfades as the page scrolls.
+ *
+ * Native scrolling only. The track (`[data-scroll-scenes]`) is tall, the
+ * stage inside it is `position: sticky`, and each scene fades with a CSS
+ * scroll-driven animation on the track's view timeline. No script runs and
+ * the browser keeps scrolling, keyboard and touch exactly as everywhere else.
+ *
+ * Default (and the fallback): the scenes are plain blocks, one under the
+ * other. Pinning only applies where scroll timelines exist, motion is
+ * allowed and the window is tall enough to hold a stage. Because the
+ * stage is a single-cell grid, all scenes share its height: nothing moves
+ * the layout while scenes fade.
+ *
+ * Pinning needs a scene count (2 to 8, set by the component as
+ * `data-scene-count`): CSS cannot count children, so the timing is written
+ * out per count below. Other counts stay stacked.
+ *
+ * Tune with custom properties on the component:
+ *   --zk-scenes-top     distance under a fixed header (default 6rem)
+ *   --zk-scenes-bottom  space kept under the stage (default 1rem)
+ *   --zk-scenes-step    scroll distance per scene (default 60svh)
+ */
+
+[data-scroll-scenes-progress] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-height: 34rem) {
+  @supports (animation-timeline: view()) {
+    [data-scroll-scenes][data-scene-count] {
+      --zk-top: var(--zk-scenes-top, 6rem);
+      --zk-bottom: var(--zk-scenes-bottom, 1rem);
+      --zk-stage: calc(100svh - var(--zk-top) - var(--zk-bottom));
+      /* The track is scrolled past while the stage is pinned: one step per scene. */
+      height: calc(var(--zk-stage) + var(--zk-scenes-count) * var(--zk-scenes-step, 60svh));
+      view-timeline: --zk-scenes block;
+      view-timeline-inset: var(--zk-top) var(--zk-bottom);
+    }
+
+    [data-scene-count="2"] {
+      --zk-scenes-count: 2;
+    }
+
+    [data-scene-count="3"] {
+      --zk-scenes-count: 3;
+    }
+
+    [data-scene-count="4"] {
+      --zk-scenes-count: 4;
+    }
+
+    [data-scene-count="5"] {
+      --zk-scenes-count: 5;
+    }
+
+    [data-scene-count="6"] {
+      --zk-scenes-count: 6;
+    }
+
+    [data-scene-count="7"] {
+      --zk-scenes-count: 7;
+    }
+
+    [data-scene-count="8"] {
+      --zk-scenes-count: 8;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(1),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(1) {
+      --zk-scene-index: 0;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(2),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(2) {
+      --zk-scene-index: 1;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(3),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(3) {
+      --zk-scene-index: 2;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(4),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(4) {
+      --zk-scene-index: 3;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(5),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(5) {
+      --zk-scene-index: 4;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(6),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(6) {
+      --zk-scene-index: 5;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(7),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(7) {
+      --zk-scene-index: 6;
+    }
+
+    [data-scene-count] [data-scroll-scene]:nth-of-type(8),
+    [data-scene-count] [data-scroll-scenes-progress] li:nth-child(8) {
+      --zk-scene-index: 7;
+    }
+
+    [data-scene-count] [data-scroll-scenes-stage] {
+      position: sticky;
+      top: var(--zk-top);
+      display: grid;
+      height: var(--zk-stage);
+      padding-bottom: 2rem;
+      overflow: clip;
+    }
+
+    [data-scene-count] [data-scroll-scene] {
+      grid-area: 1 / 1;
+      align-items: center;
+      align-content: center;
+      min-height: 0;
+      animation: zk-scene-fade linear both;
+      animation-timeline: --zk-scenes;
+      /* Scene i owns the i-th slice of the pinned scroll: it fades in, holds, then fades out before the next one fades in. */
+      animation-range:
+        contain calc(var(--zk-scene-index) * 100% / var(--zk-scenes-count))
+        contain calc((var(--zk-scene-index) + 1) * 100% / var(--zk-scenes-count));
+    }
+
+    [data-scene-count] [data-scroll-scene]:first-of-type {
+      animation-name: zk-scene-fade-first;
+    }
+
+    [data-scene-count] [data-scroll-scene]:last-of-type {
+      animation-name: zk-scene-fade-last;
+    }
+
+    /* The caption stays put inside the stage (the flat layout makes it sticky). */
+    [data-scene-count] [data-scroll-scene-caption] {
+      position: static;
+    }
+
+    [data-scene-count] [data-scroll-scene-visual] {
+      max-height: calc(var(--zk-stage) - 2rem);
+      overflow: clip;
+    }
+
+    [data-scene-count] [data-scroll-scenes-progress] {
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    [data-scene-count] [data-scroll-scenes-progress] li {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 9999px;
+      background: currentColor;
+      opacity: 0.25;
+      animation: zk-scene-dot linear both;
+      animation-timeline: --zk-scenes;
+      animation-range:
+        contain calc(var(--zk-scene-index) * 100% / var(--zk-scenes-count))
+        contain calc((var(--zk-scene-index) + 1) * 100% / var(--zk-scenes-count));
+    }
+  }
+}
+
+/* Each scene owns one slice of the pinned scroll: fade in, hold, fade out (the next one starts after). */
+@keyframes zk-scene-fade {
+  0% {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+  25%,
+  75% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+
+/* First scene is already there when the stage pins: it only fades out. */
+@keyframes zk-scene-fade-first {
+  0%,
+  75% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+
+/* Last scene stays once it has faded in. */
+@keyframes zk-scene-fade-last {
+  0% {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+  25%,
+  100% {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes zk-scene-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+}
