@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { kitDir } from "#kit.js";
@@ -101,6 +102,20 @@ describe("third-party notices", () => {
       expect(names, `${title[1] ?? ""} skills`).toHaveLength(expected);
     }
     expect(checked).toBeGreaterThan(0);
+  });
+
+  it("points every notices file path at a shipped file", () => {
+    const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
+    // Capitalized file names are local paths (SKILL.md, CREDITS.md,
+    // *-FORMAT.md, LICENSE-*); lowercase tails are upstream refs.
+    const refs = [
+      ...notices.matchAll(/`((?:[a-z-]+\/)+[A-Z][A-Za-z0-9.-]*)`/gu),
+    ].map((m) => m[1] ?? "");
+    expect(refs.length).toBeGreaterThan(0);
+    for (const ref of refs) {
+      const file = ref.startsWith("skills/") ? join(kitDir(), ref) : join(kitDir(), "skills", ref);
+      expect(existsSync(file), `notices points at ${ref}`).toBe(true);
+    }
   });
 
   it("names only shipped skills in the README vendored paragraph", () => {
