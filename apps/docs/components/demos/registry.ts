@@ -16,6 +16,9 @@ import { UpdatedAgoCustomDemo } from "./updated-ago-custom-demo";
 import { AlertSectionDemo } from "./alert-section-demo";
 import { HeadingLinkDemo } from "./heading-link-demo";
 import { AppShellNoTopbarDemo } from "./app-shell-no-topbar-demo";
+import { GuideSaveRowDemo } from "./guide-save-row-demo";
+import { AdminDashboardGuideDemo } from "./admin-dashboard-guide-demo";
+import { RevealOnScrollDemo } from "./reveal-on-scroll-demo";
 import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
@@ -99,6 +102,9 @@ export const demoRegistry = {
   AlertSectionDemo: { Demo: AlertSectionDemo, file: "alert-section-demo.tsx" },
   HeadingLinkDemo: { Demo: HeadingLinkDemo, file: "heading-link-demo.tsx" },
   AppShellNoTopbarDemo: { Demo: AppShellNoTopbarDemo, file: "app-shell-no-topbar-demo.tsx" },
+  GuideSaveRowDemo: { Demo: GuideSaveRowDemo, file: "guide-save-row-demo.tsx" },
+  AdminDashboardGuideDemo: { Demo: AdminDashboardGuideDemo, file: "admin-dashboard-guide-demo.tsx" },
+  RevealOnScrollDemo: { Demo: RevealOnScrollDemo, file: "reveal-on-scroll-demo.tsx" },
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },

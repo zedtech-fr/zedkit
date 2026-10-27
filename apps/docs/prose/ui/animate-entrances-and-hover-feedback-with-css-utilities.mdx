@@ -27,7 +27,7 @@ future identity can change how things move without touching a component.
 your code decides when content is visible. Render `"pending"` (hidden), then
 switch to `"in"` once the element enters the viewport.
 
-```tsx title="reveal-on-scroll.tsx"
+```tsx title="reveal-on-scroll.tsx" preview="RevealOnScrollDemo"
 "use client";
 import { useEffect, useId, useState } from "react";
 import { Stack, Text } from "@zedtech/zedkit-ui";

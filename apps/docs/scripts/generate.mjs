@@ -208,7 +208,7 @@ export function catalogPageKeys(catalog) {
 function readProse(folder, slug) {
   const path = join(PROSE_DIR, folder, `${slug}.mdx`);
   if (!existsSync(path)) return null;
-  const text = readFileSync(path, "utf8").trim();
+  const text = expandFencePreviews(readFileSync(path, "utf8")).trim();
   if (text.length === 0) return null;
   return `${text}\n`;
 }
@@ -221,12 +221,39 @@ export function expandGuideSnippets(text) {
   });
 }
 
+const PREVIEW_META = / preview="([A-Za-z0-9]+)"/;
+
+/**
+ * A code fence with `preview="<DemoKey>"` in its meta gets that registry demo
+ * rendered live right above it. `withImport` adds the component import for
+ * pages that do not already import it (guide pages).
+ */
+export function expandFencePreviews(text, withImport = null) {
+  let used = false;
+  const out = text.replace(/^```(tsx|jsx)([^\n]*)$/gm, (line, lang, meta) => {
+    const key = meta.match(PREVIEW_META)?.[1];
+    if (!key) return line;
+    used = true;
+    const rest = meta.replace(PREVIEW_META, "");
+    return `<ComponentPreview demo="${key}" detail="Live preview" hasProps={false} />\n\n\`\`\`${lang}${rest}`;
+  });
+  if (!used || !withImport || out.includes("import { ComponentPreview }")) return out;
+  const frontmatter = out.match(/^---\n[\s\S]*?\n---\n/);
+  const importLine = `import { ComponentPreview } from "${withImport}";\n`;
+  return frontmatter
+    ? `${frontmatter[0]}\n${importLine}${out.slice(frontmatter[0].length)}`
+    : `${importLine}\n${out}`;
+}
+
 function writeGuidePages(outDir) {
   if (!existsSync(GUIDES_DIR)) return 0;
   let count = 0;
   for (const entry of readdirSync(GUIDES_DIR, { withFileTypes: true })) {
     if (!entry.isFile() || !entry.name.endsWith(".mdx")) continue;
-    const body = expandGuideSnippets(readFileSync(join(GUIDES_DIR, entry.name), "utf8"));
+    const body = expandFencePreviews(
+      expandGuideSnippets(readFileSync(join(GUIDES_DIR, entry.name), "utf8")),
+      "../../components/component-preview",
+    );
     writeFileSync(join(outDir, entry.name), body.endsWith("\n") ? body : `${body}\n`);
     count += 1;
   }
@@ -246,7 +273,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
     `import { MaturityBadge } from "../../../components/maturity-badge";`,
     `import { Tab, Tabs } from "fumadocs-ui/components/tabs";`,
   ];
-  if (rich) head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
+  if (rich || prose?.includes("<ComponentPreview")) head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
   if (rich && rich.propsFile && rich.propsName) {
     head.push(`import { PropsTable } from "../../../components/props-table";`);
   }

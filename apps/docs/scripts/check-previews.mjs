@@ -6,7 +6,8 @@
 //     covered by the page demo (manifest `demo`); any other example needs a
 //     manifest `examples: { "<title>": "<DemoKey>" }` mapping;
 //   - guide fences (apps/docs/prose/**/*.mdx): a tsx/jsx fence with JSX
-//     needs `no-preview="<reason>"` in its meta, or a pending entry.
+//     needs `preview="<DemoKey>"` (renders that registry demo above the
+//     fence) or `no-preview="<reason>"` in its meta, or a pending entry.
 //
 // Excuses live in apps/docs/preview-coverage.json:
 //   - nonVisualPackages: packages whose snippets never render UI;
@@ -62,13 +63,14 @@ export function guideFences(proseDir) {
       if (!hasJsx(body)) continue;
       const title = meta.match(/title="([^"]+)"/)?.[1] ?? `fence ${index}`;
       const reason = meta.match(/no-preview="([^"]+)"/)?.[1] ?? null;
-      found.push({ key: `guide:${base}::${title}`, reason });
+      const preview = meta.match(/ preview="([^"]+)"/)?.[1] ?? null;
+      found.push({ key: `guide:${base}::${title}`, reason, preview });
     }
   }
   return found;
 }
 
-export function collectGaps({ catalog, rich, config, proseDir }) {
+export function collectGaps({ catalog, rich, config, proseDir, demoKeys = null }) {
   const nonVisual = new Set(config.nonVisualPackages ?? []);
   const optOut = config.optOut ?? {};
   const pending = new Set(config.pending ?? []);
@@ -104,6 +106,14 @@ export function collectGaps({ catalog, rich, config, proseDir }) {
 
   for (const fence of guideFences(proseDir)) {
     known.add(fence.key);
+    if (fence.preview) {
+      if (demoKeys && !demoKeys.has(fence.preview)) {
+        errors.push(`${fence.key}: preview="${fence.preview}" is not a demo in components/demos/registry.ts.`);
+      }
+      if (pending.has(fence.key)) errors.push(`pending "${fence.key}" now has a preview: remove it from preview-coverage.json.`);
+      if (fence.key in optOut) errors.push(`optOut "${fence.key}" now has a preview: remove it from preview-coverage.json.`);
+      continue;
+    }
     if (fence.reason) {
       if (pending.has(fence.key)) errors.push(`pending "${fence.key}" is opted out in its fence: remove it from preview-coverage.json.`);
       continue;
@@ -122,6 +132,11 @@ export function collectGaps({ catalog, rich, config, proseDir }) {
   return { gaps, errors };
 }
 
+function registryDemoKeys() {
+  const source = readFileSync(join(APP, "components", "demos", "registry.ts"), "utf8");
+  return new Set([...source.matchAll(/^ {2}([A-Za-z0-9]+): \{ Demo:/gm)].map((match) => match[1]));
+}
+
 function main() {
   const catalog = JSON.parse(readFileSync(join(ROOT, "docs", "catalog", "catalog.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(join(APP, "docs-manifest.json"), "utf8"));
@@ -131,6 +146,7 @@ function main() {
     rich: manifest.rich ?? {},
     config,
     proseDir: join(APP, "prose"),
+    demoKeys: registryDemoKeys(),
   });
   if (process.argv.includes("--list")) {
     console.log(JSON.stringify(gaps.sort(), null, 2));
@@ -138,7 +154,7 @@ function main() {
   }
   for (const key of gaps) {
     errors.push(
-      `"${key}" renders JSX with no live preview. Add a demo (manifest "examples" / page demo), or excuse it in preview-coverage.json (optOut with a reason, or a guide fence meta no-preview="reason").`,
+      `"${key}" renders JSX with no live preview. Add a demo (manifest "examples" / page demo), or excuse it in preview-coverage.json (optOut with a reason, or a guide fence meta preview="DemoKey" or no-preview="reason").`,
     );
   }
   if (errors.length > 0) {
