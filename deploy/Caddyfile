@@ -9,6 +9,9 @@ zedkit.app {
 	root * /srv/site
 	encode zstd gzip
 
+	# Renamed page: "Show the zedkit logo" is now "Show your brand logo".
+	redir /docs/ui/show-the-zedkit-logo /docs/ui/show-your-brand-logo permanent
+
 	# Extensionless static export of the search index: serve it as JSON.
 	@search path /api/search
 	header @search Content-Type application/json
