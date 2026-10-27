@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge, Button, Heading, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { maturityBadgeVariant } from "@/lib/maturity-status";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
@@ -172,7 +172,13 @@ export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const { area, status, q } = readFilter(searchParams, entries);
+  // First client render must match the prerendered fallback (empty filters).
+  // Reading the URL on that pass is React #418 on the static export.
+  const [urlReady, setUrlReady] = useState(false);
+  useEffect(() => {
+    setUrlReady(true);
+  }, []);
+  const { area, status, q } = urlReady ? readFilter(searchParams, entries) : CATALOG_DEFAULT_FILTERS;
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
     const params = new URLSearchParams(searchParams.toString());
