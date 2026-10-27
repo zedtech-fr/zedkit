@@ -24,6 +24,8 @@ import { InputDemo } from "./input-demo";
 import { LabelDemo } from "./label-demo";
 import { LoadingZonesDemo } from "./loading-zones-demo";
 import { MotionDemo } from "./motion-demo";
+import { MotionHoverDemo } from "./motion-hover-demo";
+import { MotionStaggerDemo } from "./motion-stagger-demo";
 import { SecretFieldDemo } from "./secret-field-demo";
 import { SelectDemo } from "./select-demo";
 import { SeparatorDemo } from "./separator-demo";
@@ -79,6 +81,8 @@ export const demoRegistry = {
   LabelDemo: { Demo: LabelDemo, file: "label-demo.tsx" },
   LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
   MotionDemo: { Demo: MotionDemo, file: "motion-demo.tsx" },
+  MotionHoverDemo: { Demo: MotionHoverDemo, file: "motion-hover-demo.tsx" },
+  MotionStaggerDemo: { Demo: MotionStaggerDemo, file: "motion-stagger-demo.tsx" },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
   RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },

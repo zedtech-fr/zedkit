@@ -7,7 +7,11 @@
       "component": null,
       "props": null,
       "source": "motion.css",
-      "demo": "MotionDemo"
+      "demo": "MotionDemo",
+      "examples": {
+        "Hover feedback": "MotionHoverDemo",
+        "Staggered children": "MotionStaggerDemo"
+      }
     },
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
