@@ -1,10 +1,28 @@
 # Catalog — @zedtech/zedkit-server
 
-- Keywords: nodejs, server, rate-limit, rate-limiting, redaction, pii, secrets, logging, hkdf, crypto, http, zero-dependency
+- Keywords: nodejs, server, environment, zod, rate-limit, rate-limiting, redaction, pii, secrets, logging, hkdf, crypto, http
 - Audience: Node server developers who need hardening without a framework.
-- Purpose: Harden any Node server in minutes: in-process rate limiting, secret/PII redaction for logs, HKDF crypto and HTTP helpers.
+- Purpose: Harden any Node server in minutes: boot-time env parsing, rate limiting, secret/PII redaction, HKDF crypto and HTTP helpers.
 - Attribution: Original work by the same author.
 
+
+## Fail fast on bad environment variables
+
+- Import: `@zedtech/zedkit-server` — `loadEnv`
+- Wraps: `zod`
+- Status: beta
+- Short name: loadEnv
+- Audience: Node service authors who want typed `process.env` without Nest.
+- Purpose: Parse env with a zod shape and throw one readable error at boot.
+- When to use: Standalone workers, scripts, and services that do not use the Nest config hook.
+- When not to use: Inside Nest apps — use the nest package env validation instead.
+- See also: `Bootstrap a Nest app`
+
+```ts
+import { loadEnv } from "@zedtech/zedkit-server";
+import { z } from "zod";
+const env = loadEnv({ PORT: z.coerce.number(), DATABASE_URL: z.string().url() });
+```
 
 ## Rate-limit calls per key
 

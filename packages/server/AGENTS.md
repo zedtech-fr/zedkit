@@ -1,8 +1,8 @@
 # AGENTS.md — @zedtech/zedkit-server
 
-1. Server package: in-process rate limiting, secret redaction, retry
-   backoff, webhook signatures. Zero business logic, zero runtime
-   dependencies.
+1. Server package: env parsing (`loadEnv`), in-process rate limiting,
+   secret redaction, retry backoff, webhook signatures. Zero business
+   logic; runtime dep is `zod` (catalog) for `loadEnv` only.
 2. TypeScript strict, ESM, Node 22, pnpm. Deps use `catalog:` only.
 3. No raw `try`/`catch`: use `tryCatch`/`tryCatchAsync` from
    `@zedtech/zedkit-core` (add a `workspace:*` dep if a module ever needs it).

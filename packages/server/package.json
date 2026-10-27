@@ -5,10 +5,12 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Harden any Node server in minutes: in-process rate limiting, secret/PII redaction for logs, HKDF crypto and HTTP helpers. Original work by the same author.",
+  "description": "Harden any Node server in minutes: boot-time env parsing, rate limiting, secret/PII redaction, HKDF crypto and HTTP helpers. Original work by the same author.",
   "keywords": [
     "nodejs",
     "server",
+    "environment",
+    "zod",
     "rate-limit",
     "rate-limiting",
     "redaction",
@@ -17,8 +19,7 @@
     "logging",
     "hkdf",
     "crypto",
-    "http",
-    "zero-dependency"
+    "http"
   ],
   "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/server",
   "bugs": {
@@ -47,6 +48,9 @@
   "files": [
     "dist"
   ],
+  "dependencies": {
+    "zod": "catalog:"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",

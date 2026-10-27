@@ -590,6 +590,8 @@
       "keywords": [
         "nodejs",
         "server",
+        "environment",
+        "zod",
         "rate-limit",
         "rate-limiting",
         "redaction",
@@ -598,11 +600,32 @@
         "logging",
         "hkdf",
         "crypto",
-        "http",
-        "zero-dependency"
+        "http"
       ],
       "audience": "Node server developers who need hardening without a framework.",
       "needs": [
+        {
+          "need": "Fail fast on bad environment variables",
+          "import": "`@zedtech/zedkit-server` — `loadEnv`",
+          "wraps": "`zod`",
+          "status": "beta",
+          "shortName": "loadEnv",
+          "audience": "Node service authors who want typed `process.env` without Nest.",
+          "purpose": "Parse env with a zod shape and throw one readable error at boot.",
+          "whenToUse": "Standalone workers, scripts, and services that do not use the Nest config hook.",
+          "whenNotToUse": "Inside Nest apps — use the nest package env validation instead.",
+          "derivedFrom": null,
+          "example": "import { loadEnv } from \"@zedtech/zedkit-server\";\nimport { z } from \"zod\";\nconst env = loadEnv({ PORT: z.coerce.number(), DATABASE_URL: z.string().url() });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { loadEnv } from \"@zedtech/zedkit-server\";\nimport { z } from \"zod\";\nconst env = loadEnv({ PORT: z.coerce.number(), DATABASE_URL: z.string().url() });"
+            }
+          ],
+          "seeAlso": [
+            "Bootstrap a Nest app"
+          ]
+        },
         {
           "need": "Rate-limit calls per key",
           "import": "`@zedtech/zedkit-server` — `MemoryRateLimiter`",
