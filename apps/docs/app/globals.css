@@ -17,6 +17,7 @@
 /* Live preview islands stay on light kit tokens when the site shell is dark (#396). */
 html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   color-scheme: light;
+  color: hsl(var(--foreground));
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
@@ -42,6 +43,16 @@ html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   --ring: 240 5% 64.9%;
 }
 
+/* The island tint is opaque: a translucent light tint over the dark page reads as mid-grey under the light tokens. */
+html.dark [class*="bg-muted/40"]:not(.dark) {
+  background-color: color-mix(in srgb, hsl(var(--muted)) 40%, hsl(var(--background)));
+}
+
+/* Doc prose paints links in the page colour; ghost and outline buttons rendered as links follow the island. */
+html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
+  color: hsl(var(--foreground));
+}
+
 /* Phone search: hidden while a drawer or dialog is open. */
 body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
 body:has([role="dialog"][data-state="open"]) [data-search-pill] {
@@ -51,5 +62,82 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
 @media (hover: hover) and (pointer: fine) {
   [data-search-pill] button:hover {
     filter: brightness(1.02);
+  }
+}
+
+/*
+ * Docs chrome follows the kit tokens: once an identity is chosen, fumadocs
+ * colours are bridged to it (light or dark), so one identity switch restyles
+ * the whole site. Without an identity the stock fumadocs palette stays.
+ */
+:root[data-identity] {
+  --color-fd-background: hsl(var(--background));
+  --color-fd-foreground: hsl(var(--foreground));
+  --color-fd-muted: hsl(var(--muted));
+  --color-fd-muted-foreground: hsl(var(--muted-foreground));
+  --color-fd-popover: hsl(var(--popover));
+  --color-fd-popover-foreground: hsl(var(--popover-foreground));
+  --color-fd-card: hsl(var(--card));
+  --color-fd-card-foreground: hsl(var(--card-foreground));
+  --color-fd-border: hsl(var(--border));
+  --color-fd-primary: hsl(var(--primary));
+  --color-fd-primary-foreground: hsl(var(--primary-foreground));
+  --color-fd-secondary: hsl(var(--secondary));
+  --color-fd-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-fd-accent: hsl(var(--accent));
+  --color-fd-accent-foreground: hsl(var(--accent-foreground));
+  --color-fd-ring: hsl(var(--ring));
+
+  /* Navbar and sidebar follow the identity border and surfaces (glass tokens default to solid). */
+  #nd-nav {
+    background-color: hsl(var(--background) / var(--zk-glass-alpha, 1));
+    border-bottom: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    box-shadow: var(--zk-shadow-sm);
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+  }
+  #nd-sidebar {
+    background-color: hsl(var(--sidebar) / var(--zk-glass-alpha, 1));
+    border-inline-end: var(--zk-border-width) solid hsl(var(--sidebar-border));
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+  }
+  #nd-mobile-nav {
+    background-color: hsl(var(--background) / var(--zk-glass-alpha, 1));
+    border-bottom: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    box-shadow: none;
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+  }
+
+  /* Code blocks: one frame (the figure), never a frame inside a frame; the scroll area stays inside it. */
+  figure.shiki {
+    background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
+    border: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--zk-shadow-sm);
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+    max-width: 100%;
+  }
+  figure.shiki [role="region"] {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.5) transparent;
+  }
+  /* Copy button: quiet until hovered or focused. */
+  figure.shiki > div:first-child {
+    background: hsl(var(--card));
+    border-radius: var(--radius-md);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Inside a tab group the group is the frame: its code block carries no border of its own. */
+  [role="tabpanel"] > figure.shiki:only-child {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }

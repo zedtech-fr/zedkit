@@ -6,6 +6,8 @@ import { homePage } from "@/lib/site";
 import { IdentityScript } from "@zedtech/zedkit-ui";
 import { Provider } from "./provider";
 import "./globals.css";
+import "./code-syntax.css";
+import "./docs-typography.css";
 import "./docs-shell-tokens.css";
 import "./fonts";
 

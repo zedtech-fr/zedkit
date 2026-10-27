@@ -4,7 +4,7 @@ import Link from "next/link";
 import { highlight } from "fumadocs-core/highlight";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
-import { Button, Stack, Text } from "@zedtech/zedkit-ui";
+import { Stack, Text } from "@zedtech/zedkit-ui";
 import { PreviewViewport } from "./preview-viewport";
 import { demoRegistry, type DemoEntry } from "./demos/registry";
 
@@ -30,15 +30,13 @@ export async function ComponentPreview({ demo, detail, hasProps }: ComponentPrev
   const highlighted = await highlight(code, { lang: "tsx", components: { pre: Pre } });
   const { Demo } = entry;
   return (
-    <Stack gap={4}>
+    <Stack gap={3}>
+      <Text variant="muted" className="text-xs">{detail}</Text>
       <Tabs items={["Preview", "Code"]}>
         <Tab value="Preview">
-          <Stack gap={2}>
-            <Text variant="muted">{detail}</Text>
-            <PreviewViewport center={entry.center ?? false}>
-              <Demo />
-            </PreviewViewport>
-          </Stack>
+          <PreviewViewport center={entry.center ?? false}>
+            <Demo />
+          </PreviewViewport>
         </Tab>
         <Tab value="Code">
           <CodeBlock title={entry.file} allowCopy>
@@ -47,10 +45,8 @@ export async function ComponentPreview({ demo, detail, hasProps }: ComponentPrev
         </Tab>
       </Tabs>
       {hasProps ? (
-        <Link href="#props">
-          <Button variant="outline" size="sm">
-            Props
-          </Button>
+        <Link href="#props" className="w-fit text-sm text-primary underline-offset-4 hover:underline">
+          View props table
         </Link>
       ) : null}
     </Stack>

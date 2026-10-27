@@ -18,3 +18,14 @@ html.dark {
 html.dark .text-fd-muted-foreground {
   color: hsl(240 5% 64.9%) !important;
 }
+
+[id^="type-table"] .line-through {
+  color: hsl(240 5% 32%) !important;
+  text-decoration-color: hsl(240 5% 32%);
+}
+
+:root.dark [id^="type-table"] .line-through,
+html.dark [id^="type-table"] .line-through {
+  color: hsl(240 5% 64.9%) !important;
+  text-decoration-color: hsl(240 5% 64.9%);
+}

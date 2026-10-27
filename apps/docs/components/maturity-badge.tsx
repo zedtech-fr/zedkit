@@ -5,8 +5,10 @@ import { maturityBadgeVariant } from "@/lib/maturity-status";
 
 export function MaturityBadge({ status }: { status: string }) {
   return (
-    <Badge asChild variant={maturityBadgeVariant(status)}>
-      <Link href={maturityDocHref}>{status}</Link>
+    <Badge asChild variant={maturityBadgeVariant(status)} className="no-underline hover:no-underline">
+      <Link href={maturityDocHref} data-badge-link="">
+        {status}
+      </Link>
     </Badge>
   );
 }
