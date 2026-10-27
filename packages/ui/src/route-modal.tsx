@@ -94,7 +94,6 @@ export function RouteModal({
   const [open, setOpen] = React.useState(true);
   const closing = React.useRef(false);
   const timer = React.useRef(0);
-  const focusTimer = React.useRef(0);
   // The element that had focus when the modal mounted (the trigger
   // that opened it). Captured in a lazy state initializer — NOT in an
   // effect — because Vaul's mount-autofocus effect runs before any
@@ -104,41 +103,51 @@ export function RouteModal({
     typeof document === "undefined" ? null : document.activeElement instanceof HTMLElement ? document.activeElement : null,
   );
 
+  // Drawer variant only: return focus to the opener ourselves
+  // instead of relying on the Radix close-restore. Vaul re-creates
+  // its inline onOpenAutoFocus closure on every render, which
+  // re-runs the FocusScope capture from INSIDE the drawer, so the
+  // default restore targets a detached node (no-op) and focus falls
+  // to body — and Vaul keeps the scope mounted past the close, so
+  // onCloseAutoFocus fires too late to help. When the opener left
+  // the DOM (list re-rendered under the modal), skip: nothing
+  // better than the default exists.
+  const restoreOpener = React.useCallback(() => {
+    if (variant === "drawer" && opener && document.contains(opener)) {
+      opener.focus();
+    }
+  }, [variant, opener]);
+
   React.useEffect(
     () => () => {
       window.clearTimeout(timer.current);
-      window.clearTimeout(focusTimer.current);
+      // The restore runs here — and ONLY here. Vaul keeps the trap
+      // mounted from close-start until React removes the tree (via
+      // the navigation onClose triggers), so any earlier restore
+      // loses: the trap steals focus back inside then focus falls
+      // to body at unmount (observed in browsers; jsdom unmounts
+      // synchronously, which is why a setTimeout(0) restore passed
+      // there and raced in production — see #586). Cleanup order
+      // saves us: descendants clean up before ancestors, so the
+      // FocusScope (whose default restore no-ops on its detached
+      // node) is gone before this runs, and the opener sits on the
+      // persisting list page. This also covers closes that bypass
+      // requestClose (browser back while open).
+      restoreOpener();
     },
-    [],
+    [restoreOpener],
   );
 
   const requestClose = React.useCallback(() => {
     if (closing.current) return;
     closing.current = true;
     setOpen(false);
-    // Drawer variant only: return focus to the opener ourselves
-    // instead of relying on the Radix close-restore. Vaul
-    // re-creates its inline onOpenAutoFocus closure on every
-    // render, which re-runs the FocusScope capture from INSIDE the
-    // drawer, so the default restore targets a detached node
-    // (no-op) and focus falls to body — and Vaul keeps the scope
-    // mounted past the close, so onCloseAutoFocus fires too late
-    // to help. Deferred past the unmount commit: focusing now
-    // would hit the still-mounted trap (which steals it back) and
-    // the background is still hidden. When the opener left the DOM
-    // (list re-rendered under the modal), skip: nothing better
-    // than the default exists.
-    if (variant === "drawer" && opener) {
-      focusTimer.current = window.setTimeout(() => {
-        if (document.contains(opener)) opener.focus();
-      }, 0);
-    }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       onClose();
       return;
     }
     timer.current = window.setTimeout(onClose, exitMs(variant));
-  }, [onClose, variant, opener]);
+  }, [onClose, variant]);
 
   const handleOpenChange = React.useCallback(
     (next: boolean) => {
