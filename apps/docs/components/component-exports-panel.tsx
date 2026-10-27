@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
   Button,
   Stack,
@@ -16,13 +16,17 @@ import { roleForExportSymbol } from "@/lib/import-symbols";
 
 export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; wraps: string }) {
   const [open, setOpen] = useState(false);
+  const panelId = useId();
   return (
     <Stack gap={2}>
-      <Button type="button" variant="ghost" size="sm" className="w-fit" onClick={() => setOpen((v) => !v)}>
+      <Button type="button" variant="ghost" size="sm" className="w-fit"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}>
         {open ? "Hide export symbols" : "Show export symbols"}
       </Button>
       {open ? (
-        <Stack gap={3}>
+        <Stack gap={3} id={panelId}>
           <Table>
             <TableHeader>
               <TableRow>
