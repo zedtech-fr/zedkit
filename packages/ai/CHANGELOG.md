@@ -1,5 +1,52 @@
 # @zedtech/zedkit-ai
 
+## 0.6.0
+
+### Minor Changes
+
+- 2b35617: Add the `console-architecture` agent (route/view/data layer-boundary reviewer for frontend changes) and wire it in the lens registry and agents catalog.
+- 83e0f67: Activate the `doc-demos` review lens (registry + frame + drift checks for doc apps and demo registries); both runners (`docs-writer`, `ui-designer`) already exist.
+- e39bfe7: Add the `orchestrator` agent plus `orchestrate` and `research` commands for multi-step coordination across existing playbooks and specialists.
+- 8ffe2f5: Add the `product-director` agent (one-page delivery brief over a scope: shipped/next/needs/risks with links) and wire it in the agents catalog.
+- e900417: Add the `release-manager` agent (release gatekeeper: semver 0.x rules, changesets, migration notes, deprecations, maturity) and wire it in the lens registry and agents catalog.
+
+### Patch Changes
+
+- de8f031: Test that the agents catalog Writes column matches each agent's frontmatter write guards.
+- e848e85: Test that `docs/agents-catalog.md` covers every agent the kit ships.
+- d38aefd: Ship the `audit` skill in the `core` preset: the `audit` command always installs, so a fresh core install failed its own `validate`.
+- 308f534: Bound the agents-catalog chains and persona-fallback test parsers to their sections so later doc additions cannot leak in.
+- a5266f7: Test that every Typical chains name in docs/agents-catalog.md resolves to a skill, agent or command the kit ships.
+- 46a4592: Name the removal version (0.6.0) on the deprecated `plan-challenger` alias, in the agent description and the agents catalog.
+- ae91eb5: CLI errors carry next steps (`unexpected argument` points at `--help`, `no such directory` points at the project root or `init`); validate-errors doc example fixed (`diagnosing-bugs`, not `audit`, needs `--preset full`).
+- b7f21d3: Test that the package README documents every CLI usage flag.
+- 2c885df: List the first-party `audit` skill in THIRD_PARTY_NOTICES and cover `use-zedkit` in the core-closure test list.
+- 5e86c2f: Test that every kit command routes to its same-named skill with the $ARGUMENTS contract.
+- 7f2b740: Move `diagnosing-bugs` from the `core` preset to full-only (still shipped; fresh core installs stay lean) and cap the core preset size by test.
+- 5a048ad: Test that re-running `init` against a newer kit adds new files without touching edited ones.
+- 8bbf647: Lock both agents tables to exactly the shipped agent set: fail on stale rows, not just missing ones.
+- 951ff68: Test that `THIRD_PARTY_NOTICES.md` names every shipped skill.
+- 7963a67: Align persona-review fallback generics with personas.template.md and lock the persona name set with a test.
+- 2c885df: Ship the `ponytail-audit` skill in the `core` preset: the core `audit` skill runs it, so core installs referenced a missing skill.
+- 2775028: Name the `skeptic` agent in the README entry-points paragraph: `challenge` briefs `skeptic`, not the deprecated alias.
+- 300a492: Test that the README command list matches the manifest and command files stay thin.
+- 3f51547: Fix stale README inventories: complete the first-party skills list and point subagents at the agents catalog instead of a frozen subset.
+- f6db15d: Ship the `research` skill in the `core` preset: the core `wayfinder` skill invokes it via the Skill tool.
+- 81e9503: Miss-to-rule from downstream propagation: setup-ai verify now requires the repo lint to ignore installed kit dirs.
+- 05eb888: Teach setup-ai to replace local copies of published zedkit configs with the install (propagation prep).
+- 862989a: Align the `setup-ai` subagent guidance with the kit convention: `model` omitted or `inherit`.
+- 0dc1ad8: Document why skills are exempt from the single-line description rule and lock folded descriptions as valid.
+- 28ea655: Test that shipped skills partition exactly into first-party plus upstream notices, and that the README first-party list matches.
+- b0e21c1: AGENTS template states the subagent `model` rule as omit-or-`inherit`, matching the skill and the validator; test pins the three wordings together.
+- 89c7b6b: Test that bare skill/agent/command names in the kit templates resolve to shipped content.
+- e85fb10: Point the `use-zedkit` skill links at absolute public URLs: repo-relative links break once installed in a consumer repo.
+- be8a56c: Test that the root README consumer snippet stays identical to the use-zedkit core rule.
+- e4b6ee7: Validate-errors doc matches the CLI summary (`1 problem` / `N problems`); test pins documented error strings to source.
+- f55bd78: Pluralize the `validate` summary (`1 problem` / `N problems`).
+- f0908dc: Test that the agents catalog Writes column only holds yes, no or tests only.
+- Updated dependencies [4a1b579]
+  - @zedtech/zedkit-core@0.1.3
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @zedtech/zedkit-nest
 
+## 0.1.3
+
+### Patch Changes
+
+- 4d8f177: Docs: add Start a safe NestJS API tutorial need and type-checked example sources.
+
 ## 0.1.2
 
 ### Patch Changes

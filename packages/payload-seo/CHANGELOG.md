@@ -1,5 +1,11 @@
 # @zedtech/zedkit-payload-seo
 
+## 0.2.0
+
+### Minor Changes
+
+- f5cdb31: Optional field labels, keywords-as-text leaves, and locale-aware max-length validator messages for Payload SEO fields.
+
 ## 0.1.2
 
 ### Patch Changes
