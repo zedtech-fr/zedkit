@@ -126,6 +126,44 @@
           ]
         },
         {
+          "need": "Classify failures for retry policy",
+          "import": "`@zedtech/zedkit-core` — `DomainError`, `TransientError`, `PermanentError`, `classifyError`, `ErrorKind`",
+          "wraps": "`(none)`",
+          "status": "beta",
+          "shortName": "Error taxonomy",
+          "audience": "Service authors who route failures to retry, dead-letter, or client-facing errors.",
+          "purpose": "Typed error kinds plus `classifyError` so workers and HTTP layers pick the same policy.",
+          "whenToUse": "At domain boundaries and queue consumers where retry vs fail-fast must be explicit.",
+          "whenNotToUse": "For validation-only failures — return a `Result` or map to 400 without throwing.",
+          "derivedFrom": null,
+          "example": "import { classifyError, DomainError, TransientError } from \"@zedtech/zedkit-core\";\nif (classifyError(err) === \"transient\") await retryLater();\nthrow new DomainError(\"slot_taken\", \"Slot already booked\");\nthrow new TransientError(\"upstream timeout\", { cause: err });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { classifyError, DomainError, TransientError } from \"@zedtech/zedkit-core\";\nif (classifyError(err) === \"transient\") await retryLater();\nthrow new DomainError(\"slot_taken\", \"Slot already booked\");\nthrow new TransientError(\"upstream timeout\", { cause: err });"
+            }
+          ]
+        },
+        {
+          "need": "Inject time in domain code",
+          "import": "`@zedtech/zedkit-core` — `Clock`, `systemClock`, `fixedClock`",
+          "wraps": "`(none)`",
+          "status": "beta",
+          "shortName": "Clock",
+          "audience": "Developers who need deterministic dates in tests without mocking `Date` globally.",
+          "purpose": "A tiny `Clock` port with production and fixed implementations.",
+          "whenToUse": "When domain rules depend on \"now\" (expiry, windows, staleness).",
+          "whenNotToUse": "For one-off `Date.now()` in infrastructure glue — keep those at the edges.",
+          "derivedFrom": null,
+          "example": "import { fixedClock, systemClock, type Clock } from \"@zedtech/zedkit-core\";\nconst clock: Clock = process.env.NODE_ENV === \"test\" ? fixedClock(new Date(\"2026-01-01\")) : systemClock;\nconst ageMs = clock.now().getTime() - createdAt.getTime();",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { fixedClock, systemClock, type Clock } from \"@zedtech/zedkit-core\";\nconst clock: Clock = process.env.NODE_ENV === \"test\" ? fixedClock(new Date(\"2026-01-01\")) : systemClock;\nconst ageMs = clock.now().getTime() - createdAt.getTime();"
+            }
+          ]
+        },
+        {
           "need": "Generate prefixed unique IDs",
           "import": "`@zedtech/zedkit-core` — `newPrefixedId`, `isPrefixedId`",
           "wraps": "`ulid`",

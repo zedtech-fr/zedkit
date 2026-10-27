@@ -4,8 +4,36 @@
 
 ```ts
 
+// @public
+export function classifyError(error: unknown): ErrorKind;
+
+// @public
+export interface Clock {
+    // (undocumented)
+    now(): Date;
+}
+
+// @public (undocumented)
+export class DomainError extends Error {
+    constructor(code: string, message: string, details?: unknown | undefined, options?: {
+        cause?: unknown;
+    });
+    // (undocumented)
+    readonly code: string;
+    // (undocumented)
+    readonly details?: unknown | undefined;
+    // (undocumented)
+    readonly kind: "domain";
+}
+
 // @public (undocumented)
 export function err<E>(error: E): Result<never, E>;
+
+// @public (undocumented)
+export type ErrorKind = "domain" | "transient" | "permanent";
+
+// @public (undocumented)
+export const fixedClock: (at: Date) => Clock;
 
 // @public (undocumented)
 export function isErr<T, E>(result: Result<T, E>): result is {
@@ -35,6 +63,15 @@ export function normalizeThrown(thrown: unknown): Error;
 export function ok<T>(value: T): Result<T, never>;
 
 // @public (undocumented)
+export class PermanentError extends Error {
+    constructor(message: string, options?: {
+        cause?: unknown;
+    });
+    // (undocumented)
+    readonly kind: "permanent";
+}
+
+// @public (undocumented)
 export type Result<T, E = Error> = {
     ok: true;
     value: T;
@@ -42,6 +79,18 @@ export type Result<T, E = Error> = {
     ok: false;
     error: E;
 };
+
+// @public (undocumented)
+export const systemClock: Clock;
+
+// @public (undocumented)
+export class TransientError extends Error {
+    constructor(message: string, options?: {
+        cause?: unknown;
+    });
+    // (undocumented)
+    readonly kind: "transient";
+}
 
 // @public (undocumented)
 export function tryCatch<T>(fn: () => T): Result<T, Error>;
