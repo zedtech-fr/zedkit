@@ -1,81 +1,25 @@
 # Frontend charter
 
-Short concrete rules for every UI built on this kit. Anything marked
-**lint** is enforced by the shared ESLint preset
-(`@zedtech/zedkit-quality`, install it and pass your Tailwind entry —
-no copy); **test** by the
-axe suite and the preview smoke run.
+Rules the kit enforces in lint or shows in a live example. Lint messages
+state the rule; this table is the index.
 
-## Components
-
-- One component per file, file name = component name in kebab-case
-  (`data-table.tsx` exports `DataTable`).
-- Props: one exported `XxxProps` interface, optional props last with
-  defaults, slots as `ReactNode` (`actions`, `sidebar`, `children`).
-- Variants via `class-variance-authority`, merged with `cn()`
-  (clsx + tailwind-merge). No variant prop means one sensible default.
-- Copy primitives from the official shadcn/ui registry; compose in the
-  kit; never fork a Radix behavior by hand.
-
-## Tokens only (lint)
-
-- Only semantic color tokens: `background`, `foreground`, `card`,
-  `muted`, `border`, `input`, `ring`, `primary`, `secondary`,
-  `accent`, `destructive`, `success`, `warning` (+ `-foreground`
-  pairs). No raw palette classes (`bg-red-500`), no hex/rgb literals,
-  no arbitrary color values (`bg-[#fff]`).
-- No `style` attributes. No raw `px` font sizes; use the type scale
-  (`text-xs` … `text-2xl`) and spacing scale (`p-4`, `gap-2`, …).
-- New token? Add it to the theme in both light and dark, then use it.
-- Focus ring width/offset: `--ring-width`, `--ring-width-control`,
-  `--ring-offset-width` in `styles.css`; use `focus-ring` (2px, Badge)
-  or `focus-ring-control` (1px, Button/inputs) instead of raw `ring-*`
-  widths during the component refactor.
-
-## Dark / light
-
-- Theme via next-themes (`attribute="class"`), tokens in `:root` +
-  `.dark`. Every screen must be readable in both; the preview gallery
-  shows both.
-
-## Screen states (test)
-
-Every screen that loads data ships four states: **loading**
-(skeletons, never a blank page), **empty** (what it is + the next
-step as a button), **error** (what happened + recovery: retry/back),
-**success**. The gallery renders each state; the smoke run visits
-each one.
-
-## Forms
-
-- react-hook-form + zod: schema first, `defaultValues` prefilled,
-  inline field errors, server errors shown at the top with the field
-  highlighted. Submit buttons disable while pending and say what
-  happens next ("Create app", not "Submit").
-
-## Data and realtime
-
-- Server components fetch; client islands own interactivity. One live
-  indicator pattern (`LivePulse`): pulsing dot + label when the feed
-  is connected, gray "Idle" otherwise — never a silent stall.
-
-## Accessibility (lint + test)
-
-- Every input has a label; icon-only buttons have `aria-label`.
-- Focus visible, full keyboard path, logical heading order, `aria-live`
-  or `role="status"`/`role="alert"` for async updates and errors.
-- Contrast from tokens only (never hand-picked grays). Zero axe
-  violations per component, enforced by the vitest-axe suite.
-
-## Responsive
-
-- Mobile-first: single column and full-width actions under `md`,
-  shell sidebar collapses (consumer owns the mobile nav). No
-  horizontal scroll except inside `Table` containers.
-
-## Microcopy
-
-- Match the product language (English or French, never mixed on one
-  screen). Reassure before asking ("shown once, copy it now"),
-  always name the next step, and show price/duration when the action
-  has one. Errors say what broke + what to do, in plain words.
+| Id | Enforced | Example |
+|---|---|---|
+| `ui-file` | One component per file; file name is the component name in kebab-case (`data-table.tsx` exports `DataTable`). | [Buttons](https://zedkit.app/docs/ui/trigger-actions-with-buttons) |
+| `ui-props` | One exported `XxxProps` interface; optional props last with defaults; slots as `ReactNode` (`actions`, `sidebar`, `children`). | [Card](https://zedkit.app/docs/ui/group-content-in-a-card-section) |
+| `ui-variants` | Variants via `class-variance-authority`, merged with `cn()`. No variant prop means one default. | [Badge](https://zedkit.app/docs/ui/show-a-status-or-count-badge) |
+| `ui-shadcn` | Copy primitives from the official shadcn/ui registry; compose in the kit; do not fork a Radix behavior by hand. | [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) |
+| `tokens-color` | lint. Semantic color tokens only (`background`, `foreground`, `primary`, `destructive`, …). No palette classes (`bg-red-500`), no hex/rgb, no `bg-[#fff]`. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
+| `tokens-style` | lint. No `style` attributes. No raw `px` font sizes; use `text-xs` … `text-2xl` and the spacing scale. | [Typography](https://zedkit.app/docs/ui/render-headings-and-body-text-without-raw-tags) |
+| `tokens-focus` | Focus ring via `focus-ring` / `focus-ring-control` (theme `--ring-width*`), not raw `ring-*` widths. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
+| `theme-class` | Theme via next-themes (`attribute="class"`), tokens in `:root` + `.dark`. Every screen readable in both. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
+| `states-four` | test. Loading (skeleton, not a blank page), empty (what it is + next step), error (what happened + retry/back), success. | [Skeletons](https://zedkit.app/docs/ui/load-each-zone-with-a-faithful-skeleton), [empty table](https://zedkit.app/docs/ui/show-a-sortable-filterable-paginated-data-table), [alert](https://zedkit.app/docs/ui/call-out-a-notice-or-an-error-state) |
+| `forms-schema` | react-hook-form + zod; `defaultValues` prefilled; inline field errors; pending submit names the next step. | [Validated forms](https://zedkit.app/docs/ui/build-validated-forms-with-labels-errors-and-pending-state) |
+| `data-live` | Server components fetch; client islands own interactivity. `LivePulse` when a feed is connected, never a silent stall. | [Live indicator](https://zedkit.app/docs/ui/show-key-value-details-and-a-live-indicator) |
+| `a11y-name` | lint + test. Every input has a label; icon-only buttons have `aria-label`. | [Input](https://zedkit.app/docs/ui/collect-text-input-with-a-label), [icon button](https://zedkit.app/docs/ui/icon-only-actions-with-a-visible-name) |
+| `a11y-keyboard` | lint + test. Focus visible, full keyboard path, logical headings, live region for async errors. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
+| `a11y-contrast` | test. Contrast from tokens only. Zero axe violations per component (vitest-axe). | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
+| `responsive` | Mobile-first; full-width actions under `md`; no horizontal scroll except inside `Table`. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
+| `copy-next` | One language per screen. Name the next step. Errors say what broke and what to do. | [Shown-once secret](https://zedkit.app/docs/ui/display-a-shown-once-secret-with-copy) |
+| `layers-features` | lint. UI imports ports; adapters at the composition root; model is pure. | [Note list](https://zedkit.app/examples/note-list) |
+| `try-catch` | lint. No raw `try`/`catch`; use `tryCatch` / `tryCatchAsync` from `@zedtech/zedkit-core`. | [Handle errors](https://zedkit.app/docs/core/handle-errors-without-try-catch) |

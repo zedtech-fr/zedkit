@@ -1,4 +1,5 @@
-// Shareable UI lint preset: enforces docs/frontend-charter.md by tools.
+// Shareable UI lint preset: charter rule ids live in docs/frontend-charter.md;
+// the messages below carry the explanation.
 //
 // What it enforces on every .tsx/.jsx file:
 // - jsx-a11y recommended (labels, keyboard, focus, ARIA)
@@ -57,16 +58,17 @@ export function uiPreset({ entryPoint }) {
               {
                 pattern: `(^|:)(${COLOR_UTILS})-(${PALETTE}|white|black)(-|/|$)`,
                 message:
-                  "Raw palette colors are banned. Use a semantic theme token (see docs/frontend-charter.md).",
+                  "tokens-color: raw palette classes (bg-red-500) are banned. Use a semantic token (background, foreground, primary, destructive, …) so light and dark stay in sync.",
               },
               {
                 pattern: "\\[(#|rgb|hsl)",
                 message:
-                  "Arbitrary color values are banned. Use a semantic theme token (see docs/frontend-charter.md).",
+                  "tokens-color: arbitrary hex/rgb/hsl colors are banned. Use a semantic token (background, foreground, primary, …).",
               },
               {
                 pattern: "text-\\[[^\\]]*px",
-                message: "Raw px font sizes are banned. Use the type scale (see docs/frontend-charter.md).",
+                message:
+                  "tokens-style: raw px font sizes are banned. Use the type scale (text-xs … text-2xl).",
               },
             ],
           },
@@ -78,11 +80,13 @@ export function uiPreset({ entryPoint }) {
           "error",
           {
             selector: "TryStatement",
-            message: "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
+            message:
+              "try-catch: raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core so thrown values become Error with cause.",
           },
           {
             selector: 'JSXAttribute[name.name="style"]',
-            message: "Inline style attributes are banned. Use theme tokens (see docs/frontend-charter.md).",
+            message:
+              "tokens-style: inline style attributes are banned. Use theme tokens and utility classes.",
           },
         ],
       },

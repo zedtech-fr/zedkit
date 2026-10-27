@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Tone guard: the public repo keeps a neutral, professional tone.
-# Fails on self-promotional marketing terms and internal review-lane
-# names, actor spellings, and private workflow labels in tracked
-# contents and paths, untracked contents, and (on pull_request events)
-# the PR title + body — squash merges copy those into history, so the
-# file scan alone cannot catch them.
+# Fails on self-promotional marketing terms, a short phrasing list,
+# and internal review-lane names, actor spellings, and private
+# workflow labels in tracked contents and paths, untracked contents,
+# and (on pull_request events) the PR title + body — squash merges
+# copy those into history, so the file scan alone cannot catch them.
 #
 # Enforcement lists, base64-encoded and decoded only in memory (same
 # rule as denylist-patterns.sh): no file in this repo spells the
@@ -38,6 +38,13 @@ LANE_ENCODED=(
   'bXVzZVswLTldKw=='
 )
 
+# Short preaching/charter phrasing (decoded only in memory).
+PHRASING_ENCODED=(
+  'YmVzdCBwcmFjdGljZQ=='
+  'YmVzdCBwcmFjdGljZXM='
+  'aW5kdXN0cnkgc3RhbmRhcmQ='
+)
+
 # Mirrors _denylist_b64decode: GNU coreutils uses -d, older macOS -D.
 _tone_b64decode() {
   if printf '' | base64 -d >/dev/null 2>&1; then
@@ -60,6 +67,7 @@ _alternation() {
 terms="\b($(_alternation "${TONE_ENCODED[@]}"))\b"
 tools="\b($(_alternation "${TOOLS_ENCODED[@]}"))\b"
 lanes="\b($(_alternation "${LANE_ENCODED[@]}"))\b"
+phrasing="\b($(_alternation "${PHRASING_ENCODED[@]}"))\b"
 fail=0
 
 # $1 = ERE, $2 = i for case-insensitive grep, empty for case-sensitive.
@@ -132,6 +140,7 @@ _scan() {
 _scan "$terms" "i" "banned marketing terms"
 _scan "$tools" "" "internal review actor/tool names"
 _scan "$lanes" "i" "internal review lane ids"
+_scan "$phrasing" "i" "banned phrasing"
 
 [ "$fail" -eq 0 ] || exit 1
 echo "tone: ok"

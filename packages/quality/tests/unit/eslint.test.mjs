@@ -11,6 +11,24 @@ describe("uiPreset", () => {
   it("fails fast when entryPoint is missing", () => {
     expect(() => uiPreset({})).toThrow("entryPoint");
   });
+
+  it("lint messages carry the rule id and explanation", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    const restrict = tailwind.rules["better-tailwindcss/no-restricted-classes"][1].restrict;
+    const messages = restrict.map((row) => row.message);
+    const syntax = tailwind.rules["no-restricted-syntax"].filter((row) => typeof row === "object");
+    const style = syntax.find((row) => String(row.selector).includes("style"));
+    const tryCatch = syntax.find((row) => String(row.selector).includes("TryStatement"));
+    expect(messages[0]).toMatch(/^tokens-color: /);
+    expect(messages[1]).toMatch(/^tokens-color: /);
+    expect(messages[2]).toMatch(/^tokens-style: /);
+    expect(style.message).toMatch(/^tokens-style: /);
+    expect(tryCatch.message).toMatch(/^try-catch: /);
+    for (const message of [...messages, style.message, tryCatch.message]) {
+      expect(message).not.toMatch(/frontend-charter/);
+      expect(message.length).toBeGreaterThan(40);
+    }
+  });
 });
 
 describe("defineLayers", () => {
