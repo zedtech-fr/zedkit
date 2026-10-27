@@ -1061,6 +1061,29 @@ import { Tabs } from "@zedtech/zedkit-ui";
 <Tabs value={tab} onValueChange={setTab}> // controlled: you own the state
 ```
 
+## Pin a stage and change scene as the page scrolls
+
+- Import: `@zedtech/zedkit-ui` — `ScrollScenes`, `ScrollScene`, `ScrollScenesProps`, `SCROLL_SCENES_MAX`
+- Wraps: none (CSS scroll-driven animation)
+- Status: alpha
+- Short name: ScrollScenes
+- Audience: Developers telling a story in a few steps (one product shown in several looks, a feature tour, before/after) on a marketing or docs page.
+- Purpose: One stage stays under the header while the page scrolls; each scene fades in, holds, then fades out before the next. Pure CSS scroll-driven animation: no script, no scroll hijacking, native scrolling only.
+- When to use: Two to eight (`SCROLL_SCENES_MAX`) short scenes that read well one at a time and where scrolling is the natural way to move on.
+- When not to use: Long content, forms or anything focusable inside a scene — invisible scenes stay in the accessibility tree, so keep scene visuals non-interactive (`aria-hidden` and `inert`); steps the user must pick themselves — use `Tabs` or `WizardSteps`.
+- See also: `Switch between tabbed panels`
+- Examples: Pinned scenes
+- A11y: Captions are real text in a fixed order and are never hidden (opacity only). Under `prefers-reduced-motion: reduce`, in browsers without scroll timelines (Firefox, Safari before 26) and in very short windows, the scenes are plain blocks one under the other with the same content. A decorative progress rail is `aria-hidden`.
+- Troubleshooting: Nothing is pinned — you need two to eight scenes, the browser needs `animation-timeline: view()` and the window at least 34rem tall; otherwise you get the stacked layout by design. Stage hides under a fixed header — set `--zk-scenes-top` to the header height. Scenes change too fast or slowly — set `--zk-scenes-step` (scroll distance per scene, default 60svh). Content cut at the bottom — the stage is one screen tall; shorten the scene or hide secondary parts on small screens.
+
+```ts
+import { ScrollScenes } from "@zedtech/zedkit-ui";
+<ScrollScenes className="[--zk-scenes-top:4.5rem]" scenes={[
+{ id: "mist", caption: <h3>Mist</h3>, children: <Preview /> },
+{ id: "press", caption: <h3>Press</h3>, children: <Preview /> },
+]} />
+```
+
 ## Switch the visual identity with one attribute
 
 - Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `useIdentity`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`
