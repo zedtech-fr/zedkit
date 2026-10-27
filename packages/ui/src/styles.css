@@ -11,10 +11,11 @@
 @import "./identities/volt.css";
 
 /*
- * Hover styles only apply where a hover exists: without this guard the
- * hover state sticks after a tap on touch screens.
+ * Hover styles only apply where a hover exists (Tailwind v4's default
+ * hover variant is already wrapped in @media (hover: hover), so no
+ * redefinition is needed — and a @custom-variant redefinition emits
+ * malformed CSS that breaks consumer builds. Do not add one back.
  */
-@custom-variant hover (@media (hover: hover) { &:hover });
 
 /*
  * zedkit admin theme: neutral, calm, readable. Dark/light via the
