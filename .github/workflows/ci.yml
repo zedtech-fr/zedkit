@@ -134,8 +134,11 @@ jobs:
             [ "$code" = "200" ] && break
             sleep 5
           done
-          pnpm --filter @zedtech/zedkit-docs run e2e -- --shard=${{ matrix.shard }}/3
+          pnpm --filter @zedtech/zedkit-docs run e2e
           kill "$(cat /tmp/docs-e2e.pid)"
+        env:
+          DOCS_E2E_SHARD: ${{ matrix.shard }}
+          DOCS_E2E_SHARD_TOTAL: "3"
 
   # Required check name stays `docs-e2e`: one gate over the three shards.
   docs-e2e:
