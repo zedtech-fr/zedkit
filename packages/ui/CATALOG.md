@@ -165,7 +165,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Label`, `LabelProps`
 - Wraps: `@radix-ui/react-label`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (label)
 - Short name: Label
 - Audience: Developers naming inputs accessibly.
@@ -241,7 +241,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`
 - Wraps: `(none)`
-- Status: beta
+- Status: alpha
 - Derived from: shadcn/ui (skeleton)
 - Short name: Skeleton
 - Audience: Developers covering loading states without layout shift.
@@ -268,7 +268,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `StatusDot`, `StatusDotProps`, `StatusDotTone`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Registry: status-dot
 - Short name: StatusDot
 - Audience: Developers showing compact live state (lists, headers, realtime panels).
@@ -301,7 +301,7 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `ProgressBar`, `ProgressBarProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: ProgressBar
 - Audience: Developers reporting measurable progress (uploads, jobs, wizards).
 - Purpose: An accessible progressbar with clamped value and label.
@@ -346,7 +346,7 @@ import { IconLabel } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Checkmark`, `CheckmarkProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: Checkmark
 - Audience: Developers confirming a completed action (saved, sent, done).
 - Purpose: An animated checkmark that draws once (static under reduced motion).
@@ -372,7 +372,7 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `CardSkeleton`, `CardSkeletonProps`, `DataTableSkeleton`, `DataTableSkeletonProps`, `DetailPanelSkeleton`, `DetailPanelSkeletonProps`, `PageHeaderSkeleton`, `PageHeaderSkeletonProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: Skeletons
 - Audience: Developers loading async zones without layout shift (pages, cards, tables, panels).
 - Purpose: One faithful loading skeleton per kit component shape, each a named live zone.
@@ -401,7 +401,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `StatusLabel`, `StatusLabelProps`, `StatusLabelTone`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: StatusLabel
 - Audience: Developers naming a background or foreground operation for the user.
 - Purpose: A named live-region label for the current operation state (loading, saved, error…).
@@ -872,7 +872,7 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Stack`, `stackVariants`, `StackProps`, `Section`, `SectionProps`
 - Wraps: none (flex/gap utilities over `Heading`, `Text`)
-- Status: alpha
+- Status: beta
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
 - Purpose: Gap-based vertical/horizontal stacks plus titled sections.
@@ -975,7 +975,7 @@ import { Logo } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
 - Wraps: `@radix-ui/react-select`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (select)
 - Short name: Select
 - Audience: Form builders offering 4+ exclusive options in little space.
@@ -996,7 +996,7 @@ const items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</S
 
 - Import: `@zedtech/zedkit-ui` — `Textarea`
 - Wraps: none (styled native `textarea`)
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (textarea)
 - Short name: Textarea
 - Audience: Form builders collecting paragraphs (bios, notes, messages).
@@ -1016,7 +1016,7 @@ import { Label, Textarea } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Checkbox`, `Switch`
 - Wraps: `@radix-ui/react-checkbox`, `@radix-ui/react-switch`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (checkbox, switch)
 - Short name: Checkbox
 - Audience: Form builders collecting booleans and on/off settings.
@@ -1036,7 +1036,7 @@ import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Tabs`, `TabsProps`, `TabsList`, `TabsTrigger`, `TabsContent`
 - Wraps: `@radix-ui/react-tabs`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (tabs)
 - Short name: Tabs
 - Audience: Developers grouping related panels under one heading.

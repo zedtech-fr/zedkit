@@ -7,7 +7,7 @@ const A11Y_ROUTES = [
   { path: "/", label: "home" },
   { path: "/docs", label: "docs-index" },
   { path: "/docs/getting-started", label: "getting-started" },
-  { path: "/docs/ui/indicate-status-with-a-dot", label: "component-alpha" },
+  { path: "/docs/ui/stamp-data-with-its-age", label: "component-alpha" },
   { path: "/docs/set-up-your-coding-agents", label: "tutorial-agents" },
   {
     path: "/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo",
@@ -60,7 +60,7 @@ test.describe("a11y gate (#396)", () => {
   }
 
   const maturitySamples: { path: string; name: string }[] = [
-    { path: "/docs/ui/indicate-status-with-a-dot", name: "alpha" },
+    { path: "/docs/ui/stamp-data-with-its-age", name: "alpha" },
     { path: "/catalog", name: "beta" },
   ];
 
