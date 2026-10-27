@@ -226,8 +226,12 @@ export function SearchPill() {
           >
             <div
               role="search"
-              className="relative flex h-[max(2.75rem,44px)] items-center rounded-full bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-none"
+              className="relative isolate flex h-[max(2.75rem,44px)] items-center text-popover-foreground transition-none"
             >
+              <span
+                aria-hidden
+                className="absolute inset-0 -z-10 rounded-full bg-popover shadow-lg ring-1 ring-border"
+              />
               <PillBody onClose={() => setOpen(false)} />
             </div>
           </div>
