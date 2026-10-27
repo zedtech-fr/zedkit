@@ -108,7 +108,12 @@
       "component": "DataTable",
       "props": "DataTableProps",
       "source": "data-table.tsx",
-      "demo": "DataTableDemo"
+      "demo": "DataTableDemo",
+      "examples": {
+        "Standalone pagination": "DataTablePaginationDemo",
+        "Standalone empty row": "DataTableEmptyDemo",
+        "Standalone toolbar": "DataTableToolbarDemo"
+      }
     },
     "Lay out an admin page (sidebar + topbar + header)": {
       "package": "@zedtech/zedkit-ui",
@@ -136,7 +141,10 @@
       "registry": "detail-panel",
       "props": "DetailPanelProps",
       "source": "detail-panel.tsx",
-      "demo": "DetailsDemo"
+      "demo": "DetailsDemo",
+      "examples": {
+        "Composed rows": "DetailsComposedDemo"
+      }
     },
     "Show determinate progress": {
       "package": "@zedtech/zedkit-ui",
@@ -191,7 +199,10 @@
       "registry": "card",
       "props": "CardProps",
       "source": "card.tsx",
-      "demo": "CardDemo"
+      "demo": "CardDemo",
+      "examples": {
+        "With footer": "CardFooterDemo"
+      }
     },
     "Stack content and group titled sections": {
       "package": "@zedtech/zedkit-ui",
