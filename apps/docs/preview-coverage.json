@@ -16,12 +16,6 @@
     "Quiet icon beside inline text::Simple",
     "Slide in a drawer panel::Bottom sheet",
     "Slide in a drawer panel::Side panel on every screen",
-    "Switch the visual identity with one attribute::Simple",
-    "guide:guides/build-an-admin-dashboard::Admin dashboard",
-    "guide:guides/build-an-admin-dashboard::Route entry",
-    "guide:guides/getting-started::Usage",
-    "guide:ui/animate-entrances-and-hover-feedback-with-css-utilities::reveal-on-scroll.tsx",
-    "guide:ui/render-a-route-as-a-modal-over-the-list::fence 2",
-    "guide:ui/render-a-route-as-a-modal-over-the-list::fence 4"
+    "Switch the visual identity with one attribute::Simple"
   ]
 }

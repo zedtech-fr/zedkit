@@ -6,6 +6,10 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Nested-interactive + link names without axe (home until layout axe is stable). */
   linkAndInteractiveAudit?: boolean;
+  /** Nested live preview to skip in page-level axe (same idea as `[data-home-dashboard-card]`). */
+  axeExclude?: string;
+  /** Extra axe rules off for this route (nested landmarks in a live preview). */
+  extraAxeOff?: string[];
 }
 
 export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
@@ -31,6 +35,8 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     path: "/docs/build-an-admin-dashboard",
     label: "tutorial-dashboard",
     strictSemantics: true,
+    axeExclude: "[data-component-preview]",
+    extraAxeOff: ["heading-order", "landmark-main-is-top-level", "landmark-no-duplicate-main"],
   },
   {
     path: "/docs/set-up-your-coding-agents",

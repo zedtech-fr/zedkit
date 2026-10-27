@@ -58,7 +58,7 @@ export default function ItemsLayout({
 
 Intercept page (reuses the shared view so drawer and full page never drift):
 
-```tsx
+```tsx no-preview="needs a Next.js intercepted navigation; the live RouteModal is the page preview above"
 // app/items/@modal/(.)[id]/page.tsx
 "use client";
 
@@ -92,7 +92,7 @@ export default function ModalDefault() {
 
 Full-page detail (same `DetailView`):
 
-```tsx
+```tsx no-preview="server route file that renders the shared detail view; the live result is the page preview above"
 // app/items/[id]/page.tsx
 import { DetailView } from "../_detail-view";
 
