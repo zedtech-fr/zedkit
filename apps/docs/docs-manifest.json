@@ -97,7 +97,10 @@
       "registry": "confirm-dialog",
       "props": "ConfirmDialogProps",
       "source": "confirm-dialog.tsx",
-      "demo": "ConfirmDialogDemo"
+      "demo": "ConfirmDialogDemo",
+      "examples": {
+        "Custom button labels": "ConfirmDialogLabelsDemo"
+      }
     },
     "Slide in a drawer panel": {
       "package": "@zedtech/zedkit-ui",

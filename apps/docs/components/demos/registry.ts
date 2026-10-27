@@ -27,6 +27,7 @@ import { CardDemo } from "./card-demo";
 import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
+import { ConfirmDialogLabelsDemo } from "./confirm-dialog-labels-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DataTableEmptyDemo } from "./data-table-empty-demo";
 import { DataTablePaginationDemo } from "./data-table-pagination-demo";
@@ -109,6 +110,7 @@ export const demoRegistry = {
   GuideSaveRowDemo: { Demo: GuideSaveRowDemo, file: "guide-save-row-demo.tsx" },
   AdminDashboardGuideDemo: { Demo: AdminDashboardGuideDemo, file: "admin-dashboard-guide-demo.tsx" },
   RevealOnScrollDemo: { Demo: RevealOnScrollDemo, file: "reveal-on-scroll-demo.tsx" },
+  ConfirmDialogLabelsDemo: { Demo: ConfirmDialogLabelsDemo, file: "confirm-dialog-labels-demo.tsx", center: true },
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
