@@ -8,7 +8,7 @@ const SIZES = [
 
 for (const size of SIZES) {
   {
-    test(`phone search pill stretches from the magnifier (${size.width}px)`, async ({ page }) => {
+    test(`phone search bar opens at the top, the magnifier stays (${size.width}px)`, async ({ page }) => {
       await page.setViewportSize(size);
       await page.goto("/docs/getting-started");
       const magnifier = page.getByRole("button", { name: "Search the documentation" });
@@ -21,24 +21,23 @@ for (const size of SIZES) {
       await expect(field).toBeFocused();
       expect(await field.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
 
-      // The magnifier keeps its place as the right end; the pill grows to the left, at the bottom.
+      // The magnifier stays where it is, at the bottom right; the bar is at the top, full width.
       await expect.poll(async () => (await field.boundingBox())?.width ?? 0).toBeGreaterThan(size.width - 140);
       const open = (await magnifier.boundingBox())!;
       expect(Math.abs(open.x - closed.x)).toBeLessThan(2);
       expect(Math.abs(open.y - closed.y)).toBeLessThan(2);
       const fieldBox = (await field.boundingBox())!;
-      expect(fieldBox.x).toBeLessThan(open.x);
-      expect(fieldBox.y).toBeGreaterThan(size.height - 120);
+      expect(fieldBox.y).toBeLessThan(80);
       const close = page.getByRole("button", { name: "Close search" });
       expect((await close.boundingBox())!.width).toBeGreaterThanOrEqual(43.5);
 
-      // Results appear above the pill, inside the viewport, at most ~60% of its height.
+      // Results appear right under the bar, inside the viewport, at most ~60% of its height.
       await field.fill("drawer");
       const results = page.getByRole("list", { name: "Search results" });
       await expect(results).toBeVisible();
       const sheet = (await page.locator("#phone-search-results").boundingBox())!;
-      expect(sheet.y + sheet.height).toBeLessThanOrEqual(fieldBox.y + 1);
-      expect(sheet.height).toBeLessThanOrEqual(size.height * 0.6 + 1);
+      expect(sheet.y).toBeGreaterThanOrEqual(fieldBox.y + fieldBox.height - 1);
+      expect(sheet.y + sheet.height).toBeLessThanOrEqual(size.height);
       expect(sheet.x).toBeGreaterThanOrEqual(0);
       expect(sheet.x + sheet.width).toBeLessThanOrEqual(size.width);
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
@@ -51,7 +50,7 @@ for (const size of SIZES) {
   }
 }
 
-test("Escape closes the phone search pill", async ({ page }) => {
+test("Escape closes the phone search bar", async ({ page }) => {
   await page.setViewportSize(SIZES[1]!);
   await page.goto("/");
   await page.getByRole("button", { name: "Search the documentation" }).click();
@@ -61,7 +60,7 @@ test("Escape closes the phone search pill", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Search the documentation" })).toBeFocused();
 });
 
-test("tapping outside closes the phone search pill and returns focus to the magnifier", async ({ page }) => {
+test("tapping outside closes the phone search bar and returns focus to the magnifier", async ({ page }) => {
   await page.setViewportSize(SIZES[1]!);
   await page.goto("/");
   const magnifier = page.getByRole("button", { name: "Search the documentation" });
@@ -72,7 +71,7 @@ test("tapping outside closes the phone search pill and returns focus to the magn
   await expect(magnifier).toBeFocused();
 });
 
-test("the pill opens without a width transition", async ({ page }) => {
+test("the bar opens without a width transition", async ({ page }) => {
   await page.setViewportSize(SIZES[1]!);
   await page.goto("/");
   await page.getByRole("button", { name: "Search the documentation" }).click();
@@ -82,7 +81,7 @@ test("the pill opens without a width transition", async ({ page }) => {
 
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
-  test("the pill has no width transition", async ({ page }) => {
+  test("the bar has no width transition", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Search the documentation" }).click();
     const pill = page.getByRole("search");
