@@ -158,7 +158,7 @@ installed; their files are only read when one is used.
   it needs no adapter. The subagent files are not wired for Codex.
 - Muse reads `AGENTS.md`, `.agents/skills` and `.agents/agents` directly
   (verified empirically 2026-10-24 with `muse skills list` and a headless
-  `muse exec` run: every core skill and all 6 subagents load), so it needs
+  `muse exec` run: every core skill and all installed subagents load), so it needs
   no adapter either. It ignores the `.claude/` and `.cursor/` links. This is
   how the `readonly:` ban above was found: files setting it never appear in
   its agent list.
