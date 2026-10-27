@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { ALL_PROVIDERS } from "#install.js";
-import { COMMAND, put, SKILL, tempDir } from "./helpers.js";
+import { COMMAND, put, SKILL, tempDir, usageProviders } from "./helpers.js";
 
 function run(...argv: string[]): { code: number; text: string; errors: string } {
   const out: string[] = [];
@@ -112,6 +112,12 @@ describe("cli", () => {
     expect(bad.code).toBe(2);
     const listed = /\(([^)]+)\)/u.exec(bad.errors)?.[1]?.split(", ").sort() ?? [];
     expect(listed, "error provider list").toEqual([...ALL_PROVIDERS, "all"].sort());
+  });
+
+  it("lists the accepted providers in USAGE", () => {
+    const bad = run("init", tempDir(), "--provider", "emacs", "--dry-run");
+    const listed = /\(([^)]+)\)/u.exec(bad.errors)?.[1]?.split(", ").sort() ?? [];
+    expect(usageProviders().sort(), "USAGE provider list").toEqual(listed);
   });
 
   it("validate exits 0 on a good dir and 1 on a bad one", () => {
