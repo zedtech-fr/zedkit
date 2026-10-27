@@ -60,6 +60,20 @@ describe("third-party notices", () => {
     expect(readmeFirstParty()).toEqual(firstPartyFromNotices(notices));
   });
 
+  it("matches every notices LICENSE mention with a shipped file, and vice versa", () => {
+    const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
+    const mentioned = [
+      ...new Set(
+        [...notices.matchAll(/skills\/(LICENSE-[A-Za-z0-9.-]+)/g)].map((m) => m[1] ?? ""),
+      ),
+    ].sort();
+    expect(mentioned.length).toBeGreaterThan(0);
+    const shipped = readdirSync(`${kitDir()}/skills`)
+      .filter((entry) => entry.startsWith("LICENSE-"))
+      .sort();
+    expect(shipped).toEqual(mentioned);
+  });
+
   it("names only shipped skills in the README vendored paragraph", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     const at = readme.indexOf("**Skills vendored (MIT):**");
