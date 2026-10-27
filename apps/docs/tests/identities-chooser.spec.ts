@@ -14,10 +14,10 @@ async function choose(page: Page, id: string) {
   await expect(page.locator("html")).toHaveAttribute("data-identity", id);
 }
 
-test("the header chooser lists the six identities, stock look until one is chosen", async ({ page }) => {
+test("the header chooser lists the six identities and starts on the default", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-  await expect(page.locator("html")).not.toHaveAttribute("data-identity", /.*/);
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
   const chooser = page.getByRole("combobox", { name: "Identity" }).first();
   await expect(chooser).toBeVisible();
   expect(await chooser.locator("option").evaluateAll((options) => options.map((o) => (o as HTMLOptionElement).value))).toEqual([...IDS]);

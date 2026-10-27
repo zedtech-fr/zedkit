@@ -18,6 +18,7 @@ import {
 import { SearchPill } from "@/ui/search-pill";
 import { SiteBrand } from "@/ui/site-brand";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
+import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
 const iconButtonClassName =
   "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
@@ -111,7 +112,7 @@ export function MobileHeader({
             <SiteBrand />
           </span>
         </Link>
-        <IdentityPicker />
+        <IdentityPicker defaultIdentity={DEFAULT_IDENTITY} />
         <div className="flex items-center justify-self-end">
           <ThemeButton />
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>

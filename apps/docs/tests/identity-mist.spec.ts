@@ -5,7 +5,7 @@ import { assertA11yGate } from "./a11y-helpers";
 // Relative path: the config baseURL decides the port.
 const HOME = "/";
 
-/** Turns mist on for the page (nothing selects an identity yet on the site). */
+/** Turns mist on for the page (the site default is tide, so mist is chosen explicitly). */
 async function useMist(page: Page, theme: "light" | "dark") {
   await page.evaluate((mode) => {
     const root = document.documentElement;
@@ -20,9 +20,6 @@ async function useMist(page: Page, theme: "light" | "dark") {
 test.describe("mist identity", () => {
   test("sets the page in self-hosted Inter, with a metric-aligned fallback", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
-    const stock = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
-    expect(stock).not.toContain("Inter");
-
     await useMist(page, "light");
     const family = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
     expect(family.startsWith('"Inter Variable"')).toBe(true);
