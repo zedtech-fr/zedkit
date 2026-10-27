@@ -35,7 +35,10 @@
       "registry": "label",
       "props": "LabelProps",
       "source": "label.tsx",
-      "demo": "LabelDemo"
+      "demo": "LabelDemo",
+      "examples": {
+        "Required mark": "LabelRequiredDemo"
+      }
     },
     "Collect text input with a label": {
       "package": "@zedtech/zedkit-ui",
@@ -143,7 +146,11 @@
       "registry": "wizard-steps",
       "props": "WizardStepsProps",
       "source": "wizard-steps.tsx",
-      "demo": "WizardDemo"
+      "demo": "WizardDemo",
+      "examples": {
+        "Composed steps": "WizardComposedDemo",
+        "Solo card": "WizardSoloDemo"
+      }
     },
     "Show key-value details and a live indicator": {
       "package": "@zedtech/zedkit-ui",
