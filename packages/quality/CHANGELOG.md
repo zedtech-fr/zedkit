@@ -1,5 +1,11 @@
 # @zedtech/zedkit-quality
 
+## 0.3.1
+
+### Patch Changes
+
+- e7f0312: Promote the three catalog needs to beta (tested, documented, reviewed) and lock beta example evidence.
+
 ## 0.3.0
 
 ### Minor Changes
