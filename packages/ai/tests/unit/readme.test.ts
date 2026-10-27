@@ -26,4 +26,26 @@ describe("package README", () => {
       expect(lines, file).toBeLessThanOrEqual(7);
     }
   });
+
+  it("names only shipped skills, agents, commands or presets in Entry points", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    const at = readme.indexOf("**Entry points");
+    expect(at, "entry points paragraph").toBeGreaterThanOrEqual(0);
+    const paragraph = readme.slice(at, readme.indexOf("\n\n", at));
+    const names = [...new Set([...paragraph.matchAll(/`([a-z][a-z0-9-]*)`/g)].map((m) => m[1] ?? ""))];
+    expect(names.length).toBeGreaterThan(0);
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const skills = readdirSync(`${kitDir()}/skills`);
+    const known = new Set(
+      manifest.value.agents.concat(
+        manifest.value.commands ?? [],
+        skills,
+        Object.keys(manifest.value.presets),
+      ),
+    );
+    for (const name of names) {
+      expect([...known], `entry point ${name}`).toContain(name);
+    }
+  });
 });
