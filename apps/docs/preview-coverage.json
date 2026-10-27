@@ -9,8 +9,5 @@
     "@zedtech/zedkit-server"
   ],
   "optOut": {},
-  "pending": [
-    "Pin a stage and change scene as the page scrolls::Pinned scenes",
-    "Switch the visual identity with one attribute::Simple"
-  ]
+  "pending": []
 }

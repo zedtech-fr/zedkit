@@ -32,7 +32,7 @@ export async function ComponentPreview({ demo, detail, hasProps }: ComponentPrev
   return (
     <Stack gap={3}>
       <Text variant="muted" className="text-xs">{detail}</Text>
-      <Tabs items={["Preview", "Code"]}>
+      <Tabs items={["Preview", "Code"]} className={entry.pinned ? "overflow-clip" : undefined}>
         <Tab value="Preview">
           <PreviewViewport center={entry.center ?? false}>
             <Demo />
