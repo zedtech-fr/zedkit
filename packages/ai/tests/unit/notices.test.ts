@@ -63,6 +63,28 @@ describe("third-party notices", () => {
     expect(shipped).toEqual(mentioned);
   });
 
+  it("keeps deliberately unvendored skills out of the shipped set", () => {
+    const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
+    const section = notices.split("## Deliberately not vendored")[1] ?? "";
+    expect(section.length, "not-vendored section").toBeGreaterThan(0);
+    const excluded = new Set<string>();
+    for (const m of section.matchAll(/^-\s*`([a-z][a-z0-9-]*)`/gm)) {
+      if (m[1]) excluded.add(m[1]);
+    }
+    for (const m of section.matchAll(/and `([a-z][a-z0-9-]*)`/g)) {
+      if (m[1]) excluded.add(m[1]);
+    }
+    const paren = /not vendored here \(([^)]*)\)/.exec(section)?.[1] ?? "";
+    for (const m of paren.matchAll(/`([a-z][a-z0-9-]*)`/g)) {
+      if (m[1]) excluded.add(m[1]);
+    }
+    expect(excluded.size).toBeGreaterThan(0);
+    const shipped = new Set(shippedSkills());
+    for (const name of excluded) {
+      expect(shipped.has(name), `excluded skill ${name} shipped`).toBe(false);
+    }
+  });
+
   it("names only shipped skills in the README vendored paragraph", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     const at = readme.indexOf("**Skills vendored (MIT):**");
