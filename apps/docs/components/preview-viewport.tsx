@@ -1,23 +1,32 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { Button, Stack, cn } from "@zedtech/zedkit-ui";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { useTheme } from "next-themes";
+import { Button, Stack, Text, cn } from "@zedtech/zedkit-ui";
+
+const noop = () => () => {};
 
 /**
- * Preview island with per-demo light/dark and full/mobile switches. The
- * `dark` class re-scopes the kit CSS variables for the preview subtree
- * only; narrow content centers, wide content fills.
+ * Preview island with viewport and theme switches. The `dark` class re-scopes
+ * kit CSS variables for the preview subtree only.
  */
 export function PreviewViewport({ center, children }: { center?: boolean; children: ReactNode }) {
+  const { resolvedTheme } = useTheme();
+  const mounted = useSyncExternalStore(noop, () => true, () => false);
   const [dark, setDark] = useState(false);
   const [mobile, setMobile] = useState(false);
-  // "dark" is the next-themes scope class, not a utility.
+
+  useEffect(() => {
+    if (mounted) setDark(resolvedTheme === "dark");
+  }, [mounted, resolvedTheme]);
+
   const darkScope = dark ? "dark" : undefined;
   return (
-    <Stack gap={2}>
-      <Stack direction="horizontal" gap={2} className="justify-between">
-        <Stack direction="horizontal" gap={2}>
+    <Stack gap={3} data-component-preview>
+      <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
+        <Text variant="muted" className="text-xs">Preview</Text>
+        <Stack direction="horizontal" gap={2} className="flex-wrap">
           <Button
             variant={mobile ? "outline" : "secondary"}
             size="sm"
@@ -34,8 +43,6 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
           >
             Mobile
           </Button>
-        </Stack>
-        <Stack direction="horizontal" gap={2}>
           <Button
             variant={dark ? "outline" : "secondary"}
             size="sm"
