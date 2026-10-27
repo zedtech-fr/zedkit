@@ -2,11 +2,9 @@ import { expect, test } from "@playwright/test";
 
 /**
  * Home: the hero stays calm (one identity, nothing cycling) and the
- * second section shows one kit as six use cases, each with its own
- * identity and content, chosen by the visitor.
+ * second section scrolls through one kit in six identities, each scene with
+ * its own identity and content.
  */
-const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
-const SCENE = "[data-use-case-scene]";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -30,83 +28,160 @@ test("the use cases section follows the hero, before the AI setup section", asyn
   expect(order.cases).toBeLessThan(order.ai);
 });
 
-test("each tab shows its own identity and content, and leaves the page identity alone", async ({ page }) => {
+const ORDER = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
+const BLOCK = "#use-cases [data-use-case]";
+
+test("no tabs: six blocks, one per identity, each with its name, a line of text and a scene", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#use-cases").getByRole("tab")).toHaveCount(0);
+  await expect(page.locator("#use-cases").getByRole("tablist")).toHaveCount(0);
+  const blocks = page.locator(BLOCK);
+  await expect(blocks).toHaveCount(6);
+  const seen = await blocks.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const scene = node.querySelector("[data-use-case-scene]");
+      const label = node.querySelector("h3")?.textContent ?? "";
+      const caption = [...node.querySelectorAll("p")].map((p) => p.textContent ?? "");
+      return {
+        identity: scene?.getAttribute("data-identity") ?? "",
+        label,
+        identityName: caption[0] ?? "",
+        line: caption[1] ?? "",
+        sceneText: scene?.textContent ?? "",
+        hidden: scene?.getAttribute("aria-hidden"),
+        inert: scene?.hasAttribute("inert"),
+      };
+    }),
+  );
+  expect(seen.map((entry) => entry.identity)).toEqual([...ORDER]);
+  for (const [index, entry] of seen.entries()) {
+    expect(entry.identityName.toLowerCase()).toContain(ORDER[index]);
+    expect(entry.label.length).toBeGreaterThan(5);
+    expect(entry.line.length).toBeGreaterThan(30);
+    expect(entry.sceneText.length).toBeGreaterThan(30);
+    expect(entry.hidden).toBe("true");
+    expect(entry.inert).toBe(true);
+  }
+  expect(new Set(seen.map((entry) => entry.sceneText)).size).toBe(6);
+});
+
+test("scrolling through the scenes: each shows its own look, the page identity stays", async ({ page }) => {
   await page.goto("/");
   const pageIdentity = await page.locator("html").getAttribute("data-identity");
-  const tabs = page.locator("#use-cases").getByRole("tab");
-  await expect(tabs).toHaveCount(6);
-  const seen: { title: string; identity: string; font: string; radius: string; background: string }[] = [];
+  const seen: { identity: string; font: string; radius: string }[] = [];
+  const blocks = page.locator(BLOCK);
   for (let index = 0; index < 6; index++) {
-    await tabs.nth(index).click();
-    await expect(tabs.nth(index)).toHaveAttribute("aria-selected", "true");
-    const scene = page.locator(SCENE);
-    await expect(scene).toHaveCount(1);
-    await expect(scene).toHaveAttribute("aria-hidden", "true");
-    await expect(scene).toHaveAttribute("inert", "");
+    const scene = blocks.nth(index).locator("[data-use-case-scene]");
+    await scene.scrollIntoViewIfNeeded();
+    await expect(scene).toBeInViewport();
     seen.push(
       await scene.evaluate((el) => {
-        const title = el.querySelector("p, h3, [class*='font-semibold']");
+        const title = el.querySelector("[class*='font-semibold']");
         const button = el.querySelector("button");
         return {
-          title: el.textContent?.slice(0, 40) ?? "",
           identity: el.getAttribute("data-identity") ?? "",
           font: title ? getComputedStyle(title).fontFamily : "",
           radius: button ? getComputedStyle(button).borderTopLeftRadius : "",
-          background: getComputedStyle(el).backgroundColor,
         };
       }),
     );
     expect(await page.locator("html").getAttribute("data-identity")).toBe(pageIdentity);
   }
-  expect(seen.map((entry) => entry.identity)).toEqual(["mist", "maison", "press", "volt", "tide", "glass"]);
-  expect(new Set(seen.map((entry) => entry.title)).size).toBe(6);
   expect(new Set(seen.map((entry) => entry.font)).size).toBeGreaterThanOrEqual(4);
   expect(new Set(seen.map((entry) => entry.radius)).size).toBeGreaterThanOrEqual(3);
   expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
 });
 
-test("arrow keys move between use cases", async ({ page }) => {
-  await page.goto("/");
-  const tabs = page.locator("#use-cases").getByRole("tab");
-  await tabs.first().focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator(SCENE)).toHaveAttribute("data-identity", "maison");
-  await page.keyboard.press("End");
-  await expect(page.locator(SCENE)).toHaveAttribute("data-identity", "glass");
-});
-
 test.describe("motion", () => {
   test.use({ reducedMotion: "no-preference" });
 
-  test("switching fades the scene in", async ({ page }) => {
+  test("a scene eases in with the scroll and is fully opaque once in view", async ({ page }) => {
     await page.goto("/");
-    await page.locator("#use-cases").getByRole("tab").nth(2).click();
-    const name = await page.locator(SCENE).evaluate((el) => getComputedStyle(el).animationName);
-    expect(name).not.toBe("none");
+    const scene = page.locator("[data-use-case-scene]").nth(2);
+    const animation = await scene.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { name: style.animationName, timeline: style.animationTimeline };
+    });
+    expect(animation.name).not.toBe("none");
+    expect(animation.timeline).not.toBe("auto");
+    await scene.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await expect.poll(() => scene.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeGreaterThanOrEqual(0.99);
+    // Soft by construction: never a fade from nothing, so the text stays readable.
+    const first = await page.locator("[data-use-case-scene]").nth(5).evaluate((el) => Number(getComputedStyle(el).opacity));
+    expect(first).toBeGreaterThanOrEqual(0.35);
   });
 });
 
-test("reduced motion: the scene appears without animation", async ({ page }) => {
+test("reduced motion: the scenes appear without animation", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await page.locator("#use-cases").getByRole("tab").nth(1).click();
-  const name = await page.locator(SCENE).evaluate((el) => getComputedStyle(el).animationName);
-  expect(name).toBe("none");
+  const states = await page.locator("[data-use-case-scene]").evaluateAll((nodes) =>
+    nodes.map((el) => ({ name: getComputedStyle(el).animationName, opacity: getComputedStyle(el).opacity })),
+  );
+  expect(states).toHaveLength(6);
+  for (const state of states) {
+    expect(state.name).toBe("none");
+    expect(state.opacity).toBe("1");
+  }
 });
 
-for (const identity of IDENTITIES) {
-  test(`phone, page identity ${identity}: no horizontal overflow, tabs are touch sized`, async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 740 });
+test("a scene keeps its own look under any page identity", async ({ page }) => {
+  const signatures: Record<string, string>[] = [];
+  for (const identity of ["mist", "press", "volt"] as const) {
     await page.addInitScript((id) => localStorage.setItem("zk-identity", id), identity);
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
-    const tabs = page.locator("#use-cases").getByRole("tab");
-    for (let index = 0; index < 6; index++) {
-      await tabs.nth(index).click();
-      const box = await tabs.nth(index).boundingBox();
-      expect(box?.height ?? 0).toBeGreaterThanOrEqual(43.5);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-    }
-  });
+    signatures.push(
+      await page.locator("[data-use-case-scene]").evaluateAll((nodes) =>
+        Object.fromEntries(
+          nodes.map((el) => {
+            const button = el.querySelector("button");
+            const badge = el.querySelector("[class*='rounded']");
+            return [
+              el.getAttribute("data-use-case-scene") ?? "",
+              [
+                getComputedStyle(el).backgroundColor,
+                getComputedStyle(el).fontFamily,
+                button ? getComputedStyle(button).borderTopLeftRadius : "",
+                badge ? getComputedStyle(badge).borderTopLeftRadius : "",
+              ].join("|"),
+            ];
+          }),
+        ),
+      ),
+    );
+  }
+  expect(signatures[1]).toEqual(signatures[0]);
+  expect(signatures[2]).toEqual(signatures[0]);
+});
+
+for (const identity of ORDER) {
+  for (const theme of ["light", "dark"] as const) {
+    test(`phone, page identity ${identity} (${theme}): no sideways scroll, no layout shift while scrolling`, async ({ page }) => {
+      await page.setViewportSize({ width: 360, height: 740 });
+      await page.addInitScript(
+        ([id, mode]) => {
+          localStorage.setItem("zk-identity", id);
+          localStorage.setItem("theme", mode);
+        },
+        [identity, theme],
+      );
+      await page.goto("/");
+      await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
+      await page.locator("#use-cases").scrollIntoViewIfNeeded();
+      const before = await page.evaluate(() => document.documentElement.scrollHeight);
+      const blocks = page.locator(BLOCK);
+      for (let index = 0; index < 6; index++) {
+        await blocks.nth(index).scrollIntoViewIfNeeded();
+        const fits = await blocks.nth(index).evaluate((el) => {
+          const box = el.getBoundingClientRect();
+          return box.left >= 0 && box.right <= document.documentElement.clientWidth;
+        });
+        expect(fits, `block ${index} fits the phone width`).toBe(true);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      }
+      await page.waitForTimeout(400);
+      expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(before);
+    });
+  }
 }
