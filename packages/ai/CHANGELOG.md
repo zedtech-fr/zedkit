@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.6.3
+
+### Patch Changes
+
+- 9eaf700: Test that skill and agent names cited in agent bodies resolve to shipped content.
+
 ## 0.6.2
 
 ### Patch Changes
