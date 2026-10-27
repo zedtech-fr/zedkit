@@ -1,6 +1,34 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const BASE = "http://127.0.0.1:3100";
+const MOBILE = { width: 390, height: 844 };
+
+async function gotoCatalogQuiet(page: Page, path = "/catalog") {
+  const errors: string[] = [];
+  page.on("pageerror", (event) => errors.push(String(event)));
+  page.on("console", (msg) => {
+    if (msg.type() === "error") errors.push(msg.text());
+  });
+  await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+  await expect(page.getByRole("heading", { name: "Catalog", level: 1 })).toBeVisible();
+  return errors;
+}
+
+test("catalog has no console errors on desktop", async ({ page }) => {
+  const errors = await gotoCatalogQuiet(page);
+  expect(errors, errors.join("\n")).toEqual([]);
+});
+
+test("catalog has no console errors on mobile", async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  const errors = await gotoCatalogQuiet(page);
+  expect(errors, errors.join("\n")).toEqual([]);
+});
+
+test("catalog has no console errors with a filter in the URL", async ({ page }) => {
+  const errors = await gotoCatalogQuiet(page, "/catalog?area=ui");
+  expect(errors, errors.join("\n")).toEqual([]);
+});
 
 test("catalog filters persist in the URL and show empty state", async ({ page }) => {
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });

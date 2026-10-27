@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { Badge, Button, Heading, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { maturityBadgeVariant } from "@/lib/maturity-status";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
@@ -14,6 +14,8 @@ const AREAS: { id: CatalogArea | "all"; label: string }[] = [
   { id: "seo", label: "SEO" },
   { id: "agents", label: "Agents" },
 ];
+
+export const CATALOG_DEFAULT_FILTERS = { area: "all" as const, status: "all", q: "" };
 
 function readFilter(
   searchParams: URLSearchParams,
@@ -28,12 +30,19 @@ function readFilter(
   return { area, status, q };
 }
 
-export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const { area, status, q } = readFilter(searchParams, entries);
-
+export function CatalogView({
+  entries,
+  area = CATALOG_DEFAULT_FILTERS.area,
+  status = CATALOG_DEFAULT_FILTERS.status,
+  q = CATALOG_DEFAULT_FILTERS.q,
+  onFilters,
+}: {
+  entries: CatalogIndexEntry[];
+  area?: CatalogArea | "all";
+  status?: string;
+  q?: string;
+  onFilters?: (next: { area?: string; status?: string; q?: string }) => void;
+}) {
   const statuses = useMemo(() => [...new Set(entries.map((entry) => entry.status))].sort(), [entries]);
 
   const filtered = useMemo(() => {
@@ -48,14 +57,7 @@ export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
   }, [entries, area, status, q]);
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
-    const params = new URLSearchParams(searchParams.toString());
-    for (const [key, value] of Object.entries(next)) {
-      if (value === undefined) continue;
-      if (value === "" || value === "all") params.delete(key);
-      else params.set(key, value);
-    }
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    onFilters?.(next);
   }
 
   return (
@@ -130,9 +132,9 @@ export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
       <Section
         title="Results"
         description={
-          <Text variant="muted" role="status" aria-live="polite">
+          <span role="status" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "entry" : "entries"}
-          </Text>
+          </span>
         }
       >
         {filtered.length === 0 ? (
@@ -162,5 +164,41 @@ export function CatalogView({ entries }: { entries: CatalogIndexEntry[] }) {
         )}
       </Section>
     </Stack>
+  );
+}
+
+/** URL filters after mount so the first client render matches the static HTML. */
+export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [filters, setFilterState] = useState<ReturnType<typeof readFilter>>(CATALOG_DEFAULT_FILTERS);
+
+  useEffect(() => {
+    const apply = () => setFilterState(readFilter(new URLSearchParams(window.location.search), entries));
+    apply();
+    window.addEventListener("popstate", apply);
+    return () => window.removeEventListener("popstate", apply);
+  }, [entries]);
+
+  function setFilters(next: { area?: string; status?: string; q?: string }) {
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, value] of Object.entries(next)) {
+      if (value === undefined) continue;
+      if (value === "" || value === "all") params.delete(key);
+      else params.set(key, value);
+    }
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    setFilterState(readFilter(params, entries));
+  }
+
+  return (
+    <CatalogView
+      entries={entries}
+      area={filters.area}
+      status={filters.status}
+      q={filters.q}
+      onFilters={setFilters}
+    />
   );
 }

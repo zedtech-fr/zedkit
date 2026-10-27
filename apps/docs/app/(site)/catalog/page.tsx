@@ -1,11 +1,10 @@
-import { Suspense } from "react";
 import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
 
 import { JsonLd } from "@/components/json-ld";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { homePage, pageUrl } from "@/lib/site";
-import { CatalogView } from "@/ui/catalog/catalog-view";
+import { CatalogViewFromUrl } from "@/ui/catalog/catalog-view";
 
 export const dynamic = "force-static";
 
@@ -23,9 +22,7 @@ export default function CatalogPage() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <Suspense fallback={null}>
-        <CatalogView entries={catalogIndex} />
-      </Suspense>
+      <CatalogViewFromUrl entries={catalogIndex} />
     </>
   );
 }
