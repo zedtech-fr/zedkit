@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { kitDir } from "#kit.js";
+import { lensTableRows } from "./helpers.js";
 
 type LensRow = {
   lens: string;
@@ -13,13 +14,7 @@ type LensRow = {
 };
 
 function registry(): LensRow[] {
-  const raw = readFileSync(join(kitDir(), "skills/review/lenses.md"), "utf8");
-  return raw
-    .split("\n")
-    .filter((line) => line.startsWith("| "))
-    .map((line) => line.split("|").map((c) => c.trim()))
-    .filter((cells) => cells[1] !== "Lens")
-    .map((cells) => ({
+  return lensTableRows().map((cells) => ({
       lens: cells[1] ?? "",
       runner: cells[2] ?? "",
       status: cells[3] ?? "",
