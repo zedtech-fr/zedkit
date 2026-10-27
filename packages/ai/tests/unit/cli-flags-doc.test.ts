@@ -30,6 +30,14 @@ describe("cli flags documentation", () => {
     }
   });
 
+  it("lists the manifest presets in USAGE", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const presets = Object.keys(manifest.value.presets).sort();
+    const usage = /\[--preset ([^\]]+)\]/u.exec(usageText())?.[1]?.split("|").sort() ?? [];
+    expect(usage, "USAGE --preset values").toEqual(presets);
+  });
+
   it("mirrors the preset and provider values in the package README", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
