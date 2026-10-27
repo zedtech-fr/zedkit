@@ -9,4 +9,7 @@ export const layers: Linter.Config[] = defineLayers({
   viewDirs: ["app/**/ui/**"],
   dataDirs: ["lib/**"],
   actionPatterns: ["@/lib/*"],
+  extraPatterns: {
+    kitScope: [{ group: ["payload"], message: "no payload core here" }],
+  },
 });

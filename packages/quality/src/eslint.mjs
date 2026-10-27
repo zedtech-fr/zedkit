@@ -116,17 +116,31 @@ function asFiles(patterns) {
  * - views receive data as props and never import data clients or actions;
  * - data files import no UI (no React runtime, no UI kit).
  *
- * @param {{ kitPackage: string, viewDirs: string[], dataDirs: string[], actionPatterns: string[] }} options
+ * @param {{ kitPackage: string, viewDirs: string[], dataDirs: string[], actionPatterns: string[], extraPatterns?: { kitScope?: object[], viewData?: object[], dataUi?: object[] } }} options
  * - `kitPackage`: UI kit specifier (e.g. `@acme/ui`).
  * - `viewDirs`: view folders (e.g. `app/ui/**`) or file globs.
  * - `dataDirs`: data-access folders or file globs, same shapes.
  * - `actionPatterns`: import specifiers for data clients and server actions.
+ * - `extraPatterns`: consumer bans merged into each block's own
+ *   patterns (flat-config rules replace per key, so a consumer block
+ *   setting `no-restricted-imports` would otherwise drop these).
+ *   Keys: `kitScope`, `viewData`, `dataUi`; each a list of standard
+ *   `no-restricted-imports` pattern objects, passed through untouched.
  * @returns {import("eslint").Linter.Config[]} Flat config blocks.
  */
-export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns }) {
+export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, extraPatterns = {} }) {
+  for (const [key, value] of Object.entries(extraPatterns)) {
+    if (key !== "kitScope" && key !== "viewData" && key !== "dataUi") {
+      throw new Error(`defineLayers: unknown extraPatterns key "${key}" (want kitScope, viewData or dataUi)`);
+    }
+    if (!Array.isArray(value)) {
+      throw new Error(`defineLayers: extraPatterns.${key} must be a list of no-restricted-imports pattern objects`);
+    }
+  }
   const kitPatterns = [kitPackage, `${kitPackage}/*`];
   const views = asFiles(viewDirs);
   const data = asFiles(dataDirs);
+  const extras = { kitScope: [], viewData: [], dataUi: [], ...extraPatterns };
   return [
     {
       name: "zedkit/layers-kit-scope",
@@ -141,6 +155,7 @@ export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns })
                 group: kitPatterns,
                 message: "UI kit imports are only allowed from view files. Move this import into a view.",
               },
+              ...extras.kitScope,
             ],
           },
         ],
@@ -158,6 +173,7 @@ export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns })
                 group: [...actionPatterns],
                 message: "Views receive data as props and never import data clients or server actions.",
               },
+              ...extras.viewData,
             ],
           },
         ],
@@ -179,6 +195,7 @@ export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns })
                 group: kitPatterns,
                 message: "Data code is UI-free: no UI kit imports.",
               },
+              ...extras.dataUi,
             ],
           },
         ],
