@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useStaticSearch, type SearchResultRecord } from "fumadocs-core/search/client";
@@ -64,6 +64,24 @@ function useTopAnchor(active: boolean, target: RefObject<HTMLElement | null>) {
       element.style.top = "";
     };
   }, [active, target]);
+}
+
+/** The bar unrolls from the magnifier to the top of the screen, and folds back into it. */
+const OPEN_MS = 260;
+const CLOSE_MS = 200;
+const OPEN_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+const CLOSE_EASE = "cubic-bezier(0.4, 0, 1, 1)";
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/** The transform that squeezes the bar onto the magnifier's box (both are fixed, so viewport coordinates match). */
+function foldedOnto(bar: HTMLElement, button: HTMLElement): string | null {
+  const from = bar.getBoundingClientRect();
+  const to = button.getBoundingClientRect();
+  if (from.width === 0 || from.height === 0) return null;
+  return `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${to.width / from.width}, ${to.height / from.height})`;
 }
 
 function flatten(items: ReadonlyArray<SearchResultRecord | { type: "table"; rows: SearchResultRecord[] }>): SearchResultRecord[] {
@@ -182,16 +200,66 @@ function PillBody({ onClose }: { onClose: () => void }) {
 
 /**
  * Phone search: a round magnifier at the bottom-right opens a search bar anchored at the top of the
- * screen (below the status bar), with the results in a sheet right under it. The bar does not follow
+ * screen (below the status bar), with the results in a sheet right under it. The bar unrolls from the
+ * magnifier and folds back into it; while it is open the magnifier is hidden. The bar does not follow
  * the software keyboard; the sheet is capped to the visual viewport so the keyboard never hides it.
  */
 export function SearchPill() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const bar = useRef<HTMLDivElement>(null);
+  const overlay = useRef<HTMLButtonElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const wasOpen = useRef(false);
+  const closing = useRef(false);
   useTopAnchor(open, bar);
+
+  // Opening: the bar travels from the magnifier (bottom right) up to the top of the screen. No travel under reduced motion.
+  useLayoutEffect(() => {
+    const element = bar.current;
+    const button = toggle.current;
+    if (!open || !element || !button || prefersReducedMotion() || typeof element.animate !== "function") return;
+    const folded = foldedOnto(element, button);
+    if (!folded) return;
+    element.animate(
+      [
+        { transform: folded, opacity: 0 },
+        { opacity: 1, offset: 0.4 },
+        { transform: "none", opacity: 1 },
+      ],
+      { duration: OPEN_MS, easing: OPEN_EASE },
+    );
+  }, [open]);
+
+  // Closing: the bar folds back into the magnifier, then goes away. Instant under reduced motion.
+  const close = useCallback(() => {
+    const element = bar.current;
+    const button = toggle.current;
+    const folded = element && button ? foldedOnto(element, button) : null;
+    if (!element || !folded || prefersReducedMotion() || typeof element.animate !== "function") {
+      setOpen(false);
+      return;
+    }
+    if (closing.current) return;
+    closing.current = true;
+    const finish = () => {
+      if (!closing.current) return;
+      closing.current = false;
+      setOpen(false);
+    };
+    overlay.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: CLOSE_MS, easing: CLOSE_EASE, fill: "forwards" });
+    const fold = element.animate(
+      [
+        { transform: "none", opacity: 1 },
+        { opacity: 1, offset: 0.5 },
+        { transform: folded, opacity: 0 },
+      ],
+      { duration: CLOSE_MS, easing: CLOSE_EASE, fill: "forwards" },
+    );
+    fold.onfinish = finish;
+    fold.oncancel = finish;
+    window.setTimeout(finish, CLOSE_MS + 120);
+  }, []);
 
   // However the search closes (close button, Escape, overlay tap, route change), focus goes back to the magnifier.
   useEffect(() => {
@@ -199,30 +267,35 @@ export function SearchPill() {
     wasOpen.current = open;
   }, [open]);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    closing.current = false;
+    setOpen(false);
+  }, [pathname]);
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") close();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, close]);
 
   return (
     <div className="md:hidden" data-search-pill>
       {open ? (
         <>
           <button
+            ref={overlay}
             type="button"
             tabIndex={-1}
             aria-hidden="true"
-            onClick={() => setOpen(false)}
+            onClick={close}
             className="fixed inset-0 z-overlay cursor-default bg-overlay/30 transition-opacity duration-200 motion-reduce:transition-none starting:opacity-0"
           />
           <div
             ref={bar}
-            className="fixed top-[max(0.75rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] left-[max(1rem,env(safe-area-inset-left))] z-overlay"
+            data-search-bar
+            className="fixed top-[max(0.75rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] left-[max(1rem,env(safe-area-inset-left))] z-overlay origin-top-left"
           >
             <div
               role="search"
@@ -232,18 +305,19 @@ export function SearchPill() {
                 aria-hidden
                 className="absolute inset-0 -z-10 rounded-full bg-popover shadow-lg ring-1 ring-border"
               />
-              <PillBody onClose={() => setOpen(false)} />
+              <PillBody onClose={close} />
             </div>
           </div>
         </>
       ) : null}
-      <div className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay">
+      <div
+        className={`fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay ${open ? "invisible" : ""}`}
+      >
         <button
           ref={toggle}
           type="button"
           aria-label="Search the documentation"
-          aria-expanded={open}
-          onClick={() => (open ? document.querySelector<HTMLInputElement>("#nd-search-pill-input")?.focus() : setOpen(true))}
+          onClick={() => setOpen(true)}
           className={`${iconButtonClassName} bg-primary text-primary-foreground shadow-lg active:scale-95 motion-reduce:transition-none`}
         >
           <Search aria-hidden="true" className="size-icon-control" />

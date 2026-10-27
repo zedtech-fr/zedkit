@@ -1,4 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/** The bar unrolls from the magnifier when it opens; measure only once that travel is over. */
+const settled = (page: Page) =>
+  page.waitForFunction(() => (document.querySelector("[data-search-bar]")?.getAnimations().length ?? 1) === 0);
+
 
 // Default look only: every built-in look joins this matrix once the identities are listed in the chooser.
 const SIZES = [
@@ -8,7 +13,7 @@ const SIZES = [
 
 for (const size of SIZES) {
   {
-    test(`phone search bar opens at the top, the magnifier stays (${size.width}px)`, async ({ page }) => {
+    test(`phone search bar opens at the top, the magnifier is hidden meanwhile (${size.width}px)`, async ({ page }) => {
       await page.setViewportSize(size);
       await page.goto("/docs/getting-started");
       const magnifier = page.getByRole("button", { name: "Search the documentation" });
@@ -17,15 +22,15 @@ for (const size of SIZES) {
       expect(closed.width).toBeGreaterThanOrEqual(43.5);
 
       await magnifier.click();
+      await settled(page);
       const field = page.getByRole("searchbox");
       await expect(field).toBeFocused();
       expect(await field.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
 
-      // The magnifier stays where it is, at the bottom right; the bar is at the top, full width.
+      // The magnifier is hidden while the bar is open; the bar is at the top, full width.
+      await settled(page);
+      await expect(magnifier).toBeHidden();
       await expect.poll(async () => (await field.boundingBox())?.width ?? 0).toBeGreaterThan(size.width - 140);
-      const open = (await magnifier.boundingBox())!;
-      expect(Math.abs(open.x - closed.x)).toBeLessThan(2);
-      expect(Math.abs(open.y - closed.y)).toBeLessThan(2);
       const fieldBox = (await field.boundingBox())!;
       expect(fieldBox.y).toBeLessThan(80);
       const close = page.getByRole("button", { name: "Close search" });
@@ -44,8 +49,11 @@ for (const size of SIZES) {
 
       await close.click();
       await expect(field).toHaveCount(0);
+      await expect(magnifier).toBeVisible();
       await expect(magnifier).toBeFocused();
-      await expect.poll(async () => (await magnifier.boundingBox())?.width ?? 0).toBeGreaterThanOrEqual(43.5);
+      const back = (await magnifier.boundingBox())!;
+      expect(Math.abs(back.x - closed.x)).toBeLessThan(2);
+      expect(Math.abs(back.y - closed.y)).toBeLessThan(2);
     });
   }
 }
@@ -71,10 +79,61 @@ test("tapping outside closes the phone search bar and returns focus to the magni
   await expect(magnifier).toBeFocused();
 });
 
+test("the bar unrolls from the magnifier to the top and folds back into it", async ({ page }) => {
+  await page.setViewportSize(SIZES[1]!);
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  const magnifier = page.getByRole("button", { name: "Search the documentation" });
+  const rest = (await magnifier.boundingBox())!;
+  // Catch the travel the moment the bar is mounted and hold it, so each frame can be measured exactly.
+  await page.evaluate(() => {
+    (window as unknown as { __travel: Promise<void> }).__travel = new Promise((resolve) => {
+      const watcher = new MutationObserver(() => {
+        const travel = document.querySelector("[data-search-bar]")?.getAnimations()[0];
+        if (!travel) return;
+        travel.pause();
+        travel.currentTime = 0;
+        watcher.disconnect();
+        resolve();
+      });
+      watcher.observe(document.body, { childList: true, subtree: true });
+    });
+  });
+  await magnifier.click();
+  const frames = await page.evaluate(async () => {
+    await (window as unknown as { __travel: Promise<void> }).__travel;
+    const bar = document.querySelector("[data-search-bar]")!;
+    const travel = bar.getAnimations()[0]!;
+    const box = () => {
+      const r = bar.getBoundingClientRect();
+      return { x: r.x, y: r.y, width: r.width, height: r.height };
+    };
+    const start = box();
+    travel.currentTime = 60;
+    const middle = box();
+    travel.finish();
+    return { start, middle, end: box() };
+  });
+  // Start: folded onto the magnifier. End: the full-width bar at the top. In between: on the way.
+  expect(Math.abs(frames.start.x + frames.start.width / 2 - (rest.x + rest.width / 2))).toBeLessThan(2);
+  expect(Math.abs(frames.start.y + frames.start.height / 2 - (rest.y + rest.height / 2))).toBeLessThan(2);
+  expect(frames.end.y).toBeLessThan(80);
+  expect(frames.end.width).toBeGreaterThan(SIZES[1]!.width - 80);
+  expect(frames.middle.y).toBeGreaterThan(frames.end.y + 20);
+  expect(frames.middle.y).toBeLessThan(frames.start.y - 20);
+  await settled(page);
+  // Closing folds it back: it is on its way down, then the magnifier is back.
+  await page.getByRole("button", { name: "Close search" }).click();
+  await expect(page.getByRole("searchbox")).toHaveCount(0);
+  await expect(magnifier).toBeVisible();
+  await expect(magnifier).toBeFocused();
+});
+
 test("the bar opens without a width transition", async ({ page }) => {
   await page.setViewportSize(SIZES[1]!);
   await page.goto("/");
   await page.getByRole("button", { name: "Search the documentation" }).click();
+  await settled(page);
   const pill = page.getByRole("search");
   expect(await pill.evaluate((el) => getComputedStyle(el).transitionProperty)).not.toContain("width");
 });
@@ -84,7 +143,12 @@ test.describe("reduced motion", () => {
   test("the bar has no width transition", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Search the documentation" }).click();
+    // No travel: nothing animates, the bar is simply there.
+    expect(await page.evaluate(() => document.querySelector("[data-search-bar]")?.getAnimations().length)).toBe(0);
     const pill = page.getByRole("search");
     expect(await pill.evaluate((el) => getComputedStyle(el).transitionProperty)).toBe("none");
+    await page.getByRole("button", { name: "Close search" }).click();
+    await expect(page.getByRole("searchbox")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Search the documentation" })).toBeFocused();
   });
 });

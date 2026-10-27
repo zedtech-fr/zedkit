@@ -1,4 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/** The bar unrolls from the magnifier when it opens; measure only once that travel is over. */
+const settled = (page: Page) =>
+  page.waitForFunction(() => (document.querySelector("[data-search-bar]")?.getAnimations().length ?? 1) === 0);
+
 
 // Default look only: the identity matrix lives in search-keyboard.spec.ts.
 const PHONES = [
@@ -36,6 +41,7 @@ for (const phone of PHONES) {
     );
     await page.goto("/docs");
     await page.getByRole("button", { name: "Search the documentation" }).click();
+    await settled(page);
     const input = page.getByRole("searchbox");
     await expect(input).toBeFocused();
     await page.evaluate(() => (window as unknown as Keyboard).__keyboard(true));
