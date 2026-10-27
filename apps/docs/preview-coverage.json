@@ -10,8 +10,6 @@
   ],
   "optOut": {},
   "pending": [
-    "Animate entrances and hover feedback with CSS utilities::Hover feedback",
-    "Animate entrances and hover feedback with CSS utilities::Staggered children",
     "Call out a notice or an error state::As a section (asChild)",
     "Celebrate completion with a checkmark::Decorative",
     "Confirm destructive actions::Custom button labels",
