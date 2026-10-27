@@ -1,10 +1,9 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, Text } from "@zedtech/zedkit-ui";
-import { demoRegistry } from "@/components/demos/registry";
+import { HomeAdminDashboardDemo } from "@/components/home-gallery-demos";
 
 export function HomeHeroDashboard() {
-  const { Demo } = demoRegistry.HomeAdminDashboardDemo;
   return (
     <Card className="w-full min-w-0" data-home-dashboard-card>
       <CardHeader>
@@ -14,7 +13,7 @@ export function HomeHeroDashboard() {
         </Text>
       </CardHeader>
       <CardContent className="min-w-0 p-0 pt-0">
-        <Demo />
+        <HomeAdminDashboardDemo />
       </CardContent>
     </Card>
   );

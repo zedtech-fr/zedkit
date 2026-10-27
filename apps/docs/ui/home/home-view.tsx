@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { MaturityBadge } from "@/components/maturity-badge";
-import { demoRegistry, type DemoKey } from "@/components/demos/registry";
 import type { GalleryCard } from "@/content/gallery";
+import { homeGalleryDemos } from "@/components/home-gallery-demos";
 import type { HomeScenario } from "@/content/home-scenarios";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
 import { HomeEntryPointsSection } from "@/ui/home/home-entry-points-section";
@@ -16,12 +16,8 @@ import {
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
-function isDemoKey(value: string | null): value is DemoKey {
-  return value !== null && value in demoRegistry;
-}
-
 function GalleryEntry({ card }: { card: GalleryCard }) {
-  const entry = isDemoKey(card.demo) ? demoRegistry[card.demo] : null;
+  const Demo = card.demo ? homeGalleryDemos[card.demo] : undefined;
   return (
     <Card className="min-w-0">
       <CardHeader className="flex-row items-center justify-between space-y-0">
@@ -31,7 +27,7 @@ function GalleryEntry({ card }: { card: GalleryCard }) {
         <MaturityBadge status={card.status} />
       </CardHeader>
       <CardContent>
-        {entry ? <entry.Demo /> : <Text variant="muted">{card.detail}</Text>}
+        {Demo ? <Demo /> : <Text variant="muted">{card.detail}</Text>}
       </CardContent>
     </Card>
   );
