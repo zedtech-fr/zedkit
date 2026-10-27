@@ -70,5 +70,18 @@ the pull request.
 
 `pnpm exec turbo run build && bash scripts/check-pack.sh` packs every
 package and asserts the tarball holds the manifest, LICENSE, README,
-every `files`/exports target — with no private terms inside. For a
-manual file list: `pnpm --filter <pkg> exec npm pack --dry-run`.
+every `files`/exports target — with no private terms inside. It also
+runs `publint` (errors only) and `attw --profile esm-only` on each
+tarball (CSS subpaths excluded). For a manual file list:
+`pnpm --filter <pkg> exec npm pack --dry-run`.
+
+Client gzip budgets (`gzip(dist/*.js)`, current + ~10%), fail the
+same script if exceeded:
+
+| Package | Budget |
+|---|---|
+| `@zedtech/zedkit-ui` | 28 000 bytes |
+| `@zedtech/zedkit-ai` | 9 500 bytes |
+
+Raise the number in `scripts/check-pack.sh` in the PR that grows the
+files.

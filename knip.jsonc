@@ -13,8 +13,10 @@
       "entry": ["scripts/**/*.{mjs,sh}"],
       "ignoreDependencies": [
         "shadcn",
-        // CLI from scripts/check-api-report.sh (`pnpm exec api-extractor`).
-        "@microsoft/api-extractor"
+        // CLIs from scripts/check-api-report.sh and scripts/check-pack.sh.
+        "@microsoft/api-extractor",
+        "@arethetypeswrong/cli",
+        "publint"
       ]
     },
     "apps/docs": {
