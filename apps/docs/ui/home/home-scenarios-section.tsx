@@ -5,7 +5,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Heading,
   Section,
   Stack,
   Text,
@@ -27,21 +26,21 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_TWO_COL}>
           {scenarios.map((scenario) => (
-            <Card key={scenario.href} className="min-w-0">
+            <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
               <CardHeader>
-                <CardTitle>{scenario.situation}</CardTitle>
+                <CardTitle className="text-lg">{scenario.situation}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Stack gap={HOME_CARD_CONTENT_GAP}>
+              <CardContent className="flex flex-1 flex-col">
+                <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
                   <Stack gap={1}>
-                    <Heading level={4} as="h3">You want</Heading>
+                    <Text as="span" className="text-sm font-medium">You want</Text>
                     <Text variant="muted">{scenario.goal}</Text>
                   </Stack>
                   <Stack gap={1}>
-                    <Heading level={4} as="h3">Do this</Heading>
-                    <Text variant="muted">{scenario.action}</Text>
+                    <Text as="span" className="text-sm font-medium">Do this</Text>
+                    <Text className="text-sm">{scenario.action}</Text>
                   </Stack>
-                  <Button asChild variant="ghost" size="sm" className="w-fit">
+                  <Button asChild variant="outline" className="mt-auto w-fit">
                     <Link href={scenario.href} aria-label={`Read the docs: ${scenario.situation}`}>
                       Read the docs
                     </Link>
