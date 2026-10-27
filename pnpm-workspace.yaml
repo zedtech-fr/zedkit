@@ -22,6 +22,8 @@ catalog:
   turbo: 2.11.10
   "@changesets/cli": 3.0.3
   "@microsoft/api-extractor": 7.60.0
+  "@arethetypeswrong/cli": 0.18.5
+  publint: 0.3.25
   ulid: 3.0.2
   "@fastify/static": 10.1.7
   "@nestjs/common": 12.2.0

@@ -102,8 +102,41 @@ for dir in packages/*/; do
     [ "$directory" = "\"packages/$name\"" ] || { echo "$name: repository.directory is $directory, want packages/$name"; fail=1; }
   fi
 
+  # publint: errors only. The git+ repository.url note is a suggestion
+  # and would fail --strict; provenance wants the https GitHub URL.
+  if ! pnpm exec publint run --level error "$tgz"; then
+    echo "$name: publint failed"
+    fail=1
+  fi
+
+  # ESM-only packages: ignore CJS/node10. CSS subpaths have no types.
+  attw_out="$(pnpm exec attw --profile esm-only --exclude-entrypoints ./styles.css \
+      --no-emoji --format ascii "$tgz" 2>&1)" || {
+    echo "$name: attw failed"
+    echo "$attw_out"
+    fail=1
+  }
+
   echo "$name: ok"
 done
+
+# Client gzip of dist/*.js (ui kit + ai installer). Current size + ~10%.
+# Raise the number in the same PR that grows the files; see docs/publishing.md.
+size_budget() {
+  local name="$1" max="$2"
+  local dir="$tmp/$name/unpacked/package/dist"
+  [ -d "$dir" ] || { echo "$name: size budget skipped (no dist/)"; return; }
+  local bytes
+  bytes="$(find "$dir" -name '*.js' -print0 | sort -z | xargs -0 cat | gzip -c | wc -c)"
+  if [ "$bytes" -gt "$max" ]; then
+    echo "$name: gzip(dist/*.js) is $bytes bytes, budget $max"
+    fail=1
+  else
+    echo "$name: size $bytes / $max ok"
+  fi
+}
+size_budget ui 28000
+size_budget ai 9500
 
 if [ "$fail" -ne 0 ]; then
   echo "check-pack: FAILED"

@@ -34,11 +34,13 @@
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
+    "@arethetypeswrong/cli": "catalog:",
     "@microsoft/api-extractor": "catalog:",
     "@eslint/js": "catalog:",
     "@playwright/test": "catalog:",
     "@zedtech/zedkit-quality": "workspace:*",
     "eslint": "catalog:",
+    "publint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "eslint-plugin-jsx-a11y": "catalog:",
     "shadcn": "catalog:",
