@@ -22,7 +22,7 @@ export interface DefineLayersOptions {
   readonly viewDirs: readonly string[];
   /** Minimatch globs for data-access folders. */
   readonly dataDirs: readonly string[];
-  /** Import specifiers for data clients and server actions. */
+  /** Import specifiers for data clients and server actions. May be empty. */
   readonly actionPatterns: readonly string[];
   /**
    * Consumer bans merged into each block's own patterns (flat-config
