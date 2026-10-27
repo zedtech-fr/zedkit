@@ -1,4 +1,5 @@
 import { lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach } from "vitest";
@@ -63,6 +64,32 @@ export function markdownFiles(dir: string): string[] {
   return readdirSync(dir, { recursive: true, encoding: "utf8" })
     .map((entry) => join(dir, entry))
     .filter((full) => full.endsWith(".md") && !lstatSync(full).isSymbolicLink() && lstatSync(full).isFile());
+}
+
+/** The CLI USAGE block, the documented flag contract. */
+export function usageText(): string {
+  const source = readFileSync(
+    fileURLToPath(new URL("../../src/cli.ts", import.meta.url)),
+    "utf8",
+  );
+  const usage = /const USAGE = `([\s\S]*?)`;/u.exec(source)?.[1] ?? "";
+  if (usage === "") throw new Error("src/cli.ts has no USAGE block");
+  return usage;
+}
+
+/** Every `--flag` the USAGE block names. */
+export function usageFlags(): string[] {
+  return [...new Set([...usageText().matchAll(/--[a-z][a-z0-9-]*/gu)].map((m) => m[0]))];
+}
+
+/** Every provider the USAGE `--provider` line accepts. */
+export function usageProviders(): string[] {
+  return /--provider takes ([a-z,]+)/u.exec(usageText())?.[1]?.split(",") ?? [];
+}
+
+/** Every subcommand the USAGE block documents. */
+export function usageCommands(): string[] {
+  return [...new Set([...usageText().matchAll(/^ {2}([a-z-]+)/gmu)].map((m) => m[1] ?? ""))];
 }
 
 /** Every installable name: agents + commands + skill dirs (+ presets when asked). */

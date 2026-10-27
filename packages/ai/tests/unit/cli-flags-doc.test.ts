@@ -2,20 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { readManifest } from "#kit.js";
-
-function usageText(): string {
-  const source = readFileSync(
-    fileURLToPath(new URL("../../src/cli.ts", import.meta.url)),
-    "utf8",
-  );
-  const usage = /const USAGE = `([\s\S]*?)`;/u.exec(source)?.[1] ?? "";
-  expect(usage.length, "USAGE block").toBeGreaterThan(0);
-  return usage;
-}
-
-function usageFlags(): string[] {
-  return [...new Set([...usageText().matchAll(/--[a-z][a-z0-9-]*/gu)].map((m) => m[0]))];
-}
+import { usageFlags, usageProviders, usageText } from "./helpers.js";
 
 describe("cli flags documentation", () => {
   it("documents every USAGE flag in the package README", () => {
@@ -42,8 +29,7 @@ describe("cli flags documentation", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const presets = Object.keys(manifest.value.presets).sort();
-    const providers =
-      /--provider takes ([a-z,]+)/u.exec(usageText())?.[1]?.split(",").sort() ?? [];
+    const providers = usageProviders().sort();
     expect(presets.length).toBeGreaterThan(0);
     expect(providers.length).toBeGreaterThan(0);
     const readme = readFileSync(
