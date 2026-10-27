@@ -7,6 +7,11 @@ on:
 # The Version PR needs contents + pull-requests; npm provenance
 # attestation needs id-token. Publishing itself authenticates with
 # the NPM_TOKEN secret (see docs/publishing.md).
+#
+# GitHub does not run workflows on PRs opened with GITHUB_TOKEN.
+# When RELEASE_APP_ID / RELEASE_APP_PRIVATE_KEY are set, mint an
+# installation token so the Version PR gets CI. Absent those
+# secrets, fall back to GITHUB_TOKEN (no regression until they exist).
 permissions:
   contents: write
   pull-requests: write
@@ -20,11 +25,31 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Detect App credentials
+        id: app
+        env:
+          APP_ID: ${{ secrets.RELEASE_APP_ID }}
+        run: |
+          if [ -n "$APP_ID" ]; then
+            echo "has_app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_app=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create App token
+        if: steps.app.outputs.has_app == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - uses: actions/checkout@v4
         with:
           # Changesets diff against origin/main; a shallow clone
           # without the main branch breaks version computation.
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -44,5 +69,5 @@ jobs:
           commit: "chore: version packages"
           title: "chore: version packages"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

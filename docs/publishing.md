@@ -22,6 +22,25 @@ the version). Releases run on Changesets; nothing publishes by hand.
 - Provenance attestations are automatic: public repo + `id-token: write`
   on the release job lets npm link each tarball to its CI run.
 
+## Version PR checks
+
+GitHub does not run workflows on pull requests opened with
+`GITHUB_TOKEN`. The `release` workflow mints an installation
+token so the Version PR (`chore: version packages`) gets the
+same checks as any other PR.
+
+Repository secrets (values never live in this repo):
+
+- `RELEASE_APP_ID` — GitHub App id
+- `RELEASE_APP_PRIVATE_KEY` — GitHub App private key (PEM)
+
+The App is installed on this repository only and has
+**Contents: write** and **Pull requests: write**. When those
+secrets are missing, the workflow still opens the Version PR
+with `GITHUB_TOKEN` (checks do not run until the secrets exist).
+After they exist, the next Version PR shows the `ci` checks on
+the pull request.
+
 ## First-publish checklist (run once, in order)
 
 1. npm org `zedtech` exists and is owned by the team.
