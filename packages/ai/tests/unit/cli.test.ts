@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
+import { ALL_PROVIDERS } from "#install.js";
 import { COMMAND, put, SKILL, tempDir } from "./helpers.js";
 
 function run(...argv: string[]): { code: number; text: string; errors: string } {
@@ -98,6 +99,19 @@ describe("cli", () => {
     expect(run("init", dest, "extra").errors).toContain('unexpected argument "extra"');
     expect(run("init", dest, "extra").errors).toContain("zedkit-ai --help");
     expect(readdirSync(dest)).toEqual([]);
+  });
+
+  it("accepts exactly the installer providers plus all", () => {
+    const dest = tempDir();
+    expect(ALL_PROVIDERS.length).toBeGreaterThan(0);
+    for (const provider of ALL_PROVIDERS) {
+      const result = run("init", dest, "--provider", provider, "--dry-run");
+      expect(result.errors, provider).not.toContain("unknown provider");
+    }
+    const bad = run("init", dest, "--provider", "emacs", "--dry-run");
+    expect(bad.code).toBe(2);
+    const listed = /\(([^)]+)\)/u.exec(bad.errors)?.[1]?.split(", ").sort() ?? [];
+    expect(listed, "error provider list").toEqual([...ALL_PROVIDERS, "all"].sort());
   });
 
   it("validate exits 0 on a good dir and 1 on a bad one", () => {
