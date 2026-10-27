@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.6.1
+
+### Patch Changes
+
+- 784bd72: Test that the lens registry and the review skill route the same minimum lens set.
+
 ## 0.6.0
 
 ### Minor Changes
