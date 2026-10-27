@@ -78,7 +78,9 @@ describe("third-party notices", () => {
     for (const m of paren.matchAll(/`([a-z][a-z0-9-]*)`/g)) {
       if (m[1]) excluded.add(m[1]);
     }
-    expect(excluded.size).toBeGreaterThan(0);
+    // Floor, not just non-empty: a rewording that drops a name must fail
+    // loudly instead of silently weakening the lock (5 today).
+    expect(excluded.size).toBeGreaterThanOrEqual(5);
     const shipped = new Set(shippedSkills());
     for (const name of excluded) {
       expect(shipped.has(name), `excluded skill ${name} shipped`).toBe(false);
