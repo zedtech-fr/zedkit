@@ -293,13 +293,18 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
     "",
     "## Example",
     "",
-    "```tsx title=\"Usage\"",
-    need.example,
-    "```",
-    "",
-    `Wraps: ${need.wraps}`,
-    "",
   );
+  // The first example is titled "Usage" and is covered by the page preview;
+  // every further example gets its own live preview (manifest `examples`) above its code.
+  const examples = need.examples ?? [{ title: "Usage", code: need.example }];
+  examples.forEach((ex, index) => {
+    const preview = index > 0 ? rich?.examples?.[ex.title] : null;
+    if (preview) {
+      head.push(`<ComponentPreview demo="${preview}" detail=${JSON.stringify(`Live preview: ${ex.title}`)} hasProps={false} />`, "");
+    }
+    head.push(`\`\`\`tsx title=${JSON.stringify(index === 0 ? "Usage" : ex.title)}`, ex.code, "```", "");
+  });
+  head.push(`Wraps: ${need.wraps}`, "");
   if (prose) head.push(prose);
   if (rich && rich.propsFile && rich.propsName) {
     head.push("## Props", "", `<PropsTable file="${rich.propsFile}" name="${rich.propsName}" />`, "");
