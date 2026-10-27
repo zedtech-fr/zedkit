@@ -18,8 +18,9 @@ Every lens: ran or skipped + reason. Skipping a mandatory lens blocks. -->
 ## Personas
 
 <!-- Mandatory for docs/UI/README/registry PRs: one verdict each (OK / reservations /
-blocking) with proof (screenshot light/dark/mobile or executed command). A blocking
-persona blocks the merge. Other PRs: delete the rows that do not apply, keep the rest. -->
+blocking — not n/a) with proof (screenshot light/dark/mobile or executed command).
+At least five filled rows. A blocking persona blocks the merge. Other PRs: delete
+the rows that do not apply, keep the rest. -->
 
 | Persona | Verdict | Proof |
 |---|---|---|
