@@ -6,6 +6,11 @@
 set -uo pipefail
 
 [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ] || exit 0
+# Version PRs are opened by changesets/action with a generated body.
+[ "${GITHUB_HEAD_REF:-}" = "changeset-release/main" ] && {
+  echo "pr-lenses: skip version PR"
+  exit 0
+}
 [ -n "${GITHUB_REF:-}" ] || exit 0
 pr="${GITHUB_REF#refs/pull/}"
 pr="${pr%/merge}"
