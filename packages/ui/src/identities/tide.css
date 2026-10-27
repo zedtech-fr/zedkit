@@ -108,7 +108,7 @@
   --zk-reveal-distance: 1.5rem;
   --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --zk-stagger-step: 60ms;
-  --zk-lift-duration: 240ms;
+  --zk-lift-duration: 200ms;
   --zk-lift-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --zk-lift-translate: 0 -4px;
   --zk-lift-shadow: 0 24px 48px -18px hsl(var(--zk-shadow-color) / 0.38);
