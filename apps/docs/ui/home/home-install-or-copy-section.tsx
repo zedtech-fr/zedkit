@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { Section } from "@zedtech/zedkit-ui";
 
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
-import { docsSite } from "@/lib/site";
+import { PUBLIC_SITE_URL } from "@/lib/site";
 import { registryShadcnAddCommand } from "@/lib/registry-shadcn-command";
 import { HomeInstallOrCopyCopy } from "@/ui/home/home-install-or-copy-copy";
 import { HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
@@ -22,7 +22,7 @@ export function HomeInstallOrCopySection({ npmPackage }: { npmPackage: string })
     throw new Error(`home-quickstart/snippets/install.sh must be exactly: ${expectedInstall}`);
   }
   const registryAddCmd = loadSnippet("registry-add.sh");
-  const expectedRegistry = registryShadcnAddCommand(docsSite.url, featuredRegistryBrick);
+  const expectedRegistry = registryShadcnAddCommand(PUBLIC_SITE_URL, featuredRegistryBrick);
   if (registryAddCmd !== expectedRegistry) {
     throw new Error(
       `home-quickstart/snippets/registry-add.sh must be exactly: ${expectedRegistry}`,
