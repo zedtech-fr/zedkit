@@ -9,72 +9,59 @@ import { Search, X } from "lucide-react";
 const iconButtonClassName =
   "inline-flex min-h-[max(2.75rem,44px)] min-w-[max(2.75rem,44px)] flex-none items-center justify-center rounded-full focus-ring-control";
 
-/** The keyboard counts as open when it covers at least this much (px) of the layout viewport; smaller changes are browser bars. */
-const KEYBOARD_MIN_INSET = 150;
-
 const SHEET_ID = "phone-search-results";
-/** Air (px) kept between the results sheet and the top of what the visitor can see. */
-const SHEET_TOP_MARGIN = 16;
-/** Gap (px) between the sheet and the pill (`mb-2`). */
-const SHEET_PILL_GAP = 8;
+/** Air (px) kept between the results sheet and the bottom of what the visitor can see. */
+const SHEET_BOTTOM_MARGIN = 16;
+/** Gap (px) between the bar and the sheet (`mt-2`). */
+const SHEET_BAR_GAP = 8;
 /** The sheet never gets shorter than this, however small the visible area. */
 const SHEET_MIN_HEIGHT = 96;
 
 /**
- * Caps the results sheet to the room that is really visible above the
- * pill: the visual viewport (so the software keyboard is out of the sum),
- * minus the top safe area (notch, status bar) and a margin. The list scrolls
- * inside the sheet; its first line is never pushed out of view.
+ * Caps the results sheet to the room that is really visible below the bar:
+ * the visual viewport (so the software keyboard is out of the sum) minus
+ * what the bar takes from its top and a margin. The list scrolls inside the
+ * sheet; its first line sits right under the bar and is never pushed out of view.
  */
 function fitSheet() {
   const sheet = document.getElementById(SHEET_ID);
-  const anchor = sheet?.parentElement;
-  if (!sheet || !anchor) return;
+  const bar = sheet?.parentElement;
+  if (!sheet || !bar) return;
   const viewport = window.visualViewport;
   const top = viewport?.offsetTop ?? 0;
-  const safeTop = document.querySelector<HTMLElement>("[data-search-safe-top]")?.offsetHeight ?? 0;
-  const room = anchor.getBoundingClientRect().top - SHEET_PILL_GAP - (top + safeTop + SHEET_TOP_MARGIN);
-  const cap = Math.min(room, window.innerHeight * 0.6);
-  sheet.style.maxHeight = `${Math.max(SHEET_MIN_HEIGHT, Math.floor(cap))}px`;
+  const height = viewport?.height ?? window.innerHeight;
+  const room = top + height - bar.getBoundingClientRect().bottom - SHEET_BAR_GAP - SHEET_BOTTOM_MARGIN;
+  sheet.style.maxHeight = `${Math.max(SHEET_MIN_HEIGHT, Math.floor(room))}px`;
 }
 
 /**
- * Docks `target` to the bottom of the visual viewport while the software keyboard is up (iOS and Android),
- * so the open pill sits directly on top of the keyboard with no gap. It is placed from the visual viewport's
- * own top and height, so it holds when the browser scrolls the page or resizes only the visual viewport.
- * With no keyboard the pill rests at its normal bottom-right offset.
+ * Anchors `target` to the top of what the visitor can see. It does not follow the keyboard: the bar
+ * stays put at the top while the keyboard opens below. The top edge is the visual viewport's own top
+ * (the browser may scroll the page when the keyboard opens) plus the safe area, so the bar is never
+ * pushed under the status bar or out of view.
  */
-function useKeyboardDock(active: boolean, target: RefObject<HTMLElement | null>) {
+function useTopAnchor(active: boolean, target: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const viewport = window.visualViewport;
     const element = target.current;
-    if (!active || !viewport || !element) return;
-    const reset = () => {
-      element.style.top = "";
-      element.style.bottom = "";
-    };
+    if (!active || !element) return;
     const update = () => {
-      const inset = Math.round(window.innerHeight - viewport.height - viewport.offsetTop);
-      if (inset >= KEYBOARD_MIN_INSET) {
-        element.style.bottom = "auto";
-        element.style.top = `${Math.round(viewport.offsetTop + viewport.height - element.offsetHeight)}px`;
-      } else {
-        reset();
-      }
+      const offset = Math.max(0, Math.round(viewport?.offsetTop ?? 0));
+      element.style.top = `calc(${offset}px + max(0.75rem, env(safe-area-inset-top)))`;
       fitSheet();
     };
     update();
     // iOS finishes the keyboard animation after the first resize event.
     const settle = [120, 320, 640].map((delay) => window.setTimeout(update, delay));
-    viewport.addEventListener("resize", update);
-    viewport.addEventListener("scroll", update);
+    viewport?.addEventListener("resize", update);
+    viewport?.addEventListener("scroll", update);
     window.addEventListener("focusin", update);
     return () => {
       settle.forEach((id) => window.clearTimeout(id));
-      viewport.removeEventListener("resize", update);
-      viewport.removeEventListener("scroll", update);
+      viewport?.removeEventListener("resize", update);
+      viewport?.removeEventListener("scroll", update);
       window.removeEventListener("focusin", update);
-      reset();
+      element.style.top = "";
     };
   }, [active, target]);
 }
@@ -124,11 +111,10 @@ function PillBody({ onClose }: { onClose: () => void }) {
 
   return (
     <>
-      <span aria-hidden="true" data-search-safe-top="" className="pointer-events-none invisible fixed top-0 left-0 h-[env(safe-area-inset-top)] w-0" />
       {showSheet ? (
         <div
           id={SHEET_ID}
-          className="absolute right-0 bottom-full mb-2 max-h-[60dvh] w-[calc(100vw-2rem)] overflow-y-auto overscroll-contain rounded-xl border bg-popover text-popover-foreground shadow-lg transition-[opacity,translate] duration-200 motion-reduce:transition-none starting:translate-y-2 starting:opacity-0"
+          className="absolute top-full right-0 left-0 mt-2 max-h-[60dvh] overflow-y-auto overscroll-contain rounded-xl border bg-popover text-popover-foreground shadow-lg transition-[opacity,translate] duration-200 motion-reduce:transition-none starting:-translate-y-2 starting:opacity-0"
         >
           {results.length > 0 ? (
             <>
@@ -195,19 +181,19 @@ function PillBody({ onClose }: { onClose: () => void }) {
 }
 
 /**
- * Phone search: a round magnifier at the bottom-right that stretches left into a pill
- * (the magnifier stays its right end), docks to the bottom of the visual viewport right on top
- * of the software keyboard, and shows results in a sheet directly above the pill.
+ * Phone search: a round magnifier at the bottom-right opens a search bar anchored at the top of the
+ * screen (below the status bar), with the results in a sheet right under it. The bar does not follow
+ * the software keyboard; the sheet is capped to the visual viewport so the keyboard never hides it.
  */
 export function SearchPill() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const lifted = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const wasOpen = useRef(false);
-  useKeyboardDock(open, lifted);
+  useTopAnchor(open, bar);
 
-  // However the pill closes (close button, Escape, overlay tap, route change), focus goes back to the magnifier.
+  // However the search closes (close button, Escape, overlay tap, route change), focus goes back to the magnifier.
   useEffect(() => {
     if (wasOpen.current && !open) toggle.current?.focus({ preventScroll: true });
     wasOpen.current = open;
@@ -226,36 +212,42 @@ export function SearchPill() {
   return (
     <div className="md:hidden" data-search-pill>
       {open ? (
-        <button
-          type="button"
-          tabIndex={-1}
-          aria-hidden="true"
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 z-overlay cursor-default bg-overlay/30 transition-opacity duration-200 motion-reduce:transition-none starting:opacity-0"
-        />
-      ) : null}
-      <div
-        ref={lifted}
-        className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay flex justify-end"
-      >
-        <div
-          role="search"
-          className={`relative flex h-[max(2.75rem,44px)] items-center justify-end rounded-full bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-none ${
-            open ? "w-[calc(100vw-2rem)]" : "w-[max(2.75rem,44px)]"
-          }`}
-        >
-          {open ? <PillBody onClose={() => setOpen(false)} /> : null}
+        <>
           <button
-            ref={toggle}
             type="button"
-            aria-label="Search the documentation"
-            aria-expanded={open}
-            onClick={() => (open ? document.querySelector<HTMLInputElement>("#nd-search-pill-input")?.focus() : setOpen(true))}
-            className={`${iconButtonClassName} bg-primary text-primary-foreground active:scale-95 motion-reduce:transition-none`}
+            tabIndex={-1}
+            aria-hidden="true"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-overlay cursor-default bg-overlay/30 transition-opacity duration-200 motion-reduce:transition-none starting:opacity-0"
+          />
+          <div
+            ref={bar}
+            className="fixed top-[max(0.75rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] left-[max(1rem,env(safe-area-inset-left))] z-overlay"
           >
-            <Search aria-hidden="true" className="size-icon-control" />
-          </button>
-        </div>
+            <div
+              role="search"
+              className="relative isolate flex h-[max(2.75rem,44px)] items-center text-popover-foreground transition-none"
+            >
+              <span
+                aria-hidden
+                className="absolute inset-0 -z-10 rounded-full bg-popover shadow-lg ring-1 ring-border"
+              />
+              <PillBody onClose={() => setOpen(false)} />
+            </div>
+          </div>
+        </>
+      ) : null}
+      <div className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay">
+        <button
+          ref={toggle}
+          type="button"
+          aria-label="Search the documentation"
+          aria-expanded={open}
+          onClick={() => (open ? document.querySelector<HTMLInputElement>("#nd-search-pill-input")?.focus() : setOpen(true))}
+          className={`${iconButtonClassName} bg-primary text-primary-foreground shadow-lg active:scale-95 motion-reduce:transition-none`}
+        >
+          <Search aria-hidden="true" className="size-icon-control" />
+        </button>
       </div>
     </div>
   );
