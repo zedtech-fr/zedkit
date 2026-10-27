@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { MaturityBadge } from "@/components/maturity-badge";
 import type { GalleryCard } from "@/content/gallery";
-import { homeGalleryDemos } from "@/ui/home/home-gallery-demos";
+import { homeGalleryDemos } from "@/components/home-gallery-demos";
 import type { HomeScenario } from "@/content/home-scenarios";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
 import { HomeEntryPointsSection } from "@/ui/home/home-entry-points-section";

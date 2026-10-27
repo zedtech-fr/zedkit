@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, Text } from "@zedtech/zedkit-ui";
-import { HomeAdminDashboardDemo } from "@/components/demos/home-admin-dashboard-demo";
+import { HomeAdminDashboardDemo } from "@/components/home-gallery-demos";
 
 export function HomeHeroDashboard() {
   return (
