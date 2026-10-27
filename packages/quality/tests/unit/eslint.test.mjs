@@ -188,6 +188,7 @@ describe("defineLayers", () => {
       const blocked = linter.verify(adapterImport, layers, "features/inbox/ui/inbox-view.ts");
       expect(blocked).toHaveLength(1);
       expect(blocked[0].ruleId).toBe("no-restricted-imports");
+      expect(blocked[0].message).toContain("layers-features:");
       expect(blocked[0].message).toContain("ports");
       expect(linter.verify(portImport, layers, "features/inbox/ui/inbox-view.ts")).toEqual([]);
     });

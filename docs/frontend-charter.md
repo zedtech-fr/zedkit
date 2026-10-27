@@ -17,7 +17,7 @@ state the rule; this table is the index.
 | `forms-schema` | react-hook-form + zod; `defaultValues` prefilled; inline field errors; pending submit names the next step. | [Validated forms](https://zedkit.app/docs/ui/build-validated-forms-with-labels-errors-and-pending-state) |
 | `data-live` | Server components fetch; client islands own interactivity. `LivePulse` when a feed is connected, never a silent stall. | [Live indicator](https://zedkit.app/docs/ui/show-key-value-details-and-a-live-indicator) |
 | `a11y-name` | lint + test. Every input has a label; icon-only buttons have `aria-label`. | [Input](https://zedkit.app/docs/ui/collect-text-input-with-a-label), [icon button](https://zedkit.app/docs/ui/icon-only-actions-with-a-visible-name) |
-| `a11y-keyboard` | lint + test. Focus visible, full keyboard path, logical headings, live region for async errors. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
+| `a11y-keyboard` | lint + test. Focus visible, full keyboard path, logical headings, live region for async errors. | [Validated forms](https://zedkit.app/docs/ui/build-validated-forms-with-labels-errors-and-pending-state) |
 | `a11y-contrast` | test. Contrast from tokens only. Zero axe violations per component (vitest-axe). | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
 | `responsive` | Mobile-first; full-width actions under `md`; no horizontal scroll except inside `Table`. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
 | `copy-next` | One language per screen. Name the next step. Errors say what broke and what to do. | [Shown-once secret](https://zedkit.app/docs/ui/display-a-shown-once-secret-with-copy) |
