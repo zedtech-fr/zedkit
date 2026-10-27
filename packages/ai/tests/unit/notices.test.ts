@@ -87,6 +87,22 @@ describe("third-party notices", () => {
     }
   });
 
+  it("matches every upstream title count with its Skills list", () => {
+    const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
+    const chunks = notices.split(/^## /m).slice(1);
+    let checked = 0;
+    for (const chunk of chunks) {
+      const title = /^(.+?) \((\d+)\)/u.exec(chunk);
+      if (!title) continue; // sections without a count need no match
+      const expected = Number(title[2] ?? "");
+      const bullet = /^- Skills: (.*(?:\n(?!- ).*)*)/mu.exec(chunk)?.[1] ?? "";
+      const names = [...bullet.matchAll(/`([a-z][a-z0-9-]*)`/g)].map((m) => m[1] ?? "");
+      checked += 1;
+      expect(names, `${title[1] ?? ""} skills`).toHaveLength(expected);
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
   it("names only shipped skills in the README vendored paragraph", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     const at = readme.indexOf("**Skills vendored (MIT):**");
