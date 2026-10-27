@@ -6,7 +6,7 @@ packages:
 # `catalog:` protocol so every package resolves identically. Internal
 # workspace links use `workspace:*`.
 catalog:
-  typescript: 5.9.3
+  typescript: 6.0.3
   next: 16.4.3
   fumadocs-core: 16.17.8
   fumadocs-ui: 16.17.8
