@@ -952,24 +952,37 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 </Alert>
 ```
 
-## Show the zedkit logo
+## Show your brand logo
 
-- Import: `@zedtech/zedkit-ui` — `Logo`, `LogoProps`
+- Import: `@zedtech/zedkit-ui` — `BrandLogo`, `BrandLogoProps`, `Logo`, `LogoProps`
 - Wraps: none (inline SVG)
 - Status: alpha
-- Short name: Logo
-- Audience: Teams building a header, a footer or a share image for a zedkit-based site.
-- Purpose: The zedkit mark as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.
-- When to use: Next to the product name in a site header, or anywhere a small brand mark is needed.
-- When not to use: For your own brand — ship your own mark instead.
+- Short name: BrandLogo
+- Audience: Teams building a header, a footer or a share image for their own site.
+- Purpose: Render your own logo as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.
+- When to use: Next to your product name in a site header or footer, or as the mark of a share image.
+- When not to use: For the zedkit mark — `Logo` is zedkit's own mark, used by the zedkit docs site; do not ship it as yours.
 - See also: `Switch the visual identity with one attribute`
-- A11y: named image ("zedkit") by default; pass `title=""` to hide it when the name is written next to it.
+- Examples: Simple, Header link to the home page
+- A11y: named image (the brand name) when the mark stands alone; pass `title=""` to hide it when the name is written next to it, and let the link text label the link.
 
 ```ts
-import { Logo } from "@zedtech/zedkit-ui";
-<Logo className="h-6 text-foreground" title="" />
+import { BrandLogo } from "@zedtech/zedkit-ui";
+<BrandLogo title="Harbor Studio" viewBox="0 0 32 24" className="h-6 text-primary">
+  <path d="M16 1 25 15H7Z" />
+  <path d="M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z" />
+</BrandLogo>
 ```
 
+```ts
+import { BrandLogo } from "@zedtech/zedkit-ui";
+<a href="/" className="flex items-center gap-2 text-foreground">
+  <BrandLogo title="" viewBox="0 0 32 24" className="h-6 text-primary">
+    <path d="M16 1 25 15H7Z" />
+  </BrandLogo>
+  Harbor Studio
+</a>
+```
 
 ## Pick one option from a dropdown
 

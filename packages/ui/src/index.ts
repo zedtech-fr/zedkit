@@ -169,4 +169,5 @@ export {
 } from "./identity.js";
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
 export { IdentityPicker, type IdentityPickerProps } from "./identity-picker.js";
+export { BrandLogo, type BrandLogoProps } from "./brand-logo.js";
 export { Logo, type LogoProps } from "./logo.js";

@@ -92,6 +92,15 @@ export const badgeVariants: (props?: ({
     variant?: "default" | "destructive" | "secondary" | "success" | "warning" | "outline" | null | undefined;
 } & ClassProp) | undefined) => string;
 
+// @public
+export function BrandLogo(input: BrandLogoProps): JSX.Element;
+
+// @public (undocumented)
+export interface BrandLogoProps extends Omit<SVGProps<SVGSVGElement>, "viewBox" | "title"> {
+    title: string;
+    viewBox: string;
+}
+
 // @public (undocumented)
 export const Button: React_2.ForwardRefExoticComponent<ButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
 
@@ -609,7 +618,7 @@ export interface LivePulseProps {
 export function Logo(input: LogoProps): JSX.Element;
 
 // @public (undocumented)
-export interface LogoProps extends Omit<SVGProps<SVGSVGElement>, "children" | "viewBox"> {
+export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "viewBox"> {
     title?: string;
 }
 

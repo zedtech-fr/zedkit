@@ -253,6 +253,14 @@
       "props": null,
       "source": "form.tsx",
       "demo": "ValidatedFormDemo"
+    },
+    "Show your brand logo": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "BrandLogo",
+      "props": "BrandLogoProps",
+      "source": "brand-logo.tsx",
+      "demo": "BrandLogoDemo",
+      "examples": { "Header link to the home page": "BrandLogoHeaderDemo" }
     }
   }
 }
