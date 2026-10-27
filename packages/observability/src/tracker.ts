@@ -37,7 +37,10 @@ export function createMemoryTracker<TEvents extends EventMap = EventMap>(): {
         else identified.push({ userId, traits });
       },
       capture: (event, properties) => void captured.push({ event, properties }),
-      reset: () => undefined,
+      reset: () => {
+        captured.length = 0;
+        identified.length = 0;
+      },
     },
   };
 }

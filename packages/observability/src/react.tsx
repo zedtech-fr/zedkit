@@ -1,7 +1,7 @@
 "use client";
 
 // Original work by the same author.
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { createConsoleLogger, type Logger } from "./logger.js";
 import type { ObservabilityContextValue, ObservabilityProviderProps } from "./react.types.js";
 import { createNoopTracker, type EventMap, type Tracker } from "./tracker.js";
