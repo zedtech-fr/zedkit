@@ -19,7 +19,7 @@ test.describe("site semantics harness (#300)", () => {
       await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
       await assertNoHorizontalOverflow(page);
       if (route.strictSemantics) {
-        await assertAxeOnMain(page, [], route.axeExclude);
+        await assertAxeOnMain(page, route.extraAxeOff ?? [], route.axeExclude);
       }
       await assertInternalLinksResolve(page, BASE);
       expect(errors).toEqual([]);

@@ -29,7 +29,8 @@ test.describe("guide previews", () => {
 
   test("reveal-on-scroll preview reveals its three tasks", async ({ page }) => {
     await page.goto("/docs/ui/animate-entrances-and-hover-feedback-with-css-utilities", { waitUntil: "networkidle" });
-    const stage = page.locator("[data-stagger]").filter({ hasText: "Publish the sale banner" });
+    const live = page.getByText("Live preview", { exact: true });
+    const stage = live.locator("xpath=..").locator("[data-stagger]");
     await stage.scrollIntoViewIfNeeded();
     await expect(stage).toHaveAttribute("data-stagger", "in");
     await expect(stage.getByText("Publish the sale banner")).toBeVisible();
