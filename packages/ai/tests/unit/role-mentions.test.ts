@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { kitDir, readManifest } from "#kit.js";
-import { lensTableRows } from "./helpers.js";
+import { lensTableRows, skillDirs } from "./helpers.js";
 
 // Upstream skill borrowed as an excerpt, never vendored (see skills/pr/CREDITS.md).
 const UPSTREAM = new Set(["show-me"]);
@@ -25,7 +25,7 @@ describe("role mentions", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const byKind = {
-      skill: new Set(readdirSync(join(kitDir(), "skills"))),
+      skill: new Set(skillDirs()),
       agent: new Set(manifest.value.agents),
       command: new Set(manifest.value.commands ?? []),
       lens: new Set(lensTableRows().map((cells) => cells[1] ?? "")),
@@ -45,5 +45,12 @@ describe("role mentions", () => {
       }
     }
     expect(checked).toBeGreaterThan(0);
+  });
+
+  it("keeps every non-directory entry in skills/ a LICENSE file", () => {
+    const strays = readdirSync(join(kitDir(), "skills"), { withFileTypes: true })
+      .filter((entry) => !entry.isDirectory() && !entry.name.startsWith("LICENSE-"))
+      .map((entry) => entry.name);
+    expect(strays).toEqual([]);
   });
 });
