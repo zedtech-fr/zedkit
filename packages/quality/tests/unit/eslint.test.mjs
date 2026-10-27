@@ -99,4 +99,46 @@ describe("defineLayers", () => {
       }),
     ).toThrow("extraPatterns.kitScope must be a list");
   });
+
+  it("drops the view ban (and the block) when actionPatterns is empty", () => {
+    const layers = defineLayers({
+      kitPackage: "@acme/ui",
+      viewDirs: ["app/**/ui/**"],
+      dataDirs: ["lib/**"],
+      actionPatterns: [],
+    });
+    expect(layers.map((block) => block.name)).toEqual(["zedkit/layers-kit-scope", "zedkit/layers-data-ui"]);
+    // The config validates (verify would throw on an empty group),
+    // and data imports stay allowed where no ban covers them.
+    expect(linter.verify('import { getOrder } from "@/lib/orders";\n', layers, "app/page.ts")).toEqual([]);
+    // Other blocks still ban.
+    const kit = linter.verify(kitImport, layers, "app/page.ts");
+    expect(kit).toHaveLength(1);
+  });
+
+  it("keeps viewData extras when actionPatterns is empty", () => {
+    const layers = defineLayers({
+      kitPackage: "@acme/ui",
+      viewDirs: ["app/**/ui/**"],
+      dataDirs: ["lib/**"],
+      actionPatterns: [],
+      extraPatterns: { viewData: [{ group: ["node:fs"], message: "no fs in views" }] },
+    });
+    expect(layers.map((block) => block.name)).toContain("zedkit/layers-view-data");
+    const fs = linter.verify('import x from "node:fs";\n', layers, "app/ui/card-view.ts");
+    expect(fs).toHaveLength(1);
+    expect(fs[0].message).toContain("no fs in views");
+    expect(linter.verify('import { getOrder } from "@/lib/orders";\n', layers, "app/ui/card-view.ts")).toEqual([]);
+  });
+
+  it("fails fast on non-list actionPatterns", () => {
+    expect(() =>
+      defineLayers({
+        kitPackage: "@acme/ui",
+        viewDirs: ["app/**/ui/**"],
+        dataDirs: ["lib/**"],
+        actionPatterns: "@/lib/*",
+      }),
+    ).toThrow("actionPatterns must be a list");
+  });
 });

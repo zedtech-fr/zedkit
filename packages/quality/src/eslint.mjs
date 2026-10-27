@@ -121,6 +121,9 @@ function asFiles(patterns) {
  * - `viewDirs`: view folders (e.g. `app/ui/**`) or file globs.
  * - `dataDirs`: data-access folders or file globs, same shapes.
  * - `actionPatterns`: import specifiers for data clients and server actions.
+ *   May be empty (views legitimately import data): the view ban is
+ *   then omitted, and the view block is dropped when it would carry
+ *   no bans at all.
  * - `extraPatterns`: consumer bans merged into each block's own
  *   patterns (flat-config rules replace per key, so a consumer block
  *   setting `no-restricted-imports` would otherwise drop these).
@@ -137,10 +140,27 @@ export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, e
       throw new Error(`defineLayers: extraPatterns.${key} must be a list of no-restricted-imports pattern objects`);
     }
   }
+  if (!Array.isArray(actionPatterns)) {
+    throw new Error("defineLayers: actionPatterns must be a list of import specifiers (may be empty)");
+  }
   const kitPatterns = [kitPackage, `${kitPackage}/*`];
   const views = asFiles(viewDirs);
   const data = asFiles(dataDirs);
   const extras = { kitScope: [], viewData: [], dataUi: [], ...extraPatterns };
+  // An empty group fails ESLint schema validation, so an empty
+  // actionPatterns omits the ban; with no viewData extras either,
+  // the whole block is dropped (a ban-less block is noise).
+  const viewDataPatterns = [
+    ...(actionPatterns.length > 0
+      ? [
+          {
+            group: [...actionPatterns],
+            message: "Views receive data as props and never import data clients or server actions.",
+          },
+        ]
+      : []),
+    ...extras.viewData,
+  ];
   return [
     {
       name: "zedkit/layers-kit-scope",
@@ -161,24 +181,17 @@ export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, e
         ],
       },
     },
-    {
-      name: "zedkit/layers-view-data",
-      files: views,
-      rules: {
-        "no-restricted-imports": [
-          "error",
+    ...(viewDataPatterns.length > 0
+      ? [
           {
-            patterns: [
-              {
-                group: [...actionPatterns],
-                message: "Views receive data as props and never import data clients or server actions.",
-              },
-              ...extras.viewData,
-            ],
+            name: "zedkit/layers-view-data",
+            files: views,
+            rules: {
+              "no-restricted-imports": ["error", { patterns: viewDataPatterns }],
+            },
           },
-        ],
-      },
-    },
+        ]
+      : []),
     {
       name: "zedkit/layers-data-ui",
       files: data,
