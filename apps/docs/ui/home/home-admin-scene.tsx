@@ -13,7 +13,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-/** Admin dashboard scene reused in the hero preview and use-cases tabs. */
+/** Admin dashboard scene reused in the hero preview and the use cases scroll. */
 export function HomeAdminScene() {
   return (
     <Stack gap={HOME_CARD_CONTENT_GAP}>
