@@ -842,13 +842,20 @@
           "whenToUse": "Toolbar or header controls where the glyph alone is not enough for screen readers.",
           "whenNotToUse": "Actions with visible text — use `Button` instead.",
           "derivedFrom": null,
-          "example": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>",
+          "example": "import { Archive, RefreshCw, Share2 } from \"lucide-react\";\nimport { IconButton } from \"@zedtech/zedkit-ui\";\n\n<IconButton label=\"Refresh tasks\" variant=\"ghost\" onClick={refresh}><RefreshCw /></IconButton>\n<IconButton label=\"Share project\" variant=\"ghost\" onClick={share}><Share2 /></IconButton>\n<IconButton label=\"Archive project\" variant=\"outline\" onClick={archive}><Archive /></IconButton>",
           "examples": [
             {
-              "title": "Simple",
-              "code": "import { IconButton } from \"@zedtech/zedkit-ui\";\n<IconButton label=\"Open menu\">☰</IconButton>"
+              "title": "Project toolbar",
+              "code": "import { Archive, RefreshCw, Share2 } from \"lucide-react\";\nimport { IconButton } from \"@zedtech/zedkit-ui\";\n\n<IconButton label=\"Refresh tasks\" variant=\"ghost\" onClick={refresh}><RefreshCw /></IconButton>\n<IconButton label=\"Share project\" variant=\"ghost\" onClick={share}><Share2 /></IconButton>\n<IconButton label=\"Archive project\" variant=\"outline\" onClick={archive}><Archive /></IconButton>"
+            },
+            {
+              "title": "Row actions in a list",
+              "code": "import { Copy, Pencil, Trash2 } from \"lucide-react\";\nimport { IconButton } from \"@zedtech/zedkit-ui\";\n\n{tasks.map((task) => (\n  <li key={task.id}>\n    {task.title}\n    <IconButton label={`Edit ${task.title}`} variant=\"ghost\"><Pencil /></IconButton>\n    <IconButton label={`Duplicate ${task.title}`} variant=\"ghost\"><Copy /></IconButton>\n    <IconButton label={`Delete ${task.title}`} variant=\"ghost\" onClick={() => remove(task.id)}><Trash2 /></IconButton>\n  </li>\n))}"
             }
-          ]
+          ],
+          "registry": "icon-button",
+          "a11y": "`label` becomes both `aria-label` and `title`, so screen readers and hover/long-press tooltips read the same name. Native `button` with `type=\"button\"` (never submits a form by accident); a visible focus ring shows on keyboard focus. Decorative glyphs inside should be icons, not text the reader would announce twice.",
+          "troubleshooting": "A TypeScript error about a missing `label` — it is required on purpose, an icon-only control without a name is unusable with a screen reader. Several identical buttons in a list — put the row name in the label (`Delete ${task.title}`) so each is distinct. Button feels too big for a dense toolbar — the size defaults to `icon`; pass `size=\"sm\"` for a compact one (the glyph keeps the kit icon size). The button submits a form — it should not (`type=\"button\"`); pass `type=\"submit\"` explicitly if you really want that."
         },
         {
           "need": "Show a status or count badge",
@@ -1073,14 +1080,20 @@
           "whenToUse": "Recognition hints next to names or actions, not in running prose.",
           "whenNotToUse": "Standalone icons — use the Lucide component directly; primary actions — use `Button`.",
           "derivedFrom": null,
-          "example": "import { Search } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n<IconLabel icon={Search}><code>explorer</code></IconLabel>",
+          "example": "import { Calendar, FolderOpen, MessageSquare, Users } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n\n<IconLabel icon={FolderOpen}>Harbor Studio</IconLabel>\n<IconLabel icon={Calendar}>Due Nov 14</IconLabel>\n<IconLabel icon={Users}>4 members</IconLabel>\n<IconLabel icon={MessageSquare}>12 comments</IconLabel>",
           "examples": [
             {
-              "title": "Simple",
-              "code": "import { Search } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n<IconLabel icon={Search}><code>explorer</code></IconLabel>"
+              "title": "Project details",
+              "code": "import { Calendar, FolderOpen, MessageSquare, Users } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n\n<IconLabel icon={FolderOpen}>Harbor Studio</IconLabel>\n<IconLabel icon={Calendar}>Due Nov 14</IconLabel>\n<IconLabel icon={Users}>4 members</IconLabel>\n<IconLabel icon={MessageSquare}>12 comments</IconLabel>"
+            },
+            {
+              "title": "In an order list",
+              "code": "import { Package, RotateCcw, Truck } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n\n<IconLabel icon={Truck}>Shipped Oct 25</IconLabel>\n<IconLabel icon={Package}>Packing</IconLabel>\n<IconLabel icon={RotateCcw}>Return requested</IconLabel>"
             }
           ],
-          "a11y": "Icon is decorative; put the readable name in `children`.",
+          "registry": "icon-label",
+          "a11y": "Icon is decorative (`aria-hidden`, not focusable); put the readable name in `children`. The muted colour keeps normal text contrast on every identity, but do not rely on the icon alone to carry meaning — the state or name must also be written.",
+          "troubleshooting": "The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is fixed by the `--spacing-icon-control` token (1rem); change that token, not each icon. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.",
           "seeAlso": [
             "Celebrate completion with a checkmark"
           ]

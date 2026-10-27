@@ -182,6 +182,13 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
+    "icon-label": {
+      cssVars: {
+        theme: {
+          "spacing-icon-control": varFromBlock(theme, "spacing-icon-control"),
+        },
+      },
+    },
     "card-skeleton": {
       cssVars: {
         theme: {

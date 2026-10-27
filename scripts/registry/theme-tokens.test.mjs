@@ -45,6 +45,8 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   assert.deepEqual(wizard.cssVars, expected["wizard-steps"].cssVars);
   const cardSkel = registry.items.find((item) => item.name === "card-skeleton");
   assert.deepEqual(cardSkel.cssVars, expected["card-skeleton"].cssVars);
+  const iconLabel = registry.items.find((item) => item.name === "icon-label");
+  assert.deepEqual(iconLabel.cssVars, expected["icon-label"].cssVars);
 });
 
 test("checkRegistryThemeDrift is clean on the repo", () => {

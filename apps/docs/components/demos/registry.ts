@@ -66,6 +66,8 @@ import { WizardDemo } from "./wizard-demo";
 import { WizardSoloDemo } from "./wizard-solo-demo";
 import { OfflineNoteDemo, OfflineNoteWiredDemo, OfflineNoteWordingDemo } from "./offline-note-demo";
 import { ThemeDemo, ThemeTokensDemo, ThemeToggleDemo } from "./theme-demo";
+import { IconButtonDemo, IconButtonRowsDemo } from "./icon-button-demo";
+import { IconLabelDemo, IconLabelOrdersDemo } from "./icon-label-demo";
 
 /**
  * Single seam between doc pages and live demos. Pages and MDX never
@@ -116,6 +118,10 @@ export const demoRegistry = {
   ThemeDemo: { Demo: ThemeDemo, file: "theme-demo.tsx" },
   ThemeTokensDemo: { Demo: ThemeTokensDemo, file: "theme-demo.tsx" },
   ThemeToggleDemo: { Demo: ThemeToggleDemo, file: "theme-demo.tsx" },
+  IconButtonDemo: { Demo: IconButtonDemo, file: "icon-button-demo.tsx" },
+  IconButtonRowsDemo: { Demo: IconButtonRowsDemo, file: "icon-button-demo.tsx" },
+  IconLabelDemo: { Demo: IconLabelDemo, file: "icon-label-demo.tsx" },
+  IconLabelOrdersDemo: { Demo: IconLabelOrdersDemo, file: "icon-label-demo.tsx" },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DataTablePaginationDemo: { Demo: DataTablePaginationDemo, file: "data-table-pagination-demo.tsx" },
   DataTableEmptyDemo: { Demo: DataTableEmptyDemo, file: "data-table-empty-demo.tsx" },
