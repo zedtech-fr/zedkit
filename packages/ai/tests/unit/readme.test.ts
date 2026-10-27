@@ -41,6 +41,20 @@ describe("package README", () => {
     }
   });
 
+  it("runs only scripts the package defines", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    const pkg = JSON.parse(
+      readFileSync(fileURLToPath(new URL("../../package.json", import.meta.url)), "utf8"),
+    ) as { scripts: Record<string, string> };
+    const scripts = [
+      ...readme.matchAll(/pnpm --filter @zedtech\/zedkit-ai ([a-z-]+)/gu),
+    ].map((m) => m[1] ?? "");
+    expect(scripts.length).toBeGreaterThan(0);
+    for (const script of scripts) {
+      expect(Object.keys(pkg.scripts), `README runs ${script}`).toContain(script);
+    }
+  });
+
   it("pins no kit counts that rot as the kit grows", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     const counts = [...readme.matchAll(/\b\d+ (subagents|skills|commands|agents)\b/g)].map(
