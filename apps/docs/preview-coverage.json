@@ -11,8 +11,6 @@
   "optOut": {},
   "pending": [
     "Pin a stage and change scene as the page scrolls::Pinned scenes",
-    "Slide in a drawer panel::Bottom sheet",
-    "Slide in a drawer panel::Side panel on every screen",
     "Switch the visual identity with one attribute::Simple"
   ]
 }

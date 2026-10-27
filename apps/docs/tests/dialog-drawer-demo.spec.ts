@@ -53,6 +53,25 @@ test.describe("docs dialog and drawer previews show realistic screens", () => {
     await expect(dialog.getByLabel("Note")).toBeVisible();
   });
 
+  test("drawer: filters bottom sheet and side menu previews open", async ({ page }) => {
+    await page.goto(`${BASE}/docs/ui/slide-in-a-drawer-panel`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Filters", exact: true }).click();
+    const sheet = page.getByRole("dialog");
+    await expect(sheet.getByRole("heading", { name: "Filters" })).toBeVisible();
+    await sheet.getByLabel("Awaiting shipment").click();
+    await expect(sheet.getByText("2 status selected.")).toBeVisible();
+    await sheet.getByRole("button", { name: "Reset" }).click();
+    await expect(sheet.getByText("All orders are shown.")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    const menu = page.getByRole("dialog");
+    await expect(menu.getByRole("heading", { name: "Menu" })).toBeVisible();
+    await expect(menu.getByRole("button", { name: "Billing" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+  });
+
   test("route modal: an order detail opens over the list and closes", async ({ page }) => {
     await page.goto(`${BASE}/docs/ui/render-a-route-as-a-modal-over-the-list`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Open route modal" }).click();

@@ -108,7 +108,11 @@
       "registry": "drawer",
       "props": "DrawerProps",
       "source": "drawer.tsx",
-      "demo": "DrawerDemo"
+      "demo": "DrawerDemo",
+      "examples": {
+        "Bottom sheet": "DrawerBottomSheetDemo",
+        "Side panel on every screen": "DrawerSideMenuDemo"
+      }
     },
     "Render a route as a modal over the list": {
       "package": "@zedtech/zedkit-ui",
