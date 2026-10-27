@@ -6,6 +6,7 @@ import {
   Button,
   Heading,
   ProgressBar,
+  ScrollScenes,
   Section,
   Stack,
   StatusLabel,
@@ -80,6 +81,7 @@ function SceneScope({ identity, ...props }: ComponentProps<"div"> & { identity: 
 }
 
 const SCENE_CLASS = "min-w-0 overflow-hidden rounded-xl border bg-background p-card-padding";
+const SECOND_SCENE_CLASS = `${SCENE_CLASS} max-md:hidden`;
 const SCENE_TITLE_CLASS = "font-(family-name:--zk-font-display) text-2xl leading-tight font-semibold text-balance";
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -200,14 +202,121 @@ function Scene({ id }: { id: UseCaseId }) {
 }
 
 /**
- * Second home section: the same kit in each of its six identities, one
- * block per identity, shown as the page scrolls. Every block has the
- * identity name and a line of text, and a scene drawn with kit components
- * inside an identity scope, so the page identity is never touched. Scenes
- * are inert previews hidden from assistive tech; the text next to each says
- * the same thing. The entrance is a soft scroll-linked fade (globals.css),
- * absent under `prefers-reduced-motion` and where scroll timelines are not
- * supported; nothing is hidden and nothing moves the layout.
+ * A second, smaller example next to the main one, drawn in the same
+ * identity. Shown from the tablet width up; on a phone the stage keeps one
+ * example so nothing is cut.
+ */
+function SecondScene({ id }: { id: UseCaseId }) {
+  switch (id) {
+    case "admin":
+      return (
+        <Stack gap={HOME_CARD_CONTENT_GAP}>
+          <Badge>Team</Badge>
+          <Text className={SCENE_TITLE_CLASS}>Invite a teammate</Text>
+          <Text variant="muted">They get read access to orders until you change their role.</Text>
+          <StatusLabel tone="saved">Draft saved</StatusLabel>
+          <Stack direction="horizontal" gap={2} className="flex-wrap">
+            <Button size="sm">Send invite</Button>
+            <Button size="sm" variant="outline">
+              Cancel
+            </Button>
+          </Stack>
+        </Stack>
+      );
+    case "editorial":
+      return (
+        <Stack gap={HOME_CARD_CONTENT_GAP}>
+          <Badge>Pull quote</Badge>
+          <Text className={SCENE_TITLE_CLASS}>“A page that holds still is a page that gets finished.”</Text>
+          <Text variant="muted" className="text-xs">
+            Ines Marlow, on slow reading
+          </Text>
+        </Stack>
+      );
+    case "monitoring":
+      return (
+        <Stack gap={HOME_CARD_CONTENT_GAP}>
+          <Badge>Regions</Badge>
+          {[
+            ["Paris", "38 ms"],
+            ["Frankfurt", "44 ms"],
+            ["Dublin", "51 ms"],
+            ["Madrid", "47 ms"],
+          ].map(([region, latency]) => (
+            <Stack
+              key={region}
+              direction="horizontal"
+              gap={2}
+              className="items-center justify-between rounded-lg border px-3 py-2"
+            >
+              <Text>{region}</Text>
+              <Text variant="muted" className="text-xs">
+                {latency}
+              </Text>
+            </Stack>
+          ))}
+        </Stack>
+      );
+    case "launch":
+      return (
+        <Stack gap={HOME_CARD_CONTENT_GAP}>
+          <Badge>Pro</Badge>
+          <Text className={SCENE_TITLE_CLASS}>€ 19 a month</Text>
+          <Text variant="muted">Unlimited projects, priority support, cancel any time.</Text>
+          <Stack direction="horizontal">
+            <Button size="sm">Start free</Button>
+          </Stack>
+        </Stack>
+      );
+    case "shop":
+      return (
+        <Stack gap={HOME_CARD_CONTENT_GAP}>
+          <Badge>You may also like</Badge>
+          {[
+            ["Waxed canvas tote", "€ 64"],
+            ["Stoneware mug", "€ 22"],
+            ["Wool throw", "€ 120"],
+          ].map(([name, price]) => (
+            <Stack
+              key={name}
+              direction="horizontal"
+              gap={2}
+              className="items-center justify-between rounded-lg border px-3 py-2"
+            >
+              <Text>{name}</Text>
+              <Text variant="muted" className="text-xs">
+                {price}
+              </Text>
+            </Stack>
+          ))}
+        </Stack>
+      );
+    case "mobile":
+      return (
+        <Stack gap={HOME_CARD_CONTENT_GAP}>
+          <Badge>Next up</Badge>
+          <Text className={SCENE_TITLE_CLASS}>Supplier call at 11:00</Text>
+          <Text variant="muted">Samples are packed. Ask about the delivery date.</Text>
+          <Stack direction="horizontal" gap={2} className="flex-wrap">
+            <Button size="sm">Join</Button>
+            <Button size="sm" variant="outline">
+              Snooze
+            </Button>
+          </Stack>
+        </Stack>
+      );
+  }
+}
+
+/**
+ * Second home section: the same kit in each of its six identities, shown
+ * one after the other on a stage that stays in place while the page scrolls
+ * (kit `ScrollScenes`, pure CSS, native scrolling). Each scene has the
+ * identity name and a line of text, and two small examples drawn with kit
+ * components inside an identity scope, so the page identity is never
+ * touched. Examples are inert previews hidden from assistive tech; the text
+ * next to each says the same thing. With reduced motion, or where scroll
+ * timelines are not supported, the scenes sit one under the other.
  */
 export function HomeUseCasesSection() {
   const root = useRef<HTMLDivElement>(null);
@@ -246,34 +355,40 @@ export function HomeUseCasesSection() {
       id="use-cases"
       description="Same components, six identities. Scroll to see how each one reads, with content that fits its use."
     >
-      <div ref={root} data-home-use-cases className="flex min-w-0 flex-col gap-10 md:gap-16">
-        {USE_CASES.map((useCase) => (
-          <article
-            key={useCase.id}
-            data-use-case={useCase.id}
-            aria-labelledby={`use-case-${useCase.id}`}
-            className="grid min-w-0 items-start gap-4 md:grid-cols-3"
-          >
-            <Stack gap={2} className="min-w-0 md:sticky md:top-24">
-              <Text variant="muted" className="text-xs">
-                Identity: {useCase.identityLabel}
-              </Text>
-              <Heading level={3} id={`use-case-${useCase.id}`}>
-                {useCase.title}
-              </Heading>
-              <Text variant="muted">{useCase.why}</Text>
-            </Stack>
-            <SceneScope
-              identity={useCase.identity}
-              aria-hidden="true"
-              inert
-              data-use-case-scene={useCase.id}
-              className={`${SCENE_CLASS} font-sans text-foreground md:col-span-2`}
-            >
-              <Scene id={useCase.id} />
-            </SceneScope>
-          </article>
-        ))}
+      <div ref={root} data-home-use-cases>
+        <ScrollScenes
+          className="[--zk-scenes-top:4.5rem] md:[--zk-scenes-top:6rem]"
+          scenes={USE_CASES.map((useCase) => ({
+            id: useCase.id,
+            caption: (
+              <Stack gap={2} className="min-w-0">
+                <Text variant="muted" className="text-xs">
+                  Identity: {useCase.identityLabel}
+                </Text>
+                <Heading level={3} id={`use-case-${useCase.id}`}>
+                  {useCase.title}
+                </Heading>
+                <Text variant="muted">{useCase.why}</Text>
+              </Stack>
+            ),
+            children: (
+              <SceneScope
+                identity={useCase.identity}
+                aria-hidden="true"
+                inert
+                data-use-case-scene={useCase.id}
+                className="grid min-w-0 gap-4 font-sans text-foreground md:grid-cols-5"
+              >
+                <div className={`${SCENE_CLASS} md:col-span-3`}>
+                  <Scene id={useCase.id} />
+                </div>
+                <div className={`${SECOND_SCENE_CLASS} md:col-span-2`}>
+                  <SecondScene id={useCase.id} />
+                </div>
+              </SceneScope>
+            ),
+          }))}
+        />
       </div>
     </Section>
   );
