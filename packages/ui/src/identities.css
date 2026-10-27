@@ -243,6 +243,172 @@
 }
 
 /*
+ * Scoped mist resets the stock tokens.
+ *
+ *    On <html>, mist only needs its family: everything else is the stock
+ *    value already. A scoped mist subtree (`data-identity-scope`) sits
+ *    under a page identity instead, and custom properties inherit: without
+ *    this block it would take the page's colours, radii, spacing, type
+ *    scale and motion (0px corners under press, for example). It re-declares
+ *    every token an identity may override, with the stock value:
+ *    - colours, focus ring and depth: the stock blocks of styles.css and
+ *      of this file (light here, dark below);
+ *    - type scale, weights, tracking, spacing and radii: Tailwind's defaults
+ *      (with the kit's --radius-sm/md/lg steps);
+ *    - tokens with no stock value (heading and label styling, button
+ *      motion, density): `initial`, so every var() fallback applies as it
+ *      does with no identity.
+ *    The glass tokens are reset by glass.css for every non-glass scope.
+ *    tests/unit/identity-scope-reset.test.ts keeps this list in step with
+ *    the identity files.
+ */
+[data-identity-scope][data-identity="mist"] {
+  /* Colours (styles.css :root) */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 5% 32%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 72.2% 47%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142.1 76.2% 36.3%;
+  --success-foreground: 0 0% 98%;
+  --warning: 32 95% 44%;
+  --warning-foreground: 240 10% 3.9%;
+  --overlay: 0 0% 0%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 4% 46%;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 240 5.9% 10%;
+  --sidebar-border: 240 5.9% 90%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --ring-width: 2px;
+  --ring-width-control: 2px;
+  --ring-offset-width: 2px;
+
+  /* Typography (Tailwind defaults; the mist family is set above) */
+  --zk-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-display: initial;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --tracking-tight: -0.025em;
+  --tracking-wide: 0.025em;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --zk-heading-weight: initial;
+  --zk-heading-tracking: initial;
+  --zk-heading-transform: initial;
+  --zk-heading-leading: initial;
+  --zk-label-transform: initial;
+  --zk-label-tracking: initial;
+
+  /* Spacing and shape */
+  --spacing: 0.25rem;
+  --zk-density: initial;
+  --zk-control-scale: initial;
+  --radius: 0.5rem;
+  --radius-xs: 0.125rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --zk-border-width: 1px;
+
+  /* Depth (stock block of this file) */
+  --zk-shadow-color: 240 10% 4%;
+  --zk-shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --zk-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --zk-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --zk-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --zk-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --zk-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --zk-glass-highlight: initial;
+  --zk-bg-pattern: none;
+  --zk-bg-size: auto;
+  --zk-bg-repeat: repeat;
+  --zk-bg-attach: scroll;
+
+  /* Motion (styles.css motion tokens and the stock block of this file) */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 250ms;
+  --zk-reveal-duration: 300ms;
+  --zk-reveal-distance: 0.75rem;
+  --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-stagger-step: 70ms;
+  --zk-lift-duration: 200ms;
+  --zk-lift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-lift-translate: 0 -2px;
+  --zk-lift-shadow: 0 10px 20px -8px rgb(0 0 0 / 0.18);
+  --zk-press-translate: 0 1px;
+  --zk-btn-ease: initial;
+  --zk-btn-hover-translate: initial;
+  --zk-btn-hover-shadow: initial;
+  --zk-btn-press-shadow: initial;
+  --zk-deco-ticker: none;
+}
+
+.dark [data-identity-scope][data-identity="mist"] {
+  /* Colours (styles.css .dark) */
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 72.2% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142.1 70.6% 45.3%;
+  --success-foreground: 240 10% 3.9%;
+  --warning: 32 95% 32%;
+  --warning-foreground: 0 0% 98%;
+  --overlay: 0 0% 0%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+  --sidebar: 240 10% 3.9%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  /* Depth (dark stock block of this file) */
+  --zk-shadow-color: 0 0% 0%;
+  --zk-lift-shadow: 0 10px 20px -8px rgb(0 0 0 / 0.6);
+}
+
+/*
  * Decorative layer an identity opts into (display token).
  * !important: the layer's own layout utilities (flex, block) must not win.
  */
