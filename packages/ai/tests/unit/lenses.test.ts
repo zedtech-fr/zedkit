@@ -76,6 +76,22 @@ describe("lens registry", () => {
     ).toEqual([]);
   });
 
+  it("routes the same minimum set in the registry and the review skill", () => {
+    const expected = ["code", "persona", "ponytail", "quality gate"];
+    const fromRegistry = registry()
+      .filter((row) => row.mandatory === "yes")
+      .map((row) => row.lens)
+      .sort();
+    expect(fromRegistry).toEqual(expected);
+    const skill = readFileSync(join(kitDir(), "skills/review/SKILL.md"), "utf8");
+    const sentence = /Minimum on every review:([\s\S]*?)\. Add each/u.exec(skill)?.[1] ?? "";
+    expect(sentence.length, "minimum sentence").toBeGreaterThan(0);
+    const fromSkill = [...sentence.matchAll(/`([^`]+)`/gu)]
+      .map((m) => m[1] ?? "")
+      .sort();
+    expect(fromSkill).toEqual(expected);
+  });
+
   it("release lens is wired to the release-manager agent", () => {
     const row = registry().find((r) => r.lens === "release");
     expect(row?.status).toBe("exists");
