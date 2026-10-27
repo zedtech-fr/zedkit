@@ -1,4 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/** The bar unrolls from the magnifier when it opens; measure only once that travel is over. */
+const settled = (page: Page) =>
+  page.waitForFunction(() => (document.querySelector("[data-search-bar]")?.getAnimations().length ?? 1) === 0);
+
 
 /**
  * Phone search with the software keyboard up: the bar is anchored at the top of what can be seen and does
@@ -48,6 +53,7 @@ for (const identity of IDENTITIES) {
         const toggle = page.getByRole("button", { name: "Search the documentation" });
         const restBox = (await toggle.boundingBox())!;
         await toggle.click();
+        await settled(page);
         const input = page.getByRole("searchbox");
         await expect(input).toBeFocused();
         const bar = page.getByRole("search");
@@ -70,10 +76,9 @@ for (const identity of IDENTITIES) {
         expect(top.y + top.height).toBeLessThanOrEqual(visibleBottom);
         if (offsetTop === 0) expect(Math.abs(top.y - before.y)).toBeLessThanOrEqual(1);
 
-        // The floating magnifier stays the trigger at the bottom right.
-        const button = (await toggle.boundingBox())!;
-        expect(Math.abs(button.x - restBox.x)).toBeLessThanOrEqual(1);
-        expect(Math.abs(button.y - restBox.y)).toBeLessThanOrEqual(1);
+        // The floating magnifier is gone while the bar is open: nothing is left above the keyboard.
+        await expect(toggle).toBeHidden();
+        expect(await page.locator("[data-search-pill] button[aria-label='Search the documentation']").evaluate((el) => getComputedStyle(el).visibility)).toBe("hidden");
 
         // The whole panel (bar + results) lies inside the visible viewport, results right under the bar.
         const box = (await sheet.boundingBox())!;
@@ -94,7 +99,7 @@ for (const identity of IDENTITIES) {
         // Phone ergonomics: field 16px or more, targets 44px or more, no sideways scroll.
         expect(await input.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
         expect((await page.getByRole("button", { name: "Close search" }).boundingBox())!.width).toBeGreaterThanOrEqual(43.5);
-        expect(button.width).toBeGreaterThanOrEqual(43.5);
+        expect(restBox.width).toBeGreaterThanOrEqual(43.5);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 
         // Keyboard down: the sheet may grow again but stays on screen; Escape closes and returns focus.
@@ -102,6 +107,7 @@ for (const identity of IDENTITIES) {
         await expect.poll(async () => (await sheet.boundingBox())!.y + (await sheet.boundingBox())!.height).toBeLessThanOrEqual(phone.height);
         await page.keyboard.press("Escape");
         await expect(input).toHaveCount(0);
+        await expect(toggle).toBeVisible();
         await expect(toggle).toBeFocused();
       });
     }
