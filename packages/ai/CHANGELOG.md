@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.6.4
+
+### Patch Changes
+
+- 7a2814c: Test that third-party notices and shipped LICENSE files match exactly.
+
 ## 0.6.3
 
 ### Patch Changes
