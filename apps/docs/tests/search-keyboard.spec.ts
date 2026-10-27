@@ -10,7 +10,7 @@ const KEYBOARD = 336;
 // Playwright has no software keyboard: stand in a visual viewport that shrinks the way iOS's does.
 {
   for (const phone of PHONES) {
-    test(`pill keeps air above the keyboard (${phone.name})`, async ({ page }) => {
+    test(`pill sits right on top of the keyboard (${phone.name})`, async ({ page }) => {
       await page.setViewportSize({ width: phone.width, height: phone.height });
       await page.addInitScript(
         ([keyboard]) => {
@@ -40,8 +40,9 @@ const KEYBOARD = 336;
       await expect.poll(async () => {
         const box = await pill.boundingBox();
         return box ? phone.height - KEYBOARD - (box.y + box.height) : -1;
-      }).toBeGreaterThanOrEqual(16);
+      }).toBeLessThanOrEqual(1);
       const lifted = await pill.boundingBox();
+      expect(phone.height - KEYBOARD - ((lifted?.y ?? 0) + (lifted?.height ?? 0))).toBeGreaterThanOrEqual(-1);
       expect(lifted?.y ?? -1).toBeGreaterThanOrEqual(0);
       expect(lifted?.x ?? -1).toBeGreaterThanOrEqual(0);
       expect((lifted?.x ?? 0) + (lifted?.width ?? 0)).toBeLessThanOrEqual(phone.width);

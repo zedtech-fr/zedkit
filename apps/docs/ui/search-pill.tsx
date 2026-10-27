@@ -7,10 +7,10 @@ import { useStaticSearch, type SearchResultRecord } from "fumadocs-core/search/c
 import { Search, X } from "lucide-react";
 
 const iconButtonClassName =
-  "inline-flex min-h-11 min-w-11 flex-none items-center justify-center rounded-full focus-ring-control";
+  "inline-flex min-h-[max(2.75rem,44px)] min-w-[max(2.75rem,44px)] flex-none items-center justify-center rounded-full focus-ring-control";
 
-/** Extra air (px) between the pill and the top of the keyboard or its toolbar, on top of the resting 16px offset. */
-const KEYBOARD_GAP = 16;
+/** The keyboard counts as open when it covers at least this much (px) of the layout viewport; smaller changes are browser bars. */
+const KEYBOARD_MIN_INSET = 150;
 
 const SHEET_ID = "phone-search-results";
 /** Air (px) kept between the results sheet and the top of what the visitor can see. */
@@ -38,20 +38,33 @@ function fitSheet() {
   sheet.style.maxHeight = `${Math.max(SHEET_MIN_HEIGHT, Math.floor(cap))}px`;
 }
 
-/** Lifts `target` above the part of the software keyboard that covers the layout viewport (iOS and Android). */
-function useKeyboardLift(active: boolean, target: RefObject<HTMLElement | null>) {
+/**
+ * Docks `target` to the bottom of the visual viewport while the software keyboard is up (iOS and Android),
+ * so the open pill sits directly on top of the keyboard with no gap. It is placed from the visual viewport's
+ * own top and height, so it holds when the browser scrolls the page or resizes only the visual viewport.
+ * With no keyboard the pill rests at its normal bottom-right offset.
+ */
+function useKeyboardDock(active: boolean, target: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const viewport = window.visualViewport;
     const element = target.current;
     if (!active || !viewport || !element) return;
+    const reset = () => {
+      element.style.top = "";
+      element.style.bottom = "";
+    };
     const update = () => {
-      const inset = Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop));
-      // The keyboard's own toolbar (iOS) is not part of the visual viewport: keep extra air above it.
-      element.style.translate = inset > 0 ? `0 -${inset + KEYBOARD_GAP}px` : "";
+      const inset = Math.round(window.innerHeight - viewport.height - viewport.offsetTop);
+      if (inset >= KEYBOARD_MIN_INSET) {
+        element.style.bottom = "auto";
+        element.style.top = `${Math.round(viewport.offsetTop + viewport.height - element.offsetHeight)}px`;
+      } else {
+        reset();
+      }
       fitSheet();
     };
     update();
-    // iOS finishes the keyboard animation and toolbar after the first resize event.
+    // iOS finishes the keyboard animation after the first resize event.
     const settle = [120, 320, 640].map((delay) => window.setTimeout(update, delay));
     viewport.addEventListener("resize", update);
     viewport.addEventListener("scroll", update);
@@ -61,7 +74,7 @@ function useKeyboardLift(active: boolean, target: RefObject<HTMLElement | null>)
       viewport.removeEventListener("resize", update);
       viewport.removeEventListener("scroll", update);
       window.removeEventListener("focusin", update);
-      element.style.translate = "";
+      reset();
     };
   }, [active, target]);
 }
@@ -128,7 +141,7 @@ function PillBody({ onClose }: { onClose: () => void }) {
                   <Link
                     href={result.url}
                     onClick={onClose}
-                    className="flex min-h-11 flex-col justify-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none"
+                    className="flex min-h-[max(2.75rem,44px)] flex-col justify-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none"
                   >
                     <span className={result.type === "page" ? "font-medium" : "text-muted-foreground"}>
                       {plainResultText(result.content)}
@@ -183,8 +196,8 @@ function PillBody({ onClose }: { onClose: () => void }) {
 
 /**
  * Phone search: a round magnifier at the bottom-right that stretches left into a pill
- * (the magnifier stays its right end), lifts above the software keyboard, and shows
- * results in a sheet above the pill.
+ * (the magnifier stays its right end), docks to the bottom of the visual viewport right on top
+ * of the software keyboard, and shows results in a sheet directly above the pill.
  */
 export function SearchPill() {
   const [open, setOpen] = useState(false);
@@ -192,7 +205,7 @@ export function SearchPill() {
   const lifted = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const wasOpen = useRef(false);
-  useKeyboardLift(open, lifted);
+  useKeyboardDock(open, lifted);
 
   // However the pill closes (close button, Escape, overlay tap, route change), focus goes back to the magnifier.
   useEffect(() => {
@@ -227,8 +240,8 @@ export function SearchPill() {
       >
         <div
           role="search"
-          className={`relative flex h-11 items-center justify-end rounded-full bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-none ${
-            open ? "w-[calc(100vw-2rem)]" : "w-11"
+          className={`relative flex h-[max(2.75rem,44px)] items-center justify-end rounded-full bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-none ${
+            open ? "w-[calc(100vw-2rem)]" : "w-[max(2.75rem,44px)]"
           }`}
         >
           {open ? <PillBody onClose={() => setOpen(false)} /> : null}
