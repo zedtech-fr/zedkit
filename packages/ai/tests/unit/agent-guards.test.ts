@@ -20,6 +20,14 @@ function catalogWrites(): Map<string, string> {
 }
 
 describe("agent write guards", () => {
+  it("restricts the catalog Writes column to yes, no or tests only", () => {
+    const writes = catalogWrites();
+    expect(writes.size).toBeGreaterThan(0);
+    for (const [name, column] of writes) {
+      expect(["yes", "no", "tests only"], `Writes value for ${name}`).toContain(column);
+    }
+  });
+
   it("matches the catalog Writes column with frontmatter disallowedTools", () => {
     const writes = catalogWrites();
     expect(writes.size).toBeGreaterThan(0);
