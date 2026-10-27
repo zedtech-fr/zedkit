@@ -5,7 +5,7 @@ import { assertA11yGate } from "./a11y-helpers";
 // Relative path: the config baseURL decides the port.
 const HOME = "/";
 
-/** Turns tide on for the page (nothing selects an identity yet on the site). */
+/** Turns tide on for the page (also the site default). */
 async function useTide(page: Page, theme: "light" | "dark") {
   await page.evaluate((mode) => {
     const root = document.documentElement;
@@ -35,8 +35,9 @@ async function probe(page: Page, property: string, value: string) {
 test.describe("tide identity", () => {
   test("sets Inter at heavy heading weights with large radii", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
-    const stock = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
-    expect(stock).not.toContain("Inter");
+    // Tide is the site default, so the first paint already carries it.
+    const first = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
+    expect(first.startsWith('"Inter Variable"')).toBe(true);
 
     await useTide(page, "light");
     const body = await page.evaluate(() => getComputedStyle(document.body).fontFamily);

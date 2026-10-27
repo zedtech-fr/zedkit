@@ -25,10 +25,10 @@ function resolve(page: Page, color: string) {
   }, color);
 }
 
-test("an unknown stored id is ignored: the stock look stays", async ({ page }) => {
+test("an unknown stored id is ignored: the site default applies", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("zk-identity", "anything"));
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  await expect(page.locator("html")).not.toHaveAttribute("data-identity", /.*/);
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
 });
 
 test("a stored built-in id is applied before first paint", async ({ page }) => {

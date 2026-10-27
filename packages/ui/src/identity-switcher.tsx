@@ -72,7 +72,7 @@ function IdentitySwitcher({
       >
         {identities.map((item) => (
           <option key={item.id} value={item.id}>
-            {item.label}
+            {defaultIdentity && item.id === defaultIdentity ? `${item.label} (default)` : item.label}
           </option>
         ))}
       </select>
