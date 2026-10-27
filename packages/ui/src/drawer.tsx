@@ -87,6 +87,7 @@ function DrawerOverlay({
   return (
     <DrawerPrimitive.Overlay
       ref={ref}
+      data-slot="drawer-overlay"
       className={cn(
         "fixed inset-0 z-overlay bg-overlay/80",
         "motion-safe:data-[state=open]:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]",
@@ -117,6 +118,7 @@ function DrawerContent({
       {modal ? <DrawerOverlay /> : null}
       <DrawerPrimitive.Content
         ref={ref}
+        data-slot="drawer-content"
         className={cn(
           "fixed z-overlay flex flex-col border bg-background outline-none",
           // Safety net for content composed without DrawerHeader/Body/Footer (a bare form, text, a list): it still
