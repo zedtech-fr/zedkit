@@ -44,7 +44,8 @@ export type Action = {
   note?: string;
 };
 
-const ALL_PROVIDERS: Provider[] = ["claude", "cursor", "codex", "muse"];
+/** Every provider the installer can wire; the CLI accepts these plus `all`. */
+export const ALL_PROVIDERS: Provider[] = ["claude", "cursor", "codex", "muse"];
 
 const CURSOR_RULE = `---
 description: Project rules
