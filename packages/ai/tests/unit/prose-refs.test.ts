@@ -7,12 +7,14 @@ import { lensTableRows, shippedNames } from "./helpers.js";
 const PROSE = [
   "apps/docs/prose/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo.mdx",
   "apps/docs/prose/ai/check-that-skills-subagents-commands-and-provider-copies-are-valid.mdx",
+  "apps/docs/prose/guides/set-up-your-coding-agents.mdx",
+  "apps/docs/prose/guides/getting-started.mdx",
 ];
 // CLI surface and providers: stable vocabulary, not kit content.
 const CLI = new Set(["init", "validate", "list"]);
-const PROVIDERS = new Set(["cursor", "claude", "codex", "muse"]);
+const PROVIDERS = new Set(["cursor", "claude", "codex", "muse", "all"]);
 // Bare prose words, not references.
-const GENERIC = new Set(["ok", "name", "description", "skill"]);
+const GENERIC = new Set(["ok", "name", "description", "skill", "html"]);
 
 function lensNames(): Set<string> {
   return new Set(lensTableRows().map((cells) => cells[1] ?? ""));
