@@ -42,7 +42,7 @@ test.describe("motion utilities demo", () => {
     const lift = page.locator(".hover-lift").filter({ hasText: "Website relaunch" });
     await expect(lift).toBeVisible();
     await expect(page.getByRole("button", { name: "Presses down on click" })).toBeVisible();
-    const tasks = page.locator("[data-stagger]").filter({ hasText: "Publish the sale banner" });
+    const tasks = stagger.locator("xpath=..").locator("[data-stagger]");
     await expect(tasks.getByText("Write the launch email")).toBeVisible();
     await page.getByRole("button", { name: "Replay", exact: true }).click();
     await expect(tasks.getByText("Publish the sale banner")).toBeVisible();

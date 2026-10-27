@@ -43,21 +43,24 @@ export async function assertAxeOnMain(
   exclude?: string,
 ): Promise<void> {
   let builder = new AxeBuilder({ page }).include("main");
-  if (exclude) builder = builder.exclude(exclude);
+  if (exclude) {
+    // Nested AppShell preview has its own <main>/<header>, which also match
+    // include("main"). Exclude those roots, not only the wrapper.
+    builder = builder.exclude(exclude).exclude(`${exclude} main`).exclude(`${exclude} header`);
+  }
   const results = await builder.disableRules([...AXE_BASELINE_RULES_OFF, ...extraRulesOff]).analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 
-export async function assertNoNestedInteractive(page: Page): Promise<void> {
-  const results = await new AxeBuilder({ page })
-    .include("main")
-    .withRules(["nested-interactive"])
-    .analyze();
+export async function assertNoNestedInteractive(page: Page, exclude?: string): Promise<void> {
+  let builder = new AxeBuilder({ page }).include("main").withRules(["nested-interactive"]);
+  if (exclude) builder = builder.exclude(exclude);
+  const results = await builder.analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 
 export async function assertUniqueLinkNames(page: Page): Promise<void> {
-  const main = page.locator("main");
+  const main = page.locator("main").first();
   await expect(main).toBeVisible();
   const links = await main.getByRole("link").evaluateAll((nodes) =>
     nodes.map((node) => {
