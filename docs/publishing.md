@@ -19,8 +19,19 @@ the version). Releases run on Changesets; nothing publishes by hand.
 - `NPM_TOKEN` (repo secret): npm automation token with publish rights
   on the `@zedtech` org. Write-only from CI; never printed, never
   committed. Consumers need NO token (public packages).
-- Provenance attestations are automatic: public repo + `id-token: write`
-  on the release job lets npm link each tarball to its CI run.
+- Provenance: the publish step sets `NPM_CONFIG_PROVENANCE=true`.
+  Combined with `id-token: write` and a public `repository` field on
+  each package, npm attaches a Sigstore attestation to the tarball.
+  After the next publish: the provenance badge on npmjs.com, and
+  `npm audit signatures` in a consumer.
+
+## Trusted publishing (optional)
+
+To drop the long-lived `NPM_TOKEN`, configure npm trusted publishing
+per package (npmjs.com → package → Settings → Trusted Publisher →
+GitHub Actions: owner `zedtech-fr`, repository `zedkit`, workflow
+filename `release.yml`). Provenance then comes with the OIDC publish.
+Do this only after one successful provenance publish with the token.
 
 ## Version PR checks
 

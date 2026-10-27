@@ -40,4 +40,12 @@ describe("package README", () => {
       expect([...known], `entry point ${name}`).toContain(name);
     }
   });
+
+  it("pins no kit counts that rot as the kit grows", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    const counts = [...readme.matchAll(/\b\d+ (subagents|skills|commands|agents)\b/g)].map(
+      (m) => m[0],
+    );
+    expect(counts).toEqual([]);
+  });
 });
