@@ -254,6 +254,48 @@ describe("route modal", () => {
     expect(dialogDialog.className).not.toContain("max-w-route-modal-dialog-lg");
   });
 
+  it("moves focus inside the drawer on open", () => {
+    render(
+      <>
+        <button type="button">trigger</button>
+        <RouteModal title="Delivery" onClose={vi.fn()}>
+          <button type="button">inside</button>
+        </RouteModal>
+      </>,
+    );
+    // Without Vaul's autoFocus the trigger keeps focus and the
+    // trap below never engages (keyboard users tab through the
+    // background page).
+    expect(screen.getByRole("dialog").contains(document.activeElement)).toBe(true);
+  });
+
+  it("traps Tab inside the drawer", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">before</button>
+        <RouteModal title="Delivery" onClose={vi.fn()}>
+          <button type="button">first</button>
+          <button type="button">second</button>
+        </RouteModal>
+        <button type="button">after</button>
+      </>,
+    );
+    const dialog = screen.getByRole("dialog");
+    // 3 inside focusables (Close + first + second): 6 tabs lap
+    // twice, so an untrapped Tab would visibly escape.
+    for (let i = 0; i < 6; i++) {
+      await user.tab();
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+  });
+
+  // NOTE: return-focus-on-unmount is not asserted here — jsdom
+  // + abrupt rerender-unmount reproduces it for NEITHER variant
+  // (verified against the untouched dialog variant), while real
+  // browsers restore per Radix. That leg stays covered by
+  // browser-level consumer tests.
+
   it("has no axe violations when open", async () => {
     render(
       <RouteModal title="Delivery" description="Tracking details." onClose={vi.fn()}>

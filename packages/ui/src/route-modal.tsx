@@ -133,8 +133,19 @@ export function RouteModal({
   // the full width, so narrowing them would look broken.
   const drawerSizeClass = direction === "left" || direction === "right" ? DRAWER_SIZES[size] : undefined;
 
+  // autoFocus: Vaul disables the underlying Radix mount-autofocus
+  // by default, which strands focus on the trigger — outside the
+  // drawer — so the focus trap never engages and keyboard users
+  // tab through the background page. RouteModal is always modal,
+  // so moving focus inside on open (and back to the trigger on
+  // close, which Radix then handles) is unconditionally correct
+  // here. The bare Drawer keeps Vaul's default: non-modal
+  // drawers (modal={false}) must not steal focus.
+  // Vaul component prop, not the HTML attribute: enabling Radix
+  // mount-autofocus is what lets the modal trap engage per WAI-APG.
   return (
-    <Drawer open={open} onOpenChange={handleOpenChange} direction={direction}>
+    // eslint-disable-next-line jsx-a11y/no-autofocus -- see above (#507)
+    <Drawer open={open} onOpenChange={handleOpenChange} direction={direction} autoFocus>
       <DrawerContent className={cn(drawerSizeClass, className)}>
         <DrawerClose asChild>
           <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-overlay-close-offset right-overlay-close-offset">
