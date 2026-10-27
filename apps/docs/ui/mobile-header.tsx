@@ -16,6 +16,7 @@ import {
   IdentityPicker,
 } from "@zedtech/zedkit-ui";
 import { SearchPill } from "@/ui/search-pill";
+import { SiteBrand } from "@/ui/site-brand";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 
 const iconButtonClassName =
@@ -84,7 +85,7 @@ function HomeMenuButton({ links }: { links: MobileLink[] }) {
 }
 
 /**
- * Phone header (< md): the name at the left, the identity chooser in the
+ * Phone header (< md): the logo and name at the left, the identity chooser in the
  * middle, the rest grouped at the right; search is a floating button.
  */
 export function MobileHeader({
@@ -106,7 +107,9 @@ export function MobileHeader({
         }
       >
         <Link href="/" aria-label="zedkit home" className={`${iconButtonClassName} justify-self-start text-foreground`}>
-          <span className="px-1 font-semibold">zedkit</span>
+          <span className="flex items-center gap-2 px-1 font-semibold">
+            <SiteBrand />
+          </span>
         </Link>
         <IdentityPicker />
         <div className="flex items-center justify-self-end">
