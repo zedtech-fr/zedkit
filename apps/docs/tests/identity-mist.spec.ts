@@ -71,3 +71,82 @@ test.describe("mist identity", () => {
     });
   }
 });
+
+/** Tokens read through var() on a probe, so the comparison sees resolved values. */
+const PROBE_STYLE: Record<string, string> = {
+  backgroundColor: "hsl(var(--background))",
+  color: "hsl(var(--foreground))",
+  outlineColor: "hsl(var(--primary))",
+  borderTopColor: "hsl(var(--border))",
+  borderBottomColor: "hsl(var(--accent))",
+  borderLeftColor: "hsl(var(--muted-foreground))",
+  borderRightColor: "hsl(var(--card))",
+  borderTopLeftRadius: "var(--radius-xl)",
+  borderTopRightRadius: "var(--radius-lg)",
+  borderBottomLeftRadius: "var(--radius-md)",
+  borderBottomRightRadius: "var(--radius-2xl)",
+  paddingTop: "calc(var(--spacing) * 4)",
+  fontSize: "var(--text-sm)",
+  letterSpacing: "var(--tracking-tight)",
+  boxShadow: "var(--zk-shadow-md)",
+  borderTopWidth: "var(--zk-border-width)",
+  transitionDuration: "var(--motion-base)",
+  fontFamily: "var(--font-sans)",
+  backgroundImage: "var(--zk-bg-pattern)",
+};
+
+/** Renders a scoped mist subtree in <main> and reads what it resolves to. */
+async function readScopedMist(page: Page) {
+  return page.evaluate((style) => {
+    const scope = document.createElement("div");
+    scope.setAttribute("data-identity-scope", "");
+    scope.setAttribute("data-identity", "mist");
+    const probe = document.createElement("div");
+    Object.assign(probe.style, style, { borderStyle: "solid" });
+    const heading = document.createElement("h2");
+    heading.textContent = "Scoped";
+    const label = document.createElement("th");
+    label.textContent = "Label";
+    scope.append(probe, heading, label);
+    document.querySelector("main")!.appendChild(scope);
+    const read = (el: Element, keys: string[]) => {
+      const computed = getComputedStyle(el);
+      return Object.fromEntries(keys.map((key) => [key, computed.getPropertyValue(key)]));
+    };
+    const out = {
+      probe: read(probe, Object.keys(style).map((key) => key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`))),
+      heading: read(heading, ["font-family", "font-weight", "letter-spacing", "text-transform", "line-height"]),
+      label: read(label, ["text-transform", "letter-spacing"]),
+    };
+    scope.remove();
+    return out;
+  }, PROBE_STYLE);
+}
+
+/** Sets a page identity and colour mode. */
+async function usePageIdentity(page: Page, identity: string, theme: "light" | "dark") {
+  await page.evaluate(
+    ([id, mode]) => {
+      const root = document.documentElement;
+      root.setAttribute("data-identity", id!);
+      root.classList.toggle("dark", mode === "dark");
+      root.classList.toggle("light", mode === "light");
+      root.style.colorScheme = mode!;
+    },
+    [identity, theme],
+  );
+}
+
+test.describe("scoped mist under another page identity", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`renders like a mist page under every identity, ${theme}`, async ({ page }) => {
+      await page.goto(HOME, { waitUntil: "networkidle" });
+      await useMist(page, theme);
+      const reference = await readScopedMist(page);
+      for (const identity of ["press", "tide", "volt", "maison", "glass"]) {
+        await usePageIdentity(page, identity, theme);
+        expect({ identity, ...(await readScopedMist(page)) }).toEqual({ identity, ...reference });
+      }
+    });
+  }
+});
