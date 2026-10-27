@@ -42,3 +42,7 @@ exists IS a blocker.
 6. Gentle motion by default with reduced-motion respected: overlays and
    state changes animate entry AND exit (~150-250ms, transform/opacity, no
    shift). Example refusal: an overlay without transition.
+7. Loading and feedback named, never naked: zero naked spinners, zero
+   generic 'loading' — every wait names what loads, skeletons match the
+   real content shape, retry keeps state.
+   Example refusal: a spinner with no label on a slow save.
