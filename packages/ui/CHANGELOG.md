@@ -1,5 +1,12 @@
 # @zedtech/zedkit-ui
 
+## 0.5.1
+
+### Patch Changes
+
+- 71c7513: RouteModal drawer returns focus to the trigger on close (WCAG 2.4.3) instead of dropping it on body.
+- 905202a: DetailPanelRow values wrap inside the grid instead of spilling past their boxes (grid blowout on long unbreakable ids).
+
 ## 0.5.0
 
 ### Minor Changes
