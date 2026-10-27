@@ -3,7 +3,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const stylesPath = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src", "styles.css");
+const srcDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
+const stylesPath = join(srcDir, "styles.css");
+const identitiesPath = join(srcDir, "identities.css");
 
 type RGB = [number, number, number];
 
@@ -52,5 +54,21 @@ describe("theme token contrast (WCAG AA, downstream axe scans depend on it)", ()
   it.each(["light", "dark"] as const)("muted text on card surfaces, %s", (theme) => {
     const ratio = contrast(token(theme, "muted-foreground"), token(theme, "card"));
     expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.each(["light", "dark"] as const)("success badge text on success fills, %s", (theme) => {
+    const ratio = contrast(token(theme, "success-foreground"), token(theme, "success"));
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("the scoped mist light success fill keeps the same contrast as the stock theme", () => {
+    const css = readFileSync(identitiesPath, "utf8");
+    const block = css.split(/^\[data-identity-scope\]\[data-identity="mist"\]\s*\{/m).map((part) => part.split(/^\}/m)[0] ?? "").find((part) => part.includes("--success:")) ?? "";
+    const read = (name: string) => {
+      const match = block.match(new RegExp(`--${name}:\\s*([^;]+);`));
+      if (!match) throw new Error(`--${name} missing from the scoped mist light block`);
+      return parseTriplet(match[1]!);
+    };
+    expect(contrast(read("success-foreground"), read("success"))).toBeGreaterThanOrEqual(4.5);
   });
 });

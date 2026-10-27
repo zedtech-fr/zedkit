@@ -63,7 +63,7 @@ html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   --accent-foreground: 240 5.9% 10%;
   --destructive: 0 72.2% 47%;
   --destructive-foreground: 0 0% 98%;
-  --success: 142.1 76.2% 36.3%;
+  --success: 142.1 76.2% 27%;
   --success-foreground: 0 0% 98%;
   --warning: 32 95% 44%;
   --warning-foreground: 240 10% 3.9%;
