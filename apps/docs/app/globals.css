@@ -41,3 +41,15 @@ html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   --input: 240 5.9% 90%;
   --ring: 240 5% 64.9%;
 }
+
+/* Phone search: hidden while a drawer or dialog is open. */
+body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
+body:has([role="dialog"][data-state="open"]) [data-search-pill] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-search-pill] button:hover {
+    filter: brightness(1.02);
+  }
+}

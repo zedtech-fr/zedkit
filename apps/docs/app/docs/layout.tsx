@@ -5,6 +5,7 @@ import { featuredPackageChangelogUrl } from "@/content/gallery";
 import { SiteBrand } from "@/ui/site-brand";
 import { siteHeaderLinks } from "@/lib/site-header-links";
 import { docsChromeSlots } from "@/ui/site-chrome";
+import { DocsHeader } from "@/ui/site-headers";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -15,7 +16,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       links={siteHeaderLinks(featuredPackageChangelogUrl)}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
-      slots={docsChromeSlots}
+      slots={{ ...docsChromeSlots, header: DocsHeader }}
     >
       {children}
     </DocsLayout>
