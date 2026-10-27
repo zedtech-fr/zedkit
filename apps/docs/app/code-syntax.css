@@ -1,6 +1,7 @@
 /*
- * GitHub-light/dark Shiki tokens remapped for >= 4.5:1 on code block backgrounds
- * (mist #f1f1f1 light, identity card tones dark). Match inline --shiki-* hex values.
+ * GitHub-light/dark Shiki tokens remapped toward 4.5:1 on code block backgrounds
+ * (mist #f1f1f1 light, identity card tones dark), checked by hand, not by a test.
+ * Matches inline --shiki-* hex values: re-verify after a Shiki upgrade.
  */
 
 /* --- light mode (page and light-scoped previews) --- */
