@@ -118,6 +118,21 @@ describe("third-party notices", () => {
     }
   });
 
+  it("ships provider adapters only with upstream skills", () => {
+    const firstParty = new Set(firstPartySkills());
+    const withAdapters = readdirSync(join(kitDir(), "skills"), { withFileTypes: true })
+      .filter(
+        (entry) =>
+          entry.isDirectory() &&
+          existsSync(join(kitDir(), "skills", entry.name, "agents", "openai.yaml")),
+      )
+      .map((entry) => entry.name);
+    expect(withAdapters.length).toBeGreaterThan(0);
+    for (const name of withAdapters) {
+      expect(firstParty.has(name), `${name} is first-party`).toBe(false);
+    }
+  });
+
   it("names only shipped skills in the README vendored paragraph", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     const at = readme.indexOf("**Skills vendored (MIT):**");
