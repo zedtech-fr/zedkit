@@ -92,6 +92,15 @@ export const badgeVariants: (props?: ({
     variant?: "default" | "destructive" | "secondary" | "success" | "warning" | "outline" | null | undefined;
 } & ClassProp) | undefined) => string;
 
+// @public
+export function BrandLogo(input: BrandLogoProps): JSX.Element;
+
+// @public (undocumented)
+export interface BrandLogoProps extends Omit<SVGProps<SVGSVGElement>, "viewBox" | "title"> {
+    title: string;
+    viewBox: string;
+}
+
 // @public (undocumented)
 export const Button: React_2.ForwardRefExoticComponent<ButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
 
@@ -103,7 +112,7 @@ export interface ButtonProps extends React_2.ButtonHTMLAttributes<HTMLButtonElem
 
 // @public (undocumented)
 export const buttonVariants: (props?: ({
-    variant?: "default" | "destructive" | "secondary" | "outline" | "ghost" | null | undefined;
+    variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
     size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -489,7 +498,7 @@ export type FormSubmitProps = Omit<ButtonProps, "type"> & {
 
 // @public (undocumented)
 export const Heading: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLHeadingElement> & VariantProps<(props?: ({
-    level?: 1 | 2 | 3 | 4 | null | undefined;
+    level?: 1 | 4 | 2 | 3 | null | undefined;
 } & ClassProp) | undefined) => string> & {
     level?: 1 | 2 | 3 | 4;
     as?: "h1" | "h2" | "h3" | "h4" | "div";
@@ -505,7 +514,7 @@ export type HeadingProps = React_2.HTMLAttributes<HTMLHeadingElement> & VariantP
 
 // @public (undocumented)
 export const headingVariants: (props?: ({
-    level?: 1 | 2 | 3 | 4 | null | undefined;
+    level?: 1 | 4 | 2 | 3 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -609,7 +618,7 @@ export interface LivePulseProps {
 export function Logo(input: LogoProps): JSX.Element;
 
 // @public (undocumented)
-export interface LogoProps extends Omit<SVGProps<SVGSVGElement>, "children" | "viewBox"> {
+export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "viewBox"> {
     title?: string;
 }
 
@@ -836,7 +845,7 @@ export type StackProps = React_2.HTMLAttributes<HTMLDivElement> & VariantProps<t
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 8 | 2 | 3 | 4 | 6 | null | undefined;
+    gap?: 1 | 4 | 2 | 3 | 8 | 6 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public

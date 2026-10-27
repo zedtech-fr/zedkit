@@ -1669,24 +1669,28 @@
           ]
         },
         {
-          "need": "Show the zedkit logo",
-          "import": "`@zedtech/zedkit-ui` — `Logo`, `LogoProps`",
+          "need": "Show your brand logo",
+          "import": "`@zedtech/zedkit-ui` — `BrandLogo`, `BrandLogoProps`, `Logo`, `LogoProps`",
           "wraps": "none (inline SVG)",
           "status": "alpha",
-          "shortName": "Logo",
-          "audience": "Teams building a header, a footer or a share image for a zedkit-based site.",
-          "purpose": "The zedkit mark as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.",
-          "whenToUse": "Next to the product name in a site header, or anywhere a small brand mark is needed.",
-          "whenNotToUse": "For your own brand — ship your own mark instead.",
+          "shortName": "BrandLogo",
+          "audience": "Teams building a header, a footer or a share image for their own site.",
+          "purpose": "Render your own logo as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.",
+          "whenToUse": "Next to your product name in a site header or footer, or as the mark of a share image.",
+          "whenNotToUse": "For the zedkit mark — `Logo` is zedkit's own mark, used by the zedkit docs site; do not ship it as yours.",
           "derivedFrom": null,
-          "example": "import { Logo } from \"@zedtech/zedkit-ui\";\n<Logo className=\"h-6 text-foreground\" title=\"\" />",
+          "example": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Logo } from \"@zedtech/zedkit-ui\";\n<Logo className=\"h-6 text-foreground\" title=\"\" />"
+              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>"
+            },
+            {
+              "title": "Header link to the home page",
+              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<a href=\"/\" className=\"flex items-center gap-2 text-foreground\">\n  <BrandLogo title=\"\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n    <path d=\"M16 1 25 15H7Z\" />\n  </BrandLogo>\n  Harbor Studio\n</a>"
             }
           ],
-          "a11y": "named image (\"zedkit\") by default; pass `title=\"\"` to hide it when the name is written next to it.",
+          "a11y": "named image (the brand name) when the mark stands alone; pass `title=\"\"` to hide it when the name is written next to it, and let the link text label the link.",
           "seeAlso": [
             "Switch the visual identity with one attribute"
           ]

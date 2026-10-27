@@ -1,7 +1,6 @@
-import type { SVGProps } from "react";
-import { cn } from "./utils.js";
+import { BrandLogo, type BrandLogoProps } from "./brand-logo.js";
 
-export interface LogoProps extends Omit<SVGProps<SVGSVGElement>, "children" | "viewBox"> {
+export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "viewBox"> {
   /**
    * Accessible name. Defaults to "zedkit". Pass an empty string when the brand
    * name is already written next to the mark, so screen readers skip it.
@@ -17,29 +16,16 @@ const WAVES = [
 const HAIRLINE = "M28.5 453.5C36.47 444.84 45.58 437.41 54.79 430.13C62.49 424.05 70.27 418.07 77.65 411.63C81.71 408.09 85.64 404.42 89.58 400.74C93.42 397.16 97.25 393.57 101.13 390.03C107.68 384.03 114.34 378.16 121.07 372.38C146.6 350.44 173.18 329.71 200.87 310.57C222.9 295.35 245.64 281.13 269.01 268.06C278.46 262.77 288.02 257.67 297.68 252.75C302.21 250.45 306.75 248.19 311.32 245.98C314.95 244.23 318.59 242.51 322.23 240.79C380.32 213.3 438.31 184.67 491.69 148.73C516.35 132.13 540.02 113.98 561.62 93.54C567.15 88.3 572.55 82.91 577.56 77.18C581.89 72.23 585.92 67.02 589.67 61.61C593.88 55.52 597.73 49.17 601.54 42.81C604.83 37.35 608.09 31.88 611.5 26.5L611.5 26.5C604.22 38.17 594.57 47.95 584.82 57.54C580.24 62.06 575.63 66.53 571.04 71.05C565.75 76.27 560.5 81.55 555.1 86.67C533.93 106.77 510.58 124.45 486.28 140.63C460.3 157.93 433.24 173.52 405.64 188.08C391.32 195.64 376.86 202.92 362.33 210.07C355.46 213.44 348.59 216.79 341.67 220.06C333.72 223.81 325.72 227.46 317.76 231.19C299.48 239.77 281.41 248.81 263.72 258.55C239.96 271.63 216.89 285.98 194.5 301.31C166.4 320.57 139.37 341.39 113.51 363.57C106.7 369.41 99.96 375.35 93.27 381.34C89.32 384.88 85.38 388.44 81.48 392.05C77.49 395.76 73.55 399.52 69.81 403.46C63.01 410.62 56.87 418.38 50.83 426.21C43.63 435.52 36.57 444.92 28.5 453.5Z";
 
 /**
- * The zedkit logo mark. It paints with `currentColor`, so it follows the text colour:
- * light, dark and every identity restyle it without a second asset. Size it with
- * `className` (for example `h-6 w-auto`); the aspect ratio is 4:3.
+ * The zedkit logo mark, used by the zedkit docs site itself. It paints with `currentColor`
+ * like `BrandLogo`. To show your own brand, use `BrandLogo` with your own shapes instead.
  */
-export function Logo({ title = "zedkit", className, ...props }: LogoProps) {
-  const decorative = title === "";
+export function Logo({ title = "zedkit", ...props }: LogoProps) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="20 18 600 444"
-      fill="currentColor"
-      role={decorative ? undefined : "img"}
-      aria-hidden={decorative ? true : undefined}
-      aria-label={decorative ? undefined : title}
-      focusable="false"
-      className={cn("h-6 w-auto shrink-0", className)}
-      {...props}
-    >
-      {decorative ? null : <title>{title}</title>}
+    <BrandLogo title={title} viewBox="20 18 600 444" {...props}>
       {WAVES.map((d) => (
         <path key={d} d={d} stroke="currentColor" strokeWidth={4} strokeLinejoin="round" />
       ))}
       <path d={HAIRLINE} />
-    </svg>
+    </BrandLogo>
   );
 }
