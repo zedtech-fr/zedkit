@@ -122,7 +122,7 @@
   --zk-shadow-lg: 0 18px 44px -14px hsl(var(--zk-shadow-color) / 0.26), var(--zk-glass-highlight);
   --zk-shadow-xl: 0 28px 64px -18px hsl(var(--zk-shadow-color) / 0.3), var(--zk-glass-highlight);
   --zk-shadow-overlay: 0 24px 60px -16px hsl(var(--zk-shadow-color) / 0.34), var(--zk-glass-highlight);
-  --zk-shadow-sheet: 0 0 56px -12px hsl(var(--zk-shadow-color) / 0.34), var(--zk-glass-highlight);
+  --zk-glass-shadow-sheet: 0 0 56px -12px hsl(var(--zk-shadow-color) / 0.34), var(--zk-glass-highlight);
 
   /* Page texture: three colour halos behind the glass */
   --zk-bg-pattern:
@@ -197,7 +197,7 @@
   --zk-shadow-lg: 0 18px 44px -14px rgb(0 0 0 / 0.65), var(--zk-glass-highlight);
   --zk-shadow-xl: 0 28px 64px -18px rgb(0 0 0 / 0.7), var(--zk-glass-highlight);
   --zk-shadow-overlay: 0 24px 60px -16px rgb(0 0 0 / 0.75), var(--zk-glass-highlight);
-  --zk-shadow-sheet: 0 0 56px -12px rgb(0 0 0 / 0.75), var(--zk-glass-highlight);
+  --zk-glass-shadow-sheet: 0 0 56px -12px rgb(0 0 0 / 0.75), var(--zk-glass-highlight);
   --zk-lift-shadow: 0 20px 44px -14px hsl(252 95% 78% / 0.22), var(--zk-glass-highlight);
   --zk-btn-hover-shadow: 0 12px 28px -10px hsl(252 95% 78% / 0.4);
   --zk-btn-press-shadow: 0 2px 6px -2px hsl(252 95% 78% / 0.3);
@@ -252,7 +252,7 @@
 }
 :root[data-identity="glass"] :where([data-slot="drawer-content"]):where(:not([data-identity-scope] *)),
 [data-identity-scope][data-identity="glass"] :where([data-slot="drawer-content"]) {
-  box-shadow: var(--zk-shadow-sheet);
+  box-shadow: var(--zk-glass-shadow-sheet);
 }
 :root[data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"]):where(:not([data-identity-scope] *)),
 [data-identity-scope][data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"]) {
