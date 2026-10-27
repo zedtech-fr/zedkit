@@ -104,9 +104,14 @@ jobs:
       - run: pnpm registry:build
       - run: pnpm registry:smoke
 
-  docs-e2e:
+  docs-e2e-shard:
+    name: docs-e2e-shard (${{ matrix.shard }}/3)
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
@@ -129,8 +134,18 @@ jobs:
             [ "$code" = "200" ] && break
             sleep 5
           done
-          pnpm --filter @zedtech/zedkit-docs run e2e
+          pnpm --filter @zedtech/zedkit-docs run e2e -- --shard=${{ matrix.shard }}/3
           kill "$(cat /tmp/docs-e2e.pid)"
+
+  # Required check name stays `docs-e2e`: one gate over the three shards.
+  docs-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: docs-e2e-shard
+    if: always()
+    steps:
+      - name: All shards passed
+        run: test "${{ needs.docs-e2e-shard.result }}" = "success"
 
   docs-smoke:
     runs-on: ubuntu-latest
