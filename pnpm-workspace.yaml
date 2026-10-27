@@ -21,6 +21,7 @@ catalog:
   "@types/node": 22.20.5
   turbo: 2.11.10
   "@changesets/cli": 3.0.3
+  "@microsoft/api-extractor": 7.60.0
   ulid: 3.0.2
   "@fastify/static": 10.1.7
   "@nestjs/common": 12.2.0

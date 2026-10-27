@@ -11,7 +11,11 @@
     ".": {
       // Root scripts. `shadcn` is a CLI (`pnpm exec shadcn`), not an import.
       "entry": ["scripts/**/*.{mjs,sh}"],
-      "ignoreDependencies": ["shadcn"]
+      "ignoreDependencies": [
+        "shadcn",
+        // CLI from scripts/check-api-report.sh (`pnpm exec api-extractor`).
+        "@microsoft/api-extractor"
+      ]
     },
     "apps/docs": {
       // Next/fumadocs special files plus surfaces knip cannot see:
