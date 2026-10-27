@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
-import { installKit, type Provider } from "./install.js";
+import { ALL_PROVIDERS, installKit, type Provider } from "./install.js";
 import { readManifest } from "./kit.js";
 import { checkDrift, validateKit } from "./validate.js";
 
@@ -48,7 +48,7 @@ function parseProviders(value: string | boolean | undefined): Result<Provider[] 
   if (value === undefined) return ok(undefined);
   const names = String(value).split(",").map((s) => s.trim());
   if (names.includes("all")) return ok(undefined);
-  const bad = names.find((n) => n !== "claude" && n !== "cursor" && n !== "codex" && n !== "muse");
+  const bad = names.find((n) => !ALL_PROVIDERS.some((p) => p === n));
   if (bad !== undefined) return err(new Error(`unknown provider "${bad}" (cursor, claude, codex, muse, all)`));
   return ok(names as Provider[]);
 }
