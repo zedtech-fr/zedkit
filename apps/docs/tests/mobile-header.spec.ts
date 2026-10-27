@@ -25,6 +25,18 @@ for (const path of PAGES) {
       }
     });
 
+    test("the home link shows the logo mark next to the name", async ({ page }) => {
+      await page.goto(path);
+      const home = page.locator("#nd-mobile-nav").getByRole("link", { name: "zedkit home" });
+      const mark = home.locator("svg");
+      await expect(mark).toHaveCount(1);
+      await expect(mark).toBeVisible();
+      await expect(mark).toHaveAttribute("aria-hidden", "true");
+      await expect(home).toContainText("zedkit");
+      const box = await mark.boundingBox();
+      expect(box?.height ?? 0).toBeGreaterThan(0);
+    });
+
     test("the search button floats bottom-right and opens search with focus", async ({ page }) => {
       await page.goto(path);
       const fab = page.getByRole("button", { name: "Search the documentation" });
