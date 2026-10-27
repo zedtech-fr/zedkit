@@ -1313,7 +1313,7 @@
           "need": "Render a route as a modal over the list",
           "import": "`@zedtech/zedkit-ui` — `RouteModal`, `RouteModalProps`, `RouteModalDirection`, `RouteModalSize`, `RouteModalVariant`, `closeRoute`, `CloseRouteOptions`",
           "wraps": "`(none)`",
-          "status": "alpha",
+          "status": "beta",
           "shortName": "RouteModal",
           "audience": "Developers opening list details in an overlay with a shareable URL (Next.js parallel/intercepting routes).",
           "purpose": "A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.",
