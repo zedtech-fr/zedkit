@@ -7,5 +7,8 @@
 import "@fontsource-variable/geist";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/jost";
 import "@fontsource-variable/newsreader";
 import "@fontsource-variable/space-grotesk";
+// Cormorant: maison display serif.
+import "@fontsource-variable/cormorant";
