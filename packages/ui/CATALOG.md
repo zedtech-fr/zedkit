@@ -593,7 +593,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHea
 
 - Import: `@zedtech/zedkit-ui` — `RouteModal`, `RouteModalProps`, `RouteModalDirection`, `RouteModalSize`, `RouteModalVariant`, `closeRoute`, `CloseRouteOptions`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: RouteModal
 - Audience: Developers opening list details in an overlay with a shareable URL (Next.js parallel/intercepting routes).
 - Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
