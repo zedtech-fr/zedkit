@@ -1669,6 +1669,29 @@
           ]
         },
         {
+          "need": "Show the zedkit logo",
+          "import": "`@zedtech/zedkit-ui` — `Logo`, `LogoProps`",
+          "wraps": "none (inline SVG)",
+          "status": "alpha",
+          "shortName": "Logo",
+          "audience": "Teams building a header, a footer or a share image for a zedkit-based site.",
+          "purpose": "The zedkit mark as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.",
+          "whenToUse": "Next to the product name in a site header, or anywhere a small brand mark is needed.",
+          "whenNotToUse": "For your own brand — ship your own mark instead.",
+          "derivedFrom": null,
+          "example": "import { Logo } from \"@zedtech/zedkit-ui\";\n<Logo className=\"h-6 text-foreground\" title=\"\" />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Logo } from \"@zedtech/zedkit-ui\";\n<Logo className=\"h-6 text-foreground\" title=\"\" />"
+            }
+          ],
+          "a11y": "named image (\"zedkit\") by default; pass `title=\"\"` to hide it when the name is written next to it.",
+          "seeAlso": [
+            "Switch the visual identity with one attribute"
+          ]
+        },
+        {
           "need": "Pick one option from a dropdown",
           "import": "`@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
           "wraps": "`@radix-ui/react-select`",

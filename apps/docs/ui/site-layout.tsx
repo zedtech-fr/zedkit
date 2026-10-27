@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { SiteBrand } from "@/ui/site-brand";
 import { siteHeaderLinks } from "@/lib/site-header-links";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { SitePageShell } from "@/ui/site-page-shell";
@@ -18,7 +19,7 @@ export function SiteLayout({
   return (
     <HomeLayout
       nav={{
-        title: "zedkit",
+        title: <SiteBrand />,
         url: "/",
         // Version sits beside the title link — not inside it (avoids nested <a> / hydration #418).
         children: <KitVersionLabel version={version} changelogHref={changelogHref} />,
