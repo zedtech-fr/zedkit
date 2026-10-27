@@ -241,7 +241,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`
 - Wraps: `(none)`
-- Status: beta
+- Status: alpha
 - Derived from: shadcn/ui (skeleton)
 - Short name: Skeleton
 - Audience: Developers covering loading states without layout shift.

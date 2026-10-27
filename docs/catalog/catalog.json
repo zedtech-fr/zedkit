@@ -964,7 +964,7 @@
           "need": "Show loading placeholder blocks",
           "import": "`@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`",
           "wraps": "`(none)`",
-          "status": "beta",
+          "status": "alpha",
           "shortName": "Skeleton",
           "audience": "Developers covering loading states without layout shift.",
           "purpose": "Animated placeholder blocks that hold layout while data loads.",
