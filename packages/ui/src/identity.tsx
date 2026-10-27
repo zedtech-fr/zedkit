@@ -68,6 +68,15 @@ type IdentityScriptProps = {
   storageKey?: string;
 };
 
+/** JSON literal safe to embed in an inline `<script>` body. */
+function serializeForInlineScript(value: unknown): string {
+  return JSON.stringify(value)
+    .replaceAll("<", "\\u003c")
+    .replaceAll(">", "\\u003e")
+    .replaceAll("\u2028", "\\u2028")
+    .replaceAll("\u2029", "\\u2029");
+}
+
 /**
  * Inline script that sets `data-identity` on <html> before first paint,
  * so the stored identity never flashes. Render it once inside <head>
@@ -78,7 +87,10 @@ function IdentityScript({
   defaultIdentity,
   storageKey = IDENTITY_STORAGE_KEY,
 }: IdentityScriptProps) {
-  const code = `(function(){var d=document.documentElement,a=${JSON.stringify(ids)},k=${JSON.stringify(storageKey)},v=${JSON.stringify(defaultIdentity ?? null)};try{var s=localStorage.getItem(k);if(s&&a.indexOf(s)>-1)v=s}catch(e){}if(v)d.setAttribute("data-identity",v)})()`;
+  const allowed = serializeForInlineScript(ids);
+  const key = serializeForInlineScript(storageKey);
+  const fallback = serializeForInlineScript(defaultIdentity ?? null);
+  const code = `(function(){var d=document.documentElement,a=${allowed},k=${key},v=${fallback};try{var s=localStorage.getItem(k);if(s&&a.indexOf(s)>-1)v=s}catch(e){}if(v)d.setAttribute("data-identity",v)})()`;
   return <script dangerouslySetInnerHTML={{ __html: code }} suppressHydrationWarning />;
 }
 

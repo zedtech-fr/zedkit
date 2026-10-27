@@ -78,6 +78,21 @@ describe("IdentityScript", () => {
     runScript(<IdentityScript ids={["calm"]} storageKey="my-look" />);
     expect(document.documentElement.getAttribute("data-identity")).toBe("calm");
   });
+
+  it("keeps serialized props inside the script tag", () => {
+    const breakout = "</script><script>alert(1)\u2028";
+    const { container, unmount } = render(
+      <IdentityScript ids={[breakout, "calm"]} storageKey={breakout} defaultIdentity={breakout} />,
+    );
+    const html = container.querySelector("script")?.innerHTML ?? "";
+    unmount();
+    expect(html).not.toMatch(/<\/script/i);
+    expect(html).not.toContain("\u2028");
+    new Function(html)();
+    localStorage.setItem(breakout, breakout);
+    runScript(<IdentityScript ids={[breakout, "calm"]} storageKey={breakout} />);
+    expect(document.documentElement.getAttribute("data-identity")).toBe(breakout);
+  });
 });
 
 describe("IdentitySwitcher", () => {
