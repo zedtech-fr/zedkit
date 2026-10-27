@@ -21,7 +21,7 @@ const HAIRLINE = "M28.5 453.5C36.47 444.84 45.58 437.41 54.79 430.13C62.49 424.0
  */
 export function Logo({ title = "zedkit", ...props }: LogoProps) {
   return (
-    <BrandLogo title={title} viewBox="20 18 600 444" {...props}>
+    <BrandLogo data-slot="logo" title={title} viewBox="20 18 600 444" {...props}>
       {WAVES.map((d) => (
         <path key={d} d={d} stroke="currentColor" strokeWidth={4} strokeLinejoin="round" />
       ))}

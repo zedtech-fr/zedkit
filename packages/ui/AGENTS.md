@@ -19,8 +19,9 @@ Rules:
 - `cn()` every `className` prop (conflicts resolve last-wins).
 - `.dark`-class theming only; new tokens go in `src/styles.css`
   in both `:root` and `.dark`.
-- React 19, no `forwardRef` in NEW code (ref-as-prop); copied
-  shadcn code keeps its shape until shadcn itself migrates.
+- React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
+  `forwardRef` (lint in the quality preset). Each exported host sets
+  `data-slot` on its root (see `src/button.tsx`).
 - No `any`, no `ts-ignore`; no eslint-disable except with a cited
   upstream reason in the comment (one exists: TanStack's own
   `ColumnDef<TData, any>` for mixed-value columns).

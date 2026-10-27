@@ -32,6 +32,7 @@ export interface OptionCardProps {
 export function OptionCard({ title, description, checked, onChange, className }: OptionCardProps) {
   return (
     <label
+      data-slot="option-card"
       className={cn(
         "flex cursor-pointer gap-option-card-gap rounded-lg border p-option-card-padding transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
         className,
@@ -52,7 +53,7 @@ export function OptionCards({ options, selected, onChange, label = "Options", cl
   }
 
   return (
-    <div role="group" aria-label={label} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
+    <div data-slot="option-cards" role="group" aria-label={label} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
       {options.map((option) => (
         <OptionCard
           key={option.id}

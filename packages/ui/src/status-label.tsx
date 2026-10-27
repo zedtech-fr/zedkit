@@ -37,6 +37,7 @@ function ToneIcon({ tone }: { tone: StatusLabelTone }) {
 export function StatusLabel({ tone, children, className }: StatusLabelProps) {
   return (
     <span
+      data-slot="status-label"
       role="status"
       className={cn(
         "inline-flex items-center gap-status-label-gap text-xs",

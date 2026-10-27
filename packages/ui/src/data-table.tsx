@@ -87,7 +87,7 @@ export interface DataTableEmptyProps {
  */
 export function DataTableEmpty({ colSpan, message = "No results." }: DataTableEmptyProps) {
   return (
-    <TableRow>
+    <TableRow data-slot="data-table-empty">
       <TableCell colSpan={colSpan} className="text-center text-muted-foreground">
         {message}
       </TableCell>
@@ -109,7 +109,7 @@ export function DataTablePagination({
   className,
 }: DataTablePaginationProps) {
   return (
-    <div className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
+    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
       <span className="text-sm text-muted-foreground">
         Page {page} of {Math.max(pageCount, 1)}
       </span>
@@ -136,6 +136,7 @@ export interface DataTableToolbarProps {
 export function DataTableToolbar({ value, onChange, placeholder = "Filter…" }: DataTableToolbarProps) {
   return (
     <Input
+      data-slot="data-table-toolbar"
       placeholder={placeholder}
       value={value}
       onChange={(event) => onChange(event.target.value)}
@@ -163,7 +164,7 @@ export function DataTable<TData extends RowData>({
   }, [table, pageSize]);
 
   return (
-    <div className="space-y-data-table-stack">
+    <div data-slot="data-table" className="space-y-data-table-stack">
       <DataTableToolbar
         value={table.state.globalFilter ?? ""}
         onChange={(value) => {

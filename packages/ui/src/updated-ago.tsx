@@ -31,7 +31,7 @@ function relativeFrom(now: number, then: number): string {
 export function UpdatedAgo({ date, prefix = "Updated", className }: UpdatedAgoProps) {
   const then = date instanceof Date ? date.getTime() : date;
   return (
-    <span className={cn("text-xs text-muted-foreground", className)}>
+    <span data-slot="updated-ago" className={cn("text-xs text-muted-foreground", className)}>
       {prefix} {relativeFrom(Date.now(), then)}
     </span>
   );

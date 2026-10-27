@@ -27,7 +27,7 @@ export function StatusDot({ tone = "active", pulse, className }: StatusDotProps)
   const color = TONE_COLOR[tone];
   const ping = pulse ?? PING_TONES.has(tone);
   return (
-    <span aria-hidden className={cn("relative flex size-status-dot", className)}>
+    <span data-slot="status-dot" aria-hidden className={cn("relative flex size-status-dot", className)}>
       {ping ? (
         <span
           className={cn(

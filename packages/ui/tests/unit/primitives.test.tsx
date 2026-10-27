@@ -18,6 +18,21 @@ describe("primitives", () => {
     expect(button.className).toContain("bg-destructive");
   });
 
+  it("takes ref as a prop", () => {
+    const ref = { current: null as HTMLButtonElement | null };
+    render(<Button ref={ref}>Save</Button>);
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+    expect(ref.current?.textContent).toBe("Save");
+    expect(ref.current?.getAttribute("data-slot")).toBe("button");
+  });
+
+  it("puts input ref on the native element", () => {
+    const ref = { current: null as HTMLInputElement | null };
+    render(<Input ref={ref} aria-label="Name" />);
+    expect(ref.current).toBeInstanceOf(HTMLInputElement);
+    expect(ref.current?.getAttribute("data-slot")).toBe("input");
+  });
+
   it("spaces button content from control tokens", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });

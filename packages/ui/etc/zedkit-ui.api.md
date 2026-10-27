@@ -11,9 +11,7 @@ import { ClassValue } from 'clsx';
 import { ColumnDef } from '@tanstack/react-table';
 import { ColumnHelper } from '@tanstack/react-table';
 import { ControllerProps } from 'react-hook-form';
-import { DialogCloseProps } from '@radix-ui/react-dialog';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { DialogTriggerProps } from '@radix-ui/react-dialog';
 import { Drawer as Drawer_2 } from 'vaul';
 import { FieldError as FieldError_2 } from 'react-hook-form';
 import { FieldPath } from 'react-hook-form';
@@ -22,12 +20,12 @@ import { FormProviderProps } from 'react-hook-form';
 import { JSX } from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import type { LucideIcon } from 'lucide-react';
-import { Portal } from 'vaul';
 import * as React_2 from 'react';
 import { RowData } from '@tanstack/react-table';
 import { RowModel } from '@tanstack/react-table';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
+import { Slot } from '@radix-ui/react-slot';
 import type { SVGProps } from 'react';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
 import { Table as Table_2 } from '@tanstack/react-table';
@@ -41,19 +39,19 @@ import { VariantProps } from 'class-variance-authority';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // @public (undocumented)
-export const Alert: React_2.ForwardRefExoticComponent<AlertProps & React_2.RefAttributes<HTMLDivElement>>;
+export function Alert(input: AlertProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export const AlertDescription: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLParagraphElement> & React_2.RefAttributes<HTMLParagraphElement>>;
+export function AlertDescription(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface AlertProps extends React_2.HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
+export interface AlertProps extends React_2.ComponentProps<"div">, VariantProps<typeof alertVariants> {
     // (undocumented)
     asChild?: boolean;
 }
 
 // @public (undocumented)
-export const AlertTitle: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLHeadingElement> & React_2.RefAttributes<HTMLHeadingElement>>;
+export function AlertTitle(input: React_2.ComponentProps<"h2">): React_2.JSX.Element;
 
 // @public (undocumented)
 export const alertVariants: (props?: ({
@@ -82,7 +80,7 @@ export interface AppShellProps {
 export function Badge(input: BadgeProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface BadgeProps extends React_2.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
+export interface BadgeProps extends React_2.ComponentProps<"div">, VariantProps<typeof badgeVariants> {
     // (undocumented)
     asChild?: boolean;
 }
@@ -102,10 +100,10 @@ export interface BrandLogoProps extends Omit<SVGProps<SVGSVGElement>, "viewBox" 
 }
 
 // @public (undocumented)
-export const Button: React_2.ForwardRefExoticComponent<ButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
+export function Button(input: ButtonProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface ButtonProps extends React_2.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React_2.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
     // (undocumented)
     asChild?: boolean;
 }
@@ -117,22 +115,22 @@ export const buttonVariants: (props?: ({
 } & ClassProp) | undefined) => string;
 
 // @public (undocumented)
-export const Card: React_2.ForwardRefExoticComponent<CardProps & React_2.RefAttributes<HTMLDivElement>>;
+export function Card(input: CardProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export const CardContent: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+export function CardContent(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const CardDescription: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+export function CardDescription(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const CardFooter: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+export function CardFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const CardHeader: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+export function CardHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export type CardProps = React_2.HTMLAttributes<HTMLDivElement>;
+export type CardProps = React_2.ComponentProps<"div">;
 
 // @public
 export function CardSkeleton(input: CardSkeletonProps): JSX.Element;
@@ -146,10 +144,10 @@ export interface CardSkeletonProps {
 }
 
 // @public (undocumented)
-export const CardTitle: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+export function CardTitle(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const Checkbox: React_2.ForwardRefExoticComponent<Omit<CheckboxPrimitive.CheckboxProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
+export function Checkbox(input: React_2.ComponentProps<typeof CheckboxPrimitive.Root>): React_2.JSX.Element;
 
 // @public
 export function Checkmark(input: CheckmarkProps): JSX.Element;
@@ -339,34 +337,34 @@ export interface DetailPanelSkeletonProps {
 }
 
 // @public (undocumented)
-export const Dialog: React_2.FC<DialogPrimitive.DialogProps>;
+export function Dialog(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogClose: React_2.ForwardRefExoticComponent<DialogPrimitive.DialogCloseProps & React_2.RefAttributes<HTMLButtonElement>>;
+export function DialogClose(input: React_2.ComponentProps<typeof DialogPrimitive.Close>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogContent: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogContentProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function DialogContent(input: React_2.ComponentProps<typeof DialogPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogDescription: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogDescriptionProps & React_2.RefAttributes<HTMLParagraphElement>, "ref"> & React_2.RefAttributes<HTMLParagraphElement>>;
+export function DialogDescription(input: React_2.ComponentProps<typeof DialogPrimitive.Description>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogFooter(input: React_2.HTMLAttributes<HTMLDivElement>): React_2.JSX.Element;
+export function DialogFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DialogHeader(input: React_2.HTMLAttributes<HTMLDivElement>): React_2.JSX.Element;
+export function DialogHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogOverlay: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogOverlayProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function DialogOverlay(input: React_2.ComponentProps<typeof DialogPrimitive.Overlay>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogPortal: React_2.FC<DialogPrimitive.DialogPortalProps>;
+export function DialogPortal(input: React_2.ComponentProps<typeof DialogPrimitive.Portal>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogTitle: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogTitleProps & React_2.RefAttributes<HTMLHeadingElement>, "ref"> & React_2.RefAttributes<HTMLHeadingElement>>;
+export function DialogTitle(input: React_2.ComponentProps<typeof DialogPrimitive.Title>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DialogTrigger: React_2.ForwardRefExoticComponent<DialogPrimitive.DialogTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
+export function DialogTrigger(input: React_2.ComponentProps<typeof DialogPrimitive.Trigger>): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "DrawerRootProps" needs to be exported by the entry point index.d.ts
 //
@@ -374,56 +372,45 @@ export const DialogTrigger: React_2.ForwardRefExoticComponent<DialogPrimitive.Di
 export function Drawer(input: DrawerRootProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerBody(input: React_2.HTMLAttributes<HTMLDivElement>): React_2.JSX.Element;
+export function DrawerBody(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DrawerClose: React_2.ForwardRefExoticComponent<DialogCloseProps & React_2.RefAttributes<HTMLButtonElement>>;
+export function DrawerClose(input: React_2.ComponentProps<typeof Drawer_2.Close>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerCloseButton(input: React_2.ComponentPropsWithoutRef<typeof DrawerClose> & {
-    ref?: React_2.Ref<HTMLButtonElement>;
-}): React_2.JSX.Element;
+export function DrawerCloseButton(input: React_2.ComponentProps<typeof DrawerClose>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerContent(input: React_2.ComponentPropsWithoutRef<typeof Drawer_2.Content> & {
-    ref?: React_2.Ref<HTMLDivElement>;
+export function DrawerContent(input: React_2.ComponentProps<typeof Drawer_2.Content> & {
     modal?: boolean;
 }): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerDescription(input: React_2.ComponentPropsWithoutRef<typeof Drawer_2.Description> & {
-    ref?: React_2.Ref<HTMLParagraphElement>;
-}): React_2.JSX.Element;
+export function DrawerDescription(input: React_2.ComponentProps<typeof Drawer_2.Description>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerFooter(input: React_2.HTMLAttributes<HTMLDivElement>): React_2.JSX.Element;
+export function DrawerFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerHandle(input: React_2.ComponentPropsWithoutRef<typeof Drawer_2.Handle> & {
-    ref?: React_2.Ref<HTMLDivElement>;
-}): React_2.JSX.Element;
+export function DrawerHandle(input: React_2.ComponentProps<typeof Drawer_2.Handle>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerHeader(input: React_2.HTMLAttributes<HTMLDivElement>): React_2.JSX.Element;
+export function DrawerHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DrawerOverlay(input: React_2.ComponentPropsWithoutRef<typeof Drawer_2.Overlay> & {
-    ref?: React_2.Ref<HTMLDivElement>;
-}): React_2.JSX.Element;
+export function DrawerOverlay(input: React_2.ComponentProps<typeof Drawer_2.Overlay>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DrawerPortal: Portal;
+export function DrawerPortal(input: React_2.ComponentProps<typeof Drawer_2.Portal>): React_2.JSX.Element;
 
 // @public (undocumented)
 export type DrawerProps = DrawerRootProps;
 
 // @public (undocumented)
-export function DrawerTitle(input: React_2.ComponentPropsWithoutRef<typeof Drawer_2.Title> & {
-    ref?: React_2.Ref<HTMLHeadingElement>;
-}): React_2.JSX.Element;
+export function DrawerTitle(input: React_2.ComponentProps<typeof Drawer_2.Title>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const DrawerTrigger: React_2.ForwardRefExoticComponent<DialogTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
+export function DrawerTrigger(input: React_2.ComponentProps<typeof Drawer_2.Trigger>): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "fieldVariants" needs to be exported by the entry point index.d.ts
 //
@@ -469,24 +456,22 @@ export function FieldTitle(input: React_2.ComponentProps<"div">): React_2.JSX.El
 export const Form: <TFieldValues extends FieldValues, TContext = any, TTransformedValues = TFieldValues>(input: FormProviderProps<TFieldValues, TContext, TTransformedValues>) => React_2.JSX.Element;
 
 // @public (undocumented)
-export const FormControl: React_2.ForwardRefExoticComponent<Omit<React_2.HTMLAttributes<HTMLElement> & {
-    children?: React_2.ReactNode | undefined;
-} & React_2.RefAttributes<HTMLElement>, "ref"> & React_2.RefAttributes<HTMLElement>>;
+export function FormControl(input: React_2.ComponentProps<typeof Slot>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const FormDescription: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLParagraphElement> & React_2.RefAttributes<HTMLParagraphElement>>;
+export function FormDescription(input: React_2.ComponentProps<"p">): React_2.JSX.Element;
 
 // @public (undocumented)
 export const FormField: <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>(input: ControllerProps<TFieldValues, TName>) => React_2.JSX.Element;
 
 // @public (undocumented)
-export const FormItem: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+export function FormItem(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const FormLabel: React_2.ForwardRefExoticComponent<Omit<LabelPrimitive.LabelProps & React_2.RefAttributes<HTMLLabelElement>, "ref"> & React_2.RefAttributes<HTMLLabelElement>>;
+export function FormLabel(input: React_2.ComponentProps<typeof LabelPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const FormMessage: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLParagraphElement> & React_2.RefAttributes<HTMLParagraphElement>>;
+export function FormMessage(input: React_2.ComponentProps<"p">): React_2.JSX.Element | null;
 
 // @public
 export function FormSubmit(input: FormSubmitProps): React_2.JSX.Element;
@@ -497,16 +482,10 @@ export type FormSubmitProps = Omit<ButtonProps, "type"> & {
 };
 
 // @public (undocumented)
-export const Heading: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLHeadingElement> & VariantProps<(props?: ({
-    level?: 1 | 2 | 3 | 4 | null | undefined;
-} & ClassProp) | undefined) => string> & {
-    level?: 1 | 2 | 3 | 4;
-    as?: "h1" | "h2" | "h3" | "h4" | "div";
-    asChild?: boolean;
-} & React_2.RefAttributes<HTMLHeadingElement>>;
+export function Heading(input: HeadingProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export type HeadingProps = React_2.HTMLAttributes<HTMLHeadingElement> & VariantProps<typeof headingVariants> & {
+export type HeadingProps = React_2.ComponentProps<"h1"> & VariantProps<typeof headingVariants> & {
     level?: 1 | 2 | 3 | 4;
     as?: "h1" | "h2" | "h3" | "h4" | "div";
     asChild?: boolean;
@@ -518,7 +497,7 @@ export const headingVariants: (props?: ({
 } & ClassProp) | undefined) => string;
 
 // @public
-export const IconButton: React_2.ForwardRefExoticComponent<IconButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
+export function IconButton(input: IconButtonProps): JSX.Element;
 
 // @public (undocumented)
 export interface IconButtonProps extends ButtonProps {
@@ -529,7 +508,7 @@ export interface IconButtonProps extends ButtonProps {
 export function IconLabel(input: IconLabelProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface IconLabelProps extends React_2.HTMLAttributes<HTMLSpanElement> {
+export interface IconLabelProps extends React_2.ComponentProps<"span"> {
     // (undocumented)
     children: React_2.ReactNode;
     // (undocumented)
@@ -591,15 +570,15 @@ export type IdentitySwitcherProps = Omit<React_2.ComponentProps<"select">, "valu
 };
 
 // @public (undocumented)
-export const Input: React_2.ForwardRefExoticComponent<React_2.InputHTMLAttributes<HTMLInputElement> & React_2.RefAttributes<HTMLInputElement>>;
+export function Input(input: React_2.ComponentProps<"input">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const Label: React_2.ForwardRefExoticComponent<Omit<LabelPrimitive.LabelProps & React_2.RefAttributes<HTMLLabelElement>, "ref"> & VariantProps<(props?: ClassProp | undefined) => string> & React_2.RefAttributes<HTMLLabelElement>>;
+export function Label(input: LabelProps): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "labelVariants" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export type LabelProps = React_2.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>;
+export type LabelProps = React_2.ComponentProps<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>;
 
 // @public (undocumented)
 export function LivePulse(input: LivePulseProps): JSX.Element;
@@ -766,7 +745,7 @@ export interface ScrollScene {
 export function ScrollScenes(input: ScrollScenesProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface ScrollScenesProps extends Omit<React_2.HTMLAttributes<HTMLDivElement>, "children"> {
+export interface ScrollScenesProps extends Omit<React_2.ComponentProps<"div">, "children"> {
     scenes: readonly ScrollScene[];
 }
 
@@ -785,59 +764,59 @@ export interface SecretFieldProps {
 export function Section(input: SectionProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export type SectionProps = React_2.HTMLAttributes<HTMLElement> & {
+export type SectionProps = React_2.ComponentProps<"section"> & {
     title?: React_2.ReactNode;
     description?: React_2.ReactNode;
     actions?: React_2.ReactNode;
 };
 
 // @public (undocumented)
-export const Select: React_2.FC<SelectPrimitive.SelectProps>;
+export function Select(input: React_2.ComponentProps<typeof SelectPrimitive.Root>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectContent: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectContentProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectContent(input: React_2.ComponentProps<typeof SelectPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectGroup: React_2.ForwardRefExoticComponent<SelectPrimitive.SelectGroupProps & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectGroup(input: React_2.ComponentProps<typeof SelectPrimitive.Group>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectItem: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectItemProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectItem(input: React_2.ComponentProps<typeof SelectPrimitive.Item>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectLabel: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectLabelProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectLabel(input: React_2.ComponentProps<typeof SelectPrimitive.Label>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectScrollDownButton: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectScrollDownButtonProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectScrollDownButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollDownButton>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectScrollUpButton: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectScrollUpButtonProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectScrollUpButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollUpButton>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectSeparator: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectSeparatorProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function SelectSeparator(input: React_2.ComponentProps<typeof SelectPrimitive.Separator>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectTrigger: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectTriggerProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
+export function SelectTrigger(input: React_2.ComponentProps<typeof SelectPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const SelectValue: React_2.ForwardRefExoticComponent<SelectPrimitive.SelectValueProps & React_2.RefAttributes<HTMLSpanElement>>;
+export function SelectValue(input: React_2.ComponentProps<typeof SelectPrimitive.Value>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const Separator: React_2.ForwardRefExoticComponent<Omit<SeparatorPrimitive.SeparatorProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function Separator(input: SeparatorProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export type SeparatorProps = React_2.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>;
+export type SeparatorProps = React_2.ComponentProps<typeof SeparatorPrimitive.Root>;
 
 // @public (undocumented)
 export function Skeleton(input: SkeletonProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export type SkeletonProps = React_2.HTMLAttributes<HTMLDivElement>;
+export type SkeletonProps = React_2.ComponentProps<"div">;
 
 // @public (undocumented)
 export function Stack(input: StackProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export type StackProps = React_2.HTMLAttributes<HTMLDivElement> & VariantProps<typeof stackVariants> & {
+export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
     gap?: 1 | 2 | 3 | 4 | 6 | 8;
 };
@@ -880,7 +859,7 @@ export interface StatusLabelProps {
 export type StatusLabelTone = "loading" | "updating" | "syncing" | "saved" | "retry" | "error" | "offline";
 
 // @public (undocumented)
-export const Switch: React_2.ForwardRefExoticComponent<Omit<SwitchPrimitives.SwitchProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
+export function Switch(input: React_2.ComponentProps<typeof SwitchPrimitives.Root>): React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "TableProps" needs to be exported by the entry point index.d.ts
 //
@@ -909,34 +888,29 @@ export function TableHeader(input: React_2.ComponentProps<"thead">): React_2.JSX
 export function TableRow(input: React_2.ComponentProps<"tr">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const Tabs: React_2.ForwardRefExoticComponent<TabsPrimitive.TabsProps & React_2.RefAttributes<HTMLDivElement>>;
+export function Tabs(input: TabsProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export const TabsContent: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsContentProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function TabsContent(input: React_2.ComponentProps<typeof TabsPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
-export const TabsList: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsListProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export function TabsList(input: React_2.ComponentProps<typeof TabsPrimitive.List>): React_2.JSX.Element;
 
 // @public (undocumented)
-export type TabsProps = React_2.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>;
+export type TabsProps = React_2.ComponentProps<typeof TabsPrimitive.Root>;
 
 // @public (undocumented)
-export const TabsTrigger: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsTriggerProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
+export function TabsTrigger(input: React_2.ComponentProps<typeof TabsPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
-const Text_2: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLParagraphElement> & VariantProps<(props?: ({
-    variant?: "body" | "muted" | null | undefined;
-} & ClassProp) | undefined) => string> & {
-    as?: "p" | "span" | "div";
-    asChild?: boolean;
-} & React_2.RefAttributes<HTMLParagraphElement>>;
+function Text_2(input: TextProps): React_2.JSX.Element;
 export { Text_2 as Text }
 
 // @public (undocumented)
-export const Textarea: React_2.ForwardRefExoticComponent<Omit<React_2.DetailedHTMLProps<React_2.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, "ref"> & React_2.RefAttributes<HTMLTextAreaElement>>;
+export function Textarea(input: React_2.ComponentProps<"textarea">): React_2.JSX.Element;
 
 // @public (undocumented)
-export type TextProps = React_2.HTMLAttributes<HTMLParagraphElement> & VariantProps<typeof textVariants> & {
+export type TextProps = React_2.ComponentProps<"p"> & VariantProps<typeof textVariants> & {
     as?: "p" | "span" | "div";
     asChild?: boolean;
 };
@@ -992,12 +966,7 @@ export function useValidatedForm<TFieldValues extends FieldValues>(schema: Param
 export function Wizard(input: WizardProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface WizardProps {
-    // (undocumented)
-    children: React_2.ReactNode;
-    // (undocumented)
-    className?: string;
-}
+export type WizardProps = React_2.ComponentProps<"ol">;
 
 // @public
 export function WizardStep(input: WizardStepProps): React_2.JSX.Element;

@@ -21,6 +21,7 @@ export function BrandLogo({ title, viewBox, className, children, ...props }: Bra
   const decorative = title === "";
   return (
     <svg
+      data-slot="brand-logo"
       xmlns="http://www.w3.org/2000/svg"
       viewBox={viewBox}
       fill="currentColor"

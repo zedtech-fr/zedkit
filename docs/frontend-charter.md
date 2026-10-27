@@ -9,6 +9,7 @@ state the rule; this table is the index.
 | `ui-props` | One exported `XxxProps` interface; optional props last with defaults; slots as `ReactNode` (`actions`, `sidebar`, `children`). | [Card](https://zedkit.app/docs/ui/group-content-in-a-card-section) |
 | `ui-variants` | Variants via `class-variance-authority`, merged with `cn()`. No variant prop means one default. | [Badge](https://zedkit.app/docs/ui/show-a-status-or-count-badge) |
 | `ui-shadcn` | Copy primitives from the official shadcn/ui registry; compose in the kit; do not fork a Radix behavior by hand. | [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) |
+| `ui-ref` | lint. Host components take `React.ComponentProps<"el">` (ref is a prop, no `forwardRef`) and set `data-slot` on the exported root. | [Buttons](https://zedkit.app/docs/ui/trigger-actions-with-buttons) |
 | `tokens-color` | lint. Semantic color tokens only (`background`, `foreground`, `primary`, `destructive`, …). No palette classes (`bg-red-500`), no hex/rgb, no `bg-[#fff]`. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
 | `tokens-style` | lint. No `style` attributes. No raw `px` font sizes; use `text-xs` … `text-2xl` and the spacing scale. | [Typography](https://zedkit.app/docs/ui/render-headings-and-body-text-without-raw-tags) |
 | `tokens-focus` | Focus ring via `focus-ring` / `focus-ring-control` (theme `--ring-width*`), not raw `ring-*` widths. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |

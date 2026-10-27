@@ -19,15 +19,45 @@ describe("uiPreset", () => {
     const syntax = tailwind.rules["no-restricted-syntax"].filter((row) => typeof row === "object");
     const style = syntax.find((row) => String(row.selector).includes("style"));
     const tryCatch = syntax.find((row) => String(row.selector).includes("TryStatement"));
+    const forwardRef = syntax.find((row) => String(row.selector).includes("forwardRef"));
     expect(messages[0]).toMatch(/^tokens-color: /);
     expect(messages[1]).toMatch(/^tokens-color: /);
     expect(messages[2]).toMatch(/^tokens-style: /);
     expect(style.message).toMatch(/^tokens-style: /);
     expect(tryCatch.message).toMatch(/^try-catch: /);
-    for (const message of [...messages, style.message, tryCatch.message]) {
+    expect(forwardRef.message).toMatch(/^ui-ref: /);
+    for (const message of [...messages, style.message, tryCatch.message, forwardRef.message]) {
       expect(message).not.toMatch(/frontend-charter/);
       expect(message.length).toBeGreaterThan(40);
     }
+  });
+
+  it("bans forwardRef and points at the button example", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    const syntax = tailwind.rules["no-restricted-syntax"];
+    const linter = new Linter({ configType: "flat" });
+    const config = { files: ["**/*.tsx"], rules: { "no-restricted-syntax": syntax } };
+    const member = linter.verify(
+      "const X = React.forwardRef((props, ref) => props);\n",
+      config,
+      "button.tsx",
+    );
+    expect(member).toHaveLength(1);
+    expect(member[0].ruleId).toBe("no-restricted-syntax");
+    expect(member[0].message).toContain("packages/ui/src/button.tsx");
+    const named = linter.verify(
+      "const X = forwardRef((props, ref) => props);\n",
+      config,
+      "button.tsx",
+    );
+    expect(named).toHaveLength(1);
+    expect(named[0].message).toContain("ComponentProps");
+    const imported = linter.verify(
+      'import { forwardRef } from "react";\n',
+      config,
+      "button.tsx",
+    );
+    expect(imported.some((entry) => entry.message.includes("forwardRef"))).toBe(true);
   });
 });
 
