@@ -1,5 +1,11 @@
 # @zedtech/zedkit-quality
 
+## 0.3.0
+
+### Minor Changes
+
+- c0f4692: `defineLayers` accepts `extraPatterns` (`{ kitScope?, viewData?, dataUi? }`) so consumers can add their own `no-restricted-imports` bans without replacing the preset blocks.
+
 ## 0.2.0
 
 ### Minor Changes

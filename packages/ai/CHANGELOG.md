@@ -1,5 +1,15 @@
 # @zedtech/zedkit-ai
 
+## 0.7.0
+
+### Minor Changes
+
+- e59db59: Remove the deprecated `plan-challenger` alias as promised for 0.6.0; briefs must name `skeptic` with an angle.
+
+### Patch Changes
+
+- @zedtech/zedkit-core@0.1.3
+
 ## 0.6.5
 
 ### Patch Changes
