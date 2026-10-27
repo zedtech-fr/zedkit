@@ -119,7 +119,12 @@
       "component": "DataTable",
       "props": "DataTableProps",
       "source": "data-table.tsx",
-      "demo": "DataTableDemo"
+      "demo": "DataTableDemo",
+      "examples": {
+        "Standalone pagination": "DataTablePaginationDemo",
+        "Standalone empty row": "DataTableEmptyDemo",
+        "Standalone toolbar": "DataTableToolbarDemo"
+      }
     },
     "Lay out an admin page (sidebar + topbar + header)": {
       "package": "@zedtech/zedkit-ui",

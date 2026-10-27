@@ -25,6 +25,9 @@ import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { DataTableDemo } from "./data-table-demo";
+import { DataTableEmptyDemo } from "./data-table-empty-demo";
+import { DataTablePaginationDemo } from "./data-table-pagination-demo";
+import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
@@ -95,6 +98,9 @@ export const demoRegistry = {
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
+  DataTablePaginationDemo: { Demo: DataTablePaginationDemo, file: "data-table-pagination-demo.tsx" },
+  DataTableEmptyDemo: { Demo: DataTableEmptyDemo, file: "data-table-empty-demo.tsx" },
+  DataTableToolbarDemo: { Demo: DataTableToolbarDemo, file: "data-table-toolbar-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
