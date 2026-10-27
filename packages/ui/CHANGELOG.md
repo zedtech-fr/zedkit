@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ui
 
+## 0.6.4
+
+### Patch Changes
+
+- 63b1f39: fix(route-modal): restore trigger focus at unmount only
+
 ## 0.6.3
 
 ### Patch Changes
