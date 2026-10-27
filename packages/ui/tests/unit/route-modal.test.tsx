@@ -307,7 +307,7 @@ describe("route modal", () => {
     );
   }
 
-  it("returns focus to the trigger when the drawer closes", () => {
+  it("returns focus to the trigger when the drawer closes and unmounts", () => {
     vi.useFakeTimers();
     const view = render(<Harness show={false} />);
     const trigger = screen.getByRole("button", { name: "trigger" });
@@ -316,9 +316,14 @@ describe("route modal", () => {
     // Focus moved inside on open (Vaul autoFocus).
     expect(screen.getByRole("dialog").contains(document.activeElement)).toBe(true);
     pressEscape();
-    // The restore is deferred past the unmount commit (the trap
-    // would steal back a synchronous focus).
-    vi.advanceTimersByTime(0);
+    // The restore must NOT run yet: the trap is still mounted (in
+    // browsers) and would steal it back — it runs at unmount, which
+    // follows the navigation onClose triggers (see #586).
+    // Rerendering without the modal mirrors that (the list page
+    // persists).
+    vi.advanceTimersByTime(250);
+    expect(document.activeElement).not.toBe(trigger);
+    view.rerender(<Harness show={false} />);
     expect(document.activeElement).toBe(trigger);
   });
 
@@ -329,11 +334,21 @@ describe("route modal", () => {
     trigger.focus();
     view.rerender(<Harness show />);
     // Vaul re-renders on drag state, snap points, resize: each one
-    // re-runs the Radix capture from inside without the fix.
+    // re-runs the Radix capture from inside.
     view.rerender(<Harness show />);
     view.rerender(<Harness show />);
     pressEscape();
-    vi.advanceTimersByTime(0);
+    vi.advanceTimersByTime(250);
+    view.rerender(<Harness show={false} />);
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("returns focus when unmounted without a close (browser back)", () => {
+    const view = render(<Harness show={false} />);
+    const trigger = screen.getByRole("button", { name: "trigger" });
+    trigger.focus();
+    view.rerender(<Harness show />);
+    view.rerender(<Harness show={false} />);
     expect(document.activeElement).toBe(trigger);
   });
 
@@ -346,7 +361,8 @@ describe("route modal", () => {
     // opener node (out-of-band .remove() would corrupt the commit).
     view.rerender(<Harness show trigger={false} />);
     pressEscape();
-    expect(() => vi.advanceTimersByTime(0)).not.toThrow();
+    vi.advanceTimersByTime(250);
+    expect(() => view.rerender(<Harness show={false} trigger={false} />)).not.toThrow();
   });
 
   // NOTE: return-focus for the DIALOG variant is not asserted here —
