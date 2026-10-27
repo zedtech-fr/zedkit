@@ -34,6 +34,18 @@ describe("AppShell", () => {
     expect(container.querySelector("main")?.className).toContain("p-app-shell-padding");
     expect(container.querySelector("main")?.className).toContain("md:p-app-shell-padding-md");
   });
+
+  it("hides the sidebar below md with a single display rule, so no base rule can win on desktop", () => {
+    const { container } = render(
+      <AppShell sidebar={<nav>Nav</nav>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    const classes = container.querySelector("aside")?.className.split(" ") ?? [];
+    expect(classes).toContain("max-md:hidden");
+    expect(classes).not.toContain("hidden");
+    expect(classes).not.toContain("md:block");
+  });
 });
 
 describe("PageHeader", () => {

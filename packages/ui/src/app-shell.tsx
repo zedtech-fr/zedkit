@@ -12,7 +12,7 @@ export interface AppShellProps {
 export function AppShell({ sidebar, topbar, children, className }: AppShellProps) {
   return (
     <div className={cn("flex min-h-svh w-full", className)}>
-      <aside className="hidden w-app-shell-sidebar shrink-0 border-r bg-muted/40 md:block">{sidebar}</aside>
+      <aside className="w-app-shell-sidebar shrink-0 border-r bg-muted/40 max-md:hidden">{sidebar}</aside>
       <div className="flex min-w-0 flex-1 flex-col">
         {topbar ? (
           <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">{topbar}</header>
