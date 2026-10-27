@@ -30,6 +30,17 @@ describe("DetailPanelRow", () => {
     expect(screen.getByText("Region").tagName).toBe("DT");
     expect(screen.getByText("eu").tagName).toBe("DD");
   });
+
+  it("contains unbreakable values inside the grid (no blowout)", () => {
+    render(
+      <dl>
+        <DetailPanelRow label="ID" value="evt_0123456789abcdef0123456789abcdef" />
+      </dl>,
+    );
+    const value = screen.getByText("evt_0123456789abcdef0123456789abcdef");
+    expect(value.classList.contains("min-w-0")).toBe(true);
+    expect(value.classList.contains("break-words")).toBe(true);
+  });
 });
 
 describe("LivePulse", () => {
