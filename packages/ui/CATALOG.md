@@ -45,7 +45,7 @@ cn("px-4", "px-2"); // "px-2" — last conflicting utility wins
 
 ## Animate entrances and hover feedback with CSS utilities
 
-- Import: `@zedtech/zedkit-ui/styles.css` (utilities `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `stagger-*`, `hover-lift`, `hover-press`, `marquee-track`; attributes `data-reveal`, `data-stagger`)
+- Import: `@zedtech/zedkit-ui/styles.css` (utilities `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `stagger-*`, `hover-lift`, `hover-press`, `button-press`, `hit-target`, `marquee-track`; attributes `data-reveal`, `data-stagger`)
 - Wraps: `tailwindcss` (v4 `@utility` and `@theme`)
 - Status: alpha
 - Short name: Motion

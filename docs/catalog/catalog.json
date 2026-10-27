@@ -768,7 +768,7 @@
         },
         {
           "need": "Animate entrances and hover feedback with CSS utilities",
-          "import": "`@zedtech/zedkit-ui/styles.css` (utilities `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `stagger-*`, `hover-lift`, `hover-press`, `marquee-track`; attributes `data-reveal`, `data-stagger`)",
+          "import": "`@zedtech/zedkit-ui/styles.css` (utilities `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `stagger-*`, `hover-lift`, `hover-press`, `button-press`, `hit-target`, `marquee-track`; attributes `data-reveal`, `data-stagger`)",
           "wraps": "`tailwindcss` (v4 `@utility` and `@theme`)",
           "status": "alpha",
           "shortName": "Motion",
