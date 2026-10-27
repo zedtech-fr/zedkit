@@ -26,7 +26,12 @@
       "registry": "badge",
       "props": "BadgeProps",
       "source": "badge.tsx",
-      "demo": "BadgeDemo"
+      "demo": "BadgeDemo",
+      "examples": {
+        "Variants": "BadgeVariantsDemo",
+        "In a table row": "BadgeTableRowDemo",
+        "As a link (asChild)": "BadgeLinkDemo"
+      }
     },
     "Label a form control": {
       "package": "@zedtech/zedkit-ui",
@@ -52,7 +57,10 @@
       "registry": "separator",
       "props": "SeparatorProps",
       "source": "separator.tsx",
-      "demo": "SeparatorDemo"
+      "demo": "SeparatorDemo",
+      "examples": {
+        "Vertical divider": "SeparatorVerticalDemo"
+      }
     },
     "Show loading placeholder blocks": {
       "package": "@zedtech/zedkit-ui",
@@ -60,7 +68,10 @@
       "registry": "skeleton",
       "props": "SkeletonProps",
       "source": "skeleton.tsx",
-      "demo": "SkeletonDemo"
+      "demo": "SkeletonDemo",
+      "examples": {
+        "Text lines": "SkeletonTextDemo"
+      }
     },
     "Load each zone with a faithful skeleton": {
       "package": "@zedtech/zedkit-ui",
@@ -68,7 +79,10 @@
       "registry": "card-skeleton",
       "props": "CardSkeletonProps",
       "source": "card-skeleton.tsx",
-      "demo": "LoadingZonesDemo"
+      "demo": "LoadingZonesDemo",
+      "examples": {
+        "Standalone": "CardSkeletonStandaloneDemo"
+      }
     },
     "Open modal dialogs": {
       "package": "@zedtech/zedkit-ui",
@@ -125,7 +139,10 @@
       "registry": "app-shell",
       "props": "AppShellProps",
       "source": "app-shell.tsx",
-      "demo": "AppShellDemo"
+      "demo": "AppShellDemo",
+      "examples": {
+        "Without topbar": "AppShellNoTopbarDemo"
+      }
     },
     "Guide a multi-step flow with selectable option cards": {
       "package": "@zedtech/zedkit-ui",
@@ -156,7 +173,10 @@
       "registry": "progress-bar",
       "props": "ProgressBarProps",
       "source": "progress-bar.tsx",
-      "demo": "ProgressBarDemo"
+      "demo": "ProgressBarDemo",
+      "examples": {
+        "Complete": "ProgressCompleteDemo"
+      }
     },
     "Stamp data with its age": {
       "package": "@zedtech/zedkit-ui",
@@ -164,7 +184,10 @@
       "registry": "updated-ago",
       "props": "UpdatedAgoProps",
       "source": "updated-ago.tsx",
-      "demo": "UpdatedAgoDemo"
+      "demo": "UpdatedAgoDemo",
+      "examples": {
+        "Custom prefix": "UpdatedAgoCustomDemo"
+      }
     },
     "Celebrate completion with a checkmark": {
       "package": "@zedtech/zedkit-ui",
@@ -172,7 +195,10 @@
       "registry": "checkmark",
       "props": "CheckmarkProps",
       "source": "checkmark.tsx",
-      "demo": "CheckmarkDemo"
+      "demo": "CheckmarkDemo",
+      "examples": {
+        "Decorative": "CheckmarkDecorativeDemo"
+      }
     },
     "Indicate status with a dot": {
       "package": "@zedtech/zedkit-ui",
@@ -180,7 +206,11 @@
       "registry": "status-dot",
       "props": "StatusDotProps",
       "source": "status-dot.tsx",
-      "demo": "StatusDotDemo"
+      "demo": "StatusDotDemo",
+      "examples": {
+        "All tones with labels": "StatusDotTonesDemo",
+        "Static ping override": "StatusDotStaticDemo"
+      }
     },
     "Name an operation in progress": {
       "package": "@zedtech/zedkit-ui",
@@ -188,7 +218,11 @@
       "registry": "status-label",
       "props": "StatusLabelProps",
       "source": "status-label.tsx",
-      "demo": "StatusLabelDemo"
+      "demo": "StatusLabelDemo",
+      "examples": {
+        "Saved and error states": "StatusLabelSavedErrorDemo",
+        "Offline state": "StatusLabelOfflineDemo"
+      }
     },
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
@@ -221,7 +255,10 @@
       "registry": "typography",
       "props": "HeadingProps",
       "source": "typography.tsx",
-      "demo": "TypographyDemo"
+      "demo": "TypographyDemo",
+      "examples": {
+        "Heading styles on a link (asChild)": "HeadingLinkDemo"
+      }
     },
     "Call out a notice or an error state": {
       "package": "@zedtech/zedkit-ui",
@@ -229,7 +266,10 @@
       "registry": "alert",
       "props": "AlertProps",
       "source": "alert.tsx",
-      "demo": "AlertDemo"
+      "demo": "AlertDemo",
+      "examples": {
+        "As a section (asChild)": "AlertSectionDemo"
+      }
     },
     "Pick one option from a dropdown": {
       "package": "@zedtech/zedkit-ui",
