@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { kitDir, readManifest } from "#kit.js";
@@ -22,5 +22,13 @@ describe("manifest files", () => {
         .filter((name) => !listed.includes(name));
       expect(strays, `${dir} files missing from manifest`).toEqual([]);
     }
+  });
+
+  it("carries no unknown top-level keys (typos stay loud)", () => {
+    const raw = JSON.parse(readFileSync(join(kitDir(), "kit.json"), "utf8")) as Record<
+      string,
+      unknown
+    >;
+    expect(Object.keys(raw).sort()).toEqual(["agents", "commands", "presets"]);
   });
 });
