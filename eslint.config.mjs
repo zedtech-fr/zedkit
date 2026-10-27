@@ -1,7 +1,12 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
-import { uiPreset } from "@zedtech/zedkit-quality";
+import { defineLayers, uiPreset } from "@zedtech/zedkit-quality";
+
+const deepRelativeImport = {
+  group: ["../..", "../../*", "../../../*"],
+  message: "Deep relative imports are banned. Use the `#*` subpath import for this package.",
+};
 
 export default tseslint.config(
   js.configs.recommended,
@@ -21,18 +26,7 @@ export default tseslint.config(
       ],
       // Deep relative imports are banned: use the package `#*` subpath
       // import (see "imports" in each package.json) instead of ../.. chains.
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["../..", "../../*", "../../../*"],
-              message:
-                "Deep relative imports are banned. Use the `#*` subpath import for this package.",
-            },
-          ],
-        },
-      ],
+      "no-restricted-imports": ["error", { patterns: [deepRelativeImport] }],
     },
   },
   {
@@ -59,6 +53,17 @@ export default tseslint.config(
   // exports, so this resolves with zero build).
   ...uiPreset({
     entryPoint: new URL("./packages/ui/src/styles.css", import.meta.url).pathname,
+  }),
+  ...defineLayers({
+    preset: "feature-folders",
+    kitPackage: "@zedtech/zedkit-ui",
+    featureRoot: "apps/docs/features",
+    extraPatterns: {
+      kitScope: [deepRelativeImport],
+      viewData: [deepRelativeImport],
+      dataUi: [deepRelativeImport],
+      model: [deepRelativeImport],
+    },
   }),
   {
     // next/og ImageResponse requires inline styles; not user-facing UI.

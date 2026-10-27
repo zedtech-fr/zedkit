@@ -109,6 +109,18 @@ function asFiles(patterns) {
   });
 }
 
+function assertExtraPatterns(extraPatterns, keys) {
+  const want = keys.join(", ").replace(/, ([^,]+)$/, " or $1");
+  for (const [key, value] of Object.entries(extraPatterns)) {
+    if (!keys.includes(key)) {
+      throw new Error(`defineLayers: unknown extraPatterns key "${key}" (want ${want})`);
+    }
+    if (!Array.isArray(value)) {
+      throw new Error(`defineLayers: extraPatterns.${key} must be a list of no-restricted-imports pattern objects`);
+    }
+  }
+}
+
 /**
  * Route/view/data layer boundaries as `no-restricted-imports` blocks.
  * Dependencies run one way (routes -> views -> data):
@@ -116,30 +128,29 @@ function asFiles(patterns) {
  * - views receive data as props and never import data clients or actions;
  * - data files import no UI (no React runtime, no UI kit).
  *
- * @param {{ kitPackage: string, viewDirs: string[], dataDirs: string[], actionPatterns: string[], extraPatterns?: { kitScope?: object[], viewData?: object[], dataUi?: object[] } }} options
- * - `kitPackage`: UI kit specifier (e.g. `@acme/ui`).
- * - `viewDirs`: view folders (e.g. `app/ui/**`) or file globs.
- * - `dataDirs`: data-access folders or file globs, same shapes.
- * - `actionPatterns`: import specifiers for data clients and server actions.
- *   May be empty (views legitimately import data): the view ban is
- *   then omitted, and the view block is dropped when it would carry
- *   no bans at all.
- * - `extraPatterns`: consumer bans merged into each block's own
- *   patterns (flat-config rules replace per key, so a consumer block
- *   setting `no-restricted-imports` would otherwise drop these).
- *   Keys: `kitScope`, `viewData`, `dataUi`; each a list of standard
- *   `no-restricted-imports` pattern objects, passed through untouched.
+ * @param {object} options
+ * - Classic: `{ kitPackage, viewDirs, dataDirs, actionPatterns, extraPatterns? }`.
+ *   `actionPatterns` may be empty (views legitimately import data): the
+ *   view ban is then omitted, and the view block is dropped when it
+ *   would carry no bans at all. `extraPatterns` merges consumer bans
+ *   into each block (keys: `kitScope`, `viewData`, `dataUi`).
+ * - Preset `feature-folders`: `{ preset: "feature-folders", kitPackage,
+ *   featureRoot, extraPatterns? }`. UI may import ports, not adapters;
+ *   adapters are injected at the feature composition root; model is
+ *   pure. Bans apply only under `featureRoot` (extraPatterns also
+ *   accepts `model`).
  * @returns {import("eslint").Linter.Config[]} Flat config blocks.
  */
-export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, extraPatterns = {} }) {
-  for (const [key, value] of Object.entries(extraPatterns)) {
-    if (key !== "kitScope" && key !== "viewData" && key !== "dataUi") {
-      throw new Error(`defineLayers: unknown extraPatterns key "${key}" (want kitScope, viewData or dataUi)`);
-    }
-    if (!Array.isArray(value)) {
-      throw new Error(`defineLayers: extraPatterns.${key} must be a list of no-restricted-imports pattern objects`);
-    }
+export function defineLayers(options) {
+  const { preset, extraPatterns = {} } = options;
+  if (preset === "feature-folders") {
+    return featureFolderLayers(options);
   }
+  if (preset !== undefined) {
+    throw new Error(`defineLayers: unknown preset "${preset}" (want feature-folders)`);
+  }
+  const { kitPackage, viewDirs, dataDirs, actionPatterns } = options;
+  assertExtraPatterns(extraPatterns, ["kitScope", "viewData", "dataUi"]);
   if (!Array.isArray(actionPatterns)) {
     throw new Error("defineLayers: actionPatterns must be a list of import specifiers (may be empty)");
   }
@@ -209,6 +220,128 @@ export function defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, e
                 message: "Data code is UI-free: no UI kit imports.",
               },
               ...extras.dataUi,
+            ],
+          },
+        ],
+      },
+    },
+  ];
+}
+
+const ADAPTER_GROUP = ["**/adapters", "**/adapters/**"];
+const REACT_GROUP = ["react", "react-dom", "react-dom/*", "react/jsx-runtime"];
+
+function featureFolderLayers({
+  kitPackage,
+  featureRoot,
+  extraPatterns = {},
+  viewDirs,
+  dataDirs,
+  actionPatterns,
+}) {
+  if (viewDirs !== undefined || dataDirs !== undefined || actionPatterns !== undefined) {
+    throw new Error("defineLayers: preset feature-folders uses featureRoot, not viewDirs/dataDirs/actionPatterns");
+  }
+  if (typeof featureRoot !== "string" || featureRoot === "") {
+    throw new Error("defineLayers: featureRoot is required for preset feature-folders");
+  }
+  assertExtraPatterns(extraPatterns, ["kitScope", "viewData", "dataUi", "model"]);
+  const root = featureRoot.replace(/\/$/, "");
+  const kitPatterns = [kitPackage, `${kitPackage}/*`];
+  const views = asFiles([`${root}/**/ui/**`]);
+  const adapters = asFiles([`${root}/**/adapters/**`]);
+  const model = asFiles([`${root}/**/model/**`]);
+  const compose = [`${root}/*/index.ts`, `${root}/*/index.tsx`, `${root}/*/compose.ts`, `${root}/*/compose.tsx`];
+  const extras = { kitScope: [], viewData: [], dataUi: [], model: [], ...extraPatterns };
+  return [
+    {
+      name: "zedkit/layers-kit-scope",
+      files: asFiles([root]),
+      ignores: [...views, ...adapters, ...model, ...compose],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: kitPatterns,
+                message: "UI kit imports are only allowed from view files. Move this import into a view.",
+              },
+              {
+                group: REACT_GROUP,
+                message: "Only ui/ and the composition root import React.",
+              },
+              {
+                group: ADAPTER_GROUP,
+                message: "Inject adapters at the feature composition root (index.ts or compose.ts).",
+              },
+              ...extras.kitScope,
+            ],
+          },
+        ],
+      },
+    },
+    {
+      name: "zedkit/layers-view-data",
+      files: views,
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: ADAPTER_GROUP,
+                message: "UI files import ports, not adapters. Inject the adapter at the feature composition root.",
+              },
+              ...extras.viewData,
+            ],
+          },
+        ],
+      },
+    },
+    {
+      name: "zedkit/layers-data-ui",
+      files: adapters,
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: REACT_GROUP,
+                message: "Data code is UI-free: no React runtime imports.",
+              },
+              {
+                group: kitPatterns,
+                message: "Data code is UI-free: no UI kit imports.",
+              },
+              ...extras.dataUi,
+            ],
+          },
+        ],
+      },
+    },
+    {
+      name: "zedkit/layers-model-pure",
+      files: model,
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: REACT_GROUP,
+                message: "Model is pure: no React runtime. Keep I/O in adapters.",
+              },
+              {
+                group: kitPatterns,
+                message: "Model is pure: no UI kit imports.",
+              },
+              {
+                group: ADAPTER_GROUP,
+                message: "Model is pure: adapters are injected at the composition root.",
+              },
+              ...extras.model,
             ],
           },
         ],

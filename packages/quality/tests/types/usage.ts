@@ -13,3 +13,12 @@ export const layers: Linter.Config[] = defineLayers({
     kitScope: [{ group: ["payload"], message: "no payload core here" }],
   },
 });
+
+export const featureFolders: Linter.Config[] = defineLayers({
+  preset: "feature-folders",
+  kitPackage: "@acme/ui",
+  featureRoot: "features",
+  extraPatterns: {
+    model: [{ group: ["../..", "../../*"], message: "no deep relative" }],
+  },
+});

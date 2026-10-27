@@ -32,6 +32,7 @@ describe("config-only dogfood (verdict a)", () => {
     const rootConfig = readFileSync(join(repoRoot, "eslint.config.mjs"), "utf8");
     expect(rootConfig).toContain('from "@zedtech/zedkit-quality"');
     expect(rootConfig).toContain("uiPreset({");
+    expect(rootConfig).toContain('preset: "feature-folders"');
     expect(rootConfig).not.toContain("eslint/ui-preset");
     expect(existsSync(join(repoRoot, "eslint", "ui-preset.mjs"))).toBe(false);
   });

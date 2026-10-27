@@ -18,7 +18,10 @@
    `catalog.json` (`pnpm catalog:build` from the root).
 7. `uiPreset` moves `eslint/ui-preset.mjs` logic verbatim (only
    `entryPoint` is a parameter); `defineLayers` encodes the
-   route/view/data doctrine from the `console-architecture` agent.
+   route/view/data doctrine from the `console-architecture` agent,
+   plus preset `feature-folders` (ui→ports, adapters at the
+   composition root, model pure). The live example lives in
+   `apps/docs/features/note-list`, not under `components/demos`.
 8. Definition of done: `pnpm --filter @zedtech/zedkit-quality typecheck
    && pnpm --filter @zedtech/zedkit-quality lint
    && pnpm --filter @zedtech/zedkit-quality test` green (each command

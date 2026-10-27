@@ -141,4 +141,110 @@ describe("defineLayers", () => {
       }),
     ).toThrow("actionPatterns must be a list");
   });
+
+  describe("preset feature-folders", () => {
+    const layers = defineLayers({
+      preset: "feature-folders",
+      kitPackage: "@acme/ui",
+      featureRoot: "features",
+    });
+    const linter = new Linter();
+    const kitImport = 'import { Button } from "@acme/ui";\n';
+    const adapterImport = 'import { createFixture } from "../adapters/fixture";\n';
+    const portImport = 'import { noteListPort } from "../ports/note-list-port";\n';
+    const reactImport = 'import { useState } from "react";\n';
+
+    it("allows kit imports in feature ui, denies them in ports", () => {
+      expect(linter.verify(kitImport, layers, "features/inbox/ui/inbox-view.ts")).toEqual([]);
+      const port = linter.verify(kitImport, layers, "features/inbox/ports/inbox-port.ts");
+      expect(port).toHaveLength(1);
+      expect(port[0].message).toContain("only allowed from view files");
+    });
+
+    it("does not restrict kit imports outside the feature root", () => {
+      const result = linter.verify(kitImport, layers, "app/page.ts");
+      expect(result.filter((msg) => msg.ruleId === "no-restricted-imports")).toEqual([]);
+    });
+
+    it("denies adapter imports from ui, allows port imports", () => {
+      const blocked = linter.verify(adapterImport, layers, "features/inbox/ui/inbox-view.ts");
+      expect(blocked).toHaveLength(1);
+      expect(blocked[0].ruleId).toBe("no-restricted-imports");
+      expect(blocked[0].message).toContain("ports");
+      expect(linter.verify(portImport, layers, "features/inbox/ui/inbox-view.ts")).toEqual([]);
+    });
+
+    it("allows the composition root to import adapters and kit", () => {
+      const adapter = linter.verify(adapterImport, layers, "features/inbox/index.ts");
+      expect(adapter.filter((msg) => msg.ruleId === "no-restricted-imports")).toEqual([]);
+      const kit = linter.verify(kitImport, layers, "features/inbox/index.ts");
+      expect(kit.filter((msg) => msg.ruleId === "no-restricted-imports")).toEqual([]);
+    });
+
+    it("denies adapter and react imports from ports", () => {
+      const adapter = linter.verify(adapterImport, layers, "features/inbox/ports/inbox-port.ts");
+      expect(adapter).toHaveLength(1);
+      expect(adapter[0].message).toContain("composition root");
+      const react = linter.verify(reactImport, layers, "features/inbox/ports/inbox-port.ts");
+      expect(react).toHaveLength(1);
+      expect(react[0].message).toContain("composition root");
+    });
+
+    it("merges extraPatterns into every feature-folders block", () => {
+      const extra = [{ group: ["../..", "../../*"], message: "no deep relative" }];
+      const withExtras = defineLayers({
+        preset: "feature-folders",
+        kitPackage: "@acme/ui",
+        featureRoot: "features",
+        extraPatterns: { kitScope: extra, viewData: extra, dataUi: extra, model: extra },
+      });
+      const deep = 'import x from "../../lib";\n';
+      for (const file of [
+        "features/inbox/ports/inbox-port.ts",
+        "features/inbox/ui/inbox-view.ts",
+        "features/inbox/adapters/fixture.ts",
+        "features/inbox/model/inbox-reducer.ts",
+      ]) {
+        const blocked = linter.verify(deep, withExtras, file);
+        expect(blocked, file).toHaveLength(1);
+        expect(blocked[0].message).toContain("no deep relative");
+      }
+    });
+
+    it("keeps model pure: no react, kit, or adapters", () => {
+      const react = linter.verify(reactImport, layers, "features/inbox/model/inbox-reducer.ts");
+      expect(react).toHaveLength(1);
+      expect(react[0].message).toContain("pure");
+      const kit = linter.verify(kitImport, layers, "features/inbox/model/inbox-reducer.ts");
+      expect(kit).toHaveLength(1);
+      expect(kit[0].message).toContain("pure");
+      const adapter = linter.verify(adapterImport, layers, "features/inbox/model/inbox-reducer.ts");
+      expect(adapter).toHaveLength(1);
+      expect(adapter[0].message).toContain("pure");
+    });
+
+    it("keeps adapters UI-free", () => {
+      const react = linter.verify(reactImport, layers, "features/inbox/adapters/fixture.ts");
+      expect(react).toHaveLength(1);
+      expect(react[0].message).toContain("UI-free");
+      const kit = linter.verify(kitImport, layers, "features/inbox/adapters/fixture.ts");
+      expect(kit).toHaveLength(1);
+      expect(kit[0].message).toContain("UI-free");
+    });
+
+    it("fails fast on unknown preset, missing featureRoot, and mixed classic keys", () => {
+      expect(() => defineLayers({ preset: "hexagonal", kitPackage: "@acme/ui", featureRoot: "features" })).toThrow(
+        'unknown preset "hexagonal"',
+      );
+      expect(() => defineLayers({ preset: "feature-folders", kitPackage: "@acme/ui" })).toThrow("featureRoot");
+      expect(() =>
+        defineLayers({
+          preset: "feature-folders",
+          kitPackage: "@acme/ui",
+          featureRoot: "features",
+          viewDirs: ["app/**/ui/**"],
+        }),
+      ).toThrow("featureRoot");
+    });
+  });
 });
