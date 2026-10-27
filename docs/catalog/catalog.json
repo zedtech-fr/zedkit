@@ -1807,7 +1807,7 @@
             }
           ],
           "a11y": "`IdentitySwitcher` is a native labelled `select`; `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose.",
-          "troubleshooting": "The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher. A stored id is ignored — it must be in `ids`. The kit ships no identity yet, so pass your own list to the script and the switcher.",
+          "troubleshooting": "The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher. A stored id is ignored — it must be in `ids`. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks.",
           "seeAlso": [
             "Theme an admin app (dark/light included)"
           ]

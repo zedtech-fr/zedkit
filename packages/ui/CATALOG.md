@@ -1073,7 +1073,7 @@ import { Tabs } from "@zedtech/zedkit-ui";
 - When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
 - See also: `Theme an admin app (dark/light included)`
 - A11y: `IdentitySwitcher` is a native labelled `select`; `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose.
-- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher. A stored id is ignored — it must be in `ids`. The kit ships no identity yet, so pass your own list to the script and the switcher.
+- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher. A stored id is ignored — it must be in `ids`. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks.
 
 ```ts
 import { IdentityScript, IdentitySwitcher } from "@zedtech/zedkit-ui";

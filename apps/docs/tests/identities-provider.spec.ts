@@ -25,11 +25,16 @@ function resolve(page: Page, color: string) {
   }, color);
 }
 
-test("no identity is applied while the kit ships none, even with a stored id", async ({ page }) => {
+test("an unknown stored id is ignored: the stock look stays", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("zk-identity", "anything"));
   await page.goto(PAGE, { waitUntil: "networkidle" });
   await expect(page.locator("html")).not.toHaveAttribute("data-identity", /.*/);
-  await expect(page.getByRole("combobox", { name: "Identity" })).toHaveCount(0);
+});
+
+test("a stored built-in id is applied before first paint", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("zk-identity", "press"));
+  await page.goto(PAGE, { waitUntil: "commit" });
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
 });
 
 for (const mode of ["light", "dark"] as const) {
