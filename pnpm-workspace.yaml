@@ -40,6 +40,7 @@ catalog:
   nestjs-pino: 5.3.1
   pino: 10.4.0
   pino-http: 11.0.0
+  posthog-js: 1.440.0
   reflect-metadata: 0.2.2
   supertest: 7.3.1
   unplugin-swc: 2.0.0

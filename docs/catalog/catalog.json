@@ -297,6 +297,117 @@
         }
       ]
     },
+    "@zedtech/zedkit-observability": {
+      "catalog": "packages/observability/CATALOG.md",
+      "keywords": [
+        "logging",
+        "analytics",
+        "observability",
+        "react",
+        "typescript",
+        "ports",
+        "pino",
+        "product-analytics"
+      ],
+      "audience": "App authors who want logging and analytics behind stable ports.",
+      "needs": [
+        {
+          "need": "Log without importing a backend",
+          "import": "`@zedtech/zedkit-observability` — `Logger`, `LogLevel`, `LogContext`, `noopLogger`, `createConsoleLogger`, `createMemoryLogger`, `CapturedLog`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "Logger port",
+          "audience": "TypeScript services and apps that should not import a logging SDK in feature code.",
+          "purpose": "A small `Logger` port with noop, console, and in-memory adapters.",
+          "whenToUse": "Any module that needs structured logs but should stay testable.",
+          "whenNotToUse": "When you only need one `console.log` in a throwaway script.",
+          "derivedFrom": null,
+          "example": "import { createMemoryLogger, type Logger } from \"@zedtech/zedkit-observability\";\nconst { logger, entries } = createMemoryLogger();\nlogger.info(\"ready\", { port: 3000 });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createMemoryLogger, type Logger } from \"@zedtech/zedkit-observability\";\nconst { logger, entries } = createMemoryLogger();\nlogger.info(\"ready\", { port: 3000 });"
+            }
+          ]
+        },
+        {
+          "need": "Track product events with a typed map",
+          "import": "`@zedtech/zedkit-observability` — `Tracker`, `EventMap`, `createNoopTracker`, `createConsoleTracker`, `createMemoryTracker`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "Tracker port",
+          "audience": "Front-end and full-stack teams sending product analytics events.",
+          "purpose": "Typed `capture` calls backed by noop, console, or in-memory adapters.",
+          "whenToUse": "Before a real analytics backend is wired, or in tests.",
+          "whenNotToUse": "For server request metrics — use your APM stack instead.",
+          "derivedFrom": null,
+          "example": "import { createMemoryTracker } from \"@zedtech/zedkit-observability\";\ntype Events = { signup: { plan: string } };\nconst { tracker, captured } = createMemoryTracker<Events>();\ntracker.capture(\"signup\", { plan: \"free\" });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createMemoryTracker } from \"@zedtech/zedkit-observability\";\ntype Events = { signup: { plan: string } };\nconst { tracker, captured } = createMemoryTracker<Events>();\ntracker.capture(\"signup\", { plan: \"free\" });"
+            }
+          ]
+        },
+        {
+          "need": "Wire logger and tracker in React",
+          "import": "`@zedtech/zedkit-observability/react` — `ObservabilityProvider`, `useLogger`, `useTracker`",
+          "wraps": "`react`",
+          "status": "alpha",
+          "shortName": "React observability",
+          "audience": "React apps that should read logging/analytics from context.",
+          "purpose": "One provider at the root; hooks below stay backend-agnostic.",
+          "whenToUse": "Client components that emit logs or analytics events.",
+          "whenNotToUse": "Server-only code — import the ports directly.",
+          "derivedFrom": null,
+          "example": "import { ObservabilityProvider, useLogger } from \"@zedtech/zedkit-observability/react\";\nexport function App() {\n  return (\n    <ObservabilityProvider>\n      <Home />\n    </ObservabilityProvider>\n  );\n}\nfunction Home() {\n  useLogger().info(\"mounted\");\n  return null;\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { ObservabilityProvider, useLogger } from \"@zedtech/zedkit-observability/react\";\nexport function App() {\n  return (\n    <ObservabilityProvider>\n      <Home />\n    </ObservabilityProvider>\n  );\n}\nfunction Home() {\n  useLogger().info(\"mounted\");\n  return null;\n}"
+            }
+          ]
+        },
+        {
+          "need": "Ship JSON logs on Node with pino",
+          "import": "`@zedtech/zedkit-observability/pino` — `createPinoLogger`, `PinoLoggerOptions`",
+          "wraps": "`pino` (peer)",
+          "status": "alpha",
+          "shortName": "Pino adapter",
+          "audience": "Node services that already run `pino` at the edge.",
+          "purpose": "Wrap `pino` behind the shared `Logger` port.",
+          "whenToUse": "Production Node hosts ingesting JSON log lines.",
+          "whenNotToUse": "Browser bundles — use the console adapter instead.",
+          "derivedFrom": null,
+          "example": "import { createPinoLogger } from \"@zedtech/zedkit-observability/pino\";\nconst logger = createPinoLogger({ name: \"api\" });\nlogger.info(\"listening\", { port: 3000 });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createPinoLogger } from \"@zedtech/zedkit-observability/pino\";\nconst logger = createPinoLogger({ name: \"api\" });\nlogger.info(\"listening\", { port: 3000 });"
+            }
+          ]
+        },
+        {
+          "need": "Forward events to a browser analytics SDK",
+          "import": "`@zedtech/zedkit-observability/posthog` — `createProductAnalyticsTracker`, `ProductAnalyticsClient`",
+          "wraps": "`posthog-js` (peer)",
+          "status": "alpha",
+          "shortName": "Analytics adapter",
+          "audience": "Teams using a browser product-analytics SDK at the composition root.",
+          "purpose": "Map the `Tracker` port onto an SDK client (for example `posthog-js`).",
+          "whenToUse": "After consent allows analytics in the browser.",
+          "whenNotToUse": "Server-side event pipelines — send from your API instead.",
+          "derivedFrom": null,
+          "example": "import { createProductAnalyticsTracker } from \"@zedtech/zedkit-observability/posthog\";\nconst tracker = createProductAnalyticsTracker(client);\ntracker.capture(\"page_view\", { path: \"/home\" });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createProductAnalyticsTracker } from \"@zedtech/zedkit-observability/posthog\";\nconst tracker = createProductAnalyticsTracker(client);\ntracker.capture(\"page_view\", { path: \"/home\" });"
+            }
+          ]
+        }
+      ]
+    },
     "@zedtech/zedkit-payload-seo": {
       "catalog": "packages/payload-seo/CATALOG.md",
       "keywords": [

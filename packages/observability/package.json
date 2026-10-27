@@ -1,0 +1,97 @@
+{
+  "name": "@zedtech/zedkit-observability",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Logger and Tracker ports with swappable adapters and React hooks — wire backends at the composition root, not inside features. Original work by the same author.",
+  "keywords": [
+    "logging",
+    "analytics",
+    "observability",
+    "react",
+    "typescript",
+    "ports",
+    "pino",
+    "product-analytics"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/observability",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/observability"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./pino": {
+      "types": "./dist/pino-logger.d.ts",
+      "import": "./dist/pino-logger.js"
+    },
+    "./posthog": {
+      "types": "./dist/posthog-tracker.d.ts",
+      "import": "./dist/posthog-tracker.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests"
+  },
+  "peerDependencies": {
+    "pino": "catalog:",
+    "posthog-js": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "pino": {
+      "optional": true
+    },
+    "posthog-js": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "jsdom": "catalog:",
+    "pino": "catalog:",
+    "posthog-js": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
