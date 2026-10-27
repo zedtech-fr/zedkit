@@ -190,7 +190,15 @@ export function SearchPill() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const lifted = useRef<HTMLDivElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
   useKeyboardLift(open, lifted);
+
+  // However the pill closes (close button, Escape, overlay tap, route change), focus goes back to the magnifier.
+  useEffect(() => {
+    if (wasOpen.current && !open) toggle.current?.focus({ preventScroll: true });
+    wasOpen.current = open;
+  }, [open]);
 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
@@ -219,12 +227,13 @@ export function SearchPill() {
       >
         <div
           role="search"
-          className={`relative flex h-11 items-center justify-end rounded-full bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-[width] duration-300 ease-out motion-reduce:transition-none ${
+          className={`relative flex h-11 items-center justify-end rounded-full bg-popover text-popover-foreground shadow-lg ring-1 ring-border transition-none ${
             open ? "w-[calc(100vw-2rem)]" : "w-11"
           }`}
         >
           {open ? <PillBody onClose={() => setOpen(false)} /> : null}
           <button
+            ref={toggle}
             type="button"
             aria-label="Search the documentation"
             aria-expanded={open}

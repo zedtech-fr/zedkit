@@ -45,6 +45,7 @@ for (const size of SIZES) {
 
       await close.click();
       await expect(field).toHaveCount(0);
+      await expect(magnifier).toBeFocused();
       await expect.poll(async () => (await magnifier.boundingBox())?.width ?? 0).toBeGreaterThanOrEqual(43.5);
     });
   }
@@ -57,6 +58,26 @@ test("Escape closes the phone search pill", async ({ page }) => {
   await expect(page.getByRole("searchbox")).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("searchbox")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Search the documentation" })).toBeFocused();
+});
+
+test("tapping outside closes the phone search pill and returns focus to the magnifier", async ({ page }) => {
+  await page.setViewportSize(SIZES[1]!);
+  await page.goto("/");
+  const magnifier = page.getByRole("button", { name: "Search the documentation" });
+  await magnifier.click();
+  await expect(page.getByRole("searchbox")).toBeFocused();
+  await page.mouse.click(20, 120);
+  await expect(page.getByRole("searchbox")).toHaveCount(0);
+  await expect(magnifier).toBeFocused();
+});
+
+test("the pill opens without a width transition", async ({ page }) => {
+  await page.setViewportSize(SIZES[1]!);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Search the documentation" }).click();
+  const pill = page.getByRole("search");
+  expect(await pill.evaluate((el) => getComputedStyle(el).transitionProperty)).not.toContain("width");
 });
 
 test.describe("reduced motion", () => {
