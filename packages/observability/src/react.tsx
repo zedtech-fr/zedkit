@@ -6,22 +6,23 @@ import { createConsoleLogger, type Logger } from "./logger.js";
 import type { ObservabilityContextValue, ObservabilityProviderProps } from "./react.types.js";
 import { createNoopTracker, type EventMap, type Tracker } from "./tracker.js";
 
+const defaultLogger = createConsoleLogger();
+const defaultTracker = createNoopTracker();
+
 const ObservabilityContext = createContext<ObservabilityContextValue>({
-  logger: createConsoleLogger(),
-  tracker: createNoopTracker(),
+  logger: defaultLogger,
+  tracker: defaultTracker,
 });
 
 export function ObservabilityProvider(props: ObservabilityProviderProps) {
-  return (
-    <ObservabilityContext.Provider
-      value={{
-        logger: props.logger ?? createConsoleLogger(),
-        tracker: props.tracker ?? createNoopTracker(),
-      }}
-    >
-      {props.children}
-    </ObservabilityContext.Provider>
+  const value = useMemo(
+    () => ({
+      logger: props.logger ?? defaultLogger,
+      tracker: props.tracker ?? defaultTracker,
+    }),
+    [props.logger, props.tracker],
   );
+  return <ObservabilityContext.Provider value={value}>{props.children}</ObservabilityContext.Provider>;
 }
 
 export function useLogger(): Logger {
