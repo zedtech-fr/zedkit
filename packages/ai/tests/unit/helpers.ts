@@ -48,6 +48,16 @@ export function skillDirs(): string[] {
     .map((entry) => entry.name);
 }
 
+/** First-party skill names, the single source: parsed from THIRD_PARTY_NOTICES.md. */
+export function firstPartySkills(): string[] {
+  const notices = readFileSync(join(kitDir(), "THIRD_PARTY_NOTICES.md"), "utf8");
+  const block = /is not\ncovered here: ([\s\S]*?)\. Each upstream/.exec(notices);
+  if (!block) throw new Error("THIRD_PARTY_NOTICES.md has no first-party list block");
+  return [...(block[1] ?? "").matchAll(/`([a-z][a-z0-9-]*)`/g)]
+    .map((m) => m[1] ?? "")
+    .sort();
+}
+
 /** Every installable name: agents + commands + skill dirs (+ presets when asked). */
 export function shippedNames(includePresets = false): Set<string> {
   const manifest = readManifest();

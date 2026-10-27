@@ -2,20 +2,10 @@ import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { kitDir } from "#kit.js";
+import { firstPartySkills, skillDirs } from "./helpers.js";
 
 function shippedSkills(): string[] {
-  return readdirSync(`${kitDir()}/skills`, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
-}
-
-function firstPartyFromNotices(notices: string): string[] {
-  const block = /is not\ncovered here: ([\s\S]*?)\. Each upstream/.exec(notices);
-  expect(block, "notices first-party list block").not.toBeNull();
-  return [...(block?.[1] ?? "").matchAll(/`([a-z][a-z0-9-]*)`/g)]
-    .map((m) => m[1] ?? "")
-    .sort();
+  return skillDirs().sort();
 }
 
 function upstreamFromNotices(notices: string): string[] {
@@ -49,15 +39,14 @@ describe("third-party notices", () => {
 
   it("partitions shipped skills exactly: first-party plus upstream, no overlap", () => {
     const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
-    const firstParty = firstPartyFromNotices(notices);
+    const firstParty = firstPartySkills();
     const upstream = upstreamFromNotices(notices);
     expect(firstParty.filter((name) => upstream.includes(name))).toEqual([]);
     expect([...firstParty, ...upstream].sort()).toEqual(shippedSkills());
   });
 
   it("matches the README first-party list with the notices first-party list", () => {
-    const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
-    expect(readmeFirstParty()).toEqual(firstPartyFromNotices(notices));
+    expect(readmeFirstParty()).toEqual(firstPartySkills());
   });
 
   it("matches every notices LICENSE mention with a shipped file, and vice versa", () => {

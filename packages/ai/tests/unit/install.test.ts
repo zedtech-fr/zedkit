@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { put, tempDir } from "./helpers.js";
+import { firstPartySkills, put, tempDir } from "./helpers.js";
 
 function install(dest: string, options: Parameters<typeof installKit>[0] extends infer O ? Partial<O> : never = {}) {
   const result = installKit({ dest, ...options });
@@ -431,7 +431,7 @@ describe("installKit", () => {
     const installed = new Set(readdirSync(join(dest, ".agents/skills")).concat(manifest.value.agents));
     const everything = new Set(readdirSync(join(kitRoot(), "skills")).concat(manifest.value.agents));
     // Vendored skills are upstream's text; the rest is ours and must hold together.
-    const ours = FIRST_PARTY_SKILLS.map((name) => join(dest, ".agents/skills", name, "SKILL.md"));
+    const ours = firstPartySkills().map((name) => join(dest, ".agents/skills", name, "SKILL.md"));
     const files = [join(dest, "AGENTS.md"), ...markdownFiles(join(dest, ".agents/agents")), ...ours.filter(existsSync)];
     for (const file of files) {
       const text = readFileSync(file, "utf8");
@@ -473,22 +473,6 @@ describe("installKit", () => {
     }
   });
 });
-
-const FIRST_PARTY_SKILLS = [
-  "audit",
-  "ground-truth",
-  "parallel-work",
-  "definition-of-done",
-  "adversarial-tests",
-  "rules-upkeep",
-  "persona-review",
-  "setup-ai",
-  "review",
-  "plan",
-  "challenge",
-  "orchestrate",
-  "use-zedkit",
-];
 
 function kitRoot(): string {
   return fileURLToPath(new URL("../../kit/", import.meta.url));
