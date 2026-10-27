@@ -30,7 +30,10 @@
       "registry": "label",
       "props": "LabelProps",
       "source": "label.tsx",
-      "demo": "LabelDemo"
+      "demo": "LabelDemo",
+      "examples": {
+        "Required mark": "LabelRequiredDemo"
+      }
     },
     "Collect text input with a label": {
       "package": "@zedtech/zedkit-ui",
@@ -121,7 +124,11 @@
       "registry": "wizard-steps",
       "props": "WizardStepsProps",
       "source": "wizard-steps.tsx",
-      "demo": "WizardDemo"
+      "demo": "WizardDemo",
+      "examples": {
+        "Composed steps": "WizardComposedDemo",
+        "Solo card": "WizardSoloDemo"
+      }
     },
     "Show key-value details and a live indicator": {
       "package": "@zedtech/zedkit-ui",
@@ -237,7 +244,9 @@
       "props": "TabsProps",
       "source": "tabs.tsx",
       "demo": "TabsDemo",
-      "examples": { "Controlled": "TabsControlledDemo" }
+      "examples": {
+        "Controlled": "TabsControlledDemo"
+      }
     },
     "Show toast notifications": {
       "package": "@zedtech/zedkit-ui",
@@ -260,7 +269,9 @@
       "props": "BrandLogoProps",
       "source": "brand-logo.tsx",
       "demo": "BrandLogoDemo",
-      "examples": { "Header link to the home page": "BrandLogoHeaderDemo" }
+      "examples": {
+        "Header link to the home page": "BrandLogoHeaderDemo"
+      }
     }
   }
 }

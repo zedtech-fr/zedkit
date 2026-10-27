@@ -17,6 +17,7 @@ import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
 import { LabelDemo } from "./label-demo";
+import { LabelRequiredDemo } from "./label-required-demo";
 import { LoadingZonesDemo } from "./loading-zones-demo";
 import { MotionDemo } from "./motion-demo";
 import { SecretFieldDemo } from "./secret-field-demo";
@@ -34,7 +35,9 @@ import { ToggleDemo } from "./toggle-demo";
 import { ValidatedFormDemo } from "./validated-form-demo";
 import { TypographyDemo } from "./typography-demo";
 import { UpdatedAgoDemo } from "./updated-ago-demo";
+import { WizardComposedDemo } from "./wizard-composed-demo";
 import { WizardDemo } from "./wizard-demo";
+import { WizardSoloDemo } from "./wizard-solo-demo";
 
 /**
  * Single seam between doc pages and live demos. Pages and MDX never
@@ -67,6 +70,7 @@ export const demoRegistry = {
   HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LabelDemo: { Demo: LabelDemo, file: "label-demo.tsx" },
+  LabelRequiredDemo: { Demo: LabelRequiredDemo, file: "label-required-demo.tsx" },
   LoadingZonesDemo: { Demo: LoadingZonesDemo, file: "loading-zones-demo.tsx" },
   MotionDemo: { Demo: MotionDemo, file: "motion-demo.tsx" },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
@@ -86,7 +90,9 @@ export const demoRegistry = {
   ValidatedFormDemo: { Demo: ValidatedFormDemo, file: "validated-form-demo.tsx" },
   TypographyDemo: { Demo: TypographyDemo, file: "typography-demo.tsx" },
   UpdatedAgoDemo: { Demo: UpdatedAgoDemo, file: "updated-ago-demo.tsx" },
+  WizardComposedDemo: { Demo: WizardComposedDemo, file: "wizard-composed-demo.tsx" },
   WizardDemo: { Demo: WizardDemo, file: "wizard-demo.tsx" },
+  WizardSoloDemo: { Demo: WizardSoloDemo, file: "wizard-solo-demo.tsx" },
 } as const satisfies Record<string, DemoEntry>;
 
 export type DemoKey = keyof typeof demoRegistry;
