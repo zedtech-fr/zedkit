@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach } from "vitest";
@@ -56,6 +56,13 @@ export function firstPartySkills(): string[] {
   return [...(block[1] ?? "").matchAll(/`([a-z][a-z0-9-]*)`/g)]
     .map((m) => m[1] ?? "")
     .sort();
+}
+
+/** Every real markdown file under a dir, recursively, never following symlinks. */
+export function markdownFiles(dir: string): string[] {
+  return readdirSync(dir, { recursive: true, encoding: "utf8" })
+    .map((entry) => join(dir, entry))
+    .filter((full) => full.endsWith(".md") && !lstatSync(full).isSymbolicLink() && lstatSync(full).isFile());
 }
 
 /** Every installable name: agents + commands + skill dirs (+ presets when asked). */

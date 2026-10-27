@@ -2,25 +2,12 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { kitDir, readManifest } from "#kit.js";
-import { lensTableRows, skillDirs } from "./helpers.js";
+import { lensTableRows, markdownFiles, skillDirs } from "./helpers.js";
 
 // Upstream skill borrowed as an excerpt, never vendored (see skills/pr/CREDITS.md).
 const UPSTREAM = new Set(["show-me"]);
 // Frontmatter field words, not kit names, in reversed mentions.
 const FIELDS = new Set(["model", "description"]);
-
-function kitMarkdown(): string[] {
-  const out: string[] = [];
-  const walk = (dir: string): void => {
-    for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      const full = join(dir, entry.name);
-      if (entry.isDirectory()) walk(full);
-      else if (entry.name.endsWith(".md")) out.push(full);
-    }
-  };
-  walk(kitDir());
-  return out;
-}
 
 describe("role mentions", () => {
   it("resolves every role mention, either word order, to that kind", () => {
@@ -34,7 +21,7 @@ describe("role mentions", () => {
       lens: new Set(lensTableRows().map((cells) => cells[1] ?? "")),
     };
     let checked = 0;
-    for (const file of kitMarkdown()) {
+    for (const file of markdownFiles(kitDir())) {
       const raw = readFileSync(file, "utf8");
       const mentions = new Set(
         [...raw.matchAll(/`([a-z][a-z0-9-]*)` (skill|agent|command|lens)s?/gu)]

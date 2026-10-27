@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { firstPartySkills, put, tempDir } from "./helpers.js";
+import { firstPartySkills, markdownFiles, put, tempDir } from "./helpers.js";
 
 function install(dest: string, options: Parameters<typeof installKit>[0] extends infer O ? Partial<O> : never = {}) {
   const result = installKit({ dest, ...options });
@@ -476,10 +476,4 @@ describe("installKit", () => {
 
 function kitRoot(): string {
   return fileURLToPath(new URL("../../kit/", import.meta.url));
-}
-
-function markdownFiles(dir: string): string[] {
-  return readdirSync(dir, { recursive: true, encoding: "utf8" })
-    .map((entry) => join(dir, entry))
-    .filter((full) => full.endsWith(".md") && !lstatSync(full).isSymbolicLink() && lstatSync(full).isFile());
 }
