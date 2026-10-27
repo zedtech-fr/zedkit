@@ -1,11 +1,22 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Button, Stack, Text, cn } from "@zedtech/zedkit-ui";
 
 const noop = () => () => {};
+
+const PreviewMobileContext = createContext(false);
+
+/**
+ * True while the preview shows the Mobile frame. Media queries follow the real
+ * window, so a demo whose layout changes at a breakpoint reads this to match
+ * the narrow frame on a wide screen.
+ */
+export function usePreviewMobile(): boolean {
+  return useContext(PreviewMobileContext);
+}
 
 /**
  * Preview island with viewport and theme switches. The `dark` class re-scopes
@@ -68,7 +79,9 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
           mobile && "mx-auto w-full max-w-[390px]",
         )}
       >
-        {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
+        <PreviewMobileContext.Provider value={mobile}>
+          {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
+        </PreviewMobileContext.Provider>
       </Stack>
     </Stack>
   );

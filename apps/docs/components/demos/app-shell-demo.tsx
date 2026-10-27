@@ -1,9 +1,7 @@
-import { AppShell, PageHeader, Text } from "@zedtech/zedkit-ui";
+"use client";
+
+import { ProjectTrackerDemoApp } from "../project-tracker-demo-app";
 
 export function AppShellDemo() {
-  return (
-    <AppShell sidebar={<Text>Org nav</Text>} topbar={<Text>User menu</Text>}>
-      <PageHeader title="Items" description="All items in this project." />
-    </AppShell>
-  );
+  return <ProjectTrackerDemoApp />;
 }
