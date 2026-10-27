@@ -1,5 +1,11 @@
 # @zedtech/zedkit-quality
 
+## 0.3.2
+
+### Patch Changes
+
+- 2a0b658: `defineLayers` accepts an empty `actionPatterns` (views may legitimately import data): the view ban is omitted instead of emitting an invalid empty group.
+
 ## 0.3.1
 
 ### Patch Changes
