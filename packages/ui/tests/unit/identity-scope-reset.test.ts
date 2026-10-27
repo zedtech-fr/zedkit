@@ -13,7 +13,7 @@ import { describe, expect, it } from "vitest";
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
 const read = (file: string): string => readFileSync(join(src, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 const identitiesCss = readFileSync(join(src, "identities.css"), "utf8");
-const identityFiles = readdirSync(join(src, "identities")).filter((file) => file.endsWith(".css"));
+const identityFiles = readdirSync(join(src, "identities")).filter((file: string) => file.endsWith(".css"));
 
 /** Declarations (`--name: value`) in a block body. */
 function declarations(body: string): Map<string, string> {
@@ -48,7 +48,7 @@ describe("scoped mist resets the stock tokens", () => {
     expect(resetDark.size).toBeGreaterThan(20);
   });
 
-  it.each(identityFiles)("re-declares every token %s overrides", (file) => {
+  it.each(identityFiles)("re-declares every token %s overrides", (file: string) => {
     const missing = [...declarations(read(join("identities", file))).keys()].filter(
       (name) => !handledElsewhere(name) && !resetLight.has(name),
     );
