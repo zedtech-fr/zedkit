@@ -54,6 +54,7 @@ In **improve** mode, audit each existing file and report before you edit:
 | Stale | paths that no longer exist, commands that fail, tools the repo no longer uses. Check each path and run each command; do not judge by reading. |
 | Contradictory | two files giving different commands or rules |
 | Duplicated | a paragraph, or three or more lines, repeated across files; keep one home and link to it |
+| Copied shared config | a local copy of what a published `@zedtech/*` package ships (ESLint preset/boundaries, tsconfig base): replace the copy with the install, thin wrapper only, never copy-paste; verify with the package's verify command |
 | Too long for always-loaded | root file over about 100 lines, nested file over about 60, skill over about 150; or details only one folder needs |
 | Missing trigger | skills or agents whose `description` does not say when to use them |
 | Unenforced | prose rules a tool could check. Before calling a rule unenforced, open the lint, type and CI configs and search them for it. |
