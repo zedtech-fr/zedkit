@@ -46,9 +46,13 @@ function Table({ className, scrollAriaLabel = "Scrollable table", children, ...p
     update();
     region.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
+    // Layout-driven width changes (a sidebar toggling) do not fire window resize.
+    const resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
+    resizeObserver?.observe(region);
     return () => {
       region.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      resizeObserver?.disconnect();
     };
   }, [children]);
 
