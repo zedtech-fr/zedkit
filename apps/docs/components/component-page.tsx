@@ -8,16 +8,11 @@ import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import {
   Section,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
   Text,
 } from "@zedtech/zedkit-ui";
 import { docsSite } from "../lib/site";
-import { roleForExportSymbol, symbolsFromImport } from "../lib/import-symbols";
+import { symbolsFromImport } from "../lib/import-symbols";
+import { ComponentExportsPanel } from "./component-exports-panel";
 import { ComponentPreview } from "./component-preview";
 import { PropsTable } from "./props-table";
 
@@ -47,7 +42,7 @@ export interface ComponentPageProps {
   related: RelatedLink[];
 }
 
-async function highlightedTs(code: string, title: string) {
+async function highlightedTs(code: string, title?: string) {
   const highlighted = await highlight(code, { lang: "tsx", components: { pre: Pre } });
   return (
     <CodeBlock title={title} allowCopy>
@@ -94,16 +89,16 @@ export async function ComponentPage({
         <Stack gap={4}>
           <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn", "registry"]}>
             <Tab value="pnpm">
-              {await highlightedTs(`pnpm add ${packageName}`, "pnpm")}
+              {await highlightedTs(`pnpm add ${packageName}`)}
             </Tab>
             <Tab value="npm">
-              {await highlightedTs(`npm install ${packageName}`, "npm")}
+              {await highlightedTs(`npm install ${packageName}`)}
             </Tab>
             <Tab value="yarn">
-              {await highlightedTs(`yarn add ${packageName}`, "yarn")}
+              {await highlightedTs(`yarn add ${packageName}`)}
             </Tab>
             <Tab value="registry">
-              {await highlightedTs(shadcnAdd, "shadcn")}
+              {await highlightedTs(shadcnAdd)}
             </Tab>
           </Tabs>
           <Text variant="muted">Package version: {version} (changesets).</Text>
@@ -111,7 +106,7 @@ export async function ComponentPage({
       </Section>
 
       <Section title="Import">
-        {await highlightedTs(importSnippet(importLine), "import")}
+        {await highlightedTs(importSnippet(importLine))}
       </Section>
 
       {source ? (
@@ -124,25 +119,7 @@ export async function ComponentPage({
       ) : null}
 
       <Section title="Exports">
-        <Stack gap={3}>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Symbol</TableHead>
-                <TableHead>Role</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {symbols.map((name) => (
-                <TableRow key={name}>
-                  <TableCell className="font-mono text-xs">{name}</TableCell>
-                  <TableCell className="text-muted-foreground">{roleForExportSymbol(name)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Text variant="muted">Wraps: {wraps}</Text>
-        </Stack>
+        <ComponentExportsPanel symbols={symbols} wraps={wraps} />
       </Section>
 
       <Section title="Preview">
