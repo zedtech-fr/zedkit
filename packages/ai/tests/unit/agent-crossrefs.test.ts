@@ -1,7 +1,8 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { kitDir, readManifest } from "#kit.js";
+import { kitDir } from "#kit.js";
+import { shippedNames } from "./helpers.js";
 
 // Bare code terms that are domain vocabulary, not kit references: ARIA
 // attributes, HTML elements, one CSS media feature, one CLI name.
@@ -18,16 +19,9 @@ const GENERIC = new Set([
   "rg",
 ]);
 
-function knownNames(): Set<string> {
-  const manifest = readManifest();
-  if (!manifest.ok) throw manifest.error;
-  const skills = readdirSync(join(kitDir(), "skills"));
-  return new Set(manifest.value.agents.concat(manifest.value.commands ?? [], skills));
-}
-
 describe("agent cross-references", () => {
   it("resolves every bare skill/agent name in agent bodies to shipped content", () => {
-    const names = knownNames();
+    const names = shippedNames();
     const files = readdirSync(join(kitDir(), "agents")).filter((f) => f.endsWith(".md"));
     expect(files.length).toBeGreaterThan(0);
     let checked = 0;
