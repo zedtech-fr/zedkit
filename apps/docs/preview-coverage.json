@@ -10,8 +10,6 @@
   ],
   "optOut": {},
   "pending": [
-    "Animate entrances and hover feedback with CSS utilities::Hover feedback",
-    "Animate entrances and hover feedback with CSS utilities::Staggered children",
     "Confirm destructive actions::Custom button labels",
     "Flag offline state with a live note::Offline note",
     "Flag offline state with a live note::Wired to online state",

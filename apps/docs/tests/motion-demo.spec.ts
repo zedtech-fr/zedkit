@@ -32,4 +32,19 @@ test.describe("motion utilities demo", () => {
     await expect(page.locator("[data-stagger] > *").first()).toHaveCSS("animation-name", "none");
     await expect(page.locator("[data-stagger] > *").first()).toHaveCSS("opacity", "1");
   });
+
+  test("hover and stagger examples have a live preview next to their code", async ({ page }) => {
+    await page.goto(MOTION_PAGE, { waitUntil: "networkidle" });
+    const hover = page.getByText("Live preview: Hover feedback", { exact: true });
+    const stagger = page.getByText("Live preview: Staggered children", { exact: true });
+    await expect(hover).toHaveCount(1);
+    await expect(stagger).toHaveCount(1);
+    const lift = page.locator(".hover-lift").filter({ hasText: "Website relaunch" });
+    await expect(lift).toBeVisible();
+    await expect(page.getByRole("button", { name: "Presses down on click" })).toBeVisible();
+    const tasks = page.locator("[data-stagger]").filter({ hasText: "Publish the sale banner" });
+    await expect(tasks.getByText("Write the launch email")).toBeVisible();
+    await page.getByRole("button", { name: "Replay", exact: true }).click();
+    await expect(tasks.getByText("Publish the sale banner")).toBeVisible();
+  });
 });

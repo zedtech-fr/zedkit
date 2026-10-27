@@ -19,7 +19,7 @@ test.describe("docs live overlay demos", () => {
     const errors: string[] = [];
     page.on("pageerror", (event) => errors.push(String(event)));
     await page.goto(`${BASE}${DOC_PAGES.badge}`, { waitUntil: "networkidle" });
-    await expect(page.getByRole("tab", { name: "Preview" })).toBeVisible();
+    await expect(page.getByRole("tab", { name: "Preview" }).first()).toBeVisible();
     await expectNoAxeViolations(page, ".rounded-lg.border.border-border.bg-muted\\/40");
     expect(errors).toEqual([]);
   });
