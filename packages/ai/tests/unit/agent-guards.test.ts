@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { parseFrontmatter } from "#frontmatter.js";
-import { kitDir } from "#kit.js";
+import { kitDir, readManifest } from "#kit.js";
 
 function catalogWrites(): Map<string, string> {
   const raw = readFileSync(
@@ -41,6 +41,22 @@ describe("agent write guards", () => {
       } else {
         expect(guards, name).toBeUndefined();
       }
+    }
+  });
+
+  it("keeps every agent model omitted or inherit (never a pinned model)", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    expect(manifest.value.agents.length).toBeGreaterThan(0);
+    for (const name of manifest.value.agents) {
+      const text = readFileSync(`${kitDir()}/agents/${name}.md`, "utf8");
+      const parsed = parseFrontmatter(text);
+      if (!parsed.ok) throw parsed.error;
+      const model = parsed.value.data["model"];
+      expect(
+        model === undefined || model === "inherit",
+        `${name} pins model ${String(model)}`,
+      ).toBe(true);
     }
   });
 });
