@@ -1,8 +1,11 @@
 import type { OpenGraphImage, SiteMetadata } from "@zedtech/zedkit-seo";
 
+/** The published site. Preview builds override `docsSite.url`; install commands keep pointing here. */
+export const PUBLIC_SITE_URL = "https://zedkit.app";
+
 export const docsSite: SiteMetadata = {
   name: "zedkit",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://zedkit.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? PUBLIC_SITE_URL,
   defaultLocale: "en",
   locales: ["en"],
 };
