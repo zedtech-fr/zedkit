@@ -11,6 +11,11 @@
  *    available: no backdrop-filter, or a request for less transparency,
  *    gives near-solid surfaces.
  *
+ *    Overlays (drawer, dialog, route modal) are glass too: a translucent
+ *    tinted panel, a thicker blur, a hairline light edge, a soft shadow and a
+ *    light scrim, so the page shows through blurred. Select lists and other
+ *    popovers take the popover colour the same way.
+ *
  *    Inert until `data-identity="glass"` is set on <html> (or on an
  *    element carrying `data-identity-scope`). Both families reuse the
  *    fallback faces already shipped (Inter, Space Grotesk).
@@ -102,6 +107,13 @@
   --zk-glass-filter: blur(var(--zk-glass-blur)) saturate(var(--zk-glass-saturate));
   --zk-glass-highlight: inset 0 1px 0 hsl(0 0% 100% / 0.65);
 
+  /* Glass overlays: panel alpha and blur, tint, and a light scrim. */
+  --zk-glass-overlay-alpha: 0.72;
+  --zk-glass-overlay-blur: 24px;
+  --zk-glass-overlay-filter: blur(var(--zk-glass-overlay-blur)) saturate(var(--zk-glass-saturate));
+  --zk-glass-overlay-tint: linear-gradient(160deg, hsl(262 90% 80% / 0.14), hsl(190 90% 70% / 0.1));
+  --zk-glass-scrim-alpha: 0.28;
+
   /* Depth: soft and wide, tinted by the page */
   --zk-shadow-color: 232 40% 24%;
   --zk-shadow-xs: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06);
@@ -110,6 +122,7 @@
   --zk-shadow-lg: 0 18px 44px -14px hsl(var(--zk-shadow-color) / 0.26), var(--zk-glass-highlight);
   --zk-shadow-xl: 0 28px 64px -18px hsl(var(--zk-shadow-color) / 0.3), var(--zk-glass-highlight);
   --zk-shadow-overlay: 0 24px 60px -16px hsl(var(--zk-shadow-color) / 0.34), var(--zk-glass-highlight);
+  --zk-shadow-sheet: 0 0 56px -12px hsl(var(--zk-shadow-color) / 0.34), var(--zk-glass-highlight);
 
   /* Page texture: three colour halos behind the glass */
   --zk-bg-pattern:
@@ -171,6 +184,9 @@
   --sidebar-border: 230 25% 20%;
   --sidebar-accent: 255 40% 22%;
   --zk-glass-alpha: 0.58;
+  --zk-glass-overlay-alpha: 0.66;
+  --zk-glass-overlay-tint: linear-gradient(160deg, hsl(262 90% 62% / 0.2), hsl(190 90% 50% / 0.12));
+  --zk-glass-scrim-alpha: 0.42;
   --zk-glass-edge: 220 60% 90%;
   --zk-glass-edge-alpha: 0.16;
   --zk-glass-highlight: inset 0 1px 0 hsl(0 0% 100% / 0.08);
@@ -181,6 +197,7 @@
   --zk-shadow-lg: 0 18px 44px -14px rgb(0 0 0 / 0.65), var(--zk-glass-highlight);
   --zk-shadow-xl: 0 28px 64px -18px rgb(0 0 0 / 0.7), var(--zk-glass-highlight);
   --zk-shadow-overlay: 0 24px 60px -16px rgb(0 0 0 / 0.75), var(--zk-glass-highlight);
+  --zk-shadow-sheet: 0 0 56px -12px rgb(0 0 0 / 0.75), var(--zk-glass-highlight);
   --zk-lift-shadow: 0 20px 44px -14px hsl(252 95% 78% / 0.22), var(--zk-glass-highlight);
   --zk-btn-hover-shadow: 0 12px 28px -10px hsl(252 95% 78% / 0.4);
   --zk-btn-press-shadow: 0 2px 6px -2px hsl(252 95% 78% / 0.3);
@@ -196,6 +213,11 @@
   --zk-glass-blur: 0px;
   --zk-glass-saturate: 1;
   --zk-glass-filter: none;
+  --zk-glass-overlay-alpha: 1;
+  --zk-glass-overlay-blur: 0px;
+  --zk-glass-overlay-filter: none;
+  --zk-glass-overlay-tint: none;
+  --zk-glass-scrim-alpha: 0.8;
   --zk-glass-edge: var(--border);
   --zk-glass-edge-alpha: 1;
 }
@@ -212,28 +234,83 @@
   backdrop-filter: var(--zk-glass-filter);
 }
 
+/*
+ * Overlay panels. The drawer and dialog panels are the elements that move
+ * (a slide or zoom animation), so the blur sits on the panel itself: it has
+ * no filtered or faded ancestor that would turn into a backdrop root and
+ * leave nothing to blur. The scrim is a sibling, never a parent.
+ * The sticky header and footer of a drawer stay clear so the panel reads as
+ * one sheet of glass.
+ */
+:root[data-identity="glass"] :where([data-slot="drawer-content"], [data-slot="dialog-content"]):where(:not([data-identity-scope] *)),
+[data-identity-scope][data-identity="glass"] :where([data-slot="drawer-content"], [data-slot="dialog-content"]) {
+  background-color: hsl(var(--card) / var(--zk-glass-overlay-alpha));
+  background-image: var(--zk-glass-overlay-tint);
+  border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
+  -webkit-backdrop-filter: var(--zk-glass-overlay-filter);
+  backdrop-filter: var(--zk-glass-overlay-filter);
+}
+:root[data-identity="glass"] :where([data-slot="drawer-content"]):where(:not([data-identity-scope] *)),
+[data-identity-scope][data-identity="glass"] :where([data-slot="drawer-content"]) {
+  box-shadow: var(--zk-shadow-sheet);
+}
+:root[data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"]):where(:not([data-identity-scope] *)),
+[data-identity-scope][data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"]) {
+  background-color: transparent;
+  border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
+}
+:root[data-identity="glass"] :where([data-slot="drawer-overlay"], [data-slot="dialog-overlay"]):where(:not([data-identity-scope] *)),
+[data-identity-scope][data-identity="glass"] :where([data-slot="drawer-overlay"], [data-slot="dialog-overlay"]) {
+  background-color: hsl(var(--overlay) / var(--zk-glass-scrim-alpha));
+}
+
 /* Phones: a smaller blur radius keeps scrolling smooth. */
 @media (max-width: 640px) {
   :root[data-identity="glass"],
   [data-identity-scope][data-identity="glass"] {
     --zk-glass-blur: 10px;
+    --zk-glass-overlay-blur: 16px;
   }
 }
 
-/* Less transparency requested: near-solid surfaces, no blur. */
+/*
+ * Less transparency requested, or no backdrop-filter: near-solid surfaces and
+ * a firmer scrim keep text readable. The dark rule repeats the selector
+ * because the dark palette sets its own alpha with a higher specificity.
+ */
 @media (prefers-reduced-transparency: reduce) {
   :root[data-identity="glass"],
-  [data-identity-scope][data-identity="glass"] {
+  :root[data-identity="glass"].dark,
+  [data-identity-scope][data-identity="glass"],
+  .dark [data-identity-scope][data-identity="glass"] {
     --zk-glass-alpha: 0.97;
     --zk-glass-blur: 0px;
     --zk-glass-saturate: 1;
+    --zk-glass-overlay-alpha: 0.98;
+    --zk-glass-overlay-blur: 0px;
+    --zk-glass-overlay-tint: none;
+    --zk-glass-scrim-alpha: 0.6;
   }
 }
 
-/* No backdrop-filter support: near-solid surfaces keep text readable. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :root[data-identity="glass"],
-  [data-identity-scope][data-identity="glass"] {
+  :root[data-identity="glass"].dark,
+  [data-identity-scope][data-identity="glass"],
+  .dark [data-identity-scope][data-identity="glass"] {
     --zk-glass-alpha: 0.97;
+    --zk-glass-overlay-alpha: 0.98;
+    --zk-glass-overlay-tint: none;
+    --zk-glass-scrim-alpha: 0.6;
+  }
+}
+
+/* Forced colors: system colours, opaque panels, no blur. */
+@media (forced-colors: active) {
+  :root[data-identity="glass"] :where(.bg-card, .bg-popover, [data-slot="drawer-content"], [data-slot="dialog-content"]),
+  [data-identity-scope][data-identity="glass"] :where(.bg-card, .bg-popover, [data-slot="drawer-content"], [data-slot="dialog-content"]) {
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
