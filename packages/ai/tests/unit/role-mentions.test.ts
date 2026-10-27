@@ -6,6 +6,8 @@ import { lensTableRows, skillDirs } from "./helpers.js";
 
 // Upstream skill borrowed as an excerpt, never vendored (see skills/pr/CREDITS.md).
 const UPSTREAM = new Set(["show-me"]);
+// Frontmatter field words, not kit names, in reversed mentions.
+const FIELDS = new Set(["model", "description"]);
 
 function kitMarkdown(): string[] {
   const out: string[] = [];
@@ -21,8 +23,8 @@ function kitMarkdown(): string[] {
 }
 
 describe("role mentions", () => {
-  it("resolves every `name` skill|agent|command|lens mention to that kind", () => {
-    // Singular or plural role word; each name still resolves to that kind.
+  it("resolves every role mention, either word order, to that kind", () => {
+    // Singular or plural role word, before or after the name.
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const byKind = {
@@ -37,7 +39,15 @@ describe("role mentions", () => {
       const mentions = new Set(
         [...raw.matchAll(/`([a-z][a-z0-9-]*)` (skill|agent|command|lens)s?/gu)]
           .map((m) => `${m[1] ?? ""} ${m[2] ?? ""}`)
-          .filter((key) => !UPSTREAM.has(key.split(" ")[0] ?? "")),
+          .concat(
+            [...raw.matchAll(/(skill|agent|command|lens)s? `([a-z][a-z0-9-]*)`/gu)].map(
+              (m) => `${m[2] ?? ""} ${m[1] ?? ""}`,
+            ),
+          )
+          .filter((key) => {
+            const name = key.split(" ")[0] ?? "";
+            return !UPSTREAM.has(name) && !FIELDS.has(name);
+          }),
       );
       for (const key of mentions) {
         const [name, kind] = key.split(" ") as [string, keyof typeof byKind];
