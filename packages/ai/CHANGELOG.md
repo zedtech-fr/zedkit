@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.6.5
+
+### Patch Changes
+
+- 031723d: Test that the README Entry points paragraph names only shipped kit content.
+
 ## 0.6.4
 
 ### Patch Changes
