@@ -110,5 +110,16 @@ describe("orchestrator agent", () => {
         new RegExp(`\\| (?:\`${name}\`|<AgentName name="${name}" />) \\|`),
       );
     }
+    // No stale rows: every table cell names a shipped agent.
+    const shipped = new Set(agents);
+    for (const line of prose.split("\n")) {
+      if (!line.startsWith("| ")) continue;
+      const cell = line.split("|")[1]?.trim() ?? "";
+      const code = /^`([a-z0-9-]+)`$/.exec(cell)?.[1];
+      const component = /^<AgentName name="([a-z0-9-]+)" \/>$/.exec(cell)?.[1];
+      const row = code ?? component;
+      if (!row) continue;
+      expect(shipped.has(row), `stale prose row: ${row}`).toBe(true);
+    }
   });
 });

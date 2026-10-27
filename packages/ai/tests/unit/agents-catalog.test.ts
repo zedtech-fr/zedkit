@@ -25,6 +25,15 @@ describe("agents catalog", () => {
     }
   });
 
+  it("lists no agent the kit no longer ships (no stale rows)", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const shipped = new Set(manifest.value.agents);
+    for (const row of catalogRows()) {
+      expect(shipped.has(row), `stale catalog row: ${row}`).toBe(true);
+    }
+  });
+
   it("resolves every Typical chains name to a skill, agent or command", () => {
     const raw = readFileSync(
       fileURLToPath(new URL("../../../../docs/agents-catalog.md", import.meta.url)),
