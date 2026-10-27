@@ -111,6 +111,7 @@ export {
   SelectValue,
 } from "./select.js";
 export { Separator, type SeparatorProps } from "./separator.js";
+export { SCROLL_SCENES_MAX, ScrollScenes, type ScrollScene, type ScrollScenesProps } from "./scroll-scenes.js";
 export { Skeleton, type SkeletonProps } from "./skeleton.js";
 export {
   Table,
