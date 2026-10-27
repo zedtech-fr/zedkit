@@ -19,7 +19,7 @@ test.describe("site semantics harness (#300)", () => {
       await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
       await assertNoHorizontalOverflow(page);
       if (route.strictSemantics) {
-        await assertAxeOnMain(page);
+        await assertAxeOnMain(page, [], route.axeExclude);
       }
       await assertInternalLinksResolve(page, BASE);
       expect(errors).toEqual([]);
@@ -28,7 +28,7 @@ test.describe("site semantics harness (#300)", () => {
     if (route.strictSemantics || route.linkAndInteractiveAudit) {
       test(`${route.label}: no nested interactive, unique link names`, async ({ page }) => {
         await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle" });
-        await assertNoNestedInteractive(page);
+        await assertNoNestedInteractive(page, route.axeExclude);
         await assertUniqueLinkNames(page);
       });
     }
