@@ -176,6 +176,9 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     `  propsFile={${JSON.stringify(spec.propsFile)}}`,
     `  propsName={${JSON.stringify(spec.propsName)}}`,
     `  examples={${JSON.stringify(examples)}}`,
+    ...(spec.examples && Object.keys(spec.examples).length > 0
+      ? [`  examplePreviews={${JSON.stringify(spec.examples)}}`]
+      : []),
     `  a11y={${JSON.stringify(need.a11y ?? "")}}`,
     `  troubleshooting={${JSON.stringify(need.troubleshooting ?? "")}}`,
     `  related={${JSON.stringify(related)}}`,
@@ -361,6 +364,7 @@ export function generate(outDir) {
       if (spec) {
         richBlock = {
           demo: spec.demo,
+          examples: spec.examples ?? null,
           propsFile: spec.source ?? null,
           propsName: spec.props ?? null,
           registry: spec.registry ?? null,

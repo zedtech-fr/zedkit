@@ -37,6 +37,8 @@ export interface ComponentPageProps {
   propsFile: string | null;
   propsName: string | null;
   examples: CatalogExample[];
+  /** Example title → demo registry key: a live preview rendered above that code block. */
+  examplePreviews?: Record<string, string>;
   a11y: string;
   troubleshooting: string;
   related: RelatedLink[];
@@ -72,6 +74,7 @@ export async function ComponentPage({
   propsFile,
   propsName,
   examples,
+  examplePreviews = {},
   a11y,
   troubleshooting,
   related,
@@ -127,7 +130,21 @@ export async function ComponentPage({
       </Section>
 
       <Section title="Examples">
-        <Stack gap={4}>{await Promise.all(examples.map((ex) => highlightedTs(ex.code, ex.title)))}</Stack>
+        <Stack gap={6}>
+          {await Promise.all(
+            examples.map(async (ex) => {
+              const previewDemo = examplePreviews[ex.title];
+              return (
+                <Stack key={ex.title} gap={3}>
+                  {previewDemo ? (
+                    <ComponentPreview demo={previewDemo} detail={`Live preview: ${ex.title}`} hasProps={false} />
+                  ) : null}
+                  {await highlightedTs(ex.code, ex.title)}
+                </Stack>
+              );
+            }),
+          )}
+        </Stack>
       </Section>
 
       {hasProps ? (

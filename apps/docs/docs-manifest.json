@@ -236,7 +236,8 @@
       "registry": "tabs",
       "props": "TabsProps",
       "source": "tabs.tsx",
-      "demo": "TabsDemo"
+      "demo": "TabsDemo",
+      "examples": { "Controlled": "TabsControlledDemo" }
     },
     "Show toast notifications": {
       "package": "@zedtech/zedkit-ui",
