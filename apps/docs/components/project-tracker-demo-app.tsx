@@ -211,7 +211,7 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
               {label}
             </Button>
           );
-          return <div key={label}>{wrap ? wrap(item) : item}</div>;
+          return <Stack key={label}>{wrap ? wrap(item) : item}</Stack>;
         })}
       </Stack>
     </nav>
