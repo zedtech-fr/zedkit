@@ -102,6 +102,7 @@ Shared source first, provider layers after. `zedkit-ai init --provider <names>` 
 - Every path and link exists: check each one (`test -e`).
 - No placeholder like `<Project>` is left.
 - `zedkit-ai validate` is clean, the tool folders (`.claude/`, `.cursor/`) resolve, and the `.cursor` copies match `.agents/` (no drift).
+- The repo's own lint ignores the installed kit dirs (`.agents/`, provider folders): skills ship helper scripts, and a bare lint run must stay green — run it once to prove it.
 - A fresh reader, or a subagent given only the new files, can answer: how do I run the tests, where does X live, what must I never do here?
 
 ## 7. Report

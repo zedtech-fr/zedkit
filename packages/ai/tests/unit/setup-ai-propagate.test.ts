@@ -22,4 +22,11 @@ describe("setup-ai propagation", () => {
       from = at + phrase.length;
     }
   });
+
+  it("verifies the repo lint ignores the installed kit dirs", () => {
+    const raw = readFileSync(join(kitDir(), "skills", "setup-ai", "SKILL.md"), "utf8");
+    const text = raw.replace(/\s+/g, " ").toLowerCase();
+    expect(text).toContain("lint ignores the installed kit dirs");
+    expect(text).toContain("skills ship helper scripts");
+  });
 });
