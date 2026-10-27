@@ -32,6 +32,28 @@ Adopt in 3 lines:
 import { Button } from "@zedtech/zedkit-ui"; // see CATALOG.md for every component
 ```
 
+## Migration (ref as a prop)
+
+Hosts take `ref` on the props object (`React.ComponentProps<"button">`).
+`React.forwardRef` is lint-flagged by `@zedtech/zedkit-quality` (message
+points at `src/button.tsx`). Each exported root sets `data-slot`.
+
+```tsx
+// before
+const Save = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
+  <Button ref={ref} {...props} />
+));
+type SaveRef = React.ElementRef<typeof Button>;
+
+// after
+function Save(props: ButtonProps) {
+  return <Button {...props} />;
+}
+type SaveRef = React.ComponentRef<typeof Button>;
+```
+
+Search-and-replace sketch (review the diff): drop the `forwardRef` wrapper and keep the body; `ref` arrives in `props`.
+
 ## When to use
 
 Reach for this package when you build an admin console or dashboard on

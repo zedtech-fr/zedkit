@@ -11,7 +11,7 @@ export interface PageHeaderProps {
 
 export function PageHeader({ title, description, actions, className }: PageHeaderProps) {
   return (
-    <div className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-page-header-gap", className)}>
+    <div data-slot="page-header" className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-page-header-gap", className)}>
       <div className="space-y-page-header-title-gap">
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
         {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}

@@ -19,7 +19,7 @@ export function OfflineNote({
   className,
 }: OfflineNoteProps) {
   return (
-    <Alert className={className}>
+    <Alert data-slot="offline-note" className={className}>
       <WifiOff aria-hidden />
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>{children}</AlertDescription>

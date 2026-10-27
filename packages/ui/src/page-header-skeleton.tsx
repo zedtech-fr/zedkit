@@ -20,6 +20,7 @@ export function PageHeaderSkeleton({
 }: PageHeaderSkeletonProps) {
   return (
     <div
+      data-slot="page-header-skeleton"
       role="status"
       aria-label={label}
       className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-page-header-gap", className)}

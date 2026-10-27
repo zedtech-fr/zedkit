@@ -63,7 +63,7 @@ function IdentityPicker({
   }
 
   return (
-    <Drawer>
+    <Drawer data-slot="identity-picker">
       <DrawerTrigger asChild>
         <button
           type="button"

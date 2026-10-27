@@ -39,7 +39,7 @@ function useMobileViewport(): boolean {
   return isMobile;
 }
 
-type DrawerRootProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Root> & {
+type DrawerRootProps = React.ComponentProps<typeof DrawerPrimitive.Root> & {
   /**
    * On narrow viewports, map left/right drawers to a bottom sheet (`sheet`) or keep a side panel (`side`,
    * full height, up to 90% of the width so the dimmed page stays tappable). Defaults to `sheet`.
@@ -66,6 +66,7 @@ function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
   const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
   return (
     <DrawerPrimitive.Root
+      data-slot="drawer"
       key={`${resolvedDirection}-${isMobile ? "narrow" : "wide"}`}
       direction={resolvedDirection}
       {...props}
@@ -73,20 +74,21 @@ function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
   );
 }
 
-const DrawerTrigger = DrawerPrimitive.Trigger;
-const DrawerClose = DrawerPrimitive.Close;
-const DrawerPortal = DrawerPrimitive.Portal;
+function DrawerTrigger({ ...props }: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
+  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+}
 
-function DrawerOverlay({
-  className,
-  ref,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay> & {
-  ref?: React.Ref<HTMLDivElement>;
-}) {
+function DrawerClose({ ...props }: React.ComponentProps<typeof DrawerPrimitive.Close>) {
+  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
+}
+
+function DrawerPortal({ ...props }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
+  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+}
+
+function DrawerOverlay({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
   return (
     <DrawerPrimitive.Overlay
-      ref={ref}
       data-slot="drawer-overlay"
       className={cn(
         "fixed inset-0 z-overlay bg-overlay/80",
@@ -102,11 +104,9 @@ function DrawerOverlay({
 function DrawerContent({
   className,
   children,
-  ref,
   modal = true,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> & {
-  ref?: React.Ref<HTMLDivElement>;
+}: React.ComponentProps<typeof DrawerPrimitive.Content> & {
   /**
    * Mirror of the `Drawer` root `modal` prop: `false` renders no
    * overlay so the background stays interactive. Defaults to `true`.
@@ -117,7 +117,6 @@ function DrawerContent({
     <DrawerPortal>
       {modal ? <DrawerOverlay /> : null}
       <DrawerPrimitive.Content
-        ref={ref}
         data-slot="drawer-content"
         className={cn(
           "fixed z-overlay flex flex-col border bg-background outline-none",
@@ -139,16 +138,9 @@ function DrawerContent({
   );
 }
 
-function DrawerHandle({
-  className,
-  ref,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Handle> & {
-  ref?: React.Ref<HTMLDivElement>;
-}) {
+function DrawerHandle({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Handle>) {
   return (
     <DrawerPrimitive.Handle
-      ref={ref}
       data-slot="drawer-handle"
       className={cn(
         "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
@@ -161,7 +153,7 @@ function DrawerHandle({
   );
 }
 
-function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-header"
@@ -174,7 +166,7 @@ function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
   );
 }
 
-function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function DrawerBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-body"
@@ -184,7 +176,7 @@ function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement
   );
 }
 
-function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-footer"
@@ -202,14 +194,11 @@ function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 function DrawerCloseButton({
   className,
   children,
-  ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DrawerClose> & {
-  ref?: React.Ref<HTMLButtonElement>;
-}) {
+}: React.ComponentProps<typeof DrawerClose>) {
   return (
     <DrawerClose
-      ref={ref}
+      data-slot="drawer-close-button"
       type="button"
       aria-label="Close"
       className={cn(
@@ -224,16 +213,10 @@ function DrawerCloseButton({
   );
 }
 
-function DrawerTitle({
-  className,
-  ref,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title> & {
-  ref?: React.Ref<HTMLHeadingElement>;
-}) {
+function DrawerTitle({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Title>) {
   return (
     <DrawerPrimitive.Title
-      ref={ref}
+      data-slot="drawer-title"
       className={cn("text-lg leading-none font-semibold tracking-tight", className)}
       {...props}
     />
@@ -242,14 +225,11 @@ function DrawerTitle({
 
 function DrawerDescription({
   className,
-  ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description> & {
-  ref?: React.Ref<HTMLParagraphElement>;
-}) {
+}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
   return (
     <DrawerPrimitive.Description
-      ref={ref}
+      data-slot="drawer-description"
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />

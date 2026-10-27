@@ -48,7 +48,7 @@ export default tseslint.config(
     },
   },
   // UI preset last: for .tsx/.jsx its no-restricted-syntax (try/catch +
-  // style-attribute bans) intentionally wins over the root block above.
+  // style-attribute + forwardRef bans) intentionally wins over the root block above.
   // Dogfood: the repo consumes its own published preset (source-mapped
   // exports, so this resolves with zero build).
   ...uiPreset({

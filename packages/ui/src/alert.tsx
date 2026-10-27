@@ -1,5 +1,5 @@
 // Derived from shadcn/ui (alert) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
-import * as React from "react";
+import type * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -22,37 +22,34 @@ const alertVariants = cva(
 );
 
 export interface AlertProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends React.ComponentProps<"div">,
     VariantProps<typeof alertVariants> {
   asChild?: boolean;
 }
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "div";
-    return (
-      <Comp ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props} />
-    );
-  },
-);
-Alert.displayName = "Alert";
+function Alert({ className, variant, asChild = false, ...props }: AlertProps) {
+  const Comp = asChild ? Slot : "div";
+  return (
+    <Comp data-slot="alert" role="alert" className={cn(alertVariants({ variant }), className)} {...props} />
+  );
+}
 
-const AlertTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+function AlertTitle({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"h2">) {
   // Children are explicit (not part of the props spread) so the
   // heading-has-content rule can see them; renders identically.
-  ({ className, children, ...props }, ref) => (
-    <h2 ref={ref} className={cn("mb-1 text-base leading-none font-medium tracking-tight", className)} {...props}>
+  return (
+    <h2 data-slot="alert-title" className={cn("mb-1 text-base leading-none font-medium tracking-tight", className)} {...props}>
       {children}
     </h2>
-  ),
-);
-AlertTitle.displayName = "AlertTitle";
+  );
+}
 
-const AlertDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("text-sm [&_p]:leading-relaxed", className)} {...props} />
-  ),
-);
-AlertDescription.displayName = "AlertDescription";
+function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="alert-description" className={cn("text-sm [&_p]:leading-relaxed", className)} {...props} />;
+}
 
 export { Alert, AlertTitle, AlertDescription, alertVariants };

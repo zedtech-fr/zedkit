@@ -14,6 +14,7 @@ export interface DetailPanelSkeletonProps {
 export function DetailPanelSkeleton({ label = "Loading", rows = 4, className }: DetailPanelSkeletonProps) {
   return (
     <div
+      data-slot="detail-panel-skeleton"
       role="status"
       aria-label={label}
       className={cn("divide-y divide-border rounded-lg border", className)}

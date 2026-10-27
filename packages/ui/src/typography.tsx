@@ -1,4 +1,4 @@
-import * as React from "react";
+import type * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -22,7 +22,7 @@ const headingVariants = cva("scroll-m-heading-scroll tracking-tight", {
   },
 });
 
-export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> &
+export type HeadingProps = React.ComponentProps<"h1"> &
   VariantProps<typeof headingVariants> & {
     /** Heading level: picks the default tag (`h1`-`h4`) and size. */
     level?: 1 | 2 | 3 | 4;
@@ -32,16 +32,15 @@ export type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> &
     asChild?: boolean;
   };
 
-const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ level = 1, as, asChild = false, className, ...props }, ref) => {
-    if (asChild) {
-      return <Slot ref={ref} className={cn(headingVariants({ level }), className)} {...props} />;
-    }
-    const Tag = (as ?? `h${level}`) as "h1";
-    return <Tag ref={ref} className={cn(headingVariants({ level }), className)} {...props} />;
-  },
-);
-Heading.displayName = "Heading";
+function Heading({ level = 1, as, asChild = false, className, ...props }: HeadingProps) {
+  if (asChild) {
+    return (
+      <Slot data-slot="heading" className={cn(headingVariants({ level }), className)} {...props} />
+    );
+  }
+  const Tag = (as ?? `h${level}`) as "h1";
+  return <Tag data-slot="heading" className={cn(headingVariants({ level }), className)} {...props} />;
+}
 
 const textVariants = cva("leading-body", {
   variants: {
@@ -55,7 +54,7 @@ const textVariants = cva("leading-body", {
   },
 });
 
-export type TextProps = React.HTMLAttributes<HTMLParagraphElement> &
+export type TextProps = React.ComponentProps<"p"> &
   VariantProps<typeof textVariants> & {
     /** Tag override (`p` by default). */
     as?: "p" | "span" | "div";
@@ -63,14 +62,11 @@ export type TextProps = React.HTMLAttributes<HTMLParagraphElement> &
     asChild?: boolean;
   };
 
-const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
-  ({ variant, as: Tag = "p", asChild = false, className, ...props }, ref) => {
-    if (asChild) {
-      return <Slot ref={ref} className={cn(textVariants({ variant }), className)} {...props} />;
-    }
-    return <Tag ref={ref} className={cn(textVariants({ variant }), className)} {...props} />;
-  },
-);
-Text.displayName = "Text";
+function Text({ variant, as: Tag = "p", asChild = false, className, ...props }: TextProps) {
+  if (asChild) {
+    return <Slot data-slot="text" className={cn(textVariants({ variant }), className)} {...props} />;
+  }
+  return <Tag data-slot="text" className={cn(textVariants({ variant }), className)} {...props} />;
+}
 
 export { Heading, headingVariants, Text, textVariants };

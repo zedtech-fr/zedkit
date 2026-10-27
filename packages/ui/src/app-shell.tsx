@@ -11,7 +11,7 @@ export interface AppShellProps {
 
 export function AppShell({ sidebar, topbar, children, className }: AppShellProps) {
   return (
-    <div className={cn("flex min-h-svh w-full", className)}>
+    <div data-slot="app-shell" className={cn("flex min-h-svh w-full", className)}>
       <aside className="w-app-shell-sidebar shrink-0 border-r bg-muted/40 max-md:hidden">{sidebar}</aside>
       <div className="flex min-w-0 flex-1 flex-col">
         {topbar ? (

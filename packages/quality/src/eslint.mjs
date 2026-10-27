@@ -5,7 +5,7 @@
 // - Tailwind class hygiene (order, no duplicates, no conflicts, no unknown)
 // - Tokens only: no raw palette colors (bg-red-500), no arbitrary hex/rgb
 //   colors, no raw px font sizes — use the semantic theme tokens
-// - No `style` attributes; no raw try/catch (use a tryCatch wrapper)
+// - No `style` attributes; no forwardRef (ref is a prop); no raw try/catch (use a tryCatch wrapper)
 //
 // Consumer setup (no copy: install the package, pass your Tailwind entry):
 //   `import { uiPreset } from "@zedtech/zedkit-quality"` then
@@ -73,7 +73,7 @@ export function uiPreset({ entryPoint }) {
         ],
         // NOTE: flat-config rules replace (not merge) by key, so this block
         // restates the root TryStatement ban alongside the style-attribute
-        // ban; without the restatement, .tsx files would lose the ban.
+        // and forwardRef bans; without the restatement, .tsx files would lose them.
         "no-restricted-syntax": [
           "error",
           {
@@ -83,6 +83,11 @@ export function uiPreset({ entryPoint }) {
           {
             selector: 'JSXAttribute[name.name="style"]',
             message: "Inline style attributes are banned. Use theme tokens (see docs/frontend-charter.md).",
+          },
+          {
+            selector: "Identifier[name='forwardRef']",
+            message:
+              "forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button.tsx).",
           },
         ],
       },

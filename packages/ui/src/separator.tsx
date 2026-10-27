@@ -1,22 +1,16 @@
 // Derived from shadcn/ui (separator) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import { cn } from "./utils.js";
 
-type SeparatorProps = React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>;
+type SeparatorProps = React.ComponentProps<typeof SeparatorPrimitive.Root>;
 
-const Separator = React.forwardRef<
-  React.ElementRef<typeof SeparatorPrimitive.Root>,
-  SeparatorProps
->(
-  (
-    { className, orientation = "horizontal", decorative = true, ...props },
-    ref,
-  ) => (
+function Separator({ className, orientation = "horizontal", decorative = true, ...props }: SeparatorProps) {
+  return (
     <SeparatorPrimitive.Root
-      ref={ref}
+      data-slot="separator"
       decorative={decorative}
       orientation={orientation}
       className={cn(
@@ -26,8 +20,7 @@ const Separator = React.forwardRef<
       )}
       {...props}
     />
-  ),
-);
-Separator.displayName = SeparatorPrimitive.Root.displayName;
+  );
+}
 
 export { Separator, type SeparatorProps };

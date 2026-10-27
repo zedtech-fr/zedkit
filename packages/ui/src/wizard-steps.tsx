@@ -31,6 +31,7 @@ export interface WizardStepProps {
 export function WizardStep({ step, index, state, showConnector = false, className }: WizardStepProps) {
   return (
     <li
+      data-slot="wizard-step"
       aria-current={state === "current" ? "step" : undefined}
       className={cn("flex items-center gap-wizard-step-gap text-sm", className)}
     >
@@ -56,18 +57,20 @@ export function WizardStep({ step, index, state, showConnector = false, classNam
   );
 }
 
-export interface WizardProps {
-  children: React.ReactNode;
-  className?: string;
-}
+export type WizardProps = React.ComponentProps<"ol">;
 
 /**
  * Step list container for composed `WizardStep` rows. `WizardSteps`
  * covers the plain `steps[]` case with the same markup.
  */
-export function Wizard({ children, className }: WizardProps) {
+export function Wizard({ children, className, ...props }: WizardProps) {
   return (
-    <ol className={cn("flex flex-wrap items-center gap-x-wizard-steps-gap gap-y-wizard-steps-row-gap", className)} aria-label="Progress">
+    <ol
+      data-slot="wizard"
+      className={cn("flex flex-wrap items-center gap-x-wizard-steps-gap gap-y-wizard-steps-row-gap", className)}
+      aria-label="Progress"
+      {...props}
+    >
       {children}
     </ol>
   );
@@ -81,7 +84,7 @@ function stepState(index: number, current: number): WizardStepState {
 
 export function WizardSteps({ steps, current, className }: WizardStepsProps) {
   return (
-    <Wizard {...(className === undefined ? {} : { className })}>
+    <Wizard data-slot="wizard-steps" {...(className === undefined ? {} : { className })}>
       {steps.map((step, index) => (
         <WizardStep
           key={step}
