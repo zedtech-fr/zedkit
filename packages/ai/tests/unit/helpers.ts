@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach } from "vitest";
@@ -30,6 +30,16 @@ export const AGENT = (name: string, extra = ""): string =>
 
 export const COMMAND = (skill: string, description = "Runs a skill."): string =>
   `---\ndescription: ${description}\n---\n\nRun the \`${skill}\` skill on \`$ARGUMENTS\`.\n`;
+
+/** Raw body cells of the lens registry table (skills/review/lenses.md), header excluded. */
+export function lensTableRows(): string[][] {
+  const raw = readFileSync(join(kitDir(), "skills/review/lenses.md"), "utf8");
+  return raw
+    .split("\n")
+    .filter((line) => line.startsWith("| "))
+    .map((line) => line.split("|").map((c) => c.trim()))
+    .filter((cells) => cells[1] !== "Lens" && cells[1] !== "---");
+}
 
 /** Every installable name: agents + commands + skill dirs (+ presets when asked). */
 export function shippedNames(includePresets = false): Set<string> {
