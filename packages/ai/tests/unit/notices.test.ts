@@ -59,4 +59,17 @@ describe("third-party notices", () => {
     const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
     expect(readmeFirstParty()).toEqual(firstPartyFromNotices(notices));
   });
+
+  it("names only shipped skills in the README vendored paragraph", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    const at = readme.indexOf("**Skills vendored (MIT):**");
+    expect(at, "vendored paragraph").toBeGreaterThanOrEqual(0);
+    const paragraph = readme.slice(at, readme.indexOf("\n\n", at));
+    const names = [...paragraph.matchAll(/`([a-z][a-z0-9-]*)`/g)].map((m) => m[1] ?? "");
+    expect(names.length).toBeGreaterThan(0);
+    const shipped = new Set(shippedSkills());
+    for (const name of names) {
+      expect(shipped.has(name), `vendored name ${name}`).toBe(true);
+    }
+  });
 });
