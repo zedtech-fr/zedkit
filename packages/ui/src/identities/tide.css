@@ -1,0 +1,163 @@
+/*
+ * Identity: tide.
+ *
+ *    Navy and coral, Inter at heavy weights, large radii, soft glows and
+ *    long eased reveals (interaction durations stay within the caps:
+ *    fast/base <= 200ms, slow <= 300ms). Code in JetBrains Mono.
+ *
+ *    Inert until `data-identity="tide"` is set on <html> (or on an
+ *    element carrying `data-identity-scope`). Inter falls back to its
+ *    metric-aligned face from font-fallbacks.css, then the system stack.
+ */
+:root[data-identity="tide"],
+[data-identity-scope][data-identity="tide"] {
+  --background: 20 60% 99%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 221 41% 21%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 31 47% 94%;
+  --secondary-foreground: 221 41% 21%;
+  --muted: 31 40% 95%;
+  --muted-foreground: 218 17% 35%;
+  --accent: 14 100% 90%;
+  --accent-foreground: 221 41% 21%;
+  --destructive: 4 72% 42%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 152 70% 27%;
+  --success-foreground: 0 0% 100%;
+  --warning: 28 92% 33%;
+  --warning-foreground: 0 0% 100%;
+  --overlay: 222 47% 11%;
+  --border: 28 25% 86%;
+  --input: 28 25% 78%;
+  --ring: 10 71% 52%;
+  --sidebar: 31 47% 96%;
+  --sidebar-foreground: 221 41% 21%;
+  --sidebar-border: 28 25% 86%;
+  --sidebar-accent: 14 100% 92%;
+  --radius: 1rem;
+
+  /* Typography: families, scale, weight, tracking */
+  --zk-font-sans: "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--zk-font-sans);
+  --font-mono: var(--zk-font-mono);
+  --font-display: var(--zk-font-display);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 700;
+  --font-weight-bold: 700;
+  --tracking-tight: -0.04em;
+  --tracking-wide: 0.12em;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.75rem;
+  --text-5xl: 3.5rem;
+  --zk-heading-weight: 700;
+  --zk-heading-tracking: -0.035em;
+  --zk-heading-transform: none;
+  --zk-heading-leading: 1.02;
+  --zk-label-transform: uppercase;
+  --zk-label-tracking: 0.12em;
+
+  /* Spacing: base unit */
+  --spacing: 0.26rem;
+
+  /* Shape: every Tailwind radius step */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
+  --zk-border-width: 1px;
+  --ring-width: 3px;
+  --ring-width-control: 3px;
+  --ring-offset-width: 2px;
+
+  /* Depth */
+  --zk-shadow-color: 221 41% 21%;
+  --zk-shadow-xs: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08);
+  --zk-shadow-sm: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 4px 14px -4px hsl(var(--zk-shadow-color) / 0.16);
+  --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 12px 32px -12px hsl(var(--zk-shadow-color) / 0.28);
+  --zk-shadow-lg: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 24px 56px -20px hsl(var(--zk-shadow-color) / 0.34);
+  --zk-shadow-xl: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 32px 80px -24px hsl(var(--zk-shadow-color) / 0.4);
+  --zk-shadow-overlay: 0 24px 64px -16px hsl(var(--zk-shadow-color) / 0.35);
+
+  /* Page texture */
+  --zk-bg-pattern: radial-gradient(48rem 32rem at 100% -8%, hsl(14 100% 86% / 0.5), transparent 65%), radial-gradient(40rem 30rem at -8% 108%, hsl(31 47% 94% / 0.9), transparent 65%);
+  --zk-bg-size: 100% 100%;
+  --zk-bg-repeat: no-repeat;
+  --zk-bg-attach: fixed;
+
+  /* Motion: capped like every identity (fast/base <= 200ms, slow <= 300ms) */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --zk-reveal-duration: 300ms;
+  --zk-reveal-distance: 1.5rem;
+  --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-stagger-step: 60ms;
+  --zk-lift-duration: 200ms;
+  --zk-lift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-lift-translate: 0 -4px;
+  --zk-lift-shadow: 0 24px 48px -18px hsl(var(--zk-shadow-color) / 0.38);
+  --zk-press-translate: 0 1px;
+  --zk-btn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zk-btn-hover-translate: 0 -2px;
+  --zk-btn-hover-shadow: 0 14px 28px -10px hsl(10 71% 52% / 0.5);
+  --zk-btn-press-shadow: 0 2px 6px -2px hsl(var(--zk-shadow-color) / 0.3);
+  --zk-deco-ticker: none;
+}
+
+:root[data-identity="tide"].dark,
+.dark [data-identity-scope][data-identity="tide"] {
+  --background: 222 47% 11%;
+  --foreground: 0 0% 98%;
+  --card: 218 33% 17%;
+  --card-foreground: 0 0% 98%;
+  --popover: 218 33% 17%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 10 71% 69%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 219 28% 22%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 219 28% 20%;
+  --muted-foreground: 215 20% 72%;
+  --accent: 219 30% 26%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 2 85% 66%;
+  --destructive-foreground: 222 47% 11%;
+  --success: 150 60% 52%;
+  --success-foreground: 222 47% 11%;
+  --warning: 38 92% 58%;
+  --warning-foreground: 222 47% 11%;
+  --overlay: 222 47% 5%;
+  --border: 217 25% 28%;
+  --input: 217 25% 32%;
+  --ring: 10 71% 69%;
+  --sidebar: 222 47% 13%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-border: 217 25% 24%;
+  --sidebar-accent: 219 30% 24%;
+  --zk-shadow-color: 10 71% 69%;
+  --zk-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+  --zk-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 14px -4px rgb(0 0 0 / 0.45);
+  --zk-shadow-md: 0 12px 32px -12px rgb(0 0 0 / 0.55), 0 0 28px -10px hsl(var(--zk-shadow-color) / 0.18);
+  --zk-shadow-lg: 0 24px 56px -20px rgb(0 0 0 / 0.6), 0 0 40px -12px hsl(var(--zk-shadow-color) / 0.2);
+  --zk-shadow-xl: 0 32px 80px -24px rgb(0 0 0 / 0.65), 0 0 60px -16px hsl(var(--zk-shadow-color) / 0.22);
+  --zk-shadow-overlay: 0 24px 64px -16px rgb(0 0 0 / 0.65);
+  --zk-lift-shadow: 0 24px 48px -18px rgb(0 0 0 / 0.65), 0 0 36px -10px hsl(10 71% 69% / 0.3);
+  --zk-bg-pattern: radial-gradient(48rem 32rem at 100% -8%, hsl(10 71% 69% / 0.16), transparent 65%), radial-gradient(40rem 30rem at -8% 108%, hsl(221 41% 30% / 0.55), transparent 65%);
+  --zk-btn-hover-shadow: 0 14px 30px -10px hsl(10 71% 69% / 0.45);
+}
