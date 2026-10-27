@@ -13,7 +13,7 @@ test.describe("agents table icons (#428)", () => {
     const agentsTable = page.getByRole("table").filter({ has: page.getByRole("columnheader", { name: "Agent" }) });
     await expect(agentsTable).toBeVisible();
     const icons = agentsTable.locator("svg[aria-hidden='true']");
-    await expect(icons).toHaveCount(19);
+    await expect(icons).toHaveCount(18);
 
     for (const width of [360, 390] as const) {
       await page.setViewportSize({ width, height: 844 });
@@ -29,6 +29,6 @@ test.describe("agents table icons (#428)", () => {
 
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(agentsTable.locator("svg[aria-hidden='true']")).toHaveCount(19);
+    await expect(agentsTable.locator("svg[aria-hidden='true']")).toHaveCount(18);
   });
 });
