@@ -28,6 +28,7 @@ jobs:
       - run: bash scripts/check-tone.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: bash scripts/check-dependabot.sh
       - run: bash scripts/check-breaking-changeset.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
