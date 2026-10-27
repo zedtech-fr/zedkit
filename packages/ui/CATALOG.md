@@ -1196,16 +1196,69 @@ import { Tabs } from "@zedtech/zedkit-ui";
 - When to use: Two to eight (`SCROLL_SCENES_MAX`) short scenes that read well one at a time and where scrolling is the natural way to move on.
 - When not to use: Long content, forms or anything focusable inside a scene — invisible scenes stay in the accessibility tree, so keep scene visuals non-interactive (`aria-hidden` and `inert`); steps the user must pick themselves — use `Tabs` or `WizardSteps`.
 - See also: `Switch between tabbed panels`
-- Examples: Pinned scenes
-- A11y: Captions are real text in a fixed order and are never hidden (opacity only). Under `prefers-reduced-motion: reduce`, in browsers without scroll timelines (Firefox, Safari before 26) and in very short windows, the scenes are plain blocks one under the other with the same content. A decorative progress rail is `aria-hidden`.
-- Troubleshooting: Nothing is pinned — you need two to eight scenes, the browser needs `animation-timeline: view()` and the window at least 34rem tall; otherwise you get the stacked layout by design. Stage hides under a fixed header — set `--zk-scenes-top` to the header height. Scenes change too fast or slowly — set `--zk-scenes-step` (scroll distance per scene, default 60svh). Content cut at the bottom — the stage is one screen tall; shorten the scene or hide secondary parts on small screens.
+- Examples: Pinned feature tour, Before and after
+- A11y: Captions are real text in a fixed order and are never hidden (opacity only), so put the message in the caption and treat the visual as decoration: mark it `aria-hidden="true"` and `inert` so it adds no tab stop and no duplicate announcement. Under `prefers-reduced-motion: reduce`, in browsers without scroll timelines (Firefox, Safari before 26) and in very short windows, the scenes are plain blocks one under the other with the same content. A decorative progress rail is `aria-hidden`. Give each caption a heading one level under the section title so screen reader users can jump scene by scene.
+- Troubleshooting: Nothing is pinned — you need two to eight scenes, the browser needs `animation-timeline: view()` and the window at least 34rem tall; otherwise you get the stacked layout by design. Stage hides under a fixed header — set `--zk-scenes-top` to the header height. Scenes change too fast or slowly — set `--zk-scenes-step` (scroll distance per scene, default 60svh). Content cut at the bottom — the stage is one screen tall; shorten the scene or hide secondary parts on small screens. Pinning stops inside a box — a parent with `overflow: hidden` or `auto` becomes the scroll container; keep the component in the normal page flow. The scenes stack in your own preview — `prefers-reduced-motion: reduce` is on in the OS or the browser; this is the intended fallback.
 
 ```ts
-import { ScrollScenes } from "@zedtech/zedkit-ui";
-<ScrollScenes className="[--zk-scenes-top:4.5rem]" scenes={[
-{ id: "mist", caption: <h3>Mist</h3>, children: <Preview /> },
-{ id: "press", caption: <h3>Press</h3>, children: <Preview /> },
-]} />
+import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit-ui";
+
+const steps = [
+  { id: "plan", title: "Plan the week", text: "One list: what has to ship, and who owns it.", value: 0 },
+  { id: "track", title: "Track the work", text: "Progress updates as people tick tasks.", value: 55 },
+  { id: "ship", title: "Ship with confidence", text: "Everything is green: publish in one click.", value: 100 },
+];
+
+// The caption says it all; the visual is decoration, hidden from assistive tech.
+<ScrollScenes
+  className="[--zk-scenes-top:4.5rem]"
+  scenes={steps.map((step, index) => ({
+    id: step.id,
+    caption: (
+      <Stack gap={2}>
+        <Text variant="muted">Step {index + 1} of {steps.length}</Text>
+        <Heading level={3}>{step.title}</Heading>
+        <Text variant="muted">{step.text}</Text>
+      </Stack>
+    ),
+    children: (
+      <Stack aria-hidden="true" inert>
+        <ProgressBar value={step.value} label="Week 43 progress" />
+      </Stack>
+    ),
+  }))}
+/>
+```
+
+```ts
+import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit-ui";
+
+// Two scenes, a shorter scroll per scene (default 60svh), header 4.5rem tall.
+<ScrollScenes
+  className="[--zk-scenes-step:45svh] [--zk-scenes-top:4.5rem]"
+  scenes={[
+    {
+      id: "before",
+      caption: <Heading level={3}>Before: one long form</Heading>,
+      children: (
+        <Stack aria-hidden="true" inert>
+          <ProgressBar value={18} label="Completed sign-ups" />
+          <Text variant="muted">18% of visitors finished the form.</Text>
+        </Stack>
+      ),
+    },
+    {
+      id: "after",
+      caption: <Heading level={3}>After: three short steps</Heading>,
+      children: (
+        <Stack aria-hidden="true" inert>
+          <ProgressBar value={64} label="Completed sign-ups" />
+          <Text variant="muted">64% of visitors finished the steps.</Text>
+        </Stack>
+      ),
+    },
+  ]}
+/>
 ```
 
 ## Switch the visual identity with one attribute
@@ -1219,12 +1272,63 @@ import { ScrollScenes } from "@zedtech/zedkit-ui";
 - When to use: To rebrand or offer several looks from one set of components.
 - When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
 - See also: `Theme an admin app (dark/light included)`
-- A11y: `IdentitySwitcher` is a native labelled `select`; `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose.
-- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher. A stored id is ignored — it must be in `ids`. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks.
+- Examples: Header switcher, Same card in each look, Touch picker
+- A11y: `IdentitySwitcher` is a native labelled `select` (visible label with `showLabel`, otherwise screen-reader only); `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose. A choice applies at once and the new look keeps the kit's contrast pairs in light and dark; announce the change in your own status line (`role="status"`) if you show one. Keep the trigger name stable (`label`), because the current identity is read from the value.
+- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher, and `suppressHydrationWarning` on `<html>`. A stored id is ignored — it must be in `ids`. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks. The whole page changed but you wanted one card — put `data-identity-scope` and `data-identity="…"` on that element instead of changing `<html>`; the scope sets tokens, fonts and radii for its subtree only. Two switchers disagree — give them the same `storageKey`; they follow each other through `IDENTITY_CHANGE_EVENT`.
 
 ```ts
 import { IdentityScript, IdentitySwitcher } from "@zedtech/zedkit-ui";
-const looks = [{ id: "calm", label: "Calm" }, { id: "bold", label: "Bold" }];
-// <head><IdentityScript ids={looks.map((l) => l.id)} /></head>
-<IdentitySwitcher identities={looks} />
+
+// Root layout: the script applies the stored look before first paint.
+<html lang="en" suppressHydrationWarning>
+  <head>
+    <IdentityScript storageKey="harbor-identity" defaultIdentity="mist" />
+  </head>
+  <body>
+    <header>
+      <span>Harbor Studio</span>
+      <IdentitySwitcher storageKey="harbor-identity" showLabel label="Look" />
+    </header>
+    {children}
+  </body>
+</html>
+```
+
+```ts
+import { Badge, Button, Heading, Stack, Text, identities } from "@zedtech/zedkit-ui";
+
+// Preview every look at once: the scope changes this subtree only, never <html>.
+{identities.map((look) => (
+  <Stack
+    key={look.id}
+    data-identity-scope=""
+    data-identity={look.id}
+    className="rounded-xl border border-border bg-background p-4 font-sans text-foreground"
+  >
+    <Heading level={3}>{look.label}</Heading>
+    <Badge variant="secondary">New</Badge>
+    <Text variant="muted">{look.description}</Text>
+    <Button size="sm">Save</Button>
+  </Stack>
+))}
+```
+
+```ts
+"use client";
+
+import { useState } from "react";
+import { IdentityPicker, identities } from "@zedtech/zedkit-ui";
+
+// A short custom list on a phone header; the page behind the sheet is the live preview.
+const looks = identities.filter((look) => ["mist", "press", "tide"].includes(look.id));
+
+export function MobileLookPicker() {
+  const [last, setLast] = useState<string | null>(null);
+  return (
+    <>
+      <IdentityPicker label="Look" identities={looks} onIdentityChange={setLast} />
+      <p role="status">{last ? `Chosen: ${last}` : "Nothing chosen yet."}</p>
+    </>
+  );
+}
 ```

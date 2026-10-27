@@ -23,6 +23,8 @@ import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
 import { ButtonDemo } from "./button-demo";
+import { IdentityPickerDemo, IdentityScopeDemo, IdentitySwitcherDemo } from "./identity-demo";
+import { ScrollScenesBeforeAfterDemo, ScrollScenesDemo } from "./scroll-scenes-demo";
 import { CardDemo } from "./card-demo";
 import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
@@ -83,6 +85,12 @@ export interface DemoEntry {
   file: string;
   /** Narrow widget demos center in the preview viewport; panels fill. */
   center?: boolean;
+  /**
+   * The demo pins itself while the page scrolls (`position: sticky`, scroll
+   * timelines). The preview frame then clips instead of hiding its overflow:
+   * `overflow: hidden` would make the frame the scroll container and freeze both.
+   */
+  pinned?: boolean;
 }
 
 export const demoRegistry = {
@@ -157,6 +165,11 @@ export const demoRegistry = {
   TabsDemo: { Demo: TabsDemo, file: "tabs-demo.tsx" },
   TabsControlledDemo: { Demo: TabsControlledDemo, file: "tabs-controlled-demo.tsx" },
   TextareaDemo: { Demo: TextareaDemo, file: "textarea-demo.tsx" },
+  IdentityPickerDemo: { Demo: IdentityPickerDemo, file: "identity-demo.tsx" },
+  IdentityScopeDemo: { Demo: IdentityScopeDemo, file: "identity-demo.tsx" },
+  IdentitySwitcherDemo: { Demo: IdentitySwitcherDemo, file: "identity-demo.tsx" },
+  ScrollScenesBeforeAfterDemo: { Demo: ScrollScenesBeforeAfterDemo, file: "scroll-scenes-demo.tsx", pinned: true },
+  ScrollScenesDemo: { Demo: ScrollScenesDemo, file: "scroll-scenes-demo.tsx", pinned: true },
   ToasterDemo: { Demo: ToasterDemo, file: "toaster-demo.tsx", center: true },
   ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx", center: true },
   ValidatedFormDemo: { Demo: ValidatedFormDemo, file: "validated-form-demo.tsx" },
