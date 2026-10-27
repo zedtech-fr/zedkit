@@ -4,6 +4,7 @@
  * family per identity. The browser fetches a file only when a rendered
  * identity uses that family, and only the subsets the text needs.
  */
+import "@fontsource-variable/geist";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 import "@fontsource-variable/newsreader";

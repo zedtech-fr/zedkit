@@ -1,0 +1,175 @@
+/*
+ * Identity: volt.
+ *
+ *    Dense near-black, tight type (Geist, 12px xs body), hairline
+ *    borders, layered depth, one acid accent. Code in JetBrains Mono.
+ *
+ *    Inert until `data-identity="volt"` is set on <html> (or on an
+ *    element carrying `data-identity-scope`). Geist falls back to a
+ *    metric-aligned face (below) so the swap does not shift the layout,
+ *    then the system stack.
+ */
+:root[data-identity="volt"],
+[data-identity-scope][data-identity="volt"] {
+  --background: 0 0% 96%;
+  --foreground: 0 0% 4%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 4%;
+  --primary: 0 0% 4%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 90%;
+  --secondary-foreground: 0 0% 4%;
+  --muted: 0 0% 92%;
+  --muted-foreground: 0 0% 29%;
+  --accent: 72 90% 60%;
+  --accent-foreground: 0 0% 4%;
+  --destructive: 0 80% 40%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 150 80% 22%;
+  --success-foreground: 0 0% 100%;
+  --warning: 30 95% 32%;
+  --warning-foreground: 0 0% 100%;
+  --overlay: 0 0% 0%;
+  --border: 0 0% 80%;
+  --input: 0 0% 72%;
+  --ring: 0 0% 4%;
+  --sidebar: 0 0% 93%;
+  --sidebar-foreground: 0 0% 4%;
+  --sidebar-border: 0 0% 80%;
+  --sidebar-accent: 72 90% 60%;
+  --radius: 0.25rem;
+
+  /* Typography: families, scale, weight, tracking */
+  --zk-font-sans: "Geist Variable", Geist, "Geist Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-display: "Geist Variable", Geist, "Geist Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--zk-font-sans);
+  --font-mono: var(--zk-font-mono);
+  --font-display: var(--zk-font-display);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --tracking-tight: -0.03em;
+  --tracking-wide: 0.1em;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.375rem;
+  --zk-heading-weight: 600;
+  --zk-heading-tracking: -0.04em;
+  --zk-heading-transform: none;
+  --zk-heading-leading: 1.08;
+  --zk-label-transform: uppercase;
+  --zk-label-tracking: 0.1em;
+
+  /* Spacing: base unit */
+  --spacing: 0.225rem;
+
+  /* Shape: every Tailwind radius step */
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+  --zk-border-width: 1px;
+  --ring-width: 2px;
+  --ring-width-control: 2px;
+  --ring-offset-width: 2px;
+
+  /* Depth */
+  --zk-shadow-color: 0 0% 0%;
+  --zk-shadow-xs: 0 1px 0 hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-sm: 0 1px 2px hsl(var(--zk-shadow-color) / 0.12);
+  --zk-shadow-md: 0 8px 20px -8px hsl(var(--zk-shadow-color) / 0.25), 0 0 0 1px hsl(var(--zk-shadow-color) / 0.05);
+  --zk-shadow-lg: 0 16px 36px -12px hsl(var(--zk-shadow-color) / 0.3), 0 0 0 1px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-xl: 0 24px 56px -16px hsl(var(--zk-shadow-color) / 0.34), 0 0 0 1px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-overlay: 0 20px 48px -12px hsl(var(--zk-shadow-color) / 0.34);
+
+  /* Page texture */
+  --zk-bg-pattern: linear-gradient(hsl(0 0% 0% / 0.05) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 0% / 0.05) 1px, transparent 1px);
+  --zk-bg-size: 48px 48px;
+  --zk-bg-repeat: repeat;
+  --zk-bg-attach: scroll;
+
+  /* Motion */
+  --motion-fast: 100ms;
+  --motion-base: 150ms;
+  --motion-slow: 220ms;
+  --zk-reveal-duration: 300ms;
+  --zk-reveal-distance: 0.5rem;
+  --zk-reveal-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --zk-stagger-step: 50ms;
+  --zk-lift-duration: 160ms;
+  --zk-lift-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --zk-lift-translate: 0 -1px;
+  --zk-lift-shadow: 0 14px 28px -12px rgb(0 0 0 / 0.35);
+  --zk-press-translate: 0 1px;
+  --zk-btn-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --zk-btn-hover-translate: 0 -1px;
+  --zk-btn-hover-shadow: 0 8px 20px -8px hsl(var(--zk-shadow-color) / 0.35);
+  --zk-btn-press-shadow: 0 1px 1px hsl(var(--zk-shadow-color) / 0.2);
+  --zk-deco-ticker: none;
+}
+
+:root[data-identity="volt"].dark,
+.dark [data-identity-scope][data-identity="volt"] {
+  --background: 0 0% 3%;
+  --foreground: 0 0% 96%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 96%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 96%;
+  --primary: 72 90% 58%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 13%;
+  --secondary-foreground: 0 0% 96%;
+  --muted: 0 0% 11%;
+  --muted-foreground: 0 0% 66%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 2 85% 62%;
+  --destructive-foreground: 0 0% 4%;
+  --success: 146 60% 50%;
+  --success-foreground: 0 0% 4%;
+  --warning: 40 95% 56%;
+  --warning-foreground: 0 0% 4%;
+  --overlay: 0 0% 0%;
+  --border: 0 0% 20%;
+  --input: 0 0% 24%;
+  --ring: 72 90% 58%;
+  --sidebar: 0 0% 5%;
+  --sidebar-foreground: 0 0% 96%;
+  --sidebar-border: 0 0% 17%;
+  --sidebar-accent: 0 0% 14%;
+  --zk-shadow-color: 0 0% 0%;
+  --zk-shadow-xs: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  --zk-shadow-sm: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.6);
+  --zk-shadow-md: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 10px 24px -8px rgb(0 0 0 / 0.85);
+  --zk-shadow-lg: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 18px 40px -12px rgb(0 0 0 / 0.9);
+  --zk-shadow-xl: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 28px 64px -16px rgb(0 0 0 / 0.95);
+  --zk-shadow-overlay: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 24px 56px -12px rgb(0 0 0 / 0.95);
+  --zk-lift-shadow: 0 0 0 1px hsl(72 90% 58% / 0.5), 0 14px 32px -12px rgb(0 0 0 / 0.95);
+  --zk-bg-pattern: radial-gradient(60rem 26rem at 50% -12%, hsl(72 90% 58% / 0.09), transparent 62%);
+  --zk-bg-size: 100% 100%;
+  --zk-bg-repeat: no-repeat;
+  --zk-btn-hover-shadow: 0 0 0 1px hsl(72 90% 58% / 0.6), 0 10px 24px -8px hsl(72 90% 58% / 0.25);
+}
+
+/* Metric-aligned fallback face (see font-fallbacks.css for the method). */
+@font-face {
+  font-family: "Geist Variable Fallback";
+  src: local("Arial"), local("Liberation Sans");
+  font-display: swap;
+  ascent-override: 100.5%;
+  descent-override: 29.5%;
+  line-gap-override: 0%;
+  size-adjust: 100.24%;
+}
