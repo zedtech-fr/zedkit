@@ -5,11 +5,13 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  IconLabel,
   Section,
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
+import { domainIconFor } from "@/lib/domain-icons";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_TWO_COL,
@@ -28,7 +30,9 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
           {entryPoints.map((entry) => (
             <Card key={entry.href} className="min-w-0">
               <CardHeader>
-                <CardTitle>{entry.title}</CardTitle>
+                <CardTitle>
+                  <IconLabel icon={domainIconFor(entry.title)}>{entry.title}</IconLabel>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Stack gap={HOME_CARD_CONTENT_GAP}>

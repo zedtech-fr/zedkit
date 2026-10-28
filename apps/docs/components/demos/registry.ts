@@ -93,6 +93,7 @@ import { SpinnerDemo } from "./spinner-demo";
 import { SpinnerNamedDemo } from "./spinner-named-demo";
 import { ThemeDemo, ThemeTokensDemo, ThemeToggleDemo } from "./theme-demo";
 import { IconButtonDemo, IconButtonRowsDemo } from "./icon-button-demo";
+import { IconLabelAreasDemo } from "./icon-label-areas-demo";
 import { IconLabelDemo, IconLabelOrdersDemo } from "./icon-label-demo";
 
 /**
@@ -166,6 +167,7 @@ export const demoRegistry = {
   IconButtonRowsDemo: { Demo: IconButtonRowsDemo, file: "icon-button-demo.tsx" },
   IconLabelDemo: { Demo: IconLabelDemo, file: "icon-label-demo.tsx" },
   IconLabelOrdersDemo: { Demo: IconLabelOrdersDemo, file: "icon-label-demo.tsx" },
+  IconLabelAreasDemo: { Demo: IconLabelAreasDemo, file: "icon-label-areas-demo.tsx" },
   DatePickerDemo: { Demo: DatePickerDemo, file: "date-picker-demo.tsx", center: true },
   DateRangePickerDemo: { Demo: DateRangePickerDemo, file: "date-range-picker-demo.tsx", center: true },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },

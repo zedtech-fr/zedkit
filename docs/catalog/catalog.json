@@ -1649,6 +1649,10 @@
             {
               "title": "In an order list",
               "code": "import { Package, RotateCcw, Truck } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n\n<IconLabel icon={Truck}>Shipped Oct 25</IconLabel>\n<IconLabel icon={Package}>Packing</IconLabel>\n<IconLabel icon={RotateCcw}>Return requested</IconLabel>"
+            },
+            {
+              "title": "Home areas",
+              "code": "import { Bot, LayoutDashboard, Server, TrendingUp } from \"lucide-react\";\nimport { IconLabel } from \"@zedtech/zedkit-ui\";\n\n<IconLabel icon={LayoutDashboard}>Build a UI</IconLabel>\n<IconLabel icon={Server}>Core & server</IconLabel>\n<IconLabel icon={TrendingUp}>Improve SEO</IconLabel>\n<IconLabel icon={Bot}>Set up coding agents</IconLabel>"
             }
           ],
           "registry": "icon-label",
