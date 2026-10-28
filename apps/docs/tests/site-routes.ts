@@ -59,6 +59,11 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
     label: "tutorial-shadcn",
     strictSemantics: true,
   },
+  {
+    path: "/examples/note-list",
+    label: "example-note-list",
+    strictSemantics: true,
+  },
 ];
 
 /** Registry URLs advertised on doc pages; must stay 200 on the served export. */
