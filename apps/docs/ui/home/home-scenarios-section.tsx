@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import type { HomeScenario } from "@/content/home-scenarios";
 import {
   HOME_CARD_CONTENT_GAP,
@@ -42,7 +43,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
                   </Stack>
                   <Button asChild variant="outline" className="mt-auto w-fit">
                     <Link href={scenario.href} aria-label={`Read the docs: ${scenario.situation}`}>
-                      Read the docs
+                      <DocsActionLabel>Read the docs</DocsActionLabel>
                     </Link>
                   </Button>
                 </Stack>

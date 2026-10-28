@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import { HomeAreaTitle } from "@/components/home-area-title";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
 import {
@@ -38,7 +39,9 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
                   <Text variant="muted">{entry.summary}</Text>
                   <Text variant="muted">{entry.needCount} documented needs in the catalog</Text>
                   <Button asChild variant="ghost" size="sm" className="w-fit">
-                    <Link href={entry.href}>{entry.linkLabel}</Link>
+                    <Link href={entry.href}>
+                      <DocsActionLabel>{entry.linkLabel}</DocsActionLabel>
+                    </Link>
                   </Button>
                 </Stack>
               </CardContent>
