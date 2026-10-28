@@ -865,7 +865,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHea
 
 ## Float extra content next to a control
 
-- Import: `@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`
+- Import: `@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`
 - Wraps: `@radix-ui/react-popover`
 - Status: alpha
 - Derived from: shadcn/ui (popover)
@@ -1350,6 +1350,46 @@ const items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</S
 <Select onValueChange={setRegion}>
 <SelectTrigger><SelectValue placeholder="Pick a region" /></SelectTrigger>
 <SelectContent>{items.length === 0 ? <SelectItem value="none" disabled>No regions available</SelectItem> : items}</SelectContent>
+```
+
+## Search and pick one option
+
+- Import: `@zedtech/zedkit-ui` — `Combobox`, `ComboboxOption`, `ComboboxProps`
+- Wraps: `downshift`, `@radix-ui/react-popover`
+- Status: alpha
+- Short name: Combobox
+- Audience: Form builders with long lists where typing to filter beats scrolling a select.
+- Purpose: Searchable single-select combobox with popover list, empty and loading rows, keyboard navigation.
+- When to use: When users know part of the label (city, SKU, assignee).
+- When not to use: For a fixed short list with no search — use Select.
+- See also: `Pick one option from a dropdown`, `Pick many searchable options`
+- A11y: Text input with listbox popup; arrow keys highlight, Enter selects, Escape closes.
+- Troubleshooting: Menu stays empty — check `options` labels match the typed filter. Selection does not stick — control `value` and `onValueChange` together.
+
+```ts
+import { Combobox, type ComboboxOption } from "@zedtech/zedkit-ui";
+const options: ComboboxOption[] = [{ value: "eu", label: "Europe" }];
+<Combobox options={options} value={region} onValueChange={setRegion} aria-label="Region" />;
+```
+
+## Pick many searchable options
+
+- Import: `@zedtech/zedkit-ui` — `MultiSelect`, `MultiSelectProps`, `ComboboxOption`
+- Wraps: `downshift`, `@radix-ui/react-popover`
+- Status: alpha
+- Short name: MultiSelect
+- Audience: Filters and tag pickers where several values apply.
+- Purpose: Searchable multi-select with removable chips, shared empty/loading states, keyboard support.
+- When to use: Tag filters, multi-assignee fields, facet pickers.
+- When not to use: For a single value — use Combobox or Select.
+- See also: `Search and pick one option`, `Toggle a checkbox or a switch`
+- A11y: Selected values appear as chips with remove buttons; listbox behaves like Combobox for adding.
+- Troubleshooting: Duplicate chips — the same `value` is already selected. Chips missing labels — every option needs a stable `value` and human `label`.
+
+```ts
+import { MultiSelect, type ComboboxOption } from "@zedtech/zedkit-ui";
+const tags: ComboboxOption[] = [{ value: "docs", label: "Docs" }];
+<MultiSelect options={tags} value={picked} onValueChange={setPicked} aria-label="Tags" />;
 ```
 
 ## Collect multi-line text input

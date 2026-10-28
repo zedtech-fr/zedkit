@@ -1980,7 +1980,7 @@
         },
         {
           "need": "Float extra content next to a control",
-          "import": "`@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`",
+          "import": "`@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`",
           "wraps": "`@radix-ui/react-popover`",
           "status": "alpha",
           "shortName": "Popover",
@@ -2459,6 +2459,56 @@
           "seeAlso": [
             "Toggle a checkbox or a switch",
             "Guide a multi-step flow with selectable option cards"
+          ]
+        },
+        {
+          "need": "Search and pick one option",
+          "import": "`@zedtech/zedkit-ui` — `Combobox`, `ComboboxOption`, `ComboboxProps`",
+          "wraps": "`downshift`, `@radix-ui/react-popover`",
+          "status": "alpha",
+          "shortName": "Combobox",
+          "audience": "Form builders with long lists where typing to filter beats scrolling a select.",
+          "purpose": "Searchable single-select combobox with popover list, empty and loading rows, keyboard navigation.",
+          "whenToUse": "When users know part of the label (city, SKU, assignee).",
+          "whenNotToUse": "For a fixed short list with no search — use Select.",
+          "derivedFrom": null,
+          "example": "import { Combobox, type ComboboxOption } from \"@zedtech/zedkit-ui\";\nconst options: ComboboxOption[] = [{ value: \"eu\", label: \"Europe\" }];\n<Combobox options={options} value={region} onValueChange={setRegion} aria-label=\"Region\" />;",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Combobox, type ComboboxOption } from \"@zedtech/zedkit-ui\";\nconst options: ComboboxOption[] = [{ value: \"eu\", label: \"Europe\" }];\n<Combobox options={options} value={region} onValueChange={setRegion} aria-label=\"Region\" />;"
+            }
+          ],
+          "a11y": "Text input with listbox popup; arrow keys highlight, Enter selects, Escape closes.",
+          "troubleshooting": "Menu stays empty — check `options` labels match the typed filter. Selection does not stick — control `value` and `onValueChange` together.",
+          "seeAlso": [
+            "Pick one option from a dropdown",
+            "Pick many searchable options"
+          ]
+        },
+        {
+          "need": "Pick many searchable options",
+          "import": "`@zedtech/zedkit-ui` — `MultiSelect`, `MultiSelectProps`, `ComboboxOption`",
+          "wraps": "`downshift`, `@radix-ui/react-popover`",
+          "status": "alpha",
+          "shortName": "MultiSelect",
+          "audience": "Filters and tag pickers where several values apply.",
+          "purpose": "Searchable multi-select with removable chips, shared empty/loading states, keyboard support.",
+          "whenToUse": "Tag filters, multi-assignee fields, facet pickers.",
+          "whenNotToUse": "For a single value — use Combobox or Select.",
+          "derivedFrom": null,
+          "example": "import { MultiSelect, type ComboboxOption } from \"@zedtech/zedkit-ui\";\nconst tags: ComboboxOption[] = [{ value: \"docs\", label: \"Docs\" }];\n<MultiSelect options={tags} value={picked} onValueChange={setPicked} aria-label=\"Tags\" />;",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { MultiSelect, type ComboboxOption } from \"@zedtech/zedkit-ui\";\nconst tags: ComboboxOption[] = [{ value: \"docs\", label: \"Docs\" }];\n<MultiSelect options={tags} value={picked} onValueChange={setPicked} aria-label=\"Tags\" />;"
+            }
+          ],
+          "a11y": "Selected values appear as chips with remove buttons; listbox behaves like Combobox for adding.",
+          "troubleshooting": "Duplicate chips — the same `value` is already selected. Chips missing labels — every option needs a stable `value` and human `label`.",
+          "seeAlso": [
+            "Search and pick one option",
+            "Toggle a checkbox or a switch"
           ]
         },
         {
