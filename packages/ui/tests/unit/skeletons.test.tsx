@@ -30,7 +30,8 @@ describe("skeletons", () => {
     const zone = screen.getByRole("status");
     expect(zone.className).toContain("p-card-padding");
     expect(zone.querySelector(".space-y-card-stack")).not.toBeNull();
-    expect(zone.querySelector(".mt-4.space-y-card-lines")).not.toBeNull();
+    expect(zone.querySelector(".mt-4.space-y-2")).not.toBeNull();
+    expect(zone.innerHTML).not.toContain("space-y-card-lines");
   });
 
   it("sizes the table skeleton to its columns and rows", () => {
