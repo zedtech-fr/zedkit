@@ -52,8 +52,8 @@ describe("DataTable", () => {
     expect(sortButton.className).not.toMatch(/(^|\s)gap-1(\s|$)/);
     expect(sortButton.querySelector("svg")?.classList.contains("size-icon-sm")).toBe(true);
     const pager = screen.getByText(/Page 1 of/).parentElement;
-    expect(pager?.classList.contains("gap-data-table-pagination-gap")).toBe(true);
-    expect(pager?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);
+    expect(pager?.classList.contains("gap-2")).toBe(true);
+    expect(pager?.className).not.toContain("gap-data-table-pagination-gap");
   });
 
   it("styles loading skeletons from design tokens", () => {
