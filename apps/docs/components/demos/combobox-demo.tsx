@@ -14,7 +14,7 @@ export function ComboboxDemo() {
   const [city, setCity] = useState<string | null>(null);
   return (
     <ZedkitUiProvider messages={zedkitUiMessagesEn}>
-      <Stack gap={2} className="min-w-0 max-w-sm">
+      <Stack gap={2} className="max-w-sm min-w-0">
         <Combobox
           options={CITIES}
           value={city}

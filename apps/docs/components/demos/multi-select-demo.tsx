@@ -21,7 +21,7 @@ export function MultiSelectDemo() {
   const [tags, setTags] = useState<string[]>(["docs"]);
   return (
     <ZedkitUiProvider messages={zedkitUiMessagesEn}>
-      <Stack gap={2} className="min-w-0 max-w-sm">
+      <Stack gap={2} className="max-w-sm min-w-0">
         <MultiSelect options={TAGS} value={tags} onValueChange={setTags} aria-label="Filter tags" placeholder="Add tags…" />
         <Text variant="muted" className="text-xs" aria-live="polite">
           {tags.length === 0 ? "Pick one or more tags." : `${tags.length} tag(s) selected.`}
