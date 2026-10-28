@@ -72,7 +72,7 @@ test.describe("overlay mobile (refs #425)", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible({ timeout: 10_000 });
     await page.waitForTimeout(300);
-    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "right");
+    await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "bottom");
     await expectCloseTarget(dialog);
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
