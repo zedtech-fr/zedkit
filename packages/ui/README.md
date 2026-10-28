@@ -32,41 +32,11 @@ Adopt in 3 lines:
 import { Button } from "@zedtech/zedkit-ui"; // see CATALOG.md for every component
 ```
 
-## Migration (ref as a prop)
+## Migration
 
-Hosts take `ref` on the props object (`React.ComponentProps<"button">`).
-`React.forwardRef` is lint-flagged by `@zedtech/zedkit-quality` (message
-points at `src/button.tsx`). Each exported root sets `data-slot`.
-
-```tsx
-// before
-const Save = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
-  <Button ref={ref} {...props} />
-));
-type SaveRef = React.ElementRef<typeof Button>;
-
-// after
-function Save(props: ButtonProps) {
-  return <Button {...props} />;
-}
-type SaveRef = React.ComponentRef<typeof Button>;
-```
-
-Search-and-replace sketch (review the diff): drop the `forwardRef` wrapper and keep the body; `ref` arrives in `props`.
-
-## Migration (kit messages)
-
-Kit chrome (Close, Filter…, empty table, loading names) reads from
-`ZedkitUiProvider`. English is the default. Wrap the tree with the
-French bundle (or your own copy). A per-host label prop still wins.
-
-```tsx
-import { ZedkitUiProvider, zedkitUiMessagesFr } from "@zedtech/zedkit-ui";
-
-<ZedkitUiProvider messages={zedkitUiMessagesFr}>
-  <App />
-</ZedkitUiProvider>
-```
+Ref as a prop, and kit messages: before/after, search patterns, and a
+per-app checklist live in
+[docs/migrations/ui-ref-and-messages.md](../../docs/migrations/ui-ref-and-messages.md).
 
 ## When to use
 
@@ -77,6 +47,7 @@ kit packages.
 
 ## Guides
 
+- [Upgrade: ref as a prop, and kit messages](../../docs/migrations/ui-ref-and-messages.md)
 - [Route modals](../../docs/route-modals.md): pointer to the catalog recipe
   (drawer vs dialog vs page, `RouteModal`, `closeRoute`).
 
