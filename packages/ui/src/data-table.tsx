@@ -115,7 +115,7 @@ export function DataTablePagination({
   const messages = useUiMessages();
   const pageCountShown = Math.max(pageCount, 1);
   return (
-    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
+    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-2", className)}>
       <span className="text-sm text-muted-foreground">
         {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
