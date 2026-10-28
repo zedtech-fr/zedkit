@@ -3,6 +3,16 @@ import { Linter } from "eslint";
 import { parser as tsParser, plugin as tsPlugin } from "typescript-eslint";
 import { defineLayers, uiPreset } from "#index.mjs";
 
+function arbitraryRow() {
+  const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+  const restrict = tailwind.rules["better-tailwindcss/no-restricted-classes"][1].restrict;
+  return restrict.find((row) => String(row.message).startsWith("tokens-arbitrary:"));
+}
+
+function matchesArbitrary(className) {
+  return Boolean(className.match(arbitraryRow().pattern));
+}
+
 describe("uiPreset", () => {
   it("carries the passed entryPoint into the tailwind settings", () => {
     const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
@@ -24,6 +34,7 @@ describe("uiPreset", () => {
     expect(messages[0]).toMatch(/^tokens-color: /);
     expect(messages[1]).toMatch(/^tokens-color: /);
     expect(messages[2]).toMatch(/^tokens-style: /);
+    expect(messages[3]).toMatch(/^tokens-arbitrary: /);
     expect(style.message).toMatch(/^tokens-style: /);
     expect(tryCatch.message).toMatch(/^try-catch: /);
     expect(forwardRef.message).toMatch(/^ui-ref: /);
@@ -88,6 +99,34 @@ describe("uiPreset", () => {
     const fat = `export function fat() {\n${Array.from({ length: 70 }, (_, i) => `  const n${i} = ${i};`).join("\n")}\n}\n`;
     const fnHits = linter.verify(fat, { files: ["**/*.tsx"], rules: size.rules }, "fat.tsx");
     expect(fnHits.some((entry) => entry.ruleId === "max-lines-per-function")).toBe(true);
+  });
+
+  it("flags arbitrary px in className and allows the spacing scale", () => {
+    expect(matchesArbitrary("w-[13px]")).toBe(true);
+    expect(matchesArbitrary("w-4")).toBe(false);
+    expect(arbitraryRow().message).toMatch(/w-4|spacing scale/);
+  });
+
+  it("flags arbitrary rem in className and allows the spacing scale", () => {
+    expect(matchesArbitrary("gap-[0.75rem]")).toBe(true);
+    expect(matchesArbitrary("gap-3")).toBe(false);
+    expect(arbitraryRow().message).toMatch(/gap-3|spacing scale/);
+  });
+
+  it("flags arbitrary px/rem inside cn() and cva() args", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    // Default callees already include cn and cva; we do not override them.
+    expect(tailwind.settings["better-tailwindcss"].callees).toBeUndefined();
+    expect(matchesArbitrary("w-[13px]")).toBe(true);
+    expect(matchesArbitrary("gap-[0.75rem]")).toBe(true);
+    expect(matchesArbitrary("w-4")).toBe(false);
+    expect(matchesArbitrary("gap-3")).toBe(false);
+  });
+
+  it("allows Radix CSS variables in arbitrary class values", () => {
+    expect(matchesArbitrary("w-[var(--radix-popover-trigger-width)]")).toBe(false);
+    expect(matchesArbitrary("min-w-[var(--radix-select-trigger-width)]")).toBe(false);
+    expect(matchesArbitrary("h-[var(--radix-select-trigger-height)]")).toBe(false);
   });
 
   it("bans explicit any and tells the reader to name a type", () => {

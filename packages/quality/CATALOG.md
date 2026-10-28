@@ -12,7 +12,7 @@
 - Status: beta
 - Short name: UiPreset
 - Audience: Frontend teams linting tsx/jsx everywhere the same way.
-- Purpose: Enforce a11y, Tailwind hygiene, tokens-only classes, no inline style, no forwardRef, no explicit any, and a 300/60 size budget on every UI file.
+- Purpose: Enforce a11y, Tailwind hygiene, tokens-only classes (no arbitrary px/rem), no inline style, no forwardRef, no explicit any, and a 300/60 size budget on every UI file.
 - When to use: When UI rules must match across repos without copying a preset file.
 - When not to use: When the repo has no Tailwind theme (the entryPoint has nothing to read).
 - See also: `Enforce route, view and data layer boundaries`

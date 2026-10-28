@@ -5,7 +5,8 @@
 // - jsx-a11y recommended (labels, keyboard, focus, ARIA)
 // - Tailwind class hygiene (order, no duplicates, no conflicts, no unknown)
 // - Tokens only: no raw palette colors (bg-red-500), no arbitrary hex/rgb
-//   colors, no raw px font sizes — use the semantic theme tokens
+//   colors, no raw px font sizes, no arbitrary px/rem in className
+//   (w-[13px], gap-[0.75rem]) — use the semantic theme tokens
 // - No `style` attributes; no forwardRef (ref is a prop); no explicit `any`;
 //   files ≤ 300 lines, functions ≤ 60; no raw try/catch (use a tryCatch wrapper)
 //
@@ -71,6 +72,15 @@ export function uiPreset({ entryPoint }) {
                 pattern: "text-\\[[^\\]]*px",
                 message:
                   "tokens-style: raw px font sizes are banned. Use the type scale (text-xs … text-2xl).",
+              },
+              // Radix CSS variables (w-[var(--radix-popover-trigger-width)])
+              // are not matched: they are not a px/rem literal. Overlays
+              // must follow the trigger size. Hardcoded colours are already
+              // tokens-color (palette + hex/rgb/hsl).
+              {
+                pattern: "\\[[0-9.]+(?:px|rem)\\]",
+                message:
+                  "tokens-arbitrary: raw px/rem in className (w-[13px], gap-[0.75rem]) are banned — use the spacing scale (w-4, gap-3) or the type scale (text-sm).",
               },
             ],
           },
