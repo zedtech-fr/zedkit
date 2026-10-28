@@ -958,6 +958,76 @@
         }
       ]
     },
+    "@zedtech/zedkit-storage": {
+      "catalog": "packages/storage/CATALOG.md",
+      "keywords": [
+        "s3",
+        "object-storage",
+        "presigned-url",
+        "typescript",
+        "server"
+      ],
+      "audience": "Node services that upload or serve files through S3-compatible storage.",
+      "needs": [
+        {
+          "need": "Load storage config and create a client",
+          "import": "`@zedtech/zedkit-storage` — `loadStorageConfig`, `storageConfigSchema`, `StorageConfig`, `createS3Client`",
+          "wraps": "`@aws-sdk/client-s3` (peer)",
+          "status": "alpha",
+          "shortName": "StorageConfig",
+          "audience": "Boot-time wiring in APIs and workers.",
+          "purpose": "Fail fast on missing env vars; explicit access keys only (no default credential chain).",
+          "whenToUse": "Any service that talks to S3 or a compatible provider (MinIO, R2, etc.).",
+          "whenNotToUse": "Browser uploads without a server — still need a backend to presign.",
+          "derivedFrom": null,
+          "example": "import { createS3Client, loadStorageConfig } from \"@zedtech/zedkit-storage\";\nconst config = loadStorageConfig();\nconst client = createS3Client(config);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createS3Client, loadStorageConfig } from \"@zedtech/zedkit-storage\";\nconst config = loadStorageConfig();\nconst client = createS3Client(config);"
+            }
+          ]
+        },
+        {
+          "need": "Sanitise keys and presign uploads",
+          "import": "`@zedtech/zedkit-storage` — `sanitizeObjectKey`, `sanitizeFilename`, `presignPutUrl`, `presignGetUrl`, `headObject`, `PresignPutInput`, `PresignGetInput`",
+          "wraps": "`@aws-sdk/s3-request-presigner` (peer)",
+          "status": "alpha",
+          "shortName": "presignPutUrl",
+          "audience": "Handlers that accept user filenames and return short-lived upload URLs.",
+          "purpose": "Block `..` and control characters; optional `keyPrefix` from config.",
+          "whenToUse": "Direct-to-storage uploads from the browser or mobile app.",
+          "whenNotToUse": "Public anonymous buckets without presigning — configure IAM separately.",
+          "derivedFrom": null,
+          "example": "import { presignPutUrl, sanitizeFilename } from \"@zedtech/zedkit-storage\";\nconst safe = sanitizeFilename(userName);\nawait presignPutUrl(client, config, { key: `${userId}/${safe}`, contentType: \"image/png\" });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { presignPutUrl, sanitizeFilename } from \"@zedtech/zedkit-storage\";\nconst safe = sanitizeFilename(userName);\nawait presignPutUrl(client, config, { key: `${userId}/${safe}`, contentType: \"image/png\" });"
+            }
+          ]
+        },
+        {
+          "need": "Public URLs and response headers",
+          "import": "`@zedtech/zedkit-storage` — `buildPublicObjectUrl`, `immutableCacheControl`, `svgServingHeaders`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "buildPublicObjectUrl",
+          "audience": "Apps serving fingerprinted assets or user SVG through a CDN base URL.",
+          "purpose": "Build CDN URLs from config; ship cache and CSP defaults for SVG objects.",
+          "whenToUse": "After upload, when `STORAGE_PUBLIC_BASE_URL` points at your CDN.",
+          "whenNotToUse": "Private objects — use presigned GET instead.",
+          "derivedFrom": null,
+          "example": "import { buildPublicObjectUrl, immutableCacheControl, svgServingHeaders } from \"@zedtech/zedkit-storage\";\nbuildPublicObjectUrl(config, \"avatars/id.png\");",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { buildPublicObjectUrl, immutableCacheControl, svgServingHeaders } from \"@zedtech/zedkit-storage\";\nbuildPublicObjectUrl(config, \"avatars/id.png\");"
+            }
+          ]
+        }
+      ]
+    },
     "@zedtech/zedkit-ui": {
       "catalog": "packages/ui/CATALOG.md",
       "keywords": [

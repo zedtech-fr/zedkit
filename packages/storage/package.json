@@ -1,0 +1,64 @@
+{
+  "name": "@zedtech/zedkit-storage",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Validated config, safe object keys, presigned URLs, and upload response headers without a managed storage service in-package. Original work by the same author.",
+  "keywords": [
+    "s3",
+    "object-storage",
+    "presigned-url",
+    "typescript",
+    "server"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/storage",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/storage"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-s3": "catalog:",
+    "@aws-sdk/s3-request-presigner": "catalog:"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "catalog:",
+    "@aws-sdk/s3-request-presigner": "catalog:",
+    "@types/node": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

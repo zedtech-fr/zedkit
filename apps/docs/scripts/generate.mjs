@@ -508,6 +508,7 @@ const CATALOG_AREA_BY_FOLDER = {
   "payload-seo": "seo",
   core: "backend",
   server: "backend",
+  storage: "backend",
   nest: "backend",
   observability: "backend",
   quality: "backend",
