@@ -80,6 +80,11 @@ test.describe("quiet icon beside inline text", () => {
           await orders.scrollIntoViewIfNeeded();
           await expect(orders.getByRole("list", { name: "Recent orders" }).getByRole("listitem")).toHaveCount(4);
           await expect(orders.getByText("Return requested")).toBeVisible();
+          const areas = previews.nth(2);
+          await areas.scrollIntoViewIfNeeded();
+          await expect(areas.getByText("Build a UI")).toBeVisible();
+          await expect(areas.getByText("Set up coding agents")).toBeVisible();
+          await expect(areas.locator("svg[aria-hidden='true']")).toHaveCount(4);
           const sideways = await page.evaluate(
             () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
           );

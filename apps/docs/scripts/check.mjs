@@ -562,6 +562,11 @@ if (errors.length > 0) {
             stdio: "inherit",
           });
           if (agentIcons.status !== 0) process.exitCode = 1;
+          const domainIcons = spawnSync("node", [join(HERE, "check-domain-icons.mjs")], {
+            cwd: APP,
+            stdio: "inherit",
+          });
+          if (domainIcons.status !== 0) process.exitCode = 1;
         }
       }
     }

@@ -17,7 +17,20 @@ test("home explains the product and four entry areas", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Open core & server docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
+  await expect(page.locator("#entry-points svg[aria-hidden='true']")).toHaveCount(4);
   expect(errors).toEqual([]);
+});
+
+test("home area cards keep a decorative icon at phone width", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const section = page.locator("#entry-points");
+  await expect(section.getByText("Build a UI", { exact: true })).toBeVisible();
+  await expect(section.locator("svg[aria-hidden='true']")).toHaveCount(4);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
 });
 
 test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ page }) => {

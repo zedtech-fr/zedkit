@@ -484,7 +484,8 @@
       "source": "icon-label.tsx",
       "demo": "IconLabelDemo",
       "examples": {
-        "In an order list": "IconLabelOrdersDemo"
+        "In an order list": "IconLabelOrdersDemo",
+        "Home areas": "IconLabelAreasDemo"
       }
     },
     "Pin a stage and change scene as the page scrolls": {

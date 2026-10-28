@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { HomeAreaTitle } from "@/components/home-area-title";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
 import {
   HOME_CARD_CONTENT_GAP,
@@ -28,7 +29,9 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
           {entryPoints.map((entry) => (
             <Card key={entry.href} className="min-w-0">
               <CardHeader>
-                <CardTitle>{entry.title}</CardTitle>
+                <CardTitle>
+                  <HomeAreaTitle title={entry.title} />
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Stack gap={HOME_CARD_CONTENT_GAP}>
