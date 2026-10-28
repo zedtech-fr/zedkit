@@ -13,8 +13,8 @@ const triggerClass =
   "w-full justify-start font-normal group-data-[invalid=true]/field:border-destructive";
 
 export type DatePickerProps = {
-  value?: Date;
-  defaultValue?: Date;
+  value?: Date | undefined;
+  defaultValue?: Date | undefined;
   onValueChange?: (date: Date | undefined) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -28,8 +28,8 @@ export type DatePickerProps = {
 };
 
 export type DateRangePickerProps = {
-  value?: DateRange;
-  defaultValue?: DateRange;
+  value?: DateRange | undefined;
+  defaultValue?: DateRange | undefined;
   onValueChange?: (range: DateRange | undefined) => void;
   placeholder?: string;
   disabled?: boolean;
