@@ -32,6 +32,12 @@ test("getting started lists a server npm quickstart path", async ({ page }) => {
   await expect(page.getByText("pnpm add @zedtech/zedkit-server")).toBeVisible();
 });
 
+test("getting started lists a nest npm quickstart path", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
+  await expect(page.getByRole("heading", { name: "Path E — Nest API (npm only)", level: 3 })).toBeVisible();
+  await expect(page.getByText("pnpm add @zedtech/zedkit-nest")).toBeVisible();
+});
+
 test("getting started package table keeps a decorative area icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
