@@ -29,7 +29,7 @@ test("registry brick name keeps a decorative icon", async ({ page }) => {
   expect(overflow).toBe(true);
 });
 
-test.describe("registry brick name light/dark (#762)", () => {
+test.describe("registry brick name light/dark (#769)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
