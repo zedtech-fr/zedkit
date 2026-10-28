@@ -101,6 +101,7 @@ const DEPRECATED_1REM_CLASSES = [
   "px-select-item-inline",
   "pl-select-item-inline",
   "right-select-item-inline",
+  "py-control-block-lg",
 ];
 
 function walkJs(dir, acc = []) {

@@ -38,8 +38,8 @@ describe("primitives", () => {
     const button = screen.getByRole("button", { name: "Save" });
     expect(button.className).toContain("gap-2");
     expect(button.className).not.toContain("gap-button-gap");
-    expect(button.className).toContain("py-control-block-lg");
-    expect(button.className).not.toMatch(/(^|\s)py-2(\s|$)/);
+    expect(button.className).toContain("py-2");
+    expect(button.className).not.toContain("py-control-block-lg");
   });
 
   it("merges button styles onto asChild link", () => {
@@ -211,6 +211,8 @@ describe("primitives", () => {
     );
     expect(screen.getByLabelText("Name").className).toContain("h-control-height");
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
+    expect(screen.getByLabelText("Bio").className).toContain("py-2");
+    expect(screen.getByLabelText("Bio").className).not.toContain("py-control-block-lg");
   });
 
   it("sizes every text field from the input font-size token, never a fixed text-* size", () => {
