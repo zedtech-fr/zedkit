@@ -33,6 +33,7 @@ import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { ConfirmDialogLabelsDemo } from "./confirm-dialog-labels-demo";
 import { DatePickerDemo } from "./date-picker-demo";
 import { DateRangePickerDemo } from "./date-range-picker-demo";
+import { FlagsDemo } from "./flags-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DataTableEmptyDemo } from "./data-table-empty-demo";
 import { DataTablePaginationDemo } from "./data-table-pagination-demo";
@@ -172,6 +173,7 @@ export const demoRegistry = {
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
   DropdownMenuDemo: { Demo: DropdownMenuDemo, file: "dropdown-menu-demo.tsx", center: true },
   DrawerBottomSheetDemo: { Demo: DrawerBottomSheetDemo, file: "drawer-bottom-sheet-demo.tsx", center: true },
+  FlagsDemo: { Demo: FlagsDemo, file: "flags-demo.tsx" },
   DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },

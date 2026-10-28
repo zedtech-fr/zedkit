@@ -487,6 +487,13 @@
         "Same card in each look": "IdentityScopeDemo",
         "Touch picker": "IdentityPickerDemo"
       }
+    },
+    "Read flags in React": {
+      "package": "@zedtech/zedkit-flags",
+      "component": null,
+      "props": null,
+      "source": "react.tsx",
+      "demo": "FlagsDemo"
     }
   }
 }
