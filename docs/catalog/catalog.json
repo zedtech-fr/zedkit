@@ -2462,7 +2462,7 @@
             }
           ],
           "registry": "card",
-          "a11y": "Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; `CardSkeleton` mirrors the same tokens so async content lands without shifting.",
+          "a11y": "Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; elevation is `shadow-md` (`--zk-shadow-md` per identity). `CardSkeleton` mirrors the same tokens so async content lands without shifting.",
           "troubleshooting": "Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`pt-0` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.",
           "seeAlso": [
             "Stack content and group titled sections"

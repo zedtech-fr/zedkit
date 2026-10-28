@@ -20,7 +20,7 @@ export function CardSkeleton({ label, className }: CardSkeletonProps) {
       data-slot="card-skeleton"
       role="status"
       aria-label={label ?? messages.loading}
-      className={cn("rounded-xl border bg-card p-card-padding shadow", className)}
+      className={cn("rounded-xl border bg-card p-card-padding shadow-md", className)}
     >
       <div className="space-y-card-stack">
         <Skeleton className="h-5 w-1/3" />

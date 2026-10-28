@@ -9,7 +9,7 @@ function Card({ className, ...props }: CardProps) {
   return (
     <div
       data-slot="card"
-      className={cn("rounded-xl border bg-card text-card-foreground shadow", className)}
+      className={cn("rounded-xl border bg-card text-card-foreground shadow-md", className)}
       {...props}
     />
   );

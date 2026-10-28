@@ -31,6 +31,8 @@ describe("skeletons", () => {
     render(<CardSkeleton />);
     const zone = screen.getByRole("status");
     expect(zone.className).toContain("p-card-padding");
+    expect(zone.className).toContain("shadow-md");
+    expect(zone.className).not.toMatch(/(^|\s)shadow(\s|$)/);
     expect(zone.querySelector(".space-y-card-stack")).not.toBeNull();
     expect(zone.querySelector(".mt-4.space-y-2")).not.toBeNull();
     expect(zone.innerHTML).not.toContain("space-y-card-lines");
