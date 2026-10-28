@@ -405,6 +405,63 @@
               "code": "import { createProductAnalyticsTracker } from \"@zedtech/zedkit-observability/posthog\";\nconst tracker = createProductAnalyticsTracker(client);\ntracker.capture(\"page_view\", { path: \"/home\" });"
             }
           ]
+        },
+        {
+          "need": "Persist analytics consent choices",
+          "import": "`@zedtech/zedkit-observability/consent` — `ConsentStore`, `ConsentRecord`, `ConsentCategory`, `createMemoryConsentStore`, `createLocalStorageConsentStore`, `isCategoryGranted`, `CONSENT_CATEGORIES`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "Consent store",
+          "audience": "Public sites that must record analytics/marketing opt-in before loading tags.",
+          "purpose": "Small consent store with memory and localStorage backends.",
+          "whenToUse": "Before gating trackers or third-party scripts.",
+          "whenNotToUse": "Logged-in admin apps with no public marketing tags.",
+          "derivedFrom": null,
+          "example": "import { createMemoryConsentStore } from \"@zedtech/zedkit-observability/consent\";\nconst store = createMemoryConsentStore();\nstore.write({ analytics: true, marketing: false });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createMemoryConsentStore } from \"@zedtech/zedkit-observability/consent\";\nconst store = createMemoryConsentStore();\nstore.write({ analytics: true, marketing: false });"
+            }
+          ]
+        },
+        {
+          "need": "Gate trackers and script loaders on consent",
+          "import": "`@zedtech/zedkit-observability/consent` — `createConsentGatedTracker`, `runConsentGatedLoader`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "Gated tracker",
+          "audience": "Teams wiring the Tracker port behind analytics consent.",
+          "purpose": "Drop captures until a category is granted; run loaders when consent turns on.",
+          "whenToUse": "With `createProductAnalyticsTracker` or any custom script loader.",
+          "whenNotToUse": "Strictly necessary cookies (no gate needed).",
+          "derivedFrom": null,
+          "example": "import { createConsentGatedTracker } from \"@zedtech/zedkit-observability/consent\";\nconst gated = createConsentGatedTracker(tracker, store, \"analytics\");",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createConsentGatedTracker } from \"@zedtech/zedkit-observability/consent\";\nconst gated = createConsentGatedTracker(tracker, store, \"analytics\");"
+            }
+          ]
+        },
+        {
+          "need": "Consent UI in React",
+          "import": "`@zedtech/zedkit-observability/consent/react` — `ConsentProvider`, `ConsentGate`, `ConsentBanner`, `useConsentCategory`, `useConsentGatedLoader`",
+          "wraps": "`@zedtech/zedkit-ui` (Dialog, Switch)",
+          "status": "alpha",
+          "shortName": "Consent UI",
+          "audience": "React apps showing a first-visit banner and gating children.",
+          "purpose": "Provider, category gate, banner, and hook to defer analytics loaders.",
+          "whenToUse": "Public marketing sites using the observability tracker port.",
+          "whenNotToUse": "Server components (use the store on the client only).",
+          "derivedFrom": null,
+          "example": "import { ConsentBanner, ConsentProvider } from \"@zedtech/zedkit-observability/consent/react\";\nimport { createMemoryConsentStore } from \"@zedtech/zedkit-observability/consent\";\nconst store = createMemoryConsentStore();",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { ConsentBanner, ConsentProvider } from \"@zedtech/zedkit-observability/consent/react\";\nimport { createMemoryConsentStore } from \"@zedtech/zedkit-observability/consent\";\nconst store = createMemoryConsentStore();"
+            }
+          ]
         }
       ]
     },
