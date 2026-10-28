@@ -106,6 +106,9 @@ describe("form brick", () => {
     const separator = document.querySelector("[data-slot=field-separator]");
     expect(separator?.classList.contains("h-5")).toBe(true);
     expect(separator?.className).not.toContain("h-field-separator");
+    const content = document.querySelector("[data-slot=field-separator-content]");
+    expect(content?.className).toContain("px-2");
+    expect(content?.className).not.toContain("px-field-separator-inline");
   });
 
   it("styles form item, description, and message from design tokens", async () => {
