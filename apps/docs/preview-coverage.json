@@ -3,6 +3,7 @@
     "@zedtech/zedkit-ai",
     "@zedtech/zedkit-core",
     "@zedtech/zedkit-nest",
+    "@zedtech/zedkit-observability",
     "@zedtech/zedkit-payload-seo",
     "@zedtech/zedkit-quality",
     "@zedtech/zedkit-seo",

@@ -509,6 +509,7 @@ const CATALOG_AREA_BY_FOLDER = {
   core: "backend",
   server: "backend",
   nest: "backend",
+  observability: "backend",
   quality: "backend",
 };
 
