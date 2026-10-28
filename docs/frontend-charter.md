@@ -11,6 +11,7 @@ state the rule; this table is the index.
 | `ui-shadcn` | Copy primitives from the official shadcn/ui registry; compose in the kit; do not fork a Radix behavior by hand. | [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) |
 | `ui-ref` | lint. Host components take `React.ComponentProps<"el">` (ref is a prop, no `forwardRef`) and set `data-slot` on the exported root. | [Buttons](https://zedkit.app/docs/ui/trigger-actions-with-buttons) |
 | `ui-types` | lint. No explicit `any`. Name the type, or use `unknown` and narrow. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
+| `ui-size` | lint. A UI file stays under 300 lines; a function stays under 60. Split a long file into smaller components; split a long function. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
 | `tokens-color` | lint. Semantic color tokens only (`background`, `foreground`, `primary`, `destructive`, …). No palette classes (`bg-red-500`), no hex/rgb, no `bg-[#fff]`. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
 | `tokens-style` | lint. No `style` attributes. No raw `px` font sizes; use `text-xs` … `text-2xl` and the spacing scale. | [Typography](https://zedkit.app/docs/ui/render-headings-and-body-text-without-raw-tags) |
 | `tokens-focus` | Focus ring via `focus-ring` / `focus-ring-control` (theme `--ring-width*`), not raw `ring-*` widths. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |

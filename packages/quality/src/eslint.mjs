@@ -7,7 +7,7 @@
 // - Tokens only: no raw palette colors (bg-red-500), no arbitrary hex/rgb
 //   colors, no raw px font sizes — use the semantic theme tokens
 // - No `style` attributes; no forwardRef (ref is a prop); no explicit `any`;
-//   no raw try/catch (use a tryCatch wrapper)
+//   files ≤ 300 lines, functions ≤ 60; no raw try/catch (use a tryCatch wrapper)
 //
 // Consumer setup (no copy: install the package, pass your Tailwind entry):
 //   `import { uiPreset } from "@zedtech/zedkit-quality"` then
@@ -104,6 +104,21 @@ export function uiPreset({ entryPoint }) {
       plugins: { "@typescript-eslint": tsPlugin },
       rules: {
         "@typescript-eslint/no-explicit-any": "error",
+      },
+    },
+    {
+      name: "zedkit/ui-size",
+      files: ["**/*.tsx", "**/*.jsx"],
+      ignores: ["**/*.test.*", "**/*.spec.*", "**/tests/**", "**/__tests__/**"],
+      rules: {
+        "max-lines": [
+          "error",
+          { max: 300, skipBlankLines: true, skipComments: true },
+        ],
+        "max-lines-per-function": [
+          "error",
+          { max: 60, skipBlankLines: true, skipComments: true, IIFEs: true },
+        ],
       },
     },
   ];
