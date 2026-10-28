@@ -20,6 +20,40 @@ test("getting started documents install or copy paths", async ({ page }) => {
   await expect(page.getByText(/copied bricks are plain editable files/)).toBeVisible();
 });
 
+test("getting started package table keeps a decorative area icon", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
+  const table = page
+    .getByRole("table")
+    .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
+  for (const name of ["UI", "Core & server", "SEO", "Coding agents"] as const) {
+    await expect(table.getByRole("cell", { name, exact: true }).locator("svg[aria-hidden='true']")).toHaveCount(1);
+  }
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
+test.describe("getting started package table light/dark (#753)", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
+      const table = page
+        .getByRole("table")
+        .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
+      await table.scrollIntoViewIfNeeded();
+      await expect(table.getByRole("cell", { name: "UI", exact: true })).toBeVisible();
+      await table.screenshot({ path: `test-results/getting-started-packages-${mode}.png` });
+    });
+  }
+});
+
 test("getting started links to a catalog page", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   await page
