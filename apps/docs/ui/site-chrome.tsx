@@ -76,8 +76,7 @@ export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchP
 export function SiteSidebarTrigger(props: ComponentProps<"button">) {
   const { open } = useSidebar();
   const label = open ? "Close navigation sidebar" : "Open navigation sidebar";
-  // Fumadocs sets aria-label then spreads props; ours must win so name matches title.
-  return <SidebarTrigger {...props} title={label} aria-label={label} />;
+  return <SidebarTrigger title={label} {...props} />;
 }
 
 /** Fumadocs header slots shared by home and docs layouts. */

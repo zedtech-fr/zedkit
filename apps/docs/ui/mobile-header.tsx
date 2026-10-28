@@ -46,7 +46,13 @@ function ThemeButton() {
 function DocsMenuButton() {
   const sidebar = useSidebar();
   return (
-    <button type="button" aria-label="Open navigation" className={iconButtonClassName} onClick={() => sidebar.setOpen(true)}>
+    <button
+      type="button"
+      aria-label="Open navigation"
+      title="Open navigation"
+      className={iconButtonClassName}
+      onClick={() => sidebar.setOpen(true)}
+    >
       <Menu aria-hidden="true" className="size-4" />
     </button>
   );
