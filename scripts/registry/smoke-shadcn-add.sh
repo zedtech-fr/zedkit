@@ -23,7 +23,7 @@ pnpm dlx "create-next-app@${CREATE_NEXT_APP_VERSION:-16.4.3}" "$WORK" \
 
 cd "$WORK"
 pnpm dlx "shadcn@${SHADCN}" init -d
-pnpm dlx "shadcn@${SHADCN}" registry add "zedtech-fr/zedkit=${OUT}/{name}.json"
+pnpm dlx "shadcn@${SHADCN}" registry add "@zedkit=${OUT}/{name}.json"
 pnpm dlx "shadcn@${SHADCN}" add "${OUT}/theme.json" "${OUT}/badge.json" "${OUT}/drawer.json" "${OUT}/confirm-dialog.json" -y
 pnpm exec next build
 

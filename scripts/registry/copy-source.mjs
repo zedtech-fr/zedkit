@@ -7,7 +7,17 @@ export const KIT_REGISTRY_REPO = "zedtech-fr/zedkit";
 export const SHADCN_SHARED_REGISTRY_DEPS = new Set(["utils"]);
 
 export function kitRegistryDep(brickName) {
-  return `${KIT_REGISTRY_REPO}/${brickName}`;
+  return `@zedkit/${brickName}`;
+}
+
+function resolveKitSibling(dep) {
+  if (dep.startsWith(`${KIT_REGISTRY_REPO}/`)) {
+    return dep.slice(KIT_REGISTRY_REPO.length + 1);
+  }
+  if (dep.startsWith("@zedkit/")) {
+    return dep.slice("@zedkit/".length);
+  }
+  return null;
 }
 
 /**
@@ -30,8 +40,8 @@ export function checkCopySourceFamily(registry, brickNames) {
     for (const dep of item.registryDependencies ?? []) {
       if (SHADCN_SHARED_REGISTRY_DEPS.has(dep)) continue;
 
-      if (dep.startsWith(`${KIT_REGISTRY_REPO}/`)) {
-        const sibling = dep.slice(KIT_REGISTRY_REPO.length + 1);
+      const sibling = resolveKitSibling(dep);
+      if (sibling !== null) {
         if (!published.has(sibling)) {
           errors.push(`${name}: kit dependency ${dep} is not a published brick`);
         } else if (family.has(name) && !family.has(sibling)) {
@@ -45,7 +55,7 @@ export function checkCopySourceFamily(registry, brickNames) {
         continue;
       }
 
-      errors.push(`${name}: registryDependency "${dep}" must be utils or ${KIT_REGISTRY_REPO}/<brick>`);
+      errors.push(`${name}: registryDependency "${dep}" must be utils or @zedkit/<brick>`);
     }
   }
 

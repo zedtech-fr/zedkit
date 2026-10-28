@@ -81,7 +81,8 @@
             "transition": "none !important"
           }
         }
-      }
+      },
+      "registryDependencies": []
     },
     {
       "name": "button",
@@ -220,7 +221,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "zedtech-fr/zedkit/button",
+        "@zedkit/button",
         "utils"
       ],
       "files": [
@@ -254,8 +255,8 @@
       "name": "confirm-dialog",
       "type": "registry:ui",
       "registryDependencies": [
-        "zedtech-fr/zedkit/button",
-        "zedtech-fr/zedkit/dialog",
+        "@zedkit/button",
+        "@zedkit/dialog",
         "utils"
       ],
       "files": [
@@ -372,8 +373,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "zedtech-fr/zedkit/checkmark",
-        "zedtech-fr/zedkit/status-dot",
+        "@zedkit/checkmark",
+        "@zedkit/status-dot",
         "utils"
       ],
       "files": [
@@ -480,7 +481,8 @@
           "path": "registry/generated/ui/sonner.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "registryDependencies": []
     },
     {
       "name": "typography",
@@ -657,7 +659,7 @@
       "name": "card-skeleton",
       "type": "registry:ui",
       "registryDependencies": [
-        "zedtech-fr/zedkit/skeleton",
+        "@zedkit/skeleton",
         "utils"
       ],
       "files": [
@@ -695,7 +697,8 @@
           "path": "registry/generated/ui/use-online-status.ts",
           "type": "registry:hook"
         }
-      ]
+      ],
+      "registryDependencies": []
     },
     {
       "name": "offline-note",

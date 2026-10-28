@@ -18,11 +18,7 @@ const STATUS_FAMILY = ["status-label", "status-dot", "checkmark"];
 test("status family uses kit registry slugs for siblings", () => {
   assert.deepEqual(checkCopySourceFamily(registry, STATUS_FAMILY), []);
   const label = registry.items.find((item) => item.name === "status-label");
-  assert.deepEqual(label.registryDependencies, [
-    "zedtech-fr/zedkit/checkmark",
-    "zedtech-fr/zedkit/status-dot",
-    "utils",
-  ]);
+  assert.deepEqual(label.registryDependencies, ["@zedkit/checkmark", "@zedkit/status-dot", "utils"]);
 });
 
 test("status family ships cssVars/css needed without npm styles.css", () => {
@@ -38,7 +34,7 @@ test("bare kit sibling names are rejected for the status family", () => {
   const broken = JSON.parse(JSON.stringify(registry));
   const label = broken.items.find((item) => item.name === "status-label");
   label.registryDependencies = ["checkmark", "status-dot", "utils"];
-  assert.match(checkCopySourceFamily(broken, STATUS_FAMILY).join("\n"), /use zedtech-fr\/zedkit\/checkmark/);
+  assert.match(checkCopySourceFamily(broken, STATUS_FAMILY).join("\n"), /use @zedkit\/checkmark/);
 });
 
 /** Card loading placeholder family (#420): composed skeleton + kit Skeleton brick. */
@@ -47,7 +43,7 @@ const CARD_SKELETON_FAMILY = ["card-skeleton", "skeleton"];
 test("card-skeleton family uses kit registry slug for skeleton", () => {
   assert.deepEqual(checkCopySourceFamily(registry, CARD_SKELETON_FAMILY), []);
   const cardSkel = registry.items.find((item) => item.name === "card-skeleton");
-  assert.deepEqual(cardSkel.registryDependencies, ["zedtech-fr/zedkit/skeleton", "utils"]);
+  assert.deepEqual(cardSkel.registryDependencies, ["@zedkit/skeleton", "utils"]);
 });
 
 test("card-skeleton family ships cssVars for copy-only theme", () => {
@@ -62,11 +58,7 @@ const CONFIRM_DIALOG_FAMILY = ["confirm-dialog", "button", "dialog"];
 test("confirm-dialog family uses kit registry slugs for button and dialog", () => {
   assert.deepEqual(checkCopySourceFamily(registry, CONFIRM_DIALOG_FAMILY), []);
   const confirm = registry.items.find((item) => item.name === "confirm-dialog");
-  assert.deepEqual(confirm.registryDependencies, [
-    "zedtech-fr/zedkit/button",
-    "zedtech-fr/zedkit/dialog",
-    "utils",
-  ]);
+  assert.deepEqual(confirm.registryDependencies, ["@zedkit/button", "@zedkit/dialog", "utils"]);
 });
 
 /** Drawer family (#420): kit Button for Radix drawer chrome. */
@@ -75,7 +67,7 @@ const DRAWER_FAMILY = ["drawer", "button"];
 test("drawer family uses kit registry slug for button", () => {
   assert.deepEqual(checkCopySourceFamily(registry, DRAWER_FAMILY), []);
   const drawer = registry.items.find((item) => item.name === "drawer");
-  assert.deepEqual(drawer.registryDependencies, ["zedtech-fr/zedkit/button", "utils"]);
+  assert.deepEqual(drawer.registryDependencies, ["@zedkit/button", "utils"]);
 });
 
 test("copy theme item matches styles.css motion and semantic tokens", () => {
