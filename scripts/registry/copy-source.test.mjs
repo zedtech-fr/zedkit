@@ -55,3 +55,29 @@ test("card-skeleton family ships cssVars for copy-only theme", () => {
   const cardSkel = registry.items.find((item) => item.name === "card-skeleton");
   assert.deepEqual(cardSkel.cssVars, expected["card-skeleton"].cssVars);
 });
+
+/** Confirm dialog family (#420): kit Button + Dialog, not upstream shadcn. */
+const CONFIRM_DIALOG_FAMILY = ["confirm-dialog", "button", "dialog"];
+
+test("confirm-dialog family uses kit registry slugs for button and dialog", () => {
+  assert.deepEqual(checkCopySourceFamily(registry, CONFIRM_DIALOG_FAMILY), []);
+  const confirm = registry.items.find((item) => item.name === "confirm-dialog");
+  assert.deepEqual(confirm.registryDependencies, [
+    "zedtech-fr/zedkit/button",
+    "zedtech-fr/zedkit/dialog",
+    "utils",
+  ]);
+});
+
+/** Drawer family (#420): kit Button for Radix drawer chrome. */
+const DRAWER_FAMILY = ["drawer", "button"];
+
+test("drawer family uses kit registry slug for button", () => {
+  assert.deepEqual(checkCopySourceFamily(registry, DRAWER_FAMILY), []);
+  const drawer = registry.items.find((item) => item.name === "drawer");
+  assert.deepEqual(drawer.registryDependencies, ["zedtech-fr/zedkit/button", "utils"]);
+});
+
+test("copy theme item matches styles.css motion and semantic tokens", () => {
+  assert.deepEqual(registry.items.find((item) => item.name === "theme").cssVars, expected.theme.cssVars);
+});
