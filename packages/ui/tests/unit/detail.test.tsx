@@ -15,8 +15,8 @@ describe("DetailPanel", () => {
     const row = container.querySelector("dl > div");
     expect(row?.classList.contains("gap-4")).toBe(true);
     expect(row?.classList.contains("px-4")).toBe(true);
-    expect(row?.classList.contains("py-detail-panel-block")).toBe(true);
-    expect(row?.className).not.toMatch(/(^|\s)py-3(\s|$)/);
+    expect(row?.className).toContain("py-3");
+    expect(row?.className).not.toContain("py-detail-panel-block");
   });
 });
 
