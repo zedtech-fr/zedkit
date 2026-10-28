@@ -4,6 +4,7 @@ import { userEvent } from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
+import { IDENTITY_BOOTSTRAP_SOURCE } from "#identity-bootstrap.js";
 import {
   IDENTITY_STORAGE_KEY,
   IdentityPicker,
@@ -31,12 +32,26 @@ afterEach(() => {
 
 function runScript(element: ReactElement) {
   const { container, unmount } = render(element);
-  const code = container.querySelector("script")?.innerHTML ?? "";
-  unmount();
+  const script = container.querySelector('script[data-slot="identity-script"]') as HTMLScriptElement;
+  const code = script.innerHTML;
+  Object.defineProperty(document, "currentScript", { value: script, configurable: true });
   new Function(code)();
+  unmount();
 }
 
 describe("IdentityScript", () => {
+  it("keeps a fixed bootstrap body and passes props only through data attributes", () => {
+    const { container, unmount } = render(
+      <IdentityScript ids={['a","b']} storageKey={'key"with'} defaultIdentity="calm" />,
+    );
+    const script = container.querySelector('script[data-slot="identity-script"]') as HTMLScriptElement;
+    expect(script.innerHTML).toBe(IDENTITY_BOOTSTRAP_SOURCE);
+    expect(script.getAttribute("data-ids")).toBe(JSON.stringify(['a","b']));
+    expect(script.getAttribute("data-storage-key")).toBe('key"with');
+    expect(script.getAttribute("data-default")).toBe("calm");
+    unmount();
+  });
+
   it("leaves the stock look when nothing is stored and there is no default", () => {
     runScript(<IdentityScript ids={["calm", "bold"]} />);
     expect(document.documentElement.hasAttribute("data-identity")).toBe(false);
