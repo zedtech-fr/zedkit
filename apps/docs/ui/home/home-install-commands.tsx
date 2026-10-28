@@ -2,6 +2,7 @@
 
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { SecretField, Stack, Text } from "@zedtech/zedkit-ui";
+import { RegistryBrickList, RegistryBrickName } from "@/components/registry-brick-name";
 
 export function HomeInstallCommands({
   npmPackage,
@@ -16,7 +17,6 @@ export function HomeInstallCommands({
 }) {
   const base = siteUrl.replace(/\/$/, "");
   const shadcnAdd = `npx shadcn@latest add ${base}/r/${featuredBrick}.json`;
-  const brickList = registryBricks.join(", ");
   return (
     <Stack gap={2} className="w-full min-w-0">
       <Tabs items={["pnpm (recommended)", "shadcn registry"]} className="w-full">
@@ -36,8 +36,9 @@ export function HomeInstallCommands({
         </Tab>
       </Tabs>
       <Text variant="muted" className="text-sm">
-        npm install adds the full package. The shadcn tab copies one brick ({featuredBrick}); published
-        registry items on this host: {brickList} (
+        npm install adds the full package. The shadcn tab copies one brick (
+        <RegistryBrickName name={featuredBrick} />); published registry items on this host:{" "}
+        <RegistryBrickList names={registryBricks} /> (
         <Text as="span" className="font-mono text-sm">/r/&lt;name&gt;.json</Text>).
       </Text>
     </Stack>
