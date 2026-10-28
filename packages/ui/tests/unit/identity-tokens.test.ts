@@ -29,7 +29,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(files).not.toMatch(/--zk-control-scale/);
   });
 
-  it("gives each identity its own type size, tracking, and shadow", () => {
+  it("gives each identity its own type size, tracking, shadow, and spacing", () => {
     const mistReset = read("identities.css").slice(read("identities.css").indexOf("Scoped mist resets the stock tokens."));
     const looks = {
       mist: mistReset,
@@ -42,6 +42,10 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(looks.mist, "--text-sm") ?? "").toBe("0.875rem");
     expect(token(looks.mist, "--text-lg") ?? "").toBe("1.125rem");
     expect(token(looks.mist, "--tracking-tight") ?? "").toBe("-0.025em");
+    expect(token(looks.mist, "--spacing") ?? "").toBe("0.25rem");
+    expect(token(looks.press, "--spacing") ?? "").toBe("0.24rem");
+    expect(token(looks.tide, "--spacing") ?? "").toBe("0.28rem");
+    expect(token(looks.glass, "--spacing") ?? "").toBe("0.27rem");
     const steps = ["--text-xs", "--text-sm", "--text-base", "--text-lg", "--text-xl", "--text-2xl", "--text-3xl", "--text-4xl", "--text-5xl"] as const;
     for (const css of Object.values(looks)) {
       const rem = steps.map((name) => Number.parseFloat(token(css, name) ?? "0"));
@@ -49,7 +53,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         expect(rem[i]).toBeGreaterThan(rem[i - 1] ?? 0);
       }
     }
-    for (const name of ["--text-sm", "--text-base", "--text-lg", "--tracking-tight", "--tracking-wide", "--zk-shadow-md"] as const) {
+    for (const name of ["--text-sm", "--text-base", "--text-lg", "--tracking-tight", "--tracking-wide", "--zk-shadow-md", "--spacing"] as const) {
       const seen = new Map<string, string>();
       for (const [id, css] of Object.entries(looks)) {
         const value = token(css, name) ?? "";
