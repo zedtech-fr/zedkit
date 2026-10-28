@@ -2,6 +2,8 @@
 
 import * as React from "react";
 
+import { IDENTITY_BOOTSTRAP_SOURCE } from "./identity-bootstrap.js";
+
 /** localStorage key holding the chosen identity id. */
 const IDENTITY_STORAGE_KEY = "zk-identity";
 /** Window event fired after the identity attribute changes. */
@@ -78,8 +80,16 @@ function IdentityScript({
   defaultIdentity,
   storageKey = IDENTITY_STORAGE_KEY,
 }: IdentityScriptProps) {
-  const code = `(function(){var d=document.documentElement,a=${JSON.stringify(ids)},k=${JSON.stringify(storageKey)},v=${JSON.stringify(defaultIdentity ?? null)};try{var s=localStorage.getItem(k);if(s&&a.indexOf(s)>-1)v=s}catch(e){}if(v)d.setAttribute("data-identity",v)})()`;
-  return <script data-slot="identity-script" dangerouslySetInnerHTML={{ __html: code }} suppressHydrationWarning />;
+  return (
+    <script
+      data-slot="identity-script"
+      data-ids={JSON.stringify(ids)}
+      data-storage-key={storageKey}
+      {...(defaultIdentity !== undefined ? { "data-default": defaultIdentity } : {})}
+      dangerouslySetInnerHTML={{ __html: IDENTITY_BOOTSTRAP_SOURCE }}
+      suppressHydrationWarning
+    />
+  );
 }
 
 /**
