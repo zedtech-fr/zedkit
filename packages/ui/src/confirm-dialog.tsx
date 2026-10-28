@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./dialog.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface ConfirmDialogProps {
   /** Element that opens the dialog (rendered via Trigger asChild). */
@@ -34,10 +35,11 @@ function ConfirmDialog({
   trigger,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   onConfirm,
 }: ConfirmDialogProps) {
+  const messages = useUiMessages();
   const [open, setOpen] = React.useState(false);
   return (
     <Dialog data-slot="confirm-dialog" open={open} onOpenChange={setOpen}>
@@ -49,7 +51,7 @@ function ConfirmDialog({
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            {cancelLabel}
+            {cancelLabel ?? messages.cancel}
           </Button>
           <Button
             variant="destructive"
@@ -58,7 +60,7 @@ function ConfirmDialog({
               setOpen(false);
             }}
           >
-            {confirmLabel}
+            {confirmLabel ?? messages.confirm}
           </Button>
         </DialogFooter>
       </DialogContent>

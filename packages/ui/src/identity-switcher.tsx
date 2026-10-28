@@ -11,6 +11,7 @@ import {
   type IdentityOption,
 } from "./identity.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 type IdentitySwitcherProps = Omit<React.ComponentProps<"select">, "value" | "defaultValue" | "onChange" | "children"> & {
   /** Choices to offer. Default: the identities shipped in `identities.css`. */
@@ -18,7 +19,7 @@ type IdentitySwitcherProps = Omit<React.ComponentProps<"select">, "value" | "def
   /** Shown as selected while no identity is set. Default: the first choice. */
   defaultIdentity?: string;
   storageKey?: string;
-  /** Accessible name of the control. Default "Identity". */
+  /** Accessible name of the control. Default: kit messages `identity`. */
   label?: string;
   /** Show the label text next to the control (otherwise screen-reader only). */
   showLabel?: boolean;
@@ -36,13 +37,14 @@ function IdentitySwitcher({
   identities = builtInIdentities,
   defaultIdentity,
   storageKey = IDENTITY_STORAGE_KEY,
-  label = "Identity",
+  label,
   showLabel = false,
   onIdentityChange,
   className,
   id,
   ...props
 }: IdentitySwitcherProps) {
+  const messages = useUiMessages();
   const generatedId = React.useId();
   const selectId = id ?? generatedId;
   const current = useIdentity(defaultIdentity ?? identities[0]?.id ?? "");
@@ -58,7 +60,7 @@ function IdentitySwitcher({
     <div data-slot="identity-switcher" className="inline-flex items-center gap-2">
       <Palette aria-hidden="true" className="size-icon-control text-muted-foreground" />
       <label htmlFor={selectId} className={cn("text-sm text-muted-foreground", !showLabel && "sr-only")}>
-        {label}
+        {label ?? messages.identity}
       </label>
       <select
         id={selectId}
@@ -72,7 +74,7 @@ function IdentitySwitcher({
       >
         {identities.map((item) => (
           <option key={item.id} value={item.id}>
-            {defaultIdentity && item.id === defaultIdentity ? `${item.label} (default)` : item.label}
+            {defaultIdentity && item.id === defaultIdentity ? `${item.label}${messages.identityDefaultSuffix}` : item.label}
           </option>
         ))}
       </select>

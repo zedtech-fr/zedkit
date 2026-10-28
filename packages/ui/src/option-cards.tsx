@@ -1,6 +1,9 @@
+"use client";
+
 import type * as React from "react";
 
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface OptionCardData {
   id: string;
@@ -47,13 +50,14 @@ export function OptionCard({ title, description, checked, onChange, className }:
   );
 }
 
-export function OptionCards({ options, selected, onChange, label = "Options", className }: OptionCardsProps) {
+export function OptionCards({ options, selected, onChange, label, className }: OptionCardsProps) {
+  const messages = useUiMessages();
   function toggle(id: string): void {
     onChange(selected.includes(id) ? selected.filter((entry) => entry !== id) : [...selected, id]);
   }
 
   return (
-    <div data-slot="option-cards" role="group" aria-label={label} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
+    <div data-slot="option-cards" role="group" aria-label={label ?? messages.options} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
       {options.map((option) => (
         <OptionCard
           key={option.id}

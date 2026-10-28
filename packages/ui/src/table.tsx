@@ -9,6 +9,7 @@
 import * as React from "react";
 
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface TableProps extends React.ComponentProps<"table"> {
   /** Accessible name for the horizontal scroll region (axe scrollable-region-focusable). */
@@ -18,7 +19,8 @@ export interface TableProps extends React.ComponentProps<"table"> {
 /** Edge hidden by more than this overhang counts as cut off (faded). */
 const EDGE_CUT_PX = 0.5;
 
-function Table({ className, scrollAriaLabel = "Scrollable table", children, ...props }: TableProps) {
+function Table({ className, scrollAriaLabel, children, ...props }: TableProps) {
+  const messages = useUiMessages();
   const regionRef = React.useRef<HTMLDivElement>(null);
   const [edges, setEdges] = React.useState({ left: false, right: false });
 
@@ -65,7 +67,7 @@ function Table({ className, scrollAriaLabel = "Scrollable table", children, ...p
       data-edge-right={edges.right || undefined}
       className="relative w-full overflow-x-auto"
       tabIndex={0}
-      aria-label={scrollAriaLabel}
+      aria-label={scrollAriaLabel ?? messages.scrollableTable}
     >
       <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props}>
         {children}

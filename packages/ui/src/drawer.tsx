@@ -9,6 +9,7 @@ import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { buttonVariants } from "./button.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 /** Matches Tailwind `sm` (640px): phones and narrow viewports. */
 const MOBILE_MEDIA = "(max-width: 639px)";
@@ -196,11 +197,12 @@ function DrawerCloseButton({
   children,
   ...props
 }: React.ComponentProps<typeof DrawerClose>) {
+  const messages = useUiMessages();
   return (
     <DrawerClose
       data-slot="drawer-close-button"
       type="button"
-      aria-label="Close"
+      aria-label={messages.close}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
         "size-overlay-touch-target shrink-0",

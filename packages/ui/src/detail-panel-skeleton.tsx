@@ -1,5 +1,8 @@
+"use client";
+
 import { Skeleton } from "./skeleton.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface DetailPanelSkeletonProps {
   label?: string;
@@ -11,12 +14,13 @@ export interface DetailPanelSkeletonProps {
  * Faithful loading shape of DetailPanel: label/value skeleton pairs
  * in the same divided box, so rows land without shifting.
  */
-export function DetailPanelSkeleton({ label = "Loading", rows = 4, className }: DetailPanelSkeletonProps) {
+export function DetailPanelSkeleton({ label, rows = 4, className }: DetailPanelSkeletonProps) {
+  const messages = useUiMessages();
   return (
     <div
       data-slot="detail-panel-skeleton"
       role="status"
-      aria-label={label}
+      aria-label={label ?? messages.loading}
       className={cn("divide-y divide-border rounded-lg border", className)}
     >
       {Array.from({ length: rows }, (_, index) => (

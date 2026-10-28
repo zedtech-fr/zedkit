@@ -54,6 +54,20 @@ type SaveRef = React.ComponentRef<typeof Button>;
 
 Search-and-replace sketch (review the diff): drop the `forwardRef` wrapper and keep the body; `ref` arrives in `props`.
 
+## Migration (kit messages)
+
+Kit chrome (Close, Filter…, empty table, loading names) reads from
+`ZedkitUiProvider`. English is the default. Wrap the tree with the
+French bundle (or your own copy). A per-host label prop still wins.
+
+```tsx
+import { ZedkitUiProvider, zedkitUiMessagesFr } from "@zedtech/zedkit-ui";
+
+<ZedkitUiProvider messages={zedkitUiMessagesFr}>
+  <App />
+</ZedkitUiProvider>
+```
+
 ## When to use
 
 Reach for this package when you build an admin console or dashboard on

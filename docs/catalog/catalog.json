@@ -842,6 +842,34 @@
           ]
         },
         {
+          "need": "Localize kit chrome in English or French",
+          "import": "`@zedtech/zedkit-ui` — `ZedkitUiProvider`, `useUiMessages`, `zedkitUiMessagesEn`, `zedkitUiMessagesFr`, `ZedkitUiMessages`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "ZedkitUiProvider",
+          "audience": "Apps that ship the kit in English or French and need Close, Filter, empty, and loading labels to follow the page language.",
+          "purpose": "One provider plus typed en/fr bundles for kit chrome; a per-host label prop still wins.",
+          "whenToUse": "Around the tree when the UI language is not English, or when you pass your own copy.",
+          "whenNotToUse": "For app copy (page titles, form labels, empty-state stories) — keep those in your own messages.",
+          "derivedFrom": null,
+          "example": "import { ZedkitUiProvider, zedkitUiMessagesFr } from \"@zedtech/zedkit-ui\";\n\n<ZedkitUiProvider messages={zedkitUiMessagesFr}>\n  {children}\n</ZedkitUiProvider>",
+          "examples": [
+            {
+              "title": "French bundle",
+              "code": "import { ZedkitUiProvider, zedkitUiMessagesFr } from \"@zedtech/zedkit-ui\";\n\n<ZedkitUiProvider messages={zedkitUiMessagesFr}>\n  {children}\n</ZedkitUiProvider>"
+            },
+            {
+              "title": "Override one string",
+              "code": "import { ConfirmDialog } from \"@zedtech/zedkit-ui\";\n\n<ConfirmDialog trigger={trigger} title=\"Delete?\" description=\"Gone.\" confirmLabel=\"Remove\" onConfirm={remove} />"
+            }
+          ],
+          "troubleshooting": "English still shows — the provider is missing above that host, or a label prop is set. A custom bundle must keep every key (`locale` included) so `UpdatedAgo` can pick `Intl.RelativeTimeFormat`.",
+          "seeAlso": [
+            "Confirm destructive actions",
+            "Show a sortable, filterable, paginated data table"
+          ]
+        },
+        {
           "need": "Merge class names without conflicts",
           "import": "`@zedtech/zedkit-ui` — `cn`",
           "wraps": "`clsx`, `tailwind-merge`",

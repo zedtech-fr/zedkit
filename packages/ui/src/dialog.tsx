@@ -5,6 +5,7 @@ import type * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -37,7 +38,13 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
   );
 }
 
-function DialogContent({ className, children, ...props }: React.ComponentProps<typeof DialogPrimitive.Content>) {
+function DialogContent({
+  className,
+  children,
+  closeLabel,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Content> & { closeLabel?: string }) {
+  const messages = useUiMessages();
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -54,7 +61,7 @@ function DialogContent({ className, children, ...props }: React.ComponentProps<t
         {children}
         <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <X className="size-icon-control" />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{closeLabel ?? messages.close}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>

@@ -75,6 +75,34 @@ export function DarkThemeButton() {
 }
 ```
 
+## Localize kit chrome in English or French
+
+- Import: `@zedtech/zedkit-ui` — `ZedkitUiProvider`, `useUiMessages`, `zedkitUiMessagesEn`, `zedkitUiMessagesFr`, `ZedkitUiMessages`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: ZedkitUiProvider
+- Audience: Apps that ship the kit in English or French and need Close, Filter, empty, and loading labels to follow the page language.
+- Purpose: One provider plus typed en/fr bundles for kit chrome; a per-host label prop still wins.
+- When to use: Around the tree when the UI language is not English, or when you pass your own copy.
+- When not to use: For app copy (page titles, form labels, empty-state stories) — keep those in your own messages.
+- See also: `Confirm destructive actions`, `Show a sortable, filterable, paginated data table`
+- Examples: French bundle, Override one string
+- Troubleshooting: English still shows — the provider is missing above that host, or a label prop is set. A custom bundle must keep every key (`locale` included) so `UpdatedAgo` can pick `Intl.RelativeTimeFormat`.
+
+```ts
+import { ZedkitUiProvider, zedkitUiMessagesFr } from "@zedtech/zedkit-ui";
+
+<ZedkitUiProvider messages={zedkitUiMessagesFr}>
+  {children}
+</ZedkitUiProvider>
+```
+
+```ts
+import { ConfirmDialog } from "@zedtech/zedkit-ui";
+
+<ConfirmDialog trigger={trigger} title="Delete?" description="Gone." confirmLabel="Remove" onConfirm={remove} />
+```
+
 ## Merge class names without conflicts
 
 - Import: `@zedtech/zedkit-ui` — `cn`

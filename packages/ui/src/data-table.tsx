@@ -24,6 +24,7 @@ import { Input } from "./input.js";
 import { Skeleton } from "./skeleton.js";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 const features = tableFeatures({
   rowSortingFeature,
@@ -85,11 +86,12 @@ export interface DataTableEmptyProps {
  * Single centered row for the no-results state. `DataTable` renders
  * this when rows are empty; compose directly for custom table bodies.
  */
-export function DataTableEmpty({ colSpan, message = "No results." }: DataTableEmptyProps) {
+export function DataTableEmpty({ colSpan, message }: DataTableEmptyProps) {
+  const messages = useUiMessages();
   return (
     <TableRow data-slot="data-table-empty">
       <TableCell colSpan={colSpan} className="text-center text-muted-foreground">
-        {message}
+        {message ?? messages.empty}
       </TableCell>
     </TableRow>
   );
@@ -108,16 +110,18 @@ export function DataTablePagination({
   onNext,
   className,
 }: DataTablePaginationProps) {
+  const messages = useUiMessages();
+  const pageCountShown = Math.max(pageCount, 1);
   return (
     <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
       <span className="text-sm text-muted-foreground">
-        Page {page} of {Math.max(pageCount, 1)}
+        {messages.pageOf.replace("{page}", String(page)).replace("{pageCount}", String(pageCountShown))}
       </span>
       <Button variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
-        Previous
+        {messages.previous}
       </Button>
       <Button variant="outline" size="sm" onClick={onNext} disabled={!canNext}>
-        Next
+        {messages.next}
       </Button>
     </div>
   );
@@ -133,15 +137,17 @@ export interface DataTableToolbarProps {
  * Global-filter input. `DataTable` wires it to the table state;
  * compose directly for custom table chrome.
  */
-export function DataTableToolbar({ value, onChange, placeholder = "Filter…" }: DataTableToolbarProps) {
+export function DataTableToolbar({ value, onChange, placeholder }: DataTableToolbarProps) {
+  const messages = useUiMessages();
+  const filter = placeholder ?? messages.filter;
   return (
     <Input
       data-slot="data-table-toolbar"
-      placeholder={placeholder}
+      placeholder={filter}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       className="max-w-data-table-filter-width"
-      aria-label={placeholder}
+      aria-label={filter}
     />
   );
 }
@@ -151,10 +157,11 @@ export function DataTable<TData extends RowData>({
   data,
   loading = false,
   error = null,
-  emptyMessage = "No results.",
-  filterPlaceholder = "Filter…",
+  emptyMessage,
+  filterPlaceholder,
   pageSize = 10,
 }: DataTableProps<TData>) {
+  const messages = useUiMessages();
   const table = useTable({ features, columns, data });
   const rows = table.getRowModel().rows;
   const { pageIndex } = table.state.pagination;
@@ -171,9 +178,9 @@ export function DataTable<TData extends RowData>({
           table.setGlobalFilter(value);
           table.setPageIndex(0);
         }}
-        placeholder={filterPlaceholder}
+        placeholder={filterPlaceholder ?? messages.filter}
       />
-      <Table aria-busy={loading || undefined} aria-label={loading ? "Loading" : undefined}>
+      <Table aria-busy={loading || undefined} aria-label={loading ? messages.loading : undefined}>
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
           <TableRow key={group.id}>
@@ -214,7 +221,7 @@ export function DataTable<TData extends RowData>({
             </TableRow>
           ))
         ) : rows.length === 0 ? (
-          <DataTableEmpty colSpan={columns.length} message={emptyMessage} />
+          <DataTableEmpty colSpan={columns.length} message={emptyMessage ?? messages.empty} />
         ) : (
           rows.map((row) => (
             <TableRow key={row.id}>

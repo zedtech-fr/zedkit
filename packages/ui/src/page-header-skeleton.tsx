@@ -1,5 +1,8 @@
+"use client";
+
 import { Skeleton } from "./skeleton.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface PageHeaderSkeletonProps {
   label?: string;
@@ -13,16 +16,17 @@ export interface PageHeaderSkeletonProps {
  * and action slots. Same box, no layout shift when content lands.
  */
 export function PageHeaderSkeleton({
-  label = "Loading",
+  label,
   description = true,
   actions = true,
   className,
 }: PageHeaderSkeletonProps) {
+  const messages = useUiMessages();
   return (
     <div
       data-slot="page-header-skeleton"
       role="status"
-      aria-label={label}
+      aria-label={label ?? messages.loading}
       className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-page-header-gap", className)}
     >
       <div className="space-y-1">
