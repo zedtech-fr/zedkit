@@ -98,6 +98,9 @@ const DEPRECATED_1REM_CLASSES = [
   "gap-y-wizard-steps-row-gap",
   "px-table-cell",
   "p-table-cell",
+  "px-select-item-inline",
+  "pl-select-item-inline",
+  "right-select-item-inline",
 ];
 
 function walkJs(dir, acc = []) {
