@@ -874,7 +874,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHea
 - Purpose: Anchored panel (trigger + content) that stays while the reader looks, then closes on Escape or outside click.
 - When to use: For filters, a short form, or extra context that must stay on screen.
 - When not to use: For a list of actions — use the action menu. For a task that needs full attention — use a dialog.
-- See also: `Open modal dialogs`, `Open a menu of actions from a button`, `Name a control on hover`
+- See also: `Open modal dialogs`, `Open a menu of actions from a button`, `Name a control on hover`, `Pick a date from a popover`
 - A11y: Content is `role="dialog"`. Give it a name (`aria-label` or a heading). Focus is not trapped (unlike Dialog). Escape and outside click dismiss.
 
 ```ts
@@ -934,6 +934,68 @@ import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMe
     <DropdownMenuItem>Archive invoice</DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>
+```
+
+## Pick a day on a calendar
+
+- Import: `@zedtech/zedkit-ui` — `Calendar`, `CalendarProps`
+- Wraps: `react-day-picker`
+- Status: alpha
+- Short name: Calendar
+- Audience: Developers showing a month grid the reader can pick from.
+- Purpose: Token-styled month grid. Locale and prev/next names follow the kit messages.
+- When to use: When the calendar stays on the page (a booking widget, a dashboard).
+- When not to use: For a compact form field — use the date picker in a popover.
+- See also: `Pick a date from a popover`, `Pick a start and end date`
+- A11y: Prev/next come from kit messages. Days are buttons in a grid. Pair with a visible heading when the grid is the main task.
+
+```ts
+import { Calendar } from "@zedtech/zedkit-ui";
+<Calendar />
+```
+
+## Pick a date from a popover
+
+- Import: `@zedtech/zedkit-ui` — `DatePicker`, `DatePickerProps`
+- Wraps: `react-day-picker`, `@radix-ui/react-popover`
+- Status: alpha
+- Short name: DatePicker
+- Audience: Developers collecting one day in a form field.
+- Purpose: Button that opens a calendar in a popover. `id` pairs with `FieldLabel`.
+- When to use: For a due date, a start date, or any single day in a form.
+- When not to use: For a range — use the start-and-end picker. For a calendar that stays on the page — use Calendar.
+- See also: `Lay out fieldsets, fields, and error lists`, `Pick a start and end date`, `Float extra content next to a control`
+- A11y: The popover is `role="dialog"` and takes its name from the placeholder (kit message by default). Selection is announced in a live region. Pass `disabledDays`, `startMonth`, and `endMonth` for limits.
+
+```ts
+import { DatePicker, Field, FieldLabel } from "@zedtech/zedkit-ui";
+const [due, setDue] = useState<Date | undefined>();
+<Field>
+  <FieldLabel htmlFor="due">Due date</FieldLabel>
+  <DatePicker id="due" value={due} onValueChange={setDue} />
+</Field>
+```
+
+## Pick a start and end date
+
+- Import: `@zedtech/zedkit-ui` — `DateRangePicker`, `DateRangePickerProps`
+- Wraps: `react-day-picker`, `@radix-ui/react-popover`
+- Status: alpha
+- Short name: DateRangePicker
+- Audience: Developers collecting a from/to span in a form field.
+- Purpose: Button that opens a range calendar in a popover. Closes when both days are set.
+- When to use: For leave, a report window, or any start-and-end pair.
+- When not to use: For one day — use the date picker.
+- See also: `Pick a date from a popover`, `Lay out fieldsets, fields, and error lists`
+- A11y: Same dialog name and live region as the single-day picker. Limits use `disabledDays`, `startMonth`, and `endMonth`. The popover stays open until start and end are different days.
+
+```ts
+import { DateRangePicker, Field, FieldLabel, type DateRangePickerProps } from "@zedtech/zedkit-ui";
+const [span, setSpan] = useState<DateRangePickerProps["value"]>();
+<Field>
+  <FieldLabel htmlFor="leave">Leave</FieldLabel>
+  <DateRangePicker id="leave" value={span} onValueChange={setSpan} />
+</Field>
 ```
 
 ## Render a route as a modal over the list
@@ -1175,7 +1237,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 - Purpose: Fieldsets, field rows, labels, descriptions and error lists.
 - When to use: To group related fields with legends and per-field errors.
 - When not to use: For validation logic itself — pair with Form instead.
-- See also: `Build validated forms with labels, errors, and pending state`
+- See also: `Build validated forms with labels, errors, and pending state`, `Pick a date from a popover`
 - A11y: `FieldError` uses `role="alert"`; spacing uses `gap-field-*` theme tokens (not raw spacing literals).
 
 ```ts

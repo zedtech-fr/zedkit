@@ -2,8 +2,8 @@
 
 UI kit. shadcn/ui-based (Radix + Tailwind v4, copied in —
 see THIRD_PARTY_NOTICES.md), lucide icons, sonner toasts, TanStack
-Table. Neutral/calm look; no custom component may replace a
-mature primitive (ladder rung 5).
+Table, react-day-picker calendars. Neutral/calm look; no custom
+component may replace a mature primitive (ladder rung 5).
 
 Rules:
 

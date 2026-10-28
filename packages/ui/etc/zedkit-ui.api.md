@@ -11,6 +11,8 @@ import { ClassValue } from 'clsx';
 import { ColumnDef } from '@tanstack/react-table';
 import { ColumnHelper } from '@tanstack/react-table';
 import { ControllerProps } from 'react-hook-form';
+import type { DateRange } from 'react-day-picker';
+import { DayPickerProps } from 'react-day-picker';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Drawer as Drawer_2 } from 'vaul';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
@@ -117,6 +119,12 @@ export const buttonVariants: (props?: ({
     variant?: "default" | "destructive" | "secondary" | "outline" | "ghost" | null | undefined;
     size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
+
+// @public
+export function Calendar(input: CalendarProps): JSX.Element;
+
+// @public (undocumented)
+export type CalendarProps = DayPickerProps;
 
 // @public (undocumented)
 export function Card(input: CardProps): React_2.JSX.Element;
@@ -294,6 +302,44 @@ export interface DataTableToolbarProps {
     // (undocumented)
     value: string;
 }
+
+// @public
+export function DatePicker(input: DatePickerProps): JSX.Element;
+
+// @public (undocumented)
+export type DatePickerProps = {
+    value?: Date | undefined;
+    defaultValue?: Date | undefined;
+    onValueChange?: (date: Date | undefined) => void;
+    placeholder?: string;
+    disabled?: boolean;
+    id?: string;
+    className?: string;
+    disabledDays?: CalendarProps["disabled"];
+    startMonth?: Date;
+    endMonth?: Date;
+    defaultMonth?: Date;
+    today?: Date;
+};
+
+// @public
+export function DateRangePicker(input: DateRangePickerProps): JSX.Element;
+
+// @public (undocumented)
+export type DateRangePickerProps = {
+    value?: DateRange | undefined;
+    defaultValue?: DateRange | undefined;
+    onValueChange?: (range: DateRange | undefined) => void;
+    placeholder?: string;
+    disabled?: boolean;
+    id?: string;
+    className?: string;
+    disabledDays?: CalendarProps["disabled"];
+    startMonth?: Date;
+    endMonth?: Date;
+    defaultMonth?: Date;
+    today?: Date;
+};
 
 // @public (undocumented)
 export interface DetailItem {
@@ -1108,6 +1154,8 @@ export type ZedkitUiMessages = {
     offlineBody: string;
     updated: string;
     justNow: string;
+    pickDate: string;
+    pickDateRange: string;
     locale: "en" | "fr";
 };
 

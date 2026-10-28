@@ -25,11 +25,14 @@ import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
 import { ButtonDemo } from "./button-demo";
 import { IdentityPickerDemo, IdentityScopeDemo, IdentitySwitcherDemo } from "./identity-demo";
 import { ScrollScenesBeforeAfterDemo, ScrollScenesDemo } from "./scroll-scenes-demo";
+import { CalendarDemo } from "./calendar-demo";
 import { CardDemo } from "./card-demo";
 import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { ConfirmDialogLabelsDemo } from "./confirm-dialog-labels-demo";
+import { DatePickerDemo } from "./date-picker-demo";
+import { DateRangePickerDemo } from "./date-range-picker-demo";
 import { FlagsDemo } from "./flags-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DataTableEmptyDemo } from "./data-table-empty-demo";
@@ -112,6 +115,7 @@ export const demoRegistry = {
   AppShellDemo: { Demo: AppShellDemo, file: "app-shell-demo.tsx" },
   BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx", center: true },
   ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx", center: true },
+  CalendarDemo: { Demo: CalendarDemo, file: "calendar-demo.tsx", center: true },
   CardDemo: { Demo: CardDemo, file: "card-demo.tsx" },
   CardFooterDemo: { Demo: CardFooterDemo, file: "card-footer-demo.tsx" },
   CheckmarkDemo: { Demo: CheckmarkDemo, file: "checkmark-demo.tsx" },
@@ -158,6 +162,8 @@ export const demoRegistry = {
   IconButtonRowsDemo: { Demo: IconButtonRowsDemo, file: "icon-button-demo.tsx" },
   IconLabelDemo: { Demo: IconLabelDemo, file: "icon-label-demo.tsx" },
   IconLabelOrdersDemo: { Demo: IconLabelOrdersDemo, file: "icon-label-demo.tsx" },
+  DatePickerDemo: { Demo: DatePickerDemo, file: "date-picker-demo.tsx", center: true },
+  DateRangePickerDemo: { Demo: DateRangePickerDemo, file: "date-range-picker-demo.tsx", center: true },
   DataTableDemo: { Demo: DataTableDemo, file: "data-table-demo.tsx" },
   DataTablePaginationDemo: { Demo: DataTablePaginationDemo, file: "data-table-pagination-demo.tsx" },
   DataTableEmptyDemo: { Demo: DataTableEmptyDemo, file: "data-table-empty-demo.tsx" },

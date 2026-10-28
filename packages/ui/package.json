@@ -85,6 +85,7 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "lucide-react": "catalog:",
+    "react-day-picker": "catalog:",
     "react-hook-form": "catalog:",
     "sonner": "catalog:",
     "tailwind-merge": "catalog:",

@@ -1,0 +1,33 @@
+@import "react-day-picker/style.css";
+
+.rdp-root {
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-accent-background-color: hsl(var(--accent));
+  --rdp-day-height: var(--spacing-tap);
+  --rdp-day-width: var(--spacing-tap);
+  --rdp-day_button-height: var(--spacing-tap);
+  --rdp-day_button-width: var(--spacing-tap);
+  --rdp-day_button-border-radius: var(--radius);
+  --rdp-nav_button-height: var(--spacing-control-height);
+  --rdp-nav_button-width: var(--spacing-control-height);
+  --rdp-nav-height: var(--spacing-tap);
+  --rdp-today-color: hsl(var(--primary));
+  --rdp-range_start-color: hsl(var(--primary-foreground));
+  --rdp-range_end-color: hsl(var(--primary-foreground));
+  --rdp-range_middle-color: hsl(var(--accent-foreground));
+}
+
+.rdp-day_button:focus-visible,
+.rdp-button_next:focus-visible,
+.rdp-button_previous:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--ring-offset-width) hsl(var(--background)),
+    0 0 0 calc(var(--ring-offset-width) + var(--ring-width-control)) hsl(var(--ring));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rdp-root {
+    --rdp-animation_duration: 0s;
+  }
+}

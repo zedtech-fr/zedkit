@@ -112,6 +112,27 @@
       "source": "dropdown-menu.tsx",
       "demo": "DropdownMenuDemo"
     },
+    "Pick a day on a calendar": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Calendar",
+      "props": "CalendarProps",
+      "source": "calendar.tsx",
+      "demo": "CalendarDemo"
+    },
+    "Pick a date from a popover": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DatePicker",
+      "props": "DatePickerProps",
+      "source": "date-picker.tsx",
+      "demo": "DatePickerDemo"
+    },
+    "Pick a start and end date": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DateRangePicker",
+      "props": "DateRangePickerProps",
+      "source": "date-picker.tsx",
+      "demo": "DateRangePickerDemo"
+    },
     "Confirm destructive actions": {
       "package": "@zedtech/zedkit-ui",
       "component": "ConfirmDialog",

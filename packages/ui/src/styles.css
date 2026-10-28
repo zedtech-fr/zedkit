@@ -9,6 +9,7 @@
 @import "./motion.css";
 @import "./scroll-scenes.css";
 @import "./identities/volt.css";
+@import "./calendar.css";
 
 /*
  * Hover styles only apply where a hover exists (Tailwind v4's default

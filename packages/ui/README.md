@@ -59,6 +59,7 @@ kit packages.
   `Skeleton` (see CATALOG.md for usage).
 - Overlays: `Dialog` set, `ConfirmDialog`, `Popover`, `Tooltip`,
   `DropdownMenu`, `Toaster`, `SecretField`.
+- Dates: `Calendar`, `DatePicker`, `DateRangePicker`.
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.

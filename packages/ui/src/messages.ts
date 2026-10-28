@@ -23,6 +23,8 @@ export type ZedkitUiMessages = {
   offlineBody: string;
   updated: string;
   justNow: string;
+  pickDate: string;
+  pickDateRange: string;
   locale: "en" | "fr";
 };
 
@@ -50,6 +52,8 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   offlineBody: "Changes will sync when you reconnect.",
   updated: "Updated",
   justNow: "just now",
+  pickDate: "Pick a date",
+  pickDateRange: "Pick a date range",
   locale: "en",
 };
 
@@ -77,5 +81,7 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   offlineBody: "Les changements se synchroniseront à la reconnexion.",
   updated: "Mis à jour",
   justNow: "à l'instant",
+  pickDate: "Choisir une date",
+  pickDateRange: "Choisir une période",
   locale: "fr",
 };
