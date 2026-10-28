@@ -24,7 +24,7 @@ export function LocaleTabContent({
   onLocaleChange,
 }: {
   localeOptions: readonly DevtoolsLocaleOption[];
-  activeLocale?: string;
+  activeLocale?: string | undefined;
   onLocaleChange: (localeId: string) => void;
 }) {
   return (
