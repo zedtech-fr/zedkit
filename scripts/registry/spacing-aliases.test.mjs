@@ -83,6 +83,7 @@ const DEPRECATED_1REM_CLASSES = [
   "h-field-separator",
   "h-switch-track-height",
   "gap-secret-field-gap",
+  "size-status-dot",
 ];
 
 function walkJs(dir, acc = []) {

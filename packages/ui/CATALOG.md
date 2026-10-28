@@ -374,7 +374,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
 - When to use: Beside a label that names the state (the dot is decorative).
 - When not to use: As the only state signal — pair it with text, never color alone.
-- A11y: `aria-hidden` by design — the paired text carries the meaning. Size comes from the `--spacing-status-dot` theme token; tones map to semantic color tokens.
+- A11y: `aria-hidden` by design — the paired text carries the meaning. Size is `size-2` (0.5rem, Tailwind default scale); `--spacing-status-dot` remains as a deprecated alias. Tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
 - Examples: Single tone, All tones with labels, Static ping override
 - Troubleshooting: Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.
