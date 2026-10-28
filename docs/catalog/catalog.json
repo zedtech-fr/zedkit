@@ -1622,6 +1622,45 @@
           ]
         },
         {
+          "need": "Fill a list's loading, empty, error and success states",
+          "import": "`@zedtech/zedkit-ui` — `Spinner`, `EmptyState`, `ErrorState`, `DataTable`, `Button`, `Text`, `createDataTableColumns`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "FourStates",
+          "audience": "Developers swapping a list between wait, nothing, failure, and rows.",
+          "purpose": "One host per state: Spinner, EmptyState, ErrorState, then the filled list.",
+          "whenToUse": "On a list page that loads from the network.",
+          "whenNotToUse": "For an empty row inside a table body — use `DataTableEmpty`. For a field error — use `FieldError`.",
+          "derivedFrom": null,
+          "example": "import { Spinner, Text } from \"@zedtech/zedkit-ui\";\n<Spinner label=\"Loading invoices\" />\n<Text>Loading invoices</Text>",
+          "examples": [
+            {
+              "title": "Loading",
+              "code": "import { Spinner, Text } from \"@zedtech/zedkit-ui\";\n<Spinner label=\"Loading invoices\" />\n<Text>Loading invoices</Text>"
+            },
+            {
+              "title": "Empty",
+              "code": "import { Button, EmptyState } from \"@zedtech/zedkit-ui\";\n<EmptyState\n  title=\"No invoices\"\n  description=\"Create an invoice to send to a client.\"\n  actions={<Button>New invoice</Button>}\n/>"
+            },
+            {
+              "title": "Error",
+              "code": "import { Button, ErrorState } from \"@zedtech/zedkit-ui\";\n<ErrorState\n  title=\"Could not load invoices\"\n  description=\"Check your connection and try again.\"\n  actions={<Button variant=\"outline\">Try again</Button>}\n/>"
+            },
+            {
+              "title": "Success",
+              "code": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<{ name: string; age: number }>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={[{ name: \"Ada\", age: 36 }]} />"
+            }
+          ],
+          "a11y": "Render one state at a time. Spinner is `role=\"status\"`; EmptyState uses a heading; ErrorState is `role=\"alert\"`. Keep the next step in `actions`.",
+          "troubleshooting": "Two live regions at once — do not nest ErrorState inside another alert. The spinner has no visible name — keep text beside it or pass `label`.",
+          "seeAlso": [
+            "Name a spinner while something loads",
+            "Show an empty zone with a next step",
+            "Show what broke and a next step",
+            "Show a sortable, filterable, paginated data table"
+          ]
+        },
+        {
           "need": "Open modal dialogs",
           "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
