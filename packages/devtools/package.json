@@ -1,0 +1,73 @@
+{
+  "name": "@zedtech/zedkit-devtools",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Dev-only drawer for identity, flag overrides, locale switching, build info, and a query devtools slot. Original work by the same author.",
+  "keywords": [
+    "devtools",
+    "development",
+    "react",
+    "typescript",
+    "debug"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/devtools",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/devtools"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run && node --test tests/enabled.test.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests"
+  },
+  "peerDependencies": {
+    "@zedtech/zedkit-flags": "workspace:*",
+    "@zedtech/zedkit-ui": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@zedtech/zedkit-flags": "workspace:*",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "@zedtech/zedkit-ui": "workspace:*",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
