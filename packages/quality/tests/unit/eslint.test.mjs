@@ -12,6 +12,26 @@ describe("uiPreset", () => {
     expect(() => uiPreset({})).toThrow("entryPoint");
   });
 
+  it("lint messages carry the rule id and explanation", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    const restrict = tailwind.rules["better-tailwindcss/no-restricted-classes"][1].restrict;
+    const messages = restrict.map((row) => row.message);
+    const syntax = tailwind.rules["no-restricted-syntax"].filter((row) => typeof row === "object");
+    const style = syntax.find((row) => String(row.selector).includes("style"));
+    const tryCatch = syntax.find((row) => String(row.selector).includes("TryStatement"));
+    const forwardRef = syntax.find((row) => String(row.selector).includes("forwardRef"));
+    expect(messages[0]).toMatch(/^tokens-color: /);
+    expect(messages[1]).toMatch(/^tokens-color: /);
+    expect(messages[2]).toMatch(/^tokens-style: /);
+    expect(style.message).toMatch(/^tokens-style: /);
+    expect(tryCatch.message).toMatch(/^try-catch: /);
+    expect(forwardRef.message).toMatch(/^ui-ref: /);
+    for (const message of [...messages, style.message, tryCatch.message, forwardRef.message]) {
+      expect(message).not.toMatch(/frontend-charter/);
+      expect(message.length).toBeGreaterThan(40);
+    }
+  });
+
   it("bans forwardRef and points at the button example", () => {
     const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
     const syntax = tailwind.rules["no-restricted-syntax"];
@@ -198,6 +218,7 @@ describe("defineLayers", () => {
       const blocked = linter.verify(adapterImport, layers, "features/inbox/ui/inbox-view.ts");
       expect(blocked).toHaveLength(1);
       expect(blocked[0].ruleId).toBe("no-restricted-imports");
+      expect(blocked[0].message).toContain("layers-features:");
       expect(blocked[0].message).toContain("ports");
       expect(linter.verify(portImport, layers, "features/inbox/ui/inbox-view.ts")).toEqual([]);
     });

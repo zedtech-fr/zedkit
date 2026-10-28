@@ -21,7 +21,7 @@ export default tseslint.config(
         {
           selector: "TryStatement",
           message:
-            "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
+            "try-catch: raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core so thrown values become Error with cause.",
         },
       ],
       // Deep relative imports are banned: use the package `#*` subpath
@@ -74,7 +74,7 @@ export default tseslint.config(
         {
           selector: "TryStatement",
           message:
-            "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
+            "try-catch: raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core so thrown values become Error with cause.",
         },
       ],
     },

@@ -1,4 +1,5 @@
-// Shareable UI lint preset: enforces docs/frontend-charter.md by tools.
+// Shareable UI lint preset: charter rule ids live in docs/frontend-charter.md;
+// the messages below carry the explanation.
 //
 // What it enforces on every .tsx/.jsx file:
 // - jsx-a11y recommended (labels, keyboard, focus, ARIA)
@@ -57,16 +58,17 @@ export function uiPreset({ entryPoint }) {
               {
                 pattern: `(^|:)(${COLOR_UTILS})-(${PALETTE}|white|black)(-|/|$)`,
                 message:
-                  "Raw palette colors are banned. Use a semantic theme token (see docs/frontend-charter.md).",
+                  "tokens-color: raw palette classes (bg-red-500) are banned. Use a semantic token (background, foreground, primary, destructive, …) so light and dark stay in sync.",
               },
               {
                 pattern: "\\[(#|rgb|hsl)",
                 message:
-                  "Arbitrary color values are banned. Use a semantic theme token (see docs/frontend-charter.md).",
+                  "tokens-color: arbitrary hex/rgb/hsl colors are banned. Use a semantic token (background, foreground, primary, …).",
               },
               {
                 pattern: "text-\\[[^\\]]*px",
-                message: "Raw px font sizes are banned. Use the type scale (see docs/frontend-charter.md).",
+                message:
+                  "tokens-style: raw px font sizes are banned. Use the type scale (text-xs … text-2xl).",
               },
             ],
           },
@@ -78,16 +80,18 @@ export function uiPreset({ entryPoint }) {
           "error",
           {
             selector: "TryStatement",
-            message: "Raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core.",
+            message:
+              "try-catch: raw try/catch is banned. Use tryCatch/tryCatchAsync from @zedtech/zedkit-core so thrown values become Error with cause.",
           },
           {
             selector: 'JSXAttribute[name.name="style"]',
-            message: "Inline style attributes are banned. Use theme tokens (see docs/frontend-charter.md).",
+            message:
+              "tokens-style: inline style attributes are banned. Use theme tokens and utility classes.",
           },
           {
             selector: "Identifier[name='forwardRef']",
             message:
-              "forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button.tsx).",
+              "ui-ref: forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button.tsx).",
           },
         ],
       },
@@ -270,15 +274,17 @@ function featureFolderLayers({
             patterns: [
               {
                 group: kitPatterns,
-                message: "UI kit imports are only allowed from view files. Move this import into a view.",
+                message:
+                  "layers-features: UI kit imports are only allowed from view files. Move this import into a view.",
               },
               {
                 group: REACT_GROUP,
-                message: "Only ui/ and the composition root import React.",
+                message: "layers-features: only ui/ and the composition root import React.",
               },
               {
                 group: ADAPTER_GROUP,
-                message: "Inject adapters at the feature composition root (index.ts or compose.ts).",
+                message:
+                  "layers-features: inject adapters at the feature composition root (index.ts or compose.ts).",
               },
               ...extras.kitScope,
             ],
@@ -296,7 +302,8 @@ function featureFolderLayers({
             patterns: [
               {
                 group: ADAPTER_GROUP,
-                message: "UI files import ports, not adapters. Inject the adapter at the feature composition root.",
+                message:
+                  "layers-features: UI files import ports, not adapters. Inject the adapter at the feature composition root.",
               },
               ...extras.viewData,
             ],
@@ -314,11 +321,11 @@ function featureFolderLayers({
             patterns: [
               {
                 group: REACT_GROUP,
-                message: "Data code is UI-free: no React runtime imports.",
+                message: "layers-features: data code is UI-free: no React runtime imports.",
               },
               {
                 group: kitPatterns,
-                message: "Data code is UI-free: no UI kit imports.",
+                message: "layers-features: data code is UI-free: no UI kit imports.",
               },
               ...extras.dataUi,
             ],
@@ -336,15 +343,15 @@ function featureFolderLayers({
             patterns: [
               {
                 group: REACT_GROUP,
-                message: "Model is pure: no React runtime. Keep I/O in adapters.",
+                message: "layers-features: model is pure: no React runtime. Keep I/O in adapters.",
               },
               {
                 group: kitPatterns,
-                message: "Model is pure: no UI kit imports.",
+                message: "layers-features: model is pure: no UI kit imports.",
               },
               {
                 group: ADAPTER_GROUP,
-                message: "Model is pure: adapters are injected at the composition root.",
+                message: "layers-features: model is pure: adapters are injected at the composition root.",
               },
               ...extras.model,
             ],
