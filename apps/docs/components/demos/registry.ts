@@ -37,11 +37,13 @@ import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
+import { DropdownMenuDemo } from "./dropdown-menu-demo";
 import { DrawerBottomSheetDemo } from "./drawer-bottom-sheet-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { DrawerSideMenuDemo } from "./drawer-side-menu-demo";
 import { FieldDemo } from "./field-demo";
 import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
+import { PopoverDemo } from "./popover-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
 import { InputDemo } from "./input-demo";
@@ -62,6 +64,7 @@ import { TabsControlledDemo } from "./tabs-controlled-demo";
 import { TabsDemo } from "./tabs-demo";
 import { TextareaDemo } from "./textarea-demo";
 import { ToasterDemo } from "./toaster-demo";
+import { TooltipDemo } from "./tooltip-demo";
 import { ToggleDemo } from "./toggle-demo";
 import { ValidatedFormDemo } from "./validated-form-demo";
 import { TypographyDemo } from "./typography-demo";
@@ -161,6 +164,7 @@ export const demoRegistry = {
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
+  DropdownMenuDemo: { Demo: DropdownMenuDemo, file: "dropdown-menu-demo.tsx", center: true },
   DrawerBottomSheetDemo: { Demo: DrawerBottomSheetDemo, file: "drawer-bottom-sheet-demo.tsx", center: true },
   DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
@@ -173,6 +177,7 @@ export const demoRegistry = {
   MotionDemo: { Demo: MotionDemo, file: "motion-demo.tsx" },
   MotionHoverDemo: { Demo: MotionHoverDemo, file: "motion-hover-demo.tsx" },
   MotionStaggerDemo: { Demo: MotionStaggerDemo, file: "motion-stagger-demo.tsx" },
+  PopoverDemo: { Demo: PopoverDemo, file: "popover-demo.tsx", center: true },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
   RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
@@ -191,6 +196,7 @@ export const demoRegistry = {
   ScrollScenesBeforeAfterDemo: { Demo: ScrollScenesBeforeAfterDemo, file: "scroll-scenes-demo.tsx", pinned: true },
   ScrollScenesDemo: { Demo: ScrollScenesDemo, file: "scroll-scenes-demo.tsx", pinned: true },
   ToasterDemo: { Demo: ToasterDemo, file: "toaster-demo.tsx", center: true },
+  TooltipDemo: { Demo: TooltipDemo, file: "tooltip-demo.tsx", center: true },
   ToggleDemo: { Demo: ToggleDemo, file: "toggle-demo.tsx", center: true },
   ValidatedFormDemo: { Demo: ValidatedFormDemo, file: "validated-form-demo.tsx" },
   TypographyDemo: { Demo: TypographyDemo, file: "typography-demo.tsx" },

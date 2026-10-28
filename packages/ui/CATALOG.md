@@ -766,7 +766,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - When to use: For short tasks that need full attention (confirm, edit one thing).
 - When not to use: For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.
 - A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button carries the shared `focus-ring`.
-- See also: `Confirm destructive actions`, `Slide in a drawer panel`
+- See also: `Confirm destructive actions`, `Slide in a drawer panel`, `Float extra content next to a control`, `Open a menu of actions from a button`
 
 ```ts
 import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedtech/zedkit-ui";
@@ -861,6 +861,79 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHea
     <DrawerBody>Links</DrawerBody>
   </DrawerContent>
 </Drawer>
+```
+
+## Float extra content next to a control
+
+- Import: `@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`
+- Wraps: `@radix-ui/react-popover`
+- Status: alpha
+- Derived from: shadcn/ui (popover)
+- Short name: Popover
+- Audience: Developers showing a small panel next to a button without leaving the page.
+- Purpose: Anchored panel (trigger + content) that stays while the reader looks, then closes on Escape or outside click.
+- When to use: For filters, a short form, or extra context that must stay on screen.
+- When not to use: For a list of actions — use the action menu. For a task that needs full attention — use a dialog.
+- See also: `Open modal dialogs`, `Open a menu of actions from a button`, `Name a control on hover`
+- A11y: Content is `role="dialog"`. Give it a name (`aria-label` or a heading). Focus is not trapped (unlike Dialog). Escape and outside click dismiss.
+
+```ts
+import { Button, Heading, Popover, PopoverContent, PopoverTrigger, Text } from "@zedtech/zedkit-ui";
+<Popover>
+  <PopoverTrigger asChild><Button variant="outline">Filters</Button></PopoverTrigger>
+  <PopoverContent aria-label="Filters">
+    <Heading level={3}>Filters</Heading>
+    <Text>Status: open invoices only.</Text>
+  </PopoverContent>
+</Popover>
+```
+
+## Name a control on hover
+
+- Import: `@zedtech/zedkit-ui` — `Tooltip`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`
+- Wraps: `@radix-ui/react-tooltip`
+- Status: alpha
+- Derived from: shadcn/ui (tooltip)
+- Short name: Tooltip
+- Audience: Developers adding a short extra name that appears on hover or focus.
+- Purpose: Instant hover/focus hint. Each Tooltip ships its own provider (`delayDuration` 0).
+- When to use: For a one-line hint on a control that already has a visible name.
+- When not to use: For an icon-only button — pass `label` on `IconButton`. For text the reader must keep — use a popover.
+- See also: `Icon-only actions with a visible name`, `Float extra content next to a control`
+- A11y: Content is `role="tooltip"` and tied to the trigger. Keep the sentence short. Keyboard focus shows it as well as hover.
+
+```ts
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@zedtech/zedkit-ui";
+<Tooltip>
+  <TooltipTrigger asChild><Button>Save</Button></TooltipTrigger>
+  <TooltipContent>Saves the invoice</TooltipContent>
+</Tooltip>
+```
+
+## Open a menu of actions from a button
+
+- Import: `@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`
+- Wraps: `@radix-ui/react-dropdown-menu`
+- Status: alpha
+- Derived from: shadcn/ui (dropdown-menu)
+- Short name: DropdownMenu
+- Audience: Developers grouping a few actions behind one button.
+- Purpose: Action menu (trigger + items) with keyboard and axe coverage. Not a form select.
+- When to use: For Duplicate, Archive, and similar verbs on one row or page.
+- When not to use: For choosing one form value — use Select. For a destructive confirm — use ConfirmDialog after the item is chosen.
+- See also: `Pick one option from a dropdown`, `Confirm destructive actions`, `Open modal dialogs`
+- A11y: Content is `role="menu"`; items are `role="menuitem"`. Arrow keys move, Enter chooses, Escape closes. The trigger name should say what the menu is (Actions), not a verb that sounds like it already ran.
+
+```ts
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@zedtech/zedkit-ui";
+<DropdownMenu>
+  <DropdownMenuTrigger asChild><Button variant="outline">Actions</Button></DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem>Duplicate invoice</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Archive invoice</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
 ```
 
 ## Render a route as a modal over the list

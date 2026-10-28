@@ -91,6 +91,27 @@
       "source": "dialog.tsx",
       "demo": "DialogDemo"
     },
+    "Float extra content next to a control": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Popover",
+      "props": null,
+      "source": "popover.tsx",
+      "demo": "PopoverDemo"
+    },
+    "Name a control on hover": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Tooltip",
+      "props": null,
+      "source": "tooltip.tsx",
+      "demo": "TooltipDemo"
+    },
+    "Open a menu of actions from a button": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DropdownMenu",
+      "props": null,
+      "source": "dropdown-menu.tsx",
+      "demo": "DropdownMenuDemo"
+    },
     "Confirm destructive actions": {
       "package": "@zedtech/zedkit-ui",
       "component": "ConfirmDialog",

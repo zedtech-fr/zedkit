@@ -33,6 +33,13 @@ export {
   DialogTrigger,
 } from "./dialog.js";
 export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./dropdown-menu.js";
+export {
   DetailPanel,
   DetailPanelRow,
   type DetailItem,
@@ -102,6 +109,7 @@ export {
   type OptionCardsProps,
 } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
+export { Popover, PopoverContent, PopoverTrigger } from "./popover.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
 export {
   Select,
@@ -141,6 +149,7 @@ export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger, type TabsProps } from "./tabs.js";
 export { Textarea } from "./textarea.js";
 export { Toaster, toast, type ToasterProps } from "./sonner.js";
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip.js";
 export {
   Heading,
   headingVariants,

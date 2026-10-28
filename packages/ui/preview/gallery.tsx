@@ -31,6 +31,11 @@ import {
   DrawerHandle,
   DrawerTitle,
   DrawerTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Heading,
   Input,
   Label,
@@ -46,6 +51,9 @@ import {
   OptionCards,
   PageHeader,
   PageHeaderSkeleton,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   ProgressBar,
   Spinner,
   SecretField,
@@ -66,6 +74,9 @@ import {
   Text,
   Textarea,
   Toaster,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
@@ -234,6 +245,30 @@ export function Gallery() {
               </DrawerContent>
             </Drawer>
           </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">Open popover</Button>
+            </PopoverTrigger>
+            <PopoverContent aria-label="Filters">
+              <Text>Filter invoices.</Text>
+            </PopoverContent>
+          </Popover>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Save</Button>
+            </TooltipTrigger>
+            <TooltipContent>Saves the invoice</TooltipContent>
+          </Tooltip>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Open menu</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>Duplicate invoice</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Archive invoice</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
           <Alert className="max-w-sm">
             <AlertTitle>Heads up</AlertTitle>

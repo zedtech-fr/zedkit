@@ -13,6 +13,7 @@ import { ColumnHelper } from '@tanstack/react-table';
 import { ControllerProps } from 'react-hook-form';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Drawer as Drawer_2 } from 'vaul';
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { FieldError as FieldError_2 } from 'react-hook-form';
 import { FieldPath } from 'react-hook-form';
 import { FieldValues } from 'react-hook-form';
@@ -20,6 +21,7 @@ import { FormProviderProps } from 'react-hook-form';
 import { JSX } from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import type { LucideIcon } from 'lucide-react';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as React_2 from 'react';
 import type { ReactNode } from 'react';
 import { RowData } from '@tanstack/react-table';
@@ -34,6 +36,7 @@ import { TableFeature } from '@tanstack/react-table';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { toast } from 'sonner';
 import { ToasterProps } from 'sonner';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { UseFormProps } from 'react-hook-form';
 import { UseFormReturn } from 'react-hook-form';
 import { VariantProps } from 'class-variance-authority';
@@ -415,6 +418,21 @@ export function DrawerTitle(input: React_2.ComponentProps<typeof Drawer_2.Title>
 // @public (undocumented)
 export function DrawerTrigger(input: React_2.ComponentProps<typeof Drawer_2.Trigger>): React_2.JSX.Element;
 
+// @public (undocumented)
+export function DropdownMenu(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Root>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function DropdownMenuContent(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Content>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function DropdownMenuItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Item>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function DropdownMenuSeparator(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Separator>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function DropdownMenuTrigger(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Trigger>): React_2.JSX.Element;
+
 // @public
 export function EmptyState(input: EmptyStateProps): React_2.JSX.Element;
 
@@ -721,6 +739,15 @@ export interface PageHeaderSkeletonProps {
     label?: string;
 }
 
+// @public (undocumented)
+export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function PopoverContent(input: React_2.ComponentProps<typeof PopoverPrimitive.Content>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function PopoverTrigger(input: React_2.ComponentProps<typeof PopoverPrimitive.Trigger>): React_2.JSX.Element;
+
 // @public
 export function ProgressBar(input: ProgressBarProps): JSX.Element;
 
@@ -969,6 +996,18 @@ export { toast }
 export function Toaster(props: ToasterProps): JSX.Element;
 
 export { ToasterProps }
+
+// @public (undocumented)
+export function Tooltip(input: React_2.ComponentProps<typeof TooltipPrimitive.Root>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function TooltipContent(input: React_2.ComponentProps<typeof TooltipPrimitive.Content>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrimitive.Provider>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function TooltipTrigger(input: React_2.ComponentProps<typeof TooltipPrimitive.Trigger>): React_2.JSX.Element;
 
 // @public
 export function UpdatedAgo(input: UpdatedAgoProps): JSX.Element;
