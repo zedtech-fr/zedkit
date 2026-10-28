@@ -8,11 +8,11 @@
 ## Lint UI files for accessibility, Tailwind and tokens
 
 - Import: `@zedtech/zedkit-quality/eslint` — `uiPreset`
-- Wraps: `eslint-plugin-jsx-a11y`, `eslint-plugin-better-tailwindcss`
+- Wraps: `eslint-plugin-jsx-a11y`, `eslint-plugin-better-tailwindcss`, `typescript-eslint`
 - Status: beta
 - Short name: UiPreset
 - Audience: Frontend teams linting tsx/jsx everywhere the same way.
-- Purpose: Enforce a11y, Tailwind hygiene, tokens-only classes, no inline style, and no forwardRef on every UI file.
+- Purpose: Enforce a11y, Tailwind hygiene, tokens-only classes, no inline style, no forwardRef, and no explicit any on every UI file.
 - When to use: When UI rules must match across repos without copying a preset file.
 - When not to use: When the repo has no Tailwind theme (the entryPoint has nothing to read).
 - See also: `Enforce route, view and data layer boundaries`

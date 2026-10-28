@@ -65,13 +65,15 @@
   "peerDependencies": {
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
-    "eslint-plugin-jsx-a11y": "catalog:"
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "typescript-eslint": "catalog:"
   },
   "devDependencies": {
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "eslint-plugin-jsx-a11y": "catalog:",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

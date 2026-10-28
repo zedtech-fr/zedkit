@@ -27,6 +27,7 @@ export default tseslint.config(
       // Deep relative imports are banned: use the package `#*` subpath
       // import (see "imports" in each package.json) instead of ../.. chains.
       "no-restricted-imports": ["error", { patterns: [deepRelativeImport] }],
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
   {
