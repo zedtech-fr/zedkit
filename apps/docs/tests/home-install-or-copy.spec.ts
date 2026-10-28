@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { featuredRegistryBrick } from "../content/registry-site";
+import { featuredRegistryBrick, registryBrickNames } from "../content/registry-site";
 import { registryShadcnAddCommand } from "../lib/registry-shadcn-command";
 
 const BASE = "http://127.0.0.1:3100";
@@ -41,5 +41,34 @@ test.describe("home install or copy block (#419)", () => {
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+  });
+
+  test("published brick names keep a decorative icon", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    const list = page.locator("#install-or-copy [data-registry-bricks]");
+    await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
+    await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+    );
+    expect(overflow).toBe(true);
+  });
+
+  test.describe("home brick list light/dark (#769)", () => {
+    for (const mode of ["light", "dark"] as const) {
+      test(`mist ${mode}`, async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 900 });
+        await page.addInitScript((theme) => {
+          localStorage.setItem("zk-identity", "mist");
+          localStorage.setItem("theme", theme);
+        }, mode);
+        await page.goto(BASE, { waitUntil: "networkidle" });
+        const list = page.locator("#install-or-copy [data-registry-bricks]");
+        await list.scrollIntoViewIfNeeded();
+        await expect(list.getByText("badge", { exact: true })).toBeVisible();
+        await list.screenshot({ path: `test-results/home-brick-list-${mode}.png` });
+      });
+    }
   });
 });
