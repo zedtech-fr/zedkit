@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { contrastRatio } from "./a11y-helpers";
+import { useIdentity } from "./identity-helpers";
 
 // Relative paths: the config baseURL decides the port.
 const DRAWER_PAGE = "/docs/ui/slide-in-a-drawer-panel";
@@ -39,21 +40,6 @@ async function rgbaOf(page: Page, css: string): Promise<string> {
 function over(fg: Rgba, backdrop: [number, number, number]): [number, number, number] {
   const a = fg[3];
   return [0, 1, 2].map((i) => fg[i]! * a + backdrop[i]! * (1 - a)) as [number, number, number];
-}
-
-async function useIdentity(page: Page, identity: string | null, theme: "light" | "dark") {
-  await page.evaluate(
-    ({ id, mode }) => {
-      const root = document.documentElement;
-      if (id) root.setAttribute("data-identity", id);
-      else root.removeAttribute("data-identity");
-      root.classList.toggle("dark", mode === "dark");
-      root.classList.toggle("light", mode === "light");
-      root.style.colorScheme = mode;
-    },
-    { id: identity, mode: theme },
-  );
-  await page.evaluate(() => document.fonts.ready);
 }
 
 async function openOverlay(page: Page, path: string, trigger: string, identity: string | null, theme: "light" | "dark") {
