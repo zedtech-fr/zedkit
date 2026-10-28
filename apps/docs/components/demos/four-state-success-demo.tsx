@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
 
 type Person = { name: string; age: number };
