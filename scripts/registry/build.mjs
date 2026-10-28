@@ -8,7 +8,7 @@ import { rewriteUiImports } from "./rewrite-ui-imports.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const uiSrc = join(root, "packages/ui/src");
 const i18nSrc = join(root, "packages/i18n/src");
-const generatedDir = join(root, "registry/generated/ui");
+const generatedDir = join(root, "registry/ui");
 const outDir = join(root, "apps/docs/public/r");
 
 /** UI bricks published in the first registry slice (#187). */

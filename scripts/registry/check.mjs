@@ -8,8 +8,21 @@ import { checkRegistryThemeDrift } from "./theme-tokens.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const outDir = join(root, "apps/docs/public/r");
+const registryPath = join(root, "registry.json");
 
 const errors = [];
+
+const registry = JSON.parse(readFileSync(registryPath, "utf8"));
+for (const item of registry.items ?? []) {
+  for (const file of item.files ?? []) {
+    const rel = file.path;
+    if (typeof rel !== "string" || rel.length === 0) continue;
+    const abs = join(root, rel);
+    if (!existsSync(abs)) {
+      errors.push(`missing GitHub registry source ${rel} (run pnpm registry:build)`);
+    }
+  }
+}
 
 for (const name of ["theme", "badge", "button", "dialog", "drawer", "confirm-dialog", "registry"]) {
   const path = join(outDir, `${name}.json`);

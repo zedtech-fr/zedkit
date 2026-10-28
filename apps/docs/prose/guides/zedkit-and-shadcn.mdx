@@ -49,11 +49,45 @@ Each catalog need’s **Wraps** line names the direct npm dependency; many brick
 | Path | When | What you get |
 | --- | --- | --- |
 | `pnpm add @zedtech/zedkit-ui` | You want the published package API and CSS entry | Imports from `@zedtech/zedkit-ui`; version pinned on each doc page’s Install tabs |
-| `npx shadcn@latest add https://zedkit.app/r/<brick>.json` | You want source files in *your* repo like upstream shadcn | Files from `registry/generated/ui/` with imports rewritten at build time (`pnpm registry:build` — [apps/docs/AGENTS.md](https://github.com/zedtech-fr/zedkit/blob/main/apps/docs/AGENTS.md)) |
+| `npx shadcn@latest add https://zedkit.app/r/<brick>.json` | You want source files in *your* repo like upstream shadcn | Files from [`registry/ui/`](https://github.com/zedtech-fr/zedkit/tree/main/registry/ui) (rewritten at `pnpm registry:build`) |
+| `npx shadcn@latest add zedtech-fr/zedkit/<brick>` | Same bricks, GitHub registry shorthand (no docs host) | Same files as the URL form; reads `registry.json` on the public repo |
 
 Registry bricks are listed in `registry.json`; only published JSON URLs under `/r/` are
 documented on component pages. If a brick is not in the registry yet, use npm imports until
 it ships.
+
+## Adding registry bricks
+
+Use either install form (same brick list):
+
+```sh
+npx shadcn@latest add https://zedkit.app/r/badge.json
+npx shadcn@latest add zedtech-fr/zedkit/badge
+```
+
+Composed bricks (`drawer`, `confirm-dialog`, …) declare `@zedkit/*` siblings. Register the
+docs namespace once in a project with `components.json`:
+
+```sh
+npx shadcn@latest registry add @zedkit=https://zedkit.app/r/{name}.json
+```
+
+Then run `shadcn add` for the composed item (URL or GitHub form). Install the `theme` brick
+when you need shared success/warning/overlay tokens and motion utilities without the npm
+`styles.css` package.
+
+## Updating copied files
+
+After a copy, **the files are yours** (MIT). There is no automatic update channel.
+
+- Registry URLs (hosted or GitHub) always resolve to the **latest published** item — they are
+  not version-pinned.
+- Compare upstream changes: `npx shadcn@latest add <same-url-or-name> --diff`.
+- Replace your edits: `npx shadcn@latest add … --overwrite` (review the diff first).
+- npm path: bump `@zedtech/zedkit-ui` with your package manager instead.
+
+Full theme tokens and `styles.css` still come from the npm package today; copied bricks only
+ship the CSS slices attached to each registry item plus the optional `theme` brick.
 
 ## When to prefer plain shadcn/ui
 

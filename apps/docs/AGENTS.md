@@ -40,11 +40,12 @@ components (same import a consumer writes), inside one shared frame.
 ## Registry (`/r/*.json`)
 
 Copy-paste install payloads for the official shadcn CLI (#187). `pnpm
-registry:build` (root) rewrites `packages/ui` imports, runs `shadcn
-build`, and writes gitignored JSON under `public/r/`. Docs `prebuild`
-runs that step; `registry:check` asserts rewritten imports and
-`shadcn registry validate`. CI job `registry-smoke` runs
-`pnpm registry:smoke` (fresh Next + `shadcn add` for Badge and Drawer).
+registry:build` (root) rewrites `packages/ui` imports into committed
+`registry/ui/`, runs `shadcn build`, and writes gitignored JSON under
+`public/r/`. Docs `prebuild` runs that step; `registry:check` asserts
+sources on disk, rewritten imports, and `shadcn registry validate`. CI job
+`registry-smoke` runs `pnpm registry:smoke` (fresh Next + `shadcn add`).
+GitHub shorthand: `npx shadcn@latest add zedtech-fr/zedkit/<brick>`.
 Home install copy comes from `registry.json` via `content/registry-site.ts`
 (`docs:generate`). `check-registry-urls.mjs` and `check-seo-export.mjs`
 reject dead `/r/<name>.json` links.
