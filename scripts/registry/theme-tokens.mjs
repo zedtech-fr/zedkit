@@ -84,6 +84,159 @@ function expectedCheckDrawCss(css) {
   };
 }
 
+function motionRootBlock(css) {
+  const marker = "/*\n * Motion tokens:";
+  const start = css.indexOf(marker);
+  if (start < 0) throw new Error("styles.css: missing motion tokens block");
+  const open = css.indexOf("{", start);
+  const close = css.indexOf("\n}", open);
+  return css.slice(open + 1, close);
+}
+
+function keyframesFromTo(css, name) {
+  const body = keyframesBlock(css, name);
+  const fromMatch = body.match(/from\s*\{([^}]+)\}/);
+  const toMatch = body.match(/to\s*\{([^}]+)\}/);
+  if (!fromMatch && !toMatch) throw new Error(`styles.css: ${name} keyframes malformed`);
+  const pickProps = (block) => {
+    const props = {};
+    for (const prop of ["opacity", "transform", "stroke-dashoffset"]) {
+      const match = block.match(new RegExp(`${prop}:\\s*([^;]+);`));
+      if (match) props[prop] = match[1].trim();
+    }
+    return props;
+  };
+  const frame = {};
+  if (fromMatch) frame.from = pickProps(fromMatch[1]);
+  if (toMatch) frame.to = pickProps(toMatch[1]);
+  return frame;
+}
+
+function expectedOverlayMotionCss(cssText) {
+  return {
+    "@keyframes zk-fade-in": keyframesFromTo(cssText, "zk-fade-in"),
+    "@keyframes zk-fade-out": keyframesFromTo(cssText, "zk-fade-out"),
+    "@keyframes zk-zoom-in": keyframesFromTo(cssText, "zk-zoom-in"),
+    "@keyframes zk-zoom-out": keyframesFromTo(cssText, "zk-zoom-out"),
+  };
+}
+
+function utilityCss(css, name, endMarker) {
+  const utility = blockBefore(css, `@utility ${name}`, endMarker);
+  const blockMatch = utility.match(/&:[^{]+\{([^}]+)\}/);
+  if (!blockMatch) throw new Error(`styles.css: @utility ${name} missing rule block`);
+  const inner = blockMatch[1];
+  const props = {};
+  for (const line of inner.split(";")) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const colon = trimmed.indexOf(":");
+    if (colon < 0) continue;
+    props[trimmed.slice(0, colon).trim()] = trimmed.slice(colon + 1).trim();
+  }
+  const pseudo = utility.match(/&:[\w-]+/)[0];
+  return {
+    [`@utility ${name}`]: {
+      [pseudo]: props,
+    },
+  };
+}
+
+function expectedFocusRingControlCss(css) {
+  return utilityCss(css, "focus-ring-control", "\n@utility button-press");
+}
+
+function expectedButtonPressCss(css) {
+  const utility = blockBefore(css, "@utility button-press", "\n@utility hit-target");
+  const transitionMatch = utility.match(/transition-property:\s*([^;]+);/);
+  const durationMatch = utility.match(/transition-duration:\s*([^;]+);/);
+  const timingMatch = utility.match(/transition-timing-function:\s*([^;]+);/);
+  const activeMatch = utility.match(/&:active:not\(:disabled\)\s*\{([^}]+)\}/);
+  if (!transitionMatch || !durationMatch || !timingMatch || !activeMatch) {
+    throw new Error("styles.css: @utility button-press malformed");
+  }
+  const scaleMatch = activeMatch[1].match(/scale:\s*([^;]+);/);
+  if (!scaleMatch) throw new Error("styles.css: button-press missing scale");
+  return {
+    "@utility button-press": {
+      "transition-property": transitionMatch[1].trim(),
+      "transition-duration": durationMatch[1].trim(),
+      "transition-timing-function": timingMatch[1].trim(),
+      "&:active:not(:disabled)": {
+        scale: scaleMatch[1].trim(),
+      },
+    },
+  };
+}
+
+function expectedDialogCenterCss(css) {
+  const utility = blockBefore(css, "@utility dialog-center", "\n/* Controls");
+  const props = {};
+  for (const line of utility.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("&")) continue;
+    const colon = trimmed.indexOf(":");
+    if (colon < 0) continue;
+    props[trimmed.slice(0, colon).trim()] = trimmed.slice(colon + 1).trim().replace(/;$/, "");
+  }
+  return {
+    "@utility dialog-center": props,
+  };
+}
+
+function expectedVaulCopyCss() {
+  return {
+    "html [data-vaul-drawer]": {
+      "animation-duration": "var(--motion-slow)",
+      "transition-duration": "var(--motion-slow)",
+    },
+    "html [data-vaul-overlay]": {
+      "animation-duration": "var(--motion-base)",
+    },
+    "@media (prefers-reduced-motion: reduce)": {
+      "html [data-vaul-drawer], html [data-vaul-overlay]": {
+        animation: "none !important",
+        transition: "none !important",
+      },
+    },
+  };
+}
+
+function expectedCopyThemeItem(cssText) {
+  const root = rootThemeBlock(cssText);
+  const dark = darkThemeBlock(cssText);
+  const motion = motionRootBlock(cssText);
+  return {
+    cssVars: {
+      light: {
+        success: varFromBlock(root, "success"),
+        warning: varFromBlock(root, "warning"),
+        overlay: varFromBlock(root, "overlay"),
+      },
+      dark: {
+        success: varFromBlock(dark, "success"),
+        warning: varFromBlock(dark, "warning"),
+        overlay: varFromBlock(dark, "overlay"),
+      },
+      theme: {
+        "motion-fast": varFromBlock(motion, "motion-fast"),
+        "motion-base": varFromBlock(motion, "motion-base"),
+        "motion-slow": varFromBlock(motion, "motion-slow"),
+        "ease-enter": varFromBlock(motion, "ease-enter"),
+        "ease-exit": varFromBlock(motion, "ease-exit"),
+        "zk-press-scale": varFromBlock(motion, "zk-press-scale"),
+      },
+    },
+    css: {
+      ...expectedOverlayMotionCss(cssText),
+      ...expectedDialogCenterCss(cssText),
+      ...expectedButtonPressCss(cssText),
+      ...expectedFocusRingControlCss(cssText),
+      ...expectedVaulCopyCss(),
+    },
+  };
+}
+
 /** Expected registry `cssVars` / `css` slices derived from the UI theme file. */
 export function expectedRegistryThemeFromStyles(cssText) {
   const root = rootThemeBlock(cssText);
@@ -241,6 +394,43 @@ export function expectedRegistryThemeFromStyles(cssText) {
           "spacing-card-lines": varFromBlock(theme, "spacing-card-lines"),
         },
       },
+    },
+    theme: expectedCopyThemeItem(cssText),
+    button: {
+      cssVars: {
+        theme: {
+          "spacing-control-height": varFromBlock(theme, "spacing-control-height"),
+          "spacing-control-height-sm": varFromBlock(theme, "spacing-control-height-sm"),
+          "spacing-control-height-lg": varFromBlock(theme, "spacing-control-height-lg"),
+          "spacing-button-inline": varFromBlock(theme, "spacing-button-inline"),
+          "spacing-button-inline-sm": varFromBlock(theme, "spacing-button-inline-sm"),
+          "spacing-button-inline-lg": varFromBlock(theme, "spacing-button-inline-lg"),
+          "spacing-button-gap": varFromBlock(theme, "spacing-button-gap"),
+          "ring-width-control": varFromBlock(root, "ring-width-control"),
+          "ring-offset-width": varFromBlock(root, "ring-offset-width"),
+        },
+      },
+      css: {
+        ...expectedFocusRingControlCss(cssText),
+        ...expectedButtonPressCss(cssText),
+      },
+    },
+    dialog: {
+      cssVars: {
+        theme: {
+          "spacing-dialog-center": varFromBlock(theme, "spacing-dialog-center"),
+          "spacing-dialog-gap": varFromBlock(theme, "spacing-dialog-gap"),
+          "spacing-dialog-padding": varFromBlock(theme, "spacing-dialog-padding"),
+          "spacing-dialog-header-stack": varFromBlock(theme, "spacing-dialog-header-stack"),
+          "spacing-dialog-footer-gap": varFromBlock(theme, "spacing-dialog-footer-gap"),
+          "spacing-dialog-max-height": varFromBlock(theme, "spacing-dialog-max-height"),
+          "spacing-dialog-header-end": varFromBlock(theme, "spacing-dialog-header-end"),
+          "spacing-dialog-footer-safe": varFromBlock(theme, "spacing-dialog-footer-safe"),
+          "spacing-overlay-touch-target": varFromBlock(theme, "spacing-overlay-touch-target"),
+          "spacing-overlay-close-offset": varFromBlock(theme, "spacing-overlay-close-offset"),
+        },
+      },
+      css: expectedDialogCenterCss(cssText),
     },
   };
 }

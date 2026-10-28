@@ -11,7 +11,7 @@ SHADCN="${SHADCN_VERSION:-4.22.1}"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
-for item in badge drawer; do
+for item in theme badge drawer confirm-dialog; do
   if [[ ! -f "${OUT}/${item}.json" ]]; then
     echo "smoke-shadcn-add: missing ${OUT}/${item}.json (run pnpm registry:build)" >&2
     exit 1
@@ -23,7 +23,8 @@ pnpm dlx "create-next-app@${CREATE_NEXT_APP_VERSION:-16.4.3}" "$WORK" \
 
 cd "$WORK"
 pnpm dlx "shadcn@${SHADCN}" init -d
-pnpm dlx "shadcn@${SHADCN}" add "${OUT}/badge.json" "${OUT}/drawer.json" -y
+pnpm dlx "shadcn@${SHADCN}" registry add "@zedkit=${OUT}/{name}.json"
+pnpm dlx "shadcn@${SHADCN}" add "${OUT}/theme.json" "${OUT}/badge.json" "${OUT}/drawer.json" "${OUT}/confirm-dialog.json" -y
 pnpm exec next build
 
-echo "smoke-shadcn-add: ok (badge + drawer installed, next build)"
+echo "smoke-shadcn-add: ok (theme, badge, drawer, confirm-dialog installed, next build)"

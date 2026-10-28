@@ -4,10 +4,192 @@
   "homepage": "https://github.com/zedtech-fr/zedkit",
   "items": [
     {
+      "name": "theme",
+      "type": "registry:theme",
+      "cssVars": {
+        "light": {
+          "success": "142.1 76.2% 27%",
+          "warning": "32 95% 44%",
+          "overlay": "0 0% 0%"
+        },
+        "dark": {
+          "success": "142.1 70.6% 45.3%",
+          "warning": "32 95% 32%",
+          "overlay": "0 0% 0%"
+        },
+        "theme": {
+          "motion-fast": "150ms",
+          "motion-base": "200ms",
+          "motion-slow": "250ms",
+          "ease-enter": "cubic-bezier(0.16, 1, 0.3, 1)",
+          "ease-exit": "cubic-bezier(0.4, 0, 1, 1)",
+          "zk-press-scale": "0.97"
+        }
+      },
+      "css": {
+        "@keyframes zk-fade-in": {
+          "from": {
+            "opacity": "0"
+          }
+        },
+        "@keyframes zk-fade-out": {
+          "to": {
+            "opacity": "0"
+          }
+        },
+        "@keyframes zk-zoom-in": {
+          "from": {
+            "opacity": "0",
+            "transform": "scale(0.96)"
+          }
+        },
+        "@keyframes zk-zoom-out": {
+          "to": {
+            "opacity": "0",
+            "transform": "scale(0.96)"
+          }
+        },
+        "@utility dialog-center": {
+          "top": "var(--spacing-dialog-center)",
+          "left": "var(--spacing-dialog-center)",
+          "translate": "calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1)"
+        },
+        "@utility button-press": {
+          "transition-property": "background-color, border-color, color, fill, stroke, box-shadow, translate, scale",
+          "transition-duration": "var(--motion-base)",
+          "transition-timing-function": "var(--zk-btn-ease, ease)",
+          "&:active:not(:disabled)": {
+            "scale": "var(--zk-press-scale)"
+          }
+        },
+        "@utility focus-ring-control": {
+          "&:focus-visible": {
+            "outline": "none",
+            "box-shadow": "0 0 0 var(--ring-offset-width) hsl(var(--background)),\n      0 0 0 calc(var(--ring-offset-width) + var(--ring-width-control)) hsl(var(--ring))"
+          }
+        },
+        "html [data-vaul-drawer]": {
+          "animation-duration": "var(--motion-slow)",
+          "transition-duration": "var(--motion-slow)"
+        },
+        "html [data-vaul-overlay]": {
+          "animation-duration": "var(--motion-base)"
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          "html [data-vaul-drawer], html [data-vaul-overlay]": {
+            "animation": "none !important",
+            "transition": "none !important"
+          }
+        }
+      },
+      "registryDependencies": []
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/generated/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-control-height": "max(var(--zk-tap-min, 0px), 2.25rem)",
+          "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), 2rem)",
+          "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), 2.5rem)",
+          "spacing-button-inline": "1rem",
+          "spacing-button-inline-sm": "0.75rem",
+          "spacing-button-inline-lg": "2rem",
+          "spacing-button-gap": "0.5rem",
+          "ring-width-control": "2px",
+          "ring-offset-width": "2px"
+        }
+      },
+      "css": {
+        "@utility focus-ring-control": {
+          "&:focus-visible": {
+            "outline": "none",
+            "box-shadow": "0 0 0 var(--ring-offset-width) hsl(var(--background)),\n      0 0 0 calc(var(--ring-offset-width) + var(--ring-width-control)) hsl(var(--ring))"
+          }
+        },
+        "@utility button-press": {
+          "transition-property": "background-color, border-color, color, fill, stroke, box-shadow, translate, scale",
+          "transition-duration": "var(--motion-base)",
+          "transition-timing-function": "var(--zk-btn-ease, ease)",
+          "&:active:not(:disabled)": {
+            "scale": "var(--zk-press-scale)"
+          }
+        }
+      }
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-dialog",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/generated/ui/dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-dialog-center": "50%",
+          "spacing-dialog-gap": "1rem",
+          "spacing-dialog-padding": "1.5rem",
+          "spacing-dialog-header-stack": "0.375rem",
+          "spacing-dialog-footer-gap": "0.5rem",
+          "spacing-dialog-max-height": "90dvh",
+          "spacing-dialog-header-end": "calc(var(--spacing-overlay-touch-target) + var(--spacing-overlay-close-offset))",
+          "spacing-dialog-footer-safe": "env(safe-area-inset-bottom, 0px)",
+          "spacing-overlay-touch-target": "2.75rem",
+          "spacing-overlay-close-offset": "1rem"
+        }
+      },
+      "css": {
+        "@utility dialog-center": {
+          "top": "var(--spacing-dialog-center)",
+          "left": "var(--spacing-dialog-center)",
+          "translate": "calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1)"
+        }
+      }
+    },
+    {
       "name": "badge",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/badge.tsx",
@@ -34,8 +216,14 @@
     {
       "name": "drawer",
       "type": "registry:ui",
-      "dependencies": ["vaul", "lucide-react"],
-      "registryDependencies": ["button", "utils"],
+      "dependencies": [
+        "vaul",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@zedkit/button",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/drawer.tsx",
@@ -66,7 +254,11 @@
     {
       "name": "confirm-dialog",
       "type": "registry:ui",
-      "registryDependencies": ["button", "dialog", "utils"],
+      "registryDependencies": [
+        "@zedkit/button",
+        "@zedkit/dialog",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/confirm-dialog.tsx",
@@ -89,7 +281,9 @@
     {
       "name": "status-dot",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/status-dot.tsx",
@@ -113,7 +307,9 @@
     {
       "name": "checkmark",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/checkmark.tsx",
@@ -140,7 +336,9 @@
     {
       "name": "updated-ago",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/updated-ago.tsx",
@@ -171,8 +369,14 @@
     {
       "name": "status-label",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["zedtech-fr/zedkit/checkmark", "zedtech-fr/zedkit/status-dot", "utils"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@zedkit/checkmark",
+        "@zedkit/status-dot",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/status-label.tsx",
@@ -190,7 +394,9 @@
     {
       "name": "progress-bar",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/progress-bar.tsx",
@@ -207,8 +413,12 @@
     {
       "name": "separator",
       "type": "registry:ui",
-      "dependencies": ["@radix-ui/react-separator"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "@radix-ui/react-separator"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/separator.tsx",
@@ -224,8 +434,13 @@
     {
       "name": "alert",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/alert.tsx",
@@ -245,7 +460,9 @@
     {
       "name": "skeleton",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/skeleton.tsx",
@@ -256,19 +473,27 @@
     {
       "name": "sonner",
       "type": "registry:ui",
-      "dependencies": ["sonner"],
+      "dependencies": [
+        "sonner"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/sonner.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "registryDependencies": []
     },
     {
       "name": "typography",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-slot"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/typography.tsx",
@@ -284,7 +509,9 @@
     {
       "name": "detail-panel",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/detail-panel.tsx",
@@ -302,8 +529,12 @@
     {
       "name": "tabs",
       "type": "registry:ui",
-      "dependencies": ["@radix-ui/react-tabs"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "@radix-ui/react-tabs"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/tabs.tsx",
@@ -331,7 +562,9 @@
     {
       "name": "card",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/card.tsx",
@@ -348,7 +581,9 @@
     {
       "name": "app-shell",
       "type": "registry:ui",
-      "registryDependencies": ["utils"],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/app-shell.tsx",
@@ -366,8 +601,12 @@
     {
       "name": "wizard-steps",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/wizard-steps.tsx",
@@ -402,8 +641,13 @@
     {
       "name": "label",
       "type": "registry:ui",
-      "dependencies": ["class-variance-authority", "@radix-ui/react-label"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-label"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/label.tsx",
@@ -414,7 +658,10 @@
     {
       "name": "card-skeleton",
       "type": "registry:ui",
-      "registryDependencies": ["zedtech-fr/zedkit/skeleton", "utils"],
+      "registryDependencies": [
+        "@zedkit/skeleton",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/card-skeleton.tsx",
@@ -450,13 +697,18 @@
           "path": "registry/generated/ui/use-online-status.ts",
           "type": "registry:hook"
         }
-      ]
+      ],
+      "registryDependencies": []
     },
     {
       "name": "offline-note",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["alert"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "alert"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/offline-note.tsx",
@@ -479,7 +731,9 @@
     {
       "name": "icon-button",
       "type": "registry:ui",
-      "registryDependencies": ["button"],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/icon-button.tsx",
@@ -490,7 +744,10 @@
     {
       "name": "empty-state",
       "type": "registry:ui",
-      "registryDependencies": ["typography", "utils"],
+      "registryDependencies": [
+        "typography",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/empty-state.tsx",
@@ -501,7 +758,10 @@
     {
       "name": "error-state",
       "type": "registry:ui",
-      "registryDependencies": ["alert", "utils"],
+      "registryDependencies": [
+        "alert",
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/error-state.tsx",
@@ -512,8 +772,12 @@
     {
       "name": "spinner",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/spinner.tsx",
@@ -532,8 +796,12 @@
     {
       "name": "icon-label",
       "type": "registry:ui",
-      "dependencies": ["lucide-react"],
-      "registryDependencies": ["utils"],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
       "files": [
         {
           "path": "registry/generated/ui/icon-label.tsx",
