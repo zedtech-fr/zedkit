@@ -32,6 +32,10 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Drawer,
   DrawerContent,
   DrawerDescription,
@@ -51,6 +55,9 @@ import {
   LivePulse,
   OptionCards,
   PageHeader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   RouteModal,
   SecretField,
   Section,
@@ -73,6 +80,9 @@ import {
   Text,
   Textarea,
   Toaster,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
@@ -194,6 +204,45 @@ describe("a11y", () => {
       <RouteModal title="Delivery" description="Tracking details." onClose={vi.fn()}>
         <Text>Shared detail view.</Text>
       </RouteModal>,
+    );
+    await expectNoViolations(document.body);
+  });
+
+  it("open popover", async () => {
+    render(
+      <Popover defaultOpen>
+        <PopoverTrigger asChild>
+          <Button>Filters</Button>
+        </PopoverTrigger>
+        <PopoverContent aria-label="Filters">Open invoices only.</PopoverContent>
+      </Popover>,
+    );
+    await expectNoViolations(document.body);
+  });
+
+  it("open tooltip", async () => {
+    render(
+      <Tooltip defaultOpen>
+        <TooltipTrigger asChild>
+          <Button>Save</Button>
+        </TooltipTrigger>
+        <TooltipContent>Saves the invoice</TooltipContent>
+      </Tooltip>,
+    );
+    await expectNoViolations(document.body);
+  });
+
+  it("open action menu", async () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger asChild>
+          <Button>Actions</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Duplicate invoice</DropdownMenuItem>
+          <DropdownMenuItem>Archive invoice</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>,
     );
     await expectNoViolations(document.body);
   });

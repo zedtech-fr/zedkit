@@ -1802,7 +1802,9 @@
           "a11y": "Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button carries the shared `focus-ring`.",
           "seeAlso": [
             "Confirm destructive actions",
-            "Slide in a drawer panel"
+            "Slide in a drawer panel",
+            "Float extra content next to a control",
+            "Open a menu of actions from a button"
           ]
         },
         {
@@ -1866,6 +1868,80 @@
           "seeAlso": [
             "Open modal dialogs",
             "Show key-value details and a live indicator"
+          ]
+        },
+        {
+          "need": "Float extra content next to a control",
+          "import": "`@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`",
+          "wraps": "`@radix-ui/react-popover`",
+          "status": "alpha",
+          "shortName": "Popover",
+          "audience": "Developers showing a small panel next to a button without leaving the page.",
+          "purpose": "Anchored panel (trigger + content) that stays while the reader looks, then closes on Escape or outside click.",
+          "whenToUse": "For filters, a short form, or extra context that must stay on screen.",
+          "whenNotToUse": "For a list of actions — use the action menu. For a task that needs full attention — use a dialog.",
+          "derivedFrom": "shadcn/ui (popover)",
+          "example": "import { Button, Heading, Popover, PopoverContent, PopoverTrigger, Text } from \"@zedtech/zedkit-ui\";\n<Popover>\n  <PopoverTrigger asChild><Button variant=\"outline\">Filters</Button></PopoverTrigger>\n  <PopoverContent aria-label=\"Filters\">\n    <Heading level={3}>Filters</Heading>\n    <Text>Status: open invoices only.</Text>\n  </PopoverContent>\n</Popover>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button, Heading, Popover, PopoverContent, PopoverTrigger, Text } from \"@zedtech/zedkit-ui\";\n<Popover>\n  <PopoverTrigger asChild><Button variant=\"outline\">Filters</Button></PopoverTrigger>\n  <PopoverContent aria-label=\"Filters\">\n    <Heading level={3}>Filters</Heading>\n    <Text>Status: open invoices only.</Text>\n  </PopoverContent>\n</Popover>"
+            }
+          ],
+          "a11y": "Content is `role=\"dialog\"`. Give it a name (`aria-label` or a heading). Focus is not trapped (unlike Dialog). Escape and outside click dismiss.",
+          "seeAlso": [
+            "Open modal dialogs",
+            "Open a menu of actions from a button",
+            "Name a control on hover"
+          ]
+        },
+        {
+          "need": "Name a control on hover",
+          "import": "`@zedtech/zedkit-ui` — `Tooltip`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`",
+          "wraps": "`@radix-ui/react-tooltip`",
+          "status": "alpha",
+          "shortName": "Tooltip",
+          "audience": "Developers adding a short extra name that appears on hover or focus.",
+          "purpose": "Instant hover/focus hint. Each Tooltip ships its own provider (`delayDuration` 0).",
+          "whenToUse": "For a one-line hint on a control that already has a visible name.",
+          "whenNotToUse": "For an icon-only button — pass `label` on `IconButton`. For text the reader must keep — use a popover.",
+          "derivedFrom": "shadcn/ui (tooltip)",
+          "example": "import { Button, Tooltip, TooltipContent, TooltipTrigger } from \"@zedtech/zedkit-ui\";\n<Tooltip>\n  <TooltipTrigger asChild><Button>Save</Button></TooltipTrigger>\n  <TooltipContent>Saves the invoice</TooltipContent>\n</Tooltip>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button, Tooltip, TooltipContent, TooltipTrigger } from \"@zedtech/zedkit-ui\";\n<Tooltip>\n  <TooltipTrigger asChild><Button>Save</Button></TooltipTrigger>\n  <TooltipContent>Saves the invoice</TooltipContent>\n</Tooltip>"
+            }
+          ],
+          "a11y": "Content is `role=\"tooltip\"` and tied to the trigger. Keep the sentence short. Keyboard focus shows it as well as hover.",
+          "seeAlso": [
+            "Icon-only actions with a visible name",
+            "Float extra content next to a control"
+          ]
+        },
+        {
+          "need": "Open a menu of actions from a button",
+          "import": "`@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`",
+          "wraps": "`@radix-ui/react-dropdown-menu`",
+          "status": "alpha",
+          "shortName": "DropdownMenu",
+          "audience": "Developers grouping a few actions behind one button.",
+          "purpose": "Action menu (trigger + items) with keyboard and axe coverage. Not a form select.",
+          "whenToUse": "For Duplicate, Archive, and similar verbs on one row or page.",
+          "whenNotToUse": "For choosing one form value — use Select. For a destructive confirm — use ConfirmDialog after the item is chosen.",
+          "derivedFrom": "shadcn/ui (dropdown-menu)",
+          "example": "import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from \"@zedtech/zedkit-ui\";\n<DropdownMenu>\n  <DropdownMenuTrigger asChild><Button variant=\"outline\">Actions</Button></DropdownMenuTrigger>\n  <DropdownMenuContent>\n    <DropdownMenuItem>Duplicate invoice</DropdownMenuItem>\n    <DropdownMenuSeparator />\n    <DropdownMenuItem>Archive invoice</DropdownMenuItem>\n  </DropdownMenuContent>\n</DropdownMenu>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from \"@zedtech/zedkit-ui\";\n<DropdownMenu>\n  <DropdownMenuTrigger asChild><Button variant=\"outline\">Actions</Button></DropdownMenuTrigger>\n  <DropdownMenuContent>\n    <DropdownMenuItem>Duplicate invoice</DropdownMenuItem>\n    <DropdownMenuSeparator />\n    <DropdownMenuItem>Archive invoice</DropdownMenuItem>\n  </DropdownMenuContent>\n</DropdownMenu>"
+            }
+          ],
+          "a11y": "Content is `role=\"menu\"`; items are `role=\"menuitem\"`. Arrow keys move, Enter chooses, Escape closes. The trigger name should say what the menu is (Actions), not a verb that sounds like it already ran.",
+          "seeAlso": [
+            "Pick one option from a dropdown",
+            "Confirm destructive actions",
+            "Open modal dialogs"
           ]
         },
         {

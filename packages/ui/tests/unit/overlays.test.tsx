@@ -1,13 +1,28 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { Button } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "#index.js";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "#index.js";
+import { Popover, PopoverContent, PopoverTrigger } from "#index.js";
 import { SecretField } from "#index.js";
 import { Toaster, toast } from "#index.js";
+import { Tooltip, TooltipContent, TooltipTrigger } from "#index.js";
+import { stubSelectJsdom } from "./select-fixture.js";
+import { assertNoValueArbitraries } from "./no-arbitraries.js";
 
 describe("overlays", () => {
+  beforeAll(() => {
+    stubSelectJsdom();
+  });
+
   it("opens and closes a dialog", async () => {
     const user = userEvent.setup();
     render(
@@ -181,6 +196,70 @@ describe("overlays", () => {
       expect(container.innerHTML).toContain(token);
     }
     expect(container.innerHTML).not.toMatch(/bg-(red|blue|green|amber)-/);
+  });
+
+  it("opens and closes a popover", async () => {
+    const user = userEvent.setup();
+    render(
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button>Filters</Button>
+        </PopoverTrigger>
+        <PopoverContent aria-label="Filters">Open invoices only.</PopoverContent>
+      </Popover>,
+    );
+    expect(screen.queryByRole("dialog", { name: "Filters" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Filters" }));
+    const panel = screen.getByRole("dialog", { name: "Filters" });
+    expect(panel).not.toBeNull();
+    expect(panel.className).toContain("z-overlay");
+    expect(panel.className).toContain("bg-popover");
+    assertNoValueArbitraries(panel.className);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "Filters" })).toBeNull();
+  });
+
+  it("shows a tooltip on hover", async () => {
+    const user = userEvent.setup();
+    render(
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button>Save</Button>
+        </TooltipTrigger>
+        <TooltipContent>Saves the invoice</TooltipContent>
+      </Tooltip>,
+    );
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    await user.hover(screen.getByRole("button", { name: "Save" }));
+    const tip = await screen.findByRole("tooltip");
+    expect(tip.textContent).toContain("Saves the invoice");
+    expect(tip.className).toContain("z-overlay");
+    assertNoValueArbitraries(tip.className);
+  });
+
+  it("opens a menu, picks an item, and closes", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button>Actions</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onSelect={onSelect}>Duplicate invoice</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Archive invoice</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>,
+    );
+    expect(screen.queryByRole("menu")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Actions" }));
+    const menu = await screen.findByRole("menu");
+    expect(menu.className).toContain("z-overlay");
+    assertNoValueArbitraries(menu.className);
+    await user.click(screen.getByRole("menuitem", { name: "Duplicate invoice" }));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("menu")).toBeNull();
   });
 
   describe("secret field", () => {

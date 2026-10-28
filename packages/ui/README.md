@@ -57,7 +57,8 @@ kit packages.
 - `cn()`: classnames merge.
 - Primitives: `Button`, `Badge`, `Input`, `Label`, `Separator`,
   `Skeleton` (see CATALOG.md for usage).
-- Overlays: `Dialog` set, `ConfirmDialog`, `Toaster`, `SecretField`.
+- Overlays: `Dialog` set, `ConfirmDialog`, `Popover`, `Tooltip`,
+  `DropdownMenu`, `Toaster`, `SecretField`.
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
