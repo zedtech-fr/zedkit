@@ -53,8 +53,10 @@ without explicit approval. Invoke it via the `orchestrate` skill or `/orchestrat
 
 Bundled slash commands (each runs its skill on the command arguments):
 
-`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`, `handoff`,
-`audit`, `orchestrate`, `research`.
+<DocsKitNameList
+  kind="command"
+  names={["review", "plan", "challenge", "implement", "setup-ai", "pr", "handoff", "audit", "orchestrate", "research"]}
+/>.
 
 Each file starts with frontmatter (`name`, one-line `description`,
 `model: inherit`, `disallowedTools` for read-only agents) at
@@ -64,11 +66,28 @@ Each file starts with frontmatter (`name`, one-line `description`,
 ## Review lenses
 
 `review` pins the diff once, then routes paths to lenses
-(`packages/ai/kit/skills/review/lenses.md`). Always mandatory: `code`,
-`ponytail`, `persona`, `quality gate`. Triggered by what changed:
-`adversarial-tests`, `security`, `skeptic`, `ui`, `copy`, `a11y`, `seo`,
-`dependencies`, `docs`, `release`, `research`, `frontend-quality`,
-`doc-demos`. Every verdict needs evidence (`file:line`, command, screenshot).
+(`packages/ai/kit/skills/review/lenses.md`). Always mandatory:
+<DocsKitNameList kind="lens" names={["code", "ponytail", "persona", "quality gate"]} />.
+Triggered by what changed:
+<DocsKitNameList
+  kind="lens"
+  names={[
+    "adversarial-tests",
+    "security",
+    "skeptic",
+    "ui",
+    "copy",
+    "a11y",
+    "seo",
+    "dependencies",
+    "docs",
+    "release",
+    "research",
+    "frontend-quality",
+    "doc-demos",
+  ]}
+/>.
+Every verdict needs evidence (`file:line`, command, screenshot).
 
 ## Personas
 
