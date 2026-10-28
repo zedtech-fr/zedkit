@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { checkUiExportStates, isUiComponentExport } from "./catalog.mjs";
+import "./check-previews.test.mjs";
 
 const example = "packages/ui/tests/unit/data-table.test.tsx";
 const hint = `Example fixture: \`${example}\``;
