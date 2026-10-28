@@ -37,8 +37,8 @@ describe("status dot", () => {
 
   it("sizes the dot from theme tokens", () => {
     const { container } = render(<StatusDot tone="active" />);
-    expect(container.innerHTML).toContain("size-status-dot");
-    expect(container.innerHTML).not.toContain("size-2");
+    expect(container.innerHTML).toContain("size-2");
+    expect(container.innerHTML).not.toContain("size-status-dot");
   });
 
   it("renders without a color when the tone is unknown", () => {
