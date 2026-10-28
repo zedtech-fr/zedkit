@@ -184,6 +184,57 @@
         }
       ]
     },
+    "@zedtech/zedkit-i18n": {
+      "catalog": "packages/i18n/CATALOG.md",
+      "keywords": [
+        "i18n",
+        "localization",
+        "messages",
+        "react",
+        "typescript"
+      ],
+      "audience": "App authors who pass typed copy objects instead of scattering literals.",
+      "needs": [
+        {
+          "need": "Format message templates",
+          "import": "`@zedtech/zedkit-i18n` — `formatMessage`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "formatMessage",
+          "audience": "Any TypeScript code with simple `{placeholder}` strings.",
+          "purpose": "Replace `{key}` segments without adopting a full i18n stack.",
+          "whenToUse": "Pagination labels, short templates in typed catalogs.",
+          "whenNotToUse": "ICU plurals or locale-aware dates — use `Intl` or a dedicated i18n library at the app root.",
+          "derivedFrom": null,
+          "example": "import { formatMessage } from \"@zedtech/zedkit-i18n\";\nformatMessage(\"Page {page} of {pageCount}\", { page: 2, pageCount: 5 });",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { formatMessage } from \"@zedtech/zedkit-i18n\";\nformatMessage(\"Page {page} of {pageCount}\", { page: 2, pageCount: 5 });"
+            }
+          ]
+        },
+        {
+          "need": "Create a typed messages context",
+          "import": "`@zedtech/zedkit-i18n/react` — `createMessagesContext`, `MessagesProviderProps`",
+          "wraps": "`react`",
+          "status": "alpha",
+          "shortName": "createMessagesContext",
+          "audience": "React apps that inject a copy object once at the root.",
+          "purpose": "Returns `MessagesProvider`, `useMessages`, and `defaultMessages` for a catalog type.",
+          "whenToUse": "Feature folders with a `copy` object, or wrapping kit chrome like the UI provider.",
+          "whenNotToUse": "When you already use a framework i18n layer — keep catalogs there and pass derived strings as props.",
+          "derivedFrom": null,
+          "example": "import { createMessagesContext } from \"@zedtech/zedkit-i18n/react\";\n\nconst catalog = { save: \"Save\" };\nconst { MessagesProvider, useMessages } = createMessagesContext(catalog);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createMessagesContext } from \"@zedtech/zedkit-i18n/react\";\n\nconst catalog = { save: \"Save\" };\nconst { MessagesProvider, useMessages } = createMessagesContext(catalog);"
+            }
+          ]
+        }
+      ]
+    },
     "@zedtech/zedkit-nest": {
       "catalog": "packages/nest/CATALOG.md",
       "keywords": [
@@ -1016,7 +1067,7 @@
           "status": "alpha",
           "shortName": "ZedkitUiProvider",
           "audience": "Apps that ship the kit in English or French and need Close, Filter, empty, and loading labels to follow the page language.",
-          "purpose": "One provider plus typed en/fr bundles for kit chrome; a per-host label prop still wins.",
+          "purpose": "One provider plus typed en/fr bundles for kit chrome; backed by `createMessagesContext` from `@zedtech/zedkit-i18n/react`. A per-host label prop still wins.",
           "whenToUse": "Around the tree when the UI language is not English, or when you pass your own copy.",
           "whenNotToUse": "For app copy (page titles, form labels, empty-state stories) — keep those in your own messages.",
           "derivedFrom": null,

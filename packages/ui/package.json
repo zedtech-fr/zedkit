@@ -68,6 +68,7 @@
     "tailwindcss": "catalog:"
   },
   "dependencies": {
+    "@zedtech/zedkit-i18n": "workspace:*",
     "@hookform/resolvers": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",

@@ -21,7 +21,7 @@ import { JSX } from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import type { LucideIcon } from 'lucide-react';
 import * as React_2 from 'react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { RowData } from '@tanstack/react-table';
 import { RowModel } from '@tanstack/react-table';
 import * as SelectPrimitive from '@radix-ui/react-select';

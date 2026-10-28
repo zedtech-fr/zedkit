@@ -7,6 +7,7 @@ import { rewriteUiImports } from "./rewrite-ui-imports.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const uiSrc = join(root, "packages/ui/src");
+const i18nSrc = join(root, "packages/i18n/src");
 const generatedDir = join(root, "registry/generated/ui");
 const outDir = join(root, "apps/docs/public/r");
 
@@ -18,6 +19,10 @@ function stageTransformedSources() {
   mkdirSync(generatedDir, { recursive: true });
   for (const file of REGISTRY_UI_FILES) {
     const raw = readFileSync(join(uiSrc, file), "utf8");
+    writeFileSync(join(generatedDir, file), rewriteUiImports(raw), "utf8");
+  }
+  for (const file of ["create-messages-context.tsx"]) {
+    const raw = readFileSync(join(i18nSrc, file), "utf8");
     writeFileSync(join(generatedDir, file), rewriteUiImports(raw), "utf8");
   }
 }

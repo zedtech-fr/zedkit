@@ -24,6 +24,8 @@ import { Input } from "./input.js";
 import { Skeleton } from "./skeleton.js";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table.js";
 import { cn } from "./utils.js";
+import { formatMessage } from "@zedtech/zedkit-i18n";
+
 import { useUiMessages } from "./ui-provider.js";
 
 const features = tableFeatures({
@@ -115,7 +117,7 @@ export function DataTablePagination({
   return (
     <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
       <span className="text-sm text-muted-foreground">
-        {messages.pageOf.replace("{page}", String(page)).replace("{pageCount}", String(pageCountShown))}
+        {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
       <Button variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
         {messages.previous}

@@ -46,6 +46,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/generated/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/generated/ui/messages.ts",
           "type": "registry:ui"
         }
@@ -70,6 +74,10 @@
         },
         {
           "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/create-messages-context.tsx",
           "type": "registry:ui"
         },
         {
@@ -130,6 +138,10 @@
         },
         {
           "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/create-messages-context.tsx",
           "type": "registry:ui"
         },
         {
@@ -348,6 +360,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/generated/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/generated/ui/messages.ts",
           "type": "registry:ui"
         }
@@ -391,6 +407,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/generated/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/generated/ui/messages.ts",
           "type": "registry:ui"
         }
@@ -426,6 +446,10 @@
         },
         {
           "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/create-messages-context.tsx",
           "type": "registry:ui"
         },
         {
