@@ -71,7 +71,7 @@ export function Wizard({ children, className, ...props }: WizardProps) {
   return (
     <ol
       data-slot="wizard"
-      className={cn("flex flex-wrap items-center gap-x-wizard-steps-gap gap-y-2", className)}
+      className={cn("flex flex-wrap items-center gap-x-3 gap-y-2", className)}
       aria-label={messages.progress}
       {...props}
     >
