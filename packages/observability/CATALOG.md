@@ -100,3 +100,53 @@ import { createProductAnalyticsTracker } from "@zedtech/zedkit-observability/pos
 const tracker = createProductAnalyticsTracker(client);
 tracker.capture("page_view", { path: "/home" });
 ```
+
+## Persist analytics consent choices
+
+- Import: `@zedtech/zedkit-observability/consent` — `ConsentStore`, `ConsentRecord`, `ConsentCategory`, `createMemoryConsentStore`, `createLocalStorageConsentStore`, `isCategoryGranted`, `CONSENT_CATEGORIES`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: Consent store
+- Audience: Public sites that must record analytics/marketing opt-in before loading tags.
+- Purpose: Small consent store with memory and localStorage backends.
+- When to use: Before gating trackers or third-party scripts.
+- When not to use: Logged-in admin apps with no public marketing tags.
+
+```ts
+import { createMemoryConsentStore } from "@zedtech/zedkit-observability/consent";
+const store = createMemoryConsentStore();
+store.write({ analytics: true, marketing: false });
+```
+
+## Gate trackers and script loaders on consent
+
+- Import: `@zedtech/zedkit-observability/consent` — `createConsentGatedTracker`, `runConsentGatedLoader`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: Gated tracker
+- Audience: Teams wiring the Tracker port behind analytics consent.
+- Purpose: Drop captures until a category is granted; run loaders when consent turns on.
+- When to use: With `createProductAnalyticsTracker` or any custom script loader.
+- When not to use: Strictly necessary cookies (no gate needed).
+
+```ts
+import { createConsentGatedTracker } from "@zedtech/zedkit-observability/consent";
+const gated = createConsentGatedTracker(tracker, store, "analytics");
+```
+
+## Consent UI in React
+
+- Import: `@zedtech/zedkit-observability/consent/react` — `ConsentProvider`, `ConsentGate`, `ConsentBanner`, `useConsentCategory`, `useConsentGatedLoader`
+- Wraps: `@zedtech/zedkit-ui` (Dialog, Switch)
+- Status: alpha
+- Short name: Consent UI
+- Audience: React apps showing a first-visit banner and gating children.
+- Purpose: Provider, category gate, banner, and hook to defer analytics loaders.
+- When to use: Public marketing sites using the observability tracker port.
+- When not to use: Server components (use the store on the client only).
+
+```ts
+import { ConsentBanner, ConsentProvider } from "@zedtech/zedkit-observability/consent/react";
+import { createMemoryConsentStore } from "@zedtech/zedkit-observability/consent";
+const store = createMemoryConsentStore();
+```
