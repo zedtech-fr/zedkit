@@ -261,5 +261,7 @@ describe("primitives", () => {
     expect(title.parentElement?.className).toContain("space-y-card-stack");
     expect(screen.getByText("Body text.").className).toContain("p-card-padding");
     expect(screen.getByText("Footer text.").className).toContain("p-card-padding");
+    expect(title.parentElement?.parentElement?.className).toContain("shadow-md");
+    expect(title.parentElement?.parentElement?.className).not.toMatch(/(^|\s)shadow(\s|$)/);
   });
 });
