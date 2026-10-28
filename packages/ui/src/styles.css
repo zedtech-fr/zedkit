@@ -318,6 +318,7 @@
   --spacing-select-item-indicator-gap: 2rem;
   --spacing-select-separator: 0.25rem;
   --container-select-content-min: 8rem;
+  --default-transition-duration: var(--zk-color-duration, 150ms);
 }
 
 @layer base {
@@ -328,6 +329,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--zk-font-sans);
+    line-height: var(--zk-body-leading, 1.6);
   }
   /* No double-tap zoom delay on controls; panning and pinch still work. */
   button,
