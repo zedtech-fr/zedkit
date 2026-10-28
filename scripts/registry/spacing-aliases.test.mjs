@@ -89,6 +89,7 @@ const DEPRECATED_1REM_CLASSES = [
   "space-y-form-item-gap",
   "gap-data-table-pagination-gap",
   "px-field-separator-inline",
+  "gap-page-header-actions-gap",
 ];
 
 function walkJs(dir, acc = []) {

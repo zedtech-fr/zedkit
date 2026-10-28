@@ -16,7 +16,7 @@ export function PageHeader({ title, description, actions, className }: PageHeade
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
         {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
       </div>
-      {actions ? <div className="flex items-center gap-page-header-actions-gap">{actions}</div> : null}
+      {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
     </div>
   );
 }
