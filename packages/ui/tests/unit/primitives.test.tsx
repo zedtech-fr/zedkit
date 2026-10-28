@@ -36,9 +36,10 @@ describe("primitives", () => {
   it("spaces button content from control tokens", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("gap-button-gap");
+    expect(button.className).toContain("gap-2");
+    expect(button.className).not.toContain("gap-button-gap");
     expect(button.className).toContain("py-control-block-lg");
-    expect(button.className).not.toMatch(/(^|\s)(gap-2|py-2)(\s|$)/);
+    expect(button.className).not.toMatch(/(^|\s)py-2(\s|$)/);
   });
 
   it("merges button styles onto asChild link", () => {
