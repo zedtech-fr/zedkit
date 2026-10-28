@@ -11,6 +11,7 @@ import {
   FieldLegend,
   FieldSeparator,
   FieldSet,
+  FieldTitle,
   Input,
 } from "#index.js";
 import { defaultDemoMessages, FormDemo } from "#preview/form-demo.js";
@@ -90,6 +91,7 @@ describe("form brick", () => {
         <FieldLegend>Profile</FieldLegend>
         <FieldGroup>
           <Field>
+            <FieldTitle>Section</FieldTitle>
             <FieldLabel htmlFor="field-demo-name">Name</FieldLabel>
             <FieldDescription>Public display name.</FieldDescription>
             <Input id="field-demo-name" />
@@ -109,6 +111,12 @@ describe("form brick", () => {
     const content = document.querySelector("[data-slot=field-separator-content]");
     expect(content?.className).toContain("px-2");
     expect(content?.className).not.toContain("px-field-separator-inline");
+    const labels = document.querySelectorAll("[data-slot=field-label]");
+    expect(labels.length).toBe(2);
+    for (const label of labels) {
+      expect(label.className).toContain("gap-2");
+      expect(label.className).not.toContain("gap-field-inline");
+    }
   });
 
   it("styles form item, description, and message from design tokens", async () => {
