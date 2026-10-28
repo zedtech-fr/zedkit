@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
@@ -35,7 +36,7 @@ export function DialogTallDemo() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Order activity</DialogTitle>
-          <DialogDescription>Twelve events. The panel scrolls when the list is long.</DialogDescription>
+          <DialogDescription>Twelve events. The title stays put; the list and note scroll.</DialogDescription>
         </DialogHeader>
         <Stack gap={2} className="py-2">
           {EVENTS.map((line) => (
@@ -43,6 +44,7 @@ export function DialogTallDemo() {
               {line}
             </Text>
           ))}
+          <Input aria-label="Note" placeholder="Add a note for the team" />
         </Stack>
         <DialogFooter>
           <Button>Done</Button>
