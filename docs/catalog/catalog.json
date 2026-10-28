@@ -1954,11 +1954,15 @@
           "example": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Order details",
               "code": "import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Open</Button></DialogTrigger>\n  <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>\n</Dialog>"
+            },
+            {
+              "title": "Tall content",
+              "code": "import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Activity</Button></DialogTrigger>\n  <DialogContent>\n    <DialogHeader><DialogTitle>Order activity</DialogTitle></DialogHeader>\n    {events.map((line) => <Text key={line}>{line}</Text>)}\n    <DialogFooter><Button>Done</Button></DialogFooter>\n  </DialogContent>\n</Dialog>"
             }
           ],
-          "a11y": "Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button carries the shared `focus-ring`.",
+          "a11y": "Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button is a 44px (`size-overlay-touch-target`) hit area with `focus-ring`. Tall content scrolls inside `max-h-dialog-max-height` with `overscroll-behavior: contain`.",
           "seeAlso": [
             "Confirm destructive actions",
             "Slide in a drawer panel",
@@ -2195,7 +2199,7 @@
               "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>"
             }
           ],
-          "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live.",
+          "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant scrolls inside `max-h-dialog-max-height`.",
           "seeAlso": [
             "Slide in a drawer panel",
             "Open modal dialogs",

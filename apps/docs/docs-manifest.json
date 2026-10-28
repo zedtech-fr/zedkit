@@ -89,7 +89,10 @@
       "component": "Dialog",
       "props": null,
       "source": "dialog.tsx",
-      "demo": "DialogDemo"
+      "demo": "DialogDemo",
+      "examples": {
+        "Tall content": "DialogTallDemo"
+      }
     },
     "Float extra content next to a control": {
       "package": "@zedtech/zedkit-ui",

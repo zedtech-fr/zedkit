@@ -87,6 +87,9 @@ describe("route modal", () => {
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("right");
     expect(screen.getByText("shared detail view")).not.toBeNull();
     expect(screen.getByText("Tracking details.")).not.toBeNull();
+    expect(dialog.querySelector("[data-slot=drawer-handle]")).not.toBeNull();
+    expect(dialog.querySelector("[data-slot=drawer-body]")).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Close" }).className).toContain("size-overlay-touch-target");
   });
 
   it("renders a bottom sheet without width sizes when direction is bottom", () => {
@@ -227,7 +230,9 @@ describe("route modal", () => {
         x
       </RouteModal>,
     );
-    expect(screen.getByRole("dialog", { name: "Delete item?" })).not.toBeNull();
+    const dialog = screen.getByRole("dialog", { name: "Delete item?" });
+    expect(dialog).not.toBeNull();
+    expect(dialog.className).toContain("max-h-dialog-max-height");
     expect(document.querySelector("[data-vaul-drawer]")).toBeNull();
     pressEscape();
     vi.advanceTimersByTime(200);

@@ -103,12 +103,16 @@ describe("overlays", () => {
     expect(dialog.className).toContain("z-overlay");
     expect(dialog.className).toContain("gap-dialog-gap");
     expect(dialog.className).toContain("p-dialog-padding");
+    expect(dialog.className).toContain("max-h-dialog-max-height");
+    expect(dialog.className).toContain("overflow-y-auto");
+    expect(dialog.className).toContain("overscroll-y-contain");
     expect(screen.getByText("Details").parentElement?.className).toContain("space-y-dialog-header-stack");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain(
       "sm:space-x-dialog-footer-gap",
     );
     const close = screen.getByRole("button", { name: "Close" });
     expect(close.className).toContain("top-overlay-close-offset");
+    expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring");
     expect(close.className).toContain("opacity-50");
     expect(close.innerHTML).toContain("size-icon-control");

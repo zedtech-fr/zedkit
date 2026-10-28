@@ -765,7 +765,8 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - Purpose: Accessible modal dialogs (trigger, content, title, footer) with focus trap and Escape.
 - When to use: For short tasks that need full attention (confirm, edit one thing).
 - When not to use: For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.
-- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button carries the shared `focus-ring`.
+- Examples: Order details, Tall content
+- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button is a 44px (`size-overlay-touch-target`) hit area with `focus-ring`. Tall content scrolls inside `max-h-dialog-max-height` with `overscroll-behavior: contain`.
 - See also: `Confirm destructive actions`, `Slide in a drawer panel`, `Float extra content next to a control`, `Open a menu of actions from a button`
 
 ```ts
@@ -773,6 +774,18 @@ import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedt
 <Dialog>
   <DialogTrigger asChild><Button>Open</Button></DialogTrigger>
   <DialogContent><DialogTitle>Details</DialogTitle></DialogContent>
+</Dialog>
+```
+
+```ts
+import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from "@zedtech/zedkit-ui";
+<Dialog>
+  <DialogTrigger asChild><Button>Activity</Button></DialogTrigger>
+  <DialogContent>
+    <DialogHeader><DialogTitle>Order activity</DialogTitle></DialogHeader>
+    {events.map((line) => <Text key={line}>{line}</Text>)}
+    <DialogFooter><Button>Done</Button></DialogFooter>
+  </DialogContent>
 </Dialog>
 ```
 
@@ -1008,7 +1021,7 @@ const [span, setSpan] = useState<DateRangePickerProps["value"]>();
 - Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
 - When to use: Inside an intercepting `@modal` slot, with `onClose` wired to `closeRoute`.
 - When not to use: For state-driven modals — use `Dialog`/`Drawer` directly with local state.
-- A11y: Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live.
+- A11y: Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant scrolls inside `max-h-dialog-max-height`.
 - Composition: Variant props kept deliberately — the variant selects between two Radix roots sharing one exit orchestration, which slots cannot express; custom layouts compose `Dialog`/`Drawer` directly.
 - See also: `Slide in a drawer panel`, `Open modal dialogs`, `Confirm destructive actions`
 
