@@ -1,21 +1,10 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import { createMessagesContext } from "@zedtech/zedkit-i18n/react";
 
 import { zedkitUiMessagesEn, type ZedkitUiMessages } from "./messages.js";
 
-const UiMessagesContext = createContext<ZedkitUiMessages>(zedkitUiMessagesEn);
+const { MessagesProvider: ZedkitUiProvider, useMessages: useUiMessages } =
+  createMessagesContext<ZedkitUiMessages>(zedkitUiMessagesEn);
 
-export function ZedkitUiProvider({
-  messages,
-  children,
-}: {
-  messages: ZedkitUiMessages;
-  children: ReactNode;
-}) {
-  return <UiMessagesContext.Provider value={messages}>{children}</UiMessagesContext.Provider>;
-}
-
-export function useUiMessages(): ZedkitUiMessages {
-  return useContext(UiMessagesContext);
-}
+export { ZedkitUiProvider, useUiMessages };

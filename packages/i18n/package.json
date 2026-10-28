@@ -1,0 +1,70 @@
+{
+  "name": "@zedtech/zedkit-i18n",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Format `{name}` templates and build a typed React messages context. Original work by the same author.",
+  "keywords": [
+    "i18n",
+    "localization",
+    "messages",
+    "react",
+    "typescript"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/i18n",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/i18n"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

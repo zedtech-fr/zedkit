@@ -511,6 +511,7 @@ const CATALOG_AREA_BY_FOLDER = {
   nest: "backend",
   observability: "backend",
   quality: "backend",
+  i18n: "ui",
 };
 
 function catalogAreaForFolder(folder) {

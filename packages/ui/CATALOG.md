@@ -82,7 +82,7 @@ export function DarkThemeButton() {
 - Status: alpha
 - Short name: ZedkitUiProvider
 - Audience: Apps that ship the kit in English or French and need Close, Filter, empty, and loading labels to follow the page language.
-- Purpose: One provider plus typed en/fr bundles for kit chrome; a per-host label prop still wins.
+- Purpose: One provider plus typed en/fr bundles for kit chrome; backed by `createMessagesContext` from `@zedtech/zedkit-i18n/react`. A per-host label prop still wins.
 - When to use: Around the tree when the UI language is not English, or when you pass your own copy.
 - When not to use: For app copy (page titles, form labels, empty-state stories) — keep those in your own messages.
 - See also: `Confirm destructive actions`, `Show a sortable, filterable, paginated data table`
