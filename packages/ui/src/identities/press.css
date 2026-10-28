@@ -57,12 +57,12 @@
   --tracking-tight: -0.01em;
   --tracking-wide: 0.06em;
   --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 2rem;
+  --text-sm: 0.8rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.125rem;
   --text-4xl: 2.875rem;
   --text-5xl: 3.25rem;
   --zk-heading-weight: 600;

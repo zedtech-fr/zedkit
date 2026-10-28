@@ -2758,7 +2758,7 @@
           "status": "alpha",
           "shortName": "Identities",
           "audience": "Teams that want to change the whole look of an app, or offer a choice, without touching components.",
-          "purpose": "`data-identity` on the root swaps the identity tokens next to light and dark (body line-height, border width, colour-transition duration, type, radius, motion); a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose. Mist keeps the kit defaults; the other looks change those values.",
+          "purpose": "`data-identity` on the root swaps the identity tokens next to light and dark (type size, tracking, shadow, body line-height, border width, colour-transition duration, radius, motion); a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose. Mist keeps the kit defaults; no two looks share the same type size, tracking, or shadow.",
           "whenToUse": "To rebrand or offer several looks from one set of components.",
           "whenNotToUse": "For a single fixed brand — edit the base tokens in `styles.css` instead.",
           "derivedFrom": null,
@@ -2770,7 +2770,7 @@
             },
             {
               "title": "Same card in each look",
-              "code": "import { Badge, Button, Heading, Stack, Text, identities } from \"@zedtech/zedkit-ui\";\n\n// Preview every look at once: the scope changes this subtree only, never <html>.\n{identities.map((look) => (\n  <Stack\n    key={look.id}\n    data-identity-scope=\"\"\n    data-identity={look.id}\n    className=\"rounded-xl border border-border bg-background p-4 font-sans text-foreground\"\n  >\n    <Heading level={3}>{look.label}</Heading>\n    <Badge variant=\"secondary\">New</Badge>\n    <Text variant=\"muted\">{look.description}</Text>\n    <Button size=\"sm\">Save</Button>\n  </Stack>\n))}"
+              "code": "import { Badge, Button, Heading, Stack, Text, identities } from \"@zedtech/zedkit-ui\";\n\n// Preview every look at once: the scope changes this subtree only, never <html>.\n{identities.map((look) => (\n  <Stack\n    key={look.id}\n    data-identity-scope=\"\"\n    data-identity={look.id}\n    className=\"rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md\"\n  >\n    <Heading level={3}>{look.label}</Heading>\n    <Badge variant=\"secondary\">New</Badge>\n    <Text variant=\"muted\">{look.description}</Text>\n    <Button size=\"sm\">Save</Button>\n  </Stack>\n))}"
             },
             {
               "title": "Touch picker",
