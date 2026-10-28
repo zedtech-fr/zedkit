@@ -1,26 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { assertA11yGate } from "./a11y-helpers";
+import { useIdentity } from "./identity-helpers";
 
 // Relative path: the config baseURL decides the port.
 const HOME = "/";
 
-/** Turns mist on for the page (the site default is tide, so mist is chosen explicitly). */
-async function useMist(page: Page, theme: "light" | "dark") {
-  await page.evaluate((mode) => {
-    const root = document.documentElement;
-    root.setAttribute("data-identity", "mist");
-    root.classList.toggle("dark", mode === "dark");
-    root.classList.toggle("light", mode === "light");
-    root.style.colorScheme = mode;
-  }, theme);
-  await page.evaluate(() => document.fonts.ready);
-}
-
 test.describe("mist identity", () => {
   test("sets the page in self-hosted Inter, with a metric-aligned fallback", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
-    await useMist(page, "light");
+    await useIdentity(page, "mist", "light");
     const family = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
     expect(family.startsWith('"Inter Variable"')).toBe(true);
     expect(family).toContain('"Inter Variable Fallback"');
@@ -33,7 +22,7 @@ test.describe("mist identity", () => {
 
   test("text selection uses the inverted accent pair", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
-    await useMist(page, "light");
+    await useIdentity(page, "mist", "light");
     const selection = await page.evaluate(() => {
       const probe = document.createElement("span");
       probe.style.color = "hsl(var(--accent-foreground))";
@@ -51,7 +40,7 @@ test.describe("mist identity", () => {
   for (const theme of ["light", "dark"] as const) {
     test(`passes the a11y gate in ${theme}`, async ({ page }) => {
       await page.goto(HOME, { waitUntil: "networkidle" });
-      await useMist(page, theme);
+      await useIdentity(page, "mist", theme);
       await assertA11yGate(page);
     });
   }
@@ -60,7 +49,7 @@ test.describe("mist identity", () => {
     test(`does not overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto(HOME, { waitUntil: "networkidle" });
-      await useMist(page, "light");
+      await useIdentity(page, "mist", "light");
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
@@ -120,28 +109,14 @@ async function readScopedMist(page: Page) {
   }, PROBE_STYLE);
 }
 
-/** Sets a page identity and colour mode. */
-async function usePageIdentity(page: Page, identity: string, theme: "light" | "dark") {
-  await page.evaluate(
-    ([id, mode]) => {
-      const root = document.documentElement;
-      root.setAttribute("data-identity", id!);
-      root.classList.toggle("dark", mode === "dark");
-      root.classList.toggle("light", mode === "light");
-      root.style.colorScheme = mode!;
-    },
-    [identity, theme],
-  );
-}
-
 test.describe("scoped mist under another page identity", () => {
   for (const theme of ["light", "dark"] as const) {
     test(`renders like a mist page under every identity, ${theme}`, async ({ page }) => {
       await page.goto(HOME, { waitUntil: "networkidle" });
-      await useMist(page, theme);
+      await useIdentity(page, "mist", theme);
       const reference = await readScopedMist(page);
       for (const identity of ["press", "tide", "volt", "maison", "glass"]) {
-        await usePageIdentity(page, identity, theme);
+        await useIdentity(page, identity, theme);
         expect({ identity, ...(await readScopedMist(page)) }).toEqual({ identity, ...reference });
       }
     });
