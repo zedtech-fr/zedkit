@@ -51,7 +51,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed dialog-center z-overlay grid w-full max-w-dialog-mobile gap-dialog-gap rounded-lg border bg-background p-dialog-padding shadow-overlay sm:max-w-lg",
+          "fixed dialog-center z-overlay grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-dialog-gap overflow-y-auto overscroll-y-contain rounded-lg border bg-background p-dialog-padding shadow-overlay sm:max-w-lg",
           "motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)]",
           "motion-safe:data-[state=closed]:animate-[zk-zoom-out_var(--motion-base)_var(--ease-exit)]",
           className,

@@ -259,6 +259,7 @@
   --spacing-overlay-touch-target: 2.75rem;
   /* Dialog width on phones: full width minus thumb gutters each side. */
   --container-dialog-mobile: calc(100% - 2rem);
+  --spacing-dialog-max-height: 90dvh;
   --spacing-app-shell-sidebar: 16rem;
   --spacing-app-shell-padding: 1rem;
   --spacing-app-shell-padding-md: 1.5rem;

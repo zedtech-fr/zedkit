@@ -215,6 +215,11 @@
     "tokens": ["--spacing-overlay-touch-target"]
   },
   {
+    "canonical": "--spacing-dialog-max-height",
+    "value": "90dvh",
+    "tokens": ["--spacing-dialog-max-height"]
+  },
+  {
     "canonical": "--spacing-drawer-sheet-max-height",
     "value": "88dvh",
     "tokens": ["--spacing-drawer-sheet-max-height"]

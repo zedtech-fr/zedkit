@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { X } from "lucide-react";
-import { Button } from "./button.js";
 import {
   Dialog,
   DialogContent,
@@ -12,14 +10,16 @@ import {
 } from "./dialog.js";
 import {
   Drawer,
-  DrawerClose,
+  DrawerBody,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
+  DrawerHandle,
   DrawerHeader,
   DrawerTitle,
 } from "./drawer.js";
+import { Stack } from "./layout.js";
 import { cn } from "./utils.js";
-import { useUiMessages } from "./ui-provider.js";
 
 export type RouteModalVariant = "drawer" | "dialog";
 export type RouteModalSize = "sm" | "md" | "lg";
@@ -92,7 +92,6 @@ export function RouteModal({
   onClose,
   className,
 }: RouteModalProps) {
-  const messages = useUiMessages();
   const [open, setOpen] = React.useState(true);
   const closing = React.useRef(false);
   const timer = React.useRef(0);
@@ -190,16 +189,17 @@ export function RouteModal({
     // eslint-disable-next-line jsx-a11y/no-autofocus -- see above (#507)
     <Drawer data-slot="route-modal" open={open} onOpenChange={handleOpenChange} direction={direction} autoFocus>
       <DrawerContent className={cn(drawerSizeClass, className)}>
-        <DrawerClose asChild>
-          <Button variant="ghost" size="icon" aria-label={messages.close} className="absolute top-overlay-close-offset right-overlay-close-offset">
-            <X className="size-icon-control" />
-          </Button>
-        </DrawerClose>
+        <DrawerHandle />
         <DrawerHeader>
-          <DrawerTitle>{title}</DrawerTitle>
-          {description ? <DrawerDescription>{description}</DrawerDescription> : null}
+          <Stack direction="horizontal" gap={2} className="items-start justify-between">
+            <Stack gap={1} className="min-w-0 flex-1 text-left">
+              <DrawerTitle>{title}</DrawerTitle>
+              {description ? <DrawerDescription>{description}</DrawerDescription> : null}
+            </Stack>
+            <DrawerCloseButton className="shrink-0" />
+          </Stack>
         </DrawerHeader>
-        {children}
+        <DrawerBody>{children}</DrawerBody>
       </DrawerContent>
     </Drawer>
   );

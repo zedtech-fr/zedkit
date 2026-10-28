@@ -41,6 +41,7 @@ import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
 import { DialogDemo } from "./dialog-demo";
+import { DialogTallDemo } from "./dialog-tall-demo";
 import { DropdownMenuDemo } from "./dropdown-menu-demo";
 import { DrawerBottomSheetDemo } from "./drawer-bottom-sheet-demo";
 import { DrawerDemo } from "./drawer-demo";
@@ -171,6 +172,7 @@ export const demoRegistry = {
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
+  DialogTallDemo: { Demo: DialogTallDemo, file: "dialog-tall-demo.tsx", center: true },
   DropdownMenuDemo: { Demo: DropdownMenuDemo, file: "dropdown-menu-demo.tsx", center: true },
   DrawerBottomSheetDemo: { Demo: DrawerBottomSheetDemo, file: "drawer-bottom-sheet-demo.tsx", center: true },
   FlagsDemo: { Demo: FlagsDemo, file: "flags-demo.tsx" },
