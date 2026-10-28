@@ -42,7 +42,7 @@ function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPr
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
-      className={cn("mt-tabs-content-gap focus-ring", className)}
+      className={cn("mt-2 focus-ring", className)}
       {...props}
     />
   );

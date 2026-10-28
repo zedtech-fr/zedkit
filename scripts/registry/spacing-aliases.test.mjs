@@ -85,6 +85,7 @@ const DEPRECATED_1REM_CLASSES = [
   "gap-secret-field-gap",
   "size-status-dot",
   "space-y-card-lines",
+  "mt-tabs-content-gap",
 ];
 
 function walkJs(dir, acc = []) {
