@@ -41,7 +41,7 @@ For **admin UI**, you can install the npm package or copy individual bricks with
 | Path | When to choose it | Command | What you get | Updates |
 | --- | --- | --- | --- | --- |
 | Install packages | Full kit, one import surface, theme tokens from the package | `{{snippet:ui-add.sh}}` | `@zedtech/zedkit-ui` (and peers you add) | Semver via your package manager |
-| Copy via shadcn registry | Files in your repo, full control of one brick | `{{snippet:registry-add.sh}}` | Component source, its npm deps, and CSS variables in your globals | Manual — copied files are yours; the URL tracks the latest published brick |
+| Copy via shadcn registry | Files in your repo, full control of one brick | `{{snippet:registry-add.sh}}` (or `npx shadcn@latest add zedtech-fr/zedkit/<brick>`) | Component source, its npm deps, and CSS variables in your globals | Manual — see [Updating copied files](/docs/zedkit-and-shadcn#updating-copied-files) on the shadcn guide |
 
 Nothing in the catalog is labeled **stable** yet — see the [maturity legend](/docs/maturity-and-compatibility) before you ship. Theme tokens (colors, radius, focus rings, dark/light) ship with the npm package; copied bricks are plain editable files in your tree.
 

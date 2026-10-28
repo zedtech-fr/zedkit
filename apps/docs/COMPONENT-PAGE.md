@@ -11,7 +11,7 @@ hand-written props or export lists.
 | --- | --- | --- |
 | 1 | Install | Package manager tabs + `npx shadcn add <site>/r/<registry>.json` |
 | 2 | Import | Catalog `- Import:` line (exact symbols) |
-| 3 | Registry source | `registry/generated/ui/<registry>.tsx` (rewritten imports), Copy on each block |
+| 3 | Registry source | `registry/ui/<registry>.tsx` (rewritten imports), Copy on each block |
 | 4 | Exports | Symbols from Import + role heuristic |
 | 5 | Preview | `ComponentPreview` / demo registry |
 | 6 | Examples | Catalog `examples[]` (2–3 fenced `ts` blocks; titles from `- Examples:`) |
