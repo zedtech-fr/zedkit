@@ -57,6 +57,21 @@ test("catalog result area chips keep a decorative icon", async ({ page }) => {
   expect(overflow).toBe(true);
 });
 
+test("catalog result maturity chips keep a decorative icon", async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
+  const chips = page.locator("[data-catalog-area]");
+  const badges = page.locator("a[data-badge-link]");
+  const count = await chips.count();
+  expect(count).toBeGreaterThan(0);
+  await expect(badges).toHaveCount(count);
+  await expect(badges.locator("svg[aria-hidden='true']")).toHaveCount(count);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
 test.describe("catalog result area chips light/dark", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
@@ -71,6 +86,25 @@ test.describe("catalog result area chips light/dark", () => {
       await expect(chips.first()).toBeVisible();
       await chips.first().locator("xpath=..").screenshot({
         path: `test-results/catalog-row-area-${mode}.png`,
+      });
+    });
+  }
+});
+
+test.describe("catalog result maturity chips light/dark", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
+      const badge = page.locator("a[data-badge-link]").first();
+      await badge.scrollIntoViewIfNeeded();
+      await expect(badge).toBeVisible();
+      await badge.locator("xpath=..").screenshot({
+        path: `test-results/catalog-row-maturity-${mode}.png`,
       });
     });
   }

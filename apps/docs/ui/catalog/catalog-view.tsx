@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Badge, Button, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { MaturityBadge } from "@/components/maturity-badge";
 import { areaIconFor } from "@/lib/domain-icons";
-import { maturityBadgeVariant } from "@/lib/maturity-status";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
 const AREAS: { id: CatalogArea | "all"; label: string }[] = [
@@ -167,7 +167,7 @@ export function CatalogView({
                       {entry.area}
                     </IconLabel>
                   </Badge>
-                  <Badge variant={maturityBadgeVariant(entry.status)}>{entry.status}</Badge>
+                  <MaturityBadge status={entry.status} />
                 </Stack>
               </Stack>
             ))}
