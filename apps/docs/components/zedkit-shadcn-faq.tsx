@@ -1,4 +1,4 @@
-import { Stack, Text } from "@zedtech/zedkit-ui";
+import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
 import { registryBrickNames } from "@/content/registry-site";
 import { zedkitShadcnFaq } from "@/lib/zedkit-shadcn-faq";
@@ -20,10 +20,10 @@ export function ZedkitShadcnFaq() {
     <>
       <JsonLd data={faqPage} />
       <Stack gap={6}>
-        <h2 className="text-2xl font-semibold tracking-tight">FAQ</h2>
+        <Heading level={2}>FAQ</Heading>
         {entries.map(({ question, answer }) => (
           <Stack key={question} gap={2}>
-            <h3 className="text-lg font-medium">{question}</h3>
+            <Heading level={3}>{question}</Heading>
             <Text as="p" variant="muted">
               {answer}
             </Text>
