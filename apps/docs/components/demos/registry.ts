@@ -30,6 +30,7 @@ import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { ConfirmDialogLabelsDemo } from "./confirm-dialog-labels-demo";
+import { FlagsDemo } from "./flags-demo";
 import { DataTableDemo } from "./data-table-demo";
 import { DataTableEmptyDemo } from "./data-table-empty-demo";
 import { DataTablePaginationDemo } from "./data-table-pagination-demo";
@@ -162,6 +163,7 @@ export const demoRegistry = {
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx", center: true },
   DrawerBottomSheetDemo: { Demo: DrawerBottomSheetDemo, file: "drawer-bottom-sheet-demo.tsx", center: true },
+  FlagsDemo: { Demo: FlagsDemo, file: "flags-demo.tsx" },
   DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },

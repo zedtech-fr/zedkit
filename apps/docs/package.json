@@ -30,6 +30,7 @@
     "@fontsource-variable/jost": "catalog:",
     "@fontsource-variable/newsreader": "catalog:",
     "@fontsource-variable/space-grotesk": "catalog:",
+    "@zedtech/zedkit-flags": "workspace:*",
     "@zedtech/zedkit-seo": "workspace:*",
     "@zedtech/zedkit-ui": "workspace:*",
     "fumadocs-core": "catalog:",
