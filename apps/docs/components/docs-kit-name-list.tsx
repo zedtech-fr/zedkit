@@ -1,7 +1,7 @@
 "use client";
 
 import { ScanSearch, SquareSlash } from "lucide-react";
-import { IconLabel } from "@zedtech/zedkit-ui";
+import { IconLabel, Text } from "@zedtech/zedkit-ui";
 
 const ICONS = {
   command: SquareSlash,
@@ -16,12 +16,16 @@ export function DocsKitNameList({
   names: readonly string[];
 }) {
   return (
-    <span data-kit-names={kind} className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+    <Text
+      as="span"
+      data-kit-names={kind}
+      className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1"
+    >
       {names.map((name) => (
         <IconLabel key={name} icon={ICONS[kind]}>
           <code>{name}</code>
         </IconLabel>
       ))}
-    </span>
+    </Text>
   );
 }
