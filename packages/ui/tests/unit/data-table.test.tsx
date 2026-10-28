@@ -30,10 +30,12 @@ describe("DataTable", () => {
   it("uses token-driven cell padding with no value arbitraries", () => {
     const { container } = render(<DataTable columns={columns} data={data} />);
     const head = container.querySelector("th");
-    expect(head?.className).toContain("px-table-cell");
+    expect(head?.className).toContain("px-2");
+    expect(head?.className).not.toContain("px-table-cell");
     expect(head?.className).toContain("h-table-head-height");
     const cell = container.querySelector("td");
-    expect(cell?.className).toContain("p-table-cell");
+    expect(cell?.className).toContain("p-2");
+    expect(cell?.className).not.toContain("p-table-cell");
     for (const el of [head, cell]) {
       assertNoValueArbitraries(el?.className ?? "");
     }
