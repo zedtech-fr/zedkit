@@ -24,11 +24,11 @@ describe("toggles", () => {
   it("styles the checkbox from design tokens", () => {
     render(<Checkbox aria-label="Accept the terms" defaultChecked />);
     const box = screen.getByRole("checkbox", { name: "Accept the terms" });
-    expect(box.classList.contains("size-checkbox")).toBe(true);
+    expect(box.classList.contains("size-4")).toBe(true);
     expect(box.classList.contains("focus-ring-control")).toBe(true);
     expect(box.className).not.toMatch(/(^|\s)(h-4|w-4|ring-1)(\s|$)/);
     const icon = box.querySelector("svg");
-    expect(icon?.classList.contains("size-checkbox")).toBe(true);
+    expect(icon?.classList.contains("size-4")).toBe(true);
     expect(icon?.getAttribute("aria-hidden")).toBe("true");
   });
 
@@ -54,8 +54,8 @@ describe("toggles", () => {
     expect(toggle.classList.contains("focus-ring")).toBe(true);
     expect(toggle.className).not.toMatch(/(^|\s)(h-5|w-9|ring-2)(\s|$)/);
     const thumb = toggle.querySelector("span");
-    expect(thumb?.classList.contains("size-switch-thumb")).toBe(true);
-    expect(thumb?.className).toContain("translate-x-switch-travel");
-    expect(thumb?.className).not.toContain("translate-x-4");
+    expect(thumb?.classList.contains("size-4")).toBe(true);
+    expect(thumb?.className).toContain("data-[state=checked]:translate-x-4");
+    expect(thumb?.className).not.toContain("translate-x-switch-travel");
   });
 });

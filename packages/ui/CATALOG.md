@@ -1144,7 +1144,7 @@ const [query, setQuery] = useState("");
 - See also: `Group content in a card section`
 - Examples: Simple, Without topbar
 - Registry: app-shell
-- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding comes from the `--spacing-app-shell-padding` / `--spacing-app-shell-padding-md` theme tokens.
+- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-4` / `md:p-app-shell-padding-md`. `--spacing-app-shell-padding` remains as a deprecated alias.
 
 ```ts
 import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
@@ -1211,7 +1211,7 @@ const [solo, setSolo] = useState(false);
 - Examples: Simple, Composed rows
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-4`; block padding still comes from `--spacing-detail-panel-block`. `--spacing-detail-panel-inline` remains as a deprecated alias.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -1362,7 +1362,7 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Examples: Simple, As a section (asChild)
 - A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
 - Registry: alert
-- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role="alert"` per notice; repeated renders re-announce.
+- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";

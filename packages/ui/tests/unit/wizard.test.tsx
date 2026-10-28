@@ -70,8 +70,8 @@ describe("OptionCards", () => {
     expect(group?.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
     const card = screen.getByText("Alpha").closest("label");
     expect(card?.classList.contains("gap-option-card-gap")).toBe(true);
-    expect(card?.classList.contains("p-option-card-padding")).toBe(true);
-    expect(card?.className).not.toMatch(/(^|\s)(gap-3|p-4)(\s|$)/);
+    expect(card?.classList.contains("p-4")).toBe(true);
+    expect(card?.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
   });
 });
 

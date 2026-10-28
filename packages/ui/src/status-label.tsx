@@ -45,7 +45,7 @@ export function StatusLabel({ tone, children, className }: StatusLabelProps) {
         className,
       )}
     >
-      <span className="flex size-status-label-box shrink-0 items-center justify-center">
+      <span className="flex size-4 shrink-0 items-center justify-center">
         <ToneIcon tone={tone} />
       </span>
       {children}

@@ -2320,7 +2320,7 @@
           ],
           "registry": "app-shell",
           "a11y": "Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.",
-          "troubleshooting": "Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding comes from the `--spacing-app-shell-padding` / `--spacing-app-shell-padding-md` theme tokens.",
+          "troubleshooting": "Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-4` / `md:p-app-shell-padding-md`. `--spacing-app-shell-padding` remains as a deprecated alias.",
           "seeAlso": [
             "Group content in a card section"
           ]
@@ -2382,7 +2382,7 @@
           ],
           "registry": "detail-panel",
           "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
-          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — row padding comes from the `--spacing-detail-panel-block` / `--spacing-detail-panel-inline` theme tokens.",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-4`; block padding still comes from `--spacing-detail-panel-block`. `--spacing-detail-panel-inline` remains as a deprecated alias.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"
@@ -2540,7 +2540,7 @@
           ],
           "registry": "alert",
           "a11y": "Root carries `role=\"alert\"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.",
-          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned via `--spacing-alert-icon-offset`). Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
+          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
           "seeAlso": [
             "Show toast notifications"
           ]

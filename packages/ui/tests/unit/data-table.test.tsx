@@ -42,8 +42,8 @@ describe("DataTable", () => {
   it("styles chrome (filter, sort, loading, pagination) from design tokens", () => {
     const { container } = render(<DataTable columns={columns} data={data} pageSize={1} />);
     const root = container.firstElementChild;
-    expect(root?.classList.contains("space-y-data-table-stack")).toBe(true);
-    expect(root?.className).not.toMatch(/(^|\s)space-y-4(\s|$)/);
+    expect(root?.classList.contains("space-y-4")).toBe(true);
+    expect(root?.className).not.toContain("space-y-data-table-stack");
     const filter = container.querySelector("input");
     expect(filter?.classList.contains("max-w-data-table-filter-width")).toBe(true);
     expect(filter?.className).not.toMatch(/(^|\s)max-w-sm(\s|$)/);
@@ -59,8 +59,8 @@ describe("DataTable", () => {
   it("styles loading skeletons from design tokens", () => {
     const { container } = render(<DataTable columns={columns} data={data} loading />);
     const skeleton = container.querySelector(".motion-safe\\:animate-pulse");
-    expect(skeleton?.classList.contains("h-data-table-skeleton-height")).toBe(true);
-    expect(skeleton?.className).not.toMatch(/(^|\s)h-4(\s|$)/);
+    expect(skeleton?.classList.contains("h-4")).toBe(true);
+    expect(skeleton?.className).not.toContain("h-data-table-skeleton-height");
   });
 
   it("sorts ascending then descending when a sortable header is clicked", async () => {

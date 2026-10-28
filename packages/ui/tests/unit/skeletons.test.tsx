@@ -21,8 +21,8 @@ describe("skeletons", () => {
     render(<PageHeaderSkeleton label="Loading report" />);
     const root = screen.getByRole("status", { name: "Loading report" });
     expect(root.className).toContain("mb-page-header-offset");
-    expect(root.className).toContain("gap-page-header-gap");
-    expect(root.className).not.toMatch(/(^|\s)(mb-6|gap-4)(\s|$)/);
+    expect(root.className).toContain("gap-4");
+    expect(root.className).not.toMatch(/(^|\s)mb-6(\s|$)/);
   });
 
   it("shares the card spacing tokens so content lands without shifting", () => {
@@ -30,7 +30,7 @@ describe("skeletons", () => {
     const zone = screen.getByRole("status");
     expect(zone.className).toContain("p-card-padding");
     expect(zone.querySelector(".space-y-card-stack")).not.toBeNull();
-    expect(zone.querySelector(".mt-card-section.space-y-card-lines")).not.toBeNull();
+    expect(zone.querySelector(".mt-4.space-y-card-lines")).not.toBeNull();
   });
 
   it("sizes the table skeleton to its columns and rows", () => {

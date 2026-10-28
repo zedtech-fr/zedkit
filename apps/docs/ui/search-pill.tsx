@@ -183,7 +183,7 @@ export function SearchPill() {
           onClick={() => setOpen(true)}
           className={`${iconButtonClassName} bg-primary text-primary-foreground shadow-lg active:scale-95 motion-reduce:transition-none`}
         >
-          <Search aria-hidden="true" className="size-icon-control" />
+          <Search aria-hidden="true" className="size-4" />
         </button>
       </div>
     </div>

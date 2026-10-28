@@ -156,9 +156,13 @@
   /*
    * Spacing convention (#367): one canonical name per value. A value used
    * by 2+ tokens is canonicalized to its Tailwind scale step — new code
-   * uses default utilities (p-4, gap-2) instead of minting another alias.
-   * Single-use values keep their semantic token. The full value → tokens
-   * map is scripts/registry/spacing-aliases.json, enforced by its test.
+   * uses default utilities (p-4, gap-2, size-4) instead of minting another
+   * alias. Single-use values keep their semantic token. The full value →
+   * tokens map is scripts/registry/spacing-aliases.json, enforced by its
+   * test. Remaining 1rem aliases below are deprecated: new kit code uses
+   * scale 4. Tokens stay so copied CSS and existing class names still
+   * work. `--spacing-drawer-footer-safe` still references
+   * `--spacing-drawer-chrome-padding`.
    */
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
