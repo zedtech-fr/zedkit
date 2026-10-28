@@ -80,7 +80,7 @@ same script if exceeded:
 
 | Package | Budget |
 |---|---|
-| `@zedtech/zedkit-ui` | 31 000 bytes |
+| `@zedtech/zedkit-ui` | 35 200 bytes |
 | `@zedtech/zedkit-ai` | 9 500 bytes |
 
 Raise the number in `scripts/check-pack.sh` in the PR that grows the
