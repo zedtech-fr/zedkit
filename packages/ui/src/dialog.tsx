@@ -1,11 +1,52 @@
 // Derived from shadcn/ui (dialog) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "./utils.js";
 import { useUiMessages } from "./ui-provider.js";
+
+/** Air between the panel and the visual viewport edge (same 16px as the docs search sheet). */
+const VIEWPORT_GUTTER_PX = 16;
+
+function useDialogViewportFit<T extends HTMLElement>(): React.RefCallback<T> {
+  const nodeRef = React.useRef<T | null>(null);
+  const apply = React.useCallback(() => {
+    const node = nodeRef.current;
+    const viewport = window.visualViewport;
+    if (!node) return;
+    if (!viewport) {
+      node.style.maxHeight = "";
+      node.style.top = "";
+      return;
+    }
+    const height = Math.max(0, viewport.height - VIEWPORT_GUTTER_PX);
+    node.style.maxHeight = `min(var(--spacing-dialog-max-height), ${height}px)`;
+    node.style.top = `${viewport.offsetTop + viewport.height / 2}px`;
+  }, []);
+
+  React.useLayoutEffect(() => {
+    apply();
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("resize", apply);
+    viewport?.addEventListener("scroll", apply);
+    return () => {
+      viewport?.removeEventListener("resize", apply);
+      viewport?.removeEventListener("scroll", apply);
+      const node = nodeRef.current;
+      if (node) {
+        node.style.maxHeight = "";
+        node.style.top = "";
+      }
+    };
+  }, [apply]);
+
+  return (node) => {
+    nodeRef.current = node;
+    apply();
+  };
+}
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -42,14 +83,22 @@ function DialogContent({
   className,
   children,
   closeLabel,
+  ref,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & { closeLabel?: string }) {
   const messages = useUiMessages();
+  const fitRef = useDialogViewportFit<HTMLDivElement>();
+  const setRef = (node: HTMLDivElement | null) => {
+    fitRef(node);
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        ref={setRef}
         className={cn(
           "fixed dialog-center z-overlay grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-dialog-gap overflow-y-auto overscroll-y-contain rounded-lg border bg-background p-dialog-padding shadow-overlay sm:max-w-lg",
           "motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)]",
@@ -59,7 +108,7 @@ function DialogContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset z-20 grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <X className="size-4" />
           <span className="sr-only">{closeLabel ?? messages.close}</span>
         </DialogPrimitive.Close>
@@ -72,7 +121,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col space-y-dialog-header-stack text-center sm:text-left", className)}
+      className={cn(
+        "sticky top-0 z-10 flex flex-col space-y-dialog-header-stack bg-background pr-dialog-header-end text-center sm:text-left",
+        className,
+      )}
       {...props}
     />
   );
@@ -82,7 +134,10 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-dialog-footer-gap", className)}
+      className={cn(
+        "sticky bottom-0 z-10 flex flex-col-reverse bg-background pb-dialog-footer-safe sm:flex-row sm:justify-end sm:space-x-dialog-footer-gap",
+        className,
+      )}
       {...props}
     />
   );

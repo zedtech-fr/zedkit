@@ -766,7 +766,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - When to use: For short tasks that need full attention (confirm, edit one thing).
 - When not to use: For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.
 - Examples: Order details, Tall content
-- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button is a 44px (`size-overlay-touch-target`) hit area with `focus-ring`. Tall content scrolls inside `max-h-dialog-max-height` with `overscroll-behavior: contain`.
+- A11y: Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button is a 44px (`size-overlay-touch-target`) hit area with `focus-ring` and sits above the sticky title (`z-20`). Tall content scrolls inside `max-h-dialog-max-height`, further capped to the visual viewport when the software keyboard is open, with `overscroll-behavior: contain`. Header and footer stay sticky; footer actions clear `env(safe-area-inset-bottom)`.
 - See also: `Confirm destructive actions`, `Slide in a drawer panel`, `Float extra content next to a control`, `Open a menu of actions from a button`
 
 ```ts
@@ -1022,7 +1022,7 @@ const [span, setSpan] = useState<DateRangePickerProps["value"]>();
 - When to use: Inside an intercepting `@modal` slot, with `onClose` wired to `closeRoute`.
 - When not to use: For state-driven modals — use `Dialog`/`Drawer` directly with local state.
 - Examples: Order in a drawer, Centered dialog
-- A11y: Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant scrolls inside `max-h-dialog-max-height`.
+- A11y: Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant inherits Dialog's visual-viewport cap, sticky chrome, and 44px close.
 - Composition: Variant props kept deliberately — the variant selects between two Radix roots sharing one exit orchestration, which slots cannot express; custom layouts compose `Dialog`/`Drawer` directly.
 - See also: `Slide in a drawer panel`, `Open modal dialogs`, `Confirm destructive actions`
 

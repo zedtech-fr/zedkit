@@ -220,6 +220,16 @@
     "tokens": ["--spacing-dialog-max-height"]
   },
   {
+    "canonical": "--spacing-dialog-header-end",
+    "value": "calc(var(--spacing-overlay-touch-target) + var(--spacing-overlay-close-offset))",
+    "tokens": ["--spacing-dialog-header-end"]
+  },
+  {
+    "canonical": "--spacing-dialog-footer-safe",
+    "value": "env(safe-area-inset-bottom, 0px)",
+    "tokens": ["--spacing-dialog-footer-safe"]
+  },
+  {
     "canonical": "--spacing-drawer-sheet-max-height",
     "value": "88dvh",
     "tokens": ["--spacing-drawer-sheet-max-height"]

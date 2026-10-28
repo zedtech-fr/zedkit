@@ -261,6 +261,8 @@
   /* Dialog width on phones: full width minus thumb gutters each side. */
   --container-dialog-mobile: calc(100% - 2rem);
   --spacing-dialog-max-height: 90dvh;
+  --spacing-dialog-header-end: calc(var(--spacing-overlay-touch-target) + var(--spacing-overlay-close-offset));
+  --spacing-dialog-footer-safe: env(safe-area-inset-bottom, 0px);
   --spacing-app-shell-sidebar: 16rem;
   --spacing-app-shell-padding: 1rem;
   --spacing-app-shell-padding-md: 1.5rem;

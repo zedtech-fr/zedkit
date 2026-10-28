@@ -1962,7 +1962,7 @@
               "code": "import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Activity</Button></DialogTrigger>\n  <DialogContent>\n    <DialogHeader><DialogTitle>Order activity</DialogTitle></DialogHeader>\n    {events.map((line) => <Text key={line}>{line}</Text>)}\n    <DialogFooter><Button>Done</Button></DialogFooter>\n  </DialogContent>\n</Dialog>"
             }
           ],
-          "a11y": "Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button is a 44px (`size-overlay-touch-target`) hit area with `focus-ring`. Tall content scrolls inside `max-h-dialog-max-height` with `overscroll-behavior: contain`.",
+          "a11y": "Focus trap and Escape come from Radix; content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close button is a 44px (`size-overlay-touch-target`) hit area with `focus-ring` and sits above the sticky title (`z-20`). Tall content scrolls inside `max-h-dialog-max-height`, further capped to the visual viewport when the software keyboard is open, with `overscroll-behavior: contain`. Header and footer stay sticky; footer actions clear `env(safe-area-inset-bottom)`.",
           "seeAlso": [
             "Confirm destructive actions",
             "Slide in a drawer panel",
@@ -2203,7 +2203,7 @@
               "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\n<RouteModal title=\"Invoice\" variant=\"dialog\" onClose={() => closeRoute({ ...router, fallback: \"/invoices\" })}>\n  <DetailView />\n</RouteModal>"
             }
           ],
-          "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant scrolls inside `max-h-dialog-max-height`.",
+          "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant inherits Dialog's visual-viewport cap, sticky chrome, and 44px close.",
           "seeAlso": [
             "Slide in a drawer panel",
             "Open modal dialogs",

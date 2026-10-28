@@ -107,16 +107,54 @@ describe("overlays", () => {
     expect(dialog.className).toContain("overflow-y-auto");
     expect(dialog.className).toContain("overscroll-y-contain");
     expect(screen.getByText("Details").parentElement?.className).toContain("space-y-dialog-header-stack");
+    expect(screen.getByText("Details").parentElement?.className).toContain("sticky");
+    expect(screen.getByText("Details").parentElement?.className).toContain("pr-dialog-header-end");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain(
       "sm:space-x-dialog-footer-gap",
     );
+    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("sticky");
+    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("pb-dialog-footer-safe");
     const close = screen.getByRole("button", { name: "Close" });
     expect(close.className).toContain("top-overlay-close-offset");
+    expect(close.className).toContain("z-20");
     expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring");
     expect(close.className).toContain("opacity-50");
     expect(close.innerHTML).toContain("size-4");
     expect(close.innerHTML).not.toContain("size-icon-control");
+  });
+
+  describe("visual viewport", () => {
+    afterEach(() => {
+      Reflect.deleteProperty(window, "visualViewport");
+    });
+
+    it("caps height and recenters against the visual viewport", async () => {
+      Object.defineProperty(window, "visualViewport", {
+        configurable: true,
+        value: {
+          offsetTop: 48,
+          height: 400,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        },
+      });
+      const user = userEvent.setup();
+      render(
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>Open</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Details</DialogTitle>
+          </DialogContent>
+        </Dialog>,
+      );
+      await user.click(screen.getByRole("button", { name: "Open" }));
+      const dialog = screen.getByRole("dialog");
+      expect(dialog.style.maxHeight).toBe("min(var(--spacing-dialog-max-height), 384px)");
+      expect(dialog.style.top).toBe("248px");
+    });
   });
 
   it("animates the dialog overlay through the motion tokens", async () => {
