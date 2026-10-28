@@ -86,7 +86,7 @@ test.describe("getting started package table light/dark (#753)", () => {
 
 test("getting started troubleshooting mentions server env boot failures", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
-  await expect(page.getByRole("cell", { name: /Boot fails on bad `process\.env`/ })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Boot fails on bad process.env", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Fail fast on bad environment variables" })).toBeVisible();
 });
 
