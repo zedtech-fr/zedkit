@@ -30,6 +30,20 @@ test("catalog has no console errors with a filter in the URL", async ({ page }) 
   expect(errors, errors.join("\n")).toEqual([]);
 });
 
+test("catalog area filters keep a decorative icon", async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
+  const areas = page.getByRole("group", { name: "Area" });
+  await expect(areas.getByRole("button", { name: "All areas" }).locator("svg")).toHaveCount(0);
+  for (const name of ["UI", "Core & server", "SEO", "Agents"] as const) {
+    await expect(areas.getByRole("button", { name, exact: true }).locator("svg[aria-hidden='true']")).toHaveCount(1);
+  }
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
 test("catalog filters persist in the URL and show empty state", async ({ page }) => {
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Catalog", level: 1 })).toBeVisible();

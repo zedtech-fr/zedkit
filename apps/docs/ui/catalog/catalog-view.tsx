@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Badge, Button, Heading, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Badge, Button, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { areaIconFor } from "@/lib/domain-icons";
 import { maturityBadgeVariant } from "@/lib/maturity-status";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
@@ -86,7 +87,13 @@ export function CatalogView({
                 aria-pressed={area === row.id}
                 onClick={() => setFilters({ area: row.id })}
               >
-                {row.label}
+                {row.id === "all" ? (
+                  row.label
+                ) : (
+                  <IconLabel icon={areaIconFor(row.id)} className="text-current">
+                    {row.label}
+                  </IconLabel>
+                )}
               </Button>
             ))}
           </Stack>
