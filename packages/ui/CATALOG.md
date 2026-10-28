@@ -616,7 +616,96 @@ export function DeliveryNote({ onSave }: { onSave: () => void }) {
 import { Button, OfflineNote } from "@zedtech/zedkit-ui";
 
 <OfflineNote title="No connection">Your cart is saved on this device. Reconnect to pay.</OfflineNote>
-<Button disabled>Pay now</Button>
+```
+
+## Show an empty zone with a next step
+
+- Import: `@zedtech/zedkit-ui` — `EmptyState`, `EmptyStateProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: EmptyState
+- Audience: Developers filling a list or panel when there is nothing to show.
+- Purpose: Name what is missing and put the next step in `actions`.
+- When to use: For a page or panel with zero rows.
+- When not to use: For an empty table body inside `DataTable` — use `DataTableEmpty`.
+- See also: `Show a sortable, filterable, paginated data table`, `Call out a notice or an error state`
+- Examples: Empty list, With a next step
+- A11y: The title is a heading. Write the description as what is missing plus the next step; put that step in `actions` so keyboard users can take it. Do not rely on colour alone.
+- Registry: empty-state
+- Troubleshooting: The heading is missing — pass `title`. The next step is only in the description — pass it as `actions` so it is a control. A table cell is empty — use `DataTableEmpty` inside the table, not this host.
+
+```ts
+import { EmptyState } from "@zedtech/zedkit-ui";
+<EmptyState title="No invoices" description="Create an invoice to send to a client." />
+```
+
+```ts
+import { Button, EmptyState } from "@zedtech/zedkit-ui";
+<EmptyState
+  title="No invoices"
+  description="Create an invoice to send to a client."
+  actions={<Button>New invoice</Button>}
+/>
+```
+
+## Show what broke and a next step
+
+- Import: `@zedtech/zedkit-ui` — `ErrorState`, `ErrorStateProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: ErrorState
+- Audience: Developers showing a failed load or save on the page.
+- Purpose: Say what broke and put retry or back in `actions`.
+- When to use: When a page or panel failed to load or save.
+- When not to use: For a field error — use `FieldError`. For a brief confirmation — use Toaster.
+- See also: `Call out a notice or an error state`, `Show an empty zone with a next step`
+- Examples: Load error, With retry
+- A11y: Root is an alert (`role="alert"`). Render it when the failure appears, not on every page load. Title plus description carry the meaning; `actions` is the next step.
+- Registry: error-state
+- Troubleshooting: The alert is announced twice — do not wrap it in another live region. The retry control is only in the text — pass it as `actions`. A single field failed — use `FieldError` on that field.
+
+```ts
+import { ErrorState } from "@zedtech/zedkit-ui";
+<ErrorState
+  title="Could not load invoices"
+  description="Check your connection and try again."
+/>
+```
+
+```ts
+import { Button, ErrorState } from "@zedtech/zedkit-ui";
+<ErrorState
+  title="Could not load invoices"
+  description="Check your connection and try again."
+  actions={<Button variant="outline">Try again</Button>}
+/>
+```
+
+## Name a spinner while something loads
+
+- Import: `@zedtech/zedkit-ui` — `Spinner`, `SpinnerProps`
+- Wraps: `lucide-react`
+- Status: alpha
+- Short name: Spinner
+- Audience: Developers naming a short wait next to a label.
+- Purpose: A spinning icon with an accessible name from the kit messages (`loading`).
+- When to use: Next to visible copy that names what is loading.
+- When not to use: For a zone with a known shape — use Skeleton. For a known percent — use ProgressBar.
+- See also: `Show loading placeholder blocks`, `Show determinate progress`
+- Examples: Default name, Named wait
+- A11y: `role="status"` plus `aria-label`. The icon is `aria-hidden`. Keep visible text next to it that names the wait; a `label` prop overrides the kit `loading` string. The spin uses `motion-safe:animate-spin`.
+- Registry: spinner
+- Troubleshooting: Screen readers say only "Loading" — pass `label` that names the operation, or keep visible text beside the spinner. The icon does not spin — `motion-safe:animate-spin` is static under reduced motion. Used as a full-page placeholder — prefer Skeleton so layout does not jump.
+
+```ts
+import { Spinner } from "@zedtech/zedkit-ui";
+<Spinner />
+```
+
+```ts
+import { Spinner, Text } from "@zedtech/zedkit-ui";
+<Spinner label="Saving invoices" />
+<Text>Saving invoices</Text>
 ```
 
 ## Open modal dialogs

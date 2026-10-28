@@ -415,6 +415,36 @@ export function DrawerTitle(input: React_2.ComponentProps<typeof Drawer_2.Title>
 // @public (undocumented)
 export function DrawerTrigger(input: React_2.ComponentProps<typeof Drawer_2.Trigger>): React_2.JSX.Element;
 
+// @public
+export function EmptyState(input: EmptyStateProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface EmptyStateProps {
+    // (undocumented)
+    actions?: React_2.ReactNode;
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    description: React_2.ReactNode;
+    // (undocumented)
+    title?: React_2.ReactNode;
+}
+
+// @public
+export function ErrorState(input: ErrorStateProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface ErrorStateProps {
+    // (undocumented)
+    actions?: React_2.ReactNode;
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    description: React_2.ReactNode;
+    // (undocumented)
+    title?: React_2.ReactNode;
+}
+
 // Warning: (ae-forgotten-export) The symbol "fieldVariants" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
@@ -814,6 +844,16 @@ export function Skeleton(input: SkeletonProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export type SkeletonProps = React_2.ComponentProps<"div">;
+
+// @public
+export function Spinner(input: SpinnerProps): JSX.Element;
+
+// @public (undocumented)
+export interface SpinnerProps {
+    // (undocumented)
+    className?: string;
+    label?: string;
+}
 
 // @public (undocumented)
 export function Stack(input: StackProps): React_2.JSX.Element;

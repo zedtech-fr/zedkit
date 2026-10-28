@@ -146,6 +146,24 @@
       "fixture": "packages/ui/tests/unit/data-table.test.tsx",
       "vitest": "packages/ui/tests/unit/data-table.test.tsx",
       "axe": "packages/ui/tests/unit/a11y.test.tsx"
+    },
+    "EmptyState": {
+      "states": ["empty"],
+      "fixture": "packages/ui/tests/unit/states.test.tsx",
+      "vitest": "packages/ui/tests/unit/states.test.tsx",
+      "axe": "packages/ui/tests/unit/states.test.tsx"
+    },
+    "ErrorState": {
+      "states": ["error"],
+      "fixture": "packages/ui/tests/unit/states.test.tsx",
+      "vitest": "packages/ui/tests/unit/states.test.tsx",
+      "axe": "packages/ui/tests/unit/states.test.tsx"
+    },
+    "Spinner": {
+      "states": ["loading"],
+      "fixture": "packages/ui/tests/unit/states.test.tsx",
+      "vitest": "packages/ui/tests/unit/states.test.tsx",
+      "axe": "packages/ui/tests/unit/states.test.tsx"
     }
   }
 }

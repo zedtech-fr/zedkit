@@ -335,6 +335,39 @@
         "Header link to the home page": "BrandLogoHeaderDemo"
       }
     },
+    "Show an empty zone with a next step": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "EmptyState",
+      "registry": "empty-state",
+      "props": "EmptyStateProps",
+      "source": "empty-state.tsx",
+      "demo": "EmptyStateDemo",
+      "examples": {
+        "With a next step": "EmptyStateActionsDemo"
+      }
+    },
+    "Show what broke and a next step": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ErrorState",
+      "registry": "error-state",
+      "props": "ErrorStateProps",
+      "source": "error-state.tsx",
+      "demo": "ErrorStateDemo",
+      "examples": {
+        "With retry": "ErrorStateRetryDemo"
+      }
+    },
+    "Name a spinner while something loads": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Spinner",
+      "registry": "spinner",
+      "props": "SpinnerProps",
+      "source": "spinner.tsx",
+      "demo": "SpinnerDemo",
+      "examples": {
+        "Named wait": "SpinnerNamedDemo"
+      }
+    },
     "Flag offline state with a live note": {
       "package": "@zedtech/zedkit-ui",
       "component": "OfflineNote",
