@@ -1,5 +1,44 @@
 # @zedtech/zedkit-ai
 
+## 0.8.0
+
+### Minor Changes
+
+- 4cfdff5: Add the loading and feedback rule to the UI lens.
+
+### Patch Changes
+
+- da6091f: Test that adapters ship only with upstream skills.
+- 13ce665: Test that skill companion docs are referenced.
+- 3d1916f: Pin the excluded-skills floor in the notices test.
+- 286986f: Read the first-party skill list from notices in tests.
+- 8f66f94: Test that flag values are documented in the README.
+- 3197603: Pin the demo and doc frontend rules in a test.
+- 6c6fa9e: Test that agent and command files are all listed in the manifest.
+- bdf9d9e: Test that the manifest carries no unknown keys.
+- 088addf: Share the markdown walker between kit tests.
+- 76edf64: Drop the stale subagent count from the README and ban counts.
+- 1c6759d: Test that excluded skills stay unvendored.
+- f7aa027: Pin upstream title counts to their skill lists.
+- 15305ef: Test that notices file paths point at shipped files.
+- f2e221e: Test that the repo tracks every template persona.
+- 6be391a: Resolve prose CLI flags and values against USAGE.
+- 47ac61a: Cover guides pages in the prose references test.
+- d2c6345: Test that bare names in AI docs prose resolve to kit concepts.
+- fe699e0: Check CLI providers against the installer list.
+- 21ae4e1: Lock CLI provider acceptance to the installer list.
+- 27a6d90: Test that README commands use defined package scripts.
+- fcb53ff: Cover plural role mentions in the role-mentions test.
+- d3f21da: Cover reversed role mentions in the role-mentions test.
+- 73eed38: Test that role mentions in kit docs resolve to that kind.
+- 121ea12: Pin floors under the shipped skill, agent and command sets.
+- 43b0e35: Count only skill directories as skills in tests.
+- 974898b: Test that USAGE lists the manifest presets.
+- 9bb2f48: Test that USAGE lists the accepted providers.
+- Updated dependencies [f6df11a]
+- Updated dependencies [b4ceccb]
+  - @zedtech/zedkit-core@0.2.0
+
 ## 0.7.2
 
 ### Patch Changes

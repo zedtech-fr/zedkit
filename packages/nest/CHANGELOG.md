@@ -1,5 +1,11 @@
 # @zedtech/zedkit-nest
 
+## 0.1.4
+
+### Patch Changes
+
+- 0207f25: README: npm-only install path with link to docs install-or-copy section.
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @zedtech/zedkit-server
 
+## 0.2.0
+
+### Minor Changes
+
+- 926b60b: Add `loadEnv` for zod-validated boot-time environment parsing.
+
+### Patch Changes
+
+- b4ceccb: README: npm-only install path with link to docs install-or-copy section.
+
 ## 0.1.2
 
 ### Patch Changes
