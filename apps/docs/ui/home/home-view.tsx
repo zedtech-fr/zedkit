@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { CatalogActionLabel } from "@/components/docs-action-label";
 import { MaturityBadge } from "@/components/maturity-badge";
 import type { GalleryCard } from "@/content/gallery";
 import { homeGalleryDemos } from "@/components/home-gallery-demos";
@@ -80,7 +81,7 @@ export function HomeView({
             ))}
           </Stack>
           <Button asChild variant="outline">
-            <Link href="/catalog">Browse full catalog</Link>
+            <Link href="/catalog"><CatalogActionLabel>Browse full catalog</CatalogActionLabel></Link>
           </Button>
         </Stack>
       </Section>
