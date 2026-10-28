@@ -97,6 +97,14 @@
         }
       ],
       "cssVars": {
+        "light": {
+          "success": "142.1 76.2% 27%",
+          "warning": "32 95% 44%"
+        },
+        "dark": {
+          "success": "142.1 70.6% 45.3%",
+          "warning": "32 95% 32%"
+        },
         "theme": {
           "spacing-status-dot": "0.5rem"
         }
@@ -116,6 +124,16 @@
         "theme": {
           "spacing-checkmark": "1rem",
           "animate-check-draw": "zk-check-draw 0.45s ease-out forwards"
+        }
+      },
+      "css": {
+        "@keyframes zk-check-draw": {
+          "from": {
+            "stroke-dashoffset": "8"
+          },
+          "to": {
+            "stroke-dashoffset": "0"
+          }
         }
       }
     },
@@ -154,7 +172,7 @@
       "name": "status-label",
       "type": "registry:ui",
       "dependencies": ["lucide-react"],
-      "registryDependencies": ["checkmark", "status-dot", "utils"],
+      "registryDependencies": ["zedtech-fr/zedkit/checkmark", "zedtech-fr/zedkit/status-dot", "utils"],
       "files": [
         {
           "path": "registry/generated/ui/status-label.tsx",
