@@ -18,10 +18,10 @@ export const homeGalleryDemos: Record<string, ComponentType> = {
   InputDemo,
   ConfirmDialogDemo: dynamic(
     () => import("@/components/demos/confirm-dialog-demo").then((mod) => mod.ConfirmDialogDemo),
-    { ssr: false, loading: OverlayFallback },
+    { loading: OverlayFallback },
   ),
   DrawerDemo: dynamic(
     () => import("@/components/demos/drawer-demo").then((mod) => mod.DrawerDemo),
-    { ssr: false, loading: OverlayFallback },
+    { loading: OverlayFallback },
   ),
 };
