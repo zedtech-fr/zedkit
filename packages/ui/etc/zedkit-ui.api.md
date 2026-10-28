@@ -116,7 +116,7 @@ export interface ButtonProps extends React_2.ComponentProps<"button">, VariantPr
 
 // @public (undocumented)
 export const buttonVariants: (props?: ({
-    variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+    variant?: "default" | "destructive" | "secondary" | "outline" | "ghost" | null | undefined;
     size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -613,7 +613,7 @@ export type HeadingProps = React_2.ComponentProps<"h1"> & VariantProps<typeof he
 
 // @public (undocumented)
 export const headingVariants: (props?: ({
-    level?: 1 | 2 | 3 | 4 | null | undefined;
+    level?: 1 | 3 | 4 | 2 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -983,7 +983,7 @@ export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof sta
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 2 | 3 | 4 | 6 | 8 | null | undefined;
+    gap?: 1 | 8 | 3 | 4 | 2 | 6 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
