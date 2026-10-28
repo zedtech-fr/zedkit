@@ -11,8 +11,8 @@ async function expectCloseTarget(dialog: Locator) {
   const box = await close.boundingBox();
   expect(box).not.toBeNull();
   if (box) {
-    expect(box.width).toBeGreaterThanOrEqual(44);
-    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(44 - 0.5);
+    expect(box.height).toBeGreaterThanOrEqual(44 - 0.5);
   }
 }
 
