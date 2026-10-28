@@ -113,7 +113,8 @@ describe("form brick", () => {
     render(<FormDemo messages={messages} onSave={vi.fn(async () => {})} />);
     const description = screen.getByText(messages.nameDescription);
     expect(description.className).toContain("text-form-hint");
-    expect(description.parentElement?.className).toContain("space-y-form-item-gap");
+    expect(description.parentElement?.className).toContain("space-y-2");
+    expect(description.parentElement?.className).not.toContain("space-y-form-item-gap");
 
     await user.type(screen.getByLabelText(messages.nameLabel), "x");
     await user.click(screen.getByRole("button", { name: messages.save }));
