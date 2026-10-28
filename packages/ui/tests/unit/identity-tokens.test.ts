@@ -53,7 +53,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         expect(rem[i]).toBeGreaterThan(rem[i - 1] ?? 0);
       }
     }
-    for (const name of ["--text-sm", "--text-base", "--text-lg", "--tracking-tight", "--tracking-wide", "--zk-shadow-md", "--spacing", "--radius"] as const) {
+    for (const name of ["--text-sm", "--text-base", "--text-lg", "--tracking-tight", "--tracking-wide", "--zk-shadow-md", "--spacing", "--radius", "--zk-color-duration"] as const) {
       const seen = new Map<string, string>();
       for (const [id, css] of Object.entries(looks)) {
         const value = token(css, name) ?? "";
@@ -71,7 +71,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/maison.css"), "--zk-body-leading")).toBe("1.7");
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");
     expect(token(read("identities/glass.css"), "--zk-body-leading")).toBe("1.65");
-    expect(token(read("identities/glass.css"), "--zk-color-duration")).toBe("200ms");
+    expect(token(read("identities/glass.css"), "--zk-color-duration")).toBe("220ms");
     expect(token(read("identities/glass.css"), "--radius") ?? "").toBe("1.25rem");
     expect(token(read("identities/tide.css"), "--zk-body-leading")).toBe("1.55");
     expect(token(read("identities/tide.css"), "--zk-color-duration")).toBe("180ms");

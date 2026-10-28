@@ -136,7 +136,7 @@
   --motion-fast: 150ms;
   --motion-base: 200ms;
   --motion-slow: 300ms;
-  --zk-color-duration: 200ms;
+  --zk-color-duration: 220ms;
   --zk-reveal-duration: 300ms;
   --zk-reveal-distance: 1rem;
   --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
