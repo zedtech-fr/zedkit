@@ -56,8 +56,38 @@ test("catalog filters persist in the URL and show empty state", async ({ page })
 
 test("home links to catalog with curated grid", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  await expect(page.getByRole("link", { name: "Browse full catalog" })).toBeVisible();
+  const catalog = page.getByRole("link", { name: "Browse full catalog" });
+  await expect(catalog).toBeVisible();
+  await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
   const count = await page.locator("#components .grid > *").count();
   expect(count).toBeGreaterThanOrEqual(4);
   expect(count).toBeLessThanOrEqual(8);
+});
+
+test("catalog CTA keeps a decorative icon at phone width", async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const catalog = page.getByRole("link", { name: "Browse full catalog" });
+  await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
+test.describe("catalog CTA light/dark", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(BASE, { waitUntil: "networkidle" });
+      const catalog = page.getByRole("link", { name: "Browse full catalog" });
+      await catalog.scrollIntoViewIfNeeded();
+      await expect(catalog).toBeVisible();
+      await catalog.screenshot({ path: `test-results/home-catalog-cta-${mode}.png` });
+    });
+  }
 });
