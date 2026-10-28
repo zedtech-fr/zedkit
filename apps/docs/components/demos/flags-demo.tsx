@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { Button, Stack, Text } from "@zedtech/zedkit-ui";
-import { defineFlagRegistry, writeFlagOverride } from "@zedtech/zedkit-flags";
-import { useFlag, ZedkitFlagsProvider } from "@zedtech/zedkit-flags/react";
+import { defineFlagRegistry, useFlag, writeFlagOverride, ZedkitFlagsProvider } from "@zedtech/zedkit-flags/react";
 
 const DEMO_REGISTRY = defineFlagRegistry({ docsPreview: false });
 const DEMO_OVERRIDE_KEY = "docsPreview";
@@ -46,7 +45,7 @@ function FlagsDemoInner() {
           Clear override
         </Button>
       </Stack>
-      {lastAction ? <Text className="text-muted-foreground text-sm">{lastAction}</Text> : null}
+      {lastAction ? <Text className="text-sm text-muted-foreground">{lastAction}</Text> : null}
     </Stack>
   );
 }

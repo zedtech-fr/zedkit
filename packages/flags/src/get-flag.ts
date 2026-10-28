@@ -1,7 +1,7 @@
 import type { Client } from "@openfeature/server-sdk";
 
-import type { FlagRegistry } from "#registry.js";
-import type { FlagValue } from "#memory.js";
+import type { FlagRegistry } from "./registry.js";
+import type { FlagValue } from "./memory.js";
 
 export async function getFlag<T extends Record<string, FlagValue>, K extends keyof T & string>(
   client: Client,

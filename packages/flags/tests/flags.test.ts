@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import { getFlag } from "#get-flag.js";
 import { loadFlagsFromEnv, parseFlagsJson } from "#env-json.js";
-import { defineFlagRegistry, mergeFlagValues, memoryProviderFromRegistry } from "#registry.js";
+import { defineFlagRegistry, mergeFlagValues } from "#registry.js";
+import { memoryProviderFromRegistry } from "#server-registry.js";
 
 describe("defineFlagRegistry and getFlag", () => {
   it("reads boolean flags from an in-memory provider", async () => {

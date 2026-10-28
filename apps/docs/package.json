@@ -30,6 +30,8 @@
     "@fontsource-variable/jost": "catalog:",
     "@fontsource-variable/newsreader": "catalog:",
     "@fontsource-variable/space-grotesk": "catalog:",
+    "@openfeature/react-sdk": "catalog:",
+    "@openfeature/web-sdk": "catalog:",
     "@zedtech/zedkit-flags": "workspace:*",
     "@zedtech/zedkit-seo": "workspace:*",
     "@zedtech/zedkit-ui": "workspace:*",

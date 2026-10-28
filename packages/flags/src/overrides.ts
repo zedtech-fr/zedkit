@@ -1,6 +1,6 @@
 import { tryCatch } from "@zedtech/zedkit-core";
 
-import { type FlagValue } from "#memory.js";
+import { type FlagValue } from "./memory.js";
 
 export const FLAG_OVERRIDE_STORAGE_KEY = "zedkit-flag-overrides";
 

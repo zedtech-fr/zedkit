@@ -1,6 +1,6 @@
 import { tryCatch } from "@zedtech/zedkit-core";
 
-import { type FlagValue } from "#memory.js";
+import { type FlagValue } from "./memory.js";
 
 const FLAG_VALUE = (value: unknown): value is FlagValue =>
   typeof value === "boolean" || typeof value === "string" || typeof value === "number";

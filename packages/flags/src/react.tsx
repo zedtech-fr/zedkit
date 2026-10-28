@@ -4,10 +4,10 @@ import { OpenFeatureProvider, useBooleanFlagValue } from "@openfeature/react-sdk
 import { OpenFeature, TypedInMemoryProvider } from "@openfeature/web-sdk";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
-import { buildOpenFeatureFlagDefinitions } from "#memory.js";
-import { mergeFlagValue, flagOverridesSnapshot, subscribeFlagOverrides } from "#overrides.js";
-import { type FlagRegistry } from "#registry.js";
-import { type FlagValue } from "#memory.js";
+import { buildOpenFeatureFlagDefinitions } from "./memory.js";
+import { mergeFlagValue, flagOverridesSnapshot, subscribeFlagOverrides } from "./overrides.js";
+import { type FlagRegistry } from "./registry.js";
+import { type FlagValue } from "./memory.js";
 
 export { OpenFeatureProvider, useBooleanFlagValue, useNumberFlagValue, useStringFlagValue } from "@openfeature/react-sdk";
 export { OpenFeature, TypedInMemoryProvider } from "@openfeature/web-sdk";
@@ -51,3 +51,6 @@ export function useFlag(flagKey: string, defaultValue: boolean): boolean {
   const overrides = useFlagOverrides();
   return mergeFlagValue(flagKey, evaluated, overrides);
 }
+
+export { defineFlagRegistry, type FlagRegistry } from "./registry.js";
+export { writeFlagOverride, FLAG_OVERRIDE_STORAGE_KEY } from "./overrides.js";
