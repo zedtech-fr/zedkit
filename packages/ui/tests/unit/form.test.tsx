@@ -103,6 +103,9 @@ describe("form brick", () => {
     expect(screen.getByText("Second problem.")).not.toBeNull();
     expect(screen.getByRole("alert")).not.toBeNull();
     expect(document.querySelector("[data-slot=field-set]")?.className).toContain("gap-field-set");
+    const separator = document.querySelector("[data-slot=field-separator]");
+    expect(separator?.classList.contains("h-5")).toBe(true);
+    expect(separator?.className).not.toContain("h-field-separator");
   });
 
   it("styles form item, description, and message from design tokens", async () => {

@@ -80,6 +80,8 @@ const DEPRECATED_1REM_CLASSES = [
   "top-alert-icon-offset",
   "top-overlay-close-offset",
   "translate-x-switch-travel",
+  "h-field-separator",
+  "h-switch-track-height",
 ];
 
 function walkJs(dir, acc = []) {
@@ -92,7 +94,7 @@ function walkJs(dir, acc = []) {
   return acc;
 }
 
-test("kit and docs sources use scale 4, not deprecated 1rem aliases", () => {
+test("kit and docs sources use the Tailwind scale, not deprecated spacing aliases", () => {
   const files = [...walkJs(join(root, "packages/ui/src")), ...walkJs(join(root, "apps/docs"))];
   const hits = [];
   for (const file of files) {
