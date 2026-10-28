@@ -8,6 +8,7 @@ Open-source building blocks for modern apps.
 - [Catalog index](docs/catalog/README.md)
 - [Golden rule](docs/golden-rule.md)
 - [Route modals](docs/route-modals.md) (pointer to the live catalog recipe)
+- [Upgrade: ref as a prop, and kit messages](docs/migrations/ui-ref-and-messages.md)
 - [Contributing](docs/contributing.md)
 - [Agent instructions](AGENTS.md)
 - [Agents catalog](docs/agents-catalog.md) (when to call each subagent)
