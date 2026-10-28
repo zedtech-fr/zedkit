@@ -7,6 +7,9 @@
 Open-source building blocks for modern apps: small, dependency-light TypeScript
 packages. MIT licensed; see [LICENSE](LICENSE).
 
+Use **npm packages** (`pnpm add @zedtech/…`) or **copy UI source** via the shadcn
+registry where published — [install or copy on the docs site](https://zedkit.app/docs/getting-started#install-or-copy).
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/ui-proof/readme-gallery-dark.png">
   <img alt="zedkit UI gallery: buttons, badges, status labels, inputs and typography" src="docs/ui-proof/readme-gallery-light.png">

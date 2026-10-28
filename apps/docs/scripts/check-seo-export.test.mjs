@@ -5,6 +5,7 @@ import { SITE_CHANGELOG_URL, siteFooterLinkSpecs } from "../lib/site-links.mjs";
 import {
   checkHtmlRegistryLinks,
   checkLlms,
+  checkLlmsFull,
   checkMeta,
   checkNotFound,
   checkRobots,
@@ -63,8 +64,21 @@ test("checkSitemap reports too few URLs, an off-site loc, and missing home or /d
 });
 
 test("checkLlms accepts the generated header and rejects anything else", () => {
-  assert.deepEqual(checkLlms("# zedkit docs\n"), []);
-  assert.deepEqual(checkLlms("# other"), ["llms.txt: expected generated zedkit docs header"]);
+  assert.deepEqual(checkLlms("# zedkit docs\n\n## Install or copy\n"), []);
+  assert.deepEqual(checkLlms("# zedkit docs\n"), ["llms.txt: missing ## Install or copy section"]);
+  assert.deepEqual(checkLlms("# other"), [
+    "llms.txt: expected generated zedkit docs header",
+    "llms.txt: missing ## Install or copy section",
+  ]);
+});
+
+test("checkLlmsFull accepts buildLlmsFull sections", () => {
+  const body = "# Install or copy\n\nnpm\n\n# Documentation index\n\n# zedkit docs\n";
+  assert.deepEqual(checkLlmsFull(body), []);
+  assert.deepEqual(checkLlmsFull("# other"), [
+    "llms-full.txt: expected # Install or copy header",
+    "llms-full.txt: missing # Documentation index section",
+  ]);
 });
 
 test("checkMeta is silent for a complete page and accepts a bare home href", () => {

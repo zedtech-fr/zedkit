@@ -13,7 +13,7 @@ export const docsSite: SiteMetadata = {
 export const homePage = {
   title: "zedkit",
   description:
-    "Build the parts you need. TypeScript packages for UI, core & server helpers, SEO, and agent-agnostic coding-agent setup.",
+    "Build the parts you need. Install npm packages or copy UI source via the shadcn registry — plus core, SEO, and agent setup.",
 };
 
 export function pageUrl(pathname: string): string {

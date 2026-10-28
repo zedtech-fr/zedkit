@@ -246,11 +246,24 @@ for (const path of SITE_HEADER_INTERNAL_PATHS) {
 
 const llmsPath = join(APP, "public", "llms.txt");
 if (existsSync(llmsPath)) {
+  const llmsText = readFileSync(llmsPath, "utf8");
+  if (!llmsText.includes("## Install or copy")) {
+    errors.push("llms.txt: missing ## Install or copy section.");
+  }
   const llmsStatusTail = /\) — (alpha|beta|stable|deprecated|planned)$/;
-  for (const line of readFileSync(llmsPath, "utf8").split("\n")) {
+  for (const line of llmsText.split("\n")) {
     if (line.startsWith("- [") && llmsStatusTail.test(line)) {
       errors.push(`llms.txt: legacy status-only entry: ${line.slice(0, 80)}…`);
     }
+  }
+}
+const llmsFullPath = join(APP, "public", "llms-full.txt");
+if (!existsSync(llmsFullPath)) {
+  errors.push("public/llms-full.txt missing (run docs:generate).");
+} else {
+  const fullText = readFileSync(llmsFullPath, "utf8");
+  if (!fullText.startsWith("# Install or copy")) {
+    errors.push("llms-full.txt: expected buildLlmsFull header # Install or copy");
   }
 }
 

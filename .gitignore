@@ -19,6 +19,7 @@ next-env.d.ts
 apps/docs/content/
 apps/docs/.source/
 apps/docs/public/llms.txt
+apps/docs/public/llms-full.txt
 apps/docs/public/r/
 
 # shadcn registry: transformed UI sources (fed to `shadcn build`)

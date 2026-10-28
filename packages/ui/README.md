@@ -9,6 +9,10 @@ shadcn/ui-based (MIT, see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Neutral and calm by
 default.
 
+**Install** with `pnpm add @zedtech/zedkit-ui`, or **copy** individual bricks with
+`npx shadcn@latest add https://zedkit.app/r/<brick>.json` where the registry lists
+them — see [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn).
+
 ## Install
 
 ```sh

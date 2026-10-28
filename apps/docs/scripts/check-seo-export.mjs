@@ -46,7 +46,25 @@ export function checkSitemap(text, base) {
 }
 
 export function checkLlms(text) {
-  return text.startsWith("# zedkit docs") ? [] : ["llms.txt: expected generated zedkit docs header"];
+  const errors = [];
+  if (!text.startsWith("# zedkit docs")) {
+    errors.push("llms.txt: expected generated zedkit docs header");
+  }
+  if (!text.includes("## Install or copy")) {
+    errors.push("llms.txt: missing ## Install or copy section");
+  }
+  return errors;
+}
+
+export function checkLlmsFull(text) {
+  const errors = [];
+  if (!text.startsWith("# Install or copy")) {
+    errors.push("llms-full.txt: expected # Install or copy header");
+  }
+  if (!text.includes("# Documentation index")) {
+    errors.push("llms-full.txt: missing # Documentation index section");
+  }
+  return errors;
 }
 
 export function checkMeta(html, label, canonicalHref, base, { requireJsonLd = true } = {}) {
@@ -176,6 +194,9 @@ function main() {
 
   const llmsPath = requireFile(outDir, "llms.txt", errors);
   if (llmsPath) errors.push(...checkLlms(readFileSync(llmsPath, "utf8")));
+
+  const llmsFullPath = requireFile(outDir, "llms-full.txt", errors);
+  if (llmsFullPath) errors.push(...checkLlmsFull(readFileSync(llmsFullPath, "utf8")));
 
   const homePath = requireFile(outDir, "index.html", errors);
   if (homePath) {
