@@ -16,6 +16,8 @@ test("getting started documents install or copy paths", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#install-or-copy`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Command" })).toBeVisible();
+  await expect(page.getByText(/Nothing in the catalog is labeled stable yet/)).toBeVisible();
+  await expect(page.getByText(/copied bricks are plain editable files/)).toBeVisible();
 });
 
 test("getting started links to a catalog page", async ({ page }) => {
