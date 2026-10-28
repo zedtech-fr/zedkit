@@ -11,7 +11,13 @@ default.
 
 **Install** with `pnpm add @zedtech/zedkit-ui`, or **copy** individual bricks with
 `npx shadcn@latest add https://zedkit.app/r/<brick>.json` where the registry lists
-them — see [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn).
+them. Composed bricks need the namespace once:
+
+```sh
+npx shadcn@latest registry add @zedkit=https://zedkit.app/r/{name}.json
+```
+
+See [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn).
 
 ## Install
 
