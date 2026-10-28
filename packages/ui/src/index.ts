@@ -171,15 +171,14 @@ export {
   type RouteModalSize,
   type RouteModalVariant,
 } from "./route-modal.js";
+export { IdentityScript, type IdentityScriptProps } from "./identity-script.js";
 export {
   IDENTITY_CHANGE_EVENT,
   IDENTITY_STORAGE_KEY,
-  IdentityScript,
   applyIdentity,
   identities,
   useIdentity,
   type IdentityOption,
-  type IdentityScriptProps,
 } from "./identity.js";
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
 export { IdentityPicker, type IdentityPickerProps } from "./identity-picker.js";

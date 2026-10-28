@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { ReactElement } from "react";
 import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
@@ -40,6 +43,14 @@ function runScript(element: ReactElement) {
 }
 
 describe("IdentityScript", () => {
+  it("is not a client module, so a server layout can render it without hydrating", () => {
+    const src = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../../src/identity-script.tsx"),
+      "utf8",
+    );
+    expect(src).not.toMatch(/^["']use client["']/m);
+  });
+
   it("keeps a fixed bootstrap body and passes props only through data attributes", () => {
     const { container, unmount } = render(
       <IdentityScript ids={['a","b']} storageKey={'key"with'} defaultIdentity="calm" />,
