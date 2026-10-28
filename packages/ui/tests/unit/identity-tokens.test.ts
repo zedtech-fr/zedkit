@@ -29,7 +29,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(files).not.toMatch(/--zk-control-scale/);
   });
 
-  it("gives each identity its own type size, tracking, shadow, and spacing", () => {
+  it("gives each identity its own type size, tracking, shadow, spacing, and radius", () => {
     const mistReset = read("identities.css").slice(read("identities.css").indexOf("Scoped mist resets the stock tokens."));
     const looks = {
       mist: mistReset,
@@ -53,7 +53,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         expect(rem[i]).toBeGreaterThan(rem[i - 1] ?? 0);
       }
     }
-    for (const name of ["--text-sm", "--text-base", "--text-lg", "--tracking-tight", "--tracking-wide", "--zk-shadow-md", "--spacing"] as const) {
+    for (const name of ["--text-sm", "--text-base", "--text-lg", "--tracking-tight", "--tracking-wide", "--zk-shadow-md", "--spacing", "--radius"] as const) {
       const seen = new Map<string, string>();
       for (const [id, css] of Object.entries(looks)) {
         const value = token(css, name) ?? "";
@@ -72,6 +72,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");
     expect(token(read("identities/glass.css"), "--zk-body-leading")).toBe("1.65");
     expect(token(read("identities/glass.css"), "--zk-color-duration")).toBe("200ms");
+    expect(token(read("identities/glass.css"), "--radius") ?? "").toBe("1.25rem");
     expect(token(read("identities/tide.css"), "--zk-body-leading")).toBe("1.55");
     expect(token(read("identities/tide.css"), "--zk-color-duration")).toBe("180ms");
     expect(token(read("identities/volt.css"), "--zk-body-leading")).toBe("1.4");
