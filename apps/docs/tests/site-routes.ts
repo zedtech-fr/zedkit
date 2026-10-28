@@ -66,5 +66,7 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
   },
 ];
 
+import { registryJsonSmokePaths } from "../lib/registry-smoke-urls";
+
 /** Registry URLs advertised on doc pages; must stay 200 on the served export. */
-export const REGISTRY_SMOKE_URLS = ["/r/badge.json", "/r/drawer.json", "/r/confirm-dialog.json"] as const;
+export const REGISTRY_SMOKE_URLS = registryJsonSmokePaths();
