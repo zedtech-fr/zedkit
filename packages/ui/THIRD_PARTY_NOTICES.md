@@ -41,4 +41,4 @@ SOFTWARE.
 MIT-licensed packages consumed as dependencies — see their own
 packages for license texts: Radix UI primitives (`@radix-ui/*`),
 `class-variance-authority`, `clsx`, `tailwind-merge`,
-`lucide-react`, `sonner`, `@tanstack/react-table`, `react-day-picker`.
+`lucide-react`, `sonner`, `@tanstack/react-table`, `react-day-picker`, `downshift`.

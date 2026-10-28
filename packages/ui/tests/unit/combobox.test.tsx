@@ -4,13 +4,17 @@ import { userEvent } from "@testing-library/user-event";
 import { beforeAll, describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 
-import { Combobox, MultiSelect, zedkitUiMessagesEn, ZedkitUiProvider, type ComboboxOption } from "#index.js";
+import { Combobox, MultiSelect, zedkitUiMessagesEn, zedkitUiMessagesFr, ZedkitUiProvider, type ComboboxOption } from "#index.js";
 
 const OPTIONS: ComboboxOption[] = [
   { value: "a", label: "Alpha" },
   { value: "b", label: "Bravo" },
   { value: "c", label: "Charlie" },
 ];
+
+beforeAll(() => {
+  Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
+});
 
 function wrap(ui: ReactNode) {
   return <ZedkitUiProvider messages={zedkitUiMessagesEn}>{ui}</ZedkitUiProvider>;
@@ -42,10 +46,6 @@ async function expectNoViolations(element: HTMLElement): Promise<void> {
 }
 
 describe("Combobox", () => {
-  beforeAll(() => {
-    Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
-  });
-
   it("filters options and selects with the keyboard", async () => {
     const user = userEvent.setup();
     render(wrap(<ComboboxHarness />));
@@ -79,5 +79,36 @@ describe("MultiSelect", () => {
       wrap(<MultiSelect options={OPTIONS} value={["a"]} onValueChange={() => {}} aria-label="Tags" />),
     );
     await expectNoViolations(container);
+  });
+
+  it("uses French kit messages for chip remove and selected row hint", async () => {
+    const user = userEvent.setup();
+    render(
+      <ZedkitUiProvider messages={zedkitUiMessagesFr}>
+        <MultiSelect options={OPTIONS} value={["a"]} onValueChange={() => {}} aria-label="Tags" />
+      </ZedkitUiProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Retirer Alpha" })).toBeDefined();
+    const input = screen.getByRole("combobox", { name: "Tags" });
+    await user.click(input);
+    await user.keyboard("{ArrowDown}");
+    const options = await screen.findAllByRole("option");
+    const alpha = options.find((node) => node.textContent?.includes("Alpha"));
+    expect(alpha?.textContent).toContain("sélectionné");
+  });
+});
+
+describe("Combobox messages", () => {
+  it("shows French loading chrome when loading", async () => {
+    const user = userEvent.setup();
+    render(
+      <ZedkitUiProvider messages={zedkitUiMessagesFr}>
+        <Combobox options={OPTIONS} loading aria-label="Lettres" />
+      </ZedkitUiProvider>,
+    );
+    await user.click(screen.getByRole("combobox", { name: "Lettres" }));
+    await user.keyboard("{ArrowDown}");
+    const list = await screen.findByRole("listbox");
+    expect(list.textContent).toMatch(/Chargement/);
   });
 });

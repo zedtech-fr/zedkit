@@ -3,6 +3,7 @@
 import { useCombobox } from "downshift";
 
 import { Spinner } from "./spinner.js";
+import { useUiMessages } from "./ui-provider.js";
 import { cn } from "./utils.js";
 import type { ComboboxOption } from "./combobox-shared.js";
 
@@ -21,6 +22,7 @@ export function ComboboxMenu({
   items: ComboboxOption[];
   loading: boolean;
 }) {
+  const messages = useUiMessages();
   return (
     <ul
       {...getMenuProps()}
@@ -29,8 +31,8 @@ export function ComboboxMenu({
     >
       {loading ? (
         <li className="flex items-center gap-2 px-control-inline py-control-block text-sm text-muted-foreground">
-          <Spinner label="Loading options" />
-          Loading…
+          <Spinner label={messages.loadingOptions} />
+          {messages.loadingEllipsis}
         </li>
       ) : null}
       {!loading && items.length === 0 ? (
