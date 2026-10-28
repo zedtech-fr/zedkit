@@ -184,7 +184,7 @@ function expectedDialogCenterCss(css) {
   };
 }
 
-function expectedVaulCopyCss(cssText) {
+function expectedVaulCopyCss() {
   return {
     "html [data-vaul-drawer]": {
       "animation-duration": "var(--motion-slow)",
@@ -232,7 +232,7 @@ function expectedCopyThemeItem(cssText) {
       ...expectedDialogCenterCss(cssText),
       ...expectedButtonPressCss(cssText),
       ...expectedFocusRingControlCss(cssText),
-      ...expectedVaulCopyCss(cssText),
+      ...expectedVaulCopyCss(),
     },
   };
 }

@@ -502,7 +502,7 @@ export function generate(outDir) {
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n  linkLabel: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
   const entryPointsModule = `// GENERATED from home-entry-points.json + catalog — do not edit.\nexport interface HomeEntryPoint {\n  title: string;\n  summary: string;\n  href: string;\n  needCount: number;\n  linkLabel: string;\n}\n\nexport const homeEntryPoints: HomeEntryPoint[] = ${JSON.stringify(homeEntryPoints, null, 2)};\n`;
   const registryBricks = loadRegistryBrickNames(ROOT);
-  const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks[0])};\n`;
+  const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks.includes("badge") ? "badge" : (registryBricks.find((name) => name !== "theme") ?? registryBricks[0]))};\n`;
   const maturityModule = buildMaturityCompatibility(catalog);
   return {
     pages,
