@@ -60,7 +60,7 @@ function DialogContent({
       >
         {children}
         <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-          <X className="size-icon-control" />
+          <X className="size-4" />
           <span className="sr-only">{closeLabel ?? messages.close}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>

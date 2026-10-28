@@ -21,7 +21,7 @@ function MultiSelectChips({ items, onRemove, selection }: MultiSelectChipsProps)
         <Badge key={item.value} variant="secondary" className="gap-1 pr-1">
           <span {...selection.getSelectedItemProps({ selectedItem: item, index })}>{item.label}</span>
           <button type="button" aria-label={`Remove ${item.label}`} onClick={() => onRemove(item)}>
-            <X className="size-icon-control" />
+            <X className="size-4" />
           </button>
         </Badge>
       ))}

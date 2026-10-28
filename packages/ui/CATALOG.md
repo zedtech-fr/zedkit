@@ -436,7 +436,7 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - A11y: Icon is decorative (`aria-hidden`, not focusable); put the readable name in `children`. The muted colour keeps normal text contrast on every identity, but do not rely on the icon alone to carry meaning — the state or name must also be written.
 - Registry: icon-label
 - Examples: Project details, In an order list
-- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is fixed by the `--spacing-icon-control` token (1rem); change that token, not each icon. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
+- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-4` (1rem, Tailwind default scale); override with `className`. `--spacing-icon-control` remains as a deprecated alias. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
 
 ```ts
 import { Calendar, FolderOpen, MessageSquare, Users } from "lucide-react";

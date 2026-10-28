@@ -115,7 +115,8 @@ describe("overlays", () => {
     expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring");
     expect(close.className).toContain("opacity-50");
-    expect(close.innerHTML).toContain("size-icon-control");
+    expect(close.innerHTML).toContain("size-4");
+    expect(close.innerHTML).not.toContain("size-icon-control");
   });
 
   it("animates the dialog overlay through the motion tokens", async () => {
@@ -293,7 +294,8 @@ describe("overlays", () => {
       const root = container.firstElementChild;
       expect(root?.className).toContain("gap-secret-field-gap");
       expect(root?.className).not.toContain("[");
-      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-icon-control");
+      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-4");
+      expect(container.querySelector("svg")?.className.baseVal ?? "").not.toContain("size-icon-control");
     });
   });
 });
