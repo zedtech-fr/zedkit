@@ -42,6 +42,13 @@ describe("primitives", () => {
     expect(button.className).not.toContain("py-control-block-lg");
   });
 
+  it("spaces the small button from the Tailwind scale", () => {
+    render(<Button size="sm">Save</Button>);
+    const button = screen.getByRole("button", { name: "Save" });
+    expect(button.className).toContain("px-3");
+    expect(button.className).not.toContain("px-button-inline-sm");
+  });
+
   it("merges button styles onto asChild link", () => {
     render(
       <Button asChild variant="outline">
