@@ -121,6 +121,14 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/generated/ui/updated-ago-client.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/updated-ago-format.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/generated/ui/ui-provider.tsx",
           "type": "registry:ui"
         },
