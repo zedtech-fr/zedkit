@@ -8,7 +8,8 @@
     "@zedtech/zedkit-payload-seo",
     "@zedtech/zedkit-quality",
     "@zedtech/zedkit-seo",
-    "@zedtech/zedkit-server"
+    "@zedtech/zedkit-server",
+    "@zedtech/zedkit-storage"
   ],
   "optOut": {
     "Localize kit chrome in English or French::French bundle": "App-root provider wrap; no visual host of its own.",

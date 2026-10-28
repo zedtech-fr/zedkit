@@ -38,6 +38,7 @@ need per package (criteria: [docs/catalog/README.md](docs/catalog/README.md)).
 | [`@zedtech/zedkit-quality`](packages/quality/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-quality)) | 0.3.2 | beta |
 | [`@zedtech/zedkit-seo`](packages/seo/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-seo)) | 0.1.3 | beta |
 | [`@zedtech/zedkit-server`](packages/server/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-server)) | 0.1.2 | beta |
+| [`@zedtech/zedkit-storage`](packages/storage/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-storage)) | 0.1.0 | alpha |
 | [`@zedtech/zedkit-ui`](packages/ui/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ui)) | 0.6.4 | alpha |
 
 <!-- /packages-table -->

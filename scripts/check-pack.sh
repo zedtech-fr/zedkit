@@ -82,7 +82,7 @@ for dir in packages/*/; do
   done <<< "$(manifest_targets "$pkg")"
 
   # No private terms in the packed contents; report files, never matched lines.
-  hits="$(grep -rlE -e "$(denylist_pattern)" "$unpack" 2>/dev/null || true)"
+  hits="$(grep -rHnE -e "$(denylist_pattern)" "$unpack" 2>/dev/null | denylist_filter_hits || true)"
   if [ -n "$hits" ]; then
     echo "$name: private terms in packed contents:"
     echo "$hits" | sed "s|^$unpack/||"

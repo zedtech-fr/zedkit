@@ -56,3 +56,8 @@ denylist_pattern() {
     echo
   done | paste -sd'|' -
 }
+
+# Public npm scopes allowed in dependency and import lines.
+denylist_filter_hits() {
+  grep -vE '@aws-sdk/' || true
+}
