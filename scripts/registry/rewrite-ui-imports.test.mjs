@@ -10,3 +10,8 @@ import { Button } from "./button.js";`;
   assert.match(out, /from "@\/components\/ui\/button"/);
   assert.doesNotMatch(out, /\.\/utils\.js/);
 });
+
+test("rewriteUiImports maps the messages provider to the consumer ui folder", () => {
+  const out = rewriteUiImports('import { useUiMessages } from "./ui-provider.js";');
+  assert.match(out, /from "@\/components\/ui\/ui-provider"/);
+});

@@ -1,8 +1,11 @@
+"use client";
+
 import type * as React from "react";
 
 import { CheckIcon } from "lucide-react";
 
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface WizardStepsProps {
   steps: string[];
@@ -64,11 +67,12 @@ export type WizardProps = React.ComponentProps<"ol">;
  * covers the plain `steps[]` case with the same markup.
  */
 export function Wizard({ children, className, ...props }: WizardProps) {
+  const messages = useUiMessages();
   return (
     <ol
       data-slot="wizard"
       className={cn("flex flex-wrap items-center gap-x-wizard-steps-gap gap-y-wizard-steps-row-gap", className)}
-      aria-label="Progress"
+      aria-label={messages.progress}
       {...props}
     >
       {children}

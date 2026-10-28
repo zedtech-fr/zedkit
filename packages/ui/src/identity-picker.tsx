@@ -19,6 +19,7 @@ import {
   type IdentityOption,
 } from "./identity.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 type IdentityPickerProps = {
   /** Choices to offer. Default: the identities shipped in `identities.css`. */
@@ -26,7 +27,7 @@ type IdentityPickerProps = {
   /** Shown as selected while no identity is set. Default: the first choice. */
   defaultIdentity?: string;
   storageKey?: string;
-  /** Accessible name of the list and the sheet title. Default "Identity". */
+  /** Accessible name of the list and the sheet title. Default: kit messages `identity`. */
   label?: string;
   /** Line under the sheet title. */
   description?: string;
@@ -46,11 +47,13 @@ function IdentityPicker({
   identities = builtInIdentities,
   defaultIdentity,
   storageKey = IDENTITY_STORAGE_KEY,
-  label = "Identity",
-  description = "The page behind this sheet updates as you choose.",
+  label,
+  description,
   onIdentityChange,
   className,
 }: IdentityPickerProps) {
+  const messages = useUiMessages();
+  const title = label ?? messages.identity;
   const current = useIdentity(defaultIdentity ?? identities[0]?.id ?? "");
 
   if (identities.length === 0) return null;
@@ -67,7 +70,7 @@ function IdentityPicker({
       <DrawerTrigger asChild>
         <button
           type="button"
-          aria-label={`${label}: ${currentLabel}`}
+          aria-label={`${title}: ${currentLabel}`}
           className={cn(
             "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-foreground focus-ring-control",
             className,
@@ -80,10 +83,10 @@ function IdentityPicker({
       <DrawerContent>
         <DrawerHandle />
         <DrawerHeader>
-          <DrawerTitle>{label}</DrawerTitle>
-          <DrawerDescription>{description}</DrawerDescription>
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description ?? messages.identityDescription}</DrawerDescription>
         </DrawerHeader>
-        <div role="radiogroup" aria-label={label} className="flex flex-col gap-1 overflow-y-auto px-4 pb-6">
+        <div role="radiogroup" aria-label={title} className="flex flex-col gap-1 overflow-y-auto px-4 pb-6">
           {identities.map((item) => {
             const selected = item.id === current;
             return (
@@ -102,7 +105,7 @@ function IdentityPicker({
                   <span className="block font-medium text-foreground">
                     {item.label}
                     {defaultIdentity && item.id === defaultIdentity ? (
-                      <span className="ml-2 text-sm font-normal text-muted-foreground">Default</span>
+                      <span className="ml-2 text-sm font-normal text-muted-foreground">{messages.identityDefault}</span>
                     ) : null}
                   </span>
                   {item.description ? (

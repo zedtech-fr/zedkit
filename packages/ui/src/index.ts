@@ -1,3 +1,5 @@
+export { zedkitUiMessagesEn, zedkitUiMessagesFr, type ZedkitUiMessages } from "./messages.js";
+export { ZedkitUiProvider, useUiMessages } from "./ui-provider.js";
 export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./alert.js";
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";

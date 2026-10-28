@@ -20,6 +20,8 @@ const SKIP = new Set([
   // Context/controller wrappers: no host node of their own.
   "Form",
   "FormField",
+  "ZedkitUiProvider",
+  "useUiMessages",
 ]);
 // Root/portal re-exports still carry data-slot in source (kit convention).
 // DOM hosts are also checked in primitives.test.tsx (Button, Input).

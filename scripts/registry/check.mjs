@@ -21,6 +21,9 @@ for (const name of ["badge", "drawer", "confirm-dialog", "registry"]) {
   if (name !== "registry" && raw.includes('from "./utils.js"')) {
     errors.push(`${name}.json still contains relative ./utils.js imports`);
   }
+  if (name === "drawer" && !raw.includes("@/components/ui/ui-provider")) {
+    errors.push("drawer.json missing rewritten ui-provider import");
+  }
 }
 
 const validate = spawnSync(

@@ -4,6 +4,7 @@ import * as React from "react";
 import { Check, Copy } from "lucide-react";
 import { Button } from "./button.js";
 import { Input } from "./input.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface SecretFieldProps {
   /** Element id, so a Label can point at it. */
@@ -24,7 +25,8 @@ export interface SecretFieldProps {
  * on click, check feedback for 2s. Falls back to no-op when the
  * clipboard API is unavailable (insecure contexts).
  */
-function SecretField({ id, value, copyLabel = "Copy to clipboard", "aria-label": ariaLabel }: SecretFieldProps) {
+function SecretField({ id, value, copyLabel, "aria-label": ariaLabel }: SecretFieldProps) {
+  const messages = useUiMessages();
   const [copied, setCopied] = React.useState(false);
   const copy = (): void => {
     const clipboard = navigator.clipboard;
@@ -40,7 +42,7 @@ function SecretField({ id, value, copyLabel = "Copy to clipboard", "aria-label":
   return (
     <div data-slot="secret-field" className="flex w-full items-center gap-secret-field-gap">
       <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
-      <Button type="button" variant="outline" size="icon" aria-label={copyLabel} onClick={copy}>
+      <Button type="button" variant="outline" size="icon" aria-label={copyLabel ?? messages.copyToClipboard} onClick={copy}>
         {copied ? <Check className="size-icon-control" /> : <Copy className="size-icon-control" />}
       </Button>
     </div>

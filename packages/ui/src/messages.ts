@@ -1,0 +1,81 @@
+export type ZedkitUiMessages = {
+  close: string;
+  confirm: string;
+  cancel: string;
+  loading: string;
+  progress: string;
+  filter: string;
+  empty: string;
+  previous: string;
+  next: string;
+  /** Template with `{page}` and `{pageCount}`. */
+  pageOf: string;
+  copyToClipboard: string;
+  live: string;
+  idle: string;
+  options: string;
+  identity: string;
+  identityDescription: string;
+  identityDefault: string;
+  identityDefaultSuffix: string;
+  scrollableTable: string;
+  offlineTitle: string;
+  offlineBody: string;
+  updated: string;
+  justNow: string;
+  locale: "en" | "fr";
+};
+
+export const zedkitUiMessagesEn: ZedkitUiMessages = {
+  close: "Close",
+  confirm: "Confirm",
+  cancel: "Cancel",
+  loading: "Loading",
+  progress: "Progress",
+  filter: "Filter…",
+  empty: "No results.",
+  previous: "Previous",
+  next: "Next",
+  pageOf: "Page {page} of {pageCount}",
+  copyToClipboard: "Copy to clipboard",
+  live: "Live",
+  idle: "Idle",
+  options: "Options",
+  identity: "Identity",
+  identityDescription: "The page behind this sheet updates as you choose.",
+  identityDefault: "Default",
+  identityDefaultSuffix: " (default)",
+  scrollableTable: "Scrollable table",
+  offlineTitle: "You're offline.",
+  offlineBody: "Changes will sync when you reconnect.",
+  updated: "Updated",
+  justNow: "just now",
+  locale: "en",
+};
+
+export const zedkitUiMessagesFr: ZedkitUiMessages = {
+  close: "Fermer",
+  confirm: "Confirmer",
+  cancel: "Annuler",
+  loading: "Chargement",
+  progress: "Progression",
+  filter: "Filtrer…",
+  empty: "Aucun résultat.",
+  previous: "Précédent",
+  next: "Suivant",
+  pageOf: "Page {page} sur {pageCount}",
+  copyToClipboard: "Copier dans le presse-papiers",
+  live: "En direct",
+  idle: "Inactif",
+  options: "Choix",
+  identity: "Identité",
+  identityDescription: "La page derrière ce panneau se met à jour quand vous choisissez.",
+  identityDefault: "Défaut",
+  identityDefaultSuffix: " (défaut)",
+  scrollableTable: "Tableau défilable",
+  offlineTitle: "Vous êtes hors ligne.",
+  offlineBody: "Les changements se synchroniseront à la reconnexion.",
+  updated: "Mis à jour",
+  justNow: "à l'instant",
+  locale: "fr",
+};

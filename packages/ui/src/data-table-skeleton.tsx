@@ -1,6 +1,9 @@
+"use client";
+
 import { Skeleton } from "./skeleton.js";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface DataTableSkeletonProps {
   label?: string;
@@ -16,14 +19,15 @@ export interface DataTableSkeletonProps {
  * loading state stays untouched inside the table body.)
  */
 export function DataTableSkeleton({
-  label = "Loading",
+  label,
   columns = 4,
   rows = 3,
   filter = true,
   className,
 }: DataTableSkeletonProps) {
+  const messages = useUiMessages();
   return (
-    <div data-slot="data-table-skeleton" role="status" aria-label={label} className={cn("space-y-4", className)}>
+    <div data-slot="data-table-skeleton" role="status" aria-label={label ?? messages.loading} className={cn("space-y-4", className)}>
       {filter ? <Skeleton className="h-9 max-w-sm" /> : null}
       {/* Decorative shape only — the zone label above carries the meaning. */}
       <Table aria-hidden>

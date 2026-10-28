@@ -1,5 +1,8 @@
+"use client";
+
 import { Skeleton } from "./skeleton.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export interface CardSkeletonProps {
   label?: string;
@@ -10,12 +13,13 @@ export interface CardSkeletonProps {
  * Faithful loading shape of Card: header block plus three text lines
  * in the same bordered box, so content lands without shifting.
  */
-export function CardSkeleton({ label = "Loading", className }: CardSkeletonProps) {
+export function CardSkeleton({ label, className }: CardSkeletonProps) {
+  const messages = useUiMessages();
   return (
     <div
       data-slot="card-skeleton"
       role="status"
-      aria-label={label}
+      aria-label={label ?? messages.loading}
       className={cn("rounded-xl border bg-card p-card-padding shadow", className)}
     >
       <div className="space-y-card-stack">

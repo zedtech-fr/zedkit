@@ -19,6 +19,7 @@ import {
   DrawerTitle,
 } from "./drawer.js";
 import { cn } from "./utils.js";
+import { useUiMessages } from "./ui-provider.js";
 
 export type RouteModalVariant = "drawer" | "dialog";
 export type RouteModalSize = "sm" | "md" | "lg";
@@ -91,6 +92,7 @@ export function RouteModal({
   onClose,
   className,
 }: RouteModalProps) {
+  const messages = useUiMessages();
   const [open, setOpen] = React.useState(true);
   const closing = React.useRef(false);
   const timer = React.useRef(0);
@@ -189,7 +191,7 @@ export function RouteModal({
     <Drawer data-slot="route-modal" open={open} onOpenChange={handleOpenChange} direction={direction} autoFocus>
       <DrawerContent className={cn(drawerSizeClass, className)}>
         <DrawerClose asChild>
-          <Button variant="ghost" size="icon" aria-label="Close" className="absolute top-overlay-close-offset right-overlay-close-offset">
+          <Button variant="ghost" size="icon" aria-label={messages.close} className="absolute top-overlay-close-offset right-overlay-close-offset">
             <X className="size-icon-control" />
           </Button>
         </DrawerClose>
