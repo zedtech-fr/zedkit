@@ -46,6 +46,9 @@ export function HomeHero({
               <Link href="#ai-setup">Set up your AI agent</Link>
             </Button>
             <Button asChild variant="outline">
+              <Link href="#install-or-copy">Install or copy</Link>
+            </Button>
+            <Button asChild variant="outline">
               <Link href="#quickstart">UI quickstart</Link>
             </Button>
             <Button asChild variant="ghost" size="sm" className="w-fit">
