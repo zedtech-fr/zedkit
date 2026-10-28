@@ -1,5 +1,15 @@
 # @zedtech/zedkit-core
 
+## 0.2.0
+
+### Minor Changes
+
+- f6df11a: Add error taxonomy (`DomainError`, `TransientError`, `PermanentError`, `classifyError`) and injectable `Clock` helpers.
+
+### Patch Changes
+
+- b4ceccb: README: npm-only install path with link to docs install-or-copy section.
+
 ## 0.1.3
 
 ### Patch Changes

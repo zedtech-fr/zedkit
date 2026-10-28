@@ -1,5 +1,18 @@
 # @zedtech/zedkit-quality
 
+## 0.4.0
+
+### Minor Changes
+
+- 46c235e: `defineLayers` preset `feature-folders`: UI imports ports, adapters are injected at the composition root, model is pure.
+- 4cf76ea: `uiPreset` flags explicit `any` (`@typescript-eslint/no-explicit-any`). Name the type, or use `unknown` and narrow. Inline `style` was already banned.
+- 0f2db66: `uiPreset` caps UI files at 300 lines and functions at 60. Inline `style` was already banned.
+- d074cfd: UI hosts take `ref` as a prop (`ComponentProps<"el">`) and set `data-slot` on each exported root. The quality preset flags `forwardRef` and points at `packages/ui/src/button.tsx`. Upgrade notes: docs/migrations/ui-ref-and-messages.md.
+
+### Patch Changes
+
+- 7f8bfbe: Lint messages include the charter rule id and the explanation; they no longer point at the charter file.
+
 ## 0.3.2
 
 ### Patch Changes

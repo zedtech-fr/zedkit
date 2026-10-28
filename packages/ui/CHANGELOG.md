@@ -1,5 +1,56 @@
 # @zedtech/zedkit-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- d601632: Add `BrandLogo`: render your own brand mark as an inline SVG that follows `currentColor`, with a required accessible name. `Logo` stays the zedkit mark used by the docs site.
+- fdccf34: Adds `Calendar`, `DatePicker`, and `DateRangePicker` as thin wrappers over react-day-picker. Pickers open in the existing Popover. Locale and prev/next names follow `ZedkitUiProvider`.
+- 3053f13: Add `Combobox` and `MultiSelect` (downshift + popover), export `PopoverAnchor`, docs demos, and tests.
+- a4927e3: Adds `EmptyState`, `ErrorState`, and `Spinner`. Pass `description` and `actions` (no aliases). Spinner reads its accessible name from `ZedkitUiProvider` (`loading`); a `label` prop wins.
+- cd1a0ff: Kit chrome (Close, Filter…, empty, loading) reads from `ZedkitUiProvider`. English is the default; pass `zedkitUiMessagesFr` or your own copy. A per-host label prop still wins. Upgrade notes: docs/migrations/ui-ref-and-messages.md.
+- 58ec8cd: Adds `Popover`, `Tooltip`, and `DropdownMenu` as thin Radix wrappers. Tooltip delay is 0 unless you pass `delayDuration` on `TooltipProvider`.
+- d074cfd: UI hosts take `ref` as a prop (`ComponentProps<"el">`) and set `data-slot` on each exported root. The quality preset flags `forwardRef` and points at `packages/ui/src/button.tsx`. Upgrade notes: docs/migrations/ui-ref-and-messages.md.
+
+### Patch Changes
+
+- fdac792: AppShell: the sidebar is hidden below md with `max-md:hidden`, so it shows on desktop in every Tailwind build order.
+- 57ddf89: Docs: state core/server/nest are npm-only on getting started (#419).
+- b62afe9: IconLabel catalog gains a home-areas example. Docs home cards use the same quiet decorative icons.
+- e94d789: Docs: FAQ and FAQPage JSON-LD on zedkit-and-shadcn; llms-full.txt; install-or-copy in meta, llms, and READMEs (#419 PR2).
+- 19ecc69: Docs: hero link to install-or-copy; getting started aligns install/copy intro with home (#419).
+- 4b10808: Docs: finish #769 registry brick IconLabel coverage (test traceability).
+- 2a57dc1: Docs: document @zedkit registry namespace for composed copy-path bricks (#761).
+- a10ad9e: Add `@zedtech/zedkit-i18n` (`formatMessage`, `createMessagesContext`). The UI kit depends on it for `ZedkitUiProvider` and pagination templates.
+- 0d3dddb: Drop unused `next-themes` (docs owns the theme provider) and unused `axe-core` (comes in through vitest-axe).
+- ae82829: Darken the light success fill (stock theme and scoped mist) so the success Badge text reaches 4.5:1 (it was 3.15:1).
+- 13bae80: Registry copy: card-skeleton family uses kit skeleton URL. Refs #420.
+- 466f853: Docs: registry update story and GitHub `zedtech-fr/zedkit/<brick>` shorthand; commit `registry/ui` sources (#420).
+- 2392ac5: Status registry copy family: kit sibling URLs and theme css for status-dot/checkmark/status-label. Refs #420.
+- 7bd16b7: Registry copy path: theme item plus kit button/dialog URLs for composed bricks (#420).
+- 085da29: Promote RouteModal to beta (tested, documented, reviewed, a11y-covered)
+- 8c43fd8: Route Combobox/MultiSelect list and chip chrome through kit messages; document downshift in THIRD_PARTY_NOTICES. Refs #740.
+- 3b893de: Dialog caps against the visual viewport, sticks title and footer, and keeps Close above the chrome so the keyboard cannot cover them.
+- 735ce47: Control icons use Tailwind `size-4` (1rem). `--spacing-icon-control` stays as a deprecated alias so existing class names still work.
+- 55f0cea: `IdentityScript` reads configuration from `data-*` attributes on a fixed bootstrap snippet (no dynamic inline script assembly). Behaviour unchanged for consumers.
+- 892a099: `IdentityScript` is a static `<head>` tag (no client module). The stored look still applies before first paint; React no longer hydrates the bootstrap.
+- e87f7e5: Dialog content scrolls inside a 90dvh max height. RouteModal uses the drawer sheet chrome (handle, body scroll, 44px close).
+- 49e60a6: RouteModal's dialog variant has a live preview. Mobile overlay checks cover Dialog, ConfirmDialog, and RouteModal.
+- c32f41b: Shared 1rem spacing aliases use Tailwind scale 4 (`p-4`, `px-4`, `gap-4`, `size-4`). The `--spacing-*` tokens stay as deprecated aliases so existing class names still work.
+- 79dce37: CardSkeleton body lines use Tailwind `space-y-2` (0.5rem). `--spacing-card-lines` stays as a deprecated alias so existing class names still work.
+- 87e2f05: DataTablePagination row gap uses Tailwind `gap-2` (0.5rem). `--spacing-data-table-pagination-gap` stays as a deprecated alias so existing class names still work.
+- f450ae7: DrawerFooter stack gap uses Tailwind `gap-2` (0.5rem). `--spacing-drawer-footer-gap` stays as a deprecated alias so existing class names still work.
+- 10d7fa7: FieldLabel and FieldTitle inline gap uses Tailwind `gap-2` (0.5rem). `--spacing-field-inline` stays as a deprecated alias so existing class names still work.
+- 7f64985: FieldSeparator label padding uses Tailwind `px-2` (0.5rem). `--spacing-field-separator-inline` stays as a deprecated alias so existing class names still work.
+- b22737c: FormItem stack gap uses Tailwind `space-y-2` (0.5rem). `--spacing-form-item-gap` stays as a deprecated alias so existing class names still work.
+- 1d41978: PageHeader action row gap uses Tailwind `gap-2` (0.5rem). `--spacing-page-header-actions-gap` stays as a deprecated alias so existing class names still work.
+- d6fde97: Shared 1.25rem spacing aliases use Tailwind scale 5 (`h-5`). The `--spacing-*` tokens stay as deprecated aliases so existing class names still work.
+- d3dda74: SecretField row gap uses Tailwind `gap-2` (0.5rem). `--spacing-secret-field-gap` stays as a deprecated alias so existing class names still work.
+- dec6869: StatusDot uses Tailwind `size-2` (0.5rem). `--spacing-status-dot` stays as a deprecated alias so existing class names still work.
+- 42687ee: TabsContent top gap uses Tailwind `mt-2` (0.5rem). `--spacing-tabs-content-gap` stays as a deprecated alias so existing class names still work.
+- Updated dependencies [a10ad9e]
+  - @zedtech/zedkit-i18n@0.2.0
+
 ## 0.6.4
 
 ### Patch Changes
