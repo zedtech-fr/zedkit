@@ -7,6 +7,10 @@ Boot a production-ready NestJS API from one factory call: validation,
 logging, docs, throttling, errors and graceful shutdown included.
 Original work by the same author.
 
+Install from npm only (no shadcn registry copy path). See
+[install or copy on the docs site](https://zedkit.app/docs/getting-started#install-or-copy)
+for how that differs from UI bricks.
+
 ## Install
 
 Framework pieces are peer dependencies (one copy per app — required for
