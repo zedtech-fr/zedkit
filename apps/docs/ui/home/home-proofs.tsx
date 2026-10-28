@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_TWO_COL,
@@ -58,7 +59,7 @@ export function HomeProofs({
                       href={item.href}
                       {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
                     >
-                      {item.linkLabel}
+                      {item.external ? item.linkLabel : <DocsActionLabel>{item.linkLabel}</DocsActionLabel>}
                     </Link>
                   </Button>
                 ) : null}
