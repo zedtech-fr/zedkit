@@ -123,12 +123,12 @@ export function AdminDashboardDemoApp() {
             aria-label={`Edit ${row.original.name}`}
             onClick={() => openEdit(row.original)}
           >
-            <Pencil className="size-icon-control" aria-hidden />
+            <Pencil className="size-4" aria-hidden />
           </Button>
           <ConfirmDialog
             trigger={
               <Button type="button" variant="destructive" size="icon" aria-label={`Delete ${row.original.name}`}>
-                <Trash2 className="size-icon-control" aria-hidden />
+                <Trash2 className="size-4" aria-hidden />
               </Button>
             }
             title="Delete app?"

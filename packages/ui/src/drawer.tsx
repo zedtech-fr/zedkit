@@ -124,7 +124,7 @@ function DrawerContent({
           // Safety net for content composed without DrawerHeader/Body/Footer (a bare form, text, a list): it still
           // gets the shared side gutters and a bottom inset that clears the home indicator. Buttons and the
           // kit slots keep their own spacing.
-          "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-drawer-chrome-padding [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
+          "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-4 [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
           "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
           "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:pt-drawer-safe-top",
           "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-drawer-side-mobile-width data-[vaul-drawer-direction=right]:pt-drawer-safe-top data-[vaul-drawer-direction=right]:pr-drawer-safe-right data-[vaul-drawer-direction=right]:max-sm:rounded-l-xl data-[vaul-drawer-direction=right]:sm:w-full data-[vaul-drawer-direction=right]:sm:max-w-drawer-side",
@@ -144,9 +144,9 @@ function DrawerHandle({ className, ...props }: React.ComponentProps<typeof Drawe
     <DrawerPrimitive.Handle
       data-slot="drawer-handle"
       className={cn(
-        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
+        "mx-auto mt-4 h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
         "in-data-[vaul-drawer-direction=left]:hidden in-data-[vaul-drawer-direction=right]:hidden",
-        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-0 in-data-[vaul-drawer-direction=top]:mb-drawer-handle-top",
+        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-0 in-data-[vaul-drawer-direction=top]:mb-4",
         className,
       )}
       {...props}
@@ -159,7 +159,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="drawer-header"
       className={cn(
-        "sticky top-0 z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border bg-background p-drawer-chrome-padding text-center sm:text-left",
+        "sticky top-0 z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border bg-background p-4 text-center sm:text-left",
         className,
       )}
       {...props}
@@ -171,7 +171,7 @@ function DrawerBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-body"
-      className={cn("min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-drawer-chrome-padding last:pb-drawer-safe-bottom", className)}
+      className={cn("min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 last:pb-drawer-safe-bottom", className)}
       {...props}
     />
   );
@@ -182,7 +182,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="drawer-footer"
       className={cn(
-        "sticky bottom-0 z-10 mt-auto flex shrink-0 flex-col gap-drawer-footer-gap border-t border-border bg-background px-drawer-chrome-padding pt-drawer-chrome-padding pb-drawer-footer-safe",
+        "sticky bottom-0 z-10 mt-auto flex shrink-0 flex-col gap-drawer-footer-gap border-t border-border bg-background px-4 pt-4 pb-drawer-footer-safe",
         className,
       )}
       {...props}

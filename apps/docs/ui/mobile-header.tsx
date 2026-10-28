@@ -38,7 +38,7 @@ function ThemeButton() {
       className={iconButtonClassName}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >
-      {dark ? <Moon aria-hidden="true" className="size-icon-control" /> : <Sun aria-hidden="true" className="size-icon-control" />}
+      {dark ? <Moon aria-hidden="true" className="size-4" /> : <Sun aria-hidden="true" className="size-4" />}
     </button>
   );
 }
@@ -47,7 +47,7 @@ function DocsMenuButton() {
   const sidebar = useSidebar();
   return (
     <button type="button" aria-label="Open navigation" className={iconButtonClassName} onClick={() => sidebar.setOpen(true)}>
-      <Menu aria-hidden="true" className="size-icon-control" />
+      <Menu aria-hidden="true" className="size-4" />
     </button>
   );
 }
@@ -57,7 +57,7 @@ function HomeMenuButton({ links }: { links: MobileLink[] }) {
   return (
     <>
       <button type="button" aria-label="Open menu" aria-haspopup="dialog" className={iconButtonClassName} onClick={() => setOpen(true)}>
-        <Menu aria-hidden="true" className="size-icon-control" />
+        <Menu aria-hidden="true" className="size-4" />
       </button>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent>
@@ -116,7 +116,7 @@ export function MobileHeader({
         <div className="flex items-center justify-self-end">
           <ThemeButton />
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
-            <GithubIcon className="size-icon-control" />
+            <GithubIcon className="size-4" />
           </a>
           {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton links={links} />}
         </div>

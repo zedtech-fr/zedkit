@@ -173,7 +173,7 @@ export function DataTable<TData extends RowData>({
   }, [table, pageSize]);
 
   return (
-    <div data-slot="data-table" className="space-y-data-table-stack">
+    <div data-slot="data-table" className="space-y-4">
       <DataTableToolbar
         value={table.state.globalFilter ?? ""}
         onChange={(value) => {
@@ -217,7 +217,7 @@ export function DataTable<TData extends RowData>({
             <TableRow key={row}>
               {columns.map((_column, index) => (
                 <TableCell key={index}>
-                  <Skeleton className="h-data-table-skeleton-height w-full" />
+                  <Skeleton className="h-4 w-full" />
                 </TableCell>
               ))}
             </TableRow>

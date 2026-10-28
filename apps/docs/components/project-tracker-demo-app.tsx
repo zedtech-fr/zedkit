@@ -207,7 +207,7 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
               className="w-full justify-start gap-2"
               onClick={active ? undefined : notice(`${label} is not part of this example. Tasks has the full screen.`)}
             >
-              <Icon className="size-icon-control" aria-hidden />
+              <Icon className="size-4" aria-hidden />
               {label}
             </Button>
           );
@@ -244,7 +244,7 @@ function MobileNav() {
     <Drawer direction="left" mobile="side">
       <DrawerTrigger asChild>
         <IconButton label="Open navigation" variant="ghost" className={mobile ? undefined : "md:hidden"}>
-          <Menu className="size-icon-control" aria-hidden />
+          <Menu className="size-4" aria-hidden />
         </IconButton>
       </DrawerTrigger>
       <DrawerContent>
@@ -297,7 +297,7 @@ function UserMenu() {
                   className="w-full justify-start gap-2"
                   onClick={notice(`${label} is not part of this example.`)}
                 >
-                  <Icon className="size-icon-control" aria-hidden />
+                  <Icon className="size-4" aria-hidden />
                   {label}
                 </Button>
               </DrawerClose>
@@ -307,7 +307,7 @@ function UserMenu() {
         <DrawerFooter>
           <DrawerClose asChild>
             <Button type="button" variant="outline" className="gap-2" onClick={notice("Signed out (example only)")}>
-              <LogOut className="size-icon-control" aria-hidden />
+              <LogOut className="size-4" aria-hidden />
               Sign out
             </Button>
           </DrawerClose>
@@ -326,7 +326,7 @@ function TopBar() {
       </Stack>
       <Stack direction="horizontal" gap={1}>
         <IconButton label="Notifications" variant="ghost" onClick={notice("You are all caught up.")}>
-          <Bell className="size-icon-control" aria-hidden />
+          <Bell className="size-4" aria-hidden />
         </IconButton>
         <UserMenu />
       </Stack>
@@ -446,11 +446,11 @@ export function ProjectTrackerDemoApp() {
             actions={
               <>
                 <Button type="button" variant="outline" className="gap-2" onClick={notice("Export started: tasks.csv")}>
-                  <Download className="size-icon-control" aria-hidden />
+                  <Download className="size-4" aria-hidden />
                   Export
                 </Button>
                 <Button type="button" className="gap-2" onClick={addTask}>
-                  <Plus className="size-icon-control" aria-hidden />
+                  <Plus className="size-4" aria-hidden />
                   New task
                 </Button>
               </>

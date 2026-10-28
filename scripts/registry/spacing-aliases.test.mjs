@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
@@ -49,12 +49,59 @@ test("shared values point at their Tailwind scale step, singletons at themselves
   }
 });
 
-test("kit sources use size-4, not the deprecated size-icon-control alias", () => {
-  const srcDir = join(root, "packages/ui/src");
+const DEPRECATED_1REM_CLASSES = [
+  "gap-detail-panel-gap",
+  "gap-dialog-gap",
+  "gap-field-group-nested",
+  "gap-page-header-gap",
+  "h-data-table-skeleton-height",
+  "left-alert-icon-offset",
+  "mb-drawer-handle-top",
+  "ml-field-error-indent",
+  "mt-card-section",
+  "mt-drawer-handle-top",
+  "mt-table-caption-gap",
+  "p-app-shell-padding",
+  "p-dialog-gap",
+  "p-drawer-chrome-padding",
+  "p-field-label-inset",
+  "p-option-card-padding",
+  "pt-drawer-chrome-padding",
+  "px-alert-inline",
+  "px-button-inline",
+  "px-detail-panel-inline",
+  "px-drawer-chrome-padding",
+  "right-overlay-close-offset",
+  "size-checkbox",
+  "size-icon-control",
+  "size-status-label-box",
+  "size-switch-thumb",
+  "space-y-data-table-stack",
+  "top-alert-icon-offset",
+  "top-overlay-close-offset",
+  "translate-x-switch-travel",
+];
+
+function walkJs(dir, acc = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name === ".next" || entry.name === "out" || entry.name === "dist") continue;
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) walkJs(path, acc);
+    else if (/\.(tsx?|jsx?)$/.test(entry.name)) acc.push(path);
+  }
+  return acc;
+}
+
+test("kit and docs sources use scale 4, not deprecated 1rem aliases", () => {
+  const files = [...walkJs(join(root, "packages/ui/src")), ...walkJs(join(root, "apps/docs"))];
   const hits = [];
-  for (const name of readdirSync(srcDir)) {
-    if (!name.endsWith(".ts") && !name.endsWith(".tsx")) continue;
-    if (readFileSync(join(srcDir, name), "utf8").includes("size-icon-control")) hits.push(name);
+  for (const file of files) {
+    const text = readFileSync(file, "utf8");
+    for (const alias of DEPRECATED_1REM_CLASSES) {
+      if (new RegExp(`(?<![A-Za-z0-9-])${alias}(?![A-Za-z0-9-])`).test(text)) {
+        hits.push(`${relative(root, file)}: ${alias}`);
+      }
+    }
   }
   assert.deepEqual(hits, []);
 });

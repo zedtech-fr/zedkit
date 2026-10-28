@@ -116,7 +116,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     // Bare children (anything but the kit slots, the handle, and buttons) pick up the shared gutters.
-    expect(dialog.className).toContain("px-drawer-chrome-padding");
+    expect(dialog.className).toContain("px-4");
     expect(dialog.className).toContain("pb-drawer-footer-safe");
     // The slots carry their own spacing, so they are excluded from that net.
     for (const slot of ["drawer-handle", "drawer-header", "drawer-body", "drawer-footer"]) {
@@ -387,16 +387,16 @@ describe("drawer", () => {
       </Drawer>,
     );
     const handle = screen.getByTestId("handle");
-    expect(handle.className).toContain("mt-drawer-handle-top");
+    expect(handle.className).toContain("mt-4");
     expect(handle.className).toContain("h-drawer-handle-height");
     expect(handle.className).toContain("w-drawer-handle-width");
-    expect(handle.className).not.toMatch(/(^|\s)(mt-4|h-1\.5|w-12)(\s|$)/);
+    expect(handle.className).not.toMatch(/(^|\s)(h-1\.5|w-12)(\s|$)/);
     const header = screen.getByTestId("header");
     expect(header.className).toContain("gap-drawer-header-gap");
-    expect(header.className).toContain("p-drawer-chrome-padding");
+    expect(header.className).toContain("p-4");
     const footer = screen.getByTestId("footer");
     expect(footer.className).toContain("gap-drawer-footer-gap");
-    expect(footer.className).toContain("px-drawer-chrome-padding");
+    expect(footer.className).toContain("px-4");
     expect(footer.className).toContain("pb-drawer-footer-safe");
   });
 

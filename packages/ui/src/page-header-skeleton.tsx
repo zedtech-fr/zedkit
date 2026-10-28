@@ -27,7 +27,7 @@ export function PageHeaderSkeleton({
       data-slot="page-header-skeleton"
       role="status"
       aria-label={label ?? messages.loading}
-      className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-page-header-gap", className)}
+      className={cn("mb-page-header-offset flex flex-wrap items-start justify-between gap-4", className)}
     >
       <div className="space-y-1">
         <Skeleton className="h-7 w-48" />

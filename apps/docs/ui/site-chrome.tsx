@@ -68,7 +68,7 @@ export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchP
       onClick={() => handleThemeChange(value === "light" ? "dark" : "light")}
       data-theme-toggle=""
     >
-      {value === "dark" ? <Moon className="size-icon-control" /> : <Sun className="size-icon-control" />}
+      {value === "dark" ? <Moon className="size-4" /> : <Sun className="size-4" />}
     </IconButton>
   );
 }

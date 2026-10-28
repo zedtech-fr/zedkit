@@ -31,7 +31,7 @@ describe("AppShell", () => {
       </AppShell>,
     );
     expect(container.querySelector("aside")?.className).toContain("w-app-shell-sidebar");
-    expect(container.querySelector("main")?.className).toContain("p-app-shell-padding");
+    expect(container.querySelector("main")?.className).toContain("p-4");
     expect(container.querySelector("main")?.className).toContain("md:p-app-shell-padding-md");
   });
 
@@ -69,8 +69,8 @@ describe("PageHeader", () => {
     );
     const root = container.firstElementChild;
     expect(root?.className).toContain("mb-page-header-offset");
-    expect(root?.className).toContain("gap-page-header-gap");
-    expect(root?.className).not.toMatch(/(^|\s)(mb-6|gap-4)(\s|$)/);
+    expect(root?.className).toContain("gap-4");
+    expect(root?.className).not.toMatch(/(^|\s)mb-6(\s|$)/);
     const actions = screen.getByRole("button", { name: "New" }).parentElement;
     expect(actions?.className).toContain("gap-page-header-actions-gap");
     expect(actions?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);

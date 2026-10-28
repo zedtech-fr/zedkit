@@ -193,7 +193,7 @@ describe("primitives", () => {
     );
     const section = screen.getByRole("alert", { name: "Maintenance notice" });
     expect(section.tagName).toBe("SECTION");
-    expect(section.className).toContain("px-alert-inline");
+    expect(section.className).toContain("px-4");
   });
 
   it("renders a textarea with its placeholder", () => {

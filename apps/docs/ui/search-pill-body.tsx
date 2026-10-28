@@ -130,7 +130,7 @@ export function SearchPillBody({ onClose }: { onClose: () => void }) {
         onClick={onClose}
         className={`${iconButtonClassName} text-muted-foreground hover:text-foreground`}
       >
-        <X aria-hidden="true" className="size-icon-control" />
+        <X aria-hidden="true" className="size-4" />
       </button>
     </>
   );

@@ -100,7 +100,7 @@ function DialogContent({
         data-slot="dialog-content"
         ref={setRef}
         className={cn(
-          "fixed dialog-center z-overlay grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-dialog-gap overflow-y-auto overscroll-y-contain rounded-lg border bg-background p-dialog-padding shadow-overlay sm:max-w-lg",
+          "fixed dialog-center z-overlay grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-4 overflow-y-auto overscroll-y-contain rounded-lg border bg-background p-dialog-padding shadow-overlay sm:max-w-lg",
           "motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)]",
           "motion-safe:data-[state=closed]:animate-[zk-zoom-out_var(--motion-base)_var(--ease-exit)]",
           className,
@@ -108,7 +108,7 @@ function DialogContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute top-overlay-close-offset right-overlay-close-offset z-20 grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <DialogPrimitive.Close className="absolute top-4 right-4 z-20 grid size-overlay-touch-target place-content-center rounded-sm opacity-50 focus-ring transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <X className="size-4" />
           <span className="sr-only">{closeLabel ?? messages.close}</span>
         </DialogPrimitive.Close>

@@ -31,7 +31,7 @@ function PopoverContent({
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          "z-overlay min-w-select-content-min origin-[--radix-popover-content-transform-origin] rounded-md border bg-popover p-dialog-gap text-popover-foreground shadow-md outline-none",
+          "z-overlay min-w-select-content-min origin-[--radix-popover-content-transform-origin] rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",
           className,
         )}
         {...props}
