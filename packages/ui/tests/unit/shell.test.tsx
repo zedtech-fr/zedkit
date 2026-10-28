@@ -72,7 +72,7 @@ describe("PageHeader", () => {
     expect(root?.className).toContain("gap-4");
     expect(root?.className).not.toMatch(/(^|\s)mb-6(\s|$)/);
     const actions = screen.getByRole("button", { name: "New" }).parentElement;
-    expect(actions?.className).toContain("gap-page-header-actions-gap");
-    expect(actions?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);
+    expect(actions?.className).toContain("gap-2");
+    expect(actions?.className).not.toContain("gap-page-header-actions-gap");
   });
 });

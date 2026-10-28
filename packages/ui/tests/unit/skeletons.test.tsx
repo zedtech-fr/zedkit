@@ -23,6 +23,8 @@ describe("skeletons", () => {
     expect(root.className).toContain("mb-page-header-offset");
     expect(root.className).toContain("gap-4");
     expect(root.className).not.toMatch(/(^|\s)mb-6(\s|$)/);
+    expect(root.querySelector(".gap-2")).not.toBeNull();
+    expect(root.innerHTML).not.toContain("gap-page-header-actions-gap");
   });
 
   it("shares the card spacing tokens so content lands without shifting", () => {
