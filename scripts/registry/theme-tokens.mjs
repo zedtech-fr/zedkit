@@ -23,7 +23,7 @@ function rootThemeBlock(css) {
 }
 
 function darkThemeBlock(css) {
-  return blockBefore(css, ".dark", "\n@theme");
+  return blockBefore(css, "\n.dark {", "\n@theme");
 }
 
 function themeInlineBlock(css) {
@@ -46,6 +46,40 @@ function expectedFocusRingCss(css) {
         outline,
         "box-shadow": normalizeBoxShadow(shadowMatch[1]),
       },
+    },
+  };
+}
+
+function keyframesBlock(css, name) {
+  const opener = `@keyframes ${name}`;
+  const start = css.indexOf(opener);
+  if (start < 0) throw new Error(`styles.css: missing ${opener}`);
+  const open = css.indexOf("{", start);
+  let depth = 0;
+  for (let i = open; i < css.length; i += 1) {
+    if (css[i] === "{") depth += 1;
+    if (css[i] === "}") {
+      depth -= 1;
+      if (depth === 0) return css.slice(open + 1, i);
+    }
+  }
+  throw new Error(`styles.css: unclosed ${opener}`);
+}
+
+function expectedCheckDrawCss(css) {
+  const body = keyframesBlock(css, "zk-check-draw");
+  const fromMatch = body.match(/from\s*\{([^}]+)\}/);
+  const toMatch = body.match(/to\s*\{([^}]+)\}/);
+  if (!fromMatch || !toMatch) throw new Error("styles.css: zk-check-draw keyframes malformed");
+  const pick = (block, prop) => {
+    const match = block.match(new RegExp(`${prop}:\\s*([^;]+);`));
+    if (!match) throw new Error(`styles.css: zk-check-draw missing ${prop}`);
+    return match[1].trim();
+  };
+  return {
+    "@keyframes zk-check-draw": {
+      from: { "stroke-dashoffset": pick(fromMatch[1], "stroke-dashoffset") },
+      to: { "stroke-dashoffset": pick(toMatch[1], "stroke-dashoffset") },
     },
   };
 }
@@ -75,6 +109,14 @@ export function expectedRegistryThemeFromStyles(cssText) {
     },
     "status-dot": {
       cssVars: {
+        light: {
+          success: varFromBlock(root, "success"),
+          warning: varFromBlock(root, "warning"),
+        },
+        dark: {
+          success: varFromBlock(dark, "success"),
+          warning: varFromBlock(dark, "warning"),
+        },
         theme: {
           "spacing-status-dot": varFromBlock(theme, "spacing-status-dot"),
         },
@@ -87,6 +129,7 @@ export function expectedRegistryThemeFromStyles(cssText) {
           "animate-check-draw": varFromBlock(theme, "animate-check-draw"),
         },
       },
+      css: expectedCheckDrawCss(cssText),
     },
     "status-label": {
       cssVars: {
