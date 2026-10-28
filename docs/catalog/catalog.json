@@ -184,6 +184,57 @@
         }
       ]
     },
+    "@zedtech/zedkit-devtools": {
+      "catalog": "packages/devtools/CATALOG.md",
+      "keywords": [
+        "devtools",
+        "development",
+        "react",
+        "typescript",
+        "debug"
+      ],
+      "audience": "App authors who want a consistent local-only debug drawer.",
+      "needs": [
+        {
+          "need": "Gate devtools on environment",
+          "import": "`@zedtech/zedkit-devtools` — `devtoolsEnabled`, `DevtoolsEnabledOptions`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "devtoolsEnabled",
+          "audience": "App roots that should tree-shake the panel out of production bundles.",
+          "purpose": "Return false when `NODE_ENV` is `production` unless `force` is set for demos.",
+          "whenToUse": "Before rendering `@zedtech/zedkit-devtools/react`.",
+          "whenNotToUse": "Production user-facing features — never expose `force` to end users.",
+          "derivedFrom": null,
+          "example": "import { devtoolsEnabled } from \"@zedtech/zedkit-devtools\";\n\nif (devtoolsEnabled()) {\n  // mount devtools in development\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { devtoolsEnabled } from \"@zedtech/zedkit-devtools\";\n\nif (devtoolsEnabled()) {\n  // mount devtools in development\n}"
+            }
+          ]
+        },
+        {
+          "need": "Mount a dev-only developer tools panel",
+          "import": "`@zedtech/zedkit-devtools/react` — `ZedkitDevtools`, `ZedkitDevtoolsPanel`, `DevtoolsBuildInfoRow`, `DevtoolsLocaleOption`",
+          "wraps": "`@zedtech/zedkit-ui`, `@zedtech/zedkit-flags` (peers)",
+          "status": "alpha",
+          "shortName": "ZedkitDevtools",
+          "audience": "Local development and preview environments wrapped in `ZedkitUiProvider`.",
+          "purpose": "Floating drawer with Look (identity), Flags, Locale, Info, and optional query slot tabs.",
+          "whenToUse": "After providers are mounted; pass `flagKeys`, `buildInfo`, and locale handlers from the app root.",
+          "whenNotToUse": "Production builds — rely on `devtoolsEnabled()` or omit the import entirely.",
+          "derivedFrom": null,
+          "example": "import { ZedkitDevtools } from \"@zedtech/zedkit-devtools/react\";\n\n<ZedkitDevtools\n  flagKeys={[\"betaUi\"]}\n  buildInfo={[{ label: \"Git\", value: \"abc123\" }]}\n  localeOptions={[{ id: \"en\", label: \"English\" }]}\n  activeLocale=\"en\"\n  onLocaleChange={(id) => console.log(id)}\n/>;",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { ZedkitDevtools } from \"@zedtech/zedkit-devtools/react\";\n\n<ZedkitDevtools\n  flagKeys={[\"betaUi\"]}\n  buildInfo={[{ label: \"Git\", value: \"abc123\" }]}\n  localeOptions={[{ id: \"en\", label: \"English\" }]}\n  activeLocale=\"en\"\n  onLocaleChange={(id) => console.log(id)}\n/>;"
+            }
+          ]
+        }
+      ]
+    },
     "@zedtech/zedkit-flags": {
       "catalog": "packages/flags/CATALOG.md",
       "keywords": [

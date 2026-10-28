@@ -2,6 +2,7 @@
   "nonVisualPackages": [
     "@zedtech/zedkit-ai",
     "@zedtech/zedkit-core",
+    "@zedtech/zedkit-devtools",
     "@zedtech/zedkit-nest",
     "@zedtech/zedkit-i18n",
     "@zedtech/zedkit-observability",
