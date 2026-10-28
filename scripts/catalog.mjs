@@ -6,8 +6,9 @@
 //   repository.directory) from each CATALOG.md into its package.json.
 // - `node scripts/catalog.mjs check [--root DIR]` verifies that every
 //   public export of each package appears in that package's CATALOG.md,
-//   that catalog.json is up to date, and that every public package.json
-//   matches its CATALOG.md metadata (CI runs this).
+//   that catalog.json is up to date, that every public package.json
+//   matches its CATALOG.md metadata, and that every UI component export
+//   has a four-state entry in packages/ui/four-states.json (CI runs this).
 //
 // CATALOG.md header format (before the first `## <need>`; single source
 // for the npm discoverability fields of public packages):
@@ -217,6 +218,62 @@ export function parseBarrelExports(text, indexPath, errors) {
     names.add(match[1]);
   }
   return [...names];
+}
+
+const UI_TYPE_SUFFIX = /(Props|Variants|Tone|Options|Column|Event|Messages|Data)$/;
+const UI_STATES = new Set(["loading", "empty", "error", "success"]);
+const UI_STATES_PATH = "packages/ui/four-states.json";
+const UI_STATES_EXAMPLE = "packages/ui/tests/unit/data-table.test.tsx";
+
+export function isUiComponentExport(name) {
+  if (typeof name !== "string" || !/^[A-Z]/.test(name)) return false;
+  if (UI_TYPE_SUFFIX.test(name)) return false;
+  if (name.includes("_")) return false;
+  return true;
+}
+
+export function checkUiExportStates({ symbols, manifest, fileExists }, errors) {
+  const example = manifest?.example?.fixture ?? UI_STATES_EXAMPLE;
+  const hint = `Example fixture: \`${example}\`. Add the export to ${UI_STATES_PATH} with \`"states": "none"\` or a fixture, vitest, and axe path.`;
+  if (!manifest || typeof manifest !== "object") {
+    errors.push(`${UI_STATES_PATH}: missing four-state manifest. ${hint}`);
+    return;
+  }
+  const none = new Set(manifest.none ?? []);
+  const withStates = manifest.withStates ?? {};
+  const listed = new Set([...none, ...Object.keys(withStates)]);
+  const components = [...new Set(symbols)].filter(isUiComponentExport);
+
+  for (const name of components) {
+    if (!listed.has(name)) {
+      errors.push(`${UI_STATES_PATH}: export \`${name}\` has no four-state entry. ${hint}`);
+    }
+  }
+  for (const name of listed) {
+    if (!components.includes(name)) {
+      errors.push(`${UI_STATES_PATH}: \`${name}\` is not a UI component export (stale entry).`);
+    }
+  }
+  for (const name of none) {
+    if (Object.hasOwn(withStates, name)) {
+      errors.push(`${UI_STATES_PATH}: \`${name}\` is in both none and withStates.`);
+    }
+  }
+  for (const [name, entry] of Object.entries(withStates)) {
+    const states = entry?.states;
+    if (!Array.isArray(states) || states.length === 0 || states.some((state) => !UI_STATES.has(state))) {
+      errors.push(`${UI_STATES_PATH}: \`${name}\` states must be a non-empty list of loading|empty|error|success.`);
+      continue;
+    }
+    for (const key of ["fixture", "vitest", "axe"]) {
+      const path = entry[key];
+      if (typeof path !== "string" || path === "") {
+        errors.push(`${UI_STATES_PATH}: \`${name}\` is missing ${key}. ${hint}`);
+      } else if (fileExists && !fileExists(path)) {
+        errors.push(`${UI_STATES_PATH}: \`${name}\` ${key} \`${path}\` does not exist. ${hint}`);
+      }
+    }
+  }
 }
 
 function escapeRegExp(s) {
@@ -474,6 +531,22 @@ function check(packages, root, errors) {
         } else if (!headings.has(target)) {
           errors.push(`${pkg.catalogPath}: need "${need.need}" links unknown need "${target}" in See also.`);
         }
+      }
+    }
+    if (pkg.name === "@zedtech/zedkit-ui") {
+      const statesPath = join(root, UI_STATES_PATH);
+      const raw = readIfExists(statesPath);
+      if (!raw) {
+        errors.push(`${UI_STATES_PATH}: missing four-state manifest. Example fixture: \`${UI_STATES_EXAMPLE}\`.`);
+      } else {
+        checkUiExportStates(
+          {
+            symbols: pkg.symbols,
+            manifest: JSON.parse(raw),
+            fileExists: (path) => existsSync(join(root, path)),
+          },
+          errors,
+        );
       }
     }
   }

@@ -52,6 +52,10 @@ import { a } from "@zedtech/zedkit-core";
 - **Import** names the package (and subpath, if any) plus the symbols the
   need uses. Every public export of the package must appear here — CI
   checks it (`pnpm catalog:check`).
+- UI component exports also need a four-state entry in
+  [`packages/ui/four-states.json`](../../packages/ui/four-states.json)
+  (`none`, or loading/empty/error/success plus fixture, vitest and axe
+  paths). A missing entry fails with a pointer to the DataTable fixture.
 - **Wraps** names the mature npm package underneath, or `(none)` when the
   module is dependency-free by design.
 - **Status** is one of `planned | alpha | beta | stable | deprecated`
