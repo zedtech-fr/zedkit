@@ -34,6 +34,10 @@
   --zk-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   /* Shape */
   --zk-border-width: 1px;
+  /* Body copy (mist / stock). Identities override. */
+  --zk-body-leading: 1.6;
+  /* Colour transitions (`transition-colors`). Identities override. */
+  --zk-color-duration: 150ms;
   /* Depth */
   --zk-shadow-color: 240 10% 4%;
   --zk-shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -103,6 +107,11 @@
     background-size: var(--zk-bg-size);
     background-repeat: var(--zk-bg-repeat);
     background-attachment: var(--zk-bg-attach);
+  }
+
+  /* Colour transitions follow the identity */
+  .transition-colors {
+    transition-duration: var(--zk-color-duration, 150ms);
   }
 
   /* Border width follows the identity */
@@ -256,7 +265,7 @@
  *    - type scale, weights, tracking, spacing and radii: Tailwind's defaults
  *      (with the kit's --radius-sm/md/lg steps);
  *    - tokens with no stock value (heading and label styling, button
- *      motion, density): `initial`, so every var() fallback applies as it
+ *      motion): `initial`, so every var() fallback applies as it
  *      does with no identity.
  *    The glass tokens are reset by glass.css for every non-glass scope.
  *    tests/unit/identity-scope-reset.test.ts keeps this list in step with
@@ -327,8 +336,7 @@
 
   /* Spacing and shape */
   --spacing: 0.25rem;
-  --zk-density: initial;
-  --zk-control-scale: initial;
+  --zk-body-leading: 1.6;
   --radius: 0.5rem;
   --radius-xs: 0.125rem;
   --radius-sm: calc(var(--radius) - 4px);
@@ -338,6 +346,7 @@
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
   --zk-border-width: 1px;
+  --zk-color-duration: 150ms;
 
   /* Depth (stock block of this file) */
   --zk-shadow-color: 240 10% 4%;

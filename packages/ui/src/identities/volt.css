@@ -67,6 +67,7 @@
   --zk-heading-leading: 1.08;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.1em;
+  --zk-body-leading: 1.4;
 
   /* Spacing: base unit */
   --spacing: 0.225rem;
@@ -103,6 +104,7 @@
   --motion-fast: 100ms;
   --motion-base: 150ms;
   --motion-slow: 220ms;
+  --zk-color-duration: 100ms;
   --zk-reveal-duration: 300ms;
   --zk-reveal-distance: 0.5rem;
   --zk-reveal-ease: cubic-bezier(0.2, 0.8, 0.2, 1);

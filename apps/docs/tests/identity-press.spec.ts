@@ -31,6 +31,7 @@ test.describe("press identity", () => {
     expect(await probe(page, "border-top-left-radius", "var(--radius-xl)")).toBe("0px");
     expect(await probe(page, "box-shadow", "var(--zk-shadow-md)")).toMatch(/0px 0px 0px 0px/);
     expect(await probe(page, "box-shadow", "var(--zk-shadow-overlay)")).toMatch(/0px 0px 0px 1px/);
+    expect(await probe(page, "border-top-width", "var(--zk-border-width)")).toBe("2px");
   });
 
   for (const theme of ["light", "dark"] as const) {

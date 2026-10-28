@@ -1637,7 +1637,7 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 - Status: alpha
 - Short name: Identities
 - Audience: Teams that want to change the whole look of an app, or offer a choice, without touching components.
-- Purpose: `data-identity` on the root swaps the identity tokens next to light and dark; a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose.
+- Purpose: `data-identity` on the root swaps the identity tokens next to light and dark (body line-height, border width, colour-transition duration, type, radius, motion); a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose. Mist keeps the kit defaults; the other looks change those values.
 - When to use: To rebrand or offer several looks from one set of components.
 - When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
 - See also: `Theme an admin app (dark/light included)`
