@@ -1,13 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { Badge } from "@zedtech/zedkit-ui";
+import { Badge, IconLabel } from "@zedtech/zedkit-ui";
 import { maturityDocHref } from "@/content/maturity-compatibility";
-import { maturityBadgeVariant } from "@/lib/maturity-status";
+import { maturityBadgeVariant, maturityIconFor } from "@/lib/maturity-status";
 
 export function MaturityBadge({ status }: { status: string }) {
   return (
     <Badge asChild variant={maturityBadgeVariant(status)} className="no-underline hover:no-underline">
       <Link href={maturityDocHref} data-badge-link="">
-        {status}
+        <IconLabel icon={maturityIconFor(status)} className="text-current">
+          {status}
+        </IconLabel>
       </Link>
     </Badge>
   );
