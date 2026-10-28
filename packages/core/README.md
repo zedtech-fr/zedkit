@@ -6,6 +6,10 @@
 Typed Result helpers, safe try/catch wrappers, and prefixed IDs for any
 JS/TS project. Original work by the same author.
 
+Install from npm only (no shadcn registry copy path). See
+[install or copy on the docs site](https://zedkit.app/docs/getting-started#install-or-copy)
+for how that differs from UI bricks.
+
 ## Install
 
 ```sh

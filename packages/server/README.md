@@ -7,6 +7,10 @@ Harden any Node server in minutes: in-process rate limiting, secret/PII
 redaction for logs, HKDF crypto and HTTP helpers. Original work by the
 same author. Zero runtime dependencies.
 
+Install from npm only (no shadcn registry copy path). See
+[install or copy on the docs site](https://zedkit.app/docs/getting-started#install-or-copy)
+for how that differs from UI bricks.
+
 ## Install
 
 ```sh
