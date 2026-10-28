@@ -69,7 +69,13 @@ import { UpdatedAgoDemo } from "./updated-ago-demo";
 import { WizardComposedDemo } from "./wizard-composed-demo";
 import { WizardDemo } from "./wizard-demo";
 import { WizardSoloDemo } from "./wizard-solo-demo";
+import { EmptyStateActionsDemo } from "./empty-state-actions-demo";
+import { EmptyStateDemo } from "./empty-state-demo";
+import { ErrorStateDemo } from "./error-state-demo";
+import { ErrorStateRetryDemo } from "./error-state-retry-demo";
 import { OfflineNoteDemo, OfflineNoteWiredDemo, OfflineNoteWordingDemo } from "./offline-note-demo";
+import { SpinnerDemo } from "./spinner-demo";
+import { SpinnerNamedDemo } from "./spinner-named-demo";
 import { ThemeDemo, ThemeTokensDemo, ThemeToggleDemo } from "./theme-demo";
 import { IconButtonDemo, IconButtonRowsDemo } from "./icon-button-demo";
 import { IconLabelDemo, IconLabelOrdersDemo } from "./icon-label-demo";
@@ -124,6 +130,12 @@ export const demoRegistry = {
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
+  EmptyStateDemo: { Demo: EmptyStateDemo, file: "empty-state-demo.tsx" },
+  EmptyStateActionsDemo: { Demo: EmptyStateActionsDemo, file: "empty-state-actions-demo.tsx" },
+  ErrorStateDemo: { Demo: ErrorStateDemo, file: "error-state-demo.tsx" },
+  ErrorStateRetryDemo: { Demo: ErrorStateRetryDemo, file: "error-state-retry-demo.tsx" },
+  SpinnerDemo: { Demo: SpinnerDemo, file: "spinner-demo.tsx", center: true },
+  SpinnerNamedDemo: { Demo: SpinnerNamedDemo, file: "spinner-named-demo.tsx", center: true },
   OfflineNoteDemo: { Demo: OfflineNoteDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWiredDemo: { Demo: OfflineNoteWiredDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWordingDemo: { Demo: OfflineNoteWordingDemo, file: "offline-note-demo.tsx" },

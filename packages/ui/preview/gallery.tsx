@@ -40,11 +40,14 @@ import {
   StatusDot,
   StatusLabel,
   UpdatedAgo,
+  EmptyState,
+  ErrorState,
   OfflineNote,
   OptionCards,
   PageHeader,
   PageHeaderSkeleton,
   ProgressBar,
+  Spinner,
   SecretField,
   Select,
   SelectContent,
@@ -158,6 +161,11 @@ export function Gallery() {
           </div>
           <div className="max-w-sm space-y-2">
             <OfflineNote />
+          </div>
+          <div className="max-w-sm space-y-2">
+            <EmptyState title="No invoices" description="Create an invoice to send to a client." actions={<Button>New invoice</Button>} />
+            <ErrorState title="Could not load invoices" description="Check your connection and try again." actions={<Button variant="outline">Try again</Button>} />
+            <Spinner />
           </div>
           <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-name">Name</Label>

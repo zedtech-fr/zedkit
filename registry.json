@@ -446,6 +446,48 @@
       ]
     },
     {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "registryDependencies": ["typography", "utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/empty-state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "error-state",
+      "type": "registry:ui",
+      "registryDependencies": ["alert", "utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/error-state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "registry/generated/ui/spinner.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "icon-label",
       "type": "registry:ui",
       "dependencies": ["lucide-react"],
