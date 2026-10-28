@@ -5,6 +5,7 @@ import {
   AppShell,
   Badge,
   Button,
+  Calendar,
   Card,
   CardContent,
   CardDescription,
@@ -17,6 +18,7 @@ import {
   ConfirmDialog,
   DataTable,
   DataTableSkeleton,
+  DatePicker,
   DetailPanel,
   DetailPanelSkeleton,
   Dialog,
@@ -269,6 +271,8 @@ export function Gallery() {
               <DropdownMenuItem>Archive invoice</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Calendar defaultMonth={new Date(2026, 9, 1)} today={new Date(2026, 9, 15)} />
+          <DatePicker defaultMonth={new Date(2026, 9, 1)} today={new Date(2026, 9, 15)} />
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
           <Alert className="max-w-sm">
             <AlertTitle>Heads up</AlertTitle>

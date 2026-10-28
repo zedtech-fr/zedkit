@@ -4,6 +4,13 @@ export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } f
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button.js";
+export { Calendar, type CalendarProps } from "./calendar.js";
+export {
+  DatePicker,
+  DateRangePicker,
+  type DatePickerProps,
+  type DateRangePickerProps,
+} from "./date-picker.js";
 export { IconButton, type IconButtonProps } from "./icon-button.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, type CardProps } from "./card.js";

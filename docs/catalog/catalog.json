@@ -1892,7 +1892,8 @@
           "seeAlso": [
             "Open modal dialogs",
             "Open a menu of actions from a button",
-            "Name a control on hover"
+            "Name a control on hover",
+            "Pick a date from a popover"
           ]
         },
         {
@@ -1942,6 +1943,79 @@
             "Pick one option from a dropdown",
             "Confirm destructive actions",
             "Open modal dialogs"
+          ]
+        },
+        {
+          "need": "Pick a day on a calendar",
+          "import": "`@zedtech/zedkit-ui` — `Calendar`, `CalendarProps`",
+          "wraps": "`react-day-picker`",
+          "status": "alpha",
+          "shortName": "Calendar",
+          "audience": "Developers showing a month grid the reader can pick from.",
+          "purpose": "Token-styled month grid. Locale and prev/next names follow the kit messages.",
+          "whenToUse": "When the calendar stays on the page (a booking widget, a dashboard).",
+          "whenNotToUse": "For a compact form field — use the date picker in a popover.",
+          "derivedFrom": null,
+          "example": "import { Calendar } from \"@zedtech/zedkit-ui\";\n<Calendar />",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Calendar } from \"@zedtech/zedkit-ui\";\n<Calendar />"
+            }
+          ],
+          "a11y": "Prev/next come from kit messages. Days are buttons in a grid. Pair with a visible heading when the grid is the main task.",
+          "seeAlso": [
+            "Pick a date from a popover",
+            "Pick a start and end date"
+          ]
+        },
+        {
+          "need": "Pick a date from a popover",
+          "import": "`@zedtech/zedkit-ui` — `DatePicker`, `DatePickerProps`",
+          "wraps": "`react-day-picker`, `@radix-ui/react-popover`",
+          "status": "alpha",
+          "shortName": "DatePicker",
+          "audience": "Developers collecting one day in a form field.",
+          "purpose": "Button that opens a calendar in a popover. `id` pairs with `FieldLabel`.",
+          "whenToUse": "For a due date, a start date, or any single day in a form.",
+          "whenNotToUse": "For a range — use the start-and-end picker. For a calendar that stays on the page — use Calendar.",
+          "derivedFrom": null,
+          "example": "import { DatePicker, Field, FieldLabel } from \"@zedtech/zedkit-ui\";\nconst [due, setDue] = useState<Date | undefined>();\n<Field>\n  <FieldLabel htmlFor=\"due\">Due date</FieldLabel>\n  <DatePicker id=\"due\" value={due} onValueChange={setDue} />\n</Field>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { DatePicker, Field, FieldLabel } from \"@zedtech/zedkit-ui\";\nconst [due, setDue] = useState<Date | undefined>();\n<Field>\n  <FieldLabel htmlFor=\"due\">Due date</FieldLabel>\n  <DatePicker id=\"due\" value={due} onValueChange={setDue} />\n</Field>"
+            }
+          ],
+          "a11y": "The popover is `role=\"dialog\"` and takes its name from the placeholder (kit message by default). Selection is announced in a live region. Pass `disabledDays`, `startMonth`, and `endMonth` for limits.",
+          "seeAlso": [
+            "Lay out fieldsets, fields, and error lists",
+            "Pick a start and end date",
+            "Float extra content next to a control"
+          ]
+        },
+        {
+          "need": "Pick a start and end date",
+          "import": "`@zedtech/zedkit-ui` — `DateRangePicker`, `DateRangePickerProps`",
+          "wraps": "`react-day-picker`, `@radix-ui/react-popover`",
+          "status": "alpha",
+          "shortName": "DateRangePicker",
+          "audience": "Developers collecting a from/to span in a form field.",
+          "purpose": "Button that opens a range calendar in a popover. Closes when both days are set.",
+          "whenToUse": "For leave, a report window, or any start-and-end pair.",
+          "whenNotToUse": "For one day — use the date picker.",
+          "derivedFrom": null,
+          "example": "import { DateRangePicker, Field, FieldLabel, type DateRangePickerProps } from \"@zedtech/zedkit-ui\";\nconst [span, setSpan] = useState<DateRangePickerProps[\"value\"]>();\n<Field>\n  <FieldLabel htmlFor=\"leave\">Leave</FieldLabel>\n  <DateRangePicker id=\"leave\" value={span} onValueChange={setSpan} />\n</Field>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { DateRangePicker, Field, FieldLabel, type DateRangePickerProps } from \"@zedtech/zedkit-ui\";\nconst [span, setSpan] = useState<DateRangePickerProps[\"value\"]>();\n<Field>\n  <FieldLabel htmlFor=\"leave\">Leave</FieldLabel>\n  <DateRangePicker id=\"leave\" value={span} onValueChange={setSpan} />\n</Field>"
+            }
+          ],
+          "a11y": "Same dialog name and live region as the single-day picker. Limits use `disabledDays`, `startMonth`, and `endMonth`.",
+          "seeAlso": [
+            "Pick a date from a popover",
+            "Lay out fieldsets, fields, and error lists"
           ]
         },
         {
@@ -2190,7 +2264,8 @@
           ],
           "a11y": "`FieldError` uses `role=\"alert\"`; spacing uses `gap-field-*` theme tokens (not raw spacing literals).",
           "seeAlso": [
-            "Build validated forms with labels, errors, and pending state"
+            "Build validated forms with labels, errors, and pending state",
+            "Pick a date from a popover"
           ]
         },
         {
