@@ -71,6 +71,35 @@ test.describe("home gallery maturity badges light/dark (#753)", () => {
   }
 });
 
+test("home scenario titles keep a decorative icon", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const titles = page.locator("#scenarios [data-slot='card-title']");
+  await expect(titles).toHaveCount(6);
+  await expect(titles.locator("svg[aria-hidden='true']")).toHaveCount(6);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
+test.describe("home scenario titles light/dark (#753)", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(BASE, { waitUntil: "networkidle" });
+      const scenarios = page.locator("#scenarios");
+      await scenarios.scrollIntoViewIfNeeded();
+      await expect(scenarios.getByText("New admin UI in an existing app", { exact: true })).toBeVisible();
+      await scenarios.screenshot({ path: `test-results/home-scenario-titles-${mode}.png` });
+    });
+  }
+});
+
 test("home docs CTAs keep a decorative icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE, { waitUntil: "networkidle" });
