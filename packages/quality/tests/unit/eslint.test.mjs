@@ -61,6 +61,35 @@ describe("uiPreset", () => {
     expect(imported.some((entry) => entry.message.includes("forwardRef"))).toBe(true);
   });
 
+  it("bans inline style attributes", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    const syntax = tailwind.rules["no-restricted-syntax"];
+    const linter = new Linter({ configType: "flat" });
+    const hits = linter.verify(
+      'export function X() { return <div style={{ color: "red" }} />; }\n',
+      {
+        files: ["**/*.tsx"],
+        languageOptions: { parser: tsParser, parserOptions: { ecmaFeatures: { jsx: true } } },
+        rules: { "no-restricted-syntax": syntax },
+      },
+      "box.tsx",
+    );
+    expect(hits.some((entry) => String(entry.message).includes("tokens-style"))).toBe(true);
+  });
+
+  it("caps tsx files at 300 lines and functions at 60", () => {
+    const size = uiPreset({ entryPoint: "/repo/app/globals.css" }).find((block) => block.name === "zedkit/ui-size");
+    expect(size.rules["max-lines"][1].max).toBe(300);
+    expect(size.rules["max-lines-per-function"][1].max).toBe(60);
+    const linter = new Linter({ configType: "flat" });
+    const long = Array.from({ length: 320 }, (_, i) => `const n${i} = ${i};`).join("\n");
+    const hits = linter.verify(long, { files: ["**/*.tsx"], rules: size.rules }, "wide.tsx");
+    expect(hits.some((entry) => entry.ruleId === "max-lines")).toBe(true);
+    const fat = `export function fat() {\n${Array.from({ length: 70 }, (_, i) => `  const n${i} = ${i};`).join("\n")}\n}\n`;
+    const fnHits = linter.verify(fat, { files: ["**/*.tsx"], rules: size.rules }, "fat.tsx");
+    expect(fnHits.some((entry) => entry.ruleId === "max-lines-per-function")).toBe(true);
+  });
+
   it("bans explicit any and tells the reader to name a type", () => {
     const types = uiPreset({ entryPoint: "/repo/app/globals.css" }).find((block) => block.name === "zedkit/ui-types");
     expect(types.rules["@typescript-eslint/no-explicit-any"]).toBe("error");

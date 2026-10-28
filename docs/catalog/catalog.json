@@ -553,7 +553,7 @@
           "status": "beta",
           "shortName": "UiPreset",
           "audience": "Frontend teams linting tsx/jsx everywhere the same way.",
-          "purpose": "Enforce a11y, Tailwind hygiene, tokens-only classes, no inline style, no forwardRef, and no explicit any on every UI file.",
+          "purpose": "Enforce a11y, Tailwind hygiene, tokens-only classes, no inline style, no forwardRef, no explicit any, and a 300/60 size budget on every UI file.",
           "whenToUse": "When UI rules must match across repos without copying a preset file.",
           "whenNotToUse": "When the repo has no Tailwind theme (the entryPoint has nothing to read).",
           "derivedFrom": null,

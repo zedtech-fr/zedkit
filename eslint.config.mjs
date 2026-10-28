@@ -8,6 +8,30 @@ const deepRelativeImport = {
   message: "Deep relative imports are banned. Use the `#*` subpath import for this package.",
 };
 
+// Files still over the uiPreset size budget. Drop a path when that file
+// is under the cap. `max-lines` stays on for files that only miss the
+// function cap, so they cannot grow past 300 unnoticed.
+const sizeBudgetOverFile = [
+  "apps/docs/components/project-tracker-demo-app.tsx",
+  "apps/docs/ui/home/home-use-cases-section.tsx",
+  "packages/ui/preview/gallery.tsx",
+];
+const sizeBudgetOverFunction = [
+  "apps/docs/components/admin-dashboard-demo-app.tsx",
+  "apps/docs/components/component-page.tsx",
+  "apps/docs/components/demos/drawer-demo.tsx",
+  "apps/docs/components/demos/tabs-demo.tsx",
+  "apps/docs/components/preview-viewport.tsx",
+  "apps/docs/ui/catalog/catalog-view.tsx",
+  "apps/docs/ui/home/home-install-or-copy-copy.tsx",
+  "apps/docs/ui/home/home-proofs.tsx",
+  "apps/docs/ui/home/home-ui-quickstart-copy.tsx",
+  "apps/docs/ui/search-pill.tsx",
+  "packages/ui/src/data-table.tsx",
+  "packages/ui/src/identity-picker.tsx",
+  "packages/ui/src/route-modal.tsx",
+];
+
 export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -55,6 +79,19 @@ export default tseslint.config(
   ...uiPreset({
     entryPoint: new URL("./packages/ui/src/styles.css", import.meta.url).pathname,
   }),
+  {
+    files: sizeBudgetOverFile,
+    rules: {
+      "max-lines": "off",
+      "max-lines-per-function": "off",
+    },
+  },
+  {
+    files: sizeBudgetOverFunction,
+    rules: {
+      "max-lines-per-function": "off",
+    },
+  },
   ...defineLayers({
     preset: "feature-folders",
     kitPackage: "@zedtech/zedkit-ui",
