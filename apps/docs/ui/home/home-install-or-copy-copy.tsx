@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { RegistryBrickList } from "@/components/registry-brick-name";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_TWO_COL,
@@ -26,7 +27,6 @@ export function HomeInstallOrCopyCopy({
   registryAddCmd: string;
   registryBricks: string[];
 }) {
-  const brickList = registryBricks.join(", ");
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0">
       <Text>
@@ -70,8 +70,8 @@ export function HomeInstallOrCopyCopy({
                 copyLabel="Copy shadcn registry command"
               />
               <Text variant="muted" className="text-sm">
-                Published registry bricks today: {brickList}. After copying, the files are yours — no
-                automatic updates.
+                Published registry bricks today: <RegistryBrickList names={registryBricks} />. After
+                copying, the files are yours — no automatic updates.
               </Text>
             </Stack>
           </CardContent>
