@@ -40,6 +40,14 @@
         {
           "path": "registry/generated/ui/drawer.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
+          "type": "registry:ui"
         }
       ],
       "cssVars": {
@@ -58,6 +66,14 @@
       "files": [
         {
           "path": "registry/generated/ui/confirm-dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
           "type": "registry:ui"
         }
       ]
@@ -102,6 +118,14 @@
       "files": [
         {
           "path": "registry/generated/ui/updated-ago.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
           "type": "registry:ui"
         }
       ]
@@ -310,6 +334,14 @@
         {
           "path": "registry/generated/ui/wizard-steps.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
+          "type": "registry:ui"
         }
       ],
       "cssVars": {
@@ -345,6 +377,14 @@
         {
           "path": "registry/generated/ui/card-skeleton.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
+          "type": "registry:ui"
         }
       ],
       "cssVars": {
@@ -374,6 +414,14 @@
       "files": [
         {
           "path": "registry/generated/ui/offline-note.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/generated/ui/messages.ts",
           "type": "registry:ui"
         }
       ]
