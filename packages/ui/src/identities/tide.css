@@ -52,13 +52,13 @@
   --font-weight-semibold: 700;
   --font-weight-bold: 700;
   --tracking-tight: -0.04em;
-  --tracking-wide: 0.12em;
-  --text-xs: 0.8125rem;
-  --text-sm: 0.9375rem;
-  --text-base: 1.0625rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 1.875rem;
+  --tracking-wide: 0.08em;
+  --text-xs: 0.9375rem;
+  --text-sm: 1.0625rem;
+  --text-base: 1.1875rem;
+  --text-lg: 1.5rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.125rem;
   --text-3xl: 2rem;
   --text-4xl: 2.75rem;
   --text-5xl: 3.5rem;
@@ -89,9 +89,9 @@
   /* Depth */
   --zk-shadow-color: 221 41% 21%;
   --zk-shadow-xs: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08);
-  --zk-shadow-sm: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 4px 14px -4px hsl(var(--zk-shadow-color) / 0.16);
-  --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 12px 32px -12px hsl(var(--zk-shadow-color) / 0.28);
-  --zk-shadow-lg: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 24px 56px -20px hsl(var(--zk-shadow-color) / 0.34);
+  --zk-shadow-sm: 0 2px 6px hsl(var(--zk-shadow-color) / 0.1), 0 0 12px -4px hsl(10 71% 52% / 0.16);
+  --zk-shadow-md: 0 6px 16px hsl(var(--zk-shadow-color) / 0.14), 0 16px 40px -8px hsl(var(--zk-shadow-color) / 0.28), 0 0 24px -6px hsl(10 71% 52% / 0.22);
+  --zk-shadow-lg: 0 10px 24px hsl(var(--zk-shadow-color) / 0.16), 0 28px 56px -12px hsl(var(--zk-shadow-color) / 0.32), 0 0 36px -8px hsl(10 71% 52% / 0.24);
   --zk-shadow-xl: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 32px 80px -24px hsl(var(--zk-shadow-color) / 0.4);
   --zk-shadow-overlay: 0 24px 64px -16px hsl(var(--zk-shadow-color) / 0.35);
 
