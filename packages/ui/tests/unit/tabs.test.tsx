@@ -41,9 +41,10 @@ describe("tabs", () => {
     expect(trigger.classList.contains("focus-ring")).toBe(true);
     expect(trigger.className).not.toMatch(/(^|\s)(px-3|py-1|ring-2)(\s|$)/);
     const panel = screen.getByText("First panel.");
-    expect(panel.className).toContain("mt-tabs-content-gap");
+    expect(panel.className).toContain("mt-2");
     expect(panel.className).toContain("focus-ring");
-    expect(panel.className).not.toMatch(/(^|\s)(mt-2|ring-2)(\s|$)/);
+    expect(panel.className).not.toContain("mt-tabs-content-gap");
+    expect(panel.className).not.toMatch(/(^|\s)ring-2(\s|$)/);
   });
 
   it("scrolls horizontally instead of clipping on narrow widths", () => {
