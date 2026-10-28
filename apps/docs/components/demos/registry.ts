@@ -51,6 +51,7 @@ import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { PopoverDemo } from "./popover-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
+import { RouteModalDialogDemo } from "./route-modal-dialog-demo";
 import { InputDemo } from "./input-demo";
 import { LabelDemo } from "./label-demo";
 import { LabelRequiredDemo } from "./label-required-demo";
@@ -190,6 +191,7 @@ export const demoRegistry = {
   PopoverDemo: { Demo: PopoverDemo, file: "popover-demo.tsx", center: true },
   ProgressBarDemo: { Demo: ProgressBarDemo, file: "progress-bar-demo.tsx" },
   RouteModalDemo: { Demo: RouteModalDemo, file: "route-modal-demo.tsx", center: true },
+  RouteModalDialogDemo: { Demo: RouteModalDialogDemo, file: "route-modal-dialog-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
   SelectDemo: { Demo: SelectDemo, file: "select-demo.tsx" },
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },

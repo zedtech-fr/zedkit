@@ -2195,8 +2195,12 @@
           "example": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Order in a drawer",
               "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\nimport { useRouter } from \"next/navigation\";\nconst router = useRouter();\n<RouteModal title=\"Delivery\" onClose={() => closeRoute({ ...router, fallback: \"/items\" })}>\n  <DetailView />\n</RouteModal>"
+            },
+            {
+              "title": "Centered dialog",
+              "code": "import { RouteModal, closeRoute } from \"@zedtech/zedkit-ui\";\n<RouteModal title=\"Invoice\" variant=\"dialog\" onClose={() => closeRoute({ ...router, fallback: \"/invoices\" })}>\n  <DetailView />\n</RouteModal>"
             }
           ],
           "a11y": "Inherits the Dialog/Drawer focus trap and Escape handling; exit plays before `onClose` navigates (immediate under reduced motion). Widths come from `--container-route-modal-*` tokens; exit timing reads `--motion-slow`/`--motion-base` live. The drawer variant uses `DrawerHandle`, sticky header, `DrawerBody` scroll, and `DrawerCloseButton` (44px). The dialog variant scrolls inside `max-h-dialog-max-height`.",

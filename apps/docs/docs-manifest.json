@@ -164,7 +164,10 @@
       "component": "RouteModal",
       "props": "RouteModalProps",
       "source": "route-modal.tsx",
-      "demo": "RouteModalDemo"
+      "demo": "RouteModalDemo",
+      "examples": {
+        "Centered dialog": "RouteModalDialogDemo"
+      }
     },
     "Display a shown-once secret with copy": {
       "package": "@zedtech/zedkit-ui",
