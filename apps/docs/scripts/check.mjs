@@ -42,6 +42,7 @@ import {
   GUIDE_NAV_SLUGS,
   generate,
 } from "./generate.mjs";
+import { checkGeneratedPage } from "./page-checks.mjs";
 import {
   SITE_CHANGELOG_URL,
   SITE_HEADER_INTERNAL_PATHS,
@@ -89,54 +90,14 @@ function mdxFiles(dir) {
   return out;
 }
 
-const legacyDescription =
-  /^@zedtech\/[\w-]+ — (alpha|beta|stable|deprecated|planned)$/;
 const descriptionsSeen = new Map();
-
-function readFrontmatterDescription(text) {
-  const match = text.match(/^description: (.+)$/m);
-  if (!match) return null;
-  return JSON.parse(match[1]);
-}
 
 // Every need page carries install tabs (memorized package-manager
 // choice) and a titled TSX example — never bare pill blocks.
 for (const file of mdxFiles(tmp)) {
   const rel = file.slice(tmp.length + 1);
-  if (!rel.includes("/")) continue;
   const text = readFileSync(file, "utf8");
-  const description = readFrontmatterDescription(text);
-  if (description === null) {
-    errors.push(`generator: ${rel} lacks description frontmatter.`);
-  } else {
-    if (legacyDescription.test(description)) {
-      errors.push(`generator: ${rel} uses legacy package — status description.`);
-    }
-    if (description.length > SEO_DESCRIPTION_MAX) {
-      errors.push(`generator: ${rel} description exceeds ${SEO_DESCRIPTION_MAX} characters.`);
-    }
-    const prior = descriptionsSeen.get(description);
-    if (prior) {
-      errors.push(`generator: duplicate description on ${rel} and ${prior}.`);
-    } else {
-      descriptionsSeen.set(description, rel);
-    }
-  }
-  if (text.includes("<ComponentPage")) continue;
-  if (!text.includes('<Tabs groupId="package-manager"')) {
-    errors.push(`generator: ${file.slice(tmp.length + 1)} lacks install tabs.`);
-  }
-  if (!text.includes('```tsx title="Usage"')) {
-    errors.push(`generator: ${file.slice(tmp.length + 1)} lacks a titled TSX example.`);
-  }
-  if (!text.includes("## At a glance")) {
-    errors.push(`generator: ${file.slice(tmp.length + 1)} lacks the At-a-glance guidance block.`);
-  }
-  for (const label of ["- **Who:**", "- **What:**", "- **Use when:**", "- **Avoid when:**"]) {
-    if (!text.includes(label)) {
-      errors.push(`generator: ${file.slice(tmp.length + 1)} lacks guidance bullet "${label}".`);
-    }
-  }
+  checkGeneratedPage(rel, text, { seoMax: SEO_DESCRIPTION_MAX, descriptionsSeen }, errors);
 }
 
 function proseSectionTitles(text) {
