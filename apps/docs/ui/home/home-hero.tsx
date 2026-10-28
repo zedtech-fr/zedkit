@@ -8,6 +8,7 @@ import { HomeUseCasesSection } from "@/ui/home/home-use-cases-section";
 import { HomeInstallOrCopySection } from "@/ui/home/home-install-or-copy-section";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
@@ -52,7 +53,7 @@ export function HomeHero({
               <Link href="#quickstart">UI quickstart</Link>
             </Button>
             <Button asChild variant="ghost" size="sm" className="w-fit">
-              <Link href="/docs">Open documentation</Link>
+              <Link href="/docs"><DocsActionLabel>Open documentation</DocsActionLabel></Link>
             </Button>
           </Stack>
         </Stack>

@@ -116,6 +116,9 @@ test("home docs CTAs keep a decorative icon", async ({ page }) => {
   await expect(scenarios.getByRole("link").locator("svg[aria-hidden='true']")).toHaveCount(6);
   await expect(page.locator("#install-or-copy [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(2);
   await expect(page.locator("#ai-setup [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(2);
+  await expect(page.getByRole("link", { name: "Open documentation" }).locator("svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Theme setup page" }).locator("svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "axe test suite" }).locator("svg")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -160,6 +163,27 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
       await ai.scrollIntoViewIfNeeded();
       await expect(ai.getByRole("link", { name: "AI setup docs" })).toBeVisible();
       await ai.screenshot({ path: `test-results/home-section-cta-ai-${mode}.png` });
+    });
+  }
+});
+
+test.describe("home hero and proofs docs CTAs light/dark", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(BASE, { waitUntil: "networkidle" });
+      const hero = page.getByRole("link", { name: "Open documentation" });
+      const theme = page.getByRole("link", { name: "Theme setup page" });
+      await hero.scrollIntoViewIfNeeded();
+      await expect(hero).toBeVisible();
+      await hero.screenshot({ path: `test-results/home-hero-docs-cta-${mode}.png` });
+      await theme.scrollIntoViewIfNeeded();
+      await expect(theme).toBeVisible();
+      await theme.screenshot({ path: `test-results/home-proofs-theme-cta-${mode}.png` });
     });
   }
 });
