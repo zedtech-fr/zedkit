@@ -210,7 +210,7 @@ function DrawerCloseButton({
       )}
       {...props}
     >
-      {children ?? <X className="size-icon-control" />}
+      {children ?? <X className="size-4" />}
     </DrawerClose>
   );
 }

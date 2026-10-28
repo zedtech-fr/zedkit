@@ -29,7 +29,7 @@ function Combobox(props: ComboboxProps) {
             className="absolute top-1/2 right-control-inline -translate-y-1/2 text-muted-foreground"
             aria-label={messages.options}
           >
-            <ChevronDown className="size-icon-control opacity-50" />
+            <ChevronDown className="size-4 opacity-50" />
           </button>
         </div>
       </PopoverAnchor>

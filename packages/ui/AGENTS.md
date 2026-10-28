@@ -19,6 +19,10 @@ Rules:
 - `cn()` every `className` prop (conflicts resolve last-wins).
 - `.dark`-class theming only; new tokens go in `src/styles.css`
   in both `:root` and `.dark`.
+- Spacing (#367): one canonical name per value. Shared values use the
+  Tailwind scale (`p-4`, `gap-2`, `size-4`). Semantic `--spacing-*`
+  duplicates stay as deprecated aliases (do not delete). Map:
+  `scripts/registry/spacing-aliases.json`.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).

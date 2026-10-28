@@ -58,7 +58,7 @@ function IdentitySwitcher({
 
   return (
     <div data-slot="identity-switcher" className="inline-flex items-center gap-2">
-      <Palette aria-hidden="true" className="size-icon-control text-muted-foreground" />
+      <Palette aria-hidden="true" className="size-4 text-muted-foreground" />
       <label htmlFor={selectId} className={cn("text-sm text-muted-foreground", !showLabel && "sr-only")}>
         {label ?? messages.identity}
       </label>

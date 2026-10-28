@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -47,4 +47,14 @@ test("shared values point at their Tailwind scale step, singletons at themselves
       assert.equal(group.canonical, group.tokens[0], `${group.value}: singleton canonical must be itself`);
     }
   }
+});
+
+test("kit sources use size-4, not the deprecated size-icon-control alias", () => {
+  const srcDir = join(root, "packages/ui/src");
+  const hits = [];
+  for (const name of readdirSync(srcDir)) {
+    if (!name.endsWith(".ts") && !name.endsWith(".tsx")) continue;
+    if (readFileSync(join(srcDir, name), "utf8").includes("size-icon-control")) hits.push(name);
+  }
+  assert.deepEqual(hits, []);
 });

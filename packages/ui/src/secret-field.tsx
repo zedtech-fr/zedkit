@@ -43,7 +43,7 @@ function SecretField({ id, value, copyLabel, "aria-label": ariaLabel }: SecretFi
     <div data-slot="secret-field" className="flex w-full items-center gap-secret-field-gap">
       <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
       <Button type="button" variant="outline" size="icon" aria-label={copyLabel ?? messages.copyToClipboard} onClick={copy}>
-        {copied ? <Check className="size-icon-control" /> : <Copy className="size-icon-control" />}
+        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
       </Button>
     </div>
   );

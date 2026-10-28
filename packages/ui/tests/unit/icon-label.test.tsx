@@ -23,7 +23,8 @@ describe("IconLabel", () => {
         <span>Label</span>
       </IconLabel>,
     );
-    expect(container.innerHTML).toContain("size-icon-control");
+    expect(container.innerHTML).toContain("size-4");
+    expect(container.innerHTML).not.toContain("size-icon-control");
     expect(container.innerHTML).toContain("gap-1.5");
     expect(container.innerHTML).toContain("text-muted-foreground");
   });

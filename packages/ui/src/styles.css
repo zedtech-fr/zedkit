@@ -169,6 +169,7 @@
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
   --spacing-button-gap: 0.5rem;
+  /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-4. Kept so copied CSS and existing class names still work. */
   --spacing-icon-control: 1rem;
   /* Minimum touch target (WCAG 2.5.5). */
   --spacing-tap: 2.75rem;
