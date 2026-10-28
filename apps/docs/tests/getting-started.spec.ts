@@ -20,6 +20,12 @@ test("getting started documents install or copy paths", async ({ page }) => {
   await expect(page.getByText(/copied bricks are plain editable files/)).toBeVisible();
 });
 
+test("getting started lists a core npm quickstart path", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
+  await expect(page.getByRole("heading", { name: "Path C — core helpers (npm only)", level: 3 })).toBeVisible();
+  await expect(page.getByText("pnpm add @zedtech/zedkit-core")).toBeVisible();
+});
+
 test("getting started package table keeps a decorative area icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
