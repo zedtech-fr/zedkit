@@ -827,7 +827,7 @@ export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof sta
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 2 | 3 | 4 | 6 | 8 | null | undefined;
+    gap?: 1 | 8 | 2 | 3 | 4 | 6 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
