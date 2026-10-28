@@ -53,11 +53,18 @@ describe("select", () => {
     render(<RegionSelect />);
     await user.click(screen.getByRole("combobox", { name: "Region" }));
     const option = await screen.findByRole("option", { name: "Europe" });
-    for (const token of ["py-select-item-block", "pr-select-item-indicator-gap", "pl-select-item-inline"]) {
+    for (const token of ["py-select-item-block", "pr-select-item-indicator-gap", "pl-2"]) {
       expect(option.className).toContain(token);
     }
-    expect(option.className).not.toMatch(/(^|\s)(py-1\.5|pr-8|pl-2)(\s|$)/);
-    expect(option.querySelector("span.absolute")?.className).toContain("size-icon-sm");
+    expect(option.className).not.toContain("pl-select-item-inline");
+    expect(option.className).not.toMatch(/(^|\s)(py-1\.5|pr-8)(\s|$)/);
+    const indicator = option.querySelector("span.absolute");
+    expect(indicator?.className).toContain("size-icon-sm");
+    expect(indicator?.className).toContain("right-2");
+    expect(indicator?.className).not.toContain("right-select-item-inline");
+    const label = screen.getByText("Regions");
+    expect(label.className).toContain("px-2");
+    expect(label.className).not.toContain("px-select-item-inline");
   });
 
   it("styles viewport padding and popper offsets from tokens", async () => {
