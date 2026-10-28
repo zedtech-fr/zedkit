@@ -40,3 +40,18 @@ test("bare kit sibling names are rejected for the status family", () => {
   label.registryDependencies = ["checkmark", "status-dot", "utils"];
   assert.match(checkCopySourceFamily(broken, STATUS_FAMILY).join("\n"), /use zedtech-fr\/zedkit\/checkmark/);
 });
+
+/** Card loading placeholder family (#420): composed skeleton + kit Skeleton brick. */
+const CARD_SKELETON_FAMILY = ["card-skeleton", "skeleton"];
+
+test("card-skeleton family uses kit registry slug for skeleton", () => {
+  assert.deepEqual(checkCopySourceFamily(registry, CARD_SKELETON_FAMILY), []);
+  const cardSkel = registry.items.find((item) => item.name === "card-skeleton");
+  assert.deepEqual(cardSkel.registryDependencies, ["zedtech-fr/zedkit/skeleton", "utils"]);
+});
+
+test("card-skeleton family ships cssVars for copy-only theme", () => {
+  assert.deepEqual(checkCopySourceFamilyTheme(registry, expected, CARD_SKELETON_FAMILY), []);
+  const cardSkel = registry.items.find((item) => item.name === "card-skeleton");
+  assert.deepEqual(cardSkel.cssVars, expected["card-skeleton"].cssVars);
+});

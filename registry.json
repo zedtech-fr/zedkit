@@ -414,7 +414,7 @@
     {
       "name": "card-skeleton",
       "type": "registry:ui",
-      "registryDependencies": ["skeleton", "utils"],
+      "registryDependencies": ["zedtech-fr/zedkit/skeleton", "utils"],
       "files": [
         {
           "path": "registry/generated/ui/card-skeleton.tsx",
