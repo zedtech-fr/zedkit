@@ -9,7 +9,7 @@
 //   resolves the demo through components/demos/registry.ts) and a props
 //   table resolved at build by fumadocs-typescript AutoTypeTable
 //   (via components/props-table.tsx, inherited props expanded).
-// - Also writes public/llms.txt (same source, always current).
+// - Also writes public/llms.txt and public/llms-full.txt (same source, always current).
 //
 // Catalog fields drive the fixed sections; optional prose under
 // `prose/<folder>/<slug>.mdx` is merged after Example (see PAGE-TEMPLATE.md).
@@ -20,7 +20,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
-import { truncateDescription } from "@zedtech/zedkit-seo";
+import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -59,12 +59,16 @@ function packageVersion(pkgDir) {
   return JSON.parse(text).version ?? "0.0.0";
 }
 
-function metaDescription(need) {
+function metaDescription(need, folder) {
   const purpose = (need.purpose ?? "").trim();
   if (purpose.length === 0) {
     throw new Error(`generator: catalog need "${need.need}" is missing purpose.`);
   }
-  return truncateDescription(purpose);
+  const text =
+    folder === "ui"
+      ? `${purpose} Install with npm or copy published registry bricks.`
+      : purpose;
+  return truncateDescription(text);
 }
 
 function loadPnpmCatalogVersions() {
@@ -150,12 +154,12 @@ function guidanceBlock(need, seeAlsoLinks) {
   return lines;
 }
 
-function componentPageMdx(pkg, need, version, spec, related, prose) {
+function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
-    `description: ${JSON.stringify(metaDescription(need))}`,
+    `description: ${JSON.stringify(metaDescription(need, folder))}`,
     `status: ${need.status}`,
     "---",
     "",
@@ -260,11 +264,11 @@ function writeGuidePages(outDir) {
   return count;
 }
 
-function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose) {
+function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
-    `description: ${JSON.stringify(metaDescription(need))}`,
+    `description: ${JSON.stringify(metaDescription(need, folder))}`,
     `status: ${need.status}`,
     "---",
     "",
@@ -367,10 +371,16 @@ export function generate(outDir) {
   let prosePages = 0;
   const folders = [];
   const slugsByNeed = new Map();
+  const registryBrickCount = loadRegistryBrickNames(ROOT).length;
   const llms = [
     "# zedkit docs",
     "",
     "> GENERATED from docs/catalog/catalog.json — do not edit.",
+    "",
+    "## Install or copy",
+    "",
+    "- **npm:** `pnpm add @zedtech/zedkit-ui` (and other `@zedtech/*` packages) — versioned updates via your package manager.",
+    `- **registry:** \`npx shadcn@latest add https://zedkit.app/r/<brick>.json\` — source in your repo (${registryBrickCount} brick${registryBrickCount === 1 ? "" : "s"} today; see [zedkit and shadcn/ui](/docs/zedkit-and-shadcn)).`,
     "",
     "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
     "- [Set up your coding agents](/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
@@ -412,11 +422,11 @@ export function generate(outDir) {
       if (prose) prosePages += 1;
       const body =
         richBlock?.registry
-          ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related, prose)
-          : pageMdx(pkg, need, version, richBlock, links, prose);
+          ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related, prose, folder)
+          : pageMdx(pkg, need, version, richBlock, links, prose, folder);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
-      llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${metaDescription(need)}`);
+      llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);
     }
     llms.push("");
     writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: slugs }, null, 2)}\n`);
@@ -438,6 +448,20 @@ export function generate(outDir) {
   const publicDir = join(APP, "public");
   mkdirSync(publicDir, { recursive: true });
   writeFileSync(join(publicDir, "llms.txt"), `${llms.join("\n")}\n`);
+  const llmsBody = llms.join("\n");
+  const installOrCopyBody = [
+    "Two paths into the UI kit:",
+    "",
+    "- npm: pnpm add @zedtech/zedkit-ui — versioned package and styles.css",
+    `- registry: npx shadcn@latest add https://zedkit.app/r/<brick>.json — copy source (${registryBrickCount} brick${registryBrickCount === 1 ? "" : "s"} today)`,
+    "",
+    "Guide: https://zedkit.app/docs/zedkit-and-shadcn",
+  ].join("\n");
+  const llmsFull = buildLlmsFull([
+    { title: "Install or copy", body: installOrCopyBody },
+    { title: "Documentation index", body: llmsBody },
+  ]);
+  writeFileSync(join(publicDir, "llms-full.txt"), `${llmsFull}\n`);
   // Gallery data: one card per UI need (live demo first, then the rest),
   // catalog stats, and the featured install package — single source.
   const uiPackage = Object.keys(catalog.packages).find((pkg) => shortName(pkg) === "ui") ?? null;

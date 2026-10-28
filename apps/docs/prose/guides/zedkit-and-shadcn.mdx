@@ -1,7 +1,9 @@
 ---
 title: zedkit and shadcn/ui
-description: What the UI kit wraps, what it adds beyond copying components, when to stay on plain shadcn/ui, and how registry install relates to npm.
+description: Install @zedtech/zedkit-ui or copy published registry bricks — wraps, registry install, when to use plain shadcn, and FAQ.
 ---
+
+import { ZedkitShadcnFaq } from "@/components/zedkit-shadcn-faq";
 
 Hand-written guide. Claims below point at files you can open in the public repo.
 
@@ -80,6 +82,8 @@ the file lands in your tree with the same import paths the docs show.
 | Styles look like unstyled HTML | Theme doc not applied (Tailwind v4 + kit CSS). |
 | Types differ from shadcn docs | You imported `@zedtech/zedkit-ui`; props match the generated **Props** table on the catalog page, not third-party snippets. |
 | Want only Radix, no kit | Use Radix directly; zedkit does not block that — it is an optional layer. |
+
+<ZedkitShadcnFaq />
 
 ## Next steps
 
