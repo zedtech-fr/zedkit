@@ -19,8 +19,8 @@ describe("WizardSteps", () => {
     expect(list?.classList.contains("gap-y-wizard-steps-row-gap")).toBe(true);
     expect(list?.className).not.toMatch(/(^|\s)(gap-x-3|gap-y-2)(\s|$)/);
     const item = screen.getByText("One").closest("li");
-    expect(item?.classList.contains("gap-wizard-step-gap")).toBe(true);
-    expect(item?.className).not.toMatch(/(^|\s)gap-2(\s|$)/);
+    expect(item?.classList.contains("gap-2")).toBe(true);
+    expect(item?.className).not.toContain("gap-wizard-step-gap");
     const badge = item?.querySelector("span[aria-hidden]");
     expect(badge?.classList.contains("size-wizard-step-badge")).toBe(true);
     expect(badge?.className).not.toMatch(/(^|\s)size-6(\s|$)/);

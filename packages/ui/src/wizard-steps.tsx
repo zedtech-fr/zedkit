@@ -36,7 +36,7 @@ export function WizardStep({ step, index, state, showConnector = false, classNam
     <li
       data-slot="wizard-step"
       aria-current={state === "current" ? "step" : undefined}
-      className={cn("flex items-center gap-wizard-step-gap text-sm", className)}
+      className={cn("flex items-center gap-2 text-sm", className)}
     >
       <span
         aria-hidden
