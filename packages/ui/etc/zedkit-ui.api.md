@@ -1189,6 +1189,10 @@ export type ZedkitUiMessages = {
     idle: string;
     options: string;
     search: string;
+    loadingEllipsis: string;
+    loadingOptions: string;
+    selectedSuffix: string;
+    removeItem: string;
     identity: string;
     identityDescription: string;
     identityDefault: string;

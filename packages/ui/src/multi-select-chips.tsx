@@ -1,10 +1,12 @@
 "use client";
 
+import { formatMessage } from "@zedtech/zedkit-i18n";
 import { X } from "lucide-react";
 import type { useMultipleSelection } from "downshift";
 
 import { Badge } from "./badge.js";
 import type { ComboboxOption } from "./combobox-shared.js";
+import { useUiMessages } from "./ui-provider.js";
 
 type MultiSelectChipsProps = {
   items: ComboboxOption[];
@@ -13,6 +15,7 @@ type MultiSelectChipsProps = {
 };
 
 function MultiSelectChips({ items, onRemove, selection }: MultiSelectChipsProps) {
+  const messages = useUiMessages();
   if (items.length === 0) return null;
 
   return (
@@ -20,7 +23,11 @@ function MultiSelectChips({ items, onRemove, selection }: MultiSelectChipsProps)
       {items.map((item, index) => (
         <Badge key={item.value} variant="secondary" className="gap-1 pr-1">
           <span {...selection.getSelectedItemProps({ selectedItem: item, index })}>{item.label}</span>
-          <button type="button" aria-label={`Remove ${item.label}`} onClick={() => onRemove(item)}>
+          <button
+            type="button"
+            aria-label={formatMessage(messages.removeItem, { label: item.label })}
+            onClick={() => onRemove(item)}
+          >
             <X className="size-4" />
           </button>
         </Badge>

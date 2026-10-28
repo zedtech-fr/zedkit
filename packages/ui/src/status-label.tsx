@@ -31,7 +31,7 @@ function ToneIcon({ tone }: { tone: StatusLabelTone }) {
 
 /**
  * Named inline status: icon + text, announced politely (`role=status`).
- * Name the operation ("Saving report…", not "Loading…") so a worried
+ * Name the operation ("Saving report…", not a vague loading label) so a worried
  * user always knows what is happening and where.
  */
 export function StatusLabel({ tone, children, className }: StatusLabelProps) {

@@ -48,6 +48,10 @@ const KIT_ENGLISH = [
   '" (default)"',
   '"The page behind this sheet updates as you choose."',
   '"Page {page} of {pageCount}"',
+  '"Loading…"',
+  '"Loading options"',
+  '" (selected)"',
+  '"Remove {label}"',
 ];
 
 function walk(dir: string): string[] {

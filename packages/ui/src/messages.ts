@@ -16,6 +16,14 @@ export type ZedkitUiMessages = {
   options: string;
   /** Combobox / multi-select search field placeholder. */
   search: string;
+  /** Visible list loading line (ellipsis). */
+  loadingEllipsis: string;
+  /** Spinner accessible name while options load. */
+  loadingOptions: string;
+  /** Appended to a picked multi-select row, e.g. " (selected)". */
+  selectedSuffix: string;
+  /** Chip remove control; template `{label}`. */
+  removeItem: string;
   identity: string;
   identityDescription: string;
   identityDefault: string;
@@ -46,6 +54,10 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   idle: "Idle",
   options: "Options",
   search: "Search…",
+  loadingEllipsis: "Loading…",
+  loadingOptions: "Loading options",
+  selectedSuffix: " (selected)",
+  removeItem: "Remove {label}",
   identity: "Identity",
   identityDescription: "The page behind this sheet updates as you choose.",
   identityDefault: "Default",
@@ -76,6 +88,10 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   idle: "Inactif",
   options: "Choix",
   search: "Rechercher…",
+  loadingEllipsis: "Chargement…",
+  loadingOptions: "Chargement des options",
+  selectedSuffix: " (sélectionné)",
+  removeItem: "Retirer {label}",
   identity: "Identité",
   identityDescription: "La page derrière ce panneau se met à jour quand vous choisissez.",
   identityDefault: "Défaut",

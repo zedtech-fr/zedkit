@@ -60,6 +60,7 @@ kit packages.
 - Overlays: `Dialog` set, `ConfirmDialog`, `Popover`, `Tooltip`,
   `DropdownMenu`, `Toaster`, `SecretField`.
 - Dates: `Calendar`, `DatePicker`, `DateRangePicker`.
+- Searchable lists: `Combobox`, `MultiSelect` (downshift + popover).
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
