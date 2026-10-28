@@ -411,13 +411,28 @@ for (const needEntry of Object.values(catalog.packages).flatMap((p) => p.needs))
   }
 }
 
+function richSourcePath(spec) {
+  if (spec.package === "@zedtech/zedkit-flags") {
+    return join(ROOT, "packages", "flags", "src", spec.source);
+  }
+  return join(ROOT, "packages", "ui", "src", spec.source);
+}
+
+function richPreviewOnlyNeed(spec) {
+  if (spec.component !== null) return false;
+  if (spec.props || spec.registry) return false;
+  if (typeof spec.source !== "string") return false;
+  if (spec.source.endsWith(".css")) return true;
+  return spec.package === "@zedtech/zedkit-flags";
+}
+
 for (const [key, spec] of Object.entries(rich)) {
   // CSS-only needs (utilities, no component) set component to null and
   // must point source at their stylesheet; they get no props table.
-  const cssOnly = spec.component === null && typeof spec.source === "string" && spec.source.endsWith(".css");
-  if (spec.component === null && (!cssOnly || spec.props || spec.registry)) {
+  const previewOnly = richPreviewOnlyNeed(spec);
+  if (spec.component === null && !previewOnly) {
     errors.push(`docs-manifest.json: "${key}" has component null but is not a CSS-only need (want a .css source, no props, no registry).`);
-  } else if (!cssOnly && !uiExports.has(spec.component)) {
+  } else if (!previewOnly && !uiExports.has(spec.component)) {
     errors.push(`docs-manifest.json: "${key}" references missing @zedtech/zedkit-ui export \`${spec.component}\`.`);
   }
   if (spec.props && !uiExports.has(spec.props)) {
@@ -433,7 +448,7 @@ for (const [key, spec] of Object.entries(rich)) {
       errors.push(`registry: \`${demoPath.slice(APP.length + 1)}\` does not export \`${spec.demo}\`.`);
     }
   }
-  if (spec.source && !existsSync(join(ROOT, "packages", "ui", "src", spec.source))) {
+  if (spec.source && !existsSync(richSourcePath(spec))) {
     errors.push(`docs-manifest.json: "${key}" references missing source file \`${spec.source}\`.`);
   }
 }

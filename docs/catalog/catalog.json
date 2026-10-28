@@ -184,6 +184,114 @@
         }
       ]
     },
+    "@zedtech/zedkit-flags": {
+      "catalog": "packages/flags/CATALOG.md",
+      "keywords": [
+        "feature-flags",
+        "openfeature",
+        "react",
+        "typescript",
+        "server"
+      ],
+      "audience": "Teams that want OpenFeature wiring with typed keys and test-friendly providers.",
+      "needs": [
+        {
+          "need": "Define a typed flag registry",
+          "import": "`@zedtech/zedkit-flags` — `defineFlagRegistry`, `memoryProviderFromRegistry`, `createMemoryProvider`, `OpenFeature`, `TypedInMemoryProvider`, `Client`, `Provider`, `EvaluationContext`, `JsonValue`, `buildOpenFeatureFlagDefinitions`, `FlagValue`, `FlagRegistry`",
+          "wraps": "`@openfeature/server-sdk` (peer)",
+          "status": "alpha",
+          "shortName": "defineFlagRegistry",
+          "audience": "Server boot code and tests that need deterministic flag values.",
+          "purpose": "Keep flag keys and default values in one object; build an in-memory OpenFeature provider from it.",
+          "whenToUse": "Unit tests, local APIs, or staging before a remote flag backend is wired.",
+          "whenNotToUse": "Production flag delivery — register your vendor provider at the app root instead.",
+          "derivedFrom": null,
+          "example": "import { OpenFeature, defineFlagRegistry, memoryProviderFromRegistry } from \"@zedtech/zedkit-flags\";\n\nconst registry = defineFlagRegistry({ beta: false });\nOpenFeature.setProvider(memoryProviderFromRegistry(registry));",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { OpenFeature, defineFlagRegistry, memoryProviderFromRegistry } from \"@zedtech/zedkit-flags\";\n\nconst registry = defineFlagRegistry({ beta: false });\nOpenFeature.setProvider(memoryProviderFromRegistry(registry));"
+            }
+          ]
+        },
+        {
+          "need": "Evaluate flags on the server",
+          "import": "`@zedtech/zedkit-flags` — `getFlag`, `Client`",
+          "wraps": "`@openfeature/server-sdk` (peer)",
+          "status": "alpha",
+          "shortName": "getFlag",
+          "audience": "Handlers and jobs that branch on feature flags.",
+          "purpose": "Read a flag with the default type taken from the registry entry.",
+          "whenToUse": "After `OpenFeature.setProvider` and optional context setup.",
+          "whenNotToUse": "Browser code — use the React entry instead.",
+          "derivedFrom": null,
+          "example": "import { OpenFeature, defineFlagRegistry, getFlag, memoryProviderFromRegistry } from \"@zedtech/zedkit-flags\";\n\nconst registry = defineFlagRegistry({ exportCsv: true });\nOpenFeature.setProvider(memoryProviderFromRegistry(registry));\nconst enabled = await getFlag(OpenFeature.getClient(), registry, \"exportCsv\");",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { OpenFeature, defineFlagRegistry, getFlag, memoryProviderFromRegistry } from \"@zedtech/zedkit-flags\";\n\nconst registry = defineFlagRegistry({ exportCsv: true });\nOpenFeature.setProvider(memoryProviderFromRegistry(registry));\nconst enabled = await getFlag(OpenFeature.getClient(), registry, \"exportCsv\");"
+            }
+          ]
+        },
+        {
+          "need": "Load flag values from JSON or env",
+          "import": "`@zedtech/zedkit-flags` — `parseFlagsJson`, `loadFlagsFromEnv`, `mergeFlagValues`, `createMemoryProvider`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "loadFlagsFromEnv",
+          "audience": "CI, preview apps, and integration tests.",
+          "purpose": "Parse `ZEDKIT_FLAGS_JSON` or a JSON string and merge overrides onto registry defaults.",
+          "whenToUse": "Ephemeral environments where a remote flag service is unavailable.",
+          "whenNotToUse": "Secrets or per-user targeting — use OpenFeature evaluation context and a real provider.",
+          "derivedFrom": null,
+          "example": "import { OpenFeature, createMemoryProvider, defineFlagRegistry, loadFlagsFromEnv, mergeFlagValues } from \"@zedtech/zedkit-flags\";\n\nconst registry = defineFlagRegistry({ maintenance: false });\nconst merged = mergeFlagValues(registry, loadFlagsFromEnv());\nOpenFeature.setProvider(createMemoryProvider(merged));",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { OpenFeature, createMemoryProvider, defineFlagRegistry, loadFlagsFromEnv, mergeFlagValues } from \"@zedtech/zedkit-flags\";\n\nconst registry = defineFlagRegistry({ maintenance: false });\nconst merged = mergeFlagValues(registry, loadFlagsFromEnv());\nOpenFeature.setProvider(createMemoryProvider(merged));"
+            }
+          ]
+        },
+        {
+          "need": "Override flags in the browser for local dev",
+          "import": "`@zedtech/zedkit-flags` — `readFlagOverrides`, `writeFlagOverride`, `mergeFlagValue`, `FLAG_OVERRIDE_STORAGE_KEY`, `flagOverridesSnapshot`, `subscribeFlagOverrides`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "writeFlagOverride",
+          "audience": "Authors building internal dev panels or docs previews.",
+          "purpose": "Persist boolean, string, or number overrides in `localStorage` and merge them after OpenFeature evaluation.",
+          "whenToUse": "Local-only tooling; never ship override UI to production users without auth.",
+          "whenNotToUse": "Server-side flag evaluation.",
+          "derivedFrom": null,
+          "example": "import { mergeFlagValue, readFlagOverrides, writeFlagOverride } from \"@zedtech/zedkit-flags\";\n\nconst evaluated = false;\nconst overrides = readFlagOverrides(localStorage);\nconst effective = mergeFlagValue(\"beta\", evaluated, overrides);\nwriteFlagOverride(localStorage, \"beta\", !effective);",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { mergeFlagValue, readFlagOverrides, writeFlagOverride } from \"@zedtech/zedkit-flags\";\n\nconst evaluated = false;\nconst overrides = readFlagOverrides(localStorage);\nconst effective = mergeFlagValue(\"beta\", evaluated, overrides);\nwriteFlagOverride(localStorage, \"beta\", !effective);"
+            }
+          ]
+        },
+        {
+          "need": "Read flags in React",
+          "import": "`@zedtech/zedkit-flags/react` — `ZedkitFlagsProvider`, `useFlag`, `OpenFeatureProvider`, `OpenFeature`, `TypedInMemoryProvider`, `useBooleanFlagValue`, `useStringFlagValue`, `useNumberFlagValue`",
+          "wraps": "`@openfeature/react-sdk`, `@openfeature/web-sdk` (peers)",
+          "status": "alpha",
+          "shortName": "useFlag",
+          "audience": "Client components that gate UI on feature flags.",
+          "purpose": "Register an in-memory provider from a registry and subscribe to local overrides via `useFlag`.",
+          "whenToUse": "Apps already using OpenFeature on the web; wrap a subtree that needs typed defaults.",
+          "whenNotToUse": "Server Components — evaluate on the server and pass props.",
+          "derivedFrom": null,
+          "example": "import { defineFlagRegistry } from \"@zedtech/zedkit-flags\";\nimport { useFlag, ZedkitFlagsProvider } from \"@zedtech/zedkit-flags/react\";\n\nconst registry = defineFlagRegistry({ newDashboard: false });\n\nexport function FeatureGate({ children }: { children: React.ReactNode }) {\n  return (\n    <ZedkitFlagsProvider registry={registry}>\n      <FeatureGateInner>{children}</FeatureGateInner>\n    </ZedkitFlagsProvider>\n  );\n}\n\nfunction FeatureGateInner({ children }: { children: React.ReactNode }) {\n  const show = useFlag(\"newDashboard\", false);\n  return show ? children : null;\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { defineFlagRegistry } from \"@zedtech/zedkit-flags\";\nimport { useFlag, ZedkitFlagsProvider } from \"@zedtech/zedkit-flags/react\";\n\nconst registry = defineFlagRegistry({ newDashboard: false });\n\nexport function FeatureGate({ children }: { children: React.ReactNode }) {\n  return (\n    <ZedkitFlagsProvider registry={registry}>\n      <FeatureGateInner>{children}</FeatureGateInner>\n    </ZedkitFlagsProvider>\n  );\n}\n\nfunction FeatureGateInner({ children }: { children: React.ReactNode }) {\n  const show = useFlag(\"newDashboard\", false);\n  return show ? children : null;\n}"
+            }
+          ]
+        }
+      ]
+    },
     "@zedtech/zedkit-i18n": {
       "catalog": "packages/i18n/CATALOG.md",
       "keywords": [
