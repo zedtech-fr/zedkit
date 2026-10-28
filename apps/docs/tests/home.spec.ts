@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { registryBrickNames } from "../content/registry-site";
 
 const BASE = "http://127.0.0.1:3100";
 
@@ -181,6 +182,35 @@ test("home UI quickstart lists prerequisites before install copy", async ({ page
   await expect(page.getByLabel("Copy globals.css")).toBeVisible();
   await expect(page.getByLabel("Copy pnpm command")).toBeVisible();
   await expect(page.getByLabel("Copy page.tsx")).toBeVisible();
+});
+
+test("quickstart brick names keep a decorative icon", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
+  const list = page.locator("#quickstart [data-registry-bricks]");
+  await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
+  await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
+test.describe("quickstart brick list light/dark (#769)", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
+      const list = page.locator("#quickstart [data-registry-bricks]");
+      await list.scrollIntoViewIfNeeded();
+      await expect(list.getByText("badge", { exact: true })).toBeVisible();
+      await list.screenshot({ path: `test-results/quickstart-brick-list-${mode}.png` });
+    });
+  }
 });
 
 test("home search opens from the header", async ({ page }) => {
