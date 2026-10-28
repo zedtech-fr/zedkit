@@ -28,3 +28,20 @@ export function areaIconFor(id: keyof typeof AREA_ICONS): LucideIcon {
   if (!icon) throw new Error(`domain-icons: no area icon mapped for "${id}"`);
   return icon;
 }
+
+const DOC_FOLDER_AREA = {
+  ui: "ui",
+  ai: "agents",
+  seo: "seo",
+  core: "backend",
+  nest: "backend",
+  server: "backend",
+} as const;
+
+/** Catalog folder in a `/docs/<folder>/…` href → area icon key. */
+export function areaFromDocHref(href: string): keyof typeof AREA_ICONS {
+  const folder = href.split("/")[2];
+  const area = DOC_FOLDER_AREA[folder as keyof typeof DOC_FOLDER_AREA];
+  if (!area) throw new Error(`domain-icons: no area mapped for href "${href}"`);
+  return area;
+}

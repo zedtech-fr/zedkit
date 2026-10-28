@@ -10,6 +10,7 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
+import { HomeScenarioTitle } from "@/components/home-scenario-title";
 import type { HomeScenario } from "@/content/home-scenarios";
 import {
   HOME_CARD_CONTENT_GAP,
@@ -29,7 +30,9 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
           {scenarios.map((scenario) => (
             <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
               <CardHeader>
-                <CardTitle className="text-lg">{scenario.situation}</CardTitle>
+                <CardTitle className="text-lg">
+                  <HomeScenarioTitle href={scenario.href} situation={scenario.situation} />
+                </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
