@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button, Heading, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
 export function HomeAiSetupCopy({ initCommand }: { initCommand: string }) {
@@ -37,13 +38,15 @@ export function HomeAiSetupCopy({ initCommand }: { initCommand: string }) {
         </Text>
         <Text variant="muted">Needs Node.js 22 or newer.</Text>
       </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap={2} className="flex-wrap" data-docs-ctas="">
         <Button asChild variant="ghost" size="sm" className="w-fit">
-          <Link href="/docs/set-up-your-coding-agents#what-gets-installed">What gets installed</Link>
+          <Link href="/docs/set-up-your-coding-agents#what-gets-installed">
+            <DocsActionLabel>What gets installed</DocsActionLabel>
+          </Link>
         </Button>
         <Button asChild variant="ghost" size="sm" className="w-fit">
           <Link href="/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo">
-            AI setup docs
+            <DocsActionLabel>AI setup docs</DocsActionLabel>
           </Link>
         </Button>
       </Stack>

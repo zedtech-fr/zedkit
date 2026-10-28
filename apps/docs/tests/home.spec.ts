@@ -114,6 +114,8 @@ test("home docs CTAs keep a decorative icon", async ({ page }) => {
   }
   const scenarios = page.locator("#scenarios");
   await expect(scenarios.getByRole("link").locator("svg[aria-hidden='true']")).toHaveCount(6);
+  await expect(page.locator("#install-or-copy [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(2);
+  await expect(page.locator("#ai-setup [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(2);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -137,6 +139,27 @@ test.describe("home docs CTAs light/dark (#748)", () => {
       await scenarios.scrollIntoViewIfNeeded();
       await expect(scenarios.getByRole("link", { name: "Read the docs: New admin UI in an existing app" })).toBeVisible();
       await scenarios.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
+    });
+  }
+});
+
+test.describe("home section docs CTAs light/dark (#769)", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(BASE, { waitUntil: "networkidle" });
+      const install = page.locator("#install-or-copy [data-docs-ctas]");
+      const ai = page.locator("#ai-setup [data-docs-ctas]");
+      await install.scrollIntoViewIfNeeded();
+      await expect(install.getByRole("link", { name: "Getting started" })).toBeVisible();
+      await install.screenshot({ path: `test-results/home-section-cta-install-${mode}.png` });
+      await ai.scrollIntoViewIfNeeded();
+      await expect(ai.getByRole("link", { name: "AI setup docs" })).toBeVisible();
+      await ai.screenshot({ path: `test-results/home-section-cta-ai-${mode}.png` });
     });
   }
 });

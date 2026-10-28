@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import { RegistryBrickList } from "@/components/registry-brick-name";
 import {
   HOME_CARD_CONTENT_GAP,
@@ -92,12 +93,16 @@ export function HomeInstallOrCopyCopy({
           npm package; copied bricks are plain editable files in your tree.
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap={2} className="flex-wrap" data-docs-ctas="">
         <Button asChild variant="ghost" size="sm" className="w-fit">
-          <Link href="/docs/zedkit-and-shadcn">zedkit and shadcn/ui</Link>
+          <Link href="/docs/zedkit-and-shadcn">
+            <DocsActionLabel>zedkit and shadcn/ui</DocsActionLabel>
+          </Link>
         </Button>
         <Button asChild variant="ghost" size="sm" className="w-fit">
-          <Link href="/docs/getting-started#install-or-copy">Getting started</Link>
+          <Link href="/docs/getting-started#install-or-copy">
+            <DocsActionLabel>Getting started</DocsActionLabel>
+          </Link>
         </Button>
       </Stack>
     </Stack>
