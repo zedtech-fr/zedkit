@@ -84,6 +84,15 @@ test.describe("getting started package table light/dark (#753)", () => {
   }
 });
 
+test("getting started troubleshooting mentions server env boot failures", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { name: "Troubleshooting", level: 2 }).scrollIntoViewIfNeeded();
+  const row = page.getByRole("row", { name: /Boot fails on bad process\.env/ });
+  await expect(row).toBeVisible();
+  await expect(row.getByRole("link", { name: "Fail fast on bad environment variables" })).toBeVisible();
+  await expect(row.getByRole("link", { name: "Start a safe NestJS API" })).toBeVisible();
+});
+
 test("getting started links to a catalog page", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   await page

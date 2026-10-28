@@ -145,6 +145,7 @@ Next, add UI only when you start an admin screen — install `@zedtech/zedkit-ui
 | `validate` fails after `init` | Run from the repo root; ensure `kit/` or `.agents/` copied; see [Check that skills, subagents, commands and provider copies are valid](/docs/ai/check-that-skills-subagents-commands-and-provider-copies-are-valid). |
 | `init` refuses to overwrite | By design — remove or rename the conflicting file, or use `--dry-run` to preview. |
 | UI components look unstyled | Theme doc not applied: Tailwind v4, kit CSS, and `.dark` on `html` when using dark mode. |
+| Boot fails on bad process.env | Standalone Node: [Path D](/docs/getting-started#quickstart) + [Fail fast on bad environment variables](/docs/server/fail-fast-on-bad-environment-variables). Nest: [Path E](/docs/getting-started#quickstart) + [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api). |
 | Wrong package for the job | Search [the catalog index](https://zedkit.app/docs) by need; each page states **Avoid when**. |
 
 ## Next steps
