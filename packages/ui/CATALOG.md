@@ -987,7 +987,7 @@ const [due, setDue] = useState<Date | undefined>();
 - When to use: For leave, a report window, or any start-and-end pair.
 - When not to use: For one day — use the date picker.
 - See also: `Pick a date from a popover`, `Lay out fieldsets, fields, and error lists`
-- A11y: Same dialog name and live region as the single-day picker. Limits use `disabledDays`, `startMonth`, and `endMonth`.
+- A11y: Same dialog name and live region as the single-day picker. Limits use `disabledDays`, `startMonth`, and `endMonth`. The popover stays open until start and end are different days.
 
 ```ts
 import { DateRangePicker, Field, FieldLabel, type DateRangePickerProps } from "@zedtech/zedkit-ui";
