@@ -708,6 +708,52 @@ import { Spinner, Text } from "@zedtech/zedkit-ui";
 <Text>Saving invoices</Text>
 ```
 
+## Fill a list's loading, empty, error and success states
+
+- Import: `@zedtech/zedkit-ui` — `Spinner`, `EmptyState`, `ErrorState`, `DataTable`, `Button`, `Text`, `createDataTableColumns`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: FourStates
+- Audience: Developers swapping a list between wait, nothing, failure, and rows.
+- Purpose: One host per state: Spinner, EmptyState, ErrorState, then the filled list.
+- When to use: On a list page that loads from the network.
+- When not to use: For an empty row inside a table body — use `DataTableEmpty`. For a field error — use `FieldError`.
+- See also: `Name a spinner while something loads`, `Show an empty zone with a next step`, `Show what broke and a next step`, `Show a sortable, filterable, paginated data table`
+- Examples: Loading, Empty, Error, Success
+- A11y: Render one state at a time. Spinner is `role="status"`; EmptyState uses a heading; ErrorState is `role="alert"`. Keep the next step in `actions`.
+- Troubleshooting: Two live regions at once — do not nest ErrorState inside another alert. The spinner has no visible name — keep text beside it or pass `label`.
+
+```ts
+import { Spinner, Text } from "@zedtech/zedkit-ui";
+<Spinner label="Loading invoices" />
+<Text>Loading invoices</Text>
+```
+
+```ts
+import { Button, EmptyState } from "@zedtech/zedkit-ui";
+<EmptyState
+  title="No invoices"
+  description="Create an invoice to send to a client."
+  actions={<Button>New invoice</Button>}
+/>
+```
+
+```ts
+import { Button, ErrorState } from "@zedtech/zedkit-ui";
+<ErrorState
+  title="Could not load invoices"
+  description="Check your connection and try again."
+  actions={<Button variant="outline">Try again</Button>}
+/>
+```
+
+```ts
+import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
+const helper = createDataTableColumns<{ name: string; age: number }>();
+const columns = [helper.accessor("name", { header: "Name" })];
+<DataTable columns={columns} data={[{ name: "Ada", age: 36 }]} />
+```
+
 ## Open modal dialogs
 
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`

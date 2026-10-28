@@ -69,6 +69,10 @@ import { UpdatedAgoDemo } from "./updated-ago-demo";
 import { WizardComposedDemo } from "./wizard-composed-demo";
 import { WizardDemo } from "./wizard-demo";
 import { WizardSoloDemo } from "./wizard-solo-demo";
+import { FourStateEmptyDemo } from "./four-state-empty-demo";
+import { FourStateErrorDemo } from "./four-state-error-demo";
+import { FourStateLoadingDemo } from "./four-state-loading-demo";
+import { FourStateSuccessDemo } from "./four-state-success-demo";
 import { EmptyStateActionsDemo } from "./empty-state-actions-demo";
 import { EmptyStateDemo } from "./empty-state-demo";
 import { ErrorStateDemo } from "./error-state-demo";
@@ -130,6 +134,10 @@ export const demoRegistry = {
   ConfirmDialogDemo: { Demo: ConfirmDialogDemo, file: "confirm-dialog-demo.tsx", center: true },
   BrandLogoDemo: { Demo: BrandLogoDemo, file: "brand-logo-demo.tsx" },
   BrandLogoHeaderDemo: { Demo: BrandLogoHeaderDemo, file: "brand-logo-demo.tsx" },
+  FourStateLoadingDemo: { Demo: FourStateLoadingDemo, file: "four-state-loading-demo.tsx", center: true },
+  FourStateEmptyDemo: { Demo: FourStateEmptyDemo, file: "four-state-empty-demo.tsx" },
+  FourStateErrorDemo: { Demo: FourStateErrorDemo, file: "four-state-error-demo.tsx" },
+  FourStateSuccessDemo: { Demo: FourStateSuccessDemo, file: "four-state-success-demo.tsx" },
   EmptyStateDemo: { Demo: EmptyStateDemo, file: "empty-state-demo.tsx" },
   EmptyStateActionsDemo: { Demo: EmptyStateActionsDemo, file: "empty-state-actions-demo.tsx" },
   ErrorStateDemo: { Demo: ErrorStateDemo, file: "error-state-demo.tsx" },

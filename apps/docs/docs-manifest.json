@@ -368,6 +368,18 @@
         "Named wait": "SpinnerNamedDemo"
       }
     },
+    "Fill a list's loading, empty, error and success states": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "EmptyState",
+      "props": "EmptyStateProps",
+      "source": "empty-state.tsx",
+      "demo": "FourStateLoadingDemo",
+      "examples": {
+        "Empty": "FourStateEmptyDemo",
+        "Error": "FourStateErrorDemo",
+        "Success": "FourStateSuccessDemo"
+      }
+    },
     "Flag offline state with a live note": {
       "package": "@zedtech/zedkit-ui",
       "component": "OfflineNote",

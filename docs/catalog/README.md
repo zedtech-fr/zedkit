@@ -55,7 +55,9 @@ import { a } from "@zedtech/zedkit-core";
 - UI component exports also need a four-state entry in
   [`packages/ui/four-states.json`](../../packages/ui/four-states.json)
   (`none`, or loading/empty/error/success plus fixture, vitest and axe
-  paths). A missing entry fails with a pointer to the DataTable fixture.
+  paths). Loading/empty/error fixtures must use `Spinner` / `EmptyState` /
+  `ErrorState`. A missing entry fails with a pointer to
+  `packages/ui/tests/unit/four-states.fixture.tsx`.
 - **Wraps** names the mature npm package underneath, or `(none)` when the
   module is dependency-free by design.
 - **Status** is one of `planned | alpha | beta | stable | deprecated`

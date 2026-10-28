@@ -223,7 +223,8 @@ export function parseBarrelExports(text, indexPath, errors) {
 const UI_TYPE_SUFFIX = /(Props|Variants|Tone|Options|Column|Event|Messages|Data)$/;
 const UI_STATES = new Set(["loading", "empty", "error", "success"]);
 const UI_STATES_PATH = "packages/ui/four-states.json";
-const UI_STATES_EXAMPLE = "packages/ui/tests/unit/data-table.test.tsx";
+const UI_STATES_EXAMPLE = "packages/ui/tests/unit/four-states.fixture.tsx";
+const UI_STATE_HOST = { loading: "Spinner", empty: "EmptyState", error: "ErrorState" };
 
 export function isUiComponentExport(name) {
   if (typeof name !== "string" || !/^[A-Z]/.test(name)) return false;
@@ -232,7 +233,7 @@ export function isUiComponentExport(name) {
   return true;
 }
 
-export function checkUiExportStates({ symbols, manifest, fileExists }, errors) {
+export function checkUiExportStates({ symbols, manifest, fileExists, readFile }, errors) {
   const example = manifest?.example?.fixture ?? UI_STATES_EXAMPLE;
   const hint = `Example fixture: \`${example}\`. Add the export to ${UI_STATES_PATH} with \`"states": "none"\` or a fixture, vitest, and axe path.`;
   if (!manifest || typeof manifest !== "object") {
@@ -271,6 +272,17 @@ export function checkUiExportStates({ symbols, manifest, fileExists }, errors) {
         errors.push(`${UI_STATES_PATH}: \`${name}\` is missing ${key}. ${hint}`);
       } else if (fileExists && !fileExists(path)) {
         errors.push(`${UI_STATES_PATH}: \`${name}\` ${key} \`${path}\` does not exist. ${hint}`);
+      }
+    }
+    if (typeof readFile !== "function" || typeof entry.fixture !== "string") continue;
+    const fixtureText = readFile(entry.fixture);
+    if (typeof fixtureText !== "string") continue;
+    for (const state of states) {
+      const host = UI_STATE_HOST[state];
+      if (host && !fixtureText.includes(host)) {
+        errors.push(
+          `${UI_STATES_PATH}: \`${name}\` ${state} fixture must use \`${host}\`. ${hint}`,
+        );
       }
     }
   }
@@ -544,6 +556,7 @@ function check(packages, root, errors) {
             symbols: pkg.symbols,
             manifest: JSON.parse(raw),
             fileExists: (path) => existsSync(join(root, path)),
+            readFile: (path) => readIfExists(join(root, path)),
           },
           errors,
         );
