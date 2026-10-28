@@ -1,12 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Card, CardContent, CardHeader, CardTitle, Text } from "@zedtech/zedkit-ui";
+import { Card, CardContent, CardHeader, CardTitle, Stack, Text } from "@zedtech/zedkit-ui";
 
 // Below-fold interactive table: keep it out of the first-load JS.
 const HomeAdminDashboardDemo = dynamic(
   () => import("@/components/demos/home-admin-dashboard-demo").then((mod) => mod.HomeAdminDashboardDemo),
-  { ssr: false, loading: () => <div className="min-h-72" aria-hidden="true" /> },
+  { ssr: false, loading: () => <Stack className="min-h-72" aria-hidden="true" /> },
 );
 
 export function HomeHeroDashboard() {

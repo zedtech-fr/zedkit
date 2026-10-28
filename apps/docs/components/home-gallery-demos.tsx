@@ -2,12 +2,13 @@
 
 import type { ComponentType } from "react";
 import dynamic from "next/dynamic";
+import { Stack } from "@zedtech/zedkit-ui";
 import { BadgeDemo } from "@/components/demos/badge-demo";
 import { ButtonDemo } from "@/components/demos/button-demo";
 import { InputDemo } from "@/components/demos/input-demo";
 
 function OverlayFallback() {
-  return <div className="min-h-32" aria-hidden="true" />;
+  return <Stack className="min-h-32" aria-hidden="true" />;
 }
 
 /** Only the demos the home page renders — not the full docs registry. */
