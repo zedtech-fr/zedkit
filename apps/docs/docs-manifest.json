@@ -333,6 +333,20 @@
       "source": "select.tsx",
       "demo": "SelectDemo"
     },
+    "Search and pick one option": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Combobox",
+      "props": "ComboboxProps",
+      "source": "combobox.tsx",
+      "demo": "ComboboxDemo"
+    },
+    "Pick many searchable options": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "MultiSelect",
+      "props": "MultiSelectProps",
+      "source": "multi-select.tsx",
+      "demo": "MultiSelectDemo"
+    },
     "Collect multi-line text input": {
       "package": "@zedtech/zedkit-ui",
       "component": "Textarea",

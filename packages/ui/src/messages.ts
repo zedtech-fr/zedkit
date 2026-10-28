@@ -14,6 +14,8 @@ export type ZedkitUiMessages = {
   live: string;
   idle: string;
   options: string;
+  /** Combobox / multi-select search field placeholder. */
+  search: string;
   identity: string;
   identityDescription: string;
   identityDefault: string;
@@ -43,6 +45,7 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   live: "Live",
   idle: "Idle",
   options: "Options",
+  search: "Search…",
   identity: "Identity",
   identityDescription: "The page behind this sheet updates as you choose.",
   identityDefault: "Default",
@@ -72,6 +75,7 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   live: "En direct",
   idle: "Inactif",
   options: "Choix",
+  search: "Rechercher…",
   identity: "Identité",
   identityDescription: "La page derrière ce panneau se met à jour quand vous choisissez.",
   identityDefault: "Défaut",

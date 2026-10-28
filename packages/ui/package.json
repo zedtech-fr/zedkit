@@ -84,6 +84,7 @@
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
+    "downshift": "catalog:",
     "lucide-react": "catalog:",
     "react-day-picker": "catalog:",
     "react-hook-form": "catalog:",

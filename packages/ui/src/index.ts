@@ -116,7 +116,9 @@ export {
   type OptionCardsProps,
 } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
-export { Popover, PopoverContent, PopoverTrigger } from "./popover.js";
+export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
+export { Combobox, type ComboboxOption, type ComboboxProps } from "./combobox.js";
+export { MultiSelect, type MultiSelectProps } from "./multi-select.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
 export {
   Select,

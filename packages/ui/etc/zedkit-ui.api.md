@@ -187,6 +187,29 @@ export interface CloseRouteOptions {
 // @public
 export function cn(...inputs: ClassValue[]): string;
 
+// @public (undocumented)
+export function Combobox(props: ComboboxProps): JSX.Element;
+
+// @public (undocumented)
+export type ComboboxOption = {
+    value: string;
+    label: string;
+};
+
+// @public (undocumented)
+export type ComboboxProps = {
+    options: readonly ComboboxOption[];
+    value?: string | null;
+    onValueChange?: (value: string | null) => void;
+    placeholder?: string;
+    emptyMessage?: string;
+    loading?: boolean;
+    disabled?: boolean;
+    id?: string;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+};
+
 // @public
 export function ConfirmDialog(input: ConfirmDialogProps): React_2.JSX.Element;
 
@@ -590,7 +613,7 @@ export type HeadingProps = React_2.ComponentProps<"h1"> & VariantProps<typeof he
 
 // @public (undocumented)
 export const headingVariants: (props?: ({
-    level?: 1 | 2 | 3 | 4 | null | undefined;
+    level?: 1 | 3 | 4 | 2 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -698,6 +721,23 @@ export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "
     title?: string;
 }
 
+// @public (undocumented)
+export function MultiSelect(props: MultiSelectProps): JSX.Element;
+
+// @public (undocumented)
+export type MultiSelectProps = {
+    options: readonly ComboboxOption[];
+    value?: readonly string[];
+    onValueChange?: (value: string[]) => void;
+    placeholder?: string;
+    emptyMessage?: string;
+    loading?: boolean;
+    disabled?: boolean;
+    id?: string;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+};
+
 // @public
 export function OfflineNote(input: OfflineNoteProps): JSX.Element;
 
@@ -787,6 +827,9 @@ export interface PageHeaderSkeletonProps {
 
 // @public (undocumented)
 export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function PopoverAnchor(input: React_2.ComponentProps<typeof PopoverPrimitive.Anchor>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function PopoverContent(input: React_2.ComponentProps<typeof PopoverPrimitive.Content>): React_2.JSX.Element;
@@ -940,7 +983,7 @@ export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof sta
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 8 | 2 | 3 | 4 | 6 | null | undefined;
+    gap?: 1 | 8 | 3 | 4 | 2 | 6 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1145,6 +1188,7 @@ export type ZedkitUiMessages = {
     live: string;
     idle: string;
     options: string;
+    search: string;
     identity: string;
     identityDescription: string;
     identityDefault: string;

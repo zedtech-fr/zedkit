@@ -1,0 +1,55 @@
+"use client";
+
+import { useCombobox } from "downshift";
+
+import { Spinner } from "./spinner.js";
+import { cn } from "./utils.js";
+import type { ComboboxOption } from "./combobox-shared.js";
+
+export function ComboboxMenu({
+  emptyMessage,
+  getItemProps,
+  getMenuProps,
+  highlightedIndex,
+  items,
+  loading,
+}: {
+  emptyMessage: string;
+  getItemProps: ReturnType<typeof useCombobox<ComboboxOption>>["getItemProps"];
+  getMenuProps: ReturnType<typeof useCombobox<ComboboxOption>>["getMenuProps"];
+  highlightedIndex: number;
+  items: ComboboxOption[];
+  loading: boolean;
+}) {
+  return (
+    <ul
+      {...getMenuProps()}
+      className="max-h-[--radix-select-content-available-height] overflow-y-auto p-1 outline-none"
+      data-slot="combobox-list"
+    >
+      {loading ? (
+        <li className="flex items-center gap-2 px-control-inline py-control-block text-sm text-muted-foreground">
+          <Spinner label="Loading options" />
+          Loading…
+        </li>
+      ) : null}
+      {!loading && items.length === 0 ? (
+        <li className="px-control-inline py-control-block text-sm text-muted-foreground">{emptyMessage}</li>
+      ) : null}
+      {!loading
+        ? items.map((item, index) => (
+            <li
+              key={item.value}
+              {...getItemProps({ item, index })}
+              className={cn(
+                "cursor-default rounded-sm px-control-inline py-control-block text-sm outline-none",
+                highlightedIndex === index ? "bg-accent text-accent-foreground" : "",
+              )}
+            >
+              {item.label}
+            </li>
+          ))
+        : null}
+    </ul>
+  );
+}

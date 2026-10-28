@@ -61,6 +61,8 @@ import { MotionHoverDemo } from "./motion-hover-demo";
 import { MotionStaggerDemo } from "./motion-stagger-demo";
 import { SecretFieldDemo } from "./secret-field-demo";
 import { SelectDemo } from "./select-demo";
+import { ComboboxDemo } from "./combobox-demo";
+import { MultiSelectDemo } from "./multi-select-demo";
 import { SeparatorDemo } from "./separator-demo";
 import { SkeletonDemo } from "./skeleton-demo";
 import { StackDemo } from "./stack-demo";
@@ -194,6 +196,8 @@ export const demoRegistry = {
   RouteModalDialogDemo: { Demo: RouteModalDialogDemo, file: "route-modal-dialog-demo.tsx", center: true },
   SecretFieldDemo: { Demo: SecretFieldDemo, file: "secret-field-demo.tsx" },
   SelectDemo: { Demo: SelectDemo, file: "select-demo.tsx" },
+  ComboboxDemo: { Demo: ComboboxDemo, file: "combobox-demo.tsx" },
+  MultiSelectDemo: { Demo: MultiSelectDemo, file: "multi-select-demo.tsx" },
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },
   SkeletonDemo: { Demo: SkeletonDemo, file: "skeleton-demo.tsx" },
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
