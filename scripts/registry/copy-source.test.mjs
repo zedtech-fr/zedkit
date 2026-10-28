@@ -35,7 +35,7 @@ test("status family ships cssVars/css needed without npm styles.css", () => {
 });
 
 test("bare kit sibling names are rejected for the status family", () => {
-  const broken = structuredClone(registry);
+  const broken = JSON.parse(JSON.stringify(registry));
   const label = broken.items.find((item) => item.name === "status-label");
   label.registryDependencies = ["checkmark", "status-dot", "utils"];
   assert.match(checkCopySourceFamily(broken, STATUS_FAMILY).join("\n"), /use zedtech-fr\/zedkit\/checkmark/);
