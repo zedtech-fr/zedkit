@@ -308,8 +308,8 @@ export function DatePicker(input: DatePickerProps): JSX.Element;
 
 // @public (undocumented)
 export type DatePickerProps = {
-    value?: Date;
-    defaultValue?: Date;
+    value?: Date | undefined;
+    defaultValue?: Date | undefined;
     onValueChange?: (date: Date | undefined) => void;
     placeholder?: string;
     disabled?: boolean;
@@ -327,8 +327,8 @@ export function DateRangePicker(input: DateRangePickerProps): JSX.Element;
 
 // @public (undocumented)
 export type DateRangePickerProps = {
-    value?: DateRange;
-    defaultValue?: DateRange;
+    value?: DateRange | undefined;
+    defaultValue?: DateRange | undefined;
     onValueChange?: (range: DateRange | undefined) => void;
     placeholder?: string;
     disabled?: boolean;
