@@ -4,7 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-import { checkCopySourceFamily, checkCopySourceFamilyTheme } from "./copy-source.mjs";
+import { checkCopySourceFamily, checkCopySourceFamilyTheme, kitRegistryDep } from "./copy-source.mjs";
 import { expectedRegistryThemeFromStyles } from "./theme-tokens.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -72,4 +72,8 @@ test("drawer family uses kit registry slug for button", () => {
 
 test("copy theme item matches styles.css motion and semantic tokens", () => {
   assert.deepEqual(registry.items.find((item) => item.name === "theme").cssVars, expected.theme.cssVars);
+});
+
+test("kitRegistryDep uses @zedkit namespace for composed siblings", () => {
+  assert.equal(kitRegistryDep("badge"), "@zedkit/badge");
 });

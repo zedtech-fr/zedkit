@@ -54,7 +54,7 @@ async function highlightedTs(code: string, title?: string) {
 }
 
 function registrySourcePath(registry: string): string | null {
-  const path = join(process.cwd(), "..", "..", "registry", "generated", "ui", `${registry}.tsx`);
+  const path = join(process.cwd(), "..", "..", "registry", "ui", `${registry}.tsx`);
   return existsSync(path) ? path : null;
 }
 
