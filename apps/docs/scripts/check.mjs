@@ -323,15 +323,27 @@ if (existsSync(registrySitePath)) {
   const publicSiteUrl = "https://zedkit.app";
   if (featuredBrick) {
     const expectedRegistryAdd = `npx shadcn@latest add ${publicSiteUrl}/r/${featuredBrick}.json`;
+    const expectedRegistryNamespace = `npx shadcn@latest registry add @zedkit=${publicSiteUrl}/r/{name}.json`;
     const registrySnippetPaths = [
       join(APP, "home-quickstart", "snippets", "registry-add.sh"),
       join(APP, "prose", "guides", "snippets", "registry-add.sh"),
+    ];
+    const namespaceSnippetPaths = [
+      join(APP, "home-quickstart", "snippets", "registry-namespace.sh"),
+      join(APP, "prose", "guides", "snippets", "registry-namespace.sh"),
     ];
     for (const path of registrySnippetPaths) {
       if (!existsSync(path)) {
         errors.push(`${path} missing.`);
       } else if (readFileSync(path, "utf8").trim() !== expectedRegistryAdd) {
         errors.push(`${path} must be exactly: ${expectedRegistryAdd}`);
+      }
+    }
+    for (const path of namespaceSnippetPaths) {
+      if (!existsSync(path)) {
+        errors.push(`${path} missing.`);
+      } else if (readFileSync(path, "utf8").trim() !== expectedRegistryNamespace) {
+        errors.push(`${path} must be exactly: ${expectedRegistryNamespace}`);
       }
     }
   }
