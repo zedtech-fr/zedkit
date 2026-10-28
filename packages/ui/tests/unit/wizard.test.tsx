@@ -16,8 +16,9 @@ describe("WizardSteps", () => {
     const { container } = render(<WizardSteps steps={["One", "Two"]} current={0} />);
     const list = container.querySelector("ol");
     expect(list?.classList.contains("gap-x-wizard-steps-gap")).toBe(true);
-    expect(list?.classList.contains("gap-y-wizard-steps-row-gap")).toBe(true);
-    expect(list?.className).not.toMatch(/(^|\s)(gap-x-3|gap-y-2)(\s|$)/);
+    expect(list?.classList.contains("gap-y-2")).toBe(true);
+    expect(list?.className).not.toContain("gap-y-wizard-steps-row-gap");
+    expect(list?.className).not.toMatch(/(^|\s)gap-x-3(\s|$)/);
     const item = screen.getByText("One").closest("li");
     expect(item?.classList.contains("gap-2")).toBe(true);
     expect(item?.className).not.toContain("gap-wizard-step-gap");
