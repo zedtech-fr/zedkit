@@ -93,6 +93,7 @@ const DEPRECATED_1REM_CLASSES = [
   "gap-field-inline",
   "gap-drawer-footer-gap",
   "space-x-dialog-footer-gap",
+  "gap-button-gap",
 ];
 
 function walkJs(dir, acc = []) {
