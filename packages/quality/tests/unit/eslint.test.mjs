@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Linter } from "eslint";
+import { parser as tsParser, plugin as tsPlugin } from "typescript-eslint";
 import { defineLayers, uiPreset } from "#index.mjs";
 
 describe("uiPreset", () => {
@@ -58,6 +59,24 @@ describe("uiPreset", () => {
       "button.tsx",
     );
     expect(imported.some((entry) => entry.message.includes("forwardRef"))).toBe(true);
+  });
+
+  it("bans explicit any and tells the reader to name a type", () => {
+    const types = uiPreset({ entryPoint: "/repo/app/globals.css" }).find((block) => block.name === "zedkit/ui-types");
+    expect(types.rules["@typescript-eslint/no-explicit-any"]).toBe("error");
+    const linter = new Linter({ configType: "flat" });
+    const hits = linter.verify(
+      "const x: any = 1;\n",
+      {
+        files: ["**/*.tsx"],
+        languageOptions: { parser: tsParser },
+        plugins: { "@typescript-eslint": tsPlugin },
+        rules: types.rules,
+      },
+      "row.tsx",
+    );
+    expect(hits.some((entry) => entry.ruleId === "@typescript-eslint/no-explicit-any")).toBe(true);
+    expect(hits[0].message).toMatch(/Specify a different type/i);
   });
 });
 

@@ -5,8 +5,8 @@
    (`"zedkit": { "noBuild": true }`, exempt from the pack gate's dist
    requirement); config must be consumable with zero build.
 2. Node 22, pnpm, ESM. Deps use `catalog:` only. Peer deps (`eslint`,
-   `eslint-plugin-jsx-a11y`, `eslint-plugin-better-tailwindcss`) are also
-   devDeps so the tests load the real plugins.
+   `eslint-plugin-jsx-a11y`, `eslint-plugin-better-tailwindcss`,
+   `typescript-eslint`) are also devDeps so the tests load the real plugins.
 3. Explicit named exports from `src/index.mjs` (no `export *`, no default
    exports); the `.d.mts` files mirror them and `tests/types/usage.ts`
    proves they typecheck.

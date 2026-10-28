@@ -6,13 +6,15 @@
 // - Tailwind class hygiene (order, no duplicates, no conflicts, no unknown)
 // - Tokens only: no raw palette colors (bg-red-500), no arbitrary hex/rgb
 //   colors, no raw px font sizes — use the semantic theme tokens
-// - No `style` attributes; no forwardRef (ref is a prop); no raw try/catch (use a tryCatch wrapper)
+// - No `style` attributes; no forwardRef (ref is a prop); no explicit `any`;
+//   no raw try/catch (use a tryCatch wrapper)
 //
 // Consumer setup (no copy: install the package, pass your Tailwind entry):
 //   `import { uiPreset } from "@zedtech/zedkit-quality"` then
 //   `export default [...uiPreset({ entryPoint: "./app/globals.css" })]`.
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import betterTailwindcss from "eslint-plugin-better-tailwindcss";
+import { plugin as tsPlugin } from "typescript-eslint";
 
 const PALETTE =
   "slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|fuchsia|pink|rose";
@@ -94,6 +96,14 @@ export function uiPreset({ entryPoint }) {
               "ui-ref: forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button.tsx).",
           },
         ],
+      },
+    },
+    {
+      name: "zedkit/ui-types",
+      files: ["**/*.tsx", "**/*.jsx"],
+      plugins: { "@typescript-eslint": tsPlugin },
+      rules: {
+        "@typescript-eslint/no-explicit-any": "error",
       },
     },
   ];

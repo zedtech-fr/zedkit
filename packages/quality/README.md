@@ -14,7 +14,8 @@ pnpm add -D @zedtech/zedkit-quality
 ```
 
 Peer dependencies (`eslint`, `eslint-plugin-jsx-a11y`,
-`eslint-plugin-better-tailwindcss`) install alongside it.
+`eslint-plugin-better-tailwindcss`, `typescript-eslint`) install
+alongside it.
 
 ## Usage
 
@@ -54,7 +55,7 @@ subagents, commands) see `@zedtech/zedkit-ai` instead.
 - `uiPreset({ entryPoint })` — flat-config blocks for `.tsx`/`.jsx`:
   jsx-a11y recommended, Tailwind hygiene, tokens-only classes, no `style`
   attributes, no `forwardRef` (ref is a prop; see `packages/ui/src/button.tsx`),
-  no raw `try`/`catch`. `entryPoint` (your Tailwind CSS
+  no explicit `any`, no raw `try`/`catch`. `entryPoint` (your Tailwind CSS
   entry) is required: it is the one thing that varies per repo.
 - `defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, extraPatterns })` —
   `no-restricted-imports` blocks for routes -> views -> data: the UI kit
