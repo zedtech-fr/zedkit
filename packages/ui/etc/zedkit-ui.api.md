@@ -20,8 +20,8 @@ import { FormProviderProps } from 'react-hook-form';
 import { JSX } from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import type { LucideIcon } from 'lucide-react';
+import { MessagesProviderProps } from '@zedtech/zedkit-i18n/react';
 import * as React_2 from 'react';
-import { ReactNode } from 'react';
 import { RowData } from '@tanstack/react-table';
 import { RowModel } from '@tanstack/react-table';
 import * as SelectPrimitive from '@radix-ui/react-select';
@@ -827,7 +827,7 @@ export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof sta
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 8 | 2 | 3 | 4 | 6 | null | undefined;
+    gap?: 1 | 2 | 3 | 4 | 6 | 8 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -963,7 +963,7 @@ export function useIdentity(fallback?: string): string;
 export function useOnlineStatus(): boolean;
 
 // @public (undocumented)
-export function useUiMessages(): ZedkitUiMessages;
+export const useUiMessages: () => ZedkitUiMessages;
 
 // @public
 export function useValidatedForm<TFieldValues extends FieldValues>(schema: Parameters<typeof zodResolver>[0], options?: Omit<UseFormProps<TFieldValues, any>, "resolver">): UseFormReturn<TFieldValues, any, TFieldValues>;
@@ -1039,10 +1039,7 @@ export const zedkitUiMessagesEn: ZedkitUiMessages;
 export const zedkitUiMessagesFr: ZedkitUiMessages;
 
 // @public (undocumented)
-export function ZedkitUiProvider(input: {
-    messages: ZedkitUiMessages;
-    children: ReactNode;
-}): JSX.Element;
+export const ZedkitUiProvider: (input: MessagesProviderProps<ZedkitUiMessages>) => JSX.Element;
 
 // (No @packageDocumentation comment for this package)
 
