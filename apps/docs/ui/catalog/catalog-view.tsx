@@ -162,7 +162,11 @@ export function CatalogView({
                   <Text variant="muted" className="text-sm">{entry.need}</Text>
                 </Stack>
                 <Stack direction="horizontal" gap={2} className="items-center">
-                  <Badge variant="outline">{entry.area}</Badge>
+                  <Badge variant="outline" data-catalog-area={entry.area}>
+                    <IconLabel icon={areaIconFor(entry.area)} className="text-current">
+                      {entry.area}
+                    </IconLabel>
+                  </Badge>
                   <Badge variant={maturityBadgeVariant(entry.status)}>{entry.status}</Badge>
                 </Stack>
               </Stack>
