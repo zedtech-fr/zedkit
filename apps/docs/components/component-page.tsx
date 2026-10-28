@@ -15,6 +15,7 @@ import { symbolsFromImport } from "../lib/import-symbols";
 import { ComponentExportsPanel } from "./component-exports-panel";
 import { ComponentPreview } from "./component-preview";
 import { PropsTable } from "./props-table";
+import { RegistryBrickName } from "./registry-brick-name";
 
 export interface CatalogExample {
   title: string;
@@ -117,7 +118,10 @@ export async function ComponentPage({
           title="Registry source"
           description="Copy into your app after npx shadcn add (imports are rewritten for consumers)."
         >
-          {await highlightedTs(source, `${registry}.tsx`)}
+          <Stack gap={3}>
+            <RegistryBrickName name={registry} />
+            {await highlightedTs(source, `${registry}.tsx`)}
+          </Stack>
         </Section>
       ) : null}
 
