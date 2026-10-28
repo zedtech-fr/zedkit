@@ -36,10 +36,11 @@ describe("tabs", () => {
     expect(list.classList.contains("p-tabs-list-inset")).toBe(true);
     expect(list.className).not.toMatch(/(^|\s)(h-9|p-1)(\s|$)/);
     const trigger = screen.getByRole("tab", { name: "First" });
-    expect(trigger.classList.contains("px-tabs-trigger-inline")).toBe(true);
+    expect(trigger.className).toContain("px-3");
+    expect(trigger.className).not.toContain("px-tabs-trigger-inline");
     expect(trigger.classList.contains("py-tabs-trigger-block")).toBe(true);
     expect(trigger.classList.contains("focus-ring")).toBe(true);
-    expect(trigger.className).not.toMatch(/(^|\s)(px-3|py-1|ring-2)(\s|$)/);
+    expect(trigger.className).not.toMatch(/(^|\s)(py-1|ring-2)(\s|$)/);
     const panel = screen.getByText("First panel.");
     expect(panel.className).toContain("mt-2");
     expect(panel.className).toContain("focus-ring");
