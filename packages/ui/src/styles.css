@@ -164,7 +164,16 @@
    * copied CSS and existing class names still work.
    * `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
+   *
+   * Semantic sizes derived from `--spacing` (mist: 0.25rem). Aliases
+   * below stay on rem until later #798 migrations; on mist these
+   * resolve to the same numbers those aliases use today.
    */
+  --zk-gap-sm: calc(var(--spacing) * 2);
+  --zk-gap-md: calc(var(--spacing) * 3);
+  --zk-gap-lg: calc(var(--spacing) * 4);
+  --zk-icon-size: calc(var(--spacing) * 4);
+  --zk-control-height: calc(var(--spacing) * 9);
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
   --spacing-control-height: max(var(--zk-tap-min, 0px), 2.25rem);

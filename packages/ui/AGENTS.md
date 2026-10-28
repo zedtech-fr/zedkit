@@ -22,7 +22,9 @@ Rules:
 - Spacing (#367): one canonical name per value. Shared values use the
   Tailwind scale (`p-4`, `gap-2`, `size-4`). Semantic `--spacing-*`
   duplicates stay as deprecated aliases (do not delete). Map:
-  `scripts/registry/spacing-aliases.json`.
+  `scripts/registry/spacing-aliases.json`. New shared sizes that should
+  follow identity `--spacing` use `--zk-gap-sm|md|lg`, `--zk-icon-size`,
+  `--zk-control-height` (`calc` from `--spacing`; mist matches today's rem).
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).
