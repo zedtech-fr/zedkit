@@ -10,6 +10,8 @@ test("getting started is first stop from docs index", async ({ page }) => {
   await page.waitForURL("**/docs/getting-started", { timeout: 10000 });
   await expect(page.getByRole("heading", { name: "Quickstart" })).toBeVisible();
   await expect(page.getByText("zedkit-ai validate")).toBeVisible();
+  await expect(page.getByText(/Pick one path below \(A through E\)/)).toBeVisible();
+  await expect(page.getByText(/Both end with something you can see/)).toHaveCount(0);
 });
 
 test("getting started documents install or copy paths", async ({ page }) => {
