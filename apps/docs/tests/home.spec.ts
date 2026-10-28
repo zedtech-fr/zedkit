@@ -17,7 +17,7 @@ test("home explains the product and four entry areas", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Open core & server docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
-  await expect(page.locator("#entry-points svg[aria-hidden='true']")).toHaveCount(4);
+  await expect(page.locator("#entry-points svg[aria-hidden='true']")).toHaveCount(8);
   expect(errors).toEqual([]);
 });
 
@@ -26,7 +26,7 @@ test("home area cards keep a decorative icon at phone width", async ({ page }) =
   await page.goto(BASE, { waitUntil: "networkidle" });
   const section = page.locator("#entry-points");
   await expect(section.getByText("Build a UI", { exact: true })).toBeVisible();
-  await expect(section.locator("svg[aria-hidden='true']")).toHaveCount(4);
+  await expect(section.locator("svg[aria-hidden='true']")).toHaveCount(8);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -39,6 +39,46 @@ test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ 
   await entry.click();
   await page.waitForURL("**/docs/ui/**", { timeout: 10000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("home docs CTAs keep a decorative icon", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  for (const name of [
+    "Open UI docs",
+    "Open core & server docs",
+    "Open SEO docs",
+    "Open agent setup docs",
+  ] as const) {
+    await expect(page.getByRole("link", { name }).locator("svg[aria-hidden='true']")).toHaveCount(1);
+  }
+  const scenarios = page.locator("#scenarios");
+  await expect(scenarios.getByRole("link").locator("svg[aria-hidden='true']")).toHaveCount(6);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+});
+
+test.describe("home docs CTAs light/dark (#748)", () => {
+  for (const mode of ["light", "dark"] as const) {
+    test(`mist ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.addInitScript((theme) => {
+        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("theme", theme);
+      }, mode);
+      await page.goto(BASE, { waitUntil: "networkidle" });
+      const entry = page.locator("#entry-points");
+      const scenarios = page.locator("#scenarios");
+      await entry.scrollIntoViewIfNeeded();
+      await expect(entry.getByRole("link", { name: "Open UI docs" })).toBeVisible();
+      await entry.screenshot({ path: `test-results/home-cta-entry-${mode}.png` });
+      await scenarios.scrollIntoViewIfNeeded();
+      await expect(scenarios.getByRole("link", { name: "Read the docs: New admin UI in an existing app" })).toBeVisible();
+      await scenarios.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
+    });
+  }
 });
 
 test("home scenario links have unique accessible names", async ({ page }) => {
