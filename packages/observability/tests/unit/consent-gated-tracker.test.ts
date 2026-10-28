@@ -16,6 +16,18 @@ describe("createConsentGatedTracker", () => {
     gated.capture("ping", { ok: true });
     expect(captured).toHaveLength(1);
   });
+
+  it("always forwards reset even without consent", () => {
+    const store = createMemoryConsentStore();
+    const reset = vi.fn();
+    const gated = createConsentGatedTracker<Events>(
+      { identify: () => undefined, capture: () => undefined, reset },
+      store,
+      "analytics",
+    );
+    gated.reset();
+    expect(reset).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("runConsentGatedLoader", () => {

@@ -17,9 +17,7 @@ export function createConsentGatedTracker<TEvents extends EventMap = EventMap>(
     capture: (event, properties) => {
       if (allowed()) tracker.capture(event, properties);
     },
-    reset: () => {
-      if (allowed()) tracker.reset();
-    },
+    reset: () => tracker.reset(),
   };
 }
 
