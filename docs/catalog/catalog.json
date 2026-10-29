@@ -2449,7 +2449,7 @@
           "purpose": "Cards with header/title/description/content/footer slots.",
           "whenToUse": "For self-contained blocks (panels, summaries, previews).",
           "whenNotToUse": "For page-level layout — use AppShell and Stack instead.",
-          "derivedFrom": "shadcn/ui (card)",
+          "derivedFrom": null,
           "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>",
           "examples": [
             {

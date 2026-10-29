@@ -1,9 +1,8 @@
-// Derived from shadcn/ui (card) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 import type * as React from "react";
 
 import { cn } from "./utils.js";
 
-type CardProps = React.ComponentProps<"div">;
+export type CardProps = React.ComponentProps<"div">;
 
 function Card({ className, ...props }: CardProps) {
   return (
@@ -37,4 +36,4 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="card-footer" className={cn("flex items-center p-card-padding pt-0", className)} {...props} />;
 }
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, type CardProps };
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };

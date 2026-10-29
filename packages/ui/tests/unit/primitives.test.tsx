@@ -313,11 +313,14 @@ describe("primitives", () => {
       </Card>,
     );
     const title = screen.getByText("Server");
+    const root = title.parentElement?.parentElement;
+    expect(root?.getAttribute("data-slot")).toBe("card");
+    expect(root?.className).toContain("rounded-xl");
     expect(title.parentElement?.className).toContain("p-card-padding");
     expect(title.parentElement?.className).toContain("space-y-card-stack");
     expect(screen.getByText("Body text.").className).toContain("p-card-padding");
     expect(screen.getByText("Footer text.").className).toContain("p-card-padding");
-    expect(title.parentElement?.parentElement?.className).toContain("shadow-md");
-    expect(title.parentElement?.parentElement?.className).not.toMatch(/(^|\s)shadow(\s|$)/);
+    expect(root?.className).toContain("shadow-md");
+    expect(root?.className).not.toMatch(/(^|\s)shadow(\s|$)/);
   });
 });
