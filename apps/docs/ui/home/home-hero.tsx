@@ -1,16 +1,25 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
 import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
 import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
-import { HomeUseCasesSection } from "@/ui/home/home-use-cases-section";
 import { HomeInstallOrCopySection } from "@/ui/home/home-install-or-copy-section";
 import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
 import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { DocsActionLabel } from "@/components/docs-action-label";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
+
+const HomeUseCasesSection = dynamic(
+  () => import("@/ui/home/home-use-cases-section").then((mod) => ({ default: mod.HomeUseCasesSection })),
+  {
+    loading: () => (
+      <section id="use-cases" aria-busy="true" className="min-h-[140vh] w-full max-w-none scroll-mt-24" />
+    ),
+  },
+);
 
 export function HomeHero({
   featuredPackage,
