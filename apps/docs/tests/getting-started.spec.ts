@@ -94,11 +94,13 @@ test.describe("getting started package table light/dark (#753)", () => {
   }
 });
 
-test("getting started includes backend and agents scenarios", async ({ page }) => {
+test("getting started includes backend, agents, and SEO scenarios", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Scenario — coding agents", level: 2 })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Scenario — backend", level: 2 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Scenario — SEO", level: 2 })).toBeVisible();
   await expect(page.getByRole("link", { name: "Start a safe NestJS API" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Add SEO to a Next.js app" }).first()).toBeVisible();
 });
 
 test("getting started troubleshooting mentions server env boot failures", async ({ page }) => {
