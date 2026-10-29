@@ -532,7 +532,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - Purpose: A named live-region label for the current operation state (loading, saved, error…).
 - When to use: Next to the content an operation affects, while it runs or right after.
 - When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
-- A11y: `role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.
+- A11y: `role=status` announces the named operation; icon/text gap is `gap-1.5`; `--spacing-status-label-gap` remains as a deprecated alias.
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
 - Registry: status-label

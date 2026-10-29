@@ -1747,7 +1747,7 @@
             }
           ],
           "registry": "status-label",
-          "a11y": "`role=status` announces the named operation; icon/text spacing comes from `--spacing-status-label-*` theme tokens.",
+          "a11y": "`role=status` announces the named operation; icon/text gap is `gap-1.5`; `--spacing-status-label-gap` remains as a deprecated alias.",
           "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
           "seeAlso": [
             "Stamp data with its age"
