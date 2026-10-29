@@ -1,12 +1,24 @@
 "use client";
 
-import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Badge, Button, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
-import { MaturityBadge } from "@/components/maturity-badge";
 import { areaIconFor } from "@/lib/domain-icons";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
+
+const CatalogResults = dynamic(
+  () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResults })),
+  {
+    loading: () => (
+      <Section title="Results">
+        <Text variant="muted" role="status">
+          Loading results…
+        </Text>
+      </Section>
+    ),
+  },
+);
 
 const AREAS: { id: CatalogArea | "all"; label: string }[] = [
   { id: "all", label: "All areas" },
@@ -136,44 +148,7 @@ export function CatalogView({
         </Stack>
       </Stack>
 
-      <Section
-        title="Results"
-        description={
-          <span role="status" aria-live="polite">
-            {filtered.length} {filtered.length === 1 ? "entry" : "entries"}
-          </span>
-        }
-      >
-        {filtered.length === 0 ? (
-          <Text variant="muted">No catalog entries match these filters. Clear search or pick another area.</Text>
-        ) : (
-          <Stack gap={3}>
-            {filtered.map((entry) => (
-              <Stack
-                key={entry.href}
-                direction="horizontal"
-                gap={3}
-                className="flex-wrap items-center justify-between border-b border-border pb-3"
-              >
-                <Stack gap={1}>
-                  <Link href={entry.href} className="font-medium underline-offset-4 hover:underline">
-                    {entry.title}
-                  </Link>
-                  <Text variant="muted" className="text-sm">{entry.need}</Text>
-                </Stack>
-                <Stack direction="horizontal" gap={2} className="items-center">
-                  <Badge variant="outline" data-catalog-area={entry.area}>
-                    <IconLabel icon={areaIconFor(entry.area)} className="text-current">
-                      {entry.area}
-                    </IconLabel>
-                  </Badge>
-                  <MaturityBadge status={entry.status} />
-                </Stack>
-              </Stack>
-            ))}
-          </Stack>
-        )}
-      </Section>
+      <CatalogResults filtered={filtered} />
     </Stack>
   );
 }
