@@ -40,12 +40,12 @@ test("getting started lists a nest npm quickstart path", async ({ page }) => {
   await expect(page.getByText("pnpm add @zedtech/zedkit-nest")).toBeVisible();
 });
 
-test("getting started package table links SEO row to Scenario — SEO", async ({ page }) => {
+test("getting started package table links SEO row to SEO scenario", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
   const table = page
     .getByRole("table")
     .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
-  await table.getByRole("link", { name: "Scenario — SEO" }).click();
+  await table.getByRole("link", { name: "SEO scenario" }).click();
   await expect(page.getByRole("heading", { name: "Scenario — SEO", level: 2 })).toBeVisible();
 });
 
