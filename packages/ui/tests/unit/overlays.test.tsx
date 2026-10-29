@@ -278,6 +278,8 @@ describe("overlays", () => {
     const tip = await screen.findByRole("tooltip");
     expect(tip.textContent).toContain("Saves the invoice");
     expect(tip.className).toContain("z-overlay");
+    expect(tip.className).toContain("px-3");
+    expect(tip.className).not.toContain("px-control-inline");
     assertNoValueArbitraries(tip.className);
   });
 

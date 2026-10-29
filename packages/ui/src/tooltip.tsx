@@ -36,7 +36,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-overlay origin-[--radix-tooltip-content-transform-origin] rounded-md bg-popover px-control-inline py-control-block text-sm text-popover-foreground shadow-md",
+          "z-overlay origin-[--radix-tooltip-content-transform-origin] rounded-md bg-popover px-3 py-control-block text-sm text-popover-foreground shadow-md",
           className,
         )}
         {...props}
