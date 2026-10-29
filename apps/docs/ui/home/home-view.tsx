@@ -3,8 +3,9 @@ import { Stack } from "@zedtech/zedkit-ui";
 import type { GalleryCard } from "@/content/gallery";
 import type { HomeScenario } from "@/content/home-scenarios";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
-import { HomeHero } from "@/ui/home/home-hero";
 import { HOME_PAGE_SECTION_GAP, HOME_PAGE_SHELL_CLASS } from "@/ui/home/home-rhythm";
+
+const HomeHero = dynamic(() => import("@/ui/home/home-hero").then((mod) => ({ default: mod.HomeHero })));
 
 const HomeBelowHero = dynamic(
   () => import("@/ui/home/home-below-hero").then((mod) => ({ default: mod.HomeBelowHero })),
