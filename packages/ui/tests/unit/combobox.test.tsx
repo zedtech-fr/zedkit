@@ -84,6 +84,16 @@ describe("MultiSelect", () => {
     expect(screen.getByTestId("picked").textContent).toBe("a");
   });
 
+  it("spaces menu rows from the Tailwind scale", async () => {
+    const user = userEvent.setup();
+    render(wrap(<MultiSelect options={OPTIONS} aria-label="Tags" />));
+    await user.click(screen.getByRole("combobox", { name: "Tags" }));
+    await user.keyboard("{ArrowDown}");
+    const option = await screen.findByRole("option", { name: "Alpha" });
+    expect(option.className).toContain("px-3");
+    expect(option.className).not.toContain("px-control-inline");
+  });
+
   it("has no axe violations with one chip", async () => {
     const { container } = render(
       wrap(<MultiSelect options={OPTIONS} value={["a"]} onValueChange={() => {}} aria-label="Tags" />),
