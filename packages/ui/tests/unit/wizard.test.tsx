@@ -70,9 +70,9 @@ describe("OptionCards", () => {
     expect(group?.classList.contains("gap-option-cards-gap")).toBe(true);
     expect(group?.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
     const card = screen.getByText("Alpha").closest("label");
-    expect(card?.classList.contains("gap-option-card-gap")).toBe(true);
+    expect(card?.className).toContain("gap-3");
+    expect(card?.className).not.toContain("gap-option-card-gap");
     expect(card?.classList.contains("p-4")).toBe(true);
-    expect(card?.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
   });
 });
 
