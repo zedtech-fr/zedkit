@@ -7,7 +7,13 @@ const nextConfig = {
   output: "export",
   experimental: {
     // Smaller client chunks on home/catalog (#618): barrel imports tree-shake per module.
-    optimizePackageImports: ["@zedtech/zedkit-ui", "fumadocs-ui", "lucide-react"],
+    optimizePackageImports: [
+      "@zedtech/zedkit-ui",
+      "fumadocs-ui",
+      "lucide-react",
+      "class-variance-authority",
+      "clsx",
+    ],
   },
 };
 
