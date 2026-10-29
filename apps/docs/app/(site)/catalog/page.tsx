@@ -4,7 +4,7 @@ import { JsonLd } from "@/components/json-ld";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { homePage, pageUrl } from "@/lib/site";
-import { CatalogViewFromUrl } from "@/ui/catalog/catalog-view";
+import { CatalogPageClient } from "@/ui/catalog/catalog-page-client";
 
 export const dynamic = "force-static";
 
@@ -22,7 +22,7 @@ export default function CatalogPage() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <CatalogViewFromUrl entries={catalogIndex} />
+      <CatalogPageClient entries={catalogIndex} />
     </>
   );
 }
