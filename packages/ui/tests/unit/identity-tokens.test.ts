@@ -6,9 +6,15 @@ import { describe, expect, it } from "vitest";
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
 const read = (file: string): string => readFileSync(join(src, file), "utf8");
 
+function tokens(css: string, name: string): string[] {
+  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  return [...stripped.matchAll(new RegExp(`${name}\\s*:\\s*([^;]+);`, "g"))].map((match) =>
+    (match[1] ?? "").replace(/\s+/g, " ").trim(),
+  );
+}
+
 function token(css: string, name: string): string | undefined {
-  const match = css.replace(/\/\*[\s\S]*?\*\//g, "").match(new RegExp(`${name}\\s*:\\s*([^;]+);`));
-  return match?.[1]?.replace(/\s+/g, " ").trim();
+  return tokens(css, name)[0];
 }
 
 describe("per-identity leading, border, colour duration (#799)", () => {
@@ -80,5 +86,22 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/tide.css"), "--zk-color-duration")).toBe("180ms");
     expect(token(read("identities/volt.css"), "--zk-body-leading")).toBe("1.4");
     expect(token(read("identities/volt.css"), "--zk-color-duration")).toBe("100ms");
+  });
+
+  it("gives each identity its own dark --zk-shadow-xs", () => {
+    const darkXs = {
+      maison: tokens(read("identities/maison.css"), "--zk-shadow-xs")[1],
+      glass: tokens(read("identities/glass.css"), "--zk-shadow-xs")[1],
+      tide: tokens(read("identities/tide.css"), "--zk-shadow-xs")[1],
+      volt: tokens(read("identities/volt.css"), "--zk-shadow-xs")[1],
+    };
+    expect(darkXs.maison).toBe("none");
+    expect(darkXs.glass).toBe("0 1px 2px rgb(0 0 0 / 0.35), var(--zk-glass-highlight)");
+    const seen = new Map<string, string>();
+    for (const [id, value] of Object.entries(darkXs)) {
+      expect(value ?? "").not.toBe("");
+      expect(seen.get(value ?? "") ?? "").toBe("");
+      seen.set(value ?? "", id);
+    }
   });
 });
