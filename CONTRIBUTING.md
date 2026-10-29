@@ -15,6 +15,8 @@ Rules:
   latest commit. PRs that touch `packages/*` or docs/README/registry must
   include the Lenses run and Personas tables from the PR template (CI
   checks). No force-push to `main`.
+- **`main` is protected:** required checks and merge rules are documented in
+  [docs/ci-branch-protection.md](docs/ci-branch-protection.md).
 - TypeScript strict, ESM + types, vitest. Raw `try`/`catch` is banned —
   use `tryCatch` from `@zedtech/zedkit-core`.
 - Public repo: no secrets, no customer data, no internal URLs, no
