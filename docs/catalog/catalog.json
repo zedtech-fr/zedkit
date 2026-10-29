@@ -1547,7 +1547,7 @@
           "purpose": "Animated placeholder blocks that hold layout while data loads.",
           "whenToUse": "For content areas with known approximate shape.",
           "whenNotToUse": "For progress with a known percentage — use ProgressBar instead.",
-          "derivedFrom": "shadcn/ui (skeleton)",
+          "derivedFrom": null,
           "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />",
           "examples": [
             {
@@ -1560,7 +1560,7 @@
             }
           ],
           "registry": "skeleton",
-          "a11y": "Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container.",
+          "a11y": "Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container. Corners follow identity `--radius-md` via `rounded-md`.",
           "troubleshooting": "No pulse — the pulse is `motion-safe:animate-pulse`: static under reduced-motion, and it needs Tailwind's default theme. Wrong shape — size comes only from your `className`; the brick ships no dimensions.",
           "seeAlso": [
             "Show determinate progress"

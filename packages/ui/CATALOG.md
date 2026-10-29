@@ -340,7 +340,6 @@ import { Separator } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`
 - Wraps: `(none)`
 - Status: alpha
-- Derived from: shadcn/ui (skeleton)
 - Short name: Skeleton
 - Audience: Developers covering loading states without layout shift.
 - Purpose: Animated placeholder blocks that hold layout while data loads.
@@ -348,7 +347,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 - When not to use: For progress with a known percentage — use ProgressBar instead.
 - See also: `Show determinate progress`
 - Examples: Simple, Text lines
-- A11y: Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container.
+- A11y: Renders a plain `div` with no semantics — empty blocks are ignored by assistive tech; set `aria-busy` on the loading container. Corners follow identity `--radius-md` via `rounded-md`.
 - Registry: skeleton
 - Troubleshooting: No pulse — the pulse is `motion-safe:animate-pulse`: static under reduced-motion, and it needs Tailwind's default theme. Wrong shape — size comes only from your `className`; the brick ships no dimensions.
 
