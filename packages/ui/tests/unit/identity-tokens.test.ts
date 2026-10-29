@@ -79,6 +79,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/maison.css"), "--radius-xs") ?? "").toBe("0.5px");
     expect(token(read("identities/glass.css"), "--zk-body-leading")).toBe("1.65");
     expect(token(read("identities/glass.css"), "--zk-color-duration")).toBe("220ms");
+    expect(token(read("identities/glass.css"), "--zk-border-width") ?? "").toBe("0.75px");
     expect(token(read("identities/glass.css"), "--radius") ?? "").toBe("1.25rem");
     expect(token(read("identities/glass.css"), "--radius-sm") ?? "").toBe("0.625rem");
     expect(token(read("identities/glass.css"), "--radius-md") ?? "").toBe("0.875rem");
