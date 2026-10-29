@@ -42,6 +42,7 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { UseFormProps } from 'react-hook-form';
 import { UseFormReturn } from 'react-hook-form';
 import { VariantProps } from 'class-variance-authority';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // @public (undocumented)
@@ -66,6 +67,9 @@ export const alertVariants: (props?: ({
 
 // @public
 export function applyIdentity(id: string, storageKey?: string): void;
+
+// @public (undocumented)
+export function applyIdentityTokenSheet(tokens: IdentityTokens, selector: string, doc?: Document): HTMLStyleElement;
 
 // @public (undocumented)
 export function AppShell(input: AppShellProps): React_2.JSX.Element;
@@ -645,6 +649,9 @@ export const IDENTITY_CHANGE_EVENT = "zk-identity-change";
 export const IDENTITY_STORAGE_KEY = "zk-identity";
 
 // @public (undocumented)
+export type IdentityId = keyof typeof identityPresets;
+
+// @public (undocumented)
 export type IdentityOption = {
     id: string;
     label: string;
@@ -664,6 +671,172 @@ export type IdentityPickerProps = {
     description?: string;
     onIdentityChange?: (id: string) => void;
     className?: string;
+};
+
+// @public (undocumented)
+export const identityPresets: {
+    mist: {
+        spacing: string;
+        borderWidth: string;
+        radius: string;
+        bodyLeading: string;
+        headingLeading: string;
+        headingTracking: string;
+        labelTracking: string;
+        fontSans: string;
+        fontDisplay: string;
+        light: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        dark: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        shadowSm: string;
+        shadowMd: string;
+    };
+    press: {
+        spacing: string;
+        borderWidth: string;
+        radius: string;
+        bodyLeading: string;
+        headingLeading: string;
+        headingTracking: string;
+        labelTracking: string;
+        fontSans: string;
+        fontDisplay: string;
+        light: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        dark: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        shadowSm: string;
+        shadowMd: string;
+    };
+    tide: {
+        spacing: string;
+        borderWidth: string;
+        radius: string;
+        bodyLeading: string;
+        headingLeading: string;
+        headingTracking: string;
+        labelTracking: string;
+        fontSans: string;
+        fontDisplay: string;
+        light: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        dark: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        shadowSm: string;
+        shadowMd: string;
+    };
+    volt: {
+        spacing: string;
+        borderWidth: string;
+        radius: string;
+        bodyLeading: string;
+        headingLeading: string;
+        headingTracking: string;
+        labelTracking: string;
+        fontSans: string;
+        fontDisplay: string;
+        light: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        dark: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        shadowSm: string;
+        shadowMd: string;
+    };
+    maison: {
+        spacing: string;
+        borderWidth: string;
+        radius: string;
+        bodyLeading: string;
+        headingLeading: string;
+        headingTracking: string;
+        labelTracking: string;
+        fontSans: string;
+        fontDisplay: string;
+        light: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        dark: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        shadowSm: string;
+        shadowMd: string;
+    };
+    glass: {
+        spacing: string;
+        borderWidth: string;
+        radius: string;
+        bodyLeading: string;
+        headingLeading: string;
+        headingTracking: string;
+        labelTracking: string;
+        fontSans: string;
+        fontDisplay: string;
+        light: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        dark: {
+            background: string;
+            foreground: string;
+            primary: string;
+            accent: string;
+            border: string;
+        };
+        shadowSm: string;
+        shadowMd: string;
+    };
 };
 
 // @public
@@ -690,7 +863,42 @@ export type IdentitySwitcherProps = Omit<React_2.ComponentProps<"select">, "valu
 };
 
 // @public (undocumented)
+export type IdentityTokens = z.infer<typeof identityTokenSchema>;
+
+// @public
+export const identityTokenSchema: z.ZodObject<{
+    spacing: z.ZodString;
+    borderWidth: z.ZodString;
+    radius: z.ZodString;
+    bodyLeading: z.ZodString;
+    headingLeading: z.ZodString;
+    headingTracking: z.ZodString;
+    labelTracking: z.ZodString;
+    fontSans: z.ZodString;
+    fontDisplay: z.ZodString;
+    light: z.ZodObject<{
+        background: z.ZodString;
+        foreground: z.ZodString;
+        primary: z.ZodString;
+        accent: z.ZodString;
+        border: z.ZodString;
+    }, z.core.$strip>;
+    dark: z.ZodObject<{
+        background: z.ZodString;
+        foreground: z.ZodString;
+        primary: z.ZodString;
+        accent: z.ZodString;
+        border: z.ZodString;
+    }, z.core.$strip>;
+    shadowSm: z.ZodString;
+    shadowMd: z.ZodString;
+}, z.core.$strip>;
+
+// @public (undocumented)
 export function Input(input: React_2.ComponentProps<"input">): React_2.JSX.Element;
+
+// @public (undocumented)
+export function isPresetId(id: string): id is IdentityId;
 
 // @public (undocumented)
 export function Label(input: LabelProps): React_2.JSX.Element;
@@ -824,6 +1032,35 @@ export interface PageHeaderSkeletonProps {
     // (undocumented)
     label?: string;
 }
+
+// @public (undocumented)
+export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
+    spacing: string;
+    borderWidth: string;
+    radius: string;
+    bodyLeading: string;
+    headingLeading: string;
+    headingTracking: string;
+    labelTracking: string;
+    fontSans: string;
+    fontDisplay: string;
+    light: {
+        background: string;
+        foreground: string;
+        primary: string;
+        accent: string;
+        border: string;
+    };
+    dark: {
+        background: string;
+        foreground: string;
+        primary: string;
+        accent: string;
+        border: string;
+    };
+    shadowSm: string;
+    shadowMd: string;
+}>;
 
 // @public (undocumented)
 export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): React_2.JSX.Element;
@@ -1017,6 +1254,9 @@ export interface StatusLabelProps {
 // @public (undocumented)
 export type StatusLabelTone = "loading" | "updating" | "syncing" | "saved" | "retry" | "error" | "offline";
 
+// @public
+export function suggestIdentityTokens(prompt: string): IdentityTokens;
+
 // @public (undocumented)
 export function Switch(input: React_2.ComponentProps<typeof SwitchPrimitives.Root>): React_2.JSX.Element;
 
@@ -1085,6 +1325,12 @@ export { toast }
 export function Toaster(props: ToasterProps): JSX.Element;
 
 export { ToasterProps }
+
+// @public (undocumented)
+export function tokensToCss(tokens: IdentityTokens, selector: string): string;
+
+// @public (undocumented)
+export function tokensToCssVars(tokens: IdentityTokens): Record<string, string>;
 
 // @public (undocumented)
 export function Tooltip(input: React_2.ComponentProps<typeof TooltipPrimitive.Root>): React_2.JSX.Element;

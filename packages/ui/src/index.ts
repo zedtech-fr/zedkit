@@ -191,5 +191,17 @@ export {
 } from "./identity.js";
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
 export { IdentityPicker, type IdentityPickerProps } from "./identity-picker.js";
+export {
+  applyIdentityTokenSheet,
+  identityPresets,
+  identityTokenSchema,
+  isPresetId,
+  parseIdentityTokens,
+  suggestIdentityTokens,
+  tokensToCss,
+  tokensToCssVars,
+  type IdentityId,
+  type IdentityTokens,
+} from "./identity-tokens.js";
 export { BrandLogo, type BrandLogoProps } from "./brand-logo.js";
 export { Logo, type LogoProps } from "./logo.js";
