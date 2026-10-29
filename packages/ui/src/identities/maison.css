@@ -96,7 +96,7 @@
   --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06), 0 8px 20px -16px hsl(var(--zk-shadow-color) / 0.12);
   --zk-shadow-lg: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06), 0 16px 36px -22px hsl(var(--zk-shadow-color) / 0.16);
   --zk-shadow-xl: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 28px 64px -28px hsl(var(--zk-shadow-color) / 0.28);
-  --zk-shadow-overlay: 0 24px 56px -24px hsl(var(--zk-shadow-color) / 0.26);
+  --zk-shadow-overlay: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24);
 
   /* Page texture */
   --zk-bg-pattern: linear-gradient(180deg, hsl(38 45% 90% / 0.55), transparent 28rem);
@@ -162,7 +162,7 @@
   --zk-shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 28px -16px rgb(0 0 0 / 0.7);
   --zk-shadow-lg: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -22px rgb(0 0 0 / 0.75);
   --zk-shadow-xl: 0 1px 2px rgb(0 0 0 / 0.4), 0 28px 64px -26px rgb(0 0 0 / 0.8);
-  --zk-shadow-overlay: 0 24px 56px -22px rgb(0 0 0 / 0.8);
+  --zk-shadow-overlay: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -24px rgb(0 0 0 / 0.78);
   --zk-lift-shadow: 0 22px 44px -24px rgb(0 0 0 / 0.8);
   --zk-bg-pattern: radial-gradient(50rem 24rem at 50% -10%, hsl(38 45% 70% / 0.08), transparent 65%);
 }
