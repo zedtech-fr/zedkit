@@ -104,7 +104,14 @@ describe("form brick", () => {
     expect(screen.getByText("First problem.")).not.toBeNull();
     expect(screen.getByText("Second problem.")).not.toBeNull();
     expect(screen.getByRole("alert")).not.toBeNull();
-    expect(document.querySelector("[data-slot=field-set]")?.className).toContain("gap-field-set");
+    const fieldSet = document.querySelector("[data-slot=field-set]");
+    expect(fieldSet?.className).toContain("gap-field-set");
+    expect(fieldSet?.className).toContain("has-[>[data-slot=checkbox-group]]:gap-3");
+    expect(fieldSet?.className).not.toContain("gap-field-group-compact");
+    const group = document.querySelector("[data-slot=field-group]");
+    expect(group?.className).toContain("gap-field-group");
+    expect(group?.className).toContain("data-[slot=checkbox-group]:gap-3");
+    expect(group?.className).not.toContain("gap-field-group-compact");
     const legend = document.querySelector("[data-slot=field-legend]");
     expect(legend?.className).toContain("mb-3");
     expect(legend?.className).not.toContain("mb-field-legend-bottom");
