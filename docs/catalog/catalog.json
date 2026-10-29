@@ -2530,7 +2530,7 @@
           "purpose": "Notice/error callouts with title and description.",
           "whenToUse": "For states tied to page content (load errors, warnings).",
           "whenNotToUse": "For transient confirmations — use Toaster instead.",
-          "derivedFrom": "shadcn/ui (alert)",
+          "derivedFrom": null,
           "example": "import { Alert, AlertDescription, AlertTitle } from \"@zedtech/zedkit-ui\";\n<Alert><AlertTitle>Heads up</AlertTitle>\n<AlertDescription>Something worth knowing.</AlertDescription></Alert>\n<Alert variant=\"destructive\"><AlertTitle>Failed</AlertTitle>\n<AlertDescription>Something went wrong.</AlertDescription></Alert>",
           "examples": [
             {

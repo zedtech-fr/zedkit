@@ -222,6 +222,8 @@ describe("primitives", () => {
     );
     const alerts = screen.getAllByRole("alert");
     expect(alerts).toHaveLength(2);
+    expect(alerts[0]?.getAttribute("data-slot")).toBe("alert");
+    expect(alerts[0]?.className).toContain("rounded-lg");
     expect(alerts[1]?.className).toContain("text-destructive");
   });
 
