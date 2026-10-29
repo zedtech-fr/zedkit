@@ -90,7 +90,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/maison.css"), "--zk-shadow-overlay") ?? "").toBe(
       "0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24)",
     );
-    expect(token(read("identities/glass.css"), "--zk-body-leading")).toBe("1.65");
+    expect(token(read("identities/glass.css"), "--zk-body-leading")).toBe("1.85");
     expect(token(read("identities/glass.css"), "--zk-color-duration")).toBe("220ms");
     expect(token(read("identities/glass.css"), "--zk-border-width") ?? "").toBe("0.75px");
     expect(token(read("identities/glass.css"), "--radius") ?? "").toBe("1.25rem");
