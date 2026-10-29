@@ -95,6 +95,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/volt.css"), "--zk-body-leading")).toBe("1.4");
     expect(token(read("identities/volt.css"), "--zk-color-duration")).toBe("100ms");
     expect(token(read("identities/volt.css"), "--text-4xl") ?? "").toBe("2.125rem");
+    expect(token(read("identities/volt.css"), "--zk-border-width") ?? "").toBe("1.25px");
   });
 
   it("gives each identity its own dark --zk-shadow-xs", () => {
