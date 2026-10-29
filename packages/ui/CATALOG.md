@@ -161,13 +161,13 @@ import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
 - Import: `@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`
 - Wraps: `@radix-ui/react-slot`, `class-variance-authority`
 - Status: beta
-- Derived from: shadcn/ui (button)
 - Short name: Button
 - Audience: Anyone placing actions in an admin UI.
 - Purpose: Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.
 - When to use: For every clickable action, including links styled as buttons.
 - When not to use: For navigation menus — use links or tabs instead.
 - See also: `Confirm destructive actions`
+- A11y: Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.
 
 ```ts
 import { Button } from "@zedtech/zedkit-ui";

@@ -1379,7 +1379,7 @@
           "purpose": "Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.",
           "whenToUse": "For every clickable action, including links styled as buttons.",
           "whenNotToUse": "For navigation menus — use links or tabs instead.",
-          "derivedFrom": "shadcn/ui (button)",
+          "derivedFrom": null,
           "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>",
           "examples": [
             {
@@ -1387,6 +1387,7 @@
               "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>"
             }
           ],
+          "a11y": "Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.",
           "seeAlso": [
             "Confirm destructive actions"
           ]

@@ -1,4 +1,3 @@
-// Derived from shadcn/ui (button) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 "use client";
 
 import type * as React from "react";
@@ -22,7 +21,7 @@ const buttonVariants = cva(
       size: {
         default: "h-control-height px-4 py-2",
         sm: "h-control-height-sm rounded-md px-3 text-xs",
-        lg: "h-control-height-lg rounded-md px-button-inline-lg",
+        lg: "h-control-height-lg rounded-md px-8",
         icon: "size-control-height",
       },
     },

@@ -56,6 +56,13 @@ describe("primitives", () => {
     expect(button.className).not.toContain("px-button-inline-sm");
   });
 
+  it("spaces the large button from the Tailwind scale", () => {
+    render(<Button size="lg">Save</Button>);
+    const button = screen.getByRole("button", { name: "Save" });
+    expect(button.className).toContain("px-8");
+    expect(button.className).not.toContain("px-button-inline-lg");
+  });
+
   it("merges button styles onto asChild link", () => {
     render(
       <Button asChild variant="outline">
