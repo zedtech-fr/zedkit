@@ -649,6 +649,17 @@ export const IDENTITY_CHANGE_EVENT = "zk-identity-change";
 export const IDENTITY_STORAGE_KEY = "zk-identity";
 
 // @public (undocumented)
+export type IdentityContrastWarning = {
+    scheme: "light" | "dark";
+    ratio: number;
+    min: number;
+    suggestedForeground: string;
+};
+
+// @public (undocumented)
+export function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[];
+
+// @public (undocumented)
 export type IdentityId = keyof typeof identityPresets;
 
 // @public (undocumented)

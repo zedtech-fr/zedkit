@@ -85,6 +85,7 @@
     "Heading",
     "IconButton",
     "IconLabel",
+    "IdentityContrastWarning",
     "IdentityId",
     "IdentityOption",
     "IdentityPicker",

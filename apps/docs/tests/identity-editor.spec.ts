@@ -29,8 +29,32 @@ test.describe("identity editor page", () => {
     await expect.poll(() => spacingOnDraft(page)).toBe("0.24rem");
   });
 
+  test("warns when light text matches the background and Fix restores it", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Foreground").fill("0 0% 100%");
+    const chip = page.getByText(/light text \d+(\.\d+)?:1 \(need 4\.5:1\)/);
+    await expect(chip).toBeVisible();
+    await page.getByRole("button", { name: "Fix light text" }).click();
+    await expect(chip).toHaveCount(0);
+  });
+
+  test("keeps the dark preview in the URL", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Dark" }).click();
+    await expect(page.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+    expect(page.url()).toContain("theme=dark");
+    await expect
+      .poll(() =>
+        page.locator('[data-slot="identity-editor-preview"]').evaluate((node) => node.classList.contains("dark")),
+      )
+      .toBe(true);
+    await page.goto(`${PAGE}?theme=dark`, { waitUntil: "networkidle" });
+    await expect(page.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+  });
+
   test("passes the a11y gate on the panel", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await assertA11yGate(page, "[data-slot=identity-editor]");
   });
 });
+
