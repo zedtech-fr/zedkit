@@ -128,7 +128,7 @@ For a NestJS service, install the factory package first (peer deps in the tutori
 
 **First result:** a bootstrapped API with validation and safe errors — follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api).
 
-## Scenario
+## Scenario — coding agents
 
 You inherit a monorepo with no agent instructions. You only need consistent skills for Cursor today.
 
@@ -137,6 +137,13 @@ You inherit a monorepo with no agent instructions. You only need consistent skil
 3. Commit the files `init` created; re-run validate after you edit skills.
 
 Next, add UI only when you start an admin screen — install `@zedtech/zedkit-ui` then, not on day one.
+
+## Scenario — backend
+
+You ship a Node worker or API and want env validation before you handle traffic.
+
+1. Run Path D and wire loadEnv from the server catalog page linked in that section.
+2. For NestJS, run Path E and follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api) (peer deps listed there).
 
 ## Troubleshooting
 
