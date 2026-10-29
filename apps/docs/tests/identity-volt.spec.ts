@@ -7,7 +7,7 @@ import { probe, useIdentity } from "./identity-helpers";
 const HOME = "/";
 
 test.describe("volt identity", () => {
-  test("sets the page in Geist with a metric-aligned fallback and a 12px xs body", async ({ page }) => {
+  test("sets the page in Geist with a metric-aligned fallback and a 10px xs body", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
     const stock = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
     expect(stock).not.toContain("Geist");
@@ -19,7 +19,7 @@ test.describe("volt identity", () => {
     const heading = await page.evaluate(() => getComputedStyle(document.querySelector("h1")!).fontFamily);
     expect(heading).toBe(body);
     await expect.poll(() => page.evaluate(() => document.fonts.check('16px "Geist Variable"'))).toBe(true);
-    expect(await probe(page, "font-size", "var(--text-xs)")).toBe("12px");
+    expect(await probe(page, "font-size", "var(--text-xs)")).toBe("10px");
   });
 
   test("uses hairline radii and an acid accent in dark", async ({ page }) => {
