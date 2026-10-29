@@ -56,6 +56,16 @@ describe("Combobox", () => {
     expect(screen.getByTestId("picked").textContent).toBe("b");
   });
 
+  it("spaces menu rows from the Tailwind scale", async () => {
+    const user = userEvent.setup();
+    render(wrap(<Combobox options={OPTIONS} aria-label="Pick letter" />));
+    await user.click(screen.getByRole("combobox", { name: "Pick letter" }));
+    await user.keyboard("{ArrowDown}");
+    const option = await screen.findByRole("option", { name: "Alpha" });
+    expect(option.className).toContain("px-3");
+    expect(option.className).not.toContain("px-control-inline");
+  });
+
   it("has no axe violations when open", async () => {
     const user = userEvent.setup();
     const { container } = render(wrap(<Combobox options={OPTIONS} aria-label="Pick letter" />));
