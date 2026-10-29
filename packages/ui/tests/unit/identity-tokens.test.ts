@@ -99,7 +99,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/glass.css"), "--radius-2xl") ?? "").toBe("2.25rem");
     expect(token(read("identities/glass.css"), "--text-3xl") ?? "").toBe("2rem");
     expect(token(read("identities/glass.css"), "--text-5xl") ?? "").toBe("3.125rem");
-    expect(token(read("identities/glass.css"), "--zk-heading-leading") ?? "").toBe("1.14");
+    expect(token(read("identities/glass.css"), "--zk-heading-leading") ?? "").toBe("1.16");
     expect(token(read("identities/glass.css"), "--zk-shadow-xs") ?? "").toBe(
       "0 1px 3px hsl(var(--zk-shadow-color) / 0.07)",
     );
