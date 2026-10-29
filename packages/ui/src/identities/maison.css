@@ -77,7 +77,7 @@
   --spacing: 0.3rem;
 
   /* Shape: every Tailwind radius step */
-  --radius-xs: 0px;
+  --radius-xs: 0.5px;
   --radius-sm: 1px;
   --radius-md: 2px;
   --radius-lg: 2px;
