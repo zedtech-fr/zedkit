@@ -37,7 +37,7 @@ describe("semantic spacing tokens (#798)", () => {
   });
 
   it("wires control height and block aliases to --spacing", () => {
-    expect(css).toMatch(/--spacing-control-height:\s*max\(var\(--zk-tap-min, 0px\), var\(--zk-control-height\)\)/);
+    expect(css).toMatch(/--spacing-control-height:\s*max\(var\(--zk-tap-min, 0px\), calc\(var\(--spacing\) \* 9\)\)/);
     expect(css).toMatch(/--spacing-control-height-sm:\s*max\(var\(--zk-tap-min, 0px\), calc\(var\(--spacing\) \* 8\)\)/);
     expect(css).toMatch(/--spacing-control-height-lg:\s*max\(var\(--zk-tap-min, 0px\), calc\(var\(--spacing\) \* 10\)\)/);
     expect(css).toMatch(/--spacing-control-block:\s*var\(--spacing\)/);

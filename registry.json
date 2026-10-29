@@ -102,9 +102,9 @@
       ],
       "cssVars": {
         "theme": {
-          "spacing-control-height": "max(var(--zk-tap-min, 0px), 2.25rem)",
-          "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), 2rem)",
-          "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), 2.5rem)",
+          "spacing-control-height": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
+          "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8))",
+          "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10))",
           "spacing-button-inline": "1rem",
           "spacing-button-inline-sm": "0.75rem",
           "spacing-button-inline-lg": "2rem",

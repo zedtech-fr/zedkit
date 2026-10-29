@@ -176,7 +176,7 @@
   --zk-control-height: calc(var(--spacing) * 9);
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
-  --spacing-control-height: max(var(--zk-tap-min, 0px), var(--zk-control-height));
+  --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));
   --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
   --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
   --spacing-button-inline: 1rem;

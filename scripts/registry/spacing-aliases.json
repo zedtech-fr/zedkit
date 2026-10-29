@@ -264,7 +264,7 @@
   },
   {
     "canonical": "--spacing-control-height",
-    "value": "max(var(--zk-tap-min, 0px), var(--zk-control-height))",
+    "value": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
     "tokens": ["--spacing-control-height"]
   },
   {
