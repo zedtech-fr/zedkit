@@ -68,10 +68,18 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         seen.set(value, id);
       }
     }
+    const headingLeading = new Map<string, string>();
+    for (const [id, css] of Object.entries(looks)) {
+      const raw = token(css, "--zk-heading-leading") ?? "";
+      const value = raw === "initial" ? "1.1" : raw;
+      expect(headingLeading.get(value) ?? "").toBe("");
+      headingLeading.set(value, id);
+    }
   });
 
   it("sets a distinct leading, border, and colour duration per identity", () => {
     expect(token(read("identities/press.css"), "--zk-body-leading")).toBe("1.45");
+    expect(token(read("identities/press.css"), "--zk-heading-leading") ?? "").toBe("1.06");
     expect(token(read("identities/press.css"), "--zk-border-width")).toBe("2px");
     expect(token(read("identities/press.css"), "--zk-color-duration")).toBe("80ms");
     expect(token(read("identities/maison.css"), "--zk-body-leading")).toBe("1.7");
