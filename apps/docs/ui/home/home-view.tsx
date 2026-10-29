@@ -10,9 +10,7 @@ const HomeHeroDeferred = dynamic(
   () => import("@/ui/home/home-hero-deferred").then((mod) => ({ default: mod.HomeHeroDeferred })),
   {
     loading: () => (
-      <Stack aria-busy="true" className="min-w-0 items-start" gap={HOME_SECTION_CONTENT_GAP}>
-        <section id="use-cases" className="min-h-[140vh] w-full scroll-mt-24" />
-      </Stack>
+      <Stack aria-busy="true" className="min-h-[140vh] w-full max-w-none scroll-mt-24" data-home-deferred-loading />
     ),
   },
 );
