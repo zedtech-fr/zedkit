@@ -1,5 +1,31 @@
 # @zedtech/zedkit-ui
 
+## 0.7.2
+
+### Patch Changes
+
+- 6810343: Docs: lazy-load catalog results list chunk (#618).
+- d603474: Docs: tree-shake tailwind-merge on docs app (#618).
+- 27ca979: Docs: defer non-Inter identity Fontsource CSS until after hydration (#618).
+- 36cb810: Docs: code-split home hero module from home view entry (#618).
+- 1a8e09a: Docs: idle-load home hero preview chunk (#618).
+- 60d0ca9: Control height and `py-control-block` aliases now follow `--spacing`. Mist stays 0.25rem / 2.25rem. Other looks get denser or roomier fields (Volt 32px, Maison 43px on desktop). Coarse/narrow viewports still clamp height to the 44px tap min. Leftover rem aliases (`px-button-inline*`, `gap-button-gap`, …) still do not follow `--spacing`.
+- 703bc22: Glass `--zk-body-leading` is no longer next to Mist (1.6). Glass is 1.85. Maison stays 1.7. Mist is unchanged.
+- 99a8bea: Glass `--zk-heading-leading` no longer sits next to Maison (1.12). Glass is 1.16. Maison stays 1.12. Mist is unchanged.
+- f471583: Glass `--radius-xl` no longer sits 4px from Tide (1.75rem vs 1.5rem). Glass cards are 2rem. Tide stays 1.5rem. Mist is unchanged.
+- f936e20: Glass `--spacing` no longer sits 0.01rem from Tide (0.27 vs 0.28). Glass is 0.32rem. Tide stays 0.28rem. Mist is unchanged. Tailwind `p-*` / `gap-*` on Glass open up; rem aliases from #798 still do not follow `--spacing`.
+- 8b7086e: Alert is kit-authored. CVA variants, `role="alert"`, and `asChild` stay. Block padding stays `py-3` / `px-4`. Icon geometry still uses `--spacing-alert-icon-nudge` and `--spacing-alert-content-indent`.
+- fd8f651: Badge is kit-authored. CVA variants (including `success` / `warning`) and public `badgeVariants` stay. Padding stays `px-badge-inline` / `py-badge-block`.
+- 025ac6a: Button is kit-authored. CVA variants and `asChild` stay. Large size inline padding uses Tailwind `px-8`. `--spacing-button-inline-lg` stays as a deprecated alias. Control height tokens are unchanged.
+- 34c67ca: Card is kit-authored. Slots still use `--spacing-card-padding` and `--spacing-card-stack`. Corners stay `rounded-xl`; elevation stays `shadow-md`.
+- 4a9a937: Label is kit-authored. Radix still provides `htmlFor` / click-to-focus. Classes stay `text-sm leading-none font-medium` plus the disabled-peer convention. Public `LabelProps` is unchanged.
+- dace979: Separator is kit-authored. Thickness follows the identity `--zk-border-width` token (mist stays 1px; other identities use their border weight). Radix still provides the accessible primitive. `--spacing-separator-thickness` stays as a deprecated alias for Select and DropdownMenu separators.
+- 65302ff: Skeleton is kit-authored. Corners still use `rounded-md` (identity `--radius-md`). Pulse stays `motion-safe:animate-pulse`. Public `div` props are unchanged.
+- 2140d94: FieldContent stack gap uses Tailwind `gap-1.5` (0.375rem). `--spacing-field-content` stays as a deprecated alias so existing class names still work.
+- d2433fa: StatusLabel icon/text gap uses Tailwind `gap-1.5` (0.375rem). `--spacing-status-label-gap` stays as a deprecated alias so existing class names still work.
+- 13342fa: Tide dark `--zk-shadow-xs` no longer copies Glass's `0 1px 2px` drop. Tide is `0 1px 3px` plus a coral halo. Mist is unchanged.
+- edf58b1: Volt `--zk-body-leading` is no longer next to Press (1.45). Volt is 1.25. Body leading and `--zk-shadow-lg` are unique across all six looks. Mist is unchanged. Tracking was already unique.
+
 ## 0.7.1
 
 ### Patch Changes
