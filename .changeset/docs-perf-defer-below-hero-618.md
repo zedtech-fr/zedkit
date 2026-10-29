@@ -2,4 +2,4 @@
 "@zedtech/zedkit-ui": patch
 ---
 
-Docs: defer home below-hero chunk until idle (#618).
+Docs: tree-shake tailwind-merge on docs app (#618).

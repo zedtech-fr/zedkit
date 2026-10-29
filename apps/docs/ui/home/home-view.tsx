@@ -3,10 +3,23 @@ import { Stack } from "@zedtech/zedkit-ui";
 import type { GalleryCard } from "@/content/gallery";
 import type { HomeScenario } from "@/content/home-scenarios";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
-import { HomeBelowHeroDeferred } from "@/ui/home/home-below-hero-deferred";
 import { HOME_PAGE_SECTION_GAP, HOME_PAGE_SHELL_CLASS } from "@/ui/home/home-rhythm";
 
 const HomeHero = dynamic(() => import("@/ui/home/home-hero").then((mod) => ({ default: mod.HomeHero })));
+
+const HomeBelowHero = dynamic(
+  () => import("@/ui/home/home-below-hero").then((mod) => ({ default: mod.HomeBelowHero })),
+  {
+    loading: () => (
+      <Stack aria-busy="true" className="min-h-screen w-full">
+        <section id="entry-points" className="sr-only" />
+        <section id="scenarios" className="sr-only" />
+        <section id="proofs" className="sr-only" />
+        <section id="components" className="sr-only" />
+      </Stack>
+    ),
+  },
+);
 
 export function HomeView({
   curatedGallery,
@@ -34,7 +47,7 @@ export function HomeView({
   return (
     <Stack id="home-page" gap={HOME_PAGE_SECTION_GAP} className={HOME_PAGE_SHELL_CLASS}>
       <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
-      <HomeBelowHeroDeferred
+      <HomeBelowHero
         curatedGallery={curatedGallery}
         galleryCount={galleryCount}
         stats={stats}
