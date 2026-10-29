@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Badge, Button, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { areaIconFor } from "@/lib/domain-icons";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
