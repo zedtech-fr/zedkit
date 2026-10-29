@@ -114,6 +114,9 @@ describe("form brick", () => {
     const content = document.querySelector("[data-slot=field-separator-content]");
     expect(content?.className).toContain("px-2");
     expect(content?.className).not.toContain("px-field-separator-inline");
+    const field = document.querySelector("[data-slot=field]");
+    expect(field?.className).toContain("gap-3");
+    expect(field?.className).not.toContain("gap-field");
     const labels = document.querySelectorAll("[data-slot=field-label]");
     expect(labels.length).toBe(2);
     for (const label of labels) {

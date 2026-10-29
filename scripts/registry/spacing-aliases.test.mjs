@@ -110,6 +110,7 @@ const DEPRECATED_1REM_CLASSES = [
   "gap-option-card-gap",
   "gap-option-cards-gap",
   "mb-field-legend-bottom",
+  "gap-field",
 ];
 
 function walkJs(dir, acc = []) {
