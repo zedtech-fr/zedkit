@@ -1,4 +1,3 @@
-// Derived from shadcn/ui (button) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 "use client";
 
 import type * as React from "react";
@@ -7,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-button-gap rounded-md text-sm font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -20,9 +19,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
       },
       size: {
-        default: "h-control-height px-4 py-control-block-lg",
-        sm: "h-control-height-sm rounded-md px-button-inline-sm text-xs",
-        lg: "h-control-height-lg rounded-md px-button-inline-lg",
+        default: "h-control-height px-4 py-2",
+        sm: "h-control-height-sm rounded-md px-3 text-xs",
+        lg: "h-control-height-lg rounded-md px-8",
         icon: "size-control-height",
       },
     },
