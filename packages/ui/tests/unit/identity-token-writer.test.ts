@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 
 import {
+  applyCustomIdentitySheet,
   applyIdentityTokenSheet,
   historyOf,
   historyPush,
@@ -36,6 +37,7 @@ const DRAFT = '[data-identity-scope][data-identity="draft"]';
 
 afterEach(() => {
   document.head.replaceChildren();
+  localStorage.clear();
 });
 
 describe("identity token schema", () => {
@@ -118,6 +120,15 @@ describe("token to CSS var writer", () => {
     expect(css).toContain(`${DRAFT}.dark`);
     expect(css).toContain("--background: 0 0% 6%");
     expect(css).toContain("--primary: 164 62% 56%");
+  });
+
+  it("writes a custom sheet onto :root and persists the CSS", () => {
+    const sheet = applyCustomIdentitySheet(identityPresets.tide);
+    expect(sheet.getAttribute("data-slot")).toBe("identity-custom-sheet");
+    expect(sheet.textContent).toContain(":root {");
+    expect(sheet.textContent).toContain("--spacing: 0.28rem");
+    expect(sheet.textContent).toContain(":root.dark");
+    expect(localStorage.getItem("zk-identity-custom")).toBe(sheet.textContent);
   });
 
   it("writes the sheet onto document.head without a reload", () => {

@@ -2,8 +2,11 @@
 
 import * as React from "react";
 
+import { clearCustomIdentitySheet } from "./identity-custom-sheet.js";
 import {
+  CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
+  IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
   identities,
   type IdentityOption,
@@ -14,6 +17,7 @@ import {
  * mounted switcher. Tokens follow through CSS; no component re-renders.
  */
 function applyIdentity(id: string, storageKey: string = IDENTITY_STORAGE_KEY) {
+  if (id !== CUSTOM_IDENTITY_ID) clearCustomIdentitySheet(storageKey);
   document.documentElement.setAttribute("data-identity", id);
   window.localStorage.setItem(storageKey, id);
   window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
@@ -38,7 +42,9 @@ function useIdentity(fallback = ""): string {
 }
 
 export {
+  CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
+  IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
   applyIdentity,
   identities,

@@ -1,7 +1,7 @@
 import type * as React from "react";
 
 import { IDENTITY_BOOTSTRAP_SOURCE } from "./identity-bootstrap.js";
-import { IDENTITY_STORAGE_KEY, identities } from "./identity-data.js";
+import { IDENTITY_STORAGE_KEY, customIdentityStorageKey, identities } from "./identity-data.js";
 
 type IdentityScriptProps = {
   /** Allowed ids; anything else stored is ignored. Default: built-in identities. */
@@ -27,6 +27,7 @@ function IdentityScript({
       data-slot="identity-script"
       data-ids={JSON.stringify(ids)}
       data-storage-key={storageKey}
+      data-custom-key={customIdentityStorageKey(storageKey)}
       {...(defaultIdentity !== undefined ? { "data-default": defaultIdentity } : {})}
       dangerouslySetInnerHTML={{ __html: IDENTITY_BOOTSTRAP_SOURCE }}
       suppressHydrationWarning
