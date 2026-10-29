@@ -15,7 +15,7 @@ function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
       data-slot="field-set"
       className={cn(
         "flex flex-col gap-field-set",
-        "has-[>[data-slot=checkbox-group]]:gap-field-group-compact has-[>[data-slot=radio-group]]:gap-field-group-compact",
+        "has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
         className,
       )}
       {...props}
@@ -48,7 +48,7 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="field-group"
       className={cn(
-        "group/field-group @container/field-group flex w-full flex-col gap-field-group data-[slot=checkbox-group]:gap-field-group-compact [&>[data-slot=field-group]]:gap-4",
+        "group/field-group @container/field-group flex w-full flex-col gap-field-group data-[slot=checkbox-group]:gap-3 [&>[data-slot=field-group]]:gap-4",
         className,
       )}
       {...props}
