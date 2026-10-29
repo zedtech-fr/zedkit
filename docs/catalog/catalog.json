@@ -2754,8 +2754,8 @@
         },
         {
           "need": "Switch the visual identity with one attribute",
-          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `useIdentity`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`",
-          "wraps": "none (CSS variables in `identities.css`)",
+          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `useIdentity`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`",
+          "wraps": "`zod` (token schema); CSS variables in `identities.css`",
           "status": "alpha",
           "shortName": "Identities",
           "audience": "Teams that want to change the whole look of an app, or offer a choice, without touching components.",
@@ -2776,6 +2776,10 @@
             {
               "title": "Touch picker",
               "code": "\"use client\";\n\nimport { useState } from \"react\";\nimport { IdentityPicker, identities } from \"@zedtech/zedkit-ui\";\n\n// A short custom list on a phone header; the page behind the sheet is the live preview.\nconst looks = identities.filter((look) => [\"mist\", \"press\", \"tide\"].includes(look.id));\n\nexport function MobileLookPicker() {\n  const [last, setLast] = useState<string | null>(null);\n  return (\n    <>\n      <IdentityPicker label=\"Look\" identities={looks} onIdentityChange={setLast} />\n      <p role=\"status\">{last ? `Chosen: ${last}` : \"Nothing chosen yet.\"}</p>\n    </>\n  );\n}"
+            },
+            {
+              "title": "Live token sheet",
+              "code": "import { identityPresets, suggestIdentityTokens, tokensToCss } from \"@zedtech/zedkit-ui\";\n\nconst tokens = suggestIdentityTokens(\"calm editorial, rounded, warm\");\nconst css = tokensToCss(tokens, '[data-identity-scope][data-identity=\"draft\"]');\nvoid identityPresets.mist;\nvoid css;"
             }
           ],
           "a11y": "`IdentitySwitcher` is a native labelled `select` (visible label with `showLabel`, otherwise screen-reader only); `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose. A choice applies at once and the new look keeps the kit's contrast pairs in light and dark; announce the change in your own status line (`role=\"status\"`) if you show one. Keep the trigger name stable (`label`), because the current identity is read from the value.",
