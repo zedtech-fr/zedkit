@@ -1,4 +1,3 @@
-// Derived from shadcn/ui (badge) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 import type * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
