@@ -3,8 +3,19 @@ import { Stack } from "@zedtech/zedkit-ui";
 import type { GalleryCard } from "@/content/gallery";
 import type { HomeScenario } from "@/content/home-scenarios";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
-import { HomeHero } from "@/ui/home/home-hero";
-import { HOME_PAGE_SECTION_GAP, HOME_PAGE_SHELL_CLASS } from "@/ui/home/home-rhythm";
+import { HomeHeroLead } from "@/ui/home/home-hero-lead";
+import { HOME_PAGE_SECTION_GAP, HOME_PAGE_SHELL_CLASS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
+
+const HomeHeroDeferred = dynamic(
+  () => import("@/ui/home/home-hero-deferred").then((mod) => ({ default: mod.HomeHeroDeferred })),
+  {
+    loading: () => (
+      <Stack aria-busy="true" className="min-w-0 items-start" gap={HOME_SECTION_CONTENT_GAP}>
+        <section id="use-cases" className="min-h-[140vh] w-full scroll-mt-24" />
+      </Stack>
+    ),
+  },
+);
 
 const HomeBelowHero = dynamic(
   () => import("@/ui/home/home-below-hero").then((mod) => ({ default: mod.HomeBelowHero })),
@@ -45,7 +56,10 @@ export function HomeView({
 }) {
   return (
     <Stack id="home-page" gap={HOME_PAGE_SECTION_GAP} className={HOME_PAGE_SHELL_CLASS}>
-      <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
+      <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
+        <HomeHeroLead version={version} changelogHref={changelogHref} />
+        <HomeHeroDeferred featuredPackage={featuredPackage} />
+      </Stack>
       <HomeBelowHero
         curatedGallery={curatedGallery}
         galleryCount={galleryCount}
