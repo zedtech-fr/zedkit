@@ -67,8 +67,8 @@ describe("OptionCards", () => {
   it("styles group and cards from design tokens", () => {
     const { container } = render(<OptionCards options={options} selected={["a"]} onChange={() => {}} />);
     const group = container.querySelector('[role="group"]');
-    expect(group?.classList.contains("gap-option-cards-gap")).toBe(true);
-    expect(group?.className).not.toMatch(/(^|\s)gap-3(\s|$)/);
+    expect(group?.className).toContain("gap-3");
+    expect(group?.className).not.toContain("gap-option-cards-gap");
     const card = screen.getByText("Alpha").closest("label");
     expect(card?.className).toContain("gap-3");
     expect(card?.className).not.toContain("gap-option-card-gap");

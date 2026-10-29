@@ -57,7 +57,7 @@ export function OptionCards({ options, selected, onChange, label, className }: O
   }
 
   return (
-    <div data-slot="option-cards" role="group" aria-label={label ?? messages.options} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
+    <div data-slot="option-cards" role="group" aria-label={label ?? messages.options} className={cn("grid gap-3 sm:grid-cols-2", className)}>
       {options.map((option) => (
         <OptionCard
           key={option.id}
