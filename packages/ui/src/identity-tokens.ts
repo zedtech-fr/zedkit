@@ -129,7 +129,7 @@ const identityPresets = {
     radius: "0.25rem",
     bodyLeading: "1.25",
     headingLeading: "1.08",
-    headingTracking: "-0.04em",
+    headingTracking: "-0.08em",
     labelTracking: "0.1em",
     fontSans: GEIST,
     fontDisplay: GEIST,
