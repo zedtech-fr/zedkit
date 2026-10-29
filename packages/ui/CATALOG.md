@@ -1269,7 +1269,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 - When to use: To group related fields with legends and per-field errors.
 - When not to use: For validation logic itself — pair with Form instead.
 - See also: `Build validated forms with labels, errors, and pending state`, `Pick a date from a popover`
-- A11y: `FieldError` uses `role="alert"`. Field row gap is `gap-3`; `--spacing-field` remains as a deprecated alias.
+- A11y: `FieldError` uses `role="alert"`. Field row gap is `gap-3`; `--spacing-field` remains as a deprecated alias. FieldContent stack gap is `gap-1.5`; `--spacing-field-content` remains as a deprecated alias.
 
 ```ts
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedtech/zedkit-ui";

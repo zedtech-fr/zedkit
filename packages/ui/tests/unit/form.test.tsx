@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -130,6 +131,13 @@ describe("form brick", () => {
       expect(label.className).toContain("gap-2");
       expect(label.className).not.toContain("gap-field-inline");
     }
+  });
+
+  it("spaces FieldContent from the Tailwind scale", () => {
+    render(<FieldContent>Hint</FieldContent>);
+    const node = document.querySelector("[data-slot=field-content]");
+    expect(node?.className).toContain("gap-1.5");
+    expect(node?.className).not.toContain("gap-field-content");
   });
 
   it("styles form item, description, and message from design tokens", async () => {
