@@ -1,5 +1,13 @@
 # @zedtech/zedkit-core
 
+## 0.2.1
+
+### Patch Changes
+
+- a810ef0: Docs: backend package table links to Quickstart paths C–E (#301).
+- 867edd7: Docs: getting started Path C with tested core-add snippet (#301).
+- 6cf1204: Docs: getting started Next steps tutorials match area table order (#301).
+
 ## 0.2.0
 
 ### Minor Changes

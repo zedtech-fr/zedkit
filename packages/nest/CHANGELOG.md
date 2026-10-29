@@ -1,5 +1,11 @@
 # @zedtech/zedkit-nest
 
+## 0.1.5
+
+### Patch Changes
+
+- 73569a8: Docs: getting started Path E with tested nest-add snippet (#301).
+
 ## 0.1.4
 
 ### Patch Changes

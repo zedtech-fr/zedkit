@@ -1,5 +1,12 @@
 # @zedtech/zedkit-seo
 
+## 0.1.4
+
+### Patch Changes
+
+- db86533: Docs: getting started SEO scenario (#301).
+- fa20bd4: Docs: SEO package row links to Scenario — SEO (#301).
+
 ## 0.1.3
 
 ### Patch Changes

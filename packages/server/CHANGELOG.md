@@ -1,5 +1,13 @@
 # @zedtech/zedkit-server
 
+## 0.2.1
+
+### Patch Changes
+
+- a5f9902: Docs: getting started backend scenario after paths C–E (#301).
+- 0155efe: Docs: getting started Path D with tested server-add snippet (#301).
+- fda0f62: Docs: getting started troubleshooting row for bad env on server/nest paths (#301).
+
 ## 0.2.0
 
 ### Minor Changes

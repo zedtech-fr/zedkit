@@ -1,5 +1,11 @@
 # @zedtech/zedkit-quality
 
+## 0.5.0
+
+### Minor Changes
+
+- d9da994: `uiPreset` flags arbitrary px/rem in className (`w-[13px]`, `gap-[0.75rem]`). Use the spacing scale (`w-4`, `gap-3`) or the type scale (`text-sm`). Radix CSS variables (`w-[var(--radix-*)]`) stay.
+
 ## 0.4.0
 
 ### Minor Changes

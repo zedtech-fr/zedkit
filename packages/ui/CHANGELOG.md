@@ -1,5 +1,72 @@
 # @zedtech/zedkit-ui
 
+## 0.7.1
+
+### Patch Changes
+
+- 3cb15c8: Docs: fix getting started Quickstart intro for paths A–E (#794).
+- cea8e6b: Docs: UI scenario plus scenario order matches choose-package table (#301). Supersedes open #839.
+- 2ca6ffb: Docs: UI package row links to Quickstart path B (#301).
+- 224db06: Docs: lazy-load home sections below use cases (#618).
+- 91eae2c: Docs: code-split home hero preview and below-hero sections (#618).
+- f46cab8: Docs: restore eager /catalog UI (#856 hurt LCP); defer hero admin scene and home gallery demo chunks (#618).
+- 42c63e6: Docs: split home use-cases scroll chunk and widen optimizePackageImports (#618).
+- e3d4842: Docs: optimizePackageImports on the public site for smaller client JS (#618).
+- d5b4083: Docs e2e: smoke every published `/r/<brick>.json` URL (sync with registry.json).
+- bc37bac: `Card` and `CardSkeleton` use `shadow-md`, so they pick up each identity's `--zk-shadow-md` (press stays flat; tide/glass read as deeper). Mist cards are one step stronger than the old `shadow` utility.
+- 6921e0c: Glass `--zk-border-width` is a finer hairline (0.75px), no longer Mist's 1px. Maison still 1px. Mist is unchanged.
+- e6f4bb3: Glass dark `--zk-shadow-xs` is no longer `none` (Maison keeps that). Dark glass now uses a faint drop plus the glass highlight. Tracking was already unique. Mist is unchanged.
+- a99d702: Glass light `--zk-shadow-xs` no longer matches Tide's 1px/2px shape. Glass is `0 1px 3px` at 0.07. Tracking uniqueness now covers heading and label too. Mist is unchanged.
+- c844ebb: Glass `--radius-2xl` no longer sits next to Tide's 2rem. Glass is 2.25rem. Tide stays 2rem. Mist is unchanged.
+- 6e8634f: Glass `--radius-sm` / `--radius-md` no longer match Tide (0.5rem / 0.75rem). Glass is 0.625rem / 0.875rem. Buttons (`rounded-md`) follow. Mist is unchanged.
+- 22e568c: Glass no longer shares Tide's `--radius: 1rem`. Glass corners are 1.25rem (xl 1.75rem). Tide stays 1rem / xl 1.5rem. Mist is unchanged.
+- 686d03e: Glass no longer copies Mist's `--text-3xl` / `--text-5xl` or Press's heading line-height. Glass is 2rem / 3.125rem / 1.14. Mist is unchanged.
+- d96dbda: Glass colour transitions are 220ms so they no longer match maison's 200ms. Mist stays at 150ms.
+- b4a015e: Press, tide, and glass each have their own `--spacing` unit (0.24 / 0.28 / 0.27rem). Mist stays at 0.25rem; volt and maison keep 0.225rem and 0.3rem. No two looks share the spacing scale.
+- 81ff3a0: Per-identity `--zk-body-leading`, `--zk-border-width`, and `--zk-color-duration` (`transition-colors` follows the last). Mist stays at 1.6 / 1px / 150ms. Press is firmer and faster (2px, 1.45, 80ms); maison and glass more open and slower; tide and volt each their own. Unused `--zk-density` and `--zk-control-scale` are removed (`--spacing` is the density knob).
+- e2e5e83: Each identity now has its own type size, tracking, and shadow. Mist stays on the kit defaults (0.875rem / −0.025em / the stock shadow). Press, maison, glass, tide and volt no longer share those values with each other or with mist.
+- 6e61844: Maison `--zk-border-width` is no longer Mist's 1px hairline. Maison is 1.75px (between Tide 1.5px and Press 2px). Mist is unchanged.
+- 39643fa: Maison `--radius-xs` is no longer `0px` (Press keeps that). Maison xs is 0.5px, still below `--radius-sm` 1px. Mist is unchanged.
+- 0f0f526: Maison light `--zk-shadow-overlay` no longer sits on the same 24px lift as Glass. Maison is a paper contact edge plus `0 20px 44px`, like its other depth steps. Mist is unchanged.
+- 8207cf1: Press heading line-height no longer matches Mist's 1.1 fallback. Press `--zk-heading-leading` is 1.06. Tracking was already unique. Mist is unchanged.
+- 63603ac: Press `--text-xs` is no longer Mist/Volt's 0.75rem (12px). Press is 0.6875rem. Tracking and body leading were already unique. Mist is unchanged.
+- c03a996: Adds `--zk-gap-sm`, `--zk-gap-md`, `--zk-gap-lg`, `--zk-icon-size`, and `--zk-control-height`, each `calc()` from `--spacing` (mist matches today's rem). No component classes change in this release; deprecated `--spacing-*` aliases keep their rem values.
+- ab21d41: Alert block padding uses Tailwind `py-3` (0.75rem). `--spacing-alert-block` stays as a deprecated alias so existing class names still work.
+- b520640: Button icon/label gap uses Tailwind `gap-2` (0.5rem). `--spacing-button-gap` stays as a deprecated alias so existing class names still work.
+- db3dbb4: Button `sm` inline padding uses Tailwind `px-3` (0.75rem). `--spacing-button-inline-sm` stays as a deprecated alias so existing class names still work.
+- a34e7e9: Button, select trigger, and textarea block padding uses Tailwind `py-2` (0.5rem). `--spacing-control-block-lg` stays as a deprecated alias so existing class names still work.
+- 59eec73: Combobox menu row padding uses Tailwind `px-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- 13fccd5: Input inline padding uses Tailwind `px-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- 204ddcc: MultiSelect menu row padding uses Tailwind `px-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- 0ec8894: SelectTrigger inline padding uses Tailwind `px-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- 38fbe4e: Textarea inline padding uses Tailwind `px-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- b6cdd7b: TooltipContent inline padding uses Tailwind `px-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- e7db2a8: DetailPanel row block padding uses Tailwind `py-3` (0.75rem). `--spacing-detail-panel-block` stays as a deprecated alias so existing class names still work.
+- cc10626: DialogFooter row gap uses Tailwind `sm:space-x-2` (0.5rem). `--spacing-dialog-footer-gap` stays as a deprecated alias so existing class names still work.
+- 46240f4: DropdownMenu item block padding uses Tailwind `py-1.5` (0.375rem). `--spacing-select-item-block` stays as a deprecated alias so existing class names still work.
+- 3717f63: FieldSet/FieldGroup compact gap uses Tailwind `gap-3` (0.75rem). `--spacing-field-group-compact` stays as a deprecated alias so existing class names still work.
+- e8054f4: FieldLegend bottom margin uses Tailwind `mb-3` (0.75rem). `--spacing-field-legend-bottom` stays as a deprecated alias so existing class names still work.
+- cf63cce: Field row gap uses Tailwind `gap-3` (0.75rem). `--spacing-field` stays as a deprecated alias so existing class names still work.
+- 631f165: OptionCard inner gap uses Tailwind `gap-3` (0.75rem). `--spacing-option-card-gap` stays as a deprecated alias so existing class names still work.
+- 884175f: OptionCards group gap uses Tailwind `gap-3` (0.75rem). `--spacing-option-cards-gap` stays as a deprecated alias so existing class names still work.
+- dbf7460: Combobox and MultiSelect toggle offset uses Tailwind `right-3` (0.75rem). `--spacing-control-inline` stays as a deprecated alias so existing class names still work.
+- b38e737: Select label and item block padding uses Tailwind `py-1.5` (0.375rem). `--spacing-select-item-block` stays as a deprecated alias so existing class names still work.
+- dce3744: Select and dropdown item inline padding uses Tailwind `px-2` / `pl-2` / `right-2` (0.5rem). `--spacing-select-item-inline` stays as a deprecated alias so existing class names still work.
+- c8fd922: Table head/cell padding uses Tailwind `px-2` / `p-2` (0.5rem). `--spacing-table-cell` stays as a deprecated alias so existing class names still work.
+- 4c58d29: TabsTrigger inline padding uses Tailwind `px-3` (0.75rem). `--spacing-tabs-trigger-inline` stays as a deprecated alias so existing class names still work.
+- b80840e: WizardStep badge/label gap uses Tailwind `gap-2` (0.5rem). `--spacing-wizard-step-gap` stays as a deprecated alias so existing class names still work.
+- 0accfb1: WizardSteps column gap uses Tailwind `gap-x-3` (0.75rem). `--spacing-wizard-steps-gap` stays as a deprecated alias so existing class names still work.
+- 4a21865: WizardSteps wrap gap uses Tailwind `gap-y-2` (0.5rem). `--spacing-wizard-steps-row-gap` stays as a deprecated alias so existing class names still work.
+- 07ba439: Tide `--zk-border-width` is no longer the 1px hairline shared with Mist. Tide is 1.5px. Press stays 2px. Mist is unchanged.
+- 439b6f9: Tide light `--zk-shadow-overlay` no longer sits on the same 24px lift as Glass. Tide is `0 28px 72px` plus a coral halo, matching its other depth steps. Mist is unchanged.
+- c5485d3: Tide light `--zk-shadow-sm` no longer sits on the same 2px lift as Glass. Tide is `0 3px 10px` plus a slightly stronger coral halo. Body leading and tracking were already unique. Mist is unchanged.
+- de7efe6: Tide light `--zk-shadow-xl` no longer starts with Maison's `0 1px 2px` contact layer. Tide is `0 32px 80px` plus a coral halo, matching its other depth steps. Mist is unchanged.
+- 0ee3821: Tide `--text-2xl` no longer matches Maison (2rem). Tide is 2.125rem. Mist is unchanged.
+- baeef50: Volt `--zk-border-width` is no longer the 1px hairline. Volt is 1.25px. Tide stays 1.5px, Press 2px, Mist 1px.
+- 063861d: Volt `--text-4xl` no longer matches Mist (2.25rem). Volt is 2.125rem, still between 3xl and 5xl. Mist is unchanged.
+- 83a831f: Volt `--text-xs` is no longer Mist's 0.75rem (12px). Volt is 0.625rem (10px). Every identity now has a distinct xs size. Mist is unchanged.
+- @zedtech/zedkit-i18n@0.2.0
+
 ## 0.7.0
 
 ### Minor Changes
