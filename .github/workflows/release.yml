@@ -80,7 +80,6 @@ jobs:
       # enough: contents: write). Runs after the action so a fresh
       # publish is covered; a no-op when everything is already tagged.
       - name: Push tags and create GitHub releases
-        if: steps.changesets.outputs.hasChangesets == 'false'
         run: scripts/release-tags.sh
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
