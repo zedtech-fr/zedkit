@@ -114,7 +114,7 @@ test("POST uses fallback when primary fails", async () => {
   const seen = [];
   const fetchImpl = (url) => {
     seen.push(url);
-    if (url.startsWith("https://primary.test")) {
+    if (new URL(url).hostname === "primary.test") {
       return Promise.resolve({ ok: false, status: 500, text: () => Promise.resolve("{}") });
     }
     return Promise.resolve(chatReply({ radius: "1rem" }));
