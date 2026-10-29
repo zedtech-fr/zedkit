@@ -33,6 +33,13 @@ describe("primitives", () => {
     expect(ref.current?.getAttribute("data-slot")).toBe("input");
   });
 
+  it("spaces the input from the Tailwind scale", () => {
+    render(<Input aria-label="Name" />);
+    const input = screen.getByLabelText("Name");
+    expect(input.className).toContain("px-3");
+    expect(input.className).not.toContain("px-control-inline");
+  });
+
   it("spaces button content from control tokens", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
