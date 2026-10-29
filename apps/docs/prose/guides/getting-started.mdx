@@ -128,15 +128,13 @@ For a NestJS service, install the factory package first (peer deps in the tutori
 
 **First result:** a bootstrapped API with validation and safe errors — follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api).
 
-## Scenario — coding agents
+## Scenario — UI
 
-You inherit a monorepo with no agent instructions. You only need consistent skills for Cursor today.
+You add an internal admin to an existing React 19 app with Tailwind v4 and need consistent tokens before you ship screens.
 
-1. Run Path A with `--provider cursor`.
-2. Open the [AI setup catalog page](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo) and run validate from the install tabs if you prefer copy from there.
-3. Commit the files `init` created; re-run validate after you edit skills.
-
-Next, add UI only when you start an admin screen — install `@zedtech/zedkit-ui` then, not on day one.
+1. Run Path B and wire theme CSS from [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) so buttons and forms are not unstyled.
+2. Install the npm package for the full kit; copy a single brick from the registry only when you must edit source — [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) compares both paths.
+3. For sidebar, tables, and forms together, follow [Build an admin dashboard](/docs/build-an-admin-dashboard).
 
 ## Scenario — backend
 
@@ -152,13 +150,15 @@ You ship a Next.js site or content app and want sitemap, metadata, and structure
 1. Install `@zedtech/zedkit-seo` with your package manager (npm-only). Use `@zedtech/zedkit-payload-seo` when Payload is your CMS.
 2. Start from [Build localized page metadata](/docs/seo/build-localized-page-metadata), or follow [Add SEO to a Next.js app](/docs/add-seo-to-nextjs) for robots, sitemap, and JSON-LD in one pass.
 
-## Scenario — UI
+## Scenario — coding agents
 
-You add an internal admin to an existing React 19 app with Tailwind v4 and need consistent tokens before you ship screens.
+You inherit a monorepo with no agent instructions. You only need consistent skills for Cursor today.
 
-1. Run Path B and wire theme CSS from [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) so buttons and forms are not unstyled.
-2. Install the npm package for the full kit; copy a single brick from the registry only when you must edit source — [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) compares both paths.
-3. For sidebar, tables, and forms together, follow [Build an admin dashboard](/docs/build-an-admin-dashboard).
+1. Run Path A with `--provider cursor`.
+2. Open the [AI setup catalog page](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo) and run validate from the install tabs if you prefer copy from there.
+3. Commit the files `init` created; re-run validate after you edit skills.
+
+Next, add UI only when you start an admin screen — install `@zedtech/zedkit-ui` then, not on day one.
 
 ## Troubleshooting
 
