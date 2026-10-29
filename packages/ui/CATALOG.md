@@ -1279,7 +1279,6 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 - Import: `@zedtech/zedkit-ui` — `Card`, `CardProps`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
 - Wraps: none (presentational, theme tokens only)
 - Status: beta
-- Derived from: shadcn/ui (card)
 - Short name: Card
 - Audience: Developers grouping related content in bordered sections.
 - Purpose: Cards with header/title/description/content/footer slots.
