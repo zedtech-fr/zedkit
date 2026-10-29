@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const css = readFileSync(resolve(process.cwd(), "src/styles.css"), "utf8");
-const identities = readFileSync(resolve(process.cwd(), "src/identities.css"), "utf8");
+const pkg = resolve(__dirname, "../..");
+
+const css = readFileSync(resolve(pkg, "src/styles.css"), "utf8");
+const identities = readFileSync(resolve(pkg, "src/identities.css"), "utf8");
 
 /** Mist / stock `--spacing` (identities.css). */
 const MIST_SPACING_REM = 0.25;

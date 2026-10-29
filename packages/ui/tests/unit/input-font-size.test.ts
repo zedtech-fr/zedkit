@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const css = readFileSync(resolve(process.cwd(), "src/styles.css"), "utf8");
+const pkg = resolve(__dirname, "../..");
+
+const css = readFileSync(resolve(pkg, "src/styles.css"), "utf8");
 
 describe("input font-size token", () => {
   it("keeps the 14px design size by default", () => {
