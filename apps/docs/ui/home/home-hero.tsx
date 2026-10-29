@@ -3,10 +3,22 @@ import Link from "next/link";
 import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
-import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
 import { DocsActionLabel } from "@/components/docs-action-label";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
+
+const HomeHeroPreview = dynamic(
+  () => import("@/ui/home/home-hero-preview").then((mod) => ({ default: mod.HomeHeroPreview })),
+  {
+    loading: () => (
+      <Stack
+        aria-hidden="true"
+        className="pointer-events-none min-h-72 w-full lg:min-h-80"
+        data-home-hero-preview
+      />
+    ),
+  },
+);
 
 const HomeUseCasesSection = dynamic(
   () => import("@/ui/home/home-use-cases-section").then((mod) => ({ default: mod.HomeUseCasesSection })),
