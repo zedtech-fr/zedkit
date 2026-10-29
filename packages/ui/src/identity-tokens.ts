@@ -70,7 +70,7 @@ const identityPresets = {
     shadowMd: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
   },
   press: {
-    spacing: "0.24rem",
+    spacing: "0.2rem",
     borderWidth: "2px",
     radius: "0px",
     bodyLeading: "1.12",
