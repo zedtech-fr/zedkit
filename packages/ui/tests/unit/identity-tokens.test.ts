@@ -118,6 +118,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
       "0 32px 80px -24px hsl(var(--zk-shadow-color) / 0.4), 0 0 48px -16px hsl(10 71% 52% / 0.26)",
     );
     expect(token(read("identities/volt.css"), "--zk-body-leading")).toBe("1.25");
+    expect(token(read("identities/volt.css"), "--zk-heading-tracking") ?? "").toBe("-0.08em");
     expect(token(read("identities/volt.css"), "--zk-color-duration")).toBe("100ms");
     expect(token(read("identities/volt.css"), "--text-4xl") ?? "").toBe("2.125rem");
     expect(token(read("identities/volt.css"), "--text-xs") ?? "").toBe("0.625rem");
