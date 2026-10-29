@@ -52,6 +52,36 @@ test.describe("identity editor page", () => {
     await expect(page.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  test("Suggest applies a service patch after Apply", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      const posted = route.request().postDataJSON() as { current: Record<string, unknown> };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: { tokens: { ...posted.current, spacing: "0.5rem" } },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("more space");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("Review these token changes.")).toBeVisible();
+    await expect(page.getByText("spacing: 0.25rem → 0.5rem")).toBeVisible();
+    await page.getByRole("button", { name: "Apply" }).click();
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.5rem");
+  });
+
+  test("Suggest falls back to a keyword match when the service is off", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      await route.fulfill({ status: 503, contentType: "application/json", json: { disabled: true } });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("editorial serif ink");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("Suggest is offline. Keyword match instead.")).toBeVisible();
+    await page.getByRole("button", { name: "Apply" }).click();
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.24rem");
+  });
+
   test("passes the a11y gate on the panel", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await assertA11yGate(page, "[data-slot=identity-editor]");

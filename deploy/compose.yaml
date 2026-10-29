@@ -1,8 +1,24 @@
-# One-container static host: Caddy serves ./site and manages TLS certificates.
+# Caddy serves ./site. suggest handles POST /api/identity/suggest.
 services:
+  suggest:
+    image: node:22-alpine
+    restart: unless-stopped
+    working_dir: /app
+    command: ["node", "server.mjs"]
+    volumes:
+      - ./suggest:/app:ro
+    env_file:
+      - path: suggest.env
+        required: false
+    environment:
+      PORT: "3001"
+    expose:
+      - "3001"
   caddy:
     image: caddy:2
     restart: unless-stopped
+    depends_on:
+      - suggest
     ports:
       - "80:80"
       - "443:443"

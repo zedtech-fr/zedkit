@@ -21,6 +21,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
+import { IdentityEditorSuggest } from "@/components/identity-editor-suggest";
 import {
   LIGHT_KEYS,
   SCALAR_KEYS,
@@ -219,6 +220,45 @@ function ContrastChips({
   );
 }
 
+function IdentityEditorBody({
+  identity,
+  tokens,
+  darkPreview,
+  onIdentity,
+  onDark,
+  onReset,
+  onPatch,
+  onFix,
+  onSuggestApply,
+}: {
+  identity: IdentityId;
+  tokens: IdentityTokens;
+  darkPreview: boolean;
+  onIdentity: (id: IdentityId) => void;
+  onDark: () => void;
+  onReset: () => void;
+  onPatch: (key: string, value: string) => void;
+  onFix: (warning: IdentityContrastWarning) => void;
+  onSuggestApply: (next: IdentityTokens) => void;
+}) {
+  return (
+    <Stack gap={6} data-slot="identity-editor">
+      <EditorToolbar
+        identity={identity}
+        darkPreview={darkPreview}
+        onIdentity={onIdentity}
+        onDark={onDark}
+        onReset={onReset}
+      />
+      <Text>Change spacing first, then watch the card.</Text>
+      <ContrastChips warnings={identityContrastWarnings(tokens)} onFix={onFix} />
+      <IdentityEditorSuggest tokens={tokens} onApply={onSuggestApply} />
+      <EditorFields tokens={tokens} scheme={darkPreview ? "dark" : "light"} onPatch={onPatch} />
+      <DraftCard darkPreview={darkPreview} />
+    </Stack>
+  );
+}
+
 function IdentityEditorPanel() {
   const [identity, setIdentity] = useState<IdentityId>("mist");
   const [tokens, setTokens] = useState<IdentityTokens>(identityPresets.mist);
@@ -245,37 +285,28 @@ function IdentityEditorPanel() {
   }, [darkPreview, identity, ready, tokens]);
 
   return (
-    <Stack gap={6} data-slot="identity-editor">
-      <EditorToolbar
-        identity={identity}
-        darkPreview={darkPreview}
-        onIdentity={(id) => {
-          setIdentity(id);
-          setTokens(identityPresets[id]);
-        }}
-        onDark={() => setDarkPreview((value) => !value)}
-        onReset={() => setTokens(identityPresets[identity])}
-      />
-      <Text>Change spacing first, then watch the card.</Text>
-      <ContrastChips
-        warnings={identityContrastWarnings(tokens)}
-        onFix={(warning) =>
-          setTokens((current) => {
-            const parsed = parseIdentityTokens({
-              ...current,
-              [warning.scheme]: { ...current[warning.scheme], foreground: warning.suggestedForeground },
-            });
-            return parsed.success ? parsed.data : current;
-          })
-        }
-      />
-      <EditorFields
-        tokens={tokens}
-        scheme={scheme}
-        onPatch={(key, value) => setTokens((current) => patchTokens(current, key, value, scheme))}
-      />
-      <DraftCard darkPreview={darkPreview} />
-    </Stack>
+    <IdentityEditorBody
+      identity={identity}
+      tokens={tokens}
+      darkPreview={darkPreview}
+      onIdentity={(id) => {
+        setIdentity(id);
+        setTokens(identityPresets[id]);
+      }}
+      onDark={() => setDarkPreview((value) => !value)}
+      onReset={() => setTokens(identityPresets[identity])}
+      onPatch={(key, value) => setTokens((current) => patchTokens(current, key, value, scheme))}
+      onFix={(warning) =>
+        setTokens((current) => {
+          const parsed = parseIdentityTokens({
+            ...current,
+            [warning.scheme]: { ...current[warning.scheme], foreground: warning.suggestedForeground },
+          });
+          return parsed.success ? parsed.data : current;
+        })
+      }
+      onSuggestApply={setTokens}
+    />
   );
 }
 

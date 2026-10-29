@@ -72,9 +72,19 @@ export default tseslint.config(
       "apps/docs/scripts/*.mjs",
       "packages/ui/preview/*.mjs",
       "packages/ui/playwright.config.ts",
+      "deploy/suggest/**/*.mjs",
     ],
     languageOptions: {
-      globals: { console: "readonly", process: "readonly", URL: "readonly" },
+      globals: {
+        console: "readonly",
+        process: "readonly",
+        URL: "readonly",
+        Buffer: "readonly",
+        fetch: "readonly",
+        AbortSignal: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+      },
     },
   },
   // UI preset last: for .tsx/.jsx its no-restricted-syntax (try/catch +

@@ -20,8 +20,14 @@ if [ ! -f "$out/index.html" ]; then
   exit 1
 fi
 
-ssh "$target" "mkdir -p '$remote/site'"
+ssh "$target" "mkdir -p '$remote/site' '$remote/suggest'"
 scp -q "$root/deploy/Caddyfile" "$root/deploy/compose.yaml" "$target:$remote/"
+rsync -a --delete --exclude '*.test.mjs' "$root/deploy/suggest/" "$target:$remote/suggest/"
+if [ -f "$root/deploy/suggest.env" ]; then
+  scp -q "$root/deploy/suggest.env" "$target:$remote/suggest.env"
+else
+  ssh "$target" "umask 077; : > '$remote/suggest.env'"
+fi
 rsync -a --delete "$out/" "$target:$remote/site/"
 ssh "$target" "cd '$remote' && docker compose up -d --remove-orphans && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
 echo "deploy: done"

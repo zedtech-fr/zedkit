@@ -1706,18 +1706,18 @@ void css;
 
 ## Design your identity
 
-- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `identityPresets`, `parseIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `identityContrastWarnings`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `identityContrastWarnings`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
 - Status: alpha
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
-- Purpose: A docs page writes compact identity tokens onto a scoped draft through the CSS variable writer. The address bar keeps the draft and the dark preview. Reset restores the chosen look. Contrast chips warn when foreground and background miss WCAG AA.
+- Purpose: A docs page writes compact identity tokens onto a scoped draft through the CSS variable writer. The address bar keeps the draft and the dark preview. Reset restores the chosen look. Contrast chips warn when foreground and background miss WCAG AA. Suggest turns a short request into a token preview; Apply writes it, Discard keeps the draft.
 - When to use: To try a look on one card without changing the whole page identity.
 - When not to use: To switch the published page look — use `IdentitySwitcher` or `data-identity` on the root instead.
 - See also: `Switch the visual identity with one attribute`
 - Examples: Write a draft sheet
-- A11y: Every field has a visible label. Reset and Dark are named buttons (`aria-pressed` on Dark). The draft card is a live preview of the tokens. Colour fields accept HSL channels (`H S% L%`). Foreground/background pairs below 4.5:1 show a warning and a Fix that nudges lightness.
-- Troubleshooting: The whole docs page changed — the sheet targets `[data-identity-scope][data-identity="draft"]`, not `<html>`. A field snaps back — the value failed the token schema (HSL, leading, or tracking). A refresh loses the draft — the address bar holds only fields that differ from the chosen look, plus `theme=dark` when the dark preview is on.
+- A11y: Every field has a visible label. Reset, Dark, Suggest, Apply and Discard are named buttons (`aria-pressed` on Dark). The draft card is a live preview of the tokens. Colour fields accept HSL channels (`H S% L%`). Foreground/background pairs below 4.5:1 show a warning and a Fix that nudges lightness. Suggest never writes tokens until Apply.
+- Troubleshooting: The whole docs page changed — the sheet targets `[data-identity-scope][data-identity="draft"]`, not `<html>`. A field snaps back — the value failed the token schema (HSL, leading, or tracking). A refresh loses the draft — the address bar holds only fields that differ from the chosen look, plus `theme=dark` when the dark preview is on. Suggest shows a keyword match — the HTTP service is off, rate-limited, or the response failed the token schema.
 
 ```ts
 import { applyIdentityTokenSheet, identityPresets } from "@zedtech/zedkit-ui";

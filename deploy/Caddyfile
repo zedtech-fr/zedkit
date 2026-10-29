@@ -1,32 +1,39 @@
 # Static docs site served by Caddy (automatic HTTPS via Let's Encrypt).
 # The build output of apps/docs is mounted read-only at /srv/site.
+# POST /api/identity/suggest is reverse-proxied to the suggest service.
 
 www.zedkit.app {
 	redir https://zedkit.app{uri} permanent
 }
 
 zedkit.app {
-	root * /srv/site
-	encode zstd gzip
+	handle /api/identity/suggest* {
+		reverse_proxy suggest:3001
+	}
 
-	# Renamed page: "Show the zedkit logo" is now "Show your brand logo".
-	redir /docs/ui/show-the-zedkit-logo /docs/ui/show-your-brand-logo permanent
+	handle {
+		root * /srv/site
+		encode zstd gzip
 
-	# Extensionless static export of the search index: serve it as JSON.
-	@search path /api/search
-	header @search Content-Type application/json
+		# Renamed page: "Show the zedkit logo" is now "Show your brand logo".
+		redir /docs/ui/show-the-zedkit-logo /docs/ui/show-your-brand-logo permanent
 
-	# Content-hashed build assets never change.
-	@immutable path /_next/static/*
-	header @immutable Cache-Control "public, max-age=31536000, immutable"
+		# Extensionless static export of the search index: serve it as JSON.
+		@search path /api/search
+		header @search Content-Type application/json
 
-	# /docs/foo -> docs/foo.html, /docs/ -> docs/index.html. Any other file
-	# (for example /r/<name>.json) is served as-is with its own content type.
-	try_files {path} {path}.html {path}/index.html
-	file_server
+		# Content-hashed build assets never change.
+		@immutable path /_next/static/*
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
 
-	handle_errors {
-		rewrite * /404.html
+		# /docs/foo -> docs/foo.html, /docs/ -> docs/index.html. Any other file
+		# (for example /r/<name>.json) is served as-is with its own content type.
+		try_files {path} {path}.html {path}/index.html
 		file_server
+
+		handle_errors {
+			rewrite * /404.html
+			file_server
+		}
 	}
 }
