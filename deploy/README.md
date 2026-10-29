@@ -6,9 +6,10 @@ automatically and redirects `www.zedkit.app` to `zedkit.app`.
 
 | File | Purpose |
 |---|---|
-| `Caddyfile` | Site config: apex + `www` redirect, caching, 404 page |
-| `compose.yaml` | Runs Caddy with the site directory mounted read-only |
-| `deploy.sh` | Uploads the build output and config, then reloads Caddy |
+| `Caddyfile` | Site config: apex + `www` redirect, caching, 404 page, suggest proxy |
+| `compose.yaml` | Runs Caddy plus the identity-suggest Node service |
+| `suggest/` | `POST /api/identity/suggest` — chat completions from env, no keys in the client |
+| `deploy.sh` | Uploads the build output, suggest service, and config, then reloads Caddy |
 
 ## Deploy by hand
 
@@ -30,6 +31,12 @@ secrets:
 | `DOCS_DEPLOY_USER` | SSH user (member of the `docker` group) |
 | `DOCS_DEPLOY_KEY` | Private SSH key accepted by that user |
 | `DOCS_DEPLOY_KNOWN_HOSTS` | `ssh-keyscan` output for the host |
+| `IDENTITY_AI_BASE_URL` | Chat-completions origin (no `/v1/chat/completions` suffix). Empty keeps Suggest off. |
+| `IDENTITY_AI_API_KEY` | Bearer token for that origin. Never committed. |
+| `IDENTITY_AI_MODEL` | Model id for that origin. |
+| `IDENTITY_AI_FALLBACK_BASE_URL` | Optional second origin used when the first call fails. |
+| `IDENTITY_AI_FALLBACK_API_KEY` | Bearer token for the fallback origin. |
+| `IDENTITY_AI_FALLBACK_MODEL` | Model id for the fallback origin. |
 
 ## Requirements on the VM
 
