@@ -1495,7 +1495,7 @@
           "purpose": "Labelled text input with consistent styling and focus states.",
           "whenToUse": "For names, emails, search boxes and other single-line values.",
           "whenNotToUse": "For long text — use Textarea instead.",
-          "derivedFrom": "shadcn/ui (input, label)",
+          "derivedFrom": null,
           "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />",
           "examples": [
             {
@@ -1503,7 +1503,7 @@
               "code": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />"
             }
           ],
-          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention.",
+          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is Tailwind `px-3`.",
           "seeAlso": [
             "Collect multi-line text input",
             "Build validated forms with labels, errors, and pending state"

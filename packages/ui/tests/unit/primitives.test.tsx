@@ -36,8 +36,14 @@ describe("primitives", () => {
   it("spaces the input from the Tailwind scale", () => {
     render(<Input aria-label="Name" />);
     const input = screen.getByLabelText("Name");
+    expect(input.tagName).toBe("INPUT");
+    expect(input.getAttribute("data-slot")).toBe("input");
     expect(input.className).toContain("px-3");
     expect(input.className).not.toContain("px-control-inline");
+    expect(input.className).toContain("py-control-block");
+    expect(input.className).toContain("h-control-height");
+    expect(input.className).toContain("text-control");
+    expect(input.className).toContain("rounded-md");
   });
 
   it("spaces button content from control tokens", () => {
