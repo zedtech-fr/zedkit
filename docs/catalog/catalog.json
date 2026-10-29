@@ -2433,7 +2433,7 @@
               "code": "import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from \"@zedtech/zedkit-ui\";\n<FieldSet><FieldGroup><Field>\n<FieldLabel>Name</FieldLabel><FieldDescription>Public.</FieldDescription>\n<FieldError errors={[{ message: \"Too short.\" }]} />"
             }
           ],
-          "a11y": "`FieldError` uses `role=\"alert\"`. Field row gap is `gap-3`; `--spacing-field` remains as a deprecated alias.",
+          "a11y": "`FieldError` uses `role=\"alert\"`. Field row gap is `gap-3`; `--spacing-field` remains as a deprecated alias. FieldContent stack gap is `gap-1.5`; `--spacing-field-content` remains as a deprecated alias.",
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state",
             "Pick a date from a popover"
