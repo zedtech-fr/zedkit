@@ -78,7 +78,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
   });
 
   it("sets a distinct leading, border, and colour duration per identity", () => {
-    expect(token(read("identities/press.css"), "--zk-body-leading")).toBe("1.45");
+    expect(token(read("identities/press.css"), "--zk-body-leading")).toBe("1.12");
     expect(token(read("identities/press.css"), "--zk-heading-leading") ?? "").toBe("1.06");
     expect(token(read("identities/press.css"), "--text-xs") ?? "").toBe("0.6875rem");
     expect(token(read("identities/press.css"), "--zk-border-width")).toBe("2px");
