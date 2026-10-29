@@ -71,7 +71,7 @@
   --zk-body-leading: 1.55;
 
   /* Spacing: base unit */
-  --spacing: 0.32rem;
+  --spacing: 0.28rem;
 
   /* Shape: every Tailwind radius step */
   --radius-xs: 0.25rem;
