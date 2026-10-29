@@ -114,6 +114,7 @@ const DEPRECATED_1REM_CLASSES = [
   "gap-field-group-compact",
   "px-control-inline",
   "right-control-inline",
+  "py-select-item-block",
 ];
 
 function walkJs(dir, acc = []) {
