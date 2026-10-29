@@ -112,6 +112,7 @@ const DEPRECATED_1REM_CLASSES = [
   "mb-field-legend-bottom",
   "gap-field",
   "gap-field-group-compact",
+  "px-control-inline",
 ];
 
 function walkJs(dir, acc = []) {
