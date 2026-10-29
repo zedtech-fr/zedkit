@@ -3,11 +3,7 @@ import Link from "next/link";
 import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
-import { HomeAiSetupSection } from "@/ui/home/home-ai-setup-section";
 import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
-import { HomeInstallOrCopySection } from "@/ui/home/home-install-or-copy-section";
-import { HomeHeroDashboard } from "@/ui/home/home-hero-dashboard";
-import { HomeUiQuickstartSection } from "@/ui/home/home-ui-quickstart-section";
 import { DocsActionLabel } from "@/components/docs-action-label";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
@@ -19,6 +15,30 @@ const HomeUseCasesSection = dynamic(
       <section id="use-cases" aria-busy="true" className="min-h-[140vh] w-full max-w-none scroll-mt-24" />
     ),
   },
+);
+
+const HomeAiSetupSection = dynamic(
+  () => import("@/ui/home/home-ai-setup-section").then((mod) => ({ default: mod.HomeAiSetupSection })),
+  { loading: () => <section id="ai-setup" aria-busy="true" className="min-h-64 w-full scroll-mt-24" /> },
+);
+
+const HomeInstallOrCopySection = dynamic(
+  () => import("@/ui/home/home-install-or-copy-section").then((mod) => ({ default: mod.HomeInstallOrCopySection })),
+  {
+    loading: () => (
+      <section id="install-or-copy" aria-busy="true" className="min-h-64 w-full scroll-mt-24" />
+    ),
+  },
+);
+
+const HomeUiQuickstartSection = dynamic(
+  () => import("@/ui/home/home-ui-quickstart-section").then((mod) => ({ default: mod.HomeUiQuickstartSection })),
+  { loading: () => <section id="quickstart" aria-busy="true" className="min-h-64 w-full scroll-mt-24" /> },
+);
+
+const HomeHeroDashboard = dynamic(
+  () => import("@/ui/home/home-hero-dashboard").then((mod) => ({ default: mod.HomeHeroDashboard })),
+  { loading: () => <div aria-busy="true" className="min-h-80 w-full" data-home-dashboard-card /> },
 );
 
 export function HomeHero({
