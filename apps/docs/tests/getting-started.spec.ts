@@ -40,6 +40,16 @@ test("getting started lists a nest npm quickstart path", async ({ page }) => {
   await expect(page.getByText("pnpm add @zedtech/zedkit-nest")).toBeVisible();
 });
 
+test("getting started package table links agents row to Quickstart path A", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
+  const table = page
+    .getByRole("table")
+    .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
+  await table.getByRole("link", { name: "Quickstart path A" }).click();
+  await expect(page.getByRole("heading", { name: "Quickstart", level: 2 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Path A — coding agents (about two minutes)", level: 3 })).toBeVisible();
+});
+
 test("getting started package table links backend row to Quickstart paths", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
   const table = page
@@ -104,7 +114,7 @@ test("getting started links to a catalog page", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   await page
     .getByRole("main")
-    .getByRole("link", { name: "Set up AI agent instructions", exact: true })
+    .getByRole("link", { name: "AI setup catalog page", exact: true })
     .click();
   await page.waitForURL("**/docs/ai/**", { timeout: 10000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
