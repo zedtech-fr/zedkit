@@ -109,6 +109,7 @@ const DEPRECATED_1REM_CLASSES = [
   "py-alert-block",
   "gap-option-card-gap",
   "gap-option-cards-gap",
+  "mb-field-legend-bottom",
 ];
 
 function walkJs(dir, acc = []) {
