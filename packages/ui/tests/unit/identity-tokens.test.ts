@@ -59,7 +59,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         expect(rem[i]).toBeGreaterThan(rem[i - 1] ?? 0);
       }
     }
-    for (const name of ["--text-xs", "--text-sm", "--text-base", "--text-lg", "--text-2xl", "--text-3xl", "--text-4xl", "--text-5xl", "--tracking-tight", "--tracking-wide", "--zk-heading-tracking", "--zk-label-tracking", "--zk-shadow-xs", "--zk-shadow-sm", "--zk-shadow-md", "--zk-shadow-xl", "--zk-shadow-overlay", "--spacing", "--radius", "--radius-xs", "--radius-sm", "--radius-md", "--radius-2xl", "--zk-border-width", "--zk-color-duration", "--zk-heading-leading"] as const) {
+    for (const name of ["--text-xs", "--text-sm", "--text-base", "--text-lg", "--text-2xl", "--text-3xl", "--text-4xl", "--text-5xl", "--tracking-tight", "--tracking-wide", "--zk-heading-tracking", "--zk-label-tracking", "--zk-shadow-xs", "--zk-shadow-sm", "--zk-shadow-md", "--zk-shadow-xl", "--zk-shadow-overlay", "--spacing", "--radius", "--radius-xs", "--radius-sm", "--radius-md", "--radius-xl", "--radius-2xl", "--zk-border-width", "--zk-color-duration", "--zk-heading-leading"] as const) {
       const seen = new Map<string, string>();
       for (const [id, css] of Object.entries(looks)) {
         const value = token(css, name) ?? "";
@@ -97,6 +97,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/glass.css"), "--radius-sm") ?? "").toBe("0.625rem");
     expect(token(read("identities/glass.css"), "--radius-md") ?? "").toBe("0.875rem");
     expect(token(read("identities/glass.css"), "--radius-2xl") ?? "").toBe("2.25rem");
+    expect(token(read("identities/glass.css"), "--radius-xl") ?? "").toBe("2rem");
     expect(token(read("identities/glass.css"), "--text-3xl") ?? "").toBe("2rem");
     expect(token(read("identities/glass.css"), "--text-5xl") ?? "").toBe("3.125rem");
     expect(token(read("identities/glass.css"), "--zk-heading-leading") ?? "").toBe("1.16");
