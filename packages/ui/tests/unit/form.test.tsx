@@ -105,6 +105,9 @@ describe("form brick", () => {
     expect(screen.getByText("Second problem.")).not.toBeNull();
     expect(screen.getByRole("alert")).not.toBeNull();
     expect(document.querySelector("[data-slot=field-set]")?.className).toContain("gap-field-set");
+    const legend = document.querySelector("[data-slot=field-legend]");
+    expect(legend?.className).toContain("mb-3");
+    expect(legend?.className).not.toContain("mb-field-legend-bottom");
     const separator = document.querySelector("[data-slot=field-separator]");
     expect(separator?.classList.contains("h-5")).toBe(true);
     expect(separator?.className).not.toContain("h-field-separator");
