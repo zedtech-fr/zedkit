@@ -114,8 +114,23 @@ describe("primitives", () => {
     );
     const separators = container.querySelectorAll('[data-orientation]');
     expect(separators).toHaveLength(2);
-    expect(separators[0]?.className).toContain("h-separator-thickness");
-    expect(separators[1]?.className).toContain("w-separator-thickness");
+    expect(separators[0]?.className).toContain("border-t");
+    expect(separators[1]?.className).toContain("border-l");
+    expect(separators[0]?.className).not.toContain("h-separator-thickness");
+    expect(separators[1]?.className).not.toContain("w-separator-thickness");
+  });
+
+  it("keeps a separator decorative unless named", () => {
+    render(
+      <>
+        <Separator />
+        <Separator decorative={false} aria-label="Section break" />
+      </>,
+    );
+    const [decorative, named] = document.querySelectorAll('[data-slot=separator]');
+    expect(decorative?.getAttribute("role")).toBe("none");
+    expect(named?.getAttribute("role")).toBe("separator");
+    expect(named?.getAttribute("aria-label")).toBe("Section break");
   });
 
   it("renders a skeleton block that pulses only when motion is safe", () => {
