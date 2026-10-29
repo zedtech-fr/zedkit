@@ -13,6 +13,7 @@ const nextConfig = {
       "lucide-react",
       "class-variance-authority",
       "clsx",
+      "tailwind-merge",
     ],
   },
 };
