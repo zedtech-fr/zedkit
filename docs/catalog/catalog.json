@@ -1464,7 +1464,7 @@
           "purpose": "Accessible labels that pair with any control via `htmlFor`.",
           "whenToUse": "For every visible input name.",
           "whenNotToUse": "For placeholder-only inputs — use `aria-label` instead; for headings — use Heading.",
-          "derivedFrom": "shadcn/ui (label)",
+          "derivedFrom": null,
           "example": "import { Input, Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"name\">Name</Label>\n<Input id=\"name\" placeholder=\"Ada\" />",
           "examples": [
             {
@@ -1477,7 +1477,7 @@
             }
           ],
           "registry": "label",
-          "a11y": "Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`.",
+          "a11y": "Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`. Size is `text-sm`; identity `--zk-label-transform` stays on badges and table heads.",
           "troubleshooting": "Clicking the label does nothing — the control needs a matching `id` for `htmlFor`. Label not dimming with a disabled control — `peer-disabled` needs the control as a preceding `peer` sibling.",
           "seeAlso": [
             "Collect text input with a label",
