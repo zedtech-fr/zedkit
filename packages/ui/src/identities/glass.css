@@ -115,7 +115,7 @@
 
   /* Depth: soft and wide, tinted by the page */
   --zk-shadow-color: 232 40% 24%;
-  --zk-shadow-xs: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-xs: 0 1px 3px hsl(var(--zk-shadow-color) / 0.07);
   --zk-shadow-sm: 0 2px 8px -2px hsl(var(--zk-shadow-color) / 0.1), var(--zk-glass-highlight);
   --zk-shadow-md: 0 10px 30px -10px hsl(var(--zk-shadow-color) / 0.2), var(--zk-glass-highlight);
   --zk-shadow-lg: 0 18px 44px -14px hsl(var(--zk-shadow-color) / 0.26), var(--zk-glass-highlight);
