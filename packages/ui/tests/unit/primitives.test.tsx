@@ -236,6 +236,8 @@ describe("primitives", () => {
     );
     expect(screen.getByLabelText("Name").className).toContain("h-control-height");
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
+    expect(screen.getByLabelText("Bio").className).toContain("px-3");
+    expect(screen.getByLabelText("Bio").className).not.toContain("px-control-inline");
     expect(screen.getByLabelText("Bio").className).toContain("py-2");
     expect(screen.getByLabelText("Bio").className).not.toContain("py-control-block-lg");
   });
