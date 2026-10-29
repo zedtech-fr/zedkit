@@ -1,5 +1,15 @@
 # @zedtech/zedkit-ai
 
+## 0.8.1
+
+### Patch Changes
+
+- 0b2fcd8: Docs: agents package row links to Quickstart path A (#301).
+- Updated dependencies [a810ef0]
+- Updated dependencies [867edd7]
+- Updated dependencies [6cf1204]
+  - @zedtech/zedkit-core@0.2.1
+
 ## 0.8.0
 
 ### Minor Changes

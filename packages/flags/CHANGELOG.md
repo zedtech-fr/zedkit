@@ -1,5 +1,14 @@
 # @zedtech/zedkit-flags
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [a810ef0]
+- Updated dependencies [867edd7]
+- Updated dependencies [6cf1204]
+  - @zedtech/zedkit-core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
