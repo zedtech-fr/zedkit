@@ -7,14 +7,14 @@ www.zedkit.app {
 }
 
 zedkit.app {
+	root * /srv/site
+	encode zstd gzip
+
 	handle /api/identity/suggest* {
 		reverse_proxy suggest:3001
 	}
 
 	handle {
-		root * /srv/site
-		encode zstd gzip
-
 		# Renamed page: "Show the zedkit logo" is now "Show your brand logo".
 		redir /docs/ui/show-the-zedkit-logo /docs/ui/show-your-brand-logo permanent
 
@@ -30,10 +30,11 @@ zedkit.app {
 		# (for example /r/<name>.json) is served as-is with its own content type.
 		try_files {path} {path}.html {path}/index.html
 		file_server
+	}
 
-		handle_errors {
-			rewrite * /404.html
-			file_server
-		}
+	# handle_errors is not an ordered HTTP handler: keep it at site level.
+	handle_errors {
+		rewrite * /404.html
+		file_server
 	}
 }
