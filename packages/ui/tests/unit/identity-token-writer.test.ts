@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 
 import {
@@ -12,7 +15,22 @@ import {
   suggestIdentityTokens,
   tokensToCss,
   tokensToCssVars,
+  type IdentityId,
 } from "#identity-tokens.js";
+
+const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
+const read = (file: string): string => readFileSync(join(src, file), "utf8");
+
+function cssTokens(css: string, name: string): string[] {
+  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  return [...stripped.matchAll(new RegExp(`${name}\\s*:\\s*([^;]+);`, "g"))].map((match) =>
+    (match[1] ?? "").replace(/\s+/g, " ").trim(),
+  );
+}
+
+function cssToken(css: string, name: string): string | undefined {
+  return cssTokens(css, name)[0];
+}
 
 const DRAFT = '[data-identity-scope][data-identity="draft"]';
 
@@ -37,6 +55,46 @@ describe("identity token schema", () => {
 
   it("rejects a preset with no dark pair", () => {
     expect(parseIdentityTokens({ ...identityPresets.press, dark: undefined }).success).toBe(false);
+  });
+
+  it("keeps compact fields in step with shipped identity CSS", () => {
+    const identitiesCss = read("identities.css");
+    const looks: Record<IdentityId, string> = {
+      mist: identitiesCss.slice(identitiesCss.indexOf("Scoped mist resets the stock tokens.")),
+      press: read("identities/press.css"),
+      tide: read("identities/tide.css"),
+      volt: read("identities/volt.css"),
+      maison: read("identities/maison.css"),
+      glass: read("identities/glass.css"),
+    };
+    const fields = [
+      ["spacing", "--spacing"],
+      ["borderWidth", "--zk-border-width"],
+      ["radius", "--radius"],
+      ["bodyLeading", "--zk-body-leading"],
+    ] as const;
+    const headingFields = [
+      ["headingLeading", "--zk-heading-leading"],
+      ["headingTracking", "--zk-heading-tracking"],
+      ["labelTracking", "--zk-label-tracking"],
+    ] as const;
+    const colours = ["background", "foreground", "primary", "accent", "border"] as const;
+    for (const [id, css] of Object.entries(looks) as [IdentityId, string][]) {
+      const preset = identityPresets[id];
+      for (const [field, name] of fields) {
+        expect(preset[field]).toBe(cssToken(css, name));
+      }
+      for (const [field, name] of headingFields) {
+        const value = cssToken(css, name);
+        if (!value || value === "initial") continue;
+        expect(preset[field]).toBe(value);
+      }
+      for (const colour of colours) {
+        const pair = cssTokens(css, `--${colour}`);
+        expect(preset.light[colour]).toBe(pair[0]);
+        expect(preset.dark[colour]).toBe(pair[1]);
+      }
+    }
   });
 });
 
