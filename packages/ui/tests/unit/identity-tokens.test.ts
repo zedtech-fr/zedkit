@@ -104,7 +104,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/glass.css"), "--zk-shadow-xs") ?? "").toBe(
       "0 1px 3px hsl(var(--zk-shadow-color) / 0.07)",
     );
-    expect(token(read("identities/tide.css"), "--zk-body-leading")).toBe("1.55");
+    expect(token(read("identities/tide.css"), "--zk-body-leading")).toBe("1.35");
     expect(token(read("identities/tide.css"), "--text-2xl") ?? "").toBe("2.125rem");
     expect(token(read("identities/tide.css"), "--zk-color-duration")).toBe("180ms");
     expect(token(read("identities/tide.css"), "--zk-border-width") ?? "").toBe("1.5px");
