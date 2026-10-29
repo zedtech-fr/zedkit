@@ -11,6 +11,7 @@ const SKIP = new Set([
   "tokensToCssVars",
   "parseIdentityTokens",
   "suggestIdentityTokens",
+  "identityContrastWarnings",
   "isPresetId",
   "createDataTableColumns",
   "useFormField",

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   applyIdentityTokenSheet,
+  Badge,
   Button,
   Field,
   FieldLabel,
   Heading,
+  identityContrastWarnings,
   identityPresets,
   identities,
   Input,
@@ -14,6 +16,7 @@ import {
   parseIdentityTokens,
   Stack,
   Text,
+  type IdentityContrastWarning,
   type IdentityId,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
@@ -81,9 +84,14 @@ function TokenField({
 
 const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
 
-function patchTokens(tokens: IdentityTokens, key: string, value: string): IdentityTokens {
+function patchTokens(
+  tokens: IdentityTokens,
+  key: string,
+  value: string,
+  scheme: "light" | "dark",
+): IdentityTokens {
   const next = LIGHT_KEY_SET.has(key)
-    ? { ...tokens, light: { ...tokens.light, [key]: value } }
+    ? { ...tokens, [scheme]: { ...tokens[scheme], [key]: value } }
     : { ...tokens, [key]: value };
   const parsed = parseIdentityTokens(next);
   return parsed.success ? parsed.data : tokens;
@@ -91,11 +99,15 @@ function patchTokens(tokens: IdentityTokens, key: string, value: string): Identi
 
 function EditorToolbar({
   identity,
+  darkPreview,
   onIdentity,
+  onDark,
   onReset,
 }: {
   identity: IdentityId;
+  darkPreview: boolean;
   onIdentity: (id: IdentityId) => void;
+  onDark: () => void;
   onReset: () => void;
 }) {
   return (
@@ -118,6 +130,9 @@ function EditorToolbar({
           ))}
         </select>
       </Field>
+      <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
+        Dark
+      </Button>
       <Button type="button" variant="outline" onClick={onReset}>
         Reset
       </Button>
@@ -127,11 +142,14 @@ function EditorToolbar({
 
 function EditorFields({
   tokens,
+  scheme,
   onPatch,
 }: {
   tokens: IdentityTokens;
+  scheme: "light" | "dark";
   onPatch: (key: string, value: string) => void;
 }) {
+  const pair = tokens[scheme];
   return (
     <Stack gap={3}>
       {SCALAR_KEYS.map((key) => (
@@ -148,7 +166,7 @@ function EditorFields({
           key={key}
           id={`identity-editor-${key}`}
           label={LIGHT_LABELS[key]}
-          value={tokens.light[key]}
+          value={pair[key]}
           onChange={(value) => onPatch(key, value)}
         />
       ))}
@@ -156,9 +174,14 @@ function EditorFields({
   );
 }
 
-function DraftCard() {
+function DraftCard({ darkPreview }: { darkPreview: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    ref.current?.classList.toggle("dark", darkPreview);
+  }, [darkPreview]);
   return (
     <Stack
+      ref={ref}
       data-identity-scope=""
       data-identity={DRAFT_ID}
       data-slot="identity-editor-preview"
@@ -172,41 +195,86 @@ function DraftCard() {
   );
 }
 
+function ContrastChips({
+  warnings,
+  onFix,
+}: {
+  warnings: IdentityContrastWarning[];
+  onFix: (warning: IdentityContrastWarning) => void;
+}) {
+  if (warnings.length === 0) return null;
+  return (
+    <Stack gap={2} role="status">
+      {warnings.map((warning) => (
+        <Stack key={warning.scheme} direction="horizontal" gap={2}>
+          <Badge variant="warning">
+            {warning.scheme} text {warning.ratio}:1 (need {warning.min}:1)
+          </Badge>
+          <Button type="button" size="sm" variant="outline" onClick={() => onFix(warning)}>
+            {`Fix ${warning.scheme} text`}
+          </Button>
+        </Stack>
+      ))}
+    </Stack>
+  );
+}
+
 function IdentityEditorPanel() {
   const [identity, setIdentity] = useState<IdentityId>("mist");
   const [tokens, setTokens] = useState<IdentityTokens>(identityPresets.mist);
+  const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
+  const scheme = darkPreview ? "dark" : "light";
 
   useLayoutEffect(() => {
     const parsed = parseIdentityEditorSearch(window.location.search);
     setIdentity(parsed.identity);
     setTokens(parsed.tokens);
+    setDarkPreview(parsed.darkPreview);
     setReady(true);
   }, []);
 
   useLayoutEffect(() => {
     if (!ready) return;
     const sheet = applyIdentityTokenSheet(tokens, DRAFT_SELECTOR);
-    const query = serializeIdentityEditorSearch(identity, tokens);
+    const query = serializeIdentityEditorSearch(identity, tokens, darkPreview);
     window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
     return () => {
       sheet.remove();
     };
-  }, [identity, ready, tokens]);
+  }, [darkPreview, identity, ready, tokens]);
 
   return (
     <Stack gap={6} data-slot="identity-editor">
       <EditorToolbar
         identity={identity}
+        darkPreview={darkPreview}
         onIdentity={(id) => {
           setIdentity(id);
           setTokens(identityPresets[id]);
         }}
+        onDark={() => setDarkPreview((value) => !value)}
         onReset={() => setTokens(identityPresets[identity])}
       />
       <Text>Change spacing first, then watch the card.</Text>
-      <EditorFields tokens={tokens} onPatch={(key, value) => setTokens((current) => patchTokens(current, key, value))} />
-      <DraftCard />
+      <ContrastChips
+        warnings={identityContrastWarnings(tokens)}
+        onFix={(warning) =>
+          setTokens((current) => {
+            const parsed = parseIdentityTokens({
+              ...current,
+              [warning.scheme]: { ...current[warning.scheme], foreground: warning.suggestedForeground },
+            });
+            return parsed.success ? parsed.data : current;
+          })
+        }
+      />
+      <EditorFields
+        tokens={tokens}
+        scheme={scheme}
+        onPatch={(key, value) => setTokens((current) => patchTokens(current, key, value, scheme))}
+      />
+      <DraftCard darkPreview={darkPreview} />
     </Stack>
   );
 }
