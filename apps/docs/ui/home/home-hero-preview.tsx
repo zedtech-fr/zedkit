@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Card, Stack } from "@zedtech/zedkit-ui";
+import { HOME_HERO_PREVIEW_SHELL_CLASS } from "@/ui/home/home-rhythm";
 
 const HomeAdminScene = dynamic(
   () => import("@/ui/home/home-admin-scene").then((mod) => mod.HomeAdminScene),
@@ -15,12 +16,8 @@ const HomeAdminScene = dynamic(
  */
 export function HomeHeroPreview() {
   return (
-    <Stack
-      aria-hidden="true"
-      className="pointer-events-none min-h-72 w-full lg:min-h-80"
-      data-home-hero-preview
-    >
-      <Card className="h-full min-h-72 select-none lg:min-h-80">
+    <Stack aria-hidden="true" className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview>
+      <Card className="h-full select-none">
         <Stack className="h-full justify-between p-card-padding">
           <HomeAdminScene />
         </Stack>

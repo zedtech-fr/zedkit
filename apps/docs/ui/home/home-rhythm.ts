@@ -10,3 +10,7 @@ export const HOME_CARD_GRID_THREE_COL = "grid min-w-0 gap-4 md:grid-cols-3";
 /** Soft enter animation; static when prefers-reduced-motion (kit motion tokens). */
 export const HOME_SECTION_REVEAL_CLASS =
   "motion-safe:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]";
+
+/** Fixed-height hero preview slot so idle-loaded art does not shift page scroll (#618). */
+export const HOME_HERO_PREVIEW_SHELL_CLASS =
+  "pointer-events-none h-72 w-full shrink-0 overflow-hidden lg:h-80";
