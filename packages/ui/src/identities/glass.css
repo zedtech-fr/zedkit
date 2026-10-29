@@ -191,7 +191,7 @@
   --zk-glass-edge-alpha: 0.16;
   --zk-glass-highlight: inset 0 1px 0 hsl(0 0% 100% / 0.08);
   --zk-shadow-color: 232 60% 2%;
-  --zk-shadow-xs: none;
+  --zk-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35), var(--zk-glass-highlight);
   --zk-shadow-sm: 0 2px 8px -2px rgb(0 0 0 / 0.5), var(--zk-glass-highlight);
   --zk-shadow-md: 0 10px 30px -10px rgb(0 0 0 / 0.6), var(--zk-glass-highlight);
   --zk-shadow-lg: 0 18px 44px -14px rgb(0 0 0 / 0.65), var(--zk-glass-highlight);
