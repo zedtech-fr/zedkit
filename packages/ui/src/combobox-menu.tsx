@@ -30,13 +30,13 @@ export function ComboboxMenu({
       data-slot="combobox-list"
     >
       {loading ? (
-        <li className="flex items-center gap-2 px-control-inline py-control-block text-sm text-muted-foreground">
+        <li className="flex items-center gap-2 px-3 py-control-block text-sm text-muted-foreground">
           <Spinner label={messages.loadingOptions} />
           {messages.loadingEllipsis}
         </li>
       ) : null}
       {!loading && items.length === 0 ? (
-        <li className="px-control-inline py-control-block text-sm text-muted-foreground">{emptyMessage}</li>
+        <li className="px-3 py-control-block text-sm text-muted-foreground">{emptyMessage}</li>
       ) : null}
       {!loading
         ? items.map((item, index) => (
@@ -44,7 +44,7 @@ export function ComboboxMenu({
               key={item.value}
               {...getItemProps({ item, index })}
               className={cn(
-                "cursor-default rounded-sm px-control-inline py-control-block text-sm outline-none",
+                "cursor-default rounded-sm px-3 py-control-block text-sm outline-none",
                 highlightedIndex === index ? "bg-accent text-accent-foreground" : "",
               )}
             >
