@@ -1632,8 +1632,8 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `useIdentity`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`
-- Wraps: none (CSS variables in `identities.css`)
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `useIdentity`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`
+- Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: alpha
 - Short name: Identities
 - Audience: Teams that want to change the whole look of an app, or offer a choice, without touching components.
@@ -1641,7 +1641,7 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 - When to use: To rebrand or offer several looks from one set of components.
 - When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
 - See also: `Theme an admin app (dark/light included)`
-- Examples: Header switcher, Same card in each look, Touch picker
+- Examples: Header switcher, Same card in each look, Touch picker, Live token sheet
 - A11y: `IdentitySwitcher` is a native labelled `select` (visible label with `showLabel`, otherwise screen-reader only); `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose. A choice applies at once and the new look keeps the kit's contrast pairs in light and dark; announce the change in your own status line (`role="status"`) if you show one. Keep the trigger name stable (`label`), because the current identity is read from the value.
 - Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher, and `suppressHydrationWarning` on `<html>`. A stored id is ignored — it must be in `ids`. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks. The whole page changed but you wanted one card — put `data-identity-scope` and `data-identity="…"` on that element instead of changing `<html>`; the scope sets tokens, fonts and radii for its subtree only. Two switchers disagree — give them the same `storageKey`; they follow each other through `IDENTITY_CHANGE_EVENT`.
 
@@ -1700,4 +1700,13 @@ export function MobileLookPicker() {
     </>
   );
 }
+```
+
+```ts
+import { identityPresets, suggestIdentityTokens, tokensToCss } from "@zedtech/zedkit-ui";
+
+const tokens = suggestIdentityTokens("calm editorial, rounded, warm");
+const css = tokensToCss(tokens, '[data-identity-scope][data-identity="draft"]');
+void identityPresets.mist;
+void css;
 ```

@@ -1,0 +1,274 @@
+import { z } from "zod";
+
+const hsl = z.string().regex(/^\d+(\.\d+)?\s+\d+(\.\d+)?%\s+\d+(\.\d+)?%$/);
+const cssValue = z.string().min(1);
+const leading = z.string().regex(/^\d+(\.\d+)?$/);
+const tracking = z.string().regex(/^-?\d+(\.\d+)?em$/);
+
+/** Compact identity: one value per family the live editor can write. */
+const identityTokenSchema = z.object({
+  spacing: cssValue,
+  borderWidth: cssValue,
+  radius: cssValue,
+  bodyLeading: leading,
+  headingLeading: leading,
+  headingTracking: tracking,
+  labelTracking: tracking,
+  fontSans: cssValue,
+  fontDisplay: cssValue,
+  background: hsl,
+  foreground: hsl,
+  primary: hsl,
+  accent: hsl,
+  border: hsl,
+  shadowSm: cssValue,
+  shadowMd: cssValue,
+});
+
+type IdentityTokens = z.infer<typeof identityTokenSchema>;
+
+const INTER = '"Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, sans-serif';
+const GROTESK =
+  '"Space Grotesk Variable", "Space Grotesk", "Space Grotesk Variable Fallback", ui-sans-serif, system-ui, sans-serif';
+const NEWSREADER = '"Newsreader Variable", Newsreader, "Newsreader Variable Fallback", Georgia, serif';
+const GEIST = '"Geist Variable", Geist, "Geist Variable Fallback", ui-sans-serif, system-ui, sans-serif';
+const JOST = '"Jost Variable", Jost, "Jost Variable Fallback", ui-sans-serif, system-ui, sans-serif';
+const CORMORANT = '"Cormorant Variable", Cormorant, "Cormorant Variable Fallback", Georgia, serif';
+
+const identityPresets = {
+  mist: {
+    spacing: "0.25rem",
+    borderWidth: "1px",
+    radius: "0.5rem",
+    bodyLeading: "1.6",
+    headingLeading: "1.1",
+    headingTracking: "-0.025em",
+    labelTracking: "0.025em",
+    fontSans: INTER,
+    fontDisplay: INTER,
+    background: "0 0% 100%",
+    foreground: "240 10% 3.9%",
+    primary: "240 5.9% 10%",
+    accent: "240 4.8% 95.9%",
+    border: "240 5.9% 90%",
+    shadowSm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+    shadowMd: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+  },
+  press: {
+    spacing: "0.24rem",
+    borderWidth: "2px",
+    radius: "0px",
+    bodyLeading: "1.45",
+    headingLeading: "1.06",
+    headingTracking: "-0.015em",
+    labelTracking: "0.08em",
+    fontSans: GROTESK,
+    fontDisplay: NEWSREADER,
+    background: "45 35% 94%",
+    foreground: "0 0% 5%",
+    primary: "0 0% 5%",
+    accent: "160 55% 72%",
+    border: "0 0% 18%",
+    shadowSm: "0 0 0 0 transparent",
+    shadowMd: "0 0 0 0 transparent",
+  },
+  tide: {
+    spacing: "0.28rem",
+    borderWidth: "1.5px",
+    radius: "1rem",
+    bodyLeading: "1.55",
+    headingLeading: "1.02",
+    headingTracking: "-0.035em",
+    labelTracking: "0.12em",
+    fontSans: INTER,
+    fontDisplay: INTER,
+    background: "20 60% 99%",
+    foreground: "0 0% 10%",
+    primary: "221 41% 21%",
+    accent: "14 100% 90%",
+    border: "28 25% 86%",
+    shadowSm: "0 3px 10px hsl(221 41% 21% / 0.12), 0 0 14px -4px hsl(10 71% 52% / 0.18)",
+    shadowMd: "0 6px 16px hsl(221 41% 21% / 0.14), 0 16px 40px -8px hsl(221 41% 21% / 0.28)",
+  },
+  volt: {
+    spacing: "0.225rem",
+    borderWidth: "1.25px",
+    radius: "0.25rem",
+    bodyLeading: "1.4",
+    headingLeading: "1.08",
+    headingTracking: "-0.04em",
+    labelTracking: "0.1em",
+    fontSans: GEIST,
+    fontDisplay: GEIST,
+    background: "0 0% 96%",
+    foreground: "0 0% 4%",
+    primary: "0 0% 4%",
+    accent: "72 90% 60%",
+    border: "0 0% 80%",
+    shadowSm: "0 1px 2px hsl(0 0% 0% / 0.12)",
+    shadowMd: "0 8px 20px -8px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(0 0% 0% / 0.05)",
+  },
+  maison: {
+    spacing: "0.3rem",
+    borderWidth: "1.75px",
+    radius: "2px",
+    bodyLeading: "1.7",
+    headingLeading: "1.12",
+    headingTracking: "0.005em",
+    labelTracking: "0.18em",
+    fontSans: JOST,
+    fontDisplay: CORMORANT,
+    background: "40 33% 98%",
+    foreground: "30 10% 12%",
+    primary: "30 10% 12%",
+    accent: "38 45% 88%",
+    border: "36 18% 86%",
+    shadowSm: "0 1px 1px hsl(30 10% 12% / 0.06)",
+    shadowMd: "0 1px 2px hsl(30 10% 12% / 0.06), 0 8px 20px -16px hsl(30 10% 12% / 0.12)",
+  },
+  glass: {
+    spacing: "0.27rem",
+    borderWidth: "0.75px",
+    radius: "1.25rem",
+    bodyLeading: "1.65",
+    headingLeading: "1.16",
+    headingTracking: "-0.03em",
+    labelTracking: "0.01em",
+    fontSans: INTER,
+    fontDisplay: GROTESK,
+    background: "220 60% 97%",
+    foreground: "224 45% 12%",
+    primary: "243 70% 46%",
+    accent: "262 85% 93%",
+    border: "220 35% 82%",
+    shadowSm: "0 2px 8px -2px hsl(232 40% 24% / 0.1)",
+    shadowMd: "0 10px 30px -10px hsl(232 40% 24% / 0.2)",
+  },
+};
+
+const RADIUS_STEPS = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
+const IDENTITY_TOKEN_SHEET_SLOT = "identity-token-sheet";
+
+function tokensToCssVars(tokens: IdentityTokens): Record<string, string> {
+  const vars: Record<string, string> = {
+    "--spacing": tokens.spacing,
+    "--zk-border-width": tokens.borderWidth,
+    "--radius": tokens.radius,
+    "--zk-body-leading": tokens.bodyLeading,
+    "--zk-heading-leading": tokens.headingLeading,
+    "--zk-heading-tracking": tokens.headingTracking,
+    "--zk-label-tracking": tokens.labelTracking,
+    "--zk-font-sans": tokens.fontSans,
+    "--font-sans": tokens.fontSans,
+    "--zk-font-display": tokens.fontDisplay,
+    "--font-display": tokens.fontDisplay,
+    "--background": tokens.background,
+    "--foreground": tokens.foreground,
+    "--primary": tokens.primary,
+    "--accent": tokens.accent,
+    "--border": tokens.border,
+    "--zk-shadow-sm": tokens.shadowSm,
+    "--zk-shadow-md": tokens.shadowMd,
+  };
+  for (const step of RADIUS_STEPS) vars[`--radius-${step}`] = tokens.radius;
+  return vars;
+}
+
+function tokensToCss(tokens: IdentityTokens, selector: string): string {
+  const body = Object.entries(tokensToCssVars(tokens))
+    .map(([name, value]) => `  ${name}: ${value};`)
+    .join("\n");
+  return `${selector} {\n${body}\n}`;
+}
+
+function parseIdentityTokens(input: unknown) {
+  return identityTokenSchema.safeParse(input);
+}
+
+type IdentityId = keyof typeof identityPresets;
+
+function isPresetId(id: string): id is IdentityId {
+  return Object.hasOwn(identityPresets, id);
+}
+
+const SUGGEST_KEYS: { id: IdentityId; keys: string[] }[] = [
+  { id: "press", keys: ["editorial", "serif", "ink", "paper", "news"] },
+  { id: "maison", keys: ["warm", "ivory", "boutique", "airy", "maison"] },
+  { id: "tide", keys: ["rounded", "navy", "coral", "lively", "tide"] },
+  { id: "volt", keys: ["electric", "dense", "acid", "volt"] },
+  { id: "glass", keys: ["glass", "frost", "translucent"] },
+  { id: "mist", keys: ["calm", "soft", "mist"] },
+];
+
+/** Stub: keyword map through the schema. Lot 4 replaces this with a model call. */
+function suggestIdentityTokens(prompt: string): IdentityTokens {
+  const hay = prompt.toLowerCase();
+  let best: IdentityId = "mist";
+  let score = 0;
+  for (const rule of SUGGEST_KEYS) {
+    const n = rule.keys.reduce((count, key) => count + (hay.includes(key) ? 1 : 0), 0);
+    if (n > score) {
+      score = n;
+      best = rule.id;
+    }
+  }
+  return identityTokenSchema.parse(identityPresets[best]);
+}
+
+function applyIdentityTokenSheet(
+  tokens: IdentityTokens,
+  selector: string,
+  doc: Document = document,
+): HTMLStyleElement {
+  const existing = doc.querySelector(`style[data-slot="${IDENTITY_TOKEN_SHEET_SLOT}"]`);
+  const sheet = existing instanceof HTMLStyleElement ? existing : doc.createElement("style");
+  sheet.setAttribute("data-slot", IDENTITY_TOKEN_SHEET_SLOT);
+  sheet.textContent = tokensToCss(tokens, selector);
+  if (!sheet.parentNode) doc.head.append(sheet);
+  return sheet;
+}
+
+type TokenHistory = {
+  past: IdentityTokens[];
+  present: IdentityTokens;
+  future: IdentityTokens[];
+};
+
+function historyOf(present: IdentityTokens): TokenHistory {
+  return { past: [], present, future: [] };
+}
+
+function historyPush(history: TokenHistory, next: IdentityTokens): TokenHistory {
+  return { past: [...history.past, history.present], present: next, future: [] };
+}
+
+function historyUndo(history: TokenHistory): TokenHistory {
+  const prev = history.past.at(-1);
+  if (!prev) return history;
+  return { past: history.past.slice(0, -1), present: prev, future: [history.present, ...history.future] };
+}
+
+function historyRedo(history: TokenHistory): TokenHistory {
+  const [next, ...rest] = history.future;
+  if (!next) return history;
+  return { past: [...history.past, history.present], present: next, future: rest };
+}
+
+export {
+  IDENTITY_TOKEN_SHEET_SLOT,
+  applyIdentityTokenSheet,
+  historyOf,
+  historyPush,
+  historyRedo,
+  historyUndo,
+  identityPresets,
+  identityTokenSchema,
+  isPresetId,
+  type IdentityId,
+  parseIdentityTokens,
+  suggestIdentityTokens,
+  tokensToCss,
+  tokensToCssVars,
+  type IdentityTokens,
+  type TokenHistory,
+};
