@@ -9,8 +9,18 @@ type IdentityOption = {
 
 /** localStorage key holding the chosen identity id. */
 const IDENTITY_STORAGE_KEY = "zk-identity";
+/** localStorage key holding CSS for a custom identity sheet. */
+const IDENTITY_CUSTOM_STORAGE_KEY = "zk-identity-custom";
+/** `data-identity` value while a custom token sheet is active. */
+const CUSTOM_IDENTITY_ID = "custom";
+/** `data-slot` on the custom identity `<style>` node. */
+const IDENTITY_CUSTOM_SHEET_SLOT = "identity-custom-sheet";
 /** Window event fired after the identity attribute changes. */
 const IDENTITY_CHANGE_EVENT = "zk-identity-change";
+
+function customIdentityStorageKey(storageKey: string): string {
+  return storageKey === IDENTITY_STORAGE_KEY ? IDENTITY_CUSTOM_STORAGE_KEY : `${storageKey}-custom`;
+}
 
 /**
  * Identities shipped in `identities.css`, offered by default by
@@ -57,8 +67,12 @@ const identities: readonly IdentityOption[] = [
 ];
 
 export {
+  CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
+  IDENTITY_CUSTOM_SHEET_SLOT,
+  IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
+  customIdentityStorageKey,
   identities,
   type IdentityOption,
 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
+  applyCustomIdentity,
   applyIdentityTokenSheet,
   Badge,
   Button,
@@ -10,9 +11,7 @@ import {
   Heading,
   identityContrastWarnings,
   identityPresets,
-  identities,
   Input,
-  isPresetId,
   parseIdentityTokens,
   Stack,
   Text,
@@ -22,6 +21,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { IdentityEditorSuggest } from "@/components/identity-editor-suggest";
+import { IdentityEditorToolbar } from "@/components/identity-editor-toolbar";
 import {
   LIGHT_KEYS,
   SCALAR_KEYS,
@@ -96,49 +96,6 @@ function patchTokens(
     : { ...tokens, [key]: value };
   const parsed = parseIdentityTokens(next);
   return parsed.success ? parsed.data : tokens;
-}
-
-function EditorToolbar({
-  identity,
-  darkPreview,
-  onIdentity,
-  onDark,
-  onReset,
-}: {
-  identity: IdentityId;
-  darkPreview: boolean;
-  onIdentity: (id: IdentityId) => void;
-  onDark: () => void;
-  onReset: () => void;
-}) {
-  return (
-    <Stack direction="horizontal" gap={2}>
-      <Field>
-        <FieldLabel htmlFor="identity-editor-look">Look</FieldLabel>
-        <select
-          id="identity-editor-look"
-          className="h-control-height rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
-          value={identity}
-          onChange={(event) => {
-            const id = event.target.value;
-            if (isPresetId(id)) onIdentity(id);
-          }}
-        >
-          {identities.map((look) => (
-            <option key={look.id} value={look.id}>
-              {look.label}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
-        Dark
-      </Button>
-      <Button type="button" variant="outline" onClick={onReset}>
-        Reset
-      </Button>
-    </Stack>
-  );
 }
 
 function EditorFields({
@@ -230,6 +187,7 @@ function IdentityEditorBody({
   onPatch,
   onFix,
   onSuggestApply,
+  onApplySite,
 }: {
   identity: IdentityId;
   tokens: IdentityTokens;
@@ -239,16 +197,18 @@ function IdentityEditorBody({
   onReset: () => void;
   onPatch: (key: string, value: string) => void;
   onFix: (warning: IdentityContrastWarning) => void;
-  onSuggestApply: (next: IdentityTokens) => void;
+  onSuggestApply: (next: IdentityTokens, toSite: boolean) => void;
+  onApplySite: () => void;
 }) {
   return (
     <Stack gap={6} data-slot="identity-editor">
-      <EditorToolbar
+      <IdentityEditorToolbar
         identity={identity}
         darkPreview={darkPreview}
         onIdentity={onIdentity}
         onDark={onDark}
         onReset={onReset}
+        onApplySite={onApplySite}
       />
       <Text>Change spacing first, then watch the card.</Text>
       <ContrastChips warnings={identityContrastWarnings(tokens)} onFix={onFix} />
@@ -305,7 +265,11 @@ function IdentityEditorPanel() {
           return parsed.success ? parsed.data : current;
         })
       }
-      onSuggestApply={setTokens}
+      onSuggestApply={(next, toSite) => {
+        setTokens(next);
+        if (toSite) applyCustomIdentity(next);
+      }}
+      onApplySite={() => applyCustomIdentity(tokens)}
     />
   );
 }

@@ -12,6 +12,7 @@ import {
   DrawerTrigger,
 } from "./drawer.js";
 import {
+  CUSTOM_IDENTITY_ID,
   IDENTITY_STORAGE_KEY,
   applyIdentity,
   identities as builtInIdentities,
@@ -55,10 +56,17 @@ function IdentityPicker({
   const messages = useUiMessages();
   const title = label ?? messages.identity;
   const current = useIdentity(defaultIdentity ?? identities[0]?.id ?? "");
+  const options =
+    current === CUSTOM_IDENTITY_ID && !identities.some((item) => item.id === CUSTOM_IDENTITY_ID)
+      ? [{ id: CUSTOM_IDENTITY_ID, label: messages.identityCustom }, ...identities]
+      : identities;
 
   if (identities.length === 0) return null;
 
-  const currentLabel = identities.find((item) => item.id === current)?.label ?? current;
+  const currentLabel =
+    current === CUSTOM_IDENTITY_ID
+      ? messages.identityCustom
+      : (identities.find((item) => item.id === current)?.label ?? current);
 
   function choose(next: string) {
     applyIdentity(next, storageKey);
@@ -87,7 +95,7 @@ function IdentityPicker({
           <DrawerDescription>{description ?? messages.identityDescription}</DrawerDescription>
         </DrawerHeader>
         <div role="radiogroup" aria-label={title} className="flex flex-col gap-1 overflow-y-auto px-4 pb-6">
-          {identities.map((item) => {
+          {options.map((item) => {
             const selected = item.id === current;
             return (
               <button

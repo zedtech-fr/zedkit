@@ -9,12 +9,16 @@ import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
 import { IDENTITY_BOOTSTRAP_SOURCE } from "#identity-bootstrap.js";
 import {
+  CUSTOM_IDENTITY_ID,
+  IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
   IdentityPicker,
   IdentityScript,
   IdentitySwitcher,
+  applyCustomIdentity,
   applyIdentity,
   identities,
+  identityPresets,
   type IdentityOption,
 } from "#index.js";
 
@@ -31,6 +35,7 @@ beforeAll(() => {
 afterEach(() => {
   document.documentElement.removeAttribute("data-identity");
   localStorage.clear();
+  for (const sheet of document.querySelectorAll('style[data-slot="identity-custom-sheet"]')) sheet.remove();
 });
 
 function runScript(element: ReactElement) {
@@ -59,6 +64,7 @@ describe("IdentityScript", () => {
     expect(script.innerHTML).toBe(IDENTITY_BOOTSTRAP_SOURCE);
     expect(script.getAttribute("data-ids")).toBe(JSON.stringify(['a","b']));
     expect(script.getAttribute("data-storage-key")).toBe('key"with');
+    expect(script.getAttribute("data-custom-key")).toBe('key"with-custom');
     expect(script.getAttribute("data-default")).toBe("calm");
     unmount();
   });
@@ -104,6 +110,16 @@ describe("IdentityScript", () => {
     runScript(<IdentityScript ids={["calm"]} storageKey="my-look" />);
     expect(document.documentElement.getAttribute("data-identity")).toBe("calm");
   });
+
+  it("applies a stored custom sheet before a built-in id", () => {
+    localStorage.setItem(IDENTITY_STORAGE_KEY, "press");
+    localStorage.setItem(IDENTITY_CUSTOM_STORAGE_KEY, ":root{--spacing:0.5rem}");
+    runScript(<IdentityScript />);
+    expect(document.documentElement.getAttribute("data-identity")).toBe(CUSTOM_IDENTITY_ID);
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toBe(
+      ":root{--spacing:0.5rem}",
+    );
+  });
 });
 
 describe("IdentitySwitcher", () => {
@@ -139,6 +155,20 @@ describe("IdentitySwitcher", () => {
     act(() => applyIdentity("bold"));
     expect(await screen.findByDisplayValue("Bold")).toBeTruthy();
   });
+
+  it("shows Custom while a custom sheet is active and clears it when a built-in is chosen", async () => {
+    const user = userEvent.setup();
+    render(<IdentitySwitcher identities={looks} />);
+    act(() => {
+      applyCustomIdentity(identityPresets.mist);
+    });
+    expect(await screen.findByDisplayValue("Custom")).toBeTruthy();
+    expect(document.documentElement.getAttribute("data-identity")).toBe(CUSTOM_IDENTITY_ID);
+    await user.selectOptions(screen.getByLabelText("Identity"), "bold");
+    expect(document.documentElement.getAttribute("data-identity")).toBe("bold");
+    expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toBeNull();
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toBe("");
+  });
 });
 
 describe("IdentityPicker", () => {
@@ -157,5 +187,13 @@ describe("IdentityPicker", () => {
     expect(document.documentElement.getAttribute("data-identity")).toBe("bold");
     expect(localStorage.getItem(IDENTITY_STORAGE_KEY)).toBe("bold");
     expect(bold.getAttribute("aria-checked")).toBe("true");
+  });
+
+  it("names the trigger Custom while a custom sheet is active", async () => {
+    render(<IdentityPicker identities={looks} />);
+    act(() => {
+      applyCustomIdentity(identityPresets.mist);
+    });
+    expect(await screen.findByRole("button", { name: "Identity: Custom" })).toBeTruthy();
   });
 });

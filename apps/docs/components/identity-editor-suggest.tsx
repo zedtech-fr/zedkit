@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Field, FieldLabel, Input, Stack, Text, type IdentityTokens } from "@zedtech/zedkit-ui";
+import { Button, Checkbox, Field, FieldLabel, Input, Stack, Text, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import {
   requestIdentitySuggest,
@@ -26,11 +26,15 @@ function DiffRows({ current, next }: { current: IdentityTokens; next: IdentityTo
 function ProposalCard({
   current,
   proposal,
+  applySite,
+  onApplySite,
   onApply,
   onDiscard,
 }: {
   current: IdentityTokens;
   proposal: SuggestProposal;
+  applySite: boolean;
+  onApplySite: (value: boolean) => void;
   onApply: () => void;
   onDiscard: () => void;
 }) {
@@ -38,6 +42,16 @@ function ProposalCard({
     <Stack gap={2} role="status">
       <Text>{proposal.notice}</Text>
       <DiffRows current={current} next={proposal.tokens} />
+      <Field>
+        <Stack direction="horizontal" gap={2}>
+          <Checkbox
+            id="identity-editor-suggest-site"
+            checked={applySite}
+            onCheckedChange={(value) => onApplySite(value === true)}
+          />
+          <FieldLabel htmlFor="identity-editor-suggest-site">Also apply to the whole site</FieldLabel>
+        </Stack>
+      </Field>
       <Stack direction="horizontal" gap={2}>
         <Button type="button" onClick={onApply}>
           Apply
@@ -55,10 +69,11 @@ function IdentityEditorSuggest({
   onApply,
 }: {
   tokens: IdentityTokens;
-  onApply: (tokens: IdentityTokens) => void;
+  onApply: (tokens: IdentityTokens, toSite: boolean) => void;
 }) {
   const [prompt, setPrompt] = useState("");
   const [busy, setBusy] = useState(false);
+  const [applySite, setApplySite] = useState(false);
   const [proposal, setProposal] = useState<SuggestProposal | null>(null);
 
   function runSuggest() {
@@ -92,8 +107,10 @@ function IdentityEditorSuggest({
         <ProposalCard
           current={tokens}
           proposal={proposal}
+          applySite={applySite}
+          onApplySite={setApplySite}
           onApply={() => {
-            onApply(proposal.tokens);
+            onApply(proposal.tokens, applySite);
             setProposal(null);
           }}
           onDiscard={() => setProposal(null)}

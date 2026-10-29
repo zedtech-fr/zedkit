@@ -6,6 +6,7 @@ const SKIP = new Set([
   "toast",
   "closeRoute",
   "applyIdentity",
+  "applyCustomIdentity",
   "applyIdentityTokenSheet",
   "tokensToCss",
   "tokensToCssVars",

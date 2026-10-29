@@ -182,13 +182,16 @@ export {
 } from "./route-modal.js";
 export { IdentityScript, type IdentityScriptProps } from "./identity-script.js";
 export {
+  CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
+  IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
   applyIdentity,
   identities,
   useIdentity,
   type IdentityOption,
 } from "./identity.js";
+export { applyCustomIdentity } from "./identity-apply-custom.js";
 export { IdentitySwitcher, type IdentitySwitcherProps } from "./identity-switcher.js";
 export { IdentityPicker, type IdentityPickerProps } from "./identity-picker.js";
 export {

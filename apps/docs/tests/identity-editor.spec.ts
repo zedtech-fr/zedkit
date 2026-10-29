@@ -66,7 +66,7 @@ test.describe("identity editor page", () => {
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("Review these token changes.")).toBeVisible();
     await expect(page.getByText("spacing: 0.25rem → 0.5rem")).toBeVisible();
-    await page.getByRole("button", { name: "Apply" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
     await expect.poll(() => spacingOnDraft(page)).toBe("0.5rem");
   });
 
@@ -78,13 +78,63 @@ test.describe("identity editor page", () => {
     await page.getByLabel("Request").fill("editorial serif ink");
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("Suggest is offline. Keyword match instead.")).toBeVisible();
-    await page.getByRole("button", { name: "Apply" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
     await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
   });
 
   test("passes the a11y gate on the panel", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await assertA11yGate(page, "[data-slot=identity-editor]");
+  });
+});
+
+async function spacingOnHtml(page: Page) {
+  return page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--spacing").trim());
+}
+
+test.describe("identity editor apply to site", () => {
+  test("applies the draft to the whole site without a reload", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
+    await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
+    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("custom");
+    await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
+  });
+
+  test("keeps the custom identity after navigation", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
+    await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
+    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("custom");
+  });
+
+  test("resets to the default identity and clears storage", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.getByRole("button", { name: "Reset to default" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
+    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
+  });
+
+  test("applies dark tokens while the site is dark", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "dark"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    await page.getByRole("button", { name: "Dark" }).click();
+    await page.getByLabel("Background").fill("120 40% 20%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect.poll(() =>
+      page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+    ).toBe("120 40% 20%");
+    await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 });
 

@@ -4,6 +4,7 @@ import * as React from "react";
 import { Palette } from "lucide-react";
 
 import {
+  CUSTOM_IDENTITY_ID,
   IDENTITY_STORAGE_KEY,
   applyIdentity,
   identities as builtInIdentities,
@@ -48,6 +49,10 @@ function IdentitySwitcher({
   const generatedId = React.useId();
   const selectId = id ?? generatedId;
   const current = useIdentity(defaultIdentity ?? identities[0]?.id ?? "");
+  const options =
+    current === CUSTOM_IDENTITY_ID && !identities.some((item) => item.id === CUSTOM_IDENTITY_ID)
+      ? [{ id: CUSTOM_IDENTITY_ID, label: messages.identityCustom }, ...identities]
+      : identities;
 
   if (identities.length === 0) return null;
 
@@ -72,7 +77,7 @@ function IdentitySwitcher({
         )}
         {...props}
       >
-        {identities.map((item) => (
+        {options.map((item) => (
           <option key={item.id} value={item.id}>
             {defaultIdentity && item.id === defaultIdentity ? `${item.label}${messages.identityDefaultSuffix}` : item.label}
           </option>

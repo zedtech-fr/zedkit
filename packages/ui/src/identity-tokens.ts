@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import { applyCustomIdentityCss } from "./identity-custom-sheet.js";
+import { IDENTITY_STORAGE_KEY } from "./identity-data.js";
+
 const hsl = z.string().regex(/^\d+(\.\d+)?\s+\d+(\.\d+)?%\s+\d+(\.\d+)?%$/);
 const cssValue = z.string().min(1);
 const leading = z.string().regex(/^\d+(\.\d+)?$/);
@@ -300,6 +303,15 @@ function applyIdentityTokenSheet(
   return sheet;
 }
 
+/** Writes compact tokens onto `:root` / `:root.dark` and persists the CSS. */
+function applyCustomIdentitySheet(
+  tokens: IdentityTokens,
+  storageKey: string = IDENTITY_STORAGE_KEY,
+  doc: Document = document,
+): HTMLStyleElement {
+  return applyCustomIdentityCss(tokensToCss(tokens, ":root"), storageKey, doc);
+}
+
 type TokenHistory = {
   past: IdentityTokens[];
   present: IdentityTokens;
@@ -328,6 +340,7 @@ function historyRedo(history: TokenHistory): TokenHistory {
 
 export {
   IDENTITY_TOKEN_SHEET_SLOT,
+  applyCustomIdentitySheet,
   applyIdentityTokenSheet,
   historyOf,
   historyPush,

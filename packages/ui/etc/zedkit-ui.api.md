@@ -66,6 +66,9 @@ export const alertVariants: (props?: ({
 } & ClassProp) | undefined) => string;
 
 // @public
+export function applyCustomIdentity(tokens: IdentityTokens, storageKey?: string): boolean;
+
+// @public
 export function applyIdentity(id: string, storageKey?: string): void;
 
 // @public (undocumented)
@@ -242,6 +245,9 @@ sortedRowModel: (table: Table_2<any, any>) => () => RowModel<any, any>;
 filteredRowModel: (table: Table_2<any, any>) => () => RowModel<any, any>;
 paginatedRowModel: (table: Table_2<any, any>) => () => RowModel<any, any>;
 }, TData>;
+
+// @public
+export const CUSTOM_IDENTITY_ID = "custom";
 
 // @public (undocumented)
 export function DataTable<TData extends RowData>(input: DataTableProps<TData>): React_2.JSX.Element;
@@ -644,6 +650,9 @@ export const identities: readonly IdentityOption[];
 
 // @public
 export const IDENTITY_CHANGE_EVENT = "zk-identity-change";
+
+// @public
+export const IDENTITY_CUSTOM_STORAGE_KEY = "zk-identity-custom";
 
 // @public
 export const IDENTITY_STORAGE_KEY = "zk-identity";
@@ -1454,6 +1463,7 @@ export type ZedkitUiMessages = {
     identityDescription: string;
     identityDefault: string;
     identityDefaultSuffix: string;
+    identityCustom: string;
     scrollableTable: string;
     offlineTitle: string;
     offlineBody: string;
