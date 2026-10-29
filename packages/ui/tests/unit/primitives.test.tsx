@@ -141,7 +141,11 @@ describe("primitives", () => {
 
   it("keeps skeleton styles token-driven with no arbitrary values", () => {
     const { container } = render(<Skeleton data-testid="sk-token" />);
-    const className = container.querySelector('[data-testid="sk-token"]')?.className ?? "";
+    const skeleton = container.querySelector('[data-testid="sk-token"]');
+    const className = skeleton?.className ?? "";
+    expect(skeleton?.tagName).toBe("DIV");
+    expect(skeleton?.getAttribute("data-slot")).toBe("skeleton");
+    expect(skeleton?.getAttribute("role")).toBeNull();
     expect(className).toContain("rounded-md");
     expect(className).toContain("bg-muted");
     expect(className).not.toContain("[");

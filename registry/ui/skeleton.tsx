@@ -1,9 +1,8 @@
-// Derived from shadcn/ui (skeleton) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it.
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-type SkeletonProps = React.ComponentProps<"div">;
+export type SkeletonProps = React.ComponentProps<"div">;
 
 function Skeleton({ className, ...props }: SkeletonProps) {
   return (
@@ -11,4 +10,4 @@ function Skeleton({ className, ...props }: SkeletonProps) {
   );
 }
 
-export { Skeleton, type SkeletonProps };
+export { Skeleton };
