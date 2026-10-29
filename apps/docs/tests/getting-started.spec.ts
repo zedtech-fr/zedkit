@@ -40,6 +40,16 @@ test("getting started lists a nest npm quickstart path", async ({ page }) => {
   await expect(page.getByText("pnpm add @zedtech/zedkit-nest")).toBeVisible();
 });
 
+test("getting started package table links UI row to Quickstart path B", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
+  const table = page
+    .getByRole("table")
+    .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
+  await table.getByRole("link", { name: "Quickstart path B" }).click();
+  await expect(page.getByRole("heading", { name: "Quickstart", level: 2 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Path B — UI button (install only on this page)", level: 3 })).toBeVisible();
+});
+
 test("getting started package table links agents row to Quickstart path A", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
   const table = page
