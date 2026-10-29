@@ -1221,7 +1221,7 @@ const [solo, setSolo] = useState(false);
 - Examples: Simple, Composed rows
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-4`; block padding still comes from `--spacing-detail-panel-block`. `--spacing-detail-panel-inline` remains as a deprecated alias.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-4`; block padding is `py-3`. `--spacing-detail-panel-inline` and `--spacing-detail-panel-block` remain as deprecated aliases.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";

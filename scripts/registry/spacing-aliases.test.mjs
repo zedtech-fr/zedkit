@@ -105,6 +105,7 @@ const DEPRECATED_1REM_CLASSES = [
   "gap-x-wizard-steps-gap",
   "px-button-inline-sm",
   "px-tabs-trigger-inline",
+  "py-detail-panel-block",
 ];
 
 function walkJs(dir, acc = []) {
