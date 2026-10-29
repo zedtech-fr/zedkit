@@ -2,4 +2,4 @@
 "@zedtech/zedkit-ui": patch
 ---
 
-Docs: idle-load below-hero with reserved scroll height (#618).
+Docs: drop below-hero idle defer; identity-specific heights break scroll e2e (#618).
