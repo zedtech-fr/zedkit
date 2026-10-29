@@ -113,6 +113,24 @@ test.describe("getting started package table light/dark (#753)", () => {
   }
 });
 
+test("getting started next steps tutorials follow choose-a-package table order", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { name: "Next steps", level: 2 }).scrollIntoViewIfNeeded();
+  const titles = await page.getByRole("heading", { name: "Next steps", level: 2 }).evaluate((heading) => {
+    const item = [...heading.parentElement!.querySelectorAll("li")].find((li) =>
+      li.textContent?.includes("Tutorials"),
+    );
+    return [...(item?.querySelectorAll("a") ?? [])].map((anchor) => anchor.textContent?.trim() ?? "");
+  });
+  expect(titles).toEqual([
+    "Build an admin dashboard",
+    "Start a safe NestJS API",
+    "Add SEO to a Next.js app",
+    "Set up your coding agents",
+    "zedkit and shadcn/ui",
+  ]);
+});
+
 test("getting started scenarios follow choose-a-package table order", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   const order = await page.locator("main h2").evaluateAll((elements) =>
