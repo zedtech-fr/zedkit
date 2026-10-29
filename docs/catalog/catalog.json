@@ -1518,7 +1518,7 @@
           "purpose": "Accessible horizontal/vertical divider lines.",
           "whenToUse": "Between sections, menu groups, or inline items.",
           "whenNotToUse": "For spacing alone — use Stack gap instead.",
-          "derivedFrom": "shadcn/ui (separator)",
+          "derivedFrom": null,
           "example": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator />",
           "examples": [
             {
@@ -1531,7 +1531,7 @@
             }
           ],
           "registry": "separator",
-          "a11y": "Decorative by default (`role=\"none\"`); pass `decorative={false}` with an accessible name when it separates named regions.",
+          "a11y": "Decorative by default (`role=\"none\"`); pass `decorative={false}` with an accessible name when it separates named regions. Line weight follows `--zk-border-width` (mist 1px).",
           "troubleshooting": "Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.",
           "seeAlso": [
             "Stack content and group titled sections"

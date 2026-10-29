@@ -314,7 +314,6 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Separator`, `SeparatorProps`
 - Wraps: `@radix-ui/react-separator`
 - Status: beta
-- Derived from: shadcn/ui (separator)
 - Short name: Separator
 - Audience: Developers dividing stacked or inline content.
 - Purpose: Accessible horizontal/vertical divider lines.
@@ -322,7 +321,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - When not to use: For spacing alone — use Stack gap instead.
 - See also: `Stack content and group titled sections`
 - Examples: Horizontal rule, Vertical divider
-- A11y: Decorative by default (`role="none"`); pass `decorative={false}` with an accessible name when it separates named regions.
+- A11y: Decorative by default (`role="none"`); pass `decorative={false}` with an accessible name when it separates named regions. Line weight follows `--zk-border-width` (mist 1px).
 - Registry: separator
 - Troubleshooting: Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.
 
