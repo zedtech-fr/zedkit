@@ -1357,7 +1357,6 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`, `alertVariants`, `AlertProps`
 - Wraps: `class-variance-authority`
 - Status: beta
-- Derived from: shadcn/ui (alert)
 - Short name: Alert
 - Audience: Developers surfacing notices, warnings and errors inline.
 - Purpose: Notice/error callouts with title and description.
