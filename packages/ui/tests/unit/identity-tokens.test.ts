@@ -132,6 +132,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     };
     expect(darkXs.maison).toBe("none");
     expect(darkXs.glass).toBe("0 1px 2px rgb(0 0 0 / 0.35), var(--zk-glass-highlight)");
+    expect(darkXs.tide).toBe("0 1px 3px rgb(0 0 0 / 0.42), 0 0 8px -2px hsl(var(--zk-shadow-color) / 0.16)");
     const seen = new Map<string, string>();
     for (const [id, value] of Object.entries(darkXs)) {
       expect(value ?? "").not.toBe("");
