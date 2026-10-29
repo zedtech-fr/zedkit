@@ -1704,3 +1704,28 @@ void identityPresets.mist;
 void css;
 ```
 
+## Design your identity
+
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `identityPresets`, `parseIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`
+- Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
+- Status: alpha
+- Short name: Draft look
+- Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
+- Purpose: A docs page writes compact identity tokens onto a scoped draft through the CSS variable writer. The address bar keeps the draft. Reset restores the chosen look.
+- When to use: To try a look on one card without changing the whole page identity.
+- When not to use: To switch the published page look — use `IdentitySwitcher` or `data-identity` on the root instead.
+- See also: `Switch the visual identity with one attribute`
+- Examples: Write a draft sheet
+- A11y: Every field has a visible label. Reset is a named button. The draft card is a live preview of the tokens, not a second copy of the form. Colour fields accept HSL channels (`H S% L%`); keep contrast in your own check before shipping a look.
+- Troubleshooting: The whole docs page changed — the sheet targets `[data-identity-scope][data-identity="draft"]`, not `<html>`. A field snaps back — the value failed the token schema (HSL, leading, or tracking). A refresh loses the draft — the address bar holds only fields that differ from the chosen look.
+
+```ts
+import { applyIdentityTokenSheet, identityPresets } from "@zedtech/zedkit-ui";
+
+applyIdentityTokenSheet(
+  identityPresets.mist,
+  '[data-identity-scope][data-identity="draft"]',
+);
+```
+
+
