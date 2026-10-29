@@ -104,6 +104,21 @@ test.describe("getting started package table light/dark (#753)", () => {
   }
 });
 
+test("getting started scenarios follow choose-a-package table order", async ({ page }) => {
+  await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
+  const order = await page.locator("main h2").evaluateAll((elements) =>
+    elements
+      .map((el) => el.textContent?.replace(/Copy Anchor Link/g, "").trim() ?? "")
+      .filter((text) => text.startsWith("Scenario —")),
+  );
+  expect(order).toEqual([
+    "Scenario — UI",
+    "Scenario — backend",
+    "Scenario — SEO",
+    "Scenario — coding agents",
+  ]);
+});
+
 test("getting started includes UI, backend, agents, and SEO scenarios", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Scenario — coding agents", level: 2 })).toBeVisible();
