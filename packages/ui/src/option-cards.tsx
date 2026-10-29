@@ -37,7 +37,7 @@ export function OptionCard({ title, description, checked, onChange, className }:
     <label
       data-slot="option-card"
       className={cn(
-        "flex cursor-pointer gap-option-card-gap rounded-lg border p-4 transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
+        "flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
         className,
       )}
     >
