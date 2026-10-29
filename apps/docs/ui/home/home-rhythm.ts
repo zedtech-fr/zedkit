@@ -14,3 +14,6 @@ export const HOME_SECTION_REVEAL_CLASS =
 /** Fixed-height hero preview slot so idle-loaded art does not shift page scroll (#618). */
 export const HOME_HERO_PREVIEW_SHELL_CLASS =
   "pointer-events-none h-72 w-full shrink-0 overflow-hidden lg:h-80";
+
+/** Reserved below-hero height (mobile export) so idle chunk load does not change scrollHeight (#618). */
+export const HOME_BELOW_HERO_PLACEHOLDER_CLASS = "min-h-[5800px] w-full";
