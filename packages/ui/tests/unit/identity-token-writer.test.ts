@@ -105,7 +105,7 @@ describe("token to CSS var writer", () => {
     expect(css).toContain("--spacing: 0.24rem");
     expect(css).toContain("--zk-border-width: 2px");
     expect(css).toContain("--radius: 0px");
-    expect(css).toContain("--zk-body-leading: 1.45");
+    expect(css).toContain("--zk-body-leading: 1.12");
     expect(css).toContain("--zk-heading-tracking: -0.015em");
     expect(css).toContain("--background: 45 35% 94%");
     expect(css).toContain("--zk-shadow-sm: 0 0 0 0 transparent");

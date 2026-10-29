@@ -73,7 +73,7 @@ const identityPresets = {
     spacing: "0.24rem",
     borderWidth: "2px",
     radius: "0px",
-    bodyLeading: "1.45",
+    bodyLeading: "1.12",
     headingLeading: "1.06",
     headingTracking: "-0.015em",
     labelTracking: "0.08em",
