@@ -292,14 +292,13 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Input`, `Label`
 - Wraps: `@radix-ui/react-label`
 - Status: beta
-- Derived from: shadcn/ui (input, label)
 - Short name: Input
 - Audience: Form builders collecting single-line text.
 - Purpose: Labelled text input with consistent styling and focus states.
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
-- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention.
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is Tailwind `px-3`.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
