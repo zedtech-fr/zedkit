@@ -102,7 +102,7 @@ describe("token to CSS var writer", () => {
   it("emits every family for a scoped selector", () => {
     const css = tokensToCss(identityPresets.press, DRAFT);
     expect(css.startsWith(`${DRAFT} {`)).toBe(true);
-    expect(css).toContain("--spacing: 0.24rem");
+    expect(css).toContain("--spacing: 0.2rem");
     expect(css).toContain("--zk-border-width: 2px");
     expect(css).toContain("--radius: 0px");
     expect(css).toContain("--zk-body-leading: 1.12");

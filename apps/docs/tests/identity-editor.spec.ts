@@ -26,7 +26,7 @@ test.describe("identity editor page", () => {
   test("keeps the chosen look in the URL and restores it on load", async ({ page }) => {
     await page.goto(`${PAGE}?identity=press`, { waitUntil: "networkidle" });
     await expect(page.getByLabel("Look")).toHaveValue("press");
-    await expect.poll(() => spacingOnDraft(page)).toBe("0.24rem");
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
   });
 
   test("warns when light text matches the background and Fix restores it", async ({ page }) => {
@@ -79,7 +79,7 @@ test.describe("identity editor page", () => {
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("Suggest is offline. Keyword match instead.")).toBeVisible();
     await page.getByRole("button", { name: "Apply" }).click();
-    await expect.poll(() => spacingOnDraft(page)).toBe("0.24rem");
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
   });
 
   test("passes the a11y gate on the panel", async ({ page }) => {

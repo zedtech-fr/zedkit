@@ -49,7 +49,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(looks.mist, "--text-lg") ?? "").toBe("1.125rem");
     expect(token(looks.mist, "--tracking-tight") ?? "").toBe("-0.025em");
     expect(token(looks.mist, "--spacing") ?? "").toBe("0.25rem");
-    expect(token(looks.press, "--spacing") ?? "").toBe("0.24rem");
+    expect(token(looks.press, "--spacing") ?? "").toBe("0.2rem");
     expect(token(looks.tide, "--spacing") ?? "").toBe("0.28rem");
     expect(token(looks.glass, "--spacing") ?? "").toBe("0.32rem");
     const steps = ["--text-xs", "--text-sm", "--text-base", "--text-lg", "--text-xl", "--text-2xl", "--text-3xl", "--text-4xl", "--text-5xl"] as const;
