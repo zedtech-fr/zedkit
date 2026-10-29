@@ -69,7 +69,12 @@ describe("primitives", () => {
 
   it("renders a badge with its text", () => {
     render(<Badge variant="outline">live</Badge>);
-    expect(screen.getByText("live").className).toContain("border");
+    const badge = screen.getByText("live");
+    expect(badge.tagName).toBe("DIV");
+    expect(badge.getAttribute("data-slot")).toBe("badge");
+    expect(badge.className).toContain("px-badge-inline");
+    expect(badge.className).toContain("rounded-md");
+    expect(badge.className).toContain("border");
   });
 
   it("merges badge styles onto asChild link", () => {

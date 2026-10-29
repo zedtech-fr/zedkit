@@ -222,7 +222,6 @@ import { IconButton } from "@zedtech/zedkit-ui";
 - Import: `@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`
 - Wraps: `class-variance-authority`
 - Status: beta
-- Derived from: shadcn/ui (badge)
 - Registry: badge
 - Short name: Badge
 - Audience: Developers flagging state or counts inline (lists, headers, tables).
@@ -231,7 +230,7 @@ import { IconButton } from "@zedtech/zedkit-ui";
 - When not to use: For long text or actions — use Text or Button instead.
 - See also: `Indicate status with a dot`
 - Examples: Simple, Variants, In a table row, As a link (asChild)
-- A11y: Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short.
+- A11y: Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short. Corners follow identity `--radius-md` via `rounded-md`; identity label tracking already keys off `px-badge-inline`.
 - Troubleshooting: Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.
 
 ```ts

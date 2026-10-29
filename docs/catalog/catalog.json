@@ -1427,7 +1427,7 @@
           "purpose": "Small status/count pills with semantic variants.",
           "whenToUse": "For short labels next to the thing they describe.",
           "whenNotToUse": "For long text or actions — use Text or Button instead.",
-          "derivedFrom": "shadcn/ui (badge)",
+          "derivedFrom": null,
           "example": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge>live</Badge>",
           "examples": [
             {
@@ -1448,7 +1448,7 @@
             }
           ],
           "registry": "badge",
-          "a11y": "Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short.",
+          "a11y": "Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short. Corners follow identity `--radius-md` via `rounded-md`; identity label tracking already keys off `px-badge-inline`.",
           "troubleshooting": "Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.",
           "seeAlso": [
             "Indicate status with a dot"
