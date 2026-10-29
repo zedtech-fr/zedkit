@@ -191,6 +191,17 @@ describe("primitives", () => {
     expect(alerts[1]?.className).toContain("text-destructive");
   });
 
+  it("spaces the alert from the Tailwind scale", () => {
+    render(
+      <Alert>
+        <AlertTitle>Heads up</AlertTitle>
+      </Alert>,
+    );
+    const alert = screen.getByRole("alert");
+    expect(alert.className).toContain("py-3");
+    expect(alert.className).not.toContain("py-alert-block");
+  });
+
   it("merges alert styles onto an asChild section", () => {
     render(
       <Alert asChild>

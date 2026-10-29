@@ -1372,7 +1372,7 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Examples: Simple, As a section (asChild)
 - A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
 - Registry: alert
-- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
+- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Block padding is `py-3`; `--spacing-alert-block` remains as a deprecated alias. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
