@@ -31,9 +31,20 @@ describe("semantic spacing tokens (#798)", () => {
     }
   });
 
-  it("leaves deprecated rem aliases in place", () => {
+  it("leaves leftover rem aliases in place", () => {
     expect(css).toMatch(/--spacing-button-gap:\s*0\.5rem;/);
     expect(css).toMatch(/--spacing-icon-control:\s*1rem;/);
-    expect(css).toMatch(/--spacing-control-height:\s*max\(var\(--zk-tap-min, 0px\), 2\.25rem\)/);
+  });
+
+  it("wires control height and block aliases to --spacing", () => {
+    expect(css).toMatch(/--spacing-control-height:\s*max\(var\(--zk-tap-min, 0px\), calc\(var\(--spacing\) \* 9\)\)/);
+    expect(css).toMatch(/--spacing-control-height-sm:\s*max\(var\(--zk-tap-min, 0px\), calc\(var\(--spacing\) \* 8\)\)/);
+    expect(css).toMatch(/--spacing-control-height-lg:\s*max\(var\(--zk-tap-min, 0px\), calc\(var\(--spacing\) \* 10\)\)/);
+    expect(css).toMatch(/--spacing-control-block:\s*var\(--spacing\)/);
+    expect(css).toMatch(/--spacing-control-block-lg:\s*calc\(var\(--spacing\) \* 2\)/);
+    expect(MIST_SPACING_REM * 8).toBe(2);
+    expect(MIST_SPACING_REM * 9).toBe(2.25);
+    expect(MIST_SPACING_REM * 10).toBe(2.5);
+    expect(MIST_SPACING_REM * 2).toBe(0.5);
   });
 });

@@ -25,6 +25,8 @@ Rules:
   `scripts/registry/spacing-aliases.json`. New shared sizes that should
   follow identity `--spacing` use `--zk-gap-sm|md|lg`, `--zk-icon-size`,
   `--zk-control-height` (`calc` from `--spacing`; mist matches today's rem).
+  `--spacing-control-height*` and `--spacing-control-block*` follow those
+  calcs. Leftover rem aliases stay until later #798 migrations.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).

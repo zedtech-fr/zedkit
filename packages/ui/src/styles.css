@@ -165,9 +165,9 @@
    * `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
    *
-   * Semantic sizes derived from `--spacing` (mist: 0.25rem). Aliases
-   * below stay on rem until later #798 migrations; on mist these
-   * resolve to the same numbers those aliases use today.
+   * Semantic sizes derived from `--spacing` (mist: 0.25rem). Control
+   * block aliases now follow `--spacing`; leftover rem aliases stay
+   * until later #798 migrations.
    */
   --zk-gap-sm: calc(var(--spacing) * 2);
   --zk-gap-md: calc(var(--spacing) * 3);
@@ -176,9 +176,9 @@
   --zk-control-height: calc(var(--spacing) * 9);
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
-  --spacing-control-height: max(var(--zk-tap-min, 0px), 2.25rem);
-  --spacing-control-height-sm: max(var(--zk-tap-min, 0px), 2rem);
-  --spacing-control-height-lg: max(var(--zk-tap-min, 0px), 2.5rem);
+  --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));
+  --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
+  --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
   --spacing-button-inline: 1rem;
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
@@ -232,8 +232,8 @@
   --spacing-status-label-box: 1rem;
   --spacing-status-dot: 0.5rem;
   --spacing-control-inline: 0.75rem;
-  --spacing-control-block: 0.25rem;
-  --spacing-control-block-lg: 0.5rem;
+  --spacing-control-block: var(--spacing);
+  --spacing-control-block-lg: calc(var(--spacing) * 2);
   --spacing-textarea-min-height: 3.75rem;
   --spacing-alert-inline: 1rem;
   --spacing-alert-block: 0.75rem;
