@@ -1,11 +1,12 @@
 "use client";
 
-import { useLayoutEffect, useState, useSyncExternalStore } from "react";
+import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import {
   applyIdentity,
   applyIdentityTokenSheet,
   discardCustomIdentity,
+  IDENTITY_CHANGE_EVENT,
   identities,
   identityContrastWarnings,
   identityPresets,
@@ -139,6 +140,49 @@ function IdentityEditorBody(props: EditorBodyProps) {
   );
 }
 
+type FollowSiteIdentityArgs = {
+  ready: boolean;
+  identity: string;
+  tokens: IdentityTokens;
+  darkPreview: boolean;
+  darkKept: readonly string[];
+  named: NamedIdentity[];
+  onIdentity: (id: string) => void;
+  appliedSite: boolean;
+  detachSite: () => void;
+};
+
+// Follow identity switches made outside the editor (header chooser,
+// another tab): resync fields and URL to the applied look, then stop
+// driving the site. The one exception is an unapplied dirty draft —
+// the editing session wins over the header there. Adopting goes
+// through the same path as the Look select, so Undo keeps the draft.
+function useFollowSiteIdentity(args: FollowSiteIdentityArgs) {
+  const siteIdentity = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    if (!args.ready) return;
+    const sync = () => {
+      const applied = document.documentElement.getAttribute("data-identity");
+      if (!applied || applied === siteIdentity.current) return;
+      const first = siteIdentity.current === null;
+      siteIdentity.current = applied;
+      if (first || applied === args.identity) return;
+      const clean = [...new URLSearchParams(serializeIdentityEditorSearch(args.identity, args.tokens, args.darkPreview, args.darkKept)).keys()]
+        .every((key) => key === "identity" || key === "theme");
+      if (!clean && !args.appliedSite) return;
+      if (tokensForLook(applied, args.named)) args.onIdentity(applied);
+      if (args.appliedSite) args.detachSite();
+    };
+    sync();
+    window.addEventListener(IDENTITY_CHANGE_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(IDENTITY_CHANGE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  });
+}
+
 function IdentityEditorPanel() {
   const named = useSyncExternalStore(subscribeNamedIdentities, readNamedIdentities, readNamedIdentities);
   const [identity, setIdentity] = useState("mist");
@@ -147,7 +191,7 @@ function IdentityEditorPanel() {
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
   const { setTheme } = useTheme();
-  const { tokens, darkKept, remember, undo, applySite, appliedSite, past, load, patch, fix, applySuggest } = draft;
+  const { tokens, darkKept, remember, undo, applySite, detachSite, appliedSite, past, load, patch, fix, applySuggest } = draft;
   const bound = bindNamedLooks(named, identity, name, tokens, setIdentity, setName, remember);
 
   useLayoutEffect(() => {
@@ -162,6 +206,8 @@ function IdentityEditorPanel() {
     }
     setReady(true);
   }, []);
+
+  useFollowSiteIdentity({ ready, identity, tokens, darkPreview, darkKept, named, onIdentity: bound.onIdentity, appliedSite, detachSite });
 
   useLayoutEffect(() => {
     if (!ready) return;
