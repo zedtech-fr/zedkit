@@ -101,6 +101,24 @@ test.describe("identity editor page", () => {
     await expect.poll(() => spacingOnHtml(page)).toBe("0.5rem");
   });
 
+  test("Suggest shows a status while the service is in flight", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const posted = route.request().postDataJSON() as { current: Record<string, unknown> };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: { tokens: { ...posted.current, spacing: "0.5rem" } },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("more space");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("Suggesting…", { exact: true })).toBeVisible();
+    await expect(page.getByText("Review these token changes.")).toBeVisible();
+    await expect(page.getByText("Suggesting…", { exact: true })).toHaveCount(0);
+  });
+
   test("Suggest Apply keeps a dark colour on the whole site", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.route("**/api/identity/suggest", async (route) => {

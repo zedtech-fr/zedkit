@@ -151,6 +151,7 @@ function IdentityEditorSuggest({
       <Button type="button" onClick={runSuggest} disabled={busy || prompt.trim() === ""}>
         Suggest
       </Button>
+      {busy ? <Text role="status">Suggesting…</Text> : null}
       {proposal ? (
         <ProposalCard
           current={tokens}

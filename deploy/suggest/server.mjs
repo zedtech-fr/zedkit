@@ -9,7 +9,7 @@ const MAX_PROMPT = 500;
 const RATE_PER_MIN = 10;
 const RATE_PER_DAY = 100;
 const GLOBAL_DAY = 500;
-const TIMEOUT_MS = 8000;
+const TIMEOUT_MS = 30_000;
 const SYSTEM = `Reply with a JSON object of identity tokens only, no markdown.
 Fields: spacing, borderWidth, radius, bodyLeading, headingLeading, headingTracking, labelTracking, fontSans, fontDisplay, light {background, foreground, primary, accent, border}, dark {same keys}, shadowSm, shadowMd.
 Colours are HSL channels like "240 10% 3.9%" with no hsl() wrapper. Leading is a number string. Tracking ends with em.
@@ -49,6 +49,16 @@ function unwrapContent(content) {
   const trimmed = content.trim();
   const fence = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
   return fence ? fence[1] : trimmed;
+}
+
+function messageText(content) {
+  if (typeof content === "string") return unwrapContent(content);
+  if (!Array.isArray(content)) return "";
+  return unwrapContent(
+    content
+      .map((part) => (typeof part === "string" ? part : part && typeof part.text === "string" ? part.text : ""))
+      .join(""),
+  );
 }
 
 function createLimit() {
@@ -132,9 +142,7 @@ function complete(cfg, prompt, current, fetchImpl) {
     },
     body: JSON.stringify({
       model: cfg.model,
-      temperature: 0.4,
       max_tokens: 1500,
-      response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: JSON.stringify({ prompt, current }) },
@@ -147,9 +155,9 @@ function complete(cfg, prompt, current, fetchImpl) {
       if (!res.ok) return null;
       return parseJson(res.text).then((outer) => {
         if (!outer.ok) return null;
-        const content = outer.value?.choices?.[0]?.message?.content;
-        if (typeof content !== "string") return null;
-        return parseJson(unwrapContent(content)).then((inner) => (inner.ok ? inner.value : null));
+        const content = messageText(outer.value?.choices?.[0]?.message?.content);
+        if (!content) return null;
+        return parseJson(content).then((inner) => (inner.ok ? inner.value : null));
       });
     })
     .catch(() => null);
