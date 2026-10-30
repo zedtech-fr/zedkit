@@ -10,9 +10,11 @@ describe("createConsentGatedTracker", () => {
     const store = createMemoryConsentStore();
     const { tracker, captured } = createMemoryTracker<Events>();
     const gated = createConsentGatedTracker(tracker, store, "analytics");
+    gated.identify("user-1");
     gated.capture("ping", { ok: true });
     expect(captured).toEqual([]);
     store.write({ analytics: true, marketing: false });
+    gated.identify("user-1", { plan: "free" });
     gated.capture("ping", { ok: true });
     expect(captured).toHaveLength(1);
   });
