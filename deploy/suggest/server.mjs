@@ -171,17 +171,20 @@ function complete(cfg, prompt, current, fetchImpl) {
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   })
-    .then((res) => res.text().then((text) => ({ ok: res.ok, text })))
+    .then((res) => res.text().then((text) => ({ ok: res.ok, status: res.status, text })))
     .then((res) => {
-      if (!res.ok) return null;
+      if (!res.ok) {
+        console.error("suggest: upstream", res.status);
+        return { status: res.status };
+      }
       return parseJson(res.text).then((outer) => {
-        if (!outer.ok) return null;
+        if (!outer.ok) return { status: 502 };
         const content = messageText(outer.value?.choices?.[0]?.message?.content);
-        if (!content) return null;
-        return parseJson(content).then((inner) => (inner.ok ? inner.value : null));
+        if (!content) return { status: 502 };
+        return parseJson(content).then((inner) => (inner.ok ? { patch: inner.value } : { status: 502 }));
       });
     })
-    .catch(() => null);
+    .catch(() => ({ status: 502 }));
 }
 
 function firstComplete(env, prompt, current, fetchImpl) {
@@ -190,13 +193,16 @@ function firstComplete(env, prompt, current, fetchImpl) {
   );
   return configs.reduce(
     (chain, cfg) =>
-      chain.then((tokens) => {
-        if (tokens) return tokens;
-        return complete(cfg, prompt, current, fetchImpl).then((patch) =>
-          patch && typeof patch === "object" ? mergePatch(current, patch) : null,
-        );
+      chain.then((acc) => {
+        if (acc.tokens) return acc;
+        return complete(cfg, prompt, current, fetchImpl).then((result) => {
+          const tokens = result.patch ? mergePatch(current, result.patch) : null;
+          if (tokens) return { tokens };
+          const status = result.status === 429 || acc.status === 429 ? 429 : result.status;
+          return { status };
+        });
       }),
-    Promise.resolve(null),
+    Promise.resolve({}),
   );
 }
 
@@ -230,12 +236,16 @@ async function route(req, res, { env, fetchImpl, limit }) {
     send(res, 400, { error: "body" });
     return;
   }
-  const tokens = await firstComplete(env, prompt, mergePatch(current, {}), fetchImpl);
-  if (!tokens) {
-    send(res, 502, { error: "upstream" });
+  const out = await firstComplete(env, prompt, mergePatch(current, {}), fetchImpl);
+  if (out.tokens) {
+    send(res, 200, { tokens: out.tokens });
     return;
   }
-  send(res, 200, { tokens });
+  if (out.status === 429) {
+    send(res, 429, { error: "rate" });
+    return;
+  }
+  send(res, 502, { error: "upstream" });
 }
 
 function handleSuggest(req, res, deps) {
