@@ -95,6 +95,21 @@ test("POST without env returns 503 disabled", async () => {
   });
 });
 
+test("POST asks the model for AA contrast in the system message", async () => {
+  let system = "";
+  const fetchImpl = (_url, init) => {
+    const body = JSON.parse(String(init.body));
+    system = body.messages.find((row) => row.role === "system")?.content ?? "";
+    return Promise.resolve(chatReply({ spacing: "0.4rem" }));
+  };
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+    assert.match(system, /4\.5:1/);
+    assert.match(system, /3:1/);
+  });
+});
+
 test("POST merges a mocked chat patch onto current tokens", async () => {
   const fetchImpl = (url) => {
     assert.match(url, /https:\/\/primary\.test\/v1\/chat\/completions/);
