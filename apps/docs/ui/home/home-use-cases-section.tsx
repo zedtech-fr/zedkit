@@ -351,6 +351,9 @@ export function HomeUseCasesSection() {
 
   return (
     <Section
+      bleed
+      spacing="lg"
+      containerWidth="wide"
       title="One kit, every kind of product"
       id="use-cases"
       description="Same components, six identities. Scroll to see how each one reads, with content that fits its use."

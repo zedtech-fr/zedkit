@@ -3,7 +3,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text 
 import { DocsActionLabel } from "@/components/docs-action-label";
 import {
   HOME_CARD_CONTENT_GAP,
-  HOME_CARD_GRID_TWO_COL,
+  HOME_CARD_GRID_FOUR_COL,
 } from "@/ui/home/home-rhythm";
 
 export function HomeProofs({
@@ -43,8 +43,8 @@ export function HomeProofs({
     },
   ];
   return (
-    <Section title="What you can verify" id="proofs">
-      <Stack className={HOME_CARD_GRID_TWO_COL}>
+    <Section bleed spacing="lg" containerWidth="wide" title="What you can verify" id="proofs">
+      <Stack className={HOME_CARD_GRID_FOUR_COL}>
         {items.map((item) => (
           <Card key={item.title} className="min-w-0">
             <CardHeader>

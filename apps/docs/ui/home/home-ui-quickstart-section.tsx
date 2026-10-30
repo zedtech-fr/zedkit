@@ -28,7 +28,14 @@ export function HomeUiQuickstartSection({
     throw new Error(`home-quickstart install.sh must be exactly: ${expectedInstall}`);
   }
   return (
-    <Section id="quickstart" title="UI quickstart (about five minutes)" className="w-full max-w-2xl">
+    <Section
+      bleed
+      tone="muted"
+      spacing="lg"
+      containerWidth="reading"
+      id="quickstart"
+      title="UI quickstart (about five minutes)"
+    >
       <HomeUiQuickstartCopy
         globalsCss={loadSnippet("globals.css")}
         pageTsx={loadSnippet("page.tsx")}

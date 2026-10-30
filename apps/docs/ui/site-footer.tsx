@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Separator, Stack, Text } from "@zedtech/zedkit-ui";
+import { Container, Separator, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
 
 const linkClassName = "rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-ring";
@@ -20,22 +20,24 @@ export function SiteMaintainerFooter({
       {...(embeddedInMain ? {} : { role: "contentinfo" })}
       className="mt-auto border-t border-border"
     >
-      <Stack gap={4} className="mx-auto w-full max-w-6xl px-6 py-8">
-        <Text variant="muted" as="p">Maintained by ZED TECH</Text>
-        <Separator />
-        <Stack direction="horizontal" gap={4} className="flex-wrap">
-          {links.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={linkClassName}
-              {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
-            >
-              {item.label}
-            </Link>
-          ))}
+      <Container width="wide">
+        <Stack gap={4} className="py-8">
+          <Text variant="muted" as="p">Maintained by ZED TECH</Text>
+          <Separator />
+          <Stack direction="horizontal" gap={4} className="flex-wrap">
+            {links.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={linkClassName}
+                {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
+      </Container>
     </footer>
   );
 }

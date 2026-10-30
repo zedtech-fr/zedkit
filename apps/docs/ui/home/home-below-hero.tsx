@@ -11,7 +11,6 @@ import { HomeProofs } from "@/ui/home/home-proofs";
 import { HomeScenariosSection } from "@/ui/home/home-scenarios-section";
 import {
   HOME_CARD_GRID_THREE_COL,
-  HOME_PAGE_SECTION_GAP,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
@@ -53,7 +52,7 @@ export function HomeBelowHero({
   themeHref,
 }: HomeBelowHeroProps) {
   return (
-    <Stack gap={HOME_PAGE_SECTION_GAP}>
+    <>
       <HomeEntryPointsSection entryPoints={entryPoints} />
       <HomeScenariosSection scenarios={scenarios} />
       <HomeProofs
@@ -64,6 +63,10 @@ export function HomeBelowHero({
         themeHref={themeHref}
       />
       <Section
+        bleed
+        tone="muted"
+        spacing="lg"
+        containerWidth="wide"
         title="Components"
         id="components"
         description={`Curated UI previews (${curatedGallery.length} of ${galleryCount} components). Open the catalog to filter every need across UI, core & server, SEO, and agents.`}
@@ -81,6 +84,6 @@ export function HomeBelowHero({
           </Button>
         </Stack>
       </Section>
-    </Stack>
+    </>
   );
 }
