@@ -226,7 +226,7 @@ function IdentityEditorBody({
   );
 }
 
-function useDraftTokens(present: IdentityTokens) {
+function useDraftTokens(present: IdentityTokens, look: IdentityId) {
   const [tokens, setTokens] = useState(present);
   const [past, setPast] = useState<IdentityTokens[]>([]);
   const [appliedSite, setAppliedSite] = useState(false);
@@ -250,15 +250,15 @@ function useDraftTokens(present: IdentityTokens) {
 
   useLayoutEffect(() => {
     if (!appliedSite) return;
-    applyCustomIdentity(tokens);
-  }, [appliedSite, tokens]);
+    applyCustomIdentity(tokens, look);
+  }, [appliedSite, look, tokens]);
 
   return { tokens, setTokens, past, appliedSite, setAppliedSite, remember, undo, applySite };
 }
 
 function IdentityEditorPanel() {
   const [identity, setIdentity] = useState<IdentityId>("mist");
-  const draft = useDraftTokens(identityPresets.mist);
+  const draft = useDraftTokens(identityPresets.mist, identity);
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
   const { setTheme } = useTheme();

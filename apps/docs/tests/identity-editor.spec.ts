@@ -165,7 +165,7 @@ test.describe("identity editor on a phone", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await page.getByRole("button", { name: "Dark", exact: true }).click();
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
@@ -183,9 +183,9 @@ test.describe("identity editor apply to site", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
-    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("custom");
+    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("mist");
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 
@@ -207,9 +207,9 @@ test.describe("identity editor apply to site", () => {
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
-    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("custom");
+    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("mist");
   });
 
   test("resets to the default identity and clears storage", async ({ page }) => {
@@ -221,6 +221,31 @@ test.describe("identity editor apply to site", () => {
     await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
     await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
+  });
+
+  test("Apply Press replaces the site look in light and dark", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    await page.getByLabel("Look").selectOption("press");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await expect
+      .poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--radius").trim()))
+      .toBe("0px");
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("0 0% 6%");
+    await page.getByLabel("Background").fill("120 40% 20%");
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("120 40% 20%");
   });
 
   test("applies dark tokens while the site is dark", async ({ page }) => {
@@ -242,7 +267,7 @@ test.describe("identity editor apply to site", () => {
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     const chooser = page.getByRole("combobox", { name: "Identity" }).first();
-    await expect(chooser).toHaveValue("custom");
+    await expect(chooser).toHaveValue("mist");
     await chooser.selectOption("press");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
     await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.2rem$/);
@@ -262,7 +287,7 @@ test.describe("identity editor apply to site", () => {
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     const chooser = page.getByRole("combobox", { name: "Identity" }).first();
-    await expect(chooser).toHaveValue("custom");
+    await expect(chooser).toHaveValue("mist");
     await chooser.selectOption("tide");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
