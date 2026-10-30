@@ -19,6 +19,23 @@ const NAMED_IDENTITY_PREFIX = "n-";
 function isNamedIdentityId(id: string): boolean {
   return id.startsWith(NAMED_IDENTITY_PREFIX);
 }
+
+/** Extra option so a select/radio group can name a custom or named look that is not in the list. */
+function identitiesWithCurrentLook(
+  identities: readonly IdentityOption[],
+  current: string,
+  customLabel: string,
+): readonly IdentityOption[] {
+  if (!current || identities.some((item) => item.id === current)) return identities;
+  if (current === CUSTOM_IDENTITY_ID) {
+    return [{ id: CUSTOM_IDENTITY_ID, label: customLabel }, ...identities];
+  }
+  if (isNamedIdentityId(current)) {
+    const slug = current.slice(NAMED_IDENTITY_PREFIX.length);
+    return [{ id: current, label: slug || customLabel }, ...identities];
+  }
+  return identities;
+}
 /** `data-slot` on the custom identity `<style>` node. */
 const IDENTITY_CUSTOM_SHEET_SLOT = "identity-custom-sheet";
 /** Window event fired after the identity attribute changes. */
@@ -81,6 +98,7 @@ export {
   NAMED_IDENTITY_PREFIX,
   customIdentityStorageKey,
   identities,
+  identitiesWithCurrentLook,
   isNamedIdentityId,
   type IdentityOption,
 };
