@@ -88,4 +88,58 @@ function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarni
   );
 }
 
-export { identityContrastWarnings, type IdentityContrastWarning };
+function invertLightness(value: string): string {
+  const hsl = parseHsl(value);
+  if (!hsl) return value;
+  return formatHsl({ ...hsl, l: 100 - hsl.l });
+}
+
+function forceDarkBackground(bg: Hsl): Hsl {
+  let next = { ...bg };
+  for (let step = 0; step < 100; step += 1) {
+    if (luminance(next.h, next.s, next.l) <= 0.5) return next;
+    next = { ...next, l: Math.max(0, next.l - 1) };
+  }
+  return next;
+}
+
+function darkPairFromLight(light: IdentityTokens["light"]): IdentityTokens["dark"] {
+  const inverted = {
+    background: invertLightness(light.background),
+    foreground: invertLightness(light.foreground),
+    primary: invertLightness(light.primary),
+    accent: invertLightness(light.accent),
+    border: invertLightness(light.border),
+  };
+  const bg = parseHsl(inverted.background);
+  if (!bg) return inverted;
+  const background = formatHsl(forceDarkBackground(bg));
+  const bgHsl = parseHsl(background);
+  if (!bgHsl) return { ...inverted, background };
+  const next = { ...inverted, background };
+  for (const token of ["foreground", "accent", "border"] as const) {
+    const colour = parseHsl(next[token]);
+    if (!colour) continue;
+    const min = token === "foreground" ? AA_BODY : AA_UI;
+    if (contrastRatio(colour, bgHsl) < min) next[token] = nudgeForeground(colour, bgHsl, min);
+  }
+  return next;
+}
+
+function sameLightPair(a: IdentityTokens["light"], b: IdentityTokens["light"]): boolean {
+  return (
+    a.background === b.background &&
+    a.foreground === b.foreground &&
+    a.primary === b.primary &&
+    a.accent === b.accent &&
+    a.border === b.border
+  );
+}
+
+/** Writes a dark colour pair from light (flip lightness, then AA vs background). */
+function withIdentityDarkPair(tokens: IdentityTokens, previous?: IdentityTokens): IdentityTokens {
+  if (previous && sameLightPair(previous.light, tokens.light)) return tokens;
+  return { ...tokens, dark: darkPairFromLight(tokens.light) };
+}
+
+export { identityContrastWarnings, withIdentityDarkPair, type IdentityContrastWarning };

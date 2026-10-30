@@ -16,6 +16,7 @@ import {
   parseIdentityTokens,
   Stack,
   Text,
+  withIdentityDarkPair,
   type IdentityContrastWarning,
   type IdentityId,
   type IdentityTokens,
@@ -89,7 +90,8 @@ function patchTokens(tokens: IdentityTokens, key: string, value: string, scheme:
     ? { ...tokens, [scheme]: { ...tokens[scheme], [key]: value } }
     : { ...tokens, [key]: value };
   const parsed = parseIdentityTokens(next);
-  return parsed.success ? parsed.data : tokens;
+  if (!parsed.success) return tokens;
+  return scheme === "light" && LIGHT_KEY_SET.has(key) ? withIdentityDarkPair(parsed.data) : parsed.data;
 }
 
 function EditorFields({
@@ -305,10 +307,10 @@ function IdentityEditorPanel() {
           ...tokens,
           [warning.scheme]: { ...tokens[warning.scheme], [warning.token]: warning.suggestedForeground },
         });
-        if (parsed.success) remember(parsed.data);
+        if (parsed.success) remember(warning.scheme === "light" ? withIdentityDarkPair(parsed.data) : parsed.data);
       }}
       onSuggestApply={(next, toSite) => {
-        remember(next);
+        remember(withIdentityDarkPair(next, tokens));
         if (toSite) setAppliedSite(true);
       }}
       onUndo={undo}

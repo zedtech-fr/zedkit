@@ -160,6 +160,21 @@ test.describe("identity editor on a phone", () => {
     expect(look?.width ?? 0).toBeGreaterThan(80);
   });
 
+  test("Press Apply stays on screen at 360px", async ({ page }) => {
+    await page.goto(`${PAGE}?identity=press`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await page.locator('[data-slot="identity-editor"]').screenshot({ path: "test-results/identity-editor-press-360.png" });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+    const apply = page.getByRole("button", { name: "Apply to the whole site" });
+    await apply.scrollIntoViewIfNeeded();
+    const box = await apply.boundingBox();
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(361);
+  });
+
   test("Apply then Dark keeps a custom look on the site", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -246,6 +261,21 @@ test.describe("identity editor apply to site", () => {
         page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
       )
       .toBe("120 40% 20%");
+  });
+
+  test("a light colour edit writes an AA dark pair onto the site", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Background").fill("0 0% 95%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    await expect(page.getByRole("button", { name: /^Fix dark / })).toHaveCount(0);
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toMatch(/^0 0% 5(\.0)?%$/);
   });
 
   test("applies dark tokens while the site is dark", async ({ page }) => {
