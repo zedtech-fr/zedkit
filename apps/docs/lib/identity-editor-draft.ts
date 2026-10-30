@@ -82,6 +82,12 @@ function useDraftTokens(present: IdentityTokens, look: IdentityId) {
     if (toSite) setAppliedSite(true);
   }
 
+  function load(next: IdentityTokens, keep: readonly string[] = []) {
+    setTokens(next);
+    setDarkKept([...keep]);
+    setPast([]);
+  }
+
   useLayoutEffect(() => {
     if (!appliedSite) return;
     applyCustomIdentity(tokens, look);
@@ -89,12 +95,13 @@ function useDraftTokens(present: IdentityTokens, look: IdentityId) {
 
   return {
     tokens,
-    setTokens,
+    darkKept,
     past,
     appliedSite,
     remember,
     undo,
     applySite: () => setAppliedSite(true),
+    load,
     patch,
     fix,
     applySuggest,

@@ -25,11 +25,24 @@ function clonePreset(id: IdentityId): IdentityTokens {
   return { ...preset, light: { ...preset.light }, dark: { ...preset.dark } };
 }
 
+const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
+
 type IdentityEditorSearch = {
   identity: IdentityId;
   tokens: IdentityTokens;
   darkPreview: boolean;
+  darkKept: string[];
 };
+
+function parseDarkKept(raw: string | null): string[] {
+  if (!raw) return [];
+  const keys: string[] = [];
+  for (const key of raw.split(",")) {
+    if (!LIGHT_KEY_SET.has(key) || keys.includes(key)) continue;
+    keys.push(key);
+  }
+  return keys;
+}
 
 function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
@@ -56,6 +69,7 @@ function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
     identity,
     tokens: parsed.success ? parsed.data : fallback,
     darkPreview: params.get("theme") === "dark",
+    darkKept: parseDarkKept(params.get("darkKept")),
   };
 }
 
@@ -63,6 +77,7 @@ function serializeIdentityEditorSearch(
   identity: IdentityId,
   tokens: IdentityTokens,
   darkPreview: boolean,
+  darkKept: readonly string[] = [],
 ): string {
   const params = new URLSearchParams();
   params.set("identity", identity);
@@ -75,6 +90,8 @@ function serializeIdentityEditorSearch(
     if (tokens.light[key] !== base.light[key]) params.set(key, tokens.light[key]);
     if (tokens.dark[key] !== base.dark[key]) params.set(`dark-${key}`, tokens.dark[key]);
   }
+  const kept = LIGHT_KEYS.filter((key) => darkKept.includes(key) && tokens.dark[key] !== base.dark[key]);
+  if (kept.length) params.set("darkKept", kept.join(","));
   return params.toString();
 }
 

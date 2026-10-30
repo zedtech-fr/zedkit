@@ -222,7 +222,7 @@ function IdentityEditorPanel() {
   const [ready, setReady] = useState(false);
   const { setTheme } = useTheme();
   const scheme = darkPreview ? "dark" : "light";
-  const { tokens, remember, undo, applySite, appliedSite, past, patch, fix, applySuggest } = draft;
+  const { tokens, darkKept, remember, undo, applySite, appliedSite, past, load, patch, fix, applySuggest } = draft;
 
   function setDark(next: boolean) {
     setDarkPreview(next);
@@ -232,7 +232,7 @@ function IdentityEditorPanel() {
   useLayoutEffect(() => {
     const parsed = parseIdentityEditorSearch(window.location.search);
     setIdentity(parsed.identity);
-    draft.setTokens(parsed.tokens);
+    load(parsed.tokens, parsed.darkKept);
     if (parsed.darkPreview) setDark(true);
     setReady(true);
   }, []);
@@ -240,12 +240,12 @@ function IdentityEditorPanel() {
   useLayoutEffect(() => {
     if (!ready) return;
     const sheet = applyIdentityTokenSheet(tokens, DRAFT_SELECTOR);
-    const query = serializeIdentityEditorSearch(identity, tokens, darkPreview);
+    const query = serializeIdentityEditorSearch(identity, tokens, darkPreview, darkKept);
     window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
     return () => {
       sheet.remove();
     };
-  }, [darkPreview, identity, ready, tokens]);
+  }, [darkKept, darkPreview, identity, ready, tokens]);
 
   return (
     <IdentityEditorBody

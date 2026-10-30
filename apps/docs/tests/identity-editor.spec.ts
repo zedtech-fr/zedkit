@@ -263,6 +263,25 @@ test.describe("identity editor apply to site", () => {
       .toBe("120 40% 20%");
   });
 
+  test("a URL-loaded dark colour stays kept after a light edit", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await page.getByLabel("Background").fill("120 40% 20%");
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await page.getByLabel("Background").fill("0 0% 95%");
+    await expect.poll(() => new URL(page.url()).searchParams.get("darkKept")).toBe("background");
+    await page.reload({ waitUntil: "networkidle" });
+    await page.getByLabel("Background").fill("0 0% 90%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("120 40% 20%");
+  });
+
   test("a manual dark colour survives a later light edit", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
