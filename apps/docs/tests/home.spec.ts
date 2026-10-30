@@ -5,6 +5,7 @@ import {
   featuredPackageVersion,
   uiGalleryStats,
 } from "../content/gallery";
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { registryBrickNames } from "../content/registry-site";
 
 const BASE = "http://127.0.0.1:3100";
@@ -71,6 +72,26 @@ test("home hero shows generated scale and the latest change (#1057)", async ({ p
     "href",
     "https://github.com/zedtech-fr/zedkit/releases",
   );
+});
+
+test("home hero proof flips identity and dark in scope (#1072)", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const proof = page.locator("[data-home-hero-proof]");
+  const scope = proof.locator("[data-identity-scope]");
+  await expect(scope).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+  await proof.getByLabel("Try a look").selectOption("tide");
+  await expect(scope).toHaveAttribute("data-identity", "tide");
+  await expect(proof).toContainText('<div data-identity="tide">');
+  await proof.getByRole("button", { name: "Dark" }).click();
+  await expect(proof.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+  await expect(proof).toContainText('<div class="dark"><div data-identity="tide">');
+  const darkBg = await scope.evaluate((el) => getComputedStyle(el).backgroundColor);
+  const channels = darkBg.match(/\d+/g)!.map(Number);
+  expect(Math.max(...channels.slice(0, 3))).toBeLessThan(70);
+  // The flip is scoped: the site itself keeps its identity and theme.
+  await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+  expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
 });
 
 test("home area cards keep a decorative icon at phone width", async ({ page }) => {
