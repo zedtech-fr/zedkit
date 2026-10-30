@@ -141,6 +141,43 @@ async function spacingOnHtml(page: Page) {
   return page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--spacing").trim());
 }
 
+test.describe("identity editor on a phone", () => {
+  test.use({ viewport: { width: 360, height: 800 } });
+
+  test("keeps Apply on screen at 360px", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.locator('[data-slot="identity-editor"]').screenshot({ path: "test-results/identity-editor-360.png" });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+    const apply = page.getByRole("button", { name: "Apply to the whole site" });
+    await apply.scrollIntoViewIfNeeded();
+    const box = await apply.boundingBox();
+    expect(box).toBeTruthy();
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(361);
+    const look = await page.getByLabel("Look").boundingBox();
+    expect(look?.width ?? 0).toBeGreaterThan(80);
+  });
+
+  test("Apply then Dark keeps a custom look on the site", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
+    await page.getByLabel("Background").fill("120 40% 20%");
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("120 40% 20%");
+  });
+});
+
 test.describe("identity editor apply to site", () => {
   test("applies the draft to the whole site without a reload", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
