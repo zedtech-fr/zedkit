@@ -14,6 +14,7 @@ export class MemoryRateLimiter {
   allow(key: string, limitPerMinute: number): boolean {
     // Fail closed on misconfiguration: a non-positive limit denies.
     if (!(limitPerMinute >= 1)) return false;
+    if (key.trim().length === 0) return false;
     const now = Date.now();
     const current = this.windows.get(key);
     if (!current || now - current.start >= WINDOW_MS) {

@@ -23,6 +23,13 @@ describe("MemoryRateLimiter", () => {
     expect(limiter.allow("k", Number.NaN)).toBe(false);
   });
 
+  it("denies empty or whitespace-only keys", () => {
+    const limiter = new MemoryRateLimiter();
+    expect(limiter.allow("", 10)).toBe(false);
+    expect(limiter.allow("   ", 10)).toBe(false);
+    expect(limiter.allow("\t\n", 10)).toBe(false);
+  });
+
   describe("window expiry", () => {
     afterEach(() => {
       vi.useRealTimers();
