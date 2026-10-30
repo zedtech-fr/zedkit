@@ -52,8 +52,8 @@ ssh "$target" "mkdir -p '$remote/site' '$remote/site-dev' '$remote/suggest'"
 if [ "$mode" = "prod" ]; then
   ssh "$target" "cp '$remote/Caddyfile' '$remote/Caddyfile.bak' 2>/dev/null; cp '$remote/compose.yaml' '$remote/compose.yaml.bak' 2>/dev/null; true"
   scp -q "$root/deploy/Caddyfile" "$root/deploy/compose.yaml" "$target:$remote/"
-  # Gate: the host image must accept the config before anything restarts.
-  ssh "$target" "docker run --rm -v '$remote/Caddyfile:/etc/caddy/Caddyfile:ro' caddy:2 caddy validate --config /etc/caddy/Caddyfile"
+  # Gate: the host image must accept the final config before any restart.
+  ssh "$target" "docker run --rm -v '$remote/Caddyfile:/etc/caddy/Caddyfile:ro' caddy:2 caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile"
   rsync -a --delete --exclude '*.test.mjs' "$root/deploy/suggest/" "$target:$remote/suggest/"
   if [ -f "$root/deploy/suggest.env" ]; then
     scp -q "$root/deploy/suggest.env" "$target:$remote/suggest.env"
@@ -79,7 +79,7 @@ if [ "$mode" = "prod" ]; then
   if ! ssh "$target" "cd '$remote' && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"; then
     echo "deploy: reload failed, recreating once" >&2
     if ! ssh "$target" "cd '$remote' && docker compose up -d --remove-orphans && docker compose ps --status running -q caddy | grep -q . && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"; then
-      ssh "$target" "cd '$remote' && docker compose ps -a && docker compose logs --no-color --tail 80 caddy" || true
+      ssh "$target" "cd '$remote' && docker compose ps -a && docker inspect -f 'OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}} Error={{.State.Error}}' \$(docker compose ps -aq caddy) && grep -c 'dev.zedkit.app' Caddyfile; docker compose logs --no-color --tail 200 caddy" || true
       echo "deploy: caddy did not come up; see container logs above" >&2
       exit 1
     fi
