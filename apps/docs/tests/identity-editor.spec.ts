@@ -39,17 +39,24 @@ test.describe("identity editor page", () => {
   });
 
   test("keeps the dark preview in the URL", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
     await page.getByRole("button", { name: "Dark" }).click();
     await expect(page.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
     expect(page.url()).toContain("theme=dark");
     await expect
       .poll(() =>
         page.locator('[data-slot="identity-editor-preview"]').evaluate((node) => node.classList.contains("dark")),
       )
       .toBe(true);
+    await page.getByRole("button", { name: "Dark" }).click();
+    await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
+    await expect(page.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "false");
     await page.goto(`${PAGE}?theme=dark`, { waitUntil: "networkidle" });
     await expect(page.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
   });
 
   test("Suggest applies a service patch after Apply", async ({ page }) => {
