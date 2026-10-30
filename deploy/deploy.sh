@@ -40,6 +40,8 @@ esac
 ssh "$target" "mkdir -p '$remote/site' '$remote/site-dev' '$remote/suggest'"
 if [ "$mode" = "prod" ]; then
   scp -q "$root/deploy/Caddyfile" "$root/deploy/compose.yaml" "$target:$remote/"
+  # Gate: the host image must accept the config before anything restarts.
+  ssh "$target" "docker run --rm -v '$remote/Caddyfile:/etc/caddy/Caddyfile:ro' caddy:2 caddy validate --config /etc/caddy/Caddyfile"
   rsync -a --delete --exclude '*.test.mjs' "$root/deploy/suggest/" "$target:$remote/suggest/"
   if [ -f "$root/deploy/suggest.env" ]; then
     scp -q "$root/deploy/suggest.env" "$target:$remote/suggest.env"
@@ -56,9 +58,10 @@ else
     sha="$(git -C "$root" rev-parse HEAD 2>/dev/null || echo unknown)"
   fi
   printf 'branch=%s\ncommit=%s\nbuilt=%s\n' "$branch" "$sha" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$out/dev-build.txt"
+  printf 'User-agent: *\nDisallow: /' > "$out/robots.txt"
 fi
 rsync -a --delete "$out/" "$target:$site/"
 if [ "$mode" = "prod" ]; then
-  ssh "$target" "cd '$remote' && docker compose up -d --remove-orphans && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
+  ssh "$target" "cd '$remote' && docker compose up -d --remove-orphans && docker compose ps --status running -q caddy | grep -q . && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
 fi
 echo "deploy: done"

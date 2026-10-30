@@ -59,6 +59,25 @@ test("Caddyfile serves the dev site from its own root without the suggest proxy"
   const dev = JSON.stringify(devRoutes[0]);
   assert.ok(dev.includes('"root":"/srv/site-dev"'), dev);
   assert.ok(dev.includes("noindex, nofollow"), dev);
-  assert.ok(dev.includes("User-agent: *\\nDisallow: /"), dev);
   assert.ok(!dev.includes("reverse_proxy"), dev);
+});
+
+test("Caddyfile validates on Caddy 2.6 (host floor, no newer syntax)", () => {
+  const result = spawnSync(
+    "docker",
+    [
+      "run",
+      "--rm",
+      "-v",
+      `${here}/Caddyfile:/etc/caddy/Caddyfile:ro`,
+      "caddy:2.6.2",
+      "caddy",
+      "validate",
+      "--config",
+      "/etc/caddy/Caddyfile",
+    ],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout + result.stderr, /Valid configuration/);
 });

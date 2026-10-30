@@ -67,3 +67,13 @@ jobs:
         env:
           TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
         run: deploy/deploy.sh "$TARGET"
+      - name: Smoke check production site
+        run: |
+          for _ in $(seq 1 5); do
+            if curl -sf -o /dev/null https://zedkit.app; then
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "zedkit.app did not return 200 after deploy" >&2
+          exit 1
