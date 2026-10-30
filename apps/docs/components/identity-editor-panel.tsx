@@ -20,6 +20,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
+import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorSuggest } from "@/components/identity-editor-suggest";
 import { IdentityEditorToolbar } from "@/components/identity-editor-toolbar";
 import {
@@ -224,6 +225,7 @@ function IdentityEditorBody({
       <IdentityEditorSuggest tokens={tokens} onApply={onSuggestApply} />
       <EditorFields tokens={tokens} scheme={darkPreview ? "dark" : "light"} onPatch={onPatch} />
       <DraftCard darkPreview={darkPreview} />
+      <IdentityEditorExport tokens={tokens} />
     </Stack>
   );
 }
