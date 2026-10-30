@@ -9,7 +9,8 @@ const MAX_PROMPT = 500;
 const RATE_PER_MIN = 10;
 const RATE_PER_DAY = 100;
 const GLOBAL_DAY = 500;
-const TIMEOUT_MS = 30_000;
+// shortcut: reasoning origins often exceed 30s; drop when the origin streams
+const TIMEOUT_MS = 90_000;
 // Output budget covers reasoning plus the JSON answer. Cap is the usual 128k completion limit.
 const DEFAULT_MAX_TOKENS = 131_072;
 const SYSTEM = `Reply with a JSON object of identity tokens only, no markdown.
@@ -184,7 +185,10 @@ function complete(cfg, prompt, current, fetchImpl) {
         return parseJson(content).then((inner) => (inner.ok ? { patch: inner.value } : { status: 502 }));
       });
     })
-    .catch(() => ({ status: 502 }));
+    .catch((err) => {
+      console.error("suggest: upstream", err?.name === "TimeoutError" ? "timeout" : "fetch");
+      return { status: 502 };
+    });
 }
 
 function firstComplete(env, prompt, current, fetchImpl) {
