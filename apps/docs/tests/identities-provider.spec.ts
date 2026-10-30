@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
+
 // Relative paths: the config baseURL decides the port.
 const PAGE = "/docs/ui/trigger-actions-with-buttons";
 
@@ -28,7 +30,7 @@ function resolve(page: Page, color: string) {
 test("an unknown stored id is ignored: the site default applies", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("zk-identity", "anything"));
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
 });
 
 test("a stored built-in id is applied before first paint", async ({ page }) => {

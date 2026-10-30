@@ -9,10 +9,6 @@ const HOME = "/";
 test.describe("tide identity", () => {
   test("sets Inter at heavy heading weights with large radii", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
-    // Tide is the site default, so the first paint already carries it.
-    const first = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
-    expect(first.startsWith('"Inter Variable"')).toBe(true);
-
     await useIdentity(page, "tide", "light");
     const body = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
     expect(body.startsWith('"Inter Variable"')).toBe(true);
