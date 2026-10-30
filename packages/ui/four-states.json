@@ -26,6 +26,7 @@
     "ComboboxOption",
     "Checkmark",
     "ConfirmDialog",
+    "Container",
     "DataTableEmpty",
     "DataTablePagination",
     "DataTableSkeleton",

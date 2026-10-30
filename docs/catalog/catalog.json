@@ -2511,6 +2511,31 @@
           ],
           "seeAlso": [
             "Render headings and body text without raw tags",
+            "Group content in a card section",
+            "Constrain page width and run sections edge to edge"
+          ]
+        },
+        {
+          "need": "Constrain page width and run sections edge to edge",
+          "import": "`@zedtech/zedkit-ui` — `Container`, `containerVariants`, `ContainerProps`, `Section`",
+          "wraps": "`class-variance-authority`",
+          "status": "alpha",
+          "shortName": "Container",
+          "audience": "Developers building marketing and docs pages with capped measures and full-bleed bands.",
+          "purpose": "Named container widths and edge-to-edge section bands from the layout token scale.",
+          "whenToUse": "For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.",
+          "whenNotToUse": "For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.",
+          "derivedFrom": null,
+          "example": "import { Container, Section } from \"@zedtech/zedkit-ui\";\n<Section bleed tone=\"muted\" spacing=\"lg\" title=\"Pricing\" description=\"What each plan includes.\">...</Section>\n<Container width=\"wide\">...</Container>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Container, Section } from \"@zedtech/zedkit-ui\";\n<Section bleed tone=\"muted\" spacing=\"lg\" title=\"Pricing\" description=\"What each plan includes.\">...</Section>\n<Container width=\"wide\">...</Container>"
+            }
+          ],
+          "a11y": "Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band.",
+          "seeAlso": [
+            "Stack content and group titled sections",
             "Group content in a card section"
           ]
         },

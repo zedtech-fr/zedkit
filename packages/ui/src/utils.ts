@@ -4,11 +4,17 @@ import { extendTailwindMerge } from "tailwind-merge";
 
 // Custom theme size tokens in the text-* shape would be mistaken
 // for text colors by the default config (and dropped as conflicts),
-// so they join the font-size group explicitly.
+// so they join the font-size group explicitly. Same for the layout
+// token scale: container widths, page gutter and section steps are
+// unknown to the default config, so they join their utility groups
+// explicitly or a consumer override would silently coexist.
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
       "font-size": ["text-form-hint", "text-control"],
+      "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }],
+      px: ["px-page-gutter"],
+      py: ["py-section-sm", "py-section-md", "py-section-lg", "py-section-xl"],
     },
   },
 });

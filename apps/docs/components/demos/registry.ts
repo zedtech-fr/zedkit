@@ -31,6 +31,7 @@ import { CardFooterDemo } from "./card-footer-demo";
 import { CheckmarkDemo } from "./checkmark-demo";
 import { ConfirmDialogDemo } from "./confirm-dialog-demo";
 import { ConfirmDialogLabelsDemo } from "./confirm-dialog-labels-demo";
+import { ContainerDemo } from "./container-demo";
 import { DatePickerDemo } from "./date-picker-demo";
 import { DateRangePickerDemo } from "./date-range-picker-demo";
 import { FlagsDemo } from "./flags-demo";
@@ -203,6 +204,7 @@ export const demoRegistry = {
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },
   SkeletonDemo: { Demo: SkeletonDemo, file: "skeleton-demo.tsx" },
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
+  ContainerDemo: { Demo: ContainerDemo, file: "container-demo.tsx" },
   StatusDotDemo: { Demo: StatusDotDemo, file: "status-dot-demo.tsx" },
   StatusLabelDemo: { Demo: StatusLabelDemo, file: "status-label-demo.tsx" },
   TabsDemo: { Demo: TabsDemo, file: "tabs-demo.tsx" },

@@ -73,7 +73,8 @@ kit packages.
 - Searchable lists: `Combobox`, `MultiSelect` (downshift + popover).
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
-- Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`.
+- Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`,
+  `Stack`, `Section`, `Container` (named widths + full-bleed bands).
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards).
 - Detail: `DetailPanel` (key-value rows), `LivePulse` (live indicator).
 
