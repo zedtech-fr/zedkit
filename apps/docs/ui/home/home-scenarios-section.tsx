@@ -49,8 +49,8 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
                     <Text className="text-sm">{scenario.action}</Text>
                   </Stack>
                   <Button asChild variant="outline" className="mt-auto w-fit">
-                    <Link href={scenario.href} aria-label={`Read the docs: ${scenario.situation}`}>
-                      <DocsActionLabel>Read the docs</DocsActionLabel>
+                    <Link href={scenario.href}>
+                      <DocsActionLabel>{scenario.linkLabel}</DocsActionLabel>
                     </Link>
                   </Button>
                 </Stack>

@@ -20,8 +20,8 @@ test("home explains the product and four entry areas", async ({ page }) => {
     }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Choose an area" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Open UI docs" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Open core & server docs" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Start with buttons" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Start with the Nest bootstrap" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
   await expect(page.locator("#entry-points svg[aria-hidden='true']")).toHaveCount(8);
@@ -87,7 +87,7 @@ test("home area cards keep a decorative icon at phone width", async ({ page }) =
 
 test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const entry = page.getByRole("link", { name: "Open UI docs" });
+  const entry = page.getByRole("link", { name: "Start with buttons" });
   await entry.click();
   await page.waitForURL("**/docs/ui/**", { timeout: 10000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -156,8 +156,8 @@ test("home docs CTAs keep a decorative icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE, { waitUntil: "networkidle" });
   for (const name of [
-    "Open UI docs",
-    "Open core & server docs",
+    "Start with buttons",
+    "Start with the Nest bootstrap",
     "Open SEO docs",
     "Open agent setup docs",
   ] as const) {
@@ -188,10 +188,10 @@ test.describe("home docs CTAs light/dark (#748)", () => {
       const entry = page.locator("#entry-points");
       const scenarios = page.locator("#scenarios");
       await entry.scrollIntoViewIfNeeded();
-      await expect(entry.getByRole("link", { name: "Open UI docs" })).toBeVisible();
+      await expect(entry.getByRole("link", { name: "Start with buttons" })).toBeVisible();
       await entry.screenshot({ path: `test-results/home-cta-entry-${mode}.png` });
       await scenarios.scrollIntoViewIfNeeded();
-      await expect(scenarios.getByRole("link", { name: "Read the docs: New admin UI in an existing app" })).toBeVisible();
+      await expect(scenarios.getByRole("link", { name: "Read the theme docs" })).toBeVisible();
       await scenarios.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
     });
   }
@@ -241,10 +241,16 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
 
 test("home scenario links have unique accessible names", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const scenarioLink = page.getByRole("link", { name: "Read the docs: New admin UI in an existing app" });
+  const scenarios = page.locator("#scenarios");
+  await expect(scenarios.getByRole("link", { name: "Read the theme docs" })).toBeVisible();
+  await expect(scenarios.getByRole("link", { name: "Read the agent setup docs" })).toBeVisible();
+  await expect(scenarios.getByRole("link", { name: "Read the form docs" })).toBeVisible();
+  await expect(scenarios.getByRole("link", { name: "Read the DataTable docs" })).toBeVisible();
+  await expect(scenarios.getByRole("link", { name: "Read the Drawer docs" })).toBeVisible();
+  const scenarioLink = scenarios.getByRole("link", { name: "Read the Button docs" });
   await expect(scenarioLink).toBeVisible();
   await scenarioLink.click();
-  await page.waitForURL("**/docs/**", { timeout: 10000 });
+  await page.waitForURL("**/docs/ui/trigger-actions-with-buttons", { timeout: 10000 });
 });
 
 test("home has no nested interactive elements", async ({ page }) => {
@@ -322,7 +328,7 @@ test("home keyboard: tab reaches an entry-point CTA", async ({ page }) => {
   let found = false;
   for (let i = 0; i < 50; i++) {
     const active = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
-    if (active.includes("Open UI docs")) {
+    if (active.includes("Start with buttons")) {
       found = true;
       break;
     }

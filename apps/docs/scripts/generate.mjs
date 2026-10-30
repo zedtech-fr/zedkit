@@ -610,7 +610,15 @@ function buildHomeScenarios(slugsByNeed, catalog) {
   }
   const source = JSON.parse(readFileSync(sourcePath, "utf8"));
   const scenarios = [];
+  const seenLabels = new Set();
   for (const row of source) {
+    if (!row.linkLabel) {
+      throw new Error(`home-scenarios.json: "${row.situation}" needs linkLabel.`);
+    }
+    if (seenLabels.has(row.linkLabel)) {
+      throw new Error(`home-scenarios.json: duplicate linkLabel "${row.linkLabel}".`);
+    }
+    seenLabels.add(row.linkLabel);
     let pkg = null;
     for (const [name, entry] of Object.entries(catalog.packages)) {
       if (entry.needs.some((need) => need.need === row.catalogNeed)) {
@@ -626,7 +634,7 @@ function buildHomeScenarios(slugsByNeed, catalog) {
       goal: row.goal,
       action: row.action,
       href: `/docs/${placed.folder}/${placed.slug}`,
-      linkLabel: `Read docs: ${row.situation}`,
+      linkLabel: row.linkLabel,
     });
   }
   return scenarios;
