@@ -136,5 +136,40 @@ test.describe("identity editor apply to site", () => {
     ).toBe("120 40% 20%");
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
+
+  test("header Identity control clears Custom after Apply to the whole site", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    const chooser = page.getByRole("combobox", { name: "Identity" }).first();
+    await expect(chooser).toHaveValue("custom");
+    await chooser.selectOption("press");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.2rem$/);
+    await expect(chooser).toHaveValue("press");
+    expect(await chooser.locator("option").evaluateAll((options) => options.map((o) => (o as HTMLOptionElement).value))).not.toContain(
+      "custom",
+    );
+    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
+  });
+
+  test("header Identity control clears Custom in dark mode", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.addInitScript(() => localStorage.setItem("theme", "dark"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    const chooser = page.getByRole("combobox", { name: "Identity" }).first();
+    await expect(chooser).toHaveValue("custom");
+    await chooser.selectOption("tide");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
+    await expect(chooser).toHaveValue("tide");
+    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
+  });
 });
 
