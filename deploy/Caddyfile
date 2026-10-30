@@ -39,6 +39,25 @@ zedkit.app {
 	}
 }
 
-# The dev site is served by the running config on the host (its content
-# directory is mounted from ./site-dev); declaring its host here again
-# made Caddy exit on startup. Content deploys stamp it via deploy.sh --dev.
+# Dev site: same static export, no indexing, no suggest proxy.
+# robots.txt comes from the dev build stamp (deploy.sh --dev writes it).
+dev.zedkit.app {
+	root * /srv/site-dev
+	encode zstd gzip
+
+	header X-Robots-Tag "noindex, nofollow"
+
+	handle {
+		@search path /api/search
+		header @search Content-Type application/json
+
+		@immutable path /_next/static/*
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+		@plain not path /_next/static/*
+		header @plain Cache-Control "no-cache"
+
+		try_files {path} {path}.html {path}/index.html
+		file_server
+	}
+}

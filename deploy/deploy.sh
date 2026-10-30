@@ -29,7 +29,7 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 out="$root/apps/docs/out"
 
 if [ "$mode" = "rollback" ]; then
-  ssh "$target" "cd '$remote' && for f in Caddyfile compose.yaml; do if [ -f \"\$f.bak\" ]; then cp \"\$f.bak\" \"\$f\"; fi; done && docker compose up -d --remove-orphans && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
+  ssh "$target" "cd '$remote' && for f in Caddyfile compose.yaml compose.override.yaml; do if [ -f \"\$f.bak\" ]; then cp \"\$f.bak\" \"\$f\"; fi; done && docker compose up -d --remove-orphans && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
   echo "deploy: rolled back"
   exit 0
 fi
@@ -50,8 +50,8 @@ esac
 
 ssh "$target" "mkdir -p '$remote/site' '$remote/site-dev' '$remote/suggest'"
 if [ "$mode" = "prod" ]; then
-  ssh "$target" "cp '$remote/Caddyfile' '$remote/Caddyfile.bak' 2>/dev/null; cp '$remote/compose.yaml' '$remote/compose.yaml.bak' 2>/dev/null; true"
-  scp -q "$root/deploy/Caddyfile" "$root/deploy/compose.yaml" "$target:$remote/"
+  ssh "$target" "cp '$remote/Caddyfile' '$remote/Caddyfile.bak' 2>/dev/null; cp '$remote/compose.yaml' '$remote/compose.yaml.bak' 2>/dev/null; cp '$remote/compose.override.yaml' '$remote/compose.override.yaml.bak' 2>/dev/null; true"
+  scp -q "$root/deploy/Caddyfile" "$root/deploy/compose.yaml" "$root/deploy/compose.override.yaml" "$target:$remote/"
   # Gate: the host image must accept the final config before any restart.
   ssh "$target" "docker run --rm -v '$remote/Caddyfile:/etc/caddy/Caddyfile:ro' caddy:2 caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile"
   rsync -a --delete --exclude '*.test.mjs' "$root/deploy/suggest/" "$target:$remote/suggest/"
