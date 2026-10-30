@@ -21,9 +21,13 @@ export function HomeAiSetupSection() {
   const initCommand = loadInitCommand();
   return (
     <Section
+      bleed
+      tone="muted"
+      spacing="lg"
+      containerWidth="reading"
       id="ai-setup"
       title="Set up your coding agent"
-      className={`w-full max-w-2xl min-w-0 ${HOME_SECTION_REVEAL_CLASS}`}
+      className={HOME_SECTION_REVEAL_CLASS}
     >
       <HomeAiSetupCopy initCommand={initCommand} />
     </Section>

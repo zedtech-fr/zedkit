@@ -14,19 +14,23 @@ import { HomeScenarioTitle } from "@/components/home-scenario-title";
 import type { HomeScenario } from "@/content/home-scenarios";
 import {
   HOME_CARD_CONTENT_GAP,
-  HOME_CARD_GRID_TWO_COL,
+  HOME_CARD_GRID_THREE_COL,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
 export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] }) {
   return (
     <Section
+      bleed
+      tone="muted"
+      spacing="lg"
+      containerWidth="wide"
       title="Start from your situation"
       id="scenarios"
       description="Each card links to a generated doc page (install command, example, and live preview when available)."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
-        <Stack className={HOME_CARD_GRID_TWO_COL}>
+        <Stack className={HOME_CARD_GRID_THREE_COL}>
           {scenarios.map((scenario) => (
             <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
               <CardHeader>

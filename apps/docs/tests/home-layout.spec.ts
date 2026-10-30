@@ -69,3 +69,66 @@ test.describe("home layout rhythm (#387)", () => {
     });
   }
 });
+
+test.describe("home bands (#1025)", () => {
+  test("sections bleed edge to edge with content capped at wide on 2560px", async ({ page }) => {
+    await page.setViewportSize({ width: 2560, height: 1080 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+
+    const metrics = await page.evaluate(() => {
+      const rect = (el: Element | null | undefined) => {
+        const r = el?.getBoundingClientRect();
+        return r ? { left: r.left, right: r.right, width: r.width } : null;
+      };
+      const section = document.getElementById("components");
+      return {
+        viewportWidth: document.documentElement.clientWidth,
+        section: rect(section),
+        inner: rect(section?.querySelector(":scope > div")),
+        heading: rect(document.querySelector("#home-page h1")),
+      };
+    });
+
+    // The band itself runs edge to edge.
+    expect(metrics.section).not.toBeNull();
+    expect(metrics.section!.left).toBeLessThanOrEqual(1);
+    expect(metrics.section!.right).toBeGreaterThanOrEqual(metrics.viewportWidth - 1);
+
+    // Its content is capped at the wide measure (90rem = 1440px at the stock
+    // root size) and centered inside the band.
+    expect(metrics.inner).not.toBeNull();
+    expect(metrics.inner!.width).toBeGreaterThan(1200);
+    expect(metrics.inner!.width).toBeLessThanOrEqual(1442);
+    expect(Math.abs(metrics.inner!.left - (metrics.viewportWidth - metrics.inner!.right))).toBeLessThan(2);
+
+    // The hero is no longer trapped in the old 1024px shell (its heading
+    // started ~768px in at this width before the bands).
+    expect(metrics.heading).not.toBeNull();
+    expect(metrics.heading!.left).toBeLessThan((metrics.viewportWidth - 1440) / 2 + 48);
+  });
+
+  // Regression guard: fumadocs' prebuilt CSS re-emits some utilities later
+  // in the shared utilities layer, so a home grid class it also defines can
+  // shadow this app's higher breakpoint step on the same property. Assert
+  // the rendered track counts, not just the class names.
+  test("card grids reach their wide column counts at 1440px", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+
+    const tracks = await page.evaluate(() => {
+      const count = (id: string) => {
+        const grid = document.getElementById(id)?.querySelector(".grid");
+        return grid ? getComputedStyle(grid).gridTemplateColumns.split(" ").length : 0;
+      };
+      return {
+        entryPoints: count("entry-points"),
+        scenarios: count("scenarios"),
+        components: count("components"),
+      };
+    });
+
+    expect(tracks.entryPoints).toBe(4);
+    expect(tracks.scenarios).toBe(3);
+    expect(tracks.components).toBe(3);
+  });
+});

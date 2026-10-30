@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { Stack } from "@zedtech/zedkit-ui";
+import { Container, Stack } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
 import { HomeHeroLead } from "@/ui/home/home-hero-lead";
@@ -26,21 +26,21 @@ const HomeUseCasesSection = dynamic(
 
 const HomeAiSetupSection = dynamic(
   () => import("@/ui/home/home-ai-setup-section").then((mod) => ({ default: mod.HomeAiSetupSection })),
-  { loading: () => <section id="ai-setup" aria-busy="true" className="min-h-64 w-full scroll-mt-24" /> },
+  { loading: () => <section id="ai-setup" aria-busy="true" className="min-h-128 w-full scroll-mt-24" /> },
 );
 
 const HomeInstallOrCopySection = dynamic(
   () => import("@/ui/home/home-install-or-copy-section").then((mod) => ({ default: mod.HomeInstallOrCopySection })),
   {
     loading: () => (
-      <section id="install-or-copy" aria-busy="true" className="min-h-64 w-full scroll-mt-24" />
+      <section id="install-or-copy" aria-busy="true" className="min-h-128 w-full scroll-mt-24" />
     ),
   },
 );
 
 const HomeUiQuickstartSection = dynamic(
   () => import("@/ui/home/home-ui-quickstart-section").then((mod) => ({ default: mod.HomeUiQuickstartSection })),
-  { loading: () => <section id="quickstart" aria-busy="true" className="min-h-64 w-full scroll-mt-24" /> },
+  { loading: () => <section id="quickstart" aria-busy="true" className="min-h-128 w-full scroll-mt-24" /> },
 );
 
 const HomeHeroDashboard = dynamic(
@@ -58,18 +58,20 @@ export function HomeHero({
   changelogHref: string;
 }) {
   return (
-    <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
-      <Stack
-        gap={HOME_SECTION_CONTENT_GAP}
-        className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
-      >
-        <HomeHeroLead version={version} changelogHref={changelogHref} />
-        <HomeHeroTailWhenIdle
-          placeholder={<Stack aria-hidden="true" className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview />}
+    <>
+      <Container width="wide" className="py-section-lg">
+        <Stack
+          gap={HOME_SECTION_CONTENT_GAP}
+          className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
         >
-          <HomeHeroPreview />
-        </HomeHeroTailWhenIdle>
-      </Stack>
+          <HomeHeroLead version={version} changelogHref={changelogHref} />
+          <HomeHeroTailWhenIdle
+            placeholder={<Stack aria-hidden="true" className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview />}
+          >
+            <HomeHeroPreview />
+          </HomeHeroTailWhenIdle>
+        </Stack>
+      </Container>
       <HomeUseCasesSection />
       <HomeAiSetupSection />
       <HomeInstallOrCopySection npmPackage={featuredPackage} />
@@ -79,7 +81,9 @@ export function HomeHero({
         featuredBrick={featuredRegistryBrick}
         registryBricks={registryBrickNames}
       />
-      <HomeHeroDashboard />
-    </Stack>
+      <Container width="wide" className="py-section-lg">
+        <HomeHeroDashboard />
+      </Container>
+    </>
   );
 }

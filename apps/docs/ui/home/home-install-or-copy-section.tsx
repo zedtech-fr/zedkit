@@ -30,9 +30,12 @@ export function HomeInstallOrCopySection({ npmPackage }: { npmPackage: string })
   }
   return (
     <Section
+      bleed
+      spacing="lg"
+      containerWidth="reading"
       id="install-or-copy"
       title="Install it or copy it"
-      className={`w-full max-w-2xl min-w-0 ${HOME_SECTION_REVEAL_CLASS}`}
+      className={HOME_SECTION_REVEAL_CLASS}
     >
       <HomeInstallOrCopyCopy
         packageInstallCmd={packageInstallCmd}

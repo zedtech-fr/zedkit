@@ -1,11 +1,20 @@
-/** Home page vertical rhythm — Stack `gap` steps map to kit spacing tokens. */
-export const HOME_PAGE_SECTION_GAP = 8;
+/**
+ * Home page rhythm constants. Vertical section rhythm comes from the kit
+ * section spacing scale (full-bleed bands); these constants cover the gaps
+ * and card grids inside each band.
+ */
 export const HOME_SECTION_CONTENT_GAP = 4;
 export const HOME_CARD_CONTENT_GAP = 3;
 
-export const HOME_PAGE_SHELL_CLASS = "mx-auto w-full min-w-0 max-w-5xl px-card-padding py-8";
 export const HOME_CARD_GRID_TWO_COL = "grid min-w-0 gap-4 md:grid-cols-2";
-export const HOME_CARD_GRID_THREE_COL = "grid min-w-0 gap-4 md:grid-cols-3";
+/**
+ * The two-step grids step at `sm`, not `md`: fumadocs' prebuilt CSS defines
+ * its own `md:grid-cols-2` later in the shared utilities layer, which would
+ * shadow the `xl` step on any element carrying both. Track counts are pinned
+ * by the "home bands" e2e test in tests/home-layout.spec.ts.
+ */
+export const HOME_CARD_GRID_THREE_COL = "grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3";
+export const HOME_CARD_GRID_FOUR_COL = "grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4";
 
 /** Soft enter animation; static when prefers-reduced-motion (kit motion tokens). */
 export const HOME_SECTION_REVEAL_CLASS =

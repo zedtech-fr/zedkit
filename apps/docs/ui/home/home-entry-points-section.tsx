@@ -14,19 +14,22 @@ import { HomeAreaTitle } from "@/components/home-area-title";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
 import {
   HOME_CARD_CONTENT_GAP,
-  HOME_CARD_GRID_TWO_COL,
+  HOME_CARD_GRID_FOUR_COL,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
 export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntryPoint[] }) {
   return (
     <Section
+      bleed
+      spacing="lg"
+      containerWidth="wide"
       title="Choose an area"
       id="entry-points"
       description="Four package families in the catalog — counts come from the generated index, not hand-maintained numbers."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
-        <Stack className={HOME_CARD_GRID_TWO_COL}>
+        <Stack className={HOME_CARD_GRID_FOUR_COL}>
           {entryPoints.map((entry) => (
             <Card key={entry.href} className="min-w-0">
               <CardHeader>
