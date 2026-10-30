@@ -7,21 +7,25 @@ pull request and green required checks.
 
 ## Required status checks (CI workflow)
 
-These job names must pass on the PR head before squash-merge (from
-[`.github/workflows/ci.yml`](../.github/workflows/ci.yml)):
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) ends with a job
+named **`ci-required`**. It `needs` the jobs below and fails unless each
+one is `success` (same `if: always()` pattern as `docs-e2e`). Once the
+ruleset lists only that name, adding or renaming a leaf job does not
+need a settings change.
 
 | Check | Role |
 | --- | --- |
+| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + docs-e2e + docs-smoke |
 | `hygiene` | Artifact, tone, private-refs, dependabot, changeset, PR lenses |
 | `checks` | typecheck, lint, build, tests, catalog, pack, API reports, ui smoke |
 | `registry-smoke` | Registry build + smoke |
 | `docs-smoke` | Docs Playwright smoke subset |
 | `docs-e2e` | Aggregate gate over the three docs e2e shards |
 
-The matrix jobs `docs-e2e-shard (1/3)` … `(3/3)` run in parallel; merge
-requires the aggregate **`docs-e2e`** job (see the `needs:` gate in the
-workflow). The ruleset may also list shard names; that is redundant with
-`docs-e2e` but still valid.
+The matrix jobs `docs-e2e-shard (1/3)` … `(3/3)` run in parallel; `docs-e2e`
+fails unless every shard succeeded. `ci-required` then fails unless
+`docs-e2e` succeeded. The live ruleset may still list the leaf names and
+shard names until an admin applies the settings issue (#950).
 
 `deploy-docs` and `release` run on `main` after merge; they are **not**
 required for merging PRs.

@@ -204,3 +204,20 @@ jobs:
           name: docs-home-smoke
           path: apps/docs/test-results/*.png
           if-no-files-found: ignore
+
+  # Stable check name for branch protection. Require this one job instead of
+  # listing every CI job (and the docs-e2e shard names). The ruleset still
+  # lists the old names until an admin applies the settings issue.
+  ci-required:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [hygiene, checks, registry-smoke, docs-e2e, docs-smoke]
+    if: always()
+    steps:
+      - name: All required jobs passed
+        run: |
+          test "${{ needs.hygiene.result }}" = "success"
+          test "${{ needs.checks.result }}" = "success"
+          test "${{ needs.registry-smoke.result }}" = "success"
+          test "${{ needs.docs-e2e.result }}" = "success"
+          test "${{ needs.docs-smoke.result }}" = "success"
