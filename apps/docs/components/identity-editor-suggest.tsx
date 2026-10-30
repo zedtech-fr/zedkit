@@ -121,7 +121,7 @@ function IdentityEditorSuggest({
 }) {
   const [prompt, setPrompt] = useState("");
   const [busy, setBusy] = useState(false);
-  const [applySite, setApplySite] = useState(false);
+  const [applySite, setApplySite] = useState(true);
   const [proposal, setProposal] = useState<SuggestProposal | null>(null);
 
   function runSuggest() {

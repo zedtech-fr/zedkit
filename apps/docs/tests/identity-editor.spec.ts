@@ -10,6 +10,10 @@ async function spacingOnDraft(page: Page) {
   );
 }
 
+async function spacingOnHtml(page: Page) {
+  return page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--spacing").trim());
+}
+
 test.describe("identity editor page", () => {
   test("writes spacing onto the draft card and into the URL", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -94,6 +98,39 @@ test.describe("identity editor page", () => {
     await expect(page.locator('[data-slot="identity-editor-swatch"]')).toHaveCount(0);
     await page.getByRole("button", { name: "Apply", exact: true }).click();
     await expect.poll(() => spacingOnDraft(page)).toBe("0.5rem");
+    await expect.poll(() => spacingOnHtml(page)).toBe("0.5rem");
+  });
+
+  test("Suggest Apply keeps a dark colour on the whole site", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.route("**/api/identity/suggest", async (route) => {
+      const posted = route.request().postDataJSON() as {
+        current: { light: Record<string, string>; dark: Record<string, string> };
+      };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: {
+          tokens: {
+            ...posted.current,
+            light: { ...posted.current.light, background: "0 0% 95%" },
+            dark: { ...posted.current.dark, background: "120 40% 20%" },
+          },
+        },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("dark forest");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("dark.background:")).toBeVisible();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("120 40% 20%");
   });
 
   test("Suggest preview warns when the proposal misses AA", async ({ page }) => {
@@ -158,10 +195,6 @@ test.describe("identity editor page", () => {
     await assertA11yGate(page, "[data-slot=identity-editor]");
   });
 });
-
-async function spacingOnHtml(page: Page) {
-  return page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--spacing").trim());
-}
 
 test.describe("identity editor on a phone", () => {
   test.use({ viewport: { width: 360, height: 800 } });
