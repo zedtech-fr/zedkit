@@ -192,7 +192,11 @@ test("POST uses fallback when primary fails", async () => {
 });
 
 test("POST returns 502 when the upstream fetch is aborted", async () => {
-  const fetchImpl = () => Promise.reject(new DOMException("The operation was aborted.", "TimeoutError"));
+  const fetchImpl = () => {
+    const err = new Error("The operation was aborted.");
+    err.name = "TimeoutError";
+    return Promise.reject(err);
+  };
   await withServer({ env: ENV, fetchImpl }, async (port) => {
     const res = await post(port, { prompt: "warm", current: CURRENT });
     assert.equal(res.status, 502);
