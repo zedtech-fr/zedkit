@@ -263,6 +263,21 @@ test.describe("identity editor apply to site", () => {
       .toBe("120 40% 20%");
   });
 
+  test("an old URL without darkKept still keeps a dark override", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(`${PAGE}?identity=mist&dark-background=${encodeURIComponent("120 40% 20%")}`, {
+      waitUntil: "networkidle",
+    });
+    await page.getByLabel("Background").fill("0 0% 95%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("120 40% 20%");
+  });
+
   test("a URL-loaded dark colour stays kept after a light edit", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
