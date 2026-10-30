@@ -191,6 +191,15 @@ test("POST uses fallback when primary fails", async () => {
   });
 });
 
+test("POST returns 502 when the upstream fetch is aborted", async () => {
+  const fetchImpl = () => Promise.reject(new DOMException("The operation was aborted.", "TimeoutError"));
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "warm", current: CURRENT });
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error, "upstream");
+  });
+});
+
 test("POST returns 502 when the model output fails the token schema", async () => {
   const fetchImpl = () => Promise.resolve(chatReply({ spacing: "" }));
   await withServer({ env: ENV, fetchImpl }, async (port) => {
