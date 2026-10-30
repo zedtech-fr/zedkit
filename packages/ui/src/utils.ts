@@ -13,6 +13,7 @@ const twMerge = extendTailwindMerge({
     classGroups: {
       "font-size": ["text-form-hint", "text-control"],
       "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }],
+      "min-h": [{ "min-h": ["control-height", "textarea-min-height"] }],
       px: ["px-page-gutter"],
       py: ["py-section-sm", "py-section-md", "py-section-lg", "py-section-xl"],
     },

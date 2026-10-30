@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "#index.js";
 import { Popover, PopoverContent, PopoverTrigger } from "#index.js";
+import { Label } from "#index.js";
 import { SecretField } from "#index.js";
 import { Toaster, toast } from "#index.js";
 import { Tooltip, TooltipContent, TooltipTrigger } from "#index.js";
@@ -333,6 +334,46 @@ describe("overlays", () => {
       render(<SecretField id="key" value="zbk_secret" />);
       await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
       expect(screen.getByRole("button", { name: "Copy to clipboard" })).not.toBeNull();
+    });
+
+    it("keeps the single-line input by default", () => {
+      const { container } = render(<SecretField id="key" value="zbk_secret" />);
+      expect(container.querySelector("input")?.getAttribute("value")).toBe("zbk_secret");
+      expect(container.querySelector("textarea")).toBeNull();
+    });
+
+    it("multiline renders the full value in an auto-growing textarea and still copies it", async () => {
+      const user = userEvent.setup();
+      const writeText = vi.fn(async () => {});
+      vi.stubGlobal("navigator", { clipboard: { writeText } });
+      const value = "pnpm dlx shadcn@latest add https://zedkit.app/r/themes/volt.json";
+      const { container } = render(<SecretField multiline aria-label="Registry command" value={value} />);
+      const field = screen.getByRole("textbox", { name: "Registry command" }) as HTMLTextAreaElement;
+      expect(field.tagName).toBe("TEXTAREA");
+      expect(field.value).toBe(value);
+      expect(field.readOnly).toBe(true);
+      expect(field.getAttribute("spellcheck")).toBe("false");
+      expect(field.rows).toBe(1);
+      expect(field.className).toContain("field-sizing-content");
+      expect(field.className).toContain("wrap-anywhere");
+      expect(field.className).toContain("font-mono");
+      expect(field.className).toContain("min-h-control-height");
+      expect(field.className).not.toContain("min-h-textarea-min-height");
+      expect(container.querySelector("input")).toBeNull();
+      await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
+      expect(writeText).toHaveBeenCalledWith(value);
+    });
+
+    it("multiline stays labelable and reserves one row per line as the no-field-sizing fallback", () => {
+      render(
+        <>
+          <Label htmlFor="snippet">globals.css</Label>
+          <SecretField multiline id="snippet" value={"@import \"tailwindcss\";\n@import \"@zedtech/zedkit-ui/styles.css\";"} />
+        </>,
+      );
+      const field = screen.getByLabelText("globals.css") as HTMLTextAreaElement;
+      expect(field.tagName).toBe("TEXTAREA");
+      expect(field.rows).toBe(2);
     });
 
     it("uses token-driven gap and icon size with no arbitrary values", () => {

@@ -1188,6 +1188,7 @@ export interface SecretFieldProps {
     "aria-label"?: string;
     copyLabel?: string;
     id?: string;
+    multiline?: boolean | undefined;
     value: string;
 }
 

@@ -36,6 +36,7 @@ export function HomeUiQuickstartCopy({
           1. Wire styles in <Text as="span" className="font-mono text-sm">src/app/globals.css</Text>
         </Heading>
         <SecretField
+          multiline
           value={globalsCss}
           aria-label="globals.css contents"
           copyLabel="Copy globals.css"
@@ -56,7 +57,7 @@ export function HomeUiQuickstartCopy({
         <Heading level={3} className="text-sm font-semibold">
           3. Render a button in <Text as="span" className="font-mono text-sm">src/app/page.tsx</Text>
         </Heading>
-        <SecretField value={pageTsx} aria-label="page.tsx example" copyLabel="Copy page.tsx" />
+        <SecretField multiline value={pageTsx} aria-label="page.tsx example" copyLabel="Copy page.tsx" />
         <Text variant="muted" className="text-sm">
           Run <Text as="span" className="font-mono text-sm">pnpm dev</Text> — you should see a styled{" "}
           <Text as="span" className="font-semibold">Save</Text> button. The live preview below uses the same

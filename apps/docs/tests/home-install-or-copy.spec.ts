@@ -43,6 +43,21 @@ test.describe("home install or copy block (#419)", () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
   });
 
+  test("commands read in full at 360px without internal scrolling", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 900 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+
+    const field = page.getByLabel("shadcn registry add command");
+    await expect(field).toBeVisible();
+    const box = await field.evaluate((el) => ({
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+      value: (el as HTMLTextAreaElement).value,
+    }));
+    expect(box.value).toBe(REGISTRY_CMD);
+    expect(box.scrollHeight).toBeLessThanOrEqual(box.clientHeight + 1);
+  });
+
   test("published brick names keep a decorative icon", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(BASE, { waitUntil: "networkidle" });
