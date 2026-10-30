@@ -934,6 +934,9 @@ export const identityTokenSchema: z.ZodObject<{
 export function Input(input: React_2.ComponentProps<"input">): React_2.JSX.Element;
 
 // @public (undocumented)
+export function isNamedIdentityId(id: string): boolean;
+
+// @public (undocumented)
 export function isPresetId(id: string): id is IdentityId;
 
 // @public
@@ -984,6 +987,9 @@ export type MultiSelectProps = {
     "aria-label"?: string;
     "aria-labelledby"?: string;
 };
+
+// @public
+export const NAMED_IDENTITY_PREFIX = "n-";
 
 // @public
 export function OfflineNote(input: OfflineNoteProps): JSX.Element;

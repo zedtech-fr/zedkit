@@ -13,6 +13,12 @@ const IDENTITY_STORAGE_KEY = "zk-identity";
 const IDENTITY_CUSTOM_STORAGE_KEY = "zk-identity-custom";
 /** `data-identity` value while a custom token sheet is active. */
 const CUSTOM_IDENTITY_ID = "custom";
+/** Prefix for saved named identities (`n-acme`). Built-in ids never use it. */
+const NAMED_IDENTITY_PREFIX = "n-";
+
+function isNamedIdentityId(id: string): boolean {
+  return id.startsWith(NAMED_IDENTITY_PREFIX);
+}
 /** `data-slot` on the custom identity `<style>` node. */
 const IDENTITY_CUSTOM_SHEET_SLOT = "identity-custom-sheet";
 /** Window event fired after the identity attribute changes. */
@@ -72,7 +78,9 @@ export {
   IDENTITY_CUSTOM_SHEET_SLOT,
   IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
+  NAMED_IDENTITY_PREFIX,
   customIdentityStorageKey,
   identities,
+  isNamedIdentityId,
   type IdentityOption,
 };

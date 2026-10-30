@@ -524,3 +524,42 @@ test.describe("identity editor apply to site", () => {
   });
 });
 
+test.describe("identity editor named looks", () => {
+  test("saves, lists, applies, renames and deletes a named look", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Background").fill("0 80% 70%");
+    await page.getByLabel("Name").fill("Coral");
+    await page.getByRole("button", { name: "Save look" }).click();
+    await expect(page.getByLabel("Look")).toHaveValue("n-coral");
+    const header = page.getByRole("combobox", { name: "Identity" }).first();
+    await expect(header.locator("option[value='n-coral']")).toHaveText("Coral");
+    await header.selectOption("n-coral");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
+    await page.getByLabel("Name").fill("Sunset");
+    await page.getByRole("button", { name: "Rename" }).click();
+    await expect(header.locator("option[value='n-coral']")).toHaveText("Sunset");
+    await expect(header).toHaveValue("n-coral");
+    await page.getByRole("button", { name: "Delete" }).click();
+    await expect(page.getByLabel("Look")).toHaveValue("mist");
+    await expect(header.locator("option[value='n-coral']")).toHaveCount(0);
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
+  });
+
+  test("keeps a named look after reload", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Background").fill("0 80% 70%");
+    await page.getByLabel("Name").fill("Coral");
+    await page.getByRole("button", { name: "Save look" }).click();
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
+    await page.reload({ waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("n-coral");
+    await expect(page.getByLabel("Look")).toHaveValue("n-coral");
+  });
+});
+

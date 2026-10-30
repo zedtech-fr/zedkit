@@ -375,6 +375,9 @@ importers:
       '@openfeature/web-sdk':
         specifier: 'catalog:'
         version: 1.10.0(@openfeature/core@1.12.0)
+      '@zedtech/zedkit-core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@zedtech/zedkit-flags':
         specifier: workspace:*
         version: link:../../packages/flags

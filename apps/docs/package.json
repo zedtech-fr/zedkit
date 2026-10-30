@@ -32,6 +32,7 @@
     "@fontsource-variable/space-grotesk": "catalog:",
     "@openfeature/react-sdk": "catalog:",
     "@openfeature/web-sdk": "catalog:",
+    "@zedtech/zedkit-core": "workspace:*",
     "@zedtech/zedkit-flags": "workspace:*",
     "@zedtech/zedkit-seo": "workspace:*",
     "@zedtech/zedkit-ui": "workspace:*",

@@ -1,5 +1,6 @@
 import {
   identityPresets,
+  isNamedIdentityId,
   isPresetId,
   parseIdentityTokens,
   withIdentityDarkPair,
@@ -29,7 +30,7 @@ function clonePreset(id: IdentityId): IdentityTokens {
 const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
 
 type IdentityEditorSearch = {
-  identity: IdentityId;
+  identity: string;
   tokens: IdentityTokens;
   darkPreview: boolean;
   darkKept: string[];
@@ -57,8 +58,8 @@ function inferDarkKept(params: URLSearchParams, tokens: IdentityTokens): string[
 function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   const rawId = params.get("identity") ?? "mist";
-  const identity: IdentityId = isPresetId(rawId) ? rawId : "mist";
-  const fallback = clonePreset(identity);
+  const identity = isPresetId(rawId) || isNamedIdentityId(rawId) ? rawId : "mist";
+  const fallback = clonePreset(isPresetId(identity) ? identity : "mist");
   const draft: IdentityTokens = {
     ...fallback,
     light: { ...fallback.light },
@@ -86,7 +87,7 @@ function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
 }
 
 function serializeIdentityEditorSearch(
-  identity: IdentityId,
+  identity: string,
   tokens: IdentityTokens,
   darkPreview: boolean,
   darkKept: readonly string[] = [],
@@ -94,7 +95,7 @@ function serializeIdentityEditorSearch(
   const params = new URLSearchParams();
   params.set("identity", identity);
   if (darkPreview) params.set("theme", "dark");
-  const base = identityPresets[identity];
+  const base = identityPresets[isPresetId(identity) ? identity : "mist"];
   for (const key of SCALAR_KEYS) {
     if (tokens[key] !== base[key]) params.set(key, tokens[key]);
   }
