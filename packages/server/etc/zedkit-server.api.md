@@ -4,7 +4,7 @@
 
 ```ts
 export { loadEnv } from "./load-env.js";
-export { pgErrorCode } from "./pg-error.js";
+export { pgErrorCode, pgErrorRetryable } from "./pg-error.js";
 export { MemoryRateLimiter } from "./rate-limit.js";
 export { redactValue } from "./redaction.js";
 export { computeBackoffMs } from "./backoff.js";
@@ -23,6 +23,8 @@ export declare function loadEnv<S extends z.ZodRawShape>(shape: S, source?: Reco
  * keeping its own shape check.
  */
 export declare function pgErrorCode(error: unknown): string | null;
+
+export declare function pgErrorRetryable(error: unknown): boolean | null;
 
 export declare class MemoryRateLimiter {
     private readonly windows;

@@ -1165,6 +1165,28 @@
           "seeAlso": [
             "Return uniform error bodies"
           ]
+        },
+        {
+          "need": "Retry transient Postgres failures",
+          "import": "`@zedtech/zedkit-server` — `pgErrorRetryable`",
+          "wraps": "`(none)`",
+          "status": "beta",
+          "shortName": "Postgres retry",
+          "audience": "Workers and job runners using `@zedtech/zedkit-core` backoff helpers.",
+          "purpose": "Map serialization/deadlock/connection errors to retry without duplicating SQLSTATE lists.",
+          "whenToUse": "After a failed query in a retry loop.",
+          "whenNotToUse": "For HTTP mapping — use `pgErrorCode` and your API error model.",
+          "derivedFrom": null,
+          "example": "import { pgErrorRetryable } from \"@zedtech/zedkit-server\";\nimport { computeBackoffMs } from \"@zedtech/zedkit-server\";\n\nif (pgErrorRetryable(error) === true) {\n  await sleep(computeBackoffMs(attempt));\n  continue;\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { pgErrorRetryable } from \"@zedtech/zedkit-server\";\nimport { computeBackoffMs } from \"@zedtech/zedkit-server\";\n\nif (pgErrorRetryable(error) === true) {\n  await sleep(computeBackoffMs(attempt));\n  continue;\n}"
+            }
+          ],
+          "seeAlso": [
+            "Tell a Postgres conflict from a bug"
+          ]
         }
       ]
     },
