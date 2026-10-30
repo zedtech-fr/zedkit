@@ -187,7 +187,10 @@ function IdentityEditorBody({
   onPatch,
   onFix,
   onSuggestApply,
+  onUndo,
   onApplySite,
+  canUndo,
+  appliedSite,
 }: {
   identity: IdentityId;
   tokens: IdentityTokens;
@@ -198,19 +201,25 @@ function IdentityEditorBody({
   onPatch: (key: string, value: string) => void;
   onFix: (warning: IdentityContrastWarning) => void;
   onSuggestApply: (next: IdentityTokens, toSite: boolean) => void;
+  onUndo: () => void;
   onApplySite: () => void;
+  canUndo: boolean;
+  appliedSite: boolean;
 }) {
   return (
     <Stack gap={6} data-slot="identity-editor">
       <IdentityEditorToolbar
         identity={identity}
         darkPreview={darkPreview}
+        canUndo={canUndo}
         onIdentity={onIdentity}
         onDark={onDark}
+        onUndo={onUndo}
         onReset={onReset}
         onApplySite={onApplySite}
       />
       <Text>Change spacing first, then watch the card.</Text>
+      {appliedSite ? <Text role="status">Applied to the whole site.</Text> : null}
       <ContrastChips warnings={identityContrastWarnings(tokens)} onFix={onFix} />
       <IdentityEditorSuggest tokens={tokens} onApply={onSuggestApply} />
       <EditorFields tokens={tokens} scheme={darkPreview ? "dark" : "light"} onPatch={onPatch} />
@@ -219,17 +228,46 @@ function IdentityEditorBody({
   );
 }
 
+function useDraftTokens(present: IdentityTokens) {
+  const [tokens, setTokens] = useState(present);
+  const [past, setPast] = useState<IdentityTokens[]>([]);
+  const [appliedSite, setAppliedSite] = useState(false);
+
+  function remember(next: IdentityTokens) {
+    if (next === tokens) return;
+    setPast((stack) => [...stack, tokens]);
+    setTokens(next);
+    setAppliedSite(false);
+  }
+
+  function undo() {
+    const prev = past.at(-1);
+    if (!prev) return;
+    setPast((stack) => stack.slice(0, -1));
+    setTokens(prev);
+    setAppliedSite(false);
+  }
+
+  function applySite() {
+    applyCustomIdentity(tokens);
+    setAppliedSite(true);
+  }
+
+  return { tokens, setTokens, past, appliedSite, setAppliedSite, remember, undo, applySite };
+}
+
 function IdentityEditorPanel() {
   const [identity, setIdentity] = useState<IdentityId>("mist");
-  const [tokens, setTokens] = useState<IdentityTokens>(identityPresets.mist);
+  const draft = useDraftTokens(identityPresets.mist);
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
   const scheme = darkPreview ? "dark" : "light";
+  const { tokens, remember, undo, applySite, appliedSite, setAppliedSite, past } = draft;
 
   useLayoutEffect(() => {
     const parsed = parseIdentityEditorSearch(window.location.search);
     setIdentity(parsed.identity);
-    setTokens(parsed.tokens);
+    draft.setTokens(parsed.tokens);
     setDarkPreview(parsed.darkPreview);
     setReady(true);
   }, []);
@@ -251,25 +289,29 @@ function IdentityEditorPanel() {
       darkPreview={darkPreview}
       onIdentity={(id) => {
         setIdentity(id);
-        setTokens(identityPresets[id]);
+        remember(identityPresets[id]);
       }}
       onDark={() => setDarkPreview((value) => !value)}
-      onReset={() => setTokens(identityPresets[identity])}
-      onPatch={(key, value) => setTokens((current) => patchTokens(current, key, value, scheme))}
-      onFix={(warning) =>
-        setTokens((current) => {
-          const parsed = parseIdentityTokens({
-            ...current,
-            [warning.scheme]: { ...current[warning.scheme], foreground: warning.suggestedForeground },
-          });
-          return parsed.success ? parsed.data : current;
-        })
-      }
-      onSuggestApply={(next, toSite) => {
-        setTokens(next);
-        if (toSite) applyCustomIdentity(next);
+      onReset={() => remember(identityPresets[identity])}
+      onPatch={(key, value) => remember(patchTokens(tokens, key, value, scheme))}
+      onFix={(warning) => {
+        const parsed = parseIdentityTokens({
+          ...tokens,
+          [warning.scheme]: { ...tokens[warning.scheme], foreground: warning.suggestedForeground },
+        });
+        if (parsed.success) remember(parsed.data);
       }}
-      onApplySite={() => applyCustomIdentity(tokens)}
+      onSuggestApply={(next, toSite) => {
+        remember(next);
+        if (toSite) {
+          applyCustomIdentity(next);
+          setAppliedSite(true);
+        }
+      }}
+      onUndo={undo}
+      onApplySite={applySite}
+      canUndo={past.length > 0}
+      appliedSite={appliedSite}
     />
   );
 }
