@@ -24,6 +24,17 @@ async function sidebarBg(page: Page) {
 }
 
 test.describe("identity editor page", () => {
+  test("lede and meta description lead with the benefit, untruncated (#1074)", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    const description = await page.locator('meta[name="description"]').getAttribute("content");
+    expect(description).toBe(
+      "Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site. Install with npm or copy published registry bricks.",
+    );
+    await expect(
+      page.getByRole("paragraph").filter({ hasText: "Design your own look — colour, radius, spacing, type" }),
+    ).toBeVisible();
+  });
+
   test("writes spacing onto the draft card and into the URL", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Design your identity" })).toBeVisible();
