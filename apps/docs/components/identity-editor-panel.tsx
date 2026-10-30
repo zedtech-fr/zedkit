@@ -3,7 +3,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import {
-  applyCustomIdentity,
   applyIdentityTokenSheet,
   Badge,
   Button,
@@ -13,10 +12,8 @@ import {
   identityContrastWarnings,
   identityPresets,
   Input,
-  parseIdentityTokens,
   Stack,
   Text,
-  withIdentityDarkPair,
   type IdentityContrastWarning,
   type IdentityId,
   type IdentityTokens,
@@ -25,6 +22,7 @@ import {
 import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorSuggest } from "@/components/identity-editor-suggest";
 import { IdentityEditorToolbar } from "@/components/identity-editor-toolbar";
+import { useDraftTokens } from "@/lib/identity-editor-draft";
 import {
   LIGHT_KEYS,
   SCALAR_KEYS,
@@ -81,17 +79,6 @@ function TokenField({
       />
     </Field>
   );
-}
-
-const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
-
-function patchTokens(tokens: IdentityTokens, key: string, value: string, scheme: "light" | "dark"): IdentityTokens {
-  const next = LIGHT_KEY_SET.has(key)
-    ? { ...tokens, [scheme]: { ...tokens[scheme], [key]: value } }
-    : { ...tokens, [key]: value };
-  const parsed = parseIdentityTokens(next);
-  if (!parsed.success) return tokens;
-  return scheme === "light" && LIGHT_KEY_SET.has(key) ? withIdentityDarkPair(parsed.data) : parsed.data;
 }
 
 function EditorFields({
@@ -228,36 +215,6 @@ function IdentityEditorBody({
   );
 }
 
-function useDraftTokens(present: IdentityTokens, look: IdentityId) {
-  const [tokens, setTokens] = useState(present);
-  const [past, setPast] = useState<IdentityTokens[]>([]);
-  const [appliedSite, setAppliedSite] = useState(false);
-
-  function remember(next: IdentityTokens) {
-    if (next === tokens) return;
-    setPast((stack) => [...stack, tokens]);
-    setTokens(next);
-  }
-
-  function undo() {
-    const prev = past.at(-1);
-    if (!prev) return;
-    setPast((stack) => stack.slice(0, -1));
-    setTokens(prev);
-  }
-
-  function applySite() {
-    setAppliedSite(true);
-  }
-
-  useLayoutEffect(() => {
-    if (!appliedSite) return;
-    applyCustomIdentity(tokens, look);
-  }, [appliedSite, look, tokens]);
-
-  return { tokens, setTokens, past, appliedSite, setAppliedSite, remember, undo, applySite };
-}
-
 function IdentityEditorPanel() {
   const [identity, setIdentity] = useState<IdentityId>("mist");
   const draft = useDraftTokens(identityPresets.mist, identity);
@@ -265,7 +222,7 @@ function IdentityEditorPanel() {
   const [ready, setReady] = useState(false);
   const { setTheme } = useTheme();
   const scheme = darkPreview ? "dark" : "light";
-  const { tokens, remember, undo, applySite, appliedSite, setAppliedSite, past } = draft;
+  const { tokens, remember, undo, applySite, appliedSite, past, clearDarkKept, patch, fix, applySuggest } = draft;
 
   function setDark(next: boolean) {
     setDarkPreview(next);
@@ -297,22 +254,17 @@ function IdentityEditorPanel() {
       darkPreview={darkPreview}
       onIdentity={(id) => {
         setIdentity(id);
+        clearDarkKept();
         remember(identityPresets[id]);
       }}
       onDark={() => setDark(!darkPreview)}
-      onReset={() => remember(identityPresets[identity])}
-      onPatch={(key, value) => remember(patchTokens(tokens, key, value, scheme))}
-      onFix={(warning) => {
-        const parsed = parseIdentityTokens({
-          ...tokens,
-          [warning.scheme]: { ...tokens[warning.scheme], [warning.token]: warning.suggestedForeground },
-        });
-        if (parsed.success) remember(warning.scheme === "light" ? withIdentityDarkPair(parsed.data) : parsed.data);
+      onReset={() => {
+        clearDarkKept();
+        remember(identityPresets[identity]);
       }}
-      onSuggestApply={(next, toSite) => {
-        remember(withIdentityDarkPair(next, tokens));
-        if (toSite) setAppliedSite(true);
-      }}
+      onPatch={(key, value) => patch(key, value, scheme)}
+      onFix={fix}
+      onSuggestApply={applySuggest}
       onUndo={undo}
       onApplySite={applySite}
       canUndo={past.length > 0}

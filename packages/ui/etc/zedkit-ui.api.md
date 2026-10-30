@@ -921,6 +921,9 @@ export function Input(input: React_2.ComponentProps<"input">): React_2.JSX.Eleme
 // @public (undocumented)
 export function isPresetId(id: string): id is IdentityId;
 
+// @public
+export function keepIdentityDarkKeys(tokens: IdentityTokens, source: IdentityTokens, keys: readonly string[]): IdentityTokens;
+
 // @public (undocumented)
 export function Label(input: LabelProps): React_2.JSX.Element;
 

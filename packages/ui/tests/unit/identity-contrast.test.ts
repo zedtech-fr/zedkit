@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { identityContrastWarnings, withIdentityDarkPair } from "#identity-contrast.js";
+import { identityContrastWarnings, keepIdentityDarkKeys, withIdentityDarkPair } from "#identity-contrast.js";
 import { identityPresets, identityTokenSchema, parseIdentityTokens } from "#identity-tokens.js";
 
 function ofToken(
@@ -108,5 +108,29 @@ describe("withIdentityDarkPair", () => {
   it("keeps dark when light colours did not change", () => {
     const spaced = identityTokenSchema.parse({ ...identityPresets.mist, spacing: "0.4rem" });
     expect(withIdentityDarkPair(spaced, identityPresets.mist).dark).toEqual(identityPresets.mist.dark);
+  });
+
+  it("keeps a dark colour the user set and rewrites the rest", () => {
+    const generated = withIdentityDarkPair(
+      identityTokenSchema.parse({
+        ...identityPresets.mist,
+        light: { ...identityPresets.mist.light, background: "0 0% 95%" },
+      }),
+    );
+    const previous = identityTokenSchema.parse({
+      ...generated,
+      dark: { ...generated.dark, background: "120 40% 20%" },
+    });
+    const rewritten = withIdentityDarkPair(
+      identityTokenSchema.parse({
+        ...previous,
+        light: { ...previous.light, background: "200 80% 96%" },
+      }),
+      previous,
+    );
+    const next = keepIdentityDarkKeys(rewritten, previous, ["background"]);
+    expect(rewritten.dark.background).not.toBe("120 40% 20%");
+    expect(next.dark.background).toBe("120 40% 20%");
+    expect(next.dark.foreground).toBe(rewritten.dark.foreground);
   });
 });
