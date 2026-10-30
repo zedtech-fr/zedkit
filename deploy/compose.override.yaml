@@ -1,0 +1,9 @@
+# Repo-owned override: replaces the hand dev-preview wiring that mounted
+# a wrapper config importing a separate dev file. The Caddyfile declares
+# every site, so Caddy reads it directly; keep these mounts canonical.
+services:
+  caddy:
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv/site:ro
+      - ./site-dev:/srv/site-dev:ro

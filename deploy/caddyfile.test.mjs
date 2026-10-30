@@ -58,6 +58,16 @@ test("Caddyfile declares each site host exactly once", () => {
   for (const [host, count] of counts) {
     assert.equal(count, 1, `${host} declared ${count} times`);
   }
+  const devRoute = Object.values(config.apps.http.servers)
+    .flatMap((server) => server.routes ?? [])
+    .find((route) =>
+      (route.match ?? []).some((m) => (m.host ?? []).includes("dev.zedkit.app")),
+    );
+  assert.ok(devRoute, "dev site route missing");
+  const dev = JSON.stringify(devRoute);
+  assert.ok(dev.includes('"root":"/srv/site-dev"'), dev);
+  assert.ok(dev.includes("noindex, nofollow"), dev);
+  assert.ok(!dev.includes("reverse_proxy"), dev);
 });
 
 test("Caddyfile validates on Caddy 2.6 (host floor, no newer syntax)", () => {
