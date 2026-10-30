@@ -1734,8 +1734,8 @@ void css;
 - Status: alpha
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
-- Purpose: A docs page writes compact identity tokens onto a scoped draft through the CSS variable writer. Apply to the whole site calls `applyCustomIdentity` so `:root` follows the draft at once, with no reload; the head script reapplies the stored CSS on every page. A light colour edit writes an AA dark pair (`withIdentityDarkPair`) and keeps any dark colour the user already set. The address bar keeps the draft and the dark preview. Reset restores the chosen look. Contrast chips warn when foreground and background miss WCAG AA. Suggest turns a short request into a token preview; Apply writes it (optionally also to the site), Discard keeps the draft.
-- When to use: To try a look on one card, then apply that draft to the whole page identity.
+- Purpose: Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site.
+- When to use: To try a look on one card, with contrast warnings and an automatic AA dark pair, then apply that draft to the whole page identity.
 - When not to use: To switch a published built-in look — use `IdentitySwitcher` or `data-identity` on the root instead.
 - See also: `Switch the visual identity with one attribute`
 - Examples: Write a draft sheet
