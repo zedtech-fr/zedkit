@@ -103,6 +103,19 @@ test.describe("identity editor apply to site", () => {
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 
+  test("keeps the site in step with later draft edits", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    const before = await spacingOnHtml(page);
+    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.4rem");
+    await expect.poll(() => spacingOnHtml(page)).toBe(before);
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
+    await page.getByLabel("Spacing", { exact: true }).fill("0.5rem");
+    await expect.poll(() => spacingOnHtml(page)).toBe("0.5rem");
+    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+  });
+
   test("keeps the custom identity after navigation", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
