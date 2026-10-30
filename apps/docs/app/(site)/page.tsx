@@ -4,7 +4,8 @@ import { JsonLd } from "@/components/json-ld";
 import {
   catalogStats,
   featuredPackage,
-  featuredPackageChangelogUrl,
+  featuredPackageLatestChange,
+  featuredPackageReleasesUrl,
   featuredPackageVersion,
   gallery,
   homeCuratedGallery,
@@ -34,7 +35,8 @@ export default function Home() {
       stats={catalogStats}
       featuredPackage={featuredPackage}
       version={featuredPackageVersion}
-      changelogHref={featuredPackageChangelogUrl}
+      releasesHref={featuredPackageReleasesUrl}
+      latestChange={featuredPackageLatestChange}
       uiGalleryStats={uiGalleryStats}
       scenarios={homeScenarios}
       entryPoints={homeEntryPoints}

@@ -6,17 +6,23 @@ import { HOME_CARD_CONTENT_GAP, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-
 
 export function HomeHeroLead({
   version,
-  changelogHref,
+  releasesHref,
+  stats,
+  uiStats,
+  latestChange,
 }: {
   version: string;
-  changelogHref: string;
+  releasesHref: string;
+  stats: { packages: number; needs: number };
+  uiStats: { components: number; livePreviews: number };
+  latestChange: string;
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
         <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
           <Text variant="muted" className="text-xs">zedkit</Text>
-          <KitVersionLabel version={version} changelogHref={changelogHref} />
+          <KitVersionLabel version={version} releasesHref={releasesHref} />
         </Stack>
         <Heading level={1} className="max-w-3xl text-balance">
           Build the parts you need. Keep the rest of your app.
@@ -40,6 +46,15 @@ export function HomeHeroLead({
         <Button asChild variant="ghost" size="sm" className="w-fit">
           <Link href="/docs"><DocsActionLabel>Open documentation</DocsActionLabel></Link>
         </Button>
+      </Stack>
+      <Stack gap={1} className="max-w-2xl">
+        <Text variant="muted" className="text-sm">
+          {stats.packages} packages · {stats.needs} documented needs · {uiStats.components} UI
+          components, {uiStats.livePreviews} with live previews · MIT
+        </Text>
+        <Text variant="muted" className="text-sm">
+          Latest in v{version}: {latestChange}
+        </Text>
       </Stack>
     </Stack>
   );

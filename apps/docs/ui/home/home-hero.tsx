@@ -51,11 +51,17 @@ const HomeHeroDashboard = dynamic(
 export function HomeHero({
   featuredPackage,
   version,
-  changelogHref,
+  releasesHref,
+  stats,
+  uiStats,
+  latestChange,
 }: {
   featuredPackage: string;
   version: string;
-  changelogHref: string;
+  releasesHref: string;
+  stats: { packages: number; needs: number };
+  uiStats: { components: number; livePreviews: number };
+  latestChange: string;
 }) {
   return (
     <>
@@ -64,7 +70,13 @@ export function HomeHero({
           gap={HOME_SECTION_CONTENT_GAP}
           className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
         >
-          <HomeHeroLead version={version} changelogHref={changelogHref} />
+          <HomeHeroLead
+            version={version}
+            releasesHref={releasesHref}
+            stats={stats}
+            uiStats={uiStats}
+            latestChange={latestChange}
+          />
           <HomeHeroTailWhenIdle
             placeholder={<Stack aria-hidden="true" className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview />}
           >
