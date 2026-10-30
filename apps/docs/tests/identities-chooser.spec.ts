@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
 
 // Relative paths: the config baseURL decides the port.
@@ -17,7 +18,7 @@ async function choose(page: Page, id: string) {
 test("the header chooser lists the six identities and starts on the default", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+  await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   const chooser = page.getByRole("combobox", { name: "Identity" }).first();
   await expect(chooser).toBeVisible();
   expect(await chooser.locator("option").evaluateAll((options) => options.map((o) => (o as HTMLOptionElement).value))).toEqual([...IDS]);

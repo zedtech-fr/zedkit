@@ -4,8 +4,8 @@
  * family per identity. The browser fetches a file only when a rendered
  * identity uses that family, and only the subsets the text needs.
  *
- * Default look (Inter) + code (JetBrains Mono) ship in the critical path;
+ * Default look (Geist) + code (JetBrains Mono) ship in the critical path;
  * other identity families load from `fonts-identity.ts` after hydration.
  */
-import "@fontsource-variable/inter";
+import "@fontsource-variable/geist";
 import "@fontsource-variable/jetbrains-mono";

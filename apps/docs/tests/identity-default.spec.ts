@@ -1,10 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
 
 // Relative paths: the config baseURL decides the port.
 const PAGE = "/docs/getting-started";
-const DEFAULT = "tide";
+const DEFAULT = DEFAULT_IDENTITY;
 
 type Seen = Array<string | null>;
 
@@ -42,10 +43,10 @@ test("a first-time visitor gets the default identity before the first paint, wit
 
 test("a stored choice still wins over the default", async ({ page }) => {
   await recordIdentity(page);
-  await page.addInitScript(() => localStorage.setItem("zk-identity", "volt"));
+  await page.addInitScript(() => localStorage.setItem("zk-identity", "mist"));
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
-  expect(identityValues(await seenValues(page))).toEqual(["volt"]);
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+  expect(identityValues(await seenValues(page))).toEqual(["mist"]);
 });
 
 test("the soft look (mist) stays selectable and is kept", async ({ page }) => {
@@ -69,10 +70,10 @@ test("the desktop chooser marks the default", async ({ page }) => {
 test("the phone chooser marks the default and keeps mist selectable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: /^Identity: Tide/ }).click();
+  await page.getByRole("button", { name: /^Identity: Volt/ }).click();
   const group = page.getByRole("radiogroup", { name: "Identity" });
-  await expect(group.getByRole("radio", { name: /Tide/ })).toHaveAttribute("aria-checked", "true");
-  await expect(group.getByRole("radio", { name: /Tide/ })).toContainText("Default");
+  await expect(group.getByRole("radio", { name: /Volt/ })).toHaveAttribute("aria-checked", "true");
+  await expect(group.getByRole("radio", { name: /Volt/ })).toContainText("Default");
   await group.getByRole("radio", { name: /Mist/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
 });
