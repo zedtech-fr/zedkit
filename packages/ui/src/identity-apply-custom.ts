@@ -16,7 +16,7 @@ function applyCustomIdentity(tokens: IdentityTokens, storageKey: string = IDENTI
   if (!parsed.success) return false;
   const look = isPresetId(storageKey) || isNamedIdentityId(storageKey) ? storageKey : undefined;
   const key = look ? IDENTITY_STORAGE_KEY : storageKey;
-  const selector = look ? `:root[data-identity="${look}"]` : ":root";
+  const selector = `:root[data-identity="${look ?? CUSTOM_IDENTITY_ID}"]`;
   applyCustomIdentityCss(tokensToCss(parsed.data, selector), key);
   if (!look) {
     applyIdentity(CUSTOM_IDENTITY_ID, key);

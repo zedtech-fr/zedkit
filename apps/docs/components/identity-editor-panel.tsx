@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import {
   applyIdentity,
   applyIdentityTokenSheet,
+  discardCustomIdentity,
   identities,
   identityContrastWarnings,
   identityPresets,
@@ -96,6 +97,7 @@ function bindNamedLooks(
       remember(identityPresets.mist, []);
       setName("");
       if (document.documentElement.getAttribute("data-identity") === identity) {
+        discardCustomIdentity();
         applyIdentity(DEFAULT_IDENTITY);
       }
     },

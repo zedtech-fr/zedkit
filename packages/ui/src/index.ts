@@ -197,6 +197,7 @@ export {
   IDENTITY_STORAGE_KEY,
   NAMED_IDENTITY_PREFIX,
   applyIdentity,
+  discardCustomIdentity,
   identities,
   isNamedIdentityId,
   useIdentity,

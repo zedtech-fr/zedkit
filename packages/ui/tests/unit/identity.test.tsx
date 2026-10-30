@@ -17,6 +17,7 @@ import {
   IdentitySwitcher,
   applyCustomIdentity,
   applyIdentity,
+  discardCustomIdentity,
   identities,
   identityPresets,
   isNamedIdentityId,
@@ -167,7 +168,7 @@ describe("IdentitySwitcher", () => {
     expect(await screen.findByDisplayValue("Bold")).toBeTruthy();
   });
 
-  it("shows Custom while a custom sheet is active and clears it when a built-in is chosen", async () => {
+  it("shows Custom while a custom sheet is active and parks it when a built-in is chosen", async () => {
     const user = userEvent.setup();
     render(<IdentitySwitcher identities={looks} />);
     act(() => {
@@ -187,8 +188,36 @@ describe("IdentitySwitcher", () => {
     );
     await user.selectOptions(screen.getByLabelText("Identity"), "bold");
     expect(document.documentElement.getAttribute("data-identity")).toBe("bold");
+    // Parked, not wiped: the press-scoped sheet survives the switch and is
+    // still there (inert under bold) when its look is chosen again.
+    expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toContain(`:root[data-identity="press"]`);
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `:root[data-identity="press"]`,
+    );
+    act(() => applyIdentity("press"));
+    expect(document.documentElement.getAttribute("data-identity")).toBe("press");
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `--sidebar: ${identityPresets.press.light.background}`,
+    );
+  });
+
+  it("discardCustomIdentity clears the stored sheet and the live sheet", () => {
+    act(() => {
+      applyCustomIdentity(identityPresets.press, "press");
+    });
+    expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toContain("press");
+    act(() => discardCustomIdentity());
     expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toBeNull();
-    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toBe("");
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent ?? "").toBe("");
+  });
+
+  it("scopes a look-less custom sheet to the custom look", () => {
+    act(() => {
+      applyCustomIdentity(identityPresets.mist);
+    });
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `:root[data-identity="${CUSTOM_IDENTITY_ID}"]`,
+    );
   });
 
   it("applies a named identity without dropping the custom sheet", () => {

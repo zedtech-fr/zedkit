@@ -215,6 +215,10 @@ test.describe("identity previews", () => {
     await page.setViewportSize({ width: 1280, height: 1000 });
     await open(page, SWITCH, "press", "light");
     const live = page.locator("[data-component-preview]").nth(0);
+    // Wait for hydration: the server renders the fallback look, the hydrated
+    // store reports the page look. Selecting earlier loses the change when
+    // hydration resets the controlled select.
+    await expect(live.getByRole("status")).toHaveText(/Current look:\s*Press/);
     await live.getByRole("combobox", { name: "Look" }).selectOption("volt");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
     await page.locator(`a[href$="/${SCENES}"]`).first().click();

@@ -466,6 +466,9 @@ export function DialogTitle(input: React_2.ComponentProps<typeof DialogPrimitive
 // @public (undocumented)
 export function DialogTrigger(input: React_2.ComponentProps<typeof DialogPrimitive.Trigger>): React_2.JSX.Element;
 
+// @public
+export function discardCustomIdentity(storageKey?: string): void;
+
 // Warning: (ae-forgotten-export) The symbol "DrawerRootProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)

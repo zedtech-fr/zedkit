@@ -30,4 +30,11 @@ function clearCustomIdentitySheet(storageKey: string = IDENTITY_STORAGE_KEY, doc
   if (sheet) sheet.textContent = "";
 }
 
-export { applyCustomIdentityCss, clearCustomIdentitySheet };
+/** Mirrors stored custom CSS into the live sheet (scoped per look, so parked work stays inert). */
+function syncCustomIdentitySheet(storageKey: string = IDENTITY_STORAGE_KEY, doc: Document = document): void {
+  const css = doc.defaultView?.localStorage.getItem(customIdentityStorageKey(storageKey));
+  const sheet = css ? customSheet(doc) : doc.querySelector(`style[data-slot="${IDENTITY_CUSTOM_SHEET_SLOT}"]`);
+  if (sheet) sheet.textContent = css ?? "";
+}
+
+export { applyCustomIdentityCss, clearCustomIdentitySheet, syncCustomIdentitySheet };

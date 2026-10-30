@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { clearCustomIdentitySheet } from "./identity-custom-sheet.js";
+import { clearCustomIdentitySheet, syncCustomIdentitySheet } from "./identity-custom-sheet.js";
 import {
   CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
@@ -18,11 +18,18 @@ import {
 /**
  * Sets `data-identity` on <html>, stores the choice and notifies every
  * mounted switcher. Tokens follow through CSS; no component re-renders.
+ * Custom work is parked, never deleted — see `discardCustomIdentity`.
  */
 function applyIdentity(id: string, storageKey: string = IDENTITY_STORAGE_KEY) {
-  if (id !== CUSTOM_IDENTITY_ID && !isNamedIdentityId(id)) clearCustomIdentitySheet(storageKey);
   document.documentElement.setAttribute("data-identity", id);
   window.localStorage.setItem(storageKey, id);
+  syncCustomIdentitySheet(storageKey);
+  window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
+}
+
+/** Drops the stored custom sheet for good (explicit resets only). */
+function discardCustomIdentity(storageKey: string = IDENTITY_STORAGE_KEY) {
+  clearCustomIdentitySheet(storageKey);
   window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
 }
 
@@ -51,6 +58,7 @@ export {
   IDENTITY_STORAGE_KEY,
   NAMED_IDENTITY_PREFIX,
   applyIdentity,
+  discardCustomIdentity,
   identities,
   identitiesWithCurrentLook,
   isNamedIdentityId,
