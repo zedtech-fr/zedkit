@@ -151,6 +151,7 @@ test.describe("motion", () => {
       }).observe({ type: "layout-shift", buffered: true });
     });
     await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
     const height = await page.evaluate(() => document.documentElement.scrollHeight);
     for (let index = 0; index < 6; index++) {
       await scrollToScene(page, index);

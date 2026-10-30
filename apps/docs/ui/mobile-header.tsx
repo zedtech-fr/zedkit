@@ -21,7 +21,7 @@ import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
 const iconButtonClassName =
-  "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
+  "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
 
 type MobileLink = { text: string; href: string; external?: boolean };
 
@@ -78,7 +78,7 @@ function HomeMenuButton({ links }: { links: MobileLink[] }) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="flex min-h-11 items-center rounded-lg px-3 text-foreground focus-ring-control hover:bg-muted"
+                className="flex min-h-overlay-touch-target items-center rounded-lg px-3 text-foreground focus-ring-control hover:bg-muted"
                 {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
               >
                 {link.text}
