@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { waitForAppliedLook } from "./identity-helpers";
+
 /**
  * Home: the hero stays calm (one identity, nothing cycling) and the
  * second section scrolls through one kit in six identities on a pinned
@@ -237,7 +239,7 @@ for (const identity of ORDER) {
         [identity, theme],
       );
       await page.goto("/");
-      await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
+      await waitForAppliedLook(page, identity, theme);
       await page.locator("#use-cases").scrollIntoViewIfNeeded();
       const before = await page.evaluate(() => document.documentElement.scrollHeight);
       const blocks = page.locator(BLOCK);
@@ -250,7 +252,7 @@ for (const identity of ORDER) {
         expect(fits, `block ${index} fits the phone width`).toBe(true);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
       }
-      await page.waitForTimeout(400);
+      await waitForAppliedLook(page, identity, theme);
       expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(before);
     });
   }
