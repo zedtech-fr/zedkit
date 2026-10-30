@@ -22,20 +22,20 @@ export function HomeHeroLead({
           Build the parts you need. Keep the rest of your app.
         </Heading>
         <Text variant="muted" className="max-w-2xl">
-          TypeScript packages for UI, core & server helpers, SEO, and coding-agent setup — each need
-          documented from the same catalog as the site, with{" "}
-          <Link href="/docs/maturity-and-compatibility">linked maturity badges</Link> on every page.
+          TypeScript packages for UI, core & server helpers, SEO, and coding-agent setup. Install
+          them — or copy the code in — theme everything with one of six identities, and keep the
+          rest of your app.
         </Text>
       </Stack>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
         <Button asChild>
-          <Link href="#ai-setup">Set up your AI agent</Link>
+          <Link href="#quickstart">UI quickstart</Link>
         </Button>
         <Button asChild variant="outline">
           <Link href="#install-or-copy">Install or copy</Link>
         </Button>
-        <Button asChild variant="outline">
-          <Link href="#quickstart">UI quickstart</Link>
+        <Button asChild variant="ghost" size="sm" className="w-fit">
+          <Link href="#ai-setup">Set up your coding agent</Link>
         </Button>
         <Button asChild variant="ghost" size="sm" className="w-fit">
           <Link href="/docs"><DocsActionLabel>Open documentation</DocsActionLabel></Link>

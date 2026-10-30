@@ -12,7 +12,7 @@ export function KitVersionLabel({
   const label = `v${version} (UI kit changelog)`;
   return (
     <Stack direction="horizontal" gap={2} className="items-center">
-      <LivePulse />
+      <LivePulse label="Latest" />
       <Link href={changelogHref} target="_blank" rel="noreferrer" aria-label={label}>
         <Text variant="muted" className="font-mono text-sm">
           v{version}
