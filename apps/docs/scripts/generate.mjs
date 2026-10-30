@@ -345,7 +345,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
     if (preview) {
       head.push(`<ComponentPreview demo="${preview}" detail=${JSON.stringify(`Live preview: ${ex.title}`)} hasProps={false} />`, "");
     }
-    head.push(`\`\`\`tsx title=${JSON.stringify(index === 0 ? "Usage" : ex.title)}`, ex.code, "```", "");
+    head.push(`\`\`\`${ex.lang === "css" ? "css" : "tsx"} title=${JSON.stringify(index === 0 ? "Usage" : ex.title)}`, ex.code, "```", "");
   });
   head.push(`Wraps: ${need.wraps}`, "");
   if (prose) head.push(prose);

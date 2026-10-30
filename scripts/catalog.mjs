@@ -128,13 +128,17 @@ function parseCatalog(text, catalogPath, errors) {
       derivedFrom,
       example: null,
     };
-    const exampleBlocks = [...body.matchAll(/```ts\n([\s\S]*?)```/g)].map((m) => m[1].trim());
-    if (exampleBlocks.length > 0) entry.example = exampleBlocks[0];
+    const exampleBlocks = [...body.matchAll(/```(ts|css)\n([\s\S]*?)```/g)].map((m) => ({
+      lang: m[1],
+      code: m[2].trim(),
+    }));
+    if (exampleBlocks.length > 0) entry.example = exampleBlocks[0].code;
     const exampleTitles = field("Examples");
     const titles = exampleTitles ? exampleTitles.split(/,\s*/).map((t) => t.trim()).filter(Boolean) : [];
-    entry.examples = exampleBlocks.map((code, i) => ({
+    entry.examples = exampleBlocks.map((block, i) => ({
       title: titles[i] ?? (i === 0 ? "Simple" : `Example ${i + 1}`),
-      code,
+      ...(block.lang !== "ts" ? { lang: block.lang } : {}),
+      code: block.code,
     }));
     const registry = field("Registry");
     if (registry) entry.registry = registry;
