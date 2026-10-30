@@ -10,6 +10,8 @@ const RATE_PER_MIN = 10;
 const RATE_PER_DAY = 100;
 const GLOBAL_DAY = 500;
 const TIMEOUT_MS = 30_000;
+// Reasoning models spend part of this budget before the JSON answer.
+const MAX_TOKENS = 8000;
 const SYSTEM = `Reply with a JSON object of identity tokens only, no markdown.
 Fields: spacing, borderWidth, radius, bodyLeading, headingLeading, headingTracking, labelTracking, fontSans, fontDisplay, light {background, foreground, primary, accent, border}, dark {same keys}, shadowSm, shadowMd.
 Colours are HSL channels like "240 10% 3.9%" with no hsl() wrapper. Leading is a number string. Tracking ends with em.
@@ -37,8 +39,14 @@ function chatConfig(env, prefix) {
   const base = env[`${prefix}BASE_URL`];
   const key = env[`${prefix}API_KEY`];
   const model = env[`${prefix}MODEL`];
+  const effort = env[`${prefix}REASONING_EFFORT`];
   if (!base || !key || !model) return null;
-  return { base: String(base).replace(/\/$/, ""), key: String(key), model: String(model) };
+  return {
+    base: String(base).replace(/\/$/, ""),
+    key: String(key),
+    model: String(model),
+    effort: effort ? String(effort) : "",
+  };
 }
 
 function chatUrl(base) {
@@ -142,7 +150,8 @@ function complete(cfg, prompt, current, fetchImpl) {
     },
     body: JSON.stringify({
       model: cfg.model,
-      max_tokens: 1500,
+      max_tokens: MAX_TOKENS,
+      ...(cfg.effort ? { reasoning_effort: cfg.effort } : {}),
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: JSON.stringify({ prompt, current }) },

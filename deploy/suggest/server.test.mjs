@@ -199,3 +199,23 @@ test("GET is 405", async () => {
     assert.equal(res.status, 405);
   });
 });
+
+test("POST leaves room for reasoning and sends the configured effort", async () => {
+  const bodies = [];
+  const fetchImpl = (_url, init) => {
+    bodies.push(JSON.parse(init.body));
+    return Promise.resolve(chatReply({ spacing: "0.4rem" }));
+  };
+  const env = { ...ENV, IDENTITY_AI_REASONING_EFFORT: "minimal" };
+  await withServer({ env, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+  });
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+  });
+  assert.ok(bodies[0].max_tokens >= 8000);
+  assert.equal(bodies[0].reasoning_effort, "minimal");
+  assert.equal("reasoning_effort" in bodies[1], false);
+});
