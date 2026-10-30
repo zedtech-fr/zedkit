@@ -146,13 +146,14 @@ describe("createNestApp", () => {
 
   it("serves generated OpenAPI for the app module", async () => {
     const { url } = await boot({
-      docs: { title: "Fixture", version: "0.0.0" },
+      docs: { title: "Fixture", version: "0.0.0", description: "Inventory fixture." },
     });
     const res = await request(url).get("/docs-json");
     expect(res.status).toBe(200);
-    const paths = (res.body as { paths: Record<string, unknown> }).paths;
-    expect(Object.keys(paths)).toContain("/items");
+    const body = res.body as { paths: Record<string, unknown>; info: { description?: string } };
+    expect(Object.keys(body.paths)).toContain("/items");
     expect(JSON.stringify(res.body)).toContain("CreateItemDto");
+    expect(body.info.description).toBe("Inventory fixture.");
   });
 
   it("validates env against the schema and fails fast with a readable error", async () => {
