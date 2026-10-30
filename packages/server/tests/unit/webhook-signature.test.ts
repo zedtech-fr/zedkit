@@ -62,4 +62,13 @@ describe("webhook signatures", () => {
       verifyWebhookSignatureHeader(null as unknown as Buffer, BODY, header),
     ).toBe(false);
   });
+
+  it("rejects an empty secret", () => {
+    const empty = Buffer.alloc(0);
+    const header = webhookSignatureHeader(empty, BODY, TS);
+    expect(verifyWebhookSignatureHeader(empty, BODY, header)).toBe(false);
+    expect(verifyWebhookSignatureHeader(empty, BODY, webhookSignatureHeader(SECRET, BODY, TS))).toBe(
+      false,
+    );
+  });
 });
