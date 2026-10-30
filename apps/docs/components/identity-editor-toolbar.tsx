@@ -22,8 +22,8 @@ function IdentityEditorToolbar({
   onApplySite: () => void;
 }) {
   return (
-    <Stack direction="horizontal" gap={2}>
-      <Field>
+    <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Field className="shrink-0">
         <FieldLabel htmlFor="identity-editor-look">Look</FieldLabel>
         <select
           id="identity-editor-look"
