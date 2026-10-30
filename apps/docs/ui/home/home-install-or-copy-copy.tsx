@@ -47,6 +47,7 @@ export function HomeInstallOrCopyCopy({
                 from the package.
               </Text>
               <SecretField
+                multiline
                 value={packageInstallCmd}
                 aria-label="Package install command"
                 copyLabel="Copy package install command"
@@ -66,6 +67,7 @@ export function HomeInstallOrCopyCopy({
                 and the CSS variables it needs in your globals.
               </Text>
               <SecretField
+                multiline
                 value={registryAddCmd}
                 aria-label="shadcn registry add command"
                 copyLabel="Copy shadcn registry command"

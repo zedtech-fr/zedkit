@@ -22,6 +22,7 @@ export function HomeInstallCommands({
       <Tabs items={["pnpm (recommended)", "shadcn registry"]} className="w-full">
         <Tab value="pnpm (recommended)">
           <SecretField
+            multiline
             value={`pnpm add ${npmPackage}`}
             aria-label="pnpm install command"
             copyLabel="Copy pnpm command"
@@ -29,6 +30,7 @@ export function HomeInstallCommands({
         </Tab>
         <Tab value="shadcn registry">
           <SecretField
+            multiline
             value={shadcnAdd}
             aria-label="shadcn add command"
             copyLabel="Copy shadcn command"

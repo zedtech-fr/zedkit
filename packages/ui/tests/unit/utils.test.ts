@@ -16,6 +16,10 @@ describe("cn", () => {
     expect(cn("text-foreground", "text-control")).toBe("text-foreground text-control");
   });
 
+  it("treats spacing-token min-heights as one conflict group", () => {
+    expect(cn("min-h-textarea-min-height", "min-h-control-height")).toBe("min-h-control-height");
+  });
+
   it("keeps non-conflicting utilities from every input", () => {
     expect(cn("text-sm font-medium", "px-4")).toBe("text-sm font-medium px-4");
   });

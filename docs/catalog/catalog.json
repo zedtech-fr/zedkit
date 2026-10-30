@@ -2273,7 +2273,7 @@
           "status": "beta",
           "shortName": "SecretField",
           "audience": "Developers displaying API keys and tokens shown only once.",
-          "purpose": "A masked secret field with reveal and copy controls.",
+          "purpose": "A read-only shown-once value with one-click copy; `multiline` wraps long values (install commands, short snippets) so they read in full on narrow screens.",
           "whenToUse": "Right after creating a credential the user must store.",
           "whenNotToUse": "For passwords the user typed — use a password Input instead.",
           "derivedFrom": null,

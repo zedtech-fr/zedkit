@@ -4,6 +4,7 @@ import * as React from "react";
 import { Check, Copy } from "lucide-react";
 import { Button } from "./button.js";
 import { Input } from "./input.js";
+import { Textarea } from "./textarea.js";
 import { useUiMessages } from "./ui-provider.js";
 
 export interface SecretFieldProps {
@@ -13,6 +14,14 @@ export interface SecretFieldProps {
   value: string;
   /** Accessible label for the copy button. */
   copyLabel?: string;
+  /**
+   * Render the value wrapped in an auto-growing textarea instead of a
+   * single-line input, so long values (install commands, short file
+   * snippets) read in full on narrow screens. Shown-once secrets should
+   * stay single-line (default). Browsers without `field-sizing` fall back
+   * to one row per line of the value.
+   */
+  multiline?: boolean | undefined;
   /**
    * Accessible name for the value input. Required unless an external
    * Label points at `id` — every input must have a label.
@@ -25,7 +34,7 @@ export interface SecretFieldProps {
  * on click, check feedback for 2s. Falls back to no-op when the
  * clipboard API is unavailable (insecure contexts).
  */
-function SecretField({ id, value, copyLabel, "aria-label": ariaLabel }: SecretFieldProps) {
+function SecretField({ id, value, copyLabel, multiline = false, "aria-label": ariaLabel }: SecretFieldProps) {
   const messages = useUiMessages();
   const [copied, setCopied] = React.useState(false);
   const copy = (): void => {
@@ -40,8 +49,24 @@ function SecretField({ id, value, copyLabel, "aria-label": ariaLabel }: SecretFi
     );
   };
   return (
-    <div data-slot="secret-field" className="flex w-full items-center gap-2">
-      <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
+    <div
+      data-slot="secret-field"
+      className={multiline ? "flex w-full items-start gap-2" : "flex w-full items-center gap-2"}
+    >
+      {multiline ? (
+        <Textarea
+          id={id}
+          readOnly
+          value={value}
+          rows={Math.max(1, value.split("\n").length)}
+          spellCheck={false}
+          autoComplete="off"
+          className="field-sizing-content max-h-64 min-h-control-height resize-none font-mono wrap-anywhere"
+          aria-label={ariaLabel}
+        />
+      ) : (
+        <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
+      )}
       <Button type="button" variant="outline" size="icon" aria-label={copyLabel ?? messages.copyToClipboard} onClick={copy}>
         {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
       </Button>
