@@ -5,15 +5,19 @@ import { Button, Field, FieldLabel, identities, isPresetId, Stack, type Identity
 function IdentityEditorToolbar({
   identity,
   darkPreview,
+  canUndo,
   onIdentity,
   onDark,
+  onUndo,
   onReset,
   onApplySite,
 }: {
   identity: IdentityId;
   darkPreview: boolean;
+  canUndo: boolean;
   onIdentity: (id: IdentityId) => void;
   onDark: () => void;
+  onUndo: () => void;
   onReset: () => void;
   onApplySite: () => void;
 }) {
@@ -39,6 +43,9 @@ function IdentityEditorToolbar({
       </Field>
       <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
         Dark
+      </Button>
+      <Button type="button" variant="outline" disabled={!canUndo} onClick={onUndo}>
+        Undo
       </Button>
       <Button type="button" variant="outline" onClick={onReset}>
         Reset
