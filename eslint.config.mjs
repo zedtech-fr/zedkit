@@ -68,6 +68,7 @@ export default tseslint.config(
     // globals available.
     files: [
       "eslint.config.mjs",
+      "apps/docs/next.config.mjs",
       "scripts/**/*.mjs",
       "apps/docs/scripts/*.mjs",
       "packages/ui/preview/*.mjs",
