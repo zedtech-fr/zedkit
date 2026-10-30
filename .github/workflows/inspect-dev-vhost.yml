@@ -28,6 +28,17 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           printf 'Host *\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Print compose status and recent logs
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: |
+          # Read-only: process list and logs. Never cat env files or keys.
+          ssh "$TARGET" 'cd /srv/app && docker compose ps -a && echo "--- caddy ---" && docker compose logs --tail 150 caddy && echo "--- suggest ---" && docker compose logs --tail 80 suggest' | tee compose-status.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compose-status
+          path: compose-status.txt
+          retention-days: 1
       - name: Print dev site block
         env:
           TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
