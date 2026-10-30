@@ -4,6 +4,19 @@ import { assertA11yGate } from "./a11y-helpers";
 
 const PAGE = "/docs/ui/trigger-actions-with-buttons";
 
+test("button demo shows sizes and disabled states (#1065)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  const preview = page.locator("[data-component-preview]").first();
+  await preview.scrollIntoViewIfNeeded();
+  await expect(preview.getByRole("button", { name: "Small" })).toBeVisible();
+  await expect(preview.getByRole("button", { name: "Default", exact: true })).toBeVisible();
+  await expect(preview.getByRole("button", { name: "Large" })).toBeVisible();
+  await expect(preview.getByRole("button", { name: "Add item" })).toBeVisible();
+  await expect(preview.getByRole("button", { name: "Disabled" })).toBeDisabled();
+  await expect(preview.getByRole("button", { name: "Saving…" })).toBeDisabled();
+});
+
 test.describe("button demo a11y + themes (#152)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}: names, axe, screenshot`, async ({ page }) => {
