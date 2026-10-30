@@ -14,6 +14,50 @@ async function gotoCatalogQuiet(page: Page, path = "/catalog") {
   return errors;
 }
 
+async function resultLinkGeometry(page: Page) {
+  return page.evaluate(() => {
+    const heading = [...document.querySelectorAll("h2")].find((el) => el.textContent?.trim() === "Results");
+    const section = heading?.closest("section");
+    const links = [...(section?.querySelectorAll("a:not([data-badge-link])") ?? [])];
+    return links.map((a) => {
+      const r = a.getBoundingClientRect();
+      return { text: a.textContent?.trim() ?? "", left: Math.round(r.left), top: Math.round(r.top) };
+    });
+  });
+}
+
+test("catalog runs wide with two alphabetical columns at 2560 (#1063)", async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1080 });
+  await gotoCatalogQuiet(page);
+  await expect(page.locator("[data-catalog-area]").first()).toBeVisible();
+  const container = await page.locator("main [data-slot='container']").first().boundingBox();
+  expect(container).not.toBeNull();
+  expect(container!.width).toBeGreaterThanOrEqual(1400);
+  const links = await resultLinkGeometry(page);
+  expect(links.length).toBeGreaterThan(20);
+  const lefts = [...new Set(links.map((l) => l.left))].sort((a, b) => a - b);
+  expect(lefts).toHaveLength(2);
+  const [leftCol, rightCol] = lefts.map((left) => links.filter((l) => l.left === left));
+  // Each column reads top to bottom; the right column continues the alphabet.
+  expect(leftCol!.at(-1)!.text.localeCompare(rightCol![0]!.text)).toBeLessThan(0);
+  expect(Math.abs(leftCol![0]!.top - rightCol![0]!.top)).toBeLessThanOrEqual(2);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test("catalog steps from one column to two at the xl boundary (#1063)", async ({ page }) => {
+  await page.setViewportSize({ width: 1279, height: 1000 });
+  await gotoCatalogQuiet(page);
+  await expect(page.locator("[data-catalog-area]").first()).toBeVisible();
+  const below = [...new Set((await resultLinkGeometry(page)).map((l) => l.left))];
+  expect(below).toHaveLength(1);
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  const above = [...new Set((await resultLinkGeometry(page)).map((l) => l.left))];
+  expect(above).toHaveLength(2);
+});
+
 test("catalog has no console errors on desktop", async ({ page }) => {
   const errors = await gotoCatalogQuiet(page);
   expect(errors, errors.join("\n")).toEqual([]);
