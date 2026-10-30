@@ -8,23 +8,21 @@
 ## Theme an admin app (dark/light included)
 
 - Import: `@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)
-- Wraps: `tailwindcss` (v4 CSS-first)
+- Wraps: `tailwindcss` (v4 CSS-first) plus `next-themes` for the toggle
 - Status: beta
 - Derived from: shadcn/ui (theme)
 - Short name: Theme
-- Audience: Teams starting a React admin app who want dark/light design tokens without setup.
-- Purpose: One CSS import plus a source line gives the full token set and theme switching.
+- Audience: Teams starting a React 19 + Tailwind v4 admin app who want dark/light design tokens without setup.
+- Purpose: One CSS import plus a source line gives the full token set; `next-themes` (install it alongside the kit) toggles the `dark` class.
 - When to use: As the first install in every app using the kit.
 - When not to use: For apps with their own design system — use your tokens instead of fighting these.
 - See also: `Merge class names without conflicts`
-- Examples: Set up the theme, Tokens in your own component, Dark theme button
+- Examples: Set up the theme, Globals CSS, Tokens in your own component, Dark theme button
 - A11y: Text and control colours keep at least 4.5:1 contrast (3:1 for focus rings and borders) in light and dark, and the checks run on each preview. Dark mode is chosen by the `dark` class, so it follows the setting you store, not only the system. Use the semantic utilities (`text-muted-foreground`, `text-destructive`), never a fixed colour, so both themes keep their contrast. Do not rely on colour alone: the status words in the examples ("Deployed", "Rolled back") carry the meaning.
-- Troubleshooting: Components render unstyled — the `@source` line is missing in `globals.css`, so Tailwind never scans the kit. Dark mode does nothing — the `dark` class must be on `<html>` (next-themes `attribute="class"`), not on `<body>`. A flash of the wrong theme on load — keep `suppressHydrationWarning` on `<html>` and let `ThemeProvider` set the class before paint. Utilities such as `bg-primary` have no effect — `styles.css` already imports Tailwind, so import it once and do not add a second `@import "tailwindcss"`. A colour looks wrong in dark — a fixed colour (`text-gray-500`) was used; switch to a semantic token. Red text is unreadable on a dark surface — `destructive` is a fill colour, so `text-destructive` on `bg-muted` fails contrast in dark mode; show status with `Badge variant="destructive"` or `Alert`.
+- Troubleshooting: Components render unstyled — the `@source` line is missing in `globals.css`, so Tailwind never scans the kit. Dark mode does nothing — the `dark` class must be on `<html>` (next-themes `attribute="class"`), not on `<body>`. A flash of the wrong theme on load — keep `suppressHydrationWarning` on `<html>` and let `ThemeProvider` set the class before paint. Utilities such as `bg-primary` have no effect — `globals.css` drifted from the Globals CSS snippet below; restore its three lines in order. A colour looks wrong in dark — a fixed colour (`text-gray-500`) was used; switch to a semantic token. Red text is unreadable on a dark surface — `destructive` is a fill colour, so `text-destructive` on `bg-muted` fails contrast in dark mode; show status with `Badge variant="destructive"` or `Alert`.
 
 ```ts
-// app/globals.css
-//   @import "@zedtech/zedkit-ui/styles.css";
-//   @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+// pnpm add next-themes
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 
@@ -39,6 +37,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+```
+
+```css
+@import "tailwindcss";
+@import "@zedtech/zedkit-ui/styles.css";
+@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
 ```
 
 ```ts

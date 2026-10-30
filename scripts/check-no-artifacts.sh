@@ -31,8 +31,10 @@ fi
 # explicitly here with a comment — never by raising the limit silently.
 limit=204800
 # Allowlist: the lockfile is required for frozen installs and grows with
-# the catalog; it is reviewed as text, not a binary or cache.
-allowlisted='^(pnpm-lock\.yaml)$'
+# the catalog; it is reviewed as text, not a binary or cache. The catalog
+# JSON is generated from the package CATALOG.md files, diffed in review,
+# and crossed 200KB as needs accumulated — same reasoning.
+allowlisted='^(pnpm-lock\.yaml|docs/catalog/catalog\.json)$'
 while IFS= read -r -d '' file; do
   [ -f "$file" ] || continue
   if [[ "$file" =~ $allowlisted ]]; then continue; fi

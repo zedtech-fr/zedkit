@@ -1282,19 +1282,24 @@
         {
           "need": "Theme an admin app (dark/light included)",
           "import": "`@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)",
-          "wraps": "`tailwindcss` (v4 CSS-first)",
+          "wraps": "`tailwindcss` (v4 CSS-first) plus `next-themes` for the toggle",
           "status": "beta",
           "shortName": "Theme",
-          "audience": "Teams starting a React admin app who want dark/light design tokens without setup.",
-          "purpose": "One CSS import plus a source line gives the full token set and theme switching.",
+          "audience": "Teams starting a React 19 + Tailwind v4 admin app who want dark/light design tokens without setup.",
+          "purpose": "One CSS import plus a source line gives the full token set; `next-themes` (install it alongside the kit) toggles the `dark` class.",
           "whenToUse": "As the first install in every app using the kit.",
           "whenNotToUse": "For apps with their own design system — use your tokens instead of fighting these.",
           "derivedFrom": "shadcn/ui (theme)",
-          "example": "// app/globals.css\n//   @import \"@zedtech/zedkit-ui/styles.css\";\n//   @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\nimport \"./globals.css\";\nimport { ThemeProvider } from \"next-themes\";\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <ThemeProvider attribute=\"class\" defaultTheme=\"system\" enableSystem>\n          {children}\n        </ThemeProvider>\n      </body>\n    </html>\n  );\n}",
+          "example": "// pnpm add next-themes\nimport \"./globals.css\";\nimport { ThemeProvider } from \"next-themes\";\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <ThemeProvider attribute=\"class\" defaultTheme=\"system\" enableSystem>\n          {children}\n        </ThemeProvider>\n      </body>\n    </html>\n  );\n}",
           "examples": [
             {
               "title": "Set up the theme",
-              "code": "// app/globals.css\n//   @import \"@zedtech/zedkit-ui/styles.css\";\n//   @source \"../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";\nimport \"./globals.css\";\nimport { ThemeProvider } from \"next-themes\";\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <ThemeProvider attribute=\"class\" defaultTheme=\"system\" enableSystem>\n          {children}\n        </ThemeProvider>\n      </body>\n    </html>\n  );\n}"
+              "code": "// pnpm add next-themes\nimport \"./globals.css\";\nimport { ThemeProvider } from \"next-themes\";\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <ThemeProvider attribute=\"class\" defaultTheme=\"system\" enableSystem>\n          {children}\n        </ThemeProvider>\n      </body>\n    </html>\n  );\n}"
+            },
+            {
+              "title": "Globals CSS",
+              "lang": "css",
+              "code": "@import \"tailwindcss\";\n@import \"@zedtech/zedkit-ui/styles.css\";\n@source \"../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}\";"
             },
             {
               "title": "Tokens in your own component",
@@ -1306,7 +1311,7 @@
             }
           ],
           "a11y": "Text and control colours keep at least 4.5:1 contrast (3:1 for focus rings and borders) in light and dark, and the checks run on each preview. Dark mode is chosen by the `dark` class, so it follows the setting you store, not only the system. Use the semantic utilities (`text-muted-foreground`, `text-destructive`), never a fixed colour, so both themes keep their contrast. Do not rely on colour alone: the status words in the examples (\"Deployed\", \"Rolled back\") carry the meaning.",
-          "troubleshooting": "Components render unstyled — the `@source` line is missing in `globals.css`, so Tailwind never scans the kit. Dark mode does nothing — the `dark` class must be on `<html>` (next-themes `attribute=\"class\"`), not on `<body>`. A flash of the wrong theme on load — keep `suppressHydrationWarning` on `<html>` and let `ThemeProvider` set the class before paint. Utilities such as `bg-primary` have no effect — `styles.css` already imports Tailwind, so import it once and do not add a second `@import \"tailwindcss\"`. A colour looks wrong in dark — a fixed colour (`text-gray-500`) was used; switch to a semantic token. Red text is unreadable on a dark surface — `destructive` is a fill colour, so `text-destructive` on `bg-muted` fails contrast in dark mode; show status with `Badge variant=\"destructive\"` or `Alert`.",
+          "troubleshooting": "Components render unstyled — the `@source` line is missing in `globals.css`, so Tailwind never scans the kit. Dark mode does nothing — the `dark` class must be on `<html>` (next-themes `attribute=\"class\"`), not on `<body>`. A flash of the wrong theme on load — keep `suppressHydrationWarning` on `<html>` and let `ThemeProvider` set the class before paint. Utilities such as `bg-primary` have no effect — `globals.css` drifted from the Globals CSS snippet below; restore its three lines in order. A colour looks wrong in dark — a fixed colour (`text-gray-500`) was used; switch to a semantic token. Red text is unreadable on a dark surface — `destructive` is a fill colour, so `text-destructive` on `bg-muted` fails contrast in dark mode; show status with `Badge variant=\"destructive\"` or `Alert`.",
           "seeAlso": [
             "Merge class names without conflicts"
           ]
