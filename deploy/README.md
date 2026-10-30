@@ -6,7 +6,7 @@ automatically and redirects `www.zedkit.app` to `zedkit.app`.
 
 | File | Purpose |
 |---|---|
-| `Caddyfile` | Site config: apex + `www` redirect, caching, 404 page, suggest proxy, dev site |
+| `Caddyfile` | Site config: apex + `www` redirect, caching, 404 page, suggest proxy |
 | `compose.yaml` | Runs Caddy plus the identity-suggest Node service |
 | `suggest/` | `POST /api/identity/suggest` — chat completions from env, no keys in the client |
 | `deploy.sh` | Uploads the build output, suggest service, and config, then reloads Caddy. With `--dev`: content only to the dev site, stamped with `dev-build.txt` |

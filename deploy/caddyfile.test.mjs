@@ -26,7 +26,7 @@ test("Caddyfile adapts with handle_errors at site level", () => {
   assert.match(result.stdout + result.stderr, /Valid configuration/);
 });
 
-test("Caddyfile serves the dev site from its own root without the suggest proxy", () => {
+test("Caddyfile declares each site host exactly once", () => {
   const result = spawnSync(
     "docker",
     [
@@ -44,22 +44,20 @@ test("Caddyfile serves the dev site from its own root without the suggest proxy"
   );
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const config = JSON.parse(result.stdout.slice(result.stdout.indexOf("{")));
-  const devRoutes = [];
-  const visit = (node) => {
-    if (Array.isArray(node)) {
-      node.forEach(visit);
-    } else if (node && typeof node === "object") {
-      const hosts = (node.match ?? []).flatMap((m) => m.host ?? []);
-      if (hosts.includes("dev.zedkit.app")) devRoutes.push(node);
-      Object.values(node).forEach(visit);
+  const counts = new Map();
+  for (const server of Object.values(config.apps.http.servers)) {
+    for (const route of server.routes ?? []) {
+      for (const m of route.match ?? []) {
+        for (const host of m.host ?? []) {
+          counts.set(host, (counts.get(host) ?? 0) + 1);
+        }
+      }
     }
-  };
-  visit(config);
-  assert.equal(devRoutes.length, 1);
-  const dev = JSON.stringify(devRoutes[0]);
-  assert.ok(dev.includes('"root":"/srv/site-dev"'), dev);
-  assert.ok(dev.includes("noindex, nofollow"), dev);
-  assert.ok(!dev.includes("reverse_proxy"), dev);
+  }
+  assert.ok(counts.get("zedkit.app") >= 1);
+  for (const [host, count] of counts) {
+    assert.equal(count, 1, `${host} declared ${count} times`);
+  }
 });
 
 test("Caddyfile validates on Caddy 2.6 (host floor, no newer syntax)", () => {
