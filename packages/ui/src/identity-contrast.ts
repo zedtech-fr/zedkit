@@ -1,10 +1,13 @@
 import type { IdentityTokens } from "./identity-tokens.js";
 
 const AA_BODY = 4.5;
+const AA_UI = 3;
 
 type Hsl = { h: number; s: number; l: number };
+type ContrastToken = "foreground" | "accent" | "border";
 type IdentityContrastWarning = {
   scheme: "light" | "dark";
+  token: "foreground" | "accent" | "border";
   ratio: number;
   min: number;
   suggestedForeground: string;
@@ -50,25 +53,40 @@ function nudgeForeground(fg: Hsl, bg: Hsl, min: number): string {
   return formatHsl(next);
 }
 
-function warningFor(scheme: "light" | "dark", fg: string, bg: string): IdentityContrastWarning | undefined {
-  const foreground = parseHsl(fg);
+function warningFor(
+  scheme: "light" | "dark",
+  token: ContrastToken,
+  colour: string,
+  bg: string,
+  min: number,
+): IdentityContrastWarning | undefined {
+  const value = parseHsl(colour);
   const background = parseHsl(bg);
-  if (!foreground || !background) return undefined;
-  const ratio = contrastRatio(foreground, background);
-  if (ratio >= AA_BODY) return undefined;
+  if (!value || !background) return undefined;
+  const ratio = contrastRatio(value, background);
+  if (ratio >= min) return undefined;
   return {
     scheme,
+    token,
     ratio: Number(ratio.toFixed(2)),
-    min: AA_BODY,
-    suggestedForeground: nudgeForeground(foreground, background, AA_BODY),
+    min,
+    suggestedForeground: nudgeForeground(value, background, min),
   };
 }
 
-function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[] {
+function pairWarnings(scheme: "light" | "dark", pair: IdentityTokens["light"]): Array<IdentityContrastWarning | undefined> {
   return [
-    warningFor("light", tokens.light.foreground, tokens.light.background),
-    warningFor("dark", tokens.dark.foreground, tokens.dark.background),
-  ].filter((warning): warning is IdentityContrastWarning => warning !== undefined);
+    warningFor(scheme, "foreground", pair.foreground, pair.background, AA_BODY),
+    warningFor(scheme, "accent", pair.accent, pair.background, AA_UI),
+    warningFor(scheme, "border", pair.border, pair.background, AA_UI),
+  ];
+}
+
+// shortcut: shipped looks fail 3:1 on accent/border; warn here, restyle later
+function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[] {
+  return [...pairWarnings("light", tokens.light), ...pairWarnings("dark", tokens.dark)].filter(
+    (warning): warning is IdentityContrastWarning => warning !== undefined,
+  );
 }
 
 export { identityContrastWarnings, type IdentityContrastWarning };

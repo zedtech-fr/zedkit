@@ -660,6 +660,7 @@ export const IDENTITY_STORAGE_KEY = "zk-identity";
 // @public (undocumented)
 export type IdentityContrastWarning = {
     scheme: "light" | "dark";
+    token: "foreground" | "accent" | "border";
     ratio: number;
     min: number;
     suggestedForeground: string;
