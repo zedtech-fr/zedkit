@@ -30,20 +30,11 @@ function clearCustomIdentitySheet(storageKey: string = IDENTITY_STORAGE_KEY, doc
   if (sheet) sheet.textContent = "";
 }
 
-/**
- * Mirrors the stored custom CSS into the live sheet. Sheets are scoped to
- * one look (`:root[data-identity="…"]`), so a parked sheet is inert under
- * other looks and active again on switch-back — the same state the boot
- * script restores after a reload.
- */
+/** Mirrors stored custom CSS into the live sheet (scoped per look, so parked work stays inert). */
 function syncCustomIdentitySheet(storageKey: string = IDENTITY_STORAGE_KEY, doc: Document = document): void {
   const css = doc.defaultView?.localStorage.getItem(customIdentityStorageKey(storageKey));
-  if (!css) {
-    const sheet = doc.querySelector(`style[data-slot="${IDENTITY_CUSTOM_SHEET_SLOT}"]`);
-    if (sheet) sheet.textContent = "";
-    return;
-  }
-  customSheet(doc).textContent = css;
+  const sheet = css ? customSheet(doc) : doc.querySelector(`style[data-slot="${IDENTITY_CUSTOM_SHEET_SLOT}"]`);
+  if (sheet) sheet.textContent = css ?? "";
 }
 
 export { applyCustomIdentityCss, clearCustomIdentitySheet, syncCustomIdentitySheet };

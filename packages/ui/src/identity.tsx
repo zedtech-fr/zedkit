@@ -18,9 +18,7 @@ import {
 /**
  * Sets `data-identity` on <html>, stores the choice and notifies every
  * mounted switcher. Tokens follow through CSS; no component re-renders.
- * A stored custom sheet is parked, never deleted: it is scoped to one
- * look, so it stays inert under other looks and applies again on
- * switch-back. Use `discardCustomIdentity` for an explicit reset.
+ * Custom work is parked, never deleted — see `discardCustomIdentity`.
  */
 function applyIdentity(id: string, storageKey: string = IDENTITY_STORAGE_KEY) {
   document.documentElement.setAttribute("data-identity", id);
