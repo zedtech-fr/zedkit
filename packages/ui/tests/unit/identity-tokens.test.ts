@@ -83,7 +83,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/press.css"), "--text-xs") ?? "").toBe("0.6875rem");
     expect(token(read("identities/press.css"), "--zk-border-width")).toBe("2px");
     expect(token(read("identities/press.css"), "--zk-color-duration")).toBe("80ms");
-    expect(token(read("identities/maison.css"), "--zk-body-leading")).toBe("1.7");
+    expect(token(read("identities/maison.css"), "--zk-body-leading")).toBe("2");
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");
     expect(token(read("identities/maison.css"), "--radius-xs") ?? "").toBe("0.5px");
     expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("1.75px");
