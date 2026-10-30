@@ -147,6 +147,32 @@ test("POST merges a mocked chat patch onto current tokens", async () => {
   });
 });
 
+test("POST returns 429 when the chat origin is rate-limited", async () => {
+  const fetchImpl = () => Promise.resolve({ ok: false, status: 429, text: () => Promise.resolve("{}") });
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "warmer", current: CURRENT });
+    assert.equal(res.status, 429);
+    assert.deepEqual(await res.json(), { error: "rate" });
+  });
+});
+
+test("POST uses fallback when primary is rate-limited", async () => {
+  const seen = [];
+  const fetchImpl = (url) => {
+    seen.push(url);
+    if (new URL(url).hostname === "primary.test") {
+      return Promise.resolve({ ok: false, status: 429, text: () => Promise.resolve("{}") });
+    }
+    return Promise.resolve(chatReply({ radius: "1rem" }));
+  };
+  await withServer({ env: FALLBACK_ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "rounder", current: CURRENT });
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).tokens.radius, "1rem");
+    assert.equal(seen.length, 2);
+  });
+});
+
 test("POST uses fallback when primary fails", async () => {
   const seen = [];
   const fetchImpl = (url) => {

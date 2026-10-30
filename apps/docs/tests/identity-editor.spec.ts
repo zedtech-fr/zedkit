@@ -196,6 +196,18 @@ test.describe("identity editor page", () => {
     );
   });
 
+  test("Suggest falls back to a keyword match when the origin is rate-limited", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      await route.fulfill({ status: 429, contentType: "application/json", json: { error: "rate" } });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("editorial serif ink");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("Too many requests. Keyword match instead.")).toBeVisible();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
+  });
+
   test("Suggest falls back to a keyword match when the service is off", async ({ page }) => {
     await page.route("**/api/identity/suggest", async (route) => {
       await route.fulfill({ status: 503, contentType: "application/json", json: { disabled: true } });
