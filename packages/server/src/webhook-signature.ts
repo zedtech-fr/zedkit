@@ -39,6 +39,7 @@ export function verifyWebhookSignatureHeader(
 ): boolean {
   if (!header) return false;
   if (secret == null || body == null) return false;
+  if (secret.length === 0) return false;
   const match = /^t=(\d+),v1=([0-9a-f]+)$/.exec(header);
   if (!match) return false;
   const timestamp = match[1];
