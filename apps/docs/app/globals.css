@@ -170,3 +170,19 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
     backdrop-filter: none;
   }
 }
+
+/*
+ * Wide viewports: past 1920px the docs cluster keeps fumadocs' default
+ * 97rem ceiling and reads stranded (empty sidebar column, dead space
+ * after the TOC). Raise the layout width the framework exposes for
+ * exactly this, and let the article — previews included — take a share
+ * of the surplus. Widths below 1920px are untouched.
+ */
+@media (min-width: 120rem) {
+  #nd-docs-layout {
+    --fd-layout-width: 112.5rem;
+  }
+  #nd-page {
+    max-width: 68.75rem;
+  }
+}
