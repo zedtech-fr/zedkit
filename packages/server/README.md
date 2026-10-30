@@ -34,7 +34,8 @@ see `@zedtech/zedkit-core` instead.
 ## API
 
 - `MemoryRateLimiter` — fixed-window, in-process rate limiting:
-  `allow(key, limitPerMinute)`. Correct for single-instance deployments;
+  `allow(key, limitPerMinute)`. Empty or whitespace-only keys are denied.
+  Correct for single-instance deployments;
   multi-instance enforcement needs a shared store behind the same shape.
 - `redactValue(value, key?)` — recursively replace credential-looking
   material with placeholders before logging. Secret-like keys become
