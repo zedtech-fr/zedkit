@@ -10,6 +10,8 @@ const RATE_PER_MIN = 10;
 const RATE_PER_DAY = 100;
 const GLOBAL_DAY = 500;
 const TIMEOUT_MS = 30_000;
+// Output budget covers reasoning plus the JSON answer. Cap is the usual 128k completion limit.
+const DEFAULT_MAX_TOKENS = 131_072;
 const SYSTEM = `Reply with a JSON object of identity tokens only, no markdown.
 Fields: spacing, borderWidth, radius, bodyLeading, headingLeading, headingTracking, labelTracking, fontSans, fontDisplay, light {background, foreground, primary, accent, border}, dark {same keys}, shadowSm, shadowMd.
 Colours are HSL channels like "240 10% 3.9%" with no hsl() wrapper. Leading is a number string. Tracking ends with em.
@@ -33,12 +35,30 @@ function send(res, status, body) {
   res.end(json);
 }
 
+function parseMaxTokens(raw) {
+  const n = Number.parseInt(String(raw ?? ""), 10);
+  if (!Number.isInteger(n) || n < 1) return DEFAULT_MAX_TOKENS;
+  return Math.min(n, DEFAULT_MAX_TOKENS);
+}
+
+function reasoningEffort(raw) {
+  const effort = String(raw ?? "").trim();
+  if (!effort || effort === "minimal") return "";
+  return effort;
+}
+
 function chatConfig(env, prefix) {
   const base = env[`${prefix}BASE_URL`];
   const key = env[`${prefix}API_KEY`];
   const model = env[`${prefix}MODEL`];
   if (!base || !key || !model) return null;
-  return { base: String(base).replace(/\/$/, ""), key: String(key), model: String(model) };
+  return {
+    base: String(base).replace(/\/$/, ""),
+    key: String(key),
+    model: String(model),
+    maxTokens: parseMaxTokens(env[`${prefix}MAX_TOKENS`] || env.IDENTITY_AI_MAX_TOKENS),
+    effort: reasoningEffort(env[`${prefix}REASONING_EFFORT`]),
+  };
 }
 
 function chatUrl(base) {
@@ -142,7 +162,8 @@ function complete(cfg, prompt, current, fetchImpl) {
     },
     body: JSON.stringify({
       model: cfg.model,
-      max_tokens: 1500,
+      max_tokens: cfg.maxTokens,
+      ...(cfg.effort ? { reasoning_effort: cfg.effort } : {}),
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: JSON.stringify({ prompt, current }) },

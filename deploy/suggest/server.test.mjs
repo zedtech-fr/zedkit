@@ -199,3 +199,31 @@ test("GET is 405", async () => {
     assert.equal(res.status, 405);
   });
 });
+
+test("POST uses a high max_tokens default and skips minimal reasoning_effort", async () => {
+  const bodies = [];
+  const fetchImpl = (_url, init) => {
+    bodies.push(JSON.parse(init.body));
+    return Promise.resolve(chatReply({ spacing: "0.4rem" }));
+  };
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+  });
+  await withServer(
+    { env: { ...ENV, IDENTITY_AI_REASONING_EFFORT: "minimal", IDENTITY_AI_MAX_TOKENS: "32000" }, fetchImpl },
+    async (port) => {
+      const res = await post(port, { prompt: "more space", current: CURRENT });
+      assert.equal(res.status, 200);
+    },
+  );
+  await withServer({ env: { ...ENV, IDENTITY_AI_REASONING_EFFORT: "high" }, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+  });
+  assert.equal(bodies[0].max_tokens, 131072);
+  assert.equal("reasoning_effort" in bodies[0], false);
+  assert.equal(bodies[1].max_tokens, 32000);
+  assert.equal("reasoning_effort" in bodies[1], false);
+  assert.equal(bodies[2].reasoning_effort, "high");
+});
