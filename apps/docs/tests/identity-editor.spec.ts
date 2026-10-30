@@ -14,6 +14,14 @@ async function spacingOnHtml(page: Page) {
   return page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--spacing").trim());
 }
 
+async function htmlVar(page: Page, name: string) {
+  return page.locator("html").evaluate((node, name) => getComputedStyle(node).getPropertyValue(name).trim(), name);
+}
+
+async function sidebarBg(page: Page) {
+  return page.locator("#nd-sidebar").evaluate((node) => getComputedStyle(node).backgroundColor);
+}
+
 test.describe("identity editor page", () => {
   test("writes spacing onto the draft card and into the URL", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -267,6 +275,58 @@ test.describe("identity editor on a phone", () => {
 });
 
 test.describe("identity editor apply to site", () => {
+  test("paints sidebar and page on Apply, with before/after site captures", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.route("**/api/identity/suggest", async (route) => {
+      const posted = route.request().postDataJSON() as { current: Record<string, unknown> };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: {
+          tokens: {
+            ...posted.current,
+            light: {
+              background: "0 80% 70%",
+              foreground: "0 0% 10%",
+              primary: "0 0% 10%",
+              accent: "0 70% 40%",
+              border: "0 40% 40%",
+            },
+          },
+        },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    const beforeSidebar = await sidebarBg(page);
+    const beforeBackground = await htmlVar(page, "--background");
+    await page.screenshot({ path: "test-results/identity-editor-site-before.png", fullPage: true });
+    await page.getByLabel("Request").fill("warm ivory boutique");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("light.background:")).toBeVisible();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await expect.poll(() => htmlVar(page, "--background")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
+    await expect.poll(() => sidebarBg(page)).not.toBe(beforeSidebar);
+    expect(beforeBackground).not.toBe("0 80% 70%");
+    await page.screenshot({ path: "test-results/identity-editor-site-after.png", fullPage: true });
+    await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => sidebarBg(page)).not.toBe(beforeSidebar);
+    await page.screenshot({ path: "test-results/identity-editor-site-after-docs.png", fullPage: true });
+  });
+
+  test("toolbar Apply paints sidebar from Background", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Background").fill("0 80% 70%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
+  });
+
   test("applies the draft to the whole site without a reload", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");

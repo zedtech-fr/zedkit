@@ -144,6 +144,18 @@ describe("token to CSS var writer", () => {
   it("maps one radius onto every radius step", () => {
     expect(tokensToCssVars(identityPresets.press)["--radius-xl"]).toBe("0px");
   });
+
+  it("paints sidebar and card from the compact background", () => {
+    const vars = tokensToCssVars(identityPresets.maison);
+    expect(vars["--sidebar"]).toBe(identityPresets.maison.light.background);
+    expect(vars["--card"]).toBe(identityPresets.maison.light.background);
+    expect(vars["--muted"]).toBe(identityPresets.maison.light.background);
+    const css = tokensToCss(identityPresets.maison, ':root[data-identity="mist"]');
+    expect(css).toContain("--sidebar: 40 33% 98%");
+    expect(css).toContain("--sidebar-accent: 38 45% 48%");
+    expect(css).toContain(":root[data-identity=\"mist\"].dark");
+    expect(css).toContain("--sidebar: 30 12% 7%");
+  });
 });
 
 describe("suggestIdentityTokens", () => {
