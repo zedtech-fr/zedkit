@@ -1625,7 +1625,7 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `applyCustomIdentity`, `useIdentity`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `withIdentityDarkPair`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `applyCustomIdentity`, `useIdentity`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: alpha
 - Short name: Identities
@@ -1706,12 +1706,12 @@ void css;
 
 ## Design your identity
 
-- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `identityContrastWarnings`, `withIdentityDarkPair`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
 - Status: alpha
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
-- Purpose: A docs page writes compact identity tokens onto a scoped draft through the CSS variable writer. Apply to the whole site calls `applyCustomIdentity` so `:root` follows the draft at once, with no reload; the head script reapplies the stored CSS on every page. A light colour edit writes an AA dark pair (`withIdentityDarkPair`). The address bar keeps the draft and the dark preview. Reset restores the chosen look. Contrast chips warn when foreground and background miss WCAG AA. Suggest turns a short request into a token preview; Apply writes it (optionally also to the site), Discard keeps the draft.
+- Purpose: A docs page writes compact identity tokens onto a scoped draft through the CSS variable writer. Apply to the whole site calls `applyCustomIdentity` so `:root` follows the draft at once, with no reload; the head script reapplies the stored CSS on every page. A light colour edit writes an AA dark pair (`withIdentityDarkPair`) and keeps any dark colour the user already set. The address bar keeps the draft and the dark preview. Reset restores the chosen look. Contrast chips warn when foreground and background miss WCAG AA. Suggest turns a short request into a token preview; Apply writes it (optionally also to the site), Discard keeps the draft.
 - When to use: To try a look on one card, then apply that draft to the whole page identity.
 - When not to use: To switch a published built-in look — use `IdentitySwitcher` or `data-identity` on the root instead.
 - See also: `Switch the visual identity with one attribute`

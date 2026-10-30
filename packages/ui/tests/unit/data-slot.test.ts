@@ -13,6 +13,7 @@ const SKIP = new Set([
   "parseIdentityTokens",
   "suggestIdentityTokens",
   "identityContrastWarnings",
+  "keepIdentityDarkKeys",
   "withIdentityDarkPair",
   "isPresetId",
   "createDataTableColumns",

@@ -126,14 +126,24 @@ function darkPairFromLight(light: IdentityTokens["light"]): IdentityTokens["dark
   return next;
 }
 
+const PAIR_KEYS = ["background", "foreground", "primary", "accent", "border"] as const;
+
 function sameLightPair(a: IdentityTokens["light"], b: IdentityTokens["light"]): boolean {
-  return (
-    a.background === b.background &&
-    a.foreground === b.foreground &&
-    a.primary === b.primary &&
-    a.accent === b.accent &&
-    a.border === b.border
-  );
+  return PAIR_KEYS.every((key) => a[key] === b[key]);
+}
+
+/** Restores dark colours the user already set after `withIdentityDarkPair`. */
+function keepIdentityDarkKeys(
+  tokens: IdentityTokens,
+  source: IdentityTokens,
+  keys: readonly string[],
+): IdentityTokens {
+  if (keys.length === 0) return tokens;
+  const dark = { ...tokens.dark };
+  for (const key of PAIR_KEYS) {
+    if (keys.includes(key)) dark[key] = source.dark[key];
+  }
+  return { ...tokens, dark };
 }
 
 /** Writes a dark colour pair from light (flip lightness, then AA vs background). */
@@ -142,4 +152,4 @@ function withIdentityDarkPair(tokens: IdentityTokens, previous?: IdentityTokens)
   return { ...tokens, dark: darkPairFromLight(tokens.light) };
 }
 
-export { identityContrastWarnings, withIdentityDarkPair, type IdentityContrastWarning };
+export { identityContrastWarnings, keepIdentityDarkKeys, withIdentityDarkPair, type IdentityContrastWarning };
