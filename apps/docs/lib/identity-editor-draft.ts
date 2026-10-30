@@ -32,37 +32,36 @@ function patchTokens(
   return scheme === "light" && LIGHT_KEY_SET.has(key) ? withKeptDark(parsed.data, tokens, keep) : parsed.data;
 }
 
+type DraftSnap = { tokens: IdentityTokens; darkKept: string[] };
+
+function nextDarkKept(keep: string[], key: string): string[] {
+  return keep.includes(key) ? keep : [...keep, key];
+}
+
 function useDraftTokens(present: IdentityTokens, look: IdentityId) {
   const [tokens, setTokens] = useState(present);
-  const [past, setPast] = useState<IdentityTokens[]>([]);
+  const [past, setPast] = useState<DraftSnap[]>([]);
   const [appliedSite, setAppliedSite] = useState(false);
-  // shortcut: undo does not restore which dark keys were kept; clear on look change.
   const [darkKept, setDarkKept] = useState<string[]>([]);
 
-  function remember(next: IdentityTokens) {
+  function remember(next: IdentityTokens, nextKeep: readonly string[] = darkKept) {
     if (next === tokens) return;
-    setPast((stack) => [...stack, tokens]);
+    setPast((stack) => [...stack, { tokens, darkKept }]);
     setTokens(next);
+    setDarkKept([...nextKeep]);
   }
 
   function undo() {
     const prev = past.at(-1);
     if (!prev) return;
     setPast((stack) => stack.slice(0, -1));
-    setTokens(prev);
-  }
-
-  function keepDark(key: string) {
-    setDarkKept((keys) => (keys.includes(key) ? keys : [...keys, key]));
-  }
-
-  function clearDarkKept() {
-    setDarkKept([]);
+    setTokens(prev.tokens);
+    setDarkKept(prev.darkKept);
   }
 
   function patch(key: string, value: string, scheme: "light" | "dark") {
-    if (scheme === "dark" && LIGHT_KEY_SET.has(key)) keepDark(key);
-    remember(patchTokens(tokens, key, value, scheme, darkKept));
+    const keep = scheme === "dark" && LIGHT_KEY_SET.has(key) ? nextDarkKept(darkKept, key) : darkKept;
+    remember(patchTokens(tokens, key, value, scheme, keep), keep);
   }
 
   function fix(warning: IdentityContrastWarning) {
@@ -72,8 +71,7 @@ function useDraftTokens(present: IdentityTokens, look: IdentityId) {
     });
     if (!parsed.success) return;
     if (warning.scheme === "dark") {
-      keepDark(warning.token);
-      remember(parsed.data);
+      remember(parsed.data, nextDarkKept(darkKept, warning.token));
       return;
     }
     remember(withKeptDark(parsed.data, tokens, darkKept));
@@ -97,7 +95,6 @@ function useDraftTokens(present: IdentityTokens, look: IdentityId) {
     remember,
     undo,
     applySite: () => setAppliedSite(true),
-    clearDarkKept,
     patch,
     fix,
     applySuggest,

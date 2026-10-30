@@ -222,7 +222,7 @@ function IdentityEditorPanel() {
   const [ready, setReady] = useState(false);
   const { setTheme } = useTheme();
   const scheme = darkPreview ? "dark" : "light";
-  const { tokens, remember, undo, applySite, appliedSite, past, clearDarkKept, patch, fix, applySuggest } = draft;
+  const { tokens, remember, undo, applySite, appliedSite, past, patch, fix, applySuggest } = draft;
 
   function setDark(next: boolean) {
     setDarkPreview(next);
@@ -254,14 +254,10 @@ function IdentityEditorPanel() {
       darkPreview={darkPreview}
       onIdentity={(id) => {
         setIdentity(id);
-        clearDarkKept();
-        remember(identityPresets[id]);
+        remember(identityPresets[id], []);
       }}
       onDark={() => setDark(!darkPreview)}
-      onReset={() => {
-        clearDarkKept();
-        remember(identityPresets[identity]);
-      }}
+      onReset={() => remember(identityPresets[identity], [])}
       onPatch={(key, value) => patch(key, value, scheme)}
       onFix={fix}
       onSuggestApply={applySuggest}

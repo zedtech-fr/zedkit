@@ -20,6 +20,41 @@ test.describe("identity editor undo and apply confirmation", () => {
     await expect.poll(() => spacingOnDraft(page)).toBe("0.4rem");
   });
 
+  test("undo of a dark colour lets a later light edit rewrite it", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await page.getByLabel("Background").fill("120 40% 20%");
+    await page.getByRole("button", { name: "Undo" }).click();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await page.getByLabel("Background").fill("0 0% 95%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toMatch(/^0 0% 5(\.0)?%$/);
+  });
+
+  test("undo of a light edit keeps an earlier dark override", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await page.getByLabel("Background").fill("120 40% 20%");
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await page.getByLabel("Background").fill("0 0% 95%");
+    await page.getByRole("button", { name: "Undo" }).click();
+    await page.getByLabel("Background").fill("0 0% 90%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await page.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect
+      .poll(() =>
+        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      )
+      .toBe("120 40% 20%");
+  });
+
   test("Apply to the whole site confirms on the page", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
