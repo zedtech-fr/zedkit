@@ -97,9 +97,10 @@ test("POST without env returns 503 disabled", async () => {
 
 test("POST asks the model for AA contrast in the system message", async () => {
   let system = "";
+  let payload = {};
   const fetchImpl = (_url, init) => {
-    const body = JSON.parse(String(init.body));
-    system = body.messages.find((row) => row.role === "system")?.content ?? "";
+    payload = JSON.parse(String(init.body));
+    system = payload.messages.find((row) => row.role === "system")?.content ?? "";
     return Promise.resolve(chatReply({ spacing: "0.4rem" }));
   };
   await withServer({ env: ENV, fetchImpl }, async (port) => {
@@ -107,6 +108,27 @@ test("POST asks the model for AA contrast in the system message", async () => {
     assert.equal(res.status, 200);
     assert.match(system, /4\.5:1/);
     assert.match(system, /3:1/);
+    assert.equal("response_format" in payload, false);
+    assert.equal("temperature" in payload, false);
+  });
+});
+
+test("POST reads chat content from a text-part array", async () => {
+  const fetchImpl = () =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      text: () =>
+        Promise.resolve(
+          JSON.stringify({
+            choices: [{ message: { content: [{ type: "text", text: JSON.stringify({ spacing: "0.4rem" }) }] } }],
+          }),
+        ),
+    });
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).tokens.spacing, "0.4rem");
   });
 });
 
