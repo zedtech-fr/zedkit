@@ -25,8 +25,8 @@ export async function waitForAppliedLook(page: Page, identity: string, theme: "l
     const specs = new Set<string>();
     for (const el of document.querySelectorAll("html, [data-identity], [data-identity-scope]")) {
       const { fontFamily, fontSize, fontWeight } = getComputedStyle(el);
-      const family = fontFamily.split(",")[0]?.trim();
-      if (family) specs.add(`${fontWeight} ${fontSize} ${family}`);
+      const family = fontFamily.split(",")[0]?.trim().replace(/^["']|["']$/g, "");
+      if (family) specs.add(`${fontWeight} ${fontSize} "${family}"`);
     }
     await Promise.all([...specs].map((spec) => document.fonts.load(spec)));
     await document.fonts.ready;
