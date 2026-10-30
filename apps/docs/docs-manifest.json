@@ -304,6 +304,13 @@
       "source": "layout.tsx",
       "demo": "StackDemo"
     },
+    "Constrain page width and run sections edge to edge": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Container",
+      "props": "ContainerProps",
+      "source": "layout.tsx",
+      "demo": "ContainerDemo"
+    },
     "Render headings and body text without raw tags": {
       "package": "@zedtech/zedkit-ui",
       "component": "Heading",

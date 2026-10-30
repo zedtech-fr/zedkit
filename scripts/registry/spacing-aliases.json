@@ -296,5 +296,30 @@
     "canonical": "--spacing-tap",
     "value": "2.75rem",
     "tokens": ["--spacing-tap"]
+  },
+  {
+    "canonical": "--spacing-page-gutter",
+    "value": "var(--zk-page-gutter)",
+    "tokens": ["--spacing-page-gutter"]
+  },
+  {
+    "canonical": "--spacing-section-sm",
+    "value": "var(--zk-section-sm)",
+    "tokens": ["--spacing-section-sm"]
+  },
+  {
+    "canonical": "--spacing-section-md",
+    "value": "var(--zk-section-md)",
+    "tokens": ["--spacing-section-md"]
+  },
+  {
+    "canonical": "--spacing-section-lg",
+    "value": "var(--zk-section-lg)",
+    "tokens": ["--spacing-section-lg"]
+  },
+  {
+    "canonical": "--spacing-section-xl",
+    "value": "var(--zk-section-xl)",
+    "tokens": ["--spacing-section-xl"]
   }
 ]

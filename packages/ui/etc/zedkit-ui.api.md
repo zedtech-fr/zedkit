@@ -236,6 +236,21 @@ export interface ConfirmDialogProps {
 }
 
 // @public (undocumented)
+export function Container(input: ContainerProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type ContainerProps = React_2.ComponentProps<"div"> & VariantProps<typeof containerVariants> & {
+    width?: "narrow" | "reading" | "default" | "wide" | "full" | undefined;
+    gutter?: boolean | undefined;
+};
+
+// @public (undocumented)
+export const containerVariants: (props?: ({
+    width?: "narrow" | "reading" | "default" | "wide" | "full" | null | undefined;
+    gutter?: boolean | null | undefined;
+} & ClassProp) | undefined) => string;
+
+// @public (undocumented)
 export function createDataTableColumns<TData extends RowData>(): ColumnHelper<    {
 rowSortingFeature: TableFeature;
 columnFilteringFeature: TableFeature;
@@ -1178,6 +1193,10 @@ export type SectionProps = React_2.ComponentProps<"section"> & {
     title?: React_2.ReactNode;
     description?: React_2.ReactNode;
     actions?: React_2.ReactNode;
+    bleed?: boolean | undefined;
+    tone?: "plain" | "muted" | undefined;
+    spacing?: "sm" | "md" | "lg" | "xl" | undefined;
+    containerWidth?: ContainerProps["width"];
 };
 
 // @public (undocumented)

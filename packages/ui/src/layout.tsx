@@ -42,6 +42,40 @@ function Stack({ direction, gap, className, ...props }: StackProps) {
   );
 }
 
+const containerVariants = cva("mx-auto w-full", {
+  variants: {
+    width: {
+      narrow: "max-w-narrow",
+      reading: "max-w-reading",
+      default: "max-w-default",
+      wide: "max-w-wide",
+      full: "max-w-none",
+    },
+    gutter: {
+      true: "px-page-gutter",
+      false: "",
+    },
+  },
+  defaultVariants: {
+    width: "default",
+    gutter: true,
+  },
+});
+
+export type ContainerProps = React.ComponentProps<"div"> &
+  VariantProps<typeof containerVariants> & {
+    /** Named measure from the layout token scale. */
+    width?: "narrow" | "reading" | "default" | "wide" | "full" | undefined;
+    /** Page gutter on both sides (default true). */
+    gutter?: boolean | undefined;
+  };
+
+function Container({ width, gutter, className, ...props }: ContainerProps) {
+  return (
+    <div data-slot="container" className={cn(containerVariants({ width, gutter }), className)} {...props} />
+  );
+}
+
 export type SectionProps = React.ComponentProps<"section"> & {
   /** Section title, rendered as a level-2 heading. */
   title?: React.ReactNode;
@@ -49,23 +83,64 @@ export type SectionProps = React.ComponentProps<"section"> & {
   description?: React.ReactNode;
   /** Actions row, right-aligned next to the title. */
   actions?: React.ReactNode;
+  /** Run the section edge to edge; content stays capped by a Container. */
+  bleed?: boolean | undefined;
+  /** Band background in bleed mode. */
+  tone?: "plain" | "muted" | undefined;
+  /** Vertical rhythm in bleed mode (section spacing scale). */
+  spacing?: "sm" | "md" | "lg" | "xl" | undefined;
+  /** Width of the inner container in bleed mode. */
+  containerWidth?: ContainerProps["width"];
 };
 
-function Section({ title, description, actions, children, className, ...props }: SectionProps) {
+const sectionSpacing = {
+  sm: "py-section-sm",
+  md: "py-section-md",
+  lg: "py-section-lg",
+  xl: "py-section-xl",
+} as const;
+
+function Section({
+  title,
+  description,
+  actions,
+  bleed = false,
+  tone = "plain",
+  spacing = "md",
+  containerWidth,
+  children,
+  className,
+  ...props
+}: SectionProps) {
+  const header = (title || actions) && (
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        {title && <Heading level={2}>{title}</Heading>}
+        {description && <Text variant="muted">{description}</Text>}
+      </div>
+      {actions}
+    </div>
+  );
+  if (!bleed) {
+    return (
+      <section data-slot="section" className={cn("space-y-4", className)} {...props}>
+        {header}
+        {children}
+      </section>
+    );
+  }
   return (
-    <section data-slot="section" className={cn("space-y-4", className)} {...props}>
-      {(title || actions) && (
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            {title && <Heading level={2}>{title}</Heading>}
-            {description && <Text variant="muted">{description}</Text>}
-          </div>
-          {actions}
-        </div>
-      )}
-      {children}
+    <section
+      data-slot="section"
+      className={cn("w-full", sectionSpacing[spacing], tone === "muted" && "bg-muted", className)}
+      {...props}
+    >
+      <Container width={containerWidth} className="space-y-4">
+        {header}
+        {children}
+      </Container>
     </section>
   );
 }
 
-export { Stack, stackVariants, Section };
+export { Container, containerVariants, Stack, stackVariants, Section };

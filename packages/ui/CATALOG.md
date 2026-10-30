@@ -1312,12 +1312,31 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Purpose: Gap-based vertical/horizontal stacks plus titled sections.
 - When to use: For all kit-page layout instead of hand-written flex.
 - When not to use: For complex grids — use CSS grid directly instead.
-- See also: `Render headings and body text without raw tags`, `Group content in a card section`
+- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
 
 ```ts
 import { Section, Stack } from "@zedtech/zedkit-ui";
 <Section title="Team" description="Who can access.">
 <Stack direction="horizontal" gap={2}>...</Stack>
+```
+
+## Constrain page width and run sections edge to edge
+
+- Import: `@zedtech/zedkit-ui` — `Container`, `containerVariants`, `ContainerProps`, `Section`
+- Wraps: `class-variance-authority`
+- Status: alpha
+- Short name: Container
+- Audience: Developers building marketing and docs pages with capped measures and full-bleed bands.
+- Purpose: Named container widths and edge-to-edge section bands from the layout token scale.
+- When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.
+- When not to use: For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.
+- See also: `Stack content and group titled sections`, `Group content in a card section`
+- A11y: Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band.
+
+```ts
+import { Container, Section } from "@zedtech/zedkit-ui";
+<Section bleed tone="muted" spacing="lg" title="Pricing" description="What each plan includes.">...</Section>
+<Container width="wide">...</Container>
 ```
 
 ## Render headings and body text without raw tags

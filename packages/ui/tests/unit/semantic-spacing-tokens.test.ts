@@ -16,6 +16,11 @@ const TOKENS = {
   "--zk-gap-lg": { factor: 4, mistRem: 1 },
   "--zk-icon-size": { factor: 4, mistRem: 1 },
   "--zk-control-height": { factor: 9, mistRem: 2.25 },
+  "--zk-page-gutter": { factor: 6, mistRem: 1.5 },
+  "--zk-section-sm": { factor: 8, mistRem: 2 },
+  "--zk-section-md": { factor: 12, mistRem: 3 },
+  "--zk-section-lg": { factor: 24, mistRem: 6 },
+  "--zk-section-xl": { factor: 28, mistRem: 7 },
 } as const;
 
 describe("semantic spacing tokens (#798)", () => {
@@ -46,5 +51,24 @@ describe("semantic spacing tokens (#798)", () => {
     expect(MIST_SPACING_REM * 9).toBe(2.25);
     expect(MIST_SPACING_REM * 10).toBe(2.5);
     expect(MIST_SPACING_REM * 2).toBe(0.5);
+  });
+
+  it("wires layout spacing utilities to the identity-derived tokens", () => {
+    expect(css).toMatch(/--spacing-page-gutter:\s*var\(--zk-page-gutter\)/);
+    expect(css).toMatch(/--spacing-section-sm:\s*var\(--zk-section-sm\)/);
+    expect(css).toMatch(/--spacing-section-md:\s*var\(--zk-section-md\)/);
+    expect(css).toMatch(/--spacing-section-lg:\s*var\(--zk-section-lg\)/);
+    expect(css).toMatch(/--spacing-section-xl:\s*var\(--zk-section-xl\)/);
+  });
+
+  it("defines container widths as runtime tokens and theme aliases", () => {
+    expect(css).toMatch(/--zk-container-narrow:\s*32rem;/);
+    expect(css).toMatch(/--zk-container-reading:\s*42rem;/);
+    expect(css).toMatch(/--zk-container-default:\s*64rem;/);
+    expect(css).toMatch(/--zk-container-wide:\s*90rem;/);
+    expect(css).toMatch(/--container-narrow:\s*var\(--zk-container-narrow\)/);
+    expect(css).toMatch(/--container-reading:\s*var\(--zk-container-reading\)/);
+    expect(css).toMatch(/--container-default:\s*var\(--zk-container-default\)/);
+    expect(css).toMatch(/--container-wide:\s*var\(--zk-container-wide\)/);
   });
 });

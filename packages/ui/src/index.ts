@@ -96,7 +96,16 @@ export { useValidatedForm } from "./use-validated-form.js";
 export { IconLabel, type IconLabelProps } from "./icon-label.js";
 export { Input } from "./input.js";
 export { Label, type LabelProps } from "./label.js";
-export { Section, Stack, stackVariants, type SectionProps, type StackProps } from "./layout.js";
+export {
+  Container,
+  containerVariants,
+  Section,
+  Stack,
+  stackVariants,
+  type ContainerProps,
+  type SectionProps,
+  type StackProps,
+} from "./layout.js";
 export { LivePulse, type LivePulseProps } from "./live-pulse.js";
 export { StatusDot, type StatusDotProps, type StatusDotTone } from "./status-dot.js";
 export { ProgressBar, type ProgressBarProps } from "./progress-bar.js";

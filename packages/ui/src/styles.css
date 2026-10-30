@@ -115,6 +115,26 @@
   /* Width of the table scroll hint fade on each cut edge. */
   --zk-table-fade: 1.5rem;
 }
+
+:root {
+  /*
+   * Layout measures: page container widths plus the section rhythm.
+   * Widths are plain measures (identities and apps may redefine them);
+   * the gutter and section steps derive from `--spacing` so identity
+   * density scales page rhythm, same convention as `--zk-gap-*`. The
+   * `@theme inline` block below aliases them to utilities (max-w-*,
+   * px-page-gutter, py-section-*).
+   */
+  --zk-container-narrow: 32rem;
+  --zk-container-reading: 42rem;
+  --zk-container-default: 64rem;
+  --zk-container-wide: 90rem;
+  --zk-page-gutter: calc(var(--spacing) * 6);
+  --zk-section-sm: calc(var(--spacing) * 8);
+  --zk-section-md: calc(var(--spacing) * 12);
+  --zk-section-lg: calc(var(--spacing) * 24);
+  --zk-section-xl: calc(var(--spacing) * 28);
+}
 @media (pointer: coarse), (max-width: 40rem) {
   :root {
     --zk-tap-min: 2.75rem;
@@ -174,6 +194,15 @@
   --zk-gap-lg: calc(var(--spacing) * 4);
   --zk-icon-size: calc(var(--spacing) * 4);
   --zk-control-height: calc(var(--spacing) * 9);
+  --spacing-page-gutter: var(--zk-page-gutter);
+  --spacing-section-sm: var(--zk-section-sm);
+  --spacing-section-md: var(--zk-section-md);
+  --spacing-section-lg: var(--zk-section-lg);
+  --spacing-section-xl: var(--zk-section-xl);
+  --container-narrow: var(--zk-container-narrow);
+  --container-reading: var(--zk-container-reading);
+  --container-default: var(--zk-container-default);
+  --container-wide: var(--zk-container-wide);
   --spacing-badge-inline: 0.625rem;
   --spacing-badge-block: 0.125rem;
   --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));

@@ -16,6 +16,7 @@ import {
   Checkbox,
   Checkmark,
   ConfirmDialog,
+  Container,
   DataTable,
   DataTableSkeleton,
   DatePicker,
@@ -328,6 +329,21 @@ export function Gallery() {
               <Badge>Ada</Badge>
               <Badge variant="secondary">Bob</Badge>
             </Stack>
+          </Section>
+          <div className="space-y-2">
+            <Container width="narrow" className="border py-2 text-sm">
+              Narrow container
+            </Container>
+            <Container width="reading" className="border py-2 text-sm">
+              Reading container
+            </Container>
+            <Container className="border py-2 text-sm">Default container</Container>
+            <Container width="wide" className="border py-2 text-sm">
+              Wide container
+            </Container>
+          </div>
+          <Section bleed tone="muted" spacing="sm" title="Bleed section" description="Edge to edge, content capped.">
+            <p className="text-sm">Band content.</p>
           </Section>
           <div className="flex gap-4">
             <LivePulse />

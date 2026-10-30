@@ -24,6 +24,7 @@ const SKIP = new Set([
   "alertVariants",
   "badgeVariants",
   "buttonVariants",
+  "containerVariants",
   "headingVariants",
   "stackVariants",
   "textVariants",
