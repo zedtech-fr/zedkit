@@ -5,11 +5,15 @@ import { applyCustomIdentityCss } from "./identity-custom-sheet.js";
 import { isNamedIdentityId } from "./identity-data.js";
 import { isPresetId, parseIdentityTokens, tokensToCss, type IdentityTokens } from "./identity-tokens.js";
 
-/** Applies compact tokens to the whole page. Pass a look id as the second arg to load that look's CSS. */
+/**
+ * Applies compact tokens to the whole page.
+ * Second arg is a look id (preset or `n-…` named id) or a localStorage key.
+ * A look id writes CSS under `:root[data-identity="…"]` and keeps that id;
+ * any other string is the storage key and activates `custom`.
+ */
 function applyCustomIdentity(tokens: IdentityTokens, storageKey: string = IDENTITY_STORAGE_KEY): boolean {
   const parsed = parseIdentityTokens(tokens);
   if (!parsed.success) return false;
-  // shortcut: second arg is a look id (preset or saved name) when it is not the storage key
   const look = isPresetId(storageKey) || isNamedIdentityId(storageKey) ? storageKey : undefined;
   const key = look ? IDENTITY_STORAGE_KEY : storageKey;
   const selector = look ? `:root[data-identity="${look}"]` : ":root";

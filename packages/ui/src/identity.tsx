@@ -10,6 +10,7 @@ import {
   IDENTITY_STORAGE_KEY,
   NAMED_IDENTITY_PREFIX,
   identities,
+  identitiesWithCurrentLook,
   isNamedIdentityId,
   type IdentityOption,
 } from "./identity-data.js";
@@ -51,6 +52,7 @@ export {
   NAMED_IDENTITY_PREFIX,
   applyIdentity,
   identities,
+  identitiesWithCurrentLook,
   isNamedIdentityId,
   useIdentity,
   type IdentityOption,

@@ -19,6 +19,7 @@ import {
   applyIdentity,
   identities,
   identityPresets,
+  isNamedIdentityId,
   type IdentityOption,
 } from "#index.js";
 
@@ -204,6 +205,17 @@ describe("IdentitySwitcher", () => {
     act(() => applyIdentity("n-acme"));
     expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toContain(":root[data-identity=\"n-acme\"]");
   });
+
+  it("names a named identity in the select while the custom sheet stays", async () => {
+    render(<IdentitySwitcher identities={looks} />);
+    act(() => {
+      applyCustomIdentity(identityPresets.maison, "n-acme");
+    });
+    const select = (await screen.findByLabelText("Identity")) as HTMLSelectElement;
+    expect(select.value).toBe("n-acme");
+    expect([...select.options].map((option) => option.value)).toEqual(["n-acme", "calm", "bold"]);
+    expect(screen.getByDisplayValue("acme")).toBeTruthy();
+  });
 });
 
 describe("IdentityPicker", () => {
@@ -230,5 +242,25 @@ describe("IdentityPicker", () => {
       applyCustomIdentity(identityPresets.mist);
     });
     expect(await screen.findByRole("button", { name: "Identity: Custom" })).toBeTruthy();
+  });
+
+  it("names a named identity on the trigger and checks it in the sheet", async () => {
+    const user = userEvent.setup();
+    render(<IdentityPicker identities={looks} />);
+    act(() => {
+      applyCustomIdentity(identityPresets.maison, "n-acme");
+    });
+    await user.click(await screen.findByRole("button", { name: "Identity: acme" }));
+    expect((await screen.findByRole("radio", { name: /^acme/ })).getAttribute("aria-checked")).toBe("true");
+  });
+});
+
+describe("isNamedIdentityId", () => {
+  it("matches the n- prefix only", () => {
+    expect(isNamedIdentityId("n-acme")).toBe(true);
+    expect(isNamedIdentityId("n-")).toBe(true);
+    expect(isNamedIdentityId("maison")).toBe(false);
+    expect(isNamedIdentityId("custom")).toBe(false);
+    expect(isNamedIdentityId("N-acme")).toBe(false);
   });
 });

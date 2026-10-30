@@ -12,10 +12,10 @@ import {
   DrawerTrigger,
 } from "./drawer.js";
 import {
-  CUSTOM_IDENTITY_ID,
   IDENTITY_STORAGE_KEY,
   applyIdentity,
   identities as builtInIdentities,
+  identitiesWithCurrentLook,
   useIdentity,
   type IdentityOption,
 } from "./identity.js";
@@ -56,17 +56,11 @@ function IdentityPicker({
   const messages = useUiMessages();
   const title = label ?? messages.identity;
   const current = useIdentity(defaultIdentity ?? identities[0]?.id ?? "");
-  const options =
-    current === CUSTOM_IDENTITY_ID && !identities.some((item) => item.id === CUSTOM_IDENTITY_ID)
-      ? [{ id: CUSTOM_IDENTITY_ID, label: messages.identityCustom }, ...identities]
-      : identities;
+  const options = identitiesWithCurrentLook(identities, current, messages.identityCustom);
 
   if (identities.length === 0) return null;
 
-  const currentLabel =
-    current === CUSTOM_IDENTITY_ID
-      ? messages.identityCustom
-      : (identities.find((item) => item.id === current)?.label ?? current);
+  const currentLabel = options.find((item) => item.id === current)?.label ?? current;
 
   function choose(next: string) {
     applyIdentity(next, storageKey);
