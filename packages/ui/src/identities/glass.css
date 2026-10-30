@@ -92,7 +92,7 @@
   --radius-xl: 2rem;
   --radius-2xl: 2.25rem;
   --radius-3xl: 2.75rem;
-  --zk-border-width: 0.75px;
+  --zk-border-width: 0.5px;
   --ring-width: 2px;
   --ring-width-control: 2px;
   --ring-offset-width: 2px;
@@ -115,7 +115,7 @@
 
   /* Depth: soft and wide, tinted by the page */
   --zk-shadow-color: 232 40% 24%;
-  --zk-shadow-xs: 0 1px 3px hsl(var(--zk-shadow-color) / 0.07);
+  --zk-shadow-xs: 0 8px 24px -12px hsl(var(--zk-shadow-color) / 0.18);
   --zk-shadow-sm: 0 2px 8px -2px hsl(var(--zk-shadow-color) / 0.1), var(--zk-glass-highlight);
   --zk-shadow-md: 0 10px 30px -10px hsl(var(--zk-shadow-color) / 0.2), var(--zk-glass-highlight);
   --zk-shadow-lg: 0 18px 44px -14px hsl(var(--zk-shadow-color) / 0.26), var(--zk-glass-highlight);
@@ -191,7 +191,7 @@
   --zk-glass-edge-alpha: 0.16;
   --zk-glass-highlight: inset 0 1px 0 hsl(0 0% 100% / 0.08);
   --zk-shadow-color: 232 60% 2%;
-  --zk-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35), var(--zk-glass-highlight);
+  --zk-shadow-xs: 0 8px 24px -12px rgb(0 0 0 / 0.55), var(--zk-glass-highlight);
   --zk-shadow-sm: 0 2px 8px -2px rgb(0 0 0 / 0.5), var(--zk-glass-highlight);
   --zk-shadow-md: 0 10px 30px -10px rgb(0 0 0 / 0.6), var(--zk-glass-highlight);
   --zk-shadow-lg: 0 18px 44px -14px rgb(0 0 0 / 0.65), var(--zk-glass-highlight);
