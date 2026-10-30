@@ -6,7 +6,8 @@
 // - Tailwind class hygiene (order, no duplicates, no conflicts, no unknown)
 // - Tokens only: no raw palette colors (bg-red-500), no arbitrary hex/rgb
 //   colors, no raw px font sizes, no arbitrary px/rem in className
-//   (w-[13px], gap-[0.75rem]) — use the semantic theme tokens
+//   (w-[13px], gap-[0.75rem]), no raw focus ring widths (focus:ring-2)
+//   — use the semantic theme tokens
 // - No `style` attributes; no forwardRef (ref is a prop); no explicit `any`;
 //   files ≤ 300 lines, functions ≤ 60; no raw try/catch (use a tryCatch wrapper)
 //
@@ -81,6 +82,13 @@ export function uiPreset({ entryPoint }) {
                 pattern: "\\[[0-9.]+(?:px|rem)\\]",
                 message:
                   "tokens-arbitrary: raw px/rem in className (w-[13px], gap-[0.75rem]) are banned — use the spacing scale (w-4, gap-3) or the type scale (text-sm).",
+              },
+              // Decorative ring-1 / ring-0 stay. has-[:focus-visible]:ring-*
+              // paints a parent when a child is focused; not a focus: variant.
+              {
+                pattern: "(^|:)(?:focus|focus-visible):(?:ring-offset-|ring-)[0-9]",
+                message:
+                  "tokens-focus: raw focus ring widths (focus:ring-2, focus-visible:ring-2) are banned — use focus-ring or focus-ring-control so --ring-width* apply.",
               },
             ],
           },

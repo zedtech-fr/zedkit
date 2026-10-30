@@ -3,14 +3,26 @@ import { Linter } from "eslint";
 import { parser as tsParser, plugin as tsPlugin } from "typescript-eslint";
 import { defineLayers, uiPreset } from "#index.mjs";
 
-function arbitraryRow() {
+function restrictRow(prefix) {
   const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
   const restrict = tailwind.rules["better-tailwindcss/no-restricted-classes"][1].restrict;
-  return restrict.find((row) => String(row.message).startsWith("tokens-arbitrary:"));
+  return restrict.find((row) => String(row.message).startsWith(prefix));
+}
+
+function arbitraryRow() {
+  return restrictRow("tokens-arbitrary:");
+}
+
+function focusRow() {
+  return restrictRow("tokens-focus:");
 }
 
 function matchesArbitrary(className) {
   return Boolean(className.match(arbitraryRow().pattern));
+}
+
+function matchesFocus(className) {
+  return Boolean(className.match(focusRow().pattern));
 }
 
 describe("uiPreset", () => {
@@ -35,6 +47,7 @@ describe("uiPreset", () => {
     expect(messages[1]).toMatch(/^tokens-color: /);
     expect(messages[2]).toMatch(/^tokens-style: /);
     expect(messages[3]).toMatch(/^tokens-arbitrary: /);
+    expect(messages[4]).toMatch(/^tokens-focus: /);
     expect(style.message).toMatch(/^tokens-style: /);
     expect(tryCatch.message).toMatch(/^try-catch: /);
     expect(forwardRef.message).toMatch(/^ui-ref: /);
@@ -127,6 +140,20 @@ describe("uiPreset", () => {
     expect(matchesArbitrary("w-[var(--radix-popover-trigger-width)]")).toBe(false);
     expect(matchesArbitrary("min-w-[var(--radix-select-trigger-width)]")).toBe(false);
     expect(matchesArbitrary("h-[var(--radix-select-trigger-height)]")).toBe(false);
+  });
+
+  it("flags raw focus ring widths and names focus-ring", () => {
+    expect(matchesFocus("focus:ring-2")).toBe(true);
+    expect(matchesFocus("focus-visible:ring-2")).toBe(true);
+    expect(matchesFocus("focus-visible:ring-offset-2")).toBe(true);
+    expect(matchesFocus("sm:focus-visible:ring-2")).toBe(true);
+    expect(matchesFocus("focus-ring")).toBe(false);
+    expect(matchesFocus("focus-ring-control")).toBe(false);
+    expect(matchesFocus("ring-1")).toBe(false);
+    expect(matchesFocus("ring-0")).toBe(false);
+    expect(matchesFocus("focus-visible:ring-ring")).toBe(false);
+    expect(matchesFocus("has-[:focus-visible]:ring-2")).toBe(false);
+    expect(focusRow().message).toMatch(/focus-ring/);
   });
 
   it("bans explicit any and tells the reader to name a type", () => {

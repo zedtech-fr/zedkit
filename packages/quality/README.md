@@ -53,8 +53,9 @@ subagents, commands) see `@zedtech/zedkit-ai` instead.
 ## API
 
 - `uiPreset({ entryPoint })` — flat-config blocks for `.tsx`/`.jsx`:
-  jsx-a11y recommended, Tailwind hygiene, tokens-only classes (no
-  `w-[13px]` / `gap-[0.75rem]`; Radix `w-[var(--radix-*)]` stays), no `style`
+  jsx-a11y recommended, Tailwind hygiene, tokens-only classes (no)
+  `w-[13px]` / `gap-[0.75rem]`; Radix `w-[var(--radix-*)]` stays; no
+  `focus:ring-2` / `focus-visible:ring-2` — use `focus-ring`), no `style`
   attributes, no `forwardRef` (ref is a prop; see `packages/ui/src/button.tsx`),
   no explicit `any`, files ≤ 300 lines and functions ≤ 60, no raw `try`/`catch`.
   `entryPoint` (your Tailwind CSS entry) is required: it is the one thing
