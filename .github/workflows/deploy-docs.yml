@@ -18,6 +18,7 @@ permissions:
 concurrency:
   group: deploy-docs
   cancel-in-progress: false
+  queue: max
 
 jobs:
   deploy:
@@ -69,16 +70,22 @@ jobs:
         env:
           TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
         run: deploy/deploy.sh "$TARGET"
-      - name: Smoke check production site
+      - name: Smoke check deployed sites
         run: |
-          for _ in $(seq 1 5); do
-            if curl -sf -o /dev/null https://zedkit.app; then
-              exit 0
+          for url in https://zedkit.app https://dev.zedkit.app; do
+            ok=""
+            for _ in $(seq 1 5); do
+              if curl -sf -o /dev/null "$url"; then
+                ok=1
+                break
+              fi
+              sleep 6
+            done
+            if [ -z "$ok" ]; then
+              echo "$url did not return 200 after deploy" >&2
+              exit 1
             fi
-            sleep 6
           done
-          echo "zedkit.app did not return 200 after deploy" >&2
-          exit 1
       - name: Roll back config on failure
         if: failure()
         env:
