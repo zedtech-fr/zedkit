@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # Publish the static docs build to the web host.
 #
-# Usage: deploy.sh [--dev] <ssh-target> [remote-dir]
+# Usage: deploy.sh [--dev|--rollback] <ssh-target> [remote-dir]
 #   --dev       publish to the dev site directory and stamp the build;
 #               content only: no config upload, no service changes
+#   --rollback  restore the config backed up by the last prod deploy
+#               and restart from it
 #   ssh-target  user@host of a machine with Docker and Compose installed
 #   remote-dir  directory on the host (default: /srv/app)
 #
@@ -15,13 +17,22 @@ mode="prod"
 if [ "${1:-}" = "--dev" ]; then
   mode="dev"
   shift
+elif [ "${1:-}" = "--rollback" ]; then
+  mode="rollback"
+  shift
 fi
 
-target="${1:?usage: deploy.sh [--dev] <ssh-target> [remote-dir]}"
+target="${1:?usage: deploy.sh [--dev|--rollback] <ssh-target> [remote-dir]}"
 remote="${2:-/srv/app}"
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 out="$root/apps/docs/out"
+
+if [ "$mode" = "rollback" ]; then
+  ssh "$target" "cd '$remote' && for f in Caddyfile compose.yaml; do if [ -f \"\$f.bak\" ]; then cp \"\$f.bak\" \"\$f\"; fi; done && docker compose up -d --remove-orphans && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
+  echo "deploy: rolled back"
+  exit 0
+fi
 
 if [ ! -f "$out/index.html" ]; then
   echo "deploy: $out/index.html not found; build the docs first" >&2
@@ -39,6 +50,7 @@ esac
 
 ssh "$target" "mkdir -p '$remote/site' '$remote/site-dev' '$remote/suggest'"
 if [ "$mode" = "prod" ]; then
+  ssh "$target" "cp '$remote/Caddyfile' '$remote/Caddyfile.bak' 2>/dev/null; cp '$remote/compose.yaml' '$remote/compose.yaml.bak' 2>/dev/null; true"
   scp -q "$root/deploy/Caddyfile" "$root/deploy/compose.yaml" "$target:$remote/"
   # Gate: the host image must accept the config before anything restarts.
   ssh "$target" "docker run --rm -v '$remote/Caddyfile:/etc/caddy/Caddyfile:ro' caddy:2 caddy validate --config /etc/caddy/Caddyfile"
@@ -62,6 +74,15 @@ else
 fi
 rsync -a --delete "$out/" "$target:$site/"
 if [ "$mode" = "prod" ]; then
-  ssh "$target" "cd '$remote' && docker compose up -d --remove-orphans && docker compose ps --status running -q caddy | grep -q . && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"
+  # Reload the running container first: a config-only change must not
+  # recreate it. Recreate once only if reload is impossible, and say why.
+  if ! ssh "$target" "cd '$remote' && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"; then
+    echo "deploy: reload failed, recreating once" >&2
+    if ! ssh "$target" "cd '$remote' && docker compose up -d --remove-orphans && docker compose ps --status running -q caddy | grep -q . && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"; then
+      ssh "$target" "cd '$remote' && docker compose ps -a && docker compose logs --no-color --tail 80 caddy" || true
+      echo "deploy: caddy did not come up; see container logs above" >&2
+      exit 1
+    fi
+  fi
 fi
 echo "deploy: done"
