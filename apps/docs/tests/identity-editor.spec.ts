@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
 
 const PAGE = "/docs/ui/design-your-identity";
@@ -309,7 +310,7 @@ test.describe("identity editor apply to site", () => {
       });
     });
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     const beforeSidebar = await sidebarBg(page);
     const beforeBackground = await htmlVar(page, "--background");
     await page.screenshot({ path: "test-results/identity-editor-site-before.png", fullPage: true });
