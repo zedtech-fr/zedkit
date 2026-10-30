@@ -17,6 +17,21 @@ function withKeptDark(tokens: IdentityTokens, previous: IdentityTokens, keep: re
   return keepIdentityDarkKeys(withIdentityDarkPair(tokens, previous), previous, keep);
 }
 
+function withSuggestedDark(
+  next: IdentityTokens,
+  previous: IdentityTokens,
+  userKeep: readonly string[],
+): { tokens: IdentityTokens; keep: string[] } {
+  const generated = withIdentityDarkPair(next, previous);
+  const aiKeep = LIGHT_KEYS.filter((key) => next.dark[key] !== previous.dark[key]);
+  const keep = [...userKeep];
+  for (const key of aiKeep) {
+    if (!keep.includes(key)) keep.push(key);
+  }
+  const merged = keepIdentityDarkKeys(keepIdentityDarkKeys(generated, next, aiKeep), previous, userKeep);
+  return { tokens: merged, keep };
+}
+
 function patchTokens(
   tokens: IdentityTokens,
   key: string,
@@ -78,7 +93,8 @@ function useDraftTokens(present: IdentityTokens, look: IdentityId) {
   }
 
   function applySuggest(next: IdentityTokens, toSite: boolean) {
-    remember(withKeptDark(next, tokens, darkKept));
+    const suggested = withSuggestedDark(next, tokens, darkKept);
+    remember(suggested.tokens, suggested.keep);
     if (toSite) setAppliedSite(true);
   }
 
