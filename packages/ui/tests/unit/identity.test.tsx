@@ -171,6 +171,9 @@ describe("IdentitySwitcher", () => {
     expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
       `:root[data-identity="press"]`,
     );
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `--sidebar: ${identityPresets.press.light.background}`,
+    );
     await user.selectOptions(screen.getByLabelText("Identity"), "bold");
     expect(document.documentElement.getAttribute("data-identity")).toBe("bold");
     expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toBeNull();
