@@ -1331,7 +1331,7 @@ import { Section, Stack } from "@zedtech/zedkit-ui";
 - When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.
 - When not to use: For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.
 - See also: `Stack content and group titled sections`, `Group content in a card section`
-- A11y: Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band.
+- A11y: Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band. A string `title` names the `<section>` (`aria-label`); a `description` still renders when there is no title.
 
 ```ts
 import { Container, Section } from "@zedtech/zedkit-ui";

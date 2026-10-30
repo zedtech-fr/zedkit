@@ -2533,7 +2533,7 @@
               "code": "import { Container, Section } from \"@zedtech/zedkit-ui\";\n<Section bleed tone=\"muted\" spacing=\"lg\" title=\"Pricing\" description=\"What each plan includes.\">...</Section>\n<Container width=\"wide\">...</Container>"
             }
           ],
-          "a11y": "Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band.",
+          "a11y": "Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band. A string `title` names the `<section>` (`aria-label`); a `description` still renders when there is no title.",
           "seeAlso": [
             "Stack content and group titled sections",
             "Group content in a card section"

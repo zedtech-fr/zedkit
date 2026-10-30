@@ -33,6 +33,18 @@ describe("layout", () => {
     expect(screen.getByText("Who can access.")).not.toBeNull();
     expect(screen.getByRole("button", { name: "Invite" })).not.toBeNull();
     expect(screen.getByText("Ada")).not.toBeNull();
+    expect(screen.getByRole("region", { name: "Team" })).not.toBeNull();
+  });
+
+  it("still shows a description when there is no title", () => {
+    render(<Section description="Who can access." />);
+    expect(screen.getByText("Who can access.")).not.toBeNull();
+    expect(screen.queryByRole("heading")).toBeNull();
+  });
+
+  it("lets a consumer aria-label win over the title name", () => {
+    render(<Section title="Team" aria-label="People" />);
+    expect(screen.getByRole("region", { name: "People" })).not.toBeNull();
   });
 
   it("keeps the whole stack gap scale on default spacing with no arbitrary values", () => {

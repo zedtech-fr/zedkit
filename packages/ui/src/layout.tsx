@@ -112,7 +112,7 @@ function Section({
   className,
   ...props
 }: SectionProps) {
-  const header = (title || actions) && (
+  const header = (title || description || actions) && (
     <div className="flex items-start justify-between gap-4">
       <div>
         {title && <Heading level={2}>{title}</Heading>}
@@ -121,9 +121,10 @@ function Section({
       {actions}
     </div>
   );
+  const labelled = typeof title === "string" ? { "aria-label": title } : undefined;
   if (!bleed) {
     return (
-      <section data-slot="section" className={cn("space-y-4", className)} {...props}>
+      <section data-slot="section" className={cn("space-y-4", className)} {...labelled} {...props}>
         {header}
         {children}
       </section>
@@ -133,6 +134,7 @@ function Section({
     <section
       data-slot="section"
       className={cn("w-full", sectionSpacing[spacing], tone === "muted" && "bg-muted", className)}
+      {...labelled}
       {...props}
     >
       <Container width={containerWidth} className="space-y-4">
