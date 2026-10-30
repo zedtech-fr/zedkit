@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import {
   applyIdentity,
   Button,
+  discardCustomIdentity,
   CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
   IDENTITY_CUSTOM_STORAGE_KEY,
@@ -41,7 +42,15 @@ function CustomIdentityBar() {
       className="fixed bottom-4 left-4 z-overlay rounded-md border border-border bg-background px-3 py-2 text-foreground shadow-md"
     >
       <Text>Custom identity active</Text>
-      <Button type="button" size="sm" variant="outline" onClick={() => applyIdentity(DEFAULT_IDENTITY)}>
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        onClick={() => {
+          discardCustomIdentity();
+          applyIdentity(DEFAULT_IDENTITY);
+        }}
+      >
         Reset to default
       </Button>
     </Stack>

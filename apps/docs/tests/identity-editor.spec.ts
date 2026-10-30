@@ -384,6 +384,26 @@ test.describe("identity editor apply to site", () => {
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
   });
 
+  test("a header preset switch parks applied custom work instead of wiping it", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${PAGE}?identity=mist`, { waitUntil: "networkidle" });
+    await page.getByLabel("Radius", { exact: true }).fill("2rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
+    const parked = await page.evaluate(() => localStorage.getItem("zk-identity-custom"));
+    expect(parked).toContain("2rem");
+
+    const chooser = page.getByRole("combobox", { name: "Identity" }).first();
+    await chooser.selectOption("tide");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBe(parked);
+
+    await chooser.selectOption("mist");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
+  });
+
   test("Apply Press replaces the site look in light and dark", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -488,7 +508,7 @@ test.describe("identity editor apply to site", () => {
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 
-  test("header Identity control clears Custom after Apply to the whole site", async ({ page }) => {
+  test("header Identity control parks Custom after Apply to the whole site; Reset discards it", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
@@ -502,11 +522,16 @@ test.describe("identity editor apply to site", () => {
     expect(await chooser.locator("option").evaluateAll((options) => options.map((o) => (o as HTMLOptionElement).value))).not.toContain(
       "custom",
     );
-    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
+    // Parked, not wiped: the applied work is still stored and the explicit
+    // reset remains the way to drop it.
+    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toContain("0.4rem");
+    await page.getByRole("button", { name: "Reset to default" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
+    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
   });
 
-  test("header Identity control clears Custom in dark mode", async ({ page }) => {
+  test("header Identity control parks Custom in dark mode", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.addInitScript(() => localStorage.setItem("theme", "dark"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -520,7 +545,7 @@ test.describe("identity editor apply to site", () => {
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
     await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
     await expect(chooser).toHaveValue("tide");
-    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toContain("0.4rem");
   });
 });
 
