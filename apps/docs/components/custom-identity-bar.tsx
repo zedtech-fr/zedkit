@@ -7,6 +7,7 @@ import {
   CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
   IDENTITY_CUSTOM_STORAGE_KEY,
+  isNamedIdentityId,
   Stack,
   Text,
   useIdentity,
@@ -30,7 +31,7 @@ function CustomIdentityBar() {
     () => Boolean(window.localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)),
     () => false,
   );
-  if (current !== CUSTOM_IDENTITY_ID && !hasSheet) return null;
+  if (isNamedIdentityId(current) || (current !== CUSTOM_IDENTITY_ID && !hasSheet)) return null;
   return (
     <Stack
       data-slot="custom-identity-bar"

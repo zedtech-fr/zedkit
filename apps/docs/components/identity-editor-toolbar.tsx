@@ -1,46 +1,95 @@
 "use client";
 
-import { Button, Field, FieldLabel, identities, isPresetId, Stack, type IdentityId } from "@zedtech/zedkit-ui";
+import {
+  Button,
+  Field,
+  FieldLabel,
+  Input,
+  Stack,
+  identities,
+  type IdentityOption,
+} from "@zedtech/zedkit-ui";
 
-function IdentityEditorToolbar({
-  identity,
-  darkPreview,
-  canUndo,
-  onIdentity,
-  onDark,
-  onUndo,
-  onReset,
-  onApplySite,
-}: {
-  identity: IdentityId;
+type IdentityEditorToolbarProps = {
+  identity: string;
+  looks: readonly IdentityOption[];
+  name: string;
+  namedSelected: boolean;
   darkPreview: boolean;
   canUndo: boolean;
-  onIdentity: (id: IdentityId) => void;
+  onIdentity: (id: string) => void;
+  onName: (value: string) => void;
+  onSave: () => void;
+  onRename: () => void;
+  onDelete: () => void;
   onDark: () => void;
   onUndo: () => void;
   onReset: () => void;
   onApplySite: () => void;
+};
+
+function LookSelect({
+  identity,
+  looks,
+  onIdentity,
+}: {
+  identity: string;
+  looks: readonly IdentityOption[];
+  onIdentity: (id: string) => void;
 }) {
+  const options = looks.length > 0 ? looks : identities;
+  return (
+    <Field className="shrink-0">
+      <FieldLabel htmlFor="identity-editor-look">Look</FieldLabel>
+      <select
+        id="identity-editor-look"
+        className="h-control-height rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
+        value={identity}
+        onChange={(event) => onIdentity(event.target.value)}
+      >
+        {options.map((look) => (
+          <option key={look.id} value={look.id}>
+            {look.label}
+          </option>
+        ))}
+      </select>
+    </Field>
+  );
+}
+
+function IdentityEditorToolbar({
+  identity,
+  looks,
+  name,
+  namedSelected,
+  darkPreview,
+  canUndo,
+  onIdentity,
+  onName,
+  onSave,
+  onRename,
+  onDelete,
+  onDark,
+  onUndo,
+  onReset,
+  onApplySite,
+}: IdentityEditorToolbarProps) {
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
-      <Field className="shrink-0">
-        <FieldLabel htmlFor="identity-editor-look">Look</FieldLabel>
-        <select
-          id="identity-editor-look"
-          className="h-control-height rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
-          value={identity}
-          onChange={(event) => {
-            const id = event.target.value;
-            if (isPresetId(id)) onIdentity(id);
-          }}
-        >
-          {identities.map((look) => (
-            <option key={look.id} value={look.id}>
-              {look.label}
-            </option>
-          ))}
-        </select>
+      <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
+      <Field className="min-w-36">
+        <FieldLabel htmlFor="identity-editor-name">Name</FieldLabel>
+        <Input id="identity-editor-name" value={name} onChange={(event) => onName(event.target.value)} />
       </Field>
+      <Button type="button" variant="outline" onClick={onSave} disabled={name.trim() === ""}>
+        Save look
+      </Button>
+      <Button type="button" variant="outline" onClick={onRename} disabled={!namedSelected || name.trim() === ""}>
+        Rename
+      </Button>
+      <Button type="button" variant="outline" onClick={onDelete} disabled={!namedSelected}>
+        Delete
+      </Button>
       <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
         Dark
       </Button>

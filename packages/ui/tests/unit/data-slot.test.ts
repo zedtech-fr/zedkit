@@ -16,6 +16,7 @@ const SKIP = new Set([
   "keepIdentityDarkKeys",
   "withIdentityDarkPair",
   "isPresetId",
+  "isNamedIdentityId",
   "createDataTableColumns",
   "useFormField",
   "useValidatedForm",

@@ -5,7 +5,6 @@ import {
   parseIdentityTokens,
   withIdentityDarkPair,
   type IdentityContrastWarning,
-  type IdentityId,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
@@ -53,7 +52,7 @@ function nextDarkKept(keep: string[], key: string): string[] {
   return keep.includes(key) ? keep : [...keep, key];
 }
 
-function useDraftTokens(present: IdentityTokens, look: IdentityId) {
+function useDraftTokens(present: IdentityTokens, look: string) {
   const [tokens, setTokens] = useState(present);
   const [past, setPast] = useState<DraftSnap[]>([]);
   const [appliedSite, setAppliedSite] = useState(false);

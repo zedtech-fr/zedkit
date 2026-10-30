@@ -120,6 +120,16 @@ describe("IdentityScript", () => {
       ":root{--spacing:0.5rem}",
     );
   });
+
+  it("restores a named identity id that is not in the allowlist when a sheet is stored", () => {
+    localStorage.setItem(IDENTITY_STORAGE_KEY, "n-acme");
+    localStorage.setItem(IDENTITY_CUSTOM_STORAGE_KEY, ':root[data-identity="n-acme"]{--spacing:0.4rem}');
+    runScript(<IdentityScript />);
+    expect(document.documentElement.getAttribute("data-identity")).toBe("n-acme");
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      "--spacing:0.4rem",
+    );
+  });
 });
 
 describe("IdentitySwitcher", () => {
@@ -178,6 +188,21 @@ describe("IdentitySwitcher", () => {
     expect(document.documentElement.getAttribute("data-identity")).toBe("bold");
     expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toBeNull();
     expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toBe("");
+  });
+
+  it("applies a named identity without dropping the custom sheet", () => {
+    act(() => {
+      applyCustomIdentity(identityPresets.maison, "n-acme");
+    });
+    expect(document.documentElement.getAttribute("data-identity")).toBe("n-acme");
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `:root[data-identity="n-acme"]`,
+    );
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `--sidebar: ${identityPresets.maison.light.background}`,
+    );
+    act(() => applyIdentity("n-acme"));
+    expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toContain(":root[data-identity=\"n-acme\"]");
   });
 });
 

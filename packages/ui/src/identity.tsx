@@ -8,7 +8,9 @@ import {
   IDENTITY_CHANGE_EVENT,
   IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
+  NAMED_IDENTITY_PREFIX,
   identities,
+  isNamedIdentityId,
   type IdentityOption,
 } from "./identity-data.js";
 
@@ -17,7 +19,7 @@ import {
  * mounted switcher. Tokens follow through CSS; no component re-renders.
  */
 function applyIdentity(id: string, storageKey: string = IDENTITY_STORAGE_KEY) {
-  if (id !== CUSTOM_IDENTITY_ID) clearCustomIdentitySheet(storageKey);
+  if (id !== CUSTOM_IDENTITY_ID && !isNamedIdentityId(id)) clearCustomIdentitySheet(storageKey);
   document.documentElement.setAttribute("data-identity", id);
   window.localStorage.setItem(storageKey, id);
   window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
@@ -46,8 +48,10 @@ export {
   IDENTITY_CHANGE_EVENT,
   IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
+  NAMED_IDENTITY_PREFIX,
   applyIdentity,
   identities,
+  isNamedIdentityId,
   useIdentity,
   type IdentityOption,
 };

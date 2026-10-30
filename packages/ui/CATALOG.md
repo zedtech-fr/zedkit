@@ -1625,12 +1625,12 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `applyCustomIdentity`, `useIdentity`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `applyCustomIdentity`, `useIdentity`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: alpha
 - Short name: Identities
 - Audience: Teams that want to change the whole look of an app, or offer a choice, without touching components.
-- Purpose: `data-identity` on the root swaps the identity tokens next to light and dark (type size, tracking, shadow, spacing unit, body line-height, border width, colour-transition duration, radius, motion); a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose. `applyCustomIdentity` writes compact tokens onto `:root` (id `custom`, CSS in `IDENTITY_CUSTOM_STORAGE_KEY`) and the same script reapplies that sheet before paint. Mist keeps the kit defaults; no two looks share the same type size, tracking, shadow, or spacing unit.
+- Purpose: `data-identity` on the root swaps the identity tokens next to light and dark (type size, tracking, shadow, spacing unit, body line-height, border width, colour-transition duration, radius, motion); a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose. `applyCustomIdentity` writes compact tokens onto `:root` (id `custom`, CSS in `IDENTITY_CUSTOM_STORAGE_KEY`) or onto a preset/named look id (`n-…` via `isNamedIdentityId`) and the same script reapplies that sheet before paint, keeping the stored id even when it is not in the built-in list. Mist keeps the kit defaults; no two looks share the same type size, tracking, shadow, or spacing unit.
 - When to use: To rebrand or offer several looks from one set of components.
 - When not to use: For a single fixed brand — edit the base tokens in `styles.css` instead.
 - See also: `Theme an admin app (dark/light included)`
@@ -1706,7 +1706,7 @@ void css;
 
 ## Design your identity
 
-- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
 - Status: alpha
 - Short name: Draft look

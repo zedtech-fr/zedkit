@@ -186,8 +186,10 @@ export {
   IDENTITY_CHANGE_EVENT,
   IDENTITY_CUSTOM_STORAGE_KEY,
   IDENTITY_STORAGE_KEY,
+  NAMED_IDENTITY_PREFIX,
   applyIdentity,
   identities,
+  isNamedIdentityId,
   useIdentity,
   type IdentityOption,
 } from "./identity.js";
