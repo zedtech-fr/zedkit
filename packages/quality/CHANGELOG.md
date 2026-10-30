@@ -1,5 +1,11 @@
 # @zedtech/zedkit-quality
 
+## 0.6.0
+
+### Minor Changes
+
+- 0a30b88: `uiPreset` flags raw focus ring widths (`focus:ring-2`, `focus-visible:ring-2`). Use `focus-ring` or `focus-ring-control`. Decorative `ring-1` and `ring-0` stay.
+
 ## 0.5.0
 
 ### Minor Changes
