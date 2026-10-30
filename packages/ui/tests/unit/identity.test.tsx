@@ -111,11 +111,11 @@ describe("IdentityScript", () => {
     expect(document.documentElement.getAttribute("data-identity")).toBe("calm");
   });
 
-  it("applies a stored custom sheet before a built-in id", () => {
+  it("applies a stored custom sheet on the stored look", () => {
     localStorage.setItem(IDENTITY_STORAGE_KEY, "press");
     localStorage.setItem(IDENTITY_CUSTOM_STORAGE_KEY, ":root{--spacing:0.5rem}");
     runScript(<IdentityScript />);
-    expect(document.documentElement.getAttribute("data-identity")).toBe(CUSTOM_IDENTITY_ID);
+    expect(document.documentElement.getAttribute("data-identity")).toBe("press");
     expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toBe(
       ":root{--spacing:0.5rem}",
     );
@@ -164,6 +164,13 @@ describe("IdentitySwitcher", () => {
     });
     expect(await screen.findByDisplayValue("Custom")).toBeTruthy();
     expect(document.documentElement.getAttribute("data-identity")).toBe(CUSTOM_IDENTITY_ID);
+    act(() => {
+      applyCustomIdentity(identityPresets.press, "press");
+    });
+    expect(document.documentElement.getAttribute("data-identity")).toBe("press");
+    expect(document.querySelector('style[data-slot="identity-custom-sheet"]')?.textContent).toContain(
+      `:root[data-identity="press"]`,
+    );
     await user.selectOptions(screen.getByLabelText("Identity"), "bold");
     expect(document.documentElement.getAttribute("data-identity")).toBe("bold");
     expect(localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)).toBeNull();

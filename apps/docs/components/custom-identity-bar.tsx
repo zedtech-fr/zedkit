@@ -1,12 +1,36 @@
 "use client";
 
-import { applyIdentity, Button, CUSTOM_IDENTITY_ID, Stack, Text, useIdentity } from "@zedtech/zedkit-ui";
+import { useSyncExternalStore } from "react";
+import {
+  applyIdentity,
+  Button,
+  CUSTOM_IDENTITY_ID,
+  IDENTITY_CHANGE_EVENT,
+  IDENTITY_CUSTOM_STORAGE_KEY,
+  Stack,
+  Text,
+  useIdentity,
+} from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
+function subscribe(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(IDENTITY_CHANGE_EVENT, onStoreChange);
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(IDENTITY_CHANGE_EVENT, onStoreChange);
+  };
+}
+
 function CustomIdentityBar() {
   const current = useIdentity();
-  if (current !== CUSTOM_IDENTITY_ID) return null;
+  const hasSheet = useSyncExternalStore(
+    subscribe,
+    () => Boolean(window.localStorage.getItem(IDENTITY_CUSTOM_STORAGE_KEY)),
+    () => false,
+  );
+  if (current !== CUSTOM_IDENTITY_ID && !hasSheet) return null;
   return (
     <Stack
       data-slot="custom-identity-bar"

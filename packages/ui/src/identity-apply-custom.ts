@@ -1,14 +1,25 @@
 "use client";
 
-import { applyIdentity, CUSTOM_IDENTITY_ID, IDENTITY_STORAGE_KEY } from "./identity.js";
-import { applyCustomIdentitySheet, parseIdentityTokens, type IdentityTokens } from "./identity-tokens.js";
+import { applyIdentity, CUSTOM_IDENTITY_ID, IDENTITY_CHANGE_EVENT, IDENTITY_STORAGE_KEY } from "./identity.js";
+import { applyCustomIdentityCss } from "./identity-custom-sheet.js";
+import { isPresetId, parseIdentityTokens, tokensToCss, type IdentityTokens } from "./identity-tokens.js";
 
-/** Applies compact tokens to the whole page (`:root`) and marks the identity Custom. */
+/** Applies compact tokens to the whole page. Pass a look id as the second arg to load that look's CSS. */
 function applyCustomIdentity(tokens: IdentityTokens, storageKey: string = IDENTITY_STORAGE_KEY): boolean {
   const parsed = parseIdentityTokens(tokens);
   if (!parsed.success) return false;
-  applyCustomIdentitySheet(parsed.data, storageKey);
-  applyIdentity(CUSTOM_IDENTITY_ID, storageKey);
+  // shortcut: second arg is a look id when it matches a preset, else the storage key
+  const look = isPresetId(storageKey) ? storageKey : undefined;
+  const key = look ? IDENTITY_STORAGE_KEY : storageKey;
+  const selector = look ? `:root[data-identity="${look}"]` : ":root";
+  applyCustomIdentityCss(tokensToCss(parsed.data, selector), key);
+  if (!look) {
+    applyIdentity(CUSTOM_IDENTITY_ID, key);
+    return true;
+  }
+  document.documentElement.setAttribute("data-identity", look);
+  window.localStorage.setItem(key, look);
+  window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
   return true;
 }
 
