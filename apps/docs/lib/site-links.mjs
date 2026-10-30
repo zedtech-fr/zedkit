@@ -9,7 +9,16 @@ export const SITE_CHANGELOG_URL =
   "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
 
 /** In-app routes referenced from the global header (must exist in the static export). */
-export const SITE_HEADER_INTERNAL_PATHS = ["/docs", "/docs/getting-started"];
+export const SITE_HEADER_INTERNAL_PATHS = [
+  "/docs",
+  "/catalog",
+  "/docs/getting-started",
+  "/docs/build-an-admin-dashboard",
+  "/docs/set-up-your-coding-agents",
+  "/docs/add-seo-to-nextjs",
+  "/docs/zedkit-and-shadcn",
+  "/docs/maturity-and-compatibility",
+];
 
 /**
  * @param {string} changelogHref
@@ -21,6 +30,6 @@ export function siteFooterLinkSpecs(changelogHref) {
     { label: "Source repository", href: SITE_GITHUB_URL, external: true },
     { label: "npm organisation", href: SITE_NPM_ORG_URL, external: true },
     { label: "Report a bug", href: SITE_BUG_REPORT_URL, external: true },
-    { label: "Changelog", href: changelogHref, external: true },
+    { label: "UI changelog", href: changelogHref, external: true },
   ];
 }
