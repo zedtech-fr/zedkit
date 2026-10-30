@@ -2,7 +2,7 @@
  * Identity: maison.
  *
  *    Airy ivory, serif display type (Cormorant) over a geometric body
- *    (Jost), very fine borders, small radii, generous spacing. Code in
+ *    (Jost), ink-frame borders, small radii, generous spacing. Code in
  *    JetBrains Mono. Interactions stay within the motion caps; the slow,
  *    unhurried feel is reserved for reveals (longer duration and travel).
  *
@@ -84,7 +84,7 @@
   --radius-xl: 2px;
   --radius-2xl: 3px;
   --radius-3xl: 4px;
-  --zk-border-width: 1.75px;
+  --zk-border-width: 4px;
   --ring-width: 2px;
   --ring-width-control: 2px;
   --ring-offset-width: 2px;
@@ -93,7 +93,7 @@
   --zk-shadow-color: 30 10% 12%;
   --zk-shadow-xs: 0 1px 1px hsl(var(--zk-shadow-color) / 0.04);
   --zk-shadow-sm: 0 1px 1px hsl(var(--zk-shadow-color) / 0.06);
-  --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06), 0 8px 20px -16px hsl(var(--zk-shadow-color) / 0.12);
+  --zk-shadow-md: 0 1px 0 hsl(var(--zk-shadow-color) / 0.28);
   --zk-shadow-lg: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06), 0 16px 36px -22px hsl(var(--zk-shadow-color) / 0.16);
   --zk-shadow-xl: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 28px 64px -28px hsl(var(--zk-shadow-color) / 0.28);
   --zk-shadow-overlay: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24);
@@ -159,7 +159,7 @@
   --zk-shadow-color: 30 12% 2%;
   --zk-shadow-xs: none;
   --zk-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.4);
-  --zk-shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 28px -16px rgb(0 0 0 / 0.7);
+  --zk-shadow-md: 0 1px 0 rgb(0 0 0 / 0.85);
   --zk-shadow-lg: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -22px rgb(0 0 0 / 0.75);
   --zk-shadow-xl: 0 1px 2px rgb(0 0 0 / 0.4), 0 28px 64px -26px rgb(0 0 0 / 0.8);
   --zk-shadow-overlay: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -24px rgb(0 0 0 / 0.78);

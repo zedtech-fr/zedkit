@@ -86,13 +86,14 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/maison.css"), "--zk-body-leading")).toBe("1.7");
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");
     expect(token(read("identities/maison.css"), "--radius-xs") ?? "").toBe("0.5px");
-    expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("1.75px");
+    expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("4px");
+    expect(token(read("identities/maison.css"), "--zk-shadow-md") ?? "").toBe("0 1px 0 hsl(var(--zk-shadow-color) / 0.28)");
     expect(token(read("identities/maison.css"), "--zk-shadow-overlay") ?? "").toBe(
       "0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24)",
     );
     expect(token(read("identities/glass.css"), "--zk-body-leading")).toBe("1.85");
     expect(token(read("identities/glass.css"), "--zk-color-duration")).toBe("220ms");
-    expect(token(read("identities/glass.css"), "--zk-border-width") ?? "").toBe("0.75px");
+    expect(token(read("identities/glass.css"), "--zk-border-width") ?? "").toBe("0.5px");
     expect(token(read("identities/glass.css"), "--radius") ?? "").toBe("1.25rem");
     expect(token(read("identities/glass.css"), "--radius-sm") ?? "").toBe("0.625rem");
     expect(token(read("identities/glass.css"), "--radius-md") ?? "").toBe("0.875rem");
@@ -102,7 +103,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/glass.css"), "--text-5xl") ?? "").toBe("3.125rem");
     expect(token(read("identities/glass.css"), "--zk-heading-leading") ?? "").toBe("1.16");
     expect(token(read("identities/glass.css"), "--zk-shadow-xs") ?? "").toBe(
-      "0 1px 3px hsl(var(--zk-shadow-color) / 0.07)",
+      "0 8px 24px -12px hsl(var(--zk-shadow-color) / 0.18)",
     );
     expect(token(read("identities/tide.css"), "--zk-body-leading")).toBe("1.35");
     expect(token(read("identities/tide.css"), "--text-2xl") ?? "").toBe("2.125rem");
@@ -122,7 +123,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/volt.css"), "--zk-color-duration")).toBe("100ms");
     expect(token(read("identities/volt.css"), "--text-4xl") ?? "").toBe("2.125rem");
     expect(token(read("identities/volt.css"), "--text-xs") ?? "").toBe("0.625rem");
-    expect(token(read("identities/volt.css"), "--zk-border-width") ?? "").toBe("1.25px");
+    expect(token(read("identities/volt.css"), "--zk-border-width") ?? "").toBe("3px");
   });
 
   it("gives each identity its own dark --zk-shadow-xs", () => {
@@ -133,7 +134,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
       volt: tokens(read("identities/volt.css"), "--zk-shadow-xs")[1],
     };
     expect(darkXs.maison).toBe("none");
-    expect(darkXs.glass).toBe("0 1px 2px rgb(0 0 0 / 0.35), var(--zk-glass-highlight)");
+    expect(darkXs.glass).toBe("0 8px 24px -12px rgb(0 0 0 / 0.55), var(--zk-glass-highlight)");
     expect(darkXs.tide).toBe("0 1px 3px rgb(0 0 0 / 0.42), 0 0 8px -2px hsl(var(--zk-shadow-color) / 0.16)");
     const seen = new Map<string, string>();
     for (const [id, value] of Object.entries(darkXs)) {

@@ -1,7 +1,7 @@
 /*
  * Identity: volt.
  *
- *    Dense near-black, tight type (Geist, 10px xs body), hairline
+ *    Dense near-black, tight type (Geist, 10px xs body), hard chrome
  *    borders, layered depth, one acid accent. Code in JetBrains Mono.
  *
  *    Inert until `data-identity="volt"` is set on <html> (or on an
@@ -81,7 +81,7 @@
   --radius-xl: 6px;
   --radius-2xl: 8px;
   --radius-3xl: 10px;
-  --zk-border-width: 1.25px;
+  --zk-border-width: 3px;
   --ring-width: 2px;
   --ring-width-control: 2px;
   --ring-offset-width: 2px;

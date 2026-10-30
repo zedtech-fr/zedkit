@@ -128,7 +128,7 @@ const identityPresets = {
   },
   volt: {
     spacing: "0.225rem",
-    borderWidth: "1.25px",
+    borderWidth: "3px",
     radius: "0.25rem",
     bodyLeading: "1.48",
     headingLeading: "1.08",
@@ -155,7 +155,7 @@ const identityPresets = {
   },
   maison: {
     spacing: "0.3rem",
-    borderWidth: "1.75px",
+    borderWidth: "4px",
     radius: "2px",
     bodyLeading: "1.7",
     headingLeading: "1.12",
@@ -178,11 +178,11 @@ const identityPresets = {
       border: "34 10% 22%",
     },
     shadowSm: "0 1px 1px hsl(30 10% 12% / 0.06)",
-    shadowMd: "0 1px 2px hsl(30 10% 12% / 0.06), 0 8px 20px -16px hsl(30 10% 12% / 0.12)",
+    shadowMd: "0 1px 0 hsl(30 10% 12% / 0.28)",
   },
   glass: {
     spacing: "0.32rem",
-    borderWidth: "0.75px",
+    borderWidth: "0.5px",
     radius: "1.25rem",
     bodyLeading: "1.85",
     headingLeading: "1.16",
