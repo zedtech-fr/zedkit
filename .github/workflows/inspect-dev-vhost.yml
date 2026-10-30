@@ -36,9 +36,28 @@ jobs:
           # production deploy uses. A heredoc on ssh stdin delivered
           # nothing in this runner (0-byte output, exit 0).
           extract='/^dev[.]zedkit[.]app[[:space:]]*\{/{f=1} f{print} f&&/^\}/{exit}'
+          # Known locations first (host files, then the running config).
           ssh "$TARGET" "awk '$extract' /srv/app/Caddyfile /etc/caddy/Caddyfile" > dev-vhost.txt || true
           if [ ! -s dev-vhost.txt ]; then
             ssh "$TARGET" "cd /srv/app && docker compose exec -T caddy cat /etc/caddy/Caddyfile" | awk "$extract" > dev-vhost.txt || true
+          fi
+          # The block lives elsewhere on the host: find files that name
+          # the dev host and extract only its site block from each.
+          if [ ! -s dev-vhost.txt ]; then
+            ssh "$TARGET" "grep -rlsI 'dev[.]zedkit[.]app' /srv /opt /etc /home 2>/dev/null | head -20" > candidates.txt || true
+            while read -r f; do
+              ssh "$TARGET" "awk '$extract' '$f'" >> dev-vhost.txt || true
+            done < candidates.txt
+          fi
+          # Served from the adapted config instead: show only the dev
+          # host context, never the whole file.
+          if [ ! -s dev-vhost.txt ]; then
+            ssh "$TARGET" "cd /srv/app && docker compose exec -T caddy cat /config/caddy/autosave.json" > autosave.json || true
+            grep -o '.\{0,60\}dev[.]zedkit[.]app.\{0,240\}' autosave.json >> dev-vhost.txt || true
+          fi
+          # Last resort for diagnosis: container names and images only.
+          if [ ! -s dev-vhost.txt ]; then
+            ssh "$TARGET" "docker ps --format '{{.Names}} {{.Image}}'" >> dev-vhost.txt || true
           fi
           cat dev-vhost.txt
           test -s dev-vhost.txt
