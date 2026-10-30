@@ -13,7 +13,7 @@ test.describe("site header navigation (#1034)", () => {
     ).toHaveAttribute("href", "/catalog");
     await expect(header.getByRole("link", { name: "UI changelog" })).toBeVisible();
     // The identity control explains itself instead of showing a bare name.
-    await expect(page.getByLabel("Try a look")).toBeVisible();
+    await expect(page.getByLabel("Try another identity")).toBeVisible();
   });
 
   test("a deep docs page reaches the catalog from its chrome", async ({ page }) => {

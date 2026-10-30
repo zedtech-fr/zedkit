@@ -32,7 +32,7 @@ function DocsIdentitySwitcher() {
   const { identities, onIdentityChange } = useChooser();
   return (
     <IdentitySwitcher
-      label="Try a look (identity)"
+      label="Try another identity"
       showLabel
       defaultIdentity={DEFAULT_IDENTITY}
       identities={identities}
