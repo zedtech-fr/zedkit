@@ -36,12 +36,22 @@ jobs:
           # production deploy uses. A heredoc on ssh stdin delivered
           # nothing in this runner (0-byte output, exit 0).
           extract='/^dev[.]zedkit[.]app[[:space:]]*\{/{f=1} f{print} f&&/^\}/{exit}'
+          # Known locations first (host files, then the running config).
           ssh "$TARGET" "awk '$extract' /srv/app/Caddyfile /etc/caddy/Caddyfile" > dev-vhost.txt || true
           if [ ! -s dev-vhost.txt ]; then
             ssh "$TARGET" "cd /srv/app && docker compose exec -T caddy cat /etc/caddy/Caddyfile" | awk "$extract" > dev-vhost.txt || true
           fi
+          # Served from the adapted config instead: select only the
+          # routes matched to the dev host, never the whole file.
+          if [ ! -s dev-vhost.txt ]; then
+            ssh "$TARGET" "cd /srv/app && docker compose exec -T caddy cat /config/caddy/autosave.json" > autosave.json || true
+            jq -c '.apps.http.servers[] | .routes[]? | select([.match[]?.host[]? // empty] | index("dev.zedkit.app"))' autosave.json > dev-vhost.txt || true
+          fi
+          if [ ! -s dev-vhost.txt ]; then
+            echo "dev site block not found" >&2
+            exit 1
+          fi
           cat dev-vhost.txt
-          test -s dev-vhost.txt
       - uses: actions/upload-artifact@v4
         with:
           name: dev-vhost
