@@ -14,9 +14,9 @@ function ofToken(
 }
 
 describe("identityContrastWarnings", () => {
-  it("accepts every shipped preset on text vs background in light and dark", () => {
+  it("accepts every shipped preset on text, accent, and border in light and dark", () => {
     for (const tokens of Object.values(identityPresets)) {
-      expect(ofToken(tokens, "foreground")).toEqual([]);
+      expect(identityContrastWarnings(tokens)).toEqual([]);
     }
   });
 
