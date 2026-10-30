@@ -1,0 +1,55 @@
+name: inspect-dev-vhost
+
+# Manual discovery only: print the dev site block of the live Caddy
+# config so the dev root can be versioned in deploy/Caddyfile.
+# Never prints keys, env, or any other config block.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inspect-dev-vhost
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DOCS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Print dev site block
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: |
+          ssh "$TARGET" 'bash -s' <<'REMOTE'
+          set -u
+          extract() {
+            awk '/^dev[.]zedkit[.]app[[:space:]]*\{/{f=1} f{print} f&&/^\}/{exit}'
+          }
+          block=""
+          for src in /srv/app/Caddyfile /etc/caddy/Caddyfile; do
+            if [ -f "$src" ]; then
+              block="$(extract < "$src")"
+              [ -n "$block" ] && break
+            fi
+          done
+          if [ -z "$block" ] && [ -f /srv/app/compose.yaml ]; then
+            block="$(cd /srv/app && docker compose exec -T caddy cat /etc/caddy/Caddyfile 2>/dev/null | extract)"
+          fi
+          if [ -z "$block" ]; then
+            echo "dev site block not found" >&2
+            exit 1
+          fi
+          printf '%s\n' "$block"
+          REMOTE
