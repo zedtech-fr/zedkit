@@ -35,7 +35,7 @@ test.describe("home AI setup block (#398)", () => {
     const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 
-    await expect(page.getByRole("link", { name: "Set up your AI agent" }).first()).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Set up your coding agent" }).first()).toHaveAttribute(
       "href",
       "#ai-setup",
     );
