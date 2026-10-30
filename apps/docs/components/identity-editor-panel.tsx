@@ -239,7 +239,6 @@ function useDraftTokens(present: IdentityTokens) {
     if (next === tokens) return;
     setPast((stack) => [...stack, tokens]);
     setTokens(next);
-    setAppliedSite(false);
   }
 
   function undo() {
@@ -247,13 +246,16 @@ function useDraftTokens(present: IdentityTokens) {
     if (!prev) return;
     setPast((stack) => stack.slice(0, -1));
     setTokens(prev);
-    setAppliedSite(false);
   }
 
   function applySite() {
-    applyCustomIdentity(tokens);
     setAppliedSite(true);
   }
+
+  useLayoutEffect(() => {
+    if (!appliedSite) return;
+    applyCustomIdentity(tokens);
+  }, [appliedSite, tokens]);
 
   return { tokens, setTokens, past, appliedSite, setAppliedSite, remember, undo, applySite };
 }
@@ -305,10 +307,7 @@ function IdentityEditorPanel() {
       }}
       onSuggestApply={(next, toSite) => {
         remember(next);
-        if (toSite) {
-          applyCustomIdentity(next);
-          setAppliedSite(true);
-        }
+        if (toSite) setAppliedSite(true);
       }}
       onUndo={undo}
       onApplySite={applySite}
