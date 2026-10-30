@@ -6,10 +6,10 @@ automatically and redirects `www.zedkit.app` to `zedkit.app`.
 
 | File | Purpose |
 |---|---|
-| `Caddyfile` | Site config: apex + `www` redirect, caching, 404 page, suggest proxy |
+| `Caddyfile` | Site config: apex + `www` redirect, caching, 404 page, suggest proxy, dev site |
 | `compose.yaml` | Runs Caddy plus the identity-suggest Node service |
 | `suggest/` | `POST /api/identity/suggest` — chat completions from env, no keys in the client |
-| `deploy.sh` | Uploads the build output, suggest service, and config, then reloads Caddy |
+| `deploy.sh` | Uploads the build output, suggest service, and config, then reloads Caddy. With `--dev`: content only to the dev site, stamped with `dev-build.txt` |
 
 ## Deploy by hand
 
@@ -22,7 +22,14 @@ deploy/deploy.sh <user>@<host>
 ## Deploy from CI
 
 `.github/workflows/deploy-docs.yml` builds and deploys on every push to
-`main` that touches the docs or this directory. It needs these repository
+`main` that touches the docs or this directory.
+
+`.github/workflows/deploy-dev.yml` builds and publishes to the dev site on
+every push to `main`, and on manual dispatch for any other ref. Each dev
+deploy stamps `dev-build.txt` (branch, commit, UTC build time); check it at
+`https://dev.zedkit.app/dev-build.txt`.
+
+Both workflows need these repository
 secrets:
 
 | Secret | Value |
@@ -43,7 +50,7 @@ secrets:
 ## Requirements on the VM
 
 Docker with Compose, `rsync`, ports 80/443 open (443 UDP for HTTP/3), and
-`zedkit.app` plus `www.zedkit.app` resolving to the VM.
+`zedkit.app`, `www.zedkit.app`, and `dev.zedkit.app` resolving to the VM.
 
 Other static files (for example registry JSON under `/r/`) are served from
 the same site directory with the content type derived from their extension.
