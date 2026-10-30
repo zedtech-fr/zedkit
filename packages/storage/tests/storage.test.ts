@@ -108,7 +108,7 @@ describe("createS3Client", () => {
       forcePathStyle: true,
     });
     expect(client.config.forcePathStyle).toBe(true);
-    expect((await client.config.endpoint())?.hostname).toBe("minio.example");
+    expect((await client.config.endpoint?.())?.hostname).toBe("minio.example");
   });
 });
 
