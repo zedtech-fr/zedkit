@@ -219,6 +219,21 @@ function colourCssVars(pair: ColourPair): Record<string, string> {
     "--primary": pair.primary,
     "--accent": pair.accent,
     "--border": pair.border,
+    // shortcut: compact pair paints chrome, per-surface fields later
+    "--card": pair.background,
+    "--card-foreground": pair.foreground,
+    "--popover": pair.background,
+    "--popover-foreground": pair.foreground,
+    "--secondary": pair.background,
+    "--secondary-foreground": pair.foreground,
+    "--muted": pair.background,
+    "--muted-foreground": pair.foreground,
+    "--input": pair.border,
+    "--ring": pair.accent,
+    "--sidebar": pair.background,
+    "--sidebar-foreground": pair.foreground,
+    "--sidebar-border": pair.border,
+    "--sidebar-accent": pair.accent,
   };
 }
 

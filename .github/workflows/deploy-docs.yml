@@ -36,6 +36,8 @@ jobs:
           IDENTITY_AI_BASE_URL: ${{ secrets.IDENTITY_AI_BASE_URL }}
           IDENTITY_AI_API_KEY: ${{ secrets.IDENTITY_AI_API_KEY }}
           IDENTITY_AI_MODEL: ${{ secrets.IDENTITY_AI_MODEL }}
+          IDENTITY_AI_MAX_TOKENS: ${{ secrets.IDENTITY_AI_MAX_TOKENS }}
+          IDENTITY_AI_REASONING_EFFORT: ${{ secrets.IDENTITY_AI_REASONING_EFFORT }}
           IDENTITY_AI_FALLBACK_BASE_URL: ${{ secrets.IDENTITY_AI_FALLBACK_BASE_URL }}
           IDENTITY_AI_FALLBACK_API_KEY: ${{ secrets.IDENTITY_AI_FALLBACK_API_KEY }}
           IDENTITY_AI_FALLBACK_MODEL: ${{ secrets.IDENTITY_AI_FALLBACK_MODEL }}
@@ -45,6 +47,8 @@ jobs:
           printf '%s=%s\n' IDENTITY_AI_BASE_URL "$IDENTITY_AI_BASE_URL" >> deploy/suggest.env
           printf '%s=%s\n' IDENTITY_AI_API_KEY "$IDENTITY_AI_API_KEY" >> deploy/suggest.env
           printf '%s=%s\n' IDENTITY_AI_MODEL "$IDENTITY_AI_MODEL" >> deploy/suggest.env
+          printf '%s=%s\n' IDENTITY_AI_MAX_TOKENS "$IDENTITY_AI_MAX_TOKENS" >> deploy/suggest.env
+          printf '%s=%s\n' IDENTITY_AI_REASONING_EFFORT "$IDENTITY_AI_REASONING_EFFORT" >> deploy/suggest.env
           printf '%s=%s\n' IDENTITY_AI_FALLBACK_BASE_URL "$IDENTITY_AI_FALLBACK_BASE_URL" >> deploy/suggest.env
           printf '%s=%s\n' IDENTITY_AI_FALLBACK_API_KEY "$IDENTITY_AI_FALLBACK_API_KEY" >> deploy/suggest.env
           printf '%s=%s\n' IDENTITY_AI_FALLBACK_MODEL "$IDENTITY_AI_FALLBACK_MODEL" >> deploy/suggest.env

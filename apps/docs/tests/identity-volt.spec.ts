@@ -9,8 +9,9 @@ const HOME = "/";
 test.describe("volt identity", () => {
   test("sets the page in Geist with a metric-aligned fallback and a 10px xs body", async ({ page }) => {
     await page.goto(HOME, { waitUntil: "networkidle" });
-    const stock = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
-    expect(stock).not.toContain("Geist");
+    // Volt is the site default, so the first paint already carries it.
+    const first = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
+    expect(first.startsWith('"Geist Variable"')).toBe(true);
 
     await useIdentity(page, "volt", "light");
     const body = await page.evaluate(() => getComputedStyle(document.body).fontFamily);

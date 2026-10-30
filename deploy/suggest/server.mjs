@@ -10,6 +10,8 @@ const RATE_PER_MIN = 10;
 const RATE_PER_DAY = 100;
 const GLOBAL_DAY = 500;
 const TIMEOUT_MS = 30_000;
+// Output budget covers reasoning plus the JSON answer. Cap is the usual 128k completion limit.
+const DEFAULT_MAX_TOKENS = 131_072;
 const SYSTEM = `Reply with a JSON object of identity tokens only, no markdown.
 Fields: spacing, borderWidth, radius, bodyLeading, headingLeading, headingTracking, labelTracking, fontSans, fontDisplay, light {background, foreground, primary, accent, border}, dark {same keys}, shadowSm, shadowMd.
 Colours are HSL channels like "240 10% 3.9%" with no hsl() wrapper. Leading is a number string. Tracking ends with em.
@@ -33,12 +35,30 @@ function send(res, status, body) {
   res.end(json);
 }
 
+function parseMaxTokens(raw) {
+  const n = Number.parseInt(String(raw ?? ""), 10);
+  if (!Number.isInteger(n) || n < 1) return DEFAULT_MAX_TOKENS;
+  return Math.min(n, DEFAULT_MAX_TOKENS);
+}
+
+function reasoningEffort(raw) {
+  const effort = String(raw ?? "").trim();
+  if (!effort || effort === "minimal") return "";
+  return effort;
+}
+
 function chatConfig(env, prefix) {
   const base = env[`${prefix}BASE_URL`];
   const key = env[`${prefix}API_KEY`];
   const model = env[`${prefix}MODEL`];
   if (!base || !key || !model) return null;
-  return { base: String(base).replace(/\/$/, ""), key: String(key), model: String(model) };
+  return {
+    base: String(base).replace(/\/$/, ""),
+    key: String(key),
+    model: String(model),
+    maxTokens: parseMaxTokens(env[`${prefix}MAX_TOKENS`] || env.IDENTITY_AI_MAX_TOKENS),
+    effort: reasoningEffort(env[`${prefix}REASONING_EFFORT`]),
+  };
 }
 
 function chatUrl(base) {
@@ -142,7 +162,8 @@ function complete(cfg, prompt, current, fetchImpl) {
     },
     body: JSON.stringify({
       model: cfg.model,
-      max_tokens: 1500,
+      max_tokens: cfg.maxTokens,
+      ...(cfg.effort ? { reasoning_effort: cfg.effort } : {}),
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: JSON.stringify({ prompt, current }) },
@@ -150,17 +171,20 @@ function complete(cfg, prompt, current, fetchImpl) {
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
   })
-    .then((res) => res.text().then((text) => ({ ok: res.ok, text })))
+    .then((res) => res.text().then((text) => ({ ok: res.ok, status: res.status, text })))
     .then((res) => {
-      if (!res.ok) return null;
+      if (!res.ok) {
+        console.error("suggest: upstream", res.status);
+        return { status: res.status };
+      }
       return parseJson(res.text).then((outer) => {
-        if (!outer.ok) return null;
+        if (!outer.ok) return { status: 502 };
         const content = messageText(outer.value?.choices?.[0]?.message?.content);
-        if (!content) return null;
-        return parseJson(content).then((inner) => (inner.ok ? inner.value : null));
+        if (!content) return { status: 502 };
+        return parseJson(content).then((inner) => (inner.ok ? { patch: inner.value } : { status: 502 }));
       });
     })
-    .catch(() => null);
+    .catch(() => ({ status: 502 }));
 }
 
 function firstComplete(env, prompt, current, fetchImpl) {
@@ -169,13 +193,16 @@ function firstComplete(env, prompt, current, fetchImpl) {
   );
   return configs.reduce(
     (chain, cfg) =>
-      chain.then((tokens) => {
-        if (tokens) return tokens;
-        return complete(cfg, prompt, current, fetchImpl).then((patch) =>
-          patch && typeof patch === "object" ? mergePatch(current, patch) : null,
-        );
+      chain.then((acc) => {
+        if (acc.tokens) return acc;
+        return complete(cfg, prompt, current, fetchImpl).then((result) => {
+          const tokens = result.patch ? mergePatch(current, result.patch) : null;
+          if (tokens) return { tokens };
+          const status = result.status === 429 || acc.status === 429 ? 429 : result.status;
+          return { status };
+        });
       }),
-    Promise.resolve(null),
+    Promise.resolve({}),
   );
 }
 
@@ -209,12 +236,16 @@ async function route(req, res, { env, fetchImpl, limit }) {
     send(res, 400, { error: "body" });
     return;
   }
-  const tokens = await firstComplete(env, prompt, mergePatch(current, {}), fetchImpl);
-  if (!tokens) {
-    send(res, 502, { error: "upstream" });
+  const out = await firstComplete(env, prompt, mergePatch(current, {}), fetchImpl);
+  if (out.tokens) {
+    send(res, 200, { tokens: out.tokens });
     return;
   }
-  send(res, 200, { tokens });
+  if (out.status === 429) {
+    send(res, 429, { error: "rate" });
+    return;
+  }
+  send(res, 502, { error: "upstream" });
 }
 
 function handleSuggest(req, res, deps) {

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
 
 const PAGE = "/docs/ui/design-your-identity";
@@ -12,6 +13,14 @@ async function spacingOnDraft(page: Page) {
 
 async function spacingOnHtml(page: Page) {
   return page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--spacing").trim());
+}
+
+async function htmlVar(page: Page, name: string) {
+  return page.locator("html").evaluate((node, name) => getComputedStyle(node).getPropertyValue(name).trim(), name);
+}
+
+async function sidebarBg(page: Page) {
+  return page.locator("#nd-sidebar").evaluate((node) => getComputedStyle(node).backgroundColor);
 }
 
 test.describe("identity editor page", () => {
@@ -196,6 +205,18 @@ test.describe("identity editor page", () => {
     );
   });
 
+  test("Suggest falls back to a keyword match when the origin is rate-limited", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      await route.fulfill({ status: 429, contentType: "application/json", json: { error: "rate" } });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("editorial serif ink");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("Too many requests. Keyword match instead.")).toBeVisible();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
+  });
+
   test("Suggest falls back to a keyword match when the service is off", async ({ page }) => {
     await page.route("**/api/identity/suggest", async (route) => {
       await route.fulfill({ status: 503, contentType: "application/json", json: { disabled: true } });
@@ -267,6 +288,58 @@ test.describe("identity editor on a phone", () => {
 });
 
 test.describe("identity editor apply to site", () => {
+  test("paints sidebar and page on Apply, with before/after site captures", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.route("**/api/identity/suggest", async (route) => {
+      const posted = route.request().postDataJSON() as { current: Record<string, unknown> };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: {
+          tokens: {
+            ...posted.current,
+            light: {
+              background: "0 80% 70%",
+              foreground: "0 0% 10%",
+              primary: "0 0% 10%",
+              accent: "0 70% 40%",
+              border: "0 40% 40%",
+            },
+          },
+        },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+    const beforeSidebar = await sidebarBg(page);
+    const beforeBackground = await htmlVar(page, "--background");
+    await page.screenshot({ path: "test-results/identity-editor-site-before.png", fullPage: true });
+    await page.getByLabel("Request").fill("warm ivory boutique");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("light.background:")).toBeVisible();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
+    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await expect.poll(() => htmlVar(page, "--background")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
+    await expect.poll(() => sidebarBg(page)).not.toBe(beforeSidebar);
+    expect(beforeBackground).not.toBe("0 80% 70%");
+    await page.screenshot({ path: "test-results/identity-editor-site-after.png", fullPage: true });
+    await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => sidebarBg(page)).not.toBe(beforeSidebar);
+    await page.screenshot({ path: "test-results/identity-editor-site-after-docs.png", fullPage: true });
+  });
+
+  test("toolbar Apply paints sidebar from Background", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Background").fill("0 80% 70%");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
+    await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
+  });
+
   test("applies the draft to the whole site without a reload", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
@@ -305,8 +378,8 @@ test.describe("identity editor apply to site", () => {
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await page.getByRole("button", { name: "Reset to default" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
+    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.225rem$/);
     await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
   });
@@ -314,7 +387,7 @@ test.describe("identity editor apply to site", () => {
   test("Apply Press replaces the site look in light and dark", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
     await page.getByLabel("Look").selectOption("press");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", "press");

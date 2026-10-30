@@ -147,6 +147,32 @@ test("POST merges a mocked chat patch onto current tokens", async () => {
   });
 });
 
+test("POST returns 429 when the chat origin is rate-limited", async () => {
+  const fetchImpl = () => Promise.resolve({ ok: false, status: 429, text: () => Promise.resolve("{}") });
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "warmer", current: CURRENT });
+    assert.equal(res.status, 429);
+    assert.deepEqual(await res.json(), { error: "rate" });
+  });
+});
+
+test("POST uses fallback when primary is rate-limited", async () => {
+  const seen = [];
+  const fetchImpl = (url) => {
+    seen.push(url);
+    if (new URL(url).hostname === "primary.test") {
+      return Promise.resolve({ ok: false, status: 429, text: () => Promise.resolve("{}") });
+    }
+    return Promise.resolve(chatReply({ radius: "1rem" }));
+  };
+  await withServer({ env: FALLBACK_ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "rounder", current: CURRENT });
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).tokens.radius, "1rem");
+    assert.equal(seen.length, 2);
+  });
+});
+
 test("POST uses fallback when primary fails", async () => {
   const seen = [];
   const fetchImpl = (url) => {
@@ -198,4 +224,32 @@ test("GET is 405", async () => {
     const res = await fetch(`http://127.0.0.1:${port}/api/identity/suggest`);
     assert.equal(res.status, 405);
   });
+});
+
+test("POST uses a high max_tokens default and skips minimal reasoning_effort", async () => {
+  const bodies = [];
+  const fetchImpl = (_url, init) => {
+    bodies.push(JSON.parse(init.body));
+    return Promise.resolve(chatReply({ spacing: "0.4rem" }));
+  };
+  await withServer({ env: ENV, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+  });
+  await withServer(
+    { env: { ...ENV, IDENTITY_AI_REASONING_EFFORT: "minimal", IDENTITY_AI_MAX_TOKENS: "32000" }, fetchImpl },
+    async (port) => {
+      const res = await post(port, { prompt: "more space", current: CURRENT });
+      assert.equal(res.status, 200);
+    },
+  );
+  await withServer({ env: { ...ENV, IDENTITY_AI_REASONING_EFFORT: "high" }, fetchImpl }, async (port) => {
+    const res = await post(port, { prompt: "more space", current: CURRENT });
+    assert.equal(res.status, 200);
+  });
+  assert.equal(bodies[0].max_tokens, 131072);
+  assert.equal("reasoning_effort" in bodies[0], false);
+  assert.equal(bodies[1].max_tokens, 32000);
+  assert.equal("reasoning_effort" in bodies[1], false);
+  assert.equal(bodies[2].reasoning_effort, "high");
 });
