@@ -34,7 +34,8 @@ secrets:
 | `IDENTITY_AI_BASE_URL` | Chat-completions origin (no `/v1/chat/completions` suffix). Empty keeps Suggest off. |
 | `IDENTITY_AI_API_KEY` | Bearer token for that origin. Never committed. |
 | `IDENTITY_AI_MODEL` | Model id for that origin. |
-| `IDENTITY_AI_REASONING_EFFORT` | Optional `reasoning_effort` sent to that origin (for example `minimal`). Empty sends none. |
+| `IDENTITY_AI_MAX_TOKENS` | Optional chat `max_tokens` (default 131072). Empty uses the default. |
+| `IDENTITY_AI_REASONING_EFFORT` | Optional `reasoning_effort`. Empty or `minimal` leaves the model default. |
 | `IDENTITY_AI_FALLBACK_BASE_URL` | Optional second origin used when the first call fails. |
 | `IDENTITY_AI_FALLBACK_API_KEY` | Bearer token for the fallback origin. |
 | `IDENTITY_AI_FALLBACK_MODEL` | Model id for the fallback origin. |
