@@ -4,14 +4,14 @@
     "summary": "Components, layout, forms, tables, and theme tokens for any React UI — sites, apps, dashboards, and admin tools.",
     "packages": ["@zedtech/zedkit-ui"],
     "need": "Trigger actions with buttons",
-    "linkLabel": "Open UI docs"
+    "linkLabel": "Start with buttons"
   },
   {
     "title": "Core & server",
     "summary": "Result helpers and tryCatch for any JS/TS project; Nest bootstrap, structured logs, rate limits, and webhook signing on server and nest.",
     "packages": ["@zedtech/zedkit-core", "@zedtech/zedkit-nest", "@zedtech/zedkit-server"],
     "need": "Bootstrap a Nest app",
-    "linkLabel": "Open core & server docs"
+    "linkLabel": "Start with the Nest bootstrap"
   },
   {
     "title": "Improve SEO",
