@@ -13,6 +13,7 @@ const TIMEOUT_MS = 8000;
 const SYSTEM = `Reply with a JSON object of identity tokens only, no markdown.
 Fields: spacing, borderWidth, radius, bodyLeading, headingLeading, headingTracking, labelTracking, fontSans, fontDisplay, light {background, foreground, primary, accent, border}, dark {same keys}, shadowSm, shadowMd.
 Colours are HSL channels like "240 10% 3.9%" with no hsl() wrapper. Leading is a number string. Tracking ends with em.
+Foreground vs background at least 4.5:1 in light and dark. Accent and border vs background at least 3:1.
 A partial object is fine; missing fields stay as the current tokens.`;
 
 function parseJson(text) {

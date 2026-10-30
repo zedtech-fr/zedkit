@@ -1,7 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Checkbox, Field, FieldLabel, Input, Stack, Text, type IdentityTokens } from "@zedtech/zedkit-ui";
+import {
+  Badge,
+  Button,
+  Checkbox,
+  Field,
+  FieldLabel,
+  identityContrastWarnings,
+  Input,
+  Stack,
+  Text,
+  type IdentityTokens,
+} from "@zedtech/zedkit-ui";
 
 import {
   requestIdentitySuggest,
@@ -40,6 +51,25 @@ function DiffRows({ current, next }: { current: IdentityTokens; next: IdentityTo
   );
 }
 
+function ContrastPreview({ tokens }: { tokens: IdentityTokens }) {
+  const warnings = identityContrastWarnings(tokens);
+  if (warnings.length === 0) {
+    return <Text>Contrast check passed (text 4.5:1, accent and border 3:1).</Text>;
+  }
+  return (
+    <Stack gap={2} role="status">
+      {warnings.map((warning) => {
+        const label = warning.token === "foreground" ? "text" : warning.token;
+        return (
+          <Badge key={`${warning.scheme}-${warning.token}`} variant="warning">
+            {warning.scheme} {label} {warning.ratio}:1 (need {warning.min}:1)
+          </Badge>
+        );
+      })}
+    </Stack>
+  );
+}
+
 function ProposalCard({
   current,
   proposal,
@@ -58,6 +88,7 @@ function ProposalCard({
   return (
     <Stack gap={2} role="status">
       <Text>{proposal.notice}</Text>
+      <ContrastPreview tokens={proposal.tokens} />
       <DiffRows current={current} next={proposal.tokens} />
       <Field>
         <Stack direction="horizontal" gap={2}>

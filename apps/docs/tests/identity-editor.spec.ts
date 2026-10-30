@@ -89,10 +89,32 @@ test.describe("identity editor page", () => {
     await page.getByLabel("Request").fill("more space");
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("Review these token changes.")).toBeVisible();
+    await expect(page.getByText("Contrast check passed (text 4.5:1, accent and border 3:1).")).toBeVisible();
     await expect(page.getByText("spacing: 0.25rem → 0.5rem")).toBeVisible();
     await expect(page.locator('[data-slot="identity-editor-swatch"]')).toHaveCount(0);
     await page.getByRole("button", { name: "Apply", exact: true }).click();
     await expect.poll(() => spacingOnDraft(page)).toBe("0.5rem");
+  });
+
+  test("Suggest preview warns when the proposal misses AA", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      const posted = route.request().postDataJSON() as { current: { light: Record<string, string> } };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: {
+          tokens: {
+            ...posted.current,
+            light: { ...posted.current.light, foreground: posted.current.light.background },
+          },
+        },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("pale text");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText(/light text \d+(\.\d+)?:1 \(need 4\.5:1\)/)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Fix light text" })).toHaveCount(0);
   });
 
   test("Suggest colour diffs show a swatch", async ({ page }) => {
