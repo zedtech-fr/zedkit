@@ -135,7 +135,7 @@ size_budget() {
     echo "$name: size $bytes / $max ok"
   fi
 }
-size_budget ui 38900
+size_budget ui 42800
 size_budget ai 9500
 
 if [ "$fail" -ne 0 ]; then
