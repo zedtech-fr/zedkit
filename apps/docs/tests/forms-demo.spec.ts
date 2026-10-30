@@ -14,6 +14,15 @@ test.describe("docs form previews show realistic forms", () => {
     await expect(page.getByText("Project “Harbor Studio” created.")).toBeVisible();
   });
 
+  test("validated forms: props table lists the field props (#1061)", async ({ page }) => {
+    await page.goto(`${BASE}/docs/ui/build-validated-forms-with-labels-errors-and-pending-state`, {
+      waitUntil: "networkidle",
+    });
+    await expect(page.getByRole("heading", { name: "Props" })).toBeVisible();
+    await expect(page.getByText("shouldUnregister?", { exact: true })).toBeVisible();
+    await expect(page.getByText("render", { exact: true })).toBeVisible();
+  });
+
   test("input: labelled fields with a disabled company", async ({ page }) => {
     await page.goto(`${BASE}/docs/ui/collect-text-input-with-a-label`, { waitUntil: "networkidle" });
     await expect(page.getByLabel("Full name").first()).toHaveValue("Camille Rousseau");

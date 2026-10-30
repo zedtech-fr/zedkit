@@ -87,7 +87,7 @@
     "Open modal dialogs": {
       "package": "@zedtech/zedkit-ui",
       "component": "Dialog",
-      "props": null,
+      "props": "DialogProps",
       "source": "dialog.tsx",
       "demo": "DialogDemo",
       "examples": {
@@ -390,7 +390,7 @@
     "Build validated forms with labels, errors, and pending state": {
       "package": "@zedtech/zedkit-ui",
       "component": "Form",
-      "props": null,
+      "props": "FormFieldProps",
       "source": "form.tsx",
       "demo": "ValidatedFormDemo"
     },

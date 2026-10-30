@@ -48,7 +48,9 @@ function useDialogViewportFit<T extends HTMLElement>(): React.RefCallback<T> {
   };
 }
 
-function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
+type DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;
+
+function Dialog({ ...props }: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
@@ -165,6 +167,7 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
 
 export {
   Dialog,
+  type DialogProps,
   DialogClose,
   DialogContent,
   DialogDescription,

@@ -435,7 +435,7 @@ export interface DetailPanelSkeletonProps {
 }
 
 // @public (undocumented)
-export function Dialog(input: React_2.ComponentProps<typeof DialogPrimitive.Root>): React_2.JSX.Element;
+export function Dialog(input: DialogProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DialogClose(input: React_2.ComponentProps<typeof DialogPrimitive.Close>): React_2.JSX.Element;
@@ -459,6 +459,9 @@ export function DialogOverlay(input: React_2.ComponentProps<typeof DialogPrimiti
 
 // @public (undocumented)
 export function DialogPortal(input: React_2.ComponentProps<typeof DialogPrimitive.Portal>): React_2.JSX.Element;
+
+// @public (undocumented)
+export type DialogProps = React_2.ComponentProps<typeof DialogPrimitive.Root>;
 
 // @public (undocumented)
 export function DialogTitle(input: React_2.ComponentProps<typeof DialogPrimitive.Title>): React_2.JSX.Element;
@@ -610,7 +613,10 @@ export function FormControl(input: React_2.ComponentProps<typeof Slot>): React_2
 export function FormDescription(input: React_2.ComponentProps<"p">): React_2.JSX.Element;
 
 // @public (undocumented)
-export const FormField: <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>(input: ControllerProps<TFieldValues, TName>) => React_2.JSX.Element;
+export const FormField: <TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>(input: FormFieldProps<TFieldValues, TName>) => React_2.JSX.Element;
+
+// @public (undocumented)
+export type FormFieldProps<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> = ControllerProps<TFieldValues, TName>;
 
 // @public (undocumented)
 export function FormItem(input: React_2.ComponentProps<"div">): React_2.JSX.Element;

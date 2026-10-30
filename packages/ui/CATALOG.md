@@ -761,7 +761,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 
 ## Open modal dialogs
 
-- Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
+- Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogProps`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
 - Wraps: `@radix-ui/react-dialog`
 - Status: beta
 - Derived from: shadcn/ui (dialog)
@@ -1233,7 +1233,7 @@ import { DetailPanelRow } from "@zedtech/zedkit-ui";
 
 ## Build validated forms with labels, errors, and pending state
 
-- Import: `@zedtech/zedkit-ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`
+- Import: `@zedtech/zedkit-ui` — `Form`, `FormField`, `FormFieldProps`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`
 - Wraps: `react-hook-form`, `@hookform/resolvers`, `zod`
 - Status: beta
 - Derived from: shadcn/ui (form); kit (useValidatedForm, FormSubmit)

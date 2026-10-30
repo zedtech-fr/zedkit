@@ -1969,7 +1969,7 @@
         },
         {
           "need": "Open modal dialogs",
-          "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
+          "import": "`@zedtech/zedkit-ui` — `Dialog`, `DialogProps`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`",
           "wraps": "`@radix-ui/react-dialog`",
           "status": "beta",
           "shortName": "Dialog",
@@ -2417,7 +2417,7 @@
         },
         {
           "need": "Build validated forms with labels, errors, and pending state",
-          "import": "`@zedtech/zedkit-ui` — `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
+          "import": "`@zedtech/zedkit-ui` — `Form`, `FormField`, `FormFieldProps`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`, `useFormField`, `useValidatedForm`, `FormSubmit`, `FormSubmitProps`",
           "wraps": "`react-hook-form`, `@hookform/resolvers`, `zod`",
           "status": "beta",
           "shortName": "Form",

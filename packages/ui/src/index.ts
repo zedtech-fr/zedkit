@@ -29,6 +29,7 @@ export {
 } from "./data-table.js";
 export {
   Dialog,
+  type DialogProps,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -86,6 +87,7 @@ export {
   FormControl,
   FormDescription,
   FormField,
+  type FormFieldProps,
   FormItem,
   FormLabel,
   FormMessage,

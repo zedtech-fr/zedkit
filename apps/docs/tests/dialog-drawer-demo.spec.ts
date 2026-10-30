@@ -14,6 +14,13 @@ test.describe("docs dialog and drawer previews show realistic screens", () => {
     await expect(dialog.getByRole("button", { name: "Mark as shipped" })).toBeVisible();
   });
 
+  test("dialog: props table lists the root props (#1061)", async ({ page }) => {
+    await page.goto(`${BASE}/docs/ui/open-modal-dialogs`, { waitUntil: "networkidle" });
+    await expect(page.getByRole("heading", { name: "Props" })).toBeVisible();
+    await expect(page.getByText("onOpenChange?", { exact: true })).toBeVisible();
+    await expect(page.getByText("modal?", { exact: true })).toBeVisible();
+  });
+
   test("confirm: the delete flow ends in a visible result", async ({ page }) => {
     await page.goto(`${BASE}/docs/ui/confirm-destructive-actions`, { waitUntil: "networkidle" });
     await expect(page.getByText("Website relaunch").first()).toBeVisible();
