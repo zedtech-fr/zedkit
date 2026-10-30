@@ -2,6 +2,7 @@ import {
   identityPresets,
   isPresetId,
   parseIdentityTokens,
+  withIdentityDarkPair,
   type IdentityId,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
@@ -44,6 +45,15 @@ function parseDarkKept(raw: string | null): string[] {
   return keys;
 }
 
+/** Keys in `dark-*` that are not the pair generated from light. Empty when `darkKept` is in the query. */
+function inferDarkKept(params: URLSearchParams, tokens: IdentityTokens): string[] {
+  const generated = withIdentityDarkPair(tokens).dark;
+  return LIGHT_KEYS.filter((key) => {
+    const raw = params.get(`dark-${key}`);
+    return Boolean(raw) && tokens.dark[key] !== generated[key];
+  });
+}
+
 function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   const rawId = params.get("identity") ?? "mist";
@@ -65,11 +75,13 @@ function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
     if (dark) draft.dark[key] = dark;
   }
   const parsed = parseIdentityTokens(draft);
+  const tokens = parsed.success ? parsed.data : fallback;
+  const listed = parseDarkKept(params.get("darkKept"));
   return {
     identity,
-    tokens: parsed.success ? parsed.data : fallback,
+    tokens,
     darkPreview: params.get("theme") === "dark",
-    darkKept: parseDarkKept(params.get("darkKept")),
+    darkKept: listed.length > 0 ? listed : parsed.success ? inferDarkKept(params, tokens) : [],
   };
 }
 
