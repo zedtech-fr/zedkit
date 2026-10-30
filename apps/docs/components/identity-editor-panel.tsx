@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   applyCustomIdentity,
   applyIdentityTokenSheet,
@@ -65,9 +66,7 @@ function TokenField({
   onChange: (value: string) => void;
 }) {
   const [draft, setDraft] = useState(value);
-  useEffect(() => {
-    setDraft(value);
-  }, [value]);
+  useEffect(() => setDraft(value), [value]);
   return (
     <Field>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
@@ -75,9 +74,8 @@ function TokenField({
         id={id}
         value={draft}
         onChange={(event) => {
-          const next = event.target.value;
-          setDraft(next);
-          onChange(next);
+          setDraft(event.target.value);
+          onChange(event.target.value);
         }}
       />
     </Field>
@@ -86,12 +84,7 @@ function TokenField({
 
 const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
 
-function patchTokens(
-  tokens: IdentityTokens,
-  key: string,
-  value: string,
-  scheme: "light" | "dark",
-): IdentityTokens {
+function patchTokens(tokens: IdentityTokens, key: string, value: string, scheme: "light" | "dark"): IdentityTokens {
   const next = LIGHT_KEY_SET.has(key)
     ? { ...tokens, [scheme]: { ...tokens[scheme], [key]: value } }
     : { ...tokens, [key]: value };
@@ -265,14 +258,20 @@ function IdentityEditorPanel() {
   const draft = useDraftTokens(identityPresets.mist);
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
+  const { setTheme } = useTheme();
   const scheme = darkPreview ? "dark" : "light";
   const { tokens, remember, undo, applySite, appliedSite, setAppliedSite, past } = draft;
+
+  function setDark(next: boolean) {
+    setDarkPreview(next);
+    setTheme(next ? "dark" : "light");
+  }
 
   useLayoutEffect(() => {
     const parsed = parseIdentityEditorSearch(window.location.search);
     setIdentity(parsed.identity);
     draft.setTokens(parsed.tokens);
-    setDarkPreview(parsed.darkPreview);
+    if (parsed.darkPreview) setDark(true);
     setReady(true);
   }, []);
 
@@ -295,7 +294,7 @@ function IdentityEditorPanel() {
         setIdentity(id);
         remember(identityPresets[id]);
       }}
-      onDark={() => setDarkPreview((value) => !value)}
+      onDark={() => setDark(!darkPreview)}
       onReset={() => remember(identityPresets[identity])}
       onPatch={(key, value) => remember(patchTokens(tokens, key, value, scheme))}
       onFix={(warning) => {
