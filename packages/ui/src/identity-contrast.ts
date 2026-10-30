@@ -82,7 +82,6 @@ function pairWarnings(scheme: "light" | "dark", pair: IdentityTokens["light"]): 
   ];
 }
 
-// shortcut: shipped looks fail 3:1 on accent/border; warn here, restyle later
 function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[] {
   return [...pairWarnings("light", tokens.light), ...pairWarnings("dark", tokens.dark)].filter(
     (warning): warning is IdentityContrastWarning => warning !== undefined,

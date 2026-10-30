@@ -59,7 +59,7 @@ html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
   --muted-foreground: 240 5% 32%;
-  --accent: 240 4.8% 95.9%;
+  --accent: 240 4.8% 59.9%;
   --accent-foreground: 240 5.9% 10%;
   --destructive: 0 72.2% 47%;
   --destructive-foreground: 0 0% 98%;
@@ -67,7 +67,7 @@ html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
   --success-foreground: 0 0% 98%;
   --warning: 32 95% 44%;
   --warning-foreground: 240 10% 3.9%;
-  --border: 240 5.9% 90%;
+  --border: 240 5.9% 60%;
   --input: 240 5.9% 90%;
   --ring: 240 5% 64.9%;
 }

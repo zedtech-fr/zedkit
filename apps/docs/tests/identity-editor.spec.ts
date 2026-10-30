@@ -29,6 +29,14 @@ test.describe("identity editor page", () => {
     await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
   });
 
+  test("shipped looks open with no contrast chips", async ({ page }) => {
+    for (const id of ["mist", "press", "tide", "volt", "maison", "glass"] as const) {
+      await page.goto(`${PAGE}?identity=${id}`, { waitUntil: "networkidle" });
+      await expect(page.getByLabel("Look")).toHaveValue(id);
+      await expect(page.getByRole("button", { name: /^Fix / })).toHaveCount(0);
+    }
+  });
+
   test("warns when light text matches the background and Fix restores it", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Foreground").fill("0 0% 100%");
