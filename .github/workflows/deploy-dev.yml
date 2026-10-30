@@ -1,0 +1,61 @@
+name: deploy-dev
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag, or commit to publish to the dev site"
+        required: true
+        default: "main"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @zedtech/zedkit-docs build
+      - name: Record build info
+        run: |
+          echo "DEV_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "DEV_BRANCH=${{ inputs.ref || github.ref_name }}" >> "$GITHUB_ENV"
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DOCS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Deploy
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: deploy/deploy.sh --dev "$TARGET"
+      - name: Verify dev build stamp
+        run: |
+          for _ in $(seq 1 5); do
+            if curl -sf https://dev.zedkit.app/dev-build.txt | grep -qx "commit=$DEV_SHA"; then
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "dev-build.txt does not show commit $DEV_SHA" >&2
+          exit 1
