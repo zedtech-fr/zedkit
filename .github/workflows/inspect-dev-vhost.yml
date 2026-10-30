@@ -32,7 +32,8 @@ jobs:
         env:
           TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
         run: |
-          ssh "$TARGET" 'bash -s' <<'REMOTE'
+          set -o pipefail
+          ssh "$TARGET" 'bash -s' <<'REMOTE' | tee dev-vhost.txt
           set -u
           extract() {
             awk '/^dev[.]zedkit[.]app[[:space:]]*\{/{f=1} f{print} f&&/^\}/{exit}'
@@ -53,3 +54,8 @@ jobs:
           fi
           printf '%s\n' "$block"
           REMOTE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dev-vhost
+          path: dev-vhost.txt
+          retention-days: 1
