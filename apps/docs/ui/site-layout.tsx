@@ -12,10 +12,12 @@ export function SiteLayout({
   children,
   version,
   changelogHref,
+  releasesHref,
 }: {
   children: ReactNode;
   version: string;
   changelogHref: string;
+  releasesHref: string;
 }) {
   return (
     <HomeLayout
@@ -23,7 +25,7 @@ export function SiteLayout({
         title: <SiteBrand />,
         url: "/",
         // Version sits beside the title link — not inside it (avoids nested <a> / hydration #418).
-        children: <KitVersionLabel version={version} changelogHref={changelogHref} />,
+        children: <KitVersionLabel version={version} releasesHref={releasesHref} />,
       }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
       links={siteHeaderLinks(changelogHref)}

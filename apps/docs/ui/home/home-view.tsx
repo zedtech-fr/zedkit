@@ -26,7 +26,8 @@ export function HomeView({
   stats,
   featuredPackage,
   version,
-  changelogHref,
+  releasesHref,
+  latestChange,
   uiGalleryStats,
   scenarios,
   entryPoints,
@@ -37,7 +38,8 @@ export function HomeView({
   stats: { packages: number; needs: number };
   featuredPackage: string;
   version: string;
-  changelogHref: string;
+  releasesHref: string;
+  latestChange: string;
   uiGalleryStats: { components: number; livePreviews: number };
   scenarios: HomeScenario[];
   entryPoints: HomeEntryPoint[];
@@ -45,7 +47,14 @@ export function HomeView({
 }) {
   return (
     <div id="home-page" className="min-w-0">
-      <HomeHero featuredPackage={featuredPackage} version={version} changelogHref={changelogHref} />
+      <HomeHero
+        featuredPackage={featuredPackage}
+        version={version}
+        releasesHref={releasesHref}
+        stats={stats}
+        uiStats={uiGalleryStats}
+        latestChange={latestChange}
+      />
       <HomeBelowHero
         curatedGallery={curatedGallery}
         galleryCount={galleryCount}

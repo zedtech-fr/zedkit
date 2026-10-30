@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { featuredPackageChangelogUrl, featuredPackageVersion } from "@/content/gallery";
+import { featuredPackageChangelogUrl, featuredPackageReleasesUrl, featuredPackageVersion } from "@/content/gallery";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { NotFoundView } from "@/ui/not-found/not-found-view";
 import { SiteLayout } from "@/ui/site-layout";
@@ -16,7 +16,11 @@ export const metadata: Metadata = docsPageMetadata(
 
 export default function NotFound() {
   return (
-    <SiteLayout version={featuredPackageVersion} changelogHref={featuredPackageChangelogUrl}>
+    <SiteLayout
+      version={featuredPackageVersion}
+      changelogHref={featuredPackageChangelogUrl}
+      releasesHref={featuredPackageReleasesUrl}
+    >
       <NotFoundView />
     </SiteLayout>
   );

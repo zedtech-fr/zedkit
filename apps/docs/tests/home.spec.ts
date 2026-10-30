@@ -1,4 +1,10 @@
 import { expect, test } from "@playwright/test";
+import {
+  catalogStats,
+  featuredPackageLatestChange,
+  featuredPackageVersion,
+  uiGalleryStats,
+} from "../content/gallery";
 import { registryBrickNames } from "../content/registry-site";
 
 const BASE = "http://127.0.0.1:3100";
@@ -47,6 +53,24 @@ test("home hero leads with the UI quickstart and names its actions honestly (#10
   await expect(page.getByText(/theme everything with one of six identities/)).toBeVisible();
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
   await expect(page.getByText("Latest", { exact: true }).first()).toBeVisible();
+});
+
+test("home hero shows generated scale and the latest change (#1057)", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await expect(
+    page.getByText(
+      `${catalogStats.packages} packages · ${catalogStats.needs} documented needs · ${uiGalleryStats.components} UI components, ${uiGalleryStats.livePreviews} with live previews · MIT`,
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(`Latest in v${featuredPackageVersion}: ${featuredPackageLatestChange}`),
+  ).toBeVisible();
+  const versionLinks = page.getByRole("link", { name: `v${featuredPackageVersion} (releases)` });
+  await expect(versionLinks.first()).toHaveAttribute(
+    "href",
+    "https://github.com/zedtech-fr/zedkit/releases",
+  );
 });
 
 test("home area cards keep a decorative icon at phone width", async ({ page }) => {
