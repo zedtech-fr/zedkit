@@ -23,7 +23,10 @@ export declare function loadEnv<S extends z.ZodRawShape>(shape: S, source?: Reco
  * keeping its own shape check.
  */
 export declare function pgErrorCode(error: unknown): string | null;
-
+/**
+ * Whether a thrown Postgres error is worth retrying. `null` when the value
+ * is not a Postgres-shaped error (no string `code`).
+ */
 export declare function pgErrorRetryable(error: unknown): boolean | null;
 
 export declare class MemoryRateLimiter {
