@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { identityContrastWarnings } from "#identity-contrast.js";
+import { identityContrastWarnings, withIdentityDarkPair } from "#identity-contrast.js";
 import { identityPresets, identityTokenSchema, parseIdentityTokens } from "#identity-tokens.js";
 
 function ofToken(
@@ -85,5 +85,28 @@ describe("identityContrastWarnings", () => {
     });
     expect(fixed.success).toBe(true);
     if (fixed.success) expect(ofToken(fixed.data, "border", "light")).toEqual([]);
+  });
+});
+
+describe("withIdentityDarkPair", () => {
+  it("writes an AA dark pair from a custom light pair", () => {
+    const tokens = identityTokenSchema.parse({
+      ...identityPresets.mist,
+      light: {
+        background: "200 80% 96%",
+        foreground: "200 50% 12%",
+        primary: "200 80% 36%",
+        accent: "200 80% 32%",
+        border: "200 30% 40%",
+      },
+    });
+    const next = withIdentityDarkPair(tokens);
+    expect(next.dark.background).not.toBe(identityPresets.mist.dark.background);
+    expect(identityContrastWarnings(next)).toEqual([]);
+  });
+
+  it("keeps dark when light colours did not change", () => {
+    const spaced = identityTokenSchema.parse({ ...identityPresets.mist, spacing: "0.4rem" });
+    expect(withIdentityDarkPair(spaced, identityPresets.mist).dark).toEqual(identityPresets.mist.dark);
   });
 });

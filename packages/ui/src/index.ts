@@ -206,6 +206,6 @@ export {
   type IdentityId,
   type IdentityTokens,
 } from "./identity-tokens.js";
-export { identityContrastWarnings, type IdentityContrastWarning } from "./identity-contrast.js";
+export { identityContrastWarnings, withIdentityDarkPair, type IdentityContrastWarning } from "./identity-contrast.js";
 export { BrandLogo, type BrandLogoProps } from "./brand-logo.js";
 export { Logo, type LogoProps } from "./logo.js";

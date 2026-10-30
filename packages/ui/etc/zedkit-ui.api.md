@@ -1404,6 +1404,9 @@ export function useUiMessages(): ZedkitUiMessages;
 export function useValidatedForm<TFieldValues extends FieldValues>(schema: Parameters<typeof zodResolver>[0], options?: Omit<UseFormProps<TFieldValues, any>, "resolver">): UseFormReturn<TFieldValues, any, TFieldValues>;
 
 // @public
+export function withIdentityDarkPair(tokens: IdentityTokens, previous?: IdentityTokens): IdentityTokens;
+
+// @public
 export function Wizard(input: WizardProps): React_2.JSX.Element;
 
 // @public (undocumented)
