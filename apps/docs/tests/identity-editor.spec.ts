@@ -73,8 +73,33 @@ test.describe("identity editor page", () => {
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("Review these token changes.")).toBeVisible();
     await expect(page.getByText("spacing: 0.25rem → 0.5rem")).toBeVisible();
+    await expect(page.locator('[data-slot="identity-editor-swatch"]')).toHaveCount(0);
     await page.getByRole("button", { name: "Apply", exact: true }).click();
     await expect.poll(() => spacingOnDraft(page)).toBe("0.5rem");
+  });
+
+  test("Suggest colour diffs show a swatch", async ({ page }) => {
+    await page.route("**/api/identity/suggest", async (route) => {
+      const posted = route.request().postDataJSON() as { current: { light: Record<string, string> } };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: {
+          tokens: {
+            ...posted.current,
+            light: { ...posted.current.light, primary: "0 80% 45%" },
+          },
+        },
+      });
+    });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.getByLabel("Request").fill("red button");
+    await page.getByRole("button", { name: "Suggest" }).click();
+    await expect(page.getByText("light.primary: 240 5.9% 10% → 0 80% 45%")).toBeVisible();
+    await expect(page.locator('[data-slot="identity-editor-swatch"] rect')).toHaveAttribute(
+      "fill",
+      "hsl(0 80% 45%)",
+    );
   });
 
   test("Suggest falls back to a keyword match when the service is off", async ({ page }) => {

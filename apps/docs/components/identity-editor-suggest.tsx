@@ -9,15 +9,32 @@ import {
   type SuggestProposal,
 } from "@/lib/identity-editor-suggest";
 
+function ColourSwatch({ path, value }: { path: string; value: string }) {
+  if (!path.startsWith("light.") && !path.startsWith("dark.")) return null;
+  return (
+    <svg
+      data-slot="identity-editor-swatch"
+      aria-hidden
+      className="size-4 shrink-0 rounded-sm border border-border"
+      viewBox="0 0 16 16"
+    >
+      <rect width="16" height="16" fill={`hsl(${value})`} />
+    </svg>
+  );
+}
+
 function DiffRows({ current, next }: { current: IdentityTokens; next: IdentityTokens }) {
   const rows = tokenDiff(current, next);
   if (rows.length === 0) return <Text>No token changes.</Text>;
   return (
     <Stack gap={1} data-slot="identity-editor-suggest-diff">
       {rows.map((row) => (
-        <Text key={row.path}>
-          {row.path}: {row.from} → {row.to}
-        </Text>
+        <Stack key={row.path} direction="horizontal" gap={2}>
+          <Text>
+            {row.path}: {row.from} → {row.to}
+          </Text>
+          <ColourSwatch path={row.path} value={row.to} />
+        </Stack>
       ))}
     </Stack>
   );
