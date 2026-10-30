@@ -16,6 +16,27 @@ describe("truncateDescription", () => {
     expect(cut.length).toBe(160);
     expect(cut.endsWith("…")).toBe(true);
   });
+
+  it("keeps complete sentences instead of cutting mid-sentence", () => {
+    const text = `Design your own look on a live card. ${"Then copy the tokens into your app and keep going. ".repeat(6)}`;
+    const cut = truncateDescription(text);
+    expect(cut.endsWith("…")).toBe(false);
+    expect(cut.endsWith(".")).toBe(true);
+    expect(cut.length).toBeLessThanOrEqual(160);
+    expect(cut.startsWith("Design your own look on a live card.")).toBe(true);
+  });
+
+  it("keeps a sentence that ends exactly at the cap", () => {
+    const sentence = `${"a".repeat(159)}.`;
+    expect(truncateDescription(`${sentence} More follows here.`)).toBe(sentence);
+  });
+
+  it("does not cut at abbreviations or decimals", () => {
+    const text = `Pairs below 4.5:1 warn, e.g. light text on light ground. ${"Fix nudges lightness until the pair passes. ".repeat(5)}`;
+    const cut = truncateDescription(text);
+    expect(cut.startsWith("Pairs below 4.5:1 warn, e.g. light text on light ground.")).toBe(true);
+    expect(cut.endsWith(".")).toBe(true);
+  });
 });
 
 describe("resolveLocalizedField", () => {
