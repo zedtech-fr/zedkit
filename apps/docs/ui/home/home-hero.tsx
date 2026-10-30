@@ -3,14 +3,19 @@ import { Container, Stack } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { docsSite } from "@/lib/site";
 import { HomeHeroLead } from "@/ui/home/home-hero-lead";
-import { HomeHeroTailWhenIdle } from "@/ui/home/home-hero-tail-when-idle";
 import { HOME_HERO_PREVIEW_SHELL_CLASS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
 const HomeHeroPreview = dynamic(
   () => import("@/ui/home/home-hero-preview").then((mod) => ({ default: mod.HomeHeroPreview })),
   {
+    // Reserve the controls row and code line too, so the interactive
+    // preview lands without shifting the hero grid.
     loading: () => (
-      <Stack aria-hidden="true" className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview />
+      <Stack gap={3} aria-hidden="true">
+        <Stack className="h-7" />
+        <Stack className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview />
+        <Stack className="h-3" />
+      </Stack>
     ),
   },
 );
@@ -77,11 +82,7 @@ export function HomeHero({
             uiStats={uiStats}
             latestChange={latestChange}
           />
-          <HomeHeroTailWhenIdle
-            placeholder={<Stack aria-hidden="true" className={HOME_HERO_PREVIEW_SHELL_CLASS} data-home-hero-preview />}
-          >
-            <HomeHeroPreview />
-          </HomeHeroTailWhenIdle>
+          <HomeHeroPreview />
         </Stack>
       </Container>
       <HomeUseCasesSection />
