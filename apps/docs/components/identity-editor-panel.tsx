@@ -157,16 +157,19 @@ function ContrastChips({
   if (warnings.length === 0) return null;
   return (
     <Stack gap={2} role="status">
-      {warnings.map((warning) => (
-        <Stack key={warning.scheme} direction="horizontal" gap={2}>
-          <Badge variant="warning">
-            {warning.scheme} text {warning.ratio}:1 (need {warning.min}:1)
-          </Badge>
-          <Button type="button" size="sm" variant="outline" onClick={() => onFix(warning)}>
-            {`Fix ${warning.scheme} text`}
-          </Button>
-        </Stack>
-      ))}
+      {warnings.map((warning) => {
+        const label = warning.token === "foreground" ? "text" : warning.token;
+        return (
+          <Stack key={`${warning.scheme}-${warning.token}`} direction="horizontal" gap={2}>
+            <Badge variant="warning">
+              {warning.scheme} {label} {warning.ratio}:1 (need {warning.min}:1)
+            </Badge>
+            <Button type="button" size="sm" variant="outline" onClick={() => onFix(warning)}>
+              {`Fix ${warning.scheme} ${label}`}
+            </Button>
+          </Stack>
+        );
+      })}
     </Stack>
   );
 }
@@ -300,7 +303,7 @@ function IdentityEditorPanel() {
       onFix={(warning) => {
         const parsed = parseIdentityTokens({
           ...tokens,
-          [warning.scheme]: { ...tokens[warning.scheme], foreground: warning.suggestedForeground },
+          [warning.scheme]: { ...tokens[warning.scheme], [warning.token]: warning.suggestedForeground },
         });
         if (parsed.success) remember(parsed.data);
       }}
