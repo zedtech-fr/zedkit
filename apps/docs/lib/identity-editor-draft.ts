@@ -116,6 +116,7 @@ function useDraftTokens(present: IdentityTokens, look: string) {
     remember,
     undo,
     applySite: () => setAppliedSite(true),
+    detachSite: () => setAppliedSite(false),
     load,
     patch,
     fix,

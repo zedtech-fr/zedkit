@@ -404,6 +404,48 @@ test.describe("identity editor apply to site", () => {
     await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
   });
 
+  test("editor follows a header switch when clean or driving the site", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${PAGE}?identity=mist`, { waitUntil: "networkidle" });
+    const chooser = page.getByRole("combobox", { name: "Identity" }).first();
+
+    // Clean draft: the editor adopts the header's look and the URL follows.
+    await chooser.selectOption("tide");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    await expect(page.getByLabel("Look")).toHaveValue("tide");
+    expect(new URL(page.url()).searchParams.get("identity")).toBe("tide");
+
+    // Applied draft: fields and URL resync to the header's new look.
+    await page.getByLabel("Radius", { exact: true }).fill("2rem");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
+    await expect(page.getByText("Applied to the whole site.")).toBeVisible();
+    await chooser.selectOption("mist");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await expect(page.getByLabel("Look")).toHaveValue("mist");
+    await expect(page.getByLabel("Radius", { exact: true })).not.toHaveValue("2rem");
+    expect(new URL(page.url()).searchParams.get("identity")).toBe("mist");
+    expect(new URL(page.url()).searchParams.get("radius")).toBeNull();
+
+    // Detached: further edits no longer drive the site.
+    await expect(page.getByText("Applied to the whole site.")).toHaveCount(0);
+    await page.getByLabel("Radius", { exact: true }).fill("3rem");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await expect.poll(() => htmlVar(page, "--radius")).not.toBe("3rem");
+  });
+
+  test("editor keeps an unapplied draft when the header switches", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${PAGE}?identity=tide`, { waitUntil: "networkidle" });
+    await page.getByLabel("Radius", { exact: true }).fill("2rem");
+    await page.getByRole("combobox", { name: "Identity" }).first().selectOption("press");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await expect(page.getByLabel("Look")).toHaveValue("tide");
+    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("2rem");
+    expect(page.url()).toContain("identity=tide");
+    expect(page.url()).toContain("radius=2rem");
+  });
+
   test("Apply Press replaces the site look in light and dark", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
