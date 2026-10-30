@@ -32,6 +32,8 @@ function DocsIdentitySwitcher() {
   const { identities, onIdentityChange } = useChooser();
   return (
     <IdentitySwitcher
+      label="Try a look (identity)"
+      showLabel
       defaultIdentity={DEFAULT_IDENTITY}
       identities={identities}
       onIdentityChange={onIdentityChange}
@@ -43,6 +45,7 @@ function DocsIdentityPicker() {
   const { identities, onIdentityChange } = useChooser();
   return (
     <IdentityPicker
+      description="Preview the whole site in another identity."
       defaultIdentity={DEFAULT_IDENTITY}
       identities={identities}
       onIdentityChange={onIdentityChange}

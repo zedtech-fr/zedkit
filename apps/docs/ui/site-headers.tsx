@@ -6,8 +6,9 @@ import { MobileHeader } from "@/ui/mobile-header";
 
 const homeLinks = [
   { text: "Documentation", href: "/docs" },
+  { text: "Catalog", href: "/catalog" },
   { text: "Getting started", href: "/docs/getting-started" },
-  { text: "Changelog", href: SITE_CHANGELOG_URL, external: true },
+  { text: "UI changelog", href: SITE_CHANGELOG_URL, external: true },
 ];
 
 /** Marketing header: phone header below md, the stock desktop header from md up. */
