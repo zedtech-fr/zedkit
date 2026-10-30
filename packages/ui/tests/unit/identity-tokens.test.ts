@@ -123,6 +123,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/volt.css"), "--zk-color-duration")).toBe("100ms");
     expect(token(read("identities/volt.css"), "--text-4xl") ?? "").toBe("2.125rem");
     expect(token(read("identities/volt.css"), "--text-xs") ?? "").toBe("0.625rem");
+    expect(token(read("identities/volt.css"), "--text-sm") ?? "").toBe("0.75rem");
     expect(token(read("identities/volt.css"), "--zk-border-width") ?? "").toBe("1.25px");
   });
 
