@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Button, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Container, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { areaIconFor } from "@/lib/domain-icons";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
@@ -74,7 +74,8 @@ export function CatalogView({
   }
 
   return (
-    <Stack gap={8} className="mx-auto w-full max-w-5xl px-6 py-12">
+    <Container className="py-section-md">
+      <Stack gap={8}>
       <Stack gap={2}>
         <Heading level={1}>Catalog</Heading>
         <Text variant="muted">
@@ -148,8 +149,9 @@ export function CatalogView({
         </Stack>
       </Stack>
 
-      <CatalogResults filtered={filtered} />
-    </Stack>
+        <CatalogResults filtered={filtered} />
+      </Stack>
+    </Container>
   );
 }
 

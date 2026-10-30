@@ -68,7 +68,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         <DocsBody>
           <MDX components={getMDXComponents()} />
         </DocsBody>
-        <Stack className="mt-16">
+        <Stack className="mt-section-md">
           <SiteMaintainerFooter changelogHref={featuredPackageChangelogUrl} embeddedInMain />
         </Stack>
       </DocsPage>
