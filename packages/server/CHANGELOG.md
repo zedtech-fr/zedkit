@@ -1,5 +1,15 @@
 # @zedtech/zedkit-server
 
+## 0.3.0
+
+### Minor Changes
+
+- 281bd29: Add `pgErrorRetryable` for worker retry policy on common transient Postgres SQLSTATE codes.
+
+### Patch Changes
+
+- 2b1e019: `MemoryRateLimiter.allow` fails closed when the key is empty or whitespace-only.
+
 ## 0.2.1
 
 ### Patch Changes

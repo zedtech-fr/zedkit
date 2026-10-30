@@ -1,5 +1,30 @@
 # @zedtech/zedkit-devtools
 
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies [3605166]
+- Updated dependencies [ac2f27f]
+- Updated dependencies [86460fb]
+- Updated dependencies [caaaab4]
+- Updated dependencies [a2711ad]
+- Updated dependencies [b846361]
+- Updated dependencies [0ab08f4]
+- Updated dependencies [87d1912]
+- Updated dependencies [9f63ac8]
+- Updated dependencies [636aae6]
+- Updated dependencies [e512b87]
+- Updated dependencies [06c490d]
+- Updated dependencies [b302956]
+- Updated dependencies [43a4c10]
+- Updated dependencies [ffc470f]
+- Updated dependencies [50422ce]
+- Updated dependencies [d4bcba8]
+- Updated dependencies [ef7e2fb]
+  - @zedtech/zedkit-ui@0.7.3
+  - @zedtech/zedkit-flags@0.2.1
+
 ## 0.2.2
 
 ### Patch Changes

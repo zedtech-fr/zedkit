@@ -1,5 +1,29 @@
 # @zedtech/zedkit-ui
 
+## 0.7.3
+
+### Patch Changes
+
+- 3605166: Apply the editor look as the site identity (light and dark) and overlay compact token edits.
+- ac2f27f: Apply compact identity tokens to the whole page (`applyCustomIdentity`) and restore them before paint.
+- 86460fb: WCAG 1.4.11 non-text contrast warnings for identity accent and border vs background.
+- caaaab4: Nudge shipped identity accent and border lightness to 3:1 against background.
+- a2711ad: WCAG AA contrast warnings for identity foreground/background pairs in light and dark.
+- b846361: Keep a manual dark identity colour when a later light edit rewrites the pair.
+- 0ab08f4: Derive an AA dark colour pair from identity light colours.
+- 87d1912: Identity token schema (light and dark colour pair) and a CSS variable writer for a scoped look.
+- 9f63ac8: Glass `--zk-border-width` is 0.5px (Mist stays 1px). Glass `--zk-shadow-xs` is a float, not a 1px contact lift. Maison `--zk-shadow-md` is a 1px ink line, not a soft drop. Tide, Press, and Volt borders stay. Volt/Maison stay thin so the phone search sheet still fits its results.
+- 636aae6: Maison `--zk-body-leading` is no longer next to Mist (1.6). Maison is 2. Glass stays 1.85. Tide stays 1.35. Mist is unchanged.
+- e512b87: Input is kit-authored. Height, block padding, and font size still use `--spacing` control tokens. Inline padding stays Tailwind `px-3`. `py-control-block` is unchanged (identity-aware and shared with other controls).
+- 06c490d: Press `--zk-body-leading` is no longer next to Tide (1.35). Press is 1.12. Volt stays 1.25. Mist is unchanged.
+- b302956: Press `--spacing` is no longer next to Mist (0.25rem). Press is 0.2rem. Volt stays 0.225rem. Tide stays 0.28rem. Mist is unchanged.
+- 43a4c10: Tide `--zk-body-leading` is no longer next to Mist (1.6). Tide is 1.35. Press stays 1.45. Mist is unchanged.
+- ffc470f: Volt `--zk-body-leading` is no longer next to Mist (1.6). Volt is 1.22, between Press 1.12 and Tide 1.35. Mist is unchanged.
+- 50422ce: Volt `--zk-body-leading` is no longer next to Press (1.12). Volt is 1.48. Press stays 1.12. Tide stays 1.35. Mist is unchanged.
+- d4bcba8: Volt `--zk-heading-tracking` is no longer next to Tide (-0.035em). Volt is -0.08em. Tide stays -0.035em. Mist is unchanged.
+- ef7e2fb: Volt `--text-sm` is no longer next to Press (0.8rem). Volt is 0.75rem. Mist stays 0.875rem. The Volt type scale still increases xs→5xl.
+- @zedtech/zedkit-i18n@0.2.0
+
 ## 0.7.2
 
 ### Patch Changes
