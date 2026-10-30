@@ -54,6 +54,9 @@ see `@zedtech/zedkit-core` instead.
 - `pgErrorCode(error)` — read the Postgres error code (`23505`
   unique, `23503` FK, ...) from a thrown value, or `null` when it
   has none. Lets callers decide conflict-vs-bug.
+- `pgErrorRetryable(error)` — `true` for common transient SQLSTATE
+  values (serialization, deadlock, connection loss), `false` for other
+  Postgres codes, `null` when there is no Postgres `code`.
 
 Find helpers by need in [CATALOG.md](CATALOG.md).
 

@@ -114,3 +114,25 @@ try {
   throw error;
 }
 ```
+
+## Retry transient Postgres failures
+
+- Import: `@zedtech/zedkit-server` — `pgErrorRetryable`
+- Wraps: `(none)`
+- Status: beta
+- Short name: Postgres retry
+- Audience: Workers and job runners using `@zedtech/zedkit-core` backoff helpers.
+- Purpose: Map serialization/deadlock/connection errors to retry without duplicating SQLSTATE lists.
+- When to use: After a failed query in a retry loop.
+- When not to use: For HTTP mapping — use `pgErrorCode` and your API error model.
+- See also: `Tell a Postgres conflict from a bug`
+
+```ts
+import { pgErrorRetryable } from "@zedtech/zedkit-server";
+import { computeBackoffMs } from "@zedtech/zedkit-server";
+
+if (pgErrorRetryable(error) === true) {
+  await sleep(computeBackoffMs(attempt));
+  continue;
+}
+```
