@@ -128,7 +128,7 @@ const identityPresets = {
   },
   volt: {
     spacing: "0.225rem",
-    borderWidth: "3px",
+    borderWidth: "1.25px",
     radius: "0.25rem",
     bodyLeading: "1.48",
     headingLeading: "1.08",
@@ -155,7 +155,7 @@ const identityPresets = {
   },
   maison: {
     spacing: "0.3rem",
-    borderWidth: "4px",
+    borderWidth: "1.75px",
     radius: "2px",
     bodyLeading: "1.7",
     headingLeading: "1.12",

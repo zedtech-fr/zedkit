@@ -2,7 +2,7 @@
  * Identity: maison.
  *
  *    Airy ivory, serif display type (Cormorant) over a geometric body
- *    (Jost), ink-frame borders, small radii, generous spacing. Code in
+ *    (Jost), very fine borders, small radii, generous spacing. Code in
  *    JetBrains Mono. Interactions stay within the motion caps; the slow,
  *    unhurried feel is reserved for reveals (longer duration and travel).
  *
@@ -84,7 +84,7 @@
   --radius-xl: 2px;
   --radius-2xl: 3px;
   --radius-3xl: 4px;
-  --zk-border-width: 4px;
+  --zk-border-width: 1.75px;
   --ring-width: 2px;
   --ring-width-control: 2px;
   --ring-offset-width: 2px;

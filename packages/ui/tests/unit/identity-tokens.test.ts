@@ -86,7 +86,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/maison.css"), "--zk-body-leading")).toBe("1.7");
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");
     expect(token(read("identities/maison.css"), "--radius-xs") ?? "").toBe("0.5px");
-    expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("4px");
+    expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("1.75px");
     expect(token(read("identities/maison.css"), "--zk-shadow-md") ?? "").toBe("0 1px 0 hsl(var(--zk-shadow-color) / 0.28)");
     expect(token(read("identities/maison.css"), "--zk-shadow-overlay") ?? "").toBe(
       "0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24)",
@@ -123,7 +123,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     expect(token(read("identities/volt.css"), "--zk-color-duration")).toBe("100ms");
     expect(token(read("identities/volt.css"), "--text-4xl") ?? "").toBe("2.125rem");
     expect(token(read("identities/volt.css"), "--text-xs") ?? "").toBe("0.625rem");
-    expect(token(read("identities/volt.css"), "--zk-border-width") ?? "").toBe("3px");
+    expect(token(read("identities/volt.css"), "--zk-border-width") ?? "").toBe("1.25px");
   });
 
   it("gives each identity its own dark --zk-shadow-xs", () => {

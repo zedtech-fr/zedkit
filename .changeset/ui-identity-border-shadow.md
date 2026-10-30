@@ -2,4 +2,4 @@
 "@zedtech/zedkit-ui": patch
 ---
 
-Border width is no longer a 0.25px stair. Glass is 0.5px, Volt 3px, Maison 4px. Mist stays 1px. Tide stays 1.5px. Press stays 2px. Glass xs and Maison md shadows are a float and an ink line, not the same 1px contact lift.
+Glass `--zk-border-width` is 0.5px (Mist stays 1px). Glass `--zk-shadow-xs` is a float, not a 1px contact lift. Maison `--zk-shadow-md` is a 1px ink line, not a soft drop. Tide, Press, and Volt borders stay. Volt/Maison stay thin so the phone search sheet still fits its results.
