@@ -132,3 +132,52 @@ test.describe("home bands (#1025)", () => {
     expect(tracks.components).toBe(3);
   });
 });
+
+test.describe("docs shell wide (#1064)", () => {
+  const DOCS_PAGE = `${BASE}/docs/ui/trigger-actions-with-buttons`;
+
+  async function docsGeometry(page: import("@playwright/test").Page) {
+    return page.evaluate(() => {
+      const rect = (sel: string) => {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { left: Math.round(r.left), width: Math.round(r.width), right: Math.round(r.right) };
+      };
+      return {
+        viewportWidth: window.innerWidth,
+        article: rect("#nd-page"),
+        main: rect("[data-layout-main]"),
+        toc: rect("#nd-toc"),
+        preview: rect("[data-component-preview]"),
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+  }
+
+  test("docs cluster widens past 1920px: article and previews take a share", async ({ page }) => {
+    await page.setViewportSize({ width: 2560, height: 1080 });
+    await page.goto(DOCS_PAGE, { waitUntil: "networkidle" });
+    const m = await docsGeometry(page);
+    expect(m.article).not.toBeNull();
+    expect(m.article!.width).toBeGreaterThanOrEqual(1050);
+    expect(m.main!.width).toBeGreaterThanOrEqual(1200);
+    expect(m.preview!.width).toBeGreaterThanOrEqual(1000);
+    // The cluster stays centered: the flexible column left of the sidebar
+    // (268px slot) mirrors the dead space after the TOC.
+    expect(Math.abs(m.main!.left - 268 - (m.viewportWidth - m.toc!.right))).toBeLessThanOrEqual(2);
+    expect(m.overflow).toBeLessThanOrEqual(1);
+  });
+
+  test("docs cluster is untouched below 1920px and steps at the boundary", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto(DOCS_PAGE, { waitUntil: "networkidle" });
+    expect((await docsGeometry(page)).article!.width).toBeLessThanOrEqual(902);
+    await page.setViewportSize({ width: 1919, height: 1000 });
+    expect((await docsGeometry(page)).article!.width).toBeLessThanOrEqual(902);
+    await page.setViewportSize({ width: 1920, height: 1000 });
+    const m = await docsGeometry(page);
+    expect(m.article!.width).toBeGreaterThanOrEqual(1050);
+    expect(m.overflow).toBeLessThanOrEqual(1);
+  });
+});
