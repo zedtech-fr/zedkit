@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Public API reports for ui, core, server, quality. After build (quality
-# ships source), this runs api-extractor and fails on report drift.
+# Public API reports for every publishable package under packages/*.
+# After build (quality ships source), this runs api-extractor (or the
+# server .d.ts dump) and fails on report drift.
 # A report that changed versus origin/main also needs a changeset; a
 # removed or renamed export needs minor (0.x breaking) or major.
 set -uo pipefail
@@ -12,13 +13,22 @@ write=0
 
 fail=0
 
-# name|types-entry|report file  (quality has a second export path)
+# pkg|types-entry|report file  (quality has a second export path)
 entries=(
+  "ai|dist/index.d.ts|zedkit-ai.api.md"
   "core|dist/index.d.ts|zedkit-core.api.md"
-  "server|dist/index.d.ts|zedkit-server.api.md"
-  "ui|dist/index.d.ts|zedkit-ui.api.md"
+  "devtools|dist/index.d.ts|zedkit-devtools.api.md"
+  "flags|dist/index.d.ts|zedkit-flags.api.md"
+  "i18n|dist/index.d.ts|zedkit-i18n.api.md"
+  "nest|dist/index.d.ts|zedkit-nest.api.md"
+  "observability|dist/index.d.ts|zedkit-observability.api.md"
+  "payload-seo|dist/index.d.ts|zedkit-payload-seo.api.md"
   "quality|src/index.d.mts|zedkit-quality.api.md"
   "quality|src/eslint.d.mts|zedkit-quality-eslint.api.md"
+  "seo|dist/index.d.ts|zedkit-seo.api.md"
+  "server|dist/index.d.ts|zedkit-server.api.md"
+  "storage|dist/index.d.ts|zedkit-storage.api.md"
+  "ui|dist/index.d.ts|zedkit-ui.api.md"
 )
 
 write_config() {
@@ -112,11 +122,20 @@ if probe.returncode != 0:
     sys.exit(0)
 
 reports = [
+    ("packages/ai/etc/zedkit-ai.api.md", "@zedtech/zedkit-ai"),
     ("packages/core/etc/zedkit-core.api.md", "@zedtech/zedkit-core"),
-    ("packages/server/etc/zedkit-server.api.md", "@zedtech/zedkit-server"),
-    ("packages/ui/etc/zedkit-ui.api.md", "@zedtech/zedkit-ui"),
+    ("packages/devtools/etc/zedkit-devtools.api.md", "@zedtech/zedkit-devtools"),
+    ("packages/flags/etc/zedkit-flags.api.md", "@zedtech/zedkit-flags"),
+    ("packages/i18n/etc/zedkit-i18n.api.md", "@zedtech/zedkit-i18n"),
+    ("packages/nest/etc/zedkit-nest.api.md", "@zedtech/zedkit-nest"),
+    ("packages/observability/etc/zedkit-observability.api.md", "@zedtech/zedkit-observability"),
+    ("packages/payload-seo/etc/zedkit-payload-seo.api.md", "@zedtech/zedkit-payload-seo"),
     ("packages/quality/etc/zedkit-quality.api.md", "@zedtech/zedkit-quality"),
     ("packages/quality/etc/zedkit-quality-eslint.api.md", "@zedtech/zedkit-quality"),
+    ("packages/seo/etc/zedkit-seo.api.md", "@zedtech/zedkit-seo"),
+    ("packages/server/etc/zedkit-server.api.md", "@zedtech/zedkit-server"),
+    ("packages/storage/etc/zedkit-storage.api.md", "@zedtech/zedkit-storage"),
+    ("packages/ui/etc/zedkit-ui.api.md", "@zedtech/zedkit-ui"),
 ]
 
 bumps: dict[str, set[str]] = {}
