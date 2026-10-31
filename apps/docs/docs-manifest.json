@@ -47,7 +47,7 @@
     "Collect text input with a label": {
       "package": "@zedtech/zedkit-ui",
       "component": "Input",
-      "props": null,
+      "props": "InputProps",
       "source": "input.tsx",
       "demo": "InputDemo"
     },
@@ -97,21 +97,21 @@
     "Float extra content next to a control": {
       "package": "@zedtech/zedkit-ui",
       "component": "Popover",
-      "props": null,
+      "props": "PopoverProps",
       "source": "popover.tsx",
       "demo": "PopoverDemo"
     },
     "Name a control on hover": {
       "package": "@zedtech/zedkit-ui",
       "component": "Tooltip",
-      "props": null,
+      "props": "TooltipProps",
       "source": "tooltip.tsx",
       "demo": "TooltipDemo"
     },
     "Open a menu of actions from a button": {
       "package": "@zedtech/zedkit-ui",
       "component": "DropdownMenu",
-      "props": null,
+      "props": "DropdownMenuProps",
       "source": "dropdown-menu.tsx",
       "demo": "DropdownMenuDemo"
     },
@@ -282,7 +282,7 @@
     "Lay out fieldsets, fields, and error lists": {
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",
-      "props": null,
+      "props": "FieldSetProps",
       "source": "field.tsx",
       "demo": "FieldDemo"
     },
@@ -336,7 +336,7 @@
     "Pick one option from a dropdown": {
       "package": "@zedtech/zedkit-ui",
       "component": "Select",
-      "props": null,
+      "props": "SelectProps",
       "source": "select.tsx",
       "demo": "SelectDemo"
     },
@@ -357,14 +357,14 @@
     "Collect multi-line text input": {
       "package": "@zedtech/zedkit-ui",
       "component": "Textarea",
-      "props": null,
+      "props": "TextareaProps",
       "source": "textarea.tsx",
       "demo": "TextareaDemo"
     },
     "Toggle a checkbox or a switch": {
       "package": "@zedtech/zedkit-ui",
       "component": "Checkbox",
-      "props": null,
+      "props": "CheckboxProps",
       "source": "checkbox.tsx",
       "demo": "ToggleDemo"
     },

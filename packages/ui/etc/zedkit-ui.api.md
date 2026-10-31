@@ -166,7 +166,10 @@ export interface CardSkeletonProps {
 export function CardTitle(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export function Checkbox(input: React_2.ComponentProps<typeof CheckboxPrimitive.Root>): React_2.JSX.Element;
+export function Checkbox(input: CheckboxProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type CheckboxProps = React_2.ComponentProps<typeof CheckboxPrimitive.Root>;
 
 // @public
 export function Checkmark(input: CheckmarkProps): JSX.Element;
@@ -519,13 +522,16 @@ export function DrawerTitle(input: React_2.ComponentProps<typeof Drawer_2.Title>
 export function DrawerTrigger(input: React_2.ComponentProps<typeof Drawer_2.Trigger>): React_2.JSX.Element;
 
 // @public (undocumented)
-export function DropdownMenu(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Root>): React_2.JSX.Element;
+export function DropdownMenu(input: DropdownMenuProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DropdownMenuContent(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Content>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function DropdownMenuItem(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Item>): React_2.JSX.Element;
+
+// @public (undocumented)
+export type DropdownMenuProps = React_2.ComponentProps<typeof DropdownMenuPrimitive.Root>;
 
 // @public (undocumented)
 export function DropdownMenuSeparator(input: React_2.ComponentProps<typeof DropdownMenuPrimitive.Separator>): React_2.JSX.Element;
@@ -598,7 +604,10 @@ export function FieldSeparator(input: React_2.ComponentProps<"div"> & {
 }): React_2.JSX.Element;
 
 // @public (undocumented)
-export function FieldSet(input: React_2.ComponentProps<"fieldset">): React_2.JSX.Element;
+export function FieldSet(input: FieldSetProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type FieldSetProps = React_2.ComponentProps<"fieldset">;
 
 // @public (undocumented)
 export function FieldTitle(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
@@ -940,7 +949,10 @@ export const identityTokenSchema: z.ZodObject<{
 }, z.core.$strip>;
 
 // @public (undocumented)
-export function Input(input: React_2.ComponentProps<"input">): React_2.JSX.Element;
+export function Input(input: InputProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type InputProps = React_2.ComponentProps<"input">;
 
 // @public (undocumented)
 export function isNamedIdentityId(id: string): boolean;
@@ -1117,13 +1129,16 @@ export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
 }>;
 
 // @public (undocumented)
-export function Popover(input: React_2.ComponentProps<typeof PopoverPrimitive.Root>): React_2.JSX.Element;
+export function Popover(input: PopoverProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function PopoverAnchor(input: React_2.ComponentProps<typeof PopoverPrimitive.Anchor>): React_2.JSX.Element;
 
 // @public (undocumented)
 export function PopoverContent(input: React_2.ComponentProps<typeof PopoverPrimitive.Content>): React_2.JSX.Element;
+
+// @public (undocumented)
+export type PopoverProps = React_2.ComponentProps<typeof PopoverPrimitive.Root>;
 
 // @public (undocumented)
 export function PopoverTrigger(input: React_2.ComponentProps<typeof PopoverPrimitive.Trigger>): React_2.JSX.Element;
@@ -1216,7 +1231,7 @@ export type SectionProps = React_2.ComponentProps<"section"> & {
 };
 
 // @public (undocumented)
-export function Select(input: React_2.ComponentProps<typeof SelectPrimitive.Root>): React_2.JSX.Element;
+export function Select(input: SelectProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function SelectContent(input: React_2.ComponentProps<typeof SelectPrimitive.Content>): React_2.JSX.Element;
@@ -1229,6 +1244,9 @@ export function SelectItem(input: React_2.ComponentProps<typeof SelectPrimitive.
 
 // @public (undocumented)
 export function SelectLabel(input: React_2.ComponentProps<typeof SelectPrimitive.Label>): React_2.JSX.Element;
+
+// @public (undocumented)
+export type SelectProps = React_2.ComponentProps<typeof SelectPrimitive.Root>;
 
 // @public (undocumented)
 export function SelectScrollDownButton(input: React_2.ComponentProps<typeof SelectPrimitive.ScrollDownButton>): React_2.JSX.Element;
@@ -1365,7 +1383,10 @@ function Text_2(input: TextProps): React_2.JSX.Element;
 export { Text_2 as Text }
 
 // @public (undocumented)
-export function Textarea(input: React_2.ComponentProps<"textarea">): React_2.JSX.Element;
+export function Textarea(input: TextareaProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type TextareaProps = React_2.ComponentProps<"textarea">;
 
 // @public (undocumented)
 export type TextProps = React_2.ComponentProps<"p"> & VariantProps<typeof textVariants> & {
@@ -1392,10 +1413,13 @@ export function tokensToCss(tokens: IdentityTokens, selector: string): string;
 export function tokensToCssVars(tokens: IdentityTokens): Record<string, string>;
 
 // @public (undocumented)
-export function Tooltip(input: React_2.ComponentProps<typeof TooltipPrimitive.Root>): React_2.JSX.Element;
+export function Tooltip(input: TooltipProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function TooltipContent(input: React_2.ComponentProps<typeof TooltipPrimitive.Content>): React_2.JSX.Element;
+
+// @public (undocumented)
+export type TooltipProps = React_2.ComponentProps<typeof TooltipPrimitive.Root>;
 
 // @public (undocumented)
 export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrimitive.Provider>): React_2.JSX.Element;

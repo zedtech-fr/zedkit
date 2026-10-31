@@ -7,7 +7,9 @@ import { Check } from "lucide-react";
 
 import { cn } from "./utils.js";
 
-function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+export type CheckboxProps = React.ComponentProps<typeof CheckboxPrimitive.Root>;
+
+function Checkbox({ className, ...props }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"

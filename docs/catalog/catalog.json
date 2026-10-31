@@ -1514,7 +1514,7 @@
         },
         {
           "need": "Collect text input with a label",
-          "import": "`@zedtech/zedkit-ui` — `Input`, `Label`",
+          "import": "`@zedtech/zedkit-ui` — `Input`, `InputProps`, `Label`",
           "wraps": "`@radix-ui/react-label`",
           "status": "beta",
           "shortName": "Input",
@@ -2067,7 +2067,7 @@
         },
         {
           "need": "Float extra content next to a control",
-          "import": "`@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`",
+          "import": "`@zedtech/zedkit-ui` — `Popover`, `PopoverProps`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`",
           "wraps": "`@radix-ui/react-popover`",
           "status": "alpha",
           "shortName": "Popover",
@@ -2093,7 +2093,7 @@
         },
         {
           "need": "Name a control on hover",
-          "import": "`@zedtech/zedkit-ui` — `Tooltip`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`",
+          "import": "`@zedtech/zedkit-ui` — `Tooltip`, `TooltipProps`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`",
           "wraps": "`@radix-ui/react-tooltip`",
           "status": "alpha",
           "shortName": "Tooltip",
@@ -2117,7 +2117,7 @@
         },
         {
           "need": "Open a menu of actions from a button",
-          "import": "`@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`",
+          "import": "`@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuProps`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`",
           "wraps": "`@radix-ui/react-dropdown-menu`",
           "status": "alpha",
           "shortName": "DropdownMenu",
@@ -2445,7 +2445,7 @@
         },
         {
           "need": "Lay out fieldsets, fields, and error lists",
-          "import": "`@zedtech/zedkit-ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
+          "import": "`@zedtech/zedkit-ui` — `FieldSet`, `FieldSetProps`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`",
           "wraps": "none (presentational over `Label`, `Separator`)",
           "status": "beta",
           "shortName": "FieldSet",
@@ -2631,7 +2631,7 @@
         },
         {
           "need": "Pick one option from a dropdown",
-          "import": "`@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
+          "import": "`@zedtech/zedkit-ui` — `Select`, `SelectProps`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`",
           "wraps": "`@radix-ui/react-select`",
           "status": "beta",
           "shortName": "Select",
@@ -2704,7 +2704,7 @@
         },
         {
           "need": "Collect multi-line text input",
-          "import": "`@zedtech/zedkit-ui` — `Textarea`",
+          "import": "`@zedtech/zedkit-ui` — `Textarea`, `TextareaProps`",
           "wraps": "none (styled native `textarea`)",
           "status": "beta",
           "shortName": "Textarea",
@@ -2727,7 +2727,7 @@
         },
         {
           "need": "Toggle a checkbox or a switch",
-          "import": "`@zedtech/zedkit-ui` — `Checkbox`, `Switch`",
+          "import": "`@zedtech/zedkit-ui` — `Checkbox`, `CheckboxProps`, `Switch`",
           "wraps": "`@radix-ui/react-checkbox`, `@radix-ui/react-switch`",
           "status": "beta",
           "shortName": "Checkbox",
