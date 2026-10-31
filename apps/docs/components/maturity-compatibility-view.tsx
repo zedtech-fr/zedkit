@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  Badge,
   Section,
   Stack,
   Table,
@@ -11,11 +12,23 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 import {
-  catalogMaturityReadmeUrl,
   compatibilityRows,
   maturityCounts,
   workspaceToolchain,
 } from "@/content/maturity-compatibility";
+import { maturityBadgeVariant } from "@/lib/maturity-status";
+
+// Visitor wording for the same limits as docs/catalog/README.md#maturity.
+const MATURITY_LIMITS = [
+  { status: "planned", limit: "Documented, not built yet. No code and no tests." },
+  { status: "alpha", limit: "Built, but the API may still change. Tests, docs, or review can still be missing." },
+  {
+    status: "beta",
+    limit: "Tested through the public interface, documented with an example, and reviewed. UI entries also have accessibility checks and a gallery preview. Ready for a first try. Not proven in a real app yet.",
+  },
+  { status: "stable", limit: "Used by at least two real apps. Breaking changes follow semver. Documented." },
+  { status: "deprecated", limit: "Do not start a new use. The entry names its replacement and will be removed later." },
+] as const;
 
 function CountsTable() {
   const rows = Object.entries(maturityCounts).filter(([, n]) => n > 0);
@@ -67,15 +80,16 @@ function CompatibilityTable() {
 export function MaturityCompatibilityView() {
   return (
     <Stack gap={8}>
-      <Section>
-        <Stack gap={3}>
-          <Text>
-            Every catalog need carries a maturity badge. Criteria for{" "}
-            <code>planned</code>, <code>alpha</code>, <code>beta</code>, <code>stable</code>, and{" "}
-            <code>deprecated</code> are defined once in the{" "}
-            <Link href={catalogMaturityReadmeUrl}>catalog README (Maturity)</Link> — read that
-            section instead of a copy here.
-          </Text>
+      <Section title="What a badge means">
+        <Stack gap={4}>
+          {MATURITY_LIMITS.map((row) => (
+            <Stack key={row.status} gap={2}>
+              <Badge variant={maturityBadgeVariant(row.status)} className="w-fit">
+                {row.status}
+              </Badge>
+              <Text>{row.limit}</Text>
+            </Stack>
+          ))}
           <Text variant="muted">
             Breaking changes ship through changesets and semver (0.x today). Check each package{" "}
             <code>CHANGELOG.md</code> before upgrading.
