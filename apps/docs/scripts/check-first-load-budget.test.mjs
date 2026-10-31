@@ -60,6 +60,6 @@ test("a heavy first-load chunk fails a tight budget", () => {
   writeFileSync(join(dir, "index.html"), `<head><script src="/_next/static/chunks/a.js"></script></head>`);
   writeFileSync(join(dir, "_next/static/chunks/a.js"), "x".repeat(50_000));
   const { gzipBytes } = measureFirstLoadGzip(dir, "index.html");
-  const errors = budgetErrors({ label: "fixture", gzipBytes, budget: 100 });
+  const errors = budgetErrors({ label: "fixture", gzipBytes, budget: gzipBytes - 1 });
   assert.ok(errors.length > 0);
 });
