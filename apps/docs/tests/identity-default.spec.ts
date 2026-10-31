@@ -51,6 +51,15 @@ test("legacy stored identity keys do not override the default site look", async 
   expect(identityValues(await seenValues(page))).toEqual([DEFAULT]);
 });
 
+test("site shell has no global identity chooser", async ({ page }) => {
+  for (const width of [1280, 390] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await expect(page.getByRole("combobox", { name: "Identity" })).toHaveCount(0);
+    await expect(page.getByLabel("Try another identity")).toHaveCount(0);
+  }
+});
+
 for (const theme of ["light", "dark"] as const) {
   test(`the default passes the a11y gate in ${theme}`, async ({ page }) => {
     await page.addInitScript((mode) => localStorage.setItem("theme", mode), theme);
