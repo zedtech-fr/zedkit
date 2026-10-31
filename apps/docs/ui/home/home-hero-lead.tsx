@@ -1,23 +1,13 @@
 import Link from "next/link";
 import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
-import { KitVersionLabel } from "@/ui/kit-version-label";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_LEAD_TEXT_CLASS,
-  HOME_METADATA_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
   HOME_SMALL_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 
-export function HomeHeroLead({
-  version,
-  releasesHref,
-  latestChange,
-}: {
-  version: string;
-  releasesHref: string;
-  latestChange: string;
-}) {
+export function HomeHeroLead({ version, latestChange }: { version: string; latestChange: string }) {
   return (
     <Stack
       gap={HOME_SECTION_CONTENT_GAP}
@@ -25,12 +15,6 @@ export function HomeHeroLead({
       data-home-hero-lead=""
     >
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
-        <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-          <Text variant="muted" className={HOME_METADATA_TEXT_CLASS} data-home-hero-label="">
-            zedkit
-          </Text>
-          <KitVersionLabel version={version} releasesHref={releasesHref} />
-        </Stack>
         <Heading level={1} className="type-site-h1 max-w-3xl font-semibold text-balance">
           Build the parts you need. Keep the rest of your app.
         </Heading>
