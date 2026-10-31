@@ -1,6 +1,6 @@
 "use client";
 
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- Command scroll regions need keyboard focus (scrollable-region-focusable; see packages/ui/table.tsx). */
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- Command scroll regions need keyboard focus (scrollable-region-focusable; see packages/ui/table.tsx). #1183 */
 
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
