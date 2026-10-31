@@ -133,8 +133,8 @@ function IdentityEditorBody(props: EditorBodyProps) {
       {props.appliedSite ? <Text role="status">Applied to the whole site.</Text> : null}
       <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
       <IdentityEditorSuggest tokens={props.tokens} onApply={props.onSuggestApply} />
-      <EditorFields tokens={props.tokens} scheme={scheme} onPatch={props.onPatch} />
       <DraftCard darkPreview={props.darkPreview} />
+      <EditorFields tokens={props.tokens} scheme={scheme} onPatch={props.onPatch} />
       <IdentityEditorExport tokens={props.tokens} />
     </Stack>
   );
