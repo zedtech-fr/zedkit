@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # CI: Vite + React 19 + Tailwind 4 smoke for both UI quickstart paths.
 # Snippet text lives in apps/docs/home-quickstart/snippets (see snippet-manifest.mjs).
+# Registry path uses built JSON under apps/docs/public/r (same URLs as docs, rewritten locally in CI).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
