@@ -69,9 +69,10 @@ test.describe("a11y gate (#396)", () => {
       test(`maturity ${sample.name} badge ${theme}: contrast >= 4.5:1`, async ({ page }) => {
         await openWithTheme(page, sample.path, theme);
         const badge =
-          sample.name === "alpha"
-            ? page.getByRole("link", { name: sample.name, exact: true })
-            : page.getByText(sample.name, { exact: true }).first();
+          sample.name === "beta"
+            ? page.locator("main a[data-badge-link]").filter({ hasText: /^beta$/i }).first()
+            : page.locator("main a[data-badge-link]").first();
+        await expect(badge).toBeVisible();
         const ratio = await readComputedContrast(page, badge);
         expect(ratio).toBeGreaterThanOrEqual(4.5);
       });

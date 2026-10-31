@@ -123,10 +123,7 @@ for (const identity of IDENTITIES) {
   test(`maturity badge link has no underline (${identity}, dark)`, async ({ page }) => {
     await visitAs(page, identity, "dark");
     await page.goto("/docs/ui/stamp-data-with-its-age/", { waitUntil: "networkidle" });
-    const badge = page
-      .locator("main a")
-      .filter({ hasText: /^alpha$/i })
-      .first();
+    const badge = page.locator("main a[data-badge-link]").first();
     await expect(badge).toBeVisible();
     await expect(badge).toHaveCSS("text-decoration-line", "none");
   });
