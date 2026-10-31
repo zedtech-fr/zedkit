@@ -26,11 +26,36 @@ async function resultLinkGeometry(page: Page) {
   });
 }
 
+test("catalog intro bleeds full width and the filters sit in a narrower column", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await gotoCatalogQuiet(page);
+  const intro = page.locator("[data-slot='section']").filter({
+    has: page.getByRole("heading", { name: "Catalog", level: 1 }),
+  });
+  await expect(intro).toHaveClass(/bg-muted/);
+  const introBox = await intro.boundingBox();
+  const introColumn = intro.locator("[data-slot='container']");
+  await expect(introColumn).toHaveClass(/max-w-default/);
+  const columnBox = await introColumn.boundingBox();
+  expect(introBox).not.toBeNull();
+  expect(columnBox).not.toBeNull();
+  expect(introBox!.width).toBeGreaterThan(columnBox!.width + 40);
+  const results = page.locator("[data-slot='container']").filter({
+    has: page.getByRole("heading", { name: "Results", level: 2 }),
+  });
+  await expect(results).toHaveClass(/max-w-wide/);
+  const resultsBox = await results.boundingBox();
+  expect(resultsBox!.width).toBeGreaterThan(columnBox!.width);
+});
+
 test("catalog runs wide with two alphabetical columns at 2560 (#1063)", async ({ page }) => {
   await page.setViewportSize({ width: 2560, height: 1080 });
   await gotoCatalogQuiet(page);
   await expect(page.locator("[data-catalog-area]").first()).toBeVisible();
-  const container = await page.locator("main [data-slot='container']").first().boundingBox();
+  const container = await page
+    .locator("main [data-slot='container']")
+    .filter({ has: page.getByRole("heading", { name: "Results", level: 2 }) })
+    .boundingBox();
   expect(container).not.toBeNull();
   expect(container!.width).toBeGreaterThanOrEqual(1400);
   const links = await resultLinkGeometry(page);
