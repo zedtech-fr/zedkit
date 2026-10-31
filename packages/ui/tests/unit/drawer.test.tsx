@@ -426,6 +426,82 @@ describe("drawer", () => {
     expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
   });
 
+  it("moves focus inside on open so the trap engages", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">before</button>
+        <OpenDrawer />
+      </>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    expect(dialog.contains(document.activeElement)).toBe(true);
+  });
+
+  it("traps Tab inside a modal drawer", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">before</button>
+        <Drawer direction="right">
+          <DrawerTrigger asChild>
+            <Button>Open drawer</Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerTitle>Delivery details</DrawerTitle>
+            <button type="button">first</button>
+            <button type="button">second</button>
+          </DrawerContent>
+        </Drawer>
+        <button type="button">after</button>
+      </>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open drawer" }));
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    for (let i = 0; i < 6; i++) {
+      await user.tab();
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+    for (let i = 0; i < 6; i++) {
+      await user.tab({ shift: true });
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+  });
+
+  it("returns focus to the trigger after Escape", async () => {
+    const user = userEvent.setup();
+    render(<OpenDrawer />);
+    const trigger = screen.getByRole("button", { name: "Open drawer" });
+    await user.click(trigger);
+    expect(screen.getByRole("dialog", { name: "Delivery details" }).contains(document.activeElement)).toBe(true);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("does not mount-autofocus when modal is false", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">outside</button>
+        <Drawer modal={false}>
+          <DrawerTrigger asChild>
+            <Button>Open drawer</Button>
+          </DrawerTrigger>
+          <DrawerContent modal={false}>
+            <DrawerTitle>Delivery details</DrawerTitle>
+          </DrawerContent>
+        </Drawer>
+      </>,
+    );
+    const trigger = screen.getByRole("button", { name: "Open drawer" });
+    await user.click(trigger);
+    expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+
   it("has no axe violations when open", async () => {
     const user = userEvent.setup();
     render(<OpenDrawer />);
