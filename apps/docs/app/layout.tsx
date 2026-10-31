@@ -4,6 +4,10 @@ import type { ReactNode } from "react";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { homePage } from "@/lib/site";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
+import {
+  DOCS_SITE_IDENTITY_OPT_IN_KEY,
+  DOCS_SITE_IDENTITY_STORAGE_KEY,
+} from "@/lib/site-identity-storage";
 import { IdentityScript } from "@zedtech/zedkit-ui";
 import { preload } from "react-dom";
 import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";
@@ -36,7 +40,11 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-docs-shell suppressHydrationWarning>
       <head>
-        <IdentityScript defaultIdentity={DEFAULT_IDENTITY} />
+        <IdentityScript
+          defaultIdentity={DEFAULT_IDENTITY}
+          storageKey={DOCS_SITE_IDENTITY_STORAGE_KEY}
+          optInStorageKey={DOCS_SITE_IDENTITY_OPT_IN_KEY}
+        />
       </head>
       <body>
         <Provider>{children}</Provider>
