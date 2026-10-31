@@ -388,7 +388,7 @@ export function HomeUseCasesSection() {
       containerWidth="wide"
       title="One kit, every kind of product"
       id="use-cases"
-      description="Same components, six identities. Pick one to preview how it reads, with content that fits its use."
+      description="Static looks, not working screens. Same components, six identities; use the hero demo to click around."
     >
       <div ref={root} data-home-use-cases className="min-w-0">
         <Stack gap={4} className="min-w-0">

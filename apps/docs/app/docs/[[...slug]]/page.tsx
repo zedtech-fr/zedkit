@@ -6,6 +6,7 @@ import { Stack } from "@zedtech/zedkit-ui";
 
 import { JsonLd } from "@/components/json-ld";
 import { featuredPackageChangelogUrl } from "@/content/gallery";
+import { mergeComponentPageToc } from "@/lib/component-page-toc";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
 import { getMDXComponents } from "@/mdx-components";
@@ -55,7 +56,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
     <>
       <JsonLd data={jsonLd} />
       <DocsPage
-        toc={page.data.toc}
+        toc={page.data.componentPage ? mergeComponentPageToc(page.data.toc) : page.data.toc}
         tableOfContentPopover={{
           trigger: {
             "aria-label": "Table of contents",

@@ -1403,15 +1403,15 @@
           "status": "stable",
           "shortName": "Button",
           "audience": "Anyone placing actions in an admin UI.",
-          "purpose": "Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.",
+          "purpose": "Accessible buttons with variants (default, destructive, outline, ghost) and sizes.",
           "whenToUse": "For every clickable action, including links styled as buttons.",
           "whenNotToUse": "For navigation menus — use links or tabs instead.",
           "derivedFrom": null,
-          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>",
+          "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>",
           "examples": [
             {
               "title": "Usage",
-              "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>"
+              "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>"
             },
             {
               "title": "Variants and sizes",
@@ -1997,10 +1997,12 @@
             },
             {
               "title": "Tall content",
-              "code": "import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Activity</Button></DialogTrigger>\n  <DialogContent>\n    <DialogHeader><DialogTitle>Order activity</DialogTitle></DialogHeader>\n    {events.map((line) => <Text key={line}>{line}</Text>)}\n    <DialogFooter><Button>Done</Button></DialogFooter>\n  </DialogContent>\n</Dialog>"
+              "code": "import { Button, Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from \"@zedtech/zedkit-ui\";\n<Dialog>\n  <DialogTrigger asChild><Button>Activity</Button></DialogTrigger>\n  <DialogContent>\n    <DialogHeader><DialogTitle>Order activity</DialogTitle></DialogHeader>\n    {[\"Packed\", \"Shipped\", \"Out for delivery\"].map((line) => <Text key={line}>{line}</Text>)}\n    <DialogFooter><DialogClose asChild><Button>Done</Button></DialogClose></DialogFooter>\n  </DialogContent>\n</Dialog>"
             }
           ],
+          "registry": "dialog",
           "a11y": "Focus trap and Escape come from Radix; opening moves focus to the panel (no heavy ring) before tabbing to actions. Header and footer share the content surface (transparent chrome on glass and solid identities). Content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close control is a 44px (`size-overlay-touch-target`) hit area with `focus-ring-control`, aligned to the title row. Tall content scrolls inside `max-h-dialog-max-height`, further capped to the visual viewport when the software keyboard is open, with `overscroll-behavior: contain`. Header copy is left-aligned; footer actions are right-aligned with token gaps; footer clears `env(safe-area-inset-bottom)`.",
+          "troubleshooting": "A footer button does not close the dialog unless it is `DialogClose`. Nested overlays need their own `Dialog` root. Tall content scrolls inside the panel (`max-h-dialog-max-height`), not the page behind it.",
           "seeAlso": [
             "Confirm destructive actions",
             "Slide in a drawer panel",

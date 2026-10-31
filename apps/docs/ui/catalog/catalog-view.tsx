@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Container, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { areaIconFor } from "@/lib/domain-icons";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
@@ -163,24 +163,31 @@ export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }
   const router = useRouter();
   const pathname = usePathname();
   const [filters, setFilterState] = useState<ReturnType<typeof readFilter>>(CATALOG_DEFAULT_FILTERS);
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
 
   useEffect(() => {
-    const apply = () => setFilterState(readFilter(new URLSearchParams(window.location.search), entries));
+    const apply = () => {
+      const next = readFilter(new URLSearchParams(window.location.search), entries);
+      filtersRef.current = next;
+      setFilterState(next);
+    };
     apply();
     window.addEventListener("popstate", apply);
     return () => window.removeEventListener("popstate", apply);
   }, [entries]);
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
-    const params = new URLSearchParams(window.location.search);
-    for (const [key, value] of Object.entries(next)) {
-      if (value === undefined) continue;
-      if (value === "" || value === "all") params.delete(key);
-      else params.set(key, value);
-    }
+    const merged = { ...filtersRef.current, ...next };
+    const params = new URLSearchParams();
+    if (merged.area !== "all") params.set("area", merged.area);
+    if (merged.status !== "all") params.set("status", merged.status);
+    if (merged.q) params.set("q", merged.q);
+    const parsed = readFilter(params, entries);
+    filtersRef.current = parsed;
+    setFilterState(parsed);
     const query = params.toString();
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-    setFilterState(readFilter(params, entries));
   }
 
   return (

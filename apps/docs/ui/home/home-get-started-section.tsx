@@ -51,7 +51,7 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       containerWidth="reading"
       id="get-started"
       title="Start building"
-      description="Agent setup, npm or registry install, then the UI quickstart — step-by-step detail stays in the docs."
+      description="Install the package or copy a brick, then a short UI path. Agent setup is optional."
       className={HOME_SECTION_REVEAL_CLASS}
       {...HOME_MARKETING_ROOT_PROPS}
     >

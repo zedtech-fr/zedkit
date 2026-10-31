@@ -43,10 +43,10 @@ test("home hero offers two ways in and keeps the other paths lower (#1038)", asy
 
   const heroActions = page.locator("[data-home-hero-actions] a");
   await expect(heroActions).toHaveCount(2);
-  await expect(heroActions.nth(0)).toHaveText("Explore the demo");
-  await expect(heroActions.nth(0)).toHaveAttribute("href", "#demo");
-  await expect(heroActions.nth(1)).toHaveText("Start building");
-  await expect(heroActions.nth(1)).toHaveAttribute("href", "#quickstart");
+  await expect(heroActions.nth(0)).toHaveText("Browse components");
+  await expect(heroActions.nth(0)).toHaveAttribute("href", "/catalog");
+  await expect(heroActions.nth(1)).toHaveText("Try the demo");
+  await expect(heroActions.nth(1)).toHaveAttribute("href", "#demo");
 
   const more = page.locator("[data-home-secondary-actions] a");
   await expect(more).toHaveCount(2);
@@ -60,7 +60,7 @@ test("home hero offers two ways in and keeps the other paths lower (#1038)", asy
   expect(secondaryBox!.y).toBeGreaterThan(primaryBox!.y + primaryBox!.height - 1);
 
   await expect(
-    page.getByText("An interface made of ready parts, for the app you already have."),
+    page.getByText("React components you add to the app you already have."),
   ).toBeVisible();
   await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
@@ -371,7 +371,7 @@ test("home UI quickstart points to the getting started guide", async ({ page }) 
   await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
   await expect(page.getByRole("link", { name: "Open the full UI quickstart" })).toHaveAttribute(
     "href",
-    "/docs/getting-started#quickstart",
+    "/docs/getting-started#ui-button",
   );
 });
 

@@ -168,7 +168,7 @@ import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
 - Short name: Button
 - Registry: button
 - Audience: Anyone placing actions in an admin UI.
-- Purpose: Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.
+- Purpose: Accessible buttons with variants (default, destructive, outline, ghost) and sizes.
 - When to use: For every clickable action, including links styled as buttons.
 - When not to use: For navigation menus — use links or tabs instead.
 - See also: `Confirm destructive actions`
@@ -178,7 +178,7 @@ import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
 
 ```ts
 import { Button } from "@zedtech/zedkit-ui";
-<Button ref={saveRef}>Save</Button>
+<Button>Save</Button>
 <Button variant="destructive" size="sm">Delete</Button>
 <Button variant="outline" size="icon" aria-label="Close">×</Button>
 <Button asChild variant="secondary">
@@ -785,8 +785,10 @@ const columns = [helper.accessor("name", { header: "Name" })];
 - Purpose: Accessible modal dialogs (trigger, content, title, footer) with focus trap and Escape.
 - When to use: For short tasks that need full attention (confirm, edit one thing).
 - When not to use: For destructive one-click confirms — use ConfirmDialog instead; for long forms use a page.
+- Registry: dialog
 - Examples: Order details, Tall content
 - A11y: Focus trap and Escape come from Radix; opening moves focus to the panel (no heavy ring) before tabbing to actions. Header and footer share the content surface (transparent chrome on glass and solid identities). Content centers via the `dialog-center` utility (`--spacing-dialog-center`) and elevates with `--shadow-overlay`. Slots, close offset, and overlay stacking come from `--spacing-dialog-*` / `--z-index-overlay`; the close control is a 44px (`size-overlay-touch-target`) hit area with `focus-ring-control`, aligned to the title row. Tall content scrolls inside `max-h-dialog-max-height`, further capped to the visual viewport when the software keyboard is open, with `overscroll-behavior: contain`. Header copy is left-aligned; footer actions are right-aligned with token gaps; footer clears `env(safe-area-inset-bottom)`.
+- Troubleshooting: A footer button does not close the dialog unless it is `DialogClose`. Nested overlays need their own `Dialog` root. Tall content scrolls inside the panel (`max-h-dialog-max-height`), not the page behind it.
 - See also: `Confirm destructive actions`, `Slide in a drawer panel`, `Float extra content next to a control`, `Open a menu of actions from a button`
 
 ```ts
@@ -798,13 +800,13 @@ import { Button, Dialog, DialogContent, DialogTitle, DialogTrigger } from "@zedt
 ```
 
 ```ts
-import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from "@zedtech/zedkit-ui";
+import { Button, Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Text } from "@zedtech/zedkit-ui";
 <Dialog>
   <DialogTrigger asChild><Button>Activity</Button></DialogTrigger>
   <DialogContent>
     <DialogHeader><DialogTitle>Order activity</DialogTitle></DialogHeader>
-    {events.map((line) => <Text key={line}>{line}</Text>)}
-    <DialogFooter><Button>Done</Button></DialogFooter>
+    {["Packed", "Shipped", "Out for delivery"].map((line) => <Text key={line}>{line}</Text>)}
+    <DialogFooter><DialogClose asChild><Button>Done</Button></DialogClose></DialogFooter>
   </DialogContent>
 </Dialog>
 ```

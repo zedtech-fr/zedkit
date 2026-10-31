@@ -59,9 +59,39 @@ test("button reference page surfaces variant and size in props without search (#
   await page.getByRole("link", { name: "View props table" }).click();
   const props = page.locator("#props");
   await props.scrollIntoViewIfNeeded();
-  await expect(props).toContainText("variant");
-  await expect(props).toContainText("size");
+  await expect(props.locator("[id='type-table-button.tsx-ButtonProps-variant']")).toBeVisible();
+  await expect(props.locator("[id='type-table-button.tsx-ButtonProps-size']")).toBeVisible();
+  await expect(props.locator("[id='type-table-button.tsx-ButtonProps-asChild']")).toBeVisible();
+  await expect(props.locator("[id='type-table-button.tsx-ButtonProps-onClick']")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /inherited HTML attributes/i })).toBeVisible();
+  await page.getByRole("button", { name: /inherited HTML attributes/i }).click();
+  await expect(props.locator("[id='type-table-button.tsx-ButtonProps-inherited-onClick']")).toBeVisible();
+});
+
+test("component page TOC lists the live sections", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
+  const toc = page.locator("#nd-toc");
+  await expect(toc.getByRole("link", { name: "Preview" })).toHaveAttribute("href", "#example");
+  await expect(toc.getByRole("link", { name: "Install or copy" })).toHaveAttribute("href", "#install-or-copy");
+  await expect(toc.getByRole("link", { name: "Props" })).toHaveAttribute("href", "#props");
+  await expect(page.getByRole("heading", { name: "At a glance" })).toHaveCount(0);
+});
+
+test("dialog page offers registry copy on the same anatomy", async ({ page }) => {
+  await page.goto("/docs/ui/open-modal-dialogs", { waitUntil: "networkidle" });
+  await expect(page.getByRole("tab", { name: "registry copy" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "At a glance" })).toHaveCount(0);
+  await expect(page.locator("[data-component-preview]").first()).toBeVisible();
+  await expect(page.locator("#usage-and-states")).toContainText("DialogClose");
+  await expect(page.locator("#install-or-copy")).toContainText("getting started");
+});
+
+test("button registry tab shows the local import", async ({ page }) => {
+  await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
+  await page.getByRole("tab", { name: "registry copy" }).click();
+  await expect(page.getByText('import { Button } from "@/components/ui/button"')).toBeVisible();
+  await expect(page.locator("#example")).not.toContainText("saveRef");
 });
 
 test.describe("registry brick name light/dark (#769)", () => {

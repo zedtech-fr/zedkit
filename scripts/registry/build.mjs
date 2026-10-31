@@ -21,7 +21,7 @@ function stageTransformedSources() {
     const raw = readFileSync(join(uiSrc, file), "utf8");
     writeFileSync(join(generatedDir, file), rewriteUiImports(raw), "utf8");
   }
-  for (const file of ["create-messages-context.tsx"]) {
+  for (const file of ["create-messages-context.tsx", "format-message.ts"]) {
     const raw = readFileSync(join(i18nSrc, file), "utf8");
     writeFileSync(join(generatedDir, file), rewriteUiImports(raw), "utf8");
   }

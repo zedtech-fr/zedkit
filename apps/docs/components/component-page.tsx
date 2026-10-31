@@ -69,14 +69,25 @@ function registrySourcePath(registry: string): string | null {
 function importSnippet(importLine: string): string {
   const symbols = symbolsFromImport(importLine);
   const pkg = importLine.match(/`([^`]+)`/)?.[1] ?? "@zedtech/zedkit-ui";
-  return `import { ${symbols.join(", ")} } from "${pkg}";`;
+  const types = symbols.filter((name) => name.endsWith("Props"));
+  const values = symbols.filter((name) => !name.endsWith("Props"));
+  return [
+    values.length > 0 ? `import { ${values.join(", ")} } from "${pkg}";` : "",
+    types.length > 0 ? `import type { ${types.join(", ")} } from "${pkg}";` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function registryImportSnippet(importLine: string, registry: string): string {
+  const name = symbolsFromImport(importLine).find((symbol) => !symbol.endsWith("Props") && !symbol.endsWith("Variants"));
+  return `import { ${name ?? "Button"} } from "@/components/ui/${registry}";`;
 }
 
 export async function ComponentPage({
   packageName,
   version,
   status,
-  purpose,
   audience,
   whenToUse,
   whenNotToUse,
@@ -98,68 +109,88 @@ export async function ComponentPage({
   const sourcePath = registrySourcePath(registry);
   const source = sourcePath ? await readFile(sourcePath, "utf8") : null;
   const hasProps = Boolean(propsFile && propsName);
+  const copyable = registry.length > 0;
+  const npmInstall = (
+    <Stack gap={4}>
+      <Text variant="muted" className="text-sm">
+        {copyable ? (
+          <>
+            Install the published package, then import from it. Wire the kit CSS first — see{" "}
+            <Link href="/docs/getting-started#ui-button" className="text-primary underline-offset-4 hover:underline">
+              getting started
+            </Link>
+            .
+          </>
+        ) : (
+          "This component ships on npm only; there is no copy-source registry brick."
+        )}
+      </Text>
+      <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn"]}>
+        <Tab value="pnpm">{await highlightedTs(`pnpm add ${packageName}`, "Install")}</Tab>
+        <Tab value="npm">{await highlightedTs(`npm install ${packageName}`, "Install")}</Tab>
+        <Tab value="yarn">{await highlightedTs(`yarn add ${packageName}`, "Install")}</Tab>
+      </Tabs>
+      {await highlightedTs(importSnippet(importLine), "Import")}
+      <Text variant="muted" className="text-xs">
+        Package version: {version} (changesets).
+      </Text>
+    </Stack>
+  );
 
   return (
     <Stack gap={8}>
-      <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
+      {status !== "stable" ? (
+        <Stack gap={3}>
+          <MaturityBadge status={status} />
+        </Stack>
+      ) : null}
 
-      <Stack gap={3}>
-        <MaturityBadge status={status} />
-        <Text variant="muted">{purpose}</Text>
+      <Stack id="example">
+        <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
       </Stack>
 
-      <Section title="Install or copy">
+      <Stack gap={2} className="text-sm text-muted-foreground">
+        <Text variant="muted">
+          <strong className="font-medium text-foreground">Who:</strong> {audience}
+        </Text>
+        <Text variant="muted">
+          <strong className="font-medium text-foreground">Use when:</strong> {whenToUse}
+        </Text>
+        <Text variant="muted">
+          <strong className="font-medium text-foreground">Avoid when:</strong> {whenNotToUse}
+        </Text>
+      </Stack>
+
+      <Section title="Install or copy" id="install-or-copy">
         <Stack gap={4}>
-          <Tabs groupId="component-adoption" persist items={["npm package", "registry copy"]}>
-            <Tab value="npm package">
-              <Stack gap={4}>
-                <Text variant="muted" className="text-sm">
-                  Install the published package, then import from it. Styles come from the kit CSS you already
-                  wired in your app.
-                </Text>
-                <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn"]}>
-                  <Tab value="pnpm">{await highlightedTs(`pnpm add ${packageName}`, "Install")}</Tab>
-                  <Tab value="npm">{await highlightedTs(`npm install ${packageName}`, "Install")}</Tab>
-                  <Tab value="yarn">{await highlightedTs(`yarn add ${packageName}`, "Install")}</Tab>
-                </Tabs>
-                {await highlightedTs(importSnippet(importLine), "Import")}
-                <Text variant="muted" className="text-xs">
-                  Package version: {version} (changesets).
-                </Text>
-              </Stack>
-            </Tab>
-            <Tab value="registry copy">
-              <Stack gap={4}>
-                <Text variant="muted" className="text-sm">
-                  Copy the brick into your repo with the shadcn CLI. Imports are rewritten for your app; keep this
-                  path separate from the npm package install above.
-                </Text>
-                {await highlightedTs(shadcnAdd, "shadcn add")}
-                {source ? (
-                  <Stack gap={3}>
-                    <RegistryBrickInlineName name={registry} />
-                    {await highlightedTs(source, `${registry}.tsx`)}
-                  </Stack>
-                ) : null}
-              </Stack>
-            </Tab>
-          </Tabs>
+          {copyable ? (
+            <Tabs groupId="component-adoption" persist items={["npm package", "registry copy"]}>
+              <Tab value="npm package">{npmInstall}</Tab>
+              <Tab value="registry copy">
+                <Stack gap={4}>
+                  <Text variant="muted" className="text-sm">
+                    Copy the brick into your repo with the shadcn CLI. Imports are rewritten for your app; keep this
+                    path separate from the npm package install above.
+                  </Text>
+                  {await highlightedTs(shadcnAdd, "shadcn add")}
+                  {await highlightedTs(registryImportSnippet(importLine, registry), "Import")}
+                  {source ? (
+                    <Stack gap={3}>
+                      <RegistryBrickInlineName name={registry} />
+                      {await highlightedTs(source, `${registry}.tsx`)}
+                    </Stack>
+                  ) : null}
+                </Stack>
+              </Tab>
+            </Tabs>
+          ) : (
+            npmInstall
+          )}
         </Stack>
       </Section>
 
-      <Section title="Usage and states">
+      <Section title="Usage and states" id="usage-and-states">
         <Stack gap={6}>
-          <Stack gap={2} className="text-sm text-muted-foreground">
-            <Text variant="muted">
-              <strong className="font-medium text-foreground">Who:</strong> {audience}
-            </Text>
-            <Text variant="muted">
-              <strong className="font-medium text-foreground">Use when:</strong> {whenToUse}
-            </Text>
-            <Text variant="muted">
-              <strong className="font-medium text-foreground">Avoid when:</strong> {whenNotToUse}
-            </Text>
-          </Stack>
           {await Promise.all(
             examples.map(async (ex) => {
               const previewDemo = examplePreviews[ex.title];
@@ -175,20 +206,22 @@ export async function ComponentPage({
         </Stack>
       </Section>
 
-      {hasProps ? (
-        <Section title="Props">
-          <Stack gap={3} id="props">
+      <Section title="Props" id="props">
+        {hasProps ? (
+          <Stack gap={3}>
             <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} />
           </Stack>
-        </Section>
-      ) : null}
+        ) : (
+          <Text variant="muted">No extra props documented.</Text>
+        )}
+      </Section>
 
-      <Section title="Accessibility">
+      <Section title="Accessibility" id="accessibility">
         <Text>{a11y}</Text>
       </Section>
 
-      {related.length > 0 ? (
-        <Section title="Related">
+      <Section title="Related" id="related">
+        {related.length > 0 ? (
           <Stack gap={2}>
             {related.map((link) => (
               <Link key={link.href} href={link.href} className="text-primary underline-offset-4 hover:underline">
@@ -196,14 +229,14 @@ export async function ComponentPage({
               </Link>
             ))}
           </Stack>
-        </Section>
-      ) : null}
+        ) : (
+          <Text variant="muted">No related pages.</Text>
+        )}
+      </Section>
 
-      {troubleshooting ? (
-        <Section title="Troubleshooting">
-          <Text>{troubleshooting}</Text>
-        </Section>
-      ) : null}
+      <Section title="Troubleshooting" id="troubleshooting">
+        <Text>{troubleshooting || "None yet."}</Text>
+      </Section>
     </Stack>
   );
 }

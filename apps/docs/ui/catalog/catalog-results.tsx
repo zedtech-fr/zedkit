@@ -53,7 +53,12 @@ export function CatalogResults({ filtered }: { filtered: CatalogIndexEntry[] }) 
       }
     >
       {filtered.length === 0 ? (
-        <Text variant="muted">No catalog entries match these filters. Clear search or pick another area.</Text>
+        <Stack gap={2}>
+          <Text variant="muted">No catalog entries match these filters.</Text>
+          <Link href="/catalog" className="text-sm text-primary underline-offset-4 hover:underline">
+            Clear filters
+          </Link>
+        </Stack>
       ) : (
         <Stack gap={8} data-catalog-results="">
           {groups.length > 1 ? (

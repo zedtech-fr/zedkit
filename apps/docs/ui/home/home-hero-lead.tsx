@@ -26,15 +26,15 @@ export function HomeHeroLead() {
           className={`max-w-2xl ${HOME_PERSUASION_TEXT_CLASS}`}
           data-home-hero-sub=""
         >
-          An interface made of ready parts, for the app you already have.
+          React components you add to the app you already have.
         </Text>
       </Stack>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-hero-actions>
         <Button asChild>
-          <Link href="#demo">Explore the demo</Link>
+          <Link href="/catalog">Browse components</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link href="#quickstart">Start building</Link>
+          <Link href="#demo">Try the demo</Link>
         </Button>
       </Stack>
       <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>

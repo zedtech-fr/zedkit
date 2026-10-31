@@ -42,7 +42,17 @@ export const GUIDE_NAV_SLUGS = [
 ];
 
 /** Section titles owned by the generator — prose must not repeat them. */
-export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props", "Accessibility"]);
+export const GENERATED_DOC_SECTIONS = new Set([
+  "At a glance",
+  "Preview",
+  "Install",
+  "Install or copy",
+  "Example",
+  "Usage and states",
+  "Props",
+  "Accessibility",
+  "Related",
+]);
 
 function slugify(need) {
   const slug = need
@@ -89,9 +99,10 @@ function metaDescription(need, folder) {
   if (purpose.length === 0) {
     throw new Error(`generator: catalog need "${need.need}" is missing purpose.`);
   }
-  const text =
-    folder === "ui"
-      ? `${purpose} Install with npm or copy published registry bricks.`
+  const text = need.registry
+    ? `${purpose} Install with npm or copy published registry bricks.`
+    : folder === "ui"
+      ? `${purpose} Install with npm.`
       : purpose;
   return truncateDescription(text);
 }
@@ -195,24 +206,21 @@ function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
   const pageTitle = need.shortName ?? need.need;
   const propsPriority = spec.propsPriority ?? null;
-  const seeAlsoLinks = related.map((link) => `[${link.title}](${link.href})`);
   const maturity = maturityDocParts(need);
   const head = [
     "---",
     `title: ${JSON.stringify(pageTitle)}`,
     `description: ${JSON.stringify(metaDescription(need, folder))}`,
     ...maturity.frontmatterStatus,
+    "componentPage: true",
     "---",
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
   ];
-  if (maturity.badgeImport) head.push(maturity.badgeImport);
   head.push(
     `import { ComponentPage } from "../../../components/component-page";`,
     "",
-    ...maturity.badgeLine,
-    ...guidanceBlock(need, seeAlsoLinks),
     "<ComponentPage",
     `  packageName={${JSON.stringify(pkg)}}`,
     `  version={${JSON.stringify(version)}}`,
@@ -223,7 +231,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
     `  whenNotToUse={${JSON.stringify(need.whenNotToUse)}}`,
     `  importLine={${JSON.stringify(need.import)}}`,
     `  wraps={${JSON.stringify(need.wraps)}}`,
-    `  registry={${JSON.stringify(spec.registry)}}`,
+    `  registry={${JSON.stringify(spec.registry ?? "")}}`,
     `  demo={${JSON.stringify(spec.demo)}}`,
     `  propsFile={${JSON.stringify(spec.propsFile)}}`,
     `  propsName={${JSON.stringify(spec.propsName)}}`,
@@ -481,10 +489,9 @@ export function generate(outDir) {
       const links = related.map((r) => `[${r.title}](${r.href})`);
       const prose = readProse(folder, slug);
       if (prose) prosePages += 1;
-      const body =
-        richBlock?.registry
-          ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry }, related, prose, folder)
-          : pageMdx(pkg, need, version, richBlock, links, prose, folder);
+      const body = richBlock
+        ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry ?? "" }, related, prose, folder)
+        : pageMdx(pkg, need, version, richBlock, links, prose, folder);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
       llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);

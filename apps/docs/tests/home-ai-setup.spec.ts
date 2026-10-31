@@ -36,6 +36,6 @@ test.describe("home AI setup block (#398)", () => {
       "href",
       "#ai-setup",
     );
-    await expect(page.getByRole("link", { name: "Start building" })).toHaveAttribute("href", "#quickstart");
+    await expect(page.getByRole("link", { name: "Try the demo" })).toHaveAttribute("href", "#demo");
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 
 import { DOCS_TYPE_BODY_CLASS, DOCS_TYPE_H3_CLASS, DOCS_TYPE_LABEL_CLASS } from "@/lib/docs-type-roles";
@@ -73,20 +73,49 @@ export function AdminDashboardDemoApp({
   const [selectedId, setSelectedId] = useState<string | null>(seedApps[0]?.id ?? null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
 
   const selectedApp = selectedId ? apps.find((row) => row.id === selectedId) : undefined;
+
+  function rememberOpener() {
+    const active = document.activeElement;
+    openerRef.current = active instanceof HTMLElement ? active : null;
+  }
+
+  function restoreOpener() {
+    const remembered = openerRef.current;
+    const aria = remembered?.getAttribute("aria-label");
+    const text = remembered?.textContent?.trim() ?? "";
+    const find = () => {
+      if (remembered && document.contains(remembered)) return remembered;
+      const scope = document.querySelector(`[aria-label="${CSS.escape(label)}"]`);
+      if (!scope) return null;
+      if (aria) return scope.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(aria)}"]`);
+      return text
+        ? ([...scope.querySelectorAll("button")].find((el) => el.textContent?.trim() === text) ?? null)
+        : null;
+    };
+    // Table cells remount when the drawer state updates, so wait a frame then re-query.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        find()?.focus({ preventScroll: true });
+      });
+    });
+  }
 
   const form = useValidatedForm(formSchema, {
     defaultValues: { name: "", region: "eu" },
   });
 
   function openCreate() {
+    rememberOpener();
     setEditingId(null);
     form.reset({ name: "", region: "eu" });
     setDrawerOpen(true);
   }
 
   function openEdit(row: AdminAppRow) {
+    rememberOpener();
     setEditingId(row.id);
     form.reset({ name: row.name, region: row.region });
     setDrawerOpen(true);
@@ -220,8 +249,20 @@ export function AdminDashboardDemoApp({
         </Stack>
       </Stack>
 
-      <Drawer open={drawerOpen} onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())} direction="right">
-        <DrawerContent>
+      <Drawer
+        open={drawerOpen}
+        onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())}
+        onAnimationEnd={(open) => {
+          if (!open) restoreOpener();
+        }}
+        direction="right"
+      >
+        <DrawerContent
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            restoreOpener();
+          }}
+        >
           <DrawerHandle />
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">

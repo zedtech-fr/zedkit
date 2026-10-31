@@ -93,6 +93,7 @@
     "Open modal dialogs": {
       "package": "@zedtech/zedkit-ui",
       "component": "Dialog",
+      "registry": "dialog",
       "props": "DialogProps",
       "source": "dialog.tsx",
       "demo": "DialogDemo",

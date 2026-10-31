@@ -48,6 +48,42 @@ test("home dashboard: create, edit, delete with axe on ready state", async ({ pa
   await expect(demo.getByRole("cell", { name: "playwright-app-edited", exact: true })).toHaveCount(0);
 });
 
+test("home dashboard: closing the create drawer restores focus to Add app", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+  await expect(demo).toBeVisible();
+  const add = demo.getByRole("button", { name: "Add app" });
+  await add.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible({ timeout: 10_000 });
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(add).toBeFocused();
+});
+
+test("home dashboard: create success restores focus to Add app", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+  const add = demo.getByRole("button", { name: "Add app" });
+  await add.click();
+  await page.getByRole("dialog").getByLabel("Name").fill("focus-return");
+  await page.getByRole("button", { name: "Create app" }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(add).toBeFocused();
+});
+
+test("home dashboard: canceling edit restores focus to the edit trigger", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+  const edit = demo.getByRole("button", { name: "Edit console" });
+  await edit.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Cancel" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(edit).toBeFocused();
+});
+
 test("home dashboard: preview modes are keyboard reachable", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
   const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");

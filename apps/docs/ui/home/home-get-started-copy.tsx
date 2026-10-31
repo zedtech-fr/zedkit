@@ -31,15 +31,15 @@ export function HomeGetStartedCopy({
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0">
-      <Heading level={3}>Set up your coding agent</Heading>
-      <HomeGetStartedAiBlock initCommand={initCommand} />
       <Heading level={3}>Install it or copy it</Heading>
       <HomeGetStartedInstallBlock
         packageInstallCmd={packageInstallCmd}
         registryInstallCmd={registryInstallCmd}
         registryComponentCount={registryComponentCount}
       />
-      <Heading level={3}>UI quickstart</Heading>
+      <Heading level={3} id="quickstart" className="scroll-mt-24">
+        UI quickstart
+      </Heading>
       <HomeGetStartedQuickstartBlock
         npmInstallCmd={npmInstallCmd}
         npmGlobalsCss={npmGlobalsCss}
@@ -48,6 +48,8 @@ export function HomeGetStartedCopy({
         registryAddCmd={registryAddCmd}
         registryPageTsx={registryPageTsx}
       />
+      <Heading level={3}>Set up your coding agent</Heading>
+      <HomeGetStartedAiBlock initCommand={initCommand} />
     </Stack>
   );
 }

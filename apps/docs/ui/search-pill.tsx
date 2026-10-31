@@ -12,12 +12,18 @@ const SearchPillBody = dynamic(() => import("@/ui/search-pill-body").then((mod) 
 
 /** Phone search: magnifier opens a top-anchored bar and results sheet (see search-pill-controller). */
 export function SearchPill() {
-  const { open, close, openSearch, bar, overlay, toggle } = useSearchPill();
+  const { open, close, openSearch, bar, overlay, toggle, root, dialog } = useSearchPill();
 
   return (
-    <div className="md:hidden" data-search-pill>
+    <div ref={root} className="md:hidden" data-search-pill>
       {open ? (
-        <>
+        <div
+          ref={dialog}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search the documentation"
+          className="fixed inset-0 z-overlay"
+        >
           <button
             ref={overlay}
             type="button"
@@ -42,7 +48,7 @@ export function SearchPill() {
               <SearchPillBody onClose={close} />
             </div>
           </div>
-        </>
+        </div>
       ) : null}
       <div
         className={`fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-overlay ${open ? "invisible" : ""}`}

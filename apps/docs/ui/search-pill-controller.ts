@@ -53,6 +53,8 @@ export function useSearchPill() {
   const bar = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLButtonElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const root = useRef<HTMLDivElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(false);
   const closing = useRef(false);
   useTopAnchor(open, bar);
@@ -115,13 +117,78 @@ export function useSearchPill() {
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape") {
+        close();
+        return;
+      }
+      if (event.key === "Tab") trapTab(event, dialog.current);
     };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
   }, [open, close]);
+
+  useEffect(() => {
+    if (!open || !root.current) return;
+    return inertOutside(root.current);
+  }, [open]);
 
   const openSearch = useCallback(() => setOpen(true), []);
 
-  return { open, close, openSearch, bar, overlay, toggle };
+  return { open, close, openSearch, bar, overlay, toggle, root, dialog };
+}
+
+const TAB_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function tabbables(root: HTMLElement): HTMLElement[] {
+  return [...root.querySelectorAll<HTMLElement>(TAB_SELECTOR)].filter((element) => {
+    if (element.tabIndex < 0) return false;
+    const style = getComputedStyle(element);
+    return style.visibility !== "hidden" && style.display !== "none" && element.getClientRects().length > 0;
+  });
+}
+
+function trapTab(event: KeyboardEvent, root: HTMLElement | null): void {
+  if (!root) return;
+  const items = tabbables(root);
+  if (items.length === 0) {
+    event.preventDefault();
+    return;
+  }
+  const first = items[0]!;
+  const last = items[items.length - 1]!;
+  const active = document.activeElement;
+  if (!root.contains(active)) {
+    event.preventDefault();
+    first.focus();
+    return;
+  }
+  if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus();
+    return;
+  }
+  if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+/** Hide the rest of the page from keyboard and AT while the dimmed search is open. */
+function inertOutside(keep: HTMLElement): () => void {
+  const mutated: HTMLElement[] = [];
+  let node: HTMLElement | null = keep;
+  while (node && node !== document.body) {
+    const parent: HTMLElement | null = node.parentElement;
+    if (!parent) break;
+    for (const sibling of parent.children) {
+      if (sibling === node || !(sibling instanceof HTMLElement) || sibling.inert) continue;
+      sibling.inert = true;
+      mutated.push(sibling);
+    }
+    node = parent;
+  }
+  return () => {
+    for (const element of mutated) element.inert = false;
+  };
 }

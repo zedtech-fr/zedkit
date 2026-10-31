@@ -117,7 +117,7 @@ test("catalog results group by category without per-row area chips", async ({ pa
   await page.setViewportSize(MOBILE);
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 3 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /^Backend · \d+$/, level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Core & server · \d+$/, level: 3 })).toBeVisible();
   await expect(page.locator("[data-catalog-area]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
@@ -183,6 +183,16 @@ test.describe("catalog result maturity chips light/dark", () => {
   }
 });
 
+test("catalog search keeps every letter while typing", async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
+  const search = page.getByRole("searchbox", { name: "Catalog search" });
+  await search.click();
+  await page.keyboard.type("dialog", { delay: 50 });
+  await expect(search).toHaveValue("dialog");
+  await expect(page).toHaveURL(/q=dialog/);
+});
+
 test("catalog filters persist in the URL and show empty state", async ({ page }) => {
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Catalog", level: 1 })).toBeVisible();
@@ -191,6 +201,9 @@ test("catalog filters persist in the URL and show empty state", async ({ page })
   await page.getByRole("searchbox", { name: "Catalog search" }).fill("zzzz-no-match-zzzz");
   await expect(page).toHaveURL(/q=zzzz/);
   await expect(page.getByText("No catalog entries match")).toBeVisible();
+  await page.getByRole("link", { name: "Clear filters" }).click();
+  await expect(page).toHaveURL(/\/catalog\/?$/);
+  await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 3 })).toBeVisible();
 });
 
 test("home links to catalog with curated grid", async ({ page }) => {

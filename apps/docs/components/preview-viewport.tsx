@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Button, Stack, Text, cn } from "@zedtech/zedkit-ui";
 import { DemoStyleSelect, usePinnedLook } from "@/components/demo-style-scope";
@@ -37,10 +37,13 @@ export function PreviewViewport({
   const mounted = useSyncExternalStore(noop, () => true, () => false);
   const [dark, setDark] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const modePinned = useRef(false);
   const demoStyle = usePinnedLook();
 
   useEffect(() => {
-    if (mounted) setDark(resolvedTheme === "dark");
+    if (!mounted || modePinned.current || resolvedTheme == null) return;
+    setDark(resolvedTheme === "dark");
+    modePinned.current = true;
   }, [mounted, resolvedTheme]);
 
   const darkScope = dark ? "dark" : undefined;
@@ -72,7 +75,10 @@ export function PreviewViewport({
         <Button
           variant={dark ? "outline" : "secondary"}
           size="sm"
-          onClick={() => setDark(false)}
+          onClick={() => {
+            modePinned.current = true;
+            setDark(false);
+          }}
           aria-pressed={!dark}
         >
           Light
@@ -80,7 +86,10 @@ export function PreviewViewport({
         <Button
           variant={dark ? "secondary" : "outline"}
           size="sm"
-          onClick={() => setDark(true)}
+          onClick={() => {
+            modePinned.current = true;
+            setDark(true);
+          }}
           aria-pressed={dark}
         >
           Dark

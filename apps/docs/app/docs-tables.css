@@ -6,7 +6,7 @@
 #nd-docs-layout [data-docs-table] {
   max-width: 100%;
   min-width: 0;
-  overflow-x: clip;
+  overflow-x: auto;
 }
 
 #nd-docs-layout [data-docs-table] tbody td {
@@ -97,12 +97,18 @@
     overflow-x: auto;
   }
 
+  #nd-docs-layout [data-docs-table] tbody td:nth-child(2) code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
   #nd-docs-layout [data-docs-table] tbody td:nth-child(2):not(:last-child) {
     font-family: var(--zk-font-mono, ui-monospace, monospace);
     font-size: 0.8125rem;
     color: hsl(var(--muted-foreground));
-    white-space: nowrap;
-    overflow-x: auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow-x: visible;
   }
 
   #nd-docs-layout [data-docs-table] tbody td:nth-child(2):last-child,

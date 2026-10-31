@@ -1,6 +1,7 @@
 import {
   Button,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -47,7 +48,9 @@ export function DialogTallDemo() {
           <Input aria-label="Note" placeholder="Add a note for the team" />
         </Stack>
         <DialogFooter>
-          <Button>Done</Button>
+          <DialogClose asChild>
+            <Button>Done</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -119,6 +119,40 @@ test("getting started package table links backend row to Quickstart paths", asyn
   await expect(page.getByRole("heading", { name: "Path C — core helpers (npm only)", level: 3 })).toBeVisible();
 });
 
+test("getting started install cards keep their explanation visible at phone widths", async ({ page }) => {
+  for (const width of [320, 360, 390] as const) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(`${BASE}/docs/getting-started#install-or-copy`, { waitUntil: "networkidle" });
+    const host = page
+      .locator("[data-docs-table]")
+      .filter({ has: page.getByRole("columnheader", { name: "Command" }) });
+    await host.scrollIntoViewIfNeeded();
+    const clipped = await host.evaluate((node) => {
+      const hostRect = node.getBoundingClientRect();
+      const overflowX = getComputedStyle(node).overflowX;
+      const hits: string[] = [];
+      if (overflowX === "clip" || overflowX === "hidden") {
+        const table = node.querySelector("table");
+        if (table && table.scrollWidth > node.clientWidth + 1) {
+          hits.push("parent clip hides table");
+        }
+      }
+      for (const cell of node.querySelectorAll("td")) {
+        const text = (cell.textContent ?? "").trim().slice(0, 48);
+        const rect = cell.getBoundingClientRect();
+        if (rect.right > hostRect.right + 1 && overflowX !== "auto" && overflowX !== "scroll") {
+          hits.push(text);
+        }
+      }
+      return { overflowX, hits };
+    });
+    expect(clipped.hits, `${width}px ${JSON.stringify(clipped)}`).toEqual([]);
+    await expect(host.getByRole("link", { name: "Updating copied files" })).toBeVisible();
+    await host.getByRole("link", { name: "Updating copied files" }).focus();
+    await expect(host.getByRole("link", { name: "Updating copied files" })).toBeFocused();
+  }
+});
+
 test("getting started package table keeps a decorative area icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });

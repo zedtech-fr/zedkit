@@ -30,7 +30,7 @@ test.describe("home install or copy section", () => {
     const blockBox = await installOrCopy.boundingBox();
     const componentsBox = await components.boundingBox();
     expect(aiBox && blockBox && componentsBox).toBeTruthy();
-    expect(blockBox!.y).toBeGreaterThan(aiBox!.y);
+    expect(blockBox!.y).toBeLessThan(aiBox!.y);
     expect(blockBox!.y).toBeLessThan(componentsBox!.y);
 
     await page.getByRole("button", { name: "Copy package install command" }).click();

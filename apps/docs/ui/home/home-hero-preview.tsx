@@ -29,9 +29,9 @@ export function HomeHeroPreview() {
         >
           <Card
             data-home-dashboard-card
-            className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border shadow-sm"
+            className="flex min-h-0 min-w-0 flex-col border shadow-sm"
           >
-            <Stack className="min-h-0 min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
+            <Stack className="min-w-0">
               <HomeAdminDashboardDemo label="Interactive admin dashboard demo in the hero" />
             </Stack>
           </Card>

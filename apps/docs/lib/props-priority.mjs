@@ -2,8 +2,10 @@
 export const DEFAULT_PROPS_PRIORITY = ["variant", "size", "asChild"];
 
 /**
- * @param {{ name: string }[]} entries
- * @param {string[]} priority
+ * @template {{ name: string }} T
+ * @param {T[]} entries
+ * @param {string[]} [priority]
+ * @returns {{ primary: T[], inherited: T[] }}
  */
 export function partitionPropsEntries(entries, priority = DEFAULT_PROPS_PRIORITY) {
   const order = new Map(priority.map((name, index) => [name, index]));

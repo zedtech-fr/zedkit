@@ -32,7 +32,7 @@ export function HomeGetStartedQuickstartBlock({
         registryPageTsx={registryPageTsx}
       />
       <Button asChild variant="outline" className="w-fit">
-        <Link href="/docs/getting-started#quickstart">
+        <Link href="/docs/getting-started#ui-button">
           <DocsActionLabel>Open the full UI quickstart</DocsActionLabel>
         </Link>
       </Button>

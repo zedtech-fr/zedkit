@@ -11,12 +11,13 @@ hand-written props or export lists.
 | --- | --- | --- |
 | 0 | Maturity badge + purpose line | Generated props on `ComponentPage` |
 | 1 | Preview / Code | `ComponentPreview` / demo registry (before any install copy) |
-| 2 | Install or copy | npm package path + registry copy path (separate tabs) |
-| 3 | Usage and states | Catalog guidance fields + `examples[]` + collapsed exports |
-| 4 | Props | `AutoTypeTable` with kit props first; inherited HTML attrs folded |
-| 5 | Accessibility | Catalog `- A11y:` |
-| 6 | Related | Catalog `seeAlso` → doc links |
-| 7 | Troubleshooting | Catalog `- Troubleshooting:` |
+| 2 | Who / Use / Avoid | Catalog guidance once, after the specimen |
+| 3 | Install or copy | npm package path + registry copy path (separate tabs; npm-only omits copy) |
+| 4 | Usage and states | Catalog `examples[]` + collapsed exports |
+| 5 | Props | Kit props first from source types; inherited HTML attrs folded |
+| 6 | Accessibility | Catalog `- A11y:` |
+| 7 | Related | Catalog `seeAlso` → doc links |
+| 8 | Troubleshooting | Catalog `- Troubleshooting:` |
 
 Page title uses catalog `Short name` (for example **Button**), not the need heading.
 
