@@ -24,6 +24,10 @@ export const HOME_SECTION_REVEAL_CLASS =
 export const HOME_HERO_PREVIEW_SHELL_CLASS =
   "h-80 w-full shrink-0 overflow-hidden lg:h-96";
 
+/** Bounded live preview inside home gallery cards (min height reserves space while lazy chunks load). */
+export const HOME_GALLERY_PREVIEW_SHELL_CLASS =
+  "min-h-32 w-full min-w-0 overflow-hidden rounded-md border bg-background p-3";
+
 /** Persuasion copy on the home page (maps to `--zk-type-body-*`). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 

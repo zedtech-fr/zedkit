@@ -19,6 +19,7 @@ test("home gallery loads overlay demos through next/dynamic", () => {
   assert.match(src, /from "next\/dynamic"/);
   assert.doesNotMatch(src, /from ["']@\/components\/demos\/confirm-dialog-demo["']/);
   assert.doesNotMatch(src, /from ["']@\/components\/demos\/drawer-demo["']/);
+  assert.match(src, /home-gallery-preview/);
   assert.doesNotMatch(src, /home-admin-dashboard-demo/);
 });
 

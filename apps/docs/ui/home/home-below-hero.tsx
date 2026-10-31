@@ -1,38 +1,18 @@
 import Link from "next/link";
-import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Section, Stack } from "@zedtech/zedkit-ui";
 import { CatalogActionLabel } from "@/components/docs-action-label";
-import { MaturityBadge } from "@/components/maturity-badge";
 import type { GalleryCard } from "@/content/gallery";
-import { homeGalleryDemos } from "@/components/home-gallery-demos";
 import type { HomeScenario } from "@/content/home-scenarios";
 import type { HomeEntryPoint } from "@/content/home-entry-points";
 import { HomeEntryPointsSection } from "@/ui/home/home-entry-points-section";
+import { HomeGalleryCard } from "@/ui/home/home-gallery-card";
 import { HomeProofs } from "@/ui/home/home-proofs";
 import { HomeScenariosSection } from "@/ui/home/home-scenarios-section";
 import {
   HOME_CARD_GRID_THREE_COL,
   HOME_MARKETING_ROOT_PROPS,
-  HOME_CARD_TITLE_CLASS,
-  HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
-
-function GalleryEntry({ card, className = "min-w-0" }: { card: GalleryCard; className?: string }) {
-  const Demo = card.demo ? homeGalleryDemos[card.demo] : undefined;
-  return (
-    <Card className={className}>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle className={HOME_CARD_TITLE_CLASS}>
-          <Link href={card.href}>{card.title}</Link>
-        </CardTitle>
-        <MaturityBadge status={card.status} />
-      </CardHeader>
-      <CardContent>
-        {Demo ? <Demo /> : <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>{card.detail}</Text>}
-      </CardContent>
-    </Card>
-  );
-}
 
 export type HomeBelowHeroProps = {
   curatedGallery: GalleryCard[];
@@ -77,10 +57,10 @@ export function HomeBelowHero({
         <Stack gap={HOME_SECTION_CONTENT_GAP}>
           <Stack className={HOME_CARD_GRID_THREE_COL}>
             {curatedGallery.map((card, index) => (
-              <GalleryEntry
+              <HomeGalleryCard
                 key={card.href}
                 card={card}
-                className={index >= 3 ? "hidden min-w-0 md:flex md:flex-col" : "min-w-0"}
+                className={index >= 3 ? "max-md:hidden min-w-0" : "min-w-0"}
               />
             ))}
           </Stack>
