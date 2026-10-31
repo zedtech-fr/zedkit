@@ -97,7 +97,6 @@ export function WizardSteps({ steps, current, className }: WizardStepsProps) {
   const messages = useUiMessages();
   const active = clampStepIndex(current, steps.length);
   const title = steps[active] ?? "";
-  const progress = steps.length > 0 ? ((active + 1) / steps.length) * 100 : 0;
 
   return (
     <div data-slot="wizard-steps" className={cn("min-w-0 space-y-3", className)}>
@@ -115,9 +114,18 @@ export function WizardSteps({ steps, current, className }: WizardStepsProps) {
           aria-valuemin={1}
           aria-valuemax={steps.length}
           aria-valuenow={active + 1}
-          className="h-progress-bar-height w-full overflow-hidden rounded-full bg-muted"
+          className="flex w-full gap-progress-bar-gap"
         >
-          <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
+          {steps.map((step, index) => (
+            <span
+              key={step}
+              aria-hidden
+              className={cn(
+                "h-progress-bar-height flex-1 rounded-full motion-safe:transition-colors",
+                index <= active ? "bg-primary" : "bg-muted",
+              )}
+            />
+          ))}
         </div>
       </div>
       <Wizard className="hidden sm:flex">
