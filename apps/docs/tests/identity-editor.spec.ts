@@ -630,7 +630,7 @@ test.describe("identity editor named looks", () => {
     await page.getByRole("button", { name: "Rename" }).click();
     await expect(look).toHaveValue("n-coral");
     await page.getByRole("button", { name: "Delete" }).click();
-    await expect(page.getByLabel("Look")).toHaveValue("mist");
+    await expect(page.getByLabel("Look")).toHaveValue(DEFAULT_IDENTITY);
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   });
 
