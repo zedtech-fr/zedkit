@@ -47,8 +47,9 @@ describe("per-identity leading, border, colour duration (#799)", () => {
       volt: read("identities/volt.css"),
     };
     const sharedBase = token(shared, "--text-base") ?? "";
-    expect(token(shared, "--text-sm") ?? "").toBe("0.875rem");
-    expect(token(shared, "--text-lg") ?? "").toBe("1.125rem");
+    expect(token(shared, "--text-sm") ?? "").toBe("0.8125rem");
+    expect(token(shared, "--text-base") ?? "").toBe("0.875rem");
+    expect(token(shared, "--text-lg") ?? "").toBe("1.0625rem");
     expect(token(looks.mist, "--text-sm") ?? "").toBe("0.875rem");
     expect(token(looks.mist, "--text-lg") ?? "").toBe("1.125rem");
     expect(token(looks.mist, "--tracking-tight") ?? "").toBe("-0.025em");
@@ -61,7 +62,10 @@ describe("per-identity leading, border, colour duration (#799)", () => {
     for (const css of scaleCss) {
       const rem = steps.map((name) => {
         const raw = token(css, name) ?? "0";
-        if (raw.includes("var(--zk-type-base)")) return 1;
+        if (raw.startsWith("clamp(")) {
+          const min = raw.match(/clamp\(\s*([\d.]+rem)/)?.[1];
+          return min ? Number.parseFloat(min) : 0;
+        }
         return Number.parseFloat(raw);
       });
       for (let i = 1; i < rem.length; i++) {
@@ -77,12 +81,12 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         seen.set(value, id);
       }
     }
-    expect(sharedBase).toBe("var(--zk-type-base)");
+    expect(sharedBase).toBe("0.875rem");
   });
 
   it("sets a distinct border and colour duration per identity (body leading is shared)", () => {
     const shared = read("shared-type-scale.css");
-    expect(token(shared, "--zk-body-leading")).toBe("1.6");
+    expect(token(shared, "--zk-body-leading")).toBe("1.55");
     expect(token(read("identities/press.css"), "--zk-border-width")).toBe("2px");
     expect(token(read("identities/press.css"), "--zk-color-duration")).toBe("80ms");
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");

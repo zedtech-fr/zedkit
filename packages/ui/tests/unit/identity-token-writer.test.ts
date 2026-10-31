@@ -86,7 +86,8 @@ describe("identity token schema", () => {
         expect(preset[field]).toBe(cssToken(css, name));
       }
       for (const [field, name] of sharedLeading) {
-        const fromCss = id === "mist" ? cssToken(css, name) : cssToken(sharedScale, name);
+        const fromCss =
+          field === "bodyLeading" || id !== "mist" ? cssToken(sharedScale, name) : cssToken(css, name);
         const expected = fromCss === "initial" ? "1.1" : fromCss;
         expect(preset[field]).toBe(expected);
       }
@@ -115,7 +116,7 @@ describe("token to CSS var writer", () => {
     expect(css).toContain("--spacing: 0.2rem");
     expect(css).toContain("--zk-border-width: 2px");
     expect(css).toContain("--radius: 0px");
-    expect(css).toContain("--zk-body-leading: 1.6");
+    expect(css).toContain("--zk-body-leading: 1.55");
     expect(css).toContain("--zk-heading-tracking: -0.015em");
     expect(css).toContain("--background: 45 35% 94%");
     expect(css).toContain("--zk-shadow-sm: 0 0 0 0 transparent");
