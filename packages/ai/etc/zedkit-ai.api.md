@@ -23,8 +23,8 @@ export function installKit(options: InstallOptions): Result<Action[]>;
 export type InstallOptions = {
     dest: string;
     preset?: string;
-    providers?: Provider[];
-    targets?: Target[];
+    providers?: readonly (Provider | string)[];
+    targets?: readonly (Provider | string)[];
     dryRun?: boolean;
     kit?: string;
 };
@@ -35,8 +35,8 @@ export type Issue = {
     message: string;
 };
 
-// @public (undocumented)
-export type Provider = "claude" | "cursor" | "codex" | "muse";
+// @public
+export type Provider = "claude" | "cursor" | "codex";
 
 // @public @deprecated (undocumented)
 export type Target = Provider;

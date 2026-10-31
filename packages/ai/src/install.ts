@@ -17,20 +17,26 @@ import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { parseFrontmatter } from "./frontmatter.js";
 import { kitDir, readManifest, type KitManifest } from "./kit.js";
 
-export type Provider = "claude" | "cursor" | "codex" | "muse";
+/** Providers that get an installer layer or shared-source wiring. */
+export type Provider = "claude" | "cursor" | "codex";
 
 /** @deprecated Use {@link Provider}. Kept so `--target` and old callers keep working. */
 export type Target = Provider;
+
+/** Shared-source runtime id (not part of the public {@link Provider} union). */
+type SharedSourceProvider = "muse";
+
+type WireProvider = Provider | SharedSourceProvider;
 
 export type InstallOptions = {
   /** Project directory to install into. */
   dest: string;
   /** Preset name from kit.json. Default `core`. */
   preset?: string;
-  /** Providers to wire. Default: all. */
-  providers?: Provider[];
+  /** Providers to wire. Default: all supported runtimes. Extra runtime ids are accepted at runtime. */
+  providers?: readonly (Provider | string)[];
   /** @deprecated Use `providers`. */
-  targets?: Target[];
+  targets?: readonly (Provider | string)[];
   /** Report what would happen without touching the disk. */
   dryRun?: boolean;
   /** Custom kit directory (default: the bundled kit). */
@@ -44,8 +50,8 @@ export type Action = {
   note?: string;
 };
 
-/** Every provider the installer can wire; the CLI accepts these plus `all`. */
-export const ALL_PROVIDERS: Provider[] = ["claude", "cursor", "codex", "muse"];
+/** Every runtime the installer can wire; the CLI accepts these plus `all`. */
+export const ALL_PROVIDERS: readonly WireProvider[] = ["claude", "cursor", "codex", "muse"];
 
 const CURSOR_RULE = `---
 description: Project rules
@@ -254,7 +260,7 @@ function wireCursor(ctx: Ctx, content: ReturnType<typeof plan>): void {
   writeCursorRule(ctx);
 }
 
-function wireProvider(ctx: Ctx, provider: Provider, content: ReturnType<typeof plan>): void {
+function wireProvider(ctx: Ctx, provider: WireProvider, content: ReturnType<typeof plan>): void {
   if (provider === "claude") wireClaude(ctx);
   else if (provider === "cursor") wireCursor(ctx, content);
   // codex and muse read the shared source directly (AGENTS.md plus
@@ -279,7 +285,8 @@ export function installKit(options: InstallOptions): Result<Action[]> {
   const run = tryCatch(() => {
     const content = plan(kit, manifest.value, options.preset ?? "core");
     installContent(ctx, content);
-    for (const provider of options.providers ?? options.targets ?? ALL_PROVIDERS) {
+    const chosen = (options.providers ?? options.targets ?? ALL_PROVIDERS) as WireProvider[];
+    for (const provider of chosen) {
       wireProvider(ctx, provider, content);
     }
   });

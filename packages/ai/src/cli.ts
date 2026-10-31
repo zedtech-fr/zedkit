@@ -44,13 +44,13 @@ function parse(args: string[], options: Record<string, never> | typeof OPTIONS, 
   return ok(parsed.value as Parsed);
 }
 
-function parseProviders(value: string | boolean | undefined): Result<Provider[] | undefined> {
+function parseProviders(value: string | boolean | undefined): Result<readonly (Provider | string)[] | undefined> {
   if (value === undefined) return ok(undefined);
   const names = String(value).split(",").map((s) => s.trim());
   if (names.includes("all")) return ok(undefined);
   const bad = names.find((n) => !ALL_PROVIDERS.some((p) => p === n));
   if (bad !== undefined) return err(new Error(`unknown provider "${bad}" (cursor, claude, codex, muse, all)`));
-  return ok(names as Provider[]);
+  return ok(names);
 }
 
 function fail(message: string, sinks: Sinks): number {
