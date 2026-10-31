@@ -293,7 +293,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 
 ## Collect text input with a label
 
-- Import: `@zedtech/zedkit-ui` — `Input`, `Label`
+- Import: `@zedtech/zedkit-ui` — `Input`, `InputProps`, `Label`
 - Wraps: `@radix-ui/react-label`
 - Status: beta
 - Short name: Input
@@ -887,7 +887,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHea
 
 ## Float extra content next to a control
 
-- Import: `@zedtech/zedkit-ui` — `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`
+- Import: `@zedtech/zedkit-ui` — `Popover`, `PopoverProps`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`
 - Wraps: `@radix-ui/react-popover`
 - Status: alpha
 - Derived from: shadcn/ui (popover)
@@ -912,7 +912,7 @@ import { Button, Heading, Popover, PopoverContent, PopoverTrigger, Text } from "
 
 ## Name a control on hover
 
-- Import: `@zedtech/zedkit-ui` — `Tooltip`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`
+- Import: `@zedtech/zedkit-ui` — `Tooltip`, `TooltipProps`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`
 - Wraps: `@radix-ui/react-tooltip`
 - Status: alpha
 - Derived from: shadcn/ui (tooltip)
@@ -934,7 +934,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@zedtech/zedkit
 
 ## Open a menu of actions from a button
 
-- Import: `@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`
+- Import: `@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuProps`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`
 - Wraps: `@radix-ui/react-dropdown-menu`
 - Status: alpha
 - Derived from: shadcn/ui (dropdown-menu)
@@ -1258,7 +1258,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 
 ## Lay out fieldsets, fields, and error lists
 
-- Import: `@zedtech/zedkit-ui` — `FieldSet`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`
+- Import: `@zedtech/zedkit-ui` — `FieldSet`, `FieldSetProps`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`
 - Wraps: none (presentational over `Label`, `Separator`)
 - Status: beta
 - Derived from: shadcn/ui (field)
@@ -1442,7 +1442,7 @@ import { BrandLogo } from "@zedtech/zedkit-ui";
 
 ## Pick one option from a dropdown
 
-- Import: `@zedtech/zedkit-ui` — `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
+- Import: `@zedtech/zedkit-ui` — `Select`, `SelectProps`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
 - Wraps: `@radix-ui/react-select`
 - Status: beta
 - Derived from: shadcn/ui (select)
@@ -1503,7 +1503,7 @@ const tags: ComboboxOption[] = [{ value: "docs", label: "Docs" }];
 
 ## Collect multi-line text input
 
-- Import: `@zedtech/zedkit-ui` — `Textarea`
+- Import: `@zedtech/zedkit-ui` — `Textarea`, `TextareaProps`
 - Wraps: none (styled native `textarea`)
 - Status: beta
 - Derived from: shadcn/ui (textarea)
@@ -1523,7 +1523,7 @@ import { Label, Textarea } from "@zedtech/zedkit-ui";
 
 ## Toggle a checkbox or a switch
 
-- Import: `@zedtech/zedkit-ui` — `Checkbox`, `Switch`
+- Import: `@zedtech/zedkit-ui` — `Checkbox`, `CheckboxProps`, `Switch`
 - Wraps: `@radix-ui/react-checkbox`, `@radix-ui/react-switch`
 - Status: beta
 - Derived from: shadcn/ui (checkbox, switch)

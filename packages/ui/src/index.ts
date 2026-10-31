@@ -14,7 +14,7 @@ export {
 export { IconButton, type IconButtonProps } from "./icon-button.js";
 export { ConfirmDialog, type ConfirmDialogProps } from "./confirm-dialog.js";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, type CardProps } from "./card.js";
-export { Checkbox } from "./checkbox.js";
+export { Checkbox, type CheckboxProps } from "./checkbox.js";
 export {
   DataTable,
   DataTableEmpty,
@@ -42,6 +42,7 @@ export {
 } from "./dialog.js";
 export {
   DropdownMenu,
+  type DropdownMenuProps,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -80,6 +81,7 @@ export {
   FieldLegend,
   FieldSeparator,
   FieldSet,
+  type FieldSetProps,
   FieldTitle,
 } from "./field.js";
 export {
@@ -96,7 +98,7 @@ export {
 export { FormSubmit, type FormSubmitProps } from "./form-submit.js";
 export { useValidatedForm } from "./use-validated-form.js";
 export { IconLabel, type IconLabelProps } from "./icon-label.js";
-export { Input } from "./input.js";
+export { Input, type InputProps } from "./input.js";
 export { Label, type LabelProps } from "./label.js";
 export {
   Container,
@@ -127,12 +129,13 @@ export {
   type OptionCardsProps,
 } from "./option-cards.js";
 export { PageHeader, type PageHeaderProps } from "./page-header.js";
-export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
+export { Popover, type PopoverProps, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover.js";
 export { Combobox, type ComboboxOption, type ComboboxProps } from "./combobox.js";
 export { MultiSelect, type MultiSelectProps } from "./multi-select.js";
 export { SecretField, type SecretFieldProps } from "./secret-field.js";
 export {
   Select,
+  type SelectProps,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -167,9 +170,9 @@ export {
 } from "./wizard-steps.js";
 export { Switch } from "./switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger, type TabsProps } from "./tabs.js";
-export { Textarea } from "./textarea.js";
+export { Textarea, type TextareaProps } from "./textarea.js";
 export { Toaster, toast, type ToasterProps } from "./sonner.js";
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip.js";
+export { Tooltip, type TooltipProps, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip.js";
 export {
   Heading,
   headingVariants,

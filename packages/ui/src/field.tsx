@@ -9,7 +9,9 @@ import { cn } from "./utils.js";
 import { Label } from "./label.js";
 import { Separator } from "./separator.js";
 
-function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+export type FieldSetProps = React.ComponentProps<"fieldset">;
+
+function FieldSet({ className, ...props }: FieldSetProps) {
   return (
     <fieldset
       data-slot="field-set"
