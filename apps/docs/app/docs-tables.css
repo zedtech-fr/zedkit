@@ -6,6 +6,12 @@
 #nd-docs-layout [data-docs-table] {
   max-width: 100%;
   min-width: 0;
+  overflow-x: clip;
+}
+
+#nd-docs-layout [data-docs-table] tbody td {
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 #nd-docs-layout [data-docs-table] table {
