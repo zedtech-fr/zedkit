@@ -360,7 +360,7 @@ export function HomeUseCasesSection() {
     >
       <div ref={root} data-home-use-cases>
         <ScrollScenes
-          className="[--zk-scenes-top:4.5rem] md:[--zk-scenes-top:6rem]"
+          className="[--zk-scenes-step:40svh] [--zk-scenes-top:4.5rem] md:[--zk-scenes-top:6rem]"
           scenes={USE_CASES.map((useCase) => ({
             id: useCase.id,
             caption: (

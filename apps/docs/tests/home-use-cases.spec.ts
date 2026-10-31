@@ -164,6 +164,20 @@ test.describe("motion", () => {
     expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.01);
   });
 
+  test("the pinned track stays within a laptop scroll budget (#1086)", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const perSceneSvh = await page.evaluate(() => {
+      const track = document.querySelector<HTMLElement>("#use-cases [data-scroll-scenes]")!;
+      const stage = track.firstElementChild as HTMLElement;
+      const count = track.querySelectorAll("[data-scroll-scene]").length;
+      return (track.offsetHeight - stage.offsetHeight) / count / (window.innerHeight / 100);
+    });
+    // 40svh per scene by design: enough travel to read a caption, no 60svh dwell.
+    expect(perSceneSvh).toBeGreaterThanOrEqual(30);
+    expect(perSceneSvh).toBeLessThanOrEqual(45);
+  });
+
   test("the captions stay in the page for assistive tech in every scene", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("#use-cases h3")).toHaveCount(6);
