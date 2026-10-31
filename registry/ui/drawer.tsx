@@ -8,6 +8,7 @@ import * as React from "react";
 import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { buttonVariants } from "@/components/ui/button";
+import { resolveModalMountAutoFocus } from "@/components/ui/overlay-modal";
 import { cn } from "@/lib/utils";
 import { useUiMessages } from "@/components/ui/ui-provider";
 
@@ -62,14 +63,24 @@ function resolveDrawerDirection(
   return direction;
 }
 
-function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
+function Drawer({
+  mobile = "sheet",
+  direction,
+  modal = true,
+  autoFocus,
+  ...props
+}: DrawerRootProps) {
   const isMobile = useMobileViewport();
   const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
+  const mountAutoFocus = resolveModalMountAutoFocus(autoFocus, modal);
   return (
+    // eslint-disable-next-line jsx-a11y/no-autofocus -- Vaul prop; modal drawers must mount-focus inside so the trap engages.
     <DrawerPrimitive.Root
       data-slot="drawer"
       key={`${resolvedDirection}-${isMobile ? "narrow" : "wide"}`}
       direction={resolvedDirection}
+      modal={modal}
+      autoFocus={mountAutoFocus}
       {...props}
     />
   );
@@ -182,7 +193,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="drawer-footer"
       className={cn(
-        "sticky bottom-0 z-10 mt-auto flex shrink-0 flex-col gap-drawer-footer-gap border-t border-border bg-background px-4 pt-4 pb-drawer-footer-safe",
+        "sticky bottom-0 z-10 mt-auto flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 pt-4 pb-drawer-footer-safe",
         className,
       )}
       {...props}
