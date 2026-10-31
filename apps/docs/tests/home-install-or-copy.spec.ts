@@ -64,6 +64,19 @@ test.describe("home install or copy section", () => {
     await page.goto(BASE, { waitUntil: "networkidle" });
     await expectSingleLineCommand(page, "Package install command");
     await expectSingleLineCommand(page, "shadcn registry add command");
+    const cards = page.locator("#install-or-copy [data-slot='card']");
+    await expect(cards).toHaveCount(2);
+    const emptyBottoms = await cards.evaluateAll((nodes) =>
+      nodes.map((card) => {
+        const rect = card.getBoundingClientRect();
+        const content = card.querySelector("[data-slot='card-content']") ?? card;
+        const last = content.lastElementChild?.getBoundingClientRect();
+        return last ? Math.round(rect.bottom - last.bottom) : Math.round(rect.height);
+      }),
+    );
+    // Tide is the site default: its larger type scale leaves ~122px under the
+    // shorter card (was <=96 under Volt). Still guards against hollow cards.
+    for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(128);
   });
 
   test("copy buttons sit inside the command block", async ({ page }) => {
