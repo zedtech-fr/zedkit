@@ -1,10 +1,10 @@
 /*
  * Identity: press.
  *
- *    Editorial: paper and ink, square corners, firm 2px rules, no shadows,
- *    serif display type (Newsreader) over a grotesque body (Space
- *    Grotesk), code in JetBrains Mono. Overlays keep a drawn 1px edge
- *    instead of a soft shadow; shadow buttons get a drawn edge too.
+ *    Editorial: paper and ink type, square corners, hairline tinted rules,
+ *    serif display (Newsreader) over a grotesque body (Space Grotesk),
+ *    code in JetBrains Mono. Separation uses surface tint and spacing;
+ *    depth stays a soft tinted shadow when needed, not ink outlines.
  *
  *    Inert until `data-identity="press"` is set on <html> (or on an
  *    element carrying `data-identity-scope`). The families are the
@@ -35,12 +35,12 @@
   --warning: 28 95% 32%;
   --warning-foreground: 0 0% 100%;
   --overlay: 0 0% 5%;
-  --border: 0 0% 18%;
-  --input: 0 0% 30%;
+  --border: 47 10% 50%;
+  --input: 47 8% 62%;
   --ring: 166 85% 26%;
   --sidebar: 47 30% 91%;
   --sidebar-foreground: 0 0% 5%;
-  --sidebar-border: 0 0% 18%;
+  --sidebar-border: 47 10% 58%;
   --sidebar-accent: 160 55% 72%;
   --radius: 0px;
 
@@ -73,7 +73,7 @@
   --radius-xl: 0px;
   --radius-2xl: 0px;
   --radius-3xl: 0px;
-  --zk-border-width: 2px;
+  --zk-border-width: 1px;
   --ring-width: 2px;
   --ring-width-control: 2px;
   --ring-offset-width: 2px;
@@ -81,11 +81,11 @@
   /* Depth */
   --zk-shadow-color: 0 0% 5%;
   --zk-shadow-xs: 0 0 0 0 transparent;
-  --zk-shadow-sm: 0 0 0 0 transparent;
-  --zk-shadow-md: 0 0 0 0 transparent;
-  --zk-shadow-lg: 0 0 0 0 transparent;
-  --zk-shadow-xl: 0 0 0 0 transparent;
-  --zk-shadow-overlay: 0 0 0 1px hsl(var(--border)), 0 18px 32px -22px hsl(var(--zk-shadow-color) / 0.4);
+  --zk-shadow-sm: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08);
+  --zk-shadow-lg: 0 2px 6px hsl(var(--zk-shadow-color) / 0.1), 0 12px 24px -16px hsl(var(--zk-shadow-color) / 0.14);
+  --zk-shadow-xl: 0 4px 10px hsl(var(--zk-shadow-color) / 0.12), 0 20px 40px -20px hsl(var(--zk-shadow-color) / 0.16);
+  --zk-shadow-overlay: 0 18px 32px -22px hsl(var(--zk-shadow-color) / 0.28);
 
   /* Page texture */
   --zk-bg-pattern: none;
@@ -105,7 +105,7 @@
   --zk-lift-duration: 110ms;
   --zk-lift-ease: ease-out;
   --zk-lift-translate: 0 0;
-  --zk-lift-shadow: 0 0 0 1px hsl(var(--zk-shadow-color));
+  --zk-lift-shadow: 0 2px 8px -4px hsl(var(--zk-shadow-color) / 0.12);
   --zk-press-translate: 0 1px;
   --zk-btn-ease: ease-out;
   --zk-btn-hover-translate: 0 0;
@@ -137,21 +137,15 @@
   --warning: 38 92% 56%;
   --warning-foreground: 0 0% 5%;
   --overlay: 0 0% 0%;
-  --border: 45 8% 36%;
-  --input: 45 8% 40%;
+  --border: 45 10% 38%;
+  --input: 45 8% 42%;
   --ring: 164 62% 56%;
   --sidebar: 0 0% 8%;
   --sidebar-foreground: 45 35% 94%;
-  --sidebar-border: 45 8% 30%;
+  --sidebar-border: 45 10% 32%;
   --sidebar-accent: 164 40% 22%;
-  --zk-shadow-color: 164 62% 56%;
-  --zk-lift-shadow: 7px 7px 0 0 hsl(var(--zk-shadow-color));
-}
-
-/* Shadow buttons get a drawn edge in the shadow colour. */
-:root[data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm):where(:not([data-identity-scope] *)),
-[data-identity-scope][data-identity="press"] :is(button, a).focus-ring-control:is(.shadow, .shadow-sm) {
-  border: var(--zk-border-width) solid hsl(var(--zk-shadow-color));
+  --zk-shadow-color: 0 0% 8%;
+  --zk-lift-shadow: 0 4px 12px -6px rgb(0 0 0 / 0.45);
 }
 
 /*
