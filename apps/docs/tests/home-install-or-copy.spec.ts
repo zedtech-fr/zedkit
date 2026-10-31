@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 import { featuredRegistryBrick, registryBrickNames } from "../content/registry-site";
-import { registryShadcnAddCommand } from "../lib/registry-shadcn-command";
+import { registryShadcnGithubCommand } from "../lib/registry-shadcn-github-command";
 
 const BASE = "http://127.0.0.1:3100";
-const SITE_URL = "https://zedkit.app";
 const PACKAGE_CMD = "pnpm add @zedtech/zedkit-ui";
-const REGISTRY_CMD = registryShadcnAddCommand(SITE_URL, featuredRegistryBrick);
+const REGISTRY_CMD = registryShadcnGithubCommand(featuredRegistryBrick);
+const REGISTRY_COMPONENT_COUNT = registryBrickNames.filter((name) => name !== "theme").length;
 
-test.describe("home install or copy block (#419)", () => {
+test.describe("home install or copy section", () => {
   test.use({
     permissions: ["clipboard-read", "clipboard-write"],
   });
@@ -44,23 +44,23 @@ test.describe("home install or copy block (#419)", () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
   });
 
-  test("commands read in full at 360px without internal scrolling", async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 900 });
-    await page.goto(BASE, { waitUntil: "networkidle" });
-
-    const field = page.getByLabel("shadcn registry add command");
-    await expect(field).toBeVisible();
-    const box = await field.evaluate((el) => ({
-      scrollHeight: el.scrollHeight,
-      clientHeight: el.clientHeight,
-      value: (el as HTMLTextAreaElement).value,
-    }));
-    expect(box.value).toBe(REGISTRY_CMD);
+  async function expectSingleLineCommand(page: import("@playwright/test").Page, label: string) {
+    const pre = page.getByLabel(label, { exact: true });
+    await expect(pre).toBeVisible();
+    const box = await pre.evaluate((el) => {
+      const style = window.getComputedStyle(el);
+      return {
+        scrollHeight: el.scrollHeight,
+        clientHeight: el.clientHeight,
+        whiteSpace: style.whiteSpace,
+      };
+    });
+    expect(["pre", "nowrap"]).toContain(box.whiteSpace);
     expect(box.scrollHeight).toBeLessThanOrEqual(box.clientHeight + 1);
-  });
+  }
 
-  test("neither choice card is mostly empty at laptop width (#1088)", async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
+  test("commands stay on one line with horizontal scroll at 390px", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
     const cards = page.locator("#install-or-copy [data-slot='card']");
     await expect(cards).toHaveCount(2);
@@ -75,33 +75,73 @@ test.describe("home install or copy block (#419)", () => {
     // Tide is the site default: its larger type scale leaves ~122px under the
     // shorter card (was <=96 under Volt). Still guards against hollow cards.
     for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(128);
+    await expectSingleLineCommand(page, "Package install command");
+    await expectSingleLineCommand(page, "shadcn registry add command");
   });
 
-  test("published brick names keep a decorative icon", async ({ page }) => {
+  test("copy buttons sit inside the command block", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    const blocks = page.locator("#install-or-copy [data-install-command]");
+    await expect(blocks).toHaveCount(2);
+    for (let i = 0; i < 2; i += 1) {
+      const block = blocks.nth(i);
+      const copy = block.getByRole("button");
+      await expect(copy).toBeVisible();
+      const inside = await copy.evaluate((btn) => {
+        const shell = btn.closest("[data-install-command]");
+        return shell?.contains(btn) ?? false;
+      });
+      expect(inside).toBe(true);
+    }
+  });
+
+  test("choice cards match height at laptop width", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    const heights = await page.locator("#install-or-copy [data-install-path-card]").evaluateAll((nodes) =>
+      nodes.map((node) => Math.round(node.getBoundingClientRect().height)),
+    );
+    expect(heights).toHaveLength(2);
+    expect(Math.abs(heights[0]! - heights[1]!)).toBeLessThanOrEqual(4);
+  });
+
+  test("registry catalog link replaces the brick pill wall", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(BASE, { waitUntil: "networkidle" });
-    const list = page.locator("#install-or-copy [data-registry-bricks]");
-    await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
-    await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
-    );
-    expect(overflow).toBe(true);
+    await expect(page.locator("#install-or-copy [data-registry-bricks]")).toHaveCount(0);
+    await expect(
+      page.getByRole("link", {
+        name: `${REGISTRY_COMPONENT_COUNT} components available in the registry → Catalog`,
+      }),
+    ).toHaveAttribute("href", "/docs");
   });
 
-  test.describe("home brick list light/dark (#769)", () => {
+  test.describe("install section light/dark", () => {
     for (const mode of ["light", "dark"] as const) {
-      test(`mist ${mode}`, async ({ page }) => {
+      test(`mist ${mode} at 390px`, async ({ page }) => {
+        await page.setViewportSize({ width: 390, height: 900 });
+        await page.addInitScript((theme) => {
+          localStorage.setItem("zk-identity", "mist");
+          localStorage.setItem("theme", theme);
+        }, mode);
+        await page.goto(BASE, { waitUntil: "networkidle" });
+        const section = page.locator("#install-or-copy");
+        await section.scrollIntoViewIfNeeded();
+        await expectSingleLineCommand(page, "Package install command");
+        await section.screenshot({ path: `test-results/home-install-section-${mode}-390.png` });
+      });
+
+      test(`mist ${mode} at 1280px`, async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });
         await page.addInitScript((theme) => {
           localStorage.setItem("zk-identity", "mist");
           localStorage.setItem("theme", theme);
         }, mode);
         await page.goto(BASE, { waitUntil: "networkidle" });
-        const list = page.locator("#install-or-copy [data-registry-bricks]");
-        await list.scrollIntoViewIfNeeded();
-        await expect(list.getByText("badge", { exact: true })).toBeVisible();
-        await list.screenshot({ path: `test-results/home-brick-list-${mode}.png` });
+        const section = page.locator("#install-or-copy");
+        await section.scrollIntoViewIfNeeded();
+        await section.screenshot({ path: `test-results/home-install-section-${mode}-1280.png` });
       });
     }
   });

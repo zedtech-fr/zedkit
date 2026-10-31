@@ -6,6 +6,7 @@ import { Section } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { PUBLIC_SITE_URL } from "@/lib/site";
 import { registryShadcnAddCommand } from "@/lib/registry-shadcn-command";
+import { registryShadcnGithubCommand } from "@/lib/registry-shadcn-github-command";
 import { HomeGetStartedCopy } from "@/ui/home/home-get-started-copy";
 import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
 
@@ -28,10 +29,20 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       `home-quickstart/snippets/registry-add.sh must be exactly: ${expectedRegistry}`,
     );
   }
+  const registryThemeAddCmd = loadSnippet("registry-theme-add.sh");
+  const expectedTheme = registryShadcnAddCommand(PUBLIC_SITE_URL, "theme");
+  if (registryThemeAddCmd !== expectedTheme) {
+    throw new Error(
+      `home-quickstart/snippets/registry-theme-add.sh must be exactly: ${expectedTheme}`,
+    );
+  }
   const initCommand = loadSnippet("ai-init.sh");
   if (initCommand !== "npx @zedtech/zedkit-ai init") {
     throw new Error("home-quickstart/snippets/ai-init.sh must be exactly: npx @zedtech/zedkit-ai init");
   }
+  const npmGlobalsCss = loadSnippet("npm-globals.css");
+  const npmPageTsx = loadSnippet("npm-page.tsx");
+  const registryPageTsx = loadSnippet("registry-page.tsx");
 
   return (
     <Section
@@ -47,8 +58,14 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       <HomeGetStartedCopy
         initCommand={initCommand}
         packageInstallCmd={packageInstallCmd}
+        registryInstallCmd={registryShadcnGithubCommand(featuredRegistryBrick)}
+        registryComponentCount={registryBrickNames.filter((name) => name !== "theme").length}
         registryAddCmd={registryAddCmd}
-        registryBricks={registryBrickNames}
+        npmInstallCmd={packageInstallCmd}
+        npmGlobalsCss={npmGlobalsCss}
+        npmPageTsx={npmPageTsx}
+        registryThemeAddCmd={registryThemeAddCmd}
+        registryPageTsx={registryPageTsx}
       />
     </Section>
   );
