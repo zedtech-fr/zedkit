@@ -83,6 +83,24 @@ test("checkGeneratedPage fails when catalog accessibility is not rendered", () =
   );
 });
 
+test("checkGeneratedPage fails when a component page lacks the guidance block", () => {
+  const errors = [];
+  checkGeneratedPage(
+    "ui/confirm-destructive-actions.mdx",
+    "---\ntitle: \"Confirm destructive actions\"\ndescription: \"A destructive confirmation.\"\nstatus: beta\n---\n\n<ComponentPage registry={\"confirm-dialog\"} />\n",
+    { seoMax: 160, descriptionsSeen: new Map() },
+    errors,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks the At-a-glance guidance block")),
+    true,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks install tabs")),
+    false,
+  );
+});
+
 test("checkGeneratedPage fails when install tabs or description are missing", () => {
   const errors = [];
   checkGeneratedPage(

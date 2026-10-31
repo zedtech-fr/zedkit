@@ -9,6 +9,7 @@ hand-written props or export lists.
 
 | # | Section | Source |
 | --- | --- | --- |
+| 0 | At a glance (Who / What / Use when / Avoid when / See also) | Shared generated block, same as non-registry pages |
 | 1 | Install | Package manager tabs + `npx shadcn add <site>/r/<registry>.json` |
 | 2 | Import | Catalog `- Import:` line (exact symbols) |
 | 3 | Registry source | `registry/ui/<registry>.tsx` (rewritten imports), Copy on each block |

@@ -49,13 +49,6 @@ export function checkGeneratedPage(rel, text, { seoMax, descriptionsSeen, a11yBy
       descriptionsSeen.set(description, rel);
     }
   }
-  if (text.includes("<ComponentPage")) return;
-  if (!text.includes('<Tabs groupId="package-manager"')) {
-    errors.push(`generator: ${rel} lacks install tabs.`);
-  }
-  if (!text.includes('```tsx title="Usage"')) {
-    errors.push(`generator: ${rel} lacks a titled TSX example.`);
-  }
   if (!text.includes("## At a glance")) {
     errors.push(`generator: ${rel} lacks the At-a-glance guidance block.`);
   }
@@ -63,6 +56,13 @@ export function checkGeneratedPage(rel, text, { seoMax, descriptionsSeen, a11yBy
     if (!text.includes(label)) {
       errors.push(`generator: ${rel} lacks guidance bullet "${label}".`);
     }
+  }
+  if (text.includes("<ComponentPage")) return;
+  if (!text.includes('<Tabs groupId="package-manager"')) {
+    errors.push(`generator: ${rel} lacks install tabs.`);
+  }
+  if (!text.includes('```tsx title="Usage"')) {
+    errors.push(`generator: ${rel} lacks a titled TSX example.`);
   }
   const a11y = a11yByTitle?.get(readFrontmatterTitle(text) ?? "");
   if (a11y && (!text.includes("## Accessibility") || !text.includes(a11y))) {
