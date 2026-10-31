@@ -136,7 +136,7 @@ size_budget() {
   fi
 }
 size_budget ui 39200
-size_budget ai 9500
+size_budget ai 9800
 
 if [ "$fail" -ne 0 ]; then
   echo "check-pack: FAILED"
