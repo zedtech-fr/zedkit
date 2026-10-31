@@ -18,13 +18,19 @@ export function readFrontmatterDescription(text) {
   return JSON.parse(match[1]);
 }
 
+export function readFrontmatterTitle(text) {
+  const match = text.match(/^title: (.+)$/m);
+  if (!match) return null;
+  return JSON.parse(match[1]);
+}
+
 /**
  * @param {string} rel
  * @param {string} text
- * @param {{ seoMax: number, descriptionsSeen: Map<string, string> }} ctx
+ * @param {{ seoMax: number, descriptionsSeen: Map<string, string>, a11yByTitle?: Map<string, string> }} ctx
  * @param {string[]} errors
  */
-export function checkGeneratedPage(rel, text, { seoMax, descriptionsSeen }, errors) {
+export function checkGeneratedPage(rel, text, { seoMax, descriptionsSeen, a11yByTitle }, errors) {
   if (!rel.includes("/")) return;
   const description = readFrontmatterDescription(text);
   if (description === null) {
@@ -57,5 +63,9 @@ export function checkGeneratedPage(rel, text, { seoMax, descriptionsSeen }, erro
     if (!text.includes(label)) {
       errors.push(`generator: ${rel} lacks guidance bullet "${label}".`);
     }
+  }
+  const a11y = a11yByTitle?.get(readFrontmatterTitle(text) ?? "");
+  if (a11y && (!text.includes("## Accessibility") || !text.includes(a11y))) {
+    errors.push(`generator: ${rel} lacks the catalog Accessibility section.`);
   }
 }

@@ -11,7 +11,8 @@
 //      directly (registry only) and use no namespace imports;
 //   6. demos and frame use kit layout modules only (no raw <div>/<span>);
 //   7. every page carries install tabs + a titled TSX example +
-//      the At-a-glance guidance block (Who/What/Use when/Avoid when);
+//      the At-a-glance guidance block (Who/What/Use when/Avoid when),
+//      plus the catalog Accessibility section when the need carries one;
 //   8. the home gallery covers every UI need exactly once, with the
 //      manifest demo (or null);
 //   9. the gallery stats match the catalog counts;
@@ -91,13 +92,19 @@ function mdxFiles(dir) {
 }
 
 const descriptionsSeen = new Map();
+const a11yByTitle = new Map();
+for (const entry of Object.values(catalog.packages)) {
+  for (const need of entry.needs) {
+    if (need.a11y) a11yByTitle.set(need.need, need.a11y);
+  }
+}
 
 // Every need page carries install tabs (memorized package-manager
 // choice) and a titled TSX example — never bare pill blocks.
 for (const file of mdxFiles(tmp)) {
   const rel = file.slice(tmp.length + 1);
   const text = readFileSync(file, "utf8");
-  checkGeneratedPage(rel, text, { seoMax: SEO_DESCRIPTION_MAX, descriptionsSeen }, errors);
+  checkGeneratedPage(rel, text, { seoMax: SEO_DESCRIPTION_MAX, descriptionsSeen, a11yByTitle }, errors);
 }
 
 function proseSectionTitles(text) {

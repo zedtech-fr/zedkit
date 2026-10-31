@@ -40,7 +40,7 @@ export const GUIDE_NAV_SLUGS = [
 ];
 
 /** Section titles owned by the generator — prose must not repeat them. */
-export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props"]);
+export const GENERATED_DOC_SECTIONS = new Set(["At a glance", "Preview", "Install", "Example", "Props", "Accessibility"]);
 
 function slugify(need) {
   const slug = need
@@ -351,6 +351,9 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
   if (prose) head.push(prose);
   if (rich && rich.propsFile && rich.propsName) {
     head.push("## Props", "", `<PropsTable file="${rich.propsFile}" name="${rich.propsName}" />`, "");
+  }
+  if (need.a11y) {
+    head.push("## Accessibility", "", need.a11y, "");
   }
   return head.join("\n");
 }
