@@ -83,7 +83,7 @@ export function IdentityScopeDemo() {
           className="min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground"
         >
           <Stack direction="horizontal" gap={2} className="items-center justify-between">
-            <Heading level={3} className="m-0! text-lg">
+            <Heading level={2} className="m-0! text-lg">
               {look.label}
             </Heading>
             <Badge variant="secondary">New</Badge>

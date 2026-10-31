@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Container, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
 import { ComponentPreview } from "@/components/component-preview";
@@ -21,6 +22,12 @@ export default function IdentityKitDemosPage() {
         <ComponentPreview demo="IdentitySwitcherDemo" hasProps={false} />
         <ComponentPreview demo="IdentityScopeDemo" hasProps={false} />
         <ComponentPreview demo="IdentityPickerDemo" hasProps={false} />
+        <Text variant="muted" className="text-sm">
+          <Link href="/docs/ui/pin-a-stage-and-change-scene-as-the-page-scrolls" className="text-primary underline-offset-4 hover:underline">
+            Open the scroll scenes guide
+          </Link>{" "}
+          to leave this harness.
+        </Text>
       </Stack>
     </Container>
   );

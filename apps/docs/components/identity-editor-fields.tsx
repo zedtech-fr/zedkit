@@ -119,7 +119,7 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       className="sticky top-14 z-20 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md"
       gap={3}
     >
-      <Heading level={3}>Draft look</Heading>
+      <Heading level={2}>Draft look</Heading>
       <Text variant="muted">Spacing, type and colour follow the fields.</Text>
       <Button size="sm">Save</Button>
     </Stack>

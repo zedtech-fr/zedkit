@@ -36,6 +36,11 @@
     --text-4xl: 2rem;
   }
 
+  :root[data-identity="tide"] #home-page [data-home-hero-preview] {
+    max-height: 15rem;
+    overflow: hidden;
+  }
+
   :root[data-identity="tide"] [data-identity-scope][data-identity="tide"] {
     --spacing: 0.2rem;
     --text-xs: 0.75rem;

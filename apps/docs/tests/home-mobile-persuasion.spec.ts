@@ -32,8 +32,8 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       const useCaseWhy = useCases?.querySelector(".text-home-persuasion");
 
       return {
-        heroLead: read(document.querySelector(".text-zk-type-lead")),
-        heroProof: read(document.querySelector(".text-zk-type-small")),
+        heroLead: read(document.querySelector("[data-home-hero-sub]")),
+        heroProof: read(document.querySelector("[data-home-hero-lead] .home-metadata-copy")),
         startCopy: read(startCopy),
         componentsCopy: read(componentsCopy),
         useCaseWhy: read(useCaseWhy),

@@ -203,7 +203,4 @@ html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
   #nd-page {
     max-width: 70rem;
   }
-  #nd-docs-layout [data-component-preview] {
-    width: 100%;
-  }
 }

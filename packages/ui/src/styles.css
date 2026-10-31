@@ -5,11 +5,11 @@
 @import "./identities/press.css";
 @import "./font-fallbacks.css";
 @import "./identities/glass.css";
-@import "./identities/tide.css";
 @import "./motion.css";
 @import "./scroll-scenes.css";
 @import "./identities/volt.css";
 @import "./shared-type-scale.css";
+@import "./identities/tide.css";
 @import "./calendar.css";
 
 /*

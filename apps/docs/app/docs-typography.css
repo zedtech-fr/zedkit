@@ -29,6 +29,21 @@
   color: hsl(var(--foreground));
 }
 
+@media (min-width: 120rem) {
+  #nd-page .prose {
+    max-width: none;
+  }
+  #nd-page #example {
+    max-width: none;
+    width: 100%;
+  }
+  #nd-page #example [data-component-preview],
+  #nd-page #example [data-preview-surface] {
+    width: 100%;
+    max-width: none;
+  }
+}
+
 #nd-page .prose > p:first-of-type {
   font-size: var(--zk-type-lead-size);
   font-weight: var(--zk-type-lead-weight);

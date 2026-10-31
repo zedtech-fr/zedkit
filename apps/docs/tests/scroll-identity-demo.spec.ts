@@ -194,7 +194,7 @@ test.describe("identity previews", () => {
           const signatures = await cards.evaluateAll((nodes) =>
             nodes.map((node) => {
               const save = node.querySelector("button")!;
-              const title = node.querySelector("h3")!;
+              const title = node.querySelector("h2")!;
               return `${getComputedStyle(save).backgroundColor}|${getComputedStyle(title).fontFamily}|${getComputedStyle(node).borderRadius}`;
             }),
           );

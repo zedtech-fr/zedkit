@@ -14,7 +14,7 @@ test.describe("tide identity", () => {
     expect(body.startsWith('"Inter Variable"')).toBe(true);
     expect(body).toContain('"Inter Variable Fallback"');
     const h1 = await page.evaluate(() => {
-      const style = getComputedStyle(document.querySelector("h1")!);
+      const style = getComputedStyle(document.querySelector("#home-page h1")!);
       return { family: style.fontFamily, weight: style.fontWeight };
     });
     expect(h1.family).toBe(body);
