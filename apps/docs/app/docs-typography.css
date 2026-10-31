@@ -24,6 +24,7 @@
   max-width: 68ch;
   font-size: var(--zk-type-prose-size);
   line-height: var(--zk-type-prose-leading);
+  color: hsl(var(--foreground));
 }
 
 #nd-page .prose > p:first-of-type {

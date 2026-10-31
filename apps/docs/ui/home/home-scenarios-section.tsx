@@ -35,14 +35,14 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
         <Stack className={HOME_CARD_GRID_THREE_COL}>
           {scenarios.map((scenario) => (
             <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
-              <CardHeader>
+              <CardHeader className="pb-2">
                 <CardTitle>
                   <HomeScenarioTitle href={scenario.href} situation={scenario.situation} />
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
-                  <Stack gap={2}>
+                  <Stack gap={4}>
                     <Stack gap={1}>
                       <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
                         You want
