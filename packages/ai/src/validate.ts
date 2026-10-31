@@ -4,6 +4,7 @@ import { join, relative } from "node:path";
 import { tryCatch } from "@zedtech/zedkit-core";
 import { readManifest } from "./kit.js";
 import { parseFrontmatter } from "./frontmatter.js";
+import { danglingSkillRefs, skillRefFiles } from "./skill-refs.js";
 
 export type Issue = { path: string; message: string };
 
@@ -183,6 +184,22 @@ function checkManifest(root: string, issues: Issue[]): void {
   }
 }
 
+function namesIn(root: string, dir: string): string[] {
+  const full = join(root, dir);
+  if (!existsSync(full)) return [];
+  return readdirSync(full)
+    .filter((file) => file.endsWith(".md"))
+    .map((file) => file.replace(/\.md$/, ""));
+}
+
+// A skill, agent or command that tells the agent to run a skill must name
+// one that is installed in this tree. Checked on the files present, so a
+// preset that omitted the target fails the same way the full kit would.
+function checkSkillRefs(root: string, skills: Set<string>, issues: Issue[]): void {
+  const files = skillRefFiles(root, [...skills], namesIn(root, "agents"), namesIn(root, "commands"));
+  for (const issue of danglingSkillRefs(files, skills)) issues.push(issue);
+}
+
 function collect(root: string): Issue[] {
   const issues: Issue[] = [];
   const skills = new Set(dirsIn(join(root, "skills")));
@@ -202,6 +219,7 @@ function collect(root: string): Issue[] {
   checkManifest(root, issues);
   checkLadder(root, issues);
   checkLineEndings(root, issues);
+  checkSkillRefs(root, skills, issues);
   return issues;
 }
 
