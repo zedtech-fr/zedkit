@@ -14,7 +14,7 @@ import {
   identities,
 } from "@zedtech/zedkit-ui";
 import { HomeAdminScene } from "@/ui/home/home-admin-scene";
-import { HOME_CARD_CONTENT_GAP } from "@/ui/home/home-rhythm";
+import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 type UseCaseId = "admin" | "shop" | "editorial" | "launch" | "monitoring" | "mobile";
 
@@ -90,7 +90,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   return (
     <Stack gap={1}>
       <Text className="font-(family-name:--zk-font-display) text-xl font-semibold">{value}</Text>
-      <Text variant="muted" className="text-xs">
+      <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
         {label}
       </Text>
     </Stack>
@@ -114,7 +114,7 @@ function Scene({ id }: { id: UseCaseId }) {
               Size guide
             </Button>
           </Stack>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
             Free returns within 30 days.
           </Text>
         </Stack>
@@ -124,7 +124,7 @@ function Scene({ id }: { id: UseCaseId }) {
         <Stack gap={HOME_CARD_CONTENT_GAP}>
           <Badge>Essay</Badge>
           <Text className={SCENE_TITLE_CLASS}>The quiet return of the long read</Text>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
             By Ines Marlow · 8 min read
           </Text>
           <Text>
@@ -165,7 +165,7 @@ function Scene({ id }: { id: UseCaseId }) {
           </Stack>
           <Text className={SCENE_TITLE_CLASS}>Checkout is healthy</Text>
           <ProgressBar value={83} label="Error budget left this month" />
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
             83% of the monthly error budget left. Last incident closed 6 days ago.
           </Text>
           <Stack direction="horizontal">
@@ -189,7 +189,7 @@ function Scene({ id }: { id: UseCaseId }) {
                 className="items-center justify-between rounded-lg border px-3 py-2"
               >
                 <Text>{task}</Text>
-                <Text variant="muted" className="text-xs">
+                <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
                   {index === 0 ? "9:30" : index === 1 ? "11:00" : "Later"}
                 </Text>
               </Stack>
@@ -230,7 +230,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
         <Stack gap={HOME_CARD_CONTENT_GAP}>
           <Badge>Pull quote</Badge>
           <Text className={SCENE_TITLE_CLASS}>“A page that holds still is a page that gets finished.”</Text>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
             Ines Marlow, on slow reading
           </Text>
         </Stack>
@@ -252,7 +252,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
               className="items-center justify-between rounded-lg border px-3 py-2"
             >
               <Text>{region}</Text>
-              <Text variant="muted" className="text-xs">
+              <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
                 {latency}
               </Text>
             </Stack>
@@ -286,7 +286,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
               className="items-center justify-between rounded-lg border px-3 py-2"
             >
               <Text>{name}</Text>
-              <Text variant="muted" className="text-xs">
+              <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
                 {price}
               </Text>
             </Stack>
@@ -314,7 +314,7 @@ function UseCasePreview({ useCase }: { useCase: UseCase }) {
   return (
     <Stack gap={4} className="min-w-0">
       <Stack gap={2} className="min-w-0">
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
           Identity: {useCase.identityLabel}
         </Text>
         <Heading level={3} id={`use-case-${useCase.id}`}>

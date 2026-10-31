@@ -29,19 +29,30 @@
   color: hsl(var(--destructive-foreground));
 }
 
-/* Home marketing persuasion scale (L2): comfortable mobile reading; metadata stays xs. */
+/* Home marketing type roles (L2): shared P0 semantic tokens — no ad-hoc px steps. */
 :root {
-  --zk-home-persuasion-font-size: var(--text-base);
-  --zk-home-persuasion-leading: var(--zk-body-leading, 1.6);
-  --zk-home-metadata-font-size: var(--text-xs);
-  --zk-home-metadata-leading: 1.35;
+  --zk-home-persuasion-font-size: var(--zk-type-body-size, var(--text-base));
+  --zk-home-persuasion-leading: var(--zk-type-body-leading, var(--zk-body-leading, 1.6));
+  --zk-home-metadata-font-size: var(--zk-type-label-size, var(--text-xs));
+  --zk-home-metadata-leading: var(--zk-type-label-leading, 1.4);
 }
 
-@media (width < 48rem) {
-  :root {
-    --zk-home-persuasion-font-size: 1rem;
-    --zk-home-persuasion-leading: 1.5;
-  }
+.text-zk-type-h3 {
+  font-size: var(--zk-type-h3-size);
+  font-weight: var(--zk-type-h3-weight);
+  line-height: var(--zk-type-h3-leading);
+}
+
+.text-zk-type-body {
+  font-size: var(--zk-type-body-size);
+  font-weight: var(--zk-type-body-weight);
+  line-height: var(--zk-type-body-leading);
+}
+
+.text-zk-type-label {
+  font-size: var(--zk-type-label-size);
+  font-weight: var(--zk-type-label-weight);
+  line-height: var(--zk-type-label-leading);
 }
 
 .text-home-persuasion {
