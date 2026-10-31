@@ -4,6 +4,6 @@
 services:
   caddy:
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./site:/srv/site:ro
+      - ./current/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./current/site:/srv/site:ro
       - ./site-dev:/srv/site-dev:ro

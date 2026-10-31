@@ -38,6 +38,26 @@ describe("validateKit", () => {
     expect(validateKit(root)).toEqual([]);
   });
 
+  it("flags a skill, agent or command that runs a skill which is not installed", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nCall the Skill tool with "beta".\n`);
+    put(root, "skills/gamma/SKILL.md", `${SKILL("gamma")}\nRun \`/delta\`.\n`);
+    put(root, "agents/reader.md", `${AGENT("reader")}\nCall the Skill tool with "ghost".\n`);
+    put(root, "commands/go.md", `${COMMAND("alpha")}\nThen /missing-skill.\n`);
+    const found = messages(root);
+    expect(found).toContain('skills/alpha/SKILL.md: references skill "beta", which is not installed');
+    expect(found).toContain('skills/gamma/SKILL.md: references skill "delta", which is not installed');
+    expect(found).toContain('agents/reader.md: references skill "ghost", which is not installed');
+    expect(found).toContain('commands/go.md: references skill "missing-skill", which is not installed');
+  });
+
+  it("accepts a skill reference when that skill is installed", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nCall the Skill tool with "beta". Run \`/beta\`.\n`);
+    put(root, "skills/beta/SKILL.md", SKILL("beta"));
+    expect(validateKit(root)).toEqual([]);
+  });
+
   it("flags a command that names no installed skill", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
