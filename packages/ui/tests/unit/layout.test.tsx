@@ -50,7 +50,7 @@ describe("layout", () => {
   it("keeps the whole stack gap scale on default spacing with no arbitrary values", () => {
     const { container } = render(
       <>
-        {([1, 2, 3, 4, 6, 8] as const).map((gap) => (
+        {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((gap) => (
           <Stack key={gap} data-testid={`gap-${gap}`} gap={gap}>
             <span>a</span>
           </Stack>
@@ -60,7 +60,7 @@ describe("layout", () => {
         </Section>
       </>,
     );
-    for (const gap of [1, 2, 3, 4, 6, 8]) {
+    for (const gap of [1, 2, 3, 4, 5, 6, 7, 8]) {
       const className = container.querySelector(`[data-testid="gap-${gap}"]`)?.className ?? "";
       expect(className).toContain(`gap-${gap}`);
       expect(className).not.toContain("[");
