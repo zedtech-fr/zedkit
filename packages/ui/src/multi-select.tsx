@@ -28,7 +28,12 @@ function MultiSelect(props: MultiSelectProps) {
     <Popover open={combobox.isOpen}>
       <PopoverAnchor asChild>
         <div className="w-full space-y-2" data-slot="multi-select">
-          <MultiSelectChips items={selectedItems} onRemove={removeItem} selection={selection} disabled={props.disabled} />
+          <MultiSelectChips
+            items={selectedItems}
+            onRemove={removeItem}
+            selection={selection}
+            disabled={props.disabled === true}
+          />
           <div className="relative">
             <Input
               {...inputProps}
