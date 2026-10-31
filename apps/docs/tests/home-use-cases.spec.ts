@@ -119,8 +119,10 @@ test("switching tabs keeps the page identity and shows distinct looks", async ({
 test("a scene keeps its own look under any page identity", async ({ page }) => {
   const signatures: Record<string, string>[] = [];
   for (const identity of ["mist", "press", "volt"] as const) {
-    await page.addInitScript((id) => localStorage.setItem("zk-docs-site-identity", id), identity);
-    localStorage.setItem("zk-docs-site-identity-opt-in", "1");
+    await page.addInitScript((id) => {
+      localStorage.setItem("zk-docs-site-identity", id);
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
+    }, identity);
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-identity", identity);
     await page.locator("#use-cases").getByRole("tab", { name: "Tide" }).click();

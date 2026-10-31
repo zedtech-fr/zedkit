@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 const PHONES = [
   { name: "iPhone SE", width: 375, height: 667 },
