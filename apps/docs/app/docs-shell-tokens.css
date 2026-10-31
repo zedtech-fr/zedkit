@@ -101,3 +101,21 @@ html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
   background-color: hsl(var(--card));
   border: var(--zk-border-width, 1px) solid hsl(var(--border));
 }
+
+/* Props accordion: plain mono names, not bordered inline-code pills. */
+#nd-docs-layout [id^="type-table"] code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  box-decoration-break: unset;
+  -webkit-box-decoration-break: unset;
+}
+
+#nd-docs-layout [id^="type-table"] > div:first-child {
+  border-bottom: 0;
+}
+
+#nd-docs-layout [id^="type-table"] [data-state] {
+  border-color: hsl(var(--border) / 0.22);
+}
