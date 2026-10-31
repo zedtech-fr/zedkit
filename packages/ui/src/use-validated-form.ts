@@ -8,6 +8,11 @@ import {
   type UseFormProps,
   type UseFormReturn,
 } from "react-hook-form";
+import type { z } from "zod";
+
+type SchemaForResolver = Parameters<typeof zodResolver>[0];
+type InputOf<TSchema extends SchemaForResolver> = z.input<TSchema & z.ZodTypeAny> & FieldValues;
+type OutputOf<TSchema extends SchemaForResolver> = z.output<TSchema & z.ZodTypeAny> & FieldValues;
 
 /**
  * Validated form in one call: the zod schema is the single source of
@@ -15,16 +20,14 @@ import {
  * to the API validators) and the resolver wiring stays inside the
  * kit, so consumers never import the resolver library directly.
  */
-export function useValidatedForm<TFieldValues extends FieldValues>(
-  schema: Parameters<typeof zodResolver>[0],
+export function useValidatedForm<TSchema extends SchemaForResolver>(
+  schema: TSchema,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm's own context type (any)
-  options: Omit<UseFormProps<TFieldValues, any>, "resolver"> = {},
+  options: Omit<UseFormProps<InputOf<TSchema>, any, OutputOf<TSchema>>, "resolver"> = {},
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm's own context type (any)
-): UseFormReturn<TFieldValues, any, TFieldValues> {
-  // The resolver is exact for this schema, but react-hook-form's
-  // Resolver is invariant in its options type, so a schema-typed
-  // resolver cannot flow through the generic untouched (same
-  // upstream-invariance situation as the data-table columns).
-  const resolver = zodResolver(schema) as Resolver<TFieldValues>;
-  return useForm<TFieldValues>({ ...options, resolver });
+): UseFormReturn<InputOf<TSchema>, any, OutputOf<TSchema>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm context generic
+  const resolver = zodResolver(schema) as unknown as Resolver<InputOf<TSchema>, any, OutputOf<TSchema>>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm context generic
+  return useForm<InputOf<TSchema>, any, OutputOf<TSchema>>({ ...options, resolver });
 }

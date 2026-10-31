@@ -67,7 +67,7 @@ export function AdminDashboardDemoApp() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const form = useValidatedForm<FormValues>(formSchema, {
+  const form = useValidatedForm(formSchema, {
     defaultValues: { name: "", region: "eu" },
   });
 

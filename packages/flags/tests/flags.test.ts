@@ -14,6 +14,7 @@ import {
 } from "#overrides.js";
 import { defineFlagRegistry, mergeFlagValues } from "#registry.js";
 import { memoryProviderFromRegistry } from "#server-registry.js";
+import { createMemoryProvider } from "#server-provider.js";
 
 describe("defineFlagRegistry and getFlag", () => {
   it("reads boolean flags from an in-memory provider", async () => {
@@ -30,6 +31,13 @@ describe("defineFlagRegistry and getFlag", () => {
     const client = OpenFeature.getClient();
     await expect(getFlag(client, registry, "theme")).resolves.toBe("mist");
     await expect(getFlag(client, registry, "retries")).resolves.toBe(3);
+  });
+
+  it("returns the provider value when it differs from the registry default", async () => {
+    const registry = defineFlagRegistry({ beta: false });
+    OpenFeature.setProvider(createMemoryProvider({ beta: true }));
+    const client = OpenFeature.getClient();
+    await expect(getFlag(client, registry, "beta")).resolves.toBe(true);
   });
 });
 

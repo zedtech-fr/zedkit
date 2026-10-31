@@ -21,7 +21,7 @@ const schema = z.object({ name: z.string().min(2, "Use at least 2 characters.") 
 
 export function ValidatedFormDemo() {
   const [saved, setSaved] = useState<string | null>(null);
-  const form = useValidatedForm<{ name: string }>(schema, { defaultValues: { name: "" } });
+  const form = useValidatedForm(schema, { defaultValues: { name: "" } });
 
   return (
     <Form {...form}>
