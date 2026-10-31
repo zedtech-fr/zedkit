@@ -78,7 +78,7 @@ function EditorFields({
 }) {
   const pair = tokens[scheme];
   return (
-    <Stack gap={3}>
+    <Stack gap={5} data-slot="identity-editor-fields">
       {SCALAR_KEYS.map((key) => (
         <TokenField
           key={key}
