@@ -31,6 +31,7 @@ export function HomeView({
   scenarios,
   entryPoints,
   themeHref,
+  latestChange,
 }: {
   curatedGallery: GalleryCard[];
   galleryCount: number;
@@ -42,6 +43,7 @@ export function HomeView({
   scenarios: HomeScenario[];
   entryPoints: HomeEntryPoint[];
   themeHref: string;
+  latestChange: string;
 }) {
   return (
     <div id="home-page" className="min-w-0">

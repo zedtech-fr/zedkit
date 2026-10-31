@@ -19,6 +19,10 @@ const themeHref =
   homeScenarios.find((scenario) => scenario.href.includes("theme-an-admin"))?.href ??
   "/docs/ui/theme-an-admin-app-dark-light-included";
 
+/** One-line highlight for the featured package release (home proofs). */
+const featuredPackageLatestChange =
+  "Maison and Press use hairline tinted borders, softer shadows, and no drawn ink edges on Press controls.";
+
 export default function Home() {
   const jsonLd = buildWebPageJsonLd({
     title: homePage.title,
@@ -35,6 +39,7 @@ export default function Home() {
       featuredPackage={featuredPackage}
       version={featuredPackageVersion}
       releasesHref={featuredPackageReleasesUrl}
+      latestChange={featuredPackageLatestChange}
       uiGalleryStats={uiGalleryStats}
       scenarios={homeScenarios}
       entryPoints={homeEntryPoints}

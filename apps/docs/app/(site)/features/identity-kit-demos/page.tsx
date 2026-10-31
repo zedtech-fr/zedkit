@@ -18,9 +18,9 @@ export default function IdentityKitDemosPage() {
           <Heading level={1}>Identity kit demos</Heading>
           <Text variant="muted">Internal previews for tests and QA. Identities are a demo concern, not a docs feature.</Text>
         </Stack>
-        <ComponentPreview demo="IdentitySwitcherDemo" detail="Live switcher (demo storage key)" hasProps={false} />
-        <ComponentPreview demo="IdentityScopeDemo" detail="Scoped cards" hasProps={false} />
-        <ComponentPreview demo="IdentityPickerDemo" detail="Touch picker" hasProps={false} />
+        <ComponentPreview demo="IdentitySwitcherDemo" hasProps={false} />
+        <ComponentPreview demo="IdentityScopeDemo" hasProps={false} />
+        <ComponentPreview demo="IdentityPickerDemo" hasProps={false} />
       </Stack>
     </Container>
   );
