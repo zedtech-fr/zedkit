@@ -1,5 +1,12 @@
 # @zedtech/zedkit-ui
 
+## 0.8.1
+
+### Patch Changes
+
+- d6c58ea: Publish the prop types for input, popover, tooltip, dropdown menu, fieldset, select, textarea, and checkbox so their doc pages can list them.
+- 9b70bcd: Let Stack use gaps 5 and 7, the steps that were missing between 4, 6, and 8.
+
 ## 0.8.0
 
 ### Minor Changes
