@@ -2,6 +2,32 @@ import { expect, test } from "@playwright/test";
 
 const BASE = "http://127.0.0.1:3100";
 
+test("docs index and guides carry no production memo in visitor copy (#1096)", async ({ page }) => {
+  const leaks = [
+    "hand-written",
+    "catalog.json",
+    "apps/docs/",
+    "prose/guides/snippets",
+    "verify-",
+    "docs:generate",
+  ];
+  for (const path of [
+    "/docs",
+    "/docs/getting-started",
+    "/docs/add-seo-to-nextjs",
+    "/docs/build-an-admin-dashboard",
+    "/docs/set-up-your-coding-agents",
+    "/docs/maturity-and-compatibility",
+    "/docs/zedkit-and-shadcn",
+  ]) {
+    await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+    const text = (await page.locator("main").first().innerText()).toLowerCase();
+    for (const leak of leaks) {
+      expect(text, `${path} must not contain ${JSON.stringify(leak)}`).not.toContain(leak);
+    }
+  }
+});
+
 test("getting started is first stop from docs index", async ({ page }) => {
   await page.goto(`${BASE}/docs`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Start here" })).toBeVisible();

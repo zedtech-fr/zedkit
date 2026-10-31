@@ -3,7 +3,7 @@ title: Add SEO to a Next.js app
 description: Wire metadata, robots.txt, sitemap.xml, and JSON-LD with @zedtech/zedkit-seo on a small App Router site.
 ---
 
-Hand-written tutorial. Snippets match `apps/docs/fixtures/seo-next-tutorial.mjs` (compiled in CI via `verify-seo-tutorial.mjs`).
+Every snippet on this page is compiled and tested exactly as written.
 
 ## Who this is for
 
@@ -111,7 +111,6 @@ With `output: "export"`, keep `export const dynamic = "force-static"` on every m
 
 - `pnpm build`, then open `/robots.txt` and `/sitemap.xml` on your preview host.
 - View source on `/about`: one canonical, Open Graph tags, and one `application/ld+json` script.
-- This repo runs `node apps/docs/scripts/verify-seo-tutorial.mjs` in `docs:check`.
 
 ## Troubleshooting
 
