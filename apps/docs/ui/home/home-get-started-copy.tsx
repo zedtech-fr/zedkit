@@ -11,11 +11,21 @@ export function HomeGetStartedCopy({
   packageInstallCmd,
   registryAddCmd,
   registryBricks,
+  npmInstallCmd,
+  npmGlobalsCss,
+  npmPageTsx,
+  registryThemeAddCmd,
+  registryPageTsx,
 }: {
   initCommand: string;
   packageInstallCmd: string;
   registryAddCmd: string;
   registryBricks: string[];
+  npmInstallCmd: string;
+  npmGlobalsCss: string;
+  npmPageTsx: string;
+  registryThemeAddCmd: string;
+  registryPageTsx: string;
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0">
@@ -28,7 +38,14 @@ export function HomeGetStartedCopy({
         registryBricks={registryBricks}
       />
       <Heading level={3}>UI quickstart</Heading>
-      <HomeGetStartedQuickstartBlock />
+      <HomeGetStartedQuickstartBlock
+        npmInstallCmd={npmInstallCmd}
+        npmGlobalsCss={npmGlobalsCss}
+        npmPageTsx={npmPageTsx}
+        registryThemeAddCmd={registryThemeAddCmd}
+        registryAddCmd={registryAddCmd}
+        registryPageTsx={registryPageTsx}
+      />
     </Stack>
   );
 }

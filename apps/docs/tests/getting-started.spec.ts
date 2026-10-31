@@ -87,14 +87,15 @@ test("getting started package table links SEO row to SEO scenario", async ({ pag
   await expect(page.getByRole("heading", { name: "Scenario — SEO", level: 2 })).toBeVisible();
 });
 
-test("getting started package table links UI row to Quickstart path B", async ({ page }) => {
+test("getting started package table links UI row to Quickstart paths B–B′", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
   const table = page
     .getByRole("table")
     .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
-  await table.getByRole("link", { name: "Quickstart path B" }).click();
+  await table.getByRole("link", { name: "Quickstart paths B–B′" }).click();
   await expect(page.getByRole("heading", { name: "Quickstart", level: 2 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Path B — UI button (install only on this page)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Path B — UI button (npm package)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Path B′ — UI button (shadcn registry)", level: 3 })).toBeVisible();
 });
 
 test("getting started package table links agents row to Quickstart path A", async ({ page }) => {

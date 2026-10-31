@@ -27,7 +27,7 @@ kit wraps, registry install vs npm, and when to stay on upstream shadcn.
 
 | Area | Packages | Typical first page |
 | --- | --- | --- |
-| <DocsAreaLabel area="ui" /> | `@zedtech/zedkit-ui` | [Quickstart path B](#quickstart) |
+| <DocsAreaLabel area="ui" /> | `@zedtech/zedkit-ui` | [Quickstart paths B–B′](#quickstart) |
 | <DocsAreaLabel area="backend" /> | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Quickstart paths C–E](#quickstart) |
 | <DocsAreaLabel area="seo" /> | `@zedtech/zedkit-seo`, `@zedtech/zedkit-payload-seo` | [SEO scenario](#seo-scenario) |
 | <DocsAreaLabel area="agents" /> | `@zedtech/zedkit-ai` | [Quickstart path A](#quickstart) |
@@ -63,7 +63,7 @@ See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for registry vs npm trade-of
 
 ## Quickstart
 
-Pick one path below (A through E). Path A ends with `validate` in the terminal; Path B with a visible button; paths C–E with the linked catalog or tutorial page.
+Pick one path below (A through E, plus B′ for copied UI). Path A ends with `validate` in the terminal; paths B and B′ with a visible **Save** button; paths C–E with the linked catalog or tutorial page.
 
 ### Path A — coding agents (about two minutes)
 
@@ -82,21 +82,48 @@ Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts
 
 **First result:** the validate command prints `ok`. If it does not, see [Troubleshooting](#troubleshooting).
 
-### Path B — UI button (install only on this page)
+### Path B — UI button (npm package)
 
-In your app:
+In a React 19 + Tailwind v4 app (Vite layout shown; Next.js: use `src/app/globals.css` and `@source "../../node_modules/…"`):
 
 ```sh
 {{snippet:ui-add.sh}}
 ```
 
-Wire Tailwind and theme tokens using [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included), then render a button:
+Wire Tailwind and kit CSS in `src/index.css`:
 
-```tsx title="Usage" preview="GuideSaveRowDemo"
-{{snippet:ui-button-usage.tsx}}
+```css title="src/index.css"
+{{snippet:npm-globals.css}}
+```
+
+Render a button from the package:
+
+```tsx title="src/App.tsx"
+{{snippet:npm-page.tsx}}
 ```
 
 **First result:** a styled **Save** button in your running app. Open [Button](/docs/ui/trigger-actions-with-buttons) for variants, registry install, and the live preview.
+
+### Path B′ — UI button (shadcn registry)
+
+Initialize shadcn in your app (`components.json`), then add theme tokens and the button brick — no `@zedtech/zedkit-ui` dependency:
+
+```sh
+{{snippet:registry-theme-add.sh}}
+{{snippet:registry-add.sh}}
+```
+
+Import the copied component:
+
+```tsx title="src/App.tsx"
+{{snippet:registry-page.tsx}}
+```
+
+**First result:** the same **Save** button, sourced from `@/components/ui/button`. See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for updating copied files.
+
+```tsx title="Variants (npm path only)" preview="GuideSaveRowDemo"
+{{snippet:ui-button-usage.tsx}}
+```
 
 ### Path C — core helpers (npm only)
 
@@ -132,8 +159,8 @@ For a NestJS service, install the factory package first (peer deps in the tutori
 
 You add an internal admin to an existing React 19 app with Tailwind v4 and need consistent tokens before you ship screens.
 
-1. Run Path B and wire theme CSS from [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) so buttons and forms are not unstyled.
-2. Install the npm package for the full kit; copy a single brick from the registry only when you must edit source — [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) compares both paths.
+1. Run Path B or B′ and wire CSS so buttons are not unstyled (Path B: kit CSS; Path B′: theme registry item).
+2. Install the npm package when you want the full kit; copy single bricks from the registry when you must edit source — [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) compares both paths.
 3. For sidebar, tables, and forms together, follow [Build an admin dashboard](/docs/build-an-admin-dashboard).
 
 ## Scenario — backend

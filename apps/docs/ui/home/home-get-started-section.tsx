@@ -28,10 +28,20 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       `home-quickstart/snippets/registry-add.sh must be exactly: ${expectedRegistry}`,
     );
   }
+  const registryThemeAddCmd = loadSnippet("registry-theme-add.sh");
+  const expectedTheme = registryShadcnAddCommand(PUBLIC_SITE_URL, "theme");
+  if (registryThemeAddCmd !== expectedTheme) {
+    throw new Error(
+      `home-quickstart/snippets/registry-theme-add.sh must be exactly: ${expectedTheme}`,
+    );
+  }
   const initCommand = loadSnippet("ai-init.sh");
   if (initCommand !== "npx @zedtech/zedkit-ai init") {
     throw new Error("home-quickstart/snippets/ai-init.sh must be exactly: npx @zedtech/zedkit-ai init");
   }
+  const npmGlobalsCss = loadSnippet("npm-globals.css");
+  const npmPageTsx = loadSnippet("npm-page.tsx");
+  const registryPageTsx = loadSnippet("registry-page.tsx");
 
   return (
     <Section
@@ -49,6 +59,11 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
         packageInstallCmd={packageInstallCmd}
         registryAddCmd={registryAddCmd}
         registryBricks={registryBrickNames}
+        npmInstallCmd={packageInstallCmd}
+        npmGlobalsCss={npmGlobalsCss}
+        npmPageTsx={npmPageTsx}
+        registryThemeAddCmd={registryThemeAddCmd}
+        registryPageTsx={registryPageTsx}
       />
     </Section>
   );

@@ -1,6 +1,6 @@
-import { Button } from "@zedtech/zedkit-ui";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default function App() {
   return (
     <main className="p-8">
       <Button>Save</Button>

@@ -1,58 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  SecretField,
-  Stack,
-  Text,
-} from "@zedtech/zedkit-ui";
+import { Button, Stack, Text } from "@zedtech/zedkit-ui";
+import { HomeInstallOrCopyCopy } from "@/ui/home/home-install-or-copy-copy";
 import { DocsActionLabel } from "@/components/docs-action-label";
 import { RegistryBrickList } from "@/components/registry-brick-name";
-import { HOME_CARD_CONTENT_GAP, HOME_CARD_GRID_TWO_COL, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
-
-function InstallOrCopyCards({
-  packageInstallCmd,
-  registryAddCmd,
-}: {
-  packageInstallCmd: string;
-  registryAddCmd: string;
-}) {
-  return (
-    <div className={HOME_CARD_GRID_TWO_COL}>
-      <Card className="min-w-0">
-        <CardHeader>
-          <CardTitle>Install as packages</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SecretField
-            multiline
-            value={packageInstallCmd}
-            aria-label="Package install command"
-            copyLabel="Copy package install command"
-          />
-        </CardContent>
-      </Card>
-      <Card className="min-w-0">
-        <CardHeader>
-          <CardTitle>Copy the source into your project</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SecretField
-            multiline
-            value={registryAddCmd}
-            aria-label="shadcn registry add command"
-            copyLabel="Copy shadcn registry command"
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 export function HomeGetStartedInstallBlock({
   packageInstallCmd,
@@ -69,7 +22,7 @@ export function HomeGetStartedInstallBlock({
         npm packages for the full kit, or copy UI bricks with the shadcn CLI when you have a{" "}
         <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>components.json</Text>.
       </Text>
-      <InstallOrCopyCards packageInstallCmd={packageInstallCmd} registryAddCmd={registryAddCmd} />
+      <HomeInstallOrCopyCopy packageInstallCmd={packageInstallCmd} registryAddCmd={registryAddCmd} />
       <Text className={HOME_METADATA_TEXT_CLASS}>
         Published registry bricks today: <RegistryBrickList names={registryBricks} />.
       </Text>
