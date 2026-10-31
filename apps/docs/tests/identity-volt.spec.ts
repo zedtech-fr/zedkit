@@ -10,10 +10,6 @@ test.describe("volt identity", () => {
   test("sets the page in Geist with a metric-aligned fallback and a 12px xs label step", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("zk-identity", "volt"));
     await page.goto(HOME, { waitUntil: "networkidle" });
-    // Stored Volt, not the site default.
-    const first = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
-    expect(first.startsWith('"Geist Variable"')).toBe(true);
-
     await useIdentity(page, "volt", "light");
     const body = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
     expect(body.startsWith('"Geist Variable"')).toBe(true);

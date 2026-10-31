@@ -66,7 +66,7 @@ function CustomIdentityBar() {
           applyIdentity(DEFAULT_IDENTITY, DOCS_SITE_IDENTITY_STORAGE_KEY);
         }}
       >
-        Reset to default
+        Back to default
       </Button>
     </Stack>
   );
