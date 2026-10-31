@@ -72,7 +72,7 @@ export function HomeHeroPreview() {
   }, []);
 
   return (
-    <Stack gap={3} id="demo" data-home-hero-proof className="scroll-mt-24 min-w-0 max-w-full">
+    <Stack gap={3} id="demo" data-home-hero-proof className="max-w-full min-w-0 scroll-mt-24">
       <HeroProofControls look={look} dark={dark} onLook={setLook} onDark={() => setDark(!dark)} />
       <Stack className={cn(darkScope, HOME_HERO_PREVIEW_SHELL_CLASS)} data-home-hero-preview>
         <div
