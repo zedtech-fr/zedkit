@@ -1,15 +1,11 @@
 import Link from "next/link";
 import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
-<<<<<<< HEAD
-import { HOME_CARD_CONTENT_GAP, HOME_LEAD_TEXT_CLASS, HOME_SECTION_CONTENT_GAP, HOME_SMALL_TEXT_CLASS } from "@/ui/home/home-rhythm";
-=======
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_LEAD_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
   HOME_SMALL_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
->>>>>>> origin/fix/header-hero-calm
 
 export function HomeHeroLead({ version, latestChange }: { version: string; latestChange: string }) {
   return (
