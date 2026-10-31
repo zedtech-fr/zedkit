@@ -26,6 +26,15 @@ test.describe("site shell", () => {
     expect(overflow).toBeLessThanOrEqual(1);
   });
 
+  test("note list example explains itself and links back to the pattern doc (#1094)", async ({ page }) => {
+    await page.goto(`${BASE}/examples/note-list`, { waitUntil: "networkidle" });
+    await expect(page.getByRole("heading", { name: "Notes" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "how the pattern is enforced" }),
+    ).toHaveAttribute("href", "/docs/quality/enforce-feature-folder-ports-and-adapters");
+    await expect(page.getByRole("button", { name: "Add note" })).toBeVisible();
+  });
+
   test("docs and 404 share the footer", async ({ page }) => {
     await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
     await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();

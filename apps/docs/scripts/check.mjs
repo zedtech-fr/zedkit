@@ -246,10 +246,11 @@ if (existsSync(indexGuidePath)) {
   }
 }
 for (const path of SITE_HEADER_INTERNAL_PATHS) {
-  if (path === "/catalog") {
-    // The catalog is an app route, unlike the generated /docs pages below.
-    if (!existsSync(join(APP, "app", "(site)", "catalog", "page.tsx"))) {
-      errors.push("site-nav: internal header path /catalog has no app page (app/(site)/catalog/page.tsx).");
+  if (!path.startsWith("/docs")) {
+    // App routes (catalog, examples), unlike the generated /docs pages below.
+    const appPage = join(APP, "app", "(site)", ...path.split("/").filter(Boolean), "page.tsx");
+    if (!existsSync(appPage)) {
+      errors.push(`site-nav: internal header path ${path} has no app page (${appPage}).`);
     }
     continue;
   }
