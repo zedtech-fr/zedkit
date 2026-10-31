@@ -10,7 +10,7 @@ automatically and redirects `www.zedkit.app` to `zedkit.app`.
 | `compose.yaml` | Runs Caddy plus the identity-suggest Node service |
 | `compose.override.yaml` | Repo-owned mounts for Caddy; replaces any hand wiring on the host |
 | `suggest/` | `POST /api/identity/suggest` — chat completions from env, no keys in the client. `GET /api/identity/suggest/version` reports the release id and the parameters that process loaded |
-| `deploy.sh` | Uploads the build output, suggest service, and config, reloads Caddy, and recreates Suggest when its code or env changed. With `--dev`: content only to the dev site, stamped with `dev-build.txt` |
+| `deploy.sh` | Uploads a versioned release under `releases/<sha>`, switches the `current` symlink, reloads Caddy, and recreates Suggest when its fingerprint changes. `--rollback` restores the previous release pointer. With `--dev`: content only to the dev site, stamped with `dev-build.txt` |
 
 ## Deploy by hand
 
