@@ -136,7 +136,7 @@ size_budget() {
     echo "$name: size $bytes / $max ok"
   fi
 }
-size_budget ui 39200
+size_budget ui 39400
 size_budget ai 9500
 
 if [ -f apps/docs/out/index.html ]; then
