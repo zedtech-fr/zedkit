@@ -62,7 +62,6 @@ export function HomeView({
         themeHref={themeHref}
         version={version}
         releasesHref={releasesHref}
-        latestChange={latestChange}
       />
     </div>
   );

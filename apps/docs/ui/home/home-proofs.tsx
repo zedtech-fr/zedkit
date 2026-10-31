@@ -16,7 +16,6 @@ export function HomeProofs({
   themeHref,
   version,
   releasesHref,
-  latestChange,
 }: {
   packages: number;
   needs: number;
@@ -25,12 +24,11 @@ export function HomeProofs({
   themeHref: string;
   version: string;
   releasesHref: string;
-  latestChange: string;
 }) {
   const items = [
     {
-      title: `Latest in v${version}`,
-      body: latestChange,
+      title: `v${version} releases`,
+      body: "See what shipped in each public release on GitHub.",
       href: releasesHref,
       linkLabel: `v${version} (releases)`,
       external: true,

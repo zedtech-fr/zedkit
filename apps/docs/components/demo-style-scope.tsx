@@ -3,7 +3,7 @@
 import { useId, useState, type ReactNode } from "react";
 import { identities, Stack, useIdentity } from "@zedtech/zedkit-ui";
 
-import { SITE_DEFAULT_IDENTITY } from "@/lib/default-identity";
+import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
 type ScopeAttrs = { "data-identity-scope": ""; "data-identity": string };
 
@@ -15,7 +15,7 @@ type ScopeAttrs = { "data-identity-scope": ""; "data-identity": string };
  * identity and ignored later picks. The home hero can use `DemoStyleScope`.
  */
 function usePinnedLook() {
-  const site = useIdentity(SITE_DEFAULT_IDENTITY);
+  const site = useIdentity(DEFAULT_IDENTITY);
   const [pinned, setPinned] = useState<string | null>(null);
   const look = pinned ?? site;
   const scopeAttrs: ScopeAttrs | Record<string, never> = pinned

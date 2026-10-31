@@ -24,7 +24,6 @@ export type HomeBelowHeroProps = {
   themeHref: string;
   version: string;
   releasesHref: string;
-  latestChange: string;
 };
 
 /** Marketing sections below the hero — code-split from the first home payload (#618). */
@@ -38,7 +37,6 @@ export function HomeBelowHero({
   themeHref,
   version,
   releasesHref,
-  latestChange,
 }: HomeBelowHeroProps) {
   return (
     <div {...HOME_MARKETING_ROOT_PROPS} data-home-below-hero="">
@@ -52,7 +50,6 @@ export function HomeBelowHero({
         themeHref={themeHref}
         version={version}
         releasesHref={releasesHref}
-        latestChange={latestChange}
       />
       <Section
         bleed

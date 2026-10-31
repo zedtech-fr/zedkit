@@ -13,7 +13,6 @@ import {
 import { docsSite } from "../lib/site";
 import { symbolsFromImport } from "../lib/import-symbols";
 import { DEFAULT_PROPS_PRIORITY } from "../lib/props-priority.mjs";
-import { ComponentExportsPanel } from "./component-exports-panel";
 import { ComponentPreview } from "./component-preview";
 import { ComponentWrapsLine } from "./component-wraps-line";
 import { MaturityBadge } from "./maturity-badge";
@@ -98,7 +97,6 @@ export async function ComponentPage({
   const shadcnAdd = `npx shadcn@latest add ${site}/r/${registry}.json`;
   const sourcePath = registrySourcePath(registry);
   const source = sourcePath ? await readFile(sourcePath, "utf8") : null;
-  const symbols = symbolsFromImport(importLine);
   const hasProps = Boolean(propsFile && propsName);
 
   return (
