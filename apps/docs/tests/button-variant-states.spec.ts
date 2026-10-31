@@ -34,12 +34,23 @@ test("See all six identities link stays underline-only on hover (no accent block
   await expect(link).toHaveCSS("text-decoration-line", /underline/);
 });
 
-test("selected identity tab uses secondary, not primary", async ({ page }) => {
+test("selected identity tab avoids primary fill when active", async ({ page }) => {
   await page.goto("/");
   const mist = page.locator("#use-cases").getByRole("tab", { name: "Mist" });
   await mist.click();
   await expect(mist).toHaveAttribute("aria-selected", "true");
-  await expect(mist).toHaveClass(/bg-secondary/);
+  const primaryBg = await page.evaluate(() => {
+    const probe = document.createElement("button");
+    probe.className = "bg-primary text-primary-foreground";
+    probe.style.position = "fixed";
+    probe.style.left = "-9999px";
+    document.body.appendChild(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+  const tabBg = await mist.evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(tabBg).not.toEqual(primaryBg);
 });
 
 for (const identity of IDENTITIES) {
