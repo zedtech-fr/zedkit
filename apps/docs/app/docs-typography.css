@@ -16,6 +16,9 @@
 }
 
 /* Prose paints links in the page colour, which beats the badge's own text token. Badge links keep the pair their variant defines. */
+.prose a[data-badge-link].text-foreground {
+  color: hsl(var(--foreground));
+}
 .prose a[data-badge-link].text-warning-foreground {
   color: hsl(var(--warning-foreground));
 }

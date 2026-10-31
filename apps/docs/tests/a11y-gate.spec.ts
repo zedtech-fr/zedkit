@@ -60,7 +60,7 @@ test.describe("a11y gate (#396)", () => {
   }
 
   const maturitySamples: { path: string; name: string }[] = [
-    { path: "/docs/ui/stamp-data-with-its-age", name: "alpha" },
+    { path: "/docs/ui/pin-a-stage-and-change-scene-as-the-page-scrolls", name: "alpha" },
     { path: "/catalog", name: "beta" },
   ];
 
@@ -68,10 +68,11 @@ test.describe("a11y gate (#396)", () => {
     for (const sample of maturitySamples) {
       test(`maturity ${sample.name} badge ${theme}: contrast >= 4.5:1`, async ({ page }) => {
         await openWithTheme(page, sample.path, theme);
-        const badge =
-          sample.name === "alpha"
-            ? page.getByRole("link", { name: sample.name, exact: true })
-            : page.getByText(sample.name, { exact: true }).first();
+        const badge = page
+          .locator("main a[data-badge-link]")
+          .filter({ hasText: new RegExp(`^${sample.name}$`, "i") })
+          .first();
+        await expect(badge).toBeVisible();
         const ratio = await readComputedContrast(page, badge);
         expect(ratio).toBeGreaterThanOrEqual(4.5);
       });
