@@ -1,6 +1,6 @@
 {
   "name": "@zedtech/zedkit-payload-seo",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -60,5 +60,8 @@
     "payload": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

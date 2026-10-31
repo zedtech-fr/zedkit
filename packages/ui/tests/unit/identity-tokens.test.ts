@@ -72,7 +72,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         expect(rem[i]).toBeGreaterThan(rem[i - 1] ?? 0);
       }
     }
-    for (const name of ["--tracking-tight", "--tracking-wide", "--zk-heading-tracking", "--zk-label-tracking", "--zk-shadow-xs", "--zk-shadow-sm", "--zk-shadow-md", "--zk-shadow-lg", "--zk-shadow-xl", "--zk-shadow-overlay", "--spacing", "--radius", "--radius-xs", "--radius-sm", "--radius-md", "--radius-xl", "--radius-2xl", "--zk-border-width", "--zk-color-duration"] as const) {
+    for (const name of ["--tracking-tight", "--tracking-wide", "--zk-heading-tracking", "--zk-label-tracking", "--zk-shadow-xs", "--zk-shadow-sm", "--zk-shadow-md", "--zk-shadow-lg", "--zk-shadow-xl", "--zk-shadow-overlay", "--spacing", "--radius", "--radius-xs", "--radius-sm", "--radius-md", "--radius-xl", "--radius-2xl", "--zk-color-duration"] as const) {
       const seen = new Map<string, string>();
       for (const [id, css] of Object.entries(looks)) {
         const value = token(css, name) ?? "";
@@ -87,12 +87,14 @@ describe("per-identity leading, border, colour duration (#799)", () => {
   it("sets a distinct border and colour duration per identity (body leading is shared)", () => {
     const shared = read("shared-type-scale.css");
     expect(token(shared, "--zk-body-leading")).toBe("1.55");
-    expect(token(read("identities/press.css"), "--zk-border-width")).toBe("2px");
+    expect(token(read("identities/press.css"), "--zk-border-width")).toBe("1px");
     expect(token(read("identities/press.css"), "--zk-color-duration")).toBe("80ms");
     expect(token(read("identities/maison.css"), "--zk-color-duration")).toBe("200ms");
     expect(token(read("identities/maison.css"), "--radius-xs") ?? "").toBe("0.5px");
-    expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("1.75px");
-    expect(token(read("identities/maison.css"), "--zk-shadow-md") ?? "").toBe("0 1px 0 hsl(var(--zk-shadow-color) / 0.28)");
+    expect(token(read("identities/maison.css"), "--zk-border-width") ?? "").toBe("1px");
+    expect(token(read("identities/maison.css"), "--zk-shadow-md") ?? "").toBe(
+      "0 1px 2px hsl(var(--zk-shadow-color) / 0.05), 0 4px 12px -8px hsl(var(--zk-shadow-color) / 0.06)",
+    );
     expect(token(read("identities/maison.css"), "--zk-shadow-overlay") ?? "").toBe(
       "0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24)",
     );

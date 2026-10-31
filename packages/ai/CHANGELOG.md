@@ -1,5 +1,24 @@
 # @zedtech/zedkit-ai
 
+## 0.10.0
+
+### Minor Changes
+
+- e1ce9e5: Fail install and validate when an installed skill, agent, or command references a skill absent from the selected preset. Fix vendored skills that pointed at unshipped grilling, prototype, or setup-matt-pocock-skills calls.
+- e1ce9e5: Add a `starter` preset (five skills, three subagents, two commands) and make it the default for `init`. Use `--preset core` or `--preset full` to opt into the previous layouts.
+
+### Patch Changes
+
+- 28b0dba: Narrow exported `Provider` to claude/cursor/codex; shared-source runtime ids stay runtime strings on install options.
+
+## 0.9.1
+
+### Patch Changes
+
+- fa7ce48: Declare `engines.node` (`>=22`) on every published package; CI blocks tarballs that omit it (reliability R33).
+- Updated dependencies [fa7ce48]
+  - @zedtech/zedkit-core@0.2.2
+
 ## 0.9.0
 
 ### Minor Changes

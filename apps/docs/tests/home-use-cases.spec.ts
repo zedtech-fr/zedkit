@@ -154,8 +154,8 @@ for (const identity of ORDER) {
       );
       await page.goto("/");
       await waitForAppliedLook(page, identity, theme);
-      await page.locator("#use-cases").scrollIntoViewIfNeeded();
-      await page.locator("#use-cases").getByRole("tab", { name: "Glass" }).click();
+      await page.locator("#home-page #use-cases").scrollIntoViewIfNeeded();
+      await page.locator("#home-page #use-cases").getByRole("tab", { name: "Glass" }).click();
       const fits = await page.locator("[data-use-case-scene]").evaluate((el) => {
         const box = el.getBoundingClientRect();
         return box.left >= 0 && box.right <= document.documentElement.clientWidth;

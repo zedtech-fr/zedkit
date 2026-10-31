@@ -39,6 +39,30 @@ test.describe("tide identity", () => {
     });
   }
 
+  test("keeps UI changelog on one line at 1280", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(HOME, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    const link = page.locator("#nd-nav").getByRole("link", { name: "UI changelog" });
+    const lines = await link.evaluate((el) => el.getClientRects().length);
+    expect(lines).toBe(1);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+
+  test("keeps the hero admin preview on the first phone screen", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(HOME, { waitUntil: "networkidle" });
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
+    const preview = page.locator("[data-home-hero-preview]");
+    await expect(preview).toBeVisible();
+    const box = await preview.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + box!.height).toBeLessThanOrEqual(844);
+  });
+
   for (const width of [360, 390] as const) {
     test(`does not overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });

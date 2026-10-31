@@ -1,5 +1,20 @@
 # @zedtech/zedkit-ui
 
+## 0.9.4
+
+### Patch Changes
+
+- c67595c: Maison and Press use hairline tinted borders, softer shadows, and no drawn ink edges on Press controls.
+- 2173809: Modal drawers now move focus inside on open by default so keyboard users stay in the focus trap; non-modal drawers keep the previous behavior.
+
+## 0.9.3
+
+### Patch Changes
+
+- fa7ce48: Declare `engines.node` (`>=22`) on every published package; CI blocks tarballs that omit it (reliability R33).
+- Updated dependencies [fa7ce48]
+  - @zedtech/zedkit-i18n@0.2.1
+
 ## 0.9.2
 
 ### Patch Changes

@@ -70,7 +70,9 @@ the pull request.
 
 `pnpm exec turbo run build && bash scripts/check-pack.sh` packs every
 package and asserts the tarball holds the manifest, LICENSE, README,
-every `files`/exports target — with no private terms inside. It also
+every `files`/exports target — with no private terms inside. Each public
+package must declare `engines.node` (`>=22`, same as CI); `node
+scripts/check-publish-engines.mjs` enforces it before release. It also
 runs `publint` (errors only) and `attw --profile esm-only` on each
 tarball (CSS subpaths excluded). For a manual file list:
 `pnpm --filter <pkg> exec npm pack --dry-run`.
