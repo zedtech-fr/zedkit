@@ -23,7 +23,16 @@ export function usePreviewMobile(): boolean {
  * Preview island with viewport and theme switches. The `dark` class re-scopes
  * kit CSS variables for the preview subtree only.
  */
-export function PreviewViewport({ center, children }: { center?: boolean; children: ReactNode }) {
+export function PreviewViewport({
+  center,
+  children,
+  a11yRoot,
+}: {
+  center?: boolean;
+  children: ReactNode;
+  /** When set, axe gates scope to this preview only (hero demo on component pages). */
+  a11yRoot?: boolean;
+}) {
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(noop, () => true, () => false);
   const [dark, setDark] = useState(false);
@@ -36,7 +45,7 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
 
   const darkScope = dark ? "dark" : undefined;
   return (
-    <Stack gap={3} data-component-preview>
+    <Stack gap={3} data-component-preview={a11yRoot ? "primary" : true} {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
         <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
           <Text variant="muted" className="text-xs">Preview</Text>
@@ -79,7 +88,7 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
       </Stack>
       <Stack
         className={cn(
-          "rounded-lg border border-border bg-muted/40 p-4",
+          "rounded-lg border border-border bg-muted/40 p-4 md:p-6",
           darkScope,
           mobile && "mx-auto w-full max-w-[390px]",
         )}

@@ -23,9 +23,17 @@ test("button page renders catalog accessibility guidance (#1082)", async ({ page
   const accessibility = page.getByRole("heading", { name: "Accessibility", level: 2 });
   await accessibility.scrollIntoViewIfNeeded();
   await expect(accessibility).toBeVisible();
-  await expect(page.locator("main")).toContainText("Native button");
+  await expect(page.locator("main")).toContainText(/Native `button`/);
   const props = page.getByRole("heading", { name: "Props", level: 2 });
   expect((await accessibility.boundingBox())!.y).toBeGreaterThan((await props.boundingBox())!.y);
+});
+
+test("button preview appears before install or copy (#R2)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  const preview = page.locator("[data-component-preview]").first();
+  const install = page.getByRole("heading", { name: "Install or copy", level: 2 });
+  expect((await preview.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
 });
 
 test.describe("button demo a11y + themes (#152)", () => {

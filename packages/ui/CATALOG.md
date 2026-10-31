@@ -166,12 +166,15 @@ import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
 - Wraps: `@radix-ui/react-slot`, `class-variance-authority`
 - Status: beta
 - Short name: Button
+- Registry: button
 - Audience: Anyone placing actions in an admin UI.
 - Purpose: Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.
 - When to use: For every clickable action, including links styled as buttons.
 - When not to use: For navigation menus — use links or tabs instead.
 - See also: `Confirm destructive actions`
+- Examples: Usage, Variants and sizes
 - A11y: Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.
+- Troubleshooting: Wrong variant colours in dark mode — ensure `.dark` is on the document root. Link styled as a button — use `asChild` with an anchor and keep visible link text. Icon-only control — pass `aria-label` (or use `IconButton` when the label should not appear as text).
 
 ```ts
 import { Button } from "@zedtech/zedkit-ui";
@@ -181,6 +184,14 @@ import { Button } from "@zedtech/zedkit-ui";
 <Button asChild variant="secondary">
   <a href="/docs">Read the docs</a>
 </Button>
+```
+
+```ts
+import { Button } from "@zedtech/zedkit-ui";
+<Button size="sm">Small</Button>
+<Button>Default</Button>
+<Button size="lg">Large</Button>
+<Button disabled>Saving…</Button>
 ```
 
 ## Icon-only actions with a visible name

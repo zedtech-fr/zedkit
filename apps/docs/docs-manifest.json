@@ -16,9 +16,14 @@
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
       "component": "Button",
+      "registry": "button",
       "props": "ButtonProps",
       "source": "button.tsx",
-      "demo": "ButtonDemo"
+      "demo": "ButtonDemo",
+      "propsPriority": ["variant", "size", "asChild"],
+      "examples": {
+        "Variants and sizes": "ButtonDemo"
+      }
     },
     "Show a status or count badge": {
       "package": "@zedtech/zedkit-ui",
@@ -27,6 +32,7 @@
       "props": "BadgeProps",
       "source": "badge.tsx",
       "demo": "BadgeDemo",
+      "propsPriority": ["variant", "asChild"],
       "examples": {
         "Variants": "BadgeVariantsDemo",
         "In a table row": "BadgeTableRowDemo",
