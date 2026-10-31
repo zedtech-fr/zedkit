@@ -16,6 +16,7 @@ const A11Y_ROUTES = [
   { path: "/docs/ui/pick-one-option-from-a-dropdown", label: "component-select" },
   { path: "/docs/ui/call-out-a-notice-or-an-error-state", label: "component-alert" },
   { path: "/docs/maturity-and-compatibility", label: "maturity-table" },
+  { path: "/catalog", label: "catalog" },
 ] as const;
 
 const VIEWPORTS = [

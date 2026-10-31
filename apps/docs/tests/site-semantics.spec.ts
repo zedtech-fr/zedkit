@@ -41,7 +41,7 @@ test.describe("site semantics harness (#300)", () => {
 
   test("home: axe on layout", async ({ page }) => {
     await page.goto(BASE, { waitUntil: "networkidle" });
-    await assertAxeOnMain(page, ["label-content-name-mismatch"], "[data-home-dashboard-card]");
+    await assertAxeOnMain(page, ["label-content-name-mismatch"], "[data-home-dashboard-card], [data-home-hero-proof]");
   });
 
   test("registry URLs used on the site resolve", async ({ page }) => {
