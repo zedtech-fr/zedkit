@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { useState } from "react";
+import type { DateRange } from "react-day-picker";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -66,7 +67,7 @@ describe("DatePicker controlled clear and record updates", () => {
 describe("DateRangePicker controlled clear and record updates", () => {
   it("shows the range placeholder after the parent clears the value", async () => {
     function Example() {
-      const [value, setValue] = useState<{ from?: Date; to?: Date } | undefined>();
+      const [value, setValue] = useState<DateRange | undefined>();
       return (
         <>
           <DateRangePicker value={value} onValueChange={setValue} defaultMonth={new Date(2026, 9, 1)} />

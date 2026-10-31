@@ -18,7 +18,7 @@ test.describe("home install or copy block (#419)", () => {
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
 
-    await expect(page.getByRole("link", { name: "Install or copy" }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Install it or copy it", level: 2 })).toBeVisible();
 
     const aiSetup = page.locator("#ai-setup");
     const installOrCopy = page.locator("#install-or-copy");

@@ -1,6 +1,6 @@
 /**
  * UI transition matrix (clear / disable / update / rollback).
- * See focused *-transitions.test.tsx files per row.
+ * Each row is a component plus transition; tests live in focused files.
  *
  * | Component           | disable                         | clear (controlled)              | update (record)                 |
  * |---------------------|---------------------------------|---------------------------------|---------------------------------|
