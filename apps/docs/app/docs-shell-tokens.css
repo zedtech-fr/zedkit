@@ -75,3 +75,13 @@ html:not(.dark):root[data-identity] body:has(#nd-docs-layout),
 html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
   background-image: none;
 }
+
+/*
+ * D5 specimen surface: one hairline frame on component previews, no drop
+ * shadow (shadows stay on overlays). Card fill replaces the muted wash.
+ */
+#nd-docs-layout [data-component-preview] > :last-child {
+  box-shadow: none;
+  background-color: hsl(var(--card));
+  border: var(--zk-border-width, 1px) solid hsl(var(--border));
+}

@@ -54,6 +54,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: bash scripts/check-deps-audit.sh
+      - run: node scripts/check-publish-engines.mjs
       - uses: actions/cache@v6
         with:
           path: .turbo
