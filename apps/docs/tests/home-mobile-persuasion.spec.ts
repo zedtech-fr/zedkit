@@ -49,6 +49,9 @@ test.describe("home mobile persuasion type (L2a)", () => {
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeLessThanOrEqual(1.61);
     }
 
-    expect(readings.entryMeta?.fontSize ?? 99).toBeLessThanOrEqual(13);
+    // Tide default: entry meta follows Tide --text-xs (0.9375rem = 15px), still
+    // below the 16px body floor. Was <=13 under Volt. Flag for L2/L3 if the
+    // meta scale needs revisiting with the new default.
+    expect(readings.entryMeta?.fontSize ?? 99).toBeLessThanOrEqual(15);
   });
 });

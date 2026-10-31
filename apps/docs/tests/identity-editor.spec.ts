@@ -428,10 +428,11 @@ test.describe("identity editor apply to site", () => {
     const chooser = page.getByRole("combobox", { name: "Identity" }).first();
 
     // Clean draft: the editor adopts the header's look and the URL follows.
-    await chooser.selectOption("tide");
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    await expect(page.getByLabel("Look")).toHaveValue("tide");
-    expect(new URL(page.url()).searchParams.get("identity")).toBe("tide");
+    // Press, not tide: tide is the site default, so switching to it is a no-op.
+    await chooser.selectOption("press");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await expect(page.getByLabel("Look")).toHaveValue("press");
+    expect(new URL(page.url()).searchParams.get("identity")).toBe("press");
 
     // Applied draft: fields and URL resync to the header's new look.
     await page.getByLabel("Radius", { exact: true }).fill("2rem");
