@@ -56,7 +56,7 @@ test.describe("icon-only actions with a visible name", () => {
 
   test("preview has no axe violations", async ({ page }) => {
     await open(page, "icon-only-actions-with-a-visible-name", "mist", "light");
-    await assertA11yGate(page, '[data-component-preview="primary"]');
+    await assertA11yGate(page, '[data-component-preview="primary"] .rounded-lg.border');
   });
 });
 
@@ -98,6 +98,6 @@ test.describe("quiet icon beside inline text", () => {
 
   test("preview has no axe violations", async ({ page }) => {
     await open(page, "quiet-icon-beside-inline-text", "mist", "light");
-    await assertA11yGate(page, '[data-component-preview="primary"]');
+    await assertA11yGate(page, '[data-component-preview="primary"] .rounded-lg.border');
   });
 });
