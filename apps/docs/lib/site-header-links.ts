@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import type { LinkItemType } from "fumadocs-ui/layouts/shared";
-import { DocsIdentitySwitcher } from "@/components/docs-identity-chooser";
+import { DocsIdentityPicker } from "@/components/docs-identity-chooser";
 
 /** Global marketing/docs header links (GitHub comes from `githubUrl` on the layout). */
 export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
@@ -23,6 +23,6 @@ export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
     },
     { text: "UI changelog", url: changelogHref, external: true },
     // Identity chooser (desktop header; the phone header gets its own).
-    { type: "custom", secondary: true, children: createElement("li", { className: "list-none" }, createElement(DocsIdentitySwitcher)) },
+    { type: "custom", secondary: true, children: createElement("li", { className: "list-none" }, createElement(DocsIdentityPicker)) },
   ];
 }

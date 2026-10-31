@@ -1,12 +1,94 @@
-/* Doc page hierarchy: H1 clearly above H2 on desktop and mobile. Scoped to doc pages; the home page keeps its own scale. */
+/* Doc page hierarchy uses shared semantic type roles (PR A tokens). */
 #nd-page h1 {
-  font-size: clamp(2.25rem, 1.5rem + 2vw, 3rem);
-  line-height: 1.12;
+  font-size: var(--zk-type-h1-size);
+  font-weight: var(--zk-type-h1-weight);
+  line-height: var(--zk-type-h1-leading);
+  letter-spacing: var(--zk-type-h1-tracking);
 }
 
 #nd-page .prose > h2 {
-  font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem);
-  line-height: 1.2;
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  line-height: var(--zk-type-h2-leading);
+  letter-spacing: -0.02em;
+}
+
+#nd-page .prose > h3 {
+  font-size: var(--zk-type-h3-size);
+  font-weight: var(--zk-type-h3-weight);
+  line-height: var(--zk-type-h3-leading);
+  letter-spacing: -0.02em;
+}
+
+#nd-page .prose {
+  max-width: 68ch;
+  font-size: var(--zk-type-prose-size);
+  line-height: var(--zk-type-prose-leading);
+  color: hsl(var(--foreground));
+}
+
+#nd-page .prose > p:first-of-type {
+  font-size: var(--zk-type-lead-size);
+  font-weight: var(--zk-type-lead-weight);
+  line-height: var(--zk-type-lead-leading);
+  color: hsl(var(--muted-foreground));
+}
+
+#home-page [data-slot="section"] h2[data-slot="heading"] {
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  line-height: var(--zk-type-h2-leading);
+  letter-spacing: -0.02em;
+}
+
+#home-page h3[data-slot="heading"] {
+  font-size: var(--zk-type-h3-size);
+  font-weight: var(--zk-type-h3-weight);
+  line-height: var(--zk-type-h3-leading);
+  letter-spacing: -0.02em;
+}
+
+#home-page .type-site-h1 {
+  font-size: var(--zk-type-h1-size);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+#home-page [data-home-hero-lead] [data-home-hero-sub] {
+  font-size: var(--zk-type-lead-size);
+  font-weight: var(--zk-type-lead-weight);
+  line-height: var(--zk-type-lead-leading);
+  margin-top: 0.75rem;
+}
+
+#home-page [data-home-hero-lead] [data-home-hero-label] {
+  font-size: var(--zk-type-label-size);
+  font-weight: var(--zk-type-label-weight);
+  line-height: var(--zk-type-label-leading);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#scenarios [data-slot="card-title"] {
+  font-size: var(--zk-type-card-title-size);
+  font-weight: var(--zk-type-card-title-weight);
+  line-height: var(--zk-type-card-title-leading);
+}
+
+[data-catalog-shell] .type-site-lead {
+  font-size: var(--zk-type-lead-size);
+  font-weight: var(--zk-type-lead-weight);
+  line-height: var(--zk-type-lead-leading);
+  color: hsl(var(--muted-foreground));
+}
+
+[data-catalog-shell] h2[data-slot="heading"],
+[data-catalog-shell] #catalog-filters-heading {
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  line-height: var(--zk-type-h2-leading);
+  letter-spacing: -0.02em;
 }
 
 /* Badge links inside prose keep the badge look: no link underline. */
@@ -29,19 +111,12 @@
   color: hsl(var(--destructive-foreground));
 }
 
-/* Home marketing persuasion scale (L2): comfortable mobile reading; metadata stays xs. */
+/* Home marketing persuasion scale uses semantic body + card-muted body. */
 :root {
-  --zk-home-persuasion-font-size: var(--text-base);
-  --zk-home-persuasion-leading: var(--zk-body-leading, 1.6);
-  --zk-home-metadata-font-size: var(--text-xs);
-  --zk-home-metadata-leading: 1.35;
-}
-
-@media (width < 48rem) {
-  :root {
-    --zk-home-persuasion-font-size: 1rem;
-    --zk-home-persuasion-leading: 1.5;
-  }
+  --zk-home-persuasion-font-size: var(--zk-type-body-size);
+  --zk-home-persuasion-leading: var(--zk-type-body-leading);
+  --zk-home-metadata-font-size: var(--zk-type-label-size);
+  --zk-home-metadata-leading: var(--zk-type-label-leading);
 }
 
 .text-home-persuasion {
@@ -52,11 +127,22 @@
 .home-metadata-copy {
   font-size: var(--zk-home-metadata-font-size);
   line-height: var(--zk-home-metadata-leading);
+  font-weight: var(--zk-type-label-weight);
+  color: hsl(var(--zk-subtle-foreground));
 }
 
 @media (width < 48rem) {
   #home-page [data-home-marketing] [data-slot="section"] [data-slot="heading"] + [data-slot="text"] {
     font-size: var(--zk-home-persuasion-font-size);
     line-height: var(--zk-home-persuasion-leading);
+  }
+}
+
+@media (width >= 64rem) {
+  #nd-docs-layout nav[aria-label] a,
+  header nav a {
+    font-size: var(--zk-type-nav-size);
+    font-weight: var(--zk-type-nav-weight);
+    line-height: var(--zk-type-nav-leading);
   }
 }

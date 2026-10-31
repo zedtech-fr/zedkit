@@ -48,7 +48,9 @@ function useDialogViewportFit<T extends HTMLElement>(): React.RefCallback<T> {
   };
 }
 
-function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
+type DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;
+
+function Dialog({ ...props }: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
@@ -135,7 +137,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-footer"
       className={cn(
-        "sticky bottom-0 z-10 flex flex-col-reverse bg-background pb-dialog-footer-safe sm:flex-row sm:justify-end sm:space-x-dialog-footer-gap",
+        "sticky bottom-0 z-10 flex flex-col-reverse bg-background pb-dialog-footer-safe sm:flex-row sm:justify-end sm:space-x-2",
         className,
       )}
       {...props}
@@ -165,6 +167,7 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
 
 export {
   Dialog,
+  type DialogProps,
   DialogClose,
   DialogContent,
   DialogDescription,

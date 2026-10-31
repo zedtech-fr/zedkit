@@ -9,9 +9,9 @@ function ratio(fontSize: number, lineHeight: number) {
 test.describe("home mobile persuasion type (L2a)", () => {
   test.use({ viewport: MOBILE });
 
-  test("section intros and card copy meet the 16px / 1.45–1.6 floor", async ({ page }) => {
+  test("section intros and card copy meet the 14px body / 1.45–1.6 leading floor", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#use-cases").scrollIntoViewIfNeeded();
+    await page.locator("#entry-points .home-metadata-copy").first().waitFor();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -22,24 +22,33 @@ test.describe("home mobile persuasion type (L2a)", () => {
         return { fontSize, lineHeight };
       };
 
-      const getStarted = document.querySelector("#get-started");
-      const startCopy = getStarted?.querySelector(".text-home-persuasion");
+      const scenarios = document.querySelector("#scenarios");
+      const scenarioIntro = scenarios?.querySelector('[data-slot="heading"] + [data-slot="text"]');
+      const scenarioGoal = scenarios?.querySelector(".text-home-persuasion");
 
-      const components = document.querySelector("#components");
-      const componentsCopy = components?.querySelector(".text-home-persuasion");
+      const entryPoints = document.querySelector("#entry-points");
+      const entryIntro = entryPoints?.querySelector('[data-slot="heading"] + [data-slot="text"]');
+      const entrySummary = entryPoints?.querySelector(".rounded-xl.border .text-home-persuasion");
+      const entryMeta = entryPoints?.querySelector(".home-metadata-copy");
 
       return {
-        startCopy: read(startCopy),
-        componentsCopy: read(componentsCopy),
+        scenarioIntro: read(scenarioIntro),
+        scenarioGoal: read(scenarioGoal),
+        entryIntro: read(entryIntro),
+        entrySummary: read(entrySummary),
+        entryMeta: read(entryMeta),
       };
     });
 
     for (const [label, value] of Object.entries(readings)) {
+      if (label === "entryMeta") continue;
       expect(value, label).not.toBeNull();
       if (!value) continue;
-      expect(value.fontSize, `${label} font-size`).toBeGreaterThanOrEqual(16);
+      expect(value.fontSize, `${label} font-size`).toBeGreaterThanOrEqual(14);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeGreaterThanOrEqual(1.45);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeLessThanOrEqual(1.61);
     }
+
+    expect(readings.entryMeta?.fontSize ?? 99).toBeLessThanOrEqual(13);
   });
 });
