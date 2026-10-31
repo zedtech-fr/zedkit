@@ -1,7 +1,7 @@
 /*
  * Identity: volt.
  *
- *    Dense near-black, tight type (Geist, 10px xs body), hairline
+ *    Dense near-black, Geist at shared scale, hairline
  *    borders, layered depth, one acid accent. Code in JetBrains Mono.
  *
  *    Inert until `data-identity="volt"` is set on <html> (or on an
@@ -41,7 +41,7 @@
   --sidebar-accent: 72 90% 60%;
   --radius: 0.25rem;
 
-  /* Typography: families, scale, weight, tracking */
+  /* Typography: families, weight flavour, tracking (scale is shared) */
   --zk-font-sans: "Geist Variable", Geist, "Geist Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-display: "Geist Variable", Geist, "Geist Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -53,22 +53,11 @@
   --font-weight-bold: 700;
   --tracking-tight: -0.03em;
   --tracking-wide: 0.1em;
-  --text-xs: 0.625rem;
-  --text-sm: 0.75rem;
-  --text-base: 0.9375rem;
-  --text-lg: 1.0625rem;
-  --text-xl: 1.1875rem;
-  --text-2xl: 1.4375rem;
-  --text-3xl: 1.75rem;
-  --text-4xl: 2.125rem;
-  --text-5xl: 2.75rem;
   --zk-heading-weight: 600;
   --zk-heading-tracking: -0.08em;
   --zk-heading-transform: none;
-  --zk-heading-leading: 1.08;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.1em;
-  --zk-body-leading: 1.22;
 
   /* Spacing: base unit */
   --spacing: 0.225rem;

@@ -75,7 +75,7 @@ runs `publint` (errors only) and `attw --profile esm-only` on each
 tarball (CSS subpaths excluded). For a manual file list:
 `pnpm --filter <pkg> exec npm pack --dry-run`.
 
-Client gzip budgets (`gzip(dist/*.js)`, current + ~10%), fail the
+Client gzip budgets (`gzip(dist/*.js)` on packed npm tarballs), fail the
 same script if exceeded:
 
 | Package | Budget |
@@ -83,5 +83,14 @@ same script if exceeded:
 | `@zedtech/zedkit-ui` | 39 200 bytes |
 | `@zedtech/zedkit-ai` | 9 500 bytes |
 
-Raise the number in `scripts/check-pack.sh` in the PR that grows the
-files.
+Docs site home first-load JavaScript (gzip sum of each initial
+`/_next/static/chunks/*.js` file in the static export, same gate as
+`check-pack` after build):
+
+| Route | Budget |
+|---|---|
+| `/` (`apps/docs/out/index.html`) | 363 000 bytes gzip |
+
+Raise tarball numbers in `scripts/check-pack.sh` or the home budget in
+`apps/docs/scripts/first-load-budget.mjs` in the PR that grows the
+payload.

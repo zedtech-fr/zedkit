@@ -41,7 +41,7 @@
   --sidebar-accent: 14 100% 92%;
   --radius: 1rem;
 
-  /* Typography: families, scale, weight, tracking */
+  /* Typography: families, weight flavour, tracking (scale is shared) */
   --zk-font-sans: "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-display: "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -49,26 +49,15 @@
   --font-mono: var(--zk-font-mono);
   --font-display: var(--zk-font-display);
   --font-weight-medium: 500;
-  --font-weight-semibold: 700;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --tracking-tight: -0.04em;
   --tracking-wide: 0.08em;
-  --text-xs: 0.9375rem;
-  --text-sm: 1.0625rem;
-  --text-base: 1.1875rem;
-  --text-lg: 1.5rem;
-  --text-xl: 1.75rem;
-  --text-2xl: 2.125rem;
-  --text-3xl: 2.375rem;
-  --text-4xl: 2.75rem;
-  --text-5xl: 3.5rem;
   --zk-heading-weight: 700;
   --zk-heading-tracking: -0.035em;
   --zk-heading-transform: none;
-  --zk-heading-leading: 1.02;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.12em;
-  --zk-body-leading: 1.35;
 
   /* Spacing: base unit */
   --spacing: 0.28rem;
