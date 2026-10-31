@@ -1,5 +1,36 @@
 # @zedtech/zedkit-ui
 
+## 0.8.0
+
+### Minor Changes
+
+- b8cb610: Additive type exports `DialogProps` and `FormFieldProps`, naming the props
+  `Dialog` and `FormField` already accepted (same pattern as `TabsProps`).
+  They let the docs generator render Props tables for the modal-dialogs and
+  validated-forms pages, which shipped without one.
+- 0bdc423: Preset switches no longer destroy custom identity work: `applyIdentity`
+  parks the stored custom sheet (it is scoped to one look, so it stays inert
+  under other looks and applies again on switch-back, matching the boot
+  script after reload) instead of deleting it. Explicit resets use the new
+  `discardCustomIdentity` export. A look-less `applyCustomIdentity` now
+  scopes its sheet to the `custom` look instead of writing unscoped `:root`
+  CSS.
+- 548daca: Add layout tokens and primitives: container width tokens (narrow, reading, default, wide), identity-derived page gutter and section spacing steps, a `Container` component, and a full-bleed mode on `Section` (edge-to-edge band, optional muted tone, capped inner content). Existing `Section` rendering is unchanged without the new props.
+- 00d57d4: Add a `multiline` prop to SecretField: the value renders wrapped in an
+  auto-growing read-only textarea so long values (install commands, short
+  snippets) read in full on narrow screens instead of truncating mid-token.
+  Default rendering is unchanged. Also registers the spacing-token min-height
+  utilities as one conflict group in `cn`, so token min-height overrides win
+  like stock ones.
+
+### Patch Changes
+
+- 8bbe961: Apply compact identity colours to sidebar, card and muted chrome, not only page background.
+- 5c23276: Show a named identity (`n-…`) as the selected option in IdentitySwitcher and IdentityPicker when it is not already in the list, so the control stays named.
+- f50e3f4: Restore a stored named identity id with its custom sheet, and apply named looks without clearing that sheet.
+- ea32cde: Keep destructive buttons and destructive text at WCAG AA contrast in every identity, light and dark.
+- e725040: Name a Section from a string title (`aria-label`) and still render `description` when there is no title.
+
 ## 0.7.3
 
 ### Patch Changes
