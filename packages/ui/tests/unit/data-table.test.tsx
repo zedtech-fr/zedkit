@@ -159,6 +159,28 @@ describe("DataTable", () => {
 });
 
 describe("DataTablePagination", () => {
+  it("does not submit an enclosing form when Next is clicked", async () => {
+    const submitted = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+    render(
+      <form onSubmit={submitted}>
+        <DataTablePagination page={1} pageCount={2} canPrevious={false} canNext onPrevious={() => {}} onNext={() => {}} />
+      </form>,
+    );
+    await userEvent.setup().click(screen.getByRole("button", { name: "Next" }));
+    expect(submitted).not.toHaveBeenCalled();
+  });
+
+  it("does not submit an enclosing form when Previous is clicked", async () => {
+    const submitted = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+    render(
+      <form onSubmit={submitted}>
+        <DataTablePagination page={2} pageCount={2} canPrevious canNext={false} onPrevious={() => {}} onNext={() => {}} />
+      </form>,
+    );
+    await userEvent.setup().click(screen.getByRole("button", { name: "Previous" }));
+    expect(submitted).not.toHaveBeenCalled();
+  });
+
   it("composes standalone paging with explicit state", async () => {
     const user = userEvent.setup();
     const onPrevious = vi.fn();
