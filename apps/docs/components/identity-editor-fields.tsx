@@ -10,6 +10,7 @@ import {
   Input,
   Stack,
   Text,
+  identityContrastTokenLabel,
   type IdentityContrastWarning,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
@@ -35,8 +36,10 @@ const LIGHT_LABELS: Record<(typeof LIGHT_KEYS)[number], string> = {
   background: "Background",
   foreground: "Foreground",
   primary: "Primary",
+  primaryForeground: "Primary text",
   accent: "Accent",
   border: "Border",
+  mutedForeground: "Muted text",
 };
 
 function TokenField({
@@ -134,7 +137,7 @@ function ContrastChips({
   return (
     <Stack gap={2} role="status">
       {warnings.map((warning) => {
-        const label = warning.token === "foreground" ? "text" : warning.token;
+        const label = identityContrastTokenLabel(warning.token);
         return (
           <Stack key={`${warning.scheme}-${warning.token}`} direction="horizontal" gap={2}>
             <Badge variant="warning">
