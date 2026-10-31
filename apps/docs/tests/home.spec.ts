@@ -65,7 +65,7 @@ test("home hero offers two ways in and keeps the other paths lower (#1038)", asy
   ).toBeVisible();
   await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
-  await expect(page.getByText("Latest", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: new RegExp(`v${featuredPackageVersion}`) }).filter({ visible: true })).toHaveCount(1);
 });
 
 test("home hero shows a short proof and the latest change (#1057)", async ({ page }) => {
@@ -91,17 +91,18 @@ test("home hero proof flips identity and dark in scope (#1072)", async ({ page }
   await page.goto(BASE, { waitUntil: "networkidle" });
   const proof = page.locator("[data-home-hero-proof]");
   const scope = proof.locator("[data-identity-scope]");
+  const shellIdentity = await page.locator("html").getAttribute("data-identity");
   await expect(scope).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
-  await proof.getByLabel("Try a look").selectOption("tide");
+  await proof.getByRole("combobox", { name: "Identity for this demo" }).click();
+  await page.getByRole("option", { name: "Tide" }).click();
   await expect(scope).toHaveAttribute("data-identity", "tide");
-  await expect(proof).toContainText('<div data-identity="tide">');
-  await proof.getByRole("button", { name: "Dark" }).click();
-  await expect(proof.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
-  await expect(proof).toContainText('<div class="dark"><div data-identity="tide">');
+  await proof.getByRole("combobox", { name: "Color mode for this demo" }).click();
+  await page.getByRole("option", { name: "Dark" }).click();
+  await expect(proof.locator("[data-home-hero-preview]")).toHaveClass(/dark/);
   const darkBg = await scope.evaluate((el) => getComputedStyle(el).backgroundColor);
   const channels = darkBg.match(/\d+/g)!.map(Number);
   expect(Math.max(...channels.slice(0, 3))).toBeLessThan(70);
-  await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+  expect(await page.locator("html").getAttribute("data-identity")).toBe(shellIdentity);
   expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
 });
 
