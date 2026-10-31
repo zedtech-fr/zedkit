@@ -29,6 +29,14 @@ test("home explains the product and four entry areas", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test("home visitor copy carries no repo internals or literal backticks (#1090)", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const text = (await page.locator("main").innerText()).toLowerCase();
+  for (const leak of ["`", "catalog.json", "packages/ui/tests", "generated index", "generated doc page", "manifest-driven"]) {
+    expect(text, `home copy must not contain ${JSON.stringify(leak)}`).not.toContain(leak);
+  }
+});
+
 test("home hero leads with the UI quickstart and names its actions honestly (#1038)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
