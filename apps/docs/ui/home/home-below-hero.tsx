@@ -60,7 +60,7 @@ export function HomeBelowHero({
               <HomeGalleryCard
                 key={card.href}
                 card={card}
-                className={index >= 3 ? "max-md:hidden min-w-0" : "min-w-0"}
+                className={index >= 3 ? "min-w-0 max-md:hidden" : "min-w-0"}
               />
             ))}
           </Stack>
