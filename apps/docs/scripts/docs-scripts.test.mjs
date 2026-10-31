@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
-import { checkGeneratedPage, readFrontmatterDescription } from "./page-checks.mjs";
+import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -62,6 +62,25 @@ test("checkGeneratedPage accepts a full need page", () => {
   );
   assert.deepEqual(errors, []);
   assert.equal(readFrontmatterDescription(page), "A button starts an action.");
+  assert.equal(readFrontmatterTitle(page), "Trigger actions with buttons");
+});
+
+test("checkGeneratedPage fails when catalog accessibility is not rendered", () => {
+  const errors = [];
+  checkGeneratedPage(
+    "ui/trigger-actions-with-buttons.mdx",
+    page,
+    {
+      seoMax: 160,
+      descriptionsSeen: new Map(),
+      a11yByTitle: new Map([["Trigger actions with buttons", "Native button semantics."]]),
+    },
+    errors,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks the catalog Accessibility section")),
+    true,
+  );
 });
 
 test("checkGeneratedPage fails when install tabs or description are missing", () => {

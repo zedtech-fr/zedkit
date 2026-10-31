@@ -17,6 +17,17 @@ test("button demo shows sizes and disabled states (#1065)", async ({ page }) => 
   await expect(preview.getByRole("button", { name: "Saving…" })).toBeDisabled();
 });
 
+test("button page renders catalog accessibility guidance (#1082)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  const accessibility = page.getByRole("heading", { name: "Accessibility", level: 2 });
+  await accessibility.scrollIntoViewIfNeeded();
+  await expect(accessibility).toBeVisible();
+  await expect(page.locator("main")).toContainText("Native button");
+  const props = page.getByRole("heading", { name: "Props", level: 2 });
+  expect((await accessibility.boundingBox())!.y).toBeGreaterThan((await props.boundingBox())!.y);
+});
+
 test.describe("button demo a11y + themes (#152)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}: names, axe, screenshot`, async ({ page }) => {

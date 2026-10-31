@@ -20,6 +20,7 @@ render through `ComponentPage` instead — different section order; see
 | Example | Generated from catalog | yes |
 | Deep sections (Scenario, Troubleshooting, …) | Prose | optional |
 | Props | Generated | when manifest lists props |
+| Accessibility | Generated from catalog | when A11y field exists |
 
 Do not duplicate generated section titles in prose. CI rejects them.
 
