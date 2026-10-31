@@ -17,12 +17,13 @@ const generator = createGenerator();
 export function PropsTable({
   file,
   name,
-  priority: _priority = DEFAULT_PROPS_PRIORITY,
+  priority = DEFAULT_PROPS_PRIORITY,
 }: {
   file: string;
   name: string;
   priority?: string[];
 }) {
+  void priority;
   const basePath = join(process.cwd(), "..", "..", "packages", "ui", "src");
   const host = file.replace(/\.tsx$/, "");
   const inheritedPanel =
