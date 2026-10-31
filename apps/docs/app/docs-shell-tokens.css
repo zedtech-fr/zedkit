@@ -29,3 +29,18 @@ html.dark [id^="type-table"] .line-through {
   color: hsl(240 5% 64.9%) !important;
   text-decoration-color: hsl(240 5% 64.9%);
 }
+
+/*
+ * Docs reading scale: identities ship a dense display scale (Volt: 10px
+ * xs / 12px sm, -0.08em headings, 1.22 body leading). Inside the docs
+ * shell, prose and chrome keep a readable floor: 13-14px labels,
+ * softened tracking, 1.6 leading. Scoped demos that set their own
+ * identity keep it; the home page keeps its own scale.
+ */
+#nd-docs-layout {
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --tracking-tight: -0.025em;
+  --zk-heading-tracking: -0.02em;
+  --zk-body-leading: 1.6;
+}

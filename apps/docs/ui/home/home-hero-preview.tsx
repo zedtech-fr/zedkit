@@ -72,7 +72,7 @@ export function HomeHeroPreview() {
   }, []);
 
   return (
-    <Stack gap={3} id="demo" data-home-hero-proof className="scroll-mt-24">
+    <Stack gap={3} id="demo" data-home-hero-proof className="scroll-mt-24 min-w-0 max-w-full">
       <HeroProofControls look={look} dark={dark} onLook={setLook} onDark={() => setDark(!dark)} />
       <Stack className={cn(darkScope, HOME_HERO_PREVIEW_SHELL_CLASS)} data-home-hero-preview>
         <div
@@ -80,8 +80,10 @@ export function HomeHeroPreview() {
           data-identity={look}
           className="flex h-full min-h-0 flex-col bg-background font-sans text-foreground"
         >
-          <Card className="flex h-full min-h-0 flex-col overflow-hidden border shadow-sm">
-            <HomeAdminDashboardDemo label="Interactive admin dashboard demo in the hero" />
+          <Card className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border shadow-sm">
+            <Stack className="min-h-0 min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
+              <HomeAdminDashboardDemo label="Interactive admin dashboard demo in the hero" />
+            </Stack>
           </Card>
         </div>
       </Stack>

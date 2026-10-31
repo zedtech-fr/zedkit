@@ -35,18 +35,19 @@ test("home dashboard: create, edit, delete with axe on ready state", async ({ pa
 
 test("home dashboard: preview modes are keyboard reachable", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  await page.getByLabel("Table preview mode").click();
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+  await demo.getByLabel("Table preview mode").click();
   await page.getByRole("option", { name: "Loading" }).click();
-  await expect(page.getByRole("table", { name: "Loading" })).toBeVisible();
+  await expect(demo.getByRole("table", { name: "Loading" })).toBeVisible();
   await axeDashboard(page);
 
-  await page.getByLabel("Table preview mode").click();
+  await demo.getByLabel("Table preview mode").click();
   await page.getByRole("option", { name: "Empty" }).click();
-  await expect(page.getByText("No apps yet. Choose Ready and click Add app.")).toBeVisible();
+  await expect(demo.getByText("No apps yet. Choose Ready and click Add app.")).toBeVisible();
   await axeDashboard(page);
 
-  await page.getByLabel("Table preview mode").click();
+  await demo.getByLabel("Table preview mode").click();
   await page.getByRole("option", { name: "Error" }).click();
-  await expect(page.getByText("Could not load apps.")).toBeVisible();
+  await expect(demo.getByText("Could not load apps.")).toBeVisible();
   await axeDashboard(page);
 });

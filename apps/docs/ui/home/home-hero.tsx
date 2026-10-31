@@ -86,11 +86,11 @@ export function HomeHero({
           </Stack>
         </Stack>
       </Container>
-      <HomeUseCasesSection />
-      <HomeGetStartedSection npmPackage={featuredPackage} />
-      <Container width="wide" className="py-section-lg">
+      <Container width="wide" className="scroll-mt-24 py-section-lg">
         <HomeHeroDashboard />
       </Container>
+      <HomeUseCasesSection />
+      <HomeGetStartedSection npmPackage={featuredPackage} />
     </>
   );
 }
