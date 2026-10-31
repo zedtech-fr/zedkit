@@ -37,41 +37,44 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero leads with the UI quickstart and names its actions honestly (#1038)", async ({ page }) => {
+test("home hero offers two ways in and keeps the other paths lower (#1038)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
 
-  const heroActions = await page.evaluate(() => {
-    const heading = document.querySelector("h1")?.getBoundingClientRect();
-    const nextSection = document.getElementById("use-cases")?.getBoundingClientRect();
-    if (!heading || !nextSection) return [];
-    return [...document.querySelectorAll("a")]
-      .map((link) => ({ name: (link.textContent ?? "").trim(), rect: link.getBoundingClientRect(), href: link.getAttribute("href") }))
-      .filter((item) => item.rect.top >= heading.top && item.rect.bottom <= nextSection.top && item.rect.width > 0)
-      .sort((a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left)
-      .map((item) => `${item.name} -> ${item.href}`);
-  });
-  expect(heroActions).toEqual([
-    "UI quickstart -> #quickstart",
-    "Install or copy -> #install-or-copy",
-    "Set up your coding agent -> #ai-setup",
-    "Open documentation -> /docs",
-  ]);
+  const heroActions = page.locator("[data-home-hero-actions] a");
+  await expect(heroActions).toHaveCount(2);
+  await expect(heroActions.nth(0)).toHaveText("Explore the demo");
+  await expect(heroActions.nth(0)).toHaveAttribute("href", "#demo");
+  await expect(heroActions.nth(1)).toHaveText("Start building");
+  await expect(heroActions.nth(1)).toHaveAttribute("href", "#quickstart");
 
-  // Payoff first: no site mechanics in the lede, version badge says Latest.
-  await expect(page.getByText(/theme everything with one of six identities/)).toBeVisible();
+  const more = page.locator("[data-home-secondary-actions] a");
+  await expect(more).toHaveCount(2);
+  await expect(more.nth(0)).toHaveText("Set up your coding agent");
+  await expect(more.nth(0)).toHaveAttribute("href", "#ai-setup");
+  await expect(more.nth(1)).toHaveAttribute("href", "/docs");
+
+  const primaryBox = await page.locator("[data-home-hero-actions]").boundingBox();
+  const secondaryBox = await page.locator("[data-home-secondary-actions]").boundingBox();
+  expect(primaryBox && secondaryBox).toBeTruthy();
+  expect(secondaryBox!.y).toBeGreaterThan(primaryBox!.y + primaryBox!.height - 1);
+
+  await expect(
+    page.getByText("An interface made of ready parts, for the app you already have."),
+  ).toBeVisible();
+  await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
   await expect(page.getByText("Latest", { exact: true }).first()).toBeVisible();
 });
 
-test("home hero shows generated scale and the latest change (#1057)", async ({ page }) => {
+test("home hero shows a short proof and the latest change (#1057)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
-  await expect(
-    page.getByText(
-      `${catalogStats.packages} packages · ${catalogStats.needs} documented needs · ${uiGalleryStats.components} UI components, ${uiGalleryStats.livePreviews} with live previews · MIT`,
-    ),
-  ).toBeVisible();
+  await expect(page.getByText("MIT · React 19 · Tailwind 4 · npm or source")).toBeVisible();
+  await expect(page.locator("#proofs")).toContainText(
+    `${catalogStats.packages} packages, ${catalogStats.needs} needs`,
+  );
+  await expect(page.locator("#proofs")).toContainText(`${uiGalleryStats.components} UI catalog entries`);
   await expect(
     page.getByText(`Latest in v${featuredPackageVersion}: ${featuredPackageLatestChange}`),
   ).toBeVisible();

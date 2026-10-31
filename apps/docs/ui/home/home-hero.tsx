@@ -1,5 +1,7 @@
 import dynamic from "next/dynamic";
-import { Container, Stack } from "@zedtech/zedkit-ui";
+import Link from "next/link";
+import { Button, Container, Stack } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
 import { HomeHeroLead } from "@/ui/home/home-hero-lead";
 import { HOME_HERO_PREVIEW_SHELL_CLASS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
@@ -49,13 +51,12 @@ export function HomeHero({
   featuredPackage,
   version,
   releasesHref,
-  stats,
-  uiStats,
   latestChange,
 }: {
   featuredPackage: string;
   version: string;
   releasesHref: string;
+  /** Still passed by the page; the short hero proof no longer prints the counts. */
   stats: { packages: number; needs: number };
   uiStats: { components: number; livePreviews: number };
   latestChange: string;
@@ -63,23 +64,31 @@ export function HomeHero({
   return (
     <>
       <Container width="wide" className="py-section-lg">
-        <Stack
-          gap={HOME_SECTION_CONTENT_GAP}
-          className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
-        >
-          <HomeHeroLead
-            version={version}
-            releasesHref={releasesHref}
-            stats={stats}
-            uiStats={uiStats}
-            latestChange={latestChange}
-          />
-          <HomeHeroPreview />
+        <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0">
+          <Stack
+            gap={HOME_SECTION_CONTENT_GAP}
+            className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
+          >
+            <HomeHeroLead
+              version={version}
+              releasesHref={releasesHref}
+              latestChange={latestChange}
+            />
+            <HomeHeroPreview />
+          </Stack>
+          <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-secondary-actions>
+            <Button asChild variant="ghost" size="sm" className="w-fit">
+              <Link href="#ai-setup">Set up your coding agent</Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm" className="w-fit">
+              <Link href="/docs"><DocsActionLabel>Open documentation</DocsActionLabel></Link>
+            </Button>
+          </Stack>
         </Stack>
       </Container>
       <HomeUseCasesSection />
       <HomeGetStartedSection npmPackage={featuredPackage} />
-      <Container width="wide" className="py-section-lg">
+      <Container id="demo" width="wide" className="scroll-mt-24 py-section-lg">
         <HomeHeroDashboard />
       </Container>
     </>
