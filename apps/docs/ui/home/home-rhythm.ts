@@ -1,3 +1,5 @@
+import { DOCS_TYPE_H3_CLASS } from "@/lib/docs-type-roles";
+
 /**
  * Home page rhythm constants. Vertical section rhythm comes from the kit
  * section spacing scale (full-bleed bands); these constants cover the gaps
@@ -35,7 +37,7 @@ export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy text-muted-foreground";
 
 /** Card and band titles under the hero (maps to `--zk-type-h3-*`). */
-export const HOME_CARD_TITLE_CLASS = "text-zk-type-h3";
+export const HOME_CARD_TITLE_CLASS = DOCS_TYPE_H3_CLASS;
 
 /** Hero promise line under the h1 (maps to `--zk-type-lead-*`). */
 export const HOME_LEAD_TEXT_CLASS = "text-zk-type-lead";

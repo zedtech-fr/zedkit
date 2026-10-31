@@ -8,8 +8,6 @@ import { HOME_HERO_PREVIEW_SHELL_CLASS, HOME_SECTION_CONTENT_GAP } from "@/ui/ho
 const HomeHeroPreview = dynamic(
   () => import("@/ui/home/home-hero-preview").then((mod) => ({ default: mod.HomeHeroPreview })),
   {
-    // Reserve the controls row and code line too, so the interactive
-    // preview lands without shifting the hero grid.
     loading: () => (
       <Stack gap={3} aria-hidden="true">
         <Stack className="h-7" />
@@ -42,11 +40,6 @@ const HomeGetStartedSection = dynamic(
   },
 );
 
-const HomeHeroDashboard = dynamic(
-  () => import("@/ui/home/home-hero-dashboard").then((mod) => ({ default: mod.HomeHeroDashboard })),
-  { loading: () => <div aria-busy="true" className="min-h-80 w-full" data-home-dashboard-card /> },
-);
-
 export function HomeHero({
   featuredPackage,
 }: {
@@ -72,13 +65,12 @@ export function HomeHero({
               <Link href="#ai-setup">Set up your coding agent</Link>
             </Button>
             <Button asChild variant="ghost" size="sm" className="w-fit">
-              <Link href="/docs"><DocsActionLabel>Open documentation</DocsActionLabel></Link>
+              <Link href="/docs">
+                <DocsActionLabel>Open documentation</DocsActionLabel>
+              </Link>
             </Button>
           </Stack>
         </Stack>
-      </Container>
-      <Container width="wide" className="scroll-mt-24 py-section-lg">
-        <HomeHeroDashboard />
       </Container>
       <HomeUseCasesSection />
       <HomeGetStartedSection npmPackage={featuredPackage} />

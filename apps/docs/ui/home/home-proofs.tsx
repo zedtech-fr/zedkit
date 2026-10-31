@@ -4,6 +4,7 @@ import { DocsActionLabel } from "@/components/docs-action-label";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_FOUR_COL,
+  HOME_CARD_TITLE_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 
@@ -13,14 +14,27 @@ export function HomeProofs({
   uiComponents,
   livePreviews,
   themeHref,
+  version,
+  releasesHref,
+  latestChange,
 }: {
   packages: number;
   needs: number;
   uiComponents: number;
   livePreviews: number;
   themeHref: string;
+  version: string;
+  releasesHref: string;
+  latestChange: string;
 }) {
   const items = [
+    {
+      title: `Latest in v${version}`,
+      body: latestChange,
+      href: releasesHref,
+      linkLabel: `v${version} (releases)`,
+      external: true,
+    },
     {
       title: `${uiComponents} UI catalog entries`,
       body: `${livePreviews} include a live preview you can try on the page.`,
@@ -49,7 +63,7 @@ export function HomeProofs({
         {items.map((item) => (
           <Card key={item.title} className="min-w-0">
             <CardHeader>
-              <CardTitle>{item.title}</CardTitle>
+              <CardTitle className={HOME_CARD_TITLE_CLASS}>{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <Stack gap={HOME_CARD_CONTENT_GAP}>

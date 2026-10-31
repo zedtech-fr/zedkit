@@ -60,6 +60,9 @@ export function HomeView({
         scenarios={scenarios}
         entryPoints={entryPoints}
         themeHref={themeHref}
+        version={version}
+        releasesHref={releasesHref}
+        latestChange={latestChange}
       />
     </div>
   );

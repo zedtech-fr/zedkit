@@ -27,7 +27,10 @@ export function HomeHeroPreview() {
           data-identity={look}
           className="flex h-full min-h-0 flex-col bg-background font-sans text-foreground"
         >
-          <Card className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border shadow-sm">
+          <Card
+            data-home-dashboard-card
+            className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border shadow-sm"
+          >
             <Stack className="min-h-0 min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
               <HomeAdminDashboardDemo label="Interactive admin dashboard demo in the hero" />
             </Stack>
