@@ -73,7 +73,6 @@ jobs:
       - run: bash scripts/check-e2e-registered.sh
       - run: pnpm exec turbo run test
       - name: Coverage (vitest v8)
-        continue-on-error: true
         run: pnpm test:coverage
       - name: Coverage summary
         if: always()
