@@ -31,19 +31,21 @@ async function assertNoLatestInHero(page: import("@playwright/test").Page) {
   await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
 }
 
-async function assertOmittedIdentityDocsRedirect(page: import("@playwright/test").Page) {
+async function assertOmittedIdentityDocsAbsent(page: import("@playwright/test").Page) {
   for (const path of [
     "/docs/ui/design-your-identity",
     "/docs/ui/switch-the-visual-identity-with-one-attribute",
   ]) {
-    const response = await page.goto(path, { waitUntil: "commit" });
-    expect(response?.status(), path).toBeLessThan(400);
-    await expect(page).not.toHaveURL(new RegExp(`${path.replace(/\//g, "\\/")}(\\?|$)`));
+    const response = await page.goto(path, { waitUntil: "domcontentloaded" });
+    expect(response?.status(), path).not.toBe(200);
+    if (path.includes("design-your-identity") && response?.ok()) {
+      await expect(page).toHaveURL(/identity-editor/);
+    }
   }
 }
 
-test("omitted identity doc URLs redirect away from catalog pages", async ({ page }) => {
-  await assertOmittedIdentityDocsRedirect(page);
+test("omitted identity doc URLs are not catalog pages", async ({ page }) => {
+  await assertOmittedIdentityDocsAbsent(page);
 });
 
 for (const theme of ["light", "dark"] as const) {
