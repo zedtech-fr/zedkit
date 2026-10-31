@@ -36,7 +36,7 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
 
   const darkScope = dark ? "dark" : undefined;
   return (
-    <Stack gap={3} data-component-preview>
+    <Stack gap={3} data-component-preview className={darkScope}>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
         <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
           <Text variant="muted" className="text-xs">Preview</Text>
@@ -77,18 +77,16 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
           </Button>
         </Stack>
       </Stack>
-      <Stack className={darkScope}>
-        <Stack
-          className={cn(
-            "rounded-lg border border-border bg-muted/40 p-4",
-            mobile && "mx-auto w-full max-w-[390px]",
-          )}
-          {...demoStyle.scopeAttrs}
-        >
-          <PreviewMobileContext.Provider value={mobile}>
-            {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
-          </PreviewMobileContext.Provider>
-        </Stack>
+      <Stack
+        className={cn(
+          "rounded-lg border border-border bg-muted/40 p-4",
+          mobile && "mx-auto w-full max-w-[390px]",
+        )}
+        {...demoStyle.scopeAttrs}
+      >
+        <PreviewMobileContext.Provider value={mobile}>
+          {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
+        </PreviewMobileContext.Provider>
       </Stack>
     </Stack>
   );
