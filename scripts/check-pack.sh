@@ -120,8 +120,9 @@ for dir in packages/*/; do
   echo "$name: ok"
 done
 
-# Client gzip of dist/*.js (ui kit + ai installer). Current size + ~10%.
-# Raise the number in the same PR that grows the files; see docs/publishing.md.
+# Client gzip of dist/*.js (ui kit + ai installer): npm tarball size, not what
+# a browser downloads. Docs first-load JS is checked separately from the
+# static export (see apps/docs/scripts/check-first-load-budget.mjs).
 size_budget() {
   local name="$1" max="$2"
   local dir="$tmp/$name/unpacked/package/dist"
@@ -137,6 +138,14 @@ size_budget() {
 }
 size_budget ui 39200
 size_budget ai 9800
+
+if [ -f apps/docs/out/index.html ]; then
+  if ! node apps/docs/scripts/check-first-load-budget.mjs; then
+    fail=1
+  fi
+else
+  echo "check-pack: docs first-load budget skipped (apps/docs/out missing)"
+fi
 
 if [ "$fail" -ne 0 ]; then
   echo "check-pack: FAILED"

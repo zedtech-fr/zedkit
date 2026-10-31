@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ui
 
+## 0.9.1
+
+### Patch Changes
+
+- 0d2c6f2: Add Playwright visual regression baselines for the UI gallery smoke tests.
+
 ## 0.9.0
 
 ### Minor Changes

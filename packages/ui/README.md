@@ -98,4 +98,5 @@ of every component in every state at http://127.0.0.1:4123/ (`/dark`
 for the dark theme). Static server render for visual review only —
 behavior stays covered by unit tests. `pnpm --filter @zedtech/zedkit-ui
 smoke` runs the Playwright smoke over both themes (sections render,
-zero console errors) and writes screenshots to test-results/.
+zero console errors) and compares the gallery to committed baselines under
+`preview/smoke.spec.ts-snapshots/` (Playwright `toHaveScreenshot`).

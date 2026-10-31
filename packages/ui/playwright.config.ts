@@ -5,6 +5,12 @@ export default defineConfig({
   testMatch: "smoke.spec.ts",
   fullyParallel: false,
   reporter: "list",
+  expect: {
+    toHaveScreenshot: {
+      animations: "disabled",
+      maxDiffPixelRatio: 0.02,
+    },
+  },
   use: {
     baseURL: "http://127.0.0.1:4123",
     viewport: { width: 1280, height: 900 },
