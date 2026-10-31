@@ -29,12 +29,12 @@ test("confirm-dialog page opens with the shared At a glance guidance (#1084)", a
   await expect(page.getByRole("heading", { name: "Accessibility", level: 2 })).toHaveCount(1);
 });
 
-test("registry brick name keeps a decorative icon", async ({ page }) => {
+test("registry brick label has no decorative icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(CONFIRM_DIALOG_DOC, { waitUntil: "networkidle" });
   const brick = page.locator("[data-registry-brick]");
   await expect(brick.getByText("confirm-dialog", { exact: true })).toBeVisible();
-  await expect(brick.locator("svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(brick.locator("svg[aria-hidden='true']")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );

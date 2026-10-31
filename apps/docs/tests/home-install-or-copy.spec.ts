@@ -75,12 +75,12 @@ test.describe("home install or copy block (#419)", () => {
     for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(96);
   });
 
-  test("published brick names keep a decorative icon", async ({ page }) => {
+  test("published brick names link without decorative icons", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(BASE, { waitUntil: "networkidle" });
     const list = page.locator("#install-or-copy [data-registry-bricks]");
-    await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
-    await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
+    await expect(list.locator("[data-registry-brick]")).toHaveCount(Math.min(registryBrickNames.length, 18));
+    await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(0);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
     );

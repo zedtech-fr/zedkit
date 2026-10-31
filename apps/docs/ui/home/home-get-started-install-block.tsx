@@ -70,9 +70,10 @@ export function HomeGetStartedInstallBlock({
         <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>components.json</Text>.
       </Text>
       <InstallOrCopyCards packageInstallCmd={packageInstallCmd} registryAddCmd={registryAddCmd} />
-      <Text className={HOME_METADATA_TEXT_CLASS}>
-        Published registry bricks today: <RegistryBrickList names={registryBricks} />.
-      </Text>
+      <Stack gap={2}>
+        <Text className={HOME_METADATA_TEXT_CLASS}>Published registry bricks today</Text>
+        <RegistryBrickList names={registryBricks} />
+      </Stack>
       <Stack direction="horizontal" gap={2} className="flex-wrap" data-docs-ctas="">
         <Button asChild variant="ghost" size="sm" className="w-fit">
           <Link href="/docs/zedkit-and-shadcn">

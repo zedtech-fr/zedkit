@@ -343,12 +343,12 @@ test("home UI quickstart points to the getting started guide", async ({ page }) 
   );
 });
 
-test("quickstart brick names keep a decorative icon", async ({ page }) => {
+test("quickstart brick grid links without decorative icons", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
   const list = page.locator("#install-or-copy [data-registry-bricks]");
-  await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
-  await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
+  await expect(list.locator("[data-registry-brick]").first()).toBeVisible();
+  await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
