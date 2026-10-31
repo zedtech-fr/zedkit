@@ -3,6 +3,11 @@
  * Mobile: token/reference rows stack as quiet cards; wide tables scroll inside the region.
  */
 
+#nd-docs-layout [data-docs-table] {
+  max-width: 100%;
+  min-width: 0;
+}
+
 #nd-docs-layout [data-docs-table] table {
   width: 100%;
   border-collapse: collapse;
@@ -86,7 +91,7 @@
     overflow-x: auto;
   }
 
-  #nd-docs-layout [data-docs-table] tbody td:nth-child(2) {
+  #nd-docs-layout [data-docs-table] tbody td:nth-child(2):not(:last-child) {
     font-family: var(--zk-font-mono, ui-monospace, monospace);
     font-size: 0.8125rem;
     color: hsl(var(--muted-foreground));
@@ -94,10 +99,15 @@
     overflow-x: auto;
   }
 
+  #nd-docs-layout [data-docs-table] tbody td:nth-child(2):last-child,
   #nd-docs-layout [data-docs-table] tbody td:nth-child(n + 3) {
+    font-family: inherit;
     font-size: 0.8125rem;
     line-height: 1.45;
     color: hsl(var(--foreground));
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow-x: visible;
   }
 }
 
