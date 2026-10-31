@@ -88,6 +88,14 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   display: none;
 }
 
+/* Reserve the fixed phone search button, its bottom inset, and 1rem of air after each shell. */
+@media (width < 48rem) {
+  #nd-home-layout,
+  #nd-docs-layout {
+    padding-bottom: calc(3.75rem + max(1rem, env(safe-area-inset-bottom)));
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   [data-search-pill] button:hover {
     filter: brightness(1.02);
