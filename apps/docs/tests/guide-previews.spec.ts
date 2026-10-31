@@ -31,14 +31,17 @@ test.describe("guide previews", () => {
     const stage = page
       .locator("[data-component-preview]")
       .filter({ hasText: "Publish the sale banner" })
+      .first()
       .locator("[data-stagger]")
+      .first();
     await stage.scrollIntoViewIfNeeded();
     await expect(stage).toHaveAttribute("data-stagger", "in");
     await expect(stage.getByText("Publish the sale banner")).toBeVisible();
   });
 
-  test("a no-preview excuse renders no fence preview on a component page", async ({ page }) => {
+  test("a route modal page keeps catalog example previews in Example and Usage only", async ({ page }) => {
     await page.goto("/docs/ui/render-a-route-as-a-modal-over-the-list", { waitUntil: "networkidle" });
-    await expect(page.locator("#usage-and-states [data-component-preview]")).toHaveCount(0);
+    await expect(page.locator("#example [data-component-preview]")).toHaveCount(1);
+    await expect(page.locator("#usage-and-states [data-component-preview]")).toHaveCount(1);
   });
 });

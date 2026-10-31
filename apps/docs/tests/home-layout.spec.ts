@@ -148,7 +148,7 @@ test.describe("docs shell wide (#1064)", () => {
       };
       const widestPreview = () => {
         let best: { left: number; width: number; right: number } | null = null;
-        for (const el of document.querySelectorAll("[data-component-preview]")) {
+        for (const el of document.querySelectorAll("[data-preview-surface], [data-component-preview]")) {
           const r = el.getBoundingClientRect();
           const box = {
             left: Math.round(r.left),
