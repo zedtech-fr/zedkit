@@ -1291,13 +1291,13 @@ export function Stack(input: StackProps): React_2.JSX.Element;
 // @public (undocumented)
 export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
-    gap?: 1 | 2 | 3 | 4 | 6 | 8;
+    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 };
 
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 8 | 3 | 4 | 2 | 6 | null | undefined;
+    gap?: 1 | 8 | 3 | 4 | 2 | 5 | 6 | 7 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
