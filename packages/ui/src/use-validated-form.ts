@@ -26,6 +26,8 @@ export function useValidatedForm<TSchema extends SchemaForResolver>(
   options: Omit<UseFormProps<InputOf<TSchema>, any, OutputOf<TSchema>>, "resolver"> = {},
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm's own context type (any)
 ): UseFormReturn<InputOf<TSchema>, any, OutputOf<TSchema>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm context generic
   const resolver = zodResolver(schema) as unknown as Resolver<InputOf<TSchema>, any, OutputOf<TSchema>>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mirrors useForm context generic
   return useForm<InputOf<TSchema>, any, OutputOf<TSchema>>({ ...options, resolver });
 }
