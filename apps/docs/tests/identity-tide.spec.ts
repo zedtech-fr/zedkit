@@ -52,13 +52,13 @@ test.describe("tide identity", () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
-  test("keeps the orders card on the first phone screen", async ({ page }) => {
+  test("keeps the hero admin preview on the first phone screen", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(HOME, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    const title = page.locator("[data-home-hero-preview]").getByText("128 open orders this week");
-    await expect(title).toBeVisible();
-    const box = await title.boundingBox();
+    const preview = page.locator("[data-home-hero-preview]");
+    await expect(preview).toBeVisible();
+    const box = await preview.boundingBox();
     expect(box).not.toBeNull();
     expect(box!.y + box!.height).toBeLessThanOrEqual(844);
   });

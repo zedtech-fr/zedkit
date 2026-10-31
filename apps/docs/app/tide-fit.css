@@ -1,10 +1,9 @@
 /*
  * Tide is the site default. Two fit fixes, Tide only.
  * Desktop: the primary nav item "UI changelog" wraps at 1280px.
- * Phone: the home orders card sits below the first screen. Section
- * padding and the title scale tighten under 40rem. The sentence stays
- * at 16px. The hero preview keeps its own slightly smaller type so the
- * orders title fits in that first screen.
+ * Phone: the home hero preview card sits below the first screen without Tide
+ * fit tokens. Section padding and the title scale tighten under 40rem. The
+ * hero preview keeps a fixed height so the card stays on the first screen.
  */
 :root[data-identity="tide"] #nd-nav nav > ul a,
 :root[data-identity="tide"] #nd-nav nav > ul button,
