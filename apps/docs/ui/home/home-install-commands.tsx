@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- Command scroll regions need keyboard focus (scrollable-region-focusable; see packages/ui/table.tsx). #1183 */
+
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import {
@@ -14,6 +16,7 @@ import {
   HOME_CARD_GRID_TWO_COL,
   HOME_CARD_TITLE_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
+  HOME_SMALL_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 
 function InstallCommandBlock({
@@ -43,12 +46,14 @@ function InstallCommandBlock({
       data-install-command=""
       className="relative min-w-0 rounded-md border border-input bg-muted/30"
     >
-      <pre
-        className="overflow-x-auto whitespace-pre p-3 pr-12 font-mono text-zk-type-small leading-relaxed"
+      <div
+        tabIndex={0}
+        role="region"
+        className={`${HOME_SMALL_TEXT_CLASS} overflow-x-auto p-3 pr-12 font-mono leading-relaxed whitespace-nowrap`}
         aria-label={ariaLabel}
       >
-        {value}
-      </pre>
+        <pre className="m-0 font-[inherit] leading-[inherit] whitespace-nowrap text-[inherit]">{value}</pre>
+      </div>
       <Button
         type="button"
         variant="outline"

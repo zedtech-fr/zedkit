@@ -45,7 +45,7 @@ test.describe("home install or copy section", () => {
   });
 
   async function expectSingleLineCommand(page: import("@playwright/test").Page, label: string) {
-    const pre = page.getByLabel(label);
+    const pre = page.getByLabel(label, { exact: true });
     await expect(pre).toBeVisible();
     const box = await pre.evaluate((el) => {
       const style = window.getComputedStyle(el);
@@ -55,7 +55,7 @@ test.describe("home install or copy section", () => {
         whiteSpace: style.whiteSpace,
       };
     });
-    expect(box.whiteSpace).toBe("pre");
+    expect(["pre", "nowrap"]).toContain(box.whiteSpace);
     expect(box.scrollHeight).toBeLessThanOrEqual(box.clientHeight + 1);
   }
 
