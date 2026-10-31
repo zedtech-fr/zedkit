@@ -45,7 +45,7 @@ test.describe("home install or copy section", () => {
   });
 
   async function expectSingleLineCommand(page: import("@playwright/test").Page, label: string) {
-    const pre = page.getByLabel(label, { exact: true });
+    const pre = page.locator("#install-or-copy").getByRole("region", { name: label, exact: true });
     await expect(pre).toBeVisible();
     const box = await pre.evaluate((el) => {
       const style = window.getComputedStyle(el);

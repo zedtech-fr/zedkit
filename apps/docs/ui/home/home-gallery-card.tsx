@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, Stack, Text } from "@zedtech/zedkit-ui";
-import { MaturityBadge } from "@/components/maturity-badge";
 import { homeGalleryDemos } from "@/components/home-gallery-demos";
 import type { GalleryCard } from "@/content/gallery";
 import {
@@ -15,11 +14,10 @@ export function HomeGalleryCard({ card, className = "min-w-0" }: { card: Gallery
   const Demo = card.demo ? homeGalleryDemos[card.demo] : undefined;
   return (
     <Card className={className} data-home-gallery-card="">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+      <CardHeader className="space-y-0">
         <CardTitle className={HOME_CARD_TITLE_CLASS}>
           <Link href={card.href}>{card.title}</Link>
         </CardTitle>
-        <MaturityBadge status={card.status} />
       </CardHeader>
       <CardContent>
         <Stack gap={HOME_CARD_CONTENT_GAP}>

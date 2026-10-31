@@ -44,51 +44,61 @@ export function PreviewViewport({
   }, [mounted, resolvedTheme]);
 
   const darkScope = dark ? "dark" : undefined;
-  return (
-    <Stack gap={3} data-component-preview={a11yRoot ? "primary" : true} {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}>
-      <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
-        <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-          <Text variant="muted" className="text-xs">Preview</Text>
-          <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} />
-        </Stack>
-        <Stack direction="horizontal" gap={2} className="flex-wrap">
-          <Button
-            variant={mobile ? "outline" : "secondary"}
-            size="sm"
-            onClick={() => setMobile(false)}
-            aria-pressed={!mobile}
-          >
-            Full
-          </Button>
-          <Button
-            variant={mobile ? "secondary" : "outline"}
-            size="sm"
-            onClick={() => setMobile(true)}
-            aria-pressed={mobile}
-          >
-            Mobile
-          </Button>
-          <Button
-            variant={dark ? "outline" : "secondary"}
-            size="sm"
-            onClick={() => setDark(false)}
-            aria-pressed={!dark}
-          >
-            Light
-          </Button>
-          <Button
-            variant={dark ? "secondary" : "outline"}
-            size="sm"
-            onClick={() => setDark(true)}
-            aria-pressed={dark}
-          >
-            Dark
-          </Button>
-        </Stack>
+  const toolbar = (
+    <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
+      <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
+        <Text variant="muted" className="text-xs">
+          Preview
+        </Text>
+        <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} />
       </Stack>
+      <Stack direction="horizontal" gap={2} className="flex-wrap">
+        <Button
+          variant={mobile ? "outline" : "secondary"}
+          size="sm"
+          onClick={() => setMobile(false)}
+          aria-pressed={!mobile}
+        >
+          Full
+        </Button>
+        <Button
+          variant={mobile ? "secondary" : "outline"}
+          size="sm"
+          onClick={() => setMobile(true)}
+          aria-pressed={mobile}
+        >
+          Mobile
+        </Button>
+        <Button
+          variant={dark ? "outline" : "secondary"}
+          size="sm"
+          onClick={() => setDark(false)}
+          aria-pressed={!dark}
+        >
+          Light
+        </Button>
+        <Button
+          variant={dark ? "secondary" : "outline"}
+          size="sm"
+          onClick={() => setDark(true)}
+          aria-pressed={dark}
+        >
+          Dark
+        </Button>
+      </Stack>
+    </Stack>
+  );
+  return (
+    <Stack
+      gap={a11yRoot ? 2 : 3}
+      data-component-preview={a11yRoot ? "primary" : true}
+      {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}
+    >
+      {a11yRoot ? <div className="max-md:hidden">{toolbar}</div> : toolbar}
       <Stack
         className={cn(
           "rounded-lg border border-border bg-muted/40 p-4 md:p-6",
+          a11yRoot && "max-md:p-3",
           darkScope,
           mobile && "mx-auto w-full max-w-[390px]",
         )}

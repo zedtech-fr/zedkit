@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { catalogIndex } from "../content/catalog-index";
+
 const BASE = "http://127.0.0.1:3100";
 const MOBILE = { width: 390, height: 844 };
 
@@ -135,7 +137,8 @@ test("catalog result maturity chips keep a decorative icon", async ({ page }) =>
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
   const badges = page.locator("a[data-badge-link]");
   const badgeCount = await badges.count();
-  expect(badgeCount).toBe(47);
+  const expectedBadges = catalogIndex.filter((entry) => entry.status.toLowerCase() !== "stable").length;
+  expect(badgeCount).toBe(expectedBadges);
   await expect(badges.locator("svg[aria-hidden='true']")).toHaveCount(badgeCount);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,

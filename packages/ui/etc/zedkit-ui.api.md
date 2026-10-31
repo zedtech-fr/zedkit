@@ -66,7 +66,7 @@ export const alertVariants: (props?: ({
 } & ClassProp) | undefined) => string;
 
 // @public
-export function applyCustomIdentity(tokens: IdentityTokens, storageKey?: string): boolean;
+export function applyCustomIdentity(tokens: IdentityTokens, lookOrKey?: string, persistKey?: string): boolean;
 
 // @public
 export function applyIdentity(id: string, storageKey?: string): void;
@@ -249,7 +249,7 @@ export type ContainerProps = React_2.ComponentProps<"div"> & VariantProps<typeof
 
 // @public (undocumented)
 export const containerVariants: (props?: ({
-    width?: "default" | "narrow" | "wide" | "reading" | "full" | null | undefined;
+    width?: "narrow" | "reading" | "default" | "wide" | "full" | null | undefined;
     gutter?: boolean | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -930,6 +930,7 @@ export type IdentityScriptProps = {
     ids?: readonly string[];
     defaultIdentity?: string;
     storageKey?: string;
+    optInStorageKey?: string;
 };
 
 // @public
@@ -1366,7 +1367,7 @@ export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof sta
 // @public (undocumented)
 export const stackVariants: (props?: ({
     direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | null | undefined;
+    gap?: 1 | 8 | 3 | 4 | 2 | 5 | 6 | 7 | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public

@@ -101,12 +101,12 @@ export async function ComponentPage({
 
   return (
     <Stack gap={8}>
+      <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
+
       <Stack gap={3}>
         <MaturityBadge status={status} />
         <Text variant="muted">{purpose}</Text>
       </Stack>
-
-      <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
 
       <Section title="Install or copy">
         <Stack gap={4}>
