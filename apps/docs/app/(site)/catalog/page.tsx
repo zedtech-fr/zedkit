@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
 
 import { JsonLd } from "@/components/json-ld";
@@ -22,7 +23,15 @@ export default function CatalogPage() {
   return (
     <div data-catalog-shell>
       <JsonLd data={jsonLd} />
-      <CatalogViewFromUrl entries={catalogIndex} />
+      <Suspense
+        fallback={
+          <div data-catalog-shell className="py-section-lg">
+            Loading catalog…
+          </div>
+        }
+      >
+        <CatalogViewFromUrl entries={catalogIndex} />
+      </Suspense>
     </div>
   );
 }

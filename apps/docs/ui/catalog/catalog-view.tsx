@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Container, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { areaIconFor } from "@/lib/domain-icons";
@@ -162,20 +162,16 @@ export function CatalogView({
 export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [filters, setFilterState] = useState<ReturnType<typeof readFilter>>(CATALOG_DEFAULT_FILTERS);
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
 
   useEffect(() => {
-    const apply = () => {
-      const next = readFilter(new URLSearchParams(window.location.search), entries);
-      filtersRef.current = next;
-      setFilterState(next);
-    };
-    apply();
-    window.addEventListener("popstate", apply);
-    return () => window.removeEventListener("popstate", apply);
-  }, [entries]);
+    const next = readFilter(new URLSearchParams(searchParams.toString()), entries);
+    filtersRef.current = next;
+    setFilterState(next);
+  }, [entries, searchParams]);
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
     const merged = { ...filtersRef.current, ...next };
