@@ -2,7 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 
 const BASE = "http://127.0.0.1:3100";
 
-const footerLink = (page: Page, name: string) => page.getByRole("link", { name, exact: true });
+const footerLink = (page: Page, name: string) =>
+  page.locator("footer").getByRole("link", { name, exact: true });
 
 test.describe("site shell", () => {
   test("home footer and header links", async ({ page }) => {

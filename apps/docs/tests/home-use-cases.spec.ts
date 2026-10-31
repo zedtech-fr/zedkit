@@ -49,6 +49,19 @@ async function scrollToScene(page: Page, index: number) {
 const opacities = (page: Page) =>
   page.locator(BLOCK).evaluateAll((nodes) => nodes.map((el) => Number(getComputedStyle(el).opacity)));
 
+test("the stage ends with actions into the editor and the no-code route (#1092)", async ({ page }) => {
+  await page.goto("/");
+  const section = page.locator("#use-cases");
+  await expect(section.getByRole("link", { name: "Design your identity" })).toHaveAttribute(
+    "href",
+    "/docs/ui/design-your-identity",
+  );
+  await expect(section.getByRole("link", { name: "Start without writing code" })).toHaveAttribute(
+    "href",
+    "/docs/start-without-writing-code",
+  );
+});
+
 test("no tabs: six scenes, one per identity, each with its name, a line of text and examples", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#use-cases").getByRole("tab")).toHaveCount(0);
