@@ -19,13 +19,14 @@ test("the hero keeps the page identity: nothing cycles, nothing is written", asy
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("the use cases section follows the hero, before the AI setup section", async ({ page }) => {
+test("the use cases section follows the demo, before the AI setup section", async ({ page }) => {
   await page.goto("/");
   const order = await page.evaluate(() => {
     const top = (selector: string) => document.querySelector(selector)?.getBoundingClientRect().top ?? Number.NaN;
-    return { h1: top("#home-page h1"), cases: top("#use-cases"), ai: top("#ai-setup") };
+    return { h1: top("#home-page h1"), demo: top("#demo"), cases: top("#use-cases"), ai: top("#ai-setup") };
   });
-  expect(order.h1).toBeLessThan(order.cases);
+  expect(order.h1).toBeLessThan(order.demo);
+  expect(order.demo).toBeLessThan(order.cases);
   expect(order.cases).toBeLessThan(order.ai);
 });
 
