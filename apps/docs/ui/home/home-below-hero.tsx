@@ -12,6 +12,7 @@ import { HomeScenariosSection } from "@/ui/home/home-scenarios-section";
 import {
   HOME_CARD_GRID_THREE_COL,
   HOME_MARKETING_ROOT_PROPS,
+  HOME_CARD_TITLE_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
@@ -21,7 +22,7 @@ function GalleryEntry({ card, className = "min-w-0" }: { card: GalleryCard; clas
   return (
     <Card className={className}>
       <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-lg">
+        <CardTitle className={HOME_CARD_TITLE_CLASS}>
           <Link href={card.href}>{card.title}</Link>
         </CardTitle>
         <MaturityBadge status={card.status} />

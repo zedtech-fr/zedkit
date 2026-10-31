@@ -44,3 +44,34 @@ html.dark [id^="type-table"] .line-through {
   --zk-heading-tracking: -0.02em;
   --zk-body-leading: 1.6;
 }
+
+/*
+ * Shell layout rhythm: the docs article keeps mobile gutters from the
+ * page-gutter token (fumadocs' px-4 shrinks to 14.4px under Volt), and
+ * the catalog shell caps its band on the 1160px marketing container
+ * with a section rhythm that drops to the mobile band. Home keeps its
+ * own rhythm (pinned exactly by other lanes' tests).
+ */
+[data-catalog-shell] {
+  --zk-container-default: 72.5rem;
+}
+
+@media (width < 48rem) {
+  #nd-page {
+    padding-inline: var(--zk-page-gutter);
+  }
+  [data-catalog-shell] {
+    --zk-section-lg: calc(var(--spacing) * 16);
+  }
+}
+
+/*
+ * Calm shell surfaces: identities dress the page (Volt draws a grid
+ * under the prose). Docs and catalog shells keep a flat reading
+ * surface in light mode; dark ambiance and the home page are
+ * untouched. Specificity beats the unlayered identity body rule.
+ */
+html:not(.dark):root[data-identity] body:has(#nd-docs-layout),
+html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
+  background-image: none;
+}

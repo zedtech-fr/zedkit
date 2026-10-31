@@ -6,10 +6,10 @@ function ratio(fontSize: number, lineHeight: number) {
   return lineHeight / fontSize;
 }
 
-test.describe("home mobile persuasion type (L2a)", () => {
+test.describe("home mobile marketing body type (L2 + P0)", () => {
   test.use({ viewport: MOBILE });
 
-  test("section intros and card copy meet the 16px / 1.45–1.6 floor", async ({ page }) => {
+  test("hero and band copy use shared P0 type roles", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
     await page.locator("#use-cases").scrollIntoViewIfNeeded();
 
@@ -28,16 +28,36 @@ test.describe("home mobile persuasion type (L2a)", () => {
       const components = document.querySelector("#components");
       const componentsCopy = components?.querySelector(".text-home-persuasion");
 
+      const useCases = document.querySelector("#use-cases");
+      const useCaseWhy = useCases?.querySelector(".text-home-persuasion");
+
       return {
+        heroLead: read(document.querySelector(".text-zk-type-lead")),
+        heroProof: read(document.querySelector(".text-zk-type-small")),
         startCopy: read(startCopy),
         componentsCopy: read(componentsCopy),
+        useCaseWhy: read(useCaseWhy),
       };
     });
 
-    for (const [label, value] of Object.entries(readings)) {
+    expect(readings.heroLead).not.toBeNull();
+    expect(readings.heroLead!.fontSize).toBeGreaterThanOrEqual(14);
+    expect(readings.heroLead!.fontSize).toBeLessThanOrEqual(16);
+    expect(ratio(readings.heroLead!.fontSize, readings.heroLead!.lineHeight)).toBeGreaterThanOrEqual(1.45);
+
+    expect(readings.heroProof).not.toBeNull();
+    expect(readings.heroProof!.fontSize).toBeGreaterThanOrEqual(12);
+    expect(readings.heroProof!.fontSize).toBeLessThanOrEqual(14);
+
+    for (const [label, value] of Object.entries({
+      startCopy: readings.startCopy,
+      componentsCopy: readings.componentsCopy,
+      useCaseWhy: readings.useCaseWhy,
+    })) {
       expect(value, label).not.toBeNull();
       if (!value) continue;
-      expect(value.fontSize, `${label} font-size`).toBeGreaterThanOrEqual(16);
+      expect(value.fontSize, `${label} font-size`).toBeGreaterThanOrEqual(14);
+      expect(value.fontSize, `${label} font-size`).toBeLessThanOrEqual(15);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeGreaterThanOrEqual(1.45);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeLessThanOrEqual(1.61);
     }

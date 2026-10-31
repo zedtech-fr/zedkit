@@ -22,13 +22,22 @@ export const HOME_SECTION_REVEAL_CLASS =
 
 /** Fixed-height hero preview slot so idle-loaded art does not shift page scroll (#618). */
 export const HOME_HERO_PREVIEW_SHELL_CLASS =
-  "pointer-events-none h-72 w-full shrink-0 overflow-hidden lg:h-80";
+  "h-80 w-full shrink-0 overflow-hidden lg:h-96";
 
-/** Persuasion copy on the home page (16px floor on phone widths). */
+/** Persuasion copy on the home page (maps to `--zk-type-body-*`). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 
-/** Secondary counts and labels (12–13px). */
+/** Secondary counts and labels (maps to `--zk-type-label-*`). */
 export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy text-muted-foreground";
+
+/** Card and band titles under the hero (maps to `--zk-type-h3-*`). */
+export const HOME_CARD_TITLE_CLASS = "text-zk-type-h3";
+
+/** Hero promise line under the h1 (maps to `--zk-type-lead-*`). */
+export const HOME_LEAD_TEXT_CLASS = "text-zk-type-lead";
+
+/** Factual micro-proof under CTAs (maps to `--zk-type-small-*`). */
+export const HOME_SMALL_TEXT_CLASS = "text-zk-type-small";
 
 /** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
 export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 1270;
