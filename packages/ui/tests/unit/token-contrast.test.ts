@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -45,10 +45,68 @@ function contrast(fg: [number, number, number], bg: [number, number, number]): n
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
+const SURFACES = ["background", "card", "muted", "secondary"] as const;
+
+/** One CSS block that sets `--destructive` (stock theme or an identity, light or dark). */
+function destructiveBlocks(file: string, css: string): Array<{ label: string; body: string }> {
+  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  const found: Array<{ label: string; body: string }> = [];
+  for (const match of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const body = match[2] ?? "";
+    if (!body.includes("--destructive:")) continue;
+    const selector = (match[1] ?? "").replace(/\s+/g, " ").trim();
+    const id = selector.match(/data-identity="([^"]+)"/)?.[1] ?? file;
+    const theme = selector.includes(".dark") ? "dark" : "light";
+    found.push({ label: `${id} ${theme}`, body });
+  }
+  return found;
+}
+
+function triplet(body: string, name: string, label: string): [number, number, number] {
+  const match = body.match(new RegExp(`--${name}:\\s*([^;]+);`));
+  if (!match) throw new Error(`--${name} missing from ${label}`);
+  return parseTriplet(match[1]!);
+}
+
+const identityDir = join(srcDir, "identities");
+const destructivePalettes = [
+  ...destructiveBlocks("styles.css", readFileSync(stylesPath, "utf8")),
+  ...destructiveBlocks("identities.css", readFileSync(identitiesPath, "utf8")),
+  ...readdirSync(identityDir)
+    .filter((file) => file.endsWith(".css"))
+    .flatMap((file) => destructiveBlocks(file, readFileSync(join(identityDir, file), "utf8"))),
+];
+
 describe("theme token contrast (WCAG AA, downstream axe scans depend on it)", () => {
-  it.each(["light", "dark"] as const)("destructive text on destructive fills, %s", (theme) => {
-    const ratio = contrast(token(theme, "destructive-foreground"), token(theme, "destructive"));
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  it("covers stock, mist, and every identity file in light and dark", () => {
+    const labels = destructivePalettes.map((palette) => palette.label).sort();
+    expect(labels).toEqual(
+      [
+        "glass dark",
+        "glass light",
+        "maison dark",
+        "maison light",
+        "mist dark",
+        "mist light",
+        "press dark",
+        "press light",
+        "styles.css dark",
+        "styles.css light",
+        "tide dark",
+        "tide light",
+        "volt dark",
+        "volt light",
+      ].sort(),
+    );
+  });
+
+  it.each(destructivePalettes)("$label destructive button and text", ({ label, body }) => {
+    const fill = triplet(body, "destructive", label);
+    const ink = triplet(body, "destructive-foreground", label);
+    expect(contrast(ink, fill), `${label} button`).toBeGreaterThanOrEqual(4.5);
+    for (const surface of SURFACES) {
+      expect(contrast(fill, triplet(body, surface, label)), `${label} on ${surface}`).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it.each(["light", "dark"] as const)("muted text on card surfaces, %s", (theme) => {
