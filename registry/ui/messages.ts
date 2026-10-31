@@ -28,7 +28,6 @@ export type ZedkitUiMessages = {
   identityDescription: string;
   identityDefault: string;
   identityDefaultSuffix: string;
-  identityCustom: string;
   scrollableTable: string;
   offlineTitle: string;
   offlineBody: string;
@@ -63,7 +62,6 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   identityDescription: "The page behind this sheet updates as you choose.",
   identityDefault: "Default",
   identityDefaultSuffix: " (default)",
-  identityCustom: "Custom",
   scrollableTable: "Scrollable table",
   offlineTitle: "You're offline.",
   offlineBody: "Changes will sync when you reconnect.",
@@ -98,7 +96,6 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   identityDescription: "La page derrière ce panneau se met à jour quand vous choisissez.",
   identityDefault: "Défaut",
   identityDefaultSuffix: " (défaut)",
-  identityCustom: "Personnalisé",
   scrollableTable: "Tableau défilable",
   offlineTitle: "Vous êtes hors ligne.",
   offlineBody: "Les changements se synchroniseront à la reconnexion.",
