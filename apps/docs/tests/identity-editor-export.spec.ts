@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const PAGE = "/docs/ui/design-your-identity";
+const PAGE = "/features/identity-editor";
 
 test.describe("identity editor export", () => {
   test("CSS and JSON fields follow a spacing edit", async ({ page }) => {

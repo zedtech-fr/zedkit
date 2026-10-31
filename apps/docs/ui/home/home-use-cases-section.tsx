@@ -14,6 +14,7 @@ import {
   identities,
 } from "@zedtech/zedkit-ui";
 import { HomeAdminScene } from "@/ui/home/home-admin-scene";
+import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 import { HOME_CARD_CONTENT_GAP, HOME_CARD_TITLE_CLASS, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 type UseCaseId = "admin" | "shop" | "editorial" | "launch" | "monitoring" | "mobile";
@@ -420,13 +421,13 @@ export function HomeUseCasesSection() {
             <UseCasePreview key={active.id} useCase={active} />
           </div>
           <Button asChild variant="link" size="sm" className="w-fit">
-            <Link href="/docs/ui/design-your-identity">See all six identities</Link>
+            <Link href={IDENTITY_EDITOR_HREF}>Open the demo editor</Link>
           </Button>
         </Stack>
       </div>
       <Stack direction="horizontal" gap={2} className="flex-wrap">
         <Button asChild className="w-fit">
-          <Link href="/docs/ui/design-your-identity">Design your identity</Link>
+          <Link href={IDENTITY_EDITOR_HREF}>Try the demo editor</Link>
         </Button>
         <Button asChild variant="outline" className="w-fit">
           <Link href="/docs/start-without-writing-code">Start without writing code</Link>

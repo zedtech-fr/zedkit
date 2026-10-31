@@ -43,6 +43,7 @@ import {
   GUIDE_NAV_SLUGS,
   generate,
 } from "./generate.mjs";
+import { countPublishedCatalogNeeds, docsOmitNeed } from "./docs-omitted-needs.mjs";
 import { checkGeneratedPage } from "./page-checks.mjs";
 import {
   SITE_CHANGELOG_URL,
@@ -287,16 +288,18 @@ rmSync(tmp, { recursive: true, force: true });
 
 const needs = [];
 for (const [pkg, entry] of Object.entries(catalog.packages)) {
-  for (const need of entry.needs) needs.push({ pkg, need: need.need });
+  for (const need of entry.needs) {
+    if (!docsOmitNeed(need.need)) needs.push({ pkg, need: need.need });
+  }
 }
 if (pages !== needs.length) {
-  errors.push(`generator emitted ${pages} pages for ${needs.length} catalog needs.`);
+  errors.push(`generator emitted ${pages} pages for ${needs.length} published catalog needs.`);
 }
 
 // generate() throws when no "ui" package exists, so uiPackage is set here.
-const uiNeeds = catalog.packages[uiPackage].needs;
+const uiNeeds = catalog.packages[uiPackage].needs.filter((need) => !docsOmitNeed(need.need));
 if (gallery.length !== uiNeeds.length) {
-  errors.push(`gallery holds ${gallery.length} cards for ${uiNeeds.length} UI needs.`);
+  errors.push(`gallery holds ${gallery.length} cards for ${uiNeeds.length} published UI needs.`);
 }
 const byNeed = new Map(gallery.map((card) => [card.need, card]));
 for (const need of uiNeeds) {
@@ -399,8 +402,10 @@ if (registryPage && registryPage.includes("@zedtech/zedkit-ui")) {
   errors.push("registry-page.tsx must not depend on @zedtech/zedkit-ui");
 }
 
-if (catalogIndex.length !== totalNeeds) {
-  errors.push(`catalog index holds ${catalogIndex.length} entries for ${totalNeeds} catalog needs.`);
+if (catalogIndex.length !== countPublishedCatalogNeeds(catalog)) {
+  errors.push(
+    `catalog index holds ${catalogIndex.length} entries for ${countPublishedCatalogNeeds(catalog)} published catalog needs.`,
+  );
 }
 if (homeCuratedGallery.length < 4 || homeCuratedGallery.length > 8) {
   errors.push(`home-curated.json: expected 4–8 UI previews, got ${homeCuratedGallery.length}.`);
@@ -440,7 +445,9 @@ if (!existsSync(maturityPath)) {
   errors.push("content/maturity-compatibility.ts is stale (run pnpm docs:generate).");
 }
 
-const headings = new Set(needs.map((n) => n.need));
+const headings = new Set(
+  Object.values(catalog.packages).flatMap((entry) => entry.needs.map((need) => need.need)),
+);
 for (const key of Object.keys(rich)) {
   if (!headings.has(key)) errors.push(`docs-manifest.json: "${key}" matches no catalog need heading.`);
 }

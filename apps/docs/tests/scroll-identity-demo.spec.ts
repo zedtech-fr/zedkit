@@ -3,11 +3,11 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { assertA11yGate } from "./a11y-helpers";
 
 const BASE = "http://127.0.0.1:3100/docs/ui";
+const IDENTITY_KIT_DEMOS = "/features/identity-kit-demos";
 const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
 const SCENES = "pin-a-stage-and-change-scene-as-the-page-scrolls";
-const SWITCH = "switch-the-visual-identity-with-one-attribute";
 
-async function open(page: Page, path: string, identity: string, mode: string) {
+async function openDocs(page: Page, slug: string, identity: string, mode: string) {
   await page.addInitScript(
     ([i, m]) => {
       localStorage.setItem("zk-identity", i!);
@@ -15,7 +15,18 @@ async function open(page: Page, path: string, identity: string, mode: string) {
     },
     [identity, mode],
   );
-  await page.goto(`${BASE}/${path}`, { waitUntil: "networkidle" });
+  await page.goto(`${BASE}/${slug}`, { waitUntil: "networkidle" });
+}
+
+async function openFeatures(page: Page, path: string, identity: string, mode: string) {
+  await page.addInitScript(
+    ([i, m]) => {
+      localStorage.setItem("zk-identity", i!);
+      localStorage.setItem("theme", m!);
+    },
+    [identity, mode],
+  );
+  await page.goto(`http://127.0.0.1:3100${path}`, { waitUntil: "networkidle" });
 }
 
 async function noSidewaysScroll(page: Page) {
@@ -67,7 +78,7 @@ test.describe("scroll scenes previews", () => {
       ] as const) {
         test(`${device} ${identity} ${mode}`, async ({ page }) => {
           await page.setViewportSize({ width, height });
-          await open(page, SCENES, identity, mode);
+          await openDocs(page, SCENES, identity, mode);
           const previews = page.locator("[data-component-preview]");
           await expect(previews).toHaveCount(2);
 
@@ -130,7 +141,7 @@ test.describe("scroll scenes previews", () => {
 
   test("reduced motion stacks the scenes with the same content", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await open(page, SCENES, "mist", "light");
+    await openDocs(page, SCENES, "mist", "light");
     const tour = page.locator("[data-component-preview]").nth(0).locator("[data-scroll-scenes]");
     for (const scene of await tour.locator("[data-scroll-scene]").all()) {
       await expect(scene).toHaveCSS("opacity", "1");
@@ -149,7 +160,7 @@ test.describe("identity previews", () => {
       ] as const) {
         test(`${device} ${identity} ${mode}`, async ({ page }) => {
           await page.setViewportSize({ width, height });
-          await open(page, SWITCH, identity, mode);
+          await openFeatures(page, IDENTITY_KIT_DEMOS, identity, mode);
           const previews = page.locator("[data-component-preview]");
           await expect(previews).toHaveCount(3);
           const html = page.locator("html");
@@ -213,7 +224,7 @@ test.describe("identity previews", () => {
 
   test("leaving the page restores the page look", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1000 });
-    await open(page, SWITCH, "press", "light");
+    await openFeatures(page, IDENTITY_KIT_DEMOS, "press", "light");
     const live = page.locator("[data-component-preview]").nth(0);
     // Wait for hydration: the server renders the fallback look, the hydrated
     // store reports the page look. Selecting earlier loses the change when

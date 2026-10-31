@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
 
-const PAGE = "/docs/ui/design-your-identity";
+const PAGE = "/features/identity-editor";
 
 async function spacingOnDraft(page: Page) {
   return page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
@@ -44,7 +44,7 @@ test.describe("identity editor page", () => {
 
   test("writes spacing onto the draft card and into the URL", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(page.getByRole("heading", { name: "Design your identity" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Try looks in the demo editor" })).toBeVisible();
     await expect(page.getByText("Change spacing first, then watch the card.", { exact: true })).toBeVisible();
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await expect.poll(() => spacingOnDraft(page)).toBe("0.4rem");

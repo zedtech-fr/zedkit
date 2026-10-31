@@ -17,6 +17,8 @@ zedkit.app {
 	handle {
 		# Renamed page: "Show the zedkit logo" is now "Show your brand logo".
 		redir /docs/ui/show-the-zedkit-logo /docs/ui/show-your-brand-logo permanent
+		redir /docs/ui/design-your-identity /features/identity-editor permanent
+		redir /docs/ui/switch-the-visual-identity-with-one-attribute / permanent
 
 		# Extensionless static export of the search index: serve it as JSON.
 		@search path /api/search
@@ -56,6 +58,9 @@ dev.zedkit.app {
 
 		@plain not path /_next/static/*
 		header @plain Cache-Control "no-cache"
+
+		redir /docs/ui/design-your-identity /features/identity-editor permanent
+		redir /docs/ui/switch-the-visual-identity-with-one-attribute / permanent
 
 		try_files {path} {path}.html {path}/index.html
 		file_server

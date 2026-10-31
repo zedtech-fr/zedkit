@@ -44,14 +44,14 @@ test("the use cases section follows the demo, before the AI setup section", asyn
 const ORDER = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
 const LABELS = ["Mist", "Press", "Tide", "Volt", "Maison", "Glass"] as const;
 
-test("the section offers six identity tabs, a preview panel, and See all six identities", async ({ page }) => {
+test("the section offers six identity tabs, a preview panel, and a demo editor link", async ({ page }) => {
   await page.goto("/");
   const section = page.locator("#use-cases");
   await expect(section.getByRole("tablist", { name: "Identity previews" })).toBeVisible();
   await expect(section.getByRole("tab")).toHaveCount(6);
-  await expect(section.getByRole("link", { name: "See all six identities" })).toHaveAttribute(
+  await expect(section.getByRole("link", { name: "Open the demo editor" })).toHaveAttribute(
     "href",
-    "/docs/ui/design-your-identity",
+    "/features/identity-editor",
   );
   await expect(section.locator("[data-scroll-scenes]")).toHaveCount(0);
 });
@@ -77,9 +77,9 @@ test("choosing each tab shows that identity's scoped preview and copy", async ({
 test("the stage ends with actions into the editor and the no-code route (#1092)", async ({ page }) => {
   await page.goto("/");
   const section = page.locator("#use-cases");
-  await expect(section.getByRole("link", { name: "Design your identity" })).toHaveAttribute(
+  await expect(section.getByRole("link", { name: "Try the demo editor" })).toHaveAttribute(
     "href",
-    "/docs/ui/design-your-identity",
+    "/features/identity-editor",
   );
   await expect(section.getByRole("link", { name: "Start without writing code" })).toHaveAttribute(
     "href",

@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
+import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -206,6 +207,7 @@ export function catalogPageKeys(catalog) {
       let slug = slugify(need.need);
       for (let i = 2; seen.has(slug); i++) slug = `${slugify(need.need)}-${i}`;
       seen.add(slug);
+      if (docsOmitNeed(need.need)) continue;
       keys.add(`${folder}/${slug}`);
     }
   }
@@ -404,6 +406,7 @@ export function generate(outDir) {
     const slugs = [];
     llms.push(`## ${pkg}`, "");
     for (const need of entry.needs) {
+      if (docsOmitNeed(need.need)) continue;
       const { slug } = placementByNeed.get(need.need);
       slugs.push(slug);
       slugsByNeed.set(`${pkg} ${need.need}`, { folder, slug });
@@ -419,6 +422,11 @@ export function generate(outDir) {
         };
       }
       const related = (need.seeAlso ?? []).map((target) => {
+        if (docsOmitNeed(target)) {
+          const href = hrefForOmittedNeed(target);
+          if (!href) throw new Error(`generator: omitted need "${target}" has no public href.`);
+          return { title: target, href };
+        }
         const placed = placementByNeed.get(target);
         if (!placed) throw new Error(`generator: "${need.need}" links unknown need "${target}" in See also.`);
         return { title: target, href: `/docs/${placed.folder}/${placed.slug}` };
