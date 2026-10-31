@@ -218,8 +218,11 @@ function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
   ];
+  head.push(`import { ComponentPage } from "../../../components/component-page";`);
+  if (prose?.includes("<ComponentPreview")) {
+    head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
+  }
   head.push(
-    `import { ComponentPage } from "../../../components/component-page";`,
     "",
     "<ComponentPage",
     `  packageName={${JSON.stringify(pkg)}}`,
