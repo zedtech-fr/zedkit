@@ -29,11 +29,10 @@ test("search dialog is lazy and not preloaded on every page", () => {
   assert.doesNotMatch(src, /from ["']\.\.\/components\/search["']/);
 });
 
-test("phone search pill does not import the search client until open", () => {
-  const pill = readFileSync(join(app, "ui/search-pill.tsx"), "utf8");
-  const body = readFileSync(join(app, "ui/search-pill-body.tsx"), "utf8");
-  assert.match(pill, /from "next\/dynamic"/);
-  assert.doesNotMatch(pill, /fumadocs-core\/search\/client/);
-  assert.match(body, /fumadocs-core\/search\/client/);
-  assert.doesNotMatch(pill, /from ["']@\/ui\/search-pill-body["']/);
+test("mobile header search opens the lazy dialog without bundling search on first paint", () => {
+  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const trigger = readFileSync(join(app, "ui/mobile-search-trigger.tsx"), "utf8");
+  assert.match(header, /MobileSearchTrigger/);
+  assert.doesNotMatch(header, /SearchPill/);
+  assert.doesNotMatch(trigger, /fumadocs-core\/search\/client/);
 });

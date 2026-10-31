@@ -15,7 +15,7 @@ import {
   DrawerTitle,
 } from "@zedtech/zedkit-ui";
 import { DocsIdentityPicker } from "@/components/docs-identity-chooser";
-import { SearchPill } from "@/ui/search-pill";
+import { MobileSearchTrigger } from "@/ui/mobile-search-trigger";
 import { SiteBrand } from "@/ui/site-brand";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 
@@ -92,7 +92,7 @@ function HomeMenuButton({ links }: { links: MobileLink[] }) {
 
 /**
  * Phone header (< md): the logo and name at the left, the identity chooser in the
- * middle, the rest grouped at the right; search is a floating button.
+ * middle, the rest grouped at the right; search opens the shared dialog from the header.
  */
 export function MobileHeader({
   mode,
@@ -119,6 +119,7 @@ export function MobileHeader({
         </Link>
         <DocsIdentityPicker />
         <div className="flex items-center justify-self-end">
+          <MobileSearchTrigger />
           <ThemeButton />
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
             <GithubIcon className="size-4" />
@@ -126,7 +127,6 @@ export function MobileHeader({
           {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton links={links} />}
         </div>
       </header>
-      <SearchPill />
     </>
   );
 }

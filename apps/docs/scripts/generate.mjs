@@ -508,6 +508,7 @@ export function generate(outDir) {
   const gallery = [...live, ...rest];
   const homeCuratedGallery = buildHomeCuratedGallery(gallery);
   const catalogIndex = buildCatalogIndex(sorted, slugsByNeed, rich);
+  const docsSearchCanonicalByHref = buildDocsSearchCanonical(sorted, slugsByNeed);
   const stats = {
     packages: Object.keys(catalog.packages).length,
     needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
@@ -522,6 +523,7 @@ export function generate(outDir) {
     livePreviews: gallery.filter((card) => card.demo).length,
   })};\n`;
   const catalogIndexModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport type CatalogArea = "ui" | "backend" | "seo" | "agents";\n\nexport interface CatalogIndexEntry {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  area: CatalogArea;\n  package: string;\n}\n\nexport const catalogIndex: CatalogIndexEntry[] = ${JSON.stringify(catalogIndex, null, 2)};\n`;
+  const docsSearchCanonicalModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface DocsSearchCanonicalEntry {\n  href: string;\n  label: string;\n}\n\n/** Canonical UI component doc pages keyed by pathname (e.g. \`/docs/ui/trigger-actions-with-buttons\`). */\nexport const docsSearchCanonicalByHref: Record<string, DocsSearchCanonicalEntry> = ${JSON.stringify(docsSearchCanonicalByHref, null, 2)};\n`;
   const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
   const homeEntryPoints = buildHomeEntryPoints(catalog, slugsByNeed);
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n  linkLabel: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
@@ -545,6 +547,7 @@ export function generate(outDir) {
     registrySiteModule,
     catalogIndex,
     catalogIndexModule,
+    docsSearchCanonicalModule,
     homeCuratedGallery,
     maturityModule,
   };
@@ -570,6 +573,24 @@ function catalogAreaForFolder(folder) {
   const area = CATALOG_AREA_BY_FOLDER[folder];
   if (!area) throw new Error(`catalog index: unmapped docs folder "${folder}"`);
   return area;
+}
+
+/** UI kit short names -> doc href for docs search ranking (e.g. button -> Button page). */
+function buildDocsSearchCanonical(sorted, slugsByNeed) {
+  /** @type {Record<string, { href: string; label: string }>} */
+  const byHref = {};
+  for (const [pkg, entry] of sorted) {
+    if (shortName(pkg) !== "ui") continue;
+    for (const need of entry.needs) {
+      const name = need.shortName;
+      if (!name || typeof name !== "string") continue;
+      const placed = slugsByNeed.get(`${pkg} ${need.need}`);
+      if (!placed) continue;
+      const href = `/docs/${placed.folder}/${placed.slug}`;
+      byHref[href] = { href, label: name };
+    }
+  }
+  return byHref;
 }
 
 function buildCatalogIndex(sorted, slugsByNeed, rich) {
@@ -729,6 +750,7 @@ if (invoked === fileURLToPath(import.meta.url)) {
       entryPointsModule,
       registrySiteModule,
       catalogIndexModule,
+      docsSearchCanonicalModule,
       maturityModule,
     } = generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
@@ -736,6 +758,7 @@ if (invoked === fileURLToPath(import.meta.url)) {
     writeFileSync(join(APP, "content", "home-entry-points.ts"), entryPointsModule);
     writeFileSync(join(APP, "content", "registry-site.ts"), registrySiteModule);
     writeFileSync(join(APP, "content", "catalog-index.ts"), catalogIndexModule);
+    writeFileSync(join(APP, "content", "docs-search-canonical.ts"), docsSearchCanonicalModule);
     writeFileSync(join(APP, "content", "maturity-compatibility.ts"), maturityModule);
     console.log(`docs: generated ${pages} pages in ${folders.length} folders -> ${outDir}.`);
   }

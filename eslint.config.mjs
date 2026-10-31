@@ -31,7 +31,6 @@ const sizeBudgetOverFunction = [
   "apps/docs/ui/home/home-install-or-copy-copy.tsx",
   "apps/docs/ui/home/home-proofs.tsx",
   "apps/docs/ui/home/home-ui-quickstart-copy.tsx",
-  "apps/docs/ui/search-pill.tsx",
   "packages/ui/src/data-table.tsx",
   "packages/ui/src/identity-picker.tsx",
   "packages/ui/src/route-modal.tsx",
