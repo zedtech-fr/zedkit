@@ -24,9 +24,20 @@ test("the use cases section follows the demo, before the AI setup section", asyn
   await page.goto("/");
   const order = await page.evaluate(() => {
     const top = (selector: string) => document.querySelector(selector)?.getBoundingClientRect().top ?? Number.NaN;
-    return { h1: top("#home-page h1"), demo: top("#demo"), cases: top("#use-cases"), ai: top("#ai-setup") };
+    const precedes = (earlier: string, later: string) => {
+      const a = document.querySelector(earlier);
+      const b = document.querySelector(later);
+      if (!a || !b) return false;
+      return (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+    };
+    return {
+      h1BeforeDemo: precedes("#home-page h1", "#demo"),
+      demo: top("#demo"),
+      cases: top("#use-cases"),
+      ai: top("#ai-setup"),
+    };
   });
-  expect(order.h1).toBeLessThan(order.demo);
+  expect(order.h1BeforeDemo).toBe(true);
   expect(order.demo).toBeLessThan(order.cases);
   expect(order.cases).toBeLessThan(order.ai);
 });
