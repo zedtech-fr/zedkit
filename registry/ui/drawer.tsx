@@ -74,12 +74,12 @@ function Drawer({
   const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
   const mountAutoFocus = resolveModalMountAutoFocus(autoFocus, modal);
   return (
-    // eslint-disable-next-line jsx-a11y/no-autofocus -- Vaul prop; modal drawers must mount-focus inside so the trap engages.
     <DrawerPrimitive.Root
       data-slot="drawer"
       key={`${resolvedDirection}-${isMobile ? "narrow" : "wide"}`}
       direction={resolvedDirection}
       modal={modal}
+      // eslint-disable-next-line jsx-a11y/no-autofocus -- Vaul prop; modal drawers must mount-focus inside so the trap engages.
       autoFocus={mountAutoFocus}
       {...props}
     />
