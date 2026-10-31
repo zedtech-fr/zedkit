@@ -14,9 +14,9 @@ for (const viewport of [
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
     test("hero has one visible version badge link (header only)", async ({ page }) => {
-      test.skip(viewport.width < 768, "version badge lives in the desktop header bar until shell-nav adds mobile chrome");
       await page.goto(BASE, { waitUntil: "networkidle" });
-      const badges = page.getByRole("link", { name: new RegExp(`v${featuredPackageVersion}`) }).filter({ visible: true });
+      const shell = viewport.width < 768 ? page.locator("#nd-mobile-nav") : page.locator("#nd-nav");
+      const badges = shell.getByRole("link", { name: new RegExp(`v${featuredPackageVersion}`) }).filter({ visible: true });
       await expect(badges).toHaveCount(1);
     });
 

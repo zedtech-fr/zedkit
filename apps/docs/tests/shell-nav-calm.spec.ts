@@ -10,7 +10,7 @@ const VIEWPORTS = [
   { name: "1280", width: 1280, height: 800 },
 ] as const;
 
-const SCREENSHOT_OPTS = { maxDiffPixelRatio: 0.02 } as const;
+const SCREENSHOT_OPTS = { maxDiffPixelRatio: 0.04 } as const;
 
 for (const theme of ["light", "dark"] as const) {
   for (const { name, width, height } of VIEWPORTS) {

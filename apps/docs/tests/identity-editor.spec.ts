@@ -364,7 +364,6 @@ test.describe("identity editor apply to site", () => {
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
-    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("mist");
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 
@@ -388,7 +387,6 @@ test.describe("identity editor apply to site", () => {
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
-    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("mist");
   });
 
   test("resets to the default identity and clears storage", async ({ page }) => {
@@ -402,6 +400,7 @@ test.describe("identity editor apply to site", () => {
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
   });
 
+  test.describe.skip("header preset switching (removed from site shell, D3)", () => {
   test("a header preset switch parks applied custom work instead of wiping it", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(`${PAGE}?identity=mist`, { waitUntil: "networkidle" });
@@ -463,6 +462,7 @@ test.describe("identity editor apply to site", () => {
     await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("2rem");
     expect(page.url()).toContain("identity=tide");
     expect(page.url()).toContain("radius=2rem");
+  });
   });
 
   test("Apply Press replaces the site look in light and dark", async ({ page }) => {
@@ -569,6 +569,7 @@ test.describe("identity editor apply to site", () => {
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 
+  test.describe.skip("header Identity control (removed from site shell, D3)", () => {
   test("header Identity control parks Custom after Apply to the whole site; Reset discards it", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -608,6 +609,7 @@ test.describe("identity editor apply to site", () => {
     await expect(chooser).toHaveValue("tide");
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toContain("0.4rem");
   });
+  });
 });
 
 test.describe("identity editor named looks", () => {
@@ -618,19 +620,16 @@ test.describe("identity editor named looks", () => {
     await page.getByLabel("Name").fill("Coral");
     await page.getByRole("button", { name: "Save look" }).click();
     await expect(page.getByLabel("Look")).toHaveValue("n-coral");
-    const header = page.getByRole("combobox", { name: "Identity" }).first();
-    await expect(header.locator("option[value='n-coral']")).toHaveText("Coral");
-    await header.selectOption("n-coral");
+    const look = page.getByLabel("Look");
+    await look.selectOption("n-coral");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
     await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
     await page.getByLabel("Name").fill("Sunset");
     await page.getByRole("button", { name: "Rename" }).click();
-    await expect(header.locator("option[value='n-coral']")).toHaveText("Sunset");
-    await expect(header).toHaveValue("n-coral");
+    await expect(look).toHaveValue("n-coral");
     await page.getByRole("button", { name: "Delete" }).click();
     await expect(page.getByLabel("Look")).toHaveValue("mist");
-    await expect(header.locator("option[value='n-coral']")).toHaveCount(0);
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   });
 
@@ -644,7 +643,6 @@ test.describe("identity editor named looks", () => {
     await page.reload({ waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
     await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
-    await expect(page.getByRole("combobox", { name: "Identity" }).first()).toHaveValue("n-coral");
     await expect(page.getByLabel("Look")).toHaveValue("n-coral");
   });
 });
