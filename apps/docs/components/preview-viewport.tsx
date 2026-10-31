@@ -37,58 +37,57 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
   const darkScope = dark ? "dark" : undefined;
   return (
     <Stack gap={3} data-component-preview>
-      <Stack gap={3} className={darkScope}>
-        <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
-          <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-            <Text variant="muted" className="text-xs">Preview</Text>
-            <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} />
-          </Stack>
-          <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button
-              variant={mobile ? "outline" : "secondary"}
-              size="sm"
-              onClick={() => setMobile(false)}
-              aria-pressed={!mobile}
-            >
-              Full
-            </Button>
-            <Button
-              variant={mobile ? "secondary" : "outline"}
-              size="sm"
-              onClick={() => setMobile(true)}
-              aria-pressed={mobile}
-            >
-              Mobile
-            </Button>
-            <Button
-              variant={dark ? "outline" : "secondary"}
-              size="sm"
-              onClick={() => setDark(false)}
-              aria-pressed={!dark}
-            >
-              Light
-            </Button>
-            <Button
-              variant={dark ? "secondary" : "outline"}
-              size="sm"
-              onClick={() => setDark(true)}
-              aria-pressed={dark}
-            >
-              Dark
-            </Button>
-          </Stack>
+      <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
+        <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
+          <Text variant="muted" className="text-xs">Preview</Text>
+          <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} />
         </Stack>
-        <Stack
-          className={cn(
-            "rounded-lg border border-border bg-muted/40 p-4",
-            mobile && "mx-auto w-full max-w-[390px]",
-          )}
-          {...demoStyle.scopeAttrs}
-        >
-          <PreviewMobileContext.Provider value={mobile}>
-            {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
-          </PreviewMobileContext.Provider>
+        <Stack direction="horizontal" gap={2} className="flex-wrap">
+          <Button
+            variant={mobile ? "outline" : "secondary"}
+            size="sm"
+            onClick={() => setMobile(false)}
+            aria-pressed={!mobile}
+          >
+            Full
+          </Button>
+          <Button
+            variant={mobile ? "secondary" : "outline"}
+            size="sm"
+            onClick={() => setMobile(true)}
+            aria-pressed={mobile}
+          >
+            Mobile
+          </Button>
+          <Button
+            variant={dark ? "outline" : "secondary"}
+            size="sm"
+            onClick={() => setDark(false)}
+            aria-pressed={!dark}
+          >
+            Light
+          </Button>
+          <Button
+            variant={dark ? "secondary" : "outline"}
+            size="sm"
+            onClick={() => setDark(true)}
+            aria-pressed={dark}
+          >
+            Dark
+          </Button>
         </Stack>
+      </Stack>
+      <Stack
+        className={cn(
+          "rounded-lg border border-border bg-muted/40 p-4",
+          darkScope,
+          mobile && "mx-auto w-full max-w-[390px]",
+        )}
+        {...demoStyle.scopeAttrs}
+      >
+        <PreviewMobileContext.Provider value={mobile}>
+          {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
+        </PreviewMobileContext.Provider>
       </Stack>
     </Stack>
   );
