@@ -6,10 +6,10 @@ function ratio(fontSize: number, lineHeight: number) {
   return lineHeight / fontSize;
 }
 
-test.describe("home mobile persuasion type (L2a)", () => {
+test.describe("home mobile marketing body type (L2 + P0)", () => {
   test.use({ viewport: MOBILE });
 
-  test("section intros and card copy meet the 14px body / 1.45–1.6 leading floor", async ({ page }) => {
+  test("persuasion copy uses the shared 14px body role with comfortable leading", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
     await page.locator("#entry-points .home-metadata-copy").first().waitFor();
 
@@ -45,6 +45,7 @@ test.describe("home mobile persuasion type (L2a)", () => {
       expect(value, label).not.toBeNull();
       if (!value) continue;
       expect(value.fontSize, `${label} font-size`).toBeGreaterThanOrEqual(14);
+      expect(value.fontSize, `${label} font-size`).toBeLessThanOrEqual(15);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeGreaterThanOrEqual(1.45);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeLessThanOrEqual(1.61);
     }

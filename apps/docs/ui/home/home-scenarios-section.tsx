@@ -15,6 +15,7 @@ import type { HomeScenario } from "@/content/home-scenarios";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_THREE_COL,
+  HOME_CARD_TITLE_CLASS,
   HOME_METADATA_TEXT_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
@@ -36,7 +37,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
           {scenarios.map((scenario) => (
             <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
               <CardHeader className="pb-2">
-                <CardTitle>
+                <CardTitle className={HOME_CARD_TITLE_CLASS}>
                   <HomeScenarioTitle href={scenario.href} situation={scenario.situation} />
                 </CardTitle>
               </CardHeader>
