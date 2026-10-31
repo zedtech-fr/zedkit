@@ -62,5 +62,8 @@
     "@zedtech/zedkit-quality": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
