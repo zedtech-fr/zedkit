@@ -43,6 +43,8 @@ html.dark [id^="type-table"] .line-through {
   --tracking-tight: -0.025em;
   --zk-heading-tracking: -0.02em;
   --zk-body-leading: 1.6;
+  /* Sticky nav + mobile docs header; shared with prose anchor targets. */
+  --zk-docs-scroll-offset: calc(var(--fd-docs-row-1, 0px) + 3.5rem);
 }
 
 /*

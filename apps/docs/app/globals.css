@@ -77,11 +77,6 @@ html.dark [class*="bg-muted/40"]:not(.dark) {
   background-color: color-mix(in srgb, hsl(var(--muted)) 40%, hsl(var(--background)));
 }
 
-/* Doc prose paints links in the page colour; ghost and outline buttons rendered as links follow the island. */
-html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
-  color: hsl(var(--foreground));
-}
-
 /* Phone search: hidden while a drawer or dialog is open. */
 body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
 body:has([role="dialog"][data-state="open"]) [data-search-pill] {
