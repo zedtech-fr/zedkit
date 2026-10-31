@@ -28,6 +28,8 @@ export const SITE_HEADER_INTERNAL_PATHS = [
  */
 export function siteFooterLinkSpecs(changelogHref) {
   return [
+    { label: "Documentation", href: "/docs", external: false },
+    { label: "Catalog", href: "/catalog", external: false },
     { label: "Start without writing code", href: "/docs/start-without-writing-code", external: false },
     { label: "MIT License", href: SITE_LICENSE_URL, external: true },
     { label: "Source repository", href: SITE_GITHUB_URL, external: true },

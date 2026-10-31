@@ -36,6 +36,13 @@ test.describe("site shell", () => {
     await expect(page.getByRole("button", { name: "Add note" })).toBeVisible();
   });
 
+  test("footer offers Documentation and Catalog next steps (#1098)", async ({ page }) => {
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    const footer = page.locator("footer");
+    await expect(footer.getByRole("link", { name: "Documentation", exact: true })).toHaveAttribute("href", "/docs");
+    await expect(footer.getByRole("link", { name: "Catalog", exact: true })).toHaveAttribute("href", "/catalog");
+  });
+
   test("docs and 404 share the footer", async ({ page }) => {
     await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
     await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
