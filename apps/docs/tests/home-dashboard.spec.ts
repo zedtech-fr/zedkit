@@ -12,6 +12,21 @@ async function axeDashboard(page: import("@playwright/test").Page) {
   expect(results.violations).toEqual([]);
 }
 
+test("home dashboard: row selection shows a detail panel and success toasts", async ({ page }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+
+  await demo.getByRole("button", { name: "worker", exact: true }).click();
+  await expect(demo.locator("[data-slot='detail-panel']")).toContainText("worker");
+  await expect(demo.locator("[data-slot='detail-panel']")).toContainText("seed-worker");
+
+  await demo.getByRole("button", { name: "Add app" }).click();
+  await page.getByRole("dialog").getByLabel("Name").fill("toast-check");
+  await page.getByRole("button", { name: "Create app" }).click();
+  await expect(page.getByText("App added")).toBeVisible();
+  await expect(demo.getByRole("cell", { name: "toast-check", exact: true })).toBeVisible();
+});
+
 test("home dashboard: create, edit, delete with axe on ready state", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
   const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");

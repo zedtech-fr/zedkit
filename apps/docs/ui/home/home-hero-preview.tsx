@@ -6,7 +6,8 @@ import { useEffect, useId, useState } from "react";
 import { Palette } from "lucide-react";
 import { Button, Card, Stack, Text, cn, identities } from "@zedtech/zedkit-ui";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { HOME_HERO_PREVIEW_SHELL_CLASS } from "@/ui/home/home-rhythm";
+import { DOCS_TYPE_BODY_CLASS, DOCS_TYPE_LABEL_CLASS } from "@/lib/docs-type-roles";
+import { HOME_HERO_PREVIEW_SHELL_CLASS, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 const HomeAdminDashboardDemo = dynamic(
   () => import("@/components/demos/home-admin-dashboard-demo").then((mod) => mod.HomeAdminDashboardDemo),
@@ -27,8 +28,8 @@ function HeroProofControls({ look, dark, onLook, onDark }: HeroProofControlsProp
       <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
         <span className="inline-flex items-center gap-2">
           <Palette aria-hidden="true" className="size-4 text-muted-foreground" />
-          <label htmlFor={selectId} className="text-sm text-muted-foreground">
-            Try a look
+          <label htmlFor={selectId} className={DOCS_TYPE_LABEL_CLASS}>
+            Style of this demo
           </label>
           <select
             id={selectId}
@@ -49,7 +50,7 @@ function HeroProofControls({ look, dark, onLook, onDark }: HeroProofControlsProp
       </Stack>
       <Link
         href="/docs/ui/theme-an-admin-app-dark-light-included"
-        className="text-sm text-primary underline-offset-4 hover:underline"
+        className={`${DOCS_TYPE_BODY_CLASS} text-primary underline-offset-4 hover:underline`}
       >
         See it dark
       </Link>
@@ -57,10 +58,7 @@ function HeroProofControls({ look, dark, onLook, onDark }: HeroProofControlsProp
   );
 }
 
-/**
- * Hero visual the visitor can use: the same local admin demo as below the fold,
- * restyled under a scoped identity + dark class, with the attribute line under the card.
- */
+/** Reference hero specimen: bounded identity + the same manipulable admin demo as the product proof. */
 export function HomeHeroPreview() {
   const [look, setLook] = useState(DEFAULT_IDENTITY);
   const [dark, setDark] = useState(false);
@@ -80,14 +78,17 @@ export function HomeHeroPreview() {
           data-identity={look}
           className="flex h-full min-h-0 flex-col bg-background font-sans text-foreground"
         >
-          <Card className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border shadow-sm">
+          <Card
+            data-home-dashboard-card
+            className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border shadow-sm"
+          >
             <Stack className="min-h-0 min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
               <HomeAdminDashboardDemo label="Interactive admin dashboard demo in the hero" />
             </Stack>
           </Card>
         </div>
       </Stack>
-      <Text variant="muted" className="font-mono text-xs">
+      <Text variant="muted" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>
         {dark ? `<div class="dark"><div data-identity="${look}">` : `<div data-identity="${look}">`}
       </Text>
     </Stack>

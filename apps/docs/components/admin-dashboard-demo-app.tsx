@@ -4,10 +4,12 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 
+import { DOCS_TYPE_BODY_CLASS, DOCS_TYPE_H3_CLASS, DOCS_TYPE_LABEL_CLASS } from "@/lib/docs-type-roles";
 import {
   Button,
   ConfirmDialog,
   DataTable,
+  DetailPanel,
   Drawer,
   DrawerBody,
   DrawerClose,
@@ -68,8 +70,11 @@ export function AdminDashboardDemoApp({
 }) {
   const [apps, setApps] = useState<AdminAppRow[]>(seedApps);
   const [preview, setPreview] = useState<PreviewMode>("ready");
+  const [selectedId, setSelectedId] = useState<string | null>(seedApps[0]?.id ?? null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const selectedApp = selectedId ? apps.find((row) => row.id === selectedId) : undefined;
 
   const form = useValidatedForm(formSchema, {
     defaultValues: { name: "", region: "eu" },
@@ -105,6 +110,7 @@ export function AdminDashboardDemoApp({
 
   function deleteApp(id: string) {
     setApps((prev) => prev.filter((row) => row.id !== id));
+    setSelectedId((current) => (current === id ? null : current));
     toast.success("App removed");
   }
 
@@ -113,7 +119,20 @@ export function AdminDashboardDemoApp({
   const error = preview === "error" ? "Could not load apps. Switch preview to Ready and try again." : null;
 
   const columns = [
-    tableHelper.accessor("name", { header: "Name" }),
+    tableHelper.accessor("name", {
+      header: "Name",
+      cell: ({ row }) => (
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-auto min-h-11 w-full justify-start px-2 font-normal"
+          aria-pressed={selectedId === row.original.id}
+          onClick={() => setSelectedId(row.original.id)}
+        >
+          {row.original.name}
+        </Button>
+      ),
+    }),
     tableHelper.accessor("region", { header: "Region" }),
     tableHelper.display({
       id: "actions",
@@ -150,11 +169,11 @@ export function AdminDashboardDemoApp({
       <Toaster />
       <Stack className="w-full min-w-0" aria-label={label}>
         <Stack gap={3} className="border-b border-border p-4" data-demo-toolbar>
-          <Heading level={2} className="text-lg font-semibold tracking-tight">
+          <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
             Project apps
           </Heading>
-          <Text variant="muted" className="text-sm">
-            Add, edit, or delete rows. Switch the preview to see loading, empty, and error states.
+          <Text variant="muted" className={DOCS_TYPE_BODY_CLASS}>
+            Select a row for details. Add, edit, or delete apps; switch preview for loading, empty, and error.
           </Text>
           <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
             <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
@@ -173,7 +192,7 @@ export function AdminDashboardDemoApp({
             </Button>
           </Stack>
         </Stack>
-        <Stack className="min-w-0 p-4">
+        <Stack gap={4} className="min-w-0 p-4">
           <DataTable
             columns={columns}
             data={tableData}
@@ -182,6 +201,22 @@ export function AdminDashboardDemoApp({
             emptyMessage="No apps yet. Choose Ready and click Add app."
             pageSize={5}
           />
+          {preview === "ready" && !loading && !error ? (
+            selectedApp ? (
+              <DetailPanel
+                className="min-w-0"
+                items={[
+                  { label: "Name", value: selectedApp.name },
+                  { label: "Region", value: selectedApp.region },
+                  { label: "ID", value: selectedApp.id },
+                ]}
+              />
+            ) : (
+              <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
+                Select an app row to see its details.
+              </Text>
+            )
+          ) : null}
         </Stack>
       </Stack>
 

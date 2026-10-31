@@ -65,7 +65,8 @@ test("home hero offers two ways in and keeps the other paths lower (#1038)", asy
   ).toBeVisible();
   await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
-  await expect(page.getByText("Latest", { exact: true }).first()).toBeVisible();
+  const heroLead = page.locator("[data-home-hero-actions]").locator("..");
+  await expect(heroLead.getByText(/Latest in v/)).toHaveCount(0);
 });
 
 test("home hero shows a short proof and the latest change (#1057)", async ({ page }) => {
@@ -76,10 +77,10 @@ test("home hero shows a short proof and the latest change (#1057)", async ({ pag
     `${catalogStats.packages} packages, ${catalogStats.needs} needs`,
   );
   await expect(page.locator("#proofs")).toContainText(`${uiGalleryStats.components} UI catalog entries`);
-  await expect(
-    page.getByText(`Latest in v${featuredPackageVersion}: ${featuredPackageLatestChange}`),
-  ).toBeVisible();
-  const versionLinks = page.getByRole("link", { name: `v${featuredPackageVersion} (releases)` });
+  await expect(page.locator("#proofs")).toContainText(
+    `Latest in v${featuredPackageVersion}: ${featuredPackageLatestChange}`,
+  );
+  const versionLinks = page.locator("#proofs").getByRole("link", { name: `v${featuredPackageVersion} (releases)` });
   await expect(versionLinks.first()).toHaveAttribute(
     "href",
     "https://github.com/zedtech-fr/zedkit/releases",
@@ -92,7 +93,7 @@ test("home hero proof flips identity and dark in scope (#1072)", async ({ page }
   const proof = page.locator("[data-home-hero-proof]");
   const scope = proof.locator("[data-identity-scope]");
   await expect(scope).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
-  await proof.getByLabel("Try a look").selectOption("tide");
+  await proof.getByLabel("Style of this demo").selectOption("tide");
   await expect(scope).toHaveAttribute("data-identity", "tide");
   await expect(proof).toContainText('<div data-identity="tide">');
   await proof.getByRole("button", { name: "Dark" }).click();
