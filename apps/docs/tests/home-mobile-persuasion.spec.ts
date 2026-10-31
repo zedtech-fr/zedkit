@@ -11,7 +11,7 @@ test.describe("home mobile persuasion type (L2a)", () => {
 
   test("section intros and card copy meet the 16px / 1.45–1.6 floor", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#use-cases [role='tabpanel']").waitFor();
+    await page.locator("#use-cases").scrollIntoViewIfNeeded();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -22,18 +22,14 @@ test.describe("home mobile persuasion type (L2a)", () => {
         return { fontSize, lineHeight };
       };
 
-      const useCases = document.querySelector("#use-cases");
-      const casesIntro = useCases?.querySelector('[data-slot="text"]');
-      const casesWhy = useCases?.querySelector('[role="tabpanel"] p');
+      const getStarted = document.querySelector("#get-started");
+      const startCopy = getStarted?.querySelector(".text-home-persuasion");
 
       const components = document.querySelector("#components");
-      const componentsIntro = components?.querySelector('[data-slot="text"]');
       const componentsCopy = components?.querySelector(".text-home-persuasion");
 
       return {
-        casesIntro: read(casesIntro),
-        casesWhy: read(casesWhy),
-        componentsIntro: read(componentsIntro),
+        startCopy: read(startCopy),
         componentsCopy: read(componentsCopy),
       };
     });

@@ -13,6 +13,7 @@ const BASE = "http://127.0.0.1:3100";
 test("home explains the product and four entry areas", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
   await expect(
     page.getByRole("heading", {
@@ -118,6 +119,7 @@ test("home area cards keep a decorative icon at tablet width and up", async ({ p
 });
 
 test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
   const entry = page.getByRole("link", { name: "Start with buttons" });
   await entry.click();
@@ -281,6 +283,7 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
 });
 
 test("home scenario links have unique accessible names", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
   const scenarios = page.locator("#scenarios");
   await expect(scenarios.getByRole("link", { name: "Read the theme docs" })).toBeVisible();
