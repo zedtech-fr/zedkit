@@ -41,7 +41,7 @@ export function RegistryBrickList({
       <Text as="p" variant="muted" className="text-xs">
         {names.length} published {names.length === 1 ? "brick" : "bricks"}
       </Text>
-      <Stack direction="horizontal" gap={2} wrap data-registry-brick-grid="">
+      <Stack direction="horizontal" gap={2} className="flex-wrap" data-registry-brick-grid="">
         {shown.map((name) => (
           <RegistryBrickChip key={name} name={name} />
         ))}
