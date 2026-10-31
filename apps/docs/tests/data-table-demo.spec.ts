@@ -37,12 +37,16 @@ test.describe("data table page shows a live preview for each example", () => {
           await expect(orders.getByText("Sofia Garcia")).toBeVisible();
           await expect(orders.getByText("Camille Rousseau")).toBeHidden();
           await orders.getByPlaceholder("Filter orders").fill("zzz");
-          await expect(orders.getByText("No orders yet.")).toBeVisible();
+          await expect(orders.getByText("No results.")).toBeVisible();
+          await expect(orders.getByRole("button", { name: "Clear filters" })).toBeVisible();
+          await expect(orders.locator('[data-slot="table-container"] [role="alert"]')).toHaveCount(0);
           await orders.getByPlaceholder("Filter orders").fill("");
           await orders.getByRole("button", { name: "Error" }).click();
-          await expect(orders.getByRole("alert")).toContainText("Could not load orders");
+          await expect(orders.locator('[data-slot="error-state"]')).toContainText("Could not load orders");
+          await expect(orders.locator('[data-slot="table-container"] [role="alert"]')).toHaveCount(0);
           await orders.getByRole("button", { name: "Loading" }).click();
           await expect(orders.getByRole("table")).toHaveAttribute("aria-busy", "true");
+          await expect(orders.locator('[data-slot="data-table-loading"]')).toBeVisible();
           await orders.getByRole("button", { name: "Orders" }).click();
           await expect(orders.getByText("Camille Rousseau")).toBeVisible();
 

@@ -87,6 +87,13 @@ export function DataTableDemo() {
         loading={view === "Loading"}
         error={view === "Error" ? "Could not load orders. Check your connection and try again." : null}
         emptyMessage="No orders yet. New orders appear here as soon as they are paid."
+        emptyAction={
+          view === "Empty" ? (
+            <Button size="sm" type="button">
+              Create your first order
+            </Button>
+          ) : undefined
+        }
         filterPlaceholder="Filter orders"
         pageSize={5}
       />
