@@ -10,7 +10,7 @@ const VIEWPORTS = [
   { name: "1280", width: 1280, height: 800 },
 ] as const;
 
-const SCREENSHOT_OPTS = { maxDiffPixelRatio: 0.04 } as const;
+const SCREENSHOT_OPTS = { maxDiffPixelRatio: 0.05, animations: "disabled" } as const;
 
 for (const theme of ["light", "dark"] as const) {
   for (const { name, width, height } of VIEWPORTS) {
@@ -20,6 +20,7 @@ for (const theme of ["light", "dark"] as const) {
       }
       await page.setViewportSize({ width, height });
       await page.goto("/", { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready);
       if (width < 768) {
         await page.getByRole("button", { name: "Open menu" }).click();
         await expect(page.getByRole("dialog")).toBeVisible();

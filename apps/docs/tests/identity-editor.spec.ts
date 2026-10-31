@@ -622,6 +622,7 @@ test.describe("identity editor named looks", () => {
     await expect(page.getByLabel("Look")).toHaveValue("n-coral");
     const look = page.getByLabel("Look");
     await look.selectOption("n-coral");
+    await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
     await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
