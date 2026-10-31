@@ -28,12 +28,12 @@ file. `code-review` + `ponytail-review` before merge; merge on green CI.
 
 ## Public API reports
 
-`packages/{core,server,ui,quality}/etc/*.api.md` are the committed
-export surfaces (plus `zedkit-quality-eslint.api.md` for the `./eslint`
-subpath). CI runs `bash scripts/check-api-report.sh` after build and
-fails when a report drifts. `core`/`ui`/`quality` use API Extractor;
-`server` dumps the `tsc` `.d.ts` graph (Extractor 7.60 cannot follow
-`Buffer` with its bundled TypeScript 6).
+`packages/*/etc/*.api.md` are the committed export surfaces (quality
+also ships `zedkit-quality-eslint.api.md` for the `./eslint` subpath). CI
+runs `bash scripts/check-api-report.sh` after build and fails when a
+report drifts. `server` dumps the `tsc` `.d.ts` graph (Extractor 7.60
+cannot follow `Buffer` with its bundled TypeScript 6); other packages
+use API Extractor.
 
 After adding, removing or renaming a public export:
 

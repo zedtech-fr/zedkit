@@ -1,5 +1,19 @@
 # @zedtech/zedkit-ui
 
+## 0.9.3
+
+### Patch Changes
+
+- fa7ce48: Declare `engines.node` (`>=22`) on every published package; CI blocks tarballs that omit it (reliability R33).
+- Updated dependencies [fa7ce48]
+  - @zedtech/zedkit-i18n@0.2.1
+
+## 0.9.2
+
+### Patch Changes
+
+- 45657b6: Unify the site type scale across identities: shared `--text-*` steps (12/13/14px ladder, 15px prose) and semantic `--zk-type-*` roles. **16px is for form controls on mobile only** (`--zk-input-font-size`), not body copy. Identities keep font family, colour, and tracking only.
+
 ## 0.9.1
 
 ### Patch Changes

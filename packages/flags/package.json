@@ -1,6 +1,6 @@
 {
   "name": "@zedtech/zedkit-flags",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -84,5 +84,8 @@
     "react-dom": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
