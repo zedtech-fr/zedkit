@@ -13,6 +13,19 @@ test.describe("site shell", () => {
     await expect(page.getByRole("button", { name: "Guides" })).toBeVisible();
   });
 
+  test("founder door: footer entry opens the honest no-code-first guide (#1078)", async ({ page }) => {
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await expect(footerLink(page, "Start without writing code")).toBeVisible();
+    await page.goto(`${BASE}/docs/start-without-writing-code`, { waitUntil: "networkidle" });
+    await expect(page.getByRole("heading", { name: "Start without writing code" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What zedkit is not" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Design your identity" }).first()).toBeVisible();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+
   test("docs and 404 share the footer", async ({ page }) => {
     await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
     await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
