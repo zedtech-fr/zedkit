@@ -97,6 +97,11 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   }
 }
 
+/* Doc prose paints links in the page colour; ghost and outline buttons rendered as links follow the island. */
+html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
+  color: hsl(var(--foreground));
+}
+
 /*
  * Docs chrome follows the kit tokens: once an identity is chosen, fumadocs
  * colours are bridged to it (light or dark), so one identity switch restyles
