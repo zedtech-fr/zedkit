@@ -1,5 +1,11 @@
 # @zedtech/zedkit-server
 
+## 0.3.1
+
+### Patch Changes
+
+- 7065895: `verifyWebhookSignatureHeader` fails closed when the secret is empty.
+
 ## 0.3.0
 
 ### Minor Changes
