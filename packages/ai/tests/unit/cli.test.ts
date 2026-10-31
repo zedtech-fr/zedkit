@@ -33,6 +33,7 @@ describe("cli", () => {
   it("lists presets, agents and commands", () => {
     const { code, text } = run("list");
     expect(code).toBe(0);
+    expect(text).toContain("preset starter:");
     expect(text).toContain("preset core:");
     expect(text).toContain("agents: explorer");
     expect(text).toContain("commands: review");
