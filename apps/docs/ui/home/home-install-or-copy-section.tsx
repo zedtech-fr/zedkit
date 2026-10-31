@@ -7,7 +7,7 @@ import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-si
 import { PUBLIC_SITE_URL } from "@/lib/site";
 import { registryShadcnAddCommand } from "@/lib/registry-shadcn-command";
 import { HomeInstallOrCopyCopy } from "@/ui/home/home-install-or-copy-copy";
-import { HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
+import { HOME_SECTION_REVEAL_CLASS, HOME_MARKETING_ROOT_PROPS } from "@/ui/home/home-rhythm";
 
 const SNIPPETS_DIR = join(process.cwd(), "home-quickstart", "snippets");
 
@@ -36,6 +36,7 @@ export function HomeInstallOrCopySection({ npmPackage }: { npmPackage: string })
       id="install-or-copy"
       title="Install it or copy it"
       className={HOME_SECTION_REVEAL_CLASS}
+      {...HOME_MARKETING_ROOT_PROPS}
     >
       <HomeInstallOrCopyCopy
         packageInstallCmd={packageInstallCmd}
