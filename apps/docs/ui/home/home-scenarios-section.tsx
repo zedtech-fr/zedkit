@@ -27,7 +27,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
       containerWidth="wide"
       title="Start from your situation"
       id="scenarios"
-      description="Each card links to a generated doc page (install command, example, and live preview when available)."
+      description="Each card opens a doc page with the install command, an example, and a live preview when available."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_THREE_COL}>

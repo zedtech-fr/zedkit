@@ -22,21 +22,21 @@ export function HomeProofs({
   const items = [
     {
       title: `${uiComponents} UI catalog entries`,
-      body: `${livePreviews} ship a live preview on their doc page (manifest-driven demos).`,
+      body: `${livePreviews} include a live preview you can try on the page.`,
     },
     {
       title: `${packages} packages, ${needs} needs`,
-      body: "Counts come from docs/catalog/catalog.json; the docs check fails when pages drift.",
+      body: "Counts are kept in sync with the catalog, so they match the published packages.",
     },
     {
       title: "Light and dark theme",
-      body: "Class-based `.dark` tokens; toggle in the header matches the admin kit pattern.",
+      body: "Light and dark tokens are built in — try the toggle in the header.",
       href: themeHref,
       linkLabel: "Theme setup page",
     },
     {
       title: "Accessibility checks",
-      body: "@zedtech/zedkit-ui runs vitest-axe on rendered components in packages/ui/tests/unit.",
+      body: "Rendered components are checked automatically for accessibility issues.",
       href: "https://github.com/zedtech-fr/zedkit/tree/main/packages/ui/tests/unit/a11y.test.tsx",
       linkLabel: "axe test suite",
       external: true,

@@ -2,7 +2,7 @@
   {
     "situation": "New admin UI in an existing app",
     "goal": "Install the UI kit and turn on light/dark theme",
-    "action": "Follow the theme page: tokens, `.dark` class, no extra CSS framework",
+    "action": "Follow the theme page to set up tokens and dark mode — no extra CSS framework needed",
     "catalogNeed": "Theme an admin app (dark/light included)",
     "linkLabel": "Read the theme docs"
   },

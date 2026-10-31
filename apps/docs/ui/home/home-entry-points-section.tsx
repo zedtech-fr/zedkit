@@ -26,7 +26,7 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
       containerWidth="wide"
       title="Choose an area"
       id="entry-points"
-      description="Four package families in the catalog — counts come from the generated index, not hand-maintained numbers."
+      description="Four package families in the catalog, with up-to-date counts on each card."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_FOUR_COL}>
