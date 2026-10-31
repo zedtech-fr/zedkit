@@ -6,8 +6,6 @@ import { CheckIcon } from "lucide-react";
 
 import { formatMessage } from "@/components/ui/format-message";
 
-import { ProgressBar } from "@/components/ui/progress-bar";
-import { Text } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { useUiMessages } from "@/components/ui/ui-provider";
 
@@ -104,14 +102,23 @@ export function WizardSteps({ steps, current, className }: WizardStepsProps) {
   return (
     <div data-slot="wizard-steps" className={cn("min-w-0 space-y-3", className)}>
       <div className="space-y-2 sm:hidden">
-        <Text as="p" variant="muted" className="min-w-0 truncate">
+        <p className="truncate text-sm text-muted-foreground">
           {formatMessage(messages.wizardStepOf, {
             step: active + 1,
             stepCount: steps.length,
             title,
           })}
-        </Text>
-        <ProgressBar value={progress} max={100} label={messages.progress} />
+        </p>
+        <div
+          role="progressbar"
+          aria-label={messages.progress}
+          aria-valuemin={1}
+          aria-valuemax={steps.length}
+          aria-valuenow={active + 1}
+          className="h-progress-bar-height w-full overflow-hidden rounded-full bg-muted"
+        >
+          <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
+        </div>
       </div>
       <Wizard className="hidden sm:flex">
         {steps.map((step, index) => (

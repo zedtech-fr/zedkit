@@ -30,7 +30,7 @@ describe("WizardSteps", () => {
   it("shows a compact step summary for narrow viewports", () => {
     render(<WizardSteps steps={["One", "Two", "Three"]} current={1} />);
     expect(screen.getByText("Step 2 of 3 · Two")).toBeTruthy();
-    expect(screen.getByRole("progressbar", { name: "Progress" })).toBeTruthy();
+    expect(screen.getByRole("progressbar", { name: "Progress" }).getAttribute("aria-valuenow")).toBe("2");
   });
 });
 
