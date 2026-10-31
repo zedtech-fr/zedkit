@@ -4,6 +4,8 @@ import type * as React from "react";
 
 import { CheckIcon } from "lucide-react";
 
+import { formatMessage } from "@/components/ui/format-message";
+
 import { cn } from "@/lib/utils";
 import { useUiMessages } from "@/components/ui/ui-provider";
 
@@ -36,7 +38,7 @@ export function WizardStep({ step, index, state, showConnector = false, classNam
     <li
       data-slot="wizard-step"
       aria-current={state === "current" ? "step" : undefined}
-      className={cn("flex items-center gap-wizard-step-gap text-sm", className)}
+      className={cn("flex items-center gap-2 text-sm", className)}
     >
       <span
         aria-hidden
@@ -71,7 +73,7 @@ export function Wizard({ children, className, ...props }: WizardProps) {
   return (
     <ol
       data-slot="wizard"
-      className={cn("flex flex-wrap items-center gap-x-wizard-steps-gap gap-y-wizard-steps-row-gap", className)}
+      className={cn("flex flex-wrap items-center gap-x-3 gap-y-2", className)}
       aria-label={messages.progress}
       {...props}
     >
@@ -86,18 +88,57 @@ function stepState(index: number, current: number): WizardStepState {
   return "todo";
 }
 
+function clampStepIndex(current: number, stepCount: number): number {
+  if (stepCount <= 0) return 0;
+  return Math.min(Math.max(current, 0), stepCount - 1);
+}
+
 export function WizardSteps({ steps, current, className }: WizardStepsProps) {
+  const messages = useUiMessages();
+  const active = clampStepIndex(current, steps.length);
+  const title = steps[active] ?? "";
+
   return (
-    <Wizard data-slot="wizard-steps" {...(className === undefined ? {} : { className })}>
-      {steps.map((step, index) => (
-        <WizardStep
-          key={step}
-          step={step}
-          index={index}
-          state={stepState(index, current)}
-          showConnector={index < steps.length - 1}
-        />
-      ))}
-    </Wizard>
+    <div data-slot="wizard-steps" className={cn("min-w-0 space-y-3", className)}>
+      <div className="space-y-2 sm:hidden">
+        <p className="truncate text-sm text-muted-foreground">
+          {formatMessage(messages.wizardStepOf, {
+            step: active + 1,
+            stepCount: steps.length,
+            title,
+          })}
+        </p>
+        <div
+          role="progressbar"
+          aria-label={messages.progress}
+          aria-valuemin={1}
+          aria-valuemax={steps.length}
+          aria-valuenow={active + 1}
+          className="flex w-full gap-progress-bar-gap"
+        >
+          {steps.map((step, index) => (
+            <span
+              key={step}
+              aria-hidden
+              className={cn(
+                "h-progress-bar-height flex-1 rounded-full motion-safe:transition-colors",
+                index <= active ? "bg-primary" : "bg-muted",
+              )}
+            />
+          ))}
+        </div>
+      </div>
+      <Wizard className="hidden sm:flex">
+        {steps.map((step, index) => (
+          <WizardStep
+            key={step}
+            step={step}
+            index={index}
+            state={stepState(index, current)}
+            showConnector={index < steps.length - 1}
+          />
+        ))}
+      </Wizard>
+    </div>
   );
 }

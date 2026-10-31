@@ -1195,6 +1195,7 @@ import { AppShell } from "@zedtech/zedkit-ui";
 - See also: `Build validated forms with labels, errors, and pending state`
 - Examples: Simple, Composed steps, Solo card
 - A11y: List carries `aria-label="Progress"`; current step gets `aria-current="step"`. Cards are native checkboxes in labels.
+- Mobile: Below `sm`, `WizardSteps` shows `Step {n} of {count} · {title}` plus a progress bar; the horizontal step list stays visible from `sm` up.
 - Registry: wizard-steps
 - Troubleshooting: Steps stuck done/todo — `current` is a 0-based index; past the last step everything reads done. Missing connector — composed `WizardStep` rows show one only with `showConnector` (automatic in `WizardSteps`).
 
