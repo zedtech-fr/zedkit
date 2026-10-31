@@ -6,10 +6,14 @@ import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 export type KitManifest = {
   /** Preset name -> skill names, or "*" for every skill in the kit. */
   presets: Record<string, string[] | "*">;
-  /** Subagent names (files in `agents/`). */
+  /** Subagent names (files in `agents/`). Default for every preset unless overridden. */
   agents: string[];
-  /** Command names (files in `commands/`). Absent means none. */
+  /** Command names (files in `commands/`). Default for every preset unless overridden. */
   commands?: string[];
+  /** Optional subagent subset per preset (e.g. `starter`). */
+  presetAgents?: Record<string, string[]>;
+  /** Optional command subset per preset (e.g. `starter`). */
+  presetCommands?: Record<string, string[]>;
 };
 
 /** Absolute path of the bundled kit (same relative spot from `src/` and `dist/`). */
@@ -26,7 +30,13 @@ export function readManifest(dir: string = kitDir()): Result<KitManifest> {
   if (!read.ok) {
     return err(new Error(`cannot read kit.json in ${dir}: ${read.error.message}`));
   }
-  const data = read.value as { presets?: Record<string, unknown>; agents?: unknown; commands?: unknown } | null;
+  const data = read.value as {
+    presets?: Record<string, unknown>;
+    agents?: unknown;
+    commands?: unknown;
+    presetAgents?: unknown;
+    presetCommands?: unknown;
+  } | null;
   const presets = data?.presets;
   if (!presets || typeof presets !== "object" || !isStringList(data?.agents)) {
     return err(new Error("kit.json needs `presets` (object) and `agents` (string list)"));
@@ -39,9 +49,36 @@ export function readManifest(dir: string = kitDir()): Result<KitManifest> {
       return err(new Error(`kit.json preset "${name}" must be a string list or "*"`));
     }
   }
-  return ok({
+  for (const [key, label] of [
+    ["presetAgents", data?.presetAgents],
+    ["presetCommands", data?.presetCommands],
+  ] as const) {
+    if (label === undefined) continue;
+    if (typeof label !== "object" || label === null) {
+      return err(new Error(`kit.json \`${key}\` must be an object`));
+    }
+    for (const [preset, names] of Object.entries(label)) {
+      if (!isStringList(names)) {
+        return err(new Error(`kit.json \`${key}.${preset}\` must be a string list`));
+      }
+    }
+  }
+  const manifest: KitManifest = {
     presets: presets as KitManifest["presets"],
     agents: data.agents,
-    ...(data.commands !== undefined && { commands: data.commands as string[] }),
-  });
+  };
+  if (data.commands !== undefined) manifest.commands = data.commands as string[];
+  if (data.presetAgents !== undefined) manifest.presetAgents = data.presetAgents as Record<string, string[]>;
+  if (data.presetCommands !== undefined) manifest.presetCommands = data.presetCommands as Record<string, string[]>;
+  return ok(manifest);
+}
+
+/** Subagents installed for a preset (full manifest list when not narrowed). */
+export function agentsForPreset(manifest: KitManifest, preset: string): string[] {
+  return manifest.presetAgents?.[preset] ?? manifest.agents;
+}
+
+/** Commands installed for a preset (full manifest list when not narrowed). */
+export function commandsForPreset(manifest: KitManifest, preset: string): string[] {
+  return manifest.presetCommands?.[preset] ?? manifest.commands ?? [];
 }
