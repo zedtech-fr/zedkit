@@ -1,5 +1,11 @@
 # @zedtech/zedkit-flags
 
+## 0.2.2
+
+### Patch Changes
+
+- e1d2a22: getFlag return types widen boolean, string, and number flags beyond registry literal defaults.
+
 ## 0.2.1
 
 ### Patch Changes

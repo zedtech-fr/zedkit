@@ -1,5 +1,15 @@
 # @zedtech/zedkit-ui
 
+## 0.9.0
+
+### Minor Changes
+
+- c4d1155: useValidatedForm ties form values to zod schema input and submit payload to schema output. Migration: drop the manual generic — `useValidatedForm(schema)` instead of `useValidatedForm<MyFields>(schema)`.
+
+### Patch Changes
+
+- ffc4639: Controlled DatePicker and DateRangePicker respect a parent clearing `value` instead of falling back to internal state.
+
 ## 0.8.2
 
 ### Patch Changes
