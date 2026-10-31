@@ -1,6 +1,6 @@
 // Measures docs first-load JavaScript from the static export (what the browser
 // downloads before hydration): head scripts plus the Turbopack bootstrap chunks.
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 
