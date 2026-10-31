@@ -17,7 +17,7 @@ export default defineConfig({
     ? { shard: { current: shardCurrent, total: shardTotal } }
     : {}),
   use: {
-    baseURL: "http://127.0.0.1:3100",
+    baseURL: process.env.DOCS_E2E_BASE_URL ?? "http://127.0.0.1:3100",
     trace: ci ? "on-first-retry" : "off",
   },
 });
