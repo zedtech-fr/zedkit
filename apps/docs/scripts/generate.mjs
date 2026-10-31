@@ -52,6 +52,29 @@ function slugify(need) {
   return slug.length > 0 ? slug : "need";
 }
 
+function buildRegistryBrickDocHref(catalog, placementByNeed) {
+  const hrefs = {};
+  for (const [pkg, entry] of Object.entries(catalog.packages)) {
+    const folder = shortName(pkg);
+    for (const need of entry.needs) {
+      if (!need.registry) continue;
+      const placed = placementByNeed.get(need.need);
+      if (!placed) continue;
+      hrefs[need.registry] = `/docs/${folder}/${placed.slug}`;
+    }
+  }
+  const aliasNeed = (title) => {
+    const placed = placementByNeed.get(title);
+    if (!placed) throw new Error(`generator: missing placement for "${title}".`);
+    return `/docs/${placed.folder}/${placed.slug}`;
+  };
+  if (!hrefs.theme) hrefs.theme = aliasNeed("Theme an admin app (dark/light included)");
+  if (!hrefs.button) hrefs.button = aliasNeed("Trigger actions with buttons");
+  if (!hrefs.dialog) hrefs.dialog = aliasNeed("Open modal dialogs");
+  if (!hrefs["use-online-status"]) hrefs["use-online-status"] = aliasNeed("Flag offline state with a live note");
+  return hrefs;
+}
+
 function shortName(pkg) {
   return pkg.startsWith("@zedtech/zedkit-") ? pkg.slice("@zedtech/zedkit-".length) : pkg.replace(/^@/, "").replace("/", "-");
 }
@@ -286,6 +309,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
   if (rich && rich.propsFile && rich.propsName) {
     head.push(`import { PropsTable } from "../../../components/props-table";`);
   }
+  head.push(`import { ComponentWrapsLine } from "../../../components/component-wraps-line";`);
   head.push("", `<MaturityBadge status={${JSON.stringify(need.status)}} />`, "");
   head.push(...guidanceBlock(need, seeAlsoLinks));
   if (rich) {
@@ -340,7 +364,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
     }
     head.push(`\`\`\`${ex.lang === "css" ? "css" : "tsx"} title=${JSON.stringify(index === 0 ? "Usage" : ex.title)}`, ex.code, "```", "");
   });
-  head.push(`Wraps: ${need.wraps}`, "");
+  head.push(`<ComponentWrapsLine wraps={${JSON.stringify(need.wraps)}} />`, "");
   if (prose) head.push(prose);
   if (rich && rich.propsFile && rich.propsName) {
     head.push("## Props", "", `<PropsTable file="${rich.propsFile}" name="${rich.propsName}" />`, "");
@@ -519,7 +543,8 @@ export function generate(outDir) {
   const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n  linkLabel: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
   const entryPointsModule = `// GENERATED from home-entry-points.json + catalog — do not edit.\nexport interface HomeEntryPoint {\n  title: string;\n  summary: string;\n  href: string;\n  needCount: number;\n  linkLabel: string;\n}\n\nexport const homeEntryPoints: HomeEntryPoint[] = ${JSON.stringify(homeEntryPoints, null, 2)};\n`;
   const registryBricks = loadRegistryBrickNames(ROOT);
-  const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks.includes("button") ? "button" : (registryBricks.find((name) => name !== "theme") ?? registryBricks[0]))};\n`;
+  const registryBrickDocHref = buildRegistryBrickDocHref(catalog, placementByNeed);
+  const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks.includes("button") ? "button" : (registryBricks.find((name) => name !== "theme") ?? registryBricks[0]))};\n\nexport const registryBrickDocHref: Record<string, string> = ${JSON.stringify(registryBrickDocHref, null, 2)};\n`;
   const maturityModule = buildMaturityCompatibility(catalog);
   return {
     pages,

@@ -13,6 +13,7 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 import { roleForExportSymbol } from "@/lib/import-symbols";
+import { ComponentWrapsLine } from "./component-wraps-line";
 
 export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; wraps: string }) {
   const [open, setOpen] = useState(false);
@@ -43,12 +44,15 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
               ))}
             </TableBody>
           </Table>
-          <Text variant="muted">Wraps: {wraps}</Text>
+          <ComponentWrapsLine wraps={wraps} />
         </Stack>
       ) : (
-        <Text variant="muted" className="text-xs">
-          {symbols.length} symbols from this import. Wraps: {wraps}
-        </Text>
+        <Stack gap={1}>
+          <Text variant="muted" className="text-xs">
+            {symbols.length} symbols from this import.
+          </Text>
+          <ComponentWrapsLine wraps={wraps} />
+        </Stack>
       )}
     </Stack>
   );

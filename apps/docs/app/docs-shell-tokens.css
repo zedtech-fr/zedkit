@@ -67,6 +67,24 @@ html.dark [id^="type-table"] .line-through {
   }
 }
 
+/* Props accordion: plain mono names, not bordered inline-code pills. */
+#nd-docs-layout [id^="type-table"] code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  box-decoration-break: unset;
+  -webkit-box-decoration-break: unset;
+}
+
+#nd-docs-layout [id^="type-table"] > div:first-child {
+  border-bottom: 0;
+}
+
+#nd-docs-layout [id^="type-table"] [data-state] {
+  border-color: hsl(var(--border) / 0.22);
+}
+
 /*
  * Calm shell surfaces: identities dress the page (Volt draws a grid
  * under the prose). Docs and catalog shells keep a flat reading
