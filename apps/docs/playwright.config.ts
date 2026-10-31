@@ -3,6 +3,23 @@ import { defineConfig, devices } from "@playwright/test";
 const ci = Boolean(process.env.CI);
 const shardCurrent = Number(process.env.DOCS_E2E_SHARD ?? "");
 const shardTotal = Number(process.env.DOCS_E2E_SHARD_TOTAL ?? "");
+/** CI and local default: chromium only; nightly sets firefox or webkit. */
+const projectEnv = (process.env.DOCS_E2E_PROJECT ?? "chromium").trim();
+const projectNames = projectEnv.split(/[\s,]+/).filter(Boolean);
+
+const browserProjects = {
+  chromium: { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+  firefox: { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+  webkit: { name: "webkit", use: { ...devices["Desktop Safari"] } },
+} as const;
+
+const projects = projectNames.map((name) => {
+  const project = browserProjects[name as keyof typeof browserProjects];
+  if (!project) {
+    throw new Error(`Unknown DOCS_E2E_PROJECT: ${name}`);
+  }
+  return project;
+});
 
 /** Static export is served on :3100 by CI and local `serve apps/docs/out`. */
 export default defineConfig({
@@ -20,9 +37,5 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:3100",
     trace: ci ? "on-first-retry" : "off",
   },
-  projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
-  ],
+  projects,
 });

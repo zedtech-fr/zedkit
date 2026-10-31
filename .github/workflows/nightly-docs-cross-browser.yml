@@ -46,8 +46,9 @@ jobs:
             [ "$code" = "200" ] && break
             sleep 5
           done
-          pnpm --filter @zedtech/zedkit-docs run e2e -- --project=${{ matrix.browser }}
+          pnpm --filter @zedtech/zedkit-docs run e2e
           kill "$(cat /tmp/docs-e2e.pid)"
         env:
+          DOCS_E2E_PROJECT: ${{ matrix.browser }}
           DOCS_E2E_SHARD: ${{ matrix.shard }}
           DOCS_E2E_SHARD_TOTAL: "3"
