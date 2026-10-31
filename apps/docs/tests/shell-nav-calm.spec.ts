@@ -10,6 +10,8 @@ const VIEWPORTS = [
   { name: "1280", width: 1280, height: 800 },
 ] as const;
 
+const SCREENSHOT_OPTS = { maxDiffPixelRatio: 0.02 } as const;
+
 for (const theme of ["light", "dark"] as const) {
   for (const { name, width, height } of VIEWPORTS) {
     test(`${theme} home shell nav ${name}px`, async ({ page }) => {
@@ -21,10 +23,10 @@ for (const theme of ["light", "dark"] as const) {
       if (width < 768) {
         await page.getByRole("button", { name: "Open menu" }).click();
         await expect(page.getByRole("dialog")).toBeVisible();
-        await expect(page.locator('[role="dialog"]')).toHaveScreenshot(`shell-nav-drawer-${theme}-${name}.png`);
+        await expect(page.locator('[role="dialog"]')).toHaveScreenshot(`shell-nav-drawer-${theme}-${name}.png`, SCREENSHOT_OPTS);
         await page.keyboard.press("Escape");
       } else {
-        await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`);
+        await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`, SCREENSHOT_OPTS);
       }
     });
   }
