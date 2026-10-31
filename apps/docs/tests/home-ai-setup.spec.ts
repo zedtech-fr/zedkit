@@ -39,6 +39,6 @@ test.describe("home AI setup block (#398)", () => {
       "href",
       "#ai-setup",
     );
-    await expect(page.getByRole("link", { name: "UI quickstart" })).toHaveAttribute("href", "#quickstart");
+    await expect(page.getByRole("link", { name: "UI quickstart" }).first()).toHaveAttribute("href", "#quickstart");
   });
 });

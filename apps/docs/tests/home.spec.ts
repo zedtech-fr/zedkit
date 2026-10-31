@@ -300,27 +300,18 @@ test("home has no nested interactive elements", async ({ page }) => {
   expect(nested).toEqual([]);
 });
 
-test("home UI quickstart lists prerequisites before install copy", async ({ page }) => {
+test("home UI quickstart points to the getting started guide", async ({ page }) => {
   await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "Prerequisites" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "2. Install the package" })).toBeVisible();
-  const order = await page.evaluate(() => {
-    const headings = [...document.querySelectorAll("h3")].map((el) => el.textContent?.trim() ?? "");
-    const pre = headings.findIndex((t) => t === "Prerequisites");
-    const install = headings.findIndex((t) => t.startsWith("2. Install"));
-    return { pre, install };
-  });
-  expect(order.pre).toBeGreaterThanOrEqual(0);
-  expect(order.install).toBeGreaterThan(order.pre);
-  await expect(page.getByLabel("Copy globals.css")).toBeVisible();
-  await expect(page.getByLabel("Copy pnpm command")).toBeVisible();
-  await expect(page.getByLabel("Copy page.tsx")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open the full UI quickstart" })).toHaveAttribute(
+    "href",
+    "/docs/getting-started#quickstart",
+  );
 });
 
 test("quickstart brick names keep a decorative icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
-  const list = page.locator("#quickstart [data-registry-bricks]");
+  await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
+  const list = page.locator("#install-or-copy [data-registry-bricks]");
   await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
   await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
   const overflow = await page.evaluate(
@@ -337,8 +328,8 @@ test.describe("quickstart brick list light/dark (#769)", () => {
         localStorage.setItem("zk-identity", "mist");
         localStorage.setItem("theme", theme);
       }, mode);
-      await page.goto(`${BASE}#quickstart`, { waitUntil: "networkidle" });
-      const list = page.locator("#quickstart [data-registry-bricks]");
+      await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
+      const list = page.locator("#install-or-copy [data-registry-bricks]");
       await list.scrollIntoViewIfNeeded();
       await expect(list.getByText("badge", { exact: true })).toBeVisible();
       await list.screenshot({ path: `test-results/quickstart-brick-list-${mode}.png` });
