@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -122,6 +123,26 @@ function allow(limit, ip) {
   return true;
 }
 
+function releaseId(env) {
+  const path = fileURLToPath(new URL("./release.json", import.meta.url));
+  if (existsSync(path)) {
+    const parsed = JSON.parse(readFileSync(path, "utf8"));
+    if (parsed && typeof parsed.id === "string" && parsed.id) return parsed.id;
+  }
+  const fromEnv = env.SUGGEST_RELEASE;
+  return typeof fromEnv === "string" && fromEnv ? fromEnv : "unknown";
+}
+
+function versionPayload(env, id) {
+  const primary = chatConfig(env, "IDENTITY_AI_");
+  return {
+    id,
+    model: primary ? primary.model : "",
+    maxTokens: primary ? primary.maxTokens : parseMaxTokens(env.IDENTITY_AI_MAX_TOKENS),
+    effort: primary ? primary.effort : reasoningEffort(env.IDENTITY_AI_REASONING_EFFORT),
+  };
+}
+
 function clientIp(req) {
   const forwarded = req.headers["x-forwarded-for"];
   if (typeof forwarded === "string" && forwarded.length > 0) {
@@ -210,8 +231,16 @@ function firstComplete(env, prompt, current, fetchImpl) {
   );
 }
 
-async function route(req, res, { env, fetchImpl, limit }) {
+async function route(req, res, { env, fetchImpl, limit, release }) {
   const url = new URL(req.url ?? "/", "http://suggest.local");
+  if (url.pathname === "/api/identity/suggest/version") {
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      send(res, 405, { error: "method" });
+      return;
+    }
+    send(res, 200, release);
+    return;
+  }
   if (url.pathname !== "/api/identity/suggest" && url.pathname !== "/api/identity/suggest/") {
     send(res, 404, { error: "not found" });
     return;
@@ -264,8 +293,9 @@ function listenSuggest(options = {}) {
   const limit = options.limit ?? createLimit();
   const host = options.host ?? "127.0.0.1";
   const port = options.port ?? 0;
+  const release = versionPayload(env, releaseId(env));
   const server = createServer((req, res) => {
-    void handleSuggest(req, res, { env, fetchImpl, limit });
+    void handleSuggest(req, res, { env, fetchImpl, limit, release });
   });
   return new Promise((resolveListen, reject) => {
     server.once("error", reject);

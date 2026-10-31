@@ -53,7 +53,8 @@ function TokenField({
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
   return (
-    <Field>
+    // shortcut: 18rem clears the sticky draft and the docs header, raise it if the card grows.
+    <Field className="scroll-mt-72">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Input
         id={id}
@@ -112,7 +113,7 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       data-identity-scope=""
       data-identity={DRAFT_ID}
       data-slot="identity-editor-preview"
-      className="rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md"
+      className="sticky top-14 z-20 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md"
       gap={3}
     >
       <Heading level={3}>Draft look</Heading>

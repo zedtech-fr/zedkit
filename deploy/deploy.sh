@@ -55,11 +55,23 @@ if [ "$mode" = "prod" ]; then
   # Gate: the host image must accept the final config before any restart.
   ssh "$target" "docker run --rm -v '$remote/Caddyfile:/etc/caddy/Caddyfile:ro' caddy:2 caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile"
   rsync -a --delete --exclude '*.test.mjs' "$root/deploy/suggest/" "$target:$remote/suggest/"
-  if [ -f "$root/deploy/suggest.env" ]; then
-    scp -q "$root/deploy/suggest.env" "$target:$remote/suggest.env"
+  suggest_env="${DEPLOY_SUGGEST_ENV:-$root/deploy/suggest.env}"
+  if [ -f "$suggest_env" ]; then
+    scp -q "$suggest_env" "$target:$remote/suggest.env"
   else
     ssh "$target" "umask 077; : > '$remote/suggest.env'"
   fi
+  release_id="${DEPLOY_SHA:-}"
+  if [ -z "$release_id" ]; then
+    release_id="$(git -C "$root" rev-parse HEAD 2>/dev/null || echo unknown)"
+  fi
+  # Fingerprint the files the process will actually load. Node does not
+  # notice later edits to the mounted directory or env file.
+  fp="$(ssh "$target" "sha256sum '$remote/suggest/server.mjs' '$remote/suggest/tokens.mjs' '$remote/suggest.env' | sha256sum | awk '{print \$1}'")"
+  release_file="$(mktemp)"
+  printf '{"id":"%s","fingerprint":"%s"}\n' "${release_id}:${fp:0:12}" "$fp" > "$release_file"
+  scp -q "$release_file" "$target:$remote/suggest/release.json"
+  rm -f "$release_file"
 else
   branch="${DEV_BRANCH:-}"
   if [ -z "$branch" ]; then
@@ -84,5 +96,8 @@ if [ "$mode" = "prod" ]; then
       exit 1
     fi
   fi
+  # Reconcile Suggest on every delivery. Recreate it only when its code
+  # or env changed, or when it is not running yet. Caddy stays reloaded.
+  ssh "$target" "cd '$remote' && prev=\$(cat .suggest-fingerprint 2>/dev/null || true) && running=\$(docker compose ps --status running -q suggest || true) && if [ \"\$prev\" != '$fp' ] || [ -z \"\$running\" ]; then docker compose up -d --no-deps --force-recreate suggest; fi && printf '%s\n' '$fp' > .suggest-fingerprint"
 fi
 echo "deploy: done"

@@ -2,8 +2,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Button, Container, Stack } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
-import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
-import { docsSite } from "@/lib/site";
 import { HomeHeroLead } from "@/ui/home/home-hero-lead";
 import { HOME_HERO_PREVIEW_SHELL_CLASS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
@@ -31,23 +29,17 @@ const HomeUseCasesSection = dynamic(
   },
 );
 
-const HomeAiSetupSection = dynamic(
-  () => import("@/ui/home/home-ai-setup-section").then((mod) => ({ default: mod.HomeAiSetupSection })),
-  { loading: () => <section id="ai-setup" aria-busy="true" className="min-h-128 w-full scroll-mt-24" /> },
-);
-
-const HomeInstallOrCopySection = dynamic(
-  () => import("@/ui/home/home-install-or-copy-section").then((mod) => ({ default: mod.HomeInstallOrCopySection })),
+const HomeGetStartedSection = dynamic(
+  () => import("@/ui/home/home-get-started-section").then((mod) => ({ default: mod.HomeGetStartedSection })),
   {
     loading: () => (
-      <section id="install-or-copy" aria-busy="true" className="min-h-128 w-full scroll-mt-24" />
+      <section id="get-started" aria-busy="true" className="min-h-96 w-full scroll-mt-24">
+        <section id="ai-setup" className="sr-only" />
+        <section id="install-or-copy" className="sr-only" />
+        <section id="quickstart" className="sr-only" />
+      </section>
     ),
   },
-);
-
-const HomeUiQuickstartSection = dynamic(
-  () => import("@/ui/home/home-ui-quickstart-section").then((mod) => ({ default: mod.HomeUiQuickstartSection })),
-  { loading: () => <section id="quickstart" aria-busy="true" className="min-h-128 w-full scroll-mt-24" /> },
 );
 
 const HomeHeroDashboard = dynamic(
@@ -95,14 +87,7 @@ export function HomeHero({
         </Stack>
       </Container>
       <HomeUseCasesSection />
-      <HomeAiSetupSection />
-      <HomeInstallOrCopySection npmPackage={featuredPackage} />
-      <HomeUiQuickstartSection
-        npmPackage={featuredPackage}
-        siteUrl={docsSite.url}
-        featuredBrick={featuredRegistryBrick}
-        registryBricks={registryBrickNames}
-      />
+      <HomeGetStartedSection npmPackage={featuredPackage} />
       <Container width="wide" className="py-section-lg">
         <HomeHeroDashboard />
       </Container>

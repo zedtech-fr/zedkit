@@ -239,6 +239,21 @@ test("GET is 405", async () => {
   });
 });
 
+test("GET /version announces the release and parameters loaded at start", async () => {
+  await withServer(
+    { env: { ...ENV, IDENTITY_AI_MAX_TOKENS: "222", SUGGEST_RELEASE: "sha-b" }, fetchImpl: () => Promise.resolve(chatReply({})) },
+    async (port) => {
+      const res = await fetch(`http://127.0.0.1:${port}/api/identity/suggest/version`);
+      assert.equal(res.status, 200);
+      const body = await res.json();
+      assert.equal(body.id, "sha-b");
+      assert.equal(body.model, "primary-model");
+      assert.equal(body.maxTokens, 222);
+      assert.equal(JSON.stringify(body).includes("test-primary"), false);
+    },
+  );
+});
+
 test("POST uses a high max_tokens default and skips minimal reasoning_effort", async () => {
   const bodies = [];
   const fetchImpl = (_url, init) => {

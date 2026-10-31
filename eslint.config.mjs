@@ -73,7 +73,7 @@ export default tseslint.config(
       "apps/docs/scripts/*.mjs",
       "packages/ui/preview/*.mjs",
       "packages/ui/playwright.config.ts",
-      "deploy/suggest/**/*.mjs",
+      "deploy/**/*.mjs",
     ],
     languageOptions: {
       globals: {

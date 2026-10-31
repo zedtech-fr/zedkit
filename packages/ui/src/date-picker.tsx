@@ -57,28 +57,30 @@ function skipUndef<T extends object>(obj: T): Partial<T> {
 }
 
 /** Single day in a popover. Pass `id` to pair with `FieldLabel`. */
-export function DatePicker({
-  value,
-  defaultValue,
-  onValueChange,
-  placeholder,
-  disabled,
-  id,
-  className,
-  disabledDays,
-  startMonth,
-  endMonth,
-  defaultMonth,
-  today,
-}: DatePickerProps) {
+export function DatePicker(input: DatePickerProps) {
+  const {
+    value,
+    defaultValue,
+    onValueChange,
+    placeholder,
+    disabled,
+    id,
+    className,
+    disabledDays,
+    startMonth,
+    endMonth,
+    defaultMonth,
+    today,
+  } = input;
+  const isControlled = "value" in input;
   const messages = useUiMessages();
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState(defaultValue);
-  const selected = value ?? inner;
+  const selected = isControlled ? value : inner;
   const name = placeholder ?? messages.pickDate;
 
   function select(next: Date | undefined) {
-    setInner(next);
+    if (!isControlled) setInner(next);
     onValueChange?.(next);
     setOpen(false);
   }
@@ -119,29 +121,31 @@ export function DatePicker({
 }
 
 /** Start and end day in a popover. Pass `id` to pair with `FieldLabel`. */
-export function DateRangePicker({
-  value,
-  defaultValue,
-  onValueChange,
-  placeholder,
-  disabled,
-  id,
-  className,
-  disabledDays,
-  startMonth,
-  endMonth,
-  defaultMonth,
-  today,
-}: DateRangePickerProps) {
+export function DateRangePicker(input: DateRangePickerProps) {
+  const {
+    value,
+    defaultValue,
+    onValueChange,
+    placeholder,
+    disabled,
+    id,
+    className,
+    disabledDays,
+    startMonth,
+    endMonth,
+    defaultMonth,
+    today,
+  } = input;
+  const isControlled = "value" in input;
   const messages = useUiMessages();
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState(defaultValue);
-  const selected = value ?? inner;
+  const selected = isControlled ? value : inner;
   const name = placeholder ?? messages.pickDateRange;
   const shown = rangeText(selected, messages.locale, name);
 
   function select(next: DateRange | undefined) {
-    setInner(next);
+    if (!isControlled) setInner(next);
     onValueChange?.(next);
     if (next?.from && next.to && next.from.getTime() !== next.to.getTime()) setOpen(false);
   }

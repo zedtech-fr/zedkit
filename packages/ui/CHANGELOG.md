@@ -1,5 +1,12 @@
 # @zedtech/zedkit-ui
 
+## 0.8.2
+
+### Patch Changes
+
+- bd933e1: MultiSelect honors disabled on chip removal and emits one value change per removal.
+- 2ba2950: Pagination Previous and Next use `type="button"` so they no longer submit an enclosing form.
+
 ## 0.8.1
 
 ### Patch Changes
