@@ -29,6 +29,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
       containerWidth="wide"
       title="Start from your situation"
       id="scenarios"
+      className="hidden md:block"
       description="Each card opens a doc page with the install command, an example, and a live preview when available."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
