@@ -4,9 +4,9 @@
  * family per identity. The browser fetches a file only when a rendered
  * identity uses that family, and only the subsets the text needs.
  *
- * Default look (Geist) + code (JetBrains Mono) ship in the critical path.
- * Inter stays here too: the home page paints Mist/Tide/Glass scenes in the
- * first HTML, so loading it after paint shifts the pinned scroll height.
+ * Default look (Inter) + code (JetBrains Mono) ship in the critical path.
+ * Geist stays here too: a saved Volt choice and the home scenes that use it
+ * must not shift when the file arrives.
  * Other identity families load from `fonts-identity.ts` after hydration.
  */
 import "@fontsource-variable/geist";
