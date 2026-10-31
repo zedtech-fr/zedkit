@@ -30,5 +30,8 @@ export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 /** Secondary counts and labels (12–13px). */
 export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy text-muted-foreground";
 
+/** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
+export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 1270;
+
 /** Marks a subtree whose section intros use the home persuasion scale on mobile. */
 export const HOME_MARKETING_ROOT_PROPS = { "data-home-marketing": "" } as const;
