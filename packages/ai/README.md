@@ -18,9 +18,23 @@ pnpm add -D @zedtech/zedkit-ai
 ## Usage
 
 ```sh
-npx zedkit-ai init . --provider cursor   # copy the core kit into this repo
+npx zedkit-ai init . --provider cursor   # copy the starter kit into this repo
 # then ask your agent: "run the setup-ai skill"
 npx zedkit-ai validate                   # must print: ok
+```
+
+**Starter (default):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
+and `orchestrate` (so setup can hand off bigger work), plus subagents
+`explorer`, `verifier`, and `orchestrator`, and commands `/setup-ai` and
+`/review`. Enough to onboard a repo, verify facts, run one review workflow,
+and check done-ness without loading the whole kit.
+
+**Already on `core`?** Nothing is removed from your tree automatically.
+`zedkit-ai validate` reports drift; add skills with `zedkit-ai init
+--preset core` on a fresh clone or copy missing folders from `.agents/`.
+
+```sh
+npx zedkit-ai init . --preset core   # previous default: planning, implement, triage, …
 ```
 
 `init` installs generic instructions. The `setup-ai` skill makes them specific:
@@ -40,7 +54,7 @@ Developing the kit itself? From a zedkit checkout, build once and call
 the binary directly: `pnpm --filter @zedtech/zedkit-ai build`, then
 `node packages/ai/dist/bin.js init <dir>`.
 
-`init` options: `--preset core|full`, `--provider cursor,claude,codex,muse,all`
+`init` options: `--preset starter|core|full`, `--provider cursor,claude,codex,muse,all`
 (`--target` is an alias), `--dry-run`. It copies files (you own them
 afterwards) and never overwrites an existing one; the one exception is an
 existing `AGENTS.md` without the ladder, which gets the ladder section
@@ -132,11 +146,14 @@ the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,
 director briefs — the full table (role + when to call) lives in
 `docs/agents-catalog.md`, the installed set in `kit.json`.
 
-**Presets:** `core` (the skills most projects benefit from; `zedkit-ai list`
-shows them) and `full` (all). Keep the skill count low: every skill's name and
-description is loaded into context up front (Codex caps that list at about 2%
-of the context window and shortens descriptions past it). Subagents are always
-installed; their files are only read when one is used.
+**Presets:** `starter` (default: onboard, review, done — five skills, three
+subagents, two commands), `core` (planning, implement, and the rest;
+`zedkit-ai list` shows the skill list), and `full` (every skill). Keep the
+skill count low: every skill's name and description is loaded into context
+up front (Codex caps that list at about 2%
+of the context window and shortens descriptions past it). With `starter` or
+`core`, only that preset's subagents and commands are copied; `full` still
+installs the full agent and command lists from `kit.json`.
 
 ## Choices worth knowing
 

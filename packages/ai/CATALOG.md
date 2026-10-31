@@ -27,8 +27,8 @@ for (const action of result.value) console.log(action.kind, action.path);
 
 CLI equivalent: `zedkit-ai init .` (`--provider cursor,claude,codex,muse,all`; `--target` is an alias)
 
-Presets: `core` (most projects; includes the `review`/`plan`/`challenge`/
-`implement` entry points), `full` (every skill).
+Presets: `starter` (onboard + review; default), `core` (planning and
+implement entry points), `full` (every skill).
 
 Providers: `cursor` (rules file, skills link, agents and commands as real-file
 copies), `claude` (`CLAUDE.md` and folder links), `codex` and `muse` (no
