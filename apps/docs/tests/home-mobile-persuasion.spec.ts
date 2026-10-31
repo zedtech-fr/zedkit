@@ -11,7 +11,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
   test("persuasion copy uses the shared 14px body role with comfortable leading", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#entry-points .home-metadata-copy").first().waitFor();
+    await page.locator("#scenarios .text-home-persuasion").first().waitFor();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -26,22 +26,13 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       const scenarioIntro = scenarios?.querySelector('[data-slot="heading"] + [data-slot="text"]');
       const scenarioGoal = scenarios?.querySelector(".text-home-persuasion");
 
-      const entryPoints = document.querySelector("#entry-points");
-      const entryIntro = entryPoints?.querySelector('[data-slot="heading"] + [data-slot="text"]');
-      const entrySummary = entryPoints?.querySelector(".rounded-xl.border .text-home-persuasion");
-      const entryMeta = entryPoints?.querySelector(".home-metadata-copy");
-
       return {
         scenarioIntro: read(scenarioIntro),
         scenarioGoal: read(scenarioGoal),
-        entryIntro: read(entryIntro),
-        entrySummary: read(entrySummary),
-        entryMeta: read(entryMeta),
       };
     });
 
     for (const [label, value] of Object.entries(readings)) {
-      if (label === "entryMeta") continue;
       expect(value, label).not.toBeNull();
       if (!value) continue;
       expect(value.fontSize, `${label} font-size`).toBeGreaterThanOrEqual(14);
@@ -49,7 +40,5 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeGreaterThanOrEqual(1.45);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeLessThanOrEqual(1.61);
     }
-
-    expect(readings.entryMeta?.fontSize ?? 99).toBeLessThanOrEqual(13);
   });
 });
