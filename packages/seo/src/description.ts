@@ -1,9 +1,23 @@
 export const SEO_DESCRIPTION_MAX = 160;
 
-/** Collapse whitespace and cap at 160 chars with an ellipsis (SERP length). */
+/**
+ * Collapse whitespace and cap at 160 chars (SERP length). When the cap
+ * would cut mid-sentence, keep the last complete sentence instead; only
+ * fall back to a hard slice with an ellipsis when no sentence ends in
+ * range. A sentence end must be followed by a capital (or the end), so
+ * decimals (4.5:1), domains and "e.g." never cut early.
+ */
 export function truncateDescription(text: string, max: number = SEO_DESCRIPTION_MAX): string {
   const normalized = text.replace(/\s+/g, " ").trim();
   if (normalized.length <= max) return normalized;
+  let cut = -1;
+  for (const match of normalized.matchAll(/[.!?](?=\s|$)/g)) {
+    const end = match.index + 1;
+    if (end > max) break;
+    const next = normalized.slice(end).trimStart().charAt(0);
+    if (next === "" || next === next.toUpperCase()) cut = end;
+  }
+  if (cut > 0) return normalized.slice(0, cut);
   return `${normalized.slice(0, max - 1).trimEnd()}…`;
 }
 
