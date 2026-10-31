@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 import Link from "next/link";
 import {
   Badge,
   Button,
   Heading,
   ProgressBar,
-  ScrollScenes,
   Section,
   Stack,
   StatusLabel,
@@ -71,6 +70,8 @@ const USE_CASES: readonly UseCase[] = [
     why: "Frosted layers over soft colour: light, touch-sized and at home on a phone.",
   },
 ];
+
+const DEFAULT_USE_CASE: UseCase = USE_CASES[0]!;
 
 /**
  * Renders a subtree in another identity than the page, through the kit's
@@ -309,18 +310,45 @@ function SecondScene({ id }: { id: UseCaseId }) {
   }
 }
 
+function UseCasePreview({ useCase }: { useCase: UseCase }) {
+  return (
+    <Stack gap={4} className="min-w-0">
+      <Stack gap={2} className="min-w-0">
+        <Text variant="muted" className="text-xs">
+          Identity: {useCase.identityLabel}
+        </Text>
+        <Heading level={3} id={`use-case-${useCase.id}`}>
+          {useCase.title}
+        </Heading>
+        <Text variant="muted">{useCase.why}</Text>
+      </Stack>
+      <SceneScope
+        identity={useCase.identity}
+        aria-hidden="true"
+        inert
+        data-use-case-scene={useCase.id}
+        className="grid min-w-0 gap-4 font-sans text-foreground md:grid-cols-5"
+      >
+        <div className={`${SCENE_CLASS} md:col-span-3`}>
+          <Scene id={useCase.id} />
+        </div>
+        <div className={`${SECOND_SCENE_CLASS} md:col-span-2`}>
+          <SecondScene id={useCase.id} />
+        </div>
+      </SceneScope>
+    </Stack>
+  );
+}
+
 /**
- * Second home section: the same kit in each of its six identities, shown
- * one after the other on a stage that stays in place while the page scrolls
- * (kit `ScrollScenes`, pure CSS, native scrolling). Each scene has the
- * identity name and a line of text, and two small examples drawn with kit
- * components inside an identity scope, so the page identity is never
- * touched. Examples are inert previews hidden from assistive tech; the text
- * next to each says the same thing. With reduced motion, or where scroll
- * timelines are not supported, the scenes sit one under the other.
+ * Second home section: the same kit in each of its six identities. Pick a
+ * scene explicitly instead of a long pinned scroll gallery; examples stay in
+ * scoped identities so the page chrome is never touched.
  */
 export function HomeUseCasesSection() {
   const root = useRef<HTMLDivElement>(null);
+  const [activeId, setActiveId] = useState<UseCaseId>("admin");
+  const active: UseCase = USE_CASES.find((entry) => entry.id === activeId) ?? DEFAULT_USE_CASE;
 
   /** Fetch every identity's fonts shortly before the section is reached, so no scene swaps type once visible. */
   useEffect(() => {
@@ -357,42 +385,42 @@ export function HomeUseCasesSection() {
       containerWidth="wide"
       title="One kit, every kind of product"
       id="use-cases"
-      description="Same components, six identities. Scroll to see how each one reads, with content that fits its use."
+      description="Same components, six identities. Pick one to preview how it reads, with content that fits its use."
     >
-      <div ref={root} data-home-use-cases>
-        <ScrollScenes
-          className="[--zk-scenes-step:40svh] [--zk-scenes-top:4.5rem] md:[--zk-scenes-top:6rem]"
-          scenes={USE_CASES.map((useCase) => ({
-            id: useCase.id,
-            caption: (
-              <Stack gap={2} className="min-w-0">
-                <Text variant="muted" className="text-xs">
-                  Identity: {useCase.identityLabel}
-                </Text>
-                <Heading level={3} id={`use-case-${useCase.id}`}>
-                  {useCase.title}
-                </Heading>
-                <Text variant="muted">{useCase.why}</Text>
-              </Stack>
-            ),
-            children: (
-              <SceneScope
-                identity={useCase.identity}
-                aria-hidden="true"
-                inert
-                data-use-case-scene={useCase.id}
-                className="grid min-w-0 gap-4 font-sans text-foreground md:grid-cols-5"
-              >
-                <div className={`${SCENE_CLASS} md:col-span-3`}>
-                  <Scene id={useCase.id} />
-                </div>
-                <div className={`${SECOND_SCENE_CLASS} md:col-span-2`}>
-                  <SecondScene id={useCase.id} />
-                </div>
-              </SceneScope>
-            ),
-          }))}
-        />
+      <div ref={root} data-home-use-cases className="min-w-0">
+        <Stack gap={4} className="min-w-0">
+          <Stack direction="horizontal" gap={2} className="flex-wrap" role="tablist" aria-label="Identity previews">
+            {USE_CASES.map((useCase) => {
+              const selected = activeId === useCase.id;
+              return (
+                <Button
+                  key={useCase.id}
+                  type="button"
+                  role="tab"
+                  id={`use-case-tab-${useCase.id}`}
+                  aria-selected={selected}
+                  aria-controls={`use-case-panel-${useCase.id}`}
+                  variant={selected ? "default" : "outline"}
+                  size="sm"
+                  className="min-h-11 shrink-0"
+                  onClick={() => setActiveId(useCase.id)}
+                >
+                  {useCase.identityLabel}
+                </Button>
+              );
+            })}
+          </Stack>
+          <div
+            role="tabpanel"
+            id={`use-case-panel-${active.id}`}
+            aria-labelledby={`use-case-tab-${active.id}`}
+          >
+            <UseCasePreview key={active.id} useCase={active} />
+          </div>
+          <Button asChild variant="ghost" className="h-11 w-fit px-0 text-primary underline-offset-4 hover:underline">
+            <Link href="/docs/ui/design-your-identity">See all six identities</Link>
+          </Button>
+        </Stack>
       </div>
       <Stack direction="horizontal" gap={2} className="flex-wrap">
         <Button asChild className="w-fit">
