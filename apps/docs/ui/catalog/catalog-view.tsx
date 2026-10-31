@@ -74,9 +74,9 @@ export function CatalogView({
   }
 
   return (
-    <Container width="wide" className="py-section-md">
+    <>
+      <Section bleed tone="muted" spacing="lg" containerWidth="default">
       <Stack gap={8}>
-      <Stack gap={8} className="max-w-reading">
       <Stack gap={2}>
         <Heading level={1}>Catalog</Heading>
         <Text variant="muted">
@@ -150,10 +150,11 @@ export function CatalogView({
         </Stack>
       </Stack>
       </Stack>
-
+      </Section>
+      <Container width="wide" className="py-section-lg">
         <CatalogResults filtered={filtered} />
-      </Stack>
-    </Container>
+      </Container>
+    </>
   );
 }
 
