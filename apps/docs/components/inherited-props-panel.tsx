@@ -11,7 +11,7 @@ export function InheritedPropsPanel({
   referenceHref = MDN_HTML_ATTRS,
   summary = "inherited HTML attributes",
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   referenceHref?: string;
   summary?: string;
 }) {
@@ -39,7 +39,7 @@ export function InheritedPropsPanel({
             </Link>
             .
           </Text>
-          {children}
+          {children ?? null}
         </Stack>
       ) : (
         <Text variant="muted" className="text-xs">
