@@ -103,7 +103,7 @@ export function HomeHero({
         featuredBrick={featuredRegistryBrick}
         registryBricks={registryBrickNames}
       />
-      <Container id="demo" width="wide" className="scroll-mt-24 py-section-lg">
+      <Container width="wide" className="py-section-lg">
         <HomeHeroDashboard />
       </Container>
     </>

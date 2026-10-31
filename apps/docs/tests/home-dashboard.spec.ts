@@ -4,15 +4,17 @@ import { expect, test } from "@playwright/test";
 const BASE = "http://127.0.0.1:3100";
 
 async function axeDashboard(page: import("@playwright/test").Page) {
-  const demo = page.getByLabel("Interactive admin dashboard demo");
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
   await expect(demo).toBeVisible();
-  const results = await new AxeBuilder({ page }).include('[aria-label="Interactive admin dashboard demo"]').analyze();
+  const results = await new AxeBuilder({ page })
+    .include("#demo [aria-label='Interactive admin dashboard demo in the hero']")
+    .analyze();
   expect(results.violations).toEqual([]);
 }
 
 test("home dashboard: create, edit, delete with axe on ready state", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const demo = page.getByLabel("Interactive admin dashboard demo");
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
   await axeDashboard(page);
 
   await demo.getByRole("button", { name: "Add app" }).click();

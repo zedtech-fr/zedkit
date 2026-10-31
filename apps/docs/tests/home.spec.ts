@@ -100,9 +100,29 @@ test("home hero proof flips identity and dark in scope (#1072)", async ({ page }
   const darkBg = await scope.evaluate((el) => getComputedStyle(el).backgroundColor);
   const channels = darkBg.match(/\d+/g)!.map(Number);
   expect(Math.max(...channels.slice(0, 3))).toBeLessThan(70);
-  // The flip is scoped: the site itself keeps its identity and theme.
   await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
+});
+
+test("home hero embeds the interactive admin demo above the fold (#1111 L1b)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+  await expect(demo.getByRole("button", { name: "Add app" })).toBeVisible();
+  const box = await demo.getByRole("button", { name: "Add app" }).boundingBox();
+  expect(box).toBeTruthy();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(720);
+  await expect(demo.getByRole("columnheader", { name: "Name" })).toBeVisible();
+});
+
+test("home hero demo starts on the first mobile screen (#1111 L1b)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
+  await expect(demo.getByRole("button", { name: "Add app" })).toBeVisible();
+  const top = await demo.boundingBox();
+  expect(top).toBeTruthy();
+  expect(top!.y).toBeLessThan(844);
 });
 
 test("home area cards keep a decorative icon at phone width", async ({ page }) => {

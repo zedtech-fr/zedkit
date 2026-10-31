@@ -61,7 +61,11 @@ const seedApps: AdminAppRow[] = [
  * Shared interactive admin dashboard (home demo + future tutorial).
  * Local state only; preview modes exercise DataTable loading/empty/error.
  */
-export function AdminDashboardDemoApp() {
+export function AdminDashboardDemoApp({
+  label = "Interactive admin dashboard demo",
+}: {
+  label?: string;
+}) {
   const [apps, setApps] = useState<AdminAppRow[]>(seedApps);
   const [preview, setPreview] = useState<PreviewMode>("ready");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -144,7 +148,7 @@ export function AdminDashboardDemoApp() {
   return (
     <>
       <Toaster />
-      <Stack className="w-full min-w-0" aria-label="Interactive admin dashboard demo">
+      <Stack className="w-full min-w-0" aria-label={label}>
         <Stack gap={3} className="border-b border-border p-4" data-demo-toolbar>
           <Heading level={2} className="text-lg font-semibold tracking-tight">
             Project apps

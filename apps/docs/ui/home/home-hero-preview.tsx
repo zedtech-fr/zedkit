@@ -8,11 +8,9 @@ import { Button, Card, Stack, Text, cn, identities } from "@zedtech/zedkit-ui";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 import { HOME_HERO_PREVIEW_SHELL_CLASS } from "@/ui/home/home-rhythm";
 
-const HomeAdminScene = dynamic(
-  () => import("@/ui/home/home-admin-scene").then((mod) => mod.HomeAdminScene),
-  {
-    loading: () => <Stack className="min-h-48 flex-1" aria-hidden="true" />,
-  },
+const HomeAdminDashboardDemo = dynamic(
+  () => import("@/components/demos/home-admin-dashboard-demo").then((mod) => mod.HomeAdminDashboardDemo),
+  { loading: () => <Stack className="min-h-48 flex-1" aria-hidden="true" /> },
 );
 
 type HeroProofControlsProps = {
@@ -60,33 +58,30 @@ function HeroProofControls({ look, dark, onLook, onDark }: HeroProofControlsProp
 }
 
 /**
- * Hero visual the visitor can touch: the admin scene restyles in place
- * under a scoped identity + dark class (the same two attributes the
- * identity pages document), and the line under the card shows the
- * attribute that just changed. The scene itself stays decorative.
+ * Hero visual the visitor can use: the same local admin demo as below the fold,
+ * restyled under a scoped identity + dark class, with the attribute line under the card.
  */
 export function HomeHeroPreview() {
   const [look, setLook] = useState(DEFAULT_IDENTITY);
   const [dark, setDark] = useState(false);
   const darkScope = dark ? "dark" : undefined;
 
-  // Start from whatever the site already shows, so the card never
-  // contradicts the header switcher on load; after that it is local.
   useEffect(() => {
     setLook(document.documentElement.getAttribute("data-identity") ?? DEFAULT_IDENTITY);
     setDark(document.documentElement.classList.contains("dark"));
   }, []);
 
   return (
-    <Stack gap={3} data-home-hero-proof>
+    <Stack gap={3} id="demo" data-home-hero-proof className="scroll-mt-24">
       <HeroProofControls look={look} dark={dark} onLook={setLook} onDark={() => setDark(!dark)} />
-      {/* Scoped dark needs `dark` on an ancestor of the identity scope. */}
       <Stack className={cn(darkScope, HOME_HERO_PREVIEW_SHELL_CLASS)} data-home-hero-preview>
-        <div data-identity-scope="" data-identity={look} className="h-full bg-background font-sans text-foreground">
-          <Card className="h-full select-none">
-            <Stack aria-hidden="true" className="pointer-events-none h-full justify-between p-card-padding">
-              <HomeAdminScene />
-            </Stack>
+        <div
+          data-identity-scope=""
+          data-identity={look}
+          className="flex h-full min-h-0 flex-col bg-background font-sans text-foreground"
+        >
+          <Card className="flex h-full min-h-0 flex-col overflow-hidden border shadow-sm">
+            <HomeAdminDashboardDemo label="Interactive admin dashboard demo in the hero" />
           </Card>
         </div>
       </Stack>
