@@ -32,7 +32,8 @@ const seenValues = (page: Page) =>
 
 const identityValues = (seen: Seen) => seen.filter((value) => value !== null && !value.startsWith("dcl:"));
 
-test("a first-time visitor gets the default identity before the first paint, with no change after", async ({ page }) => {
+test("a first-time visitor gets Tide before the first paint, with no change after", async ({ page }) => {
+  expect(DEFAULT).toBe("tide");
   await recordIdentity(page);
   await page.goto(PAGE, { waitUntil: "networkidle" });
   await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT);
@@ -47,6 +48,14 @@ test("a stored choice still wins over the default", async ({ page }) => {
   await page.goto(PAGE, { waitUntil: "networkidle" });
   await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
   expect(identityValues(await seenValues(page))).toEqual(["mist"]);
+});
+
+test("a stored volt choice is kept", async ({ page }) => {
+  await recordIdentity(page);
+  await page.addInitScript(() => localStorage.setItem("zk-identity", "volt"));
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
+  expect(identityValues(await seenValues(page))).toEqual(["volt"]);
 });
 
 test("the soft look (mist) stays selectable and is kept", async ({ page }) => {
@@ -70,10 +79,11 @@ test("the desktop chooser marks the default", async ({ page }) => {
 test("the phone chooser marks the default and keeps mist selectable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: /^Identity: Volt/ }).click();
+  const label = DEFAULT.slice(0, 1).toUpperCase() + DEFAULT.slice(1);
+  await page.getByRole("button", { name: new RegExp(`^Identity: ${label}`) }).click();
   const group = page.getByRole("radiogroup", { name: "Identity" });
-  await expect(group.getByRole("radio", { name: /Volt/ })).toHaveAttribute("aria-checked", "true");
-  await expect(group.getByRole("radio", { name: /Volt/ })).toContainText("Default");
+  await expect(group.getByRole("radio", { name: new RegExp(label) })).toHaveAttribute("aria-checked", "true");
+  await expect(group.getByRole("radio", { name: new RegExp(label) })).toContainText("Default");
   await group.getByRole("radio", { name: /Mist/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
 });

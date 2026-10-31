@@ -396,8 +396,8 @@ test.describe("identity editor apply to site", () => {
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await page.getByRole("button", { name: "Reset to default" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
-    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.225rem$/);
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+    await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
     await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
   });
@@ -467,7 +467,7 @@ test.describe("identity editor apply to site", () => {
   test("Apply Press replaces the site look in light and dark", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     await page.getByLabel("Look").selectOption("press");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
@@ -586,7 +586,7 @@ test.describe("identity editor apply to site", () => {
     // reset remains the way to drop it.
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toContain("0.4rem");
     await page.getByRole("button", { name: "Reset to default" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
     await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
   });
@@ -630,7 +630,7 @@ test.describe("identity editor named looks", () => {
     await page.getByRole("button", { name: "Delete" }).click();
     await expect(page.getByLabel("Look")).toHaveValue("mist");
     await expect(header.locator("option[value='n-coral']")).toHaveCount(0);
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "volt");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   });
 
   test("keeps a named look after reload", async ({ page }) => {
