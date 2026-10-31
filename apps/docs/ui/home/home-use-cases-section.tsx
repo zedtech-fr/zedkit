@@ -14,7 +14,7 @@ import {
   identities,
 } from "@zedtech/zedkit-ui";
 import { HomeAdminScene } from "@/ui/home/home-admin-scene";
-import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
+import { HOME_CARD_CONTENT_GAP, HOME_CARD_TITLE_CLASS, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 type UseCaseId = "admin" | "shop" | "editorial" | "launch" | "monitoring" | "mobile";
 
@@ -317,10 +317,12 @@ function UseCasePreview({ useCase }: { useCase: UseCase }) {
         <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
           Identity: {useCase.identityLabel}
         </Text>
-        <Heading level={3} id={`use-case-${useCase.id}`}>
+        <Heading level={3} id={`use-case-${useCase.id}`} className={HOME_CARD_TITLE_CLASS}>
           {useCase.title}
         </Heading>
-        <Text variant="muted">{useCase.why}</Text>
+        <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+          {useCase.why}
+        </Text>
       </Stack>
       <SceneScope
         identity={useCase.identity}
