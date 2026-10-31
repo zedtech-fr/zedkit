@@ -15,11 +15,11 @@ import {
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
-function GalleryEntry({ card }: { card: GalleryCard }) {
+function GalleryEntry({ card, className = "min-w-0" }: { card: GalleryCard; className?: string }) {
   const Demo = card.demo ? homeGalleryDemos[card.demo] : undefined;
   return (
-    <Card className="min-w-0">
-      <CardHeader>
+    <Card className={className}>
+      <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle className="text-lg">
           <Link href={card.href}>{card.title}</Link>
         </CardTitle>
@@ -73,8 +73,12 @@ export function HomeBelowHero({
       >
         <Stack gap={HOME_SECTION_CONTENT_GAP}>
           <Stack className={HOME_CARD_GRID_THREE_COL}>
-            {curatedGallery.map((card) => (
-              <GalleryEntry key={card.href} card={card} />
+            {curatedGallery.map((card, index) => (
+              <GalleryEntry
+                key={card.href}
+                card={card}
+                className={index >= 3 ? "hidden min-w-0 md:flex md:flex-col" : "min-w-0"}
+              />
             ))}
           </Stack>
           <Button asChild variant="outline">

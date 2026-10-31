@@ -1,4 +1,4 @@
-# Caddy serves ./site. suggest handles POST /api/identity/suggest.
+# Caddy serves ./current/site. suggest handles POST /api/identity/suggest.
 services:
   suggest:
     image: node:22-alpine
@@ -6,9 +6,9 @@ services:
     working_dir: /app
     command: ["node", "server.mjs"]
     volumes:
-      - ./suggest:/app:ro
+      - ./current/suggest:/app:ro
     env_file:
-      - path: suggest.env
+      - path: current/suggest.env
         required: false
     environment:
       PORT: "3001"
@@ -24,8 +24,8 @@ services:
       - "443:443"
       - "443:443/udp"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./site:/srv/site:ro
+      - ./current/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./current/site:/srv/site:ro
       - ./site-dev:/srv/site-dev:ro
       - caddy_data:/data
       - caddy_config:/config

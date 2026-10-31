@@ -8,12 +8,11 @@ import { maturityBadgeVariant, maturityIconFor } from "@/lib/maturity-status";
 export function MaturityBadge({ status }: { status: string }) {
   const key = status.toLowerCase();
   if (key === "stable") return null;
-  const betaMuted = key === "beta" ? " border-border text-muted-foreground text-xs font-normal" : "";
   return (
     <Badge
       asChild
       variant={maturityBadgeVariant(status)}
-      className={`no-underline hover:no-underline${betaMuted}`}
+      className="no-underline hover:no-underline"
     >
       <Link href={maturityDocHref} data-badge-link="">
         <IconLabel icon={maturityIconFor(status)} className="text-current">

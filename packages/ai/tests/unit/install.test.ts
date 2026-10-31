@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { firstPartySkills, markdownFiles, put, tempDir } from "./helpers.js";
+import { firstPartySkills, markdownFiles, put, SKILL, tempDir } from "./helpers.js";
 
 function install(dest: string, options: Parameters<typeof installKit>[0] extends infer O ? Partial<O> : never = {}) {
   const result = installKit({ dest, ...options });
@@ -37,6 +37,38 @@ describe("installKit", () => {
     install(dest, { preset: "core" });
     const issues = validateKit(join(dest, ".agents"));
     expect(issues).toEqual([]);
+  });
+
+  it("installs every preset with no dangling skill reference", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    for (const preset of Object.keys(manifest.value.presets)) {
+      const dest = tempDir();
+      const result = installKit({ dest, preset, providers: [] });
+      expect(result.ok, preset).toBe(true);
+      if (!result.ok) continue;
+      expect(validateKit(join(dest, ".agents")), preset).toEqual([]);
+    }
+  });
+
+  it("fails before writing when a preset skill references a skill the preset does not install", () => {
+    const kit = tempDir();
+    put(kit, "kit.json", JSON.stringify({ presets: { tiny: ["alpha"], full: "*" }, agents: [], commands: [] }));
+    put(kit, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nCall the Skill tool with "beta".\n`);
+    put(kit, "skills/beta/SKILL.md", SKILL("beta"));
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    const result = installKit({ dest, kit, preset: "tiny", providers: [] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.message).toContain('preset "tiny"');
+      expect(result.error.message).toContain('references skill "beta"');
+      expect(result.error.message).toContain("skills/alpha/SKILL.md");
+    }
+    expect(readdirSync(dest)).toEqual([]);
+    const full = installKit({ dest: tempDir(), kit, preset: "full", providers: [] });
+    expect(full.ok).toBe(true);
   });
 
   it("installs personas.md from the template, keeps an existing one", () => {

@@ -33,5 +33,8 @@ export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy text-muted-foregroun
 /** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
 export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 1270;
 
+/** Audit L2 mobile: home page scroll height budget at 390px width (40% shorter vs audit baseline). */
+export const HOME_MOBILE_PAGE_MAX_SCROLL_PX = 8000;
+
 /** Marks a subtree whose section intros use the home persuasion scale on mobile. */
 export const HOME_MARKETING_ROOT_PROPS = { "data-home-marketing": "" } as const;

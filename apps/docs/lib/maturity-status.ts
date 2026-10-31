@@ -18,7 +18,7 @@ export function maturityBadgeVariant(status: string): MaturityBadgeVariant {
     case "stable":
       return "outline";
     case "beta":
-      return "outline";
+      return "secondary";
     case "alpha":
       return "warning";
     case "planned":

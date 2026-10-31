@@ -14,16 +14,15 @@ async function gotoCatalogQuiet(page: Page, path = "/catalog") {
   return errors;
 }
 
-async function resultLinkGeometry(page: Page) {
-  return page.evaluate(() => {
-    const heading = [...document.querySelectorAll("h2")].find((el) => el.textContent?.trim() === "Results");
-    const section = heading?.closest("section");
-    const links = [...(section?.querySelectorAll("a:not([data-badge-link])") ?? [])];
+async function resultLinkGeometry(page: Page, groupId = "ui") {
+  return page.evaluate((id) => {
+    const group = document.querySelector(`[data-catalog-group="${id}"]`);
+    const links = [...(group?.querySelectorAll("a:not([data-badge-link])") ?? [])];
     return links.map((a) => {
       const r = a.getBoundingClientRect();
       return { text: a.textContent?.trim() ?? "", left: Math.round(r.left), top: Math.round(r.top) };
     });
-  });
+  }, groupId);
 }
 
 test("catalog intro bleeds full width and the filters sit in a narrower column", async ({ page }) => {
@@ -48,22 +47,21 @@ test("catalog intro bleeds full width and the filters sit in a narrower column",
   expect(resultsBox!.width).toBeGreaterThan(columnBox!.width);
 });
 
-test("catalog runs wide with two alphabetical columns at 2560 (#1063)", async ({ page }) => {
+test("catalog runs wide with two alphabetical columns per group at 2560 (#1063)", async ({ page }) => {
   await page.setViewportSize({ width: 2560, height: 1080 });
   await gotoCatalogQuiet(page);
-  await expect(page.locator("[data-catalog-area]").first()).toBeVisible();
+  await expect(page.locator('[data-catalog-group="ui"]').first()).toBeVisible();
   const container = await page
     .locator("main [data-slot='container']")
     .filter({ has: page.getByRole("heading", { name: "Results", level: 2 }) })
     .boundingBox();
   expect(container).not.toBeNull();
   expect(container!.width).toBeGreaterThanOrEqual(1400);
-  const links = await resultLinkGeometry(page);
+  const links = await resultLinkGeometry(page, "ui");
   expect(links.length).toBeGreaterThan(20);
   const lefts = [...new Set(links.map((l) => l.left))].sort((a, b) => a - b);
   expect(lefts).toHaveLength(2);
   const [leftCol, rightCol] = lefts.map((left) => links.filter((l) => l.left === left));
-  // Each column reads top to bottom; the right column continues the alphabet.
   expect(leftCol!.at(-1)!.text.localeCompare(rightCol![0]!.text)).toBeLessThan(0);
   expect(Math.abs(leftCol![0]!.top - rightCol![0]!.top)).toBeLessThanOrEqual(2);
   const overflow = await page.evaluate(
@@ -75,11 +73,11 @@ test("catalog runs wide with two alphabetical columns at 2560 (#1063)", async ({
 test("catalog steps from one column to two at the xl boundary (#1063)", async ({ page }) => {
   await page.setViewportSize({ width: 1279, height: 1000 });
   await gotoCatalogQuiet(page);
-  await expect(page.locator("[data-catalog-area]").first()).toBeVisible();
-  const below = [...new Set((await resultLinkGeometry(page)).map((l) => l.left))];
+  await expect(page.locator('[data-catalog-group="ui"]').first()).toBeVisible();
+  const below = [...new Set((await resultLinkGeometry(page, "ui")).map((l) => l.left))];
   expect(below).toHaveLength(1);
   await page.setViewportSize({ width: 1280, height: 1000 });
-  const above = [...new Set((await resultLinkGeometry(page)).map((l) => l.left))];
+  const above = [...new Set((await resultLinkGeometry(page, "ui")).map((l) => l.left))];
   expect(above).toHaveLength(2);
 });
 
@@ -113,27 +111,30 @@ test("catalog area filters keep a decorative icon", async ({ page }) => {
   expect(overflow).toBe(true);
 });
 
-test("catalog result area chips keep a decorative icon", async ({ page }) => {
+test("catalog results group by category without per-row area chips", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
-  const chips = page.locator("[data-catalog-area]");
-  const count = await chips.count();
-  expect(count).toBeGreaterThan(0);
-  await expect(chips.locator("svg[aria-hidden='true']")).toHaveCount(count);
+  await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Backend · \d+$/, level: 3 })).toBeVisible();
+  await expect(page.locator("[data-catalog-area]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
   expect(overflow).toBe(true);
 });
 
+test("catalog area filter shows one category group", async ({ page }) => {
+  await page.goto(`${BASE}/catalog?area=seo`, { waitUntil: "networkidle" });
+  await expect(page.getByRole("heading", { name: /^SEO · \d+$/, level: 3 })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: /^UI · /, level: 3 })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "Jump to category" })).toHaveCount(0);
+});
+
 test("catalog result maturity chips keep a decorative icon", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
-  const chips = page.locator("[data-catalog-area]");
   const badges = page.locator("a[data-badge-link]");
-  const count = await chips.count();
   const badgeCount = await badges.count();
-  expect(count).toBeGreaterThan(0);
   expect(badgeCount).toBe(47);
   await expect(badges.locator("svg[aria-hidden='true']")).toHaveCount(badgeCount);
   const overflow = await page.evaluate(
@@ -142,23 +143,20 @@ test("catalog result maturity chips keep a decorative icon", async ({ page }) =>
   expect(overflow).toBe(true);
 });
 
-test.describe("catalog result area chips light/dark", () => {
-  for (const mode of ["light", "dark"] as const) {
-    test(`mist ${mode}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
-        localStorage.setItem("theme", theme);
-      }, mode);
-      await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
-      const chips = page.locator("[data-catalog-area]");
-      await chips.first().scrollIntoViewIfNeeded();
-      await expect(chips.first()).toBeVisible();
-      await chips.first().locator("xpath=..").screenshot({
-        path: `test-results/catalog-row-area-${mode}.png`,
-      });
+test.describe("catalog grouped results mobile visual", () => {
+  test("390px mist", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => {
+      localStorage.setItem("zk-identity", "mist");
+      localStorage.setItem("theme", "light");
     });
-  }
+    await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
+    const results = page.locator("[data-catalog-results]");
+    await results.scrollIntoViewIfNeeded();
+    await expect(page.getByRole("heading", { name: /^Results$/, level: 2 })).toBeVisible();
+    await expect(page.getByRole("link", { name: /UI \(\d+\)/ })).toBeVisible();
+    await results.screenshot({ path: "test-results/catalog-grouped-mobile-390.png" });
+  });
 });
 
 test.describe("catalog result maturity chips light/dark", () => {
