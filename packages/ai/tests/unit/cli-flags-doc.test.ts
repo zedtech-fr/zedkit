@@ -39,8 +39,10 @@ describe("cli flags documentation", () => {
     const presetDoc = /`--preset ([^`]+)`/u.exec(readme)?.[1]?.split("|").sort() ?? [];
     const providerDoc = /`--provider ([^`]+)`/u.exec(readme)?.[1]?.split(",").sort() ?? [];
     expect(presetDoc, "README --preset values").toEqual(presets);
-    // Public README omits internal-only provider ids; CLI still accepts them (see --help).
-    const publicProviders = providers.filter((name) => name !== "muse");
-    expect(providerDoc, "README --provider values").toEqual(publicProviders);
+    const documentedProviders = ["all", "claude", "codex", "cursor"];
+    expect(providerDoc, "README --provider values").toEqual(documentedProviders);
+    for (const name of providerDoc) {
+      expect(providers, `README documents unknown provider "${name}"`).toContain(name);
+    }
   });
 });
