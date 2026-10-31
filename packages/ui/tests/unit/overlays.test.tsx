@@ -43,6 +43,57 @@ describe("overlays", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it("traps Tab inside a modal dialog", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">before</button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>Open</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Details</DialogTitle>
+            </DialogHeader>
+            <DialogFooter>
+              <Button>Save</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <button type="button">after</button>
+      </>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    const dialog = screen.getByRole("dialog");
+    for (let i = 0; i < 8; i++) {
+      await user.tab();
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+    for (let i = 0; i < 8; i++) {
+      await user.tab({ shift: true });
+      expect(dialog.contains(document.activeElement)).toBe(true);
+    }
+  });
+
+  it("returns focus to the trigger after Escape on a dialog", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    const trigger = screen.getByRole("button", { name: "Open" });
+    await user.click(trigger);
+    await user.keyboard("{Escape}");
+    expect(document.activeElement).toBe(trigger);
+  });
+
   it("animates dialog content in through the motion tokens", async () => {
     const user = userEvent.setup();
     render(

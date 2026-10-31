@@ -50,7 +50,6 @@ const HomeHeroDashboard = dynamic(
 export function HomeHero({
   featuredPackage,
   version,
-  releasesHref,
   latestChange,
 }: {
   featuredPackage: string;
@@ -69,11 +68,7 @@ export function HomeHero({
             gap={HOME_SECTION_CONTENT_GAP}
             className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
           >
-            <HomeHeroLead
-              version={version}
-              releasesHref={releasesHref}
-              latestChange={latestChange}
-            />
+            <HomeHeroLead version={version} latestChange={latestChange} />
             <HomeHeroPreview />
           </Stack>
           <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-secondary-actions>
