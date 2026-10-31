@@ -141,6 +141,14 @@ case "$cmd" in
     [[ -f "${state}/caddy-up" ]]
     exit $?
     ;;
+  ps)
+    case "$*" in
+      *caddy*)
+        if [[ -f "${state}/caddy-up" ]]; then echo caddy; fi
+        ;;
+    esac
+    exit 0
+    ;;
   *)
     exit 0
     ;;
