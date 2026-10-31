@@ -5,4 +5,4 @@
  * id (any id from `identities`) to change the docs default. The kit default
  * stays "mist" (`identities[0]` in `@zedtech/zedkit-ui`).
  */
-export const DEFAULT_IDENTITY = "volt";
+export const DEFAULT_IDENTITY = "tide";
