@@ -108,8 +108,9 @@ export function withCanonicalPageLabel(record, canonicalByHref) {
   if (record.type !== "page") return record;
   const canonical = canonicalByHref[pagePathFromUrl(record.url)];
   if (!canonical) return record;
-  const { hastContent: _hast, ...rest } = record;
-  return { ...rest, content: canonical.label };
+  const labeled = { ...record, content: canonical.label };
+  delete labeled.hastContent;
+  return labeled;
 }
 
 /**
