@@ -30,7 +30,7 @@ test.describe("site type hierarchy (P0)", () => {
     await page.goto("/docs/ui/trigger-actions-with-buttons?identity=volt", { waitUntil: "networkidle" });
     expect(await probe(page, "font-size", "var(--text-xs)")).toBe("12px");
     expect(await probe(page, "font-size", "var(--text-sm)")).toBe("13px");
-    const prose = await page.locator("#nd-page .prose p").first().evaluate((el) => getComputedStyle(el).fontSize);
+    const prose = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).fontSize);
     expect(prose).toBe("15px");
     const proseWidth = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).maxWidth);
     expect(proseWidth).toMatch(/ch$/);

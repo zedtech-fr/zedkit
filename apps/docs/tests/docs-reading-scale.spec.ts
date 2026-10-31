@@ -13,7 +13,7 @@ test("docs shell keeps the reading-scale floor under the default identity", asyn
   expect(await probe(page, "font-size", "var(--text-sm)")).toBe("13px");
   expect(await probe(page, "font-size", "var(--text-base)")).toBe("14px");
 
-  const prose = await page.locator("#nd-page .prose p").first().evaluate((el) => getComputedStyle(el).fontSize);
+  const prose = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).fontSize);
   expect(prose).toBe("15px");
 
   const tracking = await page.locator("#nd-page h1").evaluate((el) => {
