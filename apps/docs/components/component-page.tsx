@@ -14,8 +14,9 @@ import { docsSite } from "../lib/site";
 import { symbolsFromImport } from "../lib/import-symbols";
 import { ComponentExportsPanel } from "./component-exports-panel";
 import { ComponentPreview } from "./component-preview";
+import { ComponentWrapsLine } from "./component-wraps-line";
 import { PropsTable } from "./props-table";
-import { RegistryBrickName } from "./registry-brick-name";
+import { RegistryBrickInlineName } from "./registry-brick-name";
 
 export interface CatalogExample {
   title: string;
@@ -119,7 +120,7 @@ export async function ComponentPage({
           description="Copy into your app after npx shadcn add (imports are rewritten for consumers)."
         >
           <Stack gap={3}>
-            <RegistryBrickName name={registry} />
+            <RegistryBrickInlineName name={registry} />
             {await highlightedTs(source, `${registry}.tsx`)}
           </Stack>
         </Section>
@@ -148,6 +149,7 @@ export async function ComponentPage({
               );
             }),
           )}
+          <ComponentWrapsLine wraps={wraps} />
         </Stack>
       </Section>
 
