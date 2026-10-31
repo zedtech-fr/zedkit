@@ -60,7 +60,7 @@ reload_caddy() {
 if [ "$mode" = "rollback" ]; then
   ssh "$target" "cd '$remote' && prev=\$(cat .previous-release 2>/dev/null || true) && if [ -n \"\$prev\" ] && [ -d \"releases/\$prev\" ]; then ln -sfn \"releases/\$prev\" current; fi"
   fp="$(ssh "$target" "sha256sum '$remote/current/suggest/server.mjs' '$remote/current/suggest/tokens.mjs' '$remote/current/suggest.env' 2>/dev/null | sha256sum | awk '{print \$1}'")"
-  reload_caddy
+  recreate_caddy
   reconcile_suggest "$fp"
   github_out "switched=false"
   echo "deploy: rolled back"
