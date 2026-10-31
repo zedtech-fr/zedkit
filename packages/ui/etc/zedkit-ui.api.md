@@ -1520,6 +1520,7 @@ export type ZedkitUiMessages = {
     previous: string;
     next: string;
     pageOf: string;
+    wizardStepOf: string;
     copyToClipboard: string;
     live: string;
     idle: string;
