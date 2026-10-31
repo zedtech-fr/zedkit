@@ -8,7 +8,7 @@ import * as React from "react";
 import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { buttonVariants } from "./button.js";
-import { resolveModalMountAutoFocus } from "./overlay-modal.js";
+import { resolveModalMountAutoFocus, overlayDrawerFooterClass, overlayDrawerHeaderClass } from "./overlay-modal.js";
 import { cn } from "./utils.js";
 import { useUiMessages } from "./ui-provider.js";
 
@@ -169,10 +169,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-header"
-      className={cn(
-        "sticky top-0 z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border bg-background p-4 text-center sm:text-left",
-        className,
-      )}
+      className={cn(overlayDrawerHeaderClass, className)}
       {...props}
     />
   );
@@ -192,10 +189,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-footer"
-      className={cn(
-        "sticky bottom-0 z-10 mt-auto flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 pt-4 pb-drawer-footer-safe",
-        className,
-      )}
+      className={cn(overlayDrawerFooterClass, className)}
       {...props}
     />
   );

@@ -243,8 +243,8 @@
 [data-identity-scope][data-identity="glass"] :where([data-slot="drawer-content"]) {
   box-shadow: var(--zk-glass-shadow-sheet);
 }
-:root[data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"]):where(:not([data-identity-scope] *)),
-[data-identity-scope][data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"]) {
+:root[data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"], [data-slot="dialog-header"], [data-slot="dialog-footer"]):where(:not([data-identity-scope] *)),
+[data-identity-scope][data-identity="glass"] :where([data-slot="drawer-header"], [data-slot="drawer-footer"], [data-slot="dialog-header"], [data-slot="dialog-footer"]) {
   background-color: transparent;
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
 }
