@@ -15,6 +15,8 @@ import type { HomeScenario } from "@/content/home-scenarios";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_THREE_COL,
+  HOME_METADATA_TEXT_CLASS,
+  HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
@@ -41,12 +43,18 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
               <CardContent className="flex flex-1 flex-col">
                 <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
                   <Stack gap={1}>
-                    <Text as="span" className="text-sm font-medium">You want</Text>
-                    <Text variant="muted">{scenario.goal}</Text>
+                    <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
+                      You want
+                    </Text>
+                    <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+                      {scenario.goal}
+                    </Text>
                   </Stack>
                   <Stack gap={1}>
-                    <Text as="span" className="text-sm font-medium">Do this</Text>
-                    <Text className="text-sm">{scenario.action}</Text>
+                    <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
+                      Do this
+                    </Text>
+                    <Text className={HOME_PERSUASION_TEXT_CLASS}>{scenario.action}</Text>
                   </Stack>
                   <Button asChild variant="outline" className="mt-auto w-fit">
                     <Link href={scenario.href}>
