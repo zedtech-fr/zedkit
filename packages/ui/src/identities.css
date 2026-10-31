@@ -186,16 +186,23 @@
   /* Code blocks and inline code sit on the card surface */
   pre:not(figure.shiki pre) {
     background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
-    border: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    border: var(--zk-border-width) solid hsl(var(--border) / 0.35);
     border-radius: var(--radius-xl);
     box-shadow: var(--zk-shadow-sm);
     -webkit-backdrop-filter: var(--zk-glass-filter, none);
     backdrop-filter: var(--zk-glass-filter, none);
   }
   :not(pre) > code {
-    background-color: hsl(var(--muted));
-    border: var(--zk-border-width) solid hsl(var(--border));
-    border-radius: var(--radius-sm);
+    background-color: hsl(var(--muted) / 0.72);
+    border: 0;
+    border-radius: calc(var(--radius-sm) * 0.85);
+    padding: 0.12em 0.38em;
+    font-size: 0.875em;
+    line-height: 1.35;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    overflow-wrap: anywhere;
+    word-break: normal;
   }
 
   /* Tables: head reads as a label band, rows answer on hover */
