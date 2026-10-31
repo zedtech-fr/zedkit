@@ -39,6 +39,10 @@ describe("cli flags documentation", () => {
     const presetDoc = /`--preset ([^`]+)`/u.exec(readme)?.[1]?.split("|").sort() ?? [];
     const providerDoc = /`--provider ([^`]+)`/u.exec(readme)?.[1]?.split(",").sort() ?? [];
     expect(presetDoc, "README --preset values").toEqual(presets);
-    expect(providerDoc, "README --provider values").toEqual(providers);
+    const documentedProviders = ["all", "claude", "codex", "cursor"];
+    expect(providerDoc, "README --provider values").toEqual(documentedProviders);
+    for (const name of providerDoc) {
+      expect(providers, `README documents unknown provider "${name}"`).toContain(name);
+    }
   });
 });

@@ -30,7 +30,7 @@ describe("manifest files", () => {
       string,
       unknown
     >;
-    expect(Object.keys(raw).sort()).toEqual(["agents", "commands", "presets"]);
+    expect(Object.keys(raw).sort()).toEqual(["agents", "commands", "presetAgents", "presetCommands", "presets"]);
   });
 
   it("keeps the shipped set above its floors (38 skills, 18 agents, 10 commands)", () => {

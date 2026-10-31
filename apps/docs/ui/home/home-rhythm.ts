@@ -33,6 +33,12 @@ export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy";
 /** Card and band titles under the hero (maps to `--zk-type-h3-*`). */
 export const HOME_CARD_TITLE_CLASS = "text-zk-type-h3";
 
+/** Hero promise line under the h1 (maps to `--zk-type-lead-*`). */
+export const HOME_LEAD_TEXT_CLASS = "text-zk-type-lead";
+
+/** Factual micro-proof under CTAs (maps to `--zk-type-small-*`). */
+export const HOME_SMALL_TEXT_CLASS = "text-zk-type-small";
+
 /** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
 export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 1270;
 

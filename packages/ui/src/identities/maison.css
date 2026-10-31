@@ -2,7 +2,7 @@
  * Identity: maison.
  *
  *    Airy ivory, serif display type (Cormorant) over a geometric body
- *    (Jost), very fine borders, small radii, generous spacing. Code in
+ *    (Jost), hairline tinted borders, small radii, generous spacing. Code in
  *    JetBrains Mono. Interactions stay within the motion caps; the slow,
  *    unhurried feel is reserved for reveals (longer duration and travel).
  *
@@ -36,12 +36,12 @@
   --warning: 32 70% 32%;
   --warning-foreground: 0 0% 100%;
   --overlay: 30 10% 8%;
-  --border: 36 18% 54%;
-  --input: 36 18% 80%;
-  --ring: 36 55% 36%;
+  --border: 38 14% 55%;
+  --input: 38 12% 72%;
+  --ring: 38 45% 48%;
   --sidebar: 40 30% 96%;
   --sidebar-foreground: 30 10% 12%;
-  --sidebar-border: 36 18% 88%;
+  --sidebar-border: 38 12% 78%;
   --sidebar-accent: 38 45% 90%;
   --radius: 2px;
 
@@ -74,7 +74,7 @@
   --radius-xl: 2px;
   --radius-2xl: 3px;
   --radius-3xl: 4px;
-  --zk-border-width: 1.75px;
+  --zk-border-width: 1px;
   --ring-width: 2px;
   --ring-width-control: 2px;
   --ring-offset-width: 2px;
@@ -83,7 +83,7 @@
   --zk-shadow-color: 30 10% 12%;
   --zk-shadow-xs: 0 1px 1px hsl(var(--zk-shadow-color) / 0.04);
   --zk-shadow-sm: 0 1px 1px hsl(var(--zk-shadow-color) / 0.06);
-  --zk-shadow-md: 0 1px 0 hsl(var(--zk-shadow-color) / 0.28);
+  --zk-shadow-md: 0 1px 2px hsl(var(--zk-shadow-color) / 0.05), 0 4px 12px -8px hsl(var(--zk-shadow-color) / 0.06);
   --zk-shadow-lg: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06), 0 16px 36px -22px hsl(var(--zk-shadow-color) / 0.16);
   --zk-shadow-xl: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 28px 64px -28px hsl(var(--zk-shadow-color) / 0.28);
   --zk-shadow-overlay: 0 1px 2px hsl(var(--zk-shadow-color) / 0.08), 0 20px 44px -26px hsl(var(--zk-shadow-color) / 0.24);
@@ -139,17 +139,17 @@
   --warning: 38 70% 60%;
   --warning-foreground: 30 12% 8%;
   --overlay: 30 12% 3%;
-  --border: 34 10% 37%;
-  --input: 34 10% 28%;
+  --border: 32 8% 38%;
+  --input: 32 8% 30%;
   --ring: 38 45% 70%;
   --sidebar: 30 12% 8%;
   --sidebar-foreground: 40 30% 92%;
-  --sidebar-border: 34 10% 18%;
+  --sidebar-border: 32 8% 26%;
   --sidebar-accent: 30 10% 16%;
   --zk-shadow-color: 30 12% 2%;
   --zk-shadow-xs: none;
   --zk-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.4);
-  --zk-shadow-md: 0 1px 0 rgb(0 0 0 / 0.85);
+  --zk-shadow-md: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 16px -10px rgb(0 0 0 / 0.45);
   --zk-shadow-lg: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -22px rgb(0 0 0 / 0.75);
   --zk-shadow-xl: 0 1px 2px rgb(0 0 0 / 0.4), 0 28px 64px -26px rgb(0 0 0 / 0.8);
   --zk-shadow-overlay: 0 1px 2px rgb(0 0 0 / 0.4), 0 20px 44px -24px rgb(0 0 0 / 0.78);
