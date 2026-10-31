@@ -149,7 +149,7 @@ describe("token to CSS var writer", () => {
     expect(css).toContain("--background: 45 35% 94%");
     expect(css).toContain("--primary-foreground: 45 35% 94%");
     expect(css).toContain("--muted-foreground: 0 0% 25%");
-    expect(css).toContain("--zk-shadow-sm: 0 0 0 0 transparent");
+    expect(css).toContain("--zk-shadow-sm: 0 1px 2px hsl(0 0% 5% / 0.06)");
     expect(css).toContain("--zk-font-display:");
   });
 
