@@ -344,33 +344,18 @@ test("home UI quickstart points to the getting started guide", async ({ page }) 
   );
 });
 
-test("quickstart brick names keep a decorative icon", async ({ page }) => {
+test("home install section links to the catalog instead of listing every brick", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
-  const list = page.locator("#install-or-copy [data-registry-bricks]");
-  await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
-  await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
+  await expect(page.locator("#install-or-copy [data-registry-bricks]")).toHaveCount(0);
+  const count = registryBrickNames.filter((name) => name !== "theme").length;
+  await expect(
+    page.getByRole("link", { name: `${count} components available in the registry → Catalog` }),
+  ).toHaveAttribute("href", "/docs");
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
   expect(overflow).toBe(true);
-});
-
-test.describe("quickstart brick list light/dark (#769)", () => {
-  for (const mode of ["light", "dark"] as const) {
-    test(`mist ${mode}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
-        localStorage.setItem("theme", theme);
-      }, mode);
-      await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
-      const list = page.locator("#install-or-copy [data-registry-bricks]");
-      await list.scrollIntoViewIfNeeded();
-      await expect(list.getByText("badge", { exact: true })).toBeVisible();
-      await list.screenshot({ path: `test-results/quickstart-brick-list-${mode}.png` });
-    });
-  }
 });
 
 test("home search opens from the header", async ({ page }) => {
