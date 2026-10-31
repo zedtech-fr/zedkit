@@ -129,7 +129,7 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   #nd-nav {
     background-color: hsl(var(--background) / var(--zk-glass-alpha, 1));
     border-bottom: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
-    box-shadow: var(--zk-shadow-sm);
+    box-shadow: none;
     -webkit-backdrop-filter: var(--zk-glass-filter, none);
     backdrop-filter: var(--zk-glass-filter, none);
   }
