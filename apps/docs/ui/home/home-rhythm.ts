@@ -22,7 +22,7 @@ export const HOME_SECTION_REVEAL_CLASS =
 
 /** Fixed-height hero preview slot so idle-loaded art does not shift page scroll (#618). */
 export const HOME_HERO_PREVIEW_SHELL_CLASS =
-  "pointer-events-none h-72 w-full shrink-0 overflow-hidden lg:h-80";
+  "h-80 w-full shrink-0 overflow-hidden lg:h-96";
 
 /** Persuasion copy on the home page (16px floor on phone widths). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";

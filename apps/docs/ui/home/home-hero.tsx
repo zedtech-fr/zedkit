@@ -86,7 +86,7 @@ export function HomeHero({
           </Stack>
         </Stack>
       </Container>
-      <Container id="demo" width="wide" className="scroll-mt-24 py-section-lg">
+      <Container width="wide" className="scroll-mt-24 py-section-lg">
         <HomeHeroDashboard />
       </Container>
       <HomeUseCasesSection />
