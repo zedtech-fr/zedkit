@@ -169,6 +169,7 @@ function guidanceBlock(need, seeAlsoLinks) {
 
 function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
+  const seeAlsoLinks = related.map((link) => `[${link.title}](${link.href})`);
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
@@ -183,6 +184,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
     "",
     `<MaturityBadge status={${JSON.stringify(need.status)}} />`,
     "",
+    ...guidanceBlock(need, seeAlsoLinks),
     "<ComponentPage",
     `  packageName={${JSON.stringify(pkg)}}`,
     `  version={${JSON.stringify(version)}}`,

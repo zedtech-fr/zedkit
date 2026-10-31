@@ -17,6 +17,18 @@ test("confirm-dialog component page exposes catalog a11y and troubleshooting in 
   expect(errors).toEqual([]);
 });
 
+test("confirm-dialog page opens with the shared At a glance guidance (#1084)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(CONFIRM_DIALOG_DOC, { waitUntil: "networkidle" });
+  const glance = page.getByRole("heading", { name: "At a glance", level: 2 });
+  await expect(glance).toBeVisible();
+  await expect(page.locator("main")).toContainText("Use when:");
+  await expect(page.locator("main")).toContainText("Before any irreversible action");
+  const install = page.getByRole("heading", { name: "Install", level: 2 });
+  expect((await glance.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
+  await expect(page.getByRole("heading", { name: "Accessibility", level: 2 })).toHaveCount(1);
+});
+
 test("registry brick name keeps a decorative icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(CONFIRM_DIALOG_DOC, { waitUntil: "networkidle" });
