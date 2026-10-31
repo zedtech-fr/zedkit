@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 
 import { CheckIcon } from "lucide-react";
 
@@ -8,6 +8,32 @@ import { formatMessage } from "@/components/ui/format-message";
 
 import { cn } from "@/lib/utils";
 import { useUiMessages } from "@/components/ui/ui-provider";
+
+/** Matches Tailwind `sm` (640px): phones and narrow viewports. */
+const MOBILE_MEDIA = "(max-width: 639px)";
+
+function readMobileViewport(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  const query = typeof window.matchMedia === "function" ? window.matchMedia(MOBILE_MEDIA) : null;
+  return window.innerWidth < 640 || Boolean(query?.matches);
+}
+
+function useMobileViewport(): boolean {
+  return React.useSyncExternalStore(
+    (onStoreChange) => {
+      if (typeof window.matchMedia !== "function") {
+        return () => {};
+      }
+      const mql = window.matchMedia(MOBILE_MEDIA);
+      mql.addEventListener("change", onStoreChange);
+      return () => mql.removeEventListener("change", onStoreChange);
+    },
+    readMobileViewport,
+    () => true,
+  );
+}
 
 export interface WizardStepsProps {
   steps: string[];
@@ -95,50 +121,54 @@ function clampStepIndex(current: number, stepCount: number): number {
 
 export function WizardSteps({ steps, current, className }: WizardStepsProps) {
   const messages = useUiMessages();
+  const isMobile = useMobileViewport();
   const active = clampStepIndex(current, steps.length);
   const title = steps[active] ?? "";
 
   return (
     <div data-slot="wizard-steps" className={cn("min-w-0 space-y-3", className)}>
-      <div className="space-y-2 sm:hidden">
-        <p className="truncate text-sm text-muted-foreground">
-          {formatMessage(messages.wizardStepOf, {
-            step: active + 1,
-            stepCount: steps.length,
-            title,
-          })}
-        </p>
-        <div
-          role="progressbar"
-          aria-label={messages.progress}
-          aria-valuemin={1}
-          aria-valuemax={steps.length}
-          aria-valuenow={active + 1}
-          className="flex w-full gap-progress-bar-gap"
-        >
+      {isMobile ? (
+        <div className="space-y-2">
+          <p className="truncate text-sm text-muted-foreground">
+            {formatMessage(messages.wizardStepOf, {
+              step: active + 1,
+              stepCount: steps.length,
+              title,
+            })}
+          </p>
+          <div
+            role="progressbar"
+            aria-label={messages.progress}
+            aria-valuemin={1}
+            aria-valuemax={steps.length}
+            aria-valuenow={active + 1}
+            className="flex w-full gap-progress-bar-gap"
+          >
+            {steps.map((step, index) => (
+              <span
+                key={step}
+                aria-hidden
+                className={cn(
+                  "h-progress-bar-height flex-1 rounded-full motion-safe:transition-colors",
+                  index <= active ? "bg-primary" : "bg-muted",
+                )}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Wizard>
           {steps.map((step, index) => (
-            <span
+            <WizardStep
               key={step}
-              aria-hidden
-              className={cn(
-                "h-progress-bar-height flex-1 rounded-full motion-safe:transition-colors",
-                index <= active ? "bg-primary" : "bg-muted",
-              )}
+              step={step}
+              index={index}
+              state={stepState(index, current)}
+              showConnector={index < steps.length - 1}
             />
           ))}
-        </div>
-      </div>
-      <Wizard className="hidden sm:flex">
-        {steps.map((step, index) => (
-          <WizardStep
-            key={step}
-            step={step}
-            index={index}
-            state={stepState(index, current)}
-            showConnector={index < steps.length - 1}
-          />
-        ))}
-      </Wizard>
+        </Wizard>
+      )}
     </div>
   );
 }

@@ -54,7 +54,7 @@
   --tracking-tight: -0.04em;
   --tracking-wide: 0.08em;
   --zk-heading-weight: 600;
-  --zk-type-h1-weight: 700;
+  --zk-type-h1-weight: 600;
   --zk-heading-tracking: -0.02em;
   --zk-subtle-foreground: 218 14% 42%;
   --zk-heading-transform: none;
@@ -127,6 +127,7 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 219 28% 20%;
   --muted-foreground: 215 20% 72%;
+  --zk-subtle-foreground: 215 20% 72%;
   --accent: 219 30% 43%;
   --accent-foreground: 0 0% 98%;
   --destructive: 2 85% 70%;

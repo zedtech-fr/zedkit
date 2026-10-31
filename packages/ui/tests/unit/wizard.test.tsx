@@ -28,6 +28,14 @@ describe("WizardSteps", () => {
   });
 
   it("shows a compact step summary for narrow viewports", () => {
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query === "(max-width: 639px)",
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 390 });
     render(<WizardSteps steps={["One", "Two", "Three"]} current={1} />);
     expect(screen.getByText("Step 2 of 3 · Two")).toBeTruthy();
     expect(screen.getByRole("progressbar", { name: "Progress" }).getAttribute("aria-valuenow")).toBe("2");

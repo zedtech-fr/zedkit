@@ -8,7 +8,7 @@ const overlayDialogHeaderClass =
 const overlayDialogFooterClass =
   "sticky bottom-0 z-10 flex flex-col-reverse gap-2 pb-dialog-footer-safe sm:flex-row sm:justify-end sm:items-center";
 const overlayDialogCloseClass =
-  "absolute top-0 right-0 z-20 grid size-overlay-touch-target place-content-center rounded-sm opacity-70 focus-ring-control transition-opacity hover:opacity-100 disabled:pointer-events-none";
+  "absolute top-0 right-0 z-20 grid size-overlay-touch-target min-h-[44px] min-w-[44px] place-content-center rounded-sm opacity-70 focus-ring-control transition-opacity hover:opacity-100 disabled:pointer-events-none";
 
 const overlayDrawerHeaderClass =
   "sticky top-0 z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border p-4 text-left";
