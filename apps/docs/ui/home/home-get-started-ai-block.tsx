@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { Button, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
-import { HOME_CARD_CONTENT_GAP } from "@/ui/home/home-rhythm";
+import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 export function HomeGetStartedAiBlock({ initCommand }: { initCommand: string }) {
   const setupAiSlash = "/setup-ai";
   return (
     <Stack gap={HOME_CARD_CONTENT_GAP} id="ai-setup" className="scroll-mt-24">
-      <Text variant="muted">
-        Run init in your repo, then <Text as="span" className="font-mono text-sm">/setup-ai</Text> in the agent.
+      <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+        Run init in your repo, then <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>/setup-ai</Text> in the agent.
         Full walkthrough in the docs.
       </Text>
       <SecretField multiline value={initCommand} aria-label="AI init command" copyLabel="Copy init command" />

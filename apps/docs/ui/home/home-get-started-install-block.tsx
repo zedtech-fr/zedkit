@@ -13,7 +13,7 @@ import {
 } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
 import { RegistryBrickList } from "@/components/registry-brick-name";
-import { HOME_CARD_CONTENT_GAP, HOME_CARD_GRID_TWO_COL } from "@/ui/home/home-rhythm";
+import { HOME_CARD_CONTENT_GAP, HOME_CARD_GRID_TWO_COL, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 function InstallOrCopyCards({
   packageInstallCmd,
@@ -65,12 +65,12 @@ export function HomeGetStartedInstallBlock({
 }) {
   return (
     <Stack gap={HOME_CARD_CONTENT_GAP} id="install-or-copy" className="scroll-mt-24">
-      <Text variant="muted">
+      <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
         npm packages for the full kit, or copy UI bricks with the shadcn CLI when you have a{" "}
-        <Text as="span" className="font-mono text-sm">components.json</Text>.
+        <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>components.json</Text>.
       </Text>
       <InstallOrCopyCards packageInstallCmd={packageInstallCmd} registryAddCmd={registryAddCmd} />
-      <Text variant="muted" className="text-sm">
+      <Text className={HOME_METADATA_TEXT_CLASS}>
         Published registry bricks today: <RegistryBrickList names={registryBricks} />.
       </Text>
       <Stack direction="horizontal" gap={2} className="flex-wrap" data-docs-ctas="">

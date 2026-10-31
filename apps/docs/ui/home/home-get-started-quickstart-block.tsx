@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { Button, Stack, Text } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
-import { HOME_CARD_CONTENT_GAP } from "@/ui/home/home-rhythm";
+import { HOME_CARD_CONTENT_GAP, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 export function HomeGetStartedQuickstartBlock() {
   return (
     <Stack gap={HOME_CARD_CONTENT_GAP} id="quickstart" className="scroll-mt-24">
-      <Text variant="muted">
+      <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
         Wire globals, install the package, and render a button — about five minutes in a fresh Next.js app.
       </Text>
       <Button asChild variant="outline" className="w-fit">

@@ -28,3 +28,35 @@
 .prose a[data-badge-link].text-destructive-foreground {
   color: hsl(var(--destructive-foreground));
 }
+
+/* Home marketing persuasion scale (L2): comfortable mobile reading; metadata stays xs. */
+:root {
+  --zk-home-persuasion-font-size: var(--text-base);
+  --zk-home-persuasion-leading: var(--zk-body-leading, 1.6);
+  --zk-home-metadata-font-size: var(--text-xs);
+  --zk-home-metadata-leading: 1.35;
+}
+
+@media (width < 48rem) {
+  :root {
+    --zk-home-persuasion-font-size: 1rem;
+    --zk-home-persuasion-leading: 1.5;
+  }
+}
+
+.text-home-persuasion {
+  font-size: var(--zk-home-persuasion-font-size);
+  line-height: var(--zk-home-persuasion-leading);
+}
+
+.home-metadata-copy {
+  font-size: var(--zk-home-metadata-font-size);
+  line-height: var(--zk-home-metadata-leading);
+}
+
+@media (width < 48rem) {
+  #home-page [data-home-marketing] [data-slot="section"] [data-slot="heading"] + [data-slot="text"] {
+    font-size: var(--zk-home-persuasion-font-size);
+    line-height: var(--zk-home-persuasion-leading);
+  }
+}

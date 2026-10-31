@@ -7,7 +7,7 @@ import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-si
 import { PUBLIC_SITE_URL } from "@/lib/site";
 import { registryShadcnAddCommand } from "@/lib/registry-shadcn-command";
 import { HomeGetStartedCopy } from "@/ui/home/home-get-started-copy";
-import { HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
+import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
 
 const SNIPPETS_DIR = join(process.cwd(), "home-quickstart", "snippets");
 
@@ -42,6 +42,7 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       title="Start building"
       description="Agent setup, npm or registry install, then the UI quickstart — step-by-step detail stays in the docs."
       className={HOME_SECTION_REVEAL_CLASS}
+      {...HOME_MARKETING_ROOT_PROPS}
     >
       <HomeGetStartedCopy
         initCommand={initCommand}
