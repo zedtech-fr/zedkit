@@ -120,6 +120,16 @@ describe("cli", () => {
     expect(usageProviders().sort(), "USAGE provider list").toEqual(listed);
   });
 
+  it("validate does not print ok when a skill references a missing skill", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nCall the Skill tool with "missing".\n`);
+    const result = run("validate", root);
+    expect(result.code).toBe(1);
+    expect(result.text).toContain('references skill "missing"');
+    expect(result.text).not.toMatch(/^ok$/);
+    expect(result.text).toContain("1 problem");
+  });
+
   it("validate exits 0 on a good dir and 1 on a bad one", () => {
     const good = tempDir();
     put(good, "skills/alpha/SKILL.md", SKILL("alpha"));
