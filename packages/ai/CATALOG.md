@@ -25,14 +25,14 @@ if (!result.ok) throw result.error;
 for (const action of result.value) console.log(action.kind, action.path);
 ```
 
-CLI equivalent: `zedkit-ai init .` (`--provider cursor,claude,codex,muse,all`; `--target` is an alias)
+CLI equivalent: `zedkit-ai init .` (`--provider cursor,claude,codex,all`; `--target` is an alias; run `--help` for every provider id)
 
 Presets: `starter` (onboard + review; default), `core` (planning and
 implement entry points), `full` (every skill).
 
 Providers: `cursor` (rules file, skills link, agents and commands as real-file
-copies), `claude` (`CLAUDE.md` and folder links), `codex` and `muse` (no
-layer: they read the shared source directly).
+copies), `claude` (`CLAUDE.md` and folder links), `codex` (no
+layer: reads the shared source directly; same for other no-layer ids in `--help`).
 
 ## Check that skills, subagents, commands and provider copies are valid
 

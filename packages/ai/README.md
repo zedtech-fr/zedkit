@@ -54,8 +54,8 @@ Developing the kit itself? From a zedkit checkout, build once and call
 the binary directly: `pnpm --filter @zedtech/zedkit-ai build`, then
 `node packages/ai/dist/bin.js init <dir>`.
 
-`init` options: `--preset starter|core|full`, `--provider cursor,claude,codex,muse,all`
-(`--target` is an alias), `--dry-run`. It copies files (you own them
+`init` options: `--preset starter|core|full`, `--provider cursor,claude,codex,all`
+(`--target` is an alias; `--help` lists every provider id), `--dry-run`. It copies files (you own them
 afterwards) and never overwrites an existing one; the one exception is an
 existing `AGENTS.md` without the ladder, which gets the ladder section
 appended (reported as `append`). It also skips
@@ -80,7 +80,8 @@ One shared source (`.agents/`), then a thin layer per provider:
 | `cursor` | `.cursor/rules/project.mdc`, `.cursor/skills` link, agents and commands as real-file copies | its `.cursor/` layer |
 | `claude` | `CLAUDE.md` link, `.claude/{skills,agents,commands}` links | its `.claude/` layer |
 | `codex` | none | `AGENTS.md` and `.agents/skills` directly |
-| `muse` | none | `.agents/` directly |
+
+Other provider ids with no install layer behave like `codex` (see `zedkit-ai init --help`).
 
 Cursor gets copies because a symlinked folder shows up empty there. Copies
 can drift when `.agents/` changes: `zedkit-ai validate` reports each missing
