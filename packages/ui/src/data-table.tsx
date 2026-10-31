@@ -119,10 +119,10 @@ export function DataTablePagination({
       <span className="text-sm text-muted-foreground">
         {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
-      <Button variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
+      <Button type="button" variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
         {messages.previous}
       </Button>
-      <Button variant="outline" size="sm" onClick={onNext} disabled={!canNext}>
+      <Button type="button" variant="outline" size="sm" onClick={onNext} disabled={!canNext}>
         {messages.next}
       </Button>
     </div>
