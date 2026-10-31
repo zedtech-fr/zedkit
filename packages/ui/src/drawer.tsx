@@ -8,6 +8,7 @@ import * as React from "react";
 import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { buttonVariants } from "./button.js";
+import { resolveModalMountAutoFocus } from "./overlay-modal.js";
 import { cn } from "./utils.js";
 import { useUiMessages } from "./ui-provider.js";
 
@@ -62,14 +63,24 @@ function resolveDrawerDirection(
   return direction;
 }
 
-function Drawer({ mobile = "sheet", direction, ...props }: DrawerRootProps) {
+function Drawer({
+  mobile = "sheet",
+  direction,
+  modal = true,
+  autoFocus,
+  ...props
+}: DrawerRootProps) {
   const isMobile = useMobileViewport();
   const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
+  const mountAutoFocus = resolveModalMountAutoFocus(autoFocus, modal);
   return (
     <DrawerPrimitive.Root
       data-slot="drawer"
       key={`${resolvedDirection}-${isMobile ? "narrow" : "wide"}`}
       direction={resolvedDirection}
+      modal={modal}
+      // eslint-disable-next-line jsx-a11y/no-autofocus -- Vaul prop; modal drawers must mount-focus inside so the trap engages.
+      autoFocus={mountAutoFocus}
       {...props}
     />
   );
