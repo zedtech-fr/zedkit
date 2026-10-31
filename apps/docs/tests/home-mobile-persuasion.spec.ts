@@ -46,5 +46,13 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeGreaterThanOrEqual(1.45);
       expect(ratio(value.fontSize, value.lineHeight), `${label} line-height ratio`).toBeLessThanOrEqual(1.61);
     }
+<<<<<<< HEAD
+=======
+
+    // Tide default: entry meta follows Tide --text-xs (0.9375rem = 15px), still
+    // below the 16px body floor. Was <=13 under Volt. Flag for L2/L3 if the
+    // meta scale needs revisiting with the new default.
+    expect(readings.entryMeta?.fontSize ?? 99).toBeLessThanOrEqual(15);
+>>>>>>> 04d28ed (docs(identity): adapt Volt-calibrated specs to the tide default)
   });
 });
