@@ -44,7 +44,7 @@
   --sidebar-accent: 160 55% 72%;
   --radius: 0px;
 
-  /* Typography: families, scale, weight, tracking */
+  /* Typography: families, weight flavour, tracking (scale is shared) */
   --zk-font-sans: "Space Grotesk Variable", "Space Grotesk", "Space Grotesk Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-display: "Newsreader Variable", Newsreader, "Newsreader Variable Fallback", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -56,22 +56,11 @@
   --font-weight-bold: 700;
   --tracking-tight: -0.01em;
   --tracking-wide: 0.06em;
-  --text-xs: 0.6875rem;
-  --text-sm: 0.8rem;
-  --text-base: 0.95rem;
-  --text-lg: 1.1875rem;
-  --text-xl: 1.375rem;
-  --text-2xl: 1.75rem;
-  --text-3xl: 2.125rem;
-  --text-4xl: 2.875rem;
-  --text-5xl: 3.25rem;
   --zk-heading-weight: 600;
   --zk-heading-tracking: -0.015em;
   --zk-heading-transform: none;
-  --zk-heading-leading: 1.06;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.08em;
-  --zk-body-leading: 1.12;
 
   /* Spacing: base unit */
   --spacing: 0.2rem;
