@@ -34,7 +34,7 @@ export const HOME_GALLERY_PREVIEW_SHELL_CLASS =
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 
 /** Secondary counts and labels (maps to `--zk-type-label-*`). */
-export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy text-muted-foreground";
+export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy";
 
 /** Card and band titles under the hero (maps to `--zk-type-h3-*`). */
 export const HOME_CARD_TITLE_CLASS = DOCS_TYPE_H3_CLASS;

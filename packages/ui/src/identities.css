@@ -245,6 +245,7 @@
     "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
   --zk-font-display: var(--zk-font-sans);
+  --zk-heading-tracking: -0.02em;
 }
 
 /*
@@ -292,6 +293,7 @@
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
   --muted-foreground: 240 5% 32%;
+  --zk-subtle-foreground: 240 4% 40%;
   --accent: 240 4.8% 59.9%;
   --accent-foreground: 240 5.9% 10%;
   --destructive: 0 72.2% 47%;
@@ -335,7 +337,7 @@
   --text-4xl: 2.25rem;
   --text-5xl: 3rem;
   --zk-heading-weight: initial;
-  --zk-heading-tracking: initial;
+  --zk-heading-tracking: -0.02em;
   --zk-heading-transform: initial;
   --zk-heading-leading: initial;
   --zk-label-transform: initial;
@@ -403,6 +405,7 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 240 3.7% 15.9%;
   --muted-foreground: 240 5% 64.9%;
+  --zk-subtle-foreground: 240 4% 72%;
   --accent: 240 3.7% 37.9%;
   --accent-foreground: 0 0% 98%;
   --destructive: 0 72.2% 66%;

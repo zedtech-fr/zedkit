@@ -146,12 +146,25 @@ test.describe("docs shell wide (#1064)", () => {
         const r = el.getBoundingClientRect();
         return { left: Math.round(r.left), width: Math.round(r.width), right: Math.round(r.right) };
       };
+      const widestPreview = () => {
+        let best: { left: number; width: number; right: number } | null = null;
+        for (const el of document.querySelectorAll("[data-component-preview]")) {
+          const r = el.getBoundingClientRect();
+          const box = {
+            left: Math.round(r.left),
+            width: Math.round(r.width),
+            right: Math.round(r.right),
+          };
+          if (!best || box.width > best.width) best = box;
+        }
+        return best;
+      };
       return {
         viewportWidth: window.innerWidth,
         article: rect("#nd-page"),
         main: rect("[data-layout-main]"),
         toc: rect("#nd-toc"),
-        preview: rect("[data-component-preview]"),
+        preview: widestPreview(),
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       };
     });

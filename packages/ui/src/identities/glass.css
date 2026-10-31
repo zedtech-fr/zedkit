@@ -65,7 +65,8 @@
   --tracking-tight: -0.02em;
   --tracking-wide: 0.04em;
   --zk-heading-weight: 600;
-  --zk-heading-tracking: -0.03em;
+  --zk-heading-tracking: -0.02em;
+  --zk-subtle-foreground: 222 16% 40%;
   --zk-heading-transform: none;
   --zk-label-transform: none;
   --zk-label-tracking: 0.01em;

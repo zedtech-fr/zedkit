@@ -114,6 +114,15 @@ export default tseslint.config(
       "better-tailwindcss/no-restricted-classes": "off",
     },
   },
+  {
+    files: [
+      "apps/docs/ui/home/home-hero-lead.tsx",
+      "apps/docs/ui/catalog/catalog-view.tsx",
+    ],
+    rules: {
+      "better-tailwindcss/no-unknown-classes": "off",
+    },
+  },
   ...defineLayers({
     preset: "feature-folders",
     kitPackage: "@zedtech/zedkit-ui",

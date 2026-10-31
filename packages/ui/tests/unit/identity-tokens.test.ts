@@ -72,7 +72,7 @@ describe("per-identity leading, border, colour duration (#799)", () => {
         expect(rem[i]).toBeGreaterThan(rem[i - 1] ?? 0);
       }
     }
-    for (const name of ["--tracking-tight", "--tracking-wide", "--zk-heading-tracking", "--zk-label-tracking", "--zk-shadow-xs", "--zk-shadow-sm", "--zk-shadow-md", "--zk-shadow-lg", "--zk-shadow-xl", "--zk-shadow-overlay", "--spacing", "--radius", "--radius-xs", "--radius-sm", "--radius-md", "--radius-xl", "--radius-2xl", "--zk-color-duration"] as const) {
+    for (const name of ["--tracking-tight", "--tracking-wide", "--zk-label-tracking", "--zk-shadow-xs", "--zk-shadow-sm", "--zk-shadow-md", "--zk-shadow-lg", "--zk-shadow-xl", "--zk-shadow-overlay", "--spacing", "--radius", "--radius-xs", "--radius-sm", "--radius-md", "--radius-xl", "--radius-2xl", "--zk-color-duration"] as const) {
       const seen = new Map<string, string>();
       for (const [id, css] of Object.entries(looks)) {
         const value = token(css, name) ?? "";
@@ -82,6 +82,12 @@ describe("per-identity leading, border, colour duration (#799)", () => {
       }
     }
     expect(sharedBase).toBe("0.875rem");
+    for (const [, css] of Object.entries(looks)) {
+      const tracking = token(css, "--zk-heading-tracking") ?? "";
+      const em = Number.parseFloat(tracking);
+      expect(Number.isFinite(em)).toBe(true);
+      expect(Math.abs(em)).toBeLessThanOrEqual(0.02);
+    }
   });
 
   it("sets a distinct border and colour duration per identity (body leading is shared)", () => {
