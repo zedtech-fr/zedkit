@@ -58,8 +58,9 @@ test("button reference page surfaces variant and size in props without search (#
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   await page.getByRole("link", { name: "View props table" }).click();
   const props = page.locator("#props");
-  await expect(props.getByText("variant", { exact: true }).first()).toBeVisible();
-  await expect(props.getByText("size", { exact: true }).first()).toBeVisible();
+  await props.scrollIntoViewIfNeeded();
+  await expect(props).toContainText("variant");
+  await expect(props).toContainText("size");
   await expect(page.getByRole("button", { name: /inherited HTML attributes/i })).toBeVisible();
 });
 

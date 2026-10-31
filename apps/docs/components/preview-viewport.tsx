@@ -43,7 +43,7 @@ export function PreviewViewport({
 
   const darkScope = dark ? "dark" : undefined;
   return (
-    <Stack gap={3} data-component-preview={a11yRoot ? "primary" : true}>
+    <Stack gap={3} data-component-preview={a11yRoot ? "primary" : true} {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
         <Text variant="muted" className="text-xs">Preview</Text>
         <Stack direction="horizontal" gap={2} className="flex-wrap">
