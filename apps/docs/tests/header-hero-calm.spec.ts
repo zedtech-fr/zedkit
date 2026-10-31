@@ -10,7 +10,7 @@ for (const viewport of [
   { width: 1024, height: 800, name: "1024" },
   { width: 1280, height: 800, name: "1280" },
 ] as const) {
-  test.describe(`header + hero calm (${viewport.name}px)`, () => {
+  test.describe(`hero calm (${viewport.name}px)`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
     test("hero has one visible version badge link (header only)", async ({ page }) => {
