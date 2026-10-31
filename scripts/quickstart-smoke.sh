@@ -74,6 +74,7 @@ run_npm_path() {
   cd "$work"
   pnpm install
   pnpm add tailwindcss @tailwindcss/vite react@19 react-dom@19
+  pnpm add -D @types/node
   write_vite_tailwind_app "$work"
 
   local pack_dir="${work}/pack"
@@ -104,6 +105,7 @@ run_registry_path() {
   cd "$work"
   pnpm install
   pnpm add tailwindcss @tailwindcss/vite react@19 react-dom@19
+  pnpm add -D @types/node
   write_vite_tailwind_app "$work"
   pnpm dlx "shadcn@${SHADCN}" init -d
   rm -rf src/components src/lib @ 2>/dev/null || true
