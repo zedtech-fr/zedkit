@@ -25,7 +25,7 @@ OpenFeature.setProvider(memoryProviderFromRegistry(registry));
 
 ## Evaluate flags on the server
 
-- Import: `@zedtech/zedkit-flags` — `getFlag`, `Client`
+- Import: `@zedtech/zedkit-flags` — `getFlag`, `Client`, `FlagReturnValue`
 - Wraps: `@openfeature/server-sdk` (peer)
 - Status: alpha
 - Short name: getFlag
