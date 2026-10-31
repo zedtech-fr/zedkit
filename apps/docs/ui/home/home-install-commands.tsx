@@ -14,6 +14,7 @@ import {
   HOME_CARD_GRID_TWO_COL,
   HOME_CARD_TITLE_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
+  HOME_SMALL_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 
 function InstallCommandBlock({
@@ -44,7 +45,7 @@ function InstallCommandBlock({
       className="relative min-w-0 rounded-md border border-input bg-muted/30"
     >
       <pre
-        className="overflow-x-auto whitespace-pre p-3 pr-12 font-mono text-zk-type-small leading-relaxed"
+        className={`${HOME_SMALL_TEXT_CLASS} overflow-x-auto p-3 pr-12 font-mono leading-relaxed whitespace-nowrap`}
         aria-label={ariaLabel}
       >
         {value}

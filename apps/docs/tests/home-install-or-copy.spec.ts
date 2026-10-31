@@ -55,7 +55,7 @@ test.describe("home install or copy section", () => {
         whiteSpace: style.whiteSpace,
       };
     });
-    expect(box.whiteSpace).toBe("pre");
+    expect(["pre", "nowrap"]).toContain(box.whiteSpace);
     expect(box.scrollHeight).toBeLessThanOrEqual(box.clientHeight + 1);
   }
 
