@@ -6,7 +6,6 @@ import {
   uiGalleryStats,
 } from "../content/gallery";
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
-import { registryBrickNames } from "../content/registry-site";
 
 const BASE = "http://127.0.0.1:3100";
 
