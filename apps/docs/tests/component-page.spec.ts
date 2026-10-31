@@ -30,6 +30,7 @@ test("confirm-dialog preview precedes install (#R2 template)", async ({ page }) 
 test("registry brick name keeps a decorative icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(CONFIRM_DIALOG_DOC, { waitUntil: "networkidle" });
+  await page.getByRole("tab", { name: "registry copy" }).click();
   const brick = page.locator("[data-registry-brick]");
   await brick.scrollIntoViewIfNeeded();
   await expect(brick.getByText("confirm-dialog", { exact: true })).toBeVisible();
@@ -56,8 +57,9 @@ test("button reference page surfaces variant and size in props without search (#
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   await page.getByRole("link", { name: "View props table" }).click();
-  await expect(page.locator("#props code").filter({ hasText: "variant" }).first()).toBeVisible();
-  await expect(page.locator("#props code").filter({ hasText: "size" }).first()).toBeVisible();
+  const props = page.locator("#props");
+  await expect(props.getByRole("cell", { name: "variant" }).first()).toBeVisible();
+  await expect(props.getByRole("cell", { name: "size" }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: /inherited HTML attributes/i })).toBeVisible();
 });
 
@@ -70,6 +72,7 @@ test.describe("registry brick name light/dark (#769)", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(CONFIRM_DIALOG_DOC, { waitUntil: "networkidle" });
+      await page.getByRole("tab", { name: "registry copy" }).click();
       const brick = page.locator("[data-registry-brick]");
       await brick.scrollIntoViewIfNeeded();
       await expect(brick).toBeVisible();

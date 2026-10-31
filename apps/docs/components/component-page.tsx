@@ -107,7 +107,7 @@ export async function ComponentPage({
         <Text variant="muted">{purpose}</Text>
       </Stack>
 
-      <ComponentPreview demo={demo} hasProps={hasProps} />
+      <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
 
       <Section title="Install or copy">
         <Stack gap={4}>

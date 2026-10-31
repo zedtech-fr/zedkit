@@ -13,6 +13,8 @@ interface ComponentPreviewProps {
   demo: string;
   /** Whether the page renders a Props section to link to. */
   hasProps: boolean;
+  /** Scope a11y gates to this preview (hero on component pages). */
+  a11yRoot?: boolean;
 }
 
 /**
@@ -21,7 +23,7 @@ interface ComponentPreviewProps {
  * the demo file at build — always current) with copy + filename title.
  * Consumed by generated MDX via registry key only.
  */
-export async function ComponentPreview({ demo, hasProps }: ComponentPreviewProps) {
+export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPreviewProps) {
   const entry = (demoRegistry as Record<string, DemoEntry | undefined>)[demo];
   if (!entry) return <Text>Unknown demo “{demo}”.</Text>;
   const code = await readFile(join(process.cwd(), "components", "demos", entry.file), "utf8");
@@ -31,7 +33,7 @@ export async function ComponentPreview({ demo, hasProps }: ComponentPreviewProps
     <Stack gap={3}>
       <Tabs items={["Preview", "Code"]} className={entry.pinned ? "overflow-clip" : undefined}>
         <Tab value="Preview">
-          <PreviewViewport center={entry.center ?? false}>
+          <PreviewViewport center={entry.center ?? false} a11yRoot={a11yRoot}>
             <Demo />
           </PreviewViewport>
         </Tab>
