@@ -1,6 +1,6 @@
 {
   "name": "@zedtech/zedkit-ai",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -66,5 +66,8 @@
     "@zedtech/zedkit-quality": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

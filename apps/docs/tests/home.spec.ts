@@ -65,7 +65,7 @@ test("home hero offers two ways in and keeps the other paths lower (#1038)", asy
   ).toBeVisible();
   await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
-  await expect(page.getByText("Latest", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: new RegExp(`v${featuredPackageVersion}`) }).filter({ visible: true })).toHaveCount(1);
 });
 
 test("home hero shows a short proof and the latest change (#1057)", async ({ page }) => {
@@ -91,17 +91,18 @@ test("home hero proof flips identity and dark in scope (#1072)", async ({ page }
   await page.goto(BASE, { waitUntil: "networkidle" });
   const proof = page.locator("[data-home-hero-proof]");
   const scope = proof.locator("[data-identity-scope]");
+  const shellIdentity = await page.locator("html").getAttribute("data-identity");
   await expect(scope).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
-  await proof.getByLabel("Try a look").selectOption("tide");
+  await proof.getByRole("combobox", { name: "Identity for this demo" }).click();
+  await page.getByRole("option", { name: "Tide" }).click();
   await expect(scope).toHaveAttribute("data-identity", "tide");
-  await expect(proof).toContainText('<div data-identity="tide">');
-  await proof.getByRole("button", { name: "Dark" }).click();
-  await expect(proof.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
-  await expect(proof).toContainText('<div class="dark"><div data-identity="tide">');
+  await proof.getByRole("combobox", { name: "Color mode for this demo" }).click();
+  await page.getByRole("option", { name: "Dark" }).click();
+  await expect(proof.locator("[data-home-hero-preview]")).toHaveClass(/dark/);
   const darkBg = await scope.evaluate((el) => getComputedStyle(el).backgroundColor);
   const channels = darkBg.match(/\d+/g)!.map(Number);
   expect(Math.max(...channels.slice(0, 3))).toBeLessThan(70);
-  await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+  expect(await page.locator("html").getAttribute("data-identity")).toBe(shellIdentity);
   expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
 });
 
@@ -343,33 +344,18 @@ test("home UI quickstart points to the getting started guide", async ({ page }) 
   );
 });
 
-test("quickstart brick names keep a decorative icon", async ({ page }) => {
+test("home install section links to the catalog instead of listing every brick", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
-  const list = page.locator("#install-or-copy [data-registry-bricks]");
-  await expect(list.locator("[data-registry-brick]")).toHaveCount(registryBrickNames.length);
-  await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(registryBrickNames.length);
+  await expect(page.locator("#install-or-copy [data-registry-bricks]")).toHaveCount(0);
+  const count = registryBrickNames.filter((name) => name !== "theme").length;
+  await expect(
+    page.getByRole("link", { name: `${count} components available in the registry → Catalog` }),
+  ).toHaveAttribute("href", "/docs");
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
   expect(overflow).toBe(true);
-});
-
-test.describe("quickstart brick list light/dark (#769)", () => {
-  for (const mode of ["light", "dark"] as const) {
-    test(`mist ${mode}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
-        localStorage.setItem("theme", theme);
-      }, mode);
-      await page.goto(`${BASE}#install-or-copy`, { waitUntil: "networkidle" });
-      const list = page.locator("#install-or-copy [data-registry-bricks]");
-      await list.scrollIntoViewIfNeeded();
-      await expect(list.getByText("badge", { exact: true })).toBeVisible();
-      await list.screenshot({ path: `test-results/quickstart-brick-list-${mode}.png` });
-    });
-  }
 });
 
 test("home search opens from the header", async ({ page }) => {

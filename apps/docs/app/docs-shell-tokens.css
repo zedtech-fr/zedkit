@@ -64,3 +64,24 @@ html.dark [id^="type-table"] .line-through {
     --zk-section-lg: calc(var(--spacing) * 16);
   }
 }
+
+/*
+ * Calm shell surfaces: identities dress the page (Volt draws a grid
+ * under the prose). Docs and catalog shells keep a flat reading
+ * surface in light mode; dark ambiance and the home page are
+ * untouched. Specificity beats the unlayered identity body rule.
+ */
+html:not(.dark):root[data-identity] body:has(#nd-docs-layout),
+html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
+  background-image: none;
+}
+
+/*
+ * D5 specimen surface: one hairline frame on component previews, no drop
+ * shadow (shadows stay on overlays). Card fill replaces the muted wash.
+ */
+#nd-docs-layout [data-component-preview] > :last-child {
+  box-shadow: none;
+  background-color: hsl(var(--card));
+  border: var(--zk-border-width, 1px) solid hsl(var(--border));
+}

@@ -6,6 +6,7 @@ import { Section } from "@zedtech/zedkit-ui";
 import { featuredRegistryBrick, registryBrickNames } from "@/content/registry-site";
 import { PUBLIC_SITE_URL } from "@/lib/site";
 import { registryShadcnAddCommand } from "@/lib/registry-shadcn-command";
+import { registryShadcnGithubCommand } from "@/lib/registry-shadcn-github-command";
 import { HomeGetStartedCopy } from "@/ui/home/home-get-started-copy";
 import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
 
@@ -57,8 +58,9 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       <HomeGetStartedCopy
         initCommand={initCommand}
         packageInstallCmd={packageInstallCmd}
+        registryInstallCmd={registryShadcnGithubCommand(featuredRegistryBrick)}
+        registryComponentCount={registryBrickNames.filter((name) => name !== "theme").length}
         registryAddCmd={registryAddCmd}
-        registryBricks={registryBrickNames}
         npmInstallCmd={packageInstallCmd}
         npmGlobalsCss={npmGlobalsCss}
         npmPageTsx={npmPageTsx}

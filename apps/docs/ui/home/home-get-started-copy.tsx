@@ -9,8 +9,9 @@ import { HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 export function HomeGetStartedCopy({
   initCommand,
   packageInstallCmd,
+  registryInstallCmd,
+  registryComponentCount,
   registryAddCmd,
-  registryBricks,
   npmInstallCmd,
   npmGlobalsCss,
   npmPageTsx,
@@ -19,8 +20,9 @@ export function HomeGetStartedCopy({
 }: {
   initCommand: string;
   packageInstallCmd: string;
+  registryInstallCmd: string;
+  registryComponentCount: number;
   registryAddCmd: string;
-  registryBricks: string[];
   npmInstallCmd: string;
   npmGlobalsCss: string;
   npmPageTsx: string;
@@ -34,8 +36,8 @@ export function HomeGetStartedCopy({
       <Heading level={3}>Install it or copy it</Heading>
       <HomeGetStartedInstallBlock
         packageInstallCmd={packageInstallCmd}
-        registryAddCmd={registryAddCmd}
-        registryBricks={registryBricks}
+        registryInstallCmd={registryInstallCmd}
+        registryComponentCount={registryComponentCount}
       />
       <Heading level={3}>UI quickstart</Heading>
       <HomeGetStartedQuickstartBlock
