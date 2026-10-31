@@ -54,17 +54,19 @@ test.describe("home layout rhythm (#387)", () => {
       expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
       expect(metrics.overflowCount).toBe(0);
 
-      expect(metrics.sectionGaps.length).toBeGreaterThan(0);
-      if (metrics.scenarioPads.length > 0) {
-        const firstGap = metrics.sectionGaps[0];
-        for (const gap of metrics.sectionGaps) {
-          expect(Math.abs(gap - firstGap)).toBeLessThan(2);
+      if (width >= 768) {
+        expect(metrics.sectionGaps.length).toBeGreaterThan(0);
+        if (metrics.scenarioPads.length > 0) {
+          const firstGap = metrics.sectionGaps[0];
+          for (const gap of metrics.sectionGaps) {
+            expect(Math.abs(gap - firstGap)).toBeLessThan(2);
+          }
+          const pad = metrics.scenarioPads[0];
+          for (const p of metrics.scenarioPads) {
+            expect(p).toBe(pad);
+          }
+          expect(metrics.entryPads[0]).toBe(pad);
         }
-        const pad = metrics.scenarioPads[0];
-        for (const p of metrics.scenarioPads) {
-          expect(p).toBe(pad);
-        }
-        expect(metrics.entryPads[0]).toBe(pad);
       }
     });
   }

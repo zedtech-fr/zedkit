@@ -425,7 +425,7 @@ export function HomeUseCasesSection() {
           </Button>
         </Stack>
       </div>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap={2} className="flex-wrap max-md:hidden">
         <Button asChild className="w-fit">
           <Link href={IDENTITY_EDITOR_HREF}>Try the demo editor</Link>
         </Button>

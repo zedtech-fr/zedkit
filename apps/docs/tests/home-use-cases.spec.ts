@@ -75,6 +75,7 @@ test("choosing each tab shows that identity's scoped preview and copy", async ({
 });
 
 test("the stage ends with actions into the editor and the no-code route (#1092)", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const section = page.locator("#use-cases");
   await expect(section.getByRole("link", { name: "Try the demo editor" })).toHaveAttribute(
