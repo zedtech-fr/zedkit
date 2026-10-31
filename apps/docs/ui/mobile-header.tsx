@@ -21,6 +21,11 @@ import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 import {
+  SHELL_NAV_GUIDE_ITEM_CLASS,
+  SHELL_NAV_GUIDE_LABEL_CLASS,
+  SHELL_NAV_PRIMARY_ITEM_CLASS,
+} from "@/lib/shell-nav-classes";
+import {
   isSiteNavLinkActive,
   sitePrimaryNavLinks,
   SITE_GUIDE_LINKS,
@@ -29,12 +34,6 @@ import {
 
 const iconButtonClassName =
   "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
-
-import {
-  SHELL_NAV_GUIDE_ITEM_CLASS,
-  SHELL_NAV_GUIDE_LABEL_CLASS,
-  SHELL_NAV_PRIMARY_ITEM_CLASS,
-} from "@/lib/shell-nav-classes";
 
 const noop = () => () => {};
 
@@ -100,7 +99,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
   const primary = sitePrimaryNavLinks(changelogHref);
 
   return (
-    <div className="flex max-h-[min(85dvh,640px)] flex-col gap-4 overflow-y-auto px-4 pt-2 pb-6">
+    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-4 overflow-y-auto px-4 pt-2 pb-6">
       <div className="w-full [&_[data-search]]:w-full">
         <SiteFullSearchTrigger className="w-full max-w-none" />
       </div>
