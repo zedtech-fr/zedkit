@@ -28,9 +28,13 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       const components = document.querySelector("#components");
       const componentsCopy = components?.querySelector(".text-home-persuasion");
 
+      const useCases = document.querySelector("#use-cases");
+      const useCaseWhy = useCases?.querySelector(".text-home-persuasion");
+
       return {
         startCopy: read(startCopy),
         componentsCopy: read(componentsCopy),
+        useCaseWhy: read(useCaseWhy),
       };
     });
 
