@@ -35,6 +35,13 @@ test.describe("identity editor page", () => {
     ).toBeVisible();
   });
 
+  test("leaves a clear gap between token fields", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    const fields = page.locator('[data-slot="identity-editor-fields"]');
+    await expect(fields).toBeVisible();
+    await expect(fields).toHaveClass(/gap-5/);
+  });
+
   test("writes spacing onto the draft card and into the URL", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Design your identity" })).toBeVisible();
