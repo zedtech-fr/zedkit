@@ -18,6 +18,7 @@ for (const theme of ["light", "dark"] as const) {
       }
       await page.setViewportSize({ width, height });
       await page.goto("/", { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready);
       if (width < 768) {
         await page.getByRole("button", { name: "Open menu" }).click();
         await expect(page.getByRole("dialog")).toBeVisible();
