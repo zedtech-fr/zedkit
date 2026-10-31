@@ -53,6 +53,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: bash scripts/check-deps-audit.sh
       - uses: actions/cache@v6
         with:
           path: .turbo
