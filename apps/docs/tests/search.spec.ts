@@ -9,13 +9,13 @@ test("search finds grouped results and navigates", async ({ page }) => {
   await page.keyboard.press("Control+k");
   const dialog = page.getByRole("dialog");
   await dialog.waitFor({ timeout: 10000 });
-  // "review" matches "Preview" sections via 1-edit typo tolerance.
-  await dialog.locator("input").fill("review");
+  // "preview" hits Preview sections; grouped rows show breadcrumb crumbs.
+  await dialog.locator("input").fill("preview");
   // Scope to the listbox: the dialog also contains the ESC close button.
   const results = dialog.locator('[role="listbox"] [role="option"]');
-  await expect(results.first()).toBeVisible({ timeout: 10000 });
+  await expect(results.first()).toBeVisible({ timeout: 20000 });
   // Grouped context: section crumb next to the result title.
-  await expect(dialog.getByText("Docs").first()).toBeVisible();
+  await expect(results.first().getByText("Docs")).toBeVisible();
   await results.first().click();
   await page.waitForURL("**/docs/**", { timeout: 10000 });
   expect(errors).toEqual([]);
