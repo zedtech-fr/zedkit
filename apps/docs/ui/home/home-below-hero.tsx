@@ -11,6 +11,8 @@ import { HomeProofs } from "@/ui/home/home-proofs";
 import { HomeScenariosSection } from "@/ui/home/home-scenarios-section";
 import {
   HOME_CARD_GRID_THREE_COL,
+  HOME_MARKETING_ROOT_PROPS,
+  HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
@@ -25,7 +27,7 @@ function GalleryEntry({ card }: { card: GalleryCard }) {
         <MaturityBadge status={card.status} />
       </CardHeader>
       <CardContent>
-        {Demo ? <Demo /> : <Text variant="muted">{card.detail}</Text>}
+        {Demo ? <Demo /> : <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>{card.detail}</Text>}
       </CardContent>
     </Card>
   );
@@ -52,7 +54,7 @@ export function HomeBelowHero({
   themeHref,
 }: HomeBelowHeroProps) {
   return (
-    <>
+    <div {...HOME_MARKETING_ROOT_PROPS} data-home-below-hero="">
       <HomeEntryPointsSection entryPoints={entryPoints} />
       <HomeScenariosSection scenarios={scenarios} />
       <HomeProofs
@@ -84,6 +86,6 @@ export function HomeBelowHero({
           </Button>
         </Stack>
       </Section>
-    </>
+    </div>
   );
 }

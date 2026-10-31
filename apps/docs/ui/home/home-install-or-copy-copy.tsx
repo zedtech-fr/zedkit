@@ -16,6 +16,8 @@ import { RegistryBrickList } from "@/components/registry-brick-name";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_TWO_COL,
+  HOME_METADATA_TEXT_CLASS,
+  HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
@@ -30,9 +32,9 @@ export function HomeInstallOrCopyCopy({
 }) {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0">
-      <Text>
+      <Text className={HOME_PERSUASION_TEXT_CLASS}>
         Install versioned npm packages for the full kit, or copy a growing set of UI bricks into your
-        repo with the shadcn CLI (requires a <Text as="span" className="font-mono text-sm">components.json</Text>
+        repo with the shadcn CLI (requires a <Text as="span" className={HOME_METADATA_TEXT_CLASS}>components.json</Text>
         ). Everything else stays npm-only.
       </Text>
       <div className={HOME_CARD_GRID_TWO_COL}>
@@ -42,7 +44,7 @@ export function HomeInstallOrCopyCopy({
           </CardHeader>
           <CardContent>
             <Stack gap={HOME_CARD_CONTENT_GAP}>
-              <Text variant="muted">
+              <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
                 Choose this when you want one import surface, semver updates, and the full token theme
                 from the package.
               </Text>
@@ -61,9 +63,9 @@ export function HomeInstallOrCopyCopy({
           </CardHeader>
           <CardContent>
             <Stack gap={HOME_CARD_CONTENT_GAP}>
-              <Text variant="muted">
+              <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
                 Choose this when you want the component files in your repo. You get the source under{" "}
-                <Text as="span" className="font-mono text-sm">components/ui/</Text>, its npm dependencies,
+                <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>components/ui/</Text>, its npm dependencies,
                 and the CSS variables it needs in your globals.
               </Text>
               <SecretField
@@ -76,21 +78,21 @@ export function HomeInstallOrCopyCopy({
           </CardContent>
         </Card>
       </div>
-      <Text variant="muted" className="text-sm">
+      <Text className={HOME_METADATA_TEXT_CLASS}>
         Published registry bricks today: <RegistryBrickList names={registryBricks} />. After copying,
         the files are yours — no automatic updates.
       </Text>
-      <Text variant="muted">
+      <Text className={HOME_METADATA_TEXT_CLASS}>
         MIT license. Built on Radix and shadcn/ui-derived code. No proprietary runtime — you own what you
         copy.
       </Text>
       <Stack gap={HOME_CARD_CONTENT_GAP}>
-        <Text variant="muted">
-          Nothing in the catalog is labeled <Text as="span" className="font-mono text-sm">stable</Text>{" "}
-          yet. Pin versions, prefer beta needs where they exist, and read the{" "}
+        <Text className={HOME_METADATA_TEXT_CLASS}>
+          Nothing in the catalog is labeled <Text as="span" className="font-mono">stable</Text> yet. Pin
+          versions, prefer beta needs where they exist, and read the{" "}
           <Link href="/docs/maturity-and-compatibility">maturity legend</Link> before you ship.
         </Text>
-        <Text variant="muted">
+        <Text className={HOME_METADATA_TEXT_CLASS}>
           Flexibility: theme tokens (colors, radius, focus rings, control sizes, dark/light) ship with the
           npm package; copied bricks are plain editable files in your tree.
         </Text>

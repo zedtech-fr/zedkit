@@ -4,6 +4,7 @@ import { DocsActionLabel } from "@/components/docs-action-label";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_FOUR_COL,
+  HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 
 export function HomeProofs({
@@ -52,7 +53,9 @@ export function HomeProofs({
             </CardHeader>
             <CardContent>
               <Stack gap={HOME_CARD_CONTENT_GAP}>
-                <Text variant="muted">{item.body}</Text>
+                <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+                  {item.body}
+                </Text>
                 {item.href ? (
                   <Button asChild variant="ghost" size="sm" className="w-fit">
                     <Link

@@ -15,6 +15,8 @@ import type { HomeEntryPoint } from "@/content/home-entry-points";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_CARD_GRID_FOUR_COL,
+  HOME_METADATA_TEXT_CLASS,
+  HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
 
@@ -39,8 +41,12 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
               </CardHeader>
               <CardContent>
                 <Stack gap={HOME_CARD_CONTENT_GAP}>
-                  <Text variant="muted">{entry.summary}</Text>
-                  <Text variant="muted">{entry.needCount} documented needs in the catalog</Text>
+                  <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+                    {entry.summary}
+                  </Text>
+                  <Text className={HOME_METADATA_TEXT_CLASS}>
+                    {entry.needCount} documented needs in the catalog
+                  </Text>
                   <Button asChild variant="ghost" size="sm" className="w-fit">
                     <Link href={entry.href}>
                       <DocsActionLabel>{entry.linkLabel}</DocsActionLabel>
