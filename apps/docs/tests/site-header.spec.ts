@@ -34,6 +34,7 @@ test.describe("site header navigation (#1034)", () => {
 
     const guides = [
       ["Getting started", "/docs/getting-started"],
+      ["Start without writing code", "/docs/start-without-writing-code"],
       ["Build an admin dashboard", "/docs/build-an-admin-dashboard"],
       ["Set up your coding agents", "/docs/set-up-your-coding-agents"],
       ["Add SEO to a Next.js app", "/docs/add-seo-to-nextjs"],

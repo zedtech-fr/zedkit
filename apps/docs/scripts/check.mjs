@@ -170,6 +170,7 @@ const guideRequiredSections = {
     "Next steps",
   ],
   "index.mdx": ["Start here", "Four areas", "Catalog reference"],
+  "start-without-writing-code.mdx": ["Who this is for", "The three steps", "What zedkit is not", "Next steps"],
   "add-seo-to-nextjs.mdx": [
     "Who this is for",
     "Prerequisites",

@@ -12,6 +12,7 @@ export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
       text: "Guides",
       items: [
         { text: "Getting started", url: "/docs/getting-started", active: "url" },
+        { text: "Start without writing code", url: "/docs/start-without-writing-code", active: "url" },
         { text: "Build an admin dashboard", url: "/docs/build-an-admin-dashboard", active: "url" },
         { text: "Set up your coding agents", url: "/docs/set-up-your-coding-agents", active: "url" },
         { text: "Add SEO to a Next.js app", url: "/docs/add-seo-to-nextjs", active: "url" },

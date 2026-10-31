@@ -32,6 +32,7 @@ const GUIDE_SNIPPETS_DIR = join(GUIDES_DIR, "snippets");
 /** Standalone guide pages (not catalog needs), first in docs nav when listed here. */
 export const GUIDE_NAV_SLUGS = [
   "getting-started",
+  "start-without-writing-code",
   "build-an-admin-dashboard",
   "set-up-your-coding-agents",
   "maturity-and-compatibility",
