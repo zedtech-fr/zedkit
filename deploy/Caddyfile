@@ -1,6 +1,6 @@
 # Static docs site served by Caddy (automatic HTTPS via Let's Encrypt).
 # The build output of apps/docs is mounted read-only at /srv/site.
-# POST /api/identity/suggest is reverse-proxied to the suggest service.
+# POST /api/identity/suggest and GET /api/identity/suggest/version go to Suggest.
 
 www.zedkit.app {
 	redir https://zedkit.app{uri} permanent

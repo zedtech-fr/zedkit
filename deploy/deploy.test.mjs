@@ -138,10 +138,12 @@ source "\$remote/suggest.env"
 set +a
 export PORT="\$SUGGEST_PORT"
 cd "\$remote/suggest"
-node server.mjs >> "\$state/suggest.log" 2>&1 &
+nohup node server.mjs >> "\$state/suggest.log" 2>&1 &
 echo \$! > "\$state/suggest.pid"
 for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50; do
-  node --input-type=module -e 'import net from "node:net"; const s = net.connect(Number(process.env.PORT), "127.0.0.1", () => { s.end(); process.exit(0); }); s.on("error", () => process.exit(1));' && exit 0
+  if node --input-type=module -e 'import net from "node:net"; const s = net.connect(Number(process.env.PORT), "127.0.0.1", () => { s.end(); process.exit(0); }); s.on("error", () => process.exit(1));'; then
+    exit 0
+  fi
   sleep 0.05
 done
 echo "suggest did not listen" >&2
@@ -267,7 +269,9 @@ test("deploy A then B with Caddy already up announces B and uses the new paramet
   };
 
   const version = async () => {
-    const res = await fetch(`http://127.0.0.1:${suggestPort}/api/identity/suggest/version`);
+    const res = await fetch(`http://127.0.0.1:${suggestPort}/api/identity/suggest/version`, {
+      headers: { connection: "close" },
+    });
     assert.equal(res.status, 200);
     return res.json();
   };
@@ -275,7 +279,7 @@ test("deploy A then B with Caddy already up announces B and uses the new paramet
   const suggest = async () => {
     const res = await fetch(`http://127.0.0.1:${suggestPort}/api/identity/suggest`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", connection: "close" },
       body: JSON.stringify({ prompt: "warmer", current: CURRENT }),
     });
     assert.equal(res.status, 200);
@@ -302,6 +306,13 @@ test("deploy A then B with Caddy already up announces B and uses the new paramet
   await suggest();
   assert.equal(upstream.hits[1].model, "model-b");
   assert.equal(upstream.hits[1].max_tokens, 222);
+
+  const pid = (await readFile(join(state, "suggest.pid"), "utf8")).trim();
+  deploy("sha-b");
+  assert.equal((await readFile(join(state, "suggest.pid"), "utf8")).trim(), pid);
+  const again = await version();
+  assert.equal(again.id, second.id);
+  assert.equal(again.model, "model-b");
 
   const log = await readFile(join(state, "docker.log"), "utf8");
   assert.match(log, /caddy reload/);
