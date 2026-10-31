@@ -24,7 +24,10 @@ for (const theme of ["light", "dark"] as const) {
       if (width < 768) {
         await page.getByRole("button", { name: "Open menu" }).click();
         await expect(page.getByRole("dialog")).toBeVisible();
-        await expect(page.locator('[role="dialog"]')).toHaveScreenshot(`shell-nav-drawer-${theme}-${name}.png`, SCREENSHOT_OPTS);
+        await expect(page.getByRole("navigation", { name: "Menu" })).toHaveScreenshot(
+          `shell-nav-drawer-${theme}-${name}.png`,
+          SCREENSHOT_OPTS,
+        );
         await page.keyboard.press("Escape");
       } else {
         await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`, SCREENSHOT_OPTS);
