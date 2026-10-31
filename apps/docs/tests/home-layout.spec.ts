@@ -162,7 +162,8 @@ test.describe("docs shell wide (#1064)", () => {
     expect(m.article).not.toBeNull();
     expect(m.article!.width).toBeGreaterThanOrEqual(1050);
     expect(m.main!.width).toBeGreaterThanOrEqual(1200);
-    expect(m.preview!.width).toBeGreaterThanOrEqual(1000);
+    // Tide default: 991px with the wider Tide spacing scale (was >=1000 under Volt).
+    expect(m.preview!.width).toBeGreaterThanOrEqual(990);
     // The cluster stays centered: the flexible column left of the sidebar
     // (268px slot) mirrors the dead space after the TOC.
     expect(Math.abs(m.main!.left - 268 - (m.viewportWidth - m.toc!.right))).toBeLessThanOrEqual(2);
