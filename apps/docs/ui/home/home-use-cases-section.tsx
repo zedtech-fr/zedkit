@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ComponentProps } from "react";
+import Link from "next/link";
 import {
   Badge,
   Button,
@@ -393,6 +394,14 @@ export function HomeUseCasesSection() {
           }))}
         />
       </div>
+      <Stack direction="horizontal" gap={2} className="flex-wrap">
+        <Button asChild className="w-fit">
+          <Link href="/docs/ui/design-your-identity">Design your identity</Link>
+        </Button>
+        <Button asChild variant="outline" className="w-fit">
+          <Link href="/docs/start-without-writing-code">Start without writing code</Link>
+        </Button>
+      </Stack>
     </Section>
   );
 }
