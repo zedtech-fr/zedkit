@@ -267,7 +267,7 @@
         },
         {
           "need": "Evaluate flags on the server",
-          "import": "`@zedtech/zedkit-flags` — `getFlag`, `Client`",
+          "import": "`@zedtech/zedkit-flags` — `getFlag`, `Client`, `FlagReturnValue`",
           "wraps": "`@openfeature/server-sdk` (peer)",
           "status": "alpha",
           "shortName": "getFlag",
