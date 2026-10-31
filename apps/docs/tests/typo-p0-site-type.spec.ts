@@ -27,7 +27,11 @@ test.describe("site type hierarchy (P0)", () => {
 
   test("docs prose and labels use shared scale @390", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/docs/ui/trigger-actions-with-buttons?identity=volt", { waitUntil: "networkidle" });
+    await page.addInitScript(() => {
+      localStorage.setItem("zk-docs-site-identity", "volt");
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
+    });
+    await page.goto("/docs/ui/trigger-actions-with-buttons", { waitUntil: "networkidle" });
     expect(await probe(page, "font-size", "var(--text-xs)")).toBe("12px");
     expect(await probe(page, "font-size", "var(--text-sm)")).toBe("13px");
     const prose = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).fontSize);

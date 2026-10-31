@@ -28,10 +28,10 @@ test.describe("identity editor page", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description).toBe(
-      "Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site. Install with npm or copy published registry bricks.",
+      "Try spacing, colour, and type tokens in the browser. Demo only — not a shipped docs feature.",
     );
     await expect(
-      page.getByRole("paragraph").filter({ hasText: "Design your own look — colour, radius, spacing, type" }),
+      page.getByRole("paragraph").filter({ hasText: "Tune tokens and preview them on a card" }),
     ).toBeVisible();
   });
 

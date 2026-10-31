@@ -88,10 +88,10 @@ test.describe("scroll scenes previews", () => {
           const tour = previews.nth(0).locator("[data-scroll-scenes]");
           await expect(tour).toHaveAttribute("data-scene-count", "3");
           await expect(tour.locator("[data-scroll-scene]")).toHaveCount(3);
-          await expect(tour.getByRole("heading", { level: 3 })).toHaveCount(3);
+          await expect(tour.getByRole("heading", { level: 2 })).toHaveCount(3);
           for (const visual of await tour.locator("[data-demo-scene-visual]").all()) {
             await expect(visual).toHaveAttribute("aria-hidden", "true");
-            await expect(visual).toHaveAttribute("inert", "");
+            await expect(visual).toHaveJSProperty("inert", true);
           }
 
           if (supported) {
@@ -147,7 +147,7 @@ test.describe("scroll scenes previews", () => {
     const tour = page.locator("[data-component-preview]").nth(0).locator("[data-scroll-scenes]");
     for (const scene of await tour.locator("[data-scroll-scene]").all()) {
       await expect(scene).toHaveCSS("opacity", "1");
-      await expect(scene.getByRole("heading", { level: 3 })).toBeVisible();
+      await expect(scene.getByRole("heading", { level: 2 })).toBeVisible();
     }
     await assertA11yGate(page, "[data-component-preview]");
   });
@@ -180,7 +180,7 @@ test.describe("identity previews", () => {
             `Current look: ${target[0]!.toUpperCase()}${target.slice(1)}`,
           );
           expect(await page.evaluate(() => localStorage.getItem("harbor-demo-identity"))).toBe(target);
-          expect(await page.evaluate(() => localStorage.getItem("zk-identity"))).toBe(identity);
+          expect(await page.evaluate(() => localStorage.getItem("zk-docs-site-identity"))).toBe(identity);
           await assertA11yGate(page, "[data-component-preview]");
           await select.selectOption(identity);
           await expect(html).toHaveAttribute("data-identity", identity);
