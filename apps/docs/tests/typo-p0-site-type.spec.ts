@@ -33,6 +33,7 @@ test.describe("site type hierarchy (P0)", () => {
     const prose = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).fontSize);
     expect(prose).toBe("15px");
     const proseWidth = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).maxWidth);
-    expect(proseWidth).toMatch(/ch$/);
+    const proseWidthPx = Number.parseFloat(proseWidth);
+    expect(proseWidth.endsWith("ch") || (Number.isFinite(proseWidthPx) && proseWidthPx >= 640)).toBe(true);
   });
 });

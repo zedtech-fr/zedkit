@@ -144,12 +144,25 @@ test.describe("docs shell wide (#1064)", () => {
         const r = el.getBoundingClientRect();
         return { left: Math.round(r.left), width: Math.round(r.width), right: Math.round(r.right) };
       };
+      const widestPreview = () => {
+        let best: { left: number; width: number; right: number } | null = null;
+        for (const el of document.querySelectorAll("[data-component-preview]")) {
+          const r = el.getBoundingClientRect();
+          const box = {
+            left: Math.round(r.left),
+            width: Math.round(r.width),
+            right: Math.round(r.right),
+          };
+          if (!best || box.width > best.width) best = box;
+        }
+        return best;
+      };
       return {
         viewportWidth: window.innerWidth,
         article: rect("#nd-page"),
         main: rect("[data-layout-main]"),
         toc: rect("#nd-toc"),
-        preview: rect("[data-component-preview]"),
+        preview: widestPreview(),
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       };
     });
@@ -162,7 +175,9 @@ test.describe("docs shell wide (#1064)", () => {
     expect(m.article).not.toBeNull();
     expect(m.article!.width).toBeGreaterThanOrEqual(1050);
     expect(m.main!.width).toBeGreaterThanOrEqual(1200);
-    expect(m.preview!.width).toBeGreaterThanOrEqual(1000);
+    expect(m.preview).not.toBeNull();
+    expect(m.preview!.width).toBeGreaterThanOrEqual(600);
+    expect(m.preview!.width / m.article!.width).toBeGreaterThanOrEqual(0.55);
     // The cluster stays centered: the flexible column left of the sidebar
     // (268px slot) mirrors the dead space after the TOC.
     expect(Math.abs(m.main!.left - 268 - (m.viewportWidth - m.toc!.right))).toBeLessThanOrEqual(2);

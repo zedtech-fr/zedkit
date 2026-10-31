@@ -10,9 +10,9 @@ test.describe("typo P0 type floor @390", () => {
   test("form controls including docs search compute at least 16px", async ({ page }) => {
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
 
-    await page.getByRole("search").click();
+    await page.getByRole("button", { name: "Search the documentation" }).click();
     const searchbox = page.getByRole("searchbox");
-    await searchbox.waitFor();
+    await expect(searchbox).toBeFocused();
     expect(Number.parseFloat(await searchbox.evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
 
     await page.keyboard.press("Escape");
