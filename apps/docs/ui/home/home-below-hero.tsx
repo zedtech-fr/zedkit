@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button, Card, CardContent, CardHeader, CardTitle, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { CatalogActionLabel } from "@/components/docs-action-label";
-import { MaturityBadge } from "@/components/maturity-badge";
 import type { GalleryCard } from "@/content/gallery";
 import { homeGalleryDemos } from "@/components/home-gallery-demos";
 import type { HomeScenario } from "@/content/home-scenarios";
@@ -20,11 +19,10 @@ function GalleryEntry({ card }: { card: GalleryCard }) {
   const Demo = card.demo ? homeGalleryDemos[card.demo] : undefined;
   return (
     <Card className="min-w-0">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+      <CardHeader>
         <CardTitle className="text-lg">
           <Link href={card.href}>{card.title}</Link>
         </CardTitle>
-        <MaturityBadge status={card.status} />
       </CardHeader>
       <CardContent>
         {Demo ? <Demo /> : <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>{card.detail}</Text>}

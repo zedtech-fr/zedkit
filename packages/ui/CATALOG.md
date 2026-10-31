@@ -9,7 +9,7 @@
 
 - Import: `@zedtech/zedkit-ui/styles.css` (+ one `@source` line, see README)
 - Wraps: `tailwindcss` (v4 CSS-first) plus `next-themes` for the toggle
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (theme)
 - Short name: Theme
 - Audience: Teams starting a React 19 + Tailwind v4 admin app who want dark/light design tokens without setup.
@@ -83,7 +83,7 @@ export function DarkThemeButton() {
 
 - Import: `@zedtech/zedkit-ui` — `ZedkitUiProvider`, `useUiMessages`, `zedkitUiMessagesEn`, `zedkitUiMessagesFr`, `ZedkitUiMessages`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: ZedkitUiProvider
 - Audience: Apps that ship the kit in English or French and need Close, Filter, empty, and loading labels to follow the page language.
 - Purpose: One provider plus typed en/fr bundles for kit chrome; backed by `createMessagesContext` from `@zedtech/zedkit-i18n/react`. A per-host label prop still wins.
@@ -111,7 +111,7 @@ import { ConfirmDialog } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `cn`
 - Wraps: `clsx`, `tailwind-merge`
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (utils)
 - Short name: cn
 - Audience: Developers composing conditional Tailwind classes.
@@ -164,7 +164,7 @@ import "@zedtech/zedkit-ui/styles.css"; // motion utilities ship with the theme
 
 - Import: `@zedtech/zedkit-ui` — `Button`, `buttonVariants`, `ButtonProps`
 - Wraps: `@radix-ui/react-slot`, `class-variance-authority`
-- Status: beta
+- Status: stable
 - Short name: Button
 - Audience: Anyone placing actions in an admin UI.
 - Purpose: Accessible buttons with variants (primary, destructive, outline, ghost) and sizes.
@@ -187,7 +187,7 @@ import { Button } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `IconButton`, `IconButtonProps`
 - Wraps: `Button` (same variants and sizes; `size` defaults to `icon`)
-- Status: beta
+- Status: stable
 - Short name: IconButton
 - Audience: Developers adding icon-only header or toolbar controls in an admin UI.
 - Purpose: Icon-only controls with matching `aria-label` and `title` from one `label` prop.
@@ -225,7 +225,7 @@ import { IconButton } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Badge`, `badgeVariants`, `BadgeProps`
 - Wraps: `class-variance-authority`
-- Status: beta
+- Status: stable
 - Registry: badge
 - Short name: Badge
 - Audience: Developers flagging state or counts inline (lists, headers, tables).
@@ -267,7 +267,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Label`, `LabelProps`
 - Wraps: `@radix-ui/react-label`
-- Status: beta
+- Status: stable
 - Short name: Label
 - Audience: Developers naming inputs accessibly.
 - Purpose: Accessible labels that pair with any control via `htmlFor`.
@@ -295,7 +295,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Input`, `InputProps`, `Label`
 - Wraps: `@radix-ui/react-label`
-- Status: beta
+- Status: stable
 - Short name: Input
 - Audience: Form builders collecting single-line text.
 - Purpose: Labelled text input with consistent styling and focus states.
@@ -314,7 +314,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Separator`, `SeparatorProps`
 - Wraps: `@radix-ui/react-separator`
-- Status: beta
+- Status: stable
 - Short name: Separator
 - Audience: Developers dividing stacked or inline content.
 - Purpose: Accessible horizontal/vertical divider lines.
@@ -340,7 +340,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Skeleton`, `SkeletonProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: Skeleton
 - Audience: Developers covering loading states without layout shift.
 - Purpose: Animated placeholder blocks that hold layout while data loads.
@@ -366,7 +366,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `StatusDot`, `StatusDotProps`, `StatusDotTone`
 - Wraps: `(none)`
-- Status: beta
+- Status: stable
 - Registry: status-dot
 - Short name: StatusDot
 - Audience: Developers showing compact live state (lists, headers, realtime panels).
@@ -399,7 +399,7 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `ProgressBar`, `ProgressBarProps`
 - Wraps: `(none)`
-- Status: beta
+- Status: stable
 - Short name: ProgressBar
 - Audience: Developers reporting measurable progress (uploads, jobs, wizards).
 - Purpose: An accessible progressbar with clamped value and label.
@@ -425,7 +425,7 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `IconLabel`, `IconLabelProps`
 - Wraps: `lucide-react` (icon slot)
-- Status: beta
+- Status: stable
 - Short name: IconLabel
 - Audience: Developers pairing a small decorative icon with a text label (chips, table cells).
 - Purpose: Fixed-size muted icon + label row; icon is `aria-hidden`, label stays readable.
@@ -470,7 +470,7 @@ import { IconLabel } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Checkmark`, `CheckmarkProps`
 - Wraps: `(none)`
-- Status: beta
+- Status: stable
 - Short name: Checkmark
 - Audience: Developers confirming a completed action (saved, sent, done).
 - Purpose: An animated checkmark that draws once (static under reduced motion).
@@ -496,7 +496,7 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `CardSkeleton`, `CardSkeletonProps`, `DataTableSkeleton`, `DataTableSkeletonProps`, `DetailPanelSkeleton`, `DetailPanelSkeletonProps`, `PageHeaderSkeleton`, `PageHeaderSkeletonProps`
 - Wraps: `(none)`
-- Status: beta
+- Status: stable
 - Short name: Skeletons
 - Audience: Developers loading async zones without layout shift (pages, cards, tables, panels).
 - Purpose: One faithful loading skeleton per kit component shape, each a named live zone.
@@ -525,7 +525,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `StatusLabel`, `StatusLabelProps`, `StatusLabelTone`
 - Wraps: `(none)`
-- Status: beta
+- Status: stable
 - Short name: StatusLabel
 - Audience: Developers naming a background or foreground operation for the user.
 - Purpose: A named live-region label for the current operation state (loading, saved, error…).
@@ -557,7 +557,7 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `UpdatedAgo`, `UpdatedAgoProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: UpdatedAgo
 - Audience: Developers stamping cached or polled data with its freshness.
 - Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
@@ -583,7 +583,7 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: OfflineNote
 - Audience: Developers telling the user the app lost connectivity.
 - Purpose: A hook reporting browser online state plus an alert-style note with overridable wording.
@@ -631,7 +631,7 @@ import { Button, OfflineNote } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `EmptyState`, `EmptyStateProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: EmptyState
 - Audience: Developers filling a list or panel when there is nothing to show.
 - Purpose: Name what is missing and put the next step in `actions`.
@@ -661,7 +661,7 @@ import { Button, EmptyState } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `ErrorState`, `ErrorStateProps`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: ErrorState
 - Audience: Developers showing a failed load or save on the page.
 - Purpose: Say what broke and put retry or back in `actions`.
@@ -694,7 +694,7 @@ import { Button, ErrorState } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Spinner`, `SpinnerProps`
 - Wraps: `lucide-react`
-- Status: alpha
+- Status: beta
 - Short name: Spinner
 - Audience: Developers naming a short wait next to a label.
 - Purpose: A spinning icon with an accessible name from the kit messages (`loading`).
@@ -721,7 +721,7 @@ import { Spinner, Text } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Spinner`, `EmptyState`, `ErrorState`, `DataTable`, `Button`, `Text`, `createDataTableColumns`
 - Wraps: `(none)`
-- Status: alpha
+- Status: beta
 - Short name: FourStates
 - Audience: Developers swapping a list between wait, nothing, failure, and rows.
 - Purpose: One host per state: Spinner, EmptyState, ErrorState, then the filled list.
@@ -767,7 +767,7 @@ const columns = [helper.accessor("name", { header: "Name" })];
 
 - Import: `@zedtech/zedkit-ui` — `Dialog`, `DialogProps`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter`, `DialogClose`, `DialogOverlay`, `DialogPortal`
 - Wraps: `@radix-ui/react-dialog`
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (dialog)
 - Short name: Dialog
 - Audience: Developers interrupting the flow for focused input or decisions.
@@ -802,7 +802,7 @@ import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 
 - Import: `@zedtech/zedkit-ui` — `ConfirmDialog`, `ConfirmDialogProps`
 - Wraps: `@radix-ui/react-dialog` (via Dialog)
-- Status: beta
+- Status: stable
 - Registry: confirm-dialog
 - Short name: ConfirmDialog
 - Audience: Developers guarding delete/revoke/remove actions.
@@ -836,7 +836,7 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Drawer`, `DrawerProps`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerBody`, `DrawerFooter`, `DrawerHandle`, `DrawerClose`, `DrawerCloseButton`, `DrawerOverlay`, `DrawerPortal`
 - Wraps: `vaul`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (drawer)
 - Registry: drawer
 - Short name: Drawer
@@ -889,7 +889,7 @@ import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHea
 
 - Import: `@zedtech/zedkit-ui` — `Popover`, `PopoverProps`, `PopoverTrigger`, `PopoverContent`, `PopoverAnchor`
 - Wraps: `@radix-ui/react-popover`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (popover)
 - Short name: Popover
 - Audience: Developers showing a small panel next to a button without leaving the page.
@@ -914,7 +914,7 @@ import { Button, Heading, Popover, PopoverContent, PopoverTrigger, Text } from "
 
 - Import: `@zedtech/zedkit-ui` — `Tooltip`, `TooltipProps`, `TooltipTrigger`, `TooltipContent`, `TooltipProvider`
 - Wraps: `@radix-ui/react-tooltip`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (tooltip)
 - Short name: Tooltip
 - Audience: Developers adding a short extra name that appears on hover or focus.
@@ -936,7 +936,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@zedtech/zedkit
 
 - Import: `@zedtech/zedkit-ui` — `DropdownMenu`, `DropdownMenuProps`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`
 - Wraps: `@radix-ui/react-dropdown-menu`
-- Status: alpha
+- Status: beta
 - Derived from: shadcn/ui (dropdown-menu)
 - Short name: DropdownMenu
 - Audience: Developers grouping a few actions behind one button.
@@ -962,7 +962,7 @@ import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMe
 
 - Import: `@zedtech/zedkit-ui` — `Calendar`, `CalendarProps`
 - Wraps: `react-day-picker`
-- Status: alpha
+- Status: beta
 - Short name: Calendar
 - Audience: Developers showing a month grid the reader can pick from.
 - Purpose: Token-styled month grid. Locale and prev/next names follow the kit messages.
@@ -980,7 +980,7 @@ import { Calendar } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `DatePicker`, `DatePickerProps`
 - Wraps: `react-day-picker`, `@radix-ui/react-popover`
-- Status: alpha
+- Status: beta
 - Short name: DatePicker
 - Audience: Developers collecting one day in a form field.
 - Purpose: Button that opens a calendar in a popover. `id` pairs with `FieldLabel`.
@@ -1002,7 +1002,7 @@ const [due, setDue] = useState<Date | undefined>();
 
 - Import: `@zedtech/zedkit-ui` — `DateRangePicker`, `DateRangePickerProps`
 - Wraps: `react-day-picker`, `@radix-ui/react-popover`
-- Status: alpha
+- Status: beta
 - Short name: DateRangePicker
 - Audience: Developers collecting a from/to span in a form field.
 - Purpose: Button that opens a range calendar in a popover. Closes when both days are set.
@@ -1024,7 +1024,7 @@ const [span, setSpan] = useState<DateRangePickerProps["value"]>();
 
 - Import: `@zedtech/zedkit-ui` — `RouteModal`, `RouteModalProps`, `RouteModalDirection`, `RouteModalSize`, `RouteModalVariant`, `closeRoute`, `CloseRouteOptions`
 - Wraps: `(none)`
-- Status: beta
+- Status: stable
 - Short name: RouteModal
 - Audience: Developers opening list details in an overlay with a shareable URL (Next.js parallel/intercepting routes).
 - Purpose: A route-driven modal (right drawer or centered dialog) that plays its exit before navigating back, with a list fallback.
@@ -1055,7 +1055,7 @@ import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Toaster`, `ToasterProps`, `toast`
 - Wraps: `sonner`
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (sonner)
 - Short name: Toaster
 - Audience: Developers confirming background outcomes (saved, failed, copied).
@@ -1082,7 +1082,7 @@ toast.error("Upload failed"); // typed variants: success | error | info | warnin
 
 - Import: `@zedtech/zedkit-ui` — `SecretField`, `SecretFieldProps`
 - Wraps: `lucide-react`
-- Status: beta
+- Status: stable
 - Short name: SecretField
 - Audience: Developers displaying API keys and tokens shown only once.
 - Purpose: A read-only shown-once value with one-click copy; `multiline` wraps long values (install commands, short snippets) so they read in full on narrow screens.
@@ -1100,7 +1100,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `DataTable`, `DataTableProps`, `DataTableColumn`, `createDataTableColumns`, `DataTablePagination`, `DataTablePaginationProps`, `DataTableEmpty`, `DataTableEmptyProps`, `DataTableToolbar`, `DataTableToolbarProps`, `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`
 - Wraps: `@tanstack/react-table`
-- Status: beta
+- Status: stable
 - Short name: DataTable
 - Audience: Developers listing queryable records (deliveries, users, orders).
 - Purpose: Tables with sorting, filtering, pagination plus loading/error/empty states.
@@ -1143,7 +1143,7 @@ const [query, setQuery] = useState("");
 
 - Import: `@zedtech/zedkit-ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`
 - Wraps: none (theme tokens only)
-- Status: beta
+- Status: stable
 - Short name: AppShell
 - Audience: Teams scaffolding a consistent admin layout.
 - Purpose: Sidebar + topbar shell with page header (title, description, actions).
@@ -1173,7 +1173,7 @@ import { AppShell } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`
 - Wraps: none (native inputs + theme tokens)
-- Status: beta
+- Status: stable
 - Short name: WizardSteps
 - Audience: Developers building onboarding, setup, or checkout flows.
 - Purpose: Step indicator plus selectable option cards with state.
@@ -1210,7 +1210,7 @@ const [solo, setSolo] = useState(false);
 
 - Import: `@zedtech/zedkit-ui` — `DetailPanel`, `DetailPanelProps`, `DetailItem`, `DetailPanelRow`, `DetailPanelRowProps`, `LivePulse`, `LivePulseProps`
 - Wraps: none (theme tokens only)
-- Status: beta
+- Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
 - Purpose: Key-value detail lists plus an optional live pulse.
@@ -1260,7 +1260,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 
 - Import: `@zedtech/zedkit-ui` — `FieldSet`, `FieldSetProps`, `FieldLegend`, `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldSeparator`, `FieldContent`, `FieldTitle`
 - Wraps: none (presentational over `Label`, `Separator`)
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (field)
 - Short name: FieldSet
 - Audience: Developers structuring long or grouped forms.
@@ -1281,7 +1281,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 
 - Import: `@zedtech/zedkit-ui` — `Card`, `CardProps`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
 - Wraps: none (presentational, theme tokens only)
-- Status: beta
+- Status: stable
 - Short name: Card
 - Audience: Developers grouping related content in bordered sections.
 - Purpose: Cards with header/title/description/content/footer slots.
@@ -1310,7 +1310,7 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Stack`, `stackVariants`, `StackProps`, `Section`, `SectionProps`
 - Wraps: none (flex/gap utilities over `Heading`, `Text`)
-- Status: beta
+- Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
 - Purpose: Gap-based vertical/horizontal stacks plus titled sections.
@@ -1347,7 +1347,7 @@ import { Container, Section } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Heading`, `HeadingProps`, `headingVariants`, `Text`, `TextProps`, `textVariants`
 - Wraps: `class-variance-authority` (styles follow the documented shadcn typography recipes; no registry item exists)
-- Status: beta
+- Status: stable
 - Short name: Typography
 - Audience: Developers writing kit pages with consistent type.
 - Purpose: Heading levels and Text variants with theme-aware styles.
@@ -1378,7 +1378,7 @@ import { Heading } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`, `alertVariants`, `AlertProps`
 - Wraps: `class-variance-authority`
-- Status: beta
+- Status: stable
 - Short name: Alert
 - Audience: Developers surfacing notices, warnings and errors inline.
 - Purpose: Notice/error callouts with title and description.
@@ -1412,7 +1412,7 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `BrandLogo`, `BrandLogoProps`, `Logo`, `LogoProps`
 - Wraps: none (inline SVG)
-- Status: alpha
+- Status: beta
 - Short name: BrandLogo
 - Audience: Teams building a header, a footer or a share image for their own site.
 - Purpose: Render your own logo as an inline SVG that paints with `currentColor`, so it follows the text colour in light, dark and every visual identity.
@@ -1444,7 +1444,7 @@ import { BrandLogo } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Select`, `SelectProps`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel`, `SelectItem`, `SelectSeparator`, `SelectScrollUpButton`, `SelectScrollDownButton`
 - Wraps: `@radix-ui/react-select`
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (select)
 - Short name: Select
 - Audience: Form builders offering 4+ exclusive options in little space.
@@ -1465,7 +1465,7 @@ const items = regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</S
 
 - Import: `@zedtech/zedkit-ui` — `Combobox`, `ComboboxOption`, `ComboboxProps`
 - Wraps: `downshift`, `@radix-ui/react-popover`
-- Status: alpha
+- Status: beta
 - Short name: Combobox
 - Audience: Form builders with long lists where typing to filter beats scrolling a select.
 - Purpose: Searchable single-select combobox with popover list, empty and loading rows, keyboard navigation.
@@ -1485,7 +1485,7 @@ const options: ComboboxOption[] = [{ value: "eu", label: "Europe" }];
 
 - Import: `@zedtech/zedkit-ui` — `MultiSelect`, `MultiSelectProps`, `ComboboxOption`
 - Wraps: `downshift`, `@radix-ui/react-popover`
-- Status: alpha
+- Status: beta
 - Short name: MultiSelect
 - Audience: Filters and tag pickers where several values apply.
 - Purpose: Searchable multi-select with removable chips, shared empty/loading states, keyboard support.
@@ -1505,7 +1505,7 @@ const tags: ComboboxOption[] = [{ value: "docs", label: "Docs" }];
 
 - Import: `@zedtech/zedkit-ui` — `Textarea`, `TextareaProps`
 - Wraps: none (styled native `textarea`)
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (textarea)
 - Short name: Textarea
 - Audience: Form builders collecting paragraphs (bios, notes, messages).
@@ -1525,7 +1525,7 @@ import { Label, Textarea } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Checkbox`, `CheckboxProps`, `Switch`
 - Wraps: `@radix-ui/react-checkbox`, `@radix-ui/react-switch`
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (checkbox, switch)
 - Short name: Checkbox
 - Audience: Form builders collecting booleans and on/off settings.
@@ -1545,7 +1545,7 @@ import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";
 
 - Import: `@zedtech/zedkit-ui` — `Tabs`, `TabsProps`, `TabsList`, `TabsTrigger`, `TabsContent`
 - Wraps: `@radix-ui/react-tabs`
-- Status: beta
+- Status: stable
 - Derived from: shadcn/ui (tabs)
 - Short name: Tabs
 - Audience: Developers grouping related panels under one heading.
@@ -1650,7 +1650,7 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 
 - Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
-- Status: alpha
+- Status: beta
 - Short name: Identities
 - Audience: Teams that want to change the whole look of an app, or offer a choice, without touching components.
 - Purpose: `data-identity` on the root swaps the identity tokens next to light and dark (type size, tracking, shadow, spacing unit, body line-height, border width, colour-transition duration, radius, motion); a head script applies the stored choice before first paint and a labelled switcher or touch picker lets people choose. `applyCustomIdentity` writes compact tokens onto `:root` (id `custom`, CSS in `IDENTITY_CUSTOM_STORAGE_KEY`) or onto a preset/named look id (`n-…` via `isNamedIdentityId`) and the same script reapplies that sheet before paint, keeping the stored id even when it is not in the built-in list. Mist keeps the kit defaults; no two looks share the same type size, tracking, shadow, or spacing unit.
@@ -1731,7 +1731,7 @@ void css;
 
 - Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
-- Status: alpha
+- Status: beta
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
 - Purpose: Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site.

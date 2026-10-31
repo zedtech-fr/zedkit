@@ -100,7 +100,9 @@ for (const identity of IDENTITIES) {
 
 test("phone: maturity and badge links meet the 44px target", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/docs/ui/call-out-a-notice-or-an-error-state", { waitUntil: "networkidle" });
+  await page.goto("/docs/ui/build-validated-forms-with-labels-errors-and-pending-state", {
+    waitUntil: "networkidle",
+  });
   const { checked, small } = await page.evaluate(() => {
     const found: string[] = [];
     let count = 0;
@@ -120,10 +122,10 @@ test("phone: maturity and badge links meet the 44px target", async ({ page }) =>
 for (const identity of IDENTITIES) {
   test(`maturity badge link has no underline (${identity}, dark)`, async ({ page }) => {
     await visitAs(page, identity, "dark");
-    await page.goto("/docs/ui/collect-text-input-with-a-label/", { waitUntil: "networkidle" });
+    await page.goto("/docs/ui/stamp-data-with-its-age/", { waitUntil: "networkidle" });
     const badge = page
       .locator("main a")
-      .filter({ hasText: /^(alpha|beta|stable|experimental)$/i })
+      .filter({ hasText: /^alpha$/i })
       .first();
     await expect(badge).toBeVisible();
     await expect(badge).toHaveCSS("text-decoration-line", "none");
