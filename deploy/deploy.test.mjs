@@ -196,6 +196,10 @@ case "$cmd" in
         "${state}/start-suggest.sh"
         exit $?
         ;;
+      *caddy*)
+        touch "${state}/caddy-up"
+        exit 0
+        ;;
       *)
         touch "${state}/caddy-up"
         "${state}/start-suggest.sh"
@@ -315,5 +319,5 @@ test("deploy A then B with Caddy already up announces B and uses the new paramet
   assert.equal(again.model, "model-b");
 
   const log = await readFile(join(state, "docker.log"), "utf8");
-  assert.match(log, /caddy reload/);
+  assert.match(log, /compose up -d --no-deps --force-recreate caddy/);
 });
