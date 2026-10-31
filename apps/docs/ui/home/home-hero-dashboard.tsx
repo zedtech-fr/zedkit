@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle, Stack, Text } from "@zedtech/zedkit-ui";
+import { HOME_CARD_TITLE_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 // Below-fold interactive table: keep it out of the first-load JS.
 const HomeAdminDashboardDemo = dynamic(
@@ -13,8 +14,8 @@ export function HomeHeroDashboard() {
   return (
     <Card className="w-full min-w-0" data-home-dashboard-card>
       <CardHeader>
-        <CardTitle className="text-lg">Try the admin dashboard</CardTitle>
-        <Text variant="muted" className="text-sm">
+        <CardTitle className={HOME_CARD_TITLE_CLASS}>Try the admin dashboard</CardTitle>
+        <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
           Add, edit, and delete apps in the table — no backend. Switch preview to loading, empty, or error.
         </Text>
       </CardHeader>
