@@ -33,7 +33,10 @@ export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPr
     <Stack gap={3}>
       <Tabs items={["Preview", "Code"]} className={entry.pinned ? "overflow-clip" : undefined}>
         <Tab value="Preview">
-          <PreviewViewport center={entry.center ?? false} a11yRoot={a11yRoot}>
+          <PreviewViewport
+            center={entry.center ?? false}
+            {...(a11yRoot ? { a11yRoot: true as const } : {})}
+          >
             <Demo />
           </PreviewViewport>
         </Tab>
