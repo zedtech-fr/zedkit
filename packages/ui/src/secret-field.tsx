@@ -61,7 +61,7 @@ function SecretField({ id, value, copyLabel, multiline = false, "aria-label": ar
           rows={Math.max(1, value.split("\n").length)}
           spellCheck={false}
           autoComplete="off"
-          className="field-sizing-content max-h-64 min-h-control-height resize-none font-mono wrap-anywhere"
+          className="field-sizing-content max-h-64 min-h-control-height resize-none overflow-x-auto font-mono whitespace-nowrap"
           aria-label={ariaLabel}
         />
       ) : (
