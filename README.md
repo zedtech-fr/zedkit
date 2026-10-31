@@ -32,7 +32,7 @@ need per package (criteria: [docs/catalog/README.md](docs/catalog/README.md)).
 
 | Package | Version | Maturity |
 |---|---|---|
-| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 0.8.1 | beta |
+| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 0.9.0 | beta |
 | [`@zedtech/zedkit-core`](packages/core/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-core)) | 0.2.1 | beta |
 | [`@zedtech/zedkit-devtools`](packages/devtools/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-devtools)) | 0.2.8 | alpha |
 | [`@zedtech/zedkit-flags`](packages/flags/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-flags)) | 0.2.2 | alpha |
