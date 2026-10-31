@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // R33: every public package tarball must declare the same Node engine as the repo.
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -17,13 +17,11 @@ export function checkPublishEngines(rootDir) {
   for (const dir of readdirSync(packagesDir, { withFileTypes: true })) {
     if (!dir.isDirectory()) continue;
     const pkgPath = join(packagesDir, dir.name, "package.json");
-    let pkg;
-    try {
-      pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
-    } catch {
-      errors.push(`${dir.name}/package.json: unreadable`);
+    if (!existsSync(pkgPath)) {
+      errors.push(`${dir.name}/package.json: missing`);
       continue;
     }
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
     if (pkg.private === true) continue;
     const name = pkg.name ?? dir.name;
     const node = pkg.engines?.node;
