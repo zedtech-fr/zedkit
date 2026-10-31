@@ -28,6 +28,18 @@ test("docs index and guides carry no production memo in visitor copy (#1096)", a
   }
 });
 
+test("maturity page explains each badge on the page", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${BASE}/docs/maturity-and-compatibility`, { waitUntil: "networkidle" });
+  const heading = page.getByRole("heading", { name: "What a badge means", level: 2 });
+  await expect(heading).toBeVisible();
+  await expect(page.getByText("Built, but the API may still change.")).toBeVisible();
+  await expect(page.getByText("Not proven in a real app yet.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "catalog README (Maturity)" })).toHaveCount(0);
+  const counts = page.getByRole("heading", { name: "Current catalog counts", level: 2 });
+  expect((await heading.boundingBox())!.y).toBeLessThan((await counts.boundingBox())!.y);
+});
+
 test("getting started is first stop from docs index", async ({ page }) => {
   await page.goto(`${BASE}/docs`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Start here" })).toBeVisible();
