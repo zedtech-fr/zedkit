@@ -1,7 +1,7 @@
 import type { Client } from "@openfeature/server-sdk";
 
-import type { FlagValue } from "#memory.js";
 import type { FlagRegistry } from "./registry.js";
+import type { FlagValue } from "./memory.js";
 
 export type FlagReturnValue<T extends FlagValue> = T extends boolean
   ? boolean
