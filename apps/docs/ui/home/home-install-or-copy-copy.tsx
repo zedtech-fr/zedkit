@@ -72,14 +72,14 @@ export function HomeInstallOrCopyCopy({
                 aria-label="shadcn registry add command"
                 copyLabel="Copy shadcn registry command"
               />
-              <Text variant="muted" className="text-sm">
-                Published registry bricks today: <RegistryBrickList names={registryBricks} />. After
-                copying, the files are yours — no automatic updates.
-              </Text>
             </Stack>
           </CardContent>
         </Card>
       </div>
+      <Text variant="muted" className="text-sm">
+        Published registry bricks today: <RegistryBrickList names={registryBricks} />. After copying,
+        the files are yours — no automatic updates.
+      </Text>
       <Text variant="muted">
         MIT license. Built on Radix and shadcn/ui-derived code. No proprietary runtime — you own what you
         copy.

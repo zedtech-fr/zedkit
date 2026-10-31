@@ -58,6 +58,22 @@ test.describe("home install or copy block (#419)", () => {
     expect(box.scrollHeight).toBeLessThanOrEqual(box.clientHeight + 1);
   });
 
+  test("neither choice card is mostly empty at laptop width (#1088)", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    const cards = page.locator("#install-or-copy [data-slot='card']");
+    await expect(cards).toHaveCount(2);
+    const emptyBottoms = await cards.evaluateAll((nodes) =>
+      nodes.map((card) => {
+        const rect = card.getBoundingClientRect();
+        const content = card.querySelector("[data-slot='card-content']") ?? card;
+        const last = content.lastElementChild?.getBoundingClientRect();
+        return last ? Math.round(rect.bottom - last.bottom) : Math.round(rect.height);
+      }),
+    );
+    for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(96);
+  });
+
   test("published brick names keep a decorative icon", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(BASE, { waitUntil: "networkidle" });
