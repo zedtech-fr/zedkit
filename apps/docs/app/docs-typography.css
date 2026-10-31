@@ -42,6 +42,18 @@
   --zk-home-metadata-leading: var(--zk-type-label-leading, 1.4);
 }
 
+.text-zk-type-lead {
+  font-size: var(--zk-type-lead-size);
+  font-weight: var(--zk-type-lead-weight);
+  line-height: var(--zk-type-lead-leading);
+}
+
+.text-zk-type-small {
+  font-size: var(--zk-type-small-size);
+  font-weight: var(--zk-type-small-weight);
+  line-height: var(--zk-type-small-leading);
+}
+
 .text-zk-type-h3 {
   font-size: var(--zk-type-h3-size);
   font-weight: var(--zk-type-h3-weight);
