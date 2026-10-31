@@ -1,0 +1,38 @@
+import { expect, test } from "@playwright/test";
+
+import { probe } from "./identity-helpers";
+
+test.describe("site type hierarchy (P0)", () => {
+  test("home hero and scenario cards @1440", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/?identity=tide", { waitUntil: "networkidle" });
+
+    const h1 = await page.locator("#home-page h1").first().evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { size: Number.parseFloat(s.fontSize), weight: s.fontWeight };
+    });
+    expect(h1.size).toBeGreaterThanOrEqual(32);
+    expect(h1.weight).toBe("600");
+
+    const cardTitle = await page.locator("#scenarios [data-slot=card-title]").first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+    const cardLabel = await page.locator("#scenarios .home-metadata-copy").first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+    const cardBody = await page.locator("#scenarios .text-home-persuasion").first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+    expect(cardTitle).toBeGreaterThanOrEqual(16);
+    expect(cardTitle).toBeLessThanOrEqual(17);
+    expect(cardLabel).toBe(12);
+    expect(cardBody).toBe(14);
+    expect(cardLabel).toBeLessThan(cardBody);
+    expect(cardBody).toBeLessThan(cardTitle);
+  });
+
+  test("docs prose and labels use shared scale @390", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/docs/ui/trigger-actions-with-buttons?identity=volt", { waitUntil: "networkidle" });
+    expect(await probe(page, "font-size", "var(--text-xs)")).toBe("12px");
+    expect(await probe(page, "font-size", "var(--text-sm)")).toBe("13px");
+    const prose = await page.locator("#nd-page .prose p").first().evaluate((el) => getComputedStyle(el).fontSize);
+    expect(prose).toBe("15px");
+    const proseWidth = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).maxWidth);
+    expect(proseWidth).toMatch(/ch$/);
+  });
+});

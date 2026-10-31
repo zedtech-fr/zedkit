@@ -29,7 +29,6 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
       containerWidth="wide"
       title="Start from your situation"
       id="scenarios"
-      className="max-md:hidden"
       description="Each card opens a doc page with the install command, an example, and a live preview when available."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
@@ -37,27 +36,29 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
           {scenarios.map((scenario) => (
             <Card key={scenario.href} className="flex h-full min-w-0 flex-col">
               <CardHeader>
-                <CardTitle className="text-lg">
+                <CardTitle>
                   <HomeScenarioTitle href={scenario.href} situation={scenario.situation} />
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <Stack gap={HOME_CARD_CONTENT_GAP} className="flex flex-1 flex-col">
-                  <Stack gap={1}>
-                    <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
-                      You want
-                    </Text>
-                    <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-                      {scenario.goal}
-                    </Text>
+                  <Stack gap={2}>
+                    <Stack gap={1}>
+                      <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
+                        You want
+                      </Text>
+                      <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+                        {scenario.goal}
+                      </Text>
+                    </Stack>
+                    <Stack gap={1}>
+                      <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
+                        Do this
+                      </Text>
+                      <Text className={HOME_PERSUASION_TEXT_CLASS}>{scenario.action}</Text>
+                    </Stack>
                   </Stack>
-                  <Stack gap={1}>
-                    <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
-                      Do this
-                    </Text>
-                    <Text className={HOME_PERSUASION_TEXT_CLASS}>{scenario.action}</Text>
-                  </Stack>
-                  <Button asChild variant="outline" className="mt-auto w-fit">
+                  <Button asChild variant="outline" className="mt-6 w-fit">
                     <Link href={scenario.href}>
                       <DocsActionLabel>{scenario.linkLabel}</DocsActionLabel>
                     </Link>

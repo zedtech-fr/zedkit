@@ -24,7 +24,7 @@ export const HOME_SECTION_REVEAL_CLASS =
 export const HOME_HERO_PREVIEW_SHELL_CLASS =
   "pointer-events-none h-72 w-full shrink-0 overflow-hidden lg:h-80";
 
-/** Persuasion copy on the home page (16px floor on phone widths). */
+/** Persuasion copy on the home page (14px body; 12px labels). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 
 /** Secondary counts and labels (12–13px). */

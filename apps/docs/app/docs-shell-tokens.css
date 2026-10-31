@@ -31,36 +31,5 @@ html.dark [id^="type-table"] .line-through {
 }
 
 /*
- * Docs reading scale: identities ship a dense display scale (Volt: 10px
- * xs / 12px sm, -0.08em headings, 1.22 body leading). Inside the docs
- * shell, prose and chrome keep a readable floor: 13-14px labels,
- * softened tracking, 1.6 leading. Scoped demos that set their own
- * identity keep it; the home page keeps its own scale.
+ * Docs shell contrast overrides only (type scale is global via shared-type-scale.css).
  */
-#nd-docs-layout {
-  --text-xs: 0.8125rem;
-  --text-sm: 0.875rem;
-  --tracking-tight: -0.025em;
-  --zk-heading-tracking: -0.02em;
-  --zk-body-leading: 1.6;
-}
-
-/*
- * Shell layout rhythm: the docs article keeps mobile gutters from the
- * page-gutter token (fumadocs' px-4 shrinks to 14.4px under Volt), and
- * the catalog shell caps its band on the 1160px marketing container
- * with a section rhythm that drops to the mobile band. Home keeps its
- * own rhythm (pinned exactly by other lanes' tests).
- */
-[data-catalog-shell] {
-  --zk-container-default: 72.5rem;
-}
-
-@media (width < 48rem) {
-  #nd-page {
-    padding-inline: var(--zk-page-gutter);
-  }
-  [data-catalog-shell] {
-    --zk-section-lg: calc(var(--spacing) * 16);
-  }
-}
