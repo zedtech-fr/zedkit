@@ -115,6 +115,7 @@ export function PreviewViewport({
           darkScope,
           mobile && "mx-auto w-full max-w-[390px]",
         )}
+        data-preview-surface=""
         {...demoStyle.scopeAttrs}
       >
         <PreviewMobileContext.Provider value={mobile}>

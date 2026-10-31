@@ -186,11 +186,24 @@ html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
  * exactly this, and let the article — previews included — take a share
  * of the surplus. Widths below 1920px are untouched.
  */
+#nd-docs-layout [role="tabpanel"] figure.shiki {
+  border: 0;
+  box-shadow: none;
+}
+
+#nd-docs-layout [role="tabpanel"] figure.shiki pre {
+  border: 0;
+  box-shadow: none;
+}
+
 @media (min-width: 120rem) {
   #nd-docs-layout {
     --fd-layout-width: 112.5rem;
   }
   #nd-page {
-    max-width: 68.75rem;
+    max-width: 70rem;
+  }
+  #nd-docs-layout [data-component-preview] {
+    width: 100%;
   }
 }

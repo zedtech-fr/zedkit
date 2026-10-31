@@ -34,8 +34,6 @@ html.dark [id^="type-table"] .line-through {
  * Docs shell contrast overrides only (type scale is global via shared-type-scale.css).
  */
 #nd-docs-layout {
-  --text-xs: 0.8125rem;
-  --text-sm: 0.875rem;
   --tracking-tight: -0.025em;
   --zk-heading-tracking: -0.02em;
   --zk-body-leading: 1.6;
@@ -96,7 +94,7 @@ html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
  * D5 specimen surface: one hairline frame on component previews, no drop
  * shadow (shadows stay on overlays). Card fill replaces the muted wash.
  */
-#nd-docs-layout [data-component-preview] > :last-child {
+#nd-docs-layout [data-component-preview] [data-preview-surface] {
   box-shadow: none;
   background-color: hsl(var(--card));
   border: var(--zk-border-width, 1px) solid hsl(var(--border));

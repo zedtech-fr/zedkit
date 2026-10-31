@@ -52,7 +52,7 @@
 
 #home-page .type-site-h1 {
   font-size: var(--zk-type-h1-size);
-  font-weight: 600;
+  font-weight: var(--zk-type-h1-weight, 600);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }

@@ -18,7 +18,7 @@ export function HomeHeroLead() {
         <Text variant="muted" className={HOME_METADATA_TEXT_CLASS} data-home-hero-label="">
           zedkit
         </Text>
-        <Heading level={1} className="type-site-h1 max-w-3xl font-semibold text-balance">
+        <Heading level={1} className="type-site-h1 max-w-3xl font-(weight:--zk-type-h1-weight) text-balance">
           Build the parts you need. Keep the rest of your app.
         </Heading>
         <Text

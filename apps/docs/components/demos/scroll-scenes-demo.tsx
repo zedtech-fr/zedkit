@@ -14,7 +14,7 @@ function Caption({ step, title, children }: { step: string; title: string; child
       <Text variant="muted" className="m-0! text-xs">
         {step}
       </Text>
-      <Heading level={3} className="m-0!">{title}</Heading>
+      <Heading level={2} className="m-0!">{title}</Heading>
       <Text variant="muted" className="m-0!">{children}</Text>
     </Stack>
   );
