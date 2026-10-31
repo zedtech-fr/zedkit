@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { Section } from "@zedtech/zedkit-ui";
 
 import { HomeAiSetupCopy } from "@/ui/home/home-ai-setup-copy";
-import { HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
+import { HOME_SECTION_REVEAL_CLASS, HOME_MARKETING_ROOT_PROPS } from "@/ui/home/home-rhythm";
 
 const SNIPPET_PATH = join(process.cwd(), "home-quickstart", "snippets", "ai-init.sh");
 const EXPECTED_INIT = "npx @zedtech/zedkit-ai init";
@@ -28,6 +28,7 @@ export function HomeAiSetupSection() {
       id="ai-setup"
       title="Set up your coding agent"
       className={HOME_SECTION_REVEAL_CLASS}
+      {...HOME_MARKETING_ROOT_PROPS}
     >
       <HomeAiSetupCopy initCommand={initCommand} />
     </Section>
