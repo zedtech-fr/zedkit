@@ -1410,11 +1410,17 @@
           "example": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>",
           "examples": [
             {
-              "title": "Simple",
+              "title": "Usage",
               "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button ref={saveRef}>Save</Button>\n<Button variant=\"destructive\" size=\"sm\">Delete</Button>\n<Button variant=\"outline\" size=\"icon\" aria-label=\"Close\">×</Button>\n<Button asChild variant=\"secondary\">\n  <a href=\"/docs\">Read the docs</a>\n</Button>"
+            },
+            {
+              "title": "Variants and sizes",
+              "code": "import { Button } from \"@zedtech/zedkit-ui\";\n<Button size=\"sm\">Small</Button>\n<Button>Default</Button>\n<Button size=\"lg\">Large</Button>\n<Button disabled>Saving…</Button>"
             }
           ],
+          "registry": "button",
           "a11y": "Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.",
+          "troubleshooting": "Wrong variant colours in dark mode — ensure `.dark` is on the document root. Link styled as a button — use `asChild` with an anchor and keep visible link text. Icon-only control — pass `aria-label` (or use `IconButton` when the label should not appear as text).",
           "seeAlso": [
             "Confirm destructive actions"
           ]

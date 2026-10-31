@@ -74,7 +74,7 @@ export function PreviewViewport({ center, children }: { center?: boolean; childr
       </Stack>
       <Stack
         className={cn(
-          "rounded-lg border border-border bg-muted/40 p-4",
+          "rounded-lg border border-border bg-muted/40 p-4 md:p-6",
           darkScope,
           mobile && "mx-auto w-full max-w-[390px]",
         )}

@@ -174,31 +174,34 @@ function guidanceBlock(need, seeAlsoLinks) {
 
 function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
-  const seeAlsoLinks = related.map((link) => `[${link.title}](${link.href})`);
+  const pageTitle = need.shortName ?? need.need;
+  const propsPriority = spec.propsPriority ?? null;
   const head = [
     "---",
-    `title: ${JSON.stringify(need.need)}`,
+    `title: ${JSON.stringify(pageTitle)}`,
     `description: ${JSON.stringify(metaDescription(need, folder))}`,
     `status: ${need.status}`,
     "---",
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
-    `import { MaturityBadge } from "../../../components/maturity-badge";`,
     `import { ComponentPage } from "../../../components/component-page";`,
     "",
-    `<MaturityBadge status={${JSON.stringify(need.status)}} />`,
-    "",
-    ...guidanceBlock(need, seeAlsoLinks),
     "<ComponentPage",
     `  packageName={${JSON.stringify(pkg)}}`,
     `  version={${JSON.stringify(version)}}`,
+    `  status={${JSON.stringify(need.status)}}`,
+    `  purpose={${JSON.stringify(need.purpose)}}`,
+    `  audience={${JSON.stringify(need.audience)}}`,
+    `  whenToUse={${JSON.stringify(need.whenToUse)}}`,
+    `  whenNotToUse={${JSON.stringify(need.whenNotToUse)}}`,
     `  importLine={${JSON.stringify(need.import)}}`,
     `  wraps={${JSON.stringify(need.wraps)}}`,
     `  registry={${JSON.stringify(spec.registry)}}`,
     `  demo={${JSON.stringify(spec.demo)}}`,
     `  propsFile={${JSON.stringify(spec.propsFile)}}`,
     `  propsName={${JSON.stringify(spec.propsName)}}`,
+    ...(propsPriority ? [`  propsPriority={${JSON.stringify(propsPriority)}}`] : []),
     `  examples={${JSON.stringify(examples)}}`,
     ...(spec.examples && Object.keys(spec.examples).length > 0
       ? [`  examplePreviews={${JSON.stringify(spec.examples)}}`]
@@ -259,7 +262,7 @@ export function expandFencePreviews(text, withImport = null) {
     if (!key) return line;
     used = true;
     const rest = meta.replace(PREVIEW_META, "");
-    return `<ComponentPreview demo="${key}" detail="Live preview" hasProps={false} />\n\n\`\`\`${lang}${rest}`;
+    return `<ComponentPreview demo="${key}" hasProps={false} />\n\n\`\`\`${lang}${rest}`;
   });
   if (!used || !withImport || out.includes("import { ComponentPreview }")) return out;
   const frontmatter = out.match(/^---\n[\s\S]*?\n---\n/);
@@ -304,12 +307,11 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
   head.push("", `<MaturityBadge status={${JSON.stringify(need.status)}} />`, "");
   head.push(...guidanceBlock(need, seeAlsoLinks));
   if (rich) {
-    const detail = need.import.replace(/`/g, "");
     const hasProps = Boolean(rich.propsFile && rich.propsName);
     head.push(
       "## Preview",
       "",
-      `<ComponentPreview demo="${rich.demo}" detail={${JSON.stringify(detail)}} hasProps={${JSON.stringify(hasProps)}} />`,
+      `<ComponentPreview demo="${rich.demo}" hasProps={${JSON.stringify(hasProps)}} />`,
       "",
     );
   }
@@ -351,7 +353,7 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
   examples.forEach((ex, index) => {
     const preview = index > 0 ? rich?.examples?.[ex.title] : null;
     if (preview) {
-      head.push(`<ComponentPreview demo="${preview}" detail=${JSON.stringify(`Live preview: ${ex.title}`)} hasProps={false} />`, "");
+      head.push(`<ComponentPreview demo="${preview}" hasProps={false} />`, "");
     }
     head.push(`\`\`\`${ex.lang === "css" ? "css" : "tsx"} title=${JSON.stringify(index === 0 ? "Usage" : ex.title)}`, ex.code, "```", "");
   });
@@ -433,6 +435,7 @@ export function generate(outDir) {
           propsFile: spec.source ?? null,
           propsName: spec.props ?? null,
           registry: spec.registry ?? null,
+          propsPriority: spec.propsPriority ?? null,
         };
       }
       const related = (need.seeAlso ?? []).map((target) => {

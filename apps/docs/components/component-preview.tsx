@@ -11,8 +11,6 @@ import { demoRegistry, type DemoEntry } from "./demos/registry";
 interface ComponentPreviewProps {
   /** Registry key, e.g. `ButtonDemo`. */
   demo: string;
-  /** One-line import reference shown above the source. */
-  detail: string;
   /** Whether the page renders a Props section to link to. */
   hasProps: boolean;
 }
@@ -23,7 +21,7 @@ interface ComponentPreviewProps {
  * the demo file at build — always current) with copy + filename title.
  * Consumed by generated MDX via registry key only.
  */
-export async function ComponentPreview({ demo, detail, hasProps }: ComponentPreviewProps) {
+export async function ComponentPreview({ demo, hasProps }: ComponentPreviewProps) {
   const entry = (demoRegistry as Record<string, DemoEntry | undefined>)[demo];
   if (!entry) return <Text>Unknown demo “{demo}”.</Text>;
   const code = await readFile(join(process.cwd(), "components", "demos", entry.file), "utf8");
@@ -31,7 +29,6 @@ export async function ComponentPreview({ demo, detail, hasProps }: ComponentPrev
   const { Demo } = entry;
   return (
     <Stack gap={3}>
-      <Text variant="muted" className="text-xs">{detail}</Text>
       <Tabs items={["Preview", "Code"]} className={entry.pinned ? "overflow-clip" : undefined}>
         <Tab value="Preview">
           <PreviewViewport center={entry.center ?? false}>

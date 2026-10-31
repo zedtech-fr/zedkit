@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
+import { partitionPropsEntries } from "../lib/props-priority.mjs";
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -24,6 +25,25 @@ status: beta
 <Button>Save</Button>
 \`\`\`
 `;
+
+test("partitionPropsEntries surfaces variant and size before inherited attrs", () => {
+  const entries = [
+    { name: "disabled" },
+    { name: "variant" },
+    { name: "size" },
+    { name: "asChild" },
+    { name: "type" },
+  ];
+  const { primary, inherited } = partitionPropsEntries(entries);
+  assert.deepEqual(
+    primary.map((entry) => entry.name),
+    ["variant", "size", "asChild"],
+  );
+  assert.deepEqual(
+    inherited.map((entry) => entry.name),
+    ["disabled", "type"],
+  );
+});
 
 test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () => {
   const keys = catalogPageKeys({
@@ -87,12 +107,12 @@ test("checkGeneratedPage fails when a component page lacks the guidance block", 
   const errors = [];
   checkGeneratedPage(
     "ui/confirm-destructive-actions.mdx",
-    "---\ntitle: \"Confirm destructive actions\"\ndescription: \"A destructive confirmation.\"\nstatus: beta\n---\n\n<ComponentPage registry={\"confirm-dialog\"} />\n",
+    "---\ntitle: \"ConfirmDialog\"\ndescription: \"A destructive confirmation.\"\nstatus: beta\n---\n\n<ComponentPage registry={\"confirm-dialog\"} />\n",
     { seoMax: 160, descriptionsSeen: new Map() },
     errors,
   );
   assert.equal(
-    errors.some((entry) => entry.includes("lacks the At-a-glance guidance block")),
+    errors.some((entry) => entry.includes("lacks ComponentPage guidance prop")),
     true,
   );
   assert.equal(

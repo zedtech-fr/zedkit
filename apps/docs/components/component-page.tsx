@@ -12,8 +12,10 @@ import {
 } from "@zedtech/zedkit-ui";
 import { docsSite } from "../lib/site";
 import { symbolsFromImport } from "../lib/import-symbols";
+import { DEFAULT_PROPS_PRIORITY } from "../lib/props-priority.mjs";
 import { ComponentExportsPanel } from "./component-exports-panel";
 import { ComponentPreview } from "./component-preview";
+import { MaturityBadge } from "./maturity-badge";
 import { PropsTable } from "./props-table";
 import { RegistryBrickName } from "./registry-brick-name";
 
@@ -31,12 +33,17 @@ export interface ComponentPageProps {
   packageName: string;
   version: string;
   status: string;
+  purpose: string;
+  audience: string;
+  whenToUse: string;
+  whenNotToUse: string;
   importLine: string;
   wraps: string;
   registry: string;
   demo: string;
   propsFile: string | null;
   propsName: string | null;
+  propsPriority?: string[];
   examples: CatalogExample[];
   /** Example title → demo registry key: a live preview rendered above that code block. */
   examplePreviews?: Record<string, string>;
@@ -68,12 +75,18 @@ function importSnippet(importLine: string): string {
 export async function ComponentPage({
   packageName,
   version,
+  status,
+  purpose,
+  audience,
+  whenToUse,
+  whenNotToUse,
   importLine,
   wraps,
   registry,
   demo,
   propsFile,
   propsName,
+  propsPriority = DEFAULT_PROPS_PRIORITY,
   examples,
   examplePreviews = {},
   a11y,
@@ -89,72 +102,84 @@ export async function ComponentPage({
 
   return (
     <Stack gap={8}>
-      <Section title="Install">
+      <Stack gap={3}>
+        <MaturityBadge status={status} />
+        <Text variant="muted">{purpose}</Text>
+      </Stack>
+
+      <ComponentPreview demo={demo} hasProps={hasProps} />
+
+      <Section title="Install or copy">
         <Stack gap={4}>
-          <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn", "registry"]}>
-            <Tab value="pnpm">
-              {await highlightedTs(`pnpm add ${packageName}`)}
+          <Tabs groupId="component-adoption" persist items={["npm package", "registry copy"]}>
+            <Tab value="npm package">
+              <Stack gap={4}>
+                <Text variant="muted" className="text-sm">
+                  Install the published package, then import from it. Styles come from the kit CSS you already
+                  wired in your app.
+                </Text>
+                <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn"]}>
+                  <Tab value="pnpm">{await highlightedTs(`pnpm add ${packageName}`, "Install")}</Tab>
+                  <Tab value="npm">{await highlightedTs(`npm install ${packageName}`, "Install")}</Tab>
+                  <Tab value="yarn">{await highlightedTs(`yarn add ${packageName}`, "Install")}</Tab>
+                </Tabs>
+                {await highlightedTs(importSnippet(importLine), "Import")}
+                <Text variant="muted" className="text-xs">
+                  Package version: {version} (changesets).
+                </Text>
+              </Stack>
             </Tab>
-            <Tab value="npm">
-              {await highlightedTs(`npm install ${packageName}`)}
-            </Tab>
-            <Tab value="yarn">
-              {await highlightedTs(`yarn add ${packageName}`)}
-            </Tab>
-            <Tab value="registry">
-              {await highlightedTs(shadcnAdd)}
+            <Tab value="registry copy">
+              <Stack gap={4}>
+                <Text variant="muted" className="text-sm">
+                  Copy the brick into your repo with the shadcn CLI. Imports are rewritten for your app; keep this
+                  path separate from the npm package install above.
+                </Text>
+                {await highlightedTs(shadcnAdd, "shadcn add")}
+                {source ? (
+                  <Stack gap={3}>
+                    <RegistryBrickName name={registry} />
+                    {await highlightedTs(source, `${registry}.tsx`)}
+                  </Stack>
+                ) : null}
+              </Stack>
             </Tab>
           </Tabs>
-          <Text variant="muted">Package version: {version} (changesets).</Text>
         </Stack>
       </Section>
 
-      <Section title="Import">
-        {await highlightedTs(importSnippet(importLine))}
-      </Section>
-
-      {source ? (
-        <Section
-          title="Registry source"
-          description="Copy into your app after npx shadcn add (imports are rewritten for consumers)."
-        >
-          <Stack gap={3}>
-            <RegistryBrickName name={registry} />
-            {await highlightedTs(source, `${registry}.tsx`)}
-          </Stack>
-        </Section>
-      ) : null}
-
-      <Section title="Exports">
-        <ComponentExportsPanel symbols={symbols} wraps={wraps} />
-      </Section>
-
-      <Section title="Preview">
-        <ComponentPreview demo={demo} detail={importLine.replace(/`/g, "")} hasProps={hasProps} />
-      </Section>
-
-      <Section title="Examples">
+      <Section title="Usage and states">
         <Stack gap={6}>
+          <Stack gap={2} className="text-sm text-muted-foreground">
+            <Text variant="muted">
+              <strong className="font-medium text-foreground">Who:</strong> {audience}
+            </Text>
+            <Text variant="muted">
+              <strong className="font-medium text-foreground">Use when:</strong> {whenToUse}
+            </Text>
+            <Text variant="muted">
+              <strong className="font-medium text-foreground">Avoid when:</strong> {whenNotToUse}
+            </Text>
+          </Stack>
           {await Promise.all(
             examples.map(async (ex) => {
               const previewDemo = examplePreviews[ex.title];
               return (
                 <Stack key={ex.title} gap={3}>
-                  {previewDemo ? (
-                    <ComponentPreview demo={previewDemo} detail={`Live preview: ${ex.title}`} hasProps={false} />
-                  ) : null}
+                  {previewDemo ? <ComponentPreview demo={previewDemo} hasProps={false} /> : null}
                   {await highlightedTs(ex.code, ex.title)}
                 </Stack>
               );
             }),
           )}
+          <ComponentExportsPanel symbols={symbols} wraps={wraps} />
         </Stack>
       </Section>
 
       {hasProps ? (
         <Section title="Props">
           <Stack gap={3} id="props">
-            <PropsTable file={propsFile!} name={propsName!} />
+            <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} />
           </Stack>
         </Section>
       ) : null}
@@ -175,9 +200,11 @@ export async function ComponentPage({
         </Section>
       ) : null}
 
-      <Section title="Troubleshooting">
-        <Text>{troubleshooting}</Text>
-      </Section>
+      {troubleshooting ? (
+        <Section title="Troubleshooting">
+          <Text>{troubleshooting}</Text>
+        </Section>
+      ) : null}
     </Stack>
   );
 }
