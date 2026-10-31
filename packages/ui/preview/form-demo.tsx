@@ -60,7 +60,7 @@ export function FormDemo({
   messages?: FormDemoMessages;
   onSave?: (values: DemoValues) => Promise<void>;
 }) {
-  const form = useValidatedForm<DemoValues>(createDemoSchema(messages), {
+  const form = useValidatedForm(createDemoSchema(messages), {
     defaultValues: { name: "" },
   });
 

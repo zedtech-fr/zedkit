@@ -1462,8 +1462,12 @@ export function useOnlineStatus(): boolean;
 // @public (undocumented)
 export function useUiMessages(): ZedkitUiMessages;
 
+// Warning: (ae-forgotten-export) The symbol "SchemaForResolver" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "InputOf" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "OutputOf" needs to be exported by the entry point index.d.ts
+//
 // @public
-export function useValidatedForm<TFieldValues extends FieldValues>(schema: Parameters<typeof zodResolver>[0], options?: Omit<UseFormProps<TFieldValues, any>, "resolver">): UseFormReturn<TFieldValues, any, TFieldValues>;
+export function useValidatedForm<TSchema extends SchemaForResolver>(schema: TSchema, options?: Omit<UseFormProps<InputOf<TSchema>, any, OutputOf<TSchema>>, "resolver">): UseFormReturn<InputOf<TSchema>, any, OutputOf<TSchema>>;
 
 // @public
 export function withIdentityDarkPair(tokens: IdentityTokens, previous?: IdentityTokens): IdentityTokens;
