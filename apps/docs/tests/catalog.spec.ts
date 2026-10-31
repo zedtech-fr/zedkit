@@ -135,7 +135,7 @@ test("catalog result maturity chips keep a decorative icon", async ({ page }) =>
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
   const badges = page.locator("a[data-badge-link]");
   const badgeCount = await badges.count();
-  expect(badgeCount).toBeGreaterThan(0);
+  expect(badgeCount).toBe(47);
   await expect(badges.locator("svg[aria-hidden='true']")).toHaveCount(badgeCount);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,

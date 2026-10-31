@@ -145,13 +145,10 @@ test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("home gallery maturity badges keep a decorative icon", async ({ page }) => {
+test("home gallery shows no maturity badges", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const badges = page.locator("#components a[data-badge-link]");
-  const count = await badges.count();
-  expect(count).toBeGreaterThan(0);
-  await expect(badges.locator("svg[aria-hidden='true']")).toHaveCount(count);
+  await expect(page.locator("#components a[data-badge-link]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -201,7 +198,7 @@ test.describe("home gallery maturity badges light/dark (#753)", () => {
       await page.goto(BASE, { waitUntil: "networkidle" });
       const section = page.locator("#components");
       await section.scrollIntoViewIfNeeded();
-      await expect(section.locator("a[data-badge-link]").first()).toBeVisible();
+      await expect(section.getByRole("link").first()).toBeVisible();
       await section.screenshot({ path: `test-results/home-maturity-gallery-${mode}.png` });
     });
   }

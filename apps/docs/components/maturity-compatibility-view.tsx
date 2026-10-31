@@ -20,14 +20,30 @@ import { maturityBadgeVariant } from "@/lib/maturity-status";
 
 // Visitor wording for the same limits as docs/catalog/README.md#maturity.
 const MATURITY_LIMITS = [
-  { status: "planned", limit: "Documented, not built yet. No code and no tests." },
-  { status: "alpha", limit: "Built, but the API may still change. Tests, docs, or review can still be missing." },
+  {
+    status: "stable",
+    limit:
+      "No badge = stable: semver-protected. Tested through the public API, accessible for UI, documented, API frozen under semver.",
+    showBadge: false,
+  },
   {
     status: "beta",
-    limit: "Tested through the public interface, documented with an example, and reviewed. UI entries also have accessibility checks and a gallery preview. Ready for a first try. Not proven in a real app yet.",
+    limit:
+      "Beta: tested, documented, accessible; the API may still change in a minor, with a migration note; not covered by the semver guarantee.",
+    showBadge: true,
   },
-  { status: "stable", limit: "Used by at least two real apps. Breaking changes follow semver. Documented." },
-  { status: "deprecated", limit: "Do not start a new use. The entry names its replacement and will be removed later." },
+  {
+    status: "alpha",
+    limit:
+      "Alpha: works, but the API can change in any release; not covered by the semver guarantee.",
+    showBadge: true,
+  },
+  { status: "planned", limit: "Documented, not built yet. No code and no tests.", showBadge: true },
+  {
+    status: "deprecated",
+    limit: "Do not start a new use. The entry names its replacement and will be removed later.",
+    showBadge: true,
+  },
 ] as const;
 
 function CountsTable() {
@@ -84,15 +100,20 @@ export function MaturityCompatibilityView() {
         <Stack gap={4}>
           {MATURITY_LIMITS.map((row) => (
             <Stack key={row.status} gap={2}>
-              <Badge variant={maturityBadgeVariant(row.status)} className="w-fit">
-                {row.status}
-              </Badge>
+              {row.showBadge ? (
+                <Badge variant={maturityBadgeVariant(row.status)} className="w-fit">
+                  {row.status}
+                </Badge>
+              ) : (
+                <Text className="font-medium">No badge</Text>
+              )}
               <Text>{row.limit}</Text>
             </Stack>
           ))}
           <Text variant="muted">
-            Breaking changes ship through changesets and semver (0.x today). Check each package{" "}
-            <code>CHANGELOG.md</code> before upgrading.
+            Packages at 1.0.0 carry stable catalog entries under real semver. Alpha and beta entries
+            in the same package are excluded from that guarantee — check each need&apos;s badge (or
+            lack of one) before you ship.
           </Text>
         </Stack>
       </Section>

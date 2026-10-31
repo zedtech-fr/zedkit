@@ -33,8 +33,9 @@ test("maturity page explains each badge on the page", async ({ page }) => {
   await page.goto(`${BASE}/docs/maturity-and-compatibility`, { waitUntil: "networkidle" });
   const heading = page.getByRole("heading", { name: "What a badge means", level: 2 });
   await expect(heading).toBeVisible();
-  await expect(page.getByText("Built, but the API may still change.")).toBeVisible();
-  await expect(page.getByText("Not proven in a real app yet.")).toBeVisible();
+  await expect(page.getByText(/No badge = stable: semver-protected/)).toBeVisible();
+  await expect(page.getByText(/Beta: tested, documented, accessible/)).toBeVisible();
+  await expect(page.getByText(/Alpha: works, but the API can change/)).toBeVisible();
   await expect(page.getByRole("link", { name: "catalog README (Maturity)" })).toHaveCount(0);
   const counts = page.getByRole("heading", { name: "Current catalog counts", level: 2 });
   expect((await heading.boundingBox())!.y).toBeLessThan((await counts.boundingBox())!.y);
@@ -56,7 +57,7 @@ test("getting started documents install or copy paths", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#install-or-copy`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();
   await expect(page.getByRole("columnheader", { name: "Command" })).toBeVisible();
-  await expect(page.getByText(/Nothing in the catalog is labeled stable yet/)).toBeVisible();
+  await expect(page.getByText(/follow semver on packages at 1\.0\.0/i)).toBeVisible();
   await expect(page.getByText(/copied bricks are plain editable files/)).toBeVisible();
 });
 

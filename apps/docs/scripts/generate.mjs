@@ -179,21 +179,40 @@ function guidanceBlock(need, seeAlsoLinks) {
   return lines;
 }
 
+/** Stable needs: no frontmatter status and no inline badge (semver = no badge UX). */
+function maturityDocParts(need) {
+  if (need.status === "stable") {
+    return { frontmatterStatus: [], badgeImport: null, badgeLine: [] };
+  }
+  return {
+    frontmatterStatus: [`status: ${need.status}`],
+    badgeImport: `import { MaturityBadge } from "../../../components/maturity-badge";`,
+    badgeLine: [`<MaturityBadge status={${JSON.stringify(need.status)}} />`, ""],
+  };
+}
+
 function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
   const pageTitle = need.shortName ?? need.need;
   const propsPriority = spec.propsPriority ?? null;
+  const seeAlsoLinks = related.map((link) => `[${link.title}](${link.href})`);
+  const maturity = maturityDocParts(need);
   const head = [
     "---",
     `title: ${JSON.stringify(pageTitle)}`,
     `description: ${JSON.stringify(metaDescription(need, folder))}`,
-    `status: ${need.status}`,
+    ...maturity.frontmatterStatus,
     "---",
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
+  ];
+  if (maturity.badgeImport) head.push(maturity.badgeImport);
+  head.push(
     `import { ComponentPage } from "../../../components/component-page";`,
     "",
+    ...maturity.badgeLine,
+    ...guidanceBlock(need, seeAlsoLinks),
     "<ComponentPage",
     `  packageName={${JSON.stringify(pkg)}}`,
     `  version={${JSON.stringify(version)}}`,
@@ -218,7 +237,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
     `  related={${JSON.stringify(related)}}`,
     "/>",
     "",
-  ];
+  );
   if (prose) head.push(prose);
   return head.join("\n");
 }
@@ -296,24 +315,25 @@ function writeGuidePages(outDir) {
 }
 
 function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
+  const maturity = maturityDocParts(need);
   const head = [
     "---",
     `title: ${JSON.stringify(need.need)}`,
     `description: ${JSON.stringify(metaDescription(need, folder))}`,
-    `status: ${need.status}`,
+    ...maturity.frontmatterStatus,
     "---",
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
-    `import { MaturityBadge } from "../../../components/maturity-badge";`,
-    `import { Tab, Tabs } from "fumadocs-ui/components/tabs";`,
   ];
+  if (maturity.badgeImport) head.push(maturity.badgeImport);
+  head.push(`import { Tab, Tabs } from "fumadocs-ui/components/tabs";`);
   if (rich || prose?.includes("<ComponentPreview")) head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
   if (rich && rich.propsFile && rich.propsName) {
     head.push(`import { PropsTable } from "../../../components/props-table";`);
   }
   head.push(`import { ComponentWrapsLine } from "../../../components/component-wraps-line";`);
-  head.push("", `<MaturityBadge status={${JSON.stringify(need.status)}} />`, "");
+  head.push("", ...maturity.badgeLine);
   head.push(...guidanceBlock(need, seeAlsoLinks));
   if (rich) {
     const hasProps = Boolean(rich.propsFile && rich.propsName);
