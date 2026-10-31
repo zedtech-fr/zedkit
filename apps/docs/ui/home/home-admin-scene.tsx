@@ -1,5 +1,5 @@
 import { Badge, Button, ProgressBar, Stack, StatusLabel, Text } from "@zedtech/zedkit-ui";
-import { HOME_CARD_CONTENT_GAP } from "@/ui/home/home-rhythm";
+import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 const SCENE_TITLE_CLASS =
   "font-(family-name:--zk-font-display) text-2xl leading-tight font-semibold text-balance";
@@ -8,7 +8,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   return (
     <Stack gap={1}>
       <Text className="font-(family-name:--zk-font-display) text-xl font-semibold">{value}</Text>
-      <Text variant="muted" className="text-xs">{label}</Text>
+      <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>{label}</Text>
     </Stack>
   );
 }
