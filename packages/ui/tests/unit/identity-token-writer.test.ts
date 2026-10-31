@@ -114,12 +114,12 @@ describe("token to CSS var writer", () => {
     const css = tokensToCss(identityPresets.press, DRAFT);
     expect(css.startsWith(`${DRAFT} {`)).toBe(true);
     expect(css).toContain("--spacing: 0.2rem");
-    expect(css).toContain("--zk-border-width: 2px");
+    expect(css).toContain("--zk-border-width: 1px");
     expect(css).toContain("--radius: 0px");
     expect(css).toContain("--zk-body-leading: 1.55");
     expect(css).toContain("--zk-heading-tracking: -0.015em");
     expect(css).toContain("--background: 45 35% 94%");
-    expect(css).toContain("--zk-shadow-sm: 0 0 0 0 transparent");
+    expect(css).toContain("--zk-shadow-sm: 0 1px 2px hsl(0 0% 5% / 0.06)");
     expect(css).toContain("--zk-font-display:");
   });
 

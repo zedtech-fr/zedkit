@@ -1,5 +1,11 @@
 # @zedtech/zedkit-server
 
+## 0.3.2
+
+### Patch Changes
+
+- fa7ce48: Declare `engines.node` (`>=22`) on every published package; CI blocks tarballs that omit it (reliability R33).
+
 ## 0.3.1
 
 ### Patch Changes
