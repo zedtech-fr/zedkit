@@ -1,7 +1,7 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const docsAppRoot = join(fileURLToPath(new URL(".", import.meta.url)), "..");
+const docsAppRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 /** Canonical UI quickstart copy-paste files (docs home + getting-started + CI smoke). */
 export const UI_QUICKSTART_SNIPPETS_DIR = join(docsAppRoot, "home-quickstart", "snippets");
