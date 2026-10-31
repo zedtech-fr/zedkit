@@ -402,7 +402,7 @@ export function HomeUseCasesSection() {
                   id={`use-case-tab-${useCase.id}`}
                   aria-selected={selected}
                   aria-controls={`use-case-panel-${useCase.id}`}
-                  variant={selected ? "default" : "outline"}
+                  variant={selected ? "secondary" : "outline"}
                   size="sm"
                   className="min-h-11 shrink-0"
                   onClick={() => setActiveId(useCase.id)}
@@ -419,7 +419,7 @@ export function HomeUseCasesSection() {
           >
             <UseCasePreview key={active.id} useCase={active} />
           </div>
-          <Button asChild variant="ghost" className="h-11 w-fit px-0 text-primary underline-offset-4 hover:underline">
+          <Button asChild variant="link" size="sm" className="w-fit">
             <Link href="/docs/ui/design-your-identity">See all six identities</Link>
           </Button>
         </Stack>

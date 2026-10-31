@@ -7,6 +7,11 @@
 #nd-page .prose > h2 {
   font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem);
   line-height: 1.2;
+  scroll-margin-top: var(--zk-docs-scroll-offset, var(--spacing-heading-scroll));
+}
+
+#nd-page .prose > h3 {
+  scroll-margin-top: var(--zk-docs-scroll-offset, var(--spacing-heading-scroll));
 }
 
 /* Badge links inside prose keep the badge look: no link underline. */
