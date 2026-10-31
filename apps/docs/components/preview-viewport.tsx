@@ -94,7 +94,11 @@ export function PreviewViewport({
       data-component-preview={a11yRoot ? "primary" : true}
       {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}
     >
-      {a11yRoot ? <div className="max-md:hidden">{toolbar}</div> : toolbar}
+      {a11yRoot ? (
+        <Stack className="max-md:hidden">{toolbar}</Stack>
+      ) : (
+        toolbar
+      )}
       <Stack
         className={cn(
           "rounded-lg border border-border bg-muted/40 p-4 md:p-6",

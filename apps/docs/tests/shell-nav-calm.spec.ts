@@ -2,7 +2,11 @@ import { expect, test } from "@playwright/test";
 
 import { featuredPackageVersion } from "../content/gallery";
 
-const RELEASES_LABEL = new RegExp(`v${featuredPackageVersion.replace(/\./g, "\\.")} \\(releases\\)`);
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const RELEASES_LABEL = new RegExp(`v${escapeRegExp(featuredPackageVersion)} \\(releases\\)`);
 
 const VIEWPORTS = [
   { name: "390", width: 390, height: 844 },
