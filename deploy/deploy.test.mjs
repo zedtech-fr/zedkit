@@ -95,13 +95,13 @@ exec bash -c "$2"
 while [[ "\${1:-}" == -* ]]; do shift; done
 dest="\${@: -1}"
 dest="\${dest#*:}"
-files=("\${@:1:\$#-1}")
-if [[ "\$dest" == */ ]]; then
-  mkdir -p "\$dest"
-  cp "\${files[@]}" "\$dest"
+files=("\${@:1:$#-1}")
+if [[ "$dest" == */ ]]; then
+  mkdir -p "$dest"
+  cp "\${files[@]}" "$dest"
 else
-  mkdir -p "\$(dirname "\$dest")"
-  cp "\${files[0]}" "\$dest"
+  mkdir -p "$(dirname "$dest")"
+  cp "\${files[0]}" "$dest"
 fi
 `,
   );
@@ -109,10 +109,10 @@ fi
     join(bin, "rsync"),
     `#!/bin/bash
 args=()
-for a in "\$@"; do
-  case "\$a" in
+for a in "$@"; do
+  case "$a" in
     *:*) args+=("\${a#*:}") ;;
-    *) args+=("\$a") ;;
+    *) args+=("$a") ;;
   esac
 done
 exec /usr/bin/rsync "\${args[@]}"
@@ -124,22 +124,22 @@ exec /usr/bin/rsync "\${args[@]}"
 set -euo pipefail
 state="${state}"
 remote="${"${DEPLOY_MOCK_REMOTE}"}"
-if [[ -f "\$state/suggest.pid" ]]; then
-  old="\$(cat "\$state/suggest.pid")"
-  kill "\$old" 2>/dev/null || true
+if [[ -f "$state/suggest.pid" ]]; then
+  old="$(cat "$state/suggest.pid")"
+  kill "$old" 2>/dev/null || true
   for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
-    kill -0 "\$old" 2>/dev/null || break
+    kill -0 "$old" 2>/dev/null || break
     sleep 0.05
   done
-  kill -9 "\$old" 2>/dev/null || true
+  kill -9 "$old" 2>/dev/null || true
 fi
 set -a
-source "\$remote/suggest.env"
+source "$remote/suggest.env"
 set +a
-export PORT="\$SUGGEST_PORT"
-cd "\$remote/suggest"
-nohup node server.mjs >> "\$state/suggest.log" 2>&1 &
-echo \$! > "\$state/suggest.pid"
+export PORT="$SUGGEST_PORT"
+cd "$remote/suggest"
+nohup node server.mjs >> "$state/suggest.log" 2>&1 &
+echo $! > "$state/suggest.pid"
 for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50; do
   if node --input-type=module -e 'import net from "node:net"; const s = net.connect(Number(process.env.PORT), "127.0.0.1", () => { s.end(); process.exit(0); }); s.on("error", () => process.exit(1));'; then
     exit 0
@@ -147,38 +147,38 @@ for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27
   sleep 0.05
 done
 echo "suggest did not listen" >&2
-cat "\$state/suggest.log" >&2 || true
+cat "$state/suggest.log" >&2 || true
 exit 1
 `,
   );
   writeExec(
     join(bin, "docker"),
     `#!/bin/bash
-printf '%s\\n' "\$*" >> "${state}/docker.log"
-if [[ "\$1" == "run" ]]; then
+printf '%s\\n' "$*" >> "${state}/docker.log"
+if [[ "$1" == "run" ]]; then
   exit 0
 fi
-if [[ "\$1" != "compose" ]]; then
-  echo "mock docker: unexpected \$*" >&2
+if [[ "$1" != "compose" ]]; then
+  echo "mock docker: unexpected $*" >&2
   exit 1
 fi
 shift
-cmd="\$1"
+cmd="$1"
 shift
-case "\$cmd" in
+case "$cmd" in
   exec)
-    case "\$*" in
+    case "$*" in
       *reload*)
         [[ -f "${state}/caddy-up" ]]
-        exit \$?
+        exit $?
         ;;
     esac
     exit 1
     ;;
   ps)
-    case "\$*" in
+    case "$*" in
       *suggest*)
-        if [[ -f "${state}/suggest.pid" ]] && kill -0 "\$(cat "${state}/suggest.pid")" 2>/dev/null; then
+        if [[ -f "${state}/suggest.pid" ]] && kill -0 "$(cat "${state}/suggest.pid")" 2>/dev/null; then
           echo suggest
         fi
         exit 0
@@ -191,15 +191,15 @@ case "\$cmd" in
     exit 0
     ;;
   up)
-    case "\$*" in
+    case "$*" in
       *suggest*)
         "${state}/start-suggest.sh"
-        exit \$?
+        exit $?
         ;;
       *)
         touch "${state}/caddy-up"
         "${state}/start-suggest.sh"
-        exit \$?
+        exit $?
         ;;
     esac
     ;;
