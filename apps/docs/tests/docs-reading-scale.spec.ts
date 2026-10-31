@@ -24,7 +24,7 @@ test("docs shell keeps the reading-scale floor under the default identity", asyn
   expect(tracking).toBeGreaterThan(-0.03);
 });
 
-test("a scoped demo inside docs keeps its own identity scale", async ({ page }) => {
+test("a scoped demo inside docs keeps the shared identity scale", async ({ page }) => {
   await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
   const scoped = await page.evaluate(() => {
     const scope = document.createElement("div");
@@ -38,5 +38,5 @@ test("a scoped demo inside docs keeps its own identity scale", async ({ page }) 
     scope.remove();
     return out;
   });
-  expect(scoped).toBe("10px");
+  expect(scoped).toBe("12px");
 });

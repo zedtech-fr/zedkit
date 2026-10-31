@@ -16,6 +16,7 @@ import { dirname, join, sep } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { parseFrontmatter } from "./frontmatter.js";
 import { kitDir, readManifest, type KitManifest } from "./kit.js";
+import { danglingSkillRefs, skillRefFiles } from "./skill-refs.js";
 
 /** Providers that get an installer layer or shared-source wiring. */
 export type Provider = "claude" | "cursor" | "codex";
@@ -135,6 +136,11 @@ function plan(kit: string, manifest: KitManifest, preset: string) {
     if (!existsSync(join(kit, "commands", `${name}.md`))) throw new Error(`kit has no command "${name}"`);
   }
   const licences = readdirSync(join(kit, "skills")).filter((f) => f.startsWith("LICENSE-"));
+  const issues = danglingSkillRefs(skillRefFiles(kit, skills, manifest.agents, commands), new Set(skills));
+  if (issues.length > 0) {
+    const detail = issues.map((issue) => `${issue.path}: ${issue.message}`).join("; ");
+    throw new Error(`preset "${preset}" has dangling skill references: ${detail}`);
+  }
   return { skills, licences, agents: manifest.agents, commands };
 }
 

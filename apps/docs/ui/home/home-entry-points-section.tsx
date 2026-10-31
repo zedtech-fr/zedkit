@@ -28,6 +28,7 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
       containerWidth="wide"
       title="Choose an area"
       id="entry-points"
+      className="max-md:hidden"
       description="Four package families in the catalog, with up-to-date counts on each card."
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>

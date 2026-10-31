@@ -24,7 +24,7 @@ const HomeUseCasesSection = dynamic(
   () => import("@/ui/home/home-use-cases-section").then((mod) => ({ default: mod.HomeUseCasesSection })),
   {
     loading: () => (
-      <section id="use-cases" aria-busy="true" className="min-h-[140vh] w-full max-w-none scroll-mt-24" />
+      <section id="use-cases" aria-busy="true" className="min-h-96 w-full max-w-none scroll-mt-24" />
     ),
   },
 );
@@ -86,7 +86,7 @@ export function HomeHero({
           </Stack>
         </Stack>
       </Container>
-      <Container id="demo" width="wide" className="scroll-mt-24 py-section-lg">
+      <Container width="wide" className="scroll-mt-24 py-section-lg">
         <HomeHeroDashboard />
       </Container>
       <HomeUseCasesSection />

@@ -21,7 +21,10 @@ test.describe("home dashboard mobile (#388)", () => {
     });
     expect(bordered, JSON.stringify(bordered)).toMatchObject({ ok: true });
 
-    const toolbar = page.locator("[data-demo-toolbar]");
+    const card = page.locator("[data-home-dashboard-card]");
+    await card.scrollIntoViewIfNeeded();
+
+    const toolbar = card.locator("[data-demo-toolbar]");
     await expect(toolbar).toBeVisible();
     const toolbarRow = toolbar.locator("> div").last();
     const tops = await toolbarRow.locator("button, [role=combobox]").evaluateAll((nodes) =>
@@ -30,7 +33,7 @@ test.describe("home dashboard mobile (#388)", () => {
     expect(tops.length).toBeGreaterThanOrEqual(2);
     expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(4);
 
-    const actionStacks = page.locator("[data-demo-row-actions]");
+    const actionStacks = card.locator("[data-demo-row-actions]");
     await expect(actionStacks.first()).toBeVisible();
     const stacked = await actionStacks.first().evaluate((row) => {
       const buttons = row.querySelectorAll("button");
@@ -46,7 +49,9 @@ test.describe("home dashboard mobile (#388)", () => {
 
   test("edit sheet keeps side gutters, a visible handle, and clears the bottom edge", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Edit console" }).click();
+    const card = page.locator("[data-home-dashboard-card]");
+    await card.scrollIntoViewIfNeeded();
+    await card.getByRole("button", { name: "Edit console" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible({ timeout: 10_000 });
     await expect(dialog).toHaveAttribute("data-vaul-drawer-direction", "bottom");
