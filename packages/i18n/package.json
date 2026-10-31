@@ -66,5 +66,8 @@
     "react": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

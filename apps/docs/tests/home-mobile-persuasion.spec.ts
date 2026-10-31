@@ -11,7 +11,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
   test("persuasion copy uses the shared 14px body role with comfortable leading", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#scenarios .text-home-persuasion").first().waitFor();
+    await page.locator("#use-cases").scrollIntoViewIfNeeded();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -22,13 +22,19 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
         return { fontSize, lineHeight };
       };
 
-      const scenarios = document.querySelector("#scenarios");
-      const scenarioIntro = scenarios?.querySelector('[data-slot="heading"] + [data-slot="text"]');
-      const scenarioGoal = scenarios?.querySelector(".text-home-persuasion");
+      const getStarted = document.querySelector("#get-started");
+      const startCopy = getStarted?.querySelector(".text-home-persuasion");
+
+      const components = document.querySelector("#components");
+      const componentsCopy = components?.querySelector(".text-home-persuasion");
+
+      const useCases = document.querySelector("#use-cases");
+      const useCaseWhy = useCases?.querySelector(".text-home-persuasion");
 
       return {
-        scenarioIntro: read(scenarioIntro),
-        scenarioGoal: read(scenarioGoal),
+        startCopy: read(startCopy),
+        componentsCopy: read(componentsCopy),
+        useCaseWhy: read(useCaseWhy),
       };
     });
 
