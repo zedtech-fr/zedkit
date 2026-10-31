@@ -6,6 +6,7 @@ import { highlight } from "fumadocs-core/highlight";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import {
+  Heading,
   Section,
   Stack,
   Text,
@@ -196,7 +197,12 @@ export async function ComponentPage({
               const previewDemo = examplePreviews[ex.title];
               return (
                 <Stack key={ex.title} gap={3}>
-                  {previewDemo ? <ComponentPreview demo={previewDemo} hasProps={false} /> : null}
+                  {previewDemo ? (
+                    <>
+                      <Heading level={3}>{ex.title}</Heading>
+                      <ComponentPreview demo={previewDemo} hasProps={false} />
+                    </>
+                  ) : null}
                   {await highlightedTs(ex.code, ex.title)}
                 </Stack>
               );
