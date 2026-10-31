@@ -67,7 +67,12 @@ function latestChangelogEntry(pkgDir) {
   const release = lines.findIndex((line) => line.startsWith("## "));
   const bullet = lines.slice(release + 1).find((line) => line.startsWith("- "));
   if (release < 0 || !bullet) throw new Error(`generator: no changelog bullet found for ${pkgDir}.`);
-  const entry = bullet.replace(/^- (?:[0-9a-f]{7,}: )?/, "").trim();
+  // Visitor copy: drop inline-code backticks so the home line reads as prose (#1090).
+  const entry = bullet
+    .replace(/^- (?:[0-9a-f]{7,}: )?/, "")
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/`/g, "")
+    .trim();
   const sentence = entry.match(/^[^.]+\./);
   return sentence ? sentence[0] : entry;
 }
