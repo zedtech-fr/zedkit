@@ -154,6 +154,7 @@ jobs:
           pnpm --filter @zedtech/zedkit-docs run e2e
           kill "$(cat /tmp/docs-e2e.pid)"
         env:
+          DOCS_E2E_PROJECT: chromium
           DOCS_E2E_SHARD: ${{ matrix.shard }}
           DOCS_E2E_SHARD_TOTAL: "3"
 
@@ -199,6 +200,8 @@ jobs:
           curl -sf -o /dev/null http://127.0.0.1:3100/llms.txt
           pnpm --filter @zedtech/zedkit-docs run smoke
           kill "$(cat /tmp/docs.pid)"
+        env:
+          DOCS_E2E_PROJECT: chromium
       - uses: actions/upload-artifact@v4
         if: success()
         with:
