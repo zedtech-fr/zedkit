@@ -157,6 +157,38 @@ test("home gallery maturity badges keep a decorative icon", async ({ page }) => 
   expect(overflow).toBe(true);
 });
 
+test("home gallery cards show live previews on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const section = page.locator("#components");
+  await section.scrollIntoViewIfNeeded();
+  const cards = section.locator("[data-home-gallery-card]");
+  await expect(cards).toHaveCount(6);
+  for (let i = 0; i < 6; i++) {
+    const card = cards.nth(i);
+    await expect(card.getByRole("link").first()).toBeVisible();
+    const preview = card.locator("[data-home-gallery-preview]");
+    await expect(preview).toBeVisible({ timeout: 15_000 });
+    await expect(card.locator("code")).toHaveCount(0);
+    await expect(
+      preview.locator("button, input, [data-slot='badge'], .rounded-xl.border, [role='switch']"),
+    ).not.toHaveCount(0);
+  }
+});
+
+test("home gallery layout stays sane on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const section = page.locator("#components");
+  await section.scrollIntoViewIfNeeded();
+  await expect(section.locator("[data-home-gallery-card]").first()).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  );
+  expect(overflow).toBe(true);
+  await section.screenshot({ path: "test-results/home-gallery-390.png" });
+});
+
 test.describe("home gallery maturity badges light/dark (#753)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
