@@ -1,6 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page } from "@playwright/test";
 
+import { A11Y_AXE_EXCLUDES } from "./a11y-exceptions.mjs";
+
+export { A11Y_AXE_EXCLUDES };
+
 export const A11Y_GATE_RULES = [
   "button-name",
   "link-name",
@@ -9,11 +13,9 @@ export const A11Y_GATE_RULES = [
   "aria-valid-attr",
   "scrollable-region-focusable",
   "heading-order",
+  "document-title",
+  "html-has-lang",
 ] as const;
-
-/** Shiki samples and the home dashboard card (tracked separately on #389). */
-export const A11Y_AXE_EXCLUDES =
-  "pre, [data-rehype-pretty-code-figure], [data-home-dashboard-card], [role='tabpanel'] figure, #nd-sidebar, [id^='type-table-']";
 
 export async function assertA11yGate(page: Page, selector = "body"): Promise<void> {
   const results = await new AxeBuilder({ page })
