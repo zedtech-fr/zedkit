@@ -57,7 +57,7 @@ function skipUndef<T extends object>(obj: T): Partial<T> {
 }
 
 /** Single day in a popover. Pass `id` to pair with `FieldLabel`. */
-export function DatePicker(props: DatePickerProps) {
+export function DatePicker(input: DatePickerProps) {
   const {
     value,
     defaultValue,
@@ -71,8 +71,8 @@ export function DatePicker(props: DatePickerProps) {
     endMonth,
     defaultMonth,
     today,
-  } = props;
-  const isControlled = "value" in props;
+  } = input;
+  const isControlled = "value" in input;
   const messages = useUiMessages();
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState(defaultValue);
@@ -121,7 +121,7 @@ export function DatePicker(props: DatePickerProps) {
 }
 
 /** Start and end day in a popover. Pass `id` to pair with `FieldLabel`. */
-export function DateRangePicker(props: DateRangePickerProps) {
+export function DateRangePicker(input: DateRangePickerProps) {
   const {
     value,
     defaultValue,
@@ -135,8 +135,8 @@ export function DateRangePicker(props: DateRangePickerProps) {
     endMonth,
     defaultMonth,
     today,
-  } = props;
-  const isControlled = "value" in props;
+  } = input;
+  const isControlled = "value" in input;
   const messages = useUiMessages();
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState(defaultValue);

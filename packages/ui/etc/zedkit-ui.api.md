@@ -355,7 +355,7 @@ export interface DataTableToolbarProps {
 }
 
 // @public
-export function DatePicker(props: DatePickerProps): JSX.Element;
+export function DatePicker(input: DatePickerProps): JSX.Element;
 
 // @public (undocumented)
 export type DatePickerProps = {
@@ -374,7 +374,7 @@ export type DatePickerProps = {
 };
 
 // @public
-export function DateRangePicker(props: DateRangePickerProps): JSX.Element;
+export function DateRangePicker(input: DateRangePickerProps): JSX.Element;
 
 // @public (undocumented)
 export type DateRangePickerProps = {
