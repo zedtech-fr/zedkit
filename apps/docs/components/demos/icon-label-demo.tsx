@@ -8,7 +8,7 @@ export function IconLabelDemo() {
   return (
     <Stack gap={3} className="min-w-0 rounded-lg border border-border bg-background p-4">
       <Stack gap={1}>
-        <Heading level={3}>Spring campaign</Heading>
+        <Heading level={2}>Spring campaign</Heading>
         <Text variant="muted" className="text-sm">
           Landing page, launch email and three social posts.
         </Text>

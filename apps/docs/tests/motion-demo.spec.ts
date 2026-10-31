@@ -35,12 +35,16 @@ test.describe("motion utilities demo", () => {
 
   test("hover and stagger examples have a live preview next to their code", async ({ page }) => {
     await page.goto(MOTION_PAGE, { waitUntil: "networkidle" });
-    const lift = page.locator(".hover-lift").filter({ hasText: "Website relaunch" });
+    const hoverPreview = page.locator("[data-component-preview]").filter({ hasText: "Website relaunch" }).first();
+    await hoverPreview.scrollIntoViewIfNeeded();
+    const lift = hoverPreview.locator(".hover-lift").filter({ hasText: "Website relaunch" });
     await expect(lift).toBeVisible();
-    await expect(page.getByRole("button", { name: "Presses down on click" })).toBeVisible();
-    const tasks = page.locator("[data-stagger]").first();
+    await expect(hoverPreview.getByRole("button", { name: "Presses down on click" })).toBeVisible();
+    const staggerPreview = page.locator("[data-component-preview]").filter({ hasText: "Write the launch email" }).first();
+    await staggerPreview.scrollIntoViewIfNeeded();
+    const tasks = staggerPreview.locator("[data-stagger]").first();
     await expect(tasks.getByText("Write the launch email")).toBeVisible();
-    await page.getByRole("button", { name: "Replay", exact: true }).click();
+    await staggerPreview.getByRole("button", { name: "Replay", exact: true }).click();
     await expect(tasks.getByText("Publish the sale banner")).toBeVisible();
   });
 });

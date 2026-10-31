@@ -13,7 +13,7 @@ test.describe("home dashboard mobile (#388)", () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 
     const bordered = await page.locator("[data-home-dashboard-card]").evaluate((card) => {
-      const demo = card.querySelector('[aria-label="Interactive admin dashboard demo"]');
+      const demo = card.querySelector('[aria-label="Interactive admin dashboard demo in the hero"]');
       if (!demo) return { ok: false, reason: "demo missing" };
       const cardBorder = getComputedStyle(card).borderTopWidth;
       const demoBorder = getComputedStyle(demo).borderTopWidth;

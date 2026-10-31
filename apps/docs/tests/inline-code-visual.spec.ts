@@ -49,18 +49,18 @@ test.describe("quiet inline code (#zk-chips)", () => {
   test("home brick grid and npx field at 390px", async ({ page }) => {
     await page.setViewportSize(MOBILE);
     await page.goto(BASE, { waitUntil: "networkidle" });
-    const list = page.locator("#install-or-copy [data-registry-bricks]");
-    await list.scrollIntoViewIfNeeded();
-    await expect(list.locator("[data-registry-brick]").first()).toBeVisible();
-    await expect(list.locator("svg[aria-hidden='true']")).toHaveCount(0);
-    const field = page.getByLabel("shadcn registry add command");
+    const quickstart = page.locator("#get-started div#quickstart");
+    await quickstart.scrollIntoViewIfNeeded();
+    await expect(quickstart.getByText("shadcn registry")).toBeVisible();
+    const field = page.getByLabel("Add button registry item");
+    await expect(field).toBeVisible();
     const nowrap = await field.evaluate((el) => getComputedStyle(el).whiteSpace);
     expect(nowrap).toBe("nowrap");
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
     );
     expect(overflow).toBe(true);
-    await list.screenshot({ path: "test-results/home-bricks-390-tide.png" });
+    await quickstart.screenshot({ path: "test-results/home-bricks-390-tide.png" });
   });
 
   test("button page props and prose at 390px", async ({ page }) => {

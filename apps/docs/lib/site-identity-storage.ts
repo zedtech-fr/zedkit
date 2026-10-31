@@ -4,7 +4,7 @@ const DOCS_SITE_IDENTITY_STORAGE_KEY = "zk-docs-site-identity";
 /** Set to `"1"` when the visitor chose Apply to the whole site. */
 const DOCS_SITE_IDENTITY_OPT_IN_KEY = "zk-docs-site-identity-opt-in";
 
-const LEGACY_IDENTITY_KEYS = ["zk-identity", "zk-identity-custom", "zk-identity-named"] as const;
+const LEGACY_IDENTITY_KEYS = ["zk-identity", "zk-identity-custom"] as const;
 
 function docsSiteCustomStorageKey(): string {
   return `${DOCS_SITE_IDENTITY_STORAGE_KEY}-custom`;

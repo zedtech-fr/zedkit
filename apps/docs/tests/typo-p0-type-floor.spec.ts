@@ -10,10 +10,12 @@ test.describe("typo P0 type floor @390", () => {
   test("form controls including docs search compute at least 16px", async ({ page }) => {
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
 
-    await page.getByRole("button", { name: "Search the documentation" }).click();
-    const searchbox = page.getByRole("searchbox");
-    await expect(searchbox).toBeFocused();
-    expect(Number.parseFloat(await searchbox.evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
+    await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    const searchInput = dialog.locator("input").first();
+    await expect(searchInput).toBeFocused();
+    expect(Number.parseFloat(await searchInput.evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
 
     await page.keyboard.press("Escape");
     await page.goto("/docs/ui/build-validated-forms-with-labels-errors-and-pending-state", { waitUntil: "networkidle" });

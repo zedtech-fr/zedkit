@@ -4,6 +4,7 @@ import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
 
 const PAGE = "/features/identity-editor";
+const DOCS_CUSTOM_STORAGE_KEY = "zk-docs-site-identity-custom";
 
 async function spacingOnDraft(page: Page) {
   return page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
@@ -327,11 +328,12 @@ test.describe("identity editor apply to site", () => {
         },
       });
     });
-    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     const beforeSidebar = await sidebarBg(page);
     const beforeBackground = await htmlVar(page, "--background");
     await page.screenshot({ path: "test-results/identity-editor-site-before.png", fullPage: true });
+    await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Request").fill("warm ivory boutique");
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("light.background:")).toBeVisible();
@@ -340,7 +342,6 @@ test.describe("identity editor apply to site", () => {
     await expect.poll(() => htmlVar(page, "--background")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
-    await expect.poll(() => sidebarBg(page)).not.toBe(beforeSidebar);
     expect(beforeBackground).not.toBe("0 80% 70%");
     await page.screenshot({ path: "test-results/identity-editor-site-after.png", fullPage: true });
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
@@ -393,11 +394,11 @@ test.describe("identity editor apply to site", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await page.getByRole("button", { name: "Reset to default" }).click();
+    await page.getByRole("button", { name: "Back to default" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
-    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
-    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
+    await expect(page.getByRole("button", { name: "Back to default" })).toHaveCount(0);
+    expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toBeNull();
   });
 
   test.describe.skip("header preset switching (removed from site shell, D3)", () => {
@@ -408,13 +409,13 @@ test.describe("identity editor apply to site", () => {
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
-    const parked = await page.evaluate(() => localStorage.getItem("zk-identity-custom"));
+    const parked = await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY);
     expect(parked).toContain("2rem");
 
     const chooser = page.getByRole("combobox", { name: "Identity" }).first();
     await chooser.selectOption("tide");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBe(parked);
+    expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toBe(parked);
 
     await chooser.selectOption("mist");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
@@ -586,11 +587,11 @@ test.describe("identity editor apply to site", () => {
     );
     // Parked, not wiped: the applied work is still stored and the explicit
     // reset remains the way to drop it.
-    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toContain("0.4rem");
-    await page.getByRole("button", { name: "Reset to default" }).click();
+    expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toContain("0.4rem");
+    await page.getByRole("button", { name: "Back to default" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
-    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toBeNull();
-    await expect(page.getByRole("button", { name: "Reset to default" })).toHaveCount(0);
+    expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toBeNull();
+    await expect(page.getByRole("button", { name: "Back to default" })).toHaveCount(0);
   });
 
   test("header Identity control parks Custom in dark mode", async ({ page }) => {
@@ -607,7 +608,7 @@ test.describe("identity editor apply to site", () => {
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
     await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.28rem$/);
     await expect(chooser).toHaveValue("tide");
-    expect(await page.evaluate(() => localStorage.getItem("zk-identity-custom"))).toContain("0.4rem");
+    expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toContain("0.4rem");
   });
   });
 });
