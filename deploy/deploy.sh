@@ -38,6 +38,14 @@ reconcile_suggest() {
   ssh "$target" "cd '$remote' && prev=\$(cat .suggest-fingerprint 2>/dev/null || true) && running=\$(docker compose ps --status running -q suggest || true) && if [ \"\$prev\" != '$fp' ] || [ -z \"\$running\" ]; then docker compose up -d --no-deps --force-recreate suggest; fi && printf '%s\n' '$fp' > .suggest-fingerprint"
 }
 
+recreate_caddy() {
+  if ! ssh "$target" "cd '$remote' && docker compose up -d --no-deps --force-recreate caddy && docker compose ps --status running -q caddy | grep -q ."; then
+    ssh "$target" "cd '$remote' && docker compose ps -a && docker compose logs --no-color --tail 200 caddy" || true
+    echo "deploy: caddy did not come up after recreate" >&2
+    return 1
+  fi
+}
+
 reload_caddy() {
   if ! ssh "$target" "cd '$remote' && docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --force"; then
     echo "deploy: reload failed, recreating once" >&2
@@ -108,7 +116,10 @@ if [ "$mode" = "prod" ]; then
 
   scp -q "$root/deploy/compose.yaml" "$root/deploy/compose.override.yaml" "$target:$remote/"
   ssh "$target" "cd '$remote' && if [ -L current ]; then basename \"\$(readlink current)\" > .previous-release; fi && ln -sfn 'releases/$release_id' current"
-  reload_caddy
+  # Bind mounts of ./current/* resolve the symlink when the container is
+  # created, so a reload keeps serving the old release. Recreate caddy so it
+  # mounts the new target.
+  recreate_caddy
   reconcile_suggest "$fp"
   github_out "switched=true"
 else
