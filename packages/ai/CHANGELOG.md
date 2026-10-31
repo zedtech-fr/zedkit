@@ -1,5 +1,11 @@
 # @zedtech/zedkit-ai
 
+## 0.9.0
+
+### Minor Changes
+
+- 58fa0aa: Fail install and validate when an installed skill, agent, or command references a skill absent from the selected preset. Fix vendored skills that pointed at unshipped grilling, prototype, or setup-matt-pocock-skills calls.
+
 ## 0.8.1
 
 ### Patch Changes
