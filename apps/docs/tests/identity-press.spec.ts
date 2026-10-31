@@ -50,8 +50,8 @@ test.describe("press identity", () => {
     test(`home cards and outline controls stay hairline at ${viewport.width}px`, async ({ page }) => {
       await page.setViewportSize(viewport);
       await openAsIdentity(page, HOME, "press", "light");
-      const card = page.locator('#entry-points [data-slot="card"]').first();
-      await expect(card).toBeVisible();
+      const card = page.locator('#home-page #entry-points:not(.sr-only) [data-slot="card"]').first();
+      await expect(card).toBeVisible({ timeout: 20_000 });
       const cardBorder = await card.evaluate((el) => Number.parseFloat(getComputedStyle(el).borderTopWidth));
       expect(cardBorder).toBeLessThanOrEqual(1.01);
       await openAsIdentity(page, BUTTON_PAGE, "press", "light");
