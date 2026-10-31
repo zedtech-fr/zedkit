@@ -1,0 +1,13 @@
+/**
+ * UI transition matrix (clear / disable / update / rollback).
+ * Each row is a component plus transition; tests live in focused files
+ * and are listed here so coverage stays explicit.
+ *
+ * | Component        | disable              | clear (controlled)     | update (record) |
+ * |------------------|----------------------|------------------------|-----------------|
+ * | MultiSelect      | multi-select-transitions.test.tsx | —              | —               |
+ * | DatePicker       | —                    | date-picker-transitions.test.tsx | date-picker-transitions.test.tsx |
+ * | DateRangePicker  | —                    | date-picker-transitions.test.tsx | date-picker-transitions.test.tsx |
+ * | DataTablePagination | data-table.test.tsx (form submit) | —           | —               |
+ */
+export {};

@@ -20,15 +20,15 @@ function MultiSelect(props: MultiSelectProps) {
   const loading = props.loading ?? false;
 
   const removeItem = (item: (typeof selectedItems)[number]) => {
+    if (props.disabled) return;
     selection.removeSelectedItem(item);
-    props.onValueChange?.((props.value ?? []).filter((entry) => entry !== item.value));
   };
 
   return (
     <Popover open={combobox.isOpen}>
       <PopoverAnchor asChild>
         <div className="w-full space-y-2" data-slot="multi-select">
-          <MultiSelectChips items={selectedItems} onRemove={removeItem} selection={selection} />
+          <MultiSelectChips items={selectedItems} onRemove={removeItem} selection={selection} disabled={props.disabled} />
           <div className="relative">
             <Input
               {...inputProps}
