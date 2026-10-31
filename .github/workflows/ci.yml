@@ -151,7 +151,7 @@ jobs:
             [ "$code" = "200" ] && break
             sleep 5
           done
-          pnpm --filter @zedtech/zedkit-docs run e2e
+          pnpm --filter @zedtech/zedkit-docs run e2e -- --project=chromium
           kill "$(cat /tmp/docs-e2e.pid)"
         env:
           DOCS_E2E_SHARD: ${{ matrix.shard }}
@@ -197,7 +197,7 @@ jobs:
           curl -sf -o /dev/null http://127.0.0.1:3100/robots.txt
           curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
           curl -sf -o /dev/null http://127.0.0.1:3100/llms.txt
-          pnpm --filter @zedtech/zedkit-docs run smoke
+          pnpm --filter @zedtech/zedkit-docs run smoke -- --project=chromium
           kill "$(cat /tmp/docs.pid)"
       - uses: actions/upload-artifact@v4
         if: success()

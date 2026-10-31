@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 const ci = Boolean(process.env.CI);
 const shardCurrent = Number(process.env.DOCS_E2E_SHARD ?? "");
@@ -20,4 +20,9 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:3100",
     trace: ci ? "on-first-retry" : "off",
   },
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+  ],
 });
