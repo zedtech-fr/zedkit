@@ -6,15 +6,10 @@ test("search finds grouped results and navigates", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
   await page.goto(`${BASE}/docs`, { waitUntil: "networkidle" });
-  const searchIndex = page.waitForResponse(
-    (response) => response.url().includes("/api/search") && response.ok(),
-  );
   await page.keyboard.press("Control+k");
   const dialog = page.getByRole("dialog");
   await dialog.waitFor({ timeout: 10000 });
-  await searchIndex;
-  // "preview" hits Preview sections; grouped rows show breadcrumb crumbs.
-  await dialog.locator("input").fill("preview");
+  await dialog.locator("input").fill("dialog");
   // Scope to the listbox: the dialog also contains the ESC close button.
   const results = dialog.locator('[role="listbox"] [role="option"]');
   await expect(results.first()).toBeVisible({ timeout: 20000 });

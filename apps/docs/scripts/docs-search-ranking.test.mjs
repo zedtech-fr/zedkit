@@ -94,6 +94,26 @@ test("button query injects the Button page when the index omitted it", () => {
   assert.equal(ranked[0]?.content, "Button");
 });
 
+test("dialog query injects the Dialog page when the index omitted it", () => {
+  const items = [
+    page("/docs/ui/slide-in-a-drawer-panel", "Slide in a drawer panel"),
+    section("/docs/ui/slide-in-a-drawer-panel", "Dialog vs drawer"),
+  ];
+  const ranked = rankAndGroupSearchItems(items, "dialog", canonicalByHref);
+  assert.equal(ranked[0]?.url, dialogHref.href);
+  assert.equal(ranked[0]?.content, "Dialog");
+});
+
+test("dialog query ignores index rows with a missing url", () => {
+  const items = [
+    { id: "bad", type: "heading", content: "Dialog usage" },
+    page(dialogHref.href, "Open modal dialogs"),
+  ];
+  assert.doesNotThrow(() => rankAndGroupSearchItems(items, "dialog", canonicalByHref));
+  const ranked = rankAndGroupSearchItems(items, "dialog", canonicalByHref);
+  assert.equal(ranked[0]?.url, dialogHref.href);
+});
+
 test("exact canonical tier beats prefix matches on other pages", () => {
   const byQuery = buildCanonicalQueryIndex(canonicalByHref);
   const buttonTier = rankTierForRecord(page(buttonHref.href, "Trigger actions with buttons"), "button", byQuery, canonicalByHref);

@@ -7,6 +7,7 @@
  * @returns {string}
  */
 export function pagePathFromUrl(url) {
+  if (typeof url !== "string" || url.length === 0) return "";
   const hash = url.indexOf("#");
   return hash === -1 ? url : url.slice(0, hash);
 }
@@ -165,7 +166,7 @@ export function rankAndGroupSearchItems(items, query, canonicalByHref) {
   if (!query.trim()) return [...items];
 
   const canonical = findCanonicalForQuery(query, canonicalByHref);
-  let list = [...items];
+  let list = items.filter((item) => typeof item.url === "string" && item.url.length > 0);
   if (canonical && !list.some((item) => item.type === "page" && pagePathFromUrl(item.url) === canonical.href)) {
     list = [syntheticCanonicalPage(canonical), ...list];
   }
@@ -182,6 +183,7 @@ export function rankAndGroupSearchItems(items, query, canonicalByHref) {
       return { group, index, path, tier };
     })
     .filter(({ path, group }) => {
+      if (!path) return false;
       const page = group.find((item) => item.type === "page");
       if (!page) return true;
       if (seenPaths.has(path)) return false;
