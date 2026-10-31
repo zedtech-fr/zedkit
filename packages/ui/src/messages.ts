@@ -6,6 +6,7 @@ export type ZedkitUiMessages = {
   progress: string;
   filter: string;
   empty: string;
+  clearFilters: string;
   previous: string;
   next: string;
   /** Template with `{page}` and `{pageCount}`. */
@@ -47,6 +48,7 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   progress: "Progress",
   filter: "Filter…",
   empty: "No results.",
+  clearFilters: "Clear filters",
   previous: "Previous",
   next: "Next",
   pageOf: "Page {page} of {pageCount}",
@@ -82,6 +84,7 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   progress: "Progression",
   filter: "Filtrer…",
   empty: "Aucun résultat.",
+  clearFilters: "Effacer les filtres",
   previous: "Précédent",
   next: "Suivant",
   pageOf: "Page {page} sur {pageCount}",

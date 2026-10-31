@@ -1117,6 +1117,7 @@ import { Label, SecretField } from "@zedtech/zedkit-ui";
 - Purpose: Tables with sorting, filtering, pagination plus loading/error/empty states.
 - When to use: For record lists over ~20 rows or needing search.
 - When not to use: For a handful of static rows — map a simple table instead.
+- Props: `emptyMessage` + optional `emptyAction` when `data` is empty; `noResultsMessage` overrides the filter-miss copy (default kit `empty`). Filter miss shows **Clear filters** automatically. Error, loading, and empty zones render outside the horizontal table scroller; `DataTableEmpty` remains for custom table bodies.
 - A11y: Native table semantics (column headers associate by position); head/cell/caption spacing comes from `--spacing-table-*` theme tokens.
 - See also: `Show key-value details and a live indicator`
 - Examples: Simple, Standalone pagination, Standalone empty row, Standalone toolbar
@@ -1126,7 +1127,8 @@ import { DataTable, createDataTableColumns } from "@zedtech/zedkit-ui";
 const helper = createDataTableColumns<Item>();
 const columns = [helper.accessor("name", { header: "Name" })];
 <DataTable columns={columns} data={items} loading={isLoading}
-  error={error} pageSize={20} />
+  error={error} emptyMessage="No orders yet." emptyAction={<Button>Add order</Button>}
+  pageSize={20} />
 ```
 
 ```ts

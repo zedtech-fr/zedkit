@@ -2310,11 +2310,11 @@
           "whenToUse": "For record lists over ~20 rows or needing search.",
           "whenNotToUse": "For a handful of static rows — map a simple table instead.",
           "derivedFrom": null,
-          "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />",
+          "example": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} emptyMessage=\"No orders yet.\" emptyAction={<Button>Add order</Button>}\n  pageSize={20} />",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} pageSize={20} />"
+              "code": "import { DataTable, createDataTableColumns } from \"@zedtech/zedkit-ui\";\nconst helper = createDataTableColumns<Item>();\nconst columns = [helper.accessor(\"name\", { header: \"Name\" })];\n<DataTable columns={columns} data={items} loading={isLoading}\n  error={error} emptyMessage=\"No orders yet.\" emptyAction={<Button>Add order</Button>}\n  pageSize={20} />"
             },
             {
               "title": "Standalone pagination",

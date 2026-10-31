@@ -312,6 +312,7 @@ export interface DataTableProps<TData extends RowData> {
     columns: ReadonlyArray<DataTableColumn<TData, any>>;
     // (undocumented)
     data: TData[];
+    emptyAction?: React_2.ReactNode;
     // (undocumented)
     emptyMessage?: string;
     // (undocumented)
@@ -320,6 +321,7 @@ export interface DataTableProps<TData extends RowData> {
     filterPlaceholder?: string;
     // (undocumented)
     loading?: boolean;
+    noResultsMessage?: string;
     // (undocumented)
     pageSize?: number;
 }
@@ -1584,6 +1586,7 @@ export type ZedkitUiMessages = {
     progress: string;
     filter: string;
     empty: string;
+    clearFilters: string;
     previous: string;
     next: string;
     pageOf: string;
