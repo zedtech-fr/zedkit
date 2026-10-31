@@ -150,23 +150,23 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   /* Code blocks: one frame (the figure), never a frame inside a frame; the scroll area stays inside it. */
   figure.shiki {
     background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
-    border: var(--zk-border-width) solid hsl(var(--zk-glass-edge, var(--border)) / var(--zk-glass-edge-alpha, 1));
+    border: var(--zk-border-width) solid hsl(var(--border) / 0.35);
     border-radius: var(--radius-xl);
     box-shadow: var(--zk-shadow-sm);
     -webkit-backdrop-filter: var(--zk-glass-filter, none);
     backdrop-filter: var(--zk-glass-filter, none);
     max-width: 100%;
   }
-  figure.shiki [role="region"] {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / 0.5) transparent;
-  }
-  /* Copy button: quiet until hovered or focused. */
   figure.shiki > div:first-child {
     background: hsl(var(--card));
+    border-bottom: var(--zk-border-width) solid hsl(var(--border) / 0.25);
     border-radius: var(--radius-md);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+  figure.shiki [role="region"] {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.5) transparent;
   }
   /* Inside a tab group the group is the frame: its code block carries no border of its own. */
   [role="tabpanel"] > figure.shiki:only-child {
