@@ -51,7 +51,7 @@ function CustomIdentityBar() {
           applyIdentity(DEFAULT_IDENTITY);
         }}
       >
-        Reset to default
+        Back to default
       </Button>
     </Stack>
   );
