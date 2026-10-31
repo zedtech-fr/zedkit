@@ -18,6 +18,7 @@ export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
         { text: "Add SEO to a Next.js app", url: "/docs/add-seo-to-nextjs", active: "url" },
         { text: "zedkit and shadcn/ui", url: "/docs/zedkit-and-shadcn", active: "url" },
         { text: "Maturity and compatibility", url: "/docs/maturity-and-compatibility", active: "url" },
+        { text: "Note list example", url: "/examples/note-list", active: "url" },
       ],
     },
     { text: "UI changelog", url: changelogHref, external: true },

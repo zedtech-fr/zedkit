@@ -19,6 +19,7 @@ export const SITE_HEADER_INTERNAL_PATHS = [
   "/docs/add-seo-to-nextjs",
   "/docs/zedkit-and-shadcn",
   "/docs/maturity-and-compatibility",
+  "/examples/note-list",
 ];
 
 /**
