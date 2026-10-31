@@ -1,5 +1,12 @@
 # @zedtech/zedkit-devtools
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [45657b6]
+  - @zedtech/zedkit-ui@0.9.2
+
 ## 0.2.8
 
 ### Patch Changes
