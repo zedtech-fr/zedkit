@@ -7,7 +7,7 @@ import {
   HOME_SMALL_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 
-export function HomeHeroLead({ version, latestChange }: { version: string; latestChange: string }) {
+export function HomeHeroLead() {
   return (
     <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start">
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
@@ -26,14 +26,9 @@ export function HomeHeroLead({ version, latestChange }: { version: string; lates
           <Link href="#quickstart">Start building</Link>
         </Button>
       </Stack>
-      <Stack gap={1} className="max-w-2xl">
-        <Text variant="muted" className={HOME_SMALL_TEXT_CLASS}>
-          MIT · React 19 · Tailwind 4 · npm or source
-        </Text>
-        <Text variant="muted" className={HOME_SMALL_TEXT_CLASS}>
-          Latest in v{version}: {latestChange}
-        </Text>
-      </Stack>
+      <Text variant="muted" className={`max-w-2xl ${HOME_SMALL_TEXT_CLASS}`}>
+        MIT · React 19 · Tailwind 4 · npm or source
+      </Text>
     </Stack>
   );
 }

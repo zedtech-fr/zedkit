@@ -60,23 +60,6 @@ function packageVersion(pkgDir) {
   return JSON.parse(text).version ?? "0.0.0";
 }
 
-/** First sentence of the newest changelog bullet for one package dir. */
-function latestChangelogEntry(pkgDir) {
-  const text = readFileSync(join(ROOT, "packages", pkgDir, "CHANGELOG.md"), "utf8");
-  const lines = text.split("\n");
-  const release = lines.findIndex((line) => line.startsWith("## "));
-  const bullet = lines.slice(release + 1).find((line) => line.startsWith("- "));
-  if (release < 0 || !bullet) throw new Error(`generator: no changelog bullet found for ${pkgDir}.`);
-  // Visitor copy: drop inline-code backticks so the home line reads as prose (#1090).
-  const entry = bullet
-    .replace(/^- (?:[0-9a-f]{7,}: )?/, "")
-    .replace(/`([^`]*)`/g, "$1")
-    .replace(/`/g, "")
-    .trim();
-  const sentence = entry.match(/^[^.]+\./);
-  return sentence ? sentence[0] : entry;
-}
-
 function metaDescription(need, folder) {
   const purpose = (need.purpose ?? "").trim();
   if (purpose.length === 0) {
@@ -514,11 +497,10 @@ export function generate(outDir) {
     needs: Object.values(catalog.packages).reduce((n, entry) => n + entry.needs.length, 0),
   };
   const uiVersion = packageVersion("ui");
-  const uiLatestChange = latestChangelogEntry("ui");
   const uiChangelogUrl =
     "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
   const uiReleasesUrl = "https://github.com/zedtech-fr/zedkit/releases";
-  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const homeCuratedGallery: GalleryCard[] = ${JSON.stringify(homeCuratedGallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\nexport const featuredPackageReleasesUrl: string = ${JSON.stringify(uiReleasesUrl)};\nexport const featuredPackageLatestChange: string = ${JSON.stringify(uiLatestChange)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const homeCuratedGallery: GalleryCard[] = ${JSON.stringify(homeCuratedGallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\nexport const featuredPackageReleasesUrl: string = ${JSON.stringify(uiReleasesUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
     components: gallery.length,
     livePreviews: gallery.filter((card) => card.demo).length,
   })};\n`;

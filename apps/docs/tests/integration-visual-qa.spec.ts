@@ -27,6 +27,10 @@ async function assertNoVisibleNativeSelectOnHome(page: import("@playwright/test"
   expect(visible).toBe(0);
 }
 
+async function assertNoLatestInHero(page: import("@playwright/test").Page) {
+  await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
+}
+
 for (const theme of ["light", "dark"] as const) {
   for (const viewport of VIEWPORTS) {
     test(`clean storage shell QA ${theme} ${viewport.width}px`, async ({ page }) => {
@@ -35,6 +39,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.goto(HOME, { waitUntil: "networkidle" });
       await assertShellIdentity(page);
       await assertNoVisibleNativeSelectOnHome(page);
+      await assertNoLatestInHero(page);
     });
 
     test(`dirty legacy storage shell QA ${theme} ${viewport.width}px`, async ({ page }) => {
@@ -47,6 +52,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.goto(HOME, { waitUntil: "networkidle" });
       await assertShellIdentity(page);
       await assertNoVisibleNativeSelectOnHome(page);
+      await assertNoLatestInHero(page);
     });
   }
 }

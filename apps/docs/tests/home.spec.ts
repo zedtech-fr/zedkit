@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {
   catalogStats,
-  featuredPackageLatestChange,
   featuredPackageVersion,
   uiGalleryStats,
 } from "../content/gallery";
@@ -68,17 +67,15 @@ test("home hero offers two ways in and keeps the other paths lower (#1038)", asy
   await expect(page.getByRole("link", { name: new RegExp(`v${featuredPackageVersion}`) }).filter({ visible: true })).toHaveCount(1);
 });
 
-test("home hero shows a short proof and the latest change (#1057)", async ({ page }) => {
+test("home hero shows proof counts without release notes on the hero (#1057)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
   await expect(page.getByText("MIT · React 19 · Tailwind 4 · npm or source")).toBeVisible();
+  await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
   await expect(page.locator("#proofs")).toContainText(
     `${catalogStats.packages} packages, ${catalogStats.needs} needs`,
   );
   await expect(page.locator("#proofs")).toContainText(`${uiGalleryStats.components} UI catalog entries`);
-  await expect(
-    page.getByText(`Latest in v${featuredPackageVersion}: ${featuredPackageLatestChange}`),
-  ).toBeVisible();
   const versionLinks = page.getByRole("link", { name: `v${featuredPackageVersion} (releases)` });
   await expect(versionLinks.first()).toHaveAttribute(
     "href",

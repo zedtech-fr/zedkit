@@ -49,16 +49,12 @@ const HomeHeroDashboard = dynamic(
 
 export function HomeHero({
   featuredPackage,
-  version,
-  latestChange,
 }: {
   featuredPackage: string;
   version: string;
   releasesHref: string;
-  /** Still passed by the page; the short hero proof no longer prints the counts. */
   stats: { packages: number; needs: number };
   uiStats: { components: number; livePreviews: number };
-  latestChange: string;
 }) {
   return (
     <>
@@ -68,7 +64,7 @@ export function HomeHero({
             gap={HOME_SECTION_CONTENT_GAP}
             className="grid w-full min-w-0 items-start gap-8 lg:grid-cols-2 lg:items-center"
           >
-            <HomeHeroLead version={version} latestChange={latestChange} />
+            <HomeHeroLead />
             <HomeHeroPreview />
           </Stack>
           <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-secondary-actions>

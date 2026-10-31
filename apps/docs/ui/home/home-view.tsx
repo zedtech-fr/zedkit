@@ -27,7 +27,6 @@ export function HomeView({
   featuredPackage,
   version,
   releasesHref,
-  latestChange,
   uiGalleryStats,
   scenarios,
   entryPoints,
@@ -39,7 +38,6 @@ export function HomeView({
   featuredPackage: string;
   version: string;
   releasesHref: string;
-  latestChange: string;
   uiGalleryStats: { components: number; livePreviews: number };
   scenarios: HomeScenario[];
   entryPoints: HomeEntryPoint[];
@@ -53,7 +51,6 @@ export function HomeView({
         releasesHref={releasesHref}
         stats={stats}
         uiStats={uiGalleryStats}
-        latestChange={latestChange}
       />
       <HomeBelowHero
         curatedGallery={curatedGallery}
