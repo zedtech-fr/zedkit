@@ -20,9 +20,9 @@ export default function CatalogPage() {
     url: pageUrl("/catalog"),
   });
   return (
-    <>
+    <div data-catalog-shell>
       <JsonLd data={jsonLd} />
       <CatalogViewFromUrl entries={catalogIndex} />
-    </>
+    </div>
   );
 }

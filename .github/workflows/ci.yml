@@ -70,6 +70,8 @@ jobs:
       - run: bash scripts/check-api-report.sh
       - name: Docs static export SEO check
         run: node apps/docs/scripts/check-seo-export.mjs
+      - name: Docs home first-load JS budget
+        run: node apps/docs/scripts/check-first-load-budget.mjs
       - run: bash scripts/check-pack.sh
       - run: bash scripts/check-e2e-registered.sh
       - run: pnpm exec turbo run test

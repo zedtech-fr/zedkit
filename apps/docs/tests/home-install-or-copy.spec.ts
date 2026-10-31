@@ -23,15 +23,15 @@ test.describe("home install or copy block (#419)", () => {
 
     const aiSetup = page.locator("#ai-setup");
     const installOrCopy = page.locator("#install-or-copy");
-    const scenarios = page.locator("#scenarios");
+    const proofs = page.locator("#proofs");
     await expect(installOrCopy).toBeVisible();
 
     const aiBox = await aiSetup.boundingBox();
     const blockBox = await installOrCopy.boundingBox();
-    const scenariosBox = await scenarios.boundingBox();
-    expect(aiBox && blockBox && scenariosBox).toBeTruthy();
+    const proofsBox = await proofs.boundingBox();
+    expect(aiBox && blockBox && proofsBox).toBeTruthy();
     expect(blockBox!.y).toBeGreaterThan(aiBox!.y);
-    expect(blockBox!.y).toBeLessThan(scenariosBox!.y);
+    expect(blockBox!.y).toBeLessThan(proofsBox!.y);
 
     await page.getByRole("button", { name: "Copy package install command" }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(PACKAGE_CMD);

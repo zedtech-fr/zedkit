@@ -69,16 +69,15 @@ describe("identity token schema", () => {
       maison: read("identities/maison.css"),
       glass: read("identities/glass.css"),
     };
+    const sharedScale = read("shared-type-scale.css");
     const fields = [
       ["spacing", "--spacing"],
       ["borderWidth", "--zk-border-width"],
       ["radius", "--radius"],
-      ["bodyLeading", "--zk-body-leading"],
     ] as const;
-    const headingFields = [
+    const sharedLeading = [
+      ["bodyLeading", "--zk-body-leading"],
       ["headingLeading", "--zk-heading-leading"],
-      ["headingTracking", "--zk-heading-tracking"],
-      ["labelTracking", "--zk-label-tracking"],
     ] as const;
     const colours = ["background", "foreground", "primary", "accent", "border"] as const;
     for (const [id, css] of Object.entries(looks) as [IdentityId, string][]) {
@@ -86,6 +85,16 @@ describe("identity token schema", () => {
       for (const [field, name] of fields) {
         expect(preset[field]).toBe(cssToken(css, name));
       }
+      for (const [field, name] of sharedLeading) {
+        const fromCss =
+          field === "bodyLeading" || id !== "mist" ? cssToken(sharedScale, name) : cssToken(css, name);
+        const expected = fromCss === "initial" ? "1.1" : fromCss;
+        expect(preset[field]).toBe(expected);
+      }
+      const headingFields = [
+        ["headingTracking", "--zk-heading-tracking"],
+        ["labelTracking", "--zk-label-tracking"],
+      ] as const;
       for (const [field, name] of headingFields) {
         const value = cssToken(css, name);
         if (!value || value === "initial") continue;
@@ -107,7 +116,7 @@ describe("token to CSS var writer", () => {
     expect(css).toContain("--spacing: 0.2rem");
     expect(css).toContain("--zk-border-width: 2px");
     expect(css).toContain("--radius: 0px");
-    expect(css).toContain("--zk-body-leading: 1.12");
+    expect(css).toContain("--zk-body-leading: 1.55");
     expect(css).toContain("--zk-heading-tracking: -0.015em");
     expect(css).toContain("--background: 45 35% 94%");
     expect(css).toContain("--zk-shadow-sm: 0 0 0 0 transparent");
