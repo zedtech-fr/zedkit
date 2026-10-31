@@ -4,6 +4,35 @@ import { expect, test, type Page } from "@playwright/test";
 const settled = (page: Page) =>
   page.waitForFunction(() => (document.querySelector("[data-search-bar]")?.getAnimations().length ?? 1) === 0);
 
+/** At maximum scroll, named controls still rendered underneath the floating magnifier. */
+const endOfPageOverlaps = (page: Page) =>
+  page.evaluate(async () => {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+    const magnifier = document
+      .querySelector("[data-search-pill] button[aria-label='Search the documentation']")
+      ?.getBoundingClientRect();
+    if (!magnifier) return ["missing phone search button"];
+    return [...document.querySelectorAll<HTMLElement>("main a, main button")]
+      .filter((element) => !element.closest("[data-search-pill]"))
+      .map((element) => {
+        const box = element.getBoundingClientRect();
+        const overlapWidth = Math.max(0, Math.min(box.right, magnifier.right) - Math.max(box.left, magnifier.left));
+        const overlapHeight = Math.max(0, Math.min(box.bottom, magnifier.bottom) - Math.max(box.top, magnifier.top));
+        return {
+          label: (element.getAttribute("aria-label") || element.textContent || element.tagName)
+            .trim()
+            .replace(/\s+/g, " ")
+            .slice(0, 80),
+          area: overlapWidth * overlapHeight,
+        };
+      })
+      .filter(({ area }) => area > 0)
+      .map(({ label }) => label);
+  });
+
 
 // Default look only: every built-in look joins this matrix once the identities are listed in the chooser.
 const SIZES = [
@@ -56,6 +85,15 @@ for (const size of SIZES) {
       expect(Math.abs(back.y - closed.y)).toBeLessThan(2);
     });
   }
+}
+
+for (const path of ["/docs/getting-started", "/docs/ui/trigger-actions-with-buttons"] as const) {
+  test(`end-of-page links scroll clear of phone search (${path})`, async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page.goto(path, { waitUntil: "networkidle" });
+    await expect(page.getByRole("button", { name: "Search the documentation" })).toBeVisible();
+    await expect.poll(() => endOfPageOverlaps(page)).toEqual([]);
+  });
 }
 
 test("Escape closes the phone search bar", async ({ page }) => {
