@@ -15,7 +15,7 @@ import {
 import { dirname, join, sep } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { parseFrontmatter } from "./frontmatter.js";
-import { kitDir, readManifest, type KitManifest } from "./kit.js";
+import { agentsForPreset, commandsForPreset, kitDir, readManifest, type KitManifest } from "./kit.js";
 import { danglingSkillRefs, skillRefFiles } from "./skill-refs.js";
 
 export type Provider = "claude" | "cursor" | "codex" | "muse";
@@ -26,7 +26,7 @@ export type Target = Provider;
 export type InstallOptions = {
   /** Project directory to install into. */
   dest: string;
-  /** Preset name from kit.json. Default `core`. */
+  /** Preset name from kit.json. Default `starter`. */
   preset?: string;
   /** Providers to wire. Default: all. */
   providers?: Provider[];
@@ -122,20 +122,21 @@ function plan(kit: string, manifest: KitManifest, preset: string) {
   for (const name of skills) {
     if (!existsSync(join(kit, "skills", name, "SKILL.md"))) throw new Error(`kit has no skill "${name}"`);
   }
-  for (const name of manifest.agents) {
+  const agents = agentsForPreset(manifest, preset);
+  for (const name of agents) {
     if (!existsSync(join(kit, "agents", `${name}.md`))) throw new Error(`kit has no agent "${name}"`);
   }
-  const commands = manifest.commands ?? [];
+  const commands = commandsForPreset(manifest, preset);
   for (const name of commands) {
     if (!existsSync(join(kit, "commands", `${name}.md`))) throw new Error(`kit has no command "${name}"`);
   }
   const licences = readdirSync(join(kit, "skills")).filter((f) => f.startsWith("LICENSE-"));
-  const issues = danglingSkillRefs(skillRefFiles(kit, skills, manifest.agents, commands), new Set(skills));
+  const issues = danglingSkillRefs(skillRefFiles(kit, skills, agents, commands), new Set(skills));
   if (issues.length > 0) {
     const detail = issues.map((issue) => `${issue.path}: ${issue.message}`).join("; ");
     throw new Error(`preset "${preset}" has dangling skill references: ${detail}`);
   }
-  return { skills, licences, agents: manifest.agents, commands };
+  return { skills, licences, agents, commands };
 }
 
 // The ladder section every AGENTS.md must carry, lifted from the bundled
@@ -283,7 +284,7 @@ export function installKit(options: InstallOptions): Result<Action[]> {
   if (!manifest.ok) return err(manifest.error);
   const ctx: Ctx = { dest: options.dest, kit, dryRun: options.dryRun ?? false, actions: [] };
   const run = tryCatch(() => {
-    const content = plan(kit, manifest.value, options.preset ?? "core");
+    const content = plan(kit, manifest.value, options.preset ?? "starter");
     installContent(ctx, content);
     for (const provider of options.providers ?? options.targets ?? ALL_PROVIDERS) {
       wireProvider(ctx, provider, content);
