@@ -3,7 +3,7 @@ title: Set up your coding agents
 description: Install @zedtech/zedkit-ai, run init for your editor, validate the kit layout, and undo changes — independent from the UI package.
 ---
 
-Hand-written tutorial. Commands match `prose/guides/snippets/ai-tutorial-*.sh`; CI runs the same flow in `verify-ai-agent-tutorial.mjs` against a temp directory.
+Every command on this page is run end-to-end in a scratch directory by automated checks.
 
 This guide is **optional**: you can use `@zedtech/zedkit-ui` or the core, server, and nest packages without installing the AI kit.
 
@@ -87,7 +87,7 @@ You already maintain team rules at the root:
 Use our internal style guide.
 ```
 
-Run the same `init` command. When `AGENTS.md` exists but lacks the kit ladder section, `init` **appends** the ladder instead of replacing your text ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). Run `validate` again; stdout should still be `ok`. CI covers this in `runExistingAgentsTutorial` (`apps/docs/fixtures/ai-agent-tutorial.mjs`).
+Run the same `init` command. When `AGENTS.md` exists but lacks the kit ladder section, `init` **appends** the ladder instead of replacing your text ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). Run `validate` again; stdout should still be `ok`. Automated checks cover this flow.
 
 ## What gets installed
 
@@ -130,10 +130,6 @@ There is no uninstall command; keep a commit before `init` so you can roll back.
 | `init` skips files | Expected when paths already exist — remove or rename the conflicting file, or use `--dry-run` to preview. |
 | Unknown provider | Use `cursor`, `claude`, `codex`, `muse`, or `all` only (`cli.test.ts` rejects unknown providers). |
 | Agent ignores instructions | Out of scope for `validate` — confirm your tool loads `.cursor/rules` or the provider copy `init` created. |
-
-## Verify in this repo
-
-`pnpm catalog:check` builds `@zedtech/zedkit-ai` and runs `node apps/docs/scripts/verify-ai-agent-tutorial.mjs`.
 
 ## Next steps
 
