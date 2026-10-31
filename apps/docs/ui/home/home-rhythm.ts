@@ -28,7 +28,7 @@ export const HOME_HERO_PREVIEW_SHELL_CLASS =
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 
 /** Secondary counts and labels (12–13px). */
-export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy text-muted-foreground";
+export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy";
 
 /** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
 export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 1270;

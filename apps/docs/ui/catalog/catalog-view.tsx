@@ -79,14 +79,14 @@ export function CatalogView({
       <Stack gap={8}>
       <Stack gap={2}>
         <Heading level={1}>Catalog</Heading>
-        <Text variant="muted">
+        <Text variant="muted" className="type-site-lead">
           Every zedkit need from the public catalog — filter by area, maturity, or search text. Share or reload
           keeps your filters in the URL.
         </Text>
       </Stack>
 
       <Stack gap={4} aria-labelledby="catalog-filters-heading">
-        <Heading level={2} id="catalog-filters-heading" className="text-lg">
+        <Heading level={2} id="catalog-filters-heading">
           Filters
         </Heading>
         <Stack gap={2}>

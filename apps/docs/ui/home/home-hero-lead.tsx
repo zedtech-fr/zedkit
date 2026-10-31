@@ -25,7 +25,7 @@ export function HomeHeroLead({
           </Text>
           <KitVersionLabel version={version} releasesHref={releasesHref} />
         </Stack>
-        <Heading level={1} className="max-w-3xl text-balance">
+        <Heading level={1} className="type-site-h1 max-w-3xl font-semibold text-balance">
           Build the parts you need. Keep the rest of your app.
         </Heading>
         <Text variant="muted" className="max-w-2xl" data-home-hero-sub="">
