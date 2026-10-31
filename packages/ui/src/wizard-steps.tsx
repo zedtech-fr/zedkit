@@ -4,6 +4,10 @@ import type * as React from "react";
 
 import { CheckIcon } from "lucide-react";
 
+import { formatMessage } from "@zedtech/zedkit-i18n";
+
+import { ProgressBar } from "./progress-bar.js";
+import { Text } from "./typography.js";
 import { cn } from "./utils.js";
 import { useUiMessages } from "./ui-provider.js";
 
@@ -86,18 +90,40 @@ function stepState(index: number, current: number): WizardStepState {
   return "todo";
 }
 
+function clampStepIndex(current: number, stepCount: number): number {
+  if (stepCount <= 0) return 0;
+  return Math.min(Math.max(current, 0), stepCount - 1);
+}
+
 export function WizardSteps({ steps, current, className }: WizardStepsProps) {
+  const messages = useUiMessages();
+  const active = clampStepIndex(current, steps.length);
+  const title = steps[active] ?? "";
+  const progress = steps.length > 0 ? ((active + 1) / steps.length) * 100 : 0;
+
   return (
-    <Wizard data-slot="wizard-steps" {...(className === undefined ? {} : { className })}>
-      {steps.map((step, index) => (
-        <WizardStep
-          key={step}
-          step={step}
-          index={index}
-          state={stepState(index, current)}
-          showConnector={index < steps.length - 1}
-        />
-      ))}
-    </Wizard>
+    <div data-slot="wizard-steps" className={cn("min-w-0 space-y-3", className)}>
+      <div className="space-y-2 sm:hidden">
+        <Text as="p" variant="muted" className="min-w-0 truncate">
+          {formatMessage(messages.wizardStepOf, {
+            step: active + 1,
+            stepCount: steps.length,
+            title,
+          })}
+        </Text>
+        <ProgressBar value={progress} max={100} label={messages.progress} />
+      </div>
+      <Wizard className="hidden sm:flex">
+        {steps.map((step, index) => (
+          <WizardStep
+            key={step}
+            step={step}
+            index={index}
+            state={stepState(index, current)}
+            showConnector={index < steps.length - 1}
+          />
+        ))}
+      </Wizard>
+    </div>
   );
 }
