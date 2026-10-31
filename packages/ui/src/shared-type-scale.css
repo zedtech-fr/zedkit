@@ -1,0 +1,67 @@
+/*
+ * Shared site type scale (P0 typography).
+ *
+ * Loaded after every identity file so `--text-*` and body leading stay
+ * consistent. Identities keep family, colour, radius, and tracking flavour
+ * only; optional ±1px nudge via --zk-type-base on an identity block later.
+ */
+:root[data-identity],
+[data-identity-scope][data-identity] {
+  --zk-type-base: 1rem;
+
+  /* Tailwind steps (16px body, 12px label, fixed ratios) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: var(--zk-type-base);
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --zk-body-leading: 1.6;
+  --zk-heading-leading: 1.1;
+
+  /* Semantic roles (site chrome + docs + home) */
+  --zk-type-h1-size: clamp(2rem, 2.5vw + 1.25rem, 3rem);
+  --zk-type-h1-weight: 600;
+  --zk-type-h1-leading: 1.1;
+  --zk-type-h1-tracking: -0.02em;
+
+  --zk-type-lead-size: clamp(1.0625rem, 0.25vw + 1rem, 1.25rem);
+  --zk-type-lead-weight: 400;
+  --zk-type-lead-leading: 1.5;
+
+  --zk-type-h2-size: clamp(1.5rem, 1vw + 1.25rem, 1.875rem);
+  --zk-type-h2-weight: 600;
+  --zk-type-h2-leading: 1.2;
+
+  --zk-type-h3-size: 1.125rem;
+  --zk-type-h3-weight: 600;
+  --zk-type-h3-leading: 1.3;
+
+  --zk-type-body-size: var(--zk-type-base);
+  --zk-type-body-weight: 400;
+  --zk-type-body-leading: 1.6;
+
+  --zk-type-small-size: 0.875rem;
+  --zk-type-small-weight: 400;
+  --zk-type-small-leading: 1.5;
+
+  --zk-type-label-size: 0.75rem;
+  --zk-type-label-weight: 500;
+  --zk-type-label-leading: 1.4;
+
+  --zk-type-nav-size: 0.875rem;
+  --zk-type-nav-weight: 500;
+  --zk-type-nav-leading: 1;
+}
+
+@media (max-width: 390px) {
+  :root[data-identity],
+  [data-identity-scope][data-identity] {
+    --zk-type-h1-size: 2rem;
+    --zk-type-lead-size: 1.0625rem;
+  }
+}

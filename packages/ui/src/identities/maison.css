@@ -44,7 +44,7 @@
   --sidebar-accent: 38 45% 90%;
   --radius: 2px;
 
-  /* Typography: families, scale, weight, tracking */
+  /* Typography: families, weight flavour, tracking (scale is shared) */
   --zk-font-sans: "Jost Variable", Jost, "Jost Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --zk-font-display: "Cormorant Variable", Cormorant, "Cormorant Variable Fallback", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --zk-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -56,22 +56,11 @@
   --font-weight-bold: 600;
   --tracking-tight: 0.02em;
   --tracking-wide: 0.2em;
-  --text-xs: 0.875rem;
-  --text-sm: 1rem;
-  --text-base: 1.125rem;
-  --text-lg: 1.375rem;
-  --text-xl: 1.625rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.25rem;
-  --text-4xl: 3rem;
-  --text-5xl: 3.75rem;
   --zk-heading-weight: 500;
   --zk-heading-tracking: 0.005em;
   --zk-heading-transform: none;
-  --zk-heading-leading: 1.12;
   --zk-label-transform: uppercase;
   --zk-label-tracking: 0.18em;
-  --zk-body-leading: 2;
 
   /* Spacing: base unit */
   --spacing: 0.3rem;
