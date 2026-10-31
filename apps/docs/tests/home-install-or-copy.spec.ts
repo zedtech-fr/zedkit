@@ -72,7 +72,9 @@ test.describe("home install or copy block (#419)", () => {
         return last ? Math.round(rect.bottom - last.bottom) : Math.round(rect.height);
       }),
     );
-    for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(96);
+    // Tide is the site default: its larger type scale leaves ~122px under the
+    // shorter card (was <=96 under Volt). Still guards against hollow cards.
+    for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(128);
   });
 
   test("published brick names keep a decorative icon", async ({ page }) => {

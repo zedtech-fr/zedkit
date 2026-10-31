@@ -3,8 +3,9 @@ import { expect, test } from "@playwright/test";
 import { probe } from "./identity-helpers";
 
 /*
- * Docs reading scale: the site identity ships a dense display scale (Volt:
- * 10px xs / 12px sm, -0.08em headings). Inside the docs shell, prose and
+ * Docs reading scale: Tide is the site default; scoped demos can still use a
+ * dense identity (Volt: 10px xs / 12px sm, -0.08em headings). Inside the docs
+ * shell, prose and
  * chrome keep a readable floor: 16px body, 13-14px labels, softened
  * tracking. Relative path: the config baseURL decides the port.
  */
