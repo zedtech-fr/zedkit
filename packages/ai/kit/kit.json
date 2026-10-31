@@ -1,5 +1,12 @@
 {
   "presets": {
+    "starter": [
+      "setup-ai",
+      "ground-truth",
+      "review",
+      "definition-of-done",
+      "orchestrate"
+    ],
     "core": [
       "ponytail",
       "ponytail-review",
@@ -61,5 +68,11 @@
     "audit",
     "orchestrate",
     "research"
-  ]
+  ],
+  "presetAgents": {
+    "starter": ["explorer", "verifier", "orchestrator"]
+  },
+  "presetCommands": {
+    "starter": ["setup-ai", "review"]
+  }
 }

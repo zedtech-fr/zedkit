@@ -45,15 +45,19 @@ describe("orchestrator agent", () => {
     expect(core).toContain("orchestrate");
   });
 
-  it("installs orchestrator files for core and full presets (cursor and claude)", () => {
+  it("installs orchestrator files for starter, core, and full presets (cursor and claude)", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
-    for (const preset of ["core", "full"] as const) {
+    for (const preset of ["starter", "core", "full"] as const) {
       for (const providers of [["cursor"] as const, ["claude"] as const]) {
         const dest = tempDir();
         install(dest, { preset, providers: [...providers] });
         expect(existsSync(join(dest, ".agents/agents/orchestrator.md"))).toBe(true);
-        expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(true);
+        if (preset === "starter") {
+          expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(false);
+        } else {
+          expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(true);
+        }
         for (const provider of providers) {
           expect(existsSync(join(dest, `.${provider}/agents/orchestrator.md`))).toBe(true);
         }

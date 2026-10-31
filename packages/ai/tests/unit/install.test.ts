@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
-import { readManifest } from "#kit.js";
+import { agentsForPreset, commandsForPreset, readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
 import { firstPartySkills, markdownFiles, put, SKILL, tempDir } from "./helpers.js";
 
@@ -14,14 +14,21 @@ function install(dest: string, options: Parameters<typeof installKit>[0] extends
 }
 
 describe("installKit", () => {
-  it("installs the core preset and wires both tools", () => {
+  it("installs the starter preset by default and wires both tools", () => {
     const dest = tempDir();
     install(dest);
     expect(existsSync(join(dest, "AGENTS.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/skills/ground-truth/SKILL.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/skills/review/SKILL.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/skills/setup-ai/SKILL.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/skills/ponytail"))).toBe(false);
     expect(existsSync(join(dest, ".agents/skills/LICENSE-ponytail-MIT"))).toBe(true);
     expect(existsSync(join(dest, ".agents/THIRD_PARTY_NOTICES.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/verifier.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/agents/explorer.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/plan.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/review.md"))).toBe(true);
     // Symlinks resolve through to real files.
     expect(readlinkSync(join(dest, ".claude/skills"))).toBe("../.agents/skills");
     expect(existsSync(join(dest, ".claude/skills/ground-truth/SKILL.md"))).toBe(true);
@@ -30,6 +37,16 @@ describe("installKit", () => {
     expect(existsSync(join(dest, ".cursor/agents/verifier.md"))).toBe(true);
     expect(readlinkSync(join(dest, "CLAUDE.md"))).toBe("AGENTS.md");
     expect(readFileSync(join(dest, ".cursor/rules/project.mdc"), "utf8")).toContain("alwaysApply: true");
+  });
+
+  it("starter preset stays small: five skills, three subagents, two commands", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const starter = manifest.value.presets.starter;
+    if (!Array.isArray(starter)) throw new Error("starter preset must list skills");
+    expect(starter).toHaveLength(5);
+    expect(agentsForPreset(manifest.value, "starter")).toHaveLength(3);
+    expect(commandsForPreset(manifest.value, "starter")).toHaveLength(2);
   });
 
   it("core preset validates clean: every command resolves to an installed skill", () => {
@@ -92,8 +109,11 @@ describe("installKit", () => {
   });
 
   it("copies only the preset's skills, and the full preset copies all", () => {
+    const starter = tempDir();
+    install(starter);
+    expect(existsSync(join(starter, ".agents/skills/triage"))).toBe(false);
     const core = tempDir();
-    install(core);
+    install(core, { preset: "core" });
     expect(existsSync(join(core, ".agents/skills/triage"))).toBe(false);
     const full = tempDir();
     install(full, { preset: "full" });
@@ -133,7 +153,7 @@ describe("installKit", () => {
     put(v1, "AGENTS.template.md", "t");
     put(v1, "THIRD_PARTY_NOTICES.md", "n");
     const dest = tempDir();
-    install(dest, { kit: v1 });
+    install(dest, { kit: v1, preset: "core" });
     writeFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "edited\n");
     const v2 = tempDir();
     put(v2, "kit.json", JSON.stringify({ presets: { core: ["alpha", "beta"] }, agents: [] }));
@@ -141,7 +161,7 @@ describe("installKit", () => {
     put(v2, "skills/beta/SKILL.md", "new\n");
     put(v2, "AGENTS.template.md", "t");
     put(v2, "THIRD_PARTY_NOTICES.md", "n");
-    const again = install(dest, { kit: v2 });
+    const again = install(dest, { kit: v2, preset: "core" });
     expect(readFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "utf8")).toBe("edited\n");
     expect(readFileSync(join(dest, ".agents/skills/beta/SKILL.md"), "utf8")).toBe("new\n");
     expect(again.find((a) => a.path === join(".agents", "skills", "beta"))?.kind).toBe("copy");
@@ -174,7 +194,7 @@ describe("installKit", () => {
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
     const dest = tempDir();
     put(dest, "AGENTS.md", "mine\n");
-    const actions = install(dest, { kit });
+    const actions = install(dest, { kit, preset: "core" });
     expect(actions.find((a) => a.path === "AGENTS.md")?.kind).toBe("skip");
     expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toBe("mine\n");
   });
@@ -207,7 +227,7 @@ describe("installKit", () => {
 
   it("links commands for claude but copies them as real files for cursor", () => {
     const dest = tempDir();
-    install(dest);
+    install(dest, { preset: "core" });
     expect(readFileSync(join(dest, ".agents/commands/review.md"), "utf8")).toContain("`review`");
     expect(readlinkSync(join(dest, ".claude/commands"))).toBe("../.agents/commands");
     expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(true);
@@ -244,7 +264,7 @@ describe("installKit", () => {
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
     const dest = tempDir();
-    install(dest, { kit });
+    install(dest, { kit, preset: "core" });
     expect(existsSync(join(dest, ".agents/commands"))).toBe(false);
   });
 
@@ -260,12 +280,12 @@ describe("installKit", () => {
     const missing = tempDir();
     put(missing, "kit.json", JSON.stringify({ presets: { core: ["alpha"] }, agents: [], commands: ["ghost"] }));
     put(missing, "skills/alpha/SKILL.md", "x");
-    const result = installKit({ dest: tempDir(), kit: missing });
+    const result = installKit({ dest: tempDir(), kit: missing, preset: "core" });
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.message).toContain('kit has no command "ghost"');
     const bad = tempDir();
     put(bad, "kit.json", JSON.stringify({ presets: { core: [] }, agents: [], commands: "nope" }));
-    const badResult = installKit({ dest: tempDir(), kit: bad });
+    const badResult = installKit({ dest: tempDir(), kit: bad, preset: "core" });
     expect(badResult.ok).toBe(false);
     if (!badResult.ok) expect(badResult.error.message).toContain("must be a string list");
   });
@@ -274,7 +294,7 @@ describe("installKit", () => {
     const kit = tempDir();
     put(kit, "kit.json", JSON.stringify({ presets: { core: ["ghost"] }, agents: [] }));
     put(kit, "skills/alpha/SKILL.md", "x");
-    const result = installKit({ dest: tempDir(), kit });
+    const result = installKit({ dest: tempDir(), kit, preset: "core" });
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.message).toContain('no skill "ghost"');
   });
@@ -286,7 +306,7 @@ describe("installKit", () => {
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
     const dest = tempDir();
-    expect(installKit({ dest, kit }).ok).toBe(false);
+    expect(installKit({ dest, kit, preset: "core" }).ok).toBe(false);
     expect(readdirSync(dest)).toEqual([]);
   });
 
@@ -457,7 +477,7 @@ describe("installKit", () => {
 
   it("keeps the first-party content closed over the core preset: it only names skills and agents that core installs", () => {
     const dest = tempDir();
-    install(dest);
+    install(dest, { preset: "core" });
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const installed = new Set(readdirSync(join(dest, ".agents/skills")).concat(manifest.value.agents));

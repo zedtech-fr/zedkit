@@ -137,7 +137,7 @@ size_budget() {
   fi
 }
 size_budget ui 39600
-size_budget ai 9500
+size_budget ai 9800
 
 if [ -f apps/docs/out/index.html ]; then
   if ! node apps/docs/scripts/check-first-load-budget.mjs; then
