@@ -212,8 +212,7 @@ test("home docs CTAs keep a decorative icon on phone (start-building band)", asy
   await expect(page.locator("#install-or-copy [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(2);
   await expect(page.locator("#ai-setup [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(2);
   await expect(page.getByRole("link", { name: "Open documentation" }).locator("svg[aria-hidden='true']")).toHaveCount(1);
-  await expect(page.getByRole("link", { name: "Theme setup page" }).locator("svg[aria-hidden='true']")).toHaveCount(1);
-  await expect(page.getByRole("link", { name: "axe test suite" }).locator("svg")).toHaveCount(0);
+  await expect(page.locator("#proofs")).toBeHidden();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );

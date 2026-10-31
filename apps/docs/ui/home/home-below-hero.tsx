@@ -80,7 +80,7 @@ export function HomeBelowHero({
               <GalleryEntry
                 key={card.href}
                 card={card}
-                className={index >= 3 ? "hidden min-w-0 md:flex md:flex-col" : "min-w-0"}
+                className={index >= 2 ? "hidden min-w-0 md:flex md:flex-col" : "min-w-0"}
               />
             ))}
           </Stack>

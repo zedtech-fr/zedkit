@@ -14,15 +14,12 @@ test.describe("home AI setup block (#398)", () => {
     await page.goto(BASE, { waitUntil: "networkidle" });
 
     const aiSetup = page.locator("#ai-setup");
-    const proofs = page.locator("#proofs");
     const components = page.locator("#components");
     await expect(aiSetup).toBeVisible();
 
     const aiBox = await aiSetup.boundingBox();
-    const proofsBox = await proofs.boundingBox();
     const componentsBox = await components.boundingBox();
-    expect(aiBox && proofsBox && componentsBox).toBeTruthy();
-    expect(aiBox!.y).toBeLessThan(proofsBox!.y);
+    expect(aiBox && componentsBox).toBeTruthy();
     expect(aiBox!.y).toBeLessThan(componentsBox!.y);
 
     await page.getByRole("button", { name: "Copy init command" }).click();

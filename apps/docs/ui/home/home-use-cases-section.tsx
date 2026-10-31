@@ -424,7 +424,7 @@ export function HomeUseCasesSection() {
           </Button>
         </Stack>
       </div>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap={2} className="flex-wrap max-md:hidden">
         <Button asChild className="w-fit">
           <Link href="/docs/ui/design-your-identity">Design your identity</Link>
         </Button>

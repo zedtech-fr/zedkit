@@ -44,7 +44,7 @@ export function HomeProofs({
     },
   ];
   return (
-    <Section bleed spacing="lg" containerWidth="wide" title="What you can verify" id="proofs">
+    <Section bleed spacing="lg" containerWidth="wide" title="What you can verify" id="proofs" className="max-md:hidden">
       <Stack className={HOME_CARD_GRID_FOUR_COL}>
         {items.map((item) => (
           <Card key={item.title} className="min-w-0">
