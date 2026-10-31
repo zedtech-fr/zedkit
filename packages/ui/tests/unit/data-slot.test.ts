@@ -14,6 +14,7 @@ const SKIP = new Set([
   "parseIdentityTokens",
   "suggestIdentityTokens",
   "identityContrastWarnings",
+  "identityContrastTokenLabel",
   "keepIdentityDarkKeys",
   "withIdentityDarkPair",
   "isPresetId",

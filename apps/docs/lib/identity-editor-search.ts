@@ -20,7 +20,15 @@ const SCALAR_KEYS = [
   "shadowMd",
 ] as const;
 
-const LIGHT_KEYS = ["background", "foreground", "primary", "accent", "border"] as const;
+const LIGHT_KEYS = [
+  "background",
+  "foreground",
+  "primary",
+  "primaryForeground",
+  "accent",
+  "border",
+  "mutedForeground",
+] as const;
 
 function clonePreset(id: IdentityId): IdentityTokens {
   const preset = identityPresets[id];

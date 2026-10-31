@@ -691,9 +691,12 @@ export const IDENTITY_CUSTOM_STORAGE_KEY = "zk-identity-custom";
 export const IDENTITY_STORAGE_KEY = "zk-identity";
 
 // @public (undocumented)
+export function identityContrastTokenLabel(token: IdentityContrastWarning["token"]): string;
+
+// @public (undocumented)
 export type IdentityContrastWarning = {
     scheme: "light" | "dark";
-    token: "foreground" | "accent" | "border";
+    token: ContrastToken;
     ratio: number;
     min: number;
     suggestedForeground: string;
@@ -743,15 +746,19 @@ export const identityPresets: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         dark: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         shadowSm: string;
         shadowMd: string;
@@ -770,15 +777,19 @@ export const identityPresets: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         dark: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         shadowSm: string;
         shadowMd: string;
@@ -797,15 +808,19 @@ export const identityPresets: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         dark: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         shadowSm: string;
         shadowMd: string;
@@ -824,15 +839,19 @@ export const identityPresets: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         dark: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         shadowSm: string;
         shadowMd: string;
@@ -851,15 +870,19 @@ export const identityPresets: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         dark: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         shadowSm: string;
         shadowMd: string;
@@ -878,15 +901,19 @@ export const identityPresets: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         dark: {
             background: string;
             foreground: string;
             primary: string;
+            primaryForeground: string;
             accent: string;
             border: string;
+            mutedForeground: string;
         };
         shadowSm: string;
         shadowMd: string;
@@ -930,20 +957,56 @@ export const identityTokenSchema: z.ZodObject<{
     labelTracking: z.ZodString;
     fontSans: z.ZodString;
     fontDisplay: z.ZodString;
-    light: z.ZodObject<{
+    light: z.ZodPipe<z.ZodObject<{
         background: z.ZodString;
         foreground: z.ZodString;
         primary: z.ZodString;
+        primaryForeground: z.ZodOptional<z.ZodString>;
         accent: z.ZodString;
         border: z.ZodString;
-    }, z.core.$strip>;
-    dark: z.ZodObject<{
+        mutedForeground: z.ZodOptional<z.ZodString>;
+    }, z.core.$strip>, z.ZodTransform<{
+        background: string;
+        foreground: string;
+        primary: string;
+        primaryForeground: string;
+        accent: string;
+        border: string;
+        mutedForeground: string;
+    }, {
+        background: string;
+        foreground: string;
+        primary: string;
+        accent: string;
+        border: string;
+        primaryForeground?: string | undefined;
+        mutedForeground?: string | undefined;
+    }>>;
+    dark: z.ZodPipe<z.ZodObject<{
         background: z.ZodString;
         foreground: z.ZodString;
         primary: z.ZodString;
+        primaryForeground: z.ZodOptional<z.ZodString>;
         accent: z.ZodString;
         border: z.ZodString;
-    }, z.core.$strip>;
+        mutedForeground: z.ZodOptional<z.ZodString>;
+    }, z.core.$strip>, z.ZodTransform<{
+        background: string;
+        foreground: string;
+        primary: string;
+        primaryForeground: string;
+        accent: string;
+        border: string;
+        mutedForeground: string;
+    }, {
+        background: string;
+        foreground: string;
+        primary: string;
+        accent: string;
+        border: string;
+        primaryForeground?: string | undefined;
+        mutedForeground?: string | undefined;
+    }>>;
     shadowSm: z.ZodString;
     shadowMd: z.ZodString;
 }, z.core.$strip>;
@@ -1114,15 +1177,19 @@ export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
         background: string;
         foreground: string;
         primary: string;
+        primaryForeground: string;
         accent: string;
         border: string;
+        mutedForeground: string;
     };
     dark: {
         background: string;
         foreground: string;
         primary: string;
+        primaryForeground: string;
         accent: string;
         border: string;
+        mutedForeground: string;
     };
     shadowSm: string;
     shadowMd: string;
@@ -1555,6 +1622,10 @@ export function ZedkitUiProvider(input: {
     messages: ZedkitUiMessages;
     children: ReactNode;
 }): JSX.Element;
+
+// Warnings were encountered during analysis:
+//
+// src/identity-contrast.ts:10:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

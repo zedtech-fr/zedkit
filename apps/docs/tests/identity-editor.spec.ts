@@ -120,7 +120,7 @@ test.describe("identity editor page", () => {
     await page.getByLabel("Request").fill("more space");
     await page.getByRole("button", { name: "Suggest" }).click();
     await expect(page.getByText("Review these token changes.")).toBeVisible();
-    await expect(page.getByText("Contrast check passed (text 4.5:1, accent and border 3:1).")).toBeVisible();
+    await expect(page.getByText("Contrast check passed (body, primary, and muted text 4.5:1; accent and border 3:1).")).toBeVisible();
     await expect(page.getByText("spacing: 0.25rem → 0.5rem")).toBeVisible();
     await expect(page.locator('[data-slot="identity-editor-swatch"]')).toHaveCount(0);
     await page.getByRole("button", { name: "Apply", exact: true }).click();

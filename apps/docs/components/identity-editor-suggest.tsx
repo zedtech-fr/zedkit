@@ -8,6 +8,7 @@ import {
   Field,
   FieldLabel,
   identityContrastWarnings,
+  identityContrastTokenLabel,
   Input,
   Stack,
   Text,
@@ -54,12 +55,16 @@ function DiffRows({ current, next }: { current: IdentityTokens; next: IdentityTo
 function ContrastPreview({ tokens }: { tokens: IdentityTokens }) {
   const warnings = identityContrastWarnings(tokens);
   if (warnings.length === 0) {
-    return <Text>Contrast check passed (text 4.5:1, accent and border 3:1).</Text>;
+    return (
+      <Text>
+        Contrast check passed (body, primary, and muted text 4.5:1; accent and border 3:1).
+      </Text>
+    );
   }
   return (
     <Stack gap={2} role="status">
       {warnings.map((warning) => {
-        const label = warning.token === "foreground" ? "text" : warning.token;
+        const label = identityContrastTokenLabel(warning.token);
         return (
           <Badge key={`${warning.scheme}-${warning.token}`} variant="warning">
             {warning.scheme} {label} {warning.ratio}:1 (need {warning.min}:1)

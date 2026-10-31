@@ -224,6 +224,7 @@ export {
   type IdentityTokens,
 } from "./identity-tokens.js";
 export {
+  identityContrastTokenLabel,
   identityContrastWarnings,
   keepIdentityDarkKeys,
   withIdentityDarkPair,

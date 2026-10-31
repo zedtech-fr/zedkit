@@ -59,6 +59,25 @@ describe("identity token schema", () => {
     expect(parseIdentityTokens({ ...identityPresets.press, dark: undefined }).success).toBe(false);
   });
 
+  it("defaults missing foreground-on-surface pairs to foreground", () => {
+    const legacyLight = {
+      background: identityPresets.mist.light.background,
+      foreground: identityPresets.mist.light.foreground,
+      primary: identityPresets.mist.light.primary,
+      accent: identityPresets.mist.light.accent,
+      border: identityPresets.mist.light.border,
+    };
+    const result = parseIdentityTokens({
+      ...identityPresets.mist,
+      light: legacyLight,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.light.primaryForeground).toBe(legacyLight.foreground);
+      expect(result.data.light.mutedForeground).toBe(legacyLight.foreground);
+    }
+  });
+
   it("keeps compact fields in step with shipped identity CSS", () => {
     const identitiesCss = read("identities.css");
     const looks: Record<IdentityId, string> = {
@@ -80,6 +99,10 @@ describe("identity token schema", () => {
       ["headingLeading", "--zk-heading-leading"],
     ] as const;
     const colours = ["background", "foreground", "primary", "accent", "border"] as const;
+    const foregroundPairs = [
+      ["primaryForeground", "--primary-foreground"],
+      ["mutedForeground", "--muted-foreground"],
+    ] as const;
     for (const [id, css] of Object.entries(looks) as [IdentityId, string][]) {
       const preset = identityPresets[id];
       for (const [field, name] of fields) {
@@ -105,6 +128,11 @@ describe("identity token schema", () => {
         expect(preset.light[colour]).toBe(pair[0]);
         expect(preset.dark[colour]).toBe(pair[1]);
       }
+      for (const [field, name] of foregroundPairs) {
+        const pair = cssTokens(css, name);
+        expect(preset.light[field]).toBe(pair[0]);
+        expect(preset.dark[field]).toBe(pair[1]);
+      }
     }
   });
 });
@@ -119,7 +147,9 @@ describe("token to CSS var writer", () => {
     expect(css).toContain("--zk-body-leading: 1.55");
     expect(css).toContain("--zk-heading-tracking: -0.015em");
     expect(css).toContain("--background: 45 35% 94%");
-    expect(css).toContain("--zk-shadow-sm: 0 1px 2px hsl(0 0% 5% / 0.06)");
+    expect(css).toContain("--primary-foreground: 45 35% 94%");
+    expect(css).toContain("--muted-foreground: 0 0% 25%");
+    expect(css).toContain("--zk-shadow-sm: 0 0 0 0 transparent");
     expect(css).toContain("--zk-font-display:");
   });
 
