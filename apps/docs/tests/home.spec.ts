@@ -193,7 +193,8 @@ test.describe("home gallery maturity badges light/dark (#753)", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(BASE, { waitUntil: "networkidle" });
@@ -222,7 +223,8 @@ test.describe("home scenario titles light/dark (#753)", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(BASE, { waitUntil: "networkidle" });
@@ -271,7 +273,8 @@ test.describe("home docs CTAs light/dark (#748)", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(BASE, { waitUntil: "networkidle" });
@@ -292,7 +295,8 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(BASE, { waitUntil: "networkidle" });
@@ -313,7 +317,8 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(BASE, { waitUntil: "networkidle" });

@@ -1,5 +1,17 @@
 import { expect, type Page } from "@playwright/test";
 
+/** Opt-in docs site look before navigation (replaces legacy `zk-identity` for shell tests). */
+export async function persistDocsSiteLook(page: Page, identity: string, theme: "light" | "dark") {
+  await page.addInitScript(
+    ({ id, mode }) => {
+      localStorage.setItem("zk-docs-site-identity", id);
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
+      localStorage.setItem("theme", mode);
+    },
+    { id: identity, mode: theme },
+  );
+}
+
 /** Sets `data-identity` and colour mode on `<html>`, then waits for fonts. */
 export async function useIdentity(page: Page, identity: string | null, theme: "light" | "dark") {
   await page.evaluate(

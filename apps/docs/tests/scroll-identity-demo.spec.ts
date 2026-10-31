@@ -10,7 +10,8 @@ const SCENES = "pin-a-stage-and-change-scene-as-the-page-scrolls";
 async function openDocs(page: Page, slug: string, identity: string, mode: string) {
   await page.addInitScript(
     ([i, m]) => {
-      localStorage.setItem("zk-identity", i!);
+      localStorage.setItem("zk-docs-site-identity", i!);
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
       localStorage.setItem("theme", m!);
     },
     [identity, mode],
@@ -21,7 +22,8 @@ async function openDocs(page: Page, slug: string, identity: string, mode: string
 async function openFeatures(page: Page, path: string, identity: string, mode: string) {
   await page.addInitScript(
     ([i, m]) => {
-      localStorage.setItem("zk-identity", i!);
+      localStorage.setItem("zk-docs-site-identity", i!);
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
       localStorage.setItem("theme", m!);
     },
     [identity, mode],

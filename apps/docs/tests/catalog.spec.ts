@@ -150,7 +150,8 @@ test.describe("catalog grouped results mobile visual", () => {
   test("390px mist", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.addInitScript(() => {
-      localStorage.setItem("zk-identity", "mist");
+      localStorage.setItem("zk-docs-site-identity", "mist");
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
       localStorage.setItem("theme", "light");
     });
     await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
@@ -167,7 +168,8 @@ test.describe("catalog result maturity chips light/dark", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
@@ -217,7 +219,8 @@ test.describe("catalog CTA light/dark", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(BASE, { waitUntil: "networkidle" });

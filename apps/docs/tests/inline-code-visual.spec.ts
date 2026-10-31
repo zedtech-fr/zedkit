@@ -8,7 +8,8 @@ const MOTION_PAGE = `${BASE}/docs/ui/animate-entrances-and-hover-feedback-with-c
 test.describe("docs tables on mobile (#zk-chips ext 2)", () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      localStorage.setItem("zk-identity", "tide");
+      localStorage.setItem("zk-docs-site-identity", "tide");
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
     });
   });
 
@@ -40,7 +41,8 @@ test.describe("docs tables on mobile (#zk-chips ext 2)", () => {
 test.describe("quiet inline code (#zk-chips)", () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      localStorage.setItem("zk-identity", "tide");
+      localStorage.setItem("zk-docs-site-identity", "tide");
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
     });
   });
 

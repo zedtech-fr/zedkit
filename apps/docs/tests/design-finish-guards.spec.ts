@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { persistDocsSiteLook } from "./identity-helpers";
+
 /*
  * Finish guards for the docs site: layout stability, theme-color, motion
  * caps, touch and hover guards, contrast (code included) in every
@@ -12,13 +14,7 @@ const THEMES = ["light", "dark"] as const;
 
 /** Picks an identity and a colour mode before the page loads, like a returning visitor. */
 async function visitAs(page: Page, identity: string, theme: string) {
-  await page.addInitScript(
-    ([id, mode]) => {
-      localStorage.setItem("zk-identity", id!);
-      localStorage.setItem("theme", mode!);
-    },
-    [identity, theme],
-  );
+  await persistDocsSiteLook(page, identity, theme as "light" | "dark");
 }
 
 test("home layout shift stays under 0.05", async ({ page }) => {

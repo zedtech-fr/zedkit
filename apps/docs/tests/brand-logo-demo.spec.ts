@@ -14,7 +14,8 @@ test.describe("brand logo preview shows a fictional brand in header, footer and 
           await page.setViewportSize({ width, height });
           await page.addInitScript(
             ([i, m]) => {
-              localStorage.setItem("zk-identity", i!);
+              localStorage.setItem("zk-docs-site-identity", i!);
+              localStorage.setItem("zk-docs-site-identity-opt-in", "1");
               localStorage.setItem("theme", m!);
             },
             [identity, mode],

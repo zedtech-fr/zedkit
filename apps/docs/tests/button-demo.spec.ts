@@ -41,7 +41,8 @@ test.describe("button demo a11y + themes (#152)", () => {
     test(`mist ${mode}: names, axe, screenshot`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 1000 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(PAGE, { waitUntil: "networkidle" });

@@ -11,8 +11,9 @@ const ms = (value: string) => Number.parseFloat(value) * (value.trim().endsWith(
 
 async function openAsIdentity(page: Page, url: string, identity: string, theme: "light" | "dark") {
   await page.addInitScript(({ id, mode }) => {
-    localStorage.removeItem("zk-identity-custom");
-    localStorage.setItem("zk-identity", id);
+    localStorage.removeItem("zk-docs-site-identity-custom");
+    localStorage.setItem("zk-docs-site-identity", id);
+    localStorage.setItem("zk-docs-site-identity-opt-in", "1");
     localStorage.setItem("theme", mode);
   }, { id: identity, mode: theme });
   await page.goto(url, { waitUntil: "networkidle" });

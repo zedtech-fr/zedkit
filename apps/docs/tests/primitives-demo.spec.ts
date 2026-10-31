@@ -53,7 +53,8 @@ test.describe("primitive pages show a live preview for each example", () => {
       test(`${identity} ${mode}`, async ({ page }) => {
         await page.addInitScript(
           ([i, m]) => {
-            localStorage.setItem("zk-identity", i!);
+            localStorage.setItem("zk-docs-site-identity", i!);
+            localStorage.setItem("zk-docs-site-identity-opt-in", "1");
             localStorage.setItem("theme", m!);
           },
           [identity, mode],

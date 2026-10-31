@@ -30,10 +30,11 @@ test("search dialog is lazy and not preloaded on every page", () => {
   assert.doesNotMatch(src, /from ["']\.\.\/components\/search["']/);
 });
 
-test("mobile header keeps search on the floating pill", () => {
+test("mobile header keeps search in the phone chrome", () => {
   const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
   const trigger = readFileSync(join(app, "ui/mobile-search-trigger.tsx"), "utf8");
-  assert.match(header, /SearchPill/);
+  assert.match(header, /MobileSearchTrigger/);
+  assert.doesNotMatch(header, /SearchPill/);
   assert.doesNotMatch(header, /DocsIdentityPicker/);
   assert.doesNotMatch(trigger, /fumadocs-core\/search\/client/);
 });

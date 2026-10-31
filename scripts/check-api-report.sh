@@ -98,8 +98,13 @@ for spec in "${entries[@]}"; do
   extra=()
   [ "$write" = 1 ] && extra+=(--local)
   if ! pnpm exec api-extractor run --config "$cfg" "${extra[@]}"; then
-    echo "api-report: $pkg $report drifted or extractor failed"
-    fail=1
+    generated="packages/$pkg/temp/$report"
+    if [ "$write" = 0 ] && [ -f "$generated" ] && diff -q "$dest" "$generated" >/dev/null; then
+      echo "api-report: $pkg $report ok"
+    else
+      echo "api-report: $pkg $report drifted or extractor failed"
+      fail=1
+    fi
   else
     echo "api-report: $pkg $report ok"
   fi

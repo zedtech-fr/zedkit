@@ -15,7 +15,8 @@ test.describe("card and details pages show a live preview for each example", () 
           await page.setViewportSize({ width, height });
           await page.addInitScript(
             ([i, m]) => {
-              localStorage.setItem("zk-identity", i!);
+              localStorage.setItem("zk-docs-site-identity", i!);
+              localStorage.setItem("zk-docs-site-identity-opt-in", "1");
               localStorage.setItem("theme", m!);
             },
             [identity, mode],

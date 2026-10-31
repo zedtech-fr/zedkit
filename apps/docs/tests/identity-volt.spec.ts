@@ -8,7 +8,8 @@ const HOME = "/";
 
 test.describe("volt identity", () => {
   test("sets the page in Geist with a metric-aligned fallback and a 12px xs label step", async ({ page }) => {
-    await page.addInitScript(() => localStorage.setItem("zk-identity", "volt"));
+    await page.addInitScript(() => localStorage.setItem("zk-docs-site-identity", "volt"));
+    localStorage.setItem("zk-docs-site-identity-opt-in", "1");
     await page.goto(HOME, { waitUntil: "networkidle" });
     await useIdentity(page, "volt", "light");
     const body = await page.evaluate(() => getComputedStyle(document.body).fontFamily);

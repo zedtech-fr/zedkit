@@ -15,7 +15,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@zedtech/zedkit-ui";
-import { SearchPill } from "@/ui/search-pill";
+import { MobileSearchTrigger } from "@/ui/mobile-search-trigger";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { KitVersionLabel } from "@/ui/kit-version-label";
@@ -185,7 +185,7 @@ function HomeMenuButton({ changelogHref }: { changelogHref: string }) {
 
 /**
  * Phone header (< md): brand and version at the left; menu, theme, and GitHub at the right.
- * Search stays on the floating pill (shared with docs pages).
+ * Search opens from the header on phone (top bar + results sheet).
  */
 export function MobileHeader({
   mode,
@@ -220,6 +220,7 @@ export function MobileHeader({
           <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />
         </div>
         <div className="flex shrink-0 items-center">
+          <MobileSearchTrigger className={iconButtonClassName} />
           <ThemeButton />
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
             <GithubIcon className="size-4" />
@@ -227,7 +228,6 @@ export function MobileHeader({
           {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton changelogHref={changelogHref} />}
         </div>
       </header>
-      <SearchPill />
     </>
   );
 }

@@ -10,7 +10,8 @@ const THEME = "theme-an-admin-app-dark-light-included";
 async function open(page: import("@playwright/test").Page, path: string, identity: string, mode: string) {
   await page.addInitScript(
     ([i, m]) => {
-      localStorage.setItem("zk-identity", i!);
+      localStorage.setItem("zk-docs-site-identity", i!);
+      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
       localStorage.setItem("theme", m!);
     },
     [identity, mode],

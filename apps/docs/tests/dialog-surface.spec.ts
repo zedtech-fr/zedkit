@@ -31,7 +31,8 @@ for (const identity of IDENTITIES) {
         await page.setViewportSize({ width, height });
         await page.addInitScript(
           ([id, theme]) => {
-            localStorage.setItem("zk-identity", id as string);
+            localStorage.setItem("zk-docs-site-identity", id as string);
+            localStorage.setItem("zk-docs-site-identity-opt-in", "1");
             localStorage.setItem("theme", theme as string);
           },
           [identity, mode],
@@ -53,7 +54,8 @@ for (const identity of IDENTITIES) {
         await page.setViewportSize({ width, height });
         await page.addInitScript(
           ([id, theme]) => {
-            localStorage.setItem("zk-identity", id as string);
+            localStorage.setItem("zk-docs-site-identity", id as string);
+            localStorage.setItem("zk-docs-site-identity-opt-in", "1");
             localStorage.setItem("theme", theme as string);
           },
           [identity, mode],

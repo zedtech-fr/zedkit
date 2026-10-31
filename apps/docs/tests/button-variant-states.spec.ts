@@ -25,10 +25,12 @@ async function isAccentFill(
   });
 }
 
-test("See all six identities link stays underline-only on hover (no accent block)", async ({ page }) => {
+test("Open the demo editor link stays underline-only on hover (no accent block)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/");
-  const link = page.locator("#use-cases").getByRole("link", { name: "See all six identities" });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.locator("#use-cases").scrollIntoViewIfNeeded();
+  const link = page.locator("#use-cases").getByRole("link", { name: "Open the demo editor" });
+  await expect(link).toBeVisible();
   await link.hover();
   expect(await isAccentFill(page, link)).toBe(false);
   await expect(link).toHaveCSS("text-decoration-line", /underline/);
@@ -59,7 +61,8 @@ for (const identity of IDENTITIES) {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript(
         ([id, mode]) => {
-          localStorage.setItem("zk-identity", id);
+          localStorage.setItem("zk-docs-site-identity", id);
+          localStorage.setItem("zk-docs-site-identity-opt-in", "1");
           localStorage.setItem("theme", mode);
         },
         [identity, theme],

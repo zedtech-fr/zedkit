@@ -139,7 +139,8 @@ test.describe("getting started package table light/dark (#753)", () => {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.addInitScript((theme) => {
-        localStorage.setItem("zk-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity", "mist");
+        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });

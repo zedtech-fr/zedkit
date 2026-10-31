@@ -122,7 +122,8 @@ test.describe("home install or copy section", () => {
       test(`mist ${mode} at 390px`, async ({ page }) => {
         await page.setViewportSize({ width: 390, height: 900 });
         await page.addInitScript((theme) => {
-          localStorage.setItem("zk-identity", "mist");
+          localStorage.setItem("zk-docs-site-identity", "mist");
+          localStorage.setItem("zk-docs-site-identity-opt-in", "1");
           localStorage.setItem("theme", theme);
         }, mode);
         await page.goto(BASE, { waitUntil: "networkidle" });
@@ -135,7 +136,8 @@ test.describe("home install or copy section", () => {
       test(`mist ${mode} at 1280px`, async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });
         await page.addInitScript((theme) => {
-          localStorage.setItem("zk-identity", "mist");
+          localStorage.setItem("zk-docs-site-identity", "mist");
+          localStorage.setItem("zk-docs-site-identity-opt-in", "1");
           localStorage.setItem("theme", theme);
         }, mode);
         await page.goto(BASE, { waitUntil: "networkidle" });
