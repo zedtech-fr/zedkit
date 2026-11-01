@@ -95,7 +95,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
             ) : null}
             {groups.map((group) => (
               <Stack key={group.id} gap={3} id={`catalog-group-${group.id}`} data-catalog-group={group.id}>
-                <Heading level={3} className="text-lg">
+                <Heading level={2} className="text-lg">
                   {catalogCopy.results.groupHeading(group.label, group.entries.length)}
                 </Heading>
                 <EntryColumns entries={group.entries} />

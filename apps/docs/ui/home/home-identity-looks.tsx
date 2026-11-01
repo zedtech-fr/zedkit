@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
-import { Button, Stack, Text, ThemeScope } from "@zedtech/zedkit-ui";
+import { Button, Stack, TabsContent, Text, ThemeScope } from "@zedtech/zedkit-ui";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 import { HOME_IDENTITY_FACTS, isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
 import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
@@ -36,8 +36,11 @@ export function HomeIdentityLooks() {
         onValueChange={(next) => {
           if (isIdentityId(next)) setIdentity(next);
         }}
-      />
-      <HomeIdentityLooksFrame identity={identity} mode={mode} facts={facts} />
+      >
+        <TabsContent value={identity} className="mt-0">
+          <HomeIdentityLooksFrame identity={identity} mode={mode} facts={facts} />
+        </TabsContent>
+      </HomeIdentityLooksTabs>
       <HomeIdentityLooksLinks />
     </Stack>
   );

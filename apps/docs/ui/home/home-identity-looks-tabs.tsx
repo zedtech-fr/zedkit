@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 import { HOME_IDENTITY_FACTS, IDENTITY_IDS, isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
 import { HomeIdentityPaletteDots } from "@/ui/home/home-identity-looks-swatches";
@@ -11,10 +12,13 @@ export function HomeIdentityLooksTabs({
   value,
   mode,
   onValueChange,
+  children,
 }: {
   value: IdentityId;
   mode: "light" | "dark";
   onValueChange: (id: IdentityId) => void;
+  /** Panel(s): the active tab's `TabsContent`, so each trigger controls a real panel. */
+  children: ReactNode;
 }) {
   return (
     <Tabs
@@ -39,6 +43,7 @@ export function HomeIdentityLooksTabs({
           </TabsTrigger>
         ))}
       </TabsList>
+      {children}
     </Tabs>
   );
 }

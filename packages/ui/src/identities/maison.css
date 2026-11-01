@@ -117,7 +117,10 @@
 }
 
 :root[data-identity="maison"].dark,
-[data-identity-scope][data-identity="maison"].dark {
+[data-identity-scope][data-identity="maison"].dark,
+/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. */
+:root[data-identity="maison"] .dark:not([data-identity-scope]),
+[data-identity-scope][data-identity="maison"] .dark:not([data-identity-scope]) {
   --background: 30 12% 7%;
   --foreground: 40 30% 92%;
   --card: 30 10% 10%;

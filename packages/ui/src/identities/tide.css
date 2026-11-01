@@ -114,7 +114,10 @@
 }
 
 :root[data-identity="tide"].dark,
-[data-identity-scope][data-identity="tide"].dark {
+[data-identity-scope][data-identity="tide"].dark,
+/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. */
+:root[data-identity="tide"] .dark:not([data-identity-scope]),
+[data-identity-scope][data-identity="tide"] .dark:not([data-identity-scope]) {
   --background: 222 47% 11%;
   --foreground: 0 0% 98%;
   --card: 218 33% 17%;

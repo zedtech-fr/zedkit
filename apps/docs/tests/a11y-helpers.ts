@@ -90,6 +90,12 @@ export const A11Y_GATE_RULES = [
 ] as const;
 
 export async function assertA11yGate(page: Page, selector = "body"): Promise<void> {
+  // Colour transitions (identity/mode switches) leave blended mid-frames that axe would sample.
+  await page.evaluate(() => {
+    for (const animation of document.getAnimations()) {
+      if (animation instanceof CSSTransition) animation.finish();
+    }
+  });
   const results = await new AxeBuilder({ page })
     .include(selector)
     .exclude(A11Y_AXE_EXCLUDES)

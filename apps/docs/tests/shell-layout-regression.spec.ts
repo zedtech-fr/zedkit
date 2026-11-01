@@ -84,7 +84,7 @@ for (const theme of ["light", "dark"] as const) {
     const card = page.locator("[data-home-dashboard-card]");
     await card.scrollIntoViewIfNeeded();
     await expect(card.getByRole("heading", { name: "Project apps", level: 2 })).toBeVisible();
-    await expect(card.locator("table")).toBeVisible();
+    await expect(card.locator("[data-slot='table']")).toBeVisible();
     await expect(card.getByRole("columnheader", { name: "Region" })).toBeVisible();
 
     const preview = page.locator("[data-home-hero-preview]");
@@ -92,7 +92,7 @@ for (const theme of ["light", "dark"] as const) {
 
     await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
     await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
-    await expect(card.locator("table")).toBeVisible();
+    await expect(card.locator("[data-slot='table']")).toBeVisible();
 
     const visible = await preview.evaluate((el) => {
       const style = getComputedStyle(el);
