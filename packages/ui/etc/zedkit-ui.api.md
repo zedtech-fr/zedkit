@@ -123,7 +123,7 @@ export interface ButtonProps extends React_2.ComponentProps<"button">, VariantPr
 
 // @public (undocumented)
 export const buttonVariants: (props?: ({
-    variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | null | undefined;
+    variant?: "default" | "destructive" | "link" | "outline" | "secondary" | "ghost" | null | undefined;
     size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -1148,6 +1148,7 @@ export interface PageHeaderProps {
     description?: React_2.ReactNode;
     // (undocumented)
     title: React_2.ReactNode;
+    titleAs?: "h1" | "h2";
 }
 
 // @public
@@ -1469,6 +1470,15 @@ export const textVariants: (props?: ({
     variant?: "body" | "muted" | null | undefined;
 } & ClassProp) | undefined) => string;
 
+// @public
+export function ThemeScope(input: ThemeScopeProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type ThemeScopeProps = React_2.ComponentProps<"div"> & {
+    identity?: string | undefined;
+    mode?: "light" | "dark" | undefined;
+};
+
 export { toast }
 
 // @public
@@ -1528,6 +1538,9 @@ export function useIdentity(fallback?: string): string;
 
 // @public
 export function useOnlineStatus(): boolean;
+
+// @public
+export function usePortalContainer(): HTMLElement | undefined;
 
 // @public (undocumented)
 export function useUiMessages(): ZedkitUiMessages;

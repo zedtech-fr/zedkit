@@ -27,7 +27,7 @@ export function AppShellNoTopbarDemo() {
         </Stack>
       }
     >
-      <PageHeader title={appShellNoTopbarCopy.pageTitle} description={appShellNoTopbarCopy.pageDescription} />
+      <PageHeader titleAs="h2" title={appShellNoTopbarCopy.pageTitle} description={appShellNoTopbarCopy.pageDescription} />
     </AppShell>
   );
 }

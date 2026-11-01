@@ -190,6 +190,7 @@ export function AdminDashboardGuideDemo() {
         topbar={<TopBar />}
       >
         <PageHeader
+          titleAs="h2"
           title={adminDashboardGuideCopy.pageTitle}
           description={adminDashboardGuideCopy.pageDescription}
         />

@@ -442,6 +442,7 @@ export function ProjectTrackerDemoApp() {
         >
           <Breadcrumbs />
           <PageHeader
+            titleAs="h2"
             title={projectTrackerDemoCopy.nav.tasks}
             description={projectTrackerDemoCopy.description}
             actions={
