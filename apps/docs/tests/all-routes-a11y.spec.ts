@@ -29,6 +29,8 @@ test("every route passes axe at phone and desktop width, light and dark", async 
     await page.addInitScript((theme) => localStorage.setItem("theme", theme), view.theme);
     for (const path of routes) {
       await page.goto(path, { waitUntil: "networkidle" });
+      // The docs header label cross-fades when scroll-spy settles; let every transition end before reading colours.
+      await page.evaluate(() => Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))));
       const { violations } = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
         .exclude(A11Y_AXE_EXCLUDES)
