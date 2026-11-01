@@ -7,9 +7,9 @@ export const componentPageCopy = {
   codeBlockInstall: "Install",
   packageVersionLine: (version: string) => `Package version: ${version} (changesets).`,
   guidance: {
-    who: "Who",
-    useWhen: "Use when",
-    avoidWhen: "Avoid when",
+    who: "Who is it for?",
+    useWhen: "When should I use it?",
+    avoidWhen: "When should I pick something else?",
   },
   sections: {
     installOrCopy: "Install or copy",

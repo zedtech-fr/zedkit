@@ -114,3 +114,17 @@ test.describe("registry brick name light/dark (#769)", () => {
     });
   }
 });
+
+test("guidance answers the reader's questions and sits right after the example", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
+  const guidance = page.locator("#guidance");
+  await expect(guidance.getByText("Who is it for?")).toBeVisible();
+  await expect(guidance.getByText("When should I use it?")).toBeVisible();
+  await expect(guidance.getByText("When should I pick something else?")).toBeVisible();
+  const example = await page.locator("#example").boundingBox();
+  const props = await page.locator("#props").boundingBox();
+  const box = await guidance.boundingBox();
+  expect(box!.y).toBeGreaterThan(example!.y);
+  expect(box!.y).toBeLessThan(props!.y);
+});
