@@ -7,33 +7,8 @@ import { CheckIcon } from "lucide-react";
 import { formatMessage } from "@/components/ui/format-message";
 
 import { cn } from "@/lib/utils";
+import { useNarrowViewport } from "@/components/ui/use-narrow-viewport";
 import { useUiMessages } from "@/components/ui/ui-provider";
-
-/** Matches Tailwind `sm` (640px): phones and narrow viewports. */
-const MOBILE_MEDIA = "(max-width: 639px)";
-
-function readMobileViewport(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-  const query = typeof window.matchMedia === "function" ? window.matchMedia(MOBILE_MEDIA) : null;
-  return window.innerWidth < 640 || Boolean(query?.matches);
-}
-
-function useMobileViewport(): boolean {
-  return React.useSyncExternalStore(
-    (onStoreChange) => {
-      if (typeof window.matchMedia !== "function") {
-        return () => {};
-      }
-      const mql = window.matchMedia(MOBILE_MEDIA);
-      mql.addEventListener("change", onStoreChange);
-      return () => mql.removeEventListener("change", onStoreChange);
-    },
-    readMobileViewport,
-    () => true,
-  );
-}
 
 export interface WizardStepsProps {
   steps: string[];
@@ -121,7 +96,7 @@ function clampStepIndex(current: number, stepCount: number): number {
 
 export function WizardSteps({ steps, current, className }: WizardStepsProps) {
   const messages = useUiMessages();
-  const isMobile = useMobileViewport();
+  const isMobile = useNarrowViewport(true);
   const active = clampStepIndex(current, steps.length);
   const title = steps[active] ?? "";
 

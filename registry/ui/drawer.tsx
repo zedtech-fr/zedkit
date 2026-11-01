@@ -10,36 +10,8 @@ import { Drawer as DrawerPrimitive } from "vaul";
 import { buttonVariants } from "@/components/ui/button";
 import { resolveModalMountAutoFocus, overlayDrawerFooterClass, overlayDrawerHeaderClass } from "@/components/ui/overlay-modal";
 import { cn } from "@/lib/utils";
+import { useNarrowViewport } from "@/components/ui/use-narrow-viewport";
 import { useUiMessages } from "@/components/ui/ui-provider";
-
-/** Matches Tailwind `sm` (640px): phones and narrow viewports. */
-const MOBILE_MEDIA = "(max-width: 639px)";
-
-function readMobileViewport(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-  // Some prerender and test environments ship a `window` without matchMedia.
-  const query = typeof window.matchMedia === "function" ? window.matchMedia(MOBILE_MEDIA) : null;
-  return window.innerWidth < 640 || Boolean(query?.matches);
-}
-
-function useMobileViewport(): boolean {
-  const [isMobile, setIsMobile] = React.useState(readMobileViewport);
-
-  React.useLayoutEffect(() => {
-    const sync = () => setIsMobile(readMobileViewport());
-    sync();
-    if (typeof window.matchMedia !== "function") {
-      return;
-    }
-    const mql = window.matchMedia(MOBILE_MEDIA);
-    mql.addEventListener("change", sync);
-    return () => mql.removeEventListener("change", sync);
-  }, []);
-
-  return isMobile;
-}
 
 type DrawerRootProps = React.ComponentProps<typeof DrawerPrimitive.Root> & {
   /**
@@ -70,7 +42,7 @@ function Drawer({
   autoFocus,
   ...props
 }: DrawerRootProps) {
-  const isMobile = useMobileViewport();
+  const isMobile = useNarrowViewport();
   const resolvedDirection = resolveDrawerDirection(direction, mobile, isMobile) ?? "bottom";
   const mountAutoFocus = resolveModalMountAutoFocus(autoFocus, modal);
   return (

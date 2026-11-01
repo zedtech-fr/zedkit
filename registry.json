@@ -238,6 +238,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/ui/use-narrow-viewport.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/ui/ui-provider.tsx",
           "type": "registry:ui"
         },
@@ -618,6 +622,10 @@
       "files": [
         {
           "path": "registry/ui/wizard-steps.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/use-narrow-viewport.ts",
           "type": "registry:ui"
         },
         {
