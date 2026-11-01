@@ -387,3 +387,21 @@ test.describe("persona evidence screenshots", () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
   });
 });
+
+test("home component families link only to live docs pages, and Overlays keeps its promise", async ({ page, request }) => {
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  const section = page.locator("#components");
+  const overlays = section.locator("[data-home-component-families] > div > div").filter({ hasText: "Overlays" });
+  const names = await overlays.locator("a").allTextContents();
+  for (const expected of ["Dialog", "Drawer", "Popover", "Dropdown menu", "Tooltip"]) {
+    expect(names).toContain(expected);
+  }
+  const hrefs = await section.locator("[data-home-component-families] > div a").evaluateAll((links) => [
+    ...new Set(links.map((link) => (link as HTMLAnchorElement).getAttribute("href") ?? "")),
+  ]);
+  for (const href of hrefs) {
+    expect(href.startsWith("/docs/"), href).toBe(true);
+    const response = await request.get(`${BASE}${href}`);
+    expect(response.status(), href).toBe(200);
+  }
+});

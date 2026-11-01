@@ -50,7 +50,7 @@ export function HomeComponentFamiliesSection({
               >
                 <Stack gap={1} className="min-w-0 flex-1">
                   <Link
-                    href={family.href}
+                    href={family.examples[0].href}
                     className="font-medium underline-offset-4 hover:underline"
                   >
                     {family.label}
@@ -59,7 +59,6 @@ export function HomeComponentFamiliesSection({
                     {family.blurb}
                   </Text>
                 </Stack>
-                <Text className={HOME_METADATA_TEXT_CLASS}>{homeCopy.componentFamilies.section.arrow}</Text>
               </Stack>
               <FamilyExampleLinks examples={family.examples} />
             </Stack>
