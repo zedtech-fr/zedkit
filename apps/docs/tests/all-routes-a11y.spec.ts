@@ -21,6 +21,8 @@ test("every route passes axe at phone and desktop width, light and dark", async 
   const paths = [...xml.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((m) => m[1]!.replace(/\/$/, "") || "/");
   const routes = [...new Set([...paths, ...EXTRA_ROUTES])];
   const problems: string[] = [];
+  // Axe reads colours mid-fade otherwise: scroll scenes animate opacity on entry.
+  await page.emulateMedia({ reducedMotion: "reduce" });
 
   for (const view of VIEWS) {
     await page.setViewportSize({ width: view.width, height: view.height });
