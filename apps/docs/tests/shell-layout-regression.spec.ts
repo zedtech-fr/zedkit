@@ -14,16 +14,27 @@ for (const width of DESKTOP_WIDTHS) {
       const search = document.querySelector("#nd-nav button[class*='max-w']");
       const toggle = document.querySelector("[data-theme-toggle]");
       if (!search || !toggle) return null;
-      const s = search.getBoundingClientRect();
-      const t = toggle.getBoundingClientRect();
-      const overlap = s.left < t.right && s.right > t.left && s.top < t.bottom && s.bottom > t.top;
+      const toggleLeft = toggle.getBoundingClientRect().left;
+      const nodes = [search, ...search.querySelectorAll("*")];
+      let maxRight = Number.NEGATIVE_INFINITY;
+      const offenders: { tag: string; right: number }[] = [];
+      for (const node of nodes) {
+        const r = node.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        maxRight = Math.max(maxRight, r.right);
+        if (r.right > toggleLeft + 0.5) {
+          offenders.push({ tag: node.tagName.toLowerCase(), right: r.right });
+        }
+      }
       return {
-        gap: t.left - s.right,
-        overlap,
+        gap: toggleLeft - maxRight,
+        offenders,
+        toggleLeft,
+        maxRight,
       };
     });
     expect(layout).not.toBeNull();
-    expect(layout!.overlap).toBe(false);
+    expect(layout!.offenders, JSON.stringify(layout!.offenders)).toEqual([]);
     expect(layout!.gap).toBeGreaterThanOrEqual(8);
   });
 
@@ -120,6 +131,34 @@ test("install code on a docs page scrolls horizontally with a focusable region",
     };
   });
   expect(metrics, JSON.stringify(metrics)).toMatchObject({ ok: true });
+});
+
+test("home get-started install commands scroll horizontally at 390px", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${BASE}/#get-started`, { waitUntil: "networkidle" });
+  const block = page.locator("#get-started [data-install-command]").nth(1);
+  await block.scrollIntoViewIfNeeded();
+  await expect(block).toBeVisible();
+  const metrics = await block.evaluate((root) => {
+    const region = root.querySelector('[role="region"]');
+    const pre = root.querySelector("pre");
+    if (!region || !pre) return { ok: false, reason: "missing region or pre" };
+    const style = getComputedStyle(region);
+    const mask = style.maskImage || style.webkitMaskImage || "";
+    return {
+      ok:
+        pre.scrollWidth > region.clientWidth + 1 &&
+        region.scrollWidth > region.clientWidth &&
+        (style.overflowX === "auto" || style.overflowX === "scroll") &&
+        region.getAttribute("tabindex") === "0" &&
+        mask.includes("gradient"),
+      preScrollWidth: pre.scrollWidth,
+      regionClientWidth: region.clientWidth,
+      overflowX: style.overflowX,
+    };
+  });
+  expect(metrics, JSON.stringify(metrics)).toMatchObject({ ok: true });
+  expect(metrics!.preScrollWidth!).toBeGreaterThan(273);
 });
 
 for (const width of [1280, 1600] as const) {
