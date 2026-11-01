@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { PageHeader } from "../../src/page-header.js";
+import { PageHeader } from "#index.js";
 
 describe("PageHeader", () => {
   it("renders the title as an h1 by default", () => {
