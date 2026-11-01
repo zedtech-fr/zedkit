@@ -28,7 +28,7 @@ export function HeroDemoIdentitySelect({ look, onLook }: { look: string; onLook:
   return (
     <Select value={look} onValueChange={onLook}>
       <SelectTrigger
-        className="h-9 min-w-0 flex-1 border-border/70 bg-transparent shadow-none sm:w-32"
+        className="h-9 min-w-32 flex-1 border-border/70 bg-transparent shadow-none sm:w-32 sm:flex-none"
         aria-label={heroDemoStyleCopy.identityAriaLabel}
       >
         <SelectValue placeholder={heroDemoStyleCopy.identityPlaceholder} />

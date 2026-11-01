@@ -29,11 +29,12 @@ test.describe("home dashboard mobile (#388)", () => {
     await expect(toolbar.getByRole("button", { name: "Add app" })).toBeVisible();
     const display = page.locator("[data-hero-demo-display]");
     await expect(display.locator("[role=combobox]")).toHaveCount(3);
-    const oneRow = await display.evaluate((row) => {
-      const tops = [...row.querySelectorAll("[role=combobox]")].map((el) => el.getBoundingClientRect().top);
-      return tops.length >= 3 && Math.max(...tops) - Math.min(...tops) < 4;
-    });
-    expect(oneRow).toBe(true);
+    // The three selects may wrap onto a second row; none may shrink until its value is unreadable.
+    const widths = await display.evaluate((row) =>
+      [...row.querySelectorAll("[role=combobox]")].map((el) => Math.round(el.getBoundingClientRect().width)),
+    );
+    expect(widths.every((width) => width >= 80), JSON.stringify(widths)).toBe(true);
+    expect(widths[0], "the look select shows its value").toBeGreaterThanOrEqual(100);
 
     const actionStacks = card.locator("[data-demo-row-actions]");
     await expect(actionStacks.first()).toBeVisible();

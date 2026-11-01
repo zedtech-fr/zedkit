@@ -43,3 +43,25 @@ test("reduced motion: the examples stay still and the labels stay out", async ({
   await expect(page.locator("[data-scroll-scenes-progress]")).toBeHidden();
   await expect(page.locator("[data-home-hero-visuals] > [data-scroll-scene]:visible")).toHaveCount(1);
 });
+
+for (const width of [320, 360, 390]) {
+  test(`${width}px: the hero's chosen look is readable in full and the page does not scroll sideways`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto("/", { waitUntil: "networkidle" });
+    const select = page.getByRole("combobox", { name: /identity|look|style/i }).first();
+    await select.scrollIntoViewIfNeeded();
+    const fit = await select.evaluate((node) => {
+      const value = node.querySelector("[data-slot='select-value']") ?? node;
+      return {
+        width: node.getBoundingClientRect().width,
+        clipped: value.scrollWidth > value.clientWidth + 1,
+        text: (value.textContent ?? "").trim(),
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+    expect(fit.text.length, `${width}px shows a name`).toBeGreaterThan(2);
+    expect(fit.width, `${width}px select width`).toBeGreaterThanOrEqual(100);
+    expect(fit.clipped).toBe(false);
+    expect(fit.overflow).toBeLessThanOrEqual(1);
+  });
+}

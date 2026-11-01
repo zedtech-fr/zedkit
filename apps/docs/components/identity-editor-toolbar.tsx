@@ -75,6 +75,24 @@ function ToolbarGroup({ label, children }: { label: string; children: ReactNode 
   );
 }
 
+function NameField({ name, onName }: { name: string; onName: (value: string) => void }) {
+  const copy = identityEditorCopy.toolbar;
+  return (
+    <Field className="w-full min-w-36 sm:w-56">
+      <FieldLabel htmlFor="identity-editor-name">{copy.name}</FieldLabel>
+      <Input
+        id="identity-editor-name"
+        value={name}
+        aria-describedby="identity-editor-name-hint"
+        onChange={(event) => onName(event.target.value)}
+      />
+      <Text id="identity-editor-name-hint" variant="muted" className="text-xs">
+        {name.trim() === "" ? copy.nameHint : "\u00a0"}
+      </Text>
+    </Field>
+  );
+}
+
 function DeleteLook({ disabled, onDelete }: { disabled: boolean; onDelete: () => void }) {
   const copy = identityEditorCopy.toolbar;
   return (
@@ -114,10 +132,7 @@ function IdentityEditorToolbar({
     <Stack gap={4} data-slot="identity-editor-toolbar">
       <ToolbarGroup label={copy.groups.look}>
         <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
-        <Field className="w-full min-w-36 sm:w-56">
-          <FieldLabel htmlFor="identity-editor-name">{copy.name}</FieldLabel>
-          <Input id="identity-editor-name" value={name} onChange={(event) => onName(event.target.value)} />
-        </Field>
+        <NameField name={name} onName={onName} />
         <Button type="button" onClick={onSave} disabled={name.trim() === ""}>
           {copy.saveLook}
         </Button>

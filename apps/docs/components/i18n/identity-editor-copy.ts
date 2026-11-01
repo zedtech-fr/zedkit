@@ -93,6 +93,7 @@ export const identityEditorCopy = {
   toolbar: {
     look: "Look",
     name: "Name",
+    nameHint: "Name the look to save it.",
     saveLook: "Save look",
     rename: "Rename",
     delete: "Delete",

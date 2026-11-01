@@ -66,7 +66,8 @@ export function buildAdminDashboardColumns({
     tableHelper.accessor("region", { header: adminDashboardDemoCopy.columns.region }),
     tableHelper.display({
       id: "actions",
-      header: adminDashboardDemoCopy.columns.actions,
+      // Icons say it; the name stays for assistive tech and frees ~40px on a phone.
+      header: () => <span className="sr-only">{adminDashboardDemoCopy.columns.actions}</span>,
       cell: ({ row }) => (
         <Stack direction="horizontal" gap={1} className="flex-nowrap justify-end" data-demo-row-actions>
           <Button

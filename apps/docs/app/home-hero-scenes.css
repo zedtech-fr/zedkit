@@ -62,6 +62,7 @@
   white-space: nowrap;
   /* Full opacity always (the dots' 25% fade would fail contrast on text); the current step darkens instead. */
   opacity: 1;
+  border-bottom: 2px solid transparent;
   animation-name: zk-home-hero-step;
 }
 
@@ -151,10 +152,12 @@
   0%,
   100% {
     color: var(--color-muted-foreground);
+    border-bottom-color: transparent;
   }
   25%,
   75% {
     color: var(--color-foreground);
+    border-bottom-color: var(--color-foreground);
   }
 }
 
@@ -163,19 +166,23 @@
   0%,
   75% {
     color: var(--color-foreground);
+    border-bottom-color: var(--color-foreground);
   }
   100% {
     color: var(--color-muted-foreground);
+    border-bottom-color: transparent;
   }
 }
 
 @keyframes zk-home-hero-step-last {
   0% {
     color: var(--color-muted-foreground);
+    border-bottom-color: transparent;
   }
   25%,
   100% {
     color: var(--color-foreground);
+    border-bottom-color: var(--color-foreground);
   }
 }
 

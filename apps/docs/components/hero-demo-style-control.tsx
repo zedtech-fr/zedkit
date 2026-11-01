@@ -32,7 +32,8 @@ export function HeroDemoStyleControl({
     <Stack
       direction="horizontal"
       gap={2}
-      className="min-w-0 flex-nowrap items-center overflow-x-auto"
+      // Wraps instead of scrolling: on a phone the selected look must stay readable, so rows break before controls shrink.
+      className="min-w-0 flex-wrap items-center"
       role="group"
       aria-labelledby={labelId}
       data-hero-demo-display=""
