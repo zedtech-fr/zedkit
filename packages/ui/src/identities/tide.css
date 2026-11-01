@@ -114,7 +114,7 @@
 }
 
 :root[data-identity="tide"].dark,
-.dark [data-identity-scope][data-identity="tide"] {
+[data-identity-scope][data-identity="tide"].dark {
   --background: 222 47% 11%;
   --foreground: 0 0% 98%;
   --card: 218 33% 17%;

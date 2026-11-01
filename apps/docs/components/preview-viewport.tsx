@@ -1,9 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
-import { Button, Stack, Text, cn } from "@zedtech/zedkit-ui";
+import { Button, Stack, Text, ThemeScope, cn } from "@zedtech/zedkit-ui";
 import { DemoStyleSelect, usePinnedLook } from "@/components/demo-style-scope";
 
 const noop = () => () => {};
@@ -19,9 +19,11 @@ export function usePreviewMobile(): boolean {
   return useContext(PreviewMobileContext);
 }
 
+type ModePin = "follow" | "light" | "dark";
+
 /**
- * Preview island with viewport and theme switches. The `dark` class re-scopes
- * kit CSS variables for the preview subtree only.
+ * Preview island with viewport and theme switches. Identity and mode live on
+ * the nearest ThemeScope; `.dark` on that node is the mode authority.
  */
 export function PreviewViewport({
   center,
@@ -35,18 +37,11 @@ export function PreviewViewport({
 }) {
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(noop, () => true, () => false);
-  const [dark, setDark] = useState(false);
+  const [modePin, setModePin] = useState<ModePin>("follow");
   const [mobile, setMobile] = useState(false);
-  const modePinned = useRef(false);
   const demoStyle = usePinnedLook();
-
-  useEffect(() => {
-    if (!mounted || modePinned.current || resolvedTheme == null) return;
-    setDark(resolvedTheme === "dark");
-    modePinned.current = true;
-  }, [mounted, resolvedTheme]);
-
-  const darkScope = dark ? "dark" : undefined;
+  const siteDark = mounted && resolvedTheme === "dark";
+  const dark = modePin === "follow" ? siteDark : modePin === "dark";
   const toolbar = (
     <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
       <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
@@ -73,24 +68,26 @@ export function PreviewViewport({
           Mobile
         </Button>
         <Button
-          variant={dark ? "outline" : "secondary"}
+          variant={modePin === "follow" ? "secondary" : "outline"}
           size="sm"
-          onClick={() => {
-            modePinned.current = true;
-            setDark(false);
-          }}
-          aria-pressed={!dark}
+          onClick={() => setModePin("follow")}
+          aria-pressed={modePin === "follow"}
+        >
+          Follow site
+        </Button>
+        <Button
+          variant={modePin === "light" ? "secondary" : "outline"}
+          size="sm"
+          onClick={() => setModePin("light")}
+          aria-pressed={modePin === "light"}
         >
           Light
         </Button>
         <Button
-          variant={dark ? "secondary" : "outline"}
+          variant={modePin === "dark" ? "secondary" : "outline"}
           size="sm"
-          onClick={() => {
-            modePinned.current = true;
-            setDark(true);
-          }}
-          aria-pressed={dark}
+          onClick={() => setModePin("dark")}
+          aria-pressed={modePin === "dark"}
         >
           Dark
         </Button>
@@ -103,25 +100,23 @@ export function PreviewViewport({
       data-component-preview={a11yRoot ? "primary" : true}
       {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}
     >
-      {a11yRoot ? (
-        <Stack className="max-md:hidden">{toolbar}</Stack>
-      ) : (
-        toolbar
-      )}
-      <Stack
+      {toolbar}
+      <ThemeScope
+        identity={demoStyle.pinned ? demoStyle.look : undefined}
+        mode={dark ? "dark" : "light"}
         className={cn(
-          "rounded-lg border border-border bg-muted/40 p-4 md:p-6",
+          // not-prose is a fumadocs escape hatch, not a Tailwind utility.
+          // eslint-disable-next-line better-tailwindcss/no-unknown-classes
+          "not-prose rounded-lg border border-border bg-background p-4 md:p-6",
           a11yRoot && "max-md:p-3",
-          darkScope,
           mobile && "mx-auto w-full max-w-[390px]",
         )}
         data-preview-surface=""
-        {...demoStyle.scopeAttrs}
       >
         <PreviewMobileContext.Provider value={mobile}>
           {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
         </PreviewMobileContext.Provider>
-      </Stack>
+      </ThemeScope>
     </Stack>
   );
 }

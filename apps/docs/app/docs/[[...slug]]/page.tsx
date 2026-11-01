@@ -65,7 +65,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         }}
       >
         <DocsTitle>{page.data.title}</DocsTitle>
-        <DocsDescription>{page.data.description}</DocsDescription>
+        {page.data.componentPage ? null : <DocsDescription>{page.data.description}</DocsDescription>}
         <DocsBody>
           <MDX components={getMDXComponents()} />
         </DocsBody>

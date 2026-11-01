@@ -3,7 +3,7 @@
  * Desktop: the primary nav item "UI changelog" wraps at 1280px.
  * Phone: the home hero preview card sits below the first screen without Tide
  * fit tokens. Section padding and the title scale tighten under 40rem. The
- * hero preview keeps a fixed height so the card stays on the first screen.
+ * hero admin specimen sizes to its content (no clipped overflow).
  */
 :root[data-identity="tide"] #nd-nav nav > ul a,
 :root[data-identity="tide"] #nd-nav nav > ul button,
@@ -60,14 +60,4 @@
     --text-2xl: 1.375rem;
   }
 
-  /*
-   * Hero admin demo: keep the preview shell on the first phone screen (see
-   * identity-tide e2e) while the table and detail scroll inside the card.
-   */
-  :root[data-identity="tide"] #home-page [data-home-hero-preview] {
-    max-height: 15rem;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-  }
 }

@@ -309,7 +309,7 @@ function tokensToCssVars(tokens: IdentityTokens): Record<string, string> {
 
 function tokensToCss(tokens: IdentityTokens, selector: string): string {
   const light = `${selector} {\n${cssDecls(tokensToCssVars(tokens))}\n}`;
-  const dark = `.dark ${selector},\n${selector}.dark {\n${cssDecls(colourCssVars(tokens.dark))}\n}`;
+  const dark = `${selector}.dark {\n${cssDecls(colourCssVars(tokens.dark))}\n}`;
   return `${light}\n${dark}`;
 }
 

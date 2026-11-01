@@ -43,40 +43,6 @@
   color: hsl(var(--foreground));
 }
 
-/* Live preview islands stay on light kit tokens when the site shell is dark (#396). */
-html.dark :is([data-home-dashboard-card], [class*="bg-muted/40"]):not(.dark) {
-  color-scheme: light;
-  color: hsl(var(--foreground));
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 5% 32%;
-  --accent: 240 4.8% 59.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 72.2% 47%;
-  --destructive-foreground: 0 0% 98%;
-  --success: 142.1 76.2% 27%;
-  --success-foreground: 0 0% 98%;
-  --warning: 32 95% 44%;
-  --warning-foreground: 240 10% 3.9%;
-  --border: 240 5.9% 60%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5% 64.9%;
-}
-
-/* The island tint is opaque: a translucent light tint over the dark page reads as mid-grey under the light tokens. */
-html.dark [class*="bg-muted/40"]:not(.dark) {
-  background-color: color-mix(in srgb, hsl(var(--muted)) 40%, hsl(var(--background)));
-}
-
 /* Phone search: hidden while a drawer or dialog is open. */
 body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
 body:has([role="dialog"][data-state="open"]) [data-search-pill] {
@@ -97,17 +63,16 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   }
 }
 
-/* Doc prose paints links in the page colour; ghost and outline buttons rendered as links follow the island. */
-html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
-  color: hsl(var(--foreground));
-}
-
 /*
  * Docs chrome follows the kit tokens: once an identity is chosen, fumadocs
  * colours are bridged to it (light or dark), so one identity switch restyles
- * the whole site. Without an identity the stock fumadocs palette stays.
+ * the whole site. The same bridge on `[data-identity-scope]` keeps a
+ * pinned specimen from inheriting the page's computed `--color-fd-*`
+ * (prose tables paint `background: var(--color-fd-card)`). Without an
+ * identity the stock fumadocs palette stays.
  */
-:root[data-identity] {
+:root[data-identity],
+[data-identity-scope][data-identity] {
   --color-fd-background: hsl(var(--background));
   --color-fd-foreground: hsl(var(--foreground));
   --color-fd-muted: hsl(var(--muted));
@@ -124,7 +89,9 @@ html.dark [class*="bg-muted/40"]:not(.dark) a[class*="hover:bg-accent"] {
   --color-fd-accent: hsl(var(--accent));
   --color-fd-accent-foreground: hsl(var(--accent-foreground));
   --color-fd-ring: hsl(var(--ring));
+}
 
+:root[data-identity] {
   /* Navbar and sidebar follow the identity border and surfaces (glass tokens default to solid). */
   #nd-nav {
     background-color: hsl(var(--background) / var(--zk-glass-alpha, 1));

@@ -1593,7 +1593,7 @@ import { Tabs } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: ScrollScenes
 - Audience: Developers telling a story in a few steps (one product shown in several looks, a feature tour, before/after) on a marketing or docs page.
-- Purpose: One stage stays under the header while the page scrolls; each scene fades in, holds, then fades out before the next. Pure CSS scroll-driven animation: no script, no scroll hijacking, native scrolling only.
+- Purpose: Pin one stage under the header while the page scrolls; scenes fade in and out in turn. Pure CSS, native scrolling.
 - When to use: Two to eight (`SCROLL_SCENES_MAX`) short scenes that read well one at a time and where scrolling is the natural way to move on.
 - When not to use: Long content, forms or anything focusable inside a scene — invisible scenes stay in the accessibility tree, so keep scene visuals non-interactive (`aria-hidden` and `inert`); steps the user must pick themselves — use `Tabs` or `WizardSteps`.
 - See also: `Switch between tabbed panels`
@@ -1664,7 +1664,7 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: beta
 - Short name: Identities
@@ -1675,7 +1675,7 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
 - See also: `Theme an admin app (dark/light included)`
 - Examples: Header switcher, Same card in each look, Touch picker, Live token sheet
 - A11y: `IdentitySwitcher` is a native labelled `select` (visible label with `showLabel`, otherwise screen-reader only); `IdentityPicker` is a 44px trigger opening a sheet with a labelled radio group. Both render nothing when there is no identity to choose. While a custom sheet is active they show `Custom` (`CUSTOM_IDENTITY_ID`); a named look (`n-acme`) that is not in `identities` still appears as a selected option (label is the slug after `n-`) so the control never has a value missing from the list. Pass saved looks in `identities` to show their real labels. Picking a built-in look parks the custom sheet — it stays stored, scoped to its look, until `discardCustomIdentity` drops it. A choice applies at once and the new look keeps the kit's contrast pairs in light and dark; announce the change in your own status line (`role="status"`) if you show one. Keep the trigger name stable (`label`), because the current identity is read from the value.
-- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher, and `suppressHydrationWarning` on `<html>`. A stored id is ignored — it must be in `ids`. A stored custom sheet (`IDENTITY_CUSTOM_STORAGE_KEY`) wins over a built-in id. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks. The whole page changed but you wanted one card — put `data-identity-scope` and `data-identity="…"` on that element instead of changing `<html>`; the scope sets tokens, fonts and radii for its subtree only. Two switchers disagree — give them the same `storageKey`; they follow each other through `IDENTITY_CHANGE_EVENT`. Switching looks parks a custom sheet (it is scoped to one look); call `discardCustomIdentity` to drop it for good.
+- Troubleshooting: The look flashes on load — render `<IdentityScript />` inside `<head>` with the same ids and storage key as the switcher, and `suppressHydrationWarning` on `<html>`. A stored id is ignored — it must be in `ids`. A stored custom sheet (`IDENTITY_CUSTOM_STORAGE_KEY`) wins over a built-in id. Built-in ids: `mist`, `press`, `tide`, `volt`, `maison`, `glass`; pass your own list to the script and the switcher to offer other looks. The whole page changed but you wanted one card — wrap it in `<ThemeScope identity="…" className="dark">` (or put `data-identity-scope` and `data-identity` on that node and add `.dark` on the same node). Dark tokens apply only when `.dark` is on the identity node, not on an ancestor. Overlays (dialog, select, menu, popover, tooltip, toast) portal into the nearest ThemeScope so they keep that identity and mode; without a scope they still mount on `document.body`. Two switchers disagree — give them the same `storageKey`; they follow each other through `IDENTITY_CHANGE_EVENT`. Switching looks parks a custom sheet (it is scoped to one look); call `discardCustomIdentity` to drop it for good.
 
 ```ts
 import { IdentityScript, IdentitySwitcher } from "@zedtech/zedkit-ui";
@@ -1696,21 +1696,20 @@ import { IdentityScript, IdentitySwitcher } from "@zedtech/zedkit-ui";
 ```
 
 ```ts
-import { Badge, Button, Heading, Stack, Text, identities } from "@zedtech/zedkit-ui";
+import { Badge, Button, Heading, Text, ThemeScope, identities } from "@zedtech/zedkit-ui";
 
 // Preview every look at once: the scope changes this subtree only, never <html>.
 {identities.map((look) => (
-  <Stack
+  <ThemeScope
     key={look.id}
-    data-identity-scope=""
-    data-identity={look.id}
-    className="rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md"
+    identity={look.id}
+    className="rounded-xl border border-border bg-background p-4 shadow-md"
   >
     <Heading level={3}>{look.label}</Heading>
     <Badge variant="secondary">New</Badge>
     <Text variant="muted">{look.description}</Text>
     <Button size="sm">Save</Button>
-  </Stack>
+  </ThemeScope>
 ))}
 ```
 

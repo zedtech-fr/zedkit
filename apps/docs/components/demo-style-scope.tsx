@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
-import { identities, Stack, useIdentity } from "@zedtech/zedkit-ui";
+import { useTheme } from "next-themes";
+import { identities, Stack, ThemeScope, useIdentity } from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
@@ -24,7 +25,7 @@ function usePinnedLook() {
   return { look, pinned: pinned !== null, pin: setPinned, scopeAttrs };
 }
 
-function DemoStyleSelect({ look, pinned, onPin }: { look: string; pinned: boolean; onPin: (id: string) => void }) {
+function DemoStyleSelect({ look, pinned, onPin }: { look: string; pinned: boolean; onPin: (id: string | null) => void }) {
   const selectId = useId();
   return (
     <Stack direction="horizontal" gap={2} className="items-center">
@@ -33,12 +34,13 @@ function DemoStyleSelect({ look, pinned, onPin }: { look: string; pinned: boolea
       </label>
       {/* Uncontrolled: a controlled select here reports the previous value on change. */}
       <select
-        key={pinned ? look : `site-${look}`}
+        key={pinned ? look : "follow-site"}
         id={selectId}
-        defaultValue={look}
-        onChange={(event) => onPin(event.target.value)}
+        defaultValue={pinned ? look : "follow-site"}
+        onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
         className="h-control-height-sm rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
       >
+        <option value="follow-site">Follow site</option>
         {identities.map((item) => (
           <option key={item.id} value={item.id}>
             {item.label}
@@ -51,12 +53,17 @@ function DemoStyleSelect({ look, pinned, onPin }: { look: string; pinned: boolea
 
 function DemoStyleScope({ children }: { children: ReactNode }) {
   const demo = usePinnedLook();
+  const { resolvedTheme } = useTheme();
   return (
     <Stack gap={2} className="min-w-0">
       <DemoStyleSelect look={demo.look} pinned={demo.pinned} onPin={demo.pin} />
-      <Stack className="min-w-0" {...demo.scopeAttrs}>
+      <ThemeScope
+        identity={demo.pinned ? demo.look : undefined}
+        mode={resolvedTheme === "dark" ? "dark" : "light"}
+        className="min-w-0"
+      >
         {children}
-      </Stack>
+      </ThemeScope>
     </Stack>
   );
 }

@@ -144,7 +144,7 @@
 }
 
 :root[data-identity="glass"].dark,
-.dark [data-identity-scope][data-identity="glass"] {
+[data-identity-scope][data-identity="glass"].dark {
   --background: 232 38% 8%;
   --foreground: 220 40% 94%;
   --card: 232 30% 14%;
@@ -272,7 +272,7 @@
   :root[data-identity="glass"],
   :root[data-identity="glass"].dark,
   [data-identity-scope][data-identity="glass"],
-  .dark [data-identity-scope][data-identity="glass"] {
+  [data-identity-scope][data-identity="glass"].dark {
     --zk-glass-alpha: 0.97;
     --zk-glass-blur: 0px;
     --zk-glass-saturate: 1;
@@ -287,7 +287,7 @@
   :root[data-identity="glass"],
   :root[data-identity="glass"].dark,
   [data-identity-scope][data-identity="glass"],
-  .dark [data-identity-scope][data-identity="glass"] {
+  [data-identity-scope][data-identity="glass"].dark {
     --zk-glass-alpha: 0.97;
     --zk-glass-overlay-alpha: 0.98;
     --zk-glass-overlay-tint: none;

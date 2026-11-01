@@ -113,7 +113,7 @@
 }
 
 :root[data-identity="volt"].dark,
-.dark [data-identity-scope][data-identity="volt"] {
+[data-identity-scope][data-identity="volt"].dark {
   --background: 0 0% 3%;
   --foreground: 0 0% 96%;
   --card: 0 0% 7%;

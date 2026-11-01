@@ -289,7 +289,7 @@ describe("overlays", () => {
     const { container } = render(<Toaster />);
     toast("Saved");
     await screen.findByText("Saved");
-    for (const token of ["bg-background", "text-foreground", "border-border"]) {
+    for (const token of ["bg-card", "text-card-foreground", "border-border"]) {
       expect(container.innerHTML).toContain(token);
     }
     expect(container.innerHTML).not.toMatch(/bg-(red|blue|green|amber)-/);

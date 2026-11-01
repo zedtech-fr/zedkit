@@ -1,33 +1,11 @@
-/* Unlayered overrides: Fumadocs shadcn theme must not win over kit contrast (#396). */
-:root {
-  --muted-foreground: 240 5% 32% !important;
-  --color-fd-muted-foreground: hsl(240 5% 32%) !important;
-}
-
-:root.dark,
-html.dark {
-  --muted-foreground: 240 5% 64.9% !important;
-  --color-fd-muted-foreground: hsl(240 5% 64.9%) !important;
-}
-
+/* Unlayered: fumadocs chrome follows the nearest identity tokens, not a stock pin. */
 .text-fd-muted-foreground {
-  color: hsl(240 5% 32%) !important;
-}
-
-:root.dark .text-fd-muted-foreground,
-html.dark .text-fd-muted-foreground {
-  color: hsl(240 5% 64.9%) !important;
+  color: hsl(var(--muted-foreground));
 }
 
 [id^="type-table"] .line-through {
-  color: hsl(240 5% 32%) !important;
-  text-decoration-color: hsl(240 5% 32%);
-}
-
-:root.dark [id^="type-table"] .line-through,
-html.dark [id^="type-table"] .line-through {
-  color: hsl(240 5% 64.9%) !important;
-  text-decoration-color: hsl(240 5% 64.9%);
+  color: hsl(var(--muted-foreground));
+  text-decoration-color: hsl(var(--muted-foreground));
 }
 
 /*
@@ -86,6 +64,12 @@ html.dark [id^="type-table"] .line-through {
   font-size: inherit;
   box-decoration-break: unset;
   -webkit-box-decoration-break: unset;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#nd-docs-layout [id^="type-table"] > div {
+  min-width: 0;
 }
 
 #nd-docs-layout [id^="type-table"] > div:first-child {
@@ -115,22 +99,4 @@ html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
   box-shadow: none;
   background-color: hsl(var(--card));
   border: var(--zk-border-width, 1px) solid hsl(var(--border));
-}
-
-/* Props accordion: plain mono names, not bordered inline-code pills. */
-#nd-docs-layout [id^="type-table"] code {
-  background: transparent;
-  border: 0;
-  padding: 0;
-  font-size: inherit;
-  box-decoration-break: unset;
-  -webkit-box-decoration-break: unset;
-}
-
-#nd-docs-layout [id^="type-table"] > div:first-child {
-  border-bottom: 0;
-}
-
-#nd-docs-layout [id^="type-table"] [data-state] {
-  border-color: hsl(var(--border) / 0.22);
 }

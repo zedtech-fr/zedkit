@@ -10,6 +10,7 @@ import { Drawer as DrawerPrimitive } from "vaul";
 import { buttonVariants } from "@/components/ui/button";
 import { resolveModalMountAutoFocus, overlayDrawerFooterClass, overlayDrawerHeaderClass } from "@/components/ui/overlay-modal";
 import { cn } from "@/lib/utils";
+import { usePortalContainer } from "@/components/ui/theme-scope";
 import { useNarrowViewport } from "@/components/ui/use-narrow-viewport";
 import { useUiMessages } from "@/components/ui/ui-provider";
 
@@ -66,8 +67,14 @@ function DrawerClose({ ...props }: React.ComponentProps<typeof DrawerPrimitive.C
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
 }
 
-function DrawerPortal({ ...props }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+function DrawerPortal({
+  container,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
+  const scoped = usePortalContainer();
+  return (
+    <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} container={container ?? scoped} />
+  );
 }
 
 function DrawerOverlay({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
@@ -103,7 +110,7 @@ function DrawerContent({
       <DrawerPrimitive.Content
         data-slot="drawer-content"
         className={cn(
-          "fixed z-overlay flex flex-col border bg-background outline-none",
+          "fixed z-overlay flex flex-col border bg-card text-card-foreground outline-none",
           // Safety net for content composed without DrawerHeader/Body/Footer (a bare form, text, a list): it still
           // gets the shared side gutters and a bottom inset that clears the home indicator. Buttons and the
           // kit slots keep their own spacing.

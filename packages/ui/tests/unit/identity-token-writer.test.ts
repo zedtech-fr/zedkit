@@ -155,7 +155,7 @@ describe("token to CSS var writer", () => {
 
   it("writes dark colour channels under .dark", () => {
     const css = tokensToCss(identityPresets.press, DRAFT);
-    expect(css).toContain(`.dark ${DRAFT}`);
+    expect(css).not.toContain(`.dark ${DRAFT}`);
     expect(css).toContain(`${DRAFT}.dark`);
     expect(css).toContain("--background: 0 0% 6%");
     expect(css).toContain("--primary: 164 62% 56%");

@@ -24,6 +24,7 @@ const SKIP = new Set([
   "useValidatedForm",
   "useOnlineStatus",
   "useIdentity",
+  "usePortalContainer",
   "alertVariants",
   "badgeVariants",
   "buttonVariants",

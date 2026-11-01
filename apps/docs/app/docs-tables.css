@@ -44,9 +44,11 @@
   -webkit-box-decoration-break: unset;
 }
 
-#nd-docs-layout [data-docs-table] tbody td:first-child code,
-#nd-docs-layout [data-docs-table] tbody td:nth-child(2) code {
-  white-space: nowrap;
+@media (width >= 40rem) {
+  #nd-docs-layout [data-docs-table] tbody td:first-child code,
+  #nd-docs-layout [data-docs-table] tbody td:nth-child(2) code {
+    white-space: nowrap;
+  }
 }
 
 #nd-docs-layout [data-docs-table] tbody td:last-child code {
@@ -60,6 +62,21 @@
 }
 
 @media (width < 40rem) {
+  #nd-docs-layout [data-docs-table] {
+    overflow-x: visible;
+  }
+
+  #nd-docs-layout [data-docs-table] table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #nd-docs-layout [data-docs-table] tbody {
+    display: block;
+    width: 100%;
+  }
+
   #nd-docs-layout [data-docs-table] thead {
     position: absolute;
     width: 1px;
@@ -93,8 +110,22 @@
     font-family: var(--zk-font-mono, ui-monospace, monospace);
     font-size: 0.8125rem;
     font-weight: 500;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow-x: visible;
+  }
+
+  #nd-docs-layout [data-docs-table] tbody td:first-child code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #nd-docs-layout [data-docs-table] tbody td[data-docs-table-command],
+  #nd-docs-layout [data-docs-table] tbody td:nth-child(2):has(code) {
+    max-width: 100%;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   #nd-docs-layout [data-docs-table] tbody td:nth-child(2) code {

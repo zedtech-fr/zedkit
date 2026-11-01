@@ -10,6 +10,7 @@ import {
   overlayDialogFooterClass,
   overlayDialogHeaderClass,
 } from "./overlay-modal.js";
+import { usePortalContainer } from "./theme-scope.js";
 import { useUiMessages } from "./ui-provider.js";
 
 /** Air between the panel and the visual viewport edge (same 16px as the docs search sheet). */
@@ -67,8 +68,14 @@ function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.C
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+function DialogPortal({
+  container,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
+  const scoped = usePortalContainer();
+  return (
+    <DialogPrimitive.Portal data-slot="dialog-portal" {...props} container={container ?? scoped} />
+  );
 }
 
 function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
@@ -114,7 +121,7 @@ function DialogContent({
           contentRef.current?.focus({ preventScroll: true });
         }}
         className={cn(
-          "fixed dialog-center z-overlay grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-4 overflow-y-auto overscroll-y-contain rounded-lg border bg-background p-dialog-padding shadow-overlay outline-none focus:outline-none sm:max-w-lg",
+          "fixed dialog-center z-overlay grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-4 overflow-y-auto overscroll-y-contain rounded-lg border bg-card p-dialog-padding text-card-foreground shadow-overlay outline-none focus:outline-none sm:max-w-lg",
           "motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)]",
           "motion-safe:data-[state=closed]:animate-[zk-zoom-out_var(--motion-base)_var(--ease-exit)]",
           className,
