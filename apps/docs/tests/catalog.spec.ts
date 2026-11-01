@@ -118,8 +118,8 @@ test("catalog area filters keep a decorative icon", async ({ page }) => {
 test("catalog results group by category without per-row area chips", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 3 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /^Core & server · \d+$/, level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 2 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Core & server · \d+$/, level: 2 })).toBeVisible();
   await expect(page.locator("[data-catalog-area]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
@@ -129,8 +129,8 @@ test("catalog results group by category without per-row area chips", async ({ pa
 
 test("catalog area filter shows one category group", async ({ page }) => {
   await page.goto(`${BASE}/catalog?area=seo`, { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: /^SEO · \d+$/, level: 3 })).toHaveCount(1);
-  await expect(page.getByRole("heading", { name: /^UI · /, level: 3 })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: /^SEO · \d+$/, level: 2 })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: /^UI · /, level: 2 })).toHaveCount(0);
   await expect(page.getByRole("navigation", { name: "Jump to category" })).toHaveCount(0);
 });
 
@@ -206,7 +206,7 @@ test("catalog filters persist in the URL and show empty state", async ({ page })
   await expect(page.getByText("No catalog entries match")).toBeVisible();
   await page.getByRole("link", { name: "Clear filters" }).click();
   await expect(page).toHaveURL(/\/catalog\/?$/);
-  await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 2 })).toBeVisible();
 });
 
 async function visibleResultLinks(page: Page) {
