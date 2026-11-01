@@ -67,9 +67,16 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
       >
         <DocsTitle>{page.data.title}</DocsTitle>
         {page.data.componentPage ? null : <DocsDescription>{page.data.description}</DocsDescription>}
-        <DocsBody>
-          <MDX components={getMDXComponents()} />
-        </DocsBody>
+        {page.data.componentPage ? (
+          // Component pages are composed from kit components; the `prose` reset DocsBody adds would restyle them.
+          <Stack className="flex-1">
+            <MDX components={getMDXComponents()} />
+          </Stack>
+        ) : (
+          <DocsBody>
+            <MDX components={getMDXComponents()} />
+          </DocsBody>
+        )}
         <Stack className="mt-section-md">
           <SiteMaintainerFooter changelogHref={featuredPackageChangelogUrl} embeddedInMain />
         </Stack>

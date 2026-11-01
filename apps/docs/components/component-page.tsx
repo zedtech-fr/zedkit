@@ -130,7 +130,7 @@ export async function ComponentPage({
         {copyable ? (
           <>
             {componentPageCopy.npmInstallLeadBeforeLink}{" "}
-            <Link href="/docs/getting-started#ui-button" className="text-primary underline-offset-4 hover:underline">
+            <Link href="/docs/getting-started#ui-button" className="text-primary underline underline-offset-4 hover:no-underline">
               {componentPageCopy.npmInstallLeadLink}
             </Link>
             {componentPageCopy.npmInstallLeadAfterLink}
@@ -215,7 +215,7 @@ export async function ComponentPage({
                   {await highlightedTs(registryImportSnippet(importLine, registry))}
                   <Text variant="muted" className="text-sm">
                     {componentPageCopy.registryContinuation}{" "}
-                    <Link href="/docs/zedkit-and-shadcn" className="text-primary underline-offset-4 hover:underline">
+                    <Link href="/docs/zedkit-and-shadcn" className="text-primary underline underline-offset-4 hover:no-underline">
                       {componentPageCopy.registryContinuationLink}
                     </Link>
                   </Text>
@@ -281,7 +281,7 @@ export async function ComponentPage({
         {related.length > 0 ? (
           <Stack gap={2}>
             {related.map((link) => (
-              <Link key={link.href} href={link.href} className="text-primary underline-offset-4 hover:underline">
+              <Link key={link.href} href={link.href} className="text-primary underline underline-offset-4 hover:no-underline">
                 {link.title}
               </Link>
             ))}

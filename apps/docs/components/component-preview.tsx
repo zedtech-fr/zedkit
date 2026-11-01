@@ -46,7 +46,7 @@ export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPr
         </PreviewFrame>
       </div>
       {hasProps ? (
-        <Link href="#props" className="w-fit text-sm text-primary underline-offset-4 hover:underline">
+        <Link href="#props" className="w-fit text-sm text-primary underline underline-offset-4 hover:no-underline">
           {componentPreviewCopy.viewPropsTable}
         </Link>
       ) : null}

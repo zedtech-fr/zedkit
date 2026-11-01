@@ -34,10 +34,9 @@ test.describe("site type hierarchy (P0)", () => {
     await page.goto("/docs/ui/trigger-actions-with-buttons", { waitUntil: "networkidle" });
     expect(await probe(page, "font-size", "var(--text-xs)")).toBe("12px");
     expect(await probe(page, "font-size", "var(--text-sm)")).toBe("13px");
-    const prose = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).fontSize);
-    expect(prose).toBe("15px");
-    const proseWidth = await page.locator("#nd-page .prose").first().evaluate((el) => getComputedStyle(el).maxWidth);
-    const proseWidthPx = Number.parseFloat(proseWidth);
-    expect(proseWidth.endsWith("ch") || (Number.isFinite(proseWidthPx) && proseWidthPx >= 640)).toBe(true);
+    // Component pages are kit-composed: no `prose` wrapper, and the lead text keeps the shared scale.
+    await expect(page.locator("#nd-page .prose")).toHaveCount(0);
+    const lead = await page.locator("#nd-page p").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    expect(lead).toBeGreaterThanOrEqual(14);
   });
 });

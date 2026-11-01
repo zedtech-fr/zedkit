@@ -53,7 +53,7 @@ test.describe("quiet inline code (#zk-chips)", () => {
     await expect(propCode).toBeVisible();
     const chipBorder = await propCode.evaluate((el) => parseFloat(getComputedStyle(el).borderTopWidth));
     expect(chipBorder).toBe(0);
-    const proseCode = page.locator("#nd-page .prose :not(pre) > code").first();
+    const proseCode = page.locator("#nd-page :not(pre, [id^='type-table']) > code").first();
     await expect(proseCode).toBeVisible();
     const proseBorder = await proseCode.evaluate((el) => parseFloat(getComputedStyle(el).borderTopWidth));
     expect(proseBorder).toBe(0);
