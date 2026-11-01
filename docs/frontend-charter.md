@@ -1,6 +1,6 @@
 # Frontend charter
 
-Rules the kit enforces in lint or shows in a live example. Lint messages
+Rules the kit enforces in lint, review, or a live example. Lint messages
 state the rule; this table is the index.
 
 | Id | Enforced | Example |
@@ -13,7 +13,7 @@ state the rule; this table is the index.
 | `ui-types` | lint. No explicit `any`. Name the type, or use `unknown` and narrow. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
 | `ui-size` | lint. A UI file stays under 300 lines; a function stays under 60. Split a long file into smaller components; split a long function. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
 | `tokens-color` | lint. Semantic color tokens only (`background`, `foreground`, `primary`, `destructive`, …). No palette classes (`bg-red-500`), no hex/rgb, no `bg-[#fff]`. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
-| `tokens-style` | lint. No `style` attributes. No raw `px` font sizes; use `text-xs` … `text-2xl` and the spacing scale. | [Typography](https://zedkit.app/docs/ui/render-headings-and-body-text-without-raw-tags) |
+| `tokens-style` | lint. No `style` attributes. No raw `px` font sizes; use `text-xs` … `text-2xl` and the spacing scale. **Type floor:** no text token or visible copy below **12px**. **Body** is **14px** (docs prose **15px**); **16px minimum applies only to form controls** (input, textarea, select, contenteditable, combobox/search) on viewports **&lt;768px** so iOS Safari does not zoom on focus — not a global body size. | [Typography](https://zedkit.app/docs/ui/render-headings-and-body-text-without-raw-tags) |
 | `tokens-arbitrary` | lint. No arbitrary px/rem in className (`w-[13px]`, `gap-[0.75rem]`). Use the spacing scale (`w-4`, `gap-3`) or the type scale (`text-sm`). Radix CSS variables (`w-[var(--radix-*)]`) stay. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
 | `tokens-focus` | lint. Focus ring via `focus-ring` / `focus-ring-control` (theme `--ring-width*`), not `focus:ring-2` / `focus-visible:ring-2`. | [Lint UI files](https://zedkit.app/docs/quality/lint-ui-files-for-accessibility-tailwind-and-tokens) |
 | `theme-class` | Theme via next-themes (`attribute="class"`), tokens in `:root` + `.dark`. Every screen readable in both. | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
@@ -25,5 +25,7 @@ state the rule; this table is the index.
 | `a11y-contrast` | test. Contrast from tokens only. Zero axe violations per component (vitest-axe). | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
 | `responsive` | Mobile-first; full-width actions under `md`; no horizontal scroll except inside `Table`. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
 | `copy-next` | One language per screen. Name the next step. Errors say what broke and what to do. | [Shown-once secret](https://zedkit.app/docs/ui/display-a-shown-once-secret-with-copy) |
+| `visual-critique` | review. Lint, types, axe and screenshot diffs are necessary, not sufficient. A rendered-page critique names the strongest remaining weaknesses. A self-assigned score is not done. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
+| `visual-traps` | review. Specimen frame height, overlay-sibling blur, identity `--spacing`, calendar grid hover, scroll overflow. | [Visual contract](../apps/docs/VISUAL-CONTRACT.md) |
 | `layers-features` | lint. UI imports ports; adapters at the composition root; model is pure. | [Note list](https://zedkit.app/examples/note-list) |
 | `try-catch` | lint. No raw `try`/`catch`; use `tryCatch` / `tryCatchAsync` from `@zedtech/zedkit-core`. | [Handle errors](https://zedkit.app/docs/core/handle-errors-without-try-catch) |

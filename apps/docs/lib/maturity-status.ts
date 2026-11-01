@@ -16,7 +16,7 @@ const MATURITY_ICONS = {
 export function maturityBadgeVariant(status: string): MaturityBadgeVariant {
   switch (status.toLowerCase()) {
     case "stable":
-      return "success";
+      return "outline";
     case "beta":
       return "secondary";
     case "alpha":

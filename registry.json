@@ -146,6 +146,14 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/ui/overlay-modal.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/theme-scope.tsx",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/ui/ui-provider.tsx",
           "type": "registry:ui"
         },
@@ -227,6 +235,18 @@
       "files": [
         {
           "path": "registry/ui/drawer.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/overlay-modal.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/theme-scope.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/use-narrow-viewport.ts",
           "type": "registry:ui"
         },
         {
@@ -613,6 +633,14 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/ui/use-narrow-viewport.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/format-message.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/ui/ui-provider.tsx",
           "type": "registry:ui"
         },
@@ -707,7 +735,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "alert"
+        "@zedkit/alert"
       ],
       "files": [
         {
@@ -732,7 +760,7 @@
       "name": "icon-button",
       "type": "registry:ui",
       "registryDependencies": [
-        "button"
+        "@zedkit/button"
       ],
       "files": [
         {
@@ -745,7 +773,7 @@
       "name": "empty-state",
       "type": "registry:ui",
       "registryDependencies": [
-        "typography",
+        "@zedkit/typography",
         "utils"
       ],
       "files": [
@@ -759,7 +787,7 @@
       "name": "error-state",
       "type": "registry:ui",
       "registryDependencies": [
-        "alert",
+        "@zedkit/alert",
         "utils"
       ],
       "files": [
@@ -785,6 +813,10 @@
         },
         {
           "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
           "type": "registry:ui"
         },
         {

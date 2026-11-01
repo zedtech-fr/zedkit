@@ -26,6 +26,7 @@
   --secondary-foreground: 0 0% 5%;
   --muted: 47 22% 88%;
   --muted-foreground: 0 0% 25%;
+  --zk-subtle-foreground: 0 0% 34%;
   --accent: 160 55% 39%;
   --accent-foreground: 0 0% 5%;
   --destructive: 4 80% 38%;
@@ -115,7 +116,10 @@
 }
 
 :root[data-identity="press"].dark,
-.dark [data-identity-scope][data-identity="press"] {
+[data-identity-scope][data-identity="press"].dark,
+/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. The root rule skips sections inside a scope: the nearer scope owns them. */
+:root[data-identity="press"] .dark:not([data-identity-scope], [data-identity-scope] *),
+[data-identity-scope][data-identity="press"] .dark:not([data-identity-scope]) {
   --background: 0 0% 6%;
   --foreground: 45 35% 94%;
   --card: 0 0% 10%;

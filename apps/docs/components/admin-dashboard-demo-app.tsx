@@ -1,31 +1,13 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { z } from "zod";
+import { useRef, useState } from "react";
 
+import { DOCS_TYPE_BODY_CLASS, DOCS_TYPE_H3_CLASS, DOCS_TYPE_LABEL_CLASS } from "@/lib/docs-type-roles";
 import {
   Button,
-  ConfirmDialog,
   DataTable,
-  Drawer,
-  DrawerBody,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHandle,
-  DrawerHeader,
-  DrawerTitle,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormSubmit,
+  DetailPanel,
   Heading,
-  Input,
   Select,
   SelectContent,
   SelectItem,
@@ -34,54 +16,89 @@ import {
   Stack,
   Text,
   Toaster,
-  createDataTableColumns,
   toast,
-  useValidatedForm,
 } from "@zedtech/zedkit-ui";
 
-export type AdminAppRow = { id: string; name: string; region: "eu" | "us" };
+import { buildAdminDashboardColumns } from "./admin-dashboard-demo-columns";
+import {
+  AdminDashboardDemoDrawer,
+} from "./admin-dashboard-demo-drawer";
+import { useAdminDashboardForm } from "./admin-dashboard-demo-form";
+import {
+  adminDashboardSeedApps,
+  type AdminAppRow,
+  type AdminDashboardFormValues,
+  type PreviewMode,
+} from "./admin-dashboard-demo-types";
+import { adminDashboardDemoCopy } from "@/components/i18n/admin-dashboard-demo-copy";
 
-const tableHelper = createDataTableColumns<AdminAppRow>();
-
-const formSchema = z.object({
-  name: z.string().min(2, "Use at least 2 characters."),
-  region: z.enum(["eu", "us"]),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-type PreviewMode = "ready" | "loading" | "empty" | "error";
-
-const seedApps: AdminAppRow[] = [
-  { id: "seed-console", name: "console", region: "eu" },
-  { id: "seed-worker", name: "worker", region: "us" },
-];
+export type { PreviewMode } from "./admin-dashboard-demo-types";
 
 /**
  * Shared interactive admin dashboard (home demo + future tutorial).
  * Local state only; preview modes exercise DataTable loading/empty/error.
  */
 export function AdminDashboardDemoApp({
-  label = "Interactive admin dashboard demo",
+  label = adminDashboardDemoCopy.defaultAriaLabel,
+  preview: previewProp,
+  onPreviewChange,
+  variant = "default",
 }: {
   label?: string;
+  preview?: PreviewMode;
+  onPreviewChange?: (mode: PreviewMode) => void;
+  variant?: "default" | "home";
 }) {
-  const [apps, setApps] = useState<AdminAppRow[]>(seedApps);
-  const [preview, setPreview] = useState<PreviewMode>("ready");
+  const isHome = variant === "home";
+  const [apps, setApps] = useState<AdminAppRow[]>(adminDashboardSeedApps);
+  const [previewInternal, setPreviewInternal] = useState<PreviewMode>("ready");
+  const preview = previewProp ?? previewInternal;
+  const setPreview = (mode: PreviewMode) => {
+    onPreviewChange?.(mode);
+    if (previewProp === undefined) setPreviewInternal(mode);
+  };
+  const [selectedId, setSelectedId] = useState<string | null>(adminDashboardSeedApps[0]?.id ?? null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const form = useAdminDashboardForm();
 
-  const form = useValidatedForm(formSchema, {
-    defaultValues: { name: "", region: "eu" },
-  });
+  const selectedApp = selectedId ? apps.find((row) => row.id === selectedId) : undefined;
+
+  function rememberOpener() {
+    const active = document.activeElement;
+    openerRef.current = active instanceof HTMLElement ? active : null;
+  }
+
+  function restoreOpener() {
+    const remembered = openerRef.current;
+    const aria = remembered?.getAttribute("aria-label");
+    const text = remembered?.textContent?.trim() ?? "";
+    const find = () => {
+      if (remembered && document.contains(remembered)) return remembered;
+      const scope = document.querySelector(`[aria-label="${CSS.escape(label)}"]`);
+      if (!scope) return null;
+      if (aria) return scope.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(aria)}"]`);
+      return text
+        ? ([...scope.querySelectorAll("button")].find((el) => el.textContent?.trim() === text) ?? null)
+        : null;
+    };
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        find()?.focus({ preventScroll: true });
+      });
+    });
+  }
 
   function openCreate() {
+    rememberOpener();
     setEditingId(null);
     form.reset({ name: "", region: "eu" });
     setDrawerOpen(true);
   }
 
   function openEdit(row: AdminAppRow) {
+    rememberOpener();
     setEditingId(row.id);
     form.reset({ name: row.name, region: row.region });
     setDrawerOpen(true);
@@ -92,158 +109,129 @@ export function AdminDashboardDemoApp({
     setEditingId(null);
   }
 
-  function onSubmit(values: FormValues) {
+  function onSubmit(values: AdminDashboardFormValues) {
     if (editingId) {
       setApps((prev) => prev.map((row) => (row.id === editingId ? { ...row, ...values } : row)));
-      toast.success("App updated");
+      toast.success(adminDashboardDemoCopy.toast.updated);
     } else {
       setApps((prev) => [...prev, { id: `app-${Date.now()}`, ...values }]);
-      toast.success("App added");
+      toast.success(adminDashboardDemoCopy.toast.added);
     }
     closeDrawer();
+    restoreOpener();
   }
 
   function deleteApp(id: string) {
     setApps((prev) => prev.filter((row) => row.id !== id));
-    toast.success("App removed");
+    setSelectedId((current) => (current === id ? null : current));
+    toast.success(adminDashboardDemoCopy.toast.removed);
   }
 
   const tableData = preview === "empty" ? [] : apps;
   const loading = preview === "loading";
-  const error = preview === "error" ? "Could not load apps. Switch preview to Ready and try again." : null;
+  const error = preview === "error" ? adminDashboardDemoCopy.loadError : null;
 
-  const columns = [
-    tableHelper.accessor("name", { header: "Name" }),
-    tableHelper.accessor("region", { header: "Region" }),
-    tableHelper.display({
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <Stack direction="horizontal" gap={1} className="flex-nowrap justify-end" data-demo-row-actions>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            aria-label={`Edit ${row.original.name}`}
-            onClick={() => openEdit(row.original)}
-          >
-            <Pencil className="size-4" aria-hidden />
-          </Button>
-          <ConfirmDialog
-            trigger={
-              <Button type="button" variant="destructive" size="icon" aria-label={`Delete ${row.original.name}`}>
-                <Trash2 className="size-4" aria-hidden />
-              </Button>
-            }
-            title="Delete app?"
-            description={`Remove “${row.original.name}” from the list.`}
-            confirmLabel="Delete"
-            onConfirm={() => deleteApp(row.original.id)}
-          />
-        </Stack>
-      ),
-    }),
-  ];
+  const columns = buildAdminDashboardColumns({
+    selectedId,
+    onSelect: setSelectedId,
+    onEdit: openEdit,
+    onDelete: deleteApp,
+  });
+
+  const toolbarPad = isHome ? "p-3" : "p-4";
+  const bodyPad = isHome ? "p-3 pt-0" : "p-4";
 
   return (
     <>
       <Toaster />
-      <Stack className="w-full min-w-0" aria-label={label}>
-        <Stack gap={3} className="border-b border-border p-4" data-demo-toolbar>
-          <Heading level={2} className="text-lg font-semibold tracking-tight">
-            Project apps
-          </Heading>
-          <Text variant="muted" className="text-sm">
-            Add, edit, or delete rows. Switch the preview to see loading, empty, and error states.
-          </Text>
-          <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
-            <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
-              <SelectTrigger className="min-w-0 flex-1" aria-label="Table preview mode">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ready">Ready</SelectItem>
-                <SelectItem value="loading">Loading</SelectItem>
-                <SelectItem value="empty">Empty</SelectItem>
-                <SelectItem value="error">Error</SelectItem>
-              </SelectContent>
-            </Select>
+      <Stack className="w-full min-w-0" aria-label={label} data-admin-dashboard-demo={isHome ? "home" : undefined}>
+        {isHome ? (
+          <Stack
+            direction="horizontal"
+            gap={3}
+            className={`items-start justify-between border-b border-border ${toolbarPad}`}
+            data-demo-toolbar
+          >
+            <Stack gap={1} className="min-w-0">
+              <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
+                {adminDashboardDemoCopy.heading}
+              </Heading>
+              <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
+                {adminDashboardDemoCopy.homeHint}
+              </Text>
+            </Stack>
             <Button type="button" className="shrink-0" onClick={openCreate}>
-              Add app
+              {adminDashboardDemoCopy.addApp}
             </Button>
           </Stack>
-        </Stack>
-        <Stack className="min-w-0 p-4">
+        ) : (
+          <Stack gap={3} className={`border-b border-border ${toolbarPad}`} data-demo-toolbar>
+            <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
+              {adminDashboardDemoCopy.heading}
+            </Heading>
+            <Text variant="muted" className={DOCS_TYPE_BODY_CLASS}>
+              {adminDashboardDemoCopy.defaultHint}
+            </Text>
+            <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
+              <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
+                <SelectTrigger className="min-w-0 flex-1" aria-label={adminDashboardDemoCopy.previewModeAriaLabel}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ready">{adminDashboardDemoCopy.previewModes.ready}</SelectItem>
+                  <SelectItem value="loading">{adminDashboardDemoCopy.previewModes.loading}</SelectItem>
+                  <SelectItem value="empty">{adminDashboardDemoCopy.previewModes.empty}</SelectItem>
+                  <SelectItem value="error">{adminDashboardDemoCopy.previewModes.error}</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button type="button" className="shrink-0" onClick={openCreate}>
+                {adminDashboardDemoCopy.addApp}
+              </Button>
+            </Stack>
+          </Stack>
+        )}
+        <Stack gap={isHome ? 2 : 4} className={`min-w-0 ${bodyPad}`}>
           <DataTable
             columns={columns}
             data={tableData}
             loading={loading}
             error={error}
-            emptyMessage="No apps yet. Choose Ready and click Add app."
+            emptyMessage={adminDashboardDemoCopy.emptyMessage}
             pageSize={5}
           />
+          {!isHome && preview === "ready" && !loading && !error ? (
+            selectedApp ? (
+              <DetailPanel
+                className="min-w-0"
+                items={[
+                  { label: adminDashboardDemoCopy.detail.name, value: selectedApp.name },
+                  { label: adminDashboardDemoCopy.detail.region, value: selectedApp.region },
+                  { label: adminDashboardDemoCopy.detail.id, value: selectedApp.id },
+                ]}
+              />
+            ) : (
+              <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
+                {adminDashboardDemoCopy.detail.selectRow}
+              </Text>
+            )
+          ) : null}
         </Stack>
       </Stack>
 
-      <Drawer open={drawerOpen} onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())} direction="right">
-        <DrawerContent>
-          <DrawerHandle />
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-              <DrawerHeader>
-                <DrawerTitle>{editingId ? "Edit app" : "Add app"}</DrawerTitle>
-                <DrawerDescription>Name and region are stored in local state only.</DrawerDescription>
-              </DrawerHeader>
-              <DrawerBody>
-                <Stack gap={4} className="py-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} autoComplete="off" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="region"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Region</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pick a region" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="eu">eu</SelectItem>
-                            <SelectItem value="us">us</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Stack>
-              </DrawerBody>
-              <DrawerFooter>
-                <FormSubmit>{editingId ? "Save changes" : "Create app"}</FormSubmit>
-                <DrawerClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancel
-                  </Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </form>
-          </Form>
-        </DrawerContent>
-      </Drawer>
+      <AdminDashboardDemoDrawer
+        open={drawerOpen}
+        editingId={editingId}
+        form={form}
+        onOpenChange={(open) => (open ? setDrawerOpen(true) : closeDrawer())}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          restoreOpener();
+        }}
+        onAnimationEnd={(open) => {
+          if (!open) restoreOpener();
+        }}
+        onSubmit={onSubmit}
+      />
     </>
   );
 }

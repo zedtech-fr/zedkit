@@ -1,7 +1,6 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
-import { useTheme } from "next-themes";
 import {
   applyIdentity,
   applyIdentityTokenSheet,
@@ -19,6 +18,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { ContrastChips, DRAFT_SELECTOR, DraftCard, EditorFields } from "@/components/identity-editor-fields";
 import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorSuggest } from "@/components/identity-editor-suggest";
@@ -54,6 +54,7 @@ type EditorBodyProps = {
   onFix: (warning: IdentityContrastWarning) => void;
   onSuggestApply: (next: IdentityTokens, toSite: boolean) => void;
   onUndo: () => void;
+  onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void;
   onApplySite: () => void;
   canUndo: boolean;
   appliedSite: boolean;
@@ -129,13 +130,17 @@ function IdentityEditorBody(props: EditorBodyProps) {
         onReset={props.onReset}
         onApplySite={props.onApplySite}
       />
-      <Text>Change spacing first, then watch the card.</Text>
-      {props.appliedSite ? <Text role="status">Applied to the whole site.</Text> : null}
-      <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
-      <IdentityEditorSuggest tokens={props.tokens} onApply={props.onSuggestApply} />
-      <DraftCard darkPreview={props.darkPreview} />
-      <EditorFields tokens={props.tokens} scheme={scheme} onPatch={props.onPatch} />
-      <IdentityEditorExport tokens={props.tokens} />
+      <Text>{identityEditorCopy.panel.hint}</Text>
+      {props.appliedSite ? <Text role="status">{identityEditorCopy.panel.applied}</Text> : null}
+      <Stack gap={6} className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
+        <DraftCard darkPreview={props.darkPreview} />
+        <Stack gap={6} className="min-w-0 lg:col-start-1 lg:row-start-1">
+          <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
+          <IdentityEditorSuggest tokens={props.tokens} onApply={props.onSuggestApply} />
+          <EditorFields tokens={props.tokens} scheme={scheme} onPatch={props.onPatch} />
+          <IdentityEditorExport tokens={props.tokens} onLoad={props.onLoad} />
+        </Stack>
+      </Stack>
     </Stack>
   );
 }
@@ -190,7 +195,6 @@ function IdentityEditorPanel() {
   const [name, setName] = useState("");
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
-  const { setTheme } = useTheme();
   const { tokens, darkKept, remember, undo, applySite, detachSite, appliedSite, past, load, patch, fix, applySuggest } = draft;
   const bound = bindNamedLooks(named, identity, name, tokens, setIdentity, setName, remember);
 
@@ -200,10 +204,7 @@ function IdentityEditorPanel() {
     load(parsed.tokens, parsed.darkKept);
     const saved = readNamedIdentities().find((item) => item.id === parsed.identity);
     if (saved) setName(saved.label);
-    if (parsed.darkPreview) {
-      setDarkPreview(true);
-      setTheme("dark");
-    }
+    if (parsed.darkPreview) setDarkPreview(true);
     setReady(true);
   }, []);
 
@@ -227,14 +228,12 @@ function IdentityEditorPanel() {
       darkPreview={darkPreview}
       {...bound}
       onName={setName}
-      onDark={() => {
-        setDarkPreview(!darkPreview);
-        setTheme(darkPreview ? "light" : "dark");
-      }}
+      onDark={() => setDarkPreview(!darkPreview)}
       onPatch={(key, value) => patch(key, value, darkPreview ? "dark" : "light")}
       onFix={fix}
       onSuggestApply={applySuggest}
       onUndo={undo}
+      onLoad={remember}
       onApplySite={applySite}
       canUndo={past.length > 0}
       appliedSite={appliedSite}
