@@ -25,11 +25,11 @@ async function isAccentFill(
   });
 }
 
-test("Open the demo editor link stays underline-only on hover (no accent block)", async ({ page }) => {
+test("Link-variant button stays underline-only on hover (no accent block)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
   await page.locator("#use-cases").scrollIntoViewIfNeeded();
-  const link = page.locator("#use-cases").getByRole("link", { name: "Open the demo editor" });
+  const link = page.locator("#use-cases").getByRole("link", { name: "Start without writing code" });
   await expect(link).toBeVisible();
   await link.hover();
   expect(await isAccentFill(page, link)).toBe(false);

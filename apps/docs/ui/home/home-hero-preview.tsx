@@ -22,6 +22,39 @@ const HomeAdminDashboardDemo = dynamic(
 
 const noop = () => () => {};
 
+function HeroScenes({
+  preview,
+  onPreviewChange,
+}: {
+  preview: PreviewMode;
+  onPreviewChange: (mode: PreviewMode) => void;
+}) {
+  return (
+    <div data-home-hero-visuals="">
+      <article data-scroll-scene="admin">
+        <div data-scroll-scene-visual="">
+          <HomeAdminDashboardDemo
+            label={homeCopy.heroPreview.demoLabel}
+            preview={preview}
+            onPreviewChange={onPreviewChange}
+            variant="home"
+          />
+        </div>
+      </article>
+      <article data-scroll-scene="drawer" aria-hidden="true" inert>
+        <div data-scroll-scene-visual="">
+          <HomeHeroDrawerScene />
+        </div>
+      </article>
+      <article data-scroll-scene="calendar" aria-hidden="true" inert>
+        <div data-scroll-scene-visual="">
+          <HomeHeroCalendarScene />
+        </div>
+      </article>
+    </div>
+  );
+}
+
 /** Hero specimen: one frame, three examples that the page scroll crossfades. */
 export function HomeHeroPreview() {
   const [look, setLook] = useState(DEFAULT_IDENTITY);
@@ -59,28 +92,7 @@ export function HomeHeroPreview() {
         mode={dark ? "dark" : "light"}
         className="flex min-h-0 min-w-0 flex-col bg-background"
       >
-        <div data-home-hero-visuals="">
-          <article data-scroll-scene="admin">
-            <div data-scroll-scene-visual="">
-              <HomeAdminDashboardDemo
-                label={homeCopy.heroPreview.demoLabel}
-                preview={preview}
-                onPreviewChange={setPreview}
-                variant="home"
-              />
-            </div>
-          </article>
-          <article data-scroll-scene="drawer" aria-hidden="true" inert>
-            <div data-scroll-scene-visual="">
-              <HomeHeroDrawerScene />
-            </div>
-          </article>
-          <article data-scroll-scene="calendar" aria-hidden="true" inert>
-            <div data-scroll-scene-visual="">
-              <HomeHeroCalendarScene />
-            </div>
-          </article>
-        </div>
+        <HeroScenes preview={preview} onPreviewChange={setPreview} />
       </ThemeScope>
     </Stack>
   );
