@@ -125,7 +125,9 @@
       "component": "Calendar",
       "props": "CalendarProps",
       "source": "calendar.tsx",
-      "demo": "CalendarDemo"
+      "demo": "CalendarDemo",
+      "propsPriority": ["mode", "selected", "onSelect", "defaultMonth", "month", "onMonthChange", "numberOfMonths", "disabled", "required", "showOutsideDays", "captionLayout", "fixedWeeks", "weekStartsOn", "locale"],
+      "propsRest": { "summary": "other react-day-picker props", "href": "https://daypicker.dev/api/type-aliases/DayPickerProps" }
     },
     "Pick a date from a popover": {
       "package": "@zedtech/zedkit-ui",

@@ -128,3 +128,38 @@ test("guidance answers the reader's questions and sits right after the example",
   expect(box!.y).toBeGreaterThan(example!.y);
   expect(box!.y).toBeLessThan(props!.y);
 });
+
+const API_HEAVY_DOCS = [
+  "collect-multi-line-text-input",
+  "constrain-page-width-and-run-sections-edge-to-edge",
+  "group-content-in-a-card-section",
+  "lay-out-fieldsets-fields-and-error-lists",
+  "pin-a-stage-and-change-scene-as-the-page-scrolls",
+  "pick-a-day-on-a-calendar",
+  "quiet-icon-beside-inline-text",
+  "show-loading-placeholder-blocks",
+  "show-your-brand-logo",
+  "stack-content-and-group-titled-sections",
+];
+
+test("props sections stay compact: native attributes fold, kit props lead", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const slug of API_HEAVY_DOCS) {
+    await page.goto(`/docs/ui/${slug}`, { waitUntil: "networkidle" });
+    const height = await page.locator("#props").evaluate((heading) => {
+      const section = heading.closest("section") ?? heading.parentElement!;
+      return section.getBoundingClientRect().height;
+    });
+    expect(height, slug).toBeLessThan(1000);
+  }
+});
+
+test("IconButton lists its required label with the kit props, not the inherited attributes", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/docs/ui/icon-only-actions-with-a-visible-name", { waitUntil: "networkidle" });
+  const kit = page.locator("[id='type-table-icon-button.tsx-IconButtonProps']");
+  await expect(kit.getByText("label", { exact: true })).toBeVisible();
+  await expect(kit.getByText("label?", { exact: true })).toHaveCount(0);
+  const rows = await kit.locator("[id^='type-table-icon-button.tsx-IconButtonProps-']").allTextContents();
+  expect(rows[0]).toContain("label");
+});

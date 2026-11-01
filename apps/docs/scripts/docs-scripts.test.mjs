@@ -63,6 +63,20 @@ test("partitionPropsEntries surfaces variant and size before inherited attrs", (
   );
 });
 
+test("partitionPropsEntries keeps required and kit-only props, folds native names", () => {
+  const native = new Set(["label", "title", "id", "onClick"]);
+  const entries = [
+    { name: "title" },
+    { name: "label", required: true },
+    { name: "tone" },
+    { name: "onClick" },
+    { name: "size" },
+  ];
+  const { primary, inherited } = partitionPropsEntries(entries, ["size"], native);
+  assert.deepEqual(primary.map((e) => e.name), ["label", "size", "tone"]);
+  assert.deepEqual(inherited.map((e) => e.name), ["onClick", "title"]);
+});
+
 test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () => {
   const keys = catalogPageKeys({
     packages: {

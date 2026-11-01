@@ -206,6 +206,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
   const pageTitle = need.shortName ?? need.need;
   const propsPriority = spec.propsPriority ?? null;
+  const propsRest = spec.propsRest ?? null;
   const registryBrick = spec.registry ?? need.registry ?? "";
   const purpose = (need.purpose ?? "").trim();
   if (purpose.length === 0) {
@@ -244,6 +245,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     `  propsFile={${JSON.stringify(spec.propsFile)}}`,
     `  propsName={${JSON.stringify(spec.propsName)}}`,
     ...(propsPriority ? [`  propsPriority={${JSON.stringify(propsPriority)}}`] : []),
+    ...(propsRest ? [`  propsRest={${JSON.stringify(propsRest)}}`] : []),
     `  examples={${JSON.stringify(examples)}}`,
     ...(spec.examples && Object.keys(spec.examples).length > 0
       ? [`  examplePreviews={${JSON.stringify(spec.examples)}}`]
@@ -482,6 +484,7 @@ export function generate(outDir) {
           propsName: spec.props ?? null,
           registry: spec.registry ?? null,
           propsPriority: spec.propsPriority ?? null,
+          propsRest: spec.propsRest ?? null,
         };
       }
       const related = (need.seeAlso ?? []).map((target) => {
