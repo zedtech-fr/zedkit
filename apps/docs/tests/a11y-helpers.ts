@@ -10,7 +10,7 @@ export const DOCS_SHIPPED_IDENTITIES = ["mist", "press", "tide", "volt", "maison
 export type DocsShippedIdentity = (typeof DOCS_SHIPPED_IDENTITIES)[number];
 
 const IDENTITY_SANS_SNIPPET: Record<DocsShippedIdentity, string> = {
-  mist: "Inter Variable",
+  mist: "system-ui", // stock stack: mist is the unbranded baseline
   press: "Space Grotesk",
   tide: "Inter Variable",
   volt: "Geist",

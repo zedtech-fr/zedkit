@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { DOCS_SHIPPED_IDENTITIES, pinDemoLook, type DocsShippedIdentity } from "./a11y-helpers";
+import { pinDemoLook, type DocsShippedIdentity } from "./a11y-helpers";
 
 const PAGE = "/docs/ui/trigger-actions-with-buttons";
 
@@ -15,18 +15,23 @@ for (const identity of SPECIMEN_IDENTITIES) {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     const preview = page.locator("[data-component-preview]").first();
     await pinDemoLook(preview, identity, "light");
-    const specimen = preview.locator("[data-preview-surface]");
+    const specimen = preview.locator("[data-preview-frame]");
     await expect(specimen).toBeVisible();
     const style = await specimen.evaluate((el) => {
       const computed = getComputedStyle(el);
       return {
         boxShadow: computed.boxShadow,
         borderTopWidth: computed.borderTopWidth,
-        backgroundColor: computed.backgroundColor,
+        borderColor: computed.borderTopColor,
       };
     });
+    const stageBackground = await preview
+      .locator("[data-preview-surface]")
+      .evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(style.boxShadow).toBe("none");
     expect(style.borderTopWidth).toBe("1px");
-    expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+    expect(stageBackground).not.toBe("rgba(0, 0, 0, 0)");
+    // The frame is site chrome: the same hairline whatever identity is pinned.
+    expect(style.borderColor).not.toBe(stageBackground);
   });
 }

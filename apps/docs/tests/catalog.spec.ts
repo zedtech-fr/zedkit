@@ -215,14 +215,13 @@ test("catalog filters persist in the URL and show empty state", async ({ page })
   await expect(page.getByRole("heading", { name: /^UI · \d+$/, level: 3 })).toBeVisible();
 });
 
-test("home links to catalog with curated grid", async ({ page }) => {
+test("home links to catalog with component families", async ({ page }) => {
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: "Browse full catalog" });
+  const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
   await expect(catalog).toBeVisible();
   await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
-  const count = await page.locator("#components .grid > *").count();
-  expect(count).toBeGreaterThanOrEqual(4);
-  expect(count).toBeLessThanOrEqual(8);
+  const rows = page.locator("[data-home-component-families] a.font-medium");
+  expect(await rows.count()).toBeGreaterThanOrEqual(4);
 });
 
 test("catalog CTA keeps a decorative icon at phone width", async ({ page }) => {

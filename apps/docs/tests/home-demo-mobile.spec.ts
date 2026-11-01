@@ -26,12 +26,8 @@ test.describe("home dashboard mobile (#388)", () => {
 
     const toolbar = card.locator("[data-demo-toolbar]");
     await expect(toolbar).toBeVisible();
-    const toolbarRow = toolbar.locator("> div").last();
-    const tops = await toolbarRow.locator("button, [role=combobox]").evaluateAll((nodes) =>
-      nodes.map((node) => node.getBoundingClientRect().top),
-    );
-    expect(tops.length).toBeGreaterThanOrEqual(2);
-    expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(4);
+    await expect(toolbar.getByRole("button", { name: "Add app" })).toBeVisible();
+    await expect(page.locator("[data-hero-demo-display] [role=combobox]").first()).toBeVisible();
 
     const actionStacks = card.locator("[data-demo-row-actions]");
     await expect(actionStacks.first()).toBeVisible();

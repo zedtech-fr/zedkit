@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
-import { Button, Stack, Text, ThemeScope, cn } from "@zedtech/zedkit-ui";
+import { Stack, Tabs, TabsContent, TabsList, TabsTrigger, ThemeScope, cn } from "@zedtech/zedkit-ui";
 import { DemoStyleSelect, usePinnedLook } from "@/components/demo-style-scope";
 
 const noop = () => () => {};
@@ -21,102 +21,131 @@ export function usePreviewMobile(): boolean {
 
 type ModePin = "follow" | "light" | "dark";
 
-/**
- * Preview island with viewport and theme switches. Identity and mode live on
- * the nearest ThemeScope; `.dark` on that node is the mode authority.
- */
-export function PreviewViewport({
-  center,
+function Segmented({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div
+      role="group"
+      aria-label={label}
+      className="inline-flex items-center rounded-md border border-input bg-background p-0.5"
+    >
+      {children}
+    </div>
+  );
+}
+
+function Segment({
+  pressed,
+  onClick,
   children,
-  a11yRoot,
+}: {
+  pressed: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={pressed}
+      onClick={onClick}
+      className="min-h-11 rounded px-2.5 text-xs text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground md:min-h-7"
+    >
+      {children}
+    </button>
+  );
+}
+
+/**
+ * One example frame: Preview/Code tabs and a quiet Display row sit above a
+ * single hairline frame. Identity and mode live on the stage (the nearest
+ * ThemeScope, `.dark` on that node is the mode authority); the tabs and the
+ * frame use the site's own tokens, so they never compete with the specimen.
+ */
+export function PreviewFrame({
+  center,
+  codePanel,
+  children,
 }: {
   center?: boolean;
+  codePanel: ReactNode;
   children: ReactNode;
-  /** When set, axe gates scope to this preview only (hero demo on component pages). */
-  a11yRoot?: boolean;
 }) {
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(noop, () => true, () => false);
+  const [tab, setTab] = useState("preview");
   const [modePin, setModePin] = useState<ModePin>("follow");
   const [mobile, setMobile] = useState(false);
   const demoStyle = usePinnedLook();
   const siteDark = mounted && resolvedTheme === "dark";
   const dark = modePin === "follow" ? siteDark : modePin === "dark";
-  const toolbar = (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
-      <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
-        <Text variant="muted" className="text-xs">
-          Preview
-        </Text>
-        <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} />
-      </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
-        <Button
-          variant={mobile ? "outline" : "secondary"}
-          size="sm"
-          onClick={() => setMobile(false)}
-          aria-pressed={!mobile}
-        >
-          Full
-        </Button>
-        <Button
-          variant={mobile ? "secondary" : "outline"}
-          size="sm"
-          onClick={() => setMobile(true)}
-          aria-pressed={mobile}
-        >
-          Mobile
-        </Button>
-        <Button
-          variant={modePin === "follow" ? "secondary" : "outline"}
-          size="sm"
-          onClick={() => setModePin("follow")}
-          aria-pressed={modePin === "follow"}
-        >
-          Follow site
-        </Button>
-        <Button
-          variant={modePin === "light" ? "secondary" : "outline"}
-          size="sm"
-          onClick={() => setModePin("light")}
-          aria-pressed={modePin === "light"}
-        >
-          Light
-        </Button>
-        <Button
-          variant={modePin === "dark" ? "secondary" : "outline"}
-          size="sm"
-          onClick={() => setModePin("dark")}
-          aria-pressed={modePin === "dark"}
-        >
-          Dark
-        </Button>
-      </Stack>
-    </Stack>
-  );
+
   return (
-    <Stack
-      gap={a11yRoot ? 2 : 3}
-      data-component-preview={a11yRoot ? "primary" : true}
-      {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}
-    >
-      {toolbar}
-      <ThemeScope
-        identity={demoStyle.pinned ? demoStyle.look : undefined}
-        mode={dark ? "dark" : "light"}
-        className={cn(
-          // not-prose is a fumadocs escape hatch, not a Tailwind utility.
-          // eslint-disable-next-line better-tailwindcss/no-unknown-classes
-          "not-prose rounded-lg border border-border bg-background p-4 md:p-6",
-          a11yRoot && "max-md:p-3",
-          mobile && "mx-auto w-full max-w-[390px]",
-        )}
-        data-preview-surface=""
-      >
-        <PreviewMobileContext.Provider value={mobile}>
-          {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
-        </PreviewMobileContext.Provider>
-      </ThemeScope>
-    </Stack>
+    <Tabs value={tab} onValueChange={setTab} className="flex w-full min-w-0 flex-col gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <TabsList className="h-auto gap-1 rounded-none bg-transparent p-0">
+          {["preview", "code"].map((value) => (
+            <TabsTrigger
+              key={value}
+              value={value}
+              className="h-9 rounded-md px-3 text-sm text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            >
+              {value}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {tab === "preview" ? (
+          <div data-preview-display="" className="flex min-w-0 flex-wrap items-center gap-2">
+            <DemoStyleSelect
+              look={demoStyle.look}
+              pinned={demoStyle.pinned}
+              onPin={demoStyle.pin}
+              labelHidden
+            />
+            <Segmented label="Width">
+              <Segment pressed={!mobile} onClick={() => setMobile(false)}>
+                Full
+              </Segment>
+              <Segment pressed={mobile} onClick={() => setMobile(true)}>
+                Mobile
+              </Segment>
+            </Segmented>
+            <Segmented label="Mode">
+              <Segment pressed={modePin === "follow"} onClick={() => setModePin("follow")}>
+                Site
+              </Segment>
+              <Segment pressed={modePin === "light"} onClick={() => setModePin("light")}>
+                Light
+              </Segment>
+              <Segment pressed={modePin === "dark"} onClick={() => setModePin("dark")}>
+                Dark
+              </Segment>
+            </Segmented>
+          </div>
+        ) : null}
+      </div>
+      <div data-preview-frame="" className="min-w-0 overflow-hidden rounded-lg border border-border">
+        <TabsContent value="preview" className="mt-0">
+          <ThemeScope
+            data-preview-surface=""
+            identity={demoStyle.look}
+            mode={dark ? "dark" : "light"}
+            className={cn(
+              // not-prose is a fumadocs escape hatch, not a Tailwind utility.
+              // eslint-disable-next-line better-tailwindcss/no-unknown-classes
+              "not-prose w-full min-w-0 bg-background p-4 md:p-6",
+              mobile && "mx-auto max-w-[390px]",
+            )}
+          >
+            <PreviewMobileContext.Provider value={mobile}>
+              {center ? <Stack className="mx-auto w-fit max-w-full">{children}</Stack> : children}
+            </PreviewMobileContext.Provider>
+          </ThemeScope>
+        </TabsContent>
+        <TabsContent value="code" className="mt-0">
+          <div data-preview-code-panel="" className="min-w-0">
+            {codePanel}
+          </div>
+        </TabsContent>
+      </div>
+    </Tabs>
   );
 }

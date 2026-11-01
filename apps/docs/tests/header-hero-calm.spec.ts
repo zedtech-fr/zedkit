@@ -27,7 +27,7 @@ for (const viewport of [
 
       const shellBefore = await page.locator("html").getAttribute("data-identity");
       const proof = page.locator("[data-home-hero-proof]");
-      await expect(proof.getByText("Style of this demo")).toBeVisible();
+      await expect(proof.getByText("Display", { exact: true })).toBeVisible();
       await proof.getByRole("combobox", { name: "Identity for this demo" }).click();
       await page.getByRole("option", { name: "Glass" }).click();
       await expect(proof.locator("[data-identity-scope]")).toHaveAttribute("data-identity", "glass");

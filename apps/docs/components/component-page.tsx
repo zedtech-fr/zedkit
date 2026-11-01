@@ -152,17 +152,14 @@ export async function ComponentPage({
         <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
       </Stack>
 
-      <Stack gap={2} className="text-sm text-muted-foreground">
-        <Text variant="muted">
-          <strong className="font-medium text-foreground">Who:</strong> {audience}
-        </Text>
-        <Text variant="muted">
-          <strong className="font-medium text-foreground">Use when:</strong> {whenToUse}
-        </Text>
-        <Text variant="muted">
-          <strong className="font-medium text-foreground">Avoid when:</strong> {whenNotToUse}
-        </Text>
-      </Stack>
+      <dl id="guidance" className="m-0 grid gap-x-6 gap-y-2 text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
+        <dt className="m-0 font-normal text-foreground">Who</dt>
+        <dd className="m-0 min-w-0">{audience}</dd>
+        <dt className="m-0 font-normal text-foreground">Use when</dt>
+        <dd className="m-0 min-w-0">{whenToUse}</dd>
+        <dt className="m-0 font-normal text-foreground">Avoid when</dt>
+        <dd className="m-0 min-w-0">{whenNotToUse}</dd>
+      </dl>
 
       <Section title="Install or copy" id="install-or-copy">
         <Stack gap={4}>

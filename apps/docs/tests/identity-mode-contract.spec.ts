@@ -101,7 +101,7 @@ test.describe("identity+mode nearest-scope contract", () => {
     const preview = page.locator("[data-component-preview]").first();
     await preview.scrollIntoViewIfNeeded();
     await expect(preview.getByRole("combobox", { name: "Style of this demo" })).toBeVisible();
-    await expect(preview.getByRole("button", { name: "Follow site" })).toBeVisible();
+    await expect(preview.getByRole("button", { name: "Site", exact: true })).toBeVisible();
     await expect(preview.getByRole("button", { name: "Light", exact: true })).toBeVisible();
     await expect(preview.getByRole("button", { name: "Dark", exact: true })).toBeVisible();
   });

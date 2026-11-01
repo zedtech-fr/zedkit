@@ -18,8 +18,7 @@ test.describe("home install or copy section", () => {
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
 
-    await expect(page.getByRole("heading", { name: "Start building", level: 2 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Install it or copy it", level: 3 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Get started", level: 2 })).toBeVisible();
 
     const aiSetup = page.locator("#ai-setup");
     const installOrCopy = page.locator("#install-or-copy");
@@ -30,12 +29,13 @@ test.describe("home install or copy section", () => {
     const blockBox = await installOrCopy.boundingBox();
     const componentsBox = await components.boundingBox();
     expect(aiBox && blockBox && componentsBox).toBeTruthy();
-    expect(blockBox!.y).toBeLessThan(aiBox!.y);
     expect(blockBox!.y).toBeLessThan(componentsBox!.y);
+    expect(componentsBox!.y).toBeLessThan(aiBox!.y);
 
     await page.getByRole("button", { name: "Copy package install command" }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(PACKAGE_CMD);
 
+    await page.getByRole("tab", { name: "Copy source" }).click();
     await page.getByRole("button", { name: "Copy shadcn registry command" }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(REGISTRY_CMD);
 
@@ -62,20 +62,10 @@ test.describe("home install or copy section", () => {
   test("commands stay on one line with horizontal scroll at 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
-    const cards = page.locator("#install-or-copy [data-slot='card']");
-    await expect(cards).toHaveCount(2);
-    const emptyBottoms = await cards.evaluateAll((nodes) =>
-      nodes.map((card) => {
-        const rect = card.getBoundingClientRect();
-        const content = card.querySelector("[data-slot='card-content']") ?? card;
-        const last = content.lastElementChild?.getBoundingClientRect();
-        return last ? Math.round(rect.bottom - last.bottom) : Math.round(rect.height);
-      }),
-    );
-    // Tide is the site default: its larger type scale leaves ~122px under the
-    // shorter card (was <=96 under Volt). Still guards against hollow cards.
-    for (const empty of emptyBottoms) expect(empty).toBeLessThanOrEqual(128);
+    const cards = page.locator("#install-or-copy [data-install-command]");
+    await expect(cards).toHaveCount(1);
     await expectSingleLineCommand(page, "Package install command");
+    await page.getByRole("tab", { name: "Copy source" }).click();
     await expectSingleLineCommand(page, "shadcn registry add command");
   });
 
@@ -83,9 +73,8 @@ test.describe("home install or copy section", () => {
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
     const blocks = page.locator("#install-or-copy [data-install-command]");
-    await expect(blocks).toHaveCount(2);
-    for (let i = 0; i < 2; i += 1) {
-      const block = blocks.nth(i);
+    await expect(blocks).toHaveCount(1);
+    const block = blocks.first();
       const copy = block.getByRole("button");
       await expect(copy).toBeVisible();
       const inside = await copy.evaluate((btn) => {
@@ -93,18 +82,22 @@ test.describe("home install or copy section", () => {
         return shell?.contains(btn) ?? false;
       });
       expect(inside).toBe(true);
-    }
+    await page.getByRole("tab", { name: "Copy source" }).click();
+    await page.getByRole("button", { name: "Copy shadcn registry command" }).click();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(REGISTRY_CMD);
   });
 
-  test("choice cards match height at laptop width", async ({ page }) => {
+  test("install path tabs switch the visible command", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
-    const heights = await page.locator("#install-or-copy [data-install-path-card]").evaluateAll((nodes) =>
-      nodes.map((node) => Math.round(node.getBoundingClientRect().height)),
-    );
-    expect(heights).toHaveLength(2);
-    expect(Math.abs(heights[0]! - heights[1]!)).toBeLessThanOrEqual(4);
+    await expect(page.locator("#install-or-copy [data-install-command]")).toHaveCount(1);
+    await page.getByRole("tab", { name: "Copy source" }).click();
+    await expect(page.getByRole("region", { name: "shadcn registry add command" })).toBeVisible();
+    await page.getByRole("tab", { name: "npm package" }).click();
+    await expect(page.getByRole("region", { name: "Package install command" })).toBeVisible();
   });
+
+  test.skip("choice cards match height at laptop width — removed with tabbed install", async () => {});
 
   test("registry catalog link replaces the brick pill wall", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

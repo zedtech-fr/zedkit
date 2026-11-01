@@ -25,12 +25,25 @@ function usePinnedLook() {
   return { look, pinned: pinned !== null, pin: setPinned, scopeAttrs };
 }
 
-function DemoStyleSelect({ look, pinned, onPin }: { look: string; pinned: boolean; onPin: (id: string | null) => void }) {
+function DemoStyleSelect({
+  look,
+  pinned,
+  onPin,
+  fieldLabel = "Style of this demo",
+  labelHidden = false,
+}: {
+  look: string;
+  pinned: boolean;
+  onPin: (id: string | null) => void;
+  fieldLabel?: string;
+  /** Keep the label for assistive tech only (a surrounding row already names it). */
+  labelHidden?: boolean;
+}) {
   const selectId = useId();
   return (
     <Stack direction="horizontal" gap={2} className="items-center">
-      <label htmlFor={selectId} className="text-sm text-muted-foreground">
-        Style of this demo
+      <label htmlFor={selectId} className={labelHidden ? "sr-only" : "text-xs text-muted-foreground"}>
+        {fieldLabel}
       </label>
       {/* Uncontrolled: a controlled select here reports the previous value on change. */}
       <select
@@ -38,7 +51,7 @@ function DemoStyleSelect({ look, pinned, onPin }: { look: string; pinned: boolea
         id={selectId}
         defaultValue={pinned ? look : "follow-site"}
         onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
-        className="h-control-height-sm rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
+        className="h-8 max-w-36 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-ring-control"
       >
         <option value="follow-site">Follow site</option>
         {identities.map((item) => (
@@ -58,7 +71,7 @@ function DemoStyleScope({ children }: { children: ReactNode }) {
     <Stack gap={2} className="min-w-0">
       <DemoStyleSelect look={demo.look} pinned={demo.pinned} onPin={demo.pin} />
       <ThemeScope
-        identity={demo.pinned ? demo.look : undefined}
+        identity={demo.look}
         mode={resolvedTheme === "dark" ? "dark" : "light"}
         className="min-w-0"
       >

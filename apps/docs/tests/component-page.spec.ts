@@ -74,6 +74,7 @@ test("component page TOC lists the live sections", async ({ page }) => {
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   const toc = page.locator("#nd-toc");
   await expect(toc.getByRole("link", { name: "Preview" })).toHaveAttribute("href", "#example");
+  await expect(toc.getByRole("link", { name: "Guidance" })).toHaveAttribute("href", "#guidance");
   await expect(toc.getByRole("link", { name: "Install or copy" })).toHaveAttribute("href", "#install-or-copy");
   await expect(toc.getByRole("link", { name: "Props" })).toHaveAttribute("href", "#props");
   await expect(page.getByRole("heading", { name: "At a glance" })).toHaveCount(0);

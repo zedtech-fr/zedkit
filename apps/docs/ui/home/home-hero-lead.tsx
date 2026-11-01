@@ -1,19 +1,15 @@
-import Link from "next/link";
-import { Button, Heading, Stack, Text } from "@zedtech/zedkit-ui";
+import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import {
   HOME_CARD_CONTENT_GAP,
   HOME_METADATA_TEXT_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
+import { HomeHeroAdoptionHint, HomeHeroLeadActions } from "@/ui/home/home-hero-lead-actions";
 
-export function HomeHeroLead() {
+export function HomeHeroLead({ packageInstallCmd }: { packageInstallCmd: string }) {
   return (
-    <Stack
-      gap={HOME_SECTION_CONTENT_GAP}
-      className="min-w-0 items-start"
-      data-home-hero-lead=""
-    >
+    <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start" data-home-hero-lead="">
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
         <Text variant="muted" className={HOME_METADATA_TEXT_CLASS} data-home-hero-label="">
           zedkit
@@ -29,17 +25,8 @@ export function HomeHeroLead() {
           React components you add to the app you already have.
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-hero-actions>
-        <Button asChild>
-          <Link href="#get-started">Get started</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/catalog">Browse catalog</Link>
-        </Button>
-        <Button asChild variant="link">
-          <Link href="#demo">Try the demo</Link>
-        </Button>
-      </Stack>
+      <HomeHeroLeadActions />
+      <HomeHeroAdoptionHint packageInstallCmd={packageInstallCmd} />
       <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
         MIT · React 19 · Tailwind 4 · npm or source
       </Text>

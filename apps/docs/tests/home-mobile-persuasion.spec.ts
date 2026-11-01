@@ -11,7 +11,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
   test("hero and band copy use shared P0 type roles", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#use-cases").scrollIntoViewIfNeeded();
+    await page.locator("#components").scrollIntoViewIfNeeded();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -23,10 +23,12 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       };
 
       const getStarted = document.querySelector("#get-started");
-      const startCopy = getStarted?.querySelector(".text-home-persuasion");
+      const startCopy = getStarted?.querySelector("#install-or-copy .text-home-persuasion");
 
       const components = document.querySelector("#components");
-      const componentsCopy = components?.querySelector(".text-home-persuasion");
+      const componentsCopy = components?.querySelector(
+        "[data-home-component-families] .text-home-persuasion",
+      );
 
       const useCases = document.querySelector("#use-cases");
       const useCaseWhy = useCases?.querySelector(".text-home-persuasion");

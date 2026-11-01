@@ -3,6 +3,7 @@ import type { TOCItemType } from "fumadocs-core/toc";
 /** Section anchors rendered by `ComponentPage` (Fumadocs TOC only sees MDX headings). */
 export const COMPONENT_PAGE_TOC: TOCItemType[] = [
   { title: "Preview", url: "#example", depth: 2 },
+  { title: "Guidance", url: "#guidance", depth: 2 },
   { title: "Install or copy", url: "#install-or-copy", depth: 2 },
   { title: "Usage and states", url: "#usage-and-states", depth: 2 },
   { title: "Props", url: "#props", depth: 2 },

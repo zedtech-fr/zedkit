@@ -36,15 +36,44 @@
  */
 #home-page [data-home-hero-band] {
   padding-top: var(--zk-section-lg);
-  padding-bottom: var(--zk-section-md);
-}
-
-#home-page #use-cases[data-slot="section"] {
-  padding-top: var(--zk-section-md);
+  padding-bottom: var(--zk-section-sm);
 }
 
 #home-page #get-started[data-slot="section"] {
   padding-top: var(--zk-section-md);
+}
+
+#home-page [data-home-specimen-stage] {
+  box-shadow: none;
+}
+
+/*
+ * Home hero specimen: one frame (toolbar + stage). Hide table chrome that
+ * duplicates the Display row or adds noise in the compact hero preview.
+ */
+#home-page [data-admin-dashboard-demo="home"] [data-slot="data-table-toolbar"] {
+  display: none;
+}
+
+#home-page [data-admin-dashboard-demo="home"] [data-slot="data-table"] {
+  gap: 0.75rem;
+}
+
+#home-page [data-admin-dashboard-demo="home"] [data-slot="data-table-pagination"] {
+  display: none;
+}
+
+#home-page #components[data-slot="section"],
+#home-page #entry-points[data-slot="section"] {
+  padding-block: var(--zk-section-md);
+}
+
+#home-page [data-hero-demo-display] [data-slot="select-trigger"] {
+  box-shadow: none;
+}
+
+#home-page [data-home-install-choice] [role="tablist"] button[role="tab"] {
+  box-shadow: none;
 }
 
 @media (width < 48rem) {
@@ -92,11 +121,41 @@ html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
 }
 
 /*
- * D5 specimen surface: one hairline frame on component previews, no drop
- * shadow (shadows stay on overlays). Card fill replaces the muted wash.
+ * Quiet site chrome. The site wears its identity's colors and type, but its
+ * own chrome (header, sidebar, search, toggles, tabs, code wells, tables)
+ * uses a hairline divider, a clear control border, small radii and a faint
+ * shadow. Specimens re-declare their full identity on their own
+ * ThemeScope node, so these roles never leak into what is being shown.
+ * Roles: --border = structural divider, --input = interactive boundary.
  */
-#nd-docs-layout [data-component-preview] [data-preview-surface] {
+:root[data-identity] {
+  --zk-border-width: 1px;
+  --border: var(--sidebar-border);
+  --radius: 0.5rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --zk-shadow-sm: 0 1px 2px hsl(var(--zk-shadow-color) / 0.06);
+  --zk-shadow-md: 0 2px 6px hsl(var(--zk-shadow-color) / 0.08);
+}
+
+/* One hairline around an example; the stage inside carries the specimen. */
+#nd-docs-layout [data-component-preview] {
+  width: 100%;
+  max-width: none;
+}
+
+#nd-docs-layout [data-preview-code-panel] {
+  max-height: min(28rem, 62vh);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+#nd-docs-layout [data-preview-code-panel] figure.shiki {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
   box-shadow: none;
-  background-color: hsl(var(--card));
-  border: var(--zk-border-width, 1px) solid hsl(var(--border));
 }

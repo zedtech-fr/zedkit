@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button, Stack, Text } from "@zedtech/zedkit-ui";
-import { DocsActionLabel } from "@/components/docs-action-label";
+import { Stack, Text } from "@zedtech/zedkit-ui";
 import { HomeInstallCommands } from "@/ui/home/home-install-commands";
 import {
   HOME_CARD_CONTENT_GAP,
@@ -29,25 +28,6 @@ export function HomeInstallOrCopySection({
           {registryComponentCount} components available in the registry → Catalog
         </Link>
       </Text>
-      <Stack
-        direction="horizontal"
-        gap={3}
-        className="flex-wrap items-center"
-        data-docs-ctas=""
-        data-install-next-steps=""
-      >
-        <Text className={HOME_METADATA_TEXT_CLASS}>Next steps:</Text>
-        <Button asChild variant="ghost" size="sm" className="h-auto px-2 py-1">
-          <Link href="/docs/zedkit-and-shadcn">
-            <DocsActionLabel>zedkit and shadcn/ui</DocsActionLabel>
-          </Link>
-        </Button>
-        <Button asChild variant="ghost" size="sm" className="h-auto px-2 py-1">
-          <Link href="/docs/getting-started#install-or-copy">
-            <DocsActionLabel>Getting started</DocsActionLabel>
-          </Link>
-        </Button>
-      </Stack>
     </Stack>
   );
 }

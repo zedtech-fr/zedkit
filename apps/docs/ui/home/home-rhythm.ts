@@ -23,7 +23,7 @@ export const HOME_SECTION_REVEAL_CLASS =
   "motion-safe:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]";
 
 /** Min-height hero preview slot while the demo chunk loads; grows with the specimen (no fixed clip). */
-export const HOME_HERO_PREVIEW_SHELL_CLASS = "min-h-48 w-full min-w-0 sm:min-h-80 lg:min-h-96";
+export const HOME_HERO_PREVIEW_SHELL_CLASS = "min-h-0 w-full min-w-0";
 
 /** Bounded live preview inside home gallery cards (min height reserves space while lazy chunks load). */
 export const HOME_GALLERY_PREVIEW_SHELL_CLASS =

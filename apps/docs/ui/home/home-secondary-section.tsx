@@ -1,0 +1,67 @@
+import Link from "next/link";
+import { Button, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { DocsActionLabel } from "@/components/docs-action-label";
+import type { HomeEntryPoint } from "@/content/home-entry-points";
+import { HomeGetStartedAiBlock } from "@/ui/home/home-get-started-ai-block";
+import { HomeSecondaryIdentitiesBlock } from "@/ui/home/home-secondary-identities-block";
+import {
+  HOME_METADATA_TEXT_CLASS,
+  HOME_SECTION_CONTENT_GAP,
+} from "@/ui/home/home-rhythm";
+
+function HomeSecondaryEntryLinks({ entryPoints }: { entryPoints: HomeEntryPoint[] }) {
+  return (
+    <Stack gap={2} className="min-w-0" data-home-secondary-links="">
+      {entryPoints.map((entry) => (
+        <Stack
+          key={entry.href}
+          direction="horizontal"
+          gap={2}
+          className="flex-wrap items-baseline justify-between gap-y-1 border-b border-border/60 pb-3 last:border-0"
+        >
+          <Stack gap={1} className="min-w-0">
+            <Text className="font-medium">{entry.title}</Text>
+            <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
+              {entry.needCount} needs · {entry.summary.split(".")[0]}.
+            </Text>
+          </Stack>
+          <Button asChild variant="link" size="sm" className="h-auto shrink-0 px-0">
+            <Link href={entry.href}>
+              <DocsActionLabel>{entry.linkLabel}</DocsActionLabel>
+            </Link>
+          </Button>
+        </Stack>
+      ))}
+    </Stack>
+  );
+}
+
+/** Packages, agents, and identities — one quiet band after the main path. */
+export function HomeSecondarySection({
+  entryPoints,
+  initCommand,
+}: {
+  entryPoints: HomeEntryPoint[];
+  initCommand: string;
+}) {
+  return (
+    <Section
+      bleed
+      tone="muted"
+      spacing="md"
+      containerWidth="wide"
+      id="entry-points"
+      title="More in the kit"
+      description="Backend, SEO, agents, and visual identities when you need them."
+    >
+      <Stack gap={HOME_SECTION_CONTENT_GAP}>
+        <HomeSecondaryEntryLinks entryPoints={entryPoints} />
+        <HomeSecondaryIdentitiesBlock />
+        <Stack gap={2} className="border-t border-border pt-6">
+          <Text className="font-medium">Optional: coding agents</Text>
+          <HomeGetStartedAiBlock initCommand={initCommand} />
+        </Stack>
+      </Stack>
+    </Section>
+  );
+}
