@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import {
   Button,
   ConfirmDialog,
@@ -8,6 +8,7 @@ import {
   FieldLabel,
   Input,
   Stack,
+  Text,
   identities,
   type IdentityOption,
 } from "@zedtech/zedkit-ui";
@@ -61,10 +62,33 @@ function LookSelect({
 }
 
 function ToolbarGroup({ label, children }: { label: string; children: ReactNode }) {
+  const id = useId();
   return (
-    <Stack direction="horizontal" gap={2} role="group" aria-label={label} className="flex-wrap items-end">
-      {children}
+    <Stack gap={1} role="group" aria-labelledby={id}>
+      <Text as="span" id={id} className="text-xs font-medium text-muted-foreground">
+        {label}
+      </Text>
+      <Stack direction="horizontal" gap={2} className="flex-wrap items-end">
+        {children}
+      </Stack>
     </Stack>
+  );
+}
+
+function DeleteLook({ disabled, onDelete }: { disabled: boolean; onDelete: () => void }) {
+  const copy = identityEditorCopy.toolbar;
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button type="button" variant="outline" disabled={disabled} className="text-destructive">
+          {copy.delete}
+        </Button>
+      }
+      title={copy.deleteTitle}
+      description={copy.deleteDescription}
+      confirmLabel={copy.deleteConfirm}
+      onConfirm={onDelete}
+    />
   );
 }
 
@@ -100,17 +124,7 @@ function IdentityEditorToolbar({
         <Button type="button" variant="outline" onClick={onRename} disabled={!namedSelected || name.trim() === ""}>
           {copy.rename}
         </Button>
-        <ConfirmDialog
-          trigger={
-            <Button type="button" variant="outline" disabled={!namedSelected} className="text-destructive">
-              {copy.delete}
-            </Button>
-          }
-          title={copy.deleteTitle}
-          description={copy.deleteDescription}
-          confirmLabel={copy.deleteConfirm}
-          onConfirm={onDelete}
-        />
+        <DeleteLook disabled={!namedSelected} onDelete={onDelete} />
       </ToolbarGroup>
       <Stack direction="horizontal" gap={6} className="flex-wrap items-end">
         <ToolbarGroup label={copy.groups.edit}>

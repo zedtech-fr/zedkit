@@ -125,12 +125,55 @@ function EditorFields({
   );
 }
 
+/** The specimen's content: samples of the look, never commands (the caller makes it `inert`). */
+function SpecimenBody() {
+  const copy = identityEditorCopy.fields.draft;
+  return (
+    <>
+      <Stack direction="horizontal" gap={2} className="justify-between">
+        <Heading level={2}>{identityEditorCopy.fields.draftTitle}</Heading>
+        <Badge variant="success">{copy.status}</Badge>
+      </Stack>
+      <Text variant="muted">{identityEditorCopy.fields.draftBody}</Text>
+      <Stack direction="horizontal" gap={2} className="flex-wrap">
+        <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
+        <Button size="sm" variant="secondary">
+          {copy.secondary}
+        </Button>
+        <Button size="sm" variant="outline">
+          {copy.outline}
+        </Button>
+        <Button size="sm" variant="destructive">
+          {copy.destructive}
+        </Button>
+      </Stack>
+      <Field>
+        <FieldLabel htmlFor="identity-editor-sample">{copy.inputLabel}</FieldLabel>
+        <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
+      </Field>
+      <Stack gap={3} className="hidden lg:flex">
+        <dl className="m-0 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border p-3 text-sm">
+          {copy.rows.map(([term, detail]) => (
+            <Fragment key={term}>
+              <dt className="text-muted-foreground">{term}</dt>
+              <dd className="m-0">{detail}</dd>
+            </Fragment>
+          ))}
+        </dl>
+        <Alert>
+          <AlertTitle>{copy.alertTitle}</AlertTitle>
+          <AlertDescription>{copy.alertBody}</AlertDescription>
+        </Alert>
+      </Stack>
+    </>
+  );
+}
+
 function DraftCard({ darkPreview }: { darkPreview: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     ref.current?.classList.toggle("dark", darkPreview);
   }, [darkPreview]);
-  const copy = identityEditorCopy.fields.draft;
   return (
     <Stack
       ref={ref}
@@ -139,46 +182,12 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       data-slot="identity-editor-preview"
       role="group"
       aria-label={identityEditorCopy.fields.specimenLabel}
-      className="sticky top-14 z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6"
+      className="z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6 max-lg:[@media(min-height:44rem)]:sticky max-lg:[@media(min-height:44rem)]:top-14"
       gap={3}
     >
       {/* `inert`: the specimen is for looking at. It must not read as, or act as, an editor command. */}
       <Stack gap={3} inert>
-        <Stack direction="horizontal" gap={2} className="justify-between">
-          <Heading level={2}>{identityEditorCopy.fields.draftTitle}</Heading>
-          <Badge variant="success">{copy.status}</Badge>
-        </Stack>
-        <Text variant="muted">{identityEditorCopy.fields.draftBody}</Text>
-        <Stack direction="horizontal" gap={2} className="flex-wrap">
-          <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
-          <Button size="sm" variant="secondary">
-            {copy.secondary}
-          </Button>
-          <Button size="sm" variant="outline">
-            {copy.outline}
-          </Button>
-          <Button size="sm" variant="destructive">
-            {copy.destructive}
-          </Button>
-        </Stack>
-        <Field>
-          <FieldLabel htmlFor="identity-editor-sample">{copy.inputLabel}</FieldLabel>
-          <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
-        </Field>
-        <Stack gap={3} className="hidden lg:flex">
-          <dl className="m-0 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border p-3 text-sm">
-            {copy.rows.map(([term, detail]) => (
-              <Fragment key={term}>
-                <dt className="text-muted-foreground">{term}</dt>
-                <dd className="m-0">{detail}</dd>
-              </Fragment>
-            ))}
-          </dl>
-          <Alert>
-            <AlertTitle>{copy.alertTitle}</AlertTitle>
-            <AlertDescription>{copy.alertBody}</AlertDescription>
-          </Alert>
-        </Stack>
+        <SpecimenBody />
       </Stack>
       <Text variant="muted" className="text-xs">
         {identityEditorCopy.fields.specimenNote}
