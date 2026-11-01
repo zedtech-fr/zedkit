@@ -1,6 +1,6 @@
 # Frontend charter
 
-Rules the kit enforces in lint or shows in a live example. Lint messages
+Rules the kit enforces in lint, review, or a live example. Lint messages
 state the rule; this table is the index.
 
 | Id | Enforced | Example |
@@ -25,5 +25,6 @@ state the rule; this table is the index.
 | `a11y-contrast` | test. Contrast from tokens only. Zero axe violations per component (vitest-axe). | [Theme](https://zedkit.app/docs/ui/theme-an-admin-app-dark-light-included) |
 | `responsive` | Mobile-first; full-width actions under `md`; no horizontal scroll except inside `Table`. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
 | `copy-next` | One language per screen. Name the next step. Errors say what broke and what to do. | [Shown-once secret](https://zedkit.app/docs/ui/display-a-shown-once-secret-with-copy) |
+| `visual-critique` | review. Lint, types, axe and screenshot diffs are necessary, not sufficient. A rendered-page critique names the strongest remaining weaknesses. A self-assigned score is not done. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
 | `layers-features` | lint. UI imports ports; adapters at the composition root; model is pure. | [Note list](https://zedkit.app/examples/note-list) |
 | `try-catch` | lint. No raw `try`/`catch`; use `tryCatch` / `tryCatchAsync` from `@zedtech/zedkit-core`. | [Handle errors](https://zedkit.app/docs/core/handle-errors-without-try-catch) |

@@ -55,8 +55,22 @@ reject dead `/r/<name>.json` links.
 - `pnpm --filter @zedtech/zedkit-docs dev` (or root `pnpm dev`, :3100).
 - Gates: `typecheck`, `lint`, `build` on the filter; docs check runs
   in CI (`docs: ok (N pages cover N needs)`).
-- Done = gates green + manifest/check in sync + screenshots for
-  visual changes + demo rules respected (lint proves it).
+- Done = gates green + manifest/check in sync + examined screenshots
+  for visual changes + a rendered-page critique (strongest remaining
+  weaknesses) + demo rules respected. Lint/types/axe/screenshot diffs
+  are necessary, not sufficient. A self-assigned score is not done.
+
+## ZedKit art direction (Product Atelier)
+
+Scope: this docs site and its specimens. Exception: a specimen that
+must match a kit primitive's own look.
+
+- Stable, readable site frame around well-composed working specimens.
+- Site styling stays distinct from specimen identities.
+- One surface role per job.
+- Color from tokens; no decorative gradients.
+- One focal specimen per section, not a uniform rounded-card grid.
+- Mobile composes by priority, not by stacking.
 
 ## Boundaries
 
