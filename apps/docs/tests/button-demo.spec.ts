@@ -32,7 +32,7 @@ test("button page renders catalog accessibility guidance (#1082)", async ({ page
   const accessibility = page.getByRole("heading", { name: "Accessibility", level: 2 });
   await accessibility.scrollIntoViewIfNeeded();
   await expect(accessibility).toBeVisible();
-  await expect(page.locator("main")).toContainText(/Native `button`/);
+  await expect(page.locator("main")).toContainText(/Native button/);
   const props = page.getByRole("heading", { name: "Props", level: 2 });
   expect((await accessibility.boundingBox())!.y).toBeGreaterThan((await props.boundingBox())!.y);
 });

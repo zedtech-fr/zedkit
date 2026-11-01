@@ -82,7 +82,7 @@ function RecipeImport({ onLoad }: { onLoad: (tokens: IdentityTokens, darkKept: r
           id="identity-editor-import"
           value={text}
           className="font-mono"
-          aria-describedby="identity-editor-import-hint"
+          aria-describedby={typeof state === "object" ? "identity-editor-import-hint identity-editor-import-error" : "identity-editor-import-hint"}
           aria-invalid={typeof state === "object"}
           onChange={(event) => {
             setText(event.target.value);
@@ -97,7 +97,9 @@ function RecipeImport({ onLoad }: { onLoad: (tokens: IdentityTokens, darkKept: r
         {copy.importAction}
       </Button>
       {state === "loaded" ? <Text role="status">{copy.importLoaded}</Text> : null}
-      {typeof state === "object" ? <Text role="alert" className="text-destructive">{state.error}</Text> : null}
+      {typeof state === "object" ? <Text id="identity-editor-import-error" role="alert" className="text-destructive">
+          {state.error}
+        </Text> : null}
     </Stack>
   );
 }

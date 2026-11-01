@@ -105,7 +105,14 @@ function DeleteLook({ disabled, onDelete }: { disabled: boolean; onDelete: () =>
       title={copy.deleteTitle}
       description={copy.deleteDescription}
       confirmLabel={copy.deleteConfirm}
-      onConfirm={onDelete}
+      onConfirm={() => {
+        onDelete();
+        // The trigger is disabled once the look is gone, so the dialog cannot hand focus back to it:
+        // land on the Look select instead of the page body (after the dialog's exit has finished).
+        window.setTimeout(() => {
+          if (document.activeElement === document.body) document.getElementById("identity-editor-look")?.focus();
+        }, 400);
+      }}
     />
   );
 }

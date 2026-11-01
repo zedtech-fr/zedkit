@@ -1102,7 +1102,7 @@ toast.error("Upload failed"); // typed variants: success | error | info | warnin
 - When to use: Right after creating a credential the user must store.
 - When not to use: For passwords the user typed — use a password Input instead.
 - See also: `Collect text input with a label`
-- A11y: The value is a read-only input (a read-only textarea with `multiline`), so it can be focused and selected with the keyboard. Name it: point a `Label` at `id`, or pass `aria-label`; the kit does not add one. The copy button is a real button named by `copyLabel` (a localized default otherwise). The copied state is a 2-second icon swap only and is not announced, so pair it with your own `aria-live` message when screen-reader users need the confirmation.
+- A11y: The value is a read-only input (a read-only textarea with `multiline`), so it can be focused and selected with the keyboard. Name it: point a `Label` at `id`, or pass `aria-label`; the kit does not add one. The copy button is a real button named by `copyLabel` (a localized default otherwise). The copied state is a 2-second icon swap only and is not announced, and where the browser has no clipboard API the button does nothing and says nothing, so pair it with your own `aria-live` message for both outcomes.
 
 ```ts
 import { Label, SecretField } from "@zedtech/zedkit-ui";
@@ -1471,7 +1471,7 @@ import { BrandLogo } from "@zedtech/zedkit-ui";
 - When to use: For long option lists where radio groups would sprawl.
 - When not to use: For 2–3 visible options — use radio inputs or OptionCards instead.
 - See also: `Toggle a checkbox or a switch`, `Guide a multi-step flow with selectable option cards`
-- A11y: Built on Radix Select: the trigger has `role="combobox"`, opens with Enter, Space or the arrow keys, and options are chosen with the arrows, typeahead and Enter; Escape closes it and returns focus to the trigger. The trigger needs a name: pair it with a `Label` whose `htmlFor` matches the trigger `id`, or pass `aria-label`. The list renders in a portal, so inside a scoped theme wrap it in `ThemeScope` to keep its tokens.
+- A11y: Built on Radix Select: the trigger has `role="combobox"`, opens with Enter, Space, ArrowUp or ArrowDown, and options are chosen with the arrows, typeahead and Enter; Escape closes it and returns focus to the trigger. Typing a letter on the closed trigger changes the value without opening it. The trigger needs a name: pair it with a `Label` whose `htmlFor` matches the trigger `id`, or pass `aria-label`. The list renders in a portal, so inside a scoped theme wrap it in `ThemeScope` to keep its tokens.
 
 ```ts
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@zedtech/zedkit-ui";
@@ -1553,7 +1553,7 @@ import { Label, Textarea } from "@zedtech/zedkit-ui";
 - When to use: Checkbox for agreements and multi-picks, switch for instant on/off settings.
 - When not to use: For exclusive choices — use Select or radio inputs instead.
 - See also: `Pick one option from a dropdown`
-- A11y: Built on Radix: `Checkbox` has `role="checkbox"` and `Switch` has `role="switch"`, both toggled with Space and exposing their state through `aria-checked`. Neither has a visible name of its own: pair each with a `Label` using `htmlFor`/`id`, or pass `aria-label`. Use `Switch` only for settings that apply immediately.
+- A11y: Built on Radix: `Checkbox` has `role="checkbox"` and `Switch` has `role="switch"`, both toggled with Space (Enter also toggles a `Switch`, not a `Checkbox`) and exposing their state through `aria-checked`. Neither has a visible name of its own: pair each with a `Label` using `htmlFor`/`id`, or pass `aria-label`. Use `Switch` only for settings that apply immediately.
 
 ```ts
 import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";

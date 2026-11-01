@@ -65,3 +65,18 @@ for (const width of [320, 360, 390]) {
     expect(fit.overflow).toBeLessThanOrEqual(1);
   });
 }
+
+test("desktop: a faded-out example leaves the tab order and stops catching clicks", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.evaluate(() => scrollTo(0, 900));
+  await expect.poll(() => visibleScene(page)).toBe("drawer");
+  const admin = await page.evaluate(() => {
+    const scene = document.querySelector("[data-scroll-scene='admin']")!;
+    const control = scene.querySelector<HTMLElement>("button, [role='combobox']")!;
+    const box = control.getBoundingClientRect();
+    const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+    return { visibility: getComputedStyle(scene).visibility, catchesClicks: hit ? scene.contains(hit) : false };
+  });
+  expect(admin).toEqual({ visibility: "hidden", catchesClicks: false });
+});

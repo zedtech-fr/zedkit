@@ -182,7 +182,7 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       data-slot="identity-editor-preview"
       role="group"
       aria-label={identityEditorCopy.fields.specimenLabel}
-      className="z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6 max-lg:[@media(min-height:44rem)]:sticky max-lg:[@media(min-height:44rem)]:top-14"
+      className="z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6 max-lg:[@media(min-height:48rem)]:sticky max-lg:[@media(min-height:48rem)]:top-14"
       gap={3}
     >
       {/* `inert`: the specimen is for looking at. It must not read as, or act as, an editor command. */}

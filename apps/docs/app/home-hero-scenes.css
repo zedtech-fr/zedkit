@@ -148,6 +148,33 @@
   }
 }
 
+/*
+ * The kit fades scenes with opacity only, on purpose: their text stays readable by assistive tech.
+ * The admin example is not text, it is a live table with buttons, so once it has faded out it must also
+ * leave the tab order and stop catching clicks meant for the example that replaced it.
+ */
+@media (prefers-reduced-motion: no-preference) and (min-width: 64rem) and (min-height: 34rem) {
+  @supports (animation-timeline: view()) {
+    #home-page [data-home-hero-visuals] > [data-scroll-scene="admin"] {
+      animation-name: zk-home-hero-admin-fade;
+    }
+  }
+}
+
+@keyframes zk-home-hero-admin-fade {
+  0%,
+  75% {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -0.75rem;
+  }
+}
+
 @keyframes zk-home-hero-step {
   0%,
   100% {

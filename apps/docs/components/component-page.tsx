@@ -61,6 +61,11 @@ export interface ComponentPageProps {
   related: RelatedLink[];
 }
 
+/** Catalog prose marks code with backticks; render them as `<code>`, not literal ticks. */
+function inlineCode(text: string) {
+  return text.split(/`([^`]+)`/).map((part, index) => (index % 2 === 1 ? <code key={index}>{part}</code> : part));
+}
+
 async function highlightedTs(code: string, title?: string) {
   const highlighted = await highlight(code, { lang: "tsx", components: { pre: Pre } });
   return (
@@ -273,7 +278,7 @@ export async function ComponentPage({
 
       {sections.includes("accessibility") ? (
         <Section title={componentPageCopy.sections.accessibility} id="accessibility">
-          <Text>{a11y}</Text>
+          <Text>{inlineCode(a11y)}</Text>
         </Section>
       ) : null}
 
