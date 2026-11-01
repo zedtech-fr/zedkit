@@ -45,10 +45,10 @@ export function HomeIdentityPaletteSwatches({
   palette: readonly IdentityPaletteSwatch[];
 }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap={3} className="flex-wrap">
       {palette.map((swatch) => (
-        <Stack key={swatch.token} direction="horizontal" gap={1} className="items-center">
-          <span className="size-3 shrink-0 overflow-hidden rounded-sm border border-border">
+        <Stack key={swatch.token} gap={1} className="items-start">
+          <span className="size-10 shrink-0 overflow-hidden rounded-md border border-border">
             <ThemeScope identity={identity} mode={mode} className="block size-full">
               <span className={cn("block size-full", SWATCH_BG[swatch.token])} />
             </ThemeScope>

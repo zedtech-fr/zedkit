@@ -22,6 +22,9 @@ test("tabs switch the stage identity without leaving the page", async ({ page })
   for (const identity of IDENTITIES) {
     await looks.getByRole("tab", { name: identity.name }).click();
     await expect(stage).toHaveAttribute("data-identity", identity.id);
+    // The facts card speaks in the identity it describes.
+    await expect(looks.locator("[data-home-identity-facts]:visible")).toHaveAttribute("data-identity", identity.id);
+    await expect(looks.locator("[data-home-identity-facts]:visible h3")).toHaveText(identity.name);
   }
   await looks.getByRole("tab", { name: "Mist" }).focus();
   await page.keyboard.press("ArrowRight");
