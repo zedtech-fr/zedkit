@@ -11,11 +11,14 @@ const CatalogResults = dynamic(
   () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResults })),
   {
     loading: () => (
-      <Section title="Results">
-        <Text variant="muted" role="status">
-          Loading results…
-        </Text>
-      </Section>
+      <Stack gap={4}>
+        <Container width="default">
+          <Heading level={2}>Results</Heading>
+          <Text variant="muted" role="status">
+            Loading results…
+          </Text>
+        </Container>
+      </Stack>
     ),
   },
 );

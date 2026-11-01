@@ -20,6 +20,16 @@
   max-width: 8rem;
 }
 
+/* 1280–1440: tighten the search pill so it clears the theme toggle (nav nowrap). */
+@media (min-width: 64rem) and (max-width: 90rem) {
+  :root[data-identity="tide"] #nd-nav button[class*="max-w-"] {
+    max-width: 7rem;
+  }
+  :root[data-identity="tide"] #nd-nav > div:last-child {
+    gap: 0.375rem;
+  }
+}
+
 @media (max-width: 40rem) {
   :root[data-identity="tide"] {
     --spacing: 0.22rem;
@@ -34,11 +44,6 @@
     --text-2xl: 1.75rem;
     --text-3xl: 1.9rem;
     --text-4xl: 2rem;
-  }
-
-  :root[data-identity="tide"] #home-page [data-home-hero-preview] {
-    max-height: 15rem;
-    overflow: hidden;
   }
 
   :root[data-identity="tide"] [data-identity-scope][data-identity="tide"] {

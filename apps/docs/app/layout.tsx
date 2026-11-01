@@ -18,6 +18,7 @@ import "./docs-typography.css";
 import "./docs-shell-tokens.css";
 import "./tide-fit.css";
 import "./docs-tables.css";
+import "./code-scroll.css";
 import "./fonts";
 
 const baseMetadata = docsPageMetadata("/", homePage);

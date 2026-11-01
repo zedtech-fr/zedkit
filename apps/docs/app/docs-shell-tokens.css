@@ -52,6 +52,23 @@ html.dark [id^="type-table"] .line-through {
   --zk-container-default: 72.5rem;
 }
 
+/*
+ * Home hero band: one section step between the secondary links and the next
+ * full-bleed band; get-started uses the same wide measure as use-cases.
+ */
+#home-page [data-home-hero-band] {
+  padding-top: var(--zk-section-lg);
+  padding-bottom: var(--zk-section-md);
+}
+
+#home-page #use-cases[data-slot="section"] {
+  padding-top: var(--zk-section-md);
+}
+
+#home-page #get-started[data-slot="section"] {
+  padding-top: var(--zk-section-md);
+}
+
 @media (width < 48rem) {
   #nd-page {
     padding-inline: var(--zk-page-gutter);

@@ -51,7 +51,7 @@ export function HomeHero({
 }) {
   return (
     <>
-      <Container width="wide" className="py-section-lg">
+      <Container width="wide" data-home-hero-band="">
         <Stack gap={HOME_SECTION_CONTENT_GAP} className="w-full min-w-0">
           <Stack
             gap={HOME_SECTION_CONTENT_GAP}

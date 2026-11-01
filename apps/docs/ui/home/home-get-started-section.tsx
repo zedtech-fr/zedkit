@@ -47,8 +47,8 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
   return (
     <Section
       bleed
-      spacing="md"
-      containerWidth="reading"
+      spacing="lg"
+      containerWidth="wide"
       id="get-started"
       title="Start building"
       description="Install the package or copy a brick, then a short UI path. Agent setup is optional."
