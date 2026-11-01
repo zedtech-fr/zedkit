@@ -6,6 +6,16 @@ export const identityEditorCopy = {
       "Some text or control colours fail 4.5:1 (or 3:1 for accents and borders). Exporting them can make copy unreadable. Fix the warnings above, or export anyway if you accept the risk.",
     confirmLabel: "Export anyway",
     blocked: "Copy is blocked until you fix contrast warnings or confirm export.",
+    scopeTitle: "What this exports",
+    scope:
+      "A recipe, not a complete look: shape and spacing, type rhythm, shadows, two font stacks, and seven colours for light and for dark. Cards, menus, sidebars and muted surfaces take the page colour, and every corner uses one radius. Motion, button personality, glass layers and page texture are not included.",
+    importTitle: "Load a recipe",
+    importLabel: "Pasted recipe",
+    importHint: "Paste JSON copied from this editor. Loading replaces the draft; Undo brings it back.",
+    importAction: "Load recipe",
+    importLoaded: "Recipe loaded into the draft.",
+    importInvalid: (reason: string) => `This is not a recipe the editor can load: ${reason}`,
+    importNotJson: "the text is not valid JSON.",
     css: "CSS",
     json: "JSON",
     copyCss: "Copy CSS",
@@ -56,13 +66,15 @@ export const identityEditorCopy = {
     },
     draftTitle: "Draft look",
     draftBody: "Spacing, type and colour follow the fields.",
+    specimenNote: "Preview only: the buttons and fields here are samples.",
+    specimenLabel: "Draft preview",
     draftSave: "Save",
     contrastBadge: (scheme: string, label: string, ratio: number, min: number) =>
       `${scheme} ${label} ${ratio}:1 (need ${min}:1)`,
     fix: (scheme: string, label: string) => `Fix ${scheme} ${label}`,
   },
   panel: {
-    hint: "Change spacing first, then watch the card.",
+    hint: "Change spacing first, then watch the card. Preview dark only changes the card; the site keeps its own light or dark setting.",
     applied: "Applied to the whole site.",
   },
   suggest: {
@@ -84,10 +96,18 @@ export const identityEditorCopy = {
     saveLook: "Save look",
     rename: "Rename",
     delete: "Delete",
-    dark: "Dark",
+    deleteTitle: "Delete this look?",
+    deleteDescription: "The saved look is removed from this browser. You can save the draft again afterwards.",
+    deleteConfirm: "Delete look",
+    previewDark: "Preview dark",
     undo: "Undo",
     reset: "Reset",
     applySite: "Apply to the whole site",
+    groups: {
+      look: "Library",
+      edit: "Editing",
+      site: "Site",
+    },
   },
 } as const;
 

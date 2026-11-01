@@ -31,17 +31,25 @@ test("search dialog is lazy and not preloaded on every page", () => {
 });
 
 test("home hero lead prioritizes get started then catalog (#ZK-09)", () => {
-  const src = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
-  assert.match(src, /href="#get-started">Get started/);
-  assert.match(src, /href="\/catalog">Browse catalog/);
-  assert.match(src, /asChild variant="link">\s*\n\s*<Link href="#demo">Try the demo/);
-  assert.doesNotMatch(src, /Browse components/);
+  const lead = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
+  const actions = readFileSync(join(app, "ui/home/home-hero-lead-actions.tsx"), "utf8");
+  const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
+  assert.match(lead, /HomeHeroLeadActions/);
+  // Primary first, then the quiet catalog link; no third action competes with them.
+  assert.match(actions, /<Button asChild>\s*\n\s*<Link href="#get-started">\{homeCopy\.heroActions\.getStarted\}/);
+  assert.match(actions, /variant="link"[^>]*>\s*\n\s*<Link href="\/catalog">\{homeCopy\.heroActions\.browseCatalog\}/);
+  assert.equal((actions.match(/<Link /g) ?? []).length, 2);
+  assert.match(copy, /getStarted: "Get started"/);
+  assert.match(copy, /browseCatalog: "Browse catalog"/);
+  assert.doesNotMatch(actions + copy, /Browse components/);
 });
 
 test("drawer demo save closes and toasts", () => {
   const src = readFileSync(join(app, "components/demos/drawer-demo.tsx"), "utf8");
   assert.match(src, /DrawerClose asChild/);
-  assert.match(src, /onClick=\{\(\) => toast\("Saved"\)\}/);
+  assert.match(src, /onClick=\{\(\) => toast\(drawerCopy\.demo\.savedToast\)\}/);
+  const copy = readFileSync(join(app, "components/demos/i18n/drawer-copy.ts"), "utf8");
+  assert.match(copy, /savedToast: "Saved"/);
   assert.match(src, /open=\{open\} onOpenChange=\{setOpen\}/);
 });
 

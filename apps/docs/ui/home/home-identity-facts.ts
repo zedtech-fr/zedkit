@@ -110,7 +110,7 @@ export const HOME_IDENTITY_FACTS: Record<IdentityId, IdentityFacts> = {
     palette: palette({
       background: "20 60% 99%",
       primary: "221 41% 21%",
-      accent: "14 100% 92%",
+      accent: "14 100% 58%",
       card: "0 0% 100%",
       border: "28 25% 56%",
     }),

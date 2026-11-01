@@ -1,7 +1,9 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   Button,
+  ConfirmDialog,
   Field,
   FieldLabel,
   Input,
@@ -58,6 +60,14 @@ function LookSelect({
   );
 }
 
+function ToolbarGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <Stack direction="horizontal" gap={2} role="group" aria-label={label} className="flex-wrap items-end">
+      {children}
+    </Stack>
+  );
+}
+
 function IdentityEditorToolbar({
   identity,
   looks,
@@ -75,34 +85,51 @@ function IdentityEditorToolbar({
   onReset,
   onApplySite,
 }: IdentityEditorToolbarProps) {
+  const copy = identityEditorCopy.toolbar;
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-end">
-      <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
-      <Field className="w-full min-w-36 sm:w-56">
-        <FieldLabel htmlFor="identity-editor-name">{identityEditorCopy.toolbar.name}</FieldLabel>
-        <Input id="identity-editor-name" value={name} onChange={(event) => onName(event.target.value)} />
-      </Field>
-      <Button type="button" variant="outline" onClick={onSave} disabled={name.trim() === ""}>
-        {identityEditorCopy.toolbar.saveLook}
-      </Button>
-      <Button type="button" variant="outline" onClick={onRename} disabled={!namedSelected || name.trim() === ""}>
-        {identityEditorCopy.toolbar.rename}
-      </Button>
-      <Button type="button" variant="outline" onClick={onDelete} disabled={!namedSelected}>
-        {identityEditorCopy.toolbar.delete}
-      </Button>
-      <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
-        {identityEditorCopy.toolbar.dark}
-      </Button>
-      <Button type="button" variant="outline" disabled={!canUndo} onClick={onUndo}>
-        {identityEditorCopy.toolbar.undo}
-      </Button>
-      <Button type="button" variant="outline" onClick={onReset}>
-        {identityEditorCopy.toolbar.reset}
-      </Button>
-      <Button type="button" onClick={onApplySite}>
-        {identityEditorCopy.toolbar.applySite}
-      </Button>
+    <Stack gap={4} data-slot="identity-editor-toolbar">
+      <ToolbarGroup label={copy.groups.look}>
+        <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
+        <Field className="w-full min-w-36 sm:w-56">
+          <FieldLabel htmlFor="identity-editor-name">{copy.name}</FieldLabel>
+          <Input id="identity-editor-name" value={name} onChange={(event) => onName(event.target.value)} />
+        </Field>
+        <Button type="button" onClick={onSave} disabled={name.trim() === ""}>
+          {copy.saveLook}
+        </Button>
+        <Button type="button" variant="outline" onClick={onRename} disabled={!namedSelected || name.trim() === ""}>
+          {copy.rename}
+        </Button>
+        <ConfirmDialog
+          trigger={
+            <Button type="button" variant="outline" disabled={!namedSelected} className="text-destructive">
+              {copy.delete}
+            </Button>
+          }
+          title={copy.deleteTitle}
+          description={copy.deleteDescription}
+          confirmLabel={copy.deleteConfirm}
+          onConfirm={onDelete}
+        />
+      </ToolbarGroup>
+      <Stack direction="horizontal" gap={6} className="flex-wrap items-end">
+        <ToolbarGroup label={copy.groups.edit}>
+          <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
+            {copy.previewDark}
+          </Button>
+          <Button type="button" variant="outline" disabled={!canUndo} onClick={onUndo}>
+            {copy.undo}
+          </Button>
+          <Button type="button" variant="outline" onClick={onReset}>
+            {copy.reset}
+          </Button>
+        </ToolbarGroup>
+        <ToolbarGroup label={copy.groups.site}>
+          <Button type="button" variant="outline" onClick={onApplySite}>
+            {copy.applySite}
+          </Button>
+        </ToolbarGroup>
+      </Stack>
     </Stack>
   );
 }

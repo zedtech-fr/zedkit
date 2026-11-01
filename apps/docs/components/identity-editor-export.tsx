@@ -6,6 +6,7 @@ import {
   ConfirmDialog,
   Field,
   FieldLabel,
+  Heading,
   Stack,
   Text,
   Textarea,
@@ -14,6 +15,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { parseRecipe, serializeRecipe } from "@/lib/identity-recipe";
 
 function copyText(value: string, onDone: () => void) {
   const clipboard = navigator.clipboard;
@@ -55,9 +57,60 @@ function CopyButton({
   );
 }
 
-function IdentityEditorExport({ tokens }: { tokens: IdentityTokens }) {
+function RecipeImport({ onLoad }: { onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void }) {
+  const copy = identityEditorCopy.export;
+  const [text, setText] = useState("");
+  const [state, setState] = useState<"idle" | "loaded" | { error: string }>("idle");
+  function load() {
+    const result = parseRecipe(text);
+    if (!result.ok) {
+      const reason = result.reason === "not-json" ? copy.importNotJson : `${result.reason.path} (${result.reason.message}).`;
+      setState({ error: copy.importInvalid(reason) });
+      return;
+    }
+    onLoad(result.tokens, result.darkKept);
+    setState("loaded");
+  }
+  return (
+    <Stack gap={3} data-slot="identity-editor-import">
+      <Heading level={2} className="text-lg">
+        {copy.importTitle}
+      </Heading>
+      <Field>
+        <FieldLabel htmlFor="identity-editor-import">{copy.importLabel}</FieldLabel>
+        <Textarea
+          id="identity-editor-import"
+          value={text}
+          className="font-mono"
+          aria-describedby="identity-editor-import-hint"
+          aria-invalid={typeof state === "object"}
+          onChange={(event) => {
+            setText(event.target.value);
+            setState("idle");
+          }}
+        />
+        <Text id="identity-editor-import-hint" variant="muted">
+          {copy.importHint}
+        </Text>
+      </Field>
+      <Button type="button" variant="outline" className="w-fit" onClick={load} disabled={text.trim() === ""}>
+        {copy.importAction}
+      </Button>
+      {state === "loaded" ? <Text role="status">{copy.importLoaded}</Text> : null}
+      {typeof state === "object" ? <Text role="alert" className="text-destructive">{state.error}</Text> : null}
+    </Stack>
+  );
+}
+
+function IdentityEditorExport({
+  tokens,
+  onLoad,
+}: {
+  tokens: IdentityTokens;
+  onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void;
+}) {
   const css = tokensToCss(tokens, ":root");
-  const json = JSON.stringify(tokens, null, 2);
+  const json = serializeRecipe(tokens);
   const [copied, setCopied] = useState<"css" | "json" | null>(null);
   const blocked = identityContrastWarnings(tokens).length > 0;
 
@@ -67,6 +120,10 @@ function IdentityEditorExport({ tokens }: { tokens: IdentityTokens }) {
 
   return (
     <Stack gap={3} data-slot="identity-editor-export">
+      <Heading level={2} className="text-lg">
+        {identityEditorCopy.export.scopeTitle}
+      </Heading>
+      <Text variant="muted">{identityEditorCopy.export.scope}</Text>
       {blocked ? (
         <Text role="status" variant="muted">
           {identityEditorCopy.export.blocked}
@@ -83,6 +140,7 @@ function IdentityEditorExport({ tokens }: { tokens: IdentityTokens }) {
       </Field>
       <CopyButton label={identityEditorCopy.export.copyJson} value={json} blocked={blocked} onCopied={() => mark("json")} />
       {copied ? <Text role="status">{identityEditorCopy.export.copied(copied)}</Text> : null}
+      <RecipeImport onLoad={onLoad} />
     </Stack>
   );
 }

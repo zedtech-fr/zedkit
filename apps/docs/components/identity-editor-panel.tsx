@@ -1,7 +1,6 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
-import { useTheme } from "next-themes";
 import {
   applyIdentity,
   applyIdentityTokenSheet,
@@ -55,6 +54,7 @@ type EditorBodyProps = {
   onFix: (warning: IdentityContrastWarning) => void;
   onSuggestApply: (next: IdentityTokens, toSite: boolean) => void;
   onUndo: () => void;
+  onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void;
   onApplySite: () => void;
   canUndo: boolean;
   appliedSite: boolean;
@@ -138,7 +138,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
           <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
           <IdentityEditorSuggest tokens={props.tokens} onApply={props.onSuggestApply} />
           <EditorFields tokens={props.tokens} scheme={scheme} onPatch={props.onPatch} />
-          <IdentityEditorExport tokens={props.tokens} />
+          <IdentityEditorExport tokens={props.tokens} onLoad={props.onLoad} />
         </Stack>
       </Stack>
     </Stack>
@@ -195,7 +195,6 @@ function IdentityEditorPanel() {
   const [name, setName] = useState("");
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
-  const { setTheme } = useTheme();
   const { tokens, darkKept, remember, undo, applySite, detachSite, appliedSite, past, load, patch, fix, applySuggest } = draft;
   const bound = bindNamedLooks(named, identity, name, tokens, setIdentity, setName, remember);
 
@@ -205,10 +204,7 @@ function IdentityEditorPanel() {
     load(parsed.tokens, parsed.darkKept);
     const saved = readNamedIdentities().find((item) => item.id === parsed.identity);
     if (saved) setName(saved.label);
-    if (parsed.darkPreview) {
-      setDarkPreview(true);
-      setTheme("dark");
-    }
+    if (parsed.darkPreview) setDarkPreview(true);
     setReady(true);
   }, []);
 
@@ -232,14 +228,12 @@ function IdentityEditorPanel() {
       darkPreview={darkPreview}
       {...bound}
       onName={setName}
-      onDark={() => {
-        setDarkPreview(!darkPreview);
-        setTheme(darkPreview ? "light" : "dark");
-      }}
+      onDark={() => setDarkPreview(!darkPreview)}
       onPatch={(key, value) => patch(key, value, darkPreview ? "dark" : "light")}
       onFix={fix}
       onSuggestApply={applySuggest}
       onUndo={undo}
+      onLoad={remember}
       onApplySite={applySite}
       canUndo={past.length > 0}
       appliedSite={appliedSite}
