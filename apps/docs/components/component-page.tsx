@@ -191,22 +191,22 @@ export async function ComponentPage({
       <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-3">
         <Stack gap={3}>
           {copyable ? (
-            <KitTabs defaultValue="npm package" className="flex flex-col gap-3">
+            <KitTabs defaultValue="npm" className="flex flex-col gap-3">
               <TabsList className="h-auto w-fit gap-1 rounded-none bg-transparent p-0">
-                {componentPageCopy.adoptionTabs.map((label) => (
+                {componentPageCopy.adoptionTabs.map(({ value, label }) => (
                   <TabsTrigger
-                    key={label}
-                    value={label}
+                    key={value}
+                    value={value}
                     className="h-9 rounded-md px-3 text-sm text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
                   >
                     {label}
                   </TabsTrigger>
                 ))}
               </TabsList>
-              <TabsContent value="npm package" className="mt-0">
+              <TabsContent value="npm" className="mt-0">
                 {npmInstall}
               </TabsContent>
-              <TabsContent value="registry copy" className="mt-0">
+              <TabsContent value="registry" className="mt-0">
                 <Stack gap={3}>
                   <Text variant="muted" className="text-sm">
                     {componentPageCopy.registryCopyLead}

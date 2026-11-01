@@ -45,7 +45,7 @@ function TokenField({
   const colour = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
   return (
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
-    <Field className="scroll-mt-28 min-w-0">
+    <Field className="min-w-0 scroll-mt-28">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap={2} className="min-w-0">
         {swatch ? (
@@ -137,7 +137,7 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       data-identity-scope=""
       data-identity={DRAFT_ID}
       data-slot="identity-editor-preview"
-      className="sticky top-14 z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:col-start-2 lg:row-start-1 lg:top-20 lg:self-start lg:p-6"
+      className="sticky top-14 z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6"
       gap={3}
     >
       <Stack direction="horizontal" gap={2} className="justify-between">

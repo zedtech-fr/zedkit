@@ -20,7 +20,11 @@ export const componentPageCopy = {
     troubleshooting: "Troubleshooting",
   },
   packageManagerTabs: ["pnpm", "npm", "yarn"] as const,
-  adoptionTabs: ["npm package", "registry copy"] as const,
+  /** `value` is an id fragment (no spaces: aria-controls would split it); `label` is what readers see. */
+  adoptionTabs: [
+    { value: "npm", label: "npm package" },
+    { value: "registry", label: "registry copy" },
+  ] as const,
   registryCopyLead:
     "Copy the source into your repo with the shadcn CLI, then import it from your own components folder. No package to install.",
   registryContinuation: "New to shadcn? Set up the CLI and theme tokens first.",

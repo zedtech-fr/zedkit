@@ -15,7 +15,7 @@ function FamilyExampleLinks({ examples }: { examples: readonly { label: string; 
         <Link
           key={item.href}
           href={item.href}
-          className={`${HOME_METADATA_TEXT_CLASS} underline-offset-4 hover:underline`}
+          className={`${HOME_METADATA_TEXT_CLASS} inline-flex min-h-11 items-center underline-offset-4 hover:underline md:min-h-6`}
         >
           {item.label}
         </Link>
