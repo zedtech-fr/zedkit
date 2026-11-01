@@ -50,6 +50,8 @@ export interface ComponentPageProps {
   propsFile: string | null;
   propsName: string | null;
   propsPriority?: string[];
+  /** Folds every prop outside `propsPriority`; names and links the folded group. */
+  propsRest?: { summary: string; href: string };
   examples: CatalogExample[];
   /** Example title → demo registry key: a live preview rendered above that code block. */
   examplePreviews?: Record<string, string>;
@@ -108,6 +110,7 @@ export async function ComponentPage({
   propsFile,
   propsName,
   propsPriority = DEFAULT_PROPS_PRIORITY,
+  propsRest,
   examples,
   examplePreviews = {},
   a11y,
@@ -210,6 +213,12 @@ export async function ComponentPage({
                   </Text>
                   {await highlightedTs(shadcnAdd)}
                   {await highlightedTs(registryImportSnippet(importLine, registry))}
+                  <Text variant="muted" className="text-sm">
+                    {componentPageCopy.registryContinuation}{" "}
+                    <Link href="/docs/zedkit-and-shadcn" className="text-primary underline-offset-4 hover:underline">
+                      {componentPageCopy.registryContinuationLink}
+                    </Link>
+                  </Text>
                   {source ? (
                     <Stack gap={3}>
                       <RegistryBrickInlineName name={registry} />
@@ -227,6 +236,11 @@ export async function ComponentPage({
 
       <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-3">
         <Stack gap={4}>
+          {copyable ? (
+            <Text variant="muted" className="text-sm" data-usage-import-note="">
+              {componentPageCopy.usageImportNote(registry)}
+            </Text>
+          ) : null}
           {await Promise.all(
             examples.map(async (ex) => {
               const previewDemo = examplePreviews[ex.title];
@@ -252,7 +266,7 @@ export async function ComponentPage({
       <Section title={componentPageCopy.sections.props} id="props">
         {hasProps ? (
           <Stack gap={3}>
-            <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} />
+            <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} {...(propsRest ? { rest: propsRest } : {})} />
           </Stack>
         ) : (
           <Text variant="muted">{componentPageCopy.noExtraProps}</Text>

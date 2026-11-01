@@ -22,7 +22,11 @@ export const componentPageCopy = {
   packageManagerTabs: ["pnpm", "npm", "yarn"] as const,
   adoptionTabs: ["npm package", "registry copy"] as const,
   registryCopyLead:
-    "Copy the brick into your repo with the shadcn CLI. Imports are rewritten for your app; keep this path separate from the npm package install above.",
+    "Copy the source into your repo with the shadcn CLI, then import it from your own components folder. No package to install.",
+  registryContinuation: "New to shadcn? Set up the CLI and theme tokens first.",
+  registryContinuationLink: "Zedkit and shadcn",
+  usageImportNote: (registry: string) =>
+    `Examples import from the package. With copied source, import from @/components/ui/${registry} instead.`,
   codeBlockShadcnAdd: "shadcn add",
   codeBlockImport: "Import",
   noExtraProps: "No extra props documented.",

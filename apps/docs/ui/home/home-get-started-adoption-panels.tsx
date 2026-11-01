@@ -37,11 +37,3 @@ export function HomeGetStartedPathTabs({
     </Stack>
   );
 }
-
-export function HomeGetStartedStyledResult() {
-  return (
-    <Button type="button" tabIndex={-1} className="w-fit" data-home-get-started-result="">
-      {homeCopy.getStarted.adoption.save}
-    </Button>
-  );
-}

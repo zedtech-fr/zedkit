@@ -99,6 +99,19 @@ test.describe("home install or copy section", () => {
     await expect(page.locator("#install-or-copy [data-install-command]")).toHaveCount(1);
   });
 
+  test("the import and the setup link follow the chosen path", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    const section = page.locator("#install-or-copy");
+    const imp = section.getByRole("region", { name: "Import statement" });
+    await expect(imp).toHaveText('import { Button } from "@zedtech/zedkit-ui";');
+    await expect(section.locator("[data-home-full-setup]")).toHaveAttribute("href", "/docs/getting-started");
+    await page.getByRole("tab", { name: "Copy source" }).click();
+    await expect(imp).toHaveText('import { Button } from "@/components/ui/button";');
+    await expect(imp).not.toContainText("@zedtech/zedkit-ui");
+    await expect(section.locator("[data-home-full-setup]")).toHaveAttribute("href", "/docs/getting-started");
+  });
+
   test.skip("choice cards match height at laptop width — removed with tabbed install", async () => {});
 
   test.describe("install section light/dark", () => {
