@@ -52,7 +52,7 @@ function DemoStyleSelect({
         id={selectId}
         defaultValue={pinned ? look : "follow-site"}
         onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
-        className="h-8 max-w-36 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-ring-control"
+        className="h-8 max-w-36 rounded-md border border-input bg-background px-2 text-control text-foreground focus-ring-control"
       >
         <option value="follow-site">{demoStyleScopeCopy.followSite}</option>
         {identities.map((item) => (

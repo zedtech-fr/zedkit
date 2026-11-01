@@ -113,10 +113,9 @@ async function assertLinkGhostHoverCalm(page: Page) {
 async function assertInstallSection(page: Page) {
   await page.goto(HOME, { waitUntil: "networkidle" });
   const section = page.locator("#install-or-copy");
-  const cards = section.locator("[data-slot='card']");
-  await expect(cards).toHaveCount(2);
-  const heights = await cards.evaluateAll((nodes) => nodes.map((n) => n.getBoundingClientRect().height));
-  expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(48);
+  // One adoption choice (npm or copy source), one command, one copy button.
+  await expect(section.getByRole("tab")).toHaveCount(2);
+  await expect(section.getByRole("tab", { name: "npm" })).toHaveAttribute("aria-selected", "true");
   await expect(section.getByRole("region", { name: "Package install command" })).toBeVisible();
   await expect(section.getByRole("button", { name: "Copy package install command" })).toBeVisible();
 }

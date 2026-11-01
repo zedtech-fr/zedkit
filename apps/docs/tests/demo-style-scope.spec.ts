@@ -34,7 +34,7 @@ test("site reading mode does not restyle a specimen Light/Dark choice", async ({
   const preview = page.locator("[data-component-preview]").first();
   await preview.scrollIntoViewIfNeeded();
   await preview.getByRole("button", { name: "Light", exact: true }).click();
-  const canvas = preview.locator(".rounded-lg.border").first();
+  const canvas = preview.locator("[data-preview-surface]");
   await expect.poll(() => canvas.evaluate((node) => node.classList.contains("dark"))).toBe(false);
 
   await page.getByRole("button", { name: /toggle theme/i }).first().click();

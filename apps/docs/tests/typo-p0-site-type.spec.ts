@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { probe } from "./identity-helpers";
 
 test.describe("site type hierarchy (P0)", () => {
-  test("home hero and scenario cards @1440", async ({ page }) => {
+  test("home hero and component families @1440", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/?identity=tide", { waitUntil: "networkidle" });
 
@@ -14,15 +14,15 @@ test.describe("site type hierarchy (P0)", () => {
     expect(h1.size).toBeGreaterThanOrEqual(32);
     expect(h1.weight).toBe("600");
 
-    const cardTitle = await page.locator("#scenarios [data-slot=card-title]").first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
-    const cardLabel = await page.locator("#scenarios .home-metadata-copy").first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
-    const cardBody = await page.locator("#scenarios .text-home-persuasion").first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
-    expect(cardTitle).toBeGreaterThanOrEqual(16);
-    expect(cardTitle).toBeLessThanOrEqual(17);
+    const size = (selector: string) =>
+      page.locator(selector).first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+    const sectionTitle = await size("#components h2");
+    const cardLabel = await size("#components .home-metadata-copy");
+    const cardBody = await size("#components .text-home-persuasion");
     expect(cardLabel).toBe(12);
     expect(cardBody).toBe(14);
     expect(cardLabel).toBeLessThan(cardBody);
-    expect(cardBody).toBeLessThan(cardTitle);
+    expect(cardBody).toBeLessThan(sectionTitle);
   });
 
   test("docs prose and labels use shared scale @390", async ({ page }) => {

@@ -20,7 +20,7 @@ test.describe("motion utilities demo", () => {
     await expect(card).toBeVisible();
     // Axe reads contrast mid-fade otherwise: wait for the entrances to end.
     await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished)));
-    const results = await new AxeBuilder({ page }).include(".rounded-lg.border.border-border.bg-muted\\/40").analyze();
+    const results = await new AxeBuilder({ page }).include("[data-preview-surface]").analyze();
     expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
     expect(errors).toEqual([]);
   });
