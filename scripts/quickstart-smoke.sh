@@ -91,7 +91,8 @@ run_npm_path() {
 
   pnpm exec tsc -b
   pnpm run build
-  echo "quickstart-smoke: npm path ok (Vite build)"
+  node "${ROOT}/scripts/quickstart-render-check.mjs" dist "quickstart-smoke: npm path"
+  echo "quickstart-smoke: npm path ok (Vite build, styled Button rendered)"
 }
 
 run_registry_path() {
@@ -117,7 +118,8 @@ run_registry_path() {
 
   pnpm exec tsc -b
   pnpm run build
-  echo "quickstart-smoke: registry path ok (Vite build)"
+  node "${ROOT}/scripts/quickstart-render-check.mjs" dist "quickstart-smoke: registry path"
+  echo "quickstart-smoke: registry path ok (Vite build, styled Button rendered)"
 }
 
 echo "quickstart-smoke: eligible for ci-required once stable on main (not in branch protection yet)"
