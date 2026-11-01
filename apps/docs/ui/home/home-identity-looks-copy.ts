@@ -1,6 +1,6 @@
-/** English copy for the home identity showcase. Keys only; no markup. */
+/** English copy for the home identity looks. Keys only; no markup. */
 
-export const homeIdentityShowcaseCopy = {
+export const homeIdentityLooksCopy = {
   title: "Six identities, one set of components",
   body: "Same components, six complete looks: type, shape, density and color change together. Pick one and see the same screen change.",
   liveNote: "Live components, not screenshots.",

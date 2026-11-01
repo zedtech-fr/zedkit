@@ -2,12 +2,12 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 import { HOME_IDENTITY_FACTS, IDENTITY_IDS, isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
-import { HomeIdentityPaletteDots } from "@/ui/home/home-identity-showcase-swatches";
-import { homeIdentityShowcaseCopy } from "@/ui/home/home-identity-showcase-copy";
+import { HomeIdentityPaletteDots } from "@/ui/home/home-identity-looks-swatches";
+import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 
 const TAB_DOTS = ["background", "primary", "accent"] as const;
 
-export function HomeIdentityShowcaseTabs({
+export function HomeIdentityLooksTabs({
   value,
   mode,
   onValueChange,
@@ -25,7 +25,7 @@ export function HomeIdentityShowcaseTabs({
       className="w-full min-w-0"
     >
       <TabsList
-        aria-label={homeIdentityShowcaseCopy.tabsAriaLabel}
+        aria-label={homeIdentityLooksCopy.tabsAriaLabel}
         className="h-auto min-h-11 w-full min-w-0 snap-x snap-mandatory justify-start overflow-x-auto"
       >
         {IDENTITY_IDS.map((id) => (

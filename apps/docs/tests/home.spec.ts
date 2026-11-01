@@ -105,7 +105,6 @@ test("home hero specimen follows the headline within the mobile demo budget (#11
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  const demo = page.locator("#demo");
   const metrics = await page.evaluate(() => {
     const root = document.querySelector("#home-page");
     const demoEl = document.querySelector("#demo");

@@ -7,11 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@zedtech/zedkit-ui";
-import { homeIdentityShowcaseCopy } from "@/ui/home/home-identity-showcase-copy";
+import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 
-const copy = homeIdentityShowcaseCopy.stage;
+const copy = homeIdentityLooksCopy.stage;
 
-export function HomeIdentityShowcaseMembers() {
+export function HomeIdentityLooksMembers() {
   return (
     <Table aria-label={copy.tableAriaLabel}>
       <TableHeader>

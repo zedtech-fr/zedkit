@@ -15,9 +15,9 @@ export function DropdownMenuDemo() {
         <Button variant="outline">{dropdownMenuCopy.actions}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>{dropdownMenuCopy.duplicateInvoice}</DropdownMenuItem>
+        <DropdownMenuItem>{dropdownMenuCopy.duplicateRow}</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>{dropdownMenuCopy.archiveInvoice}</DropdownMenuItem>
+        <DropdownMenuItem>{dropdownMenuCopy.archiveRow}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

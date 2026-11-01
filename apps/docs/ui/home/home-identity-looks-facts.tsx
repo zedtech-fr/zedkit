@@ -2,11 +2,11 @@
 
 import { cn, Stack, Text } from "@zedtech/zedkit-ui";
 import type { IdentityFacts } from "@/ui/home/home-identity-facts";
-import { HomeIdentityPaletteSwatches } from "@/ui/home/home-identity-showcase-swatches";
-import { homeIdentityShowcaseCopy } from "@/ui/home/home-identity-showcase-copy";
+import { HomeIdentityPaletteSwatches } from "@/ui/home/home-identity-looks-swatches";
+import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 import { HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
-const labels = homeIdentityShowcaseCopy.factLabels;
+const labels = homeIdentityLooksCopy.factLabels;
 
 function FactLine({ label, value }: { label: string; value: string }) {
   return (
@@ -17,7 +17,7 @@ function FactLine({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function HomeIdentityShowcaseFacts({
+export function HomeIdentityLooksFacts({
   facts,
   mode,
 }: {

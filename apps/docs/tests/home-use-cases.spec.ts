@@ -79,10 +79,10 @@ test("Display preview mode reaches the table without a toolbar select", async ({
   await expect(card.getByText(/No apps yet/)).toBeVisible();
 });
 
-test("identity showcase offers six identity tabs", async ({ page }) => {
+test("identity looks offers six identity tabs", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  const showcase = page.locator("[data-home-identity-showcase]");
-  await showcase.scrollIntoViewIfNeeded();
-  await expect(showcase.getByRole("tab")).toHaveCount(6);
+  const looks = page.locator("[data-home-identity-looks]");
+  await looks.scrollIntoViewIfNeeded();
+  await expect(looks.getByRole("tab")).toHaveCount(6);
 });

@@ -1,11 +1,11 @@
 "use client";
 
 import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stack, Switch } from "@zedtech/zedkit-ui";
-import { homeIdentityShowcaseCopy } from "@/ui/home/home-identity-showcase-copy";
+import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 
-const copy = homeIdentityShowcaseCopy.stage;
+const copy = homeIdentityLooksCopy.stage;
 
-export function HomeIdentityShowcaseControls({
+export function HomeIdentityLooksControls({
   workspaceId,
   regionId,
   alertsId,

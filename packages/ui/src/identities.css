@@ -252,9 +252,9 @@
     transition-duration: var(--motion-base);
     transition-timing-function: var(--zk-btn-ease, ease);
   }
+  /* A tint of the identity accent over the page, never the full accent fill. */
   table:not([role="grid"]) tbody tr:hover {
-    background-color: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
+    background-color: color-mix(in srgb, hsl(var(--accent)) 12%, hsl(var(--background)));
   }
 
   /* Links keep a clear keyboard focus in every identity */

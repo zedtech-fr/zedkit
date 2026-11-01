@@ -23,6 +23,7 @@ import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
 import { ButtonDemo } from "./button-demo";
+import { ButtonSizesDemo } from "./button-sizes-demo";
 import { IdentityPickerDemo, IdentityScopeDemo, IdentitySwitcherDemo } from "./identity-demo";
 import {
   ScrollScenesBeforeAfterDemo,
@@ -126,6 +127,7 @@ export const demoRegistry = {
   AppShellDemo: { Demo: AppShellDemo, file: "app-shell-demo.tsx" },
   BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx", center: true },
   ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx", center: true },
+  ButtonSizesDemo: { Demo: ButtonSizesDemo, file: "button-sizes-demo.tsx", center: true },
   CalendarDemo: { Demo: CalendarDemo, file: "calendar-demo.tsx", center: true },
   CardDemo: { Demo: CardDemo, file: "card-demo.tsx" },
   CardFooterDemo: { Demo: CardFooterDemo, file: "card-footer-demo.tsx" },

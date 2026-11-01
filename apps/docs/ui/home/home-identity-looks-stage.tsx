@@ -14,13 +14,13 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
-import { HomeIdentityShowcaseControls } from "@/ui/home/home-identity-showcase-controls";
-import { HomeIdentityShowcaseMembers } from "@/ui/home/home-identity-showcase-members";
-import { homeIdentityShowcaseCopy } from "@/ui/home/home-identity-showcase-copy";
+import { HomeIdentityLooksControls } from "@/ui/home/home-identity-looks-controls";
+import { HomeIdentityLooksMembers } from "@/ui/home/home-identity-looks-members";
+import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 
-const copy = homeIdentityShowcaseCopy.stage;
+const copy = homeIdentityLooksCopy.stage;
 
-export function HomeIdentityShowcaseStage() {
+export function HomeIdentityLooksStage() {
   const workspaceId = useId();
   const regionId = useId();
   const alertsId = useId();
@@ -43,7 +43,7 @@ export function HomeIdentityShowcaseStage() {
       </CardHeader>
       <CardContent>
         <Stack gap={4} className="min-w-0">
-          <HomeIdentityShowcaseControls
+          <HomeIdentityLooksControls
             workspaceId={workspaceId}
             regionId={regionId}
             alertsId={alertsId}
@@ -63,7 +63,7 @@ export function HomeIdentityShowcaseStage() {
               {copy.destroy}
             </Button>
           </Stack>
-          <HomeIdentityShowcaseMembers />
+          <HomeIdentityLooksMembers />
           <Alert>
             <AlertTitle>{copy.alertTitle}</AlertTitle>
             <AlertDescription>{copy.alertBody}</AlertDescription>

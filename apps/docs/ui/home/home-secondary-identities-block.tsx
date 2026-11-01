@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button, Stack, Text } from "@zedtech/zedkit-ui";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
-import { HomeIdentityShowcase } from "@/ui/home/home-identity-showcase";
+import { HomeIdentityLooks } from "@/ui/home/home-identity-looks";
 import { HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
 
@@ -12,7 +12,7 @@ export function HomeSecondaryIdentitiesBlock() {
       <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
         {homeCopy.secondary.identities.body}
       </Text>
-      <HomeIdentityShowcase />
+      <HomeIdentityLooks />
       <Stack direction="horizontal" gap={2} className="flex-wrap">
         <Button asChild variant="outline" size="sm" className="w-fit">
           <Link href={IDENTITY_EDITOR_HREF}>{homeCopy.secondary.identities.tryEditor}</Link>

@@ -24,13 +24,13 @@ type ModePin = "follow" | "light" | "dark";
 
 function Segmented({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div
+    <Stack
       role="group"
       aria-label={label}
       className="inline-flex items-center gap-0.5"
     >
       {children}
-    </div>
+    </Stack>
   );
 }
 
@@ -84,7 +84,7 @@ export function PreviewFrame({
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex w-full min-w-0 flex-col gap-2">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <Stack className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <TabsList className="h-auto gap-1 rounded-none bg-transparent p-0">
           {([previewViewportCopy.tabs.preview, previewViewportCopy.tabs.code] as const).map((value) => (
             <TabsTrigger
@@ -97,7 +97,7 @@ export function PreviewFrame({
           ))}
         </TabsList>
         {tab === previewViewportCopy.tabs.preview ? (
-          <div data-preview-display="" className="flex min-w-0 flex-wrap items-center gap-2">
+          <Stack data-preview-display="" className="flex min-w-0 flex-wrap items-center gap-2">
             <DemoStyleSelect
               look={demoStyle.look}
               pinned={demoStyle.pinned}
@@ -123,10 +123,10 @@ export function PreviewFrame({
                 {previewViewportCopy.dark}
               </Segment>
             </Segmented>
-          </div>
+          </Stack>
         ) : null}
-      </div>
-      <div
+      </Stack>
+      <Stack
         data-preview-frame=""
         className={cn("min-w-0 rounded-lg border border-border", pinned ? "overflow-clip" : "overflow-hidden")}
       >
@@ -149,11 +149,11 @@ export function PreviewFrame({
           </ThemeScope>
         </TabsContent>
         <TabsContent value="code" className="mt-0">
-          <div data-preview-code-panel="" className="min-w-0">
+          <Stack data-preview-code-panel="" className="min-w-0">
             {codePanel}
-          </div>
+          </Stack>
         </TabsContent>
-      </div>
+      </Stack>
     </Tabs>
   );
 }

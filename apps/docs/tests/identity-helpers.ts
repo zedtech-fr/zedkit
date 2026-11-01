@@ -25,11 +25,7 @@ export async function useIdentity(page: Page, identity: string | null, theme: "l
       void root.offsetHeight;
       // Identity colour transitions (180ms) leave nav mid-gray; axe samples that frame.
       for (const animation of document.getAnimations()) {
-        try {
-          animation.finish();
-        } catch {
-          /* view-timeline / infinite animations are not finishable */
-        }
+        if (animation instanceof CSSTransition) animation.finish();
       }
     },
     { id: identity, mode: theme },

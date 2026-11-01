@@ -12,31 +12,31 @@ const IDENTITIES = [
 test("tabs switch the stage identity without leaving the page", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-  const showcase = page.locator("[data-home-identity-showcase]");
-  await showcase.scrollIntoViewIfNeeded();
-  const tabs = showcase.getByRole("tablist", { name: "Visual identities" });
+  const looks = page.locator("[data-home-identity-looks]");
+  await looks.scrollIntoViewIfNeeded();
+  const tabs = looks.getByRole("tablist", { name: "Visual identities" });
   await expect(tabs).toBeVisible();
-  await expect(showcase.getByRole("tab")).toHaveCount(6);
-  const stage = showcase.locator("[data-home-identity-stage]");
+  await expect(looks.getByRole("tab")).toHaveCount(6);
+  const stage = looks.locator("[data-home-identity-stage]");
   await expect(stage).toHaveAttribute("data-identity", "mist");
   for (const identity of IDENTITIES) {
-    await showcase.getByRole("tab", { name: identity.name }).click();
+    await looks.getByRole("tab", { name: identity.name }).click();
     await expect(stage).toHaveAttribute("data-identity", identity.id);
   }
-  await showcase.getByRole("tab", { name: "Mist" }).focus();
+  await looks.getByRole("tab", { name: "Mist" }).focus();
   await page.keyboard.press("ArrowRight");
-  await expect(showcase.getByRole("tab", { name: "Press" })).toHaveAttribute("aria-selected", "true");
+  await expect(looks.getByRole("tab", { name: "Press" })).toHaveAttribute("aria-selected", "true");
   await expect(stage).toHaveAttribute("data-identity", "press");
 });
 
-test("mobile showcase does not overflow horizontally", async ({ page }) => {
+test("mobile looks does not overflow horizontally", async ({ page }) => {
   for (const width of [320, 390, 768]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");
-    const showcase = page.locator("[data-home-identity-showcase]");
-    await showcase.scrollIntoViewIfNeeded();
-    await expect(showcase.getByRole("tablist")).toBeVisible();
-    const box = await showcase.evaluate((el) => {
+    const looks = page.locator("[data-home-identity-looks]");
+    await looks.scrollIntoViewIfNeeded();
+    await expect(looks.getByRole("tablist")).toBeVisible();
+    const box = await looks.evaluate((el) => {
       const rect = el.getBoundingClientRect();
       return {
         width: rect.width,
@@ -45,8 +45,8 @@ test("mobile showcase does not overflow horizontally", async ({ page }) => {
         pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       };
     });
-    expect(box.width, `${width}px showcase width`).toBeLessThanOrEqual(box.vw + 1);
-    expect(box.right, `${width}px showcase right`).toBeLessThanOrEqual(box.vw + 1);
+    expect(box.width, `${width}px looks width`).toBeLessThanOrEqual(box.vw + 1);
+    expect(box.right, `${width}px looks right`).toBeLessThanOrEqual(box.vw + 1);
     if (width <= 390) {
       expect(box.pageOverflow, `${width}px page overflow`).toBeLessThanOrEqual(1);
     }

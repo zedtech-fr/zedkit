@@ -150,6 +150,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/ui/theme-scope.tsx",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/ui/ui-provider.tsx",
           "type": "registry:ui"
         },
@@ -235,6 +239,10 @@
         },
         {
           "path": "registry/ui/overlay-modal.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/theme-scope.tsx",
           "type": "registry:ui"
         },
         {

@@ -6,15 +6,15 @@ import { useTheme } from "next-themes";
 import { Button, Stack, Text, ThemeScope } from "@zedtech/zedkit-ui";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 import { HOME_IDENTITY_FACTS, isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
-import { homeIdentityShowcaseCopy } from "@/ui/home/home-identity-showcase-copy";
-import { HomeIdentityShowcaseFacts } from "@/ui/home/home-identity-showcase-facts";
-import { HomeIdentityShowcaseStage } from "@/ui/home/home-identity-showcase-stage";
-import { HomeIdentityShowcaseTabs } from "@/ui/home/home-identity-showcase-tabs";
+import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
+import { HomeIdentityLooksFacts } from "@/ui/home/home-identity-looks-facts";
+import { HomeIdentityLooksStage } from "@/ui/home/home-identity-looks-stage";
+import { HomeIdentityLooksTabs } from "@/ui/home/home-identity-looks-tabs";
 import { HOME_CARD_TITLE_CLASS, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
 
 const noop = () => () => {};
 
-export function HomeIdentityShowcase() {
+export function HomeIdentityLooks() {
   const [identity, setIdentity] = useState<IdentityId>("mist");
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(noop, () => true, () => false);
@@ -22,28 +22,28 @@ export function HomeIdentityShowcase() {
   const facts = HOME_IDENTITY_FACTS[identity];
 
   return (
-    <Stack gap={3} className="min-w-0 scroll-mt-24" data-home-identity-showcase="">
-      <Text className={HOME_CARD_TITLE_CLASS}>{homeIdentityShowcaseCopy.title}</Text>
+    <Stack gap={3} className="min-w-0 scroll-mt-24" data-home-identity-looks="">
+      <Text className={HOME_CARD_TITLE_CLASS}>{homeIdentityLooksCopy.title}</Text>
       <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-        {homeIdentityShowcaseCopy.body}
+        {homeIdentityLooksCopy.body}
       </Text>
       <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-        {homeIdentityShowcaseCopy.liveNote}
+        {homeIdentityLooksCopy.liveNote}
       </Text>
-      <HomeIdentityShowcaseTabs
+      <HomeIdentityLooksTabs
         value={identity}
         mode={mode}
         onValueChange={(next) => {
           if (isIdentityId(next)) setIdentity(next);
         }}
       />
-      <HomeIdentityShowcaseFrame identity={identity} mode={mode} facts={facts} />
-      <HomeIdentityShowcaseLinks />
+      <HomeIdentityLooksFrame identity={identity} mode={mode} facts={facts} />
+      <HomeIdentityLooksLinks />
     </Stack>
   );
 }
 
-function HomeIdentityShowcaseFrame({
+function HomeIdentityLooksFrame({
   identity,
   mode,
   facts,
@@ -62,33 +62,33 @@ function HomeIdentityShowcaseFrame({
             data-home-identity-stage=""
             className="min-w-0 rounded-xl bg-background p-2 sm:p-4"
           >
-            <HomeIdentityShowcaseStage />
+            <HomeIdentityLooksStage />
           </ThemeScope>
         </div>
         <aside className="hidden min-w-0 lg:block">
-          <HomeIdentityShowcaseFacts facts={facts} mode={mode} />
+          <HomeIdentityLooksFacts facts={facts} mode={mode} />
         </aside>
       </div>
       <details className="min-w-0 lg:hidden">
         <summary className="flex min-h-11 cursor-pointer items-center font-medium">
-          {homeIdentityShowcaseCopy.factsSummary(facts.label)}
+          {homeIdentityLooksCopy.factsSummary(facts.label)}
         </summary>
         <div className="pt-2">
-          <HomeIdentityShowcaseFacts facts={facts} mode={mode} />
+          <HomeIdentityLooksFacts facts={facts} mode={mode} />
         </div>
       </details>
     </Stack>
   );
 }
 
-function HomeIdentityShowcaseLinks() {
+function HomeIdentityLooksLinks() {
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       <Button asChild variant="outline" size="sm" className="w-fit">
-        <Link href={IDENTITY_EDITOR_HREF}>{homeIdentityShowcaseCopy.openEditor}</Link>
+        <Link href={IDENTITY_EDITOR_HREF}>{homeIdentityLooksCopy.openEditor}</Link>
       </Button>
       <Button asChild variant="link" size="sm" className="w-fit">
-        <Link href="/features/identity-kit-demos">{homeIdentityShowcaseCopy.seeInComponents}</Link>
+        <Link href="/features/identity-kit-demos">{homeIdentityLooksCopy.seeInComponents}</Link>
       </Button>
     </Stack>
   );
