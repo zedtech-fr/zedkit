@@ -25,6 +25,7 @@ type ModePin = "follow" | "light" | "dark";
 function Segmented({ label, children }: { label: string; children: ReactNode }) {
   return (
     <Stack
+      direction="horizontal"
       role="group"
       aria-label={label}
       className="inline-flex items-center gap-0.5"
@@ -84,7 +85,7 @@ export function PreviewFrame({
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex w-full min-w-0 flex-col gap-2">
-      <Stack className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <Stack direction="horizontal" className="flex-wrap justify-between gap-x-4 gap-y-2">
         <TabsList className="h-auto gap-1 rounded-none bg-transparent p-0">
           {([previewViewportCopy.tabs.preview, previewViewportCopy.tabs.code] as const).map((value) => (
             <TabsTrigger
@@ -97,7 +98,7 @@ export function PreviewFrame({
           ))}
         </TabsList>
         {tab === previewViewportCopy.tabs.preview ? (
-          <Stack data-preview-display="" className="flex min-w-0 flex-wrap items-center gap-2">
+          <Stack direction="horizontal" data-preview-display="" className="min-w-0 flex-wrap gap-2">
             <DemoStyleSelect
               look={demoStyle.look}
               pinned={demoStyle.pinned}
