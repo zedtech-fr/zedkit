@@ -56,6 +56,40 @@ test("mobile looks does not overflow horizontally", async ({ page }) => {
   }
 });
 
+for (const width of [320, 360, 390]) {
+  test(`${width}px: every look name stays readable, and the chosen one is visible`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto("/", { waitUntil: "networkidle" });
+    const looks = page.locator("[data-home-identity-looks]");
+    await looks.scrollIntoViewIfNeeded();
+    for (const identity of IDENTITIES) {
+      const tab = looks.getByRole("tab", { name: identity.name });
+      await tab.click();
+      await expect(tab).toHaveAttribute("aria-selected", "true");
+      const fit = await tab.evaluate((node) => {
+        const rect = node.getBoundingClientRect();
+        const label = node.lastChild as Text;
+        const range = document.createRange();
+        range.selectNodeContents(label);
+        const text = range.getBoundingClientRect();
+        return {
+          inView: rect.left >= 0 && rect.right <= document.documentElement.clientWidth,
+          textInside: text.left >= rect.left - 0.5 && text.right <= rect.right + 0.5,
+          clipped: node.scrollWidth > node.clientWidth + 1,
+          fontSize: Number.parseFloat(getComputedStyle(node).fontSize),
+        };
+      });
+      expect(fit, `${width}px ${identity.name}`).toEqual({ inView: true, textInside: true, clipped: false, fontSize: fit.fontSize });
+      // Dense UI role: the kit's --text-sm (13px). Smaller than that is unreadable on a phone.
+      expect(fit.fontSize).toBeGreaterThanOrEqual(13);
+    }
+    const dots = await looks.locator("[data-palette-dots] > span").evaluateAll((nodes) =>
+      [...new Set(nodes.map((node) => Math.round(node.getBoundingClientRect().width)))],
+    );
+    expect(dots, "palette dots keep one size across looks").toHaveLength(1);
+  });
+}
+
 test("the demo keeps its promises: Discard restores, Save keeps, Delete confirms and restores", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");

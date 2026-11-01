@@ -183,3 +183,8 @@ html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
   border-radius: 0;
   box-shadow: none;
 }
+
+/* Palette dots show a look's colours; the look's own --spacing must not resize them. */
+[data-palette-dots] {
+  --spacing: 0.25rem;
+}

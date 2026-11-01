@@ -49,17 +49,8 @@ function useProjectSettings() {
   };
 }
 
-function ProjectActions({
-  deleted,
-  onSave,
-  onDiscard,
-  onDeleted,
-}: {
-  deleted: boolean;
-  onSave: () => void;
-  onDiscard: () => void;
-  onDeleted: (value: boolean) => void;
-}) {
+/** Save is the one primary action; Discard is its quiet pair. Deleting lives apart (see `DeleteProject`). */
+function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: () => void }) {
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       <Button type="button" onClick={onSave}>
@@ -68,6 +59,14 @@ function ProjectActions({
       <Button type="button" variant="secondary" onClick={onDiscard}>
         {copy.discard}
       </Button>
+    </Stack>
+  );
+}
+
+/** The destructive action sits below a divider, outlined, and confirms before it does anything. */
+function DeleteProject({ deleted, onDeleted }: { deleted: boolean; onDeleted: (value: boolean) => void }) {
+  return (
+    <div className="border-t border-border pt-4">
       {deleted ? (
         <Button type="button" variant="outline" onClick={() => onDeleted(false)}>
           {copy.restore}
@@ -75,7 +74,7 @@ function ProjectActions({
       ) : (
         <ConfirmDialog
           trigger={
-            <Button type="button" variant="destructive">
+            <Button type="button" variant="outline" className="text-destructive">
               {copy.destroy}
             </Button>
           }
@@ -85,7 +84,7 @@ function ProjectActions({
           onConfirm={() => onDeleted(true)}
         />
       )}
-    </Stack>
+    </div>
   );
 }
 
@@ -122,12 +121,7 @@ export function HomeIdentityLooksStage() {
             onRegion={settings.edit("region")}
             onAlerts={settings.edit("alerts")}
           />
-          <ProjectActions
-            deleted={deleted}
-            onSave={settings.save}
-            onDiscard={settings.discard}
-            onDeleted={setDeleted}
-          />
+          <ProjectActions onSave={settings.save} onDiscard={settings.discard} />
           <Text variant="muted" role="status" data-home-identity-status="">
             {deleted ? copy.deletedMessage : settings.message}
           </Text>
@@ -136,6 +130,7 @@ export function HomeIdentityLooksStage() {
             <AlertTitle>{copy.alertTitle}</AlertTitle>
             <AlertDescription>{copy.alertBody}</AlertDescription>
           </Alert>
+          <DeleteProject deleted={deleted} onDeleted={setDeleted} />
         </Stack>
       </CardContent>
     </Card>

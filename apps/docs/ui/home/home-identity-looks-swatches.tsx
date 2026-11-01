@@ -23,7 +23,8 @@ export function HomeIdentityPaletteDots({
 }) {
   return (
     <ThemeScope identity={identity} mode={mode} aria-hidden="true">
-      <Stack direction="horizontal" gap={1}>
+      {/* data-palette-dots pins --spacing (docs-shell-tokens.css): a look's own spacing must not resize its dots. */}
+      <Stack direction="horizontal" gap={1} data-palette-dots="">
         {tokens.map((token) => (
           <span
             key={token}
