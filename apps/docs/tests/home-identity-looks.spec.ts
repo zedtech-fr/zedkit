@@ -52,3 +52,36 @@ test("mobile looks does not overflow horizontally", async ({ page }) => {
     }
   }
 });
+
+test("the demo keeps its promises: Discard restores, Save keeps, Delete confirms and restores", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const stage = page.locator("[data-home-identity-stage]");
+  await stage.scrollIntoViewIfNeeded();
+  const name = stage.getByRole("textbox", { name: "Workspace" });
+  const status = stage.locator("[data-home-identity-status]");
+
+  await name.fill("Harbor Staging");
+  await expect(status).toHaveText("Unsaved changes.");
+  await stage.getByRole("button", { name: "Discard" }).click();
+  await expect(name).toHaveValue("Harbor Console");
+  await expect(status).toHaveText("Changes discarded.");
+
+  await name.fill("Harbor Staging");
+  await stage.getByRole("button", { name: "Save changes" }).click();
+  await expect(status).toHaveText("Changes saved.");
+  await name.fill("Something else");
+  await stage.getByRole("button", { name: "Discard" }).click();
+  await expect(name).toHaveValue("Harbor Staging");
+
+  await stage.getByRole("button", { name: "Delete project" }).click();
+  const dialog = page.getByRole("dialog", { name: "Delete this project?" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Cancel" }).click();
+  await expect(status).not.toContainText("deleted");
+  await stage.getByRole("button", { name: "Delete project" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Delete project" }).click();
+  await expect(status).toContainText("Project deleted");
+  await stage.getByRole("button", { name: "Restore project" }).click();
+  await expect(stage.getByRole("button", { name: "Delete project" })).toBeVisible();
+});
