@@ -3,6 +3,7 @@
 // Usage: node scripts/quickstart-render-check.mjs <dist dir> <label>
 // A passing Vite build does not prove the CSS reached the page; this loads the
 // build in Chromium and reads what the browser painted.
+/* global document, getComputedStyle -- used inside page.evaluate, which runs in the browser */
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, resolve } from "node:path";
@@ -24,7 +25,8 @@ const { port } = server.address();
 
 const browser = await chromium.launch();
 const failures = [];
-try {
+
+async function check() {
   const page = await browser.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -44,10 +46,14 @@ try {
   if (!(paint.paddingInline >= 12)) failures.push(`padding ${paint.paddingInline}px`);
   if (errors.length) failures.push(`console errors: ${errors.join(" | ")}`);
   console.log(`${label}: button paints`, JSON.stringify(paint));
-} finally {
-  await browser.close();
-  server.close();
 }
+
+await check()
+  .catch((error) => failures.push(`could not render the page: ${error instanceof Error ? error.message : String(error)}`))
+  .finally(async () => {
+    await browser.close();
+    server.close();
+  });
 if (failures.length) {
   console.error(`${label}: styled button check failed: ${failures.join("; ")}`);
   process.exit(1);
