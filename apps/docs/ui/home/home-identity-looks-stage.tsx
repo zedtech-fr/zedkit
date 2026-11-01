@@ -16,6 +16,8 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 import { HomeIdentityLooksControls } from "@/ui/home/home-identity-looks-controls";
+import { HomeIdentityLooksExpression } from "@/ui/home/home-identity-looks-expression";
+import type { IdentityId } from "@/ui/home/home-identity-facts";
 import { HomeIdentityLooksMembers } from "@/ui/home/home-identity-looks-members";
 import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 
@@ -88,7 +90,7 @@ function DeleteProject({ deleted, onDeleted }: { deleted: boolean; onDeleted: (v
   );
 }
 
-export function HomeIdentityLooksStage() {
+export function HomeIdentityLooksStage({ identity }: { identity: IdentityId }) {
   const workspaceId = useId();
   const regionId = useId();
   const alertsId = useId();
@@ -130,6 +132,7 @@ export function HomeIdentityLooksStage() {
             <AlertTitle>{copy.alertTitle}</AlertTitle>
             <AlertDescription>{copy.alertBody}</AlertDescription>
           </Alert>
+          <HomeIdentityLooksExpression identity={identity} />
           <DeleteProject deleted={deleted} onDeleted={setDeleted} />
         </Stack>
       </CardContent>

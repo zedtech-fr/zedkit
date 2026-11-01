@@ -16,6 +16,33 @@ export const homeIdentityLooksCopy = {
   openEditor: "Try the demo editor",
   startWithoutCode: "Start without writing code",
   seeInComponents: "See identities in components",
+  /** Extra evidence per look, beside the common task: only where a look has something the task cannot show. */
+  expression: {
+    editorial: {
+      label: "Editorial reading",
+      title: "A quiet week at Harbor",
+      lead: "Two deploys, one rollback, and a region that finally stopped paging at night.",
+      body: "Long lines stay readable here: the measure is capped, the leading is generous, and the headline carries the voice of the look.",
+      quote: "Nothing shipped on Friday, and nobody missed it.",
+    },
+    dense: {
+      label: "Dense workspace",
+      rows: [
+        { time: "09:41", event: "deploy console@4.8.2", tone: "success" as const },
+        { time: "09:38", event: "migrate eu-1 schema", tone: "active" as const },
+        { time: "09:12", event: "rotate api key (staging)", tone: "idle" as const },
+        { time: "08:57", event: "alert: queue depth 4.1k", tone: "warning" as const },
+        { time: "08:30", event: "backup eu-1 finished", tone: "success" as const },
+      ],
+      ariaLabel: "Recent activity",
+    },
+    layered: {
+      label: "Layered surfaces",
+      back: "Background",
+      card: "Card above the background",
+      overlay: "Popover above the card",
+    },
+  },
   stage: {
     heading: "Project settings",
     description: "Workspace name, region, and who gets incident mail.",

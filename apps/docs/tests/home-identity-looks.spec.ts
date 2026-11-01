@@ -122,3 +122,44 @@ test("the demo keeps its promises: Discard restores, Save keeps, Delete confirms
   await stage.getByRole("button", { name: "Restore project" }).click();
   await expect(stage.getByRole("button", { name: "Delete project" })).toBeVisible();
 });
+
+const EXPRESSION: Record<string, string | null> = {
+  Mist: null,
+  Press: "Editorial reading",
+  Tide: null,
+  Volt: "Dense workspace",
+  Maison: "Editorial reading",
+  Glass: "Layered surfaces",
+};
+
+for (const width of [320, 1280]) {
+  test(`${width}px: each look shows its own evidence beside the shared task, without overflow`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/", { waitUntil: "networkidle" });
+    const looks = page.locator("[data-home-identity-looks]");
+    await looks.scrollIntoViewIfNeeded();
+    for (const [name, label] of Object.entries(EXPRESSION)) {
+      await looks.getByRole("tab", { name }).click();
+      const stage = looks.locator("[data-home-identity-stage]");
+      // The shared task is always there, so looks stay comparable.
+      await expect(stage.getByRole("button", { name: "Save changes" })).toBeVisible();
+      if (label) await expect(stage.getByText(label, { exact: true })).toBeVisible();
+      else await expect(stage.getByText(/Editorial reading|Dense workspace|Layered surfaces/)).toHaveCount(0);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(overflow, `${width}px ${name}`).toBeLessThanOrEqual(1);
+    }
+  });
+}
+
+test("Volt's dense list reads as dense: its rows are tighter than the shared table's", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  const looks = page.locator("[data-home-identity-looks]");
+  await looks.getByRole("tab", { name: "Volt" }).click();
+  const heights = await looks.locator("[data-home-identity-stage]").evaluate((stage) => {
+    const row = (selector: string) => stage.querySelector(selector)?.getBoundingClientRect().height ?? 0;
+    return { dense: row("ul[aria-label='Recent activity'] li"), table: row("tbody tr") };
+  });
+  expect(heights.dense).toBeGreaterThan(0);
+  expect(heights.dense).toBeLessThan(heights.table);
+});

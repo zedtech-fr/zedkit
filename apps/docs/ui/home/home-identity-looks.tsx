@@ -65,7 +65,7 @@ function HomeIdentityLooksFrame({
             data-home-identity-stage=""
             className="min-w-0 rounded-xl bg-background p-2 sm:p-4"
           >
-            <HomeIdentityLooksStage />
+            <HomeIdentityLooksStage identity={identity} />
           </ThemeScope>
         </div>
         <aside className="hidden min-w-0 lg:block">
