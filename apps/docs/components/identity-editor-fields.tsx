@@ -49,12 +49,13 @@ function TokenField({
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap={2} className="min-w-0">
         {swatch ? (
-          <span
+          <svg
             aria-hidden="true"
             data-token-swatch=""
             className="size-control-height shrink-0 rounded-md border border-border"
-            style={colour ? { backgroundColor: colour } : undefined}
-          />
+          >
+            <rect width="100%" height="100%" fill={colour ?? "none"} />
+          </svg>
         ) : null}
         <Input
           id={id}

@@ -21,36 +21,80 @@ import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 
 const copy = homeIdentityLooksCopy.stage;
 
+type Settings = { workspace: string; region: string; alerts: boolean };
+
+const INITIAL: Settings = { workspace: copy.workspaceValue, region: copy.regionValue, alerts: true };
+
+/** Editable settings with a saved baseline: Save keeps them, Discard returns to the last save. */
+function useProjectSettings() {
+  const [current, setCurrent] = useState<Settings>(INITIAL);
+  const [saved, setSaved] = useState<Settings>(INITIAL);
+  const [status, setStatus] = useState("");
+  const dirty = (Object.keys(current) as (keyof Settings)[]).some((key) => current[key] !== saved[key]);
+  return {
+    current,
+    message: status || (dirty ? copy.unsaved : ""),
+    edit: <K extends keyof Settings>(key: K) => (value: Settings[K]) => {
+      setCurrent((prev) => ({ ...prev, [key]: value }));
+      setStatus("");
+    },
+    save() {
+      setSaved(current);
+      setStatus(copy.saved);
+    },
+    discard() {
+      setCurrent(saved);
+      setStatus(copy.discarded);
+    },
+  };
+}
+
+function ProjectActions({
+  deleted,
+  onSave,
+  onDiscard,
+  onDeleted,
+}: {
+  deleted: boolean;
+  onSave: () => void;
+  onDiscard: () => void;
+  onDeleted: (value: boolean) => void;
+}) {
+  return (
+    <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Button type="button" onClick={onSave}>
+        {copy.save}
+      </Button>
+      <Button type="button" variant="secondary" onClick={onDiscard}>
+        {copy.discard}
+      </Button>
+      {deleted ? (
+        <Button type="button" variant="outline" onClick={() => onDeleted(false)}>
+          {copy.restore}
+        </Button>
+      ) : (
+        <ConfirmDialog
+          trigger={
+            <Button type="button" variant="destructive">
+              {copy.destroy}
+            </Button>
+          }
+          title={copy.deleteTitle}
+          description={copy.deleteDescription}
+          confirmLabel={copy.deleteConfirm}
+          onConfirm={() => onDeleted(true)}
+        />
+      )}
+    </Stack>
+  );
+}
+
 export function HomeIdentityLooksStage() {
   const workspaceId = useId();
   const regionId = useId();
   const alertsId = useId();
-  const [workspace, setWorkspace] = useState<string>(copy.workspaceValue);
-  const [region, setRegion] = useState<string>(copy.regionValue);
-  const [alerts, setAlerts] = useState(true);
-  const [saved, setSaved] = useState({
-    workspace: copy.workspaceValue as string,
-    region: copy.regionValue as string,
-    alerts: true,
-  });
-  const [status, setStatus] = useState("");
+  const settings = useProjectSettings();
   const [deleted, setDeleted] = useState(false);
-  const dirty = workspace !== saved.workspace || region !== saved.region || alerts !== saved.alerts;
-
-  const edit = <T,>(set: (value: T) => void) => (value: T) => {
-    set(value);
-    setStatus("");
-  };
-  const save = () => {
-    setSaved({ workspace, region, alerts });
-    setStatus(copy.saved);
-  };
-  const discard = () => {
-    setWorkspace(saved.workspace);
-    setRegion(saved.region);
-    setAlerts(saved.alerts);
-    setStatus(copy.discarded);
-  };
 
   return (
     <Card className="min-w-0">
@@ -71,40 +115,21 @@ export function HomeIdentityLooksStage() {
             workspaceId={workspaceId}
             regionId={regionId}
             alertsId={alertsId}
-            workspace={workspace}
-            region={region}
-            alerts={alerts}
-            onWorkspace={edit(setWorkspace)}
-            onRegion={edit(setRegion)}
-            onAlerts={edit(setAlerts)}
+            workspace={settings.current.workspace}
+            region={settings.current.region}
+            alerts={settings.current.alerts}
+            onWorkspace={settings.edit("workspace")}
+            onRegion={settings.edit("region")}
+            onAlerts={settings.edit("alerts")}
           />
-          <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button type="button" onClick={save}>
-              {copy.save}
-            </Button>
-            <Button type="button" variant="secondary" onClick={discard}>
-              {copy.discard}
-            </Button>
-            {deleted ? (
-              <Button type="button" variant="outline" onClick={() => setDeleted(false)}>
-                {copy.restore}
-              </Button>
-            ) : (
-              <ConfirmDialog
-                trigger={
-                  <Button type="button" variant="destructive">
-                    {copy.destroy}
-                  </Button>
-                }
-                title={copy.deleteTitle}
-                description={copy.deleteDescription}
-                confirmLabel={copy.deleteConfirm}
-                onConfirm={() => setDeleted(true)}
-              />
-            )}
-          </Stack>
+          <ProjectActions
+            deleted={deleted}
+            onSave={settings.save}
+            onDiscard={settings.discard}
+            onDeleted={setDeleted}
+          />
           <Text variant="muted" role="status" data-home-identity-status="">
-            {deleted ? copy.deletedMessage : status || (dirty ? copy.unsaved : "")}
+            {deleted ? copy.deletedMessage : settings.message}
           </Text>
           <HomeIdentityLooksMembers />
           <Alert>
