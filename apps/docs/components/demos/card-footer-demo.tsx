@@ -19,7 +19,12 @@ export function CardFooterDemo() {
         <CardDescription>12 products, last edited 2 hours ago</CardDescription>
       </CardHeader>
       <CardContent>
-        <Text>This page is still a draft. Publishing makes it visible to every customer.</Text>
+        <Stack gap={2}>
+          <Text variant="muted" className="text-xs">
+            Visual variants only — footer actions are static in this preview.
+          </Text>
+          <Text>This page is still a draft. Publishing makes it visible to every customer.</Text>
+        </Stack>
       </CardContent>
       <CardFooter>
         <Stack direction="horizontal" gap={2}>

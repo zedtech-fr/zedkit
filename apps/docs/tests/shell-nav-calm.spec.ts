@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
+import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { featuredPackageVersion } from "../content/gallery";
+import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -17,12 +19,10 @@ const VIEWPORTS = [
 for (const theme of ["light", "dark"] as const) {
   for (const { name, width, height } of VIEWPORTS) {
     test(`${theme} home shell nav ${name}px`, async ({ page }) => {
-      if (theme === "dark") {
-        await page.addInitScript(() => localStorage.setItem("theme", "dark"));
-      }
+      await persistDocsSiteLook(page, DEFAULT_IDENTITY, theme);
       await page.setViewportSize({ width, height });
       await page.goto("/", { waitUntil: "networkidle" });
-      await page.evaluate(() => document.fonts.ready);
+      await waitForAppliedLook(page, DEFAULT_IDENTITY, theme);
       if (width < 768) {
         await page.getByRole("button", { name: "Open menu" }).click();
         await expect(page.getByRole("dialog")).toBeVisible();

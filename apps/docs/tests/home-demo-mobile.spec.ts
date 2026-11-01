@@ -116,4 +116,32 @@ test.describe("home dashboard mobile (#388)", () => {
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });
+
+  for (const width of [320, 360, 390] as const) {
+    test(`hero shows a full record row and actions at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto("/", { waitUntil: "networkidle" });
+      const card = page.locator("[data-home-dashboard-card]");
+      await card.scrollIntoViewIfNeeded();
+      const preview = page.locator("[data-home-hero-preview]");
+      const metrics = await preview.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return {
+          overflowY: style.overflowY,
+          clientHeight: el.clientHeight,
+          scrollHeight: el.scrollHeight,
+        };
+      });
+      expect(metrics.overflowY).not.toBe("hidden");
+      expect(metrics.clientHeight + 2).toBeGreaterThanOrEqual(metrics.scrollHeight);
+      await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
+      await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
+
+      await card.getByRole("button", { name: "Add app" }).click();
+      await page.getByRole("dialog").getByLabel("Name").fill(`mobile-${width}`);
+      await page.getByRole("button", { name: "Create app" }).click();
+      await expect(page.getByRole("dialog")).toBeHidden();
+      await expect(card.getByRole("cell", { name: `mobile-${width}`, exact: true })).toBeVisible();
+    });
+  }
 });

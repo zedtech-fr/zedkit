@@ -59,9 +59,7 @@ export async function PropsTable({
                   type={nodesFromEntries(inheritedEntries)}
                 />
               </InheritedPropsPanel>
-            ) : (
-              <InheritedPropsPanel {...(host === "button" ? { referenceHref: BUTTON_MDN } : {})} />
-            )}
+            ) : null}
           </Stack>
         );
       })}

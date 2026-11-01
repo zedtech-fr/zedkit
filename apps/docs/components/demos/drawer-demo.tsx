@@ -7,6 +7,7 @@ import {
   DetailPanel,
   Drawer,
   DrawerBody,
+  DrawerClose,
   DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
@@ -18,6 +19,8 @@ import {
   Input,
   Stack,
   Text,
+  Toaster,
+  toast,
 } from "@zedtech/zedkit-ui";
 
 type DemoDirection = "auto" | "bottom" | "left" | "right" | "top";
@@ -41,82 +44,93 @@ const ACTIVITY = [
 
 export function DrawerDemo() {
   const [choice, setChoice] = React.useState<DemoDirection>("auto");
+  const [open, setOpen] = React.useState(false);
   const current = DIRECTIONS.find((entry) => entry.value === choice);
   const direction = choice === "auto" ? "right" : choice;
 
   return (
-    <Stack gap={3} className="min-w-0 items-start">
-      <Stack gap={1} className="min-w-0">
-        <Text variant="muted" id="drawer-direction-label" className="text-xs font-medium">
-          Direction
-        </Text>
-        <Stack
-          direction="horizontal"
-          gap={1}
-          className="flex-wrap"
-          role="group"
-          aria-labelledby="drawer-direction-label"
-        >
-          {DIRECTIONS.map((entry) => (
-            <Button
-              key={entry.value}
-              type="button"
-              size="sm"
-              variant={entry.value === choice ? "default" : "outline"}
-              aria-pressed={entry.value === choice}
-              onClick={() => setChoice(entry.value)}
-            >
-              {entry.label}
-            </Button>
-          ))}
+    <>
+      <Toaster />
+      <Stack gap={3} className="min-w-0 items-start">
+        <Stack gap={1} className="min-w-0">
+          <Text variant="muted" id="drawer-direction-label" className="text-xs font-medium">
+            Direction
+          </Text>
+          <Stack
+            direction="horizontal"
+            gap={1}
+            className="flex-wrap"
+            role="group"
+            aria-labelledby="drawer-direction-label"
+          >
+            {DIRECTIONS.map((entry) => (
+              <Button
+                key={entry.value}
+                type="button"
+                size="sm"
+                variant={entry.value === choice ? "default" : "outline"}
+                aria-pressed={entry.value === choice}
+                onClick={() => setChoice(entry.value)}
+              >
+                {entry.label}
+              </Button>
+            ))}
+          </Stack>
+          <Text variant="muted" className="text-xs">
+            {current?.hint}
+          </Text>
         </Stack>
-        <Text variant="muted" className="text-xs">
-          {current?.hint}
-        </Text>
-      </Stack>
-      <Drawer direction={direction} mobile={choice === "auto" ? "sheet" : "side"}>
-        <DrawerTrigger asChild>
-          <Button variant="outline">Open drawer</Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHandle />
-          <DrawerHeader>
-            <Stack direction="horizontal" gap={2} className="items-start justify-between">
-              <Stack gap={1} className="min-w-0 flex-1 text-left">
-                <DrawerTitle>Task details</DrawerTitle>
-                <DrawerDescription>Website relaunch · opened from the {choice === "auto" ? "default" : choice} edge.</DrawerDescription>
+        <Drawer direction={direction} mobile={choice === "auto" ? "sheet" : "side"} open={open} onOpenChange={setOpen}>
+          <DrawerTrigger asChild>
+            <Button variant="outline">Open drawer</Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHandle />
+            <DrawerHeader>
+              <Stack direction="horizontal" gap={2} className="items-start justify-between">
+                <Stack gap={1} className="min-w-0 flex-1 text-left">
+                  <DrawerTitle>Task details</DrawerTitle>
+                  <DrawerDescription>Website relaunch · opened from the {choice === "auto" ? "default" : choice} edge.</DrawerDescription>
+                </Stack>
+                <DrawerCloseButton className="shrink-0" />
               </Stack>
-              <DrawerCloseButton className="shrink-0" />
-            </Stack>
-          </DrawerHeader>
-          <DrawerBody>
-            <Stack gap={3} className="py-3">
-              <Text className="font-medium">Review the homepage mockups</Text>
-              <DetailPanel
-                items={[
-                  { label: "Assignee", value: "Camille Rousseau" },
-                  { label: "Due", value: "30 October" },
-                  { label: "Status", value: <Badge variant="warning">In review</Badge> },
-                ]}
-              />
-              <Text variant="muted" className="text-xs font-medium">
-                Activity
-              </Text>
-              {ACTIVITY.map((line) => (
-                <Text key={line} variant="muted">
-                  {line}
+            </DrawerHeader>
+            <DrawerBody>
+              <Stack gap={3} className="py-3">
+                <Text className="font-medium">Review the homepage mockups</Text>
+                <DetailPanel
+                  items={[
+                    { label: "Assignee", value: "Camille Rousseau" },
+                    { label: "Due", value: "30 October" },
+                    { label: "Status", value: <Badge variant="warning">In review</Badge> },
+                  ]}
+                />
+                <Text variant="muted" className="text-xs font-medium">
+                  Activity
                 </Text>
-              ))}
-              <Input aria-label="Note" placeholder="Add a note for the team" />
-            </Stack>
-          </DrawerBody>
-          <DrawerFooter>
-            <Button variant="secondary" size="sm">
-              Save
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </Stack>
+                {ACTIVITY.map((line) => (
+                  <Text key={line} variant="muted">
+                    {line}
+                  </Text>
+                ))}
+                <Input aria-label="Note" placeholder="Add a note for the team" />
+              </Stack>
+            </DrawerBody>
+            <DrawerFooter>
+              <DrawerClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => toast("Saved")}
+                >
+                  Save
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </Stack>
+    </>
   );
 }

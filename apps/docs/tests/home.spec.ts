@@ -37,16 +37,18 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero offers two ways in and keeps the other paths lower (#1038)", async ({ page }) => {
+test("home hero offers get started first with catalog and demo links (#1038)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(BASE, { waitUntil: "networkidle" });
 
   const heroActions = page.locator("[data-home-hero-actions] a");
-  await expect(heroActions).toHaveCount(2);
-  await expect(heroActions.nth(0)).toHaveText("Browse components");
-  await expect(heroActions.nth(0)).toHaveAttribute("href", "/catalog");
-  await expect(heroActions.nth(1)).toHaveText("Try the demo");
-  await expect(heroActions.nth(1)).toHaveAttribute("href", "#demo");
+  await expect(heroActions).toHaveCount(3);
+  await expect(heroActions.nth(0)).toHaveText("Get started");
+  await expect(heroActions.nth(0)).toHaveAttribute("href", "#get-started");
+  await expect(heroActions.nth(1)).toHaveText("Browse catalog");
+  await expect(heroActions.nth(1)).toHaveAttribute("href", "/catalog");
+  await expect(heroActions.nth(2)).toHaveText("Try the demo");
+  await expect(heroActions.nth(2)).toHaveAttribute("href", "#demo");
 
   const more = page.locator("[data-home-secondary-actions] a");
   await expect(more).toHaveCount(2);

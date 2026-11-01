@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { registryBrickNames } from "../content/registry-site";
 import { docsSite } from "../lib/site";
 import { symbolsFromImport } from "../lib/import-symbols";
 import { DEFAULT_PROPS_PRIORITY } from "../lib/props-priority.mjs";
@@ -89,6 +90,7 @@ export async function ComponentPage({
   packageName,
   version,
   status,
+  purpose,
   audience,
   whenToUse,
   whenNotToUse,
@@ -110,7 +112,8 @@ export async function ComponentPage({
   const sourcePath = registrySourcePath(registry);
   const source = sourcePath ? await readFile(sourcePath, "utf8") : null;
   const hasProps = Boolean(propsFile && propsName);
-  const copyable = registry.length > 0;
+  const copyable =
+    registry.length > 0 && registryBrickNames.includes(registry) && sourcePath !== null;
   const npmInstall = (
     <Stack gap={4}>
       <Text variant="muted" className="text-sm">
@@ -140,11 +143,10 @@ export async function ComponentPage({
 
   return (
     <Stack gap={8}>
-      {status !== "stable" ? (
-        <Stack gap={3}>
-          <MaturityBadge status={status} />
-        </Stack>
-      ) : null}
+      <Stack gap={3}>
+        {status !== "stable" ? <MaturityBadge status={status} /> : null}
+        <Text className="text-base text-muted-foreground sm:text-lg">{purpose}</Text>
+      </Stack>
 
       <Stack id="example">
         <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />

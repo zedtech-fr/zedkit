@@ -1,7 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const BASE = "http://127.0.0.1:3100";
-const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
+import { DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
 
 async function expectOverlayChromeMatchesPanel(page: Page): Promise<void> {
   const ok = await page.evaluate(() => {
@@ -21,7 +20,7 @@ async function expectOverlayChromeMatchesPanel(page: Page): Promise<void> {
   expect(ok).toBe(true);
 }
 
-for (const identity of IDENTITIES) {
+for (const identity of DOCS_SHIPPED_IDENTITIES) {
   for (const mode of ["light", "dark"] as const) {
     for (const [device, width, height] of [
       ["desktop", 1280, 900],
@@ -29,15 +28,9 @@ for (const identity of IDENTITIES) {
     ] as const) {
       test(`dialog demo ${identity} ${mode} ${device}`, async ({ page }) => {
         await page.setViewportSize({ width, height });
-        await page.addInitScript(
-          ([id, theme]) => {
-            localStorage.setItem("zk-docs-site-identity", id as string);
-            localStorage.setItem("zk-docs-site-identity-opt-in", "1");
-            localStorage.setItem("theme", theme as string);
-          },
-          [identity, mode],
-        );
-        await page.goto(`${BASE}/docs/ui/open-modal-dialogs`, { waitUntil: "networkidle" });
+        await page.goto("/docs/ui/open-modal-dialogs", { waitUntil: "networkidle" });
+        const preview = page.locator("[data-component-preview]").first();
+        await pinDemoLook(preview, identity, mode);
         await page.getByRole("button", { name: "Open dialog" }).click();
         const dialog = page.getByRole("dialog");
         await expect(dialog).toBeVisible({ timeout: 10_000 });
@@ -52,15 +45,9 @@ for (const identity of IDENTITIES) {
 
       test(`confirm dialog demo ${identity} ${mode} ${device}`, async ({ page }) => {
         await page.setViewportSize({ width, height });
-        await page.addInitScript(
-          ([id, theme]) => {
-            localStorage.setItem("zk-docs-site-identity", id as string);
-            localStorage.setItem("zk-docs-site-identity-opt-in", "1");
-            localStorage.setItem("theme", theme as string);
-          },
-          [identity, mode],
-        );
-        await page.goto(`${BASE}/docs/ui/confirm-destructive-actions`, { waitUntil: "networkidle" });
+        await page.goto("/docs/ui/confirm-destructive-actions", { waitUntil: "networkidle" });
+        const preview = page.locator("[data-component-preview]").first();
+        await pinDemoLook(preview, identity, mode);
         await page.getByRole("button", { name: "Delete" }).first().click();
         const dialog = page.getByRole("dialog");
         await expect(dialog).toBeVisible({ timeout: 10_000 });

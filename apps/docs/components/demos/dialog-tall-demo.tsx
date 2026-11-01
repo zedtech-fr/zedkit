@@ -49,7 +49,7 @@ export function DialogTallDemo() {
         </Stack>
         <DialogFooter>
           <DialogClose asChild>
-            <Button>Done</Button>
+            <Button type="button">Done</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

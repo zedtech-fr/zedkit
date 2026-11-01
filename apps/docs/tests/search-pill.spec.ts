@@ -40,6 +40,19 @@ test("Tab stays inside the phone search dialog", async ({ page }) => {
   }
 });
 
+test("Shift+Tab stays inside the phone search dialog", async ({ page }) => {
+  await page.setViewportSize(SIZES[1]);
+  await page.goto("/docs/getting-started");
+  await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await dialog.locator("input").first().focus();
+  for (let i = 0; i < 8; i++) {
+    await page.keyboard.press("Shift+Tab");
+    expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+  }
+});
+
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
   test("search dialog opens without travel animations", async ({ page }) => {

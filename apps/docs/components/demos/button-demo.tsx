@@ -1,9 +1,12 @@
 import { Plus } from "lucide-react";
-import { Button, Stack } from "@zedtech/zedkit-ui";
+import { Button, Stack, Text } from "@zedtech/zedkit-ui";
 
 export function ButtonDemo() {
   return (
     <Stack gap={4}>
+      <Text variant="muted" className="text-xs">
+        Visual variants only — buttons here do not run actions.
+      </Text>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
         <Button>Create app</Button>
         <Button variant="secondary">Cancel</Button>

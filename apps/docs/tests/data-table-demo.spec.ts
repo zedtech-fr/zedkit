@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-const URL = "http://127.0.0.1:3100/docs/ui/show-a-sortable-filterable-paginated-data-table";
-const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
+import { DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
+
+const URL = "/docs/ui/show-a-sortable-filterable-paginated-data-table";
 
 test.describe("data table page shows a live preview for each example", () => {
-  for (const identity of IDENTITIES) {
+  for (const identity of DOCS_SHIPPED_IDENTITIES) {
     for (const mode of ["light", "dark"] as const) {
       for (const [device, width, height] of [
         ["desktop", 1280, 1000],
@@ -12,14 +13,6 @@ test.describe("data table page shows a live preview for each example", () => {
       ] as const) {
         test(`${device} ${identity} ${mode}`, async ({ page }) => {
           await page.setViewportSize({ width, height });
-          await page.addInitScript(
-            ([i, m]) => {
-              localStorage.setItem("zk-docs-site-identity", i!);
-              localStorage.setItem("zk-docs-site-identity-opt-in", "1");
-              localStorage.setItem("theme", m!);
-            },
-            [identity, mode],
-          );
           await page.goto(URL, { waitUntil: "networkidle" });
 
           const previews = page.locator("[data-component-preview]");
@@ -27,6 +20,7 @@ test.describe("data table page shows a live preview for each example", () => {
 
           // Store admin orders: page 1 of 3, sort by total, filter, then each state.
           const orders = previews.nth(0);
+          await pinDemoLook(orders, identity, mode);
           await orders.scrollIntoViewIfNeeded();
           await expect(orders.getByText("Camille Rousseau")).toBeVisible();
           await expect(orders.getByText("Page 1 of 3")).toBeVisible();
@@ -66,6 +60,7 @@ test.describe("data table page shows a live preview for each example", () => {
 
           // Toolbar on its own.
           const toolbar = previews.nth(3);
+          await pinDemoLook(toolbar, identity, mode);
           await toolbar.scrollIntoViewIfNeeded();
           await expect(toolbar.getByText("6 of 6 customers")).toBeVisible();
           await toolbar.getByRole("textbox", { name: "Search customers" }).fill("nantes");

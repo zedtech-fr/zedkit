@@ -30,6 +30,28 @@ test("search dialog is lazy and not preloaded on every page", () => {
   assert.doesNotMatch(src, /from ["']\.\.\/components\/search["']/);
 });
 
+test("home hero lead prioritizes get started then catalog (#ZK-09)", () => {
+  const src = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
+  assert.match(src, /href="#get-started">Get started/);
+  assert.match(src, /href="\/catalog">Browse catalog/);
+  assert.match(src, /asChild variant="link">\s*\n\s*<Link href="#demo">Try the demo/);
+  assert.doesNotMatch(src, /Browse components/);
+});
+
+test("drawer demo save closes and toasts", () => {
+  const src = readFileSync(join(app, "components/demos/drawer-demo.tsx"), "utf8");
+  assert.match(src, /DrawerClose asChild/);
+  assert.match(src, /onClick=\{\(\) => toast\("Saved"\)\}/);
+  assert.match(src, /open=\{open\} onOpenChange=\{setOpen\}/);
+});
+
+test("admin dashboard guide demo wires save and delete to state", () => {
+  const src = readFileSync(join(app, "components/demos/admin-dashboard-guide-demo.tsx"), "utf8");
+  assert.match(src, /useState<ItemRow\[\]>/);
+  assert.match(src, /setRows\(\(current\) => current\.filter/);
+  assert.doesNotMatch(src, /h-96 min-h-0 overflow-hidden/);
+});
+
 test("mobile header keeps search in the phone chrome", () => {
   const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
   const trigger = readFileSync(join(app, "ui/mobile-search-trigger.tsx"), "utf8");

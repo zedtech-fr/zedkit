@@ -31,9 +31,12 @@ export function HomeHeroLead() {
       </Stack>
       <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-hero-actions>
         <Button asChild>
-          <Link href="/catalog">Browse components</Link>
+          <Link href="#get-started">Get started</Link>
         </Button>
         <Button asChild variant="outline">
+          <Link href="/catalog">Browse catalog</Link>
+        </Button>
+        <Button asChild variant="link">
           <Link href="#demo">Try the demo</Link>
         </Button>
       </Stack>

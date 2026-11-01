@@ -69,35 +69,20 @@ for (const theme of ["light", "dark"] as const) {
     await expect(card.getByRole("columnheader", { name: "Region" })).toBeVisible();
 
     const preview = page.locator("[data-home-hero-preview]");
+    await preview.scrollIntoViewIfNeeded();
 
-    const scrollTargetIntoPreview = async (selector: string) =>
-      preview.evaluate(
-        (el, sel) => {
-          const target = document.querySelector(sel);
-          if (!target) return false;
-          const delta = target.getBoundingClientRect().top - el.getBoundingClientRect().top;
-          el.scrollTop += delta;
-          const pr = el.getBoundingClientRect();
-          const tr = target.getBoundingClientRect();
-          return tr.top >= pr.top - 2 && tr.bottom <= pr.bottom + 2;
-        },
-        selector,
-      );
+    await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
+    await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
+    await expect(card.locator("table")).toBeVisible();
 
-    expect(await scrollTargetIntoPreview("[data-home-dashboard-card] table")).toBe(true);
-    expect(await scrollTargetIntoPreview("[data-home-dashboard-card] button[aria-pressed]")).toBe(
-      true,
-    );
-
-    const visible = await page.evaluate(() => {
-      const previewEl = document.querySelector("[data-home-hero-preview]");
-      if (!previewEl) return { ok: false };
-      const previewStyle = getComputedStyle(previewEl);
+    const visible = await preview.evaluate((el) => {
+      const style = getComputedStyle(el);
       const hiddenClip =
-        previewStyle.overflowY === "hidden" ||
-        previewStyle.overflow === "hidden" ||
-        previewStyle.overflowX === "hidden";
-      return { ok: !hiddenClip, hiddenClip };
+        style.overflowY === "hidden" ||
+        style.overflow === "hidden" ||
+        style.overflowX === "hidden";
+      const sizedToContent = el.clientHeight + 2 >= el.scrollHeight;
+      return { ok: !hiddenClip && sizedToContent, hiddenClip, sizedToContent };
     });
     expect(visible, JSON.stringify(visible)).toMatchObject({ ok: true });
   });

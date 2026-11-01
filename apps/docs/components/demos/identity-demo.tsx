@@ -72,7 +72,11 @@ const SCOPED_LOOKS = identities;
 /** The same card under each identity, side by side, without touching the page. */
 export function IdentityScopeDemo() {
   return (
-    <Stack className="min-w-0 gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-3">
+    <Stack gap={2} className="min-w-0">
+      <Text variant="muted" className="text-xs">
+        Visual variants only — scoped cards and buttons are static in this preview.
+      </Text>
+      <Stack className="min-w-0 gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-3">
       {SCOPED_LOOKS.map((look) => (
         <Stack
           key={look.id}
@@ -86,7 +90,9 @@ export function IdentityScopeDemo() {
             <Heading level={2} className="m-0! text-lg">
               {look.label}
             </Heading>
-            <Badge variant="secondary">New</Badge>
+            <Badge variant="secondary" className="w-fit">
+              New
+            </Badge>
           </Stack>
           <Text variant="muted" className="m-0! text-sm">
             {look.description}
@@ -99,6 +105,7 @@ export function IdentityScopeDemo() {
           </Stack>
         </Stack>
       ))}
+      </Stack>
     </Stack>
   );
 }

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { assertA11yGate } from "./a11y-helpers";
+import { assertA11yGate, assertFocusVisibleRing, DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
 
 const PAGE = "/docs/ui/trigger-actions-with-buttons";
 
@@ -37,38 +37,33 @@ test("button preview appears before install or copy (#R2)", async ({ page }) => 
 });
 
 test.describe("button demo a11y + themes (#152)", () => {
-  for (const mode of ["light", "dark"] as const) {
-    test(`mist ${mode}: names, axe, screenshot`, async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 1000 });
-      await page.addInitScript((theme) => {
-        localStorage.setItem("zk-docs-site-identity", "mist");
-        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
-        localStorage.setItem("theme", theme);
-      }, mode);
-      await page.goto(PAGE, { waitUntil: "networkidle" });
+  for (const identity of DOCS_SHIPPED_IDENTITIES) {
+    for (const mode of ["light", "dark"] as const) {
+      test(`${identity} ${mode}: names, axe, focus ring, screenshot`, async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 1000 });
+        await page.goto(PAGE, { waitUntil: "networkidle" });
 
-      const preview = page.locator("[data-component-preview]").first();
-      await preview.scrollIntoViewIfNeeded();
-      const create = preview.getByRole("button", { name: "Create app" });
-      await expect(create).toBeVisible();
-      await expect(preview.getByRole("button", { name: "Cancel" })).toBeVisible();
-      await expect(preview.getByRole("button", { name: "Delete" })).toBeVisible();
-      await expect(preview.getByRole("link", { name: "Docs link" })).toBeVisible();
+        const preview = page.locator("[data-component-preview]").first();
+        await pinDemoLook(preview, identity, mode);
+        const create = preview.getByRole("button", { name: "Create app" });
+        await expect(create).toBeVisible();
+        await expect(preview.getByRole("button", { name: "Cancel" })).toBeVisible();
+        await expect(preview.getByRole("button", { name: "Delete" })).toBeVisible();
+        await expect(preview.getByRole("link", { name: "Docs link" })).toBeVisible();
 
-      if (mode === "light") {
         await create.focus();
-        await expect(create).toBeFocused();
+        await assertFocusVisibleRing(create);
         await page.keyboard.press("Tab");
-        await expect(preview.getByRole("button", { name: "Cancel" })).toBeFocused();
-      }
+        await assertFocusVisibleRing(preview.getByRole("button", { name: "Cancel" }));
 
-      await assertA11yGate(page, "[data-component-preview]");
-      await preview.screenshot({ path: `test-results/button-demo-${mode}.png` });
+        await assertA11yGate(page, "[data-component-preview]");
+        await preview.screenshot({ path: `test-results/button-demo-${identity}-${mode}.png` });
 
-      const sideways = await page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      );
-      expect(sideways).toBeLessThanOrEqual(1);
-    });
+        const sideways = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+        expect(sideways).toBeLessThanOrEqual(1);
+      });
+    }
   }
 });

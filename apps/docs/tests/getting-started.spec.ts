@@ -153,6 +153,37 @@ test("getting started install cards keep their explanation visible at phone widt
   }
 });
 
+test("getting started package cards fit the viewport at phone widths", async ({ page }) => {
+  for (const width of [320, 360, 390] as const) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });
+    const host = page
+      .locator("[data-docs-table]")
+      .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
+    await host.scrollIntoViewIfNeeded();
+    const clipped = await host.evaluate((node) => {
+      const hostRect = node.getBoundingClientRect();
+      const overflowX = getComputedStyle(node).overflowX;
+      const hits: string[] = [];
+      if (overflowX === "clip" || overflowX === "hidden") {
+        const table = node.querySelector("table");
+        if (table && table.scrollWidth > node.clientWidth + 1) {
+          hits.push("parent clip hides table");
+        }
+      }
+      for (const row of node.querySelectorAll("tbody tr")) {
+        const rect = row.getBoundingClientRect();
+        if (rect.right > hostRect.right + 1 || rect.left < hostRect.left - 1) {
+          hits.push((row.textContent ?? "").trim().slice(0, 40));
+        }
+      }
+      return { overflowX, hits, hostWidth: hostRect.width, tableWidth: node.querySelector("table")?.scrollWidth ?? 0 };
+    });
+    expect(clipped.hits, `${width}px ${JSON.stringify(clipped)}`).toEqual([]);
+    expect(clipped.tableWidth).toBeLessThanOrEqual(clipped.hostWidth + 1);
+  }
+});
+
 test("getting started package table keeps a decorative area icon", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}/docs/getting-started#choose-a-package`, { waitUntil: "networkidle" });

@@ -135,6 +135,7 @@ export function AdminDashboardDemoApp({
       toast.success("App added");
     }
     closeDrawer();
+    restoreOpener();
   }
 
   function deleteApp(id: string) {

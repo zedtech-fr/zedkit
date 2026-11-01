@@ -84,7 +84,7 @@ function SceneScope({ identity, ...props }: ComponentProps<"div"> & { identity: 
 }
 
 const SCENE_CLASS = "min-w-0 overflow-hidden rounded-xl border bg-background p-card-padding";
-const SECOND_SCENE_CLASS = `${SCENE_CLASS} max-md:hidden`;
+const SCENE_BADGE_CLASS = "w-fit";
 const SCENE_TITLE_CLASS = "font-(family-name:--zk-font-display) text-2xl leading-tight font-semibold text-balance";
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -105,7 +105,7 @@ function Scene({ id }: { id: UseCaseId }) {
     case "shop":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>New season</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>New season</Badge>
           <Text className={SCENE_TITLE_CLASS}>The washed linen shirt</Text>
           <Text variant="muted">Loose cut, mother-of-pearl buttons, made in small batches in Portugal.</Text>
           <Text className="font-(family-name:--zk-font-display) text-xl font-semibold">€ 89</Text>
@@ -123,7 +123,7 @@ function Scene({ id }: { id: UseCaseId }) {
     case "editorial":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Essay</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Essay</Badge>
           <Text className={SCENE_TITLE_CLASS}>The quiet return of the long read</Text>
           <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
             By Ines Marlow · 8 min read
@@ -142,7 +142,7 @@ function Scene({ id }: { id: UseCaseId }) {
     case "launch":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Version 2</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Version 2</Badge>
           <Text className={SCENE_TITLE_CLASS}>Ship your dashboard in an afternoon</Text>
           <Text variant="muted">Typed components, one config file, nothing to rewrite later.</Text>
           <Stack direction="horizontal" gap={2} className="flex-wrap">
@@ -161,7 +161,7 @@ function Scene({ id }: { id: UseCaseId }) {
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
           <Stack direction="horizontal" gap={2} className="items-center justify-between">
-            <Badge>Live</Badge>
+            <Badge className={SCENE_BADGE_CLASS}>Live</Badge>
             <StatusLabel tone="updating">Checking 4 regions</StatusLabel>
           </Stack>
           <Text className={SCENE_TITLE_CLASS}>Checkout is healthy</Text>
@@ -179,7 +179,7 @@ function Scene({ id }: { id: UseCaseId }) {
     case "mobile":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Today</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Today</Badge>
           <Text className={SCENE_TITLE_CLASS}>Good morning, 3 tasks</Text>
           <Stack gap={2}>
             {["Review the invoice", "Call the supplier", "Pack the samples"].map((task, index) => (
@@ -206,15 +206,14 @@ function Scene({ id }: { id: UseCaseId }) {
 
 /**
  * A second, smaller example next to the main one, drawn in the same
- * identity. Shown from the tablet width up; on a phone the stage keeps one
- * example so nothing is cut.
+ * identity. On narrow screens the two panels stack in one column.
  */
 function SecondScene({ id }: { id: UseCaseId }) {
   switch (id) {
     case "admin":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Team</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Team</Badge>
           <Text className={SCENE_TITLE_CLASS}>Invite a teammate</Text>
           <Text variant="muted">They get read access to orders until you change their role.</Text>
           <StatusLabel tone="saved">Draft saved</StatusLabel>
@@ -229,7 +228,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
     case "editorial":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Pull quote</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Pull quote</Badge>
           <Text className={SCENE_TITLE_CLASS}>“A page that holds still is a page that gets finished.”</Text>
           <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
             Ines Marlow, on slow reading
@@ -239,7 +238,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
     case "monitoring":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Regions</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Regions</Badge>
           {[
             ["Paris", "38 ms"],
             ["Frankfurt", "44 ms"],
@@ -263,7 +262,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
     case "launch":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Pro</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Pro</Badge>
           <Text className={SCENE_TITLE_CLASS}>€ 19 a month</Text>
           <Text variant="muted">Unlimited projects, priority support, cancel any time.</Text>
           <Stack direction="horizontal">
@@ -274,7 +273,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
     case "shop":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>You may also like</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>You may also like</Badge>
           {[
             ["Waxed canvas tote", "€ 64"],
             ["Stoneware mug", "€ 22"],
@@ -297,7 +296,7 @@ function SecondScene({ id }: { id: UseCaseId }) {
     case "mobile":
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge>Next up</Badge>
+          <Badge className={SCENE_BADGE_CLASS}>Next up</Badge>
           <Text className={SCENE_TITLE_CLASS}>Supplier call at 11:00</Text>
           <Text variant="muted">Samples are packed. Ask about the delivery date.</Text>
           <Stack direction="horizontal" gap={2} className="flex-wrap">
@@ -335,7 +334,7 @@ function UseCasePreview({ useCase }: { useCase: UseCase }) {
         <div className={`${SCENE_CLASS} md:col-span-3`}>
           <Scene id={useCase.id} />
         </div>
-        <div className={`${SECOND_SCENE_CLASS} md:col-span-2`}>
+        <div className={`${SCENE_CLASS} md:col-span-2`}>
           <SecondScene id={useCase.id} />
         </div>
       </SceneScope>
@@ -388,7 +387,7 @@ export function HomeUseCasesSection() {
       containerWidth="wide"
       title="One kit, every kind of product"
       id="use-cases"
-      description="Static looks, not working screens. Same components, six identities; use the hero demo to click around."
+      description="Static looks, not working screens. Six identity tabs, two example panels each; use the hero demo to click around."
     >
       <div ref={root} data-home-use-cases className="min-w-0">
         <Stack gap={4} className="min-w-0">
@@ -425,7 +424,7 @@ export function HomeUseCasesSection() {
           </Button>
         </Stack>
       </div>
-      <Stack direction="horizontal" gap={2} className="flex-wrap max-md:hidden">
+      <Stack direction="horizontal" gap={2} className="flex-wrap">
         <Button asChild className="w-fit">
           <Link href={IDENTITY_EDITOR_HREF}>Try the demo editor</Link>
         </Button>

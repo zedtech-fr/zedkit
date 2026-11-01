@@ -62,12 +62,8 @@ export function HomeBelowHero({
       >
         <Stack gap={HOME_SECTION_CONTENT_GAP}>
           <Stack className={HOME_CARD_GRID_THREE_COL}>
-            {curatedGallery.map((card, index) => (
-              <HomeGalleryCard
-                key={card.href}
-                card={card}
-                className={index >= 2 ? "flex min-w-0 flex-col max-md:hidden" : "min-w-0"}
-              />
+            {curatedGallery.map((card) => (
+              <HomeGalleryCard key={card.href} card={card} className="min-w-0" />
             ))}
           </Stack>
           <Button asChild variant="outline">

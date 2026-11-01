@@ -52,15 +52,26 @@ test.describe("tide identity", () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
-  test("keeps the hero admin preview on the first phone screen", async ({ page }) => {
+  test("hero admin preview sizes to content on phone (no clipped overflow)", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(HOME, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
     const preview = page.locator("[data-home-hero-preview]");
-    await expect(preview).toBeVisible();
-    const box = await preview.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.y + box!.height).toBeLessThanOrEqual(844);
+    await preview.scrollIntoViewIfNeeded();
+    const clip = await preview.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return {
+        overflowY: style.overflowY,
+        maxHeight: style.maxHeight,
+        clientHeight: el.clientHeight,
+        scrollHeight: el.scrollHeight,
+      };
+    });
+    expect(clip.overflowY).not.toBe("hidden");
+    expect(clip.clientHeight + 2).toBeGreaterThanOrEqual(clip.scrollHeight);
+    const card = page.locator("[data-home-dashboard-card]");
+    await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
+    await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
   });
 
   for (const width of [360, 390] as const) {

@@ -63,8 +63,9 @@ test("button reference page surfaces variant and size in props without search (#
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-size']")).toBeVisible();
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-asChild']")).toBeVisible();
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-onClick']")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /inherited HTML attributes/i })).toBeVisible();
-  await page.getByRole("button", { name: /inherited HTML attributes/i }).click();
+  const inherited = props.locator("details");
+  await expect(inherited).toBeVisible();
+  await inherited.locator("summary").click();
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-inherited-onClick']")).toBeVisible();
 });
 

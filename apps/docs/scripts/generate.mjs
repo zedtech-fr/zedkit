@@ -202,15 +202,20 @@ function maturityDocParts(need) {
   };
 }
 
-function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
+function componentPageMdx(pkg, need, version, spec, related, prose) {
   const examples = need.examples ?? [{ title: "Simple", code: need.example }];
   const pageTitle = need.shortName ?? need.need;
   const propsPriority = spec.propsPriority ?? null;
+  const registryBrick = spec.registry ?? need.registry ?? "";
+  const purpose = (need.purpose ?? "").trim();
+  if (purpose.length === 0) {
+    throw new Error(`generator: catalog need "${need.need}" is missing purpose.`);
+  }
   const maturity = maturityDocParts(need);
   const head = [
     "---",
     `title: ${JSON.stringify(pageTitle)}`,
-    `description: ${JSON.stringify(metaDescription(need, folder))}`,
+    `description: ${JSON.stringify(purpose)}`,
     ...maturity.frontmatterStatus,
     "componentPage: true",
     "---",
@@ -234,7 +239,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose, folder) {
     `  whenNotToUse={${JSON.stringify(need.whenNotToUse)}}`,
     `  importLine={${JSON.stringify(need.import)}}`,
     `  wraps={${JSON.stringify(need.wraps)}}`,
-    `  registry={${JSON.stringify(spec.registry ?? "")}}`,
+    `  registry={${JSON.stringify(registryBrick)}}`,
     `  demo={${JSON.stringify(spec.demo)}}`,
     `  propsFile={${JSON.stringify(spec.propsFile)}}`,
     `  propsName={${JSON.stringify(spec.propsName)}}`,
@@ -493,7 +498,14 @@ export function generate(outDir) {
       const prose = readProse(folder, slug);
       if (prose) prosePages += 1;
       const body = richBlock
-        ? componentPageMdx(pkg, need, version, { ...richBlock, registry: richBlock.registry ?? "" }, related, prose, folder)
+        ? componentPageMdx(
+            pkg,
+            need,
+            version,
+            { ...richBlock, registry: richBlock.registry ?? need.registry ?? "" },
+            related,
+            prose,
+          )
         : pageMdx(pkg, need, version, richBlock, links, prose, folder);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
