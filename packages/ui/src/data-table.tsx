@@ -75,6 +75,23 @@ function SortIcon({ direction }: { direction: SortDirection | false }) {
   return <ArrowUpDown className={className} aria-hidden />;
 }
 
+function sortableHeaderLabel(header: { column: { columnDef: { header?: unknown }; id: string } }): string {
+  const label = header.column.columnDef.header;
+  return typeof label === "string" ? label : header.column.id;
+}
+
+function headerAriaSort(direction: SortDirection | false): "ascending" | "descending" | undefined {
+  if (direction === "asc") return "ascending";
+  if (direction === "desc") return "descending";
+  return undefined;
+}
+
+function sortButtonLabel(label: string, direction: SortDirection | false): string {
+  if (direction === "asc") return `${label}, sorted ascending`;
+  if (direction === "desc") return `${label}, sorted descending`;
+  return `${label}, sort`;
+}
+
 export interface DataTablePaginationProps {
   /** 1-based current page for display. */
   page: number;
@@ -234,22 +251,30 @@ export function DataTable<TData extends RowData>({
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
           <TableRow key={group.id}>
-            {group.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder || !header.column.getCanSort() ? (
-                  <table.FlexRender header={header} />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={header.column.getToggleSortingHandler()}
-                    className={cn("inline-flex min-h-(--zk-tap-min) items-center gap-data-table-sort-gap hover:text-foreground")}
-                  >
+            {group.headers.map((header) => {
+              const canSort = !header.isPlaceholder && header.column.getCanSort();
+              const sorted = canSort ? header.column.getIsSorted() : false;
+              const label = canSort ? sortableHeaderLabel(header) : "";
+              return (
+                <TableHead key={header.id} aria-sort={canSort ? headerAriaSort(sorted) : undefined}>
+                  {canSort ? (
+                    <button
+                      type="button"
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={cn(
+                        "inline-flex min-h-(--zk-tap-min) items-center gap-data-table-sort-gap hover:text-foreground",
+                      )}
+                      aria-label={sortButtonLabel(label, sorted)}
+                    >
+                      <table.FlexRender header={header} />
+                      <SortIcon direction={sorted} />
+                    </button>
+                  ) : (
                     <table.FlexRender header={header} />
-                    <SortIcon direction={header.column.getIsSorted()} />
-                  </button>
-                )}
-              </TableHead>
-            ))}
+                  )}
+                </TableHead>
+              );
+            })}
           </TableRow>
         ))}
       </TableHeader>

@@ -75,6 +75,28 @@ describe("DataTable", () => {
     expect(bodyRowTexts()).toEqual(["Bob30", "Ada36"]);
   });
 
+  it("exposes aria-sort on the active column header only (ZK-12)", async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} />);
+    const headers = () => screen.getAllByRole("columnheader");
+    expect(headers()[0]?.getAttribute("aria-sort")).toBeNull();
+    expect(headers()[1]?.getAttribute("aria-sort")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: /Name, sort/i }));
+    expect(headers()[0]?.getAttribute("aria-sort")).toBe("ascending");
+    expect(headers()[1]?.getAttribute("aria-sort")).toBeNull();
+    expect(screen.getByRole("button", { name: /Name, sorted ascending/i })).toBeTruthy();
+
+    await user.click(screen.getByRole("button", { name: /Name, sorted ascending/i }));
+    expect(headers()[0]?.getAttribute("aria-sort")).toBe("descending");
+    expect(screen.getByRole("button", { name: /Name, sorted descending/i })).toBeTruthy();
+
+    await user.click(screen.getByRole("button", { name: /Age, sort/i }));
+    expect(headers()[0]?.getAttribute("aria-sort")).toBeNull();
+    expect(headers()[1]?.getAttribute("aria-sort")).toBe("descending");
+    expect(screen.getByRole("button", { name: /Age, sorted descending/i })).toBeTruthy();
+  });
+
   it("shows the empty message when there is no data", () => {
     render(<DataTable columns={columns} data={[]} emptyMessage="Nothing here." />);
     expect(screen.getByText("Nothing here.").textContent).toBe("Nothing here.");
