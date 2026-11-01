@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useId, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Stack, Tabs, TabsContent, TabsList, TabsTrigger, ThemeScope, cn } from "@zedtech/zedkit-ui";
 import { DemoStyleSelect, usePinnedLook } from "@/components/demo-style-scope";
@@ -22,13 +22,13 @@ export function usePreviewMobile(): boolean {
 
 type ModePin = "follow" | "light" | "dark";
 
-function Segmented({ label, children }: { label: string; children: ReactNode }) {
+function Segmented({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
   return (
     <Stack
       direction="horizontal"
       role="group"
       aria-label={label}
-      className="inline-flex items-center gap-0.5"
+      className={cn("inline-flex items-center gap-0.5", className)}
     >
       {children}
     </Stack>
@@ -79,6 +79,8 @@ export function PreviewFrame({
   const [tab, setTab] = useState<string>(previewViewportCopy.tabs.preview);
   const [modePin, setModePin] = useState<ModePin>("follow");
   const [mobile, setMobile] = useState(false);
+  const [displayOpen, setDisplayOpen] = useState(false);
+  const displayId = useId();
   const demoStyle = usePinnedLook();
   const siteDark = mounted && resolvedTheme === "dark";
   const dark = modePin === "follow" ? siteDark : modePin === "dark";
@@ -98,33 +100,44 @@ export function PreviewFrame({
           ))}
         </TabsList>
         {tab === previewViewportCopy.tabs.preview ? (
-          <Stack direction="horizontal" data-preview-display="" className="min-w-0 flex-wrap gap-2">
-            <DemoStyleSelect
-              look={demoStyle.look}
-              pinned={demoStyle.pinned}
-              onPin={demoStyle.pin}
-              labelHidden
-            />
-            <Segmented label={previewViewportCopy.width}>
-              <Segment pressed={!mobile} onClick={() => setMobile(false)}>
-                {previewViewportCopy.full}
-              </Segment>
-              <Segment pressed={mobile} onClick={() => setMobile(true)}>
-                {previewViewportCopy.mobile}
-              </Segment>
-            </Segmented>
-            <Segmented label={previewViewportCopy.mode}>
-              <Segment pressed={modePin === "follow"} onClick={() => setModePin("follow")}>
-                {previewViewportCopy.site}
-              </Segment>
-              <Segment pressed={modePin === "light"} onClick={() => setModePin("light")}>
-                {previewViewportCopy.light}
-              </Segment>
-              <Segment pressed={modePin === "dark"} onClick={() => setModePin("dark")}>
-                {previewViewportCopy.dark}
-              </Segment>
-            </Segmented>
-          </Stack>
+          <>
+            <button
+              type="button"
+              aria-expanded={displayOpen}
+              aria-controls={displayId}
+              onClick={() => setDisplayOpen(!displayOpen)}
+              className="min-h-11 rounded px-2.5 text-xs text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
+            >
+              {previewViewportCopy.display}
+            </button>
+            <Stack
+              direction="horizontal"
+              id={displayId}
+              data-preview-display=""
+              className={cn("min-w-0 flex-wrap gap-2 md:flex", displayOpen ? "w-full" : "hidden")}
+            >
+              <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} labelHidden />
+              <Segmented label={previewViewportCopy.width} className="hidden md:inline-flex">
+                <Segment pressed={!mobile} onClick={() => setMobile(false)}>
+                  {previewViewportCopy.full}
+                </Segment>
+                <Segment pressed={mobile} onClick={() => setMobile(true)}>
+                  {previewViewportCopy.mobile}
+                </Segment>
+              </Segmented>
+              <Segmented label={previewViewportCopy.mode}>
+                <Segment pressed={modePin === "follow"} onClick={() => setModePin("follow")}>
+                  {previewViewportCopy.site}
+                </Segment>
+                <Segment pressed={modePin === "light"} onClick={() => setModePin("light")}>
+                  {previewViewportCopy.light}
+                </Segment>
+                <Segment pressed={modePin === "dark"} onClick={() => setModePin("dark")}>
+                  {previewViewportCopy.dark}
+                </Segment>
+              </Segmented>
+            </Stack>
+          </>
         ) : null}
       </Stack>
       <Stack

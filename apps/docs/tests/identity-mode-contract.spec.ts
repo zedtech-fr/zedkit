@@ -95,11 +95,14 @@ function readOverlayTokens(overlay: Locator) {
 }
 
 test.describe("identity+mode nearest-scope contract", () => {
-  test("preview toolbar stays visible and wraps on a phone", async ({ page }) => {
+  test("on a phone the example comes first and Display tools open on demand", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/docs/ui/trigger-actions-with-buttons", { waitUntil: "networkidle" });
     const preview = page.locator("[data-component-preview]").first();
     await preview.scrollIntoViewIfNeeded();
+    await expect(preview.getByRole("button", { name: "Create app" })).toBeInViewport();
+    await expect(preview.getByRole("combobox", { name: "Style of this demo" })).toBeHidden();
+    await preview.getByRole("button", { name: "Display", exact: true }).click();
     await expect(preview.getByRole("combobox", { name: "Style of this demo" })).toBeVisible();
     await expect(preview.getByRole("button", { name: "Site", exact: true })).toBeVisible();
     await expect(preview.getByRole("button", { name: "Light", exact: true })).toBeVisible();

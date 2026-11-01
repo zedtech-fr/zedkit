@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { contrastRatio } from "./a11y-helpers";
+import { contrastRatio, revealPreviewDisplay } from "./a11y-helpers";
 import { useIdentity } from "./identity-helpers";
 
 // Relative paths: the config baseURL decides the port.
@@ -47,6 +47,7 @@ async function openOverlay(page: Page, path: string, trigger: string, identity: 
   await useIdentity(page, identity, theme);
   // Overlays mount in the nearest ThemeScope, so pin the look on the specimen itself.
   const preview = page.locator("[data-component-preview]").first();
+  await revealPreviewDisplay(preview);
   if (identity) await preview.getByRole("combobox", { name: "Style of this demo" }).selectOption(identity);
   await preview.getByRole("button", { name: theme === "light" ? "Light" : "Dark", exact: true }).click();
   await page.getByRole("button", { name: trigger }).click();
@@ -149,6 +150,7 @@ test.describe("glass overlay surfaces", () => {
     await page.goto(SELECT_PAGE, { waitUntil: "networkidle" });
     await useIdentity(page, "glass", "light");
     const preview = page.locator("[data-component-preview]").first();
+    await revealPreviewDisplay(preview);
     await preview.getByRole("combobox", { name: "Style of this demo" }).selectOption("glass");
     await page.getByRole("combobox", { name: "Pick a region" }).first().click();
     const list = page.getByRole("listbox");

@@ -18,6 +18,12 @@ const IDENTITY_SANS_SNIPPET: Record<DocsShippedIdentity, string> = {
   glass: "Inter Variable",
 };
 
+/** On a phone the preview's Display tools sit behind a toggle; open it when it is shown. */
+export async function revealPreviewDisplay(preview: Locator): Promise<void> {
+  const toggle = preview.getByRole("button", { name: "Display", exact: true });
+  if ((await toggle.isVisible()) && (await toggle.getAttribute("aria-expanded")) === "false") await toggle.click();
+}
+
 /** Preview toolbar: pin identity + local light/dark, then assert scope tokens. */
 export async function pinDemoLook(
   preview: Locator,
@@ -25,6 +31,7 @@ export async function pinDemoLook(
   mode: "light" | "dark",
 ): Promise<Locator> {
   await preview.scrollIntoViewIfNeeded();
+  await revealPreviewDisplay(preview);
   await preview.getByLabel("Style of this demo").selectOption(identity);
   await preview.getByRole("button", { name: mode === "light" ? "Light" : "Dark", exact: true }).click();
   const surface = preview.locator("[data-preview-surface]");

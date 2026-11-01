@@ -4,6 +4,7 @@ export const previewViewportCopy = {
     preview: "preview",
     code: "code",
   },
+  display: "Display",
   width: "Width",
   full: "Full",
   mobile: "Mobile",
