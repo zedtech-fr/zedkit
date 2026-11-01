@@ -137,7 +137,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec turbo run build --filter=@zedtech/zedkit-ui
       - run: pnpm registry:build
-      - run: pnpm exec playwright install --with-deps chromium
       - run: bash scripts/quickstart-smoke.sh
 
   docs-e2e-shard:
