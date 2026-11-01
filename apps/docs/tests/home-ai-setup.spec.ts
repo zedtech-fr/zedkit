@@ -13,14 +13,14 @@ test.describe("home AI setup block (#398)", () => {
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(BASE, { waitUntil: "networkidle" });
 
-    const aiSetup = page.locator("#ai-setup");
+    const aiSetup = page.locator("#entry-points #ai-setup");
     const components = page.locator("#components");
     await expect(aiSetup).toBeVisible();
 
     const aiBox = await aiSetup.boundingBox();
     const componentsBox = await components.boundingBox();
     expect(aiBox && componentsBox).toBeTruthy();
-    expect(aiBox!.y).toBeLessThan(componentsBox!.y);
+    expect(componentsBox!.y).toBeLessThan(aiBox!.y);
 
     await page.getByRole("button", { name: "Copy init command" }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(INIT_CMD);
@@ -32,10 +32,10 @@ test.describe("home AI setup block (#398)", () => {
     const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 
-    await expect(page.getByRole("link", { name: "Set up your coding agent" }).first()).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Open agent setup docs" }).first()).toHaveAttribute(
       "href",
-      "#ai-setup",
+      "/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo",
     );
-    await expect(page.getByRole("link", { name: "Try the demo" })).toHaveAttribute("href", "#demo");
+    await expect(page.getByRole("link", { name: "Get started" }).first()).toHaveAttribute("href", "#get-started");
   });
 });

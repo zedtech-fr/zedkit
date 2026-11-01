@@ -3,13 +3,14 @@ import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { MaturityBadge } from "@/components/maturity-badge";
 import type { CatalogIndexEntry } from "@/content/catalog-index";
 import { groupCatalogResults } from "@/lib/catalog-result-groups.mjs";
+import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
 
 function CatalogRow({ entry }: { entry: CatalogIndexEntry }) {
   return (
     <Stack
       direction="horizontal"
       gap={3}
-      className="flex-wrap items-center justify-between border-b border-border pb-3"
+      className="flex-wrap items-center justify-between border-b border-border pb-2"
     >
       <Stack gap={1} className="min-w-0 flex-1">
         <Link href={entry.href} className="font-medium underline-offset-4 hover:underline">
@@ -43,7 +44,7 @@ function EntryColumns({ entries }: { entries: CatalogIndexEntry[] }) {
 function resultsStatusLine(filtered: CatalogIndexEntry[]) {
   return (
     <span role="status" aria-live="polite">
-      {filtered.length} {filtered.length === 1 ? "entry" : "entries"}
+      {catalogCopy.results.statusLine(filtered.length)}
     </span>
   );
 }
@@ -54,7 +55,7 @@ export function CatalogResultsHeader({ filtered }: { filtered: CatalogIndexEntry
     <div className="flex items-start justify-between gap-4" data-catalog-results-heading="">
       <div>
         <Heading level={2} id="catalog-results-heading">
-          Results
+          {catalogCopy.results.heading}
         </Heading>
         <Text variant="muted">{resultsStatusLine(filtered)}</Text>
       </div>
@@ -67,18 +68,18 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
   const groups = groupCatalogResults(filtered);
   return (
     <Stack gap={4} data-catalog-results-root="">
-      <section data-slot="section" className="space-y-4" aria-label="Results">
+      <section data-slot="section" className="space-y-4" aria-label={catalogCopy.results.sectionAriaLabel}>
         {filtered.length === 0 ? (
           <Stack gap={2}>
-            <Text variant="muted">No catalog entries match these filters.</Text>
+            <Text variant="muted">{catalogCopy.results.empty}</Text>
             <Link href="/catalog" className="text-sm text-primary underline-offset-4 hover:underline">
-              Clear filters
+              {catalogCopy.results.clearFiltersLink}
             </Link>
           </Stack>
         ) : (
-          <Stack gap={8} data-catalog-results="">
+          <Stack gap={6} data-catalog-results="">
             {groups.length > 1 ? (
-              <nav aria-label="Jump to category" className="xl:hidden">
+              <nav aria-label={catalogCopy.results.jumpNavAriaLabel} className="xl:hidden">
                 <Stack direction="horizontal" gap={2} className="flex-wrap">
                   {groups.map((group) => (
                     <Link
@@ -86,7 +87,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
                       href={`#catalog-group-${group.id}`}
                       className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                     >
-                      {group.label} ({group.entries.length})
+                      {catalogCopy.results.groupJumpLink(group.label, group.entries.length)}
                     </Link>
                   ))}
                 </Stack>
@@ -95,7 +96,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
             {groups.map((group) => (
               <Stack key={group.id} gap={3} id={`catalog-group-${group.id}`} data-catalog-group={group.id}>
                 <Heading level={3} className="text-lg">
-                  {group.label} · {group.entries.length}
+                  {catalogCopy.results.groupHeading(group.label, group.entries.length)}
                 </Heading>
                 <EntryColumns entries={group.entries} />
               </Stack>

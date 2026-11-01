@@ -568,6 +568,14 @@ html [data-vaul-overlay] {
   animation-duration: var(--motion-base);
 }
 
+@media (prefers-reduced-transparency: reduce) {
+  [data-slot="drawer-overlay"] {
+    background-color: hsl(var(--overlay) / 0.8);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 /*
  * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
  * vanishes on dark and tinted identities. Draw it from the kit tokens

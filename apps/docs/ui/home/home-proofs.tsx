@@ -7,6 +7,7 @@ import {
   HOME_CARD_TITLE_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 export function HomeProofs({
   packages,
@@ -25,38 +26,48 @@ export function HomeProofs({
   version: string;
   releasesHref: string;
 }) {
+  const versionBlock = homeCopy.proofs.versionReleases(version);
+  const uiBlock = homeCopy.proofs.uiCatalog(uiComponents, livePreviews);
+  const packagesBlock = homeCopy.proofs.packagesNeeds(packages, needs);
   const items = [
     {
-      title: `v${version} releases`,
-      body: "See what shipped in each public release on GitHub.",
+      title: versionBlock.title,
+      body: versionBlock.body,
       href: releasesHref,
-      linkLabel: `v${version} (releases)`,
+      linkLabel: versionBlock.linkLabel,
       external: true,
     },
     {
-      title: `${uiComponents} UI catalog entries`,
-      body: `${livePreviews} include a live preview you can try on the page.`,
+      title: uiBlock.title,
+      body: uiBlock.body,
     },
     {
-      title: `${packages} packages, ${needs} needs`,
-      body: "Counts are kept in sync with the catalog, so they match the published packages.",
+      title: packagesBlock.title,
+      body: packagesBlock.body,
     },
     {
-      title: "Light and dark theme",
-      body: "Light and dark tokens are built in — try the toggle in the header.",
+      title: homeCopy.proofs.theme.title,
+      body: homeCopy.proofs.theme.body,
       href: themeHref,
-      linkLabel: "Theme setup page",
+      linkLabel: homeCopy.proofs.theme.linkLabel,
     },
     {
-      title: "Accessibility checks",
-      body: "Rendered components are checked automatically for accessibility issues.",
+      title: homeCopy.proofs.a11y.title,
+      body: homeCopy.proofs.a11y.body,
       href: "https://github.com/zedtech-fr/zedkit/tree/main/packages/ui/tests/unit/a11y.test.tsx",
-      linkLabel: "axe test suite",
+      linkLabel: homeCopy.proofs.a11y.linkLabel,
       external: true,
     },
   ];
   return (
-    <Section bleed spacing="lg" containerWidth="wide" title="What you can verify" id="proofs" className="max-md:hidden">
+    <Section
+      bleed
+      spacing="lg"
+      containerWidth="wide"
+      title={homeCopy.proofs.section.title}
+      id="proofs"
+      className="max-md:hidden"
+    >
       <Stack className={HOME_CARD_GRID_FOUR_COL}>
         {items.map((item) => (
           <Card key={item.title} className="min-w-0">

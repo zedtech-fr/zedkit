@@ -16,63 +16,17 @@ import {
 import { HomeAdminScene } from "@/ui/home/home-admin-scene";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 import { HOME_CARD_CONTENT_GAP, HOME_CARD_TITLE_CLASS, HOME_METADATA_TEXT_CLASS, HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
+import type { HomeUseCaseId } from "@/ui/home/i18n/home-use-cases-copy";
 
-type UseCaseId = "admin" | "shop" | "editorial" | "launch" | "monitoring" | "mobile";
+type UseCaseId = HomeUseCaseId;
+type UseCase = (typeof homeCopy.useCases.cases)[number];
 
-type UseCase = {
-  id: UseCaseId;
-  title: string;
-  identity: string;
-  identityLabel: string;
-  why: string;
-};
-
-const USE_CASES: readonly UseCase[] = [
-  {
-    id: "admin",
-    title: "An admin dashboard",
-    identity: "mist",
-    identityLabel: "Mist",
-    why: "Tables, forms and status for people who work in it all day: calm colours, soft edges, nothing shouting.",
-  },
-  {
-    id: "editorial",
-    title: "A blog or magazine",
-    identity: "press",
-    identityLabel: "Press",
-    why: "Reading first: ink on paper, fine rules and a serif that stays comfortable for long articles.",
-  },
-  {
-    id: "monitoring",
-    title: "A live status board",
-    identity: "tide",
-    identityLabel: "Tide",
-    why: "Bold, rounded and lively: state changes are easy to spot across a room.",
-  },
-  {
-    id: "launch",
-    title: "A product landing page",
-    identity: "volt",
-    identityLabel: "Volt",
-    why: "One electric accent on a dark, dense layout: the call to action is the only thing that glows.",
-  },
-  {
-    id: "shop",
-    title: "A shop or brand site",
-    identity: "maison",
-    identityLabel: "Maison",
-    why: "Product first: ivory background, serif titles and generous space let photography and price carry the page.",
-  },
-  {
-    id: "mobile",
-    title: "A companion app",
-    identity: "glass",
-    identityLabel: "Glass",
-    why: "Frosted layers over soft colour: light, touch-sized and at home on a phone.",
-  },
-];
-
+const USE_CASES = homeCopy.useCases.cases;
 const DEFAULT_USE_CASE: UseCase = USE_CASES[0]!;
+const scenes = homeCopy.useCases.scenes;
+const secondScenes = homeCopy.useCases.secondScenes;
+const useCasesSection = homeCopy.useCases.section;
 
 /**
  * Renders a subtree in another identity than the page, through the kit's
@@ -102,87 +56,93 @@ function Scene({ id }: { id: UseCaseId }) {
   switch (id) {
     case "admin":
       return <HomeAdminScene />;
-    case "shop":
+    case "shop": {
+      const c = scenes.shop;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>New season</Badge>
-          <Text className={SCENE_TITLE_CLASS}>The washed linen shirt</Text>
-          <Text variant="muted">Loose cut, mother-of-pearl buttons, made in small batches in Portugal.</Text>
-          <Text className="font-(family-name:--zk-font-display) text-xl font-semibold">€ 89</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
+          <Text variant="muted">{c.body}</Text>
+          <Text className="font-(family-name:--zk-font-display) text-xl font-semibold">{c.price}</Text>
           <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button size="sm">Add to basket</Button>
+            <Button size="sm">{c.addToBasket}</Button>
             <Button size="sm" variant="outline">
-              Size guide
+              {c.sizeGuide}
             </Button>
           </Stack>
           <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-            Free returns within 30 days.
+            {c.returns}
           </Text>
         </Stack>
       );
-    case "editorial":
+    }
+    case "editorial": {
+      const c = scenes.editorial;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Essay</Badge>
-          <Text className={SCENE_TITLE_CLASS}>The quiet return of the long read</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
           <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-            By Ines Marlow · 8 min read
+            {c.byline}
           </Text>
-          <Text>
-            After a decade of feeds, readers are asking for fewer, slower pieces: a page that holds still, a column
-            that is easy on the eyes, and an ending worth reaching.
-          </Text>
+          <Text>{c.body}</Text>
           <Stack direction="horizontal">
             <Button size="sm" variant="outline">
-              Read the essay
+              {c.read}
             </Button>
           </Stack>
         </Stack>
       );
-    case "launch":
+    }
+    case "launch": {
+      const c = scenes.launch;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Version 2</Badge>
-          <Text className={SCENE_TITLE_CLASS}>Ship your dashboard in an afternoon</Text>
-          <Text variant="muted">Typed components, one config file, nothing to rewrite later.</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
+          <Text variant="muted">{c.body}</Text>
           <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button size="sm">Start free</Button>
+            <Button size="sm">{c.startFree}</Button>
             <Button size="sm" variant="outline">
-              See pricing
+              {c.seePricing}
             </Button>
           </Stack>
           <Stack direction="horizontal" gap={6} className="flex-wrap">
-            <Stat value="3x" label="Faster setup" />
-            <Stat value="0" label="Config to start" />
+            <Stat value={c.fasterSetupValue} label={c.fasterSetupLabel} />
+            <Stat value={c.configValue} label={c.configLabel} />
           </Stack>
         </Stack>
       );
-    case "monitoring":
+    }
+    case "monitoring": {
+      const c = scenes.monitoring;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
           <Stack direction="horizontal" gap={2} className="items-center justify-between">
-            <Badge className={SCENE_BADGE_CLASS}>Live</Badge>
-            <StatusLabel tone="updating">Checking 4 regions</StatusLabel>
+            <Badge className={SCENE_BADGE_CLASS}>{c.liveBadge}</Badge>
+            <StatusLabel tone="updating">{c.checkingStatus}</StatusLabel>
           </Stack>
-          <Text className={SCENE_TITLE_CLASS}>Checkout is healthy</Text>
-          <ProgressBar value={83} label="Error budget left this month" />
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
+          <ProgressBar value={83} label={c.progressLabel} />
           <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-            83% of the monthly error budget left. Last incident closed 6 days ago.
+            {c.body}
           </Text>
           <Stack direction="horizontal">
             <Button size="sm" variant="outline">
-              Open the incident log
+              {c.openLog}
             </Button>
           </Stack>
         </Stack>
       );
-    case "mobile":
+    }
+    case "mobile": {
+      const c = scenes.mobile;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Today</Badge>
-          <Text className={SCENE_TITLE_CLASS}>Good morning, 3 tasks</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
           <Stack gap={2}>
-            {["Review the invoice", "Call the supplier", "Pack the samples"].map((task, index) => (
+            {c.tasks.map((task, index) => (
               <Stack
                 key={task}
                 direction="horizontal"
@@ -191,16 +151,17 @@ function Scene({ id }: { id: UseCaseId }) {
               >
                 <Text>{task}</Text>
                 <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-                  {index === 0 ? "9:30" : index === 1 ? "11:00" : "Later"}
+                  {c.taskTimes[index]}
                 </Text>
               </Stack>
             ))}
           </Stack>
           <Stack direction="horizontal">
-            <Button size="sm">Add a task</Button>
+            <Button size="sm">{c.addTask}</Button>
           </Stack>
         </Stack>
       );
+    }
   }
 }
 
@@ -210,41 +171,41 @@ function Scene({ id }: { id: UseCaseId }) {
  */
 function SecondScene({ id }: { id: UseCaseId }) {
   switch (id) {
-    case "admin":
+    case "admin": {
+      const c = secondScenes.admin;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Team</Badge>
-          <Text className={SCENE_TITLE_CLASS}>Invite a teammate</Text>
-          <Text variant="muted">They get read access to orders until you change their role.</Text>
-          <StatusLabel tone="saved">Draft saved</StatusLabel>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
+          <Text variant="muted">{c.body}</Text>
+          <StatusLabel tone="saved">{c.saved}</StatusLabel>
           <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button size="sm">Send invite</Button>
+            <Button size="sm">{c.sendInvite}</Button>
             <Button size="sm" variant="outline">
-              Cancel
+              {c.cancel}
             </Button>
           </Stack>
         </Stack>
       );
-    case "editorial":
+    }
+    case "editorial": {
+      const c = secondScenes.editorial;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Pull quote</Badge>
-          <Text className={SCENE_TITLE_CLASS}>“A page that holds still is a page that gets finished.”</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.quote}</Text>
           <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-            Ines Marlow, on slow reading
+            {c.attribution}
           </Text>
         </Stack>
       );
-    case "monitoring":
+    }
+    case "monitoring": {
+      const c = secondScenes.monitoring;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Regions</Badge>
-          {[
-            ["Paris", "38 ms"],
-            ["Frankfurt", "44 ms"],
-            ["Dublin", "51 ms"],
-            ["Madrid", "47 ms"],
-          ].map(([region, latency]) => (
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          {c.regions.map(([region, latency]) => (
             <Stack
               key={region}
               direction="horizontal"
@@ -259,26 +220,26 @@ function SecondScene({ id }: { id: UseCaseId }) {
           ))}
         </Stack>
       );
-    case "launch":
+    }
+    case "launch": {
+      const c = secondScenes.launch;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Pro</Badge>
-          <Text className={SCENE_TITLE_CLASS}>€ 19 a month</Text>
-          <Text variant="muted">Unlimited projects, priority support, cancel any time.</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.price}</Text>
+          <Text variant="muted">{c.body}</Text>
           <Stack direction="horizontal">
-            <Button size="sm">Start free</Button>
+            <Button size="sm">{c.startFree}</Button>
           </Stack>
         </Stack>
       );
-    case "shop":
+    }
+    case "shop": {
+      const c = secondScenes.shop;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>You may also like</Badge>
-          {[
-            ["Waxed canvas tote", "€ 64"],
-            ["Stoneware mug", "€ 22"],
-            ["Wool throw", "€ 120"],
-          ].map(([name, price]) => (
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          {c.items.map(([name, price]) => (
             <Stack
               key={name}
               direction="horizontal"
@@ -293,20 +254,23 @@ function SecondScene({ id }: { id: UseCaseId }) {
           ))}
         </Stack>
       );
-    case "mobile":
+    }
+    case "mobile": {
+      const c = secondScenes.mobile;
       return (
         <Stack gap={HOME_CARD_CONTENT_GAP}>
-          <Badge className={SCENE_BADGE_CLASS}>Next up</Badge>
-          <Text className={SCENE_TITLE_CLASS}>Supplier call at 11:00</Text>
-          <Text variant="muted">Samples are packed. Ask about the delivery date.</Text>
+          <Badge className={SCENE_BADGE_CLASS}>{c.badge}</Badge>
+          <Text className={SCENE_TITLE_CLASS}>{c.title}</Text>
+          <Text variant="muted">{c.body}</Text>
           <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Button size="sm">Join</Button>
+            <Button size="sm">{c.join}</Button>
             <Button size="sm" variant="outline">
-              Snooze
+              {c.snooze}
             </Button>
           </Stack>
         </Stack>
       );
+    }
   }
 }
 
@@ -315,7 +279,8 @@ function UseCasePreview({ useCase }: { useCase: UseCase }) {
     <Stack gap={4} className="min-w-0">
       <Stack gap={2} className="min-w-0">
         <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-          Identity: {useCase.identityLabel}
+          {useCasesSection.identityPrefix}
+          {useCase.identityLabel}
         </Text>
         <Heading level={3} id={`use-case-${useCase.id}`} className={HOME_CARD_TITLE_CLASS}>
           {useCase.title}
@@ -385,13 +350,13 @@ export function HomeUseCasesSection() {
       bleed
       spacing="lg"
       containerWidth="wide"
-      title="One kit, every kind of product"
+      title={useCasesSection.title}
       id="use-cases"
-      description="Static looks, not working screens. Six identity tabs, two example panels each; use the hero demo to click around."
+      description={useCasesSection.description}
     >
       <div ref={root} data-home-use-cases className="min-w-0">
         <Stack gap={4} className="min-w-0">
-          <Stack direction="horizontal" gap={2} className="flex-wrap" role="tablist" aria-label="Identity previews">
+          <Stack direction="horizontal" gap={2} className="flex-wrap" role="tablist" aria-label={useCasesSection.tablistAriaLabel}>
             {USE_CASES.map((useCase) => {
               const selected = activeId === useCase.id;
               return (
@@ -420,16 +385,16 @@ export function HomeUseCasesSection() {
             <UseCasePreview key={active.id} useCase={active} />
           </div>
           <Button asChild variant="link" size="sm" className="w-fit">
-            <Link href={IDENTITY_EDITOR_HREF}>Open the demo editor</Link>
+            <Link href={IDENTITY_EDITOR_HREF}>{useCasesSection.openDemoEditor}</Link>
           </Button>
         </Stack>
       </div>
       <Stack direction="horizontal" gap={2} className="flex-wrap">
         <Button asChild className="w-fit">
-          <Link href={IDENTITY_EDITOR_HREF}>Try the demo editor</Link>
+          <Link href={IDENTITY_EDITOR_HREF}>{useCasesSection.tryDemoEditor}</Link>
         </Button>
         <Button asChild variant="outline" className="w-fit">
-          <Link href="/docs/start-without-writing-code">Start without writing code</Link>
+          <Link href="/docs/start-without-writing-code">{useCasesSection.startWithoutCode}</Link>
         </Button>
       </Stack>
     </Section>

@@ -3,11 +3,12 @@
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Container, Heading, IconLabel, Input, Label, Section, Stack, Text } from "@zedtech/zedkit-ui";
-import { areaIconFor } from "@/lib/domain-icons";
+import { Container, Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
-import { CatalogResultsHeader } from "@/ui/catalog/catalog-results";
+import { AREAS } from "@/ui/catalog/catalog-filter-constants";
+import { CatalogFiltersToolbar, catalogResultsStatusLine } from "@/ui/catalog/catalog-filters";
+import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
 
 const CatalogResultsBodyLazy = dynamic(
   () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResultsBody })),
@@ -15,20 +16,12 @@ const CatalogResultsBodyLazy = dynamic(
     loading: () => (
       <Stack gap={4} data-catalog-results-root="">
         <Text variant="muted" role="status">
-          Loading results…
+          {catalogCopy.header.loadingResults}
         </Text>
       </Stack>
     ),
   },
 );
-
-const AREAS: { id: CatalogArea | "all"; label: string }[] = [
-  { id: "all", label: "All areas" },
-  { id: "ui", label: "UI" },
-  { id: "backend", label: "Core & server" },
-  { id: "seo", label: "SEO" },
-  { id: "agents", label: "Agents" },
-];
 
 export const CATALOG_DEFAULT_FILTERS = { area: "all" as const, status: "all", q: "" };
 
@@ -77,85 +70,31 @@ export function CatalogView({
 
   return (
     <>
-      <Section bleed tone="muted" spacing="lg" containerWidth="default">
-      <Stack gap={8}>
-      <Stack gap={2}>
-        <Heading level={1}>Catalog</Heading>
-        <Text variant="muted" className="type-site-lead">
-          Every zedkit need from the public catalog — filter by area, maturity, or search text. Share or reload
-          keeps your filters in the URL.
-        </Text>
-      </Stack>
+      <Section bleed tone="muted" spacing="sm" containerWidth="default">
+        <Stack gap={4}>
+          <Stack gap={2}>
+            <Heading level={1}>{catalogCopy.header.title}</Heading>
+            <Text variant="muted" className="type-site-lead">
+              {catalogCopy.header.lead}
+            </Text>
+          </Stack>
 
-      <Stack gap={4} aria-labelledby="catalog-filters-heading">
-        <Heading level={2} id="catalog-filters-heading">
-          Filters
-        </Heading>
-        <Stack gap={2}>
-          <Text variant="muted" as="span" id="catalog-area-label">Area</Text>
-          <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-labelledby="catalog-area-label">
-            {AREAS.map((row) => (
-              <Button
-                key={row.id}
-                type="button"
-                size="sm"
-                variant={area === row.id ? "default" : "outline"}
-                aria-pressed={area === row.id}
-                onClick={() => setFilters({ area: row.id })}
-              >
-                {row.id === "all" ? (
-                  row.label
-                ) : (
-                  <IconLabel icon={areaIconFor(row.id)} className="text-current">
-                    {row.label}
-                  </IconLabel>
-                )}
-              </Button>
-            ))}
-          </Stack>
-        </Stack>
-        <Stack gap={2}>
-          <Text variant="muted" as="span" id="catalog-status-label">Maturity</Text>
-          <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-labelledby="catalog-status-label">
-            <Button
-              type="button"
-              size="sm"
-              variant={status === "all" ? "default" : "outline"}
-              aria-pressed={status === "all"}
-              onClick={() => setFilters({ status: "all" })}
-            >
-              All
-            </Button>
-            {statuses.map((value) => (
-              <Button
-                key={value}
-                type="button"
-                size="sm"
-                variant={status === value ? "default" : "outline"}
-                aria-pressed={status === value}
-                onClick={() => setFilters({ status: value })}
-              >
-                {value}
-              </Button>
-            ))}
-          </Stack>
-        </Stack>
-        <Stack gap={2}>
-          <Label htmlFor="catalog-search">Catalog search</Label>
-          <Input
-            id="catalog-search"
-            type="search"
-            value={q}
-            onChange={(event) => setFilters({ q: event.target.value })}
-            placeholder="Filter by title or need"
+          <CatalogFiltersToolbar
+            area={area}
+            status={status}
+            q={q}
+            statuses={statuses}
+            onFilters={setFilters}
           />
         </Stack>
-      </Stack>
-      <CatalogResultsHeader filtered={filtered} />
-      </Stack>
       </Section>
-      <Container width="wide" className="py-section-lg">
-        <CatalogResultsBodyLazy filtered={filtered} />
+      <Container width="wide" className="pt-3 pb-section-lg">
+        <Stack gap={3}>
+          <div id="catalog-results-heading" data-catalog-results-heading="">
+            {catalogResultsStatusLine(filtered.length)}
+          </div>
+          <CatalogResultsBodyLazy filtered={filtered} />
+        </Stack>
       </Container>
     </>
   );
@@ -169,12 +108,22 @@ export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }
   const [filters, setFilterState] = useState<ReturnType<typeof readFilter>>(CATALOG_DEFAULT_FILTERS);
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
+  const qDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const next = readFilter(new URLSearchParams(searchParams.toString()), entries);
     filtersRef.current = next;
     setFilterState(next);
   }, [entries, searchParams]);
+
+  function pushFilterUrl(parsed: ReturnType<typeof readFilter>) {
+    const params = new URLSearchParams();
+    if (parsed.area !== "all") params.set("area", parsed.area);
+    if (parsed.status !== "all") params.set("status", parsed.status);
+    if (parsed.q) params.set("q", parsed.q);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
     const merged = { ...filtersRef.current, ...next };
@@ -185,8 +134,17 @@ export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }
     const parsed = readFilter(params, entries);
     filtersRef.current = parsed;
     setFilterState(parsed);
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+
+    if (next.q !== undefined) {
+      if (qDebounceRef.current) clearTimeout(qDebounceRef.current);
+      qDebounceRef.current = setTimeout(() => pushFilterUrl(parsed), 120);
+      return;
+    }
+    if (qDebounceRef.current) {
+      clearTimeout(qDebounceRef.current);
+      qDebounceRef.current = null;
+    }
+    pushFilterUrl(parsed);
   }
 
   return (

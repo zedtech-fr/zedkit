@@ -1,8 +1,10 @@
 "use client";
 
+import { FolderKanban, Server, Settings } from "lucide-react";
 import { useState } from "react";
 import {
   AppShell,
+  Badge,
   Button,
   ConfirmDialog,
   DataTable,
@@ -22,8 +24,11 @@ import {
   PageHeader,
   Stack,
   Text,
+  cn,
   createDataTableColumns,
 } from "@zedtech/zedkit-ui";
+import { adminDashboardGuideCopy } from "@/components/demos/i18n/admin-dashboard-guide-copy";
+import { usePreviewMobile } from "@/components/preview-viewport";
 
 interface ItemRow {
   name: string;
@@ -32,10 +37,7 @@ interface ItemRow {
 
 const columnHelper = createDataTableColumns<ItemRow>();
 
-const seed: ItemRow[] = [
-  { name: "reports-api", status: "active" },
-  { name: "billing-worker", status: "paused" },
-];
+const seed: ItemRow[] = [...adminDashboardGuideCopy.seed];
 
 function EditItemDrawer({
   item,
@@ -58,18 +60,18 @@ function EditItemDrawer({
     >
       <DrawerTrigger asChild>
         <Button variant="outline" size="sm">
-          Edit
+          {adminDashboardGuideCopy.edit}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHandle />
         <DrawerHeader>
-          <DrawerTitle>Edit {item.name}</DrawerTitle>
-          <DrawerDescription>Update the display name. Focus returns here when you close the drawer.</DrawerDescription>
+          <DrawerTitle>{adminDashboardGuideCopy.editTitle(item.name)}</DrawerTitle>
+          <DrawerDescription>{adminDashboardGuideCopy.editDescription}</DrawerDescription>
         </DrawerHeader>
         <DrawerBody>
           <Field>
-            <FieldLabel htmlFor={`name-${item.name}`}>Name</FieldLabel>
+            <FieldLabel htmlFor={`name-${item.name}`}>{adminDashboardGuideCopy.nameLabel}</FieldLabel>
             <Input
               id={`name-${item.name}`}
               value={name}
@@ -85,11 +87,11 @@ function EditItemDrawer({
               setOpen(false);
             }}
           >
-            Save
+            {adminDashboardGuideCopy.save}
           </Button>
           <DrawerClose asChild>
             <Button type="button" variant="outline">
-              Close
+              {adminDashboardGuideCopy.close}
             </Button>
           </DrawerClose>
         </DrawerFooter>
@@ -98,15 +100,67 @@ function EditItemDrawer({
   );
 }
 
+function Sidebar() {
+  return (
+    <Stack gap={4} className="h-full p-3">
+      <Stack gap={1}>
+        <Text className="font-semibold">{adminDashboardGuideCopy.brand}</Text>
+        <Text variant="muted" className="text-xs">
+          {adminDashboardGuideCopy.product}
+        </Text>
+      </Stack>
+      <nav aria-label={adminDashboardGuideCopy.navAria}>
+        <Stack gap={1}>
+          <Button type="button" variant="secondary" className="w-full justify-start gap-2" aria-current="page">
+            <FolderKanban className="size-4" aria-hidden />
+            {adminDashboardGuideCopy.nav.projects}
+          </Button>
+          <Button type="button" variant="ghost" className="w-full justify-start gap-2">
+            <Server className="size-4" aria-hidden />
+            {adminDashboardGuideCopy.nav.services}
+          </Button>
+          <Button type="button" variant="ghost" className="w-full justify-start gap-2">
+            <Settings className="size-4" aria-hidden />
+            {adminDashboardGuideCopy.nav.settings}
+          </Button>
+        </Stack>
+      </nav>
+    </Stack>
+  );
+}
+
+function TopBar() {
+  return (
+    <Stack direction="horizontal" gap={2} className="justify-end px-4 py-2">
+      <Text
+        as="span"
+        aria-hidden="true"
+        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+      >
+        {adminDashboardGuideCopy.initials}
+      </Text>
+      <Text as="span" className="text-sm font-medium">
+        {adminDashboardGuideCopy.user}
+      </Text>
+    </Stack>
+  );
+}
+
 export function AdminDashboardGuideDemo() {
+  const mobile = usePreviewMobile();
   const [rows, setRows] = useState<ItemRow[]>(() => [...seed]);
 
   const columns = [
-    columnHelper.accessor("name", { header: "Name" }),
-    columnHelper.accessor("status", { header: "Status" }),
+    columnHelper.accessor("name", { header: adminDashboardGuideCopy.columns.name }),
+    columnHelper.accessor("status", {
+      header: adminDashboardGuideCopy.columns.status,
+      cell: ({ getValue }) => (
+        <Badge variant={getValue() === "active" ? "success" : "warning"}>{getValue()}</Badge>
+      ),
+    }),
     columnHelper.display({
       id: "actions",
-      header: "Actions",
+      header: adminDashboardGuideCopy.columns.actions,
       cell: ({ row }: { row: { original: ItemRow; id: string } }) => (
         <Stack direction="horizontal" gap={2}>
           <EditItemDrawer
@@ -116,9 +170,9 @@ export function AdminDashboardGuideDemo() {
             }}
           />
           <ConfirmDialog
-            trigger={<Button variant="destructive" size="sm">Delete</Button>}
-            title={`Delete ${row.original.name}?`}
-            description="This removes the row from the table in this demo."
+            trigger={<Button variant="destructive" size="sm">{adminDashboardGuideCopy.delete}</Button>}
+            title={adminDashboardGuideCopy.deleteTitle(row.original.name)}
+            description={adminDashboardGuideCopy.deleteDescription}
             onConfirm={() => {
               setRows((current) => current.filter((entry) => entry.name !== row.original.name));
             }}
@@ -129,15 +183,18 @@ export function AdminDashboardGuideDemo() {
   ];
 
   return (
-    <AppShell
-      className="max-h-[min(32rem,70vh)] min-h-0 overflow-auto rounded-lg border"
-      sidebar={<Text className="p-4 text-sm">Projects</Text>}
-      topbar={<Text className="px-4 py-3 text-sm">Account</Text>}
-    >
-      <Stack gap={6} className="p-4 md:p-6">
-        <PageHeader title="Items" description="Admin shell, sortable table, drawer form, and confirm dialog." />
-        <DataTable columns={columns} data={rows} pageSize={10} />
-      </Stack>
-    </AppShell>
+    <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-hidden rounded-lg border border-border bg-background">
+      <AppShell
+        className={cn("h-full min-h-0 [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+        sidebar={<Sidebar />}
+        topbar={<TopBar />}
+      >
+        <PageHeader
+          title={adminDashboardGuideCopy.pageTitle}
+          description={adminDashboardGuideCopy.pageDescription}
+        />
+        <DataTable columns={columns} data={rows} pageSize={6} />
+      </AppShell>
+    </Stack>
   );
 }

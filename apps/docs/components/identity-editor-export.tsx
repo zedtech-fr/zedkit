@@ -13,6 +13,7 @@ import {
   tokensToCss,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 
 function copyText(value: string, onDone: () => void) {
   const clipboard = navigator.clipboard;
@@ -46,9 +47,9 @@ function CopyButton({
   return (
     <ConfirmDialog
       trigger={trigger}
-      title="Contrast below WCAG AA"
-      description="Some text or control colours fail 4.5:1 (or 3:1 for accents and borders). Exporting them can make copy unreadable. Fix the warnings above, or export anyway if you accept the risk."
-      confirmLabel="Export anyway"
+      title={identityEditorCopy.export.contrastTitle}
+      description={identityEditorCopy.export.contrastDescription}
+      confirmLabel={identityEditorCopy.export.confirmLabel}
       onConfirm={() => copyText(value, onCopied)}
     />
   );
@@ -68,20 +69,20 @@ function IdentityEditorExport({ tokens }: { tokens: IdentityTokens }) {
     <Stack gap={3} data-slot="identity-editor-export">
       {blocked ? (
         <Text role="status" variant="muted">
-          Copy is blocked until you fix contrast warnings or confirm export.
+          {identityEditorCopy.export.blocked}
         </Text>
       ) : null}
       <Field>
-        <FieldLabel htmlFor="identity-editor-css">CSS</FieldLabel>
+        <FieldLabel htmlFor="identity-editor-css">{identityEditorCopy.export.css}</FieldLabel>
         <Textarea id="identity-editor-css" readOnly value={css} className="font-mono" />
       </Field>
-      <CopyButton label="Copy CSS" value={css} blocked={blocked} onCopied={() => mark("css")} />
+      <CopyButton label={identityEditorCopy.export.copyCss} value={css} blocked={blocked} onCopied={() => mark("css")} />
       <Field>
-        <FieldLabel htmlFor="identity-editor-json">JSON</FieldLabel>
+        <FieldLabel htmlFor="identity-editor-json">{identityEditorCopy.export.json}</FieldLabel>
         <Textarea id="identity-editor-json" readOnly value={json} className="font-mono" />
       </Field>
-      <CopyButton label="Copy JSON" value={json} blocked={blocked} onCopied={() => mark("json")} />
-      {copied ? <Text role="status">Copied {copied === "css" ? "CSS" : "JSON"}.</Text> : null}
+      <CopyButton label={identityEditorCopy.export.copyJson} value={json} blocked={blocked} onCopied={() => mark("json")} />
+      {copied ? <Text role="status">{identityEditorCopy.export.copied(copied)}</Text> : null}
     </Stack>
   );
 }

@@ -20,10 +20,7 @@
       "props": "ButtonProps",
       "source": "button.tsx",
       "demo": "ButtonDemo",
-      "propsPriority": ["variant", "size", "asChild"],
-      "examples": {
-        "Variants and sizes": "ButtonDemo"
-      }
+      "propsPriority": ["variant", "size", "asChild"]
     },
     "Show a status or count badge": {
       "package": "@zedtech/zedkit-ui",
@@ -509,7 +506,9 @@
       "source": "scroll-scenes.tsx",
       "demo": "ScrollScenesDemo",
       "examples": {
-        "Before and after": "ScrollScenesBeforeAfterDemo"
+        "Before and after": "ScrollScenesBeforeAfterDemo",
+        "Same product in three looks": "ScrollScenesLooksDemo",
+        "Pricing walkthrough": "ScrollScenesPricingDemo"
       }
     },
     "Switch the visual identity with one attribute": {

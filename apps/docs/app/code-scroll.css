@@ -30,6 +30,7 @@ figure.shiki pre .line {
 }
 
 figure.shiki [role="region"] {
+  padding-inline-end: 2.75rem;
   mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
   -webkit-mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
 }

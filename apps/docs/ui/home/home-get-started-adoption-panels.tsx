@@ -1,7 +1,7 @@
 "use client";
 
-import { Button, Stack, Text } from "@zedtech/zedkit-ui";
-import { HOME_PERSUASION_TEXT_CLASS } from "@/ui/home/home-rhythm";
+import { Button, Stack } from "@zedtech/zedkit-ui";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 export function HomeGetStartedPathTabs({
   path,
@@ -11,7 +11,7 @@ export function HomeGetStartedPathTabs({
   onPath: (path: "npm" | "registry") => void;
 }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap" role="tablist" aria-label="Install path">
+    <Stack direction="horizontal" gap={2} className="flex-wrap" role="tablist" aria-label={homeCopy.getStarted.adoption.pathTabsAriaLabel}>
       <Button
         type="button"
         role="tab"
@@ -21,7 +21,7 @@ export function HomeGetStartedPathTabs({
         className="min-h-11"
         onClick={() => onPath("npm")}
       >
-        npm
+        {homeCopy.getStarted.adoption.pathNpm}
       </Button>
       <Button
         type="button"
@@ -32,7 +32,7 @@ export function HomeGetStartedPathTabs({
         className="min-h-11"
         onClick={() => onPath("registry")}
       >
-        Copy source
+        {homeCopy.getStarted.adoption.pathCopySource}
       </Button>
     </Stack>
   );
@@ -40,17 +40,8 @@ export function HomeGetStartedPathTabs({
 
 export function HomeGetStartedStyledResult() {
   return (
-    <Stack
-      gap={2}
-      className="min-w-0 items-start justify-center rounded-md border border-border bg-background p-6"
-      data-home-get-started-result=""
-    >
-      <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-        Styled result
-      </Text>
-      <Button type="button" tabIndex={-1}>
-        Save
-      </Button>
-    </Stack>
+    <Button type="button" tabIndex={-1} className="w-fit" data-home-get-started-result="">
+      {homeCopy.getStarted.adoption.save}
+    </Button>
   );
 }

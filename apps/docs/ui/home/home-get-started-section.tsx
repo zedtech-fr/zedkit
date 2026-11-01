@@ -9,6 +9,7 @@ import { registryShadcnAddCommand } from "@/lib/registry-shadcn-command";
 import { registryShadcnGithubCommand } from "@/lib/registry-shadcn-github-command";
 import { HomeGetStartedCopy } from "@/ui/home/home-get-started-copy";
 import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_REVEAL_CLASS } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 const SNIPPETS_DIR = join(process.cwd(), "home-quickstart", "snippets");
 
@@ -51,8 +52,8 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       spacing="md"
       containerWidth="wide"
       id="get-started"
-      title="Get started"
-      description="Install from npm, import a component, and render it in your app."
+      title={homeCopy.getStarted.section.title}
+      description={homeCopy.getStarted.section.description}
       className={HOME_SECTION_REVEAL_CLASS}
       {...HOME_MARKETING_ROOT_PROPS}
     >

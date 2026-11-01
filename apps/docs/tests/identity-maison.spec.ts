@@ -36,7 +36,7 @@ test.describe("maison identity", () => {
     expect(heading).toContain('"Cormorant Variable Fallback"');
     await expect.poll(() => page.evaluate(() => document.fonts.check('16px "Jost Variable"'))).toBe(true);
     await expect.poll(() => page.evaluate(() => document.fonts.check('16px "Cormorant Variable"'))).toBe(true);
-    expect(await probe(page, "border-top-left-radius", "var(--radius-xl)")).toBe("2px");
+    expect(await probe(page, "border-top-left-radius", "var(--radius-xl)", "maison")).toBe("2px");
   });
 
   test("keeps interactions within the caps and saves the slow motion for reveals", async ({ page }) => {

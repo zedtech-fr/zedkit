@@ -1,0 +1,7 @@
+/*
+ * Component catalog pages: section rhythm (VISUAL-CONTRACT).
+ */
+
+#nd-docs-layout [data-slot="section"] figure.shiki {
+  margin-block: 0;
+}

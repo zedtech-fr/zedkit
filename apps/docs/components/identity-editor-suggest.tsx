@@ -15,6 +15,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import {
   requestIdentitySuggest,
   tokenDiff,
@@ -37,14 +38,12 @@ function ColourSwatch({ path, value }: { path: string; value: string }) {
 
 function DiffRows({ current, next }: { current: IdentityTokens; next: IdentityTokens }) {
   const rows = tokenDiff(current, next);
-  if (rows.length === 0) return <Text>No token changes.</Text>;
+  if (rows.length === 0) return <Text>{identityEditorCopy.suggest.noChanges}</Text>;
   return (
     <Stack gap={1} data-slot="identity-editor-suggest-diff">
       {rows.map((row) => (
         <Stack key={row.path} direction="horizontal" gap={2}>
-          <Text>
-            {row.path}: {row.from} → {row.to}
-          </Text>
+          <Text>{identityEditorCopy.suggest.diffRow(row.path, row.from, row.to)}</Text>
           <ColourSwatch path={row.path} value={row.to} />
         </Stack>
       ))}
@@ -56,9 +55,7 @@ function ContrastPreview({ tokens }: { tokens: IdentityTokens }) {
   const warnings = identityContrastWarnings(tokens);
   if (warnings.length === 0) {
     return (
-      <Text>
-        Contrast check passed (body, primary, and muted text 4.5:1; accent and border 3:1).
-      </Text>
+      <Text>{identityEditorCopy.suggest.contrastPassed}</Text>
     );
   }
   return (
@@ -67,7 +64,7 @@ function ContrastPreview({ tokens }: { tokens: IdentityTokens }) {
         const label = identityContrastTokenLabel(warning.token);
         return (
           <Badge key={`${warning.scheme}-${warning.token}`} variant="warning">
-            {warning.scheme} {label} {warning.ratio}:1 (need {warning.min}:1)
+            {identityEditorCopy.fields.contrastBadge(warning.scheme, label, warning.ratio, warning.min)}
           </Badge>
         );
       })}
@@ -102,15 +99,15 @@ function ProposalCard({
             checked={applySite}
             onCheckedChange={(value) => onApplySite(value === true)}
           />
-          <FieldLabel htmlFor="identity-editor-suggest-site">Also apply to the whole site</FieldLabel>
+          <FieldLabel htmlFor="identity-editor-suggest-site">{identityEditorCopy.suggest.applySite}</FieldLabel>
         </Stack>
       </Field>
       <Stack direction="horizontal" gap={2}>
         <Button type="button" onClick={onApply}>
-          Apply
+          {identityEditorCopy.suggest.apply}
         </Button>
         <Button type="button" variant="outline" onClick={onDiscard}>
-          Discard
+          {identityEditorCopy.suggest.discard}
         </Button>
       </Stack>
     </Stack>
@@ -141,9 +138,9 @@ function IdentityEditorSuggest({
 
   return (
     <Stack gap={3} data-slot="identity-editor-suggest">
-      <Text>Describe a look, then Suggest. Review the list before Apply.</Text>
+      <Text>{identityEditorCopy.suggest.intro}</Text>
       <Field>
-        <FieldLabel htmlFor="identity-editor-suggest">Request</FieldLabel>
+        <FieldLabel htmlFor="identity-editor-suggest">{identityEditorCopy.suggest.request}</FieldLabel>
         <Input
           id="identity-editor-suggest"
           value={prompt}
@@ -154,9 +151,9 @@ function IdentityEditorSuggest({
         />
       </Field>
       <Button type="button" onClick={runSuggest} disabled={busy || prompt.trim() === ""}>
-        Suggest
+        {identityEditorCopy.suggest.suggest}
       </Button>
-      {busy ? <Text role="status">Suggesting…</Text> : null}
+      {busy ? <Text role="status">{identityEditorCopy.suggest.suggesting}</Text> : null}
       {proposal ? (
         <ProposalCard
           current={tokens}

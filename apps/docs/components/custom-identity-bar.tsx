@@ -21,6 +21,7 @@ import {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
   isDocsSiteIdentityOptIn,
 } from "@/lib/site-identity-storage";
+import { customIdentityBarCopy } from "@/components/i18n/custom-identity-bar-copy";
 
 function subscribe(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);
@@ -53,8 +54,8 @@ function CustomIdentityBar() {
       role="status"
       className="items-center border-b border-border bg-muted/40 px-4 py-2"
     >
-      <Badge variant="secondary">Custom identity active</Badge>
-      <Text className="text-muted-foreground">You applied a custom look to the whole site.</Text>
+      <Badge variant="secondary">{customIdentityBarCopy.badge}</Badge>
+      <Text className="text-muted-foreground">{customIdentityBarCopy.status}</Text>
       <Button
         type="button"
         size="sm"
@@ -66,7 +67,7 @@ function CustomIdentityBar() {
           applyIdentity(DEFAULT_IDENTITY, DOCS_SITE_IDENTITY_STORAGE_KEY);
         }}
       >
-        Back to default
+        {customIdentityBarCopy.backToDefault}
       </Button>
     </Stack>
   );

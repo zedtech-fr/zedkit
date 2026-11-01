@@ -252,6 +252,9 @@
 :root[data-identity="glass"] :where([data-slot="drawer-overlay"], [data-slot="dialog-overlay"]):where(:not([data-identity-scope] *)),
 [data-identity-scope][data-identity="glass"] :where([data-slot="drawer-overlay"], [data-slot="dialog-overlay"]) {
   background-color: hsl(var(--overlay) / var(--zk-glass-scrim-alpha));
+  /* Blur lives on the panel; a filtered scrim would become the backdrop root. */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 /* Phones: a smaller blur radius keeps scrolling smooth. */

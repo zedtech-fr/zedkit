@@ -82,7 +82,7 @@ test.describe("scroll scenes previews", () => {
           await page.setViewportSize({ width, height });
           await openDocs(page, SCENES, identity, mode);
           const previews = page.locator("[data-component-preview]");
-          await expect(previews).toHaveCount(2);
+          await expect(previews).toHaveCount(4);
 
           const supported = await page.evaluate(() => CSS.supports("animation-timeline: view()"));
           const tour = previews.nth(0).locator("[data-scroll-scenes]");
@@ -132,6 +132,13 @@ test.describe("scroll scenes previews", () => {
             expect(seen[0]!.active).toBe("before");
             expect(seen[seen.length - 1]!.active).toBe("after");
           }
+
+          const looks = previews.nth(2).locator("[data-scroll-scenes]");
+          await expect(looks).toHaveAttribute("data-scene-count", "3");
+          await expect(looks.locator("[data-scroll-scene]")).toHaveCount(3);
+          const pricing = previews.nth(3).locator("[data-scroll-scenes]");
+          await expect(pricing).toHaveAttribute("data-scene-count", "3");
+          await expect(pricing.getByText("$29")).toBeVisible();
 
           await page.evaluate(() => window.scrollTo(0, 0));
           await assertA11yGate(page, "[data-component-preview]");

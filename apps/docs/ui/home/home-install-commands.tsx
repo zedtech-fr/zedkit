@@ -10,6 +10,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 import { HomeCopyableCommand } from "@/ui/home/home-copyable-command";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 type InstallPath = "npm" | "registry";
 
@@ -22,13 +23,18 @@ export function HomeInstallCommands({
 }) {
   const [path, setPath] = useState<InstallPath>("npm");
   const command = path === "npm" ? packageInstallCmd : registryInstallCmd;
-  const commandLabel = path === "npm" ? "Package install command" : "shadcn registry add command";
+  const commandLabel =
+    path === "npm"
+      ? homeCopy.getStarted.install.ariaPackageInstall
+      : homeCopy.getStarted.install.ariaRegistryInstall;
   const copyLabel =
-    path === "npm" ? "Copy package install command" : "Copy shadcn registry command";
+    path === "npm"
+      ? homeCopy.getStarted.install.copyPackageInstall
+      : homeCopy.getStarted.install.copyRegistryInstall;
 
   return (
     <Stack gap={3} data-home-install-choice="">
-      <Stack direction="horizontal" gap={2} className="flex-wrap items-center" role="tablist" aria-label="Install path">
+      <Stack direction="horizontal" gap={2} className="flex-wrap items-center" role="tablist" aria-label={homeCopy.getStarted.install.pathTabsAriaLabel}>
         <Button
           type="button"
           role="tab"
@@ -38,7 +44,7 @@ export function HomeInstallCommands({
           className="min-h-11"
           onClick={() => setPath("npm")}
         >
-          npm package
+          {homeCopy.getStarted.install.pathNpmPackage}
         </Button>
         <Button
           type="button"
@@ -49,13 +55,11 @@ export function HomeInstallCommands({
           className="min-h-11"
           onClick={() => setPath("registry")}
         >
-          Copy source
+          {homeCopy.getStarted.install.pathCopySource}
         </Button>
       </Stack>
       <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-        {path === "npm"
-          ? "Full kit on npm — one import surface and theme CSS from the package."
-          : "Paste component source into your repo when you already use the shadcn CLI."}
+        {path === "npm" ? homeCopy.getStarted.install.npmHint : homeCopy.getStarted.install.registryHint}
       </Text>
       <HomeCopyableCommand value={command} ariaLabel={commandLabel} copyLabel={copyLabel} />
     </Stack>

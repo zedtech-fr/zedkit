@@ -31,6 +31,10 @@ describe("frontend rules", () => {
     expect(text).toContain("generated-but-unread");
     expect(text).toContain("do not copy a weak pattern");
     expect(text).toContain("one surface role");
+    expect(text).toContain("min-h-svh");
+    expect(text).toContain("overlay is a sibling");
+    expect(text).toContain(".rdp-day");
+    expect(text).toContain("overflow-clip");
   });
 
   it("treats visual gates as necessary not sufficient", () => {

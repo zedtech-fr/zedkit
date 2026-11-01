@@ -2,16 +2,26 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, identities } from "@zedtech/zedkit-ui";
 
+import { heroDemoStyleCopy } from "@/components/i18n/hero-demo-style-copy";
+
+export type HeroDemoModePin = "follow" | "light" | "dark";
+
 const MODES = [
-  { id: "light", label: "Light" },
-  { id: "dark", label: "Dark" },
+  { id: "follow", label: heroDemoStyleCopy.modes.follow },
+  { id: "light", label: heroDemoStyleCopy.modes.light },
+  { id: "dark", label: heroDemoStyleCopy.modes.dark },
 ] as const;
 
+export function resolveHeroDemoDark(modePin: HeroDemoModePin, siteDark: boolean): boolean {
+  if (modePin === "follow") return siteDark;
+  return modePin === "dark";
+}
+
 const PREVIEW_MODES = [
-  { id: "ready", label: "Ready" },
-  { id: "loading", label: "Loading" },
-  { id: "empty", label: "Empty" },
-  { id: "error", label: "Error" },
+  { id: "ready", label: heroDemoStyleCopy.previewModes.ready },
+  { id: "loading", label: heroDemoStyleCopy.previewModes.loading },
+  { id: "empty", label: heroDemoStyleCopy.previewModes.empty },
+  { id: "error", label: heroDemoStyleCopy.previewModes.error },
 ] as const;
 
 export function HeroDemoIdentitySelect({ look, onLook }: { look: string; onLook: (id: string) => void }) {
@@ -19,9 +29,9 @@ export function HeroDemoIdentitySelect({ look, onLook }: { look: string; onLook:
     <Select value={look} onValueChange={onLook}>
       <SelectTrigger
         className="h-9 min-w-0 flex-1 border-border/70 bg-transparent shadow-none sm:w-32"
-        aria-label="Identity for this demo"
+        aria-label={heroDemoStyleCopy.identityAriaLabel}
       >
-        <SelectValue placeholder="Identity" />
+        <SelectValue placeholder={heroDemoStyleCopy.identityPlaceholder} />
       </SelectTrigger>
       <SelectContent>
         {identities.map((item) => (
@@ -34,12 +44,18 @@ export function HeroDemoIdentitySelect({ look, onLook }: { look: string; onLook:
   );
 }
 
-export function HeroDemoModeSelect({ dark, onDark }: { dark: boolean; onDark: (dark: boolean) => void }) {
+export function HeroDemoModeSelect({
+  modePin,
+  onModePin,
+}: {
+  modePin: HeroDemoModePin;
+  onModePin: (pin: HeroDemoModePin) => void;
+}) {
   return (
-    <Select value={dark ? "dark" : "light"} onValueChange={(value) => onDark(value === "dark")}>
+    <Select value={modePin} onValueChange={(value) => onModePin(value as HeroDemoModePin)}>
       <SelectTrigger
         className="h-9 w-24 border-border/70 bg-transparent shadow-none"
-        aria-label="Color mode for this demo"
+        aria-label={heroDemoStyleCopy.modeAriaLabel}
       >
         <SelectValue />
       </SelectTrigger>
@@ -57,15 +73,17 @@ export function HeroDemoModeSelect({ dark, onDark }: { dark: boolean; onDark: (d
 export function HeroDemoPreviewSelect({
   preview,
   onPreview,
+  className,
 }: {
   preview: string;
   onPreview: (mode: string) => void;
+  className?: string;
 }) {
   return (
     <Select value={preview} onValueChange={onPreview}>
       <SelectTrigger
-        className="h-9 w-28 border-border/70 bg-transparent shadow-none"
-        aria-label="Table preview mode"
+        className={`h-9 w-28 shrink-0 border-border/70 bg-transparent shadow-none ${className ?? ""}`}
+        aria-label={heroDemoStyleCopy.previewAriaLabel}
       >
         <SelectValue />
       </SelectTrigger>

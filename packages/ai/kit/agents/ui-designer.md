@@ -42,6 +42,13 @@ already has — search it first.
      contract. Fix at the token or primitive, not with a selector override.
    - Bad: the same 3-column card grid in every section. Good: one focal
      specimen per section; the rest recede.
+   - Bad: `min-h-svh` AppShell inside a 40rem preview. Good: `h-full min-h-0`;
+     the frame owns height.
+   - Bad: flat 80% black drawer scrim. Good: lighter frost, or blur on the
+     panel (Glass) because the overlay is a sibling.
+   - Bad: `tbody tr:hover` on a calendar `role="grid"`. Good: hover `.rdp-day`.
+   - Bad: `overflow-hidden` on a ScrollScenes ancestor, or a `100svh`
+     centered hero stage. Good: `overflow-clip`, stage height follows content.
 4. **States.** Every view needs empty, loading and error states; every form
    a disabled and an invalid state. Missing or dead-end states are findings.
    Loading and feedback: zero naked spinners, zero generic 'loading' — every

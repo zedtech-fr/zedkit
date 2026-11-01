@@ -20,7 +20,7 @@ test.describe("tide identity", () => {
     expect(h1.family).toBe(body);
     expect(h1.weight).toBe("600");
     await expect.poll(() => page.evaluate(() => document.fonts.check('16px "Inter Variable"'))).toBe(true);
-    expect(await probe(page, "border-top-left-radius", "var(--radius-xl)")).toBe("24px");
+    expect(await probe(page, "border-top-left-radius", "var(--radius-xl)", "tide")).toBe("24px");
   });
 
   test("keeps interaction motion within the caps", async ({ page }) => {

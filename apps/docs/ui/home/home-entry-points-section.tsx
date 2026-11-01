@@ -19,6 +19,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntryPoint[] }) {
   return (
@@ -26,9 +27,9 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
       bleed
       spacing="lg"
       containerWidth="wide"
-      title="Choose an area"
+      title={homeCopy.entryPoints.section.title}
       id="entry-points"
-      description="Four package families in the catalog, with up-to-date counts on each card."
+      description={homeCopy.entryPoints.section.description}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_FOUR_COL}>
@@ -45,7 +46,7 @@ export function HomeEntryPointsSection({ entryPoints }: { entryPoints: HomeEntry
                     {entry.summary}
                   </Text>
                   <Text className={HOME_METADATA_TEXT_CLASS}>
-                    {entry.needCount} documented needs in the catalog
+                    {homeCopy.entryPoints.documentedNeeds(entry.needCount)}
                   </Text>
                   <Button asChild variant="ghost" size="sm" className="w-fit">
                     <Link href={entry.href}>

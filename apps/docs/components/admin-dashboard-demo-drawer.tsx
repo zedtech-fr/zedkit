@@ -18,6 +18,7 @@ import {
 import { AdminDashboardDemoDrawerFields } from "./admin-dashboard-demo-drawer-fields";
 import type { AdminDashboardFormControl } from "./admin-dashboard-demo-form";
 import { type AdminDashboardFormValues } from "./admin-dashboard-demo-types";
+import { adminDashboardDemoCopy } from "@/components/i18n/admin-dashboard-demo-copy";
 
 export function AdminDashboardDemoDrawer({
   open,
@@ -48,17 +49,21 @@ export function AdminDashboardDemoDrawer({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <DrawerHeader>
-              <DrawerTitle>{editingId ? "Edit app" : "Add app"}</DrawerTitle>
-              <DrawerDescription>Name and region are stored in local state only.</DrawerDescription>
+              <DrawerTitle>
+                {editingId ? adminDashboardDemoCopy.drawer.editTitle : adminDashboardDemoCopy.drawer.addTitle}
+              </DrawerTitle>
+              <DrawerDescription>{adminDashboardDemoCopy.drawer.description}</DrawerDescription>
             </DrawerHeader>
             <DrawerBody>
               <AdminDashboardDemoDrawerFields form={form} />
             </DrawerBody>
             <DrawerFooter>
-              <FormSubmit>{editingId ? "Save changes" : "Create app"}</FormSubmit>
+              <FormSubmit>
+                {editingId ? adminDashboardDemoCopy.drawer.saveChanges : adminDashboardDemoCopy.drawer.createApp}
+              </FormSubmit>
               <DrawerClose asChild>
                 <Button type="button" variant="outline">
-                  Cancel
+                  {adminDashboardDemoCopy.drawer.cancel}
                 </Button>
               </DrawerClose>
             </DrawerFooter>

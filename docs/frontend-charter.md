@@ -26,5 +26,6 @@ state the rule; this table is the index.
 | `responsive` | Mobile-first; full-width actions under `md`; no horizontal scroll except inside `Table`. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
 | `copy-next` | One language per screen. Name the next step. Errors say what broke and what to do. | [Shown-once secret](https://zedkit.app/docs/ui/display-a-shown-once-secret-with-copy) |
 | `visual-critique` | review. Lint, types, axe and screenshot diffs are necessary, not sufficient. A rendered-page critique names the strongest remaining weaknesses. A self-assigned score is not done. | [App shell](https://zedkit.app/docs/ui/lay-out-an-admin-page-sidebar-topbar-header) |
+| `visual-traps` | review. Specimen frame height, overlay-sibling blur, identity `--spacing`, calendar grid hover, scroll overflow. | [Visual contract](../apps/docs/VISUAL-CONTRACT.md) |
 | `layers-features` | lint. UI imports ports; adapters at the composition root; model is pure. | [Note list](https://zedkit.app/examples/note-list) |
 | `try-catch` | lint. No raw `try`/`catch`; use `tryCatch` / `tryCatchAsync` from `@zedtech/zedkit-core`. | [Handle errors](https://zedkit.app/docs/core/handle-errors-without-try-catch) |

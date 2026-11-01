@@ -15,6 +15,7 @@ import {
   HOME_METADATA_TEXT_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 function QuickstartPathCard({
   title,
@@ -65,54 +66,60 @@ export function HomeUiQuickstartCopy({
   registryAddCmd: string;
   registryPageTsx: string;
 }) {
+  const q = homeCopy.getStarted.quickstart;
   return (
     <Stack gap={HOME_CARD_CONTENT_GAP} id="quickstart" className="scroll-mt-24">
       <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-        Two self-contained paths — npm installs the package; registry copies{" "}
-        <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>Button</Text> into your
-        tree. Same <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>Save</Text>{" "}
-        button in each.
+        {q.introBeforeButton}
+        <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>
+          {q.introButtonWord}
+        </Text>
+        {q.introMiddle}
+        <Text as="span" className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}>
+          {q.introSaveWord}
+        </Text>
+        {q.introAfterSave}
       </Text>
       <div className={HOME_CARD_GRID_TWO_COL}>
         <QuickstartPathCard
-          title="npm package"
-          description="Install @zedtech/zedkit-ui, wire Tailwind + kit CSS, import Button from the package."
+          title={q.npmCardTitle}
+          description={q.npmCardDescription}
           fields={[
             {
-              label: "Package install command",
+              label: q.npmFields.installLabel,
               value: npmInstallCmd,
-              copyLabel: "Copy npm install command",
+              copyLabel: q.npmFields.installCopy,
             },
             {
-              label: "Tailwind and kit CSS",
+              label: q.npmFields.cssLabel,
               value: npmGlobalsCss,
-              copyLabel: "Copy npm globals.css",
+              copyLabel: q.npmFields.cssCopy,
             },
             {
-              label: "App entry using Button",
+              label: q.npmFields.pageLabel,
               value: npmPageTsx,
-              copyLabel: "Copy npm page.tsx",
+              copyLabel: q.npmFields.pageCopy,
             },
           ]}
         />
         <QuickstartPathCard
-          title="shadcn registry"
-          description="After shadcn init, add theme tokens then button — import from your local components path (no @zedtech/zedkit-ui)."
+          title={q.registryCardTitle}
+          description={q.registryCardDescription}
           fields={[
             {
-              label: "Add theme registry item",
+              label: q.registryFields.themeLabel,
               value: registryThemeAddCmd,
-              copyLabel: "Copy registry theme command",
+              copyLabel: q.registryFields.themeCopy,
             },
             {
-              label: "Add button registry item",
+              label: q.registryFields.buttonLabel,
               value: registryAddCmd,
-              copyLabel: "Copy registry button command",
+              copyLabel: q.registryFields.buttonCopy,
             },
             {
-              label: "App entry using copied Button",
+              label: q.registryFields.pageLabel,
               value: registryPageTsx,
-              copyLabel: "Copy registry page.tsx",
+              copyLabel: q.registryFields.pageCopy,
             },
           ]}
         />

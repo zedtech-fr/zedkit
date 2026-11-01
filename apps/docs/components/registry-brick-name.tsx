@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Stack, Text } from "@zedtech/zedkit-ui";
+import { registryBrickNameCopy } from "@/components/i18n/registry-brick-name-copy";
 import { registryBrickDocHref } from "@/content/registry-site";
 
 const DEFAULT_VISIBLE = 18;
@@ -39,7 +40,7 @@ export function RegistryBrickList({
   return (
     <Stack gap={2} data-registry-bricks="">
       <Text as="p" variant="muted" className="text-xs">
-        {names.length} published {names.length === 1 ? "brick" : "bricks"}
+        {registryBrickNameCopy.published(names.length)}
       </Text>
       <Stack direction="horizontal" gap={2} className="flex-wrap" data-registry-brick-grid="">
         {shown.map((name) => (
@@ -48,7 +49,7 @@ export function RegistryBrickList({
       </Stack>
       {collapsed ? (
         <Link href="/docs/zedkit-and-shadcn" className="w-fit text-sm text-primary underline-offset-4 hover:underline">
-          See all registry bricks
+          {registryBrickNameCopy.seeAll}
         </Link>
       ) : null}
     </Stack>

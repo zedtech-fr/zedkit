@@ -1597,7 +1597,7 @@ import { Tabs } from "@zedtech/zedkit-ui";
 - When to use: Two to eight (`SCROLL_SCENES_MAX`) short scenes that read well one at a time and where scrolling is the natural way to move on.
 - When not to use: Long content, forms or anything focusable inside a scene — invisible scenes stay in the accessibility tree, so keep scene visuals non-interactive (`aria-hidden` and `inert`); steps the user must pick themselves — use `Tabs` or `WizardSteps`.
 - See also: `Switch between tabbed panels`
-- Examples: Pinned feature tour, Before and after
+- Examples: Pinned feature tour, Before and after, Same product in three looks, Pricing walkthrough
 - A11y: Captions are real text in a fixed order and are never hidden (opacity only), so put the message in the caption and treat the visual as decoration: mark it `aria-hidden="true"` and `inert` so it adds no tab stop and no duplicate announcement. Under `prefers-reduced-motion: reduce`, in browsers without scroll timelines (Firefox, Safari before 26) and in very short windows, the scenes are plain blocks one under the other with the same content. A decorative progress rail is `aria-hidden`. Give each caption a heading one level under the section title so screen reader users can jump scene by scene.
 - Troubleshooting: Nothing is pinned — you need two to eight scenes, the browser needs `animation-timeline: view()` and the window at least 34rem tall; otherwise you get the stacked layout by design. Stage hides under a fixed header — set `--zk-scenes-top` to the header height. Scenes change too fast or slowly — set `--zk-scenes-step` (scroll distance per scene, default 60svh). Content cut at the bottom — the stage is one screen tall; shorten the scene or hide secondary parts on small screens. Pinning stops inside a box — a parent with `overflow: hidden` or `auto` becomes the scroll container; keep the component in the normal page flow. The scenes stack in your own preview — `prefers-reduced-motion: reduce` is on in the OS or the browser; this is the intended fallback.
 
@@ -1659,6 +1659,64 @@ import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit
       ),
     },
   ]}
+/>
+```
+
+```ts
+import { Heading, ScrollScenes, Stack, Text, ThemeScope } from "@zedtech/zedkit-ui";
+
+const looks = [
+  { id: "mist", title: "Mist", text: "The stock look: quiet chrome, Inter." },
+  { id: "press", title: "Press", text: "Editorial type for a reading product." },
+  { id: "tide", title: "Tide", text: "Warm colour and a bit more space." },
+];
+
+<ScrollScenes
+  className="[--zk-scenes-top:4.5rem]"
+  scenes={looks.map((look) => ({
+    id: look.id,
+    caption: (
+      <Stack gap={2}>
+        <Heading level={3}>{look.title}</Heading>
+        <Text variant="muted">{look.text}</Text>
+      </Stack>
+    ),
+    children: (
+      <ThemeScope identity={look.id} aria-hidden="true" inert>
+        <Text className="font-semibold">Harbor Studio</Text>
+        <Text variant="muted">Project tracker</Text>
+      </ThemeScope>
+    ),
+  }))}
+/>
+```
+
+```ts
+import { Heading, ScrollScenes, Stack, Text } from "@zedtech/zedkit-ui";
+
+const plans = [
+  { id: "solo", title: "Solo", text: "One person, one project.", price: "$0" },
+  { id: "crew", title: "Crew", text: "A small team, one workspace.", price: "$29" },
+  { id: "studio", title: "Studio", text: "Every workspace, with SSO.", price: "$99" },
+];
+
+<ScrollScenes
+  className="[--zk-scenes-top:4.5rem]"
+  scenes={plans.map((plan) => ({
+    id: plan.id,
+    caption: (
+      <Stack gap={2}>
+        <Heading level={3}>{plan.title}</Heading>
+        <Text variant="muted">{plan.text}</Text>
+      </Stack>
+    ),
+    children: (
+      <Stack aria-hidden="true" inert>
+        <Text className="text-3xl font-semibold">{plan.price}</Text>
+        <Text variant="muted">per month</Text>
+      </Stack>
+    ),
+  }))}
 />
 ```
 

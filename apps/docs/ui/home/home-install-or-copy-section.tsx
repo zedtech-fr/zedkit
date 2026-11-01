@@ -7,6 +7,7 @@ import {
   HOME_CARD_CONTENT_GAP,
   HOME_METADATA_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 export function HomeInstallOrCopySection({
   packageInstallCmd,
@@ -25,7 +26,7 @@ export function HomeInstallOrCopySection({
       />
       <Text className={HOME_METADATA_TEXT_CLASS}>
         <Link href="/docs" className="underline-offset-4 hover:underline">
-          {registryComponentCount} components available in the registry → Catalog
+          {homeCopy.getStarted.install.registryCatalogLink(registryComponentCount)}
         </Link>
       </Text>
     </Stack>

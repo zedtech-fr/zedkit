@@ -32,21 +32,22 @@ export function HomeCopyableCommand({
   return (
     <div
       data-install-command=""
-      className="relative min-w-0 rounded-md border border-border/80 bg-muted/20"
+      className="flex min-w-0 items-center gap-2 rounded-md border border-border bg-muted/30 py-1 pr-1 pl-3"
     >
+      {/* A span, not <pre>/<code>: the identity bridge draws chrome on both. */}
       <div
         tabIndex={0}
         role="region"
-        className={`${HOME_SMALL_TEXT_CLASS} overflow-x-auto p-3 pr-12 font-mono leading-relaxed whitespace-nowrap`}
+        className={`${HOME_SMALL_TEXT_CLASS} min-w-0 flex-1 overflow-x-auto py-2 font-mono leading-none whitespace-nowrap`}
         aria-label={ariaLabel}
       >
-        <pre className="m-0 font-[inherit] leading-[inherit] whitespace-nowrap text-[inherit]">{value}</pre>
+        <span>{value}</span>
       </div>
       <Button
         type="button"
         variant="ghost"
         size="icon"
-        className="absolute top-2 right-2"
+        className="shrink-0"
         aria-label={copyLabel}
         onClick={copy}
       >

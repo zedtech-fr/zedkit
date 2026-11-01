@@ -1,0 +1,120 @@
+/*
+ * Home hero: reuse ScrollScenes pinning, but keep one lead and fade only
+ * the right-hand examples. Extra examples stay off on phones (priority)
+ * and when motion is reduced.
+ */
+#home-page [data-home-hero-scenes] {
+  --zk-scenes-top: 4.5rem;
+  --zk-scenes-bottom: 1.75rem;
+  --zk-scenes-step: 60svh;
+}
+
+#home-page [data-home-hero-visuals] {
+  display: grid;
+  min-width: 0;
+}
+
+#home-page [data-home-hero-visuals] > [data-scroll-scene] {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  align-items: center;
+}
+
+#home-page [data-home-hero-visuals] [data-scroll-scene-visual] {
+  min-width: 0;
+  width: 100%;
+}
+
+@media (min-width: 64rem) {
+  #home-page [data-home-hero-scenes] [data-scroll-scenes-stage] {
+    display: grid;
+    align-content: center;
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    column-gap: 2.5rem;
+  }
+
+  #home-page [data-home-hero-scenes] [data-home-hero-lead] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #home-page [data-home-hero-scenes] [data-home-hero-preview] {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+}
+
+@media (width < 64rem) {
+  #home-page [data-home-hero-scenes][data-scene-count] {
+    height: auto;
+    view-timeline: none;
+  }
+
+  #home-page [data-home-hero-scenes] [data-scroll-scenes-stage] {
+    position: static;
+    display: flex;
+    height: auto;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  #home-page [data-home-hero-scenes] [data-scroll-scene]:not([data-scroll-scene="admin"]),
+  #home-page [data-home-hero-scenes] [data-scroll-scenes-progress] {
+    display: none;
+  }
+
+  #home-page [data-home-hero-scenes] [data-scroll-scene] {
+    animation: none;
+    opacity: 1;
+    translate: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 64rem) and (min-height: 34rem) {
+  @supports (animation-timeline: view()) {
+    #home-page [data-home-hero-scenes][data-scene-count] {
+      --zk-stage: calc(100svh - var(--zk-scenes-top) - var(--zk-scenes-bottom));
+    }
+
+    #home-page [data-home-hero-scenes][data-scene-count] [data-scroll-scenes-stage] {
+      height: auto;
+      min-height: var(--zk-stage);
+      overflow: visible;
+      padding-bottom: 2.25rem;
+    }
+
+    #home-page [data-home-hero-scenes] [data-home-hero-lead] {
+      animation: zk-home-hero-lead linear both;
+      animation-timeline: --zk-scenes;
+      animation-range: contain 0% contain 100%;
+    }
+
+    #home-page [data-home-hero-scenes] [data-home-hero-preview],
+    #home-page [data-home-hero-scenes] [data-scroll-scene-visual] {
+      max-height: none;
+      overflow: visible;
+    }
+
+    #home-page [data-home-hero-visuals] > [data-scroll-scene] {
+      grid-area: 1 / 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #home-page [data-home-hero-visuals] > [data-scroll-scene]:not([data-scroll-scene="admin"]) {
+    display: none;
+  }
+}
+
+@keyframes zk-home-hero-lead {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -1.25rem;
+  }
+}

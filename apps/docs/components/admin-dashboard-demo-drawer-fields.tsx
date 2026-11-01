@@ -16,6 +16,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { AdminDashboardFormControl } from "./admin-dashboard-demo-form";
+import { adminDashboardDemoCopy } from "@/components/i18n/admin-dashboard-demo-copy";
 
 export function AdminDashboardDemoDrawerFields({
   form,
@@ -29,7 +30,7 @@ export function AdminDashboardDemoDrawerFields({
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>{adminDashboardDemoCopy.drawer.fieldName}</FormLabel>
             <FormControl>
               <Input {...field} autoComplete="off" />
             </FormControl>
@@ -42,16 +43,16 @@ export function AdminDashboardDemoDrawerFields({
         name="region"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Region</FormLabel>
+            <FormLabel>{adminDashboardDemoCopy.drawer.fieldRegion}</FormLabel>
             <Select value={field.value} onValueChange={field.onChange}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Pick a region" />
+                  <SelectValue placeholder={adminDashboardDemoCopy.drawer.regionPlaceholder} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="eu">eu</SelectItem>
-                <SelectItem value="us">us</SelectItem>
+                <SelectItem value="eu">{adminDashboardDemoCopy.drawer.regionEu}</SelectItem>
+                <SelectItem value="us">{adminDashboardDemoCopy.drawer.regionUs}</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

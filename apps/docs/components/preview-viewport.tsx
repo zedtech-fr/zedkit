@@ -5,6 +5,7 @@ import { createContext, useContext, useState, useSyncExternalStore } from "react
 import { useTheme } from "next-themes";
 import { Stack, Tabs, TabsContent, TabsList, TabsTrigger, ThemeScope, cn } from "@zedtech/zedkit-ui";
 import { DemoStyleSelect, usePinnedLook } from "@/components/demo-style-scope";
+import { previewViewportCopy } from "@/components/i18n/preview-viewport-copy";
 
 const noop = () => () => {};
 
@@ -26,7 +27,7 @@ function Segmented({ label, children }: { label: string; children: ReactNode }) 
     <div
       role="group"
       aria-label={label}
-      className="inline-flex items-center rounded-md border border-input bg-background p-0.5"
+      className="inline-flex items-center gap-0.5"
     >
       {children}
     </div>
@@ -47,7 +48,7 @@ function Segment({
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className="min-h-11 rounded px-2.5 text-xs text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground md:min-h-7"
+      className="min-h-11 rounded px-2.5 text-xs text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-7"
     >
       {children}
     </button>
@@ -62,16 +63,19 @@ function Segment({
  */
 export function PreviewFrame({
   center,
+  pinned,
   codePanel,
   children,
 }: {
   center?: boolean;
+  /** Sticky/scroll-driven demos: no scroll container or hidden overflow may sit above them. */
+  pinned?: boolean;
   codePanel: ReactNode;
   children: ReactNode;
 }) {
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(noop, () => true, () => false);
-  const [tab, setTab] = useState("preview");
+  const [tab, setTab] = useState<string>(previewViewportCopy.tabs.preview);
   const [modePin, setModePin] = useState<ModePin>("follow");
   const [mobile, setMobile] = useState(false);
   const demoStyle = usePinnedLook();
@@ -82,7 +86,7 @@ export function PreviewFrame({
     <Tabs value={tab} onValueChange={setTab} className="flex w-full min-w-0 flex-col gap-2">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <TabsList className="h-auto gap-1 rounded-none bg-transparent p-0">
-          {["preview", "code"].map((value) => (
+          {([previewViewportCopy.tabs.preview, previewViewportCopy.tabs.code] as const).map((value) => (
             <TabsTrigger
               key={value}
               value={value}
@@ -92,7 +96,7 @@ export function PreviewFrame({
             </TabsTrigger>
           ))}
         </TabsList>
-        {tab === "preview" ? (
+        {tab === previewViewportCopy.tabs.preview ? (
           <div data-preview-display="" className="flex min-w-0 flex-wrap items-center gap-2">
             <DemoStyleSelect
               look={demoStyle.look}
@@ -100,29 +104,32 @@ export function PreviewFrame({
               onPin={demoStyle.pin}
               labelHidden
             />
-            <Segmented label="Width">
+            <Segmented label={previewViewportCopy.width}>
               <Segment pressed={!mobile} onClick={() => setMobile(false)}>
-                Full
+                {previewViewportCopy.full}
               </Segment>
               <Segment pressed={mobile} onClick={() => setMobile(true)}>
-                Mobile
+                {previewViewportCopy.mobile}
               </Segment>
             </Segmented>
-            <Segmented label="Mode">
+            <Segmented label={previewViewportCopy.mode}>
               <Segment pressed={modePin === "follow"} onClick={() => setModePin("follow")}>
-                Site
+                {previewViewportCopy.site}
               </Segment>
               <Segment pressed={modePin === "light"} onClick={() => setModePin("light")}>
-                Light
+                {previewViewportCopy.light}
               </Segment>
               <Segment pressed={modePin === "dark"} onClick={() => setModePin("dark")}>
-                Dark
+                {previewViewportCopy.dark}
               </Segment>
             </Segmented>
           </div>
         ) : null}
       </div>
-      <div data-preview-frame="" className="min-w-0 overflow-hidden rounded-lg border border-border">
+      <div
+        data-preview-frame=""
+        className={cn("min-w-0 rounded-lg border border-border", pinned ? "overflow-clip" : "overflow-hidden")}
+      >
         <TabsContent value="preview" className="mt-0">
           <ThemeScope
             data-preview-surface=""
@@ -132,6 +139,7 @@ export function PreviewFrame({
               // not-prose is a fumadocs escape hatch, not a Tailwind utility.
               // eslint-disable-next-line better-tailwindcss/no-unknown-classes
               "not-prose w-full min-w-0 bg-background p-4 md:p-6",
+              !pinned && "overflow-x-auto",
               mobile && "mx-auto max-w-[390px]",
             )}
           >

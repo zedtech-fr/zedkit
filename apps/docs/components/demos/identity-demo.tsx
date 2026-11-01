@@ -13,6 +13,7 @@ import {
   identities,
   useIdentity,
 } from "@zedtech/zedkit-ui";
+import { identityCopy } from "@/components/demos/i18n/identity-copy";
 
 /** A demo-only storage key keeps the visitor's own docs choice untouched. */
 const DEMO_STORAGE_KEY = "harbor-demo-identity";
@@ -38,7 +39,7 @@ function CurrentLook() {
   const label = identities.find((item) => item.id === current)?.label ?? current;
   return (
     <Text variant="muted" role="status" data-demo-current-look className="m-0!">
-      Current look: <Text as="span" className="font-medium text-foreground">{label}</Text>
+      {identityCopy.switcher.currentLook}<Text as="span" className="font-medium text-foreground">{label}</Text>
     </Text>
   );
 }
@@ -54,14 +55,13 @@ export function IdentitySwitcherDemo() {
         className="min-w-0 flex-wrap items-center justify-between rounded-lg border border-border bg-background px-4 py-3"
       >
         <Text as="span" className="font-semibold">
-          Harbor Studio
+          {identityCopy.studio}
         </Text>
-        <IdentitySwitcher storageKey={DEMO_STORAGE_KEY} showLabel label="Look" />
+        <IdentitySwitcher storageKey={DEMO_STORAGE_KEY} showLabel label={identityCopy.look} />
       </Stack>
       <CurrentLook />
       <Text variant="muted" className="m-0! text-xs">
-        This control restyles the whole page, like in your app. Your choice is kept in this demo only and the page
-        goes back to its own look when you leave.
+        {identityCopy.switcher.note}
       </Text>
     </Stack>
   );
@@ -74,7 +74,7 @@ export function IdentityScopeDemo() {
   return (
     <Stack gap={2} className="min-w-0">
       <Text variant="muted" className="text-xs">
-        Visual variants only — scoped cards and buttons are static in this preview.
+        {identityCopy.scope.note}
       </Text>
       <Stack className="min-w-0 gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-3">
       {SCOPED_LOOKS.map((look) => (
@@ -91,16 +91,16 @@ export function IdentityScopeDemo() {
               {look.label}
             </Heading>
             <Badge variant="secondary" className="w-fit">
-              New
+              {identityCopy.scope.badge}
             </Badge>
           </Stack>
           <Text variant="muted" className="m-0! text-sm">
             {look.description}
           </Text>
           <Stack direction="horizontal" gap={2}>
-            <Button size="sm">Save</Button>
+            <Button size="sm">{identityCopy.scope.save}</Button>
             <Button size="sm" variant="outline">
-              Cancel
+              {identityCopy.scope.cancel}
             </Button>
           </Stack>
         </Stack>
@@ -122,18 +122,18 @@ export function IdentityPickerDemo() {
         className="min-w-0 items-center justify-between rounded-lg border border-border bg-background px-4 py-3"
       >
         <Text as="span" className="font-semibold">
-          Harbor Studio
+          {identityCopy.studio}
         </Text>
         <IdentityPicker
           storageKey={DEMO_STORAGE_KEY}
-          label="Look"
-          description="The page behind this sheet updates as you choose."
+          label={identityCopy.look}
+          description={identityCopy.picker.description}
           identities={identities.filter((item) => ["mist", "press", "tide"].includes(item.id))}
           onIdentityChange={setLast}
         />
       </Stack>
       <Text variant="muted" role="status" className="m-0!">
-        {last ? `Chosen: ${last}` : "Nothing chosen yet."}
+        {last ? identityCopy.picker.chosen(last) : identityCopy.picker.nothing}
       </Text>
     </Stack>
   );

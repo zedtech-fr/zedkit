@@ -42,7 +42,7 @@ export const HOME_CARD_TITLE_CLASS = DOCS_TYPE_H3_CLASS;
 export const HOME_SMALL_TEXT_CLASS = "text-zk-type-small";
 
 /** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
-export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 1270;
+export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 760;
 
 /** Audit L2 mobile: home page scroll height budget at 390px width (40% shorter vs audit baseline). */
 export const HOME_MOBILE_PAGE_MAX_SCROLL_PX = 8000;

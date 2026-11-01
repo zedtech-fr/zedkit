@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { rootLayoutCopy } from "@/app/i18n/root-layout-copy";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { homePage } from "@/lib/site";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
@@ -16,9 +17,12 @@ import "./globals.css";
 import "./code-syntax.css";
 import "./docs-typography.css";
 import "./docs-shell-tokens.css";
+import "./home-hero-scenes.css";
+import "./catalog-shell.css";
 import "./tide-fit.css";
 import "./docs-tables.css";
 import "./code-scroll.css";
+import "./docs-component-page.css";
 import "./fonts";
 
 const baseMetadata = docsPageMetadata("/", homePage);
@@ -27,7 +31,7 @@ export const metadata: Metadata = {
   ...baseMetadata,
   title: {
     default: homePage.title,
-    template: `%s · ${homePage.title}`,
+    template: rootLayoutCopy.titleTemplate(homePage.title),
   },
 };
 

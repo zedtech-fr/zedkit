@@ -1,38 +1,9 @@
 ---
 title: Getting started
-description: Choose a zedkit package, meet the prerequisites, install, and reach a first visible result without reading the whole catalog.
+description: Choose a zedkit package, install or copy source, wire one CSS import, and reach a visible result before you read the whole catalog.
 ---
 
 Every command below is copied from a tested snippet — what you paste is what was run.
-
-## Who this is for
-
-You ship TypeScript apps (React UIs, APIs, content sites, or scripts) and want small,
-versioned packages **or** copied UI source in your repo — not one-off snippets from blog posts.
-You are fine installing from npm or running the shadcn registry when a brick is published.
-
-## When to use zedkit
-
-Use zedkit when a documented need matches yours: the catalog lists imports, maturity,
-and examples that stay aligned with the published package. Prefer your own code when
-the need is highly specific to one product and will not be reused.
-
-Reach for a **thin wrapper** around a mature npm library when zedkit does not list the
-need yet (see the [golden rule](https://github.com/zedtech-fr/zedkit/blob/main/docs/golden-rule.md) in the repo).
-
-Using shadcn/ui today? Read [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for what the UI
-kit wraps, registry install vs npm, and when to stay on upstream shadcn.
-
-## Choose a package
-
-| Area | Packages | Typical first page |
-| --- | --- | --- |
-| <DocsAreaLabel area="ui" /> | `@zedtech/zedkit-ui` | [Quickstart paths B–B′](#quickstart) |
-| <DocsAreaLabel area="backend" /> | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Quickstart paths C–E](#quickstart) |
-| <DocsAreaLabel area="seo" /> | `@zedtech/zedkit-seo`, `@zedtech/zedkit-payload-seo` | [SEO scenario](#seo-scenario) |
-| <DocsAreaLabel area="agents" /> | `@zedtech/zedkit-ai` | [Quickstart path A](#quickstart) |
-
-Install only the packages you need. The docs index groups every catalog entry under these folders.
 
 ## Install or copy
 
@@ -55,32 +26,9 @@ Stable catalog entries (shown **without a badge** on the docs site) follow semve
 
 See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for registry vs npm trade-offs.
 
-## Prerequisites
-
-- **Node.js** 22 or newer and **pnpm** 9 (same as the root README quickstart).
-- **UI work:** React 19 and Tailwind CSS v4 in your app; follow the theme doc for tokens and the `.dark` class.
-- **Agent setup:** a git repo on your machine; pick one provider flag for `zedkit-ai init` (`cursor`, `claude`, `codex`, `muse`, or `all`).
-
 ## Quickstart
 
 Pick one path below (A through E, plus B′ for copied UI). Path A ends with `validate` in the terminal; paths B and B′ with a visible **Save** button; paths C–E with the linked catalog or tutorial page.
-
-### Path A — coding agents (about two minutes)
-
-In your repo root:
-
-```sh
-{{snippet:ai-add.sh}}
-{{snippet:ai-init.sh}}
-```
-
-Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts). Then:
-
-```sh
-{{snippet:ai-validate.sh}}
-```
-
-**First result:** the validate command prints `ok`. If it does not, see [Troubleshooting](#troubleshooting).
 
 <a id="ui-button" />
 
@@ -127,6 +75,23 @@ Import the copied component:
 {{snippet:ui-button-usage.tsx}}
 ```
 
+### Path A — coding agents (about two minutes)
+
+In your repo root:
+
+```sh
+{{snippet:ai-add.sh}}
+{{snippet:ai-init.sh}}
+```
+
+Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts). Then:
+
+```sh
+{{snippet:ai-validate.sh}}
+```
+
+**First result:** the validate command prints `ok`. If it does not, see [Troubleshooting](#troubleshooting).
+
 ### Path C — core helpers (npm only)
 
 In any TypeScript project:
@@ -156,6 +121,41 @@ For a NestJS service, install the factory package first (peer deps in the tutori
 ```
 
 **First result:** a bootstrapped API with validation and safe errors — follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api).
+
+## Who this is for
+
+You ship TypeScript apps (React UIs, APIs, content sites, or scripts) and want small,
+versioned packages **or** copied UI source in your repo — not one-off snippets from blog posts.
+You are fine installing from npm or running the shadcn registry when a brick is published.
+
+## When to use zedkit
+
+Use zedkit when a documented need matches yours: the catalog lists imports, maturity,
+and examples that stay aligned with the published package. Prefer your own code when
+the need is highly specific to one product and will not be reused.
+
+Reach for a **thin wrapper** around a mature npm library when zedkit does not list the
+need yet (see the [golden rule](https://github.com/zedtech-fr/zedkit/blob/main/docs/golden-rule.md) in the repo).
+
+Using shadcn/ui today? Read [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for what the UI
+kit wraps, registry install vs npm, and when to stay on upstream shadcn.
+
+## Choose a package
+
+| Area | Packages | Typical first page |
+| --- | --- | --- |
+| <DocsAreaLabel area="ui" /> | `@zedtech/zedkit-ui` | [Quickstart paths B–B′](#quickstart) |
+| <DocsAreaLabel area="backend" /> | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Quickstart paths C–E](#quickstart) |
+| <DocsAreaLabel area="seo" /> | `@zedtech/zedkit-seo`, `@zedtech/zedkit-payload-seo` | [SEO scenario](#seo-scenario) |
+| <DocsAreaLabel area="agents" /> | `@zedtech/zedkit-ai` | [Quickstart path A](#quickstart) |
+
+Install only the packages you need. The docs index groups every catalog entry under these folders.
+
+## Prerequisites
+
+- **Node.js** 22 or newer and **pnpm** 9 (same as the root README quickstart).
+- **UI work:** React 19 and Tailwind CSS v4 in your app; follow the theme doc for tokens and the `.dark` class.
+- **Agent setup:** a git repo on your machine; pick one provider flag for `zedkit-ai init` (`cursor`, `claude`, `codex`, `muse`, or `all`).
 
 ## Scenario — UI
 

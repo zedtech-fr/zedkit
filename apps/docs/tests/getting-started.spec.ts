@@ -53,6 +53,24 @@ test("getting started is first stop from docs index", async ({ page }) => {
   await expect(page.getByText(/Both end with something you can see/)).toHaveCount(0);
 });
 
+test("getting started leads with install and quickstart before audience guidance", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${BASE}/docs/getting-started`, { waitUntil: "networkidle" });
+  const headings = await page.locator("main h2").evaluateAll((elements) =>
+    elements.map((el) => el.textContent?.replace(/Copy Anchor Link/g, "").trim() ?? ""),
+  );
+  expect(headings.indexOf("Install or copy")).toBeLessThan(headings.indexOf("Who this is for"));
+  expect(headings.indexOf("Quickstart")).toBeLessThan(headings.indexOf("Who this is for"));
+  await expect(page.getByText("pnpm add @zedtech/zedkit-ui").first()).toBeInViewport();
+  const previewAboveAudience = await page.evaluate(() => {
+    const preview = document.querySelector("[data-component-preview]");
+    const who = [...document.querySelectorAll("main h2")].find((h) => h.textContent?.includes("Who this is for"));
+    if (!preview || !who) return false;
+    return preview.getBoundingClientRect().top < who.getBoundingClientRect().top;
+  });
+  expect(previewAboveAudience).toBe(true);
+});
+
 test("getting started documents install or copy paths", async ({ page }) => {
   await page.goto(`${BASE}/docs/getting-started#install-or-copy`, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();

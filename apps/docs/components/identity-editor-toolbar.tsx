@@ -9,6 +9,7 @@ import {
   identities,
   type IdentityOption,
 } from "@zedtech/zedkit-ui";
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 
 type IdentityEditorToolbarProps = {
   identity: string;
@@ -40,7 +41,7 @@ function LookSelect({
   const options = looks.length > 0 ? looks : identities;
   return (
     <Field className="shrink-0">
-      <FieldLabel htmlFor="identity-editor-look">Look</FieldLabel>
+      <FieldLabel htmlFor="identity-editor-look">{identityEditorCopy.toolbar.look}</FieldLabel>
       <select
         id="identity-editor-look"
         className="h-control-height rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
@@ -78,29 +79,29 @@ function IdentityEditorToolbar({
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
       <Field className="min-w-36">
-        <FieldLabel htmlFor="identity-editor-name">Name</FieldLabel>
+        <FieldLabel htmlFor="identity-editor-name">{identityEditorCopy.toolbar.name}</FieldLabel>
         <Input id="identity-editor-name" value={name} onChange={(event) => onName(event.target.value)} />
       </Field>
       <Button type="button" variant="outline" onClick={onSave} disabled={name.trim() === ""}>
-        Save look
+        {identityEditorCopy.toolbar.saveLook}
       </Button>
       <Button type="button" variant="outline" onClick={onRename} disabled={!namedSelected || name.trim() === ""}>
-        Rename
+        {identityEditorCopy.toolbar.rename}
       </Button>
       <Button type="button" variant="outline" onClick={onDelete} disabled={!namedSelected}>
-        Delete
+        {identityEditorCopy.toolbar.delete}
       </Button>
       <Button type="button" variant="outline" aria-pressed={darkPreview} onClick={onDark}>
-        Dark
+        {identityEditorCopy.toolbar.dark}
       </Button>
       <Button type="button" variant="outline" disabled={!canUndo} onClick={onUndo}>
-        Undo
+        {identityEditorCopy.toolbar.undo}
       </Button>
       <Button type="button" variant="outline" onClick={onReset}>
-        Reset
+        {identityEditorCopy.toolbar.reset}
       </Button>
       <Button type="button" onClick={onApplySite}>
-        Apply to the whole site
+        {identityEditorCopy.toolbar.applySite}
       </Button>
     </Stack>
   );

@@ -3,12 +3,15 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import Link from "next/link";
 import { highlight } from "fumadocs-core/highlight";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import {
   Heading,
   Section,
   Stack,
+  Tabs as KitTabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Text,
 } from "@zedtech/zedkit-ui";
 import { registryBrickNames } from "../content/registry-site";
@@ -20,6 +23,7 @@ import { ComponentWrapsLine } from "./component-wraps-line";
 import { MaturityBadge } from "./maturity-badge";
 import { PropsTable } from "./props-table";
 import { RegistryBrickInlineName } from "./registry-brick-name";
+import { componentPageCopy } from "@/components/i18n/component-page-copy";
 
 export interface CatalogExample {
   title: string;
@@ -57,7 +61,10 @@ export interface ComponentPageProps {
 async function highlightedTs(code: string, title?: string) {
   const highlighted = await highlight(code, { lang: "tsx", components: { pre: Pre } });
   return (
-    <CodeBlock title={title} allowCopy>
+    <CodeBlock
+      {...(title ? { title } : {})}
+      allowCopy
+    >
       {highlighted}
     </CodeBlock>
   );
@@ -115,28 +122,45 @@ export async function ComponentPage({
   const copyable =
     registry.length > 0 && registryBrickNames.includes(registry) && sourcePath !== null;
   const npmInstall = (
-    <Stack gap={4}>
+    <Stack gap={3}>
       <Text variant="muted" className="text-sm">
         {copyable ? (
           <>
-            Install the published package, then import from it. Wire the kit CSS first — see{" "}
+            {componentPageCopy.npmInstallLeadBeforeLink}{" "}
             <Link href="/docs/getting-started#ui-button" className="text-primary underline-offset-4 hover:underline">
-              getting started
+              {componentPageCopy.npmInstallLeadLink}
             </Link>
-            .
+            {componentPageCopy.npmInstallLeadAfterLink}
           </>
         ) : (
-          "This component ships on npm only; there is no copy-source registry brick."
+          componentPageCopy.npmOnlyLead
         )}
       </Text>
-      <Tabs groupId="package-manager" persist items={["pnpm", "npm", "yarn"]}>
-        <Tab value="pnpm">{await highlightedTs(`pnpm add ${packageName}`, "Install")}</Tab>
-        <Tab value="npm">{await highlightedTs(`npm install ${packageName}`, "Install")}</Tab>
-        <Tab value="yarn">{await highlightedTs(`yarn add ${packageName}`, "Install")}</Tab>
-      </Tabs>
-      {await highlightedTs(importSnippet(importLine), "Import")}
+      <KitTabs defaultValue="pnpm" className="flex min-w-0 flex-col gap-2">
+        <TabsList className="h-auto w-fit gap-1 rounded-none bg-transparent p-0">
+          {componentPageCopy.packageManagerTabs.map((manager) => (
+            <TabsTrigger
+              key={manager}
+              value={manager}
+              className="h-8 rounded-md px-3 text-sm text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            >
+              {manager}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value="pnpm" className="mt-0">
+          {await highlightedTs(`pnpm add ${packageName}`)}
+        </TabsContent>
+        <TabsContent value="npm" className="mt-0">
+          {await highlightedTs(`npm install ${packageName}`)}
+        </TabsContent>
+        <TabsContent value="yarn" className="mt-0">
+          {await highlightedTs(`yarn add ${packageName}`)}
+        </TabsContent>
+      </KitTabs>
+      {await highlightedTs(importSnippet(importLine))}
       <Text variant="muted" className="text-xs">
-        Package version: {version} (changesets).
+        {componentPageCopy.packageVersionLine(version)}
       </Text>
     </Stack>
   );
@@ -153,27 +177,39 @@ export async function ComponentPage({
       </Stack>
 
       <dl id="guidance" className="m-0 grid gap-x-6 gap-y-2 text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
-        <dt className="m-0 font-normal text-foreground">Who</dt>
+        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
         <dd className="m-0 min-w-0">{audience}</dd>
-        <dt className="m-0 font-normal text-foreground">Use when</dt>
+        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
         <dd className="m-0 min-w-0">{whenToUse}</dd>
-        <dt className="m-0 font-normal text-foreground">Avoid when</dt>
+        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
         <dd className="m-0 min-w-0">{whenNotToUse}</dd>
       </dl>
 
-      <Section title="Install or copy" id="install-or-copy">
-        <Stack gap={4}>
+      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-3">
+        <Stack gap={3}>
           {copyable ? (
-            <Tabs groupId="component-adoption" persist items={["npm package", "registry copy"]}>
-              <Tab value="npm package">{npmInstall}</Tab>
-              <Tab value="registry copy">
-                <Stack gap={4}>
+            <KitTabs defaultValue="npm package" className="flex flex-col gap-3">
+              <TabsList className="h-auto w-fit gap-1 rounded-none bg-transparent p-0">
+                {componentPageCopy.adoptionTabs.map((label) => (
+                  <TabsTrigger
+                    key={label}
+                    value={label}
+                    className="h-9 rounded-md px-3 text-sm text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  >
+                    {label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <TabsContent value="npm package" className="mt-0">
+                {npmInstall}
+              </TabsContent>
+              <TabsContent value="registry copy" className="mt-0">
+                <Stack gap={3}>
                   <Text variant="muted" className="text-sm">
-                    Copy the brick into your repo with the shadcn CLI. Imports are rewritten for your app; keep this
-                    path separate from the npm package install above.
+                    {componentPageCopy.registryCopyLead}
                   </Text>
-                  {await highlightedTs(shadcnAdd, "shadcn add")}
-                  {await highlightedTs(registryImportSnippet(importLine, registry), "Import")}
+                  {await highlightedTs(shadcnAdd)}
+                  {await highlightedTs(registryImportSnippet(importLine, registry))}
                   {source ? (
                     <Stack gap={3}>
                       <RegistryBrickInlineName name={registry} />
@@ -181,28 +217,30 @@ export async function ComponentPage({
                     </Stack>
                   ) : null}
                 </Stack>
-              </Tab>
-            </Tabs>
+              </TabsContent>
+            </KitTabs>
           ) : (
             npmInstall
           )}
         </Stack>
       </Section>
 
-      <Section title="Usage and states" id="usage-and-states">
-        <Stack gap={6}>
+      <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-3">
+        <Stack gap={4}>
           {await Promise.all(
             examples.map(async (ex) => {
               const previewDemo = examplePreviews[ex.title];
               return (
-                <Stack key={ex.title} gap={3}>
+                <Stack key={ex.title} gap={2}>
                   {previewDemo ? (
                     <>
                       <Heading level={3}>{ex.title}</Heading>
                       <ComponentPreview demo={previewDemo} hasProps={false} />
+                      {await highlightedTs(ex.code)}
                     </>
-                  ) : null}
-                  {await highlightedTs(ex.code, ex.title)}
+                  ) : (
+                    await highlightedTs(ex.code, ex.title)
+                  )}
                 </Stack>
               );
             }),
@@ -211,21 +249,21 @@ export async function ComponentPage({
         </Stack>
       </Section>
 
-      <Section title="Props" id="props">
+      <Section title={componentPageCopy.sections.props} id="props">
         {hasProps ? (
           <Stack gap={3}>
             <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} />
           </Stack>
         ) : (
-          <Text variant="muted">No extra props documented.</Text>
+          <Text variant="muted">{componentPageCopy.noExtraProps}</Text>
         )}
       </Section>
 
-      <Section title="Accessibility" id="accessibility">
+      <Section title={componentPageCopy.sections.accessibility} id="accessibility">
         <Text>{a11y}</Text>
       </Section>
 
-      <Section title="Related" id="related">
+      <Section title={componentPageCopy.sections.related} id="related">
         {related.length > 0 ? (
           <Stack gap={2}>
             {related.map((link) => (
@@ -235,12 +273,12 @@ export async function ComponentPage({
             ))}
           </Stack>
         ) : (
-          <Text variant="muted">No related pages.</Text>
+          <Text variant="muted">{componentPageCopy.noRelatedPages}</Text>
         )}
       </Section>
 
-      <Section title="Troubleshooting" id="troubleshooting">
-        <Text>{troubleshooting || "None yet."}</Text>
+      <Section title={componentPageCopy.sections.troubleshooting} id="troubleshooting">
+        <Text>{troubleshooting || componentPageCopy.troubleshootingNone}</Text>
       </Section>
     </Stack>
   );

@@ -27,7 +27,13 @@ test.describe("home dashboard mobile (#388)", () => {
     const toolbar = card.locator("[data-demo-toolbar]");
     await expect(toolbar).toBeVisible();
     await expect(toolbar.getByRole("button", { name: "Add app" })).toBeVisible();
-    await expect(page.locator("[data-hero-demo-display] [role=combobox]").first()).toBeVisible();
+    const display = page.locator("[data-hero-demo-display]");
+    await expect(display.locator("[role=combobox]")).toHaveCount(3);
+    const oneRow = await display.evaluate((row) => {
+      const tops = [...row.querySelectorAll("[role=combobox]")].map((el) => el.getBoundingClientRect().top);
+      return tops.length >= 3 && Math.max(...tops) - Math.min(...tops) < 4;
+    });
+    expect(oneRow).toBe(true);
 
     const actionStacks = card.locator("[data-demo-row-actions]");
     await expect(actionStacks.first()).toBeVisible();

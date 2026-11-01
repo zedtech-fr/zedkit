@@ -9,27 +9,28 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
+import { cardCopy } from "@/components/demos/i18n/card-copy";
 
 /** A card whose footer holds the actions: publish now, or keep working. */
 export function CardFooterDemo() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Spring collection</CardTitle>
-        <CardDescription>12 products, last edited 2 hours ago</CardDescription>
+        <CardTitle>{cardCopy.footer.title}</CardTitle>
+        <CardDescription>{cardCopy.footer.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Stack gap={2}>
           <Text variant="muted" className="text-xs">
-            Visual variants only — footer actions are static in this preview.
+            {cardCopy.footer.hint}
           </Text>
-          <Text>This page is still a draft. Publishing makes it visible to every customer.</Text>
+          <Text>{cardCopy.footer.body}</Text>
         </Stack>
       </CardContent>
       <CardFooter>
         <Stack direction="horizontal" gap={2}>
-          <Button>Publish</Button>
-          <Button variant="outline">Save as draft</Button>
+          <Button>{cardCopy.footer.publish}</Button>
+          <Button variant="outline">{cardCopy.footer.saveDraft}</Button>
         </Stack>
       </CardFooter>
     </Card>

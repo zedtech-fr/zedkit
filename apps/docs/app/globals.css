@@ -1,6 +1,20 @@
+/* One Tailwind build: fumadocs' sources go through the same compiler as the kit,
+   so `flex` and `max-xl:hidden` (or `w-full` and `sm:w-40`) keep a single,
+   correct order. The precompiled `fumadocs-ui/style.css` carried its own copy
+   of the utilities and let base classes beat responsive variants. */
 @import "tailwindcss";
 @import "@zedtech/zedkit-ui/styles.css";
-@import "fumadocs-ui/style.css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
+
+@layer base {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+}
 
 /* Scan the workspace kit sources so preview components get their classes. */
 @source "../../../packages/ui/src";
@@ -86,8 +100,10 @@ body:has([role="dialog"][data-state="open"]) [data-search-pill] {
   --color-fd-primary-foreground: hsl(var(--primary-foreground));
   --color-fd-secondary: hsl(var(--secondary));
   --color-fd-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-fd-accent: hsl(var(--accent));
-  --color-fd-accent-foreground: hsl(var(--accent-foreground));
+  /* fumadocs "accent" is a neutral hover/selected surface (theme toggle, nav);
+     the kit's --accent is the brand color and stays on primary actions. */
+  --color-fd-accent: hsl(var(--muted));
+  --color-fd-accent-foreground: hsl(var(--foreground));
   --color-fd-ring: hsl(var(--ring));
 }
 

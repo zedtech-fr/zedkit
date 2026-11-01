@@ -50,6 +50,19 @@ Title, one purpose sentence, status, example, install (npm or source, both when 
 
 Compose by priority, not by stacking desktop. The first screen reaches the example or its start. Secondary tools are disclosed. Wide data scrolls in its own region, never clipped.
 
+## Traps (31 Oct–1 Nov 2026)
+
+These broke real previews. Check them before changing home, chrome, specimens or overlays.
+
+- **Frame vs content height.** `min-h-svh` / `min-h-screen` inside a bounded preview (hero card, 40rem stage) leaves empty chrome. The frame owns height; the specimen is `h-full min-h-0`.
+- **Identity `--spacing` scales `w-*` / `p-*` / `gap-*`.** A `w-48` sidebar in Tide is not 12rem. Pin chrome that must stay compact, and look at Tide before calling a layout done.
+- **Calendar is `role="grid"`.** Do not paint `tbody tr:hover` on it; hover `.rdp-day`.
+- **Scroll pin.** `overflow-hidden` on an ancestor kills sticky / scroll-driven scenes. Use `overflow-clip` or do not clip the track. Stage height follows the specimen; a `100svh` centered stage adds empty landing air and clips the card.
+- **Overlay is a sibling.** Vaul/Radix scrim sits next to the panel. `backdrop-filter` on the overlay becomes the backdrop root, so the panel blurs the scrim, not the page. Frost with a lighter overlay (`bg-overlay/50` + blur) or put blur on the panel and set the overlay filter to `none` (Glass). `prefers-reduced-transparency`: solid scrim, no filter.
+- **Hero scroll.** Keep the proposition outside fading scenes. Phones show one example. Do not `overflow-hidden` a card that must show a full table row. After kit source changes: `pnpm --filter @zedtech/zedkit-ui build` before judging localhost:3100.
+- **Fumadocs CSS.** Import the preset as source. A precompiled `style.css` duplicates utilities and can hide responsive variants.
+- **Identity probes.** Site chrome pins radii/shadows on `:root`. A probe in `main` does not prove a look. Resolve tokens on `[data-identity-scope]`.
+
 ## Honest finish
 
 Every iteration records: what changed, matching before/after screenshots (same content, viewport, identity, mode, state), what still looks weak. Tests passing and a self-assigned score are not evidence of design quality.

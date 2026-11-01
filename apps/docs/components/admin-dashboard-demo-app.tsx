@@ -30,6 +30,7 @@ import {
   type AdminDashboardFormValues,
   type PreviewMode,
 } from "./admin-dashboard-demo-types";
+import { adminDashboardDemoCopy } from "@/components/i18n/admin-dashboard-demo-copy";
 
 export type { PreviewMode } from "./admin-dashboard-demo-types";
 
@@ -38,7 +39,7 @@ export type { PreviewMode } from "./admin-dashboard-demo-types";
  * Local state only; preview modes exercise DataTable loading/empty/error.
  */
 export function AdminDashboardDemoApp({
-  label = "Interactive admin dashboard demo",
+  label = adminDashboardDemoCopy.defaultAriaLabel,
   preview: previewProp,
   onPreviewChange,
   variant = "default",
@@ -111,10 +112,10 @@ export function AdminDashboardDemoApp({
   function onSubmit(values: AdminDashboardFormValues) {
     if (editingId) {
       setApps((prev) => prev.map((row) => (row.id === editingId ? { ...row, ...values } : row)));
-      toast.success("App updated");
+      toast.success(adminDashboardDemoCopy.toast.updated);
     } else {
       setApps((prev) => [...prev, { id: `app-${Date.now()}`, ...values }]);
-      toast.success("App added");
+      toast.success(adminDashboardDemoCopy.toast.added);
     }
     closeDrawer();
     restoreOpener();
@@ -123,12 +124,12 @@ export function AdminDashboardDemoApp({
   function deleteApp(id: string) {
     setApps((prev) => prev.filter((row) => row.id !== id));
     setSelectedId((current) => (current === id ? null : current));
-    toast.success("App removed");
+    toast.success(adminDashboardDemoCopy.toast.removed);
   }
 
   const tableData = preview === "empty" ? [] : apps;
   const loading = preview === "loading";
-  const error = preview === "error" ? "Could not load apps. Switch preview to Ready and try again." : null;
+  const error = preview === "error" ? adminDashboardDemoCopy.loadError : null;
 
   const columns = buildAdminDashboardColumns({
     selectedId,
@@ -144,45 +145,58 @@ export function AdminDashboardDemoApp({
     <>
       <Toaster />
       <Stack className="w-full min-w-0" aria-label={label} data-admin-dashboard-demo={isHome ? "home" : undefined}>
-        <Stack gap={isHome ? 2 : 3} className={`border-b border-border ${toolbarPad}`} data-demo-toolbar>
-          <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
-            Project apps
-          </Heading>
-          {isHome ? (
-            <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
-              Select a row, then add, edit, or delete.
-            </Text>
-          ) : (
+        {isHome ? (
+          <Stack
+            direction="horizontal"
+            gap={3}
+            className={`items-start justify-between border-b border-border ${toolbarPad}`}
+            data-demo-toolbar
+          >
+            <Stack gap={1} className="min-w-0">
+              <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
+                {adminDashboardDemoCopy.heading}
+              </Heading>
+              <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
+                {adminDashboardDemoCopy.homeHint}
+              </Text>
+            </Stack>
+            <Button type="button" className="shrink-0" onClick={openCreate}>
+              {adminDashboardDemoCopy.addApp}
+            </Button>
+          </Stack>
+        ) : (
+          <Stack gap={3} className={`border-b border-border ${toolbarPad}`} data-demo-toolbar>
+            <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
+              {adminDashboardDemoCopy.heading}
+            </Heading>
             <Text variant="muted" className={DOCS_TYPE_BODY_CLASS}>
-              Select a row for details. Add, edit, or delete apps; switch preview for loading, empty, and error.
+              {adminDashboardDemoCopy.defaultHint}
             </Text>
-          )}
-          <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
-            {!isHome ? (
+            <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
               <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
-                <SelectTrigger className="min-w-0 flex-1" aria-label="Table preview mode">
+                <SelectTrigger className="min-w-0 flex-1" aria-label={adminDashboardDemoCopy.previewModeAriaLabel}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ready">Ready</SelectItem>
-                  <SelectItem value="loading">Loading</SelectItem>
-                  <SelectItem value="empty">Empty</SelectItem>
-                  <SelectItem value="error">Error</SelectItem>
+                  <SelectItem value="ready">{adminDashboardDemoCopy.previewModes.ready}</SelectItem>
+                  <SelectItem value="loading">{adminDashboardDemoCopy.previewModes.loading}</SelectItem>
+                  <SelectItem value="empty">{adminDashboardDemoCopy.previewModes.empty}</SelectItem>
+                  <SelectItem value="error">{adminDashboardDemoCopy.previewModes.error}</SelectItem>
                 </SelectContent>
               </Select>
-            ) : null}
-            <Button type="button" className="shrink-0" onClick={openCreate}>
-              Add app
-            </Button>
+              <Button type="button" className="shrink-0" onClick={openCreate}>
+                {adminDashboardDemoCopy.addApp}
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
+        )}
         <Stack gap={isHome ? 2 : 4} className={`min-w-0 ${bodyPad}`}>
           <DataTable
             columns={columns}
             data={tableData}
             loading={loading}
             error={error}
-            emptyMessage="No apps yet. Choose Ready and click Add app."
+            emptyMessage={adminDashboardDemoCopy.emptyMessage}
             pageSize={5}
           />
           {!isHome && preview === "ready" && !loading && !error ? (
@@ -190,14 +204,14 @@ export function AdminDashboardDemoApp({
               <DetailPanel
                 className="min-w-0"
                 items={[
-                  { label: "Name", value: selectedApp.name },
-                  { label: "Region", value: selectedApp.region },
-                  { label: "ID", value: selectedApp.id },
+                  { label: adminDashboardDemoCopy.detail.name, value: selectedApp.name },
+                  { label: adminDashboardDemoCopy.detail.region, value: selectedApp.region },
+                  { label: adminDashboardDemoCopy.detail.id, value: selectedApp.id },
                 ]}
               />
             ) : (
               <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
-                Select an app row to see its details.
+                {adminDashboardDemoCopy.detail.selectRow}
               </Text>
             )
           ) : null}

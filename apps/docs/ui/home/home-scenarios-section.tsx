@@ -19,6 +19,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] }) {
   return (
@@ -27,9 +28,9 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
       tone="muted"
       spacing="lg"
       containerWidth="wide"
-      title="Start from your situation"
+      title={homeCopy.scenarios.section.title}
       id="scenarios"
-      description="Each card opens a doc page with the install command, an example, and a live preview when available."
+      description={homeCopy.scenarios.section.description}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP}>
         <Stack className={HOME_CARD_GRID_THREE_COL}>
@@ -45,7 +46,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
                   <Stack gap={4}>
                     <Stack gap={1}>
                       <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
-                        You want
+                        {homeCopy.scenarios.youWant}
                       </Text>
                       <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
                         {scenario.goal}
@@ -53,7 +54,7 @@ export function HomeScenariosSection({ scenarios }: { scenarios: HomeScenario[] 
                     </Stack>
                     <Stack gap={1}>
                       <Text as="span" className={HOME_METADATA_TEXT_CLASS}>
-                        Do this
+                        {homeCopy.scenarios.doThis}
                       </Text>
                       <Text className={HOME_PERSUASION_TEXT_CLASS}>{scenario.action}</Text>
                     </Stack>

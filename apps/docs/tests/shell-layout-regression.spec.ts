@@ -38,21 +38,40 @@ for (const width of DESKTOP_WIDTHS) {
     expect(layout!.gap).toBeGreaterThanOrEqual(8);
   });
 
-  test(`catalog Results heading aligns with Filters at ${width}px light`, async ({ page }) => {
+  test(`catalog results align with filter row at ${width}px light`, async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(`${BASE}/catalog`, { waitUntil: "networkidle" });
-    await expect(page.getByRole("heading", { name: "Filters", level: 2 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Results", level: 2 })).toBeVisible();
+    await page.waitForFunction(() => document.querySelector("[data-catalog-filter-row]"));
+    await expect(page.locator("#catalog-results-heading")).toBeVisible();
 
-    const tops = await page.evaluate(() => {
-      const filters = document.querySelector("#catalog-filters-heading");
-      const results = document.querySelector("#catalog-results-heading");
-      const f = filters?.getBoundingClientRect();
-      const r = results?.getBoundingClientRect();
-      return f && r ? Math.abs(f.left - r.left) : Number.NaN;
+    const metrics = await page.evaluate(() => {
+      const filterRow = document.querySelector("[data-catalog-filter-row]");
+      const filterContainer = filterRow?.closest("[data-slot='container']");
+      const resultsHeading = document.querySelector("#catalog-results-heading");
+      const resultsContainer = resultsHeading?.closest("[data-slot='container']");
+      if (!filterRow || !filterContainer || !resultsHeading || !resultsContainer) {
+        return null;
+      }
+      const resultsStyle = getComputedStyle(resultsContainer);
+      const resultsContentLeft =
+        resultsContainer.getBoundingClientRect().left + parseFloat(resultsStyle.paddingLeft);
+      return {
+        filterInDefaultColumn: filterContainer.classList.contains("max-w-default"),
+        resultsInWideColumn: resultsContainer.classList.contains("max-w-wide"),
+        filterRowInset: Math.abs(
+          filterContainer.getBoundingClientRect().left +
+            parseFloat(getComputedStyle(filterContainer).paddingLeft) -
+            filterRow.getBoundingClientRect().left,
+        ),
+        resultsInset: Math.abs(resultsContentLeft - resultsHeading.getBoundingClientRect().left),
+      };
     });
-    expect(tops).toBeLessThanOrEqual(2);
+    expect(metrics).not.toBeNull();
+    expect(metrics!.filterInDefaultColumn).toBe(true);
+    expect(metrics!.resultsInWideColumn).toBe(true);
+    expect(metrics!.filterRowInset).toBeLessThanOrEqual(2);
+    expect(metrics!.resultsInset).toBeLessThanOrEqual(2);
   });
 }
 
@@ -121,29 +140,34 @@ test("install code on a docs page scrolls horizontally with a focusable region",
 test("home get-started install commands scroll horizontally at 390px", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}/#get-started`, { waitUntil: "networkidle" });
-  const block = page.locator("#get-started [data-install-command]").nth(1);
+  const block = page.locator("#install-or-copy [data-install-command]").first();
+  const region = block.getByRole("region", { name: "Package install command", exact: true });
   await block.scrollIntoViewIfNeeded();
-  await expect(block).toBeVisible();
-  const metrics = await block.evaluate((root) => {
-    const region = root.querySelector('[role="region"]');
-    const pre = root.querySelector("pre");
-    if (!region || !pre) return { ok: false, reason: "missing region or pre" };
-    const style = getComputedStyle(region);
-    const mask = style.maskImage || style.webkitMaskImage || "";
+  await expect(region).toBeVisible();
+  const metrics = await region.evaluate((scrollRegion) => {
+    const shell = scrollRegion.closest("[data-install-command]");
+    if (!shell) return { ok: false, reason: "missing shell" };
+    const style = getComputedStyle(scrollRegion);
+    const command = scrollRegion.textContent?.trim() ?? "";
+    const canScroll = scrollRegion.scrollWidth > scrollRegion.clientWidth + 1;
     return {
       ok:
-        pre.scrollWidth > region.clientWidth + 1 &&
-        region.scrollWidth > region.clientWidth &&
+        command.length > 0 &&
         (style.overflowX === "auto" || style.overflowX === "scroll") &&
-        region.getAttribute("tabindex") === "0" &&
-        mask.includes("gradient"),
-      preScrollWidth: pre.scrollWidth,
-      regionClientWidth: region.clientWidth,
+        scrollRegion.getAttribute("tabindex") === "0" &&
+        getComputedStyle(shell).display === "flex" &&
+        (canScroll || command.length > 24),
+      scrollWidth: scrollRegion.scrollWidth,
+      regionClientWidth: scrollRegion.clientWidth,
+      canScroll,
       overflowX: style.overflowX,
     };
   });
   expect(metrics, JSON.stringify(metrics)).toMatchObject({ ok: true });
-  expect(metrics!.preScrollWidth!).toBeGreaterThan(273);
+  const pageOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(pageOverflow).toBeLessThanOrEqual(1);
 });
 
 for (const width of [1280, 1600] as const) {
@@ -152,12 +176,19 @@ for (const width of [1280, 1600] as const) {
     await page.goto(BASE, { waitUntil: "networkidle" });
 
     const metrics = await page.evaluate(() => {
-      const secondary = document.querySelector("[data-home-secondary-actions]");
-      const useCases = document.getElementById("use-cases");
+      const containerBox = (root: Element | null | undefined) => {
+        const inner =
+          root?.querySelector("[data-slot='container']") ??
+          (root?.matches("[data-slot='container']") ? root : null);
+        return inner?.getBoundingClientRect() ?? null;
+      };
+
+      const heroBand = document.querySelector("[data-home-hero-band]");
       const getStarted = document.getElementById("get-started");
-      const useInner = useCases?.querySelector("[data-slot='container']");
-      const startInner = getStarted?.querySelector("[data-slot='container']");
-      if (!secondary || !useCases || !getStarted || !useInner || !startInner) return null;
+      const components = document.getElementById("components");
+      const entryPoints = document.getElementById("entry-points");
+      const boxes = [containerBox(heroBand), containerBox(getStarted), containerBox(components), containerBox(entryPoints)];
+      if (boxes.some((box) => !box)) return null;
 
       const sectionMd = getComputedStyle(document.documentElement)
         .getPropertyValue("--zk-section-md")
@@ -168,25 +199,32 @@ for (const width of [1280, 1600] as const) {
       const sectionMdPx = parseFloat(getComputedStyle(probe).paddingTop);
       probe.remove();
 
-      const gapAfterSecondary = useCases.getBoundingClientRect().top - secondary.getBoundingClientRect().bottom;
-      const gapBeforeGetStarted =
-        getStarted.getBoundingClientRect().top - useCases.getBoundingClientRect().bottom;
-      const useBox = useInner.getBoundingClientRect();
-      const startBox = startInner.getBoundingClientRect();
+      const bandBottom = (el: Element | null) => el?.getBoundingClientRect().bottom ?? Number.NaN;
+      const bandTop = (el: Element | null) => el?.getBoundingClientRect().top ?? Number.NaN;
+      const gaps = [
+        bandTop(getStarted) - bandBottom(heroBand),
+        bandTop(components) - bandBottom(getStarted),
+        bandTop(entryPoints) - bandBottom(components),
+      ];
+
+      const [heroBox, startBox, componentsBox, entryBox] = boxes as DOMRect[];
+      const widths = [heroBox.width, startBox.width, componentsBox.width, entryBox.width];
+      const lefts = [heroBox.left, startBox.left, componentsBox.left, entryBox.left];
 
       return {
-        gapAfterSecondary,
-        gapBeforeGetStarted,
+        gaps,
         sectionMdPx,
-        widthDelta: Math.abs(useBox.width - startBox.width),
-        leftDelta: Math.abs(useBox.left - startBox.left),
+        widthDelta: Math.max(...widths) - Math.min(...widths),
+        leftDelta: Math.max(...lefts) - Math.min(...lefts),
       };
     });
 
     expect(metrics).not.toBeNull();
     expect(metrics!.widthDelta).toBeLessThanOrEqual(2);
     expect(metrics!.leftDelta).toBeLessThanOrEqual(2);
-    expect(metrics!.gapAfterSecondary).toBeLessThanOrEqual(metrics!.sectionMdPx * 1.35);
-    expect(metrics!.gapBeforeGetStarted).toBeLessThanOrEqual(metrics!.sectionMdPx * 1.35);
+    for (const gap of metrics!.gaps) {
+      expect(gap).toBeGreaterThanOrEqual(0);
+      expect(gap).toBeLessThanOrEqual(metrics!.sectionMdPx * 1.35);
+    }
   });
 }

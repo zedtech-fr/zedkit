@@ -13,6 +13,7 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 import { roleForExportSymbol } from "@/lib/import-symbols";
+import { componentExportsPanelCopy } from "@/components/i18n/component-exports-panel-copy";
 import { ComponentWrapsLine } from "./component-wraps-line";
 
 export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; wraps: string }) {
@@ -24,15 +25,15 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}>
-        {open ? "Hide export symbols" : "Show export symbols"}
+        {open ? componentExportsPanelCopy.hideSymbols : componentExportsPanelCopy.showSymbols}
       </Button>
       {open ? (
         <Stack gap={3} id={panelId}>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Symbol</TableHead>
-                <TableHead>Role</TableHead>
+                <TableHead>{componentExportsPanelCopy.table.symbol}</TableHead>
+                <TableHead>{componentExportsPanelCopy.table.role}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -49,7 +50,7 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
       ) : (
         <Stack gap={1}>
           <Text variant="muted" className="text-xs">
-            {symbols.length} symbols from this import.
+            {componentExportsPanelCopy.symbolCountLine(symbols.length)}
           </Text>
           <ComponentWrapsLine wraps={wraps} />
         </Stack>

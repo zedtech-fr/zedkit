@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { Stack } from "@zedtech/zedkit-ui";
 
+import { docsPageCopy } from "@/app/i18n/docs-page-copy";
 import { JsonLd } from "@/components/json-ld";
 import { featuredPackageChangelogUrl } from "@/content/gallery";
 import { mergeComponentPageToc } from "@/lib/component-page-toc";
@@ -40,8 +41,8 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
   const pathname = docsPath(slug);
   const url = pageUrl(pathname);
   const breadcrumb = buildBreadcrumbJsonLd([
-    { name: "Home", url: pageUrl("/") },
-    { name: "Documentation", url: pageUrl("/docs") },
+    { name: docsPageCopy.breadcrumbHome, url: pageUrl("/") },
+    { name: docsPageCopy.breadcrumbDocs, url: pageUrl("/docs") },
     { name: page.data.title, url },
   ]);
   const description = page.data.description ?? page.data.title;
@@ -59,8 +60,8 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         toc={page.data.componentPage ? mergeComponentPageToc(page.data.toc) : page.data.toc}
         tableOfContentPopover={{
           trigger: {
-            "aria-label": "Table of contents",
-            title: "Table of contents",
+            "aria-label": docsPageCopy.tableOfContents,
+            title: docsPageCopy.tableOfContents,
           },
         }}
       >

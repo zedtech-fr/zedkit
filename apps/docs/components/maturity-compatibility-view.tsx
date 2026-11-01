@@ -16,34 +16,16 @@ import {
   maturityCounts,
   workspaceToolchain,
 } from "@/content/maturity-compatibility";
+import { maturityCompatibilityCopy } from "@/components/i18n/maturity-compatibility-copy";
 import { maturityBadgeVariant } from "@/lib/maturity-status";
 
-// Visitor wording for the same limits as docs/catalog/README.md#maturity.
+// Same limits as docs/catalog/README.md#maturity. Wording lives in the copy module.
 const MATURITY_LIMITS = [
-  {
-    status: "stable",
-    limit:
-      "No badge = stable: semver-protected. Tested through the public API, accessible for UI, documented, API frozen under semver.",
-    showBadge: false,
-  },
-  {
-    status: "beta",
-    limit:
-      "Beta: tested, documented, accessible; the API may still change in a minor, with a migration note; not covered by the semver guarantee.",
-    showBadge: true,
-  },
-  {
-    status: "alpha",
-    limit:
-      "Alpha: works, but the API can change in any release; not covered by the semver guarantee.",
-    showBadge: true,
-  },
-  { status: "planned", limit: "Documented, not built yet. No code and no tests.", showBadge: true },
-  {
-    status: "deprecated",
-    limit: "Do not start a new use. The entry names its replacement and will be removed later.",
-    showBadge: true,
-  },
+  { status: "stable", showBadge: false },
+  { status: "beta", showBadge: true },
+  { status: "alpha", showBadge: true },
+  { status: "planned", showBadge: true },
+  { status: "deprecated", showBadge: true },
 ] as const;
 
 function CountsTable() {
@@ -52,8 +34,8 @@ function CountsTable() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Status</TableHead>
-          <TableHead>Catalog needs</TableHead>
+          <TableHead>{maturityCompatibilityCopy.countsTable.status}</TableHead>
+          <TableHead>{maturityCompatibilityCopy.countsTable.needs}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -73,10 +55,10 @@ function CompatibilityTable() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Package</TableHead>
-          <TableHead>Version</TableHead>
-          <TableHead>Node</TableHead>
-          <TableHead>Peer dependencies</TableHead>
+          <TableHead>{maturityCompatibilityCopy.compatibilityTable.package}</TableHead>
+          <TableHead>{maturityCompatibilityCopy.compatibilityTable.version}</TableHead>
+          <TableHead>{maturityCompatibilityCopy.compatibilityTable.node}</TableHead>
+          <TableHead>{maturityCompatibilityCopy.compatibilityTable.peers}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -96,41 +78,39 @@ function CompatibilityTable() {
 export function MaturityCompatibilityView() {
   return (
     <Stack gap={8}>
-      <Section title="What a badge means">
+      <Section title={maturityCompatibilityCopy.sections.badgeMeaning}>
         <Stack gap={4}>
           {MATURITY_LIMITS.map((row) => (
             <Stack key={row.status} gap={2}>
               {row.showBadge ? (
-                <Badge variant={maturityBadgeVariant(row.status)} className="w-fit">
-                  {row.status}
+                <Badge variant={maturityBadgeVariant(maturityCompatibilityCopy.badges[row.status])} className="w-fit">
+                  {maturityCompatibilityCopy.badges[row.status]}
                 </Badge>
               ) : (
-                <Text className="font-medium">No badge</Text>
+                <Text className="font-medium">{maturityCompatibilityCopy.noBadge}</Text>
               )}
-              <Text>{row.limit}</Text>
+              <Text>{maturityCompatibilityCopy.limits[row.status]}</Text>
             </Stack>
           ))}
-          <Text variant="muted">
-            Packages at 1.0.0 carry stable catalog entries under real semver. Alpha and beta entries
-            in the same package are excluded from that guarantee — check each need&apos;s badge (or
-            lack of one) before you ship.
-          </Text>
+          <Text variant="muted">{maturityCompatibilityCopy.semverNote}</Text>
         </Stack>
       </Section>
-      <Section title="Current catalog counts">
+      <Section title={maturityCompatibilityCopy.sections.counts}>
         <CountsTable />
       </Section>
-      <Section title="Workspace toolchain">
+      <Section title={maturityCompatibilityCopy.sections.toolchain}>
         <Text>
-          Node {workspaceToolchain.node}, {workspaceToolchain.packageManager}. UI work expects React
-          19 and Tailwind CSS v4 (see{" "}
-          <Link href="/docs/ui/theme-an-admin-app-dark-light-included">theme doc</Link>).
+          {maturityCompatibilityCopy.toolchain(workspaceToolchain.node, workspaceToolchain.packageManager)}
+          <Link href="/docs/ui/theme-an-admin-app-dark-light-included">{maturityCompatibilityCopy.themeDoc}</Link>
+          {maturityCompatibilityCopy.toolchainTail}
         </Text>
       </Section>
-      <Section title="Package compatibility">
+      <Section title={maturityCompatibilityCopy.sections.compatibility}>
         <Stack gap={3}>
           <Text variant="muted">
-            Generated from each package <code>package.json</code> on every docs build.
+            {maturityCompatibilityCopy.generatedLead}
+            <code>package.json</code>
+            {maturityCompatibilityCopy.generatedTail}
           </Text>
           <CompatibilityTable />
         </Stack>

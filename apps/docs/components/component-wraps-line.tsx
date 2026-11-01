@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Text } from "@zedtech/zedkit-ui";
+import { componentWrapsLineCopy } from "@/components/i18n/component-wraps-line-copy";
 
 /** Catalog `wraps` field: backtick-separated npm names and plain notes. */
 export function parseWrapTokens(wraps: string): string[] {
@@ -22,7 +23,7 @@ export function ComponentWrapsLine({ wraps }: { wraps: string }) {
   if (tokens.length === 0) return null;
   return (
     <Text variant="muted" className="text-sm">
-      Wraps:{" "}
+      {componentWrapsLineCopy.prefix}{" "}
       {tokens.map((token, index) => {
         const href = npmHref(token);
         return (

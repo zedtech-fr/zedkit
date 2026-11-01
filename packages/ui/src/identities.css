@@ -241,7 +241,8 @@
     word-break: normal;
   }
 
-  /* Tables: head reads as a label band, rows answer on hover */
+  /* Tables: head reads as a label band, rows answer on hover.
+     Calendar month grids are role=grid — hover belongs on the day, not the week. */
   thead th {
     background-color: hsl(var(--muted));
     border-bottom: var(--zk-border-width) solid hsl(var(--border));
@@ -251,7 +252,7 @@
     transition-duration: var(--motion-base);
     transition-timing-function: var(--zk-btn-ease, ease);
   }
-  tbody tr:hover {
+  table:not([role="grid"]) tbody tr:hover {
     background-color: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
   }

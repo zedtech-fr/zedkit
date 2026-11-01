@@ -82,7 +82,7 @@ function DrawerOverlay({ className, ...props }: React.ComponentProps<typeof Draw
     <DrawerPrimitive.Overlay
       data-slot="drawer-overlay"
       className={cn(
-        "fixed inset-0 z-overlay bg-overlay/80",
+        "fixed inset-0 z-overlay bg-overlay/50 backdrop-blur-sm",
         "motion-safe:data-[state=open]:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]",
         "motion-safe:data-[state=closed]:animate-[zk-fade-out_var(--motion-base)_var(--ease-exit)]",
         className,

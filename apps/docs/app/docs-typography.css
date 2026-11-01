@@ -111,7 +111,6 @@
   font-size: var(--zk-type-lead-size);
   font-weight: var(--zk-type-lead-weight);
   line-height: var(--zk-type-lead-leading);
-  margin-top: 0.75rem;
 }
 
 #home-page [data-home-hero-lead] [data-home-hero-label] {
@@ -136,7 +135,7 @@
 }
 
 [data-catalog-shell] h2[data-slot="heading"],
-[data-catalog-shell] #catalog-filters-heading {
+[data-catalog-shell] [data-catalog-toolbar] {
   font-size: var(--zk-type-h2-size);
   font-weight: var(--zk-type-h2-weight);
   line-height: var(--zk-type-h2-leading);

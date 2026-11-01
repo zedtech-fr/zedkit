@@ -3,33 +3,38 @@ import {
   HOME_CARD_CONTENT_GAP,
   HOME_METADATA_TEXT_CLASS,
   HOME_PERSUASION_TEXT_CLASS,
-  HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
-import { HomeHeroAdoptionHint, HomeHeroLeadActions } from "@/ui/home/home-hero-lead-actions";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
+import { HomeHeroLeadActions } from "@/ui/home/home-hero-lead-actions";
 
-export function HomeHeroLead({ packageInstallCmd }: { packageInstallCmd: string }) {
+export function HomeHeroLead({ className }: { className?: string }) {
   return (
-    <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0 items-start" data-home-hero-lead="">
-      <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
+    <Stack
+      gap={8}
+      className={`min-w-0 items-start ${className ?? ""}`}
+      data-home-hero-lead=""
+    >
+      <Stack gap={3} className="items-start">
         <Text variant="muted" className={HOME_METADATA_TEXT_CLASS} data-home-hero-label="">
-          zedkit
+          {homeCopy.hero.label}
         </Text>
-        <Heading level={1} className="type-site-h1 max-w-3xl text-balance">
-          Build the parts you need. Keep the rest of your app.
+        <Heading level={1} className="type-site-h1 max-w-lg text-balance">
+          {homeCopy.hero.title}
         </Heading>
-        <Text
-          variant="muted"
-          className={`max-w-2xl ${HOME_PERSUASION_TEXT_CLASS}`}
-          data-home-hero-sub=""
-        >
-          React components you add to the app you already have.
+      </Stack>
+      <Text
+        variant="muted"
+        className={`max-w-md ${HOME_PERSUASION_TEXT_CLASS}`}
+        data-home-hero-sub=""
+      >
+        {homeCopy.hero.sub}
+      </Text>
+      <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
+        <HomeHeroLeadActions />
+        <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
+          {homeCopy.hero.facts}
         </Text>
       </Stack>
-      <HomeHeroLeadActions />
-      <HomeHeroAdoptionHint packageInstallCmd={packageInstallCmd} />
-      <Text variant="muted" className={HOME_METADATA_TEXT_CLASS}>
-        MIT · React 19 · Tailwind 4 · npm or source
-      </Text>
     </Stack>
   );
 }

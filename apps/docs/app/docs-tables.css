@@ -10,7 +10,7 @@
 }
 
 #nd-docs-layout [data-docs-table] tbody td {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   word-break: normal;
 }
 
@@ -63,7 +63,9 @@
 
 @media (width < 40rem) {
   #nd-docs-layout [data-docs-table] {
-    overflow-x: visible;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   #nd-docs-layout [data-docs-table] table {
@@ -111,13 +113,13 @@
     font-size: 0.8125rem;
     font-weight: 500;
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     overflow-x: visible;
   }
 
   #nd-docs-layout [data-docs-table] tbody td:first-child code {
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   #nd-docs-layout [data-docs-table] tbody td[data-docs-table-command],
@@ -130,7 +132,7 @@
 
   #nd-docs-layout [data-docs-table] tbody td:nth-child(2) code {
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   #nd-docs-layout [data-docs-table] tbody td:nth-child(2):not(:last-child) {
@@ -138,7 +140,7 @@
     font-size: 0.8125rem;
     color: hsl(var(--muted-foreground));
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     overflow-x: visible;
   }
 
@@ -149,7 +151,7 @@
     line-height: 1.45;
     color: hsl(var(--foreground));
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     overflow-x: visible;
   }
 }

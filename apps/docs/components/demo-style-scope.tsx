@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { identities, Stack, ThemeScope, useIdentity } from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
+import { demoStyleScopeCopy } from "@/components/i18n/demo-style-scope-copy";
 
 type ScopeAttrs = { "data-identity-scope": ""; "data-identity": string };
 
@@ -29,7 +30,7 @@ function DemoStyleSelect({
   look,
   pinned,
   onPin,
-  fieldLabel = "Style of this demo",
+  fieldLabel = demoStyleScopeCopy.fieldLabel,
   labelHidden = false,
 }: {
   look: string;
@@ -53,7 +54,7 @@ function DemoStyleSelect({
         onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
         className="h-8 max-w-36 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-ring-control"
       >
-        <option value="follow-site">Follow site</option>
+        <option value="follow-site">{demoStyleScopeCopy.followSite}</option>
         {identities.map((item) => (
           <option key={item.id} value={item.id}>
             {item.label}

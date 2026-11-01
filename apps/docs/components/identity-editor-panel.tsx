@@ -19,6 +19,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { ContrastChips, DRAFT_SELECTOR, DraftCard, EditorFields } from "@/components/identity-editor-fields";
 import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorSuggest } from "@/components/identity-editor-suggest";
@@ -129,8 +130,8 @@ function IdentityEditorBody(props: EditorBodyProps) {
         onReset={props.onReset}
         onApplySite={props.onApplySite}
       />
-      <Text>Change spacing first, then watch the card.</Text>
-      {props.appliedSite ? <Text role="status">Applied to the whole site.</Text> : null}
+      <Text>{identityEditorCopy.panel.hint}</Text>
+      {props.appliedSite ? <Text role="status">{identityEditorCopy.panel.applied}</Text> : null}
       <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
       <IdentityEditorSuggest tokens={props.tokens} onApply={props.onSuggestApply} />
       <DraftCard darkPreview={props.darkPreview} />

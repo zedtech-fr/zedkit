@@ -1,0 +1,45 @@
+/** English copy for the home identity showcase. Keys only; no markup. */
+
+export const homeIdentityShowcaseCopy = {
+  title: "Six identities, one set of components",
+  body: "Same components, six complete looks: type, shape, density and color change together. Pick one and see the same screen change.",
+  liveNote: "Live components, not screenshots.",
+  tabsAriaLabel: "Visual identities",
+  factsSummary: (label: string) => `${label} facts`,
+  factLabels: {
+    character: "Character",
+    type: "Type",
+    shape: "Shape",
+    density: "Density",
+    palette: "Palette",
+  },
+  openEditor: "Open the identity editor",
+  seeInComponents: "See identities in components",
+  stage: {
+    heading: "Project settings",
+    description: "Workspace name, region, and who gets incident mail.",
+    status: "Active",
+    workspaceLabel: "Workspace",
+    workspaceValue: "Harbor Console",
+    regionLabel: "Region",
+    regionValue: "eu",
+    regions: [
+      { value: "eu", label: "Europe" },
+      { value: "us", label: "Americas" },
+      { value: "apac", label: "Asia-Pacific" },
+    ],
+    alertsLabel: "Email alerts",
+    save: "Save changes",
+    discard: "Discard",
+    destroy: "Delete project",
+    tableAriaLabel: "Workspace members",
+    columns: { member: "Member", role: "Role", status: "Status" },
+    rows: [
+      { member: "Maya Laurent", role: "Owner", status: "Active", tone: "success" as const },
+      { member: "Leo Martin", role: "Admin", status: "Invited", tone: "warning" as const },
+      { member: "Sam Okafor", role: "Member", status: "Active", tone: "secondary" as const },
+    ],
+    alertTitle: "Billing ends 14 November",
+    alertBody: "Add a payment method to keep the workspace after this period.",
+  },
+} as const;

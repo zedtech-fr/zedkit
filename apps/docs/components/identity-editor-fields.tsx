@@ -15,32 +15,11 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
 
 const DRAFT_ID = "draft";
 const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
-
-const SCALAR_LABELS: Record<(typeof SCALAR_KEYS)[number], string> = {
-  spacing: "Spacing",
-  borderWidth: "Border width",
-  radius: "Radius",
-  bodyLeading: "Line height",
-  headingLeading: "Heading line height",
-  headingTracking: "Letter spacing",
-  labelTracking: "Label spacing",
-  shadowSm: "Shadow",
-  shadowMd: "Large shadow",
-};
-
-const LIGHT_LABELS: Record<(typeof LIGHT_KEYS)[number], string> = {
-  background: "Background",
-  foreground: "Foreground",
-  primary: "Primary",
-  primaryForeground: "Primary text",
-  accent: "Accent",
-  border: "Border",
-  mutedForeground: "Muted text",
-};
 
 function TokenField({
   id,
@@ -87,7 +66,7 @@ function EditorFields({
         <TokenField
           key={key}
           id={`identity-editor-${key}`}
-          label={SCALAR_LABELS[key]}
+          label={identityEditorCopy.fields.scalar[key]}
           value={tokens[key]}
           onChange={(value) => onPatch(key, value)}
         />
@@ -96,7 +75,7 @@ function EditorFields({
         <TokenField
           key={key}
           id={`identity-editor-${key}`}
-          label={LIGHT_LABELS[key]}
+          label={identityEditorCopy.fields.light[key]}
           value={pair[key]}
           onChange={(value) => onPatch(key, value)}
         />
@@ -119,9 +98,9 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       className="sticky top-14 z-20 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md"
       gap={3}
     >
-      <Heading level={2}>Draft look</Heading>
-      <Text variant="muted">Spacing, type and colour follow the fields.</Text>
-      <Button size="sm">Save</Button>
+      <Heading level={2}>{identityEditorCopy.fields.draftTitle}</Heading>
+      <Text variant="muted">{identityEditorCopy.fields.draftBody}</Text>
+      <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
     </Stack>
   );
 }
@@ -141,10 +120,10 @@ function ContrastChips({
         return (
           <Stack key={`${warning.scheme}-${warning.token}`} direction="horizontal" gap={2}>
             <Badge variant="warning">
-              {warning.scheme} {label} {warning.ratio}:1 (need {warning.min}:1)
+              {identityEditorCopy.fields.contrastBadge(warning.scheme, label, warning.ratio, warning.min)}
             </Badge>
             <Button type="button" size="sm" variant="outline" onClick={() => onFix(warning)}>
-              {`Fix ${warning.scheme} ${label}`}
+              {identityEditorCopy.fields.fix(warning.scheme, label)}
             </Button>
           </Stack>
         );

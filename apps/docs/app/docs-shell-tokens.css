@@ -3,6 +3,23 @@
   color: hsl(var(--muted-foreground));
 }
 
+/*
+ * Dark chrome: fumadocs 80%/50% fills read Tide muted too faint.
+ * Pin the tokens those utilities inherit; keep specimens on ThemeScope.
+ */
+html.dark[data-identity] #nd-nav,
+html.dark[data-identity] #nd-mobile-nav {
+  --muted-foreground: 0 0% 96%;
+  --color-fd-muted-foreground: #f4f6f8;
+  --color-muted-foreground: #f4f6f8;
+  --color-fd-background: #121826;
+  --color-fd-secondary: #1d263a;
+}
+
+html.dark[data-identity] #home-page [data-slot="tabs-trigger"][data-state="active"] {
+  color: hsl(var(--foreground));
+}
+
 [id^="type-table"] .line-through {
   color: hsl(var(--muted-foreground));
   text-decoration-color: hsl(var(--muted-foreground));
@@ -35,8 +52,15 @@
  * full-bleed band; get-started uses the same wide measure as use-cases.
  */
 #home-page [data-home-hero-band] {
-  padding-top: var(--zk-section-lg);
-  padding-bottom: var(--zk-section-sm);
+  padding-top: 2.5rem;
+  padding-bottom: 0;
+}
+
+@media (width < 64rem) {
+  #home-page [data-home-hero-band] {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
 }
 
 #home-page #get-started[data-slot="section"] {

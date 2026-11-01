@@ -20,6 +20,7 @@ test("the hero keeps the page identity: nothing cycles, nothing is written", asy
 
 test("the hero demo follows get started, before component families", async ({ page }) => {
   await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   const order = await page.evaluate(() => {
     const top = (selector: string) => document.querySelector(selector)?.getBoundingClientRect().top ?? Number.NaN;
     const precedes = (earlier: string, later: string) => {
@@ -36,8 +37,8 @@ test("the hero demo follows get started, before component families", async ({ pa
     };
   });
   expect(order.h1BeforeDemo).toBe(true);
-  expect(order.demo).toBeLessThan(order.getStarted);
   expect(order.getStarted).toBeLessThan(order.components);
+  expect(order.demo).toBeLessThan(order.getStarted);
 });
 
 test("Display scopes identity without touching the site shell", async ({ page }) => {
@@ -54,8 +55,10 @@ test("Display scopes identity without touching the site shell", async ({ page })
 test("the secondary band links to the demo editor and no-code route (#1092)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  const section = page.locator("#use-cases");
+  const section = page.locator("#entry-points");
   await section.scrollIntoViewIfNeeded();
+  const identities = section.locator("#use-cases");
+  await identities.scrollIntoViewIfNeeded();
   await expect(section.getByRole("link", { name: "Try the demo editor" })).toHaveAttribute(
     "href",
     "/features/identity-editor",
@@ -74,4 +77,12 @@ test("Display preview mode reaches the table without a toolbar select", async ({
   await page.locator("[data-hero-demo-display]").getByRole("combobox", { name: "Table preview mode" }).click();
   await page.getByRole("option", { name: "Empty" }).click();
   await expect(card.getByText(/No apps yet/)).toBeVisible();
+});
+
+test("identity showcase offers six identity tabs", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const showcase = page.locator("[data-home-identity-showcase]");
+  await showcase.scrollIntoViewIfNeeded();
+  await expect(showcase.getByRole("tab")).toHaveCount(6);
 });

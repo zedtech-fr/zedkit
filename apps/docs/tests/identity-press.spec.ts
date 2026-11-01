@@ -40,10 +40,10 @@ test.describe("press identity", () => {
 
   test("has square corners, soft shadows and a hairline rule", async ({ page }) => {
     await openAsIdentity(page, HOME, "press", "light");
-    expect(await probe(page, "border-top-left-radius", "var(--radius-xl)")).toBe("0px");
-    const shadowMd = await probe(page, "box-shadow", "var(--zk-shadow-md)");
+    expect(await probe(page, "border-top-left-radius", "var(--radius-xl)", "press")).toBe("0px");
+    const shadowMd = await probe(page, "box-shadow", "var(--zk-shadow-md)", "press");
     expect(shadowMd).not.toMatch(/^0px 0px 0px 0px/);
-    expect(await probe(page, "box-shadow", "var(--zk-shadow-overlay)")).not.toMatch(/0px 0px 0px 1px/);
+    expect(await probe(page, "box-shadow", "var(--zk-shadow-overlay)", "press")).not.toMatch(/0px 0px 0px 1px/);
     expect(await probe(page, "border-top-width", "var(--zk-border-width)")).toBe("1px");
   });
 

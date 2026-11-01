@@ -10,6 +10,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { AdminAppRow } from "./admin-dashboard-demo-types";
+import { adminDashboardDemoCopy } from "@/components/i18n/admin-dashboard-demo-copy";
 
 const tableHelper = createDataTableColumns<AdminAppRow>();
 
@@ -26,7 +27,7 @@ export function buildAdminDashboardColumns({
 }) {
   return [
     tableHelper.accessor("name", {
-      header: "Name",
+      header: adminDashboardDemoCopy.columns.name,
       cell: ({ row }) => (
         <Button
           type="button"
@@ -39,30 +40,30 @@ export function buildAdminDashboardColumns({
         </Button>
       ),
     }),
-    tableHelper.accessor("region", { header: "Region" }),
+    tableHelper.accessor("region", { header: adminDashboardDemoCopy.columns.region }),
     tableHelper.display({
       id: "actions",
-      header: "Actions",
+      header: adminDashboardDemoCopy.columns.actions,
       cell: ({ row }) => (
         <Stack direction="horizontal" gap={1} className="flex-nowrap justify-end" data-demo-row-actions>
           <Button
             type="button"
             variant="outline"
             size="icon"
-            aria-label={`Edit ${row.original.name}`}
+            aria-label={adminDashboardDemoCopy.columns.editAriaLabel(row.original.name)}
             onClick={() => onEdit(row.original)}
           >
             <Pencil className="size-4" aria-hidden />
           </Button>
           <ConfirmDialog
             trigger={
-              <Button type="button" variant="destructive" size="icon" aria-label={`Delete ${row.original.name}`}>
+              <Button type="button" variant="destructive" size="icon" aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(row.original.name)}>
                 <Trash2 className="size-4" aria-hidden />
               </Button>
             }
-            title="Delete app?"
-            description={`Remove “${row.original.name}” from the list.`}
-            confirmLabel="Delete"
+            title={adminDashboardDemoCopy.columns.deleteTitle}
+            description={adminDashboardDemoCopy.columns.deleteDescription(row.original.name)}
+            confirmLabel={adminDashboardDemoCopy.columns.deleteConfirm}
             onConfirm={() => onDelete(row.original.id)}
           />
         </Stack>

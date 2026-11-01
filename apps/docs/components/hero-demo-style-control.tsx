@@ -7,22 +7,24 @@ import {
   HeroDemoIdentitySelect,
   HeroDemoModeSelect,
   HeroDemoPreviewSelect,
+  type HeroDemoModePin,
 } from "@/components/hero-demo-style-fields";
+import { heroDemoStyleCopy } from "@/components/i18n/hero-demo-style-copy";
 
 /** Bounded demo chrome: identity, mode, and table state for the hero specimen only. */
 export function HeroDemoStyleControl({
   look,
-  dark,
+  modePin,
   preview,
   onLook,
-  onDark,
+  onModePin,
   onPreview,
 }: {
   look: string;
-  dark: boolean;
+  modePin: HeroDemoModePin;
   preview: string;
   onLook: (id: string) => void;
-  onDark: (dark: boolean) => void;
+  onModePin: (pin: HeroDemoModePin) => void;
   onPreview: (mode: string) => void;
 }) {
   const labelId = useId();
@@ -30,17 +32,17 @@ export function HeroDemoStyleControl({
     <Stack
       direction="horizontal"
       gap={2}
-      className="flex-wrap items-center"
+      className="min-w-0 flex-nowrap items-center overflow-x-auto"
       role="group"
       aria-labelledby={labelId}
       data-hero-demo-display=""
     >
       <Text id={labelId} variant="muted" className={`${HOME_METADATA_TEXT_CLASS} shrink-0`}>
-        Display
+        {heroDemoStyleCopy.display}
       </Text>
       <HeroDemoIdentitySelect look={look} onLook={onLook} />
-      <HeroDemoModeSelect dark={dark} onDark={onDark} />
-      <HeroDemoPreviewSelect preview={preview} onPreview={onPreview} />
+      <HeroDemoModeSelect modePin={modePin} onModePin={onModePin} />
+      <HeroDemoPreviewSelect preview={preview} onPreview={onPreview} className="shrink-0" />
     </Stack>
   );
 }
