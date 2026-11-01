@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { Container, Stack } from "@zedtech/zedkit-ui";
 import { HomeHeroLead } from "@/ui/home/home-hero-lead";
+import { homeCopy } from "@/ui/home/i18n/home-copy";
 import { HOME_HERO_PREVIEW_SHELL_CLASS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
 const HomeHeroPreview = dynamic(
@@ -28,9 +29,9 @@ export function HomeHero() {
           <HomeHeroLead className="min-w-0" />
           <HomeHeroPreview />
           <ol data-scroll-scenes-progress="" aria-hidden="true">
-            <li />
-            <li />
-            <li />
+            {homeCopy.heroSteps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
           </ol>
         </Stack>
       </div>

@@ -9,6 +9,8 @@ export const homeHeroCopy = {
     getStarted: "Get started",
     browseCatalog: "Browse catalog",
   },
+  /** One short label per pinned example; the same order as the scenes. */
+  heroSteps: ["Data table", "Detail panel", "Date picker"],
   heroPreview: {
     demoLabel: "Interactive admin dashboard demo in the hero",
   },

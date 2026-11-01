@@ -17,11 +17,12 @@ test.describe("site type hierarchy (P0)", () => {
     const size = (selector: string) =>
       page.locator(selector).first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
     const sectionTitle = await size("#components h2");
-    const cardLabel = await size("#components .home-metadata-copy");
+    // Example links are essential navigation, so they use the dense-UI size (13), not the 12px metadata size.
+    const exampleLink = await size("#components [data-home-component-families] a");
     const cardBody = await size("#components .text-home-persuasion");
-    expect(cardLabel).toBe(12);
+    expect(exampleLink).toBe(13);
     expect(cardBody).toBe(14);
-    expect(cardLabel).toBeLessThan(cardBody);
+    expect(exampleLink).toBeLessThan(cardBody);
     expect(cardBody).toBeLessThan(sectionTitle);
   });
 

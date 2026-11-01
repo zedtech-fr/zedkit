@@ -47,6 +47,43 @@
   }
 }
 
+/*
+ * The pinned examples are named: three short labels under the card, the current one at full strength.
+ * (The kit's progress dots carry no text, so the home hero restyles them as a label row.)
+ */
+#home-page [data-home-hero-scenes] [data-scroll-scenes-progress] li {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: var(--color-muted-foreground);
+  font-size: var(--text-sm);
+  line-height: 1.25rem;
+  white-space: nowrap;
+  /* Full opacity always (the dots' 25% fade would fail contrast on text); the current step darkens instead. */
+  opacity: 1;
+  animation-name: zk-home-hero-step;
+}
+
+#home-page [data-home-hero-scenes] [data-scroll-scenes-progress] li:first-child {
+  animation-name: zk-home-hero-step-first;
+}
+
+#home-page [data-home-hero-scenes] [data-scroll-scenes-progress] li:last-child {
+  animation-name: zk-home-hero-step-last;
+}
+
+@media (min-width: 64rem) {
+  #home-page [data-home-hero-scenes] [data-scroll-scenes-progress] {
+    position: static;
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-start;
+    gap: 1.25rem;
+    padding-top: 0.75rem;
+  }
+}
+
 @media (width < 64rem) {
   #home-page [data-home-hero-scenes][data-scene-count] {
     height: auto;
@@ -107,6 +144,38 @@
 @media (prefers-reduced-motion: reduce) {
   #home-page [data-home-hero-visuals] > [data-scroll-scene]:not([data-scroll-scene="admin"]) {
     display: none;
+  }
+}
+
+@keyframes zk-home-hero-step {
+  0%,
+  100% {
+    color: var(--color-muted-foreground);
+  }
+  25%,
+  75% {
+    color: var(--color-foreground);
+  }
+}
+
+/* Like the scenes: the first is already current when the stage pins, the last stays current. */
+@keyframes zk-home-hero-step-first {
+  0%,
+  75% {
+    color: var(--color-foreground);
+  }
+  100% {
+    color: var(--color-muted-foreground);
+  }
+}
+
+@keyframes zk-home-hero-step-last {
+  0% {
+    color: var(--color-muted-foreground);
+  }
+  25%,
+  100% {
+    color: var(--color-foreground);
   }
 }
 

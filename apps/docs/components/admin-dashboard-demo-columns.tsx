@@ -57,7 +57,13 @@ export function buildAdminDashboardColumns({
           </Button>
           <ConfirmDialog
             trigger={
-              <Button type="button" variant="destructive" size="icon" aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(row.original.name)}>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="text-destructive"
+                aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(row.original.name)}
+              >
                 <Trash2 className="size-4" aria-hidden />
               </Button>
             }
