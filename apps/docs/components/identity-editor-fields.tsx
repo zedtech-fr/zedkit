@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Badge,
   Button,
   Field,
@@ -21,34 +24,64 @@ import { LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
 const DRAFT_ID = "draft";
 const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
 
+/** `H S% L%` triplets, the format the colour tokens use. */
+const HSL_TRIPLET = /^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%$/;
+
 function TokenField({
   id,
   label,
   value,
   onChange,
+  swatch,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
+  swatch?: boolean;
 }) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
+  const colour = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
   return (
-    // shortcut: 18rem clears the sticky draft and the docs header, raise it if the card grows.
-    <Field className="scroll-mt-72">
+    // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
+    <Field className="scroll-mt-28 min-w-0">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <Input
-        id={id}
-        value={draft}
-        onChange={(event) => {
-          setDraft(event.target.value);
-          onChange(event.target.value);
-        }}
-      />
+      <Stack direction="horizontal" gap={2} className="min-w-0">
+        {swatch ? (
+          <span
+            aria-hidden="true"
+            data-token-swatch=""
+            className="size-control-height shrink-0 rounded-md border border-border"
+            style={colour ? { backgroundColor: colour } : undefined}
+          />
+        ) : null}
+        <Input
+          id={id}
+          value={draft}
+          className="min-w-0 flex-1"
+          onChange={(event) => {
+            setDraft(event.target.value);
+            onChange(event.target.value);
+          }}
+        />
+      </Stack>
     </Field>
   );
 }
+
+function FieldGroup({ legend, children }: { legend: string; children: ReactNode }) {
+  return (
+    <fieldset className="m-0 min-w-0 border-0 p-0">
+      <legend className="mb-3 text-sm font-semibold text-foreground">{legend}</legend>
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2">{children}</div>
+    </fieldset>
+  );
+}
+
+const SHAPE_KEYS = ["spacing", "borderWidth", "radius"] as const;
+const TYPE_KEYS = ["bodyLeading", "headingLeading", "headingTracking", "labelTracking"] as const;
+const DEPTH_KEYS = ["shadowSm", "shadowMd"] as const;
 
 function EditorFields({
   tokens,
@@ -60,26 +93,33 @@ function EditorFields({
   onPatch: (key: string, value: string) => void;
 }) {
   const pair = tokens[scheme];
+  const scalar = (keys: readonly (typeof SCALAR_KEYS)[number][]) =>
+    keys.map((key) => (
+      <TokenField
+        key={key}
+        id={`identity-editor-${key}`}
+        label={identityEditorCopy.fields.scalar[key]}
+        value={tokens[key]}
+        onChange={(value) => onPatch(key, value)}
+      />
+    ));
   return (
     <Stack gap={5} data-slot="identity-editor-fields">
-      {SCALAR_KEYS.map((key) => (
-        <TokenField
-          key={key}
-          id={`identity-editor-${key}`}
-          label={identityEditorCopy.fields.scalar[key]}
-          value={tokens[key]}
-          onChange={(value) => onPatch(key, value)}
-        />
-      ))}
-      {LIGHT_KEYS.map((key) => (
-        <TokenField
-          key={key}
-          id={`identity-editor-${key}`}
-          label={identityEditorCopy.fields.light[key]}
-          value={pair[key]}
-          onChange={(value) => onPatch(key, value)}
-        />
-      ))}
+      <FieldGroup legend={identityEditorCopy.fields.groups.shape}>{scalar(SHAPE_KEYS)}</FieldGroup>
+      <FieldGroup legend={identityEditorCopy.fields.groups.type}>{scalar(TYPE_KEYS)}</FieldGroup>
+      <FieldGroup legend={identityEditorCopy.fields.groups.depth}>{scalar(DEPTH_KEYS)}</FieldGroup>
+      <FieldGroup legend={identityEditorCopy.fields.groups.colour(scheme)}>
+        {LIGHT_KEYS.map((key) => (
+          <TokenField
+            key={key}
+            id={`identity-editor-${key}`}
+            label={identityEditorCopy.fields.light[key]}
+            value={pair[key]}
+            swatch
+            onChange={(value) => onPatch(key, value)}
+          />
+        ))}
+      </FieldGroup>
     </Stack>
   );
 }
@@ -89,18 +129,51 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
   useLayoutEffect(() => {
     ref.current?.classList.toggle("dark", darkPreview);
   }, [darkPreview]);
+  const copy = identityEditorCopy.fields.draft;
   return (
     <Stack
       ref={ref}
       data-identity-scope=""
       data-identity={DRAFT_ID}
       data-slot="identity-editor-preview"
-      className="sticky top-14 z-20 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md"
+      className="sticky top-14 z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md lg:col-start-2 lg:row-start-1 lg:top-20 lg:self-start lg:p-6"
       gap={3}
     >
-      <Heading level={2}>{identityEditorCopy.fields.draftTitle}</Heading>
+      <Stack direction="horizontal" gap={2} className="justify-between">
+        <Heading level={2}>{identityEditorCopy.fields.draftTitle}</Heading>
+        <Badge variant="success">{copy.status}</Badge>
+      </Stack>
       <Text variant="muted">{identityEditorCopy.fields.draftBody}</Text>
-      <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
+      <Stack direction="horizontal" gap={2} className="flex-wrap">
+        <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
+        <Button size="sm" variant="secondary">
+          {copy.secondary}
+        </Button>
+        <Button size="sm" variant="outline">
+          {copy.outline}
+        </Button>
+        <Button size="sm" variant="destructive">
+          {copy.destructive}
+        </Button>
+      </Stack>
+      <Stack gap={3} className="hidden lg:flex">
+        <Field>
+          <FieldLabel htmlFor="identity-editor-sample">{copy.inputLabel}</FieldLabel>
+          <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
+        </Field>
+        <dl className="m-0 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border p-3 text-sm">
+          {copy.rows.map(([term, detail]) => (
+            <div key={term} className="contents">
+              <dt className="text-muted-foreground">{term}</dt>
+              <dd className="m-0">{detail}</dd>
+            </div>
+          ))}
+        </dl>
+        <Alert>
+          <AlertTitle>{copy.alertTitle}</AlertTitle>
+          <AlertDescription>{copy.alertBody}</AlertDescription>
+        </Alert>
+      </Stack>
     </Stack>
   );
 }

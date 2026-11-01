@@ -1,20 +1,3 @@
-export const homeAdminSceneCopy = {
-  ordersBadge: "Orders",
-  savedStatus: "All changes saved",
-  title: "128 open orders this week",
-  stats: {
-    onTimeValue: "94%",
-    onTimeLabel: "On time",
-    reviewValue: "12",
-    reviewLabel: "To review",
-    lateValue: "3",
-    lateLabel: "Late",
-  },
-  progressLabel: "Fulfilment this week",
-  approveSelected: "Approve selected",
-  exportCsv: "Export CSV",
-} as const;
-
 export const homeGalleryPreviewCopy = {
   badge: {
     beta: "beta",

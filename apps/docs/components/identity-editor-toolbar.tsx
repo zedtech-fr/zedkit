@@ -40,11 +40,11 @@ function LookSelect({
 }) {
   const options = looks.length > 0 ? looks : identities;
   return (
-    <Field className="shrink-0">
+    <Field className="w-full sm:w-48 sm:shrink-0">
       <FieldLabel htmlFor="identity-editor-look">{identityEditorCopy.toolbar.look}</FieldLabel>
       <select
         id="identity-editor-look"
-        className="h-control-height rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
+        className="h-control-height w-full rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
         value={identity}
         onChange={(event) => onIdentity(event.target.value)}
       >
@@ -76,9 +76,9 @@ function IdentityEditorToolbar({
   onApplySite,
 }: IdentityEditorToolbarProps) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap={2} className="flex-wrap items-end">
       <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
-      <Field className="min-w-36">
+      <Field className="w-full min-w-36 sm:w-56">
         <FieldLabel htmlFor="identity-editor-name">{identityEditorCopy.toolbar.name}</FieldLabel>
         <Input id="identity-editor-name" value={name} onChange={(event) => onName(event.target.value)} />
       </Field>

@@ -13,7 +13,8 @@ export const homeIdentityLooksCopy = {
     density: "Density",
     palette: "Palette",
   },
-  openEditor: "Open the identity editor",
+  openEditor: "Try the demo editor",
+  startWithoutCode: "Start without writing code",
   seeInComponents: "See identities in components",
   stage: {
     heading: "Project settings",

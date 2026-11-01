@@ -93,6 +93,9 @@ function HomeIdentityLooksLinks() {
       <Button asChild variant="link" size="sm" className="w-fit">
         <Link href="/features/identity-kit-demos">{homeIdentityLooksCopy.seeInComponents}</Link>
       </Button>
+      <Button asChild variant="link" size="sm" className="w-fit">
+        <Link href="/docs/start-without-writing-code">{homeIdentityLooksCopy.startWithoutCode}</Link>
+      </Button>
     </Stack>
   );
 }

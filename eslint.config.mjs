@@ -13,7 +13,6 @@ const deepRelativeImport = {
 // function cap, so they cannot grow past 300 unnoticed.
 const sizeBudgetOverFile = [
   "apps/docs/components/project-tracker-demo-app.tsx",
-  "apps/docs/ui/home/home-use-cases-section.tsx",
   "packages/ui/preview/gallery.tsx",
 ];
 // Phone preview chrome uses max-w-[390px]; there is no spacing token for
@@ -28,7 +27,6 @@ const sizeBudgetOverFunction = [
   "apps/docs/components/demos/tabs-demo.tsx",
   "apps/docs/components/preview-viewport.tsx",
   "apps/docs/ui/catalog/catalog-view.tsx",
-  "apps/docs/ui/home/home-proofs.tsx",
   "packages/ui/src/data-table.tsx",
   "packages/ui/src/identity-picker.tsx",
   "packages/ui/src/route-modal.tsx",

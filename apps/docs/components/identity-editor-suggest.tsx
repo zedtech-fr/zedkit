@@ -138,21 +138,23 @@ function IdentityEditorSuggest({
 
   return (
     <Stack gap={3} data-slot="identity-editor-suggest">
-      <Text>{identityEditorCopy.suggest.intro}</Text>
-      <Field>
-        <FieldLabel htmlFor="identity-editor-suggest">{identityEditorCopy.suggest.request}</FieldLabel>
-        <Input
-          id="identity-editor-suggest"
-          value={prompt}
-          onChange={(event) => setPrompt(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") runSuggest();
-          }}
-        />
-      </Field>
-      <Button type="button" onClick={runSuggest} disabled={busy || prompt.trim() === ""}>
-        {identityEditorCopy.suggest.suggest}
-      </Button>
+      <Text variant="muted">{identityEditorCopy.suggest.intro}</Text>
+      <Stack gap={2} className="sm:flex-row sm:items-end">
+        <Field className="min-w-0 flex-1">
+          <FieldLabel htmlFor="identity-editor-suggest">{identityEditorCopy.suggest.request}</FieldLabel>
+          <Input
+            id="identity-editor-suggest"
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") runSuggest();
+            }}
+          />
+        </Field>
+        <Button type="button" className="sm:shrink-0" onClick={runSuggest} disabled={busy || prompt.trim() === ""}>
+          {identityEditorCopy.suggest.suggest}
+        </Button>
+      </Stack>
       {busy ? <Text role="status">{identityEditorCopy.suggest.suggesting}</Text> : null}
       {proposal ? (
         <ProposalCard
