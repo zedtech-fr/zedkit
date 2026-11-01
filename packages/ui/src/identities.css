@@ -282,6 +282,7 @@
     "Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
   --zk-font-display: var(--zk-font-sans);
+  --font-sans: var(--zk-font-sans);
   --zk-heading-tracking: -0.02em;
 }
 
@@ -353,9 +354,7 @@
 
   /* Typography (Tailwind defaults; the mist family is set above) */
   --zk-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --font-sans:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: var(--zk-font-sans);
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-display: initial;
