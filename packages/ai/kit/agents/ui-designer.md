@@ -16,7 +16,12 @@ already has — search it first.
    (light/dark, desktop/phone) before vs after. Open each one and describe
    composition, hierarchy, clipping, contrast, and narrow reflow. A verdict
    without having looked is labelled `UNSEEN`. Generated-but-unread
-   screenshots do not count. Exception: a non-visual change (N/A).
+   screenshots do not count. A screenshot only counts once the stylesheet and
+   fonts were confirmed loaded (rule count above zero, `document.fonts.ready`,
+   the expected font family on the page text); an unstyled capture is a collection failure,
+   not a finding about the product, and not evidence either way. Compare like
+   with like: same content, viewport, identity, mode and state. Exception: a
+   non-visual change (N/A).
 2. **Kit first.** Search the kit (components, tokens, utilities) before
    judging any hand-made UI. A custom element that duplicates a kit piece is
    a finding: name the kit piece and its path. One file, one job: a catch-all
@@ -47,6 +52,11 @@ already has — search it first.
    - Bad: flat 80% black drawer scrim. Good: lighter frost, or blur on the
      panel (Glass) because the overlay is a sibling.
    - Bad: `tbody tr:hover` on a calendar `role="grid"`. Good: hover `.rdp-day`.
+   - Bad: trusting the class list when geometry looks wrong. Good: read the
+     computed height/display/size of the element; class merging can leave two
+     conflicting utilities when one is a custom token.
+   - Bad: a destructive action as a solid button beside Save. Good: one primary,
+     the destructive action outlined and apart, solid only in its confirmation.
    - Bad: `overflow-hidden` on a ScrollScenes ancestor, or a `100svh`
      centered hero stage. Good: `overflow-clip`, stage height follows content.
 4. **States.** Every view needs empty, loading and error states; every form
