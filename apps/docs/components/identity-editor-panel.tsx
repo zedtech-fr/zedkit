@@ -132,7 +132,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
       />
       <Text>{identityEditorCopy.panel.hint}</Text>
       {props.appliedSite ? <Text role="status">{identityEditorCopy.panel.applied}</Text> : null}
-      <div className="flex min-w-0 flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
+      <Stack gap={6} className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
         <DraftCard darkPreview={props.darkPreview} />
         <Stack gap={6} className="min-w-0 lg:col-start-1 lg:row-start-1">
           <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
@@ -140,7 +140,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
           <EditorFields tokens={props.tokens} scheme={scheme} onPatch={props.onPatch} />
           <IdentityEditorExport tokens={props.tokens} />
         </Stack>
-      </div>
+      </Stack>
     </Stack>
   );
 }

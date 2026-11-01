@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   Alert,
   AlertDescription,
@@ -75,7 +75,7 @@ function FieldGroup({ legend, children }: { legend: string; children: ReactNode 
   return (
     <fieldset className="m-0 min-w-0 border-0 p-0">
       <legend className="mb-3 text-sm font-semibold text-foreground">{legend}</legend>
-      <div className="grid min-w-0 gap-4 sm:grid-cols-2">{children}</div>
+      <Stack className="grid min-w-0 gap-4 sm:grid-cols-2">{children}</Stack>
     </fieldset>
   );
 }
@@ -164,10 +164,10 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
         </Field>
         <dl className="m-0 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border p-3 text-sm">
           {copy.rows.map(([term, detail]) => (
-            <div key={term} className="contents">
+            <Fragment key={term}>
               <dt className="text-muted-foreground">{term}</dt>
               <dd className="m-0">{detail}</dd>
-            </div>
+            </Fragment>
           ))}
         </dl>
         <Alert>
