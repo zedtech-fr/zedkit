@@ -163,3 +163,37 @@ test("Volt's dense list reads as dense: its rows are tighter than the shared tab
   expect(heights.dense).toBeGreaterThan(0);
   expect(heights.dense).toBeLessThan(heights.table);
 });
+
+test("Delete project: the dialog traps focus, Cancel and Escape return it, Confirm completes and Restore undoes it", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  const stage = page.locator("[data-home-identity-stage]");
+  await stage.scrollIntoViewIfNeeded();
+  const trigger = stage.getByRole("button", { name: "Delete project" });
+  const status = stage.locator("[data-home-identity-status]");
+
+  await trigger.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  for (let step = 0; step < 6; step += 1) {
+    await page.keyboard.press("Tab");
+    expect(await dialog.evaluate((node) => node.contains(document.activeElement)), `Tab ${step + 1} stays inside`).toBe(true);
+  }
+  await dialog.getByRole("button", { name: "Cancel" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect(status).not.toContainText("deleted");
+
+  await trigger.click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await page.getByRole("dialog").getByRole("button", { name: "Delete project" }).click();
+  await expect(status).toContainText("Nothing was removed");
+  const restore = stage.getByRole("button", { name: "Restore project" });
+  await restore.click();
+  await expect(stage.getByRole("button", { name: "Delete project" })).toBeVisible();
+  await expect(stage.getByText("Active", { exact: true }).first()).toBeVisible();
+});
