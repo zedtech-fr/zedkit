@@ -24,9 +24,9 @@ describe("gentle motion", () => {
     expect(text).not.toContain("gentle motion by default");
   });
 
-  it("tells both personas that motion reassures and shows where you are", () => {
+  it("tells both personas that motion, where used, shows what changed", () => {
     const text = kitText("personas.template.md");
-    expect(text).toContain("gentle motion reassures and shows where you are");
+    expect(text).toContain("motion, where used, shows what changed");
     expect(text).toContain("stressed user");
   });
 
