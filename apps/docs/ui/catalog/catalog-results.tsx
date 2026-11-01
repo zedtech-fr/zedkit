@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container, Heading, Stack, Text } from "@zedtech/zedkit-ui";
+import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { MaturityBadge } from "@/components/maturity-badge";
 import type { CatalogIndexEntry } from "@/content/catalog-index";
 import { groupCatalogResults } from "@/lib/catalog-result-groups.mjs";
@@ -40,25 +40,33 @@ function EntryColumns({ entries }: { entries: CatalogIndexEntry[] }) {
   );
 }
 
-/** Result rows — separate chunk so filters + shell hydrate first (#618). */
-export function CatalogResults({ filtered }: { filtered: CatalogIndexEntry[] }) {
-  const groups = groupCatalogResults(filtered);
-  const statusLine = (
+function resultsStatusLine(filtered: CatalogIndexEntry[]) {
+  return (
     <span role="status" aria-live="polite">
       {filtered.length} {filtered.length === 1 ? "entry" : "entries"}
     </span>
   );
-  const header = (
-    <div className="flex items-start justify-between gap-4">
+}
+
+/** Results title row — lives in the default-width filters band for column alignment. */
+export function CatalogResultsHeader({ filtered }: { filtered: CatalogIndexEntry[] }) {
+  return (
+    <div className="flex items-start justify-between gap-4" data-catalog-results-heading="">
       <div>
-        <Heading level={2}>Results</Heading>
-        <Text variant="muted">{statusLine}</Text>
+        <Heading level={2} id="catalog-results-heading">
+          Results
+        </Heading>
+        <Text variant="muted">{resultsStatusLine(filtered)}</Text>
       </div>
     </div>
   );
+}
+
+/** Result rows — separate chunk so filters + shell hydrate first (#618). */
+export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[] }) {
+  const groups = groupCatalogResults(filtered);
   return (
     <Stack gap={4} data-catalog-results-root="">
-      <Container width="default">{header}</Container>
       <section data-slot="section" className="space-y-4" aria-label="Results">
         {filtered.length === 0 ? (
           <Stack gap={2}>
@@ -95,6 +103,16 @@ export function CatalogResults({ filtered }: { filtered: CatalogIndexEntry[] }) 
           </Stack>
         )}
       </section>
+    </Stack>
+  );
+}
+
+/** @deprecated Use CatalogResultsHeader + CatalogResultsBody from the catalog shell. */
+export function CatalogResults({ filtered }: { filtered: CatalogIndexEntry[] }) {
+  return (
+    <Stack gap={4}>
+      <CatalogResultsHeader filtered={filtered} />
+      <CatalogResultsBody filtered={filtered} />
     </Stack>
   );
 }

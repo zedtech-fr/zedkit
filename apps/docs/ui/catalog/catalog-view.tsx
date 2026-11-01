@@ -7,17 +7,16 @@ import { Button, Container, Heading, IconLabel, Input, Label, Section, Stack, Te
 import { areaIconFor } from "@/lib/domain-icons";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
-const CatalogResults = dynamic(
-  () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResults })),
+import { CatalogResultsHeader } from "@/ui/catalog/catalog-results";
+
+const CatalogResultsBodyLazy = dynamic(
+  () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResultsBody })),
   {
     loading: () => (
-      <Stack gap={4}>
-        <Container width="default">
-          <Heading level={2}>Results</Heading>
-          <Text variant="muted" role="status">
-            Loading results…
-          </Text>
-        </Container>
+      <Stack gap={4} data-catalog-results-root="">
+        <Text variant="muted" role="status">
+          Loading results…
+        </Text>
       </Stack>
     ),
   },
@@ -152,10 +151,11 @@ export function CatalogView({
           />
         </Stack>
       </Stack>
+      <CatalogResultsHeader filtered={filtered} />
       </Stack>
       </Section>
       <Container width="wide" className="py-section-lg">
-        <CatalogResults filtered={filtered} />
+        <CatalogResultsBodyLazy filtered={filtered} />
       </Container>
     </>
   );

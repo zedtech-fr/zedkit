@@ -21,6 +21,12 @@ figure.shiki [role="region"]:focus-visible {
 
 figure.shiki pre {
   min-width: min-content;
+  white-space: pre;
+}
+
+figure.shiki pre code,
+figure.shiki pre .line {
+  white-space: pre;
 }
 
 figure.shiki [role="region"] {

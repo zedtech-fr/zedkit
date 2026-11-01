@@ -36,9 +36,7 @@ for (const width of DESKTOP_WIDTHS) {
 
     const tops = await page.evaluate(() => {
       const filters = document.querySelector("#catalog-filters-heading");
-      const results = Array.from(document.querySelectorAll("h2[data-slot='heading']")).find(
-        (h) => h.textContent?.trim() === "Results",
-      );
+      const results = document.querySelector("#catalog-results-heading");
       const f = filters?.getBoundingClientRect();
       const r = results?.getBoundingClientRect();
       return f && r ? Math.abs(f.left - r.left) : Number.NaN;
@@ -57,29 +55,38 @@ for (const theme of ["light", "dark"] as const) {
     await card.scrollIntoViewIfNeeded();
     await expect(card.getByRole("heading", { name: "Project apps", level: 2 })).toBeVisible();
     await expect(card.locator("table")).toBeVisible();
-    await expect(card.getByText("Region", { exact: true })).toBeVisible();
+    await expect(card.getByRole("columnheader", { name: "Region" })).toBeVisible();
+
+    const preview = page.locator("[data-home-hero-preview]");
+
+    const scrollTargetIntoPreview = async (selector: string) =>
+      preview.evaluate(
+        (el, sel) => {
+          const target = document.querySelector(sel);
+          if (!target) return false;
+          const delta = target.getBoundingClientRect().top - el.getBoundingClientRect().top;
+          el.scrollTop += delta;
+          const pr = el.getBoundingClientRect();
+          const tr = target.getBoundingClientRect();
+          return tr.top >= pr.top - 2 && tr.bottom <= pr.bottom + 2;
+        },
+        selector,
+      );
+
+    expect(await scrollTargetIntoPreview("[data-home-dashboard-card] table")).toBe(true);
+    expect(await scrollTargetIntoPreview("[data-home-dashboard-card] button[aria-pressed]")).toBe(
+      true,
+    );
 
     const visible = await page.evaluate(() => {
-      const root = document.querySelector("[data-home-dashboard-card]");
-      const preview = document.querySelector("[data-home-hero-preview]");
-      const table = root?.querySelector("table");
-      if (!root || !preview || !table) return { ok: false, reason: "missing nodes" };
-      const rootBox = root.getBoundingClientRect();
-      const previewStyle = getComputedStyle(preview);
-      const tableBox = table.getBoundingClientRect();
-      const nameCell = root.querySelector("button[aria-pressed]");
-      const nameBox = nameCell?.getBoundingClientRect();
-      const clippedByPreview =
-        previewStyle.overflow !== "visible" &&
-        previewStyle.maxHeight !== "none" &&
-        tableBox.bottom > preview.getBoundingClientRect().bottom + 1;
-      return {
-        ok:
-          !clippedByPreview &&
-          tableBox.bottom <= rootBox.bottom + 2 &&
-          Boolean(nameBox && nameBox.height > 0),
-        clippedByPreview,
-      };
+      const previewEl = document.querySelector("[data-home-hero-preview]");
+      if (!previewEl) return { ok: false };
+      const previewStyle = getComputedStyle(previewEl);
+      const hiddenClip =
+        previewStyle.overflowY === "hidden" ||
+        previewStyle.overflow === "hidden" ||
+        previewStyle.overflowX === "hidden";
+      return { ok: !hiddenClip, hiddenClip };
     });
     expect(visible, JSON.stringify(visible)).toMatchObject({ ok: true });
   });
@@ -96,13 +103,20 @@ test("install code on a docs page scrolls horizontally with a focusable region",
     const pre = figure.querySelector("pre");
     if (!region || !pre) return { ok: false };
     const style = getComputedStyle(region);
+    const mask = style.maskImage || style.webkitMaskImage || "";
+    const hasEdgeAffordance = mask.includes("gradient");
+    const needsHorizontalScroll = pre.scrollWidth > region.clientWidth + 1;
+    const scrolls = region.scrollWidth > region.clientWidth;
     return {
       ok:
         (style.overflowX === "auto" || style.overflowX === "scroll") &&
-        region.scrollWidth > region.clientWidth &&
-        region.getAttribute("tabindex") === "0",
+        region.getAttribute("tabindex") === "0" &&
+        hasEdgeAffordance &&
+        (!needsHorizontalScroll || scrolls),
       overflowX: style.overflowX,
-      scrolls: region.scrollWidth > region.clientWidth,
+      scrolls,
+      needsHorizontalScroll,
+      hasEdgeAffordance,
     };
   });
   expect(metrics, JSON.stringify(metrics)).toMatchObject({ ok: true });

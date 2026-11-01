@@ -23,10 +23,11 @@
 /* 1280–1440: tighten the search pill so it clears the theme toggle (nav nowrap). */
 @media (min-width: 64rem) and (max-width: 90rem) {
   :root[data-identity="tide"] #nd-nav button[class*="max-w-"] {
-    max-width: 7rem;
+    max-width: 6.25rem;
+    margin-inline-end: 0.125rem;
   }
   :root[data-identity="tide"] #nd-nav > div:last-child {
-    gap: 0.375rem;
+    gap: 0.5rem;
   }
 }
 
@@ -52,5 +53,16 @@
     --text-sm: 0.875rem;
     --text-xl: 1.25rem;
     --text-2xl: 1.375rem;
+  }
+
+  /*
+   * Hero admin demo: keep the preview shell on the first phone screen (see
+   * identity-tide e2e) while the table and detail scroll inside the card.
+   */
+  :root[data-identity="tide"] #home-page [data-home-hero-preview] {
+    max-height: 15rem;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
   }
 }

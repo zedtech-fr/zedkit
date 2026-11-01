@@ -41,11 +41,20 @@ test("catalog intro bleeds full width and the filters sit in a narrower column",
   expect(introBox).not.toBeNull();
   expect(columnBox).not.toBeNull();
   expect(introBox!.width).toBeGreaterThan(columnBox!.width + 40);
-  const results = page.locator("[data-slot='container']").filter({
-    has: page.getByRole("heading", { name: "Results", level: 2 }),
+  await page.waitForFunction(() => document.querySelector("#catalog-results-heading"));
+  const align = await page.evaluate(() => {
+    const filters = document.querySelector("#catalog-filters-heading")?.getBoundingClientRect().left;
+    const results = document.querySelector("#catalog-results-heading")?.getBoundingClientRect().left;
+    return { filters, results };
   });
-  await expect(results).toHaveClass(/max-w-wide/);
-  const resultsBox = await results.boundingBox();
+  expect(align.filters).not.toBeUndefined();
+  expect(align.results).not.toBeUndefined();
+  expect(Math.abs(align.filters! - align.results!)).toBeLessThanOrEqual(2);
+  const resultsWide = page
+    .locator("main [data-slot='container'].max-w-wide")
+    .filter({ has: page.locator("[data-catalog-results-root]") });
+  await expect(resultsWide).toBeVisible();
+  const resultsBox = await resultsWide.boundingBox();
   expect(resultsBox!.width).toBeGreaterThan(columnBox!.width);
 });
 
@@ -54,8 +63,8 @@ test("catalog runs wide with two alphabetical columns per group at 2560 (#1063)"
   await gotoCatalogQuiet(page);
   await expect(page.locator('[data-catalog-group="ui"]').first()).toBeVisible();
   const container = await page
-    .locator("main [data-slot='container']")
-    .filter({ has: page.getByRole("heading", { name: "Results", level: 2 }) })
+    .locator("main [data-slot='container'].max-w-wide")
+    .filter({ has: page.locator("[data-catalog-results-root]") })
     .boundingBox();
   expect(container).not.toBeNull();
   expect(container!.width).toBeGreaterThanOrEqual(1400);
