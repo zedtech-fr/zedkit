@@ -43,3 +43,10 @@ test("Button keeps variant, size and asChild first", async () => {
   const { kit } = await split("button.tsx", "ButtonProps");
   assert.deepEqual(kit.slice(0, 3), ["variant", "size", "asChild"]);
 });
+
+test("a wrapped library's own props stay visible (Form: render and shouldUnregister)", async () => {
+  const [doc] = await readDeclaredProps({ file: "form.tsx", name: "FormFieldProps", basePath, tsconfigPath });
+  const names = doc.entries.filter((entry) => entry.origin === "kit").map((entry) => entry.name);
+  assert.ok(names.includes("render"), "render is react-hook-form's, shown as an option");
+  assert.ok(names.includes("name"));
+});

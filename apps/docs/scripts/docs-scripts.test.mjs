@@ -95,6 +95,11 @@ test("declarationOrigin follows where a property is declared", () => {
   const kit = "/repo/packages/ui/src/layout.tsx";
   assert.equal(declarationOrigin([react]), "inherited");
   assert.equal(declarationOrigin([lib]), "inherited");
+  assert.equal(
+    declarationOrigin(["/repo/node_modules/.pnpm/react-hook-form@7/node_modules/react-hook-form/dist/types/controller.d.ts"]),
+    "kit",
+    "a wrapped library's own option is the component's API, not an element attribute",
+  );
   assert.equal(declarationOrigin([kit]), "kit");
   assert.equal(declarationOrigin([react, kit]), "kit", "a kit redeclaration of a native name is the kit's option");
   assert.equal(declarationOrigin([]), "inherited");

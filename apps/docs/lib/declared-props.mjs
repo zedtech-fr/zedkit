@@ -7,18 +7,21 @@ function generatorFor(tsconfigPath) {
   return generators.get(tsconfigPath);
 }
 
-const OUTSIDE_THE_KIT = /[\\/](?:node_modules|typescript[\\/]lib)[\\/]/;
+/** Typings that describe what a DOM element accepts: React's element attributes and the TS DOM lib. */
+const ELEMENT_ATTRIBUTE_TYPINGS = /[\\/](?:@types[\\/]react(?:-dom)?|typescript[\\/]lib)[\\/]/;
 
 /**
- * Who owns a property, from the files that declare it: the kit when any
- * declaration is in the workspace, inherited when every one sits in a
- * dependency's types (React's element attributes, Radix props, the TS lib).
+ * Who owns a property, from the files that declare it. A property is inherited
+ * only when every declaration describes a DOM element (React's element
+ * attributes, the TS DOM lib). Anything else is the component's own option:
+ * declared in the kit, or by the library the kit wraps (a Radix `value`, a
+ * react-hook-form `render`), which readers need as much as the kit's own.
  *
  * @param {readonly string[]} declarationFiles
  * @returns {"kit" | "inherited"}
  */
 export function declarationOrigin(declarationFiles) {
-  return declarationFiles.some((file) => !OUTSIDE_THE_KIT.test(file)) ? "kit" : "inherited";
+  return declarationFiles.some((file) => !ELEMENT_ATTRIBUTE_TYPINGS.test(file)) ? "kit" : "inherited";
 }
 
 /**
