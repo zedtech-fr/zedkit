@@ -154,7 +154,7 @@ test("home component families list quiet example links on desktop", async ({ pag
   const section = page.locator("#components");
   await section.scrollIntoViewIfNeeded();
   await expect(section.getByRole("heading", { name: "Find a component" })).toBeVisible();
-  const families = section.locator("[data-home-component-families] a.font-medium");
+  const families = section.locator("[data-home-component-families] [data-family-title]");
   expect(await families.count()).toBeGreaterThanOrEqual(4);
   await expect(section.locator("[data-home-gallery-card]")).toHaveCount(0);
   await expect(section.locator("a").filter({ hasText: "Button" }).first()).toBeVisible();
@@ -165,7 +165,7 @@ test("home component families layout stays sane on a phone", async ({ page }) =>
   await page.goto(BASE, { waitUntil: "networkidle" });
   const section = page.locator("#components");
   await section.scrollIntoViewIfNeeded();
-  await expect(section.locator("[data-home-component-families] a.font-medium").first()).toBeVisible();
+  await expect(section.locator("[data-home-component-families] [data-family-title]").first()).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -396,6 +396,8 @@ test("home component families link only to live docs pages, and Overlays keeps i
   for (const expected of ["Dialog", "Drawer", "Popover", "Dropdown menu", "Tooltip"]) {
     expect(names).toContain(expected);
   }
+  await expect(overlays.locator("[data-family-title]")).toHaveText("Overlays");
+  await expect(overlays.locator("[data-family-title] a")).toHaveCount(0);
   const hrefs = await section.locator("[data-home-component-families] > div a").evaluateAll((links) => [
     ...new Set(links.map((link) => (link as HTMLAnchorElement).getAttribute("href") ?? "")),
   ]);

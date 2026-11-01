@@ -530,7 +530,8 @@
       "component": null,
       "props": null,
       "source": "react.tsx",
-      "demo": "FlagsDemo"
+      "demo": "FlagsDemo",
+      "a11yNotApplicable": "Hooks and providers render nothing."
     }
   }
 }

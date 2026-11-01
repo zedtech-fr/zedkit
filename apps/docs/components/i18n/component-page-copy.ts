@@ -33,9 +33,6 @@ export const componentPageCopy = {
     `Examples import from the package. With copied source, import from @/components/ui/${registry} instead.`,
   codeBlockShadcnAdd: "shadcn add",
   codeBlockImport: "Import",
-  noExtraProps: "No extra props documented.",
-  noRelatedPages: "No related pages.",
-  troubleshootingNone: "None yet.",
 } as const;
 
 export type ComponentPageCopy = typeof componentPageCopy;

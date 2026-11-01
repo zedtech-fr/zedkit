@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
+import { componentPageSections } from "../lib/component-page-sections.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -212,6 +213,17 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
   if (purpose.length === 0) {
     throw new Error(`generator: catalog need "${need.need}" is missing purpose.`);
   }
+  if (!need.a11y && !spec.a11yNotApplicable) {
+    throw new Error(
+      `generator: "${need.need}" has no A11y line in its CATALOG.md entry. Document it, or set "a11yNotApplicable" with a reason on its docs-manifest.json entry when it has no interactive or semantic behavior.`,
+    );
+  }
+  const sections = componentPageSections({
+    hasProps: Boolean(spec.propsFile && spec.propsName),
+    a11y: need.a11y,
+    related,
+    troubleshooting: need.troubleshooting,
+  });
   const maturity = maturityDocParts(need);
   const head = [
     "---",
@@ -219,6 +231,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     `description: ${JSON.stringify(purpose)}`,
     ...maturity.frontmatterStatus,
     "componentPage: true",
+    `componentSections: ${JSON.stringify(sections)}`,
     "---",
     "",
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
@@ -485,6 +498,7 @@ export function generate(outDir) {
           registry: spec.registry ?? null,
           propsPriority: spec.propsPriority ?? null,
           propsRest: spec.propsRest ?? null,
+          a11yNotApplicable: spec.a11yNotApplicable ?? null,
         };
       }
       const related = (need.seeAlso ?? []).map((target) => {

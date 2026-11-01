@@ -117,8 +117,8 @@
 
 :root[data-identity="press"].dark,
 [data-identity-scope][data-identity="press"].dark,
-/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. */
-:root[data-identity="press"] .dark:not([data-identity-scope]),
+/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. The root rule skips sections inside a scope: the nearer scope owns them. */
+:root[data-identity="press"] .dark:not([data-identity-scope], [data-identity-scope] *),
 [data-identity-scope][data-identity="press"] .dark:not([data-identity-scope]) {
   --background: 0 0% 6%;
   --foreground: 45 35% 94%;

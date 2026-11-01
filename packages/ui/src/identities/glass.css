@@ -145,8 +145,8 @@
 
 :root[data-identity="glass"].dark,
 [data-identity-scope][data-identity="glass"].dark,
-/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. */
-:root[data-identity="glass"] .dark:not([data-identity-scope]),
+/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. The root rule skips sections inside a scope: the nearer scope owns them. */
+:root[data-identity="glass"] .dark:not([data-identity-scope], [data-identity-scope] *),
 [data-identity-scope][data-identity="glass"] .dark:not([data-identity-scope]) {
   --background: 232 38% 8%;
   --foreground: 220 40% 94%;

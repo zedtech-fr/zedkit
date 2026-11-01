@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Button, Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { CatalogActionLabel } from "@/components/docs-action-label";
 import {
   HOME_PERSUASION_TEXT_CLASS,
@@ -47,9 +47,9 @@ export function HomeComponentFamiliesSection({
               className="py-4 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-8"
             >
               <Stack gap={1} className="min-w-0">
-                <Link href={family.examples[0].href} className="font-medium underline-offset-4 hover:underline">
+                <Heading level={3} className="text-base font-medium" data-family-title="">
                   {family.label}
-                </Link>
+                </Heading>
                 <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
                   {family.blurb}
                 </Text>

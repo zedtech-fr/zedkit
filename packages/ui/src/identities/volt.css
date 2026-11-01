@@ -114,8 +114,8 @@
 
 :root[data-identity="volt"].dark,
 [data-identity-scope][data-identity="volt"].dark,
-/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. */
-:root[data-identity="volt"] .dark:not([data-identity-scope]),
+/* A plain `.dark` section inside this look keeps the look and only adds the dark tokens. The root rule skips sections inside a scope: the nearer scope owns them. */
+:root[data-identity="volt"] .dark:not([data-identity-scope], [data-identity-scope] *),
 [data-identity-scope][data-identity="volt"] .dark:not([data-identity-scope]) {
   --background: 0 0% 3%;
   --foreground: 0 0% 96%;

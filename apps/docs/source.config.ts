@@ -6,6 +6,8 @@ export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       componentPage: z.boolean().optional(),
+      /** Sections a component page renders, from `componentPageSections` (drives its contents list). */
+      componentSections: z.array(z.string()).optional(),
     }),
   },
 });

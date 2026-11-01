@@ -57,7 +57,9 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
     <>
       <JsonLd data={jsonLd} />
       <DocsPage
-        toc={page.data.componentPage ? mergeComponentPageToc(page.data.toc) : page.data.toc}
+        toc={page.data.componentPage
+          ? mergeComponentPageToc(page.data.toc, page.data.componentSections ?? [])
+          : page.data.toc}
         tableOfContentPopover={{
           trigger: {
             "aria-label": docsPageCopy.tableOfContents,

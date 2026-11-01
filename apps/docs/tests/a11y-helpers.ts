@@ -10,7 +10,7 @@ export const DOCS_SHIPPED_IDENTITIES = ["mist", "press", "tide", "volt", "maison
 export type DocsShippedIdentity = (typeof DOCS_SHIPPED_IDENTITIES)[number];
 
 const IDENTITY_SANS_SNIPPET: Record<DocsShippedIdentity, string> = {
-  mist: "system-ui", // stock stack: mist is the unbranded baseline
+  mist: "Inter Variable",
   press: "Space Grotesk",
   tide: "Inter Variable",
   volt: "Geist",
@@ -65,23 +65,121 @@ export async function pinDemoLook(
   return surface;
 }
 
-export async function assertFocusVisibleRing(button: Locator): Promise<void> {
-  await expect(button).toBeFocused();
-  const visible = await button.evaluate((el) => {
-    const style = getComputedStyle(el);
-    const outline = Number.parseFloat(style.outlineWidth);
-    if (outline > 0 && style.outlineStyle !== "none") return true;
-    if (style.boxShadow !== "none") return true;
-    const ring = getComputedStyle(el).getPropertyValue("--ring").trim();
-    if (!ring) return false;
-    const probe = document.createElement("span");
-    probe.style.outline = `2px solid hsl(${ring})`;
-    el.appendChild(probe);
-    const w = Number.parseFloat(getComputedStyle(probe).outlineWidth);
-    probe.remove();
-    return w > 0;
+/** Lands focus on `control` through Tab navigation, so the browser treats it as keyboard focus. */
+export async function focusWithKeyboard(control: Locator): Promise<void> {
+  const page = control.page();
+  await control.focus();
+  await page.keyboard.press("Shift+Tab");
+  await page.keyboard.press("Tab");
+  await expect(control).toBeFocused();
+}
+
+/** What the browser actually paints around a control while it has keyboard focus. */
+export interface FocusIndicator {
+  kind: "outline" | "ring" | "none";
+  /** Painted width in CSS px (outline width, or ring spread). */
+  width: number;
+  /** Indicator colour composited over the nearest opaque background, as `[r, g, b]`. */
+  color: [number, number, number] | null;
+  /** Nearest opaque background behind the control, as `[r, g, b]`. */
+  background: [number, number, number];
+}
+
+/**
+ * Reads the focus indicator of a focused control from its computed style.
+ * The indicator is what focus adds: an outline, or a box-shadow ring layer
+ * that the same control does not paint when blurred (a resting drop shadow
+ * is not a focus state). Nothing is drawn or assumed on the control's behalf.
+ */
+export async function readFocusIndicator(control: Locator): Promise<FocusIndicator> {
+  await expect(control).toBeFocused();
+  // A script or pointer focus does not match :focus-visible, so it would show no ring by design.
+  expect(
+    await control.evaluate((el) => el.matches(":focus-visible")),
+    "the control must be focused as a keyboard user would (see focusWithKeyboard)",
+  ).toBe(true);
+  return control.evaluate((el) => {
+    // Colour and shadow transitions start from the resting style; read the settled one.
+    const settle = () => el.getAnimations().forEach((a) => a instanceof CSSTransition && a.finish());
+    settle();
+    type Rgba = [number, number, number, number];
+    const parse = (css: string): Rgba | null => {
+      const m = css.match(/rgba?\(([^)]+)\)/) ?? css.match(/color\(srgb ([^)]+)\)/);
+      if (!m) return null;
+      const parts = m[1]!.split(/[\s,/]+/).filter(Boolean).map(Number);
+      const scale = css.startsWith("color(") ? 255 : 1;
+      return [parts[0]! * scale, parts[1]! * scale, parts[2]! * scale, parts[3] ?? 1];
+    };
+    const over = (top: Rgba, base: [number, number, number]): [number, number, number] => [
+      Math.round(top[0] * top[3] + base[0] * (1 - top[3])),
+      Math.round(top[1] * top[3] + base[1] * (1 - top[3])),
+      Math.round(top[2] * top[3] + base[2] * (1 - top[3])),
+    ];
+    let background: [number, number, number] = [255, 255, 255];
+    for (let node: Element | null = el.parentElement; node; node = node.parentElement) {
+      const bg = parse(getComputedStyle(node).backgroundColor);
+      if (bg && bg[3] === 1) {
+        background = [bg[0], bg[1], bg[2]];
+        break;
+      }
+    }
+    const layers = (shadow: string): string[] => {
+      const out: string[] = [];
+      let depth = 0;
+      let start = 0;
+      for (let i = 0; i < shadow.length; i++) {
+        if (shadow[i] === "(") depth++;
+        else if (shadow[i] === ")") depth--;
+        else if (shadow[i] === "," && depth === 0) {
+          out.push(shadow.slice(start, i).trim());
+          start = i + 1;
+        }
+      }
+      out.push(shadow.slice(start).trim());
+      return out.filter((layer) => layer && layer !== "none");
+    };
+    const focusedStyle = getComputedStyle(el);
+    const outlineWidth = Number.parseFloat(focusedStyle.outlineWidth);
+    const outlineColor = parse(focusedStyle.outlineColor);
+    const focusedLayers = layers(focusedStyle.boxShadow);
+    const outline =
+      outlineWidth > 0 && !["none", "hidden"].includes(focusedStyle.outlineStyle) && outlineColor && outlineColor[3] > 0
+        ? { width: outlineWidth, color: over(outlineColor, background) }
+        : null;
+
+    (el as HTMLElement).blur();
+    settle();
+    const restingLayers = layers(getComputedStyle(el).boxShadow);
+    (el as HTMLElement).focus();
+    settle();
+
+    const ring = focusedLayers
+      .filter((layer) => !restingLayers.includes(layer) && !layer.includes("inset"))
+      .map((layer) => {
+        const color = parse(layer);
+        const lengths = layer.replace(/rgba?\([^)]*\)|color\([^)]*\)/g, "").trim().split(/\s+/).map(Number.parseFloat);
+        return { color, spread: lengths[3] ?? 0, blur: lengths[2] ?? 0 };
+      })
+      .filter((layer) => layer.color && layer.color[3] > 0 && layer.spread > 0 && layer.blur === 0)
+      // The outermost painted ring is the indicator; inner layers are the gap against the background.
+      .sort((a, b) => b.spread - a.spread)[0];
+
+    if (outline) return { kind: "outline", width: outline.width, color: outline.color, background };
+    if (ring?.color) return { kind: "ring", width: ring.spread, color: over(ring.color, background), background };
+    return { kind: "none", width: 0, color: null, background };
   });
-  expect(visible).toBe(true);
+}
+
+/**
+ * Asserts the focused control paints a keyboard focus indicator that WCAG 1.4.11
+ * would accept: drawn by focus itself (not a resting shadow), at least 2px, and
+ * 3:1 against what is behind it.
+ */
+export async function assertFocusVisibleRing(control: Locator): Promise<void> {
+  const indicator = await readFocusIndicator(control);
+  expect(indicator.kind, "focus paints an outline or a ring that blur does not").not.toBe("none");
+  expect(indicator.width).toBeGreaterThanOrEqual(2);
+  expect(contrastRatio(indicator.color!, indicator.background)).toBeGreaterThanOrEqual(3);
 }
 
 export const A11Y_GATE_RULES = [

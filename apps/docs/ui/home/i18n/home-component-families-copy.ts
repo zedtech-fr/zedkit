@@ -2,10 +2,10 @@ export const homeComponentFamiliesCopy = {
   section: {
     title: "Find a component",
     description: (componentCount: number) =>
-      `${componentCount} UI entries in the catalog. Pick a family, then open a live doc page.`,
+      `${componentCount} UI entries in the catalog. Each name below opens a live doc page.`,
     browseAll: "Browse all UI in the catalog",
   },
-  /** Every example is a live docs page; the family title opens the first one. */
+  /** Every example is a live docs page; a family title is a plain heading, not a link. */
   families: [
     {
       label: "Actions",

@@ -1102,6 +1102,7 @@ toast.error("Upload failed"); // typed variants: success | error | info | warnin
 - When to use: Right after creating a credential the user must store.
 - When not to use: For passwords the user typed — use a password Input instead.
 - See also: `Collect text input with a label`
+- A11y: The value is a read-only input (a read-only textarea with `multiline`), so it can be focused and selected with the keyboard. Name it: point a `Label` at `id`, or pass `aria-label`; the kit does not add one. The copy button is a real button named by `copyLabel` (a localized default otherwise). The copied state is a 2-second icon swap only and is not announced, so pair it with your own `aria-live` message when screen-reader users need the confirmation.
 
 ```ts
 import { Label, SecretField } from "@zedtech/zedkit-ui";
@@ -1263,6 +1264,7 @@ import { DetailPanelRow } from "@zedtech/zedkit-ui";
 - When to use: For any form needing validation or async submit.
 - When not to use: For a single search box — use Input directly instead.
 - See also: `Lay out fieldsets, fields, and error lists`, `Collect text input with a label`
+- A11y: `FormLabel` targets the control through `htmlFor`; `FormControl` sets `aria-invalid` and links the description and the error message with `aria-describedby`. `FormMessage` is plain text and is not a live region: after a failed submit react-hook-form moves focus to the first invalid field (`shouldFocusError`, on by default), which is what makes the error reach screen-reader users. `FormSubmit` is disabled while submitting, so do not rely on it for the only error path.
 
 ```ts
 import { Form, FormField, FormSubmit, Input, useValidatedForm } from "@zedtech/zedkit-ui";
@@ -1333,6 +1335,7 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - When to use: For all kit-page layout instead of hand-written flex.
 - When not to use: For complex grids — use CSS grid directly instead.
 - See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
+- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses.
 
 ```ts
 import { Section, Stack } from "@zedtech/zedkit-ui";
@@ -1468,6 +1471,7 @@ import { BrandLogo } from "@zedtech/zedkit-ui";
 - When to use: For long option lists where radio groups would sprawl.
 - When not to use: For 2–3 visible options — use radio inputs or OptionCards instead.
 - See also: `Toggle a checkbox or a switch`, `Guide a multi-step flow with selectable option cards`
+- A11y: Built on Radix Select: the trigger has `role="combobox"`, opens with Enter, Space or the arrow keys, and options are chosen with the arrows, typeahead and Enter; Escape closes it and returns focus to the trigger. The trigger needs a name: pair it with a `Label` whose `htmlFor` matches the trigger `id`, or pass `aria-label`. The list renders in a portal, so inside a scoped theme wrap it in `ThemeScope` to keep its tokens.
 
 ```ts
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@zedtech/zedkit-ui";
@@ -1549,6 +1553,7 @@ import { Label, Textarea } from "@zedtech/zedkit-ui";
 - When to use: Checkbox for agreements and multi-picks, switch for instant on/off settings.
 - When not to use: For exclusive choices — use Select or radio inputs instead.
 - See also: `Pick one option from a dropdown`
+- A11y: Built on Radix: `Checkbox` has `role="checkbox"` and `Switch` has `role="switch"`, both toggled with Space and exposing their state through `aria-checked`. Neither has a visible name of its own: pair each with a `Label` using `htmlFor`/`id`, or pass `aria-label`. Use `Switch` only for settings that apply immediately.
 
 ```ts
 import { Checkbox, Label, Switch } from "@zedtech/zedkit-ui";

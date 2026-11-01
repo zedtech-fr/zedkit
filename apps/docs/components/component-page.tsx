@@ -17,6 +17,7 @@ import {
 import { registryBrickNames } from "../content/registry-site";
 import { docsSite } from "../lib/site";
 import { symbolsFromImport } from "../lib/import-symbols";
+import { componentPageSections } from "../lib/component-page-sections.mjs";
 import { DEFAULT_PROPS_PRIORITY } from "../lib/props-priority.mjs";
 import { ComponentPreview } from "./component-preview";
 import { ComponentWrapsLine } from "./component-wraps-line";
@@ -122,6 +123,7 @@ export async function ComponentPage({
   const sourcePath = registrySourcePath(registry);
   const source = sourcePath ? await readFile(sourcePath, "utf8") : null;
   const hasProps = Boolean(propsFile && propsName);
+  const sections = componentPageSections({ hasProps, a11y, related, troubleshooting });
   const copyable =
     registry.length > 0 && registryBrickNames.includes(registry) && sourcePath !== null;
   const npmInstall = (
@@ -263,22 +265,20 @@ export async function ComponentPage({
         </Stack>
       </Section>
 
-      <Section title={componentPageCopy.sections.props} id="props">
-        {hasProps ? (
-          <Stack gap={3}>
-            <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} {...(propsRest ? { rest: propsRest } : {})} />
-          </Stack>
-        ) : (
-          <Text variant="muted">{componentPageCopy.noExtraProps}</Text>
-        )}
-      </Section>
+      {sections.includes("props") ? (
+        <Section title={componentPageCopy.sections.props} id="props">
+          <PropsTable file={propsFile!} name={propsName!} priority={propsPriority} {...(propsRest ? { rest: propsRest } : {})} />
+        </Section>
+      ) : null}
 
-      <Section title={componentPageCopy.sections.accessibility} id="accessibility">
-        <Text>{a11y}</Text>
-      </Section>
+      {sections.includes("accessibility") ? (
+        <Section title={componentPageCopy.sections.accessibility} id="accessibility">
+          <Text>{a11y}</Text>
+        </Section>
+      ) : null}
 
-      <Section title={componentPageCopy.sections.related} id="related">
-        {related.length > 0 ? (
+      {sections.includes("related") ? (
+        <Section title={componentPageCopy.sections.related} id="related">
           <Stack gap={2}>
             {related.map((link) => (
               <Link key={link.href} href={link.href} className="text-primary underline underline-offset-4 hover:no-underline">
@@ -286,14 +286,14 @@ export async function ComponentPage({
               </Link>
             ))}
           </Stack>
-        ) : (
-          <Text variant="muted">{componentPageCopy.noRelatedPages}</Text>
-        )}
-      </Section>
+        </Section>
+      ) : null}
 
-      <Section title={componentPageCopy.sections.troubleshooting} id="troubleshooting">
-        <Text>{troubleshooting || componentPageCopy.troubleshootingNone}</Text>
-      </Section>
+      {sections.includes("troubleshooting") ? (
+        <Section title={componentPageCopy.sections.troubleshooting} id="troubleshooting">
+          <Text>{troubleshooting}</Text>
+        </Section>
+      ) : null}
     </Stack>
   );
 }

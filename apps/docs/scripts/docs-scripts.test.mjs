@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
+import { componentPageSections } from "../lib/component-page-sections.mjs";
+import { declarationOrigin } from "../lib/declared-props.mjs";
 import { partitionPropsEntries } from "../lib/props-priority.mjs";
 import { groupCatalogResults } from "../lib/catalog-result-groups.mjs";
 
@@ -63,18 +65,49 @@ test("partitionPropsEntries surfaces variant and size before inherited attrs", (
   );
 });
 
-test("partitionPropsEntries keeps required and kit-only props, folds native names", () => {
-  const native = new Set(["label", "title", "id", "onClick"]);
+test("partitionPropsEntries keeps required and kit-declared props, folds inherited ones", () => {
   const entries = [
-    { name: "title" },
-    { name: "label", required: true },
-    { name: "tone" },
-    { name: "onClick" },
-    { name: "size" },
+    { name: "title", origin: "inherited" },
+    { name: "label", required: true, origin: "inherited" },
+    { name: "tone", origin: "kit" },
+    { name: "onClick", origin: "inherited" },
+    { name: "size", origin: "inherited" },
   ];
-  const { primary, inherited } = partitionPropsEntries(entries, ["size"], native);
+  const { primary, inherited } = partitionPropsEntries(entries, ["size"]);
   assert.deepEqual(primary.map((e) => e.name), ["label", "size", "tone"]);
   assert.deepEqual(inherited.map((e) => e.name), ["onClick", "title"]);
+});
+
+test("partitionPropsEntries in only-mode folds everything but the priority list", () => {
+  const entries = [
+    { name: "required", required: true, origin: "kit" },
+    { name: "variant", origin: "kit" },
+    { name: "other", origin: "kit" },
+  ];
+  const { primary, inherited } = partitionPropsEntries(entries, ["variant"], true);
+  assert.deepEqual(primary.map((e) => e.name), ["variant"]);
+  assert.deepEqual(inherited.map((e) => e.name), ["other", "required"]);
+});
+
+test("declarationOrigin follows where a property is declared", () => {
+  const react = "/repo/node_modules/.pnpm/@types+react@19/node_modules/@types/react/index.d.ts";
+  const lib = "/repo/node_modules/typescript/lib/lib.dom.d.ts";
+  const kit = "/repo/packages/ui/src/layout.tsx";
+  assert.equal(declarationOrigin([react]), "inherited");
+  assert.equal(declarationOrigin([lib]), "inherited");
+  assert.equal(declarationOrigin([kit]), "kit");
+  assert.equal(declarationOrigin([react, kit]), "kit", "a kit redeclaration of a native name is the kit's option");
+  assert.equal(declarationOrigin([]), "inherited");
+});
+
+test("componentPageSections lists a section only when it has content", () => {
+  const always = ["example", "guidance", "install-or-copy", "usage-and-states"];
+  assert.deepEqual(componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" }), always);
+  assert.deepEqual(
+    componentPageSections({ hasProps: true, a11y: "Name it.", related: [{ title: "x" }], troubleshooting: "Wire the CSS." }),
+    [...always, "props", "accessibility", "related", "troubleshooting"],
+  );
+  assert.deepEqual(componentPageSections({ hasProps: false, a11y: "Name it." }), [...always, "accessibility"]);
 });
 
 test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () => {

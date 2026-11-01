@@ -262,7 +262,7 @@ test("home links to catalog with component families", async ({ page }) => {
   const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
   await expect(catalog).toBeVisible();
   await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
-  const rows = page.locator("[data-home-component-families] a.font-medium");
+  const rows = page.locator("[data-home-component-families] [data-family-title]");
   expect(await rows.count()).toBeGreaterThanOrEqual(4);
 });
 

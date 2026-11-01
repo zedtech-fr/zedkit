@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { assertA11yGate, assertFocusVisibleRing, DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
+import { assertA11yGate, assertFocusVisibleRing, DOCS_SHIPPED_IDENTITIES, focusWithKeyboard, pinDemoLook } from "./a11y-helpers";
 
 const PAGE = "/docs/ui/trigger-actions-with-buttons";
 
@@ -60,7 +60,7 @@ test.describe("button demo a11y + themes (#152)", () => {
         await expect(preview.getByRole("button", { name: "Delete" })).toBeVisible();
         await expect(preview.getByRole("link", { name: "Docs link" })).toBeVisible();
 
-        await create.focus();
+        await focusWithKeyboard(create);
         await assertFocusVisibleRing(create);
         await page.keyboard.press("Tab");
         await assertFocusVisibleRing(preview.getByRole("button", { name: "Cancel" }));
