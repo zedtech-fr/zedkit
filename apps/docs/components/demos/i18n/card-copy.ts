@@ -14,7 +14,7 @@ export const cardCopy = {
   footer: {
     title: "Spring collection",
     description: "12 products, last edited 2 hours ago",
-    hint: "Visual variants only — footer actions are static in this preview.",
+    status: { draft: "Draft", saved: "Draft saved", published: "Published" },
     body: "This page is still a draft. Publishing makes it visible to every customer.",
     publish: "Publish",
     saveDraft: "Save as draft",

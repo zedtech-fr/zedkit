@@ -4,6 +4,15 @@ import { assertA11yGate, assertFocusVisibleRing, DOCS_SHIPPED_IDENTITIES, pinDem
 
 const PAGE = "/docs/ui/trigger-actions-with-buttons";
 
+test("create app shows a toast", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  const preview = page.locator("[data-component-preview]").first();
+  await preview.scrollIntoViewIfNeeded();
+  await preview.getByRole("button", { name: "Create app" }).click();
+  await expect(page.getByText("App created")).toBeVisible();
+});
+
 test("button demo shows sizes and disabled states (#1065)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.goto(PAGE, { waitUntil: "networkidle" });
