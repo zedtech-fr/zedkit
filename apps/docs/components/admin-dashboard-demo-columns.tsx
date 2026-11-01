@@ -14,6 +14,29 @@ import { adminDashboardDemoCopy } from "@/components/i18n/admin-dashboard-demo-c
 
 const tableHelper = createDataTableColumns<AdminAppRow>();
 
+/** Row delete: an outlined icon, red only in its icon; the solid destructive button lives in the confirmation. */
+function DeleteRow({ name, onConfirm }: { name: string; onConfirm: () => void }) {
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="text-destructive"
+          aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(name)}
+        >
+          <Trash2 className="size-4" aria-hidden />
+        </Button>
+      }
+      title={adminDashboardDemoCopy.columns.deleteTitle}
+      description={adminDashboardDemoCopy.columns.deleteDescription(name)}
+      confirmLabel={adminDashboardDemoCopy.columns.deleteConfirm}
+      onConfirm={onConfirm}
+    />
+  );
+}
+
 export function buildAdminDashboardColumns({
   selectedId,
   onSelect,
@@ -55,23 +78,7 @@ export function buildAdminDashboardColumns({
           >
             <Pencil className="size-4" aria-hidden />
           </Button>
-          <ConfirmDialog
-            trigger={
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="text-destructive"
-                aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(row.original.name)}
-              >
-                <Trash2 className="size-4" aria-hidden />
-              </Button>
-            }
-            title={adminDashboardDemoCopy.columns.deleteTitle}
-            description={adminDashboardDemoCopy.columns.deleteDescription(row.original.name)}
-            confirmLabel={adminDashboardDemoCopy.columns.deleteConfirm}
-            onConfirm={() => onDelete(row.original.id)}
-          />
+          <DeleteRow name={row.original.name} onConfirm={() => onDelete(row.original.id)} />
         </Stack>
       ),
     }),
