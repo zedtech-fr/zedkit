@@ -69,6 +69,40 @@ export function IdentitySwitcherDemo() {
 
 const SCOPED_LOOKS = identities;
 
+/** One scoped card: Save and Cancel really change its state. */
+function ScopedCard({ look }: { look: (typeof identities)[number] }) {
+  const [saved, setSaved] = useState(false);
+  return (
+    <Stack
+      gap={3}
+      data-identity-scope=""
+      data-identity={look.id}
+      data-demo-scope={look.id}
+      className="min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground"
+    >
+      <Stack direction="horizontal" gap={2} className="items-center justify-between">
+        <Heading level={2} className="m-0! text-lg">
+          {look.label}
+        </Heading>
+        <Badge variant="secondary" className="w-fit" role="status">
+          {saved ? identityCopy.scope.savedBadge : identityCopy.scope.badge}
+        </Badge>
+      </Stack>
+      <Text variant="muted" className="m-0! text-sm">
+        {look.description}
+      </Text>
+      <Stack direction="horizontal" gap={2}>
+        <Button size="sm" disabled={saved} onClick={() => setSaved(true)}>
+          {identityCopy.scope.save}
+        </Button>
+        <Button size="sm" variant="outline" disabled={!saved} onClick={() => setSaved(false)}>
+          {identityCopy.scope.cancel}
+        </Button>
+      </Stack>
+    </Stack>
+  );
+}
+
 /** The same card under each identity, side by side, without touching the page. */
 export function IdentityScopeDemo() {
   return (
@@ -77,34 +111,9 @@ export function IdentityScopeDemo() {
         {identityCopy.scope.note}
       </Text>
       <Stack className="min-w-0 gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-3">
-      {SCOPED_LOOKS.map((look) => (
-        <Stack
-          key={look.id}
-          gap={3}
-          data-identity-scope=""
-          data-identity={look.id}
-          data-demo-scope={look.id}
-          className="min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground"
-        >
-          <Stack direction="horizontal" gap={2} className="items-center justify-between">
-            <Heading level={2} className="m-0! text-lg">
-              {look.label}
-            </Heading>
-            <Badge variant="secondary" className="w-fit">
-              {identityCopy.scope.badge}
-            </Badge>
-          </Stack>
-          <Text variant="muted" className="m-0! text-sm">
-            {look.description}
-          </Text>
-          <Stack direction="horizontal" gap={2}>
-            <Button size="sm">{identityCopy.scope.save}</Button>
-            <Button size="sm" variant="outline">
-              {identityCopy.scope.cancel}
-            </Button>
-          </Stack>
-        </Stack>
-      ))}
+        {SCOPED_LOOKS.map((look) => (
+          <ScopedCard key={look.id} look={look} />
+        ))}
       </Stack>
     </Stack>
   );

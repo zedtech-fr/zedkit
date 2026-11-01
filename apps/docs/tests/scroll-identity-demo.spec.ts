@@ -198,6 +198,10 @@ test.describe("identity previews", () => {
           await scoped.scrollIntoViewIfNeeded();
           const cards = scoped.locator("[data-demo-scope]");
           await expect(cards).toHaveCount(6);
+          await cards.first().getByRole("button", { name: "Save" }).click();
+          await expect(cards.first().getByRole("status")).toHaveText("Saved");
+          await cards.first().getByRole("button", { name: "Cancel" }).click();
+          await expect(cards.first().getByRole("status")).toHaveText("New");
           const signatures = await cards.evaluateAll((nodes) =>
             nodes.map((node) => {
               const save = node.querySelector("button")!;

@@ -7,8 +7,9 @@ export const identityCopy = {
     note: "This control restyles the whole page, like in your app. Your choice is kept in this demo only and the page goes back to its own look when you leave.",
   },
   scope: {
-    note: "Visual variants only — scoped cards and buttons are static in this preview.",
+    note: "Each card wears its own look. Save and Cancel work inside the card; the page keeps its look.",
     badge: "New",
+    savedBadge: "Saved",
     save: "Save",
     cancel: "Cancel",
   },
