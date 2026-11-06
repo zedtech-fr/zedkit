@@ -1,0 +1,1 @@
+npx zedkit-ai validate

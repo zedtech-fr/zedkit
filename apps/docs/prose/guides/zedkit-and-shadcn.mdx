@@ -1,0 +1,126 @@
+---
+title: zedkit and shadcn/ui
+description: Install @zedtech/zedkit-ui or copy published registry bricks — wraps, registry install, when to use plain shadcn, and FAQ.
+---
+
+import { ZedkitShadcnFaq } from "@/components/zedkit-shadcn-faq";
+
+Every claim below points at a file you can open in the public repo.
+
+## Who this is for
+
+You already use [shadcn/ui](https://ui.shadcn.com/) or Radix primitives and wonder whether
+`@zedtech/zedkit-ui` replaces them, duplicates them, or sits beside them.
+
+## What zedkit wraps (verify in source)
+
+The UI package lists runtime dependencies in
+[`packages/ui/package.json`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/package.json).
+Today that includes, among others:
+
+| Library | Role in zedkit | Catalog example |
+| --- | --- | --- |
+| Radix UI (`@radix-ui/react-*`) | Accessible primitives for dialogs, menus, tabs, etc. | [Open modal dialogs](/docs/ui/open-modal-dialogs) (`Derived from: shadcn/ui (dialog)` in [CATALOG.md](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CATALOG.md)) |
+| `vaul` | Drawer motion and behavior | [Slide in a drawer panel](/docs/ui/slide-in-a-drawer-panel) |
+| `react-hook-form` + `zod` + `@hookform/resolvers` | Form state and schema validation | [Build validated forms](/docs/ui/build-validated-forms-with-labels-errors-and-pending-state) |
+| `@tanstack/react-table` | Data table sorting, filtering, pagination | [Show a sortable, filterable, paginated data table](/docs/ui/show-a-sortable-filterable-paginated-data-table) |
+| `sonner` | Toasts | [Show toast notifications](/docs/ui/show-toast-notifications) |
+| `tailwind-merge`, `class-variance-authority`, `clsx` | Class composition and variants | [Merge class names without conflicts](/docs/ui/merge-class-names-without-conflicts) |
+
+Each catalog need’s **Wraps** line names the direct npm dependency; many bricks also carry
+**Derived from: shadcn/ui (...)** when the component file follows the shadcn layout.
+
+## What zedkit adds
+
+- **Composed admin patterns** — layout shell, data table, multi-step flows, and similar needs
+  are first-class catalog entries, not only atomic primitives.
+- **Shared theme tokens** — [`packages/ui/src/styles.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/styles.css)
+  and [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included) document dark/light
+  setup for Tailwind v4.
+- **Generated docs** — catalog → MDX pages, live previews, and (for registry bricks) install
+  JSON from [`registry.json`](https://github.com/zedtech-fr/zedkit/blob/main/registry.json)
+  (see [COMPONENT-PAGE.md](https://github.com/zedtech-fr/zedkit/blob/main/apps/docs/COMPONENT-PAGE.md)).
+- **Thin wrappers elsewhere** — non-UI packages follow the repo
+  [golden rule](https://github.com/zedtech-fr/zedkit/blob/main/docs/golden-rule.md):
+  one stable import surface over a mature library.
+
+## npm install vs registry (`shadcn add`)
+
+| Path | When | What you get |
+| --- | --- | --- |
+| `pnpm add @zedtech/zedkit-ui` | You want the published package API and CSS entry | Imports from `@zedtech/zedkit-ui`; version pinned on each doc page’s Install tabs |
+| `npx shadcn@latest add https://zedkit.app/r/<brick>.json` | You want source files in *your* repo like upstream shadcn | Files from [`registry/ui/`](https://github.com/zedtech-fr/zedkit/tree/main/registry/ui) (rewritten at `pnpm registry:build`). Register `@zedkit` first for composed items (below). |
+| `npx shadcn@latest add zedtech-fr/zedkit/<brick>` | Same bricks, GitHub registry shorthand (no docs host) | Same files as the URL form; reads `registry.json` on the public repo |
+
+Registry bricks are listed in `registry.json`; only published JSON URLs under `/r/` are
+documented on component pages. If a brick is not in the registry yet, use npm imports until
+it ships.
+
+## Adding registry bricks
+
+Use either install form (same brick list):
+
+```sh
+npx shadcn@latest add https://zedkit.app/r/badge.json
+npx shadcn@latest add zedtech-fr/zedkit/badge
+```
+
+Composed bricks (`drawer`, `confirm-dialog`, …) declare `@zedkit/*` siblings. Register the
+docs namespace once in a project with `components.json`:
+
+```sh
+npx shadcn@latest registry add @zedkit=https://zedkit.app/r/{name}.json
+```
+
+Then run `shadcn add` for the composed item (URL or GitHub form). Install the `theme` brick
+when you need shared success/warning/overlay tokens and motion utilities without the npm
+`styles.css` package.
+
+## Updating copied files
+
+After a copy, **the files are yours** (MIT). There is no automatic update channel.
+
+- Registry URLs (hosted or GitHub) always resolve to the **latest published** item — they are
+  not version-pinned.
+- Compare upstream changes: `npx shadcn@latest add <same-url-or-name> --diff`.
+- Replace your edits: `npx shadcn@latest add … --overwrite` (review the diff first).
+- npm path: bump `@zedtech/zedkit-ui` with your package manager instead.
+
+Full theme tokens and `styles.css` still come from the npm package today; copied bricks only
+ship the CSS slices attached to each registry item plus the optional `theme` brick.
+
+## When to prefer plain shadcn/ui
+
+Stay on upstream shadcn/ui (or your own forks) when:
+
+- You need full control over every component file and do not want a versioned package boundary.
+- Your design system diverges from the kit tokens and you will not adopt
+  [`styles.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/styles.css).
+- You only need one primitive and none of the composed catalog needs apply.
+
+Reach for zedkit when several catalog needs match your admin app and you want docs, previews,
+and install commands to stay aligned with the npm release.
+
+## Scenario
+
+You start a Next.js admin app. You install `@zedtech/zedkit-ui`, follow the theme doc, and
+copy the Button usage from [Trigger actions with buttons](/docs/ui/trigger-actions-with-buttons).
+Later you add a drawer via `npx shadcn add` using the registry URL on that component page so
+the file lands in your tree with the same import paths the docs show.
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| `shadcn add` 404 | Brick not published yet — check [`registry.json`](https://github.com/zedtech-fr/zedkit/blob/main/registry.json) and the component page’s Install section. |
+| Styles look like unstyled HTML | Theme doc not applied (Tailwind v4 + kit CSS). |
+| Types differ from shadcn docs | You imported `@zedtech/zedkit-ui`; props match the generated **Props** table on the catalog page, not third-party snippets. |
+| Want only Radix, no kit | Use Radix directly; zedkit does not block that — it is an optional layer. |
+
+<ZedkitShadcnFaq />
+
+## Next steps
+
+- [Getting started](/docs/getting-started) — prerequisites and first commands
+- [Golden rule](https://github.com/zedtech-fr/zedkit/blob/main/docs/golden-rule.md) — wrapping other libraries in core, server, or nest
+- [Documentation index](/docs) — pick a need by folder

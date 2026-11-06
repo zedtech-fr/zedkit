@@ -1,0 +1,92 @@
+{
+  "name": "@zedtech/zedkit-quality",
+  "version": "1.1.1",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Shared quality setup: UI lint preset, route/view/data layer boundaries, one strict TypeScript base, and repo hygiene bins — consume, do not copy.",
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "tsconfig",
+    "typescript",
+    "strict",
+    "layers",
+    "architecture",
+    "a11y",
+    "tailwindcss",
+    "code-quality",
+    "ci",
+    "hygiene"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/quality",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/quality"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./src/index.mjs",
+  "types": "./src/index.d.mts",
+  "bin": {
+    "zedkit-sync-env": "./src/bin/sync-env.mjs",
+    "zedkit-check-no-artifacts": "./src/bin/check-no-artifacts.sh",
+    "zedkit-check-no-secrets": "./src/bin/check-no-secrets.sh"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.mts",
+      "import": "./src/index.mjs"
+    },
+    "./eslint": {
+      "types": "./src/eslint.d.mts",
+      "import": "./src/eslint.mjs"
+    },
+    "./tsconfig": "./tsconfig.base.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/index.mjs",
+    "src/index.d.mts",
+    "src/eslint.mjs",
+    "src/eslint.d.mts",
+    "src/bin",
+    "tsconfig.base.json"
+  ],
+  "zedkit": {
+    "noBuild": true
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint src tests"
+  },
+  "peerDependencies": {
+    "@eslint/js": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

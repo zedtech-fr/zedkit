@@ -1,0 +1,7 @@
+---
+description: zedkit ai package rules
+globs:
+  - "packages/ai/**"
+---
+
+When working in packages/ai, also read and follow packages/ai/AGENTS.md if present, in addition to the root /AGENTS.md.

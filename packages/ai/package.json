@@ -1,0 +1,75 @@
+{
+  "name": "@zedtech/zedkit-ai",
+  "version": "1.0.1",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Install one agent-agnostic setup (AGENTS.md, skills, subagents, commands) with a single CLI, instead of maintaining per-tool config. Original work by the same author.",
+  "keywords": [
+    "ai",
+    "agents",
+    "agents-md",
+    "skills",
+    "subagents",
+    "cursor",
+    "claude-code",
+    "codex",
+    "coding-assistant",
+    "setup",
+    "scaffolding",
+    "opencode"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/ai",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/ai"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "zedkit-ai": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "kit"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests",
+    "kit:md": "prettier --check kit"
+  },
+  "dependencies": {
+    "@zedtech/zedkit-core": "workspace:*",
+    "yaml": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "prettier": "3.9.10",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

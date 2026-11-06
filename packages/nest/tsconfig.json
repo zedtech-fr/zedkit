@@ -1,0 +1,10 @@
+{
+  "extends": "@zedtech/zedkit-quality/tsconfig",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src", "tests", "examples"]
+}

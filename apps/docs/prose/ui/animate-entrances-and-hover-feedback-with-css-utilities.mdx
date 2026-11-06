@@ -1,0 +1,46 @@
+## Tokens that drive motion
+
+Every utility reads CSS custom properties with a fallback, so a page or a
+future identity can change how things move without touching a component.
+
+| Token | Default | Used by |
+| --- | --- | --- |
+| `--zk-reveal-duration` | `300ms` | `animate-fade-up`, `animate-fade-in`, `animate-pop-in`, `data-reveal`, `data-stagger`, `data-animate` |
+| `--zk-reveal-distance` | `0.75rem` | upward travel of fade-up and reveal |
+| `--zk-reveal-ease` | `cubic-bezier(0.22, 1, 0.36, 1)` | entrance easing |
+| `--zk-stagger-step` | `70ms` | `stagger-*`, `data-reveal-delay`, `data-stagger` children |
+| `--zk-lift-duration` | `200ms` | `hover-lift`, `hover-press` |
+| `--zk-lift-translate` | `0 -2px` | `hover-lift` offset |
+| `--zk-press-translate` | `0 1px` | `hover-press` offset |
+| `--zk-marquee-duration` | `40s` | `marquee-track` loop |
+
+```css title="globals.css"
+:root {
+  --zk-reveal-duration: 400ms; /* slower entrances across the app */
+  --zk-stagger-step: 90ms;
+}
+```
+
+## Reveal on scroll
+
+Prefer `data-animate` / `<Animate>` (see *Reveal and react with motion on
+any element*): the kit observer writes `data-animate-state`. The older
+`data-reveal` / `data-stagger` attributes still style `pending` → `in` if
+you drive them yourself.
+
+```tsx title="reveal-on-scroll.tsx" preview="RevealOnScrollDemo"
+import { Animate, Stack, Text } from "@zedtech/zedkit-ui";
+
+<Animate on={{ appear: "fade-up" }} stagger>
+  <Stack>
+    <Text>One</Text>
+    <Text>Two</Text>
+  </Stack>
+</Animate>
+```
+
+## Marquee
+
+`marquee-track` scrolls its children in a loop. Render the content twice in
+the track so the `-50%` translate wraps seamlessly, and keep the duplicate out
+of the accessibility tree with `aria-hidden`.

@@ -1,0 +1,69 @@
+name: inspect-dev-vhost
+
+# Manual discovery only: print the dev site block of the live Caddy
+# config so the dev root can be versioned in deploy/Caddyfile, plus how
+# Caddy is wired on the host (file names, mounts, start command) so the
+# running config can be reconciled with this repo.
+# Never prints keys, env, or any other config block.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inspect-dev-vhost
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DOCS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Print dev site block
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: |
+          # Pass the extractor as an ssh argument: the same shape the
+          # production deploy uses. A heredoc on ssh stdin delivered
+          # nothing in this runner (0-byte output, exit 0).
+          extract='/^dev[.]zedkit[.]app[[:space:]]*\{/{f=1} f{print} f&&/^\}/{exit}'
+          # Known locations first (host files, then the running config).
+          ssh "$TARGET" "awk '$extract' /srv/app/Caddyfile /etc/caddy/Caddyfile" > dev-vhost.txt || true
+          if [ ! -s dev-vhost.txt ]; then
+            ssh "$TARGET" "cd /srv/app && docker compose exec -T caddy cat /etc/caddy/Caddyfile" | awk "$extract" > dev-vhost.txt || true
+          fi
+          # Served from the adapted config instead: select only the
+          # routes matched to the dev host, never the whole file.
+          if [ ! -s dev-vhost.txt ]; then
+            ssh "$TARGET" "cd /srv/app && docker compose exec -T caddy cat /config/caddy/autosave.json" > autosave.json || true
+            jq -c '.apps.http.servers[] | .routes[]? | select([.match[]?.host[]? // empty] | index("dev.zedkit.app"))' autosave.json > dev-vhost.txt || true
+          fi
+          if [ ! -s dev-vhost.txt ]; then
+            echo "dev site block not found" >&2
+            exit 1
+          fi
+          cat dev-vhost.txt
+      - name: Print host wiring
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: |
+          ssh "$TARGET" "cd /srv/app; echo '[files]'; ls -1; echo '[start]'; docker inspect -f '{{json .Config.Cmd}} {{json .Config.Entrypoint}}' \$(docker compose ps -q caddy); echo '[mounts]'; docker inspect -f '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}' \$(docker compose ps -q caddy); echo '[container Caddyfile hosts]'; docker compose exec -T caddy grep -n 'zedkit.app' /etc/caddy/Caddyfile; echo '[dev.caddy hosts]'; docker compose exec -T caddy grep -n 'zedkit.app' /etc/caddy/dev.caddy; echo '[wrapper]'; cat Caddyfile.dev-wrapper; echo '[override masked]'; sed -E 's/(KEY|TOKEN|SECRET|PASSWORD|API)([A-Za-z_]*)(:|=)[^ ]*/\1\2\3***/gi' compose.override.yaml" > host-wiring.txt || true
+          cat host-wiring.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dev-vhost
+          path: |
+            dev-vhost.txt
+            host-wiring.txt
+          retention-days: 1

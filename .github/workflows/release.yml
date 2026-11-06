@@ -1,0 +1,102 @@
+name: release
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# The Version PR needs contents + pull-requests; npm provenance
+# attestation needs id-token. Publishing itself authenticates with
+# the NPM_TOKEN secret (see docs/publishing.md).
+#
+# GitHub does not run workflows on PRs opened with GITHUB_TOKEN.
+# When RELEASE_APP_ID / RELEASE_APP_PRIVATE_KEY are set, mint an
+# installation token so the Version PR gets CI. Absent those
+# secrets, fall back to GITHUB_TOKEN (no regression until they exist).
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Detect App credentials
+        id: app
+        env:
+          APP_ID: ${{ secrets.RELEASE_APP_ID }}
+        run: |
+          if [ -n "$APP_ID" ]; then
+            echo "has_app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_app=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create App token
+        if: steps.app.outputs.has_app == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - uses: actions/checkout@v7
+        with:
+          # Changesets diff against origin/main; a shallow clone
+          # without the main branch breaks version computation.
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+      # release.yml and deploy-docs.yml used to start on push to main even
+      # when workflow "ci" on the same commit was red. Wait for ci-required.
+      - name: Require green CI on this commit
+        run: bash scripts/require-green-ci.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      # Build BEFORE the action: `changeset publish` packs each package as-is,
+      # and npm silently skips missing `files` entries — without this step the
+      # tarballs ship without dist/ while `main` points into it (0.1.0 had to
+      # be re-released for exactly this).
+      - run: pnpm build
+      - name: Create Version PR or publish to npm
+        id: changesets
+        uses: changesets/action@v2
+        with:
+          version-script: pnpm run changeset:version
+          # changeset publish (@changesets/cli v3) writes git-tag events to
+          # $CHANGESETS_OUTPUT, which v2 sets for this script; published-packages
+          # is derived from those events, so keep calling the CLI directly.
+          publish-script: pnpm exec changeset publish
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages"
+          # v2 ignores env GITHUB_TOKEN; the token must be passed as an input.
+          github-token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          # v2 defaults to pushing via the GitHub API; keep v1's git push.
+          push-with-git-cli: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # One env for every package (smaller than publishConfig.provenance
+          # on each package.json). Needs id-token: write, already set above.
+          NPM_CONFIG_PROVENANCE: "true"
+      # Tags + GitHub releases only for packages npm publish just shipped.
+      # Without published-packages, release-tags.sh used to poll npm for every
+      # public package version on disk (~5m each) and blocked the release group.
+      - name: Push tags and create GitHub releases
+        if: steps.changesets.outputs.published == 'true'
+        continue-on-error: true
+        run: timeout 25m scripts/release-tags.sh
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          RELEASE_TAGS_PUBLISHED: ${{ steps.changesets.outputs.published-packages }}

@@ -1,0 +1,6 @@
+---
+description: zedkit project rules
+alwaysApply: true
+---
+
+Read and follow /AGENTS.md at the repo root (non-negotiables, layout, workflow) and use the skills in .agents/skills.

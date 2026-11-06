@@ -1,0 +1,10 @@
+## Live example
+
+The docs app ships a note-list feature at `apps/docs/features/note-list`. Open
+[/examples/note-list](/examples/note-list) to run it with the fixture adapter
+and no backend.
+
+- `ui/` imports the kit and talks to the world through `ports/`
+- `adapters/fixture.ts` is injected from `index.tsx` (composition root)
+- `model/` is a pure reducer (no I/O, no React)
+- `i18n/` is a typed copy object passed as `copy`

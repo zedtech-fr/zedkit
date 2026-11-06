@@ -1,0 +1,58 @@
+{
+  "name": "zedkit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Open-source building blocks for modern apps.",
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "0.28.2",
+      "vite": "6.4.5",
+      "@fastify/middie": "9.3.5"
+    }
+  },
+  "scripts": {
+    "dev": "pnpm catalog:build && echo \"docs: http://localhost:3100\" && turbo run dev --filter=@zedtech/zedkit-docs",
+    "docs": "pnpm run dev",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "changeset": "changeset",
+    "changeset:status": "changeset status --verbose",
+    "changeset:version": "changeset version && node scripts/catalog.mjs build",
+    "catalog:build": "node scripts/catalog.mjs build",
+    "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs && node apps/docs/scripts/check-previews.mjs && node apps/docs/scripts/check-registry-urls.mjs",
+    "registry:build": "node scripts/registry/build.mjs",
+    "registry:check": "node scripts/registry/check.mjs",
+    "registry:smoke": "bash scripts/registry/smoke-shadcn-add.sh && bash scripts/registry/smoke-ui-quickstart.sh",
+    "quickstart:smoke": "bash scripts/quickstart-smoke.sh",
+    "adoption:smoke": "node scripts/adoption-smoke.mjs",
+    "test:registry": "node --test scripts/registry/*.test.mjs scripts/dts-api-report.test.mjs scripts/check-api-report.test.mjs scripts/catalog-states.test.mjs scripts/catalog-maturity.test.mjs scripts/catalog-adoption.test.mjs scripts/adoption-shown-commands.test.mjs scripts/adoption-smoke.test.mjs scripts/changeset-status-needed.test.mjs scripts/coverage-summary.test.mjs scripts/release-tags-wait.test.mjs scripts/require-green-ci.test.mjs scripts/ci-affected.test.mjs scripts/check-e2e-registered.test.mjs scripts/ci-hygiene.test.mjs apps/docs/scripts/*.test.mjs deploy/*.test.mjs deploy/suggest/*.test.mjs",
+    "knip": "pnpm dlx knip@5",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@eslint/js": "catalog:",
+    "@microsoft/api-extractor": "catalog:",
+    "@playwright/test": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "publint": "catalog:",
+    "shadcn": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

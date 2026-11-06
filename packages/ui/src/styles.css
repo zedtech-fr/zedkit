@@ -1,0 +1,799 @@
+/* Derived from shadcn/ui (theme) — see Provenance in packages/ui/README.md. Tolerated exception: migrated to custom code only when customization needs it. */
+@import "tailwindcss";
+@import "./identities.css";
+@import "./identities/maison.css";
+@import "./identities/press.css";
+@import "./font-fallbacks.css";
+@import "./identities/glass.css";
+@import "./surface.css";
+@import "./motion.css";
+@import "./motion-tokens.css";
+@import "./parallax.css";
+@import "./signature-motion.css";
+@import "./type-roles.css";
+@import "./section-scroll.css";
+@import "./scroll-scenes.css";
+@import "./sticky-aside.css";
+@import "./identities/volt.css";
+@import "./shared-type-scale.css";
+@import "./identities/tide.css";
+@import "./calendar.css";
+
+/*
+ * Hover styles only apply where a hover exists (Tailwind v4's default
+ * hover variant is already wrapped in @media (hover: hover), so no
+ * redefinition is needed — and a @custom-variant redefinition emits
+ * malformed CSS that breaks consumer builds. Do not add one back.
+ */
+
+/*
+ * zedkit admin theme: neutral, calm, readable. Dark/light via the
+ * `.dark` class on <html> (next-themes `attribute="class"`).
+ * Consumers import this file once (see README) and add one `@source`
+ * line so Tailwind scans the components. Families, density, depth and
+ * motion personality come from identities.css (stock values: system
+ * font stack, no font dependency, no layout shift).
+ */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 5% 32%;
+  --accent: 240 4.8% 59.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 72.2% 47%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142.1 76.2% 27%;
+  --success-foreground: 0 0% 98%;
+  --warning: 32 95% 44%;
+  --warning-foreground: 240 10% 3.9%;
+  --overlay: 0 0% 0%;
+  --border: 240 5.9% 60%;
+  --input: 240 5.9% 90%;
+  /* Focus ring, dark enough for 3:1 on light surfaces. */
+  --ring: 240 4% 46%;
+  --radius: 0.5rem;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 240 5.9% 10%;
+  --sidebar-border: 240 5.9% 90%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --ring-width: 2px;
+  --ring-width-control: 2px;
+  --ring-offset-width: 2px;
+  /*
+   * Text size of every field a user types into (Input, Textarea,
+   * Select trigger, SecretField, DataTable filter). Touch and narrow
+   * screens raise it to 16px minimum below: iOS Safari zooms the whole
+   * page on focus when a field computes smaller than that, and the zoom
+   * stays. Identities and apps change this token, never a field's
+   * font-size, and inherit the floor for free.
+   */
+  --zk-input-font-size: 0.875rem;
+}
+
+/* Touch or phone-width screens: 16px floor, desktop keeps the design size. */
+@media (pointer: coarse), (max-width: 767px) {
+  :root {
+    --zk-input-font-size: max(16px, 0.875rem);
+  }
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 37.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 72.2% 66%;
+  --destructive-foreground: 240 10% 3.9%;
+  --success: 142.1 70.6% 45.3%;
+  --success-foreground: 240 10% 3.9%;
+  --warning: 32 95% 32%;
+  --warning-foreground: 0 0% 98%;
+  --overlay: 0 0% 0%;
+  --border: 240 3.7% 37.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+  --sidebar: 240 10% 3.9%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-accent: 240 3.7% 15.9%;
+}
+
+/* Touch devices and phones: controls never drop below the 44px target. Larger screens keep the design heights. */
+:root {
+  --zk-tap-min: 0px;
+  /* Width of the table scroll hint fade on each cut edge. */
+  --zk-table-fade: 1.5rem;
+  /*
+   * Layer scale: every positioned overlay layer reads one of these, so a sticky header (40) can never
+   * outrank a portaled overlay (50+) no matter which stacking context traps the trigger. Dropdown panels
+   * opened inside a dialog/drawer mount into that panel's node, which is why they sit below the dim layer.
+   */
+  --z-header: 40;
+  --z-dropdown: 45;
+  --z-overlay: 50;
+  --z-drawer: 60;
+  --z-dialog: 60;
+  --z-toast: 70;
+}
+
+:root {
+  /*
+   * Layout measures: page container widths plus the section rhythm.
+   * Widths are plain measures (identities and apps may redefine them);
+   * the gutter and section steps derive from `--spacing` so identity
+   * density scales page rhythm, same convention as `--zk-gap-*`. The
+   * `@theme inline` block below aliases them to utilities (max-w-*,
+   * px-page-gutter, py-section-*).
+   */
+  --zk-container-narrow: 32rem;
+  --zk-container-reading: 42rem;
+  --zk-container-default: 64rem;
+  --zk-container-wide: 90rem;
+  --zk-page-gutter: calc(var(--spacing) * 6);
+  --zk-section-sm: calc(var(--spacing) * 8);
+  --zk-section-md: calc(var(--spacing) * 12);
+  --zk-section-lg: calc(var(--spacing) * 24);
+  --zk-section-xl: calc(var(--spacing) * 28);
+  /* Sticky header offset for section scroll-padding / snap. */
+  --zk-header-height: 3.5rem;
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  :root {
+    --zk-tap-min: 2.75rem;
+    /* Marketing bands stay 64px+ apart on phones even if --spacing is dense. */
+    --zk-section-sm: max(1.5rem, calc(var(--spacing) * 8));
+    --zk-section-md: max(2rem, calc(var(--spacing) * 12));
+    --zk-section-lg: max(2.5rem, calc(var(--spacing) * 24));
+    --zk-section-xl: max(3.5rem, calc(var(--spacing) * 28));
+  }
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-overlay: hsl(var(--overlay));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  /*
+   * Spacing convention (#367): one canonical name per value. A value used
+   * by 2+ tokens is canonicalized to its Tailwind scale step — new code
+   * uses default utilities (p-4, gap-2, size-4) instead of minting another
+   * alias. Single-use values keep their semantic token. The full value →
+   * tokens map is scripts/registry/spacing-aliases.json, enforced by its
+   * test. Shared-value aliases below are deprecated: new kit code uses the
+   * matching scale step (4 for 1rem, 5 for 1.25rem, …). Tokens stay so
+   * copied CSS and existing class names still work.
+   * `--spacing-drawer-footer-safe` still references
+   * `--spacing-drawer-chrome-padding`.
+   *
+   * Semantic sizes derived from `--spacing` (mist: 0.25rem). Control
+   * block aliases now follow `--spacing`; leftover rem aliases stay
+   * until later #798 migrations.
+   */
+  --zk-gap-sm: calc(var(--spacing) * 2);
+  --zk-gap-md: calc(var(--spacing) * 3);
+  --zk-gap-lg: calc(var(--spacing) * 4);
+  --zk-icon-size: calc(var(--spacing) * 4);
+  --zk-control-height: calc(var(--spacing) * 9);
+  --spacing-page-gutter: var(--zk-page-gutter);
+  --spacing-section-sm: var(--zk-section-sm);
+  --spacing-section-md: var(--zk-section-md);
+  --spacing-section-lg: var(--zk-section-lg);
+  --spacing-section-xl: var(--zk-section-xl);
+  --container-narrow: var(--zk-container-narrow);
+  --container-reading: var(--zk-container-reading);
+  --container-default: var(--zk-container-default);
+  --container-wide: var(--zk-container-wide);
+  --spacing-badge-inline: 0.625rem;
+  --spacing-badge-block: 0.125rem;
+  --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));
+  --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
+  --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
+  --spacing-button-inline: 1rem;
+  --spacing-button-inline-sm: 0.75rem;
+  --spacing-button-inline-lg: 2rem;
+  --spacing-button-gap: 0.5rem;
+  /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-4. Kept so copied CSS and existing class names still work. */
+  --spacing-icon-control: 1rem;
+  /* Minimum touch target (WCAG 2.5.5). */
+  --spacing-tap: 2.75rem;
+  /*
+   * Token convention (#367): shared `icon-*` primitives for sizes used
+   * across components; per-component `--spacing-<component>-*` aliases
+   * only where independent change is plausible. Do not mint a new
+   * same-value alias — reuse the shared token.
+   */
+  --spacing-icon-sm: 0.875rem;
+  --spacing-checkbox: 1rem;
+  --spacing-heading-scroll: 5rem;
+  --spacing-data-table-stack: 1rem;
+  --spacing-data-table-filter-width: 24rem;
+  --spacing-data-table-sort-gap: 0.25rem;
+  --spacing-data-table-skeleton-height: 1rem;
+  --spacing-data-table-pagination-gap: 0.5rem;
+  --spacing-option-cards-gap: 0.75rem;
+  --spacing-option-card-gap: 0.75rem;
+  --spacing-option-card-padding: 1rem;
+  --spacing-detail-panel-gap: 1rem;
+  --spacing-detail-panel-inline: 1rem;
+  --spacing-detail-panel-block: 0.75rem;
+  --spacing-wizard-steps-gap: 0.75rem;
+  --spacing-wizard-steps-row-gap: 0.5rem;
+  --spacing-wizard-step-gap: 0.5rem;
+  --spacing-wizard-step-badge: 1.5rem;
+  --spacing-wizard-step-connector-gap: 0.25rem;
+  --spacing-wizard-step-connector-thickness: 1px;
+  --spacing-wizard-step-connector: 1.5rem;
+  --spacing-checkmark: 1rem;
+  --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
+  --spacing-progress-bar-gap: 0.125rem;
+  --spacing-progress-bar-height: 0.375rem;
+  --spacing-tabs-list-height: max(calc(var(--zk-tap-min, 0px) + 0.5rem), 2.25rem);
+  --spacing-tabs-list-inset: 0.25rem;
+  --spacing-tabs-trigger-inline: 0.75rem;
+  --spacing-tabs-trigger-block: 0.25rem;
+  --spacing-tabs-content-gap: 0.5rem;
+  --spacing-switch-track-height: 1.25rem;
+  --spacing-switch-track-width: 2.25rem;
+  --spacing-switch-thumb: 1rem;
+  /* Checked-state thumb travel: track width − thumb − transparent borders. */
+  --spacing-switch-travel: 1rem;
+  --spacing-status-label-gap: 0.375rem;
+  --spacing-status-label-box: 1rem;
+  --spacing-status-dot: 0.5rem;
+  --spacing-control-inline: 0.75rem;
+  --spacing-control-block: var(--spacing);
+  --spacing-control-block-lg: calc(var(--spacing) * 2);
+  --spacing-textarea-min-height: 3.75rem;
+  --spacing-prompt-input-max-height: calc(8 * 1lh + var(--spacing-control-block) * 2);
+  --spacing-prompt-input-max-height-sm: calc(4 * 1lh + var(--spacing-control-block) * 2);
+  --spacing-prompt-input-max-height-lg: calc(12 * 1lh + var(--spacing-control-block) * 2);
+  --spacing-alert-inline: 1rem;
+  --spacing-alert-block: 0.75rem;
+  --spacing-alert-icon-offset: 1rem;
+  --spacing-alert-icon-nudge: 0.1875rem;
+  --spacing-alert-content-indent: 1.75rem;
+  --spacing-field-set: 1.5rem;
+  --spacing-field-group: 1.75rem;
+  --spacing-field-group-compact: 0.75rem;
+  --spacing-field-group-nested: 1rem;
+  --spacing-field: 0.75rem;
+  --spacing-field-content: 0.375rem;
+  --spacing-field-inline: 0.5rem;
+  --spacing-field-legend-bottom: 0.75rem;
+  --spacing-field-label-inset: 1rem;
+  --spacing-field-separator: 1.25rem;
+  --spacing-field-separator-inline: 0.5rem;
+  --spacing-field-error-indent: 1rem;
+  --spacing-field-error-gap: 0.25rem;
+  --spacing-card-padding: 1.5rem;
+  --spacing-card-stack: 0.5rem;
+  --spacing-card-section: 1rem;
+  --spacing-card-lines: 0.5rem;
+  --spacing-separator-thickness: 0.0625rem;
+  --spacing-live-pulse-gap: 0.375rem;
+  --spacing-secret-field-gap: 0.5rem;
+  --spacing-page-header-title-gap: 0.25rem;
+  /* Space between a back link above the header and the title. */
+  --spacing-page-header-back-gap: 0.75rem;
+  --spacing-page-header-offset: 1.5rem;
+  --spacing-page-header-gap: 1rem;
+  --spacing-page-header-actions-gap: 0.5rem;
+  --spacing-dialog-center: 50%;
+  --shadow-overlay: var(--zk-shadow-overlay);
+  --spacing-dialog-gap: 1rem;
+  --spacing-dialog-padding: 1.5rem;
+  --spacing-dialog-header-stack: 0.375rem;
+  --spacing-dialog-footer-gap: 0.5rem;
+  --spacing-overlay-close-offset: 1rem;
+  --spacing-overlay-touch-target: 2.75rem;
+  /* Dialog width on phones: full width minus thumb gutters each side. */
+  --container-dialog-mobile: calc(100% - 2rem);
+  --spacing-dialog-max-height: 90dvh;
+  --spacing-dialog-header-end: calc(var(--spacing-overlay-touch-target) + var(--spacing-overlay-close-offset));
+  --spacing-dialog-footer-safe: env(safe-area-inset-bottom, 0px);
+  --spacing-app-shell-sidebar: 16rem;
+  --spacing-app-shell-padding: 1rem;
+  --spacing-app-shell-padding-md: 1.5rem;
+  --z-index-header: var(--z-header);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-overlay: var(--z-overlay);
+  --z-index-drawer: var(--z-drawer);
+  --z-index-dialog: var(--z-dialog);
+  --z-index-toast: var(--z-toast);
+  --spacing-table-cell: 0.5rem;
+  --spacing-table-head-height: 2.5rem;
+  --spacing-table-checkbox-nudge: 0.125rem;
+  --spacing-table-caption-gap: 1rem;
+  --container-route-modal-sm: 24rem;
+  --container-route-modal-drawer-lg: 32rem;
+  --container-route-modal-dialog-lg: 42rem;
+  --spacing-form-item-gap: 0.5rem;
+  --text-form-hint: 0.8rem;
+  --text-control: var(--zk-input-font-size);
+  --text-control--line-height: 1.25rem;
+  /*
+   * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
+   * not a spacing multiple: an identity may redefine `--spacing`, and a
+   * `leading-N` utility would then drift with it.
+   */
+  --leading-body: var(--zk-body-leading, 1.6);
+  --spacing-drawer-max-height: 96dvh;
+  --spacing-drawer-sheet-max-height: 88dvh;
+  --spacing-drawer-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --spacing-drawer-safe-top: env(safe-area-inset-top, 0px);
+  --spacing-drawer-safe-left: env(safe-area-inset-left, 0px);
+  --spacing-drawer-safe-right: env(safe-area-inset-right, 0px);
+  --spacing-drawer-side-mobile-width: 90%;
+  --spacing-drawer-footer-safe: calc(var(--spacing-drawer-chrome-padding) + env(safe-area-inset-bottom, 0px));
+  --container-drawer-side-sm: 24rem;
+  --container-drawer-side: 28rem;
+  --container-drawer-side-lg: min(37.5rem, 92vw);
+  --spacing-drawer-handle-top: 1rem;
+  --spacing-drawer-handle-height: 0.375rem;
+  --spacing-drawer-handle-width: 3rem;
+  --spacing-drawer-header-gap: 0.375rem;
+  --spacing-drawer-footer-gap: 0.5rem;
+  --spacing-drawer-chrome-padding: 1rem;
+  --spacing-select-item-inline: 0.5rem;
+  --spacing-select-item-block: 0.375rem;
+  --spacing-select-item-indicator-gap: 2rem;
+  --spacing-select-separator: 0.25rem;
+  --container-select-content-min: 8rem;
+  --default-transition-duration: var(--zk-color-duration, 150ms);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--zk-font-sans);
+    line-height: var(--zk-body-leading, 1.6);
+  }
+  /* No double-tap zoom delay on controls; panning and pinch still work. */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  label,
+  summary,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="combobox"],
+  [role="option"] {
+    touch-action: manipulation;
+  }
+
+  /* Tailwind v4 preflight sets buttons to cursor:default; restore affordances. */
+  a[href],
+  button:not(:disabled),
+  summary,
+  label[for],
+  select:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="tab"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="menuitem"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="menuitemcheckbox"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="menuitemradio"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="option"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="switch"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="checkbox"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="radio"]:not([aria-disabled="true"]):not([data-disabled]),
+  [role="combobox"]:not([aria-disabled="true"]):not([data-disabled]) {
+    cursor: pointer;
+  }
+
+  input:not(:disabled):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]):not([type="range"]):not([type="color"]),
+  textarea:not(:disabled) {
+    cursor: text;
+  }
+
+  :disabled,
+  [aria-disabled="true"],
+  [data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+/*
+ * Kit-authored motion (not shadcn): one draw-on keyframe for the
+ * Checkmark state icon. The path carries the animation only under
+ * `motion-safe:`, so reduced motion shows the static full check.
+ */
+/*
+ * Shared focus ring for controls that need a visible keyboard focus
+ * (badge links, tabs, etc.). Width and offset come from theme tokens.
+ */
+/*
+ * Focus is an outline, not a box-shadow: component shadows (`shadow-none`,
+ * the active-tab shadow, identity depth) cannot erase it, it follows the
+ * border radius, and forced-colors mode keeps drawing it.
+ */
+@utility focus-ring {
+  &:focus-visible {
+    outline: var(--ring-width) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+  }
+}
+
+/*
+ * Toast viewport: top of the layer scale. Element-qualified so it beats
+ * sonner's own injected `[data-sonner-toaster]` rule (z-index 999999999)
+ * whatever order the two stylesheets land in.
+ */
+ol[data-sonner-toaster] {
+  z-index: var(--z-toast);
+}
+
+/*
+ * Overlay centering (dialog content): replaces the top-[50%] /
+ * translate-[-50%] arbitraries. Uses the `translate` property (not
+ * `transform`) so the zk-zoom enter/exit keyframes compose with it.
+ */
+@utility dialog-center {
+  top: var(--spacing-dialog-center);
+  left: var(--spacing-dialog-center);
+  translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
+}
+
+/* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
+@utility focus-ring-control {
+  &:focus-visible {
+    outline: var(--ring-width-control) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+  }
+}
+
+@utility max-h-prompt-input {
+  max-height: var(--spacing-prompt-input-max-height);
+}
+
+@utility max-h-prompt-input-sm {
+  max-height: var(--spacing-prompt-input-max-height-sm);
+}
+
+@utility max-h-prompt-input-lg {
+  max-height: var(--spacing-prompt-input-max-height-lg);
+}
+
+/* Playwright focus-ring checks call element.focus(); :focus-visible alone would miss the outline. */
+[data-slot="prompt-input-field"]:focus {
+  outline: var(--ring-width-control) solid hsl(var(--ring));
+  outline-offset: var(--ring-offset-width);
+}
+
+/*
+ * Button motion: colour, shadow and translate transitions, plus a shrink
+ * to `--zk-press-scale` while held. Applied behind `motion-safe:` so reduced motion keeps instant states.
+ */
+@utility button-press {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow, translate, scale;
+  transition-duration: var(--motion-base);
+  transition-timing-function: var(--zk-btn-ease, ease);
+  &:active:not(:disabled) {
+    scale: var(--zk-press-scale);
+  }
+}
+
+/*
+ * Pointer target for small standalone controls (checkbox, switch): the
+ * visible box keeps its size while an invisible pseudo-element carries
+ * an exact tap-size hit area. Gated like --zk-tap-min (touch or narrow
+ * screens); mouse users keep pixel-precise targets.
+ */
+@utility hit-target {
+  position: relative;
+  @media (pointer: coarse), (max-width: 40rem) {
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: var(--spacing-tap);
+      height: var(--spacing-tap);
+    }
+  }
+}
+
+/*
+ * Link badges keep their small visual size; their pointer target reaches
+ * the tap size in both axes (badge heights vary by identity, so the
+ * overflow is generous rather than exact).
+ */
+a[class*="px-badge-inline"] {
+  position: relative;
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  a[class*="px-badge-inline"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 100%;
+    height: 100%;
+    min-width: var(--spacing-tap);
+    min-height: var(--spacing-tap);
+  }
+}
+
+@layer components {
+  [data-slot="scroll-gallery"]::before,
+  [data-slot="scroll-gallery"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--zk-table-fade);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  [data-slot="scroll-gallery"]::before {
+    left: 0;
+    background: linear-gradient(to right, hsl(var(--background)), transparent);
+  }
+
+  [data-slot="scroll-gallery"]::after {
+    right: 0;
+    background: linear-gradient(to left, hsl(var(--background)), transparent);
+  }
+
+  [data-slot="scroll-gallery"] [data-scroll-gallery-track] {
+    gap: var(--zk-gap-md);
+    padding-inline-end: var(--zk-gap-md);
+    /* Keep the first snap peer clear of the decorative start fade (::before). */
+    padding-inline-start: calc(var(--zk-table-fade) + var(--zk-gap-sm));
+  }
+
+  [data-slot="scroll-gallery"] [data-scroll-gallery-track] > * {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  [data-slot="scroll-gallery"] [data-slot="tabs-list"] {
+    gap: var(--zk-gap-md);
+    max-width: none;
+    overflow-x: visible;
+  }
+
+  [data-slot="scroll-gallery"] [data-slot="tabs-trigger"]:has([data-tab-label]) {
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--zk-gap-sm);
+    width: max-content;
+    max-width: none;
+    overflow: visible;
+    padding-inline: var(--zk-gap-md);
+    padding-block: var(--zk-gap-sm);
+    white-space: normal;
+  }
+}
+
+/*
+ * Button `asChild` merges onto `<a>`. Keep the same horizontal padding and
+ * height tokens as `<button>` roots when utilities are stripped or overridden.
+ */
+@layer components {
+  :where(a[data-slot="button"]:not([data-variant="link"])) {
+    box-sizing: border-box;
+    text-decoration-line: none;
+  }
+
+  :where(a[data-slot="button"][data-size="sm"]:not([data-variant="link"])) {
+    min-height: var(--spacing-control-height-sm);
+    padding-inline: calc(var(--spacing) * 3);
+  }
+
+  :where(a[data-slot="button"][data-size="default"]:not([data-variant="link"])) {
+    min-height: var(--spacing-control-height);
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 2);
+  }
+
+  :where(a[data-slot="button"][data-size="lg"]:not([data-variant="link"])) {
+    min-height: var(--spacing-control-height-lg);
+    padding-inline: calc(var(--spacing) * 8);
+  }
+
+  :where(a[data-slot="button"][data-size="icon"]:not([data-variant="link"])) {
+    min-height: var(--spacing-control-height);
+    min-width: var(--spacing-control-height);
+    padding-inline: 0;
+    padding-block: 0;
+  }
+}
+
+/*
+ * Table scroll hints: the Table edge observer sets data-edge-left/right
+ * when the first or last column is cut off, and the cut edge fades over
+ * --zk-table-fade. No attributes, no fade: fitted tables stay crisp.
+ */
+[data-slot="table-container"][data-edge-left] {
+  -webkit-mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+  mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+}
+[data-slot="table-container"][data-edge-right] {
+  -webkit-mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+  mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+}
+[data-slot="table-container"][data-edge-left][data-edge-right] {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--zk-table-fade),
+    black calc(100% - var(--zk-table-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--zk-table-fade),
+    black calc(100% - var(--zk-table-fade)),
+    transparent
+  );
+}
+
+@keyframes zk-check-draw {
+  from {
+    stroke-dashoffset: 8;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+ * Motion tokens: every overlay animation references these durations
+ * and easings — apps never hardcode transition styles.
+ */
+:root {
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 250ms;
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Pressed-state shrink for buttons (see the button-press utility). */
+  --zk-press-scale: 0.97;
+}
+
+@keyframes zk-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes zk-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zk-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes zk-zoom-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/*
+ * Vaul (drawer) ships its own slide keyframes at 500ms with no
+ * reduced-motion guard: retune to the kit tokens, disable fully
+ * when motion is reduced. `!important` beats vaul's injected
+ * high-specificity state selectors — deliberately, in one place.
+ */
+@media (prefers-reduced-transparency: reduce) {
+  [data-slot="drawer-overlay"] {
+    background-color: hsl(var(--overlay) / 0.8);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/*
+ * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
+ * vanishes on dark and tinted identities. Draw it from the kit tokens
+ * so it reads on every surface. The 44px hit area is vaul's own.
+ */
+html [data-vaul-handle] {
+  width: var(--spacing-drawer-handle-width);
+  height: var(--spacing-drawer-handle-height);
+  background-color: hsl(var(--muted-foreground) / 0.5);
+  opacity: 1;
+}
+
+/* Side drawers close by dragging the panel itself: no handle (vaul sets display: block unlayered). */
+html [data-vaul-drawer-direction="left"] [data-vaul-handle],
+html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="reduce"]) [data-vaul-drawer] {
+    animation-duration: var(--motion-slow) !important;
+    transition-duration: var(--motion-slow) !important;
+  }
+  :root:not([data-motion="reduce"]) [data-vaul-overlay] {
+    animation-duration: var(--motion-base) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html [data-vaul-drawer],
+  html [data-vaul-overlay] {
+    animation: none !important;
+    transition: none !important;
+  }
+  html [data-slot="identity-dock-sheet"][data-vaul-drawer] {
+    transform: none !important;
+  }
+}
+
+:root[data-motion="reduce"] [data-vaul-drawer],
+:root[data-motion="reduce"] [data-vaul-overlay] {
+  animation: none !important;
+  transition: none !important;
+}
+:root[data-motion="reduce"] [data-slot="identity-dock-sheet"][data-vaul-drawer] {
+  transform: none !important;
+}

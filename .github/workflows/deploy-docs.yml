@@ -1,0 +1,115 @@
+name: deploy-docs
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "apps/docs/**"
+      - "packages/**"
+      - "docs/**"
+      - "deploy/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require green CI on this commit
+        run: bash scripts/require-green-ci.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @zedtech/zedkit-docs build
+      - name: Write suggest env
+        env:
+          IDENTITY_AI_ENABLED: ${{ secrets.IDENTITY_AI_ENABLED }}
+          IDENTITY_AI_BUDGET_DAILY_USD: ${{ secrets.IDENTITY_AI_BUDGET_DAILY_USD }}
+          IDENTITY_AI_BUDGET_MONTHLY_USD: ${{ secrets.IDENTITY_AI_BUDGET_MONTHLY_USD }}
+          IDENTITY_AI_PRICE_INPUT_USD_PER_MTOK: ${{ secrets.IDENTITY_AI_PRICE_INPUT_USD_PER_MTOK }}
+          IDENTITY_AI_PRICE_OUTPUT_USD_PER_MTOK: ${{ secrets.IDENTITY_AI_PRICE_OUTPUT_USD_PER_MTOK }}
+          IDENTITY_AI_FALLBACK_PRICE_INPUT_USD_PER_MTOK: ${{ secrets.IDENTITY_AI_FALLBACK_PRICE_INPUT_USD_PER_MTOK }}
+          IDENTITY_AI_FALLBACK_PRICE_OUTPUT_USD_PER_MTOK: ${{ secrets.IDENTITY_AI_FALLBACK_PRICE_OUTPUT_USD_PER_MTOK }}
+          IDENTITY_AI_BASE_URL: ${{ secrets.IDENTITY_AI_BASE_URL }}
+          IDENTITY_AI_API_KEY: ${{ secrets.IDENTITY_AI_API_KEY }}
+          IDENTITY_AI_MODEL: ${{ secrets.IDENTITY_AI_MODEL }}
+          IDENTITY_AI_MAX_TOKENS: ${{ secrets.IDENTITY_AI_MAX_TOKENS }}
+          IDENTITY_AI_REASONING_EFFORT: ${{ secrets.IDENTITY_AI_REASONING_EFFORT }}
+          IDENTITY_AI_FALLBACK_BASE_URL: ${{ secrets.IDENTITY_AI_FALLBACK_BASE_URL }}
+          IDENTITY_AI_FALLBACK_API_KEY: ${{ secrets.IDENTITY_AI_FALLBACK_API_KEY }}
+          IDENTITY_AI_FALLBACK_MODEL: ${{ secrets.IDENTITY_AI_FALLBACK_MODEL }}
+        run: |
+          umask 077
+          trim() { printf '%s' "$1" | tr -d '\r\n'; }
+          # Generation is off unless IDENTITY_AI_ENABLED is 1 and an approved budget and the prices are set.
+          {
+            printf '%s=%s\n' IDENTITY_AI_ENABLED "$IDENTITY_AI_ENABLED"
+            printf '%s=%s\n' IDENTITY_AI_BUDGET_DAILY_USD "$IDENTITY_AI_BUDGET_DAILY_USD"
+            printf '%s=%s\n' IDENTITY_AI_BUDGET_MONTHLY_USD "$IDENTITY_AI_BUDGET_MONTHLY_USD"
+            printf '%s=%s\n' IDENTITY_AI_PRICE_INPUT_USD_PER_MTOK "$IDENTITY_AI_PRICE_INPUT_USD_PER_MTOK"
+            printf '%s=%s\n' IDENTITY_AI_PRICE_OUTPUT_USD_PER_MTOK "$IDENTITY_AI_PRICE_OUTPUT_USD_PER_MTOK"
+            printf '%s=%s\n' IDENTITY_AI_FALLBACK_PRICE_INPUT_USD_PER_MTOK "$IDENTITY_AI_FALLBACK_PRICE_INPUT_USD_PER_MTOK"
+            printf '%s=%s\n' IDENTITY_AI_FALLBACK_PRICE_OUTPUT_USD_PER_MTOK "$IDENTITY_AI_FALLBACK_PRICE_OUTPUT_USD_PER_MTOK"
+            printf '%s=%s\n' IDENTITY_AI_BASE_URL "$(trim "$IDENTITY_AI_BASE_URL")"
+            printf '%s=%s\n' IDENTITY_AI_API_KEY "$(trim "$IDENTITY_AI_API_KEY")"
+            printf '%s=%s\n' IDENTITY_AI_MODEL "$(trim "$IDENTITY_AI_MODEL")"
+            printf '%s=%s\n' IDENTITY_AI_MAX_TOKENS "$IDENTITY_AI_MAX_TOKENS"
+            printf '%s=%s\n' IDENTITY_AI_REASONING_EFFORT "$IDENTITY_AI_REASONING_EFFORT"
+            printf '%s=%s\n' IDENTITY_AI_FALLBACK_BASE_URL "$(trim "$IDENTITY_AI_FALLBACK_BASE_URL")"
+            printf '%s=%s\n' IDENTITY_AI_FALLBACK_API_KEY "$(trim "$IDENTITY_AI_FALLBACK_API_KEY")"
+            printf '%s=%s\n' IDENTITY_AI_FALLBACK_MODEL "$(trim "$IDENTITY_AI_FALLBACK_MODEL")"
+          } > deploy/suggest.env
+          chmod 600 deploy/suggest.env
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DOCS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Validate Caddyfile
+        run: docker run --rm -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2 caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile
+      - name: Deploy
+        id: deploy
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: deploy/deploy.sh "$TARGET"
+      - name: Smoke check deployed sites
+        run: |
+          for url in https://zedkit.app https://dev.zedkit.app; do
+            ok=""
+            for _ in $(seq 1 5); do
+              if curl -sf -o /dev/null "$url"; then
+                ok=1
+                break
+              fi
+              sleep 6
+            done
+            if [ -z "$ok" ]; then
+              echo "$url did not return 200 after deploy" >&2
+              exit 1
+            fi
+          done
+      - name: Roll back on failure after switch
+        if: failure() && steps.deploy.outputs.switched == 'true'
+        env:
+          TARGET: ${{ secrets.DOCS_DEPLOY_USER }}@${{ secrets.DOCS_DEPLOY_HOST }}
+        run: deploy/deploy.sh --rollback "$TARGET"

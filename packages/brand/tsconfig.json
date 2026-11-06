@@ -1,0 +1,11 @@
+{
+  "extends": "@zedtech/zedkit-quality/tsconfig",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
+    "composite": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

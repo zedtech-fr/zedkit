@@ -1,0 +1,127 @@
+{
+  "name": "@zedtech/zedkit-ui",
+  "version": "1.10.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Ship a calm React UI fast: dark/light design tokens plus accessible building blocks (data tables, forms, dialogs, toasts).",
+  "keywords": [
+    "react",
+    "react-components",
+    "ui-kit",
+    "design-system",
+    "dashboard",
+    "tailwindcss",
+    "tailwind-v4",
+    "radix-ui",
+    "shadcn",
+    "dark-mode",
+    "accessible",
+    "nextjs",
+    "sites"
+  ],
+  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/ui",
+  "bugs": {
+    "url": "https://github.com/zedtech-fr/zedkit/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zedtech-fr/zedkit",
+    "directory": "packages/ui"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "imports": {
+    "#*": "./src/*",
+    "#preview/*": "./preview/*"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./marketing": {
+      "types": "./dist/marketing/index.d.ts",
+      "import": "./dist/marketing/index.js"
+    },
+    "./motion": {
+      "types": "./dist/motion/index.d.ts",
+      "import": "./dist/motion/index.js"
+    },
+    "./motion/runtime": {
+      "types": "./dist/motion/runtime.d.ts",
+      "import": "./dist/motion/runtime.js"
+    },
+    "./styles.css": "./src/styles.css",
+    "./motion.css": "./src/motion-kit.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint src tests preview",
+    "preview:build": "pnpm build && node ./preview/build.mjs",
+    "preview": "pnpm preview:build && node ./preview/serve.mjs",
+    "smoke": "playwright test"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "dependencies": {
+    "@zedtech/zedkit-i18n": "workspace:*",
+    "@hookform/resolvers": "catalog:",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-dropdown-menu": "catalog:",
+    "@radix-ui/react-label": "catalog:",
+    "@radix-ui/react-popover": "catalog:",
+    "@radix-ui/react-separator": "catalog:",
+    "@radix-ui/react-select": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "catalog:",
+    "@radix-ui/react-tabs": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "@zedtech/zedkit-core": "workspace:*",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "downshift": "catalog:",
+    "lucide-react": "catalog:",
+    "react-day-picker": "catalog:",
+    "react-hook-form": "catalog:",
+    "sonner": "catalog:",
+    "tailwind-merge": "catalog:",
+    "vaul": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "@zedtech/zedkit-quality": "workspace:*",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "jsdom": "catalog:",
+    "postcss": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vitest-axe": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

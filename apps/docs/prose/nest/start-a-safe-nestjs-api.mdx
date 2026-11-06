@@ -1,0 +1,68 @@
+## Prerequisites
+
+- Node.js 22+ and pnpm 9+ (same as the repo root `engines`).
+- `@zedtech/zedkit-nest` and `@zedtech/zedkit-core` in your app (see Install above).
+- A `TUTORIAL_TOKEN` env var (any non-empty string for local dev).
+
+## Walkthrough
+
+The runnable tutorial lives in the monorepo at
+`packages/nest/examples/safe-api/`. CI type-checks those files and boots the
+app in `tutorial-safe-api.test.ts`.
+
+1. **Env** — `TutorialEnv` validates `TUTORIAL_TOKEN` and optional `PORT`
+   (`tutorial.env.ts`).
+2. **DTO** — `CreateItemDto` uses `class-validator` so empty names fail before
+   your handler runs (`create-item.dto.ts`).
+3. **Ids** — `ItemsService` assigns `newPrefixedId("item")` from
+   `@zedtech/zedkit-core` (`items.service.ts`).
+4. **Bootstrap** — call `createNestApp({ module: TutorialModule, envSchema: TutorialEnv, … })`
+   (see `tutorial-safe-api.test.ts`) with validation, structured logging (auth
+   headers redacted by default), throttling, OpenAPI, and the global `ErrorBody`
+   filter from
+   [Return uniform error bodies](/docs/nest/return-uniform-error-bodies).
+
+## Final result
+
+With the app listening on port 3000:
+
+```bash
+curl -sS -X POST http://127.0.0.1:3000/items \
+  -H 'content-type: application/json' \
+  -d '{"name":"bolt","quantity":2}'
+```
+
+You should get `201` JSON with an `id` like `item_01J…`.
+
+Malformed body (empty name):
+
+```bash
+curl -sS -X POST http://127.0.0.1:3000/items \
+  -H 'content-type: application/json' \
+  -d '{"name":"","quantity":1}'
+```
+
+Expect `400` with `{ "code": "invalid_input", "message": "…", "requestId": "…" }`.
+That shape is documented once on the error-bodies need page; this tutorial only
+exercises it.
+
+## Troubleshooting
+
+**Boot fails on `TUTORIAL_TOKEN`** — Export a non-empty value:
+`export TUTORIAL_TOKEN=local-dev`.
+
+**`400` but you expected `201`** — Check DTO rules: `name` must be 1–80 chars,
+`quantity` must be an integer ≥ 0.
+
+**`429` after many requests** — the tutorial test enables throttling (`30`
+requests per minute). Slow down or raise limits in your own bootstrap options.
+
+**Ids fail `isPrefixedId`** — Use the same prefix (`item`) when validating ids
+from clients; see
+[Generate prefixed unique IDs](/docs/core/generate-prefixed-unique-ids).
+
+## Next steps
+
+- [Ship request logs without leaking credentials](/docs/nest/ship-request-logs-without-leaking-credentials)
+- [Rate limit calls per key](/docs/server/rate-limit-calls-per-key) when you outgrow global throttling
+- [Bootstrap a Nest app](/docs/nest/bootstrap-a-nest-app) for every factory option in one place

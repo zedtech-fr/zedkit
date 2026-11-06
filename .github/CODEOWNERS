@@ -1,0 +1,9 @@
+# Suggested owners. This file does not require reviews to merge.
+# Team: @zedtech-fr/maintainers (needs write access on this repository).
+
+/packages/ @zedtech-fr/maintainers
+/.github/workflows/ @zedtech-fr/maintainers
+/scripts/ @zedtech-fr/maintainers
+/docs/ @zedtech-fr/maintainers
+/apps/docs/ @zedtech-fr/maintainers
+/registry.json @zedtech-fr/maintainers

@@ -1,0 +1,51 @@
+---
+title: Documentation
+description: Getting started, four package areas, and one catalog page per documented need.
+---
+
+## Start here
+
+New to zedkit? Read [Getting started](/docs/getting-started) first: choose a package,
+run the quickstart commands, and reach either `zedkit-ai validate` printing `ok` or a
+rendered UI control.
+
+Building an admin screen? Follow [Build an admin dashboard](/docs/build-an-admin-dashboard) (shell, table, drawer, confirm).
+
+For agent tooling only (no UI): [Set up your coding agents](/docs/set-up-your-coding-agents).
+
+Coming from shadcn/ui? See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for a sourced
+comparison (Radix, registry JSON, npm install).
+
+[Maturity and compatibility](/docs/maturity-and-compatibility) explains catalog badges and lists
+Node and peer requirements per package.
+
+## Four areas
+
+### UI (`@zedtech/zedkit-ui`)
+
+Components, layout, forms, tables, and theme tokens for any React UI: sites, apps, dashboards, and admin tools.
+Start with [Theme an admin app](/docs/ui/theme-an-admin-app-dark-light-included), browse **ui** in the sidebar or [Trigger actions with buttons](/docs/ui/trigger-actions-with-buttons); [Build an admin dashboard](/docs/build-an-admin-dashboard) is one worked example.
+
+### Core & server (`core`, `server`, `nest`)
+
+`core` is plain TypeScript for any JS/TS project (front end, back end, scripts, edge): Result helpers, `tryCatch` / `tryCatchAsync`, and prefixed IDs.
+`server` adds Node hardening (rate limiting, log redaction, crypto); `nest` adds NestJS bootstrap and API helpers.
+Open **core**, **server**, or **nest** in the sidebar — for APIs, follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api) or [Bootstrap a Nest app](/docs/nest/bootstrap-a-nest-app).
+
+### SEO (`seo`, `payload-seo`)
+
+Metadata, hreflang, slugs, sitemaps, robots, typed JSON-LD, and `llms.txt` for any TypeScript site; `payload-seo` adds localized SEO fields for Payload CMS.
+Start with [Add SEO to a Next.js app](/docs/add-seo-to-nextjs), then open **seo** and **payload-seo** in the sidebar for each catalog need.
+
+### Coding agents (`ai`)
+
+One agent-agnostic setup copied into your repo: installer, validator, and the skill/subagent kit.
+See **ai** in the sidebar or [Set up AI agent instructions](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo).
+
+## Catalog reference
+
+Every sidebar page under a package folder follows the same shape: maturity badge,
+**At a glance** (who / what / when), install commands pinned to the published version, and
+a usage example.
+
+Search the site header or read [`llms.txt`](https://zedkit.app/llms.txt) for the same link list.

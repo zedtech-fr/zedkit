@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": { "#*": ["./app/*"], "@/*": ["./*"] }
+  },
+  "include": ["prose/guides/snippets/admin-dashboard-page.tsx", "prose/guides/snippets/admin-dashboard-mount.tsx"]
+}

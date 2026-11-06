@@ -1,0 +1,609 @@
+{
+  "_comment": "Rich doc pages: catalog needs that get a live preview (ComponentPreview frame resolving through components/demos/registry.ts) + generated props table. Every other need still gets a generated page (badge, install, example). Keys must match catalog need headings exactly; the docs check fails otherwise.",
+  "_deferred": "Merge class names (cn function) is not a component and stays preview-free by design. CSS-only needs (motion.css, styles.css) set component to null and point source at their stylesheet.",
+  "rich": {
+    "Animate entrances and hover feedback with CSS utilities": {
+      "package": "@zedtech/zedkit-ui",
+      "component": null,
+      "props": null,
+      "source": "motion.css",
+      "demo": "MotionDemo",
+      "examples": {
+        "Hover feedback": "MotionHoverDemo",
+        "Staggered children": "MotionStaggerDemo"
+      }
+    },
+    "Reveal and react with motion on any element": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Animate",
+      "props": "AnimateProps",
+      "source": "animate.tsx",
+      "demo": "AnimateDemo",
+      "examples": {
+        "Wrapper with several triggers": "AnimateTriggersDemo",
+        "Stagger children": "AnimateStaggerDemo"
+      },
+      "propsPriority": ["on", "delay", "stagger"]
+    },
+    "Trigger actions with buttons": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Button",
+      "registry": "button",
+      "props": "ButtonProps",
+      "source": "button.tsx",
+      "demo": "ButtonDemo",
+      "examples": { "Variants and sizes": "ButtonSizesDemo" },
+      "propsPriority": ["variant", "size", "asChild"]
+    },
+    "Show a status or count badge": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Badge",
+      "registry": "badge",
+      "props": "BadgeProps",
+      "source": "badge.tsx",
+      "demo": "BadgeDemo",
+      "propsPriority": ["variant", "asChild"],
+      "examples": {
+        "Variants": "BadgeVariantsDemo",
+        "In a table row": "BadgeTableRowDemo",
+        "As a link (asChild)": "BadgeLinkDemo"
+      }
+    },
+    "Label a form control": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Label",
+      "registry": "label",
+      "props": "LabelProps",
+      "source": "label.tsx",
+      "demo": "LabelDemo",
+      "examples": {
+        "Required mark": "LabelRequiredDemo",
+        "Label a native input": "LabelNativeDemo"
+      }
+    },
+    "Collect text input with a label": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Input",
+      "props": "InputProps",
+      "source": "input.tsx",
+      "demo": "InputDemo"
+    },
+    "Separate content horizontally or vertically": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Separator",
+      "registry": "separator",
+      "props": "SeparatorProps",
+      "source": "separator.tsx",
+      "demo": "SeparatorDemo",
+      "examples": {
+        "Vertical divider": "SeparatorVerticalDemo"
+      }
+    },
+    "Show loading placeholder blocks": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Skeleton",
+      "registry": "skeleton",
+      "props": "SkeletonProps",
+      "source": "skeleton.tsx",
+      "demo": "SkeletonDemo",
+      "examples": {
+        "Text lines": "SkeletonTextDemo"
+      }
+    },
+    "Load each zone with a faithful skeleton": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "CardSkeleton",
+      "registry": "card-skeleton",
+      "props": "CardSkeletonProps",
+      "source": "card-skeleton.tsx",
+      "demo": "LoadingZonesDemo",
+      "examples": {
+        "Standalone": "CardSkeletonStandaloneDemo"
+      }
+    },
+    "Open modal dialogs": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Dialog",
+      "registry": "dialog",
+      "props": "DialogProps",
+      "source": "dialog.tsx",
+      "demo": "DialogDemo",
+      "examples": {
+        "Tall content": "DialogTallDemo"
+      }
+    },
+    "Float extra content next to a control": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Popover",
+      "props": "PopoverProps",
+      "source": "popover.tsx",
+      "demo": "PopoverDemo"
+    },
+    "Name a control on hover": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Tooltip",
+      "props": "TooltipProps",
+      "source": "tooltip.tsx",
+      "demo": "TooltipDemo"
+    },
+    "Open a menu of actions from a button": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DropdownMenu",
+      "props": "DropdownMenuProps",
+      "source": "dropdown-menu.tsx",
+      "demo": "DropdownMenuDemo"
+    },
+    "Pick a day on a calendar": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Calendar",
+      "props": "CalendarProps",
+      "source": "calendar.tsx",
+      "demo": "CalendarDemo",
+      "propsPriority": ["mode", "selected", "onSelect", "defaultMonth", "month", "onMonthChange", "numberOfMonths", "disabled", "required", "showOutsideDays", "captionLayout", "fixedWeeks", "weekStartsOn", "locale"],
+      "propsRest": { "summary": "other react-day-picker props", "href": "https://daypicker.dev/api/type-aliases/DayPickerProps" }
+    },
+    "Pick a date from a popover": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DatePicker",
+      "props": "DatePickerProps",
+      "source": "date-picker.tsx",
+      "demo": "DatePickerDemo"
+    },
+    "Pick a start and end date": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DateRangePicker",
+      "props": "DateRangePickerProps",
+      "source": "date-picker.tsx",
+      "demo": "DateRangePickerDemo"
+    },
+    "Confirm destructive actions": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ConfirmDialog",
+      "registry": "confirm-dialog",
+      "props": "ConfirmDialogProps",
+      "source": "confirm-dialog.tsx",
+      "demo": "ConfirmDialogDemo",
+      "examples": {
+        "Custom button labels": "ConfirmDialogLabelsDemo"
+      }
+    },
+    "Slide in a drawer panel": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Drawer",
+      "registry": "drawer",
+      "props": "DrawerProps",
+      "source": "drawer.tsx",
+      "demo": "DrawerDemo",
+      "examples": {
+        "Bottom sheet": "DrawerBottomSheetDemo",
+        "Side panel on every screen": "DrawerSideMenuDemo"
+      }
+    },
+    "Render a route as a modal over the list": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "RouteModal",
+      "props": "RouteModalProps",
+      "source": "route-modal.tsx",
+      "demo": "RouteModalDemo",
+      "examples": {
+        "Centered dialog": "RouteModalDialogDemo"
+      }
+    },
+    "Display a shown-once secret with copy": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "SecretField",
+      "props": "SecretFieldProps",
+      "source": "secret-field.tsx",
+      "demo": "SecretFieldDemo"
+    },
+    "Show a sortable, filterable, paginated data table": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DataTable",
+      "props": "DataTableProps",
+      "source": "data-table.tsx",
+      "demo": "DataTableDemo",
+      "examples": {
+        "Standalone pagination": "DataTablePaginationDemo",
+        "Standalone empty row": "DataTableEmptyDemo",
+        "Standalone toolbar": "DataTableToolbarDemo"
+      }
+    },
+    "Lay out an admin page (sidebar + topbar + header)": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "AppShell",
+      "registry": "app-shell",
+      "props": "AppShellProps",
+      "source": "app-shell.tsx",
+      "demo": "AppShellDemo",
+      "examples": {
+        "Without topbar": "AppShellNoTopbarDemo"
+      }
+    },
+    "Guide a multi-step flow with selectable option cards": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "WizardSteps",
+      "registry": "wizard-steps",
+      "props": "WizardStepsProps",
+      "source": "wizard-steps.tsx",
+      "demo": "WizardDemo",
+      "examples": {
+        "Composed steps": "WizardComposedDemo",
+        "Solo card": "WizardSoloDemo",
+        "Pick one": "WizardPickOneDemo"
+      }
+    },
+    "Show key-value details and a live indicator": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DetailPanel",
+      "registry": "detail-panel",
+      "props": "DetailPanelProps",
+      "source": "detail-panel.tsx",
+      "demo": "DetailsDemo",
+      "examples": {
+        "Composed rows": "DetailsComposedDemo"
+      }
+    },
+    "Show determinate progress": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ProgressBar",
+      "registry": "progress-bar",
+      "props": "ProgressBarProps",
+      "source": "progress-bar.tsx",
+      "demo": "ProgressBarDemo",
+      "examples": {
+        "Complete": "ProgressCompleteDemo"
+      }
+    },
+    "Stamp data with its age": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "UpdatedAgo",
+      "registry": "updated-ago",
+      "props": "UpdatedAgoProps",
+      "source": "updated-ago.tsx",
+      "demo": "UpdatedAgoDemo",
+      "examples": {
+        "Custom prefix": "UpdatedAgoCustomDemo"
+      }
+    },
+    "Celebrate completion with a checkmark": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Checkmark",
+      "registry": "checkmark",
+      "props": "CheckmarkProps",
+      "source": "checkmark.tsx",
+      "demo": "CheckmarkDemo",
+      "examples": {
+        "Decorative": "CheckmarkDecorativeDemo"
+      }
+    },
+    "Indicate status with a dot": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StatusDot",
+      "registry": "status-dot",
+      "props": "StatusDotProps",
+      "source": "status-dot.tsx",
+      "demo": "StatusDotDemo",
+      "examples": {
+        "All tones with labels": "StatusDotTonesDemo",
+        "Static ping override": "StatusDotStaticDemo"
+      }
+    },
+    "Name an operation in progress": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StatusLabel",
+      "registry": "status-label",
+      "props": "StatusLabelProps",
+      "source": "status-label.tsx",
+      "demo": "StatusLabelDemo",
+      "examples": {
+        "Saved and error states": "StatusLabelSavedErrorDemo",
+        "Offline state": "StatusLabelOfflineDemo"
+      }
+    },
+    "Lay out fieldsets, fields, and error lists": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "FieldSet",
+      "props": "FieldSetProps",
+      "source": "field.tsx",
+      "demo": "FieldDemo"
+    },
+    "Group content in a card section": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Card",
+      "registry": "card",
+      "props": "CardProps",
+      "source": "card.tsx",
+      "demo": "CardDemo",
+      "examples": {
+        "With footer": "CardFooterDemo"
+      }
+    },
+    "Shared panel surface (border, shadow, glass)": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Surface",
+      "props": "SurfaceProps",
+      "source": "surface.tsx",
+      "demo": "SurfaceDemo"
+    },
+    "Stack content and group titled sections": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Stack",
+      "props": "StackProps",
+      "source": "layout.tsx",
+      "demo": "StackDemo"
+    },
+    "Constrain page width and run sections edge to edge": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Container",
+      "props": "ContainerProps",
+      "source": "layout.tsx",
+      "demo": "ContainerDemo"
+    },
+    "Render headings and body text without raw tags": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Heading",
+      "registry": "typography",
+      "props": "HeadingProps",
+      "source": "typography.tsx",
+      "demo": "TypographyDemo",
+      "examples": {
+        "Heading styles on a link (asChild)": "HeadingLinkDemo"
+      }
+    },
+    "Call out a notice or an error state": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Alert",
+      "registry": "alert",
+      "props": "AlertProps",
+      "source": "alert.tsx",
+      "demo": "AlertDemo",
+      "examples": {
+        "As a section (asChild)": "AlertSectionDemo"
+      }
+    },
+    "Pick one option from a dropdown": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Select",
+      "props": "SelectProps",
+      "source": "select.tsx",
+      "demo": "SelectDemo"
+    },
+    "Search and pick one option": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Combobox",
+      "props": "ComboboxProps",
+      "source": "combobox.tsx",
+      "demo": "ComboboxDemo"
+    },
+    "Pick many searchable options": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "MultiSelect",
+      "props": "MultiSelectProps",
+      "source": "multi-select.tsx",
+      "demo": "MultiSelectDemo"
+    },
+    "Collect multi-line text input": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Textarea",
+      "props": "TextareaProps",
+      "source": "textarea.tsx",
+      "demo": "TextareaDemo"
+    },
+    "Toggle a checkbox or a switch": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Checkbox",
+      "props": "CheckboxProps",
+      "source": "checkbox.tsx",
+      "demo": "ToggleDemo"
+    },
+    "Switch between tabbed panels": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Tabs",
+      "registry": "tabs",
+      "props": "TabsProps",
+      "source": "tabs.tsx",
+      "demo": "TabsDemo",
+      "examples": {
+        "Controlled": "TabsControlledDemo"
+      }
+    },
+    "Horizontal scroll gallery row": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ScrollGallery",
+      "props": "ScrollGalleryProps",
+      "source": "scroll-gallery.tsx",
+      "demo": "ScrollGalleryIdentityDemo",
+      "examples": {
+        "Filter chips": "ScrollGalleryChipsDemo"
+      }
+    },
+    "Show toast notifications": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Toaster",
+      "registry": "sonner",
+      "props": "ToasterProps",
+      "source": "sonner.tsx",
+      "demo": "ToasterDemo"
+    },
+    "Build validated forms with labels, errors, and pending state": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Form",
+      "props": "FormFieldProps",
+      "source": "form.tsx",
+      "demo": "ValidatedFormDemo"
+    },
+    "Show your brand logo": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "BrandLogo",
+      "props": "BrandLogoProps",
+      "source": "brand-logo.tsx",
+      "demo": "BrandLogoDemo",
+      "examples": {
+        "Header link to the home page": "BrandLogoHeaderDemo"
+      }
+    },
+    "Show an empty zone with a next step": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "EmptyState",
+      "registry": "empty-state",
+      "props": "EmptyStateProps",
+      "source": "empty-state.tsx",
+      "demo": "EmptyStateDemo",
+      "examples": {
+        "With a next step": "EmptyStateActionsDemo"
+      }
+    },
+    "Show what broke and a next step": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ErrorState",
+      "registry": "error-state",
+      "props": "ErrorStateProps",
+      "source": "error-state.tsx",
+      "demo": "ErrorStateDemo",
+      "examples": {
+        "With retry": "ErrorStateRetryDemo"
+      }
+    },
+    "Name a spinner while something loads": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "Spinner",
+      "registry": "spinner",
+      "props": "SpinnerProps",
+      "source": "spinner.tsx",
+      "demo": "SpinnerDemo",
+      "examples": {
+        "Named wait": "SpinnerNamedDemo"
+      }
+    },
+    "Fill a list's loading, empty, error and success states": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "EmptyState",
+      "props": "EmptyStateProps",
+      "source": "empty-state.tsx",
+      "demo": "FourStateLoadingDemo",
+      "examples": {
+        "Empty": "FourStateEmptyDemo",
+        "Error": "FourStateErrorDemo",
+        "Success": "FourStateSuccessDemo"
+      }
+    },
+    "Flag offline state with a live note": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "OfflineNote",
+      "registry": "offline-note",
+      "props": "OfflineNoteProps",
+      "source": "offline-note.tsx",
+      "demo": "OfflineNoteDemo",
+      "examples": {
+        "Wired to online state": "OfflineNoteWiredDemo",
+        "Custom wording": "OfflineNoteWordingDemo"
+      }
+    },
+    "Theme an admin app (dark/light included)": {
+      "package": "@zedtech/zedkit-ui",
+      "component": null,
+      "props": null,
+      "source": "styles.css",
+      "demo": "ThemeDemo",
+      "examples": {
+        "Tokens in your own component": "ThemeTokensDemo",
+        "Dark theme button": "ThemeToggleDemo"
+      }
+    },
+    "Icon-only actions with a visible name": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "IconButton",
+      "registry": "icon-button",
+      "props": "IconButtonProps",
+      "source": "icon-button.tsx",
+      "demo": "IconButtonDemo",
+      "examples": {
+        "Row actions in a list": "IconButtonRowsDemo"
+      }
+    },
+    "Quiet icon beside inline text": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "IconLabel",
+      "registry": "icon-label",
+      "props": "IconLabelProps",
+      "source": "icon-label.tsx",
+      "demo": "IconLabelDemo",
+      "examples": {
+        "In an order list": "IconLabelOrdersDemo",
+        "Home areas": "IconLabelAreasDemo"
+      }
+    },
+    "Pin a stage and change scene as the page scrolls": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ScrollScenes",
+      "props": "ScrollScenesProps",
+      "source": "scroll-scenes.tsx",
+      "demo": "ScrollScenesDemo",
+      "examples": {
+        "Before and after": "ScrollScenesBeforeAfterDemo",
+        "Same product in three looks": "ScrollScenesLooksDemo",
+        "Pricing walkthrough": "ScrollScenesPricingDemo"
+      }
+    },
+    "Compose a chat prompt": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "PromptInput",
+      "props": "PromptInputProps",
+      "source": "prompt-input.tsx",
+      "demo": "PromptInputDemo",
+      "examples": {
+        "Simple": "PromptInputDemo",
+        "Complete": "PromptInputCompleteDemo"
+      }
+    },
+    "Keep a side panel in view": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "StickyAside",
+      "props": "StickyAsideProps",
+      "source": "sticky-aside.tsx",
+      "demo": "StickyAsideDemo",
+      "examples": {
+        "Doc page with summary card": "StickyAsideDocStepsDemo"
+      }
+    },
+    "Compose a public marketing page": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "GlassSurface",
+      "props": "GlassSurfaceProps",
+      "source": "marketing/glass-surface.tsx",
+      "demo": "GlassSurfaceDemo",
+      "examples": {
+        "Hero": "HeroDemo",
+        "Closing call to action": "CtaBandDemo",
+        "Feature grid": "FeatureGridDemo",
+        "Steps": "HowItWorksDemo",
+        "Header and footer": "MarketingChromeDemo",
+        "Language switch": "LocaleSwitchDemo",
+        "Use case": "MediaSectionDemo",
+        "Logo band": "LogoBandDemo",
+        "Testimonials": "TestimonialsDemo",
+        "Pricing": "PricingDemo",
+        "Questions": "FaqDemo"
+      }
+    },
+    "Switch the visual identity with one attribute": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "IdentitySwitcher",
+      "props": "IdentitySwitcherProps",
+      "source": "identity-switcher.tsx",
+      "demo": "IdentitySwitcherDemo",
+      "examples": {
+        "Same card in each look": "IdentityScopeDemo",
+        "Touch picker": "IdentityPickerDemo"
+      }
+    },
+    "Read flags in React": {
+      "package": "@zedtech/zedkit-flags",
+      "component": null,
+      "props": null,
+      "source": "react.tsx",
+      "demo": "FlagsDemo",
+      "a11yNotApplicable": "Hooks and providers render nothing."
+    }
+  }
+}

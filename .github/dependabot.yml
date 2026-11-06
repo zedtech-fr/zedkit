@@ -1,0 +1,57 @@
+# Weekly grouped updates; security advisories still open dedicated PRs.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # Docs app and UI kit share these majors; bump deliberately with release notes.
+      - dependency-name: next
+        update-types: [version-update:semver-major]
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+      # Payload plugin API moves on major; coordinate with consumer upgrades.
+      - dependency-name: payload
+        update-types: [version-update:semver-major]
+      # Nest major tracks Node and Fastify; run the nest package test suite first.
+      - dependency-name: "@nestjs/common"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@nestjs/core"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@nestjs/config"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@nestjs/platform-fastify"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@nestjs/swagger"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@nestjs/throttler"
+        update-types: [version-update:semver-major]
+      # @fastify/middie 9.3.6 prefixes Nest's "{/*splat}" middleware path to
+      # "/{/*splat}", so nestjs-pino's request logger stops matching any route
+      # (no "request completed"/"request errored" lines). Pinned via
+      # pnpm.overrides; lift both once Nest or middie ship a fix.
+      - dependency-name: "@fastify/middie"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch

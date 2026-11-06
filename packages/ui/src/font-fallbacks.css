@@ -1,0 +1,26 @@
+/*
+ * Metric-aligned fallback faces for the identity fonts.
+ *
+ * An identity renders its webfont on first paint only when the file is
+ * already cached; otherwise the fallback shows first and the swap shifts
+ * the layout. These faces name the local font the browser would use
+ * anyway (Arial for sans) but carry the webfont's own ascent, descent and
+ * line gap, so line boxes keep their height across the swap.
+ *
+ * Values come from the shipped Fontsource variable files (OS/2 typo
+ * metrics when USE_TYPO_METRICS is set, else hhea; widths against
+ * Liberation Sans, the metric-compatible Arial stand-in). If a font
+ * version changes, re-derive them the same way: a wrong override is
+ * worse than none.
+ */
+
+/* Inter (mist) */
+@font-face {
+  font-family: "Inter Variable Fallback";
+  src: local("Arial"), local("Liberation Sans");
+  font-display: swap;
+  ascent-override: 96.88%;
+  descent-override: 24.12%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
+}

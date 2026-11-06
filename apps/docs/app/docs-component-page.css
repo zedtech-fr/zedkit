@@ -1,0 +1,12 @@
+/*
+ * Component catalog pages: section rhythm (VISUAL-CONTRACT).
+ */
+
+#nd-docs-layout [data-slot="section"] figure.shiki {
+  margin-block: 0;
+}
+
+/* The tab list scrolls (it clips on both axes), so its tabs draw the focus ring inside their own edge. */
+#install-or-copy [data-slot="tabs-list"] [role="tab"]:focus-visible {
+  outline-offset: calc(var(--ring-width, 2px) * -1);
+}

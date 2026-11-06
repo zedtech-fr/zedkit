@@ -1,0 +1,35 @@
+{
+  "extends": "@zedtech/zedkit-quality/tsconfig",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false,
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "incremental": true,
+    "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+    "plugins": [{ "name": "next" }],
+    "paths": { "#*": ["./app/*"], "@/*": ["./*"] }
+  },
+  "include": [
+    "app",
+    "features",
+    "components",
+    "lib",
+    "ui",
+    "content/gallery.ts",
+    "content/catalog-index.ts",
+    "content/home-scenarios.ts",
+    "source.config.ts",
+    "mdx-components.tsx",
+    "next.config.mjs",
+    "postcss.config.mjs",
+    "prose/guides/snippets/**/*.tsx"
+  ],
+  "exclude": ["prose/guides/snippets/registry-page.tsx"]
+}

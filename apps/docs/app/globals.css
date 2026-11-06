@@ -1,0 +1,216 @@
+/* One Tailwind build: fumadocs' sources go through the same compiler as the kit,
+   so `flex` and `max-xl:hidden` (or `w-full` and `sm:w-40`) keep a single,
+   correct order. The precompiled `fumadocs-ui/style.css` carried its own copy
+   of the utilities and let base classes beat responsive variants. */
+@import "tailwindcss";
+@import "@zedtech/zedkit-ui/styles.css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
+
+@layer base {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+}
+
+/* Scan the workspace kit sources so preview components get their classes. */
+@source "../../../packages/ui/src";
+
+@media (pointer: coarse) {
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="tab"] {
+    touch-action: manipulation;
+  }
+}
+
+/* Phones and touch: fumadocs' own tabs, copy buttons and props rows reach the 44px target. */
+@media (pointer: coarse), (max-width: 40rem) {
+  [role="tablist"] > [role="tab"] {
+    min-height: 2.75rem;
+  }
+  figure.shiki > div:first-child {
+    top: 0;
+    right: 0;
+  }
+  figure.shiki button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+  main button.group[aria-expanded] {
+    min-height: 2.75rem;
+  }
+}
+
+/* Mobile TOC: decorative ring must not register as an unnamed progressbar. */
+[data-toc-popover-trigger] svg[role="progressbar"] {
+  display: none;
+}
+
+[data-toc-popover-trigger] {
+  color: hsl(var(--foreground));
+}
+
+/* Cross-fade labels use opacity-0 while both stay in the tree; axe still flags contrast unless hidden. */
+[data-toc-popover-trigger] span[class*="opacity-0"] {
+  visibility: hidden;
+}
+
+/* The label swaps with a fade when scroll-spy settles; under reduced motion it swaps at once (and axe never reads a half-faded colour). */
+@media (prefers-reduced-motion: reduce) {
+  [data-toc-popover-trigger] span {
+    transition: none;
+  }
+}
+
+/* Phone search: hidden while a drawer or dialog is open. */
+body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
+body:has([role="dialog"][data-state="open"]) [data-search-pill] {
+  display: none;
+}
+
+/* Reserve the fixed phone search button, its bottom inset, and 1rem of air after each shell. */
+@media (width < 48rem) {
+  #nd-home-layout,
+  #nd-docs-layout {
+    padding-bottom: calc(3.75rem + max(1rem, env(safe-area-inset-bottom)));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-search-pill] button:hover {
+    filter: brightness(1.02);
+  }
+}
+
+/*
+ * Docs chrome follows the kit tokens: once an identity is chosen, fumadocs
+ * colours are bridged to it (light or dark), so one identity switch restyles
+ * the whole site. The same bridge on `[data-identity-scope]` keeps a
+ * pinned specimen from inheriting the page's computed `--color-fd-*`
+ * (prose tables paint `background: var(--color-fd-card)`). Without an
+ * identity the stock fumadocs palette stays.
+ */
+:root[data-identity],
+[data-identity-scope][data-identity] {
+  --color-fd-background: hsl(var(--background));
+  --color-fd-foreground: hsl(var(--foreground));
+  --color-fd-muted: hsl(var(--muted));
+  --color-fd-muted-foreground: hsl(var(--muted-foreground));
+  --color-fd-popover: hsl(var(--popover));
+  --color-fd-popover-foreground: hsl(var(--popover-foreground));
+  --color-fd-card: hsl(var(--card));
+  --color-fd-card-foreground: hsl(var(--card-foreground));
+  --color-fd-border: hsl(var(--border));
+  --color-fd-primary: hsl(var(--primary));
+  --color-fd-primary-foreground: hsl(var(--primary-foreground));
+  --color-fd-secondary: hsl(var(--secondary));
+  --color-fd-secondary-foreground: hsl(var(--secondary-foreground));
+  /* fumadocs "accent" is a neutral hover/selected surface (theme toggle, nav);
+     the kit's --accent is the brand color and stays on primary actions. */
+  --color-fd-accent: hsl(var(--muted));
+  --color-fd-accent-foreground: hsl(var(--foreground));
+  --color-fd-ring: hsl(var(--ring));
+}
+
+:root[data-identity] {
+  /* Navbar and sidebar follow the identity border and surfaces (glass tokens default to solid). */
+  /* Site headers use the kit's glass bar tokens. Header frost lives on ::before
+     (a sibling of the Guides viewport): nested backdrop-filter under a blurred
+     #nd-nav would use the header as backdrop root and frost nothing. */
+  #nd-nav,
+  #nd-mobile-nav {
+    background-color: hsl(var(--background) / var(--zk-glass-bar-alpha, var(--zk-glass-alpha, 1)));
+    border-bottom: var(--zk-border-width) solid hsl(var(--zk-glass-bar-edge, var(--border)) / var(--zk-glass-bar-edge-alpha, 1));
+    box-shadow: var(--zk-glass-bar-shadow, none);
+  }
+  #nd-mobile-nav {
+    -webkit-backdrop-filter: var(--zk-glass-bar-filter, var(--zk-glass-filter, none));
+    backdrop-filter: var(--zk-glass-bar-filter, var(--zk-glass-filter, none));
+  }
+  #nd-nav::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    z-index: 0;
+    height: var(--zk-site-header-height, 3.5rem);
+    pointer-events: none;
+    -webkit-backdrop-filter: var(--zk-glass-bar-filter, var(--zk-glass-filter, none));
+    backdrop-filter: var(--zk-glass-bar-filter, var(--zk-glass-filter, none));
+  }
+  #nd-nav > * {
+    position: relative;
+    z-index: 1;
+  }
+  /* Open Guides menu: kit `applySurfaceGlassPanel` (see site-chrome-a11y.tsx). */
+  #nd-sidebar {
+    background-color: hsl(var(--sidebar) / var(--zk-glass-alpha, 1));
+    border-inline-end: var(--zk-border-width) solid hsl(var(--sidebar-border));
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+  }
+
+  /* Code blocks: one frame (the figure), never a frame inside a frame; the scroll area stays inside it. */
+  figure.shiki {
+    background-color: hsl(var(--card) / var(--zk-glass-alpha, 1));
+    border: var(--zk-border-width) solid hsl(var(--border) / 0.35);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--zk-shadow-sm);
+    -webkit-backdrop-filter: var(--zk-glass-filter, none);
+    backdrop-filter: var(--zk-glass-filter, none);
+    max-width: 100%;
+  }
+  figure.shiki > div:first-child {
+    background: hsl(var(--card));
+    border-bottom: var(--zk-border-width) solid hsl(var(--border) / 0.25);
+    border-radius: var(--radius-md);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  figure.shiki [role="region"] {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.5) transparent;
+  }
+  /* Inside a tab group the group is the frame: its code block carries no border of its own. */
+  [role="tabpanel"] > figure.shiki:only-child {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/*
+ * Wide viewports: past 1920px the docs cluster keeps fumadocs' default
+ * 97rem ceiling and reads stranded (empty sidebar column, dead space
+ * after the TOC). Raise the layout width the framework exposes for
+ * exactly this, and let the article — previews included — take a share
+ * of the surplus. Widths below 1920px are untouched.
+ */
+#nd-docs-layout [role="tabpanel"] figure.shiki {
+  border: 0;
+  box-shadow: none;
+}
+
+#nd-docs-layout [role="tabpanel"] figure.shiki pre {
+  border: 0;
+  box-shadow: none;
+}
+
+@media (min-width: 120rem) {
+  #nd-docs-layout {
+    --fd-layout-width: 112.5rem;
+  }
+  #nd-page {
+    max-width: 70rem;
+  }
+}

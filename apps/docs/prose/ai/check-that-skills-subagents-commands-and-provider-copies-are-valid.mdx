@@ -1,0 +1,76 @@
+## Scenario
+
+You edit a shared skill under `.agents/skills/`, then run `validate` from the
+project root before committing:
+
+```sh
+zedkit-ai validate .
+```
+
+A clean setup prints `ok` and exits 0. Problems print as
+`<path>: <message>` followed by `1 problem` / `N problems`, exit 1 — wire it as a CI
+step so drifted provider copies never merge.
+
+Real output with a drifted Cursor copy (plus a core-preset gap):
+
+```text
+commands/audit.md: names no installed skill (a command runs a `skill` by name)
+.cursor/agents/verifier.md: differs from .agents/agents/verifier.md; user copy kept
+2 problems
+```
+
+Generated agent files are checked with `zedkit-ai sync --check` (exit 1 when
+they lag `.agents/agents` or `.agents/tokenomics.md`):
+
+```text
+.cursor/agents/verifier.md: out of date, run: npx zedkit-ai sync
+1 out of date
+```
+
+`validate` accepts a project root (drifts against its `.agents/`) or an
+`.agents/` dir directly (drifts against its parent). The same checks are
+available programmatically via `validateKit` + `checkDrift`, which return
+`Issue[]` (`{ path, message }`) instead of exiting.
+
+Opt-in `zedkit-ai validate --setup` (and `--plan <file>` when the plan is
+not `PLAN.md` or `.agents/setup-log/plan.md`) also checks that the plan
+text covers every git-changed path and that each
+`.agents/setup-log/gates/*.log` starts with `CMD:` and ends with
+`EXIT:<code>`. It also checks the setup went deep: a reading log with
+enough reader rows for the repo size and `file:line` evidence (D1), domain
+rules with evidence (D2), a nested `AGENTS.md` linking the setup rules, or a stated reason (D3), and
+`.agents/tokenomics.md` with a real model (not `inherit`) on
+`build.standard` and `decide.sensitive`, pointed at from `AGENTS.md` (D4).
+Plain `validate` does not run those checks. It does scan for model names
+written outside `tokenomics.md` (`path:line`, one per file and name; keep a
+name with `<!-- zk:model-ok -->` or `hardcode.allow_paths`). `zedkit-ai scan [dir]` prints the repo size, the reader
+count and one slice per reader.
+
+## Troubleshooting
+
+- `out of date, run: npx zedkit-ai sync` — a generated `.cursor/agents` or
+  `.claude/agents` file lags `.agents/agents` or `.agents/tokenomics.md`. Run
+  `zedkit-ai sync` (add `--check` in CI).
+- `differs from …; user copy kept` — a provider file `sync` did not write no
+  longer matches `.agents/`. The user file is left as-is. Re-run
+  `zedkit-ai init --adopt` to write a kit sidecar (`*.kit.md`) next to a
+  user file that differs from the kit (identical kit copies are left as-is).
+- `model name "…" outside tokenomics.md` — move the name into
+  `.agents/tokenomics.md`, or mark the line with `<!-- zk:model-ok -->`.
+- `copy missing: copy it from … or re-run init` — a provider file was
+  deleted. Either restore that one file or re-run `init`.
+- `link missing … re-run init` — a provider link (`.claude/…`, `CLAUDE.md`,
+  `.cursor/skills`) was deleted or points at a removed target. Re-run `init`
+  to restore it; user files are left as-is.
+- `names no installed skill` — the installed preset does not ship that
+  skill (for example `diagnosing-bugs` needs `--preset full`). Re-run `init` with the
+  wider preset, or remove the command.
+- `duplicate skill name "…" (also claimed by …)` — two skills claim one
+  name, usually a `zk-<name>` sidecar an older adopt left behind. Re-run
+  `setup` to refresh the sidecar name, or merge it into your copy and
+  delete it.
+- `kit.json … lists missing …` — the manifest names a skill, agent or
+  command with no file on disk. Add the file or drop the entry, then
+  re-validate.
+- `no such directory` — the path argument does not exist. Run from the
+  project root with `.` or point at `.agents/`.

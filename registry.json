@@ -1,0 +1,916 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "zedkit",
+  "homepage": "https://github.com/zedtech-fr/zedkit",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "cssVars": {
+        "light": {
+          "success": "142.1 76.2% 27%",
+          "warning": "32 95% 44%",
+          "overlay": "0 0% 0%"
+        },
+        "dark": {
+          "success": "142.1 70.6% 45.3%",
+          "warning": "32 95% 32%",
+          "overlay": "0 0% 0%"
+        },
+        "theme": {
+          "motion-fast": "150ms",
+          "motion-base": "200ms",
+          "motion-slow": "250ms",
+          "ease-enter": "cubic-bezier(0.16, 1, 0.3, 1)",
+          "ease-exit": "cubic-bezier(0.4, 0, 1, 1)",
+          "zk-press-scale": "0.97"
+        }
+      },
+      "css": {
+        "@keyframes zk-fade-in": {
+          "from": {
+            "opacity": "0"
+          }
+        },
+        "@keyframes zk-fade-out": {
+          "to": {
+            "opacity": "0"
+          }
+        },
+        "@keyframes zk-zoom-in": {
+          "from": {
+            "opacity": "0",
+            "transform": "scale(0.96)"
+          }
+        },
+        "@keyframes zk-zoom-out": {
+          "to": {
+            "opacity": "0",
+            "transform": "scale(0.96)"
+          }
+        },
+        "@utility dialog-center": {
+          "top": "var(--spacing-dialog-center)",
+          "left": "var(--spacing-dialog-center)",
+          "translate": "calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1)"
+        },
+        "@utility button-press": {
+          "transition-property": "background-color, border-color, color, fill, stroke, box-shadow, translate, scale",
+          "transition-duration": "var(--motion-base)",
+          "transition-timing-function": "var(--zk-btn-ease, ease)",
+          "&:active:not(:disabled)": {
+            "scale": "var(--zk-press-scale)"
+          }
+        },
+        "@utility focus-ring-control": {
+          "&:focus-visible": {
+            "outline": "var(--ring-width-control) solid hsl(var(--ring))",
+            "outline-offset": "var(--ring-offset-width)"
+          }
+        },
+        "html [data-vaul-drawer]": {
+          "animation-duration": "var(--motion-slow)",
+          "transition-duration": "var(--motion-slow)"
+        },
+        "html [data-vaul-overlay]": {
+          "animation-duration": "var(--motion-base)"
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          "html [data-vaul-drawer], html [data-vaul-overlay]": {
+            "animation": "none !important",
+            "transition": "none !important"
+          }
+        }
+      },
+      "registryDependencies": []
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-control-height": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
+          "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8))",
+          "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10))",
+          "spacing-button-inline": "1rem",
+          "spacing-button-inline-sm": "0.75rem",
+          "spacing-button-inline-lg": "2rem",
+          "spacing-button-gap": "0.5rem",
+          "ring-width-control": "2px",
+          "ring-offset-width": "2px"
+        }
+      },
+      "css": {
+        "@utility focus-ring-control": {
+          "&:focus-visible": {
+            "outline": "var(--ring-width-control) solid hsl(var(--ring))",
+            "outline-offset": "var(--ring-offset-width)"
+          }
+        },
+        "@utility button-press": {
+          "transition-property": "background-color, border-color, color, fill, stroke, box-shadow, translate, scale",
+          "transition-duration": "var(--motion-base)",
+          "transition-timing-function": "var(--zk-btn-ease, ease)",
+          "&:active:not(:disabled)": {
+            "scale": "var(--zk-press-scale)"
+          }
+        }
+      }
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "dependencies": [
+        "@zedtech/zedkit-core",
+        "@radix-ui/react-dialog",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils",
+        "@zedkit/surface"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/overlay-modal.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/theme-scope.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-dialog-center": "50%",
+          "spacing-dialog-gap": "1rem",
+          "spacing-dialog-padding": "1.5rem",
+          "spacing-dialog-header-stack": "0.375rem",
+          "spacing-dialog-footer-gap": "0.5rem",
+          "spacing-dialog-max-height": "90dvh",
+          "spacing-dialog-header-end": "calc(var(--spacing-overlay-touch-target) + var(--spacing-overlay-close-offset))",
+          "spacing-dialog-footer-safe": "env(safe-area-inset-bottom, 0px)",
+          "spacing-overlay-touch-target": "2.75rem",
+          "spacing-overlay-close-offset": "1rem"
+        }
+      },
+      "css": {
+        "@utility dialog-center": {
+          "top": "var(--spacing-dialog-center)",
+          "left": "var(--spacing-dialog-center)",
+          "translate": "calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1)"
+        }
+      }
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ring-width": "2px",
+          "ring-offset-width": "2px",
+          "spacing-badge-inline": "0.625rem",
+          "spacing-badge-block": "0.125rem"
+        }
+      },
+      "css": {
+        "@utility focus-ring": {
+          "&:focus-visible": {
+            "outline": "var(--ring-width) solid hsl(var(--ring))",
+            "outline-offset": "var(--ring-offset-width)"
+          }
+        }
+      }
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "dependencies": [
+        "@zedtech/zedkit-core",
+        "vaul",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@zedkit/button",
+        "utils",
+        "@zedkit/surface"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/drawer.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-non-modal.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-panel-classes.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-non-modal-effects.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-non-modal-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-portal.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-vaul.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/drawer-meta.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/overlay-modal.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/theme-scope.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/use-narrow-viewport.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "light": {
+          "overlay": "0 0% 0%"
+        },
+        "dark": {
+          "overlay": "0 0% 0%"
+        }
+      }
+    },
+    {
+      "name": "confirm-dialog",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@zedkit/button",
+        "@zedkit/dialog",
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/confirm-dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "status-dot",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/status-dot.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "light": {
+          "success": "142.1 76.2% 27%",
+          "warning": "32 95% 44%"
+        },
+        "dark": {
+          "success": "142.1 70.6% 45.3%",
+          "warning": "32 95% 32%"
+        },
+        "theme": {
+          "spacing-status-dot": "0.5rem"
+        }
+      }
+    },
+    {
+      "name": "checkmark",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/checkmark.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-checkmark": "1rem",
+          "animate-check-draw": "zk-check-draw 0.45s ease-out forwards"
+        }
+      },
+      "css": {
+        "@keyframes zk-check-draw": {
+          "from": {
+            "stroke-dashoffset": "8"
+          },
+          "to": {
+            "stroke-dashoffset": "0"
+          }
+        }
+      }
+    },
+    {
+      "name": "updated-ago",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/updated-ago.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/updated-ago-client.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/updated-ago-format.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "status-label",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@zedkit/checkmark",
+        "@zedkit/status-dot",
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/status-label.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-status-label-gap": "0.375rem",
+          "spacing-status-label-box": "1rem",
+          "spacing-icon-sm": "0.875rem"
+        }
+      }
+    },
+    {
+      "name": "progress-bar",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/progress-bar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-progress-bar-gap": "0.125rem",
+          "spacing-progress-bar-height": "0.375rem"
+        }
+      }
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-separator"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-separator-thickness": "0.0625rem"
+        }
+      }
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-alert-inline": "1rem",
+          "spacing-alert-block": "0.75rem",
+          "spacing-alert-icon-offset": "1rem",
+          "spacing-alert-icon-nudge": "0.1875rem",
+          "spacing-alert-content-indent": "1.75rem"
+        }
+      }
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "dependencies": [
+        "sonner"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "typography",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/type-roles.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/typography.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-heading-scroll": "5rem"
+        }
+      }
+    },
+    {
+      "name": "detail-panel",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/detail-panel.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-detail-panel-gap": "1rem",
+          "spacing-detail-panel-inline": "1rem",
+          "spacing-detail-panel-block": "0.75rem"
+        }
+      }
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-tabs"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-tabs-list-height": "max(calc(var(--zk-tap-min, 0px) + 0.5rem), 2.25rem)",
+          "spacing-tabs-list-inset": "0.25rem",
+          "spacing-tabs-trigger-inline": "0.75rem",
+          "spacing-tabs-trigger-block": "0.25rem",
+          "spacing-tabs-content-gap": "0.5rem"
+        }
+      },
+      "css": {
+        "@utility focus-ring": {
+          "&:focus-visible": {
+            "outline": "var(--ring-width) solid hsl(var(--ring))",
+            "outline-offset": "var(--ring-offset-width)"
+          }
+        }
+      }
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils",
+        "@zedkit/surface"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-card-stack": "0.5rem",
+          "spacing-card-padding": "1.5rem"
+        }
+      }
+    },
+    {
+      "name": "surface",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/surface.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/parallax.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/parallax-types.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "app-shell",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/app-shell.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-app-shell-sidebar": "16rem",
+          "spacing-app-shell-padding": "1rem",
+          "spacing-app-shell-padding-md": "1.5rem"
+        }
+      }
+    },
+    {
+      "name": "wizard-steps",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/wizard-steps.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/use-narrow-viewport.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/format-message.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-icon-sm": "0.875rem",
+          "spacing-wizard-steps-gap": "0.75rem",
+          "spacing-wizard-steps-row-gap": "0.5rem",
+          "spacing-wizard-step-gap": "0.5rem",
+          "spacing-wizard-step-badge": "1.5rem",
+          "spacing-wizard-step-connector-gap": "0.25rem",
+          "spacing-wizard-step-connector-thickness": "1px",
+          "spacing-wizard-step-connector": "1.5rem"
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-label"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card-skeleton",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@zedkit/skeleton",
+        "utils",
+        "@zedkit/surface"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/card-skeleton.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-card-padding": "1.5rem",
+          "spacing-card-stack": "0.5rem",
+          "spacing-card-section": "1rem",
+          "spacing-card-lines": "0.5rem"
+        }
+      }
+    },
+    {
+      "name": "use-online-status",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "registry/ui/use-online-status.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "offline-note",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@zedkit/alert"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/offline-note.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-button",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@zedkit/button"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/icon-button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@zedkit/typography",
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/empty-state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "error-state",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@zedkit/alert",
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/error-state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/spinner.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-label",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/icon-label.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "spacing-icon-control": "1rem"
+        }
+      }
+    }
+  ]
+}
