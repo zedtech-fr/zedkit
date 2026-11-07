@@ -110,7 +110,7 @@ export function IdentityAssistant({ tokens, onUse }: { tokens: IdentityTokens; o
       <details open={state.ui.open} onToggle={(event) => state.ui.setOpen(event.currentTarget.open)} className="group content-shrink">
         <summary
           id="identity-assistant-title"
-          className="flex min-h-control-height cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-input bg-background px-field-pad text-zk-type-body font-medium text-foreground shadow-sm focus-ring-control hover:bg-muted [&::-webkit-details-marker]:hidden"
+          className="flex min-h-control-height cursor-pointer list-none items-center justify-between gap-stack-sm rounded-md border border-input bg-background px-field-pad text-zk-type-body font-medium text-foreground shadow-sm focus-ring-control hover:bg-muted [&::-webkit-details-marker]:hidden"
         >
           {copy.open}
           <ChevronDown

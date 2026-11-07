@@ -19,7 +19,7 @@ export type { View } from "@/components/identity-assistant-parts";
 /** The assistant's first word, where the exchange will continue. Shown until the first exchange replaces it. */
 function AssistantGreeting() {
   return (
-    <ol className="trim-margin flex list-none flex-col gap-2 flush" data-assistant-greeting="">
+    <ol className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-greeting="">
       <li className="text-zk-type-body">
         <Text as="span" className="font-medium text-foreground">
           {copy.assistant}

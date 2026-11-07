@@ -99,7 +99,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
   const primary = sitePrimaryNavLinks(changelogHref);
 
   return (
-    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-4 overflow-y-auto px-4 pt-2 pb-6">
+    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-stack-lg overflow-y-auto px-4 pt-2 pb-6">
       <div className="w-full [&_[data-search]]:w-full">
         <SiteFullSearchTrigger className="w-full max-w-none" />
       </div>
@@ -124,12 +124,12 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
           />
         ))}
       </nav>
-      <div className="mt-2 flex items-center justify-between gap-3 border-t pt-4">
+      <div className="mt-2 flex items-center justify-between gap-stack-md border-t pt-4">
         <a
           href={SITE_GITHUB_URL}
           target="_blank"
           rel="noreferrer"
-          className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-2 text-muted-foreground`}
+          className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-stack-sm text-muted-foreground`}
         >
           <GithubIcon className="size-icon shrink-0" />
           GitHub
@@ -206,7 +206,7 @@ export function MobileHeader({
         id="nd-mobile-nav"
         className={
           className ??
-          "sticky pin-top z-40 flex h-14 items-center justify-between gap-2 border-b bg-background px-2 md:hidden"
+          "sticky pin-top z-40 flex h-14 items-center justify-between gap-stack-sm border-b bg-background px-2 md:hidden"
         }
       >
         <div className="flex content-shrink items-center gap-1.5">

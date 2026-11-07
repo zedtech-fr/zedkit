@@ -25,7 +25,7 @@ export function DetectedLinks({ text, onText, fieldId, disabled = false }: { tex
           <Text as="span" typeRole="body" className="font-medium text-foreground">
             {copy.links.found}
           </Text>
-          <ul aria-label={copy.links.list} className="trim-margin flex list-none flex-wrap gap-2 flush">
+          <ul aria-label={copy.links.list} className="trim-margin flex list-none flex-wrap gap-stack-sm flush">
             {urls.map((url) => (
               <li key={url} data-assistant-link-chip="" className="flex max-w-full content-shrink items-center gap-1 rounded-full border border-border bg-muted/40 py-0.5 pr-0.5 pl-3">
                 <Text as="span" aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-primary" />

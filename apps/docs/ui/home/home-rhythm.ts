@@ -8,15 +8,15 @@ import { DOCS_TYPE_H3_CLASS } from "@/lib/docs-type-roles";
 export const HOME_SECTION_CONTENT_GAP = 6;
 export const HOME_CARD_CONTENT_GAP = 4;
 
-export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-4 md:grid-cols-2";
+export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-cols-2";
 /**
  * The two-step grids step at `sm`, not `md`: fumadocs' prebuilt CSS defines
  * its own `md:grid-cols-2` later in the shared utilities layer, which would
  * shadow the `xl` step on any element carrying both. Track counts are pinned
  * by the "home bands" e2e test in tests/home-layout.spec.ts.
  */
-export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-4 sm:grid-cols-2 xl:grid-cols-3";
-export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-4 sm:grid-cols-2 xl:grid-cols-4";
+export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-cols-2 xl:grid-cols-3";
+export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-cols-2 xl:grid-cols-4";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;

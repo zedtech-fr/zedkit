@@ -37,7 +37,7 @@ export function NoteListView({ port, copy }: NoteListViewProps) {
           {notes.length === 0 ? (
             <Text variant="muted">{copy.empty}</Text>
           ) : (
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-stack-sm">
               {notes.map((note) => (
                 <li key={note.id}>
                   <Text>{note.title}</Text>

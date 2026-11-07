@@ -74,7 +74,7 @@ function IdentityPicker({
           type="button"
           aria-label={`${title}: ${currentLabel}`}
           className={cn(
-            "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-foreground focus-ring-control",
+            "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-button-gap rounded-md px-control-inline text-sm font-medium text-foreground focus-ring-control",
             className,
           )}
         >
@@ -99,7 +99,7 @@ function IdentityPicker({
                 aria-checked={selected}
                 onClick={() => choose(item.id)}
                 className={cn(
-                  "flex min-h-overlay-touch-target items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left focus-ring-control transition-colors",
+                  "flex min-h-overlay-touch-target items-center justify-between gap-stack-md rounded-lg border px-control-inline py-control-block-lg text-left focus-ring-control transition-colors",
                   selected ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted",
                 )}
               >
