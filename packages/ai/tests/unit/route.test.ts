@@ -280,7 +280,7 @@ describe("resolveRoute: effort", () => {
         stakes: "critical",
         needs: { reasoning: "low" },
       }).effort,
-    ).toBe("max");
+    ).toBe("high");
     expect(
       route(p, {
         kind: "check",
@@ -358,7 +358,7 @@ describe("resolveRoute: agent floors", () => {
         header: header("medium", "medium", { min_effort: "low" }),
       },
     });
-    expect(noLower.effort).toBe("max");
+    expect(noLower.effort).toBe("high");
   });
 });
 
@@ -476,7 +476,7 @@ describe("resolveRoute: the two ui-designer calls", () => {
     });
   });
 
-  it("pay button loading state: build, critical, high, large -> build.critical, max, large window", () => {
+  it("pay button loading state: build, critical, high, large -> build.critical, high, large window", () => {
     const r = route(policy(), {
       kind: "build",
       stakes: "critical",
@@ -486,7 +486,7 @@ describe("resolveRoute: the two ui-designer calls", () => {
     expect(r).toMatchObject({
       column: "critical",
       model: "cursor.build.critical",
-      effort: "max",
+      effort: "high",
       contextWindow: "1M",
     });
     expect(r.gates).toMatchObject({
@@ -614,7 +614,7 @@ describe("resolveRoute: gates and second review", () => {
     expect(r.secondReview).toMatchObject({
       provider: "cursor",
       model: "cursor.check.critical",
-      effort: "max",
+      effort: "high",
     });
   });
 
@@ -670,7 +670,7 @@ describe("loadPolicy and loadAgent", () => {
       model: "my-build-model",
       effort: "medium",
     });
-    expect(merged.value.providers.claude.check.critical.effort).toBe("max");
+    expect(merged.value.providers.claude.check.critical.effort).toBe("high");
   });
 
   it("an invalid project file is an error naming every problem", () => {

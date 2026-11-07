@@ -529,7 +529,7 @@ providers:
       );
       expect(text).toContain("kind: check (hint)");
       expect(text).toContain("note: kind not given, using check (hint)");
-      expect(text).toContain("second review: cursor model inherit effort max");
+      expect(text).toContain("second review: cursor model inherit effort high");
       expect(text).toContain("warning: cannot prove distinct model");
     });
 
