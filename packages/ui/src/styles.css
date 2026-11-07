@@ -667,6 +667,21 @@ a[class*="px-badge-inline"] {
   line-height: var(--text-lg--line-height);
 }
 
+/* A big count. One line, semibold, tight tracking. */
+.text-figure {
+  font-size: var(--text-2xl);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* A short logo word beside a mark. */
+.text-wordmark {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 600;
+}
+
 /* Marketing hero promise. Grows one step from the small breakpoint. */
 .text-hero-title {
   font-size: var(--text-4xl);

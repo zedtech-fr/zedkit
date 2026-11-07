@@ -485,9 +485,9 @@ export function Gallery() {
           <LogoBand
             title="Works with the shops you know"
             logos={[
-              { name: "Harbor Studio", logo: <span className="text-lg font-semibold">Harbor</span> },
-              { name: "North Shop", logo: <span className="text-lg font-semibold">North</span> },
-              { name: "Linen & Co", logo: <span className="text-lg font-semibold">Linen</span> },
+              { name: "Harbor Studio", logo: <span className="text-wordmark">Harbor</span> },
+              { name: "North Shop", logo: <span className="text-wordmark">North</span> },
+              { name: "Linen & Co", logo: <span className="text-wordmark">Linen</span> },
             ]}
           />
           <FeatureGrid
