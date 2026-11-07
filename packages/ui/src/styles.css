@@ -1569,6 +1569,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 [data-example-width] {
   max-width: 24rem;
 }
+[data-example-width="medium"] {
+  max-width: 28rem;
+}
 
 /* Structural layout. The declaration is the constraint; the name is the job. */
 /* Phone target. Desktop keeps the identity's spacing step; a coarse pointer or a narrow screen never goes under 44px. */
