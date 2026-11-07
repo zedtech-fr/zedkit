@@ -57,7 +57,7 @@ function Hero({
             {title}
           </Heading>
           {description ? (
-            <Text className="max-w-reading text-lg text-balance text-muted-foreground">{description}</Text>
+            <Text className="max-w-reading text-hero-lead text-balance text-muted-foreground">{description}</Text>
           ) : null}
           {actions ? (
             <div
