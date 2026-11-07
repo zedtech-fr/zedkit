@@ -25,7 +25,7 @@ export function IdentityDockComposerFooter(props: {
       {showNotice ? (
         <div
           role="status"
-          className="rounded-md border border-border bg-muted px-3 py-2 text-zk-type-body text-muted-foreground"
+ className="rounded-md border border-border bg-muted pad-row text-zk-type-body text-muted-foreground"
           data-assistant-notice=""
         >
           {noticeText(notice)}
