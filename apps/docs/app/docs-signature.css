@@ -27,6 +27,11 @@
   min-height: calc(var(--spacing) * 32);
 }
 
+/* The AI setup prompt. Wider than the reading measure, short of the page. */
+[data-setup-prompt] {
+  max-width: 48rem;
+}
+
 /* Tall code sample. Caps the frame at 96 spacing steps. */
 [data-code-tall] {
   max-height: calc(var(--spacing) * 96);
