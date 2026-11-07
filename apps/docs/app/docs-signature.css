@@ -27,6 +27,11 @@
   margin-top: calc(var(--spacing) * 2);
 }
 
+/* Framed app demo. At most 40rem, and at most 80% of the screen. */
+.h-demo-frame {
+  height: min(40rem, 80svh);
+}
+
 /* Phone frame in a component preview. */
 [data-preview-surface][data-frame="phone"] {
   max-width: 390px;
