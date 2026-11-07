@@ -227,7 +227,7 @@ export function PreviewPane(props: {
           onDiscard={props.onDiscard}
           {...(props.siteApply ? { siteApply: props.siteApply } : {})}
           {...(compact
-            ? { className: "max-h-[min(52dvh,28rem)] overflow-y-auto overscroll-y-contain px-proposal-inset", pinApply: true }
+            ? { className: "max-h-[min(52dvh,28rem)] overflow-y-auto overscroll-y-contain", "data-proposal-inset": "", pinApply: true }
             : {})}
         />
       ) : (

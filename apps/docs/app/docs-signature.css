@@ -23,8 +23,22 @@
 }
 
 /* Space above the Guides label in the site menu. */
-.mt-nav-group {
+[data-nav-group] {
   margin-top: calc(var(--spacing) * 2);
+}
+
+/* Term and definition on one line from the small breakpoint up. */
+@media (min-width: 40rem) {
+  [data-term-row] {
+    grid-template-columns: max-content 1fr;
+  }
+}
+
+/* Index row: a 24rem lead, then the rest, from the medium breakpoint up. */
+@media (min-width: 48rem) {
+  [data-index-lead] {
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+  }
 }
 
 /* Number column on an adoption step. */
@@ -33,7 +47,7 @@
 }
 
 /* Page body under the site header, so the footer can sit at the bottom. */
-.min-h-page-shell {
+[data-page-shell] {
   min-height: calc(100vh - 3.5rem);
 }
 
@@ -44,7 +58,7 @@
 }
 
 /* Framed app demo. At most 40rem, and at most 80% of the screen. */
-.h-demo-frame {
+[data-demo-frame] {
   height: min(40rem, 80svh);
 }
 
@@ -55,7 +69,7 @@
 }
 
 /* Side inset of the compact proposal card. */
-.px-proposal-inset {
+[data-proposal-inset] {
   padding-inline: var(--spacing);
 }
 
