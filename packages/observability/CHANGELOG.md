@@ -1,5 +1,15 @@
 # @zedtech/zedkit-observability
 
+## 0.3.17
+
+### Patch Changes
+
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+- Updated dependencies [2fe5608]
+- Updated dependencies [003d355]
+  - @zedtech/zedkit-core@1.0.1
+  - @zedtech/zedkit-ui@1.10.1
+
 ## 0.3.16
 
 ### Patch Changes
