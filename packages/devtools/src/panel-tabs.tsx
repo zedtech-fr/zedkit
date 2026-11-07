@@ -53,7 +53,7 @@ export function InfoTabContent({ buildInfo }: { buildInfo: readonly DevtoolsBuil
     <TabsContent value="info">
       <Stack gap={2}>
         {buildInfo.map((row) => (
-          <Stack key={row.label} direction="horizontal" gap={2} className="items-center justify-between text-sm">
+          <Stack key={row.label} direction="horizontal" gap={2} className="items-center justify-between">
             <Text variant="muted">{row.label}</Text>
             <Text>{row.value}</Text>
           </Stack>
