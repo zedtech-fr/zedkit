@@ -54,6 +54,11 @@ describe("compose-ui skill", () => {
     expect(presets.core).toContain("compose-ui");
     expect(presets.starter).not.toContain("compose-ui");
     expect(read("agents/ui-designer.md")).toContain("/compose-ui");
+    expect(read("skills/compose-ui/SKILL.md")).toContain("design-policy.md");
+    expect(read("skills/implement/SKILL.md")).toContain("design-policy.md");
+    expect(read("skills/review/SKILL.md")).toContain("design-policy.md");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("p-4");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("fails closed");
   });
 
   it("kit pointers name the persona chain behind compose-ui conditionals", () => {
@@ -84,6 +89,7 @@ describe("compose-ui skill", () => {
       expect(result.ok, preset).toBe(true);
       expect(validateKit(join(dest, ".agents")), preset).toEqual([]);
       expect(readFileSync(join(dest, ".agents", "skills", "compose-ui", "SKILL.md"), "utf8")).toContain("compose-ui");
+      expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("role");
       expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toContain("persona chain");
     }
   });
@@ -94,6 +100,7 @@ describe("compose-ui skill", () => {
     expect(result.ok).toBe(true);
     expect(validateKit(join(dest, ".agents"))).toEqual([]);
     expect(existsSync(join(dest, ".agents", "skills", "compose-ui"))).toBe(false);
+    expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("p-4");
     const agents = readFileSync(join(dest, "AGENTS.md"), "utf8");
     expect(agents).not.toMatch(/compose-ui/);
     expect(agents).not.toContain("persona chain");

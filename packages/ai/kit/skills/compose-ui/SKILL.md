@@ -33,10 +33,11 @@ Every line under _UI decisions_ names the earlier line it serves: `dense list, h
 - **Composition per use case.** A newsroom, a shop, a console and a booking page differ in density, hierarchy and focal point. The same card grid in every section is the template tell.
 - **Density and hierarchy follow the persona.** A hurried reader of a daily paper, a shopper browsing ceramics and an operator scanning a dashboard each get a different rhythm.
 - **One focal point per band.** Neighbours differ in shape and recede.
-- **Type roles, not heading levels.** `h1`–`h4` carry the outline and accessibility. Size and voice come from named type roles (the kit's `typeRole` / `text-zk-type-*` utilities, or the repo's own scale). The 16px minimum belongs to form controls below tablet width, not to every label or caption.
+- **Type roles, not heading levels.** `h1`–`h4` carry the outline and accessibility. Size and voice come from named type roles (the kit's `typeRole` / `text-zk-type-*` utilities, or the repo's own scale). The 16px minimum belongs to form controls where the host CSS says so (this kit: `(pointer: coarse)` or `max-width: 767px` on `--zk-input-font-size`), not to every label or caption.
 - **Surface roles: page, specimen stage, overlay.** Glass is selective: site chrome may wear it, specimen grids do not by default. One surface role per job.
 - **Content, not chrome.** Named businesses, real tasks, precise microcopy: a specimen reads as commissioned for its métier, not as lorem and a logo.
 - **Kit tokens only.** No raw hex or ad-hoc pixel colours; fix a wrong value at the layer that owns it.
+- **Class names name a role.** Numbers stay in token values. The rule is [design-policy.md](../setup-ai/design-policy.md). The host's vocabulary wins. Do not restate it.
 
 ## 4. Follow the repo's own spec
 

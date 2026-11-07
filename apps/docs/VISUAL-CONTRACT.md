@@ -47,7 +47,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 | Code | Mono family of the identity, 13/21 in blocks, inline code follows its sentence. |
 | Dense looks | Density is rhythm (row height, gaps, rules), not smaller type. Volt's activity rows are 13px: the event is what a person reads to act. Only the timestamp column may be metadata. Decision, 2 Nov 2026: the 13px floor wins over a 12px mono row. |
 | Widths | Marketing 1200 max. Docs shell 1440 max, nav 240, article 720-800, TOC 180 only if it fits. |
-| Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. |
+| Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. Class names are roles; the numbers stay in the token values (`packages/ai/kit/skills/setup-ai/design-policy.md`). |
 | Gutters | 16 mobile, 24 tablet, 32 desktop. |
 
 ## Surfaces, borders, elevation

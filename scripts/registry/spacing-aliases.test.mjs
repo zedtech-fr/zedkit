@@ -129,7 +129,7 @@ function walkJs(dir, acc = []) {
   return acc;
 }
 
-test("kit and docs sources use the Tailwind scale, not deprecated spacing aliases", () => {
+test("kit and docs sources do not use deprecated rem spacing aliases", () => {
   const files = [...walkJs(join(root, "packages/ui/src")), ...walkJs(join(root, "apps/docs"))];
   const hits = [];
   for (const file of files) {

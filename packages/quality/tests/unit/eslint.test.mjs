@@ -138,16 +138,18 @@ describe("uiPreset", () => {
     expect(fnHits.some((entry) => entry.ruleId === "max-lines-per-function")).toBe(true);
   });
 
-  it("flags arbitrary px in className and allows the spacing scale", () => {
+  it("flags arbitrary px in className and points at a role class", () => {
     expect(matchesArbitrary("w-[13px]")).toBe(true);
     expect(matchesArbitrary("w-4")).toBe(false);
-    expect(arbitraryRow().message).toMatch(/w-4|spacing scale/);
+    expect(arbitraryRow().message).toMatch(/role class/);
+    expect(arbitraryRow().message).not.toMatch(/spacing scale|text-sm|w-4/);
   });
 
-  it("flags arbitrary rem in className and allows the spacing scale", () => {
+  it("flags arbitrary rem in className and points at a role class", () => {
     expect(matchesArbitrary("gap-[0.75rem]")).toBe(true);
     expect(matchesArbitrary("gap-3")).toBe(false);
-    expect(arbitraryRow().message).toMatch(/gap-3|spacing scale/);
+    expect(arbitraryRow().message).toMatch(/role class/);
+    expect(arbitraryRow().message).not.toMatch(/gap-3/);
   });
 
   it("flags arbitrary px/rem inside cn() and cva() args", () => {

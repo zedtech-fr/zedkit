@@ -47,40 +47,40 @@ describe("primitives", () => {
     expect(ref.current?.getAttribute("data-slot")).toBe("input");
   });
 
-  it("spaces the input from the Tailwind scale", () => {
+  it("spaces the input with the field role", () => {
     render(<Input aria-label="Name" />);
     const input = screen.getByLabelText("Name");
     expect(input.tagName).toBe("INPUT");
     expect(input.getAttribute("data-slot")).toBe("input");
-    expect(input.className).toContain("px-3");
-    expect(input.className).not.toContain("px-control-inline");
+    expect(input.className).toContain("px-field-pad");
+    expect(input.className).not.toContain("px-3");
     expect(input.className).toContain("py-control-block");
     expect(input.className).toContain("h-control-height");
     expect(input.className).toContain("text-control");
     expect(input.className).toContain("rounded-md");
   });
 
-  it("spaces button content from control tokens", () => {
+  it("spaces button content with role classes", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("gap-2");
-    expect(button.className).not.toContain("gap-button-gap");
-    expect(button.className).toContain("py-2");
-    expect(button.className).not.toContain("py-control-block-lg");
+    expect(button.className).toContain("gap-stack-sm");
+    expect(button.className).not.toContain("gap-2");
+    expect(button.className).toContain("py-stack-sm");
+    expect(button.className).toContain("size-icon");
   });
 
-  it("spaces the small button from the Tailwind scale", () => {
+  it("spaces the small button with the field inline role", () => {
     render(<Button size="sm">Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("px-3");
-    expect(button.className).not.toContain("px-button-inline-sm");
+    expect(button.className).toContain("px-field-pad");
+    expect(button.className).not.toContain("px-3");
   });
 
-  it("spaces the large button from the Tailwind scale", () => {
+  it("spaces the large button with the button pad role", () => {
     render(<Button size="lg">Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("px-8");
-    expect(button.className).not.toContain("px-button-inline-lg");
+    expect(button.className).toContain("px-button-pad-lg");
+    expect(button.className).not.toContain("px-8");
   });
 
   it("merges button styles onto asChild link", () => {
@@ -102,7 +102,7 @@ describe("primitives", () => {
       </Button>,
     );
     const link = screen.getByRole("link", { name: "More in the kit" });
-    expect(link.className).toContain("px-3");
+    expect(link.className).toContain("px-field-pad");
     expect(link.className).toContain("py-control-block");
     expect(link.getAttribute("data-variant")).toBe("ghost");
     expect(link.getAttribute("data-size")).toBe("sm");
@@ -306,10 +306,10 @@ describe("primitives", () => {
     );
     expect(screen.getByLabelText("Name").className).toContain("h-control-height");
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
-    expect(screen.getByLabelText("Bio").className).toContain("px-3");
-    expect(screen.getByLabelText("Bio").className).not.toContain("px-control-inline");
-    expect(screen.getByLabelText("Bio").className).toContain("py-2");
-    expect(screen.getByLabelText("Bio").className).not.toContain("py-control-block-lg");
+    expect(screen.getByLabelText("Bio").className).toContain("px-field-pad");
+    expect(screen.getByLabelText("Bio").className).not.toContain("px-3");
+    expect(screen.getByLabelText("Bio").className).toContain("py-stack-sm");
+    expect(screen.getByLabelText("Bio").className).not.toContain("py-2");
   });
 
   it("sizes every text field from the input font-size token, never a fixed text-* size", () => {

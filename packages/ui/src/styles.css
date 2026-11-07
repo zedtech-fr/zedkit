@@ -57,7 +57,8 @@
   --warning-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 60%;
-  --input: 240 5.9% 90%;
+  /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
+  --input: 240 5.9% 57%;
   /* Focus ring, dark enough for 3:1 on light surfaces. */
   --ring: 240 4% 46%;
   --radius: 0.5rem;
@@ -109,7 +110,8 @@
   --warning-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 37.9%;
-  --input: 240 3.7% 15.9%;
+  /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
+  --input: 240 3.7% 46%;
   --ring: 240 4.9% 83.9%;
   --sidebar: 240 10% 3.9%;
   --sidebar-foreground: 0 0% 98%;
@@ -200,25 +202,38 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
   /*
-   * Spacing convention (#367): one canonical name per value. A value used
-   * by 2+ tokens is canonicalized to its Tailwind scale step — new code
-   * uses default utilities (p-4, gap-2, size-4) instead of minting another
-   * alias. Single-use values keep their semantic token. The full value →
-   * tokens map is scripts/registry/spacing-aliases.json, enforced by its
-   * test. Shared-value aliases below are deprecated: new kit code uses the
-   * matching scale step (4 for 1rem, 5 for 1.25rem, …). Tokens stay so
-   * copied CSS and existing class names still work.
-   * `--spacing-drawer-footer-safe` still references
+   * Spacing: a class names a role. The number lives in the value
+   * (`calc(var(--spacing) * N)`), so an identity's `--spacing` still
+   * changes density. Default scale steps (`p-4`, `gap-2`, `text-sm`) are
+   * deprecated. Rem aliases below stay so copied CSS keeps resolving;
+   * new code uses the calc role (`gap-stack-*`, `px-field-pad`,
+   * `px-button-pad`). `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
    *
-   * Semantic sizes derived from `--spacing` (mist: 0.25rem). Control
-   * block aliases now follow `--spacing`; leftover rem aliases stay
-   * until later #798 migrations.
+   * `stack-*` is the shared gap scale (1 through 8). Tailwind also emits
+   * the other spacing directions from the same token; prefer `gap-`.
    */
+  --zk-gap-2xs: calc(var(--spacing) * 1);
   --zk-gap-sm: calc(var(--spacing) * 2);
   --zk-gap-md: calc(var(--spacing) * 3);
   --zk-gap-lg: calc(var(--spacing) * 4);
+  --zk-gap-xl: calc(var(--spacing) * 5);
+  --zk-gap-2xl: calc(var(--spacing) * 6);
+  --zk-gap-3xl: calc(var(--spacing) * 7);
+  --zk-gap-4xl: calc(var(--spacing) * 8);
+  --spacing-stack-2xs: var(--zk-gap-2xs);
+  --spacing-stack-sm: var(--zk-gap-sm);
+  --spacing-stack-md: var(--zk-gap-md);
+  --spacing-stack-lg: var(--zk-gap-lg);
+  --spacing-stack-xl: var(--zk-gap-xl);
+  --spacing-stack-2xl: var(--zk-gap-2xl);
+  --spacing-stack-3xl: var(--zk-gap-3xl);
+  --spacing-stack-4xl: var(--zk-gap-4xl);
+  --spacing-field-pad: calc(var(--spacing) * 3);
+  --spacing-button-pad: calc(var(--spacing) * 4);
+  --spacing-button-pad-lg: calc(var(--spacing) * 8);
   --zk-icon-size: calc(var(--spacing) * 4);
+  --spacing-icon: var(--zk-icon-size);
   --zk-control-height: calc(var(--spacing) * 9);
   --spacing-page-gutter: var(--zk-page-gutter);
   --spacing-section-sm: var(--zk-section-sm);

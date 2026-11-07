@@ -27,12 +27,13 @@ Written only when the repo's stylesheets or token files define colours and fonts
 
 **Colour roles** (one row per role the code defines; the role is what the colour does, not its name)
 
-| Role            | Token / alias       | Value              | Source                    |
-| --------------- | ------------------- | ------------------ | ------------------------- |
-| page            | `--color-cream`     | `hsl(40 45% 96%)`  | `src/styles/tokens.css:4` |
-| surface         | `--color-mauve-100` | `hsl(300 18% 90%)` | `src/styles/tokens.css:5` |
-| text            | `--color-pine-900`  | `hsl(160 40% 12%)` | `src/styles/tokens.css:6` |
-| accent (action) | `--color-pine-600`  | `hsl(160 55% 28%)` | `src/styles/tokens.css:7` |
+| Role    | Token / alias       | Value              | Source                    |
+| ------- | ------------------- | ------------------ | ------------------------- |
+| page    | `--color-cream`     | `hsl(40 45% 96%)`  | `src/styles/tokens.css:4` |
+| surface | `--color-mauve-100` | `hsl(300 18% 90%)` | `src/styles/tokens.css:5` |
+| text    | `--color-pine-900`  | `hsl(160 40% 12%)` | `src/styles/tokens.css:6` |
+| action  | `--color-ink`       | `hsl(200 30% 14%)` | `src/ui/Button.tsx:21`    |
+| accent  | `--color-pine-600`  | `hsl(160 55% 28%)` | `src/styles/tokens.css:7` |
 
 **Font families by role**
 
@@ -42,7 +43,7 @@ Written only when the repo's stylesheets or token files define colours and fonts
 | body    | Work Sans      | system-ui, sans | `src/styles/fonts.css:9`  |
 | data    | JetBrains Mono | ui-monospace    | `src/styles/fonts.css:16` |
 
-**Accent:** one saturated colour, `--color-pine-600`, is the primary call to action and nothing else (`src/ui/Button.tsx:21`). Secondary actions use the surface role.
+**Accent:** `--color-pine-600` is its own role (`src/styles/tokens.css:7`). The primary action is `--color-ink` (`src/ui/Button.tsx:21`). When the host's code uses one colour for both, say that here. Do not merge them when the code keeps them apart.
 
 **Alias exceptions** (exact, with the reason; any alias not listed here must resolve to a role above)
 
