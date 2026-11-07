@@ -124,7 +124,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
           />
         ))}
       </nav>
-      <div className="mt-2 flex items-center justify-between gap-stack-md border-t pt-4">
+      <div className="mt-2 flex items-center justify-between gap-stack-md border-t content-offset">
         <a
           href={SITE_GITHUB_URL}
           target="_blank"

@@ -121,7 +121,7 @@ function EditorialStoryEditor({
       <Text variant="muted" role="status" className="min-h-6">
         {status}
       </Text>
-      <article aria-label={messages.previewLabel} className="max-w-prose content-shrink border-t border-border pt-4">
+      <article aria-label={messages.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">
         <Heading level={4}>{story.headline}</Heading>
         <Text variant="muted" className="mt-2 text-pretty">
           {story.standfirst}
@@ -144,7 +144,7 @@ export function EditorialSpecimen({ className, messages = specimenMessagesEn.edi
         <Text variant="muted">{messages.description}</Text>
       </Stack>
       <Card className="content-shrink">
-        <CardContent className="pt-4">
+        <CardContent className="content-offset">
           <Stack gap={4} className="content-shrink">
             <EditorialStoryQueue
               messages={messages}

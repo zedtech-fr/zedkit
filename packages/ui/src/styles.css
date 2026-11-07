@@ -849,6 +849,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility rule-gap {
   padding-bottom: calc(var(--spacing) * 2);
 }
+/* Space before content that follows a header or a top rule. */
+@utility content-offset {
+  padding-top: calc(var(--spacing) * 4);
+}
 @utility glass-pad-sm {
   padding: calc(var(--spacing) * 4);
 }
