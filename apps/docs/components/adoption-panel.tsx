@@ -14,12 +14,12 @@ const methodChoice = createStoredChoice("zk-adoption-method", ["cli", "manual"] 
 
 /** Quiet underline tabs for the one primary choice: two peers, so no box and no raised segment. */
 const PRIMARY_TRIGGER_CLASS =
-  "h-auto! min-h-control-height flex-none rounded-none border-b-2 border-transparent bg-transparent px-3 py-0 text-muted-foreground shadow-none data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none";
-const PRIMARY_LIST_CLASS = "h-auto! w-full justify-start gap-1 rounded-none border-b border-border bg-transparent p-0";
+  "h-auto! min-h-control-height flex-none rounded-none border-b-2 border-transparent bg-transparent px-3 flush-block text-muted-foreground shadow-none data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none";
+const PRIMARY_LIST_CLASS = "h-auto! w-full justify-start gap-1 rounded-none border-b border-border bg-transparent flush";
 
 /** The choice inside "Copy source": a smaller segmented control, so it reads as a detail of that path. */
 const SECONDARY_LIST_CLASS = "h-control-height-sm! w-fit";
-const SECONDARY_TRIGGER_CLASS = "min-h-0 px-3";
+const SECONDARY_TRIGGER_CLASS = "pane-shrink px-3";
 
 function ModeTabs({
   label,
@@ -57,7 +57,7 @@ function CopyMethods({ modes, highlighted, choice, result, summaryClassName }: V
         triggerClass={SECONDARY_TRIGGER_CLASS}
       />
       {modes.map((mode) => (
-        <TabsContent key={mode.id} value={mode.id} className="mt-0">
+        <TabsContent key={mode.id} value={mode.id} className="trim-top">
           <ModeView mode={mode} highlighted={highlighted} choice={choice} result={result} {...(summaryClassName ? { summaryClassName } : {})} />
         </TabsContent>
       ))}
@@ -114,10 +114,10 @@ export function AdoptionPanel({
         listClass={PRIMARY_LIST_CLASS}
         triggerClass={PRIMARY_TRIGGER_CLASS}
       />
-      <TabsContent value="package" className="mt-0">
+      <TabsContent value="package" className="trim-top">
         <ModeView mode={packageMode} highlighted={highlighted} choice={choice} result={result} {...(summaryClassName ? { summaryClassName } : {})} />
       </TabsContent>
-      <TabsContent value="copy" className="mt-0">
+      <TabsContent value="copy" className="trim-top">
         <CopyMethods modes={copyModes} highlighted={highlighted} choice={choice} result={result} {...(summaryClassName ? { summaryClassName } : {})} />
       </TabsContent>
     </Tabs>

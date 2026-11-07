@@ -88,7 +88,7 @@ function NavDrawerLink({
       className={`${className}${active ? " bg-muted/80 text-foreground" : ""}`}
       {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
     >
-      <span className="min-w-0 flex-1">{link.text}</span>
+      <span className="content-shrink flex-1">{link.text}</span>
       {link.external ? <ExternalLink aria-hidden="true" className="size-4 shrink-0 opacity-70" /> : null}
     </DocsAppLink>
   );
@@ -206,10 +206,10 @@ export function MobileHeader({
         id="nd-mobile-nav"
         className={
           className ??
-          "sticky top-0 z-40 flex h-14 items-center justify-between gap-2 border-b bg-background px-2 md:hidden"
+          "sticky pin-top z-40 flex h-14 items-center justify-between gap-2 border-b bg-background px-2 md:hidden"
         }
       >
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex content-shrink items-center gap-1.5">
           <DocsAppLink
             href="/"
             aria-label="zedkit home"

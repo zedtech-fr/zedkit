@@ -7,7 +7,7 @@ import { statusLabelCopy } from "@/components/demos/i18n/status-label-copy";
 export function StatusLabelSavedErrorDemo() {
   const [invoiceSaved, setInvoiceSaved] = useState(false);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <Stack gap={1}>
         <Text className="font-medium">{statusLabelCopy.notes}</Text>
         <StatusLabel tone="saved">{statusLabelCopy.saved}</StatusLabel>

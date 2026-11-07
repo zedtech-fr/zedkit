@@ -87,7 +87,7 @@ function IdentityEditorPreviewBar({
       role="group"
       aria-label={copy.groups.preview}
       data-slot="identity-editor-toolbar"
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
     >
       <Row>
         <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
@@ -257,7 +257,7 @@ function IdentityEditorKeepBar({
       gap={2}
       role="group"
       aria-labelledby={titleId}
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
       data-slot="identity-editor-keep"
     >
       <LibraryHeading id={titleId} problem={problem} />

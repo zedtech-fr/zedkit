@@ -12,7 +12,7 @@ function CatalogRow({ entry }: { entry: CatalogIndexEntry }) {
       gap={3}
       className="flex-wrap items-center justify-between border-b border-border pb-2"
     >
-      <Stack gap={1} className="min-w-0 flex-1">
+      <Stack gap={1} className="content-shrink flex-1">
         <Link href={entry.href} className="font-medium underline-offset-4 hover:underline">
           {entry.title}
         </Link>
@@ -29,9 +29,9 @@ function EntryColumns({ entries }: { entries: CatalogIndexEntry[] }) {
   const mid = Math.ceil(entries.length / 2);
   const halves = [entries.slice(0, mid), entries.slice(mid)];
   return (
-    <Stack className="grid min-w-0 gap-x-12 gap-y-3 xl:grid-cols-2">
+    <Stack className="grid content-shrink gap-x-12 gap-y-3 xl:grid-cols-2">
       {halves.map((half, index) => (
-        <Stack key={index} gap={3} className="min-w-0">
+        <Stack key={index} gap={3} className="content-shrink">
           {half.map((entry) => (
             <CatalogRow key={entry.href} entry={entry} />
           ))}

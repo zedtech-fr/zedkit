@@ -31,9 +31,9 @@ export function HomeIdentityLooksTabs({
       onValueChange={(next) => {
         if (isIdentityId(next)) onValueChange(next);
       }}
-      className="w-full min-w-0"
+      className="w-full content-shrink"
     >
-      <ScrollGallery className="w-full min-w-0">
+      <ScrollGallery className="w-full content-shrink">
         <TabsList
           aria-label={homeIdentityLooksCopy.tabsAriaLabel}
           className="inline-flex h-auto! min-h-11 w-max max-w-none flex-nowrap justify-start gap-2 bg-muted p-1"

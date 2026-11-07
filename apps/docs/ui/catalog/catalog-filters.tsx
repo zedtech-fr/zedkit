@@ -26,7 +26,7 @@ function CatalogSearchField({
   onFilters: (next: { q?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="min-w-0 flex-1">
+    <Stack gap={1} className="content-shrink flex-1">
       <Label htmlFor="catalog-search">{catalogCopy.filters.searchLabel}</Label>
       <Input
         id="catalog-search"

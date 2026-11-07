@@ -6,7 +6,7 @@ const NAV = appShellNoTopbarCopy.nav;
 export function AppShellNoTopbarDemo() {
   return (
     <AppShell
-      className="h-72 min-h-0 overflow-hidden rounded-lg border"
+      className="h-72 pane-shrink overflow-hidden rounded-lg border"
       sidebar={
         <Stack gap={1} className="p-3">
           <Text className="px-2 pb-2 font-semibold">{appShellNoTopbarCopy.brand}</Text>

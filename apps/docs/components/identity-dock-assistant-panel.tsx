@@ -86,7 +86,7 @@ function IdentityDockPanelScroll(props: {
   siteApply: ApplySiteTokenHandlers;
 }) {
   return (
-    <Stack ref={props.scrollRef} gap={3} className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-3 pt-3 pb-2">
+    <Stack ref={props.scrollRef} gap={3} className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-3 pt-3 pb-2">
       <DockViewSwitch
         view={props.view}
         setView={props.setView}
@@ -140,7 +140,7 @@ export function IdentityDockAssistantPanel({
   };
 
   return (
-    <Stack ref={panel.panelRef} className="min-h-0 flex-1 gap-0 overflow-hidden" data-slot="identity-dock-body">
+    <Stack ref={panel.panelRef} className="pane-shrink flex-1 gap-0 overflow-hidden" data-slot="identity-dock-body">
       <IdentityDockPanelToolbar onClose={() => panel.setExpanded(false)} />
       <IdentityDockPanelScroll
         scrollRef={panel.scrollRef}

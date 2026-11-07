@@ -3,7 +3,7 @@ import { headingLinkCopy } from "@/components/demos/i18n/heading-link-copy";
 
 export function HeadingLinkDemo() {
   return (
-    <Stack gap={1} className="min-w-0">
+    <Stack gap={1} className="content-shrink">
       <Text variant="muted">{headingLinkCopy.eyebrow}</Text>
       <Heading level={2} asChild>
         <a href="#section">{headingLinkCopy.linkText}</a>

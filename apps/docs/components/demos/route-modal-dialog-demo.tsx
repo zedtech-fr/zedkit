@@ -7,7 +7,7 @@ import { routeModalCopy } from "@/components/demos/i18n/route-modal-copy";
 export function RouteModalDialogDemo() {
   const [open, setOpen] = useState(false);
   return (
-    <Stack gap={3} className="min-w-0 items-start">
+    <Stack gap={3} className="content-shrink items-start">
       <Text variant="muted">{routeModalCopy.dialog.intro}</Text>
       <Button type="button" variant="outline" onClick={() => setOpen(true)}>
         {routeModalCopy.dialog.open}

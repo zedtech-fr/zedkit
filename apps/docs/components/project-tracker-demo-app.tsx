@@ -62,7 +62,7 @@ const columns = [
   tableHelper.accessor("title", {
     header: projectTrackerDemoCopy.columns.task,
     cell: ({ row }) => (
-      <Stack gap={1} className="min-w-0">
+      <Stack gap={1} className="content-shrink">
         <Text className="font-medium">{row.original.title}</Text>
         <Text variant="muted" className="text-xs">
           {row.original.owner}
@@ -303,7 +303,7 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
               gap={3}
               className="items-baseline justify-between"
             >
-              <Stack gap={1} className="min-w-0">
+              <Stack gap={1} className="content-shrink">
                 <CardDescription>{card.label}</CardDescription>
                 <Text variant="muted" className="text-xs">
                   {card.note}
@@ -351,7 +351,7 @@ export function ProjectTrackerDemoApp() {
   const tableRows = state === "empty" ? [] : rows;
 
   return (
-    <Stack gap={3} className="w-full min-w-0">
+    <Stack gap={3} className="w-full content-shrink">
       <Toaster />
       <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
         <Text variant="muted" className="text-xs">
@@ -370,9 +370,9 @@ export function ProjectTrackerDemoApp() {
           </Button>
         ))}
       </Stack>
-      <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-hidden rounded-lg border border-border bg-background">
+      <Stack className="h-[min(40rem,80svh)] content-shrink overflow-hidden rounded-lg border border-border bg-background">
         <AppShell
-          className={cn("h-full min-h-0 [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+          className={cn("h-full pane-shrink [&>aside]:w-48", mobile && "[&>aside]:hidden")}
           sidebar={<Sidebar />}
           topbar={<TopBar />}
         >

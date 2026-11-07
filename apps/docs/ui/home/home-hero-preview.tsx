@@ -105,14 +105,14 @@ export function HomeHeroPreview() {
       data-home-specimen-stage=""
       className={cn(
         HOME_HERO_PREVIEW_SHELL_CLASS,
-        "relative flex max-w-full min-w-0 scroll-mt-24 flex-col rounded-xl border border-border bg-card",
+        "relative flex max-w-full content-shrink scroll-mt-24 flex-col rounded-xl border border-border bg-card",
       )}
     >
       <ThemeScope
         ref={scope}
         identity={look}
         mode={dark ? "dark" : "light"}
-        className="relative min-h-0 min-w-0 rounded-t-xl bg-background"
+        className="relative pane-shrink content-shrink rounded-t-xl bg-background"
         data-home-hero-visuals=""
       >
         <HomeHeroApp

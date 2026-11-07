@@ -25,11 +25,11 @@ export function DetectedLinks({ text, onText, fieldId, disabled = false }: { tex
           <Text as="span" typeRole="body" className="font-medium text-foreground">
             {copy.links.found}
           </Text>
-          <ul aria-label={copy.links.list} className="m-0 flex list-none flex-wrap gap-2 p-0">
+          <ul aria-label={copy.links.list} className="trim-margin flex list-none flex-wrap gap-2 flush">
             {urls.map((url) => (
-              <li key={url} data-assistant-link-chip="" className="flex max-w-full min-w-0 items-center gap-1 rounded-full border border-border bg-muted/40 py-0.5 pr-0.5 pl-3">
+              <li key={url} data-assistant-link-chip="" className="flex max-w-full content-shrink items-center gap-1 rounded-full border border-border bg-muted/40 py-0.5 pr-0.5 pl-3">
                 <Text as="span" aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-primary" />
-                <Text as="span" data-assistant-link-label="" typeRole="body" className="min-w-0 truncate" title={url}>
+                <Text as="span" data-assistant-link-label="" typeRole="body" className="content-shrink truncate" title={url}>
                   {urlLabel(url)}
                 </Text>
                 <Button type="button" variant="ghost" size="sm" className="min-w-11 rounded-full" disabled={disabled} aria-label={copy.links.remove(urlLabel(url))} onClick={() => {

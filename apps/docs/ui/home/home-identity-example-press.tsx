@@ -75,7 +75,7 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
   const sectionId = useId();
   const standfirstId = useId();
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <Stack gap={1}>
         <Label htmlFor={headlineId}>{copy.headlineLabel}</Label>
         <Input id={headlineId} value={story.headline} onChange={(event) => onChange({ headline: event.target.value })} />
@@ -106,7 +106,7 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
 /** The story as a reader sees it: the display face and a capped measure are the evidence. */
 function ReadingPreview({ story }: { story: Story }) {
   return (
-    <article aria-label={copy.previewLabel} className="max-w-prose min-w-0 border-t border-border pt-4">
+    <article aria-label={copy.previewLabel} className="max-w-prose content-shrink border-t border-border pt-4">
       <Text variant="muted" className="text-xs font-medium tracking-wide uppercase">
         {sectionLabel(story.section)}
       </Text>
@@ -133,16 +133,16 @@ export function HomeIdentityExamplePress() {
   };
 
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <Stack gap={1}>
         <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
           {copy.heading}
         </Heading>
         <Text variant="muted">{copy.description}</Text>
       </Stack>
-      <Card className="min-w-0">
+      <Card className="content-shrink">
         <CardContent className="pt-4">
-          <Stack gap={4} className="min-w-0">
+          <Stack gap={4} className="content-shrink">
             <StoryQueue stories={stories} selectedId={story.id} onSelect={(id) => { setSelectedId(id); setMessage(""); }} />
             <StoryEditor story={story} onChange={change} />
             <Stack direction="horizontal" gap={2} className="flex-wrap">

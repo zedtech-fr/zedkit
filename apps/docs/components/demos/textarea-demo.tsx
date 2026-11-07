@@ -9,7 +9,7 @@ const LIMIT = 280;
 export function TextareaDemo() {
   const [note, setNote] = React.useState<string>(textareaCopy.value);
   return (
-    <Stack gap={2} className="min-w-0">
+    <Stack gap={2} className="content-shrink">
       <Label htmlFor="demo-note">{textareaCopy.label}</Label>
       <Textarea
         id="demo-note"

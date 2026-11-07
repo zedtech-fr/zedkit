@@ -183,9 +183,9 @@ export function AdminDashboardGuideDemo() {
   ];
 
   return (
-    <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-hidden rounded-lg border border-border bg-background">
+    <Stack className="h-[min(40rem,80svh)] content-shrink overflow-hidden rounded-lg border border-border bg-background">
       <AppShell
-        className={cn("h-full min-h-0 [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+        className={cn("h-full pane-shrink [&>aside]:w-48", mobile && "[&>aside]:hidden")}
         sidebar={<Sidebar />}
         topbar={<TopBar />}
       >

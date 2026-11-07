@@ -28,11 +28,11 @@ export function ReferenceReportList({ report }: { report: readonly ReferenceRepo
       <Text as="span" typeRole="body" className="font-medium text-foreground">
         {copy.references.report}
       </Text>
-      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+      <ul className="trim-margin flex list-none flex-col gap-2 flush">
         {report.map((item) => {
           const used = item.status === "used";
           return (
-            <li key={item.url} data-assistant-reference-status={used ? "used" : "failed"} className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-zk-type-body text-muted-foreground">
+            <li key={item.url} data-assistant-reference-status={used ? "used" : "failed"} className="flex content-shrink flex-wrap items-baseline gap-x-2 gap-y-1 text-zk-type-body text-muted-foreground">
               <Text
                 as="span"
                 data-assistant-reference-chip=""
@@ -41,7 +41,7 @@ export function ReferenceReportList({ report }: { report: readonly ReferenceRepo
                 <Text as="span" aria-hidden="true" className={`size-1.5 rounded-full ${used ? "bg-primary" : "bg-destructive"}`} />
                 {used ? copy.references.used : copy.references.notUsed}
               </Text>{" "}
-              <Text as="span" className="min-w-0 truncate font-medium text-foreground" title={item.url}>
+              <Text as="span" className="content-shrink truncate font-medium text-foreground" title={item.url}>
                 {item.title || hostOf(item.url)}
               </Text>{" "}
               <Text as="span" className="basis-full">

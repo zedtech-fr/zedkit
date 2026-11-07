@@ -7,7 +7,7 @@ import { confirmDialogCopy } from "@/components/demos/i18n/confirm-dialog-copy";
 export function ConfirmDialogLabelsDemo() {
   const [revoked, setRevoked] = React.useState(false);
   return (
-    <Stack gap={3} className="min-w-0 items-start">
+    <Stack gap={3} className="content-shrink items-start">
       <Stack direction="horizontal" gap={2} className="items-center">
         <Text className="font-medium">{confirmDialogCopy.labels.keySummary}</Text>
         <Badge variant={revoked ? "secondary" : "outline"}>{revoked ? confirmDialogCopy.labels.revoked : confirmDialogCopy.labels.inUse}</Badge>

@@ -19,7 +19,7 @@ export type { View } from "@/components/identity-assistant-parts";
 /** The assistant's first word, where the exchange will continue. Shown until the first exchange replaces it. */
 function AssistantGreeting() {
   return (
-    <ol className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-greeting="">
+    <ol className="trim-margin flex list-none flex-col gap-2 flush" data-assistant-greeting="">
       <li className="text-zk-type-body">
         <Text as="span" className="font-medium text-foreground">
           {copy.assistant}
@@ -93,7 +93,7 @@ export function ConversationMessages(props: ConversationMessagesProps) {
     <Stack
       gap={4}
       className={cn(
-        "min-w-0",
+        "content-shrink",
         hidden && (props.compact && !props.narrowSplit ? "hidden" : "max-lg:hidden"),
       )}
       data-assistant-pane="conversation"
@@ -138,7 +138,7 @@ export function ConversationComposer(props: {
       ? { resendPrompt: props.session.proposal.prompt }
       : {};
   return (
-    <Stack gap={2} className="min-w-0 shrink-0" data-assistant-composer="">
+    <Stack gap={2} className="content-shrink shrink-0" data-assistant-composer="">
       <BriefForm
         value={props.brief}
         onValue={props.onBrief}
@@ -169,7 +169,7 @@ export function ConversationPane(props: {
   inputRef: RefObject<HTMLTextAreaElement | null>;
 }) {
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <ConversationMessages
         view={props.view}
         session={props.session}
@@ -211,7 +211,7 @@ export function PreviewPane(props: {
   const compact = props.compact ?? false;
   const hidden = compact ? props.view !== "preview" : props.view === "conversation";
   const className = cn(
-    "min-w-0",
+    "content-shrink",
     hidden && (compact && !props.narrowSplit ? "hidden" : "max-lg:hidden"),
     !compact && !props.proposal && "lg:hidden",
   );

@@ -5,7 +5,7 @@ const RUNS = badgeCopy.variants.runs;
 
 export function BadgeVariantsDemo() {
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <Text variant="muted">{badgeCopy.variants.subtitle}</Text>
       <Stack gap={2}>
         {RUNS.map((run) => (
