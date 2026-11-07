@@ -18,6 +18,7 @@ const STACK_ROLES = new Set([
   "gap-stack-lg",
   "gap-x-stack-sm",
   "gap-y-stack-sm",
+  "gap-y-stack-lg",
   "gap-x-stack-lg",
   "space-y-stack-sm",
   "space-y-stack-md",

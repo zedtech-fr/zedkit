@@ -29,7 +29,7 @@ function CtaBand({ title, description, actions, className, ...props }: CtaBandPr
         <GlassSurface
           tone="tinted"
           padding="lg"
-          className="flex flex-col items-center gap-stack-lg text-center sm:px-12 sm:py-12"
+          className="flex flex-col items-center gap-stack-lg text-center sm:px-cta sm:py-cta"
         >
           <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
             {title}

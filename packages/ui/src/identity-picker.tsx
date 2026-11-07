@@ -107,7 +107,7 @@ function IdentityPicker({
                   <span className="block font-medium text-foreground">
                     {item.label}
                     {defaultIdentity && item.id === defaultIdentity ? (
-                      <span className="ml-2 text-sm font-normal text-muted-foreground">{messages.identityDefault}</span>
+                      <span className="ml-note text-sm font-normal text-muted-foreground">{messages.identityDefault}</span>
                     ) : null}
                   </span>
                   {item.description ? (

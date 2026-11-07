@@ -858,6 +858,13 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-y-stack-sm {
   row-gap: var(--zk-gap-sm);
 }
+@utility gap-y-stack-lg {
+  row-gap: var(--zk-gap-lg);
+}
+/* Space between marks in a logo row. */
+@utility gap-x-logos {
+  column-gap: calc(var(--spacing) * 10);
+}
 @utility gap-y-stack-tight {
   row-gap: var(--spacing);
 }
@@ -871,6 +878,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* Space between a marketing section's header and its content. */
 @utility gap-section-stack {
   gap: calc(var(--spacing) * 10);
+}
+/* Space between scroll scenes on a wide screen. */
+@utility gap-scenes {
+  gap: calc(var(--spacing) * 16);
 }
 /* Space above a row of actions. */
 @utility actions-offset {
@@ -900,6 +911,25 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility py-row {
   padding-block: calc(var(--spacing) * 4);
 }
+/* Extra inset of a call-to-action band on a wide screen. */
+@utility px-cta {
+  padding-inline: calc(var(--spacing) * 12);
+}
+@utility py-cta {
+  padding-block: calc(var(--spacing) * 12);
+}
+/* Space under an FAQ answer, above the rule. */
+@utility pb-answer {
+  padding-bottom: calc(var(--spacing) * 4);
+}
+/* The legal line under the footer rule. */
+@utility pt-footer-note {
+  padding-top: calc(var(--spacing) * 6);
+}
+/* A mono meta badge, almost flush. */
+@utility px-meta {
+  padding-inline: calc(var(--spacing) * 0.5);
+}
 @utility surface-pad-block-sm {
   padding-block: calc(var(--spacing) * 2);
 }
@@ -916,9 +946,21 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pr-column {
   padding-right: calc(var(--spacing) * 4);
 }
+/* Room for a chip's remove icon. */
+@utility pr-chip {
+  padding-right: var(--spacing);
+}
 /* Space under a title or a breadcrumb. */
 @utility mb-stack {
   margin-bottom: var(--zk-gap-sm);
+}
+/* Space under an alert title, before its description. */
+@utility mb-alert-title {
+  margin-bottom: var(--spacing);
+}
+/* The "default" note beside an identity name. */
+@utility ml-note {
+  margin-left: var(--zk-gap-sm);
 }
 /* Bottom of a scrolling sheet. */
 @utility pb-sheet {
@@ -1024,6 +1066,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-label {
   min-height: calc(var(--spacing) * 5);
 }
+/* Caps a secret or a prompt so a long value scrolls inside the field. */
+@utility max-h-secret {
+  max-height: calc(var(--spacing) * 64);
+}
 @utility empty-state-block {
   padding-block: calc(var(--spacing) * 8);
 }
@@ -1087,6 +1133,17 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pin-center-y {
   top: 50%;
   transform: translateY(-50%);
+}
+/* The send button, inset from the corner of the prompt. */
+@utility right-send {
+  right: calc(var(--spacing) * 1.5);
+}
+@utility bottom-send {
+  bottom: calc(var(--spacing) * 1.5);
+}
+/* Sticky scene caption, below the site header. */
+@utility top-caption {
+  top: calc(var(--spacing) * 24);
 }
 @utility pin-bottom {
   bottom: 0;

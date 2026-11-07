@@ -65,7 +65,7 @@ function PromptInputActions({
       <IconButton
         type="submit"
         size="icon"
-        className="absolute right-1.5 bottom-1.5 shrink-0 rounded-full"
+        className="absolute right-send bottom-send shrink-0 rounded-full"
         label={sendLabel}
         disabled={sendDisabled}
         aria-busy={busy || undefined}
