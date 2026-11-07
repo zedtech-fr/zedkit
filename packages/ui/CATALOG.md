@@ -54,10 +54,10 @@ import { Badge, Text } from "@zedtech/zedkit-ui";
 
 export function ReleaseRow({ name }: { name: string }) {
   return (
-    <li className="flex items-center justify-between gap-3 border-b border-border bg-muted px-3 py-2 text-sm">
-      <Text as="span" className="min-w-0 truncate">{name}</Text>
-      <Badge variant="success" className="gap-1">
-        <ArrowUpRight className="size-3" aria-hidden />
+    <li className="flex items-center justify-between gap-stack-md border-b border-border bg-muted pad-row text-sm">
+      <Text as="span" className="content-shrink truncate">{name}</Text>
+      <Badge variant="success" className="gap-stack-tight">
+        <ArrowUpRight className="size-mini" aria-hidden />
         Deployed
       </Badge>
     </li>
@@ -384,7 +384,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 ```ts
 import { Label } from "@zedtech/zedkit-ui";
 <Label htmlFor="city">City</Label>
-<input id="city" className="rounded-md border border-border px-3 py-2" />
+<input id="city" className="rounded-md border border-border px-field-pad py-control-block-lg" />
 ```
 
 ## Collect text input with a label
@@ -1638,7 +1638,7 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 
 ```ts
 import { BrandLogo } from "@zedtech/zedkit-ui";
-<BrandLogo title="Harbor Studio" viewBox="0 0 32 24" className="h-6 text-primary">
+<BrandLogo title="Harbor Studio" viewBox="0 0 32 24" className="h-logo text-primary">
   <path d="M16 1 25 15H7Z" />
   <path d="M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z" />
 </BrandLogo>
@@ -1646,8 +1646,8 @@ import { BrandLogo } from "@zedtech/zedkit-ui";
 
 ```ts
 import { BrandLogo } from "@zedtech/zedkit-ui";
-<a href="/" className="flex items-center gap-2 text-foreground">
-  <BrandLogo title="" viewBox="0 0 32 24" className="h-6 text-primary">
+<a href="/" className="flex items-center gap-stack-sm text-foreground">
+  <BrandLogo title="" viewBox="0 0 32 24" className="h-logo text-primary">
     <path d="M16 1 25 15H7Z" />
   </BrandLogo>
   Harbor Studio
@@ -1818,11 +1818,11 @@ import { ScrollGallery, Tabs, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 import { ScrollGallery } from "@zedtech/zedkit-ui";
 
 <ScrollGallery className="max-w-sm">
-  <div className="flex w-max gap-2">
-    <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#a">
+  <div className="flex w-max gap-stack-sm">
+    <a className="inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row" href="#a">
       Alpha
     </a>
-    <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#b">
+    <a className="inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row" href="#b">
       Beta
     </a>
   </div>
@@ -2101,7 +2101,7 @@ import { Badge, Button, Heading, Text, ThemeScope, identities } from "@zedtech/z
   <ThemeScope
     key={look.id}
     identity={look.id}
-    className="rounded-xl border border-border bg-background p-4 shadow-md"
+    className="rounded-xl border border-border bg-background surface-pad-md shadow-md"
   >
     <Heading level={3}>{look.label}</Heading>
     <Badge variant="secondary">New</Badge>
