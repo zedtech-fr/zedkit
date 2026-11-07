@@ -207,7 +207,7 @@ export function Gallery() {
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
           <Separator />
-          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-skeleton-line w-48" />
           <div className="space-y-stack-sm">
             <Heading level={1}>Page title</Heading>
             <Heading level={2}>Section title</Heading>
@@ -257,7 +257,7 @@ export function Gallery() {
                     aria-label="Close details"
                     className="absolute top-4 right-4"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="size-icon" />
                   </Button>
                 </DrawerClose>
                 <DrawerTitle>Details</DrawerTitle>

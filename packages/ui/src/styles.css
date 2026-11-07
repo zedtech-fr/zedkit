@@ -841,6 +841,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility glass-pad-lg {
   padding: calc(var(--spacing) * 8);
 }
+@utility h-skeleton-line {
+  height: calc(var(--spacing) * 4);
+}
 @utility empty-state-block {
   padding-block: calc(var(--spacing) * 8);
 }
