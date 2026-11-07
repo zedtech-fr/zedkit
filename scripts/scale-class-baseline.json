@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 329,
+  "total": 327,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -72,7 +72,6 @@
     "packages/ui/src/alert.tsx": 3,
     "packages/ui/src/badge.tsx": 1,
     "packages/ui/src/button.tsx": 4,
-    "packages/ui/src/card-skeleton.tsx": 1,
     "packages/ui/src/card.tsx": 1,
     "packages/ui/src/combobox-menu.tsx": 3,
     "packages/ui/src/data-table.tsx": 2,
@@ -100,7 +99,7 @@
     "packages/ui/src/marketing/specimens/service-booking-specimen.tsx": 1,
     "packages/ui/src/marketing/testimonials.tsx": 2,
     "packages/ui/src/multi-select-menu.tsx": 3,
-    "packages/ui/src/option-cards.tsx": 2,
+    "packages/ui/src/option-cards.tsx": 1,
     "packages/ui/src/page-header-skeleton.tsx": 1,
     "packages/ui/src/page-header.tsx": 2,
     "packages/ui/src/select.tsx": 2,
