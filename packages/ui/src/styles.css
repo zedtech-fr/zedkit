@@ -1041,7 +1041,7 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pt-start {
   padding-top: calc(var(--spacing) * 3);
 }
-@utility glass-pad-md {
+@utility surface-pad-lg {
   padding: calc(var(--spacing) * 6);
 }
 @utility glass-pad-lg {

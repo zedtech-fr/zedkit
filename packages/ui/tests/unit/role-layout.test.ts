@@ -114,7 +114,7 @@ describe("layout job classes", () => {
     expect(utility("surface-pad-md")).toBe("padding: calc(var(--spacing) * 4);");
     expect(utility("surface-pad-inline")).toBe("padding-inline: calc(var(--spacing) * 4);");
     expect(utility("px-control-tight")).toBe("padding-inline: calc(var(--spacing) * 2);");
-    expect(utility("glass-pad-md")).toBe("padding: calc(var(--spacing) * 6);");
+    expect(utility("surface-pad-lg")).toBe("padding: calc(var(--spacing) * 6);");
     expect(utility("empty-state-block")).toBe("padding-block: calc(var(--spacing) * 8);");
     expect(utility("h-skeleton-line")).toBe("height: calc(var(--spacing) * 4);");
     expect(utility("h-skeleton-title")).toBe("height: calc(var(--spacing) * 7);");
