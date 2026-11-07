@@ -140,7 +140,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
   return (
     <Stack gap={6} className="content-shrink lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start" data-slot="identity-editor">
       <DraftCard darkPreview={props.darkPreview} />
-      <Stack gap={6} className="content-shrink max-lg:contents lg:col-start-1 lg:row-start-1">
+      <Stack gap={6} className="content-shrink max-lg:contents lg:col-start-1 lg:row-start-first">
         <IdentityEditorPreviewBar
           className="max-lg:order-1"
           identity={props.identity}

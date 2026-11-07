@@ -58,7 +58,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
           {plan.badge ? (
             <span
               data-slot="pricing-badge"
-              className="rounded-full bg-primary px-3 py-control-block text-xs font-medium text-primary-foreground"
+              className="rounded-full bg-primary px-control-inline py-control-block text-xs font-medium text-primary-foreground"
             >
               {plan.badge}
             </span>

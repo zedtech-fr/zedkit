@@ -848,6 +848,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility span-rest {
   grid-column: span 2 / span 2;
 }
+/* Puts a pane on the first row of a wide grid. */
+@utility row-start-first {
+  grid-row-start: 1;
+}
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
 }
@@ -903,6 +907,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility rule-gap {
   padding-bottom: calc(var(--spacing) * 2);
+}
+/* Trailing space in a column, before the next column. */
+@utility pr-column {
+  padding-right: calc(var(--spacing) * 4);
+}
+/* Space under a title or a breadcrumb. */
+@utility mb-stack {
+  margin-bottom: var(--zk-gap-sm);
 }
 /* Bottom of a scrolling sheet. */
 @utility pb-sheet {

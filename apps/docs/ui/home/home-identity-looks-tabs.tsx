@@ -42,7 +42,7 @@ export function HomeIdentityLooksTabs({
             <TabsTrigger
               key={id}
               value={id}
-              className="h-auto! min-h-target w-max max-w-none shrink-0 snap-start flex-row! items-center! gap-stack-sm.5 px-3.5 py-1.5"
+              className="h-auto! min-h-target w-max max-w-none shrink-0 snap-start flex-row! items-center! gap-stack-sm.5 px-3.5 py-select-item-block"
             >
               <HomeIdentityPaletteDots
                 identity={id}
