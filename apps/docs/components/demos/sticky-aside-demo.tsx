@@ -16,7 +16,7 @@ export function StickyAsideDemo() {
           {steps.map((step, index) => (
             <li key={step.title} className="content-shrink">
               <Stack gap={1}>
-                <Text variant="muted" className="text-xs">
+                <Text variant="muted" className="text-caption">
                   Step {index + 1}
                 </Text>
                 <Heading level={3}>{step.title}</Heading>
@@ -30,7 +30,7 @@ export function StickyAsideDemo() {
         <Card>
           <CardContent className="pt-card-padding">
             <Stack gap={2} role="group" aria-label="Rendered example">
-              <Text className="text-xs font-medium text-muted-foreground">Rendered example</Text>
+              <Text className="text-caption font-medium text-muted-foreground">Rendered example</Text>
               <Button>Save</Button>
             </Stack>
           </CardContent>

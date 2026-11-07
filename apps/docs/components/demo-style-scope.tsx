@@ -43,7 +43,7 @@ function DemoStyleSelect({
   const selectId = useId();
   return (
     <Stack direction="horizontal" gap={2} className="items-center">
-      <label htmlFor={selectId} className={labelHidden ? "sr-only" : "text-xs text-muted-foreground"}>
+      <label htmlFor={selectId} className={labelHidden ? "sr-only" : "text-caption text-muted-foreground"}>
         {fieldLabel}
       </label>
       {/* Uncontrolled: a controlled select here reports the previous value on change. */}

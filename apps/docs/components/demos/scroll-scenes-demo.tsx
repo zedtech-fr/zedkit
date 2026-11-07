@@ -23,7 +23,7 @@ type SceneStatus = (typeof scrollScenesCopy.status)[keyof typeof scrollScenesCop
 function Caption({ step, title, children }: { step: string; title: string; children: string }) {
   return (
     <Stack gap={2} className="content-shrink">
-      <Text variant="muted" className="trim-margin! text-xs">
+      <Text variant="muted" className="trim-margin! text-caption">
         {step}
       </Text>
       <Heading level={2} className="trim-margin!">{title}</Heading>
@@ -45,7 +45,7 @@ function TaskRow({ name, owner, status }: { name: string; owner: string; status:
     <Stack direction="horizontal" gap={3} className="content-shrink items-center justify-between border-b border-border rule-gap last:border-b-0 last:trim-pad-bottom">
       <Stack gap={1} className="content-shrink">
         <Text className="trim-margin! truncate font-medium">{name}</Text>
-        <Text variant="muted" className="trim-margin! truncate text-xs">
+        <Text variant="muted" className="trim-margin! truncate text-caption">
           {owner}
         </Text>
       </Stack>

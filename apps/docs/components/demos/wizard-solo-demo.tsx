@@ -14,7 +14,7 @@ export function WizardSoloDemo() {
         checked={digest}
         onChange={() => setDigest(!digest)}
       />
-      <Text variant="muted" className="text-xs" aria-live="polite">
+      <Text variant="muted" className="text-caption" aria-live="polite">
         {digest ? wizardCopy.solo.on : wizardCopy.solo.off}
       </Text>
     </Stack>

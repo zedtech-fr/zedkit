@@ -49,7 +49,7 @@ export function BrandLogoDemo() {
           </nav>
         </header>
         <Stack gap={2} className="surface-pad-md">
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {brandLogoCopy.sizesHint}
           </Text>
           <Stack direction="horizontal" gap={4} className="flex-wrap items-end">
@@ -61,7 +61,7 @@ export function BrandLogoDemo() {
         </Stack>
         <footer className="flex items-center gap-stack-sm border-t border-border surface-pad-inline surface-pad-block text-muted-foreground">
           <HarborMark footer />
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {brandLogoCopy.copyright}
           </Text>
         </footer>

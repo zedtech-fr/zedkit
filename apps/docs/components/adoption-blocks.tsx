@@ -148,7 +148,7 @@ export function FileBlock({
           <Text as="span" className="truncate font-mono">
             {path}
           </Text>
-          <Text as="span" className="text-xs text-muted-foreground">
+          <Text as="span" className="text-caption text-muted-foreground">
             {adoptionCopy.fileAction[action]}
           </Text>
         </Stack>

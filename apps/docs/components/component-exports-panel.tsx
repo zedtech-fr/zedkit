@@ -39,7 +39,7 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
             <TableBody>
               {symbols.map((name) => (
                 <TableRow key={name}>
-                  <TableCell className="font-mono text-xs">{name}</TableCell>
+                  <TableCell className="font-mono text-caption">{name}</TableCell>
                   <TableCell className="text-muted-foreground">{roleForExportSymbol(name)}</TableCell>
                 </TableRow>
               ))}
@@ -49,7 +49,7 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
         </Stack>
       ) : (
         <Stack gap={1}>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {componentExportsPanelCopy.symbolCountLine(symbols.length)}
           </Text>
           <ComponentWrapsLine wraps={wraps} />

@@ -64,7 +64,7 @@ function CompatibilityTable() {
       <TableBody>
         {compatibilityRows.map((row) => (
           <TableRow key={row.package}>
-            <TableCell className="font-mono text-xs">{row.package}</TableCell>
+            <TableCell className="font-mono text-caption">{row.package}</TableCell>
             <TableCell>{row.version}</TableCell>
             <TableCell>{row.node}</TableCell>
             <TableCell className="text-muted-foreground">{row.peers}</TableCell>

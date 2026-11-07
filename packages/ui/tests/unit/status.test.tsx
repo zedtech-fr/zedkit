@@ -90,7 +90,7 @@ describe("updated ago", () => {
 
   it("styles the stamp with muted text tokens only", () => {
     const { container } = render(<UpdatedAgo date={Date.now() - 3_000} />);
-    expect(container.firstElementChild?.className).toBe("text-xs text-muted-foreground");
+    expect(container.firstElementChild?.className).toBe("text-caption text-muted-foreground");
   });
 });
 

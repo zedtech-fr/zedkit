@@ -52,7 +52,7 @@ function BookingSlotChoices({
 }) {
   return (
     <Stack gap={2} role="group" aria-label={messages.slotsAriaLabel}>
-      <Text variant="muted" className="text-xs font-medium">
+      <Text variant="muted" className="text-caption font-medium">
         {messages.slotsAriaLabel}
       </Text>
       <Stack direction="horizontal" gap={2} className="flex-wrap">

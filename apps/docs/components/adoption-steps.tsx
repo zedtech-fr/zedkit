@@ -57,7 +57,7 @@ function Block({
 function RenderedExample({ children }: { children: ReactNode }) {
   return (
     <Stack gap={2} role="group" aria-label={adoptionCopy.result.label} data-adoption-result="">
-      <Text as="span" className="text-xs font-medium text-muted-foreground">
+      <Text as="span" className="text-caption font-medium text-muted-foreground">
         {adoptionCopy.result.label}
       </Text>
       <Stack direction="horizontal" className="rounded-lg border border-border surface-pad-md">
@@ -66,7 +66,7 @@ function RenderedExample({ children }: { children: ReactNode }) {
           {children}
         </Text>
       </Stack>
-      <Text variant="muted" className="text-xs">
+      <Text variant="muted" className="text-caption">
         {adoptionCopy.result.caption}
       </Text>
     </Stack>

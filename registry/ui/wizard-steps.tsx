@@ -44,7 +44,7 @@ export function WizardStep({ step, index, state, showConnector = false, classNam
       <span
         aria-hidden
         className={cn(
-          "flex size-wizard-step-badge items-center justify-center rounded-full border text-xs font-medium",
+          "flex size-wizard-step-badge items-center justify-center rounded-full border text-caption font-medium",
           state === "done" && "border-primary bg-primary text-primary-foreground",
           state === "current" && "border-primary text-primary",
           state === "todo" && "text-muted-foreground",

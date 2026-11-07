@@ -18,7 +18,7 @@ export function TextareaDemo() {
         placeholder={textareaCopy.placeholder}
         onChange={(event) => setNote(event.target.value)}
       />
-      <Text variant="muted" className="text-xs" aria-live="polite">
+      <Text variant="muted" className="text-caption" aria-live="polite">
         {textareaCopy.count(note.length, LIMIT)}
       </Text>
     </Stack>

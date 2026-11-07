@@ -64,7 +64,7 @@ const columns = [
     cell: ({ row }) => (
       <Stack gap={1} className="content-shrink">
         <Text className="font-medium">{row.original.title}</Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {row.original.owner}
         </Text>
       </Stack>
@@ -120,7 +120,7 @@ function Avatar({ initials, className }: { initials: string; className?: string 
       as="span"
       aria-hidden="true"
       className={cn(
-        "flex size-person shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground",
+        "flex size-person shrink-0 items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground",
         className,
       )}
     >
@@ -159,14 +159,14 @@ function Sidebar() {
     <Stack gap={4} className="h-full surface-pad-compact">
       <Stack gap={1}>
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.product}
         </Text>
       </Stack>
       <ShellNav />
       <Stack gap={2} className="mt-auto">
         <ProgressBar value={62} label={projectTrackerDemoCopy.sprintLabel} />
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.sprintCaption}
         </Text>
       </Stack>
@@ -273,9 +273,9 @@ function TopBar() {
 function Breadcrumbs() {
   return (
     <nav aria-label={projectTrackerDemoCopy.breadcrumbAriaLabel} className="mb-stack">
-      <Text as="span" variant="muted" className="text-xs">
+      <Text as="span" variant="muted" className="text-caption">
         {projectTrackerDemoCopy.breadcrumbLead}
-        <Text as="span" className="text-xs text-foreground">
+        <Text as="span" className="text-caption text-foreground">
           {projectTrackerDemoCopy.nav.tasks}
         </Text>
       </Text>
@@ -305,7 +305,7 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
             >
               <Stack gap={1} className="content-shrink">
                 <CardDescription>{card.label}</CardDescription>
-                <Text variant="muted" className="text-xs">
+                <Text variant="muted" className="text-caption">
                   {card.note}
                 </Text>
               </Stack>
@@ -354,7 +354,7 @@ export function ProjectTrackerDemoApp() {
     <Stack gap={3} className="w-full content-shrink">
       <Toaster />
       <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.pageState}
         </Text>
         {PAGE_STATES.map((entry) => (

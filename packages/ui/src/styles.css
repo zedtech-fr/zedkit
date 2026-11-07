@@ -363,6 +363,9 @@
   /* Dense UI: controls, tabs, menus, tables, nav. Same size and line as the old text-sm step. */
   --text-dense: var(--text-sm);
   --text-dense--line-height: var(--text-sm--line-height);
+  /* Captions, badges, timestamps. 12px with a 16px line. The label role is 12px with a taller line. */
+  --text-caption: var(--text-xs);
+  --text-caption--line-height: var(--text-xs--line-height);
   /*
    * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
    * not a spacing multiple: an identity may redefine `--spacing`, and a

@@ -11,7 +11,7 @@ export function InputDemo() {
       <Stack gap={2}>
         <Label htmlFor="demo-email">{inputCopy.email}</Label>
         <Input id="demo-email" type="email" autoComplete="email" placeholder={inputCopy.emailPlaceholder} />
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {inputCopy.emailHint}
         </Text>
       </Stack>

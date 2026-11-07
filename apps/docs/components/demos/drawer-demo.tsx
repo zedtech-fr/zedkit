@@ -42,7 +42,7 @@ export function DrawerDemo() {
       <Toaster />
       <Stack gap={3} className="content-shrink items-start">
         <Stack gap={1} className="content-shrink">
-          <Text variant="muted" id="drawer-direction-label" className="text-xs font-medium">
+          <Text variant="muted" id="drawer-direction-label" className="text-caption font-medium">
             {drawerCopy.demo.directionLabel}
           </Text>
           <Stack
@@ -65,7 +65,7 @@ export function DrawerDemo() {
               </Button>
             ))}
           </Stack>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {current?.hint}
           </Text>
         </Stack>
@@ -94,7 +94,7 @@ export function DrawerDemo() {
                       : { label: item.label, value: item.value },
                   )}
                 />
-                <Text variant="muted" className="text-xs font-medium">
+                <Text variant="muted" className="text-caption font-medium">
                   {drawerCopy.demo.activityHeading}
                 </Text>
                 {ACTIVITY.map((line) => (

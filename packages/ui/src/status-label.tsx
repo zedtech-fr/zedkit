@@ -40,7 +40,7 @@ export function StatusLabel({ tone, children, className }: StatusLabelProps) {
       data-slot="status-label"
       role="status"
       className={cn(
-        "inline-flex items-center gap-icon text-xs",
+        "inline-flex items-center gap-icon text-caption",
         tone === "error" ? "text-destructive" : "text-muted-foreground",
         className,
       )}

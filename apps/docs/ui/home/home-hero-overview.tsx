@@ -37,7 +37,7 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
   return (
     <Card className="content-shrink shadow-none" data-hero-block="" data-beat={beat}>
       <Stack gap={1} className="surface-pad-compact">
-        <Text variant="muted" className="text-xs leading-tight">
+        <Text variant="muted" className="text-caption leading-tight">
           {label}
         </Text>
         {/* The number counts up on screen; assistive tech gets the final value, once. */}
@@ -55,7 +55,7 @@ function Activity() {
   return (
     <Card className="content-shrink shadow-none" data-hero-block="" data-beat={4}>
       <CardHeader data-hero-activity="" className="surface-pad-compact">
-        <CardDescription className="text-xs">{copy.activity}</CardDescription>
+        <CardDescription className="text-caption">{copy.activity}</CardDescription>
       </CardHeader>
       <CardContent className="surface-pad-compact trim-pad-top">
         <ul className="trim-margin flex list-none items-end flush" aria-label={copy.activity} data-hero-bars="">
@@ -68,7 +68,7 @@ function Activity() {
                 role="img"
                 aria-label={`${copy.activityDays[index]}: ${value}`}
               />
-              <span aria-hidden="true" className="text-xs leading-none text-muted-foreground">
+              <span aria-hidden="true" className="text-caption leading-none text-muted-foreground">
                 {copy.activityDays[index]}
               </span>
             </li>
@@ -97,7 +97,7 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
               <Badge variant={STATUS_VARIANT[row.status]} className="max-sm:hidden">
                 {row.status}
               </Badge>
-              <span className="text-xs text-muted-foreground tabular-nums">{shortDate.format(parseDue(row.due))}</span>
+              <span className="text-caption text-muted-foreground tabular-nums">{shortDate.format(parseDue(row.due))}</span>
             </span>
           </li>
         ))}

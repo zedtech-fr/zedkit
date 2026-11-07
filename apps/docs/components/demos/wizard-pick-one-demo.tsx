@@ -20,7 +20,7 @@ export function WizardPickOneDemo() {
         selected={picked}
         onChange={setPicked}
       />
-      <Text variant="muted" className="text-xs" aria-live="polite">
+      <Text variant="muted" className="text-caption" aria-live="polite">
         {wizardCopy.pickedOne(labels[picked[0] ?? ""] ?? "")}
       </Text>
     </Stack>

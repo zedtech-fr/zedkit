@@ -116,7 +116,7 @@ export async function ComponentPage({
       <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-stack-md">
         <Stack gap={3}>
           <AdoptionPanelView plan={plan} />
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {componentPageCopy.packageVersionLine(version)}
           </Text>
         </Stack>
