@@ -184,6 +184,18 @@ describe("layout job classes", () => {
     expect(css).not.toContain("--zk-gap-2xs");
   });
 
+  it("names each unlayered type role in the components layer", () => {
+    const start = css.indexOf("Names for the unlayered type roles");
+    const layer = css.slice(start, css.indexOf("\n}", start));
+    const outside = css.slice(0, start) + css.slice(css.indexOf("\n}", start));
+    const names = [...outside.matchAll(/(?:^|\s)\.(text-[a-z0-9-]+)\s*\{/gm)].map((match) => match[1]);
+    const unique = [...new Set(names)];
+    expect(unique.length).toBeGreaterThan(10);
+    for (const name of unique) {
+      expect(layer).toContain(`.${name} {}`);
+    }
+  });
+
   it("keeps a 24px hit area on small controls, and the tap size on touch", () => {
     const block = css.slice(css.indexOf("@utility hit-target"));
     const hit = block.slice(0, block.indexOf("@utility", 1));

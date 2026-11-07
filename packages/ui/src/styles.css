@@ -654,6 +654,31 @@ a[class*="px-badge-inline"] {
   letter-spacing: -0.02em;
 }
 
+/*
+ * Names for the unlayered type roles below. The Tailwind lint only sees a class
+ * that sits in the components layer. These rules are empty. The unlayered rules
+ * are the ones that paint, so they still beat a heading's type role.
+ */
+@layer components {
+  .text-specimen-title {}
+  .text-compact-heading {}
+  .text-figure {}
+  .text-wordmark {}
+  .text-plan-price {}
+  .text-product-name {}
+  .text-offer-price {}
+  .text-stat {}
+  .text-scene-title {}
+  .text-gallery-heading {}
+  .text-step-heading {}
+  .text-purpose {}
+  .text-brand-word {}
+  .text-demo-heading {}
+  .text-preview-title {}
+  .text-hero-lead {}
+  .text-hero-title {}
+}
+
 /* Identity specimen headline. Display face, one step under the section role. */
 .text-specimen-title {
   font-family: var(--zk-font-display);

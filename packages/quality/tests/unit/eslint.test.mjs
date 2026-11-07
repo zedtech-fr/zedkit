@@ -50,6 +50,14 @@ describe("nodePreset", () => {
 });
 
 describe("uiPreset", () => {
+  it("reads component-layer names before calling a class unknown", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    expect(tailwind.rules["better-tailwindcss/no-unknown-classes"]).toEqual([
+      "error",
+      { detectComponentClasses: true },
+    ]);
+  });
+
   it("carries the passed entryPoint into the tailwind settings", () => {
     const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
     expect(tailwind.settings["better-tailwindcss"].entryPoint).toBe("/repo/app/globals.css");
