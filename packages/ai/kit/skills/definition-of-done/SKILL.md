@@ -39,7 +39,7 @@ The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter type
 
 ## Size
 
-Estimate files created or modified (exclude lockfiles and generated files) before you start, and re-check if the count drifts.
+Estimate files created or modified (exclude lockfiles and generated files) before you start, and re-check when the count grows.
 
 | Zone   | Files | Action                                         |
 | ------ | ----- | ---------------------------------------------- |
@@ -47,7 +47,8 @@ Estimate files created or modified (exclude lockfiles and generated files) befor
 | Orange | 21–30 | Warn. Propose a split if seams exist.          |
 | Red    | > 30  | Warn. Propose mergeable subtasks; do not stop. |
 
-- [ ] The change is small enough to review in one sitting. If it keeps growing past your first estimate, stop and propose a split before going on.
+- [ ] File-count growth past the first estimate: re-check the zone and warn. Propose a split. Do not stop.
+- [ ] A change to the authorized scope (the work is no longer the work that was approved) may need a decision before continuing.
 - [ ] Each PR is mergeable alone, never a broken intermediate state. Split along seams: contract, implementation, wiring, tests with their code.
 
 ## Visual work

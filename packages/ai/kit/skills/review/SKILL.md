@@ -43,9 +43,11 @@ the diff<!-- if:skill=code-review --> (brief `code-review`)<!-- /if -->.
 
 Dedupe, rank by severity, one verdict: ship, fix-then-ship (list blockers),
 or rework. Open with the lenses-run table (every lens: ran or skipped +
-reason). Then a second independent `check` spawn (not the synthesizer) reads
-the ranked findings against the pinned diff; it may only drop or demote.
-Blockers that do not survive that pass are not blockers.
+reason). Then a second independent `check` spawn (not the synthesizer)
+verifies each ranked finding against the same pinned commit. It may keep a
+finding, drop it, or adjust its severity either way, and it says why. It
+stays inside the synthesis. A finding it drops is not a blocker. If that
+pass cannot run, say so: its absence does not drop blockers.
 
 ## 5. Turn the miss into a rule
 

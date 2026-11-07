@@ -465,6 +465,46 @@ providers:
       }
     });
 
+    it("setup refuses a custom agent's fast cell before writing", () => {
+      const dest = tempDir();
+      const policy = `---
+schema: 1
+default_provider: cursor
+providers:
+  cursor:
+    check:
+      critical: { model: composer-2.5-fast }
+---
+`;
+      const agent = "# custom-check\n\nProject check.\n";
+      const meta = `${JSON.stringify(
+        {
+          "custom-check": {
+            role: "custom check",
+            default_needs: { reasoning: "medium", context: "medium" },
+            default_kind: "check",
+            min_stakes: "critical",
+          },
+        },
+        null,
+        2,
+      )}\n`;
+      put(dest, ".agents/tokenomics.md", policy);
+      put(dest, ".agents/agents/custom-check.md", agent);
+      put(dest, ".agents/agents.meta.json", meta);
+      const denied = run("setup", dest, "--provider", "cursor");
+      expect(denied.code).toBe(2);
+      expect(denied.errors).toContain("custom-check");
+      expect(denied.errors).toContain("composer-2.5-fast");
+      expect(denied.errors).toContain("--allow-fast");
+      expect(existsSync(join(dest, "AGENTS.md"))).toBe(false);
+      expect(existsSync(join(dest, ".cursor"))).toBe(false);
+      expect(existsSync(join(dest, ".agents/skills"))).toBe(false);
+      expect(readFileSync(join(dest, ".agents/agents/custom-check.md"), "utf8")).toBe(agent);
+      expect(readFileSync(join(dest, ".agents/tokenomics.md"), "utf8")).toBe(policy);
+      expect(readFileSync(join(dest, ".agents/agents.meta.json"), "utf8")).toBe(meta);
+    });
+
     it("validate names an adopt sidecar and still exits 0 when nothing else is wrong", () => {
       const dir = tempDir();
       put(dir, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));

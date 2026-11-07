@@ -98,7 +98,21 @@ describe("skill content conventions", () => {
       "utf8",
     );
     expect(review).toContain("second independent `check` spawn");
-    expect(review).toContain("drop or demote");
+    expect(review).toContain("adjust its severity either way");
+    expect(review).toContain("absence does not drop blockers");
+    expect(review).not.toContain("may only drop or demote");
+  });
+
+  it("definition of done warns on file-count growth and separates a scope change", () => {
+    const dod = readFileSync(
+      join(kitDir(), "skills", "definition-of-done", "SKILL.md"),
+      "utf8",
+    );
+    expect(dod).toContain("File-count growth past the first estimate");
+    expect(dod).toContain("Do not stop.");
+    expect(dod).toContain("authorized scope");
+    expect(dod).toContain("may need a decision");
+    expect(dod).not.toContain("stop and propose a split");
   });
 
   it("implement, audit and research also go through orchestrate", () => {

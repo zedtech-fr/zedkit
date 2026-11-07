@@ -9,22 +9,22 @@ providers:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     design:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     build:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     check:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     context_windows: { small: 128k, medium: 256k, large: 1M } # UNVERIFIED placeholder, not measured
 
   claude:
@@ -32,22 +32,22 @@ providers:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     design:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     build:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     check:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     context_windows: { small: 128k, medium: 256k, large: 1M } # UNVERIFIED placeholder, not measured
 
   codex:
@@ -55,22 +55,22 @@ providers:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     design:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     build:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     check:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     context_windows: { small: 128k, medium: 256k, large: 1M } # UNVERIFIED placeholder, not measured
 
   muse:
@@ -78,22 +78,22 @@ providers:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     design:
       trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: high }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     build:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     check:
-      trivial: { model: inherit, effort: low }
+      trivial: { model: inherit, effort: medium }
       standard: { model: inherit, effort: medium }
       sensitive: { model: inherit, effort: high }
-      critical: { model: inherit, effort: max }
+      critical: { model: inherit, effort: high }
     context_windows: { small: 128k, medium: 256k, large: 1M } # UNVERIFIED placeholder, not measured
 
 gates:

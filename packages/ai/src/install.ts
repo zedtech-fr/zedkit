@@ -579,17 +579,28 @@ function wireProvider(
   // generateAgents into `.agents/agents`.
 }
 
+/**
+ * Agents this run will generate: the preset, plus project agents already on
+ * disk. Sidecars (`*.kit.md`) stay out. The precheck and `generateAgents`
+ * both use this list, so a refusal sees every route that would be written.
+ */
+function generationAgentNames(dest: string, preset: readonly string[]): string[] {
+  const names = new Set(preset);
+  const onDisk = tryCatch(() => readdirSync(join(dest, ".agents", "agents")));
+  if (onDisk.ok) {
+    for (const file of onDisk.value) {
+      if (file.endsWith(".md") && !file.endsWith(".kit.md")) names.add(file.slice(0, -3));
+    }
+  }
+  return [...names].sort();
+}
+
 // Each tool's agent files are generated from `.agents/agents` and the policy,
 // the same way `zedkit-ai sync` does. A project policy that does not parse
 // must not stop an install, so the shipped defaults stand in and a note says so.
 function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: readonly string[]): void {
-  const preset = content.agents;
+  const names = generationAgentNames(ctx.dest, content.agents);
   const agentsDir = join(ctx.dest, ".agents");
-  const onDisk = tryCatch(() => readdirSync(join(agentsDir, "agents")));
-  const names = new Set(preset);
-  if (onDisk.ok) {
-    for (const f of onDisk.value) if (f.endsWith(".md") && !f.endsWith(".kit.md")) names.add(f.slice(0, -3));
-  }
   let policy = loadPolicy(agentsDir);
   if (!policy.ok) {
     ctx.actions.push({ kind: "skip", path: join(".agents", "tokenomics.md"), note: `${policy.error.message}; models inherit until it is fixed` });
@@ -603,7 +614,7 @@ function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: r
       providers,
       policy: policy.value,
       agentsDir,
-      names: [...names].sort(),
+      names,
       commands: {
         names: (() => {
           const listed = new Set(content.commands);
@@ -680,8 +691,10 @@ function ensureScratchIgnored(ctx: Ctx): void {
  * AGENTS.md missing the ladder, which gets the ladder section appended
  * (reported as `append`). With `adopt`, a colliding skill/agent/command
  * keeps the user file and the kit version is written beside it. A bad
- * preset or kit fails before anything is written. `.gitignore` gains the
- * `.scratch/` line for git-ignored local working plans.
+ * preset or kit fails before anything is written. So does a refused route
+ * for any agent generation will write (the preset plus agents already on
+ * disk). `.gitignore` gains the `.scratch/` line for git-ignored local
+ * working plans.
  */
 export function installKit(options: InstallOptions): Result<Action[]> {
   const kit = options.kit ?? kitDir();
@@ -710,7 +723,7 @@ export function installKit(options: InstallOptions): Result<Action[]> {
       assertAgentRoutes({
         policy: policy.value,
         agentsDir,
-        names: content.agents,
+        names: generationAgentNames(ctx.dest, content.agents),
         providers: chosen,
         ...(ctx.allowFast && { allowFast: true }),
       });
