@@ -66,7 +66,7 @@ export function OptionCard({
           type === "radio" ? "rounded-full" : "rounded-sm",
         )}
       >
-        <Check className="size-3.5" strokeWidth={3} />
+        <Check className="size-icon-sm" strokeWidth={3} />
       </span>
       <span>
         <span className="block font-medium">{title}</span>

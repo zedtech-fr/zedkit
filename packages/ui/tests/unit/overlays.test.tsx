@@ -398,10 +398,10 @@ describe("overlays", () => {
     expect(menu.className).not.toContain("z-overlay");
     assertNoValueArbitraries(menu.className);
     const item = screen.getByRole("menuitem", { name: "Duplicate invoice" });
-    expect(item.className).toContain("px-2");
-    expect(item.className).toContain("py-1.5");
-    expect(item.className).not.toContain("px-select-item-inline");
-    expect(item.className).not.toContain("py-select-item-block");
+    expect(item.className).toContain("px-select-item-inline");
+    expect(item.className).toContain("py-select-item-block");
+    expect(item.className).not.toContain("px-2");
+    expect(item.className).not.toContain("py-1.5");
     await user.click(item);
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole("menu")).toBeNull();
