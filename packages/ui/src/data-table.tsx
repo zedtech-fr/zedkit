@@ -218,7 +218,7 @@ export function DataTable<TData extends RowData>({
       />
       {surface === "error" ? <ErrorState description={error ?? ""} /> : null}
       {surface === "loading" ? (
-        <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-3 py-2">
+        <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-3 surface-pad-block-sm">
           <p className="text-sm text-muted-foreground">{messages.loadingEllipsis}</p>
           <div className="space-y-stack-sm" aria-hidden>
             {[0, 1, 2].map((row) => (

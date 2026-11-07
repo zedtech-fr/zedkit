@@ -224,7 +224,7 @@ function UserMenu() {
           </Badge>
         </DrawerHeader>
         <DrawerBody>
-          <Stack gap={1} className="py-2">
+          <Stack gap={1} className="surface-pad-block-sm">
             {MENU_ITEMS.map(({ label, icon: Icon }) => (
               <DrawerClose asChild key={label}>
                 <Button

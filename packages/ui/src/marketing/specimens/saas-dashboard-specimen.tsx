@@ -134,7 +134,7 @@ function SaasTeamCard({
       <CardContent>
         <ul aria-label={messages.teamAriaLabel} className="trim-margin list-none flush">
           {members.map((member) => (
-            <li key={member.id} className="flex items-center justify-between gap-stack-md border-b border-border py-2 last:border-b-0">
+            <li key={member.id} className="flex items-center justify-between gap-stack-md border-b border-border surface-pad-block-sm last:border-b-0">
               <Text as="span" className="content-shrink truncate">
                 {member.name}
               </Text>
