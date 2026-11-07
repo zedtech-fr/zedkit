@@ -68,7 +68,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
   const groups = groupCatalogResults(filtered);
   return (
     <Stack gap={4} data-catalog-results-root="">
-      <section data-slot="section" className="space-y-4" aria-label={catalogCopy.results.sectionAriaLabel}>
+      <section data-slot="section" className="space-y-stack-lg" aria-label={catalogCopy.results.sectionAriaLabel}>
         {filtered.length === 0 ? (
           <Stack gap={2}>
             <Text variant="muted">{catalogCopy.results.empty}</Text>

@@ -34,7 +34,7 @@ function ProductCard({ product, selected, onSelect }: { product: Product; select
         type="button"
         variant="outline"
         aria-pressed={selected}
-        className="h-auto! min-h-target w-full flex-col items-start justify-start gap-stack-sm p-4 text-left font-normal whitespace-normal"
+        className="h-auto! min-h-target w-full flex-col items-start justify-start gap-stack-sm surface-pad-md text-left font-normal whitespace-normal"
         onClick={onSelect}
       >
         <span className="font-(family-name:--zk-font-display) text-xl">{product.name}</span>

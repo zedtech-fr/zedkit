@@ -43,7 +43,7 @@ const twMerge = extendTailwindMerge({
       "gap-x": ["gap-x-wizard-steps-gap"],
       "gap-y": ["gap-y-wizard-steps-row-gap"],
       "space-y": [
-        { "space-y": ["stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
+        { "space-y": ["stack-sm", "stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
       ],
       h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator"],
       size: [{ size: ["icon"] }, "size-icon-sm", "size-checkbox", "size-status-label-box", "size-status-dot"],

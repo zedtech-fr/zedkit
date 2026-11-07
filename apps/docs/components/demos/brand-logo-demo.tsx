@@ -48,7 +48,7 @@ export function BrandLogoDemo() {
             </a>
           </nav>
         </header>
-        <Stack gap={2} className="p-4">
+        <Stack gap={2} className="surface-pad-md">
           <Text variant="muted" className="text-xs">
             {brandLogoCopy.sizesHint}
           </Text>

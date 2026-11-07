@@ -59,7 +59,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
             <Menu aria-hidden="true" className="size-icon" />
             {messages.menu}
           </summary>
-          <div className="absolute pin-x top-full flex flex-col gap-stack-lg border-b bg-card p-4 shadow-lg">
+          <div className="absolute pin-x top-full flex flex-col gap-stack-lg border-b bg-card surface-pad-md shadow-lg">
             {items.length > 0 ? (
               <nav aria-label={messages.mainNavigation}>
                 <ul className={cn("flex list-none flex-col gap-1 flush", linkClass)}>

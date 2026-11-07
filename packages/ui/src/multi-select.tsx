@@ -29,7 +29,7 @@ function MultiSelect(props: MultiSelectProps) {
   return (
     <Popover open={combobox.isOpen}>
       <PopoverAnchor asChild>
-        <div className="w-full space-y-2" data-slot="multi-select">
+        <div className="w-full space-y-form-item-gap" data-slot="multi-select">
           <MultiSelectChips
             items={selectedItems}
             onRemove={removeItem}
