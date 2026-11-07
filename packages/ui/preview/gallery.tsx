@@ -379,7 +379,7 @@ export function Gallery() {
 
         <GallerySection id="forms" title="Forms">
           <FormDemo />
-          <div className="max-w-sm space-y-3" data-testid="gallery-prompt-input">
+          <div className="max-w-sm space-y-stack-md" data-testid="gallery-prompt-input">
             <PromptInput
               sendLabel="Send"
               value="Ask about your catalog"

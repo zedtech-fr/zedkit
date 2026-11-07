@@ -20,6 +20,7 @@ const STACK_ROLES = new Set([
   "gap-y-stack-sm",
   "gap-x-stack-lg",
   "space-y-stack-sm",
+  "space-y-stack-md",
   "space-y-stack-lg",
 ]);
 const SPELLED = /(?:^|-)(?:zero|hairline)$|(?:^|-)stack-(?:3xs|2xs|xs|3h|\d+xl|sm|md|lg)$/;
