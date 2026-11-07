@@ -91,7 +91,7 @@ export const homeHeroCopy = {
         read: { title: "Reading the code", detail: "3 subagents read routes, tasks and scripts in parallel" },
         rules: { title: "Business rules found", detail: "Collecting what the code enforces" },
         plan: { title: "Plan", detail: "AGENTS.md, a tasks domain note, repo skills" },
-        validate: { title: "Validate", detail: "npx zedkit-ai validate" },
+        validate: { title: "Validate", detail: "npx @zedtech/zedkit-ai validate" },
       },
       rules: [
         "A task moves from open to in review to done.",

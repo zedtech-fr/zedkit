@@ -18,10 +18,10 @@ Append one entry per `/setup-ai` run, newest first. Each entry records what the 
 | `muse`   | Native marked files in `.agents/agents`; kit/unmarked files stay the source |
 
 - **Wired:** cursor, claude (example)
-- **Reading:** medium repo, 8 readers as `check`/`standard` from `npx zedkit-ai scan`; 61 rules merged, 4 dropped after spot-checks; log at `.agents/setup-log/reading.md`; interview cut to 5 questions because the code answered the rest.
-- **Routing:** provider cursor; `check.standard` = {cheap fast model}, `build.standard` = {mid}, `decide.sensitive` = inherit; readers passed `zedkit-ai route explorer --kind check --stakes standard`; file at `.agents/tokenomics.md`; `zedkit-ai sync` run.
+- **Reading:** medium repo, 8 readers as `check`/`standard` from `npx @zedtech/zedkit-ai scan`; 61 rules merged, 4 dropped after spot-checks; log at `.agents/setup-log/reading.md`; interview cut to 5 questions because the code answered the rest.
+- **Routing:** provider cursor; `check.standard` = {non-fast check cell}, `build.standard` = {mid}, `decide.sensitive` = inherit; readers passed `zedkit-ai route explorer --kind check --stakes standard`; file at `.agents/tokenomics.md`; `zedkit-ai sync` run.
 - **Nested:** extended `apps/web/AGENTS.md` and `packages/billing/AGENTS.md` in place, linked to `.agents/domain/` (log it as `nested-agents: extended — <files>`, `none — <reason>` or `kept — <reason>`)
-- **Plan gaps:** paths changed after the plan table but missing rows (or: none — reconciled with `git diff --name-only` and **`npx zedkit-ai validate --setup`** clean; use **`--plan <file>`** when the plan is not **`PLAN.md`** at the repo root or **`.agents/setup-log/plan.md`**)
+- **Plan gaps:** paths changed after the plan table but missing rows (or: none — reconciled with `git diff --name-only` and **`npx @zedtech/zedkit-ai validate --setup`** clean; use **`--plan <file>`** when the plan is not **`PLAN.md`** at the repo root or **`.agents/setup-log/plan.md`**)
 - **Unenforced rules:** (architecture score 3 — or: none; cite the domain rule ID for domain rules, e.g. `B-01`)
 
 | Rule ID | Prose rule (AGENTS or nested) | Lint / CI proposal or ticket draft | Evidence                   |
@@ -35,7 +35,7 @@ Append one entry per `/setup-ai` run, newest first. Each entry records what the 
 | ------------- | ----------------------------------- |
 | domain-change | deferred — no money paths in v1 yet |
 
-- **Gate outcomes:** (one row per persisted gate log: every file in **`.agents/setup-log/gates/`** appears below by name, killed logs included; each `*.log` starts with **`CMD:`** and ends with **`EXIT:<code>`** as its last line — **`npx zedkit-ai validate --setup`** checks plan coverage, log shape, and that every log file is inventoried)
+- **Gate outcomes:** (one row per persisted gate log: every file in **`.agents/setup-log/gates/`** appears below by name, killed logs included; each `*.log` starts with **`CMD:`** and ends with **`EXIT:<code>`** as its last line — **`npx @zedtech/zedkit-ai validate --setup`** checks plan coverage, log shape, and that every log file is inventoried)
 
 | Log              | Gate command | Exit | Duration | Did not run / why | Safe alternative used                                    |
 | ---------------- | ------------ | ---- | -------- | ----------------- | -------------------------------------------------------- |

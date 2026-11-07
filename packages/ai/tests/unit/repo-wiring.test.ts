@@ -71,6 +71,16 @@ describe("this repo's own provider wiring", () => {
     }
   });
 
+  it("globbed cursor rules use a **/ prefixed comma-separated globs string", () => {
+    const dir = join(root, ".cursor/rules");
+    for (const file of readdirSync(dir).filter((name) => name.endsWith(".mdc"))) {
+      const text = readFileSync(join(dir, file), "utf8");
+      if (text.includes("alwaysApply: true")) continue;
+      expect(text, file).toMatch(/^globs:\s*"[^"]*\*\*\//m);
+      expect(text, file).not.toMatch(/^globs:\s*$/m);
+    }
+  });
+
   it("cursor commands link to the shared .agents commands", () => {
     for (const file of readdirSync(join(root, ".agents/commands"))) {
       const link = join(root, ".cursor/commands", file);

@@ -39,7 +39,16 @@ The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter type
 
 ## Size
 
-- [ ] The change is small enough to review in one sitting. If it keeps growing past your first estimate, stop and propose a split before going on. Ignore lockfiles and generated files when counting.
+Estimate files created or modified (exclude lockfiles and generated files) before you start, and re-check when the count grows.
+
+| Zone   | Files | Action                                         |
+| ------ | ----- | ---------------------------------------------- |
+| Green  | ≤ 20  | Proceed.                                       |
+| Orange | 21–30 | Warn. Propose a split if seams exist.          |
+| Red    | > 30  | Warn. Propose mergeable subtasks; do not stop. |
+
+- [ ] File-count growth past the first estimate: re-check the zone and warn. Propose a split. Do not stop.
+- [ ] A change to the authorized scope (the work is no longer the work that was approved) may need a decision before continuing.
 - [ ] Each PR is mergeable alone, never a broken intermediate state. Split along seams: contract, implementation, wiring, tests with their code.
 
 ## Visual work
@@ -75,3 +84,9 @@ For large changes run the `verifier` agent once per package or PR in parallel (s
 ## Report
 
 End the task with: what changed, which gates ran and their result, what was **not** verified, any known risk. Keep it short.
+
+<!-- if:skill=rules-upkeep -->
+
+Also close with the `Rules` section from `rules-upkeep` (`Rules: none` when nothing to encode).
+
+<!-- /if -->

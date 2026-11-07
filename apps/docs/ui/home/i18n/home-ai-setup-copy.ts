@@ -43,14 +43,14 @@ export const homeAiSetupCopy = {
         body: "/review runs the right lenses in parallel. A definition of done asks for gates run, tests for changed files and a cold second review.",
       },
     },
-    providers: "Cursor, Claude Code, Codex and Muse read the same .agents folder. npx zedkit-ai validate checks it.",
+    providers: "Cursor, Claude Code, Codex and Muse read the same .agents folder. npx @zedtech/zedkit-ai validate checks it.",
   },
   terminal: {
     regionLabel: "Files the AI setup creates",
     title: "your-repo",
-    installCommand: "npx zedkit-ai setup --provider cursor",
+    installCommand: "npx @zedtech/zedkit-ai setup --provider cursor",
     writtenComment: "then /setup-ai writes",
-    validateCommand: "npx zedkit-ai validate",
+    validateCommand: "npx @zedtech/zedkit-ai validate",
     validateResult: "ok",
   },
 } as const;

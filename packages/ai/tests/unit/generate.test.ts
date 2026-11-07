@@ -180,6 +180,14 @@ describe("generateMuseAgent", () => {
     expect(out.value.text.slice(0, close)).toContain("write_file, edit_file, bash");
     expect(out.value.text.slice(0, close)).not.toMatch(/\bWrite\b/);
   });
+
+  it("keeps bash off the denylist when the agent must run a command", () => {
+    const source = "---\nname: test-runner\ndescription: d\nmodel: inherit\ndisallowedTools: Write, Edit, NotebookEdit\n---\nRun it.\n";
+    const out = generateMuseAgent({ name: "test-runner", source, model: "inherit", keepShell: true });
+    if (!out.ok) throw out.error;
+    expect(out.value.text).toContain("disallowedTools: write_file, edit_file\n");
+    expect(out.value.text).not.toContain("bash");
+  });
 });
 
 describe("museNativeName", () => {

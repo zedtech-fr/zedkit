@@ -12,6 +12,8 @@ exists IS a blocker.
 | ponytail          | skill `ponytail-review` (via code lens, surfaced separately)                    | exists | always                                                                      | yes            | ladder table + lean findings                                                           |
 | persona           | skill `persona-review` + repo `.agents/personas.md`                             | exists | always                                                                      | yes            | per-persona Pass/Rough/Fail + evidence                                                 |
 | quality gate      | agent `verifier`                                                                | exists | always                                                                      | yes            | gate results + DoD checklist                                                           |
+| boundaries        | agent `domain-guardian`                                                         | exists | imports, hexagonal ports, cross-package internals                           | when triggered | leaks + holds, file:line                                                               |
+| contracts         | agent `event-contracts`                                                         | exists | events, commands, schemas, queues, webhooks                                 | when triggered | additive / versioned / breaking, file:line                                             |
 | adversarial-tests | agent `test-writer` (method: skill `adversarial-tests`)                         | exists | logic, handlers, endpoints, state machines                                  | when triggered | edge cases + missing tests                                                             |
 | security          | agent `security-reviewer`                                                       | exists | auth, secrets, tenancy, user data, external calls, crypto                   | when triggered | threats + fixes, file:line                                                             |
 | skeptic           | agent `skeptic` (angle per brief: plan, ui/ux, security, scope, data/ops, copy) | exists | plans, specs, ADRs, estimates, product/UI/scope decisions                   | when triggered | pre-mortem + ranked objections                                                         |
@@ -28,7 +30,9 @@ exists IS a blocker.
 
 At `Stakes: sensitive` or higher the full lens set runs: every lens whose
 trigger matches the diff is mandatory, and an "optional" lens is not skipped.
-Route each lens agent with `zedkit-ai route <agent> --kind check --stakes <s>`.
+Route each lens agent with `zedkit-ai route <agent> --kind check --stakes <s>`
+and pass that model id exactly. Do not substitute, and do not use a fast
+mode unless the user explicitly requested it in this request.
 A review may raise the stakes and writes `Stakes raised: <old> -> <new>: <reason>`;
 it never lowers them. At `critical` a second, independent review runs in a
 separate session (`route ... --stakes critical` gives its route; when the model

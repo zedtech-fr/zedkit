@@ -34,7 +34,12 @@
       "to-tickets",
       "wayfinder",
       "codebase-design",
-      "research"
+      "research",
+      "from-audit",
+      "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins"
     ],
     "core": [
       "ponytail",
@@ -63,7 +68,12 @@
       "domain-modeling",
       "audit",
       "research",
-      "orchestrate"
+      "orchestrate",
+      "from-audit",
+      "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins"
     ],
     "full": "*"
   },
@@ -72,6 +82,11 @@
     "architect",
     "verifier",
     "improver",
+    "implementer",
+    "reviewer",
+    "domain-guardian",
+    "event-contracts",
+    "test-runner",
     "security-reviewer",
     "skeptic",
     "ui-designer",
@@ -97,7 +112,13 @@
     "handoff",
     "audit",
     "orchestrate",
-    "research"
+    "research",
+    "improve-config",
+    "from-audit",
+    "to-audit",
+    "fix",
+    "improve-from-review",
+    "quick-wins"
   ],
   "presetAgents": {
     "starter": ["explorer", "verifier", "orchestrator"],
@@ -109,11 +130,30 @@
       "ui-designer",
       "copywriter",
       "skeptic",
-      "researcher"
+      "researcher",
+      "implementer",
+      "reviewer",
+      "domain-guardian",
+      "event-contracts",
+      "test-runner"
     ]
   },
   "presetCommands": {
     "starter": ["setup-ai", "review"],
-    "setup": ["setup-ai", "review", "plan", "implement", "orchestrate"]
+    "setup": [
+      "setup-ai",
+      "review",
+      "plan",
+      "challenge",
+      "implement",
+      "orchestrate",
+      "improve-config",
+      "research",
+      "from-audit",
+      "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins"
+    ]
   }
 }

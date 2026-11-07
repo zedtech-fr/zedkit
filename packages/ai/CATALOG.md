@@ -95,7 +95,7 @@ CLI equivalent: `zedkit-ai gate .agents/setup-log/gates/test.log -- pnpm exec tu
 - Status: beta
 - Short name: Agent routing
 - Audience: Agents and maintainers who pick a model per subagent call from one policy instead of hardcoding it.
-- Purpose: Resolve kind (how the agent is used for this call) times stakes (how much is at risk) and the call's needs to a provider's model and effort, with the gates of those stakes and the second review route for critical work.
+- Purpose: Resolve kind (how the agent is used for this call) times stakes (how much is at risk) and the call's needs to a provider's model and effort, with the gates of those stakes and the second review route for critical work. A model id with a `fast` token is an error unless the call sets `allowFast`.
 - When to use: Before spawning a subagent, when the project keeps its model policy in `.agents/tokenomics.md`.
 - When not to use: When one session model is fine for everything, leave every cell on `inherit`.
 - See also: `Set up AI agent instructions, skills, subagents and commands in a repo`
@@ -111,6 +111,8 @@ const route = resolveRoute(policy, {
 if (!route.ok) throw route.error;
 console.log(route.value.model, route.value.effort, route.value.gates.review);
 ```
+
+A cell whose model id contains a `fast` token makes `resolveRoute` return an error (CLI exit 2) unless `allowFast: true`. The same flag is `--allow-fast` on `route`, `sync`, `validate`, `init` and `setup`.
 
 CLI equivalent: `zedkit-ai route verifier --kind check --stakes sensitive --provider cursor --json`.
 
@@ -130,7 +132,11 @@ The stakes come from the task file: `zedkit-ai stakes PLAN.md --base origin/main
 
 ```ts
 import { inSync, syncKit } from "@zedtech/zedkit-ai";
-const actions = syncKit({ dest: ".", providers: ["cursor", "claude"], check: true });
+const actions = syncKit({
+  dest: ".",
+  providers: ["cursor", "claude"],
+  check: true,
+});
 if (!actions.ok) throw actions.error;
 if (!inSync(actions.value)) process.exitCode = 1;
 ```

@@ -240,8 +240,14 @@ async function runMode(project, mode) {
   }
 }
 
+/** 3400–3799. Next.js refuses 3659 (apple-sasl); it is the only blocked port in this window. */
+export function smokePort(random = Math.random) {
+  const port = 3400 + Math.floor(random() * 400);
+  return port === 3659 ? 3660 : port;
+}
+
 async function serve(project) {
-  const port = 3400 + Math.floor(Math.random() * 400);
+  const port = smokePort();
   const child = spawn("pnpm", ["exec", "next", "start", "-p", String(port)], { cwd: project, stdio: "inherit" });
   const url = `http://127.0.0.1:${port}/`;
   for (let i = 0; i < 60; i += 1) {

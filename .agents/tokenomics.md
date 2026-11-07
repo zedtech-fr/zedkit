@@ -3,49 +3,50 @@ schema: 1
 default_provider: cursor
 # Project overrides only. Unset cells keep kit defaults (`model: inherit`).
 # Models live in this providers block. Do not name them in the body.
+# Medium is the lowest effort. Critical is high, not max.
 providers:
   cursor:
     decide:
-      trivial: { model: cursor-grok-4.6-high, effort: medium }
-      standard: { model: cursor-grok-4.6-high, effort: high }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: cursor-grok-4.6-xhigh, effort: medium }
+      standard: { model: cursor-grok-4.6-xhigh, effort: high }
+      sensitive: { model: claude-sonnet-5-5-high, effort: high }
+      critical: { model: claude-opus-5-5-high, effort: high }
     design:
-      trivial: { model: cursor-grok-4.6-high, effort: medium }
-      standard: { model: cursor-grok-4.6-high, effort: high }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: cursor-grok-4.6-xhigh, effort: medium }
+      standard: { model: cursor-grok-4.6-xhigh, effort: high }
+      sensitive: { model: claude-sonnet-5-5-high, effort: high }
+      critical: { model: claude-opus-5-5-high, effort: high }
     build:
-      trivial: { model: cursor-grok-4.6-high, effort: low }
-      standard: { model: cursor-grok-4.6-high, effort: medium }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: composer-2.5, effort: medium }
+      standard: { model: composer-2.5, effort: medium }
+      sensitive: { model: cursor-grok-4.6-xhigh, effort: high }
+      critical: { model: claude-sonnet-5-5-high, effort: high }
     check:
-      trivial: { model: cursor-grok-4.6-high, effort: low }
-      standard: { model: cursor-grok-4.6-high, effort: medium }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: composer-2.5, effort: medium }
+      standard: { model: composer-2.5, effort: medium }
+      sensitive: { model: claude-sonnet-5-5-high, effort: high }
+      critical: { model: claude-opus-5-5-high, effort: high }
   muse:
     decide:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: high }
-      sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-spark-1.3-contributor, effort: max }
+      sensitive: { model: muse-wonder-1.0, effort: high }
+      critical: { model: muse-wonder-full-1.0, effort: high }
     design:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: high }
       sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-spark-1.3-contributor, effort: max }
+      critical: { model: muse-wonder-full-1.0, effort: high }
     build:
-      trivial: { model: muse-spark-1.3-contributor, effort: low }
+      trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: medium }
       sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-spark-1.3-contributor, effort: max }
+      critical: { model: muse-spark-1.3-contributor, effort: high }
     check:
-      trivial: { model: muse-spark-1.3-contributor, effort: low }
+      trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: medium }
       sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-spark-1.3-contributor, effort: max }
+      critical: { model: muse-wonder-full-1.0, effort: high }
 ---
 
 # Tokenomics
@@ -70,9 +71,16 @@ the cell for the call (kind x stakes) decides.
   independent review and a human validation line before merge.
 - Record the cell used, with its kind and stakes, in the plan and the setup
   log.
+- A spawn uses this file's cell for the running provider, the call's kind,
+  and the task's stakes. Pass that model id. Do not substitute the parent
+  model, another family, or a fast mode. If the cell is missing or `inherit`,
+  do not spawn.
+- Never spawn a fast mode, or a model id with a `fast` token, unless the user
+  explicitly requested fast mode in this request.
 
 ## This repo
 
-Cursor is the parent. Every Cursor cell uses the listed Task id. Every Muse
-cell uses the listed Contributor id (not inherit). Codex and Claude cells
-stay on shipped defaults.
+Cursor is the parent. Each cell above is the Task id for that kind and stakes.
+Medium is the lowest effort. Muse stays on Spark 1.3 Contributor except Wonder
+on decide sensitive, and Wonder Full on decide critical, design critical, and
+check critical. Codex and Claude stay on shipped defaults.

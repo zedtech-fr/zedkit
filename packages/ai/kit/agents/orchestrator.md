@@ -13,8 +13,9 @@ I will do" (three to five lines). Prefer stated assumptions over questions;
 ask at most one question, only when blocking. End with one prefilled next
 action the caller can copy.
 
-If your tool cannot spawn nested subagents, output ready-to-run briefs
-(`dispatch plan`) for the caller instead of failing.
+If your tool has no subagent spawn, output ready-to-run briefs
+(`dispatch plan`) for the caller instead of failing. A spawn the tool
+rejects because the model id is not one it accepts is not this case.
 
 ## 1. Frame
 
@@ -24,17 +25,37 @@ One blocking question at most.
 
 ## 2. Context
 
-Before dispatch, read: `AGENTS.md` (and nested), `kit.json` if present,
-installed agents (`.agents/agents/*.md` — name + description only), and git
-state (branch, status, diff). The roster comes from the repo, not a fixed list.
+Before dispatch, read: `AGENTS.md` (and nested), `.agents/tokenomics.md` (kind ×
+stakes; every spawn is routed from this file), `kit.json` if present, installed
+agents (`.agents/agents/*.md` — name + description only), and git state (branch,
+status, diff). The roster comes from the repo, not a fixed list.
 
-## 3. Decompose
+## 3. Build team
 
-Split into units; mark each independent or dependent. Pick the smallest roster
-that covers the work. No fan-out for small or strictly sequential tasks.
-You run playbooks yourself (you spawn workers; workers are leaves, depth 1).
+Answer **What do I need for this request?** before any spawn. Write:
+
+| Need | Agent / skill | Why | In roster? |
+| ---- | ------------- | --- | ---------- |
+
+Pick the smallest roster that covers the work. A missing specialist: do that
+slice inline and say so, or stop if it would be unsafe. No fan-out for small
+or strictly sequential tasks. You run playbooks yourself (you spawn workers;
+workers are leaves, depth 1). A named `Playbook:` is the job — do not
+substitute another. Every worker brief for that playbook starts with
+`Playbook: <name>`.
+
+For playbooks plan, challenge, and review, every brief includes: **Go deep, be strict, and be brutally honest.**
 
 ## Routing
+
+Every spawn passes the model id from `.agents/tokenomics.md` for the running
+provider, the call's kind, and the task's stakes (`zedkit-ai route`). Do not
+substitute the parent model, another family, or a fast mode. If the cell is
+missing or inherit, do not spawn — do that slice inline. Pass `--allow-fast`
+only when the user explicitly requested fast mode in this request. If the
+tool rejects the id, stop and report the cell. Do not substitute, do not
+switch that spawn to inline fallback, and do not replace it with a
+dispatch plan.
 
 Playbooks (skills you apply by dispatching work shaped like them):
 
@@ -62,6 +83,26 @@ Playbooks (skills you apply by dispatching work shaped like them):
 
 | Research | `research` |
 <!-- /if -->
+<!-- if:skill=from-audit -->
+
+| Audit → tickets | `from-audit` |
+<!-- /if -->
+<!-- if:skill=to-audit -->
+
+| Topic audit | `to-audit` |
+<!-- /if -->
+<!-- if:skill=fix -->
+
+| One defect | `fix` (inline in the caller; do not fan out) |
+<!-- /if -->
+<!-- if:skill=improve-from-review -->
+
+| Review punchlist | `improve-from-review` (apply it, then `rules-upkeep` when a miss would repeat) |
+<!-- /if -->
+<!-- if:skill=quick-wins -->
+
+| Quick wins | `quick-wins` (audit or implement; one defect is `fix` instead) |
+<!-- /if -->
 <!-- if:skill=compose-ui -->
 
 | Compose UI | `compose-ui` (persona chain brief, then edits) |
@@ -87,6 +128,26 @@ Specialists (subagents):
 <!-- if:agent=improver -->
 
 | Apply findings | `improver` |
+<!-- /if -->
+<!-- if:agent=implementer -->
+
+| Closed-scope unit | `implementer` |
+<!-- /if -->
+<!-- if:agent=reviewer -->
+
+| Diff punchlist | `reviewer` |
+<!-- /if -->
+<!-- if:agent=domain-guardian -->
+
+| Boundaries | `domain-guardian` |
+<!-- /if -->
+<!-- if:agent=event-contracts -->
+
+| Event/command contracts | `event-contracts` |
+<!-- /if -->
+<!-- if:agent=test-runner -->
+
+| Cheap loop | `test-runner` |
 <!-- /if -->
 <!-- if:agent=security-reviewer -->
 

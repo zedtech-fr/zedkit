@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { KIT_HEADERS, type AgentHeader } from "#agent-header.js";
 import {
+  isFastModelId,
   loadAgent,
   loadPolicy,
   resolveRoute,
@@ -105,6 +106,69 @@ describe("resolveRoute: cells", () => {
     expect(r.notes).toContain(
       "no build.standard cell for codex: model inherit",
     );
+  });
+
+  it("refuses a fast cell unless the caller explicitly allows it", () => {
+    const p = policy((x) => {
+      x.providers.cursor.check.standard.model = "composer-2.5-fast";
+    });
+    const denied = resolveRoute(p, {
+      kind: "check",
+      stakes: "standard",
+      provider: "cursor",
+      needs: { reasoning: "low" },
+    });
+    expect(denied.ok).toBe(false);
+    expect(denied.ok ? "" : denied.error.message).toContain("composer-2.5-fast");
+    expect(denied.ok ? "" : denied.error.message).toContain(
+      "explicitly requested it in this request",
+    );
+    const allowed = resolveRoute(p, {
+      kind: "check",
+      stakes: "standard",
+      provider: "cursor",
+      needs: { reasoning: "low" },
+      allowFast: true,
+    });
+    expect(allowed.ok && allowed.value.model).toBe("composer-2.5-fast");
+  });
+
+  it("does not treat a word that merely contains those letters as fast", () => {
+    expect(isFastModelId("breakfast-7")).toBe(false);
+    expect(isFastModelId("cursor-grok-4.6-high")).toBe(false);
+    expect(isFastModelId("FAST")).toBe(true);
+    expect(isFastModelId("fast")).toBe(true);
+    const p = policy((x) => {
+      x.providers.cursor.build.standard.model = "breakfast-7";
+    });
+    expect(
+      route(p, {
+        kind: "build",
+        stakes: "standard",
+        provider: "cursor",
+      }).model,
+    ).toBe("breakfast-7");
+  });
+
+  it("refuses a fast second-review cell too, unless the caller explicitly allows it", () => {
+    const p = policy((x) => {
+      x.providers.cursor.check.critical.model = "composer-2.5-fast";
+    });
+    const denied = resolveRoute(p, {
+      kind: "decide",
+      stakes: "critical",
+      provider: "cursor",
+    });
+    expect(denied.ok).toBe(false);
+    expect(denied.ok ? "" : denied.error.message).toContain("composer-2.5-fast");
+    const allowed = resolveRoute(p, {
+      kind: "decide",
+      stakes: "critical",
+      provider: "cursor",
+      allowFast: true,
+    });
+    expect(allowed.ok).toBe(true);
+    if (allowed.ok) expect(allowed.value.secondReview?.model).toBe("composer-2.5-fast");
   });
 });
 
@@ -216,7 +280,7 @@ describe("resolveRoute: effort", () => {
         stakes: "critical",
         needs: { reasoning: "low" },
       }).effort,
-    ).toBe("max");
+    ).toBe("high");
     expect(
       route(p, {
         kind: "check",
@@ -294,7 +358,7 @@ describe("resolveRoute: agent floors", () => {
         header: header("medium", "medium", { min_effort: "low" }),
       },
     });
-    expect(noLower.effort).toBe("max");
+    expect(noLower.effort).toBe("high");
   });
 });
 
@@ -412,7 +476,7 @@ describe("resolveRoute: the two ui-designer calls", () => {
     });
   });
 
-  it("pay button loading state: build, critical, high, large -> build.critical, max, large window", () => {
+  it("pay button loading state: build, critical, high, large -> build.critical, high, large window", () => {
     const r = route(policy(), {
       kind: "build",
       stakes: "critical",
@@ -422,7 +486,7 @@ describe("resolveRoute: the two ui-designer calls", () => {
     expect(r).toMatchObject({
       column: "critical",
       model: "cursor.build.critical",
-      effort: "max",
+      effort: "high",
       contextWindow: "1M",
     });
     expect(r.gates).toMatchObject({
@@ -550,7 +614,7 @@ describe("resolveRoute: gates and second review", () => {
     expect(r.secondReview).toMatchObject({
       provider: "cursor",
       model: "cursor.check.critical",
-      effort: "max",
+      effort: "high",
     });
   });
 
@@ -606,7 +670,7 @@ describe("loadPolicy and loadAgent", () => {
       model: "my-build-model",
       effort: "medium",
     });
-    expect(merged.value.providers.claude.check.critical.effort).toBe("max");
+    expect(merged.value.providers.claude.check.critical.effort).toBe("high");
   });
 
   it("an invalid project file is an error naming every problem", () => {

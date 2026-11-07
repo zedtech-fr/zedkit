@@ -21,5 +21,5 @@
 ## Domain and identity
 
 - Public hygiene (`tryCatch`, no secrets): [public-hygiene.md](../../.agents/domain/public-hygiene.md)
-- Cursor pointer: [packages-core.mdc](../../.cursor/rules/packages-core.mdc) only
+- Cursor pointer: [nested.mdc](../../.cursor/rules/nested.mdc) only
   names this file.
