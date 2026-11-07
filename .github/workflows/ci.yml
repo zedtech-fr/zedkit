@@ -278,6 +278,21 @@ jobs:
           path: coverage/
           if-no-files-found: ignore
           retention-days: 14
+      # test:registry imports built dists (ui via the docs identity tests,
+      # seo via docs generate/check helpers) but runs on every affected
+      # scope — including ones that skip both Build steps above. Build
+      # exactly that set here, unconditionally; turbo ^build pulls their
+      # deps, and the turbo cache makes it a no-op when already built.
+      - name: Build (registry deps)
+        run: |
+          extra=()
+          if [ "${RUNNER_ENVIRONMENT}" = "self-hosted" ]; then
+            extra+=(--cache-dir=/runner-cache/turbo)
+          fi
+          pnpm exec turbo run build \
+            --filter=@zedtech/zedkit-seo \
+            --filter=@zedtech/zedkit-ui \
+            "${extra[@]}"
       # deploy/* needs Docker + rsync; Self-hosted runners drop privileges and
       # do not mount docker.sock — keep those tests on github-hosted only.
       - name: test:registry
