@@ -144,7 +144,8 @@ function expectMuseNative(dest: string, preset: string): void {
     if (denied !== "") {
       expect(denied, destName).toContain("write_file");
       expect(denied, destName).toContain("edit_file");
-      expect(denied, destName).toContain("bash");
+      if (name === "test-runner") expect(denied, destName).not.toContain("bash");
+      else expect(denied, destName).toContain("bash");
     }
     expect(text, destName).not.toContain("readonly:");
     if (destName !== name) {

@@ -16,8 +16,8 @@ describe("cursor onboarding copy", () => {
 
   it("documents setup and /setup-ai in cursor-onboarding.md", () => {
     const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
-    expect(md).toContain("npx zedkit-ai setup --provider cursor");
+    expect(md).toContain("npx @zedtech/zedkit-ai setup --provider cursor");
     expect(md).toContain("/setup-ai");
-    expect(md).toContain("npx zedkit-ai validate");
+    expect(md).toContain("npx @zedtech/zedkit-ai validate");
   });
 });

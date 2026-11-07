@@ -21,7 +21,7 @@ Used in place, never copied to the repo as-is:
 
 | Template                                 | Use                                                                                                                               |
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `templates/reader-brief.template.md`     | Self-contained brief pasted into each read-only reader (one per slice from `npx zedkit-ai scan`)                                  |
+| `templates/reader-brief.template.md`     | Self-contained brief pasted into each read-only reader (one per slice from `npx @zedtech/zedkit-ai scan`)                         |
 | `templates/rule-check-brief.template.md` | Self-contained brief for the second reader that checks each rule says what the code does (order, atomicity, timing)               |
 | `templates/reading-log.template.md`      | Shape of `.agents/setup-log/reading.md`: reader rows, merged rules, meaning check, interview gaps (checked by `validate --setup`) |
 
@@ -29,11 +29,11 @@ Used in place, never copied to the repo as-is:
 
 Read in place, never copied wholesale:
 
-| Template                          | Use                                                                                                                      |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `templates/setup-rubric.md`       | Ten axes (0–3 each), hard gates; mean >= 2.5 over **8 measurable axes**; Discovery and Domain rules reported apart       |
-| `templates/setup-log.template.md` | Entry block to append to `.agents/setup-log.md`; plan rows and gate logs checked by **`npx zedkit-ai validate --setup`** |
-| `templates/kit-issue.template.md` | One public-safe kit issue draft per friction found                                                                       |
+| Template                          | Use                                                                                                                               |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `templates/setup-rubric.md`       | Ten axes (0–3 each), hard gates; mean >= 2.5 over **8 measurable axes**; Discovery and Domain rules reported apart                |
+| `templates/setup-log.template.md` | Entry block to append to `.agents/setup-log.md`; plan rows and gate logs checked by **`npx @zedtech/zedkit-ai validate --setup`** |
+| `templates/kit-issue.template.md` | One public-safe kit issue draft per friction found                                                                                |
 
 ## Catalog skills (repo copies)
 

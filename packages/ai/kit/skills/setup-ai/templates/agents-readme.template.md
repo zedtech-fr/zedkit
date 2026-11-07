@@ -11,22 +11,25 @@ Human and agent index for this repo. Always-loaded law lives in root `AGENTS.md`
 4. `/review` — punchlist (agent `reviewer`); `/implement` of findings via `improver`.
 5. Close with `definition-of-done` and `rules-upkeep` (`Rules: none` when nothing to encode).
 
-Every numbered command hands to `orchestrate` (tokenomics + **build team**). Plan, challenge and review: go deep, be strict, and be brutally honest.
+Every numbered command hands to `orchestrate` (tokenomics + **build team**), except `/fix` and `/improve-from-review`, which stay inline. Plan, challenge and review: go deep, be strict, and be brutally honest.
 
 ## Commands (human-triggered)
 
-| Command           | Does                                                    |
-| ----------------- | ------------------------------------------------------- |
-| `/plan`           | Spec, tickets, ladder, assumptions. Never implements.   |
-| `/challenge`      | Attack a plan.                                          |
-| `/implement`      | Build from a challenged plan.                           |
-| `/review`         | Pin the diff, run lenses, one verdict.                  |
-| `/orchestrate`    | Coordinator: frame, dispatch, aggregate. Does not edit. |
-| `/setup-ai`       | Audit and tailor this setup.                            |
-| `/improve-config` | Encode session learnings (skill `rules-upkeep`).        |
-| `/to-audit`       | Topic audit from questions or an unclear plan.          |
-| `/from-audit`     | Challenge an audit against the code; draft tickets.     |
-| `/research`       | Prior-art scout (hands to `orchestrate`).               |
+| Command                | Does                                                    |
+| ---------------------- | ------------------------------------------------------- |
+| `/plan`                | Spec, tickets, ladder, assumptions. Never implements.   |
+| `/challenge`           | Attack a plan.                                          |
+| `/implement`           | Build from a challenged plan.                           |
+| `/review`              | Pin the diff, run lenses, one verdict.                  |
+| `/orchestrate`         | Coordinator: frame, dispatch, aggregate. Does not edit. |
+| `/setup-ai`            | Audit and tailor this setup.                            |
+| `/improve-config`      | Encode session learnings (skill `rules-upkeep`).        |
+| `/to-audit`            | Topic audit from questions or an unclear plan.          |
+| `/from-audit`          | Challenge an audit against the code; draft tickets.     |
+| `/fix`                 | One defect, inline, with its check.                     |
+| `/improve-from-review` | Apply a review punchlist, then encode a reusable miss.  |
+| `/quick-wins`          | `audit <scope>` or `implement <findings or topic>`.     |
+| `/research`            | Prior-art scout (hands to `orchestrate`).               |
 
 Drop rows the preset did not install. Add a row when you add a command.
 

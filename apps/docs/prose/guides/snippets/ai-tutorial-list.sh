@@ -1,1 +1,1 @@
-npx zedkit-ai list
+npx @zedtech/zedkit-ai list

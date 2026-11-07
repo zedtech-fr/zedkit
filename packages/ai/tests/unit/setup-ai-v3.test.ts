@@ -36,7 +36,7 @@ describe("setup-ai v3: read the code first", () => {
       b.indexOf("B3. One batched interview"),
     );
     expect(b).toMatch(/read-only/u);
-    expect(b).toContain("npx zedkit-ai scan");
+    expect(b).toContain("npx @zedtech/zedkit-ai scan");
     expect(b).toContain("templates/reader-brief.template.md");
     expect(b).toContain("templates/reading-log.template.md");
     expect(b).toMatch(/1–5.*6–10.*11–20/su);

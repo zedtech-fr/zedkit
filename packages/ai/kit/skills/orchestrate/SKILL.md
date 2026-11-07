@@ -15,7 +15,8 @@ the parent model, another family, or a fast mode. If the CLI is missing, read
 the same cell from `.agents/tokenomics.md`. If the cell is missing or
 `inherit`, do not spawn. Pass `--allow-fast` only when the user explicitly
 requested fast mode in this request. If the tool rejects the id, stop and
-report the cell.
+report the cell. That is not the unavailable-subagent case: do not continue
+inline and do not write a dispatch plan for that spawn.
 
 If subagents are unavailable, return ready-to-run briefs (`dispatch plan`)
 when a capable caller can run them; otherwise follow the same steps yourself

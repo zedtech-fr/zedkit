@@ -28,7 +28,7 @@ test.describe("home AI setup section", () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(PROMPT);
 
     const terminal = aiSetup.getByRole("region", { name: "Files the AI setup creates" });
-    await expect(terminal).toContainText("npx zedkit-ai setup --provider cursor");
+    await expect(terminal).toContainText("npx @zedtech/zedkit-ai setup --provider cursor");
     await expect(terminal).toContainText("skills/");
     await expect(terminal).toContainText("AGENTS.md");
 

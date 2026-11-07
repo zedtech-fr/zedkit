@@ -64,6 +64,12 @@ export type SyncOptions = {
   prune?: boolean;
   /** Keep generated files whose source agent no longer exists. */
   noPrune?: boolean;
+  /**
+   * Write a fast model id. Only when the user explicitly requested fast
+   * mode in this request. `route`, `validate` and `init`/`setup` take the
+   * same flag.
+   */
+  allowFast?: boolean;
 };
 
 const KIT_SUFFIX = ".kit.md";
@@ -437,6 +443,8 @@ export type AgentSync = {
   noPrune?: boolean | undefined;
   /** When set, a resolved kit copy (conditionals applied) counts as a kit copy for Muse. */
   avail?: Availability | undefined;
+  /** See `SyncOptions.allowFast`. */
+  allowFast?: boolean | undefined;
 };
 
 /** The generating half of `syncKit`: appends what it did (or would do) to `actions`. Throws on a source it cannot generate from. */
@@ -487,18 +495,30 @@ export function syncAgents(input: AgentSync, actions: Action[]): void {
         continue;
       }
       const fileName = destName ?? name;
-      const route = resolveRoute(input.policy, { stakes: "standard", agent: agent.value, provider });
+      const executes = agent.value.header.executes === true;
+      const route = resolveRoute(input.policy, {
+        stakes: "standard",
+        agent: agent.value,
+        provider,
+        ...(input.allowFast === true && { allowFast: true }),
+      });
       if (!route.ok) throw new Error(`${name}: ${route.error.message}`);
       const source = input.source(name) ?? "";
       const kitText = readText(join(kitDir(), "agents", `${name}.md`));
       const made =
         provider === "muse"
-          ? generateMuseAgent({ name: fileName, sourceName: name, source, model: route.value.model })
+          ? generateMuseAgent({
+              name: fileName,
+              sourceName: name,
+              source,
+              model: route.value.model,
+              ...(executes && { keepShell: true }),
+            })
           : generateAgent({
               name,
               source,
               model: route.value.model,
-              readonly: provider === "cursor" && isCheckKind(agent.value.header),
+              readonly: provider === "cursor" && isCheckKind(agent.value.header) && !executes,
             });
       if (!made.ok) {
         if (input.strict === true) throw made.error;
@@ -590,6 +610,7 @@ export function syncKit(options: SyncOptions): Result<Action[]> {
         strict: true,
         prune: options.prune,
         noPrune: options.noPrune,
+        ...(options.allowFast === true && { allowFast: true }),
       },
       actions,
     ),

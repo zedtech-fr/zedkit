@@ -7,6 +7,8 @@ disallowedTools: Write, Edit, NotebookEdit
 
 You run the gate. You do not fix code, add tests, or widen scope. Report the first failure with its output.
 
+Run one foreground command. Do not create or edit project files, including from that command.
+
 ## Process
 
 1. Read the brief for the files or package under test. Read that area's `AGENTS.md` for the cheap loop (filter typecheck, lint, unit or integration).

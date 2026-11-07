@@ -27,6 +27,7 @@ export type AgentHeader = {
     default_kind?: Kind;
     min_stakes?: Stakes;
     min_effort?: Effort;
+    executes?: boolean;
 };
 
 // @public (undocumented)
@@ -36,7 +37,9 @@ export type Cell = {
 };
 
 // @public
-export function checkDrift(projectRoot: string, source: string): Issue[];
+export function checkDrift(projectRoot: string, source: string, options?: {
+    allowFast?: boolean;
+}): Issue[];
 
 // @public (undocumented)
 export const CONTEXT_SIZES: readonly ["small", "medium", "large"];
@@ -98,6 +101,7 @@ export type InstallOptions = {
     dryRun?: boolean;
     adopt?: boolean;
     kit?: string;
+    allowFast?: boolean;
 };
 
 // @public
@@ -215,6 +219,7 @@ export type SyncOptions = {
     dryRun?: boolean;
     prune?: boolean;
     noPrune?: boolean;
+    allowFast?: boolean;
 };
 
 // @public @deprecated (undocumented)

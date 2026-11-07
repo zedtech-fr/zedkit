@@ -24,14 +24,20 @@
       "0350de84818f47f9",
       "06d1a1d284c3e029",
       "10ddc0351f002789",
+      "1642643078fb69e9",
       "1cb19d9599901fbd",
       "20dbe0f7d87b5748",
       "24dd693c454aebce",
       "264fca73065b9948",
       "2efbff6fa379ace3",
+      "30d26b90976774b5",
       "3adc3cfe4b2e25ef",
+      "467e4ee2b18c2d2c",
+      "4b2873bddf479f64",
       "504e497cae3a3217",
       "5063a931ebd9ba23",
+      "5672bae055268cef",
+      "5d955221b267870c",
       "5e442d592e871e02",
       "67817a8e1154a51f",
       "70621f56f0fd51ea",
@@ -41,6 +47,7 @@
       "970f2919b8edd3aa",
       "b0a845e28d90258a",
       "ba65a42646a8ac3c",
+      "c4ff3f123fe35872",
       "e3ae3cf229016c3d",
       "eab625c28c58cf4c",
       "eeaca9748a7f8572",
@@ -94,7 +101,7 @@
     "event-contracts": ["4aaaf83436f00ff9"],
     "implementer": ["b57059813be2e151"],
     "reviewer": ["195647d90ee0ec05", "9fd327052984721a", "fd7c66aeafd45326"],
-    "test-runner": ["7dede3a37254ad3e"]
+    "test-runner": ["7dede3a37254ad3e", "9b0f3818b406ffa2"]
   },
   "commands": {
     "audit": ["776962bba5762b2d"],
@@ -114,6 +121,9 @@
     ],
     "from-audit": ["06669f4b7e355258"],
     "improve-config": ["74e7753dc18a6997"],
-    "to-audit": ["af42ae2b052c2bba"]
+    "to-audit": ["af42ae2b052c2bba"],
+    "fix": ["192977d8f6e185e4"],
+    "improve-from-review": ["4c8d27d400069cce"],
+    "quick-wins": ["6b1fa1643ed8031e"]
   }
 }

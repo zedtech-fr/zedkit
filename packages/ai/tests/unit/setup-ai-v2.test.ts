@@ -51,7 +51,7 @@ describe("setup-ai v2 kit", () => {
     expect(raw).toMatch(/Phase C — Build/u);
     expect(raw).toMatch(/Phase D — Catalog/u);
     expect(raw).toContain("templates/README.md");
-    expect(raw).toContain("npx zedkit-ai setup");
+    expect(raw).toContain("npx @zedtech/zedkit-ai setup");
     expect(raw).toMatch(/never .+ by hand/iu);
   });
 
@@ -467,7 +467,7 @@ describe("setup-ai v2 kit", () => {
   });
 
   it("documents validate --setup completion check in skill, rubric, and phase E checklist", () => {
-    const cmd = "npx zedkit-ai validate --setup";
+    const cmd = "npx @zedtech/zedkit-ai validate --setup";
     const skill = readFileSync(
       join(kitDir(), "skills", "setup-ai", "SKILL.md"),
       "utf8",
@@ -479,7 +479,7 @@ describe("setup-ai v2 kit", () => {
     expect(skill).toMatch(/git status --porcelain -uall/u);
     expect(skill).toMatch(/Phase E checklist \(before you finish\):/u);
     expect(skill).toMatch(
-      /\[ \].*npx zedkit-ai validate --setup.*clean before the closing report/s,
+        /\[ \].*npx @zedtech\/zedkit-ai validate --setup.*clean before the closing report/s,
     );
     const rubric = readFileSync(
       join(kitDir(), "skills", "setup-ai", "templates", "setup-rubric.md"),

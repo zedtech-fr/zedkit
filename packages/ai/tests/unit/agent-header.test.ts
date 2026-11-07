@@ -65,7 +65,7 @@ describe("kit agent files", () => {
     for (const name of names) {
       const front = parseFrontmatter(readFileSync(join(kitDir(), "agents", `${name}.md`), "utf8"));
       if (!front.ok) throw front.error;
-      for (const key of ["role", "default_needs", "kinds", "default_kind", "needs", "kind"]) {
+      for (const key of ["role", "default_needs", "kinds", "default_kind", "needs", "kind", "executes"]) {
         expect(front.value.data, `${name}.${key}`).not.toHaveProperty(key);
       }
     }

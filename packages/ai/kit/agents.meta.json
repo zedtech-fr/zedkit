@@ -166,7 +166,8 @@
       "context": "small"
     },
     "kinds": ["check"],
-    "default_kind": "check"
+    "default_kind": "check",
+    "executes": true
   },
   "test-writer": {
     "role": "adversarial tests",

@@ -202,7 +202,7 @@ function main() {
   if (llmsFullPath) errors.push(...checkLlmsFull(readFileSync(llmsFullPath, "utf8")));
 
   const aiSetupMd = requireFile(outDir, "ai/setup.md", errors);
-  if (aiSetupMd && !readFileSync(aiSetupMd, "utf8").includes("npx zedkit-ai setup")) {
+  if (aiSetupMd && !readFileSync(aiSetupMd, "utf8").includes("npx @zedtech/zedkit-ai setup")) {
     errors.push("ai/setup.md: missing setup command");
   }
 

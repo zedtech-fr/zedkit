@@ -1177,7 +1177,8 @@ describe("installKit", () => {
     // 26 since #440 (`orchestrate`: core's own setup-ai routes follow-ups to /orchestrate).
     // 27 for `compose-ui` (persona chain brief before composing UI).
     // 29 for `from-audit` / `to-audit` (orchestrate-first audit entrypoints).
-    expect(core.length).toBeLessThanOrEqual(29);
+    // 32 for `fix`, `improve-from-review` and `quick-wins` (short path, review punchlist, two-mode topic).
+    expect(core.length).toBeLessThanOrEqual(32);
   });
 
   it("core-installed skills only name skills and agents that core installs", () => {

@@ -30,7 +30,10 @@ export const AI_SETUP_KIT = {
     "codebase-design",
     "research",
     "from-audit",
-    "to-audit"
+    "to-audit",
+    "fix",
+    "improve-from-review",
+    "quick-wins"
   ],
   "agents": [
     "explorer",
@@ -57,7 +60,10 @@ export const AI_SETUP_KIT = {
     "improve-config",
     "research",
     "from-audit",
-    "to-audit"
+    "to-audit",
+    "fix",
+    "improve-from-review",
+    "quick-wins"
   ],
   "installed": [
     {
@@ -173,7 +179,19 @@ export const AI_SETUP_KIT = {
       "kind": "dir"
     },
     {
-      "text": "│  │  └─ to-audit/",
+      "text": "│  │  ├─ to-audit/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  ├─ fix/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  ├─ improve-from-review/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  └─ quick-wins/",
       "kind": "dir"
     },
     {
@@ -273,7 +291,19 @@ export const AI_SETUP_KIT = {
       "kind": "file"
     },
     {
-      "text": "│  │  └─ to-audit.md",
+      "text": "│  │  ├─ to-audit.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ fix.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ improve-from-review.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  └─ quick-wins.md",
       "kind": "file"
     },
     {

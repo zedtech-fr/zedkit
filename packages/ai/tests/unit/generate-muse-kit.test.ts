@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { KIT_HEADERS } from "#agent-header.js";
 import { generateMuseAgent, hasMarker, markerLine, museNativeName } from "#generate.js";
 import { kitDir } from "#kit.js";
 
@@ -61,5 +62,21 @@ describe("generateMuseAgent from kit sources", () => {
     expect(text).toContain("disallowedTools: write_file, edit_file, bash\n");
     expect(text).not.toContain("readonly:");
     expect(bodyOf(text)).toBe(bodyOf(source));
+  });
+
+  it("keeps a shell for test-runner and still denies file tools", () => {
+    expect(KIT_HEADERS["test-runner"]?.executes).toBe(true);
+    const source = kitAgent("test-runner");
+    const text = generateMuseAgent({
+      name: "test-runner",
+      sourceName: "test-runner",
+      source,
+      model: "muse-spark-1.3-contributor",
+      keepShell: true,
+    });
+    if (!text.ok) throw text.error;
+    expect(text.value.text).toContain("disallowedTools: write_file, edit_file\n");
+    expect(text.value.text).not.toContain("bash");
+    expect(bodyOf(text.value.text)).toBe(bodyOf(source));
   });
 });

@@ -257,7 +257,7 @@ describe("cli", () => {
       const result = run("validate", dir);
       expect(result.code, dir).toBe(1);
       expect(result.text, dir).toContain("user file kept");
-      expect(result.text, dir).toContain("npx zedkit-ai sync");
+      expect(result.text, dir).toContain("npx @zedtech/zedkit-ai sync");
     }
   });
 
@@ -412,6 +412,37 @@ describe("cli", () => {
       );
       expect(allowed.code).toBe(0);
       expect(allowed.text).toContain("model: composer-2.5-fast");
+    });
+
+    it("sync and validate take the same --allow-fast the route already accepts", () => {
+      const dir = project(
+        "---\nschema: 1\ndefault_provider: cursor\nproviders:\n  cursor:\n    check:\n      standard: { model: composer-2.5-fast }\n      sensitive: { model: composer-2.5-fast }\n---\n",
+      );
+      put(dir, ".cursor/rules/x.mdc", "x\n");
+      const unknown = run("sync", "--allow-fast", dir);
+      expect(unknown.errors).not.toContain("Unknown option");
+      const denied = run("sync", dir, "--provider", "cursor");
+      expect(denied.code).toBe(2);
+      expect(denied.errors).toContain("--allow-fast");
+      const allowed = run("sync", dir, "--provider", "cursor", "--allow-fast");
+      expect(allowed.code).toBe(0);
+      const validateDenied = run("validate", dir);
+      expect(validateDenied.code).toBe(1);
+      expect(validateDenied.text).toContain("--allow-fast");
+      const validateAllowed = run("validate", dir, "--allow-fast");
+      expect(validateAllowed.code).toBe(0);
+      expect(validateAllowed.text).toContain("ok");
+    });
+
+    it("validate names an adopt sidecar and still exits 0 when nothing else is wrong", () => {
+      const dir = tempDir();
+      put(dir, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+      put(dir, ".agents/skills/zk-alpha/SKILL.md", SKILL("zk-alpha"));
+      const result = run("validate", dir);
+      expect(result.code).toBe(0);
+      expect(result.text).toContain("zk-alpha");
+      expect(result.text).toContain("commands still run your old skill names");
+      expect(result.text).toContain("ok");
     });
 
     it("an omitted kind uses the hint and says so; critical prints the second review route", () => {

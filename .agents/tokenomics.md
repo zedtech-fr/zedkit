@@ -6,25 +6,25 @@ default_provider: cursor
 providers:
   cursor:
     decide:
-      trivial: { model: cursor-grok-4.6-high, effort: medium }
-      standard: { model: cursor-grok-4.6-high, effort: high }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: cursor-grok-4.6-xhigh, effort: medium }
+      standard: { model: cursor-grok-4.6-xhigh, effort: high }
+      sensitive: { model: cursor-grok-4.6-xhigh, effort: high }
+      critical: { model: cursor-grok-4.6-xhigh, effort: max }
     design:
-      trivial: { model: cursor-grok-4.6-high, effort: medium }
-      standard: { model: cursor-grok-4.6-high, effort: high }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: cursor-grok-4.6-xhigh, effort: medium }
+      standard: { model: cursor-grok-4.6-xhigh, effort: high }
+      sensitive: { model: cursor-grok-4.6-xhigh, effort: high }
+      critical: { model: cursor-grok-4.6-xhigh, effort: max }
     build:
-      trivial: { model: cursor-grok-4.6-high, effort: low }
-      standard: { model: cursor-grok-4.6-high, effort: medium }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: cursor-grok-4.6-xhigh, effort: low }
+      standard: { model: cursor-grok-4.6-xhigh, effort: medium }
+      sensitive: { model: cursor-grok-4.6-xhigh, effort: high }
+      critical: { model: cursor-grok-4.6-xhigh, effort: max }
     check:
-      trivial: { model: cursor-grok-4.6-high, effort: low }
-      standard: { model: cursor-grok-4.6-high, effort: medium }
-      sensitive: { model: cursor-grok-4.6-high, effort: high }
-      critical: { model: cursor-grok-4.6-high, effort: max }
+      trivial: { model: cursor-grok-4.6-xhigh, effort: low }
+      standard: { model: cursor-grok-4.6-xhigh, effort: medium }
+      sensitive: { model: cursor-grok-4.6-xhigh, effort: high }
+      critical: { model: cursor-grok-4.6-xhigh, effort: max }
   muse:
     decide:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }

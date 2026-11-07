@@ -36,7 +36,10 @@
       "codebase-design",
       "research",
       "from-audit",
-      "to-audit"
+      "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins"
     ],
     "core": [
       "ponytail",
@@ -67,7 +70,10 @@
       "research",
       "orchestrate",
       "from-audit",
-      "to-audit"
+      "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins"
     ],
     "full": "*"
   },
@@ -109,7 +115,10 @@
     "research",
     "improve-config",
     "from-audit",
-    "to-audit"
+    "to-audit",
+    "fix",
+    "improve-from-review",
+    "quick-wins"
   ],
   "presetAgents": {
     "starter": ["explorer", "verifier", "orchestrator"],
@@ -141,7 +150,10 @@
       "improve-config",
       "research",
       "from-audit",
-      "to-audit"
+      "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins"
     ]
   }
 }

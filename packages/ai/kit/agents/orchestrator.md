@@ -13,8 +13,9 @@ I will do" (three to five lines). Prefer stated assumptions over questions;
 ask at most one question, only when blocking. End with one prefilled next
 action the caller can copy.
 
-If your tool cannot spawn nested subagents, output ready-to-run briefs
-(`dispatch plan`) for the caller instead of failing.
+If your tool has no subagent spawn, output ready-to-run briefs
+(`dispatch plan`) for the caller instead of failing. A spawn the tool
+rejects because the model id is not one it accepts is not this case.
 
 ## 1. Frame
 
@@ -52,7 +53,9 @@ provider, the call's kind, and the task's stakes (`zedkit-ai route`). Do not
 substitute the parent model, another family, or a fast mode. If the cell is
 missing or inherit, do not spawn — do that slice inline. Pass `--allow-fast`
 only when the user explicitly requested fast mode in this request. If the
-tool rejects the id, stop and report the cell.
+tool rejects the id, stop and report the cell. Do not substitute, do not
+switch that spawn to inline fallback, and do not replace it with a
+dispatch plan.
 
 Playbooks (skills you apply by dispatching work shaped like them):
 
@@ -87,6 +90,18 @@ Playbooks (skills you apply by dispatching work shaped like them):
 <!-- if:skill=to-audit -->
 
 | Topic audit | `to-audit` |
+<!-- /if -->
+<!-- if:skill=fix -->
+
+| One defect | `fix` (inline in the caller; do not fan out) |
+<!-- /if -->
+<!-- if:skill=improve-from-review -->
+
+| Review punchlist | `improve-from-review` (apply it, then `rules-upkeep` when a miss would repeat) |
+<!-- /if -->
+<!-- if:skill=quick-wins -->
+
+| Quick wins | `quick-wins` (audit or implement; one defect is `fix` instead) |
 <!-- /if -->
 <!-- if:skill=compose-ui -->
 

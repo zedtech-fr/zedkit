@@ -71,6 +71,9 @@ describe("preset closure", () => {
       "research",
       "from-audit",
       "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins",
     ]);
     expect(agentsForPreset(manifest.value, "setup")).toEqual([
       "explorer",
@@ -98,6 +101,9 @@ describe("preset closure", () => {
       "research",
       "from-audit",
       "to-audit",
+      "fix",
+      "improve-from-review",
+      "quick-wins",
     ]);
   });
 

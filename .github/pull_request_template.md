@@ -2,6 +2,11 @@
 
 ## What
 
+Stakes: <trivial|standard|sensitive|critical>
+
+<!-- `sensitive` or higher names the recorded review. `critical` also needs
+`Second review:` and `Human validation:`. -->
+
 ## Reviews (1–3, chosen by risk)
 
 <!-- 1–3 meaningful reviews, proportionate to the risk of the change: a small

@@ -53,6 +53,11 @@ export type InstallOptions = {
   adopt?: boolean;
   /** Custom kit directory (default: the bundled kit). */
   kit?: string;
+  /**
+   * Write a fast model id from the project's tokenomics. Only when the user
+   * explicitly requested fast mode in this request.
+   */
+  allowFast?: boolean;
 };
 
 export type Action = {
@@ -83,6 +88,7 @@ type Ctx = {
   actions: Action[];
   /** What this preset installs; resolves conditional kit blocks. Set after plan(). */
   avail: Availability;
+  allowFast: boolean;
 };
 
 function lstatOf(path: string): ReturnType<typeof lstatSync> | undefined {
@@ -608,6 +614,7 @@ function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: r
         },
       },
       avail: ctx.avail,
+      ...(ctx.allowFast && { allowFast: true }),
       source: (name) => {
         const resolved = resolveAgentSource(ctx.dest, name, join(ctx.kit, "agents"));
         return resolved === undefined ? undefined : resolveIfNeeded(resolved, ctx.avail);
@@ -680,6 +687,7 @@ export function installKit(options: InstallOptions): Result<Action[]> {
     kit,
     dryRun: options.dryRun ?? false,
     adopt: options.adopt ?? false,
+    allowFast: options.allowFast === true,
     actions: [],
     avail: { skills: new Set(), agents: new Set(), commands: new Set() },
   };

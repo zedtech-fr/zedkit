@@ -136,6 +136,8 @@ describe("resolveRoute: cells", () => {
   it("does not treat a word that merely contains those letters as fast", () => {
     expect(isFastModelId("breakfast-7")).toBe(false);
     expect(isFastModelId("cursor-grok-4.6-high")).toBe(false);
+    expect(isFastModelId("FAST")).toBe(true);
+    expect(isFastModelId("fast")).toBe(true);
     const p = policy((x) => {
       x.providers.cursor.build.standard.model = "breakfast-7";
     });
@@ -148,9 +150,9 @@ describe("resolveRoute: cells", () => {
     ).toBe("breakfast-7");
   });
 
-  it("refuses a fast second-review cell too", () => {
+  it("refuses a fast second-review cell too, unless the caller explicitly allows it", () => {
     const p = policy((x) => {
-      x.providers.cursor.check.critical.model = "review-fast";
+      x.providers.cursor.check.critical.model = "composer-2.5-fast";
     });
     const denied = resolveRoute(p, {
       kind: "decide",
@@ -158,7 +160,15 @@ describe("resolveRoute: cells", () => {
       provider: "cursor",
     });
     expect(denied.ok).toBe(false);
-    expect(denied.ok ? "" : denied.error.message).toContain("review-fast");
+    expect(denied.ok ? "" : denied.error.message).toContain("composer-2.5-fast");
+    const allowed = resolveRoute(p, {
+      kind: "decide",
+      stakes: "critical",
+      provider: "cursor",
+      allowFast: true,
+    });
+    expect(allowed.ok).toBe(true);
+    if (allowed.ok) expect(allowed.value.secondReview?.model).toBe("composer-2.5-fast");
   });
 });
 
