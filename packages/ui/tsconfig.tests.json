@@ -5,7 +5,8 @@
     "noEmit": true,
     "rootDir": ".",
     "incremental": true,
-    "tsBuildInfoFile": "tsconfig.tests.tsbuildinfo"
+    "tsBuildInfoFile": "tsconfig.tests.tsbuildinfo",
+    "types": ["node"]
   },
   "include": [
     "src",

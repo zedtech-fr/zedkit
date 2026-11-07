@@ -1,0 +1,6 @@
+---
+description: Nested AGENTS.md for the folder in play
+globs: "**/packages/**,**/apps/docs/**,**/deploy/**"
+---
+
+Read and follow the nested `AGENTS.md` in the folder you are editing (walk up from the file). That file is the law for the folder. This rule only points; do not copy the rules here. Root `/AGENTS.md` still applies.

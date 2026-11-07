@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, symlinkSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { ALL_PROVIDERS } from "#install.js";
@@ -257,7 +258,7 @@ describe("cli", () => {
       const result = run("validate", dir);
       expect(result.code, dir).toBe(1);
       expect(result.text, dir).toContain("user file kept");
-      expect(result.text, dir).toContain("npx zedkit-ai sync");
+      expect(result.text, dir).toContain("npx @zedtech/zedkit-ai sync");
     }
   });
 
@@ -359,6 +360,25 @@ describe("cli", () => {
       expect(route.needsSource).toEqual({ reasoning: "call", context: "call" });
     });
 
+    it("routes orchestrator to muse when --provider muse despite cursor default_provider", () => {
+      const root = fileURLToPath(new URL("../../../../", import.meta.url));
+      const { code, text } = run(
+        "route",
+        "orchestrator",
+        "--kind",
+        "decide",
+        "--stakes",
+        "standard",
+        "--provider",
+        "muse",
+        "--dir",
+        root,
+      );
+      expect(code).toBe(0);
+      expect(text).toContain("provider: muse");
+      expect(text).toContain("model: muse-wonder-1.0");
+    });
+
     it("reads the project's tokenomics.md and its default_provider", () => {
       const dir = project(
         "---\nschema: 1\ndefault_provider: claude\nproviders:\n  claude:\n    check:\n      sensitive: { model: my-check-model }\n---\n",
@@ -378,6 +398,144 @@ describe("cli", () => {
       expect(text).toContain("model: my-check-model");
     });
 
+    it("exits 2 on a fast cell unless --allow-fast", () => {
+      const dir = project(
+        "---\nschema: 1\ndefault_provider: cursor\nproviders:\n  cursor:\n    check:\n      standard: { model: composer-2.5-fast }\n---\n",
+      );
+      const denied = run(
+        "route",
+        "verifier",
+        "--kind",
+        "check",
+        "--stakes",
+        "standard",
+        "--reasoning",
+        "low",
+        "--dir",
+        dir,
+      );
+      expect(denied.code).toBe(2);
+      expect(denied.errors).toContain("composer-2.5-fast");
+      expect(denied.errors).toContain("explicitly requested it in this request");
+      const allowed = run(
+        "route",
+        "verifier",
+        "--kind",
+        "check",
+        "--stakes",
+        "standard",
+        "--reasoning",
+        "low",
+        "--allow-fast",
+        "--dir",
+        dir,
+      );
+      expect(allowed.code).toBe(0);
+      expect(allowed.text).toContain("model: composer-2.5-fast");
+    });
+
+    it("sync and validate take the same --allow-fast the route already accepts", () => {
+      const dir = project(
+        "---\nschema: 1\ndefault_provider: cursor\nproviders:\n  cursor:\n    check:\n      standard: { model: composer-2.5-fast }\n      sensitive: { model: composer-2.5-fast }\n---\n",
+      );
+      put(dir, ".cursor/rules/x.mdc", "x\n");
+      const unknown = run("sync", "--allow-fast", dir);
+      expect(unknown.errors).not.toContain("Unknown option");
+      const denied = run("sync", dir, "--provider", "cursor");
+      expect(denied.code).toBe(2);
+      expect(denied.errors).toContain("--allow-fast");
+      const allowed = run("sync", dir, "--provider", "cursor", "--allow-fast");
+      expect(allowed.code).toBe(0);
+      const validateDenied = run("validate", dir);
+      expect(validateDenied.code).toBe(1);
+      expect(validateDenied.text).toContain("--allow-fast");
+      const validateAllowed = run("validate", dir, "--allow-fast");
+      expect(validateAllowed.code).toBe(0);
+      expect(validateAllowed.text).toContain("ok");
+    });
+
+    it("init and setup take --allow-fast and write nothing when a fast cell is refused", () => {
+      const fast = `---
+schema: 1
+default_provider: cursor
+providers:
+  cursor:
+    check:
+      standard: { model: composer-2.5-fast }
+      sensitive: { model: composer-2.5-fast }
+---
+`;
+      for (const command of ["init", "setup"] as const) {
+        const dest = tempDir();
+        put(dest, ".agents/tokenomics.md", fast);
+        const unknown = run(command, "--allow-fast", dest, "--provider", "cursor");
+        expect(unknown.errors, command).not.toContain("Unknown option");
+        const empty = tempDir();
+        put(empty, ".agents/tokenomics.md", fast);
+        const denied = run(command, empty, "--provider", "cursor");
+        expect(denied.code, command).toBe(2);
+        expect(denied.errors, command).toContain("--allow-fast");
+        expect(existsSync(join(empty, "AGENTS.md")), command).toBe(false);
+        expect(existsSync(join(empty, ".cursor")), command).toBe(false);
+        const allowed = tempDir();
+        put(allowed, ".agents/tokenomics.md", fast);
+        const ok = run(command, allowed, "--provider", "cursor", "--allow-fast");
+        expect(ok.code, command).toBe(0);
+        expect(existsSync(join(allowed, "AGENTS.md")), command).toBe(true);
+      }
+    });
+
+    it("setup refuses a custom agent's fast cell before writing", () => {
+      const dest = tempDir();
+      const policy = `---
+schema: 1
+default_provider: cursor
+providers:
+  cursor:
+    check:
+      critical: { model: composer-2.5-fast }
+---
+`;
+      const agent = "# custom-check\n\nProject check.\n";
+      const meta = `${JSON.stringify(
+        {
+          "custom-check": {
+            role: "custom check",
+            default_needs: { reasoning: "medium", context: "medium" },
+            default_kind: "check",
+            min_stakes: "critical",
+          },
+        },
+        null,
+        2,
+      )}\n`;
+      put(dest, ".agents/tokenomics.md", policy);
+      put(dest, ".agents/agents/custom-check.md", agent);
+      put(dest, ".agents/agents.meta.json", meta);
+      const denied = run("setup", dest, "--provider", "cursor");
+      expect(denied.code).toBe(2);
+      expect(denied.errors).toContain("custom-check");
+      expect(denied.errors).toContain("composer-2.5-fast");
+      expect(denied.errors).toContain("--allow-fast");
+      expect(existsSync(join(dest, "AGENTS.md"))).toBe(false);
+      expect(existsSync(join(dest, ".cursor"))).toBe(false);
+      expect(existsSync(join(dest, ".agents/skills"))).toBe(false);
+      expect(readFileSync(join(dest, ".agents/agents/custom-check.md"), "utf8")).toBe(agent);
+      expect(readFileSync(join(dest, ".agents/tokenomics.md"), "utf8")).toBe(policy);
+      expect(readFileSync(join(dest, ".agents/agents.meta.json"), "utf8")).toBe(meta);
+    });
+
+    it("validate names an adopt sidecar and still exits 0 when nothing else is wrong", () => {
+      const dir = tempDir();
+      put(dir, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+      put(dir, ".agents/skills/zk-alpha/SKILL.md", SKILL("zk-alpha"));
+      const result = run("validate", dir);
+      expect(result.code).toBe(0);
+      expect(result.text).toContain("zk-alpha");
+      expect(result.text).toContain("commands still run your old skill names");
+      expect(result.text).toContain("ok");
+    });
+
     it("an omitted kind uses the hint and says so; critical prints the second review route", () => {
       const { text } = run(
         "route",
@@ -391,7 +549,7 @@ describe("cli", () => {
       );
       expect(text).toContain("kind: check (hint)");
       expect(text).toContain("note: kind not given, using check (hint)");
-      expect(text).toContain("second review: cursor model inherit effort max");
+      expect(text).toContain("second review: cursor model inherit effort high");
       expect(text).toContain("warning: cannot prove distinct model");
     });
 

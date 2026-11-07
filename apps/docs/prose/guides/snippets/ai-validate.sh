@@ -1,1 +1,1 @@
-npx zedkit-ai validate
+npx @zedtech/zedkit-ai validate

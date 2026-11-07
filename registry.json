@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "zedkit",
-  "homepage": "https://github.com/zedtech-fr/zedkit",
+  "homepage": "https://zedkit.app",
   "items": [
     {
       "name": "theme",

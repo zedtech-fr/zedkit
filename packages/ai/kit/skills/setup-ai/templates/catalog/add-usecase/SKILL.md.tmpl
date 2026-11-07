@@ -1,0 +1,28 @@
+---
+name: add-usecase
+description: "Add one use case with a fine driving port, colocated types/tests, and wiring. Use when the repo uses hexagonal ports and a new entry point is an action, not a layer dump."
+---
+
+# Add use case
+
+One action, one port, one folder. Copy the nearest existing use-case in this repo; do not invent a layout.
+
+## Before you start
+
+1. Read the root `AGENTS.md` and the nested file for the domain folder. Read [product](../../product.md) and the [domain rules](../../domain/) for the area.
+2. Find one shipped use-case of the same shape and read its files. Copy its structure, not its code.
+3. Skip this skill for a single-file tweak; just make the change.
+
+## Steps
+
+1. **Name the action** (verb, kebab-case). One public `execute(...)` on a fine driving port. No sibling use-case calls.
+2. **Colocate** the port, implementation, tests, and any single-consumer types or pure helpers in one folder. Promote a helper to a shared collaborator only when a second consumer needs it.
+3. **Test first.** Every branch and guard, null/empty inputs, dependency failure, idempotency where there are side effects. Unit and integration are primary.
+4. **Wire** the port in the same module style the reference use-case uses. Export the port, not the class, if that is the local convention.
+5. **Prove.** Run the cheap loop from the nested `AGENTS.md`.
+
+## Done when
+
+- The new action has a port, an implementation, and tests next to it.
+- No sibling use-case is injected.
+- Gates for this folder are green, or skipped with a reason.

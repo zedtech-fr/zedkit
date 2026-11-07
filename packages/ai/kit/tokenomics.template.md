@@ -38,3 +38,9 @@ the cell for the call (kind x stakes) decides.
   independent review and a human validation line before merge.
 - Record the cell used, with its kind and stakes, in the plan and the setup
   log.
+- A spawn uses this file's cell for the running provider, the call's kind,
+  and the task's stakes. Pass that model id. Do not substitute the parent
+  model, another family, or a fast mode. If the cell is missing or `inherit`,
+  do not spawn.
+- Never spawn a fast mode, or a model id with a `fast` token, unless the user
+  explicitly requested fast mode in this request.

@@ -1,8 +1,8 @@
 # Reading log
 
-Written in phase B to `.agents/setup-log/reading.md` after the readers report. `npx zedkit-ai validate --setup` checks it (axis D1): one numbered row per reader, scaled to the repo (see `npx zedkit-ai scan`), plus `file:line` evidence, and a run-budget statement.
+Written in phase B to `.agents/setup-log/reading.md` after the readers report. `npx @zedtech/zedkit-ai validate --setup` checks it (axis D1): one numbered row per reader, scaled to the repo (see `npx @zedtech/zedkit-ai scan`), plus `file:line` evidence, and a run-budget statement.
 
-**Repo size:** {small|medium|large} ({n} files) — {n} readers, one per slice (from `npx zedkit-ai scan`).
+**Repo size:** {small|medium|large} ({n} files) — {n} readers, one per slice (from `npx @zedtech/zedkit-ai scan`).
 **Cell:** readers ran as `check` at `trivial`/`standard` ({model or `inherit`}); synthesis as `decide` at `sensitive` or above. See `.agents/tokenomics.md`.
 **Budget:** {A1 run budget, or `none found`} — every reader stayed within it. The only overrun allowed is owner-approved, one line under **Budget exceptions**.
 **Budget exceptions:** none — or `owner-approved: reader {n} read {x} files (budget {y}), approved by interview Q{k}`.
@@ -14,7 +14,7 @@ Written in phase B to `.agents/setup-log/reading.md` after the readers report. `
 
 ## Rule map
 
-Every rule or skill file the repo already owns for one provider (Cursor `.cursor/rules/*.mdc` with `globs:`, folder-level `<folder>/.cursor/rules` and `skills`, `.claude/rules`) is invisible to the other providers. One row per file, by full path (`npx zedkit-ai validate --setup` checks that none is missing). Never copy the law: one law, one owner.
+Every rule or skill file the repo already owns for one provider (Cursor `.cursor/rules/*.mdc` with `globs:`, folder-level `<folder>/.cursor/rules` and `skills`, `.claude/rules`) is invisible to the other providers. One row per file, by full path (`npx @zedtech/zedkit-ai validate --setup` checks that none is missing). Never copy the law: one law, one owner.
 
 | File                                         | Scope (globs or folder) | Decision              | Where other providers find it                                  |
 | -------------------------------------------- | ----------------------- | --------------------- | -------------------------------------------------------------- |
@@ -44,7 +44,7 @@ Rules the lead kept after dedupe and spot-checks. These feed `.agents/domain/*.m
 
 ## Meaning check
 
-Written after the checkers report (see `templates/rule-check-brief.template.md`). One row per checked rule; every rule about order, atomicity, timing, retries or idempotency is here, the rest are sampled. A `partial` or `mismatch` needs a resolution: `rewritten` (the merged rule now says what the code does), `dropped`, or `conflict` (the doc's claim is kept as a code vs docs conflict). `npx zedkit-ai validate --setup` fails on an unresolved row and on an order or atomicity rule with no row.
+Written after the checkers report (see `templates/rule-check-brief.template.md`). One row per checked rule; every rule about order, atomicity, timing, retries or idempotency is here, the rest are sampled. A `partial` or `mismatch` needs a resolution: `rewritten` (the merged rule now says what the code does), `dropped`, or `conflict` (the doc's claim is kept as a code vs docs conflict). `npx @zedtech/zedkit-ai validate --setup` fails on an unresolved row and on an order or atomicity rule with no row.
 
 | ID   | Verdict  | Code does                                                   | Resolution |
 | ---- | -------- | ----------------------------------------------------------- | ---------- |

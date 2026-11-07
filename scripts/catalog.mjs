@@ -428,7 +428,7 @@ function expectedManifestFields(pkg) {
   return {
     description,
     keywords: pkg.meta.keywords,
-    homepage: `${REPO_URL}/tree/main/${directory}`,
+    homepage: "https://zedkit.app",
     bugs: { url: `${REPO_URL}/issues` },
     repositoryDirectory: directory,
   };

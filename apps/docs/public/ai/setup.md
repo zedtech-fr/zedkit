@@ -21,7 +21,7 @@ Install `@zedtech/zedkit-ai`, wire your coding agent tool with adopt mode, run `
 2. **Install the kit with adopt** (keeps existing agent files on name collision — kit copies land beside yours as `*.kit.md` / `zk-<name>`; **`setup` uses the `setup` preset by default** — override with `--preset` when needed):
 
    ```sh
-   npx zedkit-ai setup --provider cursor
+   npx @zedtech/zedkit-ai setup --provider cursor
    ```
 
    **`--provider`** accepts `cursor`, `muse`, `claude`, `codex`, or comma-separated names (`cursor,muse`). Use `all` to wire every supported runtime. Match the tool the user asked for.
@@ -34,14 +34,14 @@ Install `@zedtech/zedkit-ai`, wire your coding agent tool with adopt mode, run `
 
    Follow the skill through **verify**: run the gate commands it lists, apply the approved plan, finish the report.
 
-   Phase **B** starts by **reading the code**, not by asking: the agent runs `npx zedkit-ai scan`, then spawns read-only subagents on a cheap, fast model (1–5 on a small repo, 10–20 on a big one) that report the rules already in place with `file:line` evidence. It writes them to domain rules, nested `AGENTS.md` files and `.agents/tokenomics.md`, then runs `zedkit-ai sync`, so later agent work in the repo keeps the same cheap-reads, strong-decides split.
+   Phase **B** starts by **reading the code**, not by asking: the agent runs `npx @zedtech/zedkit-ai scan`, then spawns read-only subagents on the `check`/`standard` cell (1–5 small, 6–10 medium, 11–20 large) using that cell’s listed id that is not a fast id. They report the rules already in place with `file:line` evidence. It writes them to domain rules, nested `AGENTS.md` files and `.agents/tokenomics.md`, then runs `zedkit-ai sync`, so later agent work in the repo keeps the same cheap-reads, strong-decides split.
 
    Then **answer or delegate the batched discovery interview** (at most 8 questions in one batch, only what the code could not answer); do not skip the interview or substitute guesses for owner answers.
 
 4. **Validate**:
 
    ```sh
-   npx zedkit-ai validate
+   npx @zedtech/zedkit-ai validate
    ```
 
    **Statically valid when** exit code is `0` and stdout is exactly:
@@ -54,7 +54,7 @@ Install `@zedtech/zedkit-ai`, wire your coding agent tool with adopt mode, run `
 
    Fix every reported path until validate is clean. If the repo uses Prettier, add the kit paths from the CLI **`prettier:`** hint to `.prettierignore` (or approve that row in the setup-ai plan) so `prettier --check .` stays green.
 
-   For a deeper check, `npx zedkit-ai validate --setup` also verifies the setup went deep: a reading log, domain rules, nested `AGENTS.md` and model routing.
+   For a deeper check, `npx @zedtech/zedkit-ai validate --setup` also verifies the setup went deep: a reading log, domain rules, nested `AGENTS.md` and model routing.
 
 ## Rules
 

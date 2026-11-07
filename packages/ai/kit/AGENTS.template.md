@@ -35,17 +35,17 @@ that holds<!-- if:skill=ponytail-review --> (skill `ponytail-review`)<!-- /if --
 ## How to work
 
 - **Verify, do not guess.** Read the source before relying on an API, flag,
-  path or version. (skill `ground-truth`)
+  path or version. List assumptions before code or a plan. (skill `ground-truth`)
 - **Smallest complete change.** No abstraction, option or dependency nobody
   asked for.<!-- if:skill=ponytail --> (skill `ponytail`)<!-- /if -->
-- **Parallelize independent work, route by kind × stakes.** Fan out read-only work; set the model on every spawn. (skill `parallel-work`; `.agents/tokenomics.md`)
-- **Route by shape.** Atomic low-risk change: do it inline and run the relevant check. Multi-step, multi-lens, or cross-area work: go through `orchestrate` (sequential stays sequential; the coordinator never edits). Guided plan and implement playbooks ship with the setup, core and full presets; starter keeps review plus specialists.
+- **Parallelize independent work, route by kind × stakes.** Fan out read-only work; set every spawn to the cell in `.agents/tokenomics.md`. Do not substitute, and do not use a fast mode unless the user explicitly requested it in this request. (skill `parallel-work`; `.agents/tokenomics.md`)
+- **Route by shape.** One defect: do it inline and run its check<!-- if:skill=fix --> (`/fix`; do not fan out)<!-- /if -->. Multi-step, multi-lens, or cross-area work: go through `orchestrate` (read tokenomics, pick a team; sequential stays sequential; the coordinator never edits).<!-- if:skill=improve-from-review --> Review feedback: `/improve-from-review` (apply the punchlist, then encode a reusable miss).<!-- /if --><!-- if:skill=quick-wins --> One topic, small wins: `/quick-wins` (audit mode or implement mode).<!-- /if --> Guided plan and implement playbooks ship with the setup, core and full presets; starter keeps review plus specialists.
 - **Tests first, adversarial; unit and integration tests are primary.** Bug fix starts with a failing test. Contract or Pact tests when a boundary earns them. E2E/browser only for an explicitly justified critical user path — not a default battery or count. (skills `tdd`, `adversarial-tests`)
-- **Small PRs from fresh trunk,** split along seams, never a broken middle.
+- **Small PRs from fresh trunk.** File budget: green ≤20, orange 21–30 (warn), red >30 (warn, do not stop). Split along seams; ignore generated files.
 - **Done means proven.** Gates run on the final state, no weakened tests, a
   cold second review. (skill `definition-of-done`, agent `verifier`)<!-- if:skill=compose-ui --> Before composing UI, run `/compose-ui` (persona chain: client business → personas → the client's customers → their personas → UI choices).<!-- /if -->
 - **Review from the users' angles:** <who uses this? e.g. new user, integrating developer or agent, operator>. Cite tests and observable behavior.<!-- if:skill=persona-review --> (skill `persona-review`)<!-- /if -->
-- **Keep this setup true.** Update the rule in the same turn a decision or correction comes up.<!-- if:skill=rules-upkeep --> (skill `rules-upkeep`)<!-- /if -->
+- **Keep this setup true.** Before you search, read your topic's row in `.agents/atlas.md`; a search that cost 3+ reads, a moved path or a changed command fixes that row. Encode the first reusable correction that changed the work, same turn. Close coding work with `Rules: none` or `Rules: <file> — <change>`.<!-- if:skill=rules-upkeep --> (skill `rules-upkeep`)<!-- /if --><!-- if:skill=improve-from-review --> A pasted review goes through `/improve-from-review`, which applies it and then does this step.<!-- /if -->
 
 ## Commands
 

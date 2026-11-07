@@ -30,6 +30,11 @@ export type AgentHeader = {
   /** Per-agent floors; the project's `tokenomics.md` wins when both set one. */
   min_stakes?: Stakes;
   min_effort?: Effort;
+  /**
+   * This agent must run a command. Muse then keeps `bash` (file tools stay
+   * denied) and Cursor does not set `readonly`.
+   */
+  executes?: boolean;
 };
 
 /** Where a header came from: the project sidecar, the shipped kit table, or the headerless default. */
@@ -48,7 +53,7 @@ const isOneOf = <T extends string>(list: readonly T[], value: unknown): value is
   typeof value === "string" && (list as readonly string[]).includes(value);
 
 /** Header keys, wherever they are stored. */
-export const HEADER_KEYS = ["role", "default_needs", "kinds", "default_kind", "min_stakes", "min_effort"] as const;
+export const HEADER_KEYS = ["role", "default_needs", "kinds", "default_kind", "min_stakes", "min_effort", "executes"] as const;
 
 /** True when `data` carries at least one header key. */
 export function hasHeaderKeys(data: Record<string, unknown>): boolean {
@@ -117,6 +122,7 @@ export function parseAgentHeader(data: Record<string, unknown>, required: boolea
   const defaultKind = checkDefaultKind(data.default_kind, kinds, issues);
   const minStakes = optionalEnum(STAKES, data.min_stakes, "min_stakes", issues);
   const minEffort = optionalEnum(EFFORTS, data.min_effort, "min_effort", issues);
+  const executes = checkExecutes(data.executes, issues);
   if (issues.length > 0 || role === undefined || needs === undefined) return { issues };
   return {
     issues,
@@ -127,8 +133,18 @@ export function parseAgentHeader(data: Record<string, unknown>, required: boolea
       ...(defaultKind && { default_kind: defaultKind }),
       ...(minStakes && { min_stakes: minStakes }),
       ...(minEffort && { min_effort: minEffort }),
+      ...(executes !== undefined && { executes }),
     },
   };
+}
+
+function checkExecutes(value: unknown, issues: string[]): boolean | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== "boolean") {
+    issues.push("executes must be true or false");
+    return undefined;
+  }
+  return value;
 }
 
 function checkRole(value: unknown, required: boolean, issues: string[]): string | undefined {

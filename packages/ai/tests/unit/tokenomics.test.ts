@@ -45,10 +45,10 @@ describe("shipped defaults", () => {
 
   it("ship the default effort table", () => {
     const cursor = defaults().providers.cursor;
-    expect(STAKES.map((s) => cursor.decide[s].effort)).toEqual(["medium", "high", "high", "max"]);
-    expect(STAKES.map((s) => cursor.design[s].effort)).toEqual(["medium", "high", "high", "max"]);
-    expect(STAKES.map((s) => cursor.build[s].effort)).toEqual(["low", "medium", "high", "max"]);
-    expect(STAKES.map((s) => cursor.check[s].effort)).toEqual(["low", "medium", "high", "max"]);
+    expect(STAKES.map((s) => cursor.decide[s].effort)).toEqual(["medium", "high", "high", "high"]);
+    expect(STAKES.map((s) => cursor.design[s].effort)).toEqual(["medium", "high", "high", "high"]);
+    expect(STAKES.map((s) => cursor.build[s].effort)).toEqual(["medium", "medium", "high", "high"]);
+    expect(STAKES.map((s) => cursor.check[s].effort)).toEqual(["medium", "medium", "high", "high"]);
   });
 
   it("ship the gate floors and a global default for needs", () => {

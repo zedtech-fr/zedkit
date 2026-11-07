@@ -4,7 +4,9 @@ import { describe, expect, it } from "vitest";
 import { kitDir } from "#kit.js";
 
 function commandFiles(): string[] {
-  return readdirSync(join(kitDir(), "commands")).filter((f) => f.endsWith(".md"));
+  return readdirSync(join(kitDir(), "commands")).filter((f) =>
+    f.endsWith(".md"),
+  );
 }
 
 function bodyOf(file: string): string {
@@ -24,12 +26,20 @@ describe("command shape", () => {
     for (const file of files) {
       const name = file.replace(/\.md$/, "");
       if (name === "setup-ai") {
-        expect(bodyOf(file), file).toContain("Before anything else, tell the user");
+        expect(bodyOf(file), file).toContain(
+          "Before anything else, tell the user",
+        );
         expect(bodyOf(file), file).toContain("Tell the user first");
         expect(bodyOf(file), file).toContain("before any tool call");
         expect(bodyOf(file), file).toContain(
           "Then run the `setup-ai` skill on `$ARGUMENTS`",
         );
+        continue;
+      }
+      if (name === "improve-config") {
+        expect(bodyOf(file), file).toContain("`rules-upkeep`");
+        expect(bodyOf(file), file).toContain("`improve-config`");
+        expect(bodyOf(file), file).toContain("$ARGUMENTS");
         continue;
       }
       expect(bodyOf(file), file).toBe(defaultBody(name));

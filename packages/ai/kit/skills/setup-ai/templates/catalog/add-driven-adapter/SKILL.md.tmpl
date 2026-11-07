@@ -1,0 +1,28 @@
+---
+name: add-driven-adapter
+description: "Add an outbound adapter that implements a driven port (database, HTTP client, or message publisher). Use when domain code needs a new side effect behind a port."
+---
+
+# Add driven adapter
+
+The domain owns the port. This skill writes the adapter that implements it, plus tests. Copy the nearest adapter in this repo.
+
+## Before you start
+
+1. Read the nested `AGENTS.md` for the adapter folder. Read [product](../../product.md) and the [domain rules](../../domain/) for what the port must guarantee (retries, idempotency, tenancy).
+2. Open the driven port this adapter will implement. If the port does not exist, stop and add the use-case / port first.
+3. Find one shipped adapter of the same kind (database, HTTP, publisher) and copy its shape.
+
+## Steps
+
+1. **Implement the port** in the adapter folder the repo already uses. No business rules here — map, call, translate errors.
+2. **Do not leak** adapter types into domain. Map at the boundary.
+3. **Test** the adapter against the port: happy path, timeout/error, empty result, duplicate call when the port is retry-safe. Prefer the repo's existing test double style.
+4. **Wire** the adapter in the same module the reference uses.
+5. **Prove.** Run the cheap loop from the nested `AGENTS.md`.
+
+## Done when
+
+- The adapter implements the port; domain tests still do not import the adapter.
+- Failure modes the port documents have tests.
+- Gates for this folder are green, or skipped with a reason.

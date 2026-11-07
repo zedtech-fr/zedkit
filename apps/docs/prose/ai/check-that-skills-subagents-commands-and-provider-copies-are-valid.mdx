@@ -23,7 +23,7 @@ Generated agent files are checked with `zedkit-ai sync --check` (exit 1 when
 they lag `.agents/agents` or `.agents/tokenomics.md`):
 
 ```text
-.cursor/agents/verifier.md: out of date, run: npx zedkit-ai sync
+.cursor/agents/verifier.md: out of date, run: npx @zedtech/zedkit-ai sync
 1 out of date
 ```
 
@@ -48,7 +48,7 @@ count and one slice per reader.
 
 ## Troubleshooting
 
-- `out of date, run: npx zedkit-ai sync` — a generated `.cursor/agents` or
+- `out of date, run: npx @zedtech/zedkit-ai sync` — a generated `.cursor/agents` or
   `.claude/agents` file lags `.agents/agents` or `.agents/tokenomics.md`. Run
   `zedkit-ai sync` (add `--check` in CI).
 - `differs from …; user copy kept` — a provider file `sync` did not write no

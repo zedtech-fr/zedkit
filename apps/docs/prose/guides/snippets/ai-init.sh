@@ -1,1 +1,1 @@
-npx zedkit-ai init . --provider cursor
+npx @zedtech/zedkit-ai init . --provider cursor

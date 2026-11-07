@@ -1,6 +1,6 @@
 # Reader brief
 
-Paste into each read-only reader subagent, one per slice from `npx zedkit-ai scan`. The brief is self-contained: the reader has none of your context. Replace the `{…}` fields only. Never name the repo's private project or customer in a public repo's files.
+Paste into each read-only reader subagent, one per slice from `npx @zedtech/zedkit-ai scan`. The brief is self-contained: the reader has none of your context. Replace the `{…}` fields only. Never name the repo's private project or customer in a public repo's files.
 
 ---
 

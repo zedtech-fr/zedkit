@@ -13,7 +13,7 @@ test.describe("agents table icons (#428)", () => {
     const agentsTable = page.getByRole("table").filter({ has: page.getByRole("columnheader", { name: "Agent" }) });
     await expect(agentsTable).toBeVisible();
     const icons = agentsTable.locator("svg[aria-hidden='true']");
-    await expect(icons).toHaveCount(18);
+    await expect(icons).toHaveCount(23);
 
     for (const width of [360, 390] as const) {
       await page.setViewportSize({ width, height: 844 });
@@ -29,7 +29,7 @@ test.describe("agents table icons (#428)", () => {
 
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(agentsTable.locator("svg[aria-hidden='true']")).toHaveCount(18);
+    await expect(agentsTable.locator("svg[aria-hidden='true']")).toHaveCount(23);
   });
 });
 
@@ -37,8 +37,8 @@ test.describe("AI command and lens lists (#762)", () => {
   test("each name keeps a decorative icon without overflow at phone width", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await expect(page.locator("[data-kit-names='command'] svg[aria-hidden='true']")).toHaveCount(10);
-    await expect(page.locator("[data-kit-names='lens'] svg[aria-hidden='true']")).toHaveCount(17);
+    await expect(page.locator("[data-kit-names='command'] svg[aria-hidden='true']")).toHaveCount(13);
+    await expect(page.locator("[data-kit-names='lens'] svg[aria-hidden='true']")).toHaveCount(19);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
     );

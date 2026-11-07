@@ -5,7 +5,11 @@ import { parseArgs } from "node:util";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { checkHardcodedModels } from "./hardcode.js";
 import { ALL_PROVIDERS, installKit, type Provider } from "./install.js";
-import { installNextStepLines, prettierHintLines } from "./install-next-step.js";
+import {
+  adoptReconcileLines,
+  installNextStepLines,
+  prettierHintLines,
+} from "./install-next-step.js";
 import { kitDir, readManifest } from "./kit.js";
 import { loadAgent, loadPolicy, resolveRoute, type Route } from "./route.js";
 import { scanRepo } from "./scan.js";
@@ -26,21 +30,35 @@ import {
   REASONING,
   STAKES,
 } from "./tokenomics.js";
+import { checkAtlas } from "./atlas.js";
 import { checkDepth } from "./setup-depth.js";
 import { checkSetup } from "./setup-check.js";
-import { checkDrift, checkKitDocs, checkPlaceholders, validateKit } from "./validate.js";
+import {
+  checkDrift,
+  checkKitDocs,
+  checkPlaceholders,
+  validateKit,
+} from "./validate.js";
 
 // Help text lives in kit/usage.txt (shipped data, not code); the one-line
 // fallback keeps --help total on a broken install.
 function usage(): string {
-  const read = tryCatch(() => readFileSync(join(kitDir(), "usage.txt"), "utf8"));
+  const read = tryCatch(() =>
+    readFileSync(join(kitDir(), "usage.txt"), "utf8"),
+  );
   return read.ok ? read.value.trimEnd() : "zedkit-ai <command>";
 }
 
 /** Where the CLI writes: normal lines and error lines. */
-export type Sinks = { out: (line: string) => void; err: (line: string) => void };
+export type Sinks = {
+  out: (line: string) => void;
+  err: (line: string) => void;
+};
 
-type Parsed = { values: Record<string, string | boolean | undefined>; positionals: string[] };
+type Parsed = {
+  values: Record<string, string | boolean | undefined>;
+  positionals: string[];
+};
 
 const OPTIONS = {
   preset: { type: "string" },
@@ -48,11 +66,13 @@ const OPTIONS = {
   target: { type: "string" },
   adopt: { type: "boolean" },
   "dry-run": { type: "boolean" },
+  "allow-fast": { type: "boolean" },
 } as const;
 
 const VALIDATE_OPTIONS = {
   setup: { type: "boolean" },
   plan: { type: "string" },
+  "allow-fast": { type: "boolean" },
 } as const;
 
 const ROUTE_OPTIONS = {
@@ -63,6 +83,7 @@ const ROUTE_OPTIONS = {
   provider: { type: "string" },
   dir: { type: "string" },
   json: { type: "boolean" },
+  "allow-fast": { type: "boolean" },
 } as const;
 
 const STAKES_OPTIONS = {
@@ -79,6 +100,7 @@ const SYNC_OPTIONS = {
   prune: { type: "boolean" },
   "no-prune": { type: "boolean" },
   quiet: { type: "boolean" },
+  "allow-fast": { type: "boolean" },
 } as const;
 
 function parse(
@@ -92,20 +114,33 @@ function parse(
     | typeof SYNC_OPTIONS,
   maxPositionals: number,
 ): Result<Parsed> {
-  const parsed = tryCatch(() => parseArgs({ args, allowPositionals: true, options }));
+  const parsed = tryCatch(() =>
+    parseArgs({ args, allowPositionals: true, options }),
+  );
   if (!parsed.ok) return err(parsed.error);
   if (parsed.value.positionals.length > maxPositionals) {
-    return err(new Error(`unexpected argument "${parsed.value.positionals[maxPositionals]}" (run 'zedkit-ai --help' for usage)`));
+    return err(
+      new Error(
+        `unexpected argument "${parsed.value.positionals[maxPositionals]}" (run 'zedkit-ai --help' for usage)`,
+      ),
+    );
   }
   return ok(parsed.value as Parsed);
 }
 
-function parseProviders(value: string | boolean | undefined): Result<readonly (Provider | string)[] | undefined> {
+function parseProviders(
+  value: string | boolean | undefined,
+): Result<readonly (Provider | string)[] | undefined> {
   if (value === undefined) return ok(undefined);
-  const names = String(value).split(",").map((s) => s.trim());
+  const names = String(value)
+    .split(",")
+    .map((s) => s.trim());
   if (names.includes("all")) return ok(undefined);
   const bad = names.find((n) => !ALL_PROVIDERS.some((p) => p === n));
-  if (bad !== undefined) return err(new Error(`unknown provider "${bad}" (cursor, claude, codex, muse, all)`));
+  if (bad !== undefined)
+    return err(
+      new Error(`unknown provider "${bad}" (cursor, claude, codex, muse, all)`),
+    );
   return ok(names);
 }
 
@@ -114,14 +149,19 @@ function fail(message: string, sinks: Sinks): number {
   return 2;
 }
 
-function runInstall(args: string[], sinks: Sinks, kind: "init" | "setup"): number {
+function runInstall(
+  args: string[],
+  sinks: Sinks,
+  kind: "init" | "setup",
+): number {
   const parsed = parse(args, OPTIONS, 1);
   if (!parsed.ok) return fail(parsed.error.message, sinks);
   const { values, positionals } = parsed.value;
   const providers = parseProviders(values.provider ?? values.target);
   if (!providers.ok) return fail(providers.error.message, sinks);
   const dryRun = values["dry-run"] === true;
-  const presetFlag = typeof values.preset === "string" ? values.preset : undefined;
+  const presetFlag =
+    typeof values.preset === "string" ? values.preset : undefined;
   const preset = presetFlag ?? (kind === "setup" ? "setup" : undefined);
   const adopt = kind === "setup" || values.adopt === true;
   const result = installKit({
@@ -130,16 +170,22 @@ function runInstall(args: string[], sinks: Sinks, kind: "init" | "setup"): numbe
     ...(providers.value !== undefined && { providers: providers.value }),
     dryRun,
     adopt,
+    ...(values["allow-fast"] === true && { allowFast: true }),
   });
   if (!result.ok) return fail(result.error.message, sinks);
   for (const action of result.value) {
-    sinks.out(`${action.kind.padEnd(5)} ${action.path}${action.note ? `  (${action.note})` : ""}`);
+    sinks.out(
+      `${action.kind.padEnd(5)} ${action.path}${action.note ? `  (${action.note})` : ""}`,
+    );
   }
   const dest = resolve(positionals[0] ?? ".");
   if (dryRun) {
     sinks.out("dry run: nothing written");
   } else {
-    for (const line of installNextStepLines(dest, providers.value as readonly Provider[] | undefined)) {
+    for (const line of installNextStepLines(
+      dest,
+      providers.value as readonly Provider[] | undefined,
+    )) {
       sinks.out(line);
     }
   }
@@ -150,32 +196,54 @@ function runValidate(args: string[], sinks: Sinks): number {
   const parsed = parse(args, VALIDATE_OPTIONS, 1);
   if (!parsed.ok) return fail(parsed.error.message, sinks);
   const dir = resolve(parsed.value.positionals[0] ?? ".agents");
-  if (!existsSync(dir)) return fail(`no such directory: ${dir} (run from the project root, or 'zedkit-ai init' to create it)`, sinks);
+  if (!existsSync(dir))
+    return fail(
+      `no such directory: ${dir} (run from the project root, or 'zedkit-ai init' to create it)`,
+      sinks,
+    );
   // A project root points at its .agents/; an .agents/ dir drifts against
   // its own parent. Any other dir just has nothing to drift against.
   const nested = join(dir, ".agents");
   const agentsDir = existsSync(nested) ? nested : dir;
   const projectRoot = agentsDir === dir ? dirname(dir) : dir;
+  const allowFast = parsed.value.values["allow-fast"] === true;
   const issues = [
     ...validateKit(agentsDir),
-    ...checkDrift(projectRoot, agentsDir),
+    ...checkDrift(
+      projectRoot,
+      agentsDir,
+      allowFast ? { allowFast: true } : undefined,
+    ),
     ...checkKitDocs(projectRoot, agentsDir),
     ...checkPlaceholders(projectRoot, agentsDir),
     ...checkHardcodedModels(projectRoot, agentsDir),
+    ...checkAtlas(projectRoot, agentsDir),
   ];
   if (parsed.value.values.setup === true) {
     const plan = parsed.value.values.plan;
-    const extra = checkSetup(projectRoot, typeof plan === "string" ? { plan } : {});
-    issues.push(...extra.issues, ...checkDepth(projectRoot));
+    const extra = checkSetup(
+      projectRoot,
+      typeof plan === "string" ? { plan } : {},
+    );
+    issues.push(
+      ...extra.issues,
+      ...checkDepth(projectRoot),
+      ...checkAtlas(projectRoot, agentsDir, { required: true }),
+    );
     for (const note of extra.notes) sinks.out(note);
   }
   for (const issue of issues) sinks.out(`${issue.path}: ${issue.message}`);
-  const failing = issues.filter((issue) => !issue.message.startsWith("warning:"));
+  for (const line of adoptReconcileLines(agentsDir)) sinks.out(line);
+  const failing = issues.filter(
+    (issue) => !issue.message.startsWith("warning:"),
+  );
   if (failing.length === 0) {
     sinks.out("ok");
     return 0;
   }
-  sinks.out(`${failing.length} ${failing.length === 1 ? "problem" : "problems"}`);
+  sinks.out(
+    `${failing.length} ${failing.length === 1 ? "problem" : "problems"}`,
+  );
   return 1;
 }
 
@@ -265,6 +333,7 @@ function runRoute(args: string[], sinks: Sinks): number {
     agent: { name, header: agent.value.header },
     ...(provider.ok &&
       provider.value !== undefined && { provider: provider.value }),
+    ...(values["allow-fast"] === true && { allowFast: true }),
   });
   if (!route.ok) return fail(route.error.message, sinks);
   if (agent.value.note !== undefined) route.value.notes.push(agent.value.note);
@@ -288,10 +357,14 @@ function runStakes(args: string[], sinks: Sinks): number {
   const { values, positionals } = parsed.value;
   const target = positionals[0];
   if (target === undefined)
-    return fail("stakes needs a file (zedkit-ai stakes <file> [--base <ref>])", sinks);
+    return fail(
+      "stakes needs a file (zedkit-ai stakes <file> [--base <ref>])",
+      sinks,
+    );
   const file = resolve(target);
   const read = tryCatch(() => readFileSync(file, "utf8"));
-  if (!read.ok) return fail(`cannot read ${target}: ${read.error.message}`, sinks);
+  if (!read.ok)
+    return fail(`cannot read ${target}: ${read.error.message}`, sinks);
   const text = read.value;
   const provider = oneOf(POLICY_PROVIDERS, values.provider, "--provider");
   if (!provider.ok) return fail(provider.error.message, sinks);
@@ -330,7 +403,16 @@ function runStakes(args: string[], sinks: Sinks): number {
   if (values.json === true) {
     sinks.out(
       JSON.stringify(
-        { file: target, stakes: level, kind: kind.value, needs: needs.value, gates: gates.gate, secondReview: gates.secondReview, issues, notes },
+        {
+          file: target,
+          stakes: level,
+          kind: kind.value,
+          needs: needs.value,
+          gates: gates.gate,
+          secondReview: gates.secondReview,
+          issues,
+          notes,
+        },
         null,
         2,
       ),
@@ -343,7 +425,9 @@ function runStakes(args: string[], sinks: Sinks): number {
     const g = gates.gate;
     sinks.out(
       `gates: review=${g.review}` +
-        (g.second_review !== undefined ? `, second_review=${g.second_review}` : "") +
+        (g.second_review !== undefined
+          ? `, second_review=${g.second_review}`
+          : "") +
         (g.distinct_model === true ? ", distinct_model" : "") +
         (g.human !== undefined ? `, human=${g.human}` : ""),
     );
@@ -362,7 +446,8 @@ function runSync(args: string[], sinks: Sinks): number {
   const dest = resolve(positionals[0] ?? ".");
   if (!existsSync(dest)) return fail(`no such directory: ${dest}`, sinks);
   const check = values.check === true;
-  const providers = values.provider === undefined ? undefined : (named.value ?? ALL_PROVIDERS);
+  const providers =
+    values.provider === undefined ? undefined : (named.value ?? ALL_PROVIDERS);
   const result = syncKit({
     dest,
     ...(providers !== undefined && { providers }),
@@ -370,16 +455,22 @@ function runSync(args: string[], sinks: Sinks): number {
     dryRun: values["dry-run"] === true,
     prune: values.prune === true,
     noPrune: values["no-prune"] === true,
+    ...(values["allow-fast"] === true && { allowFast: true }),
   });
   if (!result.ok) return fail(result.error.message, sinks);
   const changes = result.value.filter((action) => !isCheckedUnchanged(action));
   if (check) {
-    for (const action of changes) sinks.out(`${action.path}: out of date, run: npx zedkit-ai sync`);
+    for (const action of changes)
+      sinks.out(
+        `${action.path}: out of date, run: npx @zedtech/zedkit-ai sync`,
+      );
     sinks.out(inSync(result.value) ? "ok" : `${changes.length} out of date`);
     return inSync(result.value) ? 0 : 1;
   }
   for (const action of values.quiet === true ? changes : result.value) {
-    sinks.out(`${action.kind.padEnd(8)} ${action.path}${action.note ? `  (${action.note})` : ""}`);
+    sinks.out(
+      `${action.kind.padEnd(8)} ${action.path}${action.note ? `  (${action.note})` : ""}`,
+    );
   }
   if (values["dry-run"] === true) sinks.out("dry run: nothing written");
   return 0;
@@ -393,7 +484,11 @@ function runScan(args: string[], sinks: Sinks): number {
   const scan = scanRepo(dir);
   sinks.out(`size: ${scan.size} (${scan.files} files)`);
   sinks.out(`readers: ${scan.readers}`);
-  scan.slices.forEach((slice, i) => sinks.out(`slice ${i + 1}: ${slice.files} files: ${slice.paths.join(" + ")}`));
+  scan.slices.forEach((slice, i) =>
+    sinks.out(
+      `slice ${i + 1}: ${slice.files} files: ${slice.paths.join(" + ")}`,
+    ),
+  );
   for (const line of prettierHintLines(dir, undefined)) sinks.out(line);
   return 0;
 }
@@ -404,10 +499,14 @@ function runList(args: string[], sinks: Sinks): number {
   const manifest = readManifest();
   if (!manifest.ok) return fail(manifest.error.message, sinks);
   for (const [name, skills] of Object.entries(manifest.value.presets)) {
-    sinks.out(`preset ${name}: ${skills === "*" ? "every skill" : skills.join(", ")}`);
+    sinks.out(
+      `preset ${name}: ${skills === "*" ? "every skill" : skills.join(", ")}`,
+    );
   }
   sinks.out(`agents: ${manifest.value.agents.join(", ")}`);
-  sinks.out(`commands: ${(manifest.value.commands ?? []).join(", ") || "(none)"}`);
+  sinks.out(
+    `commands: ${(manifest.value.commands ?? []).join(", ") || "(none)"}`,
+  );
   return 0;
 }
 
@@ -422,7 +521,8 @@ export function main(argv: string[], sinks: Sinks): number {
   if (command === "stakes") return runStakes(rest, sinks);
   if (command === "sync") return runSync(rest, sinks);
   if (command === "list") return runList(rest, sinks);
-  const help = command === undefined || command === "--help" || command === "-h";
+  const help =
+    command === undefined || command === "--help" || command === "-h";
   (help ? sinks.out : sinks.err)(usage());
   return help ? 0 : 2;
 }

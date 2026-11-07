@@ -7,7 +7,11 @@
    unmarked subagent text (`.agents/skills` symlink into it; generated
    agent files come from `sync`). Edit kit sources there;
    `tests/unit/repo-wiring.test.ts` fails when a skills link stops
-   resolving to the kit or generated agents miss a kit name.
+   resolving to the kit or generated agents miss a kit name. After editing
+   kit agents: rebuild `dist`, `sync` every provider, refresh
+   `kit/legacy-hashes.json`, and keep the kit-guard phrases intact
+   (`skill-content`, `agent-crossrefs`, `role-mentions`; `review` stays
+   under 60 lines).
 3. Agent-agnostic: no tool-specific paths or model ids inside skills or
    subagents. Subagent `model` is omitted or `inherit`; descriptions are
    one line; names equal the folder or file name. `validateKit` enforces
@@ -18,7 +22,8 @@
    A change to shipped `kit/` content needs a patch changeset for this package.
 4. Never name a private project, customer, vendor or internal URL in the
    kit (CI denylist: `scripts/check-no-private-refs.sh`). Examples use
-   generic names.
+   generic names. A model id in a test must pass `bash scripts/check-tone.sh`.
+   A fast id reuses `composer-2.5-fast`.
 5. Vendored skills stay verbatim. Any edit is listed under Modifications
    in `kit/THIRD_PARTY_NOTICES.md`, and new vendored skills get their
    licence file next to them.
@@ -31,11 +36,22 @@
    (`tests/unit/preset-closure.test.ts`).
 7. Installer never overwrites. `--adopt` keeps a different user file and
    writes a kit sidecar (`*.kit.md` or `zk-<name>`); a copy that already
-   matches the kit is skipped. Per-skill provider links cover dirs that
-   exist under `.agents/skills`, not only the preset list. New behavior
-   needs a test in `tests/unit/install.test.ts`.
-8. Explicit named exports in `src/index.ts`, each in `CATALOG.md`.
-9. Definition of done: `pnpm --filter @zedtech/zedkit-ai typecheck && pnpm --filter @zedtech/zedkit-ai lint && pnpm --filter @zedtech/zedkit-ai build && pnpm --filter @zedtech/zedkit-ai test`
+   matches the kit is skipped. Commands keep the old skill name.
+   `setup` and `validate` print how to keep one copy. `validate` stays green. The
+   reconciliation steps are in this package's README. Per-skill provider
+   links cover dirs that exist under `.agents/skills`, not only the preset
+   list. New behavior needs a test in `tests/unit/install.test.ts`.
+8. `--allow-fast` is one flag on `route`, `sync`, `validate`, `init` and
+   `setup`. Without it a fast cell fails all of them, and `init`/`setup`/`sync`
+   fail before writing. The install check uses the same agent names generation
+   will write: the preset plus agents already on disk. Pass it only when the
+   user asked for fast mode in this request.
+9. An agent with `executes: true` in `agents.meta.json` must run a command.
+   Muse keeps `bash` and still denies `write_file` and `edit_file`. Cursor
+   does not set `readonly`. `test-runner` is that agent. Bash can still
+   write files; the prompt forbids it.
+10. Explicit named exports in `src/index.ts`, each in `CATALOG.md`.
+11. Definition of done: `pnpm --filter @zedtech/zedkit-ai typecheck && pnpm --filter @zedtech/zedkit-ai lint && pnpm --filter @zedtech/zedkit-ai build && pnpm --filter @zedtech/zedkit-ai test`
    green (each separately), `pnpm catalog:check` green. On a fresh clone build
    the sibling packages first (see Commands in the root `AGENTS.md`).
 
@@ -44,5 +60,5 @@
 - Own-install and sync rules: [ai-kit.md](../../.agents/domain/ai-kit.md)
 - Public hygiene: [public-hygiene.md](../../.agents/domain/public-hygiene.md)
 - Tokenomics (root): [tokenomics.md](../../.agents/tokenomics.md)
-- Cursor pointer: [packages-ai.mdc](../../.cursor/rules/packages-ai.mdc) only
+- Cursor pointer: [nested.mdc](../../.cursor/rules/nested.mdc) only
   names this file.

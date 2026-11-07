@@ -7,6 +7,10 @@ One loop for "audit this repo, then fix it". The audit itself is
 `ponytail-audit` (one-shot report, changes nothing); this skill adds the loop
 around it: issues, small fixes, and a rule per miss.
 
+Unless this brief already contains `Playbook: audit` or `Mode: inline fallback`,
+hand the user's text to `orchestrate` with `Playbook: audit` and stop.
+Sibling entrypoints called from here get `Playbook: <name>` so they do not re-enter.
+
 ## Process
 
 1. **Scope.** Whole repo by default. Start where a miss costs most (entry

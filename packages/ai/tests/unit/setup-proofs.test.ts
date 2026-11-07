@@ -75,7 +75,7 @@ describe("the validate --setup run is persisted", () => {
     const root = repo({
       ...log("`.agents/setup-log/validate.log`"),
       ".agents/setup-log/validate.log": GATE(
-        "npx zedkit-ai validate --setup",
+        "npx @zedtech/zedkit-ai validate --setup",
         0,
       ),
     });
@@ -86,7 +86,7 @@ describe("the validate --setup run is persisted", () => {
     const root = repo({
       ...log("`.agents/setup-log/validate.log`"),
       ".agents/setup-log/validate.log": GATE(
-        "npx zedkit-ai validate --setup",
+        "npx @zedtech/zedkit-ai validate --setup",
         1,
       ),
     });
@@ -97,7 +97,7 @@ describe("the validate --setup run is persisted", () => {
     const unnamed = repo({
       ...log("nothing"),
       ".agents/setup-log/validate.log": GATE(
-        "npx zedkit-ai validate --setup",
+        "npx @zedtech/zedkit-ai validate --setup",
         0,
       ),
     });

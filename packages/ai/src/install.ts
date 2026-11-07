@@ -20,7 +20,7 @@ import { setLensStatus } from "./lenses.js";
 import { danglingKitRefs, skillRefFiles } from "./skill-refs.js";
 import { resolveConditionals, type Availability } from "./conditional.js";
 import { loadPolicy } from "./route.js";
-import { resolveAgentSource, syncAgents } from "./sync.js";
+import { assertAgentRoutes, resolveAgentSource, syncAgents } from "./sync.js";
 import { applyTestPolicyToAgentsMd } from "./test-policy.js";
 import { loadDefaults } from "./tokenomics.js";
 
@@ -53,6 +53,11 @@ export type InstallOptions = {
   adopt?: boolean;
   /** Custom kit directory (default: the bundled kit). */
   kit?: string;
+  /**
+   * Write a fast model id from the project's tokenomics. Only when the user
+   * explicitly requested fast mode in this request.
+   */
+  allowFast?: boolean;
 };
 
 export type Action = {
@@ -83,6 +88,7 @@ type Ctx = {
   actions: Action[];
   /** What this preset installs; resolves conditional kit blocks. Set after plan(). */
   avail: Availability;
+  allowFast: boolean;
 };
 
 function lstatOf(path: string): ReturnType<typeof lstatSync> | undefined {
@@ -287,8 +293,8 @@ function skillNames(manifest: KitManifest, kit: string, preset: string): string[
   return [...kitUniverse(kit).skills];
 }
 
-// Resolve everything the install needs from the kit before the first write,
-// so a bad preset or manifest never leaves a half install behind.
+// Resolve the kit plan and every agent route before the first write,
+// so a bad preset, manifest, or fast cell never leaves a half install behind.
 function plan(kit: string, manifest: KitManifest, preset: string) {
   const skills = skillNames(manifest, kit, preset);
   for (const name of skills) {
@@ -461,6 +467,11 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): Map<string,
   if (existsSync(join(ctx.kit, "tokenomics.template.md"))) {
     copyFile(ctx, join(ctx.kit, "tokenomics.template.md"), join(".agents", "tokenomics.md"));
   }
+  // The atlas is project memory: edited by agents every session, so like the
+  // policy file it is never adopted and an existing file is left alone.
+  if (existsSync(join(ctx.kit, "atlas.template.md"))) {
+    copyFile(ctx, join(ctx.kit, "atlas.template.md"), join(".agents", "atlas.md"));
+  }
   for (const name of content.agents) {
     copyFile(ctx, join(ctx.kit, "agents", `${name}.md`), join(".agents", "agents", `${name}.md`));
   }
@@ -568,17 +579,28 @@ function wireProvider(
   // generateAgents into `.agents/agents`.
 }
 
+/**
+ * Agents this run will generate: the preset, plus project agents already on
+ * disk. Sidecars (`*.kit.md`) stay out. The precheck and `generateAgents`
+ * both use this list, so a refusal sees every route that would be written.
+ */
+function generationAgentNames(dest: string, preset: readonly string[]): string[] {
+  const names = new Set(preset);
+  const onDisk = tryCatch(() => readdirSync(join(dest, ".agents", "agents")));
+  if (onDisk.ok) {
+    for (const file of onDisk.value) {
+      if (file.endsWith(".md") && !file.endsWith(".kit.md")) names.add(file.slice(0, -3));
+    }
+  }
+  return [...names].sort();
+}
+
 // Each tool's agent files are generated from `.agents/agents` and the policy,
 // the same way `zedkit-ai sync` does. A project policy that does not parse
 // must not stop an install, so the shipped defaults stand in and a note says so.
 function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: readonly string[]): void {
-  const preset = content.agents;
+  const names = generationAgentNames(ctx.dest, content.agents);
   const agentsDir = join(ctx.dest, ".agents");
-  const onDisk = tryCatch(() => readdirSync(join(agentsDir, "agents")));
-  const names = new Set(preset);
-  if (onDisk.ok) {
-    for (const f of onDisk.value) if (f.endsWith(".md") && !f.endsWith(".kit.md")) names.add(f.slice(0, -3));
-  }
   let policy = loadPolicy(agentsDir);
   if (!policy.ok) {
     ctx.actions.push({ kind: "skip", path: join(".agents", "tokenomics.md"), note: `${policy.error.message}; models inherit until it is fixed` });
@@ -592,7 +614,7 @@ function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: r
       providers,
       policy: policy.value,
       agentsDir,
-      names: [...names].sort(),
+      names,
       commands: {
         names: (() => {
           const listed = new Set(content.commands);
@@ -608,6 +630,7 @@ function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: r
         },
       },
       avail: ctx.avail,
+      ...(ctx.allowFast && { allowFast: true }),
       source: (name) => {
         const resolved = resolveAgentSource(ctx.dest, name, join(ctx.kit, "agents"));
         return resolved === undefined ? undefined : resolveIfNeeded(resolved, ctx.avail);
@@ -668,8 +691,10 @@ function ensureScratchIgnored(ctx: Ctx): void {
  * AGENTS.md missing the ladder, which gets the ladder section appended
  * (reported as `append`). With `adopt`, a colliding skill/agent/command
  * keeps the user file and the kit version is written beside it. A bad
- * preset or kit fails before anything is written. `.gitignore` gains the
- * `.scratch/` line for git-ignored local working plans.
+ * preset or kit fails before anything is written. So does a refused route
+ * for any agent generation will write (the preset plus agents already on
+ * disk). `.gitignore` gains the `.scratch/` line for git-ignored local
+ * working plans.
  */
 export function installKit(options: InstallOptions): Result<Action[]> {
   const kit = options.kit ?? kitDir();
@@ -680,6 +705,7 @@ export function installKit(options: InstallOptions): Result<Action[]> {
     kit,
     dryRun: options.dryRun ?? false,
     adopt: options.adopt ?? false,
+    allowFast: options.allowFast === true,
     actions: [],
     avail: { skills: new Set(), agents: new Set(), commands: new Set() },
   };
@@ -690,8 +716,19 @@ export function installKit(options: InstallOptions): Result<Action[]> {
       agents: new Set(content.agents),
       commands: new Set(content.commands),
     };
-    const skillDest = installContent(ctx, content);
     const chosen = (options.providers ?? options.targets ?? ALL_PROVIDERS) as WireProvider[];
+    const agentsDir = join(ctx.dest, ".agents");
+    const policy = loadPolicy(agentsDir);
+    if (policy.ok) {
+      assertAgentRoutes({
+        policy: policy.value,
+        agentsDir,
+        names: generationAgentNames(ctx.dest, content.agents),
+        providers: chosen,
+        ...(ctx.allowFast && { allowFast: true }),
+      });
+    }
+    const skillDest = installContent(ctx, content);
     for (const provider of chosen) {
       wireProvider(ctx, provider, content, skillDest);
     }

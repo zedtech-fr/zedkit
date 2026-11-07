@@ -62,7 +62,7 @@ return new Response(xml, { headers: { "Content-Type": "application/xml" } });
 
 ## Emit typed JSON-LD structured data
 
-- Import: `@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`
+- Import: `@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`
 - Wraps: `schema-dts`
 - Status: stable
 - Short name: JSON-LD

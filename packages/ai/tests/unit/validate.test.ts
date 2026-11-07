@@ -471,8 +471,8 @@ providers:
     put(root, ".cursor/commands/run.md", COMMAND("alpha", "Edited."));
     put(root, ".cursor/agents/mine.md", "mine\n");
     const found = checkDrift(root, join(root, ".agents")).map((i) => `${i.path}: ${i.message}`);
-    expect(found.some((m) => m.includes(".cursor/agents/beta.md") && m.includes("missing, run: npx zedkit-ai sync"))).toBe(true);
-    expect(found.some((m) => m.includes("run.kit.md") && m.includes("user file kept") && m.includes("npx zedkit-ai sync"))).toBe(true);
+    expect(found.some((m) => m.includes(".cursor/agents/beta.md") && m.includes("missing, run: npx @zedtech/zedkit-ai sync"))).toBe(true);
+    expect(found.some((m) => m.includes("run.kit.md") && m.includes("user file kept") && m.includes("npx @zedtech/zedkit-ai sync"))).toBe(true);
     expect(found.some((m) => m.includes("copy it over"))).toBe(false);
     expect(found.some((m) => m.includes("mine.md"))).toBe(false);
   });
@@ -496,7 +496,7 @@ providers:
     put(root, ".agents/agents/beta.md", AGENT("beta"));
     put(root, ".cursor/agents/beta.md", "mine\n");
     expect(checkDrift(root, join(root, ".agents")).map((i) => i.message)).toEqual([
-      expect.stringContaining("user file kept; run: npx zedkit-ai sync"),
+      expect.stringContaining("user file kept; run: npx @zedtech/zedkit-ai sync"),
     ]);
     const synced = syncKit({ dest: root, providers: ["cursor"] });
     if (!synced.ok) throw synced.error;
@@ -594,7 +594,7 @@ providers:
     put(root, ".agents/agents/beta.md", AGENT("beta"));
     put(root, ".claude/agents/beta.md", "edited\n");
     const found = checkDrift(root, agents).map((i) => `${i.path}: ${i.message}`);
-    expect(found).toContainEqual(expect.stringContaining("user file kept; run: npx zedkit-ai sync"));
+    expect(found).toContainEqual(expect.stringContaining("user file kept; run: npx @zedtech/zedkit-ai sync"));
     expect(found.some((m) => /copy it over|overwrite/i.test(m))).toBe(false);
   });
 

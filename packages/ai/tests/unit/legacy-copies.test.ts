@@ -66,7 +66,7 @@ describe("legacy kit copies", () => {
     put(dest, ".agents/agents/explorer.md", AGENT("explorer"));
     put(dest, ".cursor/agents/explorer.md", LEGACY_EXPLORER);
     expect(checkDrift(dest, join(dest, ".agents")).map((i) => i.message)).toEqual([
-      "stale copy of the kit, run: npx zedkit-ai sync",
+      "stale copy of the kit, run: npx @zedtech/zedkit-ai sync",
     ]);
     sync(dest);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);

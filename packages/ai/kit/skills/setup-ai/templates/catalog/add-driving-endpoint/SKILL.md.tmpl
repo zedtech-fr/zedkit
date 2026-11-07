@@ -1,0 +1,28 @@
+---
+name: add-driving-endpoint
+description: "Add an inbound HTTP (or message) endpoint that validates input and calls one use-case port. Use when a new driving adapter is the entry, not the business logic."
+---
+
+# Add driving endpoint
+
+Thin inbound adapter: parse, authorize if the repo does that here, call `{Action}Port.execute(...)`, map the result. Copy the nearest endpoint in this repo.
+
+## Before you start
+
+1. Read the nested `AGENTS.md` for the driving folder. Read [product](../../product.md) and the [domain rules](../../domain/) for the journey this endpoint serves.
+2. The use-case port must already exist. If it does not, add the use-case first.
+3. Find one shipped endpoint of the same kind and copy its DTO, status codes, and test style.
+
+## Steps
+
+1. **DTO / input type** at the boundary. Validate with the repo's schema library. Do not accept a shape the use-case does not take.
+2. **Handler** calls one use-case port. No repository or client injection in the handler.
+3. **Test** the handler: valid input, validation failure, use-case error mapping, authz failure when the repo has it. Component or handler tests, not a browser suite, unless this is an explicitly justified critical path.
+4. **Wire** the route the way the reference endpoint does.
+5. **Prove.** Run the cheap loop from the nested `AGENTS.md`. Update API docs or collections only when this repo already keeps them next to the route.
+
+## Done when
+
+- The handler is thin: validate + `execute` + map.
+- Tests cover validation and error mapping.
+- Gates for this folder are green, or skipped with a reason.
