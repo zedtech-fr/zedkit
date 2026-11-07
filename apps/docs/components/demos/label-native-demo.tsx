@@ -9,7 +9,7 @@ export function LabelNativeDemo() {
       <input
         id="label-city"
         placeholder={labelCopy.native.placeholder}
-        className="rounded-md border border-border bg-background px-3 py-2 text-foreground"
+        className="rounded-md border border-border bg-background px-field-pad py-control-block-lg text-foreground"
       />
     </Stack>
   );

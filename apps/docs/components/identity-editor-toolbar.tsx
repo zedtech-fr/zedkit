@@ -34,7 +34,7 @@ function LookSelect({
       </FieldLabel>
       <select
         id="identity-editor-look"
-        className="h-control-height w-full rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
+        className="h-control-height w-full rounded-md border border-input bg-background px-field-pad text-control text-foreground focus-ring-control"
         value={identity}
         onChange={(event) => onIdentity(event.target.value)}
       >
