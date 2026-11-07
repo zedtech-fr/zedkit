@@ -41,7 +41,7 @@ export function CardDemo() {
             ))}
           </TableBody>
         </Table>
-        <Text className="mt-4 font-medium">{cardCopy.demo.total}</Text>
+        <Text className="mt-figure font-medium">{cardCopy.demo.total}</Text>
       </CardContent>
     </Card>
   );
