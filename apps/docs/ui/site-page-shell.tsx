@@ -11,7 +11,7 @@ export function SitePageShell({
 }) {
   // Rendered inside fumadocs HomeLayout's <main>: no top-level landmark.
   return (
-    <div className="flex min-h-page-shell flex-col">
+    <div data-page-shell="" className="flex flex-col">
       <div className="flex-1">{children}</div>
       <SiteMaintainerFooter changelogHref={changelogHref} embeddedInMain />
     </div>

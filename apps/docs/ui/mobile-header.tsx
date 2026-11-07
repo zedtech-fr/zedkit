@@ -113,7 +113,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
             className={SHELL_NAV_PRIMARY_ITEM_CLASS}
           />
         ))}
-        <p className={SHELL_NAV_GUIDE_LABEL_CLASS}>Guides</p>
+        <p className={SHELL_NAV_GUIDE_LABEL_CLASS} data-nav-group="">Guides</p>
         {SITE_GUIDE_LINKS.map((link) => (
           <NavDrawerLink
             key={link.href}

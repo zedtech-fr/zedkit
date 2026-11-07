@@ -280,6 +280,8 @@ type ProposalCardProps = {
   onUse: (tokens: IdentityTokens) => void;
   onDiscard: () => void;
   className?: string;
+  /** Side inset of one spacing step. Set on the compact card. */
+  "data-proposal-inset"?: "";
   /** Pin the apply row to the bottom of the card; set when the card scrolls inside a height cap. */
   pinApply?: boolean;
   /** When set, show Apply to the whole site under Use this look (dock Preview tab). */
@@ -295,6 +297,7 @@ export function ProposalCard({
   onUse,
   onDiscard,
   className,
+  "data-proposal-inset": proposalInset,
   pinApply,
   siteApply,
 }: ProposalCardProps) {
@@ -303,7 +306,7 @@ export function ProposalCard({
   const rows = useMemo(() => tokenDiff(current, repaired.tokens), [current, repaired.tokens]);
   const domain = useMemo(() => specimenDomainFromBrief(domainBrief), [domainBrief]);
   return (
-    <Stack gap={3} role="region" aria-label={copy.proposal.title} aria-busy={busy || undefined} data-assistant-proposal="" className={cn("overflow-visible", busy && "opacity-60", className)}>
+    <Stack gap={3} role="region" aria-label={copy.proposal.title} aria-busy={busy || undefined} data-assistant-proposal="" data-proposal-inset={proposalInset} className={cn("overflow-visible", busy && "opacity-60", className)}>
       <Text as="span" typeRole="label" className="font-semibold text-foreground">
         {copy.proposal.title}
       </Text>
