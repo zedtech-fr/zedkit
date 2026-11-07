@@ -17,7 +17,7 @@ export function PageHeader({ title, description, actions, back, titleAs: Title =
   return (
     <div data-slot="page-header" className={cn("mb-page-header-offset flex flex-col gap-page-header-title-gap", className)}>
       {back ? (
-        <div data-slot="page-header-back" className="-mx-2 mb-page-header-back-gap flex w-fit items-center">
+        <div data-slot="page-header-back" className="-mx-back mb-page-header-back-gap flex w-fit items-center">
           {back}
         </div>
       ) : null}

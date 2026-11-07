@@ -805,6 +805,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-icon {
   gap: calc(var(--spacing) * 1.5);
 }
+/* Gap inside a segmented control. */
+@utility gap-segment {
+  gap: calc(var(--spacing) * 0.5);
+}
 @utility gap-stack-tight {
   gap: var(--spacing);
 }
@@ -939,6 +943,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-sidebar-compact {
   width: calc(var(--spacing) * 48);
 }
+/* A short field sharing a row with another field. */
+@utility basis-field {
+  flex-basis: calc(var(--spacing) * 28);
+}
 @utility h-logo {
   height: calc(var(--spacing) * 6);
 }
@@ -1060,6 +1068,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility icon-nudge {
   margin-top: var(--spacing);
 }
+/* A mark sitting on the first line, a half step down. */
+@utility icon-nudge-sm {
+  margin-top: calc(var(--spacing) * 0.5);
+}
 /* Space above a status line. */
 @utility mt-status {
   margin-top: calc(var(--spacing) * 3);
@@ -1076,6 +1088,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility trim-bottom {
   margin-bottom: 0;
+}
+/* Pulls a back link out so its label lines up with the content. */
+@utility -mx-back {
+  margin-inline: calc(var(--spacing) * -2);
 }
 @utility trim-margin {
   margin: 0;
