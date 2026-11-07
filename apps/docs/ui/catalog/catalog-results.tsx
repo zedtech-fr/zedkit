@@ -10,7 +10,7 @@ function CatalogRow({ entry }: { entry: CatalogIndexEntry }) {
     <Stack
       direction="horizontal"
       gap={3}
-      className="flex-wrap items-center justify-between border-b border-border pb-2"
+      className="flex-wrap items-center justify-between border-b border-border rule-gap"
     >
       <Stack gap={1} className="content-shrink flex-1">
         <Link href={entry.href} className="font-medium underline-offset-4 hover:underline">

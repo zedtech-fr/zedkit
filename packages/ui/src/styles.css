@@ -845,6 +845,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility surface-pad-block-sm {
   padding-block: calc(var(--spacing) * 2);
 }
+/* Space between content and a rule drawn on its bottom edge. */
+@utility rule-gap {
+  padding-bottom: calc(var(--spacing) * 2);
+}
 @utility glass-pad-sm {
   padding: calc(var(--spacing) * 4);
 }
