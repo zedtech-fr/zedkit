@@ -1201,6 +1201,12 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-logo-row {
   height: calc(var(--spacing) * 8);
 }
+@utility h-logo-lg {
+  height: calc(var(--spacing) * 12);
+}
+@utility h-logo-display {
+  height: calc(var(--spacing) * 16);
+}
 /* Sticky phone header. */
 @utility h-phone-bar {
   height: calc(var(--spacing) * 14);
@@ -1346,6 +1352,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pin-center-y {
   top: 50%;
   transform: translateY(-50%);
+}
+/* A rule centered in its slot. No translate, so a filled separator stays put. */
+@utility pin-middle {
+  top: 50%;
 }
 /* The send button, inset from the corner of the prompt. */
 @utility right-send {

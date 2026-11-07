@@ -55,8 +55,8 @@ export function BrandLogoDemo() {
           <Stack direction="horizontal" gap={4} className="flex-wrap items-end">
             <HarborMark className="h-brand text-foreground" title={brandLogoCopy.logoTitle} />
             <HarborMark className="h-logo-row text-primary" title={brandLogoCopy.logoTitle} />
-            <HarborMark className="h-12 text-muted-foreground" title={brandLogoCopy.logoTitle} />
-            <HarborMark className="h-16 text-foreground" title={brandLogoCopy.logoTitle} />
+            <HarborMark className="h-logo-lg text-muted-foreground" title={brandLogoCopy.logoTitle} />
+            <HarborMark className="h-logo-display text-foreground" title={brandLogoCopy.logoTitle} />
           </Stack>
         </Stack>
         <footer className="flex items-center gap-stack-sm border-t border-border surface-pad-inline surface-pad-block text-muted-foreground">
