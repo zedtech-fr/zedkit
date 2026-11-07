@@ -35,6 +35,15 @@
   max-width: 28rem;
 }
 
+/* Chat turn. Stays inside the thread, with a little of the other side showing. */
+[data-assistant-log] > li {
+  max-width: 90%;
+}
+/* A notice beside the composer. Slightly wider than a thread turn. */
+[data-assistant-notice] {
+  max-width: 95%;
+}
+
 /* AI setup. The benefits column stays at most 30rem while the file tree scrolls. */
 [data-home-ai-setup] {
   --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
