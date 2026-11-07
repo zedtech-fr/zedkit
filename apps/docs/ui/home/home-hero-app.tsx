@@ -125,7 +125,7 @@ export function HomeHeroApp({ page, onPage, intro, preview, onPreviewChange, onL
         />
       ) : null}
       <span data-hero-cursor="" aria-hidden="true" className="pointer-events-none absolute pin-top pin-left z-30 text-foreground">
-        <MousePointer2 className="size-5 fill-foreground text-background" />
+        <MousePointer2 className="size-icon-lg fill-foreground text-background" />
       </span>
     </div>
   );

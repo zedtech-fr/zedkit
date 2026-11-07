@@ -36,7 +36,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
       className={cn("z-header w-full border-b bg-card text-card-foreground", sticky ? "sticky pin-top" : "relative", className)}
       {...props}
     >
-      <Container width="default" className="flex min-h-14 items-center gap-stack-lg">
+      <Container width="default" className="flex min-h-phone-bar items-center gap-stack-lg">
         <div data-slot="marketing-header-brand" className="flex content-shrink shrink-0 items-center">
           {brand}
         </div>

@@ -81,6 +81,8 @@ describe("cn", () => {
     expect(cn("basis-32", "basis-number")).toBe("basis-number");
     expect(cn("basis-40", "basis-text")).toBe("basis-text");
     expect(cn("h-5", "h-brand")).toBe("h-brand");
+    expect(cn("size-5", "size-icon-lg")).toBe("size-icon-lg");
+    expect(cn("min-h-14", "min-h-phone-bar")).toBe("min-h-phone-bar");
     expect(cn("basis-48", "basis-tile")).toBe("basis-tile");
     expect(cn("pt-4", "content-offset")).toBe("content-offset");
     expect(cn("py-3", "surface-pad-block")).toBe("surface-pad-block");
