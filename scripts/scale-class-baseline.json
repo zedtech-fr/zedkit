@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 374,
+  "total": 376,
   "files": {
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
     "apps/docs/components/adoption-blocks.tsx": 1,
@@ -83,7 +83,7 @@
     "packages/ui/preview/gallery.tsx": 21,
     "packages/ui/src/alert.tsx": 3,
     "packages/ui/src/badge.tsx": 1,
-    "packages/ui/src/button.tsx": 2,
+    "packages/ui/src/button.tsx": 4,
     "packages/ui/src/card-skeleton.tsx": 1,
     "packages/ui/src/card.tsx": 1,
     "packages/ui/src/combobox-menu.tsx": 3,
