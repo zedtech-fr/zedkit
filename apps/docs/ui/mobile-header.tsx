@@ -48,7 +48,7 @@ function ThemeButton({ className }: { className?: string }) {
       className={className ?? iconButtonClassName}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >
-      {dark ? <Moon aria-hidden="true" className="size-4" /> : <Sun aria-hidden="true" className="size-4" />}
+      {dark ? <Moon aria-hidden="true" className="size-icon" /> : <Sun aria-hidden="true" className="size-icon" />}
     </button>
   );
 }
@@ -63,7 +63,7 @@ function DocsMenuButton() {
       className={iconButtonClassName}
       onClick={() => sidebar.setOpen(true)}
     >
-      <Menu aria-hidden="true" className="size-4" />
+      <Menu aria-hidden="true" className="size-icon" />
     </button>
   );
 }
@@ -89,7 +89,7 @@ function NavDrawerLink({
       {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
     >
       <span className="content-shrink flex-1">{link.text}</span>
-      {link.external ? <ExternalLink aria-hidden="true" className="size-4 shrink-0 opacity-70" /> : null}
+      {link.external ? <ExternalLink aria-hidden="true" className="size-icon shrink-0 opacity-70" /> : null}
     </DocsAppLink>
   );
 }
@@ -131,7 +131,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
           rel="noreferrer"
           className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-2 text-muted-foreground`}
         >
-          <GithubIcon className="size-4 shrink-0" />
+          <GithubIcon className="size-icon shrink-0" />
           GitHub
         </a>
         <ThemeButton />
@@ -176,7 +176,7 @@ function HomeMenuButton({ changelogHref }: { changelogHref: string }) {
         className={iconButtonClassName}
         onClick={() => setOpen(true)}
       >
-        <Menu aria-hidden="true" className="size-4" />
+        <Menu aria-hidden="true" className="size-icon" />
       </button>
       <SiteNavDrawer open={open} onOpenChange={setOpen} changelogHref={changelogHref} />
     </>
@@ -225,7 +225,7 @@ export function MobileHeader({
           <MobileSearchTrigger className={iconButtonClassName} />
           <ThemeButton />
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
-            <GithubIcon className="size-4" />
+            <GithubIcon className="size-icon" />
           </a>
           {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton changelogHref={changelogHref} />}
         </div>

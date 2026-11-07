@@ -31,7 +31,7 @@ export function HomeHeroSatellites() {
       <Satellite kind="notice">
         <Card className="flex items-center gap-3 p-3" data-hero-notice="">
           <span data-hero-avatar="" className="flex shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
-            <Check className="size-4" aria-hidden />
+            <Check className="size-icon" aria-hidden />
           </span>
           <span className="flex content-shrink flex-col">
             <Text className="truncate text-sm font-medium">{copy.mergedTitle}</Text>

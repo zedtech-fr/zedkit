@@ -28,7 +28,7 @@ export function IdentityDockPanelToolbar({ onClose }: { onClose: () => void }) {
           title={copy.detailedEditorLink}
           onClick={() => setExpanded(false)}
         >
-          <ExternalLink aria-hidden="true" className="size-4" />
+          <ExternalLink aria-hidden="true" className="size-icon" />
         </Link>
       )}
       <IconButton type="button" variant="ghost" size="sm" label={identityDockCopy.closeLabel} onClick={onClose}>

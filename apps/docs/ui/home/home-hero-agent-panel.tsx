@@ -94,7 +94,7 @@ export default function HeroAgentPanel({ id, draft, status, step, onDraft, onSub
           {copy.title}
         </Heading>
         <IconButton label={copy.close} variant="ghost" size="icon" onClick={onClose} data-hero-agent-close="">
-          <X className="size-4" aria-hidden />
+          <X className="size-icon" aria-hidden />
         </IconButton>
       </Stack>
       <PromptInput

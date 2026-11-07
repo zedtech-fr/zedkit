@@ -68,7 +68,7 @@ export function IdentityDockExportCopyRow({
       aria-label={copyLabel}
       onClick={blocked ? undefined : () => runCopy(value)}
     >
-      {state === "copied" ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />}
+      {state === "copied" ? <Check className="size-icon" aria-hidden /> : <Copy className="size-icon" aria-hidden />}
     </Button>
   );
 
