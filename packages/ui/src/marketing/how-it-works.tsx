@@ -33,7 +33,7 @@ function HowItWorks({ title, description, steps, className, ...props }: HowItWor
     >
       <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ol className="grid list-none gap-8 flush md:auto-cols-fr md:grid-flow-col md:gap-6">
+        <ol className="grid list-none gap-8 flush md:auto-cols-fr md:grid-flow-col md:gap-list">
           {steps.map((step, index) => (
             <li key={step.id ?? index} data-slot="how-it-works-step" className="flex gap-stack-lg md:flex-col">
               <span

@@ -42,7 +42,7 @@ function Testimonials({ title, description, items, className, ...props }: Testim
         <ul className="grid list-none gap-stack-lg flush sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <GlassSurface key={item.id ?? index} as="li" className="flex">
-              <figure className="flex content-shrink flex-1 flex-col justify-between gap-6">
+              <figure className="flex content-shrink flex-1 flex-col justify-between gap-list">
                 <blockquote className="text-pretty">
                   <Text as="span" className="before:content-[open-quote] after:content-[close-quote]">{item.quote}</Text>
                 </blockquote>
