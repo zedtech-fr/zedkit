@@ -87,7 +87,7 @@ export default function HeroAgentPanel({ id, draft, status, step, onDraft, onSub
       aria-label={copy.title}
       data-hero-agent-panel=""
       data-status={status}
-      className="absolute inset-y-panel right-panel z-20 flex w-[calc(100%-1rem)] content-shrink motion-reveal flex-col gap-stack-md overflow-y-auto md:w-panel"
+      className="absolute inset-y-panel right-panel z-20 flex content-shrink motion-reveal flex-col gap-stack-md overflow-y-auto"
     >
       <Stack direction="horizontal" gap={2} className="items-center justify-between">
         <Heading level={2} typeRole="cardTitle">

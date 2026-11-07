@@ -39,6 +39,16 @@
   max-width: 28rem;
 }
 
+/* Agent panel. Nearly the frame on a phone, the panel width from the medium breakpoint. */
+[data-hero-agent-panel] {
+  width: calc(100% - 1rem);
+}
+@media (min-width: 48rem) {
+  [data-hero-agent-panel] {
+    width: calc(var(--spacing) * 80);
+  }
+}
+
 #home-page [data-hero-window] [data-hero-sidebar] {
   width: 10.5rem;
 }
