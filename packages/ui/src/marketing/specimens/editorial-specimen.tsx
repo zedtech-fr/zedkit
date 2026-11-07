@@ -118,7 +118,7 @@ function EditorialStoryEditor({
           {messages.saveDraft}
         </Button>
       </Stack>
-      <Text variant="muted" role="status" className="min-h-6">
+      <Text variant="muted" role="status" className="min-h-status">
         {status}
       </Text>
       <article aria-label={messages.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">

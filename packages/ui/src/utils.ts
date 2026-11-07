@@ -11,7 +11,7 @@ const twMerge = extendTailwindMerge({
       "font-size": ["text-form-hint", "text-control"],
       "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }],
       "min-w": ["content-shrink", "min-w-target"],
-      "min-h": ["pane-shrink", "min-h-target", { "min-h": ["control-height", "textarea-min-height"] }],
+      "min-h": ["pane-shrink", "min-h-target", "min-h-status", { "min-h": ["control-height", "textarea-min-height"] }],
       inset: ["pin-fill"],
       "inset-x": ["pin-x"],
       "inset-y": ["pin-y"],
@@ -45,7 +45,7 @@ const twMerge = extendTailwindMerge({
       "space-y": [
         { "space-y": ["stack-sm", "stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
       ],
-      h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator", "h-skeleton-line"],
+      h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator", "h-skeleton-line", "h-logo"],
       size: [{ size: ["icon"] }, "size-icon-sm", "size-checkbox", "size-status-label-box", "size-status-dot"],
       py: ["flush-block", "py-control-block", "py-control-block-lg", "py-alert-block", "py-detail-panel-block", "py-select-item-block", "py-table-cell", "py-section-sm", "py-section-md", "py-section-lg", "py-section-xl", "empty-state-block", "surface-pad-block", "surface-pad-block-sm"],
       p: ["flush", "p-drawer-chrome-padding", "p-app-shell-padding", "p-table-cell", "p-option-card-padding", "p-field-label-inset", "p-select-separator", "surface-pad-sm", "surface-pad-compact", "surface-pad-md", "pad-row", "glass-pad-sm", "glass-pad-md", "glass-pad-lg"],

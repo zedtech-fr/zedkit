@@ -870,6 +870,12 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-skeleton-line {
   height: calc(var(--spacing) * 4);
 }
+@utility h-logo {
+  height: calc(var(--spacing) * 6);
+}
+@utility min-h-status {
+  min-height: calc(var(--spacing) * 6);
+}
 @utility empty-state-block {
   padding-block: calc(var(--spacing) * 8);
 }

@@ -19,7 +19,7 @@ const stay = (event: MouseEvent) => event.preventDefault();
 export function BrandLogoHeaderDemo() {
   return (
     <a href="/" onClick={stay} className="flex content-shrink items-center gap-stack-sm text-foreground">
-      <HarborMark className="h-6 text-primary" />
+      <HarborMark className="h-logo text-primary" />
       <Text as="span" className="truncate font-semibold">
         {brandLogoCopy.brandName}
       </Text>
@@ -34,7 +34,7 @@ export function BrandLogoDemo() {
         <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
           {/* Logo + visible name in one link to the home page: the name labels the link, so the mark is decorative. */}
           <a href="/" onClick={stay} className="flex content-shrink items-center gap-stack-sm text-foreground">
-            <HarborMark className="h-6 text-primary" />
+            <HarborMark className="h-logo text-primary" />
             <Text as="span" className="truncate font-semibold">
               {brandLogoCopy.brandName}
             </Text>
