@@ -30,6 +30,10 @@ describe("layout job classes", () => {
     expect(css).toContain("--zk-gap-md: calc(var(--spacing) * 3);");
     expect(css).toContain("--zk-gap-lg: calc(var(--spacing) * 4);");
     expect(utility("gap-stack-sm")).toBe("gap: var(--zk-gap-sm);");
+    expect(utility("surface-pad-sm")).toBe("padding: calc(var(--spacing) * 2);");
+    expect(utility("surface-pad-md")).toBe("padding: calc(var(--spacing) * 4);");
+    expect(utility("glass-pad-md")).toBe("padding: calc(var(--spacing) * 6);");
+    expect(utility("empty-state-block")).toBe("padding-block: calc(var(--spacing) * 8);");
     expect(css).not.toContain("--spacing-stack-6xl");
     expect(css).not.toContain("--zk-gap-2xs");
   });

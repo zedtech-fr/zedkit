@@ -38,7 +38,7 @@ describe("GlassSurface", () => {
     const node = screen.getByText("Hello");
     expect(node.getAttribute("data-slot")).toBe("glass-surface");
     expect(node.className).toContain("bg-card");
-    expect(node.className).toContain("p-6");
+    expect(node.className).toContain("glass-pad-md");
   });
 
   it("switches tone and padding", () => {
@@ -49,8 +49,8 @@ describe("GlassSurface", () => {
     );
     const node = screen.getByText("Tinted");
     expect(node.className).toContain("from-accent/15");
-    expect(node.className).toContain("p-8");
-    expect(node.className).not.toContain("p-6");
+    expect(node.className).toContain("glass-pad-lg");
+    expect(node.className).not.toContain("glass-pad-md");
   });
 
   it("renders the requested element and forwards props", () => {

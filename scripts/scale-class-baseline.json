@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 974,
+  "total": 966,
   "files": {
     "apps/docs/app/(site)/features/identity-editor/page.tsx": 2,
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
@@ -144,7 +144,6 @@
     "packages/ui/src/drawer-meta.tsx": 2,
     "packages/ui/src/drawer-non-modal.tsx": 2,
     "packages/ui/src/dropdown-menu.tsx": 1,
-    "packages/ui/src/empty-state.tsx": 3,
     "packages/ui/src/error-state.tsx": 2,
     "packages/ui/src/field.tsx": 13,
     "packages/ui/src/icon-label.tsx": 1,
@@ -156,7 +155,6 @@
     "packages/ui/src/marketing/cta-band.tsx": 6,
     "packages/ui/src/marketing/faq.tsx": 4,
     "packages/ui/src/marketing/feature-grid.tsx": 7,
-    "packages/ui/src/marketing/glass-surface.tsx": 3,
     "packages/ui/src/marketing/hero.tsx": 8,
     "packages/ui/src/marketing/how-it-works.tsx": 7,
     "packages/ui/src/marketing/locale-switch.tsx": 1,
@@ -184,7 +182,6 @@
     "packages/ui/src/select.tsx": 2,
     "packages/ui/src/status-label.tsx": 1,
     "packages/ui/src/stream-status.tsx": 2,
-    "packages/ui/src/surface.tsx": 2,
     "packages/ui/src/table.tsx": 4,
     "packages/ui/src/tabs.tsx": 1,
     "packages/ui/src/tooltip.tsx": 1,

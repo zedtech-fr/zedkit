@@ -811,6 +811,25 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-stack-lg {
   gap: var(--zk-gap-lg);
 }
+/* Panel padding. The name is the surface size, and the value follows --spacing. */
+@utility surface-pad-sm {
+  padding: calc(var(--spacing) * 2);
+}
+@utility surface-pad-md {
+  padding: calc(var(--spacing) * 4);
+}
+@utility glass-pad-sm {
+  padding: calc(var(--spacing) * 4);
+}
+@utility glass-pad-md {
+  padding: calc(var(--spacing) * 6);
+}
+@utility glass-pad-lg {
+  padding: calc(var(--spacing) * 8);
+}
+@utility empty-state-block {
+  padding-block: calc(var(--spacing) * 8);
+}
 @utility space-y-stack-lg {
   :where(& > :not(:last-child)) {
     --tw-space-y-reverse: 0;
