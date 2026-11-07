@@ -103,7 +103,7 @@ export function ServiceBookingSpecimen({ className, messages = specimenMessagesE
       >
         {messages.book}
       </Button>
-      <Text variant="muted" role="status" className="min-h-6">
+      <Text variant="muted" role="status" className="min-h-status">
         {status}
       </Text>
     </Stack>

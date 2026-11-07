@@ -15,7 +15,7 @@ export interface BrandLogoProps extends Omit<SVGProps<SVGSVGElement>, "viewBox" 
  * Your own brand mark as an inline SVG. Put your shapes (`<path>`, `<circle>`, ...) inside:
  * they paint with `currentColor`, so the mark follows the text colour. Light, dark and every
  * visual identity restyle it without a second asset. Size it with `className`
- * (for example `h-6 w-auto`); the mark keeps its aspect ratio.
+ * (for example `h-logo w-auto`); the mark keeps its aspect ratio.
  */
 export function BrandLogo({ title, viewBox, className, children, ...props }: BrandLogoProps) {
   const decorative = title === "";
@@ -29,7 +29,7 @@ export function BrandLogo({ title, viewBox, className, children, ...props }: Bra
       aria-hidden={decorative ? true : undefined}
       aria-label={decorative ? undefined : title}
       focusable="false"
-      className={cn("h-6 w-auto shrink-0", className)}
+      className={cn("h-logo w-auto shrink-0", className)}
       {...props}
     >
       {decorative ? null : <title>{title}</title>}
