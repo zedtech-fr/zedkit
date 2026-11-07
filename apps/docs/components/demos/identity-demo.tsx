@@ -89,7 +89,7 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
           {saved ? identityCopy.scope.savedBadge : identityCopy.scope.badge}
         </Badge>
       </Stack>
-      <Text variant="muted" className="trim-margin! text-sm">
+      <Text variant="muted" className="trim-margin!">
         {look.description}
       </Text>
       <Stack direction="horizontal" gap={2}>

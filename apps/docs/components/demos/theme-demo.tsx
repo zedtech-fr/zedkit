@@ -100,7 +100,7 @@ export function ThemeToggleDemo() {
           <Text as="span" className="font-medium">
             {themeCopy.appearance}
           </Text>
-          <Text variant="muted" className="text-sm">
+          <Text variant="muted">
             {themeCopy.appearanceHint}
           </Text>
         </Stack>

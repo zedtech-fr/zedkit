@@ -23,7 +23,7 @@ export default function IdentityKitDemosPage() {
         <ComponentPreview demo="IdentitySwitcherDemo" hasProps={false} />
         <ComponentPreview demo="IdentityScopeDemo" hasProps={false} />
         <ComponentPreview demo="IdentityPickerDemo" hasProps={false} />
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           <Link href="/docs/ui/pin-a-stage-and-change-scene-as-the-page-scrolls" className="text-primary underline-offset-4 hover:underline">
             {identityKitDemosCopy.scrollGuide}
           </Link>{" "}

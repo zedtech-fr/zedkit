@@ -22,7 +22,7 @@ export function ComponentWrapsLine({ wraps }: { wraps: string }) {
   const tokens = parseWrapTokens(wraps);
   if (tokens.length === 0) return null;
   return (
-    <Text variant="muted" className="text-sm">
+    <Text variant="muted">
       {componentWrapsLineCopy.prefix}{" "}
       {tokens.map((token, index) => {
         const href = npmHref(token);

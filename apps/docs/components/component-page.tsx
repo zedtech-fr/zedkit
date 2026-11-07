@@ -125,7 +125,7 @@ export async function ComponentPage({
       <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
         <Stack gap={4}>
           {copyable ? (
-            <Text variant="muted" className="text-sm" data-usage-import-note="">
+            <Text variant="muted" data-usage-import-note="">
               {componentPageCopy.usageImportNote(registry)}
             </Text>
           ) : null}
