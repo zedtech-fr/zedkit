@@ -530,20 +530,24 @@ ol[data-sonner-toaster] {
 }
 
 /*
- * Pointer target for small standalone controls (checkbox, switch): the
- * visible box keeps its size while an invisible pseudo-element carries
- * an exact tap-size hit area. Gated like --zk-tap-min (touch or narrow
- * screens); mouse users keep pixel-precise targets.
+ * Pointer target for small standalone controls (checkbox, switch).
+ * The visible box stays as drawn. The hit area is at least the 24px
+ * floor on every pointer, and the labelled tap size on touch or a
+ * narrow screen.
  */
 @utility hit-target {
   position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: max(100%, 24px);
+    height: max(100%, 24px);
+  }
   @media (pointer: coarse), (max-width: 40rem) {
     &::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      translate: -50% -50%;
       width: var(--spacing-tap);
       height: var(--spacing-tap);
     }
