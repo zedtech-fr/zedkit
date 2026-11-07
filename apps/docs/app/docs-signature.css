@@ -27,6 +27,22 @@
   margin-top: calc(var(--spacing) * 2);
 }
 
+/* Number column on an adoption step. */
+[data-adoption-step] {
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+}
+
+/* Page body under the site header, so the footer can sit at the bottom. */
+.min-h-page-shell {
+  min-height: calc(100vh - 3.5rem);
+}
+
+/* Identity dock, clear of the screen edge and the home indicator. */
+[data-slot="identity-dock"] {
+  max-width: calc(100vw - 1.5rem);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
 /* Framed app demo. At most 40rem, and at most 80% of the screen. */
 .h-demo-frame {
   height: min(40rem, 80svh);

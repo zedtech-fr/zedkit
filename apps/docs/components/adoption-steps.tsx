@@ -140,7 +140,7 @@ function Step({
 }) {
   const words = adoptionCopy.step(step.id, step.params ?? {}, mode.id);
   return (
-    <li className="grid content-shrink grid-cols-[1.75rem_minmax(0,1fr)] gap-x-stack-sm" data-adoption-step={step.id}>
+    <li className="grid content-shrink gap-x-stack-sm" data-adoption-step={step.id}>
       <Text as="span" aria-hidden className="pt-step font-mono text-dense text-muted-foreground">
         {index + 1}
       </Text>
