@@ -49,7 +49,7 @@ function PersonButton({ person, selected, onSelect }: { person: Person; selected
         type="button"
         variant={selected ? "secondary" : "ghost"}
         aria-pressed={selected}
-        className="h-auto min-h-target w-full justify-start gap-stack-md px-2 py-1.5 text-left font-normal"
+        className="h-auto min-h-target w-full justify-start gap-stack-md px-control-tight py-1.5 text-left font-normal"
         onClick={onSelect}
         data-hero-person={person.name}
       >

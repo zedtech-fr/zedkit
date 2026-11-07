@@ -62,7 +62,7 @@ function EditorialStoryQueue({
                 type="button"
                 variant="ghost"
                 aria-pressed={row.id === selectedId}
-                className="h-auto! min-h-target w-full flex-col items-start gap-0 px-2 py-1 text-left font-normal whitespace-normal"
+                className="h-auto! min-h-target w-full flex-col items-start gap-0 px-control-tight py-1 text-left font-normal whitespace-normal"
                 onClick={() => onSelect(row.id)}
               >
                 {row.headline}

@@ -57,7 +57,7 @@ describe("button and alert contrast (ZK-02)", () => {
 
   it("keeps horizontal padding on link size sm (no px-0 reset)", () => {
     const classes = buttonVariants({ variant: "link", size: "sm" });
-    expect(classes).toMatch(/\bpx-2\b/);
+    expect(classes).toMatch(/\bpx-control-tight\b/);
     expect(classes).not.toMatch(/(?:^|\s)px-0(?:\s|$)/);
   });
 });

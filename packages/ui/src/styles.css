@@ -822,6 +822,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility actions-offset {
   padding-top: calc(var(--spacing) * 2);
 }
+/* Tight control inset, one step under the control's inline padding. */
+@utility px-control-tight {
+  padding-inline: calc(var(--spacing) * 2);
+}
 /* Panel padding. The name is the surface size, and the value follows --spacing. */
 @utility surface-pad-sm {
   padding: calc(var(--spacing) * 2);

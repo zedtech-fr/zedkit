@@ -13,7 +13,7 @@ export function HomeHeroLeadActions() {
       <Button asChild variant="outline">
         <HomeLink href="#ai-setup">{homeCopy.heroActions.setupAi}</HomeLink>
       </Button>
-      <Button asChild variant="link" className="h-11 px-2">
+      <Button asChild variant="link" className="h-11 px-control-tight">
         <HomeLink href="/catalog">{homeCopy.heroActions.browseCatalog}</HomeLink>
       </Button>
     </Stack>
