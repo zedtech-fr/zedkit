@@ -977,6 +977,18 @@ describe("installKit", () => {
     }
   });
 
+  it("keeps a host AGENTS.md that teaches p-4 and still validates", () => {
+    const dest = tempDir();
+    const host = "Use p-4 for page padding.\n";
+    put(dest, "AGENTS.md", host);
+    install(dest, { preset: "setup", providers: [] });
+    const agents = readFileSync(join(dest, "AGENTS.md"), "utf8");
+    expect(agents.startsWith(host)).toBe(true);
+    expect(agents).toContain("Use p-4 for page padding.");
+    expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("p-4");
+    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+  });
+
   it("skips project.mdc when AGENTS.md already exists and an always-on rule references it", () => {
     const dest = tempDir();
     put(dest, "AGENTS.md", "mine\n");
