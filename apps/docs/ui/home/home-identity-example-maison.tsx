@@ -121,7 +121,7 @@ export function HomeIdentityExampleMaison() {
               setMessage(copy.saved(next.name));
             }}
           />
-          <Text variant="muted" role="status" data-home-identity-status="" className="mt-3 empty:hidden">
+          <Text variant="muted" role="status" data-home-identity-status="" className="mt-status empty:hidden">
             {message}
           </Text>
         </CardContent>

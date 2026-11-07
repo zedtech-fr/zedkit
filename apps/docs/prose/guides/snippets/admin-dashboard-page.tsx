@@ -71,7 +71,7 @@ function TopBar() {
       <Text
         as="span"
         aria-hidden="true"
-        className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+        className="flex size-person items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
       >
         MC
       </Text>

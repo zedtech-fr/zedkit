@@ -844,6 +844,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-x-stack-lg {
   column-gap: var(--zk-gap-lg);
 }
+/* Column gap between a label and its value. */
+@utility gap-x-meta {
+  column-gap: calc(var(--spacing) * 6);
+}
 /* Space between a marketing section's header and its content. */
 @utility gap-section-stack {
   gap: calc(var(--spacing) * 10);
@@ -903,12 +907,21 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-skeleton-short {
   width: 66.666667%;
 }
+/* Short placeholder for a button or a line of text. */
+@utility w-skeleton-bar {
+  width: calc(var(--spacing) * 24);
+}
 @utility h-logo {
   height: calc(var(--spacing) * 6);
 }
 @utility size-mark {
   width: calc(var(--spacing) * 10);
   height: calc(var(--spacing) * 10);
+}
+/* Initials beside a name. Smaller than a marketing mark. */
+@utility size-person {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
 }
 @utility min-h-status {
   min-height: calc(var(--spacing) * 6);
@@ -988,6 +1001,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* Optical alignment of an icon beside a line of text. */
 @utility icon-nudge {
   margin-top: var(--spacing);
+}
+/* Space above a status line. */
+@utility mt-status {
+  margin-top: calc(var(--spacing) * 3);
 }
 @utility trim-pad-top {
   padding-top: 0;

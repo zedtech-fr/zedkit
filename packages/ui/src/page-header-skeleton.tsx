@@ -33,8 +33,8 @@ export function PageHeaderSkeleton({
         <Skeleton className="h-7 w-48" />
         {actions ? (
           <div className="flex items-center gap-page-header-actions-gap">
-            <Skeleton className="h-control-height w-24" />
-            <Skeleton className="h-control-height w-24" />
+            <Skeleton className="h-control-height w-skeleton-bar" />
+            <Skeleton className="h-control-height w-skeleton-bar" />
           </div>
         ) : null}
       </div>

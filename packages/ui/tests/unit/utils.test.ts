@@ -39,6 +39,12 @@ describe("cn", () => {
     expect(cn("top-0", "pin-top")).toBe("pin-top");
     expect(cn("inset-0", "pin-fill")).toBe("pin-fill");
     expect(cn("p-4", "flush")).toBe("flush");
+    expect(cn("size-8", "size-person")).toBe("size-person");
+    expect(cn("size-person", "size-mark")).toBe("size-mark");
+    expect(cn("size-8", "size-control-height-sm")).toBe("size-control-height-sm");
+    expect(cn("w-24", "w-skeleton-bar")).toBe("w-skeleton-bar");
+    expect(cn("mt-3", "mt-status")).toBe("mt-status");
+    expect(cn("gap-x-6", "gap-x-meta")).toBe("gap-x-meta");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });
