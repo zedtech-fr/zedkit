@@ -2806,7 +2806,7 @@
             },
             {
               "title": "Tokens in your own component",
-              "code": "import { ArrowUpRight } from \"lucide-react\";\nimport { Badge, Text } from \"@zedtech/zedkit-ui\";\n\nexport function ReleaseRow({ name }: { name: string }) {\n  return (\n    <li className=\"flex items-center justify-between gap-3 border-b border-border bg-muted px-3 py-2 text-sm\">\n      <Text as=\"span\" className=\"min-w-0 truncate\">{name}</Text>\n      <Badge variant=\"success\" className=\"gap-1\">\n        <ArrowUpRight className=\"size-3\" aria-hidden />\n        Deployed\n      </Badge>\n    </li>\n  );\n}"
+              "code": "import { ArrowUpRight } from \"lucide-react\";\nimport { Badge, Text } from \"@zedtech/zedkit-ui\";\n\nexport function ReleaseRow({ name }: { name: string }) {\n  return (\n    <li className=\"flex items-center justify-between gap-stack-md border-b border-border bg-muted pad-row text-sm\">\n      <Text as=\"span\" className=\"content-shrink truncate\">{name}</Text>\n      <Badge variant=\"success\" className=\"gap-stack-tight\">\n        <ArrowUpRight className=\"size-mini\" aria-hidden />\n        Deployed\n      </Badge>\n    </li>\n  );\n}"
             },
             {
               "title": "Dark theme button",
@@ -3218,7 +3218,7 @@
             },
             {
               "title": "Label a native input",
-              "code": "import { Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"city\">City</Label>\n<input id=\"city\" className=\"rounded-md border border-border px-3 py-2\" />"
+              "code": "import { Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"city\">City</Label>\n<input id=\"city\" className=\"rounded-md border border-border px-field-pad py-control-block-lg\" />"
             }
           ],
           "adoption": {
@@ -5076,15 +5076,15 @@
           "whenToUse": "Next to your product name in a site header or footer, or as the mark of a share image.",
           "whenNotToUse": "For the zedkit mark — `Logo` is zedkit's own mark, used by the zedkit docs site; do not ship it as yours.",
           "derivedFrom": null,
-          "example": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>",
+          "example": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-logo text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>"
+              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-logo text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>"
             },
             {
               "title": "Header link to the home page",
-              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<a href=\"/\" className=\"flex items-center gap-2 text-foreground\">\n  <BrandLogo title=\"\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n    <path d=\"M16 1 25 15H7Z\" />\n  </BrandLogo>\n  Harbor Studio\n</a>"
+              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<a href=\"/\" className=\"flex items-center gap-stack-sm text-foreground\">\n  <BrandLogo title=\"\" viewBox=\"0 0 32 24\" className=\"h-logo text-primary\">\n    <path d=\"M16 1 25 15H7Z\" />\n  </BrandLogo>\n  Harbor Studio\n</a>"
             }
           ],
           "adoption": {
@@ -5361,7 +5361,7 @@
             },
             {
               "title": "Filter chips",
-              "code": "import { ScrollGallery } from \"@zedtech/zedkit-ui\";\n\n<ScrollGallery className=\"max-w-sm\">\n  <div className=\"flex w-max gap-2\">\n    <a className=\"shrink-0 snap-start rounded-md border px-3 py-2\" href=\"#a\">\n      Alpha\n    </a>\n    <a className=\"shrink-0 snap-start rounded-md border px-3 py-2\" href=\"#b\">\n      Beta\n    </a>\n  </div>\n</ScrollGallery>"
+              "code": "import { ScrollGallery } from \"@zedtech/zedkit-ui\";\n\n<ScrollGallery className=\"max-w-sm\">\n  <div className=\"flex w-max gap-stack-sm\">\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#a\">\n      Alpha\n    </a>\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#b\">\n      Beta\n    </a>\n  </div>\n</ScrollGallery>"
             }
           ],
           "adoption": {
@@ -5554,7 +5554,7 @@
             },
             {
               "title": "Same card in each look",
-              "code": "import { Badge, Button, Heading, Text, ThemeScope, identities } from \"@zedtech/zedkit-ui\";\n\n// Preview every look at once: the scope changes this subtree only, never <html>.\n{identities.map((look) => (\n  <ThemeScope\n    key={look.id}\n    identity={look.id}\n    className=\"rounded-xl border border-border bg-background p-4 shadow-md\"\n  >\n    <Heading level={3}>{look.label}</Heading>\n    <Badge variant=\"secondary\">New</Badge>\n    <Text variant=\"muted\">{look.description}</Text>\n    <Button size=\"sm\">Save</Button>\n  </ThemeScope>\n))}"
+              "code": "import { Badge, Button, Heading, Text, ThemeScope, identities } from \"@zedtech/zedkit-ui\";\n\n// Preview every look at once: the scope changes this subtree only, never <html>.\n{identities.map((look) => (\n  <ThemeScope\n    key={look.id}\n    identity={look.id}\n    className=\"rounded-xl border border-border bg-background surface-pad-md shadow-md\"\n  >\n    <Heading level={3}>{look.label}</Heading>\n    <Badge variant=\"secondary\">New</Badge>\n    <Text variant=\"muted\">{look.description}</Text>\n    <Button size=\"sm\">Save</Button>\n  </ThemeScope>\n))}"
             },
             {
               "title": "Touch picker",
