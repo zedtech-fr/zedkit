@@ -25,7 +25,7 @@ export function DevtoolsDrawerShell({
   footer?: ReactNode;
 }) {
   return (
-    <div className="fixed bottom-float left-float z-50">
+    <div className="fixed bottom-float left-float z-overlay">
       <Drawer>
         <DrawerTrigger asChild>
           <Button type="button" size="sm" variant="secondary">
