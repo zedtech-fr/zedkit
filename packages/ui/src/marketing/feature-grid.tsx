@@ -41,11 +41,11 @@ function FeatureGrid({ title, description, features, columns = 3, className, ...
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col gap-10">
+      <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ul className={cn("grid list-none gap-4 flush sm:grid-cols-2", columnClass[columns])}>
+        <ul className={cn("grid list-none gap-stack-lg flush sm:grid-cols-2", columnClass[columns])}>
           {features.map((feature, index) => (
-            <GlassSurface key={feature.id ?? index} as="li" className="flex flex-col gap-3">
+            <GlassSurface key={feature.id ?? index} as="li" className="flex flex-col gap-stack-md">
               {feature.icon ? (
                 <span
                   data-slot="feature-icon"

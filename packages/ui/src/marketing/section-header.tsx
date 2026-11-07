@@ -14,7 +14,7 @@ export interface SectionHeaderProps {
 /** Centered title and description shared by the marketing sections (not exported). */
 export function SectionHeader({ titleId, title, description, className }: SectionHeaderProps) {
   return (
-    <div data-slot="marketing-section-header" className={cn("mx-auto flex max-w-reading flex-col items-center gap-3 text-center", className)}>
+    <div data-slot="marketing-section-header" className={cn("mx-auto flex max-w-reading flex-col items-center gap-stack-md text-center", className)}>
       <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
         {title}
       </Heading>
