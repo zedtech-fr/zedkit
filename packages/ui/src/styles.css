@@ -802,6 +802,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 
 /* Stack rhythm. Gap only, so this does not become a padding or width scale. */
+@utility gap-icon {
+  gap: calc(var(--spacing) * 1.5);
+}
 @utility gap-stack-tight {
   gap: var(--spacing);
 }

@@ -57,7 +57,7 @@ describe("LivePulse", () => {
   it("uses the canonical scale gap with no arbitrary values", () => {
     render(<LivePulse />);
     const className = screen.getByRole("status").className;
-    expect(className).toContain("gap-live-pulse-gap");
+    expect(className).toContain("gap-icon");
     expect(className).not.toContain("gap-1.5");
     expect(className).not.toContain("[");
   });

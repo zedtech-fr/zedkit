@@ -209,7 +209,7 @@ export function MobileHeader({
           "sticky pin-top z-40 flex h-14 items-center justify-between gap-stack-sm border-b bg-background px-2 md:hidden"
         }
       >
-        <div className="flex content-shrink items-center gap-1.5">
+        <div className="flex content-shrink items-center gap-icon">
           <DocsAppLink
             href="/"
             aria-label="zedkit home"
