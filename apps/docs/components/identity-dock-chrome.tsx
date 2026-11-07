@@ -19,7 +19,7 @@ function IdentityDock({ className, children, ...props }: IdentityDockProps) {
       data-slot="identity-dock"
       data-demo-specimen=""
       className={cn(
-        "pointer-events-none fixed right-control-inline bottom-control-inline z-40 flex flex-col items-end gap-stack-sm sm:right-float sm:bottom-float",
+        "pointer-events-none fixed right-control-inline bottom-control-inline flex flex-col items-end gap-stack-sm sm:right-float sm:bottom-float",
         className,
       )}
       {...props}
