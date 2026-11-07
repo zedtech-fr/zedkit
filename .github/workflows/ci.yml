@@ -56,10 +56,17 @@ jobs:
             base="origin/$BASE_REF"
           elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
             base="$BEFORE"
-          else
+          elif git rev-parse --verify --quiet HEAD~1 >/dev/null; then
             base="HEAD~1"
+          else
+            # Orphan / first commit on the branch: no parent to diff.
+            base=""
           fi
-          git diff --name-only --no-renames "$base"...HEAD 2>/dev/null |
+          if [ -n "$base" ]; then
+            git diff --name-only --no-renames "$base"...HEAD
+          else
+            git ls-tree -r --name-only HEAD
+          fi |
             node scripts/ci-affected.mjs --event "$EVENT" --base-ref "$BASE_REF" | tee -a "$GITHUB_OUTPUT"
 
   workflow-lint:
@@ -79,10 +86,16 @@ jobs:
             base="origin/${{ github.base_ref }}"
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
             base="${{ github.event.before }}"
-          else
+          elif git rev-parse --verify --quiet HEAD~1 >/dev/null; then
             base="HEAD~1"
+          else
+            base=""
           fi
-          mapfile -t files < <(git diff --name-only "$base"...HEAD -- '.github/workflows/')
+          if [ -n "$base" ]; then
+            mapfile -t files < <(git diff --name-only "$base"...HEAD -- '.github/workflows/')
+          else
+            mapfile -t files < <(git ls-tree -r --name-only HEAD -- '.github/workflows/')
+          fi
           if [ ${#files[@]} -eq 0 ]; then
             echo "No workflow files in diff; skipping actionlint/yamllint."
             exit 0
