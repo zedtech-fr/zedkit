@@ -10,7 +10,7 @@ export function IconButtonDemo() {
   const [message, setMessage] = useState<string>(iconButtonCopy.demo.initialMessage);
   return (
     <Stack className="content-shrink rounded-lg border border-border bg-background">
-      <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border px-4 py-3">
+      <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline py-3">
         <Stack gap={1} className="content-shrink">
           <Heading level={2} className="text-xl text-balance">
             {iconButtonCopy.demo.title}
@@ -53,7 +53,7 @@ export function IconButtonRowsDemo() {
     <Stack gap={3} className="content-shrink">
       <ul aria-label={iconButtonCopy.rows.tasksAriaLabel} className="divide-y divide-border rounded-lg border border-border bg-background">
         {tasks.map((task) => (
-          <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md px-4 py-2">
+          <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md surface-pad-inline py-2">
             <Stack gap={1} className="content-shrink flex-1">
               <Text as="span" className="font-medium">
                 {task.title}
@@ -81,7 +81,7 @@ export function IconButtonRowsDemo() {
           </li>
         ))}
         {tasks.length === 0 ? (
-          <li className="px-4 py-3">
+          <li className="surface-pad-inline py-3">
             <Text variant="muted">{iconButtonCopy.rows.noTasksLeft}</Text>
           </li>
         ) : null}

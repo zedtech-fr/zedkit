@@ -35,7 +35,7 @@ export function HomeAiSetupTerminal({ className }: { className?: string | undefi
       className={`content-shrink overflow-hidden ${className ?? ""}`}
       data-home-ai-terminal=""
     >
-      <Stack direction="horizontal" gap={2} className="items-center border-b border-border px-4 py-2">
+      <Stack direction="horizontal" gap={2} className="items-center border-b border-border surface-pad-inline py-2">
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {terminal.title}
         </Text>

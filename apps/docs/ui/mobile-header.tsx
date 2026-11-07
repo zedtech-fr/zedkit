@@ -99,7 +99,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
   const primary = sitePrimaryNavLinks(changelogHref);
 
   return (
-    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-stack-lg overflow-y-auto px-4 pt-2 pb-6">
+    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-stack-lg overflow-y-auto px-drawer-chrome-padding pt-2 pb-6">
       <div className="w-full [&_[data-search]]:w-full">
         <SiteFullSearchTrigger className="w-full max-w-none" />
       </div>

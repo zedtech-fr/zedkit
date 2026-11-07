@@ -829,6 +829,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility surface-pad-md {
   padding: calc(var(--spacing) * 4);
 }
+@utility surface-pad-inline {
+  padding-inline: calc(var(--spacing) * 4);
+}
 @utility glass-pad-sm {
   padding: calc(var(--spacing) * 4);
 }

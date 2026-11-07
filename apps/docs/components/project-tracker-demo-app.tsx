@@ -255,7 +255,7 @@ function UserMenu() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-between px-4 py-2">
+    <Stack direction="horizontal" gap={2} className="justify-between surface-pad-inline py-2">
       <Stack direction="horizontal" gap={2}>
         <MobileNav />
         <Text className="text-sm font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
