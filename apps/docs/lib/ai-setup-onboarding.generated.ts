@@ -28,7 +28,9 @@ export const AI_SETUP_KIT = {
     "to-tickets",
     "wayfinder",
     "codebase-design",
-    "research"
+    "research",
+    "from-audit",
+    "to-audit"
   ],
   "agents": [
     "explorer",
@@ -38,14 +40,24 @@ export const AI_SETUP_KIT = {
     "ui-designer",
     "copywriter",
     "skeptic",
-    "researcher"
+    "researcher",
+    "implementer",
+    "reviewer",
+    "domain-guardian",
+    "event-contracts",
+    "test-runner"
   ],
   "commands": [
     "setup-ai",
     "review",
     "plan",
+    "challenge",
     "implement",
-    "orchestrate"
+    "orchestrate",
+    "improve-config",
+    "research",
+    "from-audit",
+    "to-audit"
   ],
   "installed": [
     {
@@ -153,7 +165,15 @@ export const AI_SETUP_KIT = {
       "kind": "dir"
     },
     {
-      "text": "│  │  └─ research/",
+      "text": "│  │  ├─ research/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  ├─ from-audit/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  └─ to-audit/",
       "kind": "dir"
     },
     {
@@ -189,7 +209,27 @@ export const AI_SETUP_KIT = {
       "kind": "file"
     },
     {
-      "text": "│  │  └─ researcher.md",
+      "text": "│  │  ├─ researcher.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ implementer.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ reviewer.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ domain-guardian.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ event-contracts.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  └─ test-runner.md",
       "kind": "file"
     },
     {
@@ -209,11 +249,31 @@ export const AI_SETUP_KIT = {
       "kind": "file"
     },
     {
+      "text": "│  │  ├─ challenge.md",
+      "kind": "file"
+    },
+    {
       "text": "│  │  ├─ implement.md",
       "kind": "file"
     },
     {
-      "text": "│  │  └─ orchestrate.md",
+      "text": "│  │  ├─ orchestrate.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ improve-config.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ research.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ from-audit.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  └─ to-audit.md",
       "kind": "file"
     },
     {

@@ -6,7 +6,11 @@ disable-model-invocation: true
 
 Implement the work described by the user in the spec or tickets.
 
-Refuse a missing or unchallenged plan: run `challenge` (or `plan`, when there is nothing yet) first.
+Unless this brief already contains `Playbook: implement` or `Mode: inline fallback`,
+hand the user's text to `orchestrate` with `Playbook: implement` and stop.
+Sibling entrypoints called from here get `Playbook: <name>` so they do not re-enter.
+
+Refuse a missing or unchallenged plan: run `challenge` (or `plan`, when there is nothing yet) first, with `Playbook: challenge` or `Playbook: plan`.
 
 If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 
@@ -26,7 +30,7 @@ choices. Do not edit UI until that brief exists.
 
 Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it.
 
-Then pass `definition-of-done`, and call the Skill tool with "review" to review the work. Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
+Then pass `definition-of-done`, and call the Skill tool with "review" to review the work (`Playbook: review`). Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
 
 Carry the ticket's `Stakes:` into the PR body, never lower it. Before each
 spawn run `zedkit-ai route <agent> --kind <how it is used now> --stakes <s>`,

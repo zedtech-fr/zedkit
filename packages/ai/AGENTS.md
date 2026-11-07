@@ -44,5 +44,5 @@
 - Own-install and sync rules: [ai-kit.md](../../.agents/domain/ai-kit.md)
 - Public hygiene: [public-hygiene.md](../../.agents/domain/public-hygiene.md)
 - Tokenomics (root): [tokenomics.md](../../.agents/tokenomics.md)
-- Cursor pointer: [packages-ai.mdc](../../.cursor/rules/packages-ai.mdc) only
+- Cursor pointer: [nested.mdc](../../.cursor/rules/nested.mdc) only
   names this file.

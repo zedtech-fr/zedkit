@@ -2,15 +2,18 @@
 
 These files ship in **this skill folder** at `.agents/skills/setup-ai/templates/`. During phase C/D, read them here and copy customized output into `.agents/` (or repo glossary path). Fictional **Acme Bookings** examples appear only in these templates.
 
-| Template                               | Install path                                                                                                   |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `templates/product.template.md`        | `.agents/product.md`                                                                                           |
-| `templates/domain/booking.template.md` | `.agents/domain/<area>.md` (rename `<area>`)                                                                   |
-| `templates/personas-v2.template.md`    | `.agents/personas.md` (v2; `setup` init installs this file — phase C edits it in place)                        |
-| `templates/design.template.md`         | `.agents/design.md`                                                                                            |
-| `templates/glossary.template.md`       | `GLOSSARY.md` or `.agents/glossary.md`                                                                         |
-| `templates/nested-agents.template.md`  | `<folder>/AGENTS.md` for each folder whose rules differ from the root                                          |
-| kit `tokenomics.template.md`           | `.agents/tokenomics.md` (already installed; fill `providers.<p>.<kind>.<stakes>.model`, then `zedkit-ai sync`) |
+| Template                                    | Install path                                                                                                   |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `templates/product.template.md`             | `.agents/product.md`                                                                                           |
+| `templates/domain/booking.template.md`      | `.agents/domain/<area>.md` (rename `<area>`)                                                                   |
+| `templates/personas-v2.template.md`         | `.agents/personas.md` (v2; `setup` init installs this file — phase C edits it in place)                        |
+| `templates/design.template.md`              | `.agents/design.md`                                                                                            |
+| `templates/glossary.template.md`            | `GLOSSARY.md` or `.agents/glossary.md`                                                                         |
+| `templates/nested-agents.template.md`       | `<folder>/AGENTS.md` for each folder whose rules differ from the root                                          |
+| `templates/nested-cursor-rule.template.mdc` | `.cursor/rules/nested.mdc` (one globbed pointer; split per-folder only if the body would differ)               |
+| `templates/agents-readme.template.md`       | `.agents/README.md` (commands, always-on vs globbed, design loop)                                              |
+| `templates/cursor-readme.template.md`       | `.cursor/README.md` when Cursor is wired (pointer at the map)                                                  |
+| kit `tokenomics.template.md`                | `.agents/tokenomics.md` (already installed; fill `providers.<p>.<kind>.<stakes>.model`, then `zedkit-ai sync`) |
 
 ## Read the code first (phase B)
 
@@ -36,10 +39,13 @@ Read in place, never copied wholesale:
 
 Copy from `templates/catalog/<name>/SKILL.md.tmpl` to `.agents/skills/<name>/SKILL.md` when the plan tier says **must** or **should**. Each file is ready to install as-is: frontmatter included, no placeholders, links resolve once phase C wrote `product.md` and `domain/`.
 
-| Catalog skill  | When to propose                                              |
-| -------------- | ------------------------------------------------------------ |
-| add-capability | Multi-layer features (route + API + data + tests) ship often |
-| add-migration  | Schema changes are regular and gated                         |
-| domain-change  | Money, cancel, refund, or policy edits are common            |
+| Catalog skill        | When to propose                                              |
+| -------------------- | ------------------------------------------------------------ |
+| add-capability       | Multi-layer features (route + API + data + tests) ship often |
+| add-migration        | Schema changes are regular and gated                         |
+| domain-change        | Money, cancel, refund, or policy edits are common            |
+| add-usecase          | Hexagonal ports / one-action entry points                    |
+| add-driven-adapter   | Outbound adapters behind ports                               |
+| add-driving-endpoint | Inbound HTTP or message handlers that should stay thin       |
 
 After copying, edit only what this repo contradicts (a gate command, a path you verified); run `zedkit-ai validate`.

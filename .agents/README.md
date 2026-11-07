@@ -22,3 +22,40 @@ Edit skills and unmarked agent sources in `packages/ai/kit/`, then run
 (it builds the sibling packages first, validates the kit and checks skills
 links plus generated agents). Licences and credits of vendored skills:
 `packages/ai/kit/THIRD_PARTY_NOTICES.md`.
+
+## Design loop
+
+0. Unclear, or only questions? `/to-audit`. Have an audit? `/from-audit`.
+1. `/plan` — research, spec, ladder, **assumptions table**. Never implements.
+2. `/challenge` — stress-test the plan. **BLOCKING** if the assumptions table is missing.
+3. `/implement` — one unit at a time (`implementer` when the orchestrator fans out).
+4. `/review` — punchlist (`reviewer`); apply via `improver`.
+5. Close with `definition-of-done` and `rules-upkeep` (`Rules: none` when nothing to encode).
+
+Every numbered command hands to `orchestrate` (tokenomics + **build team**). Plan, challenge and review: go deep, be strict, and be brutally honest.
+
+## Commands
+
+| Command | Does |
+| --- | --- |
+| `/plan` | Spec, tickets, ladder, assumptions. Never implements. |
+| `/challenge` | Attack a plan. |
+| `/implement` | Build from a challenged plan. |
+| `/review` | Pin the diff, run lenses, one verdict. |
+| `/orchestrate` | Coordinator: frame, dispatch, aggregate. Does not edit. |
+| `/setup-ai` | Audit and tailor this setup. |
+| `/improve-config` | Encode session learnings (skill `rules-upkeep`). |
+| `/pr` | PR body. |
+| `/handoff` | Hand off to the next builder. |
+| `/audit` | Quality audit. |
+| `/research` | Prior-art scout. |
+| `/to-audit` | Topic audit from questions or an unclear plan. |
+| `/from-audit` | Challenge an audit against the code; draft tickets. |
+
+## Always-on vs globbed
+
+Root `AGENTS.md` is always on (via `.cursor/rules/zedkit.mdc`): public hygiene, ladder, file budget, assumptions, living config. Nested `AGENTS.md` plus `.cursor/rules/nested.mdc` (`globs:` `**/`-prefixed, comma-separated) attach when those files are in play. `alwaysApply: true` only for the short root pointer.
+
+## Public hygiene
+
+This is a public repo. Never name a private project. Say "an upstream consumer". `scripts/check-no-private-refs.sh` and `scripts/check-tone.sh` fail the PR. A local consumer-setup dump at `the-good-example/` is gitignored on purpose.

@@ -53,6 +53,16 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   `pnpm --filter <pkg> typecheck && pnpm --filter <pkg> lint && pnpm --filter <pkg> test`.
   CI owns full-repo test, e2e and static-export smoke.
 - Small PRs from fresh `main`, never stacked. One package per PR.
+  File budget (exclude generated and lockfiles): green ≤15, orange 16–25
+  (warn and offer a split), red >25 (stop; propose mergeable seams).
+- List assumptions before code or a plan. A missing assumptions table
+  is a blocking challenge.
+- Entrypoints go through `orchestrate` (read tokenomics, pick a build
+  team). Plan, challenge and review: go deep, be strict, and be brutally
+  honest. Unclear topic: `/to-audit`. Have an audit: `/from-audit`.
+- Encode the first reusable correction that changed the work, same turn
+  (`rules-upkeep`). Close coding work with `Rules: none` or
+  `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
 - Each package PR updates the root README package table, adds a
   Changeset file, records the module's origin in the package README
   ("original work by the same author" — never a project name or path),

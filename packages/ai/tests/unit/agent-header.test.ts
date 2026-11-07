@@ -25,8 +25,8 @@ describe("shipped header table", () => {
     expect(Object.keys(KIT_HEADERS).sort()).toEqual([...manifest.value.agents].sort());
   });
 
-  it("holds 18 valid headers, each a default_kind inside its kinds, no kind key", () => {
-    expect(Object.keys(KIT_HEADERS)).toHaveLength(18);
+  it("holds 23 valid headers, each a default_kind inside its kinds, no kind key", () => {
+    expect(Object.keys(KIT_HEADERS)).toHaveLength(23);
     for (const [name, header] of Object.entries(KIT_HEADERS)) {
       const parsed = parseAgentHeader({ ...header }, true);
       expect(parsed.issues, name).toEqual([]);
@@ -40,7 +40,18 @@ describe("shipped header table", () => {
       .filter(([, header]) => header.kinds !== undefined)
       .map(([name]) => name)
       .sort();
-    expect(restricted).toEqual(["explorer", "orchestrator", "researcher", "security-reviewer", "skeptic", "verifier"]);
+    expect(restricted).toEqual([
+      "domain-guardian",
+      "event-contracts",
+      "explorer",
+      "orchestrator",
+      "researcher",
+      "reviewer",
+      "security-reviewer",
+      "skeptic",
+      "test-runner",
+      "verifier",
+    ]);
     for (const name of restricted) expect(KIT_HEADERS[name]?.kinds).not.toContain("build");
   });
 });

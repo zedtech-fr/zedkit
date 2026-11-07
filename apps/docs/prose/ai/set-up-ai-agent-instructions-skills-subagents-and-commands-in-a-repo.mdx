@@ -20,7 +20,7 @@ overwrites existing files. `zedkit-ai sync` writes each tool's agent files from
 
 ## Agents
 
-Subagents installed from `kit.json` (18). Read-only unless noted.
+Subagents installed from `kit.json` (23). Read-only unless noted.
 
 | Agent | Role |
 |---|---|
@@ -28,6 +28,11 @@ Subagents installed from `kit.json` (18). Read-only unless noted.
 | <AgentName name="architect" /> | file-level implementation plan, never code |
 | <AgentName name="verifier" /> | quality gate: runs gates + definition of done |
 | <AgentName name="improver" /> | applies review findings, smallest diff first (writes) |
+| <AgentName name="implementer" /> | one frozen work unit, exclusive files (writes) |
+| <AgentName name="reviewer" /> | read-only punchlist for improver |
+| <AgentName name="domain-guardian" /> | package / feature / hexagonal boundary audit |
+| <AgentName name="event-contracts" /> | additive or versioned event and command contracts |
+| <AgentName name="test-runner" /> | cheap loop, first failure, no code edits |
 | <AgentName name="security-reviewer" /> | auth, tenancy, secrets, user data, input parsing |
 | <AgentName name="skeptic" /> | pre-mortem, one angle per brief |
 | <AgentName name="ui-designer" /> | UI review: kit reuse, tokens, states, lazy-client bar |
@@ -59,7 +64,7 @@ Bundled slash commands (each runs its skill on the command arguments):
 
 <DocsKitNameList
   kind="command"
-  names={["review", "plan", "challenge", "implement", "setup-ai", "pr", "handoff", "audit", "orchestrate", "research"]}
+  names={["review", "plan", "challenge", "implement", "setup-ai", "pr", "handoff", "audit", "orchestrate", "research", "improve-config", "from-audit", "to-audit"]}
 />.
 
 Each file starts with frontmatter (`name`, one-line `description`,
@@ -77,6 +82,8 @@ Triggered by what changed:
   kind="lens"
   names={[
     "adversarial-tests",
+    "boundaries",
+    "contracts",
     "security",
     "skeptic",
     "ui",

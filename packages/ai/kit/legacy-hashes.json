@@ -2,7 +2,12 @@
   "schema": 1,
   "agents": {
     "a11y-auditor": ["4463f52e65857b23"],
-    "architect": ["2fd74ea50b55e177", "ce1684657bce839e", "ecd377805f9cad79"],
+    "architect": [
+      "2fd74ea50b55e177",
+      "afd3455f5b38f96b",
+      "ce1684657bce839e",
+      "ecd377805f9cad79"
+    ],
     "console-architecture": ["49a5f8c6d3439e29"],
     "copywriter": [
       "38e560fd5395ec5b",
@@ -25,13 +30,17 @@
       "3adc3cfe4b2e25ef",
       "504e497cae3a3217",
       "5e442d592e871e02",
+      "67817a8e1154a51f",
       "70621f56f0fd51ea",
       "76b8c2398cf50536",
       "8c37f6e9158cf3a7",
       "970f2919b8edd3aa",
+      "b0a845e28d90258a",
       "ba65a42646a8ac3c",
       "e3ae3cf229016c3d",
+      "eab625c28c58cf4c",
       "eeaca9748a7f8572",
+      "f57a3db6c430c2b0",
       "fd17a213125a8ba2"
     ],
     "product-director": ["3707ba4b4037570a"],
@@ -76,7 +85,12 @@
       "cab10c777e44194e",
       "ef42139731101601",
       "f02af4e20c099f7d"
-    ]
+    ],
+    "domain-guardian": ["46e05cd4d1d5c425"],
+    "event-contracts": ["4aaaf83436f00ff9"],
+    "implementer": ["b57059813be2e151"],
+    "reviewer": ["195647d90ee0ec05", "9fd327052984721a", "fd7c66aeafd45326"],
+    "test-runner": ["7dede3a37254ad3e"]
   },
   "commands": {
     "audit": ["776962bba5762b2d"],
@@ -93,6 +107,9 @@
       "6ac1c4523627d059",
       "9054c62f58aef11a",
       "d4eee016d5aea5cc"
-    ]
+    ],
+    "from-audit": ["06669f4b7e355258"],
+    "improve-config": ["74e7753dc18a6997"],
+    "to-audit": ["af42ae2b052c2bba"]
   }
 }

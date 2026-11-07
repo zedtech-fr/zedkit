@@ -1,9 +1,18 @@
 import { appendFileSync, existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolveConditionals, withoutMarkers, type Availability } from "#conditional.js";
+import {
+  resolveConditionals,
+  withoutMarkers,
+  type Availability,
+} from "#conditional.js";
 import { installKit } from "#install.js";
-import { agentsForPreset, commandsForPreset, kitDir, readManifest } from "#kit.js";
+import {
+  agentsForPreset,
+  commandsForPreset,
+  kitDir,
+  readManifest,
+} from "#kit.js";
 import { lensClosureIssues, setLensStatus } from "#lenses.js";
 import { validateKit } from "#validate.js";
 import { skillDirs, tempDir } from "./helpers.js";
@@ -60,6 +69,8 @@ describe("preset closure", () => {
       "wayfinder",
       "codebase-design",
       "research",
+      "from-audit",
+      "to-audit",
     ]);
     expect(agentsForPreset(manifest.value, "setup")).toEqual([
       "explorer",
@@ -70,8 +81,24 @@ describe("preset closure", () => {
       "copywriter",
       "skeptic",
       "researcher",
+      "implementer",
+      "reviewer",
+      "domain-guardian",
+      "event-contracts",
+      "test-runner",
     ]);
-    expect(commandsForPreset(manifest.value, "setup")).toEqual(["setup-ai", "review", "plan", "implement", "orchestrate"]);
+    expect(commandsForPreset(manifest.value, "setup")).toEqual([
+      "setup-ai",
+      "review",
+      "plan",
+      "challenge",
+      "implement",
+      "orchestrate",
+      "improve-config",
+      "research",
+      "from-audit",
+      "to-audit",
+    ]);
   });
 
   it("every preset with the orchestrate skill ships the plan and implement playbooks, except documented-lean starter", () => {
@@ -92,7 +119,9 @@ describe("preset closure", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const presets = Object.keys(manifest.value.presets);
-    expect(presets).toEqual(expect.arrayContaining(["starter", "setup", "core", "full"]));
+    expect(presets).toEqual(
+      expect.arrayContaining(["starter", "setup", "core", "full"]),
+    );
     expect(presets.length).toBeGreaterThanOrEqual(4);
     for (const preset of presets) {
       const dest = tempDir();
@@ -107,7 +136,10 @@ describe("preset closure", () => {
       const lensesPath = join(agentsRoot, "skills", "review", "lenses.md");
       if (!existsSync(lensesPath)) continue;
       const text = readFileSync(lensesPath, "utf8");
-      expect(lensClosureIssues("skills/review/lenses.md", text, installed), preset).toEqual([]);
+      expect(
+        lensClosureIssues("skills/review/lenses.md", text, installed),
+        preset,
+      ).toEqual([]);
       expect(setLensStatus(text, installed), `${preset} lenses.md`).toBe(text);
     }
   });
@@ -124,7 +156,9 @@ describe("preset closure", () => {
     const candidates = [
       ...skillDirs().map((name) => join("skills", name, "SKILL.md")),
       ...manifest.value.agents.map((name) => join("agents", `${name}.md`)),
-      ...(manifest.value.commands ?? []).map((name) => join("commands", `${name}.md`)),
+      ...(manifest.value.commands ?? []).map((name) =>
+        join("commands", `${name}.md`),
+      ),
       "AGENTS.template.md",
       "personas.template.md",
       join("skills", "review", "lenses.md"),
@@ -144,6 +178,7 @@ describe("preset closure", () => {
         "personas.template.md",
         join("agents", "copywriter.md"),
         join("agents", "orchestrator.md"),
+        join("agents", "reviewer.md"),
         join("agents", "ui-designer.md"),
         join("agents", "verifier.md"),
         join("skills", "compose-ui", "SKILL.md"),
@@ -161,7 +196,10 @@ describe("preset closure", () => {
     const dest = tempDir();
     install(dest, "full");
     const agents = join(dest, ".agents");
-    const orch = readFileSync(join(agents, "agents", "orchestrator.md"), "utf8");
+    const orch = readFileSync(
+      join(agents, "agents", "orchestrator.md"),
+      "utf8",
+    );
     expect(orch).not.toContain("<!-- if:");
     for (const runner of [
       "`architect`",
@@ -176,6 +214,13 @@ describe("preset closure", () => {
       "`researcher`",
       "`test-writer`",
       "`docs-writer`",
+      "`implementer`",
+      "`reviewer`",
+      "`domain-guardian`",
+      "`event-contracts`",
+      "`test-runner`",
+      "`from-audit`",
+      "`to-audit`",
       "`plan`",
       "`challenge`",
       "`implement`",
@@ -184,7 +229,10 @@ describe("preset closure", () => {
     ]) {
       expect(orch, `full keeps ${runner}`).toContain(runner);
     }
-    const setupAi = readFileSync(join(agents, "skills", "setup-ai", "SKILL.md"), "utf8");
+    const setupAi = readFileSync(
+      join(agents, "skills", "setup-ai", "SKILL.md"),
+      "utf8",
+    );
     expect(setupAi).not.toContain("<!-- if:");
     for (const kept of [
       "Invoke **`product-director`**",
@@ -201,11 +249,26 @@ describe("preset closure", () => {
     install(dest, "full");
     const agents = join(dest, ".agents");
     const pairs: Array<[string, string]> = [
-      [join(kitDir(), "agents", "orchestrator.md"), join(agents, "agents", "orchestrator.md")],
-      [join(kitDir(), "agents", "ui-designer.md"), join(agents, "agents", "ui-designer.md")],
-      [join(kitDir(), "skills", "setup-ai", "SKILL.md"), join(agents, "skills", "setup-ai", "SKILL.md")],
-      [join(kitDir(), "skills", "review", "SKILL.md"), join(agents, "skills", "review", "SKILL.md")],
-      [join(kitDir(), "skills", "tdd", "SKILL.md"), join(agents, "skills", "tdd", "SKILL.md")],
+      [
+        join(kitDir(), "agents", "orchestrator.md"),
+        join(agents, "agents", "orchestrator.md"),
+      ],
+      [
+        join(kitDir(), "agents", "ui-designer.md"),
+        join(agents, "agents", "ui-designer.md"),
+      ],
+      [
+        join(kitDir(), "skills", "setup-ai", "SKILL.md"),
+        join(agents, "skills", "setup-ai", "SKILL.md"),
+      ],
+      [
+        join(kitDir(), "skills", "review", "SKILL.md"),
+        join(agents, "skills", "review", "SKILL.md"),
+      ],
+      [
+        join(kitDir(), "skills", "tdd", "SKILL.md"),
+        join(agents, "skills", "tdd", "SKILL.md"),
+      ],
       [
         join(kitDir(), "skills", "definition-of-done", "SKILL.md"),
         join(agents, "skills", "definition-of-done", "SKILL.md"),
@@ -226,7 +289,10 @@ describe("preset closure", () => {
     const dest = tempDir();
     install(dest, "starter");
     const agents = join(dest, ".agents");
-    const orch = readFileSync(join(agents, "agents", "orchestrator.md"), "utf8");
+    const orch = readFileSync(
+      join(agents, "agents", "orchestrator.md"),
+      "utf8",
+    );
     expect(orch).not.toContain("<!-- if:");
     for (const missing of [
       "architect",
@@ -241,6 +307,13 @@ describe("preset closure", () => {
       "researcher",
       "test-writer",
       "docs-writer",
+      "implementer",
+      "reviewer",
+      "domain-guardian",
+      "event-contracts",
+      "test-runner",
+      "from-audit",
+      "to-audit",
       "plan",
       "challenge",
       "implement",
@@ -249,10 +322,18 @@ describe("preset closure", () => {
     ]) {
       expect(orch, `starter drops ${missing}`).not.toContain(`\`${missing}\``);
     }
-    for (const kept of ["`explorer`", "`verifier`", "`review`", "`parallel-work`"]) {
+    for (const kept of [
+      "`explorer`",
+      "`verifier`",
+      "`review`",
+      "`parallel-work`",
+    ]) {
       expect(orch, `starter keeps ${kept}`).toContain(kept);
     }
-    const setupAi = readFileSync(join(agents, "skills", "setup-ai", "SKILL.md"), "utf8");
+    const setupAi = readFileSync(
+      join(agents, "skills", "setup-ai", "SKILL.md"),
+      "utf8",
+    );
     for (const missing of [
       "product-director",
       "domain-modeling",
@@ -263,14 +344,29 @@ describe("preset closure", () => {
       "plan",
       "implement",
     ]) {
-      expect(setupAi, `starter drops ${missing}`).not.toContain(`\`${missing}\``);
+      expect(setupAi, `starter drops ${missing}`).not.toContain(
+        `\`${missing}\``,
+      );
     }
-    for (const kept of ["`explorer`", "`ground-truth`", "`parallel-work`", "`review`"]) {
+    for (const kept of [
+      "`explorer`",
+      "`ground-truth`",
+      "`parallel-work`",
+      "`review`",
+    ]) {
       expect(setupAi, `starter keeps ${kept}`).toContain(kept);
     }
-    const done = readFileSync(join(agents, "skills", "definition-of-done", "SKILL.md"), "utf8");
+    const done = readFileSync(
+      join(agents, "skills", "definition-of-done", "SKILL.md"),
+      "utf8",
+    );
     expect(done, "starter drops ui-designer").not.toContain("`ui-designer`");
-    for (const kept of ["`tdd`", "`adversarial-tests`", "`parallel-work`", "`verifier`"]) {
+    for (const kept of [
+      "`tdd`",
+      "`adversarial-tests`",
+      "`parallel-work`",
+      "`verifier`",
+    ]) {
       expect(done, `starter keeps ${kept}`).toContain(kept);
     }
   });
@@ -278,16 +374,58 @@ describe("preset closure", () => {
   it("setup lenses mark installed runners exists and the rest planned", () => {
     const dest = tempDir();
     install(dest, "setup");
-    const text = readFileSync(join(dest, ".agents/skills/review/lenses.md"), "utf8");
-    expect(text).toMatch(/\| code\s+\| skill `code-review`[^\n]*\|\s*exists\s*\|/);
-    expect(text).toMatch(/\| ponytail\s+\| skill `ponytail-review`[^\n]*\|\s*exists\s*\|/);
-    expect(text).toMatch(/\| persona\s+\| skill `persona-review`[^\n]*\|\s*exists\s*\|/);
-    expect(text).toMatch(/\| quality gate\s+\| agent `verifier`\s+\|\s*exists\s*\|/);
+    const text = readFileSync(
+      join(dest, ".agents/skills/review/lenses.md"),
+      "utf8",
+    );
+    expect(text).toMatch(
+      /\| code\s+\| skill `code-review`[^\n]*\|\s*exists\s*\|/,
+    );
+    expect(text).toMatch(
+      /\| ponytail\s+\| skill `ponytail-review`[^\n]*\|\s*exists\s*\|/,
+    );
+    expect(text).toMatch(
+      /\| persona\s+\| skill `persona-review`[^\n]*\|\s*exists\s*\|/,
+    );
+    expect(text).toMatch(
+      /\| quality gate\s+\| agent `verifier`\s+\|\s*exists\s*\|/,
+    );
     expect(text).toMatch(/\| ui\s+\| agent `ui-designer`\s+\|\s*exists\s*\|/);
     expect(text).toMatch(/\| copy\s+\| agent `copywriter`\s+\|\s*exists\s*\|/);
-    expect(text).toMatch(/\| security\s+\| agent `security-reviewer`\s+\|\s*planned\s*\|/);
-    expect(existsSync(join(dest, ".agents/skills/writing-for-agents/SKILL.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/agents/product-director.md"))).toBe(true);
+    expect(text).toMatch(
+      /\| security\s+\| agent `security-reviewer`\s+\|\s*planned\s*\|/,
+    );
+    expect(text).toMatch(
+      /\| boundaries\s+\| agent `domain-guardian`[^\n]*\|\s*exists\s*\|/,
+    );
+    expect(text).toMatch(
+      /\| contracts\s+\| agent `event-contracts`[^\n]*\|\s*exists\s*\|/,
+    );
+    expect(
+      existsSync(join(dest, ".agents/skills/writing-for-agents/SKILL.md")),
+    ).toBe(true);
+    expect(existsSync(join(dest, ".agents/agents/product-director.md"))).toBe(
+      true,
+    );
+    expect(existsSync(join(dest, ".agents/agents/implementer.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/agents/domain-guardian.md"))).toBe(
+      true,
+    );
+    expect(existsSync(join(dest, ".agents/agents/event-contracts.md"))).toBe(
+      true,
+    );
+    expect(existsSync(join(dest, ".agents/commands/improve-config.md"))).toBe(
+      true,
+    );
+    expect(existsSync(join(dest, ".agents/skills/from-audit/SKILL.md"))).toBe(
+      true,
+    );
+    expect(existsSync(join(dest, ".agents/skills/to-audit/SKILL.md"))).toBe(
+      true,
+    );
+    expect(existsSync(join(dest, ".agents/commands/from-audit.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/to-audit.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/challenge.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/skills/triage"))).toBe(false);
     expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
     expect(validateKit(join(dest, ".agents"))).toEqual([]);
@@ -296,23 +434,36 @@ describe("preset closure", () => {
   it("flags a /name in the kit universe that the preset does not install", () => {
     const dest = tempDir();
     install(dest, "starter");
-    appendFileSync(join(dest, ".agents/skills/review/SKILL.md"), "\nRun `/plan` before merging.\n");
-    const found = validateKit(join(dest, ".agents")).map((issue) => `${issue.path}: ${issue.message}`);
-    expect(found).toContain('skills/review/SKILL.md: references command "plan", which this preset does not install');
+    appendFileSync(
+      join(dest, ".agents/skills/review/SKILL.md"),
+      "\nRun `/plan` before merging.\n",
+    );
+    const found = validateKit(join(dest, ".agents")).map(
+      (issue) => `${issue.path}: ${issue.message}`,
+    );
+    expect(found).toContain(
+      'skills/review/SKILL.md: references command "plan", which this preset does not install',
+    );
   });
 
   it("flags /audit on setup where the command is not installed", () => {
     const dest = tempDir();
     install(dest, "setup");
-    appendFileSync(join(dest, ".agents/skills/review/SKILL.md"), "\nPoint audits at `/audit`.\n");
-    const found = validateKit(join(dest, ".agents")).map((issue) => `${issue.path}: ${issue.message}`);
+    appendFileSync(
+      join(dest, ".agents/skills/review/SKILL.md"),
+      "\nPoint audits at `/audit`.\n",
+    );
+    const found = validateKit(join(dest, ".agents")).map(
+      (issue) => `${issue.path}: ${issue.message}`,
+    );
     expect(found).toContain(
       'skills/review/SKILL.md: references command "audit", which this preset does not install',
     );
   });
 
   it("flags the unbackticked handoffs line for setup and starter, except single-word names", () => {
-    const line = "Handoffs: <a11y-auditor / copywriter / console-architecture — or none>";
+    const line =
+      "Handoffs: <a11y-auditor / copywriter / console-architecture — or none>";
     const rows: Array<[string, string]> = [
       ["setup", "agents/ui-designer.md"],
       ["starter", "skills/review/SKILL.md"],
@@ -321,9 +472,15 @@ describe("preset closure", () => {
       const dest = tempDir();
       install(dest, preset);
       appendFileSync(join(dest, ".agents", ...file.split("/")), `\n${line}\n`);
-      const found = validateKit(join(dest, ".agents")).map((issue) => `${issue.path}: ${issue.message}`);
-      expect(found).toContain(`${file}: references agent "a11y-auditor", which this preset does not install`);
-      expect(found).toContain(`${file}: references agent "console-architecture", which this preset does not install`);
+      const found = validateKit(join(dest, ".agents")).map(
+        (issue) => `${issue.path}: ${issue.message}`,
+      );
+      expect(found).toContain(
+        `${file}: references agent "a11y-auditor", which this preset does not install`,
+      );
+      expect(found).toContain(
+        `${file}: references agent "console-architecture", which this preset does not install`,
+      );
       expect(found.some((entry) => entry.includes('"copywriter"'))).toBe(false);
     }
   });

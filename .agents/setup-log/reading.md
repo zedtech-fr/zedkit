@@ -26,12 +26,9 @@ Every rule or skill file the repo already owns for one provider. Never copy the 
 | File | Scope (globs or folder) | Decision | Where other providers find it |
 | ---- | ----------------------- | -------- | ----------------------------- |
 | `.cursor/rules/zedkit.mdc` | alwaysApply | not a rule: one-line pointer at root `AGENTS.md` | `AGENTS.md` |
-| `.cursor/rules/packages-ai.mdc` | `packages/ai/**` | not a rule: one-line pointer at nested AGENTS.md | `packages/ai/AGENTS.md` |
-| `.cursor/rules/packages-core.mdc` | `packages/core/**` | not a rule: one-line pointer at nested AGENTS.md | `packages/core/AGENTS.md` |
-| `.cursor/rules/packages-nest.mdc` | `packages/nest/**` | not a rule: one-line pointer at nested AGENTS.md | `packages/nest/AGENTS.md` |
-| `.cursor/rules/packages-server.mdc` | `packages/server/**` | not a rule: one-line pointer at nested AGENTS.md | `packages/server/AGENTS.md` |
+| `.cursor/rules/nested.mdc` | `**/packages/**,**/apps/docs/**,**/deploy/**` | not a rule: one-line pointer at nested AGENTS.md | nested `AGENTS.md` in the folder in play |
 
-rule-map: refreshed after phase C (0 rows changed; nested files already existed; domain pointers added in place, mdc files still pointers not law)
+rule-map: refreshed after living-config (package-specific mdc pointers collapsed to `nested.mdc` with `**/` globs so every nested AGENTS.md attaches)
 
 ## Policy docs
 

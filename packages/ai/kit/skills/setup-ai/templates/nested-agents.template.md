@@ -28,6 +28,6 @@ Rules for writing one:
 - Only what differs from the root `AGENTS.md`. A rule the root already states is deleted here.
 - Every rule cites `file:line` you opened. Say `documented, not enforced` unless you opened a checker that fails when the rule breaks.
 - Count the `../` depth from this folder so each link resolves (`test -e` each one).
-- Cursor wired? Add `.cursor/rules/{folder}.mdc` with `globs: {folder}/**` and one line pointing at this file. Do not copy the rules into it.
+- Cursor wired? Prefer one `.cursor/rules/nested.mdc` (`templates/nested-cursor-rule.template.mdc`) whose `globs` is a comma-separated `**/`-prefixed string covering every nested folder. Split to `{folder}.mdc` only when the pointer body would differ. Do not copy the rules into it. A folder prefix does not match when the workspace is that folder.
 - A nested file already exists? Extend it in place (rules from the folder notes, links to `.agents/domain` and `.agents/design`, evidence); keep the author's wording.
 - Folders that need nothing get nothing. Record `nested-agents: none — <reason>` (or `kept — <reason>` for files you left as they are) in `.agents/setup-log.md`.

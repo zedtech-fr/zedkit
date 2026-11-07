@@ -13,6 +13,11 @@ When to call which agent, and the chains they form. Agents live in
 | `skeptic` | after a plan or decision, before building; one angle per brief (plan, ui/ux, security, scope, data/ops, copy) | no | high, medium | check, decide | check |
 | `test-writer` | with or after implementation, to add adversarial tests (skill: `adversarial-tests`) | tests only | medium, medium | all | build |
 | `improver` | after a review returned findings; applies the smallest diff in risk order | yes | medium, medium | all | build |
+| `implementer` | one frozen work unit with an exclusive file list; does not re-plan | yes | medium, medium | all | build |
+| `reviewer` | a PR or plan needs a punchlist; improver consumes it | no | high, medium | check | check |
+| `domain-guardian` | a change might cross a package, feature, or hexagonal boundary | no | high, medium | check | check |
+| `event-contracts` | a change touches event or command contracts | no | high, medium | check | check |
+| `test-runner` | run the cheap loop on a unit and report the first failure | no | low, small | check | check |
 | `verifier` | before calling work done or merging; runs gates + definition of done + two review passes | no | high, medium | check, decide | check |
 | `security-reviewer` | the change touches auth, tenancy, secrets, user data, logging, input parsing or external calls | no | high, medium | check, design, decide | check |
 | `ui-designer` | the change touches components, pages, styles or previews; critiques composition, not only kit reuse | no | medium, medium | all | design |
@@ -61,9 +66,10 @@ per field is call, then the agent's default, then the global default in
 
 ## Typical chains
 
-- New feature: `researcher` -> `architect` -> `skeptic` -> `implement` ->
+- New feature: `researcher` -> `architect` -> `skeptic` -> `implementer` ->
   `verifier` + `security-reviewer` (+ `ui-designer` when UI changed) ->
-  `improver` -> `verifier` again.
+  `improver` -> `verifier` again. Parallel units go through `orchestrator`
+  plus `reviewer` / `domain-guardian` / `event-contracts` when those apply.
 - UI change: `implement` -> `ui-designer` -> `a11y-auditor` + `copywriter` ->
   `improver` -> `verifier`.
 - New dependency: `researcher` -> `dependency-auditor` -> `implement` ->

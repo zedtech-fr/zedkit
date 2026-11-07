@@ -1,11 +1,13 @@
 ---
 name: orchestrate
-description: "Hand a multi-step task to the orchestrator subagent: framing, parallel dispatch, aggregation, and a single closing report. Use when the work needs more than one lens or phase and you want one coordinator."
+description: "Hand a task to the orchestrator: read tokenomics, pick a build team, dispatch playbooks. Default path for plan, review, implement, audit and research entrypoints."
 ---
 
-Hand the task to the **`orchestrator`** subagent with the user's text, repo
-state you already know, success criteria, and the task's `Stakes:` (and any
-`Needs:`). Every spawn is routed with
+Hand the task to the **`orchestrator`** subagent with the user's text, any
+`Playbook: <name>` an entrypoint set, repo state you already know, success
+criteria, and the task's `Stakes:` (and any `Needs:`). Tell it to read
+`.agents/tokenomics.md` and answer **Build team: what do I need for this request?** before any spawn. A named playbook is the job — do not substitute
+another. Every spawn is routed with
 `zedkit-ai route <agent> --kind <how it is used now> --stakes <s>`: the
 orchestrator itself as `decide`, planners as `design`, implementers as `build`,
 reviewers as `check`.

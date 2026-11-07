@@ -232,7 +232,8 @@ per-folder rules. When to call which subagent: the
 [agents catalog](../../docs/agents-catalog.md).
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
-`handoff`, `audit`, `orchestrate`, `research`) are 3-6 line files: each runs its skill on the command arguments
+`handoff`, `audit`, `orchestrate`, `research`, `improve-config`, `from-audit`,
+`to-audit`) are 3-6 line files: each runs its skill on the command arguments
 (or the current context). Both tools also list skills as `/` commands
 nowadays; the files stay as the explicit one-keystroke path and as fallback
 when the skills link is not followed.
@@ -246,7 +247,7 @@ when the skills link is not followed.
 - *Smallest complete change* (`ponytail`, MIT, vendored): reuse before adding.
 - *Parallel and context-aware* (`parallel-work`): fan out independent work to
   subagents with self-contained briefs; contract first, disjoint files.
-  Multi-step work can go through the `orchestrator` agent or `/orchestrate`.
+  Entrypoints go through `orchestrate` (read tokenomics, pick a build team).
 - *Proven done* (`definition-of-done`, agent `verifier`): gates on the final
   state, no weakened tests, refactor parity by reading bodies, cold second
   review.
@@ -254,17 +255,18 @@ when the skills link is not followed.
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
 `use-signature`, `compose-ui` (persona chain brief before composing UI), `review`, `plan`, `challenge`, `audit`, `orchestrate`,
+`from-audit`, `to-audit`,
 `evidence-grounded-analysis` (answers about customer or user material only
 from that material, every claim tagged verbatim, inference or absent;
 technical audits skip the source quota and the wait-for-question stop).
 
-**Entry points (one command per phase):** `review` (pins the diff, fans out
-`code-review` + `persona-review` + `adversarial-tests`/`security-reviewer`
-when relevant, one verdict), `plan` (`to-spec`/`to-tickets`/`wayfinder`, then
-`challenge`), `challenge` (`skeptic` angle plan + domain/design checks),
-`implement` (extended: challenged plan in, `definition-of-done`, `review`).
-All four live in the `core` preset; the detailed skills stay reusable and are
-never copied into them.
+**Entry points (one command per phase):** each hands to `orchestrate` (read
+tokenomics, pick a build team) unless already running as that playbook.
+`review`, `plan`, `challenge`, `implement`, `from-audit` (audit → tickets),
+`to-audit` (questions → audit). `plan` / `challenge` / `review` also carry:
+Go deep, be strict, and be brutally honest. They live in the `setup` and
+`core` presets; the detailed skills stay reusable and are never copied into
+them.
 
 **Skills vendored (MIT):** `ponytail` (+ review, audit, debt, gain, help) and
 the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,

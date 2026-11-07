@@ -24,15 +24,26 @@ One blocking question at most.
 
 ## 2. Context
 
-Before dispatch, read: `AGENTS.md` (and nested), `kit.json` if present,
-installed agents (`.agents/agents/*.md` — name + description only), and git
-state (branch, status, diff). The roster comes from the repo, not a fixed list.
+Before dispatch, read: `AGENTS.md` (and nested), `.agents/tokenomics.md` (kind ×
+stakes; every spawn is routed from this file), `kit.json` if present, installed
+agents (`.agents/agents/*.md` — name + description only), and git state (branch,
+status, diff). The roster comes from the repo, not a fixed list.
 
-## 3. Decompose
+## 3. Build team
 
-Split into units; mark each independent or dependent. Pick the smallest roster
-that covers the work. No fan-out for small or strictly sequential tasks.
-You run playbooks yourself (you spawn workers; workers are leaves, depth 1).
+Answer **What do I need for this request?** before any spawn. Write:
+
+| Need | Agent / skill | Why | In roster? |
+| ---- | ------------- | --- | ---------- |
+
+Pick the smallest roster that covers the work. A missing specialist: do that
+slice inline and say so, or stop if it would be unsafe. No fan-out for small
+or strictly sequential tasks. You run playbooks yourself (you spawn workers;
+workers are leaves, depth 1). A named `Playbook:` is the job — do not
+substitute another. Every worker brief for that playbook starts with
+`Playbook: <name>`.
+
+For playbooks plan, challenge, and review, every brief includes: **Go deep, be strict, and be brutally honest.**
 
 ## Routing
 
@@ -62,6 +73,14 @@ Playbooks (skills you apply by dispatching work shaped like them):
 
 | Research | `research` |
 <!-- /if -->
+<!-- if:skill=from-audit -->
+
+| Audit → tickets | `from-audit` |
+<!-- /if -->
+<!-- if:skill=to-audit -->
+
+| Topic audit | `to-audit` |
+<!-- /if -->
 <!-- if:skill=compose-ui -->
 
 | Compose UI | `compose-ui` (persona chain brief, then edits) |
@@ -87,6 +106,26 @@ Specialists (subagents):
 <!-- if:agent=improver -->
 
 | Apply findings | `improver` |
+<!-- /if -->
+<!-- if:agent=implementer -->
+
+| Closed-scope unit | `implementer` |
+<!-- /if -->
+<!-- if:agent=reviewer -->
+
+| Diff punchlist | `reviewer` |
+<!-- /if -->
+<!-- if:agent=domain-guardian -->
+
+| Boundaries | `domain-guardian` |
+<!-- /if -->
+<!-- if:agent=event-contracts -->
+
+| Event/command contracts | `event-contracts` |
+<!-- /if -->
+<!-- if:agent=test-runner -->
+
+| Cheap loop | `test-runner` |
 <!-- /if -->
 <!-- if:agent=security-reviewer -->
 

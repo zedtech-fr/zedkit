@@ -17,6 +17,9 @@ const KIT_TEMPLATE_PATHS = [
   "skills/setup-ai/templates/catalog/add-capability/SKILL.md.tmpl",
   "skills/setup-ai/templates/catalog/add-migration/SKILL.md.tmpl",
   "skills/setup-ai/templates/catalog/domain-change/SKILL.md.tmpl",
+  "skills/setup-ai/templates/catalog/add-usecase/SKILL.md.tmpl",
+  "skills/setup-ai/templates/catalog/add-driven-adapter/SKILL.md.tmpl",
+  "skills/setup-ai/templates/catalog/add-driving-endpoint/SKILL.md.tmpl",
 ];
 
 function install(
@@ -333,6 +336,9 @@ describe("setup-ai v2 kit", () => {
       "domain-change",
       "add-capability",
       "add-migration",
+      "add-usecase",
+      "add-driven-adapter",
+      "add-driving-endpoint",
     ] as const) {
       const tmpl = readFileSync(
         join(
