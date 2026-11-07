@@ -48,7 +48,7 @@ export function DevtoolsDrawerShell({
 
 export function DevtoolsDrawerFooter() {
   return (
-    <Text variant="muted" className="text-sm">
+    <Text variant="muted">
       Not shown when `devtoolsEnabled()` is false.
     </Text>
   );

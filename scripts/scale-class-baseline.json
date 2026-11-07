@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 344,
+  "total": 343,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -69,7 +69,6 @@
     "apps/docs/ui/home/home-yours-scene.tsx": 1,
     "apps/docs/ui/kit-version-label.tsx": 1,
     "apps/docs/ui/mobile-header.tsx": 2,
-    "packages/devtools/src/panel-shell.tsx": 1,
     "packages/devtools/src/panel-tabs.tsx": 1,
     "packages/devtools/src/panel.tsx": 1,
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
