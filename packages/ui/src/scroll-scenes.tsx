@@ -33,7 +33,7 @@ export function ScrollScenes({ scenes, className, ...props }: ScrollScenesProps)
     <div data-slot="scroll-scenes" data-scroll-scenes="" data-scene-count={pinned ? count : undefined} className={cn("content-shrink", className)} {...props}>
       <div data-scroll-scenes-stage="" className="flex content-shrink flex-col gap-section-stack md:gap-16">
         {scenes.map((scene) => (
-          <article key={scene.id} data-scroll-scene={scene.id} className="grid content-shrink items-start gap-stack-lg md:grid-cols-3">
+          <article key={scene.id} data-scroll-scene={scene.id} className="grid content-shrink items-start gap-stack-lg md:grid-trio">
             <div data-scroll-scene-caption="" className="content-shrink md:sticky md:top-24">
               {scene.caption}
             </div>

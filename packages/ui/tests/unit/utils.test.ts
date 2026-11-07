@@ -40,5 +40,6 @@ describe("cn", () => {
     expect(cn("inset-0", "pin-fill")).toBe("pin-fill");
     expect(cn("p-4", "flush")).toBe("flush");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
+    expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });
 });

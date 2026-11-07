@@ -36,7 +36,7 @@ export type PricingProps = Omit<React.ComponentProps<"section">, "title"> & {
 };
 
 function columnsFor(count: number): string {
-  if (count >= 3) return "sm:grid-pair lg:grid-cols-3";
+  if (count >= 3) return "sm:grid-pair lg:grid-trio";
   if (count === 2) return "sm:grid-pair";
   return "";
 }

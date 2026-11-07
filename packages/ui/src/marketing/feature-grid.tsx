@@ -27,7 +27,7 @@ export type FeatureGridProps = Omit<React.ComponentProps<"section">, "title"> & 
 
 const columnClass = {
   2: "lg:grid-pair",
-  3: "lg:grid-cols-3",
+  3: "lg:grid-trio",
   4: "lg:grid-cols-4",
 } as const;
 

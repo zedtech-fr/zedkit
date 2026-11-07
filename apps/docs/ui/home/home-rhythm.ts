@@ -15,7 +15,7 @@ export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-
  * shadow the `xl` step on any element carrying both. Track counts are pinned
  * by the "home bands" e2e test in tests/home-layout.spec.ts.
  */
-export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-cols-3";
+export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-trio";
 export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-cols-4";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */

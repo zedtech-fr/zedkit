@@ -39,7 +39,7 @@ function Testimonials({ title, description, items, className, ...props }: Testim
     >
       <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ul className="grid list-none gap-stack-lg flush sm:grid-pair lg:grid-cols-3">
+        <ul className="grid list-none gap-stack-lg flush sm:grid-pair lg:grid-trio">
           {items.map((item, index) => (
             <GlassSurface key={item.id ?? index} as="li" className="flex">
               <figure className="flex content-shrink flex-1 flex-col justify-between gap-list">

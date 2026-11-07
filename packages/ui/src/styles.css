@@ -829,6 +829,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility grid-pair {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+@utility grid-trio {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
 }

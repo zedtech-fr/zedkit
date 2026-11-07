@@ -49,13 +49,13 @@ function MarketingFooter({ brand, description, columns = [], legal, className, .
   return (
     <footer data-slot="marketing-footer" className={cn("border-t bg-card text-card-foreground", className)} {...props}>
       <Container width="default" className="flex flex-col gap-section-stack py-section-md">
-        <div className="grid gap-section-stack md:grid-cols-3">
+        <div className="grid gap-section-stack md:grid-trio">
           <div className="flex content-shrink flex-col gap-stack-md">
             {brand}
             {description ? <Text variant="muted">{description}</Text> : null}
           </div>
           {columns.length > 0 ? (
-            <div className="grid grid-pair gap-8 sm:grid-cols-3 md:col-span-2">
+            <div className="grid grid-pair gap-8 sm:grid-trio md:col-span-2">
               {columns.map((column, index) => (
                 <FooterColumn key={column.id ?? index} column={column} />
               ))}

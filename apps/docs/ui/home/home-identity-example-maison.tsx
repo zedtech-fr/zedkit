@@ -98,7 +98,7 @@ export function HomeIdentityExampleMaison() {
         </Heading>
         <Text variant="muted">{copy.description}</Text>
       </Stack>
-      <ul aria-label={copy.listAriaLabel} className="trim-margin grid list-none gap-stack-md flush sm:grid-cols-3">
+      <ul aria-label={copy.listAriaLabel} className="trim-margin grid list-none gap-stack-md flush sm:grid-trio">
         {products.map((item) => (
           <ProductCard
             key={item.id}
