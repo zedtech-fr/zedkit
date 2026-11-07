@@ -30,7 +30,7 @@ export function ConsoleScreen({ copy }: { copy: ConsoleComposition }) {
         {copy.rows.map((row) => (
           <li
             key={row.name}
-            className="flex items-center justify-between gap-stack-sm border-t border-border py-2"
+            className="flex items-center justify-between gap-stack-sm border-t border-border surface-pad-block-sm"
           >
             <Stack gap={1} className="content-shrink">
               <Text as="span" typeRole="small" className="truncate font-medium">

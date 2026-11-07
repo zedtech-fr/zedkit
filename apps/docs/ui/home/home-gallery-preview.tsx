@@ -104,7 +104,7 @@ export function HomeDrawerPreview() {
             <DrawerCloseButton className="absolute top-3 right-3" />
           </DrawerHeader>
           <DrawerBody>
-            <Stack gap={2} className="py-2">
+            <Stack gap={2} className="surface-pad-block-sm">
               <Badge variant="warning">{g.drawer.inReview}</Badge>
             </Stack>
           </DrawerBody>

@@ -139,7 +139,7 @@ export function Gallery() {
         <nav className="space-y-1 surface-pad-md" aria-label="Gallery sections">
           <p className="px-2 pb-2 text-sm font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
-            <a key={id} href={`#${id}`} className="block rounded-md px-2 py-1 text-sm hover:bg-accent">
+            <a key={id} href={`#${id}`} className="block rounded-md px-2 py-control-block text-sm hover:bg-accent">
               {title}
             </a>
           ))}
@@ -348,14 +348,14 @@ export function Gallery() {
             </Stack>
           </Section>
           <div className="space-y-stack-sm">
-            <Container width="narrow" className="border py-2 text-sm">
+            <Container width="narrow" className="border surface-pad-block-sm text-sm">
               Narrow container
             </Container>
-            <Container width="reading" className="border py-2 text-sm">
+            <Container width="reading" className="border surface-pad-block-sm text-sm">
               Reading container
             </Container>
-            <Container className="border py-2 text-sm">Default container</Container>
-            <Container width="wide" className="border py-2 text-sm">
+            <Container className="border surface-pad-block-sm text-sm">Default container</Container>
+            <Container width="wide" className="border surface-pad-block-sm text-sm">
               Wide container
             </Container>
           </div>

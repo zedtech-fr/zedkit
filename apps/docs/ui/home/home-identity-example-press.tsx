@@ -52,7 +52,7 @@ function StoryQueue({ stories, selectedId, onSelect }: { stories: Story[]; selec
                 type="button"
                 variant="ghost"
                 aria-pressed={story.id === selectedId}
-                className="h-auto! min-h-target w-full flex-col items-start gap-flush px-control-tight py-1 text-left font-normal whitespace-normal"
+                className="h-auto! min-h-target w-full flex-col items-start gap-flush px-control-tight py-control-block text-left font-normal whitespace-normal"
                 onClick={() => onSelect(story.id)}
               >
                 <span className="font-(family-name:--zk-font-display)">{story.headline}</span>
