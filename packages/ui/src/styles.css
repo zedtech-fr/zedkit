@@ -633,6 +633,27 @@ a[class*="px-badge-inline"] {
   letter-spacing: -0.02em;
 }
 
+/* Marketing section title. Larger than the level-2 heading role. */
+@utility text-section-display {
+  font-size: var(--text-3xl);
+  line-height: var(--text-3xl--line-height);
+  font-weight: 600;
+}
+
+/* Title under a marketing section. Same size as the level-3 role, with that role's tighter line opened up. */
+@utility text-feature-title {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+}
+
+/* Page header title. */
+@utility text-page-title {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
 @layer components {
   [data-slot="scroll-gallery"]::before,
   [data-slot="scroll-gallery"]::after {

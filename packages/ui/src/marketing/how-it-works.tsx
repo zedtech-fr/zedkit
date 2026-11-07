@@ -43,7 +43,7 @@ function HowItWorks({ title, description, steps, className, ...props }: HowItWor
                 {index + 1}
               </span>
               <div className="flex content-shrink flex-col gap-stack-tight">
-                <Heading level={3} className="text-xl">
+                <Heading level={3} className="text-feature-title">
                   {step.title}
                 </Heading>
                 {step.description ? <Text variant="muted">{step.description}</Text> : null}

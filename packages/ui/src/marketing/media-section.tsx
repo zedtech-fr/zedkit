@@ -42,7 +42,7 @@ function MediaSection({
     >
       <Container width="default" className="grid items-center gap-section-stack lg:grid-pair">
         <div className={cn("flex content-shrink flex-col gap-stack-lg", reverse && "lg:order-last")}>
-          <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
+          <Heading id={titleId} level={2} className="text-section-display text-balance">
             {title}
           </Heading>
           {description ? <Text className="text-muted-foreground">{description}</Text> : null}

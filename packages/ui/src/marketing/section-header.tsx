@@ -15,7 +15,7 @@ export interface SectionHeaderProps {
 export function SectionHeader({ titleId, title, description, className }: SectionHeaderProps) {
   return (
     <div data-slot="marketing-section-header" className={cn("mx-auto flex max-w-reading flex-col items-center gap-stack-md text-center", className)}>
-      <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
+      <Heading id={titleId} level={2} className="text-section-display text-balance">
         {title}
       </Heading>
       {description ? <Text className="text-balance text-muted-foreground">{description}</Text> : null}

@@ -55,7 +55,7 @@ function FeatureGrid({ title, description, features, columns = 3, className, ...
                   {feature.icon}
                 </span>
               ) : null}
-              <Heading level={3} className="text-xl">
+              <Heading level={3} className="text-feature-title">
                 {feature.title}
               </Heading>
               {feature.description ? <Text variant="muted">{feature.description}</Text> : null}

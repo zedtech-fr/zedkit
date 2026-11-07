@@ -83,6 +83,9 @@ describe("layout job classes", () => {
     expect(utility("mb-alert-title")).toBe("margin-bottom: var(--spacing);");
     expect(utility("text-overlay-title")).toBe("font-size: var(--text-lg); line-height: 1; font-weight: 600; letter-spacing: -0.02em;");
     expect(utility("text-alert-title")).toBe("font-size: var(--text-base); line-height: 1; font-weight: 500; letter-spacing: -0.02em;");
+    expect(utility("text-section-display")).toBe("font-size: var(--text-3xl); line-height: var(--text-3xl--line-height); font-weight: 600;");
+    expect(utility("text-feature-title")).toBe("font-size: var(--text-xl); line-height: var(--text-xl--line-height);");
+    expect(utility("text-page-title")).toBe("font-size: var(--text-2xl); line-height: var(--text-2xl--line-height); font-weight: 600; letter-spacing: -0.02em;");
     expect(utility("ml-note")).toBe("margin-left: var(--zk-gap-sm);");
     expect(utility("right-send")).toBe("right: calc(var(--spacing) * 1.5);");
     expect(utility("bottom-send")).toBe("bottom: calc(var(--spacing) * 1.5);");

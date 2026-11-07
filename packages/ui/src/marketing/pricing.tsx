@@ -52,7 +52,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
     >
       <div className="flex flex-col gap-stack-tight">
         <div className="flex items-center justify-between gap-stack-sm">
-          <Heading level={3} className="text-xl">
+          <Heading level={3} className="text-feature-title">
             {plan.name}
           </Heading>
           {plan.badge ? (
