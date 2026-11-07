@@ -447,8 +447,32 @@ export type AgentSync = {
   allowFast?: boolean | undefined;
 };
 
+/**
+ * Resolve every agent route this run would write. Throws on the first
+ * refusal so a fast cell cannot leave a half-written provider layer.
+ */
+export function assertAgentRoutes(
+  input: Pick<AgentSync, "policy" | "agentsDir" | "names" | "providers" | "allowFast">,
+): void {
+  for (const provider of input.providers) {
+    if (!isGenerated(provider)) continue;
+    for (const name of input.names) {
+      const agent = loadAgent(input.agentsDir, name);
+      if (!agent.ok) continue;
+      const route = resolveRoute(input.policy, {
+        stakes: "standard",
+        agent: agent.value,
+        provider,
+        ...(input.allowFast === true && { allowFast: true }),
+      });
+      if (!route.ok) throw new Error(`${name}: ${route.error.message}`);
+    }
+  }
+}
+
 /** The generating half of `syncKit`: appends what it did (or would do) to `actions`. Throws on a source it cannot generate from. */
 export function syncAgents(input: AgentSync, actions: Action[]): void {
+  assertAgentRoutes(input);
   const ctx: Ctx = { dest: input.dest, write: input.write, actions, avail: input.avail };
   const known = new Set(input.names);
   for (const name of input.names) {

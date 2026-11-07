@@ -93,6 +93,12 @@ describe("skill content conventions", () => {
       expect(raw, name).toContain("hand the user's text to `orchestrate`");
       expect(raw, name).toContain("Go deep, be strict, and be brutally honest");
     }
+    const review = readFileSync(
+      join(kitDir(), "skills", "review", "SKILL.md"),
+      "utf8",
+    );
+    expect(review).toContain("second independent `check` spawn");
+    expect(review).toContain("drop or demote");
   });
 
   it("implement, audit and research also go through orchestrate", () => {
@@ -152,7 +158,7 @@ describe("skill content conventions", () => {
     expect(challenge).toContain("### Assumptions");
     const template = readFileSync(join(kitDir(), "AGENTS.template.md"), "utf8");
     expect(template).toMatch(/List assumptions before code or a plan/u);
-    expect(template).toMatch(/green ≤15/u);
+    expect(template).toMatch(/green ≤20/u);
     expect(template).toContain("Rules: none");
     const upkeep = readFileSync(
       join(kitDir(), "skills", "rules-upkeep", "SKILL.md"),

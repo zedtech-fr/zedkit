@@ -20,4 +20,12 @@ describe("cursor onboarding copy", () => {
     expect(md).toContain("/setup-ai");
     expect(md).toContain("npx @zedtech/zedkit-ai validate");
   });
+
+  it("does not tell the paste prompt to spawn a fast model, and names the scan buckets", () => {
+    const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
+    expect(md).not.toMatch(/fast model/i);
+    expect(md).toMatch(/1–5/u);
+    expect(md).toMatch(/6–10/u);
+    expect(md).toMatch(/11–20/u);
+  });
 });

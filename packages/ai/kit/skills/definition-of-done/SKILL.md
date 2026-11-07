@@ -41,11 +41,11 @@ The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter type
 
 Estimate files created or modified (exclude lockfiles and generated files) before you start, and re-check if the count drifts.
 
-| Zone   | Files | Action                                          |
-| ------ | ----- | ----------------------------------------------- |
-| Green  | ≤ 15  | Proceed.                                        |
-| Orange | 16–25 | Warn. Propose a split if seams exist.           |
-| Red    | > 25  | Stop. Propose mergeable subtasks before coding. |
+| Zone   | Files | Action                                         |
+| ------ | ----- | ---------------------------------------------- |
+| Green  | ≤ 20  | Proceed.                                       |
+| Orange | 21–30 | Warn. Propose a split if seams exist.          |
+| Red    | > 30  | Warn. Propose mergeable subtasks; do not stop. |
 
 - [ ] The change is small enough to review in one sitting. If it keeps growing past your first estimate, stop and propose a split before going on.
 - [ ] Each PR is mergeable alone, never a broken intermediate state. Split along seams: contract, implementation, wiring, tests with their code.

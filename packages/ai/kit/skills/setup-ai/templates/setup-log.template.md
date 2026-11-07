@@ -19,7 +19,7 @@ Append one entry per `/setup-ai` run, newest first. Each entry records what the 
 
 - **Wired:** cursor, claude (example)
 - **Reading:** medium repo, 8 readers as `check`/`standard` from `npx @zedtech/zedkit-ai scan`; 61 rules merged, 4 dropped after spot-checks; log at `.agents/setup-log/reading.md`; interview cut to 5 questions because the code answered the rest.
-- **Routing:** provider cursor; `check.standard` = {cheap fast model}, `build.standard` = {mid}, `decide.sensitive` = inherit; readers passed `zedkit-ai route explorer --kind check --stakes standard`; file at `.agents/tokenomics.md`; `zedkit-ai sync` run.
+- **Routing:** provider cursor; `check.standard` = {non-fast check cell}, `build.standard` = {mid}, `decide.sensitive` = inherit; readers passed `zedkit-ai route explorer --kind check --stakes standard`; file at `.agents/tokenomics.md`; `zedkit-ai sync` run.
 - **Nested:** extended `apps/web/AGENTS.md` and `packages/billing/AGENTS.md` in place, linked to `.agents/domain/` (log it as `nested-agents: extended — <files>`, `none — <reason>` or `kept — <reason>`)
 - **Plan gaps:** paths changed after the plan table but missing rows (or: none — reconciled with `git diff --name-only` and **`npx @zedtech/zedkit-ai validate --setup`** clean; use **`--plan <file>`** when the plan is not **`PLAN.md`** at the repo root or **`.agents/setup-log/plan.md`**)
 - **Unenforced rules:** (architecture score 3 — or: none; cite the domain rule ID for domain rules, e.g. `B-01`)

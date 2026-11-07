@@ -34,7 +34,7 @@ Where things live, what we call them, how to run them, why we chose them. Before
 | the kit      | `packages/ai/kit/`, the shipped source. Not a consumer repo's `.agents/`                              | `.agents/domain/ai-kit.md`                            |
 | cell         | One kind × stakes entry of tokenomics; holds the model id for a spawn                                 | `.agents/tokenomics.md`                               |
 | kind, stakes | Kind: `decide`, `design`, `build`, `check`. Stakes: `trivial`, `standard`, `sensitive`, `critical`    | `packages/ai/src/tokenomics.ts`                       |
-| fast mode    | A model id with a `fast` token. Refused unless the user asked for it in this request (`--allow-fast`) | A-08 in `.agents/domain/ai-kit.md`                    |
+| fast mode    | A model id with a `fast` token. Refused unless the user asked for it in this request (`--allow-fast`). `init`/`setup`/`sync` fail before the first write. | A-08 in `.agents/domain/ai-kit.md`                    |
 | sidecar      | `*.kit.md` the installer writes beside a user file instead of overwriting it (`--adopt`)              | A-10 in `.agents/domain/ai-kit.md`                    |
 | punchlist    | The findings list a review emits and `improver` or `/improve-from-review` applies                     | `packages/ai/kit/skills/improve-from-review/SKILL.md` |
 

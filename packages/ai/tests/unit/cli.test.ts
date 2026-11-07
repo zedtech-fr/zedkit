@@ -434,6 +434,37 @@ describe("cli", () => {
       expect(validateAllowed.text).toContain("ok");
     });
 
+    it("init and setup take --allow-fast and write nothing when a fast cell is refused", () => {
+      const fast = `---
+schema: 1
+default_provider: cursor
+providers:
+  cursor:
+    check:
+      standard: { model: composer-2.5-fast }
+      sensitive: { model: composer-2.5-fast }
+---
+`;
+      for (const command of ["init", "setup"] as const) {
+        const dest = tempDir();
+        put(dest, ".agents/tokenomics.md", fast);
+        const unknown = run(command, "--allow-fast", dest, "--provider", "cursor");
+        expect(unknown.errors, command).not.toContain("Unknown option");
+        const empty = tempDir();
+        put(empty, ".agents/tokenomics.md", fast);
+        const denied = run(command, empty, "--provider", "cursor");
+        expect(denied.code, command).toBe(2);
+        expect(denied.errors, command).toContain("--allow-fast");
+        expect(existsSync(join(empty, "AGENTS.md")), command).toBe(false);
+        expect(existsSync(join(empty, ".cursor")), command).toBe(false);
+        const allowed = tempDir();
+        put(allowed, ".agents/tokenomics.md", fast);
+        const ok = run(command, allowed, "--provider", "cursor", "--allow-fast");
+        expect(ok.code, command).toBe(0);
+        expect(existsSync(join(allowed, "AGENTS.md")), command).toBe(true);
+      }
+    });
+
     it("validate names an adopt sidecar and still exits 0 when nothing else is wrong", () => {
       const dir = tempDir();
       put(dir, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));

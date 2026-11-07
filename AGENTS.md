@@ -54,8 +54,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   CI owns full-repo test, e2e and static-export smoke.
 - Small PRs from fresh `main`, never stacked. One package per PR. Open the
   PR against `dev`, not `main` (`gh pr create --base dev`).
-  File budget (exclude generated and lockfiles): green ≤15, orange 16–25
-  (warn and offer a split), red >25 (stop; propose mergeable seams).
+  File budget (exclude generated and lockfiles): green ≤20, orange 21–30
+  (warn and offer a split), red >30 (warn, propose seams, do not stop).
 - List assumptions before code or a plan. A missing assumptions table
   is a blocking challenge.
 - Entrypoints go through `orchestrate` (read tokenomics, pick a build

@@ -128,7 +128,7 @@ describe("setup-ai v3: domain, identity and nested rules", () => {
     const raw = read("SKILL.md");
     expect(raw).toMatch(/### Session gates and the map/u);
     expect(raw).toMatch(/list assumptions before code or a plan/u);
-    expect(raw).toMatch(/green ≤15 \/ orange 16–25 \/ red >25/u);
+    expect(raw).toMatch(/green ≤20 \/ orange 21–30 \/ red >30/u);
     expect(raw).toMatch(
       /encode the first reusable correction that changed the work/u,
     );

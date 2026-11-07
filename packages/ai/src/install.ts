@@ -20,7 +20,7 @@ import { setLensStatus } from "./lenses.js";
 import { danglingKitRefs, skillRefFiles } from "./skill-refs.js";
 import { resolveConditionals, type Availability } from "./conditional.js";
 import { loadPolicy } from "./route.js";
-import { resolveAgentSource, syncAgents } from "./sync.js";
+import { assertAgentRoutes, resolveAgentSource, syncAgents } from "./sync.js";
 import { applyTestPolicyToAgentsMd } from "./test-policy.js";
 import { loadDefaults } from "./tokenomics.js";
 
@@ -293,8 +293,8 @@ function skillNames(manifest: KitManifest, kit: string, preset: string): string[
   return [...kitUniverse(kit).skills];
 }
 
-// Resolve everything the install needs from the kit before the first write,
-// so a bad preset or manifest never leaves a half install behind.
+// Resolve the kit plan and every agent route before the first write,
+// so a bad preset, manifest, or fast cell never leaves a half install behind.
 function plan(kit: string, manifest: KitManifest, preset: string) {
   const skills = skillNames(manifest, kit, preset);
   for (const name of skills) {
@@ -703,8 +703,19 @@ export function installKit(options: InstallOptions): Result<Action[]> {
       agents: new Set(content.agents),
       commands: new Set(content.commands),
     };
-    const skillDest = installContent(ctx, content);
     const chosen = (options.providers ?? options.targets ?? ALL_PROVIDERS) as WireProvider[];
+    const agentsDir = join(ctx.dest, ".agents");
+    const policy = loadPolicy(agentsDir);
+    if (policy.ok) {
+      assertAgentRoutes({
+        policy: policy.value,
+        agentsDir,
+        names: content.agents,
+        providers: chosen,
+        ...(ctx.allowFast && { allowFast: true }),
+      });
+    }
+    const skillDest = installContent(ctx, content);
     for (const provider of chosen) {
       wireProvider(ctx, provider, content, skillDest);
     }

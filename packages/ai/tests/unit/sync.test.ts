@@ -77,6 +77,32 @@ describe("syncKit: generate", () => {
     expect(read(root, ".agents/agents/verifier.md")).toBe(before);
   });
 
+  it("refuses a fast cell before writing any generated agent", () => {
+    const root = project();
+    put(
+      root,
+      ".agents/tokenomics.md",
+      `---
+schema: 1
+default_provider: cursor
+providers:
+  cursor:
+    build:
+      standard: { model: cur-build-standard }
+    check:
+      standard: { model: composer-2.5-fast }
+      sensitive: { model: composer-2.5-fast }
+---
+`,
+    );
+    const result = syncKit({ dest: root, providers: ["cursor"] });
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("expected refuse");
+    expect(result.error.message).toContain("--allow-fast");
+    expect(existsSync(join(root, ".cursor/agents/plain.md"))).toBe(false);
+    expect(existsSync(join(root, ".cursor/agents/verifier.md"))).toBe(false);
+  });
+
   it("is idempotent: the second run reports only skip lines", () => {
     const root = project();
     sync(root);

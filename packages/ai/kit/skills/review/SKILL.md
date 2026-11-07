@@ -41,15 +41,11 @@ the diff<!-- if:skill=code-review --> (brief `code-review`)<!-- /if -->.
 
 ## 4. Merge
 
-Dedupe (same location keep the strongest wording), rank by severity, one
-verdict: ship, fix-then-ship (list blockers), or rework. Open with the
-lenses-run table (every lens: ran or skipped + reason):
-
-```
-| Lens | Ran? | Evidence |
-| code | yes | <top finding or "clean"> |
-| ui | skipped, no UI paths | — |
-```
+Dedupe, rank by severity, one verdict: ship, fix-then-ship (list blockers),
+or rework. Open with the lenses-run table (every lens: ran or skipped +
+reason). Then a second independent `check` spawn (not the synthesizer) reads
+the ranked findings against the pinned diff; it may only drop or demote.
+Blockers that do not survive that pass are not blockers.
 
 ## 5. Turn the miss into a rule
 

@@ -38,8 +38,9 @@
    links cover dirs that exist under `.agents/skills`, not only the preset
    list. New behavior needs a test in `tests/unit/install.test.ts`.
 8. `--allow-fast` is one flag on `route`, `sync`, `validate`, `init` and
-   `setup`. Without it a fast cell fails all of them. Pass it only when
-   the user asked for fast mode in this request.
+   `setup`. Without it a fast cell fails all of them, and `init`/`setup`/`sync`
+   fail before writing. Pass it only when the user asked for fast mode in
+   this request.
 9. An agent with `executes: true` in `agents.meta.json` must run a command.
    Muse keeps `bash` and still denies `write_file` and `edit_file`. Cursor
    does not set `readonly`. `test-runner` is that agent. Bash can still

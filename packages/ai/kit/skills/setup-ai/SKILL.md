@@ -250,7 +250,7 @@ Use the readers' **folder notes**. Write one `<folder>/AGENTS.md` (`templates/ne
 
 ### Session gates and the map
 
-Root `AGENTS.md` must state, in the How-to-work bullets (keep the file short): list assumptions before code or a plan; file budget green ≤15 / orange 16–25 / red >25 excluding generated files; encode the first reusable correction that changed the work. Write `.agents/README.md` from `templates/agents-readme.template.md` (commands, always-on vs globbed, design loop). When Cursor is wired, also write `.cursor/README.md` from `templates/cursor-readme.template.md`. Improve mode extends those files in place.
+Root `AGENTS.md` must state, in the How-to-work bullets (keep the file short): list assumptions before code or a plan; file budget green ≤20 / orange 21–30 / red >30 (warn, do not stop) excluding generated files; encode the first reusable correction that changed the work. Write `.agents/README.md` from `templates/agents-readme.template.md` (commands, always-on vs globbed, design loop). When Cursor is wired, also write `.cursor/README.md` from `templates/cursor-readme.template.md`. Improve mode extends those files in place.
 
 ### Atlas (after nested files)
 
