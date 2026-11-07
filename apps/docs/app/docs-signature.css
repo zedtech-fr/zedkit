@@ -35,6 +35,13 @@
   max-width: 28rem;
 }
 
+/* Identity editor. The preview is the right column from the large breakpoint, at most 26rem. */
+@media (min-width: 64rem) {
+  [data-slot="identity-editor"] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  }
+}
+
 /* The AI setup prompt. Wider than the reading measure, short of the page. */
 [data-setup-prompt] {
   max-width: 48rem;
