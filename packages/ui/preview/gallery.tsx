@@ -158,7 +158,7 @@ export function Gallery() {
       />
       <div className="space-y-8">
         <GallerySection id="primitives" title="Primitives">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-stack-sm">
             <Button>Default</Button>
             <Button variant="secondary">Secondary</Button>
             <Button variant="outline">Outline</Button>
@@ -166,7 +166,7 @@ export function Gallery() {
             <Button variant="destructive">Destructive</Button>
             <Button size="sm">Small</Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-stack-sm">
             <Badge>Default</Badge>
             <Badge variant="secondary">Secondary</Badge>
             <Badge variant="outline">Outline</Badge>
@@ -234,7 +234,7 @@ export function Gallery() {
             description="This cannot be undone."
             onConfirm={() => {}}
           />
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-stack-sm">
             <Drawer>
               <DrawerTrigger asChild>
                 <Button variant="outline">Open sheet</Button>
@@ -362,7 +362,7 @@ export function Gallery() {
           <Section bleed tone="muted" spacing="sm" title="Bleed section" description="Edge to edge, content capped.">
             <p className="text-sm">Band content.</p>
           </Section>
-          <div className="flex gap-4">
+          <div className="flex gap-stack-lg">
             <LivePulse />
             <LivePulse active={false} />
           </div>
@@ -464,7 +464,7 @@ export function Gallery() {
               </>
             }
           />
-          <div className="grid gap-4 sm:grid-trio">
+          <div className="grid gap-stack-lg sm:grid-trio">
             <GlassSurface>Plain surface</GlassSurface>
             <GlassSurface tone="raised">Raised surface</GlassSurface>
             <GlassSurface tone="tinted">Tinted surface</GlassSurface>
