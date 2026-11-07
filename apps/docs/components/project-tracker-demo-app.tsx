@@ -213,7 +213,7 @@ function UserMenu() {
         <DrawerHandle />
         <DrawerHeader>
           <Stack direction="horizontal" gap={3} className="text-left">
-            <Avatar initials={projectTrackerDemoCopy.initials} className="size-10 text-sm" />
+            <Avatar initials={projectTrackerDemoCopy.initials} className="size-mark text-sm" />
             <Stack gap={1}>
               <DrawerTitle>{projectTrackerDemoCopy.people.maya}</DrawerTitle>
               <DrawerDescription>{projectTrackerDemoCopy.email}</DrawerDescription>

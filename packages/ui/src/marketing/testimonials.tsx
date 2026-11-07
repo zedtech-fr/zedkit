@@ -51,7 +51,7 @@ function Testimonials({ title, description, items, className, ...props }: Testim
                     <span
                       data-slot="testimonial-avatar"
                       aria-hidden="true"
-                      className="grid size-10 shrink-0 place-content-center overflow-hidden rounded-full bg-muted text-sm font-semibold [&_img]:size-full [&_img]:object-cover"
+                      className="grid size-mark shrink-0 place-content-center overflow-hidden rounded-full bg-muted text-sm font-semibold [&_img]:size-full [&_img]:object-cover"
                     >
                       {item.avatar}
                     </span>
