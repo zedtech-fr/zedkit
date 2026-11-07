@@ -201,7 +201,7 @@ describe("overlays", () => {
     expect(screen.getByText("Details").parentElement?.className).not.toContain("bg-background");
     expect(screen.getByText("Details").parentElement?.className).toContain("sticky");
     expect(screen.getByText("Details").parentElement?.className).toContain("pr-dialog-header-end");
-    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("gap-2");
+    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("gap-dialog-footer-gap");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).not.toContain("bg-background");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("sticky");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("pb-dialog-footer-safe");

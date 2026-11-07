@@ -238,7 +238,7 @@
   --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
   --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
   --spacing-button-inline: 1rem;
-  --spacing-button-inline-sm: 0.75rem;
+  --spacing-button-inline-sm: calc(var(--spacing) * 3);
   --spacing-button-inline-lg: 2rem;
   --spacing-button-gap: calc(var(--spacing) * 2);
   /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-icon. Kept so copied CSS and existing class names still work. */
@@ -280,15 +280,15 @@
   --spacing-tabs-list-inset: 0.25rem;
   --spacing-tabs-trigger-inline: calc(var(--spacing) * 3);
   --spacing-tabs-trigger-block: 0.25rem;
-  --spacing-tabs-content-gap: 0.5rem;
+  --spacing-tabs-content-gap: calc(var(--spacing) * 2);
   --spacing-switch-track-height: 1.25rem;
   --spacing-switch-track-width: 2.25rem;
   --spacing-switch-thumb: 1rem;
   /* Checked-state thumb travel: track width − thumb − transparent borders. */
   --spacing-switch-travel: 1rem;
-  --spacing-status-label-gap: 0.375rem;
+  --spacing-status-label-gap: calc(var(--spacing) * 1.5);
   --spacing-status-label-box: calc(var(--spacing) * 4);
-  --spacing-status-dot: 0.5rem;
+  --spacing-status-dot: calc(var(--spacing) * 2);
   --spacing-control-inline: 0.75rem;
   --spacing-control-block: var(--spacing);
   --spacing-control-block-lg: calc(var(--spacing) * 2);
@@ -306,20 +306,20 @@
   --spacing-field-group-compact: calc(var(--spacing) * 3);
   --spacing-field-group-nested: calc(var(--spacing) * 4);
   --spacing-field: calc(var(--spacing) * 3);
-  --spacing-field-content: 0.375rem;
+  --spacing-field-content: calc(var(--spacing) * 1.5);
   --spacing-field-inline: calc(var(--spacing) * 2);
   --spacing-field-legend-bottom: calc(var(--spacing) * 3);
   --spacing-field-label-inset: 1rem;
-  --spacing-field-separator: 1.25rem;
-  --spacing-field-separator-inline: 0.5rem;
-  --spacing-field-error-indent: 1rem;
+  --spacing-field-separator: calc(var(--spacing) * 5);
+  --spacing-field-separator-inline: calc(var(--spacing) * 2);
+  --spacing-field-error-indent: calc(var(--spacing) * 4);
   --spacing-field-error-gap: 0.25rem;
   --spacing-card-padding: 1.5rem;
   --spacing-card-stack: 0.5rem;
   --spacing-card-section: 1rem;
   --spacing-card-lines: 0.5rem;
   --spacing-separator-thickness: 0.0625rem;
-  --spacing-live-pulse-gap: 0.375rem;
+  --spacing-live-pulse-gap: calc(var(--spacing) * 1.5);
   --spacing-secret-field-gap: calc(var(--spacing) * 2);
   --spacing-page-header-title-gap: 0.25rem;
   /* Space between a back link above the header and the title. */
@@ -332,7 +332,7 @@
   --spacing-dialog-gap: 1rem;
   --spacing-dialog-padding: 1.5rem;
   --spacing-dialog-header-stack: 0.375rem;
-  --spacing-dialog-footer-gap: 0.5rem;
+  --spacing-dialog-footer-gap: calc(var(--spacing) * 2);
   --spacing-overlay-close-offset: 1rem;
   --spacing-overlay-touch-target: 2.75rem;
   /* Dialog width on phones: full width minus thumb gutters each side. */
@@ -356,7 +356,7 @@
   --container-route-modal-sm: 24rem;
   --container-route-modal-drawer-lg: 32rem;
   --container-route-modal-dialog-lg: 42rem;
-  --spacing-form-item-gap: 0.5rem;
+  --spacing-form-item-gap: calc(var(--spacing) * 2);
   --text-form-hint: 0.8rem;
   --text-control: var(--zk-input-font-size);
   --text-control--line-height: 1.25rem;
@@ -381,7 +381,7 @@
   --spacing-drawer-handle-height: 0.375rem;
   --spacing-drawer-handle-width: 3rem;
   --spacing-drawer-header-gap: 0.375rem;
-  --spacing-drawer-footer-gap: 0.5rem;
+  --spacing-drawer-footer-gap: calc(var(--spacing) * 2);
   --spacing-drawer-chrome-padding: calc(var(--spacing) * 4);
   --spacing-select-item-inline: calc(var(--spacing) * 2);
   --spacing-select-item-block: calc(var(--spacing) * 1.5);

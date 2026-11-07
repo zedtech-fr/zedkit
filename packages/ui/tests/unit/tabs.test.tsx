@@ -44,9 +44,9 @@ describe("tabs", () => {
     expect(trigger.className).toContain("focus-visible:-outline-offset-(--ring-width)");
     expect(trigger.className).not.toMatch(/(^|\s)(py-1|ring-2)(\s|$)/);
     const panel = screen.getByText("First panel.");
-    expect(panel.className).toContain("mt-2");
+    expect(panel.className).toContain("mt-tabs-content-gap");
     expect(panel.className).toContain("focus-ring");
-    expect(panel.className).not.toContain("mt-tabs-content-gap");
+    expect(panel.className).not.toContain("mt-2");
     expect(panel.className).not.toMatch(/(^|\s)ring-2(\s|$)/);
   });
 

@@ -108,7 +108,7 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="field-content"
       className={cn(
-        "group/field-content flex flex-1 flex-col gap-1.5 leading-snug",
+        "group/field-content flex flex-1 flex-col gap-field-content leading-snug",
         className,
       )}
       {...props}
@@ -171,7 +171,7 @@ function FieldSeparator({
       data-slot="field-separator"
       data-content={!!children}
       className={cn(
-        "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
+        "relative -my-2 h-field-separator text-sm group-data-[variant=outline]/field-group:-mb-2",
         className,
       )}
       {...props}
@@ -179,7 +179,7 @@ function FieldSeparator({
       <Separator className="absolute pin-fill top-1/2" />
       {children && (
         <span
-          className="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
+          className="relative mx-auto block w-fit bg-background px-field-separator-inline text-muted-foreground"
           data-slot="field-separator-content"
         >
           {children}
@@ -211,7 +211,7 @@ function FieldError({
     }
 
     return (
-      <ul className="ml-4 flex list-disc flex-col gap-field-error-gap">
+      <ul className="ml-field-error-indent flex list-disc flex-col gap-field-error-gap">
         {errors.map((error, index) => error?.message && <li key={index}>{error.message}</li>)}
       </ul>
     );

@@ -52,7 +52,6 @@ test("shared values point at their Tailwind scale step, singletons at themselves
 const DEPRECATED_1REM_CLASSES = [
   "gap-dialog-gap",
   "h-data-table-skeleton-height",
-  "ml-field-error-indent",
   "mt-card-section",
   "p-dialog-gap",
   "p-field-label-inset",
@@ -62,21 +61,12 @@ const DEPRECATED_1REM_CLASSES = [
   "size-switch-thumb",
   "top-overlay-close-offset",
   "translate-x-switch-travel",
-  "h-field-separator",
   "h-switch-track-height",
-  "size-status-dot",
   "space-y-card-lines",
-  "mt-tabs-content-gap",
-  "space-y-form-item-gap",
-  "px-field-separator-inline",
-  "gap-drawer-footer-gap",
   "space-x-dialog-footer-gap",
   "right-select-item-inline",
-  "px-button-inline-sm",
   "px-control-inline",
   "right-control-inline",
-  "gap-status-label-gap",
-  "gap-field-content",
 ];
 
 function walkJs(dir, acc = []) {
