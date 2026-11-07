@@ -110,12 +110,12 @@ export function IdentityAssistant({ tokens, onUse }: { tokens: IdentityTokens; o
       <details open={state.ui.open} onToggle={(event) => state.ui.setOpen(event.currentTarget.open)} className="group content-shrink">
         <summary
           id="identity-assistant-title"
-          className="flex min-h-control-height cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-zk-type-body font-medium text-foreground shadow-sm focus-ring-control hover:bg-muted [&::-webkit-details-marker]:hidden"
+          className="flex min-h-control-height cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-input bg-background px-field-pad text-zk-type-body font-medium text-foreground shadow-sm focus-ring-control hover:bg-muted [&::-webkit-details-marker]:hidden"
         >
           {copy.open}
           <ChevronDown
             aria-hidden="true"
-            className={cn("size-4 shrink-0 group-open:rotate-180", signatureMotionClass.feedback)}
+            className={cn("size-icon shrink-0 group-open:rotate-180", signatureMotionClass.feedback)}
           />
         </summary>
         <IdentityAssistantOpenBody {...state} tokens={tokens} onUse={onUse} />
