@@ -87,6 +87,18 @@ describe("layout job classes", () => {
     expect(utility("glass-pad-md")).toBe("padding: calc(var(--spacing) * 6);");
     expect(utility("empty-state-block")).toBe("padding-block: calc(var(--spacing) * 8);");
     expect(utility("h-skeleton-line")).toBe("height: calc(var(--spacing) * 4);");
+    expect(utility("h-skeleton-title")).toBe("height: calc(var(--spacing) * 7);");
+    expect(utility("h-scrollbar")).toBe("height: var(--spacing);");
+    expect(utility("w-skeleton-third")).toBe("width: 33.333333%;");
+    expect(utility("w-skeleton-body")).toBe("width: 80%;");
+    expect(utility("w-skeleton-label")).toBe("width: calc(var(--spacing) * 20);");
+    expect(utility("w-skeleton-note")).toBe("width: calc(var(--spacing) * 64);");
+    expect(utility("w-invite")).toBe("width: calc(var(--spacing) * 72);");
+    expect(utility("pull-line")).toBe("margin-top: calc(var(--spacing) * -1);");
+    expect(utility("pull-legend")).toBe("margin-top: calc(var(--spacing) * -1.5);");
+    expect(utility("pull-separator")).toBe("margin-block: calc(var(--spacing) * -2);");
+    expect(utility("pull-outline")).toBe("margin-bottom: calc(var(--spacing) * -2);");
+    expect(utility("mt-check")).toBe("margin-top: 1px;");
     expect(utility("h-logo")).toBe("height: calc(var(--spacing) * 6);");
     expect(utility("h-brand")).toBe("height: calc(var(--spacing) * 5);");
     expect(utility("basis-tile")).toBe("flex-basis: calc(var(--spacing) * 48);");

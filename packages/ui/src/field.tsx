@@ -67,12 +67,12 @@ const fieldVariants = cva(
       horizontal: [
         "flex-row items-center",
         "[&>[data-slot=field-label]]:flex-auto",
-        "has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-check",
       ],
       responsive: [
         "flex-col @md/field-group:flex-row @md/field-group:items-center [&>*]:w-full @md/field-group:[&>*]:w-auto [&>.sr-only]:w-auto",
         "@md/field-group:[&>[data-slot=field-label]]:flex-auto",
-        "@md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "@md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-check",
       ],
     },
   },
@@ -150,7 +150,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="field-description"
       className={cn(
         "text-sm leading-normal font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance",
-        "last:trim-top nth-last-2:-mt-1 [[data-variant=legend]+&]:-mt-1.5",
+        "last:trim-top nth-last-2:pull-line [[data-variant=legend]+&]:pull-legend",
         "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
       )}
@@ -171,7 +171,7 @@ function FieldSeparator({
       data-slot="field-separator"
       data-content={!!children}
       className={cn(
-        "relative -my-2 h-field-separator text-sm group-data-[variant=outline]/field-group:-mb-2",
+        "relative pull-separator h-field-separator text-sm group-data-[variant=outline]/field-group:pull-outline",
         className,
       )}
       {...props}
