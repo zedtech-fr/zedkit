@@ -42,7 +42,7 @@ function HowItWorks({ title, description, steps, className, ...props }: HowItWor
               >
                 {index + 1}
               </span>
-              <div className="flex content-shrink flex-col gap-1">
+              <div className="flex content-shrink flex-col gap-stack-tight">
                 <Heading level={3} className="text-xl">
                   {step.title}
                 </Heading>

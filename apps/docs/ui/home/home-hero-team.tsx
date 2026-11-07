@@ -73,7 +73,7 @@ export function HeroTeamPage({ rows, selected, onSelect }: { rows: TaskRow[]; se
     <Stack gap={3} className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
       <div className="grid content-shrink gap-stack-md sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-        <ul className="trim-margin flex content-shrink list-none flex-col gap-1 flush" aria-label={copy.title} data-hero-block="" data-beat={1}>
+        <ul className="trim-margin flex content-shrink list-none flex-col gap-stack-tight flush" aria-label={copy.title} data-hero-block="" data-beat={1}>
           {HERO_PEOPLE.map((entry) => (
             <PersonButton key={entry.name} person={entry} selected={entry.name === person.name} onSelect={() => onSelect(entry.name)} />
           ))}

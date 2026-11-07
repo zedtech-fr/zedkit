@@ -261,7 +261,7 @@ function ProposalChangeList({ rows }: { rows: readonly { path: string; from: str
   return (
     <details className="text-zk-type-body">
       <summary className="flex min-h-target cursor-pointer items-center focus-ring">{copy.proposal.showChanges}</summary>
-      <ul className="trim-margin flex list-none flex-col gap-1 flush font-mono text-zk-type-small">
+      <ul className="trim-margin flex list-none flex-col gap-stack-tight flush font-mono text-zk-type-small">
         {rows.map((row) => (
           <li key={row.path} className="break-words">
             {row.path}: {row.from} → {row.to}

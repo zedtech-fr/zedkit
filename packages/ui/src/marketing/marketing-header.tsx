@@ -42,7 +42,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
         </div>
         {items.length > 0 ? (
           <nav aria-label={messages.mainNavigation} className="hidden flex-1 md:block">
-            <ul className={cn("flex list-none items-center gap-1 flush", linkClass)}>
+            <ul className={cn("flex list-none items-center gap-stack-tight flush", linkClass)}>
               {items.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -62,7 +62,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
           <div className="absolute pin-x top-full flex flex-col gap-stack-lg border-b bg-card surface-pad-md shadow-lg">
             {items.length > 0 ? (
               <nav aria-label={messages.mainNavigation}>
-                <ul className={cn("flex list-none flex-col gap-1 flush", linkClass)}>
+                <ul className={cn("flex list-none flex-col gap-stack-tight flush", linkClass)}>
                   {items.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}

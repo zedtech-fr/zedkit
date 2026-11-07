@@ -50,7 +50,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
       data-highlighted={plan.highlighted ? "true" : undefined}
       className={cn("flex flex-col gap-5", plan.highlighted && "border-primary ring-2 ring-primary")}
     >
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-stack-tight">
         <div className="flex items-center justify-between gap-stack-sm">
           <Heading level={3} className="text-xl">
             {plan.name}

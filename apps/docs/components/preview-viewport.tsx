@@ -88,7 +88,7 @@ export function PreviewFrame({
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex w-full content-shrink flex-col gap-stack-sm">
       <Stack direction="horizontal" className="flex-wrap justify-between gap-x-4 gap-y-2">
-        <TabsList className="h-auto! gap-1 rounded-none bg-transparent flush">
+        <TabsList className="h-auto! gap-stack-tight rounded-none bg-transparent flush">
           {([previewViewportCopy.tabs.preview, previewViewportCopy.tabs.code] as const).map((value) => (
             <TabsTrigger
               key={value}

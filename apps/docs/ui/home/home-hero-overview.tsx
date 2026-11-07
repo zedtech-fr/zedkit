@@ -60,7 +60,7 @@ function Activity() {
       <CardContent className="p-3 pt-0">
         <ul className="trim-margin flex list-none items-end gap-1.5 flush" aria-label={copy.activity} data-hero-bars="">
           {copy.activityValues.map((value, index) => (
-            <li key={index} className="flex h-full content-shrink flex-1 flex-col items-center justify-end gap-1">
+            <li key={index} className="flex h-full content-shrink flex-1 flex-col items-center justify-end gap-stack-tight">
               <span
                 data-hero-bar=""
                 data-level={value}
