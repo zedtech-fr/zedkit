@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 549,
+  "total": 541,
   "files": {
     "apps/docs/app/(site)/features/identity-editor/page.tsx": 2,
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
@@ -105,10 +105,9 @@
     "packages/devtools/src/panel-shell.tsx": 3,
     "packages/devtools/src/panel-tabs.tsx": 1,
     "packages/devtools/src/panel.tsx": 1,
-    "packages/observability/src/consent/banner.tsx": 3,
     "packages/quality/src/scale-classes.mjs": 1,
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
-    "packages/ui/preview/gallery.tsx": 37,
+    "packages/ui/preview/gallery.tsx": 32,
     "packages/ui/src/alert.tsx": 4,
     "packages/ui/src/badge.tsx": 2,
     "packages/ui/src/button.tsx": 4,
