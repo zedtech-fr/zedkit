@@ -110,7 +110,7 @@ function ReadingPreview({ story }: { story: Story }) {
       <Text variant="muted" className="text-xs font-medium tracking-wide uppercase">
         {sectionLabel(story.section)}
       </Text>
-      <Heading level={3} className="mt-1 font-(family-name:--zk-font-display) text-lg text-balance">
+      <Heading level={3} data-follow="" className="font-(family-name:--zk-font-display) text-lg text-balance">
         {story.headline}
       </Heading>
       <Text variant="muted" className="mt-standfirst text-pretty">

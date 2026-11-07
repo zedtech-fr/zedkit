@@ -28,7 +28,7 @@ export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
           {copy.byline}
         </Text>
       </Stack>
-      <Stack gap={1} className="border-t border-border pt-2">
+      <Stack gap={1} data-under-rule="" className="border-t border-border">
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.moreLabel}
         </Text>

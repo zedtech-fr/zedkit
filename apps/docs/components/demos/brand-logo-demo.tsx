@@ -5,9 +5,9 @@ import { BrandLogo, Stack, Text } from "@zedtech/zedkit-ui";
 import { brandLogoCopy } from "@/components/demos/i18n/brand-logo-copy";
 
 /** Harbor Studio's own mark: a sail over a wave. Replace the shapes and the viewBox with yours. */
-function HarborMark({ className, title = "" }: { className?: string; title?: string }) {
+function HarborMark({ className, title = "", footer = false }: { className?: string; title?: string; footer?: boolean }) {
   return (
-    <BrandLogo title={title} viewBox="0 0 32 24" className={className}>
+    <BrandLogo title={title} viewBox="0 0 32 24" className={className} {...(footer ? { "data-footer-mark": "" } : {})}>
       <path d="M16 1 25 15H7Z" />
       <path d="M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z" />
     </BrandLogo>
@@ -60,7 +60,7 @@ export function BrandLogoDemo() {
           </Stack>
         </Stack>
         <footer className="flex items-center gap-stack-sm border-t border-border surface-pad-inline surface-pad-block text-muted-foreground">
-          <HarborMark className="h-4" />
+          <HarborMark footer />
           <Text variant="muted" className="text-xs">
             {brandLogoCopy.copyright}
           </Text>

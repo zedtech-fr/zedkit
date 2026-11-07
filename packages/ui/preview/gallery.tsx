@@ -137,7 +137,7 @@ export function Gallery() {
     <AppShell
       sidebar={
         <nav className="space-y-stack-tight surface-pad-md" aria-label="Gallery sections">
-          <p className="px-control-tight pb-2 text-sm font-semibold">UI gallery</p>
+          <p data-nav-label="" className="px-control-tight text-sm font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
             <a key={id} href={`#${id}`} className="block rounded-md px-control-tight py-control-block text-sm hover:bg-accent">
               {title}
@@ -207,7 +207,7 @@ export function Gallery() {
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
           <Separator />
-          <Skeleton className="h-skeleton-line w-48" />
+          <Skeleton data-gallery-line="" className="h-skeleton-line" />
           <div className="space-y-stack-sm">
             <Heading level={1}>Page title</Heading>
             <Heading level={2}>Section title</Heading>
