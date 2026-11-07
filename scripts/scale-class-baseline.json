@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 332,
+  "total": 331,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -55,7 +55,7 @@
     "apps/docs/ui/home/home-gallery-preview.tsx": 2,
     "apps/docs/ui/home/home-hero-agent-panel.tsx": 2,
     "apps/docs/ui/home/home-hero-calendar.tsx": 2,
-    "apps/docs/ui/home/home-hero-overview.tsx": 8,
+    "apps/docs/ui/home/home-hero-overview.tsx": 7,
     "apps/docs/ui/home/home-hero-satellites.tsx": 4,
     "apps/docs/ui/home/home-hero-shell-parts.tsx": 3,
     "apps/docs/ui/home/home-hero-team.tsx": 3,

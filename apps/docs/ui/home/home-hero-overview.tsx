@@ -58,7 +58,7 @@ function Activity() {
         <CardDescription className="text-xs">{copy.activity}</CardDescription>
       </CardHeader>
       <CardContent className="surface-pad-compact trim-pad-top">
-        <ul className="trim-margin flex list-none items-end gap-1.5 flush" aria-label={copy.activity} data-hero-bars="">
+        <ul className="trim-margin flex list-none items-end flush" aria-label={copy.activity} data-hero-bars="">
           {copy.activityValues.map((value, index) => (
             <li key={index} className="flex h-full content-shrink flex-1 flex-col items-center justify-end gap-stack-tight">
               <span

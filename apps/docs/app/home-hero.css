@@ -55,6 +55,7 @@
 
 #home-page [data-hero-bars] {
   height: 3.5rem;
+  gap: calc(var(--spacing) * 1.5);
 }
 
 #home-page [data-hero-bar] {
