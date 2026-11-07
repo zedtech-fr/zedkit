@@ -67,7 +67,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
         {plan.description ? <Text variant="muted">{plan.description}</Text> : null}
       </div>
       <p className="flex items-baseline gap-stack-sm">
-        <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
+        <span className="text-plan-price">{plan.price}</span>
         {plan.period ? <span className="text-dense text-muted-foreground">{plan.period}</span> : null}
       </p>
       <ul className="flex list-none flex-col gap-stack-sm flush">

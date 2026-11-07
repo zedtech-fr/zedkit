@@ -37,7 +37,7 @@ function ProductCard({ product, selected, onSelect }: { product: Product; select
         className="h-auto! min-h-target w-full flex-col items-start justify-start gap-stack-sm surface-pad-md text-left font-normal whitespace-normal"
         onClick={onSelect}
       >
-        <span className="font-(family-name:--zk-font-display) text-xl">{product.name}</span>
+        <span className="text-product-name">{product.name}</span>
         <span className="text-dense text-muted-foreground">{product.material}</span>
         <span className="flex w-full flex-wrap items-center justify-between gap-stack-sm">
           <span className="tabular-nums">{formatEur(product.price)}</span>

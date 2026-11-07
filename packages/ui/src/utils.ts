@@ -8,7 +8,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      "font-size": ["text-form-hint", "text-control", "text-dense", "text-caption", "text-overlay-title", "text-alert-title", "text-section-display", "text-feature-title", "text-page-title", "text-specimen-title", "text-hero-title", "text-compact-heading", "text-figure", "text-wordmark"],
+      "font-size": ["text-form-hint", "text-control", "text-dense", "text-caption", "text-overlay-title", "text-alert-title", "text-section-display", "text-feature-title", "text-page-title", "text-specimen-title", "text-hero-title", "text-compact-heading", "text-figure", "text-wordmark", "text-plan-price", "text-product-name"],
       "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }, "max-w-scope"],
       "min-w": ["content-shrink", "min-w-target", "min-w-name", "min-w-date"],
       "min-h": ["pane-shrink", "min-h-target", "min-h-floor", "min-h-status", "min-h-label", "min-h-phone-bar", "min-h-bar", "min-h-hero", "min-h-aside", "min-h-segment", { "min-h": ["control-height", "textarea-min-height"] }],
