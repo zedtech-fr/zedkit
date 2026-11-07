@@ -994,12 +994,40 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-skeleton-line {
   height: calc(var(--spacing) * 4);
 }
+/* A page-title placeholder. */
+@utility h-skeleton-title {
+  height: calc(var(--spacing) * 7);
+}
+/* The thin scrollbar on a horizontal gallery. */
+@utility h-scrollbar {
+  height: var(--spacing);
+}
 @utility w-skeleton-short {
   width: 66.666667%;
 }
 /* Short placeholder for a button or a line of text. */
 @utility w-skeleton-bar {
   width: calc(var(--spacing) * 24);
+}
+/* A card title placeholder. */
+@utility w-skeleton-third {
+  width: 33.333333%;
+}
+/* The last line of a card skeleton. */
+@utility w-skeleton-body {
+  width: 80%;
+}
+/* A detail-row label placeholder. */
+@utility w-skeleton-label {
+  width: calc(var(--spacing) * 20);
+}
+/* A page-header description placeholder. */
+@utility w-skeleton-note {
+  width: calc(var(--spacing) * 64);
+}
+/* An invite popover. */
+@utility w-invite {
+  width: calc(var(--spacing) * 72);
 }
 /* Compact sidebar inside a framed demo. The shell's own sidebar stays 16rem. */
 @utility w-sidebar-compact {
@@ -1187,6 +1215,26 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility trim-pad-end {
   padding-inline-end: 0;
+}
+/* Pulls a field description up when another line follows it. */
+@utility pull-line {
+  margin-top: calc(var(--spacing) * -1);
+}
+/* Pulls a field description up when it sits under a legend. */
+@utility pull-legend {
+  margin-top: calc(var(--spacing) * -1.5);
+}
+/* Lets a field rule sit in the gap instead of adding one. */
+@utility pull-separator {
+  margin-block: calc(var(--spacing) * -2);
+}
+/* Extra pull when that rule is inside an outline group. */
+@utility pull-outline {
+  margin-bottom: calc(var(--spacing) * -2);
+}
+/* Optical align of a checkbox beside the first line of a field. */
+@utility mt-check {
+  margin-top: 1px;
 }
 @utility trim-bottom {
   margin-bottom: 0;
