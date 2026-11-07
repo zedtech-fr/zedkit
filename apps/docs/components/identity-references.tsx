@@ -32,7 +32,7 @@ export function ReferenceReportList({ report }: { report: readonly ReferenceRepo
         {report.map((item) => {
           const used = item.status === "used";
           return (
-            <li key={item.url} data-assistant-reference-status={used ? "used" : "failed"} className="flex content-shrink flex-wrap items-baseline gap-x-2 gap-y-1 text-zk-type-body text-muted-foreground">
+            <li key={item.url} data-assistant-reference-status={used ? "used" : "failed"} className="flex content-shrink flex-wrap items-baseline gap-x-stack-sm gap-y-stack-tight text-zk-type-body text-muted-foreground">
               <Text
                 as="span"
                 data-assistant-reference-chip=""

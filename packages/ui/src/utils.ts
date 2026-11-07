@@ -42,8 +42,8 @@ const twMerge = extendTailwindMerge({
         "gap-flush",
         { gap: ["stack-tight", "stack-sm", "stack-md", "stack-lg"] },
       ],
-      "gap-x": ["gap-x-wizard-steps-gap"],
-      "gap-y": ["gap-y-wizard-steps-row-gap"],
+      "gap-x": ["gap-x-wizard-steps-gap", "gap-x-stack-sm", "gap-x-stack-lg"],
+      "gap-y": ["gap-y-wizard-steps-row-gap", "gap-y-stack-sm", "gap-y-stack-tight"],
       "space-y": [
         { "space-y": ["stack-sm", "stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
       ],

@@ -17,7 +17,7 @@ function HomeSecondaryEntryLinks({ entryPoints }: { entryPoints: HomeEntryPoint[
           key={entry.href}
           direction="horizontal"
           gap={2}
-          className="flex-wrap items-center justify-between gap-y-2 border-b border-border/60 pb-3 last:border-0 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-8"
+          className="flex-wrap items-center justify-between gap-y-stack-sm border-b border-border/60 pb-3 last:border-0 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-8"
         >
           <Stack gap={1} className="content-shrink">
             <Text className="font-medium">{entry.title}</Text>

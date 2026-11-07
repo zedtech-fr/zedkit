@@ -817,6 +817,18 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-stack-lg {
   gap: var(--zk-gap-lg);
 }
+@utility gap-x-stack-sm {
+  column-gap: var(--zk-gap-sm);
+}
+@utility gap-y-stack-sm {
+  row-gap: var(--zk-gap-sm);
+}
+@utility gap-y-stack-tight {
+  row-gap: var(--spacing);
+}
+@utility gap-x-stack-lg {
+  column-gap: var(--zk-gap-lg);
+}
 /* Space between a marketing section's header and its content. */
 @utility gap-section-stack {
   gap: calc(var(--spacing) * 10);

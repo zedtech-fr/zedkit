@@ -33,6 +33,9 @@ describe("layout job classes", () => {
     expect(css).toContain("--zk-gap-lg: calc(var(--spacing) * 4);");
     expect(utility("gap-stack-tight")).toBe("gap: var(--spacing);");
     expect(utility("gap-icon")).toBe("gap: calc(var(--spacing) * 1.5);");
+    expect(utility("gap-y-stack-sm")).toBe("row-gap: var(--zk-gap-sm);");
+    expect(utility("gap-x-stack-lg")).toBe("column-gap: var(--zk-gap-lg);");
+    expect(utility("gap-y-stack-tight")).toBe("row-gap: var(--spacing);");
     expect(utility("gap-stack-sm")).toBe("gap: var(--zk-gap-sm);");
     expect(utility("gap-section-stack")).toBe("gap: calc(var(--spacing) * 10);");
     expect(utility("actions-offset")).toBe("padding-top: calc(var(--spacing) * 2);");

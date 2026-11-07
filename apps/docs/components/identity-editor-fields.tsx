@@ -163,7 +163,7 @@ function SpecimenBody() {
         <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
       </Field>
       <Stack gap={3} className="hidden lg:flex">
-        <dl className="trim-margin grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border surface-pad-compact">
+        <dl className="trim-margin grid grid-cols-[max-content_1fr] gap-x-stack-lg gap-y-stack-sm rounded-lg border border-border surface-pad-compact">
           {copy.rows.map(([term, detail]) => (
             <Fragment key={term}>
               <dt className="text-muted-foreground">{term}</dt>
