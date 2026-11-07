@@ -65,7 +65,7 @@ function MarketingFooter({ brand, description, columns = [], legal, className, .
         {legal ? (
           <div
             data-slot="marketing-footer-legal"
-            className="flex flex-col gap-stack-md border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-stack-md border-t pt-footer-note text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
           >
             {legal}
           </div>

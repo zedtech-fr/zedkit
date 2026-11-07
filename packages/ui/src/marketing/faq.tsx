@@ -43,7 +43,7 @@ function Faq({ title, description, items, className, ...props }: FaqProps) {
                   className="size-icon shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
                 />
               </summary>
-              <Text variant="muted" className="pb-4">
+              <Text variant="muted" className="pb-answer">
                 {item.answer}
               </Text>
             </details>

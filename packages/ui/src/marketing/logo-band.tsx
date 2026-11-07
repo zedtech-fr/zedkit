@@ -36,7 +36,7 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
         <Text id={titleId} variant="muted" className="text-center">
           {title}
         </Text>
-        <ul className="flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-4 flush text-muted-foreground">
+        <ul className="flex list-none flex-wrap items-center justify-center gap-x-logos gap-y-stack-lg flush text-muted-foreground">
           {logos.map((item, index) => {
             const body = (
               <>
