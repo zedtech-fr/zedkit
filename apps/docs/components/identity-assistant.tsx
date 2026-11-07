@@ -106,7 +106,7 @@ export function IdentityAssistant({ tokens, onUse }: { tokens: IdentityTokens; o
   const state = useInlineIdentityAssistant(tokens);
 
   return (
-    <Stack gap={4} id="create" role="region" aria-labelledby="identity-assistant-title" data-slot="identity-assistant" className="scroll-mt-24">
+    <Stack gap={4} id="create" role="region" aria-labelledby="identity-assistant-title" data-slot="identity-assistant" data-scroll-anchor="">
       <details open={state.ui.open} onToggle={(event) => state.ui.setOpen(event.currentTarget.open)} className="group content-shrink">
         <summary
           id="identity-assistant-title"

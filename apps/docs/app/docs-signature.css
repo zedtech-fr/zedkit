@@ -22,6 +22,16 @@
   background-image: var(--zk-site-sheen, linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 55%));
 }
 
+/* Gallery card preview, tall enough that a lazy demo does not collapse the card. */
+[data-home-gallery-preview] {
+  min-height: calc(var(--spacing) * 32);
+}
+
+/* Anchor target, clear of the sticky header. */
+[data-scroll-anchor] {
+  scroll-margin-top: calc(var(--spacing) * 24);
+}
+
 /* Space above the Guides label in the site menu. */
 [data-nav-group] {
   margin-top: calc(var(--spacing) * 2);

@@ -26,7 +26,7 @@ export const HOME_HERO_PREVIEW_SHELL_CLASS = "pane-shrink w-full content-shrink"
 
 /** Bounded live preview inside home gallery cards (min height reserves space while lazy chunks load). */
 export const HOME_GALLERY_PREVIEW_SHELL_CLASS =
-  "min-h-32 w-full content-shrink overflow-hidden rounded-md border bg-background surface-pad-compact";
+  "w-full content-shrink overflow-hidden rounded-md border bg-background surface-pad-compact";
 
 /** Persuasion copy on the home page (maps to `--zk-type-body-*`). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";

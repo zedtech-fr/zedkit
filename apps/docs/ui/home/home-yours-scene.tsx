@@ -22,7 +22,7 @@ export function HomeYoursScene() {
   }
 
   return (
-    <Stack gap={4} id="your-identity" className="max-w-2xl content-shrink scroll-mt-24 border-t border-border pt-section-sm" data-home-yours="">
+    <Stack gap={4} id="your-identity" className="max-w-2xl content-shrink border-t border-border pt-section-sm" data-home-yours="" data-scroll-anchor="">
       <Stack gap={2}>
         <Heading level={3} as="h3" className="text-scene-title">
           {copy.title}

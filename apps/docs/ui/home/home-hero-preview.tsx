@@ -103,9 +103,10 @@ export function HomeHeroPreview() {
       data-home-hero-preview
       data-home-dashboard-card
       data-home-specimen-stage=""
+      data-scroll-anchor=""
       className={cn(
         HOME_HERO_PREVIEW_SHELL_CLASS,
-        "relative flex max-w-full content-shrink scroll-mt-24 flex-col rounded-xl border border-border bg-card",
+        "relative flex max-w-full content-shrink flex-col rounded-xl border border-border bg-card",
       )}
     >
       <ThemeScope
