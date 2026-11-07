@@ -88,7 +88,8 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       <Stack gap={4} className="content-shrink">
         <StickyAside
           id="install-or-copy"
-          className="scroll-mt-24 [--zk-sticky-gap:2rem] [--zk-sticky-top:7rem]"
+          data-scroll-anchor=""
+          className="[--zk-sticky-gap:2rem] [--zk-sticky-top:7rem]"
           side="right"
         >
           <StickyAside.Main>

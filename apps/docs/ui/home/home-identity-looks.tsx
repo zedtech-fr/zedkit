@@ -32,7 +32,7 @@ export function HomeIdentityLooks() {
   const Example = EXAMPLES[identity];
 
   return (
-    <Stack gap={3} className="content-shrink scroll-mt-24" data-home-identity-looks="">
+    <Stack gap={3} className="content-shrink" data-home-identity-looks="" data-scroll-anchor="">
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
         {homeIdentityLooksCopy.liveNote}
       </Text>
