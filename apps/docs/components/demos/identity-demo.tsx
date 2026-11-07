@@ -82,7 +82,7 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
       className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground"
     >
       <Stack direction="horizontal" gap={2} className="items-center justify-between">
-        <Heading level={2} className="trim-margin! text-compact-heading">
+        <Heading level={2} className="text-compact-heading trim-margin!">
           {look.label}
         </Heading>
         <Badge variant="secondary" className="w-fit" role="status">

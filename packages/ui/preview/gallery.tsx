@@ -180,7 +180,7 @@ export function Gallery() {
             <StatusDot tone="danger" />
             <Checkmark label="Saved" />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="space-y-stack-sm max-w-sm">
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
           </div>
@@ -190,19 +190,19 @@ export function Gallery() {
             <StatusLabel tone="error">Could not save</StatusLabel>
             <UpdatedAgo date={Date.now() - 3 * 60_000} />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="space-y-stack-sm max-w-sm">
             <OfflineNote />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="space-y-stack-sm max-w-sm">
             <EmptyState title="No invoices" description="Create an invoice to send to a client." actions={<Button>New invoice</Button>} />
             <ErrorState title="Could not load invoices" description="Check your connection and try again." actions={<Button variant="outline">Try again</Button>} />
             <Spinner />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="space-y-stack-sm max-w-sm">
             <Label htmlFor="gallery-name">Name</Label>
             <Input id="gallery-name" placeholder="Ada" />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="space-y-stack-sm max-w-sm">
             <Label htmlFor="gallery-bio">Bio</Label>
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
@@ -379,7 +379,7 @@ export function Gallery() {
 
         <GallerySection id="forms" title="Forms">
           <FormDemo />
-          <div className="max-w-sm space-y-stack-md" data-testid="gallery-prompt-input">
+          <div className="space-y-stack-md max-w-sm" data-testid="gallery-prompt-input">
             <PromptInput
               sendLabel="Send"
               value="Ask about your catalog"

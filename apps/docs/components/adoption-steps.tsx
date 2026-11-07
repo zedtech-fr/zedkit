@@ -185,7 +185,7 @@ export function ModeView({
         <dd className="trim-margin content-shrink">{adoptionCopy.gives[mode.gives]}</dd>
         <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youNeed}</dt>
         <dd className="trim-margin content-shrink">
-          <ul className="trim-margin list-none space-y-stack-tight flush">
+          <ul className="trim-margin space-y-stack-tight list-none flush">
             {mode.requires.map((need) => (
               <li key={need}>{adoptionCopy.requires[need]}</li>
             ))}

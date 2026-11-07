@@ -105,7 +105,7 @@ export function uiPreset({ entryPoint, scaleBaseline } = {}) {
         "better-tailwindcss/enforce-consistent-class-order": "error",
         "better-tailwindcss/no-duplicate-classes": "error",
         "better-tailwindcss/no-conflicting-classes": "error",
-        "better-tailwindcss/no-unknown-classes": "error",
+        "better-tailwindcss/no-unknown-classes": ["error", { detectComponentClasses: true }],
         "better-tailwindcss/no-restricted-classes": [
           "error",
           {

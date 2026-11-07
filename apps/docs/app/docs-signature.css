@@ -68,6 +68,11 @@
   margin-inline: auto;
 }
 
+/* Space between a look tab's swatch and its name. */
+[data-look-tab] {
+  gap: calc(var(--spacing) * 2.5);
+}
+
 /* Side inset of the compact proposal card. */
 [data-proposal-inset] {
   padding-inline: var(--spacing);

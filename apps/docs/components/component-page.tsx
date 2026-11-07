@@ -97,7 +97,7 @@ export async function ComponentPage({
     <Stack gap={8}>
       <Stack gap={3}>
         {status !== "stable" ? <MaturityBadge status={status} /> : null}
-        <Text className="text-muted-foreground text-purpose">{purpose}</Text>
+        <Text className="text-purpose text-muted-foreground">{purpose}</Text>
       </Stack>
 
       <Stack id="example">
