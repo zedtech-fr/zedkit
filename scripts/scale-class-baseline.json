@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 341,
+  "total": 340,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -28,7 +28,6 @@
     "apps/docs/components/demos/select-demo.tsx": 1,
     "apps/docs/components/demos/separator-demo.tsx": 1,
     "apps/docs/components/demos/separator-vertical-demo.tsx": 1,
-    "apps/docs/components/demos/skeleton-text-demo.tsx": 1,
     "apps/docs/components/demos/sticky-aside-demo.tsx": 2,
     "apps/docs/components/demos/textarea-demo.tsx": 1,
     "apps/docs/components/demos/theme-demo.tsx": 2,
