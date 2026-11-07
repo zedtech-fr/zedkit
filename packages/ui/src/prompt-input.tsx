@@ -30,7 +30,7 @@ const promptInputFieldPadding = (twoActions: boolean) =>
     : "pr-[calc(var(--spacing)*1.5+var(--spacing-control-height))]";
 
 const promptInputCancelPosition =
-  "absolute right-[calc(var(--spacing)*1.5+var(--spacing-control-height)+var(--spacing)*2)] bottom-1.5 shrink-0";
+  "absolute right-[calc(var(--spacing)*1.5+var(--spacing-control-height)+var(--spacing)*2)] bottom-send shrink-0";
 
 const promptInputMaxHeightClass = (maxRows: 4 | 8 | 12) =>
   ({ 4: "max-h-prompt-input-sm", 8: "max-h-prompt-input", 12: "max-h-prompt-input-lg" })[maxRows];
