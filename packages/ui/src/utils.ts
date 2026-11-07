@@ -51,6 +51,7 @@ const twMerge = extendTailwindMerge({
       ],
       h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator", "h-skeleton-line", "h-logo"],
       w: ["w-skeleton-short"],
+      "grid-cols": ["grid-pair"],
       size: [{ size: ["icon"] }, "size-icon-sm", "size-checkbox", "size-status-label-box", "size-status-dot"],
       py: ["flush-block", "py-control-block", "py-control-block-lg", "py-alert-block", "py-detail-panel-block", "py-select-item-block", "py-table-cell", "py-section-sm", "py-section-md", "py-section-lg", "py-section-xl", "empty-state-block", "surface-pad-block", "surface-pad-block-sm"],
       p: ["flush", "p-drawer-chrome-padding", "p-app-shell-padding", "p-table-cell", "p-option-card-padding", "p-field-label-inset", "p-select-separator", "surface-pad-sm", "surface-pad-compact", "surface-pad-md", "pad-row", "glass-pad-sm", "glass-pad-md", "glass-pad-lg"],
