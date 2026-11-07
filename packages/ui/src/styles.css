@@ -981,6 +981,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility trim-top {
   margin-top: 0;
 }
+/* Optical alignment of an icon beside a line of text. */
+@utility icon-nudge {
+  margin-top: var(--spacing);
+}
 @utility trim-pad-top {
   padding-top: 0;
 }
