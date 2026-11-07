@@ -218,6 +218,16 @@
   height: calc(var(--spacing) * 4);
 }
 
+/* Share card. The open-graph picture is 1200 by 630. */
+[data-share-preview] {
+  aspect-ratio: 1200 / 630;
+}
+
+/* Product picture on the shop specimen. Three times as wide as it is tall. */
+[data-product-banner] {
+  aspect-ratio: 3 / 1;
+}
+
 [data-dock-handle],
 [data-shell-drawer-foot] {
   margin-top: calc(var(--spacing) * 2);

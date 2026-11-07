@@ -69,7 +69,8 @@ export function BrandLogoDemo() {
       <Stack
         role="img"
         aria-label={brandLogoCopy.sharePreviewAriaLabel}
-        className="aspect-[1200/630] w-full items-center justify-center gap-stack-md rounded-lg bg-primary text-primary-foreground"
+        data-share-preview=""
+        className="w-full items-center justify-center gap-stack-md rounded-lg bg-primary text-primary-foreground"
       >
         <HarborMark className="h-share" />
         <Text as="span" className="text-brand-word" aria-hidden="true">
