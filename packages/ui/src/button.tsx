@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils.js";
 
 const buttonVariants = cva(
-  "box-border inline-flex cursor-pointer items-center justify-center gap-button-gap rounded-md text-sm font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-icon [&_svg]:shrink-0",
+  "box-border inline-flex cursor-pointer items-center justify-center gap-button-gap rounded-md text-control font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-icon [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -33,7 +33,7 @@ const buttonVariants = cva(
         class:
           "h-auto pane-shrink bg-transparent flush-block shadow-none hover:bg-transparent active:bg-transparent",
       },
-      { variant: "link", size: "sm", class: "min-h-target px-control-tight text-sm" },
+      { variant: "link", size: "sm", class: "min-h-target px-control-tight text-control" },
       { variant: "link", size: "default", class: "min-h-target px-control-inline" },
       { variant: "link", size: "lg", class: "min-h-target px-button-pad text-base" },
     ],
