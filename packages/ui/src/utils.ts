@@ -35,6 +35,7 @@ const twMerge = extendTailwindMerge({
         "gap-field-content",
         "gap-status-label-gap",
         "gap-live-pulse-gap",
+        "gap-icon",
         "gap-dialog-footer-gap",
         "gap-drawer-footer-gap",
         "gap-section-stack",

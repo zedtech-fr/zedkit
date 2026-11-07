@@ -36,7 +36,7 @@ describe("status label", () => {
 
   it("spaces icon and text from theme tokens", () => {
     const { container } = render(<StatusLabel tone="loading">Saving report…</StatusLabel>);
-    expect(container.innerHTML).toContain("gap-status-label-gap");
+    expect(container.innerHTML).toContain("gap-icon");
     expect(container.innerHTML).not.toContain("gap-1.5");
     expect(container.innerHTML).toContain("size-status-label-box");
     const offline = render(<StatusLabel tone="offline">You are offline</StatusLabel>);
