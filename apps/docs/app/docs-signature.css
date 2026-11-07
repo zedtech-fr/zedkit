@@ -22,6 +22,11 @@
   background-image: var(--zk-site-sheen, linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 55%));
 }
 
+/* Inherited-props disclosure. Never under 44px, and it still grows if the root font is larger. */
+[data-props-summary] {
+  min-height: max(2.75rem, 44px);
+}
+
 /* Gallery card preview, tall enough that a lazy demo does not collapse the card. */
 [data-home-gallery-preview] {
   min-height: calc(var(--spacing) * 32);
