@@ -44,7 +44,7 @@ function CommerceProductList({
             type="button"
             variant="outline"
             aria-pressed={item.id === selectedId}
-            className="h-auto! min-h-target w-full flex-col items-start gap-stack-tight p-3 text-left font-normal whitespace-normal"
+            className="h-auto! min-h-target w-full flex-col items-start gap-stack-tight surface-pad-compact text-left font-normal whitespace-normal"
             onClick={() => onSelect(item.id)}
           >
             <Text as="span" className="font-medium">

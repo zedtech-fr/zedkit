@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 356,
+  "total": 355,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -103,7 +103,6 @@
     "packages/ui/src/marketing/media-section.tsx": 1,
     "packages/ui/src/marketing/pricing.tsx": 4,
     "packages/ui/src/marketing/section-header.tsx": 1,
-    "packages/ui/src/marketing/specimens/commerce-specimen.tsx": 1,
     "packages/ui/src/marketing/specimens/saas-dashboard-specimen.tsx": 2,
     "packages/ui/src/marketing/specimens/service-booking-specimen.tsx": 1,
     "packages/ui/src/marketing/testimonials.tsx": 2,
