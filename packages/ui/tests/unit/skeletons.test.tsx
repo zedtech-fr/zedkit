@@ -41,6 +41,8 @@ describe("skeletons", () => {
 
   it("sizes the table skeleton to its columns and rows", () => {
     const { container } = render(<DataTableSkeleton columns={3} rows={2} />);
+    expect(container.querySelector(".max-w-data-table-filter-width")).not.toBeNull();
+    expect(container.innerHTML).not.toContain("max-w-sm");
     expect(container.querySelectorAll("tbody tr").length).toBe(2);
     expect(container.querySelectorAll("thead th").length).toBe(3);
   });

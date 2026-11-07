@@ -28,7 +28,7 @@ export function DataTableSkeleton({
   const messages = useUiMessages();
   return (
     <div data-slot="data-table-skeleton" role="status" aria-label={label ?? messages.loading} className={cn("space-y-data-table-stack", className)}>
-      {filter ? <Skeleton className="h-control-height max-w-sm" /> : null}
+      {filter ? <Skeleton className="h-control-height max-w-data-table-filter-width" /> : null}
       {/* Decorative shape only — the zone label above carries the meaning. */}
       <Table aria-hidden>
         <TableHeader>
