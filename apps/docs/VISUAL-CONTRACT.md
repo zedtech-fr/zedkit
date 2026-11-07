@@ -102,7 +102,7 @@ Recompose (change the order or the arrangement, not the tokens) when any of thes
 These broke real previews. Check them before changing home, chrome, specimens or overlays.
 
 - **Frame vs content height.** `min-h-svh` / `min-h-screen` inside a bounded preview (hero card, 40rem stage) leaves empty chrome. The frame owns height; the specimen is `h-full pane-shrink`.
-- **Identity `--spacing` scales `w-*` / `p-*` / `gap-*`.** A `w-48` sidebar in Tide is not 12rem. Pin chrome that must stay compact, and look at Tide before calling a layout done.
+- **Identity `--spacing` scales spacing utilities.** A numeric width tracks `--spacing`, so it is not a fixed length. Use a role width when the job has one. Pin chrome that must stay compact, and look at Tide before calling a layout done.
 - **Calendar is `role="grid"`.** Do not paint `tbody tr:hover` on it; hover `.rdp-day`.
 - **Fixed containing blocks.** A running animation of `transform`, `translate`, `scale`, `rotate` (even to `none`), a `filter` or `will-change` on an ancestor makes it the containing block of its `position: fixed` descendants: a toast or a floating bar inside is laid out against that ancestor, not the viewport, and can sit on the controls it reports on. Animate opacity, or keep fixed content out of the animated subtree. Check with a real toast at 1280x720.
 - **Scroll pinning loses the example in use.** A scroll-driven fade ends the example it is fading when a click scrolls the page by a few hundred pixels. The hero is a tablist for that reason, and the looks band is plain tabs with no pin. A scene that must pin keeps one rule: the scroll position is the only thing that picks the example, and nothing the visitor does inside it scrolls the page.
