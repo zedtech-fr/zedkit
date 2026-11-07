@@ -35,7 +35,7 @@ const buttonVariants = cva(
       },
       { variant: "link", size: "sm", class: "min-h-target px-control-tight text-dense" },
       { variant: "link", size: "default", class: "min-h-target px-control-inline" },
-      { variant: "link", size: "lg", class: "min-h-target px-button-pad text-base" },
+      { variant: "link", size: "lg", class: "min-h-target px-button-pad" },
     ],
     defaultVariants: { variant: "default", size: "default" },
   },
