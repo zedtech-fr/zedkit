@@ -74,7 +74,7 @@ export function IdentityDockExportCopyRow({
 
   return (
     <Stack gap={1} className="content-shrink" data-slot="identity-dock-export-row">
-      <Text typeRole="label" className="text-xs text-muted-foreground">
+      <Text typeRole="label" className="text-muted-foreground">
         {label}
       </Text>
       <Stack gap={2} className="content-shrink sm:flex-row sm:items-start">
