@@ -23,4 +23,15 @@ describe("cn", () => {
   it("keeps non-conflicting utilities from every input", () => {
     expect(cn("text-sm font-medium", "px-4")).toBe("text-sm font-medium px-4");
   });
+
+  it("merges role spacing with the default scale", () => {
+    expect(cn("gap-2", "gap-stack-sm")).toBe("gap-stack-sm");
+    expect(cn("gap-stack-sm", "gap-stack-lg")).toBe("gap-stack-lg");
+    expect(cn("px-4", "px-field-pad")).toBe("px-field-pad");
+    expect(cn("px-button-pad", "px-button-pad-lg")).toBe("px-button-pad-lg");
+    expect(cn("px-2", "px-stack-sm")).toBe("px-stack-sm");
+    expect(cn("py-2", "py-stack-sm")).toBe("py-stack-sm");
+    expect(cn("space-y-4", "space-y-stack-lg")).toBe("space-y-stack-lg");
+    expect(cn("size-4", "size-icon")).toBe("size-icon");
+  });
 });

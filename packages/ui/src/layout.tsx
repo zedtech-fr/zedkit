@@ -16,14 +16,17 @@ const stackVariants = cva("flex", {
       horizontal: "flex-row items-center",
     },
     gap: {
-      1: "gap-1",
-      2: "gap-2",
-      3: "gap-3",
-      4: "gap-4",
-      5: "gap-5",
-      6: "gap-6",
-      7: "gap-7",
-      8: "gap-8",
+      1: "gap-stack-2xs",
+      2: "gap-stack-sm",
+      3: "gap-stack-md",
+      4: "gap-stack-lg",
+      5: "gap-stack-xl",
+      6: "gap-stack-2xl",
+      7: "gap-stack-3xl",
+      8: "gap-stack-4xl",
+      sm: "gap-stack-sm",
+      md: "gap-stack-md",
+      lg: "gap-stack-lg",
     },
   },
   defaultVariants: {
@@ -35,7 +38,11 @@ const stackVariants = cva("flex", {
 export type StackProps = React.ComponentProps<"div"> &
   VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
-    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+    /**
+     * `sm` `md` `lg` are the role names (steps 2, 3 and 4).
+     * Numeric steps remain until a major and map to the same classes.
+     */
+    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | "sm" | "md" | "lg";
   };
 
 function Stack({ direction, gap, className, ...props }: StackProps) {
@@ -128,7 +135,7 @@ function Section({
   ...props
 }: SectionProps) {
   const header = (title || description || actions) && (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-start justify-between gap-stack-lg">
       <div>
         {title && (
           <Heading level={2} typeRole="title">
@@ -147,7 +154,7 @@ function Section({
   const labelled = typeof title === "string" ? { "aria-label": title } : undefined;
   if (!bleed) {
     return (
-      <section data-slot="section" data-snap={snap} className={cn("space-y-4", className)} {...labelled} {...props}>
+      <section data-slot="section" data-snap={snap} className={cn("space-y-stack-lg", className)} {...labelled} {...props}>
         {header}
         {children}
       </section>
@@ -161,7 +168,7 @@ function Section({
       {...labelled}
       {...props}
     >
-      <Container width={containerWidth} className="space-y-4">
+      <Container width={containerWidth} className="space-y-stack-lg">
         {header}
         {children}
       </Container>

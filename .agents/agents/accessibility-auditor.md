@@ -22,7 +22,8 @@ barrier in the changed flow beats a checklist tour of untouched pages.
    required marked programmatically, invalid submit moves attention to the
    problem. Color alone never carries meaning.
 4. **Contrast and targets.** Text contrast 4.5:1 (3:1 large text) in both
-   themes; pointer targets at least 24px (44 preferred) with visible spacing.
+   themes; pointer targets at least 24px CSS (the portable floor). A host
+   may require more; label that stricter number as the host's rule.
 5. **Motion and timing.** No essential content by animation alone;
    `prefers-reduced-motion` respected; no hard timeouts without warning and
    extension.

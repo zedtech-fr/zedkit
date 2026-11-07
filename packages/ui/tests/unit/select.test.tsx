@@ -38,11 +38,11 @@ describe("select", () => {
     render(<RegionSelect />);
 
     const trigger = screen.getByRole("combobox", { name: "Region" });
-    for (const token of ["h-control-height", "px-3", "py-2", "focus-ring-control", "text-control"]) {
+    for (const token of ["h-control-height", "px-field-pad", "py-stack-sm", "focus-ring-control", "text-control"]) {
       expect(trigger.className).toContain(token);
     }
-    expect(trigger.className).not.toContain("px-control-inline");
-    expect(trigger.className).not.toContain("py-control-block-lg");
+    expect(trigger.className).not.toContain("px-3");
+    expect(trigger.className).not.toContain("py-2");
     expect(trigger.className).not.toMatch(/(^|\s)h-9(\s|$)/);
     expect(trigger.className).not.toContain("focus:ring-1");
     expect(trigger.querySelector("svg")?.classList.contains("size-4")).toBe(true);

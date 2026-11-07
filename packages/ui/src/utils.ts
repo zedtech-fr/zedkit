@@ -14,8 +14,36 @@ const twMerge = extendTailwindMerge({
       "font-size": ["text-form-hint", "text-control"],
       "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }],
       "min-h": [{ "min-h": ["control-height", "textarea-min-height"] }],
-      px: ["px-page-gutter"],
-      py: ["py-section-sm", "py-section-md", "py-section-lg", "py-section-xl"],
+      gap: [
+        {
+          gap: [
+            "stack-2xs",
+            "stack-sm",
+            "stack-md",
+            "stack-lg",
+            "stack-xl",
+            "stack-2xl",
+            "stack-3xl",
+            "stack-4xl",
+          ],
+        },
+      ],
+      "space-y": [{ "space-y": ["stack-lg"] }],
+      size: [{ size: ["icon"] }],
+      px: [
+        "px-page-gutter",
+        "px-field-pad",
+        "px-button-pad",
+        "px-button-pad-lg",
+        { px: ["stack-2xs", "stack-sm", "stack-md", "stack-lg", "stack-xl", "stack-2xl", "stack-3xl", "stack-4xl"] },
+      ],
+      py: [
+        "py-section-sm",
+        "py-section-md",
+        "py-section-lg",
+        "py-section-xl",
+        { py: ["stack-2xs", "stack-sm", "stack-md", "stack-lg", "stack-xl", "stack-2xl", "stack-3xl", "stack-4xl"] },
+      ],
     },
   },
 });

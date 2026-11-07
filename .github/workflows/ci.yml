@@ -114,6 +114,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: bash scripts/check-no-artifacts.sh
+      - run: node scripts/check-scale-baseline.mjs
       - run: bash scripts/check-no-private-refs.sh
       - run: bash scripts/check-tone.sh
         env:

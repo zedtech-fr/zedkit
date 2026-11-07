@@ -61,8 +61,10 @@ the spawn tool's model parameter, not pasting
 the id into brief text. If the cell is missing or inherit, or the tool has
 no model parameter, do not spawn — do that slice inline and report the cell
 as not applied. Pass `--allow-fast` only when the user explicitly requested fast mode in this request. If the tool rejects the id, stop and report the
-cell. Do not substitute, do not switch that spawn to inline fallback, and do
-not replace it with a dispatch plan.
+cell. Record the cell, the provider, and the model the runtime actually
+used. When they differ, label it `cell not applied`. Do not substitute, do
+not switch that spawn to inline fallback, and do not replace it with a
+dispatch plan.
 
 Playbooks (skills you apply by dispatching work shaped like them):
 

@@ -81,6 +81,12 @@ const fieldVariants = cva(
   },
 });
 
+/**
+ * Does not set `aria-describedby`. Pass the description and error ids on
+ * the control, or use `FormControl`, which wires them inside `Form`.
+ * `FieldError` is `role="alert"`, so the error is announced even when the
+ * control does not point at it.
+ */
 function Field({
   className,
   orientation = "vertical",
