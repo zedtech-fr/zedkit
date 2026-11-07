@@ -113,7 +113,7 @@ function ReadingPreview({ story }: { story: Story }) {
       <Heading level={3} className="mt-1 font-(family-name:--zk-font-display) text-lg text-balance">
         {story.headline}
       </Heading>
-      <Text variant="muted" className="mt-2 text-pretty">
+      <Text variant="muted" className="mt-standfirst text-pretty">
         {story.standfirst}
       </Text>
     </article>
