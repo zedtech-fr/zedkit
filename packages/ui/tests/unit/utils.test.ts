@@ -80,6 +80,10 @@ describe("cn", () => {
     expect(cn("pt-3", "pt-start")).toBe("pt-start");
     expect(cn("basis-32", "basis-number")).toBe("basis-number");
     expect(cn("basis-40", "basis-text")).toBe("basis-text");
+    expect(cn("h-5", "h-brand")).toBe("h-brand");
+    expect(cn("basis-48", "basis-tile")).toBe("basis-tile");
+    expect(cn("pt-4", "content-offset")).toBe("content-offset");
+    expect(cn("py-3", "surface-pad-block")).toBe("surface-pad-block");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });

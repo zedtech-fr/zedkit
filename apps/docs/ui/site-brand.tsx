@@ -4,7 +4,7 @@ import { Logo } from "@zedtech/zedkit-ui";
 export function SiteBrand() {
   return (
     <>
-      <Logo title="" className="h-5 text-foreground" />
+      <Logo title="" className="h-brand text-foreground" />
       <span>zedkit</span>
     </>
   );

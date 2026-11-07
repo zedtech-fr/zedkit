@@ -73,6 +73,8 @@ describe("layout job classes", () => {
     expect(utility("empty-state-block")).toBe("padding-block: calc(var(--spacing) * 8);");
     expect(utility("h-skeleton-line")).toBe("height: calc(var(--spacing) * 4);");
     expect(utility("h-logo")).toBe("height: calc(var(--spacing) * 6);");
+    expect(utility("h-brand")).toBe("height: calc(var(--spacing) * 5);");
+    expect(utility("basis-tile")).toBe("flex-basis: calc(var(--spacing) * 48);");
     expect(utility("size-mark")).toBe("width: calc(var(--spacing) * 10); height: calc(var(--spacing) * 10);");
     expect(utility("size-person")).toBe("width: calc(var(--spacing) * 8); height: calc(var(--spacing) * 8);");
     expect(utility("w-skeleton-bar")).toBe("width: calc(var(--spacing) * 24);");
