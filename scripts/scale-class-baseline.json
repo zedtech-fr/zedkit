@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 1136,
+  "total": 1135,
   "files": {
     "apps/docs/app/(site)/features/identity-editor/page.tsx": 2,
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
@@ -186,11 +186,11 @@
     "packages/ui/src/option-cards.tsx": 8,
     "packages/ui/src/page-header-skeleton.tsx": 10,
     "packages/ui/src/page-header.tsx": 5,
-    "packages/ui/src/prompt-input.tsx": 4,
+    "packages/ui/src/prompt-input.tsx": 3,
     "packages/ui/src/scroll-gallery.tsx": 1,
     "packages/ui/src/scroll-scenes.tsx": 6,
     "packages/ui/src/secret-field.tsx": 3,
-    "packages/ui/src/select.tsx": 8,
+    "packages/ui/src/select.tsx": 7,
     "packages/ui/src/status-dot.tsx": 2,
     "packages/ui/src/status-label.tsx": 3,
     "packages/ui/src/stream-status.tsx": 2,
@@ -209,6 +209,6 @@
     "packages/ui/tests/unit/scroll-scenes.test.tsx": 2,
     "packages/ui/tests/unit/specimens.test.tsx": 1,
     "packages/ui/tests/unit/sticky-aside.test.tsx": 1,
-    "packages/ui/tests/unit/utils.test.ts": 13
+    "packages/ui/tests/unit/utils.test.ts": 14
   }
 }

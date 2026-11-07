@@ -308,7 +308,7 @@ describe("primitives", () => {
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
     expect(screen.getByLabelText("Bio").className).toContain("px-field-pad");
     expect(screen.getByLabelText("Bio").className).not.toContain("px-3");
-    expect(screen.getByLabelText("Bio").className).toContain("py-2");
+    expect(screen.getByLabelText("Bio").className).toContain("py-control-block-lg");
   });
 
   it("sizes every text field from the input font-size token, never a fixed text-* size", () => {
