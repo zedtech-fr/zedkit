@@ -13,9 +13,9 @@ export interface IconLabelProps extends React.ComponentProps<"span"> {
 /** Quiet inline icon + label; icon is decorative (aria-hidden). */
 export function IconLabel({ icon: Icon, children, className, ...props }: IconLabelProps) {
   return (
-    <span data-slot="icon-label" className={cn("inline-flex max-w-full min-w-0 items-center gap-1.5 text-muted-foreground", className)} {...props}>
-      <Icon aria-hidden className="size-4 shrink-0" focusable={false} />
-      <span className="min-w-0">{children}</span>
+    <span data-slot="icon-label" className={cn("inline-flex max-w-full content-shrink items-center gap-1.5 text-muted-foreground", className)} {...props}>
+      <Icon aria-hidden className="size-icon shrink-0" focusable={false} />
+      <span className="content-shrink">{children}</span>
     </span>
   );
 }

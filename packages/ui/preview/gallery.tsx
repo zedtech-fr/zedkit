@@ -125,7 +125,7 @@ const SECTIONS = [
 
 function GallerySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="space-y-4 border-b pb-8 last:border-0">
+    <section id={id} className="space-y-stack-lg border-b pb-8 last:border-0">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
       {children}
     </section>
@@ -136,7 +136,7 @@ export function Gallery() {
   return (
     <AppShell
       sidebar={
-        <nav className="space-y-1 p-4" aria-label="Gallery sections">
+        <nav className="space-y-1 surface-pad-md" aria-label="Gallery sections">
           <p className="px-2 pb-2 text-sm font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
             <a key={id} href={`#${id}`} className="block rounded-md px-2 py-1 text-sm hover:bg-accent">
@@ -146,7 +146,7 @@ export function Gallery() {
         </nav>
       }
       topbar={
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between surface-pad-md">
           <p className="text-sm font-medium">Component gallery (static preview)</p>
           <LivePulse />
         </div>
@@ -180,7 +180,7 @@ export function Gallery() {
             <StatusDot tone="danger" />
             <Checkmark label="Saved" />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div className="max-w-sm space-y-stack-sm">
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
           </div>
@@ -190,25 +190,25 @@ export function Gallery() {
             <StatusLabel tone="error">Could not save</StatusLabel>
             <UpdatedAgo date={Date.now() - 3 * 60_000} />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div className="max-w-sm space-y-stack-sm">
             <OfflineNote />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div className="max-w-sm space-y-stack-sm">
             <EmptyState title="No invoices" description="Create an invoice to send to a client." actions={<Button>New invoice</Button>} />
             <ErrorState title="Could not load invoices" description="Check your connection and try again." actions={<Button variant="outline">Try again</Button>} />
             <Spinner />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div className="max-w-sm space-y-stack-sm">
             <Label htmlFor="gallery-name">Name</Label>
             <Input id="gallery-name" placeholder="Ada" />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div className="max-w-sm space-y-stack-sm">
             <Label htmlFor="gallery-bio">Bio</Label>
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
           <Separator />
-          <Skeleton className="h-4 w-48" />
-          <div className="space-y-2">
+          <Skeleton className="h-skeleton-line w-48" />
+          <div className="space-y-stack-sm">
             <Heading level={1}>Page title</Heading>
             <Heading level={2}>Section title</Heading>
             <Text>Body copy for paragraphs.</Text>
@@ -257,7 +257,7 @@ export function Gallery() {
                     aria-label="Close details"
                     className="absolute top-4 right-4"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="size-icon" />
                   </Button>
                 </DrawerClose>
                 <DrawerTitle>Details</DrawerTitle>
@@ -347,7 +347,7 @@ export function Gallery() {
               <Badge variant="secondary">Bob</Badge>
             </Stack>
           </Section>
-          <div className="space-y-2">
+          <div className="space-y-stack-sm">
             <Container width="narrow" className="border py-2 text-sm">
               Narrow container
             </Container>
@@ -446,7 +446,7 @@ export function Gallery() {
         <GallerySection id="marketing" title="Marketing">
           <MarketingHeader
             sticky={false}
-            brand={<a href="#marketing" className="inline-flex min-h-11 items-center font-semibold">Harbor</a>}
+            brand={<a href="#marketing" className="inline-flex min-h-target items-center font-semibold">Harbor</a>}
             links={[
               <a key="docs" href="#marketing">Docs</a>,
               <a key="pricing" href="#marketing">Pricing</a>,

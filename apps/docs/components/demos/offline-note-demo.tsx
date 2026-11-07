@@ -9,13 +9,13 @@ const DRAFTS = [offlineNoteCopy.drafts.harbor, offlineNoteCopy.drafts.northwind]
 /** A page-level note above work that is still saved on the device. */
 export function OfflineNoteDemo() {
   return (
-    <Stack gap={3} className="min-w-0 rounded-lg border border-border bg-background p-4">
+    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <OfflineNote />
       <Heading level={3}>{offlineNoteCopy.drafts.title}</Heading>
       <ul aria-label={offlineNoteCopy.drafts.label} className="divide-y divide-border rounded-lg border border-border">
         {DRAFTS.map((draft) => (
-          <li key={draft.id} className="flex min-w-0 flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3">
-            <Stack gap={1} className="min-w-0">
+          <li key={draft.id} className="flex content-shrink flex-wrap items-center justify-between gap-x-4 gap-y-1 surface-pad-inline surface-pad-block">
+            <Stack gap={1} className="content-shrink">
               <Text as="span" className="font-medium">
                 {draft.id}
               </Text>
@@ -42,7 +42,7 @@ export function OfflineNoteWiredDemo() {
   const [saved, setSaved] = useState(0);
   const simulate = () => window.dispatchEvent(new Event(online ? "offline" : "online"));
   return (
-    <Stack gap={3} className="min-w-0 rounded-lg border border-border bg-background p-4">
+    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       {online ? null : <OfflineNote title={offlineNoteCopy.wired.title}>{offlineNoteCopy.wired.body}</OfflineNote>}
       <Stack gap={1}>
         <Heading level={3}>{offlineNoteCopy.wired.heading}</Heading>
@@ -65,7 +65,7 @@ export function OfflineNoteWiredDemo() {
 /** Own wording: say what is kept and what the next step is. */
 export function OfflineNoteWordingDemo() {
   return (
-    <Stack gap={3} className="min-w-0 rounded-lg border border-border bg-background p-4">
+    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <OfflineNote title={offlineNoteCopy.wording.title}>{offlineNoteCopy.wording.body}</OfflineNote>
       <Stack gap={1}>
         <Heading level={3}>{offlineNoteCopy.wording.heading}</Heading>

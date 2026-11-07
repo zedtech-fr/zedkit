@@ -5,21 +5,21 @@ const JOBS = badgeCopy.tableRow.jobs;
 
 export function BadgeTableRowDemo() {
   return (
-    <table className="w-full min-w-0 text-left text-sm">
+    <table className="w-full content-shrink text-left text-sm">
       <caption className="sr-only">{badgeCopy.tableRow.caption}</caption>
       <thead>
         <tr className="border-b text-muted-foreground">
-          <th scope="col" className="py-2 pr-4 font-medium">{badgeCopy.tableRow.columns.job}</th>
-          <th scope="col" className="py-2 pr-4 font-medium">{badgeCopy.tableRow.columns.target}</th>
-          <th scope="col" className="py-2 font-medium">{badgeCopy.tableRow.columns.state}</th>
+          <th scope="col" className="py-table-cell pr-4 font-medium">{badgeCopy.tableRow.columns.job}</th>
+          <th scope="col" className="py-table-cell pr-4 font-medium">{badgeCopy.tableRow.columns.target}</th>
+          <th scope="col" className="py-table-cell font-medium">{badgeCopy.tableRow.columns.state}</th>
         </tr>
       </thead>
       <tbody>
         {JOBS.map((job) => (
           <tr key={job.name} className="border-b last:border-b-0">
-            <td className="py-2 pr-4 font-medium">{job.name}</td>
-            <td className="py-2 pr-4">{job.target}</td>
-            <td className="py-2">
+            <td className="py-table-cell pr-4 font-medium">{job.name}</td>
+            <td className="py-table-cell pr-4">{job.target}</td>
+            <td className="py-table-cell">
               <Badge variant={job.state === "done" ? "outline" : "secondary"}>{job.state}</Badge>
             </td>
           </tr>

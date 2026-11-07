@@ -192,7 +192,7 @@ export function ViewSwitch({
 export function Thread({ turns }: { turns: readonly Turn[] }) {
   if (turns.length === 0) return null;
   return (
-    <ol aria-label={copy.thread} className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-thread="">
+    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-thread="">
       {turns.map((turn, index) => (
         <li key={`${index}-${turn.role}`} className="text-zk-type-body">
           <Text as="span" className="font-medium text-foreground">
@@ -243,7 +243,7 @@ function ProposalApplyRow({
     <Stack
       direction="horizontal"
       gap={2}
-      className={cn("flex-wrap overflow-visible", pinned && "sticky bottom-0 z-10 bg-background/95 py-2 backdrop-blur")}
+      className={cn("flex-wrap overflow-visible", pinned && "sticky pin-bottom z-10 bg-background/95 py-2 backdrop-blur")}
     >
       <Button type="button" onClick={() => onUse(tokens)} disabled={busy}>
         {copy.proposal.apply}
@@ -260,8 +260,8 @@ function ProposalChangeList({ rows }: { rows: readonly { path: string; from: str
   if (rows.length === 0) return null;
   return (
     <details className="text-zk-type-body">
-      <summary className="flex min-h-11 cursor-pointer items-center focus-ring">{copy.proposal.showChanges}</summary>
-      <ul className="m-0 flex list-none flex-col gap-1 p-0 font-mono text-zk-type-small">
+      <summary className="flex min-h-target cursor-pointer items-center focus-ring">{copy.proposal.showChanges}</summary>
+      <ul className="trim-margin flex list-none flex-col gap-stack-tight flush font-mono text-zk-type-small">
         {rows.map((row) => (
           <li key={row.path} className="break-words">
             {row.path}: {row.from} → {row.to}
@@ -308,7 +308,7 @@ export function ProposalCard({
         {copy.proposal.title}
       </Text>
       {proposal.summary ? (
-        <Text typeRole="body" className="m-0">
+        <Text typeRole="body" className="trim-margin">
           <Text as="span" className="font-medium">
             {copy.proposal.summaryLabel}:
           </Text>{" "}

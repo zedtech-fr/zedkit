@@ -6,7 +6,7 @@ import type { ConsoleComposition } from "@/components/i18n/identity-specimen-com
 export function ConsoleScreen({ copy }: { copy: ConsoleComposition }) {
   return (
     <Stack gap={3}>
-      <Stack direction="horizontal" gap={3} className="justify-between border-b border-border pb-2">
+      <Stack direction="horizontal" gap={3} className="justify-between border-b border-border rule-gap">
         <Heading level={4} typeRole="cardTitle">
           {copy.brand}
         </Heading>
@@ -26,13 +26,13 @@ export function ConsoleScreen({ copy }: { copy: ConsoleComposition }) {
           </Stack>
         ))}
       </Stack>
-      <ul aria-label={copy.listLabel} className="m-0 flex list-none flex-col p-0">
+      <ul aria-label={copy.listLabel} className="trim-margin flex list-none flex-col flush">
         {copy.rows.map((row) => (
           <li
             key={row.name}
-            className="flex items-center justify-between gap-2 border-t border-border py-2"
+            className="flex items-center justify-between gap-stack-sm border-t border-border py-2"
           >
-            <Stack gap={1} className="min-w-0">
+            <Stack gap={1} className="content-shrink">
               <Text as="span" typeRole="small" className="truncate font-medium">
                 {row.name}
               </Text>

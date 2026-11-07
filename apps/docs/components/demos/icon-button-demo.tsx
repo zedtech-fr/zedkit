@@ -9,9 +9,9 @@ import { iconButtonCopy } from "@/components/demos/i18n/icon-button-copy";
 export function IconButtonDemo() {
   const [message, setMessage] = useState<string>(iconButtonCopy.demo.initialMessage);
   return (
-    <Stack className="min-w-0 rounded-lg border border-border bg-background">
-      <header className="flex min-w-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
-        <Stack gap={1} className="min-w-0">
+    <Stack className="content-shrink rounded-lg border border-border bg-background">
+      <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
+        <Stack gap={1} className="content-shrink">
           <Heading level={2} className="text-xl text-balance">
             {iconButtonCopy.demo.title}
           </Heading>
@@ -31,7 +31,7 @@ export function IconButtonDemo() {
           </IconButton>
         </Stack>
       </header>
-      <Stack gap={1} className="p-4">
+      <Stack gap={1} className="surface-pad-md">
         <Text role="status" variant="muted" className="text-sm">
           {message}
         </Text>
@@ -50,11 +50,11 @@ export function IconButtonRowsDemo() {
   const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [duplicates, setDuplicates] = useState(0);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <ul aria-label={iconButtonCopy.rows.tasksAriaLabel} className="divide-y divide-border rounded-lg border border-border bg-background">
         {tasks.map((task) => (
-          <li key={task.id} className="flex min-w-0 items-center justify-between gap-3 px-4 py-2">
-            <Stack gap={1} className="min-w-0 flex-1">
+          <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md surface-pad-inline surface-pad-block-sm">
+            <Stack gap={1} className="content-shrink flex-1">
               <Text as="span" className="font-medium">
                 {task.title}
               </Text>
@@ -81,7 +81,7 @@ export function IconButtonRowsDemo() {
           </li>
         ))}
         {tasks.length === 0 ? (
-          <li className="px-4 py-3">
+          <li className="surface-pad-inline surface-pad-block">
             <Text variant="muted">{iconButtonCopy.rows.noTasksLeft}</Text>
           </li>
         ) : null}

@@ -33,7 +33,7 @@ function DrawerBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-body"
-      className={cn("min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 last:pb-drawer-safe-bottom", className)}
+      className={cn("pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-drawer-chrome-padding last:pb-drawer-safe-bottom", className)}
       {...props}
     />
   );
@@ -67,7 +67,7 @@ function DrawerCloseButton({
       )}
       {...props}
     >
-      {children ?? <X className="size-4" />}
+      {children ?? <X className="size-icon" />}
     </DrawerClose>
   );
 }

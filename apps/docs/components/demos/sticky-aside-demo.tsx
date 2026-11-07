@@ -12,9 +12,9 @@ export function StickyAsideDemo() {
   return (
     <StickyAside className="min-h-80 [--zk-sticky-top:4.5rem]" side="right">
       <StickyAside.Main>
-        <ol className="m-0 flex list-none flex-col gap-4 p-0">
+        <ol className="trim-margin flex list-none flex-col gap-stack-lg flush">
           {steps.map((step, index) => (
-            <li key={step.title} className="min-w-0">
+            <li key={step.title} className="content-shrink">
               <Stack gap={1}>
                 <Text variant="muted" className="text-xs">
                   Step {index + 1}

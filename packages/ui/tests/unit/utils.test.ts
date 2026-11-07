@@ -23,4 +23,21 @@ describe("cn", () => {
   it("keeps non-conflicting utilities from every input", () => {
     expect(cn("text-sm font-medium", "px-4")).toBe("text-sm font-medium px-4");
   });
+
+  it("merges a role class with the numeric step it replaces", () => {
+    expect(cn("gap-2", "gap-stack-sm")).toBe("gap-stack-sm");
+    expect(cn("gap-stack-sm", "gap-stack-lg")).toBe("gap-stack-lg");
+    expect(cn("px-4", "px-field-pad")).toBe("px-field-pad");
+    expect(cn("px-button-pad", "px-button-pad-lg")).toBe("px-button-pad-lg");
+    expect(cn("py-2", "py-control-block-lg")).toBe("py-control-block-lg");
+    expect(cn("h-9", "h-control-height")).toBe("h-control-height");
+    expect(cn("space-y-4", "space-y-stack-lg")).toBe("space-y-stack-lg");
+    expect(cn("size-4", "size-icon")).toBe("size-icon");
+    expect(cn("min-w-0", "content-shrink")).toBe("content-shrink");
+    expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
+    expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
+    expect(cn("top-0", "pin-top")).toBe("pin-top");
+    expect(cn("inset-0", "pin-fill")).toBe("pin-fill");
+    expect(cn("p-4", "flush")).toBe("flush");
+  });
 });

@@ -47,7 +47,7 @@ function CopyButton({ text, what }: { text: string; what: string }) {
         data-copy=""
         onClick={copy}
       >
-        {state === "copied" ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />}
+        {state === "copied" ? <Check className="size-icon" aria-hidden /> : <Copy className="size-icon" aria-hidden />}
       </Button>
       <Text as="span" role="status" className="sr-only">
         {state === "copied" ? adoptionCopy.copied : state === "failed" ? adoptionCopy.copyFailed : ""}
@@ -61,7 +61,7 @@ function CopyButton({ text, what }: { text: string; what: string }) {
  * what is drawn outside it, so the focus ring is drawn inside the control.
  */
 const HEADER_SELECT_CLASS =
-  "h-control-height-sm w-auto gap-2 bg-background px-3 font-mono text-[length:var(--zk-input-font-size)] shadow-none focus-visible:-outline-offset-(--ring-width)";
+  "h-control-height-sm w-auto gap-stack-sm bg-background px-3 font-mono text-[length:var(--zk-input-font-size)] shadow-none focus-visible:-outline-offset-(--ring-width)";
 
 function PackageManagerSelect({ pm, onPm }: { pm: PackageManager; onPm: (pm: PackageManager) => void }) {
   return (
@@ -144,7 +144,7 @@ export function FileBlock({
     <CodeBlock
       data-adoption-frame=""
       title={
-        <Stack gap={1} className="min-w-0 gap-0 py-1">
+        <Stack gap={1} className="content-shrink gap-0 py-1">
           <Text as="span" className="truncate font-mono">
             {path}
           </Text>

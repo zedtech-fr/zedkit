@@ -18,7 +18,7 @@ const stay = (event: MouseEvent) => event.preventDefault();
 
 export function BrandLogoHeaderDemo() {
   return (
-    <a href="/" onClick={stay} className="flex min-w-0 items-center gap-2 text-foreground">
+    <a href="/" onClick={stay} className="flex content-shrink items-center gap-stack-sm text-foreground">
       <HarborMark className="h-6 text-primary" />
       <Text as="span" className="truncate font-semibold">
         {brandLogoCopy.brandName}
@@ -29,17 +29,17 @@ export function BrandLogoHeaderDemo() {
 
 export function BrandLogoDemo() {
   return (
-    <Stack gap={4} className="min-w-0">
-      <Stack className="min-w-0 rounded-lg border border-border bg-background">
-        <header className="flex min-w-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
+    <Stack gap={4} className="content-shrink">
+      <Stack className="content-shrink rounded-lg border border-border bg-background">
+        <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
           {/* Logo + visible name in one link to the home page: the name labels the link, so the mark is decorative. */}
-          <a href="/" onClick={stay} className="flex min-w-0 items-center gap-2 text-foreground">
+          <a href="/" onClick={stay} className="flex content-shrink items-center gap-stack-sm text-foreground">
             <HarborMark className="h-6 text-primary" />
             <Text as="span" className="truncate font-semibold">
               {brandLogoCopy.brandName}
             </Text>
           </a>
-          <nav aria-label={brandLogoCopy.navAriaLabel} className="flex shrink-0 gap-3 text-sm text-muted-foreground">
+          <nav aria-label={brandLogoCopy.navAriaLabel} className="flex shrink-0 gap-stack-md text-sm text-muted-foreground">
             <a href="/work" onClick={stay}>
               {brandLogoCopy.work}
             </a>
@@ -48,7 +48,7 @@ export function BrandLogoDemo() {
             </a>
           </nav>
         </header>
-        <Stack gap={2} className="p-4">
+        <Stack gap={2} className="surface-pad-md">
           <Text variant="muted" className="text-xs">
             {brandLogoCopy.sizesHint}
           </Text>
@@ -59,7 +59,7 @@ export function BrandLogoDemo() {
             <HarborMark className="h-16 text-foreground" title={brandLogoCopy.logoTitle} />
           </Stack>
         </Stack>
-        <footer className="flex items-center gap-2 border-t border-border px-4 py-3 text-muted-foreground">
+        <footer className="flex items-center gap-stack-sm border-t border-border surface-pad-inline surface-pad-block text-muted-foreground">
           <HarborMark className="h-4" />
           <Text variant="muted" className="text-xs">
             {brandLogoCopy.copyright}
@@ -69,7 +69,7 @@ export function BrandLogoDemo() {
       <Stack
         role="img"
         aria-label={brandLogoCopy.sharePreviewAriaLabel}
-        className="aspect-[1200/630] w-full items-center justify-center gap-3 rounded-lg bg-primary text-primary-foreground"
+        className="aspect-[1200/630] w-full items-center justify-center gap-stack-md rounded-lg bg-primary text-primary-foreground"
       >
         <HarborMark className="h-1/4 min-h-10" />
         <Text as="span" className="text-xl font-semibold" aria-hidden="true">

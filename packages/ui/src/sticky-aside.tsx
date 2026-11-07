@@ -67,7 +67,7 @@ function StickyAside({
       data-mobile={resolveMobile(mobile)}
       {...(scrollable ? { "data-scrollable": "" } : {})}
       {...(ratio ? { "data-ratio": ratio } : {})}
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
       {...props}
     >
       {children}
@@ -78,7 +78,7 @@ function StickyAside({
 export type StickyAsideMainProps = React.ComponentProps<"div">;
 
 function StickyAsideMain({ className, ...props }: StickyAsideMainProps) {
-  return <div data-sticky-aside-main="" className={cn("min-w-0", className)} {...props} />;
+  return <div data-sticky-aside-main="" className={cn("content-shrink", className)} {...props} />;
 }
 
 export interface StickyAsideAsideProps extends React.ComponentProps<"aside"> {
@@ -87,7 +87,7 @@ export interface StickyAsideAsideProps extends React.ComponentProps<"aside"> {
 
 function StickyAsideAside({ asChild = false, className, ...props }: StickyAsideAsideProps) {
   const Comp = asChild ? Slot : "aside";
-  return <Comp data-sticky-aside-aside="" className={cn("min-w-0", className)} {...props} />;
+  return <Comp data-sticky-aside-aside="" className={cn("content-shrink", className)} {...props} />;
 }
 
 StickyAside.Main = StickyAsideMain;

@@ -36,17 +36,17 @@ describe("tabs", () => {
     expect(list.classList.contains("p-tabs-list-inset")).toBe(true);
     expect(list.className).not.toMatch(/(^|\s)(h-9|p-1)(\s|$)/);
     const trigger = screen.getByRole("tab", { name: "First" });
-    expect(trigger.className).toContain("px-3");
-    expect(trigger.className).not.toContain("px-tabs-trigger-inline");
+    expect(trigger.className).toContain("px-tabs-trigger-inline");
+    expect(trigger.className).not.toContain("px-3");
     expect(trigger.classList.contains("py-tabs-trigger-block")).toBe(true);
     expect(trigger.classList.contains("focus-ring")).toBe(true);
     // Drawn inside the trigger: the list scrolls sideways, and a ring outside its padding box would be cut off.
     expect(trigger.className).toContain("focus-visible:-outline-offset-(--ring-width)");
     expect(trigger.className).not.toMatch(/(^|\s)(py-1|ring-2)(\s|$)/);
     const panel = screen.getByText("First panel.");
-    expect(panel.className).toContain("mt-2");
+    expect(panel.className).toContain("mt-tabs-content-gap");
     expect(panel.className).toContain("focus-ring");
-    expect(panel.className).not.toContain("mt-tabs-content-gap");
+    expect(panel.className).not.toContain("mt-2");
     expect(panel.className).not.toMatch(/(^|\s)ring-2(\s|$)/);
   });
 

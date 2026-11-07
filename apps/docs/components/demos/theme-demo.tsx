@@ -8,7 +8,7 @@ import { themeCopy } from "@/components/demos/i18n/theme-copy";
 /** Same markup, one extra `dark` class on the wrapper: the tokens do the rest. */
 function WeeklyCard({ scope, label }: { scope?: "dark"; label: string }) {
   return (
-    <section aria-label={label} className={`${scope ?? ""} min-w-0 rounded-lg bg-background p-3 text-foreground`}>
+    <section aria-label={label} className={`${scope ?? ""} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
       <Card>
         <CardHeader>
           <CardDescription>{themeCopy.orders}</CardDescription>
@@ -37,7 +37,7 @@ function WeeklyCard({ scope, label }: { scope?: "dark"; label: string }) {
 /** The page theme next to a `dark` scope, from the one stylesheet import (both read the same tokens). */
 export function ThemeDemo() {
   return (
-    <Stack className="grid min-w-0 gap-3 sm:grid-cols-2">
+    <Stack className="grid content-shrink gap-stack-md sm:grid-cols-2">
       <WeeklyCard label={themeCopy.page} />
       <WeeklyCard label={themeCopy.darkScope} scope="dark" />
     </Stack>
@@ -58,8 +58,8 @@ export function ThemeTokensDemo() {
   // The class name comes from a variable: the app, not the kit, owns the `dark` switch.
   const scope = dark ? DARK_CLASS : "";
   return (
-    <Stack className={`${scope} min-w-0 rounded-lg bg-background p-3 text-foreground`}>
-      <Stack gap={3} className="min-w-0 rounded-lg border border-border p-4">
+    <Stack className={`${scope} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
+      <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
         <Stack direction="horizontal" gap={2} className="items-center justify-between">
           <Text as="span" className="font-medium">
             {themeCopy.releases}
@@ -71,9 +71,9 @@ export function ThemeTokensDemo() {
         </Stack>
         <ul aria-label={themeCopy.releasesLabel} className="divide-y divide-border rounded-md bg-muted">
           {RELEASES.map((release) => (
-            <li key={release.name} className="flex min-w-0 items-center justify-between gap-3 px-3 py-2 text-sm">
-              <Text as="span" className="min-w-0 wrap-anywhere">{release.name}</Text>
-              <Badge variant={release.trend === "up" ? "success" : "destructive"} className="shrink-0 gap-1">
+            <li key={release.name} className="flex content-shrink items-center justify-between gap-stack-md px-3 py-2 text-sm">
+              <Text as="span" className="content-shrink wrap-anywhere">{release.name}</Text>
+              <Badge variant={release.trend === "up" ? "success" : "destructive"} className="shrink-0 gap-stack-tight">
                 {release.trend === "up" ? <ArrowUpRight className="size-3" aria-hidden /> : <ArrowDownRight className="size-3" aria-hidden />}
                 {release.state}
               </Badge>
@@ -94,8 +94,8 @@ export function ThemeToggleDemo() {
   // The class name comes from a variable: the app, not the kit, owns the `dark` switch.
   const scope = dark ? DARK_CLASS : "";
   return (
-    <Stack className={`${scope} min-w-0 rounded-lg bg-background p-3 text-foreground`}>
-      <Stack gap={3} className="min-w-0 rounded-lg border border-border p-4">
+    <Stack className={`${scope} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
+      <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
         <Stack gap={1}>
           <Text as="span" className="font-medium">
             {themeCopy.appearance}

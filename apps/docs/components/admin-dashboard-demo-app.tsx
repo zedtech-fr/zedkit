@@ -150,13 +150,13 @@ export function AdminDashboardDemoApp({
     onDelete: deleteApp,
   });
 
-  const toolbarPad = isHome ? "p-3" : "p-4";
-  const bodyPad = isHome ? "p-3 pt-0" : "p-4";
+  const toolbarPad = isHome ? "p-3" : "surface-pad-md";
+  const bodyPad = isHome ? "p-3 pt-0" : "surface-pad-md";
 
   return (
     <>
       <Toaster />
-      <Stack className="w-full min-w-0" aria-label={label} data-admin-dashboard-demo={isHome ? "home" : undefined} {...(!isHome ? { "data-demo-specimen": "" } : {})}>
+      <Stack className="w-full content-shrink" aria-label={label} data-admin-dashboard-demo={isHome ? "home" : undefined} {...(!isHome ? { "data-demo-specimen": "" } : {})}>
         {isHome ? (
           <Stack
             direction="horizontal"
@@ -164,7 +164,7 @@ export function AdminDashboardDemoApp({
             className={`items-start justify-between border-b border-border ${toolbarPad}`}
             data-demo-toolbar
           >
-            <Stack gap={1} className="min-w-0">
+            <Stack gap={1} className="content-shrink">
               <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
                 {adminDashboardDemoCopy.heading}
               </Heading>
@@ -186,7 +186,7 @@ export function AdminDashboardDemoApp({
             </Text>
             <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
               <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
-                <SelectTrigger className="min-w-0 flex-1" aria-label={adminDashboardDemoCopy.previewModeAriaLabel}>
+                <SelectTrigger className="content-shrink flex-1" aria-label={adminDashboardDemoCopy.previewModeAriaLabel}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -202,7 +202,7 @@ export function AdminDashboardDemoApp({
             </Stack>
           </Stack>
         )}
-        <Stack gap={isHome ? 2 : 4} className={`min-w-0 ${bodyPad}`}>
+        <Stack gap={isHome ? 2 : 4} className={`content-shrink ${bodyPad}`}>
           <DataTable
             columns={columns}
             data={tableData}
@@ -214,7 +214,7 @@ export function AdminDashboardDemoApp({
           {!isHome && preview === "ready" && !loading && !error ? (
             selectedApp ? (
               <DetailPanel
-                className="min-w-0"
+                className="content-shrink"
                 items={[
                   { label: adminDashboardDemoCopy.detail.name, value: selectedApp.name },
                   { label: adminDashboardDemoCopy.detail.region, value: selectedApp.region },

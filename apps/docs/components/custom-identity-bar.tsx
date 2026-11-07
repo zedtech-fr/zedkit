@@ -52,7 +52,7 @@ function CustomIdentityBar() {
       direction="horizontal"
       gap={2}
       role="status"
-      className="items-center border-b border-border bg-muted/40 px-4 py-2"
+      className="items-center border-b border-border bg-muted/40 surface-pad-inline surface-pad-block-sm"
     >
       <Badge variant="secondary">{customIdentityBarCopy.badge}</Badge>
       <Text className="text-muted-foreground">{customIdentityBarCopy.status}</Text>

@@ -19,10 +19,10 @@ export type WordRollProps = Omit<React.ComponentProps<"span">, "children"> & {
 
 const DEFAULT_DWELL_MS = 300;
 
-const LAYER_CLASS = "absolute top-[var(--zk-word-roll-pad-block,0.2em)] left-0 whitespace-nowrap";
+const LAYER_CLASS = "absolute top-[var(--zk-word-roll-pad-block,0.2em)] pin-left whitespace-nowrap";
 
 const CLIP_CLASS =
-  "pointer-events-none absolute inset-x-0 [top:calc(-1*var(--zk-word-roll-pad-block,0.2em))] [bottom:calc(-1*var(--zk-word-roll-pad-block,0.35em))] overflow-hidden";
+  "pointer-events-none absolute pin-x [top:calc(-1*var(--zk-word-roll-pad-block,0.2em))] [bottom:calc(-1*var(--zk-word-roll-pad-block,0.35em))] overflow-hidden";
 
 function pickWord(words: readonly string[], value: string): string {
   return words.includes(value) ? value : (words[0] ?? value);

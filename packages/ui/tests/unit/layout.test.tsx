@@ -17,10 +17,10 @@ describe("layout", () => {
     );
     const vertical = container.querySelector('[data-testid="v"]');
     expect(vertical?.className).toContain("flex-col");
-    expect(vertical?.className).toContain("gap-4");
+    expect(vertical?.className).toContain("gap-stack-lg");
     const horizontal = container.querySelector('[data-testid="h"]');
     expect(horizontal?.className).toContain("flex-row");
-    expect(horizontal?.className).toContain("gap-2");
+    expect(horizontal?.className).toContain("gap-stack-sm");
   });
 
   it("renders a titled section with description, actions, and content", () => {
@@ -47,7 +47,17 @@ describe("layout", () => {
     expect(screen.getByRole("region", { name: "People" })).not.toBeNull();
   });
 
-  it("keeps the whole stack gap scale on default spacing with no arbitrary values", () => {
+  it("maps numeric and named stack gaps onto the same role classes", () => {
+    const roles = {
+      1: "gap-1",
+      2: "gap-stack-sm",
+      3: "gap-stack-md",
+      4: "gap-stack-lg",
+      5: "gap-5",
+      6: "gap-6",
+      7: "gap-7",
+      8: "gap-8",
+    } as const;
     const { container } = render(
       <>
         {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((gap) => (
@@ -55,17 +65,32 @@ describe("layout", () => {
             <span>a</span>
           </Stack>
         ))}
+        <Stack data-testid="named-sm" gap="sm">
+          <span>a</span>
+        </Stack>
+        <Stack data-testid="named-md" gap="md">
+          <span>a</span>
+        </Stack>
+        <Stack data-testid="named-lg" gap="lg">
+          <span>a</span>
+        </Stack>
         <Section data-testid="section" title="Team">
           <span>a</span>
         </Section>
       </>,
     );
-    for (const gap of [1, 2, 3, 4, 5, 6, 7, 8]) {
+    for (const gap of [1, 2, 3, 4, 5, 6, 7, 8] as const) {
       const className = container.querySelector(`[data-testid="gap-${gap}"]`)?.className ?? "";
-      expect(className).toContain(`gap-${gap}`);
+      expect(className).toContain(roles[gap]);
       expect(className).not.toContain("[");
     }
-    expect(container.querySelector('[data-testid="section"]')?.className).toContain("space-y-4");
+    expect(container.querySelector('[data-testid="named-sm"]')?.className).toContain("gap-stack-sm");
+    expect(container.querySelector('[data-testid="named-md"]')?.className).toContain("gap-stack-md");
+    expect(container.querySelector('[data-testid="named-lg"]')?.className).toContain("gap-stack-lg");
+    expect(container.querySelector('[data-testid="gap-2"]')?.className).toBe(
+      container.querySelector('[data-testid="named-sm"]')?.className,
+    );
+    expect(container.querySelector('[data-testid="section"]')?.className).toContain("space-y-stack-lg");
   });
 
   it("renders a bare section without a header", () => {
@@ -159,7 +184,7 @@ describe("layout", () => {
       </Section>,
     );
     const el = container.querySelector('[data-testid="s"]');
-    expect(el?.className).toBe("space-y-4");
+    expect(el?.className).toBe("space-y-stack-lg");
     expect(container.querySelector('[data-slot="container"]')).toBeNull();
   });
 
@@ -211,7 +236,7 @@ describe("layout", () => {
       </Section>,
     );
     const el = container.querySelector('[data-testid="s"]');
-    expect(el?.className).toBe("space-y-4");
+    expect(el?.className).toBe("space-y-stack-lg");
     expect(container.querySelector('[data-slot="container"]')).toBeNull();
   });
 

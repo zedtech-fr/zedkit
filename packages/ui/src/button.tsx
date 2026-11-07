@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils.js";
 
 const buttonVariants = cva(
-  "box-border inline-flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "box-border inline-flex cursor-pointer items-center justify-center gap-button-gap rounded-md text-sm font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-icon [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -21,9 +21,9 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline focus-visible:underline",
       },
       size: {
-        default: "h-control-height px-4 py-2",
-        sm: "h-control-height-sm rounded-md px-3 py-control-block text-xs",
-        lg: "h-control-height-lg rounded-md px-8",
+        default: "h-control-height px-button-pad py-control-block-lg",
+        sm: "h-control-height-sm rounded-md px-button-inline-sm py-control-block text-xs",
+        lg: "h-control-height-lg rounded-md px-button-pad-lg",
         icon: "size-control-height",
       },
     },
@@ -31,11 +31,11 @@ const buttonVariants = cva(
       {
         variant: "link",
         class:
-          "h-auto min-h-0 bg-transparent py-0 shadow-none hover:bg-transparent active:bg-transparent",
+          "h-auto pane-shrink bg-transparent flush-block shadow-none hover:bg-transparent active:bg-transparent",
       },
-      { variant: "link", size: "sm", class: "min-h-11 px-2 text-sm" },
-      { variant: "link", size: "default", class: "min-h-11 px-3" },
-      { variant: "link", size: "lg", class: "min-h-11 px-4 text-base" },
+      { variant: "link", size: "sm", class: "min-h-target px-control-tight text-sm" },
+      { variant: "link", size: "default", class: "min-h-target px-control-inline" },
+      { variant: "link", size: "lg", class: "min-h-target px-button-pad text-base" },
     ],
     defaultVariants: { variant: "default", size: "default" },
   },

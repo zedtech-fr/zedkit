@@ -26,11 +26,11 @@ export function ScrollGallery({ className, children, ...props }: ScrollGalleryPr
   }, []);
 
   return (
-    <div data-slot="scroll-gallery" className={cn("relative min-w-0", className)} {...props}>
+    <div data-slot="scroll-gallery" className={cn("relative content-shrink", className)} {...props}>
       <div
         ref={trackRef}
         data-scroll-gallery-track=""
-        className="flex min-w-0 snap-x snap-mandatory [scrollbar-width:thin] overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:h-1"
+        className="flex content-shrink snap-x snap-mandatory [scrollbar-width:thin] overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:h-1"
       >
         {children}
       </div>

@@ -22,7 +22,7 @@ export function MultiSelectDemo() {
   const [tags, setTags] = useState<string[]>(["docs"]);
   return (
     <ZedkitUiProvider messages={zedkitUiMessagesEn}>
-      <Stack gap={2} className="max-w-sm min-w-0">
+      <Stack gap={2} className="max-w-sm content-shrink">
         <MultiSelect options={TAGS} value={tags} onValueChange={setTags} aria-label={multiSelectCopy.label} placeholder={multiSelectCopy.placeholder} />
         <Text variant="muted" className="text-xs" aria-live="polite">
           {tags.length === 0 ? multiSelectCopy.empty : multiSelectCopy.selected(tags.length)}

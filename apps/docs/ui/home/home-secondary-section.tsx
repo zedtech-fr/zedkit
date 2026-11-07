@@ -11,7 +11,7 @@ import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 function HomeSecondaryEntryLinks({ entryPoints }: { entryPoints: HomeEntryPoint[] }) {
   return (
-    <Stack gap={2} className="min-w-0" data-home-secondary-links="">
+    <Stack gap={2} className="content-shrink" data-home-secondary-links="">
       {entryPoints.map((entry) => (
         <Stack
           key={entry.href}
@@ -19,13 +19,13 @@ function HomeSecondaryEntryLinks({ entryPoints }: { entryPoints: HomeEntryPoint[
           gap={2}
           className="flex-wrap items-center justify-between gap-y-2 border-b border-border/60 pb-3 last:border-0 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-8"
         >
-          <Stack gap={1} className="min-w-0">
+          <Stack gap={1} className="content-shrink">
             <Text className="font-medium">{entry.title}</Text>
             <Text variant="muted" typeRole="caption" className={`line-clamp-2 md:line-clamp-none ${HOME_METADATA_TEXT_CLASS}`}>
               {entry.summary}
             </Text>
           </Stack>
-          <Button asChild variant="outline" size="sm" className="min-h-11 w-fit shrink-0 md:min-h-0">
+          <Button asChild variant="outline" size="sm" className="min-h-target w-fit shrink-0 md:pane-shrink">
             <HomeLink href={entry.href}>
               <DocsActionLabel>{entry.linkLabel}</DocsActionLabel>
             </HomeLink>

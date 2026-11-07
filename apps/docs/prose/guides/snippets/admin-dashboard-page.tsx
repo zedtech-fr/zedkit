@@ -41,7 +41,7 @@ const seed: ItemRow[] = [
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full p-3">
+    <Stack gap={4} className="h-full surface-pad-compact">
       <Stack gap={1}>
         <Text className="font-semibold">Harbor Studio</Text>
         <Text variant="muted" className="text-xs">
@@ -67,7 +67,7 @@ function Sidebar() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-end px-4 py-2">
+    <Stack direction="horizontal" gap={2} className="justify-end surface-pad-inline surface-pad-block-sm">
       <Text
         as="span"
         aria-hidden="true"

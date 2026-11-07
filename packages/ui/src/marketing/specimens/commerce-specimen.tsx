@@ -37,14 +37,14 @@ function CommerceProductList({
   onSelect: (id: string) => void;
 }) {
   return (
-    <ul aria-label={messages.listAriaLabel} className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2">
+    <ul aria-label={messages.listAriaLabel} className="trim-margin grid list-none gap-stack-sm flush sm:grid-cols-2">
       {products.map((item) => (
         <li key={item.id}>
           <Button
             type="button"
             variant="outline"
             aria-pressed={item.id === selectedId}
-            className="h-auto! min-h-11 w-full flex-col items-start gap-1 p-3 text-left font-normal whitespace-normal"
+            className="h-auto! min-h-target w-full flex-col items-start gap-stack-tight p-3 text-left font-normal whitespace-normal"
             onClick={() => onSelect(item.id)}
           >
             <Text as="span" className="font-medium">
@@ -80,10 +80,10 @@ function CommerceInventoryEditor({
   status: string;
 }) {
   return (
-    <Card className="min-w-0">
+    <Card className="content-shrink">
       <CardContent className="pt-4">
-        <Stack gap={3} className="min-w-0 sm:flex-row sm:flex-wrap sm:items-end">
-          <Stack gap={1} className="min-w-0 flex-1 basis-28">
+        <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
+          <Stack gap={1} className="content-shrink flex-1 basis-28">
             <Label htmlFor={priceId}>{messages.priceLabel}</Label>
             <Input
               id={priceId}
@@ -92,7 +92,7 @@ function CommerceInventoryEditor({
               onChange={(event) => onPriceChange(Math.max(0, Number.parseInt(event.target.value, 10) || 0))}
             />
           </Stack>
-          <Stack gap={1} className="min-w-0 flex-1 basis-28">
+          <Stack gap={1} className="content-shrink flex-1 basis-28">
             <Label htmlFor={stockId}>{messages.stockLabel}</Label>
             <Input
               id={stockId}
@@ -122,7 +122,7 @@ export function CommerceSpecimen({ className, messages = specimenMessagesEn.comm
   const stockId = "zk-specimen-commerce-stock";
 
   return (
-    <Stack gap={4} className={`min-w-0 ${className ?? ""}`} data-slot="commerce-specimen" data-specimen-domain="commerce">
+    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="commerce-specimen" data-specimen-domain="commerce">
       <Stack gap={1}>
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>

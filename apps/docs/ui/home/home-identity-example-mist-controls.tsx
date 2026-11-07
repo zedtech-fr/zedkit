@@ -27,8 +27,8 @@ export function HomeIdentityExampleMistControls({
   onAlerts: (value: boolean) => void;
 }) {
   return (
-    <Stack gap={3} className="min-w-0 sm:flex-row sm:flex-wrap sm:items-end">
-      <Stack gap={1} className="min-w-0 flex-1 basis-full sm:basis-40">
+    <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
+      <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-40">
         <Label htmlFor={workspaceId}>{copy.workspaceLabel}</Label>
         <Input
           id={workspaceId}
@@ -36,7 +36,7 @@ export function HomeIdentityExampleMistControls({
           onChange={(event) => onWorkspace(event.target.value)}
         />
       </Stack>
-      <Stack gap={1} className="min-w-0 flex-1 basis-full sm:basis-40">
+      <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-40">
         <Label htmlFor={regionId}>{copy.regionLabel}</Label>
         <Select value={region} onValueChange={onRegion}>
           <SelectTrigger id={regionId} aria-label={copy.regionLabel}>
@@ -51,7 +51,7 @@ export function HomeIdentityExampleMistControls({
           </SelectContent>
         </Select>
       </Stack>
-      <Stack direction="horizontal" gap={2} className="min-h-11 items-center">
+      <Stack direction="horizontal" gap={2} className="min-h-target items-center">
         <Switch id={alertsId} checked={alerts} onCheckedChange={onAlerts} />
         <Label htmlFor={alertsId}>{copy.alertsLabel}</Label>
       </Stack>

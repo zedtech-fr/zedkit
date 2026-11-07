@@ -7,7 +7,7 @@ import { iconLabelCopy } from "@/components/demos/i18n/icon-label-copy";
 /** Project details: a row of small facts, each with a quiet decorative icon. */
 export function IconLabelDemo() {
   return (
-    <Stack gap={3} className="min-w-0 rounded-lg border border-border bg-background p-4">
+    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <Stack gap={1}>
         <Heading level={2}>{iconLabelCopy.project.title}</Heading>
         <Text variant="muted" className="text-sm">
@@ -36,8 +36,8 @@ export function IconLabelOrdersDemo() {
   return (
     <ul aria-label={iconLabelCopy.orders.label} className="divide-y divide-border rounded-lg border border-border bg-background">
       {ORDERS.map((order) => (
-        <li key={order.number} className="flex min-w-0 flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3">
-          <Stack gap={1} className="min-w-0">
+        <li key={order.number} className="flex content-shrink flex-wrap items-center justify-between gap-x-4 gap-y-1 surface-pad-inline surface-pad-block">
+          <Stack gap={1} className="content-shrink">
             <Text as="span" className="font-medium">
               {order.number}
             </Text>

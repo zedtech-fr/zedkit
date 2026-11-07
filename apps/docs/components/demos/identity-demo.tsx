@@ -38,7 +38,7 @@ function CurrentLook() {
   const current = useIdentity("mist");
   const label = identities.find((item) => item.id === current)?.label ?? current;
   return (
-    <Text variant="muted" role="status" data-demo-current-look className="m-0!">
+    <Text variant="muted" role="status" data-demo-current-look className="trim-margin!">
       {identityCopy.switcher.currentLook}<Text as="span" className="font-medium text-foreground">{label}</Text>
     </Text>
   );
@@ -48,11 +48,11 @@ function CurrentLook() {
 export function IdentitySwitcherDemo() {
   useRestoreIdentityOnUnmount();
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <Stack
         direction="horizontal"
         gap={3}
-        className="min-w-0 flex-wrap items-center justify-between rounded-lg border border-border bg-background px-4 py-3"
+        className="content-shrink flex-wrap items-center justify-between rounded-lg border border-border bg-background surface-pad-inline surface-pad-block"
       >
         <Text as="span" className="font-semibold">
           {identityCopy.studio}
@@ -60,7 +60,7 @@ export function IdentitySwitcherDemo() {
         <IdentitySwitcher storageKey={DEMO_STORAGE_KEY} showLabel label={identityCopy.look} />
       </Stack>
       <CurrentLook />
-      <Text variant="muted" className="m-0! text-xs">
+      <Text variant="muted" className="trim-margin! text-xs">
         {identityCopy.switcher.note}
       </Text>
     </Stack>
@@ -79,17 +79,17 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
       data-identity-scope=""
       data-identity={look.id}
       data-demo-scope={look.id}
-      className="min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground"
+      className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground"
     >
       <Stack direction="horizontal" gap={2} className="items-center justify-between">
-        <Heading level={2} className="m-0! text-lg">
+        <Heading level={2} className="trim-margin! text-lg">
           {look.label}
         </Heading>
         <Badge variant="secondary" className="w-fit" role="status">
           {saved ? identityCopy.scope.savedBadge : identityCopy.scope.badge}
         </Badge>
       </Stack>
-      <Text variant="muted" className="m-0! text-sm">
+      <Text variant="muted" className="trim-margin! text-sm">
         {look.description}
       </Text>
       <Stack direction="horizontal" gap={2}>
@@ -107,11 +107,11 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
 /** The same card under each identity, side by side, without touching the page. */
 export function IdentityScopeDemo() {
   return (
-    <Stack gap={2} className="min-w-0">
+    <Stack gap={2} className="content-shrink">
       <Text variant="muted" className="text-xs">
         {identityCopy.scope.note}
       </Text>
-      <Stack className="min-w-0 gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-3">
+      <Stack className="content-shrink gap-stack-md sm:grid sm:grid-cols-2 xl:grid-cols-3">
         {SCOPED_LOOKS.map((look) => (
           <ScopedCard key={look.id} look={look} />
         ))}
@@ -125,11 +125,11 @@ export function IdentityPickerDemo() {
   useRestoreIdentityOnUnmount();
   const [last, setLast] = useState<string | null>(null);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <Stack
         direction="horizontal"
         gap={3}
-        className="min-w-0 items-center justify-between rounded-lg border border-border bg-background px-4 py-3"
+        className="content-shrink items-center justify-between rounded-lg border border-border bg-background surface-pad-inline surface-pad-block"
       >
         <Text as="span" className="font-semibold">
           {identityCopy.studio}
@@ -142,7 +142,7 @@ export function IdentityPickerDemo() {
           onIdentityChange={setLast}
         />
       </Stack>
-      <Text variant="muted" role="status" className="m-0!">
+      <Text variant="muted" role="status" className="trim-margin!">
         {last ? identityCopy.picker.chosen(last) : identityCopy.picker.nothing}
       </Text>
     </Stack>

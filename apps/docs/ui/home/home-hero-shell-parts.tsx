@@ -27,13 +27,13 @@ type NavProps = { page: HeroPageId; onPage: (id: HeroPageId) => void };
  */
 export function HeroShell({ sidebar, topbar, children }: { sidebar: React.ReactNode; topbar: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div data-hero-shell="" className="flex w-full min-w-0">
+    <div data-hero-shell="" className="flex w-full content-shrink">
       <div data-hero-sidebar="" className="flex w-app-shell-sidebar shrink-0 flex-col border-r bg-muted/40 max-md:hidden">
         {sidebar}
       </div>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="flex pane-shrink content-shrink flex-1 flex-col">
         <div className="border-b bg-background/95">{topbar}</div>
-        <div data-hero-main="" className="min-h-0 flex-1">
+        <div data-hero-main="" className="pane-shrink flex-1">
           {children}
         </div>
       </div>
@@ -49,11 +49,11 @@ function NavButton({ id, icon: Icon, active, onSelect, compact }: (typeof HERO_N
       variant={active ? "secondary" : "ghost"}
       aria-current={active ? "page" : undefined}
       // The chip row scrolls sideways and clips what is drawn outside it, so a chip draws its focus ring inside itself.
-      className={compact ? "min-h-11 shrink-0 gap-2 px-3 focus-visible:-outline-offset-(--ring-width)" : "w-full justify-start gap-2 lg:max-xl:justify-center lg:max-xl:px-0"}
+      className={compact ? "min-h-target shrink-0 gap-stack-sm px-button-inline-sm focus-visible:-outline-offset-(--ring-width)" : "w-full justify-start gap-stack-sm lg:max-xl:justify-center lg:max-xl:px-0"}
       onClick={() => onSelect(id)}
       data-tour-nav={compact ? undefined : id}
     >
-      <Icon className="size-4" aria-hidden />
+      <Icon className="size-icon" aria-hidden />
       <span className={compact ? undefined : "lg:max-xl:sr-only"}>{copy.pages[id]}</span>
     </Button>
   );
@@ -62,7 +62,7 @@ function NavButton({ id, icon: Icon, active, onSelect, compact }: (typeof HERO_N
 /** From lg to xl the window is narrow, so the sidebar shrinks to icons (the names stay for assistive tech). */
 export function HeroSidebar({ page, onPage }: NavProps) {
   return (
-    <Stack gap={4} className="h-full p-3 lg:max-xl:px-2">
+    <Stack gap={4} className="h-full surface-pad-compact lg:max-xl:px-2">
       <Stack gap={1} className="lg:max-xl:hidden">
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
         <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
@@ -97,13 +97,13 @@ function AgentButton({ open, panelId, onToggle }: AgentToggle) {
       type="button"
       variant="outline"
       size="sm"
-      className="max-md:min-h-11"
+      className="max-md:min-h-target"
       aria-expanded={open}
       aria-controls={open ? panelId : undefined}
       onClick={onToggle}
       data-hero-agent-open=""
     >
-      <Sparkles className="size-4" aria-hidden />
+      <Sparkles className="size-icon" aria-hidden />
       {copy.agent.open}
     </Button>
   );
@@ -112,8 +112,8 @@ function AgentButton({ open, panelId, onToggle }: AgentToggle) {
 export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentToggle }) {
   return (
     <Stack gap={1}>
-      <Stack direction="horizontal" gap={2} className="min-h-12 items-center justify-between px-4">
-        <Text as="span" className="min-w-0 truncate text-sm" data-hero-crumb="">
+      <Stack direction="horizontal" gap={2} className="min-h-12 items-center justify-between surface-pad-inline">
+        <Text as="span" className="content-shrink truncate text-sm" data-hero-crumb="">
           <Text as="span" variant="muted" className="text-sm max-md:hidden">
             {projectTrackerDemoCopy.brand} /{" "}
           </Text>
@@ -128,7 +128,7 @@ export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentTog
         </Stack>
       </Stack>
       {/* Below md the sidebar is gone, so the pages move into the bar. */}
-      <nav aria-label={copy.navAriaLabel} className="flex gap-1 overflow-x-auto px-3 pb-2 md:hidden">
+      <nav aria-label={copy.navAriaLabel} className="flex gap-stack-tight overflow-x-auto px-3 pb-2 md:hidden">
         {HERO_NAV.map((item) => (
           <NavButton key={item.id} {...item} active={item.id === page} onSelect={onPage} compact />
         ))}

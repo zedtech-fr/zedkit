@@ -277,7 +277,7 @@ function exampleBlock({ code, title, path }, imports) {
     ...(importLines.length > 0 ? [""] : []),
     "export default function Page() {",
     "  return (",
-    '    <main className="p-8">',
+    '    <main className="px-page-gutter py-section-sm">',
     indented,
     "    </main>",
     "  );",

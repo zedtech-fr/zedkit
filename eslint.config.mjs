@@ -96,6 +96,7 @@ export default tseslint.config(
   // exports, so this resolves with zero build).
   ...uiPreset({
     entryPoint: new URL("./packages/ui/src/styles.css", import.meta.url).pathname,
+    scaleBaseline: new URL("./scripts/scale-class-baseline.json", import.meta.url).pathname,
   }),
   {
     files: sizeBudgetOverFile,

@@ -35,8 +35,8 @@ function useCountUp(to: number, active: boolean, duration = 900): number {
 function Stat({ label, value, active, beat }: { label: string; value: number; active: boolean; beat: number }) {
   const shown = useCountUp(value, active);
   return (
-    <Card className="min-w-0 shadow-none" data-hero-block="" data-beat={beat}>
-      <Stack gap={1} className="p-3">
+    <Card className="content-shrink shadow-none" data-hero-block="" data-beat={beat}>
+      <Stack gap={1} className="surface-pad-compact">
         <Text variant="muted" className="text-xs leading-tight">
           {label}
         </Text>
@@ -53,14 +53,14 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
 /** Bars grow from the baseline. Their height is a level from 1 to 6 (see `home-hero.css`), not an inline style. */
 function Activity() {
   return (
-    <Card className="min-w-0 shadow-none" data-hero-block="" data-beat={4}>
-      <CardHeader className="p-3 pb-2">
+    <Card className="content-shrink shadow-none" data-hero-block="" data-beat={4}>
+      <CardHeader className="surface-pad-compact pb-2">
         <CardDescription className="text-xs">{copy.activity}</CardDescription>
       </CardHeader>
-      <CardContent className="p-3 pt-0">
-        <ul className="m-0 flex list-none items-end gap-1.5 p-0" aria-label={copy.activity} data-hero-bars="">
+      <CardContent className="surface-pad-compact pt-0">
+        <ul className="trim-margin flex list-none items-end gap-1.5 flush" aria-label={copy.activity} data-hero-bars="">
           {copy.activityValues.map((value, index) => (
-            <li key={index} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
+            <li key={index} className="flex h-full content-shrink flex-1 flex-col items-center justify-end gap-stack-tight">
               <span
                 data-hero-bar=""
                 data-level={value}
@@ -85,15 +85,15 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
     .sort(byDue)
     .slice(0, 3);
   return (
-    <Stack gap={2} className="min-w-0" data-hero-block="" data-beat={5}>
+    <Stack gap={2} className="content-shrink" data-hero-block="" data-beat={5}>
       <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
         {copy.upNext}
       </Text>
-      <ul className="m-0 flex list-none flex-col divide-y divide-border rounded-lg border border-border p-0">
+      <ul className="trim-margin flex list-none flex-col divide-y divide-border rounded-lg border border-border flush">
         {next.map((row) => (
-          <li key={row.id} className="flex min-w-0 items-center justify-between gap-3 px-3 py-2">
-            <span className="min-w-0 truncate text-sm font-medium">{row.title}</span>
-            <span className="flex shrink-0 items-center gap-2">
+          <li key={row.id} className="flex content-shrink items-center justify-between gap-stack-md px-3 py-2">
+            <span className="content-shrink truncate text-sm font-medium">{row.title}</span>
+            <span className="flex shrink-0 items-center gap-stack-sm">
               <Badge variant={STATUS_VARIANT[row.status]} className="max-sm:hidden">
                 {row.status}
               </Badge>
@@ -109,9 +109,9 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
 export function HeroOverviewPage({ rows, active }: { rows: TaskRow[]; active: boolean }) {
   const { status } = projectTrackerDemoCopy;
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <div className="grid min-w-0 grid-cols-3 gap-2">
+      <div className="grid content-shrink grid-cols-3 gap-stack-sm">
         <Stat label={copy.stats.open} value={rows.filter((row) => !isDone(row)).length} active={active} beat={1} />
         <Stat label={copy.stats.review} value={rows.filter((row) => row.status === status.inReview).length} active={active} beat={2} />
         <Stat label={copy.stats.done} value={rows.filter(isDone).length} active={active} beat={3} />

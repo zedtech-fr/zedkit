@@ -62,7 +62,7 @@ const columns = [
   tableHelper.accessor("title", {
     header: projectTrackerDemoCopy.columns.task,
     cell: ({ row }) => (
-      <Stack gap={1} className="min-w-0">
+      <Stack gap={1} className="content-shrink">
         <Text className="font-medium">{row.original.title}</Text>
         <Text variant="muted" className="text-xs">
           {row.original.owner}
@@ -140,10 +140,10 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
               type="button"
               variant={active ? "secondary" : "ghost"}
               aria-current={active ? "page" : undefined}
-              className="w-full justify-start gap-2"
+              className="w-full justify-start gap-stack-sm"
               onClick={active ? undefined : notice(projectTrackerDemoCopy.nav.unavailable(label))}
             >
-              <Icon className="size-4" aria-hidden />
+              <Icon className="size-icon" aria-hidden />
               {label}
             </Button>
           );
@@ -156,7 +156,7 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full p-3">
+    <Stack gap={4} className="h-full surface-pad-compact">
       <Stack gap={1}>
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
         <Text variant="muted" className="text-xs">
@@ -180,7 +180,7 @@ function MobileNav() {
     <Drawer direction="left" mobile="side">
       <DrawerTrigger asChild>
         <IconButton label={projectTrackerDemoCopy.openNavigation} variant="ghost" className={mobile ? undefined : "md:hidden"}>
-          <Menu className="size-4" aria-hidden />
+          <Menu className="size-icon" aria-hidden />
         </IconButton>
       </DrawerTrigger>
       <DrawerContent>
@@ -202,7 +202,7 @@ function UserMenu() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button type="button" variant="ghost" className="gap-2 px-2" aria-label={projectTrackerDemoCopy.openUserMenu}>
+        <Button type="button" variant="ghost" className="gap-stack-sm px-control-tight" aria-label={projectTrackerDemoCopy.openUserMenu}>
           <Avatar initials={projectTrackerDemoCopy.initials} />
           <Text as="span" className={cn("text-sm font-medium", mobile ? "hidden" : "max-sm:hidden")}>
             {projectTrackerDemoCopy.people.maya}
@@ -230,10 +230,10 @@ function UserMenu() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="w-full justify-start gap-2"
+                  className="w-full justify-start gap-stack-sm"
                   onClick={notice(projectTrackerDemoCopy.menu.unavailable(label))}
                 >
-                  <Icon className="size-4" aria-hidden />
+                  <Icon className="size-icon" aria-hidden />
                   {label}
                 </Button>
               </DrawerClose>
@@ -242,8 +242,8 @@ function UserMenu() {
         </DrawerBody>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button type="button" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.signedOut)}>
-              <LogOut className="size-4" aria-hidden />
+            <Button type="button" variant="outline" className="gap-stack-sm" onClick={notice(projectTrackerDemoCopy.signedOut)}>
+              <LogOut className="size-icon" aria-hidden />
               {projectTrackerDemoCopy.signOut}
             </Button>
           </DrawerClose>
@@ -255,14 +255,14 @@ function UserMenu() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-between px-4 py-2">
+    <Stack direction="horizontal" gap={2} className="justify-between surface-pad-inline surface-pad-block-sm">
       <Stack direction="horizontal" gap={2}>
         <MobileNav />
         <Text className="text-sm font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
       </Stack>
       <Stack direction="horizontal" gap={1}>
         <IconButton label={projectTrackerDemoCopy.notifications} variant="ghost" onClick={notice(projectTrackerDemoCopy.caughtUp)}>
-          <Bell className="size-4" aria-hidden />
+          <Bell className="size-icon" aria-hidden />
         </IconButton>
         <UserMenu />
       </Stack>
@@ -294,7 +294,7 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
   ];
   return (
     <Card>
-      <CardHeader className="p-4">
+      <CardHeader className="surface-pad-md">
         <Stack gap={3}>
           {cards.map((card) => (
             <Stack
@@ -303,7 +303,7 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
               gap={3}
               className="items-baseline justify-between"
             >
-              <Stack gap={1} className="min-w-0">
+              <Stack gap={1} className="content-shrink">
                 <CardDescription>{card.label}</CardDescription>
                 <Text variant="muted" className="text-xs">
                   {card.note}
@@ -351,7 +351,7 @@ export function ProjectTrackerDemoApp() {
   const tableRows = state === "empty" ? [] : rows;
 
   return (
-    <Stack gap={3} className="w-full min-w-0">
+    <Stack gap={3} className="w-full content-shrink">
       <Toaster />
       <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
         <Text variant="muted" className="text-xs">
@@ -370,9 +370,9 @@ export function ProjectTrackerDemoApp() {
           </Button>
         ))}
       </Stack>
-      <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-hidden rounded-lg border border-border bg-background">
+      <Stack className="h-[min(40rem,80svh)] content-shrink overflow-hidden rounded-lg border border-border bg-background">
         <AppShell
-          className={cn("h-full min-h-0 [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+          className={cn("h-full pane-shrink [&>aside]:w-48", mobile && "[&>aside]:hidden")}
           sidebar={<Sidebar />}
           topbar={<TopBar />}
         >
@@ -383,12 +383,12 @@ export function ProjectTrackerDemoApp() {
             description={projectTrackerDemoCopy.description}
             actions={
               <>
-                <Button type="button" size="sm" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
-                  <Download className="size-4" aria-hidden />
+                <Button type="button" size="sm" variant="outline" className="gap-stack-sm" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
+                  <Download className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.export}
                 </Button>
-                <Button type="button" size="sm" className="gap-2" onClick={addTask}>
-                  <Plus className="size-4" aria-hidden />
+                <Button type="button" size="sm" className="gap-stack-sm" onClick={addTask}>
+                  <Plus className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.newTask}
                 </Button>
               </>

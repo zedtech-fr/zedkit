@@ -40,11 +40,11 @@ describe("table primitives", () => {
       </Table>,
     );
     expect(container.querySelector("th")?.className).toContain("h-table-head-height");
-    expect(container.querySelector("th")?.className).toContain("px-2");
-    expect(container.querySelector("th")?.className).not.toContain("px-table-cell");
-    expect(container.querySelector("td")?.className).toContain("p-2");
-    expect(container.querySelector("td")?.className).not.toContain("p-table-cell");
-    expect(container.querySelector("caption")?.className).toContain("mt-4");
+    expect(container.querySelector("th")?.className).toContain("px-table-cell");
+    expect(container.querySelector("th")?.className).not.toContain("px-2");
+    expect(container.querySelector("td")?.className).toContain("p-table-cell");
+    expect(container.querySelector("td")?.className).not.toContain("p-2");
+    expect(container.querySelector("caption")?.className).toContain("mt-table-caption-gap");
     expect(container.innerHTML).toContain("translate-y-table-checkbox-nudge");
     expect(container.innerHTML).not.toContain("translate-y-[2px]");
   });

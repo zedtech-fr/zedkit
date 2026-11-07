@@ -10,6 +10,11 @@ export function nodePreset(options?: NodePresetOptions): Linter.Config[];
 export interface UiPresetOptions {
   /** Path to the repo's Tailwind CSS entry. Required, no default. */
   readonly entryPoint: string;
+  /**
+   * Optional JSON baseline (`{ files: { "path": count } }`).
+   * Counts may only shrink. Omit it and every scale step is an error.
+   */
+  readonly scaleBaseline?: string;
 }
 
 export function uiPreset(options: UiPresetOptions): Linter.Config[];

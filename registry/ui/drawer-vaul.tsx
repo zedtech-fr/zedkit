@@ -32,7 +32,7 @@ function DrawerOverlay({
       data-slot="drawer-overlay"
       ref={setRef}
       className={cn(
-        "fixed inset-0 z-overlay bg-overlay/50 backdrop-blur-sm",
+        "fixed pin-fill z-overlay bg-overlay/50 backdrop-blur-sm",
         "motion-safe:data-[state=open]:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]",
         "motion-safe:data-[state=closed]:animate-[zk-fade-out_var(--motion-base)_var(--ease-exit)]",
         className,

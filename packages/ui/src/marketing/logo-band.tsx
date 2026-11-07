@@ -36,7 +36,7 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
         <Text id={titleId} variant="muted" className="text-center">
           {title}
         </Text>
-        <ul className="flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-4 p-0 text-muted-foreground">
+        <ul className="flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-4 flush text-muted-foreground">
           {logos.map((item, index) => {
             const body = (
               <>
@@ -54,12 +54,12 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
                 {item.href ? (
                   <a
                     href={item.href}
-                    className="inline-flex min-h-11 items-center rounded-md focus-ring-control hover:text-foreground"
+                    className="inline-flex min-h-target items-center rounded-md focus-ring-control hover:text-foreground"
                   >
                     {body}
                   </a>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center">{body}</span>
+                  <span className="inline-flex min-h-target items-center">{body}</span>
                 )}
               </li>
             );

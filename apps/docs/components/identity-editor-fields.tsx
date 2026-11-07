@@ -46,9 +46,9 @@ function TokenField({
   const colour = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
   return (
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
-    <Field className="min-w-0">
+    <Field className="content-shrink">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <Stack direction="horizontal" gap={2} className="min-w-0">
+      <Stack direction="horizontal" gap={2} className="content-shrink">
         {swatch ? (
           <svg
             aria-hidden="true"
@@ -63,7 +63,7 @@ function TokenField({
           value={draft}
           // The focused input is what the browser scrolls into view, so the margin lives here: 7rem clears the
           // docs header, and a phone with a pinned preview card also clears the card (about 237px).
-          className="min-w-0 flex-1 scroll-mt-28 max-lg:[@media(min-height:48rem)]:scroll-mt-80"
+          className="content-shrink flex-1 scroll-mt-28 max-lg:[@media(min-height:48rem)]:scroll-mt-80"
           onChange={(event) => {
             setDraft(event.target.value);
             onChange(event.target.value);
@@ -76,9 +76,9 @@ function TokenField({
 
 function FieldGroup({ legend, className, children }: { legend: string; className?: string; children: ReactNode }) {
   return (
-    <fieldset className={cn("m-0 min-w-0 border-0 p-0", className)}>
+    <fieldset className={cn("trim-margin content-shrink border-0 flush", className)}>
       <legend className="mb-3 font-semibold text-foreground">{legend}</legend>
-      <Stack className="grid min-w-0 gap-4 sm:grid-cols-2">{children}</Stack>
+      <Stack className="grid content-shrink gap-stack-lg sm:grid-cols-2">{children}</Stack>
     </fieldset>
   );
 }
@@ -163,11 +163,11 @@ function SpecimenBody() {
         <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
       </Field>
       <Stack gap={3} className="hidden lg:flex">
-        <dl className="m-0 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border p-3">
+        <dl className="trim-margin grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 rounded-lg border border-border surface-pad-compact">
           {copy.rows.map(([term, detail]) => (
             <Fragment key={term}>
               <dt className="text-muted-foreground">{term}</dt>
-              <dd className="m-0">{detail}</dd>
+              <dd className="trim-margin">{detail}</dd>
             </Fragment>
           ))}
         </dl>
@@ -193,11 +193,11 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       data-slot="identity-editor-preview"
       role="group"
       aria-label={identityEditorCopy.fields.specimenLabel}
-      className="z-20 min-w-0 rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-md max-lg:order-3 max-lg:gap-2 max-lg:p-3 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6 max-lg:[@media(min-height:48rem)]:sticky max-lg:[@media(min-height:48rem)]:top-14"
+      className="z-20 content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground shadow-md max-lg:order-3 max-lg:gap-stack-sm max-lg:surface-pad-compact lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start lg:p-6 max-lg:[@media(min-height:48rem)]:sticky max-lg:[@media(min-height:48rem)]:top-14"
       gap={3}
     >
       {/* `inert`: the specimen is for looking at. It must not read as, or act as, an editor command. */}
-      <Stack gap={3} inert className="max-lg:gap-2">
+      <Stack gap={3} inert className="max-lg:gap-stack-sm">
         <SpecimenBody />
       </Stack>
       <Text variant="muted" typeRole="label" className="max-lg:hidden">

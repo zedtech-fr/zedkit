@@ -29,11 +29,11 @@ export function HomeHeroSatellites() {
   return (
     <>
       <Satellite kind="notice">
-        <Card className="flex items-center gap-3 p-3" data-hero-notice="">
+        <Card className="flex items-center gap-stack-md surface-pad-compact" data-hero-notice="">
           <span data-hero-avatar="" className="flex shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
-            <Check className="size-4" aria-hidden />
+            <Check className="size-icon" aria-hidden />
           </span>
-          <span className="flex min-w-0 flex-col">
+          <span className="flex content-shrink flex-col">
             <Text className="truncate text-sm font-medium">{copy.mergedTitle}</Text>
             <Text variant="muted" className="truncate text-xs">
               {copy.mergedBody}
@@ -42,7 +42,7 @@ export function HomeHeroSatellites() {
         </Card>
       </Satellite>
       <Satellite kind="online">
-        <Card className="flex items-center gap-3 p-3">
+        <Card className="flex items-center gap-stack-md surface-pad-compact">
           <span className="flex -space-x-1.5" data-hero-faces="">
             {HERO_PEOPLE.filter((person) => person.online).map((person) => (
               <span

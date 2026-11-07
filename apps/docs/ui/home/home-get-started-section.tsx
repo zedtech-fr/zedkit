@@ -18,11 +18,11 @@ const otherWays = homeCopy.getStarted.otherWays;
 /** The two ways in that are not the install panel. */
 function HomeOtherWays() {
   return (
-      <Stack gap={3} className="min-w-0" role="group" aria-label={otherWays.label} data-home-other-ways="">
+      <Stack gap={3} className="content-shrink" role="group" aria-label={otherWays.label} data-home-other-ways="">
         <Text variant="muted" typeRole="label">
           {otherWays.label}
         </Text>
-        <Stack className="min-w-0 divide-y divide-border border-y border-border">
+        <Stack className="content-shrink divide-y divide-border border-y border-border">
           {([otherWays.agent, otherWays.noCode] as const).map((way) => (
             <Stack
               key={way.title}
@@ -31,13 +31,13 @@ function HomeOtherWays() {
               className="flex-wrap items-center justify-between py-3"
               data-home-way=""
             >
-              <Stack gap={1} className="min-w-0">
+              <Stack gap={1} className="content-shrink">
                 <Text className="font-medium">{way.title}</Text>
                 <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
                   {way.body}
                 </Text>
               </Stack>
-              <Button asChild variant="outline" size="sm" className="min-h-11 w-fit shrink-0 md:min-h-0" {...(way === otherWays.agent ? { "data-home-ai-setup": "" } : {})}>
+              <Button asChild variant="outline" size="sm" className="min-h-target w-fit shrink-0 md:pane-shrink" {...(way === otherWays.agent ? { "data-home-ai-setup": "" } : {})}>
                 <HomeLink href={way.href}>
                   <DocsActionLabel>{way.link}</DocsActionLabel>
                 </HomeLink>
@@ -52,12 +52,12 @@ function HomeOtherWays() {
 /** The live result of the install steps: the rendered Button, labelled as an example. */
 function HomeResultCard() {
   return (
-        <GlassSurface padding="md" className="min-w-0">
+        <GlassSurface padding="md" className="content-shrink">
           <Stack gap={HOME_CARD_CONTENT_GAP} role="group" aria-label={adoptionCopy.result.label} data-adoption-result="">
             <Text typeRole="label" className="text-muted-foreground">
               {adoptionCopy.result.label}
             </Text>
-            <Stack direction="horizontal" className="rounded-lg border border-border bg-background/80 p-4">
+            <Stack direction="horizontal" className="rounded-lg border border-border bg-background/80 surface-pad-md">
               <Text as="span" inert>
                 <Button>Save</Button>
               </Text>
@@ -85,7 +85,7 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack gap={4} className="min-w-0">
+      <Stack gap={4} className="content-shrink">
         <StickyAside
           id="install-or-copy"
           className="scroll-mt-24 [--zk-sticky-gap:2rem] [--zk-sticky-top:7rem]"
@@ -95,9 +95,9 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
             <AdoptionPanelView plan={plan} summaryClassName={HOME_PERSUASION_TEXT_CLASS} />
           </StickyAside.Main>
           <StickyAside.Aside asChild>
-            <Stack gap={4} className="min-w-0">
+            <Stack gap={4} className="content-shrink">
               <HomeResultCard />
-              <GlassSurface padding="md" className="min-w-0">
+              <GlassSurface padding="md" className="content-shrink">
                 <HomeOtherWays />
               </GlassSurface>
             </Stack>

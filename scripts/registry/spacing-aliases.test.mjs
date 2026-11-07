@@ -50,73 +50,17 @@ test("shared values point at their Tailwind scale step, singletons at themselves
 });
 
 const DEPRECATED_1REM_CLASSES = [
-  "gap-detail-panel-gap",
   "gap-dialog-gap",
-  "gap-field-group-nested",
-  "gap-page-header-gap",
   "h-data-table-skeleton-height",
-  "left-alert-icon-offset",
-  "mb-drawer-handle-top",
-  "ml-field-error-indent",
-  "mt-card-section",
-  "mt-drawer-handle-top",
-  "mt-table-caption-gap",
-  "p-app-shell-padding",
   "p-dialog-gap",
-  "p-drawer-chrome-padding",
-  "p-field-label-inset",
-  "p-option-card-padding",
-  "pt-drawer-chrome-padding",
-  "px-alert-inline",
   "px-button-inline",
-  "px-detail-panel-inline",
-  "px-drawer-chrome-padding",
   "right-overlay-close-offset",
-  "size-checkbox",
   "size-icon-control",
-  "size-status-label-box",
   "size-switch-thumb",
-  "space-y-data-table-stack",
-  "top-alert-icon-offset",
   "top-overlay-close-offset",
   "translate-x-switch-travel",
-  "h-field-separator",
   "h-switch-track-height",
-  "gap-secret-field-gap",
-  "size-status-dot",
-  "space-y-card-lines",
-  "mt-tabs-content-gap",
-  "space-y-form-item-gap",
-  "gap-data-table-pagination-gap",
-  "px-field-separator-inline",
-  "gap-page-header-actions-gap",
-  "gap-field-inline",
-  "gap-drawer-footer-gap",
   "space-x-dialog-footer-gap",
-  "gap-button-gap",
-  "gap-wizard-step-gap",
-  "gap-y-wizard-steps-row-gap",
-  "px-table-cell",
-  "p-table-cell",
-  "px-select-item-inline",
-  "pl-select-item-inline",
-  "right-select-item-inline",
-  "py-control-block-lg",
-  "gap-x-wizard-steps-gap",
-  "px-button-inline-sm",
-  "px-tabs-trigger-inline",
-  "py-detail-panel-block",
-  "py-alert-block",
-  "gap-option-card-gap",
-  "gap-option-cards-gap",
-  "mb-field-legend-bottom",
-  "gap-field",
-  "gap-field-group-compact",
-  "px-control-inline",
-  "right-control-inline",
-  "py-select-item-block",
-  "gap-status-label-gap",
-  "gap-field-content",
 ];
 
 function walkJs(dir, acc = []) {
@@ -129,7 +73,7 @@ function walkJs(dir, acc = []) {
   return acc;
 }
 
-test("kit and docs sources use the Tailwind scale, not deprecated spacing aliases", () => {
+test("kit and docs sources do not use deprecated rem spacing aliases", () => {
   const files = [...walkJs(join(root, "packages/ui/src")), ...walkJs(join(root, "apps/docs"))];
   const hits = [];
   for (const file of files) {

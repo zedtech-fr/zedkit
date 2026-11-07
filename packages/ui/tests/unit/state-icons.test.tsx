@@ -37,8 +37,8 @@ describe("status dot", () => {
 
   it("sizes the dot from theme tokens", () => {
     const { container } = render(<StatusDot tone="active" />);
-    expect(container.innerHTML).toContain("size-2");
-    expect(container.innerHTML).not.toContain("size-status-dot");
+    expect(container.innerHTML).toContain("size-status-dot");
+    expect(container.innerHTML).not.toContain("size-2");
   });
 
   it("renders without a color when the tone is unknown", () => {
@@ -98,7 +98,7 @@ describe("checkmark", () => {
 
   it("styles size from the canonical scale and motion from tokens", () => {
     const { container } = render(<Checkmark />);
-    expect(container.firstElementChild?.classList.contains("size-4")).toBe(true);
+    expect(container.firstElementChild?.classList.contains("size-icon")).toBe(true);
     expect(container.firstElementChild?.getAttribute("class")).not.toContain("size-checkmark");
     const path = container.querySelector("path");
     expect(path?.getAttribute("class")).toContain("motion-safe:animate-check-draw");

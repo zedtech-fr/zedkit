@@ -16,7 +16,7 @@ export function ErrorState({ title, description, actions, className }: ErrorStat
     <Alert data-slot="error-state" variant="destructive" className={cn(className)}>
       {title ? <AlertTitle>{title}</AlertTitle> : null}
       <AlertDescription>{description}</AlertDescription>
-      {actions ? <div className="mt-2 flex flex-wrap gap-2">{actions}</div> : null}
+      {actions ? <div className="mt-2 flex flex-wrap gap-stack-sm">{actions}</div> : null}
     </Alert>
   );
 }

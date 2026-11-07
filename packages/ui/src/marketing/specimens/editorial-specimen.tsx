@@ -62,7 +62,7 @@ function EditorialStoryQueue({
                 type="button"
                 variant="ghost"
                 aria-pressed={row.id === selectedId}
-                className="h-auto! min-h-11 w-full flex-col items-start gap-0 px-2 py-1 text-left font-normal whitespace-normal"
+                className="h-auto! min-h-target w-full flex-col items-start gap-0 px-control-tight py-1 text-left font-normal whitespace-normal"
                 onClick={() => onSelect(row.id)}
               >
                 {row.headline}
@@ -121,7 +121,7 @@ function EditorialStoryEditor({
       <Text variant="muted" role="status" className="min-h-6">
         {status}
       </Text>
-      <article aria-label={messages.previewLabel} className="max-w-prose min-w-0 border-t border-border pt-4">
+      <article aria-label={messages.previewLabel} className="max-w-prose content-shrink border-t border-border pt-4">
         <Heading level={4}>{story.headline}</Heading>
         <Text variant="muted" className="mt-2 text-pretty">
           {story.standfirst}
@@ -138,14 +138,14 @@ export function EditorialSpecimen({ className, messages = specimenMessagesEn.edi
   const story = stories.find((item) => item.id === selectedId) ?? stories[0]!;
 
   return (
-    <Stack gap={4} className={`min-w-0 ${className ?? ""}`} data-slot="editorial-specimen" data-specimen-domain="editorial">
+    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="editorial-specimen" data-specimen-domain="editorial">
       <Stack gap={1}>
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </Stack>
-      <Card className="min-w-0">
+      <Card className="content-shrink">
         <CardContent className="pt-4">
-          <Stack gap={4} className="min-w-0">
+          <Stack gap={4} className="content-shrink">
             <EditorialStoryQueue
               messages={messages}
               stories={stories}

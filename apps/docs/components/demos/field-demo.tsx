@@ -28,7 +28,7 @@ export function FieldDemo() {
   return (
     <form
       noValidate
-      className="min-w-0"
+      className="content-shrink"
       onSubmit={(event) => {
         event.preventDefault();
         setSubmitted(true);

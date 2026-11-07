@@ -70,7 +70,7 @@ function PromptInputActions({
         disabled={sendDisabled}
         aria-busy={busy || undefined}
       >
-        <ArrowUp aria-hidden="true" className="size-4" />
+        <ArrowUp aria-hidden="true" className="size-icon" />
       </IconButton>
     </>
   );
@@ -125,7 +125,7 @@ export function PromptInput({
         disabled={disabled}
         readOnly={busy}
         className={cn(
-          "field-sizing-content min-h-textarea-min-height w-full min-w-0 resize-none overflow-y-auto border-0 bg-transparent py-2 pl-3 text-control shadow-none placeholder:text-muted-foreground",
+          "field-sizing-content min-h-textarea-min-height w-full content-shrink resize-none overflow-y-auto border-0 bg-transparent py-control-block-lg pl-control-inline text-control shadow-none placeholder:text-muted-foreground",
           "disabled:cursor-not-allowed disabled:opacity-50",
           promptInputMaxHeightClass(maxRows),
           promptInputFieldPadding(showCancel),

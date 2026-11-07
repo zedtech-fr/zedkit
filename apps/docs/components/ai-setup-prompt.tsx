@@ -44,7 +44,7 @@ function CopyPromptButton({ text }: { text: string }) {
         aria-label={label}
         onClick={copy}
       >
-        {state === "copied" ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />}
+        {state === "copied" ? <Check className="size-icon" aria-hidden /> : <Copy className="size-icon" aria-hidden />}
       </Button>
       <Text as="span" role="status" className="sr-only">
         {state === "copied" ? adoptionCopy.copied : state === "failed" ? adoptionCopy.copyFailed : ""}
@@ -61,23 +61,23 @@ export function AiSetupPrompt() {
       className={
         // not-prose is a fumadocs escape hatch, not a Tailwind utility.
         // eslint-disable-next-line better-tailwindcss/no-unknown-classes
-        "not-prose rounded-lg border border-border bg-muted/40 p-4"
+        "not-prose rounded-lg border border-border bg-muted/40 surface-pad-md"
       }
     >
-      <Text as="p" variant="muted" className="m-0">
+      <Text as="p" variant="muted" className="trim-margin">
         Paste this as the only message in a new chat at the repo root (Cursor, Muse, Claude Code, or your tool — agents should fetch{" "}
         <a href={AI_SETUP_LLMS_URL} className="underline underline-offset-2">
           {AI_SETUP_LLMS_URL}
         </a>
         ):
       </Text>
-      <Stack gap={2} className="min-w-0 sm:flex-row sm:items-start sm:justify-between">
-        <pre className="min-w-0 flex-1 overflow-x-auto rounded-md bg-background px-3 py-2 font-mono text-sm break-words whitespace-pre-wrap">
+      <Stack gap={2} className="content-shrink sm:flex-row sm:items-start sm:justify-between">
+        <pre className="content-shrink flex-1 overflow-x-auto rounded-md bg-background px-3 py-2 font-mono text-sm break-words whitespace-pre-wrap">
           {AI_SETUP_MINI_PROMPT}
         </pre>
         <CopyPromptButton text={AI_SETUP_MINI_PROMPT} />
       </Stack>
-      <Text as="p" variant="muted" className="m-0">
+      <Text as="p" variant="muted" className="trim-margin">
         Full walkthrough:{" "}
         <a href={AI_SETUP_DOCS_PATH} className="underline underline-offset-2">
           {AI_SETUP_DOCS_PATH}

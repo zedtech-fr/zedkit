@@ -6,7 +6,7 @@ import type { BookingComposition } from "@/components/i18n/identity-specimen-com
 export function BookingScreen({ copy }: { copy: BookingComposition }) {
   return (
     <Stack gap={3}>
-      <Heading level={4} typeRole="cardTitle" className="border-b border-border pb-2">
+      <Heading level={4} typeRole="cardTitle" className="border-b border-border rule-gap">
         {copy.brand}
       </Heading>
       <Stack direction="horizontal" gap={3} className="items-baseline justify-between">
@@ -26,7 +26,7 @@ export function BookingScreen({ copy }: { copy: BookingComposition }) {
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.dayLabel}
         </Text>
-        <ul className="m-0 grid list-none grid-cols-4 gap-2 p-0">
+        <ul className="trim-margin grid list-none grid-cols-4 gap-stack-sm flush">
           {copy.slots.map((slot) => (
             <li key={slot}>
               <Button
@@ -44,7 +44,7 @@ export function BookingScreen({ copy }: { copy: BookingComposition }) {
       <Button size="sm" tabIndex={-1} className="w-full">
         {copy.primary}
       </Button>
-      <Text typeRole="small" className="m-0 text-muted-foreground">
+      <Text typeRole="small" className="trim-margin text-muted-foreground">
         {copy.reassurance}
       </Text>
     </Stack>

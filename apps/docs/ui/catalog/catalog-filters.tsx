@@ -26,7 +26,7 @@ function CatalogSearchField({
   onFilters: (next: { q?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="min-w-0 flex-1">
+    <Stack gap={1} className="content-shrink flex-1">
       <Label htmlFor="catalog-search">{catalogCopy.filters.searchLabel}</Label>
       <Input
         id="catalog-search"
@@ -175,7 +175,7 @@ export function CatalogFiltersToolbar({
 
   return (
     <Stack gap={3} data-catalog-toolbar="" aria-label={catalogCopy.filters.toolbarAriaLabel}>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end" data-catalog-filter-row="">
+      <div className="flex flex-col gap-stack-md sm:flex-row sm:items-end" data-catalog-filter-row="">
         <CatalogSearchField q={q} onFilters={onFilters} />
         <CatalogAreaSelect area={area} onFilters={onFilters} />
         <CatalogMaturitySelect status={status} statuses={statuses} onFilters={onFilters} />

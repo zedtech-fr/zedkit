@@ -21,14 +21,18 @@ Rules:
 - `cn()` every `className` prop (conflicts resolve last-wins).
 - `.dark`-class theming only; new tokens go in `src/styles.css`
   in both `:root` and `.dark`.
-- Spacing (#367): one canonical name per value. Shared values use the
-  Tailwind scale (`p-4`, `gap-2`, `size-4`). Semantic `--spacing-*`
-  duplicates stay as deprecated aliases (do not delete). Map:
-  `scripts/registry/spacing-aliases.json`. New shared sizes that should
-  follow identity `--spacing` use `--zk-gap-sm|md|lg`, `--zk-icon-size`,
-  `--zk-control-height` (`calc` from `--spacing`; mist matches today's rem).
-  `--spacing-control-height*` and `--spacing-control-block*` follow those
-  calcs. Leftover rem aliases stay until later #798 migrations.
+- Spacing: a class names a role or a layout job (`px-field-pad`,
+  `px-button-pad`, `gap-stack-sm` for a stack, `content-shrink`). Do not
+  spell a number (`min-w-zero`) and do not add a token per scale step.
+  Shared design values use `calc(var(--spacing) * N)`. A structural
+  constraint (`min-width: 0`, pinning to an edge) is a declaration on that
+  layout class, not a spacing token. Inside an identity, `text-sm` is 13px
+  with a line about 18.6px. `text-zk-type-small` is the same size and a
+  19.5px line. Do not swap them. `Stack` accepts `sm` | `md` | `lg`;
+  the other numeric gap props stay until a major. The shipped rule is
+  `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
+  44px, stricter than the kit's 24px floor. `min-h-target` follows
+  `--spacing` and floors at 44px on a coarse pointer or a narrow screen.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).

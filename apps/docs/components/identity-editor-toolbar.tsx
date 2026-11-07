@@ -34,7 +34,7 @@ function LookSelect({
       </FieldLabel>
       <select
         id="identity-editor-look"
-        className="h-control-height w-full rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
+        className="h-control-height w-full rounded-md border border-input bg-background px-field-pad text-control text-foreground focus-ring-control"
         value={identity}
         onChange={(event) => onIdentity(event.target.value)}
       >
@@ -87,7 +87,7 @@ function IdentityEditorPreviewBar({
       role="group"
       aria-label={copy.groups.preview}
       data-slot="identity-editor-toolbar"
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
     >
       <Row>
         <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
@@ -257,7 +257,7 @@ function IdentityEditorKeepBar({
       gap={2}
       role="group"
       aria-labelledby={titleId}
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
       data-slot="identity-editor-keep"
     >
       <LibraryHeading id={titleId} problem={problem} />

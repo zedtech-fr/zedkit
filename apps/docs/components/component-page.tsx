@@ -104,13 +104,13 @@ export async function ComponentPage({
         <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
       </Stack>
 
-      <dl id="guidance" className="m-0 grid gap-x-6 gap-y-2 text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
-        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
-        <dd className="m-0 min-w-0">{audience}</dd>
-        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
-        <dd className="m-0 min-w-0">{whenToUse}</dd>
-        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
-        <dd className="m-0 min-w-0">{whenNotToUse}</dd>
+      <dl id="guidance" className="trim-margin grid gap-x-6 gap-y-2 text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
+        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
+        <dd className="trim-margin content-shrink">{audience}</dd>
+        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
+        <dd className="trim-margin content-shrink">{whenToUse}</dd>
+        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
+        <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
       </dl>
 
       <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-3">

@@ -29,17 +29,17 @@ const toNumber = (value: string) => Math.max(0, Number.parseInt(value, 10) || 0)
 /** One piece: a pressed card picks it, the badge says how much is left. */
 function ProductCard({ product, selected, onSelect }: { product: Product; selected: boolean; onSelect: () => void }) {
   return (
-    <li className="grid min-w-0">
+    <li className="grid content-shrink">
       <Button
         type="button"
         variant="outline"
         aria-pressed={selected}
-        className="h-auto! min-h-11 w-full flex-col items-start justify-start gap-2 p-4 text-left font-normal whitespace-normal"
+        className="h-auto! min-h-target w-full flex-col items-start justify-start gap-stack-sm surface-pad-md text-left font-normal whitespace-normal"
         onClick={onSelect}
       >
         <span className="font-(family-name:--zk-font-display) text-xl">{product.name}</span>
         <span className="text-sm text-muted-foreground">{product.material}</span>
-        <span className="flex w-full flex-wrap items-center justify-between gap-2">
+        <span className="flex w-full flex-wrap items-center justify-between gap-stack-sm">
           <span className="tabular-nums">{formatEur(product.price)}</span>
           <Badge variant={product.stock <= LOW_STOCK ? "warning" : "secondary"}>
             {product.stock <= LOW_STOCK ? copy.lowStock(product.stock) : copy.inStock(product.stock)}
@@ -58,20 +58,20 @@ function ProductEditor({ product, onSave }: { product: Product; onSave: (next: P
   const visibleId = useId();
   const [draft, setDraft] = useState(product);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
         {product.name}
       </Heading>
-      <Stack gap={3} className="min-w-0 sm:flex-row sm:flex-wrap sm:items-end">
-        <Stack gap={1} className="min-w-0 flex-1 basis-full sm:basis-32">
+      <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
+        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-32">
           <Label htmlFor={priceId}>{copy.priceLabel}</Label>
           <Input id={priceId} inputMode="numeric" value={draft.price} onChange={(event) => setDraft({ ...draft, price: toNumber(event.target.value) })} />
         </Stack>
-        <Stack gap={1} className="min-w-0 flex-1 basis-full sm:basis-32">
+        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-32">
           <Label htmlFor={stockId}>{copy.stockLabel}</Label>
           <Input id={stockId} inputMode="numeric" value={draft.stock} onChange={(event) => setDraft({ ...draft, stock: toNumber(event.target.value) })} />
         </Stack>
-        <Stack direction="horizontal" gap={2} className="min-h-11 items-center">
+        <Stack direction="horizontal" gap={2} className="min-h-target items-center">
           <Switch id={visibleId} checked={draft.visible} onCheckedChange={(visible) => setDraft({ ...draft, visible })} />
           <Label htmlFor={visibleId}>{copy.visibleLabel}</Label>
         </Stack>
@@ -91,14 +91,14 @@ export function HomeIdentityExampleMaison() {
   const low = products.find((item) => item.stock <= LOW_STOCK);
 
   return (
-    <Stack gap={5} className="min-w-0">
+    <Stack gap={5} className="content-shrink">
       <Stack gap={1}>
         <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
           {copy.heading}
         </Heading>
         <Text variant="muted">{copy.description}</Text>
       </Stack>
-      <ul aria-label={copy.listAriaLabel} className="m-0 grid list-none gap-3 p-0 sm:grid-cols-3">
+      <ul aria-label={copy.listAriaLabel} className="trim-margin grid list-none gap-stack-md flush sm:grid-cols-3">
         {products.map((item) => (
           <ProductCard
             key={item.id}
@@ -111,7 +111,7 @@ export function HomeIdentityExampleMaison() {
           />
         ))}
       </ul>
-      <Card className="min-w-0">
+      <Card className="content-shrink">
         <CardContent className="pt-4">
           <ProductEditor
             key={product.id}

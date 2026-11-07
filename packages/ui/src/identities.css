@@ -343,7 +343,7 @@
   --warning-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 60%;
-  --input: 240 5.9% 90%;
+  --input: 240 5.9% 57%;
   --ring: 240 4% 46%;
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.9% 10%;
@@ -455,7 +455,7 @@
   --warning-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 37.9%;
-  --input: 240 3.7% 15.9%;
+  --input: 240 3.7% 46%;
   --ring: 240 4.9% 83.9%;
   --sidebar: 240 10% 3.9%;
   --sidebar-foreground: 0 0% 98%;

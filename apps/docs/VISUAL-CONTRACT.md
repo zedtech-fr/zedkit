@@ -47,7 +47,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 | Code | Mono family of the identity, 13/21 in blocks, inline code follows its sentence. |
 | Dense looks | Density is rhythm (row height, gaps, rules), not smaller type. Volt's activity rows are 13px: the event is what a person reads to act. Only the timestamp column may be metadata. Decision, 2 Nov 2026: the 13px floor wins over a 12px mono row. |
 | Widths | Marketing 1200 max. Docs shell 1440 max, nav 240, article 720-800, TOC 180 only if it fits. |
-| Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. |
+| Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. Class names are roles; the numbers stay in the token values (`packages/ai/kit/skills/setup-ai/design-policy.md`). |
 | Gutters | 16 mobile, 24 tablet, 32 desktop. |
 
 ## Surfaces, borders, elevation
@@ -101,7 +101,7 @@ Recompose (change the order or the arrangement, not the tokens) when any of thes
 
 These broke real previews. Check them before changing home, chrome, specimens or overlays.
 
-- **Frame vs content height.** `min-h-svh` / `min-h-screen` inside a bounded preview (hero card, 40rem stage) leaves empty chrome. The frame owns height; the specimen is `h-full min-h-0`.
+- **Frame vs content height.** `min-h-svh` / `min-h-screen` inside a bounded preview (hero card, 40rem stage) leaves empty chrome. The frame owns height; the specimen is `h-full pane-shrink`.
 - **Identity `--spacing` scales `w-*` / `p-*` / `gap-*`.** A `w-48` sidebar in Tide is not 12rem. Pin chrome that must stay compact, and look at Tide before calling a layout done.
 - **Calendar is `role="grid"`.** Do not paint `tbody tr:hover` on it; hover `.rdp-day`.
 - **Fixed containing blocks.** A running animation of `transform`, `translate`, `scale`, `rotate` (even to `none`), a `filter` or `will-change` on an ancestor makes it the containing block of its `position: fixed` descendants: a toast or a floating bar inside is laid out against that ancestor, not the viewport, and can sit on the controls it reports on. Animate opacity, or keep fixed content out of the animated subtree. Check with a real toast at 1280x720.

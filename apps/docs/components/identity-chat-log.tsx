@@ -50,7 +50,7 @@ export function ChatLog({
     end.current?.scrollIntoView({ block: "nearest" });
   }, [messages.length, pending]);
   return (
-    <ol aria-label={copy.thread} className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-log="">
+    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-log="">
       {messages.map((message, index) => {
         const user = message.role === "user";
         const text = message.role === "notice" ? noticeText(message.notice) : message.text;
@@ -60,7 +60,7 @@ export function ChatLog({
             data-role={message.role}
             {...(message.role === "notice" && !noticeInComposerFooter ? { "data-assistant-notice": "" } : {})}
             className={cn(
-              "flex max-w-[90%] flex-col gap-1 rounded-2xl px-3 py-2 text-sm",
+              "flex max-w-[90%] flex-col gap-stack-tight rounded-2xl px-3 py-2 text-sm",
               user ? "self-end rounded-tr-sm bg-primary text-primary-foreground" : "self-start rounded-tl-sm border border-border bg-muted",
             )}
           >

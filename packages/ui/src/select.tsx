@@ -31,14 +31,14 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       className={cn(
-        "flex h-control-height w-full cursor-pointer items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-control whitespace-nowrap shadow-sm focus-ring-control group-data-[invalid=true]/field:border-destructive disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-destructive data-[placeholder]:text-muted-foreground [&>span]:line-clamp-1",
+        "flex h-control-height w-full cursor-pointer items-center justify-between rounded-md border border-input bg-transparent px-field-pad py-control-block-lg text-control whitespace-nowrap shadow-sm focus-ring-control group-data-[invalid=true]/field:border-destructive disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-destructive data-[placeholder]:text-muted-foreground [&>span]:line-clamp-1",
         className,
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="size-4 opacity-50" />
+        <ChevronDown className="size-icon opacity-50" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -54,7 +54,7 @@ function SelectScrollUpButton({
       className={cn("flex cursor-default items-center justify-center py-control-block", className)}
       {...props}
     >
-      <ChevronUp className="size-4" />
+      <ChevronUp className="size-icon" />
     </SelectPrimitive.ScrollUpButton>
   );
 }
@@ -69,7 +69,7 @@ function SelectScrollDownButton({
       className={cn("flex cursor-default items-center justify-center py-control-block", className)}
       {...props}
     >
-      <ChevronDown className="size-4" />
+      <ChevronDown className="size-icon" />
     </SelectPrimitive.ScrollDownButton>
   );
 }
@@ -121,7 +121,7 @@ function SelectLabel({ className, ...props }: React.ComponentProps<typeof Select
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
-      className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+      className={cn("px-select-item-inline py-select-item-block text-sm font-semibold", className)}
       {...props}
     />
   );
@@ -132,14 +132,14 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center rounded-sm py-1.5 pr-select-item-indicator-gap pl-2 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+        "relative flex w-full cursor-pointer items-center rounded-sm py-select-item-block pr-select-item-indicator-gap pl-select-item-inline text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         className,
       )}
       {...props}
     >
-      <span className="absolute right-2 flex size-icon-sm items-center justify-center">
+      <span className="absolute right-select-item-inline flex size-icon-sm items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check className="size-icon" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

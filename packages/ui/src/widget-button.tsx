@@ -18,7 +18,7 @@ function WidgetButton({ className, variant: _variant, size, ...props }: WidgetBu
       size={size}
       className={cn(
         surfaceVariants({ variant: "solid", elevation: 2, radius: "full", padding: "none" }),
-        "w-auto max-w-full justify-between gap-2 px-4",
+        "w-auto max-w-full justify-between gap-button-gap px-button-pad",
         className,
       )}
       {...props}

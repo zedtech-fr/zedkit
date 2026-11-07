@@ -16,7 +16,7 @@ export function InheritedPropsPanel({
 }) {
   return (
     <details className="group rounded-md border border-border/40 open:border-border/60">
-      <summary className="min-h-[max(2.75rem,44px)] cursor-pointer list-none px-3 py-2 text-sm font-medium text-foreground focus-ring-control [&::-webkit-details-marker]:hidden">
+      <summary className="min-h-[max(2.75rem,44px)] cursor-pointer list-none px-control-inline py-control-block-lg text-sm font-medium text-foreground focus-ring-control [&::-webkit-details-marker]:hidden">
         <Text as="span" className="text-muted-foreground group-open:hidden">
           {inheritedPropsCopy.show(summary)}
         </Text>
