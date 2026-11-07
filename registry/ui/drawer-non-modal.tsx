@@ -122,7 +122,7 @@ function NonModalDrawerTitle({
     <h2
       data-slot="drawer-title"
       id={titleId}
-      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
+      className={cn("text-overlay-title", className)}
       {...props}
     >
       {children}
