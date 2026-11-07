@@ -420,7 +420,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - Examples: Horizontal rule, Vertical divider
 - A11y: Decorative by default (`role="none"`); pass `decorative={false}` with an accessible name when it separates named regions. Line weight follows `--zk-border-width` (mist 1px).
 - Registry: separator
-- Troubleshooting: Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.
+- Troubleshooting: Vertical divider invisible — put it in a row with text (or anything that sets the row height). It stretches to that row. Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.
 
 ```ts
 import { Separator } from "@zedtech/zedkit-ui";
@@ -428,8 +428,12 @@ import { Separator } from "@zedtech/zedkit-ui";
 ```
 
 ```ts
-import { Separator } from "@zedtech/zedkit-ui";
-<Separator orientation="vertical" className="h-6" />
+import { Separator, Stack, Text } from "@zedtech/zedkit-ui";
+<Stack direction="horizontal" gap={3} className="items-center">
+  <Text>Orders</Text>
+  <Separator orientation="vertical" />
+  <Text>Customers</Text>
+</Stack>
 ```
 
 ## Show loading placeholder blocks
