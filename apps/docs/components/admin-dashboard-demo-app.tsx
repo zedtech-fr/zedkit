@@ -150,8 +150,8 @@ export function AdminDashboardDemoApp({
     onDelete: deleteApp,
   });
 
-  const toolbarPad = isHome ? "p-3" : "surface-pad-md";
-  const bodyPad = isHome ? "p-3 pt-0" : "surface-pad-md";
+  const toolbarPad = isHome ? "surface-pad-compact" : "surface-pad-md";
+  const bodyPad = isHome ? "surface-pad-compact trim-pad-top" : "surface-pad-md";
 
   return (
     <>
