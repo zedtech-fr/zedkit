@@ -53,7 +53,7 @@ export function OptionCard({
     <label
       data-slot="option-card"
       className={cn(
-        "flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
+        "flex cursor-pointer gap-option-card-gap rounded-lg border p-option-card-padding transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
         className,
       )}
     >
@@ -95,7 +95,7 @@ export function OptionCards({
   }
 
   return (
-    <div data-slot="option-cards" role={multiple ? "group" : "radiogroup"} aria-label={label ?? messages.options} className={cn("grid gap-3 sm:grid-cols-2", className)}>
+    <div data-slot="option-cards" role={multiple ? "group" : "radiogroup"} aria-label={label ?? messages.options} className={cn("grid gap-option-cards-gap sm:grid-cols-2", className)}>
       {options.map((option) => (
         <OptionCard
           key={option.id}
