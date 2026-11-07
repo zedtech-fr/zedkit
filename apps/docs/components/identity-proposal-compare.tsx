@@ -45,7 +45,7 @@ export function ProposalBeforeAfter({
         </Stack>
         <details open={!narrow} className="content-shrink text-zk-type-body">
           <summary className="flex min-h-target cursor-pointer items-center focus-ring lg:hidden">{copy.proposal.beforeLabel}</summary>
-          <Stack gap={2} className="pt-2 lg:pt-0">
+          <Stack gap={2} className="pt-2 lg:trim-pad-top">
             <Text typeRole="label" className="hidden text-foreground lg:block">
               {copy.proposal.beforeLabel}
             </Text>

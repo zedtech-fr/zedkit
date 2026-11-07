@@ -139,7 +139,7 @@ export function HomeThemePreview() {
   return (
     <Shell>
       <Card className="content-shrink shadow-none">
-        <CardHeader className="gap-stack-tight surface-pad-compact pb-0">
+        <CardHeader className="gap-stack-tight surface-pad-compact trim-pad-bottom">
           <CardDescription>{g.themeCard.description}</CardDescription>
           <CardTitle className="text-lg">{g.themeCard.title}</CardTitle>
         </CardHeader>

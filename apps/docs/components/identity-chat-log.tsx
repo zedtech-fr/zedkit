@@ -78,7 +78,7 @@ export function ChatLog({
         );
       })}
       {pending ? <PendingAssistant pending={pending} as="li" /> : null}
-      <li ref={end} aria-hidden="true" className="h-0" />
+      <li ref={end} aria-hidden="true" className="h-anchor" />
     </ol>
   );
 }

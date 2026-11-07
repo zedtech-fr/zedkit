@@ -125,7 +125,7 @@ const SECTIONS = [
 
 function GallerySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="space-y-stack-lg border-b pb-8 last:border-0">
+    <section id={id} className="space-y-stack-lg border-b pb-section last:border-0">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
       {children}
     </section>
@@ -156,7 +156,7 @@ export function Gallery() {
         title="UI gallery"
         description="Every component in every state. Static render for visual review; behavior is covered by unit tests."
       />
-      <div className="space-y-8">
+      <div className="space-y-sections">
         <GallerySection id="primitives" title="Primitives">
           <div className="flex flex-wrap gap-stack-sm">
             <Button>Default</Button>
@@ -255,7 +255,7 @@ export function Gallery() {
                     variant="ghost"
                     size="icon"
                     aria-label="Close details"
-                    className="absolute top-4 right-4"
+                    className="absolute top-float right-float"
                   >
                     <X className="size-icon" />
                   </Button>

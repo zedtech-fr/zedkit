@@ -42,7 +42,7 @@ function Visual({ id, children }: { id: string; children: React.ReactNode }) {
 
 function TaskRow({ name, owner, status }: { name: string; owner: string; status: SceneStatus }) {
   return (
-    <Stack direction="horizontal" gap={3} className="content-shrink items-center justify-between border-b border-border rule-gap last:border-b-0 last:pb-0">
+    <Stack direction="horizontal" gap={3} className="content-shrink items-center justify-between border-b border-border rule-gap last:border-b-0 last:trim-pad-bottom">
       <Stack gap={1} className="content-shrink">
         <Text className="trim-margin! truncate font-medium">{name}</Text>
         <Text variant="muted" className="trim-margin! truncate text-xs">

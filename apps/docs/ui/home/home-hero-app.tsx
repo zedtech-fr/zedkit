@@ -52,7 +52,7 @@ function Page({ id, page, children }: { id: HeroPageId; page: HeroPageId; childr
     <section
       data-hero-page={id}
       data-state={id === page ? "active" : "inactive"}
-      className="col-start-1 row-start-1 content-shrink data-[state=inactive]:invisible"
+      className="col-start-first row-start-first content-shrink data-[state=inactive]:invisible"
     >
       {children}
     </section>

@@ -22,6 +22,14 @@ describe("layout job classes", () => {
     expect(utility("flush")).toBe("padding: 0;");
     expect(utility("trim-bottom")).toBe("margin-bottom: 0;");
     expect(utility("trim-pad-top")).toBe("padding-top: 0;");
+    expect(utility("trim-pad-bottom")).toBe("padding-bottom: 0;");
+    expect(utility("px-flush")).toBe("padding-inline: 0;");
+    expect(utility("h-anchor")).toBe("height: 0;");
+    expect(utility("top-float")).toBe("top: calc(var(--spacing) * 4);");
+    expect(utility("mb-lead")).toBe("margin-bottom: calc(var(--spacing) * 6);");
+    expect(utility("my-table")).toBe("margin-block: calc(var(--spacing) * 4);");
+    expect(utility("pb-section")).toBe("padding-bottom: calc(var(--spacing) * 8);");
+    expect(css).toContain("@utility space-y-sections");
     expect(utility("icon-nudge")).toBe("margin-top: var(--spacing);");
     expect(utility("icon-nudge-sm")).toBe("margin-top: calc(var(--spacing) * 0.5);");
     expect(utility("gap-segment")).toBe("gap: calc(var(--spacing) * 0.5);");
@@ -67,6 +75,9 @@ describe("layout job classes", () => {
     expect(utility("mt-standfirst")).toBe("margin-top: calc(var(--spacing) * 2);");
     expect(utility("grid-pair")).toBe("grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(utility("grid-trio")).toBe("grid-template-columns: repeat(3, minmax(0, 1fr));");
+    expect(utility("grid-quad")).toBe("grid-template-columns: repeat(4, minmax(0, 1fr));");
+    expect(utility("col-start-first")).toBe("grid-column-start: 1;");
+    expect(utility("col-start-next")).toBe("grid-column-start: 2;");
     expect(utility("w-skeleton-short")).toBe("width: 66.666667%;");
     expect(utility("gap-stack-sm")).toBe("gap: var(--zk-gap-sm);");
     expect(utility("gap-section-stack")).toBe("gap: calc(var(--spacing) * 10);");
