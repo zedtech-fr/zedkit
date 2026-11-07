@@ -21,7 +21,7 @@ export function KitVersionLabel({
           v{version}
         </Text>
       ) : (
-        <Link href={releasesHref} target="_blank" rel="noreferrer" aria-label={label} className="inline-flex min-h-overlay-touch-target items-center px-1">
+        <Link href={releasesHref} target="_blank" rel="noreferrer" aria-label={label} className="inline-flex min-h-overlay-touch-target items-center px-touch">
           <Text variant="muted" className="font-mono text-sm">
             v{version}
           </Text>

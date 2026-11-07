@@ -88,7 +88,7 @@ function IdentityPicker({
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description ?? messages.identityDescription}</DrawerDescription>
         </DrawerHeader>
-        <div role="radiogroup" aria-label={title} className="flex flex-col gap-stack-tight overflow-y-auto px-drawer-chrome-padding pb-6">
+        <div role="radiogroup" aria-label={title} className="flex flex-col gap-stack-tight overflow-y-auto px-drawer-chrome-padding pb-sheet">
           {options.map((item) => {
             const selected = item.id === current;
             return (

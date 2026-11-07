@@ -55,7 +55,7 @@ function MarketingFooter({ brand, description, columns = [], legal, className, .
             {description ? <Text variant="muted">{description}</Text> : null}
           </div>
           {columns.length > 0 ? (
-            <div className="grid grid-pair gap-blocks sm:grid-trio md:col-span-2">
+            <div className="grid grid-pair gap-blocks sm:grid-trio md:span-rest">
               {columns.map((column, index) => (
                 <FooterColumn key={column.id ?? index} column={column} />
               ))}

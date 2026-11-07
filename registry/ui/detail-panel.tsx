@@ -26,7 +26,7 @@ export function DetailPanelRow({ label, value, className }: DetailPanelRowProps)
   return (
     <div data-slot="detail-panel-row" className={cn("grid grid-trio gap-detail-panel-gap px-detail-panel-inline py-detail-panel-block text-sm", className)}>
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="span-value content-shrink font-medium break-words">{value}</dd>
+      <dd className="span-rest content-shrink font-medium break-words">{value}</dd>
     </div>
   );
 }

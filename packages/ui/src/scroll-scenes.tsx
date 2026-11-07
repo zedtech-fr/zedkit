@@ -37,7 +37,7 @@ export function ScrollScenes({ scenes, className, ...props }: ScrollScenesProps)
             <div data-scroll-scene-caption="" className="content-shrink md:sticky md:top-24">
               {scene.caption}
             </div>
-            <div data-scroll-scene-visual="" className="content-shrink md:col-span-2">
+            <div data-scroll-scene-visual="" className="content-shrink md:span-rest">
               {scene.children}
             </div>
           </article>

@@ -99,7 +99,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
   const primary = sitePrimaryNavLinks(changelogHref);
 
   return (
-    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-stack-lg overflow-y-auto px-drawer-chrome-padding pt-2 pb-6">
+    <div data-shell-nav-drawer className="flex max-h-[min(85dvh,640px)] flex-col gap-stack-lg overflow-y-auto px-drawer-chrome-padding pt-2 pb-sheet">
       <div className="w-full [&_[data-search]]:w-full">
         <SiteFullSearchTrigger className="w-full max-w-none" />
       </div>
@@ -213,7 +213,7 @@ export function MobileHeader({
           <DocsAppLink
             href="/"
             aria-label="zedkit home"
-            className="inline-flex min-h-overlay-touch-target items-center rounded-md px-1 text-foreground focus-ring-control"
+            className="inline-flex min-h-overlay-touch-target items-center rounded-md px-touch text-foreground focus-ring-control"
           >
             <SiteBrand />
           </DocsAppLink>
