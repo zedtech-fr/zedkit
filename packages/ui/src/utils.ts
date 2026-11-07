@@ -11,7 +11,7 @@ const twMerge = extendTailwindMerge({
       "font-size": ["text-form-hint", "text-control"],
       "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }, "max-w-scope"],
       "min-w": ["content-shrink", "min-w-target", "min-w-name", "min-w-date"],
-      "min-h": ["pane-shrink", "min-h-target", "min-h-status", "min-h-label", "min-h-phone-bar", "min-h-bar", "min-h-hero", "min-h-aside", "min-h-segment", { "min-h": ["control-height", "textarea-min-height"] }],
+      "min-h": ["pane-shrink", "min-h-target", "min-h-floor", "min-h-status", "min-h-label", "min-h-phone-bar", "min-h-bar", "min-h-hero", "min-h-aside", "min-h-segment", { "min-h": ["control-height", "textarea-min-height"] }],
       inset: ["pin-fill"],
       "inset-x": ["pin-x"],
       "inset-y": ["pin-y", "inset-y-panel"],

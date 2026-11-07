@@ -51,6 +51,7 @@ describe("DataTable", () => {
     expect(filter?.className).not.toMatch(/(^|\s)max-w-sm(\s|$)/);
     const sortButton = screen.getByRole("button", { name: /Name/ });
     expect(sortButton.classList.contains("gap-data-table-sort-gap")).toBe(true);
+    expect(sortButton.classList.contains("min-h-floor")).toBe(true);
     expect(sortButton.className).not.toMatch(/(^|\s)gap-1(\s|$)/);
     expect(sortButton.querySelector("svg")?.classList.contains("size-icon-sm")).toBe(true);
     const pager = screen.getByText(/Page 1 of/).parentElement;
@@ -62,7 +63,7 @@ describe("DataTable", () => {
     const { container } = render(<DataTable columns={columns} data={data} loading />);
     const loading = container.querySelector('[data-slot="data-table-loading"]');
     const skeleton = loading?.querySelector(".motion-safe\\:animate-pulse");
-    expect(skeleton?.classList.contains("h-4")).toBe(true);
+    expect(skeleton?.classList.contains("h-skeleton-line")).toBe(true);
     expect(skeleton?.className).not.toContain("h-data-table-skeleton-height");
   });
 
