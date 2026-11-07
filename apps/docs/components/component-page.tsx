@@ -104,7 +104,7 @@ export async function ComponentPage({
         <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
       </Stack>
 
-      <dl id="guidance" className="trim-margin grid gap-x-6 gap-y-2 text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
+      <dl id="guidance" className="trim-margin grid gap-x-6 gap-y-stack-sm text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
         <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
         <dd className="trim-margin content-shrink">{audience}</dd>
         <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>

@@ -140,7 +140,7 @@ function Step({
 }) {
   const words = adoptionCopy.step(step.id, step.params ?? {}, mode.id);
   return (
-    <li className="grid content-shrink grid-cols-[1.75rem_minmax(0,1fr)] gap-x-2" data-adoption-step={step.id}>
+    <li className="grid content-shrink grid-cols-[1.75rem_minmax(0,1fr)] gap-x-stack-sm" data-adoption-step={step.id}>
       <Text as="span" aria-hidden className="pt-0.5 font-mono text-sm text-muted-foreground">
         {index + 1}
       </Text>
@@ -180,7 +180,7 @@ export function ModeView({
   const firstCommandStep = mode.steps.findIndex((step) => step.blocks.some((block) => block.kind === "command"));
   return (
     <Stack gap={6} data-adoption-mode={mode.id}>
-      <dl className={cn("trim-margin grid gap-x-6 gap-y-2 text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline", summaryClassName)}>
+      <dl className={cn("trim-margin grid gap-x-6 gap-y-stack-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline", summaryClassName)}>
         <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youGet}</dt>
         <dd className="trim-margin content-shrink">{adoptionCopy.gives[mode.gives]}</dd>
         <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youNeed}</dt>
