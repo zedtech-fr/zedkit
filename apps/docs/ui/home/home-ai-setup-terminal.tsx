@@ -46,7 +46,7 @@ export function HomeAiSetupTerminal({ className }: { className?: string | undefi
         aria-label={terminal.regionLabel}
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable region must take focus
         tabIndex={0}
-        className="trim-margin max-h-72 overflow-auto surface-pad-md font-mono text-zk-type-small whitespace-pre focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring lg:max-h-none"
+        className="trim-margin max-h-log overflow-auto surface-pad-md font-mono text-zk-type-small whitespace-pre focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring lg:max-h-none"
       >
         <code>
           <Prompt>{terminal.installCommand}</Prompt>

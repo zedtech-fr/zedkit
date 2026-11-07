@@ -178,7 +178,7 @@ export function ViewSwitch({
         {copy.views.preview}
         {waiting && view !== "preview" ? (
           <>
-            <Text as="span" aria-hidden="true" className="inline-block size-2 rounded-full bg-primary" />
+            <Text as="span" aria-hidden="true" className="inline-block size-status-dot rounded-full bg-primary" />
             <Text as="span" className="sr-only">
               {copy.views.waitingSuffix}
             </Text>
