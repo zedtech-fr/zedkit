@@ -1853,7 +1853,7 @@ import { ScrollGallery } from "@zedtech/zedkit-ui";
 import { StickyAside, Stack, Text } from "@zedtech/zedkit-ui";
 import { GlassSurface } from "@zedtech/zedkit-ui/marketing";
 
-<StickyAside side="right" ratio="1/3" className="[--zk-sticky-top:7rem]">
+<StickyAside side="right" ratio="1/3">
   <StickyAside.Main>
     <Stack gap={4}>{/* numbered steps */}</Stack>
   </StickyAside.Main>

@@ -5394,11 +5394,11 @@
           "whenToUse": "Long step lists beside a short preview, install instructions beside a rendered example, or any section where reading order is main then aside.",
           "whenNotToUse": "Pinning a single stage that crossfades through scenes — use `ScrollScenes`. A sticky bar that spans the whole viewport outside a section — use your shell header. Tall aside content without `scrollable` when you need the full block visible at once on small viewports — stack on mobile or shorten the aside.",
           "derivedFrom": null,
-          "example": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\" className=\"[--zk-sticky-top:7rem]\">\n  <StickyAside.Main>\n    <Stack gap={4}>{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>",
+          "example": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\">\n  <StickyAside.Main>\n    <Stack gap={4}>{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>",
           "examples": [
             {
               "title": "Get started steps with live preview",
-              "code": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\" className=\"[--zk-sticky-top:7rem]\">\n  <StickyAside.Main>\n    <Stack gap={4}>{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>"
+              "code": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\">\n  <StickyAside.Main>\n    <Stack gap={4}>{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>"
             },
             {
               "title": "Doc page with summary card",
