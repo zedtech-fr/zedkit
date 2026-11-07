@@ -63,11 +63,11 @@ function ProductEditor({ product, onSave }: { product: Product; onSave: (next: P
         {product.name}
       </Heading>
       <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
-        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-32">
+        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-number">
           <Label htmlFor={priceId}>{copy.priceLabel}</Label>
           <Input id={priceId} inputMode="numeric" value={draft.price} onChange={(event) => setDraft({ ...draft, price: toNumber(event.target.value) })} />
         </Stack>
-        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-32">
+        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-number">
           <Label htmlFor={stockId}>{copy.stockLabel}</Label>
           <Input id={stockId} inputMode="numeric" value={draft.stock} onChange={(event) => setDraft({ ...draft, stock: toNumber(event.target.value) })} />
         </Stack>

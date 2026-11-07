@@ -1,10 +1,9 @@
 {
   "version": 1,
-  "total": 477,
+  "total": 472,
   "files": {
     "apps/docs/app/(site)/features/identity-editor/page.tsx": 1,
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
-    "apps/docs/components/admin-dashboard-demo-drawer-fields.tsx": 1,
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-panel.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 7,
@@ -48,10 +47,9 @@
     "apps/docs/components/docs-prose-table.tsx": 1,
     "apps/docs/components/hero-demo-style-fields.tsx": 3,
     "apps/docs/components/identity-assistant-parts.tsx": 2,
-    "apps/docs/components/identity-assistant.tsx": 1,
     "apps/docs/components/identity-chat-log.tsx": 5,
     "apps/docs/components/identity-detected-links.tsx": 2,
-    "apps/docs/components/identity-dock-assistant-panel.tsx": 2,
+    "apps/docs/components/identity-dock-assistant-panel.tsx": 1,
     "apps/docs/components/identity-dock-chrome.tsx": 3,
     "apps/docs/components/identity-dock-export-block.tsx": 1,
     "apps/docs/components/identity-dock-export-copy-row.tsx": 4,
@@ -70,10 +68,9 @@
     "apps/docs/prose/guides/snippets/admin-dashboard-page.tsx": 3,
     "apps/docs/ui/catalog/catalog-filters.tsx": 3,
     "apps/docs/ui/catalog/catalog-results.tsx": 6,
-    "apps/docs/ui/catalog/catalog-view.tsx": 1,
     "apps/docs/ui/home/home-ai-setup-section.tsx": 1,
     "apps/docs/ui/home/home-ai-setup-terminal.tsx": 1,
-    "apps/docs/ui/home/home-component-families-section.tsx": 3,
+    "apps/docs/ui/home/home-component-families-section.tsx": 2,
     "apps/docs/ui/home/home-gallery-preview.tsx": 3,
     "apps/docs/ui/home/home-hero-agent-panel.tsx": 6,
     "apps/docs/ui/home/home-hero-app.tsx": 4,
@@ -85,8 +82,7 @@
     "apps/docs/ui/home/home-hero-settings.tsx": 1,
     "apps/docs/ui/home/home-hero-shell-parts.tsx": 7,
     "apps/docs/ui/home/home-hero-team.tsx": 3,
-    "apps/docs/ui/home/home-identity-example-maison.tsx": 7,
-    "apps/docs/ui/home/home-identity-example-mist-controls.tsx": 2,
+    "apps/docs/ui/home/home-identity-example-maison.tsx": 5,
     "apps/docs/ui/home/home-identity-example-mist.tsx": 1,
     "apps/docs/ui/home/home-identity-example-press.tsx": 5,
     "apps/docs/ui/home/home-identity-looks-swatches.tsx": 1,
@@ -164,6 +160,6 @@
     "packages/ui/tests/unit/scroll-scenes.test.tsx": 2,
     "packages/ui/tests/unit/specimens.test.tsx": 1,
     "packages/ui/tests/unit/sticky-aside.test.tsx": 1,
-    "packages/ui/tests/unit/utils.test.ts": 52
+    "packages/ui/tests/unit/utils.test.ts": 56
   }
 }

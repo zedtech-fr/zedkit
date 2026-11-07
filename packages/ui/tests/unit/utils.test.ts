@@ -76,6 +76,10 @@ describe("cn", () => {
     expect(cn("row-start-1", "row-start-first")).toBe("row-start-first");
     expect(cn("px-3", "px-control-inline")).toBe("px-control-inline");
     expect(cn("py-1.5", "py-select-item-block")).toBe("py-select-item-block");
+    expect(cn("py-4", "py-row")).toBe("py-row");
+    expect(cn("pt-3", "pt-start")).toBe("pt-start");
+    expect(cn("basis-32", "basis-number")).toBe("basis-number");
+    expect(cn("basis-40", "basis-text")).toBe("basis-text");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });
