@@ -24,6 +24,7 @@ const twMerge = extendTailwindMerge({
       mt: ["trim-top"],
       gap: [{ gap: ["stack-sm", "stack-md", "stack-lg"] }],
       "space-y": [{ "space-y": ["stack-lg"] }],
+      h: ["h-control-height", "h-control-height-sm", "h-control-height-lg"],
       size: [{ size: ["icon"] }],
       px: ["px-page-gutter", "px-field-pad", "px-button-pad", "px-button-pad-lg"],
       py: ["flush-block", "py-control-block", "py-control-block-lg", "py-section-sm", "py-section-md", "py-section-lg", "py-section-xl"],
