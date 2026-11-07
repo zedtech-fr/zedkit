@@ -34,9 +34,8 @@ export function llmsFullDocumentationIndexBody(text) {
   const marker = "# Documentation index";
   const start = text.indexOf(marker);
   if (start === -1) return null;
-  const after = text.slice(start + marker.length);
-  const next = after.search(/\n# /);
-  return (next === -1 ? after : after.slice(0, next)).trim();
+  // Last buildLlmsFull section; inner lines may use `#` / `##` (catalog index).
+  return text.slice(start + marker.length).trim();
 }
 
 export function checkRobots(text, base) {

@@ -124,7 +124,7 @@ test("checkLlmsFull accepts buildLlmsFull sections", () => {
   assert.match(llmsFullDocumentationIndexBody(body) ?? "", /^- \[/m);
   assert.deepEqual(
     checkLlmsFull(
-      ["# Install or copy", "", LLMS_FULL_SCOPE_LINE, "", "# Set up zedkit AI", "", "x", "", "# Documentation index", "", "(empty)", "", "# Other", "", "- [Elsewhere](https://zedkit.app/catalog)"].join(
+      ["# Install or copy", "", LLMS_FULL_SCOPE_LINE, "", "# Set up zedkit AI", "", "x", "", "# Documentation index", "", "(empty index, no links)"].join(
         "\n",
       ),
     ),
