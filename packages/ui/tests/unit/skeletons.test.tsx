@@ -23,8 +23,9 @@ describe("skeletons", () => {
     expect(root.className).toContain("mb-page-header-offset");
     expect(root.className).toContain("gap-page-header-title-gap");
     expect(root.className).not.toMatch(/(^|\s)mb-6(\s|$)/);
-    expect(root.querySelector(".gap-2")).not.toBeNull();
-    expect(root.innerHTML).not.toContain("gap-page-header-actions-gap");
+    expect(root.querySelector(".gap-page-header-gap")).not.toBeNull();
+    expect(root.querySelector(".gap-page-header-actions-gap")).not.toBeNull();
+    expect(root.innerHTML).not.toContain("gap-2");
   });
 
   it("shares the card spacing tokens so content lands without shifting", () => {
@@ -34,8 +35,8 @@ describe("skeletons", () => {
     expect(zone.className).toContain("shadow-md");
     expect(zone.className).not.toMatch(/(^|\s)shadow(\s|$)/);
     expect(zone.querySelector(".space-y-card-stack")).not.toBeNull();
-    expect(zone.querySelector(".mt-4.space-y-2")).not.toBeNull();
-    expect(zone.innerHTML).not.toContain("space-y-card-lines");
+    expect(zone.querySelector(".mt-card-section.space-y-card-lines")).not.toBeNull();
+    expect(zone.innerHTML).not.toContain("space-y-2");
   });
 
   it("sizes the table skeleton to its columns and rows", () => {

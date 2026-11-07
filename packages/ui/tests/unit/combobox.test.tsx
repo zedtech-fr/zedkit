@@ -62,15 +62,15 @@ describe("Combobox", () => {
     await user.click(screen.getByRole("combobox", { name: "Pick letter" }));
     await user.keyboard("{ArrowDown}");
     const option = await screen.findByRole("option", { name: "Alpha" });
-    expect(option.className).toContain("px-3");
-    expect(option.className).not.toContain("px-control-inline");
+    expect(option.className).toContain("px-control-inline");
+    expect(option.className).not.toContain("px-3");
   });
 
   it("places the toggle from the Tailwind scale", () => {
     render(wrap(<Combobox options={OPTIONS} aria-label="Pick letter" />));
     const toggle = screen.getByRole("button", { name: "Options" });
-    expect(toggle.className).toContain("right-3");
-    expect(toggle.className).not.toContain("right-control-inline");
+    expect(toggle.className).toContain("right-control-inline");
+    expect(toggle.className).not.toContain("right-3");
   });
 
   it("has no axe violations when open", async () => {
@@ -97,15 +97,15 @@ describe("MultiSelect", () => {
     await user.click(screen.getByRole("combobox", { name: "Tags" }));
     await user.keyboard("{ArrowDown}");
     const option = await screen.findByRole("option", { name: "Alpha" });
-    expect(option.className).toContain("px-3");
-    expect(option.className).not.toContain("px-control-inline");
+    expect(option.className).toContain("px-control-inline");
+    expect(option.className).not.toContain("px-3");
   });
 
   it("places the toggle from the Tailwind scale", () => {
     render(wrap(<MultiSelect options={OPTIONS} aria-label="Tags" />));
     const toggle = screen.getByRole("button", { name: "Options" });
-    expect(toggle.className).toContain("right-3");
-    expect(toggle.className).not.toContain("right-control-inline");
+    expect(toggle.className).toContain("right-control-inline");
+    expect(toggle.className).not.toContain("right-3");
   });
 
   it("has no axe violations with one chip", async () => {

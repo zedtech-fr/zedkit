@@ -32,18 +32,16 @@
     ]
   },
   {
-    "canonical": "2",
+    "canonical": "--spacing-card-stack",
     "value": "0.5rem",
     "tokens": [
-      "--spacing-card-stack",
-      "--spacing-card-lines"
+      "--spacing-card-stack"
     ]
   },
   {
-    "canonical": "3",
+    "canonical": "--spacing-page-header-back-gap",
     "value": "0.75rem",
     "tokens": [
-      "--spacing-control-inline",
       "--spacing-page-header-back-gap"
     ]
   },
@@ -52,11 +50,9 @@
     "value": "1rem",
     "tokens": [
       "--spacing-button-inline",
-      "--spacing-card-section",
       "--spacing-checkmark",
       "--spacing-data-table-skeleton-height",
       "--spacing-dialog-gap",
-      "--spacing-field-label-inset",
       "--spacing-icon-control",
       "--spacing-overlay-close-offset",
       "--spacing-switch-thumb",
@@ -720,6 +716,34 @@
     "value": "calc(var(--spacing) * 2)",
     "tokens": [
       "--spacing-drawer-footer-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-control-inline",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": [
+      "--spacing-control-inline"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-label-inset",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": [
+      "--spacing-field-label-inset"
+    ]
+  },
+  {
+    "canonical": "--spacing-card-section",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": [
+      "--spacing-card-section"
+    ]
+  },
+  {
+    "canonical": "--spacing-card-lines",
+    "value": "calc(var(--spacing) * 2)",
+    "tokens": [
+      "--spacing-card-lines"
     ]
   }
 ]
