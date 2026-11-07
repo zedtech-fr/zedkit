@@ -169,7 +169,7 @@ describe("FeatureGrid", () => {
 
   it("picks the column count and handles an empty list", () => {
     const { container, rerender } = render(<FeatureGrid title="T" features={[]} columns={4} />);
-    expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-4");
+    expect(container.querySelector("ul")?.className).toContain("lg:grid-quad");
     expect(container.querySelectorAll("li")).toHaveLength(0);
     rerender(<FeatureGrid title="T" features={[]} />);
     expect(container.querySelector("ul")?.className).toContain("lg:grid-trio");

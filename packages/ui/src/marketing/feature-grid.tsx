@@ -28,7 +28,7 @@ export type FeatureGridProps = Omit<React.ComponentProps<"section">, "title"> & 
 const columnClass = {
   2: "lg:grid-pair",
   3: "lg:grid-trio",
-  4: "lg:grid-cols-4",
+  4: "lg:grid-quad",
 } as const;
 
 /** A titled grid of short benefits, each on its own glass surface. */
