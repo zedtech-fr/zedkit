@@ -5,9 +5,9 @@ export function SeparatorVerticalDemo() {
   return (
     <Stack direction="horizontal" gap={3} className="h-6 items-center">
       <Text>{separatorCopy.orders}</Text>
-      <Separator orientation="vertical" className="h-6" />
+      <Separator orientation="vertical" />
       <Text>{separatorCopy.customers}</Text>
-      <Separator orientation="vertical" className="h-6" />
+      <Separator orientation="vertical" />
       <Text>{separatorCopy.reports}</Text>
     </Stack>
   );
