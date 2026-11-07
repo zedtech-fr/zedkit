@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container, Separator, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
 
-const linkClassName = "rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-ring";
+const linkClassName = "inline-flex min-h-floor items-center rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-ring";
 
 /** Discreet maintainer block — same on home, docs, and 404. */
 export function SiteMaintainerFooter({
