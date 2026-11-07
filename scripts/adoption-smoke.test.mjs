@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 import { commandsFromPlan, shownInstallCommands } from "../apps/docs/lib/adoption-shown-commands.mjs";
-import { CASES, isSiteRegistryToken, localizeCommand, packedTarball, pinVersion, runLocalized } from "./adoption-smoke.mjs";
+import { CASES, isSiteRegistryToken, localizeCommand, packedTarball, pinVersion, runLocalized, smokePort } from "./adoption-smoke.mjs";
 
 const MARKER = "pwned-adoption-smoke";
 const HOSTILE = `reg with spaces'" ; touch ${MARKER}; echo $(touch ${MARKER}-cmd)`;
@@ -24,6 +24,11 @@ function assertNoInjection(parent) {
 function scratch() {
   return mkdtempSync(join(tmpdir(), "zk-adoption-cmd-"));
 }
+
+test("smokePort skips 3659, the port Next.js refuses in 3400–3799", () => {
+  assert.equal(smokePort(() => 259 / 400), 3660);
+  for (let i = 0; i < 400; i += 1) assert.notEqual(smokePort(() => i / 400), 3659);
+});
 
 test("pinVersion accepts a version or dist-tag and rejects shell metacharacters", () => {
   assert.equal(pinVersion("4.22.1", "SHADCN_VERSION"), "4.22.1");

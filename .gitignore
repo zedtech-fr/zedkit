@@ -44,6 +44,3 @@ apps/docs/.tmp-complete-examples/
 
 # local working plans and tickets (zedkit-ai; the installer keeps this line)
 .scratch/
-
-# Local reference dump of a consumer AI setup. Never commit.
-the-good-example/
