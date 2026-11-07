@@ -36,7 +36,7 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
   const shown = useCountUp(value, active);
   return (
     <Card className="content-shrink shadow-none" data-hero-block="" data-beat={beat}>
-      <Stack gap={1} className="p-3">
+      <Stack gap={1} className="surface-pad-compact">
         <Text variant="muted" className="text-xs leading-tight">
           {label}
         </Text>
@@ -54,10 +54,10 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
 function Activity() {
   return (
     <Card className="content-shrink shadow-none" data-hero-block="" data-beat={4}>
-      <CardHeader className="p-3 pb-2">
+      <CardHeader className="surface-pad-compact pb-2">
         <CardDescription className="text-xs">{copy.activity}</CardDescription>
       </CardHeader>
-      <CardContent className="p-3 pt-0">
+      <CardContent className="surface-pad-compact pt-0">
         <ul className="trim-margin flex list-none items-end gap-1.5 flush" aria-label={copy.activity} data-hero-bars="">
           {copy.activityValues.map((value, index) => (
             <li key={index} className="flex h-full content-shrink flex-1 flex-col items-center justify-end gap-stack-tight">

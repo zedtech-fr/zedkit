@@ -30,7 +30,7 @@ function Agenda({ rows, day }: { rows: TaskRow[]; day: Date | undefined }) {
       ) : (
         <ul className="trim-margin flex list-none flex-col gap-stack-sm flush">
           {agenda.map((row) => (
-            <li key={row.id} className="flex content-shrink flex-col gap-stack-tight rounded-lg border border-border p-3">
+            <li key={row.id} className="flex content-shrink flex-col gap-stack-tight rounded-lg border border-border surface-pad-compact">
               <span className="text-sm font-medium">{row.title}</span>
               <span className="flex items-center gap-stack-sm text-xs text-muted-foreground">
                 <Badge variant={STATUS_VARIANT[row.status]}>{row.status}</Badge>

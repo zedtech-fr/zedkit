@@ -82,7 +82,7 @@ function CompanionFiles({ count, children }: { count: number; children: ReactNod
           {adoptionCopy.companionsHint}
         </Text>
       </summary>
-      <Stack gap={3} className="p-3 pt-0">
+      <Stack gap={3} className="surface-pad-compact pt-0">
         {children}
       </Stack>
     </details>

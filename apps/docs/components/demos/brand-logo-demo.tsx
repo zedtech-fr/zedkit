@@ -31,7 +31,7 @@ export function BrandLogoDemo() {
   return (
     <Stack gap={4} className="content-shrink">
       <Stack className="content-shrink rounded-lg border border-border bg-background">
-        <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline py-3">
+        <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
           {/* Logo + visible name in one link to the home page: the name labels the link, so the mark is decorative. */}
           <a href="/" onClick={stay} className="flex content-shrink items-center gap-stack-sm text-foreground">
             <HarborMark className="h-6 text-primary" />
@@ -59,7 +59,7 @@ export function BrandLogoDemo() {
             <HarborMark className="h-16 text-foreground" title={brandLogoCopy.logoTitle} />
           </Stack>
         </Stack>
-        <footer className="flex items-center gap-stack-sm border-t border-border surface-pad-inline py-3 text-muted-foreground">
+        <footer className="flex items-center gap-stack-sm border-t border-border surface-pad-inline surface-pad-block text-muted-foreground">
           <HarborMark className="h-4" />
           <Text variant="muted" className="text-xs">
             {brandLogoCopy.copyright}

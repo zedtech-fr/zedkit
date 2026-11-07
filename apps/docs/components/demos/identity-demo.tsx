@@ -52,7 +52,7 @@ export function IdentitySwitcherDemo() {
       <Stack
         direction="horizontal"
         gap={3}
-        className="content-shrink flex-wrap items-center justify-between rounded-lg border border-border bg-background surface-pad-inline py-3"
+        className="content-shrink flex-wrap items-center justify-between rounded-lg border border-border bg-background surface-pad-inline surface-pad-block"
       >
         <Text as="span" className="font-semibold">
           {identityCopy.studio}
@@ -129,7 +129,7 @@ export function IdentityPickerDemo() {
       <Stack
         direction="horizontal"
         gap={3}
-        className="content-shrink items-center justify-between rounded-lg border border-border bg-background surface-pad-inline py-3"
+        className="content-shrink items-center justify-between rounded-lg border border-border bg-background surface-pad-inline surface-pad-block"
       >
         <Text as="span" className="font-semibold">
           {identityCopy.studio}

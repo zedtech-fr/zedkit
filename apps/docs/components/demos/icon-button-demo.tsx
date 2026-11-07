@@ -10,7 +10,7 @@ export function IconButtonDemo() {
   const [message, setMessage] = useState<string>(iconButtonCopy.demo.initialMessage);
   return (
     <Stack className="content-shrink rounded-lg border border-border bg-background">
-      <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline py-3">
+      <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
         <Stack gap={1} className="content-shrink">
           <Heading level={2} className="text-xl text-balance">
             {iconButtonCopy.demo.title}
@@ -81,7 +81,7 @@ export function IconButtonRowsDemo() {
           </li>
         ))}
         {tasks.length === 0 ? (
-          <li className="surface-pad-inline py-3">
+          <li className="surface-pad-inline surface-pad-block">
             <Text variant="muted">{iconButtonCopy.rows.noTasksLeft}</Text>
           </li>
         ) : null}
