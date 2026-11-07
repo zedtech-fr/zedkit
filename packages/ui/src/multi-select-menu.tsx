@@ -28,17 +28,17 @@ export function MultiSelectMenu({
   return (
     <ul
       {...menuProps}
-      className="max-h-[--radix-select-content-available-height] overflow-y-auto p-1 outline-none"
+      className="max-h-[--radix-select-content-available-height] overflow-y-auto p-stack-2xs outline-none"
       data-slot="multi-select-list"
     >
       {loading ? (
-        <li className="flex items-center gap-2 px-3 py-control-block text-sm text-muted-foreground">
+        <li className="flex items-center gap-stack-sm px-stack-md py-control-block text-sm text-muted-foreground">
           <Spinner label={messages.loadingOptions} />
           {messages.loadingEllipsis}
         </li>
       ) : null}
       {!loading && items.length === 0 ? (
-        <li className="px-3 py-control-block text-sm text-muted-foreground">{emptyMessage}</li>
+        <li className="px-stack-md py-control-block text-sm text-muted-foreground">{emptyMessage}</li>
       ) : null}
       {!loading
         ? items.map((item, index) => {
@@ -48,7 +48,7 @@ export function MultiSelectMenu({
                 key={item.value}
                 {...getItemProps({ item, index })}
                 className={cn(
-                  "cursor-pointer rounded-sm px-3 py-control-block text-sm outline-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+                  "cursor-pointer rounded-sm px-stack-md py-control-block text-sm outline-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
                   highlightedIndex === index ? "bg-accent text-accent-foreground" : "",
                   picked ? "opacity-60" : "",
                 )}

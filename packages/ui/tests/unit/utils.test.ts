@@ -7,7 +7,7 @@ describe("cn", () => {
   });
 
   it("lets the last conflicting Tailwind utility win", () => {
-    expect(cn("px-4", "px-2")).toBe("px-2");
+    expect(cn("px-stack-lg", "px-stack-sm")).toBe("px-stack-sm");
     expect(cn("bg-red-500", "bg-blue-500")).toBe("bg-blue-500");
   });
 
@@ -21,17 +21,20 @@ describe("cn", () => {
   });
 
   it("keeps non-conflicting utilities from every input", () => {
-    expect(cn("text-sm font-medium", "px-4")).toBe("text-sm font-medium px-4");
+    expect(cn("text-sm font-medium", "px-stack-lg")).toBe("text-sm font-medium px-stack-lg");
   });
 
   it("merges role spacing with the default scale", () => {
-    expect(cn("gap-2", "gap-stack-sm")).toBe("gap-stack-sm");
+    expect(cn("gap-stack-sm", "gap-stack-sm")).toBe("gap-stack-sm");
     expect(cn("gap-stack-sm", "gap-stack-lg")).toBe("gap-stack-lg");
-    expect(cn("px-4", "px-field-pad")).toBe("px-field-pad");
+    expect(cn("px-stack-lg", "px-field-pad")).toBe("px-field-pad");
     expect(cn("px-button-pad", "px-button-pad-lg")).toBe("px-button-pad-lg");
-    expect(cn("px-2", "px-stack-sm")).toBe("px-stack-sm");
-    expect(cn("py-2", "py-stack-sm")).toBe("py-stack-sm");
-    expect(cn("space-y-4", "space-y-stack-lg")).toBe("space-y-stack-lg");
-    expect(cn("size-4", "size-icon")).toBe("size-icon");
+    expect(cn("px-stack-sm", "px-stack-sm")).toBe("px-stack-sm");
+    expect(cn("py-stack-sm", "py-stack-sm")).toBe("py-stack-sm");
+    expect(cn("space-y-stack-lg", "space-y-stack-lg")).toBe("space-y-stack-lg");
+    expect(cn("size-stack-lg", "size-icon")).toBe("size-icon");
+    expect(cn("p-stack-lg", "p-stack-lg")).toBe("p-stack-lg");
+    expect(cn("min-w-zero", "min-w-zero")).toBe("min-w-zero");
+    expect(cn("mt-stack-lg", "-mt-stack-lg")).toBe("-mt-stack-lg");
   });
 });

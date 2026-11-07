@@ -51,7 +51,7 @@ describe("StickyAside", () => {
     expect(root?.hasAttribute("data-scrollable")).toBe(true);
     expect(root?.getAttribute("data-ratio")).toBe("1/3");
     expect(root?.className).toContain("[--zk-sticky-top:7rem]");
-    expect(root?.classList.contains("p-2")).toBe(true);
+    expect(root?.classList.contains("p-stack-sm")).toBe(true);
   });
 
   it("accepts a custom column template on className", () => {

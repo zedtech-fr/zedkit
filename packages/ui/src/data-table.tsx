@@ -139,7 +139,7 @@ export function DataTablePagination({
   const messages = useUiMessages();
   const pageCountShown = Math.max(pageCount, 1);
   return (
-    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-2", className)}>
+    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-stack-sm", className)}>
       <span className="text-sm text-muted-foreground">
         {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
@@ -207,7 +207,7 @@ export function DataTable<TData extends RowData>({
   }, [table, pageSize]);
 
   return (
-    <div data-slot="data-table" className="space-y-4">
+    <div data-slot="data-table" className="space-y-stack-lg">
       <DataTableToolbar
         value={globalFilter}
         onChange={(value) => {
@@ -218,11 +218,11 @@ export function DataTable<TData extends RowData>({
       />
       {surface === "error" ? <ErrorState description={error ?? ""} /> : null}
       {surface === "loading" ? (
-        <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-3 py-2">
+        <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-stack-md py-stack-sm">
           <p className="text-sm text-muted-foreground">{messages.loadingEllipsis}</p>
-          <div className="space-y-2" aria-hidden>
+          <div className="space-y-stack-sm" aria-hidden>
             {[0, 1, 2].map((row) => (
-              <Skeleton key={row} className="h-4 w-full max-w-data-table-filter-width" />
+              <Skeleton key={row} className="h-stack-lg w-full max-w-data-table-filter-width" />
             ))}
           </div>
         </div>

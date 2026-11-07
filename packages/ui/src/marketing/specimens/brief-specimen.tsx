@@ -35,7 +35,7 @@ export function BriefSpecimen({ brief, domain, className }: BriefSpecimenProps) 
       inner = <SaasDashboardSpecimen {...shell} />;
   }
   return (
-    <div data-slot="brief-specimen" className="min-w-0">
+    <div data-slot="brief-specimen" className="min-w-zero">
       {inner}
     </div>
   );

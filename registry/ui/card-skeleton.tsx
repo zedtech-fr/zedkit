@@ -24,13 +24,13 @@ export function CardSkeleton({ label, className }: CardSkeletonProps) {
       className={cn(surfaceVariants({ variant: "solid", elevation: 2, radius: "xl", padding: "card" }), className)}
     >
       <div className="space-y-card-stack">
-        <Skeleton className="h-5 w-1/3" />
-        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-stack-xl w-1/3" />
+        <Skeleton className="h-stack-lg w-2/3" />
       </div>
-      <div className="mt-4 space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-4/5" />
+      <div className="mt-stack-lg space-y-stack-sm">
+        <Skeleton className="h-stack-lg w-full" />
+        <Skeleton className="h-stack-lg w-full" />
+        <Skeleton className="h-stack-lg w-4/5" />
       </div>
     </div>
   );

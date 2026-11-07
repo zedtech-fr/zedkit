@@ -17,13 +17,13 @@ export function PageHeader({ title, description, actions, back, titleAs: Title =
   return (
     <div data-slot="page-header" className={cn("mb-page-header-offset flex flex-col gap-page-header-title-gap", className)}>
       {back ? (
-        <div data-slot="page-header-back" className="-mx-2 mb-page-header-back-gap flex w-fit items-center">
+        <div data-slot="page-header-back" className="-mx-stack-sm mb-page-header-back-gap flex w-fit items-center">
           {back}
         </div>
       ) : null}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-stack-lg">
         <Title className="text-2xl font-semibold tracking-tight">{title}</Title>
-        {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+        {actions ? <div className="flex items-center gap-stack-sm">{actions}</div> : null}
       </div>
       {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
     </div>

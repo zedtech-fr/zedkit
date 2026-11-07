@@ -19,7 +19,7 @@ export function Checkmark({ label, className }: CheckmarkProps) {
       {...(label === undefined
         ? { "aria-hidden": true as const }
         : { role: "img" as const, "aria-label": label })}
-      className={cn("size-4 text-success", className)}
+      className={cn("size-stack-lg text-success", className)}
     >
       <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
       <path

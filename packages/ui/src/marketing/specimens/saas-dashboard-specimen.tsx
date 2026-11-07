@@ -30,16 +30,16 @@ type SaasMessages = typeof specimenMessagesEn.saasDashboard;
 
 function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
   return (
-    <Card className="min-w-0">
+    <Card className="min-w-zero">
       <CardHeader>
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </CardHeader>
       <CardContent>
-        <Stack gap={4} className="min-w-0">
-          <div className="grid min-w-0 grid-cols-2 gap-3">
+        <Stack gap={4} className="min-w-zero">
+          <div className="grid min-w-zero grid-cols-2 gap-stack-md">
             {messages.stats.map((stat) => (
-              <div key={stat.label} className="min-w-0">
+              <div key={stat.label} className="min-w-zero">
                 <Text variant="muted">{stat.label}</Text>
                 <Text className="text-2xl font-semibold tabular-nums">{stat.value}</Text>
               </div>
@@ -80,9 +80,9 @@ function SaasInvitePopover({
           {messages.invite}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 max-w-[calc(100vw-2rem)]">
+      <PopoverContent align="end" className="w-stack-16xl max-w-[calc(100vw-2rem)]">
         <form
-          className="grid gap-3"
+          className="grid gap-stack-md"
           onSubmit={(event) => {
             event.preventDefault();
             const trimmed = email.trim();
@@ -124,7 +124,7 @@ function SaasTeamCard({
   onInvite: (email: string) => void;
 }) {
   return (
-    <Card className="min-w-0">
+    <Card className="min-w-zero">
       <CardHeader>
         <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
           <Heading level={4}>{messages.teamHeading}</Heading>
@@ -132,17 +132,17 @@ function SaasTeamCard({
         </Stack>
       </CardHeader>
       <CardContent>
-        <ul aria-label={messages.teamAriaLabel} className="m-0 list-none p-0">
+        <ul aria-label={messages.teamAriaLabel} className="m-zero list-none p-zero">
           {members.map((member) => (
-            <li key={member.id} className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-b-0">
-              <Text as="span" className="min-w-0 truncate">
+            <li key={member.id} className="flex items-center justify-between gap-stack-md border-b border-border py-stack-sm last:border-b-0">
+              <Text as="span" className="min-w-zero truncate">
                 {member.name}
               </Text>
               <Badge variant="secondary">{member.role}</Badge>
             </li>
           ))}
         </ul>
-        <Text variant="muted" role="status" className="mt-3 min-h-6">
+        <Text variant="muted" role="status" className="mt-stack-md min-h-stack-2xl">
           {status}
         </Text>
       </CardContent>
@@ -155,7 +155,7 @@ export function SaasDashboardSpecimen({ className, messages = specimenMessagesEn
   const [status, setStatus] = useState("");
 
   return (
-    <Stack gap={4} className={`min-w-0 ${className ?? ""}`} data-slot="saas-dashboard-specimen" data-specimen-domain="saas-dashboard">
+    <Stack gap={4} className={`min-w-zero ${className ?? ""}`} data-slot="saas-dashboard-specimen" data-specimen-domain="saas-dashboard">
       <SaasOverviewCard messages={messages} />
       <SaasTeamCard
         messages={messages}

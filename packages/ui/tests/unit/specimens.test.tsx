@@ -37,7 +37,7 @@ describe("BriefSpecimen", () => {
 
   it("passes className to the routed specimen", () => {
     const { container } = render(<BriefSpecimen brief="shop" domain="commerce" className="mt-4" />);
-    expect(container.querySelector("[data-slot='commerce-specimen']")?.className).toContain("mt-4");
+    expect(container.querySelector("[data-slot='commerce-specimen']")?.className).toContain("mt-stack-lg");
   });
 
   it("falls back to saas-dashboard when the brief has no domain keywords", () => {

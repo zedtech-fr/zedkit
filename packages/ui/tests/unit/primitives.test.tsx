@@ -29,7 +29,7 @@ describe("primitives", () => {
     expect(link.className).toContain("hover:underline");
     expect(link.className).toContain("hover:bg-transparent");
     expect(link.className).not.toContain("hover:bg-accent");
-    expect(link.className).toContain("min-h-11");
+    expect(link.className).toContain("min-h-stack-7xl");
   });
 
   it("takes ref as a prop", () => {
@@ -275,7 +275,7 @@ describe("primitives", () => {
       </Alert>,
     );
     const alert = screen.getByRole("alert");
-    expect(alert.className).toContain("py-3");
+    expect(alert.className).toContain("py-stack-md");
     expect(alert.className).not.toContain("py-alert-block");
   });
 
@@ -289,7 +289,7 @@ describe("primitives", () => {
     );
     const section = screen.getByRole("alert", { name: "Maintenance notice" });
     expect(section.tagName).toBe("SECTION");
-    expect(section.className).toContain("px-4");
+    expect(section.className).toContain("px-stack-lg");
   });
 
   it("renders a textarea with its placeholder", () => {

@@ -66,7 +66,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("right");
-    expect(dialog.className).toContain("right-0");
+    expect(dialog.className).toContain("right-zero");
   });
 
   it("renders a full-height side panel narrower than the screen when mobile is side", async () => {
@@ -84,7 +84,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const panel = screen.getByRole("dialog", { name: "Delivery details" });
     expect(panel.className).toContain("w-drawer-side-mobile-width");
-    expect(panel.className).toContain("inset-y-0");
+    expect(panel.className).toContain("inset-y-zero");
   });
 
   it("maps right drawers to bottom on narrow viewports when mobile is sheet", async () => {
@@ -94,7 +94,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("bottom");
-    expect(dialog.className).toContain("bottom-0");
+    expect(dialog.className).toContain("bottom-zero");
     stubDrawerJsdom();
   });
 
@@ -118,7 +118,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     // Bare children (anything but the kit slots, the handle, and buttons) pick up the shared gutters.
-    expect(dialog.className).toContain("px-4");
+    expect(dialog.className).toContain("px-stack-lg");
     expect(dialog.className).toContain("pb-drawer-footer-safe");
     // The slots carry their own spacing, so they are excluded from that net.
     for (const slot of ["drawer-handle", "drawer-header", "drawer-body", "drawer-footer"]) {
@@ -192,7 +192,7 @@ describe("drawer", () => {
     const body = screen.getByTestId("body");
     expect(body.className).toContain("overflow-y-auto");
     expect(body.className).toContain("overscroll-y-contain");
-    expect(body.className).toContain("min-h-0");
+    expect(body.className).toContain("min-h-zero");
   });
 
   it("closes from the close button", async () => {
@@ -215,7 +215,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("top");
-    expect(dialog.className).toContain("top-0");
+    expect(dialog.className).toContain("top-zero");
   });
 
   it("positions on the left with left-0", async () => {
@@ -233,7 +233,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("left");
-    expect(dialog.className).toContain("left-0");
+    expect(dialog.className).toContain("left-zero");
   });
 
   it("defaults to the bottom when direction is omitted", async () => {
@@ -242,7 +242,7 @@ describe("drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open drawer" }));
     const dialog = screen.getByRole("dialog", { name: "Delivery details" });
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("bottom");
-    expect(dialog.className).toContain("bottom-0");
+    expect(dialog.className).toContain("bottom-zero");
   });
 
   it("renders open when controlled open is true", () => {
@@ -432,17 +432,17 @@ describe("drawer", () => {
       </Drawer>,
     );
     const handle = screen.getByTestId("handle");
-    expect(handle.className).toContain("mt-4");
+    expect(handle.className).toContain("mt-stack-lg");
     expect(handle.className).toContain("h-drawer-handle-height");
     expect(handle.className).toContain("w-drawer-handle-width");
     expect(handle.className).not.toMatch(/(^|\s)(h-1\.5|w-12)(\s|$)/);
     const header = screen.getByTestId("header");
     expect(header.className).toContain("gap-drawer-header-gap");
-    expect(header.className).toContain("p-4");
+    expect(header.className).toContain("p-stack-lg");
     const footer = screen.getByTestId("footer");
-    expect(footer.className).toContain("gap-2");
+    expect(footer.className).toContain("gap-stack-sm");
     expect(footer.className).not.toContain("gap-drawer-footer-gap");
-    expect(footer.className).toContain("px-4");
+    expect(footer.className).toContain("px-stack-lg");
     expect(footer.className).toContain("pb-drawer-footer-safe");
   });
 

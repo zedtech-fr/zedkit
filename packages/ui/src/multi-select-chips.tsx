@@ -20,9 +20,9 @@ function MultiSelectChips({ items, onRemove, selection, disabled }: MultiSelectC
   if (items.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-stack-2xs">
       {items.map((item, index) => (
-        <Badge key={item.value} variant="secondary" className="gap-1 pr-1">
+        <Badge key={item.value} variant="secondary" className="gap-stack-2xs pr-stack-2xs">
           <span {...selection.getSelectedItemProps({ selectedItem: item, index })}>{item.label}</span>
           <button
             type="button"
@@ -33,7 +33,7 @@ function MultiSelectChips({ items, onRemove, selection, disabled }: MultiSelectC
               onRemove(item);
             }}
           >
-            <X className="size-4" />
+            <X className="size-stack-lg" />
           </button>
         </Badge>
       ))}
