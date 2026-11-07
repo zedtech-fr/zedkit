@@ -56,7 +56,7 @@ export function buildAdminDashboardColumns({
         <Button
           type="button"
           variant="ghost"
-          className="h-auto min-h-11 w-full justify-start px-2 font-normal"
+          className="h-auto min-h-target w-full justify-start px-2 font-normal"
           aria-pressed={selectedId === row.original.id}
           onClick={() => onSelect(row.original.id)}
         >

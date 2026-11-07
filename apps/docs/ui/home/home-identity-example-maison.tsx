@@ -34,7 +34,7 @@ function ProductCard({ product, selected, onSelect }: { product: Product; select
         type="button"
         variant="outline"
         aria-pressed={selected}
-        className="h-auto! min-h-11 w-full flex-col items-start justify-start gap-2 p-4 text-left font-normal whitespace-normal"
+        className="h-auto! min-h-target w-full flex-col items-start justify-start gap-2 p-4 text-left font-normal whitespace-normal"
         onClick={onSelect}
       >
         <span className="font-(family-name:--zk-font-display) text-xl">{product.name}</span>
@@ -71,7 +71,7 @@ function ProductEditor({ product, onSave }: { product: Product; onSave: (next: P
           <Label htmlFor={stockId}>{copy.stockLabel}</Label>
           <Input id={stockId} inputMode="numeric" value={draft.stock} onChange={(event) => setDraft({ ...draft, stock: toNumber(event.target.value) })} />
         </Stack>
-        <Stack direction="horizontal" gap={2} className="min-h-11 items-center">
+        <Stack direction="horizontal" gap={2} className="min-h-target items-center">
           <Switch id={visibleId} checked={draft.visible} onCheckedChange={(visible) => setDraft({ ...draft, visible })} />
           <Label htmlFor={visibleId}>{copy.visibleLabel}</Label>
         </Stack>

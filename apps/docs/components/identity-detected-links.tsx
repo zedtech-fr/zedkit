@@ -32,7 +32,7 @@ export function DetectedLinks({ text, onText, fieldId, disabled = false }: { tex
                 <Text as="span" data-assistant-link-label="" typeRole="body" className="content-shrink truncate" title={url}>
                   {urlLabel(url)}
                 </Text>
-                <Button type="button" variant="ghost" size="sm" className="min-w-11 rounded-full" disabled={disabled} aria-label={copy.links.remove(urlLabel(url))} onClick={() => {
+                <Button type="button" variant="ghost" size="sm" className="min-w-target rounded-full" disabled={disabled} aria-label={copy.links.remove(urlLabel(url))} onClick={() => {
                     onText(removeLink(text, url));
                     document.getElementById(fieldId)?.focus();
                   }}>

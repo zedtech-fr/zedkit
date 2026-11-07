@@ -37,7 +37,7 @@ function HomeOtherWays() {
                   {way.body}
                 </Text>
               </Stack>
-              <Button asChild variant="outline" size="sm" className="min-h-11 w-fit shrink-0 md:pane-shrink" {...(way === otherWays.agent ? { "data-home-ai-setup": "" } : {})}>
+              <Button asChild variant="outline" size="sm" className="min-h-target w-fit shrink-0 md:pane-shrink" {...(way === otherWays.agent ? { "data-home-ai-setup": "" } : {})}>
                 <HomeLink href={way.href}>
                   <DocsActionLabel>{way.link}</DocsActionLabel>
                 </HomeLink>

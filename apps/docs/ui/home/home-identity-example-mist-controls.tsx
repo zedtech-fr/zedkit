@@ -51,7 +51,7 @@ export function HomeIdentityExampleMistControls({
           </SelectContent>
         </Select>
       </Stack>
-      <Stack direction="horizontal" gap={2} className="min-h-11 items-center">
+      <Stack direction="horizontal" gap={2} className="min-h-target items-center">
         <Switch id={alertsId} checked={alerts} onCheckedChange={onAlerts} />
         <Label htmlFor={alertsId}>{copy.alertsLabel}</Label>
       </Stack>

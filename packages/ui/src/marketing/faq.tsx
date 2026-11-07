@@ -36,7 +36,7 @@ function Faq({ title, description, items, className, ...props }: FaqProps) {
         <div className="flex flex-col">
           {items.map((item, index) => (
             <details key={item.id ?? index} data-slot="faq-item" className="group border-b">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-3 font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-3 font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
                 <span className="content-shrink">{item.question}</span>
                 <ChevronDown
                   aria-hidden="true"

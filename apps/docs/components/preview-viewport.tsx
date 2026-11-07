@@ -49,7 +49,7 @@ function Segment({
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className="min-h-11 rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-7"
+      className="min-h-target rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-7"
     >
       {children}
     </button>
@@ -106,7 +106,7 @@ export function PreviewFrame({
               aria-expanded={displayOpen}
               aria-controls={displayId}
               onClick={() => setDisplayOpen(!displayOpen)}
-              className="min-h-11 rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
+              className="min-h-target rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
             >
               {previewViewportCopy.display}
             </button>

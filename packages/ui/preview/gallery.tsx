@@ -446,7 +446,7 @@ export function Gallery() {
         <GallerySection id="marketing" title="Marketing">
           <MarketingHeader
             sticky={false}
-            brand={<a href="#marketing" className="inline-flex min-h-11 items-center font-semibold">Harbor</a>}
+            brand={<a href="#marketing" className="inline-flex min-h-target items-center font-semibold">Harbor</a>}
             links={[
               <a key="docs" href="#marketing">Docs</a>,
               <a key="pricing" href="#marketing">Pricing</a>,
