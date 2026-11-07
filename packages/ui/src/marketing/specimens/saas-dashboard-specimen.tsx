@@ -41,7 +41,7 @@ function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
             {messages.stats.map((stat) => (
               <div key={stat.label} className="content-shrink">
                 <Text variant="muted">{stat.label}</Text>
-                <Text className="text-2xl font-semibold tabular-nums">{stat.value}</Text>
+                <Text className="text-stat tabular-nums">{stat.value}</Text>
               </div>
             ))}
           </div>
