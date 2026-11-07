@@ -16,7 +16,7 @@ const glassSurfaceVariants = cva("relative rounded-2xl border bg-card text-card-
     },
     padding: {
       none: "",
-      sm: "glass-pad-sm",
+      sm: "surface-pad-md",
       md: "glass-pad-md",
       lg: "glass-pad-lg",
     },
