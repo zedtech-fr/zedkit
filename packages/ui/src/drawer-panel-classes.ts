@@ -33,12 +33,12 @@ const drawerSideLeftMaxWidth: Record<DrawerSize, string> = {
 function drawerPanelClassName(size: DrawerSize, className?: string): string {
   return cn(
     "fixed z-drawer flex flex-col",
-    "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-stack-lg [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
-    "data-[vaul-drawer-direction=bottom]:inset-x-zero data-[vaul-drawer-direction=bottom]:bottom-zero data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
-    "data-[vaul-drawer-direction=top]:inset-x-zero data-[vaul-drawer-direction=top]:top-zero data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:pt-drawer-safe-top",
-    "data-[vaul-drawer-direction=right]:inset-y-zero data-[vaul-drawer-direction=right]:right-zero data-[vaul-drawer-direction=right]:w-drawer-side-mobile-width data-[vaul-drawer-direction=right]:pt-drawer-safe-top data-[vaul-drawer-direction=right]:pr-drawer-safe-right data-[vaul-drawer-direction=right]:max-sm:rounded-l-xl data-[vaul-drawer-direction=right]:sm:w-full",
+    "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-4 [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
+    "data-[vaul-drawer-direction=bottom]:pin-x data-[vaul-drawer-direction=bottom]:pin-bottom data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
+    "data-[vaul-drawer-direction=top]:pin-x data-[vaul-drawer-direction=top]:pin-top data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:pt-drawer-safe-top",
+    "data-[vaul-drawer-direction=right]:pin-y data-[vaul-drawer-direction=right]:pin-right data-[vaul-drawer-direction=right]:w-drawer-side-mobile-width data-[vaul-drawer-direction=right]:pt-drawer-safe-top data-[vaul-drawer-direction=right]:pr-drawer-safe-right data-[vaul-drawer-direction=right]:max-sm:rounded-l-xl data-[vaul-drawer-direction=right]:sm:w-full",
     drawerSideRightMaxWidth[size],
-    "data-[vaul-drawer-direction=left]:inset-y-zero data-[vaul-drawer-direction=left]:left-zero data-[vaul-drawer-direction=left]:w-drawer-side-mobile-width data-[vaul-drawer-direction=left]:pt-drawer-safe-top data-[vaul-drawer-direction=left]:pl-drawer-safe-left data-[vaul-drawer-direction=left]:max-sm:rounded-r-xl data-[vaul-drawer-direction=left]:sm:w-full",
+    "data-[vaul-drawer-direction=left]:pin-y data-[vaul-drawer-direction=left]:pin-left data-[vaul-drawer-direction=left]:w-drawer-side-mobile-width data-[vaul-drawer-direction=left]:pt-drawer-safe-top data-[vaul-drawer-direction=left]:pl-drawer-safe-left data-[vaul-drawer-direction=left]:max-sm:rounded-r-xl data-[vaul-drawer-direction=left]:sm:w-full",
     drawerSideLeftMaxWidth[size],
     className,
   );

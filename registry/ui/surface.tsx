@@ -30,8 +30,8 @@ const surfaceVariants = cva("", {
     },
     padding: {
       none: "",
-      sm: "p-stack-sm",
-      md: "p-stack-lg",
+      sm: "p-2",
+      md: "p-4",
       card: "p-card-padding",
       dialog: "p-dialog-padding",
     },

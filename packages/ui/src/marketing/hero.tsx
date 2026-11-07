@@ -46,8 +46,8 @@ function Hero({
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className={cn(media && "grid items-center gap-stack-6xl lg:grid-cols-2")}>
-        <div className={cn("flex min-w-zero flex-col gap-stack-xl", centered && "mx-auto max-w-reading items-center text-center")}>
+      <Container width="default" className={cn(media && "grid items-center gap-10 lg:grid-cols-2")}>
+        <div className={cn("flex content-shrink flex-col gap-5", centered && "mx-auto max-w-reading items-center text-center")}>
           {eyebrow ? (
             <Text as="p" variant="muted" className="font-medium text-primary">
               {eyebrow}
@@ -62,14 +62,14 @@ function Hero({
           {actions ? (
             <div
               data-slot="hero-actions"
-              className="flex w-full flex-col gap-stack-md pt-stack-sm *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
+              className="flex w-full flex-col gap-3 pt-2 *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
             >
               {actions}
             </div>
           ) : null}
         </div>
         {media ? (
-          <div data-slot="hero-media" className="min-w-zero">
+          <div data-slot="hero-media" className="content-shrink">
             {media}
           </div>
         ) : null}

@@ -101,7 +101,6 @@ const DEPRECATED_1REM_CLASSES = [
   "px-select-item-inline",
   "pl-select-item-inline",
   "right-select-item-inline",
-  "py-control-block-lg",
   "gap-x-wizard-steps-gap",
   "px-button-inline-sm",
   "px-tabs-trigger-inline",

@@ -26,16 +26,16 @@ export type MarketingFooterProps = Omit<React.ComponentProps<"footer">, "childre
 };
 
 const linkClass =
-  "[&_a]:inline-flex [&_a]:min-h-stack-7xl [&_a]:items-center [&_a]:text-sm [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a]:hover:underline";
+  "[&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:text-sm [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a]:hover:underline";
 
 function FooterColumn({ column }: { column: MarketingFooterColumn }) {
   const titleId = useId();
   return (
-    <nav aria-labelledby={titleId} className="flex min-w-zero flex-col gap-stack-2xs">
+    <nav aria-labelledby={titleId} className="flex content-shrink flex-col gap-1">
       <p id={titleId} className="text-sm font-semibold">
         {column.title}
       </p>
-      <ul className={cn("flex list-none flex-col p-zero", linkClass)}>
+      <ul className={cn("flex list-none flex-col flush", linkClass)}>
         {Children.toArray(column.links).map((link, index) => (
           <li key={index}>{link}</li>
         ))}
@@ -48,14 +48,14 @@ function FooterColumn({ column }: { column: MarketingFooterColumn }) {
 function MarketingFooter({ brand, description, columns = [], legal, className, ...props }: MarketingFooterProps) {
   return (
     <footer data-slot="marketing-footer" className={cn("border-t bg-card text-card-foreground", className)} {...props}>
-      <Container width="default" className="flex flex-col gap-stack-6xl py-section-md">
-        <div className="grid gap-stack-6xl md:grid-cols-3">
-          <div className="flex min-w-zero flex-col gap-stack-md">
+      <Container width="default" className="flex flex-col gap-10 py-section-md">
+        <div className="grid gap-10 md:grid-cols-3">
+          <div className="flex content-shrink flex-col gap-3">
             {brand}
             {description ? <Text variant="muted">{description}</Text> : null}
           </div>
           {columns.length > 0 ? (
-            <div className="grid grid-cols-2 gap-stack-4xl sm:grid-cols-3 md:col-span-2">
+            <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-2">
               {columns.map((column, index) => (
                 <FooterColumn key={column.id ?? index} column={column} />
               ))}
@@ -65,7 +65,7 @@ function MarketingFooter({ brand, description, columns = [], legal, className, .
         {legal ? (
           <div
             data-slot="marketing-footer-legal"
-            className="flex flex-col gap-stack-md border-t pt-stack-2xl text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
           >
             {legal}
           </div>

@@ -52,9 +52,15 @@ describe("scaleClassKind", () => {
   });
 
   it("allows role classes and non-scale utilities", () => {
-    for (const name of ["px-page-gutter", "gap-stack-sm", "text-control", "text-primary", "w-full", "h-svh", "focus-ring"]) {
+    for (const name of ["px-page-gutter", "gap-stack-sm", "space-y-stack-lg", "content-shrink", "pin-top", "text-control", "text-primary", "w-full", "h-svh", "focus-ring"]) {
       expect(scaleClassKind(name), name).toBeNull();
     }
+  });
+
+  it("flags a spelled number as an alias, not a role", () => {
+    expect(scaleClassKind("min-w-zero")).toBe("alias");
+    expect(scaleClassKind("px-stack-lg")).toBe("alias");
+    expect(scaleClassKind("size-stack-4xl")).toBe("alias");
   });
 });
 
@@ -68,7 +74,8 @@ describe("findScaleHits", () => {
     ]);
     expect(hits(`<div ${attr}={${call}("mt-4")} />`)).toEqual(["mt-4"]);
     expect(hits("@apply gap-2;")).toEqual(["gap-2"]);
-    expect(hits(`<div ${attr}="px-page-gutter gap-stack-sm text-control" />`)).toEqual([]);
+    expect(hits(`<div ${attr}="px-page-gutter gap-stack-sm text-control content-shrink" />`)).toEqual([]);
+    expect(hits(`<div ${attr}="min-w-zero px-stack-lg" />`)).toEqual(["min-w-zero", "px-stack-lg"]);
   });
 });
 

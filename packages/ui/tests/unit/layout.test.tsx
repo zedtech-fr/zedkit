@@ -49,14 +49,14 @@ describe("layout", () => {
 
   it("maps numeric and named stack gaps onto the same role classes", () => {
     const roles = {
-      1: "gap-stack-2xs",
+      1: "gap-1",
       2: "gap-stack-sm",
       3: "gap-stack-md",
       4: "gap-stack-lg",
-      5: "gap-stack-xl",
-      6: "gap-stack-2xl",
-      7: "gap-stack-3xl",
-      8: "gap-stack-4xl",
+      5: "gap-5",
+      6: "gap-6",
+      7: "gap-7",
+      8: "gap-8",
     } as const;
     const { container } = render(
       <>

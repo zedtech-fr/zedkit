@@ -30,7 +30,7 @@ const promptInputFieldPadding = (twoActions: boolean) =>
     : "pr-[calc(var(--spacing)*1.5+var(--spacing-control-height))]";
 
 const promptInputCancelPosition =
-  "absolute right-[calc(var(--spacing)*1.5+var(--spacing-control-height)+var(--spacing)*2)] bottom-stack-xs shrink-0";
+  "absolute right-[calc(var(--spacing)*1.5+var(--spacing-control-height)+var(--spacing)*2)] bottom-1.5 shrink-0";
 
 const promptInputMaxHeightClass = (maxRows: 4 | 8 | 12) =>
   ({ 4: "max-h-prompt-input-sm", 8: "max-h-prompt-input", 12: "max-h-prompt-input-lg" })[maxRows];
@@ -65,12 +65,12 @@ function PromptInputActions({
       <IconButton
         type="submit"
         size="icon"
-        className="absolute right-stack-xs bottom-stack-xs shrink-0 rounded-full"
+        className="absolute right-1.5 bottom-1.5 shrink-0 rounded-full"
         label={sendLabel}
         disabled={sendDisabled}
         aria-busy={busy || undefined}
       >
-        <ArrowUp aria-hidden="true" className="size-stack-lg" />
+        <ArrowUp aria-hidden="true" className="size-4" />
       </IconButton>
     </>
   );
@@ -125,7 +125,7 @@ export function PromptInput({
         disabled={disabled}
         readOnly={busy}
         className={cn(
-          "field-sizing-content min-h-textarea-min-height w-full min-w-zero resize-none overflow-y-auto border-0 bg-transparent py-stack-sm pl-stack-md text-control shadow-none placeholder:text-muted-foreground",
+          "field-sizing-content min-h-textarea-min-height w-full content-shrink resize-none overflow-y-auto border-0 bg-transparent py-2 pl-3 text-control shadow-none placeholder:text-muted-foreground",
           "disabled:cursor-not-allowed disabled:opacity-50",
           promptInputMaxHeightClass(maxRows),
           promptInputFieldPadding(showCancel),

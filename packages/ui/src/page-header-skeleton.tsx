@@ -29,16 +29,16 @@ export function PageHeaderSkeleton({
       aria-label={label ?? messages.loading}
       className={cn("mb-page-header-offset flex flex-col gap-page-header-title-gap", className)}
     >
-      <div className="flex flex-wrap items-center justify-between gap-stack-lg">
-        <Skeleton className="h-stack-3xl w-stack-14xl" />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <Skeleton className="h-7 w-48" />
         {actions ? (
-          <div className="flex items-center gap-stack-sm">
-            <Skeleton className="h-stack-5xl w-stack-12xl" />
-            <Skeleton className="h-stack-5xl w-stack-12xl" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-9 w-24" />
+            <Skeleton className="h-9 w-24" />
           </div>
         ) : null}
       </div>
-      {description ? <Skeleton className="h-stack-lg w-stack-15xl" /> : null}
+      {description ? <Skeleton className="h-4 w-64" /> : null}
     </div>
   );
 }

@@ -16,11 +16,11 @@ export function EmptyState({ title, description, actions, className }: EmptyStat
   return (
     <div
       data-slot="empty-state"
-      className={cn("flex flex-col items-center gap-stack-md py-stack-4xl text-center", className)}
+      className={cn("flex flex-col items-center gap-3 py-8 text-center", className)}
     >
       {title ? <Heading level={3}>{title}</Heading> : null}
       <Text variant="muted">{description}</Text>
-      {actions ? <div className="flex flex-wrap items-center justify-center gap-stack-sm">{actions}</div> : null}
+      {actions ? <div className="flex flex-wrap items-center justify-center gap-2">{actions}</div> : null}
     </div>
   );
 }

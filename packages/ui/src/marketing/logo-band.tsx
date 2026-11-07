@@ -32,17 +32,17 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
       className={cn("py-section-sm", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col items-center gap-stack-2xl">
+      <Container width="default" className="flex flex-col items-center gap-6">
         <Text id={titleId} variant="muted" className="text-center">
           {title}
         </Text>
-        <ul className="flex list-none flex-wrap items-center justify-center gap-x-stack-6xl gap-y-stack-lg p-zero text-muted-foreground">
+        <ul className="flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-4 flush text-muted-foreground">
           {logos.map((item, index) => {
             const body = (
               <>
                 <span
                   aria-hidden="true"
-                  className="inline-flex h-stack-4xl items-center [&_img]:h-stack-4xl [&_img]:w-auto [&_svg]:h-stack-4xl [&_svg]:w-auto"
+                  className="inline-flex h-8 items-center [&_img]:h-8 [&_img]:w-auto [&_svg]:h-8 [&_svg]:w-auto"
                 >
                   {item.logo}
                 </span>
@@ -54,12 +54,12 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
                 {item.href ? (
                   <a
                     href={item.href}
-                    className="inline-flex min-h-stack-7xl items-center rounded-md focus-ring-control hover:text-foreground"
+                    className="inline-flex min-h-11 items-center rounded-md focus-ring-control hover:text-foreground"
                   >
                     {body}
                   </a>
                 ) : (
-                  <span className="inline-flex min-h-stack-7xl items-center">{body}</span>
+                  <span className="inline-flex min-h-11 items-center">{body}</span>
                 )}
               </li>
             );

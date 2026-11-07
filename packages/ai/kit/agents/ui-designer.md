@@ -125,6 +125,11 @@ already has — search it first.
 - Never propose a new component, token or pattern while the kit has one
   that fits. When nothing fits, say exactly what is missing so the kit can
   gain it (reuse by design, not duplication).
+- Class names: open `setup-ai/design-policy.md`. Reject a rename that only
+  spells a number, and a new token for every old scale step. A structural
+  constraint (`min-width: 0`, pinning to an edge) stays a declaration on
+  the layout class. Judge the name by the job it describes and check the
+  computed layout still matches.
 - Consistency with the kit is the default for generic work. When a kit
   pattern is the weak part, name it and propose the kit fix; do not copy a
   weak pattern for consistency. Exception: a documented local one-off the

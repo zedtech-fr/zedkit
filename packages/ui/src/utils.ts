@@ -2,101 +2,31 @@
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
-// Custom theme size tokens in the text-* shape would be mistaken
-// for text colors by the default config (and dropped as conflicts),
-// so they join the font-size group explicitly. Same for the layout
-// token scale: container widths, page gutter and section steps are
-// unknown to the default config, so they join their utility groups
-// explicitly or a consumer override would silently coexist.
-// Shared spacing roles. Same calc step as the old numeric utility, so an
-// identity `--spacing` still reaches them, and a later numeric or role class
-// in `cn()` replaces the earlier one.
-const stackStep = [
-  "zero",
-  "hairline",
-  "stack-3xs",
-  "stack-2xs",
-  "stack-xs",
-  "stack-sm",
-  "stack-md",
-  "stack-3h",
-  "stack-lg",
-  "stack-xl",
-  "stack-2xl",
-  "stack-3xl",
-  "stack-4xl",
-  "stack-5xl",
-  "stack-6xl",
-  "stack-7xl",
-  "stack-8xl",
-  "stack-9xl",
-  "stack-10xl",
-  "stack-11xl",
-  "stack-12xl",
-  "stack-13xl",
-  "stack-14xl",
-  "stack-15xl",
-  "stack-16xl",
-];
-
-const step = (key: string, extra: string[] = []) => [{ [key]: [...extra, ...stackStep] }];
-
+// Custom theme tokens tailwind-merge does not know. Role classes join the
+// group they conflict with, so a later override replaces the earlier one.
+// Structural utilities (content-shrink, pin-fill) are not spacing steps.
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
       "font-size": ["text-form-hint", "text-control"],
-      "max-w": step("max-w", ["narrow", "reading", "default", "wide"]),
-      "min-w": step("min-w"),
-      "min-h": step("min-h", ["control-height", "textarea-min-height"]),
-      "max-h": step("max-h"),
-      w: step("w"),
-      h: step("h"),
-      size: step("size", ["icon"]),
-      gap: step("gap"),
-      "gap-x": step("gap-x"),
-      "gap-y": step("gap-y"),
-      "space-x": step("space-x"),
-      "space-y": step("space-y"),
-      p: step("p"),
-      px: [
-        "px-page-gutter",
-        "px-field-pad",
-        "px-button-pad",
-        "px-button-pad-lg",
-        ...step("px"),
-      ],
-      py: [
-        "py-section-sm",
-        "py-section-md",
-        "py-section-lg",
-        "py-section-xl",
-        ...step("py"),
-      ],
-      pt: step("pt"),
-      pr: step("pr"),
-      pb: step("pb"),
-      pl: step("pl"),
-      ps: step("ps"),
-      pe: step("pe"),
-      m: step("m"),
-      mx: step("mx"),
-      my: step("my"),
-      mt: step("mt"),
-      mr: step("mr"),
-      mb: step("mb"),
-      ml: step("ml"),
-      ms: step("ms"),
-      me: step("me"),
-      inset: step("inset"),
-      "inset-x": step("inset-x"),
-      "inset-y": step("inset-y"),
-      top: step("top"),
-      right: step("right"),
-      bottom: step("bottom"),
-      left: step("left"),
-      start: step("start"),
-      end: step("end"),
-      basis: step("basis"),
+      "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }],
+      "min-w": ["content-shrink"],
+      "min-h": ["pane-shrink", { "min-h": ["control-height", "textarea-min-height"] }],
+      inset: ["pin-fill"],
+      "inset-x": ["pin-x"],
+      "inset-y": ["pin-y"],
+      top: ["pin-top"],
+      bottom: ["pin-bottom"],
+      left: ["pin-left"],
+      right: ["pin-right"],
+      p: ["flush"],
+      m: ["trim-margin"],
+      mt: ["trim-top"],
+      gap: [{ gap: ["stack-sm", "stack-md", "stack-lg"] }],
+      "space-y": [{ "space-y": ["stack-lg"] }],
+      size: [{ size: ["icon"] }],
+      px: ["px-page-gutter", "px-field-pad", "px-button-pad", "px-button-pad-lg"],
+      py: ["flush-block", "py-section-sm", "py-section-md", "py-section-lg", "py-section-xl"],
     },
   },
 });

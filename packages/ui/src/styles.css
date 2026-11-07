@@ -206,47 +206,17 @@
    * (`calc(var(--spacing) * N)`), so an identity's `--spacing` still
    * changes density. Default scale steps (`p-4`, `gap-2`, `text-sm`) are
    * deprecated. Rem aliases below stay so copied CSS keeps resolving;
-   * new code uses the calc role (`gap-stack-*`, `px-field-pad`,
-   * `px-button-pad`). `--spacing-drawer-footer-safe` still references
+   * a shared design value uses a role (`px-field-pad`, `px-button-pad`,
+   * `gap-stack-sm` / `md` / `lg`). `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
    *
-   * `stack-*` is the shared spacing scale (a calc from `--spacing`).
-   * Tailwind also emits the other directions from the same token.
-   * `zero` is 0. `hairline` is 1px and does not follow `--spacing`.
+   * Stack gaps are three shared design steps. They are gap utilities only,
+   * not a renamed spacing scale. Structural constraints (shrink, pin, flush)
+   * are declarations below, not spacing tokens.
    */
-  --spacing-zero: 0px;
-  --spacing-hairline: 1px;
-  --zk-gap-2xs: calc(var(--spacing) * 1);
   --zk-gap-sm: calc(var(--spacing) * 2);
   --zk-gap-md: calc(var(--spacing) * 3);
   --zk-gap-lg: calc(var(--spacing) * 4);
-  --zk-gap-xl: calc(var(--spacing) * 5);
-  --zk-gap-2xl: calc(var(--spacing) * 6);
-  --zk-gap-3xl: calc(var(--spacing) * 7);
-  --zk-gap-4xl: calc(var(--spacing) * 8);
-  --spacing-stack-2xs: var(--zk-gap-2xs);
-  --spacing-stack-sm: var(--zk-gap-sm);
-  --spacing-stack-md: var(--zk-gap-md);
-  --spacing-stack-lg: var(--zk-gap-lg);
-  --spacing-stack-xl: var(--zk-gap-xl);
-  --spacing-stack-2xl: var(--zk-gap-2xl);
-  --spacing-stack-3xl: var(--zk-gap-3xl);
-  --spacing-stack-4xl: var(--zk-gap-4xl);
-  --spacing-stack-3xs: calc(var(--spacing) * 0.5);
-  --spacing-stack-xs: calc(var(--spacing) * 1.5);
-  --spacing-stack-3h: calc(var(--spacing) * 3.5);
-  --spacing-stack-5xl: calc(var(--spacing) * 9);
-  --spacing-stack-6xl: calc(var(--spacing) * 10);
-  --spacing-stack-7xl: calc(var(--spacing) * 11);
-  --spacing-stack-8xl: calc(var(--spacing) * 12);
-  --spacing-stack-9xl: calc(var(--spacing) * 14);
-  --spacing-stack-10xl: calc(var(--spacing) * 16);
-  --spacing-stack-11xl: calc(var(--spacing) * 20);
-  --spacing-stack-12xl: calc(var(--spacing) * 24);
-  --spacing-stack-13xl: calc(var(--spacing) * 28);
-  --spacing-stack-14xl: calc(var(--spacing) * 48);
-  --spacing-stack-15xl: calc(var(--spacing) * 64);
-  --spacing-stack-16xl: calc(var(--spacing) * 72);
   --spacing-field-pad: calc(var(--spacing) * 3);
   --spacing-button-pad: calc(var(--spacing) * 4);
   --spacing-button-pad-lg: calc(var(--spacing) * 8);
@@ -271,7 +241,7 @@
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
   --spacing-button-gap: 0.5rem;
-  /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-4. Kept so copied CSS and existing class names still work. */
+  /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-icon. Kept so copied CSS and existing class names still work. */
   --spacing-icon-control: 1rem;
   /* Minimum touch target (WCAG 2.5.5). */
   --spacing-tap: 2.75rem;
@@ -829,4 +799,63 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 :root[data-motion="reduce"] [data-slot="identity-dock-sheet"][data-vaul-drawer] {
   transform: none !important;
+}
+
+/* Stack rhythm. Gap only, so this does not become a padding or width scale. */
+@utility gap-stack-sm {
+  gap: var(--zk-gap-sm);
+}
+@utility gap-stack-md {
+  gap: var(--zk-gap-md);
+}
+@utility gap-stack-lg {
+  gap: var(--zk-gap-lg);
+}
+@utility space-y-stack-lg {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--zk-gap-lg) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--zk-gap-lg) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
+
+/* Structural layout. The declaration is the constraint; the name is the job. */
+@utility content-shrink {
+  min-width: 0;
+}
+@utility pane-shrink {
+  min-height: 0;
+}
+@utility pin-fill {
+  inset: 0;
+}
+@utility pin-x {
+  inset-inline: 0;
+}
+@utility pin-y {
+  inset-block: 0;
+}
+@utility pin-top {
+  top: 0;
+}
+@utility pin-bottom {
+  bottom: 0;
+}
+@utility pin-left {
+  left: 0;
+}
+@utility pin-right {
+  right: 0;
+}
+@utility flush {
+  padding: 0;
+}
+@utility flush-block {
+  padding-block: 0;
+}
+@utility trim-top {
+  margin-top: 0;
+}
+@utility trim-margin {
+  margin: 0;
 }

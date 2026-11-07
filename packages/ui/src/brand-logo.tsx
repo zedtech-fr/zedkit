@@ -29,7 +29,7 @@ export function BrandLogo({ title, viewBox, className, children, ...props }: Bra
       aria-hidden={decorative ? true : undefined}
       aria-label={decorative ? undefined : title}
       focusable="false"
-      className={cn("h-stack-2xl w-auto shrink-0", className)}
+      className={cn("h-6 w-auto shrink-0", className)}
       {...props}
     >
       {decorative ? null : <title>{title}</title>}

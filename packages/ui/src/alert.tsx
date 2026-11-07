@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils.js";
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border px-stack-lg py-stack-md text-sm [&>svg]:absolute [&>svg]:top-stack-lg [&>svg]:left-stack-lg [&>svg]:text-foreground [&>svg+div]:-translate-y-alert-icon-nudge [&>svg~*]:pl-alert-content-indent",
+  "relative w-full rounded-lg border px-4 py-3 text-sm [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg]:text-foreground [&>svg+div]:-translate-y-alert-icon-nudge [&>svg~*]:pl-alert-content-indent",
   {
     variants: {
       variant: {
@@ -41,7 +41,7 @@ function AlertTitle({
   // Children are explicit (not part of the props spread) so the
   // heading-has-content rule can see them; renders identically.
   return (
-    <h2 data-slot="alert-title" className={cn("mb-stack-2xs text-base leading-none font-medium tracking-tight", className)} {...props}>
+    <h2 data-slot="alert-title" className={cn("mb-1 text-base leading-none font-medium tracking-tight", className)} {...props}>
       {children}
     </h2>
   );
