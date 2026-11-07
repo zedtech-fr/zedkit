@@ -836,6 +836,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility grid-trio {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+/* The value in a three-column detail row. */
+@utility span-value {
+  grid-column: span 2 / span 2;
+}
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
 }
@@ -915,8 +919,20 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-skeleton-bar {
   width: calc(var(--spacing) * 24);
 }
+/* Compact sidebar inside a framed demo. The shell's own sidebar stays 16rem. */
+@utility w-sidebar-compact {
+  width: calc(var(--spacing) * 48);
+}
 @utility h-logo {
   height: calc(var(--spacing) * 6);
+}
+/* Logo lockup in a band of customer marks. */
+@utility h-logo-row {
+  height: calc(var(--spacing) * 8);
+}
+/* Sticky phone header. */
+@utility h-phone-bar {
+  height: calc(var(--spacing) * 14);
 }
 @utility size-mark {
   width: calc(var(--spacing) * 10);
@@ -930,8 +946,20 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-status {
   min-height: calc(var(--spacing) * 6);
 }
+/* One line of label text, so the row does not jump when the text appears. */
+@utility min-h-label {
+  min-height: calc(var(--spacing) * 5);
+}
 @utility empty-state-block {
   padding-block: calc(var(--spacing) * 8);
+}
+/* Tight stack for a list that is not a flex or grid parent. */
+@utility space-y-stack-tight {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
+  }
 }
 @utility space-y-stack-sm {
   :where(& > :not(:last-child)) {

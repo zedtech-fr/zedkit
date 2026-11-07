@@ -49,6 +49,12 @@ describe("cn", () => {
     expect(cn("gap-blocks", "gap-list")).toBe("gap-list");
     expect(cn("mt-2", "mt-standfirst")).toBe("mt-standfirst");
     expect(cn("px-2", "px-control-tight")).toBe("px-control-tight");
+    expect(cn("space-y-1", "space-y-stack-tight")).toBe("space-y-stack-tight");
+    expect(cn("w-48", "w-sidebar-compact")).toBe("w-sidebar-compact");
+    expect(cn("h-14", "h-phone-bar")).toBe("h-phone-bar");
+    expect(cn("h-8", "h-logo-row")).toBe("h-logo-row");
+    expect(cn("min-h-5", "min-h-label")).toBe("min-h-label");
+    expect(cn("col-span-2", "span-value")).toBe("span-value");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });

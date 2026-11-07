@@ -372,7 +372,7 @@ export function ProjectTrackerDemoApp() {
       </Stack>
       <Stack className="h-[min(40rem,80svh)] content-shrink overflow-hidden rounded-lg border border-border bg-background">
         <AppShell
-          className={cn("h-full pane-shrink [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+          className={cn("h-full pane-shrink [&>aside]:w-sidebar-compact", mobile && "[&>aside]:hidden")}
           sidebar={<Sidebar />}
           topbar={<TopBar />}
         >

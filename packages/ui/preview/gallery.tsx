@@ -136,7 +136,7 @@ export function Gallery() {
   return (
     <AppShell
       sidebar={
-        <nav className="space-y-1 surface-pad-md" aria-label="Gallery sections">
+        <nav className="space-y-stack-tight surface-pad-md" aria-label="Gallery sections">
           <p className="px-control-tight pb-2 text-sm font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
             <a key={id} href={`#${id}`} className="block rounded-md px-control-tight py-control-block text-sm hover:bg-accent">
@@ -172,7 +172,7 @@ export function Gallery() {
             <Badge variant="outline">Outline</Badge>
             <Badge variant="destructive">Destructive</Badge>
           </div>
-          <div className="flex items-center gap-3" aria-label="Status dots">
+          <div className="flex items-center gap-stack-md" aria-label="Status dots">
             <StatusDot tone="active" />
             <StatusDot tone="idle" />
             <StatusDot tone="success" />
@@ -184,7 +184,7 @@ export function Gallery() {
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-stack-md">
             <StatusLabel tone="loading">Saving report…</StatusLabel>
             <StatusLabel tone="saved">Saved</StatusLabel>
             <StatusLabel tone="error">Could not save</StatusLabel>
@@ -411,11 +411,11 @@ export function Gallery() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-stack-sm">
             <Checkbox id="gallery-terms" defaultChecked />
             <Label htmlFor="gallery-terms">Accept the terms</Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-stack-sm">
             <Switch id="gallery-notify" defaultChecked />
             <Label htmlFor="gallery-notify">Notify me</Label>
           </div>
