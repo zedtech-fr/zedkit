@@ -51,6 +51,8 @@ describe("GlassSurface", () => {
     expect(node.className).toContain("from-accent/15");
     expect(node.className).toContain("glass-pad-lg");
     expect(node.className).not.toContain("glass-pad-md");
+    render(<GlassSurface padding="sm">Small</GlassSurface>);
+    expect(screen.getByText("Small").className).toContain("surface-pad-md");
   });
 
   it("renders the requested element and forwards props", () => {
