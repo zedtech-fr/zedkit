@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 130,
+  "total": 126,
   "files": {
     "apps/docs/components/adoption-steps.tsx": 1,
     "apps/docs/components/component-page.tsx": 2,
@@ -19,11 +19,7 @@
     "apps/docs/ui/home/home-yours-scene.tsx": 1,
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
     "packages/ui/preview/gallery.tsx": 4,
-    "packages/ui/src/alert.tsx": 1,
     "packages/ui/src/button.tsx": 1,
-    "packages/ui/src/dialog.tsx": 1,
-    "packages/ui/src/drawer-meta.tsx": 1,
-    "packages/ui/src/drawer-non-modal.tsx": 1,
     "packages/ui/src/field.tsx": 1,
     "packages/ui/src/layout.tsx": 5,
     "packages/ui/src/marketing/cta-band.tsx": 1,

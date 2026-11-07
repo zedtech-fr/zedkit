@@ -41,7 +41,7 @@ function AlertTitle({
   // Children are explicit (not part of the props spread) so the
   // heading-has-content rule can see them; renders identically.
   return (
-    <h2 data-slot="alert-title" className={cn("mb-alert-title text-base leading-none font-medium tracking-tight", className)} {...props}>
+    <h2 data-slot="alert-title" className={cn("mb-alert-title text-alert-title", className)} {...props}>
       {children}
     </h2>
   );

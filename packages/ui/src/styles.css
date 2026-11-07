@@ -617,6 +617,22 @@ a[class*="px-badge-inline"] {
   margin-bottom: calc(var(--spacing) * 3);
 }
 
+/* Dialog and drawer titles. */
+@utility text-overlay-title {
+  font-size: var(--text-lg);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Alert title. */
+@utility text-alert-title {
+  font-size: var(--text-base);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
 @layer components {
   [data-slot="scroll-gallery"]::before,
   [data-slot="scroll-gallery"]::after {
