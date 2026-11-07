@@ -1,16 +1,13 @@
 {
   "version": 1,
-  "total": 112,
+  "total": 108,
   "files": {
     "apps/docs/components/adoption-steps.tsx": 1,
     "apps/docs/components/component-page.tsx": 2,
     "apps/docs/components/demos/brand-logo-demo.tsx": 1,
     "apps/docs/components/demos/icon-button-demo.tsx": 1,
-    "apps/docs/components/demos/identity-demo.tsx": 1,
     "apps/docs/components/demos/scroll-scenes-demo.tsx": 1,
-    "apps/docs/components/identity-editor-export.tsx": 2,
     "apps/docs/components/project-tracker-demo-app.tsx": 1,
-    "apps/docs/ui/catalog/catalog-results.tsx": 1,
     "apps/docs/ui/home/home-gallery-preview.tsx": 1,
     "apps/docs/ui/home/home-hero-overview.tsx": 1,
     "apps/docs/ui/home/home-identity-example-maison.tsx": 1,

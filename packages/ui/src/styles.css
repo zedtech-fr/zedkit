@@ -661,6 +661,12 @@ a[class*="px-badge-inline"] {
   line-height: var(--text-lg--line-height);
 }
 
+/* A level-2 heading pulled down to the specimen size. */
+.text-compact-heading {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+}
+
 /* Marketing hero promise. Grows one step from the small breakpoint. */
 .text-hero-title {
   font-size: var(--text-4xl);

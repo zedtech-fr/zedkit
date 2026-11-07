@@ -88,6 +88,7 @@ describe("layout job classes", () => {
     expect(utility("text-page-title")).toBe("font-size: var(--text-2xl); line-height: var(--text-2xl--line-height); font-weight: 600; letter-spacing: -0.02em;");
     expect(css).toContain("font-family: var(--zk-font-display);\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);");
     expect(css).toContain(".text-hero-title {\n  font-size: var(--text-4xl);");
+    expect(css).toContain(".text-compact-heading {\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);");
     expect(utility("ml-note")).toBe("margin-left: var(--zk-gap-sm);");
     expect(utility("right-send")).toBe("right: calc(var(--spacing) * 1.5);");
     expect(utility("bottom-send")).toBe("bottom: calc(var(--spacing) * 1.5);");
