@@ -54,12 +54,11 @@ function TaskRow({ name, owner, status }: { name: string; owner: string; status:
   );
 }
 
-/** A three-step product tour for a fictional app, pinned under a 4.5rem header. */
+/** A three-step product tour for a fictional app, pinned under the header. */
 export function ScrollScenesDemo() {
   const { plan, track, ship } = scrollScenesCopy.tour;
   return (
     <ScrollScenes
-      className="[--zk-scenes-top:4.5rem]"
       scenes={[
         {
           id: "plan",
@@ -118,7 +117,7 @@ export function ScrollScenesBeforeAfterDemo() {
   const { before, after } = scrollScenesCopy.compare;
   return (
     <ScrollScenes
-      className="[--zk-scenes-step:45svh] [--zk-scenes-top:4.5rem]"
+      className="[--zk-scenes-step:45svh]"
       scenes={[
         {
           id: "before",
@@ -158,7 +157,6 @@ export function ScrollScenesLooksDemo() {
   const { product, tagline, save, cancel, scenes } = scrollScenesCopy.looks;
   return (
     <ScrollScenes
-      className="[--zk-scenes-top:4.5rem]"
       scenes={scenes.map((scene) => ({
         id: scene.id,
         caption: (
@@ -194,7 +192,6 @@ export function ScrollScenesLooksDemo() {
 export function ScrollScenesPricingDemo() {
   return (
     <ScrollScenes
-      className="[--zk-scenes-top:4.5rem]"
       scenes={scrollScenesCopy.pricing.plans.map((plan) => ({
         id: plan.id,
         caption: (

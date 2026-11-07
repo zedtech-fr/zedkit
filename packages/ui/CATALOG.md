@@ -1956,7 +1956,6 @@ const steps = [
 
 // The caption says it all; the visual is decoration, hidden from assistive tech.
 <ScrollScenes
-  className="[--zk-scenes-top:4.5rem]"
   scenes={steps.map((step, index) => ({
     id: step.id,
     caption: (
@@ -1978,9 +1977,9 @@ const steps = [
 ```ts
 import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit-ui";
 
-// Two scenes, a shorter scroll per scene (default 60svh), header 4.5rem tall.
+// Two scenes, a shorter scroll per scene (default 60svh).
 <ScrollScenes
-  className="[--zk-scenes-step:45svh] [--zk-scenes-top:4.5rem]"
+  className="[--zk-scenes-step:45svh]"
   scenes={[
     {
       id: "before",
@@ -2016,7 +2015,6 @@ const looks = [
 ];
 
 <ScrollScenes
-  className="[--zk-scenes-top:4.5rem]"
   scenes={looks.map((look) => ({
     id: look.id,
     caption: (
@@ -2045,7 +2043,6 @@ const plans = [
 ];
 
 <ScrollScenes
-  className="[--zk-scenes-top:4.5rem]"
   scenes={plans.map((plan) => ({
     id: plan.id,
     caption: (
