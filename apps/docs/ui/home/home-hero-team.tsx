@@ -35,7 +35,7 @@ export function HeroAvatar({ initials }: { initials: string }) {
     <span
       aria-hidden="true"
       data-hero-avatar=""
-      className="flex shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+      className="flex shrink-0 items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground"
     >
       {initials}
     </span>
@@ -56,7 +56,7 @@ function PersonButton({ person, selected, onSelect }: { person: Person; selected
         <HeroAvatar initials={person.initials} />
         <span className="flex content-shrink flex-1 flex-col">
           <span className="truncate text-dense font-medium">{person.name}</span>
-          <span className="truncate text-xs text-muted-foreground">{person.role}</span>
+          <span className="truncate text-caption text-muted-foreground">{person.role}</span>
         </span>
         <StatusDot tone={person.online ? "success" : "idle"} pulse={false} />
         <span className="sr-only">{person.online ? copy.online : copy.away}</span>

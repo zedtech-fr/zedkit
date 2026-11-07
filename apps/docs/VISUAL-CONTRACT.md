@@ -43,7 +43,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 | Docs H1 | `--zk-type-doc-h1-size`: 2rem, 1.75rem below 48rem (not the marketing clamp). H2 `--zk-type-h2-size` 22-26px, H3 18px, weight 600. Linked headings inherit size and weight. |
 | Prose | 15/1.6 (`--zk-type-prose-size`), 64-72ch. Lead paragraph `--zk-type-lead-size` 16-18px, once. |
 | Body and dense UI | Body 14/1.55. Dense UI (controls, tabs, example links, table cells, nav) is `text-dense`: 13px, line about 18.6px (`--text-sm`). Nothing a person must read to act is below 13px. |
-| Metadata | 12/1.4 (`--zk-type-label-size`). Counts, captions, eyebrow labels, timestamps. Never essential copy or a link people need. |
+| Metadata | Captions, badges and timestamps are `text-caption`: 12px, 16px line. Eyebrow labels use the label role: 12/1.4, weight 500. Never essential copy or a link people need. |
 | Code | Mono family of the identity, 13/21 in blocks, inline code follows its sentence. |
 | Dense looks | Density is rhythm (row height, gaps, rules), not smaller type. Volt's activity rows are 13px: the event is what a person reads to act. Only the timestamp column may be metadata. Decision, 2 Nov 2026: the 13px floor wins over a 12px mono row. |
 | Widths | Marketing 1200 max. Docs shell 1440 max, nav 240, article 720-800, TOC 180 only if it fits. |

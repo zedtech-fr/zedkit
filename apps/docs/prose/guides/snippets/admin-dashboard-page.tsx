@@ -44,7 +44,7 @@ function Sidebar() {
     <Stack gap={4} className="h-full surface-pad-compact">
       <Stack gap={1}>
         <Text className="font-semibold">Harbor Studio</Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           Admin
         </Text>
       </Stack>
@@ -71,7 +71,7 @@ function TopBar() {
       <Text
         as="span"
         aria-hidden="true"
-        className="flex size-person items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+        className="flex size-person items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground"
       >
         MC
       </Text>

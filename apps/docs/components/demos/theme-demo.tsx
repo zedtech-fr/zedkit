@@ -80,7 +80,7 @@ export function ThemeTokensDemo() {
             </li>
           ))}
         </ul>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {themeCopy.updated}
         </Text>
       </Stack>

@@ -19,7 +19,7 @@ export function OfflineNoteDemo() {
               <Text as="span" className="font-medium">
                 {draft.id}
               </Text>
-              <Text as="span" variant="muted" className="text-xs">
+              <Text as="span" variant="muted" className="text-caption">
                 {draft.client}
               </Text>
             </Stack>

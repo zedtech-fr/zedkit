@@ -18,7 +18,7 @@ export function ComboboxDemo() {
           aria-label={comboboxCopy.officeCityAriaLabel}
           placeholder={comboboxCopy.placeholder}
         />
-        <Text variant="muted" className="text-xs" aria-live="polite">
+        <Text variant="muted" className="text-caption" aria-live="polite">
           {city
             ? comboboxCopy.selected(CITIES.find((entry) => entry.value === city)?.label ?? city)
             : comboboxCopy.filterHint}

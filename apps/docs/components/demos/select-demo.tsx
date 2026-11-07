@@ -32,7 +32,7 @@ export function SelectDemo() {
           <SelectItem value="apac">{selectCopy.apac}</SelectItem>
         </SelectContent>
       </Select>
-      <Text variant="muted" className="text-xs" aria-live="polite">
+      <Text variant="muted" className="text-caption" aria-live="polite">
         {region ? DELIVERY[region] : selectCopy.empty}
       </Text>
     </Stack>

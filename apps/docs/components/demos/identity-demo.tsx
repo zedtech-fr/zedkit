@@ -60,7 +60,7 @@ export function IdentitySwitcherDemo() {
         <IdentitySwitcher storageKey={DEMO_STORAGE_KEY} showLabel label={identityCopy.look} />
       </Stack>
       <CurrentLook />
-      <Text variant="muted" className="trim-margin! text-xs">
+      <Text variant="muted" className="trim-margin! text-caption">
         {identityCopy.switcher.note}
       </Text>
     </Stack>
@@ -108,7 +108,7 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
 export function IdentityScopeDemo() {
   return (
     <Stack gap={2} className="content-shrink">
-      <Text variant="muted" className="text-xs">
+      <Text variant="muted" className="text-caption">
         {identityCopy.scope.note}
       </Text>
       <Stack className="content-shrink gap-stack-md sm:grid sm:grid-pair xl:grid-trio">

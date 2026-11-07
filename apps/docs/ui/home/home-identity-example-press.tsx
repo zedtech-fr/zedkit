@@ -56,7 +56,7 @@ function StoryQueue({ stories, selectedId, onSelect }: { stories: Story[]; selec
                 onClick={() => onSelect(story.id)}
               >
                 <span className="font-(family-name:--zk-font-display)">{story.headline}</span>
-                <span className="text-xs text-muted-foreground">{sectionLabel(story.section)}</span>
+                <span className="text-caption text-muted-foreground">{sectionLabel(story.section)}</span>
               </Button>
             </TableCell>
             <TableCell>
@@ -107,7 +107,7 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
 function ReadingPreview({ story }: { story: Story }) {
   return (
     <article aria-label={copy.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">
-      <Text variant="muted" className="text-xs font-medium tracking-wide uppercase">
+      <Text variant="muted" className="text-caption font-medium tracking-wide uppercase">
         {sectionLabel(story.section)}
       </Text>
       <Heading level={3} data-follow="" className="font-(family-name:--zk-font-display) text-lg text-balance">

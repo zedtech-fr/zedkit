@@ -149,7 +149,7 @@ describe("primitives", () => {
     const label = screen.getByText("Name");
     expect(label.tagName).toBe("LABEL");
     expect(label.getAttribute("data-slot")).toBe("label");
-    expect(label.className).toContain("text-sm");
+    expect(label.className).toContain("text-dense");
     expect(label.className).toContain("peer-disabled:cursor-not-allowed");
     expect(label.className).toContain("peer-disabled:opacity-50");
   });

@@ -35,7 +35,7 @@ export function HomeHeroSatellites() {
           </span>
           <span className="flex content-shrink flex-col">
             <Text className="truncate text-dense font-medium">{copy.mergedTitle}</Text>
-            <Text variant="muted" className="truncate text-xs">
+            <Text variant="muted" className="truncate text-caption">
               {copy.mergedBody}
             </Text>
           </span>
@@ -48,7 +48,7 @@ export function HomeHeroSatellites() {
               <span
                 key={person.name}
                 data-hero-avatar=""
-                className="flex items-center justify-center rounded-full border-2 border-card bg-primary text-xs font-semibold text-primary-foreground"
+                className="flex items-center justify-center rounded-full border-2 border-card bg-primary text-caption font-semibold text-primary-foreground"
               >
                 {person.initials}
               </span>

@@ -53,7 +53,7 @@ export function HomeIdentityLooksTabs({
                 <span data-tab-label="">
                   {homeIdentityLooksCopy.products[id]}
                 </span>
-                <span className="text-xs font-normal text-muted-foreground">
+                <span className="text-caption font-normal text-muted-foreground">
                   {HOME_IDENTITY_FACTS[id].label}
                 </span>
               </span>

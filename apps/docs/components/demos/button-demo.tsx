@@ -9,7 +9,7 @@ export function ButtonDemo() {
     <>
       <Toaster />
       <Stack id="button-demo" gap={4}>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {buttonCopy.hint}
         </Text>
         <Stack direction="horizontal" gap={2} className="flex-wrap items-center">

@@ -15,7 +15,7 @@ export function IconButtonDemo() {
           <Heading level={2} className="text-xl text-balance">
             {iconButtonCopy.demo.title}
           </Heading>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {iconButtonCopy.demo.subtitle}
           </Text>
         </Stack>
@@ -35,7 +35,7 @@ export function IconButtonDemo() {
         <Text role="status" variant="muted">
           {message}
         </Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {iconButtonCopy.demo.hint}
         </Text>
       </Stack>
@@ -58,7 +58,7 @@ export function IconButtonRowsDemo() {
               <Text as="span" className="font-medium">
                 {task.title}
               </Text>
-              <Text as="span" variant="muted" className="text-xs">
+              <Text as="span" variant="muted" className="text-caption">
                 {iconButtonCopy.rows.dueLine(task.owner, task.due)}
               </Text>
             </Stack>
@@ -90,7 +90,7 @@ export function IconButtonRowsDemo() {
         <Button variant="outline" size="sm" onClick={() => setTasks(INITIAL_TASKS)}>
           {iconButtonCopy.rows.restoreTasks}
         </Button>
-        <Text role="status" variant="muted" className="text-xs">
+        <Text role="status" variant="muted" className="text-caption">
           {duplicates === 0 ? iconButtonCopy.rows.noDuplicates : iconButtonCopy.rows.duplicatesRequested(duplicates)}
         </Text>
       </Stack>

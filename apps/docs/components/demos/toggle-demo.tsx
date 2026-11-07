@@ -13,7 +13,7 @@ export function ToggleDemo() {
           <Switch id="demo-notify" defaultChecked />
           <Label htmlFor="demo-notify">{toggleCopy.notify}</Label>
         </Stack>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {toggleCopy.hint}
         </Text>
       </Stack>

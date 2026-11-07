@@ -45,7 +45,7 @@ function ProductCard({ product, selected, onSelect }: { product: Product; select
             {product.stock <= LOW_STOCK ? copy.lowStock(product.stock) : copy.inStock(product.stock)}
           </Badge>
         </span>
-        {product.visible ? null : <span className="text-xs text-muted-foreground">{copy.hidden}</span>}
+        {product.visible ? null : <span className="text-caption text-muted-foreground">{copy.hidden}</span>}
       </Button>
     </li>
   );
