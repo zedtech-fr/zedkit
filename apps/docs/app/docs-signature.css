@@ -35,6 +35,11 @@
   max-width: 28rem;
 }
 
+/* AI setup. The benefits column stays at most 30rem while the file tree scrolls. */
+[data-home-ai-setup] {
+  --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
+}
+
 /* Identity editor. The preview is the right column from the large breakpoint, at most 26rem. */
 @media (min-width: 64rem) {
   [data-slot="identity-editor"] {

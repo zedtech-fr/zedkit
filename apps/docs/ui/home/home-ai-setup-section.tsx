@@ -110,7 +110,6 @@ export function HomeAiSetupSection() {
           side="left"
           mobile="before"
           gap="lg"
-          className="[--zk-sticky-cols:minmax(0,1fr)_minmax(0,30rem)]"
           data-home-ai-setup=""
         >
           <StickyAside.Main>
