@@ -128,7 +128,7 @@ export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentTog
         </Stack>
       </Stack>
       {/* Below md the sidebar is gone, so the pages move into the bar. */}
-      <nav aria-label={copy.navAriaLabel} className="flex gap-1 overflow-x-auto px-3 pb-2 md:hidden">
+      <nav aria-label={copy.navAriaLabel} className="flex gap-stack-tight overflow-x-auto px-3 pb-2 md:hidden">
         {HERO_NAV.map((item) => (
           <NavButton key={item.id} {...item} active={item.id === page} onSelect={onPage} compact />
         ))}

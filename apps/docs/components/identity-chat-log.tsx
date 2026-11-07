@@ -60,7 +60,7 @@ export function ChatLog({
             data-role={message.role}
             {...(message.role === "notice" && !noticeInComposerFooter ? { "data-assistant-notice": "" } : {})}
             className={cn(
-              "flex max-w-[90%] flex-col gap-1 rounded-2xl px-3 py-2 text-sm",
+              "flex max-w-[90%] flex-col gap-stack-tight rounded-2xl px-3 py-2 text-sm",
               user ? "self-end rounded-tr-sm bg-primary text-primary-foreground" : "self-start rounded-tl-sm border border-border bg-muted",
             )}
           >

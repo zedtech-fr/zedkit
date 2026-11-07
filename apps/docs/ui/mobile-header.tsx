@@ -103,7 +103,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
       <div className="w-full [&_[data-search]]:w-full">
         <SiteFullSearchTrigger className="w-full max-w-none" />
       </div>
-      <nav aria-label="Menu" className="flex flex-col gap-1">
+      <nav aria-label="Menu" className="flex flex-col gap-stack-tight">
         {primary.map((link) => (
           <NavDrawerLink
             key={link.href}

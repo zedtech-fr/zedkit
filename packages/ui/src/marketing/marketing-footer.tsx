@@ -31,7 +31,7 @@ const linkClass =
 function FooterColumn({ column }: { column: MarketingFooterColumn }) {
   const titleId = useId();
   return (
-    <nav aria-labelledby={titleId} className="flex content-shrink flex-col gap-1">
+    <nav aria-labelledby={titleId} className="flex content-shrink flex-col gap-stack-tight">
       <p id={titleId} className="text-sm font-semibold">
         {column.title}
       </p>

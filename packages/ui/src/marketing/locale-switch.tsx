@@ -30,7 +30,7 @@ function LocaleSwitch({ locales, current, onSelect, className, ...props }: Local
   const messages = useUiMessages();
   return (
     <nav data-slot="locale-switch" aria-label={messages.language} className={className} {...props}>
-      <ul className={cn("flex list-none items-center gap-1 flush")}>
+      <ul className={cn("flex list-none items-center gap-stack-tight flush")}>
         {locales.map((locale) => {
           const isCurrent = locale.code === current;
           const state = isCurrent ? ("true" as const) : undefined;
