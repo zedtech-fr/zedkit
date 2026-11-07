@@ -92,6 +92,13 @@ test("localizeCommand keeps a registry path with spaces, quotes and metacharacte
   );
 });
 
+test("local consumption packs the runtime workspace closure, not only ui", () => {
+  const src = readFileSync(new URL("./adoption-smoke.mjs", import.meta.url), "utf8");
+  assert.match(src, /workspaceInstallClosure/);
+  assert.match(src, /packWorkspacePackages/);
+  assert.doesNotMatch(src, /"pack", "--pack-destination"/);
+});
+
 test("packedTarball reads a tarball from a directory whose name is a shell command", (t) => {
   const parent = scratch();
   t.after(() => {

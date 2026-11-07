@@ -131,6 +131,8 @@ const requiredOk = {
   checks: "success",
   ui_smoke: "skipped",
   registry: "skipped",
+  quickstart_smoke: "skipped",
+  adoption_smoke: "skipped",
   docs_build: "skipped",
   docs_e2e: "skipped",
   docs_smoke: "skipped",
@@ -224,4 +226,44 @@ test("PR to main keeps docs selected so a skip is not green", () => {
   assert.ok(errors.some((e) => e.includes("docs_build")));
   assert.ok(errors.some((e) => e.includes("docs_e2e")));
   assert.ok(errors.some((e) => e.includes("registry")));
+  assert.ok(errors.some((e) => e.includes("quickstart_smoke")));
+  assert.ok(errors.some((e) => e.includes("adoption_smoke")));
+});
+
+test("selected registry consumption smokes must succeed", () => {
+  assert.ok(
+    requiredJobsPass({
+      results: { ...requiredOk, registry: "success" },
+      selected: { ...packOnly, registry: true },
+    }).some((e) => e.includes("quickstart_smoke")),
+  );
+  assert.ok(
+    requiredJobsPass({
+      results: { ...requiredOk, registry: "success", quickstart_smoke: "success" },
+      selected: { ...packOnly, registry: true },
+    }).some((e) => e.includes("adoption_smoke")),
+  );
+  assert.deepEqual(
+    requiredJobsPass({
+      results: {
+        ...requiredOk,
+        registry: "success",
+        quickstart_smoke: "success",
+        adoption_smoke: "success",
+      },
+      selected: { ...packOnly, registry: true },
+    }),
+    [],
+  );
+  assert.ok(
+    requiredJobsPass({
+      results: {
+        ...requiredOk,
+        registry: "success",
+        quickstart_smoke: "failure",
+        adoption_smoke: "success",
+      },
+      selected: { ...packOnly, registry: true },
+    }).some((e) => e.includes("quickstart_smoke")),
+  );
 });
