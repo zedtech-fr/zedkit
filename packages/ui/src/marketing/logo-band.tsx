@@ -42,7 +42,7 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
               <>
                 <span
                   aria-hidden="true"
-                  className="inline-flex h-8 items-center [&_img]:h-8 [&_img]:w-auto [&_svg]:h-8 [&_svg]:w-auto"
+                  className="inline-flex h-logo-row items-center [&_img]:h-logo-row [&_img]:w-auto [&_svg]:h-logo-row [&_svg]:w-auto"
                 >
                   {item.logo}
                 </span>

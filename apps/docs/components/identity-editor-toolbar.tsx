@@ -178,7 +178,7 @@ function SaveFeedback({
   onSaveAsNew: () => void;
 }) {
   const copy = identityEditorCopy.library;
-  if (!status) return <Text role="status" typeRole="label" className="min-h-5" />;
+  if (!status) return <Text role="status" typeRole="label" className="min-h-label" />;
   if (status.kind === "exists") {
     return (
       <Stack gap={2} role="alert" data-slot="identity-editor-clash">
@@ -292,7 +292,7 @@ function IdentityEditorKeepBar({
         id="identity-editor-name-hint"
         variant="muted"
         typeRole="label"
-        className="min-h-5"
+        className="min-h-label"
       >
         {name.trim() === "" ? copy.nameHint : null}
       </Text>

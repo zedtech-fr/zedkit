@@ -65,6 +65,11 @@ describe("layout job classes", () => {
     expect(utility("size-mark")).toBe("width: calc(var(--spacing) * 10); height: calc(var(--spacing) * 10);");
     expect(utility("size-person")).toBe("width: calc(var(--spacing) * 8); height: calc(var(--spacing) * 8);");
     expect(utility("w-skeleton-bar")).toBe("width: calc(var(--spacing) * 24);");
+    expect(utility("w-sidebar-compact")).toBe("width: calc(var(--spacing) * 48);");
+    expect(utility("h-logo-row")).toBe("height: calc(var(--spacing) * 8);");
+    expect(utility("h-phone-bar")).toBe("height: calc(var(--spacing) * 14);");
+    expect(utility("min-h-label")).toBe("min-height: calc(var(--spacing) * 5);");
+    expect(utility("span-value")).toBe("grid-column: span 2 / span 2;");
     expect(utility("mt-status")).toBe("margin-top: calc(var(--spacing) * 3);");
     expect(utility("gap-x-meta")).toBe("column-gap: calc(var(--spacing) * 6);");
     expect(utility("min-h-status")).toBe("min-height: calc(var(--spacing) * 6);");

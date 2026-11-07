@@ -206,7 +206,7 @@ export function MobileHeader({
         id="nd-mobile-nav"
         className={
           className ??
-          "sticky pin-top z-40 flex h-14 items-center justify-between gap-stack-sm border-b bg-background px-control-tight md:hidden"
+          "sticky pin-top z-40 flex h-phone-bar items-center justify-between gap-stack-sm border-b bg-background px-control-tight md:hidden"
         }
       >
         <div className="flex content-shrink items-center gap-icon">
