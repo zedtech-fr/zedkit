@@ -59,7 +59,7 @@ function ProductEditor({ product, onSave }: { product: Product; onSave: (next: P
   const [draft, setDraft] = useState(product);
   return (
     <Stack gap={3} className="content-shrink">
-      <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
+      <Heading level={3} className="text-specimen-title text-balance">
         {product.name}
       </Heading>
       <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
@@ -93,7 +93,7 @@ export function HomeIdentityExampleMaison() {
   return (
     <Stack gap={5} className="content-shrink">
       <Stack gap={1}>
-        <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
+        <Heading level={3} className="text-specimen-title text-balance">
           {copy.heading}
         </Heading>
         <Text variant="muted">{copy.description}</Text>

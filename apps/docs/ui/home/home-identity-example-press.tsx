@@ -110,7 +110,7 @@ function ReadingPreview({ story }: { story: Story }) {
       <Text variant="muted" className="text-caption font-medium tracking-wide uppercase">
         {sectionLabel(story.section)}
       </Text>
-      <Heading level={3} data-follow="" className="font-(family-name:--zk-font-display) text-lg text-balance">
+      <Heading level={3} data-follow="" className="text-specimen-title text-balance">
         {story.headline}
       </Heading>
       <Text variant="muted" className="mt-standfirst text-pretty">
@@ -135,7 +135,7 @@ export function HomeIdentityExamplePress() {
   return (
     <Stack gap={4} className="content-shrink">
       <Stack gap={1}>
-        <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
+        <Heading level={3} className="text-specimen-title text-balance">
           {copy.heading}
         </Heading>
         <Text variant="muted">{copy.description}</Text>
