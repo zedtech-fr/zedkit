@@ -289,7 +289,7 @@
   --spacing-status-label-gap: calc(var(--spacing) * 1.5);
   --spacing-status-label-box: calc(var(--spacing) * 4);
   --spacing-status-dot: calc(var(--spacing) * 2);
-  --spacing-control-inline: 0.75rem;
+  --spacing-control-inline: calc(var(--spacing) * 3);
   --spacing-control-block: var(--spacing);
   --spacing-control-block-lg: calc(var(--spacing) * 2);
   --spacing-textarea-min-height: 3.75rem;
@@ -309,15 +309,15 @@
   --spacing-field-content: calc(var(--spacing) * 1.5);
   --spacing-field-inline: calc(var(--spacing) * 2);
   --spacing-field-legend-bottom: calc(var(--spacing) * 3);
-  --spacing-field-label-inset: 1rem;
+  --spacing-field-label-inset: calc(var(--spacing) * 4);
   --spacing-field-separator: calc(var(--spacing) * 5);
   --spacing-field-separator-inline: calc(var(--spacing) * 2);
   --spacing-field-error-indent: calc(var(--spacing) * 4);
   --spacing-field-error-gap: 0.25rem;
   --spacing-card-padding: 1.5rem;
   --spacing-card-stack: 0.5rem;
-  --spacing-card-section: 1rem;
-  --spacing-card-lines: 0.5rem;
+  --spacing-card-section: calc(var(--spacing) * 4);
+  --spacing-card-lines: calc(var(--spacing) * 2);
   --spacing-separator-thickness: 0.0625rem;
   --spacing-live-pulse-gap: calc(var(--spacing) * 1.5);
   --spacing-secret-field-gap: calc(var(--spacing) * 2);

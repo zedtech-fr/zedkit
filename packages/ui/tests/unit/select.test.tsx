@@ -63,8 +63,8 @@ describe("select", () => {
     expect(option.className).not.toMatch(/(^|\s)pr-8(\s|$)/);
     const indicator = option.querySelector("span.absolute");
     expect(indicator?.className).toContain("size-icon-sm");
-    expect(indicator?.className).toContain("right-2");
-    expect(indicator?.className).not.toContain("right-select-item-inline");
+    expect(indicator?.className).toContain("right-select-item-inline");
+    expect(indicator?.className).not.toContain("right-2");
     const label = screen.getByText("Regions");
     expect(label.className).toContain("px-select-item-inline");
     expect(label.className).toContain("py-select-item-block");

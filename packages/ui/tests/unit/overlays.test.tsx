@@ -371,8 +371,8 @@ describe("overlays", () => {
     expect(tip.textContent).toContain("Saves the invoice");
     expect(tip.className).toContain("z-dropdown");
     expect(tip.className).not.toContain("z-overlay");
-    expect(tip.className).toContain("px-3");
-    expect(tip.className).not.toContain("px-control-inline");
+    expect(tip.className).toContain("px-control-inline");
+    expect(tip.className).not.toContain("px-3");
     assertNoValueArbitraries(tip.className);
   });
 
