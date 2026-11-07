@@ -1494,7 +1494,7 @@ import { Surface } from "@zedtech/zedkit-ui";
 - See also: `Stack content and group titled sections`
 - Examples: Simple, With footer
 - Registry: card
-- Troubleshooting: Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`pt-0` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
+- Troubleshooting: Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
 
 ```ts
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedtech/zedkit-ui";
@@ -1909,7 +1909,7 @@ import { Card, CardContent, StickyAside, Text } from "@zedtech/zedkit-ui";
 import { ParallaxLayer, ParallaxSection } from "@zedtech/zedkit-ui/motion";
 
 <ParallaxSection range="page">
-  <ParallaxLayer depth="far" className="absolute inset-0" />
+  <ParallaxLayer depth="far" className="absolute pin-fill" />
   <div className="relative"><h1>Title</h1></div>
   <ParallaxLayer depth="near" className="absolute right-8 top-20" />
 </ParallaxSection>
