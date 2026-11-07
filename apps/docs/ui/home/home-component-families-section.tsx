@@ -13,7 +13,7 @@ function FamilyExampleLinks({ examples }: { examples: readonly { label: string; 
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       {examples.map((item) => (
-        <Button key={item.href} asChild variant="outline" size="sm" className="min-h-target px-control-tight text-sm md:pane-shrink md:px-button-inline-sm">
+        <Button key={item.href} asChild variant="outline" size="sm" className="min-h-target px-control-tight text-dense md:pane-shrink md:px-button-inline-sm">
           <HomeLink href={item.href}>{item.label}</HomeLink>
         </Button>
       ))}

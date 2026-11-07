@@ -137,9 +137,9 @@ export function Gallery() {
     <AppShell
       sidebar={
         <nav className="space-y-stack-tight surface-pad-md" aria-label="Gallery sections">
-          <p data-nav-label="" className="px-control-tight text-sm font-semibold">UI gallery</p>
+          <p data-nav-label="" className="px-control-tight text-dense font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
-            <a key={id} href={`#${id}`} className="block rounded-md px-control-tight py-control-block text-sm hover:bg-accent">
+            <a key={id} href={`#${id}`} className="block rounded-md px-control-tight py-control-block text-dense hover:bg-accent">
               {title}
             </a>
           ))}
@@ -147,7 +147,7 @@ export function Gallery() {
       }
       topbar={
         <div className="flex items-center justify-between surface-pad-md">
-          <p className="text-sm font-medium">Component gallery (static preview)</p>
+          <p className="text-dense font-medium">Component gallery (static preview)</p>
           <LivePulse />
         </div>
       }
@@ -304,13 +304,13 @@ export function Gallery() {
         </GallerySection>
 
         <GallerySection id="data-table" title="Data table">
-          <h3 className="text-sm font-medium text-muted-foreground">With rows</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">With rows</h3>
           <DataTable columns={columns} data={rows} pageSize={2} />
-          <h3 className="text-sm font-medium text-muted-foreground">Empty</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">Empty</h3>
           <DataTable columns={columns} data={[]} />
-          <h3 className="text-sm font-medium text-muted-foreground">Loading</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">Loading</h3>
           <DataTable columns={columns} data={[]} loading />
-          <h3 className="text-sm font-medium text-muted-foreground">Error</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">Error</h3>
           <DataTable columns={columns} data={[]} error="Could not load rows." />
         </GallerySection>
 
@@ -321,10 +321,10 @@ export function Gallery() {
               <CardDescription>Connection details.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">Body text.</p>
+              <p className="text-dense">Body text.</p>
             </CardContent>
             <CardFooter>
-              <p className="text-sm text-muted-foreground">Footer text.</p>
+              <p className="text-dense text-muted-foreground">Footer text.</p>
             </CardFooter>
           </Card>
           <DetailPanel
@@ -348,19 +348,19 @@ export function Gallery() {
             </Stack>
           </Section>
           <div className="space-y-stack-sm">
-            <Container width="narrow" className="border surface-pad-block-sm text-sm">
+            <Container width="narrow" className="border surface-pad-block-sm text-dense">
               Narrow container
             </Container>
-            <Container width="reading" className="border surface-pad-block-sm text-sm">
+            <Container width="reading" className="border surface-pad-block-sm text-dense">
               Reading container
             </Container>
-            <Container className="border surface-pad-block-sm text-sm">Default container</Container>
-            <Container width="wide" className="border surface-pad-block-sm text-sm">
+            <Container className="border surface-pad-block-sm text-dense">Default container</Container>
+            <Container width="wide" className="border surface-pad-block-sm text-dense">
               Wide container
             </Container>
           </div>
           <Section bleed tone="muted" spacing="sm" title="Bleed section" description="Edge to edge, content capped.">
-            <p className="text-sm">Band content.</p>
+            <p className="text-dense">Band content.</p>
           </Section>
           <div className="flex gap-stack-lg">
             <LivePulse />
@@ -518,7 +518,7 @@ export function Gallery() {
             title="An assistant that knows your catalog"
             description="Visitors ask in plain words and get answers from your products."
             points={["Reads your products and stock", "Never changes an order"]}
-            media={<p className="text-sm text-muted-foreground">Demo or screenshot goes here.</p>}
+            media={<p className="text-dense text-muted-foreground">Demo or screenshot goes here.</p>}
           />
           <Pricing
             title="Simple pricing"

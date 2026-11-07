@@ -28,7 +28,7 @@ function PendingBody({ pending }: { pending: PendingWork }) {
 export function PendingAssistant({ pending, as = "div" }: { pending: PendingWork; as?: "div" | "li" }) {
   const Tag = as;
   return (
-    <Tag data-pending-reply="" className="self-start text-sm text-muted-foreground" aria-live="polite">
+    <Tag data-pending-reply="" className="self-start text-dense text-muted-foreground" aria-live="polite">
       <PendingBody pending={pending} />
     </Tag>
   );
@@ -60,7 +60,7 @@ export function ChatLog({
             data-role={message.role}
             {...(message.role === "notice" && !noticeInComposerFooter ? { "data-assistant-notice": "" } : {})}
             className={cn(
- "flex max-w-[90%] flex-col gap-stack-tight rounded-2xl pad-row text-sm",
+ "flex max-w-[90%] flex-col gap-stack-tight rounded-2xl pad-row text-dense",
               user ? "self-end rounded-tr-sm bg-primary text-primary-foreground" : "self-start rounded-tl-sm border border-border bg-muted",
             )}
           >

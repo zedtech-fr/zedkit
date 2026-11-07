@@ -140,7 +140,7 @@ export function DataTablePagination({
   const pageCountShown = Math.max(pageCount, 1);
   return (
     <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
-      <span className="text-sm text-muted-foreground">
+      <span className="text-dense text-muted-foreground">
         {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
       <Button type="button" variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
@@ -219,7 +219,7 @@ export function DataTable<TData extends RowData>({
       {surface === "error" ? <ErrorState description={error ?? ""} /> : null}
       {surface === "loading" ? (
         <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-stack-md surface-pad-block-sm">
-          <p className="text-sm text-muted-foreground">{messages.loadingEllipsis}</p>
+          <p className="text-dense text-muted-foreground">{messages.loadingEllipsis}</p>
           <div className="space-y-stack-sm" aria-hidden>
             {[0, 1, 2].map((row) => (
               <Skeleton key={row} className="h-skeleton-line w-full max-w-data-table-filter-width" />

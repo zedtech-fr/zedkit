@@ -47,7 +47,7 @@
 }
 
 [data-testid="identity-dock"] [data-slot="brief-specimen"] > span:first-child,
-[data-testid="identity-dock"] [data-assistant-proposal-compare] .text-sm,
+[data-testid="identity-dock"] [data-assistant-proposal-compare] .text-dense,
 [data-testid="identity-dock"] [data-assistant-proposal-compare] .text-xs {
   font-size: var(--zk-type-label-size);
   font-weight: var(--zk-type-label-weight);

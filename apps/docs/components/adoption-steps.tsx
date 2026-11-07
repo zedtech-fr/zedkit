@@ -76,7 +76,7 @@ function RenderedExample({ children }: { children: ReactNode }) {
 function CompanionFiles({ count, children }: { count: number; children: ReactNode }) {
   return (
     <details className="group content-shrink rounded-lg border border-border">
-      <summary className="flex min-h-target cursor-pointer items-center gap-stack-sm px-control-inline text-sm font-medium focus-ring">
+      <summary className="flex min-h-target cursor-pointer items-center gap-stack-sm px-control-inline text-dense font-medium focus-ring">
         {adoptionCopy.companions(count)}
         <Text as="span" className="font-normal text-muted-foreground">
           {adoptionCopy.companionsHint}
@@ -141,7 +141,7 @@ function Step({
   const words = adoptionCopy.step(step.id, step.params ?? {}, mode.id);
   return (
     <li className="grid content-shrink grid-cols-[1.75rem_minmax(0,1fr)] gap-x-stack-sm" data-adoption-step={step.id}>
-      <Text as="span" aria-hidden className="pt-step font-mono text-sm text-muted-foreground">
+      <Text as="span" aria-hidden className="pt-step font-mono text-dense text-muted-foreground">
         {index + 1}
       </Text>
       <Stack gap={3} className="content-shrink">
@@ -168,7 +168,7 @@ export function ModeView({
   highlighted,
   choice,
   result,
-  summaryClassName = "text-sm",
+  summaryClassName = "text-dense",
 }: {
   mode: AdoptionMode;
   highlighted: Highlighted;

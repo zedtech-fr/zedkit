@@ -26,9 +26,10 @@ Rules:
   spell a number (`min-w-zero`) and do not add a token per scale step.
   Shared design values use `calc(var(--spacing) * N)`. A structural
   constraint (`min-width: 0`, pinning to an edge) is a declaration on that
-  layout class, not a spacing token. Inside an identity, `text-sm` is 13px
-  with a line about 18.6px. `text-zk-type-small` is the same size and a
-  19.5px line. Do not swap them. `Stack` accepts `sm` | `md` | `lg`;
+  layout class, not a spacing token. Dense UI (controls, tabs, menus,
+  tables, nav) is `text-dense`: 13px with a line about 18.6px. `text-sm`
+  is that same size and is banned. `text-zk-type-small` is the same size
+  and a 19.5px line. Do not swap them. `Stack` accepts `sm` | `md` | `lg`;
   the other numeric gap props stay until a major. The shipped rule is
   `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
   44px, stricter than the kit's 24px floor. `min-h-target` follows

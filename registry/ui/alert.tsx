@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border px-alert-inline py-alert-block text-sm [&>svg]:absolute [&>svg]:top-alert-icon-offset [&>svg]:left-alert-icon-offset [&>svg]:text-foreground [&>svg+div]:-translate-y-alert-icon-nudge [&>svg~*]:pl-alert-content-indent",
+  "relative w-full rounded-lg border px-alert-inline py-alert-block text-dense [&>svg]:absolute [&>svg]:top-alert-icon-offset [&>svg]:left-alert-icon-offset [&>svg]:text-foreground [&>svg+div]:-translate-y-alert-icon-nudge [&>svg~*]:pl-alert-content-indent",
   {
     variants: {
       variant: {
@@ -48,7 +48,7 @@ function AlertTitle({
 }
 
 function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="alert-description" className={cn("text-sm [&_p]:leading-relaxed", className)} {...props} />;
+  return <div data-slot="alert-description" className={cn("text-dense [&_p]:leading-relaxed", className)} {...props} />;
 }
 
 export { Alert, AlertTitle, AlertDescription, alertVariants };

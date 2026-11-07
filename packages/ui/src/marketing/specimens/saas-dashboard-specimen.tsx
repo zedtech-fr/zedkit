@@ -47,7 +47,7 @@ function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
           </div>
           <Stack gap={1} role="group" aria-label={messages.quotasAriaLabel}>
             <Stack direction="horizontal" gap={2} className="flex-wrap justify-between">
-              <Text as="span" className="text-sm font-medium">
+              <Text as="span" className="text-dense font-medium">
                 {messages.quotaLabel}
               </Text>
               <Text as="span" variant="muted">

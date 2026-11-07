@@ -195,7 +195,7 @@ export function CatalogFiltersToolbar({
 
 export function catalogResultsStatusLine(count: number) {
   return (
-    <span role="status" aria-live="polite" className="text-sm text-muted-foreground">
+    <span role="status" aria-live="polite" className="text-dense text-muted-foreground">
       {catalogCopy.results.statusLine(count)}
     </span>
   );

@@ -37,7 +37,7 @@ function FieldLegend({
       className={cn(
         "mb-field-legend-bottom font-medium",
         "data-[variant=legend]:text-base",
-        "data-[variant=label]:text-sm",
+        "data-[variant=label]:text-dense",
         className,
       )}
       {...props}
@@ -136,7 +136,7 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="field-label"
       className={cn(
-        "flex w-fit items-center gap-field-inline text-sm leading-snug font-medium group-data-[disabled=true]/field:opacity-50",
+        "flex w-fit items-center gap-field-inline text-dense leading-snug font-medium group-data-[disabled=true]/field:opacity-50",
         className,
       )}
       {...props}
@@ -149,7 +149,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="field-description"
       className={cn(
-        "text-sm leading-normal font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance",
+        "text-dense leading-normal font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance",
         "last:trim-top nth-last-2:pull-line [[data-variant=legend]+&]:pull-legend",
         "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
@@ -171,7 +171,7 @@ function FieldSeparator({
       data-slot="field-separator"
       data-content={!!children}
       className={cn(
-        "relative pull-separator h-field-separator text-sm group-data-[variant=outline]/field-group:pull-outline",
+        "relative pull-separator h-field-separator text-dense group-data-[variant=outline]/field-group:pull-outline",
         className,
       )}
       {...props}
@@ -225,7 +225,7 @@ function FieldError({
     <div
       role="alert"
       data-slot="field-error"
-      className={cn("text-sm font-normal text-destructive", className)}
+      className={cn("text-dense font-normal text-destructive", className)}
       {...props}
     >
       {content}

@@ -46,7 +46,7 @@ function FlagsDemoInner() {
           {flagsCopy.clearOverride}
         </Button>
       </Stack>
-      {lastAction ? <Text className="text-sm text-muted-foreground">{lastAction}</Text> : null}
+      {lastAction ? <Text className="text-dense text-muted-foreground">{lastAction}</Text> : null}
     </Stack>
   );
 }

@@ -50,7 +50,7 @@ function Segment({
       aria-pressed={pressed}
       onClick={onClick}
       data-preview-segment=""
-      className="min-h-target rounded text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-segment"
+      className="min-h-target rounded text-dense text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-segment"
     >
       {children}
     </button>
@@ -94,7 +94,7 @@ export function PreviewFrame({
             <TabsTrigger
               key={value}
               value={value}
-              className="h-control-height rounded-md px-tabs-trigger-inline text-sm text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              className="h-control-height rounded-md px-tabs-trigger-inline text-dense text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
             >
               {value}
             </TabsTrigger>
@@ -108,7 +108,7 @@ export function PreviewFrame({
               aria-controls={displayId}
               onClick={() => setDisplayOpen(!displayOpen)}
               data-preview-segment=""
-              className="min-h-target rounded text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
+              className="min-h-target rounded text-dense text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
             >
               {previewViewportCopy.display}
             </button>

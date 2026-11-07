@@ -139,7 +139,7 @@ function TopBar() {
       >
         {adminDashboardGuideCopy.initials}
       </Text>
-      <Text as="span" className="text-sm font-medium">
+      <Text as="span" className="text-dense font-medium">
         {adminDashboardGuideCopy.user}
       </Text>
     </Stack>

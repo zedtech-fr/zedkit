@@ -39,7 +39,7 @@ export function WizardStep({ step, index, state, showConnector = false, classNam
     <li
       data-slot="wizard-step"
       aria-current={state === "current" ? "step" : undefined}
-      className={cn("flex items-center gap-wizard-step-gap text-sm", className)}
+      className={cn("flex items-center gap-wizard-step-gap text-dense", className)}
     >
       <span
         aria-hidden
@@ -104,7 +104,7 @@ export function WizardSteps({ steps, current, className }: WizardStepsProps) {
     <div data-slot="wizard-steps" className={cn("content-shrink space-y-wizard-steps-gap", className)}>
       {isMobile ? (
         <div className="space-y-wizard-steps-row-gap">
-          <p className="truncate text-sm text-muted-foreground">
+          <p className="truncate text-dense text-muted-foreground">
             {formatMessage(messages.wizardStepOf, {
               step: active + 1,
               stepCount: steps.length,

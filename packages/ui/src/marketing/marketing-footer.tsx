@@ -26,13 +26,13 @@ export type MarketingFooterProps = Omit<React.ComponentProps<"footer">, "childre
 };
 
 const linkClass =
-  "[&_a]:inline-flex [&_a]:min-h-target [&_a]:items-center [&_a]:text-sm [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a]:hover:underline";
+  "[&_a]:inline-flex [&_a]:min-h-target [&_a]:items-center [&_a]:text-dense [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a]:hover:underline";
 
 function FooterColumn({ column }: { column: MarketingFooterColumn }) {
   const titleId = useId();
   return (
     <nav aria-labelledby={titleId} className="flex content-shrink flex-col gap-stack-tight">
-      <p id={titleId} className="text-sm font-semibold">
+      <p id={titleId} className="text-dense font-semibold">
         {column.title}
       </p>
       <ul className={cn("flex list-none flex-col flush", linkClass)}>
@@ -65,7 +65,7 @@ function MarketingFooter({ brand, description, columns = [], legal, className, .
         {legal ? (
           <div
             data-slot="marketing-footer-legal"
-            className="flex flex-col gap-stack-md border-t pt-footer-note text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-stack-md border-t pt-footer-note text-dense text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
           >
             {legal}
           </div>

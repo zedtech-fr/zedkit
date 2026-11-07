@@ -13,6 +13,8 @@ describe("cn", () => {
 
   it("treats the input font-size token as a font size, not a text color", () => {
     expect(cn("text-control", "text-lg")).toBe("text-lg");
+    expect(cn("text-sm", "text-dense")).toBe("text-dense");
+    expect(cn("text-dense", "text-lg")).toBe("text-lg");
     expect(cn("text-foreground", "text-control")).toBe("text-foreground text-control");
   });
 

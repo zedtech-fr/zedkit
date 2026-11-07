@@ -57,7 +57,7 @@ const textVariants = cva("leading-body", {
   variants: {
     variant: {
       body: "text-zk-type-body",
-      muted: "text-zk-type-body text-sm text-muted-foreground",
+      muted: "text-zk-type-body text-dense text-muted-foreground",
     },
     typeRole: {
       lead: "text-zk-type-lead",

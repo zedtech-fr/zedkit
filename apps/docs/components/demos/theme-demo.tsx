@@ -71,7 +71,7 @@ export function ThemeTokensDemo() {
         </Stack>
         <ul aria-label={themeCopy.releasesLabel} className="divide-y divide-border rounded-md bg-muted">
           {RELEASES.map((release) => (
- <li key={release.name} className="flex content-shrink items-center justify-between gap-stack-md pad-row text-sm">
+ <li key={release.name} className="flex content-shrink items-center justify-between gap-stack-md pad-row text-dense">
               <Text as="span" className="content-shrink wrap-anywhere">{release.name}</Text>
               <Badge variant={release.trend === "up" ? "success" : "destructive"} className="shrink-0 gap-stack-tight">
                 {release.trend === "up" ? <ArrowUpRight className="size-mini" aria-hidden /> : <ArrowDownRight className="size-mini" aria-hidden />}

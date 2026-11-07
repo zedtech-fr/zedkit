@@ -24,7 +24,7 @@ export function OfflineNoteDemo() {
               </Text>
             </Stack>
             <Stack direction="horizontal" gap={3} className="items-center">
-              <Text as="span" className="text-sm">
+              <Text as="span" className="text-dense">
                 {draft.amount}
               </Text>
               <Badge variant="secondary">{offlineNoteCopy.drafts.waiting}</Badge>

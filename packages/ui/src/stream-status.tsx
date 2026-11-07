@@ -30,7 +30,7 @@ export function StreamStatus({ stage, label, live = true, className }: StreamSta
     <span
       data-slot="stream-status"
       {...(live ? { role: "status" as const, "aria-live": "polite" as const, "aria-atomic": "true" as const } : {})}
-      className={cn("inline-flex items-center gap-icon text-sm text-muted-foreground", className)}
+      className={cn("inline-flex items-center gap-icon text-dense text-muted-foreground", className)}
     >
       <StatusDot tone="active" pulse />
       {text}

@@ -68,7 +68,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
       </div>
       <p className="flex items-baseline gap-stack-sm">
         <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
-        {plan.period ? <span className="text-sm text-muted-foreground">{plan.period}</span> : null}
+        {plan.period ? <span className="text-dense text-muted-foreground">{plan.period}</span> : null}
       </p>
       <ul className="flex list-none flex-col gap-stack-sm flush">
         {plan.features.map((feature, featureIndex) => (
