@@ -16,7 +16,7 @@ export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-
  * by the "home bands" e2e test in tests/home-layout.spec.ts.
  */
 export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-trio";
-export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-cols-4";
+export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-quad";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;
@@ -26,7 +26,7 @@ export const HOME_HERO_PREVIEW_SHELL_CLASS = "pane-shrink w-full content-shrink"
 
 /** Bounded live preview inside home gallery cards (min height reserves space while lazy chunks load). */
 export const HOME_GALLERY_PREVIEW_SHELL_CLASS =
-  "min-h-32 w-full content-shrink overflow-hidden rounded-md border bg-background p-3";
+  "min-h-32 w-full content-shrink overflow-hidden rounded-md border bg-background surface-pad-compact";
 
 /** Persuasion copy on the home page (maps to `--zk-type-body-*`). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
