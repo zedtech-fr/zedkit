@@ -282,20 +282,21 @@ technical audits skip the source quota and the wait-for-question stop).
 
 **Entry points (one command per phase):** each hands to `orchestrate` (read
 tokenomics, pick a build team) unless already running as that playbook.
-`review`, `plan`, `challenge`, `implement`, `from-audit` (audit → tickets),
+`review`, `plan`, `challenge`, `implement`, `from-audit` (audit → revalidated plan),
 `to-audit` (questions → audit), `quick-wins` (one topic, two modes).
 `/fix` does not: one defect stays inline, with its check.
 `/improve-from-review` applies a punchlist in the conversation, then
-encodes a reusable miss (`rules-upkeep`). `plan` / `challenge` / `review` also carry
-"go deep, be strict, and be brutally honest". They live in the `setup` and
+encodes a reusable miss (`rules-upkeep`). `plan` / `challenge` / `review` and the
+audit playbooks also carry "go deep, be strict, and be brutally honest". They live in the `setup` and
 `core` presets; the detailed skills stay reusable and are never copied into
 them. Starter stays the small preset and does not ship these three commands.
 
 **Quick wins.** `/quick-wins audit <topic>` returns a short ranked set and
 changes nothing. `/quick-wins implement <findings or topic>` rechecks each
 finding against the current tree, then ships one small batch. One defect
-with a known check is `/fix`, not this command. `/audit` stays the repo-wide
-loop. `/to-audit` answers an open question. `/quick-wins` is one scope.
+with a known check is `/fix`, not this command. `/audit` stays the thorough
+investigation (coverage map, findings by kind; it fixes only when the same
+request asks). `/to-audit` answers an open question. `/quick-wins` is one scope.
 
 **Skills vendored (MIT):** `ponytail` (+ review, audit, debt, gain, help) and
 the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,

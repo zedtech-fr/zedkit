@@ -137,12 +137,34 @@ describe("skill content conventions", () => {
     );
     expect(from).toContain("Playbook: from-audit");
     expect(from).toContain("to-tickets");
-    expect(from).toContain("Do not implement");
+    expect(from).toContain("Do not implement by default");
+    expect(from).toContain("honor that authorization");
+    expect(from).toContain("Revalidate against the current state");
+    expect(from).toContain("Research spike");
+    expect(from).toContain("Owner decision");
     expect(to).toContain("Playbook: to-audit");
     expect(to).toContain("before `plan`");
     expect(to).toContain("Do not implement");
     expect(from).toContain("hand the user's text to `orchestrate`");
     expect(to).toContain("hand the user's text to `orchestrate`");
+  });
+
+  it("audit investigates against a coverage map and only fixes when asked", () => {
+    const raw = readFileSync(
+      join(kitDir(), "skills", "audit", "SKILL.md"),
+      "utf8",
+    );
+    expect(raw).toContain("coverage map");
+    expect(raw).toContain("Investigate (default)");
+    expect(raw).toContain("fixes only when the same request asks for them");
+    expect(raw).toContain("Verified defect");
+    expect(raw).toContain("Requirement gap");
+    expect(raw).toContain("acceptance criterion");
+    expect(raw).toContain("reported as **partial**");
+    expect(raw).toContain("source → shipped/installed artifact");
+    expect(raw).toContain("never the whole investigation");
+    expect(raw).toContain("Not checked:");
+    expect(raw).not.toContain("opens small issues and fix PRs");
   });
 
   it("implement ends on unit plus integration, never the e2e battery by default", () => {
