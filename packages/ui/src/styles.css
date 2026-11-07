@@ -1330,9 +1330,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-skeleton-note {
   width: calc(var(--spacing) * 64);
 }
-/* An invite popover. */
+/* An invite popover. Wide enough for the email field, and it stays inside the screen. */
 @utility w-invite {
   width: calc(var(--spacing) * 72);
+  max-width: calc(100vw - 2rem);
 }
 /* The drag handle on a phone sheet. The bar is one spacing step thick. */
 @utility w-handle {
