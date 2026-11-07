@@ -12,7 +12,7 @@ const FRACTION =
 const COUNT =
   /^(?:grid-cols|grid-rows|col-span|row-span|col-start|col-end|row-start|row-end)-\d+$/;
 const TYPE = /^text-(?:xs|sm|base|lg|xl|[2-9]xl)$/;
-const STACK_ROLES = new Set(["gap-stack-sm", "gap-stack-md", "gap-stack-lg", "space-y-stack-lg"]);
+const STACK_ROLES = new Set(["gap-stack-sm", "gap-stack-md", "gap-stack-lg", "space-y-stack-sm", "space-y-stack-lg"]);
 const SPELLED = /(?:^|-)(?:zero|hairline)$|(?:^|-)stack-(?:3xs|2xs|xs|3h|\d+xl|sm|md|lg)$/;
 
 /**
