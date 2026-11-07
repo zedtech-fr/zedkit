@@ -129,6 +129,9 @@ describe("layout job classes", () => {
     expect(utility("pull-outline")).toBe("margin-bottom: calc(var(--spacing) * -2);");
     expect(utility("mt-check")).toBe("margin-top: 1px;");
     expect(utility("h-logo")).toBe("height: calc(var(--spacing) * 6);");
+    expect(utility("h-logo-lg")).toBe("height: calc(var(--spacing) * 12);");
+    expect(utility("h-logo-display")).toBe("height: calc(var(--spacing) * 16);");
+    expect(utility("pin-middle")).toBe("top: 50%;");
     expect(utility("h-brand")).toBe("height: calc(var(--spacing) * 5);");
     expect(utility("basis-tile")).toBe("flex-basis: calc(var(--spacing) * 48);");
     expect(utility("size-mark")).toBe("width: calc(var(--spacing) * 10); height: calc(var(--spacing) * 10);");

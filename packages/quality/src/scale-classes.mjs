@@ -158,7 +158,7 @@ function stringsIn(source, start, end, hits, seen) {
 
 /**
  * Scale classes inside className, cn(), cva() and @apply.
- * The same token reached twice (className={cn("p-4")}) counts once.
+ * The same token reached twice counts once.
  *
  * @param {string} source
  * @returns {{ token: string, kind: string, index: number }[]}
