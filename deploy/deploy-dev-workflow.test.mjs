@@ -7,19 +7,35 @@ import test from "node:test";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dev = readFileSync(join(root, ".github/workflows/deploy-dev.yml"), "utf8");
 const prod = readFileSync(join(root, ".github/workflows/deploy-docs.yml"), "utf8");
+const publish = readFileSync(join(root, "deploy/publish-dev-static.sh"), "utf8");
 
-test("deploy-dev publishes the CI-built export with deploy.sh --dev, not a host worktree checkout", () => {
-  assert.match(dev, /deploy\/deploy\.sh --dev zed-dev/);
+test("deploy-dev rsyncs a CI-built export to /data/srv/zedkit and does not touch host compose", () => {
   assert.match(dev, /pnpm --filter @zedtech\/zedkit-docs build/);
+  assert.match(dev, /bash deploy\/publish-dev-static\.sh zed-dev/);
   assert.match(dev, /curl -sf https:\/\/dev\.zedkit\.app\/dev-build\.txt/);
   assert.match(dev, /commit=\$DEV_SHA/);
+  assert.doesNotMatch(dev, /deploy\/deploy\.sh/);
   assert.doesNotMatch(dev, /deploy-zedkit-dev\.sh/);
-  assert.doesNotMatch(dev, /\/data\/work\/infra/);
+  assert.doesNotMatch(dev, /\/srv\/app/);
   assert.doesNotMatch(dev, /checkout -B/);
+  assert.doesNotMatch(dev, /IDENTITY_AI/);
+  assert.doesNotMatch(dev, /suggest-dev\.env/);
+  assert.doesNotMatch(dev, /docker compose/);
 });
 
-test("production deploy-docs still uses deploy.sh without the host worktree script", () => {
+test("publish-dev-static hard-codes the staging static root and never talks to docker", () => {
+  assert.match(publish, /remote="\/data\/srv\/zedkit"/);
+  assert.match(publish, /rsync -a --delete --exclude '\.git'/);
+  assert.match(publish, /refusing git worktree/);
+  assert.doesNotMatch(publish, /docker/);
+  assert.doesNotMatch(publish, /compose/);
+  assert.doesNotMatch(publish, /caddy/i);
+  assert.doesNotMatch(publish, /checkout -B/);
+  assert.doesNotMatch(publish, /\/srv\/app/);
+});
+
+test("production deploy-docs is unchanged: still deploy.sh, not this static path", () => {
   assert.match(prod, /deploy\/deploy\.sh "\$TARGET"/);
-  assert.doesNotMatch(prod, /deploy-zedkit-dev\.sh/);
-  assert.doesNotMatch(prod, /checkout -B/);
+  assert.doesNotMatch(prod, /publish-dev-static/);
+  assert.doesNotMatch(prod, /\/data\/srv\/zedkit/);
 });

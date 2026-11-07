@@ -35,34 +35,6 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @zedtech/zedkit-docs build
-      - name: Write dev suggest env
-        # The dev site's own suggest service. The provider is shared with production; the switch, the budget
-        # and the prices are the dev environment's own, and generation stays off until they are set.
-        env:
-          IDENTITY_AI_BASE_URL: ${{ secrets.IDENTITY_AI_BASE_URL }}
-          IDENTITY_AI_API_KEY: ${{ secrets.IDENTITY_AI_DEV_API_KEY }}
-          IDENTITY_AI_MODEL: ${{ secrets.IDENTITY_AI_MODEL }}
-          IDENTITY_AI_REASONING_EFFORT: ${{ secrets.IDENTITY_AI_REASONING_EFFORT }}
-          IDENTITY_AI_DEV_ENABLED: ${{ secrets.IDENTITY_AI_DEV_ENABLED }}
-          IDENTITY_AI_DEV_BUDGET_DAILY_USD: ${{ secrets.IDENTITY_AI_DEV_BUDGET_DAILY_USD }}
-          IDENTITY_AI_DEV_BUDGET_MONTHLY_USD: ${{ secrets.IDENTITY_AI_DEV_BUDGET_MONTHLY_USD }}
-          IDENTITY_AI_DEV_PRICE_INPUT_USD_PER_MTOK: ${{ secrets.IDENTITY_AI_DEV_PRICE_INPUT_USD_PER_MTOK }}
-          IDENTITY_AI_DEV_PRICE_OUTPUT_USD_PER_MTOK: ${{ secrets.IDENTITY_AI_DEV_PRICE_OUTPUT_USD_PER_MTOK }}
-        run: |
-          umask 077
-          trim() { printf '%s' "$1" | tr -d '\r\n'; }
-          {
-            printf '%s=%s\n' IDENTITY_AI_BASE_URL "$(trim "$IDENTITY_AI_BASE_URL")"
-            printf '%s=%s\n' IDENTITY_AI_API_KEY "$(trim "$IDENTITY_AI_API_KEY")"
-            printf '%s=%s\n' IDENTITY_AI_MODEL "$(trim "$IDENTITY_AI_MODEL")"
-            printf '%s=%s\n' IDENTITY_AI_REASONING_EFFORT "$(trim "$IDENTITY_AI_REASONING_EFFORT")"
-            printf '%s=%s\n' IDENTITY_AI_ENABLED "$IDENTITY_AI_DEV_ENABLED"
-            printf '%s=%s\n' IDENTITY_AI_BUDGET_DAILY_USD "$IDENTITY_AI_DEV_BUDGET_DAILY_USD"
-            printf '%s=%s\n' IDENTITY_AI_BUDGET_MONTHLY_USD "$IDENTITY_AI_DEV_BUDGET_MONTHLY_USD"
-            printf '%s=%s\n' IDENTITY_AI_PRICE_INPUT_USD_PER_MTOK "$IDENTITY_AI_DEV_PRICE_INPUT_USD_PER_MTOK"
-            printf '%s=%s\n' IDENTITY_AI_PRICE_OUTPUT_USD_PER_MTOK "$IDENTITY_AI_DEV_PRICE_OUTPUT_USD_PER_MTOK"
-          } > deploy/suggest-dev.env
-          chmod 600 deploy/suggest-dev.env
       - name: Configure SSH to deploy host
         # Reuse DOCS_DEPLOY_KEY (the docs-ci pubkey is authorized on the deploy host).
         # Do not use DOCS_DEPLOY_HOST / DOCS_DEPLOY_USER / DOCS_DEPLOY_KNOWN_HOSTS:
@@ -75,8 +47,8 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' '195.154.208.75 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPESq5xmwyuPt3alDGhEe9fE3oOmCDPBt70I8hhylnE' > ~/.ssh/known_hosts
           printf 'Host zed-dev\n  HostName 195.154.208.75\n  User zed\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
-      - name: Publish docs on deploy host
-        run: deploy/deploy.sh --dev zed-dev
+      - name: Publish static export
+        run: bash deploy/publish-dev-static.sh zed-dev
       - name: Verify dev build stamp
         run: |
           for _ in $(seq 1 8); do
@@ -88,15 +60,3 @@ jobs:
           echo "dev-build.txt does not show commit $DEV_SHA" >&2
           curl -sS https://dev.zedkit.app/dev-build.txt >&2 || true
           exit 1
-      - name: Dev suggest diagnostics
-        if: always()
-        run: |
-          ssh zed-dev 'cd /srv/app && docker compose -f compose.yaml -f compose.override.yaml -f compose.dev.yaml ps -a suggest-dev && docker compose -f compose.yaml -f compose.override.yaml -f compose.dev.yaml logs --no-color --tail 30 suggest-dev' || true
-          curl -s -w ' [%{http_code}]\n' https://dev.zedkit.app/api/identity/suggest/status || true
-      - name: Refuse deploy when suggest-dev rejects the provider key
-        if: success()
-        run: |
-          if ssh zed-dev 'cd /srv/app && docker compose -f compose.yaml -f compose.override.yaml -f compose.dev.yaml logs --no-color --tail 200 suggest-dev' | grep -q 'invalid_api_key'; then
-            echo "suggest-dev logs show invalid_api_key: fix repository secret IDENTITY_AI_DEV_API_KEY (and matching IDENTITY_AI_BASE_URL) then redeploy." >&2
-            exit 1
-          fi

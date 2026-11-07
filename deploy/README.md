@@ -27,17 +27,20 @@ deploy/deploy.sh <user>@<host>
 `main` that touches the docs or this directory.
 
 `.github/workflows/deploy-dev.yml` builds the checked-out SHA in GitHub
-Actions and publishes with `deploy/deploy.sh --dev` (rsync to
-`/srv/app/site-dev`). It does not check out a git worktree on the host.
+Actions and rsyncs the static export to `/data/srv/zedkit` on the staging
+host (`deploy/publish-dev-static.sh`). It does not check out a git
+worktree, and it does not restart Caddy, Compose, or the suggest service.
 Each deploy stamps `dev-build.txt` (branch, commit, UTC build time); check
-it at `https://dev.zedkit.app/dev-build.txt`. It also writes
-`deploy/suggest-dev.env` from the secrets below and (re)starts `suggest-dev`.
+it at `https://dev.zedkit.app/dev-build.txt`.
 
-Both workflows need the repository secrets `DOCS_DEPLOY_HOST`,
-`DOCS_DEPLOY_USER`, `DOCS_DEPLOY_KEY` and `DOCS_DEPLOY_KNOWN_HOSTS`. Production
-reads the identity secrets under their own names; dev reads the same provider
-secrets (`IDENTITY_AI_BASE_URL`, `_API_KEY`, `_MODEL`, `_REASONING_EFFORT`) and
-its own switch, budget and prices under `IDENTITY_AI_DEV_*`.
+Production (`deploy-docs.yml` / `deploy.sh`) still defaults to `/srv/app`.
+That path is not the staging static root; this repo has not verified the
+live production layout. Do not assume they match.
+
+Both workflows need `DOCS_DEPLOY_KEY`. Production also uses
+`DOCS_DEPLOY_HOST`, `DOCS_DEPLOY_USER` and `DOCS_DEPLOY_KNOWN_HOSTS`.
+Production reads the identity secrets under their own names. Dev static
+publish does not write identity env.
 
 ## Identity suggest service
 
