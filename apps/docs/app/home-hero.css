@@ -53,6 +53,10 @@
   height: 1.875rem;
 }
 
+#home-page [data-hero-rules] {
+  gap: calc(var(--spacing) * 0.5);
+}
+
 #home-page [data-hero-bars] {
   height: 3.5rem;
   gap: calc(var(--spacing) * 1.5);
