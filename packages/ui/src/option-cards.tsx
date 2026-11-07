@@ -62,7 +62,7 @@ export function OptionCard({
         data-slot="option-card-indicator"
         aria-hidden="true"
         className={cn(
-          "icon-nudge-sm grid size-5 shrink-0 place-content-center border border-input text-transparent transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground",
+          "icon-nudge-sm grid shrink-0 place-content-center border border-input text-transparent transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground",
           type === "radio" ? "rounded-full" : "rounded-sm",
         )}
       >

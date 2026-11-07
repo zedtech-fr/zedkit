@@ -580,6 +580,17 @@ a[class*="px-badge-inline"] {
   }
 }
 
+/* Choice box on an option card. Five spacing steps, not an icon. */
+[data-slot="option-card-indicator"] {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+}
+
+/* Title bar in a card skeleton. */
+[data-slot="card-skeleton"] [data-card-skeleton-title] {
+  height: calc(var(--spacing) * 5);
+}
+
 @layer components {
   [data-slot="scroll-gallery"]::before,
   [data-slot="scroll-gallery"]::after {
