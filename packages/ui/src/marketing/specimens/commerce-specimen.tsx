@@ -81,7 +81,7 @@ function CommerceInventoryEditor({
 }) {
   return (
     <Card className="content-shrink">
-      <CardContent className="pt-4">
+      <CardContent className="content-offset">
         <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
           <Stack gap={1} className="content-shrink flex-1 basis-28">
             <Label htmlFor={priceId}>{messages.priceLabel}</Label>

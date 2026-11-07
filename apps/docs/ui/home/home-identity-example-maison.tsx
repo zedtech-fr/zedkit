@@ -112,7 +112,7 @@ export function HomeIdentityExampleMaison() {
         ))}
       </ul>
       <Card className="content-shrink">
-        <CardContent className="pt-4">
+        <CardContent className="content-offset">
           <ProductEditor
             key={product.id}
             product={product}

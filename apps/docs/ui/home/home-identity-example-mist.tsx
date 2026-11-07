@@ -66,7 +66,7 @@ function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: 
 /** The destructive action sits below a divider, outlined, and confirms before it does anything. */
 function DeleteProject({ deleted, onDeleted }: { deleted: boolean; onDeleted: (value: boolean) => void }) {
   return (
-    <div className="border-t border-border pt-4">
+    <div className="border-t border-border content-offset">
       {deleted ? (
         <Button type="button" variant="outline" onClick={() => onDeleted(false)}>
           {copy.restore}

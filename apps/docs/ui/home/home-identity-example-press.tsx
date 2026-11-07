@@ -106,7 +106,7 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
 /** The story as a reader sees it: the display face and a capped measure are the evidence. */
 function ReadingPreview({ story }: { story: Story }) {
   return (
-    <article aria-label={copy.previewLabel} className="max-w-prose content-shrink border-t border-border pt-4">
+    <article aria-label={copy.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">
       <Text variant="muted" className="text-xs font-medium tracking-wide uppercase">
         {sectionLabel(story.section)}
       </Text>
@@ -141,7 +141,7 @@ export function HomeIdentityExamplePress() {
         <Text variant="muted">{copy.description}</Text>
       </Stack>
       <Card className="content-shrink">
-        <CardContent className="pt-4">
+        <CardContent className="content-offset">
           <Stack gap={4} className="content-shrink">
             <StoryQueue stories={stories} selectedId={story.id} onSelect={(id) => { setSelectedId(id); setMessage(""); }} />
             <StoryEditor story={story} onChange={change} />
