@@ -140,7 +140,7 @@ export function IdentityDockAssistantPanel({
   };
 
   return (
-    <Stack ref={panel.panelRef} className="pane-shrink flex-1 gap-0 overflow-hidden" data-slot="identity-dock-body">
+    <Stack ref={panel.panelRef} className="pane-shrink flex-1 gap-flush overflow-hidden" data-slot="identity-dock-body">
       <IdentityDockPanelToolbar onClose={() => panel.setExpanded(false)} />
       <IdentityDockPanelScroll
         scrollRef={panel.scrollRef}

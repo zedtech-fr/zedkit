@@ -932,6 +932,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility flush {
   padding: 0;
 }
+@utility gap-flush {
+  gap: 0;
+}
 @utility flush-block {
   padding-block: 0;
 }
