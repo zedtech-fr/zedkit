@@ -1199,9 +1199,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-brand {
   height: calc(var(--spacing) * 5);
 }
-/* A logo filling a share card. */
+/* A logo filling a share card. It stays at least ten spacing steps tall. */
 @utility h-share {
   height: 25%;
+  min-height: calc(var(--spacing) * 10);
 }
 /* Logo lockup in a band of customer marks. */
 @utility h-logo-row {

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 333,
+  "total": 332,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -12,7 +12,7 @@
     "apps/docs/components/demos/admin-dashboard-guide-demo.tsx": 3,
     "apps/docs/components/demos/app-shell-no-topbar-demo.tsx": 2,
     "apps/docs/components/demos/badge-table-row-demo.tsx": 1,
-    "apps/docs/components/demos/brand-logo-demo.tsx": 7,
+    "apps/docs/components/demos/brand-logo-demo.tsx": 6,
     "apps/docs/components/demos/button-demo.tsx": 1,
     "apps/docs/components/demos/combobox-demo.tsx": 1,
     "apps/docs/components/demos/drawer-demo.tsx": 3,
