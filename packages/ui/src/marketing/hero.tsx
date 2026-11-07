@@ -53,7 +53,7 @@ function Hero({
               {eyebrow}
             </Text>
           ) : null}
-          <Heading id={titleId} level={headingLevel} className="text-4xl font-semibold text-balance sm:text-5xl">
+          <Heading id={titleId} level={headingLevel} className="text-hero-title text-balance">
             {title}
           </Heading>
           {description ? (

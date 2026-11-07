@@ -654,6 +654,26 @@ a[class*="px-badge-inline"] {
   letter-spacing: -0.02em;
 }
 
+/* Identity specimen headline. Display face, one step under the section role. */
+.text-specimen-title {
+  font-family: var(--zk-font-display);
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+}
+
+/* Marketing hero promise. Grows one step from the small breakpoint. */
+.text-hero-title {
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
+  font-weight: 600;
+}
+@media (min-width: 40rem) {
+  .text-hero-title {
+    font-size: var(--text-5xl);
+    line-height: var(--text-5xl--line-height);
+  }
+}
+
 @layer components {
   [data-slot="scroll-gallery"]::before,
   [data-slot="scroll-gallery"]::after {

@@ -100,7 +100,7 @@ export function HomeIdentityExampleMist() {
       <CardHeader>
         <Stack direction="horizontal" gap={2} className="items-start justify-between">
           <Stack gap={1} className="content-shrink">
-            <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
+            <Heading level={3} className="text-specimen-title text-balance">
               {copy.heading}
             </Heading>
             <Text variant="muted">{copy.description}</Text>
