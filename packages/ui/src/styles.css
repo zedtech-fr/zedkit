@@ -1565,6 +1565,11 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
   }
 }
 
+/* Example column in the gallery and the docs demos. 24rem, same width as the table filter, kept separate so the filter can change on its own. */
+[data-example-width] {
+  max-width: 24rem;
+}
+
 /* Structural layout. The declaration is the constraint; the name is the job. */
 /* Phone target. Desktop keeps the identity's spacing step; a coarse pointer or a narrow screen never goes under 44px. */
 @utility min-h-target {
