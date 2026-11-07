@@ -20,15 +20,15 @@ export function GlassSurfaceDemo() {
   const { plain, raised, tinted } = marketingCopy.surface;
   return (
     <Stack direction="horizontal" gap={4} className="content-shrink flex-wrap items-stretch">
-      <GlassSurface className="content-shrink flex-1 basis-48">
+      <GlassSurface className="content-shrink flex-1 basis-tile">
         <Heading level={3}>{plain.title}</Heading>
         <Text variant="muted">{plain.body}</Text>
       </GlassSurface>
-      <GlassSurface tone="raised" className="content-shrink flex-1 basis-48">
+      <GlassSurface tone="raised" className="content-shrink flex-1 basis-tile">
         <Heading level={3}>{raised.title}</Heading>
         <Text variant="muted">{raised.body}</Text>
       </GlassSurface>
-      <GlassSurface tone="tinted" className="content-shrink flex-1 basis-48">
+      <GlassSurface tone="tinted" className="content-shrink flex-1 basis-tile">
         <Heading level={3}>{tinted.title}</Heading>
         <Text variant="muted">{tinted.body}</Text>
       </GlassSurface>

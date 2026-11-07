@@ -975,8 +975,16 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility basis-text {
   flex-basis: calc(var(--spacing) * 40);
 }
+/* A sample surface sharing a row. Not the app sidebar. */
+@utility basis-tile {
+  flex-basis: calc(var(--spacing) * 48);
+}
 @utility h-logo {
   height: calc(var(--spacing) * 6);
+}
+/* The mark in the site header. */
+@utility h-brand {
+  height: calc(var(--spacing) * 5);
 }
 /* Logo lockup in a band of customer marks. */
 @utility h-logo-row {

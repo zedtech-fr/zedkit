@@ -85,7 +85,7 @@ export function HomeAiSetupSection() {
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack gap={HOME_SECTION_CONTENT_GAP} className="pt-4">
+      <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
         <Stack gap={3} className="max-w-3xl">
           <SecretField
             multiline

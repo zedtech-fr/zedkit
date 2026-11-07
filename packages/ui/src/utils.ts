@@ -19,7 +19,7 @@ const twMerge = extendTailwindMerge({
       right: ["pin-right", "right-select-item-inline", "right-control-inline"],
       m: ["trim-margin"],
       mx: ["mx-back"],
-      basis: ["basis-field", "basis-number", "basis-text"],
+      basis: ["basis-field", "basis-number", "basis-text", "basis-tile"],
       gap: [
         "gap-detail-panel-gap",
         "gap-data-table-pagination-gap",
@@ -53,7 +53,7 @@ const twMerge = extendTailwindMerge({
       "space-y": [
         { "space-y": ["stack-tight", "stack-sm", "stack-md", "stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
       ],
-      h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator", "h-skeleton-line", "h-logo", "h-logo-row", "h-phone-bar"],
+      h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator", "h-skeleton-line", "h-logo", "h-logo-row", "h-brand", "h-phone-bar"],
       w: ["w-skeleton-short", "w-skeleton-bar", "w-sidebar-compact"],
       "grid-cols": ["grid-pair", "grid-trio"],
       "col-start-end": ["span-rest"],
