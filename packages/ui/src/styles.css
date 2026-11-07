@@ -846,6 +846,11 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
   padding-block: calc(var(--spacing) * 2);
 }
 /* Space between content and a rule drawn on its bottom edge. */
+/* Inline inset of a control, block inset of a short bar: one row of text. */
+@utility pad-row {
+  padding-inline: calc(var(--spacing) * 3);
+  padding-block: calc(var(--spacing) * 2);
+}
 @utility rule-gap {
   padding-bottom: calc(var(--spacing) * 2);
 }

@@ -64,7 +64,7 @@ export function AssistantNoticeBubble({ notice }: { notice: Notice }) {
   return (
     <Stack
       gap={1}
-      className="max-w-[95%] rounded-2xl rounded-tl-sm border border-border bg-muted px-3 py-2 text-sm"
+ className="max-w-[95%] rounded-2xl rounded-tl-sm border border-border bg-muted pad-row text-sm"
       data-assistant-notice=""
       role="status"
     >
@@ -211,7 +211,7 @@ export function UnavailableBanner({ reason, live = true }: { reason: Unavailable
   return (
     <Text
       role={live ? "status" : undefined}
-      className="rounded-md border border-border bg-muted px-3 py-2 text-zk-type-body"
+ className="rounded-md border border-border bg-muted pad-row text-zk-type-body"
       data-assistant-unavailable=""
     >
       {copy.unavailable(reason)}
