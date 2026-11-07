@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 468,
+  "total": 466,
   "files": {
     "apps/docs/app/(site)/features/identity-editor/page.tsx": 1,
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
@@ -70,8 +70,8 @@
     "apps/docs/ui/home/home-ai-setup-terminal.tsx": 1,
     "apps/docs/ui/home/home-component-families-section.tsx": 2,
     "apps/docs/ui/home/home-gallery-preview.tsx": 3,
-    "apps/docs/ui/home/home-hero-agent-panel.tsx": 6,
-    "apps/docs/ui/home/home-hero-app.tsx": 4,
+    "apps/docs/ui/home/home-hero-agent-panel.tsx": 5,
+    "apps/docs/ui/home/home-hero-app.tsx": 3,
     "apps/docs/ui/home/home-hero-calendar.tsx": 4,
     "apps/docs/ui/home/home-hero-lead-actions.tsx": 1,
     "apps/docs/ui/home/home-hero-overview.tsx": 8,
@@ -119,12 +119,12 @@
     "packages/ui/src/live-pulse.tsx": 1,
     "packages/ui/src/marketing/cta-band.tsx": 3,
     "packages/ui/src/marketing/faq.tsx": 1,
-    "packages/ui/src/marketing/feature-grid.tsx": 2,
+    "packages/ui/src/marketing/feature-grid.tsx": 1,
     "packages/ui/src/marketing/hero.tsx": 3,
     "packages/ui/src/marketing/how-it-works.tsx": 1,
     "packages/ui/src/marketing/logo-band.tsx": 2,
     "packages/ui/src/marketing/marketing-footer.tsx": 3,
-    "packages/ui/src/marketing/marketing-header.tsx": 2,
+    "packages/ui/src/marketing/marketing-header.tsx": 1,
     "packages/ui/src/marketing/media-section.tsx": 1,
     "packages/ui/src/marketing/pricing.tsx": 4,
     "packages/ui/src/marketing/section-header.tsx": 1,
@@ -157,6 +157,6 @@
     "packages/ui/tests/unit/scroll-scenes.test.tsx": 2,
     "packages/ui/tests/unit/specimens.test.tsx": 1,
     "packages/ui/tests/unit/sticky-aside.test.tsx": 1,
-    "packages/ui/tests/unit/utils.test.ts": 60
+    "packages/ui/tests/unit/utils.test.ts": 62
   }
 }

@@ -994,6 +994,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-phone-bar {
   height: calc(var(--spacing) * 14);
 }
+/* Marketing header. It can grow past the phone bar. */
+@utility min-h-phone-bar {
+  min-height: calc(var(--spacing) * 14);
+}
 @utility size-mark {
   width: calc(var(--spacing) * 10);
   height: calc(var(--spacing) * 10);
@@ -1007,6 +1011,11 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility size-pip {
   width: calc(var(--spacing) * 1.5);
   height: calc(var(--spacing) * 1.5);
+}
+/* An icon one step larger than size-icon. */
+@utility size-icon-lg {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
 }
 @utility min-h-status {
   min-height: calc(var(--spacing) * 6);

@@ -42,7 +42,7 @@ function PhaseList({ step, status }: { step: number; status: HeroAgentStatus }) 
       const state = phaseState(index, step, status);
       return (
         <li key={phase} data-phase={phase} data-state={state} className="flex content-shrink gap-stack-sm data-[state=pending]:opacity-60">
-          <span className="icon-nudge-sm inline-flex size-5 shrink-0 items-center justify-center">
+          <span className="icon-nudge-sm inline-flex size-icon-lg shrink-0 items-center justify-center">
             <PhaseMark state={state} />
           </span>
           <Stack gap={1} className="content-shrink">
