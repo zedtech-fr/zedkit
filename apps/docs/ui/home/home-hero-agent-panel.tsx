@@ -24,7 +24,7 @@ function PhaseDetail({ id, state }: { id: (typeof HERO_AGENT_PHASES)[number]; st
   if (state === "pending") return null;
   if (id === "rules" && state === "done") {
     return (
-      <ul className="trim-margin grid list-disc gap-0.5 pl-4">
+      <ul className="trim-margin grid list-disc gap-0.5 pl-list">
         {copy.rules.map((rule) => (
           <li key={rule}>{rule}</li>
         ))}

@@ -829,6 +829,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-blocks {
   gap: calc(var(--spacing) * 8);
 }
+/* The same step, between the columns of a wide row. */
+@utility gap-x-blocks {
+  column-gap: calc(var(--spacing) * 8);
+}
 /* Two equal columns. The breakpoint stays on the class: sm:grid-pair. */
 @utility grid-pair {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -836,8 +840,8 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility grid-trio {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-/* The value in a three-column detail row. */
-@utility span-value {
+/* The rest of a three-column row: a detail value, a scene, a link group. */
+@utility span-rest {
   grid-column: span 2 / span 2;
 }
 @utility gap-x-stack-sm {
@@ -896,6 +900,18 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility rule-gap {
   padding-bottom: calc(var(--spacing) * 2);
 }
+/* Bottom of a scrolling sheet. */
+@utility pb-sheet {
+  padding-bottom: calc(var(--spacing) * 6);
+}
+/* Indent of a list under its marker. */
+@utility pl-list {
+  padding-left: calc(var(--spacing) * 4);
+}
+/* Side inset of a full-height touch link. */
+@utility px-touch {
+  padding-inline: var(--spacing);
+}
 /* Space before content that follows a header or a top rule. */
 @utility content-offset {
   padding-top: calc(var(--spacing) * 4);
@@ -942,6 +958,11 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility size-person {
   width: calc(var(--spacing) * 8);
   height: calc(var(--spacing) * 8);
+}
+/* The dot inside a status chip. */
+@utility size-pip {
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
 }
 @utility min-h-status {
   min-height: calc(var(--spacing) * 6);
@@ -1009,6 +1030,11 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pin-top {
   top: 0;
 }
+/* Centers a control on the block axis of its field. */
+@utility pin-center-y {
+  top: 50%;
+  transform: translateY(-50%);
+}
 @utility pin-bottom {
   bottom: 0;
 }
@@ -1044,6 +1070,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility trim-pad-top {
   padding-top: 0;
+}
+@utility trim-pad-end {
+  padding-inline-end: 0;
 }
 @utility trim-bottom {
   margin-bottom: 0;

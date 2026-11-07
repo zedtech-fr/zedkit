@@ -69,7 +69,14 @@ describe("layout job classes", () => {
     expect(utility("h-logo-row")).toBe("height: calc(var(--spacing) * 8);");
     expect(utility("h-phone-bar")).toBe("height: calc(var(--spacing) * 14);");
     expect(utility("min-h-label")).toBe("min-height: calc(var(--spacing) * 5);");
-    expect(utility("span-value")).toBe("grid-column: span 2 / span 2;");
+    expect(utility("span-rest")).toBe("grid-column: span 2 / span 2;");
+    expect(utility("gap-x-blocks")).toBe("column-gap: calc(var(--spacing) * 8);");
+    expect(utility("pb-sheet")).toBe("padding-bottom: calc(var(--spacing) * 6);");
+    expect(utility("pl-list")).toBe("padding-left: calc(var(--spacing) * 4);");
+    expect(utility("px-touch")).toBe("padding-inline: var(--spacing);");
+    expect(utility("size-pip")).toBe("width: calc(var(--spacing) * 1.5); height: calc(var(--spacing) * 1.5);");
+    expect(utility("trim-pad-end")).toBe("padding-inline-end: 0;");
+    expect(utility("pin-center-y")).toBe("top: 50%; transform: translateY(-50%);");
     expect(utility("mt-status")).toBe("margin-top: calc(var(--spacing) * 3);");
     expect(utility("gap-x-meta")).toBe("column-gap: calc(var(--spacing) * 6);");
     expect(utility("min-h-status")).toBe("min-height: calc(var(--spacing) * 6);");

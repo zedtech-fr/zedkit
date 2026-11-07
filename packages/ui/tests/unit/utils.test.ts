@@ -54,7 +54,15 @@ describe("cn", () => {
     expect(cn("h-14", "h-phone-bar")).toBe("h-phone-bar");
     expect(cn("h-8", "h-logo-row")).toBe("h-logo-row");
     expect(cn("min-h-5", "min-h-label")).toBe("min-h-label");
-    expect(cn("col-span-2", "span-value")).toBe("span-value");
+    expect(cn("col-span-2", "span-rest")).toBe("span-rest");
+    expect(cn("gap-x-8", "gap-x-blocks")).toBe("gap-x-blocks");
+    expect(cn("pb-6", "pb-sheet")).toBe("pb-sheet");
+    expect(cn("pl-4", "pl-list")).toBe("pl-list");
+    expect(cn("px-1", "px-touch")).toBe("px-touch");
+    expect(cn("size-1.5", "size-pip")).toBe("size-pip");
+    expect(cn("py-0.5", "py-badge-block")).toBe("py-badge-block");
+    expect(cn("pr-0", "trim-pad-end")).toBe("trim-pad-end");
+    expect(cn("top-1/2", "pin-center-y")).toBe("pin-center-y");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });
