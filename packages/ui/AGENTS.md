@@ -21,15 +21,15 @@ Rules:
 - `cn()` every `className` prop (conflicts resolve last-wins).
 - `.dark`-class theming only; new tokens go in `src/styles.css`
   in both `:root` and `.dark`.
-- Spacing: class names are roles (`gap-stack-*`, `px-field-pad`,
-  `px-button-pad`, `size-icon`). Numbers stay in `calc(var(--spacing) * N)`
-  so identity density still applies. Default scale steps are deprecated.
-  Rem aliases stay so copied CSS resolves; do not add another name for the
-  same value. `Stack` accepts `sm` | `md` | `lg` and, until a major, the
-  numeric steps that map to the same classes. The shipped rule is
-  `packages/ai/kit/skills/setup-ai/design-policy.md` (host vocabulary;
-  this package is the host). Phone targets are 44px, stricter than the
-  kit's 24px floor.
+- Spacing: a class names a role or a layout job (`px-field-pad`,
+  `px-button-pad`, `gap-stack-sm` for a stack, `content-shrink`). Do not
+  spell a number (`min-w-zero`) and do not add a token per scale step.
+  Shared design values use `calc(var(--spacing) * N)`. A structural
+  constraint (`min-width: 0`, pinning to an edge) is a declaration on that
+  layout class, not a spacing token. `Stack` accepts `sm` | `md` | `lg`;
+  the other numeric gap props stay until a major. The shipped rule is
+  `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
+  44px, stricter than the kit's 24px floor.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).

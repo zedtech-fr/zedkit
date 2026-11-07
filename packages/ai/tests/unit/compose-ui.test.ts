@@ -59,6 +59,9 @@ describe("compose-ui skill", () => {
     expect(read("skills/review/SKILL.md")).toContain("design-policy.md");
     expect(read("skills/setup-ai/design-policy.md")).toContain("p-4");
     expect(read("skills/setup-ai/design-policy.md")).toContain("fails closed");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("min-w-zero");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("min-width: 0");
+    expect(read("agents/ui-designer.md")).toContain("spells a number");
   });
 
   it("kit pointers name the persona chain behind compose-ui conditionals", () => {

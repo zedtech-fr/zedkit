@@ -23,14 +23,14 @@ export type LocaleSwitchProps = Omit<React.ComponentProps<"nav">, "children" | "
 };
 
 const itemClass =
-  "inline-flex min-h-stack-7xl min-w-stack-7xl items-center justify-center rounded-md px-stack-md text-sm font-medium focus-ring-control hover:bg-muted aria-[current=true]:bg-secondary aria-[current=true]:text-secondary-foreground";
+  "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md px-3 text-sm font-medium focus-ring-control hover:bg-muted aria-[current=true]:bg-secondary aria-[current=true]:text-secondary-foreground";
 
 /** Language switch: one item per language, the current one marked. Name comes from `ZedkitUiProvider`. */
 function LocaleSwitch({ locales, current, onSelect, className, ...props }: LocaleSwitchProps) {
   const messages = useUiMessages();
   return (
     <nav data-slot="locale-switch" aria-label={messages.language} className={className} {...props}>
-      <ul className={cn("flex list-none items-center gap-stack-2xs p-zero")}>
+      <ul className={cn("flex list-none items-center gap-1 flush")}>
         {locales.map((locale) => {
           const isCurrent = locale.code === current;
           const state = isCurrent ? ("true" as const) : undefined;

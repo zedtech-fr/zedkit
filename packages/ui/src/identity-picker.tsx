@@ -74,11 +74,11 @@ function IdentityPicker({
           type="button"
           aria-label={`${title}: ${currentLabel}`}
           className={cn(
-            "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-stack-sm rounded-md px-stack-md text-sm font-medium text-foreground focus-ring-control",
+            "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-foreground focus-ring-control",
             className,
           )}
         >
-          <Palette aria-hidden="true" className="size-stack-lg text-muted-foreground" />
+          <Palette aria-hidden="true" className="size-4 text-muted-foreground" />
           <span>{currentLabel}</span>
         </button>
       </DrawerTrigger>
@@ -88,7 +88,7 @@ function IdentityPicker({
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description ?? messages.identityDescription}</DrawerDescription>
         </DrawerHeader>
-        <div role="radiogroup" aria-label={title} className="flex flex-col gap-stack-2xs overflow-y-auto px-stack-lg pb-stack-2xl">
+        <div role="radiogroup" aria-label={title} className="flex flex-col gap-1 overflow-y-auto px-4 pb-6">
           {options.map((item) => {
             const selected = item.id === current;
             return (
@@ -99,22 +99,22 @@ function IdentityPicker({
                 aria-checked={selected}
                 onClick={() => choose(item.id)}
                 className={cn(
-                  "flex min-h-overlay-touch-target items-center justify-between gap-stack-md rounded-lg border px-stack-md py-stack-sm text-left focus-ring-control transition-colors",
+                  "flex min-h-overlay-touch-target items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left focus-ring-control transition-colors",
                   selected ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted",
                 )}
               >
-                <span className="min-w-zero">
+                <span className="content-shrink">
                   <span className="block font-medium text-foreground">
                     {item.label}
                     {defaultIdentity && item.id === defaultIdentity ? (
-                      <span className="ml-stack-sm text-sm font-normal text-muted-foreground">{messages.identityDefault}</span>
+                      <span className="ml-2 text-sm font-normal text-muted-foreground">{messages.identityDefault}</span>
                     ) : null}
                   </span>
                   {item.description ? (
                     <span className="block text-sm text-muted-foreground">{item.description}</span>
                   ) : null}
                 </span>
-                {selected ? <Check aria-hidden="true" className="size-stack-lg shrink-0 text-primary" /> : null}
+                {selected ? <Check aria-hidden="true" className="size-4 shrink-0 text-primary" /> : null}
               </button>
             );
           })}

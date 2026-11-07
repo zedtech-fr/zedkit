@@ -29,7 +29,7 @@ function CtaBand({ title, description, actions, className, ...props }: CtaBandPr
         <GlassSurface
           tone="tinted"
           padding="lg"
-          className="flex flex-col items-center gap-stack-lg text-center sm:px-stack-8xl sm:py-stack-8xl"
+          className="flex flex-col items-center gap-4 text-center sm:px-12 sm:py-12"
         >
           <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
             {title}
@@ -40,7 +40,7 @@ function CtaBand({ title, description, actions, className, ...props }: CtaBandPr
           {actions ? (
             <div
               data-slot="cta-band-actions"
-              className="flex w-full flex-col gap-stack-md pt-stack-sm *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:*:w-auto"
+              className="flex w-full flex-col gap-3 pt-2 *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:*:w-auto"
             >
               {actions}
             </div>

@@ -40,18 +40,18 @@ function MediaSection({
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="grid items-center gap-stack-6xl lg:grid-cols-2">
-        <div className={cn("flex min-w-zero flex-col gap-stack-lg", reverse && "lg:order-last")}>
+      <Container width="default" className="grid items-center gap-10 lg:grid-cols-2">
+        <div className={cn("flex content-shrink flex-col gap-4", reverse && "lg:order-last")}>
           <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
             {title}
           </Heading>
           {description ? <Text className="text-muted-foreground">{description}</Text> : null}
           {points && points.length > 0 ? (
-            <ul className="flex list-none flex-col gap-stack-sm p-zero">
+            <ul className="flex list-none flex-col gap-2 flush">
               {points.map((point, index) => (
-                <li key={index} className="flex gap-stack-md">
-                  <Check aria-hidden="true" className="mt-stack-2xs size-stack-lg shrink-0 text-primary" />
-                  <span className="min-w-zero">{point}</span>
+                <li key={index} className="flex gap-3">
+                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-primary" />
+                  <span className="content-shrink">{point}</span>
                 </li>
               ))}
             </ul>
@@ -59,13 +59,13 @@ function MediaSection({
           {actions ? (
             <div
               data-slot="media-section-actions"
-              className="flex w-full flex-col gap-stack-md pt-stack-sm *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
+              className="flex w-full flex-col gap-3 pt-2 *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
             >
               {actions}
             </div>
           ) : null}
         </div>
-        <GlassSurface data-slot="media-section-media" tone="raised" padding="sm" className="min-w-zero overflow-hidden">
+        <GlassSurface data-slot="media-section-media" tone="raised" padding="sm" className="content-shrink overflow-hidden">
           {media}
         </GlassSurface>
       </Container>

@@ -12,10 +12,12 @@ const FRACTION =
 const COUNT =
   /^(?:grid-cols|grid-rows|col-span|row-span|col-start|col-end|row-start|row-end)-\d+$/;
 const TYPE = /^text-(?:xs|sm|base|lg|xl|[2-9]xl)$/;
+const STACK_ROLES = new Set(["gap-stack-sm", "gap-stack-md", "gap-stack-lg", "space-y-stack-lg"]);
+const SPELLED = /(?:^|-)(?:zero|hairline)$|(?:^|-)stack-(?:3xs|2xs|xs|3h|\d+xl|sm|md|lg)$/;
 
 /**
  * @param {string} className
- * @returns {"spacing" | "fraction" | "count" | "type" | null}
+ * @returns {"spacing" | "fraction" | "count" | "type" | "alias" | null}
  */
 export function scaleClassKind(className) {
   let name = className.trim();
@@ -28,15 +30,19 @@ export function scaleClassKind(className) {
   if (FRACTION.test(name)) return "fraction";
   if (COUNT.test(name)) return "count";
   if (TYPE.test(name)) return "type";
+  if (!STACK_ROLES.has(name) && SPELLED.test(name)) return "alias";
   return null;
 }
 
 /**
  * @param {string} token
- * @param {"spacing" | "fraction" | "count" | "type"} kind
+ * @param {"spacing" | "fraction" | "count" | "type" | "alias"} kind
  */
 export function scaleMessage(token, kind) {
-  return `tokens-scale: "${token}" is a ${kind} scale step. Use a role class from the host theme. Put the number in the token value, not the class name.`;
+  if (kind === "alias") {
+    return `tokens-scale: "${token}" spells a scale step. Name the component role or layout job. A structural constraint stays a literal on that layout class, not a zero token.`;
+  }
+  return `tokens-scale: "${token}" is a ${kind} scale step. Name the component role or layout job. Put a shared design value in the token, not a spelled number in the class.`;
 }
 
 function quoteEnd(source, open) {
@@ -339,7 +345,7 @@ export function zedkitLintPlugin(entryPoint, scaleBaseline) {
               const hit = hits[allowance];
               context.report({
                 loc: source.getLocFromIndex(hit.index),
-                message: `tokens-scale: ${hits.length} scale classes in this file; the baseline allows ${allowance}. Remove a numeric or type-scale class. Use a role class from the host theme. The baseline only shrinks.`,
+                message: `tokens-scale: ${hits.length} scale classes in this file; the baseline allows ${allowance}. Remove a numeric, spelled, or type-scale class. Name the role or layout job. The baseline only shrinks.`,
               });
             },
           };

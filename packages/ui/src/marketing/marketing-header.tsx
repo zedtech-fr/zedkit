@@ -20,7 +20,7 @@ export type MarketingHeaderProps = Omit<React.ComponentProps<"header">, "childre
 };
 
 const linkClass =
-  "[&_a]:inline-flex [&_a]:min-h-stack-7xl [&_a]:items-center [&_a]:rounded-md [&_a]:px-stack-md [&_a]:text-sm [&_a]:font-medium [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a[aria-current]]:text-foreground";
+  "[&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:rounded-md [&_a]:px-3 [&_a]:text-sm [&_a]:font-medium [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a[aria-current]]:text-foreground";
 
 /**
  * Compact public-page header: brand, links, actions. On phones the links and
@@ -33,16 +33,16 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
   return (
     <header
       data-slot="marketing-header"
-      className={cn("z-header w-full border-b bg-card text-card-foreground", sticky ? "sticky top-zero" : "relative", className)}
+      className={cn("z-header w-full border-b bg-card text-card-foreground", sticky ? "sticky pin-top" : "relative", className)}
       {...props}
     >
-      <Container width="default" className="flex min-h-stack-9xl items-center gap-stack-lg">
-        <div data-slot="marketing-header-brand" className="flex min-w-zero shrink-0 items-center">
+      <Container width="default" className="flex min-h-14 items-center gap-4">
+        <div data-slot="marketing-header-brand" className="flex content-shrink shrink-0 items-center">
           {brand}
         </div>
         {items.length > 0 ? (
           <nav aria-label={messages.mainNavigation} className="hidden flex-1 md:block">
-            <ul className={cn("flex list-none items-center gap-stack-2xs p-zero", linkClass)}>
+            <ul className={cn("flex list-none items-center gap-1 flush", linkClass)}>
               {items.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
@@ -50,26 +50,26 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
           </nav>
         ) : null}
         {actions ? (
-          <div data-slot="marketing-header-actions" className="ml-auto hidden items-center gap-stack-sm md:flex">
+          <div data-slot="marketing-header-actions" className="ml-auto hidden items-center gap-2 md:flex">
             {actions}
           </div>
         ) : null}
         <details data-slot="marketing-header-menu" className="group ml-auto md:hidden">
-          <summary className="flex min-h-stack-7xl cursor-pointer list-none items-center gap-stack-sm rounded-md px-stack-md text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
-            <Menu aria-hidden="true" className="size-stack-lg" />
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-md px-3 text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
+            <Menu aria-hidden="true" className="size-4" />
             {messages.menu}
           </summary>
-          <div className="absolute inset-x-zero top-full flex flex-col gap-stack-lg border-b bg-card p-stack-lg shadow-lg">
+          <div className="absolute pin-x top-full flex flex-col gap-4 border-b bg-card p-4 shadow-lg">
             {items.length > 0 ? (
               <nav aria-label={messages.mainNavigation}>
-                <ul className={cn("flex list-none flex-col gap-stack-2xs p-zero", linkClass)}>
+                <ul className={cn("flex list-none flex-col gap-1 flush", linkClass)}>
                   {items.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
                 </ul>
               </nav>
             ) : null}
-            {actions ? <div className="flex flex-col gap-stack-sm *:w-full">{actions}</div> : null}
+            {actions ? <div className="flex flex-col gap-2 *:w-full">{actions}</div> : null}
           </div>
         </details>
       </Container>

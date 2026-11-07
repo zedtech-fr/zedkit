@@ -125,7 +125,7 @@ const SECTIONS = [
 
 function GallerySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="space-y-stack-lg border-b pb-stack-4xl last:border-0">
+    <section id={id} className="space-y-4 border-b pb-8 last:border-0">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
       {children}
     </section>
@@ -136,17 +136,17 @@ export function Gallery() {
   return (
     <AppShell
       sidebar={
-        <nav className="space-y-stack-2xs p-stack-lg" aria-label="Gallery sections">
-          <p className="px-stack-sm pb-stack-sm text-sm font-semibold">UI gallery</p>
+        <nav className="space-y-1 p-4" aria-label="Gallery sections">
+          <p className="px-2 pb-2 text-sm font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
-            <a key={id} href={`#${id}`} className="block rounded-md px-stack-sm py-stack-2xs text-sm hover:bg-accent">
+            <a key={id} href={`#${id}`} className="block rounded-md px-2 py-1 text-sm hover:bg-accent">
               {title}
             </a>
           ))}
         </nav>
       }
       topbar={
-        <div className="flex items-center justify-between p-stack-lg">
+        <div className="flex items-center justify-between p-4">
           <p className="text-sm font-medium">Component gallery (static preview)</p>
           <LivePulse />
         </div>
@@ -156,9 +156,9 @@ export function Gallery() {
         title="UI gallery"
         description="Every component in every state. Static render for visual review; behavior is covered by unit tests."
       />
-      <div className="space-y-stack-4xl">
+      <div className="space-y-8">
         <GallerySection id="primitives" title="Primitives">
-          <div className="flex flex-wrap gap-stack-sm">
+          <div className="flex flex-wrap gap-2">
             <Button>Default</Button>
             <Button variant="secondary">Secondary</Button>
             <Button variant="outline">Outline</Button>
@@ -166,13 +166,13 @@ export function Gallery() {
             <Button variant="destructive">Destructive</Button>
             <Button size="sm">Small</Button>
           </div>
-          <div className="flex flex-wrap gap-stack-sm">
+          <div className="flex flex-wrap gap-2">
             <Badge>Default</Badge>
             <Badge variant="secondary">Secondary</Badge>
             <Badge variant="outline">Outline</Badge>
             <Badge variant="destructive">Destructive</Badge>
           </div>
-          <div className="flex items-center gap-stack-md" aria-label="Status dots">
+          <div className="flex items-center gap-3" aria-label="Status dots">
             <StatusDot tone="active" />
             <StatusDot tone="idle" />
             <StatusDot tone="success" />
@@ -180,35 +180,35 @@ export function Gallery() {
             <StatusDot tone="danger" />
             <Checkmark label="Saved" />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="max-w-sm space-y-2">
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
           </div>
-          <div className="flex flex-wrap items-center gap-stack-md">
+          <div className="flex flex-wrap items-center gap-3">
             <StatusLabel tone="loading">Saving report…</StatusLabel>
             <StatusLabel tone="saved">Saved</StatusLabel>
             <StatusLabel tone="error">Could not save</StatusLabel>
             <UpdatedAgo date={Date.now() - 3 * 60_000} />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="max-w-sm space-y-2">
             <OfflineNote />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="max-w-sm space-y-2">
             <EmptyState title="No invoices" description="Create an invoice to send to a client." actions={<Button>New invoice</Button>} />
             <ErrorState title="Could not load invoices" description="Check your connection and try again." actions={<Button variant="outline">Try again</Button>} />
             <Spinner />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-name">Name</Label>
             <Input id="gallery-name" placeholder="Ada" />
           </div>
-          <div className="max-w-sm space-y-stack-sm">
+          <div className="max-w-sm space-y-2">
             <Label htmlFor="gallery-bio">Bio</Label>
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
           <Separator />
-          <Skeleton className="h-stack-lg w-stack-14xl" />
-          <div className="space-y-stack-sm">
+          <Skeleton className="h-4 w-48" />
+          <div className="space-y-2">
             <Heading level={1}>Page title</Heading>
             <Heading level={2}>Section title</Heading>
             <Text>Body copy for paragraphs.</Text>
@@ -234,7 +234,7 @@ export function Gallery() {
             description="This cannot be undone."
             onConfirm={() => {}}
           />
-          <div className="flex flex-wrap gap-stack-sm">
+          <div className="flex flex-wrap gap-2">
             <Drawer>
               <DrawerTrigger asChild>
                 <Button variant="outline">Open sheet</Button>
@@ -255,9 +255,9 @@ export function Gallery() {
                     variant="ghost"
                     size="icon"
                     aria-label="Close details"
-                    className="absolute top-stack-lg right-stack-lg"
+                    className="absolute top-4 right-4"
                   >
-                    <X className="h-stack-lg w-stack-lg" />
+                    <X className="h-4 w-4" />
                   </Button>
                 </DrawerClose>
                 <DrawerTitle>Details</DrawerTitle>
@@ -347,22 +347,22 @@ export function Gallery() {
               <Badge variant="secondary">Bob</Badge>
             </Stack>
           </Section>
-          <div className="space-y-stack-sm">
-            <Container width="narrow" className="border py-stack-sm text-sm">
+          <div className="space-y-2">
+            <Container width="narrow" className="border py-2 text-sm">
               Narrow container
             </Container>
-            <Container width="reading" className="border py-stack-sm text-sm">
+            <Container width="reading" className="border py-2 text-sm">
               Reading container
             </Container>
-            <Container className="border py-stack-sm text-sm">Default container</Container>
-            <Container width="wide" className="border py-stack-sm text-sm">
+            <Container className="border py-2 text-sm">Default container</Container>
+            <Container width="wide" className="border py-2 text-sm">
               Wide container
             </Container>
           </div>
           <Section bleed tone="muted" spacing="sm" title="Bleed section" description="Edge to edge, content capped.">
             <p className="text-sm">Band content.</p>
           </Section>
-          <div className="flex gap-stack-lg">
+          <div className="flex gap-4">
             <LivePulse />
             <LivePulse active={false} />
           </div>
@@ -379,7 +379,7 @@ export function Gallery() {
 
         <GallerySection id="forms" title="Forms">
           <FormDemo />
-          <div className="max-w-sm space-y-stack-md" data-testid="gallery-prompt-input">
+          <div className="max-w-sm space-y-3" data-testid="gallery-prompt-input">
             <PromptInput
               sendLabel="Send"
               value="Ask about your catalog"
@@ -411,11 +411,11 @@ export function Gallery() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="flex items-center space-x-stack-sm">
+          <div className="flex items-center space-x-2">
             <Checkbox id="gallery-terms" defaultChecked />
             <Label htmlFor="gallery-terms">Accept the terms</Label>
           </div>
-          <div className="flex items-center space-x-stack-sm">
+          <div className="flex items-center space-x-2">
             <Switch id="gallery-notify" defaultChecked />
             <Label htmlFor="gallery-notify">Notify me</Label>
           </div>
@@ -446,7 +446,7 @@ export function Gallery() {
         <GallerySection id="marketing" title="Marketing">
           <MarketingHeader
             sticky={false}
-            brand={<a href="#marketing" className="inline-flex min-h-stack-7xl items-center font-semibold">Harbor</a>}
+            brand={<a href="#marketing" className="inline-flex min-h-11 items-center font-semibold">Harbor</a>}
             links={[
               <a key="docs" href="#marketing">Docs</a>,
               <a key="pricing" href="#marketing">Pricing</a>,
@@ -464,7 +464,7 @@ export function Gallery() {
               </>
             }
           />
-          <div className="grid gap-stack-lg sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             <GlassSurface>Plain surface</GlassSurface>
             <GlassSurface tone="raised">Raised surface</GlassSurface>
             <GlassSurface tone="tinted">Tinted surface</GlassSurface>

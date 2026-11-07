@@ -64,7 +64,7 @@ function ParallaxSection({
       {...(preset ? { "data-parallax-preset": preset } : {})}
       {...(off ? { "data-parallax-off": off } : {})}
       className={cn(
-        "min-w-zero",
+        "content-shrink",
         motionVarClass("--zk-motion-intensity", intensity),
         motionVarClass("--zk-parallax-inset", inset),
         className,
@@ -106,7 +106,7 @@ function ParallaxLayer({
       {...(zoom ? { "data-parallax-zoom": "" } : {})}
       {...(hide ? { "aria-hidden": true, inert: true } : {})}
       className={cn(
-        "min-w-zero",
+        "content-shrink",
         typeof depth === "number" && flags.named == null ? motionVarClass("--zk-depth", depth, true) : undefined,
         zoom ? motionVarClass("--zk-zoom-from", zoom[0]) : undefined,
         zoom ? motionVarClass("--zk-zoom-to", zoom[1]) : undefined,

@@ -53,7 +53,7 @@ export function OptionCard({
     <label
       data-slot="option-card"
       className={cn(
-        "flex cursor-pointer gap-stack-md rounded-lg border p-stack-lg transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
+        "flex cursor-pointer gap-3 rounded-lg border p-4 transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
         className,
       )}
     >
@@ -62,11 +62,11 @@ export function OptionCard({
         data-slot="option-card-indicator"
         aria-hidden="true"
         className={cn(
-          "mt-stack-3xs grid size-stack-xl shrink-0 place-content-center border border-input text-transparent transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground",
+          "mt-0.5 grid size-5 shrink-0 place-content-center border border-input text-transparent transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground",
           type === "radio" ? "rounded-full" : "rounded-sm",
         )}
       >
-        <Check className="size-stack-3h" strokeWidth={3} />
+        <Check className="size-3.5" strokeWidth={3} />
       </span>
       <span>
         <span className="block font-medium">{title}</span>
@@ -95,7 +95,7 @@ export function OptionCards({
   }
 
   return (
-    <div data-slot="option-cards" role={multiple ? "group" : "radiogroup"} aria-label={label ?? messages.options} className={cn("grid gap-stack-md sm:grid-cols-2", className)}>
+    <div data-slot="option-cards" role={multiple ? "group" : "radiogroup"} aria-label={label ?? messages.options} className={cn("grid gap-3 sm:grid-cols-2", className)}>
       {options.map((option) => (
         <OptionCard
           key={option.id}

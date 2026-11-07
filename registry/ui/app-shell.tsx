@@ -15,11 +15,11 @@ export function AppShell({ sidebar, topbar, children, className }: AppShellProps
       <aside className="flex w-app-shell-sidebar shrink-0 flex-col border-r bg-muted/40 max-md:hidden">
         {sidebar}
       </aside>
-      <div className="flex min-h-zero min-w-zero flex-1 flex-col">
+      <div className="flex pane-shrink content-shrink flex-1 flex-col">
         {topbar ? (
-          <header className="sticky top-zero z-header border-b bg-background/95 backdrop-blur">{topbar}</header>
+          <header className="sticky pin-top z-header border-b bg-background/95 backdrop-blur">{topbar}</header>
         ) : null}
-        <main className="min-h-zero flex-1 overflow-y-auto p-stack-lg md:p-app-shell-padding-md">{children}</main>
+        <main className="pane-shrink flex-1 overflow-y-auto p-4 md:p-app-shell-padding-md">{children}</main>
       </div>
     </div>
   );

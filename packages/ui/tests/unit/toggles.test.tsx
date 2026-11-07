@@ -24,11 +24,11 @@ describe("toggles", () => {
   it("styles the checkbox from design tokens", () => {
     render(<Checkbox aria-label="Accept the terms" defaultChecked />);
     const box = screen.getByRole("checkbox", { name: "Accept the terms" });
-    expect(box.classList.contains("size-stack-lg")).toBe(true);
+    expect(box.classList.contains("size-4")).toBe(true);
     expect(box.classList.contains("focus-ring-control")).toBe(true);
     expect(box.className).not.toMatch(/(^|\s)(h-4|w-4|ring-1)(\s|$)/);
     const icon = box.querySelector("svg");
-    expect(icon?.classList.contains("size-stack-lg")).toBe(true);
+    expect(icon?.classList.contains("size-4")).toBe(true);
     expect(icon?.getAttribute("aria-hidden")).toBe("true");
   });
 

@@ -29,7 +29,7 @@ describe("primitives", () => {
     expect(link.className).toContain("hover:underline");
     expect(link.className).toContain("hover:bg-transparent");
     expect(link.className).not.toContain("hover:bg-accent");
-    expect(link.className).toContain("min-h-stack-7xl");
+    expect(link.className).toContain("min-h-11");
   });
 
   it("takes ref as a prop", () => {
@@ -63,17 +63,17 @@ describe("primitives", () => {
   it("spaces button content with role classes", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("gap-stack-sm");
-    expect(button.className).not.toContain("gap-2");
-    expect(button.className).toContain("py-stack-sm");
+    expect(button.className).toContain("gap-2");
+    expect(button.className).toContain("py-control-block-lg");
+    expect(button.className).toContain("px-button-pad");
     expect(button.className).toContain("size-icon");
   });
 
-  it("spaces the small button with the field inline role", () => {
+  it("spaces the small button from the control scale", () => {
     render(<Button size="sm">Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("px-field-pad");
-    expect(button.className).not.toContain("px-3");
+    expect(button.className).toContain("px-3");
+    expect(button.className).toContain("py-control-block");
   });
 
   it("spaces the large button with the button pad role", () => {
@@ -102,7 +102,7 @@ describe("primitives", () => {
       </Button>,
     );
     const link = screen.getByRole("link", { name: "More in the kit" });
-    expect(link.className).toContain("px-field-pad");
+    expect(link.className).toContain("px-3");
     expect(link.className).toContain("py-control-block");
     expect(link.getAttribute("data-variant")).toBe("ghost");
     expect(link.getAttribute("data-size")).toBe("sm");
@@ -275,7 +275,7 @@ describe("primitives", () => {
       </Alert>,
     );
     const alert = screen.getByRole("alert");
-    expect(alert.className).toContain("py-stack-md");
+    expect(alert.className).toContain("py-3");
     expect(alert.className).not.toContain("py-alert-block");
   });
 
@@ -289,7 +289,7 @@ describe("primitives", () => {
     );
     const section = screen.getByRole("alert", { name: "Maintenance notice" });
     expect(section.tagName).toBe("SECTION");
-    expect(section.className).toContain("px-stack-lg");
+    expect(section.className).toContain("px-4");
   });
 
   it("renders a textarea with its placeholder", () => {
@@ -308,8 +308,7 @@ describe("primitives", () => {
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
     expect(screen.getByLabelText("Bio").className).toContain("px-field-pad");
     expect(screen.getByLabelText("Bio").className).not.toContain("px-3");
-    expect(screen.getByLabelText("Bio").className).toContain("py-stack-sm");
-    expect(screen.getByLabelText("Bio").className).not.toContain("py-2");
+    expect(screen.getByLabelText("Bio").className).toContain("py-2");
   });
 
   it("sizes every text field from the input font-size token, never a fixed text-* size", () => {

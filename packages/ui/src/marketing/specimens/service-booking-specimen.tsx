@@ -28,7 +28,7 @@ function BookingServiceChoices({
           type="button"
           variant={item.id === serviceId ? "default" : "outline"}
           aria-pressed={item.id === serviceId}
-          className="h-auto! min-h-stack-7xl w-full justify-between px-stack-lg py-stack-md font-normal"
+          className="h-auto! min-h-11 w-full justify-between px-4 py-3 font-normal"
           onClick={() => onSelect(item.id)}
         >
           <Text as="span">{item.label}</Text>
@@ -80,7 +80,7 @@ export function ServiceBookingSpecimen({ className, messages = specimenMessagesE
   const service = messages.services.find((item) => item.id === serviceId) ?? messages.services[0]!;
 
   return (
-    <Stack gap={4} className={`min-w-zero ${className ?? ""}`} data-slot="service-booking-specimen" data-specimen-domain="service-booking">
+    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="service-booking-specimen" data-specimen-domain="service-booking">
       <Stack gap={1}>
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
@@ -103,7 +103,7 @@ export function ServiceBookingSpecimen({ className, messages = specimenMessagesE
       >
         {messages.book}
       </Button>
-      <Text variant="muted" role="status" className="min-h-stack-2xl">
+      <Text variant="muted" role="status" className="min-h-6">
         {status}
       </Text>
     </Stack>
