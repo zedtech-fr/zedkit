@@ -138,7 +138,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
   // the look. On a phone the card is a flex item placed by `order` between the hint and the adjustments;
   // from `lg` it is the right column and stays in view while the left column scrolls.
   return (
-    <Stack gap={6} className="content-shrink lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start" data-slot="identity-editor">
+    <Stack gap={6} className="content-shrink lg:grid lg:items-start" data-slot="identity-editor">
       <DraftCard darkPreview={props.darkPreview} />
       <Stack gap={6} className="content-shrink max-lg:contents lg:col-start-first lg:row-start-first">
         <IdentityEditorPreviewBar
