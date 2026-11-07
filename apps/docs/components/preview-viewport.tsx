@@ -49,7 +49,7 @@ function Segment({
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className="min-h-target rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-7"
+      className="min-h-target rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-segment"
     >
       {children}
     </button>

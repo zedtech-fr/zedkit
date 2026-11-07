@@ -60,6 +60,13 @@ describe("layout job classes", () => {
     expect(utility("p-segment")).toBe("padding: calc(var(--spacing) * 0.5);");
     expect(utility("pb-block")).toBe("padding-bottom: calc(var(--spacing) * 3);");
     expect(utility("w-handle")).toBe("width: calc(var(--spacing) * 10);");
+    expect(utility("w-skeleton-half")).toBe("width: 50%;");
+    expect(utility("w-name")).toBe("width: calc(var(--spacing) * 56);");
+    expect(utility("h-frame")).toBe("height: calc(var(--spacing) * 72);");
+    expect(utility("pull-back")).toBe("margin-top: calc(var(--spacing) * -6);");
+    expect(utility("py-index")).toBe("padding-block: calc(var(--spacing) * 6);");
+    expect(utility("inset-y-panel")).toBe("inset-block: calc(var(--spacing) * 2);");
+    expect(css).toContain("@utility space-x-faces");
     expect(utility("max-h-log")).toBe("max-height: calc(var(--spacing) * 72);");
     expect(utility("min-h-bar")).toBe("min-height: calc(var(--spacing) * 12);");
     expect(utility("min-h-hero")).toBe("min-height: calc(var(--spacing) * 96);");

@@ -19,7 +19,7 @@ function dueDays(rows: TaskRow[]): Date[] {
 function Agenda({ rows, day }: { rows: TaskRow[]; day: Date | undefined }) {
   const agenda = day ? rows.filter((row) => !isDone(row) && dueOn(row, day)) : [];
   return (
-    <Stack gap={2} className="min-w-40 flex-1" aria-live="polite" data-hero-block="" data-beat={2}>
+    <Stack gap={2} className="min-w-date flex-1" aria-live="polite" data-hero-block="" data-beat={2}>
       <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
         {day ? copy.dueOn(longDate.format(day)) : copy.description}
       </Text>

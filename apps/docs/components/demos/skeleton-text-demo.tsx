@@ -8,8 +8,8 @@ export function SkeletonTextDemo() {
       <Stack gap={2}>
         <Skeleton className="h-skeleton-line w-full" />
         <Skeleton className="h-skeleton-line w-full" />
-        <Skeleton className="h-skeleton-line w-5/6" />
-        <Skeleton className="h-skeleton-line w-1/2" />
+        <Skeleton className="h-skeleton-line w-skeleton-wide" />
+        <Skeleton className="h-skeleton-line w-skeleton-half" />
       </Stack>
     </Stack>
   );
