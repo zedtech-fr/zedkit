@@ -183,7 +183,7 @@ describe("primitives", () => {
   });
 
   it("renders a skeleton block that pulses only when motion is safe", () => {
-    const { container } = render(<Skeleton className="h-4 w-24" data-testid="sk" />);
+    const { container } = render(<Skeleton className="h-skeleton-line w-skeleton-bar" data-testid="sk" />);
     const skeleton = container.querySelector('[data-testid="sk"]');
     expect(skeleton?.className).toContain("motion-safe:animate-pulse");
   });

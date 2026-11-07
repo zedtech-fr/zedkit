@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 355,
+  "total": 344,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -69,7 +69,6 @@
     "apps/docs/ui/home/home-yours-scene.tsx": 1,
     "apps/docs/ui/kit-version-label.tsx": 1,
     "apps/docs/ui/mobile-header.tsx": 2,
-    "packages/brand/tests/react.test.tsx": 1,
     "packages/devtools/src/panel-shell.tsx": 1,
     "packages/devtools/src/panel-tabs.tsx": 1,
     "packages/devtools/src/panel.tsx": 1,
@@ -119,13 +118,6 @@
     "packages/ui/src/typography.tsx": 1,
     "packages/ui/src/updated-ago.tsx": 1,
     "packages/ui/src/wizard-steps.tsx": 3,
-    "packages/ui/tests/unit/icon-label.test.tsx": 1,
-    "packages/ui/tests/unit/layout.test.tsx": 2,
-    "packages/ui/tests/unit/marketing.test.tsx": 1,
-    "packages/ui/tests/unit/primitives.test.tsx": 2,
-    "packages/ui/tests/unit/scroll-scenes.test.tsx": 2,
-    "packages/ui/tests/unit/specimens.test.tsx": 1,
-    "packages/ui/tests/unit/sticky-aside.test.tsx": 1,
     "packages/ui/tests/unit/utils.test.ts": 77
   }
 }
