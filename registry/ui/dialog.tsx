@@ -174,7 +174,7 @@ function DialogContent({
         >
           <OverlayMountContext.Provider value={mount}>{children}</OverlayMountContext.Provider>
           <DialogPrimitive.Close className={overlayDialogCloseClass}>
-            <X className="size-4" />
+            <X className="size-icon" />
             <span className="sr-only">{closeLabel ?? messages.close}</span>
           </DialogPrimitive.Close>
         </Surface>

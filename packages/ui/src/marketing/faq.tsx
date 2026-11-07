@@ -40,7 +40,7 @@ function Faq({ title, description, items, className, ...props }: FaqProps) {
                 <span className="content-shrink">{item.question}</span>
                 <ChevronDown
                   aria-hidden="true"
-                  className="size-4 shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
+                  className="size-icon shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
                 />
               </summary>
               <Text variant="muted" className="pb-4">

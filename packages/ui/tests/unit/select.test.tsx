@@ -44,7 +44,7 @@ describe("select", () => {
     expect(trigger.className).not.toContain("px-3");
     expect(trigger.className).not.toMatch(/(^|\s)h-9(\s|$)/);
     expect(trigger.className).not.toContain("focus:ring-1");
-    expect(trigger.querySelector("svg")?.classList.contains("size-4")).toBe(true);
+    expect(trigger.querySelector("svg")?.classList.contains("size-icon")).toBe(true);
     expect(trigger.querySelector("svg")?.className).not.toContain("size-icon-control");
     await user.click(trigger);
     await screen.findByRole("listbox");

@@ -212,7 +212,7 @@ describe("overlays", () => {
     expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring-control");
     expect(close.className).toContain("opacity-70");
-    expect(close.innerHTML).toContain("size-4");
+    expect(close.innerHTML).toContain("size-icon");
     expect(close.innerHTML).not.toContain("size-icon-control");
   });
 
@@ -489,7 +489,7 @@ describe("overlays", () => {
       expect(root?.className).toContain("gap-2");
       expect(root?.className).not.toContain("gap-secret-field-gap");
       expect(root?.className).not.toContain("[");
-      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-4");
+      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-icon");
       expect(container.querySelector("svg")?.className.baseVal ?? "").not.toContain("size-icon-control");
     });
   });

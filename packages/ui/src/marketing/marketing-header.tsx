@@ -56,7 +56,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
         ) : null}
         <details data-slot="marketing-header-menu" className="group ml-auto md:hidden">
           <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-md px-3 text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
-            <Menu aria-hidden="true" className="size-4" />
+            <Menu aria-hidden="true" className="size-icon" />
             {messages.menu}
           </summary>
           <div className="absolute pin-x top-full flex flex-col gap-4 border-b bg-card p-4 shadow-lg">
