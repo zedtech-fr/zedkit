@@ -25,7 +25,7 @@ export function ZedkitDevtoolsPanel({
   return (
     <DevtoolsDrawerShell triggerLabel={triggerLabel} footer={<DevtoolsDrawerFooter />}>
       <Tabs defaultValue="look">
-        <TabsList className="mb-3 flex flex-wrap">
+        <TabsList data-devtools-tabs="" className="flex flex-wrap">
           <TabsTrigger value="look">Look</TabsTrigger>
           {showFlags ? <TabsTrigger value="flags">Flags</TabsTrigger> : null}
           {showLocale ? <TabsTrigger value="locale">Locale</TabsTrigger> : null}

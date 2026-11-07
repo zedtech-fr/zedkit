@@ -16,9 +16,9 @@ function PendingBody({ pending }: { pending: PendingWork }) {
       <Text as="span" className="font-medium text-foreground">
         {copy.assistant}
       </Text>
-      <StreamStatus stage={stage} label={stage ? undefined : copy.working} live={false} className="mt-1" />
+      <StreamStatus stage={stage} label={stage ? undefined : copy.working} live={false} />
       {pending.draft ? (
-        <StreamText text={pending.draft} live={false} className="mt-1 block whitespace-pre-wrap" />
+        <StreamText text={pending.draft} live={false} className="block whitespace-pre-wrap" />
       ) : null}
     </>
   );
@@ -28,7 +28,7 @@ function PendingBody({ pending }: { pending: PendingWork }) {
 export function PendingAssistant({ pending, as = "div" }: { pending: PendingWork; as?: "div" | "li" }) {
   const Tag = as;
   return (
-    <Tag className="self-start text-sm text-muted-foreground" aria-live="polite">
+    <Tag data-pending-reply="" className="self-start text-sm text-muted-foreground" aria-live="polite">
       <PendingBody pending={pending} />
     </Tag>
   );

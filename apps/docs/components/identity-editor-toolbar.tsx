@@ -28,7 +28,7 @@ function LookSelect({
 }) {
   const options = looks.length > 0 ? looks : identities;
   return (
-    <Field className="w-full sm:w-48 sm:shrink-0">
+    <Field data-identity-look="" className="w-full">
       <FieldLabel htmlFor="identity-editor-look">
         {identityEditorCopy.toolbar.look}
       </FieldLabel>

@@ -59,3 +59,59 @@
   font-weight: var(--zk-type-body-weight);
   line-height: var(--zk-type-body-leading);
 }
+
+/* One-off insets. The step matches another role; the job does not, so the number stays a literal here. */
+[data-dock-scroll],
+[data-hero-activity],
+[data-hero-nav] {
+  padding-bottom: calc(var(--spacing) * 2);
+}
+
+[data-under-rule],
+[data-proposal-before],
+[data-theme-card-body],
+[data-shell-nav-drawer] {
+  padding-top: calc(var(--spacing) * 2);
+}
+
+@media (min-width: 64rem) {
+  [data-proposal-before] {
+    padding-top: 0;
+  }
+}
+
+[data-preview-segment] {
+  padding-inline: calc(var(--spacing) * 2.5);
+}
+
+[data-footer-mark] {
+  height: calc(var(--spacing) * 4);
+}
+
+[data-dock-handle],
+[data-shell-drawer-foot] {
+  margin-top: calc(var(--spacing) * 2);
+}
+
+[data-pending-reply] [data-slot="stream-status"],
+[data-pending-reply] [data-slot="stream-text"],
+[data-follow] {
+  margin-top: var(--spacing);
+}
+
+@media (min-width: 40rem) {
+  [data-identity-look] {
+    width: calc(var(--spacing) * 48);
+    flex-shrink: 0;
+  }
+}
+
+@media (width < 64rem) {
+  [data-draft-actions] {
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  [data-draft-field] input {
+    min-height: calc(var(--spacing) * 10);
+  }
+}

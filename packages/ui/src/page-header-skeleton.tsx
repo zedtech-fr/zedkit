@@ -30,7 +30,7 @@ export function PageHeaderSkeleton({
       className={cn("mb-page-header-offset flex flex-col gap-page-header-title-gap", className)}
     >
       <div className="flex flex-wrap items-center justify-between gap-page-header-gap">
-        <Skeleton className="h-skeleton-title w-48" />
+        <Skeleton data-page-title-bar="" className="h-skeleton-title" />
         {actions ? (
           <div className="flex items-center gap-page-header-actions-gap">
             <Skeleton className="h-control-height w-skeleton-bar" />

@@ -54,7 +54,7 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
 function Activity() {
   return (
     <Card className="content-shrink shadow-none" data-hero-block="" data-beat={4}>
-      <CardHeader className="surface-pad-compact pb-2">
+      <CardHeader data-hero-activity="" className="surface-pad-compact">
         <CardDescription className="text-xs">{copy.activity}</CardDescription>
       </CardHeader>
       <CardContent className="surface-pad-compact trim-pad-top">

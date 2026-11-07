@@ -146,7 +146,7 @@ function SpecimenBody() {
       <Text variant="muted" typeRole="body" className="max-lg:hidden">
         {identityEditorCopy.fields.draftBody}
       </Text>
-      <Stack direction="horizontal" gap={2} className="flex-wrap max-lg:gap-1.5">
+      <Stack direction="horizontal" gap={2} data-draft-actions="" className="flex-wrap">
         <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
         <Button size="sm" variant="secondary">
           {copy.secondary}
@@ -158,7 +158,7 @@ function SpecimenBody() {
           {copy.destructive}
         </Button>
       </Stack>
-      <Field className="max-lg:[&_input]:min-h-10">
+      <Field data-draft-field="">
         <FieldLabel htmlFor="identity-editor-sample">{copy.inputLabel}</FieldLabel>
         <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
       </Field>

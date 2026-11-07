@@ -591,6 +591,26 @@ a[class*="px-badge-inline"] {
   height: calc(var(--spacing) * 5);
 }
 
+/* Page-title placeholder. Same width as a compact sidebar, not a sidebar. */
+[data-page-title-bar] {
+  width: calc(var(--spacing) * 48);
+}
+
+/* A sample line in the gallery. Same width, not a sidebar. */
+[data-gallery-line] {
+  width: calc(var(--spacing) * 48);
+}
+
+/* Space under a sidebar group label. Same step as a bottom rule, not a rule. */
+[data-nav-label] {
+  padding-bottom: calc(var(--spacing) * 2);
+}
+
+/* Space under the devtools tab row. Same step as a field legend, not a legend. */
+[data-devtools-tabs] {
+  margin-bottom: calc(var(--spacing) * 3);
+}
+
 @layer components {
   [data-slot="scroll-gallery"]::before,
   [data-slot="scroll-gallery"]::after {

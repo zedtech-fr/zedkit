@@ -143,7 +143,7 @@ export function HomeThemePreview() {
           <CardDescription>{g.themeCard.description}</CardDescription>
           <CardTitle className="text-lg">{g.themeCard.title}</CardTitle>
         </CardHeader>
-        <CardContent className="surface-pad-compact pt-2">
+        <CardContent data-theme-card-body="" className="surface-pad-compact">
           <Stack direction="horizontal" gap={2} className="flex-wrap">
             <Badge variant="success">{g.themeCard.successBadge}</Badge>
             <Badge variant="outline">{g.themeCard.rangeBadge}</Badge>
