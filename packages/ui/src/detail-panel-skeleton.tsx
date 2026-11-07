@@ -25,8 +25,8 @@ export function DetailPanelSkeleton({ label, rows = 4, className }: DetailPanelS
     >
       {Array.from({ length: rows }, (_, index) => (
         <div key={index} className="grid grid-cols-3 gap-detail-panel-gap px-detail-panel-inline py-detail-panel-block">
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="col-span-2 h-4 w-2/3" />
+          <Skeleton className="h-skeleton-line w-20" />
+          <Skeleton className="col-span-2 h-skeleton-line w-2/3" />
         </div>
       ))}
     </div>

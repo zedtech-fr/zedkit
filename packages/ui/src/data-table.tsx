@@ -222,7 +222,7 @@ export function DataTable<TData extends RowData>({
           <p className="text-sm text-muted-foreground">{messages.loadingEllipsis}</p>
           <div className="space-y-stack-sm" aria-hidden>
             {[0, 1, 2].map((row) => (
-              <Skeleton key={row} className="h-4 w-full max-w-data-table-filter-width" />
+              <Skeleton key={row} className="h-skeleton-line w-full max-w-data-table-filter-width" />
             ))}
           </div>
         </div>

@@ -38,7 +38,7 @@ export function PageHeaderSkeleton({
           </div>
         ) : null}
       </div>
-      {description ? <Skeleton className="h-4 w-64" /> : null}
+      {description ? <Skeleton className="h-skeleton-line w-64" /> : null}
     </div>
   );
 }
