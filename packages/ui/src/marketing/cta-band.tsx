@@ -31,7 +31,7 @@ function CtaBand({ title, description, actions, className, ...props }: CtaBandPr
           padding="lg"
           className="flex flex-col items-center gap-stack-lg text-center sm:px-cta sm:py-cta"
         >
-          <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
+          <Heading id={titleId} level={2} className="text-section-display text-balance">
             {title}
           </Heading>
           {description ? (

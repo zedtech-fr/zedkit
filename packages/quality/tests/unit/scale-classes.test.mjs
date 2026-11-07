@@ -52,7 +52,7 @@ describe("scaleClassKind", () => {
   });
 
   it("allows role classes and non-scale utilities", () => {
-    for (const name of ["px-page-gutter", "gap-stack-sm", "gap-x-stack-sm", "gap-y-stack-sm", "gap-y-stack-md", "gap-y-stack-lg", "gap-x-stack-lg", "space-y-stack-sm", "space-y-stack-md", "space-y-stack-lg", "content-shrink", "pin-top", "text-control", "text-dense", "text-caption", "text-overlay-title", "text-alert-title", "text-primary", "w-full", "h-svh", "focus-ring"]) {
+    for (const name of ["px-page-gutter", "gap-stack-sm", "gap-x-stack-sm", "gap-y-stack-sm", "gap-y-stack-md", "gap-y-stack-lg", "gap-x-stack-lg", "space-y-stack-sm", "space-y-stack-md", "space-y-stack-lg", "content-shrink", "pin-top", "text-control", "text-dense", "text-caption", "text-overlay-title", "text-alert-title", "text-section-display", "text-feature-title", "text-page-title", "text-primary", "w-full", "h-svh", "focus-ring"]) {
       expect(scaleClassKind(name), name).toBeNull();
     }
   });

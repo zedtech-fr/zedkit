@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 126,
+  "total": 119,
   "files": {
     "apps/docs/components/adoption-steps.tsx": 1,
     "apps/docs/components/component-page.tsx": 2,
@@ -22,15 +22,9 @@
     "packages/ui/src/button.tsx": 1,
     "packages/ui/src/field.tsx": 1,
     "packages/ui/src/layout.tsx": 5,
-    "packages/ui/src/marketing/cta-band.tsx": 1,
-    "packages/ui/src/marketing/feature-grid.tsx": 1,
     "packages/ui/src/marketing/hero.tsx": 3,
-    "packages/ui/src/marketing/how-it-works.tsx": 1,
-    "packages/ui/src/marketing/media-section.tsx": 1,
-    "packages/ui/src/marketing/pricing.tsx": 2,
-    "packages/ui/src/marketing/section-header.tsx": 1,
+    "packages/ui/src/marketing/pricing.tsx": 1,
     "packages/ui/src/marketing/specimens/saas-dashboard-specimen.tsx": 1,
-    "packages/ui/src/page-header.tsx": 1,
     "packages/ui/tests/unit/utils.test.ts": 80
   }
 }

@@ -22,7 +22,7 @@ export function PageHeader({ title, description, actions, back, titleAs: Title =
         </div>
       ) : null}
       <div className="flex flex-wrap items-center justify-between gap-page-header-gap">
-        <Title className="text-2xl font-semibold tracking-tight">{title}</Title>
+        <Title className="text-page-title">{title}</Title>
         {actions ? <div className="flex items-center gap-page-header-actions-gap">{actions}</div> : null}
       </div>
       {description ? <p className="text-dense text-muted-foreground">{description}</p> : null}
