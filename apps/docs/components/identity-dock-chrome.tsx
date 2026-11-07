@@ -53,7 +53,7 @@ function IdentityDockSwatch({ className }: IdentityDockSwatchProps) {
       as="span"
       data-slot="identity-dock-swatch"
       aria-hidden="true"
-      className={cn("inline-block size-4 shrink-0 rounded-full border border-border/60 bg-primary", className)}
+      className={cn("inline-block shrink-0 rounded-full border border-border/60 bg-primary", className)}
     />
   );
 }
