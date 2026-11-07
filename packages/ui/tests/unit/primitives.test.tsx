@@ -72,7 +72,7 @@ describe("primitives", () => {
   it("spaces the small button from the control scale", () => {
     render(<Button size="sm">Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("px-3");
+    expect(button.className).toContain("px-button-inline-sm");
     expect(button.className).toContain("py-control-block");
   });
 
@@ -102,7 +102,7 @@ describe("primitives", () => {
       </Button>,
     );
     const link = screen.getByRole("link", { name: "More in the kit" });
-    expect(link.className).toContain("px-3");
+    expect(link.className).toContain("px-button-inline-sm");
     expect(link.className).toContain("py-control-block");
     expect(link.getAttribute("data-variant")).toBe("ghost");
     expect(link.getAttribute("data-size")).toBe("sm");

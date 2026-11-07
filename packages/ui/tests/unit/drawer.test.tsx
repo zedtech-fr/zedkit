@@ -440,8 +440,8 @@ describe("drawer", () => {
     expect(header.className).toContain("gap-drawer-header-gap");
     expect(header.className).toContain("p-drawer-chrome-padding");
     const footer = screen.getByTestId("footer");
-    expect(footer.className).toContain("gap-2");
-    expect(footer.className).not.toContain("gap-drawer-footer-gap");
+    expect(footer.className).toContain("gap-drawer-footer-gap");
+    expect(footer.className).not.toContain("gap-2");
     expect(footer.className).toContain("px-drawer-chrome-padding");
     expect(footer.className).toContain("pb-drawer-footer-safe");
   });
