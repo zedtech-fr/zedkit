@@ -49,7 +49,7 @@ function CatalogAreaSelect({
   onFilters: (next: { area?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="sm:w-40">
+    <Stack gap={1} className="sm:w-area">
       <Label htmlFor="catalog-area">{catalogCopy.filters.areaLabel}</Label>
       <Select value={area} onValueChange={(value) => onFilters({ area: value })}>
         <SelectTrigger id="catalog-area" data-catalog-filter-select="" className="shadow-none" aria-label={catalogCopy.filters.areaAriaLabel}>
@@ -83,7 +83,7 @@ function CatalogMaturitySelect({
   onFilters: (next: { status?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="sm:w-36">
+    <Stack gap={1} className="sm:w-status">
       <Label htmlFor="catalog-maturity">{catalogCopy.filters.maturityLabel}</Label>
       <Select value={status} onValueChange={(value) => onFilters({ status: value })}>
         <SelectTrigger

@@ -28,7 +28,7 @@ export function HeroDemoIdentitySelect({ look, onLook }: { look: string; onLook:
   return (
     <Select value={look} onValueChange={onLook}>
       <SelectTrigger
-        className="w-full content-shrink border-border/70 bg-transparent shadow-none sm:w-32"
+        className="w-full content-shrink border-border/70 bg-transparent shadow-none sm:w-look"
         aria-label={heroDemoStyleCopy.identityAriaLabel}
         data-hero-look-select=""
       >
@@ -55,7 +55,7 @@ export function HeroDemoModeSelect({
   return (
     <Select value={modePin} onValueChange={(value) => onModePin(value as HeroDemoModePin)}>
       <SelectTrigger
-        className="w-full content-shrink border-border/70 bg-transparent shadow-none sm:w-24"
+        className="w-full content-shrink border-border/70 bg-transparent shadow-none sm:w-mode"
         aria-label={heroDemoStyleCopy.modeAriaLabel}
       >
         <SelectValue />
@@ -83,7 +83,7 @@ export function HeroDemoPreviewSelect({
   return (
     <Select value={preview} onValueChange={onPreview}>
       <SelectTrigger
-        className={`w-full content-shrink border-border/70 bg-transparent shadow-none sm:w-28 ${className ?? ""}`}
+        className={`w-full content-shrink border-border/70 bg-transparent shadow-none sm:w-preview ${className ?? ""}`}
         aria-label={heroDemoStyleCopy.previewAriaLabel}
       >
         <SelectValue />

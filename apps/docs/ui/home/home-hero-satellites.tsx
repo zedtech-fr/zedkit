@@ -43,7 +43,7 @@ export function HomeHeroSatellites() {
       </Satellite>
       <Satellite kind="online">
         <Card className="flex items-center gap-stack-md surface-pad-compact">
-          <span className="flex -space-x-1.5" data-hero-faces="">
+          <span className="flex space-x-faces" data-hero-faces="">
             {HERO_PEOPLE.filter((person) => person.online).map((person) => (
               <span
                 key={person.name}

@@ -1084,6 +1084,84 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-handle {
   width: calc(var(--spacing) * 10);
 }
+@utility w-skeleton-half {
+  width: 50%;
+}
+@utility w-skeleton-wide {
+  width: 83.333333%;
+}
+@utility w-name {
+  width: calc(var(--spacing) * 56);
+}
+@utility w-area {
+  width: calc(var(--spacing) * 40);
+}
+@utility w-status {
+  width: calc(var(--spacing) * 36);
+}
+@utility w-look {
+  width: calc(var(--spacing) * 32);
+}
+@utility w-mode {
+  width: calc(var(--spacing) * 24);
+}
+@utility w-preview {
+  width: calc(var(--spacing) * 28);
+}
+@utility w-panel {
+  width: calc(var(--spacing) * 80);
+}
+@utility min-w-name {
+  min-width: calc(var(--spacing) * 36);
+}
+@utility min-w-date {
+  min-width: calc(var(--spacing) * 40);
+}
+@utility max-w-scope {
+  max-width: calc(var(--spacing) * 36);
+}
+@utility h-frame {
+  height: calc(var(--spacing) * 72);
+}
+@utility min-h-aside {
+  min-height: calc(var(--spacing) * 80);
+}
+@utility min-h-segment {
+  min-height: calc(var(--spacing) * 7);
+}
+/* Pulls a back link up into the page inset. */
+@utility pull-back {
+  margin-top: calc(var(--spacing) * -6);
+}
+/* Optical align of a step index beside its title. */
+@utility pt-step {
+  padding-top: calc(var(--spacing) * 0.5);
+}
+@utility pl-chip {
+  padding-left: calc(var(--spacing) * 3);
+}
+@utility pr-chip-end {
+  padding-right: calc(var(--spacing) * 0.5);
+}
+/* Sticky editor preview, below the site header. */
+@utility top-editor {
+  top: calc(var(--spacing) * 20);
+}
+/* Clears the phone bar. */
+@utility top-bar {
+  top: calc(var(--spacing) * 14);
+}
+/* Wide padding of an index row. */
+@utility py-index {
+  padding-block: calc(var(--spacing) * 6);
+}
+/* The agent panel, inset from the hero frame. */
+@utility inset-y-panel {
+  inset-block: calc(var(--spacing) * 2);
+}
+@utility right-panel {
+  right: calc(var(--spacing) * 2);
+}
 /* Compact sidebar inside a framed demo. The shell's own sidebar stays 16rem. */
 @utility w-sidebar-compact {
   width: calc(var(--spacing) * 48);
@@ -1177,6 +1255,12 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
   }
 }
 /* Space between gallery sections. */
+/* Overlapping faces. */
+@utility space-x-faces {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * -1.5);
+  }
+}
 @utility space-y-sections {
   :where(& > :not(:last-child)) {
     --tw-space-y-reverse: 0;

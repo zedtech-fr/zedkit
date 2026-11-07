@@ -262,7 +262,7 @@ function IdentityEditorKeepBar({
     >
       <LibraryHeading id={titleId} problem={problem} />
       <Row>
-        <Field className="w-full min-w-36 sm:w-56">
+        <Field className="w-full min-w-name sm:w-name">
           <FieldLabel htmlFor="identity-editor-name">{copy.name}</FieldLabel>
           <Input
             id="identity-editor-name"
