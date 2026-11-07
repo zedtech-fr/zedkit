@@ -36,7 +36,7 @@ export function IconLabelOrdersDemo() {
   return (
     <ul aria-label={iconLabelCopy.orders.label} className="divide-y divide-border rounded-lg border border-border bg-background">
       {ORDERS.map((order) => (
-        <li key={order.number} className="flex content-shrink flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3">
+        <li key={order.number} className="flex content-shrink flex-wrap items-center justify-between gap-x-4 gap-y-1 surface-pad-inline py-3">
           <Stack gap={1} className="content-shrink">
             <Text as="span" className="font-medium">
               {order.number}

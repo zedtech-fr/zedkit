@@ -131,7 +131,7 @@ function Sidebar() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-end px-4 py-2">
+    <Stack direction="horizontal" gap={2} className="justify-end surface-pad-inline py-2">
       <Text
         as="span"
         aria-hidden="true"

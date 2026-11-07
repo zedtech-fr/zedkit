@@ -112,7 +112,7 @@ function AgentButton({ open, panelId, onToggle }: AgentToggle) {
 export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentToggle }) {
   return (
     <Stack gap={1}>
-      <Stack direction="horizontal" gap={2} className="min-h-12 items-center justify-between px-4">
+      <Stack direction="horizontal" gap={2} className="min-h-12 items-center justify-between surface-pad-inline">
         <Text as="span" className="content-shrink truncate text-sm" data-hero-crumb="">
           <Text as="span" variant="muted" className="text-sm max-md:hidden">
             {projectTrackerDemoCopy.brand} /{" "}
