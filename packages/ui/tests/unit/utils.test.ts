@@ -71,6 +71,11 @@ describe("cn", () => {
     expect(cn("right-3", "right-control-inline")).toBe("right-control-inline");
     expect(cn("top-3", "top-control-inline")).toBe("top-control-inline");
     expect(cn("bottom-3", "bottom-control-inline")).toBe("bottom-control-inline");
+    expect(cn("pr-4", "pr-column")).toBe("pr-column");
+    expect(cn("mb-2", "mb-stack")).toBe("mb-stack");
+    expect(cn("row-start-1", "row-start-first")).toBe("row-start-first");
+    expect(cn("px-3", "px-control-inline")).toBe("px-control-inline");
+    expect(cn("py-1.5", "py-select-item-block")).toBe("py-select-item-block");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });

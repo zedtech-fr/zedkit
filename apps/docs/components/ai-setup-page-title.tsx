@@ -39,7 +39,7 @@ export function AiSetupPageTitle() {
 
   return (
     <>
-      <Heading level={1} typeRole="title" className="mb-2 text-balance" aria-label={AI_SETUP_PAGE_H1_LABEL}>
+      <Heading level={1} typeRole="title" className="mb-stack text-balance" aria-label={AI_SETUP_PAGE_H1_LABEL}>
         Set up zedkit AI in{" "}
         <WordRoll words={WORDS} value={word} dwellMs={ROLL_DWELL_MS} className={ROLL_ACCENT} aria-hidden />
       </Heading>

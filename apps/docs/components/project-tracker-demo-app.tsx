@@ -272,7 +272,7 @@ function TopBar() {
 
 function Breadcrumbs() {
   return (
-    <nav aria-label={projectTrackerDemoCopy.breadcrumbAriaLabel} className="mb-2">
+    <nav aria-label={projectTrackerDemoCopy.breadcrumbAriaLabel} className="mb-stack">
       <Text as="span" variant="muted" className="text-xs">
         {projectTrackerDemoCopy.breadcrumbLead}
         <Text as="span" className="text-xs text-foreground">

@@ -54,7 +54,7 @@ function HeroPreviewFooter({
 }) {
   return (
     <div
-      className="flex flex-col gap-stack-sm border-t border-border px-3 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:px-4"
+      className="flex flex-col gap-stack-sm border-t border-border px-control-inline py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:px-4"
       data-home-specimen-footer=""
     >
       <HeroDemoStyleControl
