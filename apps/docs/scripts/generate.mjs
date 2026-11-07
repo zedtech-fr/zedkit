@@ -477,14 +477,14 @@ export function generate(outDir) {
     "## Install or copy",
     "",
     "- **npm:** `pnpm add @zedtech/zedkit-ui` (and other `@zedtech/*` packages) — versioned updates via your package manager.",
-    `- **registry:** \`npx shadcn@latest add https://zedkit.app/r/<brick>.json\` — source in your repo (${registryBrickCount} brick${registryBrickCount === 1 ? "" : "s"} today; see [zedkit and shadcn/ui](/docs/zedkit-and-shadcn)).`,
+    `- **registry:** \`npx shadcn@latest add https://zedkit.app/r/<brick>.json\` — source in your repo (${registryBrickCount} brick${registryBrickCount === 1 ? "" : "s"} today; see [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn)).`,
     "",
-    "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
-    "- [Set up your coding agents](/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
-    "- [Set up zedkit AI](/docs/ai/setup) — one paste prompt; agent steps at https://zedkit.app/ai/setup.md",
-    "- [Maturity and compatibility](/docs/maturity-and-compatibility) — badge legend link and package matrix",
-    "- [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
-    "- [Add SEO to a Next.js app](/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
+    "- [Getting started](https://zedkit.app/docs/getting-started) — choose a package and reach a first result",
+    "- [Set up your coding agents](https://zedkit.app/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
+    "- [Set up zedkit AI](https://zedkit.app/docs/ai/setup) — one paste prompt; agent steps at https://zedkit.app/ai/setup.md",
+    "- [Maturity and compatibility](https://zedkit.app/docs/maturity-and-compatibility) — badge legend link and package matrix",
+    "- [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
+    "- [Add SEO to a Next.js app](https://zedkit.app/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
     "",
   ];
   for (const [pkg, entry] of sorted) {
@@ -539,7 +539,7 @@ export function generate(outDir) {
         : pageMdx(pkg, need, version, richBlock, links, prose, folder);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
-      llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);
+      llms.push(`- [${need.need}](https://zedkit.app/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);
     }
     llms.push("");
     writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: slugs }, null, 2)}\n`);

@@ -31,6 +31,10 @@ export function checkSitemap(text, base) {
   if (locs.length < 3) {
     errors.push(`sitemap.xml: expected at least 3 URLs, got ${locs.length}`);
   }
+  const lastmods = [...text.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((match) => match[1]);
+  if (lastmods.length < locs.length) {
+    errors.push(`sitemap.xml: expected a lastmod per URL, got ${lastmods.length} for ${locs.length}`);
+  }
   for (const loc of locs) {
     if (!loc.startsWith(`${base}/`) && loc !== `${base}/`) {
       errors.push(`sitemap.xml: URL not on site: ${loc}`);

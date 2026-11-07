@@ -46,13 +46,20 @@ test("checkRobots reports a missing Sitemap line and a missing Allow /", () => {
 });
 
 test("checkSitemap is silent for three on-site URLs including home and /docs", () => {
-  const xml = ["/", "/docs", "/catalog"].map((path) => `<loc>${base}${path === "/" ? "/" : path}</loc>`).join("");
+  const xml = ["/", "/docs", "/catalog"]
+    .map((path) => `<url><loc>${base}${path === "/" ? "/" : path}</loc><lastmod>2026-11-07</lastmod></url>`)
+    .join("");
   assert.deepEqual(checkSitemap(xml, base).errors, []);
   assert.equal(checkSitemap(xml, base).urlCount, 3);
 });
 
+test("checkSitemap reports a missing lastmod per URL", () => {
+  const xml = [`<url><loc>${base}/</loc></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(xml, base).errors, ["sitemap.xml: expected a lastmod per URL, got 0 for 3"]);
+});
+
 test("checkSitemap reports too few URLs, an off-site loc, and missing home or /docs", () => {
-  const xml = "<loc>https://example.com/other</loc><loc>https://zedkit.app/catalog</loc>";
+  const xml = "<url><loc>https://example.com/other</loc><lastmod>2026-11-07</lastmod></url><url><loc>https://zedkit.app/catalog</loc><lastmod>2026-11-07</lastmod></url>";
   const { errors, urlCount } = checkSitemap(xml, base);
   assert.equal(urlCount, 2);
   assert.deepEqual(errors, [

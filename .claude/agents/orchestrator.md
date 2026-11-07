@@ -51,9 +51,14 @@ For playbooks plan, challenge, and review, every brief includes: **Go deep, be s
 
 Every spawn passes the model id from `.agents/tokenomics.md` for the running
 provider, the call's kind, and the task's stakes. Resolve it with the local
-`zedkit-ai route` CLI from the pinned kit commit (build first; record the CLI
-version and the pinned commit in the report) — never an unpinned npx
-download. Passing the id means the spawn tool's model parameter, not pasting
+`zedkit-ai route <agent> --kind <k> --stakes <s> --provider <active-tool>`
+CLI — always pass `--provider` for the tool running this session and check
+the printed `provider:` matches the active tool before spawning (the repo default does
+not decide the model when the session tool differs from it). Use the
+installed version-locked CLI; build from the pinned kit commit first only
+when working from zedkit sources. Record the CLI version and the pinned
+commit in the report — never an unpinned npx download. Passing the id means
+the spawn tool's model parameter, not pasting
 the id into brief text. If the cell is missing or inherit, or the tool has
 no model parameter, do not spawn — do that slice inline and report the cell
 as not applied. Pass `--allow-fast` only when the user explicitly requested fast mode in this request. If the tool rejects the id, stop and report the

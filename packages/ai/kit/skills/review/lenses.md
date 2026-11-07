@@ -32,8 +32,9 @@ exists IS a blocker.
 
 At `Stakes: sensitive` or higher the full lens set runs: every lens whose
 trigger matches the diff is mandatory, and an "optional" lens is not skipped.
-Route each lens agent with `zedkit-ai route <agent> --kind check --stakes <s>`
-and pass that model id exactly. Do not substitute, and do not use a fast
+Route each lens agent with `zedkit-ai route <agent> --kind check --stakes <s> --provider <active-tool>`
+and check the printed `provider:` matches the active tool, then pass that
+model id exactly. Do not substitute, and do not use a fast
 mode unless the user explicitly requested it in this request.
 A review may raise the stakes and writes `Stakes raised: <old> -> <new>: <reason>`;
 it never lowers them. At `critical` a second, independent review runs in a

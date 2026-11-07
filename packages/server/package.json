@@ -21,7 +21,7 @@
     "crypto",
     "http"
   ],
-  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/server",
+  "homepage": "https://zedkit.app",
   "bugs": {
     "url": "https://github.com/zedtech-fr/zedkit/issues"
   },

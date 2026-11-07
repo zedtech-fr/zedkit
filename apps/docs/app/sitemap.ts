@@ -7,11 +7,13 @@ import { source } from "#source";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = [{ path: "" }, { path: "/catalog" }, { path: "/docs" }, { path: "/examples/note-list" }];
+  // shortcut: one build-date lastmod for every URL; per-page git dates when the export needs them.
+  const lastModified = new Date();
+  const pages = [{ path: "", lastModified }, { path: "/catalog", lastModified }, { path: "/docs", lastModified }, { path: "/examples/note-list", lastModified }];
   for (const param of source.generateParams()) {
     const slug = param.slug;
     if (slug === undefined || slug.length === 0) continue;
-    pages.push({ path: `/docs/${slug.join("/")}` });
+    pages.push({ path: `/docs/${slug.join("/")}`, lastModified });
   }
   return buildSitemapEntries({
     siteUrl: docsSite.url,

@@ -8,8 +8,13 @@ Hand the task to the **`orchestrator`** subagent with the user's text, any
 criteria, and the task's `Stakes:` (and any `Needs:`). Tell it to read
 `.agents/tokenomics.md` and answer **Build team: what do I need for this request?** before any spawn. A named playbook is the job — do not substitute
 another. Every spawn is routed with the local `zedkit-ai route <agent> --kind
-<how it is used now> --stakes <s>` CLI from the pinned kit commit (build
-first; record the CLI version and the pinned commit in the report) — never an
+<how it is used now> --stakes <s> --provider <active-tool>` CLI — always pass
+`--provider` for the tool running this session (the repo default does not
+decide the model when the session tool differs from it, for example a Muse
+session in a Cursor-default repo) and check the printed `provider:` matches
+the active tool before spawning. Use the installed version-locked CLI; build
+from the pinned kit commit first only when working from zedkit sources.
+Record the CLI version and the pinned commit in the report — never an
 unpinned `npx` download: the orchestrator itself as `decide`, planners as
 `design`, implementers as `build`, reviewers as `check`. Passing the cell's
 model id exactly means the spawn tool's model parameter, not pasting the id

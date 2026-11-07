@@ -2,7 +2,7 @@ export const homeHeroCopy = {
   hero: {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
     titleCategory: "UI/AI kit ·",
-    title: "Your AI agent, set up with one prompt. The UI, only what you need.",
+    title: "Your AI agent, set up with one prompt — zedkit React UI kit, only what you need.",
     /** What the window is, and the first thing to look at in it. */
     sub: "This app is built from zedkit components. Watch the setup run, then click around.",
     facts: "What you see installs from npm or copies as source · MIT · React 19 · Tailwind 4",

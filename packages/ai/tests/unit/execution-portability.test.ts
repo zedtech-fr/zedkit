@@ -80,6 +80,39 @@ describe("execution portability", () => {
     }
   });
 
+  it("passes --provider for the active tool and verifies the printed match", () => {
+    for (const rel of [
+      "agents/orchestrator.md",
+      "skills/orchestrate/SKILL.md",
+      "skills/review/SKILL.md",
+      "skills/parallel-work/SKILL.md",
+      "skills/review/lenses.md",
+      "skills/implement/SKILL.md",
+    ]) {
+      const text = kit(rel);
+      expect(text, rel).toContain("--provider");
+      expect(text, rel).toContain("matches the active tool");
+    }
+  });
+
+  it("names the session-tool-differs-from-repo-default trap with a Muse/Cursor example", () => {
+    const text = kit("skills/orchestrate/SKILL.md");
+    expect(text).toContain("Muse");
+    expect(text).toContain("Cursor-default");
+  });
+
+  it("uses the installed locked CLI outside zedkit sources, building only there", () => {
+    for (const rel of [
+      "agents/orchestrator.md",
+      "skills/orchestrate/SKILL.md",
+      "skills/review/SKILL.md",
+    ]) {
+      const text = kit(rel);
+      expect(text, rel).toContain("installed version-locked CLI");
+      expect(text, rel).toContain("pinned kit commit");
+    }
+  });
+
   it("holds provenance and precheck findings to their evidence bar", () => {
     const review = kit("skills/review/SKILL.md");
     expect(review).toContain("upstream source and diff comparison");

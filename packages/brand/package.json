@@ -15,7 +15,7 @@
     "react",
     "typescript"
   ],
-  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/brand",
+  "homepage": "https://zedkit.app",
   "bugs": {
     "url": "https://github.com/zedtech-fr/zedkit/issues"
   },

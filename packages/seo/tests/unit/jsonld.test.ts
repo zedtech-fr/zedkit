@@ -4,6 +4,7 @@ import {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
   buildOrganizationJsonLd,
+  buildSoftwareSourceCodeJsonLd,
   buildWebPageJsonLd,
 } from "#index.js";
 
@@ -18,6 +19,26 @@ describe("jsonld", () => {
       name: "Example",
       url: "https://example.com/",
       sameAs: ["https://x.example.com"],
+    });
+  });
+
+  it("builds a software source code node with repository and language", () => {
+    expect(
+      buildSoftwareSourceCodeJsonLd({
+        name: "Example",
+        url: "https://example.com/",
+        codeRepository: "https://example.com/repo",
+        programmingLanguage: "TypeScript",
+        license: "https://example.com/license",
+      }),
+    ).toEqual({
+      "@context": "https://schema.org",
+      "@type": "SoftwareSourceCode",
+      name: "Example",
+      url: "https://example.com/",
+      codeRepository: "https://example.com/repo",
+      programmingLanguage: "TypeScript",
+      license: "https://example.com/license",
     });
   });
 

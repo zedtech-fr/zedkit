@@ -2038,7 +2038,7 @@
         },
         {
           "need": "Emit typed JSON-LD structured data",
-          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`",
+          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`",
           "wraps": "`schema-dts`",
           "status": "stable",
           "shortName": "JSON-LD",
@@ -2064,10 +2064,12 @@
                   "buildWebPageJsonLd",
                   "buildBreadcrumbJsonLd",
                   "buildArticleJsonLd",
+                  "buildSoftwareSourceCodeJsonLd",
                   "OrganizationJsonLdOptions",
                   "WebPageJsonLdOptions",
                   "BreadcrumbItem",
-                  "ArticleJsonLdOptions"
+                  "ArticleJsonLdOptions",
+                  "SoftwareSourceCodeJsonLdOptions"
                 ]
               }
             ]

@@ -33,8 +33,9 @@ Run typechecking regularly, single test files regularly, and the unit plus integ
 Then pass `definition-of-done`, and call the Skill tool with "review" to review the work (`Playbook: review`). Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
 
 Carry the ticket's `Stakes:` into the PR body, never lower it. Before each
-spawn run `zedkit-ai route <agent> --kind <how it is used now> --stakes <s>`,
+spawn run `zedkit-ai route <agent> --kind <how it is used now> --stakes <s> --provider <active-tool>`,
 adding `--reasoning <r>` or `--context <c>` when the step has a `Needs:` line.
+Check the printed `provider:` matches the active tool before spawning.
 If the tool lets a spawn override the model, pass the id it prints, exactly.
 Do not substitute the parent model, another family, or a fast mode. A fast
 mode is allowed only when the user explicitly requested it in this request.

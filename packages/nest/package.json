@@ -20,7 +20,7 @@
     "health-check",
     "graceful-shutdown"
   ],
-  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/nest",
+  "homepage": "https://zedkit.app",
   "bugs": {
     "url": "https://github.com/zedtech-fr/zedkit/issues"
   },
