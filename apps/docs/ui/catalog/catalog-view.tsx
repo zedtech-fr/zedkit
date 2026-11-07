@@ -88,7 +88,7 @@ export function CatalogView({
           />
         </Stack>
       </Section>
-      <Container width="wide" className="pt-3 pb-section-lg">
+      <Container width="wide" className="pt-start pb-section-lg">
         <Stack gap={3}>
           <div id="catalog-results-heading" data-catalog-results-heading="">
             {catalogResultsStatusLine(filtered.length)}

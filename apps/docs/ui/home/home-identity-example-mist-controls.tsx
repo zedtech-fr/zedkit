@@ -28,7 +28,7 @@ export function HomeIdentityExampleMistControls({
 }) {
   return (
     <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
-      <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-40">
+      <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-text">
         <Label htmlFor={workspaceId}>{copy.workspaceLabel}</Label>
         <Input
           id={workspaceId}
@@ -36,7 +36,7 @@ export function HomeIdentityExampleMistControls({
           onChange={(event) => onWorkspace(event.target.value)}
         />
       </Stack>
-      <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-40">
+      <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-text">
         <Label htmlFor={regionId}>{copy.regionLabel}</Label>
         <Select value={region} onValueChange={onRegion}>
           <SelectTrigger id={regionId} aria-label={copy.regionLabel}>

@@ -896,6 +896,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility surface-pad-block {
   padding-block: calc(var(--spacing) * 3);
 }
+/* Block padding of a content row. */
+@utility py-row {
+  padding-block: calc(var(--spacing) * 4);
+}
 @utility surface-pad-block-sm {
   padding-block: calc(var(--spacing) * 2);
 }
@@ -932,6 +936,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility content-offset {
   padding-top: calc(var(--spacing) * 4);
 }
+/* Space before the first thing in a pane or a section. */
+@utility pt-start {
+  padding-top: calc(var(--spacing) * 3);
+}
 @utility glass-pad-sm {
   padding: calc(var(--spacing) * 4);
 }
@@ -958,6 +966,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* A short field sharing a row with another field. */
 @utility basis-field {
   flex-basis: calc(var(--spacing) * 28);
+}
+/* A price or a stock field sharing a row. */
+@utility basis-number {
+  flex-basis: calc(var(--spacing) * 32);
+}
+/* A text or select field sharing a row. */
+@utility basis-text {
+  flex-basis: calc(var(--spacing) * 40);
 }
 @utility h-logo {
   height: calc(var(--spacing) * 6);

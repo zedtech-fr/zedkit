@@ -44,7 +44,7 @@ export function HomeComponentFamiliesSection({
             <Stack
               key={family.label}
               gap={2}
-              className="py-4 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-blocks md:py-6"
+              className="py-row md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-blocks md:py-6"
             >
               <Stack gap={1} className="content-shrink">
                 <Heading level={3} typeRole="heading" data-family-title="">

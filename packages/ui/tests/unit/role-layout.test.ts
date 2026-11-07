@@ -27,6 +27,10 @@ describe("layout job classes", () => {
     expect(utility("gap-segment")).toBe("gap: calc(var(--spacing) * 0.5);");
     expect(utility("-mx-back")).toBe("margin-inline: calc(var(--spacing) * -2);");
     expect(utility("basis-field")).toBe("flex-basis: calc(var(--spacing) * 28);");
+    expect(utility("basis-number")).toBe("flex-basis: calc(var(--spacing) * 32);");
+    expect(utility("basis-text")).toBe("flex-basis: calc(var(--spacing) * 40);");
+    expect(utility("py-row")).toBe("padding-block: calc(var(--spacing) * 4);");
+    expect(utility("pt-start")).toBe("padding-top: calc(var(--spacing) * 3);");
     expect(utility("gap-flush")).toBe("gap: 0;");
     expect(utility("flush-block")).toBe("padding-block: 0;");
     expect(css).not.toContain("--spacing-zero");

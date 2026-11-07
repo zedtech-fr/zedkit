@@ -78,7 +78,7 @@ function IdentityAssistantOpenBody(props: {
 }) {
   const { ui, session, dispatch, tokens, off, brief, setBrief, busy, send, quickRefine, cancel, domainBrief, onUse } = props;
   return (
-    <Stack gap={4} className="pt-3">
+    <Stack gap={4} className="pt-start">
       <AssistantHeading />
       <ViewSwitch view={ui.view} onView={ui.setView} waiting={session.proposal !== null} previewRef={ui.previewButton} />
       <ReferenceReportList report={session.references} />
