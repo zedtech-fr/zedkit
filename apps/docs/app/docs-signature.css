@@ -119,8 +119,9 @@
   min-height: calc(100vh - 3.5rem);
 }
 
-/* Identity dock, clear of the screen edge and the home indicator. */
+/* Identity dock. Clear of the screen edge and the home indicator, on the header layer so a menu still covers it. */
 [data-slot="identity-dock"] {
+  z-index: var(--z-header);
   max-width: calc(100vw - 1.5rem);
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }
