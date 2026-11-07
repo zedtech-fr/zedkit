@@ -15,7 +15,7 @@ export const metadata = docsPageMetadata("/examples/note-list", {
 export default function NoteListExamplePage() {
   return (
     <>
-      <Stack gap={2} className="mx-auto w-full max-w-lg px-6 pt-8">
+      <Stack gap={2} className="mx-auto w-full max-w-lg px-page-gutter pt-section-sm">
         <Text variant="muted">{noteListExampleCopy.intro}</Text>
         <Text variant="muted">
           {noteListExampleCopy.read}{" "}

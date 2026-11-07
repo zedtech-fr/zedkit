@@ -21,7 +21,7 @@ export function SiteMaintainerFooter({
       className="mt-auto border-t border-border"
     >
       <Container width="wide">
-        <Stack gap={4} className="py-8">
+        <Stack gap={4} className="py-section-sm">
           <Text variant="muted" as="p">Maintained by ZED TECH</Text>
           <Separator />
           <Stack direction="horizontal" gap={4} className="flex-wrap">

@@ -28,7 +28,7 @@ export function NoteListView({ port, copy }: NoteListViewProps) {
   const notes = state.notes;
 
   return (
-    <Stack gap={4} className="mx-auto w-full max-w-lg px-6 py-8">
+    <Stack gap={4} className="mx-auto w-full max-w-lg px-page-gutter py-section-sm">
       <Heading level={1}>{copy.title}</Heading>
       {notes === null ? (
         <Text variant="muted">{copy.loading}</Text>

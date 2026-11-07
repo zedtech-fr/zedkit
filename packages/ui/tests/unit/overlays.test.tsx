@@ -191,7 +191,7 @@ describe("overlays", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog.className).toContain("z-dialog");
     expect(dialog.className).not.toContain("z-overlay");
-    expect(dialog.className).toContain("gap-4");
+    expect(dialog.className).toContain("gap-stack-lg");
     expect(dialog.className).toContain("p-dialog-padding");
     expect(dialog.className).toContain("max-h-dialog-max-height");
     expect(dialog.className).toContain("overflow-y-auto");
