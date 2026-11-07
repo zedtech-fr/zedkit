@@ -32,7 +32,7 @@ export function IconButtonDemo() {
         </Stack>
       </header>
       <Stack gap={1} className="surface-pad-md">
-        <Text role="status" variant="muted" className="text-sm">
+        <Text role="status" variant="muted">
           {message}
         </Text>
         <Text variant="muted" className="text-xs">

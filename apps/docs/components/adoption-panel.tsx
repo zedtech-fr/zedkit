@@ -90,7 +90,7 @@ export function AdoptionPanel({
   if (copyModes.length === 0) {
     return (
       <Stack gap={4} data-adoption-panel="">
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           {adoptionCopy.npmOnly}
         </Text>
         <ModeView mode={packageMode} highlighted={highlighted} choice={choice} result={result} {...(summaryClassName ? { summaryClassName } : {})} />

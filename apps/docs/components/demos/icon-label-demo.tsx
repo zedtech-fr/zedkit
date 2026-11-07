@@ -10,7 +10,7 @@ export function IconLabelDemo() {
     <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <Stack gap={1}>
         <Heading level={2}>{iconLabelCopy.project.title}</Heading>
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           {iconLabelCopy.project.summary}
         </Text>
       </Stack>

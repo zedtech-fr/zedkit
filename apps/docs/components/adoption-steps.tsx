@@ -150,7 +150,7 @@ function Step({
             {words.title}
           </Heading>
           {words.note ? (
-            <Text variant="muted" className="text-sm">
+            <Text variant="muted">
               {words.note}
             </Text>
           ) : null}

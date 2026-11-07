@@ -114,7 +114,7 @@ export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentTog
     <Stack gap={1}>
       <Stack direction="horizontal" gap={2} className="min-h-bar items-center justify-between surface-pad-inline">
         <Text as="span" className="content-shrink truncate text-sm" data-hero-crumb="">
-          <Text as="span" variant="muted" className="text-sm max-md:hidden">
+          <Text as="span" variant="muted" className="max-md:hidden">
             {projectTrackerDemoCopy.brand} /{" "}
           </Text>
           <Text as="span" className="text-sm font-medium" key={page}>

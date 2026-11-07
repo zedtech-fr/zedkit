@@ -16,7 +16,7 @@ function CatalogRow({ entry }: { entry: CatalogIndexEntry }) {
         <Link href={entry.href} className="font-medium underline-offset-4 hover:underline">
           {entry.title}
         </Link>
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           {entry.need}
         </Text>
       </Stack>

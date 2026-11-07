@@ -77,7 +77,7 @@ export function HeroSettingsPage() {
           <Button type="button" onClick={save}>
             {copy.save}
           </Button>
-          <Text variant="muted" role="status" className="text-sm empty:hidden">
+          <Text variant="muted" role="status" className="empty:hidden">
             {saved ? copy.saved : ""}
           </Text>
         </Stack>

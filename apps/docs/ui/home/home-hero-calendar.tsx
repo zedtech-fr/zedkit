@@ -24,7 +24,7 @@ function Agenda({ rows, day }: { rows: TaskRow[]; day: Date | undefined }) {
         {day ? copy.dueOn(longDate.format(day)) : copy.description}
       </Text>
       {agenda.length === 0 ? (
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           {copy.nothingDue}
         </Text>
       ) : (

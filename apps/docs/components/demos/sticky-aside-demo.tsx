@@ -52,7 +52,7 @@ export function StickyAsideDocStepsDemo() {
       <StickyAside.Aside>
         <Card>
           <CardContent className="pt-card-padding">
-            <Text variant="muted" className="text-sm">
+            <Text variant="muted">
               Summary or preview — sticks while the section scrolls; pass scrollable when this block is taller than the viewport.
             </Text>
           </CardContent>

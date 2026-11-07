@@ -46,7 +46,7 @@ export function OfflineNoteWiredDemo() {
       {online ? null : <OfflineNote title={offlineNoteCopy.wired.title}>{offlineNoteCopy.wired.body}</OfflineNote>}
       <Stack gap={1}>
         <Heading level={3}>{offlineNoteCopy.wired.heading}</Heading>
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           {offlineNoteCopy.wired.summary(saved)}
         </Text>
       </Stack>
@@ -69,7 +69,7 @@ export function OfflineNoteWordingDemo() {
       <OfflineNote title={offlineNoteCopy.wording.title}>{offlineNoteCopy.wording.body}</OfflineNote>
       <Stack gap={1}>
         <Heading level={3}>{offlineNoteCopy.wording.heading}</Heading>
-        <Text variant="muted" className="text-sm">
+        <Text variant="muted">
           {offlineNoteCopy.wording.summary}
         </Text>
       </Stack>
