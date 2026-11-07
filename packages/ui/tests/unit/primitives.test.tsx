@@ -275,8 +275,9 @@ describe("primitives", () => {
       </Alert>,
     );
     const alert = screen.getByRole("alert");
-    expect(alert.className).toContain("py-3");
-    expect(alert.className).not.toContain("py-alert-block");
+    expect(alert.className).toContain("py-alert-block");
+    expect(alert.className).toContain("px-alert-inline");
+    expect(alert.className).not.toContain("py-3");
   });
 
   it("merges alert styles onto an asChild section", () => {
@@ -289,7 +290,7 @@ describe("primitives", () => {
     );
     const section = screen.getByRole("alert", { name: "Maintenance notice" });
     expect(section.tagName).toBe("SECTION");
-    expect(section.className).toContain("px-4");
+    expect(section.className).toContain("px-alert-inline");
   });
 
   it("renders a textarea with its placeholder", () => {

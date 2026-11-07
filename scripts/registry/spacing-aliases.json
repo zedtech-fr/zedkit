@@ -62,7 +62,6 @@
     "canonical": "3",
     "value": "0.75rem",
     "tokens": [
-      "--spacing-alert-block",
       "--spacing-button-inline-sm",
       "--spacing-control-inline",
       "--spacing-detail-panel-block",
@@ -80,8 +79,6 @@
     "canonical": "4",
     "value": "1rem",
     "tokens": [
-      "--spacing-alert-icon-offset",
-      "--spacing-alert-inline",
       "--spacing-app-shell-padding",
       "--spacing-button-inline",
       "--spacing-card-section",
@@ -357,5 +354,20 @@
     "canonical": "--spacing-icon",
     "value": "var(--zk-icon-size)",
     "tokens": ["--spacing-icon"]
+  },
+  {
+    "canonical": "--spacing-alert-inline",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-alert-inline"]
+  },
+  {
+    "canonical": "--spacing-alert-block",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": ["--spacing-alert-block"]
+  },
+  {
+    "canonical": "--spacing-alert-icon-offset",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-alert-icon-offset"]
   }
 ]
