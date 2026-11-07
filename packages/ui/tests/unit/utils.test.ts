@@ -30,6 +30,7 @@ describe("cn", () => {
     expect(cn("px-4", "px-field-pad")).toBe("px-field-pad");
     expect(cn("px-button-pad", "px-button-pad-lg")).toBe("px-button-pad-lg");
     expect(cn("py-2", "py-control-block-lg")).toBe("py-control-block-lg");
+    expect(cn("h-9", "h-control-height")).toBe("h-control-height");
     expect(cn("space-y-4", "space-y-stack-lg")).toBe("space-y-stack-lg");
     expect(cn("size-4", "size-icon")).toBe("size-icon");
     expect(cn("min-w-0", "content-shrink")).toBe("content-shrink");
