@@ -1911,7 +1911,7 @@ import { ParallaxLayer, ParallaxSection } from "@zedtech/zedkit-ui/motion";
 <ParallaxSection range="page">
   <ParallaxLayer depth="far" className="absolute pin-fill" />
   <div className="relative"><h1>Title</h1></div>
-  <ParallaxLayer depth="near" className="absolute right-8 top-20" />
+  <ParallaxLayer depth="near" className="absolute pin-top pin-right" />
 </ParallaxSection>
 ```
 
