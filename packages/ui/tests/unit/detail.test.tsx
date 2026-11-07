@@ -13,10 +13,10 @@ describe("DetailPanel", () => {
   it("styles rows from design tokens", () => {
     const { container } = render(<DetailPanel items={[{ label: "Name", value: "Ada" }]} />);
     const row = container.querySelector("dl > div");
-    expect(row?.classList.contains("gap-4")).toBe(true);
-    expect(row?.classList.contains("px-4")).toBe(true);
-    expect(row?.className).toContain("py-3");
-    expect(row?.className).not.toContain("py-detail-panel-block");
+    expect(row?.classList.contains("gap-detail-panel-gap")).toBe(true);
+    expect(row?.classList.contains("px-detail-panel-inline")).toBe(true);
+    expect(row?.className).toContain("py-detail-panel-block");
+    expect(row?.className).not.toContain("py-3");
   });
 });
 

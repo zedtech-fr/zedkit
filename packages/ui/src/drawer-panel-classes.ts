@@ -33,7 +33,7 @@ const drawerSideLeftMaxWidth: Record<DrawerSize, string> = {
 function drawerPanelClassName(size: DrawerSize, className?: string): string {
   return cn(
     "fixed z-drawer flex flex-col",
-    "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-4 [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
+    "[&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-drawer-chrome-padding [&>:not([data-slot^=drawer-],[data-vaul-handle],button):last-child]:pb-drawer-footer-safe",
     "data-[vaul-drawer-direction=bottom]:pin-x data-[vaul-drawer-direction=bottom]:pin-bottom data-[vaul-drawer-direction=bottom]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=bottom]:rounded-t-xl",
     "data-[vaul-drawer-direction=top]:pin-x data-[vaul-drawer-direction=top]:pin-top data-[vaul-drawer-direction=top]:max-h-drawer-sheet-max-height data-[vaul-drawer-direction=top]:rounded-b-xl data-[vaul-drawer-direction=top]:pt-drawer-safe-top",
     "data-[vaul-drawer-direction=right]:pin-y data-[vaul-drawer-direction=right]:pin-right data-[vaul-drawer-direction=right]:w-drawer-side-mobile-width data-[vaul-drawer-direction=right]:pt-drawer-safe-top data-[vaul-drawer-direction=right]:pr-drawer-safe-right data-[vaul-drawer-direction=right]:max-sm:rounded-l-xl data-[vaul-drawer-direction=right]:sm:w-full",
