@@ -28,7 +28,7 @@ function HomeOtherWays() {
               key={way.title}
               direction="horizontal"
               gap={3}
-              className="flex-wrap items-center justify-between py-3"
+              className="flex-wrap items-center justify-between surface-pad-block"
               data-home-way=""
             >
               <Stack gap={1} className="content-shrink">
