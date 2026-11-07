@@ -26,7 +26,7 @@ export type MarketingFooterProps = Omit<React.ComponentProps<"footer">, "childre
 };
 
 const linkClass =
-  "[&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:text-sm [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a]:hover:underline";
+  "[&_a]:inline-flex [&_a]:min-h-target [&_a]:items-center [&_a]:text-sm [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a]:hover:underline";
 
 function FooterColumn({ column }: { column: MarketingFooterColumn }) {
   const titleId = useId();

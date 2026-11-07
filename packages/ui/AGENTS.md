@@ -31,7 +31,8 @@ Rules:
   19.5px line. Do not swap them. `Stack` accepts `sm` | `md` | `lg`;
   the other numeric gap props stay until a major. The shipped rule is
   `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
-  44px, stricter than the kit's 24px floor.
+  44px, stricter than the kit's 24px floor. `min-h-target` follows
+  `--spacing` and floors at 44px on a coarse pointer or a narrow screen.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).

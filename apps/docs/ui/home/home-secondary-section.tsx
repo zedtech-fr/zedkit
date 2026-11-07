@@ -25,7 +25,7 @@ function HomeSecondaryEntryLinks({ entryPoints }: { entryPoints: HomeEntryPoint[
               {entry.summary}
             </Text>
           </Stack>
-          <Button asChild variant="outline" size="sm" className="min-h-11 w-fit shrink-0 md:pane-shrink">
+          <Button asChild variant="outline" size="sm" className="min-h-target w-fit shrink-0 md:pane-shrink">
             <HomeLink href={entry.href}>
               <DocsActionLabel>{entry.linkLabel}</DocsActionLabel>
             </HomeLink>

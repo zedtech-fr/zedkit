@@ -54,12 +54,12 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
                 {item.href ? (
                   <a
                     href={item.href}
-                    className="inline-flex min-h-11 items-center rounded-md focus-ring-control hover:text-foreground"
+                    className="inline-flex min-h-target items-center rounded-md focus-ring-control hover:text-foreground"
                   >
                     {body}
                   </a>
                 ) : (
-                  <span className="inline-flex min-h-11 items-center">{body}</span>
+                  <span className="inline-flex min-h-target items-center">{body}</span>
                 )}
               </li>
             );

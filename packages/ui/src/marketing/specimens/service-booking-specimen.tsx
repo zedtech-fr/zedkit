@@ -28,7 +28,7 @@ function BookingServiceChoices({
           type="button"
           variant={item.id === serviceId ? "default" : "outline"}
           aria-pressed={item.id === serviceId}
-          className="h-auto! min-h-11 w-full justify-between px-4 py-3 font-normal"
+          className="h-auto! min-h-target w-full justify-between px-4 py-3 font-normal"
           onClick={() => onSelect(item.id)}
         >
           <Text as="span">{item.label}</Text>

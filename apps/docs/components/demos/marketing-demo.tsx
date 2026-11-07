@@ -78,7 +78,7 @@ export function MarketingChromeDemo() {
       <MarketingHeader
         sticky={false}
         brand={
-          <a href="#chrome" className="inline-flex min-h-11 items-center font-semibold">
+          <a href="#chrome" className="inline-flex min-h-target items-center font-semibold">
             {chrome.brand}
           </a>
         }

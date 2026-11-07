@@ -820,6 +820,13 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 
 /* Structural layout. The declaration is the constraint; the name is the job. */
+/* Phone target. Desktop keeps the identity's spacing step; a coarse pointer or a narrow screen never goes under 44px. */
+@utility min-h-target {
+  min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
+}
+@utility min-w-target {
+  min-width: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
+}
 @utility content-shrink {
   min-width: 0;
 }

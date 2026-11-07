@@ -10,8 +10,8 @@ const twMerge = extendTailwindMerge({
     classGroups: {
       "font-size": ["text-form-hint", "text-control"],
       "max-w": [{ "max-w": ["narrow", "reading", "default", "wide"] }],
-      "min-w": ["content-shrink"],
-      "min-h": ["pane-shrink", { "min-h": ["control-height", "textarea-min-height"] }],
+      "min-w": ["content-shrink", "min-w-target"],
+      "min-h": ["pane-shrink", "min-h-target", { "min-h": ["control-height", "textarea-min-height"] }],
       inset: ["pin-fill"],
       "inset-x": ["pin-x"],
       "inset-y": ["pin-y"],

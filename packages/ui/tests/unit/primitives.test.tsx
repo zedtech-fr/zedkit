@@ -29,7 +29,7 @@ describe("primitives", () => {
     expect(link.className).toContain("hover:underline");
     expect(link.className).toContain("hover:bg-transparent");
     expect(link.className).not.toContain("hover:bg-accent");
-    expect(link.className).toContain("min-h-11");
+    expect(link.className).toContain("min-h-target");
   });
 
   it("takes ref as a prop", () => {

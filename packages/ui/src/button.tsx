@@ -33,9 +33,9 @@ const buttonVariants = cva(
         class:
           "h-auto pane-shrink bg-transparent flush-block shadow-none hover:bg-transparent active:bg-transparent",
       },
-      { variant: "link", size: "sm", class: "min-h-11 px-2 text-sm" },
-      { variant: "link", size: "default", class: "min-h-11 px-3" },
-      { variant: "link", size: "lg", class: "min-h-11 px-button-pad text-base" },
+      { variant: "link", size: "sm", class: "min-h-target px-2 text-sm" },
+      { variant: "link", size: "default", class: "min-h-target px-3" },
+      { variant: "link", size: "lg", class: "min-h-target px-button-pad text-base" },
     ],
     defaultVariants: { variant: "default", size: "default" },
   },
