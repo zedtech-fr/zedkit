@@ -5361,7 +5361,7 @@
             },
             {
               "title": "Filter chips",
-              "code": "import { ScrollGallery } from \"@zedtech/zedkit-ui\";\n\n<ScrollGallery className=\"max-w-sm\">\n  <div className=\"flex w-max gap-stack-sm\">\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#a\">\n      Alpha\n    </a>\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#b\">\n      Beta\n    </a>\n  </div>\n</ScrollGallery>"
+              "code": "import { ScrollGallery } from \"@zedtech/zedkit-ui\";\n\n<ScrollGallery>\n  <div className=\"flex w-max gap-stack-sm\">\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#a\">\n      Alpha\n    </a>\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#b\">\n      Beta\n    </a>\n  </div>\n</ScrollGallery>"
             }
           ],
           "adoption": {

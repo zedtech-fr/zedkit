@@ -1821,7 +1821,7 @@ import { ScrollGallery, Tabs, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 ```ts
 import { ScrollGallery } from "@zedtech/zedkit-ui";
 
-<ScrollGallery className="max-w-sm">
+<ScrollGallery>
   <div className="flex w-max gap-stack-sm">
     <a className="inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row" href="#a">
       Alpha

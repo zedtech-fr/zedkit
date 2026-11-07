@@ -180,7 +180,7 @@ export function Gallery() {
             <StatusDot tone="danger" />
             <Checkmark label="Saved" />
           </div>
-          <div className="space-y-stack-sm max-w-sm">
+          <div data-example-width="" className="space-y-stack-sm">
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
           </div>
@@ -190,19 +190,19 @@ export function Gallery() {
             <StatusLabel tone="error">Could not save</StatusLabel>
             <UpdatedAgo date={Date.now() - 3 * 60_000} />
           </div>
-          <div className="space-y-stack-sm max-w-sm">
+          <div data-example-width="" className="space-y-stack-sm">
             <OfflineNote />
           </div>
-          <div className="space-y-stack-sm max-w-sm">
+          <div data-example-width="" className="space-y-stack-sm">
             <EmptyState title="No invoices" description="Create an invoice to send to a client." actions={<Button>New invoice</Button>} />
             <ErrorState title="Could not load invoices" description="Check your connection and try again." actions={<Button variant="outline">Try again</Button>} />
             <Spinner />
           </div>
-          <div className="space-y-stack-sm max-w-sm">
+          <div data-example-width="" className="space-y-stack-sm">
             <Label htmlFor="gallery-name">Name</Label>
             <Input id="gallery-name" placeholder="Ada" />
           </div>
-          <div className="space-y-stack-sm max-w-sm">
+          <div data-example-width="" className="space-y-stack-sm">
             <Label htmlFor="gallery-bio">Bio</Label>
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
@@ -292,11 +292,11 @@ export function Gallery() {
           <Calendar defaultMonth={new Date(2026, 9, 1)} today={new Date(2026, 9, 15)} />
           <DatePicker defaultMonth={new Date(2026, 9, 1)} today={new Date(2026, 9, 15)} />
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
-          <Alert className="max-w-sm">
+          <Alert data-example-width="">
             <AlertTitle>Heads up</AlertTitle>
             <AlertDescription>Something worth knowing.</AlertDescription>
           </Alert>
-          <Alert variant="destructive" className="max-w-sm">
+          <Alert variant="destructive" data-example-width="">
             <AlertTitle>Failed</AlertTitle>
             <AlertDescription>Something went wrong.</AlertDescription>
           </Alert>
@@ -315,7 +315,7 @@ export function Gallery() {
         </GallerySection>
 
         <GallerySection id="layout" title="Layout">
-          <Card className="max-w-sm">
+          <Card data-example-width="">
             <CardHeader>
               <CardTitle>Server</CardTitle>
               <CardDescription>Connection details.</CardDescription>
@@ -333,7 +333,7 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
-          <Tabs defaultValue="one" className="max-w-sm">
+          <Tabs defaultValue="one" data-example-width="">
             <TabsList>
               <TabsTrigger value="one">First</TabsTrigger>
               <TabsTrigger value="two">Second</TabsTrigger>
@@ -370,7 +370,7 @@ export function Gallery() {
 
         <GallerySection id="loading" title="Loading">
           <PageHeaderSkeleton label="Loading page" />
-          <div className="max-w-sm">
+          <div data-example-width="">
             <CardSkeleton label="Loading card" />
           </div>
           <DetailPanelSkeleton label="Loading details" rows={2} />
@@ -379,7 +379,7 @@ export function Gallery() {
 
         <GallerySection id="forms" title="Forms">
           <FormDemo />
-          <div className="space-y-stack-md max-w-sm" data-testid="gallery-prompt-input">
+          <div data-example-width="" className="space-y-stack-md" data-testid="gallery-prompt-input">
             <PromptInput
               sendLabel="Send"
               value="Ask about your catalog"
@@ -400,7 +400,7 @@ export function Gallery() {
             />
           </div>
           <Select>
-            <SelectTrigger className="max-w-sm">
+            <SelectTrigger data-example-width="">
               <SelectValue placeholder="Pick a region" />
             </SelectTrigger>
             <SelectContent>

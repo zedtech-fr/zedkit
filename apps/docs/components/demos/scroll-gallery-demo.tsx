@@ -12,7 +12,7 @@ const LOOKS = [
 export function ScrollGalleryIdentityDemo() {
   return (
     <Tabs defaultValue="one">
-      <ScrollGallery className="w-full max-w-sm">
+      <ScrollGallery data-example-width="" className="w-full">
         <TabsList className="inline-flex w-max flex-nowrap" aria-label="Looks">
           {LOOKS.map(([value, label]) => (
             <TabsTrigger key={value} value={value}>
@@ -33,7 +33,7 @@ export function ScrollGalleryIdentityDemo() {
 /** Filter-style links in a horizontal snap row. */
 export function ScrollGalleryChipsDemo() {
   return (
-    <ScrollGallery className="max-w-sm">
+    <ScrollGallery data-example-width="">
       <Stack direction="horizontal" gap={2} className="w-max">
         <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#alpha">
           Alpha
