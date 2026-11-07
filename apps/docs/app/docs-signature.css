@@ -136,9 +136,10 @@
   gap: calc(var(--spacing) * 2.5);
 }
 
-/* Side inset of the compact proposal card. */
+/* Compact proposal. One spacing step on the sides, and at most 52% of the screen or 28rem. */
 [data-proposal-inset] {
   padding-inline: var(--spacing);
+  max-height: min(52dvh, 28rem);
 }
 
 /* Color swatch in the identity dock. One spacing step of 4, same box as an icon, not an icon. */
