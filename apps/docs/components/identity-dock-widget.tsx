@@ -117,10 +117,10 @@ function IdentityDockWidget() {
           aria-label={identityDockCopy.panelTitle}
           data-slot="identity-dock-panel"
           data-state={expanded ? "open" : "closed"}
-          className="flex pane-shrink flex-col gap-0 flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-0"
+          className="flex pane-shrink flex-col gap-flush flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-0"
         >
           <DrawerHandle className="mt-2 mb-0 h-1 w-10 shrink-0 bg-border/45" aria-label="Drag to resize" />
-          <Stack data-state="open" className="pane-shrink flex-1 gap-0">
+          <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
             <IdentityDockAssistantPanel
               previewTokens={workingTokens}
               onPreviewTokens={setPreviewTokens}

@@ -38,6 +38,7 @@ const twMerge = extendTailwindMerge({
         "gap-dialog-footer-gap",
         "gap-drawer-footer-gap",
         "gap-section-stack",
+        "gap-flush",
         { gap: ["stack-tight", "stack-sm", "stack-md", "stack-lg"] },
       ],
       "gap-x": ["gap-x-wizard-steps-gap"],

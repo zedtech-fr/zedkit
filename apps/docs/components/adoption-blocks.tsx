@@ -144,7 +144,7 @@ export function FileBlock({
     <CodeBlock
       data-adoption-frame=""
       title={
-        <Stack gap={1} className="content-shrink gap-0 py-1">
+        <Stack gap={1} className="content-shrink gap-flush py-1">
           <Text as="span" className="truncate font-mono">
             {path}
           </Text>
