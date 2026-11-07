@@ -2056,7 +2056,7 @@ const plans = [
     ),
     children: (
       <Stack aria-hidden="true" inert>
-        <Text className="text-3xl font-semibold">{plan.price}</Text>
+        <Text className="font-semibold">{plan.price}</Text>
         <Text variant="muted">per month</Text>
       </Stack>
     ),
