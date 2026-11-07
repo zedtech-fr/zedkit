@@ -37,7 +37,7 @@ function WeeklyCard({ scope, label }: { scope?: "dark"; label: string }) {
 /** The page theme next to a `dark` scope, from the one stylesheet import (both read the same tokens). */
 export function ThemeDemo() {
   return (
-    <Stack className="grid content-shrink gap-3 sm:grid-cols-2">
+    <Stack className="grid content-shrink gap-stack-md sm:grid-cols-2">
       <WeeklyCard label={themeCopy.page} />
       <WeeklyCard label={themeCopy.darkScope} scope="dark" />
     </Stack>
@@ -71,7 +71,7 @@ export function ThemeTokensDemo() {
         </Stack>
         <ul aria-label={themeCopy.releasesLabel} className="divide-y divide-border rounded-md bg-muted">
           {RELEASES.map((release) => (
-            <li key={release.name} className="flex content-shrink items-center justify-between gap-3 px-3 py-2 text-sm">
+            <li key={release.name} className="flex content-shrink items-center justify-between gap-stack-md px-3 py-2 text-sm">
               <Text as="span" className="content-shrink wrap-anywhere">{release.name}</Text>
               <Badge variant={release.trend === "up" ? "success" : "destructive"} className="shrink-0 gap-1">
                 {release.trend === "up" ? <ArrowUpRight className="size-3" aria-hidden /> : <ArrowDownRight className="size-3" aria-hidden />}

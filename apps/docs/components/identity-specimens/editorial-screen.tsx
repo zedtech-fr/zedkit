@@ -34,7 +34,7 @@ export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
         </Text>
         <ul className="trim-margin flex list-none flex-col flush">
           {copy.more.map((item) => (
-            <li key={item.headline} className="flex items-baseline justify-between gap-3 py-1">
+            <li key={item.headline} className="flex items-baseline justify-between gap-stack-md py-1">
               <Text as="span" typeRole="small" className="font-medium">
                 {item.headline}
               </Text>

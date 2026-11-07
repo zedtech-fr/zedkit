@@ -34,12 +34,12 @@ function ProductCard({ product, selected, onSelect }: { product: Product; select
         type="button"
         variant="outline"
         aria-pressed={selected}
-        className="h-auto! min-h-target w-full flex-col items-start justify-start gap-2 p-4 text-left font-normal whitespace-normal"
+        className="h-auto! min-h-target w-full flex-col items-start justify-start gap-stack-sm p-4 text-left font-normal whitespace-normal"
         onClick={onSelect}
       >
         <span className="font-(family-name:--zk-font-display) text-xl">{product.name}</span>
         <span className="text-sm text-muted-foreground">{product.material}</span>
-        <span className="flex w-full flex-wrap items-center justify-between gap-2">
+        <span className="flex w-full flex-wrap items-center justify-between gap-stack-sm">
           <span className="tabular-nums">{formatEur(product.price)}</span>
           <Badge variant={product.stock <= LOW_STOCK ? "warning" : "secondary"}>
             {product.stock <= LOW_STOCK ? copy.lowStock(product.stock) : copy.inStock(product.stock)}
@@ -98,7 +98,7 @@ export function HomeIdentityExampleMaison() {
         </Heading>
         <Text variant="muted">{copy.description}</Text>
       </Stack>
-      <ul aria-label={copy.listAriaLabel} className="trim-margin grid list-none gap-3 flush sm:grid-cols-3">
+      <ul aria-label={copy.listAriaLabel} className="trim-margin grid list-none gap-stack-md flush sm:grid-cols-3">
         {products.map((item) => (
           <ProductCard
             key={item.id}

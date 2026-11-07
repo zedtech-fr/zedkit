@@ -49,7 +49,7 @@ function NavButton({ id, icon: Icon, active, onSelect, compact }: (typeof HERO_N
       variant={active ? "secondary" : "ghost"}
       aria-current={active ? "page" : undefined}
       // The chip row scrolls sideways and clips what is drawn outside it, so a chip draws its focus ring inside itself.
-      className={compact ? "min-h-target shrink-0 gap-2 px-3 focus-visible:-outline-offset-(--ring-width)" : "w-full justify-start gap-2 lg:max-xl:justify-center lg:max-xl:px-0"}
+      className={compact ? "min-h-target shrink-0 gap-stack-sm px-3 focus-visible:-outline-offset-(--ring-width)" : "w-full justify-start gap-stack-sm lg:max-xl:justify-center lg:max-xl:px-0"}
       onClick={() => onSelect(id)}
       data-tour-nav={compact ? undefined : id}
     >

@@ -30,7 +30,7 @@ export function ComboboxMenu({
       data-slot="combobox-list"
     >
       {loading ? (
-        <li className="flex items-center gap-2 px-control-inline py-control-block text-sm text-muted-foreground">
+        <li className="flex items-center gap-stack-sm px-control-inline py-control-block text-sm text-muted-foreground">
           <Spinner label={messages.loadingOptions} />
           {messages.loadingEllipsis}
         </li>

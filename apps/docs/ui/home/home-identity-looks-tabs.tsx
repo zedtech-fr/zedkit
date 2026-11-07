@@ -36,13 +36,13 @@ export function HomeIdentityLooksTabs({
       <ScrollGallery className="w-full content-shrink">
         <TabsList
           aria-label={homeIdentityLooksCopy.tabsAriaLabel}
-          className="inline-flex h-auto! min-h-target w-max max-w-none flex-nowrap justify-start gap-2 bg-muted p-1"
+          className="inline-flex h-auto! min-h-target w-max max-w-none flex-nowrap justify-start gap-stack-sm bg-muted p-1"
         >
           {IDENTITY_IDS.map((id) => (
             <TabsTrigger
               key={id}
               value={id}
-              className="h-auto! min-h-target w-max max-w-none shrink-0 snap-start flex-row! items-center! gap-2.5 px-3.5 py-1.5"
+              className="h-auto! min-h-target w-max max-w-none shrink-0 snap-start flex-row! items-center! gap-stack-sm.5 px-3.5 py-1.5"
             >
               <HomeIdentityPaletteDots
                 identity={id}

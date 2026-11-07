@@ -192,7 +192,7 @@ export function ViewSwitch({
 export function Thread({ turns }: { turns: readonly Turn[] }) {
   if (turns.length === 0) return null;
   return (
-    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-2 flush" data-assistant-thread="">
+    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-thread="">
       {turns.map((turn, index) => (
         <li key={`${index}-${turn.role}`} className="text-zk-type-body">
           <Text as="span" className="font-medium text-foreground">

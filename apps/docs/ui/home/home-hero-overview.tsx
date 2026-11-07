@@ -91,9 +91,9 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
       </Text>
       <ul className="trim-margin flex list-none flex-col divide-y divide-border rounded-lg border border-border flush">
         {next.map((row) => (
-          <li key={row.id} className="flex content-shrink items-center justify-between gap-3 px-3 py-2">
+          <li key={row.id} className="flex content-shrink items-center justify-between gap-stack-md px-3 py-2">
             <span className="content-shrink truncate text-sm font-medium">{row.title}</span>
-            <span className="flex shrink-0 items-center gap-2">
+            <span className="flex shrink-0 items-center gap-stack-sm">
               <Badge variant={STATUS_VARIANT[row.status]} className="max-sm:hidden">
                 {row.status}
               </Badge>
@@ -111,7 +111,7 @@ export function HeroOverviewPage({ rows, active }: { rows: TaskRow[]; active: bo
   return (
     <Stack gap={4} className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <div className="grid content-shrink grid-cols-3 gap-2">
+      <div className="grid content-shrink grid-cols-3 gap-stack-sm">
         <Stat label={copy.stats.open} value={rows.filter((row) => !isDone(row)).length} active={active} beat={1} />
         <Stat label={copy.stats.review} value={rows.filter((row) => row.status === status.inReview).length} active={active} beat={2} />
         <Stat label={copy.stats.done} value={rows.filter(isDone).length} active={active} beat={3} />

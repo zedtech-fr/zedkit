@@ -52,7 +52,7 @@ function resultsStatusLine(filtered: CatalogIndexEntry[]) {
 /** Results title row — lives in the default-width filters band for column alignment. */
 export function CatalogResultsHeader({ filtered }: { filtered: CatalogIndexEntry[] }) {
   return (
-    <div className="flex items-start justify-between gap-4" data-catalog-results-heading="">
+    <div className="flex items-start justify-between gap-stack-lg" data-catalog-results-heading="">
       <div>
         <Heading level={2} id="catalog-results-heading">
           {catalogCopy.results.heading}

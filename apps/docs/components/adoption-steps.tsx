@@ -76,7 +76,7 @@ function RenderedExample({ children }: { children: ReactNode }) {
 function CompanionFiles({ count, children }: { count: number; children: ReactNode }) {
   return (
     <details className="group content-shrink rounded-lg border border-border">
-      <summary className="flex min-h-target cursor-pointer items-center gap-2 px-3 text-sm font-medium focus-ring">
+      <summary className="flex min-h-target cursor-pointer items-center gap-stack-sm px-3 text-sm font-medium focus-ring">
         {adoptionCopy.companions(count)}
         <Text as="span" className="font-normal text-muted-foreground">
           {adoptionCopy.companionsHint}

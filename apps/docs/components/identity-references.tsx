@@ -28,7 +28,7 @@ export function ReferenceReportList({ report }: { report: readonly ReferenceRepo
       <Text as="span" typeRole="body" className="font-medium text-foreground">
         {copy.references.report}
       </Text>
-      <ul className="trim-margin flex list-none flex-col gap-2 flush">
+      <ul className="trim-margin flex list-none flex-col gap-stack-sm flush">
         {report.map((item) => {
           const used = item.status === "used";
           return (

@@ -49,7 +49,7 @@ function PersonButton({ person, selected, onSelect }: { person: Person; selected
         type="button"
         variant={selected ? "secondary" : "ghost"}
         aria-pressed={selected}
-        className="h-auto min-h-target w-full justify-start gap-3 px-2 py-1.5 text-left font-normal"
+        className="h-auto min-h-target w-full justify-start gap-stack-md px-2 py-1.5 text-left font-normal"
         onClick={onSelect}
         data-hero-person={person.name}
       >
@@ -72,7 +72,7 @@ export function HeroTeamPage({ rows, selected, onSelect }: { rows: TaskRow[]; se
   return (
     <Stack gap={3} className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <div className="grid content-shrink gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="grid content-shrink gap-stack-md sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <ul className="trim-margin flex content-shrink list-none flex-col gap-1 flush" aria-label={copy.title} data-hero-block="" data-beat={1}>
           {HERO_PEOPLE.map((entry) => (
             <PersonButton key={entry.name} person={entry} selected={entry.name === person.name} onSelect={() => onSelect(entry.name)} />

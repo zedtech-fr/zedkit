@@ -140,7 +140,7 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
               type="button"
               variant={active ? "secondary" : "ghost"}
               aria-current={active ? "page" : undefined}
-              className="w-full justify-start gap-2"
+              className="w-full justify-start gap-stack-sm"
               onClick={active ? undefined : notice(projectTrackerDemoCopy.nav.unavailable(label))}
             >
               <Icon className="size-icon" aria-hidden />
@@ -202,7 +202,7 @@ function UserMenu() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button type="button" variant="ghost" className="gap-2 px-2" aria-label={projectTrackerDemoCopy.openUserMenu}>
+        <Button type="button" variant="ghost" className="gap-stack-sm px-2" aria-label={projectTrackerDemoCopy.openUserMenu}>
           <Avatar initials={projectTrackerDemoCopy.initials} />
           <Text as="span" className={cn("text-sm font-medium", mobile ? "hidden" : "max-sm:hidden")}>
             {projectTrackerDemoCopy.people.maya}
@@ -230,7 +230,7 @@ function UserMenu() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="w-full justify-start gap-2"
+                  className="w-full justify-start gap-stack-sm"
                   onClick={notice(projectTrackerDemoCopy.menu.unavailable(label))}
                 >
                   <Icon className="size-icon" aria-hidden />
@@ -242,7 +242,7 @@ function UserMenu() {
         </DrawerBody>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button type="button" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.signedOut)}>
+            <Button type="button" variant="outline" className="gap-stack-sm" onClick={notice(projectTrackerDemoCopy.signedOut)}>
               <LogOut className="size-icon" aria-hidden />
               {projectTrackerDemoCopy.signOut}
             </Button>
@@ -383,11 +383,11 @@ export function ProjectTrackerDemoApp() {
             description={projectTrackerDemoCopy.description}
             actions={
               <>
-                <Button type="button" size="sm" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
+                <Button type="button" size="sm" variant="outline" className="gap-stack-sm" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
                   <Download className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.export}
                 </Button>
-                <Button type="button" size="sm" className="gap-2" onClick={addTask}>
+                <Button type="button" size="sm" className="gap-stack-sm" onClick={addTask}>
                   <Plus className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.newTask}
                 </Button>

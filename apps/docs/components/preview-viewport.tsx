@@ -86,7 +86,7 @@ export function PreviewFrame({
   const dark = modePin === "follow" ? siteDark : modePin === "dark";
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="flex w-full content-shrink flex-col gap-2">
+    <Tabs value={tab} onValueChange={setTab} className="flex w-full content-shrink flex-col gap-stack-sm">
       <Stack direction="horizontal" className="flex-wrap justify-between gap-x-4 gap-y-2">
         <TabsList className="h-auto! gap-1 rounded-none bg-transparent flush">
           {([previewViewportCopy.tabs.preview, previewViewportCopy.tabs.code] as const).map((value) => (
@@ -116,7 +116,7 @@ export function PreviewFrame({
               data-preview-display=""
               // Phone: a full-width row opened by the Display toggle. From md up the toggle is gone and the row
               // always sits beside the tabs, whatever the toggle said on the way here.
-              className={cn("content-shrink flex-wrap gap-2 md:flex md:w-auto", displayOpen ? "w-full" : "hidden")}
+              className={cn("content-shrink flex-wrap gap-stack-sm md:flex md:w-auto", displayOpen ? "w-full" : "hidden")}
             >
               <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} labelHidden />
               <Segmented label={previewViewportCopy.width} className="hidden md:inline-flex">

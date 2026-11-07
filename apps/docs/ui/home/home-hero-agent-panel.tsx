@@ -37,11 +37,11 @@ function PhaseDetail({ id, state }: { id: (typeof HERO_AGENT_PHASES)[number]; st
 
 function PhaseList({ step, status }: { step: number; status: HeroAgentStatus }) {
   return (
-  <ol aria-label={copy.progressLabel} className="trim-margin grid list-none gap-2 flush">
+  <ol aria-label={copy.progressLabel} className="trim-margin grid list-none gap-stack-sm flush">
     {HERO_AGENT_PHASES.map((phase, index) => {
       const state = phaseState(index, step, status);
       return (
-        <li key={phase} data-phase={phase} data-state={state} className="flex content-shrink gap-2 data-[state=pending]:opacity-60">
+        <li key={phase} data-phase={phase} data-state={state} className="flex content-shrink gap-stack-sm data-[state=pending]:opacity-60">
           <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center">
             <PhaseMark state={state} />
           </span>
@@ -87,7 +87,7 @@ export default function HeroAgentPanel({ id, draft, status, step, onDraft, onSub
       aria-label={copy.title}
       data-hero-agent-panel=""
       data-status={status}
-      className="absolute inset-y-2 right-2 z-20 flex w-[calc(100%-1rem)] content-shrink motion-reveal flex-col gap-3 overflow-y-auto md:w-80"
+      className="absolute inset-y-2 right-2 z-20 flex w-[calc(100%-1rem)] content-shrink motion-reveal flex-col gap-stack-md overflow-y-auto md:w-80"
     >
       <Stack direction="horizontal" gap={2} className="items-center justify-between">
         <Heading level={2} typeRole="cardTitle">

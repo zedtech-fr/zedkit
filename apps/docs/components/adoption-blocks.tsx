@@ -61,7 +61,7 @@ function CopyButton({ text, what }: { text: string; what: string }) {
  * what is drawn outside it, so the focus ring is drawn inside the control.
  */
 const HEADER_SELECT_CLASS =
-  "h-control-height-sm w-auto gap-2 bg-background px-3 font-mono text-[length:var(--zk-input-font-size)] shadow-none focus-visible:-outline-offset-(--ring-width)";
+  "h-control-height-sm w-auto gap-stack-sm bg-background px-3 font-mono text-[length:var(--zk-input-font-size)] shadow-none focus-visible:-outline-offset-(--ring-width)";
 
 function PackageManagerSelect({ pm, onPm }: { pm: PackageManager; onPm: (pm: PackageManager) => void }) {
   return (
