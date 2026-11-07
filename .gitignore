@@ -44,3 +44,6 @@ apps/docs/.tmp-complete-examples/
 
 # local working plans and tickets (zedkit-ai; the installer keeps this line)
 .scratch/
+
+# Cursor chat exports (keep outside the repo when possible)
+conversation-*.txt

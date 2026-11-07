@@ -287,6 +287,9 @@ if (!existsSync(llmsFullPath)) {
   if (!fullText.startsWith("# Install or copy")) {
     errors.push("llms-full.txt: expected buildLlmsFull header # Install or copy");
   }
+  if (!fullText.includes("not the full text of every docs page")) {
+    errors.push("llms-full.txt: missing scope statement (run docs:generate).");
+  }
 }
 
 rmSync(tmp, { recursive: true, force: true });

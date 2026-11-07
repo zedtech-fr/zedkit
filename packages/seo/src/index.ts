@@ -10,10 +10,12 @@ export {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
   buildOrganizationJsonLd,
+  buildSoftwareSourceCodeJsonLd,
   buildWebPageJsonLd,
   type ArticleJsonLdOptions,
   type BreadcrumbItem,
   type OrganizationJsonLdOptions,
+  type SoftwareSourceCodeJsonLdOptions,
   type WebPageJsonLdOptions,
 } from "./jsonld.js";
 export {

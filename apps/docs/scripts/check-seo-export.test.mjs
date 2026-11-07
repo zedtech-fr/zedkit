@@ -6,6 +6,8 @@ import {
   checkHtmlRegistryLinks,
   checkLlms,
   checkLlmsFull,
+  LLMS_FULL_SCOPE_LINE,
+  llmsFullDocumentationIndexBody,
   checkMeta,
   checkNotFound,
   checkRobots,
@@ -45,14 +47,40 @@ test("checkRobots reports a missing Sitemap line and a missing Allow /", () => {
   ]);
 });
 
-test("checkSitemap is silent for three on-site URLs including home and /docs", () => {
-  const xml = ["/", "/docs", "/catalog"].map((path) => `<loc>${base}${path === "/" ? "/" : path}</loc>`).join("");
+test("checkSitemap is silent for three on-site URLs without lastmod", () => {
+  const xml = ["/", "/docs", "/catalog"]
+    .map((path) => `<url><loc>${base}${path === "/" ? "/" : path}</loc></url>`)
+    .join("");
   assert.deepEqual(checkSitemap(xml, base).errors, []);
   assert.equal(checkSitemap(xml, base).urlCount, 3);
 });
 
+test("checkSitemap rejects an impossible calendar date in lastmod", () => {
+  const xml = [`<url><loc>${base}/</loc><lastmod>2026-99-99</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(xml, base).errors, [
+    `sitemap.xml: invalid lastmod "2026-99-99" for ${base}/`,
+  ]);
+});
+
+test("checkSitemap accepts a valid lastmod and rejects a bogus value", () => {
+  const ok = [`<url><loc>${base}/</loc><lastmod>2026-11-07</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(ok, base).errors, []);
+  const bad = [`<url><loc>${base}/</loc><lastmod>not-a-date</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(bad, base).errors, [
+    `sitemap.xml: invalid lastmod "not-a-date" for ${base}/`,
+  ]);
+});
+
+test("sitemap route omits build-time lastmod so rebuilds do not fake freshness", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { fileURLToPath } = await import("node:url");
+  const source = await readFile(fileURLToPath(new URL("../app/sitemap.ts", import.meta.url)), "utf8");
+  assert.doesNotMatch(source, /\blastModified\b/u);
+  assert.doesNotMatch(source, /new Date\(\)/u);
+});
+
 test("checkSitemap reports too few URLs, an off-site loc, and missing home or /docs", () => {
-  const xml = "<loc>https://example.com/other</loc><loc>https://zedkit.app/catalog</loc>";
+  const xml = "<url><loc>https://example.com/other</loc><lastmod>2026-11-07</lastmod></url><url><loc>https://zedkit.app/catalog</loc><lastmod>2026-11-07</lastmod></url>";
   const { errors, urlCount } = checkSitemap(xml, base);
   assert.equal(urlCount, 2);
   assert.deepEqual(errors, [
@@ -73,11 +101,38 @@ test("checkLlms accepts the generated header and rejects anything else", () => {
 });
 
 test("checkLlmsFull accepts buildLlmsFull sections", () => {
-  const body =
-    "# Install or copy\n\nnpm\n\n# Set up zedkit AI\n\nsteps\n\n# Documentation index\n\n# zedkit docs\n";
+  const body = [
+    "# Install or copy",
+    "",
+    LLMS_FULL_SCOPE_LINE,
+    "",
+    "npm",
+    "",
+    "# Set up zedkit AI",
+    "",
+    "steps",
+    "",
+    "# Documentation index",
+    "",
+    "- [Home](https://zedkit.app/)",
+    "",
+    "# Other",
+    "",
+    "- [Elsewhere](https://zedkit.app/catalog)",
+  ].join("\n");
   assert.deepEqual(checkLlmsFull(body), []);
+  assert.match(llmsFullDocumentationIndexBody(body) ?? "", /^- \[/m);
+  assert.deepEqual(
+    checkLlmsFull(
+      ["# Install or copy", "", LLMS_FULL_SCOPE_LINE, "", "# Set up zedkit AI", "", "x", "", "# Documentation index", "", "(empty index, no links)"].join(
+        "\n",
+      ),
+    ),
+    ["llms-full.txt: documentation index section must list markdown links"],
+  );
   assert.deepEqual(checkLlmsFull("# other"), [
     "llms-full.txt: expected # Install or copy header",
+    "llms-full.txt: missing scope statement for agents",
     "llms-full.txt: missing # Documentation index section",
     "llms-full.txt: missing # Set up zedkit AI section",
   ]);

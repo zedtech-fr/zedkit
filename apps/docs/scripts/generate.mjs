@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
+import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
 import { componentPageSections } from "../lib/component-page-sections.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import { readAgentOnboardingMarkdown, writeAiSetupPublicAssets } from "../lib/ai-setup-onboarding.mjs";
@@ -477,14 +478,14 @@ export function generate(outDir) {
     "## Install or copy",
     "",
     "- **npm:** `pnpm add @zedtech/zedkit-ui` (and other `@zedtech/*` packages) — versioned updates via your package manager.",
-    `- **registry:** \`npx shadcn@latest add https://zedkit.app/r/<brick>.json\` — source in your repo (${registryBrickCount} brick${registryBrickCount === 1 ? "" : "s"} today; see [zedkit and shadcn/ui](/docs/zedkit-and-shadcn)).`,
+    `- **registry:** \`npx shadcn@latest add https://zedkit.app/r/<brick>.json\` — source in your repo (${registryBrickCount} brick${registryBrickCount === 1 ? "" : "s"} today; see [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn)).`,
     "",
-    "- [Getting started](/docs/getting-started) — choose a package and reach a first result",
-    "- [Set up your coding agents](/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
-    "- [Set up zedkit AI](/docs/ai/setup) — one paste prompt; agent steps at https://zedkit.app/ai/setup.md",
-    "- [Maturity and compatibility](/docs/maturity-and-compatibility) — badge legend link and package matrix",
-    "- [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
-    "- [Add SEO to a Next.js app](/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
+    "- [Getting started](https://zedkit.app/docs/getting-started) — choose a package and reach a first result",
+    "- [Set up your coding agents](https://zedkit.app/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
+    "- [Set up zedkit AI](https://zedkit.app/docs/ai/setup) — one paste prompt; agent steps at https://zedkit.app/ai/setup.md",
+    "- [Maturity and compatibility](https://zedkit.app/docs/maturity-and-compatibility) — badge legend link and package matrix",
+    "- [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
+    "- [Add SEO to a Next.js app](https://zedkit.app/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
     "",
   ];
   for (const [pkg, entry] of sorted) {
@@ -539,7 +540,7 @@ export function generate(outDir) {
         : pageMdx(pkg, need, version, richBlock, links, prose, folder);
       writeFileSync(join(dir, `${slug}.mdx`), body);
       pages += 1;
-      llms.push(`- [${need.need}](/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);
+      llms.push(`- [${need.need}](https://zedkit.app/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);
     }
     llms.push("");
     writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: slugs }, null, 2)}\n`);
@@ -573,6 +574,8 @@ export function generate(outDir) {
   writeFileSync(join(publicDir, "llms.txt"), `${llms.join("\n")}\n`);
   const llmsBody = llms.join("\n");
   const installOrCopyBody = [
+    LLMS_FULL_SCOPE_LINE,
+    "",
     "Two paths into the UI kit:",
     "",
     "- npm: pnpm add @zedtech/zedkit-ui — versioned package and styles.css",
@@ -580,6 +583,7 @@ export function generate(outDir) {
     "",
     "Guide: https://zedkit.app/docs/zedkit-and-shadcn",
   ].join("\n");
+  // llms-full.txt scope: install + AI setup prose + the same index links as llms.txt (not full MDX page bodies).
   const llmsFull = buildLlmsFull([
     { title: "Install or copy", body: installOrCopyBody },
     { title: "Set up zedkit AI", body: readAgentOnboardingMarkdown() },

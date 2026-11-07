@@ -3,8 +3,10 @@
 // shipped agent and command, as an older `init` would have copied it (the
 // kit text with its conditional blocks resolved for each preset). `sync` and
 // `validate` treat an unmarked file with one of these hashes as a copy of the
-// kit, not as user work. Needs the full git history and a built `dist/`.
-//   node scripts/legacy-hashes.mjs
+// kit, not as user work. Needs git history for new hashes and a built `dist/`.
+// Merges with the file already on disk so a shallow or reset clone cannot drop
+// legitimate hashes; exits before writing when a prior hash would be lost.
+//   pnpm --filter @zedtech/zedkit-ai build && node scripts/legacy-hashes.mjs
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readdirSync, writeFileSync } from "node:fs";
@@ -13,6 +15,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { tryCatch } from "@zedtech/zedkit-core";
 import { resolveConditionals } from "../dist/conditional.js";
+import { legacyHashMergeIssues, mergeLegacyHashMaps, readLegacyHashFile } from "../dist/legacy.js";
 import { agentsForPreset, commandsForPreset, kitUniverse, readManifest } from "../dist/kit.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -53,14 +56,28 @@ function hashesOf(kind, name) {
   return [...found].sort();
 }
 
-const result = { schema: 1, agents: {}, commands: {} };
+const computed = { agents: {}, commands: {} };
 for (const kind of ["agents", "commands"]) {
   for (const file of readdirSync(join(kit, kind)).filter((f) => f.endsWith(".md")).sort()) {
     const name = file.slice(0, -3);
-    result[kind][name] = hashesOf(kind, name);
+    const got = tryCatch(() => hashesOf(kind, name));
+    computed[kind][name] = got.ok ? got.value : [];
   }
 }
 const hashesPath = join(kit, "legacy-hashes.json");
+const snapshot = readLegacyHashFile(hashesPath);
+if (snapshot.status === "invalid") {
+  console.error(`legacy-hashes.json: ${snapshot.detail}; fix the file before regenerating`);
+  process.exit(1);
+}
+const prior = snapshot.status === "ok" ? snapshot.map : { agents: {}, commands: {} };
+const merged = mergeLegacyHashMaps(prior, computed);
+const issues = legacyHashMergeIssues(prior, merged);
+if (issues.length > 0) {
+  console.error(issues.join("\n"));
+  process.exit(1);
+}
+const result = { schema: 1, ...merged };
 writeFileSync(hashesPath, `${JSON.stringify(result, null, 1)}\n`);
 // kit:md is `prettier --check kit`; JSON.stringify indent 1 is not that format.
 execFileSync(process.execPath, [fileURLToPath(import.meta.resolve("prettier/bin/prettier.cjs")), "--write", hashesPath], {

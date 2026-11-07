@@ -67,6 +67,7 @@ export default tseslint.config(
       "apps/docs/next.config.mjs",
       "scripts/**/*.mjs",
       "apps/docs/scripts/*.mjs",
+      "packages/ai/scripts/*.mjs",
       "packages/quality/src/bin/**/*.mjs",
       "packages/ui/preview/*.mjs",
       "packages/ui/playwright.config.ts",

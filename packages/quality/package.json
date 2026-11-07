@@ -20,7 +20,7 @@
     "ci",
     "hygiene"
   ],
-  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/quality",
+  "homepage": "https://zedkit.app",
   "bugs": {
     "url": "https://github.com/zedtech-fr/zedkit/issues"
   },

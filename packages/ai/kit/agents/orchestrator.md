@@ -49,13 +49,20 @@ For playbooks plan, challenge, and review, every brief includes: **Go deep, be s
 ## Routing
 
 Every spawn passes the model id from `.agents/tokenomics.md` for the running
-provider, the call's kind, and the task's stakes (`zedkit-ai route`). Do not
-substitute the parent model, another family, or a fast mode. If the cell is
-missing or inherit, do not spawn — do that slice inline. Pass `--allow-fast`
-only when the user explicitly requested fast mode in this request. If the
-tool rejects the id, stop and report the cell. Do not substitute, do not
-switch that spawn to inline fallback, and do not replace it with a
-dispatch plan.
+provider, the call's kind, and the task's stakes. Resolve it with the local
+`zedkit-ai route <agent> --kind <k> --stakes <s> --provider <active-tool>`
+CLI — always pass `--provider` for the tool running this session and check
+the printed `provider:` matches the active tool before spawning (the repo default does
+not decide the model when the session tool differs from it). Use the
+installed version-locked CLI; build from the pinned kit commit first only
+when working from zedkit sources. Record the CLI version and the pinned
+commit in the report — never an unpinned npx download. Passing the id means
+the spawn tool's model parameter, not pasting
+the id into brief text. If the cell is missing or inherit, or the tool has
+no model parameter, do not spawn — do that slice inline and report the cell
+as not applied. Pass `--allow-fast` only when the user explicitly requested fast mode in this request. If the tool rejects the id, stop and report the
+cell. Do not substitute, do not switch that spawn to inline fallback, and do
+not replace it with a dispatch plan.
 
 Playbooks (skills you apply by dispatching work shaped like them):
 
@@ -190,13 +197,11 @@ Specialists (subagents):
 
 One self-contained brief per subagent: objective, read/write scope, pasted
 context, success criteria, return format, stop rule — use the brief shape in
-`parallel-work`. Spawn the name the current tool lists. A Muse dest alias is
-the same CHECK agent only when generated from the kit source (marker cites
-it); an unmarked homonym is a different agent. Parallel batches only for
-independent read-only units or disjoint write paths. Shared seams: agree
-interface first, then writers. On a dispatch failure, record the attempted
-action, the observed cause, the work completed inline, and the outstanding
-independent checks.
+`parallel-work`. Every brief shares the same pinned context block verbatim:
+the pinned commit, the CLI version, the owner decisions that constrain the
+work (for example a v1 exception, an intentionally planned lens, the
+standard-plus-floors precheck), and the proofs already acquired — so a worker
+never re-litigates a decided point without new evidence. Keep each brief short; the shared block carries the common facts. Spawn the name the current tool lists. A Muse dest alias is the same CHECK agent only when generated from the kit source (marker cites it); an unmarked homonym is a different agent. Parallel batches only for independent read-only units or disjoint write paths. Shared seams: agree interface first, then writers. On a dispatch failure, record the attempted action, the observed cause, the work completed inline, and the outstanding independent checks.
 
 ## 5. Aggregate
 
@@ -214,7 +219,10 @@ verified.
 Defaults (override in `AGENTS.md` if needed): at most 6 subagents per wave,
 12 total; depth 1 (never spawn an orchestrator from a worker); one retry per
 failed unit; no destructive or irreversible action (force push, delete,
-publish, merge, secrets, deploy) without explicit go — stop and ask.
+publish, merge, secrets, deploy) without explicit go — stop and ask. On a
+capacity or contract rejection, queue the wave and wait with backoff instead
+of retrying in a tight loop; capacity retries count toward the 12-total
+budget. Fan review lenses out in waves of at most 6.
 
 ## Output
 

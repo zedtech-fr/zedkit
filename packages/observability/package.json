@@ -16,7 +16,7 @@
     "pino",
     "product-analytics"
   ],
-  "homepage": "https://github.com/zedtech-fr/zedkit/tree/main/packages/observability",
+  "homepage": "https://zedkit.app",
   "bugs": {
     "url": "https://github.com/zedtech-fr/zedkit/issues"
   },

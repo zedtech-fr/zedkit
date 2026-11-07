@@ -91,7 +91,7 @@ artifact_dirs=$(join_regex \
   'node_modules|\.next|dist|build|coverage|\.vitest|\.turbo|\.pnpm-store|\.vercel|test-results|playwright-report|blob-report|temp' \
   "${dirs_extra[@]+"${dirs_extra[@]}"}")
 artifact_files=$(join_regex \
-  '(\.tsbuildinfo|\.pack(\.gz)?)$|(^|/)next-env\.d\.ts$|chromium-darwin\.png$' \
+  '(\.tsbuildinfo|\.pack(\.gz)?)$|(^|/)next-env\.d\.ts$|chromium-darwin\.png$|^conversation-.*\.txt$' \
   "${files_extra[@]+"${files_extra[@]}"}")
 allowlisted=$(join_regex \
   '^(pnpm-lock\.yaml)$' \

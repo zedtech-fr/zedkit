@@ -2,6 +2,7 @@ import type {
   Article,
   BreadcrumbList,
   Organization,
+  SoftwareSourceCode,
   WebPage,
   WithContext,
 } from "schema-dts";
@@ -69,6 +70,30 @@ export interface ArticleJsonLdOptions {
   dateModified?: string;
   authorName?: string;
   imageUrl?: string;
+}
+
+export interface SoftwareSourceCodeJsonLdOptions {
+  name: string;
+  url: string;
+  codeRepository: string;
+  programmingLanguage?: string;
+  license?: string;
+}
+
+export function buildSoftwareSourceCodeJsonLd(
+  options: SoftwareSourceCodeJsonLdOptions,
+): WithContext<SoftwareSourceCode> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    name: options.name,
+    url: options.url,
+    codeRepository: options.codeRepository,
+    ...(options.programmingLanguage === undefined
+      ? {}
+      : { programmingLanguage: options.programmingLanguage }),
+    ...(options.license === undefined ? {} : { license: options.license }),
+  };
 }
 
 export function buildArticleJsonLd(options: ArticleJsonLdOptions): WithContext<Article> {

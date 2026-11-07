@@ -41,10 +41,10 @@ A subagent has no memory of this conversation. Every brief states:
 
 1. **Goal** in one sentence, and why it matters.
 2. **Scope**: files or area it may read, files it may write (or "read-only").
-3. **Context it needs**: decisions already made, constraints, the contract. Paste them; do not say "as discussed". Paste the `.agents/atlas.md` rows that apply, so it does not search for what is already known.
+3. **Context it needs**: decisions already made, constraints, the contract. Paste the shared pinned context block verbatim (pinned commit, CLI version, owner decisions, proofs already acquired); do not say "as discussed". Paste the `.agents/atlas.md` rows that apply, so it does not search for what is already known. Keep the brief short; the shared block carries the common facts.
 4. **Deliverable**: the exact output shape. Findings as `file:line`, a diff, a table, a verdict. A read-only agent also returns `Atlas:` lines (topic, entry path, trap) for what it had to search for and the atlas lacked.
 5. **Stop rule**: what to do when blocked or unsure (report, do not guess).
-6. **Stakes and kind**: the task's `Stakes:`, how this agent is used (`Kind: decide|design|build|check`) and any `Needs:`. Route the spawn with `zedkit-ai route <agent> --kind <k> --stakes <s>`; a `check` brief says "read-only".
+6. **Stakes and kind**: the task's `Stakes:`, how this agent is used (`Kind: decide|design|build|check`) and any `Needs:`. Route the spawn with the local `zedkit-ai route <agent> --kind <k> --stakes <s> --provider <active-tool>` CLI and check the printed `provider:` matches the active tool; a `check` brief says "read-only".
 
 Delegate the question, not the thinking: do not hand off understanding. Say what you already know so it is not rediscovered.
 
@@ -57,6 +57,7 @@ Delegate the question, not the thinking: do not hand off understanding. Say what
 
 ## Cost and context
 
-- The model is the cell `zedkit-ai route` prints for this kind and stakes. Pass that id. Do not substitute a cheaper model, a stronger model, the parent model, or a fast mode. A fast mode is allowed only when the user explicitly requested it in this request (`--allow-fast`). If the tool cannot override the model, do not pick another; say the cell was not applied.
+- The model is the cell the local `zedkit-ai route` CLI prints for this kind, stakes, and the active tool (`--provider` for the tool running this session; the repo default does not decide the model when the session tool differs from it). Check the printed `provider:` matches before spawning. Pass that id via the spawn tool's model parameter — pasting the id into brief text is not passing it. Do not substitute a cheaper model, a stronger model, the parent model, or a fast mode. A fast mode is allowed only when the user explicitly requested it in this request (`--allow-fast`). If the tool cannot override the model, do not pick another; say the cell was not applied.
+- Fan out in waves of at most 6. On a capacity or contract rejection, queue the wave and wait with backoff; do not retry in a tight loop.
 - Background agents free you to continue; foreground ones block. Use background for long read-only work you do not need right now.
 - More agents is not better. Two or three well-briefed ones usually beat eight.
