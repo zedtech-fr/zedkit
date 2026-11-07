@@ -78,7 +78,7 @@ function FieldGroup({ legend, className, children }: { legend: string; className
   return (
     <fieldset className={cn("trim-margin content-shrink border-0 flush", className)}>
       <legend className="mb-3 font-semibold text-foreground">{legend}</legend>
-      <Stack className="grid content-shrink gap-stack-lg sm:grid-cols-2">{children}</Stack>
+      <Stack className="grid content-shrink gap-stack-lg sm:grid-pair">{children}</Stack>
     </fieldset>
   );
 }

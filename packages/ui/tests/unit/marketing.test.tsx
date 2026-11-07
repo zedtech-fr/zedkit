@@ -494,7 +494,7 @@ describe("Pricing", () => {
     expect(container.querySelectorAll("[data-slot='pricing-action']")).toHaveLength(2);
     expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-3");
     rerender(<Pricing title="T" plans={plans.slice(0, 2)} />);
-    expect(container.querySelector("ul")?.className).toContain("sm:grid-cols-2");
+    expect(container.querySelector("ul")?.className).toContain("sm:grid-pair");
     expect(container.querySelector("ul")?.className).not.toContain("lg:grid-cols-3");
     rerender(<Pricing title="T" plans={plans.slice(0, 1)} />);
     expect(container.querySelector("ul")?.className).not.toContain("grid-cols");

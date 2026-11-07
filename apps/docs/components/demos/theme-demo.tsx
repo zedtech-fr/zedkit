@@ -37,7 +37,7 @@ function WeeklyCard({ scope, label }: { scope?: "dark"; label: string }) {
 /** The page theme next to a `dark` scope, from the one stylesheet import (both read the same tokens). */
 export function ThemeDemo() {
   return (
-    <Stack className="grid content-shrink gap-stack-md sm:grid-cols-2">
+    <Stack className="grid content-shrink gap-stack-md sm:grid-pair">
       <WeeklyCard label={themeCopy.page} />
       <WeeklyCard label={themeCopy.darkScope} scope="dark" />
     </Stack>

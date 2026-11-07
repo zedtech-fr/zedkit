@@ -111,7 +111,7 @@ export function IdentityScopeDemo() {
       <Text variant="muted" className="text-xs">
         {identityCopy.scope.note}
       </Text>
-      <Stack className="content-shrink gap-stack-md sm:grid sm:grid-cols-2 xl:grid-cols-3">
+      <Stack className="content-shrink gap-stack-md sm:grid sm:grid-pair xl:grid-cols-3">
         {SCOPED_LOOKS.map((look) => (
           <ScopedCard key={look.id} look={look} />
         ))}
