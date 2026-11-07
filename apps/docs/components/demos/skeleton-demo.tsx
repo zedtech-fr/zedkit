@@ -5,7 +5,7 @@ export function SkeletonDemo() {
     <Stack gap={2}>
       <Skeleton className="h-skeleton-line w-24" />
       <Skeleton className="h-skeleton-line w-full" />
-      <Skeleton className="h-skeleton-line w-2/3" />
+      <Skeleton className="h-skeleton-line w-skeleton-short" />
     </Stack>
   );
 }

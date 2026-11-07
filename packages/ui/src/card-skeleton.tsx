@@ -25,7 +25,7 @@ export function CardSkeleton({ label, className }: CardSkeletonProps) {
     >
       <div className="space-y-card-stack">
         <Skeleton className="h-5 w-1/3" />
-        <Skeleton className="h-skeleton-line w-2/3" />
+        <Skeleton className="h-skeleton-line w-skeleton-short" />
       </div>
       <div className="mt-card-section space-y-card-lines">
         <Skeleton className="h-skeleton-line w-full" />

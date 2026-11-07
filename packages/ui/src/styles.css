@@ -817,6 +817,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-stack-lg {
   gap: var(--zk-gap-lg);
 }
+/* Title, description, and actions in one column. */
+@utility gap-prose {
+  gap: calc(var(--spacing) * 5);
+}
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
 }
@@ -884,6 +888,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility h-skeleton-line {
   height: calc(var(--spacing) * 4);
+}
+@utility w-skeleton-short {
+  width: 66.666667%;
 }
 @utility h-logo {
   height: calc(var(--spacing) * 6);

@@ -35,7 +35,7 @@ export function DataTableSkeleton({
           <TableRow>
             {Array.from({ length: columns }, (_, index) => (
               <TableHead key={index}>
-                <Skeleton className="h-skeleton-line w-2/3" />
+                <Skeleton className="h-skeleton-line w-skeleton-short" />
               </TableHead>
             ))}
           </TableRow>
