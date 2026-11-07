@@ -32,8 +32,14 @@ Go deep, be strict, and be brutally honest.
    (`.scratch/<slug>/issues/`, open issues/PRs) so retained work extends
    them instead of generating an overlapping second plan. Name blocking
    edges between tasks.
-4. **Draft the plan.** Implementation tasks go through `to-tickets`
-   (vertical slices, blocking edges, what / problem / fix / if-skipped).
+4. **Draft the plan.** For implementation tasks, borrow the slicing and
+   ticket shape from `to-tickets` (vertical slices, blocking edges,
+   what / problem / fix / if-skipped) — drafting or reusing tasks only.
+   Its quiz-for-approval and publish steps are not automatic here: skip
+   the quiz when a breakdown is already approved or implementation is
+   already authorized, and carry that approval through instead of
+   re-asking; publish tickets only when the user asked for tickets, not
+   when they asked only for a plan. State the destination you used.
    Keep three kinds distinct — never dress one as another:
    - **Implementation task** — outcome, affected area, acceptance
      criteria, and the verification that proves it.
