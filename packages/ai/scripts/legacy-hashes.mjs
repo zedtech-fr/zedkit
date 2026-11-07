@@ -9,13 +9,13 @@
 //   pnpm --filter @zedtech/zedkit-ai build && node scripts/legacy-hashes.mjs
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { tryCatch } from "@zedtech/zedkit-core";
 import { resolveConditionals } from "../dist/conditional.js";
-import { legacyHashMergeIssues, mergeLegacyHashMaps } from "../dist/legacy.js";
+import { legacyHashMergeIssues, mergeLegacyHashMaps, readLegacyHashFile } from "../dist/legacy.js";
 import { agentsForPreset, commandsForPreset, kitUniverse, readManifest } from "../dist/kit.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -65,16 +65,12 @@ for (const kind of ["agents", "commands"]) {
   }
 }
 const hashesPath = join(kit, "legacy-hashes.json");
-const priorRead = existsSync(hashesPath)
-  ? tryCatch(() => JSON.parse(readFileSync(hashesPath, "utf8")))
-  : { ok: false };
-const prior =
-  priorRead.ok && priorRead.value
-    ? {
-        agents: priorRead.value.agents ?? {},
-        commands: priorRead.value.commands ?? {},
-      }
-    : { agents: {}, commands: {} };
+const snapshot = readLegacyHashFile(hashesPath);
+if (snapshot.status === "invalid") {
+  console.error(`legacy-hashes.json: ${snapshot.detail}; fix the file before regenerating`);
+  process.exit(1);
+}
+const prior = snapshot.status === "ok" ? snapshot.map : { agents: {}, commands: {} };
 const merged = mergeLegacyHashMaps(prior, computed);
 const issues = legacyHashMergeIssues(prior, merged);
 if (issues.length > 0) {

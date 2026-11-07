@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
+import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
 import { componentPageSections } from "../lib/component-page-sections.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import { readAgentOnboardingMarkdown, writeAiSetupPublicAssets } from "../lib/ai-setup-onboarding.mjs";
@@ -573,6 +574,8 @@ export function generate(outDir) {
   writeFileSync(join(publicDir, "llms.txt"), `${llms.join("\n")}\n`);
   const llmsBody = llms.join("\n");
   const installOrCopyBody = [
+    LLMS_FULL_SCOPE_LINE,
+    "",
     "Two paths into the UI kit:",
     "",
     "- npm: pnpm add @zedtech/zedkit-ui — versioned package and styles.css",

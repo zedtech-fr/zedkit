@@ -6,6 +6,8 @@ import {
   checkHtmlRegistryLinks,
   checkLlms,
   checkLlmsFull,
+  LLMS_FULL_SCOPE_LINE,
+  llmsFullDocumentationIndexBody,
   checkMeta,
   checkNotFound,
   checkRobots,
@@ -53,6 +55,13 @@ test("checkSitemap is silent for three on-site URLs without lastmod", () => {
   assert.equal(checkSitemap(xml, base).urlCount, 3);
 });
 
+test("checkSitemap rejects an impossible calendar date in lastmod", () => {
+  const xml = [`<url><loc>${base}/</loc><lastmod>2026-99-99</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(xml, base).errors, [
+    `sitemap.xml: invalid lastmod "2026-99-99" for ${base}/`,
+  ]);
+});
+
 test("checkSitemap accepts a valid lastmod and rejects a bogus value", () => {
   const ok = [`<url><loc>${base}/</loc><lastmod>2026-11-07</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
   assert.deepEqual(checkSitemap(ok, base).errors, []);
@@ -92,11 +101,38 @@ test("checkLlms accepts the generated header and rejects anything else", () => {
 });
 
 test("checkLlmsFull accepts buildLlmsFull sections", () => {
-  const body =
-    "# Install or copy\n\nnpm\n\n# Set up zedkit AI\n\nsteps\n\n# Documentation index\n\n- [Home](https://zedkit.app/)\n";
+  const body = [
+    "# Install or copy",
+    "",
+    LLMS_FULL_SCOPE_LINE,
+    "",
+    "npm",
+    "",
+    "# Set up zedkit AI",
+    "",
+    "steps",
+    "",
+    "# Documentation index",
+    "",
+    "- [Home](https://zedkit.app/)",
+    "",
+    "# Other",
+    "",
+    "- [Elsewhere](https://zedkit.app/catalog)",
+  ].join("\n");
   assert.deepEqual(checkLlmsFull(body), []);
+  assert.match(llmsFullDocumentationIndexBody(body) ?? "", /^- \[/m);
+  assert.deepEqual(
+    checkLlmsFull(
+      ["# Install or copy", "", LLMS_FULL_SCOPE_LINE, "", "# Set up zedkit AI", "", "x", "", "# Documentation index", "", "(empty)", "", "# Other", "", "- [Elsewhere](https://zedkit.app/catalog)"].join(
+        "\n",
+      ),
+    ),
+    ["llms-full.txt: documentation index section must list markdown links"],
+  );
   assert.deepEqual(checkLlmsFull("# other"), [
     "llms-full.txt: expected # Install or copy header",
+    "llms-full.txt: missing scope statement for agents",
     "llms-full.txt: missing # Documentation index section",
     "llms-full.txt: missing # Set up zedkit AI section",
   ]);

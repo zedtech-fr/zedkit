@@ -1,13 +1,38 @@
 // Original work by the same author.
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tryCatch } from "@zedtech/zedkit-core";
 import { kitDir } from "./kit.js";
 
 export type LegacyHashMap = { agents: Record<string, string[]>; commands: Record<string, string[]> };
 
+export type LegacyHashFileSnapshot =
+  | { status: "missing" }
+  | { status: "invalid"; detail: string }
+  | { status: "ok"; map: LegacyHashMap };
+
 type Hashes = LegacyHashMap;
+
+function normalizeLegacyHashMap(value: unknown): LegacyHashMap | null {
+  if (typeof value !== "object" || value === null) return null;
+  const record = value as Partial<LegacyHashMap>;
+  if (record.agents !== undefined && typeof record.agents !== "object") return null;
+  if (record.commands !== undefined && typeof record.commands !== "object") return null;
+  return { agents: record.agents ?? {}, commands: record.commands ?? {} };
+}
+
+/** Read `kit/legacy-hashes.json` without treating a broken file as an empty prior. */
+export function readLegacyHashFile(filePath: string): LegacyHashFileSnapshot {
+  if (!existsSync(filePath)) return { status: "missing" };
+  const raw = tryCatch(() => readFileSync(filePath, "utf8"));
+  if (!raw.ok) return { status: "invalid", detail: raw.error.message };
+  const parsed = tryCatch(() => JSON.parse(raw.value));
+  if (!parsed.ok) return { status: "invalid", detail: "invalid JSON" };
+  const map = normalizeLegacyHashMap(parsed.value);
+  if (!map) return { status: "invalid", detail: "expected an object with agents/commands" };
+  return { status: "ok", map };
+}
 
 let cached: Hashes | undefined;
 

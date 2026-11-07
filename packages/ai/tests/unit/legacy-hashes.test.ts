@@ -1,5 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { legacyHashMergeIssues, mergeLegacyHashMaps, type LegacyHashMap } from "#legacy.js";
+import {
+  legacyHashMergeIssues,
+  mergeLegacyHashMaps,
+  readLegacyHashFile,
+  type LegacyHashMap,
+} from "#legacy.js";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tempDir } from "./helpers.js";
+
+describe("legacy hash file read", () => {
+  it("does not treat invalid JSON as an empty prior", () => {
+    const dir = tempDir();
+    const path = join(dir, "legacy-hashes.json");
+    writeFileSync(path, '{"agents":{}}\n');
+    expect(readLegacyHashFile(path)).toMatchObject({ status: "ok" });
+    writeFileSync(path, "not json");
+    expect(readLegacyHashFile(path).status).toBe("invalid");
+  });
+});
 
 describe("legacy hash regeneration", () => {
   const prior: LegacyHashMap = {

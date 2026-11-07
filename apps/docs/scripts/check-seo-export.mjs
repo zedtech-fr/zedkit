@@ -18,6 +18,27 @@ const REGISTRY_JSON_URL = /\/r\/([a-z][a-z0-9-]*)\.json/g;
 const LASTMOD_PATTERN =
   /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?)?$/;
 
+/** Scope line agents read in generated llms-full.txt (must match docs generate). */
+export const LLMS_FULL_SCOPE_LINE =
+  "Scope: install paths, zedkit AI setup, and a documentation index with links — not the full text of every docs page.";
+
+function isPlausibleLastmod(value) {
+  if (!LASTMOD_PATTERN.test(value)) return false;
+  const [year, month, day] = value.slice(0, 10).split("-").map((part) => Number(part));
+  if (month < 1 || month > 12 || day < 1) return false;
+  const maxDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return day <= maxDay;
+}
+
+export function llmsFullDocumentationIndexBody(text) {
+  const marker = "# Documentation index";
+  const start = text.indexOf(marker);
+  if (start === -1) return null;
+  const after = text.slice(start + marker.length);
+  const next = after.search(/\n# /);
+  return (next === -1 ? after : after.slice(0, next)).trim();
+}
+
 export function checkRobots(text, base) {
   const errors = [];
   if (!text.includes(`Sitemap: ${base}/sitemap.xml`)) {
@@ -46,7 +67,7 @@ export function checkSitemap(text, base) {
       continue;
     }
     const value = lastmods[0];
-    if (!LASTMOD_PATTERN.test(value)) {
+    if (!isPlausibleLastmod(value)) {
       errors.push(`sitemap.xml: invalid lastmod "${value}" for ${locMatch?.[1] ?? "url"}`);
     }
   }
@@ -80,11 +101,16 @@ export function checkLlmsFull(text) {
   if (!text.startsWith("# Install or copy")) {
     errors.push("llms-full.txt: expected # Install or copy header");
   }
-  if (text.includes("# Documentation index") && !text.includes("- [")) {
-    errors.push("llms-full.txt: documentation index must list links (not full page bodies)");
+  if (!text.includes(LLMS_FULL_SCOPE_LINE)) {
+    errors.push("llms-full.txt: missing scope statement for agents");
   }
   if (!text.includes("# Documentation index")) {
     errors.push("llms-full.txt: missing # Documentation index section");
+  } else {
+    const indexBody = llmsFullDocumentationIndexBody(text);
+    if (indexBody !== null && !/^- \[/m.test(indexBody)) {
+      errors.push("llms-full.txt: documentation index section must list markdown links");
+    }
   }
   if (!text.includes("# Set up zedkit AI")) {
     errors.push("llms-full.txt: missing # Set up zedkit AI section");
