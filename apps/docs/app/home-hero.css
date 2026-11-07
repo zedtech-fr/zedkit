@@ -35,6 +35,12 @@
  * `gap-*`, so fixed marks are pinned here), and the position of each item in the build sequence. The sequence is
  * written as data (`data-beat`, `:nth-child`) instead of inline styles.
  */
+@media (min-width: 40rem) {
+  [data-hero-team-split] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  }
+}
+
 #home-page [data-hero-page="settings"] [data-hero-block][data-beat="1"] {
   max-width: 28rem;
 }
