@@ -142,7 +142,7 @@ function SaasTeamCard({
             </li>
           ))}
         </ul>
-        <Text variant="muted" role="status" className="mt-3 min-h-status">
+        <Text variant="muted" role="status" className="mt-status min-h-status">
           {status}
         </Text>
       </CardContent>

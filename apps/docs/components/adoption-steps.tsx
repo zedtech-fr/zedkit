@@ -180,7 +180,7 @@ export function ModeView({
   const firstCommandStep = mode.steps.findIndex((step) => step.blocks.some((block) => block.kind === "command"));
   return (
     <Stack gap={6} data-adoption-mode={mode.id}>
-      <dl className={cn("trim-margin grid gap-x-6 gap-y-stack-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline", summaryClassName)}>
+      <dl className={cn("trim-margin grid gap-x-meta gap-y-stack-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline", summaryClassName)}>
         <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youGet}</dt>
         <dd className="trim-margin content-shrink">{adoptionCopy.gives[mode.gives]}</dd>
         <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youNeed}</dt>

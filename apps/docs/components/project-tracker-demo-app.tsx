@@ -120,7 +120,7 @@ function Avatar({ initials, className }: { initials: string; className?: string 
       as="span"
       aria-hidden="true"
       className={cn(
-        "flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground",
+        "flex size-person shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground",
         className,
       )}
     >
