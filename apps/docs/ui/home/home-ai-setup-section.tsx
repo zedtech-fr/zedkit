@@ -86,7 +86,7 @@ export function HomeAiSetupSection() {
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
-        <Stack gap={3} className="max-w-3xl">
+        <Stack gap={3} data-setup-prompt="">
           <SecretField
             multiline
             value={AI_SETUP_MINI_PROMPT}
