@@ -47,7 +47,7 @@ const twMerge = extendTailwindMerge({
       ],
       h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator"],
       size: [{ size: ["icon"] }, "size-icon-sm", "size-checkbox", "size-status-label-box", "size-status-dot"],
-      py: ["flush-block", "py-control-block", "py-control-block-lg", "py-alert-block", "py-detail-panel-block", "py-select-item-block", "py-section-sm", "py-section-md", "py-section-lg", "py-section-xl", "empty-state-block"],
+      py: ["flush-block", "py-control-block", "py-control-block-lg", "py-alert-block", "py-detail-panel-block", "py-select-item-block", "py-table-cell", "py-section-sm", "py-section-md", "py-section-lg", "py-section-xl", "empty-state-block"],
       p: ["flush", "p-drawer-chrome-padding", "p-app-shell-padding", "p-table-cell", "p-option-card-padding", "p-field-label-inset", "p-select-separator", "surface-pad-sm", "surface-pad-md", "glass-pad-sm", "glass-pad-md", "glass-pad-lg"],
       px: ["px-page-gutter", "px-field-pad", "px-button-pad", "px-button-pad-lg", "px-button-inline-sm", "px-alert-inline", "px-detail-panel-inline", "px-drawer-chrome-padding", "px-table-cell", "px-select-item-inline", "px-tabs-trigger-inline", "px-field-separator-inline", "px-control-inline"],
       pl: ["pl-select-item-inline", "pl-control-inline"],
