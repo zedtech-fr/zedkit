@@ -69,12 +69,12 @@ function DemoStyleScope({ children }: { children: ReactNode }) {
   const demo = usePinnedLook();
   const { resolvedTheme } = useTheme();
   return (
-    <Stack gap={2} className="min-w-0">
+    <Stack gap={2} className="content-shrink">
       <DemoStyleSelect look={demo.look} pinned={demo.pinned} onPin={demo.pin} />
       <ThemeScope
         identity={demo.look}
         mode={resolvedTheme === "dark" ? "dark" : "light"}
-        className="min-w-0"
+        className="content-shrink"
         data-demo-specimen=""
       >
         {children}

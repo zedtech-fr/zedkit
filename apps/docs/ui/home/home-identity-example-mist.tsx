@@ -96,10 +96,10 @@ export function HomeIdentityExampleMist() {
   const [deleted, setDeleted] = useState(false);
 
   return (
-    <Card className="min-w-0">
+    <Card className="content-shrink">
       <CardHeader>
         <Stack direction="horizontal" gap={2} className="items-start justify-between">
-          <Stack gap={1} className="min-w-0">
+          <Stack gap={1} className="content-shrink">
             <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
               {copy.heading}
             </Heading>
@@ -109,7 +109,7 @@ export function HomeIdentityExampleMist() {
         </Stack>
       </CardHeader>
       <CardContent>
-        <Stack gap={4} className="min-w-0">
+        <Stack gap={4} className="content-shrink">
           <HomeIdentityExampleMistControls
             workspaceId={workspaceId}
             regionId={regionId}

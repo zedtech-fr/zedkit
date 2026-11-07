@@ -56,16 +56,16 @@ export function HeroSettingsPage() {
   const digestId = useId();
   const { draft, saved, edit, save } = useDraft();
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <Stack gap={4} className="max-w-md min-w-0" data-hero-block="" data-beat={1}>
+      <Stack gap={4} className="max-w-md content-shrink" data-hero-block="" data-beat={1}>
         <Stack gap={1}>
           <Label htmlFor={nameId}>{copy.workspace}</Label>
           <Input id={nameId} value={draft.name} onChange={(event) => edit({ name: event.target.value })} />
         </Stack>
         <RegionField id={regionId} value={draft.region} onChange={(region) => edit({ region })} />
         <Stack direction="horizontal" gap={3} className="items-center justify-between">
-          <Stack gap={1} className="min-w-0">
+          <Stack gap={1} className="content-shrink">
             <Label htmlFor={digestId}>{copy.digest}</Label>
             <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
               {copy.digestHelp}

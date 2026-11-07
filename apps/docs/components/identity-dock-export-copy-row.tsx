@@ -73,12 +73,12 @@ export function IdentityDockExportCopyRow({
   );
 
   return (
-    <Stack gap={1} className="min-w-0" data-slot="identity-dock-export-row">
+    <Stack gap={1} className="content-shrink" data-slot="identity-dock-export-row">
       <Text typeRole="label" className="text-xs text-muted-foreground">
         {label}
       </Text>
-      <Stack gap={2} className="min-w-0 sm:flex-row sm:items-start">
-        <pre className="min-w-0 flex-1 overflow-x-auto rounded-md border border-border bg-muted/30 px-2 py-1.5 font-mono text-xs break-words whitespace-pre-wrap">
+      <Stack gap={2} className="content-shrink sm:flex-row sm:items-start">
+        <pre className="content-shrink flex-1 overflow-x-auto rounded-md border border-border bg-muted/30 px-2 py-1.5 font-mono text-xs break-words whitespace-pre-wrap">
           {value}
         </pre>
         {blocked && blockedTitle && blockedDescription && confirmLabel ? (

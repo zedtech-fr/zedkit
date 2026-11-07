@@ -28,9 +28,9 @@ function Agenda({ rows, day }: { rows: TaskRow[]; day: Date | undefined }) {
           {copy.nothingDue}
         </Text>
       ) : (
-        <ul className="m-0 flex list-none flex-col gap-2 p-0">
+        <ul className="trim-margin flex list-none flex-col gap-2 flush">
           {agenda.map((row) => (
-            <li key={row.id} className="flex min-w-0 flex-col gap-1 rounded-lg border border-border p-3">
+            <li key={row.id} className="flex content-shrink flex-col gap-1 rounded-lg border border-border p-3">
               <span className="text-sm font-medium">{row.title}</span>
               <span className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Badge variant={STATUS_VARIANT[row.status]}>{row.status}</Badge>
@@ -54,9 +54,9 @@ export function HeroCalendarPage({
   onDay: (day: Date | undefined) => void;
 }) {
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <div className="flex min-w-0 flex-wrap items-start gap-4" data-hero-calendar="">
+      <div className="flex content-shrink flex-wrap items-start gap-4" data-hero-calendar="">
         <div data-hero-block="" data-beat={1}>
           <Calendar
             mode="single"

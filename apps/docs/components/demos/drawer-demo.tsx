@@ -40,8 +40,8 @@ export function DrawerDemo() {
   return (
     <>
       <Toaster />
-      <Stack gap={3} className="min-w-0 items-start">
-        <Stack gap={1} className="min-w-0">
+      <Stack gap={3} className="content-shrink items-start">
+        <Stack gap={1} className="content-shrink">
           <Text variant="muted" id="drawer-direction-label" className="text-xs font-medium">
             {drawerCopy.demo.directionLabel}
           </Text>
@@ -77,7 +77,7 @@ export function DrawerDemo() {
             <DrawerHandle />
             <DrawerHeader>
               <Stack direction="horizontal" gap={2} className="items-start justify-between">
-                <Stack gap={1} className="min-w-0 flex-1 text-left">
+                <Stack gap={1} className="content-shrink flex-1 text-left">
                   <DrawerTitle>{drawerCopy.demo.title}</DrawerTitle>
                   <DrawerDescription>{drawerCopy.demo.description(edgeLabel)}</DrawerDescription>
                 </Stack>

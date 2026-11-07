@@ -3,7 +3,7 @@ import { inputCopy } from "@/components/demos/i18n/input-copy";
 
 export function InputDemo() {
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <Stack gap={2}>
         <Label htmlFor="demo-name">{inputCopy.name}</Label>
         <Input id="demo-name" autoComplete="name" defaultValue={inputCopy.nameValue} />

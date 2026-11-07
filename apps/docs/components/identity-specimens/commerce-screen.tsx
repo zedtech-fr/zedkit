@@ -34,14 +34,14 @@ export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
         <Badge variant="success" className="whitespace-nowrap">
           {copy.badge}
         </Badge>
-        <Text typeRole="small" className="m-0 text-muted-foreground">
+        <Text typeRole="small" className="trim-margin text-muted-foreground">
           {copy.detail}
         </Text>
       </Stack>
       <Button size="sm" tabIndex={-1} className="w-full">
         {copy.primary}
       </Button>
-      <Text typeRole="small" className="m-0 text-muted-foreground">
+      <Text typeRole="small" className="trim-margin text-muted-foreground">
         {copy.reassurance}
       </Text>
     </Stack>

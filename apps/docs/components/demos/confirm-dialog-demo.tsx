@@ -7,7 +7,7 @@ import { confirmDialogCopy } from "@/components/demos/i18n/confirm-dialog-copy";
 export function ConfirmDialogDemo() {
   const [deleted, setDeleted] = React.useState(false);
   return (
-    <Stack gap={3} className="min-w-0 items-start">
+    <Stack gap={3} className="content-shrink items-start">
       <Stack direction="horizontal" gap={2} className="items-center">
         <Text className="font-medium">{confirmDialogCopy.demo.projectName}</Text>
         <Badge variant={deleted ? "secondary" : "outline"}>{deleted ? confirmDialogCopy.demo.deleted : confirmDialogCopy.demo.active}</Badge>

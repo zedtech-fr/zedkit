@@ -13,7 +13,7 @@ function FamilyExampleLinks({ examples }: { examples: readonly { label: string; 
   return (
     <Stack direction="horizontal" gap={2} className="flex-wrap">
       {examples.map((item) => (
-        <Button key={item.href} asChild variant="outline" size="sm" className="min-h-11 px-2 text-sm md:min-h-0 md:px-3">
+        <Button key={item.href} asChild variant="outline" size="sm" className="min-h-11 px-2 text-sm md:pane-shrink md:px-3">
           <HomeLink href={item.href}>{item.label}</HomeLink>
         </Button>
       ))}
@@ -39,14 +39,14 @@ export function HomeComponentFamiliesSection({
       {...HOME_SECTION_REVEAL_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} data-home-component-families="">
-        <Stack className="min-w-0 divide-y divide-border border-y border-border">
+        <Stack className="content-shrink divide-y divide-border border-y border-border">
           {homeCopy.componentFamilies.families.map((family) => (
             <Stack
               key={family.label}
               gap={2}
               className="py-4 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-8 md:py-6"
             >
-              <Stack gap={1} className="min-w-0">
+              <Stack gap={1} className="content-shrink">
                 <Heading level={3} typeRole="heading" data-family-title="">
                   {family.label}
                 </Heading>

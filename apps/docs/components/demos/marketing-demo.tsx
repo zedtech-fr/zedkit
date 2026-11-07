@@ -19,16 +19,16 @@ import { marketingCopy } from "@/components/demos/i18n/marketing-copy";
 export function GlassSurfaceDemo() {
   const { plain, raised, tinted } = marketingCopy.surface;
   return (
-    <Stack direction="horizontal" gap={4} className="min-w-0 flex-wrap items-stretch">
-      <GlassSurface className="min-w-0 flex-1 basis-48">
+    <Stack direction="horizontal" gap={4} className="content-shrink flex-wrap items-stretch">
+      <GlassSurface className="content-shrink flex-1 basis-48">
         <Heading level={3}>{plain.title}</Heading>
         <Text variant="muted">{plain.body}</Text>
       </GlassSurface>
-      <GlassSurface tone="raised" className="min-w-0 flex-1 basis-48">
+      <GlassSurface tone="raised" className="content-shrink flex-1 basis-48">
         <Heading level={3}>{raised.title}</Heading>
         <Text variant="muted">{raised.body}</Text>
       </GlassSurface>
-      <GlassSurface tone="tinted" className="min-w-0 flex-1 basis-48">
+      <GlassSurface tone="tinted" className="content-shrink flex-1 basis-48">
         <Heading level={3}>{tinted.title}</Heading>
         <Text variant="muted">{tinted.body}</Text>
       </GlassSurface>
@@ -74,7 +74,7 @@ export function HowItWorksDemo() {
 export function MarketingChromeDemo() {
   const { chrome } = marketingCopy;
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap={4} className="content-shrink">
       <MarketingHeader
         sticky={false}
         brand={

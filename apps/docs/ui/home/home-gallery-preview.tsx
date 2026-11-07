@@ -79,7 +79,7 @@ export function HomeButtonPreview() {
 export function HomeInputPreview() {
   return (
     <Shell>
-      <Stack gap={2} className="min-w-0">
+      <Stack gap={2} className="content-shrink">
         <Label htmlFor="home-gallery-email">{g.input.label}</Label>
         <Input id="home-gallery-email" type="email" autoComplete="email" placeholder={g.input.placeholder} />
       </Stack>
@@ -138,7 +138,7 @@ export function HomeConfirmDialogPreview() {
 export function HomeThemePreview() {
   return (
     <Shell>
-      <Card className="min-w-0 shadow-none">
+      <Card className="content-shrink shadow-none">
         <CardHeader className="gap-1 p-3 pb-0">
           <CardDescription>{g.themeCard.description}</CardDescription>
           <CardTitle className="text-lg">{g.themeCard.title}</CardTitle>

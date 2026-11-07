@@ -27,13 +27,13 @@ type NavProps = { page: HeroPageId; onPage: (id: HeroPageId) => void };
  */
 export function HeroShell({ sidebar, topbar, children }: { sidebar: React.ReactNode; topbar: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div data-hero-shell="" className="flex w-full min-w-0">
+    <div data-hero-shell="" className="flex w-full content-shrink">
       <div data-hero-sidebar="" className="flex w-app-shell-sidebar shrink-0 flex-col border-r bg-muted/40 max-md:hidden">
         {sidebar}
       </div>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="flex pane-shrink content-shrink flex-1 flex-col">
         <div className="border-b bg-background/95">{topbar}</div>
-        <div data-hero-main="" className="min-h-0 flex-1">
+        <div data-hero-main="" className="pane-shrink flex-1">
           {children}
         </div>
       </div>
@@ -113,7 +113,7 @@ export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentTog
   return (
     <Stack gap={1}>
       <Stack direction="horizontal" gap={2} className="min-h-12 items-center justify-between px-4">
-        <Text as="span" className="min-w-0 truncate text-sm" data-hero-crumb="">
+        <Text as="span" className="content-shrink truncate text-sm" data-hero-crumb="">
           <Text as="span" variant="muted" className="text-sm max-md:hidden">
             {projectTrackerDemoCopy.brand} /{" "}
           </Text>

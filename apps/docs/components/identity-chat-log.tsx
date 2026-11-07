@@ -50,7 +50,7 @@ export function ChatLog({
     end.current?.scrollIntoView({ block: "nearest" });
   }, [messages.length, pending]);
   return (
-    <ol aria-label={copy.thread} className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-log="">
+    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-2 flush" data-assistant-log="">
       {messages.map((message, index) => {
         const user = message.role === "user";
         const text = message.role === "notice" ? noticeText(message.notice) : message.text;

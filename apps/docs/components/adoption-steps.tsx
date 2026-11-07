@@ -75,7 +75,7 @@ function RenderedExample({ children }: { children: ReactNode }) {
 
 function CompanionFiles({ count, children }: { count: number; children: ReactNode }) {
   return (
-    <details className="group min-w-0 rounded-lg border border-border">
+    <details className="group content-shrink rounded-lg border border-border">
       <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-3 text-sm font-medium focus-ring">
         {adoptionCopy.companions(count)}
         <Text as="span" className="font-normal text-muted-foreground">
@@ -140,11 +140,11 @@ function Step({
 }) {
   const words = adoptionCopy.step(step.id, step.params ?? {}, mode.id);
   return (
-    <li className="grid min-w-0 grid-cols-[1.75rem_minmax(0,1fr)] gap-x-2" data-adoption-step={step.id}>
+    <li className="grid content-shrink grid-cols-[1.75rem_minmax(0,1fr)] gap-x-2" data-adoption-step={step.id}>
       <Text as="span" aria-hidden className="pt-0.5 font-mono text-sm text-muted-foreground">
         {index + 1}
       </Text>
-      <Stack gap={3} className="min-w-0">
+      <Stack gap={3} className="content-shrink">
         <Stack gap={1}>
           <Heading level={4} as="h3" className="text-base">
             {words.title}
@@ -180,19 +180,19 @@ export function ModeView({
   const firstCommandStep = mode.steps.findIndex((step) => step.blocks.some((block) => block.kind === "command"));
   return (
     <Stack gap={6} data-adoption-mode={mode.id}>
-      <dl className={cn("m-0 grid gap-x-6 gap-y-2 text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline", summaryClassName)}>
-        <dt className="m-0 font-normal text-foreground">{adoptionCopy.youGet}</dt>
-        <dd className="m-0 min-w-0">{adoptionCopy.gives[mode.gives]}</dd>
-        <dt className="m-0 font-normal text-foreground">{adoptionCopy.youNeed}</dt>
-        <dd className="m-0 min-w-0">
-          <ul className="m-0 list-none space-y-1 p-0">
+      <dl className={cn("trim-margin grid gap-x-6 gap-y-2 text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline", summaryClassName)}>
+        <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youGet}</dt>
+        <dd className="trim-margin content-shrink">{adoptionCopy.gives[mode.gives]}</dd>
+        <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youNeed}</dt>
+        <dd className="trim-margin content-shrink">
+          <ul className="trim-margin list-none space-y-1 flush">
             {mode.requires.map((need) => (
               <li key={need}>{adoptionCopy.requires[need]}</li>
             ))}
           </ul>
         </dd>
       </dl>
-      <ol className="m-0 flex list-none flex-col gap-6 p-0">
+      <ol className="trim-margin flex list-none flex-col gap-6 flush">
         {mode.steps.map((step, index) => (
           <Step
             key={step.id}

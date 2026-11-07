@@ -45,7 +45,7 @@ function MemberPanel({ member, onSaveRole }: { member: Member; onSaveRole: (role
   return (
     <>
       <DrawerBody>
-        <Stack gap={4} className="min-w-0">
+        <Stack gap={4} className="content-shrink">
           <div aria-label={drawer.detailsAriaLabel} role="group">
             <DetailPanel
               items={[

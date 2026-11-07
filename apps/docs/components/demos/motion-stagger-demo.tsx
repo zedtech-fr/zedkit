@@ -7,7 +7,7 @@ import { motionCopy } from "@/components/demos/i18n/motion-copy";
 export function MotionStaggerDemo() {
   const [run, setRun] = useState(0);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap={3} className="content-shrink">
       <Stack key={run} gap={2} data-stagger="in">
         {motionCopy.tasks.map((task) => (
           <Text key={task}>{task}</Text>

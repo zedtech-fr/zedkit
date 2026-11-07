@@ -5,7 +5,7 @@ const JOBS = badgeCopy.tableRow.jobs;
 
 export function BadgeTableRowDemo() {
   return (
-    <table className="w-full min-w-0 text-left text-sm">
+    <table className="w-full content-shrink text-left text-sm">
       <caption className="sr-only">{badgeCopy.tableRow.caption}</caption>
       <thead>
         <tr className="border-b text-muted-foreground">

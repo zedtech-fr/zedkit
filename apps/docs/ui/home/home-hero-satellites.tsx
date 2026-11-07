@@ -33,7 +33,7 @@ export function HomeHeroSatellites() {
           <span data-hero-avatar="" className="flex shrink-0 items-center justify-center rounded-full bg-success text-success-foreground">
             <Check className="size-4" aria-hidden />
           </span>
-          <span className="flex min-w-0 flex-col">
+          <span className="flex content-shrink flex-col">
             <Text className="truncate text-sm font-medium">{copy.mergedTitle}</Text>
             <Text variant="muted" className="truncate text-xs">
               {copy.mergedBody}

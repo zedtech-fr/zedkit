@@ -21,7 +21,7 @@ export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
         <Heading level={3} typeRole="section" className="text-balance">
           {copy.headline}
         </Heading>
-        <Text typeRole="body" className="m-0 text-muted-foreground">
+        <Text typeRole="body" className="trim-margin text-muted-foreground">
           {copy.standfirst}
         </Text>
         <Text as="span" typeRole="small" className="text-muted-foreground">
@@ -32,7 +32,7 @@ export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.moreLabel}
         </Text>
-        <ul className="m-0 flex list-none flex-col p-0">
+        <ul className="trim-margin flex list-none flex-col flush">
           {copy.more.map((item) => (
             <li key={item.headline} className="flex items-baseline justify-between gap-3 py-1">
               <Text as="span" typeRole="small" className="font-medium">
