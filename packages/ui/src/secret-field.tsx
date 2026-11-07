@@ -61,7 +61,7 @@ function SecretField({ id, value, copyLabel, multiline = false, "aria-label": ar
   return (
     <div
       data-slot="secret-field"
-      className={multiline ? "flex w-full items-start gap-2" : "flex w-full items-center gap-2"}
+      className={multiline ? "flex w-full items-start gap-secret-field-gap" : "flex w-full items-center gap-secret-field-gap"}
     >
       {multiline ? (
         <Textarea

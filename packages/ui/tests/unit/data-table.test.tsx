@@ -30,12 +30,12 @@ describe("DataTable", () => {
   it("uses token-driven cell padding with no value arbitraries", () => {
     const { container } = render(<DataTable columns={columns} data={data} />);
     const head = container.querySelector("th");
-    expect(head?.className).toContain("px-2");
-    expect(head?.className).not.toContain("px-table-cell");
+    expect(head?.className).toContain("px-table-cell");
+    expect(head?.className).not.toContain("px-2");
     expect(head?.className).toContain("h-table-head-height");
     const cell = container.querySelector("td");
-    expect(cell?.className).toContain("p-2");
-    expect(cell?.className).not.toContain("p-table-cell");
+    expect(cell?.className).toContain("p-table-cell");
+    expect(cell?.className).not.toContain("p-2");
     for (const el of [head, cell]) {
       assertNoValueArbitraries(el?.className ?? "");
     }
@@ -44,8 +44,8 @@ describe("DataTable", () => {
   it("styles chrome (filter, sort, loading, pagination) from design tokens", () => {
     const { container } = render(<DataTable columns={columns} data={data} pageSize={1} />);
     const root = container.firstElementChild;
-    expect(root?.classList.contains("space-y-4")).toBe(true);
-    expect(root?.className).not.toContain("space-y-data-table-stack");
+    expect(root?.classList.contains("space-y-data-table-stack")).toBe(true);
+    expect(root?.className).not.toContain("space-y-4");
     const filter = container.querySelector("input");
     expect(filter?.classList.contains("max-w-data-table-filter-width")).toBe(true);
     expect(filter?.className).not.toMatch(/(^|\s)max-w-sm(\s|$)/);
@@ -54,8 +54,8 @@ describe("DataTable", () => {
     expect(sortButton.className).not.toMatch(/(^|\s)gap-1(\s|$)/);
     expect(sortButton.querySelector("svg")?.classList.contains("size-icon-sm")).toBe(true);
     const pager = screen.getByText(/Page 1 of/).parentElement;
-    expect(pager?.classList.contains("gap-2")).toBe(true);
-    expect(pager?.className).not.toContain("gap-data-table-pagination-gap");
+    expect(pager?.classList.contains("gap-data-table-pagination-gap")).toBe(true);
+    expect(pager?.className).not.toContain("gap-2");
   });
 
   it("styles loading skeletons from design tokens", () => {

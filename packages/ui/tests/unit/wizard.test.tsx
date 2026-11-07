@@ -25,13 +25,13 @@ describe("WizardSteps", () => {
   it("styles list and steps from design tokens", () => {
     const { container } = render(<WizardSteps steps={["One", "Two"]} current={0} />);
     const list = container.querySelector('[data-slot="wizard"]');
-    expect(list?.classList.contains("gap-x-3")).toBe(true);
-    expect(list?.className).not.toContain("gap-x-wizard-steps-gap");
-    expect(list?.classList.contains("gap-y-2")).toBe(true);
-    expect(list?.className).not.toContain("gap-y-wizard-steps-row-gap");
+    expect(list?.classList.contains("gap-x-wizard-steps-gap")).toBe(true);
+    expect(list?.className).not.toContain("gap-x-3");
+    expect(list?.classList.contains("gap-y-wizard-steps-row-gap")).toBe(true);
+    expect(list?.className).not.toContain("gap-y-2");
     const item = screen.getByText("One").closest("li");
-    expect(item?.classList.contains("gap-2")).toBe(true);
-    expect(item?.className).not.toContain("gap-wizard-step-gap");
+    expect(item?.classList.contains("gap-wizard-step-gap")).toBe(true);
+    expect(item?.className).not.toContain("gap-2");
     const badge = item?.querySelector("span[aria-hidden]");
     expect(badge?.classList.contains("size-wizard-step-badge")).toBe(true);
     expect(badge?.className).not.toMatch(/(^|\s)size-6(\s|$)/);
@@ -145,12 +145,12 @@ describe("OptionCards", () => {
   it("styles group and cards from design tokens", () => {
     const { container } = render(<OptionCards options={options} selected={["a"]} onChange={() => {}} />);
     const group = container.querySelector('[role="group"]');
-    expect(group?.className).toContain("gap-3");
-    expect(group?.className).not.toContain("gap-option-cards-gap");
+    expect(group?.className).toContain("gap-option-cards-gap");
+    expect(group?.className).not.toContain("gap-3");
     const card = screen.getByText("Alpha").closest("label");
-    expect(card?.className).toContain("gap-3");
-    expect(card?.className).not.toContain("gap-option-card-gap");
-    expect(card?.classList.contains("p-4")).toBe(true);
+    expect(card?.className).toContain("gap-option-card-gap");
+    expect(card?.className).not.toContain("gap-3");
+    expect(card?.classList.contains("p-option-card-padding")).toBe(true);
   });
 });
 
