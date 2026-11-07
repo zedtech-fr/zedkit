@@ -46,7 +46,7 @@ function Hero({
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className={cn(media && "grid items-center gap-section-stack lg:grid-cols-2")}>
+      <Container width="default" className={cn(media && "grid items-center gap-section-stack lg:grid-pair")}>
         <div className={cn("flex content-shrink flex-col gap-prose", centered && "mx-auto max-w-reading items-center text-center")}>
           {eyebrow ? (
             <Text as="p" variant="muted" className="font-medium text-primary">

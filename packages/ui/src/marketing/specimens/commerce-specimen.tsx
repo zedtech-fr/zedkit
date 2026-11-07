@@ -37,7 +37,7 @@ function CommerceProductList({
   onSelect: (id: string) => void;
 }) {
   return (
-    <ul aria-label={messages.listAriaLabel} className="trim-margin grid list-none gap-stack-sm flush sm:grid-cols-2">
+    <ul aria-label={messages.listAriaLabel} className="trim-margin grid list-none gap-stack-sm flush sm:grid-pair">
       {products.map((item) => (
         <li key={item.id}>
           <Button

@@ -29,7 +29,7 @@ function EntryColumns({ entries }: { entries: CatalogIndexEntry[] }) {
   const mid = Math.ceil(entries.length / 2);
   const halves = [entries.slice(0, mid), entries.slice(mid)];
   return (
-    <Stack className="grid content-shrink gap-x-12 gap-y-3 xl:grid-cols-2">
+    <Stack className="grid content-shrink gap-x-12 gap-y-3 xl:grid-pair">
       {halves.map((half, index) => (
         <Stack key={index} gap={3} className="content-shrink">
           {half.map((entry) => (

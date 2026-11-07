@@ -825,6 +825,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-list {
   gap: calc(var(--spacing) * 6);
 }
+/* Two equal columns. The breakpoint stays on the class: sm:grid-pair. */
+@utility grid-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
 }

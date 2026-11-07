@@ -26,7 +26,7 @@ export type FeatureGridProps = Omit<React.ComponentProps<"section">, "title"> & 
 };
 
 const columnClass = {
-  2: "lg:grid-cols-2",
+  2: "lg:grid-pair",
   3: "lg:grid-cols-3",
   4: "lg:grid-cols-4",
 } as const;
@@ -43,7 +43,7 @@ function FeatureGrid({ title, description, features, columns = 3, className, ...
     >
       <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ul className={cn("grid list-none gap-stack-lg flush sm:grid-cols-2", columnClass[columns])}>
+        <ul className={cn("grid list-none gap-stack-lg flush sm:grid-pair", columnClass[columns])}>
           {features.map((feature, index) => (
             <GlassSurface key={feature.id ?? index} as="li" className="flex flex-col gap-stack-md">
               {feature.icon ? (

@@ -45,7 +45,7 @@ export function IdentityMiniPreview({
           copy={copy}
         />
       ) : (
-        <Stack gap={3} className="sm:grid sm:grid-cols-2">
+        <Stack gap={3} className="sm:grid sm:grid-pair">
           <IdentitySpecimenCard
             dark={false}
             label={identityAssistantCopy.proposal.lightLabel}

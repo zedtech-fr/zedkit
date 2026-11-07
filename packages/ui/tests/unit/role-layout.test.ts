@@ -38,6 +38,7 @@ describe("layout job classes", () => {
     expect(utility("gap-y-stack-tight")).toBe("row-gap: var(--spacing);");
     expect(utility("gap-prose")).toBe("gap: calc(var(--spacing) * 5);");
     expect(utility("gap-list")).toBe("gap: calc(var(--spacing) * 6);");
+    expect(utility("grid-pair")).toBe("grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(utility("w-skeleton-short")).toBe("width: 66.666667%;");
     expect(utility("gap-stack-sm")).toBe("gap: var(--zk-gap-sm);");
     expect(utility("gap-section-stack")).toBe("gap: calc(var(--spacing) * 10);");

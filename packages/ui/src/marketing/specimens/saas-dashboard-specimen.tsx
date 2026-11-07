@@ -37,7 +37,7 @@ function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
       </CardHeader>
       <CardContent>
         <Stack gap={4} className="content-shrink">
-          <div className="grid content-shrink grid-cols-2 gap-stack-md">
+          <div className="grid content-shrink grid-pair gap-stack-md">
             {messages.stats.map((stat) => (
               <div key={stat.label} className="content-shrink">
                 <Text variant="muted">{stat.label}</Text>
