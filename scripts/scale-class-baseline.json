@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 101,
+  "total": 99,
   "files": {
     "apps/docs/components/adoption-steps.tsx": 1,
     "apps/docs/components/component-page.tsx": 1,
@@ -8,14 +8,12 @@
     "apps/docs/components/demos/icon-button-demo.tsx": 1,
     "apps/docs/components/demos/scroll-scenes-demo.tsx": 1,
     "apps/docs/ui/home/home-gallery-preview.tsx": 1,
-    "apps/docs/ui/home/home-identity-example-maison.tsx": 1,
     "apps/docs/ui/home/home-yours-scene.tsx": 1,
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
     "packages/ui/preview/gallery.tsx": 1,
     "packages/ui/src/field.tsx": 1,
     "packages/ui/src/layout.tsx": 5,
     "packages/ui/src/marketing/hero.tsx": 1,
-    "packages/ui/src/marketing/pricing.tsx": 1,
     "packages/ui/src/marketing/specimens/saas-dashboard-specimen.tsx": 1,
     "packages/ui/tests/unit/utils.test.ts": 80
   }
