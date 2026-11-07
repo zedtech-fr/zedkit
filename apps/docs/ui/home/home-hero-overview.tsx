@@ -41,7 +41,7 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
           {label}
         </Text>
         {/* The number counts up on screen; assistive tech gets the final value, once. */}
-        <Text as="span" className="text-2xl leading-none font-semibold tracking-tight tabular-nums">
+        <Text as="span" className="text-figure tabular-nums">
           <span className="sr-only">{value}</span>
           <span aria-hidden="true">{shown}</span>
         </Text>

@@ -309,7 +309,7 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
                   {card.note}
                 </Text>
               </Stack>
-              <CardTitle className="text-2xl whitespace-nowrap tabular-nums">{card.value}</CardTitle>
+              <CardTitle className="text-figure whitespace-nowrap tabular-nums">{card.value}</CardTitle>
             </Stack>
           ))}
         </Stack>
