@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Aggregate required-check: selected jobs must succeed; skipped is allowed
 // only when the detector excluded that job. Failure, cancel, unknown and
-// missing results never pass.
+// missing results never pass. Registry-selected runs include the consumer
+// smokes (packed workspace tarballs) so a Version PR cannot merge green
+// while unpublished workspace deps fail install.
 
 export function requiredJobsPass({ results, selected }) {
   const errors = [];
@@ -13,6 +15,8 @@ export function requiredJobsPass({ results, selected }) {
     checks: !selected.workflow_only,
     ui_smoke: Boolean(selected.ui) && !selected.workflow_only,
     registry: Boolean(selected.registry) && !selected.workflow_only,
+    quickstart_smoke: Boolean(selected.registry) && !selected.workflow_only,
+    adoption_smoke: Boolean(selected.registry) && !selected.workflow_only,
     docs_build: Boolean(selected.docs) && !selected.workflow_only,
     docs_e2e: Boolean(selected.docs) && !selected.workflow_only,
     docs_smoke: Boolean(selected.docs) && !selected.workflow_only,
@@ -44,6 +48,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       checks: process.env.CHECKS ?? "",
       ui_smoke: process.env.UI_SMOKE ?? "",
       registry: process.env.REGISTRY ?? "",
+      quickstart_smoke: process.env.QUICKSTART_SMOKE ?? "",
+      adoption_smoke: process.env.ADOPTION_SMOKE ?? "",
       docs_build: process.env.DOCS_BUILD ?? "",
       docs_e2e: process.env.DOCS_E2E ?? "",
       docs_smoke: process.env.DOCS_SMOKE ?? "",

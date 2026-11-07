@@ -80,10 +80,8 @@ run_npm_path() {
 
   local pack_dir="${work}/pack"
   mkdir -p "$pack_dir"
-  (cd "${ROOT}/packages/ui" && pnpm pack --pack-destination "$pack_dir" >/dev/null)
-  local tgz
-  tgz="$(ls "$pack_dir"/*.tgz)"
-  pnpm add "$tgz"
+  node "${ROOT}/scripts/workspace-pack-closure.mjs" pack-and-override @zedtech/zedkit-ui "$work" "$pack_dir" >/dev/null
+  pnpm add @zedtech/zedkit-ui
 
   cp "${SNIPPETS}/npm-globals.css" src/index.css
   cp "${SNIPPETS}/npm-page.tsx" src/App.tsx
@@ -122,7 +120,7 @@ run_registry_path() {
   echo "quickstart-smoke: registry path ok (Vite build, styled Button rendered)"
 }
 
-echo "quickstart-smoke: eligible for ci-required once stable on main (not in branch protection yet)"
+echo "quickstart-smoke: in ci-required when the registry jobs are selected"
 # The render check needs Chromium; CI runners also need its system libraries.
 (cd "${ROOT}" && pnpm exec playwright install ${CI:+--with-deps} chromium >/dev/null)
 if [[ "${QUICKSTART_PREBUILT:-}" != "1" ]]; then

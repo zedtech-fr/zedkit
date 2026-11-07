@@ -35,11 +35,13 @@ landed in `ci.yml`.
 
 | Check | Role |
 | --- | --- |
-| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + docs-build + docs-smoke |
+| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + quickstart-smoke + adoption-smoke + docs-build + docs-smoke |
 | `hygiene` | Artifact, tone, private-refs, dependabot, changeset |
 | `checks` | typecheck, lint, build, tests, catalog, pack, API reports |
 | `ui-smoke` | UI gallery screenshots on ubuntu-latest |
 | `registry-smoke` | Registry build + smoke |
+| `quickstart-smoke` | Vite consumer install from packed workspace tarballs + registry Button path |
+| `adoption-smoke` | Shown install recipes; packed runtime workspace closure, not npm |
 | `docs-build` | One docs static export, shared with Playwright smoke |
 | `docs-smoke` | Critical docs journeys (home, search, catalog, a component page) |
 | `docs-e2e` | Alias: succeeds when `docs-smoke` succeeded (older rulesets) |
