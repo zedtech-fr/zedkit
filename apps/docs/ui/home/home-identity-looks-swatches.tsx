@@ -27,7 +27,7 @@ export function HomeIdentityPaletteDots({
         {tokens.map((token) => (
           <span
             key={token}
-            className={cn("size-3 shrink-0 rounded-full border border-border", SWATCH_BG[token])}
+            className={cn("size-mini shrink-0 rounded-full border border-border", SWATCH_BG[token])}
           />
         ))}
       </Stack>

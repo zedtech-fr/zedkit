@@ -139,6 +139,9 @@ describe("layout job classes", () => {
     expect(utility("h-phone-bar")).toBe("height: calc(var(--spacing) * 14);");
     expect(utility("min-h-phone-bar")).toBe("min-height: calc(var(--spacing) * 14);");
     expect(utility("size-icon-lg")).toBe("width: calc(var(--spacing) * 5); height: calc(var(--spacing) * 5);");
+    expect(utility("size-mini")).toBe("width: calc(var(--spacing) * 3); height: calc(var(--spacing) * 3);");
+    expect(utility("h-share")).toBe("height: 25%;");
+    expect(utility("mt-figure")).toBe("margin-top: calc(var(--spacing) * 4);");
     expect(utility("min-h-label")).toBe("min-height: calc(var(--spacing) * 5);");
     expect(utility("span-rest")).toBe("grid-column: span 2 / span 2;");
     expect(utility("gap-x-blocks")).toBe("column-gap: calc(var(--spacing) * 8);");

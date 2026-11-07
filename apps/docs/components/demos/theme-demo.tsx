@@ -74,7 +74,7 @@ export function ThemeTokensDemo() {
  <li key={release.name} className="flex content-shrink items-center justify-between gap-stack-md pad-row text-sm">
               <Text as="span" className="content-shrink wrap-anywhere">{release.name}</Text>
               <Badge variant={release.trend === "up" ? "success" : "destructive"} className="shrink-0 gap-stack-tight">
-                {release.trend === "up" ? <ArrowUpRight className="size-3" aria-hidden /> : <ArrowDownRight className="size-3" aria-hidden />}
+                {release.trend === "up" ? <ArrowUpRight className="size-mini" aria-hidden /> : <ArrowDownRight className="size-mini" aria-hidden />}
                 {release.state}
               </Badge>
             </li>

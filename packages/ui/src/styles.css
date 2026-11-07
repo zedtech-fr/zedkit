@@ -1133,6 +1133,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pull-back {
   margin-top: calc(var(--spacing) * -6);
 }
+/* Space above a total. */
+@utility mt-figure {
+  margin-top: calc(var(--spacing) * 4);
+}
 /* Optical align of a step index beside its title. */
 @utility pt-step {
   padding-top: calc(var(--spacing) * 0.5);
@@ -1189,6 +1193,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-brand {
   height: calc(var(--spacing) * 5);
 }
+/* A logo filling a share card. */
+@utility h-share {
+  height: 25%;
+}
 /* Logo lockup in a band of customer marks. */
 @utility h-logo-row {
   height: calc(var(--spacing) * 8);
@@ -1227,6 +1235,11 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility size-icon-lg {
   width: calc(var(--spacing) * 5);
   height: calc(var(--spacing) * 5);
+}
+/* A swatch or a small trend mark. */
+@utility size-mini {
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
 }
 @utility min-h-status {
   min-height: calc(var(--spacing) * 6);
