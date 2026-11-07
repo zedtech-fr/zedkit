@@ -37,6 +37,7 @@ describe("layout job classes", () => {
     expect(utility("surface-pad-compact")).toBe("padding: calc(var(--spacing) * 3);");
     expect(utility("surface-pad-block")).toBe("padding-block: calc(var(--spacing) * 3);");
     expect(utility("surface-pad-block-sm")).toBe("padding-block: calc(var(--spacing) * 2);");
+    expect(utility("rule-gap")).toBe("padding-bottom: calc(var(--spacing) * 2);");
     expect(utility("surface-pad-md")).toBe("padding: calc(var(--spacing) * 4);");
     expect(utility("surface-pad-inline")).toBe("padding-inline: calc(var(--spacing) * 4);");
     expect(utility("px-control-tight")).toBe("padding-inline: calc(var(--spacing) * 2);");

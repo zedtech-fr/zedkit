@@ -6,7 +6,7 @@ import type { ConsoleComposition } from "@/components/i18n/identity-specimen-com
 export function ConsoleScreen({ copy }: { copy: ConsoleComposition }) {
   return (
     <Stack gap={3}>
-      <Stack direction="horizontal" gap={3} className="justify-between border-b border-border pb-2">
+      <Stack direction="horizontal" gap={3} className="justify-between border-b border-border rule-gap">
         <Heading level={4} typeRole="cardTitle">
           {copy.brand}
         </Heading>
