@@ -142,6 +142,9 @@ describe("skill content conventions", () => {
     expect(from).toContain("Revalidate against the current state");
     expect(from).toContain("Research spike");
     expect(from).toContain("Owner decision");
+    expect(from).toContain("quiz-for-approval and publish steps are not automatic");
+    expect(from).toContain("carry that approval through");
+    expect(from).toContain("only when the user asked for tickets");
     expect(to).toContain("Playbook: to-audit");
     expect(to).toContain("before `plan`");
     expect(to).toContain("Do not implement");
@@ -160,7 +163,10 @@ describe("skill content conventions", () => {
     expect(raw).toContain("Verified defect");
     expect(raw).toContain("Requirement gap");
     expect(raw).toContain("acceptance criterion");
-    expect(raw).toContain("reported as **partial**");
+    expect(raw).toContain("Unresolved after investigation");
+    expect(raw).toContain("Listing it does not close it");
+    expect(raw).toContain("complete only when no row is **not checked**");
+    expect(raw).not.toContain("answered with evidence or explicitly listed as unresolved");
     expect(raw).toContain("source → shipped/installed artifact");
     expect(raw).toContain("never the whole investigation");
     expect(raw).toContain("Not checked:");

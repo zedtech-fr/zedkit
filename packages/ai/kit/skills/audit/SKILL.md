@@ -67,13 +67,23 @@ Sibling entrypoints called from here get `Playbook: <name>` so they do not re-en
      with its justification, and an acceptance criterion a checker could
      test. No concrete case, no defect. List missing evidence and unresolved
      questions in their own section — they are findings about coverage.
-6. **Completion bar.** The audit is complete only when every coverage-map
-   row is answered with evidence or explicitly listed as unresolved with
-   what is missing. Anything less is reported as **partial**, naming the
-   rows not covered. Depth serves decisions: expand research where a row
-   is still weak; stop when each row's answer would survive challenge.
-7. **Report.** Objective, coverage map with per-row status, findings by
-   kind, unresolved questions, `Not checked:` (parts not read or not run).
+6. **Completion bar.** Each coverage-map row ends in exactly one state:
+   - **Answered** — evidence in hand, strong enough to survive challenge.
+   - **Unresolved after investigation** — the settling check was actually
+     run or attempted and genuine uncertainty remains (conflicting
+     sources, evidence that stayed inaccessible after a real attempt).
+     State what was attempted and what the uncertainty is.
+   - **Not checked** — a required check was not performed: skipped,
+     deferred, or never attempted. Listing it does not close it.
+     The audit is complete only when no row is **not checked**. Any
+     not-checked row makes the audit **partial**, however honestly it is
+     disclosed — an unperformed install, runtime or consumer check listed
+     under open questions is still a partial audit. Depth serves decisions:
+     expand research where a row is still weak; stop when each row is
+     answered or its uncertainty is real and investigated.
+7. **Report.** Objective, coverage map with per-row state (answered /
+   unresolved after investigation / not checked), findings by kind,
+   unresolved questions, `Not checked:` (parts not read or not run).
    Point at `from-audit` for turning findings into a plan; do not start it
    unless asked.
 

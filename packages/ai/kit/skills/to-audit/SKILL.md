@@ -36,8 +36,10 @@ them, do not restate a weaker local version. What differs here is the frame:
    not support.
 4. **Report.** Findings split by kind (verified defect, requirement gap,
    design judgment, opportunity) with evidence, dropped claims, unresolved
-   questions, `Not checked:`. Partial coverage is labelled partial — every
-   coverage row is answered or listed unresolved. If the user wants work
+   questions, `Not checked:`. A row whose settling check was never
+   performed keeps the audit **partial**, even when disclosed; only a row
+   investigated to a genuine remaining uncertainty may close unresolved.
+   If the user wants work
    next, name `from-audit` or `plan` — do not start them unless asked.
 
 Use this before `plan` when assumptions would be guesses, or when the user

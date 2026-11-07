@@ -45,7 +45,7 @@ workers are leaves, depth 1). A named `Playbook:` is the job — do not
 substitute another. Every worker brief for that playbook starts with
 `Playbook: <name>`.
 
-For playbooks plan, challenge, and review, and for any audit-shaped playbook, every brief includes: **Go deep, be strict, and be brutally honest.** An audit brief also carries the coverage map: workers answer their rows with evidence, and an unanswered row returns as unresolved — never silently dropped, never reported as covered.
+For playbooks plan, challenge, and review, and for any audit-shaped playbook, every brief includes: **Go deep, be strict, and be brutally honest.** An audit brief also carries the coverage map: workers answer their rows with evidence; a row whose check was not performed returns as not checked (the audit stays partial), and a row returns as unresolved only with what was attempted — never silently dropped, never reported as covered.
 
 ## Routing
 
