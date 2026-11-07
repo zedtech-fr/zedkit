@@ -19,6 +19,7 @@ type IoCallback = (entries: Pick<IntersectionObserverEntry, "target" | "isInters
 class FakeIo implements IntersectionObserver {
   readonly root = null;
   readonly rootMargin = "";
+  readonly scrollMargin = "";
   readonly thresholds = [0];
   static instances: FakeIo[] = [];
   observed = new Set<Element>();
