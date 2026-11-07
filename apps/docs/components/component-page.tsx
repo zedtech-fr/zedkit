@@ -113,7 +113,7 @@ export async function ComponentPage({
         <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
       </dl>
 
-      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-3">
+      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-stack-md">
         <Stack gap={3}>
           <AdoptionPanelView plan={plan} />
           <Text variant="muted" className="text-xs">
@@ -122,7 +122,7 @@ export async function ComponentPage({
         </Stack>
       </Section>
 
-      <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-3">
+      <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
         <Stack gap={4}>
           {copyable ? (
             <Text variant="muted" className="text-sm" data-usage-import-note="">

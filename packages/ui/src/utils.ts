@@ -47,7 +47,7 @@ const twMerge = extendTailwindMerge({
       "gap-x": ["gap-x-wizard-steps-gap", "gap-x-stack-sm", "gap-x-stack-lg"],
       "gap-y": ["gap-y-wizard-steps-row-gap", "gap-y-stack-sm", "gap-y-stack-tight"],
       "space-y": [
-        { "space-y": ["stack-sm", "stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
+        { "space-y": ["stack-sm", "stack-md", "stack-lg", "data-table-stack", "wizard-steps-gap", "wizard-steps-row-gap", "form-item-gap", "card-lines"] },
       ],
       h: ["h-control-height", "h-control-height-sm", "h-control-height-lg", "h-field-separator", "h-skeleton-line", "h-logo"],
       w: ["w-skeleton-short"],
@@ -57,7 +57,7 @@ const twMerge = extendTailwindMerge({
       p: ["flush", "p-drawer-chrome-padding", "p-app-shell-padding", "p-table-cell", "p-option-card-padding", "p-field-label-inset", "p-select-separator", "surface-pad-sm", "surface-pad-compact", "surface-pad-md", "pad-row", "glass-pad-sm", "glass-pad-md", "glass-pad-lg"],
       px: ["px-page-gutter", "px-field-pad", "px-button-pad", "px-button-pad-lg", "px-button-inline-sm", "px-alert-inline", "px-detail-panel-inline", "px-drawer-chrome-padding", "px-table-cell", "px-select-item-inline", "px-tabs-trigger-inline", "px-field-separator-inline", "px-control-inline", "px-control-tight", "surface-pad-inline"],
       pl: ["pl-select-item-inline", "pl-control-inline"],
-      pt: ["pt-drawer-chrome-padding", "actions-offset", "content-offset"],
+      pt: ["pt-drawer-chrome-padding", "actions-offset", "content-offset", "trim-pad-top"],
       mt: ["trim-top", "mt-drawer-handle-top", "mt-table-caption-gap", "mt-tabs-content-gap", "mt-card-section"],
       mb: ["mb-drawer-handle-top", "mb-field-legend-bottom", "trim-bottom"],
       pb: ["rule-gap"],
