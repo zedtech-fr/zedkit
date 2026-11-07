@@ -39,5 +39,6 @@ describe("cn", () => {
     expect(cn("top-0", "pin-top")).toBe("pin-top");
     expect(cn("inset-0", "pin-fill")).toBe("pin-fill");
     expect(cn("p-4", "flush")).toBe("flush");
+    expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
   });
 });
