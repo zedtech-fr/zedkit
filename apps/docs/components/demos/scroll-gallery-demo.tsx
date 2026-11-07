@@ -35,16 +35,16 @@ export function ScrollGalleryChipsDemo() {
   return (
     <ScrollGallery className="max-w-sm">
       <Stack direction="horizontal" gap={2} className="w-max">
-        <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#alpha">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#alpha">
           Alpha
         </a>
-        <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#beta">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#beta">
           Beta
         </a>
-        <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#gamma">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#gamma">
           Gamma
         </a>
-        <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#delta">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#delta">
           Delta
         </a>
       </Stack>

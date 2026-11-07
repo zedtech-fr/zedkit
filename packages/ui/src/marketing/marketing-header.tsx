@@ -20,7 +20,7 @@ export type MarketingHeaderProps = Omit<React.ComponentProps<"header">, "childre
 };
 
 const linkClass =
-  "[&_a]:inline-flex [&_a]:min-h-target [&_a]:items-center [&_a]:rounded-md [&_a]:px-3 [&_a]:text-sm [&_a]:font-medium [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a[aria-current]]:text-foreground";
+  "[&_a]:inline-flex [&_a]:min-h-target [&_a]:items-center [&_a]:rounded-md [&_a]:px-control-inline [&_a]:text-sm [&_a]:font-medium [&_a]:text-muted-foreground [&_a]:hover:text-foreground [&_a[aria-current]]:text-foreground";
 
 /**
  * Compact public-page header: brand, links, actions. On phones the links and
@@ -55,7 +55,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
           </div>
         ) : null}
         <details data-slot="marketing-header-menu" className="group ml-auto md:hidden">
-          <summary className="flex min-h-target cursor-pointer list-none items-center gap-stack-sm rounded-md px-3 text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-target cursor-pointer list-none items-center gap-stack-sm rounded-md px-control-inline text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
             <Menu aria-hidden="true" className="size-icon" />
             {messages.menu}
           </summary>

@@ -31,7 +31,7 @@ export function IdentityRefinementChips({
             disabled={disabled}
             data-assistant-refine-chip={chip.id}
             className={cn(
-              "min-h-target rounded-full border-foreground/20 bg-background px-3 text-foreground shadow-none hover:bg-muted/70 hover:text-foreground",
+              "min-h-target rounded-full border-foreground/20 bg-background px-button-inline-sm text-foreground shadow-none hover:bg-muted/70 hover:text-foreground",
               signatureMotionClass.feedback,
             )}
             onClick={() => onSelect(chip.prompt)}

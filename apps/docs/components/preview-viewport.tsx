@@ -93,7 +93,7 @@ export function PreviewFrame({
             <TabsTrigger
               key={value}
               value={value}
-              className="h-9 rounded-md px-3 text-sm text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              className="h-9 rounded-md px-tabs-trigger-inline text-sm text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
             >
               {value}
             </TabsTrigger>
