@@ -186,6 +186,11 @@
   padding-bottom: calc(var(--spacing) * 2);
 }
 
+/* Site menu. At most 85% of the screen, and never taller than 640px. */
+[data-shell-nav-drawer] {
+  max-height: min(85dvh, 640px);
+}
+
 [data-under-rule],
 [data-proposal-before],
 [data-theme-card-body],
