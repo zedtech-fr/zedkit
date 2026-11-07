@@ -17,7 +17,7 @@ export function AppShellNoTopbarDemo() {
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   aria-current={index === 0 ? "page" : undefined}
-                  className="rounded-md px-2 py-1.5 text-sm hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium"
+                  className="rounded-md px-select-item-inline py-select-item-block text-sm hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium"
                 >
                   {item}
                 </a>

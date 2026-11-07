@@ -55,7 +55,7 @@ export function HeroCalendarPage({
 }) {
   return (
     <Stack gap={3} className="content-shrink">
-      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
+      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
       <div className="flex content-shrink flex-wrap items-start gap-stack-lg" data-hero-calendar="">
         <div data-hero-block="" data-beat={1}>
           <Calendar

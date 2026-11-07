@@ -941,6 +941,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility trim-top {
   margin-top: 0;
 }
+@utility trim-bottom {
+  margin-bottom: 0;
+}
 @utility trim-margin {
   margin: 0;
 }

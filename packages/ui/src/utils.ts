@@ -54,7 +54,7 @@ const twMerge = extendTailwindMerge({
       pl: ["pl-select-item-inline", "pl-control-inline"],
       pt: ["pt-drawer-chrome-padding", "actions-offset", "content-offset"],
       mt: ["trim-top", "mt-drawer-handle-top", "mt-table-caption-gap", "mt-tabs-content-gap", "mt-card-section"],
-      mb: ["mb-drawer-handle-top", "mb-field-legend-bottom"],
+      mb: ["mb-drawer-handle-top", "mb-field-legend-bottom", "trim-bottom"],
       pb: ["rule-gap"],
       ml: ["ml-field-error-indent"],
       top: ["pin-top", "top-alert-icon-offset"],

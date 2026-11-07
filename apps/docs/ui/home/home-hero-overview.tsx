@@ -110,7 +110,7 @@ export function HeroOverviewPage({ rows, active }: { rows: TaskRow[]; active: bo
   const { status } = projectTrackerDemoCopy;
   return (
     <Stack gap={4} className="content-shrink">
-      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
+      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
       <div className="grid content-shrink grid-cols-3 gap-stack-sm">
         <Stat label={copy.stats.open} value={rows.filter((row) => !isDone(row)).length} active={active} beat={1} />
         <Stat label={copy.stats.review} value={rows.filter((row) => row.status === status.inReview).length} active={active} beat={2} />
