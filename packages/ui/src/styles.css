@@ -723,6 +723,20 @@ a[class*="px-badge-inline"] {
   letter-spacing: -0.02em;
 }
 
+/* Switch track and thumb. The track is five by nine spacing steps. The thumb is four. */
+[data-slot="switch"] {
+  height: calc(var(--spacing) * 5);
+  width: calc(var(--spacing) * 9);
+}
+[data-slot="switch-thumb"] {
+  width: calc(var(--spacing) * 4);
+  height: calc(var(--spacing) * 4);
+  translate: 0 0;
+}
+[data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  translate: calc(var(--spacing) * 5 - 4px) 0;
+}
+
 /* Field legend. Medium weight stays on the element. */
 [data-slot="field-legend"][data-variant="legend"] {
   font-size: var(--text-base);
