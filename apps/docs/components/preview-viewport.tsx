@@ -151,6 +151,7 @@ export function PreviewFrame({
         <TabsContent value="preview" className="trim-top">
           <ThemeScope
             data-preview-surface=""
+            data-frame={mobile ? "phone" : undefined}
             identity={demoStyle.look}
             mode={dark ? "dark" : "light"}
             className={cn(
@@ -158,7 +159,6 @@ export function PreviewFrame({
               // eslint-disable-next-line better-tailwindcss/no-unknown-classes
               "not-prose w-full content-shrink bg-background surface-pad-md md:surface-pad-lg",
               !pinned && "overflow-x-auto",
-              mobile && "mx-auto max-w-[390px]",
             )}
           >
             <PreviewMobileContext.Provider value={mobile}>

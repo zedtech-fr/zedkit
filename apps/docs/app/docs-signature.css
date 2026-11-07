@@ -27,6 +27,12 @@
   margin-top: calc(var(--spacing) * 2);
 }
 
+/* Phone frame in a component preview. */
+[data-preview-surface][data-frame="phone"] {
+  max-width: 390px;
+  margin-inline: auto;
+}
+
 /* Side inset of the compact proposal card. */
 .px-proposal-inset {
   padding-inline: var(--spacing);
