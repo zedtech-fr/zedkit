@@ -296,9 +296,9 @@
   --spacing-prompt-input-max-height: calc(8 * 1lh + var(--spacing-control-block) * 2);
   --spacing-prompt-input-max-height-sm: calc(4 * 1lh + var(--spacing-control-block) * 2);
   --spacing-prompt-input-max-height-lg: calc(12 * 1lh + var(--spacing-control-block) * 2);
-  --spacing-alert-inline: 1rem;
-  --spacing-alert-block: 0.75rem;
-  --spacing-alert-icon-offset: 1rem;
+  --spacing-alert-inline: calc(var(--spacing) * 4);
+  --spacing-alert-block: calc(var(--spacing) * 3);
+  --spacing-alert-icon-offset: calc(var(--spacing) * 4);
   --spacing-alert-icon-nudge: 0.1875rem;
   --spacing-alert-content-indent: 1.75rem;
   --spacing-field-set: 1.5rem;

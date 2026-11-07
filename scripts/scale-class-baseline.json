@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 1058,
+  "total": 1054,
   "files": {
     "apps/docs/app/(site)/features/identity-editor/page.tsx": 2,
     "apps/docs/app/(site)/features/identity-kit-demos/page.tsx": 1,
@@ -128,7 +128,7 @@
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
     "packages/ui/preview/form-demo.tsx": 1,
     "packages/ui/preview/gallery.tsx": 57,
-    "packages/ui/src/alert.tsx": 8,
+    "packages/ui/src/alert.tsx": 4,
     "packages/ui/src/app-shell.tsx": 1,
     "packages/ui/src/badge.tsx": 2,
     "packages/ui/src/brand-logo.tsx": 1,
