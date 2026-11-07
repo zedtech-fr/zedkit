@@ -52,6 +52,17 @@ describe("layout job classes", () => {
     expect(utility("gap-stack-tight")).toBe("gap: var(--spacing);");
     expect(utility("gap-icon")).toBe("gap: calc(var(--spacing) * 1.5);");
     expect(utility("gap-y-stack-sm")).toBe("row-gap: var(--zk-gap-sm);");
+    expect(utility("gap-y-stack-md")).toBe("row-gap: var(--zk-gap-md);");
+    expect(utility("gap-x-results")).toBe("column-gap: calc(var(--spacing) * 12);");
+    expect(utility("px-tab")).toBe("padding-inline: calc(var(--spacing) * 3.5);");
+    expect(utility("py-bar")).toBe("padding-block: calc(var(--spacing) * 2.5);");
+    expect(utility("p-track")).toBe("padding: var(--spacing);");
+    expect(utility("p-segment")).toBe("padding: calc(var(--spacing) * 0.5);");
+    expect(utility("pb-block")).toBe("padding-bottom: calc(var(--spacing) * 3);");
+    expect(utility("w-handle")).toBe("width: calc(var(--spacing) * 10);");
+    expect(utility("max-h-log")).toBe("max-height: calc(var(--spacing) * 72);");
+    expect(utility("min-h-bar")).toBe("min-height: calc(var(--spacing) * 12);");
+    expect(utility("min-h-hero")).toBe("min-height: calc(var(--spacing) * 96);");
     expect(utility("gap-y-stack-lg")).toBe("row-gap: var(--zk-gap-lg);");
     expect(utility("gap-x-logos")).toBe("column-gap: calc(var(--spacing) * 10);");
     expect(utility("gap-scenes")).toBe("gap: calc(var(--spacing) * 16);");

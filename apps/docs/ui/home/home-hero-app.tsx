@@ -24,7 +24,7 @@ const loadHomeAdminDashboardDemo = () =>
   import("@/components/demos/registry").then((mod) => ({ default: mod.demoRegistry.HomeAdminDashboardDemo.Demo }));
 
 const HomeAdminDashboardDemo = dynamic(loadHomeAdminDashboardDemo, {
-  loading: () => <Stack className="min-h-96 w-full content-shrink flex-1" aria-hidden="true" />,
+  loading: () => <Stack className="min-h-hero w-full content-shrink flex-1" aria-hidden="true" />,
 });
 
 /** The agent panel is its own chunk: fetched when the tour is about to use it or the visitor first opens it. */

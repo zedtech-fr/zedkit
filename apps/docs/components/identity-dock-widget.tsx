@@ -119,7 +119,7 @@ function IdentityDockWidget() {
           data-state={expanded ? "open" : "closed"}
           className="flex pane-shrink flex-col gap-flush flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-flush"
         >
-          <DrawerHandle className="mt-2 trim-bottom h-1 w-10 shrink-0 bg-border/45" aria-label="Drag to resize" />
+          <DrawerHandle className="mt-2 trim-bottom h-1 w-handle shrink-0 bg-border/45" aria-label="Drag to resize" />
           <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
             <IdentityDockAssistantPanel
               previewTokens={workingTokens}

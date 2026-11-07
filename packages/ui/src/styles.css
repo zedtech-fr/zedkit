@@ -870,12 +870,19 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-y-stack-sm {
   row-gap: var(--zk-gap-sm);
 }
+@utility gap-y-stack-md {
+  row-gap: var(--zk-gap-md);
+}
 @utility gap-y-stack-lg {
   row-gap: var(--zk-gap-lg);
 }
 /* Space between marks in a logo row. */
 @utility gap-x-logos {
   column-gap: calc(var(--spacing) * 10);
+}
+/* Column gap of a results list. */
+@utility gap-x-results {
+  column-gap: calc(var(--spacing) * 12);
 }
 @utility gap-y-stack-tight {
   row-gap: var(--spacing);
@@ -945,6 +952,26 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* A mono meta badge, almost flush. */
 @utility px-meta {
   padding-inline: calc(var(--spacing) * 0.5);
+}
+/* Inset of a tab that shows a label and a swatch. */
+@utility px-tab {
+  padding-inline: calc(var(--spacing) * 3.5);
+}
+/* Block inset of a bar under a preview. */
+@utility py-bar {
+  padding-block: calc(var(--spacing) * 2.5);
+}
+/* Padding of a tab track. */
+@utility p-track {
+  padding: var(--spacing);
+}
+/* Padding of a segmented control's track. */
+@utility p-segment {
+  padding: calc(var(--spacing) * 0.5);
+}
+/* Bottom inset of a block, above a rule or the edge. */
+@utility pb-block {
+  padding-bottom: calc(var(--spacing) * 3);
 }
 @utility surface-pad-block-sm {
   padding-block: calc(var(--spacing) * 2);
@@ -1053,6 +1080,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-invite {
   width: calc(var(--spacing) * 72);
 }
+/* The drag handle on a phone sheet. */
+@utility w-handle {
+  width: calc(var(--spacing) * 10);
+}
 /* Compact sidebar inside a framed demo. The shell's own sidebar stays 16rem. */
 @utility w-sidebar-compact {
   width: calc(var(--spacing) * 48);
@@ -1092,6 +1123,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-phone-bar {
   min-height: calc(var(--spacing) * 14);
 }
+/* A hero shell row. */
+@utility min-h-bar {
+  min-height: calc(var(--spacing) * 12);
+}
+/* Reserve for a hero while its page loads. */
+@utility min-h-hero {
+  min-height: calc(var(--spacing) * 96);
+}
 @utility size-mark {
   width: calc(var(--spacing) * 10);
   height: calc(var(--spacing) * 10);
@@ -1121,6 +1160,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* Caps a secret or a prompt so a long value scrolls inside the field. */
 @utility max-h-secret {
   max-height: calc(var(--spacing) * 64);
+}
+/* A scrolling log, such as a terminal. */
+@utility max-h-log {
+  max-height: calc(var(--spacing) * 72);
 }
 @utility empty-state-block {
   padding-block: calc(var(--spacing) * 8);
