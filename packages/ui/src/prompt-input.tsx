@@ -24,14 +24,6 @@ export type PromptInputProps = Omit<
   maxRows?: 4 | 8 | 12;
 };
 
-const promptInputFieldPadding = (twoActions: boolean) =>
-  twoActions
-    ? "pr-[calc(var(--spacing)*1.5+var(--spacing-control-height)*2+var(--spacing)*3)]"
-    : "pr-[calc(var(--spacing)*1.5+var(--spacing-control-height))]";
-
-const promptInputCancelPosition =
-  "absolute right-[calc(var(--spacing)*1.5+var(--spacing-control-height)+var(--spacing)*2)] bottom-send shrink-0";
-
 const promptInputMaxHeightClass = (maxRows: 4 | 8 | 12) =>
   ({ 4: "max-h-prompt-input-sm", 8: "max-h-prompt-input", 12: "max-h-prompt-input-lg" })[maxRows];
 
@@ -57,7 +49,8 @@ function PromptInputActions({
           type="button"
           variant="ghost"
           size="icon"
-          className={promptInputCancelPosition}
+          data-prompt-cancel=""
+          className="bottom-send shrink-0"
           label={cancelLabel}
           onClick={onCancel}
         />
@@ -111,6 +104,7 @@ export function PromptInput({
   return (
     <form
       data-slot="prompt-input"
+      data-actions={showCancel ? "two" : undefined}
       className={cn(
         "relative w-full rounded-md border border-input bg-background shadow-sm focus-within:focus-ring-control",
         className,
@@ -128,7 +122,6 @@ export function PromptInput({
           "field-sizing-content min-h-textarea-min-height w-full content-shrink resize-none overflow-y-auto border-0 bg-transparent py-control-block-lg pl-control-inline text-control shadow-none placeholder:text-muted-foreground",
           "disabled:cursor-not-allowed disabled:opacity-50",
           promptInputMaxHeightClass(maxRows),
-          promptInputFieldPadding(showCancel),
         )}
         onKeyDown={(event) => {
           if (event.key === "Enter" && !event.shiftKey) promptInputTrySubmit(event, empty, blocked, onSubmit);
