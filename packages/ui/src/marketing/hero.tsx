@@ -47,7 +47,7 @@ function Hero({
       {...props}
     >
       <Container width="default" className={cn(media && "grid items-center gap-section-stack lg:grid-cols-2")}>
-        <div className={cn("flex content-shrink flex-col gap-5", centered && "mx-auto max-w-reading items-center text-center")}>
+        <div className={cn("flex content-shrink flex-col gap-prose", centered && "mx-auto max-w-reading items-center text-center")}>
           {eyebrow ? (
             <Text as="p" variant="muted" className="font-medium text-primary">
               {eyebrow}

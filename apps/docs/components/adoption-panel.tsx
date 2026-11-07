@@ -49,7 +49,7 @@ function CopyMethods({ modes, highlighted, choice, result, summaryClassName }: V
   const [method, setMethod] = methodChoice.useChoice();
   const active = modes.find((mode) => mode.id === method) ?? modes[0]!;
   return (
-    <Tabs value={active.id} onValueChange={(next) => methodChoice.isValue(next) && setMethod(next)} className="flex flex-col gap-5">
+    <Tabs value={active.id} onValueChange={(next) => methodChoice.isValue(next) && setMethod(next)} className="flex flex-col gap-prose">
       <ModeTabs
         label={adoptionCopy.copyMethodLabel}
         items={modes.map((mode) => ({ id: mode.id as "cli" | "manual", label: adoptionCopy.copyMethods[mode.id as "cli" | "manual"] }))}
@@ -102,7 +102,7 @@ export function AdoptionPanel({
     <Tabs
       value={group}
       onValueChange={(next) => groupChoice.isValue(next) && setGroup(next)}
-      className="flex flex-col gap-5"
+      className="flex flex-col gap-prose"
       data-adoption-panel=""
     >
       <ModeTabs
