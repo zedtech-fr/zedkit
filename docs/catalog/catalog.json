@@ -3330,15 +3330,15 @@
           "whenToUse": "For content areas with known approximate shape.",
           "whenNotToUse": "For progress with a known percentage — use ProgressBar instead.",
           "derivedFrom": null,
-          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />",
+          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-skeleton-line w-skeleton-bar\" />",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-skeleton-line w-skeleton-bar\" />"
             },
             {
               "title": "Text lines",
-              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-full\" /> // stack lines for text blocks; shape is all className"
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-skeleton-line w-full\" /> // stack lines for text blocks; shape is all className"
             }
           ],
           "adoption": {
