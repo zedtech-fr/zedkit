@@ -28,7 +28,7 @@ function Segmented({ label, className, children }: { label: string; className?: 
       direction="horizontal"
       role="group"
       aria-label={label}
-      className={cn("inline-flex items-center gap-0.5", className)}
+      className={cn("inline-flex items-center gap-segment", className)}
     >
       {children}
     </Stack>

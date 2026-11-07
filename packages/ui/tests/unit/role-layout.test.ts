@@ -23,6 +23,10 @@ describe("layout job classes", () => {
     expect(utility("trim-bottom")).toBe("margin-bottom: 0;");
     expect(utility("trim-pad-top")).toBe("padding-top: 0;");
     expect(utility("icon-nudge")).toBe("margin-top: var(--spacing);");
+    expect(utility("icon-nudge-sm")).toBe("margin-top: calc(var(--spacing) * 0.5);");
+    expect(utility("gap-segment")).toBe("gap: calc(var(--spacing) * 0.5);");
+    expect(utility("-mx-back")).toBe("margin-inline: calc(var(--spacing) * -2);");
+    expect(utility("basis-field")).toBe("flex-basis: calc(var(--spacing) * 28);");
     expect(utility("gap-flush")).toBe("gap: 0;");
     expect(utility("flush-block")).toBe("padding-block: 0;");
     expect(css).not.toContain("--spacing-zero");

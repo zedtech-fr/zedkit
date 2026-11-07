@@ -83,7 +83,7 @@ function CommerceInventoryEditor({
     <Card className="content-shrink">
       <CardContent className="content-offset">
         <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
-          <Stack gap={1} className="content-shrink flex-1 basis-28">
+          <Stack gap={1} className="content-shrink flex-1 basis-field">
             <Label htmlFor={priceId}>{messages.priceLabel}</Label>
             <Input
               id={priceId}
@@ -92,7 +92,7 @@ function CommerceInventoryEditor({
               onChange={(event) => onPriceChange(Math.max(0, Number.parseInt(event.target.value, 10) || 0))}
             />
           </Stack>
-          <Stack gap={1} className="content-shrink flex-1 basis-28">
+          <Stack gap={1} className="content-shrink flex-1 basis-field">
             <Label htmlFor={stockId}>{messages.stockLabel}</Label>
             <Input
               id={stockId}

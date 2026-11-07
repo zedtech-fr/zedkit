@@ -63,6 +63,14 @@ describe("cn", () => {
     expect(cn("py-0.5", "py-badge-block")).toBe("py-badge-block");
     expect(cn("pr-0", "trim-pad-end")).toBe("trim-pad-end");
     expect(cn("top-1/2", "pin-center-y")).toBe("pin-center-y");
+    expect(cn("mt-0.5", "icon-nudge-sm")).toBe("icon-nudge-sm");
+    expect(cn("gap-0.5", "gap-segment")).toBe("gap-segment");
+    expect(cn("-mx-2", "-mx-back")).toBe("-mx-back");
+    expect(cn("basis-28", "basis-field")).toBe("basis-field");
+    expect(cn("mb-3", "mb-field-legend-bottom")).toBe("mb-field-legend-bottom");
+    expect(cn("right-3", "right-control-inline")).toBe("right-control-inline");
+    expect(cn("top-3", "top-control-inline")).toBe("top-control-inline");
+    expect(cn("bottom-3", "bottom-control-inline")).toBe("bottom-control-inline");
     expect(cn("grid-cols-3", "grid-pair")).toBe("grid-pair");
     expect(cn("grid-pair", "grid-trio")).toBe("grid-trio");
   });

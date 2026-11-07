@@ -101,7 +101,7 @@ export function HomeDrawerPreview() {
           <DrawerHeader>
             <DrawerTitle>{g.drawer.title}</DrawerTitle>
             <DrawerDescription>{g.drawer.description}</DrawerDescription>
-            <DrawerCloseButton className="absolute top-3 right-3" />
+            <DrawerCloseButton className="absolute top-control-inline right-control-inline" />
           </DrawerHeader>
           <DrawerBody>
             <Stack gap={2} className="surface-pad-block-sm">
