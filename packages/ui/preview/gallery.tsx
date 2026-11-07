@@ -139,7 +139,7 @@ export function Gallery() {
         <nav className="space-y-1 surface-pad-md" aria-label="Gallery sections">
           <p className="px-2 pb-2 text-sm font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
-            <a key={id} href={`#${id}`} className="block rounded-md px-2 py-control-block text-sm hover:bg-accent">
+            <a key={id} href={`#${id}`} className="block rounded-md px-control-tight py-control-block text-sm hover:bg-accent">
               {title}
             </a>
           ))}

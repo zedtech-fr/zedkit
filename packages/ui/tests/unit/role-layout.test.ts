@@ -20,6 +20,7 @@ describe("layout job classes", () => {
     expect(utility("pin-top")).toBe("top: 0;");
     expect(utility("pin-x")).toBe("inset-inline: 0;");
     expect(utility("flush")).toBe("padding: 0;");
+    expect(utility("trim-bottom")).toBe("margin-bottom: 0;");
     expect(utility("gap-flush")).toBe("gap: 0;");
     expect(utility("flush-block")).toBe("padding-block: 0;");
     expect(css).not.toContain("--spacing-zero");
