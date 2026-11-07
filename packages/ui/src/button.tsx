@@ -33,7 +33,7 @@ const buttonVariants = cva(
         class:
           "h-auto pane-shrink bg-transparent flush-block shadow-none hover:bg-transparent active:bg-transparent",
       },
-      { variant: "link", size: "sm", class: "min-h-target px-2 text-sm" },
+      { variant: "link", size: "sm", class: "min-h-target px-control-tight text-sm" },
       { variant: "link", size: "default", class: "min-h-target px-control-inline" },
       { variant: "link", size: "lg", class: "min-h-target px-button-pad text-base" },
     ],

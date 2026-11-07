@@ -202,7 +202,7 @@ function UserMenu() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button type="button" variant="ghost" className="gap-stack-sm px-2" aria-label={projectTrackerDemoCopy.openUserMenu}>
+        <Button type="button" variant="ghost" className="gap-stack-sm px-control-tight" aria-label={projectTrackerDemoCopy.openUserMenu}>
           <Avatar initials={projectTrackerDemoCopy.initials} />
           <Text as="span" className={cn("text-sm font-medium", mobile ? "hidden" : "max-sm:hidden")}>
             {projectTrackerDemoCopy.people.maya}
