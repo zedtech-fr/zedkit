@@ -723,6 +723,18 @@ a[class*="px-badge-inline"] {
   letter-spacing: -0.02em;
 }
 
+/* Room in the prompt field for the send control, and for cancel when it is shown. */
+[data-slot="prompt-input-field"] {
+  padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));
+}
+[data-slot="prompt-input"][data-actions="two"] [data-slot="prompt-input-field"] {
+  padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) * 2 + var(--spacing) * 3);
+}
+[data-prompt-cancel] {
+  position: absolute;
+  right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) + var(--spacing) * 2);
+}
+
 /* Switch track and thumb. The track is five by nine spacing steps. The thumb is four. */
 [data-slot="switch"] {
   height: calc(var(--spacing) * 5);
