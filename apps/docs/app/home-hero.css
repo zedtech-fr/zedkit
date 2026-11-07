@@ -41,6 +41,19 @@
   }
 }
 
+/* Display controls. On a phone, equal columns of at least 6.25rem so none sits alone. From 40rem, each keeps its own width. */
+[data-hero-demo-fields] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.25rem, 1fr));
+}
+@media (min-width: 40rem) {
+  [data-hero-demo-fields] {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+}
+
 #home-page [data-hero-page="settings"] [data-hero-block][data-beat="1"] {
   max-width: 28rem;
 }
