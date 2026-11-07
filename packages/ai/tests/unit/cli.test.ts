@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, symlinkSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { ALL_PROVIDERS } from "#install.js";
@@ -357,6 +358,25 @@ describe("cli", () => {
         contextWindow: "1M",
       });
       expect(route.needsSource).toEqual({ reasoning: "call", context: "call" });
+    });
+
+    it("routes orchestrator to muse when --provider muse despite cursor default_provider", () => {
+      const root = fileURLToPath(new URL("../../../../", import.meta.url));
+      const { code, text } = run(
+        "route",
+        "orchestrator",
+        "--kind",
+        "decide",
+        "--stakes",
+        "standard",
+        "--provider",
+        "muse",
+        "--dir",
+        root,
+      );
+      expect(code).toBe(0);
+      expect(text).toContain("provider: muse");
+      expect(text).toContain("model: muse-wonder-1.0");
     });
 
     it("reads the project's tokenomics.md and its default_provider", () => {

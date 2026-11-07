@@ -72,6 +72,13 @@ describe("zedkit-check-no-artifacts", () => {
     expect(result.stdout).toContain("dist/out.js");
   });
 
+  it("fails on a tracked conversation export at repo root", () => {
+    const dir = gitRepo({ "conversation-abc123.txt": "export\n" });
+    const result = runBin(artifactsBin, dir);
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain("conversation-abc123.txt");
+  });
+
   it("matches artifact directory names as path segments, not substrings", () => {
     const dir = gitRepo({
       "tsconfig.build.json": "{}\n",

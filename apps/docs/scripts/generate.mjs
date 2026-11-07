@@ -580,6 +580,7 @@ export function generate(outDir) {
     "",
     "Guide: https://zedkit.app/docs/zedkit-and-shadcn",
   ].join("\n");
+  // llms-full.txt scope: install + AI setup prose + the same index links as llms.txt (not full MDX page bodies).
   const llmsFull = buildLlmsFull([
     { title: "Install or copy", body: installOrCopyBody },
     { title: "Set up zedkit AI", body: readAgentOnboardingMarkdown() },

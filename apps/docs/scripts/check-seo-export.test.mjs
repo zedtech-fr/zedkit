@@ -45,17 +45,29 @@ test("checkRobots reports a missing Sitemap line and a missing Allow /", () => {
   ]);
 });
 
-test("checkSitemap is silent for three on-site URLs including home and /docs", () => {
+test("checkSitemap is silent for three on-site URLs without lastmod", () => {
   const xml = ["/", "/docs", "/catalog"]
-    .map((path) => `<url><loc>${base}${path === "/" ? "/" : path}</loc><lastmod>2026-11-07</lastmod></url>`)
+    .map((path) => `<url><loc>${base}${path === "/" ? "/" : path}</loc></url>`)
     .join("");
   assert.deepEqual(checkSitemap(xml, base).errors, []);
   assert.equal(checkSitemap(xml, base).urlCount, 3);
 });
 
-test("checkSitemap reports a missing lastmod per URL", () => {
-  const xml = [`<url><loc>${base}/</loc></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
-  assert.deepEqual(checkSitemap(xml, base).errors, ["sitemap.xml: expected a lastmod per URL, got 0 for 3"]);
+test("checkSitemap accepts a valid lastmod and rejects a bogus value", () => {
+  const ok = [`<url><loc>${base}/</loc><lastmod>2026-11-07</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(ok, base).errors, []);
+  const bad = [`<url><loc>${base}/</loc><lastmod>not-a-date</lastmod></url>`, `<url><loc>${base}/docs</loc></url>`, `<url><loc>${base}/catalog</loc></url>`].join("");
+  assert.deepEqual(checkSitemap(bad, base).errors, [
+    `sitemap.xml: invalid lastmod "not-a-date" for ${base}/`,
+  ]);
+});
+
+test("sitemap route omits build-time lastmod so rebuilds do not fake freshness", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { fileURLToPath } = await import("node:url");
+  const source = await readFile(fileURLToPath(new URL("../app/sitemap.ts", import.meta.url)), "utf8");
+  assert.doesNotMatch(source, /\blastModified\b/u);
+  assert.doesNotMatch(source, /new Date\(\)/u);
 });
 
 test("checkSitemap reports too few URLs, an off-site loc, and missing home or /docs", () => {
@@ -81,7 +93,7 @@ test("checkLlms accepts the generated header and rejects anything else", () => {
 
 test("checkLlmsFull accepts buildLlmsFull sections", () => {
   const body =
-    "# Install or copy\n\nnpm\n\n# Set up zedkit AI\n\nsteps\n\n# Documentation index\n\n# zedkit docs\n";
+    "# Install or copy\n\nnpm\n\n# Set up zedkit AI\n\nsteps\n\n# Documentation index\n\n- [Home](https://zedkit.app/)\n";
   assert.deepEqual(checkLlmsFull(body), []);
   assert.deepEqual(checkLlmsFull("# other"), [
     "llms-full.txt: expected # Install or copy header",

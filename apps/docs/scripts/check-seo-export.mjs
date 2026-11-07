@@ -14,6 +14,10 @@ const APP = join(HERE, "..");
 
 const REGISTRY_JSON_URL = /\/r\/([a-z][a-z0-9-]*)\.json/g;
 
+/** W3C datetime subset: YYYY-MM-DD or a full ISO 8601 timestamp (no invented dates). */
+const LASTMOD_PATTERN =
+  /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?)?$/;
+
 export function checkRobots(text, base) {
   const errors = [];
   if (!text.includes(`Sitemap: ${base}/sitemap.xml`)) {
@@ -31,9 +35,20 @@ export function checkSitemap(text, base) {
   if (locs.length < 3) {
     errors.push(`sitemap.xml: expected at least 3 URLs, got ${locs.length}`);
   }
-  const lastmods = [...text.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((match) => match[1]);
-  if (lastmods.length < locs.length) {
-    errors.push(`sitemap.xml: expected a lastmod per URL, got ${lastmods.length} for ${locs.length}`);
+  const urlBlocks = [...text.matchAll(/<url>([\s\S]*?)<\/url>/g)];
+  for (const match of urlBlocks) {
+    const block = match[1];
+    const locMatch = block.match(/<loc>([^<]+)<\/loc>/);
+    const lastmods = [...block.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((m) => m[1]);
+    if (lastmods.length === 0) continue;
+    if (lastmods.length > 1) {
+      errors.push(`sitemap.xml: multiple lastmod values for ${locMatch?.[1] ?? "url"}`);
+      continue;
+    }
+    const value = lastmods[0];
+    if (!LASTMOD_PATTERN.test(value)) {
+      errors.push(`sitemap.xml: invalid lastmod "${value}" for ${locMatch?.[1] ?? "url"}`);
+    }
   }
   for (const loc of locs) {
     if (!loc.startsWith(`${base}/`) && loc !== `${base}/`) {
@@ -64,6 +79,9 @@ export function checkLlmsFull(text) {
   const errors = [];
   if (!text.startsWith("# Install or copy")) {
     errors.push("llms-full.txt: expected # Install or copy header");
+  }
+  if (text.includes("# Documentation index") && !text.includes("- [")) {
+    errors.push("llms-full.txt: documentation index must list links (not full page bodies)");
   }
   if (!text.includes("# Documentation index")) {
     errors.push("llms-full.txt: missing # Documentation index section");
