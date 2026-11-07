@@ -141,7 +141,7 @@ export function HomeThemePreview() {
       <Card className="content-shrink shadow-none">
         <CardHeader className="gap-stack-tight surface-pad-compact trim-pad-bottom">
           <CardDescription>{g.themeCard.description}</CardDescription>
-          <CardTitle className="text-lg">{g.themeCard.title}</CardTitle>
+          <CardTitle className="text-preview-title">{g.themeCard.title}</CardTitle>
         </CardHeader>
         <CardContent data-theme-card-body="" className="surface-pad-compact">
           <Stack direction="horizontal" gap={2} className="flex-wrap">

@@ -72,7 +72,7 @@ export function BrandLogoDemo() {
         className="aspect-[1200/630] w-full items-center justify-center gap-stack-md rounded-lg bg-primary text-primary-foreground"
       >
         <HarborMark className="h-share" />
-        <Text as="span" className="text-xl font-semibold" aria-hidden="true">
+        <Text as="span" className="text-brand-word" aria-hidden="true">
           {brandLogoCopy.brandName}
         </Text>
         <Text as="span" className="text-dense opacity-80" aria-hidden="true">

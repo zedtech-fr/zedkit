@@ -12,7 +12,7 @@ export function IconButtonDemo() {
     <Stack className="content-shrink rounded-lg border border-border bg-background">
       <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
         <Stack gap={1} className="content-shrink">
-          <Heading level={2} className="text-xl text-balance">
+          <Heading level={2} className="text-demo-heading text-balance">
             {iconButtonCopy.demo.title}
           </Heading>
           <Text variant="muted" className="text-caption">
