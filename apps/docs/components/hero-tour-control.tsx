@@ -34,7 +34,7 @@ export function HeroTourControl({ playing, onToggle }: { playing: boolean; onTog
       onClick={toggle}
       {...control}
     >
-      {playing ? <Pause className="size-4" aria-hidden /> : <Play className="size-4" aria-hidden />}
+      {playing ? <Pause className="size-icon" aria-hidden /> : <Play className="size-icon" aria-hidden />}
       <Text as="span" className="sr-only xl:not-sr-only">
         {label}
       </Text>

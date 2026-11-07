@@ -53,7 +53,7 @@ function NavButton({ id, icon: Icon, active, onSelect, compact }: (typeof HERO_N
       onClick={() => onSelect(id)}
       data-tour-nav={compact ? undefined : id}
     >
-      <Icon className="size-4" aria-hidden />
+      <Icon className="size-icon" aria-hidden />
       <span className={compact ? undefined : "lg:max-xl:sr-only"}>{copy.pages[id]}</span>
     </Button>
   );
@@ -103,7 +103,7 @@ function AgentButton({ open, panelId, onToggle }: AgentToggle) {
       onClick={onToggle}
       data-hero-agent-open=""
     >
-      <Sparkles className="size-4" aria-hidden />
+      <Sparkles className="size-icon" aria-hidden />
       {copy.agent.open}
     </Button>
   );

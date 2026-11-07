@@ -29,7 +29,7 @@ export function MobileSearchTrigger({ className }: { className?: string }) {
       className={className ?? iconButtonClassName}
       onClick={() => setOpenSearch(true)}
     >
-      <Search aria-hidden="true" className="size-4" />
+      <Search aria-hidden="true" className="size-icon" />
     </button>
   );
 }

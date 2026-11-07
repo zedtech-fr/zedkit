@@ -47,7 +47,7 @@ function CopyButton({ text, what }: { text: string; what: string }) {
         data-copy=""
         onClick={copy}
       >
-        {state === "copied" ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />}
+        {state === "copied" ? <Check className="size-icon" aria-hidden /> : <Copy className="size-icon" aria-hidden />}
       </Button>
       <Text as="span" role="status" className="sr-only">
         {state === "copied" ? adoptionCopy.copied : state === "failed" ? adoptionCopy.copyFailed : ""}

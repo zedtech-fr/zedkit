@@ -143,7 +143,7 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
               className="w-full justify-start gap-2"
               onClick={active ? undefined : notice(projectTrackerDemoCopy.nav.unavailable(label))}
             >
-              <Icon className="size-4" aria-hidden />
+              <Icon className="size-icon" aria-hidden />
               {label}
             </Button>
           );
@@ -180,7 +180,7 @@ function MobileNav() {
     <Drawer direction="left" mobile="side">
       <DrawerTrigger asChild>
         <IconButton label={projectTrackerDemoCopy.openNavigation} variant="ghost" className={mobile ? undefined : "md:hidden"}>
-          <Menu className="size-4" aria-hidden />
+          <Menu className="size-icon" aria-hidden />
         </IconButton>
       </DrawerTrigger>
       <DrawerContent>
@@ -233,7 +233,7 @@ function UserMenu() {
                   className="w-full justify-start gap-2"
                   onClick={notice(projectTrackerDemoCopy.menu.unavailable(label))}
                 >
-                  <Icon className="size-4" aria-hidden />
+                  <Icon className="size-icon" aria-hidden />
                   {label}
                 </Button>
               </DrawerClose>
@@ -243,7 +243,7 @@ function UserMenu() {
         <DrawerFooter>
           <DrawerClose asChild>
             <Button type="button" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.signedOut)}>
-              <LogOut className="size-4" aria-hidden />
+              <LogOut className="size-icon" aria-hidden />
               {projectTrackerDemoCopy.signOut}
             </Button>
           </DrawerClose>
@@ -262,7 +262,7 @@ function TopBar() {
       </Stack>
       <Stack direction="horizontal" gap={1}>
         <IconButton label={projectTrackerDemoCopy.notifications} variant="ghost" onClick={notice(projectTrackerDemoCopy.caughtUp)}>
-          <Bell className="size-4" aria-hidden />
+          <Bell className="size-icon" aria-hidden />
         </IconButton>
         <UserMenu />
       </Stack>
@@ -384,11 +384,11 @@ export function ProjectTrackerDemoApp() {
             actions={
               <>
                 <Button type="button" size="sm" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
-                  <Download className="size-4" aria-hidden />
+                  <Download className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.export}
                 </Button>
                 <Button type="button" size="sm" className="gap-2" onClick={addTask}>
-                  <Plus className="size-4" aria-hidden />
+                  <Plus className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.newTask}
                 </Button>
               </>

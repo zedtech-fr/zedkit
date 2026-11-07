@@ -112,15 +112,15 @@ function Sidebar() {
       <nav aria-label={adminDashboardGuideCopy.navAria}>
         <Stack gap={1}>
           <Button type="button" variant="secondary" className="w-full justify-start gap-2" aria-current="page">
-            <FolderKanban className="size-4" aria-hidden />
+            <FolderKanban className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.projects}
           </Button>
           <Button type="button" variant="ghost" className="w-full justify-start gap-2">
-            <Server className="size-4" aria-hidden />
+            <Server className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.services}
           </Button>
           <Button type="button" variant="ghost" className="w-full justify-start gap-2">
-            <Settings className="size-4" aria-hidden />
+            <Settings className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.settings}
           </Button>
         </Stack>

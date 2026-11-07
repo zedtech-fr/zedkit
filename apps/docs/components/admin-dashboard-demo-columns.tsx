@@ -27,7 +27,7 @@ function DeleteRow({ name, onConfirm }: { name: string; onConfirm: () => void })
           className="text-destructive"
           aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(name)}
         >
-          <Trash2 className="size-4" aria-hidden />
+          <Trash2 className="size-icon" aria-hidden />
         </Button>
       }
       title={adminDashboardDemoCopy.columns.deleteTitle}
@@ -82,7 +82,7 @@ export function buildAdminDashboardColumns({
             aria-label={adminDashboardDemoCopy.columns.editAriaLabel(row.original.name)}
             onClick={() => onEdit(row.original)}
           >
-            <Pencil className="size-4" aria-hidden />
+            <Pencil className="size-icon" aria-hidden />
           </Button>
           <DeleteRow name={row.original.name} onConfirm={() => onDelete(row.original.id)} />
         </Stack>
