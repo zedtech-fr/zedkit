@@ -759,6 +759,12 @@ a[class*="px-badge-inline"] {
   font-size: var(--text-lg);
 }
 
+/* The sentence under a marketing hero. The size is the compact heading size. The line stays the body line. */
+.text-hero-lead {
+  font-size: var(--text-lg);
+  line-height: var(--zk-body-leading, 1.55);
+}
+
 /* Marketing hero promise. Grows one step from the small breakpoint. */
 .text-hero-title {
   font-size: var(--text-4xl);
