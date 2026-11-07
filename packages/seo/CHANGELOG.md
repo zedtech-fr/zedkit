@@ -1,5 +1,15 @@
 # @zedtech/zedkit-seo
 
+## 1.1.0
+
+### Minor Changes
+
+- 2fe5608: Add `buildSoftwareSourceCodeJsonLd` (plus `SoftwareSourceCodeJsonLdOptions`) for typed SoftwareSourceCode structured data.
+
+### Patch Changes
+
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+
 ## 1.0.0
 
 ### Major Changes

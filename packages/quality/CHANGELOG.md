@@ -1,5 +1,11 @@
 # @zedtech/zedkit-quality
 
+## 1.1.2
+
+### Patch Changes
+
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+
 ## 1.1.1
 
 ### Patch Changes
