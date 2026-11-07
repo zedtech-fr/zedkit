@@ -154,7 +154,7 @@ export function FileBlock({
         </Stack>
       }
       allowCopy={false}
-      viewportProps={{ "aria-label": path, ...(tall ? { className: "max-h-96" } : {}) }}
+      viewportProps={{ "aria-label": path, ...(tall ? { "data-code-tall": "" } : {}) }}
       Actions={({ className }) => (
         <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
           <CopyButton text={code} what={path} />

@@ -27,6 +27,25 @@
   min-height: calc(var(--spacing) * 32);
 }
 
+/* Tall code sample. Caps the frame at 96 spacing steps. */
+[data-code-tall] {
+  max-height: calc(var(--spacing) * 96);
+}
+
+/* Editor field and the apply-to-site button. Clears the docs header.
+   On a short window with a pinned preview, clears that card too. */
+[data-editor-scroll] {
+  scroll-margin-top: calc(var(--spacing) * 28);
+}
+@media (width < 64rem) and (min-height: 48rem) {
+  [data-editor-scroll] {
+    scroll-margin-top: calc(var(--spacing) * 80);
+  }
+}
+[data-editor-scroll="apply"] {
+  scroll-margin-bottom: calc(var(--spacing) * 24);
+}
+
 /* Anchor target, clear of the sticky header. */
 [data-scroll-anchor] {
   scroll-margin-top: calc(var(--spacing) * 24);

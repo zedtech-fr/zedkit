@@ -38,7 +38,7 @@ function ApplySiteRow({
         <Button
           type="button"
           variant="outline"
-          className="scroll-mt-28 scroll-mb-24 max-lg:[@media(min-height:48rem)]:scroll-mt-80"
+          data-editor-scroll="apply"
           onClick={onApplySite}
         >
           {identityEditorCopy.toolbar.applySite}
