@@ -597,7 +597,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile --filter="@zedtech/zedkit-docs..."
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: docs-out
           path: apps/docs/out
