@@ -53,7 +53,7 @@ export function IconButtonRowsDemo() {
     <Stack gap={3} className="content-shrink">
       <ul aria-label={iconButtonCopy.rows.tasksAriaLabel} className="divide-y divide-border rounded-lg border border-border bg-background">
         {tasks.map((task) => (
-          <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md surface-pad-inline py-2">
+          <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md surface-pad-inline surface-pad-block-sm">
             <Stack gap={1} className="content-shrink flex-1">
               <Text as="span" className="font-medium">
                 {task.title}
