@@ -102,7 +102,7 @@ describe("sticky-aside.css", () => {
     expect(css).toContain("@media (min-width: 48rem)");
     expect(css).toContain("@media (min-width: 64rem)");
     expect(css).toContain("position: sticky");
-    expect(css).toContain("top: var(--zk-sticky-top)");
+    expect(css).toContain("top: var(--zk-sticky-top, var(--zk-pin-top))");
   });
 
   it("sets anchor scroll margin on the main column", () => {
@@ -112,7 +112,7 @@ describe("sticky-aside.css", () => {
 
   it("scrollable asides cap height and scroll internally", () => {
     expect(css).toContain("[data-scrollable]");
-    expect(css).toContain("max-height: calc(100svh - var(--zk-sticky-top))");
+    expect(css).toContain("max-height: calc(100svh - var(--zk-sticky-top, var(--zk-pin-top)))");
     expect(css).toContain("overflow-y: auto");
   });
 
