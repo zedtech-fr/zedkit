@@ -906,6 +906,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility h-logo {
   height: calc(var(--spacing) * 6);
 }
+@utility size-mark {
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+}
 @utility min-h-status {
   min-height: calc(var(--spacing) * 6);
 }

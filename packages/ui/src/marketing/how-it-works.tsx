@@ -38,7 +38,7 @@ function HowItWorks({ title, description, steps, className, ...props }: HowItWor
             <li key={step.id ?? index} data-slot="how-it-works-step" className="flex gap-stack-lg md:flex-col">
               <span
                 aria-hidden="true"
-                className="grid size-10 shrink-0 place-content-center rounded-full bg-primary font-semibold text-primary-foreground"
+                className="grid size-mark shrink-0 place-content-center rounded-full bg-primary font-semibold text-primary-foreground"
               >
                 {index + 1}
               </span>

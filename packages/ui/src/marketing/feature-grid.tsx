@@ -50,7 +50,7 @@ function FeatureGrid({ title, description, features, columns = 3, className, ...
                 <span
                   data-slot="feature-icon"
                   aria-hidden="true"
-                  className="grid size-10 place-content-center rounded-lg bg-primary/10 text-primary [&_svg]:size-5"
+                  className="grid size-mark place-content-center rounded-lg bg-primary/10 text-primary [&_svg]:size-5"
                 >
                   {feature.icon}
                 </span>

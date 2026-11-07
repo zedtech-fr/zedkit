@@ -60,6 +60,7 @@ describe("layout job classes", () => {
     expect(utility("empty-state-block")).toBe("padding-block: calc(var(--spacing) * 8);");
     expect(utility("h-skeleton-line")).toBe("height: calc(var(--spacing) * 4);");
     expect(utility("h-logo")).toBe("height: calc(var(--spacing) * 6);");
+    expect(utility("size-mark")).toBe("width: calc(var(--spacing) * 10); height: calc(var(--spacing) * 10);");
     expect(utility("min-h-status")).toBe("min-height: calc(var(--spacing) * 6);");
     expect(css).not.toContain("--spacing-stack-6xl");
     expect(css).not.toContain("--zk-gap-2xs");
