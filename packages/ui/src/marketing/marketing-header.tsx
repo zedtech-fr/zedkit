@@ -36,7 +36,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
       className={cn("z-header w-full border-b bg-card text-card-foreground", sticky ? "sticky pin-top" : "relative", className)}
       {...props}
     >
-      <Container width="default" className="flex min-h-14 items-center gap-4">
+      <Container width="default" className="flex min-h-14 items-center gap-stack-lg">
         <div data-slot="marketing-header-brand" className="flex content-shrink shrink-0 items-center">
           {brand}
         </div>
@@ -50,16 +50,16 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
           </nav>
         ) : null}
         {actions ? (
-          <div data-slot="marketing-header-actions" className="ml-auto hidden items-center gap-2 md:flex">
+          <div data-slot="marketing-header-actions" className="ml-auto hidden items-center gap-stack-sm md:flex">
             {actions}
           </div>
         ) : null}
         <details data-slot="marketing-header-menu" className="group ml-auto md:hidden">
-          <summary className="flex min-h-target cursor-pointer list-none items-center gap-2 rounded-md px-3 text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-target cursor-pointer list-none items-center gap-stack-sm rounded-md px-3 text-sm font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
             <Menu aria-hidden="true" className="size-icon" />
             {messages.menu}
           </summary>
-          <div className="absolute pin-x top-full flex flex-col gap-4 border-b bg-card p-4 shadow-lg">
+          <div className="absolute pin-x top-full flex flex-col gap-stack-lg border-b bg-card p-4 shadow-lg">
             {items.length > 0 ? (
               <nav aria-label={messages.mainNavigation}>
                 <ul className={cn("flex list-none flex-col gap-1 flush", linkClass)}>
@@ -69,7 +69,7 @@ function MarketingHeader({ brand, links = [], actions, sticky = true, className,
                 </ul>
               </nav>
             ) : null}
-            {actions ? <div className="flex flex-col gap-2 *:w-full">{actions}</div> : null}
+            {actions ? <div className="flex flex-col gap-stack-sm *:w-full">{actions}</div> : null}
           </div>
         </details>
       </Container>

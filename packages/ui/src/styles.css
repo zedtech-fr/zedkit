@@ -811,6 +811,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-stack-lg {
   gap: var(--zk-gap-lg);
 }
+/* Space between a marketing section's header and its content. */
+@utility gap-section-stack {
+  gap: calc(var(--spacing) * 10);
+}
+/* Space above a row of actions. */
+@utility actions-offset {
+  padding-top: calc(var(--spacing) * 2);
+}
 /* Panel padding. The name is the surface size, and the value follows --spacing. */
 @utility surface-pad-sm {
   padding: calc(var(--spacing) * 2);

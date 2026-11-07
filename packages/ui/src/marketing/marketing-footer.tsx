@@ -48,9 +48,9 @@ function FooterColumn({ column }: { column: MarketingFooterColumn }) {
 function MarketingFooter({ brand, description, columns = [], legal, className, ...props }: MarketingFooterProps) {
   return (
     <footer data-slot="marketing-footer" className={cn("border-t bg-card text-card-foreground", className)} {...props}>
-      <Container width="default" className="flex flex-col gap-10 py-section-md">
-        <div className="grid gap-10 md:grid-cols-3">
-          <div className="flex content-shrink flex-col gap-3">
+      <Container width="default" className="flex flex-col gap-section-stack py-section-md">
+        <div className="grid gap-section-stack md:grid-cols-3">
+          <div className="flex content-shrink flex-col gap-stack-md">
             {brand}
             {description ? <Text variant="muted">{description}</Text> : null}
           </div>
@@ -65,7 +65,7 @@ function MarketingFooter({ brand, description, columns = [], legal, className, .
         {legal ? (
           <div
             data-slot="marketing-footer-legal"
-            className="flex flex-col gap-3 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-stack-md border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
           >
             {legal}
           </div>

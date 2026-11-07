@@ -31,11 +31,11 @@ function HowItWorks({ title, description, steps, className, ...props }: HowItWor
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col gap-10">
+      <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
         <ol className="grid list-none gap-8 flush md:auto-cols-fr md:grid-flow-col md:gap-6">
           {steps.map((step, index) => (
-            <li key={step.id ?? index} data-slot="how-it-works-step" className="flex gap-4 md:flex-col">
+            <li key={step.id ?? index} data-slot="how-it-works-step" className="flex gap-stack-lg md:flex-col">
               <span
                 aria-hidden="true"
                 className="grid size-10 shrink-0 place-content-center rounded-full bg-primary font-semibold text-primary-foreground"

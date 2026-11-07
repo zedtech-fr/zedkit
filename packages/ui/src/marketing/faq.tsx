@@ -31,12 +31,12 @@ function Faq({ title, description, items, className, ...props }: FaqProps) {
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="reading" className="flex flex-col gap-10">
+      <Container width="reading" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
         <div className="flex flex-col">
           {items.map((item, index) => (
             <details key={item.id ?? index} data-slot="faq-item" className="group border-b">
-              <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-3 font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-stack-lg py-3 font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
                 <span className="content-shrink">{item.question}</span>
                 <ChevronDown
                   aria-hidden="true"

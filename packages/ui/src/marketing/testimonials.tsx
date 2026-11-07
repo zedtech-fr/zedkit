@@ -37,16 +37,16 @@ function Testimonials({ title, description, items, className, ...props }: Testim
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col gap-10">
+      <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ul className="grid list-none gap-4 flush sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid list-none gap-stack-lg flush sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <GlassSurface key={item.id ?? index} as="li" className="flex">
               <figure className="flex content-shrink flex-1 flex-col justify-between gap-6">
                 <blockquote className="text-pretty">
                   <Text as="span" className="before:content-[open-quote] after:content-[close-quote]">{item.quote}</Text>
                 </blockquote>
-                <figcaption className="flex items-center gap-3">
+                <figcaption className="flex items-center gap-stack-md">
                   {item.avatar ? (
                     <span
                       data-slot="testimonial-avatar"
