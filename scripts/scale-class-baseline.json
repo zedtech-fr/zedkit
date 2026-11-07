@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 334,
+  "total": 333,
   "files": {
     "apps/docs/components/adoption-blocks.tsx": 1,
     "apps/docs/components/adoption-steps.tsx": 5,
@@ -38,7 +38,7 @@
     "apps/docs/components/identity-dock-chrome.tsx": 1,
     "apps/docs/components/identity-dock-export-block.tsx": 1,
     "apps/docs/components/identity-dock-export-copy-row.tsx": 1,
-    "apps/docs/components/identity-dock-widget.tsx": 2,
+    "apps/docs/components/identity-dock-widget.tsx": 1,
     "apps/docs/components/identity-editor-export.tsx": 2,
     "apps/docs/components/identity-editor-fields.tsx": 2,
     "apps/docs/components/identity-editor-toolbar.tsx": 1,

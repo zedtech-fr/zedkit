@@ -1085,9 +1085,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-invite {
   width: calc(var(--spacing) * 72);
 }
-/* The drag handle on a phone sheet. */
+/* The drag handle on a phone sheet. The bar is one spacing step thick. */
 @utility w-handle {
   width: calc(var(--spacing) * 10);
+  height: var(--spacing);
 }
 @utility w-skeleton-half {
   width: 50%;
