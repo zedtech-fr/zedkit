@@ -36,7 +36,6 @@ function FieldLegend({
       data-variant={variant}
       className={cn(
         "mb-field-legend-bottom font-medium",
-        "data-[variant=legend]:text-base",
         "data-[variant=label]:text-dense",
         className,
       )}

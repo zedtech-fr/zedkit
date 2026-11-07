@@ -126,7 +126,7 @@ const SECTIONS = [
 function GallerySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="space-y-stack-lg border-b pb-section last:border-0">
-      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+      <h2 className="text-gallery-heading">{title}</h2>
       {children}
     </section>
   );

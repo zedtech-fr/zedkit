@@ -205,7 +205,7 @@ export function ScrollScenesPricingDemo() {
         children: (
           <Visual id={plan.id}>
             <Stack direction="horizontal" gap={2} className="items-baseline">
-              <Text className="trim-margin! text-3xl font-semibold">{plan.price}</Text>
+              <Text className="trim-margin! text-offer-price">{plan.price}</Text>
               <Text variant="muted" className="trim-margin!">
                 {scrollScenesCopy.pricing.period}
               </Text>

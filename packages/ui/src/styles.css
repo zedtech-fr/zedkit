@@ -697,6 +697,38 @@ a[class*="px-badge-inline"] {
   line-height: var(--text-xl--line-height);
 }
 
+/* A price in a story. The text's own line stays. */
+.text-offer-price {
+  font-size: var(--text-3xl);
+  font-weight: 600;
+}
+
+/* A dashboard stat. The text's own line stays. */
+.text-stat {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+}
+
+/* A scene heading pulled up to the stat size. */
+.text-scene-title {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+}
+
+/* A gallery section title. */
+.text-gallery-heading {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Field legend. Medium weight stays on the element. */
+[data-slot="field-legend"][data-variant="legend"] {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+}
+
 /* Marketing hero promise. Grows one step from the small breakpoint. */
 .text-hero-title {
   font-size: var(--text-4xl);
