@@ -22,6 +22,7 @@ describe("layout job classes", () => {
     expect(utility("flush")).toBe("padding: 0;");
     expect(utility("trim-bottom")).toBe("margin-bottom: 0;");
     expect(utility("trim-pad-top")).toBe("padding-top: 0;");
+    expect(utility("icon-nudge")).toBe("margin-top: var(--spacing);");
     expect(utility("gap-flush")).toBe("gap: 0;");
     expect(utility("flush-block")).toBe("padding-block: 0;");
     expect(css).not.toContain("--spacing-zero");

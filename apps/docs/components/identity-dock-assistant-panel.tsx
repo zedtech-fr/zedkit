@@ -86,7 +86,7 @@ function IdentityDockPanelScroll(props: {
   siteApply: ApplySiteTokenHandlers;
 }) {
   return (
-    <Stack ref={props.scrollRef} gap={3} className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-3 pt-3 pb-2">
+    <Stack ref={props.scrollRef} gap={3} className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-3 pb-2">
       <DockViewSwitch
         view={props.view}
         setView={props.setView}
