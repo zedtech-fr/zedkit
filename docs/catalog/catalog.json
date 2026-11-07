@@ -3297,7 +3297,7 @@
             },
             {
               "title": "Vertical divider",
-              "code": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+              "code": "import { Separator, Stack, Text } from \"@zedtech/zedkit-ui\";\n<Stack direction=\"horizontal\" gap={3} className=\"items-center\">\n  <Text>Orders</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Customers</Text>\n</Stack>"
             }
           ],
           "adoption": {
@@ -3314,7 +3314,7 @@
           },
           "registry": "separator",
           "a11y": "Decorative by default (`role=\"none\"`); pass `decorative={false}` with an accessible name when it separates named regions. Line weight follows `--zk-border-width` (mist 1px).",
-          "troubleshooting": "Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.",
+          "troubleshooting": "Vertical divider invisible — put it in a row with text (or anything that sets the row height). It stretches to that row. Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]

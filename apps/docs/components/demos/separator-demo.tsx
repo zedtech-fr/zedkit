@@ -7,7 +7,7 @@ export function SeparatorDemo() {
       <Text>{separatorCopy.above}</Text>
       <Separator />
       <Text>{separatorCopy.below}</Text>
-      <Stack direction="horizontal" gap={3} className="h-6">
+      <Stack direction="horizontal" gap={3} className="items-center">
         <Text>{separatorCopy.left}</Text>
         <Separator orientation="vertical" />
         <Text>{separatorCopy.right}</Text>
