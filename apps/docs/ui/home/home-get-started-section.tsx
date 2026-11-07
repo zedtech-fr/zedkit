@@ -89,7 +89,6 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
         <StickyAside
           id="install-or-copy"
           data-scroll-anchor=""
-          className="[--zk-sticky-gap:2rem] [--zk-sticky-top:7rem]"
           side="right"
         >
           <StickyAside.Main>

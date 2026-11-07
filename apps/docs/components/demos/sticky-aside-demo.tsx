@@ -10,7 +10,7 @@ const steps = [
 
 export function StickyAsideDemo() {
   return (
-    <StickyAside className="min-h-aside [--zk-sticky-top:4.5rem]" side="right">
+    <StickyAside className="min-h-aside" side="right">
       <StickyAside.Main>
         <ol className="trim-margin flex list-none flex-col gap-stack-lg flush">
           {steps.map((step, index) => (
@@ -42,7 +42,7 @@ export function StickyAsideDemo() {
 
 export function StickyAsideDocStepsDemo() {
   return (
-    <StickyAside side="left" from="md" ratio="2/5" scrollable className="[--zk-sticky-top:4.5rem]">
+    <StickyAside side="left" from="md" ratio="2/5" scrollable>
       <StickyAside.Main>
         <Stack gap={3}>
           <Heading level={3}>Write the guide</Heading>
