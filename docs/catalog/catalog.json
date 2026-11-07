@@ -5445,11 +5445,11 @@
           "whenToUse": "Background and deco layers that should drift as the section scrolls. Keep copy and controls outside a moving layer, or at `depth={0}`.",
           "whenNotToUse": "Node-local scroll presets on a single element — `data-animate-scroll=\"parallax\"` stays. Pinned scene crossfades — `ScrollScenes`. Sticky columns — `StickyAside`.",
           "derivedFrom": null,
-          "example": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute pin-fill\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute right-8 top-20\" />\n</ParallaxSection>",
+          "example": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute pin-fill\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute pin-top pin-right\" />\n</ParallaxSection>",
           "examples": [
             {
               "title": "Hero with far background",
-              "code": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute pin-fill\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute right-8 top-20\" />\n</ParallaxSection>"
+              "code": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute pin-fill\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute pin-top pin-right\" />\n</ParallaxSection>"
             },
             {
               "title": "Named depth layer",
