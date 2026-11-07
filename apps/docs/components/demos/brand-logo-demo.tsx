@@ -71,7 +71,7 @@ export function BrandLogoDemo() {
         aria-label={brandLogoCopy.sharePreviewAriaLabel}
         className="aspect-[1200/630] w-full items-center justify-center gap-stack-md rounded-lg bg-primary text-primary-foreground"
       >
-        <HarborMark className="h-share min-h-10" />
+        <HarborMark className="h-share" />
         <Text as="span" className="text-xl font-semibold" aria-hidden="true">
           {brandLogoCopy.brandName}
         </Text>
