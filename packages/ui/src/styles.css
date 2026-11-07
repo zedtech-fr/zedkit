@@ -821,6 +821,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility gap-prose {
   gap: calc(var(--spacing) * 5);
 }
+/* A loose list or a loose column, one step under the section stack. */
+@utility gap-list {
+  gap: calc(var(--spacing) * 6);
+}
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
 }

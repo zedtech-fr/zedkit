@@ -49,7 +49,7 @@ function HomeAiSetupWhatYouGet() {
           {whatYouGet.summary}
         </Text>
       </Stack>
-      <ul className="trim-margin grid list-none gap-6 flush" data-animate="fade-up" data-animate-stagger="">
+      <ul className="trim-margin grid list-none gap-list flush" data-animate="fade-up" data-animate-stagger="">
         {items.map((item) => (
           <li key={item.id} className="flex content-shrink flex-col gap-stack-tight border-l-2 border-border pl-4">
             <Heading level={4} typeRole="cardTitle">

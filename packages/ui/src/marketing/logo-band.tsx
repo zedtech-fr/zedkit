@@ -32,7 +32,7 @@ function LogoBand({ title, logos, className, ...props }: LogoBandProps) {
       className={cn("py-section-sm", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col items-center gap-6">
+      <Container width="default" className="flex flex-col items-center gap-list">
         <Text id={titleId} variant="muted" className="text-center">
           {title}
         </Text>

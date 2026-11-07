@@ -192,7 +192,7 @@ export function ModeView({
           </ul>
         </dd>
       </dl>
-      <ol className="trim-margin flex list-none flex-col gap-6 flush">
+      <ol className="trim-margin flex list-none flex-col gap-list flush">
         {mode.steps.map((step, index) => (
           <Step
             key={step.id}
