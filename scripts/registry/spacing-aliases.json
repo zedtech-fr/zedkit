@@ -64,7 +64,6 @@
     "tokens": [
       "--spacing-button-inline-sm",
       "--spacing-control-inline",
-      "--spacing-detail-panel-block",
       "--spacing-field",
       "--spacing-field-group-compact",
       "--spacing-field-legend-bottom",
@@ -82,15 +81,10 @@
       "--spacing-app-shell-padding",
       "--spacing-button-inline",
       "--spacing-card-section",
-      "--spacing-checkbox",
       "--spacing-checkmark",
       "--spacing-data-table-skeleton-height",
       "--spacing-data-table-stack",
-      "--spacing-detail-panel-gap",
-      "--spacing-detail-panel-inline",
       "--spacing-dialog-gap",
-      "--spacing-drawer-chrome-padding",
-      "--spacing-drawer-handle-top",
       "--spacing-field-error-indent",
       "--spacing-field-group-nested",
       "--spacing-field-label-inset",
@@ -98,7 +92,6 @@
       "--spacing-option-card-padding",
       "--spacing-overlay-close-offset",
       "--spacing-page-header-gap",
-      "--spacing-status-label-box",
       "--spacing-switch-thumb",
       "--spacing-switch-travel",
       "--spacing-table-caption-gap"
@@ -369,5 +362,40 @@
     "canonical": "--spacing-alert-icon-offset",
     "value": "calc(var(--spacing) * 4)",
     "tokens": ["--spacing-alert-icon-offset"]
+  },
+  {
+    "canonical": "--spacing-detail-panel-inline",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-detail-panel-inline"]
+  },
+  {
+    "canonical": "--spacing-detail-panel-gap",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-detail-panel-gap"]
+  },
+  {
+    "canonical": "--spacing-detail-panel-block",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": ["--spacing-detail-panel-block"]
+  },
+  {
+    "canonical": "--spacing-checkbox",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-checkbox"]
+  },
+  {
+    "canonical": "--spacing-status-label-box",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-status-label-box"]
+  },
+  {
+    "canonical": "--spacing-drawer-chrome-padding",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-drawer-chrome-padding"]
+  },
+  {
+    "canonical": "--spacing-drawer-handle-top",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": ["--spacing-drawer-handle-top"]
   }
 ]

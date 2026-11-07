@@ -155,9 +155,9 @@ const overlayDialogCloseClass =
   "absolute pin-top pin-right z-20 grid size-overlay-touch-target min-h-[45px] min-w-[45px] shrink-0 place-content-center rounded-sm opacity-70 focus-ring-control transition-opacity hover:opacity-100 disabled:pointer-events-none";
 
 const overlayDrawerHeaderClass =
-  "sticky pin-top z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border p-4 text-left";
+  "sticky pin-top z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border p-drawer-chrome-padding text-left";
 const overlayDrawerFooterClass =
-  "sticky pin-bottom z-10 mt-auto flex shrink-0 flex-col gap-2 border-t border-border px-4 pt-4 pb-drawer-footer-safe sm:flex-row sm:justify-end sm:items-center";
+  "sticky pin-bottom z-10 mt-auto flex shrink-0 flex-col gap-2 border-t border-border px-drawer-chrome-padding pt-drawer-chrome-padding pb-drawer-footer-safe sm:flex-row sm:justify-end sm:items-center";
 
 export {
   focusOverlayInitial,

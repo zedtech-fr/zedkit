@@ -252,7 +252,7 @@
    * same-value alias — reuse the shared token.
    */
   --spacing-icon-sm: 0.875rem;
-  --spacing-checkbox: 1rem;
+  --spacing-checkbox: calc(var(--spacing) * 4);
   --spacing-heading-scroll: 5rem;
   --spacing-data-table-stack: 1rem;
   --spacing-data-table-filter-width: 24rem;
@@ -262,9 +262,9 @@
   --spacing-option-cards-gap: 0.75rem;
   --spacing-option-card-gap: 0.75rem;
   --spacing-option-card-padding: 1rem;
-  --spacing-detail-panel-gap: 1rem;
-  --spacing-detail-panel-inline: 1rem;
-  --spacing-detail-panel-block: 0.75rem;
+  --spacing-detail-panel-gap: calc(var(--spacing) * 4);
+  --spacing-detail-panel-inline: calc(var(--spacing) * 4);
+  --spacing-detail-panel-block: calc(var(--spacing) * 3);
   --spacing-wizard-steps-gap: 0.75rem;
   --spacing-wizard-steps-row-gap: 0.5rem;
   --spacing-wizard-step-gap: 0.5rem;
@@ -287,7 +287,7 @@
   /* Checked-state thumb travel: track width − thumb − transparent borders. */
   --spacing-switch-travel: 1rem;
   --spacing-status-label-gap: 0.375rem;
-  --spacing-status-label-box: 1rem;
+  --spacing-status-label-box: calc(var(--spacing) * 4);
   --spacing-status-dot: 0.5rem;
   --spacing-control-inline: 0.75rem;
   --spacing-control-block: var(--spacing);
@@ -377,12 +377,12 @@
   --container-drawer-side-sm: 24rem;
   --container-drawer-side: 28rem;
   --container-drawer-side-lg: min(37.5rem, 92vw);
-  --spacing-drawer-handle-top: 1rem;
+  --spacing-drawer-handle-top: calc(var(--spacing) * 4);
   --spacing-drawer-handle-height: 0.375rem;
   --spacing-drawer-handle-width: 3rem;
   --spacing-drawer-header-gap: 0.375rem;
   --spacing-drawer-footer-gap: 0.5rem;
-  --spacing-drawer-chrome-padding: 1rem;
+  --spacing-drawer-chrome-padding: calc(var(--spacing) * 4);
   --spacing-select-item-inline: 0.5rem;
   --spacing-select-item-block: 0.375rem;
   --spacing-select-item-indicator-gap: 2rem;
