@@ -195,6 +195,7 @@ describe("preset closure", () => {
         join("skills", "review", "lenses.md"),
         join("skills", "setup-ai", "SKILL.md"),
         join("skills", "tdd", "SKILL.md"),
+        join("skills", "to-audit", "SKILL.md"),
       ].sort(),
     );
   });

@@ -50,10 +50,10 @@ Every numbered command hands to `orchestrate` (tokenomics + **build team**), exc
 | `/improve-config` | Encode session learnings (skill `rules-upkeep`). |
 | `/pr` | PR body. |
 | `/handoff` | Hand off to the next builder. |
-| `/audit` | Quality audit. |
+| `/audit` | Thorough audit: coverage map, evidence-backed findings. Investigates by default; fixes only when asked. |
 | `/research` | Prior-art scout. |
 | `/to-audit` | Topic audit from questions or an unclear plan. |
-| `/from-audit` | Challenge an audit against the code; draft tickets. |
+| `/from-audit` | Revalidate an audit against the current code; turn it into an actionable plan. |
 | `/fix` | One defect, inline, with its check. Does not go through `orchestrate`. |
 | `/improve-from-review` | Apply a review punchlist, then encode a reusable miss. |
 | `/quick-wins` | `audit <scope>` finds small wins (read-only); `implement <findings or topic>` ships them. |

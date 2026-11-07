@@ -24,6 +24,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    # Isolated production GitHub Environment: this job reads environment
+    # secrets (prod host/key/user/known_hosts and identity). Repo-level
+    # DOCS_DEPLOY_KEY stays the staging key for deploy-dev and must not
+    # be the source of this job's credentials.
+    environment: production
     steps:
       - uses: actions/checkout@v7
       - name: Require green CI on this commit

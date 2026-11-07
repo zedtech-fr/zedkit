@@ -19,6 +19,9 @@ concurrency:
 
 jobs:
   deploy:
+    # Repo-level DOCS_DEPLOY_KEY is the staging key. Do not bind
+    # environment: production — that environment holds isolated prod
+    # secrets this job must not consume.
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:

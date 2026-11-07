@@ -39,3 +39,19 @@ test("production deploy-docs is unchanged: still deploy.sh, not this static path
   assert.doesNotMatch(prod, /publish-dev-static/);
   assert.doesNotMatch(prod, /\/data\/srv\/zedkit/);
 });
+
+function jobBlock(yaml, name) {
+  return yaml.split(new RegExp(`^ {2}${name}:`, "m"))[1]?.split(/^ {2}\S/m)[0] ?? "";
+}
+
+test("prod deploy is bound to GitHub Environment production; staging deploy is not", () => {
+  const prodJob = jobBlock(prod, "deploy");
+  const devJob = jobBlock(dev, "deploy");
+  assert.match(prodJob, /^\s+environment:\s+production\s*$/m);
+  assert.doesNotMatch(devJob, /^\s+environment:\s/m);
+  assert.doesNotMatch(dev, /^\s+environment:\s+production\s*$/m);
+  assert.match(prodJob, /secrets\.DOCS_DEPLOY_KEY/);
+  assert.match(devJob, /secrets\.DOCS_DEPLOY_KEY/);
+  assert.match(devJob, /195\.154\.208\.75/);
+  assert.match(dev, /Repo-level DOCS_DEPLOY_KEY is the staging key/);
+});
