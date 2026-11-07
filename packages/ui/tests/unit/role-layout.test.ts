@@ -40,6 +40,8 @@ describe("layout job classes", () => {
     expect(utility("gap-y-stack-tight")).toBe("row-gap: var(--spacing);");
     expect(utility("gap-prose")).toBe("gap: calc(var(--spacing) * 5);");
     expect(utility("gap-list")).toBe("gap: calc(var(--spacing) * 6);");
+    expect(utility("gap-blocks")).toBe("gap: calc(var(--spacing) * 8);");
+    expect(utility("mt-standfirst")).toBe("margin-top: calc(var(--spacing) * 2);");
     expect(utility("grid-pair")).toBe("grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(utility("grid-trio")).toBe("grid-template-columns: repeat(3, minmax(0, 1fr));");
     expect(utility("w-skeleton-short")).toBe("width: 66.666667%;");

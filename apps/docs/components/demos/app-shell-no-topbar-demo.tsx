@@ -9,7 +9,7 @@ export function AppShellNoTopbarDemo() {
       className="h-72 pane-shrink overflow-hidden rounded-lg border"
       sidebar={
         <Stack gap={1} className="surface-pad-compact">
-          <Text className="px-2 pb-2 font-semibold">{appShellNoTopbarCopy.brand}</Text>
+          <Text className="px-control-tight pb-2 font-semibold">{appShellNoTopbarCopy.brand}</Text>
           <nav aria-label={appShellNoTopbarCopy.navAriaLabel}>
             <Stack gap={1}>
               {NAV.map((item, index) => (

@@ -113,7 +113,7 @@ export function CommandBlock({
           {picker ? (
             <PackageManagerSelect pm={pm} onPm={onPm} />
           ) : (
-            <Text as="span" className="px-2 font-mono text-muted-foreground">
+            <Text as="span" className="px-control-tight font-mono text-muted-foreground">
               {pm}
             </Text>
           )}

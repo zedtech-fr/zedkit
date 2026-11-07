@@ -123,7 +123,7 @@ function EditorialStoryEditor({
       </Text>
       <article aria-label={messages.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">
         <Heading level={4}>{story.headline}</Heading>
-        <Text variant="muted" className="mt-2 text-pretty">
+        <Text variant="muted" className="mt-standfirst text-pretty">
           {story.standfirst}
         </Text>
       </article>
