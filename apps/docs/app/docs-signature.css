@@ -27,6 +27,14 @@
   min-height: calc(var(--spacing) * 32);
 }
 
+/* Hero title line, then the sentence under it. */
+[data-home-hero-lead] h1 {
+  max-width: 32rem;
+}
+[data-home-hero-sub] {
+  max-width: 28rem;
+}
+
 /* The AI setup prompt. Wider than the reading measure, short of the page. */
 [data-setup-prompt] {
   max-width: 48rem;
