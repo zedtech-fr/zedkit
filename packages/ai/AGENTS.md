@@ -7,7 +7,11 @@
    unmarked subagent text (`.agents/skills` symlink into it; generated
    agent files come from `sync`). Edit kit sources there;
    `tests/unit/repo-wiring.test.ts` fails when a skills link stops
-   resolving to the kit or generated agents miss a kit name.
+   resolving to the kit or generated agents miss a kit name. After editing
+   kit agents: rebuild `dist`, `sync` every provider, refresh
+   `kit/legacy-hashes.json`, and keep the kit-guard phrases intact
+   (`skill-content`, `agent-crossrefs`, `role-mentions`; `review` stays
+   under 60 lines).
 3. Agent-agnostic: no tool-specific paths or model ids inside skills or
    subagents. Subagent `model` is omitted or `inherit`; descriptions are
    one line; names equal the folder or file name. `validateKit` enforces

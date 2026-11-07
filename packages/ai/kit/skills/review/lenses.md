@@ -2,8 +2,10 @@
 
 One row per review lens. `review` routes over this table: path/type ->
 mandatory lenses. Runner `Status` `planned` means the skill/agent does not
-exist yet (kit-agents roadmap): the lens reports skipped-planned, never a
-blocker, until the runner lands. Skipping a mandatory lens whose runner
+exist yet (kit-agents roadmap): the lens reports skipped-planned with its
+reason in the lenses-run table, never a blocker and never silent, until the
+runner lands. A preset that omits a runner is a product choice to record, not
+an automatic blocker. Skipping a mandatory lens whose runner
 exists IS a blocker.
 
 | Lens              | Runner (skill or agent)                                                         | Status | Trigger (changed paths/types)                                               | Mandatory?     | Output                                                                                 |
