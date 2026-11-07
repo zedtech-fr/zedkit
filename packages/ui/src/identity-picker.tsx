@@ -78,7 +78,7 @@ function IdentityPicker({
             className,
           )}
         >
-          <Palette aria-hidden="true" className="size-4 text-muted-foreground" />
+          <Palette aria-hidden="true" className="size-icon text-muted-foreground" />
           <span>{currentLabel}</span>
         </button>
       </DrawerTrigger>
@@ -114,7 +114,7 @@ function IdentityPicker({
                     <span className="block text-sm text-muted-foreground">{item.description}</span>
                   ) : null}
                 </span>
-                {selected ? <Check aria-hidden="true" className="size-4 shrink-0 text-primary" /> : null}
+                {selected ? <Check aria-hidden="true" className="size-icon shrink-0 text-primary" /> : null}
               </button>
             );
           })}

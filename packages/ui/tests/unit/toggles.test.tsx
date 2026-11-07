@@ -28,7 +28,7 @@ describe("toggles", () => {
     expect(box.classList.contains("focus-ring-control")).toBe(true);
     expect(box.className).not.toMatch(/(^|\s)(h-4|w-4|ring-1)(\s|$)/);
     const icon = box.querySelector("svg");
-    expect(icon?.classList.contains("size-4")).toBe(true);
+    expect(icon?.classList.contains("size-icon")).toBe(true);
     expect(icon?.getAttribute("aria-hidden")).toBe("true");
   });
 

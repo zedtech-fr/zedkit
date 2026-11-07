@@ -20,7 +20,7 @@ function Checkbox({ className, ...props }: CheckboxProps) {
       {...props}
     >
       <CheckboxPrimitive.Indicator className={cn("grid place-content-center text-current")}>
-        <Check aria-hidden="true" className="size-4" />
+        <Check aria-hidden="true" className="size-icon" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

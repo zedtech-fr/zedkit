@@ -38,7 +38,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="size-4 opacity-50" />
+        <ChevronDown className="size-icon opacity-50" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -54,7 +54,7 @@ function SelectScrollUpButton({
       className={cn("flex cursor-default items-center justify-center py-control-block", className)}
       {...props}
     >
-      <ChevronUp className="size-4" />
+      <ChevronUp className="size-icon" />
     </SelectPrimitive.ScrollUpButton>
   );
 }
@@ -69,7 +69,7 @@ function SelectScrollDownButton({
       className={cn("flex cursor-default items-center justify-center py-control-block", className)}
       {...props}
     >
-      <ChevronDown className="size-4" />
+      <ChevronDown className="size-icon" />
     </SelectPrimitive.ScrollDownButton>
   );
 }
@@ -139,7 +139,7 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
     >
       <span className="absolute right-2 flex size-icon-sm items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check className="size-icon" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

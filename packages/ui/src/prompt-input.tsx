@@ -70,7 +70,7 @@ function PromptInputActions({
         disabled={sendDisabled}
         aria-busy={busy || undefined}
       >
-        <ArrowUp aria-hidden="true" className="size-4" />
+        <ArrowUp aria-hidden="true" className="size-icon" />
       </IconButton>
     </>
   );

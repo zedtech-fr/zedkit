@@ -33,7 +33,7 @@ function MultiSelectChips({ items, onRemove, selection, disabled }: MultiSelectC
               onRemove(item);
             }}
           >
-            <X className="size-4" />
+            <X className="size-icon" />
           </button>
         </Badge>
       ))}

@@ -73,7 +73,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
       <ul className="flex list-none flex-col gap-2 flush">
         {plan.features.map((feature, featureIndex) => (
           <li key={featureIndex} className="flex gap-3">
-            <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-primary" />
+            <Check aria-hidden="true" className="mt-1 size-icon shrink-0 text-primary" />
             <span className="content-shrink">{feature}</span>
           </li>
         ))}
