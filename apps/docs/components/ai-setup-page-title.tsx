@@ -43,7 +43,7 @@ export function AiSetupPageTitle() {
         Set up zedkit AI in{" "}
         <WordRoll words={WORDS} value={word} dwellMs={ROLL_DWELL_MS} className={ROLL_ACCENT} aria-hidden />
       </Heading>
-      <Text as="p" variant="muted" className="mb-6 text-balance">
+      <Text as="p" variant="muted" className="mb-lead text-balance">
         {LEAD}
       </Text>
     </>

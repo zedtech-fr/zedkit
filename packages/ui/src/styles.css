@@ -844,6 +844,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility grid-trio {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+/* Four equal columns, such as a row of time slots. */
+@utility grid-quad {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 /* The rest of a three-column row: a detail value, a scene, a link group. */
 @utility span-rest {
   grid-column: span 2 / span 2;
@@ -851,6 +855,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* Puts a pane on the first row of a wide grid. */
 @utility row-start-first {
   grid-row-start: 1;
+}
+/* The first column of a stacked or wide grid. */
+@utility col-start-first {
+  grid-column-start: 1;
+}
+/* The column after the first. */
+@utility col-start-next {
+  grid-column-start: 2;
 }
 @utility gap-x-stack-sm {
   column-gap: var(--zk-gap-sm);
@@ -922,6 +934,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pb-answer {
   padding-bottom: calc(var(--spacing) * 4);
 }
+/* Space under a gallery section, above its rule. */
+@utility pb-section {
+  padding-bottom: calc(var(--spacing) * 8);
+}
 /* The legal line under the footer rule. */
 @utility pt-footer-note {
   padding-top: calc(var(--spacing) * 6);
@@ -953,6 +969,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* Space under a title or a breadcrumb. */
 @utility mb-stack {
   margin-bottom: var(--zk-gap-sm);
+}
+/* Space under a page lead. */
+@utility mb-lead {
+  margin-bottom: calc(var(--spacing) * 6);
+}
+/* Space around a table in prose. */
+@utility my-table {
+  margin-block: calc(var(--spacing) * 4);
 }
 /* Space under an alert title, before its description. */
 @utility mb-alert-title {
@@ -1109,6 +1133,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
     margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
   }
 }
+/* Space between gallery sections. */
+@utility space-y-sections {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
 @utility space-y-stack-sm {
   :where(& > :not(:last-child)) {
     --tw-space-y-reverse: 0;
@@ -1156,6 +1188,19 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility pin-top {
   top: 0;
+}
+/* Inset of a floating control from the screen or panel edge. */
+@utility top-float {
+  top: calc(var(--spacing) * 4);
+}
+@utility right-float {
+  right: calc(var(--spacing) * 4);
+}
+@utility bottom-float {
+  bottom: calc(var(--spacing) * 4);
+}
+@utility left-float {
+  left: calc(var(--spacing) * 4);
 }
 /* Centers a control on the block axis of its field. */
 @utility pin-center-y {
@@ -1212,6 +1257,16 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 @utility trim-pad-top {
   padding-top: 0;
+}
+@utility trim-pad-bottom {
+  padding-bottom: 0;
+}
+@utility px-flush {
+  padding-inline: 0;
+}
+/* A zero-height scroll target. */
+@utility h-anchor {
+  height: 0;
 }
 @utility trim-pad-end {
   padding-inline-end: 0;

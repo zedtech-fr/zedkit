@@ -26,14 +26,14 @@ export function BookingScreen({ copy }: { copy: BookingComposition }) {
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.dayLabel}
         </Text>
-        <ul className="trim-margin grid list-none grid-cols-4 gap-stack-sm flush">
+        <ul className="trim-margin grid list-none grid-quad gap-stack-sm flush">
           {copy.slots.map((slot) => (
             <li key={slot}>
               <Button
                 size="sm"
                 variant={slot === copy.selectedSlot ? "default" : "outline"}
                 tabIndex={-1}
-                className="w-full px-0 tabular-nums"
+                className="w-full px-flush tabular-nums"
               >
                 {slot}
               </Button>
