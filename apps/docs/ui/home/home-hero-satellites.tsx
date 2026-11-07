@@ -34,7 +34,7 @@ export function HomeHeroSatellites() {
             <Check className="size-icon" aria-hidden />
           </span>
           <span className="flex content-shrink flex-col">
-            <Text className="truncate text-sm font-medium">{copy.mergedTitle}</Text>
+            <Text className="truncate text-dense font-medium">{copy.mergedTitle}</Text>
             <Text variant="muted" className="truncate text-xs">
               {copy.mergedBody}
             </Text>
@@ -54,7 +54,7 @@ export function HomeHeroSatellites() {
               </span>
             ))}
           </span>
-          <Text className="text-sm font-medium whitespace-nowrap">{copy.online(HERO_ONLINE_COUNT)}</Text>
+          <Text className="text-dense font-medium whitespace-nowrap">{copy.online(HERO_ONLINE_COUNT)}</Text>
         </Card>
       </Satellite>
     </>

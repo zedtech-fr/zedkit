@@ -64,7 +64,7 @@ export function AssistantNoticeBubble({ notice }: { notice: Notice }) {
   return (
     <Stack
       gap={1}
- className="max-w-[95%] rounded-2xl rounded-tl-sm border border-border bg-muted pad-row text-sm"
+ className="max-w-[95%] rounded-2xl rounded-tl-sm border border-border bg-muted pad-row text-dense"
       data-assistant-notice=""
       role="status"
     >

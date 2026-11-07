@@ -92,7 +92,7 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
       <ul className="trim-margin flex list-none flex-col divide-y divide-border rounded-lg border border-border flush">
         {next.map((row) => (
  <li key={row.id} className="flex content-shrink items-center justify-between gap-stack-md pad-row">
-            <span className="content-shrink truncate text-sm font-medium">{row.title}</span>
+            <span className="content-shrink truncate text-dense font-medium">{row.title}</span>
             <span className="flex shrink-0 items-center gap-stack-sm">
               <Badge variant={STATUS_VARIANT[row.status]} className="max-sm:hidden">
                 {row.status}

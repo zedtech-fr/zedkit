@@ -38,7 +38,7 @@ function ProductCard({ product, selected, onSelect }: { product: Product; select
         onClick={onSelect}
       >
         <span className="font-(family-name:--zk-font-display) text-xl">{product.name}</span>
-        <span className="text-sm text-muted-foreground">{product.material}</span>
+        <span className="text-dense text-muted-foreground">{product.material}</span>
         <span className="flex w-full flex-wrap items-center justify-between gap-stack-sm">
           <span className="tabular-nums">{formatEur(product.price)}</span>
           <Badge variant={product.stock <= LOW_STOCK ? "warning" : "secondary"}>

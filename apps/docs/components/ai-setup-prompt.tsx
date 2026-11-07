@@ -72,7 +72,7 @@ export function AiSetupPrompt() {
         ):
       </Text>
       <Stack gap={2} className="content-shrink sm:flex-row sm:items-start sm:justify-between">
-        <pre className="content-shrink flex-1 overflow-x-auto rounded-md bg-background px-control-inline surface-pad-block-sm font-mono text-sm break-words whitespace-pre-wrap">
+        <pre className="content-shrink flex-1 overflow-x-auto rounded-md bg-background px-control-inline surface-pad-block-sm font-mono text-dense break-words whitespace-pre-wrap">
           {AI_SETUP_MINI_PROMPT}
         </pre>
         <CopyPromptButton text={AI_SETUP_MINI_PROMPT} />

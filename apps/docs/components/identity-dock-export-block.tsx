@@ -25,7 +25,7 @@ export function IdentityDockExportBlock({ tokens }: { tokens: IdentityTokens }) 
       className="shrink-0 border-t border-border bg-muted/20 surface-pad-compact"
       data-slot="identity-dock-export"
     >
-      <Heading level={3} className="text-sm font-medium">
+      <Heading level={3} className="text-dense font-medium">
         {exportCopy.heading}
       </Heading>
       <IdentityDockExportCopyRow

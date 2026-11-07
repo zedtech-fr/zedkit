@@ -69,7 +69,7 @@ function Table({ className, scrollAriaLabel, children, ...props }: TableProps) {
       tabIndex={0}
       aria-label={scrollAriaLabel ?? messages.scrollableTable}
     >
-      <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props}>
+      <table data-slot="table" className={cn("w-full caption-bottom text-dense", className)} {...props}>
         {children}
       </table>
     </div>
@@ -128,7 +128,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 }
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
-  return <caption data-slot="table-caption" className={cn("mt-table-caption-gap text-sm text-muted-foreground", className)} {...props} />;
+  return <caption data-slot="table-caption" className={cn("mt-table-caption-gap text-dense text-muted-foreground", className)} {...props} />;
 }
 
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };

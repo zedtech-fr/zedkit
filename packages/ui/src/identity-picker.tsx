@@ -74,7 +74,7 @@ function IdentityPicker({
           type="button"
           aria-label={`${title}: ${currentLabel}`}
           className={cn(
-            "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-button-gap rounded-md px-control-inline text-sm font-medium text-foreground focus-ring-control",
+            "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center gap-button-gap rounded-md px-control-inline text-dense font-medium text-foreground focus-ring-control",
             className,
           )}
         >
@@ -107,11 +107,11 @@ function IdentityPicker({
                   <span className="block font-medium text-foreground">
                     {item.label}
                     {defaultIdentity && item.id === defaultIdentity ? (
-                      <span className="ml-note text-sm font-normal text-muted-foreground">{messages.identityDefault}</span>
+                      <span className="ml-note text-dense font-normal text-muted-foreground">{messages.identityDefault}</span>
                     ) : null}
                   </span>
                   {item.description ? (
-                    <span className="block text-sm text-muted-foreground">{item.description}</span>
+                    <span className="block text-dense text-muted-foreground">{item.description}</span>
                   ) : null}
                 </span>
                 {selected ? <Check aria-hidden="true" className="size-icon shrink-0 text-primary" /> : null}

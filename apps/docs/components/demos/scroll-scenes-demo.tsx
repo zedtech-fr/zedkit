@@ -212,7 +212,7 @@ export function ScrollScenesPricingDemo() {
             </Stack>
             <Stack gap={1}>
               {plan.features.map((feature) => (
-                <Text key={feature} className="trim-margin! text-sm">
+                <Text key={feature} className="trim-margin! text-dense">
                   {feature}
                 </Text>
               ))}

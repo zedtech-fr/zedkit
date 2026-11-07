@@ -46,7 +46,7 @@ function PhaseList({ step, status }: { step: number; status: HeroAgentStatus }) 
             <PhaseMark state={state} />
           </span>
           <Stack gap={1} className="content-shrink">
-            <Text as="span" className="text-sm font-medium">
+            <Text as="span" className="text-dense font-medium">
               {copy.phases[phase].title}
             </Text>
             <Text as="div" variant="muted" className={DOCS_TYPE_LABEL_CLASS}>

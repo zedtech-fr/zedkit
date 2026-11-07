@@ -72,7 +72,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
         {filtered.length === 0 ? (
           <Stack gap={2}>
             <Text variant="muted">{catalogCopy.results.empty}</Text>
-            <Link href="/catalog" className="text-sm text-primary underline-offset-4 hover:underline">
+            <Link href="/catalog" className="text-dense text-primary underline-offset-4 hover:underline">
               {catalogCopy.results.clearFiltersLink}
             </Link>
           </Stack>
@@ -85,7 +85,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
                     <Link
                       key={group.id}
                       href={`#catalog-group-${group.id}`}
-                      className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                      className="text-dense text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                     >
                       {catalogCopy.results.groupJumpLink(group.label, group.entries.length)}
                     </Link>

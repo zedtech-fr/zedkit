@@ -22,7 +22,7 @@ export function ScrollGalleryIdentityDemo() {
         </TabsList>
       </ScrollGallery>
       {LOOKS.map(([value, label]) => (
-        <TabsContent key={value} value={value} className="text-sm text-muted-foreground">
+        <TabsContent key={value} value={value} className="text-dense text-muted-foreground">
           {label}
         </TabsContent>
       ))}

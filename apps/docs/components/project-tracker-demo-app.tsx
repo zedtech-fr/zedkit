@@ -204,7 +204,7 @@ function UserMenu() {
       <DrawerTrigger asChild>
         <Button type="button" variant="ghost" className="gap-stack-sm px-control-tight" aria-label={projectTrackerDemoCopy.openUserMenu}>
           <Avatar initials={projectTrackerDemoCopy.initials} />
-          <Text as="span" className={cn("text-sm font-medium", mobile ? "hidden" : "max-sm:hidden")}>
+          <Text as="span" className={cn("text-dense font-medium", mobile ? "hidden" : "max-sm:hidden")}>
             {projectTrackerDemoCopy.people.maya}
           </Text>
         </Button>
@@ -213,7 +213,7 @@ function UserMenu() {
         <DrawerHandle />
         <DrawerHeader>
           <Stack direction="horizontal" gap={3} className="text-left">
-            <Avatar initials={projectTrackerDemoCopy.initials} className="size-mark text-sm" />
+            <Avatar initials={projectTrackerDemoCopy.initials} className="size-mark text-dense" />
             <Stack gap={1}>
               <DrawerTitle>{projectTrackerDemoCopy.people.maya}</DrawerTitle>
               <DrawerDescription>{projectTrackerDemoCopy.email}</DrawerDescription>
@@ -258,7 +258,7 @@ function TopBar() {
     <Stack direction="horizontal" gap={2} className="justify-between surface-pad-inline surface-pad-block-sm">
       <Stack direction="horizontal" gap={2}>
         <MobileNav />
-        <Text className="text-sm font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
+        <Text className="text-dense font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
       </Stack>
       <Stack direction="horizontal" gap={1}>
         <IconButton label={projectTrackerDemoCopy.notifications} variant="ghost" onClick={notice(projectTrackerDemoCopy.caughtUp)}>

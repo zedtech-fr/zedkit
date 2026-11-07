@@ -25,7 +25,7 @@ export function PageHeader({ title, description, actions, back, titleAs: Title =
         <Title className="text-2xl font-semibold tracking-tight">{title}</Title>
         {actions ? <div className="flex items-center gap-page-header-actions-gap">{actions}</div> : null}
       </div>
-      {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+      {description ? <p className="text-dense text-muted-foreground">{description}</p> : null}
     </div>
   );
 }

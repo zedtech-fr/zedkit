@@ -41,7 +41,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-dropdown origin-[--radix-tooltip-content-transform-origin] rounded-md bg-popover px-control-inline py-control-block text-sm text-popover-foreground shadow-md",
+          "z-dropdown origin-[--radix-tooltip-content-transform-origin] rounded-md bg-popover px-control-inline py-control-block text-dense text-popover-foreground shadow-md",
           className,
         )}
         {...props}

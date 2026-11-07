@@ -360,6 +360,9 @@
   --text-form-hint: 0.8rem;
   --text-control: var(--zk-input-font-size);
   --text-control--line-height: 1.25rem;
+  /* Dense UI: controls, tabs, menus, tables, nav. Same size and line as the old text-sm step. */
+  --text-dense: var(--text-sm);
+  --text-dense--line-height: var(--text-sm--line-height);
   /*
    * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
    * not a spacing multiple: an identity may redefine `--spacing`, and a

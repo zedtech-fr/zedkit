@@ -70,7 +70,7 @@ export function OptionCard({
       </span>
       <span>
         <span className="block font-medium">{title}</span>
-        {description ? <span className="block text-sm text-muted-foreground">{description}</span> : null}
+        {description ? <span className="block text-dense text-muted-foreground">{description}</span> : null}
       </span>
     </label>
   );

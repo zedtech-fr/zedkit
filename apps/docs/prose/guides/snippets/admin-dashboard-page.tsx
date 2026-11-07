@@ -75,7 +75,7 @@ function TopBar() {
       >
         MC
       </Text>
-      <Text as="span" className="text-sm font-medium">
+      <Text as="span" className="text-dense font-medium">
         Maya Chen
       </Text>
     </Stack>

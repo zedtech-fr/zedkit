@@ -39,7 +39,7 @@ export function BrandLogoDemo() {
               {brandLogoCopy.brandName}
             </Text>
           </a>
-          <nav aria-label={brandLogoCopy.navAriaLabel} className="flex shrink-0 gap-stack-md text-sm text-muted-foreground">
+          <nav aria-label={brandLogoCopy.navAriaLabel} className="flex shrink-0 gap-stack-md text-dense text-muted-foreground">
             <a href="/work" onClick={stay}>
               {brandLogoCopy.work}
             </a>
@@ -75,7 +75,7 @@ export function BrandLogoDemo() {
         <Text as="span" className="text-xl font-semibold" aria-hidden="true">
           {brandLogoCopy.brandName}
         </Text>
-        <Text as="span" className="text-sm opacity-80" aria-hidden="true">
+        <Text as="span" className="text-dense opacity-80" aria-hidden="true">
           {brandLogoCopy.tagline}
         </Text>
       </Stack>

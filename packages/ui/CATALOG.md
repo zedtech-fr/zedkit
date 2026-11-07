@@ -54,7 +54,7 @@ import { Badge, Text } from "@zedtech/zedkit-ui";
 
 export function ReleaseRow({ name }: { name: string }) {
   return (
-    <li className="flex items-center justify-between gap-stack-md border-b border-border bg-muted pad-row text-sm">
+    <li className="flex items-center justify-between gap-stack-md border-b border-border bg-muted pad-row text-dense">
       <Text as="span" className="content-shrink truncate">{name}</Text>
       <Badge variant="success" className="gap-stack-tight">
         <ArrowUpRight className="size-mini" aria-hidden />

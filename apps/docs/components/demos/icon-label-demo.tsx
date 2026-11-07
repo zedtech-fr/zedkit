@@ -14,7 +14,7 @@ export function IconLabelDemo() {
           {iconLabelCopy.project.summary}
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={4} className="flex-wrap text-sm">
+      <Stack direction="horizontal" gap={4} className="flex-wrap text-dense">
         <IconLabel icon={FolderOpen}>{iconLabelCopy.project.studio}</IconLabel>
         <IconLabel icon={Calendar}>{iconLabelCopy.project.due}</IconLabel>
         <IconLabel icon={Users}>{iconLabelCopy.project.members}</IconLabel>
@@ -45,7 +45,7 @@ export function IconLabelOrdersDemo() {
               {order.item}
             </Text>
           </Stack>
-          <IconLabel icon={order.icon} className="text-sm">
+          <IconLabel icon={order.icon} className="text-dense">
             {order.state}
           </IconLabel>
         </li>

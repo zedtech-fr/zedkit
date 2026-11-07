@@ -144,7 +144,7 @@ function NonModalDrawerDescription({
     <p
       data-slot="drawer-description"
       id={descriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-dense text-muted-foreground", className)}
       {...props}
     >
       {children}

@@ -55,7 +55,7 @@ function PersonButton({ person, selected, onSelect }: { person: Person; selected
       >
         <HeroAvatar initials={person.initials} />
         <span className="flex content-shrink flex-1 flex-col">
-          <span className="truncate text-sm font-medium">{person.name}</span>
+          <span className="truncate text-dense font-medium">{person.name}</span>
           <span className="truncate text-xs text-muted-foreground">{person.role}</span>
         </span>
         <StatusDot tone={person.online ? "success" : "idle"} pulse={false} />

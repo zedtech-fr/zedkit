@@ -51,14 +51,14 @@ function Testimonials({ title, description, items, className, ...props }: Testim
                     <span
                       data-slot="testimonial-avatar"
                       aria-hidden="true"
-                      className="grid size-mark shrink-0 place-content-center overflow-hidden rounded-full bg-muted text-sm font-semibold [&_img]:size-full [&_img]:object-cover"
+                      className="grid size-mark shrink-0 place-content-center overflow-hidden rounded-full bg-muted text-dense font-semibold [&_img]:size-full [&_img]:object-cover"
                     >
                       {item.avatar}
                     </span>
                   ) : null}
                   <span className="flex content-shrink flex-col">
                     <span className="font-semibold">{item.name}</span>
-                    {item.role ? <span className="text-sm text-muted-foreground">{item.role}</span> : null}
+                    {item.role ? <span className="text-dense text-muted-foreground">{item.role}</span> : null}
                   </span>
                 </figcaption>
               </figure>
