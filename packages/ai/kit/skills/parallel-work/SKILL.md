@@ -41,8 +41,8 @@ A subagent has no memory of this conversation. Every brief states:
 
 1. **Goal** in one sentence, and why it matters.
 2. **Scope**: files or area it may read, files it may write (or "read-only").
-3. **Context it needs**: decisions already made, constraints, the contract. Paste them; do not say "as discussed".
-4. **Deliverable**: the exact output shape. Findings as `file:line`, a diff, a table, a verdict.
+3. **Context it needs**: decisions already made, constraints, the contract. Paste them; do not say "as discussed". Paste the `.agents/atlas.md` rows that apply, so it does not search for what is already known.
+4. **Deliverable**: the exact output shape. Findings as `file:line`, a diff, a table, a verdict. A read-only agent also returns `Atlas:` lines (topic, entry path, trap) for what it had to search for and the atlas lacked.
 5. **Stop rule**: what to do when blocked or unsure (report, do not guess).
 6. **Stakes and kind**: the task's `Stakes:`, how this agent is used (`Kind: decide|design|build|check`) and any `Needs:`. Route the spawn with `zedkit-ai route <agent> --kind <k> --stakes <s>`; a `check` brief says "read-only".
 
@@ -51,7 +51,7 @@ Delegate the question, not the thinking: do not hand off understanding. Say what
 ## After they return
 
 - Read the reports. A report is a claim: open the cited lines before acting on it (see `ground-truth`).
-- Merge: deduplicate, resolve conflicts between agents, note disagreements.
+- Merge: deduplicate, resolve conflicts between agents, note disagreements. Open each `Atlas:` line's path, then add the true ones to `.agents/atlas.md`.<!-- if:skill=rules-upkeep --> (see `rules-upkeep`)<!-- /if -->
 - Run the integration check yourself. Parallel parts that each pass can still fail together.
 - If two writers touched the same file, stop and reconcile before continuing.
 

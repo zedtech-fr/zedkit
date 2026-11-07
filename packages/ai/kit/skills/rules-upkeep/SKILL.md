@@ -16,6 +16,7 @@ At the end of any coding task, and when one of these happened:
 - One reusable correction changed the work — the next similar change would repeat the miss if the config stays silent. Do not wait for a second occurrence.
 - A new convention was adopted (naming, testing, wiring).
 - A shortcut with a stated limit was left in code and will recur.
+- A search cost 3 or more reads, or you were corrected on a path, a word or a command: the next session would search again. That is an **atlas** row, not a rule.
 
 Skip a note, a question, or a nit the diff ignored. Skip a one-off bug of the feature.
 
@@ -24,9 +25,10 @@ Skip a note, a question, or a nit the diff ignored. Skip a one-off bug of the fe
 1. Locate the gap: which file says nothing, is out of date, or disagrees with the decision?
 2. Make the **smallest additive edit** in the same turn, in the natural home. Do not ask first. Do not create a new file when an existing one fits.
 3. Change every file the decision touches, and no more. Link to the canonical text instead of copying it. An agent file gets a pointer; the rule stays the source of truth.
-4. Removing a rule needs the user's confirmation.
+4. Removing a rule needs the user's confirmation. Atlas rows are facts, not rules: fix or delete a stale one without asking.
 5. If you added a command, skill, or always-on rule, update the map (`.agents/README.md`, and `.cursor/README.md` when that file exists).
-6. Finish with the **Rules** section below. Silence is not a valid outcome.
+6. **Atlas.** If `.agents/atlas.md` exists, add or fix one row for what the work taught: where it lives, the wording, the exact command, or the reason (link the owner, never copy it). Fix a wrong row in place, delete a row one search finds, and keep the file under its cap. Open every path you write. When the work moves a file, renames a path or changes a command a row names, fix that row in the same change; a recent `Checked` date is not proof. In a read-only task (audit, review, research) write nothing: list the rows to add, fix or drop under `Atlas:` in the report.
+7. Finish with the **Rules** section below. Silence is not a valid outcome.
 
 ## Where things go
 
@@ -36,6 +38,7 @@ Skip a note, a question, or a nit the diff ignored. Skip a one-off bug of the fe
 | Rules for one folder                              | `AGENTS.md` in that folder (read when working there) |
 | A repeatable workflow with steps                  | a skill                                              |
 | A persona with a narrow job and fresh context     | a subagent                                           |
+| Where a thing lives, a term, a command, a reason  | `.agents/atlas.md`: one row, fixed in place, bounded |
 | A short cross-cutting gate                        | always-on Cursor rule (`alwaysApply: true`)          |
 | Area-specific procedure                           | globbed Cursor rule, never appended to an always-on  |
 
@@ -75,6 +78,7 @@ Include this section in the final response of every coding task. Never omit it.
 - **Target file:** N/A | path of the file just edited
 - **Edit:** N/A | <one-line summary>
 - **Applied:** yes | N/A
+- **Atlas:** none | <rows added, fixed or dropped>
 ```
 
 When **Gap: none**, still include the section. A one-line `Rules: none` is enough when nothing changed.

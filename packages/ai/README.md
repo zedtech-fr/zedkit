@@ -237,7 +237,15 @@ CLAUDE.md -> AGENTS.md
 .cursor/commands/*.md      one link per command to .agents/commands/
 .cursor/rules/project.mdc  one always-on rule pointing at AGENTS.md
 .agents/tokenomics.md      model and effort per kind x stakes (yours to edit)
+.agents/atlas.md           lookup: where things live, words, commands, why
 ```
+
+`atlas.md` is project memory, not a doc to keep growing. Agents read it before
+they search and fix one row when a search or a correction taught them something
+(skill `rules-upkeep`); `setup-ai` fills it from the reading log. `validate`
+fails when it passes 150 lines or a row in its **Where** table names a path
+that no longer exists; `validate --setup` also needs the file and three
+**Where** rows. `init` and `setup` install an empty stub and never overwrite it.
 
 One source (`.agents/`), thin per-tool links. Nested `AGENTS.md` files hold
 per-folder rules. When to call which subagent: the

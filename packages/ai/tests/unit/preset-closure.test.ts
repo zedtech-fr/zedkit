@@ -190,6 +190,7 @@ describe("preset closure", () => {
         join("skills", "compose-ui", "SKILL.md"),
         join("skills", "definition-of-done", "SKILL.md"),
         join("skills", "implement", "SKILL.md"),
+        join("skills", "parallel-work", "SKILL.md"),
         join("skills", "review", "SKILL.md"),
         join("skills", "review", "lenses.md"),
         join("skills", "setup-ai", "SKILL.md"),

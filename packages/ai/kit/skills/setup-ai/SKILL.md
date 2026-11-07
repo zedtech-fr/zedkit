@@ -27,7 +27,7 @@ When `/setup-ai` starts (or the user asks to set up AI), say this in plain langu
 
 - **Modes:** **fresh** (little or no agent setup yet) or **improve** (you already have `AGENTS.md`, rules, or provider folders — audit and extend, do not replace blindly).
 - **Phases:** **A** audit (inventory + parallel explore + gaps) → **B** discovery (parallel read-only subagents read the code and report the rules already in place with file evidence; mine docs; then **one batched interview of at most 8 questions**, only on what the code did not answer) → **C** build deep artifacts from kit templates → **D** propose repo skills from the catalog → write provider layers, verify, report → **E** score and learn.
-- **What they get:** verified root `AGENTS.md`, `.agents/product.md`, domain rules under `.agents/domain/` read from the code, `.agents/personas.md`, `.agents/design.md` with identity rules when the repo has UI, nested `AGENTS.md` where folders differ, `.agents/tokenomics.md` (kind × stakes cells; cheap `check`/`build` cells read, `sensitive`+ cells decide), optional repo-specific skills and subagents, and thin Cursor/Claude layers that match `.agents/`.
+- **What they get:** verified root `AGENTS.md`, `.agents/product.md`, an `.agents/atlas.md` lookup (where things live, words, commands, why), domain rules under `.agents/domain/` read from the code, `.agents/personas.md`, `.agents/design.md` with identity rules when the repo has UI, nested `AGENTS.md` where folders differ, `.agents/tokenomics.md` (kind × stakes cells; cheap `check`/`build` cells read, `sensitive`+ cells decide), optional repo-specific skills and subagents, and thin Cursor/Claude layers that match `.agents/`.
 - **Time:** about **15–45 minutes** for a typical app repo; large monorepos or workspace roots can take longer. They approve the plan before writes; in phase B they **answer or delegate the batched interview** (do not skip it). Asking **which** providers to wire is optional when names are already known; **recording all four provider values** (see Providers) in the plan and setup-log is **not** optional.
 
 ## Phases (whole run)
@@ -237,6 +237,7 @@ Open **`templates/README.md`** in this skill folder (after install: `.agents/ski
 | Design / identity | `.agents/design.md` (with **Identity rules**) | `templates/design.template.md`                       |
 | Glossary          | `GLOSSARY.md` or `.agents/glossary.md`        | `templates/glossary.template.md`                     |
 | Setup map         | `.agents/README.md`                           | `templates/agents-readme.template.md`                |
+| Atlas             | `.agents/atlas.md`                            | kit stub (already installed; fill, never recopy)     |
 | Cursor map        | `.cursor/README.md` (when Cursor is wired)    | `templates/cursor-readme.template.md`                |
 
 **Rules come from the reading log** (`.agents/setup-log/reading.md`), not from the templates: every merged rule lands in exactly one home (domain file for `domain` and `business` lanes, `design.md` **Identity rules** for `identity`, a nested `AGENTS.md` for folder-specific `architecture` and `convention`, root `AGENTS.md` for repo-wide ones) and keeps its `file:line` and `source: owner` answers. A repo with money, state or policy in its code and no domain file is an incomplete setup. **Visual signature:** when the repo's stylesheets or token files define colours and fonts, `design.md` also carries a **Signature** section (`templates/design.template.md`): colour roles with exact variable names and values, font families by role, the one accent role reserved for the primary call to action, and the exact alias exceptions, each with `file:line`. Improve mode keeps those rows as written; changing one needs the owner's word.
@@ -250,6 +251,18 @@ Use the readers' **folder notes**. Write one `<folder>/AGENTS.md` (`templates/ne
 ### Session gates and the map
 
 Root `AGENTS.md` must state, in the How-to-work bullets (keep the file short): list assumptions before code or a plan; file budget green ≤15 / orange 16–25 / red >25 excluding generated files; encode the first reusable correction that changed the work. Write `.agents/README.md` from `templates/agents-readme.template.md` (commands, always-on vs globbed, design loop). When Cursor is wired, also write `.cursor/README.md` from `templates/cursor-readme.template.md`. Improve mode extends those files in place.
+
+### Atlas (after nested files)
+
+`.agents/atlas.md` is the lookup the next session reads before it searches: where things live, the repo's own words, the exact commands, the reasons. The kit stub is installed; fill it **in place** from what this run already proved, and add nothing the reading log does not back.
+
+- **Where**: one row per entry point, folder note and file a newcomer would hunt for (generated vs source, the file that owns a rule), each with its trap. Entry paths in backticks; `validate` opens every one.
+- **Words**: the names people use in chat and commands that differ from the code's, each with its home.
+- **Run**: the **Observed commands** you ran, the gate loop per area, and the commands that look right and fail (the trap goes in Note).
+- **Why**: only decisions a newcomer would undo by mistake; one line, linking the rule or domain row that owns it. Never copy the rule.
+- At least three Where rows; about 120 lines in all. **Improve mode:** open every existing row, fix or delete the stale ones, keep the author's wording where it holds.
+
+After setup, the atlas stays true one row at a time.<!-- if:skill=rules-upkeep --> `rules-upkeep` says how.<!-- /if --> Do not add a second index of the same facts.
 
 ### Rule map refresh (after nested files)
 
@@ -400,6 +413,7 @@ Then:
 **Phase E checklist (before you finish):**
 
 - [ ] Providers value table + **Wired:** in setup-log, plus the **Routing** and **Reading** lines
+- [ ] Atlas filled in place (`.agents/atlas.md`: 3+ Where rows, Run from commands you ran), every Entry path `test -e`
 - [ ] Rule map refreshed after phase C (`rule-map: refreshed after phase C` line, every pointer `test -e`)
 - [ ] Depth: `.agents/setup-log/reading.md` (readers scaled to size), `.agents/domain/*.md` with evidence, nested `AGENTS.md` (or `nested-agents: none`), `.agents/tokenomics.md` pointed at from root `AGENTS.md`, then `zedkit-ai sync`
 - [ ] Plan rows cover **`git status` / `git diff --name-only`** after Write (or **Plan gaps** documented)

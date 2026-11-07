@@ -467,6 +467,11 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): Map<string,
   if (existsSync(join(ctx.kit, "tokenomics.template.md"))) {
     copyFile(ctx, join(ctx.kit, "tokenomics.template.md"), join(".agents", "tokenomics.md"));
   }
+  // The atlas is project memory: edited by agents every session, so like the
+  // policy file it is never adopted and an existing file is left alone.
+  if (existsSync(join(ctx.kit, "atlas.template.md"))) {
+    copyFile(ctx, join(ctx.kit, "atlas.template.md"), join(".agents", "atlas.md"));
+  }
   for (const name of content.agents) {
     copyFile(ctx, join(ctx.kit, "agents", `${name}.md`), join(".agents", "agents", `${name}.md`));
   }

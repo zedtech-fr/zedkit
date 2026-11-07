@@ -33,6 +33,10 @@ Every numbered command hands to `orchestrate` (tokenomics + **build team**), exc
 
 Drop rows the preset did not install. Add a row when you add a command.
 
+## Atlas
+
+`.agents/atlas.md` is the lookup: where things live, the repo's words, exact commands, reasons. Read it before you search; fix one row when a search or a correction taught you something. `zedkit-ai validate` fails on a path that no longer exists. Skill `rules-upkeep` says how.
+
 ## Always-on vs globbed
 
 Root `AGENTS.md` is always on: assumptions, file budget, living config, ladder. Nested `AGENTS.md` plus one Cursor `.mdc` (`nested.mdc`, `globs:` comma-separated, `**/`-prefixed) attach only when matching files are in play. Split to per-folder `.mdc` only when the pointer body would differ. `alwaysApply: true` only for short cross-cutting gates.

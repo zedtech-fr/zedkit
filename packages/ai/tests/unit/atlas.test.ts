@@ -1,0 +1,100 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+import { ATLAS_MAX_LINES, checkAtlas } from "#atlas.js";
+import { main } from "#cli.js";
+import { kitDir } from "#kit.js";
+import { put, tempDir } from "./helpers.js";
+
+const repo = fileURLToPath(new URL("../../../../", import.meta.url));
+
+const HEAD = "| Topic | Entry | Why it lives there / trap | Checked |\n| --- | --- | --- | --- |\n";
+const atlas = (...rows: string[]): string => `# Atlas\n\n## Where\n\n${HEAD}${rows.join("\n")}\n\n## Run\n\n| Intent | Command | Note |\n| --- | --- | --- |\n| Test | \`pnpm test\` | |\n`;
+
+function project(text: string): string {
+  const root = tempDir();
+  put(root, ".agents/atlas.md", text);
+  return root;
+}
+
+function run(...argv: string[]): { code: number; text: string } {
+  const out: string[] = [];
+  const code = main(argv, { out: (line) => out.push(line), err: (line) => out.push(line) });
+  return { code, text: out.join("\n") };
+}
+
+describe("checkAtlas", () => {
+  it("is silent when there is no atlas and none is required", () => {
+    const root = tempDir();
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("accepts rows whose entry paths exist, with or without :line and a trailing slash", () => {
+    const root = project(atlas("| Auth | `src/auth/` | why | 2026-01-01 |", "| Login | `src/login.ts:12-30`, `README.md` | why | 2026-01-01 |"));
+    put(root, "src/auth/index.ts", "x");
+    put(root, "src/login.ts", "x");
+    put(root, "README.md", "x");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("names the row whose entry path is gone", () => {
+    const root = project(atlas("| Auth | `src/auth/` | why | 2026-01-01 |"));
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("src/auth/");
+    expect(issues[0]?.message).toContain("Auth");
+  });
+
+  it("skips placeholders, globs, urls, packages and commands in the entry cell", () => {
+    const root = project(atlas("| X | `<path>` `src/*.ts` `https://example.com/a` `@scope/pkg` `pnpm test` | why | 2026-01-01 |"));
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("only checks the Where table: other sections may name anything", () => {
+    const root = project(`${atlas("| A | `a.md` | why | 2026-01-01 |")}\n## Why\n\n| Decision | Reason | Source |\n| --- | --- | --- |\n| d | r | \`gone/path.md\` |\n`);
+    put(root, "a.md", "x");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("fails an atlas past the line cap", () => {
+    const rows = Array.from({ length: ATLAS_MAX_LINES }, (_, i) => `| T${i} | \`a.md\` | why | 2026-01-01 |`);
+    const root = project(atlas(...rows));
+    put(root, "a.md", "x");
+    expect(checkAtlas(root, join(root, ".agents")).map((i) => i.message).join("\n")).toContain("lines");
+  });
+
+  it("when required: a missing atlas, or fewer than three Where rows, fails", () => {
+    const empty = tempDir();
+    expect(checkAtlas(empty, join(empty, ".agents"), { required: true })[0]?.message).toContain("no atlas");
+    const thin = project(atlas("| A | `a.md` | why | 2026-01-01 |"));
+    put(thin, "a.md", "x");
+    expect(checkAtlas(thin, join(thin, ".agents"), { required: true })[0]?.message).toContain("fewer than 3");
+  });
+
+  it("when required: three real rows pass", () => {
+    const root = project(atlas("| A | `a.md` | w | d |", "| B | `b.md` | w | d |", "| C | `c.md` | w | d |"));
+    for (const f of ["a.md", "b.md", "c.md"]) put(root, f, "x");
+    expect(checkAtlas(root, join(root, ".agents"), { required: true })).toEqual([]);
+  });
+});
+
+describe("the kit stub and this repo's own atlas", () => {
+  it("ships a stub that is empty but valid", () => {
+    const stub = readFileSync(join(kitDir(), "atlas.template.md"), "utf8");
+    const root = project(stub);
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+    expect(stub.split("\n").length).toBeLessThan(ATLAS_MAX_LINES);
+  });
+
+  it("keeps every entry path of this repo's atlas true", () => {
+    expect(checkAtlas(repo, join(repo, ".agents"))).toEqual([]);
+  });
+
+  it("validate reports a stale row", () => {
+    const root = project(atlas("| Auth | `src/auth/` | why | 2026-01-01 |"));
+    const { code, text } = run("validate", root);
+    expect(code).toBe(1);
+    expect(text).toContain("src/auth/");
+  });
+});

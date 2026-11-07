@@ -279,6 +279,20 @@ describe("installKit", () => {
     }
   });
 
+  it("installs the atlas stub once and never touches an edited atlas, with or without adopt", () => {
+    for (const adopt of [false, true]) {
+      const dest = tempDir();
+      install(dest, { providers: [], adopt });
+      const file = join(dest, ".agents", "atlas.md");
+      expect(readFileSync(file, "utf8")).toBe(readFileSync(join(kitDir(), "atlas.template.md"), "utf8"));
+      const edited = `${readFileSync(file, "utf8")}\n<!-- ours -->\n`;
+      writeFileSync(file, edited);
+      install(dest, { providers: [], adopt });
+      expect(readFileSync(file, "utf8")).toBe(edited);
+      expect(existsSync(join(dest, ".agents", "atlas.kit.md"))).toBe(false);
+    }
+  });
+
   it("validate reports an invalid project tokenomics.md", () => {
     const dest = tempDir();
     install(dest, { providers: [] });

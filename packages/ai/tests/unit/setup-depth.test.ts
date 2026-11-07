@@ -297,6 +297,12 @@ describe("validate --setup depth", () => {
     const root = tempDir();
     deep(root);
     put(root, "PLAN.md", "PLAN.md\nintro-first: printed before any tool call (fresh)\n");
+    const row = (topic: string, path: string): string => `| ${topic} | \`${path}\` | trap | 2026-01-01 |\n`;
+    put(
+      root,
+      ".agents/atlas.md",
+      `# Atlas\n\n## Where\n\n| Topic | Entry | Trap | Checked |\n| --- | --- | --- | --- |\n${row("Refunds", "src/refund.ts")}${row("Root rules", "AGENTS.md")}${row("Nested rules", "src/AGENTS.md")}`,
+    );
     expect(run("validate", root, "--setup")).toEqual({ code: 0, text: "not a git repository; skipped change coverage\nok" });
   });
 });

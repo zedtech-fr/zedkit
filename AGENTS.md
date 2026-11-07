@@ -52,7 +52,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - After an edit, run that area's **Local loop** (its AGENTS.md), or
   `pnpm --filter <pkg> typecheck && pnpm --filter <pkg> lint && pnpm --filter <pkg> test`.
   CI owns full-repo test, e2e and static-export smoke.
-- Small PRs from fresh `main`, never stacked. One package per PR.
+- Small PRs from fresh `main`, never stacked. One package per PR. Open the
+  PR against `dev`, not `main` (`gh pr create --base dev`).
   File budget (exclude generated and lockfiles): green ≤15, orange 16–25
   (warn and offer a split), red >25 (stop; propose mergeable seams).
 - List assumptions before code or a plan. A missing assumptions table
@@ -66,6 +67,11 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - Encode the first reusable correction that changed the work, same turn
   (`rules-upkeep`). Close coding work with `Rules: none` or
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
+- Look up before you search: read the row for your topic in
+  [.agents/atlas.md](.agents/atlas.md) (where things live, words, commands,
+  why), open its Entry, widen only if it does not hold. A search that cost 3+
+  reads, a correction, or a moved file or changed command fixes that row in the
+  same turn. `zedkit-ai validate` fails on a path that is gone.
 - Each package PR updates the root README package table, adds a
   Changeset file, records the module's origin in the package README
   ("original work by the same author" — never a project name or path),

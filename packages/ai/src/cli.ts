@@ -30,6 +30,7 @@ import {
   REASONING,
   STAKES,
 } from "./tokenomics.js";
+import { checkAtlas } from "./atlas.js";
 import { checkDepth } from "./setup-depth.js";
 import { checkSetup } from "./setup-check.js";
 import {
@@ -216,6 +217,7 @@ function runValidate(args: string[], sinks: Sinks): number {
     ...checkKitDocs(projectRoot, agentsDir),
     ...checkPlaceholders(projectRoot, agentsDir),
     ...checkHardcodedModels(projectRoot, agentsDir),
+    ...checkAtlas(projectRoot, agentsDir),
   ];
   if (parsed.value.values.setup === true) {
     const plan = parsed.value.values.plan;
@@ -223,7 +225,11 @@ function runValidate(args: string[], sinks: Sinks): number {
       projectRoot,
       typeof plan === "string" ? { plan } : {},
     );
-    issues.push(...extra.issues, ...checkDepth(projectRoot));
+    issues.push(
+      ...extra.issues,
+      ...checkDepth(projectRoot),
+      ...checkAtlas(projectRoot, agentsDir, { required: true }),
+    );
     for (const note of extra.notes) sinks.out(note);
   }
   for (const issue of issues) sinks.out(`${issue.path}: ${issue.message}`);
