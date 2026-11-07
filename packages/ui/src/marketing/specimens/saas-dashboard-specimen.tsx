@@ -80,7 +80,7 @@ function SaasInvitePopover({
           {messages.invite}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-invite max-w-[calc(100vw-2rem)]">
+      <PopoverContent align="end" className="w-invite">
         <form
           className="grid gap-stack-md"
           onSubmit={(event) => {

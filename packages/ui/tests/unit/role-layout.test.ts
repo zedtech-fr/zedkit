@@ -145,7 +145,7 @@ describe("layout job classes", () => {
     expect(utility("w-skeleton-body")).toBe("width: 80%;");
     expect(utility("w-skeleton-label")).toBe("width: calc(var(--spacing) * 20);");
     expect(utility("w-skeleton-note")).toBe("width: calc(var(--spacing) * 64);");
-    expect(utility("w-invite")).toBe("width: calc(var(--spacing) * 72);");
+    expect(utility("w-invite")).toBe("width: calc(var(--spacing) * 72); max-width: calc(100vw - 2rem);");
     expect(utility("pull-line")).toBe("margin-top: calc(var(--spacing) * -1);");
     expect(utility("pull-legend")).toBe("margin-top: calc(var(--spacing) * -1.5);");
     expect(utility("pull-separator")).toBe("margin-block: calc(var(--spacing) * -2);");
