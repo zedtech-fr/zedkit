@@ -172,7 +172,7 @@ describe("FeatureGrid", () => {
     expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-4");
     expect(container.querySelectorAll("li")).toHaveLength(0);
     rerender(<FeatureGrid title="T" features={[]} />);
-    expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-3");
+    expect(container.querySelector("ul")?.className).toContain("lg:grid-trio");
   });
 });
 
@@ -492,10 +492,10 @@ describe("Pricing", () => {
   it("skips the action row when a plan has none, and picks columns from the plan count", () => {
     const { container, rerender } = render(<Pricing title="T" plans={plans} />);
     expect(container.querySelectorAll("[data-slot='pricing-action']")).toHaveLength(2);
-    expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-3");
+    expect(container.querySelector("ul")?.className).toContain("lg:grid-trio");
     rerender(<Pricing title="T" plans={plans.slice(0, 2)} />);
     expect(container.querySelector("ul")?.className).toContain("sm:grid-pair");
-    expect(container.querySelector("ul")?.className).not.toContain("lg:grid-cols-3");
+    expect(container.querySelector("ul")?.className).not.toContain("lg:grid-trio");
     rerender(<Pricing title="T" plans={plans.slice(0, 1)} />);
     expect(container.querySelector("ul")?.className).not.toContain("grid-cols");
     rerender(<Pricing title="T" plans={[]} />);
