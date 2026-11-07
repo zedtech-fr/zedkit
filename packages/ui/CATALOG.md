@@ -252,7 +252,7 @@ const words = ["Cursor", "Muse", "Claude"] as const;
 - When not to use: For navigation menus — use links or tabs instead.
 - See also: `Confirm destructive actions`
 - Examples: Usage, Variants and sizes
-- A11y: Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.
+- A11y: Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use `px-button-inline-sm` / `px-button-pad` / `px-button-pad-lg`. Height still follows `--spacing` control tokens.
 - Troubleshooting: Wrong variant colours in dark mode — ensure `.dark` is on the document root. Link styled as a button — use `asChild` with an anchor and keep visible link text. Icon-only control — pass `aria-label` (or use `IconButton` when the label should not appear as text).
 
 ```ts
@@ -398,7 +398,7 @@ import { Label } from "@zedtech/zedkit-ui";
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
-- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is Tailwind `px-3`.
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is `px-field-pad`.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
@@ -572,7 +572,7 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - A11y: Icon is decorative (`aria-hidden`, not focusable); put the readable name in `children`. The muted colour keeps normal text contrast on every identity, but do not rely on the icon alone to carry meaning — the state or name must also be written.
 - Registry: icon-label
 - Examples: Project details, In an order list, Home areas
-- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-4` (1rem, Tailwind default scale); override with `className`. `--spacing-icon-control` remains as a deprecated alias. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
+- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-icon`; override with `className`. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
 
 ```ts
 import { Calendar, FolderOpen, MessageSquare, Users } from "lucide-react";
@@ -1326,7 +1326,7 @@ const [query, setQuery] = useState("");
 - See also: `Group content in a card section`
 - Examples: Simple, Without topbar
 - Registry: app-shell
-- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-4` / `md:p-app-shell-padding-md`. `--spacing-app-shell-padding` remains as a deprecated alias.
+- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.
 
 ```ts
 import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
@@ -1606,7 +1606,7 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Examples: Simple, As a section (asChild)
 - A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
 - Registry: alert
-- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Block padding is `py-3`; `--spacing-alert-block` remains as a deprecated alias. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
+- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-alert-icon-offset` / `left-alert-icon-offset`). Block padding is `py-alert-block`. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
