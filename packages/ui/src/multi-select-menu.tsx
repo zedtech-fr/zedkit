@@ -28,7 +28,7 @@ export function MultiSelectMenu({
   return (
     <ul
       {...menuProps}
-      className="max-h-[--radix-select-content-available-height] overflow-y-auto p-1 outline-none"
+      className="max-h-[--radix-select-content-available-height] overflow-y-auto p-select-separator outline-none"
       data-slot="multi-select-list"
     >
       {loading ? (

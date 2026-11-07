@@ -1,57 +1,10 @@
 [
   {
-    "canonical": "0.5",
-    "value": "0.125rem",
-    "tokens": [
-      "--spacing-badge-block",
-      "--spacing-progress-bar-gap",
-      "--spacing-table-checkbox-nudge"
-    ]
-  },
-  {
-    "canonical": "1",
-    "value": "0.25rem",
-    "tokens": [
-      "--spacing-data-table-sort-gap",
-      "--spacing-field-error-gap",
-      "--spacing-page-header-title-gap",
-      "--spacing-select-separator",
-      "--spacing-tabs-list-inset",
-      "--spacing-tabs-trigger-block",
-      "--spacing-wizard-step-connector-gap"
-    ]
-  },
-  {
-    "canonical": "1.5",
-    "value": "0.375rem",
-    "tokens": [
-      "--spacing-dialog-header-stack",
-      "--spacing-drawer-handle-height",
-      "--spacing-drawer-header-gap",
-      "--spacing-progress-bar-height"
-    ]
-  },
-  {
-    "canonical": "--spacing-card-stack",
-    "value": "0.5rem",
-    "tokens": [
-      "--spacing-card-stack"
-    ]
-  },
-  {
-    "canonical": "--spacing-page-header-back-gap",
-    "value": "0.75rem",
-    "tokens": [
-      "--spacing-page-header-back-gap"
-    ]
-  },
-  {
     "canonical": "4",
     "value": "1rem",
     "tokens": [
       "--spacing-button-inline",
       "--spacing-checkmark",
-      "--spacing-data-table-skeleton-height",
       "--spacing-dialog-gap",
       "--spacing-icon-control",
       "--spacing-overlay-close-offset",
@@ -67,32 +20,10 @@
     ]
   },
   {
-    "canonical": "6",
-    "value": "1.5rem",
-    "tokens": [
-      "--spacing-app-shell-padding-md",
-      "--spacing-card-padding",
-      "--spacing-dialog-padding",
-      "--spacing-field-set",
-      "--spacing-page-header-offset",
-      "--spacing-wizard-step-badge",
-      "--spacing-wizard-step-connector"
-    ]
-  },
-  {
-    "canonical": "7",
-    "value": "1.75rem",
-    "tokens": [
-      "--spacing-alert-content-indent",
-      "--spacing-field-group"
-    ]
-  },
-  {
-    "canonical": "8",
+    "canonical": "--spacing-button-inline-lg",
     "value": "2rem",
     "tokens": [
-      "--spacing-button-inline-lg",
-      "--spacing-select-item-indicator-gap"
+      "--spacing-button-inline-lg"
     ]
   },
   {
@@ -103,31 +34,10 @@
     ]
   },
   {
-    "canonical": "--spacing-table-head-height",
-    "value": "2.5rem",
-    "tokens": [
-      "--spacing-table-head-height"
-    ]
-  },
-  {
-    "canonical": "--spacing-alert-icon-nudge",
-    "value": "0.1875rem",
-    "tokens": [
-      "--spacing-alert-icon-nudge"
-    ]
-  },
-  {
     "canonical": "--spacing-app-shell-sidebar",
     "value": "16rem",
     "tokens": [
       "--spacing-app-shell-sidebar"
-    ]
-  },
-  {
-    "canonical": "--spacing-badge-inline",
-    "value": "0.625rem",
-    "tokens": [
-      "--spacing-badge-inline"
     ]
   },
   {
@@ -145,13 +55,6 @@
     ]
   },
   {
-    "canonical": "--spacing-drawer-handle-width",
-    "value": "3rem",
-    "tokens": [
-      "--spacing-drawer-handle-width"
-    ]
-  },
-  {
     "canonical": "--spacing-drawer-max-height",
     "value": "96dvh",
     "tokens": [
@@ -166,24 +69,10 @@
     ]
   },
   {
-    "canonical": "--spacing-icon-sm",
-    "value": "0.875rem",
-    "tokens": [
-      "--spacing-icon-sm"
-    ]
-  },
-  {
     "canonical": "--spacing-separator-thickness",
     "value": "0.0625rem",
     "tokens": [
       "--spacing-separator-thickness"
-    ]
-  },
-  {
-    "canonical": "--spacing-textarea-min-height",
-    "value": "3.75rem",
-    "tokens": [
-      "--spacing-textarea-min-height"
     ]
   },
   {
@@ -744,6 +633,237 @@
     "value": "calc(var(--spacing) * 2)",
     "tokens": [
       "--spacing-card-lines"
+    ]
+  },
+  {
+    "canonical": "--spacing-badge-inline",
+    "value": "calc(var(--spacing) * 2.5)",
+    "tokens": [
+      "--spacing-badge-inline"
+    ]
+  },
+  {
+    "canonical": "--spacing-badge-block",
+    "value": "calc(var(--spacing) * 0.5)",
+    "tokens": [
+      "--spacing-badge-block"
+    ]
+  },
+  {
+    "canonical": "--spacing-icon-sm",
+    "value": "calc(var(--spacing) * 3.5)",
+    "tokens": [
+      "--spacing-icon-sm"
+    ]
+  },
+  {
+    "canonical": "--spacing-data-table-sort-gap",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-data-table-sort-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-data-table-skeleton-height",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": [
+      "--spacing-data-table-skeleton-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-wizard-step-badge",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-wizard-step-badge"
+    ]
+  },
+  {
+    "canonical": "--spacing-wizard-step-connector-gap",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-wizard-step-connector-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-wizard-step-connector",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-wizard-step-connector"
+    ]
+  },
+  {
+    "canonical": "--spacing-progress-bar-gap",
+    "value": "calc(var(--spacing) * 0.5)",
+    "tokens": [
+      "--spacing-progress-bar-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-progress-bar-height",
+    "value": "calc(var(--spacing) * 1.5)",
+    "tokens": [
+      "--spacing-progress-bar-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-tabs-list-inset",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-tabs-list-inset"
+    ]
+  },
+  {
+    "canonical": "--spacing-tabs-trigger-block",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-tabs-trigger-block"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-set",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-field-set"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-group",
+    "value": "calc(var(--spacing) * 7)",
+    "tokens": [
+      "--spacing-field-group"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-error-gap",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-field-error-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-card-padding",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-card-padding"
+    ]
+  },
+  {
+    "canonical": "--spacing-card-stack",
+    "value": "calc(var(--spacing) * 2)",
+    "tokens": [
+      "--spacing-card-stack"
+    ]
+  },
+  {
+    "canonical": "--spacing-page-header-title-gap",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-page-header-title-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-page-header-back-gap",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": [
+      "--spacing-page-header-back-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-page-header-offset",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-page-header-offset"
+    ]
+  },
+  {
+    "canonical": "--spacing-dialog-padding",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-dialog-padding"
+    ]
+  },
+  {
+    "canonical": "--spacing-dialog-header-stack",
+    "value": "calc(var(--spacing) * 1.5)",
+    "tokens": [
+      "--spacing-dialog-header-stack"
+    ]
+  },
+  {
+    "canonical": "--spacing-app-shell-padding-md",
+    "value": "calc(var(--spacing) * 6)",
+    "tokens": [
+      "--spacing-app-shell-padding-md"
+    ]
+  },
+  {
+    "canonical": "--spacing-table-head-height",
+    "value": "calc(var(--spacing) * 10)",
+    "tokens": [
+      "--spacing-table-head-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-table-checkbox-nudge",
+    "value": "calc(var(--spacing) * 0.5)",
+    "tokens": [
+      "--spacing-table-checkbox-nudge"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-handle-height",
+    "value": "calc(var(--spacing) * 1.5)",
+    "tokens": [
+      "--spacing-drawer-handle-height"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-handle-width",
+    "value": "calc(var(--spacing) * 12)",
+    "tokens": [
+      "--spacing-drawer-handle-width"
+    ]
+  },
+  {
+    "canonical": "--spacing-drawer-header-gap",
+    "value": "calc(var(--spacing) * 1.5)",
+    "tokens": [
+      "--spacing-drawer-header-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-select-item-indicator-gap",
+    "value": "calc(var(--spacing) * 8)",
+    "tokens": [
+      "--spacing-select-item-indicator-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-select-separator",
+    "value": "calc(var(--spacing) * 1)",
+    "tokens": [
+      "--spacing-select-separator"
+    ]
+  },
+  {
+    "canonical": "--spacing-alert-icon-nudge",
+    "value": "calc(var(--spacing) * 0.75)",
+    "tokens": [
+      "--spacing-alert-icon-nudge"
+    ]
+  },
+  {
+    "canonical": "--spacing-alert-content-indent",
+    "value": "calc(var(--spacing) * 7)",
+    "tokens": [
+      "--spacing-alert-content-indent"
+    ]
+  },
+  {
+    "canonical": "--spacing-textarea-min-height",
+    "value": "calc(var(--spacing) * 15)",
+    "tokens": [
+      "--spacing-textarea-min-height"
     ]
   }
 ]
