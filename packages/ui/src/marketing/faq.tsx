@@ -31,19 +31,19 @@ function Faq({ title, description, items, className, ...props }: FaqProps) {
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="reading" className="flex flex-col gap-10">
+      <Container width="reading" className="flex flex-col gap-stack-6xl">
         <SectionHeader titleId={titleId} title={title} description={description} />
         <div className="flex flex-col">
           {items.map((item, index) => (
             <details key={item.id ?? index} data-slot="faq-item" className="group border-b">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-3 font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
-                <span className="min-w-0">{item.question}</span>
+              <summary className="flex min-h-stack-7xl cursor-pointer list-none items-center justify-between gap-stack-lg py-stack-md font-medium focus-ring-control [&::-webkit-details-marker]:hidden">
+                <span className="min-w-zero">{item.question}</span>
                 <ChevronDown
                   aria-hidden="true"
-                  className="size-4 shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
+                  className="size-stack-lg shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
                 />
               </summary>
-              <Text variant="muted" className="pb-4">
+              <Text variant="muted" className="pb-stack-lg">
                 {item.answer}
               </Text>
             </details>

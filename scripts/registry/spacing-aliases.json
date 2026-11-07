@@ -397,5 +397,22 @@
     "canonical": "--spacing-icon",
     "value": "var(--zk-icon-size)",
     "tokens": ["--spacing-icon"]
-  }
+  },
+  { "canonical": "--spacing-zero", "value": "0px", "tokens": ["--spacing-zero"] },
+  { "canonical": "--spacing-hairline", "value": "1px", "tokens": ["--spacing-hairline"] },
+  { "canonical": "--spacing-stack-3xs", "value": "calc(var(--spacing) * 0.5)", "tokens": ["--spacing-stack-3xs"] },
+  { "canonical": "--spacing-stack-xs", "value": "calc(var(--spacing) * 1.5)", "tokens": ["--spacing-stack-xs"] },
+  { "canonical": "--spacing-stack-3h", "value": "calc(var(--spacing) * 3.5)", "tokens": ["--spacing-stack-3h"] },
+  { "canonical": "--spacing-stack-5xl", "value": "calc(var(--spacing) * 9)", "tokens": ["--spacing-stack-5xl"] },
+  { "canonical": "--spacing-stack-6xl", "value": "calc(var(--spacing) * 10)", "tokens": ["--spacing-stack-6xl"] },
+  { "canonical": "--spacing-stack-7xl", "value": "calc(var(--spacing) * 11)", "tokens": ["--spacing-stack-7xl"] },
+  { "canonical": "--spacing-stack-8xl", "value": "calc(var(--spacing) * 12)", "tokens": ["--spacing-stack-8xl"] },
+  { "canonical": "--spacing-stack-9xl", "value": "calc(var(--spacing) * 14)", "tokens": ["--spacing-stack-9xl"] },
+  { "canonical": "--spacing-stack-10xl", "value": "calc(var(--spacing) * 16)", "tokens": ["--spacing-stack-10xl"] },
+  { "canonical": "--spacing-stack-11xl", "value": "calc(var(--spacing) * 20)", "tokens": ["--spacing-stack-11xl"] },
+  { "canonical": "--spacing-stack-12xl", "value": "calc(var(--spacing) * 24)", "tokens": ["--spacing-stack-12xl"] },
+  { "canonical": "--spacing-stack-13xl", "value": "calc(var(--spacing) * 28)", "tokens": ["--spacing-stack-13xl"] },
+  { "canonical": "--spacing-stack-14xl", "value": "calc(var(--spacing) * 48)", "tokens": ["--spacing-stack-14xl"] },
+  { "canonical": "--spacing-stack-15xl", "value": "calc(var(--spacing) * 64)", "tokens": ["--spacing-stack-15xl"] },
+  { "canonical": "--spacing-stack-16xl", "value": "calc(var(--spacing) * 72)", "tokens": ["--spacing-stack-16xl"] }
 ]

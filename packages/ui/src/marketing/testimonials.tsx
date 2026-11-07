@@ -37,26 +37,26 @@ function Testimonials({ title, description, items, className, ...props }: Testim
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col gap-10">
+      <Container width="default" className="flex flex-col gap-stack-6xl">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ul className="grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid list-none gap-stack-lg p-zero sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => (
             <GlassSurface key={item.id ?? index} as="li" className="flex">
-              <figure className="flex min-w-0 flex-1 flex-col justify-between gap-6">
+              <figure className="flex min-w-zero flex-1 flex-col justify-between gap-stack-2xl">
                 <blockquote className="text-pretty">
                   <Text as="span" className="before:content-[open-quote] after:content-[close-quote]">{item.quote}</Text>
                 </blockquote>
-                <figcaption className="flex items-center gap-3">
+                <figcaption className="flex items-center gap-stack-md">
                   {item.avatar ? (
                     <span
                       data-slot="testimonial-avatar"
                       aria-hidden="true"
-                      className="grid size-10 shrink-0 place-content-center overflow-hidden rounded-full bg-muted text-sm font-semibold [&_img]:size-full [&_img]:object-cover"
+                      className="grid size-stack-6xl shrink-0 place-content-center overflow-hidden rounded-full bg-muted text-sm font-semibold [&_img]:size-full [&_img]:object-cover"
                     >
                       {item.avatar}
                     </span>
                   ) : null}
-                  <span className="flex min-w-0 flex-col">
+                  <span className="flex min-w-zero flex-col">
                     <span className="font-semibold">{item.name}</span>
                     {item.role ? <span className="text-sm text-muted-foreground">{item.role}</span> : null}
                   </span>

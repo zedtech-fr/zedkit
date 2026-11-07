@@ -25,12 +25,12 @@ describe("WizardSteps", () => {
   it("styles list and steps from design tokens", () => {
     const { container } = render(<WizardSteps steps={["One", "Two"]} current={0} />);
     const list = container.querySelector('[data-slot="wizard"]');
-    expect(list?.classList.contains("gap-x-3")).toBe(true);
+    expect(list?.classList.contains("gap-x-stack-md")).toBe(true);
     expect(list?.className).not.toContain("gap-x-wizard-steps-gap");
-    expect(list?.classList.contains("gap-y-2")).toBe(true);
+    expect(list?.classList.contains("gap-y-stack-sm")).toBe(true);
     expect(list?.className).not.toContain("gap-y-wizard-steps-row-gap");
     const item = screen.getByText("One").closest("li");
-    expect(item?.classList.contains("gap-2")).toBe(true);
+    expect(item?.classList.contains("gap-stack-sm")).toBe(true);
     expect(item?.className).not.toContain("gap-wizard-step-gap");
     const badge = item?.querySelector("span[aria-hidden]");
     expect(badge?.classList.contains("size-wizard-step-badge")).toBe(true);
@@ -145,12 +145,12 @@ describe("OptionCards", () => {
   it("styles group and cards from design tokens", () => {
     const { container } = render(<OptionCards options={options} selected={["a"]} onChange={() => {}} />);
     const group = container.querySelector('[role="group"]');
-    expect(group?.className).toContain("gap-3");
+    expect(group?.className).toContain("gap-stack-md");
     expect(group?.className).not.toContain("gap-option-cards-gap");
     const card = screen.getByText("Alpha").closest("label");
-    expect(card?.className).toContain("gap-3");
+    expect(card?.className).toContain("gap-stack-md");
     expect(card?.className).not.toContain("gap-option-card-gap");
-    expect(card?.classList.contains("p-4")).toBe(true);
+    expect(card?.classList.contains("p-stack-lg")).toBe(true);
   });
 });
 

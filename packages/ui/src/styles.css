@@ -210,9 +210,12 @@
    * `px-button-pad`). `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
    *
-   * `stack-*` is the shared gap scale (1 through 8). Tailwind also emits
-   * the other spacing directions from the same token; prefer `gap-`.
+   * `stack-*` is the shared spacing scale (a calc from `--spacing`).
+   * Tailwind also emits the other directions from the same token.
+   * `zero` is 0. `hairline` is 1px and does not follow `--spacing`.
    */
+  --spacing-zero: 0px;
+  --spacing-hairline: 1px;
   --zk-gap-2xs: calc(var(--spacing) * 1);
   --zk-gap-sm: calc(var(--spacing) * 2);
   --zk-gap-md: calc(var(--spacing) * 3);
@@ -229,6 +232,21 @@
   --spacing-stack-2xl: var(--zk-gap-2xl);
   --spacing-stack-3xl: var(--zk-gap-3xl);
   --spacing-stack-4xl: var(--zk-gap-4xl);
+  --spacing-stack-3xs: calc(var(--spacing) * 0.5);
+  --spacing-stack-xs: calc(var(--spacing) * 1.5);
+  --spacing-stack-3h: calc(var(--spacing) * 3.5);
+  --spacing-stack-5xl: calc(var(--spacing) * 9);
+  --spacing-stack-6xl: calc(var(--spacing) * 10);
+  --spacing-stack-7xl: calc(var(--spacing) * 11);
+  --spacing-stack-8xl: calc(var(--spacing) * 12);
+  --spacing-stack-9xl: calc(var(--spacing) * 14);
+  --spacing-stack-10xl: calc(var(--spacing) * 16);
+  --spacing-stack-11xl: calc(var(--spacing) * 20);
+  --spacing-stack-12xl: calc(var(--spacing) * 24);
+  --spacing-stack-13xl: calc(var(--spacing) * 28);
+  --spacing-stack-14xl: calc(var(--spacing) * 48);
+  --spacing-stack-15xl: calc(var(--spacing) * 64);
+  --spacing-stack-16xl: calc(var(--spacing) * 72);
   --spacing-field-pad: calc(var(--spacing) * 3);
   --spacing-button-pad: calc(var(--spacing) * 4);
   --spacing-button-pad-lg: calc(var(--spacing) * 8);

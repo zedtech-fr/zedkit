@@ -31,11 +31,11 @@ const buttonVariants = cva(
       {
         variant: "link",
         class:
-          "h-auto min-h-0 bg-transparent py-0 shadow-none hover:bg-transparent active:bg-transparent",
+          "h-auto min-h-zero bg-transparent py-zero shadow-none hover:bg-transparent active:bg-transparent",
       },
-      { variant: "link", size: "sm", class: "min-h-11 px-stack-sm text-sm" },
-      { variant: "link", size: "default", class: "min-h-11 px-field-pad" },
-      { variant: "link", size: "lg", class: "min-h-11 px-button-pad text-base" },
+      { variant: "link", size: "sm", class: "min-h-stack-7xl px-stack-sm text-sm" },
+      { variant: "link", size: "default", class: "min-h-stack-7xl px-field-pad" },
+      { variant: "link", size: "lg", class: "min-h-stack-7xl px-button-pad text-base" },
     ],
     defaultVariants: { variant: "default", size: "default" },
   },

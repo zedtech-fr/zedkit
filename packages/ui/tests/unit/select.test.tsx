@@ -45,7 +45,7 @@ describe("select", () => {
     expect(trigger.className).not.toContain("py-2");
     expect(trigger.className).not.toMatch(/(^|\s)h-9(\s|$)/);
     expect(trigger.className).not.toContain("focus:ring-1");
-    expect(trigger.querySelector("svg")?.classList.contains("size-4")).toBe(true);
+    expect(trigger.querySelector("svg")?.classList.contains("size-stack-lg")).toBe(true);
     expect(trigger.querySelector("svg")?.className).not.toContain("size-icon-control");
     await user.click(trigger);
     await screen.findByRole("listbox");
@@ -56,7 +56,7 @@ describe("select", () => {
     render(<RegionSelect />);
     await user.click(screen.getByRole("combobox", { name: "Region" }));
     const option = await screen.findByRole("option", { name: "Europe" });
-    for (const token of ["py-1.5", "pr-select-item-indicator-gap", "pl-2"]) {
+    for (const token of ["py-stack-xs", "pr-select-item-indicator-gap", "pl-stack-sm"]) {
       expect(option.className).toContain(token);
     }
     expect(option.className).not.toContain("py-select-item-block");
@@ -64,11 +64,11 @@ describe("select", () => {
     expect(option.className).not.toMatch(/(^|\s)pr-8(\s|$)/);
     const indicator = option.querySelector("span.absolute");
     expect(indicator?.className).toContain("size-icon-sm");
-    expect(indicator?.className).toContain("right-2");
+    expect(indicator?.className).toContain("right-stack-sm");
     expect(indicator?.className).not.toContain("right-select-item-inline");
     const label = screen.getByText("Regions");
-    expect(label.className).toContain("px-2");
-    expect(label.className).toContain("py-1.5");
+    expect(label.className).toContain("px-stack-sm");
+    expect(label.className).toContain("py-stack-xs");
     expect(label.className).not.toContain("px-select-item-inline");
     expect(label.className).not.toContain("py-select-item-block");
   });

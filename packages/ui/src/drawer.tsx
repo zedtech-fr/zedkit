@@ -153,9 +153,9 @@ function DrawerHandle({ className, ...props }: React.ComponentProps<typeof Drawe
     <DrawerPrimitive.Handle
       data-slot="drawer-handle"
       className={cn(
-        "mx-auto mt-4 h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
+        "mx-auto mt-stack-lg h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
         "in-data-[vaul-drawer-direction=left]:hidden in-data-[vaul-drawer-direction=right]:hidden",
-        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-0 in-data-[vaul-drawer-direction=top]:mb-4",
+        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-zero in-data-[vaul-drawer-direction=top]:mb-stack-lg",
         className,
       )}
       {...props}

@@ -30,11 +30,11 @@ describe("DataTable", () => {
   it("uses token-driven cell padding with no value arbitraries", () => {
     const { container } = render(<DataTable columns={columns} data={data} />);
     const head = container.querySelector("th");
-    expect(head?.className).toContain("px-2");
+    expect(head?.className).toContain("px-stack-sm");
     expect(head?.className).not.toContain("px-table-cell");
     expect(head?.className).toContain("h-table-head-height");
     const cell = container.querySelector("td");
-    expect(cell?.className).toContain("p-2");
+    expect(cell?.className).toContain("p-stack-sm");
     expect(cell?.className).not.toContain("p-table-cell");
     for (const el of [head, cell]) {
       assertNoValueArbitraries(el?.className ?? "");
@@ -44,7 +44,7 @@ describe("DataTable", () => {
   it("styles chrome (filter, sort, loading, pagination) from design tokens", () => {
     const { container } = render(<DataTable columns={columns} data={data} pageSize={1} />);
     const root = container.firstElementChild;
-    expect(root?.classList.contains("space-y-4")).toBe(true);
+    expect(root?.classList.contains("space-y-stack-lg")).toBe(true);
     expect(root?.className).not.toContain("space-y-data-table-stack");
     const filter = container.querySelector("input");
     expect(filter?.classList.contains("max-w-data-table-filter-width")).toBe(true);
@@ -54,7 +54,7 @@ describe("DataTable", () => {
     expect(sortButton.className).not.toMatch(/(^|\s)gap-1(\s|$)/);
     expect(sortButton.querySelector("svg")?.classList.contains("size-icon-sm")).toBe(true);
     const pager = screen.getByText(/Page 1 of/).parentElement;
-    expect(pager?.classList.contains("gap-2")).toBe(true);
+    expect(pager?.classList.contains("gap-stack-sm")).toBe(true);
     expect(pager?.className).not.toContain("gap-data-table-pagination-gap");
   });
 
@@ -62,7 +62,7 @@ describe("DataTable", () => {
     const { container } = render(<DataTable columns={columns} data={data} loading />);
     const loading = container.querySelector('[data-slot="data-table-loading"]');
     const skeleton = loading?.querySelector(".motion-safe\\:animate-pulse");
-    expect(skeleton?.classList.contains("h-4")).toBe(true);
+    expect(skeleton?.classList.contains("h-stack-lg")).toBe(true);
     expect(skeleton?.className).not.toContain("h-data-table-skeleton-height");
   });
 
