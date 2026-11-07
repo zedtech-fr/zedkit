@@ -1314,6 +1314,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-target {
   min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
 }
+/* CSS target floor. On a coarse pointer or a narrow screen, the phone target still wins. */
+@utility min-h-floor {
+  min-height: max(24px, var(--zk-tap-min, 0px));
+}
 @utility min-w-target {
   min-width: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
 }

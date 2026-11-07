@@ -262,7 +262,7 @@ export function DataTable<TData extends RowData>({
                       type="button"
                       onClick={header.column.getToggleSortingHandler()}
                       className={cn(
-                        "inline-flex min-h-(--zk-tap-min) items-center gap-data-table-sort-gap hover:text-foreground",
+                        "inline-flex min-h-floor items-center gap-data-table-sort-gap hover:text-foreground",
                       )}
                       aria-label={sortButtonLabel(label, sorted)}
                     >
