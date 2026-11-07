@@ -729,6 +729,36 @@ a[class*="px-badge-inline"] {
   line-height: var(--text-base--line-height);
 }
 
+/* A small step heading. Same size as body copy, one line of that size. */
+.text-step-heading {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+}
+
+/* Docs purpose line. Body size until the small breakpoint, then a larger size. The text's own line stays. */
+@media (min-width: 40rem) {
+  .text-purpose {
+    font-size: var(--text-lg);
+  }
+}
+
+/* A decorative brand word. The text's own line stays. */
+.text-brand-word {
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+/* A demo section heading pulled to the brand-word size. */
+.text-demo-heading {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+}
+
+/* Card title in a home preview. The card title's own line, weight, and tracking stay. */
+.text-preview-title {
+  font-size: var(--text-lg);
+}
+
 /* Marketing hero promise. Grows one step from the small breakpoint. */
 .text-hero-title {
   font-size: var(--text-4xl);

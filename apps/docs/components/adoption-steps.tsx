@@ -146,7 +146,7 @@ function Step({
       </Text>
       <Stack gap={3} className="content-shrink">
         <Stack gap={1}>
-          <Heading level={4} as="h3" className="text-base">
+          <Heading level={4} as="h3" className="text-step-heading">
             {words.title}
           </Heading>
           {words.note ? (

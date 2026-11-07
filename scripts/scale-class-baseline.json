@@ -1,12 +1,7 @@
 {
   "version": 1,
-  "total": 94,
+  "total": 89,
   "files": {
-    "apps/docs/components/adoption-steps.tsx": 1,
-    "apps/docs/components/component-page.tsx": 1,
-    "apps/docs/components/demos/brand-logo-demo.tsx": 1,
-    "apps/docs/components/demos/icon-button-demo.tsx": 1,
-    "apps/docs/ui/home/home-gallery-preview.tsx": 1,
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
     "packages/ui/src/layout.tsx": 5,
     "packages/ui/src/marketing/hero.tsx": 1,
