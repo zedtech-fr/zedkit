@@ -49,12 +49,12 @@ describe("toggles", () => {
   it("styles the switch from spacing-derived geometry", () => {
     render(<Switch aria-label="Notify me" defaultChecked />);
     const toggle = screen.getByRole("switch", { name: "Notify me" });
-    expect(toggle.className).toContain("calc(var(--spacing)");
     expect(toggle.classList.contains("hit-target")).toBe(true);
     expect(toggle.classList.contains("focus-ring")).toBe(true);
     expect(toggle.className).not.toContain("w-switch-track-width");
-    const thumb = toggle.querySelector("span");
-    expect(thumb?.className).toContain("calc(var(--spacing)");
+    expect(toggle.className).not.toContain("calc(var(--spacing)");
+    const thumb = toggle.querySelector("[data-slot=switch-thumb]");
+    expect(thumb?.className).not.toContain("calc(var(--spacing)");
     expect(thumb?.className).not.toContain("translate-x-4");
   });
 });
