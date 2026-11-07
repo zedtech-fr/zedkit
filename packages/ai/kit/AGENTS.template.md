@@ -38,7 +38,7 @@ that holds<!-- if:skill=ponytail-review --> (skill `ponytail-review`)<!-- /if --
   path or version. List assumptions before code or a plan. (skill `ground-truth`)
 - **Smallest complete change.** No abstraction, option or dependency nobody
   asked for.<!-- if:skill=ponytail --> (skill `ponytail`)<!-- /if -->
-- **Parallelize independent work, route by kind × stakes.** Fan out read-only work; set the model on every spawn. (skill `parallel-work`; `.agents/tokenomics.md`)
+- **Parallelize independent work, route by kind × stakes.** Fan out read-only work; set every spawn to the cell in `.agents/tokenomics.md`. Do not substitute, and do not use a fast mode unless the user explicitly requested it in this request. (skill `parallel-work`; `.agents/tokenomics.md`)
 - **Route by shape.** Atomic low-risk change: do it inline and run the relevant check. Multi-step, multi-lens, or cross-area work: go through `orchestrate` (read tokenomics, pick a team; sequential stays sequential; the coordinator never edits). Guided plan and implement playbooks ship with the setup, core and full presets; starter keeps review plus specialists.
 - **Tests first, adversarial; unit and integration tests are primary.** Bug fix starts with a failing test. Contract or Pact tests when a boundary earns them. E2E/browser only for an explicitly justified critical user path — not a default battery or count. (skills `tdd`, `adversarial-tests`)
 - **Small PRs from fresh trunk.** File budget: green ≤15, orange 16–25 (warn), red >25 (stop). Split along seams; ignore generated files.

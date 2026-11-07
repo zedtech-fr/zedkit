@@ -378,6 +378,42 @@ describe("cli", () => {
       expect(text).toContain("model: my-check-model");
     });
 
+    it("exits 2 on a fast cell unless --allow-fast", () => {
+      const dir = project(
+        "---\nschema: 1\ndefault_provider: cursor\nproviders:\n  cursor:\n    check:\n      standard: { model: composer-2.5-fast }\n---\n",
+      );
+      const denied = run(
+        "route",
+        "verifier",
+        "--kind",
+        "check",
+        "--stakes",
+        "standard",
+        "--reasoning",
+        "low",
+        "--dir",
+        dir,
+      );
+      expect(denied.code).toBe(2);
+      expect(denied.errors).toContain("composer-2.5-fast");
+      expect(denied.errors).toContain("explicitly requested it in this request");
+      const allowed = run(
+        "route",
+        "verifier",
+        "--kind",
+        "check",
+        "--stakes",
+        "standard",
+        "--reasoning",
+        "low",
+        "--allow-fast",
+        "--dir",
+        dir,
+      );
+      expect(allowed.code).toBe(0);
+      expect(allowed.text).toContain("model: composer-2.5-fast");
+    });
+
     it("an omitted kind uses the hint and says so; critical prints the second review route", () => {
       const { text } = run(
         "route",

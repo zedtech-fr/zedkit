@@ -26,14 +26,18 @@ zedkit-ai <command>
       before the setup-ai code-reading phase.
   route <agent> --stakes <s> [--kind decide|design|build|check] [--reasoning low|medium|high]
       [--context small|medium|large] [--provider cursor|claude|codex|muse] [--dir <project>] [--json]
+      [--allow-fast]
       Resolve one agent call to a model and effort from .agents/tokenomics.md
-      (merged over the shipped defaults). --kind is how the agent is used for
+      (merged over the shipped defaults). Pass that model id on the spawn.
+      Do not substitute another id. --kind is how the agent is used for
       this call; omitted, the agent's default_kind hint is used, else build.
       --reasoning and --context override the agent's default needs for this
       call. Prints the cell, the effective needs and where each came from,
       the gates of the stakes, read-only for check, and the second review
-      route for critical. Exit 2 on a bad flag, an unknown agent or an
-      invalid tokenomics.md.
+      route for critical. A model id with a `fast` token exits 2 unless
+      --allow-fast, and that flag is only for a user who explicitly
+      requested fast mode in this request. Exit 2 on a bad flag, an unknown
+      agent, a fast model, or an invalid tokenomics.md.
   stakes <file> [--base <ref>] [--dir <project>] [--provider cursor|claude|codex|muse] [--json]
       Read the stakes, kind and needs of a ticket, plan or PR body (a
       frontmatter key or a `Stakes:`, `Kind:`, `Needs:` line) and print the

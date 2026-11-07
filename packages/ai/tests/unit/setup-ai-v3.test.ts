@@ -216,10 +216,13 @@ describe("setup-ai v3: tokenomics", () => {
     expect(m).toMatch(/Never pin an id you did not see listed/u);
     expect(m).toMatch(/This tool's listing is not another provider's catalog/u);
     expect(m).toMatch(/A Cursor Task list is not Muse availability/u);
-    expect(m).toMatch(/parent session's listed id/u);
     expect(m).toMatch(/--provider <running>/u);
     expect(m).toMatch(/CLI `--model` flag pins only the parent/u);
-    expect(m).toMatch(/cheapest-fast is not a substitute/u);
+    expect(m).toMatch(/explicitly requested fast mode/u);
+    expect(m).toMatch(/Do not substitute/u);
+    expect(m).toMatch(/--allow-fast/u);
+    expect(raw).not.toMatch(/parent session's listed id/u);
+    expect(raw).not.toMatch(/cheapest fast model/u);
     expect(m).toMatch(/\.agents\/tokenomics\.md/u);
     expect(m).toMatch(/zedkit-ai sync/u);
     expect(raw).toMatch(/explorer.*check/su);

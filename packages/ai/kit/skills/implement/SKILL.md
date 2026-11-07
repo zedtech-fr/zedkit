@@ -35,7 +35,10 @@ Then pass `definition-of-done`, and call the Skill tool with "review" to review 
 Carry the ticket's `Stakes:` into the PR body, never lower it. Before each
 spawn run `zedkit-ai route <agent> --kind <how it is used now> --stakes <s>`,
 adding `--reasoning <r>` or `--context <c>` when the step has a `Needs:` line.
-If the tool lets a spawn override the model, pass the one it prints; if not,
+If the tool lets a spawn override the model, pass the id it prints, exactly.
+Do not substitute the parent model, another family, or a fast mode. A fast
+mode is allowed only when the user explicitly requested it in this request.
+If the tool cannot override the model, stop and say the cell was not applied;
 the stakes still decide the gates. `sensitive` or higher makes `review`
 mandatory, and `critical` also needs a second independent review and a
 `Human validation:` line.

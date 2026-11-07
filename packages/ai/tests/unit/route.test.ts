@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { KIT_HEADERS, type AgentHeader } from "#agent-header.js";
 import {
+  isFastModelId,
   loadAgent,
   loadPolicy,
   resolveRoute,
@@ -105,6 +106,59 @@ describe("resolveRoute: cells", () => {
     expect(r.notes).toContain(
       "no build.standard cell for codex: model inherit",
     );
+  });
+
+  it("refuses a fast cell unless the caller explicitly allows it", () => {
+    const p = policy((x) => {
+      x.providers.cursor.check.standard.model = "composer-2.5-fast";
+    });
+    const denied = resolveRoute(p, {
+      kind: "check",
+      stakes: "standard",
+      provider: "cursor",
+      needs: { reasoning: "low" },
+    });
+    expect(denied.ok).toBe(false);
+    expect(denied.ok ? "" : denied.error.message).toContain("composer-2.5-fast");
+    expect(denied.ok ? "" : denied.error.message).toContain(
+      "explicitly requested it in this request",
+    );
+    const allowed = resolveRoute(p, {
+      kind: "check",
+      stakes: "standard",
+      provider: "cursor",
+      needs: { reasoning: "low" },
+      allowFast: true,
+    });
+    expect(allowed.ok && allowed.value.model).toBe("composer-2.5-fast");
+  });
+
+  it("does not treat a word that merely contains those letters as fast", () => {
+    expect(isFastModelId("breakfast-7")).toBe(false);
+    expect(isFastModelId("cursor-grok-4.6-high")).toBe(false);
+    const p = policy((x) => {
+      x.providers.cursor.build.standard.model = "breakfast-7";
+    });
+    expect(
+      route(p, {
+        kind: "build",
+        stakes: "standard",
+        provider: "cursor",
+      }).model,
+    ).toBe("breakfast-7");
+  });
+
+  it("refuses a fast second-review cell too", () => {
+    const p = policy((x) => {
+      x.providers.cursor.check.critical.model = "review-fast";
+    });
+    const denied = resolveRoute(p, {
+      kind: "decide",
+      stakes: "critical",
+      provider: "cursor",
+    });
+    expect(denied.ok).toBe(false);
+    expect(denied.ok ? "" : denied.error.message).toContain("review-fast");
   });
 });
 

@@ -122,7 +122,9 @@ do it (`pnpm exec turbo run test --filter=<pkg>`).
   [AI kit](.agents/domain/ai-kit.md),
   [identity suggest](.agents/domain/identity-suggest.md)
 - Tokenomics: [.agents/tokenomics.md](.agents/tokenomics.md). Source agents
-  never name a model; the kind × stakes cell does.
+  never name a model; the kind × stakes cell does. Every spawn passes that
+  cell's model id and does not substitute. Never a fast mode unless the user
+  explicitly requested it in this request.
 - Design / identity: [.agents/design.md](.agents/design.md)
 - Documented, not enforced: A-07, S-09, H-06, H-07, P-05.
 - Docs UI look: [VISUAL-CONTRACT.md](apps/docs/VISUAL-CONTRACT.md) and

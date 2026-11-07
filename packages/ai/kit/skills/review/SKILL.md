@@ -30,8 +30,10 @@ blocker); skipping a mandatory lens whose runner exists IS a blocker.
 
 One subagent per lens, in parallel (`parallel-work`); inline when the diff is
 a few lines. Route each spawn with
-`zedkit-ai route <agent> --kind check --stakes <s>` and pass its model if the
-tool allows. A `check` spawn is read-only: compare `git status --porcelain`
+`zedkit-ai route <agent> --kind check --stakes <s>` and pass that model id
+exactly. Do not substitute the parent model, another family, or a fast mode.
+If the cell is missing or `inherit`, do not spawn. A fast mode is allowed
+only when the user explicitly requested it in this request. A `check` spawn is read-only: compare `git status --porcelain`
 before and after. Every brief is self-contained: the diff command, the lens
 skill, `ground-truth` — a finding without `file:line` is not a finding. When
 the change implements a plan with a ladder table, verify the table against

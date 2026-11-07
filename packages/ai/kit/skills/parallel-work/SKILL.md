@@ -57,6 +57,6 @@ Delegate the question, not the thinking: do not hand off understanding. Say what
 
 ## Cost and context
 
-- Pick the cheapest agent that can do the job: exploration and lookups need less capability than design or release decisions. Take the model from `zedkit-ai route` where the tool lets a spawn override it; otherwise pin one only after listing what the tool offers.
+- The model is the cell `zedkit-ai route` prints for this kind and stakes. Pass that id. Do not substitute a cheaper model, a stronger model, the parent model, or a fast mode. A fast mode is allowed only when the user explicitly requested it in this request (`--allow-fast`). If the tool cannot override the model, do not pick another; say the cell was not applied.
 - Background agents free you to continue; foreground ones block. Use background for long read-only work you do not need right now.
 - More agents is not better. Two or three well-briefed ones usually beat eight.

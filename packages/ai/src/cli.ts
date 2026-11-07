@@ -63,6 +63,7 @@ const ROUTE_OPTIONS = {
   provider: { type: "string" },
   dir: { type: "string" },
   json: { type: "boolean" },
+  "allow-fast": { type: "boolean" },
 } as const;
 
 const STAKES_OPTIONS = {
@@ -265,6 +266,7 @@ function runRoute(args: string[], sinks: Sinks): number {
     agent: { name, header: agent.value.header },
     ...(provider.ok &&
       provider.value !== undefined && { provider: provider.value }),
+    ...(values["allow-fast"] === true && { allowFast: true }),
   });
   if (!route.ok) return fail(route.error.message, sinks);
   if (agent.value.note !== undefined) route.value.notes.push(agent.value.note);

@@ -10,7 +10,12 @@ criteria, and the task's `Stakes:` (and any `Needs:`). Tell it to read
 another. Every spawn is routed with
 `zedkit-ai route <agent> --kind <how it is used now> --stakes <s>`: the
 orchestrator itself as `decide`, planners as `design`, implementers as `build`,
-reviewers as `check`.
+reviewers as `check`. Pass that cell's model id exactly. Do not substitute
+the parent model, another family, or a fast mode. If the CLI is missing, read
+the same cell from `.agents/tokenomics.md`. If the cell is missing or
+`inherit`, do not spawn. Pass `--allow-fast` only when the user explicitly
+requested fast mode in this request. If the tool rejects the id, stop and
+report the cell.
 
 If subagents are unavailable, return ready-to-run briefs (`dispatch plan`)
 when a capable caller can run them; otherwise follow the same steps yourself

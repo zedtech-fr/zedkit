@@ -184,6 +184,7 @@ export type RouteInput = {
         header?: AgentHeader | undefined;
     };
     provider?: PolicyProvider;
+    allowFast?: boolean;
 };
 
 // @public

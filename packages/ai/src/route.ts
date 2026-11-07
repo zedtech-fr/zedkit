@@ -39,6 +39,11 @@ export type RouteInput = {
   agent?: { name: string; header?: AgentHeader | undefined };
   /** Default: the policy's `default_provider`. */
   provider?: PolicyProvider;
+  /**
+   * A fast model id is refused unless this is set. Skills set it only when
+   * the user explicitly requested fast mode in this request.
+   */
+  allowFast?: boolean;
 };
 
 /** The independent second review a `critical` task requires, routed as `check` at the `critical` column. */
@@ -73,6 +78,17 @@ export type Route = {
 
 const at = <T>(list: readonly T[], index: number): T =>
   list[Math.max(0, Math.min(list.length - 1, index))] as T;
+
+/** A speed-mode id (`fast`, `composer-2.5-fast`). Not a substring of another word. */
+export function isFastModelId(model: string): boolean {
+  return /(?:^|[-_.])fast(?:$|[-_.])/i.test(model);
+}
+
+function refuseFast(model: string, where: string): Error {
+  return new Error(
+    `refusing fast model "${model}" (${where}): fast mode is off unless the user explicitly requested it in this request; pass --allow-fast only then`,
+  );
+}
 
 function resolveNeeds(
   policy: Tokenomics,
@@ -210,6 +226,10 @@ export function resolveRoute(
   if (floorEffort !== undefined)
     effortIndex = Math.max(effortIndex, EFFORTS.indexOf(floorEffort));
   const model = cell?.model ?? "inherit";
+  if (isFastModelId(model) && input.allowFast !== true)
+    return err(
+      refuseFast(model, `${provider}.${kind.value.kind}.${column}`),
+    );
   const window = policy.providers[provider]?.context_windows?.[needs.context];
   if (window === undefined)
     notes.push(`no context_windows.${needs.context} for ${provider}`);
@@ -233,6 +253,14 @@ export function resolveRoute(
     notes,
   };
   const second = secondReviewFor(policy, provider, input.stakes, column);
+  if (
+    second !== undefined &&
+    isFastModelId(second.model) &&
+    input.allowFast !== true
+  )
+    return err(
+      refuseFast(second.model, `${second.provider}.check.critical`),
+    );
   if (second) route.secondReview = second;
   return ok(route);
 }

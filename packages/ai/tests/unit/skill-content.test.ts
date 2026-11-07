@@ -69,6 +69,7 @@ describe("skill content conventions", () => {
       "Go deep, be strict, and be brutally honest",
     );
     expect(raw).toContain("`Playbook: <name>`");
+    expect(raw).toContain("explicitly requested fast mode");
   });
 
   it("the orchestrate skill asks for tokenomics and a build team", () => {

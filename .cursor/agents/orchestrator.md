@@ -48,6 +48,13 @@ For playbooks plan, challenge, and review, every brief includes: **Go deep, be s
 
 ## Routing
 
+Every spawn passes the model id from `.agents/tokenomics.md` for the running
+provider, the call's kind, and the task's stakes (`zedkit-ai route`). Do not
+substitute the parent model, another family, or a fast mode. If the cell is
+missing or inherit, do not spawn — do that slice inline. Pass `--allow-fast`
+only when the user explicitly requested fast mode in this request. If the
+tool rejects the id, stop and report the cell.
+
 Playbooks (skills you apply by dispatching work shaped like them):
 
 | Playbook        | Skill    |
