@@ -63,7 +63,7 @@ describe("primitives", () => {
   it("spaces button content with role classes", () => {
     render(<Button>Save</Button>);
     const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("gap-2");
+    expect(button.className).toContain("gap-button-gap");
     expect(button.className).toContain("py-control-block-lg");
     expect(button.className).toContain("px-button-pad");
     expect(button.className).toContain("size-icon");

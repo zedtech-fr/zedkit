@@ -31,7 +31,6 @@
       "--spacing-field-content",
       "--spacing-live-pulse-gap",
       "--spacing-progress-bar-height",
-      "--spacing-select-item-block",
       "--spacing-status-label-gap"
     ]
   },
@@ -39,15 +38,12 @@
     "canonical": "2",
     "value": "0.5rem",
     "tokens": [
-      "--spacing-button-gap",
       "--spacing-card-stack",
       "--spacing-card-lines",
       "--spacing-dialog-footer-gap",
       "--spacing-drawer-footer-gap",
-      "--spacing-field-inline",
       "--spacing-field-separator-inline",
       "--spacing-form-item-gap",
-      "--spacing-select-item-inline",
       "--spacing-status-dot",
       "--spacing-tabs-content-gap"
     ]
@@ -58,11 +54,7 @@
     "tokens": [
       "--spacing-button-inline-sm",
       "--spacing-control-inline",
-      "--spacing-field",
-      "--spacing-field-group-compact",
-      "--spacing-field-legend-bottom",
-      "--spacing-page-header-back-gap",
-      "--spacing-tabs-trigger-inline"
+      "--spacing-page-header-back-gap"
     ]
   },
   {
@@ -75,7 +67,6 @@
       "--spacing-data-table-skeleton-height",
       "--spacing-dialog-gap",
       "--spacing-field-error-indent",
-      "--spacing-field-group-nested",
       "--spacing-field-label-inset",
       "--spacing-icon-control",
       "--spacing-overlay-close-offset",
@@ -594,6 +585,69 @@
     "value": "calc(var(--spacing) * 2)",
     "tokens": [
       "--spacing-page-header-actions-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-button-gap",
+    "value": "calc(var(--spacing) * 2)",
+    "tokens": [
+      "--spacing-button-gap"
+    ]
+  },
+  {
+    "canonical": "--spacing-tabs-trigger-inline",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": [
+      "--spacing-tabs-trigger-inline"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-group-compact",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": [
+      "--spacing-field-group-compact"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-group-nested",
+    "value": "calc(var(--spacing) * 4)",
+    "tokens": [
+      "--spacing-field-group-nested"
+    ]
+  },
+  {
+    "canonical": "--spacing-field",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": [
+      "--spacing-field"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-inline",
+    "value": "calc(var(--spacing) * 2)",
+    "tokens": [
+      "--spacing-field-inline"
+    ]
+  },
+  {
+    "canonical": "--spacing-field-legend-bottom",
+    "value": "calc(var(--spacing) * 3)",
+    "tokens": [
+      "--spacing-field-legend-bottom"
+    ]
+  },
+  {
+    "canonical": "--spacing-select-item-inline",
+    "value": "calc(var(--spacing) * 2)",
+    "tokens": [
+      "--spacing-select-item-inline"
+    ]
+  },
+  {
+    "canonical": "--spacing-select-item-block",
+    "value": "calc(var(--spacing) * 1.5)",
+    "tokens": [
+      "--spacing-select-item-block"
     ]
   }
 ]

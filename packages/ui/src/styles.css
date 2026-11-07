@@ -240,7 +240,7 @@
   --spacing-button-inline: 1rem;
   --spacing-button-inline-sm: 0.75rem;
   --spacing-button-inline-lg: 2rem;
-  --spacing-button-gap: 0.5rem;
+  --spacing-button-gap: calc(var(--spacing) * 2);
   /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-icon. Kept so copied CSS and existing class names still work. */
   --spacing-icon-control: 1rem;
   /* Minimum touch target (WCAG 2.5.5). */
@@ -278,7 +278,7 @@
   --spacing-progress-bar-height: 0.375rem;
   --spacing-tabs-list-height: max(calc(var(--zk-tap-min, 0px) + 0.5rem), 2.25rem);
   --spacing-tabs-list-inset: 0.25rem;
-  --spacing-tabs-trigger-inline: 0.75rem;
+  --spacing-tabs-trigger-inline: calc(var(--spacing) * 3);
   --spacing-tabs-trigger-block: 0.25rem;
   --spacing-tabs-content-gap: 0.5rem;
   --spacing-switch-track-height: 1.25rem;
@@ -303,12 +303,12 @@
   --spacing-alert-content-indent: 1.75rem;
   --spacing-field-set: 1.5rem;
   --spacing-field-group: 1.75rem;
-  --spacing-field-group-compact: 0.75rem;
-  --spacing-field-group-nested: 1rem;
-  --spacing-field: 0.75rem;
+  --spacing-field-group-compact: calc(var(--spacing) * 3);
+  --spacing-field-group-nested: calc(var(--spacing) * 4);
+  --spacing-field: calc(var(--spacing) * 3);
   --spacing-field-content: 0.375rem;
-  --spacing-field-inline: 0.5rem;
-  --spacing-field-legend-bottom: 0.75rem;
+  --spacing-field-inline: calc(var(--spacing) * 2);
+  --spacing-field-legend-bottom: calc(var(--spacing) * 3);
   --spacing-field-label-inset: 1rem;
   --spacing-field-separator: 1.25rem;
   --spacing-field-separator-inline: 0.5rem;
@@ -383,8 +383,8 @@
   --spacing-drawer-header-gap: 0.375rem;
   --spacing-drawer-footer-gap: 0.5rem;
   --spacing-drawer-chrome-padding: calc(var(--spacing) * 4);
-  --spacing-select-item-inline: 0.5rem;
-  --spacing-select-item-block: 0.375rem;
+  --spacing-select-item-inline: calc(var(--spacing) * 2);
+  --spacing-select-item-block: calc(var(--spacing) * 1.5);
   --spacing-select-item-indicator-gap: 2rem;
   --spacing-select-separator: 0.25rem;
   --container-select-content-min: 8rem;
