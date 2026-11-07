@@ -11,11 +11,11 @@ export function HomeHeroLead({ className }: { className?: string }) {
         <Text typeRole="label" className={`text-muted-foreground ${HOME_METADATA_TEXT_CLASS}`} data-home-hero-category="">
           {homeCopy.hero.titleCategory}
         </Text>
-        <Heading level={1} typeRole="display" className="max-w-lg text-balance">
+        <Heading level={1} typeRole="display" className="text-balance">
           {homeCopy.hero.title}
         </Heading>
       </Stack>
-      <Text variant="muted" typeRole="body" className={`max-w-md ${DOCS_TYPE_BODY_CLASS}`} data-home-hero-sub="">
+      <Text variant="muted" typeRole="body" className={DOCS_TYPE_BODY_CLASS} data-home-hero-sub="">
         {homeCopy.hero.sub}
       </Text>
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">

@@ -21,7 +21,7 @@ import { useUiMessages } from "@/components/ui/ui-provider";
 const VIEWPORT_GUTTER_PX = 16;
 
 const dialogContentClass =
-  "fixed dialog-center z-dialog grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-stack-lg overflow-y-auto overscroll-y-contain outline-none focus:outline-none sm:max-w-lg motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)] motion-safe:data-[state=closed]:animate-[zk-zoom-out_var(--motion-base)_var(--ease-exit)]";
+  "fixed dialog-center z-dialog grid max-h-dialog-max-height w-full max-w-dialog-mobile gap-stack-lg overflow-y-auto overscroll-y-contain outline-none focus:outline-none sm:max-w-narrow motion-safe:data-[state=open]:animate-[zk-zoom-in_var(--motion-base)_var(--ease-enter)] motion-safe:data-[state=closed]:animate-[zk-zoom-out_var(--motion-base)_var(--ease-exit)]";
 
 function useDialogViewportFit<T extends HTMLElement>(): React.RefCallback<T> {
   const nodeRef = React.useRef<T | null>(null);
