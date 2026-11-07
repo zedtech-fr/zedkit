@@ -450,12 +450,12 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
-<Skeleton className="h-4 w-24" />
+<Skeleton className="h-skeleton-line w-skeleton-bar" />
 ```
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
-<Skeleton className="h-4 w-full" /> // stack lines for text blocks; shape is all className
+<Skeleton className="h-skeleton-line w-full" /> // stack lines for text blocks; shape is all className
 ```
 
 ## Indicate status with a dot
