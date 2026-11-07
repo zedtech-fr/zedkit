@@ -14,7 +14,7 @@ export function OfflineNoteDemo() {
       <Heading level={3}>{offlineNoteCopy.drafts.title}</Heading>
       <ul aria-label={offlineNoteCopy.drafts.label} className="divide-y divide-border rounded-lg border border-border">
         {DRAFTS.map((draft) => (
-          <li key={draft.id} className="flex content-shrink flex-wrap items-center justify-between gap-x-4 gap-y-1 surface-pad-inline py-3">
+          <li key={draft.id} className="flex content-shrink flex-wrap items-center justify-between gap-x-4 gap-y-1 surface-pad-inline surface-pad-block">
             <Stack gap={1} className="content-shrink">
               <Text as="span" className="font-medium">
                 {draft.id}

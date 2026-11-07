@@ -8,7 +8,7 @@ import { themeCopy } from "@/components/demos/i18n/theme-copy";
 /** Same markup, one extra `dark` class on the wrapper: the tokens do the rest. */
 function WeeklyCard({ scope, label }: { scope?: "dark"; label: string }) {
   return (
-    <section aria-label={label} className={`${scope ?? ""} content-shrink rounded-lg bg-background p-3 text-foreground`}>
+    <section aria-label={label} className={`${scope ?? ""} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
       <Card>
         <CardHeader>
           <CardDescription>{themeCopy.orders}</CardDescription>
@@ -58,7 +58,7 @@ export function ThemeTokensDemo() {
   // The class name comes from a variable: the app, not the kit, owns the `dark` switch.
   const scope = dark ? DARK_CLASS : "";
   return (
-    <Stack className={`${scope} content-shrink rounded-lg bg-background p-3 text-foreground`}>
+    <Stack className={`${scope} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
       <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
         <Stack direction="horizontal" gap={2} className="items-center justify-between">
           <Text as="span" className="font-medium">
@@ -94,7 +94,7 @@ export function ThemeToggleDemo() {
   // The class name comes from a variable: the app, not the kit, owns the `dark` switch.
   const scope = dark ? DARK_CLASS : "";
   return (
-    <Stack className={`${scope} content-shrink rounded-lg bg-background p-3 text-foreground`}>
+    <Stack className={`${scope} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
       <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
         <Stack gap={1}>
           <Text as="span" className="font-medium">

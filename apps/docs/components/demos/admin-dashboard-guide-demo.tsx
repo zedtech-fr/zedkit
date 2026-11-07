@@ -102,7 +102,7 @@ function EditItemDrawer({
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full p-3">
+    <Stack gap={4} className="h-full surface-pad-compact">
       <Stack gap={1}>
         <Text className="font-semibold">{adminDashboardGuideCopy.brand}</Text>
         <Text variant="muted" className="text-xs">

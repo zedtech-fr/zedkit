@@ -62,7 +62,7 @@ function NavButton({ id, icon: Icon, active, onSelect, compact }: (typeof HERO_N
 /** From lg to xl the window is narrow, so the sidebar shrinks to icons (the names stay for assistive tech). */
 export function HeroSidebar({ page, onPage }: NavProps) {
   return (
-    <Stack gap={4} className="h-full p-3 lg:max-xl:px-2">
+    <Stack gap={4} className="h-full surface-pad-compact lg:max-xl:px-2">
       <Stack gap={1} className="lg:max-xl:hidden">
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
         <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>

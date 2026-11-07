@@ -139,11 +139,11 @@ export function HomeThemePreview() {
   return (
     <Shell>
       <Card className="content-shrink shadow-none">
-        <CardHeader className="gap-stack-tight p-3 pb-0">
+        <CardHeader className="gap-stack-tight surface-pad-compact pb-0">
           <CardDescription>{g.themeCard.description}</CardDescription>
           <CardTitle className="text-lg">{g.themeCard.title}</CardTitle>
         </CardHeader>
-        <CardContent className="p-3 pt-2">
+        <CardContent className="surface-pad-compact pt-2">
           <Stack direction="horizontal" gap={2} className="flex-wrap">
             <Badge variant="success">{g.themeCard.successBadge}</Badge>
             <Badge variant="outline">{g.themeCard.rangeBadge}</Badge>
