@@ -155,25 +155,25 @@ describe("layout", () => {
 
   it("lets a consumer className win width conflicts and passes html props through", () => {
     const { container } = render(
-      <Container data-testid="c" id="shell" aria-label="Page" className="max-w-sm px-2" />,
+      <Container data-testid="c" id="shell" aria-label="Page" className="max-w-sm px-control-tight" />,
     );
     const el = container.querySelector('[data-testid="c"]');
     expect(el?.id).toBe("shell");
     expect(el?.getAttribute("aria-label")).toBe("Page");
     expect(el?.className).toContain("max-w-sm");
     expect(el?.className).not.toContain("max-w-default");
-    expect(el?.className).toContain("px-2");
+    expect(el?.className).toContain("px-control-tight");
     expect(el?.className).not.toContain("px-page-gutter");
   });
 
   it("lets a consumer className win the bleed spacing conflict", () => {
     const { container } = render(
-      <Section data-testid="s" bleed className="py-2">
+      <Section data-testid="s" bleed className="py-control-block-lg">
         <span>a</span>
       </Section>,
     );
     const el = container.querySelector('[data-testid="s"]');
-    expect(el?.className).toContain("py-2");
+    expect(el?.className).toContain("py-control-block-lg");
     expect(el?.className).not.toContain("py-section-md");
   });
 

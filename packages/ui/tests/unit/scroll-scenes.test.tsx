@@ -44,9 +44,9 @@ describe("ScrollScenes", () => {
   });
 
   it("keeps the caller's className and props on the track", () => {
-    const { container } = render(<ScrollScenes scenes={scenes} className="min-w-0 p-2" id="tour" aria-label="Tour" />);
+    const { container } = render(<ScrollScenes scenes={scenes} className="content-shrink surface-pad-compact" id="tour" aria-label="Tour" />);
     const track = container.querySelector<HTMLElement>("[data-scroll-scenes]");
-    expect(track?.classList.contains("p-2")).toBe(true);
+    expect(track?.classList.contains("surface-pad-compact")).toBe(true);
     expect(track?.id).toBe("tour");
     expect(track?.getAttribute("aria-label")).toBe("Tour");
   });
