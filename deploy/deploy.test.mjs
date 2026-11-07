@@ -386,6 +386,13 @@ exit 0
   };
 
   deploy("sha-dev-1");
+  assert.equal(
+    await readFile(join(remote, "site-dev", "index.html"), "utf8"),
+    "<!doctype html><title>docs</title>",
+  );
+  const stamp = await readFile(join(remote, "site-dev", "dev-build.txt"), "utf8");
+  assert.match(stamp, /^commit=sha-dev-1$/m);
+  assert.match(stamp, /^branch=integration\/visual-followup$/m);
   const dev = join(remote, "suggest-dev");
   for (const file of ["server.mjs", "ledger.mjs", "references.mjs", "tokens.mjs", "config.mjs", "release.json"]) {
     assert.ok(existsSync(join(dev, "code", file)), `${file} is deployed`);

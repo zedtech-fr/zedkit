@@ -26,11 +26,11 @@ deploy/deploy.sh <user>@<host>
 `.github/workflows/deploy-docs.yml` builds and deploys on every push to
 `main` that touches the docs or this directory.
 
-`.github/workflows/deploy-dev.yml` builds and publishes to the dev site on
-every push to `integration/visual` or `integration/visual-followup`, and on
-manual dispatch for any other ref. Each dev deploy stamps `dev-build.txt`
-(branch, commit, UTC build time); check it at
-`https://dev.zedkit.app/dev-build.txt`. It also writes
+`.github/workflows/deploy-dev.yml` builds the checked-out SHA in GitHub
+Actions and publishes with `deploy/deploy.sh --dev` (rsync to
+`/srv/app/site-dev`). It does not check out a git worktree on the host.
+Each deploy stamps `dev-build.txt` (branch, commit, UTC build time); check
+it at `https://dev.zedkit.app/dev-build.txt`. It also writes
 `deploy/suggest-dev.env` from the secrets below and (re)starts `suggest-dev`.
 
 Both workflows need the repository secrets `DOCS_DEPLOY_HOST`,
