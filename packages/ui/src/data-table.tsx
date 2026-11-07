@@ -220,7 +220,7 @@ export function DataTable<TData extends RowData>({
       {surface === "loading" ? (
         <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-3 py-2">
           <p className="text-sm text-muted-foreground">{messages.loadingEllipsis}</p>
-          <div className="space-y-2" aria-hidden>
+          <div className="space-y-stack-sm" aria-hidden>
             {[0, 1, 2].map((row) => (
               <Skeleton key={row} className="h-4 w-full max-w-data-table-filter-width" />
             ))}

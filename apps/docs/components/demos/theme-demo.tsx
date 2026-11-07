@@ -59,7 +59,7 @@ export function ThemeTokensDemo() {
   const scope = dark ? DARK_CLASS : "";
   return (
     <Stack className={`${scope} content-shrink rounded-lg bg-background p-3 text-foreground`}>
-      <Stack gap={3} className="content-shrink rounded-lg border border-border p-4">
+      <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
         <Stack direction="horizontal" gap={2} className="items-center justify-between">
           <Text as="span" className="font-medium">
             {themeCopy.releases}
@@ -95,7 +95,7 @@ export function ThemeToggleDemo() {
   const scope = dark ? DARK_CLASS : "";
   return (
     <Stack className={`${scope} content-shrink rounded-lg bg-background p-3 text-foreground`}>
-      <Stack gap={3} className="content-shrink rounded-lg border border-border p-4">
+      <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
         <Stack gap={1}>
           <Text as="span" className="font-medium">
             {themeCopy.appearance}

@@ -7,7 +7,7 @@ import { iconLabelCopy } from "@/components/demos/i18n/icon-label-copy";
 /** Project details: a row of small facts, each with a quiet decorative icon. */
 export function IconLabelDemo() {
   return (
-    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background p-4">
+    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <Stack gap={1}>
         <Heading level={2}>{iconLabelCopy.project.title}</Heading>
         <Text variant="muted" className="text-sm">

@@ -43,7 +43,7 @@ export function HomeIdentityLooks() {
               identity={identity}
               mode={mode}
               data-home-identity-stage=""
-              className="content-shrink rounded-xl bg-background p-2 sm:p-4"
+              className="content-shrink rounded-xl bg-background p-2 sm:surface-pad-md"
             >
               <div data-identity-example="" key={identity}>
                 <Example />

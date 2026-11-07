@@ -294,7 +294,7 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
   ];
   return (
     <Card>
-      <CardHeader className="p-4">
+      <CardHeader className="surface-pad-md">
         <Stack gap={3}>
           {cards.map((card) => (
             <Stack

@@ -31,7 +31,7 @@ export function IdentitySpecimenCard({
       role="group"
       aria-label={label}
       gap={3}
-      className="content-shrink rounded-xl border border-border bg-background p-4 font-sans text-foreground shadow-sm"
+      className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground shadow-sm"
     >
       <Stack gap={3} inert>
         <SpecimenScreen copy={copy} />

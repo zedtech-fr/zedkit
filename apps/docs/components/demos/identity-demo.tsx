@@ -79,7 +79,7 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
       data-identity-scope=""
       data-identity={look.id}
       data-demo-scope={look.id}
-      className="content-shrink rounded-xl border border-border bg-background p-4 font-sans text-foreground"
+      className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground"
     >
       <Stack direction="horizontal" gap={2} className="items-center justify-between">
         <Heading level={2} className="trim-margin! text-lg">

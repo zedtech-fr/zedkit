@@ -16,7 +16,7 @@ import { scrollScenesCopy } from "@/components/demos/i18n/scroll-scenes-copy";
  * Scene visuals are decorative: the caption carries the message, so each
  * visual is hidden from assistive tech and made inert (no tab stops inside).
  */
-const VISUAL_CLASS = "content-shrink rounded-xl border border-border bg-background p-4";
+const VISUAL_CLASS = "content-shrink rounded-xl border border-border bg-background surface-pad-md";
 
 type SceneStatus = (typeof scrollScenesCopy.status)[keyof typeof scrollScenesCopy.status];
 

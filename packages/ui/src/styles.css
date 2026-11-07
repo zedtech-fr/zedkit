@@ -838,6 +838,13 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility empty-state-block {
   padding-block: calc(var(--spacing) * 8);
 }
+@utility space-y-stack-sm {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--zk-gap-sm) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--zk-gap-sm) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
 @utility space-y-stack-lg {
   :where(& > :not(:last-child)) {
     --tw-space-y-reverse: 0;

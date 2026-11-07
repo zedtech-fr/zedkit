@@ -60,7 +60,7 @@ function RenderedExample({ children }: { children: ReactNode }) {
       <Text as="span" className="text-xs font-medium text-muted-foreground">
         {adoptionCopy.result.label}
       </Text>
-      <Stack direction="horizontal" className="rounded-lg border border-border p-4">
+      <Stack direction="horizontal" className="rounded-lg border border-border surface-pad-md">
         {/* Inert: a specimen, not a control. It leaves the tab order and the page's own actions. */}
         <Text as="span" inert>
           {children}
