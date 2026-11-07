@@ -21,7 +21,7 @@ export function IdentityDockComposerFooter(props: {
   const notice = props.session.notice;
   const showNotice = notice !== null;
   return (
-    <Stack gap={2} className="shrink-0 border-t border-border bg-background px-3 py-3">
+    <Stack gap={2} className="shrink-0 border-t border-border bg-background surface-pad-compact">
       {showNotice ? (
         <div
           role="status"

@@ -27,7 +27,7 @@ export function DrawerSideMenuDemo() {
           </Stack>
         </DrawerHeader>
         <DrawerBody>
-          <Stack gap={1} className="py-3">
+          <Stack gap={1} className="surface-pad-block">
             {LINKS.map((link) => (
               <Button key={link} variant="ghost" className="justify-start">
                 {link}

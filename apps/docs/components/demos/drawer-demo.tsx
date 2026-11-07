@@ -85,7 +85,7 @@ export function DrawerDemo() {
               </Stack>
             </DrawerHeader>
             <DrawerBody>
-              <Stack gap={3} className="py-3">
+              <Stack gap={3} className="surface-pad-block">
                 <Text className="font-medium">{drawerCopy.demo.taskTitle}</Text>
                 <DetailPanel
                   items={drawerCopy.demo.detailItems.map((item) =>
