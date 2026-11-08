@@ -148,6 +148,18 @@ test("home 'More in the kit' links are tappable on a phone and sit beside their 
   );
   expect(borders).toHaveLength(4);
   expect(borders.at(-1)?.border).toBe("0px");
+  const line = await page.locator("#entry-points [data-home-secondary-links] > [data-index-lead]").first().evaluate((node) => {
+    const probe = document.createElement("div");
+    probe.className = "border-border/60";
+    probe.style.borderBottomStyle = "solid";
+    probe.style.borderBottomWidth = "1px";
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderBottomColor;
+    probe.remove();
+    return { color: getComputedStyle(node).borderBottomColor, expected, numeric: node.className.includes("border-border/") };
+  });
+  expect(line.color).toBe(line.expected);
+  expect(line.numeric).toBe(false);
   expect(borders.slice(0, -1).every((entry) => entry.border !== "0px")).toBe(true);
   expect(borders.every((entry) => entry.pad !== "0px")).toBe(true);
 });
