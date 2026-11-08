@@ -9,7 +9,6 @@ import {
   DrawerHandle,
   Stack,
   Text,
-  cn,
   identityPresets,
   isPresetId,
   parseIdentityTokens,
@@ -101,7 +100,6 @@ function IdentityDockWidget() {
           aria-keyshortcuts="Control+I Meta+I"
           title={identityDockCopy.shortcutHint}
           tabIndex={expanded ? -1 : undefined}
-          className={cn(expanded && "pointer-events-none opacity-0")}
           onClick={() => setExpanded(true)}
         >
           <IdentityDockSwatch />

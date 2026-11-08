@@ -167,6 +167,12 @@
   min-height: calc(100vh - 3.5rem);
 }
 
+/* The dock button hides while the panel is open, and it cannot be pressed. */
+[data-slot="identity-dock-trigger"][aria-expanded="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Identity dock. Clear of the screen edge and the home indicator, on the header layer so a menu still covers it. */
 [data-slot="identity-dock"] {
   z-index: var(--z-header);
