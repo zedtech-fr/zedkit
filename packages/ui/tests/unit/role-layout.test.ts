@@ -151,6 +151,10 @@ describe("layout job classes", () => {
     expect(utility("close-quiet")).toBe("opacity: 0.7;");
     expect(css).toContain(".close-quiet:hover {\n  opacity: 1;\n}");
     expect(css).toContain('[data-slot="option-card"]:has(:focus-visible)');
+    expect(css).toContain('[data-slot="pricing"] [data-highlighted="true"]');
+    expect(css).toContain(
+      "--tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);",
+    );
     expect(css).toContain("outline: var(--ring-width) solid hsl(var(--ring));");
     expect(utility("sort-mark")).toBe("opacity: 0.6;");
     expect(utility("status-ping")).toBe("opacity: 0.6;");

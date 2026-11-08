@@ -546,6 +546,12 @@ ol[data-sonner-toaster] {
   outline: var(--ring-width) solid hsl(var(--ring));
 }
 
+/* Featured plan. The ring sits on the card shadow. It is not the focus ring. */
+[data-slot="pricing"] [data-highlighted="true"] {
+  --tw-ring-color: hsl(var(--primary));
+  --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+}
+
 /* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
 @utility focus-ring-control {
   &:focus-visible {

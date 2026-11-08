@@ -488,7 +488,8 @@ describe("Pricing", () => {
     const marked = container.querySelectorAll("[data-highlighted='true']");
     expect(marked).toHaveLength(1);
     expect(marked[0]?.querySelector("[data-slot='pricing-badge']")?.textContent).toBe("Most popular");
-    expect(marked[0]?.className).toContain("ring-primary");
+    expect(marked[0]?.className).toContain("border-primary");
+    expect(marked[0]?.className).not.toContain("ring-2");
   });
 
   it("skips the action row when a plan has none, and picks columns from the plan count", () => {

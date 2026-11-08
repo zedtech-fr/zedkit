@@ -48,7 +48,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
       tone={plan.highlighted ? "tinted" : "plain"}
       padding="lg"
       data-highlighted={plan.highlighted ? "true" : undefined}
-      className={cn("flex flex-col gap-prose", plan.highlighted && "border-primary ring-2 ring-primary")}
+      className={cn("flex flex-col gap-prose", plan.highlighted && "border-primary")}
     >
       <div className="flex flex-col gap-stack-tight">
         <div className="flex items-center justify-between gap-stack-sm">
