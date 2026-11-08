@@ -57,7 +57,7 @@ function HomeResultCard() {
             <Text typeRole="label" className="text-muted-foreground">
               {adoptionCopy.result.label}
             </Text>
-            <Stack direction="horizontal" className="rounded-lg border border-border bg-background/80 surface-pad-md">
+            <Stack direction="horizontal" data-adoption-example="" className="rounded-lg border border-border surface-pad-md">
               <Text as="span" inert>
                 <Button>Save</Button>
               </Text>
