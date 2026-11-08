@@ -115,6 +115,40 @@ test("the primary button keeps a quieter fill on hover", async ({ page }) => {
   expect(hover).not.toBe(rest);
 });
 
+test("the ghost button keeps a muted tint on hover and a secondary fill when pressed", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const link = page.locator("[data-component-preview]").first().getByRole("link", { name: "Docs link" });
+  await expect(link).toBeVisible();
+  const rest = await link.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await link.hover();
+  await expect.poll(async () =>
+    link.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-muted/");
+    }),
+  ).toBe(true);
+  const hover = await link.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+  await page.mouse.move(0, 0);
+  await link.evaluate((node) => node.setAttribute("aria-pressed", "true"));
+  await expect.poll(async () =>
+    link.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-secondary/");
+    }),
+  ).toBe(true);
+});
+
 test("button reference page surfaces variant and size in props without search (#R2)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
