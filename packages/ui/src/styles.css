@@ -560,6 +560,10 @@ ol[data-sonner-toaster] {
 @utility dialog-scrim {
   background-color: color-mix(in oklab, hsl(var(--overlay)) 80%, transparent);
 }
+/* The dim layer behind a drawer. Lighter than the dialog scrim. Glass replaces the colour. */
+@utility drawer-scrim {
+  background-color: color-mix(in oklab, hsl(var(--overlay)) 50%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;

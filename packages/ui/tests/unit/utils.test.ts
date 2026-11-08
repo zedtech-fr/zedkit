@@ -55,6 +55,7 @@ describe("cn", () => {
     expect(cn("hover:badge-warning-hover", "hover:bg-card")).toBe("hover:bg-card");
     expect(cn("bg-card", "dialog-scrim")).toBe("dialog-scrim");
     expect(cn("dialog-scrim", "bg-card")).toBe("bg-card");
+    expect(cn("dialog-scrim", "drawer-scrim")).toBe("drawer-scrim");
     expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
     expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
     expect(cn("top-0", "pin-top")).toBe("pin-top");
