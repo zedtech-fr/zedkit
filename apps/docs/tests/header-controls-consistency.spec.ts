@@ -139,3 +139,28 @@ for (const theme of ["light", "dark"] as const) {
     await panel.screenshot({ path: shotPath(`guides-menu-after-1440-${theme}.png`) });
   });
 }
+
+test("the theme switch keeps a quiet border", async ({ page }) => {
+  await page.goto("/docs/getting-started");
+  const toggle = page.locator("[data-theme-toggle] button").filter({ visible: true }).first();
+  await expect(toggle).toBeVisible();
+  const line = await toggle.evaluate((node) => {
+    const probe = document.createElement("div");
+    probe.className = "border-border/35";
+    probe.style.borderStyle = "solid";
+    probe.style.borderWidth = "1px";
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderTopColor;
+    probe.remove();
+    const style = getComputedStyle(node);
+    return {
+      color: style.borderTopColor,
+      expected,
+      width: style.borderTopWidth,
+      numeric: node.className.includes("border-border/"),
+    };
+  });
+  expect(line.color).toBe(line.expected);
+  expect(line.width).toBe("1px");
+  expect(line.numeric).toBe(false);
+});
