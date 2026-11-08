@@ -31,7 +31,7 @@ export function StatusDot({ tone = "active", pulse, className }: StatusDotProps)
       {ping ? (
         <span
           className={cn(
-            "absolute inline-flex h-full w-full rounded-full opacity-60 motion-safe:animate-ping",
+            "absolute inline-flex h-full w-full rounded-full status-ping motion-safe:animate-ping",
             color,
           )}
         />

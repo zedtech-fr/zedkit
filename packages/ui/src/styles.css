@@ -515,6 +515,10 @@ ol[data-sonner-toaster] {
 @utility sort-mark {
   opacity: 0.6;
 }
+/* The pulse behind a live status dot. */
+@utility status-ping {
+  opacity: 0.6;
+}
 
 /* The chosen select value stays on one line. */
 [data-slot="select-value"] {
