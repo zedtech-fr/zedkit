@@ -11,7 +11,7 @@ export function IconButtonDemo() {
   return (
     <Stack className="content-shrink rounded-lg border border-border bg-background">
       <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
-        <Stack gap={1} className="content-shrink">
+        <Stack gap="tight" className="content-shrink">
           <Heading level={2} className="text-demo-heading text-balance">
             {iconButtonCopy.demo.title}
           </Heading>
@@ -19,7 +19,7 @@ export function IconButtonDemo() {
             {iconButtonCopy.demo.subtitle}
           </Text>
         </Stack>
-        <Stack direction="horizontal" gap={1} className="shrink-0">
+        <Stack direction="horizontal" gap="tight" className="shrink-0">
           <IconButton label={iconButtonCopy.demo.refreshLabel} variant="ghost" onClick={() => setMessage(iconButtonCopy.demo.refreshed)}>
             <RefreshCw />
           </IconButton>
@@ -31,7 +31,7 @@ export function IconButtonDemo() {
           </IconButton>
         </Stack>
       </header>
-      <Stack gap={1} className="surface-pad-md">
+      <Stack gap="tight" className="surface-pad-md">
         <Text role="status" variant="muted">
           {message}
         </Text>
@@ -50,11 +50,11 @@ export function IconButtonRowsDemo() {
   const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [duplicates, setDuplicates] = useState(0);
   return (
-    <Stack gap={3} className="content-shrink">
+    <Stack gap="md" className="content-shrink">
       <ul aria-label={iconButtonCopy.rows.tasksAriaLabel} className="divide-y divide-border rounded-lg border border-border bg-background">
         {tasks.map((task) => (
           <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md surface-pad-inline surface-pad-block-sm">
-            <Stack gap={1} className="content-shrink flex-1">
+            <Stack gap="tight" className="content-shrink flex-1">
               <Text as="span" className="font-medium">
                 {task.title}
               </Text>
@@ -62,7 +62,7 @@ export function IconButtonRowsDemo() {
                 {iconButtonCopy.rows.dueLine(task.owner, task.due)}
               </Text>
             </Stack>
-            <Stack direction="horizontal" gap={1} className="shrink-0">
+            <Stack direction="horizontal" gap="tight" className="shrink-0">
               <IconButton label={iconButtonCopy.rows.editLabel(task.title)} variant="ghost">
                 <Pencil />
               </IconButton>
@@ -86,7 +86,7 @@ export function IconButtonRowsDemo() {
           </li>
         ) : null}
       </ul>
-      <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
+      <Stack direction="horizontal" gap="md" className="flex-wrap items-center">
         <Button variant="outline" size="sm" onClick={() => setTasks(INITIAL_TASKS)}>
           {iconButtonCopy.rows.restoreTasks}
         </Button>

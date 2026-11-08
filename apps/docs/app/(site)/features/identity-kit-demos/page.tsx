@@ -15,8 +15,8 @@ export const metadata = docsPageMetadata("/features/identity-kit-demos", {
 export default function IdentityKitDemosPage() {
   return (
     <Container width="wide" className="py-section-lg">
-      <Stack gap={8}>
-        <Stack gap={2}>
+      <Stack gap="blocks">
+        <Stack gap="sm">
           <Heading level={1}>{identityKitDemosCopy.heading}</Heading>
           <Text variant="muted">{identityKitDemosCopy.body}</Text>
         </Stack>

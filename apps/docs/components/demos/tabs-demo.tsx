@@ -48,7 +48,7 @@ export function TabsDemo() {
           </TabsList>
 
           <TabsContent value="overview">
-            <Stack gap={4}>
+            <Stack gap="lg">
               <ProgressBar value={55} label={tabsCopy.project.progress} />
               <Text variant="muted">{tabsCopy.project.done}</Text>
               <DetailPanel
@@ -84,9 +84,9 @@ export function TabsDemo() {
           </TabsContent>
 
           <TabsContent value="activity">
-            <Stack gap={3}>
+            <Stack gap="md">
               {activity.map((entry) => (
-                <Stack key={entry.what} gap={1}>
+                <Stack key={entry.what} gap="tight">
                   <Text>
                     <strong>{entry.who}</strong> {entry.what}
                   </Text>

@@ -3,7 +3,7 @@ import { containerCopy } from "@/components/demos/i18n/container-copy";
 
 export function ContainerDemo() {
   return (
-    <Stack gap={4}>
+    <Stack gap="lg">
       <Container width="narrow" className="border surface-pad-block-sm">
         <Text>{containerCopy.narrow}</Text>
       </Container>

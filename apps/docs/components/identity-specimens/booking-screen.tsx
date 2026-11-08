@@ -5,12 +5,12 @@ import type { BookingComposition } from "@/components/i18n/identity-specimen-com
 /** Booking: the service and price first, then times with one preselected, then one action. */
 export function BookingScreen({ copy }: { copy: BookingComposition }) {
   return (
-    <Stack gap={3}>
+    <Stack gap="md">
       <Heading level={4} typeRole="cardTitle" className="border-b border-border rule-gap">
         {copy.brand}
       </Heading>
-      <Stack direction="horizontal" gap={3} className="items-baseline justify-between">
-        <Stack gap={1}>
+      <Stack direction="horizontal" gap="md" className="items-baseline justify-between">
+        <Stack gap="tight">
           <Heading level={3} typeRole="band">
             {copy.service}
           </Heading>
@@ -22,7 +22,7 @@ export function BookingScreen({ copy }: { copy: BookingComposition }) {
           {copy.price}
         </Text>
       </Stack>
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.dayLabel}
         </Text>

@@ -271,13 +271,6 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
-    "icon-label": {
-      cssVars: {
-        theme: {
-          "spacing-icon-control": varFromBlock(theme, "spacing-icon-control"),
-        },
-      },
-    },
     "card-skeleton": {
       cssVars: {
         theme: {
@@ -296,9 +289,7 @@ export function expectedRegistryThemeFromStyles(cssText) {
           "spacing-control-height": varFromBlock(theme, "spacing-control-height"),
           "spacing-control-height-sm": varFromBlock(theme, "spacing-control-height-sm"),
           "spacing-control-height-lg": varFromBlock(theme, "spacing-control-height-lg"),
-          "spacing-button-inline": varFromBlock(theme, "spacing-button-inline"),
           "spacing-button-inline-sm": varFromBlock(theme, "spacing-button-inline-sm"),
-          "spacing-button-inline-lg": varFromBlock(theme, "spacing-button-inline-lg"),
           "spacing-button-gap": varFromBlock(theme, "spacing-button-gap"),
           "ring-width-control": varFromBlock(root, "ring-width-control"),
           "ring-offset-width": varFromBlock(root, "ring-offset-width"),

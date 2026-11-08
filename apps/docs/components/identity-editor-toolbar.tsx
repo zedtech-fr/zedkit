@@ -51,7 +51,7 @@ function LookSelect({
 /** Controls that sit on one line align on their bottom edge; a hint never sits inside the row. */
 function Row({ children }: { children: ReactNode }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-end">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-end">
       {children}
     </Stack>
   );
@@ -181,7 +181,7 @@ function SaveFeedback({
   if (!status) return <Text role="status" typeRole="label" className="min-h-label" />;
   if (status.kind === "exists") {
     return (
-      <Stack gap={2} role="alert" data-slot="identity-editor-clash">
+      <Stack gap="sm" role="alert" data-slot="identity-editor-clash">
         <Text typeRole="label">{copy.exists(status.label)}</Text>
         <Row>
           <Button type="button" variant="outline" onClick={() => onSave(true)}>
@@ -254,7 +254,7 @@ function IdentityEditorKeepBar({
   const titleId = useId();
   return (
     <Stack
-      gap={2}
+      gap="sm"
       role="group"
       aria-labelledby={titleId}
       className={cn("content-shrink", className)}

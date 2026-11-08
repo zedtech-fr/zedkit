@@ -137,7 +137,7 @@ describe("a11y", () => {
   it("titled section with stacked badges", async () => {
     const { container } = render(
       <Section title="Team" description="Who can access the workspace.">
-        <Stack direction="horizontal" gap={2}>
+        <Stack direction="horizontal" gap="sm">
           <Badge>Ada</Badge>
           <Badge variant="secondary">Bob</Badge>
         </Stack>

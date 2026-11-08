@@ -29,7 +29,7 @@ export function BrandLogoHeaderDemo() {
 
 export function BrandLogoDemo() {
   return (
-    <Stack gap={4} className="content-shrink">
+    <Stack gap="lg" className="content-shrink">
       <Stack className="content-shrink rounded-lg border border-border bg-background">
         <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
           {/* Logo + visible name in one link to the home page: the name labels the link, so the mark is decorative. */}
@@ -48,11 +48,11 @@ export function BrandLogoDemo() {
             </a>
           </nav>
         </header>
-        <Stack gap={2} className="surface-pad-md">
+        <Stack gap="sm" className="surface-pad-md">
           <Text variant="muted" className="text-caption">
             {brandLogoCopy.sizesHint}
           </Text>
-          <Stack direction="horizontal" gap={4} className="flex-wrap items-end">
+          <Stack direction="horizontal" gap="lg" className="flex-wrap items-end">
             <HarborMark className="h-brand text-foreground" title={brandLogoCopy.logoTitle} />
             <HarborMark className="h-logo-row text-primary" title={brandLogoCopy.logoTitle} />
             <HarborMark className="h-logo-lg text-muted-foreground" title={brandLogoCopy.logoTitle} />

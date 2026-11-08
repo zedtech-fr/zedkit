@@ -50,7 +50,7 @@ function CustomIdentityBar() {
     <Stack
       data-slot="custom-identity-bar"
       direction="horizontal"
-      gap={2}
+      gap="sm"
       role="status"
       className="muted-wash items-center border-b border-border surface-pad-inline surface-pad-block-sm"
     >

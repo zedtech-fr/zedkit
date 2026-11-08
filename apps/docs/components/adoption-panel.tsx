@@ -89,7 +89,7 @@ export function AdoptionPanel({
 
   if (copyModes.length === 0) {
     return (
-      <Stack gap={4} data-adoption-panel="">
+      <Stack gap="lg" data-adoption-panel="">
         <Text variant="muted">
           {adoptionCopy.npmOnly}
         </Text>

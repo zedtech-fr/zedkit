@@ -5,8 +5,8 @@ import type { EditorialComposition } from "@/components/i18n/identity-specimen-c
 /** Newsroom: the lead story owns the screen; other stories are a compact list; subscribing is quiet. */
 export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
   return (
-    <Stack gap={3}>
-      <Stack direction="horizontal" gap={3} className="justify-between border-b border-border rule-gap">
+    <Stack gap="md">
+      <Stack direction="horizontal" gap="md" className="justify-between border-b border-border rule-gap">
         <Heading level={4} typeRole="cardTitle">
           {copy.brand}
         </Heading>
@@ -14,7 +14,7 @@ export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
           {copy.subscribe}
         </Button>
       </Stack>
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Text as="span" typeRole="label" className="font-semibold tracking-[var(--zk-label-tracking,0.08em)] text-primary uppercase">
           {copy.kicker}
         </Text>
@@ -28,7 +28,7 @@ export function EditorialScreen({ copy }: { copy: EditorialComposition }) {
           {copy.byline}
         </Text>
       </Stack>
-      <Stack gap={1} data-under-rule="" className="border-t border-border">
+      <Stack gap="tight" data-under-rule="" className="border-t border-border">
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.moreLabel}
         </Text>

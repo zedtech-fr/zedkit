@@ -77,7 +77,7 @@ function RecipeImport({ onLoad }: { onLoad: (tokens: IdentityTokens, darkKept: r
     setState("loaded");
   }
   return (
-    <Stack gap={3} data-slot="identity-editor-import">
+    <Stack gap="md" data-slot="identity-editor-import">
       <Heading level={2} className="text-compact-heading">
         {copy.importTitle}
       </Heading>
@@ -175,7 +175,7 @@ function IdentityEditorExport({
   }
 
   return (
-    <Stack gap={3} data-slot="identity-editor-export">
+    <Stack gap="md" data-slot="identity-editor-export">
       <Heading level={2} className="text-compact-heading">
         {identityEditorCopy.export.scopeTitle}
       </Heading>

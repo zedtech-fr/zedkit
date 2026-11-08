@@ -24,7 +24,7 @@ function signalsLine(item: ReferenceReport): string {
 export function ReferenceReportList({ report }: { report: readonly ReferenceReport[] }) {
   if (report.length === 0) return null;
   return (
-    <Stack gap={1} role="status" data-assistant-reference-report="">
+    <Stack gap="tight" role="status" data-assistant-reference-report="">
       <Text as="span" typeRole="body" className="font-medium text-foreground">
         {copy.references.report}
       </Text>

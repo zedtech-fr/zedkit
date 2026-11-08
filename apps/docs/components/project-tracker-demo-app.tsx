@@ -62,7 +62,7 @@ const columns = [
   tableHelper.accessor("title", {
     header: projectTrackerDemoCopy.columns.task,
     cell: ({ row }) => (
-      <Stack gap={1} className="content-shrink">
+      <Stack gap="tight" className="content-shrink">
         <Text className="font-medium">{row.original.title}</Text>
         <Text variant="muted" className="text-caption">
           {row.original.owner}
@@ -132,7 +132,7 @@ function Avatar({ initials, className }: { initials: string; className?: string 
 function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
   return (
     <nav aria-label={projectTrackerDemoCopy.nav.ariaLabel}>
-      <Stack gap={1}>
+      <Stack gap="tight">
         {NAV_ITEMS.map(({ label, icon: Icon }) => {
           const active = label === ACTIVE_ITEM;
           const item = (
@@ -156,15 +156,15 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full surface-pad-compact">
-      <Stack gap={1}>
+    <Stack gap="lg" className="h-full surface-pad-compact">
+      <Stack gap="tight">
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
         <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.product}
         </Text>
       </Stack>
       <ShellNav />
-      <Stack gap={2} className="mt-auto">
+      <Stack gap="sm" className="mt-auto">
         <ProgressBar value={62} label={projectTrackerDemoCopy.sprintLabel} />
         <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.sprintCaption}
@@ -212,9 +212,9 @@ function UserMenu() {
       <DrawerContent>
         <DrawerHandle />
         <DrawerHeader>
-          <Stack direction="horizontal" gap={3} className="text-left">
+          <Stack direction="horizontal" gap="md" className="text-left">
             <Avatar initials={projectTrackerDemoCopy.initials} className="size-mark text-dense" />
-            <Stack gap={1}>
+            <Stack gap="tight">
               <DrawerTitle>{projectTrackerDemoCopy.people.maya}</DrawerTitle>
               <DrawerDescription>{projectTrackerDemoCopy.email}</DrawerDescription>
             </Stack>
@@ -224,7 +224,7 @@ function UserMenu() {
           </Badge>
         </DrawerHeader>
         <DrawerBody>
-          <Stack gap={1} className="surface-pad-block-sm">
+          <Stack gap="tight" className="surface-pad-block-sm">
             {MENU_ITEMS.map(({ label, icon: Icon }) => (
               <DrawerClose asChild key={label}>
                 <Button
@@ -255,12 +255,12 @@ function UserMenu() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-between surface-pad-inline surface-pad-block-sm">
-      <Stack direction="horizontal" gap={2}>
+    <Stack direction="horizontal" gap="sm" className="justify-between surface-pad-inline surface-pad-block-sm">
+      <Stack direction="horizontal" gap="sm">
         <MobileNav />
         <Text className="text-dense font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
       </Stack>
-      <Stack direction="horizontal" gap={1}>
+      <Stack direction="horizontal" gap="tight">
         <IconButton label={projectTrackerDemoCopy.notifications} variant="ghost" onClick={notice(projectTrackerDemoCopy.caughtUp)}>
           <Bell className="size-icon" aria-hidden />
         </IconButton>
@@ -295,15 +295,15 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
   return (
     <Card>
       <CardHeader className="surface-pad-md">
-        <Stack gap={3}>
+        <Stack gap="md">
           {cards.map((card) => (
             <Stack
               key={card.label}
               direction="horizontal"
-              gap={3}
+              gap="md"
               className="items-baseline justify-between"
             >
-              <Stack gap={1} className="content-shrink">
+              <Stack gap="tight" className="content-shrink">
                 <CardDescription>{card.label}</CardDescription>
                 <Text variant="muted" className="text-caption">
                   {card.note}
@@ -351,9 +351,9 @@ export function ProjectTrackerDemoApp() {
   const tableRows = state === "empty" ? [] : rows;
 
   return (
-    <Stack gap={3} className="w-full content-shrink">
+    <Stack gap="md" className="w-full content-shrink">
       <Toaster />
-      <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
+      <Stack direction="horizontal" gap="sm" className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
         <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.pageState}
         </Text>
@@ -394,7 +394,7 @@ export function ProjectTrackerDemoApp() {
               </>
             }
           />
-          <Stack gap={4}>
+          <Stack gap="lg">
             {loading ? <SummarySkeletons /> : state === "data" ? <SummaryCards rows={rows} /> : null}
             <Separator />
             <DataTable

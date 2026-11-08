@@ -48,10 +48,10 @@ function CurrentLook() {
 export function IdentitySwitcherDemo() {
   useRestoreIdentityOnUnmount();
   return (
-    <Stack gap={4} className="content-shrink">
+    <Stack gap="lg" className="content-shrink">
       <Stack
         direction="horizontal"
-        gap={3}
+        gap="md"
         className="content-shrink flex-wrap items-center justify-between rounded-lg border border-border bg-background surface-pad-inline surface-pad-block"
       >
         <Text as="span" className="font-semibold">
@@ -74,14 +74,14 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
   const [saved, setSaved] = useState(false);
   return (
     <Stack
-      gap={3}
+      gap="md"
       data-demo-specimen=""
       data-identity-scope=""
       data-identity={look.id}
       data-demo-scope={look.id}
       className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground"
     >
-      <Stack direction="horizontal" gap={2} className="items-center justify-between">
+      <Stack direction="horizontal" gap="sm" className="items-center justify-between">
         <Heading level={2} className="text-compact-heading trim-margin!">
           {look.label}
         </Heading>
@@ -92,7 +92,7 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
       <Text variant="muted" className="trim-margin!">
         {look.description}
       </Text>
-      <Stack direction="horizontal" gap={2}>
+      <Stack direction="horizontal" gap="sm">
         <Button size="sm" disabled={saved} onClick={() => setSaved(true)}>
           {identityCopy.scope.save}
         </Button>
@@ -107,7 +107,7 @@ function ScopedCard({ look }: { look: (typeof identities)[number] }) {
 /** The same card under each identity, side by side, without touching the page. */
 export function IdentityScopeDemo() {
   return (
-    <Stack gap={2} className="content-shrink">
+    <Stack gap="sm" className="content-shrink">
       <Text variant="muted" className="text-caption">
         {identityCopy.scope.note}
       </Text>
@@ -125,10 +125,10 @@ export function IdentityPickerDemo() {
   useRestoreIdentityOnUnmount();
   const [last, setLast] = useState<string | null>(null);
   return (
-    <Stack gap={3} className="content-shrink">
+    <Stack gap="md" className="content-shrink">
       <Stack
         direction="horizontal"
-        gap={3}
+        gap="md"
         className="content-shrink items-center justify-between rounded-lg border border-border bg-background surface-pad-inline surface-pad-block"
       >
         <Text as="span" className="font-semibold">

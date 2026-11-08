@@ -4856,11 +4856,11 @@
           "whenToUse": "For self-contained blocks (panels, summaries, previews).",
           "whenNotToUse": "For page-level layout — use AppShell and Stack instead.",
           "derivedFrom": null,
-          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>",
+          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container } from \"@zedtech/zedkit-ui\";\n<Container query width=\"full\" gutter={false}><Card size=\"sm\"><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card></Container>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
+              "code": "import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container } from \"@zedtech/zedkit-ui\";\n<Container query width=\"full\" gutter={false}><Card size=\"sm\"><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card></Container>"
             },
             {
               "title": "With footer",
@@ -4886,9 +4886,10 @@
           },
           "registry": "card",
           "a11y": "Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` mirrors the same tokens so async content lands without shifting.",
-          "troubleshooting": "Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.",
+          "troubleshooting": "Cramped content — inner padding comes from the card recipe (`--zk-card-pad`; `trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.",
           "seeAlso": [
-            "Stack content and group titled sections"
+            "Stack content and group titled sections",
+            "Constrain page width and run sections edge to edge"
           ]
         },
         {
@@ -4898,15 +4899,15 @@
           "status": "stable",
           "shortName": "Stack",
           "audience": "Developers laying out kit pages without raw divs.",
-          "purpose": "Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap.",
+          "purpose": "Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named (`tight`, `sm`, `md`, `lg`, `prose`, `list`, `blocks`); numeric steps were removed. Bleed sections carry a sizing recipe: in a wide `zk-query` slot their rhythm steps up one section step.",
           "whenToUse": "For all kit-page layout instead of hand-written flex.",
           "whenNotToUse": "For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.",
           "derivedFrom": null,
-          "example": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap={2}>...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>",
+          "example": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap=\"sm\">...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap={2}>...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>"
+              "code": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap=\"sm\">...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>"
             }
           ],
           "adoption": {
@@ -4940,8 +4941,8 @@
           "status": "alpha",
           "shortName": "Container",
           "audience": "Developers building marketing and docs pages with capped measures and full-bleed bands.",
-          "purpose": "Named container widths and edge-to-edge section bands from the layout token scale.",
-          "whenToUse": "For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.",
+          "purpose": "Named container widths and edge-to-edge section bands from the layout token scale. `query` also establishes the container as the sizing slot (`zk-query` marker) that container-aware components (Card, Section) adapt to — the same class works on any grid cell or layout slot without a Container.",
+          "whenToUse": "For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings. Add `query` where descendants should size to their allocated space, not the viewport.",
           "whenNotToUse": "For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.",
           "derivedFrom": null,
           "example": "import { Container, Section } from \"@zedtech/zedkit-ui\";\n<Section bleed tone=\"muted\" spacing=\"lg\" title=\"Pricing\" description=\"What each plan includes.\">...</Section>\n<Container width=\"wide\">...</Container>",

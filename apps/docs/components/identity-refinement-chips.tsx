@@ -17,11 +17,11 @@ export function IdentityRefinementChips({
 }) {
   if (!visible) return null;
   return (
-    <Stack gap={2} data-assistant-refine-chips="">
+    <Stack gap="sm" data-assistant-refine-chips="">
       <Text typeRole="label" className="text-foreground">
         {copy.refineChips.label}
       </Text>
-      <Stack direction="horizontal" gap={2} role="group" aria-label={copy.refineChips.group} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" role="group" aria-label={copy.refineChips.group} className="flex-wrap">
         {identityRefinementChips.map((chip) => (
           <Button
             key={chip.id}

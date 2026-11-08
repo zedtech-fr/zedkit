@@ -3,11 +3,11 @@ import { separatorCopy } from "@/components/demos/i18n/separator-copy";
 
 export function SeparatorDemo() {
   return (
-    <Stack gap={3}>
+    <Stack gap="md">
       <Text>{separatorCopy.above}</Text>
       <Separator />
       <Text>{separatorCopy.below}</Text>
-      <Stack direction="horizontal" gap={3} className="items-center">
+      <Stack direction="horizontal" gap="md" className="items-center">
         <Text>{separatorCopy.left}</Text>
         <Separator orientation="vertical" />
         <Text>{separatorCopy.right}</Text>

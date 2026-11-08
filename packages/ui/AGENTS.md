@@ -32,8 +32,13 @@ Rules:
   and a 19.5px line. Do not swap them. Captions, badges and timestamps
   are `text-caption`: 12px with a 16px line. `text-xs` is that size and
   is banned. The label role is also 12px, with a 16.8px line and medium
-  weight. Do not swap those either. `Stack` accepts `sm` | `md` | `lg`;
-  the other numeric gap props stay until a major. The shipped rule is
+  weight. Do not swap those either. `Stack` gaps are role-named only
+  (`tight` | `sm` | `md` | `lg` | `prose` | `list` | `blocks`).
+  Multipliers must land on the declared scale
+  (`tests/unit/declared-scales.test.ts`). Density-derived tokens live
+  in the one `:root, [data-identity-scope]` rule in `styles.css`
+  (nested scopes re-resolve them). Container sizing: `zk-query`
+  slots, Card/Section recipes — same `styles.css` section. The shipped rule is
   `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
   44px, stricter than the kit's 24px floor. `min-h-target` follows
   `--spacing` and floors at 44px on a coarse pointer or a narrow screen.

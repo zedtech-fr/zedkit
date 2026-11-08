@@ -138,9 +138,9 @@ function IdentityEditorBody(props: EditorBodyProps) {
   // the look. On a phone the stylesheet places the card between the hint and the adjustments;
   // from `lg` it is the right column and stays in view while the left column scrolls.
   return (
-    <Stack gap={6} className="content-shrink lg:grid lg:items-start" data-slot="identity-editor">
+    <Stack gap="list" className="content-shrink lg:grid lg:items-start" data-slot="identity-editor">
       <DraftCard darkPreview={props.darkPreview} />
-      <Stack gap={6} className="content-shrink max-lg:contents lg:col-start-first lg:row-start-first">
+      <Stack gap="list" className="content-shrink max-lg:contents lg:col-start-first lg:row-start-first">
         <IdentityEditorPreviewBar
           identity={props.identity}
           looks={props.looks}
@@ -151,7 +151,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
           onUndo={props.onUndo}
           onReset={props.onReset}
         />
-        <Stack gap={2} data-editor-section="hint">
+        <Stack gap="sm" data-editor-section="hint">
           <Text>{identityEditorCopy.panel.hint}</Text>
           {props.appliedSite ? <Text role="status">{identityEditorCopy.panel.applied}</Text> : null}
         </Stack>

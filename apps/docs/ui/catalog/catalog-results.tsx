@@ -9,10 +9,10 @@ function CatalogRow({ entry }: { entry: CatalogIndexEntry }) {
   return (
     <Stack
       direction="horizontal"
-      gap={3}
+      gap="md"
       className="flex-wrap items-center justify-between border-b border-border rule-gap"
     >
-      <Stack gap={1} className="content-shrink flex-1">
+      <Stack gap="tight" className="content-shrink flex-1">
         <Link href={entry.href} className="font-medium link-offset hover:underline">
           {entry.title}
         </Link>
@@ -31,7 +31,7 @@ function EntryColumns({ entries }: { entries: CatalogIndexEntry[] }) {
   return (
     <Stack className="grid content-shrink gap-x-results gap-y-stack-md xl:grid-pair">
       {halves.map((half, index) => (
-        <Stack key={index} gap={3} className="content-shrink">
+        <Stack key={index} gap="md" className="content-shrink">
           {half.map((entry) => (
             <CatalogRow key={entry.href} entry={entry} />
           ))}
@@ -67,20 +67,20 @@ export function CatalogResultsHeader({ filtered }: { filtered: CatalogIndexEntry
 export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[] }) {
   const groups = groupCatalogResults(filtered);
   return (
-    <Stack gap={4} data-catalog-results-root="">
+    <Stack gap="lg" data-catalog-results-root="">
       <section data-slot="section" className="space-y-stack-lg" aria-label={catalogCopy.results.sectionAriaLabel}>
         {filtered.length === 0 ? (
-          <Stack gap={2}>
+          <Stack gap="sm">
             <Text variant="muted">{catalogCopy.results.empty}</Text>
             <Link href="/catalog" className="text-dense text-primary link-offset hover:underline">
               {catalogCopy.results.clearFiltersLink}
             </Link>
           </Stack>
         ) : (
-          <Stack gap={6} data-catalog-results="">
+          <Stack gap="list" data-catalog-results="">
             {groups.length > 1 ? (
               <nav aria-label={catalogCopy.results.jumpNavAriaLabel} className="xl:hidden">
-                <Stack direction="horizontal" gap={2} className="flex-wrap">
+                <Stack direction="horizontal" gap="sm" className="flex-wrap">
                   {groups.map((group) => (
                     <Link
                       key={group.id}
@@ -94,7 +94,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
               </nav>
             ) : null}
             {groups.map((group) => (
-              <Stack key={group.id} gap={3} id={`catalog-group-${group.id}`} data-catalog-group={group.id}>
+              <Stack key={group.id} gap="md" id={`catalog-group-${group.id}`} data-catalog-group={group.id}>
                 <Heading level={2} className="text-compact-heading">
                   {catalogCopy.results.groupHeading(group.label, group.entries.length)}
                 </Heading>
@@ -111,7 +111,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
 /** @deprecated Use CatalogResultsHeader + CatalogResultsBody from the catalog shell. */
 export function CatalogResults({ filtered }: { filtered: CatalogIndexEntry[] }) {
   return (
-    <Stack gap={4}>
+    <Stack gap="lg">
       <CatalogResultsHeader filtered={filtered} />
       <CatalogResultsBody filtered={filtered} />
     </Stack>

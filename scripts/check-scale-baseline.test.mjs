@@ -37,6 +37,16 @@ test("--write refuses an increase and leaves the baseline untouched", () => {
   assert.equal(readFileSync(baseline, "utf8"), before);
 });
 
+test("shipped sources must be zero even when the baseline would allow them (C-04b)", () => {
+  const { root, script } = fixture({ "src/app.mjs": 1 });
+  mkdirSync(join(root, "src"), { recursive: true });
+  writeFileSync(join(root, "src/app.mjs"), BAD);
+  const res = run(script, []);
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /shipped sources \(must be zero\)/);
+  assert.match(res.stderr, /src\/app\.mjs: 1/);
+});
+
 test("--write with an equal count is a no-op success (repeat call harmless)", () => {
   const { root, baseline, script } = fixture({ "app.mjs": 1 });
   writeFileSync(join(root, "app.mjs"), BAD);

@@ -45,7 +45,7 @@ function PhaseList({ step, status }: { step: number; status: HeroAgentStatus }) 
           <span className="icon-nudge-sm inline-flex size-icon-lg shrink-0 items-center justify-center">
             <PhaseMark state={state} />
           </span>
-          <Stack gap={1} className="content-shrink">
+          <Stack gap="tight" className="content-shrink">
             <Text as="span" className="text-dense font-medium">
               {copy.phases[phase].title}
             </Text>
@@ -89,7 +89,7 @@ export default function HeroAgentPanel({ id, draft, status, step, onDraft, onSub
       data-status={status}
       className="absolute inset-y-panel right-panel flex content-shrink motion-reveal flex-col gap-stack-md overflow-y-auto"
     >
-      <Stack direction="horizontal" gap={2} className="items-center justify-between">
+      <Stack direction="horizontal" gap="sm" className="items-center justify-between">
         <Heading level={2} typeRole="cardTitle">
           {copy.title}
         </Heading>

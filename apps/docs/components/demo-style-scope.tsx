@@ -42,7 +42,7 @@ function DemoStyleSelect({
 }) {
   const selectId = useId();
   return (
-    <Stack direction="horizontal" gap={2} className="items-center">
+    <Stack direction="horizontal" gap="sm" className="items-center">
       <label htmlFor={selectId} className={labelHidden ? "sr-only" : "text-caption text-muted-foreground"}>
         {fieldLabel}
       </label>
@@ -69,7 +69,7 @@ function DemoStyleScope({ children }: { children: ReactNode }) {
   const demo = usePinnedLook();
   const { resolvedTheme } = useTheme();
   return (
-    <Stack gap={2} className="content-shrink">
+    <Stack gap="sm" className="content-shrink">
       <DemoStyleSelect look={demo.look} pinned={demo.pinned} onPin={demo.pin} />
       <ThemeScope
         identity={demo.look}

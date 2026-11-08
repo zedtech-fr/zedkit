@@ -97,11 +97,11 @@ function EditorialStoryEditor({
 }) {
   return (
     <>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor="zk-specimen-editorial-headline">{messages.headlineLabel}</Label>
         <Input id="zk-specimen-editorial-headline" value={story.headline} onChange={(event) => onHeadlineChange(event.target.value)} />
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor="zk-specimen-editorial-standfirst">{messages.standfirstLabel}</Label>
         <Textarea
           id="zk-specimen-editorial-standfirst"
@@ -110,7 +110,7 @@ function EditorialStoryEditor({
           onChange={(event) => onStandfirstChange(event.target.value)}
         />
       </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Button type="button" onClick={onPublish}>
           {messages.publish}
         </Button>
@@ -138,14 +138,14 @@ export function EditorialSpecimen({ className, messages = specimenMessagesEn.edi
   const story = stories.find((item) => item.id === selectedId) ?? stories[0]!;
 
   return (
-    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="editorial-specimen" data-specimen-domain="editorial">
-      <Stack gap={1}>
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="editorial-specimen" data-specimen-domain="editorial">
+      <Stack gap="tight">
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </Stack>
       <Card className="content-shrink">
         <CardContent className="content-offset">
-          <Stack gap={4} className="content-shrink">
+          <Stack gap="lg" className="content-shrink">
             <EditorialStoryQueue
               messages={messages}
               stories={stories}

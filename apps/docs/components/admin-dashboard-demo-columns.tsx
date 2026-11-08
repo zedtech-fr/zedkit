@@ -74,7 +74,7 @@ export function buildAdminDashboardColumns({
         </Text>
       ),
       cell: ({ row }) => (
-        <Stack direction="horizontal" gap={1} className="flex-nowrap justify-end" data-demo-row-actions>
+        <Stack direction="horizontal" gap="tight" className="flex-nowrap justify-end" data-demo-row-actions>
           <Button
             type="button"
             variant="outline"

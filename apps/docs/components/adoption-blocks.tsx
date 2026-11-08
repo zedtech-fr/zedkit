@@ -109,7 +109,7 @@ export function CommandBlock({
       allowCopy={false}
       viewportProps={{ "aria-label": adoptionCopy.terminalTitle }}
       Actions={({ className }) => (
-        <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
+        <Stack direction="horizontal" gap="tight" {...(className ? { className } : {})}>
           {picker ? (
             <PackageManagerSelect pm={pm} onPm={onPm} />
           ) : (
@@ -144,7 +144,7 @@ export function FileBlock({
     <CodeBlock
       data-adoption-frame=""
       title={
-        <Stack gap={1} className="content-shrink gap-flush py-control-block">
+        <Stack gap="tight" className="content-shrink gap-flush py-control-block">
           <Text as="span" className="truncate font-mono">
             {path}
           </Text>
@@ -156,7 +156,7 @@ export function FileBlock({
       allowCopy={false}
       viewportProps={{ "aria-label": path, ...(tall ? { "data-code-tall": "" } : {}) }}
       Actions={({ className }) => (
-        <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
+        <Stack direction="horizontal" gap="tight" {...(className ? { className } : {})}>
           <CopyButton text={code} what={path} />
         </Stack>
       )}
@@ -175,7 +175,7 @@ export function SnippetBlock({ title, code, highlighted }: { title: string; code
       allowCopy={false}
       viewportProps={{ "aria-label": title }}
       Actions={({ className }) => (
-        <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
+        <Stack direction="horizontal" gap="tight" {...(className ? { className } : {})}>
           <CopyButton text={code} what={title.toLowerCase()} />
         </Stack>
       )}

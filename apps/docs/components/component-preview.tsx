@@ -27,7 +27,7 @@ export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPr
   const highlighted = await highlight(code, { lang: "tsx", components: { pre: Pre } });
   const { Demo } = entry;
   return (
-    <Stack gap={2} className="w-full content-shrink">
+    <Stack gap="sm" className="w-full content-shrink">
       <div
         className="w-full content-shrink"
         data-component-preview={a11yRoot ? "primary" : true}

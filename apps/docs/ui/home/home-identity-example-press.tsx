@@ -75,12 +75,12 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
   const sectionId = useId();
   const standfirstId = useId();
   return (
-    <Stack gap={3} className="content-shrink">
-      <Stack gap={1}>
+    <Stack gap="md" className="content-shrink">
+      <Stack gap="tight">
         <Label htmlFor={headlineId}>{copy.headlineLabel}</Label>
         <Input id={headlineId} value={story.headline} onChange={(event) => onChange({ headline: event.target.value })} />
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor={sectionId}>{copy.sectionLabel}</Label>
         <Select value={story.section} onValueChange={(section) => onChange({ section })}>
           <SelectTrigger id={sectionId} aria-label={copy.sectionLabel}>
@@ -95,7 +95,7 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
           </SelectContent>
         </Select>
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor={standfirstId}>{copy.standfirstLabel}</Label>
         <Textarea id={standfirstId} rows={3} value={story.standfirst} onChange={(event) => onChange({ standfirst: event.target.value })} />
       </Stack>
@@ -133,8 +133,8 @@ export function HomeIdentityExamplePress() {
   };
 
   return (
-    <Stack gap={4} className="content-shrink">
-      <Stack gap={1}>
+    <Stack gap="lg" className="content-shrink">
+      <Stack gap="tight">
         <Heading level={3} className="text-specimen-title text-balance">
           {copy.heading}
         </Heading>
@@ -142,10 +142,10 @@ export function HomeIdentityExamplePress() {
       </Stack>
       <Card className="content-shrink">
         <CardContent className="content-offset">
-          <Stack gap={4} className="content-shrink">
+          <Stack gap="lg" className="content-shrink">
             <StoryQueue stories={stories} selectedId={story.id} onSelect={(id) => { setSelectedId(id); setMessage(""); }} />
             <StoryEditor story={story} onChange={change} />
-            <Stack direction="horizontal" gap={2} className="flex-wrap">
+            <Stack direction="horizontal" gap="sm" className="flex-wrap">
               <Button type="button" onClick={() => move("published", copy.published)}>
                 {copy.publish}
               </Button>

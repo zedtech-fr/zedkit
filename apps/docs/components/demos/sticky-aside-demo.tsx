@@ -15,7 +15,7 @@ export function StickyAsideDemo() {
         <ol className="trim-margin flex list-none flex-col gap-stack-lg flush">
           {steps.map((step, index) => (
             <li key={step.title} className="content-shrink">
-              <Stack gap={1}>
+              <Stack gap="tight">
                 <Text variant="muted" className="text-caption">
                   Step {index + 1}
                 </Text>
@@ -29,7 +29,7 @@ export function StickyAsideDemo() {
       <StickyAside.Aside asChild>
         <Card>
           <CardContent className="pt-card-padding">
-            <Stack gap={2} role="group" aria-label="Rendered example">
+            <Stack gap="sm" role="group" aria-label="Rendered example">
               <Text className="text-caption font-medium text-muted-foreground">Rendered example</Text>
               <Button>Save</Button>
             </Stack>
@@ -44,7 +44,7 @@ export function StickyAsideDocStepsDemo() {
   return (
     <StickyAside side="left" from="md" ratio="2/5" scrollable>
       <StickyAside.Main>
-        <Stack gap={3}>
+        <Stack gap="md">
           <Heading level={3}>Write the guide</Heading>
           <Text variant="muted">Steps stay in the main column for reading order.</Text>
         </Stack>

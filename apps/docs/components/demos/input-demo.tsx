@@ -3,19 +3,19 @@ import { inputCopy } from "@/components/demos/i18n/input-copy";
 
 export function InputDemo() {
   return (
-    <Stack gap={4} className="content-shrink">
-      <Stack gap={2}>
+    <Stack gap="lg" className="content-shrink">
+      <Stack gap="sm">
         <Label htmlFor="demo-name">{inputCopy.name}</Label>
         <Input id="demo-name" autoComplete="name" defaultValue={inputCopy.nameValue} />
       </Stack>
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Label htmlFor="demo-email">{inputCopy.email}</Label>
         <Input id="demo-email" type="email" autoComplete="email" placeholder={inputCopy.emailPlaceholder} />
         <Text variant="muted" className="text-caption">
           {inputCopy.emailHint}
         </Text>
       </Stack>
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Label htmlFor="demo-company">{inputCopy.company}</Label>
         <Input id="demo-company" disabled defaultValue={inputCopy.companyValue} />
       </Stack>

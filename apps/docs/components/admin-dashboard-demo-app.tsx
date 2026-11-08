@@ -160,11 +160,11 @@ export function AdminDashboardDemoApp({
         {isHome ? (
           <Stack
             direction="horizontal"
-            gap={3}
+            gap="md"
             className={`items-start justify-between border-b border-border ${toolbarPad}`}
             data-demo-toolbar
           >
-            <Stack gap={1} className="content-shrink">
+            <Stack gap="tight" className="content-shrink">
               <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
                 {adminDashboardDemoCopy.heading}
               </Heading>
@@ -177,14 +177,14 @@ export function AdminDashboardDemoApp({
             </Button>
           </Stack>
         ) : (
-          <Stack gap={3} className={`border-b border-border ${toolbarPad}`} data-demo-toolbar>
+          <Stack gap="md" className={`border-b border-border ${toolbarPad}`} data-demo-toolbar>
             <Heading level={2} className={`${DOCS_TYPE_H3_CLASS} tracking-tight`}>
               {adminDashboardDemoCopy.heading}
             </Heading>
             <Text variant="muted" className={DOCS_TYPE_BODY_CLASS}>
               {adminDashboardDemoCopy.defaultHint}
             </Text>
-            <Stack direction="horizontal" gap={2} className="flex-nowrap items-center">
+            <Stack direction="horizontal" gap="sm" className="flex-nowrap items-center">
               <Select value={preview} onValueChange={(value) => setPreview(value as PreviewMode)}>
                 <SelectTrigger className="content-shrink flex-1" aria-label={adminDashboardDemoCopy.previewModeAriaLabel}>
                   <SelectValue />

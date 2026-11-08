@@ -40,8 +40,8 @@ function HomeAiSetupMono({ children }: { children: string }) {
 
 function HomeAiSetupWhatYouGet() {
   return (
-    <Stack gap={4}>
-      <Stack gap={1}>
+    <Stack gap="lg">
+      <Stack gap="tight">
         <Heading level={3} typeRole="heading">
           {whatYouGet.title}
         </Heading>
@@ -86,7 +86,7 @@ export function HomeAiSetupSection() {
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
-        <Stack gap={3} data-setup-prompt="">
+        <Stack gap="md" data-setup-prompt="">
           <SecretField
             multiline
             value={AI_SETUP_MINI_PROMPT}

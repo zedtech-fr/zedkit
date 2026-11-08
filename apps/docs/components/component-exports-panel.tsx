@@ -20,7 +20,7 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
   const [open, setOpen] = useState(false);
   const panelId = useId();
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <Button type="button" variant="ghost" size="sm" className="w-fit"
         aria-expanded={open}
         aria-controls={panelId}
@@ -28,7 +28,7 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
         {open ? componentExportsPanelCopy.hideSymbols : componentExportsPanelCopy.showSymbols}
       </Button>
       {open ? (
-        <Stack gap={3} id={panelId}>
+        <Stack gap="md" id={panelId}>
           <Table>
             <TableHeader>
               <TableRow>
@@ -48,7 +48,7 @@ export function ComponentExportsPanel({ symbols, wraps }: { symbols: string[]; w
           <ComponentWrapsLine wraps={wraps} />
         </Stack>
       ) : (
-        <Stack gap={1}>
+        <Stack gap="tight">
           <Text variant="muted" className="text-caption">
             {componentExportsPanelCopy.symbolCountLine(symbols.length)}
           </Text>

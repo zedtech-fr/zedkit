@@ -32,7 +32,7 @@ export function HomeIdentityLooks() {
   const Example = EXAMPLES[identity];
 
   return (
-    <Stack gap={3} className="content-shrink" data-home-identity-looks="" data-scroll-anchor="">
+    <Stack gap="md" className="content-shrink" data-home-identity-looks="" data-scroll-anchor="">
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
         {homeIdentityLooksCopy.liveNote}
       </Text>
@@ -62,7 +62,7 @@ export function HomeIdentityLooks() {
 
 function HomeIdentityLooksLinks() {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap">
       <Button asChild variant="outline" size="sm" className="w-fit">
         <HomeLink href={`${IDENTITY_EDITOR_HREF}#create`}>{homeIdentityLooksCopy.openEditor}</HomeLink>
       </Button>

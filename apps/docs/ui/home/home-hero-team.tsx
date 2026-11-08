@@ -70,7 +70,7 @@ export function HeroTeamPage({ rows, selected, onSelect }: { rows: TaskRow[]; se
   const theirs = rows.filter((row) => row.owner === person.name && !isDone(row)).sort(byDue);
   const next = theirs[0];
   return (
-    <Stack gap={3} className="content-shrink">
+    <Stack gap="md" className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
       <div data-hero-team-split="" className="grid content-shrink gap-stack-md">
         <ul className="trim-margin flex content-shrink list-none flex-col gap-stack-tight flush" aria-label={copy.title} data-hero-block="" data-beat={1}>

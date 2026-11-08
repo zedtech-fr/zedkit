@@ -4,7 +4,7 @@ import { labelCopy } from "@/components/demos/i18n/label-copy";
 /** Label needs no other kit component: a native input with a matching id is enough. */
 export function LabelNativeDemo() {
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <Label htmlFor="label-city">{labelCopy.native.city}</Label>
       <input
         id="label-city"

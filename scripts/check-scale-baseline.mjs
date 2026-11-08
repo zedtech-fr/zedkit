@@ -1,5 +1,7 @@
-// Ratchet for scale-step classes. The committed count is the current count.
-// A file may only shrink. Growing, or leaving a stale higher count, fails.
+// Ratchet for scale-step classes. Shipped sources (any src/ tree) must
+// be at zero — the lint rule enforces that directly. The baseline file
+// only carries named test-fixture inputs (files whose strings are the
+// scanner's test cases). A fixture count may only shrink.
 import { lstatSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import { baselineIncreases, findScaleHits } from "../packages/quality/src/scale-classes.mjs";
@@ -51,6 +53,18 @@ const write = process.argv.includes("--write");
 const current = currentCounts();
 const total = [...current.values()].reduce((sum, n) => sum + n, 0);
 
+// Zero-baseline for shipped sources: any hit under a src/ tree fails,
+// whatever the fixture baseline says.
+const shippedHits = [...current.entries()].filter(([file]) => /(^|\/)src\//.test(file));
+if (shippedHits.length > 0) {
+  process.stderr.write(
+    "scale classes in shipped sources (must be zero):\n" +
+      shippedHits.map(([file, count]) => `${file}: ${count}`).join("\n") +
+      "\nName the role or layout job instead of the scale step.\n",
+  );
+  process.exit(1);
+}
+
 if (write) {
   const increases = baselineIncreases(readCommitted(), current);
   if (increases.length > 0) {
@@ -85,4 +99,4 @@ if (diffs.length > 0 || committedTotal !== total) {
   );
   process.exit(1);
 }
-process.stdout.write(`scale-class baseline: ${total} (not complete while this is above zero)\n`);
+process.stdout.write(`scale-class baseline: ${total} in test fixtures only; shipped sources at zero\n`);

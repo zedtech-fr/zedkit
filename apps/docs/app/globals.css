@@ -4,6 +4,7 @@
    of the utilities and let base classes beat responsive variants. */
 @import "tailwindcss";
 @import "@zedtech/zedkit-ui/styles.css";
+@import "./site-text-roles.css";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 @source "../node_modules/fumadocs-ui/dist/**/*.js";

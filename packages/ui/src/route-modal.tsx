@@ -191,8 +191,8 @@ export function RouteModal({
       <DrawerContent className={cn(drawerSizeClass, className)}>
         <DrawerHandle />
         <DrawerHeader>
-          <Stack direction="horizontal" gap={2} className="items-start justify-between">
-            <Stack gap={1} className="content-shrink flex-1 text-left">
+          <Stack direction="horizontal" gap="sm" className="items-start justify-between">
+            <Stack gap="tight" className="content-shrink flex-1 text-left">
               <DrawerTitle>{title}</DrawerTitle>
               {description ? <DrawerDescription>{description}</DrawerDescription> : null}
             </Stack>

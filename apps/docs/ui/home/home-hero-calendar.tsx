@@ -19,7 +19,7 @@ function dueDays(rows: TaskRow[]): Date[] {
 function Agenda({ rows, day }: { rows: TaskRow[]; day: Date | undefined }) {
   const agenda = day ? rows.filter((row) => !isDone(row) && dueOn(row, day)) : [];
   return (
-    <Stack gap={2} className="min-w-date flex-1" aria-live="polite" data-hero-block="" data-beat={2}>
+    <Stack gap="sm" className="min-w-date flex-1" aria-live="polite" data-hero-block="" data-beat={2}>
       <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
         {day ? copy.dueOn(longDate.format(day)) : copy.description}
       </Text>
@@ -54,7 +54,7 @@ export function HeroCalendarPage({
   onDay: (day: Date | undefined) => void;
 }) {
   return (
-    <Stack gap={3} className="content-shrink">
+    <Stack gap="md" className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
       <div className="flex content-shrink flex-wrap items-start gap-stack-lg" data-hero-calendar="">
         <div data-hero-block="" data-beat={1}>

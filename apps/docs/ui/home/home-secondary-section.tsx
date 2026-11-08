@@ -11,16 +11,16 @@ import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 function HomeSecondaryEntryLinks({ entryPoints }: { entryPoints: HomeEntryPoint[] }) {
   return (
-    <Stack gap={2} className="content-shrink" data-home-secondary-links="">
+    <Stack gap="sm" className="content-shrink" data-home-secondary-links="">
       {entryPoints.map((entry) => (
         <Stack
           key={entry.href}
           direction="horizontal"
-          gap={2}
+          gap="sm"
           data-index-lead=""
           className="flex-wrap items-center justify-between gap-y-stack-sm border-b pb-block md:grid md:items-baseline md:gap-x-blocks"
         >
-          <Stack gap={1} className="content-shrink">
+          <Stack gap="tight" className="content-shrink">
             <Text className="font-medium">{entry.title}</Text>
             <Text variant="muted" typeRole="caption" data-index-summary="" className={HOME_METADATA_TEXT_CLASS}>
               {entry.summary}

@@ -1,9 +1,8 @@
 {
   "version": 1,
-  "total": 88,
+  "total": 83,
   "files": {
     "packages/quality/tests/unit/scale-classes.test.mjs": 3,
-    "packages/ui/src/layout.tsx": 5,
     "packages/ui/tests/unit/utils.test.ts": 80
   }
 }

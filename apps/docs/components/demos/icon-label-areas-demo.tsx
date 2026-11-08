@@ -14,9 +14,9 @@ const AREAS = [
 /** Home areas: each catalog family keeps its name; the icon is only a cue. */
 export function IconLabelAreasDemo() {
   return (
-    <Stack gap={3} className="content-shrink">
+    <Stack gap="md" className="content-shrink">
       <Text variant="muted">{iconLabelCopy.areas.intro}</Text>
-      <Stack gap={2}>
+      <Stack gap="sm">
         {AREAS.map((area) => (
           <IconLabel key={area.label} icon={area.icon}>
             {area.label}

@@ -10,7 +10,7 @@ describe("layout", () => {
         <Stack data-testid="v">
           <span>a</span>
         </Stack>
-        <Stack data-testid="h" direction="horizontal" gap={2}>
+        <Stack data-testid="h" direction="horizontal" gap="sm">
           <span>a</span>
         </Stack>
       </>,
@@ -47,49 +47,33 @@ describe("layout", () => {
     expect(screen.getByRole("region", { name: "People" })).not.toBeNull();
   });
 
-  it("maps numeric and named stack gaps onto the same role classes", () => {
+  it("maps named stack gaps onto role classes", () => {
     const roles = {
-      1: "gap-1",
-      2: "gap-stack-sm",
-      3: "gap-stack-md",
-      4: "gap-stack-lg",
-      5: "gap-5",
-      6: "gap-6",
-      7: "gap-7",
-      8: "gap-8",
+      tight: "gap-stack-tight",
+      sm: "gap-stack-sm",
+      md: "gap-stack-md",
+      lg: "gap-stack-lg",
+      prose: "gap-prose",
+      list: "gap-list",
+      blocks: "gap-blocks",
     } as const;
     const { container } = render(
       <>
-        {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((gap) => (
+        {(Object.keys(roles) as (keyof typeof roles)[]).map((gap) => (
           <Stack key={gap} data-testid={`gap-${gap}`} gap={gap}>
             <span>a</span>
           </Stack>
         ))}
-        <Stack data-testid="named-sm" gap="sm">
-          <span>a</span>
-        </Stack>
-        <Stack data-testid="named-md" gap="md">
-          <span>a</span>
-        </Stack>
-        <Stack data-testid="named-lg" gap="lg">
-          <span>a</span>
-        </Stack>
         <Section data-testid="section" title="Team">
           <span>a</span>
         </Section>
       </>,
     );
-    for (const gap of [1, 2, 3, 4, 5, 6, 7, 8] as const) {
+    for (const [gap, role] of Object.entries(roles)) {
       const className = container.querySelector(`[data-testid="gap-${gap}"]`)?.className ?? "";
-      expect(className).toContain(roles[gap]);
-      expect(className).not.toContain("[");
+      expect(className, gap).toContain(role);
+      expect(className, gap).not.toContain("[");
     }
-    expect(container.querySelector('[data-testid="named-sm"]')?.className).toContain("gap-stack-sm");
-    expect(container.querySelector('[data-testid="named-md"]')?.className).toContain("gap-stack-md");
-    expect(container.querySelector('[data-testid="named-lg"]')?.className).toContain("gap-stack-lg");
-    expect(container.querySelector('[data-testid="gap-2"]')?.className).toBe(
-      container.querySelector('[data-testid="named-sm"]')?.className,
-    );
     expect(container.querySelector('[data-testid="section"]')?.className).toContain("space-y-stack-lg");
   });
 
@@ -196,7 +180,7 @@ describe("layout", () => {
     );
     const el = container.querySelector('[data-testid="s"]');
     expect(el?.className).toContain("w-full");
-    expect(el?.className).toContain("py-section-md");
+    expect(el?.getAttribute("data-spacing")).toBe("md");
     expect(el?.className).not.toContain("bg-muted");
     const inner = el?.querySelector('[data-slot="container"]');
     expect(inner).not.toBeNull();
@@ -206,26 +190,21 @@ describe("layout", () => {
     expect(screen.getByRole("button", { name: "Invite" })).not.toBeNull();
   });
 
-  it("renders every bleed spacing step with literal classes", () => {
-    const steps = {
-      sm: "py-section-sm",
-      md: "py-section-md",
-      lg: "py-section-lg",
-      xl: "py-section-xl",
-    } as const;
+  it("renders every bleed spacing step as a recipe attribute", () => {
+    const steps = ["sm", "md", "lg", "xl"] as const;
     const { container } = render(
       <>
-        {(Object.keys(steps) as Array<keyof typeof steps>).map((spacing) => (
+        {steps.map((spacing) => (
           <Section key={spacing} data-testid={`s-${spacing}`} bleed spacing={spacing}>
             <span>a</span>
           </Section>
         ))}
       </>,
     );
-    for (const [spacing, klass] of Object.entries(steps)) {
-      const className = container.querySelector(`[data-testid="s-${spacing}"]`)?.className ?? "";
-      expect(className).toContain(klass);
-      expect(className).not.toContain("[");
+    for (const spacing of steps) {
+      const el = container.querySelector(`[data-testid="s-${spacing}"]`);
+      expect(el?.getAttribute("data-spacing"), spacing).toBe(spacing);
+      expect(el?.className ?? "").not.toContain("[");
     }
   });
 
@@ -248,7 +227,7 @@ describe("layout", () => {
     );
     const el = container.querySelector('[data-testid="s"]');
     expect(el?.className).toContain("bg-muted");
-    expect(el?.className).toContain("py-section-lg");
+    expect(el?.getAttribute("data-spacing")).toBe("lg");
     expect(el?.querySelector('[data-slot="container"]')?.className).toContain("max-w-wide");
     expect(screen.queryByRole("heading")).toBeNull();
   });

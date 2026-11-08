@@ -24,7 +24,7 @@ export function InheritedPropsPanel({
           {inheritedPropsCopy.hide(summary)}
         </Text>
       </summary>
-      <Stack gap={2} data-under-rule="" className="border-t px-control-inline pb-block">
+      <Stack gap="sm" data-under-rule="" className="border-t px-control-inline pb-block">
         <Text variant="muted" className="text-caption">
           {inheritedPropsCopy.referenceLead}
           <Link href={referenceHref} className="text-primary link-offset hover:underline">

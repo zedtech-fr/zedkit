@@ -78,7 +78,7 @@ function IdentityAssistantOpenBody(props: {
 }) {
   const { ui, session, dispatch, tokens, off, brief, setBrief, busy, send, quickRefine, cancel, domainBrief, onUse } = props;
   return (
-    <Stack gap={4} className="pt-start">
+    <Stack gap="lg" className="pt-start">
       <AssistantHeading />
       <ViewSwitch view={ui.view} onView={ui.setView} waiting={session.proposal !== null} previewRef={ui.previewButton} />
       <ReferenceReportList report={session.references} />
@@ -106,7 +106,7 @@ export function IdentityAssistant({ tokens, onUse }: { tokens: IdentityTokens; o
   const state = useInlineIdentityAssistant(tokens);
 
   return (
-    <Stack gap={4} id="create" role="region" aria-labelledby="identity-assistant-title" data-slot="identity-assistant" data-scroll-anchor="">
+    <Stack gap="lg" id="create" role="region" aria-labelledby="identity-assistant-title" data-slot="identity-assistant" data-scroll-anchor="">
       <details open={state.ui.open} onToggle={(event) => state.ui.setOpen(event.currentTarget.open)} className="group content-shrink">
         <summary
           id="identity-assistant-title"

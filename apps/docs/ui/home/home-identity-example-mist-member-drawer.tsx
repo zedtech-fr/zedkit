@@ -45,7 +45,7 @@ function MemberPanel({ member, onSaveRole }: { member: Member; onSaveRole: (role
   return (
     <>
       <DrawerBody>
-        <Stack gap={4} className="content-shrink">
+        <Stack gap="lg" className="content-shrink">
           <div aria-label={drawer.detailsAriaLabel} role="group">
             <DetailPanel
               items={[
@@ -55,7 +55,7 @@ function MemberPanel({ member, onSaveRole }: { member: Member; onSaveRole: (role
               ]}
             />
           </div>
-          <Stack gap={1}>
+          <Stack gap="tight">
             <Label htmlFor={roleId}>{drawer.roleLabel}</Label>
             <Select value={role} onValueChange={setRole}>
               <SelectTrigger id={roleId} aria-label={drawer.roleLabel}>
@@ -71,7 +71,7 @@ function MemberPanel({ member, onSaveRole }: { member: Member; onSaveRole: (role
             </Select>
           </Stack>
           {member.status === "Invited" ? (
-            <Stack gap={2}>
+            <Stack gap="sm">
               <Button type="button" variant="outline" className="w-fit" disabled={resent} onClick={() => setResent(true)}>
                 {drawer.resend}
               </Button>

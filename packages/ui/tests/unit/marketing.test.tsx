@@ -58,13 +58,13 @@ describe("GlassSurface", () => {
 
   it("renders the requested element and forwards props", () => {
     render(
-      <GlassSurface as="section" aria-label="Plans" className="mt-figure">
+      <GlassSurface as="section" aria-label="Plans" className="mt-status">
         Plans
       </GlassSurface>,
     );
     const node = screen.getByLabelText("Plans");
     expect(node.tagName).toBe("SECTION");
-    expect(node.className).toContain("mt-figure");
+    expect(node.className).toContain("mt-status");
   });
 
   it("uses no raw arbitrary values and has no axe violations", async () => {

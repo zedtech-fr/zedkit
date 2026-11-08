@@ -94,8 +94,8 @@ export async function ComponentPage({
   });
 
   return (
-    <Stack gap={8}>
-      <Stack gap={3}>
+    <Stack gap="blocks">
+      <Stack gap="md">
         {status !== "stable" ? <MaturityBadge status={status} /> : null}
         <Text className="text-purpose text-muted-foreground">{purpose}</Text>
       </Stack>
@@ -114,7 +114,7 @@ export async function ComponentPage({
       </dl>
 
       <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-stack-md">
-        <Stack gap={3}>
+        <Stack gap="md">
           <AdoptionPanelView plan={plan} />
           <Text variant="muted" className="text-caption">
             {componentPageCopy.packageVersionLine(version)}
@@ -123,7 +123,7 @@ export async function ComponentPage({
       </Section>
 
       <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
-        <Stack gap={4}>
+        <Stack gap="lg">
           {copyable ? (
             <Text variant="muted" data-usage-import-note="">
               {componentPageCopy.usageImportNote(registry)}
@@ -133,7 +133,7 @@ export async function ComponentPage({
             examples.map(async (ex) => {
               const previewDemo = examplePreviews[ex.title];
               return (
-                <Stack key={ex.title} gap={2}>
+                <Stack key={ex.title} gap="sm">
                   {previewDemo ? (
                     <>
                       <Heading level={3}>{ex.title}</Heading>
@@ -165,7 +165,7 @@ export async function ComponentPage({
 
       {sections.includes("related") ? (
         <Section title={componentPageCopy.sections.related} id="related">
-          <Stack gap={2}>
+          <Stack gap="sm">
             {related.map((link) => (
               <Link key={link.href} href={link.href} className="text-primary underline link-offset hover:no-underline">
                 {link.title}

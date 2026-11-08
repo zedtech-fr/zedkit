@@ -23,7 +23,7 @@ export function DataTableToolbarDemo() {
   const needle = query.trim().toLowerCase();
   const rows = customers.filter((c) => `${c.name} ${c.city}`.toLowerCase().includes(needle));
   return (
-    <Stack gap={3}>
+    <Stack gap="md">
       <DataTableToolbar value={query} onChange={setQuery} placeholder={dataTableCopy.toolbar.placeholder} />
       <Text variant="muted" aria-live="polite">
         {dataTableCopy.toolbar.count(rows.length, customers.length)}

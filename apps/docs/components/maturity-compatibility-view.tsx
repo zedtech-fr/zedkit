@@ -77,11 +77,11 @@ function CompatibilityTable() {
 
 export function MaturityCompatibilityView() {
   return (
-    <Stack gap={8}>
+    <Stack gap="blocks">
       <Section title={maturityCompatibilityCopy.sections.badgeMeaning}>
-        <Stack gap={4}>
+        <Stack gap="lg">
           {MATURITY_LIMITS.map((row) => (
-            <Stack key={row.status} gap={2}>
+            <Stack key={row.status} gap="sm">
               {row.showBadge ? (
                 <Badge
                   variant={maturityBadgeVariant(maturityCompatibilityCopy.badges[row.status])}
@@ -109,7 +109,7 @@ export function MaturityCompatibilityView() {
         </Text>
       </Section>
       <Section title={maturityCompatibilityCopy.sections.compatibility}>
-        <Stack gap={3}>
+        <Stack gap="md">
           <Text variant="muted">
             {maturityCompatibilityCopy.generatedLead}
             <code>package.json</code>

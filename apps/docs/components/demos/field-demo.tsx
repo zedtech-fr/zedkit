@@ -74,7 +74,7 @@ export function FieldDemo() {
           </Field>
           <NotifyField />
         </FieldGroup>
-        <Stack direction="horizontal" gap={3} className="items-center">
+        <Stack direction="horizontal" gap="md" className="items-center">
           <Button type="submit">{fieldCopy.submit}</Button>
           {created ? (
             <Text role="status" variant="muted">

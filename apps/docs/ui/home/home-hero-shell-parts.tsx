@@ -62,15 +62,15 @@ function NavButton({ id, icon: Icon, active, onSelect, compact }: (typeof HERO_N
 /** From lg to xl the window is narrow, so the sidebar shrinks to icons (the names stay for assistive tech). */
 export function HeroSidebar({ page, onPage }: NavProps) {
   return (
-    <Stack gap={4} className="h-full surface-pad-compact lg:max-xl:px-control-tight">
-      <Stack gap={1} className="lg:max-xl:hidden">
+    <Stack gap="lg" className="h-full surface-pad-compact lg:max-xl:px-control-tight">
+      <Stack gap="tight" className="lg:max-xl:hidden">
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
         <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
           {projectTrackerDemoCopy.product}
         </Text>
       </Stack>
       <nav aria-label={copy.navAriaLabel}>
-        <Stack gap={1}>
+        <Stack gap="tight">
           {HERO_NAV.map((item) => (
             <Stack key={item.id} data-hero-nav-item="">
               <NavButton {...item} active={item.id === page} onSelect={onPage} />
@@ -78,7 +78,7 @@ export function HeroSidebar({ page, onPage }: NavProps) {
           ))}
         </Stack>
       </nav>
-      <Stack gap={2} className="mt-auto lg:max-xl:hidden">
+      <Stack gap="sm" className="mt-auto lg:max-xl:hidden">
         <ProgressBar value={62} label={projectTrackerDemoCopy.sprintLabel} />
         <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
           {projectTrackerDemoCopy.sprintCaption}
@@ -111,8 +111,8 @@ function AgentButton({ open, panelId, onToggle }: AgentToggle) {
 
 export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentToggle }) {
   return (
-    <Stack gap={1}>
-      <Stack direction="horizontal" gap={2} className="min-h-bar items-center justify-between surface-pad-inline">
+    <Stack gap="tight">
+      <Stack direction="horizontal" gap="sm" className="min-h-bar items-center justify-between surface-pad-inline">
         <Text as="span" className="content-shrink truncate text-dense" data-hero-crumb="">
           <Text as="span" variant="muted" className="max-md:hidden">
             {projectTrackerDemoCopy.brand} /{" "}
@@ -121,7 +121,7 @@ export function HeroTopBar({ page, onPage, agent }: NavProps & { agent: AgentTog
             {copy.pages[page]}
           </Text>
         </Text>
-        <Stack direction="horizontal" gap={3} className="shrink-0 items-center">
+        <Stack direction="horizontal" gap="md" className="shrink-0 items-center">
           <AgentButton {...agent} />
           <LivePulse />
           <HeroAvatar initials={projectTrackerDemoCopy.initials} />

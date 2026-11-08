@@ -22,7 +22,7 @@ type SceneStatus = (typeof scrollScenesCopy.status)[keyof typeof scrollScenesCop
 
 function Caption({ step, title, children }: { step: string; title: string; children: string }) {
   return (
-    <Stack gap={2} className="content-shrink">
+    <Stack gap="sm" className="content-shrink">
       <Text variant="muted" className="trim-margin! text-caption">
         {step}
       </Text>
@@ -34,7 +34,7 @@ function Caption({ step, title, children }: { step: string; title: string; child
 
 function Visual({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <Stack gap={3} aria-hidden="true" inert data-demo-scene-visual={id} className={VISUAL_CLASS}>
+    <Stack gap="md" aria-hidden="true" inert data-demo-scene-visual={id} className={VISUAL_CLASS}>
       {children}
     </Stack>
   );
@@ -42,8 +42,8 @@ function Visual({ id, children }: { id: string; children: React.ReactNode }) {
 
 function TaskRow({ name, owner, status }: { name: string; owner: string; status: SceneStatus }) {
   return (
-    <Stack direction="horizontal" gap={3} className="content-shrink items-center justify-between border-b border-border rule-gap last:trim-pad-bottom">
-      <Stack gap={1} className="content-shrink">
+    <Stack direction="horizontal" gap="md" className="content-shrink items-center justify-between border-b border-border rule-gap last:trim-pad-bottom">
+      <Stack gap="tight" className="content-shrink">
         <Text className="trim-margin! truncate font-medium">{name}</Text>
         <Text variant="muted" className="trim-margin! truncate text-caption">
           {owner}
@@ -167,14 +167,14 @@ export function ScrollScenesLooksDemo() {
         children: (
           <ThemeScope identity={scene.id}>
             <Visual id={scene.id}>
-              <Stack direction="horizontal" gap={2} className="items-center justify-between">
+              <Stack direction="horizontal" gap="sm" className="items-center justify-between">
                 <Text className="trim-margin! font-semibold">{product}</Text>
                 <Badge variant="secondary">{scene.badge}</Badge>
               </Stack>
               <Text variant="muted" className="trim-margin!">
                 {tagline}
               </Text>
-              <Stack direction="horizontal" gap={2}>
+              <Stack direction="horizontal" gap="sm">
                 <Button size="sm">{save}</Button>
                 <Button size="sm" variant="outline">
                   {cancel}
@@ -201,13 +201,13 @@ export function ScrollScenesPricingDemo() {
         ),
         children: (
           <Visual id={plan.id}>
-            <Stack direction="horizontal" gap={2} className="items-baseline">
+            <Stack direction="horizontal" gap="sm" className="items-baseline">
               <Text className="text-offer-price trim-margin!">{plan.price}</Text>
               <Text variant="muted" className="trim-margin!">
                 {scrollScenesCopy.pricing.period}
               </Text>
             </Stack>
-            <Stack gap={1}>
+            <Stack gap="tight">
               {plan.features.map((feature) => (
                 <Text key={feature} className="trim-margin! text-dense">
                   {feature}

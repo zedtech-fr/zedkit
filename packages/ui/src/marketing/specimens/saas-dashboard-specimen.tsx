@@ -36,7 +36,7 @@ function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
         <Text variant="muted">{messages.description}</Text>
       </CardHeader>
       <CardContent>
-        <Stack gap={4} className="content-shrink">
+        <Stack gap="lg" className="content-shrink">
           <div className="grid content-shrink grid-pair gap-stack-md">
             {messages.stats.map((stat) => (
               <div key={stat.label} className="content-shrink">
@@ -45,8 +45,8 @@ function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
               </div>
             ))}
           </div>
-          <Stack gap={1} role="group" aria-label={messages.quotasAriaLabel}>
-            <Stack direction="horizontal" gap={2} className="flex-wrap justify-between">
+          <Stack gap="tight" role="group" aria-label={messages.quotasAriaLabel}>
+            <Stack direction="horizontal" gap="sm" className="flex-wrap justify-between">
               <Text as="span" className="text-dense font-medium">
                 {messages.quotaLabel}
               </Text>
@@ -93,7 +93,7 @@ function SaasInvitePopover({
           }}
         >
           <Text className="font-medium">{messages.inviteTitle}</Text>
-          <Stack gap={1}>
+          <Stack gap="tight">
             <Label htmlFor={emailId}>{messages.emailLabel}</Label>
             <Input
               id={emailId}
@@ -126,7 +126,7 @@ function SaasTeamCard({
   return (
     <Card className="content-shrink">
       <CardHeader>
-        <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center justify-between">
           <Heading level={4}>{messages.teamHeading}</Heading>
           <SaasInvitePopover messages={messages} onInvite={onInvite} />
         </Stack>
@@ -155,7 +155,7 @@ export function SaasDashboardSpecimen({ className, messages = specimenMessagesEn
   const [status, setStatus] = useState("");
 
   return (
-    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="saas-dashboard-specimen" data-specimen-domain="saas-dashboard">
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="saas-dashboard-specimen" data-specimen-domain="saas-dashboard">
       <SaasOverviewCard messages={messages} />
       <SaasTeamCard
         messages={messages}

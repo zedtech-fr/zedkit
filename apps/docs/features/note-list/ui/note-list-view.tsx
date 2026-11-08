@@ -28,7 +28,7 @@ export function NoteListView({ port, copy }: NoteListViewProps) {
   const notes = state.notes;
 
   return (
-    <Stack gap={4} className="mx-auto w-full max-w-narrow px-page-gutter py-section-sm">
+    <Stack gap="lg" className="mx-auto w-full max-w-narrow px-page-gutter py-section-sm">
       <Heading level={1}>{copy.title}</Heading>
       {notes === null ? (
         <Text variant="muted">{copy.loading}</Text>
@@ -53,7 +53,7 @@ export function NoteListView({ port, copy }: NoteListViewProps) {
               void port.add(title).then((note) => dispatch({ type: "add-ok", note }));
             }}
           >
-            <Stack gap={2}>
+            <Stack gap="sm">
               <Label htmlFor="note-list-title">{copy.label}</Label>
               <Input
                 id="note-list-title"

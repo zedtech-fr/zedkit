@@ -91,7 +91,7 @@ export function ConversationMessages(props: ConversationMessagesProps) {
   const surfaceNotice = props.noticeInComposerFooter !== true;
   return (
     <Stack
-      gap={4}
+      gap="lg"
       className={cn(
         "content-shrink",
         hidden && (props.compact && !props.narrowSplit ? "hidden" : "max-lg:hidden"),
@@ -138,7 +138,7 @@ export function ConversationComposer(props: {
       ? { resendPrompt: props.session.proposal.prompt }
       : {};
   return (
-    <Stack gap={2} className="content-shrink shrink-0" data-assistant-composer="">
+    <Stack gap="sm" className="content-shrink shrink-0" data-assistant-composer="">
       <BriefForm
         value={props.brief}
         onValue={props.onBrief}
@@ -169,7 +169,7 @@ export function ConversationPane(props: {
   inputRef: RefObject<HTMLTextAreaElement | null>;
 }) {
   return (
-    <Stack gap={4} className="content-shrink">
+    <Stack gap="lg" className="content-shrink">
       <ConversationMessages
         view={props.view}
         session={props.session}
@@ -216,7 +216,7 @@ export function PreviewPane(props: {
     !compact && !props.proposal && "lg:hidden",
   );
   return (
-    <Stack gap={4} className={className} data-assistant-pane="preview">
+    <Stack gap="lg" className={className} data-assistant-pane="preview">
       {props.proposal ? (
         <ProposalCard
           proposal={props.proposal}
@@ -231,7 +231,7 @@ export function PreviewPane(props: {
             : {})}
         />
       ) : (
-        <Stack gap={3}>
+        <Stack gap="md">
           <Text variant="muted" typeRole="label">
             {copy.views.draftNow}
           </Text>

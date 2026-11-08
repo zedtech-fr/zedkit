@@ -56,7 +56,7 @@ function Block({
 /** What the code above produces, labelled as an example so it is never mistaken for a control of the site. */
 function RenderedExample({ children }: { children: ReactNode }) {
   return (
-    <Stack gap={2} role="group" aria-label={adoptionCopy.result.label} data-adoption-result="">
+    <Stack gap="sm" role="group" aria-label={adoptionCopy.result.label} data-adoption-result="">
       <Text as="span" className="text-caption font-medium text-muted-foreground">
         {adoptionCopy.result.label}
       </Text>
@@ -82,7 +82,7 @@ function CompanionFiles({ count, children }: { count: number; children: ReactNod
           {adoptionCopy.companionsHint}
         </Text>
       </summary>
-      <Stack gap={3} className="surface-pad-compact trim-pad-top">
+      <Stack gap="md" className="surface-pad-compact trim-pad-top">
         {children}
       </Stack>
     </details>
@@ -144,8 +144,8 @@ function Step({
       <Text as="span" aria-hidden className="pt-step font-mono text-dense text-muted-foreground">
         {index + 1}
       </Text>
-      <Stack gap={3} className="content-shrink">
-        <Stack gap={1}>
+      <Stack gap="md" className="content-shrink">
+        <Stack gap="tight">
           <Heading level={4} as="h3" className="text-step-heading">
             {words.title}
           </Heading>
@@ -179,7 +179,7 @@ export function ModeView({
 }) {
   const firstCommandStep = mode.steps.findIndex((step) => step.blocks.some((block) => block.kind === "command"));
   return (
-    <Stack gap={6} data-adoption-mode={mode.id}>
+    <Stack gap="list" data-adoption-mode={mode.id}>
       <dl data-term-row="" className={cn("trim-margin grid gap-x-meta gap-y-stack-sm text-muted-foreground sm:items-baseline", summaryClassName)}>
         <dt className="trim-margin font-normal text-foreground">{adoptionCopy.youGet}</dt>
         <dd className="trim-margin content-shrink">{adoptionCopy.gives[mode.gives]}</dd>

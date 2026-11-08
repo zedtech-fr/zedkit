@@ -21,10 +21,10 @@ export function SiteMaintainerFooter({
       className="mt-auto border-t border-border"
     >
       <Container width="wide">
-        <Stack gap={4} className="py-section-sm">
+        <Stack gap="lg" className="py-section-sm">
           <Text variant="muted" as="p">Maintained by ZED TECH</Text>
           <Separator />
-          <Stack direction="horizontal" gap={4} className="flex-wrap">
+          <Stack direction="horizontal" gap="lg" className="flex-wrap">
             {links.map((item) => (
               <Link
                 key={item.href}

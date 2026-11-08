@@ -361,7 +361,7 @@ describe("primitives", () => {
     expect(screen.getByText("Footer text.")).not.toBeNull();
   });
 
-  it("spaces card slots from theme tokens", () => {
+  it("spaces card slots from the sizing recipe", () => {
     render(
       <Card>
         <CardHeader>
@@ -374,11 +374,12 @@ describe("primitives", () => {
     const title = screen.getByText("Server");
     const root = title.parentElement?.parentElement;
     expect(root?.getAttribute("data-slot")).toBe("card");
-    expect(root?.className).toContain("rounded-xl");
-    expect(title.parentElement?.className).toContain("p-card-padding");
-    expect(title.parentElement?.className).toContain("space-y-card-stack");
-    expect(screen.getByText("Body text.").className).toContain("p-card-padding");
-    expect(screen.getByText("Footer text.").className).toContain("p-card-padding");
+    expect(root?.className).toContain("rounded-(--zk-card-radius)");
+    // Padding/gap come from the card recipe rules in styles.css
+    // (computed values are proven in preview/cascade.spec.ts).
+    expect(title.parentElement?.getAttribute("data-slot")).toBe("card-header");
+    expect(screen.getByText("Body text.").getAttribute("data-slot")).toBe("card-content");
+    expect(screen.getByText("Footer text.").getAttribute("data-slot")).toBe("card-footer");
     expect(root?.className).toContain("shadow-md");
     expect(root?.className).not.toMatch(/(^|\s)shadow(\s|$)/);
   });

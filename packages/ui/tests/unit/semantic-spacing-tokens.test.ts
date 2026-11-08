@@ -41,10 +41,11 @@ describe("semantic spacing tokens (#798)", () => {
     }
   });
 
-  it("leaves leftover rem aliases in place", () => {
-    // button-gap already migrated to the spacing calc; icon-control is the rem leftover.
+  it("has no leftover rem aliases for spacing steps", () => {
     expect(css).toMatch(/--spacing-button-gap:\s*calc\(var\(--spacing\)\s*\*\s*2\);/);
-    expect(css).toMatch(/--spacing-icon-control:\s*1rem;/);
+    expect(css).not.toContain("--spacing-icon-control");
+    expect(css).not.toContain("--spacing-button-inline:");
+    expect(css).not.toContain("--spacing-button-inline-lg");
   });
 
   it("wires control height and block aliases to --spacing", () => {

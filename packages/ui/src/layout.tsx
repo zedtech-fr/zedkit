@@ -16,33 +16,26 @@ const stackVariants = cva("flex", {
       horizontal: "flex-row items-center",
     },
     gap: {
-      1: "gap-1",
-      2: "gap-stack-sm",
-      3: "gap-stack-md",
-      4: "gap-stack-lg",
-      5: "gap-5",
-      6: "gap-6",
-      7: "gap-7",
-      8: "gap-8",
+      tight: "gap-stack-tight",
       sm: "gap-stack-sm",
       md: "gap-stack-md",
       lg: "gap-stack-lg",
+      prose: "gap-prose",
+      list: "gap-list",
+      blocks: "gap-blocks",
     },
   },
   defaultVariants: {
     direction: "vertical",
-    gap: 4,
+    gap: "lg",
   },
 });
 
 export type StackProps = React.ComponentProps<"div"> &
   VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
-    /**
-     * `sm` `md` `lg` are the role names (steps 2, 3 and 4).
-     * Numeric steps remain until a major and map to the same classes.
-     */
-    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | "sm" | "md" | "lg";
+    /** Role-named stack steps (tight/sm/md/lg, then prose/list/blocks). */
+    gap?: "tight" | "sm" | "md" | "lg" | "prose" | "list" | "blocks";
   };
 
 function Stack({ direction, gap, className, ...props }: StackProps) {

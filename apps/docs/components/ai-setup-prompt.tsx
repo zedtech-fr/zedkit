@@ -57,7 +57,7 @@ function CopyPromptButton({ text }: { text: string }) {
 export function AiSetupPrompt() {
   return (
     <Stack
-      gap={2}
+      gap="sm"
       data-setup-prompt=""
       className={
         // not-prose is a fumadocs escape hatch, not a Tailwind utility.
@@ -72,7 +72,7 @@ export function AiSetupPrompt() {
         </a>
         ):
       </Text>
-      <Stack gap={2} className="content-shrink sm:flex-row sm:items-start sm:justify-between">
+      <Stack gap="sm" className="content-shrink sm:flex-row sm:items-start sm:justify-between">
         <pre className="content-shrink flex-1 overflow-x-auto rounded-md bg-background px-control-inline surface-pad-block-sm font-mono text-dense break-words whitespace-pre-wrap">
           {AI_SETUP_MINI_PROMPT}
         </pre>

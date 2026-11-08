@@ -342,7 +342,7 @@ export function Gallery() {
             <TabsContent value="two">Second panel.</TabsContent>
           </Tabs>
           <Section title="Team" description="Who can access the workspace.">
-            <Stack direction="horizontal" gap={2}>
+            <Stack direction="horizontal" gap="sm">
               <Badge>Ada</Badge>
               <Badge variant="secondary">Bob</Badge>
             </Stack>

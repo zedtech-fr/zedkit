@@ -1491,16 +1491,17 @@ import { Surface } from "@zedtech/zedkit-ui";
 - When to use: For self-contained blocks (panels, summaries, previews).
 - When not to use: For page-level layout — use AppShell and Stack instead.
 - A11y: Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` mirrors the same tokens so async content lands without shifting.
-- See also: `Stack content and group titled sections`
+- See also: `Stack content and group titled sections`, `Constrain page width and run sections edge to edge`
 - Examples: Simple, With footer
 - Registry: card
-- Troubleshooting: Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
+- Troubleshooting: Cramped content — inner padding comes from the card recipe (`--zk-card-pad`; `trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
+- Sizing: `size="sm" | "lg"` picks a recipe; inside a `zk-query` slot (see Container `query`) padding, header gap, radius and title/body type step up in wide slots (30rem). No slot means the base recipe — never viewport-driven. Recipe custom properties (`--zk-card-pad`, `--zk-card-stack`, `--zk-card-radius`, `--zk-card-title`, `--zk-card-body`) and utilities on the parts are the override seams.
 
 ```ts
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedtech/zedkit-ui";
-<Card><CardHeader><CardTitle>Server</CardTitle>
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container } from "@zedtech/zedkit-ui";
+<Container query width="full" gutter={false}><Card size="sm"><CardHeader><CardTitle>Server</CardTitle>
 <CardDescription>Connection details.</CardDescription></CardHeader>
-<CardContent>Body.</CardContent></Card>
+<CardContent>Body.</CardContent></Card></Container>
 ```
 
 ```ts
@@ -1516,7 +1517,7 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
-- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap.
+- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named (`tight`, `sm`, `md`, `lg`, `prose`, `list`, `blocks`); numeric steps were removed. Bleed sections carry a sizing recipe: in a wide `zk-query` slot their rhythm steps up one section step.
 - When to use: For all kit-page layout instead of hand-written flex.
 - When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.
 - See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
@@ -1526,7 +1527,7 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
 <SectionScroll>
   <Section title="Team" description="Who can access.">
-    <Stack direction="horizontal" gap={2}>...</Stack>
+    <Stack direction="horizontal" gap="sm">...</Stack>
   </Section>
   <Section snap="none" title="Long band">...</Section>
 </SectionScroll>
@@ -1539,8 +1540,8 @@ import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: Container
 - Audience: Developers building marketing and docs pages with capped measures and full-bleed bands.
-- Purpose: Named container widths and edge-to-edge section bands from the layout token scale.
-- When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.
+- Purpose: Named container widths and edge-to-edge section bands from the layout token scale. `query` also establishes the container as the sizing slot (`zk-query` marker) that container-aware components (Card, Section) adapt to — the same class works on any grid cell or layout slot without a Container.
+- When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings. Add `query` where descendants should size to their allocated space, not the viewport.
 - When not to use: For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.
 - See also: `Stack content and group titled sections`, `Group content in a card section`
 - A11y: Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band. A string `title` names the `<section>` (`aria-label`); a `description` still renders when there is no title.

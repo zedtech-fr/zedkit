@@ -197,8 +197,7 @@
    * Spacing: a class names a role. The number lives in the value
    * (`calc(var(--spacing) * N)`), so an identity's `--spacing` still
    * changes density. Default scale steps (`p-4`, `gap-2`, `text-sm`) are
-   * deprecated. Rem aliases below stay so copied CSS keeps resolving;
-   * a shared design value uses a role (`px-field-pad`, `px-button-pad`,
+   * deprecated. A shared design value uses a role (`px-field-pad`, `px-button-pad`,
    * `gap-stack-sm` / `md` / `lg`). `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
    *
@@ -238,19 +237,16 @@
   --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));
   --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
   --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
-  --spacing-button-inline: 1rem;
   --spacing-button-inline-sm: calc(var(--spacing) * 3);
-  --spacing-button-inline-lg: 2rem;
   --spacing-button-gap: calc(var(--spacing) * 2);
-  /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-icon. Kept so copied CSS and existing class names still work. */
-  --spacing-icon-control: 1rem;
   /* Minimum touch target (WCAG 2.5.5). */
   --spacing-tap: 2.75rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
-   * across components; per-component `--spacing-<component>-*` aliases
-   * only where independent change is plausible. Do not mint a new
-   * same-value alias — reuse the shared token.
+   * across components; per-component `--spacing-<component>-*` tokens
+   * where the purpose is distinct. Distinct purposes may share a value
+   * today and diverge tomorrow — judge a token by meaning, ownership
+   * and independent customizability, not by value uniqueness.
    */
   --spacing-icon-sm: calc(var(--spacing) * 3.5);
   --spacing-checkbox: calc(var(--spacing) * 4);
@@ -995,26 +991,11 @@ section[data-gallery-section].border-b:last-child {
  * unlayered CSS beat every consumer override.)
  */
 
-/* Identity specimen headline. Display face, one step under the section role. */
-@utility text-specimen-title {
-  font-family: var(--zk-font-display);
-  font-size: var(--text-lg);
-  line-height: var(--text-lg--line-height);
-}
 
-/* A level-2 heading pulled down to the specimen size. */
-@utility text-compact-heading {
-  font-size: var(--text-lg);
-  line-height: var(--text-lg--line-height);
-}
 
-/* A big count. One line, semibold, tight tracking. */
-@utility text-figure {
-  font-size: var(--text-2xl);
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
+
+
+
 
 /* A short logo word beside a mark. */
 @utility text-wordmark {
@@ -1031,18 +1012,9 @@ section[data-gallery-section].border-b:last-child {
   letter-spacing: -0.02em;
 }
 
-/* A product name in a specimen, in the display face. */
-@utility text-product-name {
-  font-family: var(--zk-font-display);
-  font-size: var(--text-xl);
-  line-height: var(--text-xl--line-height);
-}
 
-/* A price in a story. The text's own line stays. */
-@utility text-offer-price {
-  font-size: var(--text-3xl);
-  font-weight: 600;
-}
+
+
 
 /* A dashboard stat. The text's own line stays. */
 @utility text-stat {
@@ -1050,11 +1022,7 @@ section[data-gallery-section].border-b:last-child {
   font-weight: 600;
 }
 
-/* A scene heading pulled up to the stat size. */
-@utility text-scene-title {
-  font-size: var(--text-2xl);
-  line-height: var(--text-2xl--line-height);
-}
+
 
 /* A gallery section title. */
 @utility text-gallery-heading {
@@ -1102,40 +1070,20 @@ section[data-gallery-section].border-b:last-child {
   }
 }
 
-/* A small step heading. Same size as body copy, one line of that size. */
-@utility text-step-heading {
-  font-size: var(--text-base);
-  line-height: var(--text-base--line-height);
-}
 
-/* Docs purpose line. Body size until the small breakpoint, then a larger size. The text's own line stays. */
-@utility text-purpose {
-  @media (min-width: 40rem) {
-    font-size: var(--text-lg);
-  }
-}
 
-/* A decorative brand word. The text's own line stays. */
-@utility text-brand-word {
-  font-size: var(--text-xl);
-  font-weight: 600;
-}
 
-/* A demo section heading pulled to the brand-word size. */
-@utility text-demo-heading {
-  font-size: var(--text-xl);
-  line-height: var(--text-xl--line-height);
-}
 
-/* Card title in a home preview. The card title's own line, weight, and tracking stay. */
-@utility text-preview-title {
-  font-size: var(--text-lg);
-}
+
+
+
+
+
 
 /* The sentence under a marketing hero. The size is the compact heading size. The line stays the body line. */
 @utility text-hero-lead {
   font-size: var(--text-lg);
-  line-height: var(--zk-body-leading, 1.55);
+  line-height: var(--zk-body-leading, 1.6);
 }
 
 /* Marketing hero promise. Grows one step from the small breakpoint. */
@@ -1688,9 +1636,7 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility w-preview {
   width: calc(var(--spacing) * 28);
 }
-@utility w-panel {
-  width: calc(var(--spacing) * 80);
-}
+
 @utility min-w-name {
   min-width: calc(var(--spacing) * 36);
 }
@@ -1713,10 +1659,7 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pull-back {
   margin-top: calc(var(--spacing) * -6);
 }
-/* Space above a total. */
-@utility mt-figure {
-  margin-top: calc(var(--spacing) * 4);
-}
+
 /* Optical align of a step index beside its title. */
 @utility pt-step {
   padding-top: calc(var(--spacing) * 0.5);
@@ -1861,13 +1804,7 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
     margin-inline-end: calc(var(--spacing) * -1.5);
   }
 }
-@utility space-y-sections {
-  :where(& > :not(:last-child)) {
-    --tw-space-y-reverse: 0;
-    margin-block-start: calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));
-    margin-block-end: calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)));
-  }
-}
+
 @utility space-y-stack-sm {
   :where(& > :not(:last-child)) {
     --tw-space-y-reverse: 0;
@@ -1930,19 +1867,14 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility pin-top {
   top: 0;
 }
-/* Inset of a floating control from the screen or panel edge. */
-@utility top-float {
-  top: calc(var(--spacing) * 4);
-}
+
 @utility right-float {
   right: calc(var(--spacing) * 4);
 }
 @utility bottom-float {
   bottom: calc(var(--spacing) * 4);
 }
-@utility left-float {
-  left: calc(var(--spacing) * 4);
-}
+
 /* Centers a control on the block axis of its field. */
 @utility pin-center-y {
   top: 50%;

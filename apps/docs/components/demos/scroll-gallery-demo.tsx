@@ -34,7 +34,7 @@ export function ScrollGalleryIdentityDemo() {
 export function ScrollGalleryChipsDemo() {
   return (
     <ScrollGallery data-example-width="">
-      <Stack direction="horizontal" gap={2} className="w-max">
+      <Stack direction="horizontal" gap="sm" className="w-max">
         <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#alpha">
           Alpha
         </a>

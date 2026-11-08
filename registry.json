@@ -242,11 +242,8 @@
           "spacing-control-height": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
           "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8))",
           "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10))",
-          "spacing-button-inline": "1rem",
           "spacing-button-inline-sm": "calc(var(--spacing) * 3)",
-          "spacing-button-inline-lg": "2rem",
           "spacing-button-gap": "calc(var(--spacing) * 2)",
-          "spacing-icon-control": "1rem",
           "spacing-tap": "2.75rem",
           "spacing-icon-sm": "calc(var(--spacing) * 3.5)",
           "spacing-checkbox": "calc(var(--spacing) * 4)",
@@ -1131,9 +1128,7 @@
           "spacing-control-height": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
           "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8))",
           "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10))",
-          "spacing-button-inline": "1rem",
           "spacing-button-inline-sm": "calc(var(--spacing) * 3)",
-          "spacing-button-inline-lg": "2rem",
           "spacing-button-gap": "calc(var(--spacing) * 2)",
           "ring-width-control": "2px",
           "ring-offset-width": "2px"
@@ -1931,12 +1926,7 @@
           "path": "registry/ui/icon-label.tsx",
           "type": "registry:ui"
         }
-      ],
-      "cssVars": {
-        "theme": {
-          "spacing-icon-control": "1rem"
-        }
-      }
+      ]
     }
   ]
 }

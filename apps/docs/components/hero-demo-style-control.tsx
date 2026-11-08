@@ -33,7 +33,7 @@ export function HeroDemoStyleControl({
   const labelId = useId();
   return (
     <Stack
-      gap={2}
+      gap="sm"
       className="content-shrink sm:flex-row sm:flex-wrap sm:items-center"
       role="group"
       aria-labelledby={labelId}
@@ -42,7 +42,7 @@ export function HeroDemoStyleControl({
       <Text id={labelId} variant="muted" className={`${HOME_METADATA_TEXT_CLASS} shrink-0`}>
         {heroDemoStyleCopy.display}
       </Text>
-      <Stack gap={2} data-hero-demo-fields="" className="content-shrink">
+      <Stack gap="sm" data-hero-demo-fields="" className="content-shrink">
         <HeroDemoIdentitySelect look={look} onLook={onLook} />
         <HeroDemoModeSelect modePin={modePin} onModePin={onModePin} />
         {showPreview ? <HeroDemoPreviewSelect preview={preview} onPreview={onPreview} className="shrink-0" /> : null}

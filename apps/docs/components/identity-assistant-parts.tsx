@@ -63,7 +63,7 @@ export function AssistantNoticeBubble({ notice }: { notice: Notice }) {
   if (notice.kind === "unavailable") return null;
   return (
     <Stack
-      gap={1}
+      gap="tight"
       className="rounded-2xl rounded-tl-sm border border-border bg-muted pad-row text-dense"
       data-assistant-notice=""
       role="status"
@@ -104,7 +104,7 @@ export function BriefForm({
   const left = LIMITS.prompt - value.length;
   const placeholder = useRotatingPlaceholder(!refining);
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <PromptInput
         id="identity-assistant-brief"
         ref={inputRef}
@@ -165,7 +165,7 @@ export function ViewSwitch({
   return (
     <Stack
       direction="horizontal"
-      gap={2}
+      gap="sm"
       role="group"
       aria-label={copy.views.label}
       data-assistant-views=""
@@ -242,7 +242,7 @@ function ProposalApplyRow({
   return (
     <Stack
       direction="horizontal"
-      gap={2} {...(pinned ? { "data-proposal-apply": "" } : {})}
+      gap="sm" {...(pinned ? { "data-proposal-apply": "" } : {})}
       className={cn("flex-wrap overflow-visible", pinned && "bar-scrim sticky pin-bottom surface-pad-block-sm backdrop-blur")}
     >
       <Button type="button" onClick={() => onUse(tokens)} disabled={busy}>
@@ -305,7 +305,7 @@ export function ProposalCard({
   const rows = useMemo(() => tokenDiff(current, repaired.tokens), [current, repaired.tokens]);
   const domain = useMemo(() => specimenDomainFromBrief(domainBrief), [domainBrief]);
   return (
-    <Stack gap={3} role="region" aria-label={copy.proposal.title} aria-busy={busy || undefined} data-assistant-proposal="" data-proposal-inset={proposalInset} className={cn("overflow-visible", className)}>
+    <Stack gap="md" role="region" aria-label={copy.proposal.title} aria-busy={busy || undefined} data-assistant-proposal="" data-proposal-inset={proposalInset} className={cn("overflow-visible", className)}>
       <Text as="span" typeRole="label" className="font-semibold text-foreground">
         {copy.proposal.title}
       </Text>

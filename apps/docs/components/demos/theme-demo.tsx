@@ -15,13 +15,13 @@ function WeeklyCard({ scope, label }: { scope?: "dark"; label: string }) {
           <CardTitle>{themeCopy.total}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Stack gap={3}>
-            <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+          <Stack gap="md">
+            <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
               <Badge variant="success">{themeCopy.up}</Badge>
               <Badge variant="destructive">{themeCopy.late}</Badge>
               <Badge variant="outline">{themeCopy.range}</Badge>
             </Stack>
-            <Stack direction="horizontal" gap={2} className="flex-wrap">
+            <Stack direction="horizontal" gap="sm" className="flex-wrap">
               <Button size="sm">{themeCopy.open}</Button>
               <Button size="sm" variant="outline">
                 {themeCopy.export}
@@ -59,12 +59,12 @@ export function ThemeTokensDemo() {
   const scope = dark ? DARK_CLASS : "";
   return (
     <Stack className={`${scope} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
-      <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
-        <Stack direction="horizontal" gap={2} className="items-center justify-between">
+      <Stack gap="md" className="content-shrink rounded-lg border border-border surface-pad-md">
+        <Stack direction="horizontal" gap="sm" className="items-center justify-between">
           <Text as="span" className="font-medium">
             {themeCopy.releases}
           </Text>
-          <Stack direction="horizontal" gap={2} className="items-center">
+          <Stack direction="horizontal" gap="sm" className="items-center">
             <Switch id="theme-tokens-dark" checked={dark} onCheckedChange={setDark} />
             <Label htmlFor="theme-tokens-dark">{themeCopy.dark}</Label>
           </Stack>
@@ -95,8 +95,8 @@ export function ThemeToggleDemo() {
   const scope = dark ? DARK_CLASS : "";
   return (
     <Stack className={`${scope} content-shrink rounded-lg bg-background surface-pad-compact text-foreground`}>
-      <Stack gap={3} className="content-shrink rounded-lg border border-border surface-pad-md">
-        <Stack gap={1}>
+      <Stack gap="md" className="content-shrink rounded-lg border border-border surface-pad-md">
+        <Stack gap="tight">
           <Text as="span" className="font-medium">
             {themeCopy.appearance}
           </Text>

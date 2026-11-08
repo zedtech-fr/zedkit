@@ -41,15 +41,15 @@ const seed: ItemRow[] = [
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full surface-pad-compact">
-      <Stack gap={1}>
+    <Stack gap="lg" className="h-full surface-pad-compact">
+      <Stack gap="tight">
         <Text className="font-semibold">Harbor Studio</Text>
         <Text variant="muted" className="text-caption">
           Admin
         </Text>
       </Stack>
       <nav aria-label="Main">
-        <Stack gap={1}>
+        <Stack gap="tight">
           <Button type="button" variant="secondary" className="w-full justify-start" aria-current="page">
             Projects
           </Button>
@@ -67,7 +67,7 @@ function Sidebar() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-end surface-pad-inline surface-pad-block-sm">
+    <Stack direction="horizontal" gap="sm" className="justify-end surface-pad-inline surface-pad-block-sm">
       <Text
         as="span"
         aria-hidden="true"
@@ -95,7 +95,7 @@ export function AdminDashboardPage() {
       id: "actions",
       header: "Actions",
       cell: ({ row }: { row: { original: ItemRow; id: string } }) => (
-        <Stack direction="horizontal" gap={2}>
+        <Stack direction="horizontal" gap="sm">
           <Drawer direction="right">
             <DrawerTrigger asChild>
               <Button variant="outline" size="sm">Edit</Button>

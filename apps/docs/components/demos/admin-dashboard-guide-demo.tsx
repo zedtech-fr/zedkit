@@ -102,15 +102,15 @@ function EditItemDrawer({
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full surface-pad-compact">
-      <Stack gap={1}>
+    <Stack gap="lg" className="h-full surface-pad-compact">
+      <Stack gap="tight">
         <Text className="font-semibold">{adminDashboardGuideCopy.brand}</Text>
         <Text variant="muted" className="text-caption">
           {adminDashboardGuideCopy.product}
         </Text>
       </Stack>
       <nav aria-label={adminDashboardGuideCopy.navAria}>
-        <Stack gap={1}>
+        <Stack gap="tight">
           <Button type="button" variant="secondary" className="w-full justify-start gap-stack-sm" aria-current="page">
             <FolderKanban className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.projects}
@@ -131,7 +131,7 @@ function Sidebar() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-end surface-pad-inline surface-pad-block-sm">
+    <Stack direction="horizontal" gap="sm" className="justify-end surface-pad-inline surface-pad-block-sm">
       <Text
         as="span"
         aria-hidden="true"
@@ -162,7 +162,7 @@ export function AdminDashboardGuideDemo() {
       id: "actions",
       header: adminDashboardGuideCopy.columns.actions,
       cell: ({ row }: { row: { original: ItemRow; id: string } }) => (
-        <Stack direction="horizontal" gap={2}>
+        <Stack direction="horizontal" gap="sm">
           <EditItemDrawer
             item={row.original}
             onSave={(next) => {

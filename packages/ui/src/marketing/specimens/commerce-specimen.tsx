@@ -82,8 +82,8 @@ function CommerceInventoryEditor({
   return (
     <Card className="content-shrink">
       <CardContent className="content-offset">
-        <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
-          <Stack gap={1} className="content-shrink flex-1 basis-field">
+        <Stack gap="md" className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
+          <Stack gap="tight" className="content-shrink flex-1 basis-field">
             <Label htmlFor={priceId}>{messages.priceLabel}</Label>
             <Input
               id={priceId}
@@ -92,7 +92,7 @@ function CommerceInventoryEditor({
               onChange={(event) => onPriceChange(Math.max(0, Number.parseInt(event.target.value, 10) || 0))}
             />
           </Stack>
-          <Stack gap={1} className="content-shrink flex-1 basis-field">
+          <Stack gap="tight" className="content-shrink flex-1 basis-field">
             <Label htmlFor={stockId}>{messages.stockLabel}</Label>
             <Input
               id={stockId}
@@ -122,8 +122,8 @@ export function CommerceSpecimen({ className, messages = specimenMessagesEn.comm
   const stockId = "zk-specimen-commerce-stock";
 
   return (
-    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="commerce-specimen" data-specimen-domain="commerce">
-      <Stack gap={1}>
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="commerce-specimen" data-specimen-domain="commerce">
+      <Stack gap="tight">
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </Stack>

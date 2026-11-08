@@ -44,6 +44,14 @@ Adopt in 3 lines:
 import { Button } from "@zedtech/zedkit-ui"; // see CATALOG.md for every component
 ```
 
+Container-aware sizing: mark a layout slot with `Container`'s `query`
+prop (or the `zk-query` class on any grid cell/slot) and adaptive
+components size to their allocated space, not the viewport. `Card`
+takes `size="sm" | "lg"`; each variant's padding, internal gap,
+radius and title/body type step up in wide slots (30rem), compose
+with identity density, and fall back to the base recipe with no
+marked ancestor. Controls keep explicit sizes and target floors.
+
 ## Migration
 
 Ref as a prop, and kit messages: before/after, search patterns, and a

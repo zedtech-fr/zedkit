@@ -18,7 +18,7 @@ const otherWays = homeCopy.getStarted.otherWays;
 /** The two ways in that are not the install panel. */
 function HomeOtherWays() {
   return (
-      <Stack gap={3} className="content-shrink" role="group" aria-label={otherWays.label} data-home-other-ways="">
+      <Stack gap="md" className="content-shrink" role="group" aria-label={otherWays.label} data-home-other-ways="">
         <Text variant="muted" typeRole="label">
           {otherWays.label}
         </Text>
@@ -27,11 +27,11 @@ function HomeOtherWays() {
             <Stack
               key={way.title}
               direction="horizontal"
-              gap={3}
+              gap="md"
               className="flex-wrap items-center justify-between surface-pad-block"
               data-home-way=""
             >
-              <Stack gap={1} className="content-shrink">
+              <Stack gap="tight" className="content-shrink">
                 <Text className="font-medium">{way.title}</Text>
                 <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
                   {way.body}
@@ -85,7 +85,7 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack gap={4} className="content-shrink">
+      <Stack gap="lg" className="content-shrink">
         <StickyAside
           id="install-or-copy"
           data-scroll-anchor=""
@@ -95,7 +95,7 @@ export function HomeGetStartedSection({ npmPackage }: { npmPackage: string }) {
             <AdoptionPanelView plan={plan} summaryClassName={HOME_PERSUASION_TEXT_CLASS} />
           </StickyAside.Main>
           <StickyAside.Aside asChild>
-            <Stack gap={4} className="content-shrink">
+            <Stack gap="lg" className="content-shrink">
               <HomeResultCard />
               <GlassSurface padding="md" className="content-shrink">
                 <HomeOtherWays />

@@ -35,7 +35,7 @@ function useDraft() {
 
 function RegionField({ id, value, onChange }: { id: string; value: string; onChange: (value: string) => void }) {
   return (
-    <Stack gap={1}>
+    <Stack gap="tight">
       <Label htmlFor={id}>{copy.region}</Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger id={id} className="w-full">
@@ -56,16 +56,16 @@ export function HeroSettingsPage() {
   const digestId = useId();
   const { draft, saved, edit, save } = useDraft();
   return (
-    <Stack gap={4} className="content-shrink">
+    <Stack gap="lg" className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
-      <Stack gap={4} className="content-shrink" data-hero-block="" data-beat={1}>
-        <Stack gap={1}>
+      <Stack gap="lg" className="content-shrink" data-hero-block="" data-beat={1}>
+        <Stack gap="tight">
           <Label htmlFor={nameId}>{copy.workspace}</Label>
           <Input id={nameId} value={draft.name} onChange={(event) => edit({ name: event.target.value })} />
         </Stack>
         <RegionField id={regionId} value={draft.region} onChange={(region) => edit({ region })} />
-        <Stack direction="horizontal" gap={3} className="items-center justify-between">
-          <Stack gap={1} className="content-shrink">
+        <Stack direction="horizontal" gap="md" className="items-center justify-between">
+          <Stack gap="tight" className="content-shrink">
             <Label htmlFor={digestId}>{copy.digest}</Label>
             <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
               {copy.digestHelp}
@@ -73,7 +73,7 @@ export function HeroSettingsPage() {
           </Stack>
           <Switch id={digestId} checked={draft.digest} onCheckedChange={(digest) => edit({ digest })} data-hero-switch="" />
         </Stack>
-        <Stack direction="horizontal" gap={3} className="items-center">
+        <Stack direction="horizontal" gap="md" className="items-center">
           <Button type="button" onClick={save}>
             {copy.save}
           </Button>

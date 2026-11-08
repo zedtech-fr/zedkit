@@ -21,7 +21,7 @@ export function IdentityDockExportBlock({ tokens }: { tokens: IdentityTokens }) 
 
   return (
     <Stack
-      gap={3}
+      gap="md"
       className="shrink-0 border-t border-border surface-pad-compact"
       data-slot="identity-dock-export"
     >

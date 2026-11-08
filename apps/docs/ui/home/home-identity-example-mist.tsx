@@ -52,7 +52,7 @@ function useProjectSettings() {
 /** Save is the one primary action; Discard is its quiet pair. Deleting lives apart (see `DeleteProject`). */
 function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: () => void }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap">
       <Button type="button" onClick={onSave}>
         {copy.save}
       </Button>
@@ -98,8 +98,8 @@ export function HomeIdentityExampleMist() {
   return (
     <Card className="content-shrink">
       <CardHeader>
-        <Stack direction="horizontal" gap={2} className="items-start justify-between">
-          <Stack gap={1} className="content-shrink">
+        <Stack direction="horizontal" gap="sm" className="items-start justify-between">
+          <Stack gap="tight" className="content-shrink">
             <Heading level={3} className="text-specimen-title text-balance">
               {copy.heading}
             </Heading>
@@ -109,7 +109,7 @@ export function HomeIdentityExampleMist() {
         </Stack>
       </CardHeader>
       <CardContent>
-        <Stack gap={4} className="content-shrink">
+        <Stack gap="lg" className="content-shrink">
           <HomeIdentityExampleMistControls
             workspaceId={workspaceId}
             regionId={regionId}

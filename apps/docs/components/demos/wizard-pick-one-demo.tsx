@@ -12,7 +12,7 @@ export function WizardPickOneDemo() {
     pickup: wizardCopy.shipping.pickup.title,
   };
   return (
-    <Stack gap={2} className="content-shrink">
+    <Stack gap="sm" className="content-shrink">
       <OptionCards
         multiple={false}
         label={wizardCopy.shippingLabel}

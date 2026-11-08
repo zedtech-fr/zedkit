@@ -12,12 +12,12 @@ export interface AppShellProps {
 export function AppShell({ sidebar, topbar, children, className }: AppShellProps) {
   return (
     <div data-slot="app-shell" className={cn("flex min-h-svh w-full", className)}>
-      <aside className="muted-wash flex w-app-shell-sidebar shrink-0 flex-col border-r max-md:hidden">
+      <aside className="flex w-app-shell-sidebar shrink-0 flex-col border-r muted-wash max-md:hidden">
         {sidebar}
       </aside>
       <div className="flex pane-shrink content-shrink flex-1 flex-col">
         {topbar ? (
-          <header className="bar-scrim sticky pin-top z-header border-b backdrop-blur">{topbar}</header>
+          <header className="sticky pin-top z-header border-b bar-scrim backdrop-blur">{topbar}</header>
         ) : null}
         <main className="pane-shrink flex-1 overflow-y-auto p-app-shell-padding md:p-app-shell-padding-md">{children}</main>
       </div>

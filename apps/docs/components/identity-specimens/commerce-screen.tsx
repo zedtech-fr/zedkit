@@ -5,8 +5,8 @@ import type { CommerceComposition } from "@/components/i18n/identity-specimen-co
 /** Shop: one product leads; price and stock sit beside its name; one action. */
 export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
   return (
-    <Stack gap={3}>
-      <Stack direction="horizontal" gap={3} className="justify-between">
+    <Stack gap="md">
+      <Stack direction="horizontal" gap="md" className="justify-between">
         <Heading level={4} typeRole="cardTitle">
           {copy.brand}
         </Heading>
@@ -23,7 +23,7 @@ export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
           {copy.imageNote}
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={3} className="items-baseline justify-between">
+      <Stack direction="horizontal" gap="md" className="items-baseline justify-between">
         <Heading level={3} typeRole="band">
           {copy.product}
         </Heading>
@@ -31,7 +31,7 @@ export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
           {copy.price}
         </Text>
       </Stack>
-      <Stack gap={2} className="items-start">
+      <Stack gap="sm" className="items-start">
         <Badge variant="success" className="whitespace-nowrap">
           {copy.badge}
         </Badge>

@@ -36,7 +36,7 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
   const shown = useCountUp(value, active);
   return (
     <Card className="content-shrink shadow-none" data-hero-block="" data-beat={beat}>
-      <Stack gap={1} className="surface-pad-compact">
+      <Stack gap="tight" className="surface-pad-compact">
         <Text variant="muted" className="text-caption leading-tight">
           {label}
         </Text>
@@ -85,7 +85,7 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
     .sort(byDue)
     .slice(0, 3);
   return (
-    <Stack gap={2} className="content-shrink" data-hero-block="" data-beat={5}>
+    <Stack gap="sm" className="content-shrink" data-hero-block="" data-beat={5}>
       <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
         {copy.upNext}
       </Text>
@@ -109,7 +109,7 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
 export function HeroOverviewPage({ rows, active }: { rows: TaskRow[]; active: boolean }) {
   const { status } = projectTrackerDemoCopy;
   return (
-    <Stack gap={4} className="content-shrink">
+    <Stack gap="lg" className="content-shrink">
       <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
       <div className="grid content-shrink grid-trio gap-stack-sm">
         <Stat label={copy.stats.open} value={rows.filter((row) => !isDone(row)).length} active={active} beat={1} />

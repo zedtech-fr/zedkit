@@ -9,7 +9,7 @@ import { loadingZonesCopy } from "@/components/demos/i18n/loading-zones-copy";
 
 export function LoadingZonesDemo() {
   return (
-    <Stack gap={4}>
+    <Stack gap="lg">
       <PageHeaderSkeleton label={loadingZonesCopy.page} />
       <CardSkeleton label={loadingZonesCopy.card} />
       <DetailPanelSkeleton label={loadingZonesCopy.details} rows={2} />

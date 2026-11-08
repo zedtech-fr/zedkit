@@ -8,11 +8,11 @@ export function ButtonDemo() {
   return (
     <>
       <Toaster />
-      <Stack id="button-demo" gap={4}>
+      <Stack id="button-demo" gap="lg">
         <Text variant="muted" className="text-caption">
           {buttonCopy.hint}
         </Text>
-        <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
           <Button onClick={() => toast(buttonCopy.created)}>{buttonCopy.createApp}</Button>
           <Button variant="secondary" onClick={() => toast(buttonCopy.cancelled)}>
             {buttonCopy.cancel}
@@ -29,7 +29,7 @@ export function ButtonDemo() {
             </a>
           </Button>
         </Stack>
-        <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
           <Button size="sm" onClick={() => toast(buttonCopy.created)}>
             {buttonCopy.small}
           </Button>
@@ -41,7 +41,7 @@ export function ButtonDemo() {
             <Plus />
           </Button>
         </Stack>
-        <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
           <Button disabled>{buttonCopy.disabled}</Button>
           <Button disabled>{buttonCopy.saving}</Button>
         </Stack>

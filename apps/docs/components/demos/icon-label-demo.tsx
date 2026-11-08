@@ -7,14 +7,14 @@ import { iconLabelCopy } from "@/components/demos/i18n/icon-label-copy";
 /** Project details: a row of small facts, each with a quiet decorative icon. */
 export function IconLabelDemo() {
   return (
-    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
-      <Stack gap={1}>
+    <Stack gap="md" className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
+      <Stack gap="tight">
         <Heading level={2}>{iconLabelCopy.project.title}</Heading>
         <Text variant="muted">
           {iconLabelCopy.project.summary}
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={4} className="flex-wrap text-dense">
+      <Stack direction="horizontal" gap="lg" className="flex-wrap text-dense">
         <IconLabel icon={FolderOpen}>{iconLabelCopy.project.studio}</IconLabel>
         <IconLabel icon={Calendar}>{iconLabelCopy.project.due}</IconLabel>
         <IconLabel icon={Users}>{iconLabelCopy.project.members}</IconLabel>
@@ -37,7 +37,7 @@ export function IconLabelOrdersDemo() {
     <ul aria-label={iconLabelCopy.orders.label} className="divide-y divide-border rounded-lg border border-border bg-background">
       {ORDERS.map((order) => (
         <li key={order.number} className="flex content-shrink flex-wrap items-center justify-between gap-x-stack-lg gap-y-stack-tight surface-pad-inline surface-pad-block">
-          <Stack gap={1} className="content-shrink">
+          <Stack gap="tight" className="content-shrink">
             <Text as="span" className="font-medium">
               {order.number}
             </Text>

@@ -11,7 +11,7 @@ const rows: Person[] = [
 
 export function FourStateLoading() {
   return (
-    <Stack direction="horizontal" gap={2} className="items-center">
+    <Stack direction="horizontal" gap="sm" className="items-center">
       <Spinner label="Loading invoices" />
       <Text>Loading invoices</Text>
     </Stack>

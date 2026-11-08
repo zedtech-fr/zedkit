@@ -48,7 +48,7 @@ function TokenField({
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
     <Field className="content-shrink">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <Stack direction="horizontal" gap={2} className="content-shrink">
+      <Stack direction="horizontal" gap="sm" className="content-shrink">
         {swatch ? (
           <svg
             aria-hidden="true"
@@ -110,7 +110,7 @@ function EditorFields({
       />
     ));
   return (
-    <Stack gap={5} data-slot="identity-editor-fields">
+    <Stack gap="prose" data-slot="identity-editor-fields">
       <FieldGroup legend={identityEditorCopy.fields.groups.shape}>{scalar(SHAPE_KEYS)}</FieldGroup>
       {afterShape}
       <FieldGroup legend={identityEditorCopy.fields.groups.type}>{scalar(TYPE_KEYS)}</FieldGroup>
@@ -136,7 +136,7 @@ function SpecimenBody() {
   const copy = identityEditorCopy.fields.draft;
   return (
     <>
-      <Stack direction="horizontal" gap={2} className="justify-between">
+      <Stack direction="horizontal" gap="sm" className="justify-between">
         <Heading level={2} typeRole="band">
           {identityEditorCopy.fields.draftTitle}
         </Heading>
@@ -145,7 +145,7 @@ function SpecimenBody() {
       <Text variant="muted" typeRole="body" className="max-lg:hidden">
         {identityEditorCopy.fields.draftBody}
       </Text>
-      <Stack direction="horizontal" gap={2} data-draft-actions="" className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" data-draft-actions="" className="flex-wrap">
         <Button size="sm">{identityEditorCopy.fields.draftSave}</Button>
         <Button size="sm" variant="secondary">
           {copy.secondary}
@@ -161,7 +161,7 @@ function SpecimenBody() {
         <FieldLabel htmlFor="identity-editor-sample">{copy.inputLabel}</FieldLabel>
         <Input id="identity-editor-sample" defaultValue={copy.inputValue} />
       </Field>
-      <Stack gap={3} className="hidden lg:flex">
+      <Stack gap="md" className="hidden lg:flex">
         <dl data-term-row="" className="trim-margin grid gap-x-stack-lg gap-y-stack-sm rounded-lg border border-border surface-pad-compact">
           {copy.rows.map(([term, detail]) => (
             <Fragment key={term}>
@@ -193,10 +193,10 @@ function DraftCard({ darkPreview }: { darkPreview: boolean }) {
       role="group"
       aria-label={identityEditorCopy.fields.specimenLabel}
       className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground shadow-md max-lg:gap-stack-sm max-lg:surface-pad-compact lg:sticky lg:top-editor lg:col-start-next lg:row-start-first lg:self-start lg:surface-pad-lg max-lg:[@media(min-height:48rem)]:sticky max-lg:[@media(min-height:48rem)]:top-bar"
-      gap={3}
+      gap="md"
     >
       {/* `inert`: the specimen is for looking at. It must not read as, or act as, an editor command. */}
-      <Stack gap={3} inert className="max-lg:gap-stack-sm">
+      <Stack gap="md" inert className="max-lg:gap-stack-sm">
         <SpecimenBody />
       </Stack>
       <Text variant="muted" typeRole="label" className="max-lg:hidden">
@@ -215,11 +215,11 @@ function ContrastChips({
 }) {
   if (warnings.length === 0) return null;
   return (
-    <Stack gap={2} role="status">
+    <Stack gap="sm" role="status">
       {warnings.map((warning) => {
         const label = identityContrastTokenLabel(warning.token);
         return (
-          <Stack key={`${warning.scheme}-${warning.token}`} direction="horizontal" gap={2}>
+          <Stack key={`${warning.scheme}-${warning.token}`} direction="horizontal" gap="sm">
             <Badge variant="warning">
               {identityEditorCopy.fields.contrastBadge(warning.scheme, label, warning.ratio, warning.min)}
             </Badge>

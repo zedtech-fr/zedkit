@@ -19,7 +19,7 @@ export function DetectedLinks({ text, onText, fieldId, disabled = false }: { tex
   if (urls.length === 0 && skipped.length === 0) return null;
   const tooMany = skipped.some((item) => item.why === "too-many");
   return (
-    <Stack gap={2} data-assistant-links="">
+    <Stack gap="sm" data-assistant-links="">
       {urls.length > 0 ? (
         <>
           <Text as="span" typeRole="body" className="font-medium text-foreground">

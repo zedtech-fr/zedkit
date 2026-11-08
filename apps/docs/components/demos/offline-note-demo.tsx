@@ -9,13 +9,13 @@ const DRAFTS = [offlineNoteCopy.drafts.harbor, offlineNoteCopy.drafts.northwind]
 /** A page-level note above work that is still saved on the device. */
 export function OfflineNoteDemo() {
   return (
-    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
+    <Stack gap="md" className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <OfflineNote />
       <Heading level={3}>{offlineNoteCopy.drafts.title}</Heading>
       <ul aria-label={offlineNoteCopy.drafts.label} className="divide-y divide-border rounded-lg border border-border">
         {DRAFTS.map((draft) => (
           <li key={draft.id} className="flex content-shrink flex-wrap items-center justify-between gap-x-stack-lg gap-y-stack-tight surface-pad-inline surface-pad-block">
-            <Stack gap={1} className="content-shrink">
+            <Stack gap="tight" className="content-shrink">
               <Text as="span" className="font-medium">
                 {draft.id}
               </Text>
@@ -23,7 +23,7 @@ export function OfflineNoteDemo() {
                 {draft.client}
               </Text>
             </Stack>
-            <Stack direction="horizontal" gap={3} className="items-center">
+            <Stack direction="horizontal" gap="md" className="items-center">
               <Text as="span" className="text-dense">
                 {draft.amount}
               </Text>
@@ -42,15 +42,15 @@ export function OfflineNoteWiredDemo() {
   const [saved, setSaved] = useState(0);
   const simulate = () => window.dispatchEvent(new Event(online ? "offline" : "online"));
   return (
-    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
+    <Stack gap="md" className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       {online ? null : <OfflineNote title={offlineNoteCopy.wired.title}>{offlineNoteCopy.wired.body}</OfflineNote>}
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Heading level={3}>{offlineNoteCopy.wired.heading}</Heading>
         <Text variant="muted">
           {offlineNoteCopy.wired.summary(saved)}
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Button disabled={!online} onClick={() => setSaved((count) => count + 1)}>
           {offlineNoteCopy.wired.save}
         </Button>
@@ -65,9 +65,9 @@ export function OfflineNoteWiredDemo() {
 /** Own wording: say what is kept and what the next step is. */
 export function OfflineNoteWordingDemo() {
   return (
-    <Stack gap={3} className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
+    <Stack gap="md" className="content-shrink rounded-lg border border-border bg-background surface-pad-md">
       <OfflineNote title={offlineNoteCopy.wording.title}>{offlineNoteCopy.wording.body}</OfflineNote>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Heading level={3}>{offlineNoteCopy.wording.heading}</Heading>
         <Text variant="muted">
           {offlineNoteCopy.wording.summary}

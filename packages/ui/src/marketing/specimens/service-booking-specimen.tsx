@@ -21,7 +21,7 @@ function BookingServiceChoices({
   onSelect: (id: string) => void;
 }) {
   return (
-    <Stack gap={2} role="group" aria-label={messages.servicesAriaLabel}>
+    <Stack gap="sm" role="group" aria-label={messages.servicesAriaLabel}>
       {messages.services.map((item) => (
         <Button
           key={item.id}
@@ -51,11 +51,11 @@ function BookingSlotChoices({
   onSelect: (time: string) => void;
 }) {
   return (
-    <Stack gap={2} role="group" aria-label={messages.slotsAriaLabel}>
+    <Stack gap="sm" role="group" aria-label={messages.slotsAriaLabel}>
       <Text variant="muted" className="text-caption font-medium">
         {messages.slotsAriaLabel}
       </Text>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         {messages.slots.map((time) => (
           <Button
             key={time}
@@ -80,8 +80,8 @@ export function ServiceBookingSpecimen({ className, messages = specimenMessagesE
   const service = messages.services.find((item) => item.id === serviceId) ?? messages.services[0]!;
 
   return (
-    <Stack gap={4} className={`content-shrink ${className ?? ""}`} data-slot="service-booking-specimen" data-specimen-domain="service-booking">
-      <Stack gap={1}>
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="service-booking-specimen" data-specimen-domain="service-booking">
+      <Stack gap="tight">
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </Stack>

@@ -8,7 +8,7 @@ export function PromptInputDemo() {
   const [sent, setSent] = useState("");
 
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <PromptInput
         sendLabel="Send"
         value={text}
@@ -32,7 +32,7 @@ export function PromptInputCompleteDemo() {
   const [pending, setPending] = useState(false);
 
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <PromptInput
         id="prompt-input-complete"
         sendLabel="Send"

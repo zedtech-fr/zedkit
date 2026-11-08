@@ -58,20 +58,20 @@ function ProductEditor({ product, onSave }: { product: Product; onSave: (next: P
   const visibleId = useId();
   const [draft, setDraft] = useState(product);
   return (
-    <Stack gap={3} className="content-shrink">
+    <Stack gap="md" className="content-shrink">
       <Heading level={3} className="text-specimen-title text-balance">
         {product.name}
       </Heading>
-      <Stack gap={3} className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
-        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-number">
+      <Stack gap="md" className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
+        <Stack gap="tight" className="content-shrink flex-1 basis-full sm:basis-number">
           <Label htmlFor={priceId}>{copy.priceLabel}</Label>
           <Input id={priceId} inputMode="numeric" value={draft.price} onChange={(event) => setDraft({ ...draft, price: toNumber(event.target.value) })} />
         </Stack>
-        <Stack gap={1} className="content-shrink flex-1 basis-full sm:basis-number">
+        <Stack gap="tight" className="content-shrink flex-1 basis-full sm:basis-number">
           <Label htmlFor={stockId}>{copy.stockLabel}</Label>
           <Input id={stockId} inputMode="numeric" value={draft.stock} onChange={(event) => setDraft({ ...draft, stock: toNumber(event.target.value) })} />
         </Stack>
-        <Stack direction="horizontal" gap={2} className="min-h-target items-center">
+        <Stack direction="horizontal" gap="sm" className="min-h-target items-center">
           <Switch id={visibleId} checked={draft.visible} onCheckedChange={(visible) => setDraft({ ...draft, visible })} />
           <Label htmlFor={visibleId}>{copy.visibleLabel}</Label>
         </Stack>
@@ -91,8 +91,8 @@ export function HomeIdentityExampleMaison() {
   const low = products.find((item) => item.stock <= LOW_STOCK);
 
   return (
-    <Stack gap={5} className="content-shrink">
-      <Stack gap={1}>
+    <Stack gap="prose" className="content-shrink">
+      <Stack gap="tight">
         <Heading level={3} className="text-specimen-title text-balance">
           {copy.heading}
         </Heading>

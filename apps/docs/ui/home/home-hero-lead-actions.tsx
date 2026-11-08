@@ -6,7 +6,7 @@ import { homeCopy } from "@/ui/home/i18n/home-copy";
 
 export function HomeHeroLeadActions() {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-center" data-home-hero-actions>
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center" data-home-hero-actions>
       <Button asChild>
         <HomeLink href="#get-started">{homeCopy.heroActions.getStarted}</HomeLink>
       </Button>

@@ -32,7 +32,7 @@ export function IdentityMiniPreview({
   const scope = `[data-identity-scope][data-identity="proposal"][data-identity-proposal="${CSS.escape(id)}"]`;
   const headings = `${scope} h3, ${scope} h4 { font-family: var(--zk-font-display); letter-spacing: var(--zk-heading-tracking); line-height: var(--zk-heading-leading, 1.1); }`;
   return (
-    <Stack gap={2} data-assistant-preview="" data-slot="brief-specimen" data-specimen-domain={SPECIMEN_DOMAIN_ATTR[domain]}>
+    <Stack gap="sm" data-assistant-preview="" data-slot="brief-specimen" data-specimen-domain={SPECIMEN_DOMAIN_ATTR[domain]}>
       <style>{`${tokensToCss(tokens, scope)}\n${headings}`}</style>
       <Text as="span" typeRole="body" className="font-medium text-foreground">
         {identityAssistantCopy.proposal.preview}
@@ -45,7 +45,7 @@ export function IdentityMiniPreview({
           copy={copy}
         />
       ) : (
-        <Stack gap={3} className="sm:grid sm:grid-pair">
+        <Stack gap="md" className="sm:grid sm:grid-pair">
           <IdentitySpecimenCard
             dark={false}
             label={identityAssistantCopy.proposal.lightLabel}

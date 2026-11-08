@@ -14,7 +14,7 @@ export function KitVersionLabel({
 }) {
   const label = `v${version} (releases)`;
   return (
-    <Stack direction="horizontal" gap={2} className="items-center">
+    <Stack direction="horizontal" gap="sm" className="items-center">
       {tone === "hero" ? <LivePulse label="Latest" /> : null}
       {tone === "shell" ? (
         <Text as="span" variant="muted" data-kit-version="" className="font-mono text-caption tabular-nums">

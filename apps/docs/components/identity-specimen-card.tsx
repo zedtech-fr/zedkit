@@ -30,10 +30,10 @@ export function IdentitySpecimenCard({
       data-identity="proposal"
       role="group"
       aria-label={label}
-      gap={3}
+      gap="md"
       className="content-shrink rounded-xl border border-border bg-background surface-pad-md font-sans text-foreground shadow-sm"
     >
-      <Stack gap={3} inert>
+      <Stack gap="md" inert>
         <SpecimenScreen copy={copy} />
       </Stack>
     </Stack>

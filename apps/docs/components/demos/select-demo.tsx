@@ -21,7 +21,7 @@ const DELIVERY: Record<string, string> = {
 export function SelectDemo() {
   const [region, setRegion] = React.useState<string | undefined>(undefined);
   return (
-    <Stack gap={2} className="content-shrink">
+    <Stack gap="sm" className="content-shrink">
       <Select {...(region === undefined ? {} : { value: region })} onValueChange={setRegion}>
         <SelectTrigger aria-label={selectCopy.label}>
           <SelectValue placeholder={selectCopy.placeholder} />

@@ -14,7 +14,7 @@ const CatalogResultsBodyLazy = dynamic(
   () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResultsBody })),
   {
     loading: () => (
-      <Stack gap={4} data-catalog-results-root="">
+      <Stack gap="lg" data-catalog-results-root="">
         <Text variant="muted" role="status">
           {catalogCopy.header.loadingResults}
         </Text>
@@ -71,8 +71,8 @@ export function CatalogView({
   return (
     <>
       <Section bleed tone="muted" spacing="sm" containerWidth="default">
-        <Stack gap={4}>
-          <Stack gap={2}>
+        <Stack gap="lg">
+          <Stack gap="sm">
             <Heading level={1}>{catalogCopy.header.title}</Heading>
             <Text variant="muted" typeRole="lead" className="text-muted-foreground">
               {catalogCopy.header.lead}
@@ -89,7 +89,7 @@ export function CatalogView({
         </Stack>
       </Section>
       <Container width="wide" className="pt-start pb-section-lg">
-        <Stack gap={3}>
+        <Stack gap="md">
           <div id="catalog-results-heading" data-catalog-results-heading="">
             {catalogResultsStatusLine(filtered.length)}
           </div>
