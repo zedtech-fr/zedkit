@@ -26,6 +26,8 @@ describe("primitives", () => {
       </Button>,
     );
     const link = screen.getByRole("link", { name: "Read docs" });
+    expect(link.className).toContain("link-offset");
+    expect(link.className).not.toContain("underline-offset-4");
     expect(link.className).toContain("hover:underline");
     expect(link.className).toContain("hover:bg-transparent");
     expect(link.className).not.toContain("hover:bg-accent");

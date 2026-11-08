@@ -366,6 +366,8 @@
   /* Captions, badges, timestamps. 12px with a 16px line. The label role is 12px with a taller line. */
   --text-caption: var(--text-xs);
   --text-caption--line-height: var(--text-xs--line-height);
+  /* Gap between a text link and its line. Not a spacing step. */
+  --zk-link-offset: 4px;
   /*
    * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
    * not a spacing multiple: an identity may redefine `--spacing`, and a
@@ -544,6 +546,11 @@ ol[data-sonner-toaster] {
 /* Option card. The hidden input is focused, so the card itself draws the focus width. */
 [data-slot="option-card"]:has(:focus-visible) {
   outline: var(--ring-width) solid hsl(var(--ring));
+}
+
+/* Text link. The line sits this far from the letters. */
+@utility link-offset {
+  text-underline-offset: var(--zk-link-offset);
 }
 
 /* Featured plan. The ring sits on the card shadow. It is not the focus ring. */

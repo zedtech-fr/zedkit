@@ -21,7 +21,7 @@ export default function NoteListExamplePage() {
           {noteListExampleCopy.read}{" "}
           <Link
             href="/docs/quality/enforce-feature-folder-ports-and-adapters"
-            className="underline underline-offset-4"
+            className="underline link-offset"
           >
             {noteListExampleCopy.patternLink}
           </Link>
