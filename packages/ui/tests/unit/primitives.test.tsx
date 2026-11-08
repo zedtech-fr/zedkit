@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Badge } from "#index.js";
 import { Alert, AlertDescription, AlertTitle } from "#index.js";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#index.js";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardSkeleton, CardTitle } from "#index.js";
 import { Button, cn } from "#index.js";
 import { Input } from "#index.js";
 import { Label } from "#index.js";
@@ -382,5 +382,13 @@ describe("primitives", () => {
     expect(screen.getByText("Footer text.").getAttribute("data-slot")).toBe("card-footer");
     expect(root?.className).toContain("shadow-md");
     expect(root?.className).not.toMatch(/(^|\s)shadow(\s|$)/);
+  });
+
+  it("lets CardSkeleton use the same size recipe as Card", () => {
+    const { container } = render(<CardSkeleton size="lg" label="Loading card" />);
+    const el = container.querySelector('[data-slot="card-skeleton"]');
+    expect(el?.getAttribute("data-size")).toBe("lg");
+    expect(el?.className).toContain("rounded-(--zk-card-radius)");
+    expect(el?.className).not.toContain("p-card-padding");
   });
 });

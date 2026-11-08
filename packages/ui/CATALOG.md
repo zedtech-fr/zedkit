@@ -1490,7 +1490,7 @@ import { Surface } from "@zedtech/zedkit-ui";
 - Purpose: Cards with header/title/description/content/footer slots.
 - When to use: For self-contained blocks (panels, summaries, previews).
 - When not to use: For page-level layout — use AppShell and Stack instead.
-- A11y: Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` mirrors the same tokens so async content lands without shifting.
+- A11y: Slots are plain containers — put headings and labels inside. Spacing comes from the Card recipe (`--zk-card-*`); elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` takes the same `size` prop and recipe so loading-to-content substitution does not jump.
 - See also: `Stack content and group titled sections`, `Constrain page width and run sections edge to edge`
 - Examples: Simple, With footer
 - Registry: card

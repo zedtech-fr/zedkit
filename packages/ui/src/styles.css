@@ -361,6 +361,9 @@
   /* Dense UI: controls, tabs, menus, tables, nav. Same size and line as the old text-sm step. */
   --text-dense: var(--text-sm);
   --text-dense--line-height: var(--text-sm--line-height);
+  /* Container-driven display step. --text-2xl / --text-4xl stay viewport-fluid for marketing. */
+  --text-heading: 1.5rem;
+  --text-heading--line-height: 1.2;
   /* Captions, badges, timestamps. 12px with a 16px line. The label role is 12px with a taller line. */
   --text-caption: var(--text-xs);
   --text-caption--line-height: var(--text-xs--line-height);
@@ -455,22 +458,22 @@
 }
 
 @layer components {
-  /* Card recipe (defaults preserve today's rendering exactly). */
-  [data-slot="card"] {
+  /* Card recipe. CardSkeleton shares the same instance properties. */
+  :is([data-slot="card"], [data-slot="card-skeleton"]) {
     --zk-card-pad: calc(var(--spacing) * 6);
     --zk-card-stack: calc(var(--spacing) * 2);
     --zk-card-radius: var(--radius-xl);
     --zk-card-title: var(--text-base);
     --zk-card-body: var(--text-sm);
   }
-  [data-slot="card"][data-size="sm"] {
+  :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="sm"] {
     --zk-card-pad: calc(var(--spacing) * 3);
     --zk-card-stack: calc(var(--spacing) * 1.5);
     --zk-card-radius: var(--radius-lg);
     --zk-card-title: var(--text-sm);
     --zk-card-body: var(--text-xs);
   }
-  [data-slot="card"][data-size="lg"] {
+  :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="lg"] {
     --zk-card-pad: calc(var(--spacing) * 5);
     --zk-card-stack: calc(var(--spacing) * 3);
     --zk-card-radius: var(--radius-2xl);
@@ -478,30 +481,33 @@
     --zk-card-body: var(--text-base);
   }
   @container zk-slot (min-width: 30rem) {
-    [data-slot="card"] {
+    :is([data-slot="card"], [data-slot="card-skeleton"]) {
       --zk-card-pad: calc(var(--spacing) * 8);
       --zk-card-stack: calc(var(--spacing) * 3);
       --zk-card-radius: var(--radius-2xl);
       --zk-card-title: var(--text-lg);
       --zk-card-body: var(--text-base);
     }
-    [data-slot="card"][data-size="sm"] {
+    :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="sm"] {
       --zk-card-pad: calc(var(--spacing) * 4);
       --zk-card-stack: calc(var(--spacing) * 2);
       --zk-card-radius: var(--radius-xl);
       --zk-card-title: var(--text-base);
       --zk-card-body: var(--text-sm);
     }
-    [data-slot="card"][data-size="lg"] {
+    :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="lg"] {
       --zk-card-pad: calc(var(--spacing) * 8);
       --zk-card-stack: calc(var(--spacing) * 5);
       --zk-card-radius: var(--radius-3xl);
-      --zk-card-title: var(--text-2xl);
+      --zk-card-title: var(--text-heading);
       --zk-card-body: var(--text-lg);
     }
   }
-  [data-slot="card"] {
+  :is([data-slot="card"], [data-slot="card-skeleton"]) {
     border-radius: var(--zk-card-radius);
+  }
+  [data-slot="card-skeleton"] {
+    padding: var(--zk-card-pad, calc(var(--spacing) * 6));
   }
   /* Fallbacks = the default recipe, so parts also render standalone. */
   [data-slot="card-header"],

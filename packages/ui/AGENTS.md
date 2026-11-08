@@ -38,7 +38,10 @@ Rules:
   (`tests/unit/declared-scales.test.ts`). Density-derived tokens live
   in the one `:root, [data-identity-scope]` rule in `styles.css`
   (nested scopes re-resolve them). Container sizing: `zk-query`
-  slots, Card/Section recipes — same `styles.css` section. The shipped rule is
+  slots, Card/Section recipes — same `styles.css` section. Density
+  still follows `--spacing` for every purpose (today's behavior). The
+  recommended alternative is control/stack rhythm only; that owner
+  decision (D-0.1) is open and is not applied here. The shipped rule is
   `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
   44px, stricter than the kit's 24px floor. `min-h-target` follows
   `--spacing` and floors at 44px on a coarse pointer or a narrow screen.

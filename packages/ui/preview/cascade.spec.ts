@@ -81,6 +81,34 @@ test("registry-only payload renders the copied Dialog overlay (C-01)", async ({ 
   expect(out.bg).not.toBe("transparent");
 });
 
+test("registry-only payload paints the copied Button (copy install)", async ({ page }) => {
+  const compiled = await compileRegistryPayload();
+  const classes =
+    "box-border inline-flex cursor-pointer items-center justify-center gap-button-gap rounded-md text-dense font-medium bg-primary text-primary-foreground shadow h-control-height px-button-pad py-control-block-lg";
+  await page.setContent(`<style>${compiled}</style><button type="button" class="${classes}">Save</button>`);
+  const paint = await page.evaluate(() => {
+    const el = document.querySelector("button")!;
+    const s = getComputedStyle(el);
+    return {
+      background: s.backgroundColor,
+      height: el.getBoundingClientRect().height,
+      size: Number.parseFloat(s.fontSize),
+      duration: s.transitionDuration,
+    };
+  });
+  expect(paint.background).not.toBe("rgba(0, 0, 0, 0)");
+  expect(paint.background).not.toBe("rgb(239, 239, 239)");
+  expect(paint.height).toBeGreaterThanOrEqual(36);
+  expect(paint.size).toBeGreaterThanOrEqual(13);
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const mobile = await page.evaluate(() => {
+    const el = document.querySelector("button")!;
+    return { height: el.getBoundingClientRect().height, duration: getComputedStyle(el).transitionDuration };
+  });
+  expect(mobile.height).toBeGreaterThanOrEqual(44);
+});
+
 test("registry-only payload carries the card sizing recipe (D-C2 copy row)", async ({ page }) => {
   const compiled = await compileRegistryPayload();
   // Card markup as copied by registry/ui/card.tsx (Surface classes + recipe radius utility).
@@ -94,6 +122,7 @@ test("registry-only payload carries the card sizing recipe (D-C2 copy row)", asy
       `<div class="zk-query" style="width:320px" data-copy-slot="narrow">${card}</div>` +
       `<div class="zk-query" style="width:800px" data-copy-slot="wide">${card}</div>`,
   );
+  await page.evaluate(() => document.documentElement.setAttribute("data-identity", "mist"));
   const out = await page.evaluate(() => {
     const read = (slot: string) => {
       const el = document.querySelector(`[data-copy-slot="${slot}"] [data-slot="card"]`)!;
@@ -132,8 +161,8 @@ test("card sizing contract: size x slot matrix (D-C2)", async ({ page }) => {
   // Real apps set an identity on <html>; the kit type scale scopes to it.
   await page.evaluate(() => {
     document.documentElement.setAttribute("data-identity", "mist");
-    const narrow = ["slot-sm-narrow", "slot-lg-narrow", "slot-nested", "slot-density", "slot-section"];
-    const wide = ["slot-sm-wide", "slot-lg-wide", "slot-container-query", "slot-override"];
+    const narrow = ["slot-sm-narrow", "slot-lg-narrow", "slot-nested", "slot-density", "slot-section", "slot-skel-narrow"];
+    const wide = ["slot-sm-wide", "slot-lg-wide", "slot-container-query", "slot-override", "slot-skel-wide"];
     for (const id of narrow) (document.querySelector(`[data-testid="${id}"]`) as HTMLElement).style.width = "320px";
     for (const id of wide) (document.querySelector(`[data-testid="${id}"]`) as HTMLElement).style.width = "800px";
     document.querySelector('[data-testid="slot-section"]')!.setAttribute("data-wide", "");
@@ -147,7 +176,19 @@ test("card sizing contract: size x slot matrix (D-C2)", async ({ page }) => {
   expect(await cardRecipe(page, "card-sm-narrow")).toEqual({ pad: "12px", gap: "6px", radius: "8px", title: "13px", body: "12px" });
   expect(await cardRecipe(page, "card-sm-wide")).toEqual({ pad: "16px", gap: "8px", radius: "12px", title: "14px", body: "13px" });
   expect(await cardRecipe(page, "card-lg-narrow")).toEqual({ pad: "20px", gap: "12px", radius: "16px", title: "17px", body: "14px" });
-  expect(await cardRecipe(page, "card-lg-wide")).toEqual({ pad: "32px", gap: "20px", radius: "24px", title: "26px", body: "17px" });
+  expect(await cardRecipe(page, "card-lg-wide")).toEqual({ pad: "32px", gap: "20px", radius: "24px", title: "24px", body: "17px" });
+  const skelNarrow = await page.evaluate(() => {
+    const el = document.querySelector('[data-testid="skel-lg-narrow"]')!;
+    const s = getComputedStyle(el);
+    return { pad: s.paddingTop, radius: s.borderTopLeftRadius };
+  });
+  const skelWide = await page.evaluate(() => {
+    const el = document.querySelector('[data-testid="skel-lg-wide"]')!;
+    const s = getComputedStyle(el);
+    return { pad: s.paddingTop, radius: s.borderTopLeftRadius };
+  });
+  expect(skelNarrow).toEqual({ pad: "20px", radius: "16px" });
+  expect(skelWide).toEqual({ pad: "32px", radius: "24px" });
   // Size and space are separable inputs.
   const smWide = await cardRecipe(page, "card-sm-wide");
   const lgNarrow = await cardRecipe(page, "card-lg-narrow");
@@ -181,6 +222,22 @@ test("card sizing contract: size x slot matrix (D-C2)", async ({ page }) => {
     () => getComputedStyle(document.querySelector('[data-testid="section-recipe"]')!).paddingTop,
   );
   expect(sectionWide).toBe("48px");
+});
+
+test("card lg title does not change with viewport when the slot is fixed", async ({ page }) => {
+  await page.evaluate(() => {
+    document.documentElement.setAttribute("data-identity", "mist");
+    (document.querySelector('[data-testid="slot-lg-wide"]') as HTMLElement).style.width = "500px";
+  });
+  await page.setViewportSize({ width: 600, height: 800 });
+  const at600 = (await cardRecipe(page, "card-lg-wide")).title;
+  await page.setViewportSize({ width: 800, height: 800 });
+  await page.evaluate(() => {
+    (document.querySelector('[data-testid="slot-lg-wide"]') as HTMLElement).style.width = "500px";
+  });
+  const at800 = (await cardRecipe(page, "card-lg-wide")).title;
+  expect(at600).toBe(at800);
+  expect(at600).toBe("24px");
 });
 
 test("card sizing contract: user font size 200% moves type and threshold (D-C2)", async ({ page }) => {

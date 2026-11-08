@@ -426,6 +426,12 @@ export function Gallery() {
               <CardDescription>Base recipe, viewport-independent.</CardDescription>
             </CardHeader>
           </Card>
+          <div data-testid="slot-skel-narrow" className="zk-query">
+            <CardSkeleton size="lg" label="Loading large card" data-testid="skel-lg-narrow" />
+          </div>
+          <div data-testid="slot-skel-wide" className="zk-query">
+            <CardSkeleton size="lg" label="Loading large card" data-testid="skel-lg-wide" />
+          </div>
           <div data-testid="slot-override" className="zk-query">
             <Card size="sm" data-testid="card-override">
               <CardHeader data-testid="card-override-header" className="flush">
