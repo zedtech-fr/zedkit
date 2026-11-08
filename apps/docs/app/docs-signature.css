@@ -49,6 +49,11 @@
   max-width: 95%;
 }
 
+/* The last task in a scene has no line under it. The scene padding closes the card. */
+[data-demo-scene-visual] > [data-slot="stack"]:last-child {
+  border-bottom-width: 0;
+}
+
 /* Inline URLs in the setup prompt. The line sits closer than a text link so it stays with the words. */
 [data-setup-prompt] a {
   text-underline-offset: 2px;
