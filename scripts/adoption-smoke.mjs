@@ -4,8 +4,9 @@
 // The steps come from `buildAdoptionPlan` (apps/docs/lib/adoption-plan.mjs), the function the home page and
 // every component page render from. Each command runs as displayed and each file is written where the step
 // says. The only differences from a person at a terminal are listed here and printed in the log:
-//   - the kit package resolves to the tarball built from this checkout (a pnpm override), so a pull request is
-//     checked against its own code; set ADOPTION_PACKAGE=published to use what npm serves;
+//   - each @zedtech package in the install, plus its runtime workspace closure, resolves to
+//     tarballs packed from this checkout (pnpm overrides), so a Version PR can be checked before
+//     those versions exist on npm; set ADOPTION_PACKAGE=published to use what npm serves;
 //   - https://zedkit.app/r/ resolves to the registry JSON built from this checkout (apps/docs/public/r);
 //   - shadcn@latest is pinned (SHADCN_VERSION), and `add` answers its prompts (--yes --overwrite).
 //
@@ -17,8 +18,9 @@
 //   ADOPTION_SMOKE_JOBS (default 3) caps how many cases run at once.
 // Needs network (create-next-app, npm) and Chromium (pnpm exec playwright install chromium).
 /* global document, getComputedStyle -- page.evaluate callbacks run in the browser. */
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync, appendFileSync } from "node:fs";
+import { overridePackages, packWorkspacePackages, workspaceInstallClosure } from "./workspace-pack-closure.mjs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -199,28 +201,6 @@ export function runLocalized(commandText, cwd, env = {}, opts = {}) {
   return run(argv[0], argv.slice(1), cwd, env);
 }
 
-/** The project's own pnpm decides: a packageManager field can switch the version inside it. */
-function pnpmMajor(project) {
-  return Number(execFileSync("pnpm", ["--version"], { cwd: project, encoding: "utf8" }).trim().split(".")[0]);
-}
-
-function overridePackage(project, tarball) {
-  overridePackages(project, { "@zedtech/zedkit-ui": tarball });
-}
-
-function overridePackages(project, tarballs) {
-  const overrides = Object.fromEntries(Object.entries(tarballs).map(([name, file]) => [name, `file:${file}`]));
-  if (pnpmMajor(project) >= 10) {
-    const lines = Object.entries(overrides).map(([name, spec]) => `  "${name}": "${spec}"`);
-    appendFileSync(join(project, "pnpm-workspace.yaml"), `overrides:\n${lines.join("\n")}\n`);
-    return;
-  }
-  const pkgPath = join(project, "package.json");
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
-  pkg.pnpm = { ...(pkg.pnpm ?? {}), overrides: { ...(pkg.pnpm?.overrides ?? {}), ...overrides } };
-  writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
-}
-
 function applyFile(project, block) {
   const target = join(project, block.path);
   mkdirSync(dirname(target), { recursive: true });
@@ -277,17 +257,9 @@ async function runShownPackageAdds() {
   writeFileSync(join(project, "package.json"), `${JSON.stringify({ name: "shown-installs", private: true }, null, 2)}\n`);
   if (PACKAGE_SOURCE === "local") {
     const names = [...new Set(adds.flatMap(packagesNamedInAdd))];
-    await run("pnpm", ["exec", "turbo", "run", "build", ...names.map((name) => `--filter=${name}`)], ROOT);
-    const tarballs = {};
-    for (const name of names) {
-      const dest = join(work, "pack", name.replace("@zedtech/", ""));
-      mkdirSync(dest, { recursive: true });
-      const dir = workspacePackageDir(name, ROOT);
-      assert(dir, `no packages/* folder for ${name}`);
-      await run("pnpm", ["pack", "--pack-destination", dest], dir);
-      tarballs[name] = packedTarball(dest);
-    }
-    overridePackages(project, tarballs);
+    const packNames = workspaceInstallClosure(names, ROOT);
+    await run("pnpm", ["exec", "turbo", "run", "build", ...packNames.map((name) => `--filter=${name}`)], ROOT);
+    overridePackages(project, packWorkspacePackages(packNames, join(work, "pack"), ROOT));
   }
   await run("pnpm", ["install"], project);
   for (const command of adds) {
@@ -305,7 +277,7 @@ async function runShownPackageAdds() {
   else console.log(`kept ${work}`);
 }
 
-async function runCase(name, template, tarball, chromium) {
+async function runCase(name, template, tarballs, chromium) {
   console.log(`\n======== ${name} ========`);
   const spec = CASES[name];
   if (spec.kind === "shown-package-adds") {
@@ -314,34 +286,34 @@ async function runCase(name, template, tarball, chromium) {
     return;
   }
   if (spec.expectFailure) {
-    const error = await runCaseOnce(name, spec, template, tarball, chromium).then(() => null, (thrown) => thrown);
+    const error = await runCaseOnce(name, spec, template, tarballs, chromium).then(() => null, (thrown) => thrown);
     assert(error, `${name} was expected to fail and did not`);
     // It must fail where the old recipe did, in the build. A network flake while scaffolding or installing is not the proof.
     assert(/next build/.test(String(error.message)), `${name} failed, but not in the build step: ${String(error.message).slice(0, 200)}`);
     console.log(`\nadoption-smoke: ${name} failed as expected`);
     return;
   }
-  await runCaseOnce(name, spec, template, tarball, chromium);
+  await runCaseOnce(name, spec, template, tarballs, chromium);
   console.log(`\nadoption-smoke: ${name} ok`);
 }
 
-function runCaseOnce(name, spec, template, tarball, chromium) {
+function runCaseOnce(name, spec, template, tarballs, chromium) {
   const project = mkdtempSync(join(tmpdir(), `zedkit-adoption-${name}-`));
-  return buildAndCheck(name, spec, project, template, tarball, chromium).finally(() => {
+  return buildAndCheck(name, spec, project, template, tarballs, chromium).finally(() => {
     if (!process.env.ADOPTION_KEEP) rmSync(project, { recursive: true, force: true });
     else console.log(`kept ${project}`);
   });
 }
 
-async function buildAndCheck(name, spec, project, template, tarball, chromium) {
+async function buildAndCheck(name, spec, project, template, tarballs, chromium) {
   cpSync(template, project, { recursive: true });
-  if (tarball) overridePackage(project, tarball);
+  if (tarballs) overridePackages(project, tarballs);
   await run("pnpm", ["install"], project);
   const built = spec.plan();
   const mode = built.modes.find((item) => item.id === spec.mode);
   if (!mode) throw new Error(`${name}: the plan has no ${spec.mode} mode`);
   await runMode(project, mode);
-  if (tarball && mode.id === "package") {
+  if (tarballs && mode.id === "package") {
     const installed = JSON.parse(readFileSync(join(project, "node_modules/@zedtech/zedkit-ui/package.json"), "utf8")).version;
     const local = JSON.parse(readFileSync(join(ROOT, "packages/ui/package.json"), "utf8")).version;
     assert(installed === local, `the kit resolved to ${installed}, not this checkout's ${local}`);
@@ -377,13 +349,12 @@ async function main() {
 
   const work = mkdtempSync(join(tmpdir(), "zedkit-adoption-base-"));
   const template = join(work, "app");
-  let tarball = null;
+  let tarballs = null;
   let chromium = null;
   if (appCases.length > 0) {
     if (PACKAGE_SOURCE === "local") {
       await run("pnpm", ["exec", "turbo", "run", "build", "--filter=@zedtech/zedkit-ui"], ROOT);
-      await run("pnpm", ["pack", "--pack-destination", work], join(ROOT, "packages/ui"));
-      tarball = packedTarball(work);
+      tarballs = packWorkspacePackages(workspaceInstallClosure("@zedtech/zedkit-ui", ROOT), join(work, "pack"), ROOT);
     }
     await run("pnpm", ["dlx", `create-next-app@${NEXT_APP}`, "app", "--ts", "--tailwind", "--eslint", "--app", "--src-dir", "--import-alias", "@/*", "--use-pnpm", "--skip-install", "--yes"], work);
     ({ chromium } = await import("@playwright/test"));
@@ -391,7 +362,7 @@ async function main() {
 
   const failures = [];
   await eachPool(names, smokeJobs(), async (name) => {
-    await runCase(name, template, tarball, chromium).catch((error) => {
+    await runCase(name, template, tarballs, chromium).catch((error) => {
       failures.push(`${name}: ${error.message}`);
       console.error(`\nadoption-smoke: ${name} FAILED: ${error.message}`);
     });

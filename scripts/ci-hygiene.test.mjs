@@ -30,6 +30,17 @@ describe("ci hygiene job", () => {
   });
 });
 
+describe("ci-required aggregate", () => {
+  it("needs the registry consumption smokes and passes their results in", () => {
+    const required = workflow.split(/^ {2}ci-required:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(required, "", "ci-required job block not found");
+    assert.match(required, /quickstart-smoke/);
+    assert.match(required, /adoption-smoke/);
+    assert.match(required, /QUICKSTART_SMOKE/);
+    assert.match(required, /ADOPTION_SMOKE/);
+  });
+});
+
 describe("pr template", () => {
   it("has no mandatory Lenses/Personas tables", () => {
     const template = readFileSync(join(root, ".github/pull_request_template.md"), "utf8");
