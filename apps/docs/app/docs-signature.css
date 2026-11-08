@@ -241,10 +241,12 @@
   z-index: 10;
 }
 
-/* Color swatch in the identity dock. One spacing step of 4, same box as an icon, not an icon. */
+/* Color swatch in the identity dock. One spacing step of 4, same box as an icon, not an icon.
+   The ring is 60% of the border colour. */
 [data-slot="identity-dock-swatch"] {
   width: calc(var(--spacing) * 4);
   height: calc(var(--spacing) * 4);
+  border-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
 }
 
 /* Identity dock + inline assistant: type roles via tokens (not Tailwind text-*). */

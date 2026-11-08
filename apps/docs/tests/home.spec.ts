@@ -464,3 +464,29 @@ test("home component families link only to live docs pages, and Overlays keeps i
     expect(response.status(), href).toBe(200);
   }
 });
+
+test("the identity dock swatch keeps a quiet border", async ({ page }) => {
+  await page.goto("/");
+  const swatch = page.locator("[data-slot='identity-dock-swatch']");
+  await expect(swatch).toBeVisible();
+  const mark = await swatch.evaluate((node) => {
+    const probe = document.createElement("span");
+    probe.className = "border border-border/60";
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderTopColor;
+    probe.remove();
+    const style = getComputedStyle(node);
+    const box = node.getBoundingClientRect();
+    return {
+      color: style.borderTopColor,
+      expected,
+      width: style.borderTopWidth,
+      square: box.width === box.height,
+      numeric: node.className.includes("border-border/"),
+    };
+  });
+  expect(mark.color).toBe(mark.expected);
+  expect(mark.width).toBe("1px");
+  expect(mark.square).toBe(true);
+  expect(mark.numeric).toBe(false);
+});
