@@ -19,6 +19,8 @@ describe("status dot", () => {
     active.unmount();
     const idle = render(<StatusDot tone="idle" />);
     expect(idle.container.innerHTML).not.toContain("animate-ping");
+    expect(idle.container.innerHTML).toContain("status-idle");
+    expect(idle.container.innerHTML).not.toContain("bg-muted-foreground/");
     idle.unmount();
     const success = render(<StatusDot tone="success" />);
     expect(success.container.innerHTML).not.toContain("animate-ping");

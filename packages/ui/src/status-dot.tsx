@@ -11,7 +11,7 @@ export interface StatusDotProps {
 
 const TONE_COLOR: Record<StatusDotTone, string> = {
   active: "bg-primary",
-  idle: "bg-muted-foreground/40",
+  idle: "status-idle",
   success: "bg-success",
   warning: "bg-warning",
   danger: "bg-destructive",

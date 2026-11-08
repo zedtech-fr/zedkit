@@ -94,6 +94,7 @@ const twMerge = extendTailwindMerge({
         "dialog-scrim",
         "drawer-scrim",
         "alert-destructive-fill",
+        "status-idle",
       ],
       "border-color": ["alert-destructive-line"],
       "underline-offset": ["link-offset"],

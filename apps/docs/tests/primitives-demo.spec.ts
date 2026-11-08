@@ -40,6 +40,32 @@ test("the destructive alert keeps its fill and its line", async ({ page }) => {
   expect(light.border).toBe(light.line);
 });
 
+test("the idle status dot stays a quiet mark", async ({ page }) => {
+  await page.goto(`${BASE}indicate-status-with-a-dot`);
+  const preview = page.locator("[data-component-preview]").first();
+  const dot = preview.getByText("Idle", { exact: true }).locator("xpath=..").locator("[data-slot='status-dot']");
+  await expect(dot).toBeVisible();
+  const mark = await dot.evaluate((node) => {
+    const spot = node.querySelector("span.relative") ?? node;
+    const probe = document.createElement("div");
+    probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent)";
+    spot.append(probe);
+    const expected = getComputedStyle(probe).backgroundColor;
+    const background = getComputedStyle(spot).backgroundColor;
+    const box = spot.getBoundingClientRect();
+    probe.remove();
+    return {
+      background,
+      expected,
+      square: box.width === box.height,
+      numeric: spot.className.includes("bg-muted-foreground/"),
+    };
+  });
+  expect(mark.background).toBe(mark.expected);
+  expect(mark.square).toBe(true);
+  expect(mark.numeric).toBe(false);
+});
+
 const BASE = "/docs/ui/";
 
 // page slug, expected preview count, then per-preview visible text checks.

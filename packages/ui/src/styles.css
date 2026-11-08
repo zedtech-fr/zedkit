@@ -571,6 +571,10 @@ ol[data-sonner-toaster] {
 @utility alert-destructive-line {
   border-color: color-mix(in oklab, hsl(var(--destructive)) 50%, transparent);
 }
+/* Idle status dot. Quieter than the label, not a second status colour. */
+@utility status-idle {
+  background-color: color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;
