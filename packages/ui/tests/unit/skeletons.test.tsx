@@ -1,3 +1,7 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
@@ -5,6 +9,8 @@ import { CardSkeleton } from "#index.js";
 import { DataTableSkeleton } from "#index.js";
 import { DetailPanelSkeleton } from "#index.js";
 import { PageHeaderSkeleton } from "#index.js";
+
+const stylesCss = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../src/styles.css"), "utf8");
 
 describe("skeletons", () => {
   it("names each loading zone for assistive tech", () => {
@@ -31,7 +37,13 @@ describe("skeletons", () => {
   it("shares the card spacing tokens so content lands without shifting", () => {
     render(<CardSkeleton />);
     const zone = screen.getByRole("status");
-    expect(zone.className).toContain("p-card-padding");
+    expect(zone.getAttribute("data-slot")).toBe("card-skeleton");
+    expect(zone.className).toContain("rounded-(--zk-card-radius)");
+    expect(zone.className).not.toContain("p-card-padding");
+    expect(stylesCss).toMatch(/\[data-slot="card-skeleton"\][\s\S]*padding:\s*var\(--zk-card-pad/);
+    expect(stylesCss).toMatch(
+      /\[data-slot="card-header"\],\s*\[data-slot="card-content"\],\s*\[data-slot="card-footer"\][\s\S]*padding:\s*var\(--zk-card-pad/,
+    );
     expect(zone.className).toContain("shadow-md");
     expect(zone.className).not.toMatch(/(^|\s)shadow(\s|$)/);
     expect(zone.querySelector(".space-y-card-stack")).not.toBeNull();
