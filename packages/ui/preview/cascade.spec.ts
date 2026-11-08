@@ -1,5 +1,10 @@
 /* global document, getComputedStyle -- used inside page.evaluate */
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
+import tailwindcss from "@tailwindcss/postcss";
+import postcss from "postcss";
 
 // Behavior checks against the real compiled package CSS (the gallery page
 // carries it). jsdom cannot resolve cascade layers or custom-property
@@ -7,6 +12,67 @@ import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
+});
+
+type CssObject = { [key: string]: string | CssObject };
+
+function serializeCss(obj: CssObject): string {
+  return Object.entries(obj)
+    .map(([key, value]) => (typeof value === "string" ? `${key}: ${value};` : `${key} { ${serializeCss(value)} }`))
+    .join("\n");
+}
+
+test("registry-only payload renders the copied Dialog overlay (C-01)", async ({ page }) => {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const uiRoot = join(here, "..");
+  const repo = join(uiRoot, "..", "..");
+  const registry = JSON.parse(readFileSync(join(repo, "registry.json"), "utf8")) as {
+    items: { name: string; css?: CssObject; cssVars?: Record<string, Record<string, string>> }[];
+  };
+  const light: Record<string, string> = {};
+  const dark: Record<string, string> = {};
+  const theme: Record<string, string> = {};
+  const chunks: string[] = [];
+  for (const item of registry.items) {
+    Object.assign(light, item.cssVars?.light ?? {});
+    Object.assign(dark, item.cssVars?.dark ?? {});
+    Object.assign(theme, item.cssVars?.theme ?? {});
+    if (item.css) chunks.push(serializeCss(item.css));
+  }
+  const vars = (selector: string, vars: Record<string, string>) =>
+    `${selector} { ${Object.entries(vars).map(([n, v]) => `--${n}: ${v};`).join("\n")} }`;
+  const fixture = [
+    '@import "tailwindcss";',
+    `@source "${join(repo, "registry", "ui")}";`,
+    vars("@theme inline", theme),
+    vars(":root", light),
+    vars(".dark", dark),
+    ...chunks,
+  ].join("\n");
+  const dir = join(uiRoot, "preview", ".tmp-copy-css");
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, "payload.css");
+  writeFileSync(file, fixture);
+  let compiled: string;
+  try {
+    compiled = (await postcss([tailwindcss()]).process(fixture, { from: file })).css;
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+  // Overlay markup as copied by registry/ui/dialog.tsx.
+  await page.setContent(
+    `<style>${compiled}</style><div data-slot="dialog-overlay" class="fixed pin-fill z-overlay dialog-scrim"></div>`,
+  );
+  const out = await page.evaluate(() => {
+    const el = document.querySelector('[data-slot="dialog-overlay"]')!;
+    const rect = el.getBoundingClientRect();
+    return { w: rect.width, h: rect.height, bg: getComputedStyle(el).backgroundColor };
+  });
+  const viewport = page.viewportSize()!;
+  expect(out.w).toBe(viewport.width);
+  expect(out.h).toBe(viewport.height);
+  expect(out.bg).not.toBe("rgba(0, 0, 0, 0)");
+  expect(out.bg).not.toBe("transparent");
 });
 
 test("consumer utility overrides Switch height (C-03)", async ({ page }) => {
