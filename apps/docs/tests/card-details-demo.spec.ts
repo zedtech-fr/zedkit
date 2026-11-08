@@ -5,6 +5,25 @@ import { DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
 const CARD_URL = "/docs/ui/group-content-in-a-card-section";
 const DETAILS_URL = "/docs/ui/show-key-value-details-and-a-live-indicator";
 
+test("the order total sits in a quiet table foot", async ({ page }) => {
+  await page.goto(CARD_URL);
+  const preview = page.locator("[data-component-preview]").first();
+  const foot = preview.locator("[data-slot='table-footer']");
+  await expect(foot).toBeVisible();
+  await expect(foot).toContainText("Total €101.50");
+  const band = await foot.evaluate((node) => {
+    const probe = document.createElement("div");
+    probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted)) 50%, transparent)";
+    node.append(probe);
+    const expected = getComputedStyle(probe).backgroundColor;
+    const background = getComputedStyle(node).backgroundColor;
+    probe.remove();
+    return { background, expected, numeric: node.className.includes("bg-muted/") };
+  });
+  expect(band.background).toBe(band.expected);
+  expect(band.numeric).toBe(false);
+});
+
 test("card footer actions change the card state", async ({ page }) => {
   await page.goto(CARD_URL, { waitUntil: "networkidle" });
   const card = page.locator("[data-component-preview]").nth(1);
