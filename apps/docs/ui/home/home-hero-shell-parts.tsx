@@ -28,7 +28,7 @@ type NavProps = { page: HeroPageId; onPage: (id: HeroPageId) => void };
 export function HeroShell({ sidebar, topbar, children }: { sidebar: React.ReactNode; topbar: React.ReactNode; children: React.ReactNode }) {
   return (
     <div data-hero-shell="" className="flex w-full content-shrink">
-      <div data-hero-sidebar="" className="sidebar-wash flex w-app-shell-sidebar shrink-0 flex-col border-r max-md:hidden">
+      <div data-hero-sidebar="" className="muted-wash flex w-app-shell-sidebar shrink-0 flex-col border-r max-md:hidden">
         {sidebar}
       </div>
       <div className="flex pane-shrink content-shrink flex-1 flex-col">
