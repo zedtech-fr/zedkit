@@ -89,7 +89,7 @@ function NavDrawerLink({
       {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
     >
       <span className="content-shrink flex-1">{link.text}</span>
-      {link.external ? <ExternalLink aria-hidden="true" className="size-icon shrink-0 opacity-70" /> : null}
+      {link.external ? <ExternalLink aria-hidden="true" data-external-mark="" className="size-icon shrink-0" /> : null}
     </DocsAppLink>
   );
 }

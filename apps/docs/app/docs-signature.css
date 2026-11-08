@@ -246,6 +246,11 @@
   padding-bottom: calc(var(--spacing) * 2);
 }
 
+/* A menu link that leaves the site. Quieter than the label, not the dialog close. */
+[data-external-mark] {
+  opacity: 0.7;
+}
+
 /* Site menu. At most 85% of the screen, and never taller than 640px. */
 [data-shell-nav-drawer] {
   max-height: min(85dvh, 640px);
