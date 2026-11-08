@@ -28,13 +28,13 @@ function LookSelect({
 }) {
   const options = looks.length > 0 ? looks : identities;
   return (
-    <Field className="w-full sm:w-48 sm:shrink-0">
+    <Field data-identity-look="" className="w-full">
       <FieldLabel htmlFor="identity-editor-look">
         {identityEditorCopy.toolbar.look}
       </FieldLabel>
       <select
         id="identity-editor-look"
-        className="h-control-height w-full rounded-md border border-input bg-background px-3 text-control text-foreground focus-ring-control"
+        className="h-control-height w-full rounded-md border border-input bg-background px-field-pad text-control text-foreground focus-ring-control"
         value={identity}
         onChange={(event) => onIdentity(event.target.value)}
       >
@@ -51,7 +51,7 @@ function LookSelect({
 /** Controls that sit on one line align on their bottom edge; a hint never sits inside the row. */
 function Row({ children }: { children: ReactNode }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-end">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-end">
       {children}
     </Stack>
   );
@@ -87,7 +87,7 @@ function IdentityEditorPreviewBar({
       role="group"
       aria-label={copy.groups.preview}
       data-slot="identity-editor-toolbar"
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
     >
       <Row>
         <LookSelect identity={identity} looks={looks} onIdentity={onIdentity} />
@@ -178,10 +178,10 @@ function SaveFeedback({
   onSaveAsNew: () => void;
 }) {
   const copy = identityEditorCopy.library;
-  if (!status) return <Text role="status" typeRole="label" className="min-h-5" />;
+  if (!status) return <Text role="status" typeRole="label" className="min-h-label" />;
   if (status.kind === "exists") {
     return (
-      <Stack gap={2} role="alert" data-slot="identity-editor-clash">
+      <Stack gap="sm" role="alert" data-slot="identity-editor-clash">
         <Text typeRole="label">{copy.exists(status.label)}</Text>
         <Row>
           <Button type="button" variant="outline" onClick={() => onSave(true)}>
@@ -254,15 +254,15 @@ function IdentityEditorKeepBar({
   const titleId = useId();
   return (
     <Stack
-      gap={2}
+      gap="sm"
       role="group"
       aria-labelledby={titleId}
-      className={cn("min-w-0", className)}
+      className={cn("content-shrink", className)}
       data-slot="identity-editor-keep"
     >
       <LibraryHeading id={titleId} problem={problem} />
       <Row>
-        <Field className="w-full min-w-36 sm:w-56">
+        <Field className="w-full min-w-name sm:w-name">
           <FieldLabel htmlFor="identity-editor-name">{copy.name}</FieldLabel>
           <Input
             id="identity-editor-name"
@@ -292,7 +292,7 @@ function IdentityEditorKeepBar({
         id="identity-editor-name-hint"
         variant="muted"
         typeRole="label"
-        className="min-h-5"
+        className="min-h-label"
       >
         {name.trim() === "" ? copy.nameHint : null}
       </Text>

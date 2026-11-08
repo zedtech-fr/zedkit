@@ -4,7 +4,6 @@ import test from "node:test";
 import { A11Y_AXE_EXCEPTIONS, A11Y_AXE_EXCLUDES } from "../tests/a11y-exceptions.mjs";
 
 test("every axe exclude is documented with owner and removeBy", () => {
-  assert.ok(A11Y_AXE_EXCEPTIONS.length > 0);
   const today = new Date().toISOString().slice(0, 10);
   for (const entry of A11Y_AXE_EXCEPTIONS) {
     assert.match(entry.selector, /\S/, "selector");

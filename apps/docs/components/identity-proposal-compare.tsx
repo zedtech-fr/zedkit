@@ -32,20 +32,20 @@ export function ProposalBeforeAfter({
 }) {
   const narrow = useNarrowCompare();
   return (
-    <Stack gap={3} data-assistant-proposal-compare="">
+    <Stack gap="md" data-assistant-proposal-compare="">
       <Text variant="muted" typeRole="body">
         {copy.proposal.compare}
       </Text>
-      <Stack gap={3} className={cn("flex flex-col", narrow ? "flex-col-reverse" : undefined)}>
-        <Stack gap={2} className="min-w-0">
+      <Stack gap="md" className={cn("flex flex-col", narrow ? "flex-col-reverse" : undefined)}>
+        <Stack gap="sm" className="content-shrink">
           <Text typeRole="label" className="text-foreground">
             {copy.proposal.afterLabel}
           </Text>
           <IdentityMiniPreview tokens={proposed} id={`proposal-${requestId}`} domain={domain} compact={narrow} />
         </Stack>
-        <details open={!narrow} className="min-w-0 text-zk-type-body">
-          <summary className="flex min-h-11 cursor-pointer items-center focus-ring lg:hidden">{copy.proposal.beforeLabel}</summary>
-          <Stack gap={2} className="pt-2 lg:pt-0">
+        <details open={!narrow} className="content-shrink text-zk-type-body">
+          <summary className="flex min-h-target cursor-pointer items-center focus-ring lg:hidden">{copy.proposal.beforeLabel}</summary>
+          <Stack gap="sm" data-proposal-before="">
             <Text typeRole="label" className="hidden text-foreground lg:block">
               {copy.proposal.beforeLabel}
             </Text>

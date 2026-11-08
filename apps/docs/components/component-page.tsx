@@ -94,38 +94,38 @@ export async function ComponentPage({
   });
 
   return (
-    <Stack gap={8}>
-      <Stack gap={3}>
+    <Stack gap="blocks">
+      <Stack gap="md">
         {status !== "stable" ? <MaturityBadge status={status} /> : null}
-        <Text className="text-base text-muted-foreground sm:text-lg">{purpose}</Text>
+        <Text className="text-purpose text-muted-foreground">{purpose}</Text>
       </Stack>
 
       <Stack id="example">
         <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
       </Stack>
 
-      <dl id="guidance" className="m-0 grid gap-x-6 gap-y-2 text-sm text-muted-foreground sm:grid-cols-[max-content_1fr] sm:items-baseline">
-        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
-        <dd className="m-0 min-w-0">{audience}</dd>
-        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
-        <dd className="m-0 min-w-0">{whenToUse}</dd>
-        <dt className="m-0 font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
-        <dd className="m-0 min-w-0">{whenNotToUse}</dd>
+      <dl id="guidance" data-term-row="" className="trim-margin grid gap-x-meta gap-y-stack-sm text-dense text-muted-foreground sm:items-baseline">
+        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
+        <dd className="trim-margin content-shrink">{audience}</dd>
+        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
+        <dd className="trim-margin content-shrink">{whenToUse}</dd>
+        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
+        <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
       </dl>
 
-      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-3">
-        <Stack gap={3}>
+      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-stack-md">
+        <Stack gap="md">
           <AdoptionPanelView plan={plan} />
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {componentPageCopy.packageVersionLine(version)}
           </Text>
         </Stack>
       </Section>
 
-      <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-3">
-        <Stack gap={4}>
+      <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
+        <Stack gap="lg">
           {copyable ? (
-            <Text variant="muted" className="text-sm" data-usage-import-note="">
+            <Text variant="muted" data-usage-import-note="">
               {componentPageCopy.usageImportNote(registry)}
             </Text>
           ) : null}
@@ -133,7 +133,7 @@ export async function ComponentPage({
             examples.map(async (ex) => {
               const previewDemo = examplePreviews[ex.title];
               return (
-                <Stack key={ex.title} gap={2}>
+                <Stack key={ex.title} gap="sm">
                   {previewDemo ? (
                     <>
                       <Heading level={3}>{ex.title}</Heading>
@@ -165,9 +165,9 @@ export async function ComponentPage({
 
       {sections.includes("related") ? (
         <Section title={componentPageCopy.sections.related} id="related">
-          <Stack gap={2}>
+          <Stack gap="sm">
             {related.map((link) => (
-              <Link key={link.href} href={link.href} className="text-primary underline underline-offset-4 hover:no-underline">
+              <Link key={link.href} href={link.href} className="text-primary underline link-offset hover:no-underline">
                 {link.title}
               </Link>
             ))}

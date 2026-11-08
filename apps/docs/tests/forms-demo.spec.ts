@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { pinDemoLook } from "./a11y-helpers";
+
 test.describe("docs form previews show realistic forms", () => {
   test("field: validation shows after submit and clears once fixed", async ({ page }) => {
     await page.goto("/docs/ui/lay-out-fieldsets-fields-and-error-lists", { waitUntil: "networkidle" });
@@ -10,6 +12,27 @@ test.describe("docs form previews show realistic forms", () => {
     await page.getByRole("button", { name: "Create project" }).first().click();
     await expect(page.getByText("Use at least 3 characters.")).toBeHidden();
     await expect(page.getByText("Project “Harbor Studio” created.")).toBeVisible();
+  });
+
+  test("a checked field keeps a light primary wash, stronger in the dark", async ({ page }) => {
+    await page.goto("/docs/ui/lay-out-fieldsets-fields-and-error-lists");
+    const preview = page.locator("[data-component-preview]").first();
+    const label = preview.locator("[data-slot='field-label']").filter({ hasText: "Email the team" });
+    await expect(label).toBeVisible();
+    const read = (amount: string) =>
+      label.evaluate((node, percent) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = `color-mix(in oklab, hsl(var(--primary)) ${percent}, transparent)`;
+        node.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        const background = getComputedStyle(node).backgroundColor;
+        probe.remove();
+        return background === expected && !node.className.includes("bg-primary/");
+      }, amount);
+    await pinDemoLook(preview, "glass", "light");
+    await expect.poll(() => read("5%")).toBe(true);
+    await pinDemoLook(preview, "glass", "dark");
+    await expect.poll(() => read("10%")).toBe(true);
   });
 
   test("validated forms: props table lists the field props (#1061)", async ({ page }) => {
@@ -57,6 +80,37 @@ test.describe("docs form previews show realistic forms", () => {
     await terms.check();
     await expect(terms).toBeChecked();
     await expect(page.getByLabel("Notify me when the order ships").first()).toBeChecked();
+  });
+
+  test("a chosen option card keeps a light primary wash", async ({ page }) => {
+    await page.goto("/docs/ui/guide-a-multi-step-flow-with-selectable-option-cards");
+    const preview = page.locator("[data-component-preview]").first();
+    const chosen = preview.locator("[data-slot='option-card']").filter({ hasText: "Physical products" });
+    const other = preview.locator("[data-slot='option-card']").filter({ hasText: "Digital downloads" });
+    await expect(chosen).toBeVisible();
+    const fill = await chosen.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--primary)) 5%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return { background, expected, numeric: node.className.includes("bg-primary/") };
+    });
+    expect(fill.background).toBe(fill.expected);
+    expect(fill.numeric).toBe(false);
+    await other.hover();
+    await expect.poll(async () =>
+      other.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.borderTop = "1px solid color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent)";
+        node.append(probe);
+        const expected = getComputedStyle(probe).borderTopColor;
+        const border = getComputedStyle(node).borderTopColor;
+        probe.remove();
+        return border === expected && !node.className.includes("border-muted-foreground/");
+      }),
+    ).toBe(true);
   });
 
   test("wizard: continue and back walk the store setup, composed steps and solo card render", async ({ page }) => {

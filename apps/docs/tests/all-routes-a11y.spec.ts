@@ -37,10 +37,9 @@ for (const route of routes) {
       await page.evaluate(() =>
         Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
       );
-      const { violations } = await new AxeBuilder({ page })
-        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-        .exclude(A11Y_AXE_EXCLUDES)
-        .analyze();
+      let builder = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]);
+      if (A11Y_AXE_EXCLUDES) builder = builder.exclude(A11Y_AXE_EXCLUDES);
+      const { violations } = await builder.analyze();
       for (const violation of violations) {
         if (violation.impact !== "serious" && violation.impact !== "critical") continue;
         const where = violation.nodes[0]?.target.join(" ").slice(0, 90);

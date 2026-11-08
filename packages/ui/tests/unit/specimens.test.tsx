@@ -36,8 +36,8 @@ describe("BriefSpecimen", () => {
   });
 
   it("passes className to the routed specimen", () => {
-    const { container } = render(<BriefSpecimen brief="shop" domain="commerce" className="mt-4" />);
-    expect(container.querySelector("[data-slot='commerce-specimen']")?.className).toContain("mt-4");
+    const { container } = render(<BriefSpecimen brief="shop" domain="commerce" className="mt-status" />);
+    expect(container.querySelector("[data-slot='commerce-specimen']")?.className).toContain("mt-status");
   });
 
   it("falls back to saas-dashboard when the brief has no domain keywords", () => {
@@ -72,8 +72,11 @@ describe("SaasDashboardSpecimen", () => {
   it("renders usage stats and invites a teammate with a valid email", async () => {
     const user = userEvent.setup();
     const messages = specimenMessagesEn.saasDashboard;
-    render(<SaasDashboardSpecimen />);
+    const { container } = render(<SaasDashboardSpecimen />);
     expect(screen.getByRole("heading", { name: messages.heading })).toBeTruthy();
+    const members = container.querySelectorAll("[data-team-list] > li");
+    expect(members.length).toBeGreaterThan(0);
+    for (const member of members) expect(member.className).not.toContain("border-b-0");
     expect(screen.getByText(messages.stats[0]!.label)).toBeTruthy();
     await user.click(screen.getByRole("button", { name: messages.invite }));
     const email = screen.getByLabelText(messages.emailLabel);

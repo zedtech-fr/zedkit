@@ -37,8 +37,8 @@ export function TabsControlledDemo() {
         <CardDescription>{tabsCopy.controlled.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Stack gap={4}>
-          <Stack direction="horizontal" gap={3}>
+        <Stack gap="lg">
+          <Stack direction="horizontal" gap="md">
             <Badge variant="secondary" className="whitespace-nowrap">{tabsCopy.controlled.showing(views[view].label)}</Badge>
             <Button variant="outline" size="sm" onClick={() => setView("month")}>
               {tabsCopy.controlled.jump}

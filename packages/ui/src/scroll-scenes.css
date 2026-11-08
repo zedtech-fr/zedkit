@@ -17,7 +17,7 @@
  * out per count below. Other counts stay stacked.
  *
  * Tune with custom properties on the component:
- *   --zk-scenes-top     distance under a fixed header (default 6rem)
+ *   --zk-scenes-top     distance under a fixed header (default: header height plus 1rem)
  *   --zk-scenes-bottom  space kept under the stage (default 1rem)
  *   --zk-scenes-step    scroll distance per scene (default 60svh)
  */
@@ -30,7 +30,7 @@
   @supports (animation-timeline: view()) {
     :root:not([data-motion="reduce"]) {
     [data-scroll-scenes][data-scene-count] {
-      --zk-top: var(--zk-scenes-top, 6rem);
+      --zk-top: var(--zk-scenes-top, calc(var(--zk-header-height, 3.5rem) + 1rem));
       --zk-bottom: var(--zk-scenes-bottom, 1rem);
       --zk-stage: calc(100svh - var(--zk-top) - var(--zk-bottom));
       /* The track is scrolled past while the stage is pinned: one step per scene. */

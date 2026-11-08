@@ -38,7 +38,7 @@ describe("GlassSurface", () => {
     const node = screen.getByText("Hello");
     expect(node.getAttribute("data-slot")).toBe("glass-surface");
     expect(node.className).toContain("bg-card");
-    expect(node.className).toContain("p-6");
+    expect(node.className).toContain("surface-pad-lg");
   });
 
   it("switches tone and padding", () => {
@@ -48,20 +48,23 @@ describe("GlassSurface", () => {
       </GlassSurface>,
     );
     const node = screen.getByText("Tinted");
-    expect(node.className).toContain("from-accent/15");
-    expect(node.className).toContain("p-8");
-    expect(node.className).not.toContain("p-6");
+    expect(node.className).toContain("surface-tint");
+    expect(node.className).not.toContain("from-accent/");
+    expect(node.className).toContain("glass-pad-lg");
+    expect(node.className).not.toContain("surface-pad-lg");
+    render(<GlassSurface padding="sm">Small</GlassSurface>);
+    expect(screen.getByText("Small").className).toContain("surface-pad-md");
   });
 
   it("renders the requested element and forwards props", () => {
     render(
-      <GlassSurface as="section" aria-label="Plans" className="mt-4">
+      <GlassSurface as="section" aria-label="Plans" className="mt-status">
         Plans
       </GlassSurface>,
     );
     const node = screen.getByLabelText("Plans");
     expect(node.tagName).toBe("SECTION");
-    expect(node.className).toContain("mt-4");
+    expect(node.className).toContain("mt-status");
   });
 
   it("uses no raw arbitrary values and has no axe violations", async () => {
@@ -164,15 +167,16 @@ describe("FeatureGrid", () => {
     const icons = container.querySelectorAll("[data-slot='feature-icon']");
     expect(icons).toHaveLength(1);
     expect(icons[0]?.getAttribute("aria-hidden")).toBe("true");
+    expect(icons[0]?.className).not.toContain("bg-primary/10");
     expect(container.querySelector("[data-slot='marketing-section-header'] p")).toBeNull();
   });
 
   it("picks the column count and handles an empty list", () => {
     const { container, rerender } = render(<FeatureGrid title="T" features={[]} columns={4} />);
-    expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-4");
+    expect(container.querySelector("ul")?.className).toContain("lg:grid-quad");
     expect(container.querySelectorAll("li")).toHaveLength(0);
     rerender(<FeatureGrid title="T" features={[]} />);
-    expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-3");
+    expect(container.querySelector("ul")?.className).toContain("lg:grid-trio");
   });
 });
 
@@ -486,16 +490,17 @@ describe("Pricing", () => {
     const marked = container.querySelectorAll("[data-highlighted='true']");
     expect(marked).toHaveLength(1);
     expect(marked[0]?.querySelector("[data-slot='pricing-badge']")?.textContent).toBe("Most popular");
-    expect(marked[0]?.className).toContain("ring-primary");
+    expect(marked[0]?.className).toContain("border-primary");
+    expect(marked[0]?.className).not.toContain("ring-2");
   });
 
   it("skips the action row when a plan has none, and picks columns from the plan count", () => {
     const { container, rerender } = render(<Pricing title="T" plans={plans} />);
     expect(container.querySelectorAll("[data-slot='pricing-action']")).toHaveLength(2);
-    expect(container.querySelector("ul")?.className).toContain("lg:grid-cols-3");
+    expect(container.querySelector("ul")?.className).toContain("lg:grid-trio");
     rerender(<Pricing title="T" plans={plans.slice(0, 2)} />);
-    expect(container.querySelector("ul")?.className).toContain("sm:grid-cols-2");
-    expect(container.querySelector("ul")?.className).not.toContain("lg:grid-cols-3");
+    expect(container.querySelector("ul")?.className).toContain("sm:grid-pair");
+    expect(container.querySelector("ul")?.className).not.toContain("lg:grid-trio");
     rerender(<Pricing title="T" plans={plans.slice(0, 1)} />);
     expect(container.querySelector("ul")?.className).not.toContain("grid-cols");
     rerender(<Pricing title="T" plans={[]} />);

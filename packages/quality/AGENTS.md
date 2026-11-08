@@ -20,7 +20,10 @@
 6. Every export and subpath needs a CATALOG.md entry; regenerate
    `catalog.json` (`pnpm catalog:build` from the root).
 7. `uiPreset` moves `eslint/ui-preset.mjs` logic verbatim (only
-   `entryPoint` is a parameter); `defineLayers` encodes the
+   `entryPoint` is a parameter). `entryPoints` scopes extra CSS
+   entries; `zedkit/tailwind-ready` must validate the entry for the
+   file being linted (`settings.zedkit.entryPoint`), not only the
+   default. `defineLayers` encodes the
    route/view/data doctrine from the `console-architecture` agent,
    plus preset `feature-folders` (ui→ports, adapters at the
    composition root, model pure). The live example lives in

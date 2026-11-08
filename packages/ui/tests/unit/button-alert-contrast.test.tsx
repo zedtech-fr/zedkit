@@ -57,7 +57,7 @@ describe("button and alert contrast (ZK-02)", () => {
 
   it("keeps horizontal padding on link size sm (no px-0 reset)", () => {
     const classes = buttonVariants({ variant: "link", size: "sm" });
-    expect(classes).toMatch(/\bpx-2\b/);
+    expect(classes).toMatch(/\bpx-control-tight\b/);
     expect(classes).not.toMatch(/(?:^|\s)px-0(?:\s|$)/);
   });
 });
@@ -73,8 +73,11 @@ describe("switch geometry (ZK-11)", () => {
   };
 
   it("derives thumb travel from track width minus thumb (border-aware)", () => {
+    // Geometry lives in the [data-slot="switch"] rules in styles.css now;
+    // switch.tsx carries no sizing classes of its own.
+    const css = readFileSync(resolve(pkg, "src/styles.css"), "utf8");
     const source = readFileSync(resolve(pkg, "src/switch.tsx"), "utf8");
-    expect(source).toContain("calc(var(--spacing)");
+    expect(css).toContain("translate: calc(var(--spacing) * 5 - 4px) 0;");
     expect(source).not.toContain("w-switch-track-width");
     expect(source).not.toContain("translate-x-4");
     expect(source).not.toContain("size-4");

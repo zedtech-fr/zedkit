@@ -6,7 +6,7 @@ import { animateCopy } from "@/components/demos/i18n/animate-copy";
 export function AnimateStaggerDemo() {
   return (
     <Animate on={{ appear: "fade-up" }} stagger>
-      <Stack gap={2}>
+      <Stack gap="sm">
         {animateCopy.tasks.map((task) => (
           <Text key={task}>{task}</Text>
         ))}

@@ -28,7 +28,7 @@ function Segmented({ label, className, children }: { label: string; className?: 
       direction="horizontal"
       role="group"
       aria-label={label}
-      className={cn("inline-flex items-center gap-0.5", className)}
+      className={cn("inline-flex items-center gap-segment", className)}
     >
       {children}
     </Stack>
@@ -49,7 +49,8 @@ function Segment({
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className="min-h-11 rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-7"
+      data-preview-segment=""
+      className="min-h-target rounded text-dense text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-segment"
     >
       {children}
     </button>
@@ -86,14 +87,14 @@ export function PreviewFrame({
   const dark = modePin === "follow" ? siteDark : modePin === "dark";
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="flex w-full min-w-0 flex-col gap-2">
-      <Stack direction="horizontal" className="flex-wrap justify-between gap-x-4 gap-y-2">
-        <TabsList className="h-auto! gap-1 rounded-none bg-transparent p-0">
+    <Tabs value={tab} onValueChange={setTab} className="flex w-full content-shrink flex-col gap-stack-sm">
+      <Stack direction="horizontal" className="flex-wrap justify-between gap-x-stack-lg gap-y-stack-sm">
+        <TabsList className="h-auto! gap-stack-tight rounded-none bg-transparent flush">
           {([previewViewportCopy.tabs.preview, previewViewportCopy.tabs.code] as const).map((value) => (
             <TabsTrigger
               key={value}
               value={value}
-              className="h-9 rounded-md px-3 text-sm text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              className="h-control-height rounded-md px-tabs-trigger-inline text-dense text-muted-foreground capitalize data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none"
             >
               {value}
             </TabsTrigger>
@@ -106,7 +107,8 @@ export function PreviewFrame({
               aria-expanded={displayOpen}
               aria-controls={displayId}
               onClick={() => setDisplayOpen(!displayOpen)}
-              className="min-h-11 rounded px-2.5 text-sm text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
+              data-preview-segment=""
+              className="min-h-target rounded text-dense text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
             >
               {previewViewportCopy.display}
             </button>
@@ -116,7 +118,7 @@ export function PreviewFrame({
               data-preview-display=""
               // Phone: a full-width row opened by the Display toggle. From md up the toggle is gone and the row
               // always sits beside the tabs, whatever the toggle said on the way here.
-              className={cn("min-w-0 flex-wrap gap-2 md:flex md:w-auto", displayOpen ? "w-full" : "hidden")}
+              className={cn("content-shrink flex-wrap gap-stack-sm md:flex md:w-auto", displayOpen ? "w-full" : "hidden")}
             >
               <DemoStyleSelect look={demoStyle.look} pinned={demoStyle.pinned} onPin={demoStyle.pin} labelHidden />
               <Segmented label={previewViewportCopy.width} className="hidden md:inline-flex">
@@ -144,19 +146,19 @@ export function PreviewFrame({
       </Stack>
       <Stack
         data-preview-frame=""
-        className={cn("min-w-0 rounded-lg border border-border", pinned ? "overflow-clip" : "overflow-hidden")}
+        className={cn("content-shrink rounded-lg border border-border", pinned ? "overflow-clip" : "overflow-hidden")}
       >
-        <TabsContent value="preview" className="mt-0">
+        <TabsContent value="preview" className="trim-top">
           <ThemeScope
             data-preview-surface=""
+            data-frame={mobile ? "phone" : undefined}
             identity={demoStyle.look}
             mode={dark ? "dark" : "light"}
             className={cn(
               // not-prose is a fumadocs escape hatch, not a Tailwind utility.
               // eslint-disable-next-line better-tailwindcss/no-unknown-classes
-              "not-prose w-full min-w-0 bg-background p-4 md:p-6",
+              "not-prose w-full content-shrink bg-background surface-pad-md md:surface-pad-lg",
               !pinned && "overflow-x-auto",
-              mobile && "mx-auto max-w-[390px]",
             )}
           >
             <PreviewMobileContext.Provider value={mobile}>
@@ -164,8 +166,8 @@ export function PreviewFrame({
             </PreviewMobileContext.Provider>
           </ThemeScope>
         </TabsContent>
-        <TabsContent value="code" className="mt-0">
-          <Stack data-preview-code-panel="" className="min-w-0">
+        <TabsContent value="code" className="trim-top">
+          <Stack data-preview-code-panel="" className="content-shrink">
             {codePanel}
           </Stack>
         </TabsContent>

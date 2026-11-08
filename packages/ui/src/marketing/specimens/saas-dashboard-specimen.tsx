@@ -30,24 +30,24 @@ type SaasMessages = typeof specimenMessagesEn.saasDashboard;
 
 function SaasOverviewCard({ messages }: { messages: SaasMessages }) {
   return (
-    <Card className="min-w-0">
+    <Card className="content-shrink">
       <CardHeader>
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </CardHeader>
       <CardContent>
-        <Stack gap={4} className="min-w-0">
-          <div className="grid min-w-0 grid-cols-2 gap-3">
+        <Stack gap="lg" className="content-shrink">
+          <div className="grid content-shrink grid-pair gap-stack-md">
             {messages.stats.map((stat) => (
-              <div key={stat.label} className="min-w-0">
+              <div key={stat.label} className="content-shrink">
                 <Text variant="muted">{stat.label}</Text>
-                <Text className="text-2xl font-semibold tabular-nums">{stat.value}</Text>
+                <Text className="text-stat tabular-nums">{stat.value}</Text>
               </div>
             ))}
           </div>
-          <Stack gap={1} role="group" aria-label={messages.quotasAriaLabel}>
-            <Stack direction="horizontal" gap={2} className="flex-wrap justify-between">
-              <Text as="span" className="text-sm font-medium">
+          <Stack gap="tight" role="group" aria-label={messages.quotasAriaLabel}>
+            <Stack direction="horizontal" gap="sm" className="flex-wrap justify-between">
+              <Text as="span" className="text-dense font-medium">
                 {messages.quotaLabel}
               </Text>
               <Text as="span" variant="muted">
@@ -80,9 +80,9 @@ function SaasInvitePopover({
           {messages.invite}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 max-w-[calc(100vw-2rem)]">
+      <PopoverContent align="end" className="w-invite">
         <form
-          className="grid gap-3"
+          className="grid gap-stack-md"
           onSubmit={(event) => {
             event.preventDefault();
             const trimmed = email.trim();
@@ -93,7 +93,7 @@ function SaasInvitePopover({
           }}
         >
           <Text className="font-medium">{messages.inviteTitle}</Text>
-          <Stack gap={1}>
+          <Stack gap="tight">
             <Label htmlFor={emailId}>{messages.emailLabel}</Label>
             <Input
               id={emailId}
@@ -124,25 +124,25 @@ function SaasTeamCard({
   onInvite: (email: string) => void;
 }) {
   return (
-    <Card className="min-w-0">
+    <Card className="content-shrink">
       <CardHeader>
-        <Stack direction="horizontal" gap={2} className="flex-wrap items-center justify-between">
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center justify-between">
           <Heading level={4}>{messages.teamHeading}</Heading>
           <SaasInvitePopover messages={messages} onInvite={onInvite} />
         </Stack>
       </CardHeader>
       <CardContent>
-        <ul aria-label={messages.teamAriaLabel} className="m-0 list-none p-0">
+        <ul aria-label={messages.teamAriaLabel} data-team-list="" className="trim-margin list-none flush">
           {members.map((member) => (
-            <li key={member.id} className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-b-0">
-              <Text as="span" className="min-w-0 truncate">
+            <li key={member.id} className="flex items-center justify-between gap-stack-md border-b border-border surface-pad-block-sm">
+              <Text as="span" className="content-shrink truncate">
                 {member.name}
               </Text>
               <Badge variant="secondary">{member.role}</Badge>
             </li>
           ))}
         </ul>
-        <Text variant="muted" role="status" className="mt-3 min-h-6">
+        <Text variant="muted" role="status" className="mt-status min-h-status">
           {status}
         </Text>
       </CardContent>
@@ -155,7 +155,7 @@ export function SaasDashboardSpecimen({ className, messages = specimenMessagesEn
   const [status, setStatus] = useState("");
 
   return (
-    <Stack gap={4} className={`min-w-0 ${className ?? ""}`} data-slot="saas-dashboard-specimen" data-specimen-domain="saas-dashboard">
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="saas-dashboard-specimen" data-specimen-domain="saas-dashboard">
       <SaasOverviewCard messages={messages} />
       <SaasTeamCard
         messages={messages}

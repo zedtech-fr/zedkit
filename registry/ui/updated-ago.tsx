@@ -20,7 +20,7 @@ export function UpdatedAgo({ date, prefix, className }: UpdatedAgoProps) {
   const fallbackPrefix = prefix ?? zedkitUiMessagesEn.updated;
   const fallback = `${fallbackPrefix} ${formatUpdatedAgo(Date.now(), then, zedkitUiMessagesEn.locale, zedkitUiMessagesEn.justNow)}`;
   return (
-    <span data-slot="updated-ago" className={cn("text-xs text-muted-foreground", className)}>
+    <span data-slot="updated-ago" className={cn("text-caption text-muted-foreground", className)}>
       <UpdatedAgoClient then={then} fallback={fallback} {...(prefix === undefined ? {} : { prefix })} />
     </span>
   );

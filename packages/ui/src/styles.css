@@ -57,7 +57,8 @@
   --warning-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 60%;
-  --input: 240 5.9% 90%;
+  /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
+  --input: 240 5.9% 57%;
   /* Focus ring, dark enough for 3:1 on light surfaces. */
   --ring: 240 4% 46%;
   --radius: 0.5rem;
@@ -109,7 +110,8 @@
   --warning-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 37.9%;
-  --input: 240 3.7% 15.9%;
+  /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
+  --input: 240 3.7% 46%;
   --ring: 240 4.9% 83.9%;
   --sidebar: 240 10% 3.9%;
   --sidebar-foreground: 0 0% 98%;
@@ -148,22 +150,14 @@
   --zk-container-reading: 42rem;
   --zk-container-default: 64rem;
   --zk-container-wide: 90rem;
-  --zk-page-gutter: calc(var(--spacing) * 6);
-  --zk-section-sm: calc(var(--spacing) * 8);
-  --zk-section-md: calc(var(--spacing) * 12);
-  --zk-section-lg: calc(var(--spacing) * 24);
-  --zk-section-xl: calc(var(--spacing) * 28);
+  /* --zk-page-gutter / --zk-section-*: the density scope rule after @theme. */
   /* Sticky header offset for section scroll-padding / snap. */
   --zk-header-height: 3.5rem;
 }
 @media (pointer: coarse), (max-width: 40rem) {
   :root {
     --zk-tap-min: 2.75rem;
-    /* Marketing bands stay 64px+ apart on phones even if --spacing is dense. */
-    --zk-section-sm: max(1.5rem, calc(var(--spacing) * 8));
-    --zk-section-md: max(2rem, calc(var(--spacing) * 12));
-    --zk-section-lg: max(2.5rem, calc(var(--spacing) * 24));
-    --zk-section-xl: max(3.5rem, calc(var(--spacing) * 28));
+    /* Section-step floors for this media: the density scope rule after @theme. */
   }
 }
 
@@ -200,26 +194,35 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
   /*
-   * Spacing convention (#367): one canonical name per value. A value used
-   * by 2+ tokens is canonicalized to its Tailwind scale step — new code
-   * uses default utilities (p-4, gap-2, size-4) instead of minting another
-   * alias. Single-use values keep their semantic token. The full value →
-   * tokens map is scripts/registry/spacing-aliases.json, enforced by its
-   * test. Shared-value aliases below are deprecated: new kit code uses the
-   * matching scale step (4 for 1rem, 5 for 1.25rem, …). Tokens stay so
-   * copied CSS and existing class names still work.
-   * `--spacing-drawer-footer-safe` still references
+   * Spacing: a class names a role. The number lives in the value
+   * (`calc(var(--spacing) * N)`), so an identity's `--spacing` still
+   * changes density. Default scale steps (`p-4`, `gap-2`, `text-sm`) are
+   * deprecated. A shared design value uses a role (`px-field-pad`, `px-button-pad`,
+   * `gap-stack-sm` / `md` / `lg`). `--spacing-drawer-footer-safe` still references
    * `--spacing-drawer-chrome-padding`.
    *
-   * Semantic sizes derived from `--spacing` (mist: 0.25rem). Control
-   * block aliases now follow `--spacing`; leftover rem aliases stay
-   * until later #798 migrations.
+   * Stack gaps are three shared design steps. They are gap utilities only,
+   * not a renamed spacing scale. Structural constraints (shrink, pin, flush)
+   * are declarations below, not spacing tokens.
+   *
+   * Declared scales (tested in tests/unit/declared-scales.test.ts):
+   * spacing multipliers at stock resolve to 2,4,6,8,10,12,14,16,20,24,
+   * 28,32,36,40,44,48px rhythm steps (halves to 16px, wholes above),
+   * then named measures 56,60,64,80,96,112,128,144,160,192,224,256,288,
+   * 320,384px. Named exceptions: 1px borders, 2px focus/border widths,
+   * the 3px optical alert nudge, radii and type (their own step scales:
+   * --radius-* in identities.css, --text-* in shared-type-scale.css).
+   * Distinct purposes may share a step; that is normal, not aliasing.
+   * Component recipes (container-aware sizing) select among these
+   * steps only — a recipe never mints a free value.
    */
-  --zk-gap-sm: calc(var(--spacing) * 2);
-  --zk-gap-md: calc(var(--spacing) * 3);
-  --zk-gap-lg: calc(var(--spacing) * 4);
-  --zk-icon-size: calc(var(--spacing) * 4);
-  --zk-control-height: calc(var(--spacing) * 9);
+  /* --zk-gap-*, --zk-icon-size, --zk-control-height live in the plain
+     scope rule after this block, not here: @theme emits them at :root,
+     where their calc would freeze at root density (see that rule). */
+  --spacing-field-pad: calc(var(--spacing) * 3);
+  --spacing-button-pad: calc(var(--spacing) * 4);
+  --spacing-button-pad-lg: calc(var(--spacing) * 8);
+  --spacing-icon: var(--zk-icon-size);
   --spacing-page-gutter: var(--zk-page-gutter);
   --spacing-section-sm: var(--zk-section-sm);
   --spacing-section-md: var(--zk-section-md);
@@ -229,107 +232,105 @@
   --container-reading: var(--zk-container-reading);
   --container-default: var(--zk-container-default);
   --container-wide: var(--zk-container-wide);
-  --spacing-badge-inline: 0.625rem;
-  --spacing-badge-block: 0.125rem;
+  --spacing-badge-inline: calc(var(--spacing) * 2.5);
+  --spacing-badge-block: calc(var(--spacing) * 0.5);
   --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));
   --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
   --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
-  --spacing-button-inline: 1rem;
-  --spacing-button-inline-sm: 0.75rem;
-  --spacing-button-inline-lg: 2rem;
-  --spacing-button-gap: 0.5rem;
-  /* Deprecated alias of Tailwind scale 4 (1rem). New kit code uses size-4. Kept so copied CSS and existing class names still work. */
-  --spacing-icon-control: 1rem;
+  --spacing-button-inline-sm: calc(var(--spacing) * 3);
+  --spacing-button-gap: calc(var(--spacing) * 2);
   /* Minimum touch target (WCAG 2.5.5). */
   --spacing-tap: 2.75rem;
   /*
    * Token convention (#367): shared `icon-*` primitives for sizes used
-   * across components; per-component `--spacing-<component>-*` aliases
-   * only where independent change is plausible. Do not mint a new
-   * same-value alias — reuse the shared token.
+   * across components; per-component `--spacing-<component>-*` tokens
+   * where the purpose is distinct. Distinct purposes may share a value
+   * today and diverge tomorrow — judge a token by meaning, ownership
+   * and independent customizability, not by value uniqueness.
+   * A name that only spells the number is not a separate decision.
    */
-  --spacing-icon-sm: 0.875rem;
-  --spacing-checkbox: 1rem;
+  --spacing-icon-sm: calc(var(--spacing) * 3.5);
+  --spacing-checkbox: calc(var(--spacing) * 4);
   --spacing-heading-scroll: 5rem;
-  --spacing-data-table-stack: 1rem;
+  --spacing-data-table-stack: calc(var(--spacing) * 4);
   --spacing-data-table-filter-width: 24rem;
-  --spacing-data-table-sort-gap: 0.25rem;
-  --spacing-data-table-skeleton-height: 1rem;
-  --spacing-data-table-pagination-gap: 0.5rem;
-  --spacing-option-cards-gap: 0.75rem;
-  --spacing-option-card-gap: 0.75rem;
-  --spacing-option-card-padding: 1rem;
-  --spacing-detail-panel-gap: 1rem;
-  --spacing-detail-panel-inline: 1rem;
-  --spacing-detail-panel-block: 0.75rem;
-  --spacing-wizard-steps-gap: 0.75rem;
-  --spacing-wizard-steps-row-gap: 0.5rem;
-  --spacing-wizard-step-gap: 0.5rem;
-  --spacing-wizard-step-badge: 1.5rem;
-  --spacing-wizard-step-connector-gap: 0.25rem;
+  --spacing-data-table-sort-gap: calc(var(--spacing) * 1);
+  --spacing-data-table-skeleton-height: calc(var(--spacing) * 4);
+  --spacing-data-table-pagination-gap: calc(var(--spacing) * 2);
+  --spacing-option-cards-gap: calc(var(--spacing) * 3);
+  --spacing-option-card-gap: calc(var(--spacing) * 3);
+  --spacing-option-card-padding: calc(var(--spacing) * 4);
+  --spacing-detail-panel-gap: calc(var(--spacing) * 4);
+  --spacing-detail-panel-inline: calc(var(--spacing) * 4);
+  --spacing-detail-panel-block: calc(var(--spacing) * 3);
+  --spacing-wizard-steps-gap: calc(var(--spacing) * 3);
+  --spacing-wizard-steps-row-gap: calc(var(--spacing) * 2);
+  --spacing-wizard-step-gap: calc(var(--spacing) * 2);
+  --spacing-wizard-step-badge: calc(var(--spacing) * 6);
+  --spacing-wizard-step-connector-gap: calc(var(--spacing) * 1);
   --spacing-wizard-step-connector-thickness: 1px;
-  --spacing-wizard-step-connector: 1.5rem;
+  --spacing-wizard-step-connector: calc(var(--spacing) * 6);
   --spacing-checkmark: 1rem;
   --animate-check-draw: zk-check-draw 0.45s ease-out forwards;
-  --spacing-progress-bar-gap: 0.125rem;
-  --spacing-progress-bar-height: 0.375rem;
+  --spacing-progress-bar-gap: calc(var(--spacing) * 0.5);
+  --spacing-progress-bar-height: calc(var(--spacing) * 1.5);
   --spacing-tabs-list-height: max(calc(var(--zk-tap-min, 0px) + 0.5rem), 2.25rem);
-  --spacing-tabs-list-inset: 0.25rem;
-  --spacing-tabs-trigger-inline: 0.75rem;
-  --spacing-tabs-trigger-block: 0.25rem;
-  --spacing-tabs-content-gap: 0.5rem;
+  --spacing-tabs-list-inset: calc(var(--spacing) * 1);
+  --spacing-tabs-trigger-inline: calc(var(--spacing) * 3);
+  --spacing-tabs-trigger-block: calc(var(--spacing) * 1);
+  --spacing-tabs-content-gap: calc(var(--spacing) * 2);
   --spacing-switch-track-height: 1.25rem;
   --spacing-switch-track-width: 2.25rem;
   --spacing-switch-thumb: 1rem;
   /* Checked-state thumb travel: track width − thumb − transparent borders. */
   --spacing-switch-travel: 1rem;
-  --spacing-status-label-gap: 0.375rem;
-  --spacing-status-label-box: 1rem;
-  --spacing-status-dot: 0.5rem;
-  --spacing-control-inline: 0.75rem;
+  --spacing-status-label-gap: calc(var(--spacing) * 1.5);
+  --spacing-status-label-box: calc(var(--spacing) * 4);
+  --spacing-status-dot: calc(var(--spacing) * 2);
+  --spacing-control-inline: calc(var(--spacing) * 3);
   --spacing-control-block: var(--spacing);
   --spacing-control-block-lg: calc(var(--spacing) * 2);
-  --spacing-textarea-min-height: 3.75rem;
+  --spacing-textarea-min-height: calc(var(--spacing) * 15);
   --spacing-prompt-input-max-height: calc(8 * 1lh + var(--spacing-control-block) * 2);
   --spacing-prompt-input-max-height-sm: calc(4 * 1lh + var(--spacing-control-block) * 2);
   --spacing-prompt-input-max-height-lg: calc(12 * 1lh + var(--spacing-control-block) * 2);
-  --spacing-alert-inline: 1rem;
-  --spacing-alert-block: 0.75rem;
-  --spacing-alert-icon-offset: 1rem;
-  --spacing-alert-icon-nudge: 0.1875rem;
-  --spacing-alert-content-indent: 1.75rem;
-  --spacing-field-set: 1.5rem;
-  --spacing-field-group: 1.75rem;
-  --spacing-field-group-compact: 0.75rem;
-  --spacing-field-group-nested: 1rem;
-  --spacing-field: 0.75rem;
-  --spacing-field-content: 0.375rem;
-  --spacing-field-inline: 0.5rem;
-  --spacing-field-legend-bottom: 0.75rem;
-  --spacing-field-label-inset: 1rem;
-  --spacing-field-separator: 1.25rem;
-  --spacing-field-separator-inline: 0.5rem;
-  --spacing-field-error-indent: 1rem;
-  --spacing-field-error-gap: 0.25rem;
-  --spacing-card-padding: 1.5rem;
-  --spacing-card-stack: 0.5rem;
-  --spacing-card-section: 1rem;
-  --spacing-card-lines: 0.5rem;
+  --spacing-alert-inline: calc(var(--spacing) * 4);
+  --spacing-alert-block: calc(var(--spacing) * 3);
+  --spacing-alert-icon-offset: calc(var(--spacing) * 4);
+  --spacing-alert-icon-nudge: calc(var(--spacing) * 0.75);
+  --spacing-alert-content-indent: calc(var(--spacing) * 7);
+  --spacing-field-set: calc(var(--spacing) * 6);
+  --spacing-field-group: calc(var(--spacing) * 7);
+  --spacing-field-group-compact: calc(var(--spacing) * 3);
+  --spacing-field-group-nested: calc(var(--spacing) * 4);
+  --spacing-field: calc(var(--spacing) * 3);
+  --spacing-field-content: calc(var(--spacing) * 1.5);
+  --spacing-field-inline: calc(var(--spacing) * 2);
+  --spacing-field-legend-bottom: calc(var(--spacing) * 3);
+  --spacing-field-label-inset: calc(var(--spacing) * 4);
+  --spacing-field-separator: calc(var(--spacing) * 5);
+  --spacing-field-separator-inline: calc(var(--spacing) * 2);
+  --spacing-field-error-indent: calc(var(--spacing) * 4);
+  --spacing-field-error-gap: calc(var(--spacing) * 1);
+  --spacing-card-padding: calc(var(--spacing) * 6);
+  --spacing-card-stack: calc(var(--spacing) * 2);
+  --spacing-card-section: calc(var(--spacing) * 4);
+  --spacing-card-lines: calc(var(--spacing) * 2);
   --spacing-separator-thickness: 0.0625rem;
-  --spacing-live-pulse-gap: 0.375rem;
-  --spacing-secret-field-gap: 0.5rem;
-  --spacing-page-header-title-gap: 0.25rem;
+  --spacing-live-pulse-gap: calc(var(--spacing) * 1.5);
+  --spacing-secret-field-gap: calc(var(--spacing) * 2);
+  --spacing-page-header-title-gap: calc(var(--spacing) * 1);
   /* Space between a back link above the header and the title. */
-  --spacing-page-header-back-gap: 0.75rem;
-  --spacing-page-header-offset: 1.5rem;
-  --spacing-page-header-gap: 1rem;
-  --spacing-page-header-actions-gap: 0.5rem;
+  --spacing-page-header-back-gap: calc(var(--spacing) * 3);
+  --spacing-page-header-offset: calc(var(--spacing) * 6);
+  --spacing-page-header-gap: calc(var(--spacing) * 4);
+  --spacing-page-header-actions-gap: calc(var(--spacing) * 2);
   --spacing-dialog-center: 50%;
   --shadow-overlay: var(--zk-shadow-overlay);
   --spacing-dialog-gap: 1rem;
-  --spacing-dialog-padding: 1.5rem;
-  --spacing-dialog-header-stack: 0.375rem;
-  --spacing-dialog-footer-gap: 0.5rem;
+  --spacing-dialog-padding: calc(var(--spacing) * 6);
+  --spacing-dialog-header-stack: calc(var(--spacing) * 1.5);
+  --spacing-dialog-footer-gap: calc(var(--spacing) * 2);
   --spacing-overlay-close-offset: 1rem;
   --spacing-overlay-touch-target: 2.75rem;
   /* Dialog width on phones: full width minus thumb gutters each side. */
@@ -338,25 +339,40 @@
   --spacing-dialog-header-end: calc(var(--spacing-overlay-touch-target) + var(--spacing-overlay-close-offset));
   --spacing-dialog-footer-safe: env(safe-area-inset-bottom, 0px);
   --spacing-app-shell-sidebar: 16rem;
-  --spacing-app-shell-padding: 1rem;
-  --spacing-app-shell-padding-md: 1.5rem;
+  --spacing-app-shell-padding: calc(var(--spacing) * 4);
+  --spacing-app-shell-padding-md: calc(var(--spacing) * 6);
   --z-index-header: var(--z-header);
   --z-index-dropdown: var(--z-dropdown);
   --z-index-overlay: var(--z-overlay);
   --z-index-drawer: var(--z-drawer);
   --z-index-dialog: var(--z-dialog);
   --z-index-toast: var(--z-toast);
-  --spacing-table-cell: 0.5rem;
-  --spacing-table-head-height: 2.5rem;
-  --spacing-table-checkbox-nudge: 0.125rem;
-  --spacing-table-caption-gap: 1rem;
+  --spacing-table-cell: calc(var(--spacing) * 2);
+  --spacing-table-head-height: calc(var(--spacing) * 10);
+  --spacing-table-checkbox-nudge: calc(var(--spacing) * 0.5);
+  --spacing-table-caption-gap: calc(var(--spacing) * 4);
   --container-route-modal-sm: 24rem;
   --container-route-modal-drawer-lg: 32rem;
   --container-route-modal-dialog-lg: 42rem;
-  --spacing-form-item-gap: 0.5rem;
+  --spacing-form-item-gap: calc(var(--spacing) * 2);
   --text-form-hint: 0.8rem;
   --text-control: var(--zk-input-font-size);
   --text-control--line-height: 1.25rem;
+  /* Dense UI: controls, tabs, menus, tables, nav. Same size and line as the old text-sm step. */
+  --text-dense: var(--text-sm);
+  --text-dense--line-height: var(--text-sm--line-height);
+  /* Container-driven display step. --text-2xl / --text-4xl stay viewport-fluid for marketing. */
+  --text-heading: 1.5rem;
+  --text-heading--line-height: 1.2;
+  /* Captions, badges, timestamps. 12px with a 16px line. The label role is 12px with a taller line. */
+  --text-caption: var(--text-xs);
+  --text-caption--line-height: var(--text-xs--line-height);
+  /* Gap between a text link and its line. Not a spacing step. */
+  --zk-link-offset: 4px;
+  /* A quiet muted surface: side column, note, bar, or chip. */
+  --zk-muted-wash: 40%;
+  /* A bar that stays over moving content. Mostly the page background. */
+  --zk-bar-scrim: 95%;
   /*
    * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
    * not a spacing multiple: an identity may redefine `--spacing`, and a
@@ -374,18 +390,156 @@
   --container-drawer-side-sm: 24rem;
   --container-drawer-side: 28rem;
   --container-drawer-side-lg: min(37.5rem, 92vw);
-  --spacing-drawer-handle-top: 1rem;
-  --spacing-drawer-handle-height: 0.375rem;
-  --spacing-drawer-handle-width: 3rem;
-  --spacing-drawer-header-gap: 0.375rem;
-  --spacing-drawer-footer-gap: 0.5rem;
-  --spacing-drawer-chrome-padding: 1rem;
-  --spacing-select-item-inline: 0.5rem;
-  --spacing-select-item-block: 0.375rem;
-  --spacing-select-item-indicator-gap: 2rem;
-  --spacing-select-separator: 0.25rem;
+  --spacing-drawer-handle-top: calc(var(--spacing) * 4);
+  --spacing-drawer-handle-height: calc(var(--spacing) * 1.5);
+  --spacing-drawer-handle-width: calc(var(--spacing) * 12);
+  --spacing-drawer-header-gap: calc(var(--spacing) * 1.5);
+  --spacing-drawer-footer-gap: calc(var(--spacing) * 2);
+  --spacing-drawer-chrome-padding: calc(var(--spacing) * 4);
+  --spacing-select-item-inline: calc(var(--spacing) * 2);
+  --spacing-select-item-block: calc(var(--spacing) * 1.5);
+  --spacing-select-item-indicator-gap: calc(var(--spacing) * 8);
+  --spacing-select-separator: calc(var(--spacing) * 1);
   --container-select-content-min: 8rem;
   --default-transition-duration: var(--zk-color-duration, 150ms);
+}
+
+/*
+ * Density-derived tokens: the single definition site, declared on the
+ * root AND on every identity scope. A custom property's var() resolves
+ * where it is declared, so a :root-only calc(var(--spacing) * N) would
+ * freeze at root density inside nested [data-identity-scope] subtrees.
+ * Declaring on the scope element makes the calc re-resolve with that
+ * scope's --spacing. (Theme spacing utilities inline their calc and
+ * never had this problem; only var-referenced tokens need this rule.)
+ */
+:root,
+[data-identity-scope] {
+  --zk-gap-sm: calc(var(--spacing) * 2);
+  --zk-gap-md: calc(var(--spacing) * 3);
+  --zk-gap-lg: calc(var(--spacing) * 4);
+  --zk-icon-size: calc(var(--spacing) * 4);
+  --zk-control-height: calc(var(--spacing) * 9);
+  --zk-page-gutter: calc(var(--spacing) * 6);
+  --zk-section-sm: calc(var(--spacing) * 8);
+  --zk-section-md: calc(var(--spacing) * 12);
+  --zk-section-lg: calc(var(--spacing) * 24);
+  --zk-section-xl: calc(var(--spacing) * 28);
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  :root,
+  [data-identity-scope] {
+    /* Marketing bands stay 64px+ apart on phones even if --spacing is dense. */
+    --zk-section-sm: max(1.5rem, calc(var(--spacing) * 8));
+    --zk-section-md: max(2rem, calc(var(--spacing) * 12));
+    --zk-section-lg: max(2.5rem, calc(var(--spacing) * 24));
+    --zk-section-xl: max(3.5rem, calc(var(--spacing) * 28));
+  }
+}
+
+/*
+ * Container-aware component sizing. Three separate inputs: the
+ * component's size variant, the space in its allocated slot, and
+ * identity density (--spacing above). A slot opts in with the
+ * `zk-query` marker (Container's `query` prop, or the class on any
+ * grid cell / layout slot — no wrapper required). Each component
+ * instance declares its recipe defaults on itself (base = narrow
+ * slot = no marked ancestor, never viewport-driven); wide-slot steps
+ * follow in the same layer. Because defaults are declared per
+ * instance, a small nested component never inherits a large parent's
+ * resolved recipe. Recipe values only ever select declared scale
+ * steps. Consumer utilities (utilities layer) and the recipe custom
+ * properties themselves remain the override seams. Controls (Button)
+ * are intentionally NOT adaptive: explicit sizes + target floors.
+ */
+@utility zk-query {
+  container-type: inline-size;
+  container-name: zk-slot;
+}
+
+@layer components {
+  /* Card recipe. CardSkeleton shares the same instance properties. */
+  :is([data-slot="card"], [data-slot="card-skeleton"]) {
+    --zk-card-pad: calc(var(--spacing) * 6);
+    --zk-card-stack: calc(var(--spacing) * 2);
+    --zk-card-radius: var(--radius-xl);
+    --zk-card-title: var(--text-base);
+    --zk-card-body: var(--text-sm);
+  }
+  :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="sm"] {
+    --zk-card-pad: calc(var(--spacing) * 3);
+    --zk-card-stack: calc(var(--spacing) * 1.5);
+    --zk-card-radius: var(--radius-lg);
+    --zk-card-title: var(--text-sm);
+    --zk-card-body: var(--text-xs);
+  }
+  :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="lg"] {
+    --zk-card-pad: calc(var(--spacing) * 5);
+    --zk-card-stack: calc(var(--spacing) * 3);
+    --zk-card-radius: var(--radius-2xl);
+    --zk-card-title: var(--text-lg);
+    --zk-card-body: var(--text-base);
+  }
+  @container zk-slot (min-width: 30rem) {
+    :is([data-slot="card"], [data-slot="card-skeleton"]) {
+      --zk-card-pad: calc(var(--spacing) * 8);
+      --zk-card-stack: calc(var(--spacing) * 3);
+      --zk-card-radius: var(--radius-2xl);
+      --zk-card-title: var(--text-lg);
+      --zk-card-body: var(--text-base);
+    }
+    :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="sm"] {
+      --zk-card-pad: calc(var(--spacing) * 4);
+      --zk-card-stack: calc(var(--spacing) * 2);
+      --zk-card-radius: var(--radius-xl);
+      --zk-card-title: var(--text-base);
+      --zk-card-body: var(--text-sm);
+    }
+    :is([data-slot="card"], [data-slot="card-skeleton"])[data-size="lg"] {
+      --zk-card-pad: calc(var(--spacing) * 8);
+      --zk-card-stack: calc(var(--spacing) * 5);
+      --zk-card-radius: var(--radius-3xl);
+      --zk-card-title: var(--text-heading);
+      --zk-card-body: var(--text-lg);
+    }
+  }
+  :is([data-slot="card"], [data-slot="card-skeleton"]) {
+    border-radius: var(--zk-card-radius);
+  }
+  [data-slot="card-skeleton"] {
+    padding: var(--zk-card-pad, calc(var(--spacing) * 6));
+  }
+  /* Fallbacks = the default recipe, so parts also render standalone. */
+  [data-slot="card-header"],
+  [data-slot="card-content"],
+  [data-slot="card-footer"] {
+    padding: var(--zk-card-pad, calc(var(--spacing) * 6));
+  }
+  [data-slot="card-header"] {
+    gap: var(--zk-card-stack, calc(var(--spacing) * 2));
+  }
+  [data-slot="card-title"] {
+    font-size: var(--zk-card-title, var(--text-base));
+  }
+  [data-slot="card-description"] {
+    font-size: var(--zk-card-body, var(--text-sm));
+    line-height: var(--text-sm--line-height);
+  }
+
+  /* Section rhythm recipe (bleed bands): base = the spacing token,
+     wide slot = next step up, xl capped at xl. */
+  [data-slot="section"][data-spacing] {
+    padding-block: var(--zk-section-pad);
+  }
+  [data-slot="section"][data-spacing="sm"] { --zk-section-pad: var(--zk-section-sm); }
+  [data-slot="section"][data-spacing="md"] { --zk-section-pad: var(--zk-section-md); }
+  [data-slot="section"][data-spacing="lg"] { --zk-section-pad: var(--zk-section-lg); }
+  [data-slot="section"][data-spacing="xl"] { --zk-section-pad: var(--zk-section-xl); }
+  @container zk-slot (min-width: 30rem) {
+    [data-slot="section"][data-spacing="sm"] { --zk-section-pad: var(--zk-section-md); }
+    [data-slot="section"][data-spacing="md"] { --zk-section-pad: var(--zk-section-lg); }
+    [data-slot="section"][data-spacing="lg"] { --zk-section-pad: var(--zk-section-xl); }
+  }
 }
 
 @layer base {
@@ -470,7 +624,11 @@
 /*
  * Toast viewport: top of the layer scale. Element-qualified so it beats
  * sonner's own injected `[data-sonner-toaster]` rule (z-index 999999999)
- * whatever order the two stylesheets land in.
+ * whatever order the two stylesheets land in. Deliberately unlayered:
+ * sonner's injected stylesheet is unlayered, and unlayered author CSS
+ * beats layered CSS regardless of specificity. This is a documented
+ * must-win rule, not a cascade accident (see the layered component
+ * rules below for the norm).
  */
 ol[data-sonner-toaster] {
   z-index: var(--z-toast);
@@ -481,10 +639,195 @@ ol[data-sonner-toaster] {
  * translate-[-50%] arbitraries. Uses the `translate` property (not
  * `transform`) so the zk-zoom enter/exit keyframes compose with it.
  */
+/* Sticky header and footer inside a dialog or drawer, above the scrolling body. */
+@utility z-overlay-chrome {
+  z-index: 10;
+}
+/* Dialog close, above that sticky header. */
+@utility z-overlay-close {
+  z-index: 20;
+}
+
+/* A control that cannot be used. Half strength, on every control. */
+@utility fade-disabled {
+  opacity: 0.5;
+}
+/* The mark that opens a menu. Quieter than the label, not a disabled control. */
+@utility disclosure-icon {
+  opacity: 0.5;
+}
+/* Dialog close at rest. Hover brings it back to full strength. */
+@utility close-quiet {
+  opacity: 0.7;
+  &:hover {
+    opacity: 1;
+  }
+}
+/* Secondary button, hovered. The fill is 80% of the secondary colour. */
+@utility secondary-hover {
+  background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
+}
+/* Destructive button, hovered. The fill is 90% of the destructive colour. */
+@utility destructive-hover {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 90%, transparent);
+}
+/* Primary button, hovered. The fill is 90% of the primary colour. */
+@utility primary-hover {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 90%, transparent);
+}
+/* Ghost button, hovered. A muted tint, not a second fill. */
+@utility ghost-hover {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 80%, transparent);
+}
+/* Ghost button, pressed. The secondary colour, a little quieter. */
+@utility ghost-pressed {
+  background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
+}
+/* Status badges, hovered. Quieter than the resting fill. Not the button hovers. */
+@utility badge-primary-hover {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 80%, transparent);
+}
+@utility badge-secondary-hover {
+  background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
+}
+@utility badge-destructive-hover {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 80%, transparent);
+}
+@utility badge-success-hover {
+  background-color: color-mix(in oklab, hsl(var(--success)) 90%, transparent);
+}
+@utility badge-warning-hover {
+  background-color: color-mix(in oklab, hsl(var(--warning)) 90%, transparent);
+}
+/* The dim layer behind a dialog. Glass replaces this with its own scrim. */
+@utility dialog-scrim {
+  background-color: color-mix(in oklab, hsl(var(--overlay)) 80%, transparent);
+}
+/* The dim layer behind a drawer. Lighter than the dialog scrim. Glass replaces the colour. */
+@utility drawer-scrim {
+  background-color: color-mix(in oklab, hsl(var(--overlay)) 50%, transparent);
+}
+/* Destructive alert. The fill is 90% of the destructive colour. The line is half of it. */
+@utility alert-destructive-fill {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 90%, transparent);
+}
+@utility alert-destructive-line {
+  border-color: color-mix(in oklab, hsl(var(--destructive)) 50%, transparent);
+}
+/* Idle status dot. Quieter than the label, not a second status colour. */
+@utility status-idle {
+  background-color: color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent);
+}
+/* Phone menu row, hovered. A muted tint. */
+@utility menu-hover {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 60%, transparent);
+}
+/* Phone menu row for the page you are on. Stronger than the hover. */
+@utility menu-current {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 80%, transparent);
+}
+/* A chosen option, look, or field. A light primary wash, not the primary button. */
+@utility option-selected {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 5%, transparent);
+}
+/* Table foot. Half the muted colour, so a total sits apart from the rows. */
+@utility table-foot {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 50%, transparent);
+}
+/* Checked field in the dark. A stronger primary wash than the light one. */
+@utility field-checked-strong {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+}
+/* Option card, hovered. The line is 40% of the muted foreground. */
+@utility option-hover-line {
+  border-color: color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent);
+}
+/* Tinted marketing surface. Accent at the start, primary at the end. */
+@utility surface-tint {
+  background-image: linear-gradient(
+    to right bottom,
+    color-mix(in oklab, hsl(var(--accent)) 15%, transparent) 0%,
+    transparent 50%,
+    color-mix(in oklab, hsl(var(--primary)) 10%, transparent) 100%
+  );
+}
+/* The sort mark beside a column name. Quieter than the label. */
+@utility sort-mark {
+  opacity: 0.6;
+}
+/* The pulse behind a live status dot. */
+@utility status-ping {
+  opacity: 0.6;
+}
+/* An option that is already chosen. Quieter than the row under the cursor. */
+@utility option-picked {
+  opacity: 0.6;
+}
+
+/* The chosen select value stays on one line. */
+@layer components {
+  [data-slot="select-value"] {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+}
+
 @utility dialog-center {
   top: var(--spacing-dialog-center);
   left: var(--spacing-dialog-center);
   translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
+}
+
+/* Option card. The hidden input is focused, so the card itself draws the focus width. */
+@layer components {
+  [data-slot="option-card"]:has(:focus-visible) {
+    outline: var(--ring-width) solid hsl(var(--ring));
+  }
+
+  /* Feature mark. A light primary tint behind the icon, not a filled button. */
+  [data-slot="feature-icon"] {
+    background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+  }
+}
+
+/* A quiet muted surface. The amount is the share of the muted colour. */
+@utility muted-wash {
+  background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-muted-wash), transparent);
+}
+
+/* A bar over moving content. Mostly the page background, so type on it stays readable. */
+@utility bar-scrim {
+  background-color: color-mix(in oklab, hsl(var(--background)) var(--zk-bar-scrim), transparent);
+}
+
+/* Text link. The line sits this far from the letters. */
+@utility link-offset {
+  text-underline-offset: var(--zk-link-offset);
+}
+
+/*
+ * The last gallery section has no line under it. The sections above keep
+ * theirs. Deliberately unlayered must-win: it has to beat the `border-b`
+ * utility on the same element, and layered CSS never beats the utilities
+ * layer. Consumer overrides do not apply here (internal specimen chrome).
+ */
+section[data-gallery-section].border-b:last-child {
+  border-bottom-width: 0;
+}
+
+/* The last teammate has no line under them. Same documented must-win as the gallery rule above. */
+[data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child {
+  border-bottom-width: 0;
+}
+
+/* Featured plan. The ring sits on the card shadow. It is not the focus ring. */
+@layer components {
+  [data-slot="pricing"] [data-highlighted="true"] {
+    --tw-ring-color: hsl(var(--primary));
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+  }
 }
 
 /* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
@@ -508,9 +851,11 @@ ol[data-sonner-toaster] {
 }
 
 /* Playwright focus-ring checks call element.focus(); :focus-visible alone would miss the outline. */
-[data-slot="prompt-input-field"]:focus {
-  outline: var(--ring-width-control) solid hsl(var(--ring));
-  outline-offset: var(--ring-offset-width);
+@layer components {
+  [data-slot="prompt-input-field"]:focus {
+    outline: var(--ring-width-control) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+  }
 }
 
 /*
@@ -527,20 +872,24 @@ ol[data-sonner-toaster] {
 }
 
 /*
- * Pointer target for small standalone controls (checkbox, switch): the
- * visible box keeps its size while an invisible pseudo-element carries
- * an exact tap-size hit area. Gated like --zk-tap-min (touch or narrow
- * screens); mouse users keep pixel-precise targets.
+ * Pointer target for small standalone controls (checkbox, switch).
+ * The visible box stays as drawn. The hit area is at least the 24px
+ * floor on every pointer, and the labelled tap size on touch or a
+ * narrow screen.
  */
 @utility hit-target {
   position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: max(100%, 24px);
+    height: max(100%, 24px);
+  }
   @media (pointer: coarse), (max-width: 40rem) {
     &::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      translate: -50% -50%;
       width: var(--spacing-tap);
       height: var(--spacing-tap);
     }
@@ -548,24 +897,211 @@ ol[data-sonner-toaster] {
 }
 
 /*
- * Link badges keep their small visual size; their pointer target reaches
- * the tap size in both axes (badge heights vary by identity, so the
- * overflow is generous rather than exact).
+ * Link badges keep their small visual size. The hit area is at least the
+ * 24px floor on every pointer, and the labelled tap size on touch or a
+ * narrow screen.
  */
-a[class*="px-badge-inline"] {
-  position: relative;
+@layer components {
+  a[class*="px-badge-inline"] {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: 100%;
+      height: max(100%, 24px);
+    }
+  }
+  @media (pointer: coarse), (max-width: 40rem) {
+    a[class*="px-badge-inline"]::after {
+      width: 100%;
+      height: 100%;
+      min-width: var(--spacing-tap);
+      min-height: var(--spacing-tap);
+    }
+  }
+
+  /* Choice box on an option card. Five spacing steps, not an icon. */
+  [data-slot="option-card-indicator"] {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
+
+  /* Title bar in a card skeleton. */
+  [data-slot="card-skeleton"] [data-card-skeleton-title] {
+    height: calc(var(--spacing) * 5);
+  }
+
+  /* Page-title placeholder. Same width as a compact sidebar, not a sidebar. */
+  [data-page-title-bar] {
+    width: calc(var(--spacing) * 48);
+  }
+
+  /* A sample line in the gallery. Same width, not a sidebar. */
+  [data-gallery-line] {
+    width: calc(var(--spacing) * 48);
+  }
+
+  /* Space under a sidebar group label. Same step as a bottom rule, not a rule. */
+  [data-nav-label] {
+    padding-bottom: calc(var(--spacing) * 2);
+  }
+
+  /* Space under the devtools tab row. Same step as a field legend, not a legend. */
+  [data-devtools-tabs] {
+    margin-bottom: calc(var(--spacing) * 3);
+  }
 }
-@media (pointer: coarse), (max-width: 40rem) {
-  a[class*="px-badge-inline"]::after {
-    content: "";
+
+/* Dialog and drawer titles. */
+@utility text-overlay-title {
+  font-size: var(--text-lg);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Alert title. */
+@utility text-alert-title {
+  font-size: var(--text-base);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* Marketing section title. Larger than the level-2 heading role. */
+@utility text-section-display {
+  font-size: var(--text-3xl);
+  line-height: var(--text-3xl--line-height);
+  font-weight: 600;
+}
+
+/* Title under a marketing section. Same size as the level-3 role, with that role's tighter line opened up. */
+@utility text-feature-title {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+}
+
+/* Page header title. */
+@utility text-page-title {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/*
+ * Type roles are real `@utility` definitions: the lint sees them, and a
+ * consumer utility later in the cascade can override them. (They used to
+ * be unlayered rules with empty decoy names in this layer for the lint;
+ * unlayered CSS beat every consumer override.)
+ */
+
+
+
+
+
+
+
+/* A short logo word beside a mark. */
+@utility text-wordmark {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 600;
+}
+
+/* The price on a plan. */
+@utility text-plan-price {
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+
+
+
+
+/* A dashboard stat. The text's own line stays. */
+@utility text-stat {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+}
+
+
+
+/* A gallery section title. */
+@utility text-gallery-heading {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@layer components {
+  /* Room in the prompt field for the send control, and for cancel when it is shown. */
+  [data-slot="prompt-input-field"] {
+    padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));
+  }
+  [data-slot="prompt-input"][data-actions="two"] [data-slot="prompt-input-field"] {
+    padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) * 2 + var(--spacing) * 3);
+  }
+  [data-prompt-cancel] {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    width: 100%;
-    height: 100%;
-    min-width: var(--spacing-tap);
-    min-height: var(--spacing-tap);
+    right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) + var(--spacing) * 2);
+  }
+
+  /* Switch track and thumb. The track is five by nine spacing steps. The thumb is four.
+     The transparent border is two pixels, so the checked thumb subtracts both sides. */
+  [data-slot="switch"] {
+    height: calc(var(--spacing) * 5);
+    width: calc(var(--spacing) * 9);
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+  }
+  [data-slot="switch-thumb"] {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
+    translate: 0 0;
+  }
+  [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+    translate: calc(var(--spacing) * 5 - 4px) 0;
+  }
+
+  /* Field legend. Medium weight stays on the element. */
+  [data-slot="field-legend"][data-variant="legend"] {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* The sentence under a marketing hero. The size is the compact heading size. The line stays the body line. */
+@utility text-hero-lead {
+  font-size: var(--text-lg);
+  line-height: var(--zk-body-leading, 1.6);
+}
+
+/* Marketing hero promise. Grows one step from the small breakpoint. */
+@utility text-hero-title {
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
+  font-weight: 600;
+  @media (min-width: 40rem) {
+    font-size: var(--text-5xl);
+    line-height: var(--text-5xl--line-height);
   }
 }
 
@@ -662,29 +1198,31 @@ a[class*="px-badge-inline"] {
  * when the first or last column is cut off, and the cut edge fades over
  * --zk-table-fade. No attributes, no fade: fitted tables stay crisp.
  */
-[data-slot="table-container"][data-edge-left] {
-  -webkit-mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
-  mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
-}
-[data-slot="table-container"][data-edge-right] {
-  -webkit-mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
-  mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
-}
-[data-slot="table-container"][data-edge-left][data-edge-right] {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    black var(--zk-table-fade),
-    black calc(100% - var(--zk-table-fade)),
-    transparent
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black var(--zk-table-fade),
-    black calc(100% - var(--zk-table-fade)),
-    transparent
-  );
+@layer components {
+  [data-slot="table-container"][data-edge-left] {
+    -webkit-mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+    mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+  }
+  [data-slot="table-container"][data-edge-right] {
+    -webkit-mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+    mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+  }
+  [data-slot="table-container"][data-edge-left][data-edge-right] {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--zk-table-fade),
+      black calc(100% - var(--zk-table-fade)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--zk-table-fade),
+      black calc(100% - var(--zk-table-fade)),
+      transparent
+    );
+  }
 }
 
 @keyframes zk-check-draw {
@@ -754,6 +1292,8 @@ a[class*="px-badge-inline"] {
  * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
  * vanishes on dark and tinted identities. Draw it from the kit tokens
  * so it reads on every surface. The 44px hit area is vaul's own.
+ * The whole vaul block below stays deliberately unlayered: vaul injects
+ * unlayered styles, and layered CSS would lose to them.
  */
 html [data-vaul-handle] {
   width: var(--spacing-drawer-handle-width);
@@ -796,4 +1336,667 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 :root[data-motion="reduce"] [data-slot="identity-dock-sheet"][data-vaul-drawer] {
   transform: none !important;
+}
+
+/* Stack rhythm. Gap only, so this does not become a padding or width scale. */
+@utility gap-icon {
+  gap: calc(var(--spacing) * 1.5);
+}
+/* Gap inside a segmented control. */
+@utility gap-segment {
+  gap: calc(var(--spacing) * 0.5);
+}
+@utility gap-stack-tight {
+  gap: var(--spacing);
+}
+@utility gap-stack-sm {
+  gap: var(--zk-gap-sm);
+}
+@utility gap-stack-md {
+  gap: var(--zk-gap-md);
+}
+@utility gap-stack-lg {
+  gap: var(--zk-gap-lg);
+}
+/* Title, description, and actions in one column. */
+@utility gap-prose {
+  gap: calc(var(--spacing) * 5);
+}
+/* A loose list or a loose column, one step under the section stack. */
+@utility gap-list {
+  gap: calc(var(--spacing) * 6);
+}
+/* Space between peer blocks: steps on a phone, link columns. */
+@utility gap-blocks {
+  gap: calc(var(--spacing) * 8);
+}
+/* The same step, between the columns of a wide row. */
+@utility gap-x-blocks {
+  column-gap: calc(var(--spacing) * 8);
+}
+/* Two equal columns. The breakpoint stays on the class: sm:grid-pair. */
+@utility grid-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@utility grid-trio {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+/* Four equal columns, such as a row of time slots. */
+@utility grid-quad {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+/* The rest of a three-column row: a detail value, a scene, a link group. */
+@utility span-rest {
+  grid-column: span 2 / span 2;
+}
+/* Puts a pane on the first row of a wide grid. */
+@utility row-start-first {
+  grid-row-start: 1;
+}
+/* The first column of a stacked or wide grid. */
+@utility col-start-first {
+  grid-column-start: 1;
+}
+/* The column after the first. */
+@utility col-start-next {
+  grid-column-start: 2;
+}
+@utility gap-x-stack-sm {
+  column-gap: var(--zk-gap-sm);
+}
+@utility gap-y-stack-sm {
+  row-gap: var(--zk-gap-sm);
+}
+@utility gap-y-stack-md {
+  row-gap: var(--zk-gap-md);
+}
+@utility gap-y-stack-lg {
+  row-gap: var(--zk-gap-lg);
+}
+/* Space between marks in a logo row. */
+@utility gap-x-logos {
+  column-gap: calc(var(--spacing) * 10);
+}
+/* Column gap of a results list. */
+@utility gap-x-results {
+  column-gap: calc(var(--spacing) * 12);
+}
+@utility gap-y-stack-tight {
+  row-gap: var(--spacing);
+}
+@utility gap-x-stack-lg {
+  column-gap: var(--zk-gap-lg);
+}
+/* Column gap between a label and its value. */
+@utility gap-x-meta {
+  column-gap: calc(var(--spacing) * 6);
+}
+/* Space between a marketing section's header and its content. */
+@utility gap-section-stack {
+  gap: calc(var(--spacing) * 10);
+}
+/* Space between scroll scenes on a wide screen. */
+@utility gap-scenes {
+  gap: calc(var(--spacing) * 16);
+}
+/* Space above a row of actions. */
+@utility actions-offset {
+  padding-top: calc(var(--spacing) * 2);
+}
+/* Tight control inset, one step under the control's inline padding. */
+@utility px-control-tight {
+  padding-inline: calc(var(--spacing) * 2);
+}
+/* Panel padding. The name is the surface size, and the value follows --spacing. */
+@utility surface-pad-sm {
+  padding: calc(var(--spacing) * 2);
+}
+@utility surface-pad-compact {
+  padding: calc(var(--spacing) * 3);
+}
+@utility surface-pad-md {
+  padding: calc(var(--spacing) * 4);
+}
+@utility surface-pad-inline {
+  padding-inline: calc(var(--spacing) * 4);
+}
+@utility surface-pad-block {
+  padding-block: calc(var(--spacing) * 3);
+}
+/* Block padding of a content row. */
+@utility py-row {
+  padding-block: calc(var(--spacing) * 4);
+}
+/* Extra inset of a call-to-action band on a wide screen. */
+@utility px-cta {
+  padding-inline: calc(var(--spacing) * 12);
+}
+@utility py-cta {
+  padding-block: calc(var(--spacing) * 12);
+}
+/* Space under an FAQ answer, above the rule. */
+@utility pb-answer {
+  padding-bottom: calc(var(--spacing) * 4);
+}
+/* Space under a gallery section, above its rule. */
+@utility pb-section {
+  padding-bottom: calc(var(--spacing) * 8);
+}
+/* The legal line under the footer rule. */
+@utility pt-footer-note {
+  padding-top: calc(var(--spacing) * 6);
+}
+/* A mono meta badge, almost flush. */
+@utility px-meta {
+  padding-inline: calc(var(--spacing) * 0.5);
+}
+/* Inset of a tab that shows a label and a swatch. */
+@utility px-tab {
+  padding-inline: calc(var(--spacing) * 3.5);
+}
+/* Block inset of a bar under a preview. */
+@utility py-bar {
+  padding-block: calc(var(--spacing) * 2.5);
+}
+/* Padding of a tab track. */
+@utility p-track {
+  padding: var(--spacing);
+}
+/* Padding of a segmented control's track. */
+@utility p-segment {
+  padding: calc(var(--spacing) * 0.5);
+}
+/* Bottom inset of a block, above a rule or the edge. */
+@utility pb-block {
+  padding-bottom: calc(var(--spacing) * 3);
+}
+@utility surface-pad-block-sm {
+  padding-block: calc(var(--spacing) * 2);
+}
+/* Space between content and a rule drawn on its bottom edge. */
+/* Inline inset of a control, block inset of a short bar: one row of text. */
+@utility pad-row {
+  padding-inline: calc(var(--spacing) * 3);
+  padding-block: calc(var(--spacing) * 2);
+}
+@utility rule-gap {
+  padding-bottom: calc(var(--spacing) * 2);
+}
+/* Trailing space in a column, before the next column. */
+@utility pr-column {
+  padding-right: calc(var(--spacing) * 4);
+}
+/* Room for a chip's remove icon. */
+@utility pr-chip {
+  padding-right: var(--spacing);
+}
+/* Space under a title or a breadcrumb. */
+@utility mb-stack {
+  margin-bottom: var(--zk-gap-sm);
+}
+/* Space under a page lead. */
+@utility mb-lead {
+  margin-bottom: calc(var(--spacing) * 6);
+}
+/* Space around a table in prose. */
+@utility my-table {
+  margin-block: calc(var(--spacing) * 4);
+}
+/* Space under an alert title, before its description. */
+@utility mb-alert-title {
+  margin-bottom: var(--spacing);
+}
+/* The "default" note beside an identity name. */
+@utility ml-note {
+  margin-left: var(--zk-gap-sm);
+}
+/* Bottom of a scrolling sheet. */
+@utility pb-sheet {
+  padding-bottom: calc(var(--spacing) * 6);
+}
+/* Indent of a list under its marker. */
+@utility pl-list {
+  padding-left: calc(var(--spacing) * 4);
+}
+/* Side inset of a full-height touch link. */
+@utility px-touch {
+  padding-inline: var(--spacing);
+}
+/* Space before content that follows a header or a top rule. */
+@utility content-offset {
+  padding-top: calc(var(--spacing) * 4);
+}
+/* Space before the first thing in a pane or a section. */
+@utility pt-start {
+  padding-top: calc(var(--spacing) * 3);
+}
+@utility surface-pad-lg {
+  padding: calc(var(--spacing) * 6);
+}
+@utility glass-pad-lg {
+  padding: calc(var(--spacing) * 8);
+}
+@utility h-skeleton-line {
+  height: calc(var(--spacing) * 4);
+}
+/* A page-title placeholder. */
+@utility h-skeleton-title {
+  height: calc(var(--spacing) * 7);
+}
+/* The thin scrollbar on a horizontal gallery. */
+@utility h-scrollbar {
+  height: var(--spacing);
+}
+@utility w-skeleton-short {
+  width: 66.666667%;
+}
+/* Short placeholder for a button or a line of text. */
+@utility w-skeleton-bar {
+  width: calc(var(--spacing) * 24);
+}
+/* A card title placeholder. */
+@utility w-skeleton-third {
+  width: 33.333333%;
+}
+/* The last line of a card skeleton. */
+@utility w-skeleton-body {
+  width: 80%;
+}
+/* A detail-row label placeholder. */
+@utility w-skeleton-label {
+  width: calc(var(--spacing) * 20);
+}
+/* A page-header description placeholder. */
+@utility w-skeleton-note {
+  width: calc(var(--spacing) * 64);
+}
+/* An invite popover. Wide enough for the email field, and it stays inside the screen. */
+@utility w-invite {
+  width: calc(var(--spacing) * 72);
+  max-width: calc(100vw - 2rem);
+}
+/* The drag handle on a phone sheet. The bar is one spacing step thick. */
+@utility w-handle {
+  width: calc(var(--spacing) * 10);
+  height: var(--spacing);
+}
+@utility w-skeleton-half {
+  width: 50%;
+}
+@utility w-skeleton-wide {
+  width: 83.333333%;
+}
+@utility w-name {
+  width: calc(var(--spacing) * 56);
+}
+@utility w-area {
+  width: calc(var(--spacing) * 40);
+}
+@utility w-status {
+  width: calc(var(--spacing) * 36);
+}
+@utility w-look {
+  width: calc(var(--spacing) * 32);
+}
+@utility w-mode {
+  width: calc(var(--spacing) * 24);
+}
+@utility w-preview {
+  width: calc(var(--spacing) * 28);
+}
+
+@utility min-w-name {
+  min-width: calc(var(--spacing) * 36);
+}
+@utility min-w-date {
+  min-width: calc(var(--spacing) * 40);
+}
+@utility max-w-scope {
+  max-width: calc(var(--spacing) * 36);
+}
+@utility h-frame {
+  height: calc(var(--spacing) * 72);
+}
+@utility min-h-aside {
+  min-height: calc(var(--spacing) * 80);
+}
+@utility min-h-segment {
+  min-height: calc(var(--spacing) * 7);
+}
+/* Pulls a back link up into the page inset. */
+@utility pull-back {
+  margin-top: calc(var(--spacing) * -6);
+}
+
+/* Optical align of a step index beside its title. */
+@utility pt-step {
+  padding-top: calc(var(--spacing) * 0.5);
+}
+@utility pl-chip {
+  padding-left: calc(var(--spacing) * 3);
+}
+@utility pr-chip-end {
+  padding-right: calc(var(--spacing) * 0.5);
+}
+/* Sticky editor preview, below the site header. */
+@utility top-editor {
+  top: calc(var(--spacing) * 20);
+}
+/* Clears the phone bar. */
+@utility top-bar {
+  top: calc(var(--spacing) * 14);
+}
+/* Wide padding of an index row. */
+@utility py-index {
+  padding-block: calc(var(--spacing) * 6);
+}
+/* The agent panel, inset from the hero frame. */
+@utility inset-y-panel {
+  inset-block: calc(var(--spacing) * 2);
+}
+@utility right-panel {
+  right: calc(var(--spacing) * 2);
+}
+/* Compact sidebar inside a framed demo. The shell's own sidebar stays 16rem. */
+@utility w-sidebar-compact {
+  width: calc(var(--spacing) * 48);
+}
+/* A short field sharing a row with another field. */
+@utility basis-field {
+  flex-basis: calc(var(--spacing) * 28);
+}
+/* A price or a stock field sharing a row. */
+@utility basis-number {
+  flex-basis: calc(var(--spacing) * 32);
+}
+/* A text or select field sharing a row. */
+@utility basis-text {
+  flex-basis: calc(var(--spacing) * 40);
+}
+/* A sample surface sharing a row. Not the app sidebar. */
+@utility basis-tile {
+  flex-basis: calc(var(--spacing) * 48);
+}
+@utility h-logo {
+  height: calc(var(--spacing) * 6);
+}
+/* The mark in the site header. */
+@utility h-brand {
+  height: calc(var(--spacing) * 5);
+}
+/* A logo filling a share card. It stays at least ten spacing steps tall. */
+@utility h-share {
+  height: 25%;
+  min-height: calc(var(--spacing) * 10);
+}
+/* Logo lockup in a band of customer marks. */
+@utility h-logo-row {
+  height: calc(var(--spacing) * 8);
+}
+@utility h-logo-lg {
+  height: calc(var(--spacing) * 12);
+}
+@utility h-logo-display {
+  height: calc(var(--spacing) * 16);
+}
+/* Sticky phone header. */
+@utility h-phone-bar {
+  height: calc(var(--spacing) * 14);
+}
+/* Marketing header. It can grow past the phone bar. */
+@utility min-h-phone-bar {
+  min-height: calc(var(--spacing) * 14);
+}
+/* A hero shell row. */
+@utility min-h-bar {
+  min-height: calc(var(--spacing) * 12);
+}
+/* Reserve for a hero while its page loads. */
+@utility min-h-hero {
+  min-height: calc(var(--spacing) * 96);
+}
+@utility size-mark {
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+}
+/* Initials beside a name. Smaller than a marketing mark. */
+@utility size-person {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
+}
+/* The dot inside a status chip. */
+@utility size-pip {
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
+}
+/* An icon one step larger than size-icon. */
+@utility size-icon-lg {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+}
+/* A swatch or a small trend mark. */
+@utility size-mini {
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
+}
+@utility min-h-status {
+  min-height: calc(var(--spacing) * 6);
+}
+/* One line of label text, so the row does not jump when the text appears. */
+@utility min-h-label {
+  min-height: calc(var(--spacing) * 5);
+}
+/* Caps a secret or a prompt so a long value scrolls inside the field. */
+@utility max-h-secret {
+  max-height: calc(var(--spacing) * 64);
+}
+/* A scrolling log, such as a terminal. */
+@utility max-h-log {
+  max-height: calc(var(--spacing) * 72);
+}
+@utility empty-state-block {
+  padding-block: calc(var(--spacing) * 8);
+}
+/* Tight stack for a list that is not a flex or grid parent. */
+@utility space-y-stack-tight {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
+/* Space between gallery sections. */
+/* Overlapping faces. */
+@utility space-x-faces {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * -1.5);
+  }
+}
+
+@utility space-y-stack-sm {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--zk-gap-sm) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--zk-gap-sm) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
+@utility space-y-stack-md {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--zk-gap-md) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--zk-gap-md) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
+@utility space-y-sections {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
+@utility space-y-stack-lg {
+  :where(& > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(var(--zk-gap-lg) * var(--tw-space-y-reverse));
+    margin-block-end: calc(var(--zk-gap-lg) * calc(1 - var(--tw-space-y-reverse)));
+  }
+}
+
+/* Example column in the gallery and the docs demos. 24rem, same width as the table filter, kept separate so the filter can change on its own. */
+@layer components {
+  [data-example-width] {
+    max-width: 24rem;
+  }
+  [data-example-width="medium"] {
+    max-width: 28rem;
+  }
+}
+
+/* Structural layout. The declaration is the constraint; the name is the job. */
+/* Phone target. Desktop keeps the identity's spacing step; a coarse pointer or a narrow screen never goes under 44px. */
+@utility min-h-target {
+  min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
+}
+/* CSS target floor. On a coarse pointer or a narrow screen, the phone target still wins. */
+@utility min-h-floor {
+  min-height: max(24px, var(--zk-tap-min, 0px));
+}
+@utility min-w-target {
+  min-width: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
+}
+@utility content-shrink {
+  min-width: 0;
+}
+@utility pane-shrink {
+  min-height: 0;
+}
+@utility pin-fill {
+  inset: 0;
+}
+@utility pin-x {
+  inset-inline: 0;
+}
+@utility pin-y {
+  inset-block: 0;
+}
+@utility pin-top {
+  top: 0;
+}
+
+/* Inset of a floating control from the screen or panel edge. */
+@utility top-float {
+  top: calc(var(--spacing) * 4);
+}
+@utility left-float {
+  left: calc(var(--spacing) * 4);
+}
+@utility right-float {
+  right: calc(var(--spacing) * 4);
+}
+@utility bottom-float {
+  bottom: calc(var(--spacing) * 4);
+}
+
+/* Centers a control on the block axis of its field. */
+@utility pin-center-y {
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* A rule centered in its slot. No translate, so a filled separator stays put. */
+@utility pin-middle {
+  top: 50%;
+}
+/* The send button, inset from the corner of the prompt. */
+@utility right-send {
+  right: calc(var(--spacing) * 1.5);
+}
+@utility bottom-send {
+  bottom: calc(var(--spacing) * 1.5);
+}
+/* Sticky scene caption, below the site header. */
+@utility top-caption {
+  top: calc(var(--spacing) * 24);
+}
+@utility pin-bottom {
+  bottom: 0;
+}
+@utility pin-left {
+  left: 0;
+}
+@utility pin-right {
+  right: 0;
+}
+@utility flush {
+  padding: 0;
+}
+@utility gap-flush {
+  gap: 0;
+}
+@utility flush-block {
+  padding-block: 0;
+}
+@utility trim-top {
+  margin-top: 0;
+}
+/* Optical alignment of an icon beside a line of text. */
+@utility icon-nudge {
+  margin-top: var(--spacing);
+}
+/* A mark sitting on the first line, a half step down. */
+@utility icon-nudge-sm {
+  margin-top: calc(var(--spacing) * 0.5);
+}
+/* Space above a status line. */
+@utility mt-status {
+  margin-top: calc(var(--spacing) * 3);
+}
+/* Space between a headline and its standfirst. */
+@utility mt-standfirst {
+  margin-top: calc(var(--spacing) * 2);
+}
+@utility trim-pad-top {
+  padding-top: 0;
+}
+@utility trim-pad-bottom {
+  padding-bottom: 0;
+}
+@utility px-flush {
+  padding-inline: 0;
+}
+/* A zero-height scroll target. */
+@utility h-anchor {
+  height: 0;
+}
+@utility trim-pad-end {
+  padding-inline-end: 0;
+}
+/* Pulls a field description up when another line follows it. */
+@utility pull-line {
+  margin-top: calc(var(--spacing) * -1);
+}
+/* Pulls a field description up when it sits under a legend. */
+@utility pull-legend {
+  margin-top: calc(var(--spacing) * -1.5);
+}
+/* Lets a field rule sit in the gap instead of adding one. */
+@utility pull-separator {
+  margin-block: calc(var(--spacing) * -2);
+}
+/* Extra pull when that rule is inside an outline group. */
+@utility pull-outline {
+  margin-bottom: calc(var(--spacing) * -2);
+}
+/* Optical align of a checkbox beside the first line of a field. */
+@utility mt-check {
+  margin-top: 1px;
+}
+@utility trim-bottom {
+  margin-bottom: 0;
+}
+/* Pulls a back link out so its label lines up with the content. */
+@utility -mx-back {
+  margin-inline: calc(var(--spacing) * -2);
+}
+@utility trim-margin {
+  margin: 0;
 }

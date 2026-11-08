@@ -7,7 +7,7 @@ import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 
 function Row({ children }: { children: ReactNode }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-end">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-end">
       {children}
     </Stack>
   );
@@ -33,12 +33,12 @@ function ApplySiteRow({
   hint = false,
 }: ApplySiteHandlers & { hint?: boolean }) {
   return (
-    <Stack gap={2} data-slot="identity-apply-site">
+    <Stack gap="sm" data-slot="identity-apply-site">
       <Row>
         <Button
           type="button"
           variant="outline"
-          className="scroll-mt-28 scroll-mb-24 max-lg:[@media(min-height:48rem)]:scroll-mt-80"
+          data-editor-scroll="apply"
           onClick={onApplySite}
         >
           {identityEditorCopy.toolbar.applySite}
@@ -84,7 +84,7 @@ function ConversationSiteApply({
   className?: string;
 }) {
   return (
-    <Stack gap={2} className={className} data-slot="identity-apply-site-conversation">
+    <Stack gap="sm" className={className} data-slot="identity-apply-site-conversation">
       <ApplySiteRow
         appliedSite={siteApply.appliedSite}
         onApplySite={siteApply.onApplySite}

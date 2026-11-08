@@ -24,12 +24,12 @@ export function FlagOverridesTab({ flagKeys }: FlagOverridesTabProps) {
   }
 
   return (
-    <Stack gap={3}>
+    <Stack gap="md">
       {flagKeys.map((key) => {
         const on = key in overrides ? Boolean(overrides[key]) : false;
         const id = `devtools-flag-${key}`;
         return (
-          <Stack key={key} direction="horizontal" gap={2} className="items-center justify-between">
+          <Stack key={key} direction="horizontal" gap="sm" className="items-center justify-between">
             <Label htmlFor={id}>{key}</Label>
             <Switch
               id={id}

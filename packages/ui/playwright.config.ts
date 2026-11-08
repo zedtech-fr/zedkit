@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./preview",
-  testMatch: /(smoke|parallax)\.spec\.ts/,
+  testMatch: /(smoke|parallax|cascade)\.spec\.ts/,
   fullyParallel: false,
   reporter: "list",
   use: {

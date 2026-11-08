@@ -3,12 +3,12 @@ import { secretFieldCopy } from "@/components/demos/i18n/secret-field-copy";
 
 export function SecretFieldDemo() {
   return (
-    <Stack gap={4}>
-      <Stack gap={2}>
+    <Stack gap="lg">
+      <Stack gap="sm">
         <Label htmlFor="demo-key">{secretFieldCopy.key}</Label>
         <SecretField id="demo-key" value={secretFieldCopy.keyValue} />
       </Stack>
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Label htmlFor="demo-command">{secretFieldCopy.command}</Label>
         <SecretField
           multiline

@@ -1704,7 +1704,7 @@
           "status": "stable",
           "shortName": "UiPreset",
           "audience": "Frontend teams linting tsx/jsx everywhere the same way.",
-          "purpose": "Enforce a11y, Tailwind hygiene, tokens-only classes (no arbitrary px/rem, no raw focus:ring-N), no inline style, no forwardRef, no explicit any, and a 300/60 size budget on every UI file.",
+          "purpose": "Enforce a11y, Tailwind hygiene, tokens-only classes (no arbitrary px/rem, no scale steps such as p-4 or text-sm, no raw focus:ring-N), no inline style, no forwardRef, no explicit any, and a 300/60 size budget on every UI file. Fails when Tailwind or the CSS entry cannot be resolved. A scale-class baseline may only shrink.",
           "whenToUse": "When UI rules must match across repos without copying a preset file.",
           "whenNotToUse": "When the repo has no Tailwind theme (the entryPoint has nothing to read).",
           "derivedFrom": null,
@@ -2806,7 +2806,7 @@
             },
             {
               "title": "Tokens in your own component",
-              "code": "import { ArrowUpRight } from \"lucide-react\";\nimport { Badge, Text } from \"@zedtech/zedkit-ui\";\n\nexport function ReleaseRow({ name }: { name: string }) {\n  return (\n    <li className=\"flex items-center justify-between gap-3 border-b border-border bg-muted px-3 py-2 text-sm\">\n      <Text as=\"span\" className=\"min-w-0 truncate\">{name}</Text>\n      <Badge variant=\"success\" className=\"gap-1\">\n        <ArrowUpRight className=\"size-3\" aria-hidden />\n        Deployed\n      </Badge>\n    </li>\n  );\n}"
+              "code": "import { ArrowUpRight } from \"lucide-react\";\nimport { Badge, Text } from \"@zedtech/zedkit-ui\";\n\nexport function ReleaseRow({ name }: { name: string }) {\n  return (\n    <li className=\"flex items-center justify-between gap-stack-md border-b border-border bg-muted pad-row text-dense\">\n      <Text as=\"span\" className=\"content-shrink truncate\">{name}</Text>\n      <Badge variant=\"success\" className=\"gap-stack-tight\">\n        <ArrowUpRight className=\"size-mini\" aria-hidden />\n        Deployed\n      </Badge>\n    </li>\n  );\n}"
             },
             {
               "title": "Dark theme button",
@@ -3101,7 +3101,7 @@
             ]
           },
           "registry": "button",
-          "a11y": "Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.",
+          "a11y": "Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use `px-button-inline-sm` / `px-button-pad` / `px-button-pad-lg`. Height still follows `--spacing` control tokens.",
           "troubleshooting": "Wrong variant colours in dark mode — ensure `.dark` is on the document root. Link styled as a button — use `asChild` with an anchor and keep visible link text. Icon-only control — pass `aria-label` (or use `IconButton` when the label should not appear as text).",
           "seeAlso": [
             "Confirm destructive actions"
@@ -3218,7 +3218,7 @@
             },
             {
               "title": "Label a native input",
-              "code": "import { Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"city\">City</Label>\n<input id=\"city\" className=\"rounded-md border border-border px-3 py-2\" />"
+              "code": "import { Label } from \"@zedtech/zedkit-ui\";\n<Label htmlFor=\"city\">City</Label>\n<input id=\"city\" className=\"rounded-md border border-border px-field-pad py-control-block-lg\" />"
             }
           ],
           "adoption": {
@@ -3234,7 +3234,7 @@
             ]
           },
           "registry": "label",
-          "a11y": "Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`. Size is `text-sm`; identity `--zk-label-transform` stays on badges and table heads.",
+          "a11y": "Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`. Size is `text-dense` (13px) with `leading-none`. Identity `--zk-label-transform` stays on badges and table heads.",
           "troubleshooting": "Clicking the label does nothing — the control needs a matching `id` for `htmlFor`. Label not dimming with a disabled control — `peer-disabled` needs the control as a preceding `peer` sibling.",
           "seeAlso": [
             "Collect text input with a label",
@@ -3272,7 +3272,7 @@
               }
             ]
           },
-          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is Tailwind `px-3`.",
+          "a11y": "Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label with `fade-disabled`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is `px-field-pad`.",
           "seeAlso": [
             "Collect multi-line text input",
             "Build validated forms with labels, errors, and pending state"
@@ -3297,7 +3297,7 @@
             },
             {
               "title": "Vertical divider",
-              "code": "import { Separator } from \"@zedtech/zedkit-ui\";\n<Separator orientation=\"vertical\" className=\"h-6\" />"
+              "code": "import { Separator, Stack, Text } from \"@zedtech/zedkit-ui\";\n<Stack direction=\"horizontal\" gap=\"md\" className=\"items-center\">\n  <Text>Orders</Text>\n  <Separator orientation=\"vertical\" />\n  <Text>Customers</Text>\n</Stack>"
             }
           ],
           "adoption": {
@@ -3314,7 +3314,7 @@
           },
           "registry": "separator",
           "a11y": "Decorative by default (`role=\"none\"`); pass `decorative={false}` with an accessible name when it separates named regions. Line weight follows `--zk-border-width` (mist 1px).",
-          "troubleshooting": "Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.",
+          "troubleshooting": "Vertical divider invisible — put it in a row with text (or anything that sets the row height). It stretches to that row. Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.",
           "seeAlso": [
             "Stack content and group titled sections"
           ]
@@ -3330,15 +3330,15 @@
           "whenToUse": "For content areas with known approximate shape.",
           "whenNotToUse": "For progress with a known percentage — use ProgressBar instead.",
           "derivedFrom": null,
-          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />",
+          "example": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-skeleton-line w-skeleton-bar\" />",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-24\" />"
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-skeleton-line w-skeleton-bar\" />"
             },
             {
               "title": "Text lines",
-              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-4 w-full\" /> // stack lines for text blocks; shape is all className"
+              "code": "import { Skeleton } from \"@zedtech/zedkit-ui\";\n<Skeleton className=\"h-skeleton-line w-full\" /> // stack lines for text blocks; shape is all className"
             }
           ],
           "adoption": {
@@ -3400,7 +3400,7 @@
             ]
           },
           "registry": "status-dot",
-          "a11y": "`aria-hidden` by design — the paired text carries the meaning. Size is `size-2` (0.5rem, Tailwind default scale); `--spacing-status-dot` remains as a deprecated alias. Tones map to semantic color tokens.",
+          "a11y": "`aria-hidden` by design — the paired text carries the meaning. Size is `size-status-dot`. Tones map to semantic color tokens.",
           "troubleshooting": "Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.",
           "seeAlso": [
             "Show a status or count badge",
@@ -3529,7 +3529,7 @@
           },
           "registry": "icon-label",
           "a11y": "Icon is decorative (`aria-hidden`, not focusable); put the readable name in `children`. The muted colour keeps normal text contrast on every identity, but do not rely on the icon alone to carry meaning — the state or name must also be written.",
-          "troubleshooting": "The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-4` (1rem, Tailwind default scale); override with `className`. `--spacing-icon-control` remains as a deprecated alias. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.",
+          "troubleshooting": "The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-icon`; override with `className`. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.",
           "seeAlso": [
             "Celebrate completion with a checkmark"
           ]
@@ -3674,7 +3674,7 @@
             ]
           },
           "registry": "status-label",
-          "a11y": "`role=status` announces the named operation; icon/text gap is `gap-1.5`; `--spacing-status-label-gap` remains as a deprecated alias.",
+          "a11y": "`role=status` announces the named operation; icon/text gap is `gap-icon`.",
           "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
           "seeAlso": [
             "Stamp data with its age"
@@ -3715,7 +3715,7 @@
             ]
           },
           "registry": "updated-ago",
-          "a11y": "Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.",
+          "a11y": "Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-caption text-muted-foreground` only.",
           "troubleshooting": "Stamp never changes — it renders once per render; re-render from your polling tick or SWR refresh. Future dates read as “just now” (clamped, never “in 5 minutes”).",
           "seeAlso": [
             "Name an operation in progress"
@@ -4598,7 +4598,7 @@
           },
           "registry": "app-shell",
           "a11y": "Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.",
-          "troubleshooting": "Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-4` / `md:p-app-shell-padding-md`. `--spacing-app-shell-padding` remains as a deprecated alias.",
+          "troubleshooting": "Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.",
           "seeAlso": [
             "Group content in a card section"
           ]
@@ -4703,7 +4703,7 @@
           },
           "registry": "detail-panel",
           "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
-          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-4`; block padding is `py-3`. `--spacing-detail-panel-inline` and `--spacing-detail-panel-block` remain as deprecated aliases.",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"
@@ -4794,7 +4794,7 @@
               }
             ]
           },
-          "a11y": "`FieldError` uses `role=\"alert\"`. Field row gap is `gap-3`; `--spacing-field` remains as a deprecated alias. FieldContent stack gap is `gap-1.5`; `--spacing-field-content` remains as a deprecated alias.",
+          "a11y": "`FieldError` uses `role=\"alert\"`. Field row gap is `gap-field`. FieldContent stack gap is `gap-field-content`.",
           "seeAlso": [
             "Build validated forms with labels, errors, and pending state",
             "Pick a date from a popover"
@@ -4856,11 +4856,11 @@
           "whenToUse": "For self-contained blocks (panels, summaries, previews).",
           "whenNotToUse": "For page-level layout — use AppShell and Stack instead.",
           "derivedFrom": null,
-          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>",
+          "example": "import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container } from \"@zedtech/zedkit-ui\";\n<Container query width=\"full\" gutter={false}><Card size=\"sm\"><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card></Container>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@zedtech/zedkit-ui\";\n<Card><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card>"
+              "code": "import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container } from \"@zedtech/zedkit-ui\";\n<Container query width=\"full\" gutter={false}><Card size=\"sm\"><CardHeader><CardTitle>Server</CardTitle>\n<CardDescription>Connection details.</CardDescription></CardHeader>\n<CardContent>Body.</CardContent></Card></Container>"
             },
             {
               "title": "With footer",
@@ -4885,10 +4885,11 @@
             ]
           },
           "registry": "card",
-          "a11y": "Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` mirrors the same tokens so async content lands without shifting.",
-          "troubleshooting": "Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`pt-0` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.",
+          "a11y": "Slots are plain containers — put headings and labels inside. Spacing comes from the Card recipe (`--zk-card-*`); elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` takes the same `size` prop and recipe so loading-to-content substitution does not jump.",
+          "troubleshooting": "Cramped content — inner padding comes from the card recipe (`--zk-card-pad`; `trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.",
           "seeAlso": [
-            "Stack content and group titled sections"
+            "Stack content and group titled sections",
+            "Constrain page width and run sections edge to edge"
           ]
         },
         {
@@ -4898,15 +4899,15 @@
           "status": "stable",
           "shortName": "Stack",
           "audience": "Developers laying out kit pages without raw divs.",
-          "purpose": "Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap.",
-          "whenToUse": "For all kit-page layout instead of hand-written flex.",
+          "purpose": "Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.",
+          "whenToUse": "For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.",
           "whenNotToUse": "For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.",
           "derivedFrom": null,
-          "example": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap={2}>...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>",
+          "example": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap=\"sm\">...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap={2}>...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>"
+              "code": "import { Section, SectionScroll, Stack } from \"@zedtech/zedkit-ui\";\n<SectionScroll>\n  <Section title=\"Team\" description=\"Who can access.\">\n    <Stack direction=\"horizontal\" gap=\"sm\">...</Stack>\n  </Section>\n  <Section snap=\"none\" title=\"Long band\">...</Section>\n</SectionScroll>"
             }
           ],
           "adoption": {
@@ -4940,8 +4941,8 @@
           "status": "alpha",
           "shortName": "Container",
           "audience": "Developers building marketing and docs pages with capped measures and full-bleed bands.",
-          "purpose": "Named container widths and edge-to-edge section bands from the layout token scale.",
-          "whenToUse": "For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.",
+          "purpose": "Named container widths and edge-to-edge section bands from the layout token scale. `query` makes the container a sizing slot for adaptive components.",
+          "whenToUse": "For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings. Add `query` where descendants should size to their allocated space, not the viewport.",
           "whenNotToUse": "For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.",
           "derivedFrom": null,
           "example": "import { Container, Section } from \"@zedtech/zedkit-ui\";\n<Section bleed tone=\"muted\" spacing=\"lg\" title=\"Pricing\" description=\"What each plan includes.\">...</Section>\n<Container width=\"wide\">...</Container>",
@@ -5060,7 +5061,7 @@
           },
           "registry": "alert",
           "a11y": "Root carries `role=\"alert\"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.",
-          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Block padding is `py-3`; `--spacing-alert-block` remains as a deprecated alias. Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
+          "troubleshooting": "Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-alert-icon-offset` / `left-alert-icon-offset`). Block padding is `py-alert-block`. Double announcement — one `role=\"alert\"` per notice; repeated renders re-announce.",
           "seeAlso": [
             "Show toast notifications"
           ]
@@ -5076,15 +5077,15 @@
           "whenToUse": "Next to your product name in a site header or footer, or as the mark of a share image.",
           "whenNotToUse": "For the zedkit mark — `Logo` is zedkit's own mark, used by the zedkit docs site; do not ship it as yours.",
           "derivedFrom": null,
-          "example": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>",
+          "example": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-logo text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>"
+              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<BrandLogo title=\"Harbor Studio\" viewBox=\"0 0 32 24\" className=\"h-logo text-primary\">\n  <path d=\"M16 1 25 15H7Z\" />\n  <path d=\"M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z\" />\n</BrandLogo>"
             },
             {
               "title": "Header link to the home page",
-              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<a href=\"/\" className=\"flex items-center gap-2 text-foreground\">\n  <BrandLogo title=\"\" viewBox=\"0 0 32 24\" className=\"h-6 text-primary\">\n    <path d=\"M16 1 25 15H7Z\" />\n  </BrandLogo>\n  Harbor Studio\n</a>"
+              "code": "import { BrandLogo } from \"@zedtech/zedkit-ui\";\n<a href=\"/\" className=\"flex items-center gap-stack-sm text-foreground\">\n  <BrandLogo title=\"\" viewBox=\"0 0 32 24\" className=\"h-logo text-primary\">\n    <path d=\"M16 1 25 15H7Z\" />\n  </BrandLogo>\n  Harbor Studio\n</a>"
             }
           ],
           "adoption": {
@@ -5361,7 +5362,7 @@
             },
             {
               "title": "Filter chips",
-              "code": "import { ScrollGallery } from \"@zedtech/zedkit-ui\";\n\n<ScrollGallery className=\"max-w-sm\">\n  <div className=\"flex w-max gap-2\">\n    <a className=\"shrink-0 snap-start rounded-md border px-3 py-2\" href=\"#a\">\n      Alpha\n    </a>\n    <a className=\"shrink-0 snap-start rounded-md border px-3 py-2\" href=\"#b\">\n      Beta\n    </a>\n  </div>\n</ScrollGallery>"
+              "code": "import { ScrollGallery } from \"@zedtech/zedkit-ui\";\n\n<ScrollGallery>\n  <div className=\"flex w-max gap-stack-sm\">\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#a\">\n      Alpha\n    </a>\n    <a className=\"inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row\" href=\"#b\">\n      Beta\n    </a>\n  </div>\n</ScrollGallery>"
             }
           ],
           "adoption": {
@@ -5394,11 +5395,11 @@
           "whenToUse": "Long step lists beside a short preview, install instructions beside a rendered example, or any section where reading order is main then aside.",
           "whenNotToUse": "Pinning a single stage that crossfades through scenes — use `ScrollScenes`. A sticky bar that spans the whole viewport outside a section — use your shell header. Tall aside content without `scrollable` when you need the full block visible at once on small viewports — stack on mobile or shorten the aside.",
           "derivedFrom": null,
-          "example": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\" className=\"[--zk-sticky-top:7rem]\">\n  <StickyAside.Main>\n    <Stack gap={4}>{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>",
+          "example": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\">\n  <StickyAside.Main>\n    <Stack gap=\"lg\">{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>",
           "examples": [
             {
               "title": "Get started steps with live preview",
-              "code": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\" className=\"[--zk-sticky-top:7rem]\">\n  <StickyAside.Main>\n    <Stack gap={4}>{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>"
+              "code": "import { StickyAside, Stack, Text } from \"@zedtech/zedkit-ui\";\nimport { GlassSurface } from \"@zedtech/zedkit-ui/marketing\";\n\n<StickyAside side=\"right\" ratio=\"1/3\">\n  <StickyAside.Main>\n    <Stack gap=\"lg\">{/* numbered steps */}</Stack>\n  </StickyAside.Main>\n  <StickyAside.Aside asChild>\n    <GlassSurface padding=\"md\">\n      <Text>Rendered example</Text>\n    </GlassSurface>\n  </StickyAside.Aside>\n</StickyAside>"
             },
             {
               "title": "Doc page with summary card",
@@ -5445,11 +5446,11 @@
           "whenToUse": "Background and deco layers that should drift as the section scrolls. Keep copy and controls outside a moving layer, or at `depth={0}`.",
           "whenNotToUse": "Node-local scroll presets on a single element — `data-animate-scroll=\"parallax\"` stays. Pinned scene crossfades — `ScrollScenes`. Sticky columns — `StickyAside`.",
           "derivedFrom": null,
-          "example": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute inset-0\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute right-8 top-20\" />\n</ParallaxSection>",
+          "example": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute pin-fill\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute pin-top pin-right\" />\n</ParallaxSection>",
           "examples": [
             {
               "title": "Hero with far background",
-              "code": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute inset-0\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute right-8 top-20\" />\n</ParallaxSection>"
+              "code": "import { ParallaxLayer, ParallaxSection } from \"@zedtech/zedkit-ui/motion\";\n\n<ParallaxSection range=\"page\">\n  <ParallaxLayer depth=\"far\" className=\"absolute pin-fill\" />\n  <div className=\"relative\"><h1>Title</h1></div>\n  <ParallaxLayer depth=\"near\" className=\"absolute pin-top pin-right\" />\n</ParallaxSection>"
             },
             {
               "title": "Named depth layer",
@@ -5496,23 +5497,23 @@
           "whenToUse": "Two to eight (`SCROLL_SCENES_MAX`) short scenes that read well one at a time and where scrolling is the natural way to move on.",
           "whenNotToUse": "Long content, forms or anything focusable inside a scene — invisible scenes stay in the accessibility tree, so keep scene visuals non-interactive (`aria-hidden` and `inert`); steps the user must pick themselves — use `Tabs` or `WizardSteps`.",
           "derivedFrom": null,
-          "example": "import { Heading, ProgressBar, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\nconst steps = [\n  { id: \"plan\", title: \"Plan the week\", text: \"One list: what has to ship, and who owns it.\", value: 0 },\n  { id: \"track\", title: \"Track the work\", text: \"Progress updates as people tick tasks.\", value: 55 },\n  { id: \"ship\", title: \"Ship with confidence\", text: \"Everything is green: publish in one click.\", value: 100 },\n];\n\n// The caption says it all; the visual is decoration, hidden from assistive tech.\n<ScrollScenes\n  className=\"[--zk-scenes-top:4.5rem]\"\n  scenes={steps.map((step, index) => ({\n    id: step.id,\n    caption: (\n      <Stack gap={2}>\n        <Text variant=\"muted\">Step {index + 1} of {steps.length}</Text>\n        <Heading level={3}>{step.title}</Heading>\n        <Text variant=\"muted\">{step.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <Stack aria-hidden=\"true\" inert>\n        <ProgressBar value={step.value} label=\"Week 43 progress\" />\n      </Stack>\n    ),\n  }))}\n/>",
+          "example": "import { Heading, ProgressBar, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\nconst steps = [\n  { id: \"plan\", title: \"Plan the week\", text: \"One list: what has to ship, and who owns it.\", value: 0 },\n  { id: \"track\", title: \"Track the work\", text: \"Progress updates as people tick tasks.\", value: 55 },\n  { id: \"ship\", title: \"Ship with confidence\", text: \"Everything is green: publish in one click.\", value: 100 },\n];\n\n// The caption says it all; the visual is decoration, hidden from assistive tech.\n<ScrollScenes\n  scenes={steps.map((step, index) => ({\n    id: step.id,\n    caption: (\n      <Stack gap=\"sm\">\n        <Text variant=\"muted\">Step {index + 1} of {steps.length}</Text>\n        <Heading level={3}>{step.title}</Heading>\n        <Text variant=\"muted\">{step.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <Stack aria-hidden=\"true\" inert>\n        <ProgressBar value={step.value} label=\"Week 43 progress\" />\n      </Stack>\n    ),\n  }))}\n/>",
           "examples": [
             {
               "title": "Pinned feature tour",
-              "code": "import { Heading, ProgressBar, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\nconst steps = [\n  { id: \"plan\", title: \"Plan the week\", text: \"One list: what has to ship, and who owns it.\", value: 0 },\n  { id: \"track\", title: \"Track the work\", text: \"Progress updates as people tick tasks.\", value: 55 },\n  { id: \"ship\", title: \"Ship with confidence\", text: \"Everything is green: publish in one click.\", value: 100 },\n];\n\n// The caption says it all; the visual is decoration, hidden from assistive tech.\n<ScrollScenes\n  className=\"[--zk-scenes-top:4.5rem]\"\n  scenes={steps.map((step, index) => ({\n    id: step.id,\n    caption: (\n      <Stack gap={2}>\n        <Text variant=\"muted\">Step {index + 1} of {steps.length}</Text>\n        <Heading level={3}>{step.title}</Heading>\n        <Text variant=\"muted\">{step.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <Stack aria-hidden=\"true\" inert>\n        <ProgressBar value={step.value} label=\"Week 43 progress\" />\n      </Stack>\n    ),\n  }))}\n/>"
+              "code": "import { Heading, ProgressBar, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\nconst steps = [\n  { id: \"plan\", title: \"Plan the week\", text: \"One list: what has to ship, and who owns it.\", value: 0 },\n  { id: \"track\", title: \"Track the work\", text: \"Progress updates as people tick tasks.\", value: 55 },\n  { id: \"ship\", title: \"Ship with confidence\", text: \"Everything is green: publish in one click.\", value: 100 },\n];\n\n// The caption says it all; the visual is decoration, hidden from assistive tech.\n<ScrollScenes\n  scenes={steps.map((step, index) => ({\n    id: step.id,\n    caption: (\n      <Stack gap=\"sm\">\n        <Text variant=\"muted\">Step {index + 1} of {steps.length}</Text>\n        <Heading level={3}>{step.title}</Heading>\n        <Text variant=\"muted\">{step.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <Stack aria-hidden=\"true\" inert>\n        <ProgressBar value={step.value} label=\"Week 43 progress\" />\n      </Stack>\n    ),\n  }))}\n/>"
             },
             {
               "title": "Before and after",
-              "code": "import { Heading, ProgressBar, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\n// Two scenes, a shorter scroll per scene (default 60svh), header 4.5rem tall.\n<ScrollScenes\n  className=\"[--zk-scenes-step:45svh] [--zk-scenes-top:4.5rem]\"\n  scenes={[\n    {\n      id: \"before\",\n      caption: <Heading level={3}>Before: one long form</Heading>,\n      children: (\n        <Stack aria-hidden=\"true\" inert>\n          <ProgressBar value={18} label=\"Completed sign-ups\" />\n          <Text variant=\"muted\">18% of visitors finished the form.</Text>\n        </Stack>\n      ),\n    },\n    {\n      id: \"after\",\n      caption: <Heading level={3}>After: three short steps</Heading>,\n      children: (\n        <Stack aria-hidden=\"true\" inert>\n          <ProgressBar value={64} label=\"Completed sign-ups\" />\n          <Text variant=\"muted\">64% of visitors finished the steps.</Text>\n        </Stack>\n      ),\n    },\n  ]}\n/>"
+              "code": "import { Heading, ProgressBar, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\n// Two scenes, a shorter scroll per scene (default 60svh).\n<ScrollScenes\n  className=\"[--zk-scenes-step:45svh]\"\n  scenes={[\n    {\n      id: \"before\",\n      caption: <Heading level={3}>Before: one long form</Heading>,\n      children: (\n        <Stack aria-hidden=\"true\" inert>\n          <ProgressBar value={18} label=\"Completed sign-ups\" />\n          <Text variant=\"muted\">18% of visitors finished the form.</Text>\n        </Stack>\n      ),\n    },\n    {\n      id: \"after\",\n      caption: <Heading level={3}>After: three short steps</Heading>,\n      children: (\n        <Stack aria-hidden=\"true\" inert>\n          <ProgressBar value={64} label=\"Completed sign-ups\" />\n          <Text variant=\"muted\">64% of visitors finished the steps.</Text>\n        </Stack>\n      ),\n    },\n  ]}\n/>"
             },
             {
               "title": "Same product in three looks",
-              "code": "import { Heading, ScrollScenes, Stack, Text, ThemeScope } from \"@zedtech/zedkit-ui\";\n\nconst looks = [\n  { id: \"mist\", title: \"Mist\", text: \"The stock look: quiet chrome, Inter.\" },\n  { id: \"press\", title: \"Press\", text: \"Editorial type for a reading product.\" },\n  { id: \"tide\", title: \"Tide\", text: \"Warm colour and a bit more space.\" },\n];\n\n<ScrollScenes\n  className=\"[--zk-scenes-top:4.5rem]\"\n  scenes={looks.map((look) => ({\n    id: look.id,\n    caption: (\n      <Stack gap={2}>\n        <Heading level={3}>{look.title}</Heading>\n        <Text variant=\"muted\">{look.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <ThemeScope identity={look.id} aria-hidden=\"true\" inert>\n        <Text className=\"font-semibold\">Harbor Studio</Text>\n        <Text variant=\"muted\">Project tracker</Text>\n      </ThemeScope>\n    ),\n  }))}\n/>"
+              "code": "import { Heading, ScrollScenes, Stack, Text, ThemeScope } from \"@zedtech/zedkit-ui\";\n\nconst looks = [\n  { id: \"mist\", title: \"Mist\", text: \"The stock look: quiet chrome, Inter.\" },\n  { id: \"press\", title: \"Press\", text: \"Editorial type for a reading product.\" },\n  { id: \"tide\", title: \"Tide\", text: \"Warm colour and a bit more space.\" },\n];\n\n<ScrollScenes\n  scenes={looks.map((look) => ({\n    id: look.id,\n    caption: (\n      <Stack gap=\"sm\">\n        <Heading level={3}>{look.title}</Heading>\n        <Text variant=\"muted\">{look.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <ThemeScope identity={look.id} aria-hidden=\"true\" inert>\n        <Text className=\"font-semibold\">Harbor Studio</Text>\n        <Text variant=\"muted\">Project tracker</Text>\n      </ThemeScope>\n    ),\n  }))}\n/>"
             },
             {
               "title": "Pricing walkthrough",
-              "code": "import { Heading, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\nconst plans = [\n  { id: \"solo\", title: \"Solo\", text: \"One person, one project.\", price: \"$0\" },\n  { id: \"crew\", title: \"Crew\", text: \"A small team, one workspace.\", price: \"$29\" },\n  { id: \"studio\", title: \"Studio\", text: \"Every workspace, with SSO.\", price: \"$99\" },\n];\n\n<ScrollScenes\n  className=\"[--zk-scenes-top:4.5rem]\"\n  scenes={plans.map((plan) => ({\n    id: plan.id,\n    caption: (\n      <Stack gap={2}>\n        <Heading level={3}>{plan.title}</Heading>\n        <Text variant=\"muted\">{plan.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <Stack aria-hidden=\"true\" inert>\n        <Text className=\"text-3xl font-semibold\">{plan.price}</Text>\n        <Text variant=\"muted\">per month</Text>\n      </Stack>\n    ),\n  }))}\n/>"
+              "code": "import { Heading, ScrollScenes, Stack, Text } from \"@zedtech/zedkit-ui\";\n\nconst plans = [\n  { id: \"solo\", title: \"Solo\", text: \"One person, one project.\", price: \"$0\" },\n  { id: \"crew\", title: \"Crew\", text: \"A small team, one workspace.\", price: \"$29\" },\n  { id: \"studio\", title: \"Studio\", text: \"Every workspace, with SSO.\", price: \"$99\" },\n];\n\n<ScrollScenes\n  scenes={plans.map((plan) => ({\n    id: plan.id,\n    caption: (\n      <Stack gap=\"sm\">\n        <Heading level={3}>{plan.title}</Heading>\n        <Text variant=\"muted\">{plan.text}</Text>\n      </Stack>\n    ),\n    children: (\n      <Stack aria-hidden=\"true\" inert>\n        <Text className=\"font-semibold\">{plan.price}</Text>\n        <Text variant=\"muted\">per month</Text>\n      </Stack>\n    ),\n  }))}\n/>"
             }
           ],
           "adoption": {
@@ -5554,7 +5555,7 @@
             },
             {
               "title": "Same card in each look",
-              "code": "import { Badge, Button, Heading, Text, ThemeScope, identities } from \"@zedtech/zedkit-ui\";\n\n// Preview every look at once: the scope changes this subtree only, never <html>.\n{identities.map((look) => (\n  <ThemeScope\n    key={look.id}\n    identity={look.id}\n    className=\"rounded-xl border border-border bg-background p-4 shadow-md\"\n  >\n    <Heading level={3}>{look.label}</Heading>\n    <Badge variant=\"secondary\">New</Badge>\n    <Text variant=\"muted\">{look.description}</Text>\n    <Button size=\"sm\">Save</Button>\n  </ThemeScope>\n))}"
+              "code": "import { Badge, Button, Heading, Text, ThemeScope, identities } from \"@zedtech/zedkit-ui\";\n\n// Preview every look at once: the scope changes this subtree only, never <html>.\n{identities.map((look) => (\n  <ThemeScope\n    key={look.id}\n    identity={look.id}\n    className=\"rounded-xl border border-border bg-background surface-pad-md shadow-md\"\n  >\n    <Heading level={3}>{look.label}</Heading>\n    <Badge variant=\"secondary\">New</Badge>\n    <Text variant=\"muted\">{look.description}</Text>\n    <Button size=\"sm\">Save</Button>\n  </ThemeScope>\n))}"
             },
             {
               "title": "Touch picker",

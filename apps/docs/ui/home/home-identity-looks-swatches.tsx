@@ -23,11 +23,11 @@ export function HomeIdentityPaletteDots({
   return (
     <ThemeScope identity={identity} mode={mode} aria-hidden="true">
       {/* data-palette-dots pins --spacing (docs-shell-tokens.css): a look's own spacing must not resize its dots. */}
-      <Stack direction="horizontal" gap={1} data-palette-dots="">
+      <Stack direction="horizontal" gap="tight" data-palette-dots="">
         {tokens.map((token) => (
           <span
             key={token}
-            className={cn("size-3 shrink-0 rounded-full border border-border", SWATCH_BG[token])}
+            className={cn("size-mini shrink-0 rounded-full border border-border", SWATCH_BG[token])}
           />
         ))}
       </Stack>

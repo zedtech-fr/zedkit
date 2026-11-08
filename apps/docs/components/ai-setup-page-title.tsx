@@ -15,7 +15,7 @@ const LEAD = "Give your coding agent one prompt to set up ZedKit AI in your proj
 
 /** Accent the rolling word only; inherit Heading weight/size — no type size on the slot. */
 const ROLL_ACCENT =
-  "[&_[data-word-roll=in]]:text-primary [&_[data-word-roll=in]]:underline [&_[data-word-roll=in]]:decoration-primary/50 [&_[data-word-roll=in]]:underline-offset-4 [&_[data-word-roll=exit]]:text-primary [&_[data-word-roll=exit]]:underline [&_[data-word-roll=exit]]:decoration-primary/50 [&_[data-word-roll=exit]]:underline-offset-4";
+  "[&_[data-word-roll=in]]:text-primary [&_[data-word-roll=in]]:underline [&_[data-word-roll=in]]:link-offset [&_[data-word-roll=exit]]:text-primary [&_[data-word-roll=exit]]:underline [&_[data-word-roll=exit]]:link-offset";
 
 /**
  * Page H1 for the AI setup guide. SSR and the client paint the same tree
@@ -39,11 +39,11 @@ export function AiSetupPageTitle() {
 
   return (
     <>
-      <Heading level={1} typeRole="title" className="mb-2 text-balance" aria-label={AI_SETUP_PAGE_H1_LABEL}>
+      <Heading level={1} typeRole="title" className="mb-stack text-balance" aria-label={AI_SETUP_PAGE_H1_LABEL}>
         Set up zedkit AI in{" "}
-        <WordRoll words={WORDS} value={word} dwellMs={ROLL_DWELL_MS} className={ROLL_ACCENT} aria-hidden />
+        <WordRoll words={WORDS} value={word} dwellMs={ROLL_DWELL_MS} className={ROLL_ACCENT} data-setup-word="" aria-hidden />
       </Heading>
-      <Text as="p" variant="muted" className="mb-6 text-balance">
+      <Text as="p" variant="muted" className="mb-lead text-balance">
         {LEAD}
       </Text>
     </>

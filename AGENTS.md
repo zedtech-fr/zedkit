@@ -58,12 +58,16 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   (warn and offer a split), red >30 (warn, propose seams, do not stop).
 - List assumptions before code or a plan. A missing assumptions table
   is a blocking challenge.
-- Entrypoints go through `orchestrate` (read tokenomics, pick a build
-  team). Plan, challenge and review: go deep, be strict, and be brutally
-  honest. One defect: `/fix` (inline, with its check). Review feedback:
-  `/improve-from-review` (apply it, then encode a reusable miss). One
-  topic, small wins: `/quick-wins` (`audit` or `implement`). Unclear topic:
-  `/to-audit`. Have an audit: `/from-audit`.
+- **Depth first, then route by shape.** On every user message, before an
+  answer: is this deep? Deep = a search, inventory, "are there other/unused",
+  audit, review, plan, or anything whose honest answer needs files you do
+  not already have. Keep the asked scope. Deep: open the matching skill
+  (`audit`, `research`, `review`, `plan`, `orchestrate`) and follow it. One
+  named defect: `/fix` (inline, with its check). Multi-step or multi-lens:
+  `orchestrate` (read tokenomics, pick a team). Plan, challenge and review:
+  go deep, be strict, and be brutally honest. Review feedback:
+  `/improve-from-review`. One topic, small wins: `/quick-wins`. Unclear
+  topic: `/to-audit`. Have an audit: `/from-audit`.
 - Encode the first reusable correction that changed the work, same turn
   (`rules-upkeep`). Close coding work with `Rules: none` or
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).

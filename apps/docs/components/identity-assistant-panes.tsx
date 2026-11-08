@@ -19,7 +19,7 @@ export type { View } from "@/components/identity-assistant-parts";
 /** The assistant's first word, where the exchange will continue. Shown until the first exchange replaces it. */
 function AssistantGreeting() {
   return (
-    <ol className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-greeting="">
+    <ol className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-greeting="">
       <li className="text-zk-type-body">
         <Text as="span" className="font-medium text-foreground">
           {copy.assistant}
@@ -91,9 +91,9 @@ export function ConversationMessages(props: ConversationMessagesProps) {
   const surfaceNotice = props.noticeInComposerFooter !== true;
   return (
     <Stack
-      gap={4}
+      gap="lg"
       className={cn(
-        "min-w-0",
+        "content-shrink",
         hidden && (props.compact && !props.narrowSplit ? "hidden" : "max-lg:hidden"),
       )}
       data-assistant-pane="conversation"
@@ -138,7 +138,7 @@ export function ConversationComposer(props: {
       ? { resendPrompt: props.session.proposal.prompt }
       : {};
   return (
-    <Stack gap={2} className="min-w-0 shrink-0" data-assistant-composer="">
+    <Stack gap="sm" className="content-shrink shrink-0" data-assistant-composer="">
       <BriefForm
         value={props.brief}
         onValue={props.onBrief}
@@ -169,7 +169,7 @@ export function ConversationPane(props: {
   inputRef: RefObject<HTMLTextAreaElement | null>;
 }) {
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap="lg" className="content-shrink">
       <ConversationMessages
         view={props.view}
         session={props.session}
@@ -211,12 +211,12 @@ export function PreviewPane(props: {
   const compact = props.compact ?? false;
   const hidden = compact ? props.view !== "preview" : props.view === "conversation";
   const className = cn(
-    "min-w-0",
+    "content-shrink",
     hidden && (compact && !props.narrowSplit ? "hidden" : "max-lg:hidden"),
     !compact && !props.proposal && "lg:hidden",
   );
   return (
-    <Stack gap={4} className={className} data-assistant-pane="preview">
+    <Stack gap="lg" className={className} data-assistant-pane="preview">
       {props.proposal ? (
         <ProposalCard
           proposal={props.proposal}
@@ -227,11 +227,11 @@ export function PreviewPane(props: {
           onDiscard={props.onDiscard}
           {...(props.siteApply ? { siteApply: props.siteApply } : {})}
           {...(compact
-            ? { className: "max-h-[min(52dvh,28rem)] overflow-y-auto overscroll-y-contain px-1", pinApply: true }
+            ? { className: "overflow-y-auto overscroll-y-contain", "data-proposal-inset": "", pinApply: true }
             : {})}
         />
       ) : (
-        <Stack gap={3}>
+        <Stack gap="md">
           <Text variant="muted" typeRole="label">
             {copy.views.draftNow}
           </Text>

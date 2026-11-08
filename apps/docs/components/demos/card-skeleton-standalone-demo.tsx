@@ -7,7 +7,7 @@ import { cardCopy } from "@/components/demos/i18n/card-copy";
 export function CardSkeletonStandaloneDemo() {
   const [loading, setLoading] = useState(true);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap="md" className="content-shrink">
       {loading ? (
         <CardSkeleton label={cardCopy.skeleton.loadingLabel} />
       ) : (

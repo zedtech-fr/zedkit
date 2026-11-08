@@ -12,13 +12,13 @@ const glassSurfaceVariants = cva("relative rounded-2xl border bg-card text-card-
     tone: {
       plain: "shadow-md",
       raised: "shadow-xl",
-      tinted: "bg-linear-to-br from-accent/15 via-transparent to-primary/10 shadow-lg",
+      tinted: "surface-tint shadow-lg",
     },
     padding: {
       none: "",
-      sm: "p-4",
-      md: "p-6",
-      lg: "p-8",
+      sm: "surface-pad-md",
+      md: "surface-pad-lg",
+      lg: "glass-pad-lg",
     },
   },
   defaultVariants: {

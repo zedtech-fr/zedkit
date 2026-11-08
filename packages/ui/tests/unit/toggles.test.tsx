@@ -24,11 +24,11 @@ describe("toggles", () => {
   it("styles the checkbox from design tokens", () => {
     render(<Checkbox aria-label="Accept the terms" defaultChecked />);
     const box = screen.getByRole("checkbox", { name: "Accept the terms" });
-    expect(box.classList.contains("size-4")).toBe(true);
+    expect(box.classList.contains("size-checkbox")).toBe(true);
     expect(box.classList.contains("focus-ring-control")).toBe(true);
     expect(box.className).not.toMatch(/(^|\s)(h-4|w-4|ring-1)(\s|$)/);
     const icon = box.querySelector("svg");
-    expect(icon?.classList.contains("size-4")).toBe(true);
+    expect(icon?.classList.contains("size-icon")).toBe(true);
     expect(icon?.getAttribute("aria-hidden")).toBe("true");
   });
 
@@ -49,12 +49,14 @@ describe("toggles", () => {
   it("styles the switch from spacing-derived geometry", () => {
     render(<Switch aria-label="Notify me" defaultChecked />);
     const toggle = screen.getByRole("switch", { name: "Notify me" });
-    expect(toggle.className).toContain("calc(var(--spacing)");
     expect(toggle.classList.contains("hit-target")).toBe(true);
     expect(toggle.classList.contains("focus-ring")).toBe(true);
     expect(toggle.className).not.toContain("w-switch-track-width");
-    const thumb = toggle.querySelector("span");
-    expect(thumb?.className).toContain("calc(var(--spacing)");
+    expect(toggle.className).not.toContain("border-2");
+    expect(toggle.className).not.toContain("calc(var(--spacing)");
+    const thumb = toggle.querySelector("[data-slot=switch-thumb]");
+    expect(thumb?.className).not.toContain("calc(var(--spacing)");
     expect(thumb?.className).not.toContain("translate-x-4");
+    expect(thumb?.className).not.toContain("ring-0");
   });
 });

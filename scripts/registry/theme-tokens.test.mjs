@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -60,7 +60,7 @@ test("expectedRegistryThemeFromStyles matches registry.json badge, drawer and st
   const cardSkel = registry.items.find((item) => item.name === "card-skeleton");
   assert.deepEqual(cardSkel.cssVars, expected["card-skeleton"].cssVars);
   const iconLabel = registry.items.find((item) => item.name === "icon-label");
-  assert.deepEqual(iconLabel.cssVars, expected["icon-label"].cssVars);
+  assert.equal(iconLabel.cssVars, undefined);
 });
 
 test("checkRegistryThemeDrift is clean on the repo", () => {
@@ -69,11 +69,10 @@ test("checkRegistryThemeDrift is clean on the repo", () => {
 
 function fixtureRoot(mutateRegistry) {
   const dir = mkdtempSync(join(tmpdir(), "theme-drift-"));
-  mkdirSync(join(dir, "packages/ui/src"), { recursive: true });
-  writeFileSync(
-    join(dir, "packages/ui/src/styles.css"),
-    readFileSync(join(root, "packages/ui/src/styles.css"), "utf8"),
-  );
+  mkdirSync(join(dir, "packages/ui"), { recursive: true });
+  symlinkSync(join(root, "packages/ui/src"), join(dir, "packages/ui/src"), "dir");
+  mkdirSync(join(dir, "registry"), { recursive: true });
+  symlinkSync(join(root, "registry/ui"), join(dir, "registry/ui"), "dir");
   const registry = JSON.parse(readFileSync(join(root, "registry.json"), "utf8"));
   mutateRegistry(registry);
   writeFileSync(join(dir, "registry.json"), JSON.stringify(registry));

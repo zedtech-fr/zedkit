@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { focusWithKeyboard } from "./a11y-helpers";
+
 const PROMPT = "Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md";
 
 test.describe("home AI setup section", () => {
@@ -44,7 +46,25 @@ test.describe("home AI setup section", () => {
     const response = await page.goto("/docs/ai/setup", { waitUntil: "networkidle" });
     expect(response?.status()).toBe(200);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Set up zedkit AI in");
-    await expect(page.locator("h1 [data-slot='word-roll']")).toBeVisible();
+    const inline = page.locator("[data-setup-prompt] a");
+    await expect(inline).toHaveCount(2);
+    const offsets = await inline.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).textUnderlineOffset));
+    expect(offsets).toEqual(["2px", "2px"]);
+    await expect(inline.first()).not.toHaveClass(/underline-offset-/);
+    const word = page.locator("h1 [data-setup-word] [data-word-roll='in']");
+    await expect(word).toBeVisible();
+    await expect.poll(async () =>
+      word.evaluate((node) => {
+        const probe = document.createElement("span");
+        probe.style.textDecorationColor = "color-mix(in oklab, hsl(var(--primary)) 50%, transparent)";
+        node.append(probe);
+        const style = getComputedStyle(node);
+        const match = style.textDecorationColor === getComputedStyle(probe).textDecorationColor;
+        probe.remove();
+        const host = node.closest("[data-setup-word]");
+        return match && style.textDecorationLine === "underline" && !host?.className.includes("decoration-primary/");
+      }),
+    ).toBe(true);
     await expect(page.getByText("Give your coding agent one prompt to set up ZedKit AI in your project.")).toBeVisible();
     await expect(page.locator("[data-slot='text'] p")).toHaveCount(0);
   });
@@ -61,8 +81,24 @@ test.describe("home AI setup section", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
     const terminal = page.locator("#ai-setup").getByRole("region", { name: "Files the AI setup creates" });
-    await terminal.focus();
+    await focusWithKeyboard(terminal);
     await expect(terminal).toBeFocused();
+    const focus = await terminal.evaluate((el) => {
+      const style = getComputedStyle(el);
+      const root = getComputedStyle(document.documentElement);
+      return {
+        className: el.className,
+        outlineStyle: style.outlineStyle,
+        outlineWidth: style.outlineWidth,
+        outlineOffset: style.outlineOffset,
+        ringWidth: root.getPropertyValue("--ring-width").trim(),
+        ringOffset: root.getPropertyValue("--ring-offset-width").trim(),
+      };
+    });
+    expect(focus.className).not.toContain("outline-2");
+    expect(focus.outlineStyle).toBe("solid");
+    expect(focus.outlineWidth).toBe(focus.ringWidth);
+    expect(focus.outlineOffset).toBe(`-${focus.ringOffset}`);
     const prompt = await page.locator("#ai-setup textarea").boundingBox();
     const tree = await terminal.boundingBox();
     expect(prompt && tree).toBeTruthy();

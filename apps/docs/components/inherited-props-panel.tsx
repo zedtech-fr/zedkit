@@ -15,8 +15,8 @@ export function InheritedPropsPanel({
   summary?: string;
 }) {
   return (
-    <details className="group rounded-md border border-border/40 open:border-border/60">
-      <summary className="min-h-[max(2.75rem,44px)] cursor-pointer list-none px-3 py-2 text-sm font-medium text-foreground focus-ring-control [&::-webkit-details-marker]:hidden">
+    <details data-inherited-props="" className="group rounded-md border">
+      <summary data-props-summary="" className="cursor-pointer list-none px-control-inline py-control-block-lg text-dense font-medium text-foreground focus-ring-control [&::-webkit-details-marker]:hidden">
         <Text as="span" className="text-muted-foreground group-open:hidden">
           {inheritedPropsCopy.show(summary)}
         </Text>
@@ -24,10 +24,10 @@ export function InheritedPropsPanel({
           {inheritedPropsCopy.hide(summary)}
         </Text>
       </summary>
-      <Stack gap={2} className="border-t border-border/40 px-3 pt-2 pb-3">
-        <Text variant="muted" className="text-xs">
+      <Stack gap="sm" data-under-rule="" className="border-t px-control-inline pb-block">
+        <Text variant="muted" className="text-caption">
           {inheritedPropsCopy.referenceLead}
-          <Link href={referenceHref} className="text-primary underline-offset-4 hover:underline">
+          <Link href={referenceHref} className="text-primary link-offset hover:underline">
             {inheritedPropsCopy.referenceLink}
           </Link>
           {inheritedPropsCopy.referenceTail}

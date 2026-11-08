@@ -161,7 +161,7 @@ export interface BadgeProps extends React_2.ComponentProps<"div">, VariantProps<
 
 // @public (undocumented)
 export const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "meta" | "secondary" | "success" | "warning" | "outline" | null | undefined;
+    variant?: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" | "meta" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -184,8 +184,8 @@ export interface ButtonProps extends React_2.ComponentProps<"button">, VariantPr
 
 // @public (undocumented)
 export const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "destructive" | "secondary" | "outline" | "ghost" | null | undefined;
-    size?: "default" | "sm" | "lg" | "icon" | null | undefined;
+    variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+    size?: "default" | "icon" | "sm" | "lg" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -210,7 +210,9 @@ export function CardFooter(input: React_2.ComponentProps<"div">): React_2.JSX.El
 export function CardHeader(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
-export type CardProps = React_2.ComponentProps<"div">;
+export type CardProps = React_2.ComponentProps<"div"> & {
+    size?: "sm" | "lg" | undefined;
+};
 
 // @public
 export function CardSkeleton(input: CardSkeletonProps): JSX.Element;
@@ -309,12 +311,14 @@ export function Container(input: ContainerProps): React_2.JSX.Element;
 export type ContainerProps = React_2.ComponentProps<"div"> & VariantProps<typeof containerVariants> & {
     width?: "narrow" | "reading" | "default" | "wide" | "full" | undefined;
     gutter?: boolean | undefined;
+    query?: boolean | undefined;
 };
 
 // @public (undocumented)
 export const containerVariants: (props?: ({
     width?: "narrow" | "reading" | "default" | "wide" | "full" | null | undefined;
     gutter?: boolean | null | undefined;
+    query?: boolean | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public (undocumented)
@@ -646,7 +650,7 @@ export interface ErrorStateProps {
 
 // Warning: (ae-forgotten-export) The symbol "fieldVariants" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function Field(input: React_2.ComponentProps<"div"> & VariantProps<typeof fieldVariants>): React_2.JSX.Element;
 
 // @public (undocumented)
@@ -1541,13 +1545,13 @@ export function Stack(input: StackProps): React_2.JSX.Element;
 // @public (undocumented)
 export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
-    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+    gap?: "tight" | "sm" | "md" | "lg" | "prose" | "list" | "blocks";
 };
 
 // @public (undocumented)
 export const stackVariants: (props?: ({
-    direction?: "horizontal" | "vertical" | null | undefined;
-    gap?: 1 | 6 | 2 | 3 | 5 | 4 | 8 | 7 | null | undefined;
+    direction?: "vertical" | "horizontal" | null | undefined;
+    gap?: "tight" | "sm" | "md" | "lg" | "prose" | "list" | "blocks" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1685,7 +1689,7 @@ export type SurfaceProps = React_2.ComponentProps<"div"> & Omit<VariantProps<typ
 export const surfaceVariants: (props?: ({
     variant?: "popover" | "solid" | "glass" | null | undefined;
     elevation?: 0 | 1 | 2 | 3 | null | undefined;
-    radius?: "none" | "sm" | "lg" | "full" | "md" | "xl" | "2xl" | null | undefined;
+    radius?: "none" | "sm" | "lg" | "md" | "xl" | "2xl" | "full" | null | undefined;
     padding?: "dialog" | "none" | "sm" | "md" | "card" | null | undefined;
 } & ClassProp) | undefined) => string;
 

@@ -1,36 +1,44 @@
 "use client";
 
+import type * as React from "react";
 import { Skeleton } from "./skeleton.js";
 import { surfaceVariants } from "./surface.js";
 import { cn } from "./utils.js";
 import { useUiMessages } from "./ui-provider.js";
 
-export interface CardSkeletonProps {
+export interface CardSkeletonProps extends React.ComponentProps<"div"> {
   label?: string;
-  className?: string;
+  /** Same sizing recipe as Card. */
+  size?: "sm" | "lg" | undefined;
 }
 
 /**
  * Faithful loading shape of Card: header block plus three text lines
  * in the same bordered box, so content lands without shifting.
  */
-export function CardSkeleton({ label, className }: CardSkeletonProps) {
+export function CardSkeleton({ label, className, size, ...props }: CardSkeletonProps) {
   const messages = useUiMessages();
   return (
     <div
       data-slot="card-skeleton"
+      data-size={size}
       role="status"
       aria-label={label ?? messages.loading}
-      className={cn(surfaceVariants({ variant: "solid", elevation: 2, radius: "xl", padding: "card" }), className)}
+      className={cn(
+        surfaceVariants({ variant: "solid", elevation: 2, radius: "xl" }),
+        "rounded-(--zk-card-radius)",
+        className,
+      )}
+      {...props}
     >
       <div className="space-y-card-stack">
-        <Skeleton className="h-5 w-1/3" />
-        <Skeleton className="h-4 w-2/3" />
+        <Skeleton data-card-skeleton-title="" className="w-skeleton-third" />
+        <Skeleton className="h-skeleton-line w-skeleton-short" />
       </div>
-      <div className="mt-4 space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-4/5" />
+      <div className="mt-card-section space-y-card-lines">
+        <Skeleton className="h-skeleton-line w-full" />
+        <Skeleton className="h-skeleton-line w-full" />
+        <Skeleton className="h-skeleton-line w-skeleton-body" />
       </div>
     </div>
   );

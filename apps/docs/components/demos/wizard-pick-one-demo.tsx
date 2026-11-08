@@ -12,7 +12,7 @@ export function WizardPickOneDemo() {
     pickup: wizardCopy.shipping.pickup.title,
   };
   return (
-    <Stack gap={2} className="min-w-0">
+    <Stack gap="sm" className="content-shrink">
       <OptionCards
         multiple={false}
         label={wizardCopy.shippingLabel}
@@ -20,7 +20,7 @@ export function WizardPickOneDemo() {
         selected={picked}
         onChange={setPicked}
       />
-      <Text variant="muted" className="text-xs" aria-live="polite">
+      <Text variant="muted" className="text-caption" aria-live="polite">
         {wizardCopy.pickedOne(labels[picked[0] ?? ""] ?? "")}
       </Text>
     </Stack>

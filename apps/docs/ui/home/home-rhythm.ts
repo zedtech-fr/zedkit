@@ -5,28 +5,28 @@ import { DOCS_TYPE_H3_CLASS } from "@/lib/docs-type-roles";
  * section spacing scale (full-bleed bands); these constants cover the gaps
  * and card grids inside each band.
  */
-export const HOME_SECTION_CONTENT_GAP = 6;
-export const HOME_CARD_CONTENT_GAP = 4;
+export const HOME_SECTION_CONTENT_GAP = "list" as const;
+export const HOME_CARD_CONTENT_GAP = "lg" as const;
 
-export const HOME_CARD_GRID_TWO_COL = "grid min-w-0 gap-4 md:grid-cols-2";
+export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-pair";
 /**
  * The two-step grids step at `sm`, not `md`: fumadocs' prebuilt CSS defines
  * its own `md:grid-cols-2` later in the shared utilities layer, which would
  * shadow the `xl` step on any element carrying both. Track counts are pinned
  * by the "home bands" e2e test in tests/home-layout.spec.ts.
  */
-export const HOME_CARD_GRID_THREE_COL = "grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3";
-export const HOME_CARD_GRID_FOUR_COL = "grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4";
+export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-trio";
+export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-quad";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;
 
 /** Min-height hero preview slot while the demo chunk loads; grows with the specimen (no fixed clip). */
-export const HOME_HERO_PREVIEW_SHELL_CLASS = "min-h-0 w-full min-w-0";
+export const HOME_HERO_PREVIEW_SHELL_CLASS = "pane-shrink w-full content-shrink";
 
 /** Bounded live preview inside home gallery cards (min height reserves space while lazy chunks load). */
 export const HOME_GALLERY_PREVIEW_SHELL_CLASS =
-  "min-h-32 w-full min-w-0 overflow-hidden rounded-md border bg-background p-3";
+  "w-full content-shrink overflow-hidden rounded-md border bg-background surface-pad-compact";
 
 /** Persuasion copy on the home page (maps to `--zk-type-body-*`). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";

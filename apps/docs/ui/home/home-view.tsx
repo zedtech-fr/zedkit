@@ -13,7 +13,7 @@ export function HomeView({
   entryPoints: HomeEntryPoint[];
 }) {
   return (
-    <SectionScroll id="home-page" className="min-w-0" data-home-marketing="">
+    <SectionScroll id="home-page" className="content-shrink" data-home-marketing="">
       <HomeHero />
       <HomeBelowHero
         featuredPackage={featuredPackage}

@@ -5,11 +5,11 @@ const RUNS = badgeCopy.variants.runs;
 
 export function BadgeVariantsDemo() {
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap="md" className="content-shrink">
       <Text variant="muted">{badgeCopy.variants.subtitle}</Text>
-      <Stack gap={2}>
+      <Stack gap="sm">
         {RUNS.map((run) => (
-          <Stack key={run.name} direction="horizontal" gap={3} className="items-center justify-between">
+          <Stack key={run.name} direction="horizontal" gap="md" className="items-center justify-between">
             <Text>{run.name}</Text>
             {run.variant === "default" ? (
               <Badge>{run.badge}</Badge>

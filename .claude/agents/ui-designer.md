@@ -104,9 +104,10 @@ already has — search it first.
 8. **Motion.** Animate when motion explains a transition or preserves
    context (overlay entry/exit, list reorder, focus-following panel). Instant
    is fine for small feedback (toggle, checkbox, inline validation). Not
-   required on every state change. When used: the project's durations if its
-   contract sets them (zedkit: 120-160ms feedback, 180-220ms panels), else
-   ~150-250ms; ease-out in / ease-in out, transform/opacity only, no layout
+   required on every state change. When used: the host contract's durations.
+   About 150–250ms is only a fallback when the host has no duration rule,
+   and it must be labelled a fallback. Ease-out in / ease-in out,
+   transform/opacity only, no layout
    shift. `prefers-reduced-motion`
    respected everywhere: fade or instant, never displacement. Scope: overlays,
    reordering, and panels that would otherwise hide what changed. Exception:
@@ -125,6 +126,11 @@ already has — search it first.
 - Never propose a new component, token or pattern while the kit has one
   that fits. When nothing fits, say exactly what is missing so the kit can
   gain it (reuse by design, not duplication).
+- Class names: open `setup-ai/design-policy.md`. Reject a rename that only
+  spells a number, and a new token for every old scale step. A structural
+  constraint (`min-width: 0`, pinning to an edge) stays a declaration on
+  the layout class. Judge the name by the job it describes and check the
+  computed layout still matches.
 - Consistency with the kit is the default for generic work. When a kit
   pattern is the weak part, name it and propose the kit fix; do not copy a
   weak pattern for consistency. Exception: a documented local one-off the

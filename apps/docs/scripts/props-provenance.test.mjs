@@ -21,9 +21,9 @@ test("Stack exposes its own direction and gap although SVG also has a direction 
   assert.ok(!inherited.includes("direction") && !inherited.includes("gap"));
 });
 
-test("Container exposes width and gutter although width is a native attribute name elsewhere", async () => {
+test("Container exposes width, gutter and query although width is a native attribute name elsewhere", async () => {
   const { kit, inherited } = await split("layout.tsx", "ContainerProps");
-  assert.deepEqual(kit.sort(), ["gutter", "width"]);
+  assert.deepEqual(kit.sort(), ["gutter", "query", "width"]);
   assert.ok(!inherited.includes("width"));
 });
 

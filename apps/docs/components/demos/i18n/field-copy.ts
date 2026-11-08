@@ -5,6 +5,7 @@ export const fieldCopy = {
   nameTooShort: "Use at least 3 characters.",
   summaryLabel: "Summary (optional)",
   summaryPlaceholder: "What is this project for?",
+  notifyLabel: "Email the team",
   submit: "Create project",
   created: (name: string) => `Project “${name}” created.`,
   initialName: "Ho",

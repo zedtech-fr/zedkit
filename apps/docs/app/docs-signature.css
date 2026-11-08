@@ -22,6 +22,253 @@
   background-image: var(--zk-site-sheen, linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 55%));
 }
 
+/* Inherited-props disclosure. Never under 44px, and it still grows if the root font is larger.
+   Closed, the box and the rule under the summary are 40% of the border colour. Open, the box is 60%. */
+[data-props-summary] {
+  min-height: max(2.75rem, 44px);
+}
+[data-inherited-props] {
+  border-color: color-mix(in oklab, hsl(var(--border)) 40%, transparent);
+}
+[data-inherited-props][open] {
+  border-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
+}
+[data-inherited-props] [data-under-rule] {
+  border-top-color: color-mix(in oklab, hsl(var(--border)) 40%, transparent);
+}
+
+/* Gallery card preview, tall enough that a lazy demo does not collapse the card. */
+[data-home-gallery-preview] {
+  min-height: calc(var(--spacing) * 32);
+}
+
+/* Hero title line, then the sentence under it. */
+[data-home-hero-lead] h1 {
+  max-width: 32rem;
+}
+[data-home-hero-sub] {
+  max-width: 28rem;
+}
+
+/* Chat turn. Stays inside the thread, with a little of the other side showing. */
+[data-assistant-log] > li {
+  max-width: 90%;
+}
+/* A notice beside the composer. Slightly wider than a thread turn. */
+[data-assistant-notice] {
+  max-width: 95%;
+}
+
+/* Home index rows. The line is 60% of the border colour. The last row has no line. */
+[data-home-secondary-links] > [data-index-lead] {
+  border-bottom-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
+}
+[data-home-secondary-links] > [data-index-lead].border-b:last-child {
+  border-bottom-width: 0;
+}
+
+/* The last job in the badge table has no line under it. */
+[data-badge-table] tbody tr.border-b:last-child {
+  border-bottom-width: 0;
+}
+
+/* The last task in a scene has no line under it. The scene padding closes the card. */
+[data-demo-scene-visual] > [data-slot="stack"]:last-child {
+  border-bottom-width: 0;
+}
+
+/* Inline URLs in the setup prompt. The line sits closer than a text link so it stays with the words. */
+[data-setup-prompt] a {
+  text-underline-offset: 2px;
+}
+
+/* AI setup. The benefits column stays at most 30rem while the file tree scrolls. */
+[data-home-ai-setup] {
+  --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
+}
+
+/* The file list scrolls. The focus ring sits inside it, so the clip does not hide the ring. */
+[data-home-ai-terminal] pre:focus-visible {
+  outline: var(--ring-width) solid hsl(var(--ring));
+  outline-offset: calc(var(--ring-offset-width) * -1);
+}
+
+/* The draft card stays above the form while it sticks. */
+[data-slot="identity-editor-preview"] {
+  z-index: 20;
+}
+
+/* Phone: look, hint, card, contrast, adjustments, then export. From 64rem the grid places the card. */
+@media (width < 64rem) {
+  [data-slot="identity-editor-toolbar"] {
+    order: 1;
+  }
+  [data-editor-section="hint"] {
+    order: 2;
+  }
+  [data-slot="identity-editor-preview"] {
+    order: 3;
+  }
+  [data-editor-section="contrast"] {
+    order: 4;
+  }
+  [data-editor-section="fields"] {
+    order: 5;
+  }
+  [data-editor-section="export"] {
+    order: 7;
+  }
+}
+
+/* Docs phone bar. It sits under the docs row, below the site header layer. */
+#nd-mobile-nav[data-docs-phone-bar] {
+  z-index: 30;
+}
+
+/* Identity editor. The preview is the right column from the large breakpoint, at most 26rem. */
+@media (min-width: 64rem) {
+  [data-slot="identity-editor"] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  }
+}
+
+/* The AI setup prompt. Wider than the reading measure, short of the page. */
+[data-setup-prompt] {
+  max-width: 48rem;
+}
+
+/* Tall code sample. Caps the frame at 96 spacing steps. */
+[data-code-tall] {
+  max-height: calc(var(--spacing) * 96);
+}
+
+/* Editor field and the apply-to-site button. Clears the docs header.
+   On a short window with a pinned preview, clears that card too. */
+[data-editor-scroll] {
+  scroll-margin-top: calc(var(--spacing) * 28);
+}
+@media (width < 64rem) and (min-height: 48rem) {
+  [data-editor-scroll] {
+    scroll-margin-top: calc(var(--spacing) * 80);
+  }
+}
+[data-editor-scroll="apply"] {
+  scroll-margin-bottom: calc(var(--spacing) * 24);
+}
+
+/* Anchor target, clear of the sticky header. */
+[data-scroll-anchor] {
+  scroll-margin-top: calc(var(--spacing) * 24);
+}
+
+/* Space above the Guides label in the site menu. */
+[data-nav-group] {
+  margin-top: calc(var(--spacing) * 2);
+}
+
+/* Term and definition on one line from the small breakpoint up. */
+@media (min-width: 40rem) {
+  [data-term-row] {
+    grid-template-columns: max-content 1fr;
+  }
+}
+
+/* Index row: a 24rem lead, then the rest, from the medium breakpoint up. */
+@media (min-width: 48rem) {
+  [data-index-lead] {
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+  }
+}
+
+/* Index summary. Two lines on a phone, the whole sentence from the medium breakpoint. */
+[data-index-summary] {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+@media (min-width: 48rem) {
+  [data-index-summary] {
+    display: block;
+    overflow: visible;
+    -webkit-box-orient: horizontal;
+    -webkit-line-clamp: unset;
+  }
+}
+
+/* Number column on an adoption step. */
+[data-adoption-step] {
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+}
+
+/* Page body under the site header, so the footer can sit at the bottom. */
+[data-page-shell] {
+  min-height: calc(100vh - 3.5rem);
+}
+
+/* The dock button hides while the panel is open, and it cannot be pressed. */
+[data-slot="identity-dock-trigger"][aria-expanded="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Identity dock. Clear of the screen edge and the home indicator, on the header layer so a menu still covers it. */
+[data-slot="identity-dock"] {
+  z-index: var(--z-header);
+  max-width: calc(100vw - 1.5rem);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/* Framed app demo. At most 40rem, and at most 80% of the screen. */
+[data-demo-frame] {
+  height: min(40rem, 80svh);
+}
+
+/* Phone frame in a component preview. */
+[data-preview-surface][data-frame="phone"] {
+  max-width: 390px;
+  margin-inline: auto;
+}
+
+/* Space between a look tab's swatch and its name. */
+[data-look-tab] {
+  gap: calc(var(--spacing) * 2.5);
+}
+
+/* Compact proposal. One spacing step on the sides, and at most 52% of the screen or 28rem. */
+[data-proposal-inset] {
+  padding-inline: var(--spacing);
+  max-height: min(52dvh, 28rem);
+}
+
+/* The proposal card while a new look is being made. */
+[data-assistant-proposal][aria-busy="true"] {
+  opacity: 0.6;
+}
+
+/* Pinned proposal actions. They stay above the card while it scrolls. */
+[data-proposal-apply] {
+  z-index: 10;
+}
+
+/* Color swatch in the identity dock. One spacing step of 4, same box as an icon, not an icon.
+   The ring is 60% of the border colour. */
+[data-slot="identity-dock-swatch"] {
+  width: calc(var(--spacing) * 4);
+  height: calc(var(--spacing) * 4);
+  border-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
+}
+
+/* Look controls on the home demo. The outline is 70% of the border colour. */
+[data-look-control] {
+  border-color: color-mix(in oklab, hsl(var(--border)) 70%, transparent);
+}
+
+/* Theme switch. The ring is 35% of the border colour. */
+[data-theme-toggle] button {
+  border-color: color-mix(in oklab, hsl(var(--border)) 35%, transparent);
+}
+
 /* Identity dock + inline assistant: type roles via tokens (not Tailwind text-*). */
 [data-testid="identity-dock"] [data-assistant-status],
 [data-testid="identity-dock"] [data-assistant-feedback],
@@ -41,8 +288,8 @@
 }
 
 [data-testid="identity-dock"] [data-slot="brief-specimen"] > span:first-child,
-[data-testid="identity-dock"] [data-assistant-proposal-compare] .text-sm,
-[data-testid="identity-dock"] [data-assistant-proposal-compare] .text-xs {
+[data-testid="identity-dock"] [data-assistant-proposal-compare] .text-dense,
+[data-testid="identity-dock"] [data-assistant-proposal-compare] .text-caption {
   font-size: var(--zk-type-label-size);
   font-weight: var(--zk-type-label-weight);
   line-height: var(--zk-type-label-leading);
@@ -52,4 +299,122 @@
   font-size: var(--zk-type-body-size);
   font-weight: var(--zk-type-body-weight);
   line-height: var(--zk-type-body-leading);
+}
+
+/* One-off insets. The step matches another role; the job does not, so the number stays a literal here. */
+[data-dock-scroll],
+[data-hero-activity],
+[data-hero-nav] {
+  padding-bottom: calc(var(--spacing) * 2);
+}
+
+/* A menu link that leaves the site. Quieter than the label, not the dialog close. */
+[data-external-mark] {
+  opacity: 0.7;
+}
+
+/* Site menu. At most 85% of the screen, and never taller than 640px. */
+[data-shell-nav-drawer] {
+  max-height: min(85dvh, 640px);
+}
+
+[data-under-rule],
+[data-proposal-before],
+[data-theme-card-body],
+[data-shell-nav-drawer] {
+  padding-top: calc(var(--spacing) * 2);
+}
+
+@media (min-width: 64rem) {
+  [data-proposal-before] {
+    padding-top: 0;
+  }
+}
+
+[data-preview-segment] {
+  padding-inline: calc(var(--spacing) * 2.5);
+}
+
+[data-footer-mark] {
+  height: calc(var(--spacing) * 4);
+}
+
+/* Share card. The open-graph picture is 1200 by 630. */
+[data-share-preview] {
+  aspect-ratio: 1200 / 630;
+}
+/* The sentence under the brand name. A little quieter than the name. */
+[data-share-tagline] {
+  opacity: 0.8;
+}
+
+/* The install example's frame. Mostly the page background, so the sample button sits on a quiet plate. */
+[data-adoption-example] {
+  background-color: color-mix(in oklab, hsl(var(--background)) 80%, transparent);
+}
+
+/* Product picture on the shop specimen. Three times as wide as it is tall, with a light primary tint. */
+[data-product-banner] {
+  aspect-ratio: 3 / 1;
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+}
+
+[data-dock-handle],
+[data-shell-drawer-foot] {
+  margin-top: calc(var(--spacing) * 2);
+}
+
+[data-pending-reply] [data-slot="stream-status"],
+[data-pending-reply] [data-slot="stream-text"],
+[data-follow] {
+  margin-top: var(--spacing);
+}
+
+@media (min-width: 40rem) {
+  [data-identity-look] {
+    width: calc(var(--spacing) * 48);
+    flex-shrink: 0;
+  }
+}
+
+@media (width < 64rem) {
+  [data-draft-actions] {
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  [data-draft-field] input {
+    min-height: calc(var(--spacing) * 10);
+  }
+}
+
+/* A link the assistant could read. A light primary chip. */
+[data-assistant-reference-status="used"] [data-assistant-reference-chip] {
+  border-color: color-mix(in oklab, hsl(var(--primary)) 40%, transparent);
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+}
+
+/* A link the assistant could not read. */
+[data-assistant-reference-status="failed"] [data-assistant-reference-chip] {
+  border-color: color-mix(in oklab, hsl(var(--destructive)) 50%, transparent);
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 10%, transparent);
+}
+
+/* A follow-up after a look is applied. Quiet outline, muted fill on hover. */
+[data-assistant-refine-chip] {
+  border-color: color-mix(in oklab, hsl(var(--foreground)) 20%, transparent);
+}
+
+[data-assistant-refine-chip]:hover {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 70%, transparent);
+}
+
+/* An accepted look, ready to copy. Quieter than the panel behind it. */
+[data-slot="identity-dock-export"] {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 20%, transparent);
+}
+
+/* The rolling word in the setup title. Primary type, a quieter line under it. */
+[data-setup-word] [data-word-roll="in"],
+[data-setup-word] [data-word-roll="exit"] {
+  text-decoration-color: color-mix(in oklab, hsl(var(--primary)) 50%, transparent);
 }

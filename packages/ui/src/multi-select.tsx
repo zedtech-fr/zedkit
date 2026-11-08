@@ -29,7 +29,7 @@ function MultiSelect(props: MultiSelectProps) {
   return (
     <Popover open={combobox.isOpen}>
       <PopoverAnchor asChild>
-        <div className="w-full space-y-2" data-slot="multi-select">
+        <div className="w-full space-y-form-item-gap" data-slot="multi-select">
           <MultiSelectChips
             items={selectedItems}
             onRemove={removeItem}
@@ -50,15 +50,15 @@ function MultiSelect(props: MultiSelectProps) {
             <button
               type="button"
               {...combobox.getToggleButtonProps({ disabled: Boolean(props.disabled) })}
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
+              className="absolute pin-center-y right-control-inline text-muted-foreground"
               aria-label={messages.options}
             >
-              <ChevronDown className="size-4 opacity-50" />
+              <ChevronDown className="size-icon disclosure-icon" />
             </button>
           </div>
         </div>
       </PopoverAnchor>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" onOpenAutoFocus={(event) => event.preventDefault()}>
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] flush" onOpenAutoFocus={(event) => event.preventDefault()}>
         <MultiSelectMenu
           emptyMessage={emptyMessage}
           getItemProps={combobox.getItemProps}

@@ -31,18 +31,19 @@ export function HomeIdentityLooksTabs({
       onValueChange={(next) => {
         if (isIdentityId(next)) onValueChange(next);
       }}
-      className="w-full min-w-0"
+      className="w-full content-shrink"
     >
-      <ScrollGallery className="w-full min-w-0">
+      <ScrollGallery className="w-full content-shrink">
         <TabsList
           aria-label={homeIdentityLooksCopy.tabsAriaLabel}
-          className="inline-flex h-auto! min-h-11 w-max max-w-none flex-nowrap justify-start gap-2 bg-muted p-1"
+          className="inline-flex h-auto! min-h-target w-max max-w-none flex-nowrap justify-start gap-stack-sm bg-muted p-track"
         >
           {IDENTITY_IDS.map((id) => (
             <TabsTrigger
               key={id}
               value={id}
-              className="h-auto! min-h-11 w-max max-w-none shrink-0 snap-start flex-row! items-center! gap-2.5 px-3.5 py-1.5"
+              data-look-tab=""
+              className="h-auto! min-h-target w-max max-w-none shrink-0 snap-start flex-row! items-center! px-tab py-select-item-block"
             >
               <HomeIdentityPaletteDots
                 identity={id}
@@ -53,7 +54,7 @@ export function HomeIdentityLooksTabs({
                 <span data-tab-label="">
                   {homeIdentityLooksCopy.products[id]}
                 </span>
-                <span className="text-xs font-normal text-muted-foreground">
+                <span className="text-caption font-normal text-muted-foreground">
                   {HOME_IDENTITY_FACTS[id].label}
                 </span>
               </span>

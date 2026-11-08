@@ -69,7 +69,7 @@ export interface DataTableProps<TData extends RowData> {
 }
 
 function SortIcon({ direction }: { direction: SortDirection | false }) {
-  const className = "size-icon-sm opacity-60";
+  const className = "size-icon-sm sort-mark";
   if (direction === "asc") return <ArrowUp className={className} aria-hidden />;
   if (direction === "desc") return <ArrowDown className={className} aria-hidden />;
   return <ArrowUpDown className={className} aria-hidden />;
@@ -139,8 +139,8 @@ export function DataTablePagination({
   const messages = useUiMessages();
   const pageCountShown = Math.max(pageCount, 1);
   return (
-    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-2", className)}>
-      <span className="text-sm text-muted-foreground">
+    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
+      <span className="text-dense text-muted-foreground">
         {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
       <Button type="button" variant="outline" size="sm" onClick={onPrevious} disabled={!canPrevious}>
@@ -207,7 +207,7 @@ export function DataTable<TData extends RowData>({
   }, [table, pageSize]);
 
   return (
-    <div data-slot="data-table" className="space-y-4">
+    <div data-slot="data-table" className="space-y-data-table-stack">
       <DataTableToolbar
         value={globalFilter}
         onChange={(value) => {
@@ -218,11 +218,11 @@ export function DataTable<TData extends RowData>({
       />
       {surface === "error" ? <ErrorState description={error ?? ""} /> : null}
       {surface === "loading" ? (
-        <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-3 py-2">
-          <p className="text-sm text-muted-foreground">{messages.loadingEllipsis}</p>
-          <div className="space-y-2" aria-hidden>
+        <div data-slot="data-table-loading" role="status" aria-label={messages.loading} className="space-y-stack-md surface-pad-block-sm">
+          <p className="text-dense text-muted-foreground">{messages.loadingEllipsis}</p>
+          <div className="space-y-stack-sm" aria-hidden>
             {[0, 1, 2].map((row) => (
-              <Skeleton key={row} className="h-4 w-full max-w-data-table-filter-width" />
+              <Skeleton key={row} className="h-skeleton-line w-full max-w-data-table-filter-width" />
             ))}
           </div>
         </div>
@@ -262,7 +262,7 @@ export function DataTable<TData extends RowData>({
                       type="button"
                       onClick={header.column.getToggleSortingHandler()}
                       className={cn(
-                        "inline-flex min-h-(--zk-tap-min) items-center gap-data-table-sort-gap hover:text-foreground",
+                        "inline-flex min-h-floor items-center gap-data-table-sort-gap hover:text-foreground",
                       )}
                       aria-label={sortButtonLabel(label, sorted)}
                     >

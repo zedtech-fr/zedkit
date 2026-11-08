@@ -4,6 +4,7 @@
    of the utilities and let base classes beat responsive variants. */
 @import "tailwindcss";
 @import "@zedtech/zedkit-ui/styles.css";
+@import "./site-text-roles.css";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 @source "../node_modules/fumadocs-ui/dist/**/*.js";
@@ -66,26 +67,6 @@
 @media (prefers-reduced-motion: reduce) {
   [data-toc-popover-trigger] span {
     transition: none;
-  }
-}
-
-/* Phone search: hidden while a drawer or dialog is open. */
-body:has([data-vaul-overlay][data-state="open"]) [data-search-pill],
-body:has([role="dialog"][data-state="open"]) [data-search-pill] {
-  display: none;
-}
-
-/* Reserve the fixed phone search button, its bottom inset, and 1rem of air after each shell. */
-@media (width < 48rem) {
-  #nd-home-layout,
-  #nd-docs-layout {
-    padding-bottom: calc(3.75rem + max(1rem, env(safe-area-inset-bottom)));
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  [data-search-pill] button:hover {
-    filter: brightness(1.02);
   }
 }
 

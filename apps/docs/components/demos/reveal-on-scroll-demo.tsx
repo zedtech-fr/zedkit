@@ -5,7 +5,7 @@ import { revealOnScrollCopy } from "@/components/demos/i18n/reveal-on-scroll-cop
 
 export function RevealOnScrollDemo() {
   return (
-    <Animate on={{ appear: "fade-up" }} stagger className="min-w-0">
+    <Animate on={{ appear: "fade-up" }} stagger className="content-shrink">
       <Stack>
         {revealOnScrollCopy.tasks.map((task) => (
           <Text key={task}>{task}</Text>

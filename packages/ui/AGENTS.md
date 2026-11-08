@@ -21,14 +21,33 @@ Rules:
 - `cn()` every `className` prop (conflicts resolve last-wins).
 - `.dark`-class theming only; new tokens go in `src/styles.css`
   in both `:root` and `.dark`.
-- Spacing (#367): one canonical name per value. Shared values use the
-  Tailwind scale (`p-4`, `gap-2`, `size-4`). Semantic `--spacing-*`
-  duplicates stay as deprecated aliases (do not delete). Map:
-  `scripts/registry/spacing-aliases.json`. New shared sizes that should
-  follow identity `--spacing` use `--zk-gap-sm|md|lg`, `--zk-icon-size`,
-  `--zk-control-height` (`calc` from `--spacing`; mist matches today's rem).
-  `--spacing-control-height*` and `--spacing-control-block*` follow those
-  calcs. Leftover rem aliases stay until later #798 migrations.
+- Spacing: a class names a role or a layout job (`px-field-pad`,
+  `px-button-pad`, `gap-stack-sm` for a stack, `content-shrink`). Do not
+  spell a number (`min-w-zero`) and do not add a token per scale step.
+  Shared design values use `calc(var(--spacing) * N)`. A structural
+  constraint (`min-width: 0`, pinning to an edge) is a declaration on that
+  layout class, not a spacing token. Dense UI (controls, tabs, menus,
+  tables, nav) is `text-dense`: 13px with a line about 18.6px. `text-sm`
+  is that same size and is banned. `text-zk-type-small` is the same size
+  and a 19.5px line. Do not swap them. Captions, badges and timestamps
+  are `text-caption`: 12px with a 16px line. `text-xs` is that size and
+  is banned. The label role is also 12px, with a 16.8px line and medium
+  weight. Do not swap those either. `Stack` gaps are role-named only
+  (`tight` | `sm` | `md` | `lg` | `prose` | `list` | `blocks`).
+  Multipliers must land on the declared scale
+  (`tests/unit/declared-scales.test.ts`). Density-derived tokens live
+  in the one `:root, [data-identity-scope]` rule in `styles.css`
+  (nested scopes re-resolve them). Container sizing: `zk-query`
+  slots, Card/Section recipes — same `styles.css` section. Density
+  still follows `--spacing` for every purpose (today's behavior). The
+  recommended alternative is control/stack rhythm only; that owner
+  decision (D-0.1) is open and is not applied here. The shipped rule is
+  `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
+  44px, stricter than the kit's 24px floor. `min-h-target` follows
+  `--spacing` and floors at 44px on a coarse pointer or a narrow screen.
+- Deleting a utility/token: prove zero usage with a full-repo search
+  that includes `preview/`, other packages and docs — never a truncated
+  hit list.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
   `data-slot` on its root (see `src/button.tsx`).

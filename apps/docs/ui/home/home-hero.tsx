@@ -9,7 +9,7 @@ import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
  */
 function HeroShapes() {
   return (
-    <span aria-hidden="true" data-hero-shapes="" className="pointer-events-none absolute inset-0 -z-10">
+    <span aria-hidden="true" data-hero-shapes="" className="pointer-events-none absolute pin-fill">
       <span data-shape="1" />
       <span data-shape="2" />
       <span data-shape="3" />
@@ -22,8 +22,8 @@ export function HomeHero() {
   return (
     <Container width="wide" data-home-hero-band="" className={`relative ${signatureMotionClass.settle}`}>
       <HeroShapes />
-      <Stack gap={HOME_SECTION_CONTENT_GAP} className="min-w-0" data-home-hero="">
-        <HomeHeroLead className="min-w-0" />
+      <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-shrink" data-home-hero="">
+        <HomeHeroLead className="content-shrink" />
         <HomeHeroPreview />
       </Stack>
     </Container>

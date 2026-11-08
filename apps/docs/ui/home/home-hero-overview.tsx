@@ -35,13 +35,13 @@ function useCountUp(to: number, active: boolean, duration = 900): number {
 function Stat({ label, value, active, beat }: { label: string; value: number; active: boolean; beat: number }) {
   const shown = useCountUp(value, active);
   return (
-    <Card className="min-w-0 shadow-none" data-hero-block="" data-beat={beat}>
-      <Stack gap={1} className="p-3">
-        <Text variant="muted" className="text-xs leading-tight">
+    <Card className="content-shrink shadow-none" data-hero-block="" data-beat={beat}>
+      <Stack gap="tight" className="surface-pad-compact">
+        <Text variant="muted" className="text-caption leading-tight">
           {label}
         </Text>
         {/* The number counts up on screen; assistive tech gets the final value, once. */}
-        <Text as="span" className="text-2xl leading-none font-semibold tracking-tight tabular-nums">
+        <Text as="span" className="text-figure tabular-nums">
           <span className="sr-only">{value}</span>
           <span aria-hidden="true">{shown}</span>
         </Text>
@@ -53,14 +53,14 @@ function Stat({ label, value, active, beat }: { label: string; value: number; ac
 /** Bars grow from the baseline. Their height is a level from 1 to 6 (see `home-hero.css`), not an inline style. */
 function Activity() {
   return (
-    <Card className="min-w-0 shadow-none" data-hero-block="" data-beat={4}>
-      <CardHeader className="p-3 pb-2">
-        <CardDescription className="text-xs">{copy.activity}</CardDescription>
+    <Card className="content-shrink shadow-none" data-hero-block="" data-beat={4}>
+      <CardHeader data-hero-activity="" className="surface-pad-compact">
+        <CardDescription className="text-caption">{copy.activity}</CardDescription>
       </CardHeader>
-      <CardContent className="p-3 pt-0">
-        <ul className="m-0 flex list-none items-end gap-1.5 p-0" aria-label={copy.activity} data-hero-bars="">
+      <CardContent className="surface-pad-compact trim-pad-top">
+        <ul className="trim-margin flex list-none items-end flush" aria-label={copy.activity} data-hero-bars="">
           {copy.activityValues.map((value, index) => (
-            <li key={index} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
+            <li key={index} className="flex h-full content-shrink flex-1 flex-col items-center justify-end gap-stack-tight">
               <span
                 data-hero-bar=""
                 data-level={value}
@@ -68,7 +68,7 @@ function Activity() {
                 role="img"
                 aria-label={`${copy.activityDays[index]}: ${value}`}
               />
-              <span aria-hidden="true" className="text-xs leading-none text-muted-foreground">
+              <span aria-hidden="true" className="text-caption leading-none text-muted-foreground">
                 {copy.activityDays[index]}
               </span>
             </li>
@@ -85,19 +85,19 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
     .sort(byDue)
     .slice(0, 3);
   return (
-    <Stack gap={2} className="min-w-0" data-hero-block="" data-beat={5}>
+    <Stack gap="sm" className="content-shrink" data-hero-block="" data-beat={5}>
       <Text variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
         {copy.upNext}
       </Text>
-      <ul className="m-0 flex list-none flex-col divide-y divide-border rounded-lg border border-border p-0">
+      <ul className="trim-margin flex list-none flex-col divide-y divide-border rounded-lg border border-border flush">
         {next.map((row) => (
-          <li key={row.id} className="flex min-w-0 items-center justify-between gap-3 px-3 py-2">
-            <span className="min-w-0 truncate text-sm font-medium">{row.title}</span>
-            <span className="flex shrink-0 items-center gap-2">
+ <li key={row.id} className="flex content-shrink items-center justify-between gap-stack-md pad-row">
+            <span className="content-shrink truncate text-dense font-medium">{row.title}</span>
+            <span className="flex shrink-0 items-center gap-stack-sm">
               <Badge variant={STATUS_VARIANT[row.status]} className="max-sm:hidden">
                 {row.status}
               </Badge>
-              <span className="text-xs text-muted-foreground tabular-nums">{shortDate.format(parseDue(row.due))}</span>
+              <span className="text-caption text-muted-foreground tabular-nums">{shortDate.format(parseDue(row.due))}</span>
             </span>
           </li>
         ))}
@@ -109,9 +109,9 @@ function UpNext({ rows }: { rows: TaskRow[] }) {
 export function HeroOverviewPage({ rows, active }: { rows: TaskRow[]; active: boolean }) {
   const { status } = projectTrackerDemoCopy;
   return (
-    <Stack gap={4} className="min-w-0">
-      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <div className="grid min-w-0 grid-cols-3 gap-2">
+    <Stack gap="lg" className="content-shrink">
+      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
+      <div className="grid content-shrink grid-trio gap-stack-sm">
         <Stat label={copy.stats.open} value={rows.filter((row) => !isDone(row)).length} active={active} beat={1} />
         <Stat label={copy.stats.review} value={rows.filter((row) => row.status === status.inReview).length} active={active} beat={2} />
         <Stat label={copy.stats.done} value={rows.filter(isDone).length} active={active} beat={3} />

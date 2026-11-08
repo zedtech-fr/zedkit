@@ -13,10 +13,10 @@ describe("DetailPanel", () => {
   it("styles rows from design tokens", () => {
     const { container } = render(<DetailPanel items={[{ label: "Name", value: "Ada" }]} />);
     const row = container.querySelector("dl > div");
-    expect(row?.classList.contains("gap-4")).toBe(true);
-    expect(row?.classList.contains("px-4")).toBe(true);
-    expect(row?.className).toContain("py-3");
-    expect(row?.className).not.toContain("py-detail-panel-block");
+    expect(row?.classList.contains("gap-detail-panel-gap")).toBe(true);
+    expect(row?.classList.contains("px-detail-panel-inline")).toBe(true);
+    expect(row?.className).toContain("py-detail-panel-block");
+    expect(row?.className).not.toContain("py-3");
   });
 });
 
@@ -38,7 +38,7 @@ describe("DetailPanelRow", () => {
       </dl>,
     );
     const value = screen.getByText("evt_0123456789abcdef0123456789abcdef");
-    expect(value.classList.contains("min-w-0")).toBe(true);
+    expect(value.classList.contains("content-shrink")).toBe(true);
     expect(value.classList.contains("break-words")).toBe(true);
   });
 });
@@ -57,8 +57,8 @@ describe("LivePulse", () => {
   it("uses the canonical scale gap with no arbitrary values", () => {
     render(<LivePulse />);
     const className = screen.getByRole("status").className;
-    expect(className).toContain("gap-1.5");
-    expect(className).not.toContain("gap-live-pulse-gap");
+    expect(className).toContain("gap-icon");
+    expect(className).not.toContain("gap-1.5");
     expect(className).not.toContain("[");
   });
 });

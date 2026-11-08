@@ -63,8 +63,8 @@ export function AssistantNoticeBubble({ notice }: { notice: Notice }) {
   if (notice.kind === "unavailable") return null;
   return (
     <Stack
-      gap={1}
-      className="max-w-[95%] rounded-2xl rounded-tl-sm border border-border bg-muted px-3 py-2 text-sm"
+      gap="tight"
+      className="rounded-2xl rounded-tl-sm border border-border bg-muted pad-row text-dense"
       data-assistant-notice=""
       role="status"
     >
@@ -104,7 +104,7 @@ export function BriefForm({
   const left = LIMITS.prompt - value.length;
   const placeholder = useRotatingPlaceholder(!refining);
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <PromptInput
         id="identity-assistant-brief"
         ref={inputRef}
@@ -165,7 +165,7 @@ export function ViewSwitch({
   return (
     <Stack
       direction="horizontal"
-      gap={2}
+      gap="sm"
       role="group"
       aria-label={copy.views.label}
       data-assistant-views=""
@@ -178,7 +178,7 @@ export function ViewSwitch({
         {copy.views.preview}
         {waiting && view !== "preview" ? (
           <>
-            <Text as="span" aria-hidden="true" className="inline-block size-2 rounded-full bg-primary" />
+            <Text as="span" aria-hidden="true" className="inline-block size-status-dot rounded-full bg-primary" />
             <Text as="span" className="sr-only">
               {copy.views.waitingSuffix}
             </Text>
@@ -192,7 +192,7 @@ export function ViewSwitch({
 export function Thread({ turns }: { turns: readonly Turn[] }) {
   if (turns.length === 0) return null;
   return (
-    <ol aria-label={copy.thread} className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-thread="">
+    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-thread="">
       {turns.map((turn, index) => (
         <li key={`${index}-${turn.role}`} className="text-zk-type-body">
           <Text as="span" className="font-medium text-foreground">
@@ -211,7 +211,7 @@ export function UnavailableBanner({ reason, live = true }: { reason: Unavailable
   return (
     <Text
       role={live ? "status" : undefined}
-      className="rounded-md border border-border bg-muted px-3 py-2 text-zk-type-body"
+ className="rounded-md border border-border bg-muted pad-row text-zk-type-body"
       data-assistant-unavailable=""
     >
       {copy.unavailable(reason)}
@@ -242,8 +242,8 @@ function ProposalApplyRow({
   return (
     <Stack
       direction="horizontal"
-      gap={2}
-      className={cn("flex-wrap overflow-visible", pinned && "sticky bottom-0 z-10 bg-background/95 py-2 backdrop-blur")}
+      gap="sm" {...(pinned ? { "data-proposal-apply": "" } : {})}
+      className={cn("flex-wrap overflow-visible", pinned && "sticky pin-bottom bar-scrim surface-pad-block-sm backdrop-blur")}
     >
       <Button type="button" onClick={() => onUse(tokens)} disabled={busy}>
         {copy.proposal.apply}
@@ -255,13 +255,12 @@ function ProposalApplyRow({
   );
 }
 
-
 function ProposalChangeList({ rows }: { rows: readonly { path: string; from: string; to: string }[] }) {
   if (rows.length === 0) return null;
   return (
     <details className="text-zk-type-body">
-      <summary className="flex min-h-11 cursor-pointer items-center focus-ring">{copy.proposal.showChanges}</summary>
-      <ul className="m-0 flex list-none flex-col gap-1 p-0 font-mono text-zk-type-small">
+      <summary className="flex min-h-target cursor-pointer items-center focus-ring">{copy.proposal.showChanges}</summary>
+      <ul className="trim-margin flex list-none flex-col gap-stack-tight flush font-mono text-zk-type-small">
         {rows.map((row) => (
           <li key={row.path} className="break-words">
             {row.path}: {row.from} → {row.to}
@@ -280,6 +279,8 @@ type ProposalCardProps = {
   onUse: (tokens: IdentityTokens) => void;
   onDiscard: () => void;
   className?: string;
+  /** Side inset of one spacing step. Set on the compact card. */
+  "data-proposal-inset"?: "";
   /** Pin the apply row to the bottom of the card; set when the card scrolls inside a height cap. */
   pinApply?: boolean;
   /** When set, show Apply to the whole site under Use this look (dock Preview tab). */
@@ -295,6 +296,7 @@ export function ProposalCard({
   onUse,
   onDiscard,
   className,
+  "data-proposal-inset": proposalInset,
   pinApply,
   siteApply,
 }: ProposalCardProps) {
@@ -303,12 +305,12 @@ export function ProposalCard({
   const rows = useMemo(() => tokenDiff(current, repaired.tokens), [current, repaired.tokens]);
   const domain = useMemo(() => specimenDomainFromBrief(domainBrief), [domainBrief]);
   return (
-    <Stack gap={3} role="region" aria-label={copy.proposal.title} aria-busy={busy || undefined} data-assistant-proposal="" className={cn("overflow-visible", busy && "opacity-60", className)}>
+    <Stack gap="md" role="region" aria-label={copy.proposal.title} aria-busy={busy || undefined} data-assistant-proposal="" data-proposal-inset={proposalInset} className={cn("overflow-visible", className)}>
       <Text as="span" typeRole="label" className="font-semibold text-foreground">
         {copy.proposal.title}
       </Text>
       {proposal.summary ? (
-        <Text typeRole="body" className="m-0">
+        <Text typeRole="body" className="trim-margin">
           <Text as="span" className="font-medium">
             {copy.proposal.summaryLabel}:
           </Text>{" "}

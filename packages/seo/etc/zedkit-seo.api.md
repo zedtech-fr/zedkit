@@ -7,6 +7,7 @@
 import type { Article } from 'schema-dts';
 import type { BreadcrumbList } from 'schema-dts';
 import type { Organization } from 'schema-dts';
+import type { SoftwareSourceCode } from 'schema-dts';
 import type { WebPage } from 'schema-dts';
 import type { WithContext } from 'schema-dts';
 
@@ -89,6 +90,9 @@ export interface BuildSitemapOptions {
     pages: SitemapPage[];
     siteUrl: string;
 }
+
+// @public (undocumented)
+export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode>;
 
 // @public
 export function buildVideoSitemap(options: BuildVideoSitemapOptions): string;
@@ -288,6 +292,20 @@ export interface SiteMetadata {
     locales: string[];
     // (undocumented)
     name: string;
+    // (undocumented)
+    url: string;
+}
+
+// @public (undocumented)
+export interface SoftwareSourceCodeJsonLdOptions {
+    // (undocumented)
+    codeRepository: string;
+    // (undocumented)
+    license?: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    programmingLanguage?: string;
     // (undocumented)
     url: string;
 }

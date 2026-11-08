@@ -16,9 +16,9 @@ function PendingBody({ pending }: { pending: PendingWork }) {
       <Text as="span" className="font-medium text-foreground">
         {copy.assistant}
       </Text>
-      <StreamStatus stage={stage} label={stage ? undefined : copy.working} live={false} className="mt-1" />
+      <StreamStatus stage={stage} label={stage ? undefined : copy.working} live={false} />
       {pending.draft ? (
-        <StreamText text={pending.draft} live={false} className="mt-1 block whitespace-pre-wrap" />
+        <StreamText text={pending.draft} live={false} className="block whitespace-pre-wrap" />
       ) : null}
     </>
   );
@@ -28,7 +28,7 @@ function PendingBody({ pending }: { pending: PendingWork }) {
 export function PendingAssistant({ pending, as = "div" }: { pending: PendingWork; as?: "div" | "li" }) {
   const Tag = as;
   return (
-    <Tag className="self-start text-sm text-muted-foreground" aria-live="polite">
+    <Tag data-pending-reply="" className="self-start text-dense text-muted-foreground" aria-live="polite">
       <PendingBody pending={pending} />
     </Tag>
   );
@@ -50,7 +50,7 @@ export function ChatLog({
     end.current?.scrollIntoView({ block: "nearest" });
   }, [messages.length, pending]);
   return (
-    <ol aria-label={copy.thread} className="m-0 flex list-none flex-col gap-2 p-0" data-assistant-log="">
+    <ol aria-label={copy.thread} className="trim-margin flex list-none flex-col gap-stack-sm flush" data-assistant-log="">
       {messages.map((message, index) => {
         const user = message.role === "user";
         const text = message.role === "notice" ? noticeText(message.notice) : message.text;
@@ -60,7 +60,7 @@ export function ChatLog({
             data-role={message.role}
             {...(message.role === "notice" && !noticeInComposerFooter ? { "data-assistant-notice": "" } : {})}
             className={cn(
-              "flex max-w-[90%] flex-col gap-1 rounded-2xl px-3 py-2 text-sm",
+              "flex flex-col gap-stack-tight rounded-2xl pad-row text-dense",
               user ? "self-end rounded-tr-sm bg-primary text-primary-foreground" : "self-start rounded-tl-sm border border-border bg-muted",
             )}
           >
@@ -78,7 +78,7 @@ export function ChatLog({
         );
       })}
       {pending ? <PendingAssistant pending={pending} as="li" /> : null}
-      <li ref={end} aria-hidden="true" className="h-0" />
+      <li ref={end} aria-hidden="true" className="h-anchor" />
     </ol>
   );
 }

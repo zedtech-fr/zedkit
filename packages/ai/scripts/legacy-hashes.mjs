@@ -9,7 +9,7 @@
 //   pnpm --filter @zedtech/zedkit-ai build && node scripts/legacy-hashes.mjs
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readdirSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -36,6 +36,8 @@ const short = (text) => createHash("sha256").update(text.replace(/\r\n/g, "\n"))
 function versions(kind, name) {
   const log = git("log", "--follow", "--name-only", "--format=%x00%H", "--", `kit/${kind}/${name}.md`);
   const out = [];
+  const current = tryCatch(() => readFileSync(join(kit, kind, `${name}.md`), "utf8"));
+  if (current.ok) out.push(current.value);
   for (const chunk of log.split("\0").slice(1)) {
     const [hash, , path] = chunk.split("\n");
     const shown = tryCatch(() => git("show", `${hash}:${path}`));

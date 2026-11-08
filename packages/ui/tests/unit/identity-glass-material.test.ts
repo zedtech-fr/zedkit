@@ -48,7 +48,7 @@ describe("the glass material", () => {
   });
 
   it("leaves a card's own wash alone and fills only plain cards with the sheen", () => {
-    expect(css).toMatch(/:not\(\[class\*="bg-linear"\], \[class\*="bg-gradient"\], \[class\*="bg-\[url"\]\)/);
+    expect(css).toMatch(/:not\(\[class\*="surface-tint"\], \[class\*="bg-linear"\], \[class\*="bg-gradient"\], \[class\*="bg-\[url"\]\)/);
   });
 
   it("keeps a colour field behind the glass: the three halos are saturated enough to show through", () => {

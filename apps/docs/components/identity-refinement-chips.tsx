@@ -17,11 +17,11 @@ export function IdentityRefinementChips({
 }) {
   if (!visible) return null;
   return (
-    <Stack gap={2} data-assistant-refine-chips="">
+    <Stack gap="sm" data-assistant-refine-chips="">
       <Text typeRole="label" className="text-foreground">
         {copy.refineChips.label}
       </Text>
-      <Stack direction="horizontal" gap={2} role="group" aria-label={copy.refineChips.group} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" role="group" aria-label={copy.refineChips.group} className="flex-wrap">
         {identityRefinementChips.map((chip) => (
           <Button
             key={chip.id}
@@ -31,7 +31,7 @@ export function IdentityRefinementChips({
             disabled={disabled}
             data-assistant-refine-chip={chip.id}
             className={cn(
-              "min-h-11 rounded-full border-foreground/20 bg-background px-3 text-foreground shadow-none hover:bg-muted/70 hover:text-foreground",
+              "min-h-target rounded-full bg-background px-button-inline-sm text-foreground shadow-none hover:text-foreground",
               signatureMotionClass.feedback,
             )}
             onClick={() => onSelect(chip.prompt)}

@@ -10,13 +10,13 @@ const steps = [
 
 export function StickyAsideDemo() {
   return (
-    <StickyAside className="min-h-80 [--zk-sticky-top:4.5rem]" side="right">
+    <StickyAside className="min-h-aside" side="right">
       <StickyAside.Main>
-        <ol className="m-0 flex list-none flex-col gap-4 p-0">
+        <ol className="trim-margin flex list-none flex-col gap-stack-lg flush">
           {steps.map((step, index) => (
-            <li key={step.title} className="min-w-0">
-              <Stack gap={1}>
-                <Text variant="muted" className="text-xs">
+            <li key={step.title} className="content-shrink">
+              <Stack gap="tight">
+                <Text variant="muted" className="text-caption">
                   Step {index + 1}
                 </Text>
                 <Heading level={3}>{step.title}</Heading>
@@ -29,8 +29,8 @@ export function StickyAsideDemo() {
       <StickyAside.Aside asChild>
         <Card>
           <CardContent className="pt-card-padding">
-            <Stack gap={2} role="group" aria-label="Rendered example">
-              <Text className="text-xs font-medium text-muted-foreground">Rendered example</Text>
+            <Stack gap="sm" role="group" aria-label="Rendered example">
+              <Text className="text-caption font-medium text-muted-foreground">Rendered example</Text>
               <Button>Save</Button>
             </Stack>
           </CardContent>
@@ -42,9 +42,9 @@ export function StickyAsideDemo() {
 
 export function StickyAsideDocStepsDemo() {
   return (
-    <StickyAside side="left" from="md" ratio="2/5" scrollable className="[--zk-sticky-top:4.5rem]">
+    <StickyAside side="left" from="md" ratio="2/5" scrollable>
       <StickyAside.Main>
-        <Stack gap={3}>
+        <Stack gap="md">
           <Heading level={3}>Write the guide</Heading>
           <Text variant="muted">Steps stay in the main column for reading order.</Text>
         </Stack>
@@ -52,7 +52,7 @@ export function StickyAsideDocStepsDemo() {
       <StickyAside.Aside>
         <Card>
           <CardContent className="pt-card-padding">
-            <Text variant="muted" className="text-sm">
+            <Text variant="muted">
               Summary or preview — sticks while the section scrolls; pass scrollable when this block is taller than the viewport.
             </Text>
           </CardContent>

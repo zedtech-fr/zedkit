@@ -19,7 +19,7 @@ export function LivePulse({ active = true, label, className }: LivePulseProps) {
       data-slot="live-pulse"
       role="status"
       aria-label={shown}
-      className={cn("inline-flex items-center gap-1.5 text-xs text-muted-foreground", className)}
+      className={cn("inline-flex items-center gap-icon text-caption text-muted-foreground", className)}
     >
       <StatusDot tone={active ? "success" : "idle"} pulse={active} />
       {shown}

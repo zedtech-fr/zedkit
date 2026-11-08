@@ -61,6 +61,17 @@ test.describe("home adoption panel", () => {
       return document.activeElement === el;
     });
     expect(focusable).toBe(false);
+    const frame = example.locator("[data-adoption-example]");
+    const colors = await frame.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.className = "bg-background/80";
+      document.body.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return { background: getComputedStyle(node).backgroundColor, expected };
+    });
+    expect(colors.background).toBe(colors.expected);
+    await expect(frame).not.toHaveClass(/bg-background/);
   });
 
   test("the package manager rewrites every command and is remembered", async ({ page }) => {

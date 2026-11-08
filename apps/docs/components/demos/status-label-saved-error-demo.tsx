@@ -7,17 +7,17 @@ import { statusLabelCopy } from "@/components/demos/i18n/status-label-copy";
 export function StatusLabelSavedErrorDemo() {
   const [invoiceSaved, setInvoiceSaved] = useState(false);
   return (
-    <Stack gap={3} className="min-w-0">
-      <Stack gap={1}>
+    <Stack gap="md" className="content-shrink">
+      <Stack gap="tight">
         <Text className="font-medium">{statusLabelCopy.notes}</Text>
         <StatusLabel tone="saved">{statusLabelCopy.saved}</StatusLabel>
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Text className="font-medium">{statusLabelCopy.invoice}</Text>
         {invoiceSaved ? (
           <StatusLabel tone="saved">{statusLabelCopy.saved}</StatusLabel>
         ) : (
-          <Stack direction="horizontal" gap={3} className="items-center">
+          <Stack direction="horizontal" gap="md" className="items-center">
             <StatusLabel tone="error">{statusLabelCopy.error}</StatusLabel>
             <Button size="sm" variant="outline" onClick={() => setInvoiceSaved(true)}>
               {statusLabelCopy.retry}

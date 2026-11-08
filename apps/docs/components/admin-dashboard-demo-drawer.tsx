@@ -47,7 +47,7 @@ export function AdminDashboardDemoDrawer({
       <DrawerContent onCloseAutoFocus={onCloseAutoFocus}>
         <DrawerHandle />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex pane-shrink flex-1 flex-col">
             <DrawerHeader>
               <DrawerTitle>
                 {editingId ? adminDashboardDemoCopy.drawer.editTitle : adminDashboardDemoCopy.drawer.addTitle}

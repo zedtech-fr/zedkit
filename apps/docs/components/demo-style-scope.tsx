@@ -42,8 +42,8 @@ function DemoStyleSelect({
 }) {
   const selectId = useId();
   return (
-    <Stack direction="horizontal" gap={2} className="items-center">
-      <label htmlFor={selectId} className={labelHidden ? "sr-only" : "text-xs text-muted-foreground"}>
+    <Stack direction="horizontal" gap="sm" className="items-center">
+      <label htmlFor={selectId} className={labelHidden ? "sr-only" : "text-caption text-muted-foreground"}>
         {fieldLabel}
       </label>
       {/* Uncontrolled: a controlled select here reports the previous value on change. */}
@@ -52,7 +52,7 @@ function DemoStyleSelect({
         id={selectId}
         defaultValue={pinned ? look : "follow-site"}
         onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
-        className="h-8 max-w-36 rounded-md border border-input bg-background px-2 text-control text-foreground focus-ring-control"
+        className="h-control-height-sm max-w-scope rounded-md border border-input bg-background px-control-tight text-control text-foreground focus-ring-control"
       >
         <option value="follow-site">{demoStyleScopeCopy.followSite}</option>
         {identities.map((item) => (
@@ -69,12 +69,12 @@ function DemoStyleScope({ children }: { children: ReactNode }) {
   const demo = usePinnedLook();
   const { resolvedTheme } = useTheme();
   return (
-    <Stack gap={2} className="min-w-0">
+    <Stack gap="sm" className="content-shrink">
       <DemoStyleSelect look={demo.look} pinned={demo.pinned} onPin={demo.pin} />
       <ThemeScope
         identity={demo.look}
         mode={resolvedTheme === "dark" ? "dark" : "light"}
-        className="min-w-0"
+        className="content-shrink"
         data-demo-specimen=""
       >
         {children}

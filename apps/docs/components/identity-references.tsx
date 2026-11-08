@@ -24,24 +24,24 @@ function signalsLine(item: ReferenceReport): string {
 export function ReferenceReportList({ report }: { report: readonly ReferenceReport[] }) {
   if (report.length === 0) return null;
   return (
-    <Stack gap={1} role="status" data-assistant-reference-report="">
+    <Stack gap="tight" role="status" data-assistant-reference-report="">
       <Text as="span" typeRole="body" className="font-medium text-foreground">
         {copy.references.report}
       </Text>
-      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+      <ul className="trim-margin flex list-none flex-col gap-stack-sm flush">
         {report.map((item) => {
           const used = item.status === "used";
           return (
-            <li key={item.url} data-assistant-reference-status={used ? "used" : "failed"} className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-zk-type-body text-muted-foreground">
+            <li key={item.url} data-assistant-reference-status={used ? "used" : "failed"} className="flex content-shrink flex-wrap items-baseline gap-x-stack-sm gap-y-stack-tight text-zk-type-body text-muted-foreground">
               <Text
                 as="span"
                 data-assistant-reference-chip=""
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-zk-type-label font-medium ${used ? "border-primary/40 bg-primary/10 text-foreground" : "border-destructive/50 bg-destructive/10 text-foreground"}`}
+                className="inline-flex shrink-0 items-center gap-icon rounded-full border px-control-tight py-badge-block text-zk-type-label font-medium text-foreground"
               >
-                <Text as="span" aria-hidden="true" className={`size-1.5 rounded-full ${used ? "bg-primary" : "bg-destructive"}`} />
+                <Text as="span" aria-hidden="true" className={`size-pip rounded-full ${used ? "bg-primary" : "bg-destructive"}`} />
                 {used ? copy.references.used : copy.references.notUsed}
               </Text>{" "}
-              <Text as="span" className="min-w-0 truncate font-medium text-foreground" title={item.url}>
+              <Text as="span" className="content-shrink truncate font-medium text-foreground" title={item.url}>
                 {item.title || hostOf(item.url)}
               </Text>{" "}
               <Text as="span" className="basis-full">

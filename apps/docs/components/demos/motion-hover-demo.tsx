@@ -3,7 +3,7 @@ import { motionCopy } from "@/components/demos/i18n/motion-copy";
 
 export function MotionHoverDemo() {
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap="md" className="content-shrink">
       <Card className="hover-lift">
         <CardHeader>
           <CardTitle>{motionCopy.hover.title}</CardTitle>

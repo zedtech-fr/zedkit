@@ -25,7 +25,7 @@ export function DevtoolsDrawerShell({
   footer?: ReactNode;
 }) {
   return (
-    <div className="fixed bottom-4 left-4 z-50">
+    <div className="fixed bottom-float left-float z-overlay">
       <Drawer>
         <DrawerTrigger asChild>
           <Button type="button" size="sm" variant="secondary">
@@ -48,7 +48,7 @@ export function DevtoolsDrawerShell({
 
 export function DevtoolsDrawerFooter() {
   return (
-    <Text variant="muted" className="text-sm">
+    <Text variant="muted">
       Not shown when `devtoolsEnabled()` is false.
     </Text>
   );

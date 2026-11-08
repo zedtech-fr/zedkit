@@ -89,24 +89,25 @@ runs `publint` (errors only) and `attw --profile esm-only` on each
 tarball (CSS subpaths excluded). For a manual file list:
 `pnpm --filter <pkg> exec npm pack --dry-run`.
 
-Client gzip budgets (`gzip(dist/*.js)` on packed npm tarballs) fail the
-same script if exceeded. They apply to the browser-facing ui kit only.
-`@zedtech/zedkit-ai` is a CLI and kit installer: pack still checks
-integrity, exports, contents, publint and attw, and has no gzip ceiling.
+Concatenated `@zedtech/zedkit-ui` `dist/*.js` gzip is not gated: consumers
+tree-shake, and that ceiling was raised on every UI change. The marketing
+barrel is a dedicated entry someone may import wholesale, so it still has
+a gzip ceiling. `@zedtech/zedkit-ai` is a CLI and kit installer: pack
+still checks integrity, exports, contents, publint and attw, and has no
+gzip ceiling.
 
 | Package | Budget |
 |---|---|
-| `@zedtech/zedkit-ui` | 60 500 bytes |
 | `@zedtech/zedkit-ui` marketing entry | 10 200 bytes |
 
 Docs site home first-load JavaScript (gzip sum of each initial
 `/_next/static/chunks/*.js` file in the static export, same gate as
-`check-pack` after build):
+`check-pack` after build) is the consumer payload:
 
 | Route | Budget |
 |---|---|
 | `/` (`apps/docs/out/index.html`) | 363 000 bytes gzip |
 
-Raise ui tarball numbers in `scripts/check-pack.sh` or the home budget in
-`apps/docs/scripts/first-load-budget.mjs` in the PR that grows the
-payload. Do not add an ai gzip ceiling.
+Raise the marketing tarball number in `scripts/check-pack.sh` or the home
+budget in `apps/docs/scripts/first-load-budget.mjs` in the PR that grows
+the payload. Do not add an ai gzip ceiling.

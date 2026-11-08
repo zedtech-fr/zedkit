@@ -52,11 +52,11 @@ function StoryQueue({ stories, selectedId, onSelect }: { stories: Story[]; selec
                 type="button"
                 variant="ghost"
                 aria-pressed={story.id === selectedId}
-                className="h-auto! min-h-11 w-full flex-col items-start gap-0 px-2 py-1 text-left font-normal whitespace-normal"
+                className="h-auto! min-h-target w-full flex-col items-start gap-flush px-control-tight py-control-block text-left font-normal whitespace-normal"
                 onClick={() => onSelect(story.id)}
               >
                 <span className="font-(family-name:--zk-font-display)">{story.headline}</span>
-                <span className="text-xs text-muted-foreground">{sectionLabel(story.section)}</span>
+                <span className="text-caption text-muted-foreground">{sectionLabel(story.section)}</span>
               </Button>
             </TableCell>
             <TableCell>
@@ -75,12 +75,12 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
   const sectionId = useId();
   const standfirstId = useId();
   return (
-    <Stack gap={3} className="min-w-0">
-      <Stack gap={1}>
+    <Stack gap="md" className="content-shrink">
+      <Stack gap="tight">
         <Label htmlFor={headlineId}>{copy.headlineLabel}</Label>
         <Input id={headlineId} value={story.headline} onChange={(event) => onChange({ headline: event.target.value })} />
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor={sectionId}>{copy.sectionLabel}</Label>
         <Select value={story.section} onValueChange={(section) => onChange({ section })}>
           <SelectTrigger id={sectionId} aria-label={copy.sectionLabel}>
@@ -95,7 +95,7 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
           </SelectContent>
         </Select>
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor={standfirstId}>{copy.standfirstLabel}</Label>
         <Textarea id={standfirstId} rows={3} value={story.standfirst} onChange={(event) => onChange({ standfirst: event.target.value })} />
       </Stack>
@@ -106,14 +106,14 @@ function StoryEditor({ story, onChange }: { story: Story; onChange: (patch: Part
 /** The story as a reader sees it: the display face and a capped measure are the evidence. */
 function ReadingPreview({ story }: { story: Story }) {
   return (
-    <article aria-label={copy.previewLabel} className="max-w-prose min-w-0 border-t border-border pt-4">
-      <Text variant="muted" className="text-xs font-medium tracking-wide uppercase">
+    <article aria-label={copy.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">
+      <Text variant="muted" className="text-caption font-medium tracking-wide uppercase">
         {sectionLabel(story.section)}
       </Text>
-      <Heading level={3} className="mt-1 font-(family-name:--zk-font-display) text-lg text-balance">
+      <Heading level={3} data-follow="" className="text-specimen-title text-balance">
         {story.headline}
       </Heading>
-      <Text variant="muted" className="mt-2 text-pretty">
+      <Text variant="muted" className="mt-standfirst text-pretty">
         {story.standfirst}
       </Text>
     </article>
@@ -133,19 +133,19 @@ export function HomeIdentityExamplePress() {
   };
 
   return (
-    <Stack gap={4} className="min-w-0">
-      <Stack gap={1}>
-        <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
+    <Stack gap="lg" className="content-shrink">
+      <Stack gap="tight">
+        <Heading level={3} className="text-specimen-title text-balance">
           {copy.heading}
         </Heading>
         <Text variant="muted">{copy.description}</Text>
       </Stack>
-      <Card className="min-w-0">
-        <CardContent className="pt-4">
-          <Stack gap={4} className="min-w-0">
+      <Card className="content-shrink">
+        <CardContent className="content-offset">
+          <Stack gap="lg" className="content-shrink">
             <StoryQueue stories={stories} selectedId={story.id} onSelect={(id) => { setSelectedId(id); setMessage(""); }} />
             <StoryEditor story={story} onChange={change} />
-            <Stack direction="horizontal" gap={2} className="flex-wrap">
+            <Stack direction="horizontal" gap="sm" className="flex-wrap">
               <Button type="button" onClick={() => move("published", copy.published)}>
                 {copy.publish}
               </Button>

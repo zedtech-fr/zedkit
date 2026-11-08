@@ -54,7 +54,7 @@ export async function PropsTable({
   const docs = await readDeclaredProps({ file, name, basePath });
 
   return (
-    <Stack gap={4}>
+    <Stack gap="lg">
       {docs.map((item) => {
         const { primary, inherited } = partitionPropsEntries(
           item.entries.filter((entry) => !REACT_RESERVED.has(entry.name)),
@@ -63,7 +63,7 @@ export async function PropsTable({
         );
         const inheritedEntries = inherited;
         return (
-          <Stack key={item.id} gap={4}>
+          <Stack key={item.id} gap="lg">
             {primary.length > 0 ? (
               <TypeTable id={`type-table-${item.id}`} type={nodesFromEntries(primary)} />
             ) : (

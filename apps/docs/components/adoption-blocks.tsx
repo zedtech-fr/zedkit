@@ -47,7 +47,7 @@ function CopyButton({ text, what }: { text: string; what: string }) {
         data-copy=""
         onClick={copy}
       >
-        {state === "copied" ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />}
+        {state === "copied" ? <Check className="size-icon" aria-hidden /> : <Copy className="size-icon" aria-hidden />}
       </Button>
       <Text as="span" role="status" className="sr-only">
         {state === "copied" ? adoptionCopy.copied : state === "failed" ? adoptionCopy.copyFailed : ""}
@@ -61,7 +61,7 @@ function CopyButton({ text, what }: { text: string; what: string }) {
  * what is drawn outside it, so the focus ring is drawn inside the control.
  */
 const HEADER_SELECT_CLASS =
-  "h-control-height-sm w-auto gap-2 bg-background px-3 font-mono text-[length:var(--zk-input-font-size)] shadow-none focus-visible:-outline-offset-(--ring-width)";
+  "h-control-height-sm w-auto gap-stack-sm bg-background px-control-inline font-mono text-[length:var(--zk-input-font-size)] shadow-none focus-visible:-outline-offset-(--ring-width)";
 
 function PackageManagerSelect({ pm, onPm }: { pm: PackageManager; onPm: (pm: PackageManager) => void }) {
   return (
@@ -109,11 +109,11 @@ export function CommandBlock({
       allowCopy={false}
       viewportProps={{ "aria-label": adoptionCopy.terminalTitle }}
       Actions={({ className }) => (
-        <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
+        <Stack direction="horizontal" gap="tight" {...(className ? { className } : {})}>
           {picker ? (
             <PackageManagerSelect pm={pm} onPm={onPm} />
           ) : (
-            <Text as="span" className="px-2 font-mono text-muted-foreground">
+            <Text as="span" className="px-control-tight font-mono text-muted-foreground">
               {pm}
             </Text>
           )}
@@ -144,19 +144,19 @@ export function FileBlock({
     <CodeBlock
       data-adoption-frame=""
       title={
-        <Stack gap={1} className="min-w-0 gap-0 py-1">
+        <Stack gap="tight" className="content-shrink gap-flush py-control-block">
           <Text as="span" className="truncate font-mono">
             {path}
           </Text>
-          <Text as="span" className="text-xs text-muted-foreground">
+          <Text as="span" className="text-caption text-muted-foreground">
             {adoptionCopy.fileAction[action]}
           </Text>
         </Stack>
       }
       allowCopy={false}
-      viewportProps={{ "aria-label": path, ...(tall ? { className: "max-h-96" } : {}) }}
+      viewportProps={{ "aria-label": path, ...(tall ? { "data-code-tall": "" } : {}) }}
       Actions={({ className }) => (
-        <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
+        <Stack direction="horizontal" gap="tight" {...(className ? { className } : {})}>
           <CopyButton text={code} what={path} />
         </Stack>
       )}
@@ -175,7 +175,7 @@ export function SnippetBlock({ title, code, highlighted }: { title: string; code
       allowCopy={false}
       viewportProps={{ "aria-label": title }}
       Actions={({ className }) => (
-        <Stack direction="horizontal" gap={1} {...(className ? { className } : {})}>
+        <Stack direction="horizontal" gap="tight" {...(className ? { className } : {})}>
           <CopyButton text={code} what={title.toLowerCase()} />
         </Stack>
       )}

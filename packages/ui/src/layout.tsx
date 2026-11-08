@@ -16,26 +16,26 @@ const stackVariants = cva("flex", {
       horizontal: "flex-row items-center",
     },
     gap: {
-      1: "gap-1",
-      2: "gap-2",
-      3: "gap-3",
-      4: "gap-4",
-      5: "gap-5",
-      6: "gap-6",
-      7: "gap-7",
-      8: "gap-8",
+      tight: "gap-stack-tight",
+      sm: "gap-stack-sm",
+      md: "gap-stack-md",
+      lg: "gap-stack-lg",
+      prose: "gap-prose",
+      list: "gap-list",
+      blocks: "gap-blocks",
     },
   },
   defaultVariants: {
     direction: "vertical",
-    gap: 4,
+    gap: "lg",
   },
 });
 
 export type StackProps = React.ComponentProps<"div"> &
   VariantProps<typeof stackVariants> & {
     direction?: "vertical" | "horizontal";
-    gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+    /** Role-named stack steps (tight/sm/md/lg, then prose/list/blocks). */
+    gap?: "tight" | "sm" | "md" | "lg" | "prose" | "list" | "blocks";
   };
 
 function Stack({ direction, gap, className, ...props }: StackProps) {
@@ -57,10 +57,15 @@ const containerVariants = cva("mx-auto w-full", {
       true: "px-page-gutter",
       false: "",
     },
+    query: {
+      true: "zk-query",
+      false: "",
+    },
   },
   defaultVariants: {
     width: "default",
     gutter: true,
+    query: false,
   },
 });
 
@@ -70,11 +75,18 @@ export type ContainerProps = React.ComponentProps<"div"> &
     width?: "narrow" | "reading" | "default" | "wide" | "full" | undefined;
     /** Page gutter on both sides (default true). */
     gutter?: boolean | undefined;
+    /**
+     * Establish this container as the sizing slot for descendants:
+     * container-aware components (Card, Section) adapt their recipe
+     * to the width allocated here. Same marker as the `zk-query`
+     * class on any grid cell or layout slot.
+     */
+    query?: boolean | undefined;
   };
 
-function Container({ width, gutter, className, ...props }: ContainerProps) {
+function Container({ width, gutter, query, className, ...props }: ContainerProps) {
   return (
-    <div data-slot="container" className={cn(containerVariants({ width, gutter }), className)} {...props} />
+    <div data-slot="container" className={cn(containerVariants({ width, gutter, query }), className)} {...props} />
   );
 }
 
@@ -107,12 +119,8 @@ function SectionScroll({ className, ...props }: SectionScrollProps) {
   return <div data-slot="section-scroll" className={className} {...props} />;
 }
 
-const sectionSpacing = {
-  sm: "py-section-sm",
-  md: "py-section-md",
-  lg: "py-section-lg",
-  xl: "py-section-xl",
-} as const;
+// Bleed rhythm is a recipe (styles.css): data-spacing selects the
+// base section step; a wide zk-query slot steps it up one step.
 
 function Section({
   title,
@@ -128,7 +136,7 @@ function Section({
   ...props
 }: SectionProps) {
   const header = (title || description || actions) && (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-start justify-between gap-stack-lg">
       <div>
         {title && (
           <Heading level={2} typeRole="title">
@@ -147,7 +155,7 @@ function Section({
   const labelled = typeof title === "string" ? { "aria-label": title } : undefined;
   if (!bleed) {
     return (
-      <section data-slot="section" data-snap={snap} className={cn("space-y-4", className)} {...labelled} {...props}>
+      <section data-slot="section" data-snap={snap} className={cn("space-y-stack-lg", className)} {...labelled} {...props}>
         {header}
         {children}
       </section>
@@ -157,11 +165,12 @@ function Section({
     <section
       data-slot="section"
       data-snap={snap}
-      className={cn("w-full", sectionSpacing[spacing], tone === "muted" && "bg-muted", className)}
+      data-spacing={spacing}
+      className={cn("w-full", tone === "muted" && "bg-muted", className)}
       {...labelled}
       {...props}
     >
-      <Container width={containerWidth} className="space-y-4">
+      <Container width={containerWidth} className="space-y-stack-lg">
         {header}
         {children}
       </Container>

@@ -235,6 +235,39 @@ test.describe("identity previews", () => {
     }
   }
 
+  test("the last task in a scene has no line under it", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(`${BASE}/${SCENES}`, { waitUntil: "networkidle" });
+    const rows = page.locator("[data-demo-scene-visual='plan'] > [data-slot='stack']");
+    const borders = await rows.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderBottomWidth));
+    expect(borders.length).toBeGreaterThan(1);
+    expect(borders.at(-1)).toBe("0px");
+    expect(borders.slice(0, -1).every((width) => width !== "0px")).toBe(true);
+    await expect(rows.last()).not.toHaveClass(/border-b-0/);
+  });
+
+  test("the chosen look in the touch picker keeps the selected wash", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(IDENTITY_KIT_DEMOS);
+    const picker = page.locator("[data-component-preview]").nth(2);
+    await picker.getByRole("button", { name: /^Look: / }).click();
+    const sheet = page.getByRole("dialog");
+    const chosen = sheet.getByRole("radio", { name: /^Mist/ });
+    await chosen.click();
+    await expect.poll(async () =>
+      chosen.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.className = "option-selected";
+        node.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        const background = getComputedStyle(node).backgroundColor;
+        probe.remove();
+        return background === expected && !node.className.includes("bg-primary/");
+      }),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
+  });
+
   test("leaving the page restores the page look", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1000 });
     await openFeatures(page, IDENTITY_KIT_DEMOS, "press", "light");

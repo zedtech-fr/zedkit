@@ -125,8 +125,8 @@ const SECTIONS = [
 
 function GallerySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="space-y-4 border-b pb-8 last:border-0">
-      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+    <section id={id} data-gallery-section="" className="space-y-stack-lg border-b pb-section">
+      <h2 className="text-gallery-heading">{title}</h2>
       {children}
     </section>
   );
@@ -136,18 +136,18 @@ export function Gallery() {
   return (
     <AppShell
       sidebar={
-        <nav className="space-y-1 p-4" aria-label="Gallery sections">
-          <p className="px-2 pb-2 text-sm font-semibold">UI gallery</p>
+        <nav className="space-y-stack-tight surface-pad-md" aria-label="Gallery sections">
+          <p data-nav-label="" className="px-control-tight text-dense font-semibold">UI gallery</p>
           {SECTIONS.map(([id, title]) => (
-            <a key={id} href={`#${id}`} className="block rounded-md px-2 py-1 text-sm hover:bg-accent">
+            <a key={id} href={`#${id}`} className="block rounded-md px-control-tight py-control-block text-dense hover:bg-accent">
               {title}
             </a>
           ))}
         </nav>
       }
       topbar={
-        <div className="flex items-center justify-between p-4">
-          <p className="text-sm font-medium">Component gallery (static preview)</p>
+        <div className="flex items-center justify-between surface-pad-md">
+          <p className="text-dense font-medium">Component gallery (static preview)</p>
           <LivePulse />
         </div>
       }
@@ -156,9 +156,9 @@ export function Gallery() {
         title="UI gallery"
         description="Every component in every state. Static render for visual review; behavior is covered by unit tests."
       />
-      <div className="space-y-8">
+      <div className="space-y-sections">
         <GallerySection id="primitives" title="Primitives">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-stack-sm">
             <Button>Default</Button>
             <Button variant="secondary">Secondary</Button>
             <Button variant="outline">Outline</Button>
@@ -166,13 +166,13 @@ export function Gallery() {
             <Button variant="destructive">Destructive</Button>
             <Button size="sm">Small</Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-stack-sm">
             <Badge>Default</Badge>
             <Badge variant="secondary">Secondary</Badge>
             <Badge variant="outline">Outline</Badge>
             <Badge variant="destructive">Destructive</Badge>
           </div>
-          <div className="flex items-center gap-3" aria-label="Status dots">
+          <div className="flex items-center gap-stack-md" aria-label="Status dots">
             <StatusDot tone="active" />
             <StatusDot tone="idle" />
             <StatusDot tone="success" />
@@ -180,35 +180,35 @@ export function Gallery() {
             <StatusDot tone="danger" />
             <Checkmark label="Saved" />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div data-example-width="" className="space-y-stack-sm">
             <ProgressBar value={65} label="Uploading report" />
             <ProgressBar value={100} label="Sync complete" />
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-stack-md">
             <StatusLabel tone="loading">Saving report…</StatusLabel>
             <StatusLabel tone="saved">Saved</StatusLabel>
             <StatusLabel tone="error">Could not save</StatusLabel>
             <UpdatedAgo date={Date.now() - 3 * 60_000} />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div data-example-width="" className="space-y-stack-sm">
             <OfflineNote />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div data-example-width="" className="space-y-stack-sm">
             <EmptyState title="No invoices" description="Create an invoice to send to a client." actions={<Button>New invoice</Button>} />
             <ErrorState title="Could not load invoices" description="Check your connection and try again." actions={<Button variant="outline">Try again</Button>} />
             <Spinner />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div data-example-width="" className="space-y-stack-sm">
             <Label htmlFor="gallery-name">Name</Label>
             <Input id="gallery-name" placeholder="Ada" />
           </div>
-          <div className="max-w-sm space-y-2">
+          <div data-example-width="" className="space-y-stack-sm">
             <Label htmlFor="gallery-bio">Bio</Label>
             <Textarea id="gallery-bio" placeholder="A few words." />
           </div>
           <Separator />
-          <Skeleton className="h-4 w-48" />
-          <div className="space-y-2">
+          <Skeleton data-gallery-line="" className="h-skeleton-line" />
+          <div className="space-y-stack-sm">
             <Heading level={1}>Page title</Heading>
             <Heading level={2}>Section title</Heading>
             <Text>Body copy for paragraphs.</Text>
@@ -234,7 +234,7 @@ export function Gallery() {
             description="This cannot be undone."
             onConfirm={() => {}}
           />
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-stack-sm">
             <Drawer>
               <DrawerTrigger asChild>
                 <Button variant="outline">Open sheet</Button>
@@ -255,9 +255,9 @@ export function Gallery() {
                     variant="ghost"
                     size="icon"
                     aria-label="Close details"
-                    className="absolute top-4 right-4"
+                    className="absolute top-float right-float"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="size-icon" />
                   </Button>
                 </DrawerClose>
                 <DrawerTitle>Details</DrawerTitle>
@@ -292,11 +292,11 @@ export function Gallery() {
           <Calendar defaultMonth={new Date(2026, 9, 1)} today={new Date(2026, 9, 15)} />
           <DatePicker defaultMonth={new Date(2026, 9, 1)} today={new Date(2026, 9, 15)} />
           <SecretField id="gallery-key" value="shown-once-value" aria-label="API key" />
-          <Alert className="max-w-sm">
+          <Alert data-example-width="">
             <AlertTitle>Heads up</AlertTitle>
             <AlertDescription>Something worth knowing.</AlertDescription>
           </Alert>
-          <Alert variant="destructive" className="max-w-sm">
+          <Alert variant="destructive" data-example-width="">
             <AlertTitle>Failed</AlertTitle>
             <AlertDescription>Something went wrong.</AlertDescription>
           </Alert>
@@ -304,27 +304,27 @@ export function Gallery() {
         </GallerySection>
 
         <GallerySection id="data-table" title="Data table">
-          <h3 className="text-sm font-medium text-muted-foreground">With rows</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">With rows</h3>
           <DataTable columns={columns} data={rows} pageSize={2} />
-          <h3 className="text-sm font-medium text-muted-foreground">Empty</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">Empty</h3>
           <DataTable columns={columns} data={[]} />
-          <h3 className="text-sm font-medium text-muted-foreground">Loading</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">Loading</h3>
           <DataTable columns={columns} data={[]} loading />
-          <h3 className="text-sm font-medium text-muted-foreground">Error</h3>
+          <h3 className="text-dense font-medium text-muted-foreground">Error</h3>
           <DataTable columns={columns} data={[]} error="Could not load rows." />
         </GallerySection>
 
         <GallerySection id="layout" title="Layout">
-          <Card className="max-w-sm">
+          <Card data-example-width="">
             <CardHeader>
               <CardTitle>Server</CardTitle>
               <CardDescription>Connection details.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">Body text.</p>
+              <p className="text-dense">Body text.</p>
             </CardContent>
             <CardFooter>
-              <p className="text-sm text-muted-foreground">Footer text.</p>
+              <p className="text-dense text-muted-foreground">Footer text.</p>
             </CardFooter>
           </Card>
           <DetailPanel
@@ -333,7 +333,7 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
-          <Tabs defaultValue="one" className="max-w-sm">
+          <Tabs defaultValue="one" data-example-width="">
             <TabsList>
               <TabsTrigger value="one">First</TabsTrigger>
               <TabsTrigger value="two">Second</TabsTrigger>
@@ -342,35 +342,126 @@ export function Gallery() {
             <TabsContent value="two">Second panel.</TabsContent>
           </Tabs>
           <Section title="Team" description="Who can access the workspace.">
-            <Stack direction="horizontal" gap={2}>
+            <Stack direction="horizontal" gap="sm">
               <Badge>Ada</Badge>
               <Badge variant="secondary">Bob</Badge>
             </Stack>
           </Section>
-          <div className="space-y-2">
-            <Container width="narrow" className="border py-2 text-sm">
+          <div className="space-y-stack-sm">
+            <Container width="narrow" className="border surface-pad-block-sm text-dense">
               Narrow container
             </Container>
-            <Container width="reading" className="border py-2 text-sm">
+            <Container width="reading" className="border surface-pad-block-sm text-dense">
               Reading container
             </Container>
-            <Container className="border py-2 text-sm">Default container</Container>
-            <Container width="wide" className="border py-2 text-sm">
+            <Container className="border surface-pad-block-sm text-dense">Default container</Container>
+            <Container width="wide" className="border surface-pad-block-sm text-dense">
               Wide container
             </Container>
           </div>
           <Section bleed tone="muted" spacing="sm" title="Bleed section" description="Edge to edge, content capped.">
-            <p className="text-sm">Band content.</p>
+            <p className="text-dense">Band content.</p>
           </Section>
-          <div className="flex gap-4">
+          <div className="flex gap-stack-lg">
             <LivePulse />
             <LivePulse active={false} />
           </div>
         </GallerySection>
 
+        <GallerySection id="sizing" title="Container sizing">
+          {/* Slot widths are set by preview/cascade.spec.ts; recipes step at 30rem. */}
+          <div data-testid="slot-sm-narrow" className="zk-query">
+            <Card size="sm" data-testid="card-sm-narrow">
+              <CardHeader>
+                <CardTitle>Small, narrow slot</CardTitle>
+                <CardDescription>Base small recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-sm-wide" className="zk-query">
+            <Card size="sm" data-testid="card-sm-wide">
+              <CardHeader>
+                <CardTitle>Small, wide slot</CardTitle>
+                <CardDescription>Stepped small recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-lg-narrow" className="zk-query">
+            <Card size="lg" data-testid="card-lg-narrow">
+              <CardHeader>
+                <CardTitle>Large, narrow slot</CardTitle>
+                <CardDescription>Base large recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-lg-wide" className="zk-query">
+            <Card size="lg" data-testid="card-lg-wide">
+              <CardHeader>
+                <CardTitle>Large, wide slot</CardTitle>
+                <CardDescription>Stepped large recipe.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div data-testid="slot-nested" className="zk-query">
+                  <Card size="sm" data-testid="card-nested-sm">
+                    <CardHeader>
+                      <CardTitle>Nested small</CardTitle>
+                      <CardDescription>Own slot, own recipe.</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <Container query width="full" gutter={false} data-testid="slot-container-query">
+            <Card data-testid="card-default-wide">
+              <CardHeader>
+                <CardTitle>Default in a query container</CardTitle>
+                <CardDescription>Stepped default recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </Container>
+          <Card size="lg" data-testid="card-no-query">
+            <CardHeader>
+              <CardTitle>Large, no query slot</CardTitle>
+              <CardDescription>Base recipe, viewport-independent.</CardDescription>
+            </CardHeader>
+          </Card>
+          <div data-testid="slot-skel-narrow" className="zk-query">
+            <CardSkeleton size="lg" label="Loading large card" data-testid="skel-lg-narrow" />
+          </div>
+          <div data-testid="slot-skel-wide" className="zk-query">
+            <CardSkeleton size="lg" label="Loading large card" data-testid="skel-lg-wide" />
+          </div>
+          <div data-testid="slot-override" className="zk-query">
+            <Card size="sm" data-testid="card-override">
+              <CardHeader data-testid="card-override-header" className="flush">
+                <CardTitle>Override seams</CardTitle>
+                <CardDescription>Utility and recipe-var overrides win.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-section" className="zk-query">
+            <Section bleed spacing="sm" title="Sizing section" data-testid="section-recipe">
+              <p className="text-dense">Band rhythm steps with its slot.</p>
+            </Section>
+          </div>
+          <div data-identity-scope="" data-identity="press">
+            <div data-identity-scope="" data-identity="glass">
+              <div data-testid="slot-density" className="zk-query">
+                <Card size="sm" data-testid="card-density">
+                  <CardHeader>
+                    <CardTitle>Density composes</CardTitle>
+                    <CardDescription>Glass density, small recipe.</CardDescription>
+                  </CardHeader>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </GallerySection>
+
         <GallerySection id="loading" title="Loading">
           <PageHeaderSkeleton label="Loading page" />
-          <div className="max-w-sm">
+          <div data-example-width="">
             <CardSkeleton label="Loading card" />
           </div>
           <DetailPanelSkeleton label="Loading details" rows={2} />
@@ -379,7 +470,7 @@ export function Gallery() {
 
         <GallerySection id="forms" title="Forms">
           <FormDemo />
-          <div className="max-w-sm space-y-3" data-testid="gallery-prompt-input">
+          <div data-example-width="" className="space-y-stack-md" data-testid="gallery-prompt-input">
             <PromptInput
               sendLabel="Send"
               value="Ask about your catalog"
@@ -400,7 +491,7 @@ export function Gallery() {
             />
           </div>
           <Select>
-            <SelectTrigger className="max-w-sm">
+            <SelectTrigger data-example-width="">
               <SelectValue placeholder="Pick a region" />
             </SelectTrigger>
             <SelectContent>
@@ -411,11 +502,11 @@ export function Gallery() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-stack-sm">
             <Checkbox id="gallery-terms" defaultChecked />
             <Label htmlFor="gallery-terms">Accept the terms</Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-stack-sm">
             <Switch id="gallery-notify" defaultChecked />
             <Label htmlFor="gallery-notify">Notify me</Label>
           </div>
@@ -446,7 +537,7 @@ export function Gallery() {
         <GallerySection id="marketing" title="Marketing">
           <MarketingHeader
             sticky={false}
-            brand={<a href="#marketing" className="inline-flex min-h-11 items-center font-semibold">Harbor</a>}
+            brand={<a href="#marketing" className="inline-flex min-h-target items-center font-semibold">Harbor</a>}
             links={[
               <a key="docs" href="#marketing">Docs</a>,
               <a key="pricing" href="#marketing">Pricing</a>,
@@ -464,7 +555,7 @@ export function Gallery() {
               </>
             }
           />
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-stack-lg sm:grid-trio">
             <GlassSurface>Plain surface</GlassSurface>
             <GlassSurface tone="raised">Raised surface</GlassSurface>
             <GlassSurface tone="tinted">Tinted surface</GlassSurface>
@@ -485,9 +576,9 @@ export function Gallery() {
           <LogoBand
             title="Works with the shops you know"
             logos={[
-              { name: "Harbor Studio", logo: <span className="text-lg font-semibold">Harbor</span> },
-              { name: "North Shop", logo: <span className="text-lg font-semibold">North</span> },
-              { name: "Linen & Co", logo: <span className="text-lg font-semibold">Linen</span> },
+              { name: "Harbor Studio", logo: <span className="text-wordmark">Harbor</span> },
+              { name: "North Shop", logo: <span className="text-wordmark">North</span> },
+              { name: "Linen & Co", logo: <span className="text-wordmark">Linen</span> },
             ]}
           />
           <FeatureGrid
@@ -518,7 +609,7 @@ export function Gallery() {
             title="An assistant that knows your catalog"
             description="Visitors ask in plain words and get answers from your products."
             points={["Reads your products and stock", "Never changes an order"]}
-            media={<p className="text-sm text-muted-foreground">Demo or screenshot goes here.</p>}
+            media={<p className="text-dense text-muted-foreground">Demo or screenshot goes here.</p>}
           />
           <Pricing
             title="Simple pricing"

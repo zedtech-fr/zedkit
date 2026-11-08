@@ -122,7 +122,7 @@ function NonModalDrawerTitle({
     <h2
       data-slot="drawer-title"
       id={titleId}
-      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
+      className={cn("text-overlay-title", className)}
       {...props}
     >
       {children}
@@ -144,7 +144,7 @@ function NonModalDrawerDescription({
     <p
       data-slot="drawer-description"
       id={descriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-dense text-muted-foreground", className)}
       {...props}
     >
       {children}
@@ -159,9 +159,9 @@ function NonModalDrawerHandle({ className, ...props }: React.ComponentProps<"div
       data-vaul-handle=""
       aria-hidden="true"
       className={cn(
-        "mx-auto mt-4 h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
+        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full",
         "in-data-[vaul-drawer-direction=left]:hidden in-data-[vaul-drawer-direction=right]:hidden",
-        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:mt-0 in-data-[vaul-drawer-direction=top]:mb-4",
+        "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:trim-top in-data-[vaul-drawer-direction=top]:mb-drawer-handle-top",
         className,
       )}
       {...props}

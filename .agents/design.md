@@ -39,3 +39,5 @@ Colour roles and font families below copy exact CSS variable names and values fr
 | stock mono font | `--zk-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Consolas, monospace` | `packages/ui/src/identities.css:37` |
 
 Accent: `--accent` (`262 85% 70%`) is the accent role, distinct from the `--primary` action role (`packages/ui/src/identities/glass.css:37`).
+
+Class names are roles. Phone touch targets are 44px, stricter than the kit floor of 24px (`apps/docs/VISUAL-CONTRACT.md`). Durations are the signature's, not the kit fallback.

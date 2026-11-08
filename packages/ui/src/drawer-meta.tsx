@@ -14,7 +14,7 @@ function DrawerTitle({ className, ...props }: React.ComponentProps<typeof Drawer
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
+      className={cn("text-overlay-title", className)}
       {...props}
     />
   );
@@ -31,7 +31,7 @@ function DrawerDescription({
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-dense text-muted-foreground", className)}
       {...props}
     />
   );

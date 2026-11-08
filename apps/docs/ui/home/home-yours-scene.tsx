@@ -22,16 +22,16 @@ export function HomeYoursScene() {
   }
 
   return (
-    <Stack gap={4} id="your-identity" className="max-w-2xl min-w-0 scroll-mt-24 border-t border-border pt-8" data-home-yours="">
-      <Stack gap={2}>
-        <Heading level={3} as="h3" className="text-2xl">
+    <Stack gap="lg" id="your-identity" className="max-w-reading content-shrink border-t border-border pt-section-sm" data-home-yours="" data-scroll-anchor="">
+      <Stack gap="sm">
+        <Heading level={3} as="h3" className="text-scene-title">
           {copy.title}
         </Heading>
         <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
           {copy.body}
         </Text>
       </Stack>
-      <Stack gap={4} className="max-w-2xl min-w-0">
+      <Stack gap="lg" className="max-w-reading content-shrink">
         <Field>
           <FieldLabel htmlFor="home-yours-brief">{copy.briefLabel}</FieldLabel>
           <Textarea id="home-yours-brief" rows={4} maxLength={LIMITS.prompt} placeholder={identityBriefCopy.placeholder} value={brief} onChange={(event) => setBrief(event.target.value)} aria-describedby="home-yours-hint" />
@@ -40,7 +40,7 @@ export function HomeYoursScene() {
           {copy.briefHint}
         </Text>
         <DetectedLinks text={brief} onText={setBrief} fieldId="home-yours-brief" />
-        <Stack gap={2}>
+        <Stack gap="sm">
           <Button type="button" className="w-fit" onClick={start}>
             {copy.start}
           </Button>

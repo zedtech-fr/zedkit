@@ -54,10 +54,10 @@ import { Badge, Text } from "@zedtech/zedkit-ui";
 
 export function ReleaseRow({ name }: { name: string }) {
   return (
-    <li className="flex items-center justify-between gap-3 border-b border-border bg-muted px-3 py-2 text-sm">
-      <Text as="span" className="min-w-0 truncate">{name}</Text>
-      <Badge variant="success" className="gap-1">
-        <ArrowUpRight className="size-3" aria-hidden />
+    <li className="flex items-center justify-between gap-stack-md border-b border-border bg-muted pad-row text-dense">
+      <Text as="span" className="content-shrink truncate">{name}</Text>
+      <Badge variant="success" className="gap-stack-tight">
+        <ArrowUpRight className="size-mini" aria-hidden />
         Deployed
       </Badge>
     </li>
@@ -252,7 +252,7 @@ const words = ["Cursor", "Muse", "Claude"] as const;
 - When not to use: For navigation menus — use links or tabs instead.
 - See also: `Confirm destructive actions`
 - Examples: Usage, Variants and sizes
-- A11y: Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use Tailwind `px-3` / `px-4` / `px-8`; `--spacing-button-inline-lg` remains as a deprecated alias. Height still follows `--spacing` control tokens.
+- A11y: Native `button` (or `asChild` onto a link). Sizes `sm` / default / `lg` use `px-button-inline-sm` / `px-button-pad` / `px-button-pad-lg`. Height still follows `--spacing` control tokens.
 - Troubleshooting: Wrong variant colours in dark mode — ensure `.dark` is on the document root. Link styled as a button — use `asChild` with an anchor and keep visible link text. Icon-only control — pass `aria-label` (or use `IconButton` when the label should not appear as text).
 
 ```ts
@@ -365,7 +365,7 @@ import { Badge } from "@zedtech/zedkit-ui";
 - When not to use: For placeholder-only inputs — use `aria-label` instead; for headings — use Heading.
 - See also: `Collect text input with a label`, `Build validated forms with labels, errors, and pending state`
 - Examples: Simple, Required mark, Label a native input
-- A11y: Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`. Size is `text-sm`; identity `--zk-label-transform` stays on badges and table heads.
+- A11y: Pairs with a control via `htmlFor` plus a matching `id`; clicking the label focuses the control (native behavior). A disabled peer dims the label via `peer-disabled`. Size is `text-dense` (13px) with `leading-none`. Identity `--zk-label-transform` stays on badges and table heads.
 - Registry: label
 - Troubleshooting: Clicking the label does nothing — the control needs a matching `id` for `htmlFor`. Label not dimming with a disabled control — `peer-disabled` needs the control as a preceding `peer` sibling.
 
@@ -384,7 +384,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 ```ts
 import { Label } from "@zedtech/zedkit-ui";
 <Label htmlFor="city">City</Label>
-<input id="city" className="rounded-md border border-border px-3 py-2" />
+<input id="city" className="rounded-md border border-border px-field-pad py-control-block-lg" />
 ```
 
 ## Collect text input with a label
@@ -398,7 +398,7 @@ import { Label } from "@zedtech/zedkit-ui";
 - When to use: For names, emails, search boxes and other single-line values.
 - When not to use: For long text — use Textarea instead.
 - See also: `Collect multi-line text input`, `Build validated forms with labels, errors, and pending state`
-- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label to `opacity-50`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is Tailwind `px-3`.
+- A11y: Pair with `Label` or `aria-label`; `focus-ring-control` matches Button keyboard focus. A disabled peer dims the label with `fade-disabled`, the kit-wide disabled convention. Height and block padding follow `--spacing` (`h-control-height`, `py-control-block`); inline padding is `px-field-pad`.
 
 ```ts
 import { Input, Label } from "@zedtech/zedkit-ui";
@@ -420,7 +420,7 @@ import { Input, Label } from "@zedtech/zedkit-ui";
 - Examples: Horizontal rule, Vertical divider
 - A11y: Decorative by default (`role="none"`); pass `decorative={false}` with an accessible name when it separates named regions. Line weight follows `--zk-border-width` (mist 1px).
 - Registry: separator
-- Troubleshooting: Vertical divider invisible — it needs a bounded height from the parent (`h-6`, flex stretch). Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.
+- Troubleshooting: Vertical divider invisible — put it in a row with text (or anything that sets the row height). It stretches to that row. Announced as separator — set `decorative` explicitly; unnamed non-decorative separators confuse screen readers.
 
 ```ts
 import { Separator } from "@zedtech/zedkit-ui";
@@ -428,8 +428,12 @@ import { Separator } from "@zedtech/zedkit-ui";
 ```
 
 ```ts
-import { Separator } from "@zedtech/zedkit-ui";
-<Separator orientation="vertical" className="h-6" />
+import { Separator, Stack, Text } from "@zedtech/zedkit-ui";
+<Stack direction="horizontal" gap="md" className="items-center">
+  <Text>Orders</Text>
+  <Separator orientation="vertical" />
+  <Text>Customers</Text>
+</Stack>
 ```
 
 ## Show loading placeholder blocks
@@ -450,12 +454,12 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
-<Skeleton className="h-4 w-24" />
+<Skeleton className="h-skeleton-line w-skeleton-bar" />
 ```
 
 ```ts
 import { Skeleton } from "@zedtech/zedkit-ui";
-<Skeleton className="h-4 w-full" /> // stack lines for text blocks; shape is all className
+<Skeleton className="h-skeleton-line w-full" /> // stack lines for text blocks; shape is all className
 ```
 
 ## Indicate status with a dot
@@ -469,7 +473,7 @@ import { Skeleton } from "@zedtech/zedkit-ui";
 - Purpose: A small status dot with semantic tones (active, idle, success, warning, danger).
 - When to use: Beside a label that names the state (the dot is decorative).
 - When not to use: As the only state signal — pair it with text, never color alone.
-- A11y: `aria-hidden` by design — the paired text carries the meaning. Size is `size-2` (0.5rem, Tailwind default scale); `--spacing-status-dot` remains as a deprecated alias. Tones map to semantic color tokens.
+- A11y: `aria-hidden` by design — the paired text carries the meaning. Size is `size-status-dot`. Tones map to semantic color tokens.
 - See also: `Show a status or count badge`, `Show key-value details and a live indicator`
 - Examples: Single tone, All tones with labels, Static ping override
 - Troubleshooting: Dot invisible — the paired text must carry the state (never color alone). Pinging when it should not — ongoing tones (`active`, `warning`, `danger`) ping by default; pass `pulse={false}`.
@@ -568,7 +572,7 @@ import { ProgressBar } from "@zedtech/zedkit-ui";
 - A11y: Icon is decorative (`aria-hidden`, not focusable); put the readable name in `children`. The muted colour keeps normal text contrast on every identity, but do not rely on the icon alone to carry meaning — the state or name must also be written.
 - Registry: icon-label
 - Examples: Project details, In an order list, Home areas
-- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-4` (1rem, Tailwind default scale); override with `className`. `--spacing-icon-control` remains as a deprecated alias. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
+- Troubleshooting: The icon does not appear — pass the component itself (`icon={Calendar}`), not an element (`icon={<Calendar />}`). Icon too small or too large — the size is `size-icon`; override with `className`. Long text overflows a narrow cell — the label shrinks inside flex parents, give the parent a width or let the row wrap (`flex-wrap`). Meaning is lost for a screen reader — the icon is hidden on purpose, so write the state in the text.
 
 ```ts
 import { Calendar, FolderOpen, MessageSquare, Users } from "lucide-react";
@@ -664,7 +668,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - Purpose: A named live-region label for the current operation state (loading, saved, error…).
 - When to use: Next to the content an operation affects, while it runs or right after.
 - When not to use: For bare spinners without a name — use `ProgressBar`; for data age — use `UpdatedAgo`.
-- A11y: `role=status` announces the named operation; icon/text gap is `gap-1.5`; `--spacing-status-label-gap` remains as a deprecated alias.
+- A11y: `role=status` announces the named operation; icon/text gap is `gap-icon`.
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
 - Registry: status-label
@@ -696,7 +700,7 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
 - When to use: Under data that refreshes (polling, SWR, manual refetch).
 - When not to use: For absolute timestamps — render a `<time dateTime>` instead.
-- A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-xs text-muted-foreground` only.
+- A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-caption text-muted-foreground` only.
 - See also: `Name an operation in progress`
 - Examples: Simple, Custom prefix
 - Registry: updated-ago
@@ -1322,7 +1326,7 @@ const [query, setQuery] = useState("");
 - See also: `Group content in a card section`
 - Examples: Simple, Without topbar
 - Registry: app-shell
-- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-4` / `md:p-app-shell-padding-md`. `--spacing-app-shell-padding` remains as a deprecated alias.
+- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.
 
 ```ts
 import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
@@ -1396,7 +1400,7 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Examples: Simple, Composed rows
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-4`; block padding is `py-3`. `--spacing-detail-panel-inline` and `--spacing-detail-panel-block` remain as deprecated aliases.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -1445,7 +1449,7 @@ const form = useValidatedForm<Values>(schemaFromContracts, { defaultValues });
 - When to use: To group related fields with legends and per-field errors.
 - When not to use: For validation logic itself — pair with Form instead.
 - See also: `Build validated forms with labels, errors, and pending state`, `Pick a date from a popover`
-- A11y: `FieldError` uses `role="alert"`. Field row gap is `gap-3`; `--spacing-field` remains as a deprecated alias. FieldContent stack gap is `gap-1.5`; `--spacing-field-content` remains as a deprecated alias.
+- A11y: `FieldError` uses `role="alert"`. Field row gap is `gap-field`. FieldContent stack gap is `gap-field-content`.
 
 ```ts
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@zedtech/zedkit-ui";
@@ -1486,17 +1490,18 @@ import { Surface } from "@zedtech/zedkit-ui";
 - Purpose: Cards with header/title/description/content/footer slots.
 - When to use: For self-contained blocks (panels, summaries, previews).
 - When not to use: For page-level layout — use AppShell and Stack instead.
-- A11y: Slots are plain containers — put headings and labels inside. Spacing comes from `--spacing-card-*` theme tokens; elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` mirrors the same tokens so async content lands without shifting.
-- See also: `Stack content and group titled sections`
+- A11y: Slots are plain containers — put headings and labels inside. Spacing comes from the Card recipe (`--zk-card-*`); elevation is Surface level 2 (`shadow-md`, `--zk-shadow-md` per identity). `CardSkeleton` takes the same `size` prop and recipe so loading-to-content substitution does not jump.
+- See also: `Stack content and group titled sections`, `Constrain page width and run sections edge to edge`
 - Examples: Simple, With footer
 - Registry: card
-- Troubleshooting: Cramped content — inner padding comes from the `--spacing-card-padding` theme token (`pt-0` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
+- Troubleshooting: Cramped content — inner padding comes from the card recipe (`--zk-card-pad`; `trim-pad-top` on content/footer avoids doubling it). Title not announced as a heading — slots are plain `div`s; put a real heading element inside `CardTitle` when the card needs one.
+- Sizing: `size="sm" | "lg"` picks a recipe; inside a `zk-query` slot (see Container `query`) padding, header gap, radius and title/body type step up in wide slots (30rem). No slot means the base recipe — never viewport-driven. Recipe custom properties (`--zk-card-pad`, `--zk-card-stack`, `--zk-card-radius`, `--zk-card-title`, `--zk-card-body`) and utilities on the parts are the override seams.
 
 ```ts
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@zedtech/zedkit-ui";
-<Card><CardHeader><CardTitle>Server</CardTitle>
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container } from "@zedtech/zedkit-ui";
+<Container query width="full" gutter={false}><Card size="sm"><CardHeader><CardTitle>Server</CardTitle>
 <CardDescription>Connection details.</CardDescription></CardHeader>
-<CardContent>Body.</CardContent></Card>
+<CardContent>Body.</CardContent></Card></Container>
 ```
 
 ```ts
@@ -1512,8 +1517,8 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
-- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap.
-- When to use: For all kit-page layout instead of hand-written flex.
+- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.
+- When to use: For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.
 - When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.
 - See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
 - A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap and smooth scrolling apply only when `prefers-reduced-motion` is `no-preference`.
@@ -1522,7 +1527,7 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
 <SectionScroll>
   <Section title="Team" description="Who can access.">
-    <Stack direction="horizontal" gap={2}>...</Stack>
+    <Stack direction="horizontal" gap="sm">...</Stack>
   </Section>
   <Section snap="none" title="Long band">...</Section>
 </SectionScroll>
@@ -1535,8 +1540,8 @@ import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: Container
 - Audience: Developers building marketing and docs pages with capped measures and full-bleed bands.
-- Purpose: Named container widths and edge-to-edge section bands from the layout token scale.
-- When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings.
+- Purpose: Named container widths and edge-to-edge section bands from the layout token scale. `query` makes the container a sizing slot for adaptive components.
+- When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings. Add `query` where descendants should size to their allocated space, not the viewport.
 - When not to use: For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.
 - See also: `Stack content and group titled sections`, `Group content in a card section`
 - A11y: Bleed sections keep the heading outline inside the capped container; do not nest landmarks inside the band. A string `title` names the `<section>` (`aria-label`); a `description` still renders when there is no title.
@@ -1602,7 +1607,7 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Examples: Simple, As a section (asChild)
 - A11y: Root carries `role="alert"` (announced assertively). Use `asChild` to render another element; keep one title plus one description.
 - Registry: alert
-- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-4` / `left-4`). `--spacing-alert-icon-offset` remains as a deprecated alias. Block padding is `py-3`; `--spacing-alert-block` remains as a deprecated alias. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
+- Troubleshooting: Icon misaligned — the svg slot expects one `lucide-react` icon as the first child (positioned with `top-alert-icon-offset` / `left-alert-icon-offset`). Block padding is `py-alert-block`. Double announcement — one `role="alert"` per notice; repeated renders re-announce.
 
 ```ts
 import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
@@ -1638,7 +1643,7 @@ import { Alert, AlertDescription, AlertTitle } from "@zedtech/zedkit-ui";
 
 ```ts
 import { BrandLogo } from "@zedtech/zedkit-ui";
-<BrandLogo title="Harbor Studio" viewBox="0 0 32 24" className="h-6 text-primary">
+<BrandLogo title="Harbor Studio" viewBox="0 0 32 24" className="h-logo text-primary">
   <path d="M16 1 25 15H7Z" />
   <path d="M0 19c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3v5H0Z" />
 </BrandLogo>
@@ -1646,8 +1651,8 @@ import { BrandLogo } from "@zedtech/zedkit-ui";
 
 ```ts
 import { BrandLogo } from "@zedtech/zedkit-ui";
-<a href="/" className="flex items-center gap-2 text-foreground">
-  <BrandLogo title="" viewBox="0 0 32 24" className="h-6 text-primary">
+<a href="/" className="flex items-center gap-stack-sm text-foreground">
+  <BrandLogo title="" viewBox="0 0 32 24" className="h-logo text-primary">
     <path d="M16 1 25 15H7Z" />
   </BrandLogo>
   Harbor Studio
@@ -1817,12 +1822,12 @@ import { ScrollGallery, Tabs, TabsList, TabsTrigger } from "@zedtech/zedkit-ui";
 ```ts
 import { ScrollGallery } from "@zedtech/zedkit-ui";
 
-<ScrollGallery className="max-w-sm">
-  <div className="flex w-max gap-2">
-    <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#a">
+<ScrollGallery>
+  <div className="flex w-max gap-stack-sm">
+    <a className="inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row" href="#a">
       Alpha
     </a>
-    <a className="shrink-0 snap-start rounded-md border px-3 py-2" href="#b">
+    <a className="inline-flex min-h-floor shrink-0 snap-start items-center rounded-md border pad-row" href="#b">
       Beta
     </a>
   </div>
@@ -1849,9 +1854,9 @@ import { ScrollGallery } from "@zedtech/zedkit-ui";
 import { StickyAside, Stack, Text } from "@zedtech/zedkit-ui";
 import { GlassSurface } from "@zedtech/zedkit-ui/marketing";
 
-<StickyAside side="right" ratio="1/3" className="[--zk-sticky-top:7rem]">
+<StickyAside side="right" ratio="1/3">
   <StickyAside.Main>
-    <Stack gap={4}>{/* numbered steps */}</Stack>
+    <Stack gap="lg">{/* numbered steps */}</Stack>
   </StickyAside.Main>
   <StickyAside.Aside asChild>
     <GlassSurface padding="md">
@@ -1905,9 +1910,9 @@ import { Card, CardContent, StickyAside, Text } from "@zedtech/zedkit-ui";
 import { ParallaxLayer, ParallaxSection } from "@zedtech/zedkit-ui/motion";
 
 <ParallaxSection range="page">
-  <ParallaxLayer depth="far" className="absolute inset-0" />
+  <ParallaxLayer depth="far" className="absolute pin-fill" />
   <div className="relative"><h1>Title</h1></div>
-  <ParallaxLayer depth="near" className="absolute right-8 top-20" />
+  <ParallaxLayer depth="near" className="absolute pin-top pin-right" />
 </ParallaxSection>
 ```
 
@@ -1952,11 +1957,10 @@ const steps = [
 
 // The caption says it all; the visual is decoration, hidden from assistive tech.
 <ScrollScenes
-  className="[--zk-scenes-top:4.5rem]"
   scenes={steps.map((step, index) => ({
     id: step.id,
     caption: (
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Text variant="muted">Step {index + 1} of {steps.length}</Text>
         <Heading level={3}>{step.title}</Heading>
         <Text variant="muted">{step.text}</Text>
@@ -1974,9 +1978,9 @@ const steps = [
 ```ts
 import { Heading, ProgressBar, ScrollScenes, Stack, Text } from "@zedtech/zedkit-ui";
 
-// Two scenes, a shorter scroll per scene (default 60svh), header 4.5rem tall.
+// Two scenes, a shorter scroll per scene (default 60svh).
 <ScrollScenes
-  className="[--zk-scenes-step:45svh] [--zk-scenes-top:4.5rem]"
+  className="[--zk-scenes-step:45svh]"
   scenes={[
     {
       id: "before",
@@ -2012,11 +2016,10 @@ const looks = [
 ];
 
 <ScrollScenes
-  className="[--zk-scenes-top:4.5rem]"
   scenes={looks.map((look) => ({
     id: look.id,
     caption: (
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Heading level={3}>{look.title}</Heading>
         <Text variant="muted">{look.text}</Text>
       </Stack>
@@ -2041,18 +2044,17 @@ const plans = [
 ];
 
 <ScrollScenes
-  className="[--zk-scenes-top:4.5rem]"
   scenes={plans.map((plan) => ({
     id: plan.id,
     caption: (
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Heading level={3}>{plan.title}</Heading>
         <Text variant="muted">{plan.text}</Text>
       </Stack>
     ),
     children: (
       <Stack aria-hidden="true" inert>
-        <Text className="text-3xl font-semibold">{plan.price}</Text>
+        <Text className="font-semibold">{plan.price}</Text>
         <Text variant="muted">per month</Text>
       </Stack>
     ),
@@ -2101,7 +2103,7 @@ import { Badge, Button, Heading, Text, ThemeScope, identities } from "@zedtech/z
   <ThemeScope
     key={look.id}
     identity={look.id}
-    className="rounded-xl border border-border bg-background p-4 shadow-md"
+    className="rounded-xl border border-border bg-background surface-pad-md shadow-md"
   >
     <Heading level={3}>{look.label}</Heading>
     <Badge variant="secondary">New</Badge>

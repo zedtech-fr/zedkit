@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   Button,
+  Checkbox,
   Field,
   FieldDescription,
   FieldError,
@@ -17,6 +18,15 @@ import {
 } from "@zedtech/zedkit-ui";
 import { fieldCopy } from "@/components/demos/i18n/field-copy";
 
+function NotifyField() {
+  return (
+    <FieldLabel className="items-center">
+      <Checkbox defaultChecked />
+      <Text as="span">{fieldCopy.notifyLabel}</Text>
+    </FieldLabel>
+  );
+}
+
 export function FieldDemo() {
   const [name, setName] = React.useState<string>(fieldCopy.initialName);
   const [summary, setSummary] = React.useState("");
@@ -28,7 +38,7 @@ export function FieldDemo() {
   return (
     <form
       noValidate
-      className="min-w-0"
+      className="content-shrink"
       onSubmit={(event) => {
         event.preventDefault();
         setSubmitted(true);
@@ -62,8 +72,9 @@ export function FieldDemo() {
               onChange={(event) => setSummary(event.target.value)}
             />
           </Field>
+          <NotifyField />
         </FieldGroup>
-        <Stack direction="horizontal" gap={3} className="items-center">
+        <Stack direction="horizontal" gap="md" className="items-center">
           <Button type="submit">{fieldCopy.submit}</Button>
           {created ? (
             <Text role="status" variant="muted">

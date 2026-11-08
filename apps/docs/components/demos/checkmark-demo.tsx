@@ -3,7 +3,7 @@ import { checkmarkCopy } from "@/components/demos/i18n/checkmark-copy";
 
 export function CheckmarkDemo() {
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <Checkmark label={checkmarkCopy.demo.savedLabel} />
       <Checkmark />
     </Stack>

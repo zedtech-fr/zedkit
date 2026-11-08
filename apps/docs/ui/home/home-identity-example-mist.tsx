@@ -52,7 +52,7 @@ function useProjectSettings() {
 /** Save is the one primary action; Discard is its quiet pair. Deleting lives apart (see `DeleteProject`). */
 function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: () => void }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap">
       <Button type="button" onClick={onSave}>
         {copy.save}
       </Button>
@@ -66,7 +66,7 @@ function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: 
 /** The destructive action sits below a divider, outlined, and confirms before it does anything. */
 function DeleteProject({ deleted, onDeleted }: { deleted: boolean; onDeleted: (value: boolean) => void }) {
   return (
-    <div className="border-t border-border pt-4">
+    <div className="border-t border-border content-offset">
       {deleted ? (
         <Button type="button" variant="outline" onClick={() => onDeleted(false)}>
           {copy.restore}
@@ -96,11 +96,11 @@ export function HomeIdentityExampleMist() {
   const [deleted, setDeleted] = useState(false);
 
   return (
-    <Card className="min-w-0">
+    <Card className="content-shrink">
       <CardHeader>
-        <Stack direction="horizontal" gap={2} className="items-start justify-between">
-          <Stack gap={1} className="min-w-0">
-            <Heading level={3} className="font-(family-name:--zk-font-display) text-lg text-balance">
+        <Stack direction="horizontal" gap="sm" className="items-start justify-between">
+          <Stack gap="tight" className="content-shrink">
+            <Heading level={3} className="text-specimen-title text-balance">
               {copy.heading}
             </Heading>
             <Text variant="muted">{copy.description}</Text>
@@ -109,7 +109,7 @@ export function HomeIdentityExampleMist() {
         </Stack>
       </CardHeader>
       <CardContent>
-        <Stack gap={4} className="min-w-0">
+        <Stack gap="lg" className="content-shrink">
           <HomeIdentityExampleMistControls
             workspaceId={workspaceId}
             regionId={regionId}

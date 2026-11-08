@@ -9,17 +9,17 @@ import { iconButtonCopy } from "@/components/demos/i18n/icon-button-copy";
 export function IconButtonDemo() {
   const [message, setMessage] = useState<string>(iconButtonCopy.demo.initialMessage);
   return (
-    <Stack className="min-w-0 rounded-lg border border-border bg-background">
-      <header className="flex min-w-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
-        <Stack gap={1} className="min-w-0">
-          <Heading level={2} className="text-xl text-balance">
+    <Stack className="content-shrink rounded-lg border border-border bg-background">
+      <header className="flex content-shrink items-center justify-between gap-stack-md border-b border-border surface-pad-inline surface-pad-block">
+        <Stack gap="tight" className="content-shrink">
+          <Heading level={2} className="text-demo-heading text-balance">
             {iconButtonCopy.demo.title}
           </Heading>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {iconButtonCopy.demo.subtitle}
           </Text>
         </Stack>
-        <Stack direction="horizontal" gap={1} className="shrink-0">
+        <Stack direction="horizontal" gap="tight" className="shrink-0">
           <IconButton label={iconButtonCopy.demo.refreshLabel} variant="ghost" onClick={() => setMessage(iconButtonCopy.demo.refreshed)}>
             <RefreshCw />
           </IconButton>
@@ -31,11 +31,11 @@ export function IconButtonDemo() {
           </IconButton>
         </Stack>
       </header>
-      <Stack gap={1} className="p-4">
-        <Text role="status" variant="muted" className="text-sm">
+      <Stack gap="tight" className="surface-pad-md">
+        <Text role="status" variant="muted">
           {message}
         </Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {iconButtonCopy.demo.hint}
         </Text>
       </Stack>
@@ -50,19 +50,19 @@ export function IconButtonRowsDemo() {
   const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [duplicates, setDuplicates] = useState(0);
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap="md" className="content-shrink">
       <ul aria-label={iconButtonCopy.rows.tasksAriaLabel} className="divide-y divide-border rounded-lg border border-border bg-background">
         {tasks.map((task) => (
-          <li key={task.id} className="flex min-w-0 items-center justify-between gap-3 px-4 py-2">
-            <Stack gap={1} className="min-w-0 flex-1">
+          <li key={task.id} className="flex content-shrink items-center justify-between gap-stack-md surface-pad-inline surface-pad-block-sm">
+            <Stack gap="tight" className="content-shrink flex-1">
               <Text as="span" className="font-medium">
                 {task.title}
               </Text>
-              <Text as="span" variant="muted" className="text-xs">
+              <Text as="span" variant="muted" className="text-caption">
                 {iconButtonCopy.rows.dueLine(task.owner, task.due)}
               </Text>
             </Stack>
-            <Stack direction="horizontal" gap={1} className="shrink-0">
+            <Stack direction="horizontal" gap="tight" className="shrink-0">
               <IconButton label={iconButtonCopy.rows.editLabel(task.title)} variant="ghost">
                 <Pencil />
               </IconButton>
@@ -81,16 +81,16 @@ export function IconButtonRowsDemo() {
           </li>
         ))}
         {tasks.length === 0 ? (
-          <li className="px-4 py-3">
+          <li className="surface-pad-inline surface-pad-block">
             <Text variant="muted">{iconButtonCopy.rows.noTasksLeft}</Text>
           </li>
         ) : null}
       </ul>
-      <Stack direction="horizontal" gap={3} className="flex-wrap items-center">
+      <Stack direction="horizontal" gap="md" className="flex-wrap items-center">
         <Button variant="outline" size="sm" onClick={() => setTasks(INITIAL_TASKS)}>
           {iconButtonCopy.rows.restoreTasks}
         </Button>
-        <Text role="status" variant="muted" className="text-xs">
+        <Text role="status" variant="muted" className="text-caption">
           {duplicates === 0 ? iconButtonCopy.rows.noDuplicates : iconButtonCopy.rows.duplicatesRequested(duplicates)}
         </Text>
       </Stack>

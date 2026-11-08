@@ -28,7 +28,7 @@ export function ValidatedFormDemo() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((values) => setSaved(values.name))}
-        className="max-w-sm space-y-4"
+        data-example-width="" className="space-y-stack-lg"
       >
         <FormField
           control={form.control}

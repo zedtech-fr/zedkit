@@ -5,13 +5,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils.js";
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border px-4 py-3 text-sm [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg]:text-foreground [&>svg+div]:-translate-y-alert-icon-nudge [&>svg~*]:pl-alert-content-indent",
+  "relative w-full rounded-lg border px-alert-inline py-alert-block text-dense [&>svg]:absolute [&>svg]:top-alert-icon-offset [&>svg]:left-alert-icon-offset [&>svg]:text-foreground [&>svg+div]:-translate-y-alert-icon-nudge [&>svg~*]:pl-alert-content-indent",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
         destructive:
-          "border-destructive/50 bg-destructive/90 text-destructive-foreground dark:border-destructive [&>svg]:text-destructive-foreground",
+          "alert-destructive-line alert-destructive-fill text-destructive-foreground dark:border-destructive [&>svg]:text-destructive-foreground",
       },
     },
     defaultVariants: {
@@ -41,14 +41,14 @@ function AlertTitle({
   // Children are explicit (not part of the props spread) so the
   // heading-has-content rule can see them; renders identically.
   return (
-    <h2 data-slot="alert-title" className={cn("mb-1 text-base leading-none font-medium tracking-tight", className)} {...props}>
+    <h2 data-slot="alert-title" className={cn("mb-alert-title text-alert-title", className)} {...props}>
       {children}
     </h2>
   );
 }
 
 function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="alert-description" className={cn("text-sm [&_p]:leading-relaxed", className)} {...props} />;
+  return <div data-slot="alert-description" className={cn("text-dense [&_p]:leading-relaxed", className)} {...props} />;
 }
 
 export { Alert, AlertTitle, AlertDescription, alertVariants };

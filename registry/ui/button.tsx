@@ -6,24 +6,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "box-border inline-flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "box-border inline-flex cursor-pointer items-center justify-center gap-button-gap rounded-md text-dense font-medium whitespace-nowrap focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:fade-disabled motion-safe:button-press [&_svg]:pointer-events-none [&_svg]:size-icon [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground shadow hover:primary-hover",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:destructive-hover",
         outline:
           "border border-input bg-background text-foreground shadow-sm hover:bg-muted hover:text-foreground aria-pressed:border-input aria-pressed:bg-secondary aria-pressed:text-secondary-foreground",
-        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:secondary-hover",
         ghost:
-          "text-foreground hover:bg-muted/80 hover:text-foreground aria-pressed:bg-secondary/80 aria-pressed:text-secondary-foreground",
-        link: "text-primary underline-offset-4 hover:underline focus-visible:underline",
+          "text-foreground hover:ghost-hover hover:text-foreground aria-pressed:ghost-pressed aria-pressed:text-secondary-foreground",
+        link: "text-primary link-offset hover:underline focus-visible:underline",
       },
       size: {
-        default: "h-control-height px-4 py-2",
-        sm: "h-control-height-sm rounded-md px-3 py-control-block text-xs",
-        lg: "h-control-height-lg rounded-md px-8",
+        default: "h-control-height px-button-pad py-control-block-lg",
+        sm: "h-control-height-sm rounded-md px-button-inline-sm py-control-block text-caption",
+        lg: "h-control-height-lg rounded-md px-button-pad-lg",
         icon: "size-control-height",
       },
     },
@@ -31,11 +31,11 @@ const buttonVariants = cva(
       {
         variant: "link",
         class:
-          "h-auto min-h-0 bg-transparent py-0 shadow-none hover:bg-transparent active:bg-transparent",
+          "h-auto pane-shrink bg-transparent flush-block shadow-none hover:bg-transparent active:bg-transparent",
       },
-      { variant: "link", size: "sm", class: "min-h-11 px-2 text-sm" },
-      { variant: "link", size: "default", class: "min-h-11 px-3" },
-      { variant: "link", size: "lg", class: "min-h-11 px-4 text-base" },
+      { variant: "link", size: "sm", class: "min-h-target px-control-tight text-dense" },
+      { variant: "link", size: "default", class: "min-h-target px-control-inline" },
+      { variant: "link", size: "lg", class: "min-h-target px-button-pad" },
     ],
     defaultVariants: { variant: "default", size: "default" },
   },

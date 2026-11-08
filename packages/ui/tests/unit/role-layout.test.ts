@@ -1,0 +1,233 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+
+const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../src/styles.css"), "utf8");
+
+function utility(name: string): string {
+  const match = css.match(new RegExp(`@utility ${name} \\{([^}]+)\\}`));
+  return match?.[1]?.replace(/\s+/g, " ").trim() ?? "";
+}
+
+describe("layout job classes", () => {
+  it("keeps the shrink and pin constraints as literals under a job name", () => {
+    expect(utility("content-shrink")).toBe("min-width: 0;");
+    expect(utility("min-h-target")).toBe("min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));");
+    expect(utility("min-h-floor")).toBe("min-height: max(24px, var(--zk-tap-min, 0px));");
+    expect(utility("min-w-target")).toBe("min-width: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));");
+    expect(utility("pane-shrink")).toBe("min-height: 0;");
+    expect(utility("pin-fill")).toBe("inset: 0;");
+    expect(utility("pin-top")).toBe("top: 0;");
+    expect(utility("top-float")).toBe("top: calc(var(--spacing) * 4);");
+    expect(css).toContain("@utility space-y-sections");
+    expect(utility("pin-x")).toBe("inset-inline: 0;");
+    expect(utility("flush")).toBe("padding: 0;");
+    expect(utility("trim-bottom")).toBe("margin-bottom: 0;");
+    expect(utility("trim-pad-top")).toBe("padding-top: 0;");
+    expect(utility("trim-pad-bottom")).toBe("padding-bottom: 0;");
+    expect(utility("px-flush")).toBe("padding-inline: 0;");
+    expect(utility("h-anchor")).toBe("height: 0;");
+    expect(utility("mb-lead")).toBe("margin-bottom: calc(var(--spacing) * 6);");
+    expect(utility("my-table")).toBe("margin-block: calc(var(--spacing) * 4);");
+    expect(utility("pb-section")).toBe("padding-bottom: calc(var(--spacing) * 8);");
+    expect(utility("icon-nudge")).toBe("margin-top: var(--spacing);");
+    expect(utility("icon-nudge-sm")).toBe("margin-top: calc(var(--spacing) * 0.5);");
+    expect(utility("gap-segment")).toBe("gap: calc(var(--spacing) * 0.5);");
+    expect(utility("-mx-back")).toBe("margin-inline: calc(var(--spacing) * -2);");
+    expect(utility("basis-field")).toBe("flex-basis: calc(var(--spacing) * 28);");
+    expect(utility("basis-number")).toBe("flex-basis: calc(var(--spacing) * 32);");
+    expect(utility("basis-text")).toBe("flex-basis: calc(var(--spacing) * 40);");
+    expect(utility("py-row")).toBe("padding-block: calc(var(--spacing) * 4);");
+    expect(utility("pt-start")).toBe("padding-top: calc(var(--spacing) * 3);");
+    expect(utility("gap-flush")).toBe("gap: 0;");
+    expect(utility("flush-block")).toBe("padding-block: 0;");
+    expect(css).not.toContain("--spacing-zero");
+    expect(css).not.toContain("min-w-zero");
+  });
+
+  it("names only the shared stack steps, and keeps them on the spacing scale", () => {
+    expect(css).toContain("--zk-gap-sm: calc(var(--spacing) * 2);");
+    expect(css).toContain("--zk-gap-md: calc(var(--spacing) * 3);");
+    expect(css).toContain("--zk-gap-lg: calc(var(--spacing) * 4);");
+    expect(utility("gap-stack-tight")).toBe("gap: var(--spacing);");
+    expect(utility("gap-icon")).toBe("gap: calc(var(--spacing) * 1.5);");
+    expect(utility("gap-y-stack-sm")).toBe("row-gap: var(--zk-gap-sm);");
+    expect(utility("gap-y-stack-md")).toBe("row-gap: var(--zk-gap-md);");
+    expect(utility("gap-x-results")).toBe("column-gap: calc(var(--spacing) * 12);");
+    expect(utility("px-tab")).toBe("padding-inline: calc(var(--spacing) * 3.5);");
+    expect(utility("py-bar")).toBe("padding-block: calc(var(--spacing) * 2.5);");
+    expect(utility("p-track")).toBe("padding: var(--spacing);");
+    expect(utility("p-segment")).toBe("padding: calc(var(--spacing) * 0.5);");
+    expect(utility("pb-block")).toBe("padding-bottom: calc(var(--spacing) * 3);");
+    expect(utility("w-handle")).toBe("width: calc(var(--spacing) * 10); height: var(--spacing);");
+    expect(utility("w-skeleton-half")).toBe("width: 50%;");
+    expect(utility("w-name")).toBe("width: calc(var(--spacing) * 56);");
+    expect(utility("h-frame")).toBe("height: calc(var(--spacing) * 72);");
+    expect(utility("pull-back")).toBe("margin-top: calc(var(--spacing) * -6);");
+    expect(utility("py-index")).toBe("padding-block: calc(var(--spacing) * 6);");
+    expect(utility("inset-y-panel")).toBe("inset-block: calc(var(--spacing) * 2);");
+    expect(css).toContain("@utility space-x-faces");
+    expect(utility("max-h-log")).toBe("max-height: calc(var(--spacing) * 72);");
+    expect(utility("min-h-bar")).toBe("min-height: calc(var(--spacing) * 12);");
+    expect(utility("min-h-hero")).toBe("min-height: calc(var(--spacing) * 96);");
+    expect(utility("gap-y-stack-lg")).toBe("row-gap: var(--zk-gap-lg);");
+    expect(utility("gap-x-logos")).toBe("column-gap: calc(var(--spacing) * 10);");
+    expect(utility("gap-scenes")).toBe("gap: calc(var(--spacing) * 16);");
+    expect(utility("px-cta")).toBe("padding-inline: calc(var(--spacing) * 12);");
+    expect(utility("py-cta")).toBe("padding-block: calc(var(--spacing) * 12);");
+    expect(utility("pb-answer")).toBe("padding-bottom: calc(var(--spacing) * 4);");
+    expect(utility("pt-footer-note")).toBe("padding-top: calc(var(--spacing) * 6);");
+    expect(utility("px-meta")).toBe("padding-inline: calc(var(--spacing) * 0.5);");
+    expect(utility("pr-chip")).toBe("padding-right: var(--spacing);");
+    expect(utility("mb-alert-title")).toBe("margin-bottom: var(--spacing);");
+    expect(utility("text-overlay-title")).toBe("font-size: var(--text-lg); line-height: 1; font-weight: 600; letter-spacing: -0.02em;");
+    expect(utility("text-alert-title")).toBe("font-size: var(--text-base); line-height: 1; font-weight: 500; letter-spacing: -0.02em;");
+    expect(utility("text-section-display")).toBe("font-size: var(--text-3xl); line-height: var(--text-3xl--line-height); font-weight: 600;");
+    expect(utility("text-feature-title")).toBe("font-size: var(--text-xl); line-height: var(--text-xl--line-height);");
+    expect(utility("text-page-title")).toBe("font-size: var(--text-2xl); line-height: var(--text-2xl--line-height); font-weight: 600; letter-spacing: -0.02em;");
+    expect(css).toContain("@utility text-hero-title {\n  font-size: var(--text-4xl);");
+    expect(css).toContain("@utility text-wordmark {\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);\n  font-weight: 600;");
+    expect(css).toContain("@utility text-plan-price {\n  font-size: var(--text-4xl);\n  line-height: var(--text-4xl--line-height);\n  font-weight: 600;\n  letter-spacing: -0.02em;");
+    expect(css).toContain("@utility text-stat {\n  font-size: var(--text-2xl);\n  font-weight: 600;");
+    expect(css).toContain("[data-slot=\"field-legend\"][data-variant=\"legend\"]");
+    expect(css).toContain("@utility text-hero-lead {\n  font-size: var(--text-lg);\n  line-height: var(--zk-body-leading, 1.6);");
+    expect(css).toContain("[data-slot=\"switch\"] {\n    height: calc(var(--spacing) * 5);\n    width: calc(var(--spacing) * 9);\n    border-width: 2px;\n    border-style: solid;\n    border-color: transparent;");
+    expect(css).toContain("translate: calc(var(--spacing) * 5 - 4px) 0;");
+    expect(css).toContain("[data-slot=\"prompt-input-field\"] {\n    padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));");
+    expect(utility("ml-note")).toBe("margin-left: var(--zk-gap-sm);");
+    expect(utility("right-send")).toBe("right: calc(var(--spacing) * 1.5);");
+    expect(utility("bottom-send")).toBe("bottom: calc(var(--spacing) * 1.5);");
+    expect(utility("top-caption")).toBe("top: calc(var(--spacing) * 24);");
+    expect(utility("max-h-secret")).toBe("max-height: calc(var(--spacing) * 64);");
+    expect(utility("gap-x-stack-lg")).toBe("column-gap: var(--zk-gap-lg);");
+    expect(utility("gap-y-stack-tight")).toBe("row-gap: var(--spacing);");
+    expect(utility("gap-prose")).toBe("gap: calc(var(--spacing) * 5);");
+    expect(utility("gap-list")).toBe("gap: calc(var(--spacing) * 6);");
+    expect(utility("gap-blocks")).toBe("gap: calc(var(--spacing) * 8);");
+    expect(utility("mt-standfirst")).toBe("margin-top: calc(var(--spacing) * 2);");
+    expect(utility("grid-pair")).toBe("grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(utility("grid-trio")).toBe("grid-template-columns: repeat(3, minmax(0, 1fr));");
+    expect(utility("grid-quad")).toBe("grid-template-columns: repeat(4, minmax(0, 1fr));");
+    expect(utility("col-start-first")).toBe("grid-column-start: 1;");
+    expect(utility("col-start-next")).toBe("grid-column-start: 2;");
+    expect(utility("w-skeleton-short")).toBe("width: 66.666667%;");
+    expect(utility("gap-stack-sm")).toBe("gap: var(--zk-gap-sm);");
+    expect(utility("gap-section-stack")).toBe("gap: calc(var(--spacing) * 10);");
+    expect(utility("actions-offset")).toBe("padding-top: calc(var(--spacing) * 2);");
+    expect(utility("surface-pad-sm")).toBe("padding: calc(var(--spacing) * 2);");
+    expect(utility("surface-pad-compact")).toBe("padding: calc(var(--spacing) * 3);");
+    expect(utility("surface-pad-block")).toBe("padding-block: calc(var(--spacing) * 3);");
+    expect(utility("surface-pad-block-sm")).toBe("padding-block: calc(var(--spacing) * 2);");
+    expect(utility("rule-gap")).toBe("padding-bottom: calc(var(--spacing) * 2);");
+    expect(utility("pr-column")).toBe("padding-right: calc(var(--spacing) * 4);");
+    expect(utility("mb-stack")).toBe("margin-bottom: var(--zk-gap-sm);");
+    expect(utility("row-start-first")).toBe("grid-row-start: 1;");
+    expect(utility("content-offset")).toBe("padding-top: calc(var(--spacing) * 4);");
+    expect(utility("pad-row")).toBe("padding-inline: calc(var(--spacing) * 3); padding-block: calc(var(--spacing) * 2);");
+    expect(utility("surface-pad-md")).toBe("padding: calc(var(--spacing) * 4);");
+    expect(utility("surface-pad-inline")).toBe("padding-inline: calc(var(--spacing) * 4);");
+    expect(utility("px-control-tight")).toBe("padding-inline: calc(var(--spacing) * 2);");
+    expect(utility("surface-pad-lg")).toBe("padding: calc(var(--spacing) * 6);");
+    expect(utility("empty-state-block")).toBe("padding-block: calc(var(--spacing) * 8);");
+    expect(utility("h-skeleton-line")).toBe("height: calc(var(--spacing) * 4);");
+    expect(utility("h-skeleton-title")).toBe("height: calc(var(--spacing) * 7);");
+    expect(utility("h-scrollbar")).toBe("height: var(--spacing);");
+    expect(utility("w-skeleton-third")).toBe("width: 33.333333%;");
+    expect(utility("w-skeleton-body")).toBe("width: 80%;");
+    expect(utility("w-skeleton-label")).toBe("width: calc(var(--spacing) * 20);");
+    expect(utility("w-skeleton-note")).toBe("width: calc(var(--spacing) * 64);");
+    expect(utility("w-invite")).toBe("width: calc(var(--spacing) * 72); max-width: calc(100vw - 2rem);");
+    expect(utility("fade-disabled")).toBe("opacity: 0.5;");
+    expect(utility("disclosure-icon")).toBe("opacity: 0.5;");
+    expect(utility("close-quiet")).toContain("opacity: 0.7;");
+    expect(utility("close-quiet")).toContain("&:hover { opacity: 1;");
+    expect(utility("link-offset")).toBe("text-underline-offset: var(--zk-link-offset);");
+    expect(css).toContain('[data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child');
+    expect(css).toContain("section[data-gallery-section].border-b:last-child");
+    expect(css).toContain("background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-muted-wash), transparent);");
+    expect(css).toContain('[data-slot="feature-icon"]');
+    expect(css).toContain("background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);");
+    expect(css).toContain("background-color: color-mix(in oklab, hsl(var(--background)) var(--zk-bar-scrim), transparent);");
+    expect(css).toContain('[data-slot="option-card"]:has(:focus-visible)');
+    expect(css).toContain('[data-slot="pricing"] [data-highlighted="true"]');
+    expect(css).toContain(
+      "--tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);",
+    );
+    expect(css).toContain("outline: var(--ring-width) solid hsl(var(--ring));");
+    expect(utility("sort-mark")).toBe("opacity: 0.6;");
+    expect(utility("status-ping")).toBe("opacity: 0.6;");
+    expect(utility("option-picked")).toBe("opacity: 0.6;");
+    expect(utility("z-overlay-chrome")).toBe("z-index: 10;");
+    expect(utility("z-overlay-close")).toBe("z-index: 20;");
+    expect(utility("pull-line")).toBe("margin-top: calc(var(--spacing) * -1);");
+    expect(utility("pull-legend")).toBe("margin-top: calc(var(--spacing) * -1.5);");
+    expect(utility("pull-separator")).toBe("margin-block: calc(var(--spacing) * -2);");
+    expect(utility("pull-outline")).toBe("margin-bottom: calc(var(--spacing) * -2);");
+    expect(utility("mt-check")).toBe("margin-top: 1px;");
+    expect(utility("h-logo")).toBe("height: calc(var(--spacing) * 6);");
+    expect(utility("h-logo-lg")).toBe("height: calc(var(--spacing) * 12);");
+    expect(utility("h-logo-display")).toBe("height: calc(var(--spacing) * 16);");
+    expect(utility("pin-middle")).toBe("top: 50%;");
+    expect(utility("h-brand")).toBe("height: calc(var(--spacing) * 5);");
+    expect(utility("basis-tile")).toBe("flex-basis: calc(var(--spacing) * 48);");
+    expect(utility("size-mark")).toBe("width: calc(var(--spacing) * 10); height: calc(var(--spacing) * 10);");
+    expect(utility("size-person")).toBe("width: calc(var(--spacing) * 8); height: calc(var(--spacing) * 8);");
+    expect(utility("w-skeleton-bar")).toBe("width: calc(var(--spacing) * 24);");
+    expect(utility("w-sidebar-compact")).toBe("width: calc(var(--spacing) * 48);");
+    expect(utility("h-logo-row")).toBe("height: calc(var(--spacing) * 8);");
+    expect(utility("h-phone-bar")).toBe("height: calc(var(--spacing) * 14);");
+    expect(utility("min-h-phone-bar")).toBe("min-height: calc(var(--spacing) * 14);");
+    expect(utility("size-icon-lg")).toBe("width: calc(var(--spacing) * 5); height: calc(var(--spacing) * 5);");
+    expect(utility("size-mini")).toBe("width: calc(var(--spacing) * 3); height: calc(var(--spacing) * 3);");
+    expect(utility("h-share")).toBe("height: 25%; min-height: calc(var(--spacing) * 10);");
+    expect(utility("min-h-label")).toBe("min-height: calc(var(--spacing) * 5);");
+    expect(utility("span-rest")).toBe("grid-column: span 2 / span 2;");
+    expect(utility("gap-x-blocks")).toBe("column-gap: calc(var(--spacing) * 8);");
+    expect(utility("pb-sheet")).toBe("padding-bottom: calc(var(--spacing) * 6);");
+    expect(utility("pl-list")).toBe("padding-left: calc(var(--spacing) * 4);");
+    expect(utility("px-touch")).toBe("padding-inline: var(--spacing);");
+    expect(utility("size-pip")).toBe("width: calc(var(--spacing) * 1.5); height: calc(var(--spacing) * 1.5);");
+    expect(utility("trim-pad-end")).toBe("padding-inline-end: 0;");
+    expect(utility("pin-center-y")).toBe("top: 50%; transform: translateY(-50%);");
+    expect(utility("mt-status")).toBe("margin-top: calc(var(--spacing) * 3);");
+    expect(utility("gap-x-meta")).toBe("column-gap: calc(var(--spacing) * 6);");
+    expect(utility("min-h-status")).toBe("min-height: calc(var(--spacing) * 6);");
+    expect(css).not.toContain("--spacing-stack-6xl");
+    expect(css).not.toContain("--zk-gap-2xs");
+  });
+
+  it("defines every type role as a real utility, with no decoy layer names", () => {
+    // Regression guard for the old decoy mechanism (empty names in
+    // @layer components + unlayered rules that beat consumer overrides).
+    // Behavior itself is proven in preview/cascade.spec.ts.
+    expect(css).not.toMatch(/\.text-[a-z0-9-]+ \{\}/);
+    const plain = [...css.matchAll(/^\.text-[a-z0-9-]+ \{/gm)];
+    expect(plain).toEqual([]);
+    const roles = [...css.matchAll(/@utility (text-[a-z0-9-]+) \{/g)].map((match) => match[1]);
+    expect(new Set(roles).size).toBeGreaterThan(10);
+  });
+
+  it("keeps a 24px hit area on small controls, and the tap size on touch", () => {
+    const block = css.slice(css.indexOf("@utility hit-target"));
+    const hit = block.slice(0, block.indexOf("@utility", 1));
+    expect(hit).toContain("width: max(100%, 24px);");
+    expect(hit).toContain("height: max(100%, 24px);");
+    expect(hit).toContain("width: var(--spacing-tap);");
+    expect(hit).toContain("height: var(--spacing-tap);");
+  });
+
+  it("keeps the chosen select value on one line", () => {
+    const start = css.indexOf('[data-slot="select-value"]');
+    const block = css.slice(start, css.indexOf("}", start));
+    expect(block).toContain("display: -webkit-box;");
+    expect(block).toContain("-webkit-line-clamp: 1;");
+  });
+
+  it("keeps a 24px hit area on a link badge, and the tap size on touch", () => {
+    const start = css.indexOf('a[class*="px-badge-inline"]');
+    const block = css.slice(start, css.indexOf("@layer components", start));
+    expect(block).toContain("height: max(100%, 24px);");
+    expect(block).toContain("min-height: var(--spacing-tap);");
+  });
+});

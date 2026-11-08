@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container, Separator, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
 
-const linkClassName = "rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-ring";
+const linkClassName = "inline-flex min-h-floor items-center rounded-sm text-dense text-muted-foreground link-offset hover:underline focus-ring";
 
 /** Discreet maintainer block — same on home, docs, and 404. */
 export function SiteMaintainerFooter({
@@ -21,10 +21,10 @@ export function SiteMaintainerFooter({
       className="mt-auto border-t border-border"
     >
       <Container width="wide">
-        <Stack gap={4} className="py-8">
+        <Stack gap="lg" className="py-section-sm">
           <Text variant="muted" as="p">Maintained by ZED TECH</Text>
           <Separator />
-          <Stack direction="horizontal" gap={4} className="flex-wrap">
+          <Stack direction="horizontal" gap="lg" className="flex-wrap">
             {links.map((item) => (
               <Link
                 key={item.href}

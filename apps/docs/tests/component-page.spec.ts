@@ -52,6 +52,103 @@ test("button reference page shows a full button before scroll at 390 (#R2)", asy
   expect(box!.y + box!.height).toBeLessThanOrEqual(844);
 });
 
+test("the secondary button keeps a quieter fill on hover", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const cancel = page.locator("[data-component-preview]").first().getByRole("button", { name: "Cancel" });
+  await expect(cancel).toBeVisible();
+  const rest = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await cancel.hover();
+  await expect.poll(async () =>
+    cancel.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-secondary/");
+    }),
+  ).toBe(true);
+  const hover = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+});
+
+test("the destructive button keeps a quieter fill on hover", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const remove = page.locator("[data-component-preview]").first().getByRole("button", { name: "Delete" });
+  await expect(remove).toBeVisible();
+  const rest = await remove.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await remove.hover();
+  await expect.poll(async () =>
+    remove.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--destructive)) 90%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-destructive/");
+    }),
+  ).toBe(true);
+  const hover = await remove.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+});
+
+test("the primary button keeps a quieter fill on hover", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const create = page.locator("[data-component-preview]").first().getByRole("button", { name: "Create app" });
+  await expect(create).toBeVisible();
+  const rest = await create.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await create.hover();
+  await expect.poll(async () =>
+    create.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--primary)) 90%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-primary/");
+    }),
+  ).toBe(true);
+  const hover = await create.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+});
+
+test("the ghost button keeps a muted tint on hover and a secondary fill when pressed", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const link = page.locator("[data-component-preview]").first().getByRole("link", { name: "Docs link" });
+  await expect(link).toBeVisible();
+  const rest = await link.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await link.hover();
+  await expect.poll(async () =>
+    link.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-muted/");
+    }),
+  ).toBe(true);
+  const hover = await link.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+  await page.mouse.move(0, 0);
+  await link.evaluate((node) => node.setAttribute("aria-pressed", "true"));
+  await expect.poll(async () =>
+    link.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-secondary/");
+    }),
+  ).toBe(true);
+});
+
 test("button reference page surfaces variant and size in props without search (#R2)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
@@ -64,8 +161,45 @@ test("button reference page surfaces variant and size in props without search (#
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-onClick']")).toHaveCount(0);
   const inherited = props.locator("details");
   await expect(inherited).toBeVisible();
+  const closed = await inherited.evaluate((node) => {
+    const probe = document.createElement("div");
+    probe.className = "border-border/40";
+    probe.style.borderStyle = "solid";
+    probe.style.borderWidth = "1px";
+    document.body.append(probe);
+    const forty = getComputedStyle(probe).borderTopColor;
+    probe.remove();
+    return { color: getComputedStyle(node).borderTopColor, forty, width: getComputedStyle(node).borderTopWidth };
+  });
+  expect(closed.color).toBe(closed.forty);
+  expect(closed.width).toBe("1px");
   await inherited.locator("summary").click();
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-inherited-onClick']")).toBeVisible();
+  const colors = await inherited.evaluate((node) => {
+    const mix = (percent: string) => {
+      const probe = document.createElement("div");
+      probe.className = `border-border/${percent}`;
+      probe.style.borderStyle = "solid";
+      probe.style.borderWidth = "1px";
+      document.body.append(probe);
+      const color = getComputedStyle(probe).borderTopColor;
+      probe.remove();
+      return color;
+    };
+    const rule = node.querySelector("[data-under-rule]");
+    return {
+      open: getComputedStyle(node).borderTopColor,
+      openWidth: getComputedStyle(node).borderTopWidth,
+      rule: rule ? getComputedStyle(rule).borderTopColor : "",
+      forty: mix("40"),
+      sixty: mix("60"),
+      numeric: node.className.includes("border-border/"),
+    };
+  });
+  expect(colors.open).toBe(colors.sixty);
+  expect(colors.openWidth).toBe("1px");
+  expect(colors.rule).toBe(colors.forty);
+  expect(colors.numeric).toBe(false);
 });
 
 test("component page TOC lists the live sections", async ({ page }) => {

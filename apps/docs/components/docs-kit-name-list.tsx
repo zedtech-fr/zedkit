@@ -19,7 +19,7 @@ export function DocsKitNameList({
     <Text
       as="span"
       data-kit-names={kind}
-      className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1"
+      className="inline-flex max-w-full content-shrink flex-wrap items-center gap-x-stack-sm gap-y-stack-tight"
     >
       {names.map((name) => (
         <IconLabel key={name} icon={ICONS[kind]}>

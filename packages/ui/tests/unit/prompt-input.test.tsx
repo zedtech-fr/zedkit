@@ -5,6 +5,15 @@ import { describe, expect, it, vi } from "vitest";
 import { PromptInput } from "#prompt-input.js";
 
 describe("PromptInput", () => {
+  it("leaves the border on the shell, not the field", () => {
+    render(
+      <PromptInput sendLabel="Generate" value="" onChange={() => {}} onSubmit={() => {}} aria-label="Brief" />,
+    );
+    const field = screen.getByLabelText("Brief");
+    expect(field.className).not.toContain("border-0");
+    expect(field.closest("form")?.className).toContain("border-input");
+  });
+
   it("submits on Enter and keeps Shift+Enter as a newline", async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();

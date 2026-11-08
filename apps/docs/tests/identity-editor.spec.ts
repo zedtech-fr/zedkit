@@ -31,6 +31,15 @@ async function sidebarBg(page: Page) {
 }
 
 test.describe("identity editor page", () => {
+  test("field groups have no border of their own", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    const groups = page.locator("fieldset");
+    const borders = await groups.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderTopWidth));
+    expect(borders.length).toBeGreaterThan(0);
+    expect(borders.every((width) => width === "0px")).toBe(true);
+    await expect(groups.first()).not.toHaveClass(/border-0/);
+  });
+
   test("lede and meta description lead with the benefit, untruncated (#1074)", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     const description = await page.locator('meta[name="description"]').getAttribute("content");

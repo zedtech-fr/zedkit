@@ -61,7 +61,7 @@ function SecretField({ id, value, copyLabel, multiline = false, "aria-label": ar
   return (
     <div
       data-slot="secret-field"
-      className={multiline ? "flex w-full items-start gap-2" : "flex w-full items-center gap-2"}
+      className={multiline ? "flex w-full items-start gap-secret-field-gap" : "flex w-full items-center gap-secret-field-gap"}
     >
       {multiline ? (
         <Textarea
@@ -71,14 +71,14 @@ function SecretField({ id, value, copyLabel, multiline = false, "aria-label": ar
           rows={Math.max(1, value.split("\n").length)}
           spellCheck={false}
           autoComplete="off"
-          className="field-sizing-content max-h-64 min-h-control-height resize-none overflow-y-auto font-mono wrap-anywhere whitespace-pre-wrap"
+          className="field-sizing-content max-h-secret min-h-control-height resize-none overflow-y-auto font-mono wrap-anywhere whitespace-pre-wrap"
           aria-label={ariaLabel}
         />
       ) : (
         <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
       )}
       <Button type="button" variant="outline" size="icon" aria-label={copyLabel ?? messages.copyToClipboard} onClick={copy}>
-        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+        {copied ? <Check className="size-icon" /> : <Copy className="size-icon" />}
       </Button>
       <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {copied ? messages.copied : copyFailed ? messages.copyFailed : ""}

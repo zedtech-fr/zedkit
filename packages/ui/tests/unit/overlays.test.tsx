@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { Button } from "#index.js";
+import { Button, cn } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "#index.js";
 import {
@@ -191,7 +191,7 @@ describe("overlays", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog.className).toContain("z-dialog");
     expect(dialog.className).not.toContain("z-overlay");
-    expect(dialog.className).toContain("gap-4");
+    expect(dialog.className).toContain("gap-stack-lg");
     expect(dialog.className).toContain("p-dialog-padding");
     expect(dialog.className).toContain("max-h-dialog-max-height");
     expect(dialog.className).toContain("overflow-y-auto");
@@ -201,18 +201,25 @@ describe("overlays", () => {
     expect(screen.getByText("Details").parentElement?.className).not.toContain("bg-background");
     expect(screen.getByText("Details").parentElement?.className).toContain("sticky");
     expect(screen.getByText("Details").parentElement?.className).toContain("pr-dialog-header-end");
-    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("gap-2");
+    expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("gap-dialog-footer-gap");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).not.toContain("bg-background");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("sticky");
     expect(screen.getByRole("button", { name: "Save" }).parentElement?.className).toContain("pb-dialog-footer-safe");
     const close = screen.getByRole("button", { name: "Close" });
-    expect(close.className).toContain("top-0");
-    expect(close.className).toContain("right-0");
-    expect(close.className).toContain("z-20");
+    expect(close.className).toContain("pin-top");
+    expect(close.className).toContain("pin-right");
+    expect(close.className).toContain("z-overlay-close");
+    expect(close.className).not.toContain("z-20");
+    expect(cn("z-overlay-chrome", "z-0")).toBe("z-0");
+    expect(cn("z-10", "z-overlay-close")).toBe("z-overlay-close");
     expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring-control");
-    expect(close.className).toContain("opacity-70");
-    expect(close.innerHTML).toContain("size-4");
+    expect(close.className).toContain("close-quiet");
+    expect(close.className).toContain("transition-opacity");
+    expect(close.className).not.toContain("hover:opacity-100");
+    expect(close.className).not.toContain("opacity-70");
+    expect(cn("close-quiet", "opacity-100")).toBe("opacity-100");
+    expect(close.innerHTML).toContain("size-icon");
     expect(close.innerHTML).not.toContain("size-icon-control");
   });
 
@@ -262,7 +269,7 @@ describe("overlays", () => {
       </Dialog>,
     );
     await user.click(screen.getByRole("button", { name: "Open" }));
-    const overlay = document.querySelector(".bg-overlay\\/80");
+    const overlay = document.querySelector('[data-slot="dialog-overlay"]');
     expect(overlay?.getAttribute("data-state")).toBe("open");
     expect(overlay?.getAttribute("class")).toContain("zk-fade-in");
   });
@@ -371,8 +378,8 @@ describe("overlays", () => {
     expect(tip.textContent).toContain("Saves the invoice");
     expect(tip.className).toContain("z-dropdown");
     expect(tip.className).not.toContain("z-overlay");
-    expect(tip.className).toContain("px-3");
-    expect(tip.className).not.toContain("px-control-inline");
+    expect(tip.className).toContain("px-control-inline");
+    expect(tip.className).not.toContain("px-3");
     assertNoValueArbitraries(tip.className);
   });
 
@@ -398,10 +405,10 @@ describe("overlays", () => {
     expect(menu.className).not.toContain("z-overlay");
     assertNoValueArbitraries(menu.className);
     const item = screen.getByRole("menuitem", { name: "Duplicate invoice" });
-    expect(item.className).toContain("px-2");
-    expect(item.className).toContain("py-1.5");
-    expect(item.className).not.toContain("px-select-item-inline");
-    expect(item.className).not.toContain("py-select-item-block");
+    expect(item.className).toContain("px-select-item-inline");
+    expect(item.className).toContain("py-select-item-block");
+    expect(item.className).not.toContain("px-2");
+    expect(item.className).not.toContain("py-1.5");
     await user.click(item);
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole("menu")).toBeNull();
@@ -486,10 +493,10 @@ describe("overlays", () => {
     it("uses token-driven gap and icon size with no arbitrary values", () => {
       const { container } = render(<SecretField id="key" value="zbk_secret" />);
       const root = container.firstElementChild;
-      expect(root?.className).toContain("gap-2");
-      expect(root?.className).not.toContain("gap-secret-field-gap");
+      expect(root?.className).toContain("gap-secret-field-gap");
+      expect(root?.className).not.toContain("gap-2");
       expect(root?.className).not.toContain("[");
-      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-4");
+      expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-icon");
       expect(container.querySelector("svg")?.className.baseVal ?? "").not.toContain("size-icon-control");
     });
   });

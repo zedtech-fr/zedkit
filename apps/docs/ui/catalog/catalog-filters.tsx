@@ -26,7 +26,7 @@ function CatalogSearchField({
   onFilters: (next: { q?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="min-w-0 flex-1">
+    <Stack gap="tight" className="content-shrink flex-1">
       <Label htmlFor="catalog-search">{catalogCopy.filters.searchLabel}</Label>
       <Input
         id="catalog-search"
@@ -49,7 +49,7 @@ function CatalogAreaSelect({
   onFilters: (next: { area?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="sm:w-40">
+    <Stack gap="tight" className="sm:w-area">
       <Label htmlFor="catalog-area">{catalogCopy.filters.areaLabel}</Label>
       <Select value={area} onValueChange={(value) => onFilters({ area: value })}>
         <SelectTrigger id="catalog-area" data-catalog-filter-select="" className="shadow-none" aria-label={catalogCopy.filters.areaAriaLabel}>
@@ -83,7 +83,7 @@ function CatalogMaturitySelect({
   onFilters: (next: { status?: string }) => void;
 }) {
   return (
-    <Stack gap={1} className="sm:w-36">
+    <Stack gap="tight" className="sm:w-status">
       <Label htmlFor="catalog-maturity">{catalogCopy.filters.maturityLabel}</Label>
       <Select value={status} onValueChange={(value) => onFilters({ status: value })}>
         <SelectTrigger
@@ -121,7 +121,7 @@ function CatalogActiveFilterChips({
   onClear: () => void;
 }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
       {area !== "all" ? (
         <Button
           type="button"
@@ -174,8 +174,8 @@ export function CatalogFiltersToolbar({
   const hasActiveFilters = area !== "all" || status !== "all" || q.trim().length > 0;
 
   return (
-    <Stack gap={3} data-catalog-toolbar="" aria-label={catalogCopy.filters.toolbarAriaLabel}>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end" data-catalog-filter-row="">
+    <Stack gap="md" data-catalog-toolbar="" aria-label={catalogCopy.filters.toolbarAriaLabel}>
+      <div className="flex flex-col gap-stack-md sm:flex-row sm:items-end" data-catalog-filter-row="">
         <CatalogSearchField q={q} onFilters={onFilters} />
         <CatalogAreaSelect area={area} onFilters={onFilters} />
         <CatalogMaturitySelect status={status} statuses={statuses} onFilters={onFilters} />
@@ -195,7 +195,7 @@ export function CatalogFiltersToolbar({
 
 export function catalogResultsStatusLine(count: number) {
   return (
-    <span role="status" aria-live="polite" className="text-sm text-muted-foreground">
+    <span role="status" aria-live="polite" className="text-dense text-muted-foreground">
       {catalogCopy.results.statusLine(count)}
     </span>
   );

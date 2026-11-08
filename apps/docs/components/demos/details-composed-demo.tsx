@@ -10,7 +10,7 @@ export function DetailsComposedDemo() {
       <DetailPanelRow
         label={detailsCopy.composed.labels.lastSeen}
         value={
-          <Stack direction="horizontal" gap={2}>
+          <Stack direction="horizontal" gap="sm">
             <StatusDot tone="success" />
             <Text>{detailsCopy.composed.lastSeen}</Text>
           </Stack>

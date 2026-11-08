@@ -11,7 +11,7 @@ export interface StatusDotProps {
 
 const TONE_COLOR: Record<StatusDotTone, string> = {
   active: "bg-primary",
-  idle: "bg-muted-foreground/40",
+  idle: "status-idle",
   success: "bg-success",
   warning: "bg-warning",
   danger: "bg-destructive",
@@ -27,16 +27,16 @@ export function StatusDot({ tone = "active", pulse, className }: StatusDotProps)
   const color = TONE_COLOR[tone];
   const ping = pulse ?? PING_TONES.has(tone);
   return (
-    <span data-slot="status-dot" aria-hidden className={cn("relative flex size-2", className)}>
+    <span data-slot="status-dot" aria-hidden className={cn("relative flex size-status-dot", className)}>
       {ping ? (
         <span
           className={cn(
-            "absolute inline-flex h-full w-full rounded-full opacity-60 motion-safe:animate-ping",
+            "absolute inline-flex h-full w-full rounded-full status-ping motion-safe:animate-ping",
             color,
           )}
         />
       ) : null}
-      <span className={cn("relative inline-flex size-2 rounded-full", color)} />
+      <span className={cn("relative inline-flex size-status-dot rounded-full", color)} />
     </span>
   );
 }

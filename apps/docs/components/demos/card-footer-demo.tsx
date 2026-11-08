@@ -27,7 +27,7 @@ export function CardFooterDemo() {
         <CardDescription>{cardCopy.footer.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Stack gap={2}>
+        <Stack gap="sm">
           <Badge variant={state === "published" ? "default" : "secondary"} className="w-fit" role="status">
             {cardCopy.footer.status[state]}
           </Badge>
@@ -35,7 +35,7 @@ export function CardFooterDemo() {
         </Stack>
       </CardContent>
       <CardFooter>
-        <Stack direction="horizontal" gap={2}>
+        <Stack direction="horizontal" gap="sm">
           <Button disabled={state === "published"} onClick={() => setState("published")}>
             {cardCopy.footer.publish}
           </Button>

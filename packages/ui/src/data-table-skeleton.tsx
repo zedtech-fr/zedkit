@@ -27,15 +27,15 @@ export function DataTableSkeleton({
 }: DataTableSkeletonProps) {
   const messages = useUiMessages();
   return (
-    <div data-slot="data-table-skeleton" role="status" aria-label={label ?? messages.loading} className={cn("space-y-4", className)}>
-      {filter ? <Skeleton className="h-9 max-w-sm" /> : null}
+    <div data-slot="data-table-skeleton" role="status" aria-label={label ?? messages.loading} className={cn("space-y-data-table-stack", className)}>
+      {filter ? <Skeleton className="h-control-height max-w-data-table-filter-width" /> : null}
       {/* Decorative shape only — the zone label above carries the meaning. */}
       <Table aria-hidden>
         <TableHeader>
           <TableRow>
             {Array.from({ length: columns }, (_, index) => (
               <TableHead key={index}>
-                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-skeleton-line w-skeleton-short" />
               </TableHead>
             ))}
           </TableRow>
@@ -45,7 +45,7 @@ export function DataTableSkeleton({
             <TableRow key={row}>
               {Array.from({ length: columns }, (_, column) => (
                 <TableCell key={column}>
-                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-skeleton-line w-full" />
                 </TableCell>
               ))}
             </TableRow>

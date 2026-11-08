@@ -11,9 +11,9 @@ const SERVICES = [
 
 export function StatusDotTonesDemo() {
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       {SERVICES.map((service) => (
-        <Stack key={service.name} direction="horizontal" gap={2} className="items-center">
+        <Stack key={service.name} direction="horizontal" gap="sm" className="items-center">
           <StatusDot tone={service.tone} />
           <Text>{statusDotCopy.line(service.name, service.label)}</Text>
         </Stack>

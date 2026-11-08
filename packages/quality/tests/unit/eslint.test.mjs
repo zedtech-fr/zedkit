@@ -1,3 +1,5 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { Linter } from "eslint";
 import { parser as tsParser, plugin as tsPlugin } from "typescript-eslint";
@@ -49,7 +51,59 @@ describe("nodePreset", () => {
   });
 });
 
+describe("uiPreset entryPoints", () => {
+  it("appends a scoped settings block per extra entry point", () => {
+    const blocks = uiPreset({
+      entryPoint: "/repo/packages/ui/src/styles.css",
+      entryPoints: [{ files: ["apps/docs/**/*.tsx"], entryPoint: "/repo/apps/docs/app/globals.css" }],
+    });
+    const scoped = blocks.find((block) => block.name === "zedkit/ui-tailwind-entry-0");
+    expect(scoped?.files).toEqual(["apps/docs/**/*.tsx"]);
+    expect(scoped?.settings?.["better-tailwindcss"]?.entryPoint).toBe("/repo/apps/docs/app/globals.css");
+    expect(scoped?.settings?.zedkit?.entryPoint).toBe("/repo/apps/docs/app/globals.css");
+    // The repo-wide block keeps the primary entry.
+    const main = blocks.find((block) => block.name === "zedkit/ui-tailwind");
+    expect(main?.settings?.["better-tailwindcss"]?.entryPoint).toBe("/repo/packages/ui/src/styles.css");
+  });
+
+  it("tailwind-ready uses the scoped entry, not the default", () => {
+    const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..");
+    const defaultEntry = join(repo, "packages/ui/src/styles.css");
+    const missing = join(repo, "apps/docs/does-not-exist.css");
+    const scopedOk = join(repo, "apps/docs/app/globals.css");
+    const blocks = (entry) => {
+      const preset = uiPreset({
+        entryPoint: defaultEntry,
+        entryPoints: [{ files: ["apps/docs/**/*.tsx"], entryPoint: entry }],
+      });
+      return [
+        ...preset.filter((block) => block.name === "zedkit/ui-scale" || block.name?.startsWith("zedkit/ui-tailwind-entry")),
+        {
+          files: ["**/*.tsx"],
+          languageOptions: { parser: tsParser, parserOptions: { ecmaFeatures: { jsx: true } } },
+        },
+      ];
+    };
+    const linter = new Linter({ configType: "flat", cwd: repo });
+    const sample = `export function X() { return <div className="flex" />; }\n`;
+    const missingMsgs = linter.verify(sample, blocks(missing), "apps/docs/page.tsx");
+    expect(missingMsgs.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(true);
+    const okMsgs = linter.verify(sample, blocks(scopedOk), "apps/docs/page.tsx");
+    expect(okMsgs.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(false);
+    const unmatched = linter.verify(sample, blocks(missing), "packages/ui/src/button.tsx");
+    expect(unmatched.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(false);
+  });
+});
+
 describe("uiPreset", () => {
+  it("reads component-layer names before calling a class unknown", () => {
+    const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
+    expect(tailwind.rules["better-tailwindcss/no-unknown-classes"]).toEqual([
+      "error",
+      { detectComponentClasses: true },
+    ]);
+  });
+
   it("carries the passed entryPoint into the tailwind settings", () => {
     const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
     expect(tailwind.settings["better-tailwindcss"].entryPoint).toBe("/repo/app/globals.css");
@@ -57,6 +111,7 @@ describe("uiPreset", () => {
 
   it("fails fast when entryPoint is missing", () => {
     expect(() => uiPreset({})).toThrow("entryPoint");
+    expect(() => uiPreset({ entryPoint: "/repo/app/globals.css", entryPoints: [{ files: ["apps/docs/**"] }] })).toThrow("entryPoints");
   });
 
   it("lint messages carry the rule id and explanation", () => {
@@ -138,16 +193,18 @@ describe("uiPreset", () => {
     expect(fnHits.some((entry) => entry.ruleId === "max-lines-per-function")).toBe(true);
   });
 
-  it("flags arbitrary px in className and allows the spacing scale", () => {
+  it("flags arbitrary px in className and points at a role class", () => {
     expect(matchesArbitrary("w-[13px]")).toBe(true);
     expect(matchesArbitrary("w-4")).toBe(false);
-    expect(arbitraryRow().message).toMatch(/w-4|spacing scale/);
+    expect(arbitraryRow().message).toMatch(/role class/);
+    expect(arbitraryRow().message).not.toMatch(/spacing scale|text-sm|w-4/);
   });
 
-  it("flags arbitrary rem in className and allows the spacing scale", () => {
+  it("flags arbitrary rem in className and points at a role class", () => {
     expect(matchesArbitrary("gap-[0.75rem]")).toBe(true);
     expect(matchesArbitrary("gap-3")).toBe(false);
-    expect(arbitraryRow().message).toMatch(/gap-3|spacing scale/);
+    expect(arbitraryRow().message).toMatch(/role class/);
+    expect(arbitraryRow().message).not.toMatch(/gap-3/);
   });
 
   it("flags arbitrary px/rem inside cn() and cva() args", () => {

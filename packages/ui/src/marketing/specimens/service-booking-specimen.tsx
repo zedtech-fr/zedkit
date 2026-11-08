@@ -21,14 +21,14 @@ function BookingServiceChoices({
   onSelect: (id: string) => void;
 }) {
   return (
-    <Stack gap={2} role="group" aria-label={messages.servicesAriaLabel}>
+    <Stack gap="sm" role="group" aria-label={messages.servicesAriaLabel}>
       {messages.services.map((item) => (
         <Button
           key={item.id}
           type="button"
           variant={item.id === serviceId ? "default" : "outline"}
           aria-pressed={item.id === serviceId}
-          className="h-auto! min-h-11 w-full justify-between px-4 py-3 font-normal"
+          className="h-auto! min-h-target w-full justify-between px-button-pad surface-pad-block font-normal"
           onClick={() => onSelect(item.id)}
         >
           <Text as="span">{item.label}</Text>
@@ -51,11 +51,11 @@ function BookingSlotChoices({
   onSelect: (time: string) => void;
 }) {
   return (
-    <Stack gap={2} role="group" aria-label={messages.slotsAriaLabel}>
-      <Text variant="muted" className="text-xs font-medium">
+    <Stack gap="sm" role="group" aria-label={messages.slotsAriaLabel}>
+      <Text variant="muted" className="text-caption font-medium">
         {messages.slotsAriaLabel}
       </Text>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         {messages.slots.map((time) => (
           <Button
             key={time}
@@ -80,8 +80,8 @@ export function ServiceBookingSpecimen({ className, messages = specimenMessagesE
   const service = messages.services.find((item) => item.id === serviceId) ?? messages.services[0]!;
 
   return (
-    <Stack gap={4} className={`min-w-0 ${className ?? ""}`} data-slot="service-booking-specimen" data-specimen-domain="service-booking">
-      <Stack gap={1}>
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="service-booking-specimen" data-specimen-domain="service-booking">
+      <Stack gap="tight">
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </Stack>
@@ -103,7 +103,7 @@ export function ServiceBookingSpecimen({ className, messages = specimenMessagesE
       >
         {messages.book}
       </Button>
-      <Text variant="muted" role="status" className="min-h-6">
+      <Text variant="muted" role="status" className="min-h-status">
         {status}
       </Text>
     </Stack>

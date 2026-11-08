@@ -3,7 +3,7 @@ import { alertCopy } from "@/components/demos/i18n/alert-copy";
 
 export function AlertDemo() {
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <Alert>
         <AlertTitle>{alertCopy.demo.headsUpTitle}</AlertTitle>
         <AlertDescription>{alertCopy.demo.headsUpDescription}</AlertDescription>

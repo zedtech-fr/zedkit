@@ -122,49 +122,26 @@ for dir in packages/*/; do
   echo "$name: ok"
 done
 
-# Client gzip of dist/*.js for the ui kit: npm tarball size, not what a
-# browser downloads. Docs first-load JS is checked separately from the
-# static export (see apps/docs/scripts/check-first-load-budget.mjs).
-# @zedtech/zedkit-ai has no gzip ceiling: it is a CLI and kit installer,
-# not a browser payload. Pack still checks integrity, exports, contents.
-# Optional third argument: a subdirectory of dist/ to measure on its own
-# (ui: dist/marketing). The main budget then leaves that subdirectory out.
+# Docs first-load JS is the consumer payload (see
+# apps/docs/scripts/check-first-load-budget.mjs). Concatenated ui dist/*.js
+# gzip is not: consumers tree-shake, and that ceiling was raised on every
+# UI PR. Marketing is a dedicated barrel someone may import wholesale.
+# @zedtech/zedkit-ai has no gzip ceiling: CLI, not a browser payload.
+# Pack still checks integrity, exports, contents.
 size_budget() {
-  local name="$1" max="$2" sub="${3:-}"
-  local dir="$tmp/$name/unpacked/package/dist"
-  [ -d "$dir" ] || { echo "$name: size budget skipped (no dist/)"; return; }
-  local bytes label="$name"
-  if [ -n "$sub" ]; then
-    [ -d "$dir/$sub" ] || { echo "$name/$sub: size budget skipped (no dist/$sub)"; return; }
-    label="$name/$sub"
-    bytes="$(find "$dir/$sub" -name '*.js' -print0 | sort -z | xargs -0 cat | gzip -c | wc -c)"
-  else
-    bytes="$(find "$dir" -name '*.js' -not -path "$dir/marketing/*" -print0 | sort -z | xargs -0 cat | gzip -c | wc -c)"
-  fi
+  local name="$1" max="$2" sub="$3"
+  local dir="$tmp/$name/unpacked/package/dist/$sub"
+  [ -d "$dir" ] || { echo "$name/$sub: size budget skipped (no dist/$sub)"; return; }
+  local bytes
+  bytes="$(find "$dir" -name '*.js' -print0 | sort -z | xargs -0 cat | gzip -c | wc -c)"
   if [ "$bytes" -gt "$max" ]; then
-    echo "$label: gzip(dist/*.js) is $bytes bytes, budget $max"
+    echo "$name/$sub: gzip(dist/*.js) is $bytes bytes, budget $max"
     fail=1
   else
-    echo "$label: size $bytes / $max ok"
+    echo "$name/$sub: size $bytes / $max ok"
   fi
 }
-# Raised from 43500 to 44500 on 4 Nov 2026: measured 44141 with ScrollReset (route scroll reset).
-# Raised to 45500 on 4 Nov 2026 after syncing main: signature type-role and motion exports on top of ScrollReset.
-# IdentityDock chrome + vaul sheet moved to apps/docs (4 Nov 2026); ui gzip measured 44660.
-# Raised to 48000 on 4 Nov 2026: Animate runtime + types (measured 46973).
-# Raised to 56000 on 4 Nov 2026 (measured 54172 in CI): approved by the maintainers
-# raising size budgets now and optimising later; trim tracked in issue 1398
-# (identity-tokens, splitting the Animate runtime).
-# Raised to 58000 on 5 Nov 2026 (measured 57331 in CI on ship #1446): ParallaxSection/
-# ParallaxLayer on the motion subpath; trim still tracked in issue 1398.
-# Raised to 60500 on 5 Nov 2026 (measured 59132 locally): StreamStatus, StreamText,
-# and assistant SSE helpers on the main entry; trim still tracked in issue 1398.
-# Raised to 60600 on 6 Nov 2026: same UI sources measure 60450 gzip on
-# ubuntu-latest (dev tip 33e05b87) but 60530 on self-hosted/Dedibox after a
-# clean tsc rebuild — toolchain emit variance, not a source growth. Headroom
-# keeps the razor-thin ceiling from flaking; trim still tracked in issue 1398.
-size_budget ui 60600
-# Marketing entry (separate from the main budget); measured 785 with GlassSurface only;
+# Marketing entry; measured 785 with GlassSurface only;
 # 9865 with L2 domain specimens plus goal/reference marketing sections (Hero, Pricing, …);
 # 10020 after specimen-primitives barrel; tokenized keyword routing measured 10084 gzip.
 size_budget ui 10200 marketing

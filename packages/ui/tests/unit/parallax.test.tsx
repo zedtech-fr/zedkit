@@ -74,7 +74,7 @@ describe("ParallaxLayer", () => {
 describe("Surface depth", () => {
   it("wraps the surface in a ParallaxLayer without hiding it", () => {
     const { container } = render(
-      <Surface depth="back" layerClassName="absolute inset-0" padding="md">
+      <Surface depth="back" layerClassName="absolute pin-fill" padding="md">
         Mock
       </Surface>,
     );

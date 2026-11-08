@@ -29,7 +29,7 @@ export function LocaleTabContent({
 }) {
   return (
     <TabsContent value="locale">
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Label htmlFor="devtools-locale">Messages locale</Label>
         <Select value={activeLocale} onValueChange={onLocaleChange}>
           <SelectTrigger id="devtools-locale">
@@ -51,9 +51,9 @@ export function LocaleTabContent({
 export function InfoTabContent({ buildInfo }: { buildInfo: readonly DevtoolsBuildInfoRow[] }) {
   return (
     <TabsContent value="info">
-      <Stack gap={2}>
+      <Stack gap="sm">
         {buildInfo.map((row) => (
-          <Stack key={row.label} direction="horizontal" gap={2} className="items-center justify-between text-sm">
+          <Stack key={row.label} direction="horizontal" gap="sm" className="items-center justify-between">
             <Text variant="muted">{row.label}</Text>
             <Text>{row.value}</Text>
           </Stack>
