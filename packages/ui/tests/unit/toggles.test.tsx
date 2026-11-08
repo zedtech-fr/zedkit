@@ -52,6 +52,7 @@ describe("toggles", () => {
     expect(toggle.classList.contains("hit-target")).toBe(true);
     expect(toggle.classList.contains("focus-ring")).toBe(true);
     expect(toggle.className).not.toContain("w-switch-track-width");
+    expect(toggle.className).not.toContain("border-2");
     expect(toggle.className).not.toContain("calc(var(--spacing)");
     const thumb = toggle.querySelector("[data-slot=switch-thumb]");
     expect(thumb?.className).not.toContain("calc(var(--spacing)");

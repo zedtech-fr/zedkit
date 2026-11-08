@@ -816,10 +816,14 @@ a[class*="px-badge-inline"] {
   right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) + var(--spacing) * 2);
 }
 
-/* Switch track and thumb. The track is five by nine spacing steps. The thumb is four. */
+/* Switch track and thumb. The track is five by nine spacing steps. The thumb is four.
+   The transparent border is two pixels, so the checked thumb subtracts both sides. */
 [data-slot="switch"] {
   height: calc(var(--spacing) * 5);
   width: calc(var(--spacing) * 9);
+  border-width: 2px;
+  border-style: solid;
+  border-color: transparent;
 }
 [data-slot="switch-thumb"] {
   width: calc(var(--spacing) * 4);
