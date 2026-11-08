@@ -323,6 +323,11 @@
   opacity: 0.8;
 }
 
+/* The install example's frame. Mostly the page background, so the sample button sits on a quiet plate. */
+[data-adoption-example] {
+  background-color: color-mix(in oklab, hsl(var(--background)) 80%, transparent);
+}
+
 /* Product picture on the shop specimen. Three times as wide as it is tall, with a light primary tint. */
 [data-product-banner] {
   aspect-ratio: 3 / 1;
