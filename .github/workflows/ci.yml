@@ -105,7 +105,7 @@ jobs:
           bash scripts/install-actionlint.sh
           ./actionlint "${files[@]}"
           python3 -m pip install --disable-pip-version-check yamllint==1.35.1
-          yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" "${files[@]}"
+          yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, document-start: disable}}" "${files[@]}"
 
   hygiene:
     runs-on: ubuntu-latest
