@@ -205,6 +205,17 @@
    * Stack gaps are three shared design steps. They are gap utilities only,
    * not a renamed spacing scale. Structural constraints (shrink, pin, flush)
    * are declarations below, not spacing tokens.
+   *
+   * Declared scales (tested in tests/unit/declared-scales.test.ts):
+   * spacing multipliers at stock resolve to 2,4,6,8,10,12,14,16,20,24,
+   * 28,32,36,40,44,48px rhythm steps (halves to 16px, wholes above),
+   * then named measures 56,60,64,80,96,112,128,144,160,192,224,256,288,
+   * 320,384px. Named exceptions: 1px borders, 2px focus/border widths,
+   * the 3px optical alert nudge, radii and type (their own step scales:
+   * --radius-* in identities.css, --text-* in shared-type-scale.css).
+   * Distinct purposes may share a step; that is normal, not aliasing.
+   * Component recipes (container-aware sizing) select among these
+   * steps only — a recipe never mints a free value.
    */
   /* --zk-gap-*, --zk-icon-size, --zk-control-height live in the plain
      scope rule after this block, not here: @theme emits them at :root,
