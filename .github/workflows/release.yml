@@ -5,9 +5,10 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
-# The Version PR needs contents + pull-requests; npm provenance
-# attestation needs id-token. Publishing itself authenticates with
-# the NPM_TOKEN secret (see docs/publishing.md).
+# The Version PR needs contents + pull-requests; npm trusted
+# publishing (OIDC) needs id-token. Do not set NODE_AUTH_TOKEN on
+# the publish step: an empty value is worse than unset, and npm 10
+# cannot exchange the GitHub id-token (see docs/publishing.md).
 #
 # GitHub does not run workflows on PRs opened with GITHUB_TOKEN.
 # When RELEASE_APP_ID / RELEASE_APP_PRIVATE_KEY are set, mint an
@@ -70,6 +71,13 @@ jobs:
       # tarballs ship without dist/ while `main` points into it (0.1.0 had to
       # be re-released for exactly this).
       - run: pnpm build
+      # pnpm 9.15.9 prepends dirname(process.execPath) when it
+      # spawns npm (empty pack cwd, so no local .bin). A later PATH
+      # `npm i -g npm@11` is ignored. Install the pin into the Node
+      # prefix, then fail closed unless that publisher npm is >=11.5.1
+      # and Node is >=22.14.0 (docs.npmjs.com/trusted-publishers).
+      - name: Ensure publisher npm for OIDC
+        run: bash scripts/ensure-release-publisher.sh
       - name: Create Version PR or publish to npm
         id: changesets
         uses: changesets/action@v2
@@ -86,9 +94,8 @@ jobs:
           # v2 defaults to pushing via the GitHub API; keep v1's git push.
           push-with-git-cli: true
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # One env for every package (smaller than publishConfig.provenance
-          # on each package.json). Needs id-token: write, already set above.
+          # Tokenless OIDC. Provenance is automatic with trusted
+          # publishing; keep this so a token fallback cannot drop it.
           NPM_CONFIG_PROVENANCE: "true"
       # Tags + GitHub releases only for packages npm publish just shipped.
       # Without published-packages, release-tags.sh used to poll npm for every
