@@ -1,5 +1,11 @@
 # @zedtech/zedkit-i18n
 
+## 0.2.2
+
+### Patch Changes
+
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+
 ## 0.2.1
 
 ### Patch Changes

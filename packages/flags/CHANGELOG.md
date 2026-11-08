@@ -1,5 +1,14 @@
 # @zedtech/zedkit-flags
 
+## 0.3.1
+
+### Patch Changes
+
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+- 003d355: Rebuild with TypeScript 6.0 (explicit ambient node types in tsconfig; no public API change).
+- Updated dependencies [2fe5608]
+  - @zedtech/zedkit-core@1.0.1
+
 ## 0.3.0
 
 ### Minor Changes
