@@ -394,7 +394,8 @@ jobs:
         if: runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh install
       - run: pnpm registry:build
-      # Two Next smokes; Vite paths live in the dedicated quickstart-smoke job.
+      # Next smokes (src-dir pnpm + npm, plain pnpm); Vite paths live in the dedicated quickstart-smoke job.
+      # The npm cell guards the D1 promise (no ERESOLVE); each serve port is pinned per cell.
       - name: registry smoke
         run: |
           fail=0
@@ -402,8 +403,14 @@ jobs:
           p1=$!
           bash scripts/registry/smoke-ui-quickstart.sh &
           p2=$!
+          SMOKE_PORT=3110 PM=npm bash scripts/registry/smoke-ui-quickstart.sh &
+          p3=$!
+          SMOKE_PORT=3111 LAYOUT=plain bash scripts/registry/smoke-ui-quickstart.sh &
+          p4=$!
           wait "$p1" || fail=1
           wait "$p2" || fail=1
+          wait "$p3" || fail=1
+          wait "$p4" || fail=1
           exit "$fail"
 
   # Vite + registry Button consumer. In ci-required when registry is selected.

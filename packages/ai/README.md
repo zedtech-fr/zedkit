@@ -100,7 +100,7 @@ Measured `/setup-ai` quality: mean **2.25/3** on the eight measurable rubric axe
 Advanced / CI paths:
 
 ```sh
-npx @zedtech/zedkit-ai init . --provider cursor --adopt   # same files as setup; explicit init
+npx @zedtech/zedkit-ai init . --provider cursor --adopt   # adopt on the starter preset; setup uses the setup preset
 npx @zedtech/zedkit-ai validate                           # must print: ok
 npx @zedtech/zedkit-ai validate --setup [--plan file]     # opt-in: PLAN covers git changes, setup went deep (D1-D4)
 npx @zedtech/zedkit-ai scan [dir]                         # repo size and one slice per read-only reader
@@ -117,7 +117,10 @@ run one review workflow, and check done-ness without loading the whole kit.
 
 **Setup preset (default for `setup`):** everything in starter, plus
 `domain-modeling`, `persona-review`, `compose-ui`, `code-review`,
-`ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, and subagents
+`ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
+`plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
+`research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, and `quick-wins`,
+and subagents
 `product-director`, `ui-designer`, `copywriter`, `skeptic`, `researcher`,
 `implementer`, `reviewer`, `domain-guardian`, `event-contracts`, and
 `test-runner` (starter already ships `explorer`, `verifier`, and

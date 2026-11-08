@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { kitDir } from "#kit.js";
-import { applyTestPolicyToAgentsMd } from "#test-policy.js";
+import { applyTestPolicyToAgentsMd, detectRunner } from "#test-policy.js";
 import { checkDrift, validateKit } from "#validate.js";
 import { put, tempDir } from "./helpers.js";
 
@@ -178,5 +178,80 @@ describe("setup-ai product output: test recommendations", () => {
     expect(agents).not.toMatch(/playwright|cypress|test:e2e/iu);
     expect(section(agents, RECOMMEND_HEADING, "## Map")).toContain("pnpm test:unit");
     expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("pnpm test:integration");
+  });
+});
+
+describe("setup-ai product output: observed commands use the repo runner", () => {
+  function fixture(scripts: Record<string, string>, extraFiles: Record<string, string> = {}): string {
+    const dest = tempDir();
+    put(dest, "package.json", `${JSON.stringify({ name: "runner-fixture", private: true, scripts }, null, 2)}\n`);
+    for (const [rel, text] of Object.entries(extraFiles)) put(dest, rel, text);
+    installSetup(dest);
+    return readFileSync(join(dest, "AGENTS.md"), "utf8");
+  }
+
+  it("writes npm commands for a package-lock.json repo (D6)", () => {
+    const agents = fixture({ build: "tsc", test: "vitest run" }, { "package-lock.json": '{ "lockfileVersion": 3 }' });
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("npm run build");
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).not.toContain("pnpm");
+  });
+
+  it("writes yarn commands for a yarn.lock repo", () => {
+    const agents = fixture({ build: "tsc", test: "vitest run" }, { "yarn.lock": "# yarn lockfile v1" });
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("yarn build");
+  });
+
+  it("writes bun commands for a bun.lock repo", () => {
+    const agents = fixture({ build: "tsc", test: "vitest run" }, { "bun.lock": "" });
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("bun build");
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).not.toContain("bun run build");
+  });
+
+  it("keeps pnpm commands for a pnpm-lock.yaml repo", () => {
+    const agents = fixture({ build: "tsc", test: "vitest run" }, { "pnpm-lock.yaml": "lockfileVersion: '9.0'" });
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("pnpm build");
+  });
+
+  it("prefers the packageManager field over lockfiles", () => {
+    const dest = tempDir();
+    put(
+      dest,
+      "package.json",
+      `${JSON.stringify({ name: "pm-field", packageManager: "yarn@4.9.2", scripts: { build: "tsc" } }, null, 2)}\n`,
+    );
+    put(dest, "package-lock.json", '{ "lockfileVersion": 3 }');
+    installSetup(dest);
+    const agents = readFileSync(join(dest, "AGENTS.md"), "utf8");
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("yarn build");
+  });
+
+  it("keeps the pnpm default with no lockfile (existing contract)", () => {
+    const agents = fixture({ build: "tsc" });
+    expect(section(agents, OBSERVED_HEADING, RECOMMEND_HEADING)).toContain("pnpm build");
+  });
+});
+
+describe("detectRunner edge cases", () => {
+  it("falls back to lockfiles when package.json is missing or unreadable", () => {
+    const bare = tempDir();
+    expect(detectRunner(bare)).toBe("pnpm");
+    put(bare, "package-lock.json", "{}");
+    expect(detectRunner(bare)).toBe("npm");
+  });
+
+  it("ignores a malformed packageManager field and uses lockfiles", () => {
+    const dest = tempDir();
+    put(dest, "package.json", '{ "packageManager": "npm" }');
+    put(dest, "yarn.lock", "");
+    expect(detectRunner(dest)).toBe("yarn");
+    put(dest, "package.json", "{ not json");
+    expect(detectRunner(dest)).toBe("yarn");
+  });
+
+  it("resolves conflicting lockfiles in a fixed order", () => {
+    const dest = tempDir();
+    put(dest, "package-lock.json", "{}");
+    put(dest, "yarn.lock", "");
+    expect(detectRunner(dest)).toBe("npm");
   });
 });

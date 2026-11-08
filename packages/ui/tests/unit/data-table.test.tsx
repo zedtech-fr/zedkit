@@ -276,3 +276,23 @@ describe("DataTableToolbar", () => {
     expect(onChange).toHaveBeenCalledWith("A");
   });
 });
+
+describe("DataTable scroll region naming (D9)", () => {
+  it("names each table region explicitly so two tables do not share a landmark label", () => {
+    render(
+      <>
+        <DataTable columns={columns} data={data} scrollAriaLabel="Team members" />
+        <DataTable columns={columns} data={data} scrollAriaLabel="Audit log" />
+      </>,
+    );
+    expect(screen.getByRole("region", { name: "Team members" })).not.toBeNull();
+    expect(screen.getByRole("region", { name: "Audit log" })).not.toBeNull();
+  });
+
+  it("keeps the default label when no explicit name is given", () => {
+    const { container } = render(<DataTable columns={columns} data={data} />);
+    expect(container.querySelector("[data-slot=table-container]")?.getAttribute("aria-label")).toBe(
+      "Scrollable table",
+    );
+  });
+});

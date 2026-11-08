@@ -249,6 +249,29 @@ describe("checkDepth", () => {
     expect(checkDepth(root).map((i) => i.message)).toEqual([expect.stringContaining("real model (not inherit)")]);
   });
 
+  it("D4: inherit with a recorded tool limitation warns instead of failing (T8b)", () => {
+    const root = tempDir();
+    deep(root);
+    put(
+      root,
+      ".agents/tokenomics.md",
+      "---\nschema: 1\nproviders:\n  cursor:\n    build:\n      standard: { model: inherit, effort: medium }\n    decide:\n      sensitive: { model: inherit, effort: high }\n---\n\n<!-- inherit-reason: cursor cannot route per spawn; reading done inline -->\n",
+    );
+    const messages = checkDepth(root).map((i) => i.message);
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toMatch(/^warning:.*inherit/);
+    expect(messages[0]).toMatch(/partial/);
+  });
+
+  it("D4: a bare inherit-reason marker without the cells still fails", () => {
+    const root = tempDir();
+    deep(root);
+    // Marker on a tokenomics file that does not even declare the D4 cells:
+    // the reason alone is not a policy.
+    put(root, ".agents/tokenomics.md", "---\nschema: 1\nproviders: {}\n---\n\n<!-- inherit-reason: cursor cannot route per spawn -->\n");
+    expect(checkDepth(root).map((i) => i.message)).toEqual([expect.stringContaining("real model (not inherit)")]);
+  });
+
   it("D4: a valid leftover model-routing.md still passes, with a deprecation warning", () => {
     const root = tempDir();
     deep(root);
