@@ -587,6 +587,10 @@ ol[data-sonner-toaster] {
 @utility option-selected {
   background-color: color-mix(in oklab, hsl(var(--primary)) 5%, transparent);
 }
+/* Table foot. Half the muted colour, so a total sits apart from the rows. */
+@utility table-foot {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 50%, transparent);
+}
 /* Checked field in the dark. A stronger primary wash than the light one. */
 @utility field-checked-strong {
   background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);

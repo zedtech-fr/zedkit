@@ -7,10 +7,10 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-  Text,
 } from "@zedtech/zedkit-ui";
 import { cardCopy } from "@/components/demos/i18n/card-copy";
 
@@ -40,8 +40,12 @@ export function CardDemo() {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={3}>{cardCopy.demo.total}</TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
-        <Text className="mt-figure font-medium">{cardCopy.demo.total}</Text>
       </CardContent>
     </Card>
   );
