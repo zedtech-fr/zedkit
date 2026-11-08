@@ -17,7 +17,7 @@ type SatelliteKind = "notice" | "online";
  */
 function Satellite({ kind, children }: { kind: SatelliteKind; children: React.ReactNode }) {
   return (
-    <div aria-hidden="true" inert data-hero-satellite={kind} className="pointer-events-none absolute z-10 max-md:hidden">
+    <div aria-hidden="true" inert data-hero-satellite={kind} className="pointer-events-none absolute max-md:hidden">
       <div data-hero-drift="">
         <div data-hero-float="">{children}</div>
       </div>
