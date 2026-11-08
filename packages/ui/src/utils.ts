@@ -98,6 +98,7 @@ const twMerge = extendTailwindMerge({
         "menu-hover",
         "menu-current",
         "option-selected",
+        "field-checked-strong",
       ],
       "border-color": ["alert-destructive-line", "option-hover-line"],
       "underline-offset": ["link-offset"],

@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   Button,
+  Checkbox,
   Field,
   FieldDescription,
   FieldError,
@@ -16,6 +17,15 @@ import {
   Textarea,
 } from "@zedtech/zedkit-ui";
 import { fieldCopy } from "@/components/demos/i18n/field-copy";
+
+function NotifyField() {
+  return (
+    <FieldLabel className="items-center">
+      <Checkbox defaultChecked />
+      <span>{fieldCopy.notifyLabel}</span>
+    </FieldLabel>
+  );
+}
 
 export function FieldDemo() {
   const [name, setName] = React.useState<string>(fieldCopy.initialName);
@@ -62,6 +72,7 @@ export function FieldDemo() {
               onChange={(event) => setSummary(event.target.value)}
             />
           </Field>
+          <NotifyField />
         </FieldGroup>
         <Stack direction="horizontal" gap={3} className="items-center">
           <Button type="submit">{fieldCopy.submit}</Button>
