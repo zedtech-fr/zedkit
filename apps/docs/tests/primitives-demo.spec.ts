@@ -70,6 +70,15 @@ test.describe("primitive pages show a live preview for each example", () => {
     }
   }
 
+  test("the last badge job has no line under it", async ({ page }) => {
+    await page.goto(BASE + "show-a-status-or-count-badge", { waitUntil: "networkidle" });
+    const rows = page.locator("[data-badge-table] tbody tr");
+    const borders = await rows.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderBottomWidth));
+    expect(borders.length).toBeGreaterThan(1);
+    expect(borders.at(-1)).toBe("0px");
+    expect(borders.slice(0, -1).every((width) => width !== "0px")).toBe(true);
+  });
+
   test("interactive demos respond", async ({ page }) => {
     await page.goto(BASE + "load-each-zone-with-a-faithful-skeleton", { waitUntil: "networkidle" });
     const standalone = page.locator("[data-component-preview]").nth(1);

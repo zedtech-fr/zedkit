@@ -49,6 +49,11 @@
   max-width: 95%;
 }
 
+/* The last job in the badge table has no line under it. */
+[data-badge-table] tbody tr.border-b:last-child {
+  border-bottom-width: 0;
+}
+
 /* The last task in a scene has no line under it. The scene padding closes the card. */
 [data-demo-scene-visual] > [data-slot="stack"]:last-child {
   border-bottom-width: 0;
