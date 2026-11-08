@@ -320,6 +320,7 @@ jobs:
             scripts/workspace-pack-closure.test.mjs \
             scripts/ci-hygiene.test.mjs \
             scripts/install-actionlint.test.mjs \
+            scripts/release-publisher.test.mjs \
             apps/docs/scripts/*.test.mjs
       # Versioning dry-run only: proves the Changesets metadata is sane.
       # Skipped on the Version PR itself: it consumed the changesets, so
