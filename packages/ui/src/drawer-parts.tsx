@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { buttonVariants } from "./button.js";
+import { buttonVariants } from "./button/button.js";
 import { overlayDrawerFooterClass, overlayDrawerHeaderClass } from "./overlay-modal.js";
 import { cn } from "./utils.js";
 import { useUiMessages } from "./ui-provider.js";

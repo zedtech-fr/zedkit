@@ -3,7 +3,7 @@ export { ZedkitUiProvider, useUiMessages } from "./ui-provider.js";
 export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./alert.js";
 export { AppShell, type AppShellProps } from "./app-shell.js";
 export { Badge, badgeVariants, type BadgeProps } from "./badge.js";
-export { Button, buttonVariants, type ButtonProps } from "./button.js";
+export { Button, buttonVariants, type ButtonProps } from "./button/button.js";
 export { Calendar, type CalendarProps } from "./calendar.js";
 export {
   DatePicker,

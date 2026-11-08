@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Check, Copy } from "lucide-react";
-import { Button } from "./button.js";
+import { Button } from "./button/button.js";
 import { Input } from "./input.js";
 import { Textarea } from "./textarea.js";
 import { useUiMessages } from "./ui-provider.js";

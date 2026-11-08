@@ -3,7 +3,7 @@
 import type * as React from "react";
 import { useFormContext } from "react-hook-form";
 
-import { Button, type ButtonProps } from "./button.js";
+import { Button, type ButtonProps } from "./button/button.js";
 
 export type FormSubmitProps = Omit<ButtonProps, "type"> & {
   /**

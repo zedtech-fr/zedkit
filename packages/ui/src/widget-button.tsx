@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, type ButtonProps } from "./button.js";
+import { Button, type ButtonProps } from "./button/button.js";
 import { surfaceVariants } from "./surface.js";
 import { cn } from "./utils.js";
 
