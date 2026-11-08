@@ -317,7 +317,19 @@ test.describe("IdentityDock", () => {
     await page.keyboard.press("Control+I");
     await expect(page.locator("[data-slot='identity-dock-panel']")).toBeVisible();
     await expect(page.getByRole("button", { name: /peek height|half height|full height/i })).toHaveCount(0);
-    await expect(page.locator("[data-slot='drawer-handle']")).toBeVisible();
+    const handle = page.locator("[data-dock-handle]");
+    await expect(handle).toBeVisible();
+    const mark = await handle.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "hsl(var(--muted-foreground) / 0.5)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return { background, expected, numeric: node.className.includes("bg-border/") };
+    });
+    expect(mark.background).toBe(mark.expected);
+    expect(mark.numeric).toBe(false);
   });
 
   test("390px: quota feedback stays visible inside the dock panel", async ({ page }) => {
