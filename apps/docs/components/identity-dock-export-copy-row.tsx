@@ -78,7 +78,7 @@ export function IdentityDockExportCopyRow({
         {label}
       </Text>
       <Stack gap={2} className="content-shrink sm:flex-row sm:items-start">
-        <pre className="content-shrink flex-1 overflow-x-auto rounded-md border border-border bg-muted/30 px-control-tight py-select-item-block font-mono text-caption break-words whitespace-pre-wrap">
+        <pre className="content-shrink flex-1 overflow-x-auto rounded-md border border-border px-control-tight py-select-item-block font-mono text-caption break-words whitespace-pre-wrap">
           {value}
         </pre>
         {blocked && blockedTitle && blockedDescription && confirmLabel ? (

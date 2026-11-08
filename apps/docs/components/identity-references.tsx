@@ -36,7 +36,7 @@ export function ReferenceReportList({ report }: { report: readonly ReferenceRepo
               <Text
                 as="span"
                 data-assistant-reference-chip=""
-                className={`inline-flex shrink-0 items-center gap-icon rounded-full border px-control-tight py-badge-block text-zk-type-label font-medium ${used ? "border-primary/40 bg-primary/10 text-foreground" : "border-destructive/50 bg-destructive/10 text-foreground"}`}
+                className="inline-flex shrink-0 items-center gap-icon rounded-full border px-control-tight py-badge-block text-zk-type-label font-medium text-foreground"
               >
                 <Text as="span" aria-hidden="true" className={`size-pip rounded-full ${used ? "bg-primary" : "bg-destructive"}`} />
                 {used ? copy.references.used : copy.references.notUsed}
