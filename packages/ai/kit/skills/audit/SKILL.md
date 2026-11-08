@@ -69,6 +69,10 @@ Sibling entrypoints called from here get `Playbook: <name>` so they do not re-en
      questions in their own section — they are findings about coverage.
 6. **Completion bar.** Each coverage-map row ends in exactly one state:
    - **Answered** — evidence in hand, strong enough to survive challenge.
+     The evidence is a command and its output, a `file:line`, or a URL
+     opened in this session. A spawn that did not start, or a result
+     whose data is null, stays **Not checked** until this session repeats
+     the settling check and cites it. **Partial** is a finished report.
    - **Unresolved after investigation** — the settling check was actually
      run or attempted and genuine uncertainty remains (conflicting
      sources, evidence that stayed inaccessible after a real attempt).

@@ -49,6 +49,13 @@ Go deep, be strict, and be brutally honest.
      Default home: the configured tracker; else `.scratch/<slug>/issues/` —
      git-ignored, never `docs/`. Reuse the audit's own slug/folder when it
      has one. High-quality means a newcomer can start from the task alone.
+     After writing, search the plan for every phrase this turn withdrew. A
+     withdrawn rule left as a current instruction fails the plan. A
+     "blocked by" edge that disagrees with the order arrow fails it too.
+     When the plan contradicts a loaded file (a skill, a package
+     `AGENTS.md`, or a check's success message), that file is task 1, not
+     a follow-up after merge. A gitignored plan does not reach the next
+     session. Name the loaded file.
 5. **Report.** Kept (as tasks, spikes, decisions), dropped (with why:
    unsupported, already fixed, duplicate), and anything the revalidation
    could not settle. Evidence is `file:line`.

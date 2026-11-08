@@ -30,9 +30,7 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 
 Remember that all work goes through two stages: implementation and review. The implementation agent has the most **context pressure**. They are responsible for exploration, writing code, and debugging failures.
 
-The review agent has the least context pressure - it receives a diff, so no exploration needed. It often does not need to write code or debug.
-
-This means that the review agent should be responsible for imposing coding standards, not the implementation agent.
+The review agent starts from a pinned diff. A behavior that lives in a generated or copied artifact is not in that diff: open the artifact and the check that consumes it. A standard the implementation is writing in this change (a policy file, a check's success message) is reviewed here, not deferred to a later pass.
 
 ### Files
 

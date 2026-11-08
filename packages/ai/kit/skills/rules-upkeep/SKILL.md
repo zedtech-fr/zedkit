@@ -23,7 +23,7 @@ Skip a note, a question, or a nit the diff ignored. Skip a one-off bug of the fe
 ## What to do
 
 1. Locate the gap: which file says nothing, is out of date, or disagrees with the decision?
-2. Make the **smallest additive edit** in the same turn, in the natural home. Do not ask first. Do not create a new file when an existing one fits.
+2. Make the **smallest additive edit** in the same turn, in the natural home. Do not ask first. Do not create a new file when an existing one fits. Encode a correction at the strength stated. Do not add a wider ban in the same edit.
 3. Change every file the decision touches, and no more. Link to the canonical text instead of copying it. An agent file gets a pointer; the rule stays the source of truth.
 4. Removing a rule needs the user's confirmation. Atlas rows are facts, not rules: fix or delete a stale one without asking.
 5. If you added a command, skill, or always-on rule, update the map (`.agents/README.md`, and `.cursor/README.md` when that file exists).

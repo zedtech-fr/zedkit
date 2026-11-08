@@ -9,7 +9,7 @@ Shipped default for every host. Token values and the role vocabulary belong to t
 - A structural constraint stays a literal declaration inside the layout class that needs it (`content-shrink { min-width: 0 }`). `min-width: 0` lets a flex or grid item shrink. `inset: 0` pins a layer to its parent. Neither is a spacing token, and neither needs a spelled number.
 - Banned as authored design classes: spacing and sizing steps (`p-4`, `mt-4`, `gap-2`, `size-4`), fractions (`w-1/2`), counts (`grid-cols-3`, `col-span-2`), and the default type scale (`text-sm`, `text-xs`, `text-base`, `text-lg`, `text-2xl`).
 - When a design value is shared, the number lives in the token (`calc(var(--spacing) * 4)`), so a density change still reaches every role that uses it.
-- One name per shared value. A second name for the same value is an alias. Do not add it.
+- Two roles may share one value. A second name is right when the purposes can change independently. A name that only spells the number is not a second role.
 - The host writes the vocabulary down once. Skills, templates and review notes link to that note. They do not copy the values.
 
 ## What this file does not decide
@@ -33,7 +33,7 @@ Shipped default for every host. Token values and the role vocabulary belong to t
 
 - The host's lint or CI rejects the classes above. Prose does not enforce them.
 - If a required check cannot initialize (Tailwind is not resolvable, or the CSS entry is missing), the run fails closed. It does not report success with the check skipped.
-- Existing violations may sit in a baseline. The count may only decrease. The baseline is temporary. It is not an exemption. Do not call the migration done while the count is above zero.
+- Existing violations may sit in a baseline. The count may only decrease. The baseline is an inventory of what remains, not a verdict that the work is unfinished. When every remaining hit is a named public API or a test fixture, report that constraint and stop. Do not keep editing other files to drive the count to zero.
 - Hierarchy, density and which state a screen shows are judged on current pixels, not on old screenshots.
 
 ## Setup

@@ -30,6 +30,10 @@ exists IS a blocker.
 | frontend-quality  | agents `ui-designer` + `console-architecture`                                   | exists | app routes, views, `**/*.tsx`, styles, preview/gallery                      | when triggered | layer + composition + design critique + one-file-one-job findings, file:line           |
 | doc-demos         | agent `docs-writer` (demos: `ui-designer`)                                      | exists | doc apps, `**/demos/**`, preview registries, generated pages                | when triggered | registry + frame + drift findings per §Frontend rules, file:line                       |
 
+A `registry.json` or registry CSS payload in the diff is part of the
+doc-demos lens. Check that payload by compiling it. The app that imports
+the package stylesheet does not cover the copy path.
+
 At `Stakes: sensitive` or higher the full lens set runs: every lens whose
 trigger matches the diff is mandatory, and an "optional" lens is not skipped.
 Route each lens agent with `zedkit-ai route <agent> --kind check --stakes <s> --provider <active-tool>`

@@ -32,8 +32,10 @@ Rules:
   and a 19.5px line. Do not swap them. Captions, badges and timestamps
   are `text-caption`: 12px with a 16px line. `text-xs` is that size and
   is banned. The label role is also 12px, with a 16.8px line and medium
-  weight. Do not swap those either. `Stack` accepts `sm` | `md` | `lg`;
-  the other numeric gap props stay until a major. The shipped rule is
+  weight. Do not swap those either. `Stack` accepts `sm` | `md` | `lg`.
+  The numeric gap props are still public and still on the baseline. Removing
+  them is a breaking change in its own change. While those props and the test
+  fixtures are the only hits, the count is not unfinished migration. The shipped rule is
   `packages/ai/kit/skills/setup-ai/design-policy.md`. Phone targets are
   44px, stricter than the kit's 24px floor. `min-h-target` follows
   `--spacing` and floors at 44px on a coarse pointer or a narrow screen.
