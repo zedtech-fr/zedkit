@@ -519,6 +519,10 @@ ol[data-sonner-toaster] {
 @utility status-ping {
   opacity: 0.6;
 }
+/* An option that is already chosen. Quieter than the row under the cursor. */
+@utility option-picked {
+  opacity: 0.6;
+}
 
 /* The chosen select value stays on one line. */
 [data-slot="select-value"] {

@@ -50,7 +50,7 @@ export function MultiSelectMenu({
                 className={cn(
                   "cursor-pointer rounded-sm px-control-inline py-control-block text-dense outline-none data-[disabled]:cursor-not-allowed data-[disabled]:fade-disabled",
                   highlightedIndex === index ? "bg-accent text-accent-foreground" : "",
-                  picked ? "opacity-60" : "",
+                  picked ? "option-picked" : "",
                 )}
               >
                 {item.label}

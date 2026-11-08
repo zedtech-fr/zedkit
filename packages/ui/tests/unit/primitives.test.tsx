@@ -157,6 +157,7 @@ describe("primitives", () => {
     expect(cn("disclosure-icon", "opacity-100")).toBe("opacity-100");
     expect(cn("sort-mark", "opacity-100")).toBe("opacity-100");
     expect(cn("status-ping", "opacity-100")).toBe("opacity-100");
+    expect(cn("option-picked", "opacity-100")).toBe("opacity-100");
   });
 
   it("renders horizontal and vertical separators", () => {
