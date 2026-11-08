@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { focusWithKeyboard } from "./a11y-helpers";
+
 const PROMPT = "Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md";
 
 test.describe("home AI setup section", () => {
@@ -61,8 +63,24 @@ test.describe("home AI setup section", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
     const terminal = page.locator("#ai-setup").getByRole("region", { name: "Files the AI setup creates" });
-    await terminal.focus();
+    await focusWithKeyboard(terminal);
     await expect(terminal).toBeFocused();
+    const focus = await terminal.evaluate((el) => {
+      const style = getComputedStyle(el);
+      const root = getComputedStyle(document.documentElement);
+      return {
+        className: el.className,
+        outlineStyle: style.outlineStyle,
+        outlineWidth: style.outlineWidth,
+        outlineOffset: style.outlineOffset,
+        ringWidth: root.getPropertyValue("--ring-width").trim(),
+        ringOffset: root.getPropertyValue("--ring-offset-width").trim(),
+      };
+    });
+    expect(focus.className).not.toContain("outline-2");
+    expect(focus.outlineStyle).toBe("solid");
+    expect(focus.outlineWidth).toBe(focus.ringWidth);
+    expect(focus.outlineOffset).toBe(`-${focus.ringOffset}`);
     const prompt = await page.locator("#ai-setup textarea").boundingBox();
     const tree = await terminal.boundingBox();
     expect(prompt && tree).toBeTruthy();
