@@ -9,7 +9,7 @@ import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
  */
 function HeroShapes() {
   return (
-    <span aria-hidden="true" data-hero-shapes="" className="pointer-events-none absolute pin-fill -z-10">
+    <span aria-hidden="true" data-hero-shapes="" className="pointer-events-none absolute pin-fill">
       <span data-shape="1" />
       <span data-shape="2" />
       <span data-shape="3" />

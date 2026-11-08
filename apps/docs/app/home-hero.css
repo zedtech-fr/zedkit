@@ -58,8 +58,9 @@
   max-width: 28rem;
 }
 
-/* Agent panel. Nearly the frame on a phone, the panel width from the medium breakpoint. */
+/* Agent panel. Nearly the frame on a phone, the panel width from the medium breakpoint. It sits above the window. */
 [data-hero-agent-panel] {
+  z-index: 20;
   width: calc(100% - 1rem);
 }
 @media (min-width: 48rem) {
@@ -158,7 +159,16 @@
  * On lg and up the window is the right column, so the discs sit there; below it they follow the stacked layout.
  */
 #home-page [data-hero-shapes] {
+  z-index: -10;
   display: none;
+}
+
+/* Guided cursor and the cards over the window. These stay put when motion is off. */
+#home-page [data-hero-cursor] {
+  z-index: 30;
+}
+#home-page [data-hero-satellite] {
+  z-index: 10;
 }
 
 :root[data-identity="glass"] #home-page [data-hero-shapes] {
@@ -275,7 +285,6 @@
 
   /* The guided cursor: a glide between controls, a ring when it presses. */
   #home-page [data-hero-cursor] {
-    z-index: 30;
     opacity: 0;
     transition:
       translate 560ms cubic-bezier(0.4, 0.05, 0.2, 1),
