@@ -511,6 +511,10 @@ ol[data-sonner-toaster] {
 @utility close-quiet {
   opacity: 0.7;
 }
+/* The sort mark beside a column name. Quieter than the label. */
+@utility sort-mark {
+  opacity: 0.6;
+}
 
 /* The chosen select value stays on one line. */
 [data-slot="select-value"] {

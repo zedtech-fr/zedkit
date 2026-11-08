@@ -155,6 +155,7 @@ describe("primitives", () => {
     expect(label.className).not.toContain("opacity-50");
     expect(cn("disabled:fade-disabled", "disabled:opacity-100")).toBe("disabled:opacity-100");
     expect(cn("disclosure-icon", "opacity-100")).toBe("opacity-100");
+    expect(cn("sort-mark", "opacity-100")).toBe("opacity-100");
   });
 
   it("renders horizontal and vertical separators", () => {
