@@ -56,6 +56,9 @@ describe("cn", () => {
     expect(cn("bg-card", "dialog-scrim")).toBe("dialog-scrim");
     expect(cn("dialog-scrim", "bg-card")).toBe("bg-card");
     expect(cn("dialog-scrim", "drawer-scrim")).toBe("drawer-scrim");
+    expect(cn("bg-card", "alert-destructive-fill")).toBe("alert-destructive-fill");
+    expect(cn("border-input", "alert-destructive-line")).toBe("alert-destructive-line");
+    expect(cn("alert-destructive-line", "dark:border-destructive")).toBe("alert-destructive-line dark:border-destructive");
     expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
     expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
     expect(cn("top-0", "pin-top")).toBe("pin-top");

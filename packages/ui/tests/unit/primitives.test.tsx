@@ -278,6 +278,10 @@ describe("primitives", () => {
     expect(alerts[0]?.getAttribute("data-slot")).toBe("alert");
     expect(alerts[0]?.className).toContain("rounded-lg");
     expect(alerts[1]?.className).toContain("text-destructive");
+    expect(alerts[1]?.className).toContain("alert-destructive-fill");
+    expect(alerts[1]?.className).toContain("alert-destructive-line");
+    expect(alerts[1]?.className).not.toContain("bg-destructive/");
+    expect(alerts[1]?.className).not.toContain("border-destructive/");
   });
 
   it("spaces the alert from the Tailwind scale", () => {

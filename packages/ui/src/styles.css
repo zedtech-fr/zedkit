@@ -564,6 +564,13 @@ ol[data-sonner-toaster] {
 @utility drawer-scrim {
   background-color: color-mix(in oklab, hsl(var(--overlay)) 50%, transparent);
 }
+/* Destructive alert. The fill is 90% of the destructive colour. The line is half of it. */
+@utility alert-destructive-fill {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 90%, transparent);
+}
+@utility alert-destructive-line {
+  border-color: color-mix(in oklab, hsl(var(--destructive)) 50%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;
