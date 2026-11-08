@@ -57,5 +57,6 @@ describe("toggles", () => {
     const thumb = toggle.querySelector("[data-slot=switch-thumb]");
     expect(thumb?.className).not.toContain("calc(var(--spacing)");
     expect(thumb?.className).not.toContain("translate-x-4");
+    expect(thumb?.className).not.toContain("ring-0");
   });
 });
