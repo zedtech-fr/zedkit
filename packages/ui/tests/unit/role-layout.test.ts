@@ -100,7 +100,7 @@ describe("layout job classes", () => {
     expect(css).toContain(".text-brand-word {\n  font-size: var(--text-xl);\n  font-weight: 600;");
     expect(css).toContain(".text-purpose {\n    font-size: var(--text-lg);");
     expect(css).toContain(".text-hero-lead {\n  font-size: var(--text-lg);\n  line-height: var(--zk-body-leading, 1.55);");
-    expect(css).toContain("[data-slot=\"switch\"] {\n  height: calc(var(--spacing) * 5);\n  width: calc(var(--spacing) * 9);");
+    expect(css).toContain("[data-slot=\"switch\"] {\n  height: calc(var(--spacing) * 5);\n  width: calc(var(--spacing) * 9);\n  border-width: 2px;\n  border-style: solid;\n  border-color: transparent;");
     expect(css).toContain("translate: calc(var(--spacing) * 5 - 4px) 0;");
     expect(css).toContain("[data-slot=\"prompt-input-field\"] {\n  padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));");
     expect(utility("ml-note")).toBe("margin-left: var(--zk-gap-sm);");
