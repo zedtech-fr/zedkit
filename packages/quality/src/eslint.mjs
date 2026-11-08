@@ -71,22 +71,49 @@ const COLOR_UTILS =
 /**
  * UI lint preset for .tsx/.jsx files.
  *
- * @param {{ entryPoint: string, scaleBaseline?: string }} options - Path to
+ * @param {{ entryPoint: string, scaleBaseline?: string, entryPoints?: { files: string[], entryPoint: string }[] }} options - Path to
  * the repo's Tailwind CSS entry, so the plugin knows the theme tokens.
  * Required, no default: the per-repo CSS path is the one thing that varies.
  * `scaleBaseline` is an optional JSON file of per-file scale-class counts.
  * Without it every scale step is an error. The count may only shrink.
+ * `entryPoints` scopes additional CSS entries to file globs (an app with
+ * its own globals that @imports the kit sheet plus app utilities).
  * @returns {import("eslint").Linter.Config[]} Flat config blocks.
  */
-export function uiPreset({ entryPoint, scaleBaseline } = {}) {
+export function uiPreset({ entryPoint, scaleBaseline, entryPoints = [] } = {}) {
   if (typeof entryPoint !== "string" || entryPoint === "") {
     throw new Error("uiPreset: `entryPoint` is required (path to your Tailwind CSS entry).");
+  }
+  if (!Array.isArray(entryPoints)) {
+    throw new Error("uiPreset: `entryPoints` must be a list of { files, entryPoint }.");
+  }
+  for (const scoped of entryPoints) {
+    if (!Array.isArray(scoped?.files) || scoped.files.length === 0 || typeof scoped?.entryPoint !== "string" || scoped.entryPoint === "") {
+      throw new Error("uiPreset: each `entryPoints` entry needs non-empty `files` and `entryPoint`.");
+    }
   }
   // Resolve once: the absolute path is what both better-tailwindcss and
   // the zedkit rules see, so linting from a subdirectory matches the root.
   const resolvedEntry = resolveEntryPoint(entryPoint, process.cwd());
   const entryDir = dirname(resolvedEntry);
   const themeRoot = tailwindPackageRoot(entryDir) ?? tailwindPackageRoot(process.cwd());
+  const btSettings = (resolved, root) => ({
+    "better-tailwindcss": {
+      entryPoint: resolved,
+      // The plugin resolves tailwindcss from its cwd. In a workspace that
+      // package often sits next to the CSS entry, not next to the ESLint process.
+      ...(root ? { cwd: root } : {}),
+    },
+  });
+  const scopedBlocks = entryPoints.map((scoped, index) => {
+    const resolved = resolveEntryPoint(scoped.entryPoint, process.cwd());
+    const root = tailwindPackageRoot(dirname(resolved)) ?? themeRoot;
+    return {
+      name: `zedkit/ui-tailwind-entry-${index}`,
+      files: scoped.files,
+      settings: btSettings(resolved, root),
+    };
+  });
   return [
     {
       name: "zedkit/ui-a11y",
@@ -97,14 +124,7 @@ export function uiPreset({ entryPoint, scaleBaseline } = {}) {
       name: "zedkit/ui-tailwind",
       files: ["**/*.tsx", "**/*.jsx"],
       plugins: { "better-tailwindcss": betterTailwindcss },
-      settings: {
-        "better-tailwindcss": {
-          entryPoint: resolvedEntry,
-          // The plugin resolves tailwindcss from its cwd. In a workspace that
-          // package often sits next to the CSS entry, not next to the ESLint process.
-          ...(themeRoot ? { cwd: themeRoot } : {}),
-        },
-      },
+      settings: btSettings(resolvedEntry, themeRoot),
       rules: {
         "better-tailwindcss/enforce-consistent-class-order": "error",
         "better-tailwindcss/no-duplicate-classes": "error",
@@ -203,6 +223,7 @@ export function uiPreset({ entryPoint, scaleBaseline } = {}) {
         ],
       },
     },
+    ...scopedBlocks,
   ];
 }
 

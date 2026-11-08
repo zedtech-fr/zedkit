@@ -92,6 +92,12 @@ export default tseslint.config(
   ...uiPreset({
     entryPoint: new URL("./packages/ui/src/styles.css", import.meta.url).pathname,
     scaleBaseline: new URL("./scripts/scale-class-baseline.json", import.meta.url).pathname,
+    entryPoints: [
+      {
+        files: ["apps/docs/**/*.tsx", "apps/docs/**/*.jsx"],
+        entryPoint: new URL("./apps/docs/app/globals.css", import.meta.url).pathname,
+      },
+    ],
   }),
   {
     files: sizeBudgetOverFile,

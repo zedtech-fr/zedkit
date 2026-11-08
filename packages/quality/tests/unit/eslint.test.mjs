@@ -49,6 +49,21 @@ describe("nodePreset", () => {
   });
 });
 
+describe("uiPreset entryPoints", () => {
+  it("appends a scoped settings block per extra entry point", () => {
+    const blocks = uiPreset({
+      entryPoint: "/repo/packages/ui/src/styles.css",
+      entryPoints: [{ files: ["apps/docs/**/*.tsx"], entryPoint: "/repo/apps/docs/app/globals.css" }],
+    });
+    const scoped = blocks.find((block) => block.name === "zedkit/ui-tailwind-entry-0");
+    expect(scoped?.files).toEqual(["apps/docs/**/*.tsx"]);
+    expect(scoped?.settings?.["better-tailwindcss"]?.entryPoint).toBe("/repo/apps/docs/app/globals.css");
+    // The repo-wide block keeps the primary entry.
+    const main = blocks.find((block) => block.name === "zedkit/ui-tailwind");
+    expect(main?.settings?.["better-tailwindcss"]?.entryPoint).toBe("/repo/packages/ui/src/styles.css");
+  });
+});
+
 describe("uiPreset", () => {
   it("reads component-layer names before calling a class unknown", () => {
     const [, tailwind] = uiPreset({ entryPoint: "/repo/app/globals.css" });
@@ -65,6 +80,7 @@ describe("uiPreset", () => {
 
   it("fails fast when entryPoint is missing", () => {
     expect(() => uiPreset({})).toThrow("entryPoint");
+    expect(() => uiPreset({ entryPoint: "/repo/app/globals.css", entryPoints: [{ files: ["apps/docs/**"] }] })).toThrow("entryPoints");
   });
 
   it("lint messages carry the rule id and explanation", () => {

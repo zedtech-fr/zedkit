@@ -62,7 +62,7 @@ export function AiSetupPrompt() {
       className={
         // not-prose is a fumadocs escape hatch, not a Tailwind utility.
         // eslint-disable-next-line better-tailwindcss/no-unknown-classes
-        "not-prose muted-wash rounded-lg border border-border surface-pad-md"
+        "not-prose rounded-lg border border-border muted-wash surface-pad-md"
       }
     >
       <Text as="p" variant="muted" className="trim-margin">

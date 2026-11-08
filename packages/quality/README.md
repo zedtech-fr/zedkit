@@ -75,7 +75,9 @@ commands) see `@zedtech/zedkit-ai` instead.
   attributes, no `forwardRef` (ref is a prop; see `packages/ui/src/button.tsx`),
   no explicit `any`, files ≤ 300 lines and functions ≤ 60, no raw `try`/`catch`.
   `entryPoint` (your Tailwind CSS entry) is required: it is the one thing
-  that varies per repo.
+  that varies per repo. Apps with their own globals that `@import` the
+  kit sheet pass `entryPoints: [{ files, entryPoint }]` so their files
+  resolve app-defined utilities too.
 - `defineLayers({ kitPackage, viewDirs, dataDirs, actionPatterns, extraPatterns })` —
   `no-restricted-imports` blocks for routes -> views -> data: the UI kit
   is only imported from views, views never import data clients or

@@ -15,6 +15,11 @@ export interface UiPresetOptions {
    * Counts may only shrink. Omit it and every scale step is an error.
    */
   readonly scaleBaseline?: string;
+  /**
+   * Additional CSS entries scoped to file globs, for apps whose globals
+   * @import the kit sheet plus app-level utilities.
+   */
+  readonly entryPoints?: readonly { readonly files: readonly string[]; readonly entryPoint: string }[];
 }
 
 export function uiPreset(options: UiPresetOptions): Linter.Config[];
