@@ -1517,8 +1517,8 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
-- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named (`tight`, `sm`, `md`, `lg`, `prose`, `list`, `blocks`); numeric steps were removed. Bleed sections carry a sizing recipe: in a wide `zk-query` slot their rhythm steps up one section step.
-- When to use: For all kit-page layout instead of hand-written flex.
+- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.
+- When to use: For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.
 - When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.
 - See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
 - A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap and smooth scrolling apply only when `prefers-reduced-motion` is `no-preference`.
@@ -1540,7 +1540,7 @@ import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: Container
 - Audience: Developers building marketing and docs pages with capped measures and full-bleed bands.
-- Purpose: Named container widths and edge-to-edge section bands from the layout token scale. `query` also establishes the container as the sizing slot (`zk-query` marker) that container-aware components (Card, Section) adapt to — the same class works on any grid cell or layout slot without a Container.
+- Purpose: Named container widths and edge-to-edge section bands from the layout token scale. `query` makes the container a sizing slot for adaptive components.
 - When to use: For page shells and banded landing sections instead of hand-written max-width, gutter and section-padding strings. Add `query` where descendants should size to their allocated space, not the viewport.
 - When not to use: For app chrome with sidebars — use the app shell; for component-internal widths — use the spacing scale.
 - See also: `Stack content and group titled sections`, `Group content in a card section`

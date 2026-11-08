@@ -202,7 +202,7 @@ export function AdminDashboardDemoApp({
             </Stack>
           </Stack>
         )}
-        <Stack gap={isHome ? 2 : 4} className={`content-shrink ${bodyPad}`}>
+        <Stack gap={isHome ? "sm" : "lg"} className={`content-shrink ${bodyPad}`}>
           <DataTable
             columns={columns}
             data={tableData}

@@ -5,8 +5,8 @@ import { DOCS_TYPE_H3_CLASS } from "@/lib/docs-type-roles";
  * section spacing scale (full-bleed bands); these constants cover the gaps
  * and card grids inside each band.
  */
-export const HOME_SECTION_CONTENT_GAP = 6;
-export const HOME_CARD_CONTENT_GAP = 4;
+export const HOME_SECTION_CONTENT_GAP = "list" as const;
+export const HOME_CARD_CONTENT_GAP = "lg" as const;
 
 export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-pair";
 /**
