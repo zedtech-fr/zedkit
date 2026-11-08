@@ -575,6 +575,14 @@ ol[data-sonner-toaster] {
 @utility status-idle {
   background-color: color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent);
 }
+/* Phone menu row, hovered. A muted tint. */
+@utility menu-hover {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 60%, transparent);
+}
+/* Phone menu row for the page you are on. Stronger than the hover. */
+@utility menu-current {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 80%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;

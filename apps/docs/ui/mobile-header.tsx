@@ -85,7 +85,7 @@ function NavDrawerLink({
       href={link.href}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
-      className={`${className}${active ? " bg-muted/80 text-foreground" : ""}`}
+      className={`${className}${active ? " menu-current text-foreground" : ""}`}
       {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
     >
       <span className="content-shrink flex-1">{link.text}</span>
