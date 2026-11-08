@@ -105,7 +105,8 @@ pnpm typecheck              # turbo: tsc --noEmit everywhere
 pnpm lint                   # turbo: eslint everywhere
 pnpm build                  # turbo: build everywhere (docs: static export in apps/docs/out)
 pnpm test                   # turbo: vitest in every package; not the line below
-pnpm test:registry          # node:test: scripts/, deploy/ (incl. suggest), apps/docs/scripts
+pnpm test:registry          # node:test: test:registry:nodeploy globs + deploy/* (incl. packages/ai/scripts)
+pnpm test:registry:nodeploy # node:test without deploy/* (self-hosted CI path)
 pnpm changeset:status       # versioning dry-run (no publish)
 pnpm catalog:build          # regenerate docs/catalog/catalog.json
 pnpm catalog:check          # catalog + docs check (demo registry, previews, /r/ urls)
