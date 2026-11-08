@@ -100,7 +100,7 @@ function IdentityPicker({
                 onClick={() => choose(item.id)}
                 className={cn(
                   "flex min-h-overlay-touch-target items-center justify-between gap-stack-md rounded-lg border px-control-inline py-control-block-lg text-left focus-ring-control transition-colors",
-                  selected ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted",
+                  selected ? "border-primary option-selected" : "border-transparent hover:bg-muted",
                 )}
               >
                 <span className="content-shrink">
