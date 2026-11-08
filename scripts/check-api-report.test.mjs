@@ -258,6 +258,42 @@ ${SEO_FN}
   assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
 });
 
+test("changeset gate fails when HEAD adds the original name of export { hidden as visible }", (t) => {
+  const dir = initSeoCatchUpRepo({
+    index: 'export { hidden as visible } from "./jsonld.js";\n',
+    jsonld: "export function hidden(): void {}\n",
+    headReport: `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+export function hidden(): void;
+\`\`\`
+`,
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
+test("changeset gate fails when HEAD catch-up lists only the first overload", (t) => {
+  const dir = initSeoCatchUpRepo({
+    index: `export function foo(x: string): void;
+export function foo(x: number): void;
+export function foo(x: string | number): void {}\n`,
+    jsonld: "export {}\n",
+    headReport: `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+export function foo(x: string): void;
+\`\`\`
+`,
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
 test("changeset gate fails when a fake export lives in a block comment or template string", (t) => {
   const commentDir = initSeoCatchUpRepo({
     index: `/*

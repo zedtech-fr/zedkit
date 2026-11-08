@@ -183,6 +183,30 @@ describe("resolvePublicDeclarations", () => {
     assert.equal(commented.has("otherFn"), true);
     assert.equal(templated.has("otherFn"), true);
   });
+
+  it("does not register the original name of an export { hidden as visible } re-export", () => {
+    const decls = resolvePublicDeclarations(
+      {
+        "src/index.ts": 'export { hidden as visible } from "./impl.js";\n',
+        "src/impl.ts": "export function hidden(): void {}\n",
+      },
+      "src/index.ts",
+    );
+    assert.equal(decls.has("hidden"), false);
+    assert.equal(decls.has("visible"), false);
+  });
+
+  it("does not keep only the first overload as the public shape", () => {
+    const decls = resolvePublicDeclarations(
+      {
+        "src/index.ts": `export function foo(x: string): void;
+export function foo(x: number): void;
+export function foo(x: string | number): void {}\n`,
+      },
+      "src/index.ts",
+    );
+    assert.equal(decls.has("foo"), false);
+  });
 });
 
 describe("evaluateReportChange", () => {
@@ -322,6 +346,43 @@ export function otherFn(): void {}
       mainSources: {
         "src/index.ts":
           "const s = `\nexport function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode> {}\nexport interface SoftwareSourceCodeJsonLdOptions { name: string }\n`;\nexport function otherFn(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when HEAD adds the original name of an export { hidden as visible }", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export function hidden(): void;\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts":
+          'export { hidden as visible } from "./impl.js";\nexport function otherFn(): void {}\n',
+        "src/impl.ts": "export function hidden(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when HEAD catch-up lists only the first overload", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export function foo(x: string): void;\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": `export function foo(x: string): void;
+export function foo(x: number): void;
+export function foo(x: string | number): void {}
+export function otherFn(): void {}\n`,
       },
       kinds: new Set(),
     });

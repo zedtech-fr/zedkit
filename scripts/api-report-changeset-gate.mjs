@@ -207,6 +207,7 @@ function parseSourceFile(text, path = "file.ts") {
   const all = new Map();
   /** @type {Map<string, string>} */
   const locals = new Map();
+  const overloaded = new Set();
   /** @type {{ from: string, names: '*' | { exported: string, original: string }[] }[]} */
   const reexports = [];
 
@@ -215,7 +216,15 @@ function parseSourceFile(text, path = "file.ts") {
     const exported = isExported(stmt);
     for (const { name, text: block } of namedDecls(stmt, sf)) {
       all.set(name, block);
-      if (exported && !locals.has(name)) locals.set(name, block);
+      if (!exported) continue;
+      // shortcut: duplicate exported names (overloads, merges) are not
+      // catch-up; a changeset is required.
+      if (locals.has(name) || overloaded.has(name)) {
+        locals.delete(name);
+        overloaded.add(name);
+      } else {
+        locals.set(name, block);
+      }
     }
   }
   for (const stmt of sf.statements) {
@@ -232,9 +241,16 @@ function parseSourceFile(text, path = "file.ts") {
       original: (el.propertyName ?? el.name).text,
       exported: el.name.text,
     }));
-    if (from) reexports.push({ from, names });
-    else {
+    if (from) {
+      // shortcut: `export { hidden as visible }` is not catch-up. Register
+      // only same-name specifiers so the original local stays non-public.
+      reexports.push({
+        from,
+        names: names.filter((n) => n.exported === n.original),
+      });
+    } else {
       for (const { original, exported } of names) {
+        if (exported !== original) continue;
         const block = all.get(original);
         if (block && !locals.has(exported)) locals.set(exported, block);
       }
@@ -277,8 +293,8 @@ export function resolvePublicDeclarations(files, entry) {
       }
       const wanted = new Set();
       for (const { exported, original } of reexport.names) {
+        if (exported !== original) continue;
         if (only && !only.has(exported)) continue;
-        wanted.add(original);
         wanted.add(exported);
       }
       if (wanted.size > 0) take(target, wanted);
