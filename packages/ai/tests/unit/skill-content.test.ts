@@ -83,6 +83,22 @@ describe("skill content conventions", () => {
     );
   });
 
+  it("every message picks depth before answering, and a search loads audit", () => {
+    const template = readFileSync(join(kitDir(), "AGENTS.template.md"), "utf8");
+    expect(template).toContain("Depth first");
+    expect(template).toMatch(/are there other\/unused/u);
+    const audit = readFileSync(
+      join(kitDir(), "skills", "audit", "SKILL.md"),
+      "utf8",
+    );
+    expect(audit).toMatch(/^description:.*search or inventory/mu);
+    const orchestrate = readFileSync(
+      join(kitDir(), "skills", "orchestrate", "SKILL.md"),
+      "utf8",
+    );
+    expect(orchestrate).toMatch(/^description:.*when the request is deep/mu);
+  });
+
   it("plan, challenge and review go through orchestrate and set the quality bar", () => {
     for (const name of ["plan", "challenge", "review"] as const) {
       const raw = readFileSync(

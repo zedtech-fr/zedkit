@@ -267,7 +267,7 @@ when the skills link is not followed.
 - *Smallest complete change* (`ponytail`, MIT, vendored): reuse before adding.
 - *Parallel and context-aware* (`parallel-work`): fan out independent work to
   subagents with self-contained briefs; contract first, disjoint files.
-  Entrypoints go through `orchestrate` (read tokenomics, pick a build team).
+  Depth first: a search or inventory loads `audit`. Named entrypoints go through `orchestrate` (read tokenomics, pick a build team).
 - *Proven done* (`definition-of-done`, agent `verifier`): gates on the final
   state, no weakened tests, refactor parity by reading bodies, cold second
   review.
@@ -280,8 +280,10 @@ when the skills link is not followed.
 from that material, every claim tagged verbatim, inference or absent;
 technical audits skip the source quota and the wait-for-question stop).
 
-**Entry points (one command per phase):** each hands to `orchestrate` (read
-tokenomics, pick a build team) unless already running as that playbook.
+**Entry points (one command per phase):** a casual search or inventory is
+deep too — load `audit` even without `/audit`. Named commands each hand to
+`orchestrate` (read tokenomics, pick a build team) unless already running as
+that playbook.
 `review`, `plan`, `challenge`, `implement`, `from-audit` (audit → revalidated plan),
 `to-audit` (questions → audit), `quick-wins` (one topic, two modes).
 `/fix` does not: one defect stays inline, with its check.

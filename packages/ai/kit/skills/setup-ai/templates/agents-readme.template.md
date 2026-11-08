@@ -11,7 +11,7 @@ Human and agent index for this repo. Always-loaded law lives in root `AGENTS.md`
 4. `/review` — punchlist (agent `reviewer`); `/implement` of findings via `improver`.
 5. Close with `definition-of-done` and `rules-upkeep` (`Rules: none` when nothing to encode).
 
-Every numbered command hands to `orchestrate` (tokenomics + **build team**), except `/fix` and `/improve-from-review`, which stay inline. Plan, challenge and review: go deep, be strict, and be brutally honest.
+On every message, pick depth first (root `AGENTS.md`). A search or inventory is an audit, not a grep-and-reply. Every numbered command hands to `orchestrate` (tokenomics + **build team**), except `/fix` and `/improve-from-review`, which stay inline. Plan, challenge and review: go deep, be strict, and be brutally honest.
 
 ## Commands (human-triggered)
 
