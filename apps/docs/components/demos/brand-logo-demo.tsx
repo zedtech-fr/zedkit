@@ -76,7 +76,7 @@ export function BrandLogoDemo() {
         <Text as="span" className="text-brand-word" aria-hidden="true">
           {brandLogoCopy.brandName}
         </Text>
-        <Text as="span" className="text-dense opacity-80" aria-hidden="true">
+        <Text as="span" data-share-tagline="" className="text-dense" aria-hidden="true">
           {brandLogoCopy.tagline}
         </Text>
       </Stack>
