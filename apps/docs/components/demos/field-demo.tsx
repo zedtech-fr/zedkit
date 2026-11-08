@@ -22,7 +22,7 @@ function NotifyField() {
   return (
     <FieldLabel className="items-center">
       <Checkbox defaultChecked />
-      <span>{fieldCopy.notifyLabel}</span>
+      <Text as="span">{fieldCopy.notifyLabel}</Text>
     </FieldLabel>
   );
 }
