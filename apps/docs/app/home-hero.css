@@ -89,6 +89,8 @@
 #home-page [data-hero-faces] [data-hero-avatar] {
   width: 1.875rem;
   height: 1.875rem;
+  /* A card-coloured rim so the overlapping faces stay separate. */
+  border: 2px solid hsl(var(--card));
 }
 
 #home-page [data-hero-rules] {

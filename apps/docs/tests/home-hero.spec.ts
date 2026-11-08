@@ -434,6 +434,30 @@ test("the cards over the window's edge follow the pointer, and are out of reach 
   await page.goto("/", { waitUntil: "networkidle" });
   const satellite = page.locator("#demo [data-hero-satellite]").first();
   await expect(page.locator("#demo [data-hero-satellite]")).toHaveCount(2);
+  const faces = await page.locator("[data-hero-faces] [data-hero-avatar]").evaluateAll((nodes) => {
+    const probe = document.createElement("div");
+    probe.style.borderTop = "2px solid hsl(var(--card))";
+    document.body.append(probe);
+    const card = getComputedStyle(probe).borderTopColor;
+    probe.remove();
+    return nodes.map((node) => {
+      const style = getComputedStyle(node);
+      return {
+        className: node.className,
+        border: style.borderTopWidth,
+        color: style.borderTopColor,
+        card,
+      };
+    });
+  });
+  expect(faces.length).toBeGreaterThan(1);
+  for (const face of faces) {
+    expect(face.className).not.toContain("border-2");
+    expect(face.border).toBe("2px");
+    expect(face.color).toBe(face.card);
+  }
+  const noticeBorder = await page.locator("[data-hero-notice] [data-hero-avatar]").evaluate((node) => getComputedStyle(node).borderTopWidth);
+  expect(noticeBorder).toBe("0px");
   await expect(satellite).toHaveAttribute("aria-hidden", "true");
   expect(await satellite.evaluate((node) => node.hasAttribute("inert"))).toBe(true);
   expect(await satellite.evaluate((node) => node.querySelectorAll("a, button, input, [tabindex]").length)).toBe(0);
