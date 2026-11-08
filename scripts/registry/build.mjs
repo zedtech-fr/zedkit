@@ -3,13 +3,8 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  assertUniqueStems,
-  indexSources,
-  knownImportBasenames,
-  resolveUniqueSource,
-} from "./resolve-ui-source.mjs";
-import { rewriteUiImports } from "./rewrite-ui-imports.mjs";
+import { assertUniqueStems, indexSources, resolveUniqueSource, stemOf } from "./resolve-ui-source.mjs";
+import { consumerDestinations, rewriteUiImports } from "./rewrite-ui-imports.mjs";
 import { generateThemePayload } from "./theme-payload.mjs";
 import { expectedRegistryThemeFromStyles } from "./theme-tokens.mjs";
 
@@ -27,16 +22,26 @@ function stageTransformedSources() {
   const staged = [...REGISTRY_UI_FILES, ...REGISTRY_I18N_FILES];
   const index = indexSources([uiSrc, i18nSrc]);
   assertUniqueStems(index, staged);
-  const known = knownImportBasenames(staged);
+  const resolved = staged.map((file) => {
+    const src = resolveUniqueSource(index, file);
+    return { file, src, stem: stemOf(file) };
+  });
+  const destinations = consumerDestinations({
+    canonicalUtils: join(uiSrc, "utils.ts"),
+    staged: resolved.map(({ src, stem }) => [src, stem]),
+  });
   rmSync(generatedDir, { recursive: true, force: true });
   mkdirSync(generatedDir, { recursive: true });
-  for (const file of staged) {
-    const src = resolveUniqueSource(index, file);
+  for (const { file, src } of resolved) {
     const dest = join(generatedDir, file);
     if (existsSync(dest)) {
       throw new Error(`registry output would overwrite ${file} (from ${src})`);
     }
-    writeFileSync(dest, rewriteUiImports(readFileSync(src, "utf8"), known), "utf8");
+    writeFileSync(
+      dest,
+      rewriteUiImports(readFileSync(src, "utf8"), { importerPath: src, destinations }),
+      "utf8",
+    );
   }
   writeFileSync(
     join(generatedDir, "README.md"),

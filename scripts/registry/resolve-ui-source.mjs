@@ -60,6 +60,3 @@ export function assertUniqueStems(index, fileNames) {
   }
 }
 
-export function knownImportBasenames(fileNames) {
-  return new Set(fileNames.map(stemOf));
-}
