@@ -148,16 +148,16 @@ function useExitUnmountFallback<T extends HTMLElement>(): React.RefCallback<T> {
 
 /** D5 overlay role: header/footer inherit the panel surface (no opaque chrome bands). */
 const overlayDialogHeaderClass =
-  "sticky pin-top z-10 flex flex-col gap-dialog-header-stack pr-dialog-header-end text-left";
+  "sticky pin-top z-overlay-chrome flex flex-col gap-dialog-header-stack pr-dialog-header-end text-left";
 const overlayDialogFooterClass =
-  "sticky pin-bottom z-10 flex flex-col-reverse gap-dialog-footer-gap pb-dialog-footer-safe sm:flex-row sm:justify-end sm:items-center";
+  "sticky pin-bottom z-overlay-chrome flex flex-col-reverse gap-dialog-footer-gap pb-dialog-footer-safe sm:flex-row sm:justify-end sm:items-center";
 const overlayDialogCloseClass =
-  "absolute pin-top pin-right z-20 grid size-overlay-touch-target shrink-0 place-content-center rounded-sm opacity-70 focus-ring-control transition-opacity hover:opacity-100 disabled:pointer-events-none";
+  "absolute pin-top pin-right z-overlay-close grid size-overlay-touch-target shrink-0 place-content-center rounded-sm opacity-70 focus-ring-control transition-opacity hover:opacity-100 disabled:pointer-events-none";
 
 const overlayDrawerHeaderClass =
-  "sticky pin-top z-10 flex shrink-0 flex-col gap-drawer-header-gap border-b border-border p-drawer-chrome-padding text-left";
+  "sticky pin-top z-overlay-chrome flex shrink-0 flex-col gap-drawer-header-gap border-b border-border p-drawer-chrome-padding text-left";
 const overlayDrawerFooterClass =
-  "sticky pin-bottom z-10 mt-auto flex shrink-0 flex-col gap-drawer-footer-gap border-t border-border px-drawer-chrome-padding pt-drawer-chrome-padding pb-drawer-footer-safe sm:flex-row sm:justify-end sm:items-center";
+  "sticky pin-bottom z-overlay-chrome mt-auto flex shrink-0 flex-col gap-drawer-footer-gap border-t border-border px-drawer-chrome-padding pt-drawer-chrome-padding pb-drawer-footer-safe sm:flex-row sm:justify-end sm:items-center";
 
 export {
   focusOverlayInitial,

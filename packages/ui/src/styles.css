@@ -490,6 +490,15 @@ ol[data-sonner-toaster] {
  * translate-[-50%] arbitraries. Uses the `translate` property (not
  * `transform`) so the zk-zoom enter/exit keyframes compose with it.
  */
+/* Sticky header and footer inside a dialog or drawer, above the scrolling body. */
+@utility z-overlay-chrome {
+  z-index: 10;
+}
+/* Dialog close, above that sticky header. */
+@utility z-overlay-close {
+  z-index: 20;
+}
+
 @utility dialog-center {
   top: var(--spacing-dialog-center);
   left: var(--spacing-dialog-center);
