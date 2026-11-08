@@ -35,7 +35,7 @@ links plus generated agents). Licences and credits of vendored skills:
 4. `/review` — punchlist (`reviewer`); apply via `improver`.
 5. Close with `definition-of-done` and `rules-upkeep` (`Rules: none` when nothing to encode).
 
-Every numbered command hands to `orchestrate` (tokenomics + **build team**), except `/fix` and `/improve-from-review`, which stay inline. Plan, challenge and review: go deep, be strict, and be brutally honest.
+On every message, pick depth first (root `AGENTS.md`). A search or inventory is `audit`, not a grep-and-reply. Every numbered command hands to `orchestrate` (tokenomics + **build team**), except `/fix` and `/improve-from-review`, which stay inline. Plan, challenge and review: go deep, be strict, and be brutally honest.
 
 ## Commands
 

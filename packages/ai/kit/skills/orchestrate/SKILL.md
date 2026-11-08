@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: "Hand a task to the orchestrator: read tokenomics, pick a build team, dispatch playbooks. Default path for plan, review, implement, audit and research entrypoints."
+description: "Hand a task to the orchestrator: read tokenomics, pick a build team, dispatch playbooks. Default path when the request is deep (search, inventory, audit, plan, review, implement, research) or spans more than one skill. Not for one named defect."
 ---
 
 Hand the task to the **`orchestrator`** subagent with the user's text, any

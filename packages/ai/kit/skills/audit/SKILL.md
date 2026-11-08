@@ -1,6 +1,6 @@
 ---
 name: audit
-description: "Thorough, persistent audit of a repo, package or topic: coverage map from the actual request, evidence from code, history, artifacts, consumers and external primary sources, findings split by kind with acceptance criteria. Use when asked to audit, run the quality loop, or on schedule. Investigates by default; fixes only when the same request asks for them."
+description: "Thorough, persistent audit of a repo, package or topic: coverage map from the actual request, evidence from code, history, artifacts, consumers and external primary sources, findings split by kind with acceptance criteria. Use when asked to audit, search or inventory (are there other/unused/useless checks, similar dead weight, what else can we drop), run the quality loop, or on schedule. Investigates by default; never shrinks the ask to the last task's cousin; fixes only when the same request asks for them."
 ---
 
 An audit is an investigation, not a scan and not a fix loop. It is complete

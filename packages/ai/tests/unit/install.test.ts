@@ -1134,6 +1134,8 @@ describe("installKit", () => {
     expect(text).toContain(
       "the 7-question ladder (same section as the kit template)",
     );
+    expect(text).toContain("Missing depth gate");
+    expect(text).toContain("Depth first");
   });
 
   it("setup-ai covers multi-repo workspace roots and leaves children alone", () => {
