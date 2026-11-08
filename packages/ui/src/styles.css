@@ -532,6 +532,14 @@ ol[data-sonner-toaster] {
 @utility primary-hover {
   background-color: color-mix(in oklab, hsl(var(--primary)) 90%, transparent);
 }
+/* Ghost button, hovered. A muted tint, not a second fill. */
+@utility ghost-hover {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 80%, transparent);
+}
+/* Ghost button, pressed. The secondary colour, a little quieter. */
+@utility ghost-pressed {
+  background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;

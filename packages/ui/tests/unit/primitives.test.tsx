@@ -15,8 +15,11 @@ describe("primitives", () => {
   it("uses a quiet ghost hover (muted tint, not accent fill)", () => {
     render(<Button variant="ghost">Quiet</Button>);
     const button = screen.getByRole("button", { name: "Quiet" });
-    expect(button.className).toContain("hover:bg-muted/80");
+    expect(button.className).toContain("hover:ghost-hover");
+    expect(button.className).toContain("aria-pressed:ghost-pressed");
     expect(button.className).not.toContain("hover:bg-accent");
+    expect(button.className).not.toContain("bg-muted/");
+    expect(button.className).not.toContain("bg-secondary/");
   });
 
   it("uses underline-only link styling without a hover fill", () => {
