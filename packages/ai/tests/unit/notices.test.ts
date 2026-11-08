@@ -133,6 +133,12 @@ describe("third-party notices", () => {
     }
   });
 
+  it("lists the retro skill edit under Matt Pocock modifications", () => {
+    const notices = readFileSync(`${kitDir()}/THIRD_PARTY_NOTICES.md`, "utf8");
+    const pocock = notices.split("## Matt Pocock")[1]?.split("## ")[0] ?? "";
+    expect(pocock).toContain("`retro/SKILL.md`");
+  });
+
   it("names only shipped skills in the README vendored paragraph", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     const at = readme.indexOf("**Skills vendored (MIT):**");

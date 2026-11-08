@@ -53,9 +53,12 @@ Go deep, be strict, and be brutally honest.
      withdrawn rule left as a current instruction fails the plan. A
      "blocked by" edge that disagrees with the order arrow fails it too.
      When the plan contradicts a loaded file (a skill, a package
-     `AGENTS.md`, or a check's success message), that file is task 1, not
-     a follow-up after merge. A gitignored plan does not reach the next
-     session. Name the loaded file.
+     `AGENTS.md`, or a check's success message), resolve the contradiction
+     from the authorized decisions, then place that file in the order
+     those decisions imply: an obsolete execution rule is a prior task; a
+     description of current behavior the plan will change lands with that
+     change. Name the loaded file. A gitignored plan does not reach the
+     next session.
 5. **Report.** Kept (as tasks, spikes, decisions), dropped (with why:
    unsupported, already fixed, duplicate), and anything the revalidation
    could not settle. Evidence is `file:line`.

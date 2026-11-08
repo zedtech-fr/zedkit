@@ -33,7 +33,7 @@ Shipped default for every host. Token values and the role vocabulary belong to t
 
 - The host's lint or CI rejects the classes above. Prose does not enforce them.
 - If a required check cannot initialize (Tailwind is not resolvable, or the CSS entry is missing), the run fails closed. It does not report success with the check skipped.
-- Existing violations may sit in a baseline. The count may only decrease. The baseline is an inventory of what remains, not a verdict that the work is unfinished. When every remaining hit is a named public API or a test fixture, report that constraint and stop. Do not keep editing other files to drive the count to zero.
+- Existing violations may sit in a baseline. The count may only decrease. The baseline is an inventory of what remains, not a verdict that the work is unfinished. Report why each remaining hit is still there. Continue a named, authorized removal even when the hits are a public API or fixtures. New edits belong to that authorized change, not to the count.
 - Hierarchy, density and which state a screen shows are judged on current pixels, not on old screenshots.
 
 ## Setup

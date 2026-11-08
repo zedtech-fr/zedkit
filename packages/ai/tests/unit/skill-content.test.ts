@@ -145,6 +145,9 @@ describe("skill content conventions", () => {
     expect(from).toContain("quiz-for-approval and publish steps are not automatic");
     expect(from).toContain("carry that approval through");
     expect(from).toContain("only when the user asked for tickets");
+    expect(from).toContain("resolve the contradiction");
+    expect(from).toContain("obsolete execution rule");
+    expect(from).not.toContain("that file is task 1");
     expect(to).toContain("Playbook: to-audit");
     expect(to).toContain("before `plan`");
     expect(to).toContain("Do not implement");
@@ -170,6 +173,10 @@ describe("skill content conventions", () => {
     expect(raw).toContain("source → shipped/installed artifact");
     expect(raw).toContain("never the whole investigation");
     expect(raw).toContain("Not checked:");
+    expect(raw).toContain("retained artifact");
+    expect(raw).not.toContain(
+      "or a result whose data is null, stays **Not checked** until this session repeats",
+    );
     expect(raw).not.toContain("opens small issues and fix PRs");
   });
 

@@ -62,8 +62,10 @@ describe("compose-ui skill", () => {
     expect(read("skills/setup-ai/design-policy.md")).toContain("min-w-zero");
     expect(read("skills/setup-ai/design-policy.md")).toContain("min-width: 0");
     expect(read("skills/setup-ai/design-policy.md")).toContain("may share one value");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("named, authorized removal");
     expect(read("skills/setup-ai/design-policy.md")).not.toContain("One name per shared value");
     expect(read("skills/setup-ai/design-policy.md")).not.toContain("above zero");
+    expect(read("skills/setup-ai/design-policy.md")).not.toContain("report that constraint and stop");
     expect(read("agents/ui-designer.md")).toContain("spells a number");
   });
 
