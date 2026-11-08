@@ -429,7 +429,7 @@ import { Separator } from "@zedtech/zedkit-ui";
 
 ```ts
 import { Separator, Stack, Text } from "@zedtech/zedkit-ui";
-<Stack direction="horizontal" gap={3} className="items-center">
+<Stack direction="horizontal" gap="md" className="items-center">
   <Text>Orders</Text>
   <Separator orientation="vertical" />
   <Text>Customers</Text>
@@ -1856,7 +1856,7 @@ import { GlassSurface } from "@zedtech/zedkit-ui/marketing";
 
 <StickyAside side="right" ratio="1/3">
   <StickyAside.Main>
-    <Stack gap={4}>{/* numbered steps */}</Stack>
+    <Stack gap="lg">{/* numbered steps */}</Stack>
   </StickyAside.Main>
   <StickyAside.Aside asChild>
     <GlassSurface padding="md">
@@ -1960,7 +1960,7 @@ const steps = [
   scenes={steps.map((step, index) => ({
     id: step.id,
     caption: (
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Text variant="muted">Step {index + 1} of {steps.length}</Text>
         <Heading level={3}>{step.title}</Heading>
         <Text variant="muted">{step.text}</Text>
@@ -2019,7 +2019,7 @@ const looks = [
   scenes={looks.map((look) => ({
     id: look.id,
     caption: (
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Heading level={3}>{look.title}</Heading>
         <Text variant="muted">{look.text}</Text>
       </Stack>
@@ -2047,7 +2047,7 @@ const plans = [
   scenes={plans.map((plan) => ({
     id: plan.id,
     caption: (
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Heading level={3}>{plan.title}</Heading>
         <Text variant="muted">{plan.text}</Text>
       </Stack>
