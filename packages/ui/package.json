@@ -79,9 +79,9 @@
     "smoke": "playwright test"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "tailwindcss": "catalog:"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0"
   },
   "dependencies": {
     "@zedtech/zedkit-i18n": "workspace:*",

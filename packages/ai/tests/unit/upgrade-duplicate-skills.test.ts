@@ -1,11 +1,11 @@
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { parseFrontmatter } from "#frontmatter.js";
 import { installKit } from "#install.js";
-import { validateKit } from "#validate.js";
-import { tempDir } from "./helpers.js";
+import { checkDrift, validateKit } from "#validate.js";
+import { put, tempDir } from "./helpers.js";
 
 function run(...argv: string[]): { code: number; text: string; errors: string } {
   const out: string[] = [];
@@ -153,5 +153,71 @@ describe("Upgrading Cursor+Muse with a personalized orchestrate skill", () => {
     const issues = validateKit(join(dest, ".agents"));
     expect(issues.filter((issue) => issue.path.includes("orchestrate"))).toEqual([]);
     expect(claimants(join(dest, ".agents"), "orchestrate")).toEqual(["orchestrate"]);
+  });
+});
+
+describe("provider layer with a same-named project skill (D5)", () => {
+  function seedHouseReview(dest: string): void {
+    // Replace the whole-dir link with a real project layer first: writing
+    // through the link would rename the shared canonical source.
+    const layer = join(dest, ".claude", "skills");
+    if (lstatSync(layer).isSymbolicLink()) unlinkSync(layer);
+    mkdirSync(join(layer, "review"), { recursive: true });
+    put(dest, ".claude/skills/review/SKILL.md", '---\nname: review\n---\n\n# House review checklist\n');
+  }
+
+  function setupAdopt(dest: string) {
+    const result = installKit({ dest, preset: "setup", providers: ["claude", "cursor"], adopt: true });
+    if (!result.ok) throw result.error;
+    return result.value;
+  }
+
+  it("copies the kit skill beside the house skill under zk-review without touching the canonical source", () => {
+    const dest = tempDir();
+    setupAdopt(dest);
+    const canonical = readFileSync(join(dest, ".agents", "skills", "review", "SKILL.md"), "utf8");
+    seedHouseReview(dest);
+
+    setupAdopt(dest);
+
+    // The house skill is kept byte-identical; the kit source still claims the
+    // kit name (installed bytes are conditional-resolved, so compare identity,
+    // not raw bytes).
+    expect(readFileSync(join(dest, ".claude", "skills", "review", "SKILL.md"), "utf8")).toContain("# House review checklist");
+    expect(readFileSync(join(dest, ".agents", "skills", "review", "SKILL.md"), "utf8")).toBe(canonical);
+    const canonicalFront = parseFrontmatter(canonical);
+    if (!canonicalFront.ok) throw canonicalFront.error;
+    expect(canonicalFront.value.data.name).toBe("review");
+    expect(canonical).not.toContain("House review checklist");
+    // The layer sidecar is a real copy renamed to zk-review, never a link
+    // through which a rename could reach the shared source.
+    const sidecar = join(dest, ".claude", "skills", "zk-review", "SKILL.md");
+    expect(lstatSync(join(dest, ".claude", "skills", "zk-review")).isSymbolicLink()).toBe(false);
+    const sidecarFront = parseFrontmatter(readFileSync(sidecar, "utf8"));
+    if (!sidecarFront.ok) throw sidecarFront.error;
+    expect(sidecarFront.value.data.name).toBe("zk-review");
+    expect(claimants(join(dest, ".claude"), "review")).toEqual(["review"]);
+  });
+
+  it("validate flags a same-named unrenamed link in a layer", () => {
+    const dest = tempDir();
+    setupAdopt(dest);
+    seedHouseReview(dest);
+    // Simulate the pre-fix layout: an unrenamed kit link beside the house skill.
+    symlinkSync("../../.agents/skills/review", join(dest, ".claude", "skills", "zk-review"));
+    const issues = checkDrift(dest, join(dest, ".agents"));
+    expect(issues.map((issue) => `${issue.path}: ${issue.message}`)).toContainEqual(
+      expect.stringContaining('duplicate skill name "review"'),
+    );
+  });
+
+  it("a rerun with the house skill and the sidecar is a no-op (D4 for layers)", () => {
+    const dest = tempDir();
+    setupAdopt(dest);
+    seedHouseReview(dest);
+    setupAdopt(dest);
+
+    const again = setupAdopt(dest);
+    expect(again.filter((action) => action.kind !== "skip")).toEqual([]);
   });
 });

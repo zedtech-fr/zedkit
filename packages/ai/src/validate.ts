@@ -668,6 +668,51 @@ function checkDanglingLink(
   });
 }
 
+/**
+ * Same frontmatter name claimed twice inside one provider layer (a project
+ * skill plus an unrenamed kit link/sidecar): the command resolves
+ * differently per tool. Whole-directory links mirror the source, so only
+ * real layer dirs are scanned; reads never write through links.
+ */
+function checkLayerDuplicateSkillNames(projectRoot: string, layer: string, issues: Issue[]): void {
+  const dir = join(projectRoot, layer, "skills");
+  if (!isRealDir(dir)) return;
+  const entries = tryCatch(() => readdirSync(dir));
+  if (!entries.ok) return;
+  const claimants = new Map<string, string[]>();
+  for (const entry of entries.value.sort()) {
+    const raw = tryCatch(() => readFileSync(join(dir, entry, "SKILL.md"), "utf8"));
+    if (!raw.ok) continue;
+    const front = parseFrontmatter(raw.value);
+    if (!front.ok || typeof front.value.data.name !== "string") continue;
+    const paths = claimants.get(front.value.data.name) ?? [];
+    paths.push(join(layer, "skills", entry, "SKILL.md"));
+    claimants.set(front.value.data.name, paths);
+  }
+  for (const [claimed, paths] of [...claimants.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    if (paths.length < 2) continue;
+    const ordered = [...paths].sort();
+    const sidecar = ordered.find((path) => (path.split(sep)[2] ?? "").startsWith("zk-"));
+    if (sidecar !== undefined) {
+      const others = ordered.filter((path) => path !== sidecar);
+      if (others.length > 0) {
+        issues.push({
+          path: sidecar,
+          message: `duplicate skill name "${claimed}" (also claimed by ${others.join(", ")}); re-run setup to refresh the sidecar, or merge it into your copy and delete it`,
+        });
+      }
+      continue;
+    }
+    const [first, ...rest] = ordered;
+    for (const path of rest) {
+      issues.push({
+        path,
+        message: `duplicate skill name "${claimed}" (also claimed by ${first}); give each skill its own name`,
+      });
+    }
+  }
+}
+
 function checkLayerSkills(
   projectRoot: string,
   source: string,
@@ -832,6 +877,7 @@ function checkClaudeLayer(
   );
   checkLayerCopies(projectRoot, source, ".claude", "commands", issues);
   checkLayerSkills(projectRoot, source, ".claude", issues);
+  checkLayerDuplicateSkillNames(projectRoot, ".claude", issues);
   const pointer = join(projectRoot, "CLAUDE.md");
   const state = linkState(pointer);
   if (state === "dangling") {
@@ -877,6 +923,7 @@ export function checkDrift(
       issues,
     );
     checkLayerSkills(projectRoot, source, ".cursor", issues);
+    checkLayerDuplicateSkillNames(projectRoot, ".cursor", issues);
     checkClaudeLayer(projectRoot, source, issues);
     return issues;
   });

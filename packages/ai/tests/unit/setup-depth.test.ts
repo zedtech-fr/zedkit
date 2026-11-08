@@ -249,6 +249,32 @@ describe("checkDepth", () => {
     expect(checkDepth(root).map((i) => i.message)).toEqual([expect.stringContaining("real model (not inherit)")]);
   });
 
+  it("D4: inherit with a recorded tool limitation is partial, never a pass (P2.5)", () => {
+    const root = tempDir();
+    deep(root);
+    put(
+      root,
+      ".agents/tokenomics.md",
+      "---\nschema: 1\nproviders:\n  cursor:\n    build:\n      standard: { model: inherit, effort: medium }\n    decide:\n      sensitive: { model: inherit, effort: high }\n---\n\n<!-- inherit-reason: cursor cannot route per spawn; reading done inline -->\n",
+    );
+    // Reason for the change (review P2.5): the CLI excludes `warning:` issues
+    // from failures, so a warning let a partial setup print `ok` with exit
+    // 0. Partial must be a failing issue: distinct from complete, never a pass.
+    const messages = checkDepth(root).map((i) => i.message);
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).not.toMatch(/^warning:/);
+    expect(messages[0]).toMatch(/partial, not complete/);
+  });
+
+  it("D4: a bare inherit-reason marker without the cells still fails", () => {
+    const root = tempDir();
+    deep(root);
+    // Marker on a tokenomics file that does not even declare the D4 cells:
+    // the reason alone is not a policy.
+    put(root, ".agents/tokenomics.md", "---\nschema: 1\nproviders: {}\n---\n\n<!-- inherit-reason: cursor cannot route per spawn -->\n");
+    expect(checkDepth(root).map((i) => i.message)).toEqual([expect.stringContaining("real model (not inherit)")]);
+  });
+
   it("D4: a valid leftover model-routing.md still passes, with a deprecation warning", () => {
     const root = tempDir();
     deep(root);

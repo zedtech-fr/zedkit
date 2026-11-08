@@ -66,6 +66,8 @@ export interface DataTableProps<TData extends RowData> {
   noResultsMessage?: string;
   filterPlaceholder?: string;
   pageSize?: number;
+  /** Accessible name for the scroll region; defaults to the kit message. Set it whenever two tables share a page. */
+  scrollAriaLabel?: string;
 }
 
 function SortIcon({ direction }: { direction: SortDirection | false }) {
@@ -188,6 +190,7 @@ export function DataTable<TData extends RowData>({
   noResultsMessage,
   filterPlaceholder,
   pageSize = 10,
+  scrollAriaLabel,
 }: DataTableProps<TData>) {
   const messages = useUiMessages();
   const table = useTable({ features, columns, data });
@@ -247,7 +250,11 @@ export function DataTable<TData extends RowData>({
       {surface === "empty-dataset" ? (
         <EmptyState description={emptyMessage ?? messages.empty} actions={emptyAction} />
       ) : null}
-      <Table aria-busy={loading || undefined} aria-label={loading ? messages.loading : undefined}>
+      <Table
+        aria-busy={loading || undefined}
+        aria-label={loading ? messages.loading : undefined}
+        {...(scrollAriaLabel !== undefined ? { scrollAriaLabel } : {})}
+      >
       <TableHeader>
         {table.getHeaderGroups().map((group) => (
           <TableRow key={group.id}>

@@ -8,6 +8,8 @@ import {
   readdirSync,
   readFileSync,
   readlinkSync,
+  realpathSync,
+  rmSync,
   statSync,
   symlinkSync,
   writeFileSync,
@@ -15,13 +17,21 @@ import {
 import { dirname, join, sep } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import { parseFrontmatter } from "./frontmatter.js";
+import { hasMarker } from "./generate.js";
+import {
+  kitVersion,
+  readInstalledManifest,
+  writeInstalledManifest,
+  type InstalledManifestSnapshot,
+} from "./installed-manifest.js";
 import { adoptRel, agentsForPreset, commandsForPreset, kitDir, kitUniverse, readManifest, type KitManifest } from "./kit.js";
+import { isKitCopy, isKitSkillCopy, shortHash } from "./legacy.js";
 import { setLensStatus } from "./lenses.js";
 import { danglingKitRefs, skillRefFiles } from "./skill-refs.js";
 import { resolveConditionals, type Availability } from "./conditional.js";
 import { loadPolicy } from "./route.js";
 import { assertAgentRoutes, resolveAgentSource, syncAgents } from "./sync.js";
-import { applyTestPolicyToAgentsMd } from "./test-policy.js";
+import { applyTestPolicyToAgentsMd, detectRunner } from "./test-policy.js";
 import { loadDefaults } from "./tokenomics.js";
 
 /** Providers that get an installer layer or shared-source wiring. */
@@ -89,6 +99,10 @@ type Ctx = {
   /** What this preset installs; resolves conditional kit blocks. Set after plan(). */
   avail: Availability;
   allowFast: boolean;
+  /** This install's own record (missing for pre-manifest installs). Read-only input. */
+  priorManifest: InstalledManifestSnapshot;
+  /** Install-relative (`/` separators) -> post-write content hash, saved at the end. */
+  written: Map<string, string>;
 };
 
 function lstatOf(path: string): ReturnType<typeof lstatSync> | undefined {
@@ -118,7 +132,9 @@ function obstacle(ctx: Ctx, rel: string): string | undefined {
 // Provider layer dirs are link targets, never sidecarred: a `.claude/zk-skills`
 // link is dead (no provider reads it), so a blocked layer dir is just
 // skipped. Sidecars exist only for files (`*.kit.md`) and skill folders
-// (`zk-<name>`).
+// (`zk-<name>`), including a same-named project skill dir inside a layer:
+// linkPresentSkills copies the kit skill beside it under `zk-<name>` instead
+// of linking through the block.
 const LAYER_DIRS: ReadonlySet<string> = new Set(
   ["skills", "agents", "commands"].map((kind) => join(".claude", kind)).concat(join(".cursor", "skills")),
 );
@@ -160,6 +176,169 @@ function treesMatch(src: string, dest: string, installed: ReadonlySet<string>, a
     const lensed = rel === "lenses.md" ? setLensStatus(raw.value, installed) : raw.value;
     return resolveIfNeeded(lensed, avail) === got.value;
   });
+}
+
+// Install-relative manifest key with stable separators.
+function manifestKey(rel: string): string {
+  return rel.split(sep).join("/");
+}
+
+// Hash of bytes on disk, or undefined when unreadable.
+function diskHash(full: string): string | undefined {
+  const raw = tryCatch(() => readFileSync(full, "utf8"));
+  return raw.ok ? shortHash(raw.value) : undefined;
+}
+
+// Record post-write bytes so the next run recognizes its own record.
+function recordWritten(ctx: Ctx, rel: string): void {
+  if (ctx.dryRun) return;
+  const hash = diskHash(join(ctx.dest, rel));
+  if (hash !== undefined) ctx.written.set(manifestKey(rel), hash);
+}
+
+// Record every file under an installed skill dir after copy + patch.
+function recordSkillDir(ctx: Ctx, rel: string): void {
+  if (ctx.dryRun) return;
+  const files = treeFiles(join(ctx.dest, rel));
+  if (!files) return;
+  for (const file of files) recordWritten(ctx, join(rel, ...file.split("/")));
+}
+
+// True when every file under an installed skill dir is this install's own
+// record: untouched since we wrote it, safe to update in place.
+function manifestOwnsSkillDir(ctx: Ctx, rel: string): boolean {
+  if (ctx.priorManifest.status !== "ok") return false;
+  const files = treeFiles(join(ctx.dest, rel));
+  if (!files) return false;
+  return files.every((file) => {
+    const hash = diskHash(join(ctx.dest, rel, ...file.split("/")));
+    return hash !== undefined && ctx.priorManifest.status === "ok" && ctx.priorManifest.manifest.files[manifestKey(join(rel, file))] === hash;
+  });
+}
+
+// True when every file under an installed skill dir is a copy of the kit:
+// either the current kit (post-transform, same comparison as treesMatch) or
+// a recorded older version. Missing files are fine (older kits had fewer);
+// unknown bytes mean user work.
+function legacyOwnsSkillDir(ctx: Ctx, name: string, destDir: string): boolean {
+  const files = treeFiles(destDir);
+  if (!files) return false;
+  const installed = new Set([...ctx.avail.skills, ...ctx.avail.agents]);
+  for (const file of files) {
+    const raw = tryCatch(() => readFileSync(join(destDir, ...file.split("/")), "utf8"));
+    if (!raw.ok) return false;
+    const kitRaw = tryCatch(() => readFileSync(join(ctx.kit, "skills", name, ...file.split("/")), "utf8"));
+    if (kitRaw.ok) {
+      const lensed = file === "lenses.md" ? setLensStatus(kitRaw.value, installed) : kitRaw.value;
+      if (resolveIfNeeded(lensed, ctx.avail) === raw.value) continue;
+    }
+    if (isKitSkillCopy(`${name}/${file}`, raw.value)) continue;
+    return false;
+  }
+  return true;
+}
+
+// Frontmatter skill name a project directory claims, if it is a skill at all.
+function houseSkillName(dir: string): string | undefined {
+  const raw = tryCatch(() => readFileSync(join(dir, "SKILL.md"), "utf8"));
+  if (!raw.ok) return undefined;
+  const front = parseFrontmatter(raw.value);
+  if (!front.ok || typeof front.value.data.name !== "string") return undefined;
+  return front.value.data.name;
+}
+
+// True when a provider-layer sidecar already carries this kit skill under its
+// renamed identity: SKILL.md matches the renamed copy, other files match the
+// installed kit bytes (lenses patched, conditionals resolved).
+function layerSidecarUpToDate(ctx: Ctx, kitName: string, sidecarRel: string, zkName: string, installed: ReadonlySet<string>): boolean {
+  const from = treeFiles(join(ctx.kit, "skills", kitName));
+  const to = treeFiles(join(ctx.dest, sidecarRel));
+  if (!from || !to || from.join("\n") !== to.join("\n")) return false;
+  return from.every((file) => {
+    const raw = tryCatch(() => readFileSync(join(ctx.kit, "skills", kitName, ...file.split("/")), "utf8"));
+    const got = tryCatch(() => readFileSync(join(ctx.dest, sidecarRel, ...file.split("/")), "utf8"));
+    if (!raw.ok || !got.ok) return false;
+    const lensed = file === "lenses.md" ? setLensStatus(raw.value, installed) : raw.value;
+    const patched = resolveIfNeeded(lensed, ctx.avail);
+    if (file === "SKILL.md") {
+      // Rename lands after patching, same as copyLayerSkillSidecar.
+      return (withSidecarSkillName(patched, zkName) ?? patched) === got.value;
+    }
+    return patched === got.value;
+  });
+}
+
+// Resolved directory, or undefined when it does not exist (nothing to delete).
+function realDir(path: string): string | undefined {
+  const resolved = tryCatch(() => realpathSync(path));
+  return resolved.ok ? resolved.value : undefined;
+}
+
+// Why a skill dir must not be replaced, or undefined when replacement is
+// safe. A layer that symlinks into the kit makes destination and source the
+// same folder: deleting it would delete the kit's own sources (this repo's
+// `.agents/skills` links there). A destination inside the kit tree is an
+// install pointed at the kit repo itself, never a consumer project. A path
+// that does not exist yet resolves through its parent, so creating a sidecar
+// beside a symlinked dir cannot smuggle files into the kit either.
+function refreshBlocked(ctx: Ctx, rel: string, srcDir: string): string | undefined {
+  const full = join(ctx.dest, rel);
+  const realDest = realDir(full) ?? realDir(dirname(full));
+  const realSrc = realDir(srcDir);
+  if (realDest !== undefined && realSrc !== undefined && realDest === realSrc) {
+    return "same directory as the kit source (symlinked install), left untouched";
+  }
+  const realKit = realDir(ctx.kit);
+  if (realDest !== undefined && realKit !== undefined && (realDest === realKit || realDest.startsWith(`${realKit}${sep}`))) {
+    return "inside the kit source tree, left untouched";
+  }
+  return undefined;
+}
+
+// True when an existing provider sidecar is a kit copy, safe to replace: it
+// matches the current kit bytes, this install's record, or a recorded older
+// version (SKILL.md compared with the sidecar name mapped back to the kit
+// name). Anything else is user work and must be preserved.
+function layerSidecarKitOwned(ctx: Ctx, kitName: string, sidecarRel: string, installed: ReadonlySet<string>): boolean {
+  if (layerSidecarUpToDate(ctx, kitName, sidecarRel, `zk-${kitName}`, installed)) return true;
+  if (manifestOwnsSkillDir(ctx, sidecarRel)) return true;
+  const files = treeFiles(join(ctx.dest, sidecarRel));
+  if (!files) return false;
+  return files.every((file) => {
+    const raw = tryCatch(() => readFileSync(join(ctx.dest, sidecarRel, ...file.split("/")), "utf8"));
+    if (!raw.ok) return false;
+    const text = file === "SKILL.md" ? (withSidecarSkillName(raw.value, kitName) ?? raw.value) : raw.value;
+    return isKitSkillCopy(`${kitName}/${file}`, text);
+  });
+}
+
+// Why the provider sidecar must not be (re)written, or undefined when the
+// copy may proceed. The callers check before logging the action, so a skip
+// never follows a copy for the same path.
+function sidecarBlocker(ctx: Ctx, kitName: string, sidecarRel: string, installed: ReadonlySet<string>): string | undefined {
+  const srcDir = join(ctx.kit, "skills", kitName);
+  if (!existsSync(join(srcDir, "SKILL.md"))) {
+    return `kit has no skill "${kitName}" (project skill kept, no sidecar written)`;
+  }
+  const blocked = refreshBlocked(ctx, sidecarRel, srcDir);
+  if (blocked !== undefined) return blocked;
+  const existing = lstatOf(join(ctx.dest, sidecarRel));
+  if (existing?.isDirectory() === true && !existing.isSymbolicLink() && !layerSidecarKitOwned(ctx, kitName, sidecarRel, installed)) {
+    return "kept (user-modified sidecar is not a kit copy; diff and merge by hand)";
+  }
+  return undefined;
+}
+
+// Copy the kit skill into the provider layer under its renamed identity.
+// Never writes through the layer link: the canonical source stays shared.
+function copyLayerSkillSidecar(ctx: Ctx, kitName: string, sidecarRel: string, installed: ReadonlySet<string>): void {
+  if (ctx.dryRun) return;
+  rmSync(join(ctx.dest, sidecarRel), { recursive: true, force: true });
+  cpSync(join(ctx.kit, "skills", kitName), join(ctx.dest, sidecarRel), { recursive: true, dereference: true });
+  patchLenses(join(ctx.dest, sidecarRel), installed);
+  patchConditionals(join(ctx.dest, sidecarRel), ctx.avail);
+  renameFreshSidecarSkill(join(ctx.dest, sidecarRel), kitName);
+  recordSkillDir(ctx, sidecarRel);
 }
 
 // Adopt sidecars must not claim the live skill name: two SKILL.md files with
@@ -229,6 +408,11 @@ function place(
     }
     if (ctx.adopt && canAdopt(rel)) {
       const alt = adoptRel(rel);
+      const kitBlocked = refreshBlocked(ctx, alt, join(ctx.dest, rel));
+      if (kitBlocked !== undefined) {
+        ctx.actions.push({ kind: "skip", path: rel, note: kitBlocked });
+        return undefined;
+      }
       const altBlocked = obstacle(ctx, alt);
       ctx.actions.push({ kind: "skip", path: rel, note: `kept user file; kit → ${alt}` });
       if (altBlocked) {
@@ -259,25 +443,58 @@ function personasCustomized(current: string): boolean {
   return current.replace(/\s+/g, " ").includes(PERSONAS_V2_COLUMNS);
 }
 
+function legacyAgentOrCommand(rel: string): { kind: "agents" | "commands"; name: string } | undefined {
+  const [root, kind, file] = rel.split(sep);
+  if (root !== ".agents" || file === undefined || !file.endsWith(".md")) return undefined;
+  if (kind !== "agents" && kind !== "commands") return undefined;
+  return { kind, name: file.slice(0, -3) };
+}
+
 function copyFile(ctx: Ctx, from: string, rel: string): void {
   const kit = tryCatch(() => readFileSync(from, "utf8"));
   const text = kit.ok ? resolveIfNeeded(kit.value, ctx.avail) : undefined;
   if (text === undefined) {
-    place(ctx, "copy", rel, (destRel) => copyFileSync(from, join(ctx.dest, destRel)));
+    const target = place(ctx, "copy", rel, (destRel) => copyFileSync(from, join(ctx.dest, destRel)));
+    if (target !== undefined) recordWritten(ctx, target);
     return;
   }
   if (ctx.adopt) {
     const current = tryCatch(() => readFileSync(join(ctx.dest, rel), "utf8"));
     if (current.ok && current.value === text) {
       ctx.actions.push({ kind: "skip", path: rel, note: "already installed" });
+      recordWritten(ctx, rel);
       return;
     }
     if (current.ok && rel === join(".agents", "personas.md") && personasCustomized(current.value)) {
       ctx.actions.push({ kind: "skip", path: rel, note: "kept (already customized)" });
       return;
     }
+    if (current.ok && canAdopt(rel)) {
+      const prior = ctx.priorManifest.status === "ok" ? ctx.priorManifest.manifest.files[manifestKey(rel)] : undefined;
+      const ownedByRecord = prior !== undefined && prior === shortHash(current.value);
+      const legacyFile = legacyAgentOrCommand(rel);
+      const ownedByLegacy = legacyFile !== undefined && isKitCopy(legacyFile.kind, legacyFile.name, current.value, text);
+      // Generated files carry a marker and stay syncFile's job: rewriting the
+      // kit text over them only churns (syncFile regenerates or skips itself).
+      if ((ownedByRecord || ownedByLegacy) && hasMarker(current.value)) {
+        ctx.actions.push({ kind: "skip", path: rel, note: "generated file up to date" });
+        recordWritten(ctx, rel);
+        return;
+      }
+      if (ownedByRecord || ownedByLegacy) {
+        ctx.actions.push({
+          kind: "copy",
+          path: rel,
+          note: ownedByRecord ? "updated (this install's record)" : "updated from earlier kit copy",
+        });
+        if (!ctx.dryRun) writeFileSync(join(ctx.dest, rel), text);
+        recordWritten(ctx, rel);
+        return;
+      }
+    }
   }
-  place(ctx, "copy", rel, (destRel) => writeFileSync(join(ctx.dest, destRel), text));
+  const target = place(ctx, "copy", rel, (destRel) => writeFileSync(join(ctx.dest, destRel), text));
+  if (target !== undefined) recordWritten(ctx, target);
 }
 
 function link(ctx: Ctx, rel: string, target: string): void {
@@ -387,7 +604,7 @@ function fillAgentsCommands(ctx: Ctx): void {
   const dest = join(ctx.dest, "AGENTS.md");
   const md = tryCatch(() => readFileSync(dest, "utf8"));
   if (!md.ok) return;
-  const next = applyTestPolicyToAgentsMd(md.value, readDestScripts(ctx.dest));
+  const next = applyTestPolicyToAgentsMd(md.value, readDestScripts(ctx.dest), detectRunner(ctx.dest));
   if (next !== md.value) writeFileSync(dest, next);
 }
 
@@ -435,6 +652,14 @@ function patchConditionals(folder: string, avail: Availability): void {
   }
 }
 
+function refreshSkillDir(ctx: Ctx, name: string, rel: string, installed: ReadonlySet<string>): void {
+  if (ctx.dryRun) return;
+  rmSync(join(ctx.dest, rel), { recursive: true, force: true });
+  cpSync(join(ctx.kit, "skills", name), join(ctx.dest, rel), { recursive: true, dereference: true });
+  patchLenses(join(ctx.dest, rel), installed);
+  patchConditionals(join(ctx.dest, rel), ctx.avail);
+}
+
 function installContent(ctx: Ctx, content: ReturnType<typeof plan>): Map<string, string> {
   const installed = new Set([...content.skills, ...content.agents]);
   const skillDest = new Map<string, string>();
@@ -443,8 +668,28 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): Map<string,
     if (ctx.adopt) migrateSidecarSkillName(ctx, rel, name);
     if (ctx.adopt && treesMatch(join(ctx.kit, "skills", name), join(ctx.dest, rel), installed, ctx.avail)) {
       ctx.actions.push({ kind: "skip", path: rel, note: "already installed" });
+      recordSkillDir(ctx, rel);
       skillDest.set(name, rel);
       continue;
+    }
+    if (ctx.adopt) {
+      const via = manifestOwnsSkillDir(ctx, rel)
+        ? "this install's record"
+        : legacyOwnsSkillDir(ctx, name, join(ctx.dest, rel))
+          ? "earlier kit copy"
+          : undefined;
+      if (via !== undefined) {
+        const blocked = refreshBlocked(ctx, rel, join(ctx.kit, "skills", name));
+        if (blocked !== undefined) {
+          ctx.actions.push({ kind: "skip", path: rel, note: blocked });
+        } else {
+          ctx.actions.push({ kind: "copy", path: rel, note: `updated (${via})` });
+          refreshSkillDir(ctx, name, rel, installed);
+          recordSkillDir(ctx, rel);
+        }
+        skillDest.set(name, rel);
+        continue;
+      }
     }
     const destRel = place(ctx, "copy", rel, (target) => {
       cpSync(join(ctx.kit, "skills", name), join(ctx.dest, target), { recursive: true, dereference: true });
@@ -452,6 +697,7 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): Map<string,
       patchConditionals(join(ctx.dest, target), ctx.avail);
       if (target !== rel) renameFreshSidecarSkill(join(ctx.dest, target), name);
     });
+    if (destRel !== undefined) recordSkillDir(ctx, destRel);
     skillDest.set(name, destRel ?? rel);
   }
   for (const file of content.licences) {
@@ -523,6 +769,7 @@ function linkPresentSkills(
   preset: readonly string[],
   skillDest: Map<string, string>,
 ): void {
+  const installed = new Set([...ctx.avail.skills, ...ctx.avail.agents]);
   const names = new Set(preset);
   const listed = tryCatch(() => readdirSync(join(ctx.dest, ".agents", "skills"), { withFileTypes: true }));
   if (listed.ok) {
@@ -532,6 +779,34 @@ function linkPresentSkills(
   }
   for (const name of names) {
     const source = skillDest.get(name) ?? join(".agents", "skills", name);
+    if (ctx.adopt) {
+      const blockedFull = join(ctx.dest, skillsRel, name);
+      const blocked = lstatOf(blockedFull);
+      // A project skill dir claiming this name blocks the link. Link the kit
+      // beside it as a renamed real copy instead: writing `name:` through a
+      // link would rename the canonical source shared by all tools.
+      if (blocked?.isDirectory() === true && !blocked.isSymbolicLink() && houseSkillName(blockedFull) === name) {
+        const zkName = `zk-${name}`;
+        const sidecarRel = join(skillsRel, zkName);
+        if (layerSidecarUpToDate(ctx, name, sidecarRel, zkName, installed)) {
+          ctx.actions.push({ kind: "skip", path: sidecarRel, note: "already installed" });
+          recordSkillDir(ctx, sidecarRel);
+          continue;
+        }
+        const blocker = sidecarBlocker(ctx, name, sidecarRel, installed);
+        if (blocker !== undefined) {
+          ctx.actions.push({ kind: "skip", path: sidecarRel, note: blocker });
+          continue;
+        }
+        ctx.actions.push({
+          kind: "copy",
+          path: sidecarRel,
+          note: `kit skill beside project ${name}; renamed to ${zkName} so /${name} resolves to one skill`,
+        });
+        copyLayerSkillSidecar(ctx, name, sidecarRel, installed);
+        continue;
+      }
+    }
     link(ctx, join(skillsRel, name), join("..", "..", source));
   }
 }
@@ -708,6 +983,8 @@ export function installKit(options: InstallOptions): Result<Action[]> {
     allowFast: options.allowFast === true,
     actions: [],
     avail: { skills: new Set(), agents: new Set(), commands: new Set() },
+    priorManifest: readInstalledManifest(options.dest),
+    written: new Map(),
   };
   const run = tryCatch(() => {
     const content = plan(kit, manifest.value, options.preset ?? "starter");
@@ -735,5 +1012,26 @@ export function installKit(options: InstallOptions): Result<Action[]> {
     generateAgents(ctx, content, chosen);
     ensureScratchIgnored(ctx);
   });
+  if (run.ok && !ctx.dryRun) {
+    // Re-hash every file this run wrote: later steps (agent generation) may
+    // have replaced what an earlier step recorded, and only final bytes count.
+    for (const action of ctx.actions) {
+      if (action.kind !== "copy" && action.kind !== "write" && action.kind !== "generate" && action.kind !== "append") {
+        continue;
+      }
+      const st = tryCatch(() => statSync(join(ctx.dest, action.path)));
+      if (!st.ok || !st.value.isFile()) continue;
+      const hash = diskHash(join(ctx.dest, action.path));
+      if (hash !== undefined) ctx.written.set(manifestKey(action.path), hash);
+    }
+    // Keep records for files this run did not touch.
+    for (const [rel, hash] of ctx.priorManifest.status === "ok" ? Object.entries(ctx.priorManifest.manifest.files) : []) {
+      if (!ctx.written.has(rel)) ctx.written.set(rel, hash);
+    }
+    const save = tryCatch(() =>
+      writeInstalledManifest(ctx.dest, { schema: 1, kit: kitVersion(kit), files: Object.fromEntries(ctx.written) }),
+    );
+    if (!save.ok) return err(save.error);
+  }
   return run.ok ? ok(ctx.actions) : err(run.error);
 }

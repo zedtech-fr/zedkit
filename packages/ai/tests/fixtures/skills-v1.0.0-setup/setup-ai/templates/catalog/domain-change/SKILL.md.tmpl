@@ -1,0 +1,33 @@
+---
+name: domain-change
+description: "Change a business rule (money, cancel, refund, limits, policy) with a rules check against the domain docs. Use when a change edits what the product promises, not only how it is built."
+---
+
+# Domain change
+
+A rule edit can look like a small diff and still change what users were promised. Check the rules before the code.
+
+## Before you start
+
+1. Read the root `AGENTS.md`, [product](../../product.md) and every file in [domain rules](../../domain/) that applies.
+2. Read the glossary (`GLOSSARY.md` or `.agents/glossary.md`) for the terms involved; use them as written.
+
+## Rules check (required)
+
+1. List every rule id the change affects, or add new ids.
+2. For each, cite evidence: `file:line` in code, a test name, or `source: owner` for policy the owner confirmed.
+3. Update the domain doc in the same PR as the code, or first when the change is additive.
+4. Update the glossary when a term shifts.
+5. No automated test for a rule? Add one, or mark the row `no test` with the reason.
+
+## Steps
+
+1. **Diff the promise.** What changes for the user, and who is affected?
+2. **Implement** the smallest change; use a feature flag if the repo already does.
+3. **Verify.** Run the gates, then exercise the limit paths (cancel, refund, edge amounts) by hand where automated coverage is thin.
+4. **Retro.** If setup missed this rule, add a line to `.agents/setup-log.md`.
+
+## Done when
+
+- Domain docs and code agree; contradictions are fixed or listed as open questions.
+- Every changed rule has evidence and a test or a `no test` flag.
