@@ -58,6 +58,7 @@ export function AiSetupPrompt() {
   return (
     <Stack
       gap={2}
+      data-setup-prompt=""
       className={
         // not-prose is a fumadocs escape hatch, not a Tailwind utility.
         // eslint-disable-next-line better-tailwindcss/no-unknown-classes
@@ -66,7 +67,7 @@ export function AiSetupPrompt() {
     >
       <Text as="p" variant="muted" className="trim-margin">
         Paste this as the only message in a new chat at the repo root (Cursor, Muse, Claude Code, or your tool — agents should fetch{" "}
-        <a href={AI_SETUP_LLMS_URL} className="underline underline-offset-2">
+        <a href={AI_SETUP_LLMS_URL} className="underline">
           {AI_SETUP_LLMS_URL}
         </a>
         ):
@@ -79,7 +80,7 @@ export function AiSetupPrompt() {
       </Stack>
       <Text as="p" variant="muted" className="trim-margin">
         Full walkthrough:{" "}
-        <a href={AI_SETUP_DOCS_PATH} className="underline underline-offset-2">
+        <a href={AI_SETUP_DOCS_PATH} className="underline">
           {AI_SETUP_DOCS_PATH}
         </a>
       </Text>
