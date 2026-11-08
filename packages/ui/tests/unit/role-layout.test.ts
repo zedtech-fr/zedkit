@@ -149,6 +149,7 @@ describe("layout job classes", () => {
     expect(utility("fade-disabled")).toBe("opacity: 0.5;");
     expect(utility("disclosure-icon")).toBe("opacity: 0.5;");
     expect(utility("close-quiet")).toBe("opacity: 0.7;");
+    expect(utility("sort-mark")).toBe("opacity: 0.6;");
     expect(utility("z-overlay-chrome")).toBe("z-index: 10;");
     expect(utility("z-overlay-close")).toBe("z-index: 20;");
     expect(utility("pull-line")).toBe("margin-top: calc(var(--spacing) * -1);");
