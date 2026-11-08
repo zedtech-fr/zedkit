@@ -873,16 +873,16 @@
             }
           },
           "[data-slot=\"card-header\"], [data-slot=\"card-content\"], [data-slot=\"card-footer\"]": {
-            "padding": "var(--zk-card-pad)"
+            "padding": "var(--zk-card-pad, calc(var(--spacing) * 6))"
           },
           "[data-slot=\"card-header\"]": {
-            "gap": "var(--zk-card-stack)"
+            "gap": "var(--zk-card-stack, calc(var(--spacing) * 2))"
           },
           "[data-slot=\"card-title\"]": {
-            "font-size": "var(--zk-card-title)"
+            "font-size": "var(--zk-card-title, var(--text-base))"
           },
           "[data-slot=\"card-description\"]": {
-            "font-size": "var(--zk-card-body)",
+            "font-size": "var(--zk-card-body, var(--text-sm))",
             "line-height": "var(--text-sm--line-height)"
           },
           "[data-slot=\"section\"][data-spacing]": {
