@@ -19,6 +19,8 @@ describe("layout job classes", () => {
     expect(utility("pane-shrink")).toBe("min-height: 0;");
     expect(utility("pin-fill")).toBe("inset: 0;");
     expect(utility("pin-top")).toBe("top: 0;");
+    expect(utility("top-float")).toBe("top: calc(var(--spacing) * 4);");
+    expect(css).toContain("@utility space-y-sections");
     expect(utility("pin-x")).toBe("inset-inline: 0;");
     expect(utility("flush")).toBe("padding: 0;");
     expect(utility("trim-bottom")).toBe("margin-bottom: 0;");
