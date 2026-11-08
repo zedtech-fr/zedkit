@@ -499,6 +499,14 @@ ol[data-sonner-toaster] {
   z-index: 20;
 }
 
+/* The chosen select value stays on one line. */
+[data-slot="select-value"] {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
 @utility dialog-center {
   top: var(--spacing-dialog-center);
   left: var(--spacing-dialog-center);
