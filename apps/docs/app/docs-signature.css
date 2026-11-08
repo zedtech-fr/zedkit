@@ -323,9 +323,10 @@
   opacity: 0.8;
 }
 
-/* Product picture on the shop specimen. Three times as wide as it is tall. */
+/* Product picture on the shop specimen. Three times as wide as it is tall, with a light primary tint. */
 [data-product-banner] {
   aspect-ratio: 3 / 1;
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
 }
 
 [data-dock-handle],
