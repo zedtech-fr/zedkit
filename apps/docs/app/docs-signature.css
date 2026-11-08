@@ -276,6 +276,10 @@
 [data-share-preview] {
   aspect-ratio: 1200 / 630;
 }
+/* The sentence under the brand name. A little quieter than the name. */
+[data-share-tagline] {
+  opacity: 0.8;
+}
 
 /* Product picture on the shop specimen. Three times as wide as it is tall. */
 [data-product-banner] {
