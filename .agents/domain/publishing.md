@@ -7,7 +7,7 @@ payments**. `source: owner`
 
 | ID | Status | Rule | Source | Test | Enforced by |
 | -- | ------ | ---- | ------ | ---- | ----------- |
-| P-01 | current | Publishing is live: merging a Version PR publishes from CI. Never `npm publish` from a laptop. | `AGENTS.md:29-31`; `docs/publishing.md:5`; `docs/publishing.md:14-15` | no test — flag | `.github/workflows/release.yml:73-81` (`changesets/action`, provenance) |
+| P-01 | current | Publishing is live: merging a Version PR publishes from CI. Never `npm publish` from a laptop. | `AGENTS.md:29-31`; `docs/publishing.md:5`; `docs/publishing.md:14-16` | `scripts/release-publisher.test.mjs`; `scripts/export-release-auth.test.mjs` | `.github/workflows/release.yml` (`changesets/action`, OIDC or NPM_TOKEN, publisher npm assert) |
 | P-02 | current | Feature PRs that version a public package carry a Changeset; docs/tooling-only PRs do not name a private package. | `scripts/check-changeset-packages.sh:2`; `docs/publishing.md:10` | no test — flag | `scripts/check-changeset-packages.sh` (CI `.github/workflows/ci.yml:109`) |
 | P-03 | current | A PR labelled `breaking` needs a minor-or-major changeset and a one-line migration note. | `CONTRIBUTING.md:42-44`; `scripts/check-breaking-changeset.sh:2` | no test — flag | `scripts/check-breaking-changeset.sh` (CI `.github/workflows/ci.yml:106`) |
 | P-04 | current | Catalog `Status`: `alpha`/`beta` may change in a minor; `stable` follows semver; below 1.0 a break is a minor. | `CONTRIBUTING.md:31-33`; `docs/catalog/README.md:94-110` | no test — flag | `scripts/check-breaking-changeset.sh` (label path only); catalog check for Status values |
@@ -16,7 +16,7 @@ payments**. `source: owner`
 
 ## Invariants
 
-- No direct `npm publish`. Token lives in CI (`NPM_TOKEN`), not in the tree.
+- No direct `npm publish`. Publish auth is GitHub OIDC on `release.yml`, or `NODE_AUTH_TOKEN` when repo secret `NPM_TOKEN` is non-empty (empty is left unset).
 - This setup slice does not open a Version PR or publish. `source: owner`
 
 ## Edge cases

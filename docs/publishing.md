@@ -12,26 +12,37 @@ field). Releases run on Changesets; nothing publishes by hand.
    changesets it opens (or updates) the **Version PR** (`chore: version
    packages`) with bumped versions + CHANGELOGs. Review it like code.
 3. Merging the Version PR publishes the bumped packages to npm from CI
-   (`NPM_TOKEN`) and consumes the changesets. No direct `npm publish`.
+   and consumes the changesets. No direct `npm publish`. Auth is GitHub
+   OIDC, or `NODE_AUTH_TOKEN` when the `NPM_TOKEN` repo secret is set.
 
 ## Secrets and provenance
 
-- `NPM_TOKEN` (repo secret): npm automation token with publish rights
-  on the `@zedtech` org. Write-only from CI; never printed, never
-  committed. Consumers need NO token (public packages).
-- Provenance: the publish step sets `NPM_CONFIG_PROVENANCE=true`.
-  Combined with `id-token: write` and a public `repository` field on
-  each package, npm attaches a Sigstore attestation to the tarball.
-  After the next publish: the provenance badge on npmjs.com, and
-  `npm audit signatures` in a consumer.
+- Publish auth: `scripts/export-release-auth.mjs` runs before Changesets.
+  If repo secret `NPM_TOKEN` is non-empty, it writes `NODE_AUTH_TOKEN`
+  to `GITHUB_ENV`. If the secret is empty or absent, `NODE_AUTH_TOKEN`
+  is left **unset**. Do not assign `NODE_AUTH_TOKEN` from the secret
+  directly: an empty interpolation is `ENEEDAUTH`.
+- npm 11 tries OIDC first (`id-token: write`) and falls through to the
+  token when no Trusted Publisher is configured (oidc() never throws).
+- Provenance: the publish step sets `NPM_CONFIG_PROVENANCE=true` for
+  both paths. Combined with `id-token: write` and a public `repository`
+  field on each package, npm attaches a Sigstore attestation.
 
-## Trusted publishing (optional)
+## Trusted publishing
 
-To drop the long-lived `NPM_TOKEN`, configure npm trusted publishing
-per package (npmjs.com → package → Settings → Trusted Publisher →
-GitHub Actions: owner `zedtech-fr`, repository `zedkit`, workflow
-filename `release.yml`). Provenance then comes with the OIDC publish.
-Do this only after one successful provenance publish with the token.
+Configure each package on npmjs.com (Settings → Trusted Publisher →
+GitHub Actions): owner `zedtech-fr`, repository `zedkit`, workflow
+filename `release.yml`, Environment **empty** (the job has none).
+Do that in the npm UI; this repo does not mutate Trusted Publishers.
+
+Official floors (https://docs.npmjs.com/trusted-publishers): npm CLI
+≥ 11.5.1, Node ≥ 22.14.0, GitHub-hosted runners only. Node 22 still
+ships npm 10.x in `dirname(process.execPath)`. `pnpm publish`
+(Changesets → pnpm 9.15.9) prepends that directory, so a later PATH
+`npm i -g npm@11` is ignored. `scripts/ensure-release-publisher.sh`
+installs the pinned npm 11 into the Node prefix, then
+`scripts/release-publisher.mjs` asserts the **publisher** npm (empty
+pack cwd) before Changesets runs.
 
 ## Version PR checks
 
@@ -55,8 +66,9 @@ the pull request.
 ## First-publish checklist (run once, in order)
 
 1. npm org `zedtech` exists and is owned by the team.
-2. `NPM_TOKEN` created (automation token, publish on `@zedtech/*`) and
-   stored as a repo secret.
+2. Each public package has a Trusted Publisher on npmjs.com for
+   GitHub Actions: owner `zedtech-fr`, repository `zedkit`, workflow
+   filename `release.yml`, Environment empty.
 3. This setup merged; the Version PR computes the first cut
    (`@zedtech/zedkit-ui` 0.1.0 alone — the other inits are held in
    `.changeset-hold/` for the second cut, minimal blast radius).
