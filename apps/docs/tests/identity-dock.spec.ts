@@ -525,6 +525,108 @@ test.describe("IdentityDock", () => {
       page.evaluate(() => localStorage.getItem("zk-docs-site-identity-opt-in")),
     ).toBeNull();
   });
+
+  test("an accepted look keeps its reference chips, follow-ups, and export band", async ({ page }) => {
+    const tokens = {
+      spacing: "0.2rem",
+      borderWidth: "1px",
+      radius: "0.25rem",
+      bodyLeading: "1.6",
+      headingLeading: "1.05",
+      headingTracking: "-0.01em",
+      labelTracking: "0.12em",
+      fontSans: '"Jost Variable", Jost, ui-sans-serif, system-ui, sans-serif',
+      fontDisplay: "Georgia, serif",
+      light: { background: "30 40% 96%", foreground: "20 20% 12%", primary: "14 55% 34%", primaryForeground: "30 40% 96%", accent: "14 45% 42%", border: "25 20% 52%", mutedForeground: "20 12% 32%" },
+      dark: { background: "20 18% 8%", foreground: "30 35% 92%", primary: "20 70% 68%", primaryForeground: "20 18% 8%", accent: "20 30% 45%", border: "20 15% 40%", mutedForeground: "30 15% 70%" },
+      shadowSm: "0 1px 2px hsl(20 20% 12% / 0.08)",
+      shadowMd: "0 6px 16px -8px hsl(20 20% 12% / 0.2)",
+    };
+    await service(page, (posted, route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: {
+          requestId: posted.requestId,
+          summary: "Warmer.",
+          changed: ["radius"],
+          tokens,
+          references: [
+            { url: "https://example.com", status: "used", title: "Example", analysis: "styles-and-text", hints: { colors: ["navy"] } },
+            { url: "https://blocked.example", status: "failed", title: "Blocked", reason: "unreachable" },
+          ],
+        },
+      }),
+    );
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/", { waitUntil: "networkidle" });
+    await page.keyboard.press("Control+I");
+    const field = brief(page);
+    await expect(field).toBeVisible();
+    await field.fill("A ceramics shop");
+    await page.getByRole("button", { name: "Generate", exact: true }).click();
+    const used = page.locator("[data-assistant-reference-status='used'] [data-assistant-reference-chip]");
+    const missed = page.locator("[data-assistant-reference-status='failed'] [data-assistant-reference-chip]");
+    await expect(used).toBeVisible();
+    await expect(missed).toBeVisible();
+    const chipColor = async (
+      chip: ReturnType<typeof used>,
+      colors: { fill: string; fillAmount: string; line: string; lineAmount: string },
+    ) =>
+      chip.evaluate((node, colors) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = `color-mix(in oklab, hsl(var(${colors.fill})) ${colors.fillAmount}, transparent)`;
+        probe.style.borderTop = `1px solid color-mix(in oklab, hsl(var(${colors.line})) ${colors.lineAmount}, transparent)`;
+        node.append(probe);
+        const style = getComputedStyle(node);
+        const expected = getComputedStyle(probe);
+        const result = style.backgroundColor === expected.backgroundColor && style.borderTopColor === expected.borderTopColor;
+        probe.remove();
+        return result && !/bg-(primary|destructive)\//.test(node.className);
+      }, colors);
+    await expect.poll(() => chipColor(used, { fill: "--primary", fillAmount: "10%", line: "--primary", lineAmount: "40%" })).toBe(true);
+    await expect.poll(() => chipColor(missed, { fill: "--destructive", fillAmount: "10%", line: "--destructive", lineAmount: "50%" })).toBe(true);
+    await page.getByRole("button", { name: "Use this look" }).click();
+    const follow = page.locator("[data-assistant-refine-chip='calmer']");
+    await expect(follow).toBeVisible();
+    const band = page.locator("[data-slot='identity-dock-export']");
+    await expect(band).toBeVisible();
+    const code = band.locator("pre").first();
+    await expect.poll(async () =>
+      band.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted)) 20%, transparent)";
+        node.append(probe);
+        const match = getComputedStyle(node).backgroundColor === getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return match && !node.className.includes("bg-muted/");
+      }),
+    ).toBe(true);
+    await expect.poll(async () =>
+      code.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "hsl(var(--card) / var(--zk-glass-alpha, 1))";
+        node.append(probe);
+        const match = getComputedStyle(node).backgroundColor === getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return match && !node.className.includes("bg-muted/");
+      }),
+    ).toBe(true);
+    await follow.hover();
+    await expect.poll(async () =>
+      follow.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted)) 70%, transparent)";
+        probe.style.borderTop = "1px solid color-mix(in oklab, hsl(var(--foreground)) 20%, transparent)";
+        node.append(probe);
+        const style = getComputedStyle(node);
+        const expected = getComputedStyle(probe);
+        const match = style.backgroundColor === expected.backgroundColor && style.borderTopColor === expected.borderTopColor;
+        probe.remove();
+        return match && !node.className.includes("bg-muted/") && !node.className.includes("border-foreground/");
+      }),
+    ).toBe(true);
+  });
 });
 
 test.describe("IdentityDock reduced motion", () => {

@@ -386,3 +386,29 @@
     min-height: calc(var(--spacing) * 10);
   }
 }
+
+/* A link the assistant could read. A light primary chip. */
+[data-assistant-reference-status="used"] [data-assistant-reference-chip] {
+  border-color: color-mix(in oklab, hsl(var(--primary)) 40%, transparent);
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+}
+
+/* A link the assistant could not read. */
+[data-assistant-reference-status="failed"] [data-assistant-reference-chip] {
+  border-color: color-mix(in oklab, hsl(var(--destructive)) 50%, transparent);
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 10%, transparent);
+}
+
+/* A follow-up after a look is applied. Quiet outline, muted fill on hover. */
+[data-assistant-refine-chip] {
+  border-color: color-mix(in oklab, hsl(var(--foreground)) 20%, transparent);
+}
+
+[data-assistant-refine-chip]:hover {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 70%, transparent);
+}
+
+/* An accepted look, ready to copy. Quieter than the panel behind it. */
+[data-slot="identity-dock-export"] {
+  background-color: color-mix(in oklab, hsl(var(--muted)) 20%, transparent);
+}
