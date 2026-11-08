@@ -87,22 +87,22 @@ describe("layout job classes", () => {
     expect(utility("text-feature-title")).toBe("font-size: var(--text-xl); line-height: var(--text-xl--line-height);");
     expect(utility("text-page-title")).toBe("font-size: var(--text-2xl); line-height: var(--text-2xl--line-height); font-weight: 600; letter-spacing: -0.02em;");
     expect(css).toContain("font-family: var(--zk-font-display);\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);");
-    expect(css).toContain(".text-hero-title {\n  font-size: var(--text-4xl);");
-    expect(css).toContain(".text-compact-heading {\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);");
-    expect(css).toContain(".text-figure {\n  font-size: var(--text-2xl);\n  line-height: 1;\n  font-weight: 600;\n  letter-spacing: -0.02em;");
-    expect(css).toContain(".text-wordmark {\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);\n  font-weight: 600;");
-    expect(css).toContain(".text-plan-price {\n  font-size: var(--text-4xl);\n  line-height: var(--text-4xl--line-height);\n  font-weight: 600;\n  letter-spacing: -0.02em;");
-    expect(css).toContain(".text-product-name {\n  font-family: var(--zk-font-display);\n  font-size: var(--text-xl);\n  line-height: var(--text-xl--line-height);");
-    expect(css).toContain(".text-offer-price {\n  font-size: var(--text-3xl);\n  font-weight: 600;");
-    expect(css).toContain(".text-stat {\n  font-size: var(--text-2xl);\n  font-weight: 600;");
+    expect(css).toContain("@utility text-hero-title {\n  font-size: var(--text-4xl);");
+    expect(css).toContain("@utility text-compact-heading {\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);");
+    expect(css).toContain("@utility text-figure {\n  font-size: var(--text-2xl);\n  line-height: 1;\n  font-weight: 600;\n  letter-spacing: -0.02em;");
+    expect(css).toContain("@utility text-wordmark {\n  font-size: var(--text-lg);\n  line-height: var(--text-lg--line-height);\n  font-weight: 600;");
+    expect(css).toContain("@utility text-plan-price {\n  font-size: var(--text-4xl);\n  line-height: var(--text-4xl--line-height);\n  font-weight: 600;\n  letter-spacing: -0.02em;");
+    expect(css).toContain("@utility text-product-name {\n  font-family: var(--zk-font-display);\n  font-size: var(--text-xl);\n  line-height: var(--text-xl--line-height);");
+    expect(css).toContain("@utility text-offer-price {\n  font-size: var(--text-3xl);\n  font-weight: 600;");
+    expect(css).toContain("@utility text-stat {\n  font-size: var(--text-2xl);\n  font-weight: 600;");
     expect(css).toContain("[data-slot=\"field-legend\"][data-variant=\"legend\"]");
-    expect(css).toContain(".text-step-heading {\n  font-size: var(--text-base);\n  line-height: var(--text-base--line-height);");
-    expect(css).toContain(".text-brand-word {\n  font-size: var(--text-xl);\n  font-weight: 600;");
-    expect(css).toContain(".text-purpose {\n    font-size: var(--text-lg);");
-    expect(css).toContain(".text-hero-lead {\n  font-size: var(--text-lg);\n  line-height: var(--zk-body-leading, 1.55);");
-    expect(css).toContain("[data-slot=\"switch\"] {\n  height: calc(var(--spacing) * 5);\n  width: calc(var(--spacing) * 9);\n  border-width: 2px;\n  border-style: solid;\n  border-color: transparent;");
+    expect(css).toContain("@utility text-step-heading {\n  font-size: var(--text-base);\n  line-height: var(--text-base--line-height);");
+    expect(css).toContain("@utility text-brand-word {\n  font-size: var(--text-xl);\n  font-weight: 600;");
+    expect(css).toContain("@utility text-purpose {\n  @media (min-width: 40rem) {\n    font-size: var(--text-lg);");
+    expect(css).toContain("@utility text-hero-lead {\n  font-size: var(--text-lg);\n  line-height: var(--zk-body-leading, 1.55);");
+    expect(css).toContain("[data-slot=\"switch\"] {\n    height: calc(var(--spacing) * 5);\n    width: calc(var(--spacing) * 9);\n    border-width: 2px;\n    border-style: solid;\n    border-color: transparent;");
     expect(css).toContain("translate: calc(var(--spacing) * 5 - 4px) 0;");
-    expect(css).toContain("[data-slot=\"prompt-input-field\"] {\n  padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));");
+    expect(css).toContain("[data-slot=\"prompt-input-field\"] {\n    padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));");
     expect(utility("ml-note")).toBe("margin-left: var(--zk-gap-sm);");
     expect(utility("right-send")).toBe("right: calc(var(--spacing) * 1.5);");
     expect(utility("bottom-send")).toBe("bottom: calc(var(--spacing) * 1.5);");
@@ -148,8 +148,8 @@ describe("layout job classes", () => {
     expect(utility("w-invite")).toBe("width: calc(var(--spacing) * 72); max-width: calc(100vw - 2rem);");
     expect(utility("fade-disabled")).toBe("opacity: 0.5;");
     expect(utility("disclosure-icon")).toBe("opacity: 0.5;");
-    expect(utility("close-quiet")).toBe("opacity: 0.7;");
-    expect(css).toContain(".close-quiet:hover {\n  opacity: 1;\n}");
+    expect(utility("close-quiet")).toContain("opacity: 0.7;");
+    expect(utility("close-quiet")).toContain("&:hover { opacity: 1;");
     expect(utility("link-offset")).toBe("text-underline-offset: var(--zk-link-offset);");
     expect(css).toContain('[data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child');
     expect(css).toContain("section[data-gallery-section].border-b:last-child");
@@ -206,16 +206,15 @@ describe("layout job classes", () => {
     expect(css).not.toContain("--zk-gap-2xs");
   });
 
-  it("names each unlayered type role in the components layer", () => {
-    const start = css.indexOf("Names for the unlayered type roles");
-    const layer = css.slice(start, css.indexOf("\n}", start));
-    const outside = css.slice(0, start) + css.slice(css.indexOf("\n}", start));
-    const names = [...outside.matchAll(/(?:^|\s)\.(text-[a-z0-9-]+)\s*\{/gm)].map((match) => match[1]);
-    const unique = [...new Set(names)];
-    expect(unique.length).toBeGreaterThan(10);
-    for (const name of unique) {
-      expect(layer).toContain(`.${name} {}`);
-    }
+  it("defines every type role as a real utility, with no decoy layer names", () => {
+    // Regression guard for the old decoy mechanism (empty names in
+    // @layer components + unlayered rules that beat consumer overrides).
+    // Behavior itself is proven in preview/cascade.spec.ts.
+    expect(css).not.toMatch(/\.text-[a-z0-9-]+ \{\}/);
+    const plain = [...css.matchAll(/^\.text-[a-z0-9-]+ \{/gm)];
+    expect(plain).toEqual([]);
+    const roles = [...css.matchAll(/@utility (text-[a-z0-9-]+) \{/g)].map((match) => match[1]);
+    expect(new Set(roles).size).toBeGreaterThan(10);
   });
 
   it("keeps a 24px hit area on small controls, and the tap size on touch", () => {

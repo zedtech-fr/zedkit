@@ -150,22 +150,14 @@
   --zk-container-reading: 42rem;
   --zk-container-default: 64rem;
   --zk-container-wide: 90rem;
-  --zk-page-gutter: calc(var(--spacing) * 6);
-  --zk-section-sm: calc(var(--spacing) * 8);
-  --zk-section-md: calc(var(--spacing) * 12);
-  --zk-section-lg: calc(var(--spacing) * 24);
-  --zk-section-xl: calc(var(--spacing) * 28);
+  /* --zk-page-gutter / --zk-section-*: the density scope rule after @theme. */
   /* Sticky header offset for section scroll-padding / snap. */
   --zk-header-height: 3.5rem;
 }
 @media (pointer: coarse), (max-width: 40rem) {
   :root {
     --zk-tap-min: 2.75rem;
-    /* Marketing bands stay 64px+ apart on phones even if --spacing is dense. */
-    --zk-section-sm: max(1.5rem, calc(var(--spacing) * 8));
-    --zk-section-md: max(2rem, calc(var(--spacing) * 12));
-    --zk-section-lg: max(2.5rem, calc(var(--spacing) * 24));
-    --zk-section-xl: max(3.5rem, calc(var(--spacing) * 28));
+    /* Section-step floors for this media: the density scope rule after @theme. */
   }
 }
 
@@ -214,15 +206,13 @@
    * not a renamed spacing scale. Structural constraints (shrink, pin, flush)
    * are declarations below, not spacing tokens.
    */
-  --zk-gap-sm: calc(var(--spacing) * 2);
-  --zk-gap-md: calc(var(--spacing) * 3);
-  --zk-gap-lg: calc(var(--spacing) * 4);
+  /* --zk-gap-*, --zk-icon-size, --zk-control-height live in the plain
+     scope rule after this block, not here: @theme emits them at :root,
+     where their calc would freeze at root density (see that rule). */
   --spacing-field-pad: calc(var(--spacing) * 3);
   --spacing-button-pad: calc(var(--spacing) * 4);
   --spacing-button-pad-lg: calc(var(--spacing) * 8);
-  --zk-icon-size: calc(var(--spacing) * 4);
   --spacing-icon: var(--zk-icon-size);
-  --zk-control-height: calc(var(--spacing) * 9);
   --spacing-page-gutter: var(--zk-page-gutter);
   --spacing-section-sm: var(--zk-section-sm);
   --spacing-section-md: var(--zk-section-md);
@@ -403,6 +393,39 @@
   --default-transition-duration: var(--zk-color-duration, 150ms);
 }
 
+/*
+ * Density-derived tokens: the single definition site, declared on the
+ * root AND on every identity scope. A custom property's var() resolves
+ * where it is declared, so a :root-only calc(var(--spacing) * N) would
+ * freeze at root density inside nested [data-identity-scope] subtrees.
+ * Declaring on the scope element makes the calc re-resolve with that
+ * scope's --spacing. (Theme spacing utilities inline their calc and
+ * never had this problem; only var-referenced tokens need this rule.)
+ */
+:root,
+[data-identity-scope] {
+  --zk-gap-sm: calc(var(--spacing) * 2);
+  --zk-gap-md: calc(var(--spacing) * 3);
+  --zk-gap-lg: calc(var(--spacing) * 4);
+  --zk-icon-size: calc(var(--spacing) * 4);
+  --zk-control-height: calc(var(--spacing) * 9);
+  --zk-page-gutter: calc(var(--spacing) * 6);
+  --zk-section-sm: calc(var(--spacing) * 8);
+  --zk-section-md: calc(var(--spacing) * 12);
+  --zk-section-lg: calc(var(--spacing) * 24);
+  --zk-section-xl: calc(var(--spacing) * 28);
+}
+@media (pointer: coarse), (max-width: 40rem) {
+  :root,
+  [data-identity-scope] {
+    /* Marketing bands stay 64px+ apart on phones even if --spacing is dense. */
+    --zk-section-sm: max(1.5rem, calc(var(--spacing) * 8));
+    --zk-section-md: max(2rem, calc(var(--spacing) * 12));
+    --zk-section-lg: max(2.5rem, calc(var(--spacing) * 24));
+    --zk-section-xl: max(3.5rem, calc(var(--spacing) * 28));
+  }
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -485,7 +508,11 @@
 /*
  * Toast viewport: top of the layer scale. Element-qualified so it beats
  * sonner's own injected `[data-sonner-toaster]` rule (z-index 999999999)
- * whatever order the two stylesheets land in.
+ * whatever order the two stylesheets land in. Deliberately unlayered:
+ * sonner's injected stylesheet is unlayered, and unlayered author CSS
+ * beats layered CSS regardless of specificity. This is a documented
+ * must-win rule, not a cascade accident (see the layered component
+ * rules below for the norm).
  */
 ol[data-sonner-toaster] {
   z-index: var(--z-toast);
@@ -516,9 +543,9 @@ ol[data-sonner-toaster] {
 /* Dialog close at rest. Hover brings it back to full strength. */
 @utility close-quiet {
   opacity: 0.7;
-}
-.close-quiet:hover {
-  opacity: 1;
+  &:hover {
+    opacity: 1;
+  }
 }
 /* Secondary button, hovered. The fill is 80% of the secondary colour. */
 @utility secondary-hover {
@@ -622,11 +649,13 @@ ol[data-sonner-toaster] {
 }
 
 /* The chosen select value stays on one line. */
-[data-slot="select-value"] {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+@layer components {
+  [data-slot="select-value"] {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
 }
 
 @utility dialog-center {
@@ -636,22 +665,24 @@ ol[data-sonner-toaster] {
 }
 
 /* Option card. The hidden input is focused, so the card itself draws the focus width. */
-[data-slot="option-card"]:has(:focus-visible) {
-  outline: var(--ring-width) solid hsl(var(--ring));
+@layer components {
+  [data-slot="option-card"]:has(:focus-visible) {
+    outline: var(--ring-width) solid hsl(var(--ring));
+  }
+
+  /* Feature mark. A light primary tint behind the icon, not a filled button. */
+  [data-slot="feature-icon"] {
+    background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+  }
 }
 
 /* A quiet muted surface. The amount is the share of the muted colour. */
-.muted-wash {
+@utility muted-wash {
   background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-muted-wash), transparent);
 }
 
-/* Feature mark. A light primary tint behind the icon, not a filled button. */
-[data-slot="feature-icon"] {
-  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
-}
-
 /* A bar over moving content. Mostly the page background, so type on it stays readable. */
-.bar-scrim {
+@utility bar-scrim {
   background-color: color-mix(in oklab, hsl(var(--background)) var(--zk-bar-scrim), transparent);
 }
 
@@ -660,20 +691,27 @@ ol[data-sonner-toaster] {
   text-underline-offset: var(--zk-link-offset);
 }
 
-/* The last gallery section has no line under it. The sections above keep theirs. */
+/*
+ * The last gallery section has no line under it. The sections above keep
+ * theirs. Deliberately unlayered must-win: it has to beat the `border-b`
+ * utility on the same element, and layered CSS never beats the utilities
+ * layer. Consumer overrides do not apply here (internal specimen chrome).
+ */
 section[data-gallery-section].border-b:last-child {
   border-bottom-width: 0;
 }
 
-/* The last teammate has no line under them. The people above keep theirs. */
+/* The last teammate has no line under them. Same documented must-win as the gallery rule above. */
 [data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child {
   border-bottom-width: 0;
 }
 
 /* Featured plan. The ring sits on the card shadow. It is not the focus ring. */
-[data-slot="pricing"] [data-highlighted="true"] {
-  --tw-ring-color: hsl(var(--primary));
-  --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+@layer components {
+  [data-slot="pricing"] [data-highlighted="true"] {
+    --tw-ring-color: hsl(var(--primary));
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+  }
 }
 
 /* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
@@ -697,9 +735,11 @@ section[data-gallery-section].border-b:last-child {
 }
 
 /* Playwright focus-ring checks call element.focus(); :focus-visible alone would miss the outline. */
-[data-slot="prompt-input-field"]:focus {
-  outline: var(--ring-width-control) solid hsl(var(--ring));
-  outline-offset: var(--ring-offset-width);
+@layer components {
+  [data-slot="prompt-input-field"]:focus {
+    outline: var(--ring-width-control) solid hsl(var(--ring));
+    outline-offset: var(--ring-offset-width);
+  }
 }
 
 /*
@@ -745,56 +785,58 @@ section[data-gallery-section].border-b:last-child {
  * 24px floor on every pointer, and the labelled tap size on touch or a
  * narrow screen.
  */
-a[class*="px-badge-inline"] {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    width: 100%;
-    height: max(100%, 24px);
+@layer components {
+  a[class*="px-badge-inline"] {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      width: 100%;
+      height: max(100%, 24px);
+    }
   }
-}
-@media (pointer: coarse), (max-width: 40rem) {
-  a[class*="px-badge-inline"]::after {
-    width: 100%;
-    height: 100%;
-    min-width: var(--spacing-tap);
-    min-height: var(--spacing-tap);
+  @media (pointer: coarse), (max-width: 40rem) {
+    a[class*="px-badge-inline"]::after {
+      width: 100%;
+      height: 100%;
+      min-width: var(--spacing-tap);
+      min-height: var(--spacing-tap);
+    }
   }
-}
 
-/* Choice box on an option card. Five spacing steps, not an icon. */
-[data-slot="option-card-indicator"] {
-  width: calc(var(--spacing) * 5);
-  height: calc(var(--spacing) * 5);
-}
+  /* Choice box on an option card. Five spacing steps, not an icon. */
+  [data-slot="option-card-indicator"] {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
 
-/* Title bar in a card skeleton. */
-[data-slot="card-skeleton"] [data-card-skeleton-title] {
-  height: calc(var(--spacing) * 5);
-}
+  /* Title bar in a card skeleton. */
+  [data-slot="card-skeleton"] [data-card-skeleton-title] {
+    height: calc(var(--spacing) * 5);
+  }
 
-/* Page-title placeholder. Same width as a compact sidebar, not a sidebar. */
-[data-page-title-bar] {
-  width: calc(var(--spacing) * 48);
-}
+  /* Page-title placeholder. Same width as a compact sidebar, not a sidebar. */
+  [data-page-title-bar] {
+    width: calc(var(--spacing) * 48);
+  }
 
-/* A sample line in the gallery. Same width, not a sidebar. */
-[data-gallery-line] {
-  width: calc(var(--spacing) * 48);
-}
+  /* A sample line in the gallery. Same width, not a sidebar. */
+  [data-gallery-line] {
+    width: calc(var(--spacing) * 48);
+  }
 
-/* Space under a sidebar group label. Same step as a bottom rule, not a rule. */
-[data-nav-label] {
-  padding-bottom: calc(var(--spacing) * 2);
-}
+  /* Space under a sidebar group label. Same step as a bottom rule, not a rule. */
+  [data-nav-label] {
+    padding-bottom: calc(var(--spacing) * 2);
+  }
 
-/* Space under the devtools tab row. Same step as a field legend, not a legend. */
-[data-devtools-tabs] {
-  margin-bottom: calc(var(--spacing) * 3);
+  /* Space under the devtools tab row. Same step as a field legend, not a legend. */
+  [data-devtools-tabs] {
+    margin-bottom: calc(var(--spacing) * 3);
+  }
 }
 
 /* Dialog and drawer titles. */
@@ -835,47 +877,27 @@ a[class*="px-badge-inline"] {
 }
 
 /*
- * Names for the unlayered type roles below. The Tailwind lint only sees a class
- * that sits in the components layer. These rules are empty. The unlayered rules
- * are the ones that paint, so they still beat a heading's type role.
+ * Type roles are real `@utility` definitions: the lint sees them, and a
+ * consumer utility later in the cascade can override them. (They used to
+ * be unlayered rules with empty decoy names in this layer for the lint;
+ * unlayered CSS beat every consumer override.)
  */
-@layer components {
-  .muted-wash {}
-  .bar-scrim {}
-  .text-specimen-title {}
-  .text-compact-heading {}
-  .text-figure {}
-  .text-wordmark {}
-  .text-plan-price {}
-  .text-product-name {}
-  .text-offer-price {}
-  .text-stat {}
-  .text-scene-title {}
-  .text-gallery-heading {}
-  .text-step-heading {}
-  .text-purpose {}
-  .text-brand-word {}
-  .text-demo-heading {}
-  .text-preview-title {}
-  .text-hero-lead {}
-  .text-hero-title {}
-}
 
 /* Identity specimen headline. Display face, one step under the section role. */
-.text-specimen-title {
+@utility text-specimen-title {
   font-family: var(--zk-font-display);
   font-size: var(--text-lg);
   line-height: var(--text-lg--line-height);
 }
 
 /* A level-2 heading pulled down to the specimen size. */
-.text-compact-heading {
+@utility text-compact-heading {
   font-size: var(--text-lg);
   line-height: var(--text-lg--line-height);
 }
 
 /* A big count. One line, semibold, tight tracking. */
-.text-figure {
+@utility text-figure {
   font-size: var(--text-2xl);
   line-height: 1;
   font-weight: 600;
@@ -883,14 +905,14 @@ a[class*="px-badge-inline"] {
 }
 
 /* A short logo word beside a mark. */
-.text-wordmark {
+@utility text-wordmark {
   font-size: var(--text-lg);
   line-height: var(--text-lg--line-height);
   font-weight: 600;
 }
 
 /* The price on a plan. */
-.text-plan-price {
+@utility text-plan-price {
   font-size: var(--text-4xl);
   line-height: var(--text-4xl--line-height);
   font-weight: 600;
@@ -898,118 +920,118 @@ a[class*="px-badge-inline"] {
 }
 
 /* A product name in a specimen, in the display face. */
-.text-product-name {
+@utility text-product-name {
   font-family: var(--zk-font-display);
   font-size: var(--text-xl);
   line-height: var(--text-xl--line-height);
 }
 
 /* A price in a story. The text's own line stays. */
-.text-offer-price {
+@utility text-offer-price {
   font-size: var(--text-3xl);
   font-weight: 600;
 }
 
 /* A dashboard stat. The text's own line stays. */
-.text-stat {
+@utility text-stat {
   font-size: var(--text-2xl);
   font-weight: 600;
 }
 
 /* A scene heading pulled up to the stat size. */
-.text-scene-title {
+@utility text-scene-title {
   font-size: var(--text-2xl);
   line-height: var(--text-2xl--line-height);
 }
 
 /* A gallery section title. */
-.text-gallery-heading {
+@utility text-gallery-heading {
   font-size: var(--text-xl);
   line-height: var(--text-xl--line-height);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-/* Room in the prompt field for the send control, and for cancel when it is shown. */
-[data-slot="prompt-input-field"] {
-  padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));
-}
-[data-slot="prompt-input"][data-actions="two"] [data-slot="prompt-input-field"] {
-  padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) * 2 + var(--spacing) * 3);
-}
-[data-prompt-cancel] {
-  position: absolute;
-  right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) + var(--spacing) * 2);
-}
+@layer components {
+  /* Room in the prompt field for the send control, and for cancel when it is shown. */
+  [data-slot="prompt-input-field"] {
+    padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height));
+  }
+  [data-slot="prompt-input"][data-actions="two"] [data-slot="prompt-input-field"] {
+    padding-right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) * 2 + var(--spacing) * 3);
+  }
+  [data-prompt-cancel] {
+    position: absolute;
+    right: calc(var(--spacing) * 1.5 + var(--spacing-control-height) + var(--spacing) * 2);
+  }
 
-/* Switch track and thumb. The track is five by nine spacing steps. The thumb is four.
-   The transparent border is two pixels, so the checked thumb subtracts both sides. */
-[data-slot="switch"] {
-  height: calc(var(--spacing) * 5);
-  width: calc(var(--spacing) * 9);
-  border-width: 2px;
-  border-style: solid;
-  border-color: transparent;
-}
-[data-slot="switch-thumb"] {
-  width: calc(var(--spacing) * 4);
-  height: calc(var(--spacing) * 4);
-  translate: 0 0;
-}
-[data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
-  translate: calc(var(--spacing) * 5 - 4px) 0;
-}
+  /* Switch track and thumb. The track is five by nine spacing steps. The thumb is four.
+     The transparent border is two pixels, so the checked thumb subtracts both sides. */
+  [data-slot="switch"] {
+    height: calc(var(--spacing) * 5);
+    width: calc(var(--spacing) * 9);
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+  }
+  [data-slot="switch-thumb"] {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
+    translate: 0 0;
+  }
+  [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+    translate: calc(var(--spacing) * 5 - 4px) 0;
+  }
 
-/* Field legend. Medium weight stays on the element. */
-[data-slot="field-legend"][data-variant="legend"] {
-  font-size: var(--text-base);
-  line-height: var(--text-base--line-height);
+  /* Field legend. Medium weight stays on the element. */
+  [data-slot="field-legend"][data-variant="legend"] {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
 }
 
 /* A small step heading. Same size as body copy, one line of that size. */
-.text-step-heading {
+@utility text-step-heading {
   font-size: var(--text-base);
   line-height: var(--text-base--line-height);
 }
 
 /* Docs purpose line. Body size until the small breakpoint, then a larger size. The text's own line stays. */
-@media (min-width: 40rem) {
-  .text-purpose {
+@utility text-purpose {
+  @media (min-width: 40rem) {
     font-size: var(--text-lg);
   }
 }
 
 /* A decorative brand word. The text's own line stays. */
-.text-brand-word {
+@utility text-brand-word {
   font-size: var(--text-xl);
   font-weight: 600;
 }
 
 /* A demo section heading pulled to the brand-word size. */
-.text-demo-heading {
+@utility text-demo-heading {
   font-size: var(--text-xl);
   line-height: var(--text-xl--line-height);
 }
 
 /* Card title in a home preview. The card title's own line, weight, and tracking stay. */
-.text-preview-title {
+@utility text-preview-title {
   font-size: var(--text-lg);
 }
 
 /* The sentence under a marketing hero. The size is the compact heading size. The line stays the body line. */
-.text-hero-lead {
+@utility text-hero-lead {
   font-size: var(--text-lg);
   line-height: var(--zk-body-leading, 1.55);
 }
 
 /* Marketing hero promise. Grows one step from the small breakpoint. */
-.text-hero-title {
+@utility text-hero-title {
   font-size: var(--text-4xl);
   line-height: var(--text-4xl--line-height);
   font-weight: 600;
-}
-@media (min-width: 40rem) {
-  .text-hero-title {
+  @media (min-width: 40rem) {
     font-size: var(--text-5xl);
     line-height: var(--text-5xl--line-height);
   }
@@ -1108,29 +1130,31 @@ a[class*="px-badge-inline"] {
  * when the first or last column is cut off, and the cut edge fades over
  * --zk-table-fade. No attributes, no fade: fitted tables stay crisp.
  */
-[data-slot="table-container"][data-edge-left] {
-  -webkit-mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
-  mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
-}
-[data-slot="table-container"][data-edge-right] {
-  -webkit-mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
-  mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
-}
-[data-slot="table-container"][data-edge-left][data-edge-right] {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    black var(--zk-table-fade),
-    black calc(100% - var(--zk-table-fade)),
-    transparent
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black var(--zk-table-fade),
-    black calc(100% - var(--zk-table-fade)),
-    transparent
-  );
+@layer components {
+  [data-slot="table-container"][data-edge-left] {
+    -webkit-mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+    mask-image: linear-gradient(to right, transparent, black var(--zk-table-fade));
+  }
+  [data-slot="table-container"][data-edge-right] {
+    -webkit-mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+    mask-image: linear-gradient(to left, transparent, black var(--zk-table-fade));
+  }
+  [data-slot="table-container"][data-edge-left][data-edge-right] {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--zk-table-fade),
+      black calc(100% - var(--zk-table-fade)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--zk-table-fade),
+      black calc(100% - var(--zk-table-fade)),
+      transparent
+    );
+  }
 }
 
 @keyframes zk-check-draw {
@@ -1200,6 +1224,8 @@ a[class*="px-badge-inline"] {
  * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
  * vanishes on dark and tinted identities. Draw it from the kit tokens
  * so it reads on every surface. The 44px hit area is vaul's own.
+ * The whole vaul block below stays deliberately unlayered: vaul injects
+ * unlayered styles, and layered CSS would lose to them.
  */
 html [data-vaul-handle] {
   width: var(--spacing-drawer-handle-width);
@@ -1753,11 +1779,13 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 }
 
 /* Example column in the gallery and the docs demos. 24rem, same width as the table filter, kept separate so the filter can change on its own. */
-[data-example-width] {
-  max-width: 24rem;
-}
-[data-example-width="medium"] {
-  max-width: 28rem;
+@layer components {
+  [data-example-width] {
+    max-width: 24rem;
+  }
+  [data-example-width="medium"] {
+    max-width: 28rem;
+  }
 }
 
 /* Structural layout. The declaration is the constraint; the name is the job. */

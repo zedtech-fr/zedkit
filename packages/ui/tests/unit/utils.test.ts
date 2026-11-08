@@ -19,6 +19,10 @@ describe("cn", () => {
     expect(cn("text-foreground", "text-control")).toBe("text-foreground text-control");
   });
 
+  it("lets a consumer type role replace the hero role (override seam for cascade.spec)", () => {
+    expect(cn("text-hero-title", "text-page-title")).toBe("text-page-title");
+  });
+
   it("treats spacing-token min-heights as one conflict group", () => {
     expect(cn("min-h-textarea-min-height", "min-h-control-height")).toBe("min-h-control-height");
   });
