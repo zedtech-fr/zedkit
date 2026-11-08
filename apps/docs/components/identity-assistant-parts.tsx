@@ -242,8 +242,8 @@ function ProposalApplyRow({
   return (
     <Stack
       direction="horizontal"
-      gap={2}
-      className={cn("flex-wrap overflow-visible", pinned && "sticky pin-bottom z-10 bg-background/95 surface-pad-block-sm backdrop-blur")}
+      gap={2} {...(pinned ? { "data-proposal-apply": "" } : {})}
+      className={cn("flex-wrap overflow-visible", pinned && "sticky pin-bottom bg-background/95 surface-pad-block-sm backdrop-blur")}
     >
       <Button type="button" onClick={() => onUse(tokens)} disabled={busy}>
         {copy.proposal.apply}
@@ -254,7 +254,6 @@ function ProposalApplyRow({
     </Stack>
   );
 }
-
 
 function ProposalChangeList({ rows }: { rows: readonly { path: string; from: string; to: string }[] }) {
   if (rows.length === 0) return null;
