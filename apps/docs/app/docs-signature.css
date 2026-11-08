@@ -158,6 +158,11 @@
   max-height: min(52dvh, 28rem);
 }
 
+/* Pinned proposal actions. They stay above the card while it scrolls. */
+[data-proposal-apply] {
+  z-index: 10;
+}
+
 /* Color swatch in the identity dock. One spacing step of 4, same box as an icon, not an icon. */
 [data-slot="identity-dock-swatch"] {
   width: calc(var(--spacing) * 4);
