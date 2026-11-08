@@ -503,6 +503,10 @@ ol[data-sonner-toaster] {
 @utility fade-disabled {
   opacity: 0.5;
 }
+/* The mark that opens a menu. Quieter than the label, not a disabled control. */
+@utility disclosure-icon {
+  opacity: 0.5;
+}
 
 /* The chosen select value stays on one line. */
 [data-slot="select-value"] {

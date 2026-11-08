@@ -53,7 +53,7 @@ function MultiSelect(props: MultiSelectProps) {
               className="absolute pin-center-y right-control-inline text-muted-foreground"
               aria-label={messages.options}
             >
-              <ChevronDown className="size-icon opacity-50" />
+              <ChevronDown className="size-icon disclosure-icon" />
             </button>
           </div>
         </div>
