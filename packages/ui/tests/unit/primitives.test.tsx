@@ -57,6 +57,7 @@ describe("primitives", () => {
     expect(input.className).toContain("py-control-block");
     expect(input.className).toContain("h-control-height");
     expect(input.className).toContain("text-control");
+    expect(input.className).not.toContain("file:border-0");
     expect(input.className).toContain("rounded-md");
   });
 
