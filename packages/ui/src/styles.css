@@ -553,6 +553,11 @@ ol[data-sonner-toaster] {
   text-underline-offset: var(--zk-link-offset);
 }
 
+/* The last gallery section has no line under it. The sections above keep theirs. */
+section[data-gallery-section].border-b:last-child {
+  border-bottom-width: 0;
+}
+
 /* The last teammate has no line under them. The people above keep theirs. */
 [data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child {
   border-bottom-width: 0;
