@@ -1,3 +1,5 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { Linter } from "eslint";
 import { parser as tsParser, plugin as tsPlugin } from "typescript-eslint";
@@ -58,9 +60,38 @@ describe("uiPreset entryPoints", () => {
     const scoped = blocks.find((block) => block.name === "zedkit/ui-tailwind-entry-0");
     expect(scoped?.files).toEqual(["apps/docs/**/*.tsx"]);
     expect(scoped?.settings?.["better-tailwindcss"]?.entryPoint).toBe("/repo/apps/docs/app/globals.css");
+    expect(scoped?.settings?.zedkit?.entryPoint).toBe("/repo/apps/docs/app/globals.css");
     // The repo-wide block keeps the primary entry.
     const main = blocks.find((block) => block.name === "zedkit/ui-tailwind");
     expect(main?.settings?.["better-tailwindcss"]?.entryPoint).toBe("/repo/packages/ui/src/styles.css");
+  });
+
+  it("tailwind-ready uses the scoped entry, not the default", () => {
+    const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..");
+    const defaultEntry = join(repo, "packages/ui/src/styles.css");
+    const missing = join(repo, "apps/docs/does-not-exist.css");
+    const scopedOk = join(repo, "apps/docs/app/globals.css");
+    const blocks = (entry) => {
+      const preset = uiPreset({
+        entryPoint: defaultEntry,
+        entryPoints: [{ files: ["apps/docs/**/*.tsx"], entryPoint: entry }],
+      });
+      return [
+        ...preset.filter((block) => block.name === "zedkit/ui-scale" || block.name?.startsWith("zedkit/ui-tailwind-entry")),
+        {
+          files: ["**/*.tsx"],
+          languageOptions: { parser: tsParser, parserOptions: { ecmaFeatures: { jsx: true } } },
+        },
+      ];
+    };
+    const linter = new Linter({ configType: "flat", cwd: repo });
+    const sample = `export function X() { return <div className="flex" />; }\n`;
+    const missingMsgs = linter.verify(sample, blocks(missing), "apps/docs/page.tsx");
+    expect(missingMsgs.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(true);
+    const okMsgs = linter.verify(sample, blocks(scopedOk), "apps/docs/page.tsx");
+    expect(okMsgs.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(false);
+    const unmatched = linter.verify(sample, blocks(missing), "packages/ui/src/button.tsx");
+    expect(unmatched.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(false);
   });
 });
 

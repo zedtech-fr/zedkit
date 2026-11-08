@@ -391,7 +391,9 @@ export function zedkitLintPlugin(entryPoint, scaleBaseline) {
         create(context) {
           return {
             Program(node) {
-              const problem = tailwindProblem(context.cwd, entryPoint);
+              const configured = context.settings?.zedkit?.entryPoint;
+              const effective = typeof configured === "string" && configured !== "" ? configured : entryPoint;
+              const problem = tailwindProblem(context.cwd, effective);
               if (!problem) return;
               context.report({ node, message: problem });
             },

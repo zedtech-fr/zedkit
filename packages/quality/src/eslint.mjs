@@ -111,7 +111,10 @@ export function uiPreset({ entryPoint, scaleBaseline, entryPoints = [] } = {}) {
     return {
       name: `zedkit/ui-tailwind-entry-${index}`,
       files: scoped.files,
-      settings: btSettings(resolved, root),
+      settings: {
+        ...btSettings(resolved, root),
+        zedkit: { entryPoint: resolved },
+      },
     };
   });
   return [
@@ -195,6 +198,7 @@ export function uiPreset({ entryPoint, scaleBaseline, entryPoints = [] } = {}) {
       name: "zedkit/ui-scale",
       files: ["**/*.tsx", "**/*.jsx"],
       plugins: { zedkit: zedkitLintPlugin(resolvedEntry, scaleBaseline) },
+      settings: { zedkit: { entryPoint: resolvedEntry } },
       rules: {
         "zedkit/tailwind-ready": "error",
         "zedkit/no-scale-classes": "error",
