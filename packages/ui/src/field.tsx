@@ -150,7 +150,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
       className={cn(
         "text-dense leading-normal font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance",
         "last:trim-top nth-last-2:pull-line [[data-variant=legend]+&]:pull-legend",
-        "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "[&>a]:underline [&>a]:link-offset [&>a:hover]:text-primary",
         className,
       )}
       {...props}

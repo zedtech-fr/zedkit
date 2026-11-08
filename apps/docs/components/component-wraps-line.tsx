@@ -23,7 +23,7 @@ export function ComponentWrapsLine({ wraps }: { wraps: string }) {
           <Text as="span" key={`${token}-${index}`}>
             {index > 0 ? ", " : null}
             {href ? (
-              <Link href={href} className="font-mono text-foreground underline-offset-4 hover:underline">
+              <Link href={href} className="font-mono text-foreground link-offset hover:underline">
                 {token}
               </Link>
             ) : (

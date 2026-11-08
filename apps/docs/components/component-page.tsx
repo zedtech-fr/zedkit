@@ -167,7 +167,7 @@ export async function ComponentPage({
         <Section title={componentPageCopy.sections.related} id="related">
           <Stack gap={2}>
             {related.map((link) => (
-              <Link key={link.href} href={link.href} className="text-primary underline underline-offset-4 hover:no-underline">
+              <Link key={link.href} href={link.href} className="text-primary underline link-offset hover:no-underline">
                 {link.title}
               </Link>
             ))}

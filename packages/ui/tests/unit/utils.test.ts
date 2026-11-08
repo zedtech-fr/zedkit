@@ -37,6 +37,8 @@ describe("cn", () => {
     expect(cn("space-y-4", "space-y-stack-lg")).toBe("space-y-stack-lg");
     expect(cn("size-4", "size-icon")).toBe("size-icon");
     expect(cn("min-w-0", "content-shrink")).toBe("content-shrink");
+    expect(cn("underline-offset-4", "link-offset")).toBe("link-offset");
+    expect(cn("link-offset", "underline-offset-2")).toBe("underline-offset-2");
     expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
     expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
     expect(cn("top-0", "pin-top")).toBe("pin-top");
