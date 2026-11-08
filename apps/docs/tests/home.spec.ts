@@ -140,6 +140,16 @@ test("home 'More in the kit' links are tappable on a phone and sit beside their 
   const [text, link] = await Promise.all([row.locator("> div").boundingBox(), row.locator("a").boundingBox()]);
   expect(link!.x).toBeGreaterThan(text!.x + text!.width);
   expect(Math.abs(link!.y - text!.y)).toBeLessThan(40);
+  const borders = await page.locator("#entry-points [data-home-secondary-links] > [data-index-lead]").evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      border: getComputedStyle(node).borderBottomWidth,
+      pad: getComputedStyle(node).paddingBottom,
+    })),
+  );
+  expect(borders).toHaveLength(4);
+  expect(borders.at(-1)?.border).toBe("0px");
+  expect(borders.slice(0, -1).every((entry) => entry.border !== "0px")).toBe(true);
+  expect(borders.every((entry) => entry.pad !== "0px")).toBe(true);
 });
 
 test("home area cards keep a decorative icon at tablet width and up", async ({ page }) => {

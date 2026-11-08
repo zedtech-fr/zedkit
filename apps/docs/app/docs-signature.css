@@ -49,6 +49,11 @@
   max-width: 95%;
 }
 
+/* The last home index row has no line under it. The rows above keep theirs, and the padding stays. */
+[data-home-secondary-links] > [data-index-lead].border-b:last-child {
+  border-bottom-width: 0;
+}
+
 /* The last job in the badge table has no line under it. */
 [data-badge-table] tbody tr.border-b:last-child {
   border-bottom-width: 0;
