@@ -4,17 +4,11 @@ import { expect, type Page } from "@playwright/test";
 const MOBILE_WIDTH = 375;
 
 /**
- * Baseline axe on `main` (#300 harness). `color-contrast` stays off: enabling
- * it fails on all 8 strict routes (probed 2026-10-26, systemic token issue
- * for the UI lane), not just home. Fumadocs chrome duplicates are out of
- * scope here.
+ * Baseline axe on `main` (#300 harness). Contrast stays on: the 8 strict
+ * routes and home were clean in light and dark on 2026-11-08, including
+ * code blocks. Fumadocs chrome duplicates are out of scope here.
  */
-const AXE_BASELINE_RULES_OFF = [
-  "landmark-unique",
-  "region",
-  "landmark-one-main",
-  "color-contrast",
-] as const;
+const AXE_BASELINE_RULES_OFF = ["landmark-unique", "region", "landmark-one-main"] as const;
 
 export async function assertNoHorizontalOverflow(page: Page): Promise<void> {
   await page.setViewportSize({ width: MOBILE_WIDTH, height: 844 });
