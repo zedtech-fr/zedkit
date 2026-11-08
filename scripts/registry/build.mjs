@@ -4,6 +4,8 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { rewriteUiImports } from "./rewrite-ui-imports.mjs";
+import { generateThemePayload } from "./theme-payload.mjs";
+import { expectedRegistryThemeFromStyles } from "./theme-tokens.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const uiSrc = join(root, "packages/ui/src");
@@ -37,6 +39,27 @@ can read sources from GitHub. Do not edit by hand. CI runs
   );
 }
 
+/**
+ * Sync registry.json css/cssVars from the package stylesheet: per-brick
+ * slices from theme-tokens.mjs, the theme item whole from
+ * theme-payload.mjs. Hand-edited values in registry.json are overwritten
+ * here — edit styles.css (or the expectations) instead.
+ */
+function syncRegistryTheme() {
+  const registryPath = join(root, "registry.json");
+  const registry = JSON.parse(readFileSync(registryPath, "utf8"));
+  const cssText = readFileSync(join(uiSrc, "styles.css"), "utf8");
+  const expected = expectedRegistryThemeFromStyles(cssText);
+  expected.theme = generateThemePayload(root);
+  for (const item of registry.items ?? []) {
+    const want = expected[item.name];
+    if (!want) continue;
+    if (want.cssVars) item.cssVars = want.cssVars;
+    if (want.css) item.css = want.css;
+  }
+  writeFileSync(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+}
+
 function runShadcnBuild() {
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
@@ -47,4 +70,5 @@ function runShadcnBuild() {
 }
 
 stageTransformedSources();
+syncRegistryTheme();
 runShadcnBuild();

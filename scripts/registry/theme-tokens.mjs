@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { cssObjectFromBody, generateThemePayload, utilitiesFromCss } from "./theme-payload.mjs";
 
 const STYLES_REL = "packages/ui/src/styles.css";
 
@@ -64,42 +65,8 @@ function expectedCheckDrawCss(css) {
   };
 }
 
-function motionRootBlock(css) {
-  const marker = "/*\n * Motion tokens:";
-  const start = css.indexOf(marker);
-  if (start < 0) throw new Error("styles.css: missing motion tokens block");
-  const open = css.indexOf("{", start);
-  const close = css.indexOf("\n}", open);
-  return css.slice(open + 1, close);
-}
 
-function keyframesFromTo(css, name) {
-  const body = keyframesBlock(css, name);
-  const fromMatch = body.match(/from\s*\{([^}]+)\}/);
-  const toMatch = body.match(/to\s*\{([^}]+)\}/);
-  if (!fromMatch && !toMatch) throw new Error(`styles.css: ${name} keyframes malformed`);
-  const pickProps = (block) => {
-    const props = {};
-    for (const prop of ["opacity", "transform", "stroke-dashoffset"]) {
-      const match = block.match(new RegExp(`${prop}:\\s*([^;]+);`));
-      if (match) props[prop] = match[1].trim();
-    }
-    return props;
-  };
-  const frame = {};
-  if (fromMatch) frame.from = pickProps(fromMatch[1]);
-  if (toMatch) frame.to = pickProps(toMatch[1]);
-  return frame;
-}
 
-function expectedOverlayMotionCss(cssText) {
-  return {
-    "@keyframes zk-fade-in": keyframesFromTo(cssText, "zk-fade-in"),
-    "@keyframes zk-fade-out": keyframesFromTo(cssText, "zk-fade-out"),
-    "@keyframes zk-zoom-in": keyframesFromTo(cssText, "zk-zoom-in"),
-    "@keyframes zk-zoom-out": keyframesFromTo(cssText, "zk-zoom-out"),
-  };
-}
 
 function utilityCss(css, name, endMarker) {
   const utility = blockBefore(css, `@utility ${name}`, endMarker);
@@ -154,72 +121,14 @@ function expectedButtonPressCss(css) {
 }
 
 function expectedDialogCenterCss(css) {
-  const utility = blockBefore(css, "@utility dialog-center", "\n/* Controls");
-  const props = {};
-  for (const line of utility.split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("&")) continue;
-    const colon = trimmed.indexOf(":");
-    if (colon < 0) continue;
-    props[trimmed.slice(0, colon).trim()] = trimmed.slice(colon + 1).trim().replace(/;$/, "");
-  }
+  const body = utilitiesFromCss(css).get("dialog-center");
+  if (!body) throw new Error("styles.css: missing @utility dialog-center");
   return {
-    "@utility dialog-center": props,
+    "@utility dialog-center": cssObjectFromBody(body),
   };
 }
 
-function expectedVaulCopyCss() {
-  return {
-    "html [data-vaul-drawer]": {
-      "animation-duration": "var(--motion-slow)",
-      "transition-duration": "var(--motion-slow)",
-    },
-    "html [data-vaul-overlay]": {
-      "animation-duration": "var(--motion-base)",
-    },
-    "@media (prefers-reduced-motion: reduce)": {
-      "html [data-vaul-drawer], html [data-vaul-overlay]": {
-        animation: "none !important",
-        transition: "none !important",
-      },
-    },
-  };
-}
 
-function expectedCopyThemeItem(cssText) {
-  const root = rootThemeBlock(cssText);
-  const dark = darkThemeBlock(cssText);
-  const motion = motionRootBlock(cssText);
-  return {
-    cssVars: {
-      light: {
-        success: varFromBlock(root, "success"),
-        warning: varFromBlock(root, "warning"),
-        overlay: varFromBlock(root, "overlay"),
-      },
-      dark: {
-        success: varFromBlock(dark, "success"),
-        warning: varFromBlock(dark, "warning"),
-        overlay: varFromBlock(dark, "overlay"),
-      },
-      theme: {
-        "motion-fast": varFromBlock(motion, "motion-fast"),
-        "motion-base": varFromBlock(motion, "motion-base"),
-        "motion-slow": varFromBlock(motion, "motion-slow"),
-        "ease-enter": varFromBlock(motion, "ease-enter"),
-        "ease-exit": varFromBlock(motion, "ease-exit"),
-        "zk-press-scale": varFromBlock(motion, "zk-press-scale"),
-      },
-    },
-    css: {
-      ...expectedOverlayMotionCss(cssText),
-      ...expectedDialogCenterCss(cssText),
-      ...expectedButtonPressCss(cssText),
-      ...expectedFocusRingControlCss(cssText),
-      ...expectedVaulCopyCss(),
-    },
-  };
-}
 
 /** Expected registry `cssVars` / `css` slices derived from the UI theme file. */
 export function expectedRegistryThemeFromStyles(cssText) {
@@ -379,7 +288,8 @@ export function expectedRegistryThemeFromStyles(cssText) {
         },
       },
     },
-    theme: expectedCopyThemeItem(cssText),
+    // theme: generated whole by theme-payload.mjs (needs repo root);
+    // checkRegistryThemeDrift and the registry build inject it.
     button: {
       cssVars: {
         theme: {
@@ -435,6 +345,7 @@ export function checkRegistryThemeDrift(root) {
   const registry = JSON.parse(readFileSync(registryPath, "utf8"));
   const cssText = readFileSync(stylesPath, "utf8");
   const expectedByBrick = expectedRegistryThemeFromStyles(cssText);
+  expectedByBrick.theme = generateThemePayload(root);
   const errors = [];
 
   for (const item of registry.items ?? []) {
