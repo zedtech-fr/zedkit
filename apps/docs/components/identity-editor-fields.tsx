@@ -75,7 +75,7 @@ function TokenField({
 
 function FieldGroup({ legend, className, children }: { legend: string; className?: string; children: ReactNode }) {
   return (
-    <fieldset className={cn("trim-margin content-shrink border-0 flush", className)}>
+    <fieldset className={cn("trim-margin content-shrink flush", className)}>
       <legend className="mb-field-legend-bottom font-semibold text-foreground">{legend}</legend>
       <Stack className="grid content-shrink gap-stack-lg sm:grid-pair">{children}</Stack>
     </fieldset>
