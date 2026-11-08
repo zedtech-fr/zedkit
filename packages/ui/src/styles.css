@@ -247,6 +247,7 @@
    * where the purpose is distinct. Distinct purposes may share a value
    * today and diverge tomorrow — judge a token by meaning, ownership
    * and independent customizability, not by value uniqueness.
+   * A name that only spells the number is not a separate decision.
    */
   --spacing-icon-sm: calc(var(--spacing) * 3.5);
   --spacing-checkbox: calc(var(--spacing) * 4);

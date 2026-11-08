@@ -57,6 +57,16 @@ test("--write with an equal count is a no-op success (repeat call harmless)", ()
   assert.equal(JSON.parse(once).total, 1);
 });
 
+test("a matching baseline is an inventory, not an unfinished migration", () => {
+  const { root, script } = fixture({ "app.mjs": 1 });
+  writeFileSync(join(root, "app.mjs"), BAD);
+  const res = run(script, []);
+  assert.equal(res.status, 0, res.stderr);
+  assert.match(res.stdout, /inventory, not a migration verdict/);
+  assert.match(res.stdout, /app\.mjs: 1/);
+  assert.doesNotMatch(res.stdout + res.stderr, /not complete/);
+});
+
 test("--write still records a decrease", () => {
   const { root, baseline, script } = fixture({ "app.mjs": 1 });
   writeFileSync(join(root, "app.mjs"), 'export const x = cn("px-page-gutter");\n');

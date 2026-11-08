@@ -34,6 +34,7 @@ The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter type
 ## Contracts and data
 
 - [ ] Public API, event or schema changes are additive, or versioned with a stated migration path. List the consumers you searched.
+- [ ] When the change ships CSS or a registry payload, one check compiles only that payload and asserts a behavior the component claims. An app that imports the package stylesheet does not cover the copy path.
 - [ ] Persisted-data changes: old data still readable, rollout order safe (new code reads old data, old code survives new data).
 - [ ] Docs, examples and catalogs that describe the changed surface are updated.
 
