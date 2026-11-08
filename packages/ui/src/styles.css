@@ -520,6 +520,10 @@ ol[data-sonner-toaster] {
 .close-quiet:hover {
   opacity: 1;
 }
+/* Secondary button, hovered. The fill is 80% of the secondary colour. */
+@utility secondary-hover {
+  background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;

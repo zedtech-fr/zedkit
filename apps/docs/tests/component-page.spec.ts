@@ -52,6 +52,27 @@ test("button reference page shows a full button before scroll at 390 (#R2)", asy
   expect(box!.y + box!.height).toBeLessThanOrEqual(844);
 });
 
+test("the secondary button keeps a quieter fill on hover", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const cancel = page.locator("[data-component-preview]").first().getByRole("button", { name: "Cancel" });
+  await expect(cancel).toBeVisible();
+  const rest = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await cancel.hover();
+  await expect.poll(async () =>
+    cancel.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-secondary/");
+    }),
+  ).toBe(true);
+  const hover = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+});
+
 test("button reference page surfaces variant and size in props without search (#R2)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
