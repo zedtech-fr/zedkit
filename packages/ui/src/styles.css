@@ -540,6 +540,22 @@ ol[data-sonner-toaster] {
 @utility ghost-pressed {
   background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
 }
+/* Status badges, hovered. Quieter than the resting fill. Not the button hovers. */
+@utility badge-primary-hover {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 80%, transparent);
+}
+@utility badge-secondary-hover {
+  background-color: color-mix(in oklab, hsl(var(--secondary)) 80%, transparent);
+}
+@utility badge-destructive-hover {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 80%, transparent);
+}
+@utility badge-success-hover {
+  background-color: color-mix(in oklab, hsl(var(--success)) 90%, transparent);
+}
+@utility badge-warning-hover {
+  background-color: color-mix(in oklab, hsl(var(--warning)) 90%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;
