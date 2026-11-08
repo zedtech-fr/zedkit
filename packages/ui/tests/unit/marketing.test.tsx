@@ -166,6 +166,7 @@ describe("FeatureGrid", () => {
     const icons = container.querySelectorAll("[data-slot='feature-icon']");
     expect(icons).toHaveLength(1);
     expect(icons[0]?.getAttribute("aria-hidden")).toBe("true");
+    expect(icons[0]?.className).not.toContain("bg-primary/10");
     expect(container.querySelector("[data-slot='marketing-section-header'] p")).toBeNull();
   });
 
