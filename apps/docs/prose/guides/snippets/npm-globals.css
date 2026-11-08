@@ -1,3 +1,6 @@
 @import "tailwindcss";
 @import "@zedtech/zedkit-ui/styles.css";
 @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+@source not "../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
+@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";

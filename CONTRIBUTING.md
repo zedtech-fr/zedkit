@@ -42,3 +42,8 @@ Breaking changes are never silent:
 Label such PRs `breaking`: CI fails the PR unless it carries a
 minor-or-major changeset with a migration note
 (`scripts/check-breaking-changeset.sh`).
+
+The GitHub shadcn shorthand `npx shadcn add zedtech-fr/zedkit/<brick>` is
+retired. Copy bricks from the hosted JSON (`https://zedkit.app/r/<brick>.json`)
+or the `@zedkit` namespace. That was a documented install route, not an npm
+export.

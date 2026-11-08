@@ -45,7 +45,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - `deploy/` — hosting and the identity suggest service
   ([AGENTS.md](deploy/AGENTS.md)); maintainer switches:
   [README.md](deploy/README.md).
-- `registry/`, `scripts/` — shadcn copy-source payloads; repo checks.
+- `registry/`, `scripts/` — generated shadcn copy-source staging (`registry/ui/`
+  is gitignored; `pnpm registry:build` writes it) and repo checks.
 
 ## How to work
 

@@ -12,6 +12,7 @@ shadcn/ui-based (MIT, see
 default.
 
 **Install** with `pnpm add @zedtech/zedkit-ui`, or **copy** individual bricks with
+`npx shadcn@latest init -y --base radix --preset nova` then
 `npx shadcn@latest add https://zedkit.app/r/<brick>.json` where the registry lists
 them. Composed bricks need the namespace once:
 
@@ -35,9 +36,14 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 Adopt in 3 lines:
 
 ```css
-/* app/globals.css (Tailwind v4, PostCSS or Vite plugin) */
+/* Tailwind v4. Path is relative to this CSS file. */
 @import "@zedtech/zedkit-ui/styles.css";
+/* app/globals.css or src/index.css */
 @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+@source not "../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
+/* src/app/globals.css */
+@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
 ```
 
 ```tsx

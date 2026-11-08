@@ -24,6 +24,12 @@ export function declarationOrigin(declarationFiles) {
   return declarationFiles.some((file) => !ELEMENT_ATTRIBUTE_TYPINGS.test(file)) ? "kit" : "inherited";
 }
 
+/** Registry / MDN host key: the file basename, even after the source moves into a folder. */
+export function registryHostName(file) {
+  const base = file.replaceAll("\\", "/").split("/").at(-1) ?? file;
+  return base.replace(/\.(tsx|ts)$/, "");
+}
+
 /**
  * Reads one props type from the real kit source. Each entry carries its
  * `origin`, resolved from the property's own declarations.

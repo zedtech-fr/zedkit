@@ -13,12 +13,19 @@ import { describe, expect, it } from "vitest";
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
 
+function collectCss(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, name.name);
+    if (name.isDirectory()) collectCss(path, out);
+    else if (name.name.endsWith(".css")) out.push(path);
+  }
+  return out;
+}
+
+const cssFiles = collectCss(src).sort();
+
 function packageCss(): string {
-  const files = [
-    ...readdirSync(src).filter((f) => f.endsWith(".css")),
-    ...readdirSync(join(src, "identities")).map((f) => join("identities", f)),
-  ];
-  return files.map((f) => readFileSync(join(src, f), "utf8")).join("\n");
+  return cssFiles.map((file) => readFileSync(file, "utf8")).join("\n");
 }
 
 const RHYTHM = new Set([0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -115,6 +122,10 @@ function varValue(css: string, name: string): string | undefined {
 
 describe("declared scales (D-S1)", () => {
   const css = packageCss();
+
+  it("scans every package css file, including nested sheets", () => {
+    expect(cssFiles).toHaveLength(20);
+  });
 
   it("keeps every spacing multiplier on the declared set", () => {
     expect(offScaleDeclarations(css)).toEqual([]);

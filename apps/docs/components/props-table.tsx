@@ -2,7 +2,7 @@ import { join } from "node:path";
 import type { DocEntry } from "fumadocs-typescript";
 import { TypeTable, type TypeNode } from "fumadocs-ui/components/type-table";
 import { Stack, Text } from "@zedtech/zedkit-ui";
-import { readDeclaredProps } from "../lib/declared-props.mjs";
+import { readDeclaredProps, registryHostName } from "../lib/declared-props.mjs";
 import { DEFAULT_PROPS_PRIORITY, partitionPropsEntries } from "../lib/props-priority.mjs";
 import { inheritedPropsCopy } from "./i18n/inherited-props-copy";
 import { InheritedPropsPanel } from "./inherited-props-panel";
@@ -50,7 +50,7 @@ export async function PropsTable({
   rest?: { summary: string; href: string };
 }) {
   const basePath = join(process.cwd(), "..", "..", "packages", "ui", "src");
-  const host = file.replace(/\.tsx$/, "");
+  const host = registryHostName(file);
   const docs = await readDeclaredProps({ file, name, basePath });
 
   return (

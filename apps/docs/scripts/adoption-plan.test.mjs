@@ -55,7 +55,7 @@ test("Button: install package is install, load styles, import and render", () =>
   assert.equal(styles[0].lang, "css");
   assert.equal(
     styles[0].code,
-    '@import "tailwindcss";\n@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n',
+    '@import "tailwindcss";\n@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";\n',
   );
   assert.equal(render[0].path, "src/app/page.tsx");
   assert.match(render[0].code, /^import \{ Button \} from "@zedtech\/zedkit-ui";/m);
@@ -168,7 +168,10 @@ test("every copy mode starts from a shadcn project and says what it requires", (
   for (const id of ["cli", "manual"]) {
     const m = mode(plan("Trigger actions with buttons"), id);
     assert.equal(m.steps[0].id, "init");
-    assert.equal(m.steps[0].blocks[0].commands.pnpm, "pnpm dlx shadcn@latest init -d");
+    assert.equal(
+      m.steps[0].blocks[0].commands.pnpm,
+      "pnpm dlx shadcn@latest init -y --base radix --preset nova",
+    );
     assert.ok(m.requires.length > 0 && m.gives.length > 0);
   }
 });

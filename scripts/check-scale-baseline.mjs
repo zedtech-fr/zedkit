@@ -55,7 +55,9 @@ const total = [...current.values()].reduce((sum, n) => sum + n, 0);
 
 // Zero-baseline for shipped sources: any hit under a src/ tree fails,
 // whatever the fixture baseline says.
-const shippedHits = [...current.entries()].filter(([file]) => /(^|\/)src\//.test(file));
+const shippedHits = [...current.entries()].filter(
+  ([file]) => /(^|\/)src\//.test(file) && !/\.(?:test|spec)\./.test(file),
+);
 if (shippedHits.length > 0) {
   process.stderr.write(
     "scale classes in shipped sources (must be zero):\n" +

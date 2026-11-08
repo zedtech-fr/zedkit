@@ -7,8 +7,11 @@ component may replace a mature primitive (ladder rung 5).
 
 Rules:
 
-- New code goes in `src/`, tests in `tests/unit/` (Testing
-  Library + jsdom for rendered output, plain vitest otherwise).
+- New code goes in `src/`. Tests live in `tests/unit/` or, for one
+  module, as `<name>.test.tsx` next to it. Packed `src` excludes
+  `*.test.*` / `*.spec.*` / `*.stories.*`. Use `#*` in tests.
+  `tsconfig.json` excludes colocated tests from emit; `tsconfig.tests.json`
+  must set its own `exclude` so it does not inherit that list.
 - Animate triggers (`data-animate`, `<Animate>`): types, grammar and
   reduced-motion rules in [docs/animate-spec.md](docs/animate-spec.md).
 - Every public export gets a `## <need>` entry in CATALOG.md
