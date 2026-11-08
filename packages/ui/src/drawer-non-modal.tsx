@@ -159,7 +159,7 @@ function NonModalDrawerHandle({ className, ...props }: React.ComponentProps<"div
       data-vaul-handle=""
       aria-hidden="true"
       className={cn(
-        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full bg-muted-foreground/50",
+        "mx-auto mt-drawer-handle-top h-drawer-handle-height w-drawer-handle-width shrink-0 rounded-full",
         "in-data-[vaul-drawer-direction=left]:hidden in-data-[vaul-drawer-direction=right]:hidden",
         "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:trim-top in-data-[vaul-drawer-direction=top]:mb-drawer-handle-top",
         className,

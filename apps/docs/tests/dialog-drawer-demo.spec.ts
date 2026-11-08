@@ -69,6 +69,26 @@ test.describe("docs dialog and drawer previews show realistic screens", () => {
     await page.getByRole("button", { name: "Filters", exact: true }).click();
     const sheet = page.getByRole("dialog");
     await expect(sheet.getByRole("heading", { name: "Filters" })).toBeVisible();
+    const handle = sheet.locator("[data-vaul-handle]");
+    await expect(handle).toBeVisible();
+    const mark = await handle.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "hsl(var(--muted-foreground) / 0.5)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      const box = node.getBoundingClientRect();
+      probe.remove();
+      return {
+        background,
+        expected,
+        numeric: node.className.includes("bg-muted-foreground/"),
+        wide: box.width > box.height,
+      };
+    });
+    expect(mark.background).toBe(mark.expected);
+    expect(mark.numeric).toBe(false);
+    expect(mark.wide).toBe(true);
     await sheet.getByLabel("Awaiting shipment").click();
     await expect(sheet.getByText("2 status selected.")).toBeVisible();
     await sheet.getByRole("button", { name: "Reset" }).click();
