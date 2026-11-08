@@ -269,7 +269,7 @@ describe("overlays", () => {
       </Dialog>,
     );
     await user.click(screen.getByRole("button", { name: "Open" }));
-    const overlay = document.querySelector(".bg-overlay\\/80");
+    const overlay = document.querySelector('[data-slot="dialog-overlay"]');
     expect(overlay?.getAttribute("data-state")).toBe("open");
     expect(overlay?.getAttribute("class")).toContain("zk-fade-in");
   });
