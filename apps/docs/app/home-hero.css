@@ -63,6 +63,10 @@
   z-index: 20;
   width: calc(100% - 1rem);
 }
+/* A step that has not started. Quieter than the one running or done. */
+[data-hero-agent-panel] [data-state="pending"] {
+  opacity: 0.6;
+}
 @media (min-width: 48rem) {
   [data-hero-agent-panel] {
     width: calc(var(--spacing) * 80);

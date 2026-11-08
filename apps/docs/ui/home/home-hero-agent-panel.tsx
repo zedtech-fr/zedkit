@@ -41,7 +41,7 @@ function PhaseList({ step, status }: { step: number; status: HeroAgentStatus }) 
     {HERO_AGENT_PHASES.map((phase, index) => {
       const state = phaseState(index, step, status);
       return (
-        <li key={phase} data-phase={phase} data-state={state} className="flex content-shrink gap-stack-sm data-[state=pending]:opacity-60">
+        <li key={phase} data-phase={phase} data-state={state} className="flex content-shrink gap-stack-sm">
           <span className="icon-nudge-sm inline-flex size-icon-lg shrink-0 items-center justify-center">
             <PhaseMark state={state} />
           </span>
