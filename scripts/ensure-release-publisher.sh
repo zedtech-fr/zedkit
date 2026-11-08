@@ -17,6 +17,8 @@ PREFIX="$(dirname "$NODE_BIN")"
 PINNED_NPM="$(node --input-type=module -e "import { PINNED_NPM } from '${ROOT}/scripts/release-publisher.mjs'; process.stdout.write(PINNED_NPM)")"
 [ -n "$PINNED_NPM" ] || fail "could not read PINNED_NPM"
 
-echo "ensure-release-publisher: installing npm@${PINNED_NPM} --prefix ${PREFIX}"
+echo "ensure-release-publisher: node_bin=${NODE_BIN} prefix=${PREFIX} pin=${PINNED_NPM}"
 npm install -g --prefix "$PREFIX" --no-fund --no-audit "npm@${PINNED_NPM}"
+# pnpm looks up npm in dirname(process.execPath), not a later PATH entry.
+[ -x "${NODE_BIN}/npm" ] || fail "npm not installed at ${NODE_BIN}/npm"
 node "${ROOT}/scripts/release-publisher.mjs"

@@ -177,6 +177,7 @@ describe("release wiring (no secrets, no empty NODE_AUTH_TOKEN)", () => {
     assert.match(releaseYml, /ensure-release-publisher\.sh/);
     assert.match(ensureSh, /npm install -g --prefix "\$PREFIX"/);
     assert.match(ensureSh, /release-publisher\.mjs/);
+    assert.match(ensureSh, /\$\{NODE_BIN\}\/npm/);
     assert.doesNotMatch(ensureSh, /npm install -g npm@/);
     const ensureAt = releaseYml.indexOf("ensure-release-publisher.sh");
     const publishAt = releaseYml.indexOf("changesets/action");
