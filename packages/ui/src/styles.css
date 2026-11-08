@@ -368,6 +368,8 @@
   --text-caption--line-height: var(--text-xs--line-height);
   /* Gap between a text link and its line. Not a spacing step. */
   --zk-link-offset: 4px;
+  /* Side column. A quiet muted wash, not the page background. */
+  --zk-sidebar-wash: 40%;
   /*
    * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
    * not a spacing multiple: an identity may redefine `--spacing`, and a
@@ -546,6 +548,11 @@ ol[data-sonner-toaster] {
 /* Option card. The hidden input is focused, so the card itself draws the focus width. */
 [data-slot="option-card"]:has(:focus-visible) {
   outline: var(--ring-width) solid hsl(var(--ring));
+}
+
+/* Side column. The wash is a share of the muted colour. */
+.sidebar-wash {
+  background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-sidebar-wash), transparent);
 }
 
 /* Text link. The line sits this far from the letters. */
@@ -733,6 +740,7 @@ a[class*="px-badge-inline"] {
  * are the ones that paint, so they still beat a heading's type role.
  */
 @layer components {
+  .sidebar-wash {}
   .text-specimen-title {}
   .text-compact-heading {}
   .text-figure {}
