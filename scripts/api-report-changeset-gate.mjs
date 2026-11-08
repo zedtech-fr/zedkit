@@ -2,8 +2,10 @@
 // Changeset gate for API reports vs origin/main.
 // Catch-up (no extra bump) only when HEAD's report is origin/main's report
 // plus complete public declarations that already exist, equivalently, in
-// origin/main's source. Equivalence uses TypeScript's parser (not the
-// checker): unsupported syntax has no shape and fails closed.
+// origin/main's source.
+// shortcut: catch-up proves only the constructs SEO 1.1.0 actually adds
+// (export function with Ident / Ident<Ident> types, export interface with
+// keyword properties, same-name imports). Everything else needs a changeset.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, posix, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -83,10 +85,6 @@ function consumeBlockLines(lines, start) {
   return lines.length;
 }
 
-function compactWs(text) {
-  return text.replace(/\s+/gu, " ").trim();
-}
-
 function parseTs(text, path = "decl.ts") {
   return ts.createSourceFile(
     path,
@@ -101,73 +99,118 @@ function isExported(stmt) {
   return (ts.getCombinedModifierFlags(stmt) & ts.ModifierFlags.Export) !== 0;
 }
 
-function typeParamsOf(node, sf) {
-  return (node.typeParameters ?? []).map((tp) => ({
-    name: tp.name.getText(sf),
-    constraint: tp.constraint ? compactWs(tp.constraint.getText(sf)) : "",
-    default: tp.default ? compactWs(tp.default.getText(sf)) : "",
-  }));
-}
-
-function heritageOf(node, sf) {
-  return (node.heritageClauses ?? []).flatMap((clause) => {
-    const tag = clause.token === ts.SyntaxKind.ExtendsKeyword ? "extends" : "implements";
-    return clause.types.map((type) => `${tag} ${compactWs(type.getText(sf))}`);
-  });
-}
+const KEYWORD_TYPES = new Set([
+  ts.SyntaxKind.AnyKeyword,
+  ts.SyntaxKind.UnknownKeyword,
+  ts.SyntaxKind.NumberKeyword,
+  ts.SyntaxKind.BigIntKeyword,
+  ts.SyntaxKind.ObjectKeyword,
+  ts.SyntaxKind.BooleanKeyword,
+  ts.SyntaxKind.StringKeyword,
+  ts.SyntaxKind.SymbolKeyword,
+  ts.SyntaxKind.VoidKeyword,
+  ts.SyntaxKind.UndefinedKeyword,
+  ts.SyntaxKind.NeverKeyword,
+  ts.SyntaxKind.NullKeyword,
+]);
+const ALLOWED_FLAGS = ts.ModifierFlags.Export | ts.ModifierFlags.Ambient;
 
 /**
- * shortcut: shapes cover function/interface/class/type/const. Other syntax
- * returns null so catch-up fails closed until a changeset exists.
- * @param {ts.Statement} stmt
- * @param {ts.SourceFile} sf
+ * @param {ts.TypeNode | undefined} node
+ * @returns {{ k: "kw", n: string } | { k: "ref", n: string } | { k: "gen", n: string, a: string } | null}
  */
-function nodeShape(stmt, sf) {
-  if (ts.isFunctionDeclaration(stmt)) {
-    return {
-      kind: "function",
-      typeParams: typeParamsOf(stmt, sf),
-      params: stmt.parameters.map((param) => compactWs(param.getText(sf))),
-      returnType: stmt.type ? compactWs(stmt.type.getText(sf)) : "",
-    };
-  }
-  if (ts.isInterfaceDeclaration(stmt) || ts.isClassDeclaration(stmt)) {
-    return {
-      kind: ts.isClassDeclaration(stmt) ? "class" : "interface",
-      typeParams: typeParamsOf(stmt, sf),
-      heritage: heritageOf(stmt, sf),
-      members: stmt.members.map((member) => compactWs(member.getText(sf).replace(/;$/u, ""))).sort(),
-    };
-  }
-  if (ts.isTypeAliasDeclaration(stmt)) {
-    return {
-      kind: "type",
-      typeParams: typeParamsOf(stmt, sf),
-      type: compactWs(stmt.type.getText(sf)),
-    };
-  }
-  if (ts.isVariableStatement(stmt)) {
-    const decl = stmt.declarationList.declarations[0];
-    if (!decl || !ts.isIdentifier(decl.name)) return null;
-    return {
-      kind: "const",
-      type: decl.type ? compactWs(decl.type.getText(sf)) : "",
-      init: decl.initializer ? compactWs(decl.initializer.getText(sf)) : "",
-    };
+function allowedType(node) {
+  if (!node) return null;
+  if (KEYWORD_TYPES.has(node.kind)) return { k: "kw", n: ts.tokenToString(node.kind) ?? "" };
+  if (!ts.isTypeReferenceNode(node) || !ts.isIdentifier(node.typeName)) return null;
+  const args = node.typeArguments ?? [];
+  if (args.length === 0) return { k: "ref", n: node.typeName.text };
+  if (
+    args.length === 1 &&
+    ts.isTypeReferenceNode(args[0]) &&
+    ts.isIdentifier(args[0].typeName) &&
+    (args[0].typeArguments ?? []).length === 0
+  ) {
+    return { k: "gen", n: node.typeName.text, a: args[0].typeName.text };
   }
   return null;
 }
 
-function shapesOfText(text) {
+function catchUpShape(stmt) {
+  if ((ts.getCombinedModifierFlags(stmt) & ~ALLOWED_FLAGS) !== 0) return null;
+  if (stmt.typeParameters?.length) return null;
+  if (ts.isFunctionDeclaration(stmt) && stmt.name && !stmt.asteriskToken) {
+    const params = [];
+    for (const param of stmt.parameters) {
+      if (!ts.isIdentifier(param.name) || param.dotDotDotToken || param.questionToken || param.initializer) {
+        return null;
+      }
+      const type = allowedType(param.type);
+      if (!type) return null;
+      params.push({ n: param.name.text, t: type });
+    }
+    const ret = allowedType(stmt.type);
+    if (!ret) return null;
+    return { kind: "function", name: stmt.name.text, params, ret };
+  }
+  if (ts.isInterfaceDeclaration(stmt) && !stmt.heritageClauses?.length) {
+    const props = [];
+    for (const member of stmt.members) {
+      if (!ts.isPropertySignature(member) || !ts.isIdentifier(member.name) || member.modifiers?.length) return null;
+      const type = allowedType(member.type);
+      if (!type || type.k !== "kw") return null;
+      props.push({ n: member.name.text, opt: Boolean(member.questionToken), t: type.n });
+    }
+    props.sort((a, b) => a.n.localeCompare(b.n));
+    return { kind: "interface", name: stmt.name.text, props };
+  }
+  return null;
+}
+
+function catchUpShapes(text) {
   const sf = parseTs(text);
   const shapes = [];
   for (const stmt of sf.statements) {
     if (ts.isImportDeclaration(stmt) || ts.isEmptyStatement(stmt)) continue;
-    const shape = nodeShape(stmt, sf);
+    const shape = catchUpShape(stmt);
     if (!shape) return null;
     shapes.push(shape);
   }
   return shapes;
+}
+
+function typeNamesOf(shape) {
+  /** @type {string[]} */
+  const names = [];
+  function add(type) {
+    if (type.k === "ref") names.push(type.n);
+    if (type.k === "gen") names.push(type.n, type.a);
+  }
+  if (shape.kind === "function") {
+    for (const param of shape.params) add(param.t);
+    add(shape.ret);
+  }
+  return names;
+}
+
+function originKey(name, bindings) {
+  const binding = bindings.get(name);
+  if (!binding || binding.kind === "unknown") return null;
+  if (binding.kind === "import") return `import:${binding.module}:${binding.imported}:${binding.local}`;
+  return `local:${name}`;
+}
+
+function originsMatch(reportBlock, reportBindings, sourceBlock, sourceBindings) {
+  const shapes = catchUpShapes(reportBlock);
+  if (!shapes || !catchUpShapes(sourceBlock)) return false;
+  for (const shape of shapes) {
+    for (const name of typeNamesOf(shape)) {
+      const report = originKey(name, reportBindings);
+      const source = originKey(name, sourceBindings);
+      if (!report || !source || report !== source) return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -176,10 +219,10 @@ function shapesOfText(text) {
  */
 export function declarationsEquivalent(reportBlock, sourceBlock) {
   if (!reportBlock || !sourceBlock) return false;
-  const report = shapesOfText(reportBlock);
-  const source = shapesOfText(sourceBlock);
+  const report = catchUpShapes(reportBlock);
+  const source = catchUpShapes(sourceBlock);
   if (!report || !source || report.length === 0 || report.length !== source.length) return false;
-  return report.every((shape, i) => JSON.stringify(shape) === JSON.stringify(source[i]));
+  return JSON.stringify(report) === JSON.stringify(source);
 }
 
 function namedDecls(stmt, sf) {
@@ -196,25 +239,6 @@ function namedDecls(stmt, sf) {
   }
   return out;
 }
-
-const TYPE_KEYWORDS = new Set([
-  ts.SyntaxKind.AnyKeyword,
-  ts.SyntaxKind.UnknownKeyword,
-  ts.SyntaxKind.NumberKeyword,
-  ts.SyntaxKind.BigIntKeyword,
-  ts.SyntaxKind.ObjectKeyword,
-  ts.SyntaxKind.BooleanKeyword,
-  ts.SyntaxKind.StringKeyword,
-  ts.SyntaxKind.SymbolKeyword,
-  ts.SyntaxKind.VoidKeyword,
-  ts.SyntaxKind.UndefinedKeyword,
-  ts.SyntaxKind.NeverKeyword,
-  ts.SyntaxKind.IntrinsicKeyword,
-  ts.SyntaxKind.NullKeyword,
-  ts.SyntaxKind.ThisKeyword,
-  ts.SyntaxKind.TrueKeyword,
-  ts.SyntaxKind.FalseKeyword,
-]);
 
 /**
  * shortcut: parser bindings only. Aliases, default/namespace imports,
@@ -260,163 +284,6 @@ function collectBindings(sf) {
     for (const { name } of namedDecls(stmt, sf)) set(name, { kind: "local" });
   }
   return bindings;
-}
-
-/**
- * @param {string} block
- * @param {Map<string, { kind: string, module?: string, imported?: string, local?: string }>} bindings
- * @returns {string[] | null}
- */
-function originProof(block, bindings) {
-  const sf = parseTs(block);
-  /** @type {Map<string, string>} */
-  const proofs = new Map();
-  const typeParams = new Set();
-  let unknown = false;
-  function fail() {
-    unknown = true;
-  }
-  function collectRef(name) {
-    if (!name || typeParams.has(name) || unknown) return;
-    const binding = bindings.get(name);
-    if (!binding || binding.kind === "unknown") {
-      fail();
-      return;
-    }
-    if (binding.kind === "import") {
-      proofs.set(name, `import:${name}:${binding.module}:${binding.imported}:${binding.local}`);
-      return;
-    }
-    proofs.set(name, `local:${name}`);
-  }
-  function walkType(node) {
-    if (!node || unknown) return;
-    if (TYPE_KEYWORDS.has(node.kind) || ts.isLiteralTypeNode(node) || ts.isThisTypeNode(node)) return;
-    if (ts.isTypeReferenceNode(node)) {
-      if (ts.isIdentifier(node.typeName)) collectRef(node.typeName.text);
-      else fail();
-      for (const arg of node.typeArguments ?? []) walkType(arg);
-      return;
-    }
-    if (ts.isExpressionWithTypeArguments(node)) {
-      if (ts.isIdentifier(node.expression)) collectRef(node.expression.text);
-      else fail();
-      for (const arg of node.typeArguments ?? []) walkType(arg);
-      return;
-    }
-    if (ts.isUnionTypeNode(node) || ts.isIntersectionTypeNode(node)) {
-      for (const type of node.types) walkType(type);
-      return;
-    }
-    if (ts.isArrayTypeNode(node)) {
-      walkType(node.elementType);
-      return;
-    }
-    if (ts.isTupleTypeNode(node)) {
-      for (const el of node.elements) walkType(el);
-      return;
-    }
-    if (ts.isNamedTupleMember(node) || ts.isOptionalTypeNode(node) || ts.isRestTypeNode(node) || ts.isParenthesizedTypeNode(node) || ts.isTypeOperatorNode(node)) {
-      walkType(node.type);
-      return;
-    }
-    if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) {
-      walkSig(node);
-      return;
-    }
-    if (ts.isTypeLiteralNode(node)) {
-      for (const member of node.members) walkMember(member);
-      return;
-    }
-    if (ts.isIndexedAccessTypeNode(node)) {
-      walkType(node.objectType);
-      walkType(node.indexType);
-      return;
-    }
-    if (ts.isMappedTypeNode(node)) {
-      walkTypeParam(node.typeParameter);
-      walkType(node.nameType);
-      walkType(node.type);
-      return;
-    }
-    if (ts.isConditionalTypeNode(node)) {
-      walkType(node.checkType);
-      walkType(node.extendsType);
-      walkType(node.trueType);
-      walkType(node.falseType);
-      return;
-    }
-    if (ts.isInferTypeNode(node)) {
-      walkTypeParam(node.typeParameter);
-      return;
-    }
-    if (ts.isTemplateLiteralTypeNode(node)) {
-      for (const span of node.templateSpans) walkType(span.type);
-      return;
-    }
-    if (ts.isTypePredicateNode(node)) {
-      walkType(node.type);
-      return;
-    }
-    fail();
-  }
-  function walkTypeParam(tp) {
-    if (!tp) return;
-    typeParams.add(tp.name.text);
-    walkType(tp.constraint);
-    walkType(tp.default);
-  }
-  function walkSig(sig) {
-    for (const tp of sig.typeParameters ?? []) walkTypeParam(tp);
-    for (const param of sig.parameters ?? []) walkType(param.type);
-    walkType(sig.type);
-  }
-  function walkMember(member) {
-    if (ts.isPropertySignature(member) || ts.isPropertyDeclaration(member)) {
-      walkType(member.type);
-      return;
-    }
-    if (
-      ts.isMethodSignature(member) ||
-      ts.isMethodDeclaration(member) ||
-      ts.isCallSignatureDeclaration(member) ||
-      ts.isConstructSignatureDeclaration(member) ||
-      ts.isIndexSignatureDeclaration(member) ||
-      ts.isConstructorDeclaration(member) ||
-      ts.isGetAccessorDeclaration(member) ||
-      ts.isSetAccessorDeclaration(member)
-    ) {
-      walkSig(member);
-      return;
-    }
-    if (ts.isSemicolonClassElement(member)) return;
-    fail();
-  }
-  for (const stmt of sf.statements) {
-    if (ts.isImportDeclaration(stmt) || ts.isEmptyStatement(stmt)) continue;
-    if (ts.isFunctionDeclaration(stmt)) walkSig(stmt);
-    else if (ts.isInterfaceDeclaration(stmt) || ts.isClassDeclaration(stmt)) {
-      for (const tp of stmt.typeParameters ?? []) walkTypeParam(tp);
-      for (const clause of stmt.heritageClauses ?? []) {
-        for (const type of clause.types) walkType(type);
-      }
-      for (const member of stmt.members) walkMember(member);
-    } else if (ts.isTypeAliasDeclaration(stmt)) {
-      for (const tp of stmt.typeParameters ?? []) walkTypeParam(tp);
-      walkType(stmt.type);
-    } else if (ts.isVariableStatement(stmt)) {
-      for (const decl of stmt.declarationList.declarations) walkType(decl.type);
-    } else fail();
-  }
-  if (unknown) return null;
-  return [...proofs.values()].sort();
-}
-
-function originsMatch(reportBlock, reportBindings, sourceBlock, sourceBindings) {
-  const report = originProof(reportBlock, reportBindings);
-  const source = originProof(sourceBlock, sourceBindings);
-  if (!report || !source) return false;
-  return JSON.stringify(report) === JSON.stringify(source);
 }
 
 /**

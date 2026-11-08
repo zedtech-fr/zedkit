@@ -127,17 +127,19 @@ describe("declarationsEquivalent", () => {
     assert.equal(declarationsEquivalent(SEO_HEAD_ADDED_IFACE, changed), false);
   });
 
-  it("rejects generic constraint, default, and heritage mismatches", () => {
-    const stringBound = "export interface Options<T extends string> { value: T }";
-    const numberBound = "export interface Options<T extends number> { value: T }";
-    const withDefault = 'export interface Options<T extends string = "x"> { value: T }';
-    const extendsFoo = "export interface Options extends Foo { value: string }";
-    const extendsBar = "export interface Options extends Bar { value: string }";
-    assert.equal(declarationsEquivalent(stringBound, numberBound), false);
-    assert.equal(declarationsEquivalent(stringBound, withDefault), false);
-    assert.equal(declarationsEquivalent(extendsFoo, extendsBar), false);
-    assert.equal(declarationsEquivalent(stringBound, stringBound), true);
-    assert.equal(declarationsEquivalent(extendsFoo, extendsFoo), true);
+  it("rejects generics, heritage, const, classes, and literal-type properties as not catch-up", () => {
+    assert.equal(declarationsEquivalent("export interface Options<T extends string> { value: T }", "export interface Options<T extends string> { value: T }"), false);
+    assert.equal(declarationsEquivalent("export interface Options extends Foo { value: string }", "export interface Options extends Foo { value: string }"), false);
+    assert.equal(declarationsEquivalent("export const a = 's', b = 1;", "export const b = 's';"), false);
+    assert.equal(declarationsEquivalent("export abstract class Foo { x: string }", "export class Foo { x: string }"), false);
+    assert.equal(declarationsEquivalent("export interface X { v: 'a  b' }", "export interface X { v: 'a b' }"), false);
+    assert.equal(
+      declarationsEquivalent(
+        "export interface Box { fn: <T>(x: T) => T; value: T }",
+        "export interface Box { fn: <T>(x: T) => T; value: T }",
+      ),
+      false,
+    );
   });
 });
 
@@ -548,6 +550,74 @@ export function otherFn(): void;
 export function f(x: Options): Options { return x; }
 export function otherFn(): void {}
 `,
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when a generic callback leaks T into another property", () => {
+    const box = `export interface Box {
+  fn: <T>(x: T) => T;
+  value: T;
+}`;
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        `import { T } from 'pkg-b';\n${box}\nexport function otherFn(): void;`,
+      ),
+      mainSources: {
+        "src/index.ts": `import { T } from "pkg-a";\n${box}\nexport function otherFn(): void {}\n`,
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when a multi-declarator const is compared by the first name", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export const b = 's';\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": "export const a = 's', b = 1;\nexport function otherFn(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when a string-literal property differs only by interior whitespace", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export interface X { v: 'a b' }\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": "export interface X { v: 'a  b' }\nexport function otherFn(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when an abstract class is reported as a concrete class", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export class Foo {\n    x: string;\n}\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": "export abstract class Foo { x: string }\nexport function otherFn(): void {}\n",
       },
       kinds: new Set(),
     });
