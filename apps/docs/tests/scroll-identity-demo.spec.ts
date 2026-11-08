@@ -246,6 +246,28 @@ test.describe("identity previews", () => {
     await expect(rows.last()).not.toHaveClass(/border-b-0/);
   });
 
+  test("the chosen look in the touch picker keeps the selected wash", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(IDENTITY_KIT_DEMOS);
+    const picker = page.locator("[data-component-preview]").nth(2);
+    await picker.getByRole("button", { name: /^Look: / }).click();
+    const sheet = page.getByRole("dialog");
+    const chosen = sheet.getByRole("radio", { name: /^Mist/ });
+    await chosen.click();
+    await expect.poll(async () =>
+      chosen.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.className = "option-selected";
+        node.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        const background = getComputedStyle(node).backgroundColor;
+        probe.remove();
+        return background === expected && !node.className.includes("bg-primary/");
+      }),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
+  });
+
   test("leaving the page restores the page look", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1000 });
     await openFeatures(page, IDENTITY_KIT_DEMOS, "press", "light");
