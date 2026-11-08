@@ -553,6 +553,11 @@ ol[data-sonner-toaster] {
   text-underline-offset: var(--zk-link-offset);
 }
 
+/* The last teammate has no line under them. The people above keep theirs. */
+[data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child {
+  border-bottom-width: 0;
+}
+
 /* Featured plan. The ring sits on the card shadow. It is not the focus ring. */
 [data-slot="pricing"] [data-highlighted="true"] {
   --tw-ring-color: hsl(var(--primary));
