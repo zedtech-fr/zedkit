@@ -215,7 +215,8 @@ describe("overlays", () => {
     expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring-control");
     expect(close.className).toContain("close-quiet");
-    expect(close.className).toContain("hover:opacity-100");
+    expect(close.className).toContain("transition-opacity");
+    expect(close.className).not.toContain("hover:opacity-100");
     expect(close.className).not.toContain("opacity-70");
     expect(cn("close-quiet", "opacity-100")).toBe("opacity-100");
     expect(close.innerHTML).toContain("size-icon");

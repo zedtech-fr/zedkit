@@ -149,6 +149,7 @@ describe("layout job classes", () => {
     expect(utility("fade-disabled")).toBe("opacity: 0.5;");
     expect(utility("disclosure-icon")).toBe("opacity: 0.5;");
     expect(utility("close-quiet")).toBe("opacity: 0.7;");
+    expect(css).toContain(".close-quiet:hover {\n  opacity: 1;\n}");
     expect(utility("sort-mark")).toBe("opacity: 0.6;");
     expect(utility("status-ping")).toBe("opacity: 0.6;");
     expect(utility("option-picked")).toBe("opacity: 0.6;");
