@@ -266,11 +266,11 @@
 }
 
 /*
- * The sheen: the slanted light over the fill. A card that brings its own wash (`bg-linear-*`, `bg-gradient-*`,
+ * The sheen: the slanted light over the fill. A card that brings its own wash (`surface-tint`, `bg-linear-*`, `bg-gradient-*`,
  * an image) keeps it; this rule only fills the plain ones.
  */
-:root[data-identity="glass"] :where(.bg-card, .bg-popover):where(:not([data-identity-scope] *)):not([class*="bg-linear"], [class*="bg-gradient"], [class*="bg-[url"]),
-[data-identity-scope][data-identity="glass"] :where(.bg-card, .bg-popover):not([class*="bg-linear"], [class*="bg-gradient"], [class*="bg-[url"]) {
+:root[data-identity="glass"] :where(.bg-card, .bg-popover):where(:not([data-identity-scope] *)):not([class*="surface-tint"], [class*="bg-linear"], [class*="bg-gradient"], [class*="bg-[url"]),
+[data-identity-scope][data-identity="glass"] :where(.bg-card, .bg-popover):not([class*="surface-tint"], [class*="bg-linear"], [class*="bg-gradient"], [class*="bg-[url"]) {
   background-image: var(--zk-glass-sheen);
 }
 

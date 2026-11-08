@@ -48,7 +48,8 @@ describe("GlassSurface", () => {
       </GlassSurface>,
     );
     const node = screen.getByText("Tinted");
-    expect(node.className).toContain("from-accent/15");
+    expect(node.className).toContain("surface-tint");
+    expect(node.className).not.toContain("from-accent/");
     expect(node.className).toContain("glass-pad-lg");
     expect(node.className).not.toContain("surface-pad-lg");
     render(<GlassSurface padding="sm">Small</GlassSurface>);

@@ -591,6 +591,15 @@ ol[data-sonner-toaster] {
 @utility option-hover-line {
   border-color: color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent);
 }
+/* Tinted marketing surface. Accent at the start, primary at the end. */
+@utility surface-tint {
+  background-image: linear-gradient(
+    to right bottom,
+    color-mix(in oklab, hsl(var(--accent)) 15%, transparent) 0%,
+    transparent 50%,
+    color-mix(in oklab, hsl(var(--primary)) 10%, transparent) 100%
+  );
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;
