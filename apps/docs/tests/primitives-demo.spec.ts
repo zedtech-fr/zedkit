@@ -79,6 +79,35 @@ test.describe("primitive pages show a live preview for each example", () => {
     expect(borders.slice(0, -1).every((width) => width !== "0px")).toBe(true);
   });
 
+  test("status badges keep a quieter fill on hover", async ({ page }) => {
+    await page.goto(BASE + "show-a-status-or-count-badge");
+    const preview = page.locator("[data-component-preview]").first();
+    const cases = [
+      { name: "beta", token: "--primary", amount: "80%" },
+      { name: "12 events", token: "--secondary", amount: "80%" },
+      { name: "deprecated", token: "--destructive", amount: "80%" },
+    ];
+    for (const item of cases) {
+      const badge = preview.getByText(item.name, { exact: true });
+      await expect(badge).toBeVisible();
+      const rest = await badge.evaluate((node) => getComputedStyle(node).backgroundColor);
+      await badge.hover();
+      await expect.poll(async () =>
+        badge.evaluate((node, expected) => {
+          const probe = document.createElement("div");
+          probe.style.backgroundColor = `color-mix(in oklab, hsl(var(${expected.token})) ${expected.amount}, transparent)`;
+          node.append(probe);
+          const color = getComputedStyle(probe).backgroundColor;
+          const background = getComputedStyle(node).backgroundColor;
+          probe.remove();
+          return background === color && !/bg-(primary|secondary|destructive)\//.test(node.className);
+        }, item),
+      ).toBe(true);
+      const hover = await badge.evaluate((node) => getComputedStyle(node).backgroundColor);
+      expect(hover, item.name).not.toBe(rest);
+    }
+  });
+
   test("interactive demos respond", async ({ page }) => {
     await page.goto(BASE + "load-each-zone-with-a-faithful-skeleton", { waitUntil: "networkidle" });
     const standalone = page.locator("[data-component-preview]").nth(1);
