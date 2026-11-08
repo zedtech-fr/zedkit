@@ -111,6 +111,13 @@ for dir in packages/*/; do
     fail=1
   fi
 
+  if [ "$name" = "ui" ]; then
+    if grep -qE 'package/src/.*\.(test|spec|stories)\.' <<< "$listing"; then
+      echo "ui: tarball contains test/spec/stories sources"
+      fail=1
+    fi
+  fi
+
   # ESM-only packages: ignore CJS/node10. CSS subpaths have no types.
   attw_out="$(pnpm exec attw --profile esm-only --exclude-entrypoints ./styles.css --exclude-entrypoints ./motion.css \
       --no-emoji --format ascii "$tgz" 2>&1)" || {

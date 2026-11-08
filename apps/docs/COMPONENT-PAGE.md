@@ -2,7 +2,7 @@
 
 Rich UI needs with a `registry` brick in `docs-manifest.json` render through
 `ComponentPage` instead of the thin catalog layout. All factual content comes
-from `catalog.json`, TypeScript sources, and `registry/ui/` — never
+from `catalog.json`, TypeScript sources, and staged `registry/ui/` (`pnpm registry:build`) — never
 hand-written props or export lists.
 
 ## Sections (order)

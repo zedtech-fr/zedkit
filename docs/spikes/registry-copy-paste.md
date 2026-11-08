@@ -1,5 +1,7 @@
 # Spike: copy-paste registry (shadcn CLI)
 
+**Later:** GitHub shorthand `npx shadcn add zedtech-fr/zedkit/<brick>` is retired. Copy from hosted JSON / `@zedkit`. `registry/ui/` is generated and gitignored. Init with `--base radix --preset nova`.
+
 Checked 2026-10-25 against [shadcn registry docs](https://ui.shadcn.com/docs/registry)
 (`registry.json`, `registry-item.json`, `shadcn build`, namespaces, GitHub
 registries, FAQ) and a local install into a fresh Next app. CLI: `shadcn@4.22.1`.

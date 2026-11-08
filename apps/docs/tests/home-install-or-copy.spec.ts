@@ -82,7 +82,9 @@ test.describe("home adoption panel", () => {
     await page.getByRole("option", { name: "yarn", exact: true }).click();
     await expect(panel.locator('[data-adoption-step="install"]')).toContainText("yarn add @zedtech/zedkit-ui");
     await panel.getByRole("tab", { name: "Copy source" }).click();
-    await expect(panel.locator('[data-adoption-step="init"]')).toContainText("yarn dlx shadcn@latest init -d");
+    await expect(panel.locator('[data-adoption-step="init"]')).toContainText(
+      "yarn dlx shadcn@latest init -y --base radix --preset nova",
+    );
     await expect(panel.locator('[data-adoption-step="add"]')).toContainText("yarn dlx shadcn@latest add https://zedkit.app/r/button.json");
     await page.reload({ waitUntil: "networkidle" });
     await panel.scrollIntoViewIfNeeded();

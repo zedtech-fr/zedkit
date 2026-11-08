@@ -7,8 +7,9 @@ component may replace a mature primitive (ladder rung 5).
 
 Rules:
 
-- New code goes in `src/`, tests in `tests/unit/` (Testing
-  Library + jsdom for rendered output, plain vitest otherwise).
+- New code goes in `src/`. Tests live in `tests/unit/` or, for one
+  module, as `<name>.test.tsx` next to it. Packed `src` excludes
+  `*.test.*` / `*.spec.*` / `*.stories.*`. Use `#*` in tests.
 - Animate triggers (`data-animate`, `<Animate>`): types, grammar and
   reduced-motion rules in [docs/animate-spec.md](docs/animate-spec.md).
 - Every public export gets a `## <need>` entry in CATALOG.md

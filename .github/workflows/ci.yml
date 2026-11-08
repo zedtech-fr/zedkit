@@ -182,7 +182,7 @@ jobs:
         run: bash scripts/ci-runner-cache.sh restore-ts
       - run: bash scripts/check-deps-audit.sh
       - run: node scripts/check-publish-engines.mjs
-      - run: bash scripts/check-registry-ui-drift.sh
+      - run: pnpm registry:build
       - uses: actions/cache@v6
         if: runner.environment != 'self-hosted'
         with:

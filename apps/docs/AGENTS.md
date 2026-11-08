@@ -35,12 +35,14 @@ frame and the demo registry.
 ## Registry (`/r/*.json`)
 
 Copy-paste install payloads for the official shadcn CLI (#187). `pnpm
-registry:build` (root) rewrites `packages/ui` imports into committed
-`registry/ui/`, runs `shadcn build`, and writes gitignored JSON under
-`public/r/`. Docs `prebuild` runs that step; `registry:check` asserts
-sources on disk, rewritten imports, and `shadcn registry validate`. CI job
-`registry-smoke` runs the two Next smokes in parallel (`pnpm registry:smoke` locally: fresh Next + `shadcn add`).
-GitHub shorthand: `npx shadcn@latest add zedtech-fr/zedkit/<brick>`.
+registry:build` (root) rewrites `packages/ui` imports into gitignored
+`registry/ui/`, runs `shadcn build`, and writes JSON under `public/r/`.
+Docs `prebuild` runs that step; `registry:check` asserts staged sources,
+rewritten imports, and `shadcn registry validate`. CI `checks` stages
+before tests that read `registry/ui`. Copy install:
+`npx shadcn@latest init -y --base radix --preset nova` then
+`npx shadcn@latest add https://zedkit.app/r/<brick>.json` (composed bricks
+need `@zedkit` first). The GitHub shorthand is retired.
 Home install copy comes from `registry.json` via `content/registry-site.ts`
 (`docs:generate`). `check-registry-urls.mjs` and `check-seo-export.mjs`
 reject dead `/r/<name>.json` links.

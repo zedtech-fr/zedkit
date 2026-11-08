@@ -46,6 +46,8 @@ export default tseslint.config(
       ],
       // Deep relative imports are banned: use the package `#*` subpath
       // import (see "imports" in each package.json) instead of ../.. chains.
+      // packages/ui/src may use one extra parent (../..) after folder moves;
+      // tests and other packages keep this ban.
       "no-restricted-imports": ["error", { patterns: [deepRelativeImport] }],
       "@typescript-eslint/no-explicit-any": "error",
     },
@@ -132,6 +134,25 @@ export default tseslint.config(
       model: [deepRelativeImport],
     },
   }),
+  {
+    // After uiPreset so other production checks stay. Tests keep the root ban.
+    files: ["packages/ui/src/**/*.{ts,tsx}"],
+    ignores: ["packages/ui/src/**/*.{test,spec}.*"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../../..", "../../../*", "../../../../*"],
+              message:
+                "More than two parent segments are banned. Flatten the folder or use the `#*` subpath import.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     // next/og ImageResponse requires inline styles; not user-facing UI.
     files: ["apps/docs/app/opengraph-image.tsx"],

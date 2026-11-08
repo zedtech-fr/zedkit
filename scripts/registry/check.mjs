@@ -38,7 +38,7 @@ for (const item of registry.items ?? []) {
     if (typeof rel !== "string" || rel.length === 0) continue;
     const abs = join(root, rel);
     if (!existsSync(abs)) {
-      errors.push(`missing GitHub registry source ${rel} (run pnpm registry:build)`);
+      errors.push(`missing staged registry source ${rel} (run pnpm registry:build)`);
       continue;
     }
     const source = readFileSync(abs, "utf8");
