@@ -12,19 +12,21 @@ field). Releases run on Changesets; nothing publishes by hand.
    changesets it opens (or updates) the **Version PR** (`chore: version
    packages`) with bumped versions + CHANGELOGs. Review it like code.
 3. Merging the Version PR publishes the bumped packages to npm from CI
-   (OIDC trusted publishing) and consumes the changesets. No direct
-   `npm publish`. No long-lived npm token in the publish env.
+   and consumes the changesets. No direct `npm publish`. Auth is GitHub
+   OIDC, or `NODE_AUTH_TOKEN` when the `NPM_TOKEN` repo secret is set.
 
 ## Secrets and provenance
 
-- Publish auth is GitHub OIDC (`id-token: write` on `release.yml`).
-  The job does **not** set `NODE_AUTH_TOKEN`. An empty token is worse
-  than unset: npm 10 cannot do OIDC and treats the empty value as
-  missing auth (`ENEEDAUTH`).
-- Provenance: trusted publishing generates it automatically. The
-  publish step also sets `NPM_CONFIG_PROVENANCE=true`. Combined with
-  `id-token: write` and a public `repository` field on each package,
-  npm attaches a Sigstore attestation to the tarball.
+- Publish auth: `scripts/export-release-auth.mjs` runs before Changesets.
+  If repo secret `NPM_TOKEN` is non-empty, it writes `NODE_AUTH_TOKEN`
+  to `GITHUB_ENV`. If the secret is empty or absent, `NODE_AUTH_TOKEN`
+  is left **unset**. Do not assign `NODE_AUTH_TOKEN` from the secret
+  directly: an empty interpolation is `ENEEDAUTH`.
+- npm 11 tries OIDC first (`id-token: write`) and falls through to the
+  token when no Trusted Publisher is configured (oidc() never throws).
+- Provenance: the publish step sets `NPM_CONFIG_PROVENANCE=true` for
+  both paths. Combined with `id-token: write` and a public `repository`
+  field on each package, npm attaches a Sigstore attestation.
 
 ## Trusted publishing
 
