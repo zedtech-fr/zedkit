@@ -5,7 +5,7 @@ const JOBS = badgeCopy.tableRow.jobs;
 
 export function BadgeTableRowDemo() {
   return (
-    <table className="w-full content-shrink text-left text-dense">
+    <table data-badge-table="" className="w-full content-shrink text-left text-dense">
       <caption className="sr-only">{badgeCopy.tableRow.caption}</caption>
       <thead>
         <tr className="border-b text-muted-foreground">
@@ -16,7 +16,7 @@ export function BadgeTableRowDemo() {
       </thead>
       <tbody>
         {JOBS.map((job) => (
-          <tr key={job.name} className="border-b last:border-b-0">
+          <tr key={job.name} className="border-b">
             <td className="py-table-cell pr-column font-medium">{job.name}</td>
             <td className="py-table-cell pr-column">{job.target}</td>
             <td className="py-table-cell">
