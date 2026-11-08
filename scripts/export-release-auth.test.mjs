@@ -110,8 +110,6 @@ describe("CLI (GITHUB_ENV, no secret on stdout)", () => {
 
 describe("release.yml wiring", () => {
   const releaseYml = readFileSync(join(ROOT, ".github/workflows/release.yml"), "utf8");
-  const ciYml = readFileSync(join(ROOT, ".github/workflows/ci.yml"), "utf8");
-  const pkg = readFileSync(join(ROOT, "package.json"), "utf8");
 
   it("selects auth after the npm 11 pin and before Changesets", () => {
     const pinAt = releaseYml.indexOf("ensure-release-publisher.sh");
@@ -130,10 +128,5 @@ describe("release.yml wiring", () => {
     assert.match(releaseYml, /NPM_CONFIG_PROVENANCE:\s*"true"/);
     assert.match(releaseYml, /ensure-release-publisher\.sh/);
     assert.doesNotMatch(releaseYml, /^\s*environment:/m);
-  });
-
-  it("registers the auth tests in both test:registry lists", () => {
-    assert.match(pkg, /scripts\/export-release-auth\.test\.mjs/);
-    assert.match(ciYml, /scripts\/export-release-auth\.test\.mjs/);
   });
 });

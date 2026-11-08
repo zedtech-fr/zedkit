@@ -59,9 +59,8 @@ Rules:
   `ColumnDef<TData, any>` for mixed-value columns).
 - UI PRs: the PR body carries the four lenses plus a UX pass as a
   lazy, distracted, doubtful end user (can they finish the flow
-  half-asleep?), and attaches a gallery screenshot showing the
-  change (`pnpm --filter @zedtech/zedkit-ui smoke` writes them to
-  test-results/, never committed).
+  half-asleep?), and attaches a screenshot of the changed preview
+  (from `pnpm --filter @zedtech/zedkit-ui preview`; never committed).
 - Token and primitive fixes belong here; which layer owns a given fix, and
   the known traps (overlay is a sibling, calendar grid hover, identity
   `--spacing`, `overflow-clip` on pinned scenes, fixed containing blocks), are
