@@ -64,8 +64,45 @@ test("button reference page surfaces variant and size in props without search (#
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-onClick']")).toHaveCount(0);
   const inherited = props.locator("details");
   await expect(inherited).toBeVisible();
+  const closed = await inherited.evaluate((node) => {
+    const probe = document.createElement("div");
+    probe.className = "border-border/40";
+    probe.style.borderStyle = "solid";
+    probe.style.borderWidth = "1px";
+    document.body.append(probe);
+    const forty = getComputedStyle(probe).borderTopColor;
+    probe.remove();
+    return { color: getComputedStyle(node).borderTopColor, forty, width: getComputedStyle(node).borderTopWidth };
+  });
+  expect(closed.color).toBe(closed.forty);
+  expect(closed.width).toBe("1px");
   await inherited.locator("summary").click();
   await expect(props.locator("[id='type-table-button.tsx-ButtonProps-inherited-onClick']")).toBeVisible();
+  const colors = await inherited.evaluate((node) => {
+    const mix = (percent: string) => {
+      const probe = document.createElement("div");
+      probe.className = `border-border/${percent}`;
+      probe.style.borderStyle = "solid";
+      probe.style.borderWidth = "1px";
+      document.body.append(probe);
+      const color = getComputedStyle(probe).borderTopColor;
+      probe.remove();
+      return color;
+    };
+    const rule = node.querySelector("[data-under-rule]");
+    return {
+      open: getComputedStyle(node).borderTopColor,
+      openWidth: getComputedStyle(node).borderTopWidth,
+      rule: rule ? getComputedStyle(rule).borderTopColor : "",
+      forty: mix("40"),
+      sixty: mix("60"),
+      numeric: node.className.includes("border-border/"),
+    };
+  });
+  expect(colors.open).toBe(colors.sixty);
+  expect(colors.openWidth).toBe("1px");
+  expect(colors.rule).toBe(colors.forty);
+  expect(colors.numeric).toBe(false);
 });
 
 test("component page TOC lists the live sections", async ({ page }) => {

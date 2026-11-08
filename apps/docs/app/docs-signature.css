@@ -22,9 +22,19 @@
   background-image: var(--zk-site-sheen, linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 55%));
 }
 
-/* Inherited-props disclosure. Never under 44px, and it still grows if the root font is larger. */
+/* Inherited-props disclosure. Never under 44px, and it still grows if the root font is larger.
+   Closed, the box and the rule under the summary are 40% of the border colour. Open, the box is 60%. */
 [data-props-summary] {
   min-height: max(2.75rem, 44px);
+}
+[data-inherited-props] {
+  border-color: color-mix(in oklab, hsl(var(--border)) 40%, transparent);
+}
+[data-inherited-props][open] {
+  border-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
+}
+[data-inherited-props] [data-under-rule] {
+  border-top-color: color-mix(in oklab, hsl(var(--border)) 40%, transparent);
 }
 
 /* Gallery card preview, tall enough that a lazy demo does not collapse the card. */
