@@ -129,6 +129,8 @@ describe("MultiSelect", () => {
     const options = await screen.findAllByRole("option");
     const alpha = options.find((node) => node.textContent?.includes("Alpha"));
     expect(alpha?.textContent).toContain("sélectionné");
+    expect(alpha?.className).toContain("option-picked");
+    expect(alpha?.className).not.toContain("opacity-60");
   });
 });
 

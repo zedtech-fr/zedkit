@@ -77,7 +77,7 @@ const twMerge = extendTailwindMerge({
       "space-x": ["space-x-faces"],
       "max-h": ["max-h-secret", "max-h-log"],
       z: ["z-overlay-chrome", "z-overlay-close"],
-      opacity: ["fade-disabled", "disclosure-icon", "close-quiet", "sort-mark", "status-ping"],
+      opacity: ["fade-disabled", "disclosure-icon", "close-quiet", "sort-mark", "status-ping", "option-picked"],
     },
   },
 });
