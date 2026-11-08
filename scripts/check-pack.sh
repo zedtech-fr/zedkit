@@ -163,7 +163,9 @@ size_budget() {
 # ubuntu-latest (dev tip 33e05b87) but 60530 on self-hosted/Dedibox after a
 # clean tsc rebuild — toolchain emit variance, not a source growth. Headroom
 # keeps the razor-thin ceiling from flaking; trim still tracked in issue 1398.
-size_budget ui 60600
+# Raised to 63000 on 8 Nov 2026 (measured 62536 in CI): Card size recipes,
+# CardSkeleton sharing that recipe, and Container query. Trim still 1398.
+size_budget ui 63000
 # Marketing entry (separate from the main budget); measured 785 with GlassSurface only;
 # 9865 with L2 domain specimens plus goal/reference marketing sections (Hero, Pricing, …);
 # 10020 after specimen-primitives barrel; tokenized keyword routing measured 10084 gzip.
