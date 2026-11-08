@@ -94,6 +94,27 @@ test("the destructive button keeps a quieter fill on hover", async ({ page }) =>
   expect(hover).not.toBe(rest);
 });
 
+test("the primary button keeps a quieter fill on hover", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const create = page.locator("[data-component-preview]").first().getByRole("button", { name: "Create app" });
+  await expect(create).toBeVisible();
+  const rest = await create.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await create.hover();
+  await expect.poll(async () =>
+    create.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--primary)) 90%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-primary/");
+    }),
+  ).toBe(true);
+  const hover = await create.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+});
+
 test("button reference page surfaces variant and size in props without search (#R2)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });

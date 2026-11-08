@@ -47,6 +47,8 @@ describe("cn", () => {
     expect(cn("hover:secondary-hover", "hover:bg-card")).toBe("hover:bg-card");
     expect(cn("hover:bg-card", "hover:destructive-hover")).toBe("hover:destructive-hover");
     expect(cn("hover:destructive-hover", "hover:bg-card")).toBe("hover:bg-card");
+    expect(cn("hover:bg-card", "hover:primary-hover")).toBe("hover:primary-hover");
+    expect(cn("hover:primary-hover", "hover:bg-card")).toBe("hover:bg-card");
     expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
     expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
     expect(cn("top-0", "pin-top")).toBe("pin-top");
