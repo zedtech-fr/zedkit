@@ -53,7 +53,7 @@ export function OptionCard({
     <label
       data-slot="option-card"
       className={cn(
-        "flex cursor-pointer gap-option-card-gap rounded-lg border p-option-card-padding transition-colors hover:border-muted-foreground/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5",
+        "flex cursor-pointer gap-option-card-gap rounded-lg border p-option-card-padding transition-colors hover:option-hover-line has-[:checked]:border-primary has-[:checked]:option-selected",
         className,
       )}
     >

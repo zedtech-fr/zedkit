@@ -583,6 +583,14 @@ ol[data-sonner-toaster] {
 @utility menu-current {
   background-color: color-mix(in oklab, hsl(var(--muted)) 80%, transparent);
 }
+/* Chosen option card. A light primary wash, not the primary button. */
+@utility option-selected {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 5%, transparent);
+}
+/* Option card, hovered. The line is 40% of the muted foreground. */
+@utility option-hover-line {
+  border-color: color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;

@@ -59,6 +59,37 @@ test.describe("docs form previews show realistic forms", () => {
     await expect(page.getByLabel("Notify me when the order ships").first()).toBeChecked();
   });
 
+  test("a chosen option card keeps a light primary wash", async ({ page }) => {
+    await page.goto("/docs/ui/guide-a-multi-step-flow-with-selectable-option-cards");
+    const preview = page.locator("[data-component-preview]").first();
+    const chosen = preview.locator("[data-slot='option-card']").filter({ hasText: "Physical products" });
+    const other = preview.locator("[data-slot='option-card']").filter({ hasText: "Digital downloads" });
+    await expect(chosen).toBeVisible();
+    const fill = await chosen.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--primary)) 5%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return { background, expected, numeric: node.className.includes("bg-primary/") };
+    });
+    expect(fill.background).toBe(fill.expected);
+    expect(fill.numeric).toBe(false);
+    await other.hover();
+    await expect.poll(async () =>
+      other.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.borderTop = "1px solid color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent)";
+        node.append(probe);
+        const expected = getComputedStyle(probe).borderTopColor;
+        const border = getComputedStyle(node).borderTopColor;
+        probe.remove();
+        return border === expected && !node.className.includes("border-muted-foreground/");
+      }),
+    ).toBe(true);
+  });
+
   test("wizard: continue and back walk the store setup, composed steps and solo card render", async ({ page }) => {
     await page.goto("/docs/ui/guide-a-multi-step-flow-with-selectable-option-cards", { waitUntil: "networkidle" });
     await expect(page.getByRole("group", { name: "What will you sell?" }).first()).toBeVisible();
