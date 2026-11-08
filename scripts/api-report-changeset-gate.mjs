@@ -215,16 +215,16 @@ function parseSourceFile(text, path = "file.ts") {
     if (ts.isExportDeclaration(stmt)) continue;
     const exported = isExported(stmt);
     for (const { name, text: block } of namedDecls(stmt, sf)) {
-      all.set(name, block);
-      if (!exported) continue;
-      // shortcut: duplicate exported names (overloads, merges) are not
-      // catch-up; a changeset is required.
-      if (locals.has(name) || overloaded.has(name)) {
+      // shortcut: any duplicate local name (overloads, merges) is not
+      // catch-up, including a later `export { name }`.
+      if (all.has(name) || overloaded.has(name)) {
+        all.delete(name);
         locals.delete(name);
         overloaded.add(name);
-      } else {
-        locals.set(name, block);
+        continue;
       }
+      all.set(name, block);
+      if (exported) locals.set(name, block);
     }
   }
   for (const stmt of sf.statements) {
@@ -241,22 +241,21 @@ function parseSourceFile(text, path = "file.ts") {
       original: (el.propertyName ?? el.name).text,
       exported: el.name.text,
     }));
+    const sameName = names.filter(
+      (n) => n.exported === n.original && !overloaded.has(n.original) && !overloaded.has(n.exported),
+    );
     if (from) {
       // shortcut: `export { hidden as visible }` is not catch-up. Register
       // only same-name specifiers so the original local stays non-public.
-      reexports.push({
-        from,
-        names: names.filter((n) => n.exported === n.original),
-      });
+      if (sameName.length > 0) reexports.push({ from, names: sameName });
     } else {
-      for (const { original, exported } of names) {
-        if (exported !== original) continue;
+      for (const { original, exported } of sameName) {
         const block = all.get(original);
         if (block && !locals.has(exported)) locals.set(exported, block);
       }
     }
   }
-  return { locals, reexports };
+  return { locals, reexports, overloaded };
 }
 
 /**
@@ -265,7 +264,7 @@ function parseSourceFile(text, path = "file.ts") {
  * @returns {Map<string, string>}
  */
 export function resolvePublicDeclarations(files, entry) {
-  /** @type {Map<string, { locals: Map<string, string>, reexports: { from: string, names: '*' | { exported: string, original: string }[] }[] }>} */
+  /** @type {Map<string, { locals: Map<string, string>, reexports: { from: string, names: '*' | { exported: string, original: string }[] }[], overloaded: Set<string> }>} */
   const parsed = new Map();
   for (const [path, text] of Object.entries(files)) {
     parsed.set(posix.normalize(path), parseSourceFile(text, path));
@@ -276,33 +275,39 @@ export function resolvePublicDeclarations(files, entry) {
   /**
    * @param {string} path
    * @param {Set<string> | null} only
+   * @param {Set<string>} blocked  names quarantined on an earlier hop
    */
-  function take(path, only) {
+  function take(path, only, blocked) {
     const file = parsed.get(posix.normalize(path));
     if (!file || visiting.has(path)) return;
     visiting.add(path);
     for (const [name, block] of file.locals) {
+      if (blocked.has(name)) continue;
       if ((!only || only.has(name)) && !publicDecls.has(name)) publicDecls.set(name, block);
     }
+    // shortcut: a quarantined name must not re-enter through this file's
+    // same-name or star re-exports; aliases already dropped at parse.
+    const deny = new Set([...blocked, ...file.overloaded]);
     for (const reexport of file.reexports) {
       const target = resolveSourceImport(path, reexport.from, files);
       if (!target) continue;
       if (reexport.names === "*") {
-        take(target, only);
+        take(target, only, deny);
         continue;
       }
       const wanted = new Set();
       for (const { exported, original } of reexport.names) {
         if (exported !== original) continue;
+        if (deny.has(exported)) continue;
         if (only && !only.has(exported)) continue;
         wanted.add(exported);
       }
-      if (wanted.size > 0) take(target, wanted);
+      if (wanted.size > 0) take(target, wanted, deny);
     }
     visiting.delete(path);
   }
 
-  if (entry && parsed.has(posix.normalize(entry))) take(entry, null);
+  if (entry && parsed.has(posix.normalize(entry))) take(entry, null, new Set());
   return publicDecls;
 }
 

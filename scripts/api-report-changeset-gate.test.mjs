@@ -207,6 +207,93 @@ export function foo(x: string | number): void {}\n`,
     );
     assert.equal(decls.has("foo"), false);
   });
+
+  it("does not recover a local overload through export { f }", () => {
+    const decls = resolvePublicDeclarations(
+      {
+        "src/index.ts": `function f(x: string): string;
+function f(x: number): number;
+function f(x: string | number): string | number { return x; }
+export { f };
+`,
+      },
+      "src/index.ts",
+    );
+    assert.equal(decls.has("f"), false);
+  });
+
+  it("still treats a single local function plus export { g } as public", () => {
+    const decls = resolvePublicDeclarations(
+      {
+        "src/index.ts": `function g(x: string): string { return x; }
+export { g };
+`,
+      },
+      "src/index.ts",
+    );
+    assert.equal(decls.has("g"), true);
+    assert.equal(
+      declarationsEquivalent("export function g(x: string): string;", decls.get("g")),
+      true,
+    );
+  });
+
+  it("does not refeed a quarantined overload through a same-name re-export", () => {
+    const fromOverloaded = resolvePublicDeclarations(
+      {
+        "src/index.ts": 'export { f } from "./impl.js";\n',
+        "src/impl.ts": `function f(x: string): string;
+function f(x: number): number;
+function f(x: string | number): string | number { return x; }
+export { f };
+`,
+      },
+      "src/index.ts",
+    );
+    const localThenFrom = resolvePublicDeclarations(
+      {
+        "src/index.ts": `function f(x: string): string;
+function f(x: number): number;
+function f(x: string | number): string | number { return x; }
+export { f } from "./simple.js";
+`,
+        "src/simple.ts": "export function f(x: string | number): string | number { return x; }\n",
+      },
+      "src/index.ts",
+    );
+    assert.equal(fromOverloaded.has("f"), false);
+    assert.equal(localThenFrom.has("f"), false);
+  });
+
+  it("does not refeed a local overload through export * of the same name", () => {
+    const decls = resolvePublicDeclarations(
+      {
+        "src/index.ts": `function f(x: string): string;
+function f(x: number): number;
+function f(x: string | number): string | number { return x; }
+export * from "./simple.js";
+`,
+        "src/simple.ts": "export function f(x: string | number): string | number { return x; }\n",
+      },
+      "src/index.ts",
+    );
+    assert.equal(decls.has("f"), false);
+  });
+
+  it("still follows export * when the name is not quarantined", () => {
+    const decls = resolvePublicDeclarations(
+      {
+        "src/index.ts": 'export * from "./simple.js";\n',
+        "src/simple.ts": "export function g(x: string): string { return x; }\n",
+      },
+      "src/index.ts",
+    );
+    assert.equal(decls.has("g"), true);
+    assert.equal(
+      declarationsEquivalent("export function g(x: string): string;", decls.get("g")),
+      true,
+    );
+  });
 });
 
 describe("evaluateReportChange", () => {
@@ -388,6 +475,68 @@ export function otherFn(): void {}\n`,
     });
     assert.equal(result.ok, false);
     assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when local overloads are published only via export { f } as a union", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export function f(x: string | number): string | number;\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": `function f(x: string): string;
+function f(x: number): number;
+function f(x: string | number): string | number { return x; }
+export { f };
+export function otherFn(): void {}
+`,
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when a local overload is refed through export * as a union", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export function f(x: string | number): string | number;\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": `function f(x: string): string;
+function f(x: number): number;
+function f(x: string | number): string | number { return x; }
+export * from "./simple.js";
+export function otherFn(): void {}
+`,
+        "src/simple.ts":
+          "export function f(x: string | number): string | number { return x; }\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("skips a changeset for a single local function published via export { g }", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        "export function g(x: string): string;\nexport function otherFn(): void;",
+      ),
+      mainSources: {
+        "src/index.ts": `function g(x: string): string { return x; }
+export { g };
+export function otherFn(): void {}
+`,
+      },
+      kinds: new Set(),
+    });
+    assert.deepEqual(result, { ok: true, skip: "already-on-main" });
   });
 
   it("requires a changeset when the name only appears in an import on origin/main", () => {
