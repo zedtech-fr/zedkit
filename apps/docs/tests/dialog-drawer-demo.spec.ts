@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { pinDemoLook } from "./a11y-helpers";
+
 test.describe("docs dialog and drawer previews show realistic screens", () => {
   test("dialog: an order sheet with a status, not a stub", async ({ page }) => {
     await page.goto("/docs/ui/open-modal-dialogs", { waitUntil: "networkidle" });
@@ -89,5 +91,44 @@ test.describe("docs dialog and drawer previews show realistic screens", () => {
     await expect(dialog.getByText("Camille Rousseau")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
+  });
+
+  test("the drawer scrim stays lighter than the dialog scrim", async ({ page }) => {
+    await page.goto("/docs/ui/slide-in-a-drawer-panel");
+    const preview = page.locator("[data-component-preview]").first();
+    const open = preview.getByRole("button", { name: "Open drawer" });
+    const overlay = page.locator("[data-slot='drawer-overlay']");
+
+    await open.click();
+    await expect(overlay).toBeVisible();
+    await expect.poll(async () =>
+      overlay.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "hsl(var(--overlay) / var(--zk-glass-scrim-alpha))";
+        node.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        const background = getComputedStyle(node).backgroundColor;
+        probe.remove();
+        return background === expected && !node.className.includes("bg-overlay/");
+      }),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(overlay).toBeHidden();
+
+    await pinDemoLook(preview, "mist", "dark");
+    await open.click();
+    await expect(overlay).toBeVisible();
+    await expect.poll(async () =>
+      overlay.evaluate((node) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--overlay)) 50%, transparent)";
+        node.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        const style = getComputedStyle(node);
+        probe.remove();
+        return style.backgroundColor === expected && style.backdropFilter.includes("blur");
+      }),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
   });
 });
