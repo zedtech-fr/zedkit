@@ -59,6 +59,28 @@
   z-index: 20;
 }
 
+/* Phone: look, hint, card, contrast, adjustments, then export. From 64rem the grid places the card. */
+@media (width < 64rem) {
+  [data-slot="identity-editor-toolbar"] {
+    order: 1;
+  }
+  [data-editor-section="hint"] {
+    order: 2;
+  }
+  [data-slot="identity-editor-preview"] {
+    order: 3;
+  }
+  [data-editor-section="contrast"] {
+    order: 4;
+  }
+  [data-editor-section="fields"] {
+    order: 5;
+  }
+  [data-editor-section="export"] {
+    order: 7;
+  }
+}
+
 /* Docs phone bar. It sits under the docs row, below the site header layer. */
 #nd-mobile-nav[data-docs-phone-bar] {
   z-index: 30;
