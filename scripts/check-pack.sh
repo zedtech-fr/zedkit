@@ -151,7 +151,8 @@ size_budget() {
 # Marketing entry; measured 785 with GlassSurface only;
 # 9865 with L2 domain specimens plus goal/reference marketing sections (Hero, Pricing, …);
 # 10020 after specimen-primitives barrel; tokenized keyword routing measured 10084 gzip.
-size_budget ui 10200 marketing
+# 10204 after family-folder import paths (`../layout/layout.js` instead of `../layout.js`).
+size_budget ui 10300 marketing
 
 if [ -f apps/docs/out/index.html ]; then
   if ! node apps/docs/scripts/check-first-load-budget.mjs; then

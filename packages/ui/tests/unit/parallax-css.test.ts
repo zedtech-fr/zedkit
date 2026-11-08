@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
-const css = readFileSync(join(src, "parallax.css"), "utf8");
+const css = readFileSync(join(src, "motion", "parallax.css"), "utf8");
 const body = css.replace(/\/\*[\s\S]*?\*\//g, "");
 
 function keyframeBodies(source: string): string[] {
@@ -29,8 +29,8 @@ describe("parallax CSS contract (AC 9.1, 9.9)", () => {
   it("is imported by the kit stylesheet and the motion.css export", () => {
     const styles = readFileSync(join(src, "styles.css"), "utf8");
     const kit = readFileSync(join(src, "motion-kit.css"), "utf8");
-    expect(styles).toContain('@import "./parallax.css"');
-    expect(kit).toContain('@import "./parallax.css"');
+    expect(styles).toContain('@import "./motion/parallax.css"');
+    expect(kit).toContain('@import "./motion/parallax.css"');
   });
 
   it("animates only translate, scale, and opacity", () => {
@@ -80,7 +80,7 @@ describe("parallax CSS contract (AC 9.1, 9.9)", () => {
   });
 
   it("disables snap on sections that contain a parallax root", () => {
-    const scroll = readFileSync(join(src, "section-scroll.css"), "utf8");
+    const scroll = readFileSync(join(src, "layout", "section-scroll.css"), "utf8");
     expect(scroll).toContain("[data-parallax]");
   });
 });

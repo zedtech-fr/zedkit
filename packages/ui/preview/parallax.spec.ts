@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test, type Page } from "@playwright/test";
 
-const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "parallax.css"), "utf8");
+const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "motion", "parallax.css"), "utf8");
 
 const LAYER_BUDGET = 12;
 

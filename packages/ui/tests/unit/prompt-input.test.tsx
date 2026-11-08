@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { PromptInput } from "#prompt-input.js";
+import { PromptInput } from "#forms/prompt-input.js";
 
 describe("PromptInput", () => {
   it("leaves the border on the shell, not the field", () => {

@@ -76,7 +76,7 @@ describe("switch geometry (ZK-11)", () => {
     // Geometry lives in the [data-slot="switch"] rules in styles.css now;
     // switch.tsx carries no sizing classes of its own.
     const css = readFileSync(resolve(pkg, "src/styles.css"), "utf8");
-    const source = readFileSync(resolve(pkg, "src/switch.tsx"), "utf8");
+    const source = readFileSync(resolve(pkg, "src/forms/switch.tsx"), "utf8");
     expect(css).toContain("translate: calc(var(--spacing) * 5 - 4px) 0;");
     expect(source).not.toContain("w-switch-track-width");
     expect(source).not.toContain("translate-x-4");

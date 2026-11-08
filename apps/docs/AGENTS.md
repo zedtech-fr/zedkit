@@ -102,7 +102,7 @@ scripts inside `pnpm catalog:check`.
 
 - Identity data is constrained tokens, never code: no executable code, free
   CSS or HTML. One schema (`parseIdentityTokens`,
-  `packages/ui/src/identity-tokens.ts`) validates in the browser and in the
+  `packages/ui/src/identity/identity-tokens.ts`) validates in the browser and in the
   suggest service ([deploy/AGENTS.md](../../deploy/AGENTS.md)).
   The page's client is `lib/identity-assistant.ts`: it parses whatever the
   service returns and turns every failure into a named outcome (`unavailable`

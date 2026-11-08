@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { SCROLL_SCENES_MAX, ScrollScenes } from "#index.js";
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
-const css = readFileSync(join(src, "scroll-scenes.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+const css = readFileSync(join(src, "layout", "scroll-scenes.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 
 const scenes = [
   { id: "one", caption: <h3>First</h3>, children: <p>Alpha</p> },

@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { StickyAside, StickyAsideAside, StickyAsideMain } from "#index.js";
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
-const css = readFileSync(join(src, "sticky-aside.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+const css = readFileSync(join(src, "layout", "sticky-aside.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 
 describe("StickyAside", () => {
   it("marks the root, main, and aside with defaults", () => {

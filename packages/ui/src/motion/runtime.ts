@@ -7,11 +7,11 @@ export {
   type AnimateOn,
   type AnimatePreset,
   type AnimateTrigger,
-} from "../animate-runtime.js";
+} from "./animate-runtime.js";
 export {
   MOTION_CHANGE_EVENT,
   MOTION_STORAGE_KEY,
   applyMotionPreference,
   isMotionReduced,
   type MotionPreference,
-} from "../motion-preference.js";
+} from "./motion-preference.js";
