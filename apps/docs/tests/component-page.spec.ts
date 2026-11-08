@@ -73,6 +73,27 @@ test("the secondary button keeps a quieter fill on hover", async ({ page }) => {
   expect(hover).not.toBe(rest);
 });
 
+test("the destructive button keeps a quieter fill on hover", async ({ page }) => {
+  await page.goto(BUTTON_DOC);
+  const remove = page.locator("[data-component-preview]").first().getByRole("button", { name: "Delete" });
+  await expect(remove).toBeVisible();
+  const rest = await remove.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await remove.hover();
+  await expect.poll(async () =>
+    remove.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--destructive)) 90%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-destructive/");
+    }),
+  ).toBe(true);
+  const hover = await remove.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(hover).not.toBe(rest);
+});
+
 test("button reference page surfaces variant and size in props without search (#R2)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
