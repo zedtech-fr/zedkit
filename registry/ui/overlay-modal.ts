@@ -152,7 +152,7 @@ const overlayDialogHeaderClass =
 const overlayDialogFooterClass =
   "sticky pin-bottom z-overlay-chrome flex flex-col-reverse gap-dialog-footer-gap pb-dialog-footer-safe sm:flex-row sm:justify-end sm:items-center";
 const overlayDialogCloseClass =
-  "absolute pin-top pin-right z-overlay-close grid size-overlay-touch-target shrink-0 place-content-center rounded-sm close-quiet focus-ring-control transition-opacity hover:opacity-100 disabled:pointer-events-none";
+  "absolute pin-top pin-right z-overlay-close grid size-overlay-touch-target shrink-0 place-content-center rounded-sm close-quiet focus-ring-control transition-opacity disabled:pointer-events-none";
 
 const overlayDrawerHeaderClass =
   "sticky pin-top z-overlay-chrome flex shrink-0 flex-col gap-drawer-header-gap border-b border-border p-drawer-chrome-padding text-left";
