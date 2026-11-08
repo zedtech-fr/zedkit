@@ -2,6 +2,44 @@ import { expect, test } from "@playwright/test";
 
 import { DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
 
+test("the destructive alert keeps its fill and its line", async ({ page }) => {
+  await page.goto(`${BASE}call-out-a-notice-or-an-error-state`);
+  const preview = page.locator("[data-component-preview]").first();
+  const alert = preview.getByRole("alert").filter({ hasText: "Failed" });
+  await expect(alert).toBeVisible();
+  await pinDemoLook(preview, "glass", "dark");
+  const read = () =>
+    alert.evaluate((node) => {
+      const fill = document.createElement("div");
+      fill.style.backgroundColor = "color-mix(in oklab, hsl(var(--destructive)) 90%, transparent)";
+      const line = document.createElement("div");
+      line.style.borderTop = "1px solid";
+      line.style.borderTopColor = node.classList.contains("dark") || node.closest(".dark")
+        ? "hsl(var(--destructive))"
+        : "color-mix(in oklab, hsl(var(--destructive)) 50%, transparent)";
+      node.append(fill, line);
+      const style = getComputedStyle(node);
+      const result = {
+        background: style.backgroundColor,
+        border: style.borderTopColor,
+        fill: getComputedStyle(fill).backgroundColor,
+        line: getComputedStyle(line).borderTopColor,
+        numeric: /(?:bg|border)-destructive\//.test(node.className),
+      };
+      fill.remove();
+      line.remove();
+      return result;
+    });
+  const dark = await read();
+  expect(dark.background).toBe(dark.fill);
+  expect(dark.border).toBe(dark.line);
+  expect(dark.numeric).toBe(false);
+  await pinDemoLook(preview, "glass", "light");
+  const light = await read();
+  expect(light.background).toBe(light.fill);
+  expect(light.border).toBe(light.line);
+});
+
 const BASE = "/docs/ui/";
 
 // page slug, expected preview count, then per-preview visible text checks.
