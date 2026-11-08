@@ -88,26 +88,63 @@ marketing api touch
   return { dir, reportPath };
 }
 
-function initSeoCatchUpRepo() {
-  const dir = mkdtempSync(join(tmpdir(), "api-report-seo-catchup-"));
-  execSync("git init -q", { cwd: dir });
-  execSync('git config user.email "test@test"', { cwd: dir });
-  execSync('git config user.name "test"', { cwd: dir });
+const SEO_IFACE = `export interface SoftwareSourceCodeJsonLdOptions {
+  name: string;
+  url: string;
+  codeRepository: string;
+  programmingLanguage?: string;
+  license?: string;
+}`;
+const SEO_FN = `export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode> {
+  return { "@type": "SoftwareSourceCode" };
+}`;
+const SEO_REPORT_CATCHUP = `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+import type { SoftwareSourceCode } from 'schema-dts';
+import type { WithContext } from 'schema-dts';
+
+export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode>;
+
+export interface SoftwareSourceCodeJsonLdOptions {
+    codeRepository: string;
+    license?: string;
+    name: string;
+    programmingLanguage?: string;
+    url: string;
+}
+\`\`\`
+`;
+
+function writeSeoSource(dir, { index, jsonld } = {}) {
   mkdirSync(join(dir, "packages/seo/src"), { recursive: true });
   mkdirSync(join(dir, "packages/seo/etc"), { recursive: true });
   writeFileSync(
     join(dir, "packages/seo/src/index.ts"),
-    `export { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";\n`,
+    index ?? `export { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";\n`,
   );
-  writeFileSync(join(dir, "packages/seo/etc/zedkit-seo.api.md"), "// stale report, published API not listed\n");
+  writeFileSync(join(dir, "packages/seo/src/jsonld.ts"), jsonld ?? `${SEO_IFACE}\n\n${SEO_FN}\n`);
+}
+
+function initSeoCatchUpRepo({ index, jsonld, headReport } = {}) {
+  const dir = mkdtempSync(join(tmpdir(), "api-report-seo-catchup-"));
+  execSync("git init -q", { cwd: dir });
+  execSync('git config user.email "test@test"', { cwd: dir });
+  execSync('git config user.name "test"', { cwd: dir });
+  writeSeoSource(dir, { index, jsonld });
+  writeFileSync(
+    join(dir, "packages/seo/etc/zedkit-seo.api.md"),
+    `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+
+\`\`\`
+`,
+  );
   execSync("git add -A && git commit -q -m base", { cwd: dir });
   const base = execSync("git rev-parse HEAD", { cwd: dir, encoding: "utf8" }).trim();
   execSync(`git update-ref refs/remotes/origin/main ${base}`, { cwd: dir });
-  writeFileSync(
-    join(dir, "packages/seo/etc/zedkit-seo.api.md"),
-    `export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): void;
-export interface SoftwareSourceCodeJsonLdOptions {}\n`,
-  );
+  writeFileSync(join(dir, "packages/seo/etc/zedkit-seo.api.md"), headReport ?? SEO_REPORT_CATCHUP);
   execSync("git add -A && git commit -q -m report", { cwd: dir });
   return dir;
 }
@@ -127,12 +164,94 @@ test("check-api-report.sh lists every packages/* workspace package", () => {
   );
 });
 
-test("changeset gate skips SEO report catch-up when origin/main already exports the names", (t) => {
+test("changeset gate skips SEO report catch-up when origin/main public declarations match", (t) => {
   const dir = initSeoCatchUpRepo();
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const out = runChangesetGate(dir, entries);
   assert.equal(out.status, 0, `${out.stderr}${out.stdout}`);
-  assert.match(`${out.stderr}${out.stdout}`, /already on origin\/main/);
+  assert.match(`${out.stderr}${out.stdout}`, /exact catch-up of public declarations already on origin\/main/);
+});
+
+test("changeset gate fails when the added catch-up signature does not match origin/main", (t) => {
+  const dir = initSeoCatchUpRepo({
+    jsonld: `${SEO_IFACE}\n\nexport function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): string {\n  return "";\n}\n`,
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
+test("changeset gate fails when an existing interface property changes beside a catch-up export", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "api-report-seo-prop-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  execSync("git init -q", { cwd: dir });
+  execSync('git config user.email "test@test"', { cwd: dir });
+  execSync('git config user.name "test"', { cwd: dir });
+  writeSeoSource(dir);
+  writeFileSync(
+    join(dir, "packages/seo/etc/zedkit-seo.api.md"),
+    `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+export interface ArticleJsonLdOptions {
+    title: string;
+}
+\`\`\`
+`,
+  );
+  execSync("git add -A && git commit -q -m base", { cwd: dir });
+  const base = execSync("git rev-parse HEAD", { cwd: dir, encoding: "utf8" }).trim();
+  execSync(`git update-ref refs/remotes/origin/main ${base}`, { cwd: dir });
+  writeFileSync(
+    join(dir, "packages/seo/etc/zedkit-seo.api.md"),
+    `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+import type { SoftwareSourceCode } from 'schema-dts';
+import type { WithContext } from 'schema-dts';
+
+export interface ArticleJsonLdOptions {
+    title?: string;
+}
+
+export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode>;
+
+export interface SoftwareSourceCodeJsonLdOptions {
+    codeRepository: string;
+    license?: string;
+    name: string;
+    programmingLanguage?: string;
+    url: string;
+}
+\`\`\`
+`,
+  );
+  execSync("git add -A && git commit -q -m report", { cwd: dir });
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
+test("changeset gate fails when the catch-up name only appears in a comment on origin/main", (t) => {
+  const dir = initSeoCatchUpRepo({
+    index: "// buildSoftwareSourceCodeJsonLd SoftwareSourceCodeJsonLdOptions\nexport function otherFn(): void {}\n",
+    jsonld: `${SEO_IFACE}\n\n${SEO_FN}\n`,
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
+test("changeset gate fails when the catch-up name only appears in an import on origin/main", (t) => {
+  const dir = initSeoCatchUpRepo({
+    index: 'import { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";\nexport function otherFn(): void {}\n',
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
 });
 
 test("changeset gate fails when marketing API report changes without a changeset", (t) => {
