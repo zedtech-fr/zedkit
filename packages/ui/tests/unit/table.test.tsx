@@ -25,6 +25,7 @@ describe("table primitives", () => {
       </Table>,
     );
     expect(document.querySelector("[data-slot=table-body]")?.className ?? "").not.toContain("border-0");
+    expect(document.querySelector("[data-slot=table-row]")?.className ?? "").not.toContain("hover:bg-muted/50");
     expect(document.querySelector("[data-slot=table-footer]")?.className ?? "").not.toContain("border-b-0");
     expect(screen.getByRole("columnheader", { name: "Name" })).not.toBeNull();
     expect(screen.getByRole("cell", { name: "Ada" })).not.toBeNull();
