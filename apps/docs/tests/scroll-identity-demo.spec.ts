@@ -235,6 +235,17 @@ test.describe("identity previews", () => {
     }
   }
 
+  test("the last task in a scene has no line under it", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(`${BASE}/${SCENES}`, { waitUntil: "networkidle" });
+    const rows = page.locator("[data-demo-scene-visual='plan'] > [data-slot='stack']");
+    const borders = await rows.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderBottomWidth));
+    expect(borders.length).toBeGreaterThan(1);
+    expect(borders.at(-1)).toBe("0px");
+    expect(borders.slice(0, -1).every((width) => width !== "0px")).toBe(true);
+    await expect(rows.last()).not.toHaveClass(/border-b-0/);
+  });
+
   test("leaving the page restores the page look", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1000 });
     await openFeatures(page, IDENTITY_KIT_DEMOS, "press", "light");
