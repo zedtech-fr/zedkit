@@ -152,6 +152,8 @@ if probe.returncode != 0:
     sys.exit(0)
 
 # pkg|types-entry|report — same rows as shell entries=( above
+if len(sys.argv) <= 1:
+    sys.exit("api-report: no entries")
 reports = []
 for spec in sys.argv[1:]:
     pkg, _entry, report = spec.split("|", 2)

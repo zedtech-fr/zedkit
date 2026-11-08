@@ -48,13 +48,18 @@ describe("ci-required aggregate", () => {
   });
 });
 
-const NODEPLOY_GLOBS = [
-  "scripts/*.test.mjs",
-  "scripts/registry/*.test.mjs",
-  "apps/docs/scripts/*.test.mjs",
-  "packages/ai/scripts/*.test.mjs",
-];
-const DEPLOY_GLOBS = ["deploy/*.test.mjs", "deploy/suggest/*.test.mjs"];
+const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+
+/** Quoted glob tokens from `node --test "glob" ...` script lines. */
+function quotedGlobsFromScript(scriptLine) {
+  return [...scriptLine.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+}
+
+const NODEPLOY_GLOBS = quotedGlobsFromScript(pkg.scripts["test:registry:nodeploy"].replace(/^node --test\s+/, ""));
+const DEPLOY_ONLY_GLOBS = quotedGlobsFromScript(
+  pkg.scripts["test:registry"].replace(/^pnpm test:registry:nodeploy && node --test\s+/, ""),
+);
+const REGISTRY_GLOBS = [...NODEPLOY_GLOBS, ...DEPLOY_ONLY_GLOBS];
 const VITEST_NODE_TEST_ELSEWHERE = new Set([
   "packages/devtools/tests/enabled.test.mjs",
   ...globSync("packages/quality/tests/unit/*.test.mjs", { cwd: root }),
@@ -66,11 +71,7 @@ describe("test:registry globs", () => {
       .trim()
       .split("\n")
       .filter(Boolean);
-    const covered = new Set(
-      [...NODEPLOY_GLOBS, ...DEPLOY_GLOBS].flatMap((pattern) =>
-        globSync(pattern, { cwd: root }),
-      ),
-    );
+    const covered = new Set(REGISTRY_GLOBS.flatMap((pattern) => globSync(pattern, { cwd: root })));
     const missing = tracked.filter(
       (f) => !VITEST_NODE_TEST_ELSEWHERE.has(f) && !covered.has(f),
     );
@@ -80,7 +81,9 @@ describe("test:registry globs", () => {
   it("self-hosted checks job runs pnpm test:registry:nodeploy (no inline file list)", () => {
     const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.match(checks, /pnpm test:registry:nodeploy/);
-    assert.doesNotMatch(checks, /node --test \\\n\s+scripts\/registry/, "inline node --test file list");
+    const registryStep =
+      checks.split(/- name: test:registry \(exclude deploy\/\*\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
+    assert.doesNotMatch(registryStep, /node --test/, "inline node --test file list");
   });
 });
 

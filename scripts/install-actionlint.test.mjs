@@ -10,7 +10,6 @@ import test from "node:test";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const script = join(root, "scripts/install-actionlint.sh");
 const workflow = readFileSync(join(root, ".github/workflows/ci.yml"), "utf8");
-const pkg = readFileSync(join(root, "package.json"), "utf8");
 const PIN = "f4c76b71db5755a713e6055cbb0857ed07e103e028bda117817660ebadb4386f";
 
 function sha256(buf) {
@@ -140,8 +139,6 @@ test("script pins v1.7.10, official API fallback, TLS, and the release sha256", 
   assert.doesNotMatch(body, /(?:\s-k\b)|--insecure|--location-trusted/);
   assert.doesNotMatch(body, /jsdelivr|ghproxy|fastly/i);
   assert.match(body, /Accept: application\/octet-stream/);
-  assert.match(pkg, /scripts\/install-actionlint\.test\.mjs/);
-  assert.match(workflow, /scripts\/install-actionlint\.test\.mjs/);
 });
 
 test("primary success verifies the pin and skips the API fallback", () => {

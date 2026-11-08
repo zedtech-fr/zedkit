@@ -17,8 +17,8 @@ concurrency:
 # Same-repo PRs into `dev` run checks, registry and docs-build on the
 # self-hosted zedkit runner (persistent /runner-cache + TURBO_CACHE_DIR).
 # Docs Playwright smoke and UI gallery checks always run on
-# ubuntu-latest (the host the PNG baselines were taken on). Forks, PRs
-# into `main`, and pushes stay on ubuntu-latest.
+# ubuntu-latest (GitHub-hosted Chromium; Dedibox uses a different revision).
+# Forks, PRs into `main`, and pushes stay on ubuntu-latest.
 # Release/deploy workflows are separate and untouched.
 
 jobs:
@@ -264,12 +264,14 @@ jobs:
         run: |
           pnpm exec turbo run build --filter=@zedtech/zedkit-ai
           node packages/ai/dist/bin.js sync --check
-      # Full path: one vitest coverage run (all packages) plus devtools node:test.
+      # Full path: one vitest coverage run (all packages).
       - name: Coverage (vitest v8)
         if: env.FULL == 'true'
-        run: |
-          pnpm test:coverage
-          pnpm --filter @zedtech/zedkit-devtools exec node --test tests/enabled.test.mjs
+        run: pnpm test:coverage
+      # Needs dist from the Build step above.
+      - name: Test (devtools node:test)
+        if: env.FULL == 'true'
+        run: pnpm --filter @zedtech/zedkit-devtools exec node --test tests/enabled.test.mjs
       - name: Coverage summary
         if: always() && env.FULL == 'true'
         run: |
@@ -351,12 +353,6 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm exec playwright install chromium
       - run: pnpm --filter @zedtech/zedkit-ui smoke
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ui-gallery
-          path: packages/ui/test-results/*.png
-          if-no-files-found: ignore
 
   registry-smoke:
     runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}

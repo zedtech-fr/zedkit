@@ -91,7 +91,8 @@ saved export of the active configuration.
 
 1. Open a throw-away PR; confirm merge is blocked while a required check is
    pending or failed.
-2. With all required checks green and **MERGE-OK** at head, confirm
+2. With all required checks green and **MERGE-OK** at head, one approving
+   review on the PR, and review threads resolved, confirm
    `gh pr merge --squash --match-head-commit` succeeds.
 
 Refs #604, #616.
