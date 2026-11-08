@@ -412,3 +412,9 @@
 [data-slot="identity-dock-export"] {
   background-color: color-mix(in oklab, hsl(var(--muted)) 20%, transparent);
 }
+
+/* The rolling word in the setup title. Primary type, a quieter line under it. */
+[data-setup-word] [data-word-roll="in"],
+[data-setup-word] [data-word-roll="exit"] {
+  text-decoration-color: color-mix(in oklab, hsl(var(--primary)) 50%, transparent);
+}
