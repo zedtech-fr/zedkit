@@ -236,10 +236,10 @@
   /* Minimum touch target (WCAG 2.5.5). */
   --spacing-tap: 2.75rem;
   /*
-   * Token convention (#367): shared `icon-*` primitives for sizes used
-   * across components; per-component `--spacing-<component>-*` aliases
-   * only where independent change is plausible. Do not mint a new
-   * same-value alias — reuse the shared token.
+   * Token convention (#367): shared primitives for sizes used across
+   * components. A per-component token is its own decision even when its
+   * value matches another role today. A name that only spells the number
+   * is not a separate decision.
    */
   --spacing-icon-sm: calc(var(--spacing) * 3.5);
   --spacing-checkbox: calc(var(--spacing) * 4);

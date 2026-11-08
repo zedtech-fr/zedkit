@@ -85,4 +85,9 @@ if (diffs.length > 0 || committedTotal !== total) {
   );
   process.exit(1);
 }
-process.stdout.write(`scale-class baseline: ${total} (not complete while this is above zero)\n`);
+const rows = [...current.entries()].sort(([a], [b]) => a.localeCompare(b));
+const listing = rows.map(([file, count]) => `${file}: ${count}`).join("\n");
+process.stdout.write(
+  `scale-class baseline: ${total} in ${rows.length} files (inventory, not a migration verdict)\n` +
+    (listing ? `${listing}\n` : ""),
+);
