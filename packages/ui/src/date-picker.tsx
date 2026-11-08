@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
 
-import { Button } from "./button.js";
+import { Button } from "./button/button.js";
 import { Calendar, formatCalendarDate, type CalendarProps } from "./calendar.js";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.js";
 import { useUiMessages } from "./ui-provider.js";

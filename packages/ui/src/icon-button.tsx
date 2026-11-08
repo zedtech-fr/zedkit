@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, type ButtonProps } from "./button.js";
+import { Button, type ButtonProps } from "./button/button.js";
 
 export interface IconButtonProps extends ButtonProps {
   /** Accessible name and native tooltip (visible on hover / long-press). */

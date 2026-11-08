@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { assertUniqueStems, indexSources, resolveUniqueSource } from "./resolve-ui-source.mjs";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
 function fixture(files) {
   const dir = mkdtempSync(join(tmpdir(), "zk-ui-src-"));
@@ -58,4 +61,12 @@ test("resolveUniqueSource throws when two trees would overwrite the same output 
   const i18n = fixture({ "messages.ts": "i18n" });
   const index = indexSources([ui, i18n]);
   assert.throws(() => resolveUniqueSource(index, "messages.ts"), /ambiguous: messages\.ts/);
+});
+
+test("packages/ui/src resolves button.tsx from the button folder", () => {
+  const index = indexSources([join(repoRoot, "packages/ui/src")]);
+  assert.equal(
+    resolveUniqueSource(index, "button.tsx"),
+    join(repoRoot, "packages/ui/src/button/button.tsx"),
+  );
 });

@@ -40,7 +40,7 @@ test("a required kit prop stays visible next to the inherited title", async () =
 });
 
 test("Button keeps variant, size and asChild first", async () => {
-  const { kit } = await split("button.tsx", "ButtonProps");
+  const { kit } = await split("button/button.tsx", "ButtonProps");
   assert.deepEqual(kit.slice(0, 3), ["variant", "size", "asChild"]);
 });
 

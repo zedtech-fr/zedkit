@@ -53,7 +53,8 @@ Rules:
   hit list.
 - React 19 ref-as-prop: `ComponentProps<"el">`, ref is a prop, no
   `forwardRef` (lint in the quality preset). Each exported host sets
-  `data-slot` on its root (see `src/button.tsx`).
+  `data-slot` on its root (see `src/button/button.tsx`). A component folder
+  is only for a file plus an adjacent artifact; Button is `src/button/`.
 - Kit chrome strings come from `ZedkitUiProvider` (English default, `zedkitUiMessagesFr`
   for French). A label prop on the host wins. Do not hard-code
   `aria-label` / `title` / `placeholder` literals in `src/`.

@@ -1,6 +1,6 @@
 /** Shared ui imports for brief specimens (compiled to dist-relative paths for smoke). */
 export { Badge } from "../badge.js";
-export { Button } from "../button.js";
+export { Button } from "../button/button.js";
 export { Card, CardContent, CardHeader } from "../card.js";
 export { Input } from "../input.js";
 export { Label } from "../label.js";

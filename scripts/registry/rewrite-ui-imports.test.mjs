@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { consumerDestinations, rewriteUiImports } from "./rewrite-ui-imports.mjs";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
 function fixture(files) {
   const dir = mkdtempSync(join(tmpdir(), "zk-ui-rw-"));
@@ -159,4 +162,18 @@ test("consumerDestinations throws on two sources sharing one consumer path", () 
       ]),
     /ambiguous mapping/,
   );
+});
+
+test("nested Button source rewrites ../utils.js to the shadcn alias", () => {
+  const src = join(repoRoot, "packages/ui/src");
+  const importer = join(src, "button/button.tsx");
+  const out = rewriteUiImports(readFileSync(importer, "utf8"), {
+    importerPath: importer,
+    destinations: consumerDestinations({
+      canonicalUtils: join(src, "utils.ts"),
+      staged: [[importer, "button"]],
+    }),
+  });
+  assert.match(out, /from "@\/lib\/utils"/);
+  assert.doesNotMatch(out, /from ["']\.\.?\//);
 });

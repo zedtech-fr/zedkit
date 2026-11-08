@@ -19,7 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import { Button } from "./button.js";
+import { Button } from "./button/button.js";
 import { EmptyState } from "./empty-state.js";
 import { ErrorState } from "./error-state.js";
 import { Input } from "./input.js";

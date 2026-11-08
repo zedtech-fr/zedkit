@@ -30,7 +30,7 @@
       "component": "Button",
       "registry": "button",
       "props": "ButtonProps",
-      "source": "button.tsx",
+      "source": "button/button.tsx",
       "demo": "ButtonDemo",
       "examples": { "Variants and sizes": "ButtonSizesDemo" },
       "propsPriority": ["variant", "size", "asChild"]
