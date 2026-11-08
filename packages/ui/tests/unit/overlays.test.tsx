@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { Button } from "#index.js";
+import { Button, cn } from "#index.js";
 import { ConfirmDialog } from "#index.js";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "#index.js";
 import {
@@ -208,7 +208,10 @@ describe("overlays", () => {
     const close = screen.getByRole("button", { name: "Close" });
     expect(close.className).toContain("pin-top");
     expect(close.className).toContain("pin-right");
-    expect(close.className).toContain("z-20");
+    expect(close.className).toContain("z-overlay-close");
+    expect(close.className).not.toContain("z-20");
+    expect(cn("z-overlay-chrome", "z-0")).toBe("z-0");
+    expect(cn("z-10", "z-overlay-close")).toBe("z-overlay-close");
     expect(close.className).toContain("size-overlay-touch-target");
     expect(close.className).toContain("focus-ring-control");
     expect(close.className).toContain("opacity-70");
