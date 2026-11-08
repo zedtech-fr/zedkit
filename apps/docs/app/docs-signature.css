@@ -54,6 +54,16 @@
   --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
 }
 
+/* The draft card stays above the form while it sticks. */
+[data-slot="identity-editor-preview"] {
+  z-index: 20;
+}
+
+/* Docs phone bar. It sits under the docs row, below the site header layer. */
+#nd-mobile-nav[data-docs-phone-bar] {
+  z-index: 30;
+}
+
 /* Identity editor. The preview is the right column from the large breakpoint, at most 26rem. */
 @media (min-width: 64rem) {
   [data-slot="identity-editor"] {
