@@ -151,6 +151,7 @@ describe("layout job classes", () => {
     expect(utility("close-quiet")).toBe("opacity: 0.7;");
     expect(css).toContain(".close-quiet:hover {\n  opacity: 1;\n}");
     expect(utility("link-offset")).toBe("text-underline-offset: var(--zk-link-offset);");
+    expect(css).toContain('[data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child');
     expect(css).toContain('[data-slot="option-card"]:has(:focus-visible)');
     expect(css).toContain('[data-slot="pricing"] [data-highlighted="true"]');
     expect(css).toContain(
