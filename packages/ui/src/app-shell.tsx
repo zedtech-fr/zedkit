@@ -17,7 +17,7 @@ export function AppShell({ sidebar, topbar, children, className }: AppShellProps
       </aside>
       <div className="flex pane-shrink content-shrink flex-1 flex-col">
         {topbar ? (
-          <header className="sticky pin-top z-header border-b bg-background/95 backdrop-blur">{topbar}</header>
+          <header className="bar-scrim sticky pin-top z-header border-b backdrop-blur">{topbar}</header>
         ) : null}
         <main className="pane-shrink flex-1 overflow-y-auto p-app-shell-padding md:p-app-shell-padding-md">{children}</main>
       </div>

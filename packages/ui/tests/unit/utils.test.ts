@@ -41,6 +41,8 @@ describe("cn", () => {
     expect(cn("link-offset", "underline-offset-2")).toBe("underline-offset-2");
     expect(cn("bg-muted/40", "sidebar-wash")).toBe("sidebar-wash");
     expect(cn("sidebar-wash", "bg-card")).toBe("bg-card");
+    expect(cn("bg-background/95", "bar-scrim")).toBe("bar-scrim");
+    expect(cn("bar-scrim", "sidebar-wash")).toBe("sidebar-wash");
     expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
     expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
     expect(cn("top-0", "pin-top")).toBe("pin-top");

@@ -32,7 +32,7 @@ export function HeroShell({ sidebar, topbar, children }: { sidebar: React.ReactN
         {sidebar}
       </div>
       <div className="flex pane-shrink content-shrink flex-1 flex-col">
-        <div className="border-b bg-background/95">{topbar}</div>
+        <div className="bar-scrim border-b">{topbar}</div>
         <div data-hero-main="" className="pane-shrink flex-1">
           {children}
         </div>

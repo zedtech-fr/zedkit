@@ -243,7 +243,7 @@ function ProposalApplyRow({
     <Stack
       direction="horizontal"
       gap={2} {...(pinned ? { "data-proposal-apply": "" } : {})}
-      className={cn("flex-wrap overflow-visible", pinned && "sticky pin-bottom bg-background/95 surface-pad-block-sm backdrop-blur")}
+      className={cn("flex-wrap overflow-visible", pinned && "bar-scrim sticky pin-bottom surface-pad-block-sm backdrop-blur")}
     >
       <Button type="button" onClick={() => onUse(tokens)} disabled={busy}>
         {copy.proposal.apply}
