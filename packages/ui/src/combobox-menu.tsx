@@ -44,7 +44,7 @@ export function ComboboxMenu({
               key={item.value}
               {...getItemProps({ item, index })}
               className={cn(
-                  "cursor-pointer rounded-sm px-control-inline py-control-block text-dense outline-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+                  "cursor-pointer rounded-sm px-control-inline py-control-block text-dense outline-none data-[disabled]:cursor-not-allowed data-[disabled]:fade-disabled",
                 highlightedIndex === index ? "bg-accent text-accent-foreground" : "",
               )}
             >

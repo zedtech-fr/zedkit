@@ -120,7 +120,7 @@ export function PromptInput({
         readOnly={busy}
         className={cn(
           "field-sizing-content min-h-textarea-min-height w-full content-shrink resize-none overflow-y-auto border-0 bg-transparent py-control-block-lg pl-control-inline text-control shadow-none placeholder:text-muted-foreground",
-          "disabled:cursor-not-allowed disabled:opacity-50",
+          "disabled:cursor-not-allowed disabled:fade-disabled",
           promptInputMaxHeightClass(maxRows),
         )}
         onKeyDown={(event) => {
