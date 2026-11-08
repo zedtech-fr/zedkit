@@ -207,6 +207,13 @@ describe("layout job classes", () => {
     expect(hit).toContain("height: var(--spacing-tap);");
   });
 
+  it("keeps the chosen select value on one line", () => {
+    const start = css.indexOf('[data-slot="select-value"]');
+    const block = css.slice(start, css.indexOf("}", start));
+    expect(block).toContain("display: -webkit-box;");
+    expect(block).toContain("-webkit-line-clamp: 1;");
+  });
+
   it("keeps a 24px hit area on a link badge, and the tap size on touch", () => {
     const start = css.indexOf('a[class*="px-badge-inline"]');
     const block = css.slice(start, css.indexOf("@layer components", start));
