@@ -196,8 +196,8 @@ function dropColorAliases(vars) {
   return out;
 }
 
-function postcssFromUi(root) {
-  return createRequire(join(root, "packages/ui/package.json"))("postcss");
+function postcssFromUi() {
+  return createRequire(new URL("../../packages/ui/package.json", import.meta.url))("postcss");
 }
 
 function normalizeSelector(selector) {
@@ -301,7 +301,7 @@ export function generateThemePayload(root) {
     topLevelRulesFromCss(css, (selector) => /data-vaul|data-sonner/.test(selector)),
   );
 
-  const postcss = postcssFromUi(root);
+  const postcss = postcssFromUi();
   const tokenSheets = [css, identities, ...stockSiblings.map((sheet) => sheet.css)];
   for (const sheet of tokenSheets) mergeCssObject(cssPayload, tokenRulesFromCss(sheet, postcss));
 
