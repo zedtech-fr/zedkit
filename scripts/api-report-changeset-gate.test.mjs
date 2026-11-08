@@ -124,6 +124,19 @@ describe("declarationsEquivalent", () => {
     const changed = SEO_SOURCE_IFACE.replace("codeRepository: string", "codeRepository: number");
     assert.equal(declarationsEquivalent(SEO_HEAD_ADDED_IFACE, changed), false);
   });
+
+  it("rejects generic constraint, default, and heritage mismatches", () => {
+    const stringBound = "export interface Options<T extends string> { value: T }";
+    const numberBound = "export interface Options<T extends number> { value: T }";
+    const withDefault = 'export interface Options<T extends string = "x"> { value: T }';
+    const extendsFoo = "export interface Options extends Foo { value: string }";
+    const extendsBar = "export interface Options extends Bar { value: string }";
+    assert.equal(declarationsEquivalent(stringBound, numberBound), false);
+    assert.equal(declarationsEquivalent(stringBound, withDefault), false);
+    assert.equal(declarationsEquivalent(extendsFoo, extendsBar), false);
+    assert.equal(declarationsEquivalent(stringBound, stringBound), true);
+    assert.equal(declarationsEquivalent(extendsFoo, extendsFoo), true);
+  });
 });
 
 describe("resolvePublicDeclarations", () => {
@@ -148,6 +161,27 @@ describe("resolvePublicDeclarations", () => {
     );
     assert.equal(commented.has("buildSoftwareSourceCodeJsonLd"), false);
     assert.equal(imported.has("buildSoftwareSourceCodeJsonLd"), false);
+  });
+
+  it("does not treat a fake export in a block comment or template string as public", () => {
+    const commented = resolvePublicDeclarations(
+      {
+        "src/index.ts":
+          "/*\nexport interface Phantom {\n  x: string;\n}\n*/\nexport function otherFn(): void {}\n",
+      },
+      "src/index.ts",
+    );
+    const templated = resolvePublicDeclarations(
+      {
+        "src/index.ts":
+          "const s = `\nexport interface Phantom { x: string }\n`;\nexport function otherFn(): void {}\n",
+      },
+      "src/index.ts",
+    );
+    assert.equal(commented.has("Phantom"), false);
+    assert.equal(templated.has("Phantom"), false);
+    assert.equal(commented.has("otherFn"), true);
+    assert.equal(templated.has("otherFn"), true);
   });
 });
 
@@ -216,6 +250,78 @@ describe("evaluateReportChange", () => {
       headReport: HEAD_CATCHUP,
       mainSources: {
         "src/index.ts": "// buildSoftwareSourceCodeJsonLd SoftwareSourceCodeJsonLdOptions\nexport function otherFn(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when generic constraints differ on a catch-up interface", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        `export interface Options<T extends string> {
+    value: T;
+}
+
+export function otherFn(): void;`,
+      ),
+      mainSources: {
+        "src/index.ts": "export interface Options<T extends number> { value: T }\nexport function otherFn(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when heritage differs on a catch-up interface", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: MAIN_REPORT.replace(
+        "export function otherFn(): void;",
+        `export interface Options extends Foo {
+    value: string;
+}
+
+export function otherFn(): void;`,
+      ),
+      mainSources: {
+        "src/index.ts": "export interface Options extends Bar { value: string }\nexport function otherFn(): void {}\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when the added export exists only inside a block comment", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: HEAD_CATCHUP,
+      mainSources: {
+        "src/index.ts": `/*
+export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode> {}
+export interface SoftwareSourceCodeJsonLdOptions { name: string; url: string; codeRepository: string }
+*/
+export function otherFn(): void {}
+`,
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when the added export exists only inside a template string", () => {
+    const result = evaluateReportChange({
+      mainReport: MAIN_REPORT,
+      headReport: HEAD_CATCHUP,
+      mainSources: {
+        "src/index.ts":
+          "const s = `\nexport function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): WithContext<SoftwareSourceCode> {}\nexport interface SoftwareSourceCodeJsonLdOptions { name: string }\n`;\nexport function otherFn(): void {}\n",
       },
       kinds: new Set(),
     });

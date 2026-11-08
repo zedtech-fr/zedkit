@@ -2,12 +2,13 @@
 // Changeset gate for API reports vs origin/main.
 // Catch-up (no extra bump) only when HEAD's report is origin/main's report
 // plus complete public declarations that already exist, equivalently, in
-// origin/main's source. Name hits in comments/imports do not count; any
-// other delta still needs a changeset.
+// origin/main's source. Equivalence uses TypeScript's parser (not the
+// checker): unsupported syntax has no shape and fails closed.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, posix, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
+import ts from "typescript";
 
 const NAME_RE = /^["']([^"']+)["']\s*:\s*(patch|minor|major)/;
 const DECL_HEADER_RE =
@@ -82,111 +83,91 @@ function consumeBlockLines(lines, start) {
   return lines.length;
 }
 
-/**
- * @param {string} text
- * @returns {string}
- */
-export function stripComments(text) {
-  return text.replace(/\/\*[\s\S]*?\*\//gu, "").replace(/(^|[^:])\/\/.*$/gmu, "$1");
+function compactWs(text) {
+  return text.replace(/\s+/gu, " ").trim();
 }
 
-/**
- * @param {string} text
- */
-function normalizeSpace(text) {
-  return compactSignature(
-    stripComments(text).replace(/\bdeclare\b/gu, ""),
+function parseTs(text, path = "decl.ts") {
+  return ts.createSourceFile(
+    path,
+    text,
+    ts.ScriptTarget.Latest,
+    true,
+    path.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
 }
 
-/**
- * @param {string} block
- */
-export function functionSignature(block) {
-  const source = stripComments(block).replace(/\s+/gu, " ").trim().replace(/^export\s+declare\s+/u, "export ");
-  const header = /^(export\s+(?:async\s+)?function\s+[A-Za-z_$][\w$]*)/u.exec(source);
-  if (!header) return normalizeSpace(source);
-  let i = header[0].length;
-  while (source[i] === " ") i += 1;
-  if (source[i] !== "(") return normalizeSpace(source);
-  let depth = 0;
-  let paramsEnd = i;
-  for (; paramsEnd < source.length; paramsEnd += 1) {
-    if (source[paramsEnd] === "(") depth += 1;
-    else if (source[paramsEnd] === ")") {
-      depth -= 1;
-      if (depth === 0) {
-        paramsEnd += 1;
-        break;
-      }
-    }
-  }
-  let rest = source.slice(paramsEnd).trim();
-  if (rest.startsWith(":")) {
-    let brace = 0;
-    let paren = 0;
-    let angle = 0;
-    let j = 0;
-    for (; j < rest.length; j += 1) {
-      const ch = rest[j];
-      if (ch === "{") {
-        if (brace === 0 && paren === 0 && angle === 0 && j > 0 && !/^:\s*$/u.test(rest.slice(0, j).trimEnd())) {
-          break;
-        }
-        brace += 1;
-      } else if (ch === "}") brace -= 1;
-      else if (ch === "(") paren += 1;
-      else if (ch === ")") paren -= 1;
-      else if (ch === "<") angle += 1;
-      else if (ch === ">") angle -= 1;
-      else if (ch === ";" && brace <= 0 && paren === 0 && angle <= 0) break;
-    }
-    rest = rest.slice(0, j).trim().replace(/;$/u, "");
-  } else if (rest.startsWith("{")) rest = "";
-  else rest = rest.replace(/[;{].*$/u, "").trim();
-  return compactSignature(`${header[0]}${source.slice(i, paramsEnd)}${rest ? ` ${rest}` : ""}`);
+function isExported(stmt) {
+  return (ts.getCombinedModifierFlags(stmt) & ts.ModifierFlags.Export) !== 0;
 }
 
-function compactSignature(text) {
-  return text
-    .replace(/\s+/gu, " ")
-    .replace(/\(\s+/gu, "(")
-    .replace(/\s+\)/gu, ")")
-    .replace(/\s+,/gu, ",")
-    .replace(/,\s+/gu, ", ")
-    .replace(/\s+:/gu, ":")
-    .replace(/:\s+/gu, ": ")
-    .replace(/,\s*\)/gu, ")")
-    .replace(/\s*;\s*$/u, "")
-    .trim();
+function typeParamsOf(node, sf) {
+  return (node.typeParameters ?? []).map((tp) => ({
+    name: tp.name.getText(sf),
+    constraint: tp.constraint ? compactWs(tp.constraint.getText(sf)) : "",
+    default: tp.default ? compactWs(tp.default.getText(sf)) : "",
+  }));
+}
+
+function heritageOf(node, sf) {
+  return (node.heritageClauses ?? []).flatMap((clause) => {
+    const tag = clause.token === ts.SyntaxKind.ExtendsKeyword ? "extends" : "implements";
+    return clause.types.map((type) => `${tag} ${compactWs(type.getText(sf))}`);
+  });
 }
 
 /**
- * @param {string} block
- * @returns {string[]}
+ * shortcut: shapes cover function/interface/class/type/const. Other syntax
+ * returns null so catch-up fails closed until a changeset exists.
+ * @param {ts.Statement} stmt
+ * @param {ts.SourceFile} sf
  */
-export function interfaceMembers(block) {
-  const start = block.indexOf("{");
-  const end = block.lastIndexOf("}");
-  if (start < 0 || end < start) return [];
-  const inner = stripComments(block.slice(start + 1, end));
-  const members = [];
-  let depth = 0;
-  let current = "";
-  for (const ch of inner) {
-    if (ch === "{") depth += 1;
-    if (ch === "}") depth -= 1;
-    if ((ch === ";" || ch === "\n") && depth === 0) {
-      const item = current.replace(/\s+/gu, " ").replace(/,$/u, "").trim();
-      if (item) members.push(item);
-      current = "";
-      continue;
-    }
-    current += ch;
+function nodeShape(stmt, sf) {
+  if (ts.isFunctionDeclaration(stmt)) {
+    return {
+      kind: "function",
+      typeParams: typeParamsOf(stmt, sf),
+      params: stmt.parameters.map((param) => compactWs(param.getText(sf))),
+      returnType: stmt.type ? compactWs(stmt.type.getText(sf)) : "",
+    };
   }
-  const tail = current.replace(/\s+/gu, " ").replace(/,$/u, "").trim();
-  if (tail) members.push(tail);
-  return members.sort();
+  if (ts.isInterfaceDeclaration(stmt) || ts.isClassDeclaration(stmt)) {
+    return {
+      kind: ts.isClassDeclaration(stmt) ? "class" : "interface",
+      typeParams: typeParamsOf(stmt, sf),
+      heritage: heritageOf(stmt, sf),
+      members: stmt.members.map((member) => compactWs(member.getText(sf).replace(/;$/u, ""))).sort(),
+    };
+  }
+  if (ts.isTypeAliasDeclaration(stmt)) {
+    return {
+      kind: "type",
+      typeParams: typeParamsOf(stmt, sf),
+      type: compactWs(stmt.type.getText(sf)),
+    };
+  }
+  if (ts.isVariableStatement(stmt)) {
+    const decl = stmt.declarationList.declarations[0];
+    if (!decl || !ts.isIdentifier(decl.name)) return null;
+    return {
+      kind: "const",
+      type: decl.type ? compactWs(decl.type.getText(sf)) : "",
+      init: decl.initializer ? compactWs(decl.initializer.getText(sf)) : "",
+    };
+  }
+  return null;
+}
+
+function shapesOfText(text) {
+  const sf = parseTs(text);
+  const shapes = [];
+  for (const stmt of sf.statements) {
+    if (ts.isImportDeclaration(stmt) || ts.isEmptyStatement(stmt)) continue;
+    const shape = nodeShape(stmt, sf);
+    if (!shape) return null;
+    shapes.push(shape);
+  }
+  return shapes;
 }
 
 /**
@@ -195,25 +176,71 @@ export function interfaceMembers(block) {
  */
 export function declarationsEquivalent(reportBlock, sourceBlock) {
   if (!reportBlock || !sourceBlock) return false;
-  const reportKind = declKind(reportBlock);
-  const sourceKind = declKind(sourceBlock);
-  if (!reportKind || reportKind !== sourceKind) return false;
-  if (reportKind === "interface" || reportKind === "class" || reportKind === "enum" || reportKind === "namespace") {
-    const a = interfaceMembers(reportBlock);
-    const b = interfaceMembers(sourceBlock);
-    return a.length > 0 && a.length === b.length && a.every((item, i) => item === b[i]);
-  }
-  if (reportKind === "function") {
-    return stripFnName(functionSignature(reportBlock)) === stripFnName(functionSignature(sourceBlock));
-  }
-  return stripFnName(normalizeSpace(reportBlock)) === stripFnName(normalizeSpace(sourceBlock));
+  const report = shapesOfText(reportBlock);
+  const source = shapesOfText(sourceBlock);
+  if (!report || !source || report.length === 0 || report.length !== source.length) return false;
+  return report.every((shape, i) => JSON.stringify(shape) === JSON.stringify(source[i]));
 }
 
-function stripFnName(signature) {
-  return signature.replace(
-    /^export\s+(?:async\s+)?(?:function|class|interface|type|enum|const|let|var|namespace)\s+[A-Za-z_$][\w$]*/u,
-    "export",
-  );
+function namedDecls(stmt, sf) {
+  /** @type {{ name: string, text: string }[]} */
+  const out = [];
+  const text = stmt.getText(sf);
+  if (ts.isFunctionDeclaration(stmt) && stmt.name) out.push({ name: stmt.name.text, text });
+  else if (ts.isInterfaceDeclaration(stmt) || ts.isClassDeclaration(stmt) || ts.isTypeAliasDeclaration(stmt) || ts.isEnumDeclaration(stmt)) {
+    out.push({ name: stmt.name.text, text });
+  } else if (ts.isVariableStatement(stmt)) {
+    for (const decl of stmt.declarationList.declarations) {
+      if (ts.isIdentifier(decl.name)) out.push({ name: decl.name.text, text });
+    }
+  }
+  return out;
+}
+
+/**
+ * @param {string} text
+ * @param {string} path
+ */
+function parseSourceFile(text, path = "file.ts") {
+  const sf = parseTs(text, path);
+  /** @type {Map<string, string>} */
+  const all = new Map();
+  /** @type {Map<string, string>} */
+  const locals = new Map();
+  /** @type {{ from: string, names: '*' | { exported: string, original: string }[] }[]} */
+  const reexports = [];
+
+  for (const stmt of sf.statements) {
+    if (ts.isExportDeclaration(stmt)) continue;
+    const exported = isExported(stmt);
+    for (const { name, text: block } of namedDecls(stmt, sf)) {
+      all.set(name, block);
+      if (exported && !locals.has(name)) locals.set(name, block);
+    }
+  }
+  for (const stmt of sf.statements) {
+    if (!ts.isExportDeclaration(stmt)) continue;
+    if (stmt.exportClause && ts.isNamespaceExport(stmt.exportClause)) continue;
+    const from =
+      stmt.moduleSpecifier && ts.isStringLiteral(stmt.moduleSpecifier) ? stmt.moduleSpecifier.text : "";
+    if (!stmt.exportClause) {
+      if (from) reexports.push({ from, names: "*" });
+      continue;
+    }
+    if (!ts.isNamedExports(stmt.exportClause)) continue;
+    const names = stmt.exportClause.elements.map((el) => ({
+      original: (el.propertyName ?? el.name).text,
+      exported: el.name.text,
+    }));
+    if (from) reexports.push({ from, names });
+    else {
+      for (const { original, exported } of names) {
+        const block = all.get(original);
+        if (block && !locals.has(exported)) locals.set(exported, block);
+      }
+    }
+  }
+  return { locals, reexports };
 }
 
 /**
@@ -225,7 +252,7 @@ export function resolvePublicDeclarations(files, entry) {
   /** @type {Map<string, { locals: Map<string, string>, reexports: { from: string, names: '*' | { exported: string, original: string }[] }[] }>} */
   const parsed = new Map();
   for (const [path, text] of Object.entries(files)) {
-    parsed.set(posix.normalize(path), parseSourceFile(text));
+    parsed.set(posix.normalize(path), parseSourceFile(text, path));
   }
   const publicDecls = new Map();
   const visiting = new Set();
@@ -261,131 +288,6 @@ export function resolvePublicDeclarations(files, entry) {
 
   if (entry && parsed.has(posix.normalize(entry))) take(entry, null);
   return publicDecls;
-}
-
-/**
- * @param {string} text
- */
-function parseSourceFile(text) {
-  /** @type {Map<string, string>} */
-  const locals = new Map();
-  /** @type {{ from: string, names: '*' | { exported: string, original: string }[] }[]} */
-  const reexports = [];
-  const exportAt = /(\n|^)export[\s*{]/gu;
-  let match = exportAt.exec(text);
-  while (match) {
-    const start = match.index + match[1].length;
-    const slice = text.slice(start);
-    if (/^export\s+\*(?:\s+as\s+[A-Za-z_$][\w$]*)?\s+from\s+["']([^"']+)["']/u.test(slice)) {
-      const star = /^export\s+\*(?:\s+as\s+[A-Za-z_$][\w$]*)?\s+from\s+["']([^"']+)["']/u.exec(slice);
-      if (star) reexports.push({ from: star[1], names: "*" });
-    } else if (/^export\s+(?:type\s+)?\{/u.test(slice)) {
-      const list = readExportList(slice);
-      if (list) reexports.push(list);
-    } else {
-      const header = DECL_HEADER_RE.exec(slice);
-      if (header) {
-        const end = scanDeclEnd(text, start);
-        const block = text.slice(start, end).trim();
-        const prev = locals.get(header[2]);
-        locals.set(header[2], prev ? `${prev}\n${block}` : block);
-      }
-    }
-    exportAt.lastIndex = start + 6;
-    match = exportAt.exec(text);
-  }
-  return { locals, reexports };
-}
-
-/**
- * @param {string} slice
- */
-function readExportList(slice) {
-  const open = slice.indexOf("{");
-  if (open < 0) return null;
-  let depth = 0;
-  let close = -1;
-  for (let i = open; i < slice.length; i += 1) {
-    if (slice[i] === "{") depth += 1;
-    else if (slice[i] === "}") {
-      depth -= 1;
-      if (depth === 0) {
-        close = i;
-        break;
-      }
-    }
-  }
-  if (close < 0) return null;
-  const from = /\bfrom\s+["']([^"']+)["']/u.exec(slice.slice(close + 1, close + 80));
-  if (!from) return null;
-  /** @type {{ exported: string, original: string }[]} */
-  const names = [];
-  for (const part of slice.slice(open + 1, close).split(",")) {
-    const token = part.replace(/^\s*type\s+/u, "").trim();
-    if (!token) continue;
-    const sides = token.split(/\s+as\s+/u);
-    const original = sides[0].trim();
-    const exported = (sides[1] ?? sides[0]).trim();
-    if (/^[A-Za-z_$][\w$]*$/u.test(exported) && /^[A-Za-z_$][\w$]*$/u.test(original)) {
-      names.push({ exported, original });
-    }
-  }
-  return { from: from[1], names };
-}
-
-/**
- * @param {string} text
- * @param {number} start
- */
-function scanDeclEnd(text, start) {
-  let brace = 0;
-  let paren = 0;
-  let square = 0;
-  let startedBrace = false;
-  let inStr = "";
-  for (let i = start; i < text.length; i += 1) {
-    const ch = text[i];
-    const next = text[i + 1];
-    if (inStr) {
-      if (ch === "\\" ) {
-        i += 1;
-        continue;
-      }
-      if (ch === inStr) inStr = "";
-      continue;
-    }
-    if (ch === "'" || ch === '"' || ch === "`") {
-      inStr = ch;
-      continue;
-    }
-    if (ch === "/" && next === "/") {
-      while (i < text.length && text[i] !== "\n") i += 1;
-      continue;
-    }
-    if (ch === "/" && next === "*") {
-      const close = text.indexOf("*/", i + 2);
-      i = close < 0 ? text.length : close + 1;
-      continue;
-    }
-    if (ch === "(") paren += 1;
-    else if (ch === ")") paren -= 1;
-    else if (ch === "[") square += 1;
-    else if (ch === "]") square -= 1;
-    else if (ch === "{") {
-      brace += 1;
-      startedBrace = true;
-    } else if (ch === "}") {
-      brace -= 1;
-      if (startedBrace && brace <= 0 && paren <= 0) {
-        let j = i + 1;
-        while (j < text.length && (text[j] === " " || text[j] === "\t")) j += 1;
-        return text[j] === ";" ? j + 1 : i + 1;
-      }
-    } else if (ch === ";" && brace === 0 && paren === 0 && square === 0) {
-      return i + 1;
-    }
-  }
-  return text.length;
 }
 
 /**

@@ -244,6 +244,43 @@ test("changeset gate fails when the catch-up name only appears in a comment on o
   assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
 });
 
+test("changeset gate fails when a catch-up interface generic constraint does not match origin/main", (t) => {
+  const dir = initSeoCatchUpRepo({
+    jsonld: `export interface SoftwareSourceCodeJsonLdOptions<T extends number> {
+  name: T;
+}
+${SEO_FN}
+`,
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
+test("changeset gate fails when a fake export lives in a block comment or template string", (t) => {
+  const commentDir = initSeoCatchUpRepo({
+    index: `/*
+export { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";
+*/
+export function otherFn(): void {}
+`,
+  });
+  t.after(() => rmSync(commentDir, { recursive: true, force: true }));
+  const commentOut = runChangesetGate(commentDir, entries);
+  assert.notEqual(commentOut.status, 0);
+  assert.match(`${commentOut.stderr}${commentOut.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+
+  const templateDir = initSeoCatchUpRepo({
+    index:
+      "const s = `\nexport { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from \"./jsonld.js\";\n`;\nexport function otherFn(): void {}\n",
+  });
+  t.after(() => rmSync(templateDir, { recursive: true, force: true }));
+  const templateOut = runChangesetGate(templateDir, entries);
+  assert.notEqual(templateOut.status, 0);
+  assert.match(`${templateOut.stderr}${templateOut.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
+});
+
 test("changeset gate fails when the catch-up name only appears in an import on origin/main", (t) => {
   const dir = initSeoCatchUpRepo({
     index: 'import { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";\nexport function otherFn(): void {}\n',
