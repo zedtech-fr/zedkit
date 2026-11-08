@@ -612,3 +612,33 @@ for (const width of [320, 390, 768, 1440]) {
     expect(overflow).toBeLessThanOrEqual(1);
   });
 }
+
+test("the look controls keep a quiet border", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#demo").getByRole("button", { name: "Apps", exact: true }).click();
+  const controls = page.locator("#demo [data-look-control]");
+  await expect(controls).toHaveCount(3);
+  for (const control of await controls.all()) {
+    await expect(control).toBeVisible();
+    const line = await control.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.className = "border-border/70";
+      probe.style.borderStyle = "solid";
+      probe.style.borderWidth = "1px";
+      document.body.append(probe);
+      const expected = getComputedStyle(probe).borderTopColor;
+      probe.remove();
+      const style = getComputedStyle(node);
+      return {
+        label: node.getAttribute("aria-label"),
+        color: style.borderTopColor,
+        expected,
+        width: style.borderTopWidth,
+        numeric: node.className.includes("border-border/"),
+      };
+    });
+    expect(line.color, line.label ?? "").toBe(line.expected);
+    expect(line.width, line.label ?? "").toBe("1px");
+    expect(line.numeric, line.label ?? "").toBe(false);
+  }
+});
