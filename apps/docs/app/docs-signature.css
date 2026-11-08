@@ -49,6 +49,11 @@
   max-width: 95%;
 }
 
+/* Inline URLs in the setup prompt. The line sits closer than a text link so it stays with the words. */
+[data-setup-prompt] a {
+  text-underline-offset: 2px;
+}
+
 /* AI setup. The benefits column stays at most 30rem while the file tree scrolls. */
 [data-home-ai-setup] {
   --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
