@@ -64,10 +64,15 @@ const containerVariants = cva("mx-auto w-full", {
       true: "px-page-gutter",
       false: "",
     },
+    query: {
+      true: "zk-query",
+      false: "",
+    },
   },
   defaultVariants: {
     width: "default",
     gutter: true,
+    query: false,
   },
 });
 
@@ -77,11 +82,18 @@ export type ContainerProps = React.ComponentProps<"div"> &
     width?: "narrow" | "reading" | "default" | "wide" | "full" | undefined;
     /** Page gutter on both sides (default true). */
     gutter?: boolean | undefined;
+    /**
+     * Establish this container as the sizing slot for descendants:
+     * container-aware components (Card, Section) adapt their recipe
+     * to the width allocated here. Same marker as the `zk-query`
+     * class on any grid cell or layout slot.
+     */
+    query?: boolean | undefined;
   };
 
-function Container({ width, gutter, className, ...props }: ContainerProps) {
+function Container({ width, gutter, query, className, ...props }: ContainerProps) {
   return (
-    <div data-slot="container" className={cn(containerVariants({ width, gutter }), className)} {...props} />
+    <div data-slot="container" className={cn(containerVariants({ width, gutter, query }), className)} {...props} />
   );
 }
 
@@ -114,12 +126,8 @@ function SectionScroll({ className, ...props }: SectionScrollProps) {
   return <div data-slot="section-scroll" className={className} {...props} />;
 }
 
-const sectionSpacing = {
-  sm: "py-section-sm",
-  md: "py-section-md",
-  lg: "py-section-lg",
-  xl: "py-section-xl",
-} as const;
+// Bleed rhythm is a recipe (styles.css): data-spacing selects the
+// base section step; a wide zk-query slot steps it up one step.
 
 function Section({
   title,
@@ -164,7 +172,8 @@ function Section({
     <section
       data-slot="section"
       data-snap={snap}
-      className={cn("w-full", sectionSpacing[spacing], tone === "muted" && "bg-muted", className)}
+      data-spacing={spacing}
+      className={cn("w-full", tone === "muted" && "bg-muted", className)}
       {...labelled}
       {...props}
     >

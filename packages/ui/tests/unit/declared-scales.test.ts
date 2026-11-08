@@ -22,7 +22,7 @@ function packageCss(): string {
 export function offScaleMultipliers(css: string): number[] {
   const bad = new Set<number>();
   for (const match of css.matchAll(/calc\(var\(--spacing\)\s*\*\s*(-?[\d.]+)\)/g)) {
-    const n = Math.abs(Number.parseFloat(match[1]));
+    const n = Math.abs(Number.parseFloat(match[1] ?? "NaN"));
     if (!ALLOWED_MULTIPLIERS.has(n)) bad.add(n);
   }
   return [...bad].sort((a, b) => a - b);

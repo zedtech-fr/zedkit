@@ -45,7 +45,7 @@
           "zk-font-display": "var(--zk-font-sans)",
           "zk-font-mono": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
           "zk-border-width": "1px",
-          "zk-body-leading": "1.6",
+          "zk-body-leading": "1.55",
           "zk-color-duration": "150ms",
           "zk-shadow-color": "240 10% 4%",
           "zk-shadow-overlay": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
@@ -99,6 +99,10 @@
           "color-sidebar-accent": "hsl(var(--sidebar-accent))",
           "tw-shadow": "var(--zk-btn-press-shadow)",
           "zk-motion-mobile": "0.5",
+          "zk-shift": "calc(\n          var(--zk-depth, 0) *\n            var(\n              --zk-parallax-amplitude-x,\n              min(calc(var(--zk-reveal-distance, 0.75rem) * 8), var(--zk-parallax-max-shift, 12vw))\n            ) * var(--zk-motion-intensity, 1) * var(--zk-motion-mobile, 1) * var(--zk-dir, 1)\n        )",
+          "zk-travel": "max(var(--zk-shift), calc(var(--zk-shift) * -1))",
+          "zk-from": "0",
+          "zk-to": "2",
           "zk-motion-reveal-duration": "var(--zk-reveal-duration, 300ms)",
           "zk-motion-reveal-distance": "var(--zk-reveal-distance, 0.75rem)",
           "zk-motion-reveal-ease": "var(--zk-reveal-ease, var(--ease-enter))",
@@ -109,7 +113,54 @@
           "zk-motion-glide-duration": "var(--motion-slow, 250ms)",
           "zk-motion-glide-ease": "var(--ease-enter)",
           "zk-motion-feedback-duration": "var(--motion-fast, 150ms)",
-          "zk-motion-feedback-ease": "var(--ease-exit)"
+          "zk-motion-feedback-ease": "var(--ease-exit)",
+          "zk-top": "var(--zk-scenes-top, calc(var(--zk-header-height, 3.5rem) + 1rem))",
+          "zk-bottom": "var(--zk-scenes-bottom, 1rem)",
+          "zk-stage": "calc(100svh - var(--zk-top) - var(--zk-bottom))",
+          "zk-scenes-count": "8",
+          "zk-scene-index": "7",
+          "zk-type-base": "0.875rem",
+          "text-xs": "0.75rem",
+          "text-sm": "0.8125rem",
+          "text-base": "0.875rem",
+          "text-lg": "1.0625rem",
+          "text-xl": "1.125rem",
+          "text-2xl": "clamp(1.375rem, 1vw + 1.125rem, 1.625rem)",
+          "text-3xl": "1.75rem",
+          "text-4xl": "clamp(2rem, 2.5vw + 1rem, 2.75rem)",
+          "text-5xl": "2.75rem",
+          "zk-heading-leading": "1.1",
+          "zk-type-h1-size": "2rem",
+          "zk-type-h1-weight": "600",
+          "zk-type-h1-leading": "1.1",
+          "zk-type-h1-tracking": "-0.02em",
+          "zk-type-lead-size": "0.9375rem",
+          "zk-type-lead-weight": "400",
+          "zk-type-lead-leading": "1.5",
+          "zk-type-h2-size": "var(--text-2xl)",
+          "zk-type-h2-weight": "600",
+          "zk-type-h2-leading": "1.2",
+          "zk-type-h3-size": "1.125rem",
+          "zk-type-h3-weight": "600",
+          "zk-type-h3-leading": "1.3",
+          "zk-type-card-title-size": "clamp(1rem, 0.15vw + 0.9375rem, 1.0625rem)",
+          "zk-type-card-title-weight": "600",
+          "zk-type-card-title-leading": "1.3",
+          "zk-type-body-size": "0.875rem",
+          "zk-type-body-weight": "400",
+          "zk-type-body-leading": "1.55",
+          "zk-type-prose-size": "0.9375rem",
+          "zk-type-prose-leading": "1.6",
+          "zk-type-small-size": "0.8125rem",
+          "zk-type-small-weight": "400",
+          "zk-type-small-leading": "1.5",
+          "zk-type-label-size": "0.75rem",
+          "zk-type-label-weight": "500",
+          "zk-type-label-leading": "1.4",
+          "zk-type-nav-size": "0.8125rem",
+          "zk-type-nav-weight": "500",
+          "zk-type-nav-leading": "1",
+          "zk-subtle-foreground": "var(--muted-foreground)"
         },
         "dark": {
           "background": "240 10% 3.9%",
@@ -610,6 +661,10 @@
         "@utility z-overlay-close": {
           "z-index": "20"
         },
+        "@utility zk-query": {
+          "container-type": "inline-size",
+          "container-name": "zk-slot"
+        },
         "@keyframes zk-check-draw": {
           "from": {
             "stroke-dashoffset": "8"
@@ -766,6 +821,88 @@
           }
         },
         "@layer components": {
+          "[data-slot=\"card\"]": {
+            "--zk-card-pad": "calc(var(--spacing) * 6)",
+            "--zk-card-stack": "calc(var(--spacing) * 2)",
+            "--zk-card-radius": "var(--radius-xl)",
+            "--zk-card-title": "var(--text-base)",
+            "--zk-card-body": "var(--text-sm)",
+            "border-radius": "var(--zk-card-radius)"
+          },
+          "[data-slot=\"card\"][data-size=\"sm\"]": {
+            "--zk-card-pad": "calc(var(--spacing) * 3)",
+            "--zk-card-stack": "calc(var(--spacing) * 1.5)",
+            "--zk-card-radius": "var(--radius-lg)",
+            "--zk-card-title": "var(--text-sm)",
+            "--zk-card-body": "var(--text-xs)"
+          },
+          "[data-slot=\"card\"][data-size=\"lg\"]": {
+            "--zk-card-pad": "calc(var(--spacing) * 5)",
+            "--zk-card-stack": "calc(var(--spacing) * 3)",
+            "--zk-card-radius": "var(--radius-2xl)",
+            "--zk-card-title": "var(--text-lg)",
+            "--zk-card-body": "var(--text-base)"
+          },
+          "@container zk-slot (min-width: 30rem)": {
+            "[data-slot=\"card\"]": {
+              "--zk-card-pad": "calc(var(--spacing) * 8)",
+              "--zk-card-stack": "calc(var(--spacing) * 3)",
+              "--zk-card-radius": "var(--radius-2xl)",
+              "--zk-card-title": "var(--text-lg)",
+              "--zk-card-body": "var(--text-base)"
+            },
+            "[data-slot=\"card\"][data-size=\"sm\"]": {
+              "--zk-card-pad": "calc(var(--spacing) * 4)",
+              "--zk-card-stack": "calc(var(--spacing) * 2)",
+              "--zk-card-radius": "var(--radius-xl)",
+              "--zk-card-title": "var(--text-base)",
+              "--zk-card-body": "var(--text-sm)"
+            },
+            "[data-slot=\"card\"][data-size=\"lg\"]": {
+              "--zk-card-pad": "calc(var(--spacing) * 8)",
+              "--zk-card-stack": "calc(var(--spacing) * 5)",
+              "--zk-card-radius": "var(--radius-3xl)",
+              "--zk-card-title": "var(--text-2xl)",
+              "--zk-card-body": "var(--text-lg)"
+            },
+            "[data-slot=\"section\"][data-spacing=\"sm\"]": {
+              "--zk-section-pad": "var(--zk-section-md)"
+            },
+            "[data-slot=\"section\"][data-spacing=\"md\"]": {
+              "--zk-section-pad": "var(--zk-section-lg)"
+            },
+            "[data-slot=\"section\"][data-spacing=\"lg\"]": {
+              "--zk-section-pad": "var(--zk-section-xl)"
+            }
+          },
+          "[data-slot=\"card-header\"], [data-slot=\"card-content\"], [data-slot=\"card-footer\"]": {
+            "padding": "var(--zk-card-pad)"
+          },
+          "[data-slot=\"card-header\"]": {
+            "gap": "var(--zk-card-stack)"
+          },
+          "[data-slot=\"card-title\"]": {
+            "font-size": "var(--zk-card-title)"
+          },
+          "[data-slot=\"card-description\"]": {
+            "font-size": "var(--zk-card-body)",
+            "line-height": "var(--text-sm--line-height)"
+          },
+          "[data-slot=\"section\"][data-spacing]": {
+            "padding-block": "var(--zk-section-pad)"
+          },
+          "[data-slot=\"section\"][data-spacing=\"sm\"]": {
+            "--zk-section-pad": "var(--zk-section-sm)"
+          },
+          "[data-slot=\"section\"][data-spacing=\"md\"]": {
+            "--zk-section-pad": "var(--zk-section-md)"
+          },
+          "[data-slot=\"section\"][data-spacing=\"lg\"]": {
+            "--zk-section-pad": "var(--zk-section-lg)"
+          },
+          "[data-slot=\"section\"][data-spacing=\"xl\"]": {
+            "--zk-section-pad": "var(--zk-section-xl)"
+          },
           "[data-slot=\"select-value\"]": {
             "display": "-webkit-box",
             "overflow": "hidden",

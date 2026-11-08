@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { tryCatchAsync } from "@zedtech/zedkit-core";
 import tailwindcss from "@tailwindcss/postcss";
 import postcss from "postcss";
 import { describe, expect, it } from "vitest";
@@ -53,11 +54,10 @@ async function compile(css: string, name: string): Promise<string> {
   mkdirSync(dir, { recursive: true });
   const file = join(dir, name);
   writeFileSync(file, css);
-  try {
-    return (await postcss([tailwindcss()]).process(css, { from: file })).css;
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
+  const result = await tryCatchAsync(() => postcss([tailwindcss()]).process(css, { from: file }));
+  rmSync(dir, { recursive: true, force: true });
+  if (!result.ok) throw result.error;
+  return result.value.css;
 }
 
 function hasRule(compiled: string, token: string): boolean {

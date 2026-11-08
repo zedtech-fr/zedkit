@@ -368,6 +368,91 @@ export function Gallery() {
           </div>
         </GallerySection>
 
+        <GallerySection id="sizing" title="Container sizing">
+          {/* Slot widths are set by preview/cascade.spec.ts; recipes step at 30rem. */}
+          <div data-testid="slot-sm-narrow" className="zk-query">
+            <Card size="sm" data-testid="card-sm-narrow">
+              <CardHeader>
+                <CardTitle>Small, narrow slot</CardTitle>
+                <CardDescription>Base small recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-sm-wide" className="zk-query">
+            <Card size="sm" data-testid="card-sm-wide">
+              <CardHeader>
+                <CardTitle>Small, wide slot</CardTitle>
+                <CardDescription>Stepped small recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-lg-narrow" className="zk-query">
+            <Card size="lg" data-testid="card-lg-narrow">
+              <CardHeader>
+                <CardTitle>Large, narrow slot</CardTitle>
+                <CardDescription>Base large recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-lg-wide" className="zk-query">
+            <Card size="lg" data-testid="card-lg-wide">
+              <CardHeader>
+                <CardTitle>Large, wide slot</CardTitle>
+                <CardDescription>Stepped large recipe.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div data-testid="slot-nested" className="zk-query">
+                  <Card size="sm" data-testid="card-nested-sm">
+                    <CardHeader>
+                      <CardTitle>Nested small</CardTitle>
+                      <CardDescription>Own slot, own recipe.</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <Container query width="full" gutter={false} data-testid="slot-container-query">
+            <Card data-testid="card-default-wide">
+              <CardHeader>
+                <CardTitle>Default in a query container</CardTitle>
+                <CardDescription>Stepped default recipe.</CardDescription>
+              </CardHeader>
+            </Card>
+          </Container>
+          <Card size="lg" data-testid="card-no-query">
+            <CardHeader>
+              <CardTitle>Large, no query slot</CardTitle>
+              <CardDescription>Base recipe, viewport-independent.</CardDescription>
+            </CardHeader>
+          </Card>
+          <div data-testid="slot-override" className="zk-query">
+            <Card size="sm" data-testid="card-override">
+              <CardHeader data-testid="card-override-header" className="flush">
+                <CardTitle>Override seams</CardTitle>
+                <CardDescription>Utility and recipe-var overrides win.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <div data-testid="slot-section" className="zk-query">
+            <Section bleed spacing="sm" title="Sizing section" data-testid="section-recipe">
+              <p className="text-dense">Band rhythm steps with its slot.</p>
+            </Section>
+          </div>
+          <div data-identity-scope="" data-identity="press">
+            <div data-identity-scope="" data-identity="glass">
+              <div data-testid="slot-density" className="zk-query">
+                <Card size="sm" data-testid="card-density">
+                  <CardHeader>
+                    <CardTitle>Density composes</CardTitle>
+                    <CardDescription>Glass density, small recipe.</CardDescription>
+                  </CardHeader>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </GallerySection>
+
         <GallerySection id="loading" title="Loading">
           <PageHeaderSkeleton label="Loading page" />
           <div data-example-width="">

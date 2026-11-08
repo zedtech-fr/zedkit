@@ -29,6 +29,15 @@ function findBlock(css, opener) {
   return blockBody(css, css.indexOf("{", start)).body;
 }
 
+function mergeCssObject(target, source) {
+  for (const [key, value] of Object.entries(source)) {
+    const existing = target[key];
+    if (existing && typeof existing === "object" && typeof value === "object") mergeCssObject(existing, value);
+    else target[key] = value;
+  }
+  return target;
+}
+
 /** Parse a CSS block body into a shadcn css object (decls + nested rules). */
 export function cssObjectFromBody(body) {
   const out = {};
@@ -38,7 +47,11 @@ export function cssObjectFromBody(body) {
     const ch = body[i];
     if (ch === "{") {
       const { body: inner, end } = blockBody(body, i);
-      out[head.trim().replace(/\s+/g, " ")] = cssObjectFromBody(inner);
+      const key = head.trim().replace(/\s+/g, " ");
+      const parsed = cssObjectFromBody(inner);
+      // Repeated selectors / @container blocks merge, never clobber.
+      if (out[key]) mergeCssObject(out[key], parsed);
+      else out[key] = parsed;
       head = "";
       i = end + 1;
       continue;
@@ -114,7 +127,7 @@ function componentRulesFromCss(css) {
   const out = {};
   for (const match of css.matchAll(/@layer components\s*\{/g)) {
     const open = css.indexOf("{", match.index);
-    Object.assign(out, cssObjectFromBody(blockBody(css, open).body));
+    mergeCssObject(out, cssObjectFromBody(blockBody(css, open).body));
   }
   return out;
 }
@@ -160,14 +173,18 @@ export function generateThemePayload(root) {
   const identities = STRIP_COMMENTS(readFileSync(join(srcDir, "identities.css"), "utf8"));
   // Sibling sheets styles.css imports also define utilities/keyframes
   // (motion, type roles, signature motion...). Follow its @import list.
-  let siblings = "";
+  const siblingSheets = [];
   for (const match of css.matchAll(/@import\s+"\.\/([\w./-]+\.css)"/g)) {
     if (match[1] === "identities.css") continue;
-    siblings += `\n${STRIP_COMMENTS(readFileSync(join(srcDir, match[1]), "utf8"))}`;
+    siblingSheets.push({ name: match[1], css: STRIP_COMMENTS(readFileSync(join(srcDir, match[1]), "utf8")) });
   }
+  const siblings = siblingSheets.map((sheet) => sheet.css).join("\n");
   const used = classTokensFromSources(join(root, "registry/ui"));
   const utilities = utilitiesFromCss(css + siblings);
 
+  // zk-query is the consumer-applied slot marker: copied bricks never
+  // reference it themselves, but copy consumers need it to opt slots in.
+  used.add("zk-query");
   const cssPayload = {};
   for (const [name, body] of [...utilities.entries()].sort(([a], [b]) => a.localeCompare(b))) {
     if (!used.has(name)) continue;
@@ -192,10 +209,21 @@ export function generateThemePayload(root) {
   };
   const dark = varsFromBody(findBlock(css, "\n.dark"));
   const theme = varsFromBody(findBlock(css, "@theme inline"));
-  // Sibling sheets may add :root/@theme vars (motion tokens, type scale).
-  for (const match of siblings.matchAll(/(?::root|@theme[^{]*)\s*\{/g)) {
-    const { body } = blockBody(siblings, siblings.indexOf("{", match.index));
-    Object.assign(match[0].startsWith("@theme") ? theme : light, varsFromBody(body));
+  // Non-identity sibling sheets may add :root/@theme vars (motion
+  // tokens, type scale under `:root[data-identity], ...`). Per-identity
+  // sheets are skipped: the copy theme carries the stock identity only.
+  for (const sheet of siblingSheets) {
+    if (sheet.name.startsWith("identities/")) continue;
+    for (const match of sheet.css.matchAll(/(?::root|@theme)[^{]*\{/g)) {
+      const selector = match[0].slice(0, -1).trim();
+      const parts = selector.split(",").map((part) => part.trim());
+      const isVarScope = parts.every(
+        (part) => part.startsWith(":root") || part.startsWith("[data-identity-scope]") || part.startsWith("@theme"),
+      );
+      if (!isVarScope || selector.includes("::")) continue;
+      const { body } = blockBody(sheet.css, sheet.css.indexOf("{", match.index));
+      Object.assign(selector.startsWith("@theme") ? theme : light, varsFromBody(body));
+    }
   }
 
   return {
