@@ -254,6 +254,11 @@
   border-color: color-mix(in oklab, hsl(var(--border)) 70%, transparent);
 }
 
+/* Theme switch. The ring is 35% of the border colour. */
+[data-theme-toggle] button {
+  border-color: color-mix(in oklab, hsl(var(--border)) 35%, transparent);
+}
+
 /* Identity dock + inline assistant: type roles via tokens (not Tailwind text-*). */
 [data-testid="identity-dock"] [data-assistant-status],
 [data-testid="identity-dock"] [data-assistant-feedback],
