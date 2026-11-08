@@ -528,6 +528,10 @@ ol[data-sonner-toaster] {
 @utility destructive-hover {
   background-color: color-mix(in oklab, hsl(var(--destructive)) 90%, transparent);
 }
+/* Primary button, hovered. The fill is 90% of the primary colour. */
+@utility primary-hover {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 90%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;
