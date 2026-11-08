@@ -167,7 +167,7 @@ describe("inspectReleasePublisher (real subprocess versions)", () => {
   });
 });
 
-describe("release wiring (no secrets, no empty NODE_AUTH_TOKEN)", () => {
+describe("release wiring (publisher pin, provenance, optional token)", () => {
   const releaseYml = readFileSync(join(ROOT, ".github/workflows/release.yml"), "utf8");
   const ensureSh = readFileSync(join(ROOT, "scripts/ensure-release-publisher.sh"), "utf8");
   const ciYml = readFileSync(join(ROOT, ".github/workflows/ci.yml"), "utf8");
@@ -184,8 +184,8 @@ describe("release wiring (no secrets, no empty NODE_AUTH_TOKEN)", () => {
     assert.ok(ensureAt > 0 && publishAt > ensureAt);
   });
 
-  it("publish env is tokenless OIDC (no NODE_AUTH_TOKEN)", () => {
-    assert.doesNotMatch(releaseYml, /^\s+NODE_AUTH_TOKEN:/m);
+  it("keeps OIDC permissions and provenance; does not assign empty NODE_AUTH_TOKEN", () => {
+    assert.doesNotMatch(releaseYml, /NODE_AUTH_TOKEN:\s*\$\{\{\s*secrets\.NPM_TOKEN/);
     assert.match(releaseYml, /id-token:\s*write/);
     assert.match(releaseYml, /NPM_CONFIG_PROVENANCE:\s*"true"/);
     assert.match(releaseYml, /registry-url:\s*https:\/\/registry\.npmjs\.org/);
