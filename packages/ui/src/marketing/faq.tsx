@@ -2,8 +2,8 @@ import { useId } from "react";
 import type * as React from "react";
 import { ChevronDown } from "lucide-react";
 
-import { Container } from "../layout.js";
-import { Text } from "../typography.js";
+import { Container } from "../layout/layout.js";
+import { Text } from "../typography/typography.js";
 import { cn } from "../utils.js";
 import { SectionHeader } from "./section-header.js";
 

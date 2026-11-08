@@ -90,7 +90,7 @@ describe("uiPreset entryPoints", () => {
     expect(missingMsgs.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(true);
     const okMsgs = linter.verify(sample, blocks(scopedOk), "apps/docs/page.tsx");
     expect(okMsgs.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(false);
-    const unmatched = linter.verify(sample, blocks(missing), "packages/ui/src/button.tsx");
+    const unmatched = linter.verify(sample, blocks(missing), "packages/ui/src/button/button.tsx");
     expect(unmatched.some((m) => m.ruleId === "zedkit/tailwind-ready")).toBe(false);
   });
 });
@@ -148,7 +148,7 @@ describe("uiPreset", () => {
     );
     expect(member).toHaveLength(1);
     expect(member[0].ruleId).toBe("no-restricted-syntax");
-    expect(member[0].message).toContain("packages/ui/src/button.tsx");
+    expect(member[0].message).toContain("packages/ui/src/button/button.tsx");
     const named = linter.verify(
       "const X = forwardRef((props, ref) => props);\n",
       config,

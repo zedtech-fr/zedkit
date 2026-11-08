@@ -24,7 +24,7 @@ Approved product context: [reference-decisions.md](./reference-decisions.md) (D1
 
 **16px** is for form controls when `(pointer: coarse)` or `max-width: 767px` (`--zk-input-font-size` in `packages/ui/src/styles.css`), not body copy.
 
-Implementation: `packages/ui/src/shared-type-scale.css` (tokens), `type-roles.css` (utilities), `typography.tsx` (React API), `type-roles.ts` (class name constants).
+Implementation: `packages/ui/src/shared-type-scale.css` (tokens), `packages/ui/src/typography/type-roles.css` (utilities), `packages/ui/src/typography/typography.tsx` (React API), `packages/ui/src/typography/type-roles.ts` (class name constants).
 
 ## Composition grid
 

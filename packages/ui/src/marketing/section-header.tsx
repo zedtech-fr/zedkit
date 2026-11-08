@@ -1,6 +1,6 @@
 import type * as React from "react";
 
-import { Heading, Text } from "../typography.js";
+import { Heading, Text } from "../typography/typography.js";
 import { cn } from "../utils.js";
 
 export interface SectionHeaderProps {

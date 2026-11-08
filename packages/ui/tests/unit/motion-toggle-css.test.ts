@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
 const read = (file: string): string => readFileSync(join(src, file), "utf8");
 
-const SHEETS = ["motion.css", "scroll-scenes.css", "signature-motion.css", "styles.css", "parallax.css"] as const;
+const SHEETS = ["motion.css", "layout/scroll-scenes.css", "signature-motion.css", "styles.css", "motion/parallax.css"] as const;
 
 describe("in-app motion toggle CSS", () => {
   it.each(SHEETS)("gates %s with :root:not([data-motion=reduce])", (file) => {
@@ -21,7 +21,7 @@ describe("in-app motion toggle CSS", () => {
   );
 
   it("keeps ScrollScenes pinning inside the toggle gate, so reduce falls back to the stacked layout", () => {
-    const css = read("scroll-scenes.css").replace(/\/\*[\s\S]*?\*\//g, "");
+    const css = read("layout/scroll-scenes.css").replace(/\/\*[\s\S]*?\*\//g, "");
     const gate = css.indexOf(':root:not([data-motion="reduce"])');
     const sticky = css.indexOf("position: sticky");
     expect(gate).toBeGreaterThan(-1);

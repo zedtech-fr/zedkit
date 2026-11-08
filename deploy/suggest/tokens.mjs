@@ -1,6 +1,6 @@
 // The identity token schema, for the service. It must accept and reject exactly what packages/ui does.
 //
-// shortcut: this is a port of identityTokenSchema in packages/ui/src/identity-tokens.ts, because the alpine
+// shortcut: this is a port of identityTokenSchema in packages/ui/src/identity/identity-tokens.ts, because the alpine
 // service has no workspace dependencies. `tokens.parity.test.mjs` runs both on the same inputs (every preset, and a
 // seeded fuzz of hostile values) and fails when they disagree, so drift shows up in CI instead of in a result.
 const HSL = /^\d+(\.\d+)?\s+\d+(\.\d+)?%\s+\d+(\.\d+)?%$/;
@@ -34,7 +34,7 @@ export const FONT_STACKS = Object.freeze([
   'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
 ]);
 
-// Mirrors cssValue in packages/ui/src/identity-tokens.ts: a plain value that cannot leave its declaration.
+// Mirrors cssValue in packages/ui/src/identity/identity-tokens.ts: a plain value that cannot leave its declaration.
 function isBalanced(value) {
   const closers = [];
   let quote = null;

@@ -92,7 +92,7 @@ test("partitionPropsEntries in only-mode folds everything but the priority list"
 test("declarationOrigin follows where a property is declared", () => {
   const react = "/repo/node_modules/.pnpm/@types+react@19/node_modules/@types/react/index.d.ts";
   const lib = "/repo/node_modules/typescript/lib/lib.dom.d.ts";
-  const kit = "/repo/packages/ui/src/layout.tsx";
+  const kit = "/repo/packages/ui/src/layout/layout.tsx";
   assert.equal(declarationOrigin([react]), "inherited");
   assert.equal(declarationOrigin([lib]), "inherited");
   assert.equal(

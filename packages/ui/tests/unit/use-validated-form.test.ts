@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { useValidatedForm } from "#use-validated-form.js";
+import { useValidatedForm } from "#forms/use-validated-form.js";
 import { renderHook, waitFor } from "@testing-library/react";
 
 describe("useValidatedForm runtime", () => {

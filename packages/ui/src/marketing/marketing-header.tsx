@@ -4,7 +4,7 @@ import { Children } from "react";
 import type * as React from "react";
 import { Menu } from "lucide-react";
 
-import { Container } from "../layout.js";
+import { Container } from "../layout/layout.js";
 import { useUiMessages } from "../ui-provider.js";
 import { cn } from "../utils.js";
 

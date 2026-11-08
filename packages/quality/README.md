@@ -72,7 +72,7 @@ commands) see `@zedtech/zedkit-ai` instead.
   jsx-a11y recommended, Tailwind hygiene, tokens-only classes (no)
   `w-[13px]` / `gap-[0.75rem]`; Radix `w-[var(--radix-*)]` stays; no
   `focus:ring-2` / `focus-visible:ring-2` — use `focus-ring`), no `style`
-  attributes, no `forwardRef` (ref is a prop; see `packages/ui/src/button.tsx`),
+  attributes, no `forwardRef` (ref is a prop; see `packages/ui/src/button/button.tsx`),
   no explicit `any`, files ≤ 300 lines and functions ≤ 60, no raw `try`/`catch`.
   `entryPoint` (your Tailwind CSS entry) is required: it is the one thing
   that varies per repo. Apps with their own globals that `@import` the

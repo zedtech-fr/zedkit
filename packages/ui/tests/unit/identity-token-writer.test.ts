@@ -17,7 +17,7 @@ import {
   tokensToCss,
   tokensToCssVars,
   type IdentityId,
-} from "#identity-tokens.js";
+} from "#identity/identity-tokens.js";
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
 const read = (file: string): string => readFileSync(join(src, file), "utf8");

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveDataTableSurfaceState } from "#data-table-state.js";
+import { resolveDataTableSurfaceState } from "#data-table/data-table-state.js";
 
 describe("resolveDataTableSurfaceState", () => {
   it("prioritises error and loading over row counts", () => {

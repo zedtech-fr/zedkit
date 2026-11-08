@@ -7,7 +7,7 @@ export {
   PARALLAX_OFF,
   PARALLAX_RANGES,
   PARALLAX_SECTION_TAGS,
-} from "../parallax-types.js";
+} from "./parallax-types.js";
 export {
   ParallaxLayer,
   ParallaxSection,
@@ -20,9 +20,9 @@ export {
   type ParallaxRange,
   type ParallaxSectionProps,
   type ParallaxSectionTag,
-} from "../parallax.js";
-export { MotionScript, type MotionScriptProps } from "../motion-script.js";
-export { SCROLL_SCENES_MAX, ScrollScenes, type ScrollScene, type ScrollScenesProps } from "../scroll-scenes.js";
+} from "./parallax.js";
+export { MotionScript, type MotionScriptProps } from "./motion-script.js";
+export { SCROLL_SCENES_MAX, ScrollScenes, type ScrollScene, type ScrollScenesProps } from "../layout/scroll-scenes.js";
 export {
   StickyAside,
   StickyAsideAside,
@@ -35,11 +35,11 @@ export {
   type StickyAsideProps,
   type StickyAsideRatioPreset,
   type StickyAsideSide,
-} from "../sticky-aside.js";
+} from "../layout/sticky-aside.js";
 export {
   MOTION_CHANGE_EVENT,
   MOTION_STORAGE_KEY,
   applyMotionPreference,
   isMotionReduced,
   type MotionPreference,
-} from "../motion-preference.js";
+} from "./motion-preference.js";

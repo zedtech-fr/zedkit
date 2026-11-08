@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 
 const pkg = resolve(__dirname, "../..");
 
-const css = readFileSync(resolve(pkg, "src/surface.css"), "utf8");
+const css = readFileSync(resolve(pkg, "src/surfaces/surface.css"), "utf8");
 const entry = readFileSync(resolve(pkg, "src/styles.css"), "utf8");
 
 describe("glass surface", () => {
   it("is imported by the kit stylesheet", () => {
-    expect(entry).toContain('@import "./surface.css";');
+    expect(entry).toContain('@import "./surfaces/surface.css";');
   });
 
   it("renders a solid popover panel without glass tokens", () => {

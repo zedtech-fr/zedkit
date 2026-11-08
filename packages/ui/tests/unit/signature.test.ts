@@ -26,7 +26,7 @@ describe("signature motion tokens", () => {
 });
 
 describe("type role utilities", () => {
-  const css = read("type-roles.css");
+  const css = read("typography/type-roles.css");
 
   it("maps display/section/band roles to h1–h3 tokens", () => {
     expect(css).toContain("text-zk-type-display");
@@ -39,7 +39,7 @@ describe("type role utilities", () => {
 });
 
 describe("section scroll", () => {
-  const css = read("section-scroll.css");
+  const css = read("layout/section-scroll.css");
 
   it("uses proximity snap, never mandatory, behind reduced-motion", () => {
     expect(css).toContain("@media (prefers-reduced-motion: no-preference)");

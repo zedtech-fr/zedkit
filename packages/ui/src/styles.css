@@ -5,19 +5,19 @@
 @import "./identities/press.css";
 @import "./font-fallbacks.css";
 @import "./identities/glass.css";
-@import "./surface.css";
+@import "./surfaces/surface.css";
 @import "./motion.css";
 @import "./motion-tokens.css";
-@import "./parallax.css";
+@import "./motion/parallax.css";
 @import "./signature-motion.css";
-@import "./type-roles.css";
-@import "./section-scroll.css";
-@import "./scroll-scenes.css";
-@import "./sticky-aside.css";
+@import "./typography/type-roles.css";
+@import "./layout/section-scroll.css";
+@import "./layout/scroll-scenes.css";
+@import "./layout/sticky-aside.css";
 @import "./identities/volt.css";
 @import "./shared-type-scale.css";
 @import "./identities/tide.css";
-@import "./calendar.css";
+@import "./calendar/calendar.css";
 
 /*
  * Hover styles only apply where a hover exists (Tailwind v4's default

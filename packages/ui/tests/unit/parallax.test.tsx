@@ -95,7 +95,7 @@ describe("Surface depth", () => {
 
 describe("motion public API", () => {
   it("does not leak third-party library names from the motion entry", () => {
-    const files = ["motion/index.ts", "motion/runtime.ts", "parallax.tsx", "parallax-types.ts"];
+    const files = ["motion/index.ts", "motion/runtime.ts", "motion/parallax.tsx", "motion/parallax-types.ts"];
     for (const file of files) {
       const text = readFileSync(join(src, file), "utf8");
       expect(text).not.toMatch(/\b(framer-motion|animejs|from ["']motion["'])\b/);
@@ -104,12 +104,12 @@ describe("motion public API", () => {
 });
 
 function typeContractChecks(): void {
-  const ok: import("#surface.js").SurfaceProps = { depth: "back", variant: "solid" };
+  const ok: import("#surfaces/surface.js").SurfaceProps = { depth: "back", variant: "solid" };
   void ok;
-  const glass: import("#surface.js").SurfaceProps = { variant: "glass" };
+  const glass: import("#surfaces/surface.js").SurfaceProps = { variant: "glass" };
   void glass;
   // @ts-expect-error -- depth is forbidden on glass
-  const bad: import("#surface.js").SurfaceProps = { variant: "glass", depth: "back" };
+  const bad: import("#surfaces/surface.js").SurfaceProps = { variant: "glass", depth: "back" };
   void bad;
 }
 

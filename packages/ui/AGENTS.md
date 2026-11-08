@@ -7,11 +7,24 @@ component may replace a mature primitive (ladder rung 5).
 
 Rules:
 
-- New code goes in `src/`. Tests live in `tests/unit/` or, for one
-  module, as `<name>.test.tsx` next to it. Packed `src` excludes
-  `*.test.*` / `*.spec.*` / `*.stories.*`. Use `#*` in tests.
+- New code goes in `src/`. A folder names a responsibility: no
+  `common/` / `misc/` / `helpers/` / `shared/` / `utils/` folders
+  (`utils.ts` may sit at `src/` root). Depth is at most
+  `src/<family>/<name>/<file>` except existing `marketing/specimens/`
+  and identity CSS sheets. Make a component folder only when that
+  file has an adjacent artifact (CSS, private helper, colocated test,
+  real example). Make a family folder only when ≥2 public components
+  share the job, or the cluster is already many files. Basenames stay
+  unique (registry keys). Private helpers live in the owning folder.
+  No per-folder barrels, no stories. Component CSS sits next to the
+  component and is `@import`ed from `styles.css` or `motion-kit.css`.
+  Tests live in `tests/unit/` or, for one module, as `<name>.test.tsx`
+  next to it. Packed `src` excludes `*.test.*` / `*.spec.*` /
+  `*.stories.*`. Use `#*` in tests; shipped `src` may use one `../..`.
   `tsconfig.json` excludes colocated tests from emit; `tsconfig.tests.json`
   must set its own `exclude` so it does not inherit that list.
+  Keep `theme-scope`, `overlay-modal` and `use-narrow-viewport` at
+  `src/` root (import-graph cycles).
 - Animate triggers (`data-animate`, `<Animate>`): types, grammar and
   reduced-motion rules in [docs/animate-spec.md](docs/animate-spec.md).
 - Every public export gets a `## <need>` entry in CATALOG.md

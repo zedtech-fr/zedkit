@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { ReactElement } from "react";
 import { render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { MOTION_BOOTSTRAP_SOURCE } from "#motion-bootstrap.js";
+import { MOTION_BOOTSTRAP_SOURCE } from "#motion/motion-bootstrap.js";
 import {
   MOTION_CHANGE_EVENT,
   MOTION_STORAGE_KEY,
@@ -28,7 +28,7 @@ function runScript(element: ReactElement) {
 
 describe("MotionScript", () => {
   it("is not a client module, so a server layout can render it without hydrating", () => {
-    const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../src/motion-script.tsx"), "utf8");
+    const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../src/motion/motion-script.tsx"), "utf8");
     expect(src).not.toMatch(/^["']use client["']/m);
   });
 

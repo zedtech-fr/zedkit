@@ -189,7 +189,7 @@ export function uiPreset({ entryPoint, scaleBaseline, entryPoints = [] } = {}) {
           {
             selector: "Identifier[name='forwardRef']",
             message:
-              "ui-ref: forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button.tsx).",
+              "ui-ref: forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button/button.tsx).",
           },
         ],
       },

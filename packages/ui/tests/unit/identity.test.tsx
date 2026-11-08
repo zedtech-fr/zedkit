@@ -5,7 +5,7 @@ import { userEvent } from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
-import { IDENTITY_BOOTSTRAP_SOURCE } from "#identity-bootstrap.js";
+import { IDENTITY_BOOTSTRAP_SOURCE } from "#identity/identity-bootstrap.js";
 import {
   CUSTOM_IDENTITY_ID,
   IDENTITY_CUSTOM_STORAGE_KEY,
