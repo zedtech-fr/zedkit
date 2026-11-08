@@ -34,7 +34,7 @@ describe("AppShell", () => {
     );
     expect(container.querySelector("aside")?.className).toContain("w-app-shell-sidebar");
     expect(container.querySelector("aside")?.className).toContain("flex-col");
-    expect(container.querySelector("aside")?.className).toContain("sidebar-wash");
+    expect(container.querySelector("aside")?.className).toContain("muted-wash");
     expect(container.querySelector("aside")?.className).not.toContain("bg-muted/40");
     expect(container.querySelector("main")?.className).toContain("p-app-shell-padding");
     expect(container.querySelector("main")?.className).toContain("md:p-app-shell-padding-md");
