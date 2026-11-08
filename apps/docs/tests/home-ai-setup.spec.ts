@@ -51,7 +51,20 @@ test.describe("home AI setup section", () => {
     const offsets = await inline.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).textUnderlineOffset));
     expect(offsets).toEqual(["2px", "2px"]);
     await expect(inline.first()).not.toHaveClass(/underline-offset-/);
-    await expect(page.locator("h1 [data-slot='word-roll']")).toBeVisible();
+    const word = page.locator("h1 [data-setup-word] [data-word-roll='in']");
+    await expect(word).toBeVisible();
+    await expect.poll(async () =>
+      word.evaluate((node) => {
+        const probe = document.createElement("span");
+        probe.style.textDecorationColor = "color-mix(in oklab, hsl(var(--primary)) 50%, transparent)";
+        node.append(probe);
+        const style = getComputedStyle(node);
+        const match = style.textDecorationColor === getComputedStyle(probe).textDecorationColor;
+        probe.remove();
+        const host = node.closest("[data-setup-word]");
+        return match && style.textDecorationLine === "underline" && !host?.className.includes("decoration-primary/");
+      }),
+    ).toBe(true);
     await expect(page.getByText("Give your coding agent one prompt to set up ZedKit AI in your project.")).toBeVisible();
     await expect(page.locator("[data-slot='text'] p")).toHaveCount(0);
   });
