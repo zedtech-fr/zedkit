@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "#index.js";
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "#index.js";
 
 describe("table primitives", () => {
   it("renders head and body cells", () => {
@@ -17,8 +17,15 @@ describe("table primitives", () => {
             <TableCell>Ada</TableCell>
           </TableRow>
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell>Total</TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>,
     );
+    expect(document.querySelector("[data-slot=table-body]")?.className ?? "").not.toContain("border-0");
+    expect(document.querySelector("[data-slot=table-footer]")?.className ?? "").not.toContain("border-b-0");
     expect(screen.getByRole("columnheader", { name: "Name" })).not.toBeNull();
     expect(screen.getByRole("cell", { name: "Ada" })).not.toBeNull();
   });
