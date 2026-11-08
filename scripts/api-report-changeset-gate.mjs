@@ -197,6 +197,228 @@ function namedDecls(stmt, sf) {
   return out;
 }
 
+const TYPE_KEYWORDS = new Set([
+  ts.SyntaxKind.AnyKeyword,
+  ts.SyntaxKind.UnknownKeyword,
+  ts.SyntaxKind.NumberKeyword,
+  ts.SyntaxKind.BigIntKeyword,
+  ts.SyntaxKind.ObjectKeyword,
+  ts.SyntaxKind.BooleanKeyword,
+  ts.SyntaxKind.StringKeyword,
+  ts.SyntaxKind.SymbolKeyword,
+  ts.SyntaxKind.VoidKeyword,
+  ts.SyntaxKind.UndefinedKeyword,
+  ts.SyntaxKind.NeverKeyword,
+  ts.SyntaxKind.IntrinsicKeyword,
+  ts.SyntaxKind.NullKeyword,
+  ts.SyntaxKind.ThisKeyword,
+  ts.SyntaxKind.TrueKeyword,
+  ts.SyntaxKind.FalseKeyword,
+]);
+
+/**
+ * shortcut: parser bindings only. Aliases, default/namespace imports,
+ * import(), typeof, and qualified names have no proof and fail closed.
+ * @param {ts.SourceFile} sf
+ * @returns {Map<string, { kind: "import", module: string, imported: string, local: string } | { kind: "local" } | { kind: "unknown" }>}
+ */
+function collectBindings(sf) {
+  /** @type {Map<string, { kind: "import", module: string, imported: string, local: string } | { kind: "local" } | { kind: "unknown" }>} */
+  const bindings = new Map();
+  function set(name, binding) {
+    const prev = bindings.get(name);
+    if (prev && JSON.stringify(prev) !== JSON.stringify(binding)) {
+      bindings.set(name, { kind: "unknown" });
+      return;
+    }
+    bindings.set(name, binding);
+  }
+  for (const stmt of sf.statements) {
+    if (!ts.isImportDeclaration(stmt)) continue;
+    if (!stmt.importClause || !stmt.moduleSpecifier || !ts.isStringLiteral(stmt.moduleSpecifier)) continue;
+    const module = stmt.moduleSpecifier.text;
+    if (stmt.importClause.name) set(stmt.importClause.name.text, { kind: "unknown" });
+    const named = stmt.importClause.namedBindings;
+    if (!named) continue;
+    if (ts.isNamespaceImport(named)) {
+      set(named.name.text, { kind: "unknown" });
+      continue;
+    }
+    if (!ts.isNamedImports(named)) continue;
+    for (const el of named.elements) {
+      const imported = (el.propertyName ?? el.name).text;
+      const local = el.name.text;
+      if (imported !== local) {
+        set(local, { kind: "unknown" });
+        continue;
+      }
+      set(local, { kind: "import", module, imported, local });
+    }
+  }
+  for (const stmt of sf.statements) {
+    if (ts.isImportDeclaration(stmt) || ts.isExportDeclaration(stmt)) continue;
+    for (const { name } of namedDecls(stmt, sf)) set(name, { kind: "local" });
+  }
+  return bindings;
+}
+
+/**
+ * @param {string} block
+ * @param {Map<string, { kind: string, module?: string, imported?: string, local?: string }>} bindings
+ * @returns {string[] | null}
+ */
+function originProof(block, bindings) {
+  const sf = parseTs(block);
+  /** @type {Map<string, string>} */
+  const proofs = new Map();
+  const typeParams = new Set();
+  let unknown = false;
+  function fail() {
+    unknown = true;
+  }
+  function collectRef(name) {
+    if (!name || typeParams.has(name) || unknown) return;
+    const binding = bindings.get(name);
+    if (!binding || binding.kind === "unknown") {
+      fail();
+      return;
+    }
+    if (binding.kind === "import") {
+      proofs.set(name, `import:${name}:${binding.module}:${binding.imported}:${binding.local}`);
+      return;
+    }
+    proofs.set(name, `local:${name}`);
+  }
+  function walkType(node) {
+    if (!node || unknown) return;
+    if (TYPE_KEYWORDS.has(node.kind) || ts.isLiteralTypeNode(node) || ts.isThisTypeNode(node)) return;
+    if (ts.isTypeReferenceNode(node)) {
+      if (ts.isIdentifier(node.typeName)) collectRef(node.typeName.text);
+      else fail();
+      for (const arg of node.typeArguments ?? []) walkType(arg);
+      return;
+    }
+    if (ts.isExpressionWithTypeArguments(node)) {
+      if (ts.isIdentifier(node.expression)) collectRef(node.expression.text);
+      else fail();
+      for (const arg of node.typeArguments ?? []) walkType(arg);
+      return;
+    }
+    if (ts.isUnionTypeNode(node) || ts.isIntersectionTypeNode(node)) {
+      for (const type of node.types) walkType(type);
+      return;
+    }
+    if (ts.isArrayTypeNode(node)) {
+      walkType(node.elementType);
+      return;
+    }
+    if (ts.isTupleTypeNode(node)) {
+      for (const el of node.elements) walkType(el);
+      return;
+    }
+    if (ts.isNamedTupleMember(node) || ts.isOptionalTypeNode(node) || ts.isRestTypeNode(node) || ts.isParenthesizedTypeNode(node) || ts.isTypeOperatorNode(node)) {
+      walkType(node.type);
+      return;
+    }
+    if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) {
+      walkSig(node);
+      return;
+    }
+    if (ts.isTypeLiteralNode(node)) {
+      for (const member of node.members) walkMember(member);
+      return;
+    }
+    if (ts.isIndexedAccessTypeNode(node)) {
+      walkType(node.objectType);
+      walkType(node.indexType);
+      return;
+    }
+    if (ts.isMappedTypeNode(node)) {
+      walkTypeParam(node.typeParameter);
+      walkType(node.nameType);
+      walkType(node.type);
+      return;
+    }
+    if (ts.isConditionalTypeNode(node)) {
+      walkType(node.checkType);
+      walkType(node.extendsType);
+      walkType(node.trueType);
+      walkType(node.falseType);
+      return;
+    }
+    if (ts.isInferTypeNode(node)) {
+      walkTypeParam(node.typeParameter);
+      return;
+    }
+    if (ts.isTemplateLiteralTypeNode(node)) {
+      for (const span of node.templateSpans) walkType(span.type);
+      return;
+    }
+    if (ts.isTypePredicateNode(node)) {
+      walkType(node.type);
+      return;
+    }
+    fail();
+  }
+  function walkTypeParam(tp) {
+    if (!tp) return;
+    typeParams.add(tp.name.text);
+    walkType(tp.constraint);
+    walkType(tp.default);
+  }
+  function walkSig(sig) {
+    for (const tp of sig.typeParameters ?? []) walkTypeParam(tp);
+    for (const param of sig.parameters ?? []) walkType(param.type);
+    walkType(sig.type);
+  }
+  function walkMember(member) {
+    if (ts.isPropertySignature(member) || ts.isPropertyDeclaration(member)) {
+      walkType(member.type);
+      return;
+    }
+    if (
+      ts.isMethodSignature(member) ||
+      ts.isMethodDeclaration(member) ||
+      ts.isCallSignatureDeclaration(member) ||
+      ts.isConstructSignatureDeclaration(member) ||
+      ts.isIndexSignatureDeclaration(member) ||
+      ts.isConstructorDeclaration(member) ||
+      ts.isGetAccessorDeclaration(member) ||
+      ts.isSetAccessorDeclaration(member)
+    ) {
+      walkSig(member);
+      return;
+    }
+    if (ts.isSemicolonClassElement(member)) return;
+    fail();
+  }
+  for (const stmt of sf.statements) {
+    if (ts.isImportDeclaration(stmt) || ts.isEmptyStatement(stmt)) continue;
+    if (ts.isFunctionDeclaration(stmt)) walkSig(stmt);
+    else if (ts.isInterfaceDeclaration(stmt) || ts.isClassDeclaration(stmt)) {
+      for (const tp of stmt.typeParameters ?? []) walkTypeParam(tp);
+      for (const clause of stmt.heritageClauses ?? []) {
+        for (const type of clause.types) walkType(type);
+      }
+      for (const member of stmt.members) walkMember(member);
+    } else if (ts.isTypeAliasDeclaration(stmt)) {
+      for (const tp of stmt.typeParameters ?? []) walkTypeParam(tp);
+      walkType(stmt.type);
+    } else if (ts.isVariableStatement(stmt)) {
+      for (const decl of stmt.declarationList.declarations) walkType(decl.type);
+    } else fail();
+  }
+  if (unknown) return null;
+  return [...proofs.values()].sort();
+}
+
+function originsMatch(reportBlock, reportBindings, sourceBlock, sourceBindings) {
+  const report = originProof(reportBlock, reportBindings);
+  const source = originProof(sourceBlock, sourceBindings);
+  if (!report || !source) return false;
+  return JSON.stringify(report) === JSON.stringify(source);
+}
+
 /**
  * @param {string} text
  * @param {string} path
@@ -255,21 +477,23 @@ function parseSourceFile(text, path = "file.ts") {
       }
     }
   }
-  return { locals, reexports, overloaded };
+  return { locals, reexports, overloaded, bindings: collectBindings(sf) };
 }
 
 /**
  * @param {Record<string, string>} files
  * @param {string} entry
- * @returns {Map<string, string>}
+ * @returns {{ decls: Map<string, string>, bindings: Map<string, Map<string, { kind: string, module?: string, imported?: string, local?: string }>> }}
  */
-export function resolvePublicDeclarations(files, entry) {
-  /** @type {Map<string, { locals: Map<string, string>, reexports: { from: string, names: '*' | { exported: string, original: string }[] }[], overloaded: Set<string> }>} */
+function resolvePublicInfo(files, entry) {
+  /** @type {Map<string, { locals: Map<string, string>, reexports: { from: string, names: '*' | { exported: string, original: string }[] }[], overloaded: Set<string>, bindings: Map<string, { kind: string, module?: string, imported?: string, local?: string }> }>} */
   const parsed = new Map();
   for (const [path, text] of Object.entries(files)) {
     parsed.set(posix.normalize(path), parseSourceFile(text, path));
   }
   const publicDecls = new Map();
+  /** @type {Map<string, Map<string, { kind: string, module?: string, imported?: string, local?: string }>>} */
+  const publicBindings = new Map();
   const visiting = new Set();
 
   /**
@@ -283,7 +507,10 @@ export function resolvePublicDeclarations(files, entry) {
     visiting.add(path);
     for (const [name, block] of file.locals) {
       if (blocked.has(name)) continue;
-      if ((!only || only.has(name)) && !publicDecls.has(name)) publicDecls.set(name, block);
+      if ((!only || only.has(name)) && !publicDecls.has(name)) {
+        publicDecls.set(name, block);
+        publicBindings.set(name, file.bindings);
+      }
     }
     // shortcut: a quarantined name must not re-enter through this file's
     // same-name or star re-exports; aliases already dropped at parse.
@@ -308,7 +535,16 @@ export function resolvePublicDeclarations(files, entry) {
   }
 
   if (entry && parsed.has(posix.normalize(entry))) take(entry, null, new Set());
-  return publicDecls;
+  return { decls: publicDecls, bindings: publicBindings };
+}
+
+/**
+ * @param {Record<string, string>} files
+ * @param {string} entry
+ * @returns {Map<string, string>}
+ */
+export function resolvePublicDeclarations(files, entry) {
+  return resolvePublicInfo(files, entry).decls;
 }
 
 /**
@@ -406,13 +642,22 @@ export function evaluateReportChange({
   const headerChanged = changed.some(
     (name) => firstDeclLine(mainDecls.get(name)) !== firstDeclLine(headDecls.get(name)),
   );
-  const sourceDecls = resolvePublicDeclarations(mainSources, entry);
+  const source = resolvePublicInfo(mainSources, entry);
+  // shortcut: origin proof reads HEAD imports before remainderEqualsMain drops them.
+  const reportBindings = collectBindings(parseTs(reportTsBody(headReport), "report.ts"));
   const catchUp =
     removed.length === 0 &&
     changed.length === 0 &&
     added.length > 0 &&
     remainderEqualsMain(mainReport, headReport, added) &&
-    added.every((name) => declarationsEquivalent(headDecls.get(name) ?? "", sourceDecls.get(name) ?? ""));
+    added.every((name) => {
+      const head = headDecls.get(name) ?? "";
+      const src = source.decls.get(name) ?? "";
+      return (
+        declarationsEquivalent(head, src) &&
+        originsMatch(head, reportBindings, src, source.bindings.get(name) ?? new Map())
+      );
+    });
   if (kinds.size === 0) {
     if (catchUp) return { ok: true, skip: "already-on-main" };
     return { ok: false, error: "add a changeset" };

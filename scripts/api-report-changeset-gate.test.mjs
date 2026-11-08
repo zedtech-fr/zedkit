@@ -58,7 +58,9 @@ const MAIN_SEO_INDEX = `export {
 } from "./jsonld.js";
 `;
 
-const MAIN_SEO_JSONLD = `${SEO_SOURCE_IFACE}
+const MAIN_SEO_JSONLD = `import type { SoftwareSourceCode, WithContext } from "schema-dts";
+
+${SEO_SOURCE_IFACE}
 
 ${SEO_SOURCE_FN}
 `;
@@ -514,6 +516,132 @@ export function otherFn(): void {}
 `,
         "src/simple.ts":
           "export function f(x: string | number): string | number { return x; }\n",
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when an identical signature imports Options from a different module", () => {
+    const mainReport = `## API Report File
+
+\`\`\`ts
+export function otherFn(): void;
+\`\`\`
+`;
+    const headReport = `## API Report File
+
+\`\`\`ts
+import { Options } from 'pkg-b';
+
+export function f(x: Options): Options;
+
+export function otherFn(): void;
+\`\`\`
+`;
+    const result = evaluateReportChange({
+      mainReport,
+      headReport,
+      mainSources: {
+        "src/index.ts": `import { Options } from "pkg-a";
+export function f(x: Options): Options { return x; }
+export function otherFn(): void {}
+`,
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when the imported name is an alias", () => {
+    const mainReport = `## API Report File
+
+\`\`\`ts
+export function otherFn(): void;
+\`\`\`
+`;
+    const headReport = `## API Report File
+
+\`\`\`ts
+import { Options } from 'pkg-a';
+
+export function f(x: Options): Options;
+
+export function otherFn(): void;
+\`\`\`
+`;
+    const result = evaluateReportChange({
+      mainReport,
+      headReport,
+      mainSources: {
+        "src/index.ts": `import { Options as Opts } from "pkg-a";
+export function f(x: Opts): Opts { return x; }
+export function otherFn(): void {}
+`,
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when the type is imported indirectly", () => {
+    const mainReport = `## API Report File
+
+\`\`\`ts
+export function otherFn(): void;
+\`\`\`
+`;
+    const headReport = `## API Report File
+
+\`\`\`ts
+import { Options } from 'pkg-a';
+
+export function f(x: Options): Options;
+
+export function otherFn(): void;
+\`\`\`
+`;
+    const result = evaluateReportChange({
+      mainReport,
+      headReport,
+      mainSources: {
+        "src/index.ts": `import { Options } from "./proxy.js";
+export function f(x: Options): Options { return x; }
+export function otherFn(): void {}
+`,
+        "src/proxy.ts": 'export type { Options } from "pkg-a";\n',
+      },
+      kinds: new Set(),
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, "add a changeset");
+  });
+
+  it("requires a changeset when a referenced type has no import or local binding", () => {
+    const mainReport = `## API Report File
+
+\`\`\`ts
+export function otherFn(): void;
+\`\`\`
+`;
+    const headReport = `## API Report File
+
+\`\`\`ts
+export function f(x: Options): Options;
+
+export function otherFn(): void;
+\`\`\`
+`;
+    const result = evaluateReportChange({
+      mainReport,
+      headReport,
+      mainSources: {
+        "src/index.ts": `export function f(x: Options): Options { return x; }
+export function otherFn(): void {}
+`,
       },
       kinds: new Set(),
     });

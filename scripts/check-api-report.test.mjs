@@ -88,6 +88,7 @@ marketing api touch
   return { dir, reportPath };
 }
 
+const SEO_IMPORT = 'import type { SoftwareSourceCode, WithContext } from "schema-dts";\n';
 const SEO_IFACE = `export interface SoftwareSourceCodeJsonLdOptions {
   name: string;
   url: string;
@@ -123,7 +124,7 @@ function writeSeoSource(dir, { index, jsonld } = {}) {
     join(dir, "packages/seo/src/index.ts"),
     index ?? `export { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";\n`,
   );
-  writeFileSync(join(dir, "packages/seo/src/jsonld.ts"), jsonld ?? `${SEO_IFACE}\n\n${SEO_FN}\n`);
+  writeFileSync(join(dir, "packages/seo/src/jsonld.ts"), jsonld ?? `${SEO_IMPORT}\n${SEO_IFACE}\n\n${SEO_FN}\n`);
 }
 
 function initSeoCatchUpRepo({ index, jsonld, headReport } = {}) {
@@ -162,6 +163,27 @@ test("check-api-report.sh lists every packages/* workspace package", () => {
     want,
     `entries in check-api-report.sh must cover all packages; missing: ${want.filter((p) => !have.includes(p)).join(", ")}`,
   );
+});
+
+test("changeset gate fails when catch-up types are imported from a different module", (t) => {
+  const dir = initSeoCatchUpRepo({
+    index: `import { Options } from "pkg-a";
+export function f(x: Options): Options { return x; }
+`,
+    jsonld: "export {}\n",
+    headReport: `## API Report File for "@zedtech/zedkit-seo"
+
+\`\`\`ts
+import { Options } from 'pkg-b';
+
+export function f(x: Options): Options;
+\`\`\`
+`,
+  });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.match(`${out.stderr}${out.stdout}`, /packages\/seo\/etc\/zedkit-seo\.api\.md: API report changed/);
 });
 
 test("changeset gate skips SEO report catch-up when origin/main public declarations match", (t) => {
