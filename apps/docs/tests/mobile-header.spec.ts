@@ -2,6 +2,16 @@ import { expect, test } from "@playwright/test";
 
 const PAGES = ["/", "/docs/getting-started"];
 
+test("the docs phone bar keeps a painted fill without an 80% background class", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/docs/getting-started");
+  const header = page.locator("[data-docs-phone-bar]");
+  await expect(header).toBeVisible();
+  await expect(header).not.toHaveClass(/bg-background\/80/);
+  const background = await header.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(background).not.toBe("rgba(0, 0, 0, 0)");
+});
+
 for (const path of PAGES) {
   test.describe(`phone header on ${path}`, () => {
     test.use({ viewport: { width: 390, height: 844 } });
