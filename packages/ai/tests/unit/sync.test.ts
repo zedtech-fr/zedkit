@@ -6,7 +6,7 @@ import { hasMarker } from "#generate.js";
 import { kitDir } from "#kit.js";
 import { installKit, type Action } from "#install.js";
 import { inSync, syncKit, type SyncOptions } from "#sync.js";
-import { AGENT, put, tempDir } from "./helpers.js";
+import { AGENT, COMMAND, put, tempDir } from "./helpers.js";
 
 const POLICY = `---
 schema: 1
@@ -151,6 +151,9 @@ providers:
     expect(existsSync(join(root, ".cursor"))).toBe(false);
     expect(read(root, ".agents/agents/verifier.md")).toBe(before);
     expect(hasMarker(before)).toBe(false);
+    expect(
+      actions.some((a) => (a.note ?? "").includes("user file kept; Muse may drop it")),
+    ).toBe(true);
   });
 
   it("keeps a model the source pins and says so", () => {
@@ -271,6 +274,38 @@ describe("syncKit: never overwrite user work", () => {
     const actions = sync(root, { providers: ["cursor"] });
     expect(actions[0]?.note).toBe("not a directory");
     expect(read(root, ".cursor/agents")).toBe("not a directory");
+  });
+
+  it("does not write through a .cursor path that is a file", () => {
+    const root = project();
+    put(root, ".cursor", "not a folder");
+    const actions = sync(root, { providers: ["cursor"] });
+    expect(actions.some((a) => a.path === ".cursor" && a.note === "not a directory")).toBe(true);
+    expect(read(root, ".cursor")).toBe("not a folder");
+    expect(existsSync(join(root, ".cursor/agents"))).toBe(false);
+  });
+
+  it("does not write through a .cursor/commands path that is a file", () => {
+    const root = project();
+    put(root, ".agents/commands/run.md", COMMAND("plain"));
+    put(root, ".cursor/commands", "not a directory");
+    const actions = sync(root, { providers: ["cursor"] });
+    expect(
+      actions.some((a) => a.path === ".cursor/commands" && a.note === "not a directory"),
+    ).toBe(true);
+    expect(read(root, ".cursor/commands")).toBe("not a directory");
+  });
+
+  it("keeps a user-edited generated sidecar instead of overwriting it", () => {
+    const root = project();
+    const mine = "---\nname: plain\ndescription: mine\n---\n\nMy own agent.\n";
+    const sidecar = "---\nname: plain\ndescription: custom kit offer\n---\n\nI edited the sidecar.\n";
+    put(root, ".cursor/agents/plain.md", mine);
+    put(root, ".cursor/agents/plain.kit.md", sidecar);
+    const actions = sync(root, { providers: ["cursor"] });
+    expect(actions.some((a) => a.path === ".cursor/agents/plain.kit.md" && a.note === "user sidecar kept")).toBe(true);
+    expect(read(root, ".cursor/agents/plain.md")).toBe(mine);
+    expect(read(root, ".cursor/agents/plain.kit.md")).toBe(sidecar);
   });
 
   it("does not write through a parent .cursor symlink into another tree", () => {
