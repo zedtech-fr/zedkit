@@ -1,5 +1,13 @@
 # @zedtech/zedkit-nest
 
+## 1.1.1
+
+### Patch Changes
+
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+- Updated dependencies [2fe5608]
+  - @zedtech/zedkit-core@1.0.1
+
 ## 1.1.0
 
 ### Minor Changes

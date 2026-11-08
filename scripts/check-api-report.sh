@@ -4,6 +4,7 @@
 # server .d.ts dump) and fails on report drift.
 # A report that changed versus origin/main also needs a changeset; a
 # removed or renamed export needs minor (0.x breaking) or major.
+# Catch-up: added exports already in origin/main source do not bump again.
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
@@ -132,82 +133,9 @@ fi
 
 [ "$fail" -eq 0 ] || { echo "api-report: extractor FAILED"; exit 1; }
 
-python3 - "${entries[@]}" <<'PY'
-import subprocess
-import sys
-import os
-from pathlib import Path
-
-root = Path(".")
-head = os.environ.get("GITHUB_HEAD_REF", "")
-if head == "changeset-release/main":
-    print("api-report: skip changeset gate on version PR")
-    sys.exit(0)
-base = "origin/main"
-probe = subprocess.run(
-    ["git", "rev-parse", "--verify", base], capture_output=True, text=True
-)
-if probe.returncode != 0:
-    print("api-report: no origin/main, skip changeset gate")
-    sys.exit(0)
-
-# pkg|types-entry|report — same rows as shell entries=( above
-if len(sys.argv) <= 1:
-    sys.exit("api-report: no entries")
-reports = []
-for spec in sys.argv[1:]:
-    pkg, _entry, report = spec.split("|", 2)
-    path = f"packages/{pkg}/etc/{report}"
-    npm_pkg = f"@zedtech/zedkit-{pkg}"
-    reports.append((path, npm_pkg))
-
-bumps: dict[str, set[str]] = {}
-name_re = __import__("re").compile(r'^["\']([^"\']+)["\']\s*:\s*(patch|minor|major)')
-for cs in sorted(root.glob(".changeset/*.md")):
-    text = cs.read_text()
-    if not text.startswith("---"):
-        continue
-    end = text.find("\n---", 3)
-    if end < 0:
-        continue
-    for line in text[4:end].splitlines():
-        match = name_re.match(line.strip())
-        if match:
-            bumps.setdefault(match.group(1), set()).add(match.group(2))
-
-fail = 0
-for path, pkg in reports:
-    existed = subprocess.run(
-        ["git", "cat-file", "-e", f"{base}:{path}"],
-        capture_output=True,
-    )
-    if existed.returncode != 0:
-        continue
-    # Compare commits only. `git diff base -- path` includes the working tree,
-    # and api-extractor --local may rewrite the report on disk.
-    diff = subprocess.check_output(["git", "diff", base, "HEAD", "--", path], text=True)
-    if not diff.strip():
-        continue
-    kinds = bumps.get(pkg, set())
-    if not kinds:
-        print(f"{path}: API report changed; add a changeset for {pkg}")
-        fail = 1
-        continue
-    removed = any(
-        line.startswith("-export ") for line in diff.splitlines()
-    )
-    if removed and kinds.isdisjoint({"minor", "major"}):
-        print(
-            f"{path}: removed or renamed export needs a minor "
-            f"(0.x breaking) or major changeset for {pkg}"
-        )
-        fail = 1
-
-if fail:
-    print("api-report: changeset gate FAILED")
-    sys.exit(1)
-print("api-report: changeset gate ok")
-PY
+# Compare commits only. `git diff base -- path` includes the working tree,
+# and api-extractor --local may rewrite the report on disk.
+node scripts/api-report-changeset-gate.mjs "${entries[@]}"
 status=$?
 [ "$status" -eq 0 ] || exit "$status"
 echo "api-report: ok"

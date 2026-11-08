@@ -1,5 +1,29 @@
 # @zedtech/zedkit-ai
 
+## 1.1.0
+
+### Minor Changes
+
+- 9d80205: Add `.agents/atlas.md`, a bounded lookup of where things live, the repo's words, exact commands and reasons. `init` and `setup` install an empty stub (never overwritten), `setup-ai` fills it from the reading log, and `rules-upkeep`, `improve-from-review`, `research` and `parallel-work` read it before searching and fix one row after a search or correction taught something. `validate` fails on an atlas past 150 lines or a Where row whose path is gone; `validate --setup` also needs the file and three Where rows.
+- d3ef5e7: A spawn follows the cell in `.agents/tokenomics.md` and does not substitute another model. `zedkit-ai route` refuses a fast model id unless `--allow-fast`, which is only for a request that explicitly asked for fast mode.
+
+  Migration: a fast cell used to resolve to a route -> it now exits 2 unless `--allow-fast`. `init` / `setup` / `sync` fail before writing.
+
+### Patch Changes
+
+- 8bf84d0: Make `audit` a thorough, persistent investigation: a coverage map built from the actual request, evidence traced from source through shipped artifact to consumer behavior, external primary sources where they settle a row, findings split into verified defects, requirement gaps, design judgments and opportunities — each with an acceptance criterion — and a completion bar that labels partial coverage partial. `audit` investigates read-only by default and runs its fix loop only when the same request asks for fixes. `from-audit` now revalidates findings against the current state (already fixed, already filed, moved), deduplicates, and produces an actionable plan split into implementation tasks, research spikes and owner decisions; it implements only when the conversation already authorized it. `to-audit` reuses the same coverage and evidence bar, and orchestrator audit briefs now carry the coverage map and the go-deep instruction.
+- 96c14ff: The shipped effort floor is medium. Critical cells use high. No cell ships at low or max.
+- 96c14ff: Refuse a fast cell on an agent already in the project before setup writes. A second review may keep, drop, or raise a finding, and a missing pass does not drop blockers. File-count growth warns; it does not stop the work.
+- 335fef4: Accept `--allow-fast` on sync, validate, init and setup, keep a shell for the test runner, print how to reconcile an adopt sidecar, and add `/fix`, `/improve-from-review` and `/quick-wins`. Invoke the package as `npx @zedtech/zedkit-ai`.
+- 2fe5608: Point every package `homepage` at https://zedkit.app so npm package pages link the docs site.
+- 4d999b7: Preserve legacy kit hashes on regeneration; avoid writing when a prior hash would be dropped.
+- 0e78365: Ship living-config session gates, specialist agents, hexagonal recipe catalog skills, orchestrate-first entrypoints (tokenomics + a build team), a quality bar on plan/challenge/review, from-audit/to-audit, and one globbed Cursor nested.mdc pointer instead of per-folder copies.
+- 1036f05: Harden review and orchestration execution: route the tokenomics cell via the spawn tool's model parameter (never pasted into brief text), pin the local CLI version and commit (never an unpinned download), queue saturated capacity in waves instead of retrying, share one pinned context block across briefs, and report planned lenses explicitly.
+- 2fe5608: Route every spawn with `--provider` for the active tool and verify the printed provider matches before spawning; use the installed version-locked CLI outside zedkit sources, building from the pinned kit commit only there.
+- 003d355: Rebuild with TypeScript 6.0 (explicit ambient node types in tsconfig; no public API change).
+- Updated dependencies [2fe5608]
+  - @zedtech/zedkit-core@1.0.1
+
 ## 1.0.1
 
 ### Patch Changes

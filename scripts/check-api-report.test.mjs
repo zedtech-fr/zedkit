@@ -42,22 +42,10 @@ function shellEntryLines() {
   return lines;
 }
 
-function extractChangesetGatePython() {
-  const marker = "python3 - \"${entries[@]}\" <<'PY'";
-  const start = script.indexOf(marker);
-  assert.ok(start >= 0, "changeset gate Python block missing");
-  const bodyStart = script.indexOf("\n", start) + 1;
-  const end = script.indexOf("\nPY\n", bodyStart);
-  assert.ok(end > bodyStart, "PY terminator missing");
-  return script.slice(bodyStart, end + 1);
-}
-
 function runChangesetGate(cwd, argv, env = {}) {
-  const py = extractChangesetGatePython();
-  const result = spawnSync("python3", ["-", ...argv], {
+  const result = spawnSync(process.execPath, [join(root, "scripts/api-report-changeset-gate.mjs"), ...argv], {
     cwd,
     encoding: "utf8",
-    input: py,
     env: { ...process.env, ...env },
   });
   return {
@@ -100,6 +88,30 @@ marketing api touch
   return { dir, reportPath };
 }
 
+function initSeoCatchUpRepo() {
+  const dir = mkdtempSync(join(tmpdir(), "api-report-seo-catchup-"));
+  execSync("git init -q", { cwd: dir });
+  execSync('git config user.email "test@test"', { cwd: dir });
+  execSync('git config user.name "test"', { cwd: dir });
+  mkdirSync(join(dir, "packages/seo/src"), { recursive: true });
+  mkdirSync(join(dir, "packages/seo/etc"), { recursive: true });
+  writeFileSync(
+    join(dir, "packages/seo/src/index.ts"),
+    `export { buildSoftwareSourceCodeJsonLd, type SoftwareSourceCodeJsonLdOptions } from "./jsonld.js";\n`,
+  );
+  writeFileSync(join(dir, "packages/seo/etc/zedkit-seo.api.md"), "// stale report, published API not listed\n");
+  execSync("git add -A && git commit -q -m base", { cwd: dir });
+  const base = execSync("git rev-parse HEAD", { cwd: dir, encoding: "utf8" }).trim();
+  execSync(`git update-ref refs/remotes/origin/main ${base}`, { cwd: dir });
+  writeFileSync(
+    join(dir, "packages/seo/etc/zedkit-seo.api.md"),
+    `export function buildSoftwareSourceCodeJsonLd(options: SoftwareSourceCodeJsonLdOptions): void;
+export interface SoftwareSourceCodeJsonLdOptions {}\n`,
+  );
+  execSync("git add -A && git commit -q -m report", { cwd: dir });
+  return dir;
+}
+
 const entries = shellEntryLines();
 const marketingEntry = entries.find((e) => e.endsWith("|zedkit-ui-marketing.api.md"));
 assert.ok(marketingEntry, "shell entries must include zedkit-ui-marketing.api.md");
@@ -113,6 +125,14 @@ test("check-api-report.sh lists every packages/* workspace package", () => {
     want,
     `entries in check-api-report.sh must cover all packages; missing: ${want.filter((p) => !have.includes(p)).join(", ")}`,
   );
+});
+
+test("changeset gate skips SEO report catch-up when origin/main already exports the names", (t) => {
+  const dir = initSeoCatchUpRepo();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.equal(out.status, 0, `${out.stderr}${out.stdout}`);
+  assert.match(`${out.stderr}${out.stdout}`, /already on origin\/main/);
 });
 
 test("changeset gate fails when marketing API report changes without a changeset", (t) => {
@@ -150,8 +170,14 @@ test("changeset gate rejects empty argv", (t) => {
 });
 
 test("changeset gate skips the version PR branch", () => {
-  assert.match(script, /changeset-release\/main/);
-  assert.match(script, /skip changeset gate on version PR/);
+  const gate = readFileSync(join(root, "scripts/api-report-changeset-gate.mjs"), "utf8");
+  assert.match(gate, /changeset-release\/main/);
+  assert.match(script, /api-report-changeset-gate\.mjs/);
+  const dir = mkdtempSync(join(tmpdir(), "api-report-version-pr-"));
+  const out = runChangesetGate(dir, entries, { GITHUB_HEAD_REF: "changeset-release/main" });
+  assert.equal(out.status, 0, `${out.stderr}${out.stdout}`);
+  assert.match(`${out.stderr}${out.stdout}`, /skip changeset gate on version PR/);
+  rmSync(dir, { recursive: true, force: true });
 });
 
 test("extractor runs in parallel on GNU xargs and falls back otherwise", () => {
