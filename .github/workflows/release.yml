@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 # The Version PR needs contents + pull-requests; npm trusted
-# publishing (OIDC) needs id-token. Do not set NODE_AUTH_TOKEN on
-# the publish step: an empty value is worse than unset, and npm 10
-# cannot exchange the GitHub id-token (see docs/publishing.md).
+# publishing (OIDC) needs id-token. NODE_AUTH_TOKEN is exported only
+# when repo secret NPM_TOKEN is non-empty (empty interpolation is
+# ENEEDAUTH). npm 11 tries OIDC first and falls back to the token.
 #
 # GitHub does not run workflows on PRs opened with GITHUB_TOKEN.
 # When RELEASE_APP_ID / RELEASE_APP_PRIVATE_KEY are set, mint an
@@ -78,6 +78,13 @@ jobs:
       # and Node is >=22.14.0 (docs.npmjs.com/trusted-publishers).
       - name: Ensure publisher npm for OIDC
         run: bash scripts/ensure-release-publisher.sh
+      # Do not interpolate the npm secret onto NODE_AUTH_TOKEN on the
+      # publish step — a missing secret becomes "" and npm treats that
+      # as failed auth. Export only when the value is non-empty.
+      - name: Select npm publish auth
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: node scripts/export-release-auth.mjs
       - name: Create Version PR or publish to npm
         id: changesets
         uses: changesets/action@v2
@@ -94,8 +101,7 @@ jobs:
           # v2 defaults to pushing via the GitHub API; keep v1's git push.
           push-with-git-cli: true
         env:
-          # Tokenless OIDC. Provenance is automatic with trusted
-          # publishing; keep this so a token fallback cannot drop it.
+          # Provenance for both OIDC and token publishes (needs id-token).
           NPM_CONFIG_PROVENANCE: "true"
       # Tags + GitHub releases only for packages npm publish just shipped.
       # Without published-packages, release-tags.sh used to poll npm for every
