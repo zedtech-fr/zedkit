@@ -260,11 +260,9 @@ export async function assertA11yGate(page: Page, selector = "body"): Promise<voi
       if (animation instanceof CSSTransition) animation.finish();
     }
   });
-  const results = await new AxeBuilder({ page })
-    .include(selector)
-    .exclude(A11Y_AXE_EXCLUDES)
-    .withRules([...A11Y_GATE_RULES])
-    .analyze();
+  let builder = new AxeBuilder({ page }).include(selector).withRules([...A11Y_GATE_RULES]);
+  if (A11Y_AXE_EXCLUDES) builder = builder.exclude(A11Y_AXE_EXCLUDES);
+  const results = await builder.analyze();
   expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
 }
 
