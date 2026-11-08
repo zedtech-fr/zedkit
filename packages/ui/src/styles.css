@@ -507,6 +507,10 @@ ol[data-sonner-toaster] {
 @utility disclosure-icon {
   opacity: 0.5;
 }
+/* Dialog close at rest. Hover brings it back to full strength. */
+@utility close-quiet {
+  opacity: 0.7;
+}
 
 /* The chosen select value stays on one line. */
 [data-slot="select-value"] {
