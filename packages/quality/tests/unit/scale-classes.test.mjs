@@ -1,12 +1,13 @@
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { performance } from "node:perf_hooks";
 import { Linter } from "eslint";
 import { parser as tsParser } from "typescript-eslint";
 import { describe, expect, it } from "vitest";
 import { uiPreset } from "#index.mjs";
-import { findScaleHits, scaleClassKind } from "#scale-classes.mjs";
+import { baselineIncreases, findScaleHits, resolveEntryPoint, scaleClassKind } from "#scale-classes.mjs";
 
 const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..");
 const entry = join(repo, "packages/ui/src/styles.css");
@@ -79,6 +80,94 @@ describe("findScaleHits", () => {
   });
 });
 
+describe("findScaleHits template interpolations (C-05)", () => {
+  it("sees conditional classes inside template interpolations like plain strings", () => {
+    const plain = hits(`export const x = ${call}("p-4", "m-2");`);
+    const templ = hits('export const x = ' + call + '(`a ${c ? "p-4" : "m-2"}`);');
+    expect(templ).toEqual(plain);
+    expect(hits('export const x = ' + call + '(`a ${c && "gap-2"}`);')).toEqual(["gap-2"]);
+    expect(hits(`<div ${attr}={\`a \${c ? "mt-4" : ""}\`} />`)).toEqual(["mt-4"]);
+  });
+
+  it("stays near-linear on stray-quote input (C-07)", () => {
+    const start = performance.now();
+    findScaleHits((call + '(" abc ').repeat(4000));
+    expect(performance.now() - start).toBeLessThan(250);
+  });
+
+  it("stays near-linear on nested-call input (C-07)", () => {
+    const start = performance.now();
+    findScaleHits((call + "(").repeat(8000));
+    expect(performance.now() - start).toBeLessThan(250);
+  });
+
+  it("handles empty and unterminated sources without throwing", () => {
+    expect(hits("")).toEqual([]);
+    expect(hits(`export const x = ${call}("p-4`)).toEqual(["p-4"]);
+  });
+
+  it("does not flag dynamically built names (documented static limit)", () => {
+    expect(hits("export const x = " + call + "(`p-${n}`);")).toEqual([]);
+  });
+
+  it("does not stack-overflow on deeply nested template interpolations", () => {
+    const source = call + "(" + "`${".repeat(5000);
+    expect(() => findScaleHits(source)).not.toThrow();
+  });
+
+  it("sees strings in a template nested inside an interpolation", () => {
+    const token = "mt-" + "4";
+    expect(hits("export const x = " + call + "(`a ${c ? `" + token + "` : \"\"}`);")).toEqual([token]);
+  });
+});
+
+describe("baselineIncreases (C-04a)", () => {
+  it("flags per-file and new-file increases, allows decreases", () => {
+    const committed = new Map([["a.tsx", 2], ["b.tsx", 1]]);
+    expect(baselineIncreases(committed, new Map([["a.tsx", 1]]))).toEqual([]);
+    expect(baselineIncreases(committed, new Map([["a.tsx", 3]]))).toEqual(["a.tsx: baseline 2, current 3"]);
+    expect(baselineIncreases(committed, new Map([["c.tsx", 1]]))).toEqual(["c.tsx: baseline 0, current 1"]);
+  });
+
+  it("allows equal counts and empty maps", () => {
+    expect(baselineIncreases(new Map(), new Map())).toEqual([]);
+    expect(baselineIncreases(new Map([["a.tsx", 2]]), new Map([["a.tsx", 2]]))).toEqual([]);
+    expect(baselineIncreases(new Map([["a.tsx", 2]]), new Map())).toEqual([]);
+  });
+
+  it("lists only the increasing files when others shrink", () => {
+    const committed = new Map([["a.tsx", 5], ["b.tsx", 1]]);
+    const current = new Map([["a.tsx", 1], ["b.tsx", 2]]);
+    expect(baselineIncreases(committed, current)).toEqual(["b.tsx: baseline 1, current 2"]);
+  });
+});
+
+describe("resolveEntryPoint (C-06)", () => {
+  it("resolves a relative entry from an ancestor config dir, not the lint cwd", () => {
+    const root = mkdtempSync(join(tmpdir(), "zk-entry-"));
+    writeFileSync(join(root, "eslint.config.mjs"), "export default [];\n");
+    mkdirSync(join(root, "app"), { recursive: true });
+    mkdirSync(join(root, "sub", "deep"), { recursive: true });
+    writeFileSync(join(root, "app", "globals.css"), "@import 'tailwindcss';\n");
+    expect(resolveEntryPoint("./app/globals.css", join(root, "sub", "deep"))).toBe(join(root, "app", "globals.css"));
+    expect(resolveEntryPoint(join(root, "app", "globals.css"), join(root, "sub"))).toBe(join(root, "app", "globals.css"));
+  });
+
+  it("falls back to the cwd when no ancestor holds config and file", () => {
+    const root = mkdtempSync(join(tmpdir(), "zk-entry-none-"));
+    expect(resolveEntryPoint("./app/globals.css", root)).toBe(join(root, "app", "globals.css"));
+    expect(resolveEntryPoint("", root)).toBe("");
+  });
+
+  it("ignores an ancestor that holds the file but no ESLint config", () => {
+    const root = mkdtempSync(join(tmpdir(), "zk-entry-noconfig-"));
+    mkdirSync(join(root, "app"), { recursive: true });
+    mkdirSync(join(root, "sub"), { recursive: true });
+    writeFileSync(join(root, "app", "globals.css"), "@import 'tailwindcss';\n");
+    expect(resolveEntryPoint("./app/globals.css", join(root, "sub"))).toBe(join(root, "sub", "app", "globals.css"));
+  });
+});
+
 describe("uiPreset scale enforcement", () => {
   const good = `export function A(){ return <div ${attr}="px-page-gutter gap-stack-sm text-control" />; }\n`;
   const bad = `export function A(){ return <div ${attr}="mt-4 grid-cols-3 w-1/2 text-sm" />; }\n`;
@@ -116,6 +205,17 @@ describe("uiPreset scale enforcement", () => {
       entryPoint: join(repo, "missing-entry.css"),
     });
     expect(messages.some((item) => item.message.includes("Tailwind entry not found"))).toBe(true);
+  });
+
+  it("reports a missing entry before unresolvable Tailwind (fail-closed order)", () => {
+    const cwd = mkdtempSync(join(tmpdir(), "zk-no-tw-entry-"));
+    const messages = lintScale(good, {
+      cwd,
+      filename: join(cwd, "a.tsx"),
+      entryPoint: join(cwd, "missing.css"),
+    });
+    expect(messages.some((item) => item.message.includes("Tailwind entry not found"))).toBe(true);
+    expect(messages.some((item) => item.message.includes("fails closed"))).toBe(true);
   });
 
   it("allows a file only up to its baseline count", () => {

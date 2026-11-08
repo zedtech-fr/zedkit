@@ -1,9 +1,12 @@
 // Scale-step class ban. Numbers belong in token values; class names name a role.
 // The host names the roles. This module only rejects the default scale.
-import { createRequire } from "node:module";
+// Static limits (never claim more coverage than this): class sites are
+// string literals inside className, cn(), cva() and @apply, including
+// strings nested in template interpolations. Dynamically built names
+// (`p-${n}`), classes held in variables or passed across files, and other
+// helpers (clsx(), twMerge()) are NOT scanned.
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join, relative } from "node:path";
-import { pathToFileURL } from "node:url";
 
 const SPACING =
   /^(?:p|px|py|pt|pr|pb|pl|ps|pe|m|mx|my|mt|mr|mb|ml|ms|me|gap|gap-x|gap-y|space-x|space-y|w|h|size|min-w|min-h|max-w|max-h|inset|inset-x|inset-y|top|right|bottom|left|start|end|basis)-(?:px|\d+(?:\.\d+)?)$/;
@@ -57,33 +60,42 @@ export function scaleMessage(token, kind) {
   return `tokens-scale: "${token}" is a ${kind} scale step. Name the component role or layout job. Put a shared design value in the token, not a spelled number in the class.`;
 }
 
-function quoteEnd(source, open) {
+// Nesting beyond this is treated as unterminated: raw-text scans must
+// never stack-overflow on adversarial `${`${…` input.
+const MAX_NESTING = 64;
+
+// Index of the closing quote for the string opening at `open`, or -1.
+// Template literals nest: `${…}` may contain strings and templates.
+function quoteEnd(source, open, limit = source.length, depth = 0) {
+  if (depth > MAX_NESTING) return -1;
   const quote = source[open];
-  for (let i = open + 1; i < source.length; i++) {
-    if (source[i] === "\\") {
-      i += 1;
+  let i = open + 1;
+  while (i < limit) {
+    const ch = source[i];
+    if (ch === "\\") {
+      i += 2;
       continue;
     }
-    if (source[i] === quote) return i;
+    if (ch === quote) return i;
+    if (quote === "`" && ch === "$" && source[i + 1] === "{") {
+      const close = balancedEnd(source, i + 1, "{", "}", limit, depth + 1);
+      if (close === -1) return -1;
+      i = close + 1;
+      continue;
+    }
+    i += 1;
   }
   return -1;
 }
 
-function balancedEnd(source, openIndex, openChar, closeChar) {
+function balancedEnd(source, openIndex, openChar, closeChar, limit = source.length, nestDepth = 0) {
   let depth = 0;
-  let quote = "";
-  for (let i = openIndex; i < source.length; i++) {
+  for (let i = openIndex; i < limit; i++) {
     const ch = source[i];
-    if (quote) {
-      if (ch === "\\") {
-        i += 1;
-        continue;
-      }
-      if (ch === quote) quote = "";
-      continue;
-    }
     if (ch === '"' || ch === "'" || ch === "`") {
-      quote = ch;
+      const end = quoteEnd(source, i, limit, nestDepth);
+      if (end === -1) return -1;
+      i = end;
       continue;
     }
     if (ch === openChar) depth += 1;
@@ -101,11 +113,15 @@ function balancedEnd(source, openIndex, openChar, closeChar) {
  * @param {{ token: string, kind: string, index: number }[]} hits
  * @param {Set<number>} seen
  */
-function addClasses(literal, literalStart, hits, seen) {
+function addClasses(literal, literalStart, hits, seen, depth = 0) {
+  if (depth > MAX_NESTING) return;
   let i = 0;
   while (i < literal.length) {
     if (literal.startsWith("${", i)) {
-      const close = literal.indexOf("}", i + 2);
+      // Strings inside ${…} are class sites too (conditional classes).
+      const close = balancedEnd(literal, i + 1, "{", "}");
+      const innerEnd = close === -1 ? literal.length : close;
+      stringsIn(literal, i + 2, innerEnd, hits, seen, literalStart, depth + 1);
       i = close === -1 ? literal.length : close + 1;
       continue;
     }
@@ -133,26 +149,18 @@ function addClasses(literal, literalStart, hits, seen) {
  * @param {{ token: string, kind: string, index: number }[]} hits
  * @param {Set<number>} seen
  */
-function stringsIn(source, start, end, hits, seen) {
-  let quote = "";
-  let literalStart = -1;
+function stringsIn(source, start, end, hits, seen, base = 0, depth = 0) {
   for (let i = start; i < end; i++) {
     const ch = source[i];
-    if (quote) {
-      if (ch === "\\") {
-        i += 1;
-        continue;
-      }
-      if (ch === quote) {
-        addClasses(source.slice(literalStart, i), literalStart, hits, seen);
-        quote = "";
-      }
-      continue;
+    if (ch !== '"' && ch !== "'" && ch !== "`") continue;
+    const close = quoteEnd(source, i, end);
+    if (close === -1) {
+      // Unterminated literal (raw-text scans): still scan what is there.
+      addClasses(source.slice(i + 1, end), base + i + 1, hits, seen, depth);
+      return;
     }
-    if (ch === '"' || ch === "'" || ch === "`") {
-      quote = ch;
-      literalStart = i + 1;
-    }
+    addClasses(source.slice(i + 1, close), base + i + 1, hits, seen, depth);
+    i = close;
   }
 }
 
@@ -166,6 +174,9 @@ function stringsIn(source, start, end, hits, seen) {
 export function findScaleHits(source) {
   const hits = [];
   const seen = new Set();
+  // Single-pass discipline: the cursor never re-enters a consumed region,
+  // and an unbalanced construct terminates its region at EOF exactly once.
+  // Without this, stray-quote / nested-call inputs rescan quadratically.
   const attr = /className\s*=\s*/g;
   let match = attr.exec(source);
   while (match) {
@@ -173,10 +184,20 @@ export function findScaleHits(source) {
     const ch = source[i];
     if (ch === "{") {
       const end = balancedEnd(source, i, "{", "}");
-      if (end !== -1) stringsIn(source, i, end, hits, seen);
+      if (end === -1) {
+        stringsIn(source, i, source.length, hits, seen);
+        break;
+      }
+      stringsIn(source, i, end, hits, seen);
+      attr.lastIndex = Math.max(attr.lastIndex, end);
     } else if (ch === '"' || ch === "'" || ch === "`") {
       const end = quoteEnd(source, i);
-      if (end !== -1) addClasses(source.slice(i + 1, end), i + 1, hits, seen);
+      if (end === -1) {
+        addClasses(source.slice(i + 1), i + 1, hits, seen);
+        break;
+      }
+      addClasses(source.slice(i + 1, end), i + 1, hits, seen);
+      attr.lastIndex = Math.max(attr.lastIndex, end);
     }
     match = attr.exec(source);
   }
@@ -185,7 +206,12 @@ export function findScaleHits(source) {
   while (match) {
     const open = match.index + match[0].length - 1;
     const end = balancedEnd(source, open, "(", ")");
-    if (end !== -1) stringsIn(source, open, end, hits, seen);
+    if (end === -1) {
+      stringsIn(source, open, source.length, hits, seen);
+      break;
+    }
+    stringsIn(source, open, end, hits, seen);
+    calls.lastIndex = Math.max(calls.lastIndex, end);
     match = calls.exec(source);
   }
   const apply = /@apply\s+([^;]+);/g;
@@ -218,16 +244,61 @@ export function tailwindPackageRoot(start) {
   return null;
 }
 
+const ESLINT_CONFIGS = ["eslint.config.js", "eslint.config.mjs", "eslint.config.cjs", "eslint.config.ts", "eslint.config.mts"];
+
+/**
+ * Resolve a CSS entryPoint once to an absolute path. A relative entry is
+ * resolved against the nearest ancestor that holds an ESLint flat config
+ * and the file (so linting from a subdirectory matches linting from the
+ * root); falls back to the given cwd. Absolute paths pass through.
+ *
+ * @param {string} entryPoint
+ * @param {string} cwd
+ * @returns {string}
+ */
+export function resolveEntryPoint(entryPoint, cwd) {
+  if (typeof entryPoint !== "string" || entryPoint === "" || isAbsolute(entryPoint)) return entryPoint;
+  let dir = cwd;
+  for (let i = 0; i < 16; i += 1) {
+    const candidate = join(dir, entryPoint);
+    if (existsSync(candidate) && ESLINT_CONFIGS.some((name) => existsSync(join(dir, name)))) return candidate;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return join(cwd, entryPoint);
+}
+
+/**
+ * Per-file increases of `current` over `committed` (new files count from 0).
+ * The baseline ratchet: `--write` may only record decreases.
+ *
+ * @param {Map<string, number>} committed
+ * @param {Map<string, number>} current
+ * @returns {string[]}
+ */
+export function baselineIncreases(committed, current) {
+  const out = [];
+  for (const key of [...current.keys()].sort()) {
+    const now = current.get(key) ?? 0;
+    const was = committed.get(key) ?? 0;
+    if (now > was) out.push(`${key}: baseline ${was}, current ${now}`);
+  }
+  return out;
+}
+
 export function tailwindResolvable(cwd, entryPoint) {
+  // One criterion, shared with the preset's better-tailwindcss `cwd`:
+  // tailwindcss must sit in a node_modules reachable by walking up from
+  // the CSS entry directory or the lint cwd. (A looser resolve.paths probe
+  // here previously let `tailwind-ready` pass while the plugin disabled
+  // its theme rules.)
   if (tailwindInTree(cwd)) return true;
   if (typeof entryPoint === "string" && entryPoint !== "") {
-    const entry = isAbsolute(entryPoint) ? entryPoint : join(cwd, entryPoint);
+    const entry = resolveEntryPoint(entryPoint, cwd);
     if (tailwindInTree(dirname(entry))) return true;
   }
-  const req = createRequire(pathToFileURL(join(cwd, "package.json")).href);
-  const paths = req.resolve.paths("tailwindcss/package.json");
-  if (!paths) return false;
-  return paths.some((dir) => existsSync(join(dir, "tailwindcss", "package.json")));
+  return false;
 }
 
 /**
@@ -236,15 +307,15 @@ export function tailwindResolvable(cwd, entryPoint) {
  * @returns {string | null}
  */
 export function tailwindProblem(cwd, entryPoint) {
-  if (!tailwindResolvable(cwd, entryPoint)) {
-    return `tokens-tailwind: Tailwind CSS is not resolvable from ${cwd}. Theme checks did not start. Install tailwindcss where ESLint runs. This check fails closed.`;
-  }
   if (typeof entryPoint !== "string" || entryPoint === "") {
     return "tokens-tailwind: entryPoint is empty, so theme checks cannot start. This check fails closed.";
   }
-  const entry = isAbsolute(entryPoint) ? entryPoint : join(cwd, entryPoint);
+  const entry = resolveEntryPoint(entryPoint, cwd);
   if (!existsSync(entry)) {
     return `tokens-tailwind: Tailwind entry not found at ${entry}. Theme checks would fall back to default classes and miss host tokens. Pass the CSS entry that defines the theme. This check fails closed.`;
+  }
+  if (!tailwindResolvable(cwd, entryPoint)) {
+    return `tokens-tailwind: Tailwind CSS is not resolvable from ${cwd}. Theme checks did not start. Install tailwindcss where ESLint runs. This check fails closed.`;
   }
   return null;
 }

@@ -16,12 +16,13 @@
 // Consumer setup (no copy: install the package, pass your Tailwind entry):
 //   `import { uiPreset } from "@zedtech/zedkit-quality"` then
 //   `export default [...uiPreset({ entryPoint: "./app/globals.css" })]`.
-import { dirname, isAbsolute, join } from "node:path";
+import { dirname } from "node:path";
+import process from "node:process";
 import js from "@eslint/js";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import betterTailwindcss from "eslint-plugin-better-tailwindcss";
 import tseslint, { plugin as tsPlugin } from "typescript-eslint";
-import { tailwindPackageRoot, zedkitLintPlugin } from "./scale-classes.mjs";
+import { resolveEntryPoint, tailwindPackageRoot, zedkitLintPlugin } from "./scale-classes.mjs";
 
 const DEEP_RELATIVE_IMPORT = {
   group: ["../..", "../../*", "../../../*"],
@@ -81,7 +82,10 @@ export function uiPreset({ entryPoint, scaleBaseline } = {}) {
   if (typeof entryPoint !== "string" || entryPoint === "") {
     throw new Error("uiPreset: `entryPoint` is required (path to your Tailwind CSS entry).");
   }
-  const entryDir = dirname(isAbsolute(entryPoint) ? entryPoint : join(process.cwd(), entryPoint));
+  // Resolve once: the absolute path is what both better-tailwindcss and
+  // the zedkit rules see, so linting from a subdirectory matches the root.
+  const resolvedEntry = resolveEntryPoint(entryPoint, process.cwd());
+  const entryDir = dirname(resolvedEntry);
   const themeRoot = tailwindPackageRoot(entryDir) ?? tailwindPackageRoot(process.cwd());
   return [
     {
@@ -95,7 +99,7 @@ export function uiPreset({ entryPoint, scaleBaseline } = {}) {
       plugins: { "better-tailwindcss": betterTailwindcss },
       settings: {
         "better-tailwindcss": {
-          entryPoint,
+          entryPoint: resolvedEntry,
           // The plugin resolves tailwindcss from its cwd. In a workspace that
           // package often sits next to the CSS entry, not next to the ESLint process.
           ...(themeRoot ? { cwd: themeRoot } : {}),
@@ -170,7 +174,7 @@ export function uiPreset({ entryPoint, scaleBaseline } = {}) {
     {
       name: "zedkit/ui-scale",
       files: ["**/*.tsx", "**/*.jsx"],
-      plugins: { zedkit: zedkitLintPlugin(entryPoint, scaleBaseline) },
+      plugins: { zedkit: zedkitLintPlugin(resolvedEntry, scaleBaseline) },
       rules: {
         "zedkit/tailwind-ready": "error",
         "zedkit/no-scale-classes": "error",

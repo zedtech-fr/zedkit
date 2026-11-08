@@ -2,7 +2,7 @@
 // A file may only shrink. Growing, or leaving a stale higher count, fails.
 import { lstatSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join, relative } from "node:path";
-import { findScaleHits } from "../packages/quality/src/scale-classes.mjs";
+import { baselineIncreases, findScaleHits } from "../packages/quality/src/scale-classes.mjs";
 
 const root = join(import.meta.dirname, "..");
 const baselinePath = join(root, "scripts/scale-class-baseline.json");
@@ -52,6 +52,15 @@ const current = currentCounts();
 const total = [...current.values()].reduce((sum, n) => sum + n, 0);
 
 if (write) {
+  const increases = baselineIncreases(readCommitted(), current);
+  if (increases.length > 0) {
+    process.stderr.write(
+      "scale-class baseline may only shrink; --write refuses these increases (baseline file untouched):\n" +
+        increases.join("\n") +
+        "\nRemove the scale classes, then --write records the decrease.\n",
+    );
+    process.exit(1);
+  }
   const files = Object.fromEntries([...current.entries()].sort(([a], [b]) => a.localeCompare(b)));
   writeFileSync(baselinePath, `${JSON.stringify({ version: 1, total, files }, null, 2)}\n`);
   process.stdout.write(`scale-class baseline: ${total} in ${current.size} files\n`);
@@ -70,7 +79,7 @@ const committedTotal = [...committed.values()].reduce((sum, n) => sum + n, 0);
 if (diffs.length > 0 || committedTotal !== total) {
   process.stderr.write(
     `scale-class baseline is not the current count (baseline ${committedTotal}, current ${total}).\n` +
-      `The count may only shrink, and the file must match. Update with: node scripts/check-scale-baseline.mjs --write\n` +
+      `The count may only shrink. Remove scale classes; after a decrease, record it with: node scripts/check-scale-baseline.mjs --write\n` +
       diffs.slice(0, 30).join("\n") +
       (diffs.length > 30 ? `\n… ${diffs.length - 30} more\n` : "\n"),
   );
