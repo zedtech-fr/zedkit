@@ -499,6 +499,11 @@ ol[data-sonner-toaster] {
   z-index: 20;
 }
 
+/* A control that cannot be used. Half strength, on every control. */
+@utility fade-disabled {
+  opacity: 0.5;
+}
+
 /* The chosen select value stays on one line. */
 [data-slot="select-value"] {
   display: -webkit-box;

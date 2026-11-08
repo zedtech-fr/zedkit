@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { Badge } from "#index.js";
 import { Alert, AlertDescription, AlertTitle } from "#index.js";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#index.js";
-import { Button } from "#index.js";
+import { Button, cn } from "#index.js";
 import { Input } from "#index.js";
 import { Label } from "#index.js";
 import { Separator } from "#index.js";
@@ -151,7 +151,9 @@ describe("primitives", () => {
     expect(label.getAttribute("data-slot")).toBe("label");
     expect(label.className).toContain("text-dense");
     expect(label.className).toContain("peer-disabled:cursor-not-allowed");
-    expect(label.className).toContain("peer-disabled:opacity-50");
+    expect(label.className).toContain("peer-disabled:fade-disabled");
+    expect(label.className).not.toContain("opacity-50");
+    expect(cn("disabled:fade-disabled", "disabled:opacity-100")).toBe("disabled:opacity-100");
   });
 
   it("renders horizontal and vertical separators", () => {
