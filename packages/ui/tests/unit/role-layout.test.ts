@@ -150,6 +150,8 @@ describe("layout job classes", () => {
     expect(utility("disclosure-icon")).toBe("opacity: 0.5;");
     expect(utility("close-quiet")).toBe("opacity: 0.7;");
     expect(css).toContain(".close-quiet:hover {\n  opacity: 1;\n}");
+    expect(css).toContain('[data-slot="option-card"]:has(:focus-visible)');
+    expect(css).toContain("outline: var(--ring-width) solid hsl(var(--ring));");
     expect(utility("sort-mark")).toBe("opacity: 0.6;");
     expect(utility("status-ping")).toBe("opacity: 0.6;");
     expect(utility("option-picked")).toBe("opacity: 0.6;");

@@ -151,6 +151,7 @@ describe("OptionCards", () => {
     expect(card?.className).toContain("gap-option-card-gap");
     expect(card?.className).not.toContain("gap-3");
     expect(card?.classList.contains("p-option-card-padding")).toBe(true);
+    expect(card?.className).not.toContain("ring-2");
   });
 });
 
