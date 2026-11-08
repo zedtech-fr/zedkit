@@ -583,9 +583,13 @@ ol[data-sonner-toaster] {
 @utility menu-current {
   background-color: color-mix(in oklab, hsl(var(--muted)) 80%, transparent);
 }
-/* A chosen option or look. A light primary wash, not the primary button. */
+/* A chosen option, look, or field. A light primary wash, not the primary button. */
 @utility option-selected {
   background-color: color-mix(in oklab, hsl(var(--primary)) 5%, transparent);
+}
+/* Checked field in the dark. A stronger primary wash than the light one. */
+@utility field-checked-strong {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
 }
 /* Option card, hovered. The line is 40% of the muted foreground. */
 @utility option-hover-line {

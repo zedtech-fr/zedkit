@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { pinDemoLook } from "./a11y-helpers";
+
 test.describe("docs form previews show realistic forms", () => {
   test("field: validation shows after submit and clears once fixed", async ({ page }) => {
     await page.goto("/docs/ui/lay-out-fieldsets-fields-and-error-lists", { waitUntil: "networkidle" });
@@ -10,6 +12,27 @@ test.describe("docs form previews show realistic forms", () => {
     await page.getByRole("button", { name: "Create project" }).first().click();
     await expect(page.getByText("Use at least 3 characters.")).toBeHidden();
     await expect(page.getByText("Project “Harbor Studio” created.")).toBeVisible();
+  });
+
+  test("a checked field keeps a light primary wash, stronger in the dark", async ({ page }) => {
+    await page.goto("/docs/ui/lay-out-fieldsets-fields-and-error-lists");
+    const preview = page.locator("[data-component-preview]").first();
+    const label = preview.locator("[data-slot='field-label']").filter({ hasText: "Email the team" });
+    await expect(label).toBeVisible();
+    const read = (amount: string) =>
+      label.evaluate((node, percent) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = `color-mix(in oklab, hsl(var(--primary)) ${percent}, transparent)`;
+        node.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        const background = getComputedStyle(node).backgroundColor;
+        probe.remove();
+        return background === expected && !node.className.includes("bg-primary/");
+      }, amount);
+    await pinDemoLook(preview, "glass", "light");
+    await expect.poll(() => read("5%")).toBe(true);
+    await pinDemoLook(preview, "glass", "dark");
+    await expect.poll(() => read("10%")).toBe(true);
   });
 
   test("validated forms: props table lists the field props (#1061)", async ({ page }) => {
