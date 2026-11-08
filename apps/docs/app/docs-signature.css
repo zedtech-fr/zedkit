@@ -141,6 +141,22 @@
   }
 }
 
+/* Index summary. Two lines on a phone, the whole sentence from the medium breakpoint. */
+[data-index-summary] {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+@media (min-width: 48rem) {
+  [data-index-summary] {
+    display: block;
+    overflow: visible;
+    -webkit-box-orient: horizontal;
+    -webkit-line-clamp: unset;
+  }
+}
+
 /* Number column on an adoption step. */
 [data-adoption-step] {
   grid-template-columns: 1.75rem minmax(0, 1fr);
