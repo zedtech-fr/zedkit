@@ -109,7 +109,7 @@ function DialogOverlay({
       data-slot="dialog-overlay"
       ref={setRef}
       className={cn(
-        "fixed pin-fill z-overlay bg-overlay/80",
+        "fixed pin-fill z-overlay dialog-scrim",
         "motion-safe:data-[state=open]:animate-[zk-fade-in_var(--motion-base)_var(--ease-enter)]",
         "motion-safe:data-[state=closed]:animate-[zk-fade-out_var(--motion-base)_var(--ease-exit)]",
         className,

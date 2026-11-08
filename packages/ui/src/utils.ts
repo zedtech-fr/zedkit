@@ -91,6 +91,7 @@ const twMerge = extendTailwindMerge({
         "badge-destructive-hover",
         "badge-success-hover",
         "badge-warning-hover",
+        "dialog-scrim",
       ],
       "underline-offset": ["link-offset"],
     },

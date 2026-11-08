@@ -53,6 +53,8 @@ describe("cn", () => {
     expect(cn("aria-pressed:bg-card", "aria-pressed:ghost-pressed")).toBe("aria-pressed:ghost-pressed");
     expect(cn("hover:bg-card", "hover:badge-primary-hover")).toBe("hover:badge-primary-hover");
     expect(cn("hover:badge-warning-hover", "hover:bg-card")).toBe("hover:bg-card");
+    expect(cn("bg-card", "dialog-scrim")).toBe("dialog-scrim");
+    expect(cn("dialog-scrim", "bg-card")).toBe("bg-card");
     expect(cn("min-h-11", "min-h-target")).toBe("min-h-target");
     expect(cn("content-shrink", "min-w-full")).toBe("min-w-full");
     expect(cn("top-0", "pin-top")).toBe("pin-top");

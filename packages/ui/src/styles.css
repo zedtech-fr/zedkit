@@ -556,6 +556,10 @@ ol[data-sonner-toaster] {
 @utility badge-warning-hover {
   background-color: color-mix(in oklab, hsl(var(--warning)) 90%, transparent);
 }
+/* The dim layer behind a dialog. Glass replaces this with its own scrim. */
+@utility dialog-scrim {
+  background-color: color-mix(in oklab, hsl(var(--overlay)) 80%, transparent);
+}
 /* The sort mark beside a column name. Quieter than the label. */
 @utility sort-mark {
   opacity: 0.6;
