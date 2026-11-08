@@ -370,6 +370,8 @@
   --zk-link-offset: 4px;
   /* Side column. A quiet muted wash, not the page background. */
   --zk-sidebar-wash: 40%;
+  /* A bar that stays over moving content. Mostly the page background. */
+  --zk-bar-scrim: 95%;
   /*
    * Body copy line-height (`leading-body`, used by <Text>). A fixed ratio,
    * not a spacing multiple: an identity may redefine `--spacing`, and a
@@ -553,6 +555,11 @@ ol[data-sonner-toaster] {
 /* Side column. The wash is a share of the muted colour. */
 .sidebar-wash {
   background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-sidebar-wash), transparent);
+}
+
+/* A bar over moving content. Mostly the page background, so type on it stays readable. */
+.bar-scrim {
+  background-color: color-mix(in oklab, hsl(var(--background)) var(--zk-bar-scrim), transparent);
 }
 
 /* Text link. The line sits this far from the letters. */
@@ -741,6 +748,7 @@ a[class*="px-badge-inline"] {
  */
 @layer components {
   .sidebar-wash {}
+  .bar-scrim {}
   .text-specimen-title {}
   .text-compact-heading {}
   .text-figure {}

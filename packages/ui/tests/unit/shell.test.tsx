@@ -12,6 +12,8 @@ describe("AppShell", () => {
     );
     expect(screen.getByText("Nav").textContent).toBe("Nav");
     expect(screen.getByText("Top").textContent).toBe("Top");
+    expect(document.querySelector("header")?.className).toContain("bar-scrim");
+    expect(document.querySelector("header")?.className).not.toContain("bg-background/95");
     expect(screen.getByText("Content").textContent).toBe("Content");
   });
 
