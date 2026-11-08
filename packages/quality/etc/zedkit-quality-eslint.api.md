@@ -61,6 +61,7 @@ export function uiPreset(options: UiPresetOptions): Linter.Config[];
 // @public (undocumented)
 export interface UiPresetOptions {
     readonly entryPoint: string;
+    readonly scaleBaseline?: string;
 }
 
 // (No @packageDocumentation comment for this package)

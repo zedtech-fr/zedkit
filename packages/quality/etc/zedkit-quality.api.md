@@ -46,11 +46,12 @@ export function uiPreset(options: UiPresetOptions): Linter.Config[];
 // @public (undocumented)
 export interface UiPresetOptions {
     readonly entryPoint: string;
+    readonly scaleBaseline?: string;
 }
 
 // Warnings were encountered during analysis:
 //
-// src/eslint.d.mts:42:9 - (ae-forgotten-export) The symbol "RestrictedImportPattern" needs to be exported by the entry point index.d.mts
+// src/eslint.d.mts:47:9 - (ae-forgotten-export) The symbol "RestrictedImportPattern" needs to be exported by the entry point index.d.mts
 
 // (No @packageDocumentation comment for this package)
 
