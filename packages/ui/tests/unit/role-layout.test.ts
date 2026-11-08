@@ -154,6 +154,8 @@ describe("layout job classes", () => {
     expect(css).toContain('[data-slot="saas-dashboard-specimen"] [data-team-list] > li.border-b:last-child');
     expect(css).toContain("section[data-gallery-section].border-b:last-child");
     expect(css).toContain("background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-muted-wash), transparent);");
+    expect(css).toContain('[data-slot="feature-icon"]');
+    expect(css).toContain("background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);");
     expect(css).toContain("background-color: color-mix(in oklab, hsl(var(--background)) var(--zk-bar-scrim), transparent);");
     expect(css).toContain('[data-slot="option-card"]:has(:focus-visible)');
     expect(css).toContain('[data-slot="pricing"] [data-highlighted="true"]');

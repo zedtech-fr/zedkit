@@ -557,6 +557,11 @@ ol[data-sonner-toaster] {
   background-color: color-mix(in oklab, hsl(var(--muted)) var(--zk-muted-wash), transparent);
 }
 
+/* Feature mark. A light primary tint behind the icon, not a filled button. */
+[data-slot="feature-icon"] {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 10%, transparent);
+}
+
 /* A bar over moving content. Mostly the page background, so type on it stays readable. */
 .bar-scrim {
   background-color: color-mix(in oklab, hsl(var(--background)) var(--zk-bar-scrim), transparent);
