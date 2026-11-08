@@ -2,6 +2,36 @@ import { expect, test } from "@playwright/test";
 
 const PAGES = ["/", "/docs/getting-started"];
 
+test("the phone menu keeps a quiet hover and a stronger current page", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/catalog");
+  await page.getByRole("button", { name: "Open menu" }).click();
+  const menu = page.locator("[data-shell-nav-drawer]");
+  const current = menu.getByRole("link", { name: "Catalog", exact: true });
+  const other = menu.getByRole("link", { name: "Documentation", exact: true });
+  await expect(current).toBeVisible();
+  const read = async (link: typeof current, amount: string) =>
+    link.evaluate((node, percent) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = `color-mix(in oklab, hsl(var(--muted)) ${percent}, transparent)`;
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      const height = node.getBoundingClientRect().height;
+      probe.remove();
+      return { background, expected, height, numeric: node.className.includes("bg-muted/") };
+    }, amount);
+  const here = await read(current, "80%");
+  expect(here.background).toBe(here.expected);
+  expect(here.height).toBeGreaterThanOrEqual(44);
+  expect(here.numeric).toBe(false);
+  await other.hover();
+  await expect.poll(async () => {
+    const hover = await read(other, "60%");
+    return hover.background === hover.expected && !hover.numeric;
+  }).toBe(true);
+});
+
 test("the docs phone bar keeps a painted fill without an 80% background class", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/docs/getting-started");
