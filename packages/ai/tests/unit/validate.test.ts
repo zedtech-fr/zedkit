@@ -341,6 +341,42 @@ describe("validateKit", () => {
     expect(messages(root)).toEqual([expect.stringContaining("single line")]);
   });
 
+  it("flags a subagent description continued on the next line", () => {
+    const root = tempDir();
+    put(
+      root,
+      "agents/beta.md",
+      "---\nname: beta\ndescription:\n  Agent beta. Use when needed.\n---\n\nBody.\n",
+    );
+    expect(messages(root)).toEqual([expect.stringContaining("single line")]);
+  });
+
+  it("flags a command with a pipe block description", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/run.md", "---\ndescription: |\n  Runs alpha.\n---\n\nRun the `alpha` skill.\n");
+    expect(messages(root)).toEqual([expect.stringContaining("single line")]);
+  });
+
+  it("flags a command whose file name is over the length cap", () => {
+    const root = tempDir();
+    const long = "a".repeat(65);
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, `commands/${long}.md`, COMMAND("alpha"));
+    expect(messages(root)).toEqual([expect.stringContaining("at most 64 characters")]);
+  });
+
+  it("flags two skill folders that claim the same name", () => {
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "skills/also/SKILL.md", SKILL("alpha"));
+    const found = messages(root);
+    expect(found).toContainEqual(expect.stringContaining('name must equal "also"'));
+    expect(found).toContainEqual(
+      expect.stringContaining('duplicate skill name "alpha" (also claimed by skills/alpha/SKILL.md); give each skill its own name'),
+    );
+  });
+
   it("flags subagents that pin a model", () => {
     const root = tempDir();
     put(root, "agents/beta.md", AGENT("beta", "model: some-made-up-id\n"));
@@ -588,6 +624,29 @@ providers:
     expect(found).toContainEqual(expect.stringContaining('kit skill "alpha" is unreachable from .claude/skills'));
   });
 
+  it("flags a missing real .claude/commands copy of a source command", () => {
+    const root = tempDir();
+    put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, ".agents/commands/run.md", COMMAND("alpha"));
+    put(root, ".claude/commands/other.md", "user command\n");
+    const found = checkDrift(root, join(root, ".agents")).map((i) => `${i.path}: ${i.message}`);
+    expect(found).toContainEqual(expect.stringContaining("copy missing"));
+    expect(found.some((m) => m.includes(".claude/commands/run.md"))).toBe(true);
+  });
+
+  it("flags two real layer skills that claim the same name without a zk- sidecar", () => {
+    const root = tempDir();
+    put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, ".cursor/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, ".cursor/skills/also/SKILL.md", SKILL("alpha"));
+    const found = checkDrift(root, join(root, ".agents")).map((i) => `${i.path}: ${i.message}`);
+    expect(found).toContainEqual(
+      expect.stringContaining(
+        'duplicate skill name "alpha" (also claimed by .cursor/skills/alpha/SKILL.md); give each skill its own name',
+      ),
+    );
+  });
+
   it("flags a drifted copy inside a real .claude/agents directory", () => {
     const root = tempDir();
     const agents = join(root, ".agents");
@@ -648,6 +707,14 @@ providers:
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
     symlinkSync("/definitely/not/here", join(root, "skills/ghost"));
     const issues = validateKit(root);
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("cannot read");
+  });
+
+  it("reports a file where a kit directory should be instead of throwing", () => {
+    const root = tempDir();
+    put(root, "not-a-dir", "plain file\n");
+    const issues = validateKit(join(root, "not-a-dir"));
     expect(issues).toHaveLength(1);
     expect(issues[0]?.message).toContain("cannot read");
   });

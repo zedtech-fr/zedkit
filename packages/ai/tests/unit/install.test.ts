@@ -818,6 +818,21 @@ describe("installKit", () => {
     expect(result.ok).toBe(false);
     if (!result.ok)
       expect(result.error.message).toContain('kit has no command "ghost"');
+    const missingAgent = tempDir();
+    put(
+      missingAgent,
+      "kit.json",
+      JSON.stringify({ presets: { core: ["alpha"] }, agents: ["ghost"] }),
+    );
+    put(missingAgent, "skills/alpha/SKILL.md", "x");
+    const missingAgentResult = installKit({
+      dest: tempDir(),
+      kit: missingAgent,
+      preset: "core",
+    });
+    expect(missingAgentResult.ok).toBe(false);
+    if (!missingAgentResult.ok)
+      expect(missingAgentResult.error.message).toContain('kit has no agent "ghost"');
     const bad = tempDir();
     put(
       bad,
@@ -828,6 +843,45 @@ describe("installKit", () => {
     expect(badResult.ok).toBe(false);
     if (!badResult.ok)
       expect(badResult.error.message).toContain("must be a string list");
+  });
+
+  it("still generates provider agents when project tokenomics does not parse, and notes inherit", () => {
+    const dest = tempDir();
+    put(dest, ".agents/tokenomics.md", "---\nschema: [broken\n---\n");
+    const actions = install(dest, { providers: ["cursor"] });
+    expect(
+      actions.some((a) => (a.note ?? "").includes("models inherit until it is fixed")),
+    ).toBe(true);
+    expect(existsSync(join(dest, ".cursor/agents/verifier.md"))).toBe(true);
+    expect(readFileSync(join(dest, ".cursor/agents/verifier.md"), "utf8")).toContain(
+      "model: inherit\n",
+    );
+  });
+
+  it("does not write a kit sidecar for a project-only skill in a real layer directory", () => {
+    const dest = tempDir();
+    put(dest, ".agents/skills/mine/SKILL.md", SKILL("mine"));
+    put(dest, ".cursor/skills/mine/SKILL.md", SKILL("mine"));
+    const actions = install(dest, { providers: ["cursor"], adopt: true });
+    expect(
+      actions.some((a) => (a.note ?? "").includes('kit has no skill "mine"')),
+    ).toBe(true);
+    expect(existsSync(join(dest, ".cursor/skills/zk-mine"))).toBe(false);
+    expect(readFileSync(join(dest, ".cursor/skills/mine/SKILL.md"), "utf8")).toBe(
+      SKILL("mine"),
+    );
+  });
+
+  it("leaves a .gitignore directory untouched", () => {
+    const dest = tempDir();
+    mkdirSync(join(dest, ".gitignore"));
+    const actions = install(dest, { preset: "starter", providers: [] });
+    expect(lstatSync(join(dest, ".gitignore")).isDirectory()).toBe(true);
+    expect(actions).toContainEqual({
+      kind: "skip",
+      path: ".gitignore",
+      note: "not a file, left untouched",
+    });
   });
 
   it("setup ignores a dirty v1 personas template when v2 is installed", () => {
@@ -849,6 +903,23 @@ describe("installKit", () => {
       providers: [],
     });
     expect(result.ok).toBe(true);
+  });
+
+  it("setup falls back to the v1 personas template when v2 is absent", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({ presets: { setup: ["alpha"] }, agents: [] }),
+    );
+    put(kit, "skills/alpha/SKILL.md", "x");
+    put(kit, "personas.template.md", "v1 personas\n");
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    const result = installKit({ dest, kit, preset: "setup", providers: [] });
+    expect(result.ok).toBe(true);
+    expect(readFileSync(join(dest, ".agents/personas.md"), "utf8")).toBe("v1 personas\n");
   });
 
   it("setup fails before writing when the installed v2 personas names a missing skill", () => {
