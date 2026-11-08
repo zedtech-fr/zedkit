@@ -19,12 +19,6 @@ export const A11Y_AXE_EXCEPTIONS = [
     removeBy: "2026-12-31",
   },
   {
-    selector: "[data-home-dashboard-card]",
-    reason: "Home dashboard demo card tracked on #389",
-    owner: "ui-idiom",
-    removeBy: "2026-11-30",
-  },
-  {
     selector: "[role='tabpanel'] figure",
     reason: "Component preview figures use isolated theme scopes (#394)",
     owner: "docs",
