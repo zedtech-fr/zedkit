@@ -204,6 +204,7 @@ export function MobileHeader({
     <>
       <header
         id="nd-mobile-nav"
+        {...(mode === "docs" ? { "data-docs-phone-bar": "" } : {})}
         className={
           className ??
           "sticky pin-top z-header flex h-phone-bar items-center justify-between gap-stack-sm border-b bg-background px-control-tight md:hidden"
