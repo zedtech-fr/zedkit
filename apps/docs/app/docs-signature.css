@@ -202,6 +202,11 @@
   max-height: min(52dvh, 28rem);
 }
 
+/* The proposal card while a new look is being made. */
+[data-assistant-proposal][aria-busy="true"] {
+  opacity: 0.6;
+}
+
 /* Pinned proposal actions. They stay above the card while it scrolls. */
 [data-proposal-apply] {
   z-index: 10;
