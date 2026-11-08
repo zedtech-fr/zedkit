@@ -14,6 +14,8 @@ describe("status dot", () => {
   it("pings for ongoing tones and stays static otherwise", () => {
     const active = render(<StatusDot tone="active" />);
     expect(active.container.innerHTML).toContain("motion-safe:animate-ping");
+    expect(active.container.innerHTML).toContain("status-ping");
+    expect(active.container.innerHTML).not.toContain("opacity-60");
     active.unmount();
     const idle = render(<StatusDot tone="idle" />);
     expect(idle.container.innerHTML).not.toContain("animate-ping");
