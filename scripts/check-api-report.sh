@@ -132,7 +132,7 @@ fi
 
 [ "$fail" -eq 0 ] || { echo "api-report: extractor FAILED"; exit 1; }
 
-python3 - <<'PY'
+python3 - "${entries[@]}" <<'PY'
 import subprocess
 import sys
 import os
@@ -151,26 +151,13 @@ if probe.returncode != 0:
     print("api-report: no origin/main, skip changeset gate")
     sys.exit(0)
 
-reports = [
-    ("packages/ai/etc/zedkit-ai.api.md", "@zedtech/zedkit-ai"),
-    ("packages/brand/etc/zedkit-brand.api.md", "@zedtech/zedkit-brand"),
-    ("packages/core/etc/zedkit-core.api.md", "@zedtech/zedkit-core"),
-    ("packages/devtools/etc/zedkit-devtools.api.md", "@zedtech/zedkit-devtools"),
-    ("packages/flags/etc/zedkit-flags.api.md", "@zedtech/zedkit-flags"),
-    ("packages/i18n/etc/zedkit-i18n.api.md", "@zedtech/zedkit-i18n"),
-    ("packages/live/etc/zedkit-live.api.md", "@zedtech/zedkit-live"),
-    ("packages/nest/etc/zedkit-nest.api.md", "@zedtech/zedkit-nest"),
-    ("packages/observability/etc/zedkit-observability.api.md", "@zedtech/zedkit-observability"),
-    ("packages/payload-access/etc/zedkit-payload-access.api.md", "@zedtech/zedkit-payload-access"),
-    ("packages/payload-seo/etc/zedkit-payload-seo.api.md", "@zedtech/zedkit-payload-seo"),
-    ("packages/quality/etc/zedkit-quality.api.md", "@zedtech/zedkit-quality"),
-    ("packages/quality/etc/zedkit-quality-eslint.api.md", "@zedtech/zedkit-quality"),
-    ("packages/seo/etc/zedkit-seo.api.md", "@zedtech/zedkit-seo"),
-    ("packages/server/etc/zedkit-server.api.md", "@zedtech/zedkit-server"),
-    ("packages/storage/etc/zedkit-storage.api.md", "@zedtech/zedkit-storage"),
-    ("packages/ui/etc/zedkit-ui.api.md", "@zedtech/zedkit-ui"),
-    ("packages/ui/etc/zedkit-ui-motion.api.md", "@zedtech/zedkit-ui"),
-]
+# pkg|types-entry|report — same rows as shell entries=( above
+reports = []
+for spec in sys.argv[1:]:
+    pkg, _entry, report = spec.split("|", 2)
+    path = f"packages/{pkg}/etc/{report}"
+    npm_pkg = f"@zedtech/zedkit-{pkg}"
+    reports.append((path, npm_pkg))
 
 bumps: dict[str, set[str]] = {}
 name_re = __import__("re").compile(r'^["\']([^"\']+)["\']\s*:\s*(patch|minor|major)')

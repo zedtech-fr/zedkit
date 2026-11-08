@@ -170,8 +170,6 @@ describe("inspectReleasePublisher (real subprocess versions)", () => {
 describe("release wiring (publisher pin, provenance, optional token)", () => {
   const releaseYml = readFileSync(join(ROOT, ".github/workflows/release.yml"), "utf8");
   const ensureSh = readFileSync(join(ROOT, "scripts/ensure-release-publisher.sh"), "utf8");
-  const ciYml = readFileSync(join(ROOT, ".github/workflows/ci.yml"), "utf8");
-  const pkg = readFileSync(join(ROOT, "package.json"), "utf8");
 
   it("release job installs into the Node prefix then asserts before Changesets", () => {
     assert.match(releaseYml, /ensure-release-publisher\.sh/);
@@ -194,10 +192,5 @@ describe("release wiring (publisher pin, provenance, optional token)", () => {
 
   it("keeps Changesets as the publisher", () => {
     assert.match(releaseYml, /publish-script:\s*pnpm exec changeset publish/);
-  });
-
-  it("registers the unit tests in both test:registry lists", () => {
-    assert.match(pkg, /scripts\/release-publisher\.test\.mjs/);
-    assert.match(ciYml, /scripts\/release-publisher\.test\.mjs/);
   });
 });

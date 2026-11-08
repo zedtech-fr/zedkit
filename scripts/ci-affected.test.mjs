@@ -134,7 +134,6 @@ const requiredOk = {
   quickstart_smoke: "skipped",
   adoption_smoke: "skipped",
   docs_build: "skipped",
-  docs_e2e: "skipped",
   docs_smoke: "skipped",
 };
 const packOnly = { workflows: false, docs: false, registry: false, ui: false, workflow_only: false };
@@ -159,16 +158,15 @@ test("impact-excluded docs jobs may skip; selected docs jobs must succeed", () =
   assert.deepEqual(requiredJobsPass({ results: requiredOk, selected: packOnly }), []);
   assert.ok(
     requiredJobsPass({
-      results: { ...requiredOk, docs_build: "skipped", docs_e2e: "skipped", docs_smoke: "skipped" },
+      results: { ...requiredOk, docs_build: "skipped", docs_smoke: "skipped" },
       selected: { ...packOnly, docs: true },
-    }).some((e) => e.includes("docs_e2e")),
+    }).some((e) => e.includes("docs_smoke")),
   );
   assert.deepEqual(
     requiredJobsPass({
       results: {
         ...requiredOk,
         docs_build: "success",
-        docs_e2e: "success",
         docs_smoke: "success",
       },
       selected: { ...packOnly, docs: true },
@@ -180,7 +178,7 @@ test("impact-excluded docs jobs may skip; selected docs jobs must succeed", () =
 test("fail, cancel, unknown and missing results are not green", () => {
   for (const result of ["failure", "cancelled", "unknown", ""]) {
     const errors = requiredJobsPass({
-      results: { ...requiredOk, docs_build: "success", docs_e2e: result, docs_smoke: "success" },
+      results: { ...requiredOk, docs_build: "success", docs_smoke: result },
       selected: { ...packOnly, docs: true },
     });
     assert.ok(errors.length > 0, result);
@@ -203,7 +201,6 @@ test("workflow-only requires the lint job and skips checks and docs", () => {
         workflow_lint: "success",
         checks: "skipped",
         docs_build: "skipped",
-        docs_e2e: "skipped",
         docs_smoke: "skipped",
       },
       selected: { workflows: true, docs: false, registry: false, ui: false, workflow_only: true },
@@ -224,7 +221,7 @@ test("PR to main keeps docs selected so a skip is not green", () => {
     selected: { workflows: false, docs: true, registry: true, workflow_only: false },
   });
   assert.ok(errors.some((e) => e.includes("docs_build")));
-  assert.ok(errors.some((e) => e.includes("docs_e2e")));
+  assert.ok(errors.some((e) => e.includes("docs_smoke")));
   assert.ok(errors.some((e) => e.includes("registry")));
   assert.ok(errors.some((e) => e.includes("quickstart_smoke")));
   assert.ok(errors.some((e) => e.includes("adoption_smoke")));
