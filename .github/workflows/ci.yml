@@ -394,6 +394,14 @@ jobs:
         if: runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh install
       - run: pnpm registry:build
+      # The pack closure ships prebuilt dist (not rebuildable by the
+      # consumer): build the UI closure once before the parallel cells pack it.
+      - run: pnpm exec turbo run build --filter=@zedtech/zedkit-ui
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm exec playwright install chromium
       # Next smokes (src-dir pnpm + npm, plain pnpm); Vite paths live in the dedicated quickstart-smoke job.
       # The npm cell guards the D1 promise (no ERESOLVE); each serve port is pinned per cell.
       - name: registry smoke

@@ -1,13 +1,14 @@
 // Original work by the same author.
-import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { resolveConditionals } from "#conditional.js";
+import { installKit } from "#install.js";
 import { agentsForPreset, commandsForPreset, kitDir, kitUniverse, readManifest } from "#kit.js";
 import { readLegacyHashFile, shortHash } from "#legacy.js";
 import { validateKit } from "#validate.js";
-import { tempDir } from "./helpers.js";
+import { put, SKILL, tempDir } from "./helpers.js";
 
 function setup(dest: string, providers: string[]): void {
   const code = main(["setup", dest, "--provider", providers.join(",")], {
@@ -94,5 +95,85 @@ describe("install lifecycle: reruns and upgrades converge", () => {
 
     expect(existsSync(join(dest, ".agents", "skills", "zk-setup-ai"))).toBe(false);
     expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "SKILL.md"), "utf8")).toBe(installedVariant);
+  });
+
+  it("never deletes kit sources when .agents/skills symlinks into the kit (P1.1)", () => {
+    const kit = tempDir();
+    cpSync(kitDir(), kit, { recursive: true });
+    const dest = tempDir();
+    mkdirSync(join(dest, ".agents"), { recursive: true });
+    symlinkSync(join(kit, "skills"), join(dest, ".agents", "skills"));
+    const result = installKit({ dest, preset: "setup", providers: ["cursor"], adopt: true, kit });
+    expect(result.ok).toBe(true);
+    expect(existsSync(join(kit, "skills", "setup-ai", "SKILL.md"))).toBe(true);
+    expect(existsSync(join(kit, "skills", "review", "SKILL.md"))).toBe(true);
+    expect(readdirSync(join(kit, "skills")).filter((e) => e.startsWith("zk-"))).toEqual([]);
+  });
+
+  it("preserves a user-modified zk- sidecar instead of replacing it (P1.2)", () => {
+    const dest = tempDir();
+    put(dest, ".claude/skills/review/SKILL.md", `${SKILL("review")}\nHouse review notes.\n`);
+    setup(dest, ["claude"]);
+    const sidecar = join(dest, ".claude", "skills", "zk-review", "SKILL.md");
+    expect(existsSync(sidecar)).toBe(true);
+    writeFileSync(sidecar, `${readFileSync(sidecar, "utf8")}\n\nUser margin note.\n`);
+    put(dest, ".claude/skills/zk-review/operator-notes.md", "operator notes\n");
+
+    setup(dest, ["claude"]);
+
+    expect(readFileSync(sidecar, "utf8")).toContain("User margin note.");
+    expect(existsSync(join(dest, ".claude", "skills", "zk-review", "operator-notes.md"))).toBe(true);
+  });
+
+  it("keeps a project zk- skill the kit does not ship instead of deleting it (P1.2)", () => {
+    const dest = tempDir();
+    put(dest, ".agents/skills/team-review/SKILL.md", SKILL("team-review"));
+    put(dest, ".claude/skills/team-review/SKILL.md", SKILL("team-review"));
+    put(dest, ".claude/skills/zk-team-review/SKILL.md", `${SKILL("zk-team-review")}\nOperator customisation.\n`);
+
+    setup(dest, ["claude"]);
+
+    expect(readFileSync(join(dest, ".claude", "skills", "zk-team-review", "SKILL.md"), "utf8")).toContain(
+      "Operator customisation.",
+    );
+  });
+
+  it("skips a sidecar for a project skill the kit does not ship instead of crashing (P1.2)", () => {
+    const dest = tempDir();
+    put(dest, ".agents/skills/team-review/SKILL.md", SKILL("team-review"));
+    put(dest, ".claude/skills/team-review/SKILL.md", SKILL("team-review"));
+
+    setup(dest, ["claude"]);
+
+    expect(existsSync(join(dest, ".claude", "skills", "zk-team-review"))).toBe(false);
+  });
+
+  const FIXTURE_100 = join(kitDir(), "..", "tests", "fixtures", "skills-v1.0.0-setup");
+
+  function installFixture100(dest: string): void {
+    cpSync(FIXTURE_100, join(dest, ".agents", "skills"), { recursive: true });
+  }
+
+  it("a published 1.0.0 skill tree upgrades in place without sidecars (P2.4)", () => {
+    const dest = tempDir();
+    installFixture100(dest);
+
+    setup(dest, ["cursor"]);
+
+    expect(readdirSync(join(dest, ".agents", "skills")).filter((s) => s.startsWith("zk-"))).toEqual([]);
+    expect(existsSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"))).toBe(true);
+  });
+
+  it("references stay valid after a published-version upgrade (P2.4)", () => {
+    const dest = tempDir();
+    installFixture100(dest);
+
+    setup(dest, ["cursor"]);
+
+    const out: string[] = [];
+    const code = main(["validate", dest, "--setup"], { out: (line) => out.push(line), err: () => {} });
+    expect(out.join("\n")).not.toContain("broken link");
+    expect(out.join("\n")).not.toContain("design-policy");
+    expect(code).toBe(1); // depth findings remain (no /setup-ai run), but no dangling refs
   });
 });

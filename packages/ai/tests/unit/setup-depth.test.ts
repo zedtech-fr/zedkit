@@ -249,7 +249,7 @@ describe("checkDepth", () => {
     expect(checkDepth(root).map((i) => i.message)).toEqual([expect.stringContaining("real model (not inherit)")]);
   });
 
-  it("D4: inherit with a recorded tool limitation warns instead of failing (T8b)", () => {
+  it("D4: inherit with a recorded tool limitation is partial, never a pass (P2.5)", () => {
     const root = tempDir();
     deep(root);
     put(
@@ -257,10 +257,13 @@ describe("checkDepth", () => {
       ".agents/tokenomics.md",
       "---\nschema: 1\nproviders:\n  cursor:\n    build:\n      standard: { model: inherit, effort: medium }\n    decide:\n      sensitive: { model: inherit, effort: high }\n---\n\n<!-- inherit-reason: cursor cannot route per spawn; reading done inline -->\n",
     );
+    // Reason for the change (review P2.5): the CLI excludes `warning:` issues
+    // from failures, so a warning let a partial setup print `ok` with exit
+    // 0. Partial must be a failing issue: distinct from complete, never a pass.
     const messages = checkDepth(root).map((i) => i.message);
     expect(messages).toHaveLength(1);
-    expect(messages[0]).toMatch(/^warning:.*inherit/);
-    expect(messages[0]).toMatch(/partial/);
+    expect(messages[0]).not.toMatch(/^warning:/);
+    expect(messages[0]).toMatch(/partial, not complete/);
   });
 
   it("D4: a bare inherit-reason marker without the cells still fails", () => {

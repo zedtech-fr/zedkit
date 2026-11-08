@@ -29,6 +29,14 @@ for f in install.sh npm-globals.css npm-page.tsx; do
   fi
 done
 
+# The pack closure ships prebuilt `dist/` (package `files` lists it; a clean
+# checkout has none). Build the UI closure before packing so every cell packs
+# the same bytes; with a warm turbo cache this is a no-op.
+if [[ ! -f "${ROOT}/packages/ui/dist/index.js" ]]; then
+  echo "smoke-ui-quickstart: no packages/ui/dist — building the UI closure first" >&2
+  (cd "$ROOT" && pnpm exec turbo run build --filter=@zedtech/zedkit-ui)
+fi
+
 case "$PM" in
   pnpm) USE="--use-pnpm"; BUILD="pnpm exec next build" ;;
   npm) USE="--use-npm"; BUILD="npx --yes next build" ;;
@@ -61,10 +69,10 @@ pnpm dlx "create-next-app@${CREATE_NEXT_APP_VERSION:-16.4.3}" "$WORK" \
 cd "$WORK"
 cp "${SNIPPETS}/npm-globals.css" "$GLOBALS"
 cp "${SNIPPETS}/npm-page.tsx" "$PAGE"
-if [[ "$LAYOUT" == "src" ]]; then
-  # The snippet is Vite-oriented; under --src-dir the scan root sits one level
-  # deeper (docs: prose/guides/getting-started.mdx "Next.js: use ... @source
-  # "../../node_modules/…"").
+if [[ "$LAYOUT" == "src" ]] && ! grep -q '@source "../../node_modules' "$GLOBALS"; then
+  # Older snippets only name the Vite/Next-plain depth; under --src-dir the
+  # scan root sits one level deeper (docs: prose/guides/getting-started.mdx).
+  # Snippets that already name both depths (one line per depth) need no edit.
   sed -i 's#@source "../node_modules#@source "../../node_modules#' "$GLOBALS"
 fi
 

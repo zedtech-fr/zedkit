@@ -8,6 +8,7 @@ import {
   readdirSync,
   readFileSync,
   readlinkSync,
+  realpathSync,
   rmSync,
   statSync,
   symlinkSync,
@@ -267,6 +268,67 @@ function layerSidecarUpToDate(ctx: Ctx, kitName: string, sidecarRel: string, zkN
   });
 }
 
+// Resolved directory, or undefined when it does not exist (nothing to delete).
+function realDir(path: string): string | undefined {
+  const resolved = tryCatch(() => realpathSync(path));
+  return resolved.ok ? resolved.value : undefined;
+}
+
+// Why a skill dir must not be replaced, or undefined when replacement is
+// safe. A layer that symlinks into the kit makes destination and source the
+// same folder: deleting it would delete the kit's own sources (this repo's
+// `.agents/skills` links there). A destination inside the kit tree is an
+// install pointed at the kit repo itself, never a consumer project. A path
+// that does not exist yet resolves through its parent, so creating a sidecar
+// beside a symlinked dir cannot smuggle files into the kit either.
+function refreshBlocked(ctx: Ctx, rel: string, srcDir: string): string | undefined {
+  const full = join(ctx.dest, rel);
+  const realDest = realDir(full) ?? realDir(dirname(full));
+  const realSrc = realDir(srcDir);
+  if (realDest !== undefined && realSrc !== undefined && realDest === realSrc) {
+    return "same directory as the kit source (symlinked install), left untouched";
+  }
+  const realKit = realDir(ctx.kit);
+  if (realDest !== undefined && realKit !== undefined && (realDest === realKit || realDest.startsWith(`${realKit}${sep}`))) {
+    return "inside the kit source tree, left untouched";
+  }
+  return undefined;
+}
+
+// True when an existing provider sidecar is a kit copy, safe to replace: it
+// matches the current kit bytes, this install's record, or a recorded older
+// version (SKILL.md compared with the sidecar name mapped back to the kit
+// name). Anything else is user work and must be preserved.
+function layerSidecarKitOwned(ctx: Ctx, kitName: string, sidecarRel: string, installed: ReadonlySet<string>): boolean {
+  if (layerSidecarUpToDate(ctx, kitName, sidecarRel, `zk-${kitName}`, installed)) return true;
+  if (manifestOwnsSkillDir(ctx, sidecarRel)) return true;
+  const files = treeFiles(join(ctx.dest, sidecarRel));
+  if (!files) return false;
+  return files.every((file) => {
+    const raw = tryCatch(() => readFileSync(join(ctx.dest, sidecarRel, ...file.split("/")), "utf8"));
+    if (!raw.ok) return false;
+    const text = file === "SKILL.md" ? (withSidecarSkillName(raw.value, kitName) ?? raw.value) : raw.value;
+    return isKitSkillCopy(`${kitName}/${file}`, text);
+  });
+}
+
+// Why the provider sidecar must not be (re)written, or undefined when the
+// copy may proceed. The callers check before logging the action, so a skip
+// never follows a copy for the same path.
+function sidecarBlocker(ctx: Ctx, kitName: string, sidecarRel: string, installed: ReadonlySet<string>): string | undefined {
+  const srcDir = join(ctx.kit, "skills", kitName);
+  if (!existsSync(join(srcDir, "SKILL.md"))) {
+    return `kit has no skill "${kitName}" (project skill kept, no sidecar written)`;
+  }
+  const blocked = refreshBlocked(ctx, sidecarRel, srcDir);
+  if (blocked !== undefined) return blocked;
+  const existing = lstatOf(join(ctx.dest, sidecarRel));
+  if (existing?.isDirectory() === true && !existing.isSymbolicLink() && !layerSidecarKitOwned(ctx, kitName, sidecarRel, installed)) {
+    return "kept (user-modified sidecar is not a kit copy; diff and merge by hand)";
+  }
+  return undefined;
+}
+
 // Copy the kit skill into the provider layer under its renamed identity.
 // Never writes through the layer link: the canonical source stays shared.
 function copyLayerSkillSidecar(ctx: Ctx, kitName: string, sidecarRel: string, installed: ReadonlySet<string>): void {
@@ -346,6 +408,11 @@ function place(
     }
     if (ctx.adopt && canAdopt(rel)) {
       const alt = adoptRel(rel);
+      const kitBlocked = refreshBlocked(ctx, alt, join(ctx.dest, rel));
+      if (kitBlocked !== undefined) {
+        ctx.actions.push({ kind: "skip", path: rel, note: kitBlocked });
+        return undefined;
+      }
       const altBlocked = obstacle(ctx, alt);
       ctx.actions.push({ kind: "skip", path: rel, note: `kept user file; kit → ${alt}` });
       if (altBlocked) {
@@ -612,9 +679,14 @@ function installContent(ctx: Ctx, content: ReturnType<typeof plan>): Map<string,
           ? "earlier kit copy"
           : undefined;
       if (via !== undefined) {
-        ctx.actions.push({ kind: "copy", path: rel, note: `updated (${via})` });
-        refreshSkillDir(ctx, name, rel, installed);
-        recordSkillDir(ctx, rel);
+        const blocked = refreshBlocked(ctx, rel, join(ctx.kit, "skills", name));
+        if (blocked !== undefined) {
+          ctx.actions.push({ kind: "skip", path: rel, note: blocked });
+        } else {
+          ctx.actions.push({ kind: "copy", path: rel, note: `updated (${via})` });
+          refreshSkillDir(ctx, name, rel, installed);
+          recordSkillDir(ctx, rel);
+        }
         skillDest.set(name, rel);
         continue;
       }
@@ -719,6 +791,11 @@ function linkPresentSkills(
         if (layerSidecarUpToDate(ctx, name, sidecarRel, zkName, installed)) {
           ctx.actions.push({ kind: "skip", path: sidecarRel, note: "already installed" });
           recordSkillDir(ctx, sidecarRel);
+          continue;
+        }
+        const blocker = sidecarBlocker(ctx, name, sidecarRel, installed);
+        if (blocker !== undefined) {
+          ctx.actions.push({ kind: "skip", path: sidecarRel, note: blocker });
           continue;
         }
         ctx.actions.push({

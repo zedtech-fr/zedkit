@@ -196,6 +196,7 @@
       "8a691a1aacbcc7f5",
       "935975acef71d885",
       "a651711c3b3f8c49",
+      "be70e283fd3c0282",
       "c0bbb75e2a9cccf9",
       "c7703ad9afc009f8",
       "d302d20c23d10d72",
@@ -251,6 +252,7 @@
       "2059b7338efd3ecf",
       "37c49f204f3aed01",
       "478f723c65c48aeb",
+      "7cafb67b79878019",
       "83ebef32e277009a",
       "e73daec3a4ccd659",
       "eafe35e0dca2a862",
@@ -287,7 +289,11 @@
       "93f04cce65bbb02d"
     ],
     "research/agents/openai.yaml": ["9b4c470d63221c1f"],
-    "retro/SKILL.md": ["0840f7ebc1a7d44e", "cd39231a30de7888"],
+    "retro/SKILL.md": [
+      "0840f7ebc1a7d44e",
+      "33fbc28568e3146f",
+      "cd39231a30de7888"
+    ],
     "retro/agents/openai.yaml": ["cb6fb9d7e6b4be59"],
     "review/SKILL.md": [
       "0e172acaade560ea",
@@ -331,6 +337,7 @@
       "44a3e5fce7668db8",
       "46d7fd7aab1eef1d",
       "495e11fb447d27d7",
+      "4aa98cf6673c66be",
       "5f9096c3f1d2b70f",
       "66344fe97c596bcd",
       "6fa876cfe0ea7206",
@@ -357,13 +364,17 @@
     ],
     "setup-ai/SKILL.md": [
       "06c4b8695c60b01f",
+      "14c4519b0d1f87bf",
       "18891cafb880ac3f",
+      "1d032a4b4e8f2ab2",
       "21802b670e825165",
       "2fd5a1ca8285d0d7",
       "36787fa5600e9565",
       "3fc684fac0f2b7c2",
+      "4c6dc934a0cc8e02",
       "53f71f6d905308c6",
       "551fca6b06a1ee1b",
+      "588ba26a4f4ac425",
       "5b183daa1f9016e8",
       "5c9f06800f42b59d",
       "695f01d439f826e2",
@@ -378,6 +389,7 @@
       "95817b319b01c034",
       "a11656fdf61474f1",
       "a722b36a6c2f0d0d",
+      "abdfb498878bdeb6",
       "b0b612342b40a099",
       "b1432fadd96b6842",
       "b46bb07fa17258be",
@@ -483,7 +495,8 @@
     "tdd/SKILL.md": [
       "869d46e15eb513b9",
       "8855506d6b34650e",
-      "9ab926777de111b8"
+      "9ab926777de111b8",
+      "d77b11aa9f76b1a0"
     ],
     "tdd/agents/openai.yaml": ["ea6f01cf1b8c06a4"],
     "tdd/mocking.md": ["3ceb807fdf4a47d6"],

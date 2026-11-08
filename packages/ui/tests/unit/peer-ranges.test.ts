@@ -16,16 +16,16 @@ function peersOf(packageJson: string): Record<string, string> {
 const THIS_PACKAGE = peersOf(join(uiRoot, "package.json"));
 const PAYLOAD_SEO_PACKAGE = peersOf(join(repo, "packages", "payload-seo", "package.json"));
 
-describe("published peer dependencies are installable ranges (D1)", () => {
+describe("published peer dependencies declare installable floors (D1)", () => {
   it("ui peers accept newer minors instead of pinning the catalog exact", () => {
     const peers = THIS_PACKAGE;
     expect(Object.keys(peers).length).toBeGreaterThan(0);
     for (const [name, range] of Object.entries(peers)) {
       // No catalog: pins, no bare versions: npm ERESOLVEs otherwise.
-      // Floors admit every React 19 / Tailwind 4 minor (including today's
-      // scaffold defaults); CI installs scaffold defaults (pnpm + npm cells)
-      // while tailwind ^4 resolves to newest.
-      expect(range, `${name} peer range`).toMatch(/^\^/u);
+      // This asserts the declared floor shape only; the compatibility proof
+      // is the smoke cells, which install real scaffold defaults (CNA React
+      // 19.3.x, Tailwind 4) against these ranges on pnpm and npm.
+      expect(range, `${name} peer range`).toMatch(/^\^19\.0\.0$|^\^4\.0\.0$/u);
     }
   });
 

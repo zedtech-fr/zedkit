@@ -2,9 +2,11 @@
 // Regenerates kit/legacy-hashes.json: a short hash of every version of every
 // shipped agent, command, and skill file, as an older `init` would have copied
 // it (the kit text with its conditional blocks resolved for each preset;
-// lenses.md additionally lens-patched for that preset). `sync`, `validate`
-// and `install` treat an unmarked file with one of these hashes as a copy of
-// the kit, not as user work. Needs git history for new hashes and a built
+// lenses.md additionally lens-patched for that preset), plus the rendered
+// files of every tests/fixtures/skills-v<version>-* published install.
+// `sync`, `validate` and `install` treat an unmarked file with one of these
+// hashes as a copy of the kit, not as user work. Needs git history for new
+// hashes and a built
 // `dist/`. Merges with the file already on disk so a shallow or reset clone
 // cannot drop legitimate hashes; exits before writing when a prior hash
 // would be lost.
@@ -122,6 +124,43 @@ for (const entry of readdirSync(join(kit, "skills"), { withFileTypes: true })
     const key = `${entry}/${rel}`;
     const got = tryCatch(() => skillHashesOf(entry, rel));
     computed.skills[key] = got.ok ? got.value : [];
+  }
+}
+
+// Published-version fixtures (tests/fixtures/skills-v<version>-*): rendered
+// installs no git history can reproduce, lenses patched and conditionals
+// resolved with that version's avail. Unioned into the skills map like any
+// recorded version, so a historic install upgrades in place.
+function fixtureSkillFiles(fixtureDir, skill) {
+  const found = [];
+  const walk = (dir, base) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      const rel = base === "" ? entry.name : `${base}/${entry.name}`;
+      if (entry.isDirectory()) walk(full, rel);
+      else if (entry.isFile()) found.push(rel.split(sep).join("/"));
+    }
+  };
+  walk(join(fixtureDir, skill), "");
+  return found.sort();
+}
+
+const fixturesRoot = join(root, "tests", "fixtures");
+const fixtureDirs = tryCatch(() => readdirSync(fixturesRoot, { withFileTypes: true }));
+if (fixtureDirs.ok) {
+  for (const fixture of fixtureDirs.value.filter((e) => e.isDirectory() && e.name.startsWith("skills-v")).map((e) => e.name).sort()) {
+    const fixtureDir = join(fixturesRoot, fixture);
+    for (const skill of readdirSync(fixtureDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
+      .sort()) {
+      for (const rel of fixtureSkillFiles(fixtureDir, skill)) {
+        const key = `${skill}/${rel}`;
+        const raw = tryCatch(() => readFileSync(join(fixtureDir, skill, ...rel.split("/")), "utf8"));
+        if (!raw.ok) continue;
+        computed.skills[key] = [...new Set([...(computed.skills[key] ?? []), short(raw.value)])].sort();
+      }
+    }
   }
 }
 const hashesPath = join(kit, "legacy-hashes.json");

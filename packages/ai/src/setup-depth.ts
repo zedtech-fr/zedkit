@@ -240,7 +240,7 @@ function routing(root: string, issues: Issue[]): void {
       issues.push({
         path: policyPath,
         message:
-          "warning: D4 tokenomics: cells stay on inherit (recorded tool limitation); routing stays manual and this setup is partial, not complete",
+          "D4 tokenomics: cells stay on inherit (recorded tool limitation); routing stays manual and this setup is partial, not complete",
       });
     } else {
       issues.push({
