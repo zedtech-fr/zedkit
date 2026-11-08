@@ -249,6 +249,11 @@
   border-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
 }
 
+/* Look controls on the home demo. The outline is 70% of the border colour. */
+[data-look-control] {
+  border-color: color-mix(in oklab, hsl(var(--border)) 70%, transparent);
+}
+
 /* Identity dock + inline assistant: type roles via tokens (not Tailwind text-*). */
 [data-testid="identity-dock"] [data-assistant-status],
 [data-testid="identity-dock"] [data-assistant-feedback],
