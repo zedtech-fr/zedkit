@@ -56,6 +56,9 @@
   --zk-bg-attach: scroll;
   /* Motion personality (see motion.css). Interaction durations are
    * capped for every identity: fast/base <= 200ms, slow <= 300ms. */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 250ms;
   --zk-reveal-duration: 300ms;
   --zk-reveal-distance: 0.75rem;
   --zk-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);

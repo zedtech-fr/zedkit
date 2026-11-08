@@ -7,6 +7,7 @@
 // registry:build` writes the result into registry.json; the drift test
 // in theme-tokens.test.mjs compares the committed file against a fresh
 // generation, and the copy-css closure test compiles the payload.
+import { createRequire } from "node:module";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
@@ -162,6 +163,112 @@ function topLevelRulesFromCss(css, keep) {
 
 const STRIP_COMMENTS = (css) => css.replace(/\/\*[\s\S]*?\*\//g, "");
 
+const COLOR_ALIAS = /^hsl\(\s*(var\(--[\w-]+\))\s*\)$/;
+
+/** shadcn wraps space-separated HSL. Ship already-wrapped values so it does not wrap twice. */
+function wrapLocalHsl(vars) {
+  const out = {};
+  for (const [key, value] of Object.entries(vars)) {
+    const text = String(value).trim();
+    const parts = text.split(/\s+/);
+    const triplet = parts.length === 3 && parts.slice(1).every((part) => part.includes("%"));
+    out[key] = triplet && !text.startsWith("hsl") && !text.startsWith("rgb") ? `hsl(${text})` : text;
+  }
+  return out;
+}
+
+/** `--color-primary: hsl(var(--primary))` becomes `var(--primary)` once --primary is already hsl(). */
+function rewriteColorAliases(vars) {
+  const out = { ...vars };
+  for (const [key, value] of Object.entries(out)) {
+    if (!key.startsWith("color-")) continue;
+    const match = String(value).trim().match(COLOR_ALIAS);
+    if (match) out[key] = match[1];
+  }
+  return out;
+}
+
+function dropColorAliases(vars) {
+  const out = { ...vars };
+  for (const [key, value] of Object.entries(out)) {
+    if (key.startsWith("color-") && COLOR_ALIAS.test(String(value).trim())) delete out[key];
+  }
+  return out;
+}
+
+function postcssFromUi(root) {
+  return createRequire(join(root, "packages/ui/package.json"))("postcss");
+}
+
+function normalizeSelector(selector) {
+  return selector.replace(/\s+/g, " ").trim();
+}
+
+function ruleObject(rule) {
+  const out = {};
+  for (const node of rule.nodes ?? []) {
+    if (node.type === "decl") out[node.prop] = node.value;
+    else if (node.type === "rule") out[normalizeSelector(node.selector)] = ruleObject(node);
+    else if (node.type === "atrule") {
+      const key = node.params ? `@${node.name} ${node.params}` : `@${node.name}`;
+      out[key] = node.nodes ? ruleObject(node) : {};
+    }
+  }
+  return out;
+}
+
+function wrapPath(rule) {
+  const path = [];
+  for (let node = rule.parent; node && node.type !== "root"; node = node.parent) {
+    if (node.type === "atrule") {
+      if (node.name === "layer" || node.name === "utility" || node.name === "theme" || node.name === "keyframes") {
+        return null;
+      }
+      path.unshift(node.params ? `@${node.name} ${node.params}` : `@${node.name}`);
+    }
+  }
+  return path;
+}
+
+function isColorRoleRule(rule) {
+  const selector = normalizeSelector(rule.selector);
+  if (selector !== ":root" && selector !== ".dark") return false;
+  const primary = (rule.nodes ?? []).find((node) => node.type === "decl" && node.prop === "--primary");
+  return Boolean(primary && /^\d/.test(primary.value.trim()));
+}
+
+function isTokenSelector(selector) {
+  return /:root|\.dark|\[data-identity|\[data-motion/.test(selector);
+}
+
+function nestCss(target, path, value) {
+  let current = target;
+  for (const key of path.slice(0, -1)) {
+    if (!current[key] || typeof current[key] !== "object") current[key] = {};
+    current = current[key];
+  }
+  const last = path.at(-1);
+  if (current[last] && typeof current[last] === "object" && typeof value === "object") {
+    mergeCssObject(current[last], value);
+  } else current[last] = value;
+}
+
+/** Every :root / identity / reduced-motion rule, including later blocks and @media. */
+export function tokenRulesFromCss(css, postcss) {
+  const out = {};
+  const parsed = postcss.parse(css);
+  parsed.walkRules((rule) => {
+    const path = wrapPath(rule);
+    if (!path) return;
+    const selector = normalizeSelector(rule.selector);
+    const inMotionMedia = path.some((part) => part.includes("prefers-reduced-motion"));
+    if (!inMotionMedia && !isTokenSelector(selector)) return;
+    if (isColorRoleRule(rule)) return;
+    nestCss(out, [...path, selector], ruleObject(rule));
+  });
+  return out;
+}
+
 /**
  * Full theme payload for the registry `theme` item.
  * @param {string} root repo root
@@ -171,19 +278,16 @@ export function generateThemePayload(root) {
   const srcDir = join(root, "packages/ui/src");
   const css = STRIP_COMMENTS(readFileSync(join(srcDir, "styles.css"), "utf8"));
   const identities = STRIP_COMMENTS(readFileSync(join(srcDir, "identities.css"), "utf8"));
-  // Sibling sheets styles.css imports also define utilities/keyframes
-  // (motion, type roles, signature motion...). Follow its @import list.
   const siblingSheets = [];
   for (const match of css.matchAll(/@import\s+"\.\/([\w./-]+\.css)"/g)) {
     if (match[1] === "identities.css") continue;
     siblingSheets.push({ name: match[1], css: STRIP_COMMENTS(readFileSync(join(srcDir, match[1]), "utf8")) });
   }
-  const siblings = siblingSheets.map((sheet) => sheet.css).join("\n");
+  const stockSiblings = siblingSheets.filter((sheet) => !sheet.name.startsWith("identities/"));
+  const siblings = stockSiblings.map((sheet) => sheet.css).join("\n");
   const used = classTokensFromSources(join(root, "registry/ui"));
   const utilities = utilitiesFromCss(css + siblings);
 
-  // zk-query is the consumer-applied slot marker: copied bricks never
-  // reference it themselves, but copy consumers need it to opt slots in.
   used.add("zk-query");
   const cssPayload = {};
   for (const [name, body] of [...utilities.entries()].sort(([a], [b]) => a.localeCompare(b))) {
@@ -196,38 +300,24 @@ export function generateThemePayload(root) {
     cssPayload,
     topLevelRulesFromCss(css, (selector) => /data-vaul|data-sonner/.test(selector)),
   );
-  // Density scope rule (single definition site in styles.css).
-  const density = findBlock(css, ":root,\n[data-identity-scope]");
-  cssPayload[":root, [data-identity-scope]"] = cssObjectFromBody(density);
 
-  const light = {
-    ...varsFromBody(findBlock(css, ":root")),
-    ...varsFromBody(findBlock(identities, ":root")),
-    // Shared identity defaults (--spacing, fonts, radii) live in the
-    // `:root[data-identity], [data-identity-scope][data-identity]` block.
-    ...varsFromBody(findBlock(identities, ":root[data-identity],")),
-  };
-  const dark = varsFromBody(findBlock(css, "\n.dark"));
-  const theme = varsFromBody(findBlock(css, "@theme inline"));
-  // Non-identity sibling sheets may add :root/@theme vars (motion
-  // tokens, type scale under `:root[data-identity], ...`). Per-identity
-  // sheets are skipped: the copy theme carries the stock identity only.
-  for (const sheet of siblingSheets) {
-    if (sheet.name.startsWith("identities/")) continue;
-    for (const match of sheet.css.matchAll(/(?::root|@theme)[^{]*\{/g)) {
-      const selector = match[0].slice(0, -1).trim();
-      const parts = selector.split(",").map((part) => part.trim());
-      const isVarScope = parts.every(
-        (part) => part.startsWith(":root") || part.startsWith("[data-identity-scope]") || part.startsWith("@theme"),
-      );
-      if (!isVarScope || selector.includes("::")) continue;
-      const { body } = blockBody(sheet.css, sheet.css.indexOf("{", match.index));
-      Object.assign(selector.startsWith("@theme") ? theme : light, varsFromBody(body));
+  const postcss = postcssFromUi(root);
+  const tokenSheets = [css, identities, ...stockSiblings.map((sheet) => sheet.css)];
+  for (const sheet of tokenSheets) mergeCssObject(cssPayload, tokenRulesFromCss(sheet, postcss));
+
+  const theme = rewriteColorAliases(varsFromBody(findBlock(css, "@theme inline")));
+  for (const sheet of stockSiblings) {
+    for (const match of sheet.css.matchAll(/@theme[^{]*\{/g)) {
+      Object.assign(theme, rewriteColorAliases(varsFromBody(blockBody(sheet.css, sheet.css.indexOf("{", match.index)).body)));
     }
   }
 
   return {
-    cssVars: { light, dark, theme },
+    cssVars: {
+      light: wrapLocalHsl(dropColorAliases(varsFromBody(findBlock(css, ":root")))),
+      dark: wrapLocalHsl(dropColorAliases(varsFromBody(findBlock(css, "\n.dark")))),
+      theme,
+    },
     css: cssPayload,
   };
 }
