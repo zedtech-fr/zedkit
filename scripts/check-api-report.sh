@@ -4,7 +4,9 @@
 # server .d.ts dump) and fails on report drift.
 # A report that changed versus origin/main also needs a changeset; a
 # removed or renamed export needs minor (0.x breaking) or major.
-# Catch-up: added exports already in origin/main source do not bump again.
+# Catch-up: HEAD may add complete public declarations only when they already
+# exist equivalently in origin/main source; any other report delta still
+# needs a changeset. Name hits in comments or imports do not count.
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
