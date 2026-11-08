@@ -541,6 +541,11 @@ ol[data-sonner-toaster] {
   translate: calc(var(--spacing-dialog-center) * -1) calc(var(--spacing-dialog-center) * -1);
 }
 
+/* Option card. The hidden input is focused, so the card itself draws the focus width. */
+[data-slot="option-card"]:has(:focus-visible) {
+  outline: var(--ring-width) solid hsl(var(--ring));
+}
+
 /* Controls (Button, Input, …): focus weight comes from `--ring-width-control` (2px or more). */
 @utility focus-ring-control {
   &:focus-visible {
