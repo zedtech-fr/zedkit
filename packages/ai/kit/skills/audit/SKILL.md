@@ -29,6 +29,9 @@ Sibling entrypoints called from here get `Playbook: <name>` so they do not re-en
    Write the report as you go, in the configured tracker or
    `.scratch/<slug>/audit.md` (git-ignored, never `docs/`); that file is the
    resume point across turns — reopen and extend it instead of restarting.
+   Persist by default per handoff's Durable deliverables section: chat summarizes
+   the outcome and links the saved files; an explicit `chat-only` or
+   `no-write` request stays in chat and writes nothing.
    If your tool offers a native durable-goal mechanism, register the
    objective there; if it does not, the report file carries continuity.
    Do not invent a goal tool you do not have.

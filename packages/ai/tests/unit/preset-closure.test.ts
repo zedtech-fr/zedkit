@@ -74,6 +74,7 @@ describe("preset closure", () => {
       "fix",
       "improve-from-review",
       "quick-wins",
+      "handoff",
     ]);
     expect(agentsForPreset(manifest.value, "setup")).toEqual([
       "explorer",
@@ -490,6 +491,20 @@ describe("preset closure", () => {
         `${file}: references agent "console-architecture", which this preset does not install`,
       );
       expect(found.some((entry) => entry.includes('"copywriter"'))).toBe(false);
+    }
+  });
+
+  it("installs the handoff skill in every preset whose skills point at its contract", () => {
+    for (const preset of ["setup", "core", "full"]) {
+      const dest = tempDir();
+      install(dest, preset);
+      const handoff = join(dest, ".agents/skills/handoff/SKILL.md");
+      expect(existsSync(handoff), `${preset} installs handoff`).toBe(true);
+      expect(readFileSync(handoff, "utf8")).toContain("Durable deliverables");
+      const found = validateKit(join(dest, ".agents")).map(
+        (issue) => `${issue.path}: ${issue.message}`,
+      );
+      expect(found.some((entry) => entry.includes('"handoff"')), `${preset}: ${found.join("\n")}`).toBe(false);
     }
   });
 });

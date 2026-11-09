@@ -98,7 +98,7 @@
           "status": "stable",
           "shortName": "Gate log",
           "audience": "Agents and maintainers who run lint, test or build gates and need the result as evidence.",
-          "purpose": "Run a shell command and write a gate log in the `CMD:` / `START:` / `END:` / `EXIT:<code>` shape that `zedkit-ai validate --setup` checks, with the V8 heap capped and a `CAUSE:` line when the command times out, is killed or runs out of memory.",
+          "purpose": "Run a shell command and write a gate log in the `CMD:` / `START:` / `END:` / `EXIT:<code>` shape that `zedkit-ai validate --setup` checks, with the V8 heap capped and a `CAUSE:` line when the command times out, is killed or runs out of memory. The finished file is published atomically on close, so the final path is never a half-written file.",
           "whenToUse": "When a setup run, a handoff or a PR cites a gate and the log must outlive the chat.",
           "whenNotToUse": "For interactive commands or when a CI job already stores its own log.",
           "derivedFrom": null,

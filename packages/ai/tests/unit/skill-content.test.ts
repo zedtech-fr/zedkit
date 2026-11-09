@@ -234,6 +234,37 @@ describe("skill content conventions", () => {
     expect(upkeep).toContain("prefixed `**/`");
   });
 
+  it("durable deliverables persist by default, amend in place, and warn that .scratch is not portable", () => {
+    const handoff = readFileSync(
+      join(kitDir(), "skills", "handoff", "SKILL.md"),
+      "utf8",
+    );
+    expect(handoff).toContain("## Durable deliverables (persist by default)");
+    expect(handoff).toContain("chat is the summary, files are the record");
+    expect(handoff).toContain("explicit `chat-only` or `no-write` request stays in chat");
+    expect(handoff).toContain("amend the artifact instead of forking");
+    expect(handoff).toContain("does not travel across clones");
+    expect(handoff).toContain("names every required artifact");
+    for (const skill of ["audit", "plan", "from-audit"]) {
+      const text = readFileSync(
+        join(kitDir(), "skills", skill, "SKILL.md"),
+        "utf8",
+      );
+      expect(text, skill).toContain("per handoff's Durable deliverables section");
+    }
+    const implement = readFileSync(
+      join(kitDir(), "skills", "implement", "SKILL.md"),
+      "utf8",
+    );
+    expect(implement).toContain("Read the saved plan first and keep its checklist current");
+    const fromAudit = readFileSync(
+      join(kitDir(), "skills", "from-audit", "SKILL.md"),
+      "utf8",
+    );
+    expect(fromAudit).toContain("Prefer the saved audit file");
+    expect(fromAudit).toContain(".scratch/<slug>/spec.md");
+  });
+
   it("unconfigured plans default to git-ignored .scratch, never docs", () => {
     const plan = readFileSync(
       join(kitDir(), "skills", "plan", "SKILL.md"),

@@ -70,7 +70,7 @@ Need: size a repo and cut it for parallel read-only readers. CLI: `zedkit-ai sca
 - Status: stable
 - Short name: Gate log
 - Audience: Agents and maintainers who run lint, test or build gates and need the result as evidence.
-- Purpose: Run a shell command and write a gate log in the `CMD:` / `START:` / `END:` / `EXIT:<code>` shape that `zedkit-ai validate --setup` checks, with the V8 heap capped and a `CAUSE:` line when the command times out, is killed or runs out of memory.
+- Purpose: Run a shell command and write a gate log in the `CMD:` / `START:` / `END:` / `EXIT:<code>` shape that `zedkit-ai validate --setup` checks, with the V8 heap capped and a `CAUSE:` line when the command times out, is killed or runs out of memory. The finished file is published atomically on close, so the final path is never a half-written file.
 - When to use: When a setup run, a handoff or a PR cites a gate and the log must outlive the chat.
 - When not to use: For interactive commands or when a CI job already stores its own log.
 - See also: `Check that skills, subagents, commands and provider copies are valid`

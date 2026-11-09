@@ -63,7 +63,7 @@ Stdout ends with `dry run: nothing written` and no new files on disk.
 **Expected result:** exit code `0` and a single line on stdout:
 
 ```text
-ok
+ok — structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate
 ```
 
 If skills, commands, or provider copies drift, you get `path: message` lines and a non-zero exit (see `validate` in [`cli.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/cli.ts)).
@@ -91,7 +91,7 @@ You already maintain team rules at the root:
 Use our internal style guide.
 ```
 
-Run the same `init` command. When `AGENTS.md` exists but lacks the kit ladder section, `init` **appends** the ladder instead of replacing your text ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). Run `validate` again; stdout should still be `ok`. Automated checks cover this flow.
+Run the same `init` command. When `AGENTS.md` exists but lacks the kit ladder section, `init` **appends** the ladder instead of replacing your text ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). Run `validate` again; stdout should still start with `ok — structural kit checks only`. Automated checks cover this flow.
 
 ## What gets installed
 

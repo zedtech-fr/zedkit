@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { utimesSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
@@ -76,6 +77,92 @@ describe("checkSetup", () => {
     put(root, ".agents/setup-log/gates/run.log", GOOD_LOG);
     put(root, ".agents/setup-log.md", "| gates/run.log | pnpm test | 0 |\n");
     expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
+  });
+
+  it("ignores an orphaned gate tmp with no final log", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/gates/run.log.tmp-123-4", "CMD: pnpm test\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "# Log\n");
+    expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
+  });
+
+  it("flags a final log with a newer unpublished tmp as historical", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/gates/run.log", GOOD_LOG);
+    put(root, ".agents/setup-log/gates/run.log.tmp-123-4", "CMD: pnpm test\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| gates/run.log | pnpm test | 0 |\n");
+    utimesSync(join(root, ".agents/setup-log/gates/run.log"), new Date(Date.now() - 30000), new Date(Date.now() - 30000));
+    const messages = checkSetup(root).issues.map((i) => i.message);
+    expect(messages).toContain("run.log may be historical: an unpublished gate attempt (run.log.tmp-123-4) exists — re-run the gate to publish fresh evidence");
+  });
+
+  it("ignores an orphaned tmp older than the published final log", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/gates/run.log", GOOD_LOG);
+    put(root, ".agents/setup-log/gates/run.log.tmp-123-4", "CMD: pnpm test\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| gates/run.log | pnpm test | 0 |\n");
+    utimesSync(join(root, ".agents/setup-log/gates/run.log.tmp-123-4"), new Date(Date.now() - 30000), new Date(Date.now() - 30000));
+    expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
+  });
+
+  it("flags validate.log as historical when a newer unpublished capture exists beside it", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", GOOD_LOG);
+    put(root, ".agents/setup-log/validate.log.tmp-7-0", "CMD: validate\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 0 |\n");
+    utimesSync(join(root, ".agents/setup-log/validate.log"), new Date(Date.now() - 30000), new Date(Date.now() - 30000));
+    const messages = checkSetup(root).issues.map((i) => i.message);
+    expect(messages).toContain("validate.log may be historical: an unpublished gate attempt (validate.log.tmp-7-0) exists — re-run the gate to publish fresh evidence");
+  });
+
+  it("ignores an orphaned validate.log tmp older than the published final", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", GOOD_LOG);
+    put(root, ".agents/setup-log/validate.log.tmp-7-0", "CMD: validate\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 0 |\n");
+    utimesSync(join(root, ".agents/setup-log/validate.log.tmp-7-0"), new Date(Date.now() - 30000), new Date(Date.now() - 30000));
+    expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
+  });
+
+  it("exempts validate.log history while its own gate capture replaces it", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", GOOD_LOG);
+    put(root, ".agents/setup-log/validate.log.tmp-7-0", "CMD: validate\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 0 |\n");
+    const prev = process.env.ZEDKIT_GATE_LOG;
+    process.env.ZEDKIT_GATE_LOG = join(root, ".agents/setup-log/validate.log");
+    const found = checkSetup(root).issues.map((i) => i.message);
+    if (prev === undefined) delete process.env.ZEDKIT_GATE_LOG;
+    else process.env.ZEDKIT_GATE_LOG = prev;
+    expect(found).toEqual([]);
+  });
+
+  it("a stale failing validate.log blocks recovery until its own capture replaces it", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", "CMD: validate\nSTART\nEND\nEXIT:1\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 1 |\n");
+    const failing = "validate.log is from a failing run: fix the issues and re-run validate --setup before scoring";
+    expect(checkSetup(root).issues.map((i) => i.message)).toContain(failing);
+    const prev = process.env.ZEDKIT_GATE_LOG;
+    process.env.ZEDKIT_GATE_LOG = join(root, ".agents/setup-log/validate.log");
+    const captured = checkSetup(root).issues.map((i) => i.message);
+    if (prev === undefined) delete process.env.ZEDKIT_GATE_LOG;
+    else process.env.ZEDKIT_GATE_LOG = prev;
+    expect(captured).not.toContain(failing);
   });
 
   it("issues when a persisted gate log has no setup-log inventory row", () => {
@@ -247,7 +334,10 @@ describe("validate --setup", () => {
     put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
     put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
     put(root, "lost.txt", "x\n");
-    expect(run("validate", root)).toEqual({ code: 0, text: "ok", errors: "" });
+    const plain = run("validate", root);
+    expect(plain.code).toBe(0);
+    expect(plain.errors).toBe("");
+    expect(plain.text).toMatch(/^ok — structural kit checks only/u);
     const setup = run("validate", root, "--setup");
     expect(setup.code).toBe(1);
     expect(setup.text).toContain("plan misses lost.txt");

@@ -282,6 +282,7 @@ describe("validate: agent header contract (agents.meta.json)", () => {
     const out: string[] = [];
     const code = main(["validate", root], { out: (line) => out.push(line), err: (line) => out.push(line) });
     expect(code).toBe(0);
-    expect(out).toEqual(["ok"]);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatch(/^ok — structural kit checks only/u);
   });
 });

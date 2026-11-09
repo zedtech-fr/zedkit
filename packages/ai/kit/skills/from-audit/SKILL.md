@@ -18,7 +18,9 @@ Go deep, be strict, and be brutally honest.
 
 ## Process
 
-1. **Read the audit.** Path, paste, or `$ARGUMENTS`. List each finding as a
+1. **Read the audit.** Prefer the saved audit file (same slug/folder) when
+   one exists — continuity per handoff's Durable deliverables section — else path,
+   paste, or `$ARGUMENTS`. List each finding as a
    claim (what, where, kind, severity). If there is no audit, stop and
    point at `to-audit`.
 2. **Revalidate against the current state.** Audits go stale. For every
@@ -46,9 +48,12 @@ Go deep, be strict, and be brutally honest.
    - **Research spike** — the question, what evidence closes it, timebox.
    - **Owner decision** — the choice, options, and what each costs; the
      agent does not decide it.
-     Default home: the configured tracker; else `.scratch/<slug>/issues/` —
-     git-ignored, never `docs/`. Reuse the audit's own slug/folder when it
-     has one. High-quality means a newcomer can start from the task alone.
+     Default home: the configured tracker; else `.scratch/<slug>/spec.md`
+     beside its `issues/` — git-ignored, never `docs/`. Reuse the audit's
+     own slug/folder when it has one; amend that artifact instead of forking
+     a second one. High-quality means a newcomer can start from the task alone.
+     Persist by default per handoff's Durable deliverables section: chat summarizes
+     the outcome and links the saved files.
      After writing, search the plan for every phrase this turn withdrew. A
      withdrawn rule left as a current instruction fails the plan. A
      "blocked by" edge that disagrees with the order arrow fails it too.

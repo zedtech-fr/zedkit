@@ -238,7 +238,13 @@ function runValidate(args: string[], sinks: Sinks): number {
     (issue) => !issue.message.startsWith("warning:"),
   );
   if (failing.length === 0) {
-    sinks.out("ok");
+    const scope =
+      parsed.value.values.setup === true
+        ? "skills, agents, commands, wiring, tokenomics, atlas paths, setup-log shape, plan coverage, depth"
+        : "skills, agents, commands, wiring, tokenomics, atlas paths";
+    sinks.out(
+      `ok — structural kit checks only (${scope}); browser rendering, focus, hosting and on-target behavior are NOT checked by validate`,
+    );
     return 0;
   }
   sinks.out(

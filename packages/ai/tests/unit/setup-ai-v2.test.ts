@@ -275,6 +275,41 @@ describe("setup-ai v2 kit", () => {
     expect(log).toContain("sed 's/^EXIT://'");
   });
 
+  it("gate capture goes through the gate command, never hand-written prose", () => {
+    const raw = readFileSync(
+      join(kitDir(), "skills", "setup-ai", "SKILL.md"),
+      "utf8",
+    );
+    const gateBlock = raw.slice(
+      raw.indexOf("Gate execution log"),
+      raw.indexOf("OOM-safe fallback"),
+    );
+    expect(gateBlock).toContain("zedkit-ai gate .agents/setup-log/gates/");
+    expect(gateBlock).toContain("never hand-written");
+  });
+
+  it("close-out names five verification states and what validate does not check", () => {
+    const log = readFileSync(
+      join(
+        kitDir(),
+        "skills",
+        "setup-ai",
+        "templates",
+        "setup-log.template.md",
+      ),
+      "utf8",
+    );
+    for (const state of [
+      "implemented",
+      "statically checked",
+      "behaviorally checked",
+      "deployed",
+      "verified on target",
+    ])
+      expect(log).toContain(state);
+    expect(log).toContain("NOT checked by validate");
+  });
+
   it("setup-ai SKILL and templates only name setup-preset slash commands or wrap others in conditionals", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;

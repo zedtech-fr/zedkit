@@ -1,8 +1,8 @@
 // Original work by the same author.
 import { spawn } from "node:child_process";
-import { closeSync, mkdirSync, openSync, readSync, fstatSync, writeSync } from "node:fs";
+import { closeSync, mkdirSync, openSync, readSync, fstatSync, renameSync, writeSync } from "node:fs";
 import { constants } from "node:os";
-import { dirname } from "node:path";
+import { dirname, resolve as resolvePath } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 
 /** Why a gate did not end with its own exit code. */
@@ -45,12 +45,24 @@ function classify(code: number, signal: NodeJS.Signals | null, text: string): Ga
   return signal === null ? undefined : "signal";
 }
 
+let gateSeq = 0;
+
+/**
+ * Temp file in the same directory as the final log. A running gate writes
+ * only here: the final path is never a half-written file, and a command that
+ * reads its own log path sees the previous finished run (or nothing), never
+ * its own in-flight output. Published atomically on close, whatever the
+ * outcome; an uncatchable kill leaves an orphaned tmp, never a fake final.
+ */
+const tmpLog = (log: string): string => `${log}.tmp-${process.pid}-${gateSeq++}`;
+
 /** Run one gate command into `options.log` (CMD, START, output, END, CAUSE?, EXIT last). Never rejects. */
 export function runGate(options: GateOptions): Promise<Result<GateResult>> {
   const stamp = (): string => new Date().toISOString();
+  const tmp = tmpLog(options.log);
   const opened = tryCatch(() => {
     mkdirSync(dirname(options.log), { recursive: true });
-    const fd = openSync(options.log, "w+");
+    const fd = openSync(tmp, "w+");
     writeSync(fd, `CMD: ${options.cmd.replace(/\r?\n/gu, " ")}\nSTART: ${stamp()}\n`);
     return fd;
   });
@@ -61,7 +73,12 @@ export function runGate(options: GateOptions): Promise<Result<GateResult>> {
     const child = spawn(options.cmd, {
       shell: true,
       cwd: options.cwd,
-      env: withHeapCap(options.env ?? process.env, options.heapMb ?? DEFAULT_HEAP_MB),
+      env: {
+        ...withHeapCap(options.env ?? process.env, options.heapMb ?? DEFAULT_HEAP_MB),
+        // Reentrancy guard: a validate run captured into its own validate.log
+        // must judge the tree, not the previous run's file it is replacing.
+        ZEDKIT_GATE_LOG: resolvePath(options.log),
+      },
       stdio: ["ignore", fd, fd],
     });
     let forced: GateCause | undefined;
@@ -94,6 +111,7 @@ export function runGate(options: GateOptions): Promise<Result<GateResult>> {
         const lead = text === "" || text.endsWith("\n") ? "" : "\n";
         writeSync(fd, `${lead}${lines.join("\n")}\n`);
         closeSync(fd);
+        renameSync(tmp, options.log);
         return { code: exit, ...(cause !== undefined && { cause }), log: options.log };
       });
       resolve(closed.ok ? ok(closed.value) : err(closed.error));
