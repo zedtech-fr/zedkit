@@ -256,6 +256,28 @@ describe("cli", () => {
     expect(text).not.toContain("setup-log shape");
   });
 
+  it("validate green agrees with the installed close-out record: functional acceptance stays UNVERIFIED", () => {
+    const dest = tempDir();
+    expect(run("setup", dest, "--provider", "cursor").code).toBe(0);
+    const { code, text } = run("validate", dest);
+    expect(code).toBe(0);
+    expect(text).toContain("NOT checked by validate");
+    const record = readFileSync(
+      join(dest, ".agents/skills/setup-ai/templates/setup-log.template.md"),
+      "utf8",
+    );
+    for (const state of [
+      "implemented",
+      "statically checked",
+      "behaviorally checked",
+      "deployed",
+      "verified on target",
+    ])
+      expect(record).toContain(state);
+    expect(record).toContain("UNVERIFIED");
+    expect(record).toContain("NOT checked by validate");
+  });
+
   it("validate accepts a project root and reports provider-copy drift", () => {
     const root = tempDir();
     put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
