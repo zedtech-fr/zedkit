@@ -230,6 +230,7 @@
     ],
     "handoff/agents/openai.yaml": ["5c479fd562c69185"],
     "implement/SKILL.md": [
+      "19558e50a5d22b8d",
       "21096de7585ca248",
       "3c3c7c54d7049552",
       "4f7bede57e49e454",
@@ -247,7 +248,9 @@
       "aa4e9422820f83a6",
       "b3e4b0a8a7c4e27a",
       "ce8125c0a6eda1f6",
+      "ed65d4395d501870",
       "f1165a4db94fd4ca",
+      "f2a7afecdbde9dea",
       "f8174102258ecf62",
       "f92896b4faa324a0",
       "ffa307a5ef68e246"

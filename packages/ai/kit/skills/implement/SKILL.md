@@ -31,7 +31,7 @@ choices. Do not edit UI until that brief exists.
 
 Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
-Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it.
+Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it. When shortening a check's output with a pipe, preserve its exit status (`set -o pipefail` under bash, or run the check through the `gate` wrapper and inspect its captured log): a passing pipeline must never mask a failing check — piping inside the gate does not itself preserve the status.
 
 Then pass `definition-of-done`, and call the Skill tool with "review" to review the work (`Playbook: review`). Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
 
