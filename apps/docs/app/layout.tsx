@@ -13,6 +13,7 @@ import {
 import { IdentityScript } from "@zedtech/zedkit-ui";
 import { preload } from "react-dom";
 import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";
+import spaceGroteskLatin from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2";
 import { Provider } from "./provider";
 import "./globals.css";
 import "./code-syntax.css";
@@ -39,9 +40,15 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: ReactNode }) {
-  // The default identity sets Inter: fetch the Latin file with the page, so the
-  // first paint already uses it and the text does not shift when it arrives.
+  // The default identity sets Inter and Space Grotesk: fetch the Latin files
+  // with the page, so the first paint already uses them and the text does not
+  // shift when they arrive.
   preload(typeof interLatin === "string" ? interLatin : interLatin.src, {
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  });
+  preload(typeof spaceGroteskLatin === "string" ? spaceGroteskLatin : spaceGroteskLatin.src, {
     as: "font",
     type: "font/woff2",
     crossOrigin: "anonymous",
