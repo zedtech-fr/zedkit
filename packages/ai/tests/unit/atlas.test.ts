@@ -80,6 +80,34 @@ describe("checkAtlas", () => {
     expect(issues[0]?.message).toContain("excerpt");
   });
 
+  it("rejects an excerpt living in a sibling method of the same class", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "class Gate {\n  runGate() { return 1; }\n  other() { /* writes to a temp file */ }\n}\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("excerpt");
+  });
+
+  it("resolves a multiline declaration through its forward opening brace", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "export function runGate(\n  option: string,\n) {\n  // writes to a temp file\n}\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("resolves a Markdown section anchor within its own section", () => {
+    const root = project(atlas("| Policy | `docs/policy.md#Refunds#within 24 hours` | why | 2026-01-01 |"));
+    put(root, "docs/policy.md", "## Refunds\n\nCancel within 24 hours.\n\n## Payments\n\nPay in advance.\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("rejects a Markdown section anchor whose excerpt lives in another section", () => {
+    const root = project(atlas("| Policy | `docs/policy.md#Refunds#Pay in advance` | why | 2026-01-01 |"));
+    put(root, "docs/policy.md", "## Refunds\n\nCancel within 24 hours.\n\n## Payments\n\nPay in advance.\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("excerpt");
+  });
+
   it("resolves silently when the excerpt identifies one of several symbol hits", () => {
     const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
     put(root, "src/gate.ts", "export function runGate() {\n  // writes to a temp file\n}\nrunGate();\n");
