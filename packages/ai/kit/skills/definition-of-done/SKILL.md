@@ -86,7 +86,7 @@ For large changes run the `verifier` agent once per package or PR in parallel (s
 
 End the task with: what changed, which gates ran and their result, what was **not** verified, any known risk. Keep it short.
 
-When the work pushes to a deployment target: name the target (identity + environment) before pushing. Push a complete, current baseline to a new target and confirm the baseline rather than the returned link; scope updates to an existing target so user- and editor-owned paths survive, then re-verify them. A returned link names where to look, never what was proven. E.g. after pushing a preview: load it, confirm the expected changed content renders and prior configuration survived; when that observation is unavailable, record `verified on target: UNVERIFIED` instead of treating the push as proof.
+When the work pushes to a deployment target: name the target (which site or account, which environment — e.g. preview vs production) before pushing. Push a complete, current baseline (the full current state) to a new target and confirm on the target rather than trusting the returned link; scope updates to an existing target so user- and editor-owned paths (existing content and settings) survive, then re-verify them. E.g. after pushing a preview: load it, confirm the expected changed content renders and prior configuration survived; when that observation is unavailable, record `verified on target: UNVERIFIED` instead of treating the push as proof.
 
 <!-- if:skill=rules-upkeep -->
 
