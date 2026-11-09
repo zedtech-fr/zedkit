@@ -111,6 +111,44 @@ describe("checkSetup", () => {
     expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
   });
 
+  it("flags validate.log as historical when a newer unpublished capture exists beside it", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", GOOD_LOG);
+    put(root, ".agents/setup-log/validate.log.tmp-7-0", "CMD: validate\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 0 |\n");
+    utimesSync(join(root, ".agents/setup-log/validate.log"), new Date(Date.now() - 30000), new Date(Date.now() - 30000));
+    const messages = checkSetup(root).issues.map((i) => i.message);
+    expect(messages).toContain("validate.log may be historical: an unpublished gate attempt (validate.log.tmp-7-0) exists — re-run the gate to publish fresh evidence");
+  });
+
+  it("ignores an orphaned validate.log tmp older than the published final", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", GOOD_LOG);
+    put(root, ".agents/setup-log/validate.log.tmp-7-0", "CMD: validate\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 0 |\n");
+    utimesSync(join(root, ".agents/setup-log/validate.log.tmp-7-0"), new Date(Date.now() - 30000), new Date(Date.now() - 30000));
+    expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
+  });
+
+  it("exempts validate.log history while its own gate capture replaces it", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/validate.log", GOOD_LOG);
+    put(root, ".agents/setup-log/validate.log.tmp-7-0", "CMD: validate\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| validate.log | validate --setup | 0 |\n");
+    const prev = process.env.ZEDKIT_GATE_LOG;
+    process.env.ZEDKIT_GATE_LOG = join(root, ".agents/setup-log/validate.log");
+    const found = checkSetup(root).issues.map((i) => i.message);
+    if (prev === undefined) delete process.env.ZEDKIT_GATE_LOG;
+    else process.env.ZEDKIT_GATE_LOG = prev;
+    expect(found).toEqual([]);
+  });
+
   it("a stale failing validate.log blocks recovery until its own capture replaces it", () => {
     const root = tempDir();
     gitInit(root);

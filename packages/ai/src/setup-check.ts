@@ -115,6 +115,20 @@ function gates(root: string): Issue[] {
     if (!isCaptureTarget(path)) {
       logShape(path, run.value, issues);
       if (!/^EXIT:0\s*$/m.test(run.value.trimEnd().split("\n").at(-1) ?? "")) issues.push({ path, message: "validate.log is from a failing run: fix the issues and re-run validate --setup before scoring" });
+      // Same freshness rule as the gates/ logs: an orphaned capture tmp newer
+      // than the final means a later attempt started and never published — the
+      // final is historical, not latest. An older orphan was superseded.
+      const setupLogDir = join(root, ".agents/setup-log");
+      const siblings = tryCatch(() => readdirSync(setupLogDir));
+      const finalStat = tryCatch(() => statSync(path));
+      const unpublished = (siblings.ok ? siblings.value : []).filter((n) => {
+        if (!n.startsWith("validate.log.tmp-")) return false;
+        const tmpStat = tryCatch(() => statSync(join(setupLogDir, n)));
+        return tmpStat.ok && finalStat.ok && tmpStat.value.mtimeMs > finalStat.value.mtimeMs;
+      });
+      if (unpublished.length > 0) {
+        issues.push({ path, message: `validate.log may be historical: an unpublished gate attempt (${unpublished.join(", ")}) exists — re-run the gate to publish fresh evidence` });
+      }
     }
     if (!inventory.includes("validate.log")) issues.push({ path, message: "setup-log does not reference validate.log (name it in the setup-log entry)" });
   }

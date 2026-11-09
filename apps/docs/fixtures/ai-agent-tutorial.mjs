@@ -24,6 +24,23 @@ function capture(argv, cwd = ROOT) {
   };
 }
 
+/**
+ * The validate output contract: exit 0 plus a single `ok` line that names its
+ * structural-only scope (never a bare `ok`, never a browser/rendering claim).
+ */
+function assertValidateOut(validate, what) {
+  if (validate.code !== 0) {
+    throw new Error(`${what} failed: code=${validate.code} out=${validate.out} err=${validate.err}`);
+  }
+  const out = validate.out.trim();
+  if (!out.startsWith("ok — structural kit checks only")) {
+    throw new Error(`${what} changed contract: ${validate.out}`);
+  }
+  if (!out.includes("NOT checked by validate")) {
+    throw new Error(`${what} missing scope disclaimer: ${validate.out}`);
+  }
+}
+
 /** Same flow as the set-up-your-coding-agents tutorial (empty scratch repo). */
 export function runEmptyRepoTutorial(dir) {
   const init = capture(["init", dir, "--provider", "cursor", "--preset", "full"]);
@@ -37,9 +54,7 @@ export function runEmptyRepoTutorial(dir) {
     throw new Error("init did not wire Cursor rules");
   }
   const validate = capture(["validate", dir]);
-  if (validate.code !== 0 || validate.out.trim() !== "ok") {
-    throw new Error(`validate failed: code=${validate.code} out=${validate.out} err=${validate.err}`);
-  }
+  assertValidateOut(validate, "validate");
   return { initLines: init.out, validateOut: validate.out.trim() };
 }
 
@@ -59,9 +74,7 @@ export function runCursorSetupTutorial(dir) {
     if (!existsSync(join(dir, rel))) throw new Error(`setup should install setup preset (missing ${rel})`);
   }
   const validate = capture(["validate", "."], dir);
-  if (validate.code !== 0 || validate.out.trim() !== "ok") {
-    throw new Error(`validate after setup failed: ${validate.out} ${validate.err}`);
-  }
+  assertValidateOut(validate, "validate after setup");
   const again = capture(["setup", ".", "--provider", "cursor"], dir);
   if (again.code !== 0) throw new Error(`setup re-run failed: ${again.err || again.out}`);
   const writes = again.out.split("\n").filter((line) => /^(copy|link|write)\s/u.test(line));
@@ -69,9 +82,7 @@ export function runCursorSetupTutorial(dir) {
     throw new Error(`setup re-run should not copy/link/write again: ${writes.join("; ")}`);
   }
   const validateAgain = capture(["validate", "."], dir);
-  if (validateAgain.code !== 0 || validateAgain.out.trim() !== "ok") {
-    throw new Error(`validate after setup re-run failed: ${validateAgain.out}`);
-  }
+  assertValidateOut(validateAgain, "validate after setup re-run");
 }
 
 /** setup --adopt with team-owned .cursor paths before install. */
@@ -104,9 +115,7 @@ export function runExistingAgentsTutorial(dir) {
     throw new Error("init should append the ladder section to an existing AGENTS.md");
   }
   const validate = capture(["validate", dir]);
-  if (validate.code !== 0 || validate.out.trim() !== "ok") {
-    throw new Error(`validate after append failed: ${validate.out}`);
-  }
+  assertValidateOut(validate, "validate after append");
 }
 
 /** Home page command (snippet) run via workspace CLI in an empty folder — no git, no package.json. */
@@ -140,9 +149,7 @@ export function runHomeSnippetInit(dir) {
     throw new Error("home init re-run should skip existing files");
   }
   const validate = capture(["validate", dir]);
-  if (validate.code !== 0 || validate.out.trim() !== "ok") {
-    throw new Error(`home init validate failed: ${validate.out} ${validate.err}`);
-  }
+  assertValidateOut(validate, "home init validate");
 }
 
 export function withScratchDir(fn) {
