@@ -43,10 +43,16 @@ function shellEntryLines() {
 }
 
 function runChangesetGate(cwd, argv, env = {}) {
+  const childEnv = { ...process.env };
+  // Gate skip is GITHUB_HEAD_REF; strip CI branch vars so Version PR CI does not skip fixtures.
+  delete childEnv.GITHUB_HEAD_REF;
+  delete childEnv.GITHUB_REF;
+  delete childEnv.GITHUB_BASE_REF;
+  Object.assign(childEnv, env);
   const result = spawnSync(process.execPath, [join(root, "scripts/api-report-changeset-gate.mjs"), ...argv], {
     cwd,
     encoding: "utf8",
-    env: { ...process.env, ...env },
+    env: childEnv,
   });
   return {
     status: result.status ?? 1,
@@ -392,6 +398,24 @@ test("changeset gate skips the version PR branch", () => {
   assert.equal(out.status, 0, `${out.stderr}${out.stdout}`);
   assert.match(`${out.stderr}${out.stdout}`, /skip changeset gate on version PR/);
   rmSync(dir, { recursive: true, force: true });
+});
+
+test("changeset gate fixtures ignore inherited GITHUB_HEAD_REF from a Version PR", (t) => {
+  const prev = process.env.GITHUB_HEAD_REF;
+  process.env.GITHUB_HEAD_REF = "changeset-release/main";
+  t.after(() => {
+    if (prev === undefined) delete process.env.GITHUB_HEAD_REF;
+    else process.env.GITHUB_HEAD_REF = prev;
+  });
+  const { dir } = initRepoWithMarketingDiff({ withChangeset: false });
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const out = runChangesetGate(dir, entries);
+  assert.notEqual(out.status, 0);
+  assert.doesNotMatch(`${out.stderr}${out.stdout}`, /skip changeset gate on version PR/);
+  assert.match(
+    `${out.stderr}${out.stdout}`,
+    /packages\/ui\/etc\/zedkit-ui-marketing\.api\.md: API report changed/,
+  );
 });
 
 test("extractor runs in parallel on GNU xargs and falls back otherwise", () => {
