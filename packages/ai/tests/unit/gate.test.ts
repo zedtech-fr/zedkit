@@ -202,6 +202,14 @@ describe("runGate", () => {
     expect(out.filter((line) => line.startsWith("EXIT:"))).toEqual(["EXIT:0"]);
   });
 
+  it("publishes its log path to the child as ZEDKIT_GATE_LOG", async () => {
+    const root = tempDir();
+    const log = join(root, "gates/env.log");
+    const result = await gate({ cmd: "node -e \"process.stdout.write(process.env.ZEDKIT_GATE_LOG ?? 'MISSING')\"", log });
+    expect(result.code).toBe(0);
+    expect(lines(log)).toContain(log);
+  });
+
   it("returns an error instead of a fabricated log when the final path cannot be published", async () => {
     const root = tempDir();
     const dir = join(root, "gates");

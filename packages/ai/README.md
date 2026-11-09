@@ -119,7 +119,8 @@ run one review workflow, and check done-ness without loading the whole kit.
 `domain-modeling`, `persona-review`, `compose-ui`, `code-review`,
 `ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
 `plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
-`research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, and `quick-wins`,
+`research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`, and
+`handoff` (durable deliverables: persist plans and handoffs so a fresh session recovers scope),
 and subagents
 `product-director`, `ui-designer`, `copywriter`, `skeptic`, `researcher`,
 `implementer`, `reviewer`, `domain-guardian`, `event-contracts`, and

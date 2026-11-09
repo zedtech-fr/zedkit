@@ -2,7 +2,7 @@
 import { spawn } from "node:child_process";
 import { closeSync, mkdirSync, openSync, readSync, fstatSync, renameSync, writeSync } from "node:fs";
 import { constants } from "node:os";
-import { dirname } from "node:path";
+import { dirname, resolve as resolvePath } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 
 /** Why a gate did not end with its own exit code. */
@@ -73,7 +73,12 @@ export function runGate(options: GateOptions): Promise<Result<GateResult>> {
     const child = spawn(options.cmd, {
       shell: true,
       cwd: options.cwd,
-      env: withHeapCap(options.env ?? process.env, options.heapMb ?? DEFAULT_HEAP_MB),
+      env: {
+        ...withHeapCap(options.env ?? process.env, options.heapMb ?? DEFAULT_HEAP_MB),
+        // Reentrancy guard: a validate run captured into its own validate.log
+        // must judge the tree, not the previous run's file it is replacing.
+        ZEDKIT_GATE_LOG: resolvePath(options.log),
+      },
       stdio: ["ignore", fd, fd],
     });
     let forced: GateCause | undefined;

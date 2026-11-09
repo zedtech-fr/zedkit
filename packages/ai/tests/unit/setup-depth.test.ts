@@ -331,7 +331,7 @@ describe("validate --setup depth", () => {
     );
     const setup = run("validate", root, "--setup");
     expect(setup.code).toBe(0);
-    expect(setup.text).toMatch(/^not a git repository; skipped change coverage\nok — structural kit checks only/u);
+    expect(setup.text).toMatch(/^not a git repository; skipped change coverage\nok — structural kit checks only \(skills, agents, commands, wiring, tokenomics, atlas paths, setup-log shape, plan coverage, depth\);/u);
   });
 });
 

@@ -1,7 +1,7 @@
 // Original work by the same author.
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { tryCatch } from "@zedtech/zedkit-core";
 import { kitPathsMissingFromPrettierIgnore, repoUsesPrettier } from "./install-next-step.js";
 import type { Issue } from "./validate.js";
@@ -61,19 +61,40 @@ function logShape(path: string, raw: string, issues: Issue[]): void {
 }
 
 function gates(root: string): Issue[] {
-  const listed = tryCatch(() => readdirSync(join(root, ".agents/setup-log/gates")));
+  const gatesDir = join(root, ".agents/setup-log/gates");
+  const listed = tryCatch(() => readdirSync(gatesDir));
   const issues: Issue[] = [];
   const log = tryCatch(() => readFileSync(join(root, ".agents/setup-log.md"), "utf8"));
   const inventory = log.ok ? log.value : "";
   const cmds: string[] = [];
-  for (const name of (listed.ok ? listed.value : []).filter((n) => n.endsWith(".log"))) {
-    const path = join(root, ".agents/setup-log/gates", name);
+  // A log currently replaced by its own gate capture is exempt from staleness
+  // checks: the file on disk is the previous run, superseded by this one.
+  // The capturing gate publishes ZEDKIT_GATE_LOG for exactly this case.
+  const capturing = process.env.ZEDKIT_GATE_LOG;
+  const isCaptureTarget = (p: string): boolean =>
+    capturing !== undefined && resolve(p) === resolve(capturing);
+  const names = listed.ok ? listed.value : [];
+  for (const name of names.filter((n) => n.endsWith(".log"))) {
+    const path = join(gatesDir, name);
+    if (isCaptureTarget(path)) continue;
     const raw = tryCatch(() => readFileSync(path, "utf8"));
     if (!raw.ok) continue;
     logShape(path, raw.value, issues);
     cmds.push(raw.value.split(/\r?\n/)[0] ?? "");
     if (!inventory.includes(name)) {
       issues.push({ path, message: `gate inventory misses ${name} (one setup-log row per persisted gate log, killed logs included)` });
+    }
+    // An orphaned tmp newer than the final log means a later attempt started
+    // and never published: the final is historical, not latest. An older
+    // orphan was superseded by a subsequent publish and stays ignored.
+    const finalStat = tryCatch(() => statSync(path));
+    const unpublished = names.filter((n) => {
+      if (!n.startsWith(`${name}.tmp-`)) return false;
+      const tmpStat = tryCatch(() => statSync(join(gatesDir, n)));
+      return tmpStat.ok && finalStat.ok && tmpStat.value.mtimeMs > finalStat.value.mtimeMs;
+    });
+    if (unpublished.length > 0) {
+      issues.push({ path, message: `${name} may be historical: an unpublished gate attempt (${unpublished.join(", ")}) exists — re-run the gate to publish fresh evidence` });
     }
   }
   // The full gate: a repo with a `check` script has a log of it, or a setup-log row saying why it did not run.
@@ -86,11 +107,15 @@ function gates(root: string): Issue[] {
     }
   }
   // The final `validate --setup` run, when persisted, is clean and named in the setup-log.
+  // Exempt while its own gate capture replaces it (see ZEDKIT_GATE_LOG above):
+  // judging the previous run's file would deadlock every recovery on it.
   const run = tryCatch(() => readFileSync(join(root, ".agents/setup-log/validate.log"), "utf8"));
   if (run.ok) {
     const path = join(root, ".agents/setup-log/validate.log");
-    logShape(path, run.value, issues);
-    if (!/^EXIT:0\s*$/m.test(run.value.trimEnd().split("\n").at(-1) ?? "")) issues.push({ path, message: "validate.log is from a failing run: fix the issues and re-run validate --setup before scoring" });
+    if (!isCaptureTarget(path)) {
+      logShape(path, run.value, issues);
+      if (!/^EXIT:0\s*$/m.test(run.value.trimEnd().split("\n").at(-1) ?? "")) issues.push({ path, message: "validate.log is from a failing run: fix the issues and re-run validate --setup before scoring" });
+    }
     if (!inventory.includes("validate.log")) issues.push({ path, message: "setup-log does not reference validate.log (name it in the setup-log entry)" });
   }
   return issues;

@@ -39,7 +39,8 @@
       "to-audit",
       "fix",
       "improve-from-review",
-      "quick-wins"
+      "quick-wins",
+      "handoff"
     ],
     "core": [
       "ponytail",

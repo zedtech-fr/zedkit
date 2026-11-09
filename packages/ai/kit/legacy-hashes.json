@@ -223,7 +223,11 @@
       "f3ef81035c3ab6da"
     ],
     "ground-truth/SKILL.md": ["6548dd4c2dfc7d59"],
-    "handoff/SKILL.md": ["220d1e88c0700096", "797024829b3b1fb2"],
+    "handoff/SKILL.md": [
+      "220d1e88c0700096",
+      "797024829b3b1fb2",
+      "e10d54aef09873d8"
+    ],
     "handoff/agents/openai.yaml": ["5c479fd562c69185"],
     "implement/SKILL.md": [
       "21096de7585ca248",
