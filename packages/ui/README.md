@@ -58,6 +58,18 @@ radius and title/body type step up in wide slots (30rem), compose
 with identity density, and fall back to the base recipe with no
 marked ancestor. Controls keep explicit sizes and target floors.
 
+## Theme scopes
+
+`ThemeScope` is transparent: it adds no background or surface of its own.
+Surfaces stay explicit (`Card`, `GlassSurface`, dialog/drawer panels). The
+scope only names the identity and pins the mode for its subtree:
+
+- A nested scope without `identity` keeps the nearer identity; a `mode`
+  pinned without `identity` still carries that identity on its own node.
+- Dropdown panels portal into the scope itself; dialog/drawer portals mount
+  on `document.body` with a look-mirroring twin, so no consumer stacking
+  context traps them under the site header.
+
 ## Migration
 
 Ref as a prop, and kit messages: before/after, search patterns, and a

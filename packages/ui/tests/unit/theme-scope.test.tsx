@@ -5,6 +5,7 @@ import { userEvent } from "@testing-library/user-event";
 
 import {
   Button,
+  Card,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -268,5 +269,82 @@ describe("ThemeScope nested identity", () => {
   it("leaves a mode-only scope under the page root without an identity", () => {
     const { container } = render(<ThemeScope mode="dark" data-label="root" />);
     expect(host(container, "root")?.hasAttribute("data-identity")).toBe(false);
+  });
+});
+
+describe("ThemeScope transparent scope with an explicit surface, nesting, and portals", () => {
+  const scopeHost = (container: HTMLElement, label: string) => container.querySelector(`[data-label='${label}']`);
+
+  it("adds no surface of its own", () => {
+    const { container } = render(
+      <ThemeScope identity="press" data-label="outer">
+        <ThemeScope mode="dark" data-label="inner" />
+      </ThemeScope>,
+    );
+    const outer = scopeHost(container, "outer") as HTMLElement | null;
+    const inner = scopeHost(container, "inner") as HTMLElement | null;
+    expect(outer?.className).not.toMatch(/bg-/);
+    expect(outer?.style.background).toBe("");
+    expect(inner?.className).not.toMatch(/bg-/);
+    expect(inner?.style.background).toBe("");
+  });
+
+  /** Explicit surface plus a nested scope with a dropdown and a dialog inside. */
+  function composition(outerMode: "light" | "dark", innerMode: "light" | "dark") {
+    return (
+      <ThemeScope identity="press" mode={outerMode === "dark" ? "dark" : undefined} data-label="outer">
+        <Card data-label="surface">Preview</Card>
+        <ThemeScope mode={innerMode} data-label="inner">
+          <OpenPopover />
+          <OpenDialog />
+        </ThemeScope>
+      </ThemeScope>
+    );
+  }
+
+  it("keeps the surface, the nested scope, and both portals in the dark-outer look", async () => {
+    const user = userEvent.setup();
+    const { container } = render(composition("dark", "light"));
+    const outer = scopeHost(container, "outer") as HTMLElement | null;
+    const inner = scopeHost(container, "inner") as HTMLElement | null;
+    expect(outer?.getAttribute("data-identity")).toBe("press");
+    expect(outer?.classList.contains("dark")).toBe(true);
+    expect(inner?.getAttribute("data-identity")).toBe("press");
+    expect(inner?.classList.contains("dark")).toBe(false);
+    const surface = container.querySelector("[data-slot='card']");
+    expect(outer?.contains(surface)).toBe(true);
+    const [openPopover, openDialog] = screen.getAllByRole("button", { name: "Open" });
+    await user.click(openPopover!);
+    expect(outer?.contains(screen.getByText("Frozen peas"))).toBe(true);
+    await user.click(openDialog!);
+    const dialog = screen.getByRole("dialog");
+    expect(outer?.contains(dialog)).toBe(false);
+    const mirror = dialog.closest("[data-slot='theme-scope']");
+    expect(mirror?.getAttribute("data-identity")).toBe("press");
+    expect(mirror?.classList.contains("dark")).toBe(false);
+    expect(mirror?.parentElement).toBe(document.body);
+  });
+
+  it("keeps the surface, the nested scope, and both portals in the light-outer look", async () => {
+    const user = userEvent.setup();
+    const { container } = render(composition("light", "dark"));
+    const outer = scopeHost(container, "outer") as HTMLElement | null;
+    const inner = scopeHost(container, "inner") as HTMLElement | null;
+    expect(outer?.getAttribute("data-identity")).toBe("press");
+    expect(outer?.classList.contains("dark")).toBe(false);
+    expect(inner?.getAttribute("data-identity")).toBe("press");
+    expect(inner?.classList.contains("dark")).toBe(true);
+    const surface = container.querySelector("[data-slot='card']");
+    expect(outer?.contains(surface)).toBe(true);
+    const [openPopover, openDialog] = screen.getAllByRole("button", { name: "Open" });
+    await user.click(openPopover!);
+    expect(outer?.contains(screen.getByText("Frozen peas"))).toBe(true);
+    await user.click(openDialog!);
+    const dialog = screen.getByRole("dialog");
+    expect(outer?.contains(dialog)).toBe(false);
+    const mirror = dialog.closest("[data-slot='theme-scope']");
+    expect(mirror?.getAttribute("data-identity")).toBe("press");
+    expect(mirror?.classList.contains("dark")).toBe(true);
+    expect(mirror?.parentElement).toBe(document.body);
   });
 });
