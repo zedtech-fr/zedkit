@@ -192,6 +192,11 @@ export function checkHtmlRegistryLinks(html, existsRel) {
   return errors;
 }
 
+/** The exported walkthrough names a setup invocation, pinned or floating. */
+export function hasSetupCommand(text) {
+  return /npx @zedtech\/zedkit-ai(@[\w.-]+)? setup/.test(text);
+}
+
 function requireFile(outDir, rel, errors) {
   const file = join(outDir, rel);
   if (!existsSync(file)) {
@@ -249,7 +254,7 @@ function main() {
   if (llmsFullPath) errors.push(...checkLlmsFull(readFileSync(llmsFullPath, "utf8")));
 
   const aiSetupMd = requireFile(outDir, "ai/setup.md", errors);
-  if (aiSetupMd && !readFileSync(aiSetupMd, "utf8").includes("npx @zedtech/zedkit-ai setup")) {
+  if (aiSetupMd && !hasSetupCommand(readFileSync(aiSetupMd, "utf8"))) {
     errors.push("ai/setup.md: missing setup command");
   }
 
