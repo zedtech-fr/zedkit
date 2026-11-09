@@ -6,6 +6,7 @@ import { KitVersionLabel } from "@/ui/kit-version-label";
 import { SitePageShell } from "@/ui/site-page-shell";
 import { siteChromeSlots } from "@/ui/site-chrome-slots";
 import { MarketingSiteHeader } from "@/ui/site-headers";
+import { SkipLink, SkipTarget } from "@/ui/skip-link";
 
 /** Shared marketing shell: nav, search, theme toggle, GitHub link. */
 export function SiteLayout({
@@ -20,20 +21,25 @@ export function SiteLayout({
   releasesHref: string;
 }) {
   return (
-    <HomeLayout
-      nav={{
-        title: <SiteBrand />,
-        url: "/",
-        // Version sits beside the title link — not inside it (avoids nested <a> / hydration #418).
-        children: <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />,
-      }}
-      githubUrl="https://github.com/zedtech-fr/zedkit"
-      links={siteHeaderLinks(changelogHref)}
-      searchToggle={{ enabled: true }}
-      themeSwitch={{ enabled: true }}
-      slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
-    >
-      <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
-    </HomeLayout>
+    <>
+      <SkipLink />
+      <HomeLayout
+        nav={{
+          title: <SiteBrand />,
+          url: "/",
+          // Version sits beside the title link — not inside it (avoids nested <a> / hydration #418).
+          children: <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />,
+        }}
+        githubUrl="https://github.com/zedtech-fr/zedkit"
+        links={siteHeaderLinks(changelogHref)}
+        searchToggle={{ enabled: true }}
+        themeSwitch={{ enabled: true }}
+        slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
+      >
+        <SitePageShell changelogHref={changelogHref}>
+          <SkipTarget>{children}</SkipTarget>
+        </SitePageShell>
+      </HomeLayout>
+    </>
   );
 }
