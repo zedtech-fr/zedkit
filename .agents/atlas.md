@@ -10,7 +10,7 @@ Where things live, what we call them, how to run them, why we chose them. Before
 
 ## Reference durability
 
-Durable references name `path#symbol/section#excerpt` plus the commit they were verified against; bare lines are accepted only with that commit. Quiet line movement resolves through the symbol's own body or section; a missing, changed, or ambiguous association is reported explicitly, never silently passed and never broadened to unchanged content. Enforced for atlas rows by `checkAtlas` (`packages/ai/src/atlas.ts:292-364`, wired into `validate` via `cli.ts:220,231`); domain and design tables follow the same shape by convention, fixed progressively — no bulk migration, no index engine.
+Durable references name `path#symbol/section#excerpt` plus the commit they were verified against; bare lines are accepted only with that commit. Quiet line movement resolves through the symbol's own body or section; a missing, changed, or ambiguous association is reported explicitly, never silently passed and never broadened to unchanged content. Enforced for atlas rows by `checkAtlas` (`packages/ai/src/atlas.ts#checkAtlas#stale row`, wired into `validate` via `packages/ai/src/cli.ts#runValidate#checkAtlas`; verified against `1d8da98`); domain and design tables follow the same shape by convention, fixed progressively — no bulk migration, no index engine.
 
 ## Where
 

@@ -11,6 +11,7 @@ Route model choice through the kind × stakes cell in `.agents/tokenomics.md`.
 | I-01 | current | Public wording only: say "an upstream consumer", never a private project name. | `AGENTS.md:11` | `scripts/check-no-private-refs.sh:1` |
 | I-02 | current | Neutral, professional tone; no self-promotional marketing terms. | `apps/docs/AGENTS.md:5` | `scripts/check-tone.sh:2` |
 | I-03 | current | Kit chrome strings come from `ZedkitUiProvider` with English default. | `packages/ui/AGENTS.md:34` | lint + vitest per package |
+<!-- Identity-table bare refs (I-01 to I-03) predate the Reference-durability rule; deferred, outside the token-pin verification commit below. -->
 
 ## Signature
 
