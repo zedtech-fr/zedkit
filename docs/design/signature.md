@@ -82,6 +82,6 @@ Glass is the default look, so its material is a token layer (`packages/ui/src/id
 
 - **Something behind it.** Saturated colour halos (`--zk-bg-pattern`) and, on the home hero, a few soft shapes at the window edges. Blurring a flat pastel shows nothing.
 - **A lit edge.** `--zk-glass-highlight`: bright top-left rim, soft bottom-right rim, inner glow. Every `--zk-shadow-*` carries it, so cards, popovers, dialogs and drawers share it.
-- **A clear fill with light on it.** `--zk-glass-alpha` (floor 0.5 light, 0.45 dark so text keeps its contrast), `--zk-glass-sheen` (slanted light, plain cards only), and `blur + saturate + brightness`.
+- **A clear fill with light on it.** `--zk-glass-alpha` (floor 0.54 light, 0.7 dark so text keeps its contrast), `--zk-glass-sheen` (slanted light, plain cards only), and `blur + saturate + brightness`.
 
 Fallbacks stay solid: `prefers-reduced-transparency`, no `backdrop-filter`, forced colors, and any scope of another look inside a Glass page. No lensing: `backdrop-filter: url()` is Chromium-only and loses the blur where it parses but is ignored.
