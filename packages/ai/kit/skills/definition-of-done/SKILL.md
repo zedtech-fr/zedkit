@@ -86,6 +86,8 @@ For large changes run the `verifier` agent once per package or PR in parallel (s
 
 End the task with: what changed, which gates ran and their result, what was **not** verified, any known risk. Keep it short.
 
+When the work pushes to a deployment target: name the target (identity + environment) before pushing. Push a complete, current baseline to a new target and confirm the baseline rather than the returned link; scope updates to an existing target so user- and editor-owned paths survive, then re-verify them. A returned link names where to look, never what was proven.
+
 <!-- if:skill=rules-upkeep -->
 
 Also close with the `Rules` section from `rules-upkeep` (`Rules: none` when nothing to encode).
