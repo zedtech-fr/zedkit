@@ -33,9 +33,59 @@ describe("checkAtlas", () => {
   it("accepts rows whose entry paths exist, with or without :line and a trailing slash", () => {
     const root = project(atlas("| Auth | `src/auth/` | why | 2026-01-01 |", "| Login | `src/login.ts:12-30`, `README.md` | why | 2026-01-01 |"));
     put(root, "src/auth/index.ts", "x");
-    put(root, "src/login.ts", "x");
+    put(root, "src/login.ts", `${"line\n".repeat(29)}last\n`);
     put(root, "README.md", "x");
     expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("resolves an anchor silently after lines are inserted above it", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "export function runGate() {\n  // writes to a temp file\n}\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+    put(root, "src/gate.ts", `${"// inserted\n".repeat(20)}export function runGate() {\n  // writes to a temp file\n}\n`);
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("reports a renamed symbol instead of passing on the unchanged path", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "export function runGateV2() {}\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("runGate");
+    expect(issues[0]?.message).toContain("Gate");
+  });
+
+  it("reports a changed excerpt while the path and symbol still exist", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "export function runGate() {\n  // writes elsewhere now\n}\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("excerpt");
+  });
+
+  it("warns without failing on an ambiguous anchor", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "export function runGate() {}\nexport function runGate() {}\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message.startsWith("warning:")).toBe(true);
+    expect(run("validate", root).code).toBe(0);
+  });
+
+  it("fails a :line past the end of the file", () => {
+    const root = project(atlas("| Gate | `src/gate.ts:120` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "one\ntwo\nthree\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("120");
+  });
+
+  it("warns without failing on a :line pointing at a blank line", () => {
+    const root = project(atlas("| Gate | `src/gate.ts:2` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "one\n\nthree\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message.startsWith("warning:")).toBe(true);
   });
 
   it("names the row whose entry path is gone", () => {
