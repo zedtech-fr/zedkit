@@ -28,7 +28,7 @@ Say **"an upstream consumer"** — never a private project name. `source: owner`
 ## Success signals
 
 - A package installs from its README without reading the implementation.
-- `zedkit-ai validate` prints `ok` after setup/sync.
+- `zedkit-ai validate` exits 0 with a final line starting with `ok` (long scope line) after setup/sync.
 - Catalog check stays green (`pnpm catalog:check`).
 
 ## Non-goals
