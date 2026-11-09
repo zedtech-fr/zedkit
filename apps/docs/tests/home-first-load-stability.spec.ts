@@ -9,15 +9,17 @@ import { expect, test } from "@playwright/test";
 test("home first paint is layout-stable on a cold load", async ({ page }) => {
   await page.addInitScript(() => {
     window.__cls = 0;
-    try {
+    /* No try/catch: repo bans raw try/catch; feature-detect instead. When
+       PerformanceObserver is unavailable cls stays 0 and the assertion below
+       still guards the CLS budget (it would pass vacuously, so this spec is
+       meaningful only where the observer exists — true in all CI browsers). */
+    if ("PerformanceObserver" in window) {
       new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           if (entry.hadRecentInput) continue;
           window.__cls += entry.value;
         }
       }).observe({ type: "layout-shift", buffered: true });
-    } catch {
-      /* PerformanceObserver unavailable: cls stays 0 and the font gate below still guards */
     }
   });
   await page.goto("/", { waitUntil: "load" });
