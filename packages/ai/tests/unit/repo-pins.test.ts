@@ -27,10 +27,12 @@ const PINS = [
 describe("durable domain and design references", () => {
   it("resolves the A-02 anchor inside the symbol body", () => {
     const src = readFileSync(join(root, "packages/ai/src/validate.ts"), "utf8");
+    expect(src.split("function checkAgent(").length - 1, "anchor symbol unique file-wide").toBe(1);
     const symIdx = src.indexOf("function checkAgent(");
     expect(symIdx, "anchor symbol").toBeGreaterThan(-1);
-    const nextFn = src.indexOf("\nfunction ", symIdx + 1);
-    const body = nextFn === -1 ? src.slice(symIdx) : src.slice(symIdx, nextFn);
+    const tail = src.slice(symIdx + 1);
+    const nextFnRel = tail.search(/\n(?:export\s+)?(?:async\s+)?function\s/);
+    const body = nextFnRel === -1 ? src.slice(symIdx) : src.slice(symIdx, symIdx + 1 + nextFnRel);
     const excerpt = 'model must be omitted or "inherit"';
     expect(body, "anchor excerpt in the symbol body").toContain(excerpt);
     expect(body.split(excerpt).length - 1, "anchor excerpt unique in the symbol body").toBe(1);
@@ -45,17 +47,26 @@ describe("durable domain and design references", () => {
 
   it("covers exactly the design token pins", () => {
     const doc = readFileSync(join(root, ".agents/design.md"), "utf8");
-    const docPins = new Set(doc.match(/packages\/ui\/src\/[^`\s]*?:\d+/g) ?? []);
+    const raw = doc.match(/packages\/ui\/src\/[^`\s]*?:\d+/g) ?? [];
     const testPins = PINS.map(([path, line]) => `${path}:${line}`).sort();
-    expect(testPins).toEqual(Array.from(docPins).sort());
+    // glass.css:40 is cited twice by design (token table + accent-vs-primary prose); any other dup fails.
+    const dupes = raw.filter((pin) => raw.indexOf(pin) !== raw.lastIndexOf(pin));
+    expect([...new Set(dupes)].sort()).toEqual(["packages/ui/src/identities/glass.css:40"]);
+    expect(raw.length, "raw doc pins are the test pins plus the one known dup").toBe(testPins.length + 1);
+    expect(testPins).toEqual(Array.from(new Set(raw)).sort());
   });
 
   it("keeps one verification commit on the domain and design pins", () => {
     const sha = (rel: string): string => {
-      const match = /verified against `([0-9a-f]{7,40})`/.exec(readFileSync(join(root, rel), "utf8"));
-      expect(match?.[1], `${rel} verification commit`).toMatch(/^[0-9a-f]{7,40}$/);
-      return match?.[1] ?? "";
+      const text = readFileSync(join(root, rel), "utf8");
+      const markers = text.match(/verified against `([0-9a-f]{7,40})`/g) ?? [];
+      expect(markers, `${rel} has exactly one verification commit`).toHaveLength(1);
+      const commit = /verified against `([0-9a-f]{7,40})`/.exec(text)?.[1] ?? "";
+      expect(commit, `${rel} verification commit`).toMatch(/^[0-9a-f]{7,40}$/);
+      return commit;
     };
-    expect(sha(".agents/design.md")).toBe(sha(".agents/domain/ai-kit.md"));
+    const design = sha(".agents/design.md");
+    expect(sha(".agents/domain/ai-kit.md")).toBe(design);
+    expect(sha(".agents/atlas.md")).toBe(design);
   });
 });
