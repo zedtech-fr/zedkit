@@ -6,7 +6,6 @@ import { KitVersionLabel } from "@/ui/kit-version-label";
 import { SitePageShell } from "@/ui/site-page-shell";
 import { siteChromeSlots } from "@/ui/site-chrome-slots";
 import { MarketingSiteHeader } from "@/ui/site-headers";
-import { SkipLink, SkipTarget } from "@/ui/skip-link";
 
 /** Shared marketing shell: nav, search, theme toggle, GitHub link. */
 export function SiteLayout({
@@ -21,9 +20,7 @@ export function SiteLayout({
   releasesHref: string;
 }) {
   return (
-    <>
-      <SkipLink />
-      <HomeLayout
+    <HomeLayout
         nav={{
           title: <SiteBrand />,
           url: "/",
@@ -36,10 +33,7 @@ export function SiteLayout({
         themeSwitch={{ enabled: true }}
         slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
       >
-        <SitePageShell changelogHref={changelogHref}>
-          <SkipTarget>{children}</SkipTarget>
-        </SitePageShell>
+        <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
       </HomeLayout>
-    </>
   );
 }

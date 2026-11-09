@@ -7,12 +7,9 @@ import { siteHeaderLinks } from "@/lib/site-header-links";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { docsChromeSlots } from "@/ui/site-chrome-slots";
 import { DocsSiteHeader } from "@/ui/site-headers";
-import { SkipLink, SkipTarget } from "@/ui/skip-link";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <>
-    <SkipLink />
     <DocsLayout
       tree={source.pageTree}
       nav={{
@@ -32,8 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       themeSwitch={{ enabled: true }}
       slots={{ ...docsChromeSlots, header: DocsSiteHeader }}
     >
-      <SkipTarget>{children}</SkipTarget>
+      {children}
     </DocsLayout>
-    </>
   );
 }

@@ -9,8 +9,8 @@ for (const path of ["/", "/docs/set-up-your-coding-agents"]) {
     await expect(skip).toBeFocused();
     await page.keyboard.press("Enter");
     const landed = await page.evaluate(() => {
-      const target = document.getElementById("main-content");
-      return target !== null && target.contains(document.activeElement);
+      const main = document.querySelector("main");
+      return main !== null && main.contains(document.activeElement);
     });
     expect(landed).toBe(true);
   });
