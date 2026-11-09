@@ -9,9 +9,10 @@ export function SitePageShell({
   children: ReactNode;
   changelogHref: string;
 }) {
-  // Rendered inside fumadocs HomeLayout's <main>: no top-level landmark.
+  // Inside fumadocs HomeLayout <main>. id is the skip-link / hash target
+  // (SSR, no JS); tabIndex -1 lets it take focus without being a tab stop.
   return (
-    <div data-page-shell="" className="flex flex-col">
+    <div data-page-shell="" id="main-content" tabIndex={-1} className="flex flex-col">
       <div className="flex-1">{children}</div>
       <SiteMaintainerFooter changelogHref={changelogHref} embeddedInMain />
     </div>
