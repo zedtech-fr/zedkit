@@ -8,6 +8,10 @@ Where things live, what we call them, how to run them, why we chose them. Before
 - **Bounded.** About 120 lines. `zedkit-ai validate` fails past 150 lines, and on any path in the Entry column of Where that no longer exists.
 - A read-only task (audit, review, subagent) writes nothing: it lists rows to add, fix or drop under `Atlas:` in its report; the caller writes them. Stale factual rows are deleted without asking; changing a rule is a separate step.
 
+## Reference durability
+
+Durable references name `path#symbol/section#excerpt` plus the commit they were verified against; bare lines are accepted only with that commit. Quiet line movement resolves through the symbol's own body or section; a missing, changed, or ambiguous association is reported explicitly, never silently passed and never broadened to unchanged content. Enforced for atlas rows by `checkAtlas` (`packages/ai/src/atlas.ts:292-364`, wired into `validate` via `cli.ts:220,231`); domain and design tables follow the same shape by convention, fixed progressively — no bulk migration, no index engine.
+
 ## Where
 
 | Topic                                                      | Entry                                                                                                                                                                    | Why it lives there / trap                                                                                       | Touches                                                      | Checked    |
