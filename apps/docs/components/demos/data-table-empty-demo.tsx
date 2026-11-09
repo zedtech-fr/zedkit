@@ -13,7 +13,7 @@ import { dataTableCopy } from "@/components/demos/i18n/data-table-copy";
 /** No-results row inside your own table body, with a sentence that says what to do next. */
 export function DataTableEmptyDemo() {
   return (
-    <Stack gap={3}>
+    <Stack gap="md">
       <Text variant="muted">{dataTableCopy.empty.searchHint}</Text>
       <Table aria-label={dataTableCopy.empty.tableAriaLabel}>
         <TableHeader>

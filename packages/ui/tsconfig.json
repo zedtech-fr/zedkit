@@ -8,5 +8,6 @@
     "tsBuildInfoFile": "dist/.tsbuildinfo",
     "composite": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.*", "src/**/*.spec.*"]
 }

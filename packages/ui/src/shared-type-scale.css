@@ -1,8 +1,9 @@
 /*
  * Shared site type scale (P0 typography).
  *
- * 16px is for form controls on narrow viewports only (`--zk-input-font-size` in
- * styles.css). Body copy is 14px; docs prose 15px; floor 12px everywhere else.
+ * 16px is for form controls only when `(pointer: coarse)` or `max-width: 767px`
+ * (`--zk-input-font-size` in styles.css). Body copy is 14px; docs prose 15px;
+ * floor 12px everywhere else.
  * Loaded after identity CSS so `--text-*` stay consistent across identities.
  */
 :root[data-identity],
@@ -15,6 +16,7 @@
   --text-base: 0.875rem;
   --text-lg: 1.0625rem;
   --text-xl: 1.125rem;
+  --text-heading: 1.5rem;
   --text-2xl: clamp(1.375rem, 1vw + 1.125rem, 1.625rem);
   --text-3xl: 1.75rem;
   --text-4xl: clamp(2rem, 2.5vw + 1rem, 2.75rem);

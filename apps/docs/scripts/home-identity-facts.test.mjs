@@ -8,7 +8,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const app = join(here, "..");
 const uiSrc = join(app, "../../packages/ui/src");
 const factsSrc = readFileSync(join(app, "ui/home/home-identity-facts.ts"), "utf8");
-const identityData = readFileSync(join(uiSrc, "identity-data.ts"), "utf8");
+const identityData = readFileSync(join(uiSrc, "identity/identity-data.ts"), "utf8");
 const identitiesCss = readFileSync(join(uiSrc, "identities.css"), "utf8");
 
 /** Home shows three looks only (`IDENTITY_IDS`); other kit identities stay off the home facts table. */

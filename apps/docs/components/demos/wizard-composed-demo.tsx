@@ -3,7 +3,7 @@ import { wizardCopy } from "@/components/demos/i18n/wizard-copy";
 
 export function WizardComposedDemo() {
   return (
-    <Stack gap={3} className="min-w-0">
+    <Stack gap="md" className="content-shrink">
       <Wizard>
         <WizardStep step={wizardCopy.composed.cart} index={0} state="done" showConnector />
         <WizardStep step={wizardCopy.composed.delivery} index={1} state="done" showConnector />

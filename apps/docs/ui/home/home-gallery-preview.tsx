@@ -51,7 +51,7 @@ function Shell({ children }: { children: ReactNode }) {
 export function HomeBadgePreview() {
   return (
     <Shell>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Badge>{g.badge.beta}</Badge>
         <Badge variant="secondary">{g.badge.events}</Badge>
         <Badge variant="outline">{g.badge.stable}</Badge>
@@ -63,7 +63,7 @@ export function HomeBadgePreview() {
 export function HomeButtonPreview() {
   return (
     <Shell>
-      <Stack direction="horizontal" gap={2} className="flex-wrap items-center">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
         <Button size="sm">{g.button.createApp}</Button>
         <Button size="sm" variant="secondary">
           {g.button.cancel}
@@ -79,7 +79,7 @@ export function HomeButtonPreview() {
 export function HomeInputPreview() {
   return (
     <Shell>
-      <Stack gap={2} className="min-w-0">
+      <Stack gap="sm" className="content-shrink">
         <Label htmlFor="home-gallery-email">{g.input.label}</Label>
         <Input id="home-gallery-email" type="email" autoComplete="email" placeholder={g.input.placeholder} />
       </Stack>
@@ -101,10 +101,10 @@ export function HomeDrawerPreview() {
           <DrawerHeader>
             <DrawerTitle>{g.drawer.title}</DrawerTitle>
             <DrawerDescription>{g.drawer.description}</DrawerDescription>
-            <DrawerCloseButton className="absolute top-3 right-3" />
+            <DrawerCloseButton className="absolute top-control-inline right-control-inline" />
           </DrawerHeader>
           <DrawerBody>
-            <Stack gap={2} className="py-2">
+            <Stack gap="sm" className="surface-pad-block-sm">
               <Badge variant="warning">{g.drawer.inReview}</Badge>
             </Stack>
           </DrawerBody>
@@ -138,13 +138,13 @@ export function HomeConfirmDialogPreview() {
 export function HomeThemePreview() {
   return (
     <Shell>
-      <Card className="min-w-0 shadow-none">
-        <CardHeader className="gap-1 p-3 pb-0">
+      <Card className="content-shrink shadow-none">
+        <CardHeader className="gap-stack-tight surface-pad-compact trim-pad-bottom">
           <CardDescription>{g.themeCard.description}</CardDescription>
-          <CardTitle className="text-lg">{g.themeCard.title}</CardTitle>
+          <CardTitle className="text-preview-title">{g.themeCard.title}</CardTitle>
         </CardHeader>
-        <CardContent className="p-3 pt-2">
-          <Stack direction="horizontal" gap={2} className="flex-wrap">
+        <CardContent data-theme-card-body="" className="surface-pad-compact">
+          <Stack direction="horizontal" gap="sm" className="flex-wrap">
             <Badge variant="success">{g.themeCard.successBadge}</Badge>
             <Badge variant="outline">{g.themeCard.rangeBadge}</Badge>
           </Stack>

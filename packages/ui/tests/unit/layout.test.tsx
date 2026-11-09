@@ -10,17 +10,17 @@ describe("layout", () => {
         <Stack data-testid="v">
           <span>a</span>
         </Stack>
-        <Stack data-testid="h" direction="horizontal" gap={2}>
+        <Stack data-testid="h" direction="horizontal" gap="sm">
           <span>a</span>
         </Stack>
       </>,
     );
     const vertical = container.querySelector('[data-testid="v"]');
     expect(vertical?.className).toContain("flex-col");
-    expect(vertical?.className).toContain("gap-4");
+    expect(vertical?.className).toContain("gap-stack-lg");
     const horizontal = container.querySelector('[data-testid="h"]');
     expect(horizontal?.className).toContain("flex-row");
-    expect(horizontal?.className).toContain("gap-2");
+    expect(horizontal?.className).toContain("gap-stack-sm");
   });
 
   it("renders a titled section with description, actions, and content", () => {
@@ -47,10 +47,19 @@ describe("layout", () => {
     expect(screen.getByRole("region", { name: "People" })).not.toBeNull();
   });
 
-  it("keeps the whole stack gap scale on default spacing with no arbitrary values", () => {
+  it("maps named stack gaps onto role classes", () => {
+    const roles = {
+      tight: "gap-stack-tight",
+      sm: "gap-stack-sm",
+      md: "gap-stack-md",
+      lg: "gap-stack-lg",
+      prose: "gap-prose",
+      list: "gap-list",
+      blocks: "gap-blocks",
+    } as const;
     const { container } = render(
       <>
-        {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((gap) => (
+        {(Object.keys(roles) as (keyof typeof roles)[]).map((gap) => (
           <Stack key={gap} data-testid={`gap-${gap}`} gap={gap}>
             <span>a</span>
           </Stack>
@@ -60,12 +69,12 @@ describe("layout", () => {
         </Section>
       </>,
     );
-    for (const gap of [1, 2, 3, 4, 5, 6, 7, 8]) {
+    for (const [gap, role] of Object.entries(roles)) {
       const className = container.querySelector(`[data-testid="gap-${gap}"]`)?.className ?? "";
-      expect(className).toContain(`gap-${gap}`);
-      expect(className).not.toContain("[");
+      expect(className, gap).toContain(role);
+      expect(className, gap).not.toContain("[");
     }
-    expect(container.querySelector('[data-testid="section"]')?.className).toContain("space-y-4");
+    expect(container.querySelector('[data-testid="section"]')?.className).toContain("space-y-stack-lg");
   });
 
   it("renders a bare section without a header", () => {
@@ -130,25 +139,25 @@ describe("layout", () => {
 
   it("lets a consumer className win width conflicts and passes html props through", () => {
     const { container } = render(
-      <Container data-testid="c" id="shell" aria-label="Page" className="max-w-sm px-2" />,
+      <Container data-testid="c" id="shell" aria-label="Page" className="max-w-sm px-control-tight" />,
     );
     const el = container.querySelector('[data-testid="c"]');
     expect(el?.id).toBe("shell");
     expect(el?.getAttribute("aria-label")).toBe("Page");
     expect(el?.className).toContain("max-w-sm");
     expect(el?.className).not.toContain("max-w-default");
-    expect(el?.className).toContain("px-2");
+    expect(el?.className).toContain("px-control-tight");
     expect(el?.className).not.toContain("px-page-gutter");
   });
 
   it("lets a consumer className win the bleed spacing conflict", () => {
     const { container } = render(
-      <Section data-testid="s" bleed className="py-2">
+      <Section data-testid="s" bleed className="py-control-block-lg">
         <span>a</span>
       </Section>,
     );
     const el = container.querySelector('[data-testid="s"]');
-    expect(el?.className).toContain("py-2");
+    expect(el?.className).toContain("py-control-block-lg");
     expect(el?.className).not.toContain("py-section-md");
   });
 
@@ -159,7 +168,7 @@ describe("layout", () => {
       </Section>,
     );
     const el = container.querySelector('[data-testid="s"]');
-    expect(el?.className).toBe("space-y-4");
+    expect(el?.className).toBe("space-y-stack-lg");
     expect(container.querySelector('[data-slot="container"]')).toBeNull();
   });
 
@@ -171,7 +180,7 @@ describe("layout", () => {
     );
     const el = container.querySelector('[data-testid="s"]');
     expect(el?.className).toContain("w-full");
-    expect(el?.className).toContain("py-section-md");
+    expect(el?.getAttribute("data-spacing")).toBe("md");
     expect(el?.className).not.toContain("bg-muted");
     const inner = el?.querySelector('[data-slot="container"]');
     expect(inner).not.toBeNull();
@@ -181,26 +190,21 @@ describe("layout", () => {
     expect(screen.getByRole("button", { name: "Invite" })).not.toBeNull();
   });
 
-  it("renders every bleed spacing step with literal classes", () => {
-    const steps = {
-      sm: "py-section-sm",
-      md: "py-section-md",
-      lg: "py-section-lg",
-      xl: "py-section-xl",
-    } as const;
+  it("renders every bleed spacing step as a recipe attribute", () => {
+    const steps = ["sm", "md", "lg", "xl"] as const;
     const { container } = render(
       <>
-        {(Object.keys(steps) as Array<keyof typeof steps>).map((spacing) => (
+        {steps.map((spacing) => (
           <Section key={spacing} data-testid={`s-${spacing}`} bleed spacing={spacing}>
             <span>a</span>
           </Section>
         ))}
       </>,
     );
-    for (const [spacing, klass] of Object.entries(steps)) {
-      const className = container.querySelector(`[data-testid="s-${spacing}"]`)?.className ?? "";
-      expect(className).toContain(klass);
-      expect(className).not.toContain("[");
+    for (const spacing of steps) {
+      const el = container.querySelector(`[data-testid="s-${spacing}"]`);
+      expect(el?.getAttribute("data-spacing"), spacing).toBe(spacing);
+      expect(el?.className ?? "").not.toContain("[");
     }
   });
 
@@ -211,7 +215,7 @@ describe("layout", () => {
       </Section>,
     );
     const el = container.querySelector('[data-testid="s"]');
-    expect(el?.className).toBe("space-y-4");
+    expect(el?.className).toBe("space-y-stack-lg");
     expect(container.querySelector('[data-slot="container"]')).toBeNull();
   });
 
@@ -223,7 +227,7 @@ describe("layout", () => {
     );
     const el = container.querySelector('[data-testid="s"]');
     expect(el?.className).toContain("bg-muted");
-    expect(el?.className).toContain("py-section-lg");
+    expect(el?.getAttribute("data-spacing")).toBe("lg");
     expect(el?.querySelector('[data-slot="container"]')?.className).toContain("max-w-wide");
     expect(screen.queryByRole("heading")).toBeNull();
   });

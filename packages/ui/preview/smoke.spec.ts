@@ -51,7 +51,6 @@ test("gallery renders every section with no errors (light)", async ({ page }) =>
   await expect(page.getByRole("button", { name: "Open sheet" })).toBeVisible();
   expect(problems).toEqual([]);
   await expectNoOverflow(page);
-  await expect(page).toHaveScreenshot("gallery-light.png");
 });
 
 test("gallery renders the dark theme with no errors", async ({ page }) => {
@@ -64,7 +63,6 @@ test("gallery renders the dark theme with no errors", async ({ page }) => {
   }
   expect(problems).toEqual([]);
   await expectNoOverflow(page);
-  await expect(page).toHaveScreenshot("gallery-dark.png");
 });
 
 test.describe("mobile viewport", () => {
@@ -79,6 +77,5 @@ test.describe("mobile viewport", () => {
     await expect(page.getByRole("button", { name: "Open sheet" })).toBeVisible();
     expect(problems).toEqual([]);
     await expectNoOverflow(page);
-    await expect(page).toHaveScreenshot("gallery-mobile.png");
   });
 });

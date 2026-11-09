@@ -102,25 +102,25 @@ function EditItemDrawer({
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full p-3">
-      <Stack gap={1}>
+    <Stack gap="lg" className="h-full surface-pad-compact">
+      <Stack gap="tight">
         <Text className="font-semibold">{adminDashboardGuideCopy.brand}</Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {adminDashboardGuideCopy.product}
         </Text>
       </Stack>
       <nav aria-label={adminDashboardGuideCopy.navAria}>
-        <Stack gap={1}>
-          <Button type="button" variant="secondary" className="w-full justify-start gap-2" aria-current="page">
-            <FolderKanban className="size-4" aria-hidden />
+        <Stack gap="tight">
+          <Button type="button" variant="secondary" className="w-full justify-start gap-stack-sm" aria-current="page">
+            <FolderKanban className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.projects}
           </Button>
-          <Button type="button" variant="ghost" className="w-full justify-start gap-2">
-            <Server className="size-4" aria-hidden />
+          <Button type="button" variant="ghost" className="w-full justify-start gap-stack-sm">
+            <Server className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.services}
           </Button>
-          <Button type="button" variant="ghost" className="w-full justify-start gap-2">
-            <Settings className="size-4" aria-hidden />
+          <Button type="button" variant="ghost" className="w-full justify-start gap-stack-sm">
+            <Settings className="size-icon" aria-hidden />
             {adminDashboardGuideCopy.nav.settings}
           </Button>
         </Stack>
@@ -131,15 +131,15 @@ function Sidebar() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-end px-4 py-2">
+    <Stack direction="horizontal" gap="sm" className="justify-end surface-pad-inline surface-pad-block-sm">
       <Text
         as="span"
         aria-hidden="true"
-        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+        className="flex size-person shrink-0 items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground"
       >
         {adminDashboardGuideCopy.initials}
       </Text>
-      <Text as="span" className="text-sm font-medium">
+      <Text as="span" className="text-dense font-medium">
         {adminDashboardGuideCopy.user}
       </Text>
     </Stack>
@@ -162,7 +162,7 @@ export function AdminDashboardGuideDemo() {
       id: "actions",
       header: adminDashboardGuideCopy.columns.actions,
       cell: ({ row }: { row: { original: ItemRow; id: string } }) => (
-        <Stack direction="horizontal" gap={2}>
+        <Stack direction="horizontal" gap="sm">
           <EditItemDrawer
             item={row.original}
             onSave={(next) => {
@@ -183,9 +183,9 @@ export function AdminDashboardGuideDemo() {
   ];
 
   return (
-    <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-hidden rounded-lg border border-border bg-background">
+    <Stack data-demo-frame="" className="content-shrink overflow-hidden rounded-lg border border-border bg-background">
       <AppShell
-        className={cn("h-full min-h-0 [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+        className={cn("h-full pane-shrink [&>aside]:w-sidebar-compact", mobile && "[&>aside]:hidden")}
         sidebar={<Sidebar />}
         topbar={<TopBar />}
       >

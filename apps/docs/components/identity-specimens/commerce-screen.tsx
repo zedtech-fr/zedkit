@@ -5,8 +5,8 @@ import type { CommerceComposition } from "@/components/i18n/identity-specimen-co
 /** Shop: one product leads; price and stock sit beside its name; one action. */
 export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
   return (
-    <Stack gap={3}>
-      <Stack direction="horizontal" gap={3} className="justify-between">
+    <Stack gap="md">
+      <Stack direction="horizontal" gap="md" className="justify-between">
         <Heading level={4} typeRole="cardTitle">
           {copy.brand}
         </Heading>
@@ -16,13 +16,14 @@ export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
       </Stack>
       <Stack
         aria-hidden="true"
-        className="aspect-[3/1] justify-end rounded-md bg-primary/10 p-3"
+        data-product-banner=""
+        className="justify-end rounded-md surface-pad-compact"
       >
         <Text as="span" typeRole="label" className="text-foreground">
           {copy.imageNote}
         </Text>
       </Stack>
-      <Stack direction="horizontal" gap={3} className="items-baseline justify-between">
+      <Stack direction="horizontal" gap="md" className="items-baseline justify-between">
         <Heading level={3} typeRole="band">
           {copy.product}
         </Heading>
@@ -30,18 +31,18 @@ export function CommerceScreen({ copy }: { copy: CommerceComposition }) {
           {copy.price}
         </Text>
       </Stack>
-      <Stack gap={2} className="items-start">
+      <Stack gap="sm" className="items-start">
         <Badge variant="success" className="whitespace-nowrap">
           {copy.badge}
         </Badge>
-        <Text typeRole="small" className="m-0 text-muted-foreground">
+        <Text typeRole="small" className="trim-margin text-muted-foreground">
           {copy.detail}
         </Text>
       </Stack>
       <Button size="sm" tabIndex={-1} className="w-full">
         {copy.primary}
       </Button>
-      <Text typeRole="small" className="m-0 text-muted-foreground">
+      <Text typeRole="small" className="trim-margin text-muted-foreground">
         {copy.reassurance}
       </Text>
     </Stack>

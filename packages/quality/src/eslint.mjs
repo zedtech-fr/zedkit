@@ -6,18 +6,23 @@
 // - Tailwind class hygiene (order, no duplicates, no conflicts, no unknown)
 // - Tokens only: no raw palette colors (bg-red-500), no arbitrary hex/rgb
 //   colors, no raw px font sizes, no arbitrary px/rem in className
-//   (w-[13px], gap-[0.75rem]), no raw focus ring widths (focus:ring-2)
-//   — use the semantic theme tokens
+//   (w-[13px], gap-[0.75rem]), no scale steps (p-4, mt-4, w-1/2,
+//   grid-cols-3, text-sm), no raw focus ring widths (focus:ring-2)
+//   — use a role class from the host theme. Numbers stay in token values.
+// - Fails closed when tailwindcss or the CSS entry cannot be resolved.
 // - No `style` attributes; no forwardRef (ref is a prop); no explicit `any`;
 //   files ≤ 300 lines, functions ≤ 60; no raw try/catch (use a tryCatch wrapper)
 //
 // Consumer setup (no copy: install the package, pass your Tailwind entry):
 //   `import { uiPreset } from "@zedtech/zedkit-quality"` then
 //   `export default [...uiPreset({ entryPoint: "./app/globals.css" })]`.
+import { dirname } from "node:path";
+import process from "node:process";
 import js from "@eslint/js";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import betterTailwindcss from "eslint-plugin-better-tailwindcss";
 import tseslint, { plugin as tsPlugin } from "typescript-eslint";
+import { resolveEntryPoint, tailwindPackageRoot, zedkitLintPlugin } from "./scale-classes.mjs";
 
 const DEEP_RELATIVE_IMPORT = {
   group: ["../..", "../../*", "../../../*"],
@@ -66,15 +71,52 @@ const COLOR_UTILS =
 /**
  * UI lint preset for .tsx/.jsx files.
  *
- * @param {{ entryPoint: string }} options - Path to the repo's Tailwind CSS
- * entry, so the plugin knows the theme tokens. Required, no default: the
- * per-repo CSS path is the one thing that varies.
+ * @param {{ entryPoint: string, scaleBaseline?: string, entryPoints?: { files: string[], entryPoint: string }[] }} options - Path to
+ * the repo's Tailwind CSS entry, so the plugin knows the theme tokens.
+ * Required, no default: the per-repo CSS path is the one thing that varies.
+ * `scaleBaseline` is an optional JSON file of per-file scale-class counts.
+ * Without it every scale step is an error. The count may only shrink.
+ * `entryPoints` scopes additional CSS entries to file globs (an app with
+ * its own globals that @imports the kit sheet plus app utilities).
  * @returns {import("eslint").Linter.Config[]} Flat config blocks.
  */
-export function uiPreset({ entryPoint }) {
+export function uiPreset({ entryPoint, scaleBaseline, entryPoints = [] } = {}) {
   if (typeof entryPoint !== "string" || entryPoint === "") {
     throw new Error("uiPreset: `entryPoint` is required (path to your Tailwind CSS entry).");
   }
+  if (!Array.isArray(entryPoints)) {
+    throw new Error("uiPreset: `entryPoints` must be a list of { files, entryPoint }.");
+  }
+  for (const scoped of entryPoints) {
+    if (!Array.isArray(scoped?.files) || scoped.files.length === 0 || typeof scoped?.entryPoint !== "string" || scoped.entryPoint === "") {
+      throw new Error("uiPreset: each `entryPoints` entry needs non-empty `files` and `entryPoint`.");
+    }
+  }
+  // Resolve once: the absolute path is what both better-tailwindcss and
+  // the zedkit rules see, so linting from a subdirectory matches the root.
+  const resolvedEntry = resolveEntryPoint(entryPoint, process.cwd());
+  const entryDir = dirname(resolvedEntry);
+  const themeRoot = tailwindPackageRoot(entryDir) ?? tailwindPackageRoot(process.cwd());
+  const btSettings = (resolved, root) => ({
+    "better-tailwindcss": {
+      entryPoint: resolved,
+      // The plugin resolves tailwindcss from its cwd. In a workspace that
+      // package often sits next to the CSS entry, not next to the ESLint process.
+      ...(root ? { cwd: root } : {}),
+    },
+  });
+  const scopedBlocks = entryPoints.map((scoped, index) => {
+    const resolved = resolveEntryPoint(scoped.entryPoint, process.cwd());
+    const root = tailwindPackageRoot(dirname(resolved)) ?? themeRoot;
+    return {
+      name: `zedkit/ui-tailwind-entry-${index}`,
+      files: scoped.files,
+      settings: {
+        ...btSettings(resolved, root),
+        zedkit: { entryPoint: resolved },
+      },
+    };
+  });
   return [
     {
       name: "zedkit/ui-a11y",
@@ -85,16 +127,12 @@ export function uiPreset({ entryPoint }) {
       name: "zedkit/ui-tailwind",
       files: ["**/*.tsx", "**/*.jsx"],
       plugins: { "better-tailwindcss": betterTailwindcss },
-      settings: {
-        "better-tailwindcss": {
-          entryPoint,
-        },
-      },
+      settings: btSettings(resolvedEntry, themeRoot),
       rules: {
         "better-tailwindcss/enforce-consistent-class-order": "error",
         "better-tailwindcss/no-duplicate-classes": "error",
         "better-tailwindcss/no-conflicting-classes": "error",
-        "better-tailwindcss/no-unknown-classes": "error",
+        "better-tailwindcss/no-unknown-classes": ["error", { detectComponentClasses: true }],
         "better-tailwindcss/no-restricted-classes": [
           "error",
           {
@@ -112,7 +150,7 @@ export function uiPreset({ entryPoint }) {
               {
                 pattern: "text-\\[[^\\]]*px",
                 message:
-                  "tokens-style: raw px font sizes are banned. Use the type scale (text-xs … text-2xl).",
+                  "tokens-style: raw px font sizes are banned. Use a named type role from the host theme, not a px size or the default type scale.",
               },
               // Radix CSS variables (w-[var(--radix-popover-trigger-width)])
               // are not matched: they are not a px/rem literal. Overlays
@@ -121,7 +159,7 @@ export function uiPreset({ entryPoint }) {
               {
                 pattern: "\\[[0-9.]+(?:px|rem)\\]",
                 message:
-                  "tokens-arbitrary: raw px/rem in className (w-[13px], gap-[0.75rem]) are banned — use the spacing scale (w-4, gap-3) or the type scale (text-sm).",
+                  "tokens-arbitrary: raw px/rem in className (w-[13px], gap-[0.75rem]) are banned. Use a role class from the host theme. Put the number in the token value.",
               },
               // Decorative ring-1 / ring-0 stay. has-[:focus-visible]:ring-*
               // paints a parent when a child is focused; not a focus: variant.
@@ -151,9 +189,19 @@ export function uiPreset({ entryPoint }) {
           {
             selector: "Identifier[name='forwardRef']",
             message:
-              "ui-ref: forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button.tsx).",
+              "ui-ref: forwardRef is banned. Pass ref as a prop on ComponentProps<\"button\"> (see packages/ui/src/button/button.tsx).",
           },
         ],
+      },
+    },
+    {
+      name: "zedkit/ui-scale",
+      files: ["**/*.tsx", "**/*.jsx"],
+      plugins: { zedkit: zedkitLintPlugin(resolvedEntry, scaleBaseline) },
+      settings: { zedkit: { entryPoint: resolvedEntry } },
+      rules: {
+        "zedkit/tailwind-ready": "error",
+        "zedkit/no-scale-classes": "error",
       },
     },
     {
@@ -179,6 +227,7 @@ export function uiPreset({ entryPoint }) {
         ],
       },
     },
+    ...scopedBlocks,
   ];
 }
 

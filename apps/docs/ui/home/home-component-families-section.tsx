@@ -11,9 +11,9 @@ import { homeCopy } from "@/ui/home/i18n/home-copy";
 /** Each name is a control: bordered like one, 44px tall on a phone, 13px text (dense-UI size). */
 function FamilyExampleLinks({ examples }: { examples: readonly { label: string; href: string }[] }) {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap">
       {examples.map((item) => (
-        <Button key={item.href} asChild variant="outline" size="sm" className="min-h-11 px-2 text-sm md:min-h-0 md:px-3">
+        <Button key={item.href} asChild variant="outline" size="sm" className="min-h-target px-control-tight text-dense md:pane-shrink md:px-button-inline-sm">
           <HomeLink href={item.href}>{item.label}</HomeLink>
         </Button>
       ))}
@@ -39,14 +39,15 @@ export function HomeComponentFamiliesSection({
       {...HOME_SECTION_REVEAL_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} data-home-component-families="">
-        <Stack className="min-w-0 divide-y divide-border border-y border-border">
+        <Stack className="content-shrink divide-y divide-border border-y border-border">
           {homeCopy.componentFamilies.families.map((family) => (
             <Stack
               key={family.label}
-              gap={2}
-              className="py-4 md:grid md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-baseline md:gap-x-8 md:py-6"
+              gap="sm"
+              data-index-lead=""
+              className="py-row md:grid md:items-baseline md:gap-x-blocks md:py-index"
             >
-              <Stack gap={1} className="min-w-0">
+              <Stack gap="tight" className="content-shrink">
                 <Heading level={3} typeRole="heading" data-family-title="">
                   {family.label}
                 </Heading>

@@ -1,4 +1,4 @@
-import { readFileSync, utimesSync } from "node:fs";
+import { mkdirSync, readFileSync, utimesSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ALL_PROVIDERS } from "#install.js";
@@ -309,6 +309,56 @@ describe("checkTokenomics", () => {
   it("lets a project strengthen gates", () => {
     expect(checkTokenomics(doc("gates:\n  trivial: { review: required }\n  standard: { review: required, human: required }\n"))).toEqual([]);
   });
+
+  it("rejects a top-level section that is not a mapping", () => {
+    const issues = checkTokenomics(
+      doc(
+        [
+          "default_needs: [medium]",
+          "providers: [cursor]",
+          "gates: required",
+          "agents: [verifier]",
+          "hardcode: off",
+          "",
+        ].join("\n"),
+      ),
+    );
+    for (const key of ["default_needs", "providers", "gates", "agents", "hardcode"]) {
+      expect(issues, key).toContainEqual(expect.stringContaining(`${key}: must be a mapping`));
+    }
+  });
+
+  it("rejects a context_windows block that is not a mapping", () => {
+    expect(checkTokenomics(doc("providers:\n  cursor:\n    context_windows: 128k\n"))).toContainEqual(
+      expect.stringContaining("providers.cursor.context_windows: must be a mapping"),
+    );
+  });
+
+  it("rejects a cell model that is not a string", () => {
+    expect(
+      checkTokenomics(doc("providers:\n  cursor:\n    build:\n      standard: { model: 12, effort: medium }\n")),
+    ).toContainEqual(expect.stringContaining("providers.cursor.build.standard.model: must be \"inherit\" or a model id"));
+  });
+
+  it("rejects a distinct_model flag that is not a boolean", () => {
+    expect(checkTokenomics(doc("gates:\n  standard: { distinct_model: yes }\n"))).toContainEqual(
+      expect.stringContaining("gates.standard.distinct_model: must be true or false"),
+    );
+  });
+
+  it("rejects hardcode lists that are not strings and a non-boolean scan_nested", () => {
+    const issues = checkTokenomics(
+      doc("hardcode:\n  allow_paths: docs/**\n  extra_patterns: ['gpt-\\\\d+', 12]\n  scan_nested: yes please\n"),
+    );
+    expect(issues).toContainEqual(expect.stringContaining("hardcode.allow_paths: must be a list of strings"));
+    expect(issues).toContainEqual(expect.stringContaining("hardcode.extra_patterns: must be a list of strings"));
+    expect(issues).toContainEqual(expect.stringContaining("hardcode.scan_nested: must be true or false"));
+  });
+
+  it("rejects a model name nested in an array outside providers", () => {
+    const issues = checkTokenomics(doc("agents:\n  verifier:\n    min_effort: [gpt-5]\n"));
+    expect(issues).toContainEqual(expect.stringContaining('agents.verifier.min_effort[0]: model name "gpt-5" outside providers'));
+  });
 });
 
 describe("loadDefaults cache", () => {
@@ -328,5 +378,23 @@ describe("loadDefaults cache", () => {
     put(kit, "tokenomics.defaults.md", "---\nschema: 1\nstrict_headers: true\n---\n");
     utimesSync(join(kit, "tokenomics.defaults.md"), new Date(), new Date(Date.now() + 5000));
     expect(loadDefaults(kit)).toMatchObject({ ok: true, value: { strict_headers: true } });
+  });
+
+  it("reports a defaults path that exists but cannot be read as a file", () => {
+    const kit = tempDir();
+    mkdirSync(join(kit, "tokenomics.defaults.md"));
+    const loaded = loadDefaults(kit);
+    expect(loaded.ok).toBe(false);
+    if (loaded.ok) throw new Error("expected unreadable defaults");
+    expect(loaded.error.message).toContain("cannot read tokenomics.defaults.md");
+  });
+
+  it("reports a defaults file that is not parseable tokenomics", () => {
+    const kit = tempDir();
+    put(kit, "tokenomics.defaults.md", "# no frontmatter\n");
+    const loaded = loadDefaults(kit);
+    expect(loaded.ok).toBe(false);
+    if (loaded.ok) throw new Error("expected unparseable defaults");
+    expect(loaded.error.message).toMatch(/frontmatter|YAML/i);
   });
 });

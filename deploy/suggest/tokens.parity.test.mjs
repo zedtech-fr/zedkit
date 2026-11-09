@@ -6,7 +6,7 @@ import test from "node:test";
 
 import { FONT_STACKS, fontsAllowed, mergePatch, validateTokens } from "./tokens.mjs";
 
-const UI_DIST = join(dirname(fileURLToPath(import.meta.url)), "../../packages/ui/dist/identity-tokens.js");
+const UI_DIST = join(dirname(fileURLToPath(import.meta.url)), "../../packages/ui/dist/identity/identity-tokens.js");
 
 // The service ports the UI's schema; this test is what keeps the port honest. It needs the built kit
 // (`pnpm --filter @zedtech/zedkit-ui build`, which CI runs before this suite).

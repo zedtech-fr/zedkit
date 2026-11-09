@@ -27,7 +27,7 @@ function DeleteRow({ name, onConfirm }: { name: string; onConfirm: () => void })
           className="text-destructive"
           aria-label={adminDashboardDemoCopy.columns.deleteAriaLabel(name)}
         >
-          <Trash2 className="size-4" aria-hidden />
+          <Trash2 className="size-icon" aria-hidden />
         </Button>
       }
       title={adminDashboardDemoCopy.columns.deleteTitle}
@@ -56,7 +56,7 @@ export function buildAdminDashboardColumns({
         <Button
           type="button"
           variant="ghost"
-          className="h-auto min-h-11 w-full justify-start px-2 font-normal"
+          className="h-auto min-h-target w-full justify-start px-control-tight font-normal"
           aria-pressed={selectedId === row.original.id}
           onClick={() => onSelect(row.original.id)}
         >
@@ -74,7 +74,7 @@ export function buildAdminDashboardColumns({
         </Text>
       ),
       cell: ({ row }) => (
-        <Stack direction="horizontal" gap={1} className="flex-nowrap justify-end" data-demo-row-actions>
+        <Stack direction="horizontal" gap="tight" className="flex-nowrap justify-end" data-demo-row-actions>
           <Button
             type="button"
             variant="outline"
@@ -82,7 +82,7 @@ export function buildAdminDashboardColumns({
             aria-label={adminDashboardDemoCopy.columns.editAriaLabel(row.original.name)}
             onClick={() => onEdit(row.original)}
           >
-            <Pencil className="size-4" aria-hidden />
+            <Pencil className="size-icon" aria-hidden />
           </Button>
           <DeleteRow name={row.original.name} onConfirm={() => onDelete(row.original.id)} />
         </Stack>

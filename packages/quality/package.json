@@ -59,6 +59,7 @@
     "src/index.d.mts",
     "src/eslint.mjs",
     "src/eslint.d.mts",
+    "src/scale-classes.mjs",
     "src/bin",
     "tsconfig.base.json"
   ],

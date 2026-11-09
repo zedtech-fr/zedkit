@@ -5,8 +5,8 @@ import {
   identityContrastWarnings,
   keepIdentityDarkKeys,
   withIdentityDarkPair,
-} from "#identity-contrast.js";
-import { identityPresets, identityTokenSchema, parseIdentityTokens } from "#identity-tokens.js";
+} from "#identity/identity-contrast.js";
+import { identityPresets, identityTokenSchema, parseIdentityTokens } from "#identity/identity-tokens.js";
 
 function ofToken(
   tokens: ReturnType<typeof identityTokenSchema.parse>,

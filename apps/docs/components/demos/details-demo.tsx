@@ -4,8 +4,8 @@ import { detailsCopy } from "@/components/demos/i18n/details-copy";
 /** A parcel tracking panel: title with a live indicator, then the key-value details. */
 export function DetailsDemo() {
   return (
-    <Stack gap={4}>
-      <Stack direction="horizontal" gap={3}>
+    <Stack gap="lg">
+      <Stack direction="horizontal" gap="md">
         <Heading level={3}>{detailsCopy.demo.title}</Heading>
         <LivePulse label={detailsCopy.demo.trackingLive} />
       </Stack>
@@ -16,7 +16,7 @@ export function DetailsDemo() {
             : { label: item.label, value: item.value },
         )}
       />
-      <Stack direction="horizontal" gap={3}>
+      <Stack direction="horizontal" gap="md">
         <LivePulse active={false} />
         <Text variant="muted">{detailsCopy.demo.trackingStoppedHint}</Text>
       </Stack>

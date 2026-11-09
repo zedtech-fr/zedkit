@@ -78,7 +78,7 @@ export function FormDemo({
     <>
       <Toaster />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-sm space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} data-example-width="" className="space-y-stack-lg">
           <FormField
             control={form.control}
             name="name"

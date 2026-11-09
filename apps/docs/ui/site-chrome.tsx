@@ -40,7 +40,7 @@ export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchP
     <div data-theme-toggle="" className="inline-flex shrink-0">
       <ThemeSwitch
         mode={mode}
-        className={cn("h-control-height-sm shrink-0 gap-0.5 border-border/35 p-0.5", className)}
+        className={cn("h-control-height-sm shrink-0 gap-segment p-segment", className)}
       />
     </div>
   );

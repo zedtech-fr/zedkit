@@ -21,11 +21,11 @@ export function IdentityDockComposerFooter(props: {
   const notice = props.session.notice;
   const showNotice = notice !== null;
   return (
-    <Stack gap={2} className="shrink-0 border-t border-border bg-background px-3 py-3">
+    <Stack gap="sm" className="shrink-0 border-t border-border bg-background surface-pad-compact">
       {showNotice ? (
         <div
           role="status"
-          className="rounded-md border border-border bg-muted px-3 py-2 text-zk-type-body text-muted-foreground"
+ className="rounded-md border border-border bg-muted pad-row text-zk-type-body text-muted-foreground"
           data-assistant-notice=""
         >
           {noticeText(notice)}

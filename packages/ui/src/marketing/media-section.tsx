@@ -2,8 +2,8 @@ import { useId } from "react";
 import type * as React from "react";
 import { Check } from "lucide-react";
 
-import { Container } from "../layout.js";
-import { Heading, Text } from "../typography.js";
+import { Container } from "../layout/layout.js";
+import { Heading, Text } from "../typography/typography.js";
 import { cn } from "../utils.js";
 import { GlassSurface } from "./glass-surface.js";
 
@@ -40,18 +40,18 @@ function MediaSection({
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="grid items-center gap-10 lg:grid-cols-2">
-        <div className={cn("flex min-w-0 flex-col gap-4", reverse && "lg:order-last")}>
-          <Heading id={titleId} level={2} className="text-3xl font-semibold text-balance">
+      <Container width="default" className="grid items-center gap-section-stack lg:grid-pair">
+        <div className={cn("flex content-shrink flex-col gap-stack-lg", reverse && "lg:order-last")}>
+          <Heading id={titleId} level={2} className="text-section-display text-balance">
             {title}
           </Heading>
           {description ? <Text className="text-muted-foreground">{description}</Text> : null}
           {points && points.length > 0 ? (
-            <ul className="flex list-none flex-col gap-2 p-0">
+            <ul className="flex list-none flex-col gap-stack-sm flush">
               {points.map((point, index) => (
-                <li key={index} className="flex gap-3">
-                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-primary" />
-                  <span className="min-w-0">{point}</span>
+                <li key={index} className="flex gap-stack-md">
+                  <Check aria-hidden="true" className="icon-nudge size-icon shrink-0 text-primary" />
+                  <span className="content-shrink">{point}</span>
                 </li>
               ))}
             </ul>
@@ -59,13 +59,13 @@ function MediaSection({
           {actions ? (
             <div
               data-slot="media-section-actions"
-              className="flex w-full flex-col gap-3 pt-2 *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
+              className="flex w-full flex-col gap-stack-md actions-offset *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
             >
               {actions}
             </div>
           ) : null}
         </div>
-        <GlassSurface data-slot="media-section-media" tone="raised" padding="sm" className="min-w-0 overflow-hidden">
+        <GlassSurface data-slot="media-section-media" tone="raised" padding="sm" className="content-shrink overflow-hidden">
           {media}
         </GlassSurface>
       </Container>

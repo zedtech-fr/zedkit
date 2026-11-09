@@ -277,7 +277,7 @@ function exampleBlock({ code, title, path }, imports) {
     ...(importLines.length > 0 ? [""] : []),
     "export default function Page() {",
     "  return (",
-    '    <main className="p-8">',
+    '    <main className="px-page-gutter py-section-sm">',
     indented,
     "    </main>",
     "  );",
@@ -342,7 +342,7 @@ function packageMode({ need, packageName, example }) {
           kind: "file",
           path: CSS_PATH,
           lang: "css",
-          code: stylesheet(adoption.kind === "css" ? adoption : { imports: [`${UI_PACKAGE}/styles.css`], directives: [UI_SOURCE] }),
+          code: stylesheet(adoption.kind === "css" ? adoption : { imports: [`${UI_PACKAGE}/styles.css`], directives: [UI_SOURCE, UI_SOURCE_NOT_TESTS] }),
           action: "replace",
         },
       ],
@@ -371,6 +371,7 @@ function packageMode({ need, packageName, example }) {
 }
 
 const UI_SOURCE = '@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}"';
+const UI_SOURCE_NOT_TESTS = '@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*"';
 
 function copySteps({ need, registry, closure, siteUrl, mode, extra }) {
   const brick = need.registry;
@@ -381,7 +382,7 @@ function copySteps({ need, registry, closure, siteUrl, mode, extra }) {
   const steps = [
     {
       id: "init",
-      blocks: [command((pm) => `${run(pm)} shadcn@latest init -d`)],
+      blocks: [command((pm) => `${run(pm)} shadcn@latest init -y --base radix --preset nova`)],
     },
   ];
   if (mode === "cli") {

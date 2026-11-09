@@ -9,7 +9,7 @@ const LIMIT = 280;
 export function TextareaDemo() {
   const [note, setNote] = React.useState<string>(textareaCopy.value);
   return (
-    <Stack gap={2} className="min-w-0">
+    <Stack gap="sm" className="content-shrink">
       <Label htmlFor="demo-note">{textareaCopy.label}</Label>
       <Textarea
         id="demo-note"
@@ -18,7 +18,7 @@ export function TextareaDemo() {
         placeholder={textareaCopy.placeholder}
         onChange={(event) => setNote(event.target.value)}
       />
-      <Text variant="muted" className="text-xs" aria-live="polite">
+      <Text variant="muted" className="text-caption" aria-live="polite">
         {textareaCopy.count(note.length, LIMIT)}
       </Text>
     </Stack>

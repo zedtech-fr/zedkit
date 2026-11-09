@@ -7,7 +7,7 @@ import { routeModalCopy } from "@/components/demos/i18n/route-modal-copy";
 export function RouteModalDemo() {
   const [open, setOpen] = useState(false);
   return (
-    <Stack gap={3} className="min-w-0 items-start">
+    <Stack gap="md" className="content-shrink items-start">
       <Text variant="muted">{routeModalCopy.drawer.intro}</Text>
       <Button type="button" variant="outline" onClick={() => setOpen(true)}>
         {routeModalCopy.drawer.open}
@@ -18,7 +18,7 @@ export function RouteModalDemo() {
           description={routeModalCopy.drawer.description}
           onClose={() => setOpen(false)}
         >
-          <Stack gap={3}>
+          <Stack gap="md">
             <DetailPanel
               items={[
                 { label: routeModalCopy.details.customer, value: routeModalCopy.details.customerName },

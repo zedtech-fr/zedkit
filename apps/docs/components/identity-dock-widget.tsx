@@ -9,7 +9,6 @@ import {
   DrawerHandle,
   Stack,
   Text,
-  cn,
   identityPresets,
   isPresetId,
   parseIdentityTokens,
@@ -101,7 +100,6 @@ function IdentityDockWidget() {
           aria-keyshortcuts="Control+I Meta+I"
           title={identityDockCopy.shortcutHint}
           tabIndex={expanded ? -1 : undefined}
-          className={cn(expanded && "pointer-events-none opacity-0")}
           onClick={() => setExpanded(true)}
         >
           <IdentityDockSwatch />
@@ -117,10 +115,10 @@ function IdentityDockWidget() {
           aria-label={identityDockCopy.panelTitle}
           data-slot="identity-dock-panel"
           data-state={expanded ? "open" : "closed"}
-          className="flex min-h-0 flex-col gap-0 p-0 [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-0"
+          className="flex pane-shrink flex-col gap-flush flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-flush"
         >
-          <DrawerHandle className="mt-2 mb-0 h-1 w-10 shrink-0 bg-border/45" aria-label="Drag to resize" />
-          <Stack data-state="open" className="min-h-0 flex-1 gap-0">
+          <DrawerHandle data-dock-handle="" className="trim-bottom w-handle shrink-0" aria-label="Drag to resize" />
+          <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
             <IdentityDockAssistantPanel
               previewTokens={workingTokens}
               onPreviewTokens={setPreviewTokens}

@@ -3,17 +3,17 @@ import { toggleCopy } from "@/components/demos/i18n/toggle-copy";
 
 export function ToggleDemo() {
   return (
-    <Stack gap={4}>
-      <Stack direction="horizontal" gap={2} className="items-center">
+    <Stack gap="lg">
+      <Stack direction="horizontal" gap="sm" className="items-center">
         <Checkbox id="demo-terms" />
         <Label htmlFor="demo-terms">{toggleCopy.terms}</Label>
       </Stack>
-      <Stack gap={1}>
-        <Stack direction="horizontal" gap={2} className="items-center">
+      <Stack gap="tight">
+        <Stack direction="horizontal" gap="sm" className="items-center">
           <Switch id="demo-notify" defaultChecked />
           <Label htmlFor="demo-notify">{toggleCopy.notify}</Label>
         </Stack>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {toggleCopy.hint}
         </Text>
       </Stack>

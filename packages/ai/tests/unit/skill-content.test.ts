@@ -83,6 +83,22 @@ describe("skill content conventions", () => {
     );
   });
 
+  it("every message picks depth before answering, and a search loads audit", () => {
+    const template = readFileSync(join(kitDir(), "AGENTS.template.md"), "utf8");
+    expect(template).toContain("Depth first");
+    expect(template).toMatch(/are there other\/unused/u);
+    const audit = readFileSync(
+      join(kitDir(), "skills", "audit", "SKILL.md"),
+      "utf8",
+    );
+    expect(audit).toMatch(/^description:.*search or inventory/mu);
+    const orchestrate = readFileSync(
+      join(kitDir(), "skills", "orchestrate", "SKILL.md"),
+      "utf8",
+    );
+    expect(orchestrate).toMatch(/^description:.*when the request is deep/mu);
+  });
+
   it("plan, challenge and review go through orchestrate and set the quality bar", () => {
     for (const name of ["plan", "challenge", "review"] as const) {
       const raw = readFileSync(
@@ -145,6 +161,9 @@ describe("skill content conventions", () => {
     expect(from).toContain("quiz-for-approval and publish steps are not automatic");
     expect(from).toContain("carry that approval through");
     expect(from).toContain("only when the user asked for tickets");
+    expect(from).toContain("resolve the contradiction");
+    expect(from).toContain("obsolete execution rule");
+    expect(from).not.toContain("that file is task 1");
     expect(to).toContain("Playbook: to-audit");
     expect(to).toContain("before `plan`");
     expect(to).toContain("Do not implement");
@@ -170,6 +189,10 @@ describe("skill content conventions", () => {
     expect(raw).toContain("source → shipped/installed artifact");
     expect(raw).toContain("never the whole investigation");
     expect(raw).toContain("Not checked:");
+    expect(raw).toContain("retained artifact");
+    expect(raw).not.toContain(
+      "or a result whose data is null, stays **Not checked** until this session repeats",
+    );
     expect(raw).not.toContain("opens small issues and fix PRs");
   });
 

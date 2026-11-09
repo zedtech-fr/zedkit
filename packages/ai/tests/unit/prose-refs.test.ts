@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -22,6 +22,62 @@ function lensNames(): Set<string> {
 
 function repoRoot(): string {
   return fileURLToPath(new URL("../../../..", import.meta.url));
+}
+
+function expandGuideSnippets(text: string): string {
+  return text.replace(/\{\{snippet:([a-zA-Z0-9._-]+)\}\}/g, (_full, id: string) => {
+    const path = join(repoRoot(), "apps/docs/prose/guides/snippets", id);
+    return existsSync(path) ? readFileSync(path, "utf8") : `{{snippet:${id}}}`;
+  });
+}
+
+function zedkitAiCommandExamples(text: string): string[] {
+  const spans: string[] = [];
+  for (const m of text.matchAll(/`([^`]*zedkit-ai[^`]*)`/gu)) {
+    spans.push(m[1] ?? "");
+  }
+  for (const m of text.matchAll(/```[^\n]*\n([\s\S]*?)```/g)) {
+    const block = m[1] ?? "";
+    if (block.includes("zedkit-ai")) spans.push(block);
+  }
+  return spans;
+}
+
+function assertAiCliRefs(
+  text: string,
+  rel: string,
+  flags: Set<string>,
+  presets: Set<string>,
+  providers: Set<string>,
+): number {
+  let checked = 0;
+  for (const span of zedkitAiCommandExamples(text)) {
+    for (const m of span.matchAll(/--[a-z][a-z0-9-]*/gu)) {
+      checked += 1;
+      expect([...flags], `${rel} uses ${m[0]}`).toContain(m[0]);
+    }
+    for (const m of span.matchAll(/--preset ([a-z][a-z0-9-]*)/gu)) {
+      checked += 1;
+      expect([...presets], `${rel} presets ${m[1]}`).toContain(m[1] ?? "");
+    }
+    for (const m of span.matchAll(/--provider ([a-z][a-z0-9-,]*)/gu)) {
+      for (const name of (m[1] ?? "").split(",")) {
+        checked += 1;
+        expect([...providers], `${rel} provides ${name}`).toContain(name);
+      }
+    }
+  }
+  return checked;
+}
+
+function cliContract(): { flags: Set<string>; presets: Set<string>; providers: Set<string> } {
+  const manifest = readManifest();
+  if (!manifest.ok) throw manifest.error;
+  return {
+    flags: new Set([...usageFlags(), ...HELP]),
+    presets: new Set(Object.keys(manifest.value.presets)),
+    providers: new Set(usageProviders()),
+  };
 }
 
 describe("prose references", () => {
@@ -48,33 +104,31 @@ describe("prose references", () => {
     expect(checked).toBeGreaterThan(0);
   });
 
-  it("resolves every CLI flag and value in AI prose to USAGE", () => {
-    const manifest = readManifest();
-    if (!manifest.ok) throw manifest.error;
-    const flags = new Set([...usageFlags(), ...HELP]);
-    const presets = new Set(Object.keys(manifest.value.presets));
-    const providers = new Set(usageProviders());
+  it("resolves every CLI flag and value in ZedKit AI command examples to USAGE", () => {
+    const { flags, presets, providers } = cliContract();
     let checked = 0;
     for (const rel of PROSE) {
-      const text = readFileSync(join(repoRoot(), rel), "utf8");
-      for (const m of text.matchAll(/--[a-z][a-z0-9-]*/gu)) {
-        checked += 1;
-        expect([...flags], `${rel} uses ${m[0]}`).toContain(m[0]);
-      }
-      const spans = [...text.matchAll(/`([^`]*)`/gu)].map((m) => m[1] ?? "");
-      for (const span of spans) {
-        for (const m of span.matchAll(/--preset ([a-z][a-z0-9-]*)/gu)) {
-          checked += 1;
-          expect([...presets], `${rel} presets ${m[1]}`).toContain(m[1] ?? "");
-        }
-        for (const m of span.matchAll(/--provider ([a-z][a-z0-9-,]*)/gu)) {
-          for (const name of (m[1] ?? "").split(",")) {
-            checked += 1;
-            expect([...providers], `${rel} provides ${name}`).toContain(name);
-          }
-        }
-      }
+      const text = expandGuideSnippets(readFileSync(join(repoRoot(), rel), "utf8"));
+      checked += assertAiCliRefs(text, rel, flags, presets, providers);
     }
     expect(checked).toBeGreaterThan(0);
+  });
+
+  it("accepts shadcn --preset nova and still rejects an invalid AI preset", () => {
+    const { flags, presets, providers } = cliContract();
+    const mixed = [
+      "`npx shadcn@latest init -y --base radix --preset nova`",
+      "```sh\nnpx @zedtech/zedkit-ai init --preset core --provider cursor\n```",
+    ].join("\n");
+    expect(assertAiCliRefs(mixed, "fixture.mdx", flags, presets, providers)).toBeGreaterThan(0);
+    expect(() =>
+      assertAiCliRefs(
+        "`npx @zedtech/zedkit-ai init --preset not-a-preset`",
+        "bad.mdx",
+        flags,
+        presets,
+        providers,
+      ),
+    ).toThrow(/not-a-preset/);
   });
 });

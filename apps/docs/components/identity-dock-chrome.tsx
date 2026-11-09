@@ -19,7 +19,7 @@ function IdentityDock({ className, children, ...props }: IdentityDockProps) {
       data-slot="identity-dock"
       data-demo-specimen=""
       className={cn(
-        "pointer-events-none fixed right-3 bottom-3 z-40 flex max-w-[calc(100vw-1.5rem)] flex-col items-end gap-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:right-4 sm:bottom-4",
+        "pointer-events-none fixed right-control-inline bottom-control-inline flex flex-col items-end gap-stack-sm sm:right-float sm:bottom-float",
         className,
       )}
       {...props}
@@ -53,7 +53,7 @@ function IdentityDockSwatch({ className }: IdentityDockSwatchProps) {
       as="span"
       data-slot="identity-dock-swatch"
       aria-hidden="true"
-      className={cn("inline-block size-4 shrink-0 rounded-full border border-border/60 bg-primary", className)}
+      className={cn("inline-block shrink-0 rounded-full border bg-primary", className)}
     />
   );
 }

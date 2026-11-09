@@ -12,6 +12,7 @@ shadcn/ui-based (MIT, see
 default.
 
 **Install** with `pnpm add @zedtech/zedkit-ui`, or **copy** individual bricks with
+`npx shadcn@latest init -y --base radix --preset nova` then
 `npx shadcn@latest add https://zedkit.app/r/<brick>.json` where the registry lists
 them. Composed bricks need the namespace once:
 
@@ -35,14 +36,27 @@ Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 Adopt in 3 lines:
 
 ```css
-/* app/globals.css (Tailwind v4, PostCSS or Vite plugin) */
+/* Tailwind v4. Path is relative to this CSS file. */
 @import "@zedtech/zedkit-ui/styles.css";
+/* app/globals.css or src/index.css */
 @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+@source not "../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
+/* src/app/globals.css */
+@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
+@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
 ```
 
 ```tsx
 import { Button } from "@zedtech/zedkit-ui"; // see CATALOG.md for every component
 ```
+
+Container-aware sizing: mark a layout slot with `Container`'s `query`
+prop (or the `zk-query` class on any grid cell/slot) and adaptive
+components size to their allocated space, not the viewport. `Card`
+takes `size="sm" | "lg"`; each variant's padding, internal gap,
+radius and title/body type step up in wide slots (30rem), compose
+with identity density, and fall back to the base recipe with no
+marked ancestor. Controls keep explicit sizes and target floors.
 
 ## Migration
 
@@ -105,6 +119,7 @@ Component tests render with Testing Library + jsdom.
 of every component in every state at http://127.0.0.1:4123/ (`/dark`
 for the dark theme). Static server render for visual review only —
 behavior stays covered by unit tests. `pnpm --filter @zedtech/zedkit-ui
-smoke` runs the Playwright smoke over both themes (sections render,
-zero console errors) and compares the gallery to committed baselines under
-`preview/smoke.spec.ts-snapshots/` (Playwright `toHaveScreenshot`).
+smoke` runs the Playwright smoke over both themes: every gallery section is
+visible, overlay triggers render, console errors in the light theme and
+uncaught page errors in all themes, and layouts do not overflow the viewport
+(no pixel baselines).

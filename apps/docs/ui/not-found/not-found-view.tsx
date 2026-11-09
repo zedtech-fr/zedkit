@@ -5,7 +5,7 @@ import { notFoundCopy } from "@/ui/not-found/i18n/not-found-copy";
 export function NotFoundView() {
   return (
     <Container width="narrow" className="py-section-lg">
-      <Stack gap={4}>
+      <Stack gap="lg">
         <Heading level={1}>{notFoundCopy.title}</Heading>
         <Text variant="muted">{notFoundCopy.body}</Text>
         <Button asChild>

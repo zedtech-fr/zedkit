@@ -15,20 +15,20 @@ export function IdentityDockPanelToolbar({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
   const { setExpanded } = useIdentityAssistantStore();
   return (
-    <Stack direction="horizontal" gap={2} className="items-center border-b border-border px-3 py-2">
-      <Text typeRole="label" className="min-w-0 flex-1">
+ <Stack direction="horizontal" gap="sm" className="items-center border-b border-border pad-row">
+      <Text typeRole="label" className="content-shrink flex-1">
         {identityDockCopy.panelTitle}
       </Text>
       {pathname === IDENTITY_EDITOR_HREF ? null : (
         <Link
           href={IDENTITY_EDITOR_HREF}
-          className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground focus-ring-control hover:bg-muted hover:text-foreground"
+          className="inline-flex size-control-height-sm shrink-0 items-center justify-center rounded-md text-muted-foreground focus-ring-control hover:bg-muted hover:text-foreground"
           data-assistant-editor-link=""
           aria-label={copy.detailedEditorLink}
           title={copy.detailedEditorLink}
           onClick={() => setExpanded(false)}
         >
-          <ExternalLink aria-hidden="true" className="size-4" />
+          <ExternalLink aria-hidden="true" className="size-icon" />
         </Link>
       )}
       <IconButton type="button" variant="ghost" size="sm" label={identityDockCopy.closeLabel} onClick={onClose}>

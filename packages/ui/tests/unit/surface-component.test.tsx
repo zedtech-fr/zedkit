@@ -43,7 +43,7 @@ describe("Surface composition", () => {
     expect(card.getAttribute("data-slot")).toBe("card");
     expect(card.className).toContain("bg-card");
     expect(card.className).toContain("shadow-md");
-    expect(card.className).toContain("rounded-xl");
+    expect(card.className).toContain("rounded-(--zk-card-radius)");
   });
 
   it("WidgetButton composes surfaceVariants on the button host", () => {

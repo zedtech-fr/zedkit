@@ -35,6 +35,44 @@
  * `gap-*`, so fixed marks are pinned here), and the position of each item in the build sequence. The sequence is
  * written as data (`data-beat`, `:nth-child`) instead of inline styles.
  */
+@media (min-width: 40rem) {
+  [data-hero-team-split] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  }
+}
+
+/* Display controls. On a phone, equal columns of at least 6.25rem so none sits alone. From 40rem, each keeps its own width. */
+[data-hero-demo-fields] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.25rem, 1fr));
+}
+@media (min-width: 40rem) {
+  [data-hero-demo-fields] {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+}
+
+#home-page [data-hero-page="settings"] [data-hero-block][data-beat="1"] {
+  max-width: 28rem;
+}
+
+/* Agent panel. Nearly the frame on a phone, the panel width from the medium breakpoint. It sits above the window. */
+[data-hero-agent-panel] {
+  z-index: 20;
+  width: calc(100% - 1rem);
+}
+/* A step that has not started. Quieter than the one running or done. */
+[data-hero-agent-panel] [data-state="pending"] {
+  opacity: 0.6;
+}
+@media (min-width: 48rem) {
+  [data-hero-agent-panel] {
+    width: calc(var(--spacing) * 80);
+  }
+}
+
 #home-page [data-hero-window] [data-hero-sidebar] {
   width: 10.5rem;
 }
@@ -51,10 +89,17 @@
 #home-page [data-hero-faces] [data-hero-avatar] {
   width: 1.875rem;
   height: 1.875rem;
+  /* A card-coloured rim so the overlapping faces stay separate. */
+  border: 2px solid hsl(var(--card));
+}
+
+#home-page [data-hero-rules] {
+  gap: calc(var(--spacing) * 0.5);
 }
 
 #home-page [data-hero-bars] {
   height: 3.5rem;
+  gap: calc(var(--spacing) * 1.5);
 }
 
 #home-page [data-hero-bar] {
@@ -120,7 +165,16 @@
  * On lg and up the window is the right column, so the discs sit there; below it they follow the stacked layout.
  */
 #home-page [data-hero-shapes] {
+  z-index: -10;
   display: none;
+}
+
+/* Guided cursor and the cards over the window. These stay put when motion is off. */
+#home-page [data-hero-cursor] {
+  z-index: 30;
+}
+#home-page [data-hero-satellite] {
+  z-index: 10;
 }
 
 :root[data-identity="glass"] #home-page [data-hero-shapes] {
@@ -237,7 +291,6 @@
 
   /* The guided cursor: a glide between controls, a ring when it presses. */
   #home-page [data-hero-cursor] {
-    z-index: 30;
     opacity: 0;
     transition:
       translate 560ms cubic-bezier(0.4, 0.05, 0.2, 1),

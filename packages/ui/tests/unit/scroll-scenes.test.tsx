@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { SCROLL_SCENES_MAX, ScrollScenes } from "#index.js";
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src");
-const css = readFileSync(join(src, "scroll-scenes.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+const css = readFileSync(join(src, "layout", "scroll-scenes.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 
 const scenes = [
   { id: "one", caption: <h3>First</h3>, children: <p>Alpha</p> },
@@ -44,9 +44,9 @@ describe("ScrollScenes", () => {
   });
 
   it("keeps the caller's className and props on the track", () => {
-    const { container } = render(<ScrollScenes scenes={scenes} className="min-w-0 p-2" id="tour" aria-label="Tour" />);
+    const { container } = render(<ScrollScenes scenes={scenes} className="content-shrink surface-pad-compact" id="tour" aria-label="Tour" />);
     const track = container.querySelector<HTMLElement>("[data-scroll-scenes]");
-    expect(track?.classList.contains("p-2")).toBe(true);
+    expect(track?.classList.contains("surface-pad-compact")).toBe(true);
     expect(track?.id).toBe("tour");
     expect(track?.getAttribute("aria-label")).toBe("Tour");
   });

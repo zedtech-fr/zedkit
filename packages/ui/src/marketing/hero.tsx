@@ -1,8 +1,8 @@
 import { useId } from "react";
 import type * as React from "react";
 
-import { Container } from "../layout.js";
-import { Heading, Text } from "../typography.js";
+import { Container } from "../layout/layout.js";
+import { Heading, Text } from "../typography/typography.js";
 import { cn } from "../utils.js";
 
 export type HeroProps = Omit<React.ComponentProps<"section">, "title"> & {
@@ -46,30 +46,30 @@ function Hero({
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className={cn(media && "grid items-center gap-10 lg:grid-cols-2")}>
-        <div className={cn("flex min-w-0 flex-col gap-5", centered && "mx-auto max-w-reading items-center text-center")}>
+      <Container width="default" className={cn(media && "grid items-center gap-section-stack lg:grid-pair")}>
+        <div className={cn("flex content-shrink flex-col gap-prose", centered && "mx-auto max-w-reading items-center text-center")}>
           {eyebrow ? (
             <Text as="p" variant="muted" className="font-medium text-primary">
               {eyebrow}
             </Text>
           ) : null}
-          <Heading id={titleId} level={headingLevel} className="text-4xl font-semibold text-balance sm:text-5xl">
+          <Heading id={titleId} level={headingLevel} className="text-hero-title text-balance">
             {title}
           </Heading>
           {description ? (
-            <Text className="max-w-reading text-lg text-balance text-muted-foreground">{description}</Text>
+            <Text className="max-w-reading text-hero-lead text-balance text-muted-foreground">{description}</Text>
           ) : null}
           {actions ? (
             <div
               data-slot="hero-actions"
-              className="flex w-full flex-col gap-3 pt-2 *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
+              className="flex w-full flex-col gap-stack-md actions-offset *:w-full sm:w-auto sm:flex-row sm:flex-wrap sm:*:w-auto"
             >
               {actions}
             </div>
           ) : null}
         </div>
         {media ? (
-          <div data-slot="hero-media" className="min-w-0">
+          <div data-slot="hero-media" className="content-shrink">
             {media}
           </div>
         ) : null}

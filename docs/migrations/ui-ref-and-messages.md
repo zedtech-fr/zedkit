@@ -12,7 +12,7 @@ you want French or your own copy.
 
 Hosts take `ref` on the props object (`React.ComponentProps<"button">`).
 `@zedtech/zedkit-quality` flags `forwardRef` and points at
-`packages/ui/src/button.tsx`. Each exported root sets `data-slot`.
+`packages/ui/src/button/button.tsx`. Each exported root sets `data-slot`.
 
 ```tsx
 // before

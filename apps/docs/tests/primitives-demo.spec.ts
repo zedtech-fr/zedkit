@@ -2,6 +2,70 @@ import { expect, test } from "@playwright/test";
 
 import { DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
 
+test("the destructive alert keeps its fill and its line", async ({ page }) => {
+  await page.goto(`${BASE}call-out-a-notice-or-an-error-state`);
+  const preview = page.locator("[data-component-preview]").first();
+  const alert = preview.getByRole("alert").filter({ hasText: "Failed" });
+  await expect(alert).toBeVisible();
+  await pinDemoLook(preview, "glass", "dark");
+  const read = () =>
+    alert.evaluate((node) => {
+      const fill = document.createElement("div");
+      fill.style.backgroundColor = "color-mix(in oklab, hsl(var(--destructive)) 90%, transparent)";
+      const line = document.createElement("div");
+      line.style.borderTop = "1px solid";
+      line.style.borderTopColor = node.classList.contains("dark") || node.closest(".dark")
+        ? "hsl(var(--destructive))"
+        : "color-mix(in oklab, hsl(var(--destructive)) 50%, transparent)";
+      node.append(fill, line);
+      const style = getComputedStyle(node);
+      const result = {
+        background: style.backgroundColor,
+        border: style.borderTopColor,
+        fill: getComputedStyle(fill).backgroundColor,
+        line: getComputedStyle(line).borderTopColor,
+        numeric: /(?:bg|border)-destructive\//.test(node.className),
+      };
+      fill.remove();
+      line.remove();
+      return result;
+    });
+  const dark = await read();
+  expect(dark.background).toBe(dark.fill);
+  expect(dark.border).toBe(dark.line);
+  expect(dark.numeric).toBe(false);
+  await pinDemoLook(preview, "glass", "light");
+  const light = await read();
+  expect(light.background).toBe(light.fill);
+  expect(light.border).toBe(light.line);
+});
+
+test("the idle status dot stays a quiet mark", async ({ page }) => {
+  await page.goto(`${BASE}indicate-status-with-a-dot`);
+  const preview = page.locator("[data-component-preview]").first();
+  const dot = preview.getByText("Idle", { exact: true }).locator("xpath=..").locator("[data-slot='status-dot']");
+  await expect(dot).toBeVisible();
+  const mark = await dot.evaluate((node) => {
+    const spot = node.querySelector("span.relative") ?? node;
+    const probe = document.createElement("div");
+    probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted-foreground)) 40%, transparent)";
+    spot.append(probe);
+    const expected = getComputedStyle(probe).backgroundColor;
+    const background = getComputedStyle(spot).backgroundColor;
+    const box = spot.getBoundingClientRect();
+    probe.remove();
+    return {
+      background,
+      expected,
+      square: box.width === box.height,
+      numeric: spot.className.includes("bg-muted-foreground/"),
+    };
+  });
+  expect(mark.background).toBe(mark.expected);
+  expect(mark.square).toBe(true);
+  expect(mark.numeric).toBe(false);
+});
+
 const BASE = "/docs/ui/";
 
 // page slug, expected preview count, then per-preview visible text checks.
@@ -69,6 +133,44 @@ test.describe("primitive pages show a live preview for each example", () => {
       });
     }
   }
+
+  test("the last badge job has no line under it", async ({ page }) => {
+    await page.goto(BASE + "show-a-status-or-count-badge", { waitUntil: "networkidle" });
+    const rows = page.locator("[data-badge-table] tbody tr");
+    const borders = await rows.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderBottomWidth));
+    expect(borders.length).toBeGreaterThan(1);
+    expect(borders.at(-1)).toBe("0px");
+    expect(borders.slice(0, -1).every((width) => width !== "0px")).toBe(true);
+  });
+
+  test("status badges keep a quieter fill on hover", async ({ page }) => {
+    await page.goto(BASE + "show-a-status-or-count-badge");
+    const preview = page.locator("[data-component-preview]").first();
+    const cases = [
+      { name: "beta", token: "--primary", amount: "80%" },
+      { name: "12 events", token: "--secondary", amount: "80%" },
+      { name: "deprecated", token: "--destructive", amount: "80%" },
+    ];
+    for (const item of cases) {
+      const badge = preview.getByText(item.name, { exact: true });
+      await expect(badge).toBeVisible();
+      const rest = await badge.evaluate((node) => getComputedStyle(node).backgroundColor);
+      await badge.hover();
+      await expect.poll(async () =>
+        badge.evaluate((node, expected) => {
+          const probe = document.createElement("div");
+          probe.style.backgroundColor = `color-mix(in oklab, hsl(var(${expected.token})) ${expected.amount}, transparent)`;
+          node.append(probe);
+          const color = getComputedStyle(probe).backgroundColor;
+          const background = getComputedStyle(node).backgroundColor;
+          probe.remove();
+          return background === color && !/bg-(primary|secondary|destructive)\//.test(node.className);
+        }, item),
+      ).toBe(true);
+      const hover = await badge.evaluate((node) => getComputedStyle(node).backgroundColor);
+      expect(hover, item.name).not.toBe(rest);
+    }
+  });
 
   test("interactive demos respond", async ({ page }) => {
     await page.goto(BASE + "load-each-zone-with-a-faithful-skeleton", { waitUntil: "networkidle" });

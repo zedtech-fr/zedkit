@@ -24,7 +24,7 @@ const loadHomeAdminDashboardDemo = () =>
   import("@/components/demos/registry").then((mod) => ({ default: mod.demoRegistry.HomeAdminDashboardDemo.Demo }));
 
 const HomeAdminDashboardDemo = dynamic(loadHomeAdminDashboardDemo, {
-  loading: () => <Stack className="min-h-96 w-full min-w-0 flex-1" aria-hidden="true" />,
+  loading: () => <Stack className="min-h-hero w-full content-shrink flex-1" aria-hidden="true" />,
 });
 
 /** The agent panel is its own chunk: fetched when the tour is about to use it or the visitor first opens it. */
@@ -52,7 +52,7 @@ function Page({ id, page, children }: { id: HeroPageId; page: HeroPageId; childr
     <section
       data-hero-page={id}
       data-state={id === page ? "active" : "inactive"}
-      className="col-start-1 row-start-1 min-w-0 data-[state=inactive]:invisible"
+      className="col-start-first row-start-first content-shrink data-[state=inactive]:invisible"
     >
       {children}
     </section>
@@ -63,7 +63,7 @@ function Pages({ page, preview, onPreviewChange, motionOk }: Pick<AppProps, "pag
   const [day, setDay] = useState<Date | undefined>(HERO_FIRST_DAY);
   const [person, setPerson] = useState<string>(projectTrackerDemoCopy.people.maya);
   return (
-    <div className="grid min-w-0">
+    <div className="grid content-shrink">
       <Page id="overview" page={page}>
         <HeroOverviewPage rows={SEED_TASKS} active={motionOk && page === "overview"} />
       </Page>
@@ -109,7 +109,7 @@ export function HomeHeroApp({ page, onPage, intro, preview, onPreviewChange, onL
     },
   });
   return (
-    <div ref={root} role="region" aria-label={copy.label} data-hero-window="" data-intro={intro ? "" : undefined} className="relative min-w-0">
+    <div ref={root} role="region" aria-label={copy.label} data-hero-window="" data-intro={intro ? "" : undefined} className="relative content-shrink">
       <HeroShell sidebar={<HeroSidebar page={page} onPage={onPage} />} topbar={<HeroTopBar page={page} onPage={onPage} agent={{ open: agent.open, panelId, onToggle: agent.toggle }} />}>
         <Pages page={page} preview={preview} onPreviewChange={onPreviewChange} motionOk={motionOk} />
       </HeroShell>
@@ -124,8 +124,8 @@ export function HomeHeroApp({ page, onPage, intro, preview, onPreviewChange, onL
           onClose={agent.toggle}
         />
       ) : null}
-      <span data-hero-cursor="" aria-hidden="true" className="pointer-events-none absolute top-0 left-0 z-30 text-foreground">
-        <MousePointer2 className="size-5 fill-foreground text-background" />
+      <span data-hero-cursor="" aria-hidden="true" className="pointer-events-none absolute pin-top pin-left text-foreground">
+        <MousePointer2 className="size-icon-lg fill-foreground text-background" />
       </span>
     </div>
   );

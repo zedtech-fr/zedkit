@@ -13,9 +13,9 @@ function FlagsDemoInner() {
   const [lastAction, setLastAction] = useState<string | null>(null);
 
   return (
-    <Stack gap={3}>
+    <Stack gap="md">
       <Text>{enabled ? flagsCopy.on : flagsCopy.off}</Text>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Button
           type="button"
           onClick={() => {
@@ -46,7 +46,7 @@ function FlagsDemoInner() {
           {flagsCopy.clearOverride}
         </Button>
       </Stack>
-      {lastAction ? <Text className="text-sm text-muted-foreground">{lastAction}</Text> : null}
+      {lastAction ? <Text className="text-dense text-muted-foreground">{lastAction}</Text> : null}
     </Stack>
   );
 }

@@ -35,7 +35,7 @@ export function HeroAvatar({ initials }: { initials: string }) {
     <span
       aria-hidden="true"
       data-hero-avatar=""
-      className="flex shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+      className="flex shrink-0 items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground"
     >
       {initials}
     </span>
@@ -44,19 +44,19 @@ export function HeroAvatar({ initials }: { initials: string }) {
 
 function PersonButton({ person, selected, onSelect }: { person: Person; selected: boolean; onSelect: () => void }) {
   return (
-    <li className="min-w-0">
+    <li className="content-shrink">
       <Button
         type="button"
         variant={selected ? "secondary" : "ghost"}
         aria-pressed={selected}
-        className="h-auto min-h-11 w-full justify-start gap-3 px-2 py-1.5 text-left font-normal"
+        className="h-auto min-h-target w-full justify-start gap-stack-md px-control-tight py-select-item-block text-left font-normal"
         onClick={onSelect}
         data-hero-person={person.name}
       >
         <HeroAvatar initials={person.initials} />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-medium">{person.name}</span>
-          <span className="truncate text-xs text-muted-foreground">{person.role}</span>
+        <span className="flex content-shrink flex-1 flex-col">
+          <span className="truncate text-dense font-medium">{person.name}</span>
+          <span className="truncate text-caption text-muted-foreground">{person.role}</span>
         </span>
         <StatusDot tone={person.online ? "success" : "idle"} pulse={false} />
         <span className="sr-only">{person.online ? copy.online : copy.away}</span>
@@ -70,15 +70,15 @@ export function HeroTeamPage({ rows, selected, onSelect }: { rows: TaskRow[]; se
   const theirs = rows.filter((row) => row.owner === person.name && !isDone(row)).sort(byDue);
   const next = theirs[0];
   return (
-    <Stack gap={3} className="min-w-0">
-      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="mb-0" />
-      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-        <ul className="m-0 flex min-w-0 list-none flex-col gap-1 p-0" aria-label={copy.title} data-hero-block="" data-beat={1}>
+    <Stack gap="md" className="content-shrink">
+      <PageHeader titleAs="h2" title={copy.title} description={copy.description} className="trim-bottom" />
+      <div data-hero-team-split="" className="grid content-shrink gap-stack-md">
+        <ul className="trim-margin flex content-shrink list-none flex-col gap-stack-tight flush" aria-label={copy.title} data-hero-block="" data-beat={1}>
           {HERO_PEOPLE.map((entry) => (
             <PersonButton key={entry.name} person={entry} selected={entry.name === person.name} onSelect={() => onSelect(entry.name)} />
           ))}
         </ul>
-        <div className="min-w-0 self-start" data-hero-block="" data-beat={2}>
+        <div className="content-shrink self-start" data-hero-block="" data-beat={2}>
           <DetailPanel
             items={[
               { label: copy.role, value: person.role },

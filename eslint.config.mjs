@@ -16,11 +16,6 @@ const sizeBudgetOverFile = [
   "apps/docs/components/project-tracker-demo-app.tsx",
   "packages/ui/preview/gallery.tsx",
 ];
-// Phone preview chrome uses max-w-[390px]; there is no spacing token for
-// that device width. This file turns the whole restrict rule off (palette
-// and hex bans stay on every other tsx file).
-const arbitraryValueBaseline = ["apps/docs/components/preview-viewport.tsx"];
-
 const sizeBudgetOverFunction = [
   "apps/docs/components/admin-dashboard-demo-app.tsx",
   "apps/docs/components/component-page.tsx",
@@ -28,9 +23,9 @@ const sizeBudgetOverFunction = [
   "apps/docs/components/demos/tabs-demo.tsx",
   "apps/docs/components/preview-viewport.tsx",
   "apps/docs/ui/catalog/catalog-view.tsx",
-  "packages/ui/src/data-table.tsx",
-  "packages/ui/src/identity-picker.tsx",
-  "packages/ui/src/route-modal.tsx",
+  "packages/ui/src/data-table/data-table.tsx",
+  "packages/ui/src/identity/identity-picker.tsx",
+  "packages/ui/src/overlays/route-modal.tsx",
 ];
 
 export default tseslint.config(
@@ -51,6 +46,8 @@ export default tseslint.config(
       ],
       // Deep relative imports are banned: use the package `#*` subpath
       // import (see "imports" in each package.json) instead of ../.. chains.
+      // packages/ui/src may use one extra parent (../..) after folder moves;
+      // tests and other packages keep this ban.
       "no-restricted-imports": ["error", { patterns: [deepRelativeImport] }],
       "@typescript-eslint/no-explicit-any": "error",
     },
@@ -96,6 +93,13 @@ export default tseslint.config(
   // exports, so this resolves with zero build).
   ...uiPreset({
     entryPoint: new URL("./packages/ui/src/styles.css", import.meta.url).pathname,
+    scaleBaseline: new URL("./scripts/scale-class-baseline.json", import.meta.url).pathname,
+    entryPoints: [
+      {
+        files: ["apps/docs/**/*.tsx", "apps/docs/**/*.jsx"],
+        entryPoint: new URL("./apps/docs/app/globals.css", import.meta.url).pathname,
+      },
+    ],
   }),
   {
     files: sizeBudgetOverFile,
@@ -108,12 +112,6 @@ export default tseslint.config(
     files: sizeBudgetOverFunction,
     rules: {
       "max-lines-per-function": "off",
-    },
-  },
-  {
-    files: arbitraryValueBaseline,
-    rules: {
-      "better-tailwindcss/no-restricted-classes": "off",
     },
   },
   {
@@ -136,6 +134,25 @@ export default tseslint.config(
       model: [deepRelativeImport],
     },
   }),
+  {
+    // After uiPreset so other production checks stay. Tests keep the root ban.
+    files: ["packages/ui/src/**/*.{ts,tsx}"],
+    ignores: ["packages/ui/src/**/*.{test,spec}.*"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../../..", "../../../*", "../../../../*"],
+              message:
+                "More than two parent segments are banned. Flatten the folder or use the `#*` subpath import.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     // next/og ImageResponse requires inline styles; not user-facing UI.
     files: ["apps/docs/app/opengraph-image.tsx"],

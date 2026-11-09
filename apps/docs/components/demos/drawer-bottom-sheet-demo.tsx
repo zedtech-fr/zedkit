@@ -37,9 +37,9 @@ export function DrawerBottomSheetDemo() {
           <DrawerDescription>{drawerCopy.bottomSheet.description}</DrawerDescription>
         </DrawerHeader>
         <DrawerBody>
-          <Stack gap={3} className="py-3">
+          <Stack gap="md" className="surface-pad-block">
             {STATUSES.map((status) => (
-              <Stack key={status} direction="horizontal" gap={2} className="items-center">
+              <Stack key={status} direction="horizontal" gap="sm" className="items-center">
                 <Checkbox id={`filter-${status}`} checked={checked.includes(status)} onCheckedChange={() => toggle(status)} />
                 <Label htmlFor={`filter-${status}`}>{status}</Label>
               </Stack>

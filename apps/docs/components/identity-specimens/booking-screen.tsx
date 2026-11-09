@@ -5,12 +5,12 @@ import type { BookingComposition } from "@/components/i18n/identity-specimen-com
 /** Booking: the service and price first, then times with one preselected, then one action. */
 export function BookingScreen({ copy }: { copy: BookingComposition }) {
   return (
-    <Stack gap={3}>
-      <Heading level={4} typeRole="cardTitle" className="border-b border-border pb-2">
+    <Stack gap="md">
+      <Heading level={4} typeRole="cardTitle" className="border-b border-border rule-gap">
         {copy.brand}
       </Heading>
-      <Stack direction="horizontal" gap={3} className="items-baseline justify-between">
-        <Stack gap={1}>
+      <Stack direction="horizontal" gap="md" className="items-baseline justify-between">
+        <Stack gap="tight">
           <Heading level={3} typeRole="band">
             {copy.service}
           </Heading>
@@ -22,18 +22,18 @@ export function BookingScreen({ copy }: { copy: BookingComposition }) {
           {copy.price}
         </Text>
       </Stack>
-      <Stack gap={2}>
+      <Stack gap="sm">
         <Text as="span" typeRole="label" className="text-muted-foreground">
           {copy.dayLabel}
         </Text>
-        <ul className="m-0 grid list-none grid-cols-4 gap-2 p-0">
+        <ul className="trim-margin grid list-none grid-quad gap-stack-sm flush">
           {copy.slots.map((slot) => (
             <li key={slot}>
               <Button
                 size="sm"
                 variant={slot === copy.selectedSlot ? "default" : "outline"}
                 tabIndex={-1}
-                className="w-full px-0 tabular-nums"
+                className="w-full px-flush tabular-nums"
               >
                 {slot}
               </Button>
@@ -44,7 +44,7 @@ export function BookingScreen({ copy }: { copy: BookingComposition }) {
       <Button size="sm" tabIndex={-1} className="w-full">
         {copy.primary}
       </Button>
-      <Text typeRole="small" className="m-0 text-muted-foreground">
+      <Text typeRole="small" className="trim-margin text-muted-foreground">
         {copy.reassurance}
       </Text>
     </Stack>

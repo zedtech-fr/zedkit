@@ -62,7 +62,7 @@ function EditorialStoryQueue({
                 type="button"
                 variant="ghost"
                 aria-pressed={row.id === selectedId}
-                className="h-auto! min-h-11 w-full flex-col items-start gap-0 px-2 py-1 text-left font-normal whitespace-normal"
+                className="h-auto! min-h-target w-full flex-col items-start gap-flush px-control-tight py-control-block text-left font-normal whitespace-normal"
                 onClick={() => onSelect(row.id)}
               >
                 {row.headline}
@@ -97,11 +97,11 @@ function EditorialStoryEditor({
 }) {
   return (
     <>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor="zk-specimen-editorial-headline">{messages.headlineLabel}</Label>
         <Input id="zk-specimen-editorial-headline" value={story.headline} onChange={(event) => onHeadlineChange(event.target.value)} />
       </Stack>
-      <Stack gap={1}>
+      <Stack gap="tight">
         <Label htmlFor="zk-specimen-editorial-standfirst">{messages.standfirstLabel}</Label>
         <Textarea
           id="zk-specimen-editorial-standfirst"
@@ -110,7 +110,7 @@ function EditorialStoryEditor({
           onChange={(event) => onStandfirstChange(event.target.value)}
         />
       </Stack>
-      <Stack direction="horizontal" gap={2} className="flex-wrap">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Button type="button" onClick={onPublish}>
           {messages.publish}
         </Button>
@@ -118,12 +118,12 @@ function EditorialStoryEditor({
           {messages.saveDraft}
         </Button>
       </Stack>
-      <Text variant="muted" role="status" className="min-h-6">
+      <Text variant="muted" role="status" className="min-h-status">
         {status}
       </Text>
-      <article aria-label={messages.previewLabel} className="max-w-prose min-w-0 border-t border-border pt-4">
+      <article aria-label={messages.previewLabel} className="max-w-prose content-shrink border-t border-border content-offset">
         <Heading level={4}>{story.headline}</Heading>
-        <Text variant="muted" className="mt-2 text-pretty">
+        <Text variant="muted" className="mt-standfirst text-pretty">
           {story.standfirst}
         </Text>
       </article>
@@ -138,14 +138,14 @@ export function EditorialSpecimen({ className, messages = specimenMessagesEn.edi
   const story = stories.find((item) => item.id === selectedId) ?? stories[0]!;
 
   return (
-    <Stack gap={4} className={`min-w-0 ${className ?? ""}`} data-slot="editorial-specimen" data-specimen-domain="editorial">
-      <Stack gap={1}>
+    <Stack gap="lg" className={`content-shrink ${className ?? ""}`} data-slot="editorial-specimen" data-specimen-domain="editorial">
+      <Stack gap="tight">
         <Heading level={3}>{messages.heading}</Heading>
         <Text variant="muted">{messages.description}</Text>
       </Stack>
-      <Card className="min-w-0">
-        <CardContent className="pt-4">
-          <Stack gap={4} className="min-w-0">
+      <Card className="content-shrink">
+        <CardContent className="content-offset">
+          <Stack gap="lg" className="content-shrink">
             <EditorialStoryQueue
               messages={messages}
               stories={stories}

@@ -38,7 +38,7 @@ export function HomeIdentityExampleMistMembers() {
                   type="button"
                   variant="ghost"
                   aria-haspopup="dialog"
-                  className="h-auto! min-h-0 justify-start p-0 font-normal after:absolute after:inset-0 hover:bg-transparent active:scale-none!"
+                  className="h-auto! pane-shrink justify-start flush font-normal after:absolute after:pin-fill hover:bg-transparent active:scale-none!"
                   onClick={(event) => {
                     opener.current = event.currentTarget;
                     setOpenName(row.member);

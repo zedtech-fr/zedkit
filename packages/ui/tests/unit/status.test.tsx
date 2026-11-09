@@ -36,9 +36,9 @@ describe("status label", () => {
 
   it("spaces icon and text from theme tokens", () => {
     const { container } = render(<StatusLabel tone="loading">Saving report…</StatusLabel>);
-    expect(container.innerHTML).toContain("gap-1.5");
-    expect(container.innerHTML).not.toContain("gap-status-label-gap");
-    expect(container.innerHTML).toContain("size-4");
+    expect(container.innerHTML).toContain("gap-icon");
+    expect(container.innerHTML).not.toContain("gap-1.5");
+    expect(container.innerHTML).toContain("size-status-label-box");
     const offline = render(<StatusLabel tone="offline">You are offline</StatusLabel>);
     expect(offline.container.innerHTML).toContain("size-icon-sm");
   });
@@ -90,7 +90,7 @@ describe("updated ago", () => {
 
   it("styles the stamp with muted text tokens only", () => {
     const { container } = render(<UpdatedAgo date={Date.now() - 3_000} />);
-    expect(container.firstElementChild?.className).toBe("text-xs text-muted-foreground");
+    expect(container.firstElementChild?.className).toBe("text-caption text-muted-foreground");
   });
 });
 

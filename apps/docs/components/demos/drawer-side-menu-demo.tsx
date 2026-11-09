@@ -21,13 +21,13 @@ export function DrawerSideMenuDemo() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <Stack direction="horizontal" gap={2} className="items-center justify-between">
+          <Stack direction="horizontal" gap="sm" className="items-center justify-between">
             <DrawerTitle>{drawerCopy.sideMenu.menu}</DrawerTitle>
             <DrawerCloseButton />
           </Stack>
         </DrawerHeader>
         <DrawerBody>
-          <Stack gap={1} className="py-3">
+          <Stack gap="tight" className="surface-pad-block">
             {LINKS.map((link) => (
               <Button key={link} variant="ghost" className="justify-start">
                 {link}

@@ -135,14 +135,13 @@ function bindNamedLooks(
 function IdentityEditorBody(props: EditorBodyProps) {
   const scheme = props.darkPreview ? "dark" : "light";
   // The order is the task: choose a look, read the hint, see the card, make the first adjustment, then keep
-  // the look. On a phone the card is a flex item placed by `order` between the hint and the adjustments;
+  // the look. On a phone the stylesheet places the card between the hint and the adjustments;
   // from `lg` it is the right column and stays in view while the left column scrolls.
   return (
-    <Stack gap={6} className="min-w-0 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start" data-slot="identity-editor">
+    <Stack gap="list" className="content-shrink lg:grid lg:items-start" data-slot="identity-editor">
       <DraftCard darkPreview={props.darkPreview} />
-      <Stack gap={6} className="min-w-0 max-lg:contents lg:col-start-1 lg:row-start-1">
+      <Stack gap="list" className="content-shrink max-lg:contents lg:col-start-first lg:row-start-first">
         <IdentityEditorPreviewBar
-          className="max-lg:order-1"
           identity={props.identity}
           looks={props.looks}
           darkPreview={props.darkPreview}
@@ -152,14 +151,14 @@ function IdentityEditorBody(props: EditorBodyProps) {
           onUndo={props.onUndo}
           onReset={props.onReset}
         />
-        <Stack gap={2} className="max-lg:order-2">
+        <Stack gap="sm" data-editor-section="hint">
           <Text>{identityEditorCopy.panel.hint}</Text>
           {props.appliedSite ? <Text role="status">{identityEditorCopy.panel.applied}</Text> : null}
         </Stack>
-        <Stack className="empty:hidden max-lg:order-4">
+        <Stack className="empty:hidden" data-editor-section="contrast">
           <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
         </Stack>
-        <Stack className="max-lg:order-5">
+        <Stack data-editor-section="fields">
           <EditorFields
             tokens={props.tokens}
             scheme={scheme}
@@ -182,7 +181,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
             }
           />
         </Stack>
-        <Stack className="max-lg:order-7">
+        <Stack data-editor-section="export">
           <IdentityEditorExport tokens={props.tokens} onLoad={props.onLoad} />
         </Stack>
       </Stack>

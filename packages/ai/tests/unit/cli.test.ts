@@ -276,6 +276,49 @@ describe("cli", () => {
     expect(run("validate", root)).toEqual({ code: 0, text: "ok", errors: "" });
   });
 
+  it("validate --setup reports a partial setup as failing, never ok (P2.5)", () => {
+    const root = tempDir();
+    put(root, "PLAN.md", "intro-first: printed before any tool call\n");
+    put(root, "AGENTS.md", "# Rules\n\nSee .agents/tokenomics.md.\n");
+    put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(
+      root,
+      ".agents/setup-log/reading.md",
+      [
+        "# Reading",
+        "",
+        "| # | slice | note |",
+        "| - | ----- | ---- |",
+        "| 1 | . | read `AGENTS.md:1` |",
+        "",
+        "**Budget:** none found",
+        "",
+        "## Meaning check",
+        "",
+        "| id | verdict | code | resolution |",
+        "| -- | ------- | ---- | ---------- |",
+        "| R1-1 | match | cites `AGENTS.md:1` | kept |",
+        "",
+      ].join("\n"),
+    );
+    put(root, ".agents/domain/ownership.md", "# Ownership\n\nsource: owner\n");
+    put(root, ".agents/setup-log.md", "- nested-agents: none — one folder\n");
+    put(
+      root,
+      ".agents/atlas.md",
+      ["## Where", "", "| Topic | Entry | Why |", "| ----- | ----- | --- |", "| Plan | `PLAN.md` | coverage |", "| Rules | `AGENTS.md` | entry |", "| Policy | `.agents/tokenomics.md` | routing |", ""].join("\n"),
+    );
+    put(
+      root,
+      ".agents/tokenomics.md",
+      "---\nschema: 1\nproviders:\n  cursor:\n    build:\n      standard: { model: inherit, effort: medium }\n    decide:\n      sensitive: { model: inherit, effort: high }\n---\n\n<!-- inherit-reason: cursor cannot route per spawn; reading done inline -->\n",
+    );
+    const result = run("validate", root, "--setup");
+    expect(result.code).toBe(1);
+    expect(result.text).toContain("partial, not complete");
+    expect(result.text.split("\n")).not.toContain("ok");
+  });
+
   it("validate fails on a missing directory and on unexpected arguments", () => {
     const missing = run("validate", "/definitely/not/here");
     expect(missing.code).toBe(2);

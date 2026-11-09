@@ -21,11 +21,11 @@ export function IdentityDockExportBlock({ tokens }: { tokens: IdentityTokens }) 
 
   return (
     <Stack
-      gap={3}
-      className="shrink-0 border-t border-border bg-muted/20 px-3 py-3"
+      gap="md"
+      className="shrink-0 border-t border-border surface-pad-compact"
       data-slot="identity-dock-export"
     >
-      <Heading level={3} className="text-sm font-medium">
+      <Heading level={3} className="text-dense font-medium">
         {exportCopy.heading}
       </Heading>
       <IdentityDockExportCopyRow

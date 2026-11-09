@@ -8,7 +8,7 @@ export function PromptInputDemo() {
   const [sent, setSent] = useState("");
 
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <PromptInput
         sendLabel="Send"
         value={text}
@@ -20,7 +20,7 @@ export function PromptInputDemo() {
         placeholder="Ask anything"
         aria-label="Message"
       />
-      <Text variant="muted" className="text-sm" aria-live="polite">
+      <Text variant="muted" aria-live="polite">
         {sent ? `Sent: ${sent}` : "Enter sends, Shift+Enter adds a line."}
       </Text>
     </Stack>
@@ -32,7 +32,7 @@ export function PromptInputCompleteDemo() {
   const [pending, setPending] = useState(false);
 
   return (
-    <Stack gap={2}>
+    <Stack gap="sm">
       <PromptInput
         id="prompt-input-complete"
         sendLabel="Send"
@@ -46,7 +46,7 @@ export function PromptInputCompleteDemo() {
         maxLength={2000}
         aria-label="Message"
       />
-      <Text variant="muted" className="text-sm" aria-live="polite">
+      <Text variant="muted" aria-live="polite">
         {pending ? "Waiting for a reply. Stop cancels." : "Send to see the busy state."}
       </Text>
     </Stack>

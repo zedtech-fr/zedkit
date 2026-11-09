@@ -173,6 +173,22 @@ function hasFilledCells(data: Record<string, unknown>): boolean {
   );
 }
 
+/** True when a provider declares both D4 cells, even as `inherit`. */
+function declaresD4Cells(data: Record<string, unknown>): boolean {
+  return POLICY_PROVIDERS.some(
+    (provider) =>
+      cellModel(data, provider, "build", "standard") !== undefined && cellModel(data, provider, "decide", "sensitive") !== undefined,
+  );
+}
+
+/**
+ * A recorded tool limitation: `inherit` the agent cannot lift, said out loud
+ * in the file (`setup-ai` tells the agent to keep `inherit` and say so when
+ * the tool cannot route per spawn). A bare marker without the cells is not a
+ * policy and still fails.
+ */
+const INHERIT_REASON = /<!--[^\n>]*inherit-reason:[^\n>]*-->/iu;
+
 const LEGACY_NOTE =
   "warning: D4 tokenomics: .agents/model-routing.md is deprecated; copy its rows into .agents/tokenomics.md, delete it, and point AGENTS.md at the new file. Removed two minors after this release.";
 
@@ -220,11 +236,19 @@ function routing(root: string, issues: Issue[]): void {
     }
   }
   if (policyText !== undefined) {
-    issues.push({
-      path: policyPath,
-      message:
-        "D4 tokenomics: .agents/tokenomics.md must set a real model (not inherit) on providers.<provider>.build.standard and providers.<provider>.decide.sensitive",
-    });
+    if (parsed?.ok === true && declaresD4Cells(parsed.value) && INHERIT_REASON.test(policyText)) {
+      issues.push({
+        path: policyPath,
+        message:
+          "D4 tokenomics: cells stay on inherit (recorded tool limitation); routing stays manual and this setup is partial, not complete",
+      });
+    } else {
+      issues.push({
+        path: policyPath,
+        message:
+          "D4 tokenomics: .agents/tokenomics.md must set a real model (not inherit) on providers.<provider>.build.standard and providers.<provider>.decide.sensitive",
+      });
+    }
     if (!/tokenomics/iu.test(agents)) {
       issues.push({ path: agentsPath, message: "D4 tokenomics: root AGENTS.md does not point at .agents/tokenomics.md" });
     }

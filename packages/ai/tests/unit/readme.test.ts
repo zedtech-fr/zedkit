@@ -80,4 +80,37 @@ describe("package README", () => {
     );
     expect(counts).toEqual([]);
   });
+
+  it("never claims init --adopt is the same files as setup (D7)", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    expect(readme).not.toMatch(/same files as setup/i);
+    // init defaults to the starter preset, setup to the setup preset.
+    expect(readme).toMatch(/init .*starter.*preset/is);
+  });
+
+  it("names every setup-minus-starter skill and subagent in the setup preset section", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    const at = readme.indexOf("**Setup preset (default for `setup`):**");
+    expect(at, "setup preset paragraph").toBeGreaterThanOrEqual(0);
+    const paragraph = readme.slice(at, readme.indexOf("\n\n", at));
+    const named = new Set(
+      [...paragraph.matchAll(/`([a-z][a-z0-9-]*)`/g)].map((m) => m[1] ?? ""),
+    );
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const skillsOf = (preset: string): Set<string> => {
+      const entry = manifest.value.presets[preset];
+      return new Set(entry === "*" ? [] : entry);
+    };
+    const agentsOf = (preset: string): Set<string> =>
+      new Set(manifest.value.presetAgents?.[preset] ?? []);
+    for (const skill of skillsOf("setup")) {
+      if (skillsOf("starter").has(skill)) continue;
+      expect(named, `setup skill ${skill} documented`).toContain(skill);
+    }
+    for (const agent of agentsOf("setup")) {
+      if (agentsOf("starter").has(agent)) continue;
+      expect(named, `setup subagent ${agent} documented`).toContain(agent);
+    }
+  });
 });

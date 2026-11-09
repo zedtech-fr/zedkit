@@ -61,6 +61,17 @@ test.describe("home adoption panel", () => {
       return document.activeElement === el;
     });
     expect(focusable).toBe(false);
+    const frame = example.locator("[data-adoption-example]");
+    const colors = await frame.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.className = "bg-background/80";
+      document.body.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return { background: getComputedStyle(node).backgroundColor, expected };
+    });
+    expect(colors.background).toBe(colors.expected);
+    await expect(frame).not.toHaveClass(/bg-background/);
   });
 
   test("the package manager rewrites every command and is remembered", async ({ page }) => {
@@ -71,7 +82,9 @@ test.describe("home adoption panel", () => {
     await page.getByRole("option", { name: "yarn", exact: true }).click();
     await expect(panel.locator('[data-adoption-step="install"]')).toContainText("yarn add @zedtech/zedkit-ui");
     await panel.getByRole("tab", { name: "Copy source" }).click();
-    await expect(panel.locator('[data-adoption-step="init"]')).toContainText("yarn dlx shadcn@latest init -d");
+    await expect(panel.locator('[data-adoption-step="init"]')).toContainText(
+      "yarn dlx shadcn@latest init -y --base radix --preset nova",
+    );
     await expect(panel.locator('[data-adoption-step="add"]')).toContainText("yarn dlx shadcn@latest add https://zedkit.app/r/button.json");
     await page.reload({ waitUntil: "networkidle" });
     await panel.scrollIntoViewIfNeeded();

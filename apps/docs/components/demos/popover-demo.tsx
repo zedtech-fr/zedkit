@@ -8,7 +8,7 @@ export function PopoverDemo() {
         <Button variant="outline">{popoverCopy.trigger}</Button>
       </PopoverTrigger>
       <PopoverContent aria-label={popoverCopy.label}>
-        <Stack gap={2}>
+        <Stack gap="sm">
           <Heading level={3}>{popoverCopy.title}</Heading>
           <Text>{popoverCopy.status}</Text>
         </Stack>

@@ -2,8 +2,8 @@ import { useId } from "react";
 import type * as React from "react";
 import { Check } from "lucide-react";
 
-import { Container } from "../layout.js";
-import { Heading, Text } from "../typography.js";
+import { Container } from "../layout/layout.js";
+import { Heading, Text } from "../typography/typography.js";
 import { cn } from "../utils.js";
 import { GlassSurface } from "./glass-surface.js";
 import { SectionHeader } from "./section-header.js";
@@ -36,8 +36,8 @@ export type PricingProps = Omit<React.ComponentProps<"section">, "title"> & {
 };
 
 function columnsFor(count: number): string {
-  if (count >= 3) return "sm:grid-cols-2 lg:grid-cols-3";
-  if (count === 2) return "sm:grid-cols-2";
+  if (count >= 3) return "sm:grid-pair lg:grid-trio";
+  if (count === 2) return "sm:grid-pair";
   return "";
 }
 
@@ -48,17 +48,17 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
       tone={plan.highlighted ? "tinted" : "plain"}
       padding="lg"
       data-highlighted={plan.highlighted ? "true" : undefined}
-      className={cn("flex flex-col gap-5", plan.highlighted && "border-primary ring-2 ring-primary")}
+      className={cn("flex flex-col gap-prose", plan.highlighted && "border-primary")}
     >
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-2">
-          <Heading level={3} className="text-xl">
+      <div className="flex flex-col gap-stack-tight">
+        <div className="flex items-center justify-between gap-stack-sm">
+          <Heading level={3} className="text-feature-title">
             {plan.name}
           </Heading>
           {plan.badge ? (
             <span
               data-slot="pricing-badge"
-              className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground"
+              className="rounded-full bg-primary px-control-inline py-control-block text-caption font-medium text-primary-foreground"
             >
               {plan.badge}
             </span>
@@ -66,20 +66,20 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
         </div>
         {plan.description ? <Text variant="muted">{plan.description}</Text> : null}
       </div>
-      <p className="flex items-baseline gap-2">
-        <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
-        {plan.period ? <span className="text-sm text-muted-foreground">{plan.period}</span> : null}
+      <p className="flex items-baseline gap-stack-sm">
+        <span className="text-plan-price">{plan.price}</span>
+        {plan.period ? <span className="text-dense text-muted-foreground">{plan.period}</span> : null}
       </p>
-      <ul className="flex list-none flex-col gap-2 p-0">
+      <ul className="flex list-none flex-col gap-stack-sm flush">
         {plan.features.map((feature, featureIndex) => (
-          <li key={featureIndex} className="flex gap-3">
-            <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-primary" />
-            <span className="min-w-0">{feature}</span>
+          <li key={featureIndex} className="flex gap-stack-md">
+            <Check aria-hidden="true" className="icon-nudge size-icon shrink-0 text-primary" />
+            <span className="content-shrink">{feature}</span>
           </li>
         ))}
       </ul>
       {plan.action ? (
-        <div data-slot="pricing-action" className="mt-auto flex flex-col pt-2 *:w-full">
+        <div data-slot="pricing-action" className="mt-auto flex flex-col actions-offset *:w-full">
           {plan.action}
         </div>
       ) : null}
@@ -97,9 +97,9 @@ function Pricing({ title, description, plans, className, ...props }: PricingProp
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col gap-10">
+      <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ul className={cn("grid list-none items-stretch gap-4 p-0", columnsFor(plans.length))}>
+        <ul className={cn("grid list-none items-stretch gap-stack-lg flush", columnsFor(plans.length))}>
           {plans.map((plan, index) => (
             <PlanCard key={plan.id ?? index} plan={plan} />
           ))}

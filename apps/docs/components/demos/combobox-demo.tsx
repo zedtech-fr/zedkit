@@ -10,7 +10,7 @@ export function ComboboxDemo() {
   const [city, setCity] = useState<string | null>(null);
   return (
     <ZedkitUiProvider messages={zedkitUiMessagesEn}>
-      <Stack gap={2} className="max-w-sm min-w-0">
+      <Stack gap="sm" data-example-width="" className="content-shrink">
         <Combobox
           options={CITIES}
           value={city}
@@ -18,7 +18,7 @@ export function ComboboxDemo() {
           aria-label={comboboxCopy.officeCityAriaLabel}
           placeholder={comboboxCopy.placeholder}
         />
-        <Text variant="muted" className="text-xs" aria-live="polite">
+        <Text variant="muted" className="text-caption" aria-live="polite">
           {city
             ? comboboxCopy.selected(CITIES.find((entry) => entry.value === city)?.label ?? city)
             : comboboxCopy.filterHint}

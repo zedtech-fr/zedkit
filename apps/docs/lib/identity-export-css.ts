@@ -13,7 +13,7 @@ export const IDENTITY_UI_INSTALL_COMMAND = "pnpm add @zedtech/zedkit-ui";
  * (pinned against the adoption builder by identity-export.test.mjs).
  */
 export const IDENTITY_KIT_STYLES_CSS =
-  '@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n';
+  '@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";\n';
 
 /** Fontsource families the docs site loads (app/fonts.ts, app/fonts-identity.ts): stack marker to package. */
 const IDENTITY_FONT_PACKAGES: ReadonlyArray<readonly [marker: string, pkg: string]> = [

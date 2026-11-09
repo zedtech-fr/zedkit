@@ -62,9 +62,9 @@ const columns = [
   tableHelper.accessor("title", {
     header: projectTrackerDemoCopy.columns.task,
     cell: ({ row }) => (
-      <Stack gap={1} className="min-w-0">
+      <Stack gap="tight" className="content-shrink">
         <Text className="font-medium">{row.original.title}</Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {row.original.owner}
         </Text>
       </Stack>
@@ -120,7 +120,7 @@ function Avatar({ initials, className }: { initials: string; className?: string 
       as="span"
       aria-hidden="true"
       className={cn(
-        "flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground",
+        "flex size-person shrink-0 items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground",
         className,
       )}
     >
@@ -132,7 +132,7 @@ function Avatar({ initials, className }: { initials: string; className?: string 
 function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
   return (
     <nav aria-label={projectTrackerDemoCopy.nav.ariaLabel}>
-      <Stack gap={1}>
+      <Stack gap="tight">
         {NAV_ITEMS.map(({ label, icon: Icon }) => {
           const active = label === ACTIVE_ITEM;
           const item = (
@@ -140,10 +140,10 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
               type="button"
               variant={active ? "secondary" : "ghost"}
               aria-current={active ? "page" : undefined}
-              className="w-full justify-start gap-2"
+              className="w-full justify-start gap-stack-sm"
               onClick={active ? undefined : notice(projectTrackerDemoCopy.nav.unavailable(label))}
             >
-              <Icon className="size-4" aria-hidden />
+              <Icon className="size-icon" aria-hidden />
               {label}
             </Button>
           );
@@ -156,17 +156,17 @@ function ShellNav({ wrap }: { wrap?: (item: ReactNode) => ReactNode }) {
 
 function Sidebar() {
   return (
-    <Stack gap={4} className="h-full p-3">
-      <Stack gap={1}>
+    <Stack gap="lg" className="h-full surface-pad-compact">
+      <Stack gap="tight">
         <Text className="font-semibold">{projectTrackerDemoCopy.brand}</Text>
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.product}
         </Text>
       </Stack>
       <ShellNav />
-      <Stack gap={2} className="mt-auto">
+      <Stack gap="sm" className="mt-auto">
         <ProgressBar value={62} label={projectTrackerDemoCopy.sprintLabel} />
-        <Text variant="muted" className="text-xs">
+        <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.sprintCaption}
         </Text>
       </Stack>
@@ -180,7 +180,7 @@ function MobileNav() {
     <Drawer direction="left" mobile="side">
       <DrawerTrigger asChild>
         <IconButton label={projectTrackerDemoCopy.openNavigation} variant="ghost" className={mobile ? undefined : "md:hidden"}>
-          <Menu className="size-4" aria-hidden />
+          <Menu className="size-icon" aria-hidden />
         </IconButton>
       </DrawerTrigger>
       <DrawerContent>
@@ -202,9 +202,9 @@ function UserMenu() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button type="button" variant="ghost" className="gap-2 px-2" aria-label={projectTrackerDemoCopy.openUserMenu}>
+        <Button type="button" variant="ghost" className="gap-stack-sm px-control-tight" aria-label={projectTrackerDemoCopy.openUserMenu}>
           <Avatar initials={projectTrackerDemoCopy.initials} />
-          <Text as="span" className={cn("text-sm font-medium", mobile ? "hidden" : "max-sm:hidden")}>
+          <Text as="span" className={cn("text-dense font-medium", mobile ? "hidden" : "max-sm:hidden")}>
             {projectTrackerDemoCopy.people.maya}
           </Text>
         </Button>
@@ -212,9 +212,9 @@ function UserMenu() {
       <DrawerContent>
         <DrawerHandle />
         <DrawerHeader>
-          <Stack direction="horizontal" gap={3} className="text-left">
-            <Avatar initials={projectTrackerDemoCopy.initials} className="size-10 text-sm" />
-            <Stack gap={1}>
+          <Stack direction="horizontal" gap="md" className="text-left">
+            <Avatar initials={projectTrackerDemoCopy.initials} className="size-mark text-dense" />
+            <Stack gap="tight">
               <DrawerTitle>{projectTrackerDemoCopy.people.maya}</DrawerTitle>
               <DrawerDescription>{projectTrackerDemoCopy.email}</DrawerDescription>
             </Stack>
@@ -224,16 +224,16 @@ function UserMenu() {
           </Badge>
         </DrawerHeader>
         <DrawerBody>
-          <Stack gap={1} className="py-2">
+          <Stack gap="tight" className="surface-pad-block-sm">
             {MENU_ITEMS.map(({ label, icon: Icon }) => (
               <DrawerClose asChild key={label}>
                 <Button
                   type="button"
                   variant="ghost"
-                  className="w-full justify-start gap-2"
+                  className="w-full justify-start gap-stack-sm"
                   onClick={notice(projectTrackerDemoCopy.menu.unavailable(label))}
                 >
-                  <Icon className="size-4" aria-hidden />
+                  <Icon className="size-icon" aria-hidden />
                   {label}
                 </Button>
               </DrawerClose>
@@ -242,8 +242,8 @@ function UserMenu() {
         </DrawerBody>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button type="button" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.signedOut)}>
-              <LogOut className="size-4" aria-hidden />
+            <Button type="button" variant="outline" className="gap-stack-sm" onClick={notice(projectTrackerDemoCopy.signedOut)}>
+              <LogOut className="size-icon" aria-hidden />
               {projectTrackerDemoCopy.signOut}
             </Button>
           </DrawerClose>
@@ -255,14 +255,14 @@ function UserMenu() {
 
 function TopBar() {
   return (
-    <Stack direction="horizontal" gap={2} className="justify-between px-4 py-2">
-      <Stack direction="horizontal" gap={2}>
+    <Stack direction="horizontal" gap="sm" className="justify-between surface-pad-inline surface-pad-block-sm">
+      <Stack direction="horizontal" gap="sm">
         <MobileNav />
-        <Text className="text-sm font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
+        <Text className="text-dense font-medium md:hidden">{projectTrackerDemoCopy.brand}</Text>
       </Stack>
-      <Stack direction="horizontal" gap={1}>
+      <Stack direction="horizontal" gap="tight">
         <IconButton label={projectTrackerDemoCopy.notifications} variant="ghost" onClick={notice(projectTrackerDemoCopy.caughtUp)}>
-          <Bell className="size-4" aria-hidden />
+          <Bell className="size-icon" aria-hidden />
         </IconButton>
         <UserMenu />
       </Stack>
@@ -272,10 +272,10 @@ function TopBar() {
 
 function Breadcrumbs() {
   return (
-    <nav aria-label={projectTrackerDemoCopy.breadcrumbAriaLabel} className="mb-2">
-      <Text as="span" variant="muted" className="text-xs">
+    <nav aria-label={projectTrackerDemoCopy.breadcrumbAriaLabel} className="mb-stack">
+      <Text as="span" variant="muted" className="text-caption">
         {projectTrackerDemoCopy.breadcrumbLead}
-        <Text as="span" className="text-xs text-foreground">
+        <Text as="span" className="text-caption text-foreground">
           {projectTrackerDemoCopy.nav.tasks}
         </Text>
       </Text>
@@ -294,22 +294,22 @@ function SummaryCards({ rows }: { rows: TaskRow[] }) {
   ];
   return (
     <Card>
-      <CardHeader className="p-4">
-        <Stack gap={3}>
+      <CardHeader className="surface-pad-md">
+        <Stack gap="md">
           {cards.map((card) => (
             <Stack
               key={card.label}
               direction="horizontal"
-              gap={3}
+              gap="md"
               className="items-baseline justify-between"
             >
-              <Stack gap={1} className="min-w-0">
+              <Stack gap="tight" className="content-shrink">
                 <CardDescription>{card.label}</CardDescription>
-                <Text variant="muted" className="text-xs">
+                <Text variant="muted" className="text-caption">
                   {card.note}
                 </Text>
               </Stack>
-              <CardTitle className="text-2xl whitespace-nowrap tabular-nums">{card.value}</CardTitle>
+              <CardTitle className="text-figure whitespace-nowrap tabular-nums">{card.value}</CardTitle>
             </Stack>
           ))}
         </Stack>
@@ -351,10 +351,10 @@ export function ProjectTrackerDemoApp() {
   const tableRows = state === "empty" ? [] : rows;
 
   return (
-    <Stack gap={3} className="w-full min-w-0">
+    <Stack gap="md" className="w-full content-shrink">
       <Toaster />
-      <Stack direction="horizontal" gap={2} className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
-        <Text variant="muted" className="text-xs">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap" role="group" aria-label={projectTrackerDemoCopy.pageState}>
+        <Text variant="muted" className="text-caption">
           {projectTrackerDemoCopy.pageState}
         </Text>
         {PAGE_STATES.map((entry) => (
@@ -370,9 +370,9 @@ export function ProjectTrackerDemoApp() {
           </Button>
         ))}
       </Stack>
-      <Stack className="h-[min(40rem,80svh)] min-w-0 overflow-hidden rounded-lg border border-border bg-background">
+      <Stack data-demo-frame="" className="content-shrink overflow-hidden rounded-lg border border-border bg-background">
         <AppShell
-          className={cn("h-full min-h-0 [&>aside]:w-48", mobile && "[&>aside]:hidden")}
+          className={cn("h-full pane-shrink [&>aside]:w-sidebar-compact", mobile && "[&>aside]:hidden")}
           sidebar={<Sidebar />}
           topbar={<TopBar />}
         >
@@ -383,18 +383,18 @@ export function ProjectTrackerDemoApp() {
             description={projectTrackerDemoCopy.description}
             actions={
               <>
-                <Button type="button" size="sm" variant="outline" className="gap-2" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
-                  <Download className="size-4" aria-hidden />
+                <Button type="button" size="sm" variant="outline" className="gap-stack-sm" onClick={notice(projectTrackerDemoCopy.exportStarted)}>
+                  <Download className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.export}
                 </Button>
-                <Button type="button" size="sm" className="gap-2" onClick={addTask}>
-                  <Plus className="size-4" aria-hidden />
+                <Button type="button" size="sm" className="gap-stack-sm" onClick={addTask}>
+                  <Plus className="size-icon" aria-hidden />
                   {projectTrackerDemoCopy.newTask}
                 </Button>
               </>
             }
           />
-          <Stack gap={4}>
+          <Stack gap="lg">
             {loading ? <SummarySkeletons /> : state === "data" ? <SummaryCards rows={rows} /> : null}
             <Separator />
             <DataTable

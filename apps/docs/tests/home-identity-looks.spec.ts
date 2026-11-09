@@ -295,3 +295,25 @@ test("Delete project: the dialog traps focus, Cancel and Escape return it, Confi
   await expect(stage.getByRole("button", { name: "Delete project" })).toBeVisible();
   await expect(stage.getByText("Active", { exact: true }).first()).toBeVisible();
 });
+
+test("the shop product picture is a 3:1 primary tint", async ({ page }) => {
+  await page.goto("/");
+  const picture = await page.evaluate(() => {
+    const banner = document.createElement("div");
+    banner.setAttribute("data-product-banner", "");
+    banner.style.width = "300px";
+    const tint = document.createElement("div");
+    tint.className = "bg-primary/10";
+    document.body.append(banner, tint);
+    const result = {
+      background: getComputedStyle(banner).backgroundColor,
+      tint: getComputedStyle(tint).backgroundColor,
+      height: banner.getBoundingClientRect().height,
+    };
+    banner.remove();
+    tint.remove();
+    return result;
+  });
+  expect(picture.background).toBe(picture.tint);
+  expect(picture.height).toBeCloseTo(100, 0);
+});

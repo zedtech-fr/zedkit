@@ -16,25 +16,25 @@ import { scrollScenesCopy } from "@/components/demos/i18n/scroll-scenes-copy";
  * Scene visuals are decorative: the caption carries the message, so each
  * visual is hidden from assistive tech and made inert (no tab stops inside).
  */
-const VISUAL_CLASS = "min-w-0 rounded-xl border border-border bg-background p-4";
+const VISUAL_CLASS = "content-shrink rounded-xl border border-border bg-background surface-pad-md";
 
 type SceneStatus = (typeof scrollScenesCopy.status)[keyof typeof scrollScenesCopy.status];
 
 function Caption({ step, title, children }: { step: string; title: string; children: string }) {
   return (
-    <Stack gap={2} className="min-w-0">
-      <Text variant="muted" className="m-0! text-xs">
+    <Stack gap="sm" className="content-shrink">
+      <Text variant="muted" className="trim-margin! text-caption">
         {step}
       </Text>
-      <Heading level={2} className="m-0!">{title}</Heading>
-      <Text variant="muted" className="m-0!">{children}</Text>
+      <Heading level={2} className="trim-margin!">{title}</Heading>
+      <Text variant="muted" className="trim-margin!">{children}</Text>
     </Stack>
   );
 }
 
 function Visual({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <Stack gap={3} aria-hidden="true" inert data-demo-scene-visual={id} className={VISUAL_CLASS}>
+    <Stack gap="md" aria-hidden="true" inert data-demo-scene-visual={id} className={VISUAL_CLASS}>
       {children}
     </Stack>
   );
@@ -42,10 +42,10 @@ function Visual({ id, children }: { id: string; children: React.ReactNode }) {
 
 function TaskRow({ name, owner, status }: { name: string; owner: string; status: SceneStatus }) {
   return (
-    <Stack direction="horizontal" gap={3} className="min-w-0 items-center justify-between border-b border-border pb-2 last:border-b-0 last:pb-0">
-      <Stack gap={1} className="min-w-0">
-        <Text className="m-0! truncate font-medium">{name}</Text>
-        <Text variant="muted" className="m-0! truncate text-xs">
+    <Stack direction="horizontal" gap="md" className="content-shrink items-center justify-between border-b border-border rule-gap last:trim-pad-bottom">
+      <Stack gap="tight" className="content-shrink">
+        <Text className="trim-margin! truncate font-medium">{name}</Text>
+        <Text variant="muted" className="trim-margin! truncate text-caption">
           {owner}
         </Text>
       </Stack>
@@ -54,12 +54,11 @@ function TaskRow({ name, owner, status }: { name: string; owner: string; status:
   );
 }
 
-/** A three-step product tour for a fictional app, pinned under a 4.5rem header. */
+/** A three-step product tour for a fictional app, pinned under the header. */
 export function ScrollScenesDemo() {
   const { plan, track, ship } = scrollScenesCopy.tour;
   return (
     <ScrollScenes
-      className="[--zk-scenes-top:4.5rem]"
       scenes={[
         {
           id: "plan",
@@ -118,7 +117,7 @@ export function ScrollScenesBeforeAfterDemo() {
   const { before, after } = scrollScenesCopy.compare;
   return (
     <ScrollScenes
-      className="[--zk-scenes-step:45svh] [--zk-scenes-top:4.5rem]"
+      className="[--zk-scenes-step:45svh]"
       scenes={[
         {
           id: "before",
@@ -130,7 +129,7 @@ export function ScrollScenesBeforeAfterDemo() {
           children: (
             <Visual id="before">
               <ProgressBar value={18} label={before.progress} />
-              <Text variant="muted" className="m-0!">{before.result}</Text>
+              <Text variant="muted" className="trim-margin!">{before.result}</Text>
             </Visual>
           ),
         },
@@ -144,7 +143,7 @@ export function ScrollScenesBeforeAfterDemo() {
           children: (
             <Visual id="after">
               <ProgressBar value={64} label={after.progress} />
-              <Text variant="muted" className="m-0!">{after.result}</Text>
+              <Text variant="muted" className="trim-margin!">{after.result}</Text>
             </Visual>
           ),
         },
@@ -158,7 +157,6 @@ export function ScrollScenesLooksDemo() {
   const { product, tagline, save, cancel, scenes } = scrollScenesCopy.looks;
   return (
     <ScrollScenes
-      className="[--zk-scenes-top:4.5rem]"
       scenes={scenes.map((scene) => ({
         id: scene.id,
         caption: (
@@ -169,14 +167,14 @@ export function ScrollScenesLooksDemo() {
         children: (
           <ThemeScope identity={scene.id}>
             <Visual id={scene.id}>
-              <Stack direction="horizontal" gap={2} className="items-center justify-between">
-                <Text className="m-0! font-semibold">{product}</Text>
+              <Stack direction="horizontal" gap="sm" className="items-center justify-between">
+                <Text className="trim-margin! font-semibold">{product}</Text>
                 <Badge variant="secondary">{scene.badge}</Badge>
               </Stack>
-              <Text variant="muted" className="m-0!">
+              <Text variant="muted" className="trim-margin!">
                 {tagline}
               </Text>
-              <Stack direction="horizontal" gap={2}>
+              <Stack direction="horizontal" gap="sm">
                 <Button size="sm">{save}</Button>
                 <Button size="sm" variant="outline">
                   {cancel}
@@ -194,7 +192,6 @@ export function ScrollScenesLooksDemo() {
 export function ScrollScenesPricingDemo() {
   return (
     <ScrollScenes
-      className="[--zk-scenes-top:4.5rem]"
       scenes={scrollScenesCopy.pricing.plans.map((plan) => ({
         id: plan.id,
         caption: (
@@ -204,15 +201,15 @@ export function ScrollScenesPricingDemo() {
         ),
         children: (
           <Visual id={plan.id}>
-            <Stack direction="horizontal" gap={2} className="items-baseline">
-              <Text className="m-0! text-3xl font-semibold">{plan.price}</Text>
-              <Text variant="muted" className="m-0!">
+            <Stack direction="horizontal" gap="sm" className="items-baseline">
+              <Text className="trim-margin! text-offer-price">{plan.price}</Text>
+              <Text variant="muted" className="trim-margin!">
                 {scrollScenesCopy.pricing.period}
               </Text>
             </Stack>
-            <Stack gap={1}>
+            <Stack gap="tight">
               {plan.features.map((feature) => (
-                <Text key={feature} className="m-0! text-sm">
+                <Text key={feature} className="trim-margin! text-dense">
                   {feature}
                 </Text>
               ))}

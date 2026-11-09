@@ -27,7 +27,7 @@ export function WizardDemo() {
     list.filter((entry) => ids.includes(entry.id)).map((entry) => entry.title.toLowerCase());
 
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap="lg" className="content-shrink">
       <WizardSteps steps={STEPS} current={step} />
       {step === 0 ? (
         <OptionCards label={wizardCopy.productsLabel} options={PRODUCTS} selected={products} onChange={setProducts} />
@@ -40,7 +40,7 @@ export function WizardDemo() {
           {wizardCopy.ready(picked(PRODUCTS, products), picked(SHIPPING, shipping))}
         </Text>
       ) : null}
-      <Stack direction="horizontal" gap={2}>
+      <Stack direction="horizontal" gap="sm">
         <Button variant="outline" disabled={step === 0} onClick={() => setStep(step - 1)}>
           {wizardCopy.back}
         </Button>

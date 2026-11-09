@@ -20,10 +20,10 @@ export function ZedkitShadcnFaq() {
   return (
     <>
       <JsonLd data={faqPage} />
-      <Stack gap={6}>
+      <Stack gap="list">
         <Heading level={2}>{zedkitShadcnFaqCopy.heading}</Heading>
         {entries.map(({ question, answer }) => (
-          <Stack key={question} gap={2}>
+          <Stack key={question} gap="sm">
             <Heading level={3}>{question}</Heading>
             <Text as="p" variant="muted">
               {answer}

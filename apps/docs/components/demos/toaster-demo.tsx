@@ -7,7 +7,7 @@ export function ToasterDemo() {
   return (
     <>
       <Toaster />
-      <Stack direction="horizontal" gap={3}>
+      <Stack direction="horizontal" gap="md">
         <Button variant="outline" onClick={() => toast(toasterCopy.saved)}>
           {toasterCopy.show}
         </Button>

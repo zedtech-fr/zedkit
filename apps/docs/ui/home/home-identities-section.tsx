@@ -23,7 +23,7 @@ export function HomeIdentitiesSection() {
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack id="use-cases" gap={HOME_SECTION_CONTENT_GAP} className="scroll-mt-24">
+      <Stack id="use-cases" gap={HOME_SECTION_CONTENT_GAP} data-scroll-anchor="">
         <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
           {homeIdentityLooksCopy.body}
         </Text>

@@ -23,10 +23,13 @@ holds. Stop and replan any piece where a higher rung holds.
 Call the Skill tool with "tdd" where possible, at pre-agreed seams. Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
 
 <!-- if:skill=compose-ui -->
+
 If the work composes, restyles or personalises UI, run `/compose-ui` first:
 client business → personas → the client's customers → their personas → UI
 choices. Do not edit UI until that brief exists.
 <!-- /if -->
+
+Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
 Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it.
 

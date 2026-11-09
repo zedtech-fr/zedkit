@@ -78,7 +78,7 @@ function IdentityAssistantOpenBody(props: {
 }) {
   const { ui, session, dispatch, tokens, off, brief, setBrief, busy, send, quickRefine, cancel, domainBrief, onUse } = props;
   return (
-    <Stack gap={4} className="pt-3">
+    <Stack gap="lg" className="pt-start">
       <AssistantHeading />
       <ViewSwitch view={ui.view} onView={ui.setView} waiting={session.proposal !== null} previewRef={ui.previewButton} />
       <ReferenceReportList report={session.references} />
@@ -106,16 +106,16 @@ export function IdentityAssistant({ tokens, onUse }: { tokens: IdentityTokens; o
   const state = useInlineIdentityAssistant(tokens);
 
   return (
-    <Stack gap={4} id="create" role="region" aria-labelledby="identity-assistant-title" data-slot="identity-assistant" className="scroll-mt-24">
-      <details open={state.ui.open} onToggle={(event) => state.ui.setOpen(event.currentTarget.open)} className="group min-w-0">
+    <Stack gap="lg" id="create" role="region" aria-labelledby="identity-assistant-title" data-slot="identity-assistant" data-scroll-anchor="">
+      <details open={state.ui.open} onToggle={(event) => state.ui.setOpen(event.currentTarget.open)} className="group content-shrink">
         <summary
           id="identity-assistant-title"
-          className="flex min-h-control-height cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-zk-type-body font-medium text-foreground shadow-sm focus-ring-control hover:bg-muted [&::-webkit-details-marker]:hidden"
+          className="flex min-h-control-height cursor-pointer list-none items-center justify-between gap-stack-sm rounded-md border border-input bg-background px-field-pad text-zk-type-body font-medium text-foreground shadow-sm focus-ring-control hover:bg-muted [&::-webkit-details-marker]:hidden"
         >
           {copy.open}
           <ChevronDown
             aria-hidden="true"
-            className={cn("size-4 shrink-0 group-open:rotate-180", signatureMotionClass.feedback)}
+            className={cn("size-icon shrink-0 group-open:rotate-180", signatureMotionClass.feedback)}
           />
         </summary>
         <IdentityAssistantOpenBody {...state} tokens={tokens} onUse={onUse} />

@@ -1,8 +1,8 @@
 import { useId } from "react";
 import type * as React from "react";
 
-import { Container } from "../layout.js";
-import { Heading, Text } from "../typography.js";
+import { Container } from "../layout/layout.js";
+import { Heading, Text } from "../typography/typography.js";
 import { cn } from "../utils.js";
 import { SectionHeader } from "./section-header.js";
 
@@ -31,19 +31,19 @@ function HowItWorks({ title, description, steps, className, ...props }: HowItWor
       className={cn("py-section-md sm:py-section-lg", className)}
       {...props}
     >
-      <Container width="default" className="flex flex-col gap-10">
+      <Container width="default" className="flex flex-col gap-section-stack">
         <SectionHeader titleId={titleId} title={title} description={description} />
-        <ol className="grid list-none gap-8 p-0 md:auto-cols-fr md:grid-flow-col md:gap-6">
+        <ol className="grid list-none gap-blocks flush md:auto-cols-fr md:grid-flow-col md:gap-list">
           {steps.map((step, index) => (
-            <li key={step.id ?? index} data-slot="how-it-works-step" className="flex gap-4 md:flex-col">
+            <li key={step.id ?? index} data-slot="how-it-works-step" className="flex gap-stack-lg md:flex-col">
               <span
                 aria-hidden="true"
-                className="grid size-10 shrink-0 place-content-center rounded-full bg-primary font-semibold text-primary-foreground"
+                className="grid size-mark shrink-0 place-content-center rounded-full bg-primary font-semibold text-primary-foreground"
               >
                 {index + 1}
               </span>
-              <div className="flex min-w-0 flex-col gap-1">
-                <Heading level={3} className="text-xl">
+              <div className="flex content-shrink flex-col gap-stack-tight">
+                <Heading level={3} className="text-feature-title">
                   {step.title}
                 </Heading>
                 {step.description ? <Text variant="muted">{step.description}</Text> : null}

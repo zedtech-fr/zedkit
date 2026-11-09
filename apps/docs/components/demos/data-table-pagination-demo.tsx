@@ -22,7 +22,7 @@ export function DataTablePaginationDemo() {
   const pageCount = Math.ceil(catalog.length / PAGE_SIZE);
   const rows = catalog.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return (
-    <Stack gap={4}>
+    <Stack gap="lg">
       <Table aria-label={dataTableCopy.pagination.tableAriaLabel}>
         <TableHeader>
           <TableRow>

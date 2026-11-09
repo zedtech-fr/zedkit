@@ -32,18 +32,18 @@ export function HomeIdentityLooks() {
   const Example = EXAMPLES[identity];
 
   return (
-    <Stack gap={3} className="min-w-0 scroll-mt-24" data-home-identity-looks="">
+    <Stack gap="md" className="content-shrink" data-home-identity-looks="" data-scroll-anchor="">
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
         {homeIdentityLooksCopy.liveNote}
       </Text>
       <HomeIdentityLooksTabs value={identity} mode={mode} onValueChange={setIdentity}>
-        <TabsContent value={identity} className="mt-0">
-          <div className="min-w-0 rounded-xl border border-border" data-identity-frame-stage="">
+        <TabsContent value={identity} className="trim-top">
+          <div className="content-shrink rounded-xl border border-border" data-identity-frame-stage="">
             <ThemeScope
               identity={identity}
               mode={mode}
               data-home-identity-stage=""
-              className="min-w-0 rounded-xl bg-background p-2 sm:p-4"
+              className="content-shrink rounded-xl bg-background surface-pad-sm sm:surface-pad-md"
             >
               <div data-identity-example="" key={identity}>
                 <Example />
@@ -62,7 +62,7 @@ export function HomeIdentityLooks() {
 
 function HomeIdentityLooksLinks() {
   return (
-    <Stack direction="horizontal" gap={2} className="flex-wrap">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap">
       <Button asChild variant="outline" size="sm" className="w-fit">
         <HomeLink href={`${IDENTITY_EDITOR_HREF}#create`}>{homeIdentityLooksCopy.openEditor}</HomeLink>
       </Button>

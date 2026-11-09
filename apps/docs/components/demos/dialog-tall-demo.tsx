@@ -27,7 +27,7 @@ export function DialogTallDemo() {
           <DialogTitle>{dialogCopy.tall.title}</DialogTitle>
           <DialogDescription>{dialogCopy.tall.description}</DialogDescription>
         </DialogHeader>
-        <Stack gap={2} className="py-2">
+        <Stack gap="sm" className="surface-pad-block-sm">
           {EVENTS.map((line) => (
             <Text key={line} variant="muted">
               {line}

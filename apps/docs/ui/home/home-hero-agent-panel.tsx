@@ -24,7 +24,7 @@ function PhaseDetail({ id, state }: { id: (typeof HERO_AGENT_PHASES)[number]; st
   if (state === "pending") return null;
   if (id === "rules" && state === "done") {
     return (
-      <ul className="m-0 grid list-disc gap-0.5 pl-4">
+      <ul className="trim-margin grid list-disc pl-list" data-hero-rules="">
         {copy.rules.map((rule) => (
           <li key={rule}>{rule}</li>
         ))}
@@ -37,16 +37,16 @@ function PhaseDetail({ id, state }: { id: (typeof HERO_AGENT_PHASES)[number]; st
 
 function PhaseList({ step, status }: { step: number; status: HeroAgentStatus }) {
   return (
-  <ol aria-label={copy.progressLabel} className="m-0 grid list-none gap-2 p-0">
+  <ol aria-label={copy.progressLabel} className="trim-margin grid list-none gap-stack-sm flush">
     {HERO_AGENT_PHASES.map((phase, index) => {
       const state = phaseState(index, step, status);
       return (
-        <li key={phase} data-phase={phase} data-state={state} className="flex min-w-0 gap-2 data-[state=pending]:opacity-60">
-          <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center">
+        <li key={phase} data-phase={phase} data-state={state} className="flex content-shrink gap-stack-sm">
+          <span className="icon-nudge-sm inline-flex size-icon-lg shrink-0 items-center justify-center">
             <PhaseMark state={state} />
           </span>
-          <Stack gap={1} className="min-w-0">
-            <Text as="span" className="text-sm font-medium">
+          <Stack gap="tight" className="content-shrink">
+            <Text as="span" className="text-dense font-medium">
               {copy.phases[phase].title}
             </Text>
             <Text as="div" variant="muted" className={DOCS_TYPE_LABEL_CLASS}>
@@ -87,14 +87,14 @@ export default function HeroAgentPanel({ id, draft, status, step, onDraft, onSub
       aria-label={copy.title}
       data-hero-agent-panel=""
       data-status={status}
-      className="absolute inset-y-2 right-2 z-20 flex w-[calc(100%-1rem)] min-w-0 motion-reveal flex-col gap-3 overflow-y-auto md:w-80"
+      className="absolute inset-y-panel right-panel flex content-shrink motion-reveal flex-col gap-stack-md overflow-y-auto"
     >
-      <Stack direction="horizontal" gap={2} className="items-center justify-between">
+      <Stack direction="horizontal" gap="sm" className="items-center justify-between">
         <Heading level={2} typeRole="cardTitle">
           {copy.title}
         </Heading>
         <IconButton label={copy.close} variant="ghost" size="icon" onClick={onClose} data-hero-agent-close="">
-          <X className="size-4" aria-hidden />
+          <X className="size-icon" aria-hidden />
         </IconButton>
       </Stack>
       <PromptInput

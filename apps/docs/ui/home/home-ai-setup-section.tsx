@@ -40,8 +40,8 @@ function HomeAiSetupMono({ children }: { children: string }) {
 
 function HomeAiSetupWhatYouGet() {
   return (
-    <Stack gap={4}>
-      <Stack gap={1}>
+    <Stack gap="lg">
+      <Stack gap="tight">
         <Heading level={3} typeRole="heading">
           {whatYouGet.title}
         </Heading>
@@ -49,9 +49,9 @@ function HomeAiSetupWhatYouGet() {
           {whatYouGet.summary}
         </Text>
       </Stack>
-      <ul className="m-0 grid list-none gap-6 p-0" data-animate="fade-up" data-animate-stagger="">
+      <ul className="trim-margin grid list-none gap-list flush" data-animate="fade-up" data-animate-stagger="">
         {items.map((item) => (
-          <li key={item.id} className="flex min-w-0 flex-col gap-1 border-l-2 border-border pl-4">
+          <li key={item.id} className="flex content-shrink flex-col gap-stack-tight border-l-2 border-border pl-list">
             <Heading level={4} typeRole="cardTitle">
               {whatYouGet.items[item.id].title}
             </Heading>
@@ -85,8 +85,8 @@ export function HomeAiSetupSection() {
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack gap={HOME_SECTION_CONTENT_GAP} className="pt-4">
-        <Stack gap={3} className="max-w-3xl">
+      <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
+        <Stack gap="md" data-setup-prompt="">
           <SecretField
             multiline
             value={AI_SETUP_MINI_PROMPT}
@@ -110,7 +110,6 @@ export function HomeAiSetupSection() {
           side="left"
           mobile="before"
           gap="lg"
-          className="[--zk-sticky-cols:minmax(0,1fr)_minmax(0,30rem)]"
           data-home-ai-setup=""
         >
           <StickyAside.Main>

@@ -42,12 +42,12 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 | Marketing H1 | `--zk-type-h1-size`: 32px up to 44px (`clamp`), 32px at 390px and below, weight 600, one per page. No second display size. |
 | Docs H1 | `--zk-type-doc-h1-size`: 2rem, 1.75rem below 48rem (not the marketing clamp). H2 `--zk-type-h2-size` 22-26px, H3 18px, weight 600. Linked headings inherit size and weight. |
 | Prose | 15/1.6 (`--zk-type-prose-size`), 64-72ch. Lead paragraph `--zk-type-lead-size` 16-18px, once. |
-| Body and dense UI | Body 14/1.55. Dense UI (controls, tabs, example links, table cells, nav) is the kit's `--text-sm`: 13px. Nothing a person must read to act is below 13px. |
-| Metadata | 12/1.4 (`--zk-type-label-size`). Counts, captions, eyebrow labels, timestamps. Never essential copy or a link people need. |
+| Body and dense UI | Body 14/1.55. Dense UI (controls, tabs, example links, table cells, nav) is `text-dense`: 13px, line about 18.6px (`--text-sm`). Nothing a person must read to act is below 13px. |
+| Metadata | Captions, badges and timestamps are `text-caption`: 12px, 16px line. Eyebrow labels use the label role: 12/1.4, weight 500. Never essential copy or a link people need. |
 | Code | Mono family of the identity, 13/21 in blocks, inline code follows its sentence. |
 | Dense looks | Density is rhythm (row height, gaps, rules), not smaller type. Volt's activity rows are 13px: the event is what a person reads to act. Only the timestamp column may be metadata. Decision, 2 Nov 2026: the 13px floor wins over a 12px mono row. |
 | Widths | Marketing 1200 max. Docs shell 1440 max, nav 240, article 720-800, TOC 180 only if it fits. |
-| Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. |
+| Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. Class names are roles; the numbers stay in the token values (`packages/ai/kit/skills/setup-ai/design-policy.md`). |
 | Gutters | 16 mobile, 24 tablet, 32 desktop. |
 
 ## Surfaces, borders, elevation
@@ -101,12 +101,12 @@ Recompose (change the order or the arrangement, not the tokens) when any of thes
 
 These broke real previews. Check them before changing home, chrome, specimens or overlays.
 
-- **Frame vs content height.** `min-h-svh` / `min-h-screen` inside a bounded preview (hero card, 40rem stage) leaves empty chrome. The frame owns height; the specimen is `h-full min-h-0`.
-- **Identity `--spacing` scales `w-*` / `p-*` / `gap-*`.** A `w-48` sidebar in Tide is not 12rem. Pin chrome that must stay compact, and look at Tide before calling a layout done.
+- **Frame vs content height.** `min-h-svh` / `min-h-screen` inside a bounded preview (hero card, 40rem stage) leaves empty chrome. The frame owns height; the specimen is `h-full pane-shrink`.
+- **Identity `--spacing` scales spacing utilities.** A numeric width tracks `--spacing`, so it is not a fixed length. Use a role width when the job has one. Pin chrome that must stay compact, and look at Tide before calling a layout done.
 - **Calendar is `role="grid"`.** Do not paint `tbody tr:hover` on it; hover `.rdp-day`.
 - **Fixed containing blocks.** A running animation of `transform`, `translate`, `scale`, `rotate` (even to `none`), a `filter` or `will-change` on an ancestor makes it the containing block of its `position: fixed` descendants: a toast or a floating bar inside is laid out against that ancestor, not the viewport, and can sit on the controls it reports on. Animate opacity, or keep fixed content out of the animated subtree. Check with a real toast at 1280x720.
 - **Scroll pinning loses the example in use.** A scroll-driven fade ends the example it is fading when a click scrolls the page by a few hundred pixels. The hero is a tablist for that reason, and the looks band is plain tabs with no pin. A scene that must pin keeps one rule: the scroll position is the only thing that picks the example, and nothing the visitor does inside it scrolls the page.
-- **Overlay is a sibling.** Vaul/Radix scrim sits next to the panel. `backdrop-filter` on the overlay becomes the backdrop root, so the panel blurs the scrim, not the page. Frost with a lighter overlay (`bg-overlay/50` + blur) or put blur on the panel and set the overlay filter to `none` (Glass). `prefers-reduced-transparency`: solid scrim, no filter.
+- **Overlay is a sibling.** Vaul/Radix scrim sits next to the panel. `backdrop-filter` on the overlay becomes the backdrop root, so the panel blurs the scrim, not the page. Frost with a lighter overlay (`drawer-scrim` plus blur) or put blur on the panel and set the overlay filter to `none` (Glass). `prefers-reduced-transparency`: solid scrim, no filter.
 - **Hero.** The proposition stays outside the examples. Examples share one grid cell so the frame keeps one height; inactive ones are `invisible`, not unmounted (state survives), and not `display: none` (they would resize the frame). After kit source changes: `pnpm --filter @zedtech/zedkit-ui build` before judging localhost:3100.
 - **Hero motion and fixed positioning.** A toast (`position: fixed`) inside the window sits against the viewport only if no ancestor has a running `transform`, `filter` or `mask`. The window and its pages run finite entrances only; loops and scroll-driven motion live on the decorative cards, which wrap nothing interactive. Check with a toast raised after the entrance.
 - **One `main` per page.** The window is not the kit's `AppShell`: that renders `main`, `aside` and `header`, and the home page already has its own `main` (specs and axe assume one). `HeroShell` uses the same tokens with plain blocks. Move to `AppShell` if the kit ever offers an embedded mode.

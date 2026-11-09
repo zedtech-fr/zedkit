@@ -16,8 +16,8 @@ import { dialogCopy } from "@/components/demos/i18n/dialog-copy";
 
 export function DialogDemo() {
   return (
-    <Stack gap={3} className="w-full max-w-md">
-      <Text variant="muted" className="text-sm">
+    <Stack gap="md" data-example-width="medium" className="w-full">
+      <Text variant="muted">
         {dialogCopy.demo.triggerContext}
       </Text>
       <Dialog>

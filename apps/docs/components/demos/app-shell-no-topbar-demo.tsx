@@ -6,18 +6,18 @@ const NAV = appShellNoTopbarCopy.nav;
 export function AppShellNoTopbarDemo() {
   return (
     <AppShell
-      className="h-72 min-h-0 overflow-hidden rounded-lg border"
+      className="h-frame pane-shrink overflow-hidden rounded-lg border"
       sidebar={
-        <Stack gap={1} className="p-3">
-          <Text className="px-2 pb-2 font-semibold">{appShellNoTopbarCopy.brand}</Text>
+        <Stack gap="tight" className="surface-pad-compact">
+          <Text data-nav-label="" className="px-control-tight font-semibold">{appShellNoTopbarCopy.brand}</Text>
           <nav aria-label={appShellNoTopbarCopy.navAriaLabel}>
-            <Stack gap={1}>
+            <Stack gap="tight">
               {NAV.map((item, index) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   aria-current={index === 0 ? "page" : undefined}
-                  className="rounded-md px-2 py-1.5 text-sm hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium"
+                  className="rounded-md px-select-item-inline py-select-item-block text-dense hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium"
                 >
                   {item}
                 </a>

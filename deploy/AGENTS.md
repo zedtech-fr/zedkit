@@ -14,7 +14,7 @@ kit: `pnpm exec turbo run build --filter=@zedtech/zedkit-ui`.
    tokens. Never accept or emit executable code, free CSS or HTML (`url()`,
    at-rules, braces, comments).
 2. **One schema, validated at both ends.** The kit's `parseIdentityTokens`
-   (`packages/ui/src/identity-tokens.ts`) validates in the browser;
+   (`packages/ui/src/identity/identity-tokens.ts`) validates in the browser;
    `suggest/tokens.mjs` is a port, guarded by `suggest/tokens.parity.test.mjs`.
    Change the kit schema, port it, keep parity green. Never loosen one side.
 3. **References are untrusted data.** `http` or `https` on the first hop,

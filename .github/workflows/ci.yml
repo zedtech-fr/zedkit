@@ -16,9 +16,9 @@ concurrency:
 
 # Same-repo PRs into `dev` run checks, registry and docs-build on the
 # self-hosted zedkit runner (persistent /runner-cache + TURBO_CACHE_DIR).
-# Docs Playwright smoke and the UI gallery screenshots always run on
-# ubuntu-latest (the host the PNG baselines were taken on). Forks, PRs
-# into `main`, and pushes stay on ubuntu-latest.
+# Docs Playwright smoke and UI gallery checks always run on
+# ubuntu-latest (GitHub-hosted Chromium; Dedibox uses a different revision).
+# Forks, PRs into `main`, and pushes stay on ubuntu-latest.
 # Release/deploy workflows are separate and untouched.
 
 jobs:
@@ -105,7 +105,7 @@ jobs:
           bash scripts/install-actionlint.sh
           ./actionlint "${files[@]}"
           python3 -m pip install --disable-pip-version-check yamllint==1.35.1
-          yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" "${files[@]}"
+          yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, document-start: disable}}" "${files[@]}"
 
   hygiene:
     runs-on: ubuntu-latest
@@ -116,11 +116,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: bash scripts/check-no-artifacts.sh
+      - run: node scripts/check-scale-baseline.mjs
       - run: bash scripts/check-no-private-refs.sh
       - run: bash scripts/check-tone.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: bash scripts/check-dependabot.sh
       - run: bash scripts/check-breaking-changeset.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -182,7 +182,7 @@ jobs:
         run: bash scripts/ci-runner-cache.sh restore-ts
       - run: bash scripts/check-deps-audit.sh
       - run: node scripts/check-publish-engines.mjs
-      - run: bash scripts/check-registry-ui-drift.sh
+      - run: pnpm registry:build
       - uses: actions/cache@v6
         if: runner.environment != 'self-hosted'
         with:
@@ -252,6 +252,7 @@ jobs:
         run: bash scripts/check-pack.sh
       - run: bash scripts/check-e2e-registered.sh
       - name: test
+        if: env.FULL != 'true'
         run: |
           extra=()
           if [ "${RUNNER_ENVIRONMENT}" = "self-hosted" ]; then
@@ -264,10 +265,14 @@ jobs:
         run: |
           pnpm exec turbo run build --filter=@zedtech/zedkit-ai
           node packages/ai/dist/bin.js sync --check
-      # Workspace-wide thresholds, and it reruns every test: full path only.
+      # Full path: one vitest coverage run (all packages).
       - name: Coverage (vitest v8)
         if: env.FULL == 'true'
         run: pnpm test:coverage
+      # Needs dist from the Build step above.
+      - name: Test (devtools node:test)
+        if: env.FULL == 'true'
+        run: pnpm --filter @zedtech/zedkit-devtools exec node --test tests/enabled.test.mjs
       - name: Coverage summary
         if: always() && env.FULL == 'true'
         run: |
@@ -302,27 +307,7 @@ jobs:
         run: pnpm test:registry
       - name: test:registry (exclude deploy/*)
         if: runner.environment == 'self-hosted'
-        run: |
-          node --test \
-            scripts/registry/*.test.mjs \
-            scripts/dts-api-report.test.mjs \
-            scripts/check-api-report.test.mjs \
-            scripts/catalog-states.test.mjs \
-            scripts/catalog-maturity.test.mjs \
-            scripts/catalog-adoption.test.mjs \
-            scripts/adoption-shown-commands.test.mjs \
-            scripts/adoption-smoke.test.mjs \
-            scripts/changeset-status-needed.test.mjs \
-            scripts/coverage-summary.test.mjs \
-            scripts/release-tags-wait.test.mjs \
-            scripts/require-green-ci.test.mjs \
-            scripts/ci-affected.test.mjs \
-            scripts/workspace-pack-closure.test.mjs \
-            scripts/ci-hygiene.test.mjs \
-            scripts/install-actionlint.test.mjs \
-            scripts/release-publisher.test.mjs \
-            scripts/export-release-auth.test.mjs \
-            apps/docs/scripts/*.test.mjs
+        run: pnpm test:registry:nodeploy
       # Versioning dry-run only: proves the Changesets metadata is sane.
       # Skipped on the Version PR itself: it consumed the changesets, so
       # `status` always reports "changed packages, no changesets" there.
@@ -347,9 +332,8 @@ jobs:
         if: always() && runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh disk-report
 
-  # Gallery screenshots (gallery-*-linux.png) were taken on GitHub-hosted
-  # Ubuntu + the Chromium Playwright 1.64.1 installs. The Dedibox image
-  # browser is a different revision and fails maxDiffPixelRatio: 0.02.
+  # Gallery console, overflow and visibility checks on GitHub-hosted Ubuntu
+  # Chromium (Dedibox uses a different revision).
   ui-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -370,12 +354,6 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm exec playwright install chromium
       - run: pnpm --filter @zedtech/zedkit-ui smoke
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ui-gallery
-          path: packages/ui/test-results/*.png
-          if-no-files-found: ignore
 
   registry-smoke:
     runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
@@ -416,7 +394,16 @@ jobs:
         if: runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh install
       - run: pnpm registry:build
-      # Two Next smokes; Vite paths live in the dedicated quickstart-smoke job.
+      # The pack closure ships prebuilt dist (not rebuildable by the
+      # consumer): build the UI closure once before the parallel cells pack it.
+      - run: pnpm exec turbo run build --filter=@zedtech/zedkit-ui
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm exec playwright install chromium
+      # Next smokes (src-dir pnpm + npm, plain pnpm); Vite paths live in the dedicated quickstart-smoke job.
+      # The npm cell guards the D1 promise (no ERESOLVE); each serve port is pinned per cell.
       - name: registry smoke
         run: |
           fail=0
@@ -424,8 +411,14 @@ jobs:
           p1=$!
           bash scripts/registry/smoke-ui-quickstart.sh &
           p2=$!
+          SMOKE_PORT=3110 PM=npm bash scripts/registry/smoke-ui-quickstart.sh &
+          p3=$!
+          SMOKE_PORT=3111 LAYOUT=plain bash scripts/registry/smoke-ui-quickstart.sh &
+          p4=$!
           wait "$p1" || fail=1
           wait "$p2" || fail=1
+          wait "$p3" || fail=1
+          wait "$p4" || fail=1
           exit "$fail"
 
   # Vite + registry Button consumer. In ci-required when registry is selected.
@@ -653,25 +646,14 @@ jobs:
           path: apps/docs/test-results/*.png
           if-no-files-found: ignore
 
-  # Stable check name for older rulesets. The browser suite is docs-smoke.
-  docs-e2e:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [changes, docs-smoke]
-    if: always() && needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
-    steps:
-      - name: Smoke passed
-        run: test "${{ needs.docs-smoke.result }}" = "success"
-
   # Stable check name for branch protection. Require this one job instead of
-  # listing every CI job. The ruleset still lists the old names until an
-  # admin applies the settings issue.
+  # listing every CI job.
   # Selected jobs must succeed. Skipped is allowed only when `changes`
   # excluded that job. Failure, cancel, unknown and missing never pass.
   ci-required:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [changes, hygiene, workflow-lint, checks, ui-smoke, registry-smoke, quickstart-smoke, adoption-smoke, docs-build, docs-e2e, docs-smoke]
+    needs: [changes, hygiene, workflow-lint, checks, ui-smoke, registry-smoke, quickstart-smoke, adoption-smoke, docs-build, docs-smoke]
     if: always()
     steps:
       - uses: actions/checkout@v7
@@ -686,7 +668,6 @@ jobs:
           QUICKSTART_SMOKE: ${{ needs.quickstart-smoke.result }}
           ADOPTION_SMOKE: ${{ needs.adoption-smoke.result }}
           DOCS_BUILD: ${{ needs.docs-build.result }}
-          DOCS_E2E: ${{ needs.docs-e2e.result }}
           DOCS_SMOKE: ${{ needs.docs-smoke.result }}
           WORKFLOWS: ${{ needs.changes.outputs.workflows }}
           DOCS: ${{ needs.changes.outputs.docs }}

@@ -2,6 +2,45 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { DOCS_SHIPPED_IDENTITIES, pinDemoLook } from "./a11y-helpers";
 
+test("the dialog scrim stays a dim layer", async ({ page }) => {
+  await page.goto("/docs/ui/open-modal-dialogs");
+  const preview = page.locator("[data-component-preview]").first();
+  const open = preview.getByRole("button", { name: "Open dialog" });
+  const overlay = page.locator("[data-slot='dialog-overlay']");
+
+  await open.click();
+  await expect(overlay).toBeVisible();
+  await expect.poll(async () =>
+    overlay.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "hsl(var(--overlay) / var(--zk-glass-scrim-alpha))";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected && !node.className.includes("bg-overlay/");
+    }),
+  ).toBe(true);
+  await page.keyboard.press("Escape");
+  await expect(overlay).toBeHidden();
+
+  await pinDemoLook(preview, "mist", "dark");
+  await open.click();
+  await expect(overlay).toBeVisible();
+  await expect.poll(async () =>
+    overlay.evaluate((node) => {
+      const probe = document.createElement("div");
+      probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--overlay)) 80%, transparent)";
+      node.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      const background = getComputedStyle(node).backgroundColor;
+      probe.remove();
+      return background === expected;
+    }),
+  ).toBe(true);
+  await page.keyboard.press("Escape");
+});
+
 async function expectOverlayChromeMatchesPanel(page: Page): Promise<void> {
   const ok = await page.evaluate(() => {
     const panel = document.querySelector('[data-slot="dialog-content"]');

@@ -23,7 +23,8 @@ beforeAll(() => {
 });
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "../../src");
-const ATTR_LITERAL = /\b(?:aria-label|placeholder|title)="[^"{]*"/;
+// Lookbehind keeps data-* names ending in -title (data-card-skeleton-title) out.
+const ATTR_LITERAL = /(?<![-\w])(?:aria-label|placeholder|title)="[^"{]*"/;
 const KIT_ENGLISH = [
   '"Close"',
   '"Confirm"',

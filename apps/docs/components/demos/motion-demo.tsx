@@ -14,8 +14,8 @@ const STEPS = [
 export function MotionDemo() {
   const [run, setRun] = useState(0);
   return (
-    <Stack gap={4}>
-      <Stack key={`cards-${run}`} gap={3}>
+    <Stack gap="lg">
+      <Stack key={`cards-${run}`} gap="md">
         {STEPS.map((step) => (
           <Card key={step.title} className={step.className}>
             <CardHeader>
@@ -25,11 +25,11 @@ export function MotionDemo() {
           </Card>
         ))}
       </Stack>
-      <Stack key={`list-${run}`} gap={1} data-stagger="in">
+      <Stack key={`list-${run}`} gap="tight" data-stagger="in">
         <Text variant="muted">{motionCopy.staggerNote}</Text>
         <Text variant="muted">{motionCopy.reducedMotion}</Text>
       </Stack>
-      <Stack direction="horizontal" gap={2}>
+      <Stack direction="horizontal" gap="sm">
         <Button className="hover-press" onClick={() => setRun((n) => n + 1)}>
           {motionCopy.replayEntrance}
         </Button>

@@ -16,9 +16,9 @@ export const metadata = docsPageMetadata("/features/identity-editor", {
 export default function IdentityEditorFeaturePage() {
   return (
     <Container width="wide" className="py-section-lg">
-      <Stack gap={6}>
-        <Stack gap={2}>
-          <Button asChild variant="link" size="sm" className="-mx-2 -mt-6 w-fit" data-editor-back="">
+      <Stack gap="list">
+        <Stack gap="sm">
+          <Button asChild variant="link" size="sm" className="-mx-back pull-back w-fit" data-editor-back="">
             <Link href="/#identities">{identityEditorCopy.back}</Link>
           </Button>
           <Heading level={1} typeRole="section">

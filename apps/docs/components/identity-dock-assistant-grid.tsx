@@ -39,7 +39,7 @@ function DockAssistantPreviewColumn(props: {
 }) {
   const pane = compactPaneProps(props.narrowSplit);
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap="lg" className="content-shrink">
       <ReferenceReportList report={props.references} />
       <PreviewPane
         view={props.view}
@@ -128,7 +128,7 @@ export function IdentityDockAssistantGrid(props: IdentityDockAssistantGridProps)
   const pane = compactPaneProps(props.narrowSplit);
   const chatApply = conversationSiteApply(props.siteApply, props.session.proposal);
   return (
-    <Stack gap={4} className="min-w-0">
+    <Stack gap="lg" className="content-shrink">
       <ConversationMessages
         view={props.view}
         session={props.session}

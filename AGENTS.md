@@ -45,7 +45,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - `deploy/` — hosting and the identity suggest service
   ([AGENTS.md](deploy/AGENTS.md)); maintainer switches:
   [README.md](deploy/README.md).
-- `registry/`, `scripts/` — shadcn copy-source payloads; repo checks.
+- `registry/`, `scripts/` — generated shadcn copy-source staging (`registry/ui/`
+  is gitignored; `pnpm registry:build` writes it) and repo checks.
 
 ## How to work
 
@@ -58,12 +59,16 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   (warn and offer a split), red >30 (warn, propose seams, do not stop).
 - List assumptions before code or a plan. A missing assumptions table
   is a blocking challenge.
-- Entrypoints go through `orchestrate` (read tokenomics, pick a build
-  team). Plan, challenge and review: go deep, be strict, and be brutally
-  honest. One defect: `/fix` (inline, with its check). Review feedback:
-  `/improve-from-review` (apply it, then encode a reusable miss). One
-  topic, small wins: `/quick-wins` (`audit` or `implement`). Unclear topic:
-  `/to-audit`. Have an audit: `/from-audit`.
+- **Depth first, then route by shape.** On every user message, before an
+  answer: is this deep? Deep = a search, inventory, "are there other/unused",
+  audit, review, plan, or anything whose honest answer needs files you do
+  not already have. Keep the asked scope. Deep: open the matching skill
+  (`audit`, `research`, `review`, `plan`, `orchestrate`) and follow it. One
+  named defect: `/fix` (inline, with its check). Multi-step or multi-lens:
+  `orchestrate` (read tokenomics, pick a team). Plan, challenge and review:
+  go deep, be strict, and be brutally honest. Review feedback:
+  `/improve-from-review`. One topic, small wins: `/quick-wins`. Unclear
+  topic: `/to-audit`. Have an audit: `/from-audit`.
 - Encode the first reusable correction that changed the work, same turn
   (`rules-upkeep`). Close coding work with `Rules: none` or
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
@@ -105,7 +110,8 @@ pnpm typecheck              # turbo: tsc --noEmit everywhere
 pnpm lint                   # turbo: eslint everywhere
 pnpm build                  # turbo: build everywhere (docs: static export in apps/docs/out)
 pnpm test                   # turbo: vitest in every package; not the line below
-pnpm test:registry          # node:test: scripts/, deploy/ (incl. suggest), apps/docs/scripts
+pnpm test:registry          # node:test: test:registry:nodeploy globs + deploy/* (incl. packages/ai/scripts)
+pnpm test:registry:nodeploy # node:test without deploy/* (self-hosted CI path)
 pnpm changeset:status       # versioning dry-run (no publish)
 pnpm catalog:build          # regenerate docs/catalog/catalog.json
 pnpm catalog:check          # catalog + docs check (demo registry, previews, /r/ urls)

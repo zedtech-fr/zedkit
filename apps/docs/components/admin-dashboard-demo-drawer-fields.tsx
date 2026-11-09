@@ -24,7 +24,7 @@ export function AdminDashboardDemoDrawerFields({
   form: AdminDashboardFormControl;
 }) {
   return (
-    <Stack gap={4} className="py-4">
+    <Stack gap="lg" className="py-row">
       <FormField
         control={form.control}
         name="name"

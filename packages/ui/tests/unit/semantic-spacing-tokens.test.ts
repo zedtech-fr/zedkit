@@ -30,7 +30,7 @@ describe("semantic spacing tokens (#798)", () => {
 
   it("floors section rhythm on phones so dense identities cannot collapse bands", () => {
     expect(css).toMatch(/--zk-section-md:\s*max\(2rem,\s*calc\(var\(--spacing\)\s*\*\s*12\)\)/);
-    expect(css).toMatch(/--spacing-card-stack:\s*0\.5rem;/);
+    expect(css).toMatch(/--spacing-card-stack:\s*calc\(var\(--spacing\)\s*\*\s*2\);/);
   });
 
   it("derives each token from --spacing with the mist-matching factor", () => {
@@ -41,9 +41,11 @@ describe("semantic spacing tokens (#798)", () => {
     }
   });
 
-  it("leaves leftover rem aliases in place", () => {
-    expect(css).toMatch(/--spacing-button-gap:\s*0\.5rem;/);
-    expect(css).toMatch(/--spacing-icon-control:\s*1rem;/);
+  it("has no leftover rem aliases for spacing steps", () => {
+    expect(css).toMatch(/--spacing-button-gap:\s*calc\(var\(--spacing\)\s*\*\s*2\);/);
+    expect(css).not.toContain("--spacing-icon-control");
+    expect(css).not.toContain("--spacing-button-inline:");
+    expect(css).not.toContain("--spacing-button-inline-lg");
   });
 
   it("wires control height and block aliases to --spacing", () => {

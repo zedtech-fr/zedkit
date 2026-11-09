@@ -27,7 +27,6 @@ const DOCS_PREFIXES = [
   "registry/",
   "scripts/registry/",
   "scripts/catalog",
-  "scripts/check-registry-ui-drift",
   "scripts/quickstart",
   "scripts/adoption",
 ];

@@ -22,9 +22,9 @@ describe("ZedkitLogo", () => {
   });
 
   it("lets the caller size and style it", () => {
-    const { container } = render(<ZedkitLogo className="h-6" height={40} id="brand" />);
+    const { container } = render(<ZedkitLogo className="h-logo" height={40} id="brand" />);
     const svg = container.querySelector("svg");
-    expect(svg?.getAttribute("class")).toBe("h-6");
+    expect(svg?.getAttribute("class")).toBe("h-logo");
     expect(svg?.getAttribute("height")).toBe("40");
     expect(svg?.id).toBe("brand");
   });

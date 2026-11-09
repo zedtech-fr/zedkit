@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Badge } from "#index.js";
 import { Alert, AlertDescription, AlertTitle } from "#index.js";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#index.js";
-import { Button } from "#index.js";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardSkeleton, CardTitle } from "#index.js";
+import { cn } from "#index.js";
 import { Input } from "#index.js";
 import { Label } from "#index.js";
 import { Separator } from "#index.js";
@@ -12,34 +12,6 @@ import { Heading, Text } from "#index.js";
 import { Textarea } from "#index.js";
 
 describe("primitives", () => {
-  it("uses a quiet ghost hover (muted tint, not accent fill)", () => {
-    render(<Button variant="ghost">Quiet</Button>);
-    const button = screen.getByRole("button", { name: "Quiet" });
-    expect(button.className).toContain("hover:bg-muted/80");
-    expect(button.className).not.toContain("hover:bg-accent");
-  });
-
-  it("uses underline-only link styling without a hover fill", () => {
-    render(
-      <Button asChild variant="link" size="sm">
-        <a href="/docs">Read docs</a>
-      </Button>,
-    );
-    const link = screen.getByRole("link", { name: "Read docs" });
-    expect(link.className).toContain("hover:underline");
-    expect(link.className).toContain("hover:bg-transparent");
-    expect(link.className).not.toContain("hover:bg-accent");
-    expect(link.className).toContain("min-h-11");
-  });
-
-  it("takes ref as a prop", () => {
-    const ref = { current: null as HTMLButtonElement | null };
-    render(<Button ref={ref}>Save</Button>);
-    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
-    expect(ref.current?.textContent).toBe("Save");
-    expect(ref.current?.getAttribute("data-slot")).toBe("button");
-  });
-
   it("puts input ref on the native element", () => {
     const ref = { current: null as HTMLInputElement | null };
     render(<Input ref={ref} aria-label="Name" />);
@@ -47,65 +19,18 @@ describe("primitives", () => {
     expect(ref.current?.getAttribute("data-slot")).toBe("input");
   });
 
-  it("spaces the input from the Tailwind scale", () => {
+  it("spaces the input with the field role", () => {
     render(<Input aria-label="Name" />);
     const input = screen.getByLabelText("Name");
     expect(input.tagName).toBe("INPUT");
     expect(input.getAttribute("data-slot")).toBe("input");
-    expect(input.className).toContain("px-3");
-    expect(input.className).not.toContain("px-control-inline");
+    expect(input.className).toContain("px-field-pad");
+    expect(input.className).not.toContain("px-3");
     expect(input.className).toContain("py-control-block");
     expect(input.className).toContain("h-control-height");
     expect(input.className).toContain("text-control");
+    expect(input.className).not.toContain("file:border-0");
     expect(input.className).toContain("rounded-md");
-  });
-
-  it("spaces button content from control tokens", () => {
-    render(<Button>Save</Button>);
-    const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("gap-2");
-    expect(button.className).not.toContain("gap-button-gap");
-    expect(button.className).toContain("py-2");
-    expect(button.className).not.toContain("py-control-block-lg");
-  });
-
-  it("spaces the small button from the Tailwind scale", () => {
-    render(<Button size="sm">Save</Button>);
-    const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("px-3");
-    expect(button.className).not.toContain("px-button-inline-sm");
-  });
-
-  it("spaces the large button from the Tailwind scale", () => {
-    render(<Button size="lg">Save</Button>);
-    const button = screen.getByRole("button", { name: "Save" });
-    expect(button.className).toContain("px-8");
-    expect(button.className).not.toContain("px-button-inline-lg");
-  });
-
-  it("merges button styles onto asChild link", () => {
-    render(
-      <Button asChild variant="outline">
-        <a href="/save">Save</a>
-      </Button>,
-    );
-    const link = screen.getByRole("link", { name: "Save" });
-    expect(link.className).toContain("border-input");
-    expect(link.getAttribute("href")).toBe("/save");
-    expect(link.getAttribute("data-size")).toBe("default");
-  });
-
-  it("keeps sm ghost padding on asChild anchor roots", () => {
-    render(
-      <Button asChild variant="ghost" size="sm">
-        <a href="/docs">More in the kit</a>
-      </Button>,
-    );
-    const link = screen.getByRole("link", { name: "More in the kit" });
-    expect(link.className).toContain("px-3");
-    expect(link.className).toContain("py-control-block");
-    expect(link.getAttribute("data-variant")).toBe("ghost");
-    expect(link.getAttribute("data-size")).toBe("sm");
   });
 
   it("renders a badge with its text", () => {
@@ -149,9 +74,15 @@ describe("primitives", () => {
     const label = screen.getByText("Name");
     expect(label.tagName).toBe("LABEL");
     expect(label.getAttribute("data-slot")).toBe("label");
-    expect(label.className).toContain("text-sm");
+    expect(label.className).toContain("text-dense");
     expect(label.className).toContain("peer-disabled:cursor-not-allowed");
-    expect(label.className).toContain("peer-disabled:opacity-50");
+    expect(label.className).toContain("peer-disabled:fade-disabled");
+    expect(label.className).not.toContain("opacity-50");
+    expect(cn("disabled:fade-disabled", "disabled:opacity-100")).toBe("disabled:opacity-100");
+    expect(cn("disclosure-icon", "opacity-100")).toBe("opacity-100");
+    expect(cn("sort-mark", "opacity-100")).toBe("opacity-100");
+    expect(cn("status-ping", "opacity-100")).toBe("opacity-100");
+    expect(cn("option-picked", "opacity-100")).toBe("opacity-100");
   });
 
   it("renders horizontal and vertical separators", () => {
@@ -183,7 +114,7 @@ describe("primitives", () => {
   });
 
   it("renders a skeleton block that pulses only when motion is safe", () => {
-    const { container } = render(<Skeleton className="h-4 w-24" data-testid="sk" />);
+    const { container } = render(<Skeleton className="h-skeleton-line w-skeleton-bar" data-testid="sk" />);
     const skeleton = container.querySelector('[data-testid="sk"]');
     expect(skeleton?.className).toContain("motion-safe:animate-pulse");
   });
@@ -266,6 +197,10 @@ describe("primitives", () => {
     expect(alerts[0]?.getAttribute("data-slot")).toBe("alert");
     expect(alerts[0]?.className).toContain("rounded-lg");
     expect(alerts[1]?.className).toContain("text-destructive");
+    expect(alerts[1]?.className).toContain("alert-destructive-fill");
+    expect(alerts[1]?.className).toContain("alert-destructive-line");
+    expect(alerts[1]?.className).not.toContain("bg-destructive/");
+    expect(alerts[1]?.className).not.toContain("border-destructive/");
   });
 
   it("spaces the alert from the Tailwind scale", () => {
@@ -275,8 +210,9 @@ describe("primitives", () => {
       </Alert>,
     );
     const alert = screen.getByRole("alert");
-    expect(alert.className).toContain("py-3");
-    expect(alert.className).not.toContain("py-alert-block");
+    expect(alert.className).toContain("py-alert-block");
+    expect(alert.className).toContain("px-alert-inline");
+    expect(alert.className).not.toContain("py-3");
   });
 
   it("merges alert styles onto an asChild section", () => {
@@ -289,7 +225,7 @@ describe("primitives", () => {
     );
     const section = screen.getByRole("alert", { name: "Maintenance notice" });
     expect(section.tagName).toBe("SECTION");
-    expect(section.className).toContain("px-4");
+    expect(section.className).toContain("px-alert-inline");
   });
 
   it("renders a textarea with its placeholder", () => {
@@ -306,10 +242,9 @@ describe("primitives", () => {
     );
     expect(screen.getByLabelText("Name").className).toContain("h-control-height");
     expect(screen.getByLabelText("Bio").className).toContain("min-h-textarea-min-height");
-    expect(screen.getByLabelText("Bio").className).toContain("px-3");
-    expect(screen.getByLabelText("Bio").className).not.toContain("px-control-inline");
-    expect(screen.getByLabelText("Bio").className).toContain("py-2");
-    expect(screen.getByLabelText("Bio").className).not.toContain("py-control-block-lg");
+    expect(screen.getByLabelText("Bio").className).toContain("px-field-pad");
+    expect(screen.getByLabelText("Bio").className).not.toContain("px-3");
+    expect(screen.getByLabelText("Bio").className).toContain("py-control-block-lg");
   });
 
   it("sizes every text field from the input font-size token, never a fixed text-* size", () => {
@@ -345,7 +280,7 @@ describe("primitives", () => {
     expect(screen.getByText("Footer text.")).not.toBeNull();
   });
 
-  it("spaces card slots from theme tokens", () => {
+  it("spaces card slots from the sizing recipe", () => {
     render(
       <Card>
         <CardHeader>
@@ -358,12 +293,21 @@ describe("primitives", () => {
     const title = screen.getByText("Server");
     const root = title.parentElement?.parentElement;
     expect(root?.getAttribute("data-slot")).toBe("card");
-    expect(root?.className).toContain("rounded-xl");
-    expect(title.parentElement?.className).toContain("p-card-padding");
-    expect(title.parentElement?.className).toContain("space-y-card-stack");
-    expect(screen.getByText("Body text.").className).toContain("p-card-padding");
-    expect(screen.getByText("Footer text.").className).toContain("p-card-padding");
+    expect(root?.className).toContain("rounded-(--zk-card-radius)");
+    // Padding/gap come from the card recipe rules in styles.css
+    // (computed values are proven in preview/cascade.spec.ts).
+    expect(title.parentElement?.getAttribute("data-slot")).toBe("card-header");
+    expect(screen.getByText("Body text.").getAttribute("data-slot")).toBe("card-content");
+    expect(screen.getByText("Footer text.").getAttribute("data-slot")).toBe("card-footer");
     expect(root?.className).toContain("shadow-md");
     expect(root?.className).not.toMatch(/(^|\s)shadow(\s|$)/);
+  });
+
+  it("lets CardSkeleton use the same size recipe as Card", () => {
+    const { container } = render(<CardSkeleton size="lg" label="Loading card" />);
+    const el = container.querySelector('[data-slot="card-skeleton"]');
+    expect(el?.getAttribute("data-size")).toBe("lg");
+    expect(el?.className).toContain("rounded-(--zk-card-radius)");
+    expect(el?.className).not.toContain("p-card-padding");
   });
 });

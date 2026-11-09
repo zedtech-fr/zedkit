@@ -14,15 +14,15 @@ export function KitVersionLabel({
 }) {
   const label = `v${version} (releases)`;
   return (
-    <Stack direction="horizontal" gap={2} className="items-center">
+    <Stack direction="horizontal" gap="sm" className="items-center">
       {tone === "hero" ? <LivePulse label="Latest" /> : null}
       {tone === "shell" ? (
-        <Text as="span" variant="muted" data-kit-version="" className="font-mono text-xs tabular-nums">
+        <Text as="span" variant="muted" data-kit-version="" className="font-mono text-caption tabular-nums">
           v{version}
         </Text>
       ) : (
-        <Link href={releasesHref} target="_blank" rel="noreferrer" aria-label={label} className="inline-flex min-h-overlay-touch-target items-center px-1">
-          <Text variant="muted" className="font-mono text-sm">
+        <Link href={releasesHref} target="_blank" rel="noreferrer" aria-label={label} className="inline-flex min-h-overlay-touch-target items-center px-touch">
+          <Text variant="muted" className="font-mono">
             v{version}
           </Text>
         </Link>

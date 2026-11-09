@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { useValidatedForm } from "#use-validated-form.js";
+import { useValidatedForm } from "#forms/use-validated-form.js";
 
 /** Exercised by `pnpm --filter @zedtech/zedkit-ui typecheck`, not at runtime. */
 function typeContractChecks(): void {

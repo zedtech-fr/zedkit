@@ -4,6 +4,9 @@
 # server .d.ts dump) and fails on report drift.
 # A report that changed versus origin/main also needs a changeset; a
 # removed or renamed export needs minor (0.x breaking) or major.
+# Catch-up: HEAD may add complete public declarations only when they already
+# exist equivalently in origin/main source; any other report delta still
+# needs a changeset. Name hits in comments or imports do not count.
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
@@ -132,93 +135,9 @@ fi
 
 [ "$fail" -eq 0 ] || { echo "api-report: extractor FAILED"; exit 1; }
 
-python3 - <<'PY'
-import subprocess
-import sys
-import os
-from pathlib import Path
-
-root = Path(".")
-head = os.environ.get("GITHUB_HEAD_REF", "")
-if head == "changeset-release/main":
-    print("api-report: skip changeset gate on version PR")
-    sys.exit(0)
-base = "origin/main"
-probe = subprocess.run(
-    ["git", "rev-parse", "--verify", base], capture_output=True, text=True
-)
-if probe.returncode != 0:
-    print("api-report: no origin/main, skip changeset gate")
-    sys.exit(0)
-
-reports = [
-    ("packages/ai/etc/zedkit-ai.api.md", "@zedtech/zedkit-ai"),
-    ("packages/brand/etc/zedkit-brand.api.md", "@zedtech/zedkit-brand"),
-    ("packages/core/etc/zedkit-core.api.md", "@zedtech/zedkit-core"),
-    ("packages/devtools/etc/zedkit-devtools.api.md", "@zedtech/zedkit-devtools"),
-    ("packages/flags/etc/zedkit-flags.api.md", "@zedtech/zedkit-flags"),
-    ("packages/i18n/etc/zedkit-i18n.api.md", "@zedtech/zedkit-i18n"),
-    ("packages/live/etc/zedkit-live.api.md", "@zedtech/zedkit-live"),
-    ("packages/nest/etc/zedkit-nest.api.md", "@zedtech/zedkit-nest"),
-    ("packages/observability/etc/zedkit-observability.api.md", "@zedtech/zedkit-observability"),
-    ("packages/payload-access/etc/zedkit-payload-access.api.md", "@zedtech/zedkit-payload-access"),
-    ("packages/payload-seo/etc/zedkit-payload-seo.api.md", "@zedtech/zedkit-payload-seo"),
-    ("packages/quality/etc/zedkit-quality.api.md", "@zedtech/zedkit-quality"),
-    ("packages/quality/etc/zedkit-quality-eslint.api.md", "@zedtech/zedkit-quality"),
-    ("packages/seo/etc/zedkit-seo.api.md", "@zedtech/zedkit-seo"),
-    ("packages/server/etc/zedkit-server.api.md", "@zedtech/zedkit-server"),
-    ("packages/storage/etc/zedkit-storage.api.md", "@zedtech/zedkit-storage"),
-    ("packages/ui/etc/zedkit-ui.api.md", "@zedtech/zedkit-ui"),
-    ("packages/ui/etc/zedkit-ui-motion.api.md", "@zedtech/zedkit-ui"),
-]
-
-bumps: dict[str, set[str]] = {}
-name_re = __import__("re").compile(r'^["\']([^"\']+)["\']\s*:\s*(patch|minor|major)')
-for cs in sorted(root.glob(".changeset/*.md")):
-    text = cs.read_text()
-    if not text.startswith("---"):
-        continue
-    end = text.find("\n---", 3)
-    if end < 0:
-        continue
-    for line in text[4:end].splitlines():
-        match = name_re.match(line.strip())
-        if match:
-            bumps.setdefault(match.group(1), set()).add(match.group(2))
-
-fail = 0
-for path, pkg in reports:
-    existed = subprocess.run(
-        ["git", "cat-file", "-e", f"{base}:{path}"],
-        capture_output=True,
-    )
-    if existed.returncode != 0:
-        continue
-    # Compare commits only. `git diff base -- path` includes the working tree,
-    # and api-extractor --local may rewrite the report on disk.
-    diff = subprocess.check_output(["git", "diff", base, "HEAD", "--", path], text=True)
-    if not diff.strip():
-        continue
-    kinds = bumps.get(pkg, set())
-    if not kinds:
-        print(f"{path}: API report changed; add a changeset for {pkg}")
-        fail = 1
-        continue
-    removed = any(
-        line.startswith("-export ") for line in diff.splitlines()
-    )
-    if removed and kinds.isdisjoint({"minor", "major"}):
-        print(
-            f"{path}: removed or renamed export needs a minor "
-            f"(0.x breaking) or major changeset for {pkg}"
-        )
-        fail = 1
-
-if fail:
-    print("api-report: changeset gate FAILED")
-    sys.exit(1)
-print("api-report: changeset gate ok")
-PY
+# Compare commits only. `git diff base -- path` includes the working tree,
+# and api-extractor --local may rewrite the report on disk.
+node scripts/api-report-changeset-gate.mjs "${entries[@]}"
 status=$?
 [ "$status" -eq 0 ] || exit "$status"
 echo "api-report: ok"

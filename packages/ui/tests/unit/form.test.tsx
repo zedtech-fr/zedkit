@@ -107,37 +107,37 @@ describe("form brick", () => {
     expect(screen.getByRole("alert")).not.toBeNull();
     const fieldSet = document.querySelector("[data-slot=field-set]");
     expect(fieldSet?.className).toContain("gap-field-set");
-    expect(fieldSet?.className).toContain("has-[>[data-slot=checkbox-group]]:gap-3");
-    expect(fieldSet?.className).not.toContain("gap-field-group-compact");
+    expect(fieldSet?.className).toContain("has-[>[data-slot=checkbox-group]]:gap-field-group-compact");
+    expect(fieldSet?.className).not.toContain("gap-3");
     const group = document.querySelector("[data-slot=field-group]");
     expect(group?.className).toContain("gap-field-group");
-    expect(group?.className).toContain("data-[slot=checkbox-group]:gap-3");
-    expect(group?.className).not.toContain("gap-field-group-compact");
+    expect(group?.className).toContain("data-[slot=checkbox-group]:gap-field-group-compact");
+    expect(group?.className).not.toContain("gap-3");
     const legend = document.querySelector("[data-slot=field-legend]");
-    expect(legend?.className).toContain("mb-3");
-    expect(legend?.className).not.toContain("mb-field-legend-bottom");
+    expect(legend?.className).toContain("mb-field-legend-bottom");
+    expect(legend?.className).not.toContain("mb-3");
     const separator = document.querySelector("[data-slot=field-separator]");
-    expect(separator?.classList.contains("h-5")).toBe(true);
-    expect(separator?.className).not.toContain("h-field-separator");
+    expect(separator?.classList.contains("h-field-separator")).toBe(true);
+    expect(separator?.className).not.toContain("h-5");
     const content = document.querySelector("[data-slot=field-separator-content]");
-    expect(content?.className).toContain("px-2");
-    expect(content?.className).not.toContain("px-field-separator-inline");
+    expect(content?.className).toContain("px-field-separator-inline");
+    expect(content?.className).not.toContain("px-2");
     const field = document.querySelector("[data-slot=field]");
-    expect(field?.className).toContain("gap-3");
-    expect(field?.className).not.toContain("gap-field");
+    expect(field?.className).toContain("gap-field");
+    expect(field?.className).not.toContain("gap-3");
     const labels = document.querySelectorAll("[data-slot=field-label]");
     expect(labels.length).toBe(2);
     for (const label of labels) {
-      expect(label.className).toContain("gap-2");
-      expect(label.className).not.toContain("gap-field-inline");
+      expect(label.className).toContain("gap-field-inline");
+      expect(label.className).not.toContain("gap-2");
     }
   });
 
   it("spaces FieldContent from the Tailwind scale", () => {
     render(<FieldContent>Hint</FieldContent>);
     const node = document.querySelector("[data-slot=field-content]");
-    expect(node?.className).toContain("gap-1.5");
-    expect(node?.className).not.toContain("gap-field-content");
+    expect(node?.className).toContain("gap-field-content");
+    expect(node?.className).not.toContain("gap-1.5");
   });
 
   it("styles form item, description, and message from design tokens", async () => {
@@ -145,8 +145,8 @@ describe("form brick", () => {
     render(<FormDemo messages={messages} onSave={vi.fn(async () => {})} />);
     const description = screen.getByText(messages.nameDescription);
     expect(description.className).toContain("text-form-hint");
-    expect(description.parentElement?.className).toContain("space-y-2");
-    expect(description.parentElement?.className).not.toContain("space-y-form-item-gap");
+    expect(description.parentElement?.className).toContain("space-y-form-item-gap");
+    expect(description.parentElement?.className).not.toContain("space-y-2");
 
     await user.type(screen.getByLabelText(messages.nameLabel), "x");
     await user.click(screen.getByRole("button", { name: messages.save }));

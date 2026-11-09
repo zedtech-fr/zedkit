@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SNIPPETS="${ROOT}/apps/docs/home-quickstart/snippets"
 REGISTRY_DIR="${ROOT}/apps/docs/public/r"
-SHADCN="${SHADCN_VERSION:-4.22.1}"
+SHADCN="${SHADCN_VERSION:-4.23.0}"
 CREATE_VITE="${CREATE_VITE_VERSION:-7.1.3}"
 
 cleanup_work() { rm -rf "$1"; }
@@ -107,7 +107,7 @@ run_registry_path() {
   pnpm add tailwindcss @tailwindcss/vite react@19 react-dom@19
   pnpm add -D @types/node
   write_vite_tailwind_app "$work"
-  pnpm dlx "shadcn@${SHADCN}" init -d
+  pnpm dlx "shadcn@${SHADCN}" init -y --base radix --preset nova
   rm -rf src/components src/lib @ 2>/dev/null || true
   run_registry_snippet "${SNIPPETS}/registry-theme-add.sh"
   run_registry_snippet "${SNIPPETS}/registry-add.sh"

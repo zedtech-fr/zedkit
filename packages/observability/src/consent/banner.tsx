@@ -51,8 +51,8 @@ export function ConsentBanner(props: ConsentBannerProps) {
           <DialogTitle>{props.title}</DialogTitle>
           <DialogDescription>{props.description}</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 py-2">
-          <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-stack-lg surface-pad-block-sm">
+          <div className="flex items-center justify-between gap-stack-lg">
             <Label htmlFor="consent-analytics">{props.analyticsLabel}</Label>
             <Switch
               id="consent-analytics"
@@ -60,7 +60,7 @@ export function ConsentBanner(props: ConsentBannerProps) {
               onCheckedChange={(checked) => setDraft((prev) => ({ ...prev, analytics: checked }))}
             />
           </div>
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-stack-lg">
             <Label htmlFor="consent-marketing">{props.marketingLabel}</Label>
             <Switch
               id="consent-marketing"

@@ -1,12 +1,12 @@
 /** Shared ui imports for brief specimens (compiled to dist-relative paths for smoke). */
-export { Badge } from "../badge.js";
-export { Button } from "../button.js";
-export { Card, CardContent, CardHeader } from "../card.js";
-export { Input } from "../input.js";
-export { Label } from "../label.js";
-export { Stack } from "../layout.js";
-export { Popover, PopoverContent, PopoverTrigger } from "../popover.js";
-export { ProgressBar } from "../progress-bar.js";
+export { Badge } from "../feedback/badge.js";
+export { Button } from "../button/button.js";
+export { Card, CardContent, CardHeader } from "../surfaces/card.js";
+export { Input } from "../forms/input.js";
+export { Label } from "../forms/label.js";
+export { Stack } from "../layout/layout.js";
+export { Popover, PopoverContent, PopoverTrigger } from "../overlays/popover.js";
+export { ProgressBar } from "../feedback/progress-bar.js";
 export {
   Table,
   TableBody,
@@ -14,6 +14,6 @@ export {
   TableHead,
   TableHeader,
   TableRow,
-} from "../table.js";
-export { Heading, Text } from "../typography.js";
-export { Textarea } from "../textarea.js";
+} from "../data-table/table.js";
+export { Heading, Text } from "../typography/typography.js";
+export { Textarea } from "../forms/textarea.js";

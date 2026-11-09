@@ -40,14 +40,14 @@ export function DrawerDemo() {
   return (
     <>
       <Toaster />
-      <Stack gap={3} className="min-w-0 items-start">
-        <Stack gap={1} className="min-w-0">
-          <Text variant="muted" id="drawer-direction-label" className="text-xs font-medium">
+      <Stack gap="md" className="content-shrink items-start">
+        <Stack gap="tight" className="content-shrink">
+          <Text variant="muted" id="drawer-direction-label" className="text-caption font-medium">
             {drawerCopy.demo.directionLabel}
           </Text>
           <Stack
             direction="horizontal"
-            gap={1}
+            gap="tight"
             className="flex-wrap"
             role="group"
             aria-labelledby="drawer-direction-label"
@@ -65,7 +65,7 @@ export function DrawerDemo() {
               </Button>
             ))}
           </Stack>
-          <Text variant="muted" className="text-xs">
+          <Text variant="muted" className="text-caption">
             {current?.hint}
           </Text>
         </Stack>
@@ -76,8 +76,8 @@ export function DrawerDemo() {
           <DrawerContent>
             <DrawerHandle />
             <DrawerHeader>
-              <Stack direction="horizontal" gap={2} className="items-start justify-between">
-                <Stack gap={1} className="min-w-0 flex-1 text-left">
+              <Stack direction="horizontal" gap="sm" className="items-start justify-between">
+                <Stack gap="tight" className="content-shrink flex-1 text-left">
                   <DrawerTitle>{drawerCopy.demo.title}</DrawerTitle>
                   <DrawerDescription>{drawerCopy.demo.description(edgeLabel)}</DrawerDescription>
                 </Stack>
@@ -85,7 +85,7 @@ export function DrawerDemo() {
               </Stack>
             </DrawerHeader>
             <DrawerBody>
-              <Stack gap={3} className="py-3">
+              <Stack gap="md" className="surface-pad-block">
                 <Text className="font-medium">{drawerCopy.demo.taskTitle}</Text>
                 <DetailPanel
                   items={drawerCopy.demo.detailItems.map((item) =>
@@ -94,7 +94,7 @@ export function DrawerDemo() {
                       : { label: item.label, value: item.value },
                   )}
                 />
-                <Text variant="muted" className="text-xs font-medium">
+                <Text variant="muted" className="text-caption font-medium">
                   {drawerCopy.demo.activityHeading}
                 </Text>
                 {ACTIVITY.map((line) => (

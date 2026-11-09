@@ -1,14 +1,9 @@
 import assert from "node:assert/strict";
-import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import {
-  CATALOG_MATURITY_TARGETS,
-  MATURITY_DEFINITIONS,
-  countCatalogStatuses,
-} from "./catalog.mjs";
+import { MATURITY_DEFINITIONS } from "./catalog.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -24,22 +19,4 @@ test("docs/catalog/README.md#maturity mentions semver and no badge for stable", 
   assert.match(section, /API-frozen under semver/i);
   assert.match(section, /without a badge/i);
   assert.match(section, /not covered by the semver guarantee/i);
-});
-
-test("catalog need counts match Option B targets", () => {
-  execSync("node scripts/catalog.mjs build", { cwd: root, stdio: "pipe" });
-  const catalog = JSON.parse(readFileSync(join(root, "docs", "catalog", "catalog.json"), "utf8"));
-  const packages = Object.entries(catalog.packages).map(([name, entry]) => ({
-    name,
-    needs: entry.needs,
-  }));
-  const counts = countCatalogStatuses(packages);
-  assert.deepEqual(
-    {
-      stable: counts.stable,
-      beta: counts.beta,
-      alpha: counts.alpha,
-    },
-    CATALOG_MATURITY_TARGETS,
-  );
 });

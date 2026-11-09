@@ -100,7 +100,7 @@ Measured `/setup-ai` quality: mean **2.25/3** on the eight measurable rubric axe
 Advanced / CI paths:
 
 ```sh
-npx @zedtech/zedkit-ai init . --provider cursor --adopt   # same files as setup; explicit init
+npx @zedtech/zedkit-ai init . --provider cursor --adopt   # adopt on the starter preset; setup uses the setup preset
 npx @zedtech/zedkit-ai validate                           # must print: ok
 npx @zedtech/zedkit-ai validate --setup [--plan file]     # opt-in: PLAN covers git changes, setup went deep (D1-D4)
 npx @zedtech/zedkit-ai scan [dir]                         # repo size and one slice per read-only reader
@@ -117,7 +117,10 @@ run one review workflow, and check done-ness without loading the whole kit.
 
 **Setup preset (default for `setup`):** everything in starter, plus
 `domain-modeling`, `persona-review`, `compose-ui`, `code-review`,
-`ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, and subagents
+`ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
+`plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
+`research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, and `quick-wins`,
+and subagents
 `product-director`, `ui-designer`, `copywriter`, `skeptic`, `researcher`,
 `implementer`, `reviewer`, `domain-guardian`, `event-contracts`, and
 `test-runner` (starter already ships `explorer`, `verifier`, and
@@ -267,7 +270,7 @@ when the skills link is not followed.
 - *Smallest complete change* (`ponytail`, MIT, vendored): reuse before adding.
 - *Parallel and context-aware* (`parallel-work`): fan out independent work to
   subagents with self-contained briefs; contract first, disjoint files.
-  Entrypoints go through `orchestrate` (read tokenomics, pick a build team).
+  Depth first: a search or inventory loads `audit`. Named entrypoints go through `orchestrate` (read tokenomics, pick a build team).
 - *Proven done* (`definition-of-done`, agent `verifier`): gates on the final
   state, no weakened tests, refactor parity by reading bodies, cold second
   review.
@@ -280,8 +283,10 @@ when the skills link is not followed.
 from that material, every claim tagged verbatim, inference or absent;
 technical audits skip the source quota and the wait-for-question stop).
 
-**Entry points (one command per phase):** each hands to `orchestrate` (read
-tokenomics, pick a build team) unless already running as that playbook.
+**Entry points (one command per phase):** a casual search or inventory is
+deep too — load `audit` even without `/audit`. Named commands each hand to
+`orchestrate` (read tokenomics, pick a build team) unless already running as
+that playbook.
 `review`, `plan`, `challenge`, `implement`, `from-audit` (audit → revalidated plan),
 `to-audit` (questions → audit), `quick-wins` (one topic, two modes).
 `/fix` does not: one defect stays inline, with its check.

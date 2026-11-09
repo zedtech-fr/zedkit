@@ -140,6 +140,28 @@ test("home 'More in the kit' links are tappable on a phone and sit beside their 
   const [text, link] = await Promise.all([row.locator("> div").boundingBox(), row.locator("a").boundingBox()]);
   expect(link!.x).toBeGreaterThan(text!.x + text!.width);
   expect(Math.abs(link!.y - text!.y)).toBeLessThan(40);
+  const borders = await page.locator("#entry-points [data-home-secondary-links] > [data-index-lead]").evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      border: getComputedStyle(node).borderBottomWidth,
+      pad: getComputedStyle(node).paddingBottom,
+    })),
+  );
+  expect(borders).toHaveLength(4);
+  expect(borders.at(-1)?.border).toBe("0px");
+  const line = await page.locator("#entry-points [data-home-secondary-links] > [data-index-lead]").first().evaluate((node) => {
+    const probe = document.createElement("div");
+    probe.className = "border-border/60";
+    probe.style.borderBottomStyle = "solid";
+    probe.style.borderBottomWidth = "1px";
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderBottomColor;
+    probe.remove();
+    return { color: getComputedStyle(node).borderBottomColor, expected, numeric: node.className.includes("border-border/") };
+  });
+  expect(line.color).toBe(line.expected);
+  expect(line.numeric).toBe(false);
+  expect(borders.slice(0, -1).every((entry) => entry.border !== "0px")).toBe(true);
+  expect(borders.every((entry) => entry.pad !== "0px")).toBe(true);
 });
 
 test("home area cards keep a decorative icon at tablet width and up", async ({ page }) => {
@@ -441,4 +463,30 @@ test("home component families link only to live docs pages, and Overlays keeps i
     const response = await request.get(href);
     expect(response.status(), href).toBe(200);
   }
+});
+
+test("the identity dock swatch keeps a quiet border", async ({ page }) => {
+  await page.goto("/");
+  const swatch = page.locator("[data-slot='identity-dock-swatch']");
+  await expect(swatch).toBeVisible();
+  const mark = await swatch.evaluate((node) => {
+    const probe = document.createElement("span");
+    probe.className = "border border-border/60";
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderTopColor;
+    probe.remove();
+    const style = getComputedStyle(node);
+    const box = node.getBoundingClientRect();
+    return {
+      color: style.borderTopColor,
+      expected,
+      width: style.borderTopWidth,
+      square: box.width === box.height,
+      numeric: node.className.includes("border-border/"),
+    };
+  });
+  expect(mark.color).toBe(mark.expected);
+  expect(mark.width).toBe("1px");
+  expect(mark.square).toBe(true);
+  expect(mark.numeric).toBe(false);
 });

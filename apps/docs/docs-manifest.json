@@ -17,32 +17,45 @@
       "package": "@zedtech/zedkit-ui",
       "component": "Animate",
       "props": "AnimateProps",
-      "source": "animate.tsx",
+      "source": "motion/animate.tsx",
       "demo": "AnimateDemo",
       "examples": {
         "Wrapper with several triggers": "AnimateTriggersDemo",
         "Stagger children": "AnimateStaggerDemo"
       },
-      "propsPriority": ["on", "delay", "stagger"]
+      "propsPriority": [
+        "on",
+        "delay",
+        "stagger"
+      ]
     },
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
       "component": "Button",
       "registry": "button",
       "props": "ButtonProps",
-      "source": "button.tsx",
+      "source": "button/button.tsx",
       "demo": "ButtonDemo",
-      "examples": { "Variants and sizes": "ButtonSizesDemo" },
-      "propsPriority": ["variant", "size", "asChild"]
+      "examples": {
+        "Variants and sizes": "ButtonSizesDemo"
+      },
+      "propsPriority": [
+        "variant",
+        "size",
+        "asChild"
+      ]
     },
     "Show a status or count badge": {
       "package": "@zedtech/zedkit-ui",
       "component": "Badge",
       "registry": "badge",
       "props": "BadgeProps",
-      "source": "badge.tsx",
+      "source": "feedback/badge.tsx",
       "demo": "BadgeDemo",
-      "propsPriority": ["variant", "asChild"],
+      "propsPriority": [
+        "variant",
+        "asChild"
+      ],
       "examples": {
         "Variants": "BadgeVariantsDemo",
         "In a table row": "BadgeTableRowDemo",
@@ -54,7 +67,7 @@
       "component": "Label",
       "registry": "label",
       "props": "LabelProps",
-      "source": "label.tsx",
+      "source": "forms/label.tsx",
       "demo": "LabelDemo",
       "examples": {
         "Required mark": "LabelRequiredDemo",
@@ -65,7 +78,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "Input",
       "props": "InputProps",
-      "source": "input.tsx",
+      "source": "forms/input.tsx",
       "demo": "InputDemo"
     },
     "Separate content horizontally or vertically": {
@@ -73,7 +86,7 @@
       "component": "Separator",
       "registry": "separator",
       "props": "SeparatorProps",
-      "source": "separator.tsx",
+      "source": "layout/separator.tsx",
       "demo": "SeparatorDemo",
       "examples": {
         "Vertical divider": "SeparatorVerticalDemo"
@@ -84,7 +97,7 @@
       "component": "Skeleton",
       "registry": "skeleton",
       "props": "SkeletonProps",
-      "source": "skeleton.tsx",
+      "source": "feedback/skeleton.tsx",
       "demo": "SkeletonDemo",
       "examples": {
         "Text lines": "SkeletonTextDemo"
@@ -95,7 +108,7 @@
       "component": "CardSkeleton",
       "registry": "card-skeleton",
       "props": "CardSkeletonProps",
-      "source": "card-skeleton.tsx",
+      "source": "surfaces/card-skeleton.tsx",
       "demo": "LoadingZonesDemo",
       "examples": {
         "Standalone": "CardSkeletonStandaloneDemo"
@@ -106,7 +119,7 @@
       "component": "Dialog",
       "registry": "dialog",
       "props": "DialogProps",
-      "source": "dialog.tsx",
+      "source": "overlays/dialog.tsx",
       "demo": "DialogDemo",
       "examples": {
         "Tall content": "DialogTallDemo"
@@ -116,44 +129,62 @@
       "package": "@zedtech/zedkit-ui",
       "component": "Popover",
       "props": "PopoverProps",
-      "source": "popover.tsx",
+      "source": "overlays/popover.tsx",
       "demo": "PopoverDemo"
     },
     "Name a control on hover": {
       "package": "@zedtech/zedkit-ui",
       "component": "Tooltip",
       "props": "TooltipProps",
-      "source": "tooltip.tsx",
+      "source": "overlays/tooltip.tsx",
       "demo": "TooltipDemo"
     },
     "Open a menu of actions from a button": {
       "package": "@zedtech/zedkit-ui",
       "component": "DropdownMenu",
       "props": "DropdownMenuProps",
-      "source": "dropdown-menu.tsx",
+      "source": "overlays/dropdown-menu.tsx",
       "demo": "DropdownMenuDemo"
     },
     "Pick a day on a calendar": {
       "package": "@zedtech/zedkit-ui",
       "component": "Calendar",
       "props": "CalendarProps",
-      "source": "calendar.tsx",
+      "source": "calendar/calendar.tsx",
       "demo": "CalendarDemo",
-      "propsPriority": ["mode", "selected", "onSelect", "defaultMonth", "month", "onMonthChange", "numberOfMonths", "disabled", "required", "showOutsideDays", "captionLayout", "fixedWeeks", "weekStartsOn", "locale"],
-      "propsRest": { "summary": "other react-day-picker props", "href": "https://daypicker.dev/api/type-aliases/DayPickerProps" }
+      "propsPriority": [
+        "mode",
+        "selected",
+        "onSelect",
+        "defaultMonth",
+        "month",
+        "onMonthChange",
+        "numberOfMonths",
+        "disabled",
+        "required",
+        "showOutsideDays",
+        "captionLayout",
+        "fixedWeeks",
+        "weekStartsOn",
+        "locale"
+      ],
+      "propsRest": {
+        "summary": "other react-day-picker props",
+        "href": "https://daypicker.dev/api/type-aliases/DayPickerProps"
+      }
     },
     "Pick a date from a popover": {
       "package": "@zedtech/zedkit-ui",
       "component": "DatePicker",
       "props": "DatePickerProps",
-      "source": "date-picker.tsx",
+      "source": "calendar/date-picker.tsx",
       "demo": "DatePickerDemo"
     },
     "Pick a start and end date": {
       "package": "@zedtech/zedkit-ui",
       "component": "DateRangePicker",
       "props": "DateRangePickerProps",
-      "source": "date-picker.tsx",
+      "source": "calendar/date-picker.tsx",
       "demo": "DateRangePickerDemo"
     },
     "Confirm destructive actions": {
@@ -161,7 +192,7 @@
       "component": "ConfirmDialog",
       "registry": "confirm-dialog",
       "props": "ConfirmDialogProps",
-      "source": "confirm-dialog.tsx",
+      "source": "overlays/confirm-dialog.tsx",
       "demo": "ConfirmDialogDemo",
       "examples": {
         "Custom button labels": "ConfirmDialogLabelsDemo"
@@ -172,7 +203,7 @@
       "component": "Drawer",
       "registry": "drawer",
       "props": "DrawerProps",
-      "source": "drawer.tsx",
+      "source": "drawer/drawer.tsx",
       "demo": "DrawerDemo",
       "examples": {
         "Bottom sheet": "DrawerBottomSheetDemo",
@@ -183,7 +214,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "RouteModal",
       "props": "RouteModalProps",
-      "source": "route-modal.tsx",
+      "source": "overlays/route-modal.tsx",
       "demo": "RouteModalDemo",
       "examples": {
         "Centered dialog": "RouteModalDialogDemo"
@@ -193,14 +224,14 @@
       "package": "@zedtech/zedkit-ui",
       "component": "SecretField",
       "props": "SecretFieldProps",
-      "source": "secret-field.tsx",
+      "source": "forms/secret-field.tsx",
       "demo": "SecretFieldDemo"
     },
     "Show a sortable, filterable, paginated data table": {
       "package": "@zedtech/zedkit-ui",
       "component": "DataTable",
       "props": "DataTableProps",
-      "source": "data-table.tsx",
+      "source": "data-table/data-table.tsx",
       "demo": "DataTableDemo",
       "examples": {
         "Standalone pagination": "DataTablePaginationDemo",
@@ -213,7 +244,7 @@
       "component": "AppShell",
       "registry": "app-shell",
       "props": "AppShellProps",
-      "source": "app-shell.tsx",
+      "source": "layout/app-shell.tsx",
       "demo": "AppShellDemo",
       "examples": {
         "Without topbar": "AppShellNoTopbarDemo"
@@ -224,7 +255,7 @@
       "component": "WizardSteps",
       "registry": "wizard-steps",
       "props": "WizardStepsProps",
-      "source": "wizard-steps.tsx",
+      "source": "layout/wizard-steps.tsx",
       "demo": "WizardDemo",
       "examples": {
         "Composed steps": "WizardComposedDemo",
@@ -237,7 +268,7 @@
       "component": "DetailPanel",
       "registry": "detail-panel",
       "props": "DetailPanelProps",
-      "source": "detail-panel.tsx",
+      "source": "layout/detail-panel.tsx",
       "demo": "DetailsDemo",
       "examples": {
         "Composed rows": "DetailsComposedDemo"
@@ -248,7 +279,7 @@
       "component": "ProgressBar",
       "registry": "progress-bar",
       "props": "ProgressBarProps",
-      "source": "progress-bar.tsx",
+      "source": "feedback/progress-bar.tsx",
       "demo": "ProgressBarDemo",
       "examples": {
         "Complete": "ProgressCompleteDemo"
@@ -259,7 +290,7 @@
       "component": "UpdatedAgo",
       "registry": "updated-ago",
       "props": "UpdatedAgoProps",
-      "source": "updated-ago.tsx",
+      "source": "feedback/updated-ago.tsx",
       "demo": "UpdatedAgoDemo",
       "examples": {
         "Custom prefix": "UpdatedAgoCustomDemo"
@@ -270,7 +301,7 @@
       "component": "Checkmark",
       "registry": "checkmark",
       "props": "CheckmarkProps",
-      "source": "checkmark.tsx",
+      "source": "feedback/checkmark.tsx",
       "demo": "CheckmarkDemo",
       "examples": {
         "Decorative": "CheckmarkDecorativeDemo"
@@ -281,7 +312,7 @@
       "component": "StatusDot",
       "registry": "status-dot",
       "props": "StatusDotProps",
-      "source": "status-dot.tsx",
+      "source": "feedback/status-dot.tsx",
       "demo": "StatusDotDemo",
       "examples": {
         "All tones with labels": "StatusDotTonesDemo",
@@ -293,7 +324,7 @@
       "component": "StatusLabel",
       "registry": "status-label",
       "props": "StatusLabelProps",
-      "source": "status-label.tsx",
+      "source": "feedback/status-label.tsx",
       "demo": "StatusLabelDemo",
       "examples": {
         "Saved and error states": "StatusLabelSavedErrorDemo",
@@ -304,7 +335,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "FieldSet",
       "props": "FieldSetProps",
-      "source": "field.tsx",
+      "source": "forms/field.tsx",
       "demo": "FieldDemo"
     },
     "Group content in a card section": {
@@ -312,7 +343,7 @@
       "component": "Card",
       "registry": "card",
       "props": "CardProps",
-      "source": "card.tsx",
+      "source": "surfaces/card.tsx",
       "demo": "CardDemo",
       "examples": {
         "With footer": "CardFooterDemo"
@@ -322,21 +353,21 @@
       "package": "@zedtech/zedkit-ui",
       "component": "Surface",
       "props": "SurfaceProps",
-      "source": "surface.tsx",
+      "source": "surfaces/surface.tsx",
       "demo": "SurfaceDemo"
     },
     "Stack content and group titled sections": {
       "package": "@zedtech/zedkit-ui",
       "component": "Stack",
       "props": "StackProps",
-      "source": "layout.tsx",
+      "source": "layout/layout.tsx",
       "demo": "StackDemo"
     },
     "Constrain page width and run sections edge to edge": {
       "package": "@zedtech/zedkit-ui",
       "component": "Container",
       "props": "ContainerProps",
-      "source": "layout.tsx",
+      "source": "layout/layout.tsx",
       "demo": "ContainerDemo"
     },
     "Render headings and body text without raw tags": {
@@ -344,7 +375,7 @@
       "component": "Heading",
       "registry": "typography",
       "props": "HeadingProps",
-      "source": "typography.tsx",
+      "source": "typography/typography.tsx",
       "demo": "TypographyDemo",
       "examples": {
         "Heading styles on a link (asChild)": "HeadingLinkDemo"
@@ -355,7 +386,7 @@
       "component": "Alert",
       "registry": "alert",
       "props": "AlertProps",
-      "source": "alert.tsx",
+      "source": "feedback/alert.tsx",
       "demo": "AlertDemo",
       "examples": {
         "As a section (asChild)": "AlertSectionDemo"
@@ -365,35 +396,35 @@
       "package": "@zedtech/zedkit-ui",
       "component": "Select",
       "props": "SelectProps",
-      "source": "select.tsx",
+      "source": "forms/select.tsx",
       "demo": "SelectDemo"
     },
     "Search and pick one option": {
       "package": "@zedtech/zedkit-ui",
       "component": "Combobox",
       "props": "ComboboxProps",
-      "source": "combobox.tsx",
+      "source": "combobox/combobox.tsx",
       "demo": "ComboboxDemo"
     },
     "Pick many searchable options": {
       "package": "@zedtech/zedkit-ui",
       "component": "MultiSelect",
       "props": "MultiSelectProps",
-      "source": "multi-select.tsx",
+      "source": "combobox/multi-select.tsx",
       "demo": "MultiSelectDemo"
     },
     "Collect multi-line text input": {
       "package": "@zedtech/zedkit-ui",
       "component": "Textarea",
       "props": "TextareaProps",
-      "source": "textarea.tsx",
+      "source": "forms/textarea.tsx",
       "demo": "TextareaDemo"
     },
     "Toggle a checkbox or a switch": {
       "package": "@zedtech/zedkit-ui",
       "component": "Checkbox",
       "props": "CheckboxProps",
-      "source": "checkbox.tsx",
+      "source": "forms/checkbox.tsx",
       "demo": "ToggleDemo"
     },
     "Switch between tabbed panels": {
@@ -401,7 +432,7 @@
       "component": "Tabs",
       "registry": "tabs",
       "props": "TabsProps",
-      "source": "tabs.tsx",
+      "source": "layout/tabs.tsx",
       "demo": "TabsDemo",
       "examples": {
         "Controlled": "TabsControlledDemo"
@@ -411,7 +442,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "ScrollGallery",
       "props": "ScrollGalleryProps",
-      "source": "scroll-gallery.tsx",
+      "source": "layout/scroll-gallery.tsx",
       "demo": "ScrollGalleryIdentityDemo",
       "examples": {
         "Filter chips": "ScrollGalleryChipsDemo"
@@ -422,21 +453,21 @@
       "component": "Toaster",
       "registry": "sonner",
       "props": "ToasterProps",
-      "source": "sonner.tsx",
+      "source": "feedback/sonner.tsx",
       "demo": "ToasterDemo"
     },
     "Build validated forms with labels, errors, and pending state": {
       "package": "@zedtech/zedkit-ui",
       "component": "Form",
       "props": "FormFieldProps",
-      "source": "form.tsx",
+      "source": "forms/form.tsx",
       "demo": "ValidatedFormDemo"
     },
     "Show your brand logo": {
       "package": "@zedtech/zedkit-ui",
       "component": "BrandLogo",
       "props": "BrandLogoProps",
-      "source": "brand-logo.tsx",
+      "source": "brand/brand-logo.tsx",
       "demo": "BrandLogoDemo",
       "examples": {
         "Header link to the home page": "BrandLogoHeaderDemo"
@@ -447,7 +478,7 @@
       "component": "EmptyState",
       "registry": "empty-state",
       "props": "EmptyStateProps",
-      "source": "empty-state.tsx",
+      "source": "feedback/empty-state.tsx",
       "demo": "EmptyStateDemo",
       "examples": {
         "With a next step": "EmptyStateActionsDemo"
@@ -458,7 +489,7 @@
       "component": "ErrorState",
       "registry": "error-state",
       "props": "ErrorStateProps",
-      "source": "error-state.tsx",
+      "source": "feedback/error-state.tsx",
       "demo": "ErrorStateDemo",
       "examples": {
         "With retry": "ErrorStateRetryDemo"
@@ -469,7 +500,7 @@
       "component": "Spinner",
       "registry": "spinner",
       "props": "SpinnerProps",
-      "source": "spinner.tsx",
+      "source": "feedback/spinner.tsx",
       "demo": "SpinnerDemo",
       "examples": {
         "Named wait": "SpinnerNamedDemo"
@@ -479,7 +510,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "EmptyState",
       "props": "EmptyStateProps",
-      "source": "empty-state.tsx",
+      "source": "feedback/empty-state.tsx",
       "demo": "FourStateLoadingDemo",
       "examples": {
         "Empty": "FourStateEmptyDemo",
@@ -492,7 +523,7 @@
       "component": "OfflineNote",
       "registry": "offline-note",
       "props": "OfflineNoteProps",
-      "source": "offline-note.tsx",
+      "source": "feedback/offline-note.tsx",
       "demo": "OfflineNoteDemo",
       "examples": {
         "Wired to online state": "OfflineNoteWiredDemo",
@@ -515,7 +546,7 @@
       "component": "IconButton",
       "registry": "icon-button",
       "props": "IconButtonProps",
-      "source": "icon-button.tsx",
+      "source": "actions/icon-button.tsx",
       "demo": "IconButtonDemo",
       "examples": {
         "Row actions in a list": "IconButtonRowsDemo"
@@ -526,7 +557,7 @@
       "component": "IconLabel",
       "registry": "icon-label",
       "props": "IconLabelProps",
-      "source": "icon-label.tsx",
+      "source": "actions/icon-label.tsx",
       "demo": "IconLabelDemo",
       "examples": {
         "In an order list": "IconLabelOrdersDemo",
@@ -537,7 +568,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "ScrollScenes",
       "props": "ScrollScenesProps",
-      "source": "scroll-scenes.tsx",
+      "source": "layout/scroll-scenes.tsx",
       "demo": "ScrollScenesDemo",
       "examples": {
         "Before and after": "ScrollScenesBeforeAfterDemo",
@@ -549,7 +580,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "PromptInput",
       "props": "PromptInputProps",
-      "source": "prompt-input.tsx",
+      "source": "forms/prompt-input.tsx",
       "demo": "PromptInputDemo",
       "examples": {
         "Simple": "PromptInputDemo",
@@ -560,7 +591,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "StickyAside",
       "props": "StickyAsideProps",
-      "source": "sticky-aside.tsx",
+      "source": "layout/sticky-aside.tsx",
       "demo": "StickyAsideDemo",
       "examples": {
         "Doc page with summary card": "StickyAsideDocStepsDemo"
@@ -590,7 +621,7 @@
       "package": "@zedtech/zedkit-ui",
       "component": "IdentitySwitcher",
       "props": "IdentitySwitcherProps",
-      "source": "identity-switcher.tsx",
+      "source": "identity/identity-switcher.tsx",
       "demo": "IdentitySwitcherDemo",
       "examples": {
         "Same card in each look": "IdentityScopeDemo",
