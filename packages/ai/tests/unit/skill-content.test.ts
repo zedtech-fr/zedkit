@@ -137,9 +137,12 @@ describe("skill content conventions", () => {
       "utf8",
     );
     expect(dod).toContain("deployment target");
-    expect(dod).toContain("baseline");
+    expect(dod).toContain("Push a complete, current baseline");
     expect(dod).toContain("verified on target: UNVERIFIED");
     expect(dod).toContain("confirm on the target");
+    expect(dod).toContain("before pushing");
+    expect(dod).toContain("editor-owned");
+    expect(dod).toContain("returned link");
   });
 
   it("implement, audit and research also go through orchestrate", () => {
