@@ -47,7 +47,7 @@ describe("durable domain and design references", () => {
 
   it("covers exactly the design token pins", () => {
     const doc = readFileSync(join(root, ".agents/design.md"), "utf8");
-    const raw = doc.match(/packages\/ui\/src\/[^`\s]*?:\d+/g) ?? [];
+    const raw = doc.match(/packages\/ui\/src\/[^`\s]*?:\d+/g) ?? ([] as string[]);
     const testPins = PINS.map(([path, line]) => `${path}:${line}`).sort();
     // glass.css:40 is cited twice by design (token table + accent-vs-primary prose); any other dup fails.
     const dupes = raw.filter((pin) => raw.indexOf(pin) !== raw.lastIndexOf(pin));
