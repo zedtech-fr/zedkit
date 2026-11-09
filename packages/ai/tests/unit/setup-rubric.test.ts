@@ -113,6 +113,27 @@ describe("setup rubric and score-and-learn", () => {
     }
   });
 
+  it("keeps product-dimension scoring out of the consumer rubric (T8)", () => {
+    const raw = readFileSync(
+      join(kitDir(), "skills", "setup-ai", "templates", "setup-rubric.md"),
+      "utf8",
+    );
+    // The product AI/UI/adoption grid is published by the evaluation track,
+    // never as a score inside a consumer setup. These terms must stay out.
+    for (const term of [
+      "overall score",
+      "composite",
+      "AI capability",
+      "UI quality",
+      "adoption rate",
+      "presentation score",
+      "product dimension",
+      "three dimensions",
+    ]) {
+      expect(raw, `rubric leaks product scoring: ${term}`).not.toContain(term);
+    }
+  });
+
   it("scores ten axes with hard gates and targets", () => {
     const raw = readFileSync(
       join(kitDir(), "skills", "setup-ai", "templates", "setup-rubric.md"),
