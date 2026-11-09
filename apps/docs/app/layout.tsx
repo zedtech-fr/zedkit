@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { SkipLink } from "@/ui/skip-link";
 
 import { rootLayoutCopy } from "@/app/i18n/root-layout-copy";
 import { docsPageMetadata } from "@/lib/docs-metadata";
@@ -55,6 +56,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <SkipLink />
         <Provider>{children}</Provider>
       </body>
     </html>

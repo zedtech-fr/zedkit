@@ -21,19 +21,19 @@ export function SiteLayout({
 }) {
   return (
     <HomeLayout
-      nav={{
-        title: <SiteBrand />,
-        url: "/",
-        // Version sits beside the title link — not inside it (avoids nested <a> / hydration #418).
-        children: <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />,
-      }}
-      githubUrl="https://github.com/zedtech-fr/zedkit"
-      links={siteHeaderLinks(changelogHref)}
-      searchToggle={{ enabled: true }}
-      themeSwitch={{ enabled: true }}
-      slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
-    >
-      <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
-    </HomeLayout>
+        nav={{
+          title: <SiteBrand />,
+          url: "/",
+          // Version sits beside the title link — not inside it (avoids nested <a> / hydration #418).
+          children: <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />,
+        }}
+        githubUrl="https://github.com/zedtech-fr/zedkit"
+        links={siteHeaderLinks(changelogHref)}
+        searchToggle={{ enabled: true }}
+        themeSwitch={{ enabled: true }}
+        slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
+      >
+        <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
+      </HomeLayout>
   );
 }
