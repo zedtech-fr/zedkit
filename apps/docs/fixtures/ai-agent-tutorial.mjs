@@ -43,6 +43,13 @@ function assertValidateOut(validate, what) {
 
 /** Same flow as the set-up-your-coding-agents tutorial (empty scratch repo). */
 export function runEmptyRepoTutorial(dir) {
+  const list = capture(["list"]);
+  if (list.code !== 0) {
+    throw new Error(`list failed: code=${list.code} out=${list.out} err=${list.err}`);
+  }
+  if (!list.out.includes("explorer") || !list.out.includes("review")) {
+    throw new Error(`list should name subagents and commands: ${list.out}`);
+  }
   const init = capture(["init", dir, "--provider", "cursor", "--preset", "full"]);
   if (init.code !== 0) {
     throw new Error(`init failed: ${init.err || init.out}`);
