@@ -75,7 +75,7 @@ Or by hand:
 ```sh
 pnpm add -D @zedtech/zedkit-ai
 npx @zedtech/zedkit-ai setup --provider cursor
-npx @zedtech/zedkit-ai validate                   # must print: ok
+npx @zedtech/zedkit-ai validate                   # success: exit 0; final line starts with ok (long scope line)
 ```
 
 ## Highlights

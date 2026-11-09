@@ -41,7 +41,7 @@ Use `cursor`, `claude`, `codex`, `muse`, or comma-separated names; omit `--provi
 After `/setup-ai` finishes:
 
 ```sh
-npx @zedtech/zedkit-ai validate   # stdout starts with ok (long scope line, not exact bare ok)
+npx @zedtech/zedkit-ai validate   # success: exit 0; final line starts with ok (long scope line)
 ```
 
 ### Cursor: one paste
@@ -54,7 +54,7 @@ Paste this single message in a new Cursor chat at the repo root:
 Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md
 ```
 
-The agent should install the package, run `npx @zedtech/zedkit-ai setup --provider cursor`, execute `/setup-ai`, then run `validate` until stdout starts with `ok` (the long scope line, not exact bare `ok`).
+The agent should install the package, run `npx @zedtech/zedkit-ai setup --provider cursor`, execute `/setup-ai`, then run `validate` until exit 0 with a final line starting with `ok` (long scope line).
 
 ## Upgrading from 0.12
 
@@ -101,7 +101,7 @@ Advanced / CI paths:
 
 ```sh
 npx @zedtech/zedkit-ai init . --provider cursor --adopt   # adopt on the starter preset; setup uses the setup preset
-npx @zedtech/zedkit-ai validate                           # stdout starts with ok (long scope line, not exact bare ok)
+npx @zedtech/zedkit-ai validate                           # success: exit 0; final line starts with ok (long scope line)
 npx @zedtech/zedkit-ai validate --setup [--plan file]     # opt-in: PLAN covers git changes, setup went deep (D1-D4)
 npx @zedtech/zedkit-ai scan [dir]                         # repo size and one slice per read-only reader
 npx @zedtech/zedkit-ai route verifier --kind check --stakes sensitive   # model and effort for one call (--allow-fast only if the user asked)
