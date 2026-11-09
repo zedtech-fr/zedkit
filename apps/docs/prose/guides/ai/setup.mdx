@@ -20,7 +20,7 @@ This guide targets `@zedtech/zedkit-ai` **1.1.1** (the current published version
 
 ## What the agent will do
 
-1. Add `@zedtech/zedkit-ai` if missing (`pnpm add -D -w` at a pnpm workspace root when `pnpm-workspace.yaml` exists).
+1. Add `@zedtech/zedkit-ai@1.1.1` if missing or not exactly at 1.1.1 (`pnpm add -D -w --save-exact` at a pnpm workspace root when `pnpm-workspace.yaml` exists).
 2. Run `npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor` (**`setup` preset by default**, adopt mode — keeps your files on collision; override with `--preset starter|setup|core|full` if needed). Use `--provider muse`, `claude`, `codex`, comma-separated names, or `all` to match your tool.
 3. Run **`/setup-ai`** — phases A–E (audit, **batched discovery interview** — answer or delegate, do not skip — build `product.md`, domain rules, personas, `design.md` when relevant, repo skills, score and learn), then verify and report.
 4. Run `npx @zedtech/zedkit-ai@1.1.1 validate` until stdout is `ok`.
@@ -37,7 +37,7 @@ This guide targets `@zedtech/zedkit-ai` **1.1.1** (the current published version
 ## Manual path (same result)
 
 ```sh
-pnpm add -D @zedtech/zedkit-ai   # workspace root: pnpm add -D -w @zedtech/zedkit-ai
+pnpm add -D --save-exact @zedtech/zedkit-ai@1.1.1   # workspace root: pnpm add -D -w --save-exact @zedtech/zedkit-ai@1.1.1
 npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor
 ```
 
@@ -56,7 +56,7 @@ setup went deep: `/setup-ai` reads the code first with read-only subagents
 (`npx @zedtech/zedkit-ai@1.1.1 scan` sizes them), writes domain rules and nested `AGENTS.md`
 files from what they found, fills `.agents/tokenomics.md` (cheap models on
 `check`/`build` at `trivial`/`standard`, the strong model on `sensitive`/`critical`),
-and runs `zedkit-ai sync`.
+and runs `npx @zedtech/zedkit-ai@1.1.1 sync`.
 Full notes: the package README `Upgrading from 0.12` section.
 
 ## Troubleshooting
