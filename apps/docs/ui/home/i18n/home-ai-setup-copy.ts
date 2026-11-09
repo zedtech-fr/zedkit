@@ -51,6 +51,7 @@ export const homeAiSetupCopy = {
     installCommand: "npx @zedtech/zedkit-ai setup --provider cursor",
     writtenComment: "then /setup-ai writes",
     validateCommand: "npx @zedtech/zedkit-ai validate",
-    validateResult: "ok",
+    validateResult:
+      "ok — structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate",
   },
 } as const;

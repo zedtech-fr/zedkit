@@ -11,6 +11,7 @@ import { mergeComponentPageToc } from "@/lib/component-page-toc";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
 import { getMDXComponents } from "@/mdx-components";
+import { DocsMainContent } from "@/ui/docs-main-content";
 import { SiteMaintainerFooter } from "@/ui/site-footer";
 import { source } from "#source";
 
@@ -58,6 +59,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
     <>
       <JsonLd data={jsonLd} />
       <DocsPage
+        slots={{ container: DocsMainContent }}
         toc={page.data.componentPage
           ? mergeComponentPageToc(page.data.toc, page.data.componentSections ?? [])
           : page.data.toc}
