@@ -16,9 +16,10 @@ describe("cursor onboarding copy", () => {
 
   it("documents setup and /setup-ai in cursor-onboarding.md", () => {
     const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
-    expect(md).toContain("npx @zedtech/zedkit-ai setup --provider cursor");
+    expect(md).toContain("npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor");
     expect(md).toContain("/setup-ai");
-    expect(md).toContain("npx @zedtech/zedkit-ai validate");
+    expect(md).toContain("npx @zedtech/zedkit-ai@1.1.1 validate");
+    expect(md).toContain("current published version");
   });
 
   it("does not tell the paste prompt to spawn a fast model, and names the scan buckets", () => {
@@ -27,5 +28,17 @@ describe("cursor onboarding copy", () => {
     expect(md).toMatch(/1–5/u);
     expect(md).toMatch(/6–10/u);
     expect(md).toMatch(/11–20/u);
+  });
+
+  it("pins every installer invocation to the package version", () => {
+    const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
+    const pkg = JSON.parse(
+      readFileSync(join(pkgRoot, "package.json"), "utf8"),
+    ) as { version: string };
+    const pins = new Set(
+      [...md.matchAll(/@zedtech\/zedkit-ai@([0-9][\w.-]*)/g)].map((m) => m[1]),
+    );
+    expect(pins.size).toBeGreaterThan(0);
+    expect([...pins]).toEqual([pkg.version]);
   });
 });
