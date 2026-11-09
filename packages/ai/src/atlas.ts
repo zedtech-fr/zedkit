@@ -44,11 +44,49 @@ function entryRef(token: string): EntryRef | undefined {
 }
 
 /**
- * Lines around a symbol hit that still count as its location. Insertions move
- * symbol and excerpt together, so a small window never breaks silent
- * re-resolution; only genuine relocation separates them.
+ * An excerpt belongs to a symbol hit when it sits with it: on the hit's own
+ * line, inside the hit's own declaration body (a same-line or forward `{`
+ * reached without crossing other code), inside the brace block enclosing a
+ * braceless hit (either side of it), within the hit heading's Markdown
+ * section, or in the contiguous comment lines directly above it (leading
+ * trivia such as a docstring).
+ * Insertions move symbol and excerpt together, so silent re-resolution still
+ * holds; an excerpt living in a sibling function, method, or section breaks
+ * every rule, and the anchor is reported instead of silently passing.
+ * Brace counting is single-line and naive (strings and `//` comments are
+ * stripped; escaped quotes are honored, multi-line strings are not) — good
+ * enough for a checker, never a parser.
  */
-const ANCHOR_WINDOW = 10;
+function stripLineForBraces(line: string): string {
+  let out = "";
+  let i = 0;
+  while (i < line.length) {
+    const ch = line[i];
+    if (ch === '"' || ch === "'" || ch === "`") {
+      i++;
+      while (i < line.length && line[i] !== ch) i += line[i] === "\\" ? 2 : 1;
+      i++;
+    } else if (ch === "/" && line[i + 1] === "/") {
+      break;
+    } else {
+      out += ch;
+      i++;
+    }
+  }
+  return out;
+}
+
+/** A comment-only line: the only lines leading trivia may cross (blanks end it). */
+function isTriviaLine(line: string): boolean {
+  const trimmed = line.trim();
+  return (
+    trimmed.startsWith("//") ||
+    trimmed.startsWith("/*") ||
+    trimmed.startsWith("*") ||
+    trimmed.startsWith("*/") ||
+    trimmed.startsWith("<!--")
+  );
+}
 
 /** Line indices where a symbol or section title occurs as a whole token. */
 function symbolHitLines(numbered: string[], symbol: string): number[] {
@@ -57,12 +95,131 @@ function symbolHitLines(numbered: string[], symbol: string): number[] {
   return numbered.map((line, i) => (hit.test(line) ? i : -1)).filter((i) => i >= 0);
 }
 
-/** Whether the excerpt occurs within the window around a symbol hit line. */
-function excerptNear(numbered: string[], hitLine: number, excerpt: string): boolean {
-  const from = Math.max(0, hitLine - ANCHOR_WINDOW);
-  const to = Math.min(numbered.length - 1, hitLine + ANCHOR_WINDOW);
-  for (let i = from; i <= to; i++) {
-    if ((numbered[i] ?? "").includes(excerpt)) return true;
+/** First line of the block enclosing the hit: the nearest unmatched `{` at or above it. */
+function blockOpen(numbered: string[], hitLine: number): number | undefined {
+  let depth = 0;
+  for (let i = hitLine; i >= 0; i--) {
+    const stripped = stripLineForBraces(numbered[i] ?? "");
+    for (let k = stripped.length - 1; k >= 0; k--) {
+      const ch = stripped[k];
+      if (ch === "}") depth++;
+      else if (ch === "{") depth--;
+    }
+    if (depth < 0) return i;
+  }
+  return undefined;
+}
+
+/** ATX heading level of a line, if it is one (`## Title` → 2). */
+function headingLevel(line: string): number | undefined {
+  const match = /^(#{1,6})(?:\s|$)/u.exec(line.trim());
+  if (match === null) return undefined;
+  return (match[1] ?? "").length;
+}
+
+/**
+ * Last line of the Markdown section opened by a heading hit: the line before
+ * the next heading of equal or higher level, or the end of the file. Only
+ * for Markdown targets hit on a heading line; anything else is not a section.
+ */
+function sectionEnd(numbered: string[], hitLine: number, refPath: string): number | undefined {
+  if (!/\.(md|mdx|markdown)$/u.test(refPath)) return undefined;
+  const level = headingLevel(numbered[hitLine] ?? "");
+  if (level === undefined) return undefined;
+  for (let i = hitLine + 1; i < numbered.length; i++) {
+    const next = headingLevel(numbered[i] ?? "");
+    if (next !== undefined && next <= level) return i - 1;
+  }
+  return numbered.length - 1;
+}
+
+/**
+ * First line of the `{`-body opened by the declaration starting at the hit
+ * line: a same-line brace, or a forward brace reached through the header's
+ * own parenthesized lines plus an Allman-style `{` line separated from the
+ * header only by blanks and trivia. Any other code in between (another
+ * declaration, a call, a statement end) means the hit opens no body here.
+ */
+function declBodyOpen(numbered: string[], hitLine: number): number | undefined {
+  let parens = 0;
+  let sawParen = false;
+  let h = hitLine;
+  let i = hitLine;
+  for (; i < numbered.length; i++) {
+    const stripped = stripLineForBraces(numbered[i] ?? "");
+    for (const ch of stripped) {
+      if (ch === "(") {
+        parens++;
+        sawParen = true;
+      } else if (ch === ")") {
+        parens = Math.max(0, parens - 1);
+      } else if (ch === "{" && parens === 0) {
+        return i;
+      } else if ((ch === "}" || ch === ";") && parens === 0) {
+        return undefined;
+      }
+    }
+    if (parens === 0) {
+      h = i;
+      break;
+    }
+  }
+  if (!sawParen) return undefined;
+  for (let j = h + 1; j < numbered.length; j++) {
+    const line = numbered[j] ?? "";
+    if (line.trim() === "" || isTriviaLine(line)) continue;
+    return stripLineForBraces(line).trimStart().startsWith("{") ? j : undefined;
+  }
+  return undefined;
+}
+
+/** Last line of the brace block opened on (or after) the hit line; the hit line itself when it opens none. */
+function blockClose(numbered: string[], hitLine: number): number {
+  let depth = 0;
+  for (let i = hitLine; i < numbered.length; i++) {
+    const stripped = stripLineForBraces(numbered[i] ?? "");
+    for (const ch of stripped) {
+      if (ch === "{") depth++;
+      else if (ch === "}") depth--;
+    }
+    if (depth <= 0) return i;
+  }
+  return numbered.length - 1;
+}
+
+/**
+ * Whether the excerpt sits with the symbol hit: its line, its heading's
+ * section, its declaration's own body, its enclosing block, or its leading
+ * comments. A hit that opens a multi-line block owns that block forward and
+ * never reaches upward; a method's balanced one-line body never broadens to
+ * its class.
+ */
+function excerptBelongs(numbered: string[], hitLine: number, excerpt: string, refPath: string): boolean {
+  if ((numbered[hitLine] ?? "").includes(excerpt)) return true;
+  const section = sectionEnd(numbered, hitLine, refPath);
+  if (section !== undefined) {
+    for (let i = hitLine; i <= section; i++) {
+      if ((numbered[i] ?? "").includes(excerpt)) return true;
+    }
+  } else if (blockClose(numbered, hitLine) > hitLine) {
+    const close = blockClose(numbered, hitLine);
+    for (let i = hitLine; i <= close; i++) {
+      if ((numbered[i] ?? "").includes(excerpt)) return true;
+    }
+  } else {
+    const body = declBodyOpen(numbered, hitLine);
+    const open = body ?? blockOpen(numbered, hitLine) ?? hitLine;
+    const close = blockClose(numbered, open);
+    // A found body owns its header lines too (an excerpt may name a parameter).
+    const from = body === undefined ? open : hitLine;
+    for (let i = from; i <= close; i++) {
+      if ((numbered[i] ?? "").includes(excerpt)) return true;
+    }
+  }
+  for (let i = hitLine - 1; i >= 0; i--) {
+    const line = numbered[i] ?? "";
+    if (line.trim() === "" || !isTriviaLine(line)) break;
+    if (line.includes(excerpt)) return true;
   }
   return false;
 }
@@ -182,7 +339,7 @@ export function checkAtlas(projectRoot: string, agentsDir: string, options: { re
       }
       const hitLines = symbolHitLines(numbered, ref.symbol);
       if (hitLines.length === 0) {
-        issues.push({ path, message: `stale row "${topic}": symbol "${ref.symbol}" from ${token} not found in ${ref.path} (renamed or moved?)` });
+        issues.push({ path, message: `stale row "${topic}": symbol "${ref.symbol}" from ${token} not found in ${ref.path}` });
         continue;
       }
       const excerpt = ref.excerpt;
@@ -192,13 +349,13 @@ export function checkAtlas(projectRoot: string, agentsDir: string, options: { re
         }
         continue;
       }
-      const candidates = hitLines.filter((h) => excerptNear(numbered, h, excerpt));
+      const candidates = hitLines.filter((h) => excerptBelongs(numbered, h, excerpt, ref.path));
       if (candidates.length === 1) continue;
       if (candidates.length === 0) {
-        issues.push({ path, message: `stale row "${topic}": excerpt from ${token} changed or moved in ${ref.path} (no symbol hit has it nearby)` });
+        issues.push({ path, message: `stale row "${topic}": excerpt from ${token} has no symbol hit sitting with it in ${ref.path}` });
         continue;
       }
-      issues.push({ path, message: `warning: row "${topic}": excerpt from ${token} matches near ${candidates.length} symbol hits in ${ref.path} — reference left ambiguous` });
+      issues.push({ path, message: `warning: row "${topic}": excerpt from ${token} sits with ${candidates.length} symbol hits in ${ref.path} — reference left ambiguous` });
     }
   }
   if (options.required === true && rows.length < MIN_WHERE_ROWS) {

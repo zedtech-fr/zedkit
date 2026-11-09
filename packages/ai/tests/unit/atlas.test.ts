@@ -74,8 +74,35 @@ describe("checkAtlas", () => {
 
   it("reports an excerpt that lives only in an unrelated function", () => {
     const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
-    const filler = "// filler\n".repeat(25);
-    put(root, "src/gate.ts", `export function runGate() {\n  // nothing here\n}\n${filler}export function other() {\n  // writes to a temp file\n}\n`);
+    put(root, "src/gate.ts", "export function runGate() {\n  // nothing here\n}\nexport function other() {\n  // writes to a temp file\n}\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("excerpt");
+  });
+
+  it("rejects an excerpt living in a sibling method of the same class", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "class Gate {\n  runGate() { return 1; }\n  other() { /* writes to a temp file */ }\n}\n");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("excerpt");
+  });
+
+  it("resolves a multiline declaration through its forward opening brace", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "export function runGate(\n  option: string,\n) {\n  // writes to a temp file\n}\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("resolves a Markdown section anchor within its own section", () => {
+    const root = project(atlas("| Policy | `docs/policy.md#Refunds#within 24 hours` | why | 2026-01-01 |"));
+    put(root, "docs/policy.md", "## Refunds\n\nCancel within 24 hours.\n\n## Payments\n\nPay in advance.\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("rejects a Markdown section anchor whose excerpt lives in another section", () => {
+    const root = project(atlas("| Policy | `docs/policy.md#Refunds#Pay in advance` | why | 2026-01-01 |"));
+    put(root, "docs/policy.md", "## Refunds\n\nCancel within 24 hours.\n\n## Payments\n\nPay in advance.\n");
     const issues = checkAtlas(root, join(root, ".agents"));
     expect(issues).toHaveLength(1);
     expect(issues[0]?.message).toContain("excerpt");
@@ -83,8 +110,33 @@ describe("checkAtlas", () => {
 
   it("resolves silently when the excerpt identifies one of several symbol hits", () => {
     const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
-    const filler = "// filler\n".repeat(25);
-    put(root, "src/gate.ts", `export function runGate() {\n  // writes to a temp file\n}\n${filler}runGate();\n`);
+    put(root, "src/gate.ts", "export function runGate() {\n  // writes to a temp file\n}\nrunGate();\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("resolves an excerpt in the leading comments above the symbol", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#does the thing` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", "// does the thing\nexport function runGate() {}\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("resolves an excerpt on a preceding line inside the same block", () => {
+    const root = project(atlas("| Gate | `src/g.ts#helper#temp marker` | why | 2026-01-01 |"));
+    put(root, "src/g.ts", 'export function runGate() {\n  const marker = "temp marker";\n  return helper();\n}\n');
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("ignores an excerpt in a code line above the symbol", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#unrelated marker` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", 'const marker = "unrelated marker";\nexport function runGate() {}\n');
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("excerpt");
+  });
+
+  it("ignores braces inside strings when finding the symbol block", () => {
+    const root = project(atlas("| Gate | `src/gate.ts#runGate#writes to a temp file` | why | 2026-01-01 |"));
+    put(root, "src/gate.ts", 'export function runGate() {\n  const close = "}";\n  const esc = "a\\"}b";\n  // writes to a temp file\n}\n');
     expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
   });
 
