@@ -131,6 +131,20 @@ describe("skill content conventions", () => {
     expect(dod).not.toContain("stop and propose a split");
   });
 
+  it("definition of done pins deployment-target verification in Report", () => {
+    const dod = readFileSync(
+      join(kitDir(), "skills", "definition-of-done", "SKILL.md"),
+      "utf8",
+    );
+    expect(dod).toContain("deployment target");
+    expect(dod).toContain("Push a complete, current baseline");
+    expect(dod).toContain("verified on target: UNVERIFIED");
+    expect(dod).toContain("confirm on the target");
+    expect(dod).toContain("before pushing");
+    expect(dod).toContain("editor-owned");
+    expect(dod).toContain("returned link");
+  });
+
   it("implement, audit and research also go through orchestrate", () => {
     for (const name of ["implement", "audit", "research"] as const) {
       const raw = readFileSync(
