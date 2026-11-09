@@ -13,6 +13,7 @@ import {
   checkRobots,
   checkSitemap,
   checkSiteShell,
+  hasSetupCommand,
   missingRegistryExports,
 } from "./check-seo-export.mjs";
 
@@ -195,4 +196,11 @@ test("checkHtmlRegistryLinks names a linked brick whose JSON is missing", () => 
   assert.deepEqual(checkHtmlRegistryLinks('href="/r/toast.json"', (rel) => present.has(rel)), [
     `export HTML links to /r/toast.json but ${join("r", "toast.json")} is missing.`,
   ]);
+});
+
+test("hasSetupCommand accepts pinned and floating setup invocations, rejects their absence", () => {
+  assert.equal(hasSetupCommand("npx @zedtech/zedkit-ai setup --provider cursor"), true);
+  assert.equal(hasSetupCommand("npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor"), true);
+  assert.equal(hasSetupCommand("run validate, then done"), false);
+  assert.equal(hasSetupCommand("npx @zedtech/zedkit-ai validate"), false);
 });

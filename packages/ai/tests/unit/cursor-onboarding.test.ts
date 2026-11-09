@@ -16,10 +16,14 @@ describe("cursor onboarding copy", () => {
 
   it("documents setup and /setup-ai in cursor-onboarding.md", () => {
     const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
-    expect(md).toContain("npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor");
+    const pkg = JSON.parse(readFileSync(join(pkgRoot, "package.json"), "utf8")) as { version: string };
+    // Expectations derive from the candidate package version: only the prose names the selected published target.
+    expect(md).toContain(`npx @zedtech/zedkit-ai@${pkg.version} setup --provider cursor`);
     expect(md).toContain("/setup-ai");
-    expect(md).toContain("npx @zedtech/zedkit-ai@1.1.1 validate");
+    expect(md).toContain(`npx @zedtech/zedkit-ai@${pkg.version} validate`);
     expect(md).toContain("current published version");
+    expect(md).toContain(`npx @zedtech/zedkit-ai@${pkg.version} sync`);
+    expect(md).toMatch(/skip only if .* already pins/);
   });
 
   it("does not tell the paste prompt to spawn a fast model, and names the scan buckets", () => {
@@ -30,7 +34,11 @@ describe("cursor onboarding copy", () => {
     expect(md).toMatch(/11–20/u);
   });
 
-  it("pins every installer invocation to the package version", () => {
+  it("pins every installer invocation to one deliberate version", () => {
+    // Maintenance policy: the walkthrough pins one deliberate version everywhere (uniformity, enforced here). The
+    // prose names the selected published target; the guard ties pins to the candidate package.json version. Those
+    // two are not automatically interchangeable: when this guard fails after a version bump, decide deliberately —
+    // bump the documented target or hold it — never auto-derive the prose from package.json.
     const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
     const pkg = JSON.parse(
       readFileSync(join(pkgRoot, "package.json"), "utf8"),

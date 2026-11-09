@@ -10,15 +10,17 @@ This walkthrough targets `@zedtech/zedkit-ai` **1.1.1** (the current published v
 
 ## Steps
 
-1. **Install the package** (skip if `@zedtech/zedkit-ai` is already in `devDependencies`):
+1. **Install the package** (skip only if `devDependencies` already pins `@zedtech/zedkit-ai@1.1.1` — mere presence is not enough; a different installed version must be upgraded to the pinned one so install and execution agree):
 
    ```sh
-   pnpm add -D @zedtech/zedkit-ai@1.1.1
+   pnpm add -D --save-exact @zedtech/zedkit-ai@1.1.1
    ```
 
-   When **`pnpm-workspace.yaml`** exists at the repo root, use **`pnpm add -D -w @zedtech/zedkit-ai@1.1.1`** instead (avoids `ERR_PNPM_ADDING_TO_ROOT`).
+   When **`pnpm-workspace.yaml`** exists at the repo root, use **`pnpm add -D -w --save-exact @zedtech/zedkit-ai@1.1.1`** instead (avoids `ERR_PNPM_ADDING_TO_ROOT`).
 
-   Use `npm install -D @zedtech/zedkit-ai@1.1.1` when the repo has no pnpm lockfile.
+   Use `npm install -D --save-exact @zedtech/zedkit-ai@1.1.1` when the repo has no pnpm lockfile.
+
+   `--save-exact` matters: without it the manager records a caret range (`^1.1.1`) that floats on later installs. The pin must be exact so install and execution agree.
 
 2. **Install the kit with adopt** (keeps existing agent files on name collision — kit copies land beside yours as `*.kit.md` / `zk-<name>`; **`setup` uses the `setup` preset by default** — override with `--preset` when needed):
 
@@ -36,7 +38,7 @@ This walkthrough targets `@zedtech/zedkit-ai` **1.1.1** (the current published v
 
    Follow the skill through **verify**: run the gate commands it lists, apply the approved plan, finish the report.
 
-   Phase **B** starts by **reading the code**, not by asking: the agent runs `npx @zedtech/zedkit-ai@1.1.1 scan`, then spawns read-only subagents on the `check`/`standard` cell (1–5 small, 6–10 medium, 11–20 large) using that cell’s listed id that is not a fast id. They report the rules already in place with `file:line` evidence. It writes them to domain rules, nested `AGENTS.md` files and `.agents/tokenomics.md`, then runs `zedkit-ai sync`, so later agent work in the repo keeps the same cheap-reads, strong-decides split.
+   Phase **B** starts by **reading the code**, not by asking: the agent runs `npx @zedtech/zedkit-ai@1.1.1 scan`, then spawns read-only subagents on the `check`/`standard` cell (1–5 small, 6–10 medium, 11–20 large) using that cell’s listed id that is not a fast id. They report the rules already in place with `file:line` evidence. It writes them to domain rules, nested `AGENTS.md` files and `.agents/tokenomics.md`, then runs `npx @zedtech/zedkit-ai@1.1.1 sync`, so later agent work in the repo keeps the same cheap-reads, strong-decides split.
 
    Then **answer or delegate the batched discovery interview** (at most 8 questions in one batch, only what the code could not answer); do not skip the interview or substitute guesses for owner answers.
 
