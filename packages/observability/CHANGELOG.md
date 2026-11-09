@@ -1,5 +1,18 @@
 # @zedtech/zedkit-observability
 
+## 0.3.18
+
+### Patch Changes
+
+- Updated dependencies [58b6f9d]
+- Updated dependencies [58b6f9d]
+- Updated dependencies [58b6f9d]
+- Updated dependencies [58b6f9d]
+- Updated dependencies [58b6f9d]
+- Updated dependencies [58b6f9d]
+  - @zedtech/zedkit-ui@2.0.0
+  - @zedtech/zedkit-core@1.0.1
+
 ## 0.3.17
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @zedtech/zedkit-ai
 
+## 1.1.1
+
+### Patch Changes
+
+- 58b6f9d: Adoption fixes from the November product audit, revalidated against dev.
+
+  AI kit lifecycle: installs record a manifest (`.agents/.zedkit-manifest.json`) so reruns update untouched files instead of sidecarring them; upgrades recognise untouched older-version skills and assets via extended legacy hashes, including the rendered 1.0.0 install tree vendored as a test fixture (fixes the 1.0.0 setup-ai `design-policy.md` broken-link class); provider layer collisions materialise as renamed `zk-*` copies instead of same-named links and `validate` flags same-name claims per layer; an existing `zk-*` sidecar is only replaced when it is still a kit copy (current, recorded or legacy bytes), a project skill the kit does not ship never gains a sidecar, and no replacement ever deletes the kit's own sources through a symlinked layer; observed `AGENTS.md` commands use the repo's lockfile runner (npm/yarn/bun/pnpm); `validate --setup` reports a recorded tool limitation (`inherit-reason`) as a partial setup (failing state, never `ok`); README no longer claims `init --adopt` equals `setup` and lists the full setup preset delta.
+
+  UI install: `peerDependencies` declare tested floors (`react`/`react-dom` `^19.0.0`, `tailwindcss` `^4.0.0`, `payload` `^3.93.0` for payload-seo, `react` `^19.0.0` for i18n) so `npm install` no longer ERESOLVEs on current scaffolds, with the smoke cells as the compatibility proof; `DataTable` takes an explicit `scrollAriaLabel`. The Next src-dir smoke now asserts painted styles and runs pnpm, npm and plain-layout cells, builds the UI closure before packing (clean checkouts ship no `dist/`), installs Chromium on the Ubuntu path, and leaves snippets that already name both `@source` depths untouched.
+
+- 58b6f9d: A baseline count is an inventory, not a verdict that the work is unfinished. Two roles may share one value. A copied stylesheet is checked on that payload, not on the app that imports the package.
+- 58b6f9d: On every message, pick depth before answering. A search or inventory loads `audit`; it does not shrink to the last task's cousin.
+- 58b6f9d: Ship one design policy: a class names a role, a layout job, or a design purpose. Scale steps such as `p-4`, `text-sm`, `grid-cols-3` and `w-1/2` are lint errors, and so is a spelled step (`min-w-zero`, `px-stack-lg`). Migration: pass `scaleBaseline` for a count that only shrinks, or replace the class with a host role. A structural constraint stays a literal on that layout class (`content-shrink { min-width: 0 }`); it is not a zero token. The check fails when Tailwind or the CSS entry cannot be resolved. `Stack` gaps are role-named only (`sm` / `md` / `lg` and the other role names). Numeric gap props are removed. Field borders meet 3:1 on the token surfaces.
+- @zedtech/zedkit-core@1.0.1
+
 ## 1.1.0
 
 ### Minor Changes

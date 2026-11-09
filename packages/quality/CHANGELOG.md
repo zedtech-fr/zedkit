@@ -1,5 +1,21 @@
 # @zedtech/zedkit-quality
 
+## 2.0.0
+
+### Major Changes
+
+- 58b6f9d: Ship one design policy: a class names a role, a layout job, or a design purpose. Scale steps such as `p-4`, `text-sm`, `grid-cols-3` and `w-1/2` are lint errors, and so is a spelled step (`min-w-zero`, `px-stack-lg`). Migration: pass `scaleBaseline` for a count that only shrinks, or replace the class with a host role. A structural constraint stays a literal on that layout class (`content-shrink { min-width: 0 }`); it is not a zero token. The check fails when Tailwind or the CSS entry cannot be resolved. `Stack` gaps are role-named only (`sm` / `md` / `lg` and the other role names). Numeric gap props are removed. Field borders meet 3:1 on the token surfaces.
+
+### Patch Changes
+
+- 58b6f9d: Container-aware sizing, declared scales, and correctness fixes on top of the role-class migration.
+
+  UI (breaking): `Card` gains `size="sm" | "lg"` and `Container` gains `query` — inside a `zk-query` slot, card padding, gap, radius and title/body type step up at 30rem; without a slot the base recipe renders exactly as before. `Stack` numeric `gap` props are removed (role names only: `tight`, `sm`, `md`, `lg`, `prose`, `list`, `blocks` — same rendered gaps). Site-only text roles (`text-specimen-title`, `text-demo-heading`, `text-scene-title`, `text-preview-title`, `text-offer-price`, `text-brand-word`, `text-product-name`, `text-purpose`, `text-compact-heading`, `text-figure`, `text-step-heading`) moved out of the package to the docs site. Dead utilities (`w-panel`, `mt-figure`) and rem alias tokens (`--spacing-icon-control`, `--spacing-button-inline`, `--spacing-button-inline-lg`) are deleted. Component CSS now lives in `@layer components` and type roles are real utilities, so consumer `className` utilities override components again. Density-derived tokens re-resolve inside nested identity scopes. The registry copy path keeps later `:root` blocks, media rules and identity selectors, and leaves `--color-*` aliases to the installer so shadcn does not wrap `hsl()` twice. `CardSkeleton` uses the Card sizing recipe. Card titles in wide slots use `--text-heading` (1.5rem), not the viewport-fluid `--text-2xl`. Density still follows `--spacing` for every purpose; control/stack-only density is an open owner decision.
+
+  Quality (patch): the scale scanner sees classes inside template interpolations, runs in linear time on degenerate inputs, resolves a relative Tailwind `entryPoint` deterministically, and the baseline ratchet refuses any increase via `--write`; shipped sources must be at zero.
+
+- 58b6f9d: Group UI sources into family folders. Public export names, CSS entries, and copy-install targets stay the same. The quality preset's `forwardRef` hint now points at `src/button/button.tsx`.
+
 ## 1.1.2
 
 ### Patch Changes
