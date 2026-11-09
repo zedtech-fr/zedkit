@@ -34,8 +34,9 @@ function cliInvocations(text) {
   const commands = [];
   const flags = [];
   for (const line of text.split("\n")) {
-    if (!/(?:@zedtech\/)?zedkit-ai(@[\w.-]+)?\s+[a-z]/.test(line)) continue;
-    const cmd = line.match(/(?:@zedtech\/)?zedkit-ai(?:@[\w.-]+)?\s+([a-z][a-z-]*)/);
+    // Same-line invocation only: a pin at end of line must never bridge the newline into the next line's words.
+    if (!/(?:@zedtech\/)?zedkit-ai(@[\w.-]+)?[ \t]+[a-z]/.test(line)) continue;
+    const cmd = line.match(/(?:@zedtech\/)?zedkit-ai(?:@[\w.-]+)?[ \t]+([a-z][a-z-]*)/);
     if (cmd) commands.push(cmd[1]);
     for (const m of line.matchAll(/--[a-z][a-z-]*/g)) flags.push(m[0]);
   }
@@ -85,7 +86,7 @@ test("ai setup docs name real preset values", () => {
 
 test("version-pinned invocations are validated, not skipped", () => {
   const all = SOURCES.map(read).join("\n");
-  const pinned = [...all.matchAll(/zedkit-ai@[\w.-]+\s+([a-z][a-z-]*)/g)].map((m) => m[1]);
+  const pinned = [...all.matchAll(/zedkit-ai@[\w.-]+[ \t]+([a-z][a-z-]*)/g)].map((m) => m[1]);
   assert.ok(pinned.length > 0, "no pinned invocation found to validate — coverage would be vacuous");
   const { commands } = cliSurface();
   for (const cmd of pinned) assert.ok(commands.has(cmd), `unknown pinned command ${cmd}`);
@@ -97,6 +98,8 @@ test("an invalid pinned command and flag are surfaced for rejection", () => {
   assert.ok(bad.commands.length > 0 && bad.flags.length > 0, "negative fixture parsed nothing — vacuous");
   for (const cmd of bad.commands) assert.ok(!commands.has(cmd), `bogus command unexpectedly known: ${cmd}`);
   for (const flag of bad.flags) assert.ok(!flags.has(flag), `bogus flag unexpectedly known: ${flag}`);
+  const split = cliInvocations("run @zedtech/zedkit-ai@1.1.1\nnpx whatever");
+  assert.deepEqual(split.commands, [], "a pin at end of line must not bridge into the next line");
 });
 
 test("generated agent page and mini prompt match the kit sources", () => {
