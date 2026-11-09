@@ -238,7 +238,9 @@ function runValidate(args: string[], sinks: Sinks): number {
     (issue) => !issue.message.startsWith("warning:"),
   );
   if (failing.length === 0) {
-    sinks.out("ok");
+    sinks.out(
+      "ok — structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths, setup-log shape); browser rendering, focus, hosting and on-target behavior are NOT checked by validate",
+    );
     return 0;
   }
   sinks.out(

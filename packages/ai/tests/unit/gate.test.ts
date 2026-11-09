@@ -1,9 +1,22 @@
-import { readFileSync, statSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { gateMain, runGate } from "#gate.js";
 import { checkSetup } from "#setup-check.js";
 import { put, tempDir } from "./helpers.js";
+
+/** File names in dir matching pred, waiting up to ms for the first one. */
+async function waitForFile(dir: string, pred: (name: string) => boolean, ms = 5000): Promise<string[]> {
+  const start = Date.now();
+  for (;;) {
+    const names = readdirSync(dir);
+    if (names.some(pred)) return names;
+    if (Date.now() - start > ms) throw new Error(`timed out waiting in ${dir}`);
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+}
+
+const tmpNames = (dir: string): string[] => readdirSync(dir).filter((n) => n.includes(".tmp-"));
 
 const lines = (path: string): string[] => readFileSync(path, "utf8").trimEnd().split("\n");
 
@@ -139,6 +152,66 @@ describe("runGate", () => {
     put(root, "file", "x");
     const result = await runGate({ cmd: "true", log: join(root, "file/sub/x.log") });
     expect(result.ok).toBe(false);
+  });
+
+  it("never exposes a half-written log at the final path while the command runs", async () => {
+    const root = tempDir();
+    const dir = join(root, "gates");
+    const log = join(dir, "slow.log");
+    put(root, "gates/slow.log", "CMD: stale\nEXIT:0\n");
+    const pending = gate({ cmd: "sleep 2 && echo done", log });
+    const first = await Promise.race([
+      pending.then(() => "published" as const),
+      waitForFile(dir, (n) => n.includes(".tmp-")).then(() => "tmp" as const),
+    ]);
+    expect(first).toBe("tmp");
+    expect(readFileSync(log, "utf8")).toBe("CMD: stale\nEXIT:0\n");
+    const result = await pending;
+    expect(result.code).toBe(0);
+    const out = lines(log);
+    expect(out[0]).toBe("CMD: sleep 2 && echo done");
+    expect(out).toContain("done");
+    expect(out.at(-1)).toBe("EXIT:0");
+    expect(tmpNames(dir)).toEqual([]);
+  });
+
+  it("an interrupted run publishes its closed CAUSE log instead of a truncation", async () => {
+    const root = tempDir();
+    const dir = join(root, "gates");
+    const log = join(dir, "kill.log");
+    put(root, "gates/kill.log", "CMD: stale\nEXIT:0\n");
+    const result = await gate({ cmd: "sleep 30", log, timeoutMs: 100 });
+    expect(result).toEqual({ code: 124, cause: "timeout", log });
+    const out = lines(log);
+    expect(out[0]).toBe("CMD: sleep 30");
+    expect(out.at(-2)).toBe("CAUSE: timeout after 100ms");
+    expect(out.at(-1)).toBe("EXIT:124");
+    expect(tmpNames(dir)).toEqual([]);
+    expect(logIssues(root, "kill.log")).toEqual([]);
+  });
+
+  it("a successful retry after a failure ends with a single EXIT:0", async () => {
+    const root = tempDir();
+    const log = join(root, "gates/retry.log");
+    const failed = await gate({ cmd: "exit 3", log });
+    expect(failed.code).toBe(3);
+    expect(lines(log).at(-1)).toBe("EXIT:3");
+    await gate({ cmd: "true", log });
+    const out = lines(log);
+    expect(out[0]).toBe("CMD: true");
+    expect(out.filter((line) => line.startsWith("EXIT:"))).toEqual(["EXIT:0"]);
+  });
+
+  it("returns an error instead of a fabricated log when the final path cannot be published", async () => {
+    const root = tempDir();
+    const dir = join(root, "gates");
+    const log = join(dir, "blocked.log");
+    mkdirSync(log, { recursive: true });
+    put(root, "gates/blocked.log/inner.txt", "x");
+    const result = await runGate({ cmd: "echo hi", log });
+    expect(result.ok).toBe(false);
+    expect(statSync(log).isDirectory()).toBe(true);
+    expect(readFileSync(join(log, "inner.txt"), "utf8")).toBe("x");
   });
 });
 

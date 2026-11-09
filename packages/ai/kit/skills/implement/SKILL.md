@@ -4,7 +4,7 @@ description: "Implement a piece of work based on a spec or set of tickets."
 disable-model-invocation: true
 ---
 
-Implement the work described by the user in the spec or tickets.
+Implement the work described by the user in the spec or tickets. Read the saved plan first and keep its checklist current — continuity per handoff's Durable deliverables section; amend the artifact, don't fork it.
 
 Unless this brief already contains `Playbook: implement` or `Mode: inline fallback`,
 hand the user's text to `orchestrate` with `Playbook: implement` and stop.

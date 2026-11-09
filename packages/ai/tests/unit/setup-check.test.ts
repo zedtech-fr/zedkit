@@ -78,6 +78,16 @@ describe("checkSetup", () => {
     expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
   });
 
+  it("ignores orphaned gate tmp files left by an uncatchable kill", () => {
+    const root = tempDir();
+    gitInit(root);
+    put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
+    put(root, ".agents/setup-log/gates/run.log", GOOD_LOG);
+    put(root, ".agents/setup-log/gates/run.log.tmp-123-4", "CMD: pnpm test\nSTART\npartial output, wrapper SIGKILLed\n");
+    put(root, ".agents/setup-log.md", "| gates/run.log | pnpm test | 0 |\n");
+    expect(checkSetup(root)).toEqual({ issues: [], notes: [] });
+  });
+
   it("issues when a persisted gate log has no setup-log inventory row", () => {
     const root = tempDir();
     gitInit(root);
@@ -247,7 +257,10 @@ describe("validate --setup", () => {
     put(root, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
     put(root, "PLAN.md", "PLAN.md\n.agents/\nintro-first: printed before any tool call (fresh)\n");
     put(root, "lost.txt", "x\n");
-    expect(run("validate", root)).toEqual({ code: 0, text: "ok", errors: "" });
+    const plain = run("validate", root);
+    expect(plain.code).toBe(0);
+    expect(plain.errors).toBe("");
+    expect(plain.text).toMatch(/^ok — structural kit checks only/u);
     const setup = run("validate", root, "--setup");
     expect(setup.code).toBe(1);
     expect(setup.text).toContain("plan misses lost.txt");

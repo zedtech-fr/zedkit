@@ -24,7 +24,9 @@ with blocking edges. Bigger than one session: `wayfinder`, decision tickets
 first. Plan may self-invoke; `implement`, `to-spec` and `to-tickets` never do —
 the user or the orchestrator calls them (`/implement`, or the skill by name).
 Default home: the configured tracker; else `.scratch/<feature-slug>/spec.md`
-and `.scratch/<feature-slug>/issues/` — git-ignored, never `docs/`.
+and `.scratch/<feature-slug>/issues/` — git-ignored, never `docs/`. Amend, don't
+fork; persist by default per handoff's Durable deliverables section (chat links
+files; explicit `chat-only`/`no-write` stays in chat).
 
 A `### Assumptions` table is mandatory. For every undefined term or ambiguous
 requirement, state what you assume and whether it might not hold: inputs /

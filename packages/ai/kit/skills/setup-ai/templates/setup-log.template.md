@@ -36,6 +36,7 @@ Append one entry per `/setup-ai` run, newest first. Each entry records what the 
 | domain-change | deferred — no money paths in v1 yet |
 
 - **Gate outcomes:** (one row per persisted gate log: every file in **`.agents/setup-log/gates/`** appears below by name, killed logs included; each `*.log` starts with **`CMD:`** and ends with **`EXIT:<code>`** as its last line — **`npx @zedtech/zedkit-ai validate --setup`** checks plan coverage, log shape, and that every log file is inventoried)
+- **Verification states (exactly one per outcome):** implemented · statically checked · behaviorally checked · deployed · verified on target. A green `validate` proves the structural checks only — browser rendering, focus behavior, hosting and on-target state are NOT checked by validate: record each as its own `UNVERIFIED` outcome with the check that covers it, never as covered by a green validate.
 
 | Log              | Gate command | Exit | Duration | Did not run / why | Safe alternative used                                    |
 | ---------------- | ------------ | ---- | -------- | ----------------- | -------------------------------------------------------- |

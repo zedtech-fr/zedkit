@@ -1,0 +1,5 @@
+---
+"@zedtech/zedkit-ai": patch
+---
+
+Gate logs publish atomically and validate states its scope. `runGate` writes to a same-directory temp file and renames it over the final path only when the run closes, so a cited log is never half-written and an uncatchable kill leaves an orphaned tmp instead of a fake final. `validate` success now names its structural-only surface, and the setup log template distinguishes implemented / statically checked / behaviorally checked / deployed / verified-on-target, with browser, focus, hosting and on-target behavior explicitly not covered by validate. The setup skill mandates `zedkit-ai gate` for capture. Audit, plan and from-audit persist their deliverables by default (chat summarizes and links the saved files; explicit chat-only/no-write requests stay in chat), with the contract defined once in the handoff skill: amend the same artifact instead of forking, from-audit reads the saved audit first, implement reads the saved plan and keeps its checklist current, and handoffs name every required artifact since git-ignored storage does not travel across clones.

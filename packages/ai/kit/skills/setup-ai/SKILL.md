@@ -119,6 +119,17 @@ Then **run the gate commands you found**, preferring forms without side effects 
 
 Every gate you cite in setup-log, domain rules, or a repo skill must be **persisted**, not chat-only. **One gate = one log file** (for example `.agents/setup-log/gates/main-check.log`). Do not append validate, prettier, or a second command to the same file after **`EXIT:<code>`**.
 
+Capture with the gate command itself — never hand-written prose:
+
+```sh
+zedkit-ai gate .agents/setup-log/gates/typecheck.log -- pnpm exec turbo run typecheck --concurrency=2
+```
+
+The gate command writes the contract below and publishes the finished file
+atomically, so a cited log is never a half-written file and a log assembled
+by `Write` or echo without running the command is not evidence. Use the
+manual redirect further below only when the CLI is unavailable.
+
 | Field   | Required                                                              |
 | ------- | --------------------------------------------------------------------- |
 | Command | First line **`CMD: <exact shell line>`**                              |
