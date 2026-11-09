@@ -34,7 +34,7 @@ function cliInvocations(text) {
   const commands = [];
   const flags = [];
   for (const line of text.split("\n")) {
-    // Same-line invocation only: a pin at end of line must never bridge the newline into the next line's words.
+    // Per-line match: each line is tested independently, so no match can span lines by construction.
     if (!/(?:@zedtech\/)?zedkit-ai(@[\w.-]+)?[ \t]+[a-z]/.test(line)) continue;
     const cmd = line.match(/(?:@zedtech\/)?zedkit-ai(?:@[\w.-]+)?[ \t]+([a-z][a-z-]*)/);
     if (cmd) commands.push(cmd[1]);
@@ -86,6 +86,8 @@ test("ai setup docs name real preset values", () => {
 
 test("version-pinned invocations are validated, not skipped", () => {
   const all = SOURCES.map(read).join("\n");
+  // Whole-text match: [ \t] (not \s) so a pin at end of line never bridges the newline
+  // into the next line's words (live case: setup.mdx manual path pins @1.1.1 above an npx line).
   const pinned = [...all.matchAll(/zedkit-ai@[\w.-]+[ \t]+([a-z][a-z-]*)/g)].map((m) => m[1]);
   assert.ok(pinned.length > 0, "no pinned invocation found to validate — coverage would be vacuous");
   const { commands } = cliSurface();
@@ -98,8 +100,17 @@ test("an invalid pinned command and flag are surfaced for rejection", () => {
   assert.ok(bad.commands.length > 0 && bad.flags.length > 0, "negative fixture parsed nothing — vacuous");
   for (const cmd of bad.commands) assert.ok(!commands.has(cmd), `bogus command unexpectedly known: ${cmd}`);
   for (const flag of bad.flags) assert.ok(!flags.has(flag), `bogus flag unexpectedly known: ${flag}`);
+});
+
+test("a version pin at end of line does not bridge into the next line", () => {
+  // Direct pin of the whole-text pattern above: with \s this captures 'npx'.
+  const bridged = [
+    ..."run @zedtech/zedkit-ai@1.1.1\nnpx whatever".matchAll(/zedkit-ai@[\w.-]+[ \t]+([a-z][a-z-]*)/g),
+  ].map((m) => m[1]);
+  assert.deepEqual(bridged, [], "a pin at end of line must not bridge into the next line");
+  // Supplementary: cliInvocations splits per line so it cannot bridge by construction.
   const split = cliInvocations("run @zedtech/zedkit-ai@1.1.1\nnpx whatever");
-  assert.deepEqual(split.commands, [], "a pin at end of line must not bridge into the next line");
+  assert.deepEqual(split.commands, [], "per-line parsing must not bridge into the next line");
 });
 
 test("generated agent page and mini prompt match the kit sources", () => {
