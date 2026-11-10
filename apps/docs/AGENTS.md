@@ -55,7 +55,11 @@ reject dead `/r/<name>.json` links.
   pnpm --filter @zedtech/zedkit-docs lint` and the Playwright
   spec that covers the files you touched, against that :3100 (relative
   paths; origin is `baseURL` in `playwright.config.ts`). One foreground
-  command.
+  command. A new or moved App Router file (`page`, `layout`, `route`,
+  `opengraph-image`, `twitter-image`, `icon`) is not done until
+  `pnpm --filter @zedtech/zedkit-docs build` has been run and read.
+  Typecheck does not load the router. A file inside a catch-all segment
+  (`[[...slug]]`) is a child route; that segment must stay last.
 - **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
   component page, getting-started). Unit tests, `catalog:check`, the SEO
   export check and the first-load budget cover the rest. `pnpm e2e` is

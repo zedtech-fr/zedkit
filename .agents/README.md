@@ -31,7 +31,7 @@ links plus generated agents). Licences and credits of vendored skills:
 0. Unclear, or only questions? `/to-audit`. Have an audit? `/from-audit`.
 1. `/plan` — research, spec, ladder, **assumptions table**. Never implements.
 2. `/challenge` — stress-test the plan. **BLOCKING** if the assumptions table is missing.
-3. `/implement` — one unit at a time (`implementer` when the orchestrator fans out).
+3. `/implement` — the named unit, or the plan's first phase when none is named (`implementer` when the orchestrator fans out). Work branch; open the PR.
 4. `/review` — punchlist (`reviewer`); apply via `improver`.
 5. Close with `definition-of-done` and `rules-upkeep` (`Rules: none` when nothing to encode).
 
@@ -48,7 +48,7 @@ On every message, pick depth first (root `AGENTS.md`). A search or inventory is 
 | `/orchestrate` | Coordinator: frame, dispatch, aggregate. Does not edit. |
 | `/setup-ai` | Audit and tailor this setup. |
 | `/improve-config` | Encode session learnings (skill `rules-upkeep`). |
-| `/pr` | PR body. |
+| `/pr` | PR body. Does not open the PR (`implement` does, after definition-of-done). |
 | `/handoff` | Hand off to the next builder. |
 | `/audit` | Thorough audit: coverage map, evidence-backed findings. Investigates by default; fixes only when asked. |
 | `/research` | Prior-art scout. |

@@ -14,6 +14,8 @@ Refuse a missing or unchallenged plan: run `challenge` (or `plan`, when there is
 
 If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 
+If the user does not name a ticket, task id, or phase, implement only the first phase of the plan (the Blockers heading, or the first Implementation tasks group). Then stop and name the next `/implement` invocation. Later phases wait for a new call.
+
 Before writing code, climb the `ponytail-review` ladder for every new piece
 of code, file, or dependency — need to exist? in this codebase? standard
 library? native platform feature or a standard tool? installed dependency?
@@ -31,7 +33,7 @@ choices. Do not edit UI until that brief exists.
 
 Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
-Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it. When shortening a check's output with a pipe, preserve its exit status (`set -o pipefail` under bash, or run the check through the `gate` wrapper and inspect its captured log): a passing pipeline must never mask a failing check — piping inside the gate does not itself preserve the status.
+Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it. When the diff adds or moves a file the app router or bundler loads (`page`, `layout`, `route`, `opengraph-image`, a CSS entry, an export map), also run the area **build** from that area's AGENTS.md. Typecheck does not load it. When shortening a check's output with a pipe, preserve its exit status (`set -o pipefail` under bash, or run the check through the `gate` wrapper and inspect its captured log): a passing pipeline must never mask a failing check — piping inside the gate does not itself preserve the status.
 
 Then pass `definition-of-done`, and call the Skill tool with "review" to review the work (`Playbook: review`). Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
 
@@ -42,9 +44,13 @@ Check the printed `provider:` matches the active tool before spawning.
 If the tool lets a spawn override the model, pass the id it prints, exactly.
 Do not substitute the parent model, another family, or a fast mode. A fast
 mode is allowed only when the user explicitly requested it in this request.
-If the tool cannot override the model, stop and say the cell was not applied;
-the stakes still decide the gates. `sensitive` or higher makes `review`
-mandatory, and `critical` also needs a second independent review and a
-`Human validation:` line.
+If the tool cannot override the model, stop and say the cell was not applied.
+Do not implement on the parent model. The user re-runs with a tool that
+passes the cell, or explicitly asks to continue inline. `sensitive` or
+higher makes `review` mandatory, and `critical` also needs a second
+independent review and a `Human validation:` line.
 
-Commit your work to the current branch.
+Commit on a work branch. If HEAD is trunk or the host integration branch,
+create a work branch from it before the first commit. After
+definition-of-done, open a pull request against the integration branch
+the host AGENTS.md names. Drafting a PR body is not that step.

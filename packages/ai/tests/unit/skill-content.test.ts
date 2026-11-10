@@ -131,6 +131,16 @@ describe("skill content conventions", () => {
     expect(dod).not.toContain("stop and propose a split");
   });
 
+  it("definition of done runs the area build when the diff includes a routed file", () => {
+    const dod = readFileSync(
+      join(kitDir(), "skills", "definition-of-done", "SKILL.md"),
+      "utf8",
+    );
+    expect(dod).toContain("opengraph-image");
+    expect(dod).toContain("area **build**");
+    expect(dod).toContain("Typecheck is not that build");
+  });
+
   it("definition of done pins deployment-target verification in Report", () => {
     const dod = readFileSync(
       join(kitDir(), "skills", "definition-of-done", "SKILL.md"),
@@ -243,6 +253,21 @@ describe("skill content conventions", () => {
       "never the end-to-end battery unless a critical path justifies it",
     );
     expect(raw).not.toContain("full test suite");
+  });
+
+  it("implement without a named scope stops after the first phase, on a work branch", () => {
+    const raw = readFileSync(
+      join(kitDir(), "skills", "implement", "SKILL.md"),
+      "utf8",
+    );
+    expect(raw).toContain("first phase of the plan");
+    expect(raw).toContain("Blockers heading");
+    expect(raw).toContain("Commit on a work branch");
+    expect(raw).not.toContain("Commit your work to the current branch");
+    expect(raw).toContain("area **build**");
+    expect(raw).toContain("Do not implement on the parent model");
+    expect(raw).not.toContain("the stakes still decide the gates");
+    expect(raw).toContain("Drafting a PR body is not that step");
   });
 
   it("plans require an assumptions table and challenge blocks when it is missing", () => {
