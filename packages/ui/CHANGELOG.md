@@ -1,5 +1,12 @@
 # @zedtech/zedkit-ui
 
+## 2.0.1
+
+### Patch Changes
+
+- 2fcc095: Raise the dark glass card alpha floor from 0.5 to 0.7 so dark-scope Card text keeps AA contrast on its composited fill over a light page. No scope background painting; the transparent carrier stands.
+- 1f5c2e0: Document the transparent `ThemeScope` contract in the package README (a scope adds no background or surface; surfaces stay explicit; nested scopes keep the nearer identity; dropdowns portal into the scope, dialogs mirror on the body) and lock it with rendered tests: no `bg-*` class or inline background on scope hosts, plus a light/dark composition of an explicit `Card` surface, a nested scope, a dropdown portal kept inside, and a dialog mirrored on the body with the nested look.
+
 ## 2.0.0
 
 ### Major Changes
