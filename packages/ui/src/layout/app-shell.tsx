@@ -38,7 +38,7 @@ export function AppShell({
     <div className="flex pane-shrink content-shrink flex-1 flex-col">
       {showDrawer ? (
         <div data-slot="app-shell-menu" className="flex items-center p-app-shell-padding md:hidden">
-          <AppShellMenuTrigger trigger={sidebarTrigger ?? undefined} />
+          <AppShellMenuTrigger {...(sidebarTrigger ? { trigger: sidebarTrigger } : {})} />
         </div>
       ) : null}
       {topbar ? (
