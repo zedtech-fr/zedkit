@@ -25,7 +25,7 @@
     "test": "turbo run test",
     "changeset": "changeset",
     "changeset:status": "changeset status --verbose",
-    "changeset:version": "changeset version && node scripts/catalog.mjs build",
+    "changeset:version": "changeset version && node scripts/catalog.mjs build && node scripts/doc-pins.mjs write",
     "catalog:build": "node scripts/catalog.mjs build",
     "catalog:check": "node scripts/catalog.mjs check && node apps/docs/scripts/check.mjs && node apps/docs/scripts/check-previews.mjs && node apps/docs/scripts/check-registry-urls.mjs",
     "registry:build": "node scripts/registry/build.mjs",
