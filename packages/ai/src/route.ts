@@ -10,6 +10,7 @@ import {
   type AgentHeader,
 } from "./agent-header.js";
 import { hasMarker, museIdentityName, museSourceName } from "./generate.js";
+import { encodeModel } from "./model-encode.js";
 import {
   checkTokenomics,
   loadDefaults,
@@ -165,15 +166,14 @@ export function secondReviewFor(
   const cell = policy.providers[p2]?.check?.critical;
   const model = cell?.model ?? "inherit";
   // The first reviewer is `check` at the same column on the task's provider.
-  const first = policy.providers[provider]?.check?.[column]?.model ?? "inherit";
-  const review: SecondReview = {
-    provider: p2,
-    model,
-    effort: cell?.effort ?? "medium",
-  };
-  if (gate.distinct_model === true && model === first) {
+  const firstCell = policy.providers[provider]?.check?.[column];
+  const first = encodeModel(provider, firstCell?.model ?? "inherit", firstCell?.effort ?? "medium");
+  const effort = cell?.effort ?? "medium";
+  const encoded = encodeModel(p2, model, effort);
+  const review: SecondReview = { provider: p2, model: encoded, effort };
+  if (gate.distinct_model === true && encoded === first) {
     review.warning =
-      model === "inherit"
+      encoded === "inherit"
         ? "cannot prove distinct model: both reviews inherit; name the model the second session used on the Second review line"
         : "second review resolves to the same model as the first review; pin second_review_provider or give check.critical another model";
   }
@@ -225,7 +225,9 @@ export function resolveRoute(
     header?.min_effort;
   if (floorEffort !== undefined)
     effortIndex = Math.max(effortIndex, EFFORTS.indexOf(floorEffort));
-  const model = cell?.model ?? "inherit";
+  const effort = at(EFFORTS, effortIndex);
+  const base = cell?.model ?? "inherit";
+  const model = encodeModel(provider, base, effort);
   if (isFastModelId(model) && input.allowFast !== true)
     return err(
       refuseFast(model, `${provider}.${kind.value.kind}.${column}`),
@@ -240,7 +242,7 @@ export function resolveRoute(
   const route: Route = {
     provider,
     model,
-    effort: at(EFFORTS, effortIndex),
+    effort,
     contextWindow: window,
     kind: kind.value.kind,
     kindSource: kind.value.source,

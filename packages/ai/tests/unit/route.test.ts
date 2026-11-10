@@ -803,3 +803,41 @@ describe("effort order", () => {
     expect([...EFFORTS]).toEqual(["low", "medium", "high", "max"]);
   });
 });
+
+describe("resolveRoute: effort encoding", () => {
+  const cursorCheck = (model: string, effort: "low" | "medium" | "high" | "max", edit?: (p: Tokenomics) => void): Tokenomics =>
+    policy((p) => {
+      p.providers.cursor.check.sensitive = { model, effort };
+      edit?.(p);
+    });
+  const sensitive = { kind: "check", stakes: "sensitive", provider: "cursor" } as const;
+
+  it("cursor: the printed id follows the cell's effort with the model held constant", () => {
+    expect(route(cursorCheck("claude-sonnet-5-5", "medium"), sensitive).model).toBe("claude-sonnet-5-5-medium");
+    expect(route(cursorCheck("claude-sonnet-5-5", "max"), sensitive).model).toBe("claude-sonnet-5-5-xhigh");
+  });
+
+  it("a legacy suffixed cell passes through unchanged whatever the effort", () => {
+    for (const legacy of ["claude-sonnet-5-5-high", "claude-sonnet-5-5-low", "claude-sonnet-5-5-medium"])
+      expect(route(cursorCheck(legacy, "max"), sensitive).model).toBe(legacy);
+  });
+
+  it("second review prints the encoded id and warns on a base/legacy pair of the same family", () => {
+    const p = cursorCheck("claude-sonnet-5-5-xhigh", "high", (q) => {
+      q.providers.cursor.check.critical = { model: "claude-sonnet-5-5", effort: "max" };
+      q.gates.critical.distinct_model = true;
+    });
+    const r = route(p, { kind: "check", stakes: "critical", provider: "cursor" });
+    expect(r.secondReview?.model).toBe("claude-sonnet-5-5-xhigh");
+    const w = route(
+      cursorCheck("claude-sonnet-5-5-xhigh", "high", (q) => {
+        q.providers.cursor.check.sensitive = { model: "claude-sonnet-5-5", effort: "max" };
+        q.providers.cursor.check.critical = { model: "claude-sonnet-5-5-xhigh", effort: "max" };
+        q.gates.sensitive.second_review = "independent";
+        q.gates.sensitive.distinct_model = true;
+      }),
+      { kind: "check", stakes: "sensitive", provider: "cursor" },
+    );
+    expect(w.secondReview?.warning).toBeDefined();
+  });
+});

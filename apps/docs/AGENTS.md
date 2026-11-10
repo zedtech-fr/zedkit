@@ -55,7 +55,11 @@ reject dead `/r/<name>.json` links.
   pnpm --filter @zedtech/zedkit-docs lint` and the Playwright
   spec that covers the files you touched, against that :3100 (relative
   paths; origin is `baseURL` in `playwright.config.ts`). One foreground
-  command.
+  command. A new or moved App Router file (`page`, `layout`, `route`,
+  `opengraph-image`, `twitter-image`, `icon`) is not done until
+  `pnpm --filter @zedtech/zedkit-docs build` has been run and read.
+  Typecheck does not load the router. A file inside a catch-all segment
+  (`[[...slug]]`) is a child route; that segment must stay last.
 - **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
   component page, getting-started). Unit tests, `catalog:check`, the SEO
   export check and the first-load budget cover the rest. `pnpm e2e` is
@@ -96,7 +100,14 @@ which the home and every component page render, and
 (plus the `pnpm add` lines on getting-started that those cases do not cover).
 A stylesheet or config need says so in its catalog entry, not in prose.
 Guide snippets (`prose/guides/snippets/`) are run by the `verify-*-tutorial.mjs`
-scripts inside `pnpm catalog:check`.
+scripts inside `pnpm catalog:check`. The UI package install is
+fonts-inclusive (`prose/guides/snippets/ui-add.sh`, matching
+`home-quickstart/snippets/install.sh`); a consumer `layout.tsx` must
+keep `import "./globals.css"` (Next.js loads the styles step from the
+layout) and `import "./fonts"` so those packages load. A need whose
+`exampleFile` is `src/app/layout.tsx` folds Glass into that one write;
+do not also replace the path in the identity step. Do not add a
+second fonts `pnpm add` next to that snippet.
 
 ## Identity editor and creator
 

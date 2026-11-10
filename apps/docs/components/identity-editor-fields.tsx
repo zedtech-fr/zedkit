@@ -25,7 +25,7 @@ import { LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
 const DRAFT_ID = "draft";
 const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
 
-/** `H S% L%` triplets, the format the colour tokens use. */
+/** `H S% L%` triplets, the format the color tokens use. */
 const HSL_TRIPLET = /^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%$/;
 
 function TokenField({
@@ -43,7 +43,7 @@ function TokenField({
 }) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
-  const colour = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
+  const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
   return (
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
     <Field className="content-shrink">
@@ -55,7 +55,7 @@ function TokenField({
             data-token-swatch=""
             className="size-control-height shrink-0 rounded-md border border-border"
           >
-            <rect width="100%" height="100%" fill={colour ?? "none"} />
+            <rect width="100%" height="100%" fill={color ?? "none"} />
           </svg>
         ) : null}
         <Input
@@ -115,7 +115,7 @@ function EditorFields({
       {afterShape}
       <FieldGroup legend={identityEditorCopy.fields.groups.type}>{scalar(TYPE_KEYS)}</FieldGroup>
       <FieldGroup legend={identityEditorCopy.fields.groups.depth}>{scalar(DEPTH_KEYS)}</FieldGroup>
-      <FieldGroup legend={identityEditorCopy.fields.groups.colour(scheme)}>
+      <FieldGroup legend={identityEditorCopy.fields.groups.color(scheme)}>
         {LIGHT_KEYS.map((key) => (
           <TokenField
             key={key}

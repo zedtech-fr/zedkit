@@ -1,0 +1,52 @@
+import assert from "node:assert/strict";
+import { readFileSync, existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import test from "node:test";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const APP = join(HERE, "..");
+
+const COPY_FILE_RELATIVE = [
+  "components/i18n/adoption-copy.ts",
+  "components/i18n/identity-assistant-copy.ts",
+  "components/i18n/identity-brief-copy.ts",
+  "components/i18n/identity-editor-copy.ts",
+  "app/i18n/identity-editor-copy.ts",
+  "components/demos/i18n/brand-logo-copy.ts",
+  "components/demos/i18n/scroll-scenes-copy.ts",
+  "components/identity-editor-fields.tsx",
+  "lib/identity-editor-search.ts",
+  "lib/maturity-status.ts",
+  "lib/identity-refinement-chips.ts",
+];
+
+const BRITISH_SPELLINGS = ["colour", "colours", "Colour", "Colours", "organisation", "organised", "behaviour", "behavioural"];
+
+function readCopyFiles() {
+  const files = [];
+  const missing = [];
+  for (const rel of COPY_FILE_RELATIVE) {
+    const path = join(APP, rel);
+    if (!existsSync(path)) {
+      missing.push(rel);
+      continue;
+    }
+    files.push({ rel, content: readFileSync(path, "utf8") });
+  }
+  assert.deepEqual(missing, [], `listed copy files missing:\n${missing.join("\n")}`);
+  return files;
+}
+
+test("listed copy files use US spelling for color and organisation", () => {
+  const banned = BRITISH_SPELLINGS;
+  const errors = [];
+  for (const { rel, content } of readCopyFiles()) {
+    for (const word of banned) {
+      if (content.includes(word)) {
+        errors.push(`${rel} contains British spelling "${word}"`);
+      }
+    }
+  }
+  assert.deepEqual(errors, [], `British spellings found:\n${errors.join("\n")}`);
+});

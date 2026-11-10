@@ -36,6 +36,7 @@ import { parseBarrelExports } from "../../../scripts/catalog.mjs";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { SEO_DESCRIPTION_MAX } from "@zedtech/zedkit-seo";
+import { GLASS_FONTS } from "../lib/adoption-plan.mjs";
 import {
   catalogPageKeys,
   expandGuideSnippets,
@@ -339,8 +340,9 @@ if (galleryFile && existsSync(homeInstallSnippet)) {
   const featuredMatch = /featuredPackage: string = (.+);\n/.exec(galleryFile);
   const featuredPackage = featuredMatch ? JSON.parse(featuredMatch[1]) : null;
   const install = readFileSync(homeInstallSnippet, "utf8").trim();
-  if (featuredPackage && install !== `pnpm add ${featuredPackage}`) {
-    errors.push(`home-quickstart/snippets/install.sh must be exactly: pnpm add ${featuredPackage}`);
+  const expectedInstall = `pnpm add ${featuredPackage} ${GLASS_FONTS.join(" ")}`;
+  if (featuredPackage && install !== expectedInstall) {
+    errors.push(`home-quickstart/snippets/install.sh must be exactly: ${expectedInstall}`);
   }
 }
 const registrySitePath = join(APP, "content", "registry-site.ts");

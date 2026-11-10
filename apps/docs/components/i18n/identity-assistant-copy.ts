@@ -72,13 +72,13 @@ export const identityAssistantCopy = {
     compare: "Your current look and the proposal side by side.",
     apply: "Use this look",
     discard: "Discard",
-    contrastAdjusted: (count: number) => `${count} ${count === 1 ? "colour was" : "colours were"} adjusted so text stays readable.`,
+    contrastAdjusted: (count: number) => `${count} ${count === 1 ? "color was" : "colors were"} adjusted so text stays readable.`,
     contrastOk: "Text and controls keep their contrast in light and dark.",
     contrastUnresolved: (count: number) =>
       `${count} ${count === 1 ? "pair still misses" : "pairs still miss"} the contrast target after adjustment; check them before applying.`,
     note: "Applies to demo specimens on this site only, not the docs chrome. Saved looks and the site default are not changed until you export or save elsewhere.",
   },
-  /** Sample content the proposal is shown in: a small shop, so type, colour, shape and density have something to act on. */
+  /** Sample content the proposal is shown in: a small shop, so type, color, shape and density have something to act on. */
   preview: {
     brand: "Atelier Lune",
     nav: ["Shop", "Journal", "About"],
@@ -109,7 +109,7 @@ export const identityAssistantCopy = {
   links: identityBriefCopy.links,
   references: {
     textOnly: "Read as text only. Pictures and layout are not analysed.",
-    styles: (signals: string) => (signals ? `Styles and text read: ${signals}.` : "Styles and text read. No distinct colours or fonts found."),
+    styles: (signals: string) => (signals ? `Styles and text read: ${signals}.` : "Styles and text read. No distinct colors or fonts found."),
     radius: (value: string) => `radius ${value}`,
     failed: (reason: string) => `Could not be used: ${referenceReason(reason)}.`,
     report: "What happened to your links",

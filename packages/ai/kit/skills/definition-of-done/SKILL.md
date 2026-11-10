@@ -9,9 +9,10 @@ Done is a claim. This list is the evidence. If one box cannot be ticked, say whi
 
 ## Gates
 
-The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter typecheck, lint, and the unit or integration tests that cover the files you touched). One foreground command. CI owns full-repo test, e2e, static-export smoke and catalog:check.
+The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter typecheck, lint, and the unit or integration tests that cover the files you touched). One foreground command. CI owns full-repo test, e2e, static-export smoke and catalog:check. A diff that adds or moves a routed or entry file (for example `page`, `layout`, `route`, `opengraph-image`, a CSS entry, an export map) also runs the area **build**. Typecheck does not exercise the router or the bundler.
 
 - [ ] Cheap loop ran **after the last edit** (read the area AGENTS.md). A fix made after the run means run the cheap loop again.
+- [ ] Area build ran when the diff includes a routed or entry file. Typecheck is not that build.
 - [ ] Output was read, not assumed. A failure you cannot explain is not done.
 - [ ] Nothing generated, built or cached is staged: check `git status` and `git diff --stat HEAD`. Never `git add -A` blindly.
 - [ ] No secrets, tokens or personal data in code, tests, logs, fixtures or errors.

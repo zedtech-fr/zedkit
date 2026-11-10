@@ -3,7 +3,7 @@ export const identityEditorCopy = {
   metadata: {
     title: "Identity demo editor",
     description:
-      "Try spacing, colour, and type tokens in the browser. Demo only — not a shipped docs feature.",
+      "Try spacing, color, and type tokens in the browser. Demo only — not a shipped docs feature.",
   },
   back: "← Back to the examples",
   heading: "Try looks in the demo editor",

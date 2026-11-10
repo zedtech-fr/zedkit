@@ -112,6 +112,8 @@ if (!route.ok) throw route.error;
 console.log(route.value.model, route.value.effort, route.value.gates.review);
 ```
 
+Cells hold a base model id plus `effort`: on Cursor, `route` prints the id the tool lists (`max` becomes `xhigh`), and an id that already ends in a level passes through with its `effort` unused. Other providers get the id unchanged. For the second-review distinct-model gate, encoded ids count as distinct models.
+
 A cell whose model id contains a `fast` token makes `resolveRoute` return an error (CLI exit 2) unless `allowFast: true`. The same flag is `--allow-fast` on `route`, `sync`, `validate`, `init` and `setup`.
 
 CLI equivalent: `zedkit-ai route verifier --kind check --stakes sensitive --provider cursor --json`.

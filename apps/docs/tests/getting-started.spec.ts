@@ -47,7 +47,7 @@ test("getting started is first stop from docs index", async ({ page }) => {
   await page.waitForURL("**/docs/getting-started", { timeout: 10000 });
   await expect(page.getByRole("heading", { name: "Quickstart" })).toBeVisible();
   await expect(page.getByText("zedkit-ai validate")).toBeVisible();
-  await expect(page.getByText(/Pick one path below \(A through E, plus B′ for copied UI\)/)).toBeVisible();
+  await expect(page.getByText(/Pick one path below/)).toBeVisible();
   await expect(page.getByText(/Both end with something you can see/)).toHaveCount(0);
 });
 
@@ -79,19 +79,19 @@ test("getting started documents install or copy paths", async ({ page }) => {
 
 test("getting started lists a core npm quickstart path", async ({ page }) => {
   await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "Path C — core helpers (npm only)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Core helpers (npm only)", level: 3 })).toBeVisible();
   await expect(page.getByText("pnpm add @zedtech/zedkit-core")).toBeVisible();
 });
 
 test("getting started lists a server npm quickstart path", async ({ page }) => {
   await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "Path D — server helpers (npm only)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Server helpers (npm only)", level: 3 })).toBeVisible();
   await expect(page.getByText("pnpm add @zedtech/zedkit-server")).toBeVisible();
 });
 
 test("getting started lists a nest npm quickstart path", async ({ page }) => {
   await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "Path E — Nest API (npm only)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Nest API (npm only)", level: 3 })).toBeVisible();
   await expect(page.getByText("pnpm add @zedtech/zedkit-nest")).toBeVisible();
 });
 
@@ -104,25 +104,25 @@ test("getting started package table links SEO row to SEO scenario", async ({ pag
   await expect(page.getByRole("heading", { name: "Scenario — SEO", level: 2 })).toBeVisible();
 });
 
-test("getting started package table links UI row to Quickstart paths B–B′", async ({ page }) => {
+test("getting started package table links UI row to Quickstart UI button", async ({ page }) => {
   await page.goto("/docs/getting-started#choose-a-package", { waitUntil: "networkidle" });
   const table = page
     .getByRole("table")
     .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
-  await table.getByRole("link", { name: "Quickstart paths B–B′" }).click();
+  await table.getByRole("link", { name: "Quickstart UI button" }).click();
   await expect(page.getByRole("heading", { name: "Quickstart", level: 2 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Path B — UI button (npm package)", level: 3 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Path B′ — UI button (shadcn registry)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "UI button (npm package)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "UI button (shadcn registry)", level: 3 })).toBeVisible();
 });
 
-test("getting started package table links agents row to Quickstart path A", async ({ page }) => {
+test("getting started package table links agents row to Quickstart coding agents", async ({ page }) => {
   await page.goto("/docs/getting-started#choose-a-package", { waitUntil: "networkidle" });
   const table = page
     .getByRole("table")
     .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
-  await table.getByRole("link", { name: "Quickstart path A" }).click();
+  await table.getByRole("link", { name: "Quickstart coding agents" }).click();
   await expect(page.getByRole("heading", { name: "Quickstart", level: 2 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Path A — coding agents (about two minutes)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Coding agents", level: 3 })).toBeVisible();
 });
 
 test("getting started package table links backend row to Quickstart paths", async ({ page }) => {
@@ -130,9 +130,9 @@ test("getting started package table links backend row to Quickstart paths", asyn
   const table = page
     .getByRole("table")
     .filter({ has: page.getByRole("columnheader", { name: "Typical first page" }) });
-  await table.getByRole("link", { name: "Quickstart paths C–E" }).click();
+  await table.getByRole("link", { name: "Quickstart backend" }).click();
   await expect(page.getByRole("heading", { name: "Quickstart", level: 2 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Path C — core helpers (npm only)", level: 3 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Core helpers (npm only)", level: 3 })).toBeVisible();
 });
 
 test("getting started install cards keep their explanation visible at phone widths", async ({ page }) => {

@@ -1,6 +1,6 @@
 ---
 title: "Set up zedkit AI"
-description: "Give your coding agent one prompt to set up ZedKit AI in your project."
+description: "Give your coding agent one prompt to set up zedkit AI in your project."
 hidePageTitle: true
 ---
 
@@ -47,17 +47,17 @@ Then **`/setup-ai`** in your agent, then:
 npx @zedtech/zedkit-ai@1.1.2 validate
 ```
 
-## Already on 0.12?
+## Already on 1.1.x?
 
 Re-run `npx @zedtech/zedkit-ai@1.1.2 setup` (adopt keeps your files; kit copies
-land as `*.kit.md` / `zk-<name>`), then `/setup-ai`. Opt-in
-`npx @zedtech/zedkit-ai@1.1.2 validate --setup` checks plan coverage, gate-log shape, and that the
+land as `*.kit.md` / `zk-<name>`), then `/setup-ai`. Coming from 0.12? Follow
+[Upgrading from 0.12](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/README.md#upgrading-from-012).
+Opt-in `npx @zedtech/zedkit-ai@1.1.2 validate --setup` checks plan coverage, gate-log shape, and that the
 setup went deep: `/setup-ai` reads the code first with read-only subagents
 (`npx @zedtech/zedkit-ai@1.1.2 scan` sizes them), writes domain rules and nested `AGENTS.md`
 files from what they found, fills `.agents/tokenomics.md` (cheap models on
 `check`/`build` at `trivial`/`standard`, the strong model on `sensitive`/`critical`),
 and runs `npx @zedtech/zedkit-ai@1.1.2 sync`.
-Full notes: the package README `Upgrading from 0.12` section.
 
 ## Troubleshooting
 
