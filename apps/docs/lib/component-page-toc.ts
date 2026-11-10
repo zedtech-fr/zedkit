@@ -1,11 +1,12 @@
 import type { TOCItemType } from "fumadocs-core/toc";
+import { componentPageCopy } from "@/components/i18n/component-page-copy";
 
 /** Every section anchor `ComponentPage` can render (Fumadocs TOC only sees MDX headings). */
 const SECTION_TOC: Record<string, TOCItemType> = {
   example: { title: "Preview", url: "#example", depth: 2 },
   guidance: { title: "Guidance", url: "#guidance", depth: 2 },
-  "install-or-copy": { title: "Install or copy", url: "#install-or-copy", depth: 2 },
-  "usage-and-states": { title: "Usage and states", url: "#usage-and-states", depth: 2 },
+  "install-or-copy": { title: componentPageCopy.sections.installOrCopy, url: "#install-or-copy", depth: 2 },
+  "usage-and-states": { title: componentPageCopy.sections.usageAndStates, url: "#usage-and-states", depth: 2 },
   props: { title: "Props", url: "#props", depth: 2 },
   accessibility: { title: "Accessibility", url: "#accessibility", depth: 2 },
   related: { title: "Related", url: "#related", depth: 2 },

@@ -89,7 +89,7 @@ Identity examples sell what the kit builds, not how many identities it ships: no
 
 ## Component page
 
-Title, one purpose sentence, status, example, install (npm or source, both when available), usage, states, behavior and accessibility, kit props first, inherited attributes collapsed, related. Contents list every section.
+Title, purpose (role), maturity including Stable, package, source, preview, usage, then install (npm or source, both when available), kit props first, inherited attributes collapsed, related. Contents list every section. Full order: [COMPONENT-PAGE.md](./COMPONENT-PAGE.md).
 
 ## Mobile
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { registryBrickNames } from "../content/registry-site";
-import { componentPageSections } from "../lib/component-page-sections.mjs";
+import { componentPageHeaderMeta, componentPageSections } from "../lib/component-page-sections.mjs";
 import { DEFAULT_PROPS_PRIORITY } from "../lib/props-priority.mjs";
 import { ComponentPreview } from "./component-preview";
 import { ComponentWrapsLine } from "./component-wraps-line";
@@ -87,6 +87,7 @@ export async function ComponentPage({
 }: ComponentPageProps) {
   const hasProps = Boolean(propsFile && propsName);
   const sections = componentPageSections({ hasProps, a11y, related, troubleshooting });
+  const header = componentPageHeaderMeta({ status, purpose, packageName, wraps });
   const copyable = registry.length > 0 && registryBrickNames.includes(registry);
   const plan: AdoptionPlan = adoptionPlanFor({
     need: { need: needName, shortName, adoption, examples, registry: copyable ? registry : "", ...(exampleFile ? { exampleFile } : {}) },
@@ -95,9 +96,21 @@ export async function ComponentPage({
 
   return (
     <Stack gap="blocks">
-      <Stack gap="md">
-        {status !== "stable" ? <MaturityBadge status={status} /> : null}
-        <Text className="text-purpose text-muted-foreground">{purpose}</Text>
+      <Stack gap="sm" data-component-page-header="">
+        <Text className="text-purpose text-muted-foreground">{header.purpose}</Text>
+        <Stack direction="horizontal" gap="md" className="flex-wrap text-dense text-muted-foreground">
+          <Text as="span" data-component-maturity={header.maturity}>
+            {header.maturity.toLowerCase() === "stable" ? (
+              componentPageCopy.header.stable
+            ) : (
+              <MaturityBadge status={header.maturity} />
+            )}
+          </Text>
+          <Text as="span" data-component-package="" className="font-mono text-foreground">
+            {header.packageName}
+          </Text>
+        </Stack>
+        <ComponentWrapsLine wraps={header.wraps} />
       </Stack>
 
       <Stack id="example">
@@ -112,15 +125,6 @@ export async function ComponentPage({
         <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
         <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
       </dl>
-
-      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-stack-md">
-        <Stack gap="md">
-          <AdoptionPanelView plan={plan} />
-          <Text variant="muted" className="text-caption">
-            {componentPageCopy.packageVersionLine(version)}
-          </Text>
-        </Stack>
-      </Section>
 
       <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
         <Stack gap="lg">
@@ -147,7 +151,15 @@ export async function ComponentPage({
               );
             }),
           )}
-          <ComponentWrapsLine wraps={wraps} />
+        </Stack>
+      </Section>
+
+      <Section title={componentPageCopy.sections.installOrCopy} id="install-or-copy" className="space-y-stack-md">
+        <Stack gap="md">
+          <AdoptionPanelView plan={plan} />
+          <Text variant="muted" className="text-caption">
+            {componentPageCopy.packageVersionLine(version)}
+          </Text>
         </Stack>
       </Section>
 

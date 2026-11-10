@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
-import { componentPageSections } from "../lib/component-page-sections.mjs";
+import { componentPageHeaderMeta, componentPageSections } from "../lib/component-page-sections.mjs";
 import { declarationOrigin } from "../lib/declared-props.mjs";
 import { partitionPropsEntries } from "../lib/props-priority.mjs";
 import { groupCatalogResults } from "../lib/catalog-result-groups.mjs";
@@ -106,13 +106,28 @@ test("declarationOrigin follows where a property is declared", () => {
 });
 
 test("componentPageSections lists a section only when it has content", () => {
-  const always = ["example", "guidance", "install-or-copy", "usage-and-states"];
-  assert.deepEqual(componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" }), always);
+  const always = ["example", "guidance", "usage-and-states", "install-or-copy"];
+  const sections = componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" });
+  assert.deepEqual(sections, always);
+  assert.ok(sections.indexOf("usage-and-states") < sections.indexOf("install-or-copy"));
   assert.deepEqual(
     componentPageSections({ hasProps: true, a11y: "Name it.", related: [{ title: "x" }], troubleshooting: "Wire the CSS." }),
     [...always, "props", "accessibility", "related", "troubleshooting"],
   );
   assert.deepEqual(componentPageSections({ hasProps: false, a11y: "Name it." }), [...always, "accessibility"]);
+});
+
+test("component page header keeps Stable maturity, package, and wraps", () => {
+  const header = componentPageHeaderMeta({
+    status: "stable",
+    purpose: "A labeled button starts an action.",
+    packageName: "@zedtech/zedkit-ui",
+    wraps: "`@radix-ui/react-slot`",
+  });
+  assert.equal(header.maturity, "stable");
+  assert.equal(header.purpose, "A labeled button starts an action.");
+  assert.equal(header.packageName, "@zedtech/zedkit-ui");
+  assert.equal(header.wraps, "`@radix-ui/react-slot`");
 });
 
 test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () => {
