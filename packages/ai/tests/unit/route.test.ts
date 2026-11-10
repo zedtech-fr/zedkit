@@ -803,3 +803,17 @@ describe("effort order", () => {
     expect([...EFFORTS]).toEqual(["low", "medium", "high", "max"]);
   });
 });
+
+describe("resolveRoute: effort encoding", () => {
+  it("cursor: the printed id follows the cell's effort with the model held constant", () => {
+    const at = (effort: "medium" | "max"): string =>
+      route(
+        policy((p) => {
+          p.providers.cursor.check.sensitive = { model: "claude-sonnet-5-5", effort };
+        }),
+        { kind: "check", stakes: "sensitive", provider: "cursor" },
+      ).model;
+    expect(at("medium")).toBe("claude-sonnet-5-5-medium");
+    expect(at("max")).toBe("claude-sonnet-5-5-xhigh");
+  });
+});

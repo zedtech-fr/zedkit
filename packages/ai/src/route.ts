@@ -10,6 +10,7 @@ import {
   type AgentHeader,
 } from "./agent-header.js";
 import { hasMarker, museIdentityName, museSourceName } from "./generate.js";
+import { encodeModel } from "./model-encode.js";
 import {
   checkTokenomics,
   loadDefaults,
@@ -166,10 +167,11 @@ export function secondReviewFor(
   const model = cell?.model ?? "inherit";
   // The first reviewer is `check` at the same column on the task's provider.
   const first = policy.providers[provider]?.check?.[column]?.model ?? "inherit";
+  const effort = cell?.effort ?? "medium";
   const review: SecondReview = {
     provider: p2,
-    model,
-    effort: cell?.effort ?? "medium",
+    model: encodeModel(p2, model, effort),
+    effort,
   };
   if (gate.distinct_model === true && model === first) {
     review.warning =
@@ -225,7 +227,9 @@ export function resolveRoute(
     header?.min_effort;
   if (floorEffort !== undefined)
     effortIndex = Math.max(effortIndex, EFFORTS.indexOf(floorEffort));
-  const model = cell?.model ?? "inherit";
+  const effort = at(EFFORTS, effortIndex);
+  const base = cell?.model ?? "inherit";
+  const model = encodeModel(provider, base, effort);
   if (isFastModelId(model) && input.allowFast !== true)
     return err(
       refuseFast(model, `${provider}.${kind.value.kind}.${column}`),
@@ -240,7 +244,7 @@ export function resolveRoute(
   const route: Route = {
     provider,
     model,
-    effort: at(EFFORTS, effortIndex),
+    effort,
     contextWindow: window,
     kind: kind.value.kind,
     kindSource: kind.value.source,
