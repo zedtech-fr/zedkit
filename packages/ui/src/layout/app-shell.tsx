@@ -47,7 +47,7 @@ export function AppShell({
       <main
         ref={mainRef}
         tabIndex={0}
-        className="pane-shrink flex-1 overflow-y-auto p-app-shell-padding md:p-app-shell-padding-md focus-ring"
+        className="pane-shrink flex-1 overflow-y-auto p-app-shell-padding focus-ring md:p-app-shell-padding-md"
       >
         {children}
       </main>

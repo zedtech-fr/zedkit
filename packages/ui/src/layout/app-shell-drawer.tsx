@@ -1,6 +1,5 @@
 "use client";
 
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- DrawerBody is an overflow scrollport (scrollable-region-focusable, #396). */
 import { useState, type ReactElement, type ReactNode } from "react";
 import { Menu } from "lucide-react";
 
