@@ -16,14 +16,14 @@ You use a **coding agent** (Cursor, Muse, Claude Code, Codex, or similar) on a g
 
 Agents should read the raw steps at [https://zedkit.app/ai/setup.md](https://zedkit.app/ai/setup.md) (plain markdown, no site chrome).
 
-This guide targets `@zedtech/zedkit-ai` **1.1.1** (the current published version). Every command below pins it with `@1.1.1`; drop the suffix to float (not reproducible).
+This guide targets `@zedtech/zedkit-ai` **1.1.2** (the current published version). Every command below pins it with `@1.1.2`; drop the suffix to float (not reproducible).
 
 ## What the agent will do
 
-1. Add `@zedtech/zedkit-ai@1.1.1` if missing or not exactly at 1.1.1 (`pnpm add -D -w --save-exact` at a pnpm workspace root when `pnpm-workspace.yaml` exists).
-2. Run `npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor` (**`setup` preset by default**, adopt mode — keeps your files on collision; override with `--preset starter|setup|core|full` if needed). Use `--provider muse`, `claude`, `codex`, comma-separated names, or `all` to match your tool.
+1. Add `@zedtech/zedkit-ai@1.1.2` if missing or not exactly at 1.1.2 (`pnpm add -D -w --save-exact` at a pnpm workspace root when `pnpm-workspace.yaml` exists).
+2. Run `npx @zedtech/zedkit-ai@1.1.2 setup --provider cursor` (**`setup` preset by default**, adopt mode — keeps your files on collision; override with `--preset starter|setup|core|full` if needed). Use `--provider muse`, `claude`, `codex`, comma-separated names, or `all` to match your tool.
 3. Run **`/setup-ai`** — phases A–E (audit, **batched discovery interview** — answer or delegate, do not skip — build `product.md`, domain rules, personas, `design.md` when relevant, repo skills, score and learn), then verify and report.
-4. Run `npx @zedtech/zedkit-ai@1.1.1 validate` until stdout is `ok`.
+4. Run `npx @zedtech/zedkit-ai@1.1.2 validate` until stdout is `ok`.
 
 **Time:** about 15–45 minutes for a typical app repo once the agent starts (see the setup-ai skill intro).
 
@@ -37,26 +37,26 @@ This guide targets `@zedtech/zedkit-ai` **1.1.1** (the current published version
 ## Manual path (same result)
 
 ```sh
-pnpm add -D --save-exact @zedtech/zedkit-ai@1.1.1   # workspace root: pnpm add -D -w --save-exact @zedtech/zedkit-ai@1.1.1
-npx @zedtech/zedkit-ai@1.1.1 setup --provider cursor
+pnpm add -D --save-exact @zedtech/zedkit-ai@1.1.2   # workspace root: pnpm add -D -w --save-exact @zedtech/zedkit-ai@1.1.2
+npx @zedtech/zedkit-ai@1.1.2 setup --provider cursor
 ```
 
 Then **`/setup-ai`** in your agent, then:
 
 ```sh
-npx @zedtech/zedkit-ai@1.1.1 validate
+npx @zedtech/zedkit-ai@1.1.2 validate
 ```
 
 ## Already on 0.12?
 
-Re-run `npx @zedtech/zedkit-ai@1.1.1 setup` (adopt keeps your files; kit copies
+Re-run `npx @zedtech/zedkit-ai@1.1.2 setup` (adopt keeps your files; kit copies
 land as `*.kit.md` / `zk-<name>`), then `/setup-ai`. Opt-in
-`npx @zedtech/zedkit-ai@1.1.1 validate --setup` checks plan coverage, gate-log shape, and that the
+`npx @zedtech/zedkit-ai@1.1.2 validate --setup` checks plan coverage, gate-log shape, and that the
 setup went deep: `/setup-ai` reads the code first with read-only subagents
-(`npx @zedtech/zedkit-ai@1.1.1 scan` sizes them), writes domain rules and nested `AGENTS.md`
+(`npx @zedtech/zedkit-ai@1.1.2 scan` sizes them), writes domain rules and nested `AGENTS.md`
 files from what they found, fills `.agents/tokenomics.md` (cheap models on
 `check`/`build` at `trivial`/`standard`, the strong model on `sensitive`/`critical`),
-and runs `npx @zedtech/zedkit-ai@1.1.1 sync`.
+and runs `npx @zedtech/zedkit-ai@1.1.2 sync`.
 Full notes: the package README `Upgrading from 0.12` section.
 
 ## Troubleshooting
