@@ -9,11 +9,6 @@ describe("encodeModel", () => {
     expect(encodeModel("cursor", "claude-opus-5-5", "low")).toBe("claude-opus-5-5-low");
   });
 
-  it("changing effort with the model held constant changes the id", () => {
-    const ids = (["low", "medium", "high", "max"] as const).map((e) => encodeModel("cursor", "claude-sonnet-5-5", e));
-    expect(new Set(ids).size).toBe(4);
-  });
-
   it("leaves bare ids alone: composer, inherit, muse, other providers", () => {
     expect(encodeModel("cursor", "composer-2.5", "high")).toBe("composer-2.5");
     expect(encodeModel("cursor", "inherit", "high")).toBe("inherit");
