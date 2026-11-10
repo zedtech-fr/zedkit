@@ -7,19 +7,19 @@ default_provider: cursor
 providers:
   cursor:
     decide:
-      trivial: { model: cursor-grok-4.6-xhigh, effort: medium }
-      standard: { model: cursor-grok-4.6-xhigh, effort: high }
+      trivial: { model: cursor-grok-4.6, effort: max }
+      standard: { model: cursor-grok-4.6, effort: max }
       sensitive: { model: claude-sonnet-5-5, effort: max }
       critical: { model: claude-opus-5-5-high, effort: high }
     design:
-      trivial: { model: cursor-grok-4.6-xhigh, effort: medium }
-      standard: { model: cursor-grok-4.6-xhigh, effort: high }
+      trivial: { model: cursor-grok-4.6, effort: max }
+      standard: { model: cursor-grok-4.6, effort: max }
       sensitive: { model: claude-sonnet-5-5, effort: max }
       critical: { model: claude-opus-5-5-high, effort: high }
     build:
       trivial: { model: composer-2.5, effort: medium }
       standard: { model: composer-2.5, effort: medium }
-      sensitive: { model: cursor-grok-4.6-xhigh, effort: high }
+      sensitive: { model: cursor-grok-4.6, effort: max }
       critical: { model: claude-sonnet-5-5, effort: max }
     check:
       trivial: { model: composer-2.5, effort: medium }
@@ -87,7 +87,7 @@ the cell for the call (kind x stakes) decides.
 Cursor is the parent. Each cell holds a base `model` and an `effort`; the
 printed id may still be rejected by the session's Task allowlist, which is not
 the cell. The table floor is medium; runtime `low` exists only for
-`reasoning=low` on cheap check. Sensitive Sonnet cells use `max`. Muse uses
+`reasoning=low` on cheap check. Grok and sensitive Sonnet cells use `max`; Opus keeps its listed id. Muse uses
 Ember on trivial and standard build and check, Spark elsewhere, Wonder on
 decide sensitive, and Wonder Full on decide critical, design critical, and
 check critical. Codex and Claude stay on shipped defaults.
