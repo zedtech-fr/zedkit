@@ -339,8 +339,9 @@ if (galleryFile && existsSync(homeInstallSnippet)) {
   const featuredMatch = /featuredPackage: string = (.+);\n/.exec(galleryFile);
   const featuredPackage = featuredMatch ? JSON.parse(featuredMatch[1]) : null;
   const install = readFileSync(homeInstallSnippet, "utf8").trim();
-  if (featuredPackage && install !== `pnpm add ${featuredPackage}`) {
-    errors.push(`home-quickstart/snippets/install.sh must be exactly: pnpm add ${featuredPackage}`);
+  const expectedInstall = `pnpm add ${featuredPackage} @fontsource-variable/inter @fontsource-variable/space-grotesk`;
+  if (featuredPackage && install !== expectedInstall) {
+    errors.push(`home-quickstart/snippets/install.sh must be exactly: ${expectedInstall}`);
   }
 }
 const registrySitePath = join(APP, "content", "registry-site.ts");

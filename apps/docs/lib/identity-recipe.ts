@@ -13,7 +13,7 @@ export type RecipeResult =
   | { ok: false; reason: "not-json" | { path: string; message: string } };
 
 /**
- * Reads pasted recipe JSON back into tokens. Dark colours that differ from the
+ * Reads pasted recipe JSON back into tokens. Dark colors that differ from the
  * pair light would generate come back as kept, so a later light edit does not
  * rewrite them: loading what was exported changes nothing.
  */

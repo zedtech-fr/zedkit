@@ -23,11 +23,11 @@ export const homeAiSetupCopy = {
     summary: "A setup written for your repo, not a generic prompt pack.",
     items: {
       orchestration: {
-        title: "Thin orchestration",
+        title: "One agent plans. Specialists do the work.",
         body: "One coordinator frames the task, briefs specialists in parallel and reports once. It never edits files itself.",
       },
       roles: {
-        title: "Clear roles",
+        title: "The agent that writes is never the one that checks.",
         body: "Planning, reading, building and checking stay separate: an explorer reads the code, specialists do the work, a verifier checks the result.",
       },
       rules: {
@@ -35,7 +35,7 @@ export const homeAiSetupCopy = {
         body: "/setup-ai reads your code, docs and CI, then writes down the rules your product runs on, so agents stop guessing.",
       },
       skills: {
-        title: "Skills tailored to your repo",
+        title: "The workflows your repo repeats become commands.",
         body: "AGENTS.md holds the commands it ran and the facts it checked. Workflows your repo repeats become repo skills.",
       },
       checks: {

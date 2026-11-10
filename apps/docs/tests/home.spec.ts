@@ -7,10 +7,10 @@ test("home explains the product and four entry areas", async ({ page }) => {
   page.on("pageerror", (event) => errors.push(String(event)));
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("[data-home-hero-category]")).toHaveText("UI/AI kit ·");
+  await expect(page.locator("[data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(
     page.getByRole("heading", {
-      name: "Your AI agent, set up with one prompt — zedkit React UI kit, only what you need.",
+      name: "Years of production setup. One prompt.",
       level: 1,
     }),
   ).toBeVisible();
@@ -45,13 +45,13 @@ test("home hero offers get started first with catalog and demo links (#1038)", a
   await expect(heroActions.nth(2)).toHaveAttribute("href", "/catalog");
 
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
-    "This app is built from zedkit components. Watch the setup run, then click around.",
+    "Installs in 2 seconds. Then the agent interviews your repo once: 15 to 45 minutes.",
   );
   // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
-  await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("UI/AI kit ·");
+  await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Your AI agent, set up with one prompt — zedkit React UI kit, only what you need.",
+      name: "Years of production setup. One prompt.",
       level: 1,
     }),
   ).toBeVisible();

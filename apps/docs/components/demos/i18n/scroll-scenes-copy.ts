@@ -77,7 +77,7 @@ export const scrollScenesCopy = {
         id: "tide",
         step: "Look 3 of 3",
         title: "Tide",
-        body: "Warm colour and a bit more space. Same screen, a different shop.",
+        body: "Warm color and a bit more space. Same screen, a different shop.",
         badge: "Warm",
       },
     ],

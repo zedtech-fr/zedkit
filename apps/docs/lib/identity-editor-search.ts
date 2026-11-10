@@ -60,7 +60,7 @@ function parseDarkKept(raw: string | null): string[] {
   return keys;
 }
 
-/** Dark colours that differ from the pair generated from light: the ones an edit of light must not rewrite. */
+/** Dark colors that differ from the pair generated from light: the ones an edit of light must not rewrite. */
 function inferKeptDark(tokens: IdentityTokens): string[] {
   const generated = withIdentityDarkPair(tokens).dark;
   return LIGHT_KEYS.filter((key) => tokens.dark[key] !== generated[key]);

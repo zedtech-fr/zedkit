@@ -322,16 +322,20 @@ function importSnippet(adoption) {
     .join("\n");
 }
 
+/** Fonts the Glass identity needs; the site self-hosts them in `apps/docs/app/fonts.ts`. */
+const GLASS_FONTS = ["@fontsource-variable/inter", "@fontsource-variable/space-grotesk"];
+
 /** @returns {Mode} */
 function packageMode({ need, packageName, example }) {
   const adoption = need.adoption;
   const isUi = packageName === UI_PACKAGE;
   const extra = examplePackages(splitExample(example.code).imports);
+  const uiFonts = isUi ? GLASS_FONTS : [];
   /** @type {Step[]} */
   const steps = [
     {
       id: "install",
-      blocks: [command((pm) => addCommand(pm, packagesFor(packageName, adoption, extra), { dev: adoption.kind === "config" || adoption.kind === "bin" }))],
+      blocks: [command((pm) => addCommand(pm, packagesFor(packageName, adoption, [...extra, ...uiFonts]), { dev: adoption.kind === "config" || adoption.kind === "bin" }))],
     },
   ];
   if (isUi) {
@@ -344,6 +348,30 @@ function packageMode({ need, packageName, example }) {
           lang: "css",
           code: stylesheet(adoption.kind === "css" ? adoption : { imports: [`${UI_PACKAGE}/styles.css`], directives: [UI_SOURCE, UI_SOURCE_NOT_TESTS] }),
           action: "replace",
+        },
+      ],
+    });
+    steps.push({
+      id: "identity",
+      blocks: [
+        {
+          kind: "file",
+          path: "src/app/layout.tsx",
+          lang: "tsx",
+          code: `export default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang="en" data-identity="glass">\n      <body>{children}</body>\n    </html>\n  );\n}\n`,
+          action: "replace",
+        },
+      ],
+    });
+    steps.push({
+      id: "fonts",
+      blocks: [
+        {
+          kind: "file",
+          path: "src/app/fonts.ts",
+          lang: "ts",
+          code: 'import "@fontsource-variable/inter";\nimport "@fontsource-variable/space-grotesk";\n',
+          action: "create",
         },
       ],
     });

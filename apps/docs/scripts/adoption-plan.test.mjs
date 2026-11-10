@@ -41,15 +41,15 @@ function mode(built, id) {
 
 const text = (m) => allBlocks(m).map((block) => (block.kind === "file" ? block.code : Object.values(block.commands).join("\n"))).join("\n");
 
-test("Button: install package is install, load styles, import and render", () => {
+test("Button: install package is install, load styles, pick a look, fonts, import and render", () => {
   const built = plan("Trigger actions with buttons");
   const pkg = mode(built, "package");
-  assert.deepEqual(pkg.steps.map((step) => step.id), ["install", "styles", "render"]);
-  const [install, styles, render] = pkg.steps.map((step) => step.blocks);
+  assert.deepEqual(pkg.steps.map((step) => step.id), ["install", "styles", "identity", "fonts", "render"]);
+  const [install, styles, identity, fonts, render] = pkg.steps.map((step) => step.blocks);
   assert.deepEqual(install[0].commands, {
-    pnpm: "pnpm add @zedtech/zedkit-ui",
-    npm: "npm install @zedtech/zedkit-ui",
-    yarn: "yarn add @zedtech/zedkit-ui",
+    pnpm: "pnpm add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk",
+    npm: "npm install @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk",
+    yarn: "yarn add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk",
   });
   assert.equal(styles[0].path, CSS_PATH);
   assert.equal(styles[0].lang, "css");
@@ -57,6 +57,11 @@ test("Button: install package is install, load styles, import and render", () =>
     styles[0].code,
     '@import "tailwindcss";\n@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";\n',
   );
+  assert.equal(identity[0].path, "src/app/layout.tsx");
+  assert.match(identity[0].code, /data-identity="glass"/);
+  assert.equal(fonts[0].path, "src/app/fonts.ts");
+  assert.match(fonts[0].code, /@fontsource-variable\/inter/);
+  assert.match(fonts[0].code, /@fontsource-variable\/space-grotesk/);
   assert.equal(render[0].path, "src/app/page.tsx");
   assert.match(render[0].code, /^import \{ Button \} from "@zedtech\/zedkit-ui";/m);
   assert.match(render[0].code, /export default function Page\(\)/);
@@ -70,7 +75,7 @@ test("Theme: a stylesheet is a CSS import, never a JavaScript import", () => {
   assert.doesNotMatch(all, /import \{[^}]*(styles\.css|@source)/, "no CSS path inside a named JS import");
   assert.doesNotMatch(all, /from "@zedtech\/zedkit-ui\/styles\.css"/);
   const install = pkg.steps[0].blocks[0].commands;
-  assert.equal(install.pnpm, "pnpm add @zedtech/zedkit-ui next-themes");
+  assert.equal(install.pnpm, "pnpm add @zedtech/zedkit-ui next-themes @fontsource-variable/inter @fontsource-variable/space-grotesk");
   const css = pkg.steps.find((step) => step.id === "styles").blocks[0];
   assert.match(css.code, /^@import "tailwindcss";$/m);
   assert.match(css.code, /^@import "@zedtech\/zedkit-ui\/styles\.css";$/m);

@@ -29,7 +29,7 @@ export const adoptionCopy = {
     stack: "React 19 and Tailwind CSS 4, for example a Next.js app created with the Tailwind option.",
     runtime: "Node.js 22 or newer.",
     shadcn:
-      "shadcn set up in the project: init creates components.json, the base colour tokens and the cn helper (src/lib/utils.ts).",
+      "shadcn set up in the project: init creates components.json, the base color tokens and the cn helper (src/lib/utils.ts).",
   },
   fileAction: { replace: "Replace the contents", append: "Add to the end", create: "Create the file", merge: "Merge into your file, keeping what is there" },
   companions: (count: number) => `${count} companion ${plural(count, "file", "files")}`,
@@ -51,6 +51,10 @@ export const adoptionCopy = {
           title: "Load the styles",
           note: "Tailwind does not scan node_modules, so the @source line points it at the kit's class names. The path is relative to this file.",
         };
+      case "identity":
+        return { title: 'Pick a look', note: 'Set data-identity="glass" on <html> so the finished app matches the site.' };
+      case "fonts":
+        return { title: "Load the fonts", note: "The Glass look uses Inter and Space Grotesk; these imports self-host them." };
       case "extend":
         return { title: "Extend the preset" };
       case "import":
@@ -64,8 +68,8 @@ export const adoptionCopy = {
         return { title: "Set up shadcn", note: "Skip this if components.json already exists." };
       case "namespace":
         return {
-          title: "Register the ZedKit registry",
-          note: `${brick} depends on other ZedKit bricks; this lets the CLI find them.`,
+          title: "Register the zedkit registry",
+          note: `${brick} depends on other zedkit bricks; this lets the CLI find them.`,
         };
       case "theme":
         return { title: "Add the theme tokens" };

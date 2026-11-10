@@ -2,9 +2,9 @@ import { identityContrastWarnings, parseIdentityTokens } from "@zedtech/zedkit-u
 import type { IdentityTokens } from "@zedtech/zedkit-ui";
 
 /**
- * Nudges a generated identity's colours until text and controls meet WCAG AA, in light and dark.
- * Deterministic and bounded (three passes, one nudge per failing colour per pass): this is arithmetic on
- * lightness, not another request to the model. Returns how many colours moved and how many pairs still miss
+ * Nudges a generated identity's colors until text and controls meet WCAG AA, in light and dark.
+ * Deterministic and bounded (three passes, one nudge per failing color per pass): this is arithmetic on
+ * lightness, not another request to the model. Returns how many colors moved and how many pairs still miss
  * the target (`remaining`), so the page never claims success it did not reach.
  */
 export function repairContrast(tokens: IdentityTokens): { tokens: IdentityTokens; adjusted: number; remaining: number } {

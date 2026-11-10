@@ -3,12 +3,12 @@ export const identityEditorCopy = {
   export: {
     contrastTitle: "Contrast below WCAG AA",
     contrastDescription:
-      "Some text or control colours fail 4.5:1 (or 3:1 for accents and borders). Exporting them can make copy unreadable. Fix the warnings above, or export anyway if you accept the risk.",
+      "Some text or control colors fail 4.5:1 (or 3:1 for accents and borders). Exporting them can make copy unreadable. Fix the warnings above, or export anyway if you accept the risk.",
     confirmLabel: "Export anyway",
     blocked: "Copy is blocked until you fix contrast warnings or confirm export.",
     scopeTitle: "What this exports",
     scope:
-      "A recipe, not a complete look: shape and spacing, type rhythm, shadows, two font stacks, and seven colours for light and for dark. Cards, menus, sidebars and muted surfaces take the page colour, and every corner uses one radius. Motion, button personality, glass layers and page texture are not included.",
+      "A recipe, not a complete look: shape and spacing, type rhythm, shadows, two font stacks, and seven colors for light and for dark. Cards, menus, sidebars and muted surfaces take the page color, and every corner uses one radius. Motion, button personality, glass layers and page texture are not included.",
     importTitle: "Load a recipe",
     importLabel: "Pasted recipe",
     importHint: "Paste JSON copied from this editor. Loading replaces the draft; Undo brings it back.",
@@ -58,7 +58,7 @@ export const identityEditorCopy = {
       shape: "Shape and spacing",
       type: "Type rhythm",
       depth: "Depth",
-      colour: (scheme: "light" | "dark") => `Colour (${scheme})`,
+      color: (scheme: "light" | "dark") => `Color (${scheme})`,
     },
     draft: {
       status: "Active",
@@ -76,7 +76,7 @@ export const identityEditorCopy = {
       alertBody: "Add a payment method to keep the workspace.",
     },
     draftTitle: "Draft look",
-    draftBody: "Spacing, type and colour follow the fields.",
+    draftBody: "Spacing, type and color follow the fields.",
     specimenNote: "Preview only: the buttons and fields here are samples.",
     specimenLabel: "Draft preview",
     draftSave: "Save",

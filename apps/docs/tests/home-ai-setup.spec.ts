@@ -31,15 +31,17 @@ test.describe("home AI setup section", () => {
 
     const terminal = aiSetup.getByRole("region", { name: "Files the AI setup creates" });
     await expect(terminal).toContainText("npx @zedtech/zedkit-ai setup --provider cursor");
-    await expect(terminal).toContainText("skills/");
-    await expect(terminal).toContainText("AGENTS.md");
+    await expect(aiSetup.locator("[data-home-ai-counters]")).toBeVisible();
+    await expect(aiSetup.locator("[data-home-ai-counters]")).toContainText("skills");
+    await expect(aiSetup.locator("[data-home-ai-counters]")).toContainText("agents");
+    await expect(aiSetup.locator("[data-home-ai-counters]")).toContainText("files");
 
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 
     await expect(aiSetup.getByRole("link", { name: "Read the AI setup guide" })).toHaveAttribute("href", "/docs/ai/setup");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Your AI agent, set up with one prompt");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Years of production setup. One prompt.");
   });
 
   test("the guide route exists", async ({ page }) => {
@@ -65,7 +67,7 @@ test.describe("home AI setup section", () => {
         return match && style.textDecorationLine === "underline" && !host?.className.includes("decoration-primary/");
       }),
     ).toBe(true);
-    await expect(page.getByText("Give your coding agent one prompt to set up ZedKit AI in your project.")).toBeVisible();
+    await expect(page.getByText("Give your coding agent one prompt to set up zedkit AI in your project.")).toBeVisible();
     await expect(page.locator("[data-slot='text'] p")).toHaveCount(0);
   });
 
@@ -105,14 +107,14 @@ test.describe("home AI setup section", () => {
     expect(tree!.x).toBeGreaterThan(prompt!.x + prompt!.width);
   });
 
-  test("no skill or subagent counters; the benefits name what the setup does", async ({ page }) => {
+  test("manifest counters and plain words: the benefits name what the setup does", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    const text = await page.locator("#ai-setup").innerText();
-    expect(text).not.toMatch(/\b\d+\s+(skills?|subagents?|agents?|commands?)\b/i);
-    for (const title of ["Thin orchestration", "Clear roles", "Business rules from your code", "Skills tailored to your repo"]) {
+    await expect(page.locator("[data-home-ai-counters]")).toBeVisible();
+    for (const title of ["One agent plans. Specialists do the work.", "The agent that writes is never the one that checks.", "The workflows your repo repeats become commands."]) {
       await expect(page.locator("#ai-setup").getByRole("heading", { level: 4, name: title })).toBeVisible();
     }
+    await expect(page.locator("#ai-setup")).not.toContainText("Thin orchestration");
   });
 
   test("the shorter column stays in view while the longer one scrolls (StickyAside)", async ({ page }) => {

@@ -28,11 +28,28 @@ See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for registry vs npm trade-of
 
 ## Quickstart
 
-Pick one path below (A through E, plus B′ for copied UI). Path A ends with `validate` in the terminal; paths B and B′ with a visible **Save** button; paths C–E with the linked catalog or tutorial page.
+Pick one path below. Coding agents ends with `validate` in the terminal; UI button paths with a visible **Save** button; backend and API paths with the linked catalog or tutorial page.
 
 <a id="ui-button" />
 
-### Path B — UI button (npm package)
+### Coding agents — about two minutes
+
+In your repo root:
+
+```sh
+{{snippet:ai-add.sh}}
+{{snippet:ai-init.sh}}
+```
+
+Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts). Then:
+
+```sh
+{{snippet:ai-validate.sh}}
+```
+
+**First result:** the validate command prints an `ok` line naming its structural-only scope. If it does not, see [Troubleshooting](#troubleshooting).
+
+### UI button (npm package)
 
 In a React 19 + Tailwind v4 app. `@source` is relative to the CSS file: `../node_modules/…` from `app/globals.css` or Vite `src/index.css`, and `../../node_modules/…` from Next.js `src/app/globals.css`. The snippet includes both.
 
@@ -40,10 +57,33 @@ In a React 19 + Tailwind v4 app. `@source` is relative to the CSS file: `../node
 {{snippet:ui-add.sh}}
 ```
 
+```sh
+pnpm add @fontsource-variable/inter @fontsource-variable/space-grotesk
+```
+
 Wire Tailwind and kit CSS in `src/index.css`:
 
 ```css title="src/index.css"
 {{snippet:npm-globals.css}}
+```
+
+Load the fonts in `src/app/fonts.ts` (self-hosted, same as the site):
+
+```ts title="src/app/fonts.ts"
+import "@fontsource-variable/inter";
+import "@fontsource-variable/space-grotesk";
+```
+
+Pick a look in `src/app/layout.tsx` so the finished app matches the site:
+
+```tsx title="src/app/layout.tsx"
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" data-identity="glass">
+      <body>{children}</body>
+    </html>
+  );
+}
 ```
 
 Render a button from the package:
@@ -54,7 +94,7 @@ Render a button from the package:
 
 **First result:** a styled **Save** button in your running app. Open [Button](/docs/ui/trigger-actions-with-buttons) for variants, registry install, and the live preview.
 
-### Path B′ — UI button (shadcn registry)
+### UI button (shadcn registry)
 
 Initialize shadcn with the Radix preset (`npx shadcn@latest init -y --base radix --preset nova`), then add theme tokens and the button brick — no `@zedtech/zedkit-ui` dependency:
 
@@ -75,24 +115,7 @@ Import the copied component:
 {{snippet:ui-button-usage.tsx}}
 ```
 
-### Path A — coding agents (about two minutes)
-
-In your repo root:
-
-```sh
-{{snippet:ai-add.sh}}
-{{snippet:ai-init.sh}}
-```
-
-Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts). Then:
-
-```sh
-{{snippet:ai-validate.sh}}
-```
-
-**First result:** the validate command prints an `ok` line naming its structural-only scope. If it does not, see [Troubleshooting](#troubleshooting).
-
-### Path C — core helpers (npm only)
+### Core helpers (npm only)
 
 In any TypeScript project:
 
@@ -102,7 +125,7 @@ In any TypeScript project:
 
 **First result:** model errors with Result and tryCatch instead of raw try/catch — follow [Model success or failure without throwing](/docs/core/model-success-or-failure-without-throwing).
 
-### Path D — server helpers (npm only)
+### Server helpers (npm only)
 
 On a Node server or worker:
 
@@ -112,7 +135,7 @@ On a Node server or worker:
 
 **First result:** parse env at boot with loadEnv — see [Fail fast on bad environment variables](/docs/server/fail-fast-on-bad-environment-variables).
 
-### Path E — Nest API (npm only)
+### Nest API (npm only)
 
 For a NestJS service, install the factory package first (peer deps in the tutorial):
 
@@ -144,10 +167,10 @@ kit wraps, registry install vs npm, and when to stay on upstream shadcn.
 
 | Area | Packages | Typical first page |
 | --- | --- | --- |
-| <DocsAreaLabel area="ui" /> | `@zedtech/zedkit-ui` | [Quickstart paths B–B′](#quickstart) |
-| <DocsAreaLabel area="backend" /> | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Quickstart paths C–E](#quickstart) |
+| <DocsAreaLabel area="ui" /> | `@zedtech/zedkit-ui` | [Quickstart UI button](#quickstart) |
+| <DocsAreaLabel area="backend" /> | `@zedtech/zedkit-core`, `@zedtech/zedkit-server`, `@zedtech/zedkit-nest` | [Quickstart backend](#quickstart) |
 | <DocsAreaLabel area="seo" /> | `@zedtech/zedkit-seo`, `@zedtech/zedkit-payload-seo` | [SEO scenario](#seo-scenario) |
-| <DocsAreaLabel area="agents" /> | `@zedtech/zedkit-ai` | [Quickstart path A](#quickstart) |
+| <DocsAreaLabel area="agents" /> | `@zedtech/zedkit-ai` | [Quickstart coding agents](#quickstart) |
 
 Install only the packages you need. The docs index groups every catalog entry under these folders.
 
@@ -161,7 +184,7 @@ Install only the packages you need. The docs index groups every catalog entry un
 
 You add an internal admin to an existing React 19 app with Tailwind v4 and need consistent tokens before you ship screens.
 
-1. Run Path B or B′ and wire CSS so buttons are not unstyled (Path B: kit CSS; Path B′: theme registry item).
+1. Run UI button and wire CSS so buttons are not unstyled (npm: kit CSS; registry: theme registry item).
 2. Install the npm package when you want the full kit; copy single bricks from the registry when you must edit source — [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) compares both paths.
 3. For sidebar, tables, and forms together, follow [Build an admin dashboard](/docs/build-an-admin-dashboard).
 
@@ -169,8 +192,8 @@ You add an internal admin to an existing React 19 app with Tailwind v4 and need 
 
 You ship a Node worker or API and want env validation before you handle traffic.
 
-1. Run Path D and wire loadEnv from the server catalog page linked in that section.
-2. For NestJS, run Path E and follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api) (peer deps listed there).
+1. Run Server helpers and wire loadEnv from the server catalog page linked in that section.
+2. For NestJS, run Nest API and follow [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api) (peer deps listed there).
 
 <span id="seo-scenario" />
 
@@ -185,7 +208,7 @@ You ship a Next.js site or content app and want sitemap, metadata, and structure
 
 You inherit a monorepo with no agent instructions. You only need consistent skills for Cursor today.
 
-1. Run Path A with `--provider cursor`.
+1. Run Coding agents with `--provider cursor`.
 2. Open the [AI setup catalog page](/docs/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo) and run validate from the install tabs if you prefer copy from there.
 3. Commit the files `init` created; re-run validate after you edit skills.
 
@@ -198,7 +221,7 @@ Next, add UI only when you start an admin screen — install `@zedtech/zedkit-ui
 | `validate` fails after `init` | Run from the repo root; ensure `kit/` or `.agents/` copied; see [Check that skills, subagents, commands and provider copies are valid](/docs/ai/check-that-skills-subagents-commands-and-provider-copies-are-valid). |
 | `init` refuses to overwrite | By design — remove or rename the conflicting file, or use `--dry-run` to preview. |
 | UI components look unstyled | Theme doc not applied: Tailwind v4, kit CSS, and `.dark` on `html` when using dark mode. |
-| Boot fails on bad process.env | Standalone Node: [Path D](/docs/getting-started#quickstart) + [Fail fast on bad environment variables](/docs/server/fail-fast-on-bad-environment-variables). Nest: [Path E](/docs/getting-started#quickstart) + [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api). |
+| Boot fails on bad process.env | Standalone Node: [Server helpers](/docs/getting-started#quickstart) + [Fail fast on bad environment variables](/docs/server/fail-fast-on-bad-environment-variables). Nest: [Nest API](/docs/getting-started#quickstart) + [Start a safe NestJS API](/docs/nest/start-a-safe-nestjs-api). |
 | Wrong package for the job | Search [the catalog index](https://zedkit.app/docs) by need; each page states **Avoid when**. |
 
 ## Next steps

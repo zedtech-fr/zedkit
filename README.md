@@ -25,7 +25,7 @@ one prompt away, with the server, SEO and quality packages behind them. Open sou
 ## What you get
 
 **🎨 A UI kit with taste built in** — React 19 + Tailwind 4 components driven by
-tokens. Pick an *identity* (type, shape, density, colour together) and the same
+tokens. Pick an *identity* (type, shape, density, color together) and the same
 components read as a newsroom, an invoicing tool, a boutique or a SaaS app.
 Install from npm or copy the source through the shadcn registry.
 
@@ -60,6 +60,29 @@ pnpm add @zedtech/zedkit-ui
 import { Button } from "@zedtech/zedkit-ui";
 
 export default () => <Button>Ship it</Button>;
+```
+
+Pick a look, then fonts (so the finished app matches the site):
+
+```sh
+pnpm add @fontsource-variable/inter @fontsource-variable/space-grotesk
+```
+
+```tsx
+// src/app/fonts.ts
+import "@fontsource-variable/inter";
+import "@fontsource-variable/space-grotesk";
+```
+
+```tsx
+// src/app/layout.tsx
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" data-identity="glass">
+      <body>{children}</body>
+    </html>
+  );
+}
 ```
 
 Styles and setup: [getting started](https://zedkit.app/docs/getting-started#install-or-copy).

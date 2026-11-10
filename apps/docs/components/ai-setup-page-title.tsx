@@ -11,7 +11,7 @@ export const AI_SETUP_PAGE_H1_LABEL = "Set up zedkit AI in Cursor, Muse, Claude,
 const ROTATE_MS = 2800;
 const ROLL_DWELL_MS = 300;
 
-const LEAD = "Give your coding agent one prompt to set up ZedKit AI in your project.";
+const LEAD = "Give your coding agent one prompt to set up zedkit AI in your project.";
 
 /** Accent the rolling word only; inherit Heading weight/size — no type size on the slot. */
 const ROLL_ACCENT =
