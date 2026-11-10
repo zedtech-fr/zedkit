@@ -11,6 +11,7 @@ Route model choice through the kind × stakes cell in `.agents/tokenomics.md`.
 | I-01 | current | Public wording only: say "an upstream consumer", never a private project name. | `AGENTS.md:11` | `scripts/check-no-private-refs.sh:1` |
 | I-02 | current | Neutral, professional tone; no self-promotional marketing terms. | `apps/docs/AGENTS.md:5` | `scripts/check-tone.sh:2` |
 | I-03 | current | Kit chrome strings come from `ZedkitUiProvider` with English default. | `packages/ui/AGENTS.md:34` | lint + vitest per package |
+<!-- Identity-table bare refs (I-01 to I-03) predate the Reference-durability rule; deferred, outside the token-pin verification commit below. -->
 
 ## Signature
 
@@ -21,10 +22,10 @@ Colour roles and font families below copy exact CSS variable names and values fr
 
 | Role | Token | Value | Source |
 |------|-------|-------|--------|
-| action | `--primary` | `243 70% 46%` | `packages/ui/src/identities/glass.css:31` |
-| accent | `--accent` | `262 85% 70%` | `packages/ui/src/identities/glass.css:37` |
-| page | `--background` | `220 60% 97%` | `packages/ui/src/identities/glass.css:25` |
-| text | `--foreground` | `224 45% 12%` | `packages/ui/src/identities/glass.css:26` |
+| action | `--primary` | `243 70% 46%` | `packages/ui/src/identities/glass.css:34` |
+| accent | `--accent` | `262 85% 70%` | `packages/ui/src/identities/glass.css:40` |
+| page | `--background` | `220 60% 97%` | `packages/ui/src/identities/glass.css:28` |
+| text | `--foreground` | `224 45% 12%` | `packages/ui/src/identities/glass.css:29` |
 | stock action | `--primary` | `240 5.9% 10%` | `packages/ui/src/styles.css:44` |
 | stock accent | `--accent` | `240 4.8% 59.9%` | `packages/ui/src/styles.css:50` |
 
@@ -32,12 +33,14 @@ Colour roles and font families below copy exact CSS variable names and values fr
 
 | Role | Token | Value | Source |
 |------|-------|-------|--------|
-| body font | `--zk-font-sans` | `"Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif` | `packages/ui/src/identities/glass.css:56` |
-| display font | `--zk-font-display` | `"Space Grotesk Variable", "Space Grotesk", "Space Grotesk Variable Fallback", "Inter Variable", "Inter Variable Fallback", ui-sans-serif, system-ui, sans-serif` | `packages/ui/src/identities/glass.css:57` |
-| mono font | `--zk-font-mono` | `"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace` | `packages/ui/src/identities/glass.css:58` |
+| body font | `--zk-font-sans` | `"Inter Variable", Inter, "Inter Variable Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif` | `packages/ui/src/identities/glass.css:59` |
+| display font | `--zk-font-display` | `"Space Grotesk Variable", "Space Grotesk", "Space Grotesk Variable Fallback", "Inter Variable", "Inter Variable Fallback", ui-sans-serif, system-ui, sans-serif` | `packages/ui/src/identities/glass.css:60` |
+| mono font | `--zk-font-mono` | `"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace` | `packages/ui/src/identities/glass.css:61` |
 | stock body font | `--zk-font-sans` | `ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif` | `packages/ui/src/identities.css:35` |
 | stock mono font | `--zk-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Consolas, monospace` | `packages/ui/src/identities.css:37` |
 
-Accent: `--accent` (`262 85% 70%`) is the accent role, distinct from the `--primary` action role (`packages/ui/src/identities/glass.css:37`).
+Token pins verified against `1d8da98`. Line numbers drift — write new pins as anchors (`path#symbol/section#excerpt`) per [Atlas](atlas.md); a bare line keeps its verification commit. Missing, changed, or ambiguous pins are reported, never silently passed.
+
+Accent: `--accent` (`262 85% 70%`) is the accent role, distinct from the `--primary` action role (`packages/ui/src/identities/glass.css:40`).
 
 Class names are roles. Phone touch targets are 44px, stricter than the kit floor of 24px (`apps/docs/VISUAL-CONTRACT.md`). Durations are the signature's, not the kit fallback.

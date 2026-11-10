@@ -33,7 +33,8 @@ export const AI_SETUP_KIT = {
     "to-audit",
     "fix",
     "improve-from-review",
-    "quick-wins"
+    "quick-wins",
+    "handoff"
   ],
   "agents": [
     "explorer",
@@ -191,7 +192,11 @@ export const AI_SETUP_KIT = {
       "kind": "dir"
     },
     {
-      "text": "│  │  └─ quick-wins/",
+      "text": "│  │  ├─ quick-wins/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  └─ handoff/",
       "kind": "dir"
     },
     {

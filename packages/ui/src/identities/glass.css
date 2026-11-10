@@ -199,7 +199,8 @@
   --sidebar-foreground: 220 40% 94%;
   --sidebar-border: 230 25% 20%;
   --sidebar-accent: 255 40% 22%;
-  --zk-glass-alpha: 0.5;
+  /* Dark card fill over an unknown (often light) backdrop: the alpha floor keeps card text at AA on the composited fill. */
+  --zk-glass-alpha: 0.7;
   --zk-glass-brightness: 1.08;
   --zk-glass-sheen: linear-gradient(135deg, hsl(0 0% 100% / 0.14) 0%, hsl(0 0% 100% / 0.03) 40%, hsl(0 0% 100% / 0) 62%, hsl(0 0% 100% / 0.06) 100%);
   --zk-glass-overlay-alpha: 0.66;

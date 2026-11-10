@@ -329,7 +329,9 @@ describe("validate --setup depth", () => {
       ".agents/atlas.md",
       `# Atlas\n\n## Where\n\n| Topic | Entry | Trap | Checked |\n| --- | --- | --- | --- |\n${row("Refunds", "src/refund.ts")}${row("Root rules", "AGENTS.md")}${row("Nested rules", "src/AGENTS.md")}`,
     );
-    expect(run("validate", root, "--setup")).toEqual({ code: 0, text: "not a git repository; skipped change coverage\nok" });
+    const setup = run("validate", root, "--setup");
+    expect(setup.code).toBe(0);
+    expect(setup.text).toMatch(/^not a git repository; skipped change coverage\nok — structural kit checks only \(skills, agents, commands, wiring, tokenomics, atlas paths, setup-log shape, plan coverage, depth\);/u);
   });
 });
 

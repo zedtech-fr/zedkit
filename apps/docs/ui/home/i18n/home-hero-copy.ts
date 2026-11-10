@@ -98,7 +98,7 @@ export const homeHeroCopy = {
         "Due dates are read as UTC midnight, so they never shift with the time zone.",
         "The daily digest is one mail each morning.",
       ],
-      validateOk: "ok",
+      validateOk: "ok — structural kit checks only (…)…",
       finished: "Setup written to AGENTS.md and .agents/",
     },
     /** Floating cards around the window. Decorative, so they restate what the window already shows. */

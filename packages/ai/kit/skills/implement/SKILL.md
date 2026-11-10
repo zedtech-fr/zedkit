@@ -4,7 +4,7 @@ description: "Implement a piece of work based on a spec or set of tickets."
 disable-model-invocation: true
 ---
 
-Implement the work described by the user in the spec or tickets.
+Implement the work described by the user in the spec or tickets. Read the saved plan first and keep its checklist current — continuity per handoff's Durable deliverables section; amend the artifact, don't fork it.
 
 Unless this brief already contains `Playbook: implement` or `Mode: inline fallback`,
 hand the user's text to `orchestrate` with `Playbook: implement` and stop.
@@ -31,7 +31,7 @@ choices. Do not edit UI until that brief exists.
 
 Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
-Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it.
+Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it. When shortening a check's output with a pipe, preserve its exit status (`set -o pipefail` under bash, or run the check through the `gate` wrapper and inspect its captured log): a passing pipeline must never mask a failing check — piping inside the gate does not itself preserve the status.
 
 Then pass `definition-of-done`, and call the Skill tool with "review" to review the work (`Playbook: review`). Without a Skill tool, open that skill's `SKILL.md` under `.agents/skills/` and follow its steps in this conversation (same for repo-added skills; explicit-only skills still need an explicit user call).
 

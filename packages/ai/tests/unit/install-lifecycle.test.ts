@@ -1,11 +1,12 @@
 // Original work by the same author.
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { resolveConditionals } from "#conditional.js";
 import { installKit } from "#install.js";
 import { agentsForPreset, commandsForPreset, kitDir, kitUniverse, readManifest } from "#kit.js";
+import { MANIFEST_NAME } from "#installed-manifest.js";
 import { readLegacyHashFile, shortHash } from "#legacy.js";
 import { validateKit } from "#validate.js";
 import { put, SKILL, tempDir } from "./helpers.js";
@@ -162,6 +163,101 @@ describe("install lifecycle: reruns and upgrades converge", () => {
 
     expect(readdirSync(join(dest, ".agents", "skills")).filter((s) => s.startsWith("zk-"))).toEqual([]);
     expect(existsSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"))).toBe(true);
+  });
+
+  /** Every installed byte plus every symlink target: a rerun must reproduce it exactly. */
+  function snapshot(dest: string): string[] {
+    const found: string[] = [];
+    const walk = (dir: string, base: string): void => {
+      for (const entry of readdirSync(join(dest, dir), { withFileTypes: true })) {
+        const rel = base === "" ? entry.name : `${base}/${entry.name}`;
+        const full = join(dest, dir, entry.name);
+        if (entry.isSymbolicLink()) found.push(`${rel}\0link:${readlinkSync(full)}`);
+        else if (entry.isDirectory()) walk(join(dir, entry.name), rel);
+        else if (entry.isFile()) found.push(`${rel}\0file:${readFileSync(full).toString("hex")}`);
+      }
+    };
+    walk("", "");
+    return found.sort();
+  }
+
+  /** Adopt the published 1.0.0 skill tree with the current setup. */
+  function adopt100(dest: string): void {
+    installFixture100(dest);
+    setup(dest, ["cursor"]);
+  }
+
+  /** Modification times of everything but the install's own record, which a rerun refreshes. */
+  function mtimes(root: string): string[] {
+    const out: string[] = [];
+    const walk = (dir: string, base: string): void => {
+      for (const entry of readdirSync(join(root, dir), { withFileTypes: true })) {
+        const rel = base === "" ? entry.name : `${base}/${entry.name}`;
+        if (entry.isDirectory() && !entry.isSymbolicLink()) walk(join(dir, entry.name), rel);
+        else out.push(`${rel} ${lstatSync(join(root, dir, entry.name)).mtimeMs}`);
+      }
+    };
+    walk("", "");
+    return out.sort().filter((line) => !line.startsWith(`.agents/${MANIFEST_NAME} `));
+  }
+
+  it("a second pass over a 1.0.0 adoption changes no file but its own record", () => {
+    const dest = tempDir();
+    adopt100(dest);
+    const before = snapshot(dest);
+    const mtimesBefore = mtimes(dest);
+
+    setup(dest, ["cursor"]);
+
+    expect(snapshot(dest)).toEqual(before);
+    expect(mtimes(dest)).toEqual(mtimesBefore);
+  });
+
+  it("user-owned files stay byte-identical across adoption and rerun", () => {
+    const dest = tempDir();
+    installFixture100(dest);
+    put(dest, ".agents/skills/team-own/SKILL.md", `${SKILL("team-own")}\nOur notes.\n`);
+    put(dest, ".cursor/agents/my-agent.md", "---\nname: my-agent\n---\n\nOurs.\n");
+    const userSkill = readFileSync(join(dest, ".agents", "skills", "team-own", "SKILL.md"), "utf8");
+    const userAgent = readFileSync(join(dest, ".cursor", "agents", "my-agent.md"), "utf8");
+
+    setup(dest, ["cursor"]);
+    setup(dest, ["cursor"]);
+
+    expect(readFileSync(join(dest, ".agents", "skills", "team-own", "SKILL.md"), "utf8")).toBe(userSkill);
+    expect(readFileSync(join(dest, ".cursor", "agents", "my-agent.md"), "utf8")).toBe(userAgent);
+  });
+
+  it("files intact since 1.0.0 converge to current kit bytes", () => {
+    const dest = tempDir();
+    adopt100(dest);
+    const kitBytes = readFileSync(join(kitDir(), "skills", "domain-modeling", "SKILL.md"), "utf8");
+
+    expect(readFileSync(join(dest, ".agents", "skills", "domain-modeling", "SKILL.md"), "utf8")).toBe(kitBytes);
+  });
+
+  it("every installed link resolves after a 1.0.0 adoption", () => {
+    const dest = tempDir();
+    adopt100(dest);
+
+    const dangling: string[] = [];
+    let links = 0;
+    const walk = (dir: string, base: string): void => {
+      for (const entry of readdirSync(join(dest, dir), { withFileTypes: true })) {
+        const rel = base === "" ? entry.name : `${base}/${entry.name}`;
+        const full = join(dest, dir, entry.name);
+        if (entry.isSymbolicLink()) {
+          links++;
+          if (!existsSync(full)) dangling.push(`${rel} -> ${readlinkSync(full)}`);
+        }
+        if (entry.isDirectory() && !lstatSync(full).isSymbolicLink()) walk(join(dir, entry.name), rel);
+      }
+    };
+    walk("", "");
+
+    expect(links).toBeGreaterThan(0);
+    expect(dangling).toEqual([]);
+    expect(validateKit(join(dest, ".agents"))).toEqual([]);
   });
 
   it("references stay valid after a published-version upgrade (P2.4)", () => {
