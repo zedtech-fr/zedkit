@@ -3,7 +3,7 @@ export const brandLogoCopy = {
   navAriaLabel: "Site",
   work: "Work",
   about: "About",
-  sizesHint: "Same mark, four sizes and three text colours. It inherits the colour from the text around it.",
+  sizesHint: "Same mark, four sizes and three text colors. It inherits the color from the text around it.",
   logoTitle: "Harbor Studio",
   copyright: "© 2026 Harbor Studio. All rights reserved.",
   sharePreviewAriaLabel: "Share image preview: Harbor Studio, product design for small teams",

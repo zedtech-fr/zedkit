@@ -28,6 +28,7 @@ export const FEATURED_EXAMPLE = { title: "Save button", code: 'import { Button }
 
 export const CSS_PATH = "src/app/globals.css";
 export const PAGE_PATH = "src/app/page.tsx";
+export const LAYOUT_PATH = "src/app/layout.tsx";
 const UI_DIR = "src/components/ui";
 const UI_PACKAGE = "@zedtech/zedkit-ui";
 /** Registry items the shadcn CLI provides itself; `init` creates them. */
@@ -322,18 +323,50 @@ function importSnippet(adoption) {
     .join("\n");
 }
 
+/** Fonts the Glass identity needs; the site self-hosts them in `apps/docs/app/fonts.ts`. */
+export const GLASS_FONTS = ["@fontsource-variable/inter", "@fontsource-variable/space-grotesk"];
+
+/** Next.js root layout the package path writes. `globals.css` is how Next loads the styles step; `./fonts` loads the font packages. */
+export const GLASS_LAYOUT = `import "./globals.css";
+import "./fonts";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" data-identity="glass">
+      <body>{children}</body>
+    </html>
+  );
+}
+`;
+
+/** Keep ThemeProvider (and other providers) while adding the Glass look. */
+function withGlassIdentity(code) {
+  let next = code;
+  if (!/^import "\.\/fonts";$/m.test(next)) {
+    next = /^import "\.\/globals\.css";$/m.test(next)
+      ? next.replace(/^import "\.\/globals\.css";$/m, 'import "./globals.css";\nimport "./fonts";')
+      : `import "./fonts";\n${next}`;
+  }
+  if (!/\bdata-identity="glass"/.test(next)) {
+    next = next.replace(/<html\b([^>]*)>/, `<html$1 data-identity="glass">`);
+  }
+  return next;
+}
+
 /** @returns {Mode} */
 function packageMode({ need, packageName, example }) {
   const adoption = need.adoption;
   const isUi = packageName === UI_PACKAGE;
   const extra = examplePackages(splitExample(example.code).imports);
+  const uiFonts = isUi ? GLASS_FONTS : [];
   /** @type {Step[]} */
   const steps = [
     {
       id: "install",
-      blocks: [command((pm) => addCommand(pm, packagesFor(packageName, adoption, extra), { dev: adoption.kind === "config" || adoption.kind === "bin" }))],
+      blocks: [command((pm) => addCommand(pm, packagesFor(packageName, adoption, [...extra, ...uiFonts]), { dev: adoption.kind === "config" || adoption.kind === "bin" }))],
     },
   ];
+  const layoutIsExample = need.exampleFile === LAYOUT_PATH;
   if (isUi) {
     steps.push({
       id: "styles",
@@ -347,6 +380,32 @@ function packageMode({ need, packageName, example }) {
         },
       ],
     });
+    if (!layoutIsExample) {
+      steps.push({
+        id: "identity",
+        blocks: [
+          {
+            kind: "file",
+            path: LAYOUT_PATH,
+            lang: "tsx",
+            code: GLASS_LAYOUT,
+            action: "replace",
+          },
+        ],
+      });
+    }
+    steps.push({
+      id: "fonts",
+      blocks: [
+        {
+          kind: "file",
+          path: "src/app/fonts.ts",
+          lang: "ts",
+          code: `${GLASS_FONTS.map((name) => `import "${name}";`).join("\n")}\n`,
+          action: "create",
+        },
+      ],
+    });
   }
   if (adoption.kind === "config") {
     steps.push({
@@ -354,9 +413,11 @@ function packageMode({ need, packageName, example }) {
       blocks: [{ kind: "file", path: "tsconfig.json", lang: "json", code: `${JSON.stringify({ extends: adoption.extends }, null, 2)}\n`, action: "merge" }],
     });
   } else if (isUi) {
+    const block = exampleBlock({ ...example, path: need.exampleFile }, null);
+    if (layoutIsExample && block.kind === "file") block.code = withGlassIdentity(block.code);
     steps.push({
       id: "render",
-      blocks: [exampleBlock({ ...example, path: need.exampleFile }, null)],
+      blocks: [block],
     });
   } else if (adoption.kind === "js") {
     steps.push({ id: "import", blocks: [{ kind: "snippet", lang: "ts", code: `${importSnippet(adoption)}\n` }] });

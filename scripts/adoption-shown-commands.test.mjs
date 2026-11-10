@@ -44,7 +44,10 @@ test("installCommandKey treats npx and pnpm dlx shadcn as the same add", () => {
 test("getting-started shows the UI, registry, core, server, nest and ai installs", () => {
   const shown = shownInstallCommands(ROOT);
   const keys = shown.map(installCommandKey);
-  assert.ok(keys.includes("add @zedtech/zedkit-ui"), shown.join("\n"));
+  assert.ok(
+    keys.includes("add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk"),
+    shown.join("\n"),
+  );
   assert.ok(keys.includes("add @zedtech/zedkit-core"), shown.join("\n"));
   assert.ok(keys.includes("add @zedtech/zedkit-server"), shown.join("\n"));
   assert.ok(keys.includes("add @zedtech/zedkit-nest"), shown.join("\n"));

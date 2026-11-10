@@ -311,14 +311,18 @@ test("install or copy blocks copy their own text and say where it goes", async (
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   const adoption = page.locator("#install-or-copy");
   const blocks = adoption.locator("figure");
-  await expect(blocks).toHaveCount(3);
+  await expect(blocks).toHaveCount(5);
   await expect(blocks.nth(0).locator("figcaption")).toContainText("Terminal");
   await expect(blocks.nth(1).locator("figcaption")).toContainText("src/app/globals.css");
   await expect(blocks.nth(1).locator("figcaption")).toContainText("Replace the contents");
-  await expect(blocks.nth(2).locator("figcaption")).toContainText("src/app/page.tsx");
+  await expect(blocks.nth(2).locator("figcaption")).toContainText("src/app/layout.tsx");
+  await expect(blocks.nth(3).locator("figcaption")).toContainText("src/app/fonts.ts");
+  await expect(blocks.nth(4).locator("figcaption")).toContainText("src/app/page.tsx");
   await blocks.nth(0).getByRole("button", { name: /^Copy/ }).click();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("pnpm add @zedtech/zedkit-ui");
-  await blocks.nth(2).getByRole("button", { name: /^Copy/ }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "pnpm add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk",
+  );
+  await blocks.nth(4).getByRole("button", { name: /^Copy/ }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('from "@zedtech/zedkit-ui"');
 });
 

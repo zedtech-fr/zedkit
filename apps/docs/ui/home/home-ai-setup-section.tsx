@@ -86,39 +86,41 @@ export function HomeAiSetupSection() {
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
-        <Stack gap="md" data-setup-prompt="">
-          <SecretField
-            multiline
-            value={AI_SETUP_MINI_PROMPT}
-            aria-label={prompt.ariaLabel}
-            copyLabel={prompt.copyLabel}
-          />
-          <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
-            {prompt.hintBefore} <HomeAiSetupMono>{prompt.hintCommand}</HomeAiSetupMono>
-            {prompt.hintMiddle} <HomeAiSetupMono>{prompt.hintSlash}</HomeAiSetupMono> {prompt.hintAfter}
-          </Text>
-          <Stack direction="horizontal" className="flex-wrap" data-docs-ctas="">
-            <Button asChild variant="outline" className="w-fit">
-              <HomeLink href={AI_SETUP_DOCS_PATH}>
-                <DocsActionLabel>{homeAiSetupCopy.cta.guide}</DocsActionLabel>
-              </HomeLink>
-            </Button>
-          </Stack>
-        </Stack>
-        {/* The benefits are the shorter column, so they are the aside and stay in view while the file tree scrolls. */}
+        {/* Terminal is the shorter column: sticky on the right while the prompt and benefits scroll. */}
         <StickyAside
-          side="left"
-          mobile="before"
+          side="right"
+          mobile="after"
           gap="lg"
           data-home-ai-setup=""
         >
           <StickyAside.Main>
+            <Stack gap={HOME_SECTION_CONTENT_GAP}>
+              <Stack gap="md" data-setup-prompt="">
+                <SecretField
+                  multiline
+                  value={AI_SETUP_MINI_PROMPT}
+                  aria-label={prompt.ariaLabel}
+                  copyLabel={prompt.copyLabel}
+                />
+                <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
+                  {prompt.hintBefore} <HomeAiSetupMono>{prompt.hintCommand}</HomeAiSetupMono>
+                  {prompt.hintMiddle} <HomeAiSetupMono>{prompt.hintSlash}</HomeAiSetupMono> {prompt.hintAfter}
+                </Text>
+                <Stack direction="horizontal" className="flex-wrap" data-docs-ctas="">
+                  <Button asChild variant="outline" className="w-fit">
+                    <HomeLink href={AI_SETUP_DOCS_PATH}>
+                      <DocsActionLabel>{homeAiSetupCopy.cta.guide}</DocsActionLabel>
+                    </HomeLink>
+                  </Button>
+                </Stack>
+              </Stack>
+              <HomeAiSetupWhatYouGet />
+            </Stack>
+          </StickyAside.Main>
+          <StickyAside.Aside aria-label={homeAiSetupCopy.terminal.asideLabel}>
             <Animate on={{ appear: "fade-in" }} delay={120}>
               <HomeAiSetupTerminal />
             </Animate>
-          </StickyAside.Main>
-          <StickyAside.Aside>
-            <HomeAiSetupWhatYouGet />
           </StickyAside.Aside>
         </StickyAside>
       </Stack>

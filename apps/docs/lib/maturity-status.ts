@@ -31,7 +31,7 @@ export function maturityBadgeVariant(status: string): MaturityBadgeVariant {
   }
 }
 
-/** Alpha keeps its warning colour on the border and the icon; the label stays in the text colour (4.5:1). */
+/** Alpha keeps its warning color on the border and the icon; the label stays in the text color (4.5:1). */
 export function maturityBadgeClass(status: string): string {
   return status.toLowerCase() === "alpha" ? "border-warning [&_svg]:text-warning" : "";
 }
