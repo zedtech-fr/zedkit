@@ -119,7 +119,7 @@ Maturity criteria: [docs/catalog/README.md](docs/catalog/README.md).
 
 | Package | Version | Maturity |
 |---|---|---|
-| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 1.1.2 | beta |
+| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 1.2.0 | beta |
 | [`@zedtech/zedkit-brand`](packages/brand/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-brand)) | 0.1.1 | alpha |
 | [`@zedtech/zedkit-core`](packages/core/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-core)) | 1.0.1 | stable |
 | [`@zedtech/zedkit-devtools`](packages/devtools/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-devtools)) | 0.3.19 | beta |
