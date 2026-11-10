@@ -24,6 +24,7 @@ describe("ci hygiene job", () => {
       "scripts/check-tone.sh",
       "scripts/check-breaking-changeset.sh",
       "scripts/check-changeset-packages.sh",
+      "scripts/doc-pins.mjs",
     ]) {
       assert.ok(hygiene.includes(script), `hygiene job lost ${script}`);
     }

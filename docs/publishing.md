@@ -10,7 +10,9 @@ field). Releases run on Changesets; nothing publishes by hand.
    naming the packages and the bump). Docs/tooling-only PRs carry none.
 2. Merging to `main` triggers the `release` workflow: with pending
    changesets it opens (or updates) the **Version PR** (`chore: version
-   packages`) with bumped versions + CHANGELOGs. Review it like code.
+   packages`) with bumped versions, CHANGELOGs, and walkthrough pins
+   (`scripts/doc-pins.mjs write`). Review it like code. Do not add a
+   manual pin commit.
 3. Merging the Version PR publishes the bumped packages to npm from CI
    and consumes the changesets. No direct `npm publish`. Auth is GitHub
    OIDC, or `NODE_AUTH_TOKEN` when the `NPM_TOKEN` repo secret is set.
