@@ -27,7 +27,9 @@ the cell for the call (kind x stakes) decides.
 - Edit the `model` (a base id, no thinking suffix such as `-high`) and the
   `effort` of a cell in the frontmatter above. On Cursor, `route` encodes the
   pair into the id the tool lists (`max` prints as `xhigh`). An id that already
-  ends in a level is kept as written and its `effort` is not applied.
+  ends in a level is kept as written and its `effort` is not applied: strip
+  `-low`, `-medium`, `-high` or `-xhigh` to re-enable `effort`. Upgrade the kit
+  before writing bare cells.
 - Models are named only in the `providers` block of that frontmatter. This
   prose may explain why a model was chosen.
 - Stakes are the main lever. A bug on a payment button is `critical` even if

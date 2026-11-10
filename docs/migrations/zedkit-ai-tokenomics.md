@@ -35,4 +35,4 @@ policy and run `npx @zedtech/zedkit-ai sync`; a hand edit is overwritten.
 
 - `init --adopt` over a user file in `.cursor/commands` now writes `<name>.kit.md` as a link to the source; before, it was a copy.
 - An agent source that cannot be generated from (no frontmatter) is skipped with a `not synced` note by `init` and `validate`; `sync` stops and names it.
-- Models stay `inherit` until `tokenomics.md` names one. Check an id against your tool's model list first: an unknown id falls back to the session model without an error.
+- Models stay `inherit` until `tokenomics.md` names one. Check an id against your tool's model list first: an unknown id falls back to the session model without an error. On Cursor, write the base id without its `-<level>` suffix and set `effort`; check the id `route` prints against the list. A cell that still carries a suffix keeps it and ignores `effort`; strip the suffix to make `effort` apply. Upgrade the kit before writing bare cells: an older kit prints the bare id as is.
