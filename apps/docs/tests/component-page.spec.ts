@@ -26,7 +26,7 @@ test("confirm-dialog component page exposes catalog a11y and troubleshooting in 
   await expect(page.getByText(/role="dialog"/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Troubleshooting", level: 2 })).toBeVisible();
   await expect(page.getByText(/onConfirm` runs synchronously then closes/)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Kit not installed yet?", level: 2 })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -34,10 +34,12 @@ test("confirm-dialog preview precedes install (#R2 template)", async ({ page }) 
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(CONFIRM_DIALOG_DOC, { waitUntil: "networkidle" });
   const preview = page.locator("[data-component-preview]").first();
-  const install = page.getByRole("heading", { name: "Install or copy", level: 2 });
+  const usage = page.getByRole("heading", { name: "Use it", level: 2 });
+  const install = page.getByRole("heading", { name: "Kit not installed yet?", level: 2 });
   await preview.scrollIntoViewIfNeeded();
   await expect(preview).toBeVisible();
   expect((await preview.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
+  expect((await usage.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
 });
 
 test("button reference page shows a full button before scroll at 390 (#R2)", async ({ page }) => {
@@ -208,7 +210,8 @@ test("component page TOC lists the live sections", async ({ page }) => {
   const toc = page.locator("#nd-toc");
   await expect(toc.getByRole("link", { name: "Preview" })).toHaveAttribute("href", "#example");
   await expect(toc.getByRole("link", { name: "Guidance" })).toHaveAttribute("href", "#guidance");
-  await expect(toc.getByRole("link", { name: "Install or copy" })).toHaveAttribute("href", "#install-or-copy");
+  await expect(toc.getByRole("link", { name: "Use it" })).toHaveAttribute("href", "#usage-and-states");
+  await expect(toc.getByRole("link", { name: "Kit not installed yet?" })).toHaveAttribute("href", "#install-or-copy");
   await expect(toc.getByRole("link", { name: "Props" })).toHaveAttribute("href", "#props");
   await expect(page.getByRole("heading", { name: "At a glance" })).toHaveCount(0);
 });

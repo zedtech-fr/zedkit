@@ -41,7 +41,7 @@ test("button preview appears before install or copy (#R2)", async ({ page }) => 
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.goto(PAGE, { waitUntil: "networkidle" });
   const preview = page.locator("[data-component-preview]").first();
-  const install = page.getByRole("heading", { name: "Install or copy", level: 2 });
+  const install = page.getByRole("heading", { name: "Kit not installed yet?", level: 2 });
   expect((await preview.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
 });
 

@@ -16,11 +16,21 @@ export function componentPageSections({ hasProps, a11y, related, troubleshooting
   return [
     "example",
     "guidance",
-    "install-or-copy",
     "usage-and-states",
+    "install-or-copy",
     ...(hasProps ? ["props"] : []),
     ...(a11y ? ["accessibility"] : []),
     ...(related && related.length > 0 ? ["related"] : []),
     ...(troubleshooting ? ["troubleshooting"] : []),
   ];
+}
+
+/**
+ * Header facts a registry component page always shows. Catalog
+ * `MaturityBadge` still hides Stable; this object does not.
+ *
+ * @param {{ status: string, purpose: string, packageName: string, wraps: string }} page
+ */
+export function componentPageHeaderMeta({ status, purpose, packageName, wraps }) {
+  return { maturity: status, purpose, packageName, wraps };
 }
