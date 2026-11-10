@@ -1,11 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { AppShell, PageHeader } from "#index.js";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
 
 describe("AppShell", () => {
+  afterEach(() => {
+    stubDrawerJsdom();
+  });
+
   it("renders sidebar, topbar, and main slots", () => {
     render(
       <AppShell sidebar={<nav>Nav</nav>} topbar={<div>Top</div>}>
@@ -41,6 +45,10 @@ describe("AppShell", () => {
     expect(container.querySelector("main")?.className).toContain("p-app-shell-padding");
     expect(container.querySelector("main")?.className).toContain("md:p-app-shell-padding-md");
     expect(container.querySelector("main")?.className).toContain("overflow-y-auto");
+    expect(container.querySelector("main")?.className).toContain("focus-ring");
+    expect(container.querySelector("main")?.getAttribute("tabindex")).toBe("0");
+    expect(container.querySelector("aside")?.getAttribute("tabindex")).toBeNull();
+    expect(container.querySelector("[data-slot='app-shell-menu']")).not.toBeNull();
   });
 
   it("hides the sidebar below md with a single display rule, so no base rule can win on desktop", () => {
@@ -67,7 +75,22 @@ describe("AppShell", () => {
     const dialog = screen.getByRole("dialog", { name: "Main navigation" });
     expect(dialog.textContent).toContain("Nav");
     expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("left");
-    stubDrawerJsdom();
+    expect(dialog.querySelector("[data-slot='drawer-body']")).not.toBeNull();
+    expect(within(dialog).getByRole("button", { name: "Close" })).not.toBeNull();
+  });
+
+  it("closes the drawer when a sidebar link is activated", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    render(
+      <AppShell sidebar={<nav><a href="#runs">Runs</a></nav>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    const dialog = screen.getByRole("dialog", { name: "Main navigation" });
+    await user.click(within(dialog).getByRole("link", { name: "Runs" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("omits the drawer trigger when sidebarTrigger is null", () => {
@@ -78,6 +101,7 @@ describe("AppShell", () => {
     );
     expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
     expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.querySelector("[data-slot='app-shell-menu']")).toBeNull();
   });
 
   it("uses a custom sidebarTrigger in place of the default menu button", async () => {
@@ -91,7 +115,6 @@ describe("AppShell", () => {
     expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
     await user.click(screen.getByRole("button", { name: "Runs" }));
     expect(screen.getByRole("dialog", { name: "Main navigation" }).textContent).toContain("Nav");
-    stubDrawerJsdom();
   });
 
   it("makes sidebar and main independent scrollports when fixedHeight is set", () => {
@@ -105,6 +128,8 @@ describe("AppShell", () => {
     expect(root?.className).toContain("overflow-hidden");
     expect(container.querySelector("aside")?.className).toContain("pane-shrink");
     expect(container.querySelector("aside")?.className).toContain("overflow-y-auto");
+    expect(container.querySelector("aside")?.className).toContain("focus-ring");
+    expect(container.querySelector("aside")?.getAttribute("tabindex")).toBe("0");
     expect(container.querySelector("main")?.className).toContain("pane-shrink");
     expect(container.querySelector("main")?.className).toContain("overflow-y-auto");
   });

@@ -1322,11 +1322,11 @@ const [query, setQuery] = useState("");
 - Purpose: Sidebar + topbar shell with a mobile drawer, optional fixed-height scrollports, and page header (title, description, actions).
 - When to use: As the frame of every admin page.
 - When not to use: For public marketing pages — use your site layout instead.
-- A11y: Landmark structure (`aside`/`header`/`main`) comes free; below `md` the menu opens a left Drawer titled from `messages.mainNavigation` (focus trap and return-focus come from Drawer). Sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
+- A11y: Landmark structure (`aside`/`header`/`main`) comes free; below `md` the menu opens a left Drawer titled from `messages.mainNavigation` (focus trap and return-focus come from Drawer). A custom `sidebarTrigger` must be a focusable button or link with an accessible name. `main` (always) and the aside (when `fixedHeight`) take `tabIndex={0}` so the overflow scrollports are keyboard reachable. Sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
 - See also: `Group content in a card section`
-- Examples: Simple, Without topbar, Mobile drawer
+- Examples: Simple, Without topbar, Fixed height, Custom trigger
 - Registry: app-shell
-- Troubleshooting: Below `md`, the built-in menu (or `sidebarTrigger`) opens the sidebar in a Drawer; pass `sidebarTrigger={null}` to hide it on small screens. The sidebar node mounts twice (aside + drawer) — keep it presentational. `fixedHeight` makes sidebar and main independent scrollports; `mainRef` is the scrolling `<main>`. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.
+- Troubleshooting: Below `md`, the built-in menu (or `sidebarTrigger`) opens the sidebar in a Drawer; pass `sidebarTrigger={null}` to hide it on small screens. A custom `sidebarTrigger` must be a focusable button or link with an accessible name. The sidebar node mounts twice (aside + drawer) — keep it presentational: no ids, no aria references, no effects (duplicate-id risk). `fixedHeight` makes sidebar and main independent scrollports. `mainRef` is the scrolling `<main>` and needs a client parent (AppShell stays a server module). Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.
 
 ```ts
 import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
@@ -1347,6 +1347,14 @@ import { AppShell } from "@zedtech/zedkit-ui";
 <AppShell sidebar={<nav aria-label="Runs">Runs</nav>} fixedHeight>
   <p>Live transcript.</p>
 </AppShell>
+```
+
+```ts
+import { AppShell } from "@zedtech/zedkit-ui";
+<AppShell sidebar={<nav aria-label="Runs">Runs</nav>} sidebarTrigger={<button type="button">Runs</button>}>
+  <p>Content.</p>
+</AppShell>
+// Opt out of the mobile menu: sidebarTrigger={null}
 ```
 
 ## Guide a multi-step flow with selectable option cards

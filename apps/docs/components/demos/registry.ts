@@ -20,6 +20,7 @@ import { AlertSectionDemo } from "./alert-section-demo";
 import { HeadingLinkDemo } from "./heading-link-demo";
 import { AppShellMobileDrawerDemo } from "./app-shell-mobile-drawer-demo";
 import { AppShellNoTopbarDemo } from "./app-shell-no-topbar-demo";
+import { AppShellTriggerDemo } from "./app-shell-trigger-demo";
 import { GuideSaveRowDemo } from "./guide-save-row-demo";
 import { AdminDashboardGuideDemo } from "./admin-dashboard-guide-demo";
 import { RevealOnScrollDemo } from "./reveal-on-scroll-demo";
@@ -173,6 +174,7 @@ export const demoRegistry = {
   HeadingLinkDemo: { Demo: HeadingLinkDemo, file: "heading-link-demo.tsx" },
   AppShellNoTopbarDemo: { Demo: AppShellNoTopbarDemo, file: "app-shell-no-topbar-demo.tsx" },
   AppShellMobileDrawerDemo: { Demo: AppShellMobileDrawerDemo, file: "app-shell-mobile-drawer-demo.tsx" },
+  AppShellTriggerDemo: { Demo: AppShellTriggerDemo, file: "app-shell-trigger-demo.tsx" },
   GuideSaveRowDemo: { Demo: GuideSaveRowDemo, file: "guide-save-row-demo.tsx" },
   AdminDashboardGuideDemo: { Demo: AdminDashboardGuideDemo, file: "admin-dashboard-guide-demo.tsx" },
   AnimateDemo: { Demo: AnimateDemo, file: "animate-demo.tsx" },

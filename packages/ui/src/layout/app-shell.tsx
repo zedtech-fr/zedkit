@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per scrollable-region-focusable (#396). */
 import type * as React from "react";
 
 import { cn } from "../utils.js";
@@ -11,11 +12,15 @@ export interface AppShellProps {
   /**
    * Control that opens the sidebar as a drawer below `md`.
    * Omit for the built-in menu button; pass `null` to keep the sidebar hidden on small screens.
+   * A custom trigger must be a focusable button or link with an accessible name.
    */
   sidebarTrigger?: React.ReactElement | null;
   /** Viewport-tall shell: sidebar and main scroll independently. */
   fixedHeight?: boolean;
-  /** Ref to the scrolling `<main>` (stick-to-bottom, `useScrollReset`). */
+  /**
+   * Ref to the scrolling `<main>` (stick-to-bottom, `useScrollReset`).
+   * Requires a client parent; AppShell itself stays a server module.
+   */
   mainRef?: React.Ref<HTMLElement>;
 }
 
@@ -32,7 +37,7 @@ export function AppShell({
   const column = (
     <div className="flex pane-shrink content-shrink flex-1 flex-col">
       {showDrawer ? (
-        <div className="flex items-center p-app-shell-padding md:hidden">
+        <div data-slot="app-shell-menu" className="flex items-center p-app-shell-padding md:hidden">
           <AppShellMenuTrigger trigger={sidebarTrigger ?? undefined} />
         </div>
       ) : null}
@@ -41,7 +46,8 @@ export function AppShell({
       ) : null}
       <main
         ref={mainRef}
-        className="pane-shrink flex-1 overflow-y-auto p-app-shell-padding md:p-app-shell-padding-md"
+        tabIndex={0}
+        className="pane-shrink flex-1 overflow-y-auto p-app-shell-padding md:p-app-shell-padding-md focus-ring"
       >
         {children}
       </main>
@@ -54,9 +60,10 @@ export function AppShell({
       className={cn("flex w-full", fixedHeight ? "h-svh overflow-hidden" : "min-h-svh", className)}
     >
       <aside
+        tabIndex={fixedHeight ? 0 : undefined}
         className={cn(
           "flex w-app-shell-sidebar shrink-0 flex-col border-r muted-wash max-md:hidden",
-          fixedHeight && "pane-shrink overflow-y-auto",
+          fixedHeight && "pane-shrink overflow-y-auto focus-ring",
         )}
       >
         {sidebar}

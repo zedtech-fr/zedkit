@@ -248,7 +248,8 @@
       "demo": "AppShellDemo",
       "examples": {
         "Without topbar": "AppShellNoTopbarDemo",
-        "Mobile drawer": "AppShellMobileDrawerDemo"
+        "Fixed height": "AppShellMobileDrawerDemo",
+        "Custom trigger": "AppShellTriggerDemo"
       }
     },
     "Guide a multi-step flow with selectable option cards": {
