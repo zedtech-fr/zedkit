@@ -189,6 +189,11 @@ describe("skill content conventions", () => {
     );
     expect(from).toContain("`missing` must be 0");
     expect(from).toContain("until a full pass adds nothing new");
+    expect(from).toContain("in parallel, one leaf per family");
+    expect(from).toContain("in waves of at most six");
+    expect(from).toContain("Sequential is the exception");
+    expect(from).toContain("after every family has reported");
+    expect(from).toContain("stays `not checked`");
     expect(from).toContain("Verification path, not demotion");
     expect(from).toContain("One question per spike");
     expect(from).toContain("carries its family and item number");

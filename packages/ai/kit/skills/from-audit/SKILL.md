@@ -27,10 +27,15 @@ Go deep, be strict, and be brutally honest.
    item number. Persist the map in the plan artifact as the resume point
    and reopen it instead of restarting. Done when every family has at
    least one item; a family with none fails this step.
-2. **Revalidate against the current state, one family at a time.** Audits
-   go stale. Per family, open the cited files (`ground-truth`, `explorer`)
-   and check history since the audit: already fixed, already filed, or
-   code moved. Verification path, not demotion: a claim with no
+2. **Revalidate against the current state, per family.** Audits go
+   stale. Families are independent by default: run the per-family passes
+   in parallel, one leaf per family (`explorer` through `orchestrate`,
+   in waves of at most six) when the tool offers spawns. Each leaf
+   returns its family's disposition table. Sequential is the exception:
+   only where a dependency between families requires an order, or no
+   spawn is available — then say which and why. Per family, open the cited files
+   (`ground-truth`, `explorer`) and check history since the audit:
+   already fixed, already filed, or code moved. Verification path, not demotion: a claim with no
    `file:line` (or cited external source) gets the exact check that would
    settle it — a render, a measurement, an external lookup — named in the
    plan; it only leaves this step as the spike that runs that check, with
@@ -38,8 +43,11 @@ Go deep, be strict, and be brutally honest.
    revalidate, dedupe within the family, name its dependencies and
    classify each item, then repeat until a full pass adds nothing new.
    Done per family when each item is kept, dropped with a reason,
-   spike-owned or decision-owned, with evidence.
-3. **Deduplicate and find dependencies.** Merge claims that are one
+   spike-owned or decision-owned, with evidence. A family whose pass
+   did not run stays `not checked` and the plan stays partial; it is
+   never absorbed by a sibling family's result.
+3. **Deduplicate and find dependencies.** This synthesis runs once,
+   after every family has reported. Merge claims that are one
    underlying problem once across families on the labelled items. A merge never deletes a number: record it as
    `merged into <task> (from <family>#<n>, …)`. Check the tracker and
    existing plan artifacts (`.scratch/<slug>/issues/`, open issues/PRs) so
