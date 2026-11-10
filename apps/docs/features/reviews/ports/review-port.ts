@@ -8,6 +8,18 @@ export type ReviewAction = {
   readonly detail: string;
 };
 
+export type ReviewFindingDisposition = "kept" | "downgraded" | "dismissed";
+
+export type ReviewFinding = {
+  readonly title: string;
+  readonly detail: string;
+  readonly disposition: ReviewFindingDisposition;
+};
+
+export type ReviewFirstPass = {
+  readonly findings: readonly ReviewFinding[];
+};
+
 export type ReviewRun = {
   readonly id: string;
   readonly status: ReviewRunStatus;
@@ -25,7 +37,10 @@ export type ReviewRecord = {
   readonly prState: ReviewPrState;
   readonly visibility: ReviewVisibility;
   readonly notes: string;
+  readonly summary: string;
+  readonly evidence: string;
   readonly actions: readonly ReviewAction[];
+  readonly firstPass?: ReviewFirstPass;
   readonly runs: readonly ReviewRun[];
 };
 

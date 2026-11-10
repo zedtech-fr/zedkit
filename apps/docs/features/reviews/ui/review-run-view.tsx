@@ -13,6 +13,7 @@ import {
 import type { ReviewRecord, ReviewRun } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { ReviewAppearanceFrame } from "./appearance-panel";
+import { ReviewMainFlow } from "./review-main-flow";
 
 const STATUS_TONE: Record<ReviewRun["status"], StatusLabelTone> = {
   running: "loading",
@@ -49,7 +50,7 @@ export function ReviewRunView({
           />
           <StatusLabel tone={STATUS_TONE[run.status]}>{copy.status[run.status]}</StatusLabel>
           <UpdatedAgo date={new Date(run.startedAt)} />
-          {panel}
+          <ReviewMainFlow record={record} copy={copy} panel={panel} />
         </>
       )}
     </ReviewAppearanceFrame>
