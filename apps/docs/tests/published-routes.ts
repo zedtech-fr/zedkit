@@ -3,7 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 /** Extra routes the sitemap sweep should cover even if they are not listed yet. */
-export const EXTRA_SITEMAP_ROUTES = ["/features/identity-editor", "/features/identity-kit-demos"];
+export const EXTRA_SITEMAP_ROUTES = [
+  "/features/identity-editor",
+  "/features/identity-kit-demos",
+  "/reviews",
+];
 
 function sitemapCandidates(): string[] {
   const here = path.dirname(fileURLToPath(import.meta.url));

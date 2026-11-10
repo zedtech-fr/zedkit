@@ -1,17 +1,19 @@
 import type { MetadataRoute } from "next";
 import { buildSitemapEntries } from "@zedtech/zedkit-seo";
 
+import { listReviewSitemapPaths } from "@/features/reviews/adapters/fixture";
 import { docsSite } from "@/lib/site";
 import { source } from "#source";
 
 export const dynamic = "force-static";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = [
     { path: "" },
     { path: "/catalog" },
     { path: "/docs" },
     { path: "/examples/note-list" },
+    ...(await listReviewSitemapPaths()).map((path) => ({ path })),
   ];
   for (const param of source.generateParams()) {
     const slug = param.slug;
