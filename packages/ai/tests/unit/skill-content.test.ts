@@ -183,6 +183,29 @@ describe("skill content conventions", () => {
     expect(to).toContain("Do not implement");
     expect(from).toContain("hand the user's text to `orchestrate`");
     expect(to).toContain("hand the user's text to `orchestrate`");
+    expect(from).toContain("Coverage map");
+    expect(from).toContain(
+      "items = kept + dropped + spike-owned + decision-owned + missing",
+    );
+    expect(from).toContain("`missing` must be 0");
+    expect(from).toContain("until a full pass adds nothing new");
+    expect(from).toContain("in parallel, one leaf per family");
+    expect(from).toContain("in waves of at most six");
+    expect(from).toContain("Sequential is the exception");
+    expect(from).toContain("after every family has reported");
+    expect(from).toContain("stays `not checked`");
+    expect(from).toContain("Verification path, not demotion");
+    expect(from).toContain("One question per spike");
+    expect(from).toContain("carries its family and item number");
+    expect(from).toContain("merged into");
+    expect(from).toContain("do-not-regress guardrail");
+    expect(from).toContain("carried as acceptance wording");
+    expect(from).toContain("release gates");
+    expect(from).toContain("sequencing skeleton");
+    expect(from).toContain("Challenge gate");
+    expect(from).toContain("header reads `draft`");
+    expect(from).toContain("is not reportable");
+    expect(from).not.toContain("is not a task");
   });
 
   it("audit investigates against a coverage map and only fixes when asked", () => {
