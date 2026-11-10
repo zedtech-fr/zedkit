@@ -52,6 +52,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | fast mode    | A model id with a `fast` token. Refused unless the user asked for it in this request (`--allow-fast`). `init`/`setup`/`sync` fail before the first write, on the same agent list generation will write (preset plus agents already on disk). | A-08 in `.agents/domain/ai-kit.md`                    |
 | sidecar      | `*.kit.md` the installer writes beside a user file instead of overwriting it (`--adopt`)              | A-10 in `.agents/domain/ai-kit.md`                    |
 | punchlist    | The findings list a review emits and `improver` or `/improve-from-review` applies                     | `packages/ai/kit/skills/improve-from-review/SKILL.md` |
+| frontier     | Unscoped `/implement`: tickets/tasks whose blockers are all done (`to-tickets`); from-audit: first tasks in dependency order | `packages/ai/kit/skills/implement/SKILL.md`           |
 | depth first  | On every message, pick depth before answering. A search/inventory/"are there other" is `audit`        | `AGENTS.md` How-to-work; kit `AGENTS.template.md`     |
 
 ## Run

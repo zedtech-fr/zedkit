@@ -136,6 +136,7 @@ describe("skill content conventions", () => {
       join(kitDir(), "skills", "definition-of-done", "SKILL.md"),
       "utf8",
     );
+    expect(dod).toContain("for example");
     expect(dod).toContain("opengraph-image");
     expect(dod).toContain("area **build**");
     expect(dod).toContain("Typecheck is not that build");
@@ -255,13 +256,14 @@ describe("skill content conventions", () => {
     expect(raw).not.toContain("full test suite");
   });
 
-  it("implement without a named scope stops after the first phase, on a work branch", () => {
+  it("implement without a named scope stops after the first dependency-ready batch, on a work branch", () => {
     const raw = readFileSync(
       join(kitDir(), "skills", "implement", "SKILL.md"),
       "utf8",
     );
-    expect(raw).toContain("first phase of the plan");
-    expect(raw).toContain("Blockers heading");
+    expect(raw).toContain("dependency-ready");
+    expect(raw).toContain("frontier");
+    expect(raw).not.toContain("Blockers heading");
     expect(raw).toContain("Commit on a work branch");
     expect(raw).not.toContain("Commit your work to the current branch");
     expect(raw).toContain("area **build**");

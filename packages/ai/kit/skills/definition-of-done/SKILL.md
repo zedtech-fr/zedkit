@@ -9,7 +9,7 @@ Done is a claim. This list is the evidence. If one box cannot be ticked, say whi
 
 ## Gates
 
-The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter typecheck, lint, and the unit or integration tests that cover the files you touched). One foreground command. CI owns full-repo test, e2e, static-export smoke and catalog:check. A diff that adds or moves a routed or entry file (`page`, `layout`, `route`, `opengraph-image`, a CSS entry, an export map) also runs the area **build**. Typecheck does not exercise the router or the bundler.
+The **cheap loop** is the `Local loop` line in the area `AGENTS.md` (filter typecheck, lint, and the unit or integration tests that cover the files you touched). One foreground command. CI owns full-repo test, e2e, static-export smoke and catalog:check. A diff that adds or moves a routed or entry file (for example `page`, `layout`, `route`, `opengraph-image`, a CSS entry, an export map) also runs the area **build**. Typecheck does not exercise the router or the bundler.
 
 - [ ] Cheap loop ran **after the last edit** (read the area AGENTS.md). A fix made after the run means run the cheap loop again.
 - [ ] Area build ran when the diff includes a routed or entry file. Typecheck is not that build.

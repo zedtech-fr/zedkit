@@ -31,7 +31,7 @@ links plus generated agents). Licences and credits of vendored skills:
 0. Unclear, or only questions? `/to-audit`. Have an audit? `/from-audit`.
 1. `/plan` — research, spec, ladder, **assumptions table**. Never implements.
 2. `/challenge` — stress-test the plan. **BLOCKING** if the assumptions table is missing.
-3. `/implement` — the named unit, or the plan's first phase when none is named (`implementer` when the orchestrator fans out). Work branch; open the PR.
+3. `/implement` — the named unit, or the plan's first dependency-ready batch when none is named (the to-tickets frontier; `implementer` when the orchestrator fans out). Work branch; open the PR.
 4. `/review` — punchlist (`reviewer`); apply via `improver`.
 5. Close with `definition-of-done` and `rules-upkeep` (`Rules: none` when nothing to encode).
 
@@ -43,7 +43,7 @@ On every message, pick depth first (root `AGENTS.md`). A search or inventory is 
 | --- | --- |
 | `/plan` | Spec, tickets, ladder, assumptions. Never implements. |
 | `/challenge` | Attack a plan. |
-| `/implement` | Build from a challenged plan. |
+| `/implement` | Build from a challenged plan; unscoped, the first dependency-ready batch. |
 | `/review` | Pin the diff, run lenses, one verdict. |
 | `/orchestrate` | Coordinator: frame, dispatch, aggregate. Does not edit. |
 | `/setup-ai` | Audit and tailor this setup. |
