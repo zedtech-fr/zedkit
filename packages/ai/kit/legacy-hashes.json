@@ -155,7 +155,8 @@
     "to-audit": ["af42ae2b052c2bba"],
     "fix": ["192977d8f6e185e4"],
     "improve-from-review": ["4c8d27d400069cce"],
-    "quick-wins": ["6b1fa1643ed8031e"]
+    "quick-wins": ["6b1fa1643ed8031e"],
+    "triage": ["5efc9e333284648e"]
   },
   "skills": {
     "adversarial-tests/SKILL.md": ["5e5da22c554500e3"],

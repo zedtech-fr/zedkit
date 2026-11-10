@@ -69,7 +69,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   `orchestrate` (read tokenomics, pick a team). Plan, challenge and review:
   go deep, be strict, and be brutally honest. Review feedback:
   `/improve-from-review`. One topic, small wins: `/quick-wins`. Unclear
-  topic: `/to-audit`. Have an audit: `/from-audit`.
+  topic: `/to-audit`. Have an audit: `/from-audit`. Raw issue inbox:
+  `/triage`.
 - Encode the first reusable correction that changed the work, same turn
   (`rules-upkeep`). Close coding work with `Rules: none` or
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
