@@ -1,5 +1,16 @@
 # @zedtech/zedkit-ai
 
+## 1.2.0
+
+### Minor Changes
+
+- 9012ad2: `route` prints the id the tool lists: on Cursor a base `model` plus the cell's `effort` becomes the thinking variant (`max` is `xhigh`); composer, Muse and other providers stay bare, and ids that already carry a level are kept. Changing `effort` with `model` held constant now changes what a spawn runs. Cells and the `setup-ai` stub now take a base id plus `effort`. Cutover: upgrade the kit before writing bare cells (an older kit prints the bare id), and strip `-low`, `-medium`, `-high` or `-xhigh` from an existing cell to re-enable its `effort`.
+
+### Patch Changes
+
+- 7bb12e4: Deepen `from-audit`: the skill now builds a persisted coverage map per audit family, reconciles every item (kept, dropped, spike-owned, decision-owned, or missing), and dives family by family until a pass adds nothing new. Claims without a `file:line` get a named verification path instead of demotion to a bundled spike, spikes carry one question and a filed output, and the plan passes a challenge gate before it can be reported.
+- a78019a: Stop an unscoped `/implement` after the plan's first dependency-ready batch, commit on a work branch, and run the area build when the diff adds or moves a routed file. Typecheck does not load the app router.
+
 ## 1.1.2
 
 ### Patch Changes
