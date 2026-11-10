@@ -51,9 +51,12 @@ Name:
   - `Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md`
   - `Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md`
   - `Set up zedkit Nest on this repo following https://zedkit.app/nest/setup.md`
+  - `Set up zedkit AI and UI on this repo following https://zedkit.app/map.md`
+  - `Set up zedkit AI and Nest on this repo following https://zedkit.app/map.md`
+  - `Set up zedkit UI and Nest on this repo following https://zedkit.app/map.md`
   - `Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md`
 
-Pick the single-package prompt when exactly one package remains. Pick the map prompt when two or more remain (the user message to map.md should name that subset). Print `nothing to install` when every package is skipped.
+Pick the single-package prompt when exactly one package remains. Pick the matching two- or three-package map prompt when two or more remain. Print `nothing to install` when every package is skipped.
 
 Do not follow the setup file in this run.
 

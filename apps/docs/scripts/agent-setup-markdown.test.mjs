@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { writeAiSetupPublicAssets } from "../lib/ai-setup-onboarding.mjs";
+import { stripLeadingMarkdownH1, writeAiSetupPublicAssets } from "../lib/ai-setup-onboarding.mjs";
 import { AGENT_SETUP_PUBLIC_FILES, LLMS_AGENT_MARKDOWN_URLS } from "./check-seo-export.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -29,7 +29,11 @@ const SETUP_HEADINGS = ["Goal", "Detect", "Steps", "Preserve", "Idempotent re-ru
 
 const UI_PROMPT = "Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md";
 const NEST_PROMPT = "Set up zedkit Nest on this repo following https://zedkit.app/nest/setup.md";
+const AI_PROMPT = "Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md";
 const MAP_PROMPT = "Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md";
+const MAP_AI_UI_PROMPT = "Set up zedkit AI and UI on this repo following https://zedkit.app/map.md";
+const MAP_AI_NEST_PROMPT = "Set up zedkit AI and Nest on this repo following https://zedkit.app/map.md";
+const MAP_UI_NEST_PROMPT = "Set up zedkit UI and Nest on this repo following https://zedkit.app/map.md";
 const SUGGEST_PROMPT = "Suggest which zedkit setup this repo needs following https://zedkit.app/suggest.md";
 
 const SUGGEST_INSTALL_PATTERNS = [
@@ -84,14 +88,16 @@ test("UI and Nest setup.md share the contract headings and pin the published ver
   assert.match(nest, new RegExp(`@zedtech/zedkit-nest@${nestV.replaceAll(".", "\\.")}`));
   assert.match(ui, /--save-exact/);
   assert.match(nest, /--save-exact/);
+  assert.match(ui, /yarn add --exact/);
+  assert.match(nest, /yarn add --exact/);
+  assert.match(ui, /exactly at /);
+  assert.match(nest, /exactly at /);
+  assert.equal(ui.includes("at exactly `"), false, "ui pin phrasing must be exactly at X");
+  assert.equal(nest.includes("at exactly `"), false, "nest pin phrasing must be exactly at X");
 });
 
 test("UI steps lockstep Getting started snippets", () => {
   const ui = read("apps/docs/prose/agent/ui-setup.md");
-  const add = read("apps/docs/prose/guides/snippets/ui-add.sh").trim();
-  for (const token of add.split(/\s+/).filter((part) => part.startsWith("@") || part === "pnpm" || part === "add")) {
-    assert.ok(ui.includes(token.replace(/@zedtech\/zedkit-ui$/, "@zedtech/zedkit-ui")), `ui-add token: ${token}`);
-  }
   assert.ok(ui.includes("@zedtech/zedkit-ui"), "ui package name");
   assert.ok(ui.includes("@fontsource-variable/inter"));
   assert.ok(ui.includes("@fontsource-variable/space-grotesk"));
@@ -108,6 +114,9 @@ test("UI steps lockstep Getting started snippets", () => {
   assert.ok(ui.includes('data-identity="glass"'));
   assert.ok(ui.includes("../node_modules/@zedtech/zedkit-ui/src"));
   assert.ok(ui.includes("../../node_modules/@zedtech/zedkit-ui/src"));
+  assert.match(ui, /or `app\/fonts\.ts`/);
+  assert.match(ui, /or `app\/layout\.tsx`/);
+  assert.match(ui, /float at first install by design/);
 });
 
 test("Nest steps lockstep README peers, not nest-add.sh alone", () => {
@@ -121,11 +130,14 @@ test("Nest steps lockstep README peers, not nest-add.sh alone", () => {
   for (const pkg of pkgs) {
     assert.ok(nest.includes(pkg), `README peer: ${pkg}`);
   }
-  const snippet = read("apps/docs/prose/guides/snippets/nest-add.sh").trim();
-  assert.equal(snippet, "pnpm add @zedtech/zedkit-nest");
-  assert.ok(!snippet.includes("@nestjs/core"), "snippet drift: nest-add.sh omits README peers");
   assert.ok(nest.includes("createNestApp"));
   assert.ok(fenceBlocks(nest, "sh").some((body) => body.includes("@nestjs/core")));
+  assert.match(nest, /Peers float by design/);
+  assert.match(nest, /does not scaffold/);
+  assert.doesNotMatch(nest, /did not ask to start one/);
+  assert.match(nest, /start-a-safe-nestjs-api/);
+  assert.match(nest, /app\.listen\(existingPort\)/);
+  assert.doesNotMatch(nest, /app\.listen\(3000\)/);
 });
 
 test("suggest.md is read-only, covers empty and partial repos, ends with one follow-up", () => {
@@ -137,10 +149,18 @@ test("suggest.md is read-only, covers empty and partial repos, ends with one fol
   for (const pattern of SUGGEST_INSTALL_PATTERNS) {
     assert.equal(pattern.test(suggest), false, `forbidden: ${pattern}`);
   }
-  assert.ok(suggest.includes(SUGGEST_PROMPT) === false || true);
-  const prompts = [UI_PROMPT, NEST_PROMPT, MAP_PROMPT, "Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md"];
+  const prompts = [
+    AI_PROMPT,
+    UI_PROMPT,
+    NEST_PROMPT,
+    MAP_AI_UI_PROMPT,
+    MAP_AI_NEST_PROMPT,
+    MAP_UI_NEST_PROMPT,
+    MAP_PROMPT,
+  ];
   const named = prompts.filter((p) => suggest.includes(p));
   assert.equal(named.length, prompts.length, "suggest lists every follow-up setup prompt");
+  assert.match(suggest, /matching two- or three-package map prompt/);
   const last = suggest.trim().split("\n").filter(Boolean).at(-1) ?? "";
   assert.match(last, /stop/i);
 });
@@ -158,6 +178,10 @@ test("map.md orders UI then Nest then AI, requested-only, suggest when unchosen"
   assert.ok(map.includes(MAP_PROMPT));
   assert.ok(map.includes(SUGGEST_PROMPT));
   assert.match(map, /one combined/i);
+  assert.match(map, /npx @zedtech\/zedkit-ai@\d+\.\d+\.\d+ validate/);
+  assert.doesNotMatch(map, /`zedkit-ai validate`/);
+  assert.doesNotMatch(map, /asked to start one/);
+  assert.match(map, /does not scaffold/);
 });
 
 test("doc-pins lists every new file that names a zedkit version pin", () => {
@@ -165,8 +189,10 @@ test("doc-pins lists every new file that names a zedkit version pin", () => {
   for (const rel of [
     "apps/docs/prose/agent/ui-setup.md",
     "apps/docs/prose/agent/nest-setup.md",
+    "apps/docs/prose/agent/map.md",
     "apps/docs/public/ui/setup.md",
     "apps/docs/public/nest/setup.md",
+    "apps/docs/public/map.md",
   ]) {
     assert.ok(pins.includes(`"${rel}"`), rel);
   }
@@ -187,12 +213,16 @@ test("SEO export and llms index the agent markdown URLs", () => {
     "https://zedkit.app/map.md",
     "https://zedkit.app/suggest.md",
   ]);
+  // public/llms.txt and llms-full.txt are gitignored (postinstall `docs:generate`).
+  // URL presence is asserted in generate.mjs; built-file checks are check-seo-export after generate.
   const generate = read("apps/docs/scripts/generate.mjs");
-  const llms = read("apps/docs/public/llms.txt");
-  const llmsFull = read("apps/docs/public/llms-full.txt");
   for (const url of LLMS_AGENT_MARKDOWN_URLS) {
     assert.ok(generate.includes(url), url);
-    assert.ok(llms.includes(url), `llms.txt: ${url}`);
   }
-  assert.equal([...llmsFull.matchAll(/^# zedkit setup map$/gm)].length, 1);
+  assert.match(generate, /stripLeadingMarkdownH1\(readAgentProseMarkdown\("map\.md"\)\)/);
+  const map = read("apps/docs/prose/agent/map.md");
+  const stripped = stripLeadingMarkdownH1(map);
+  assert.notEqual(stripped, map);
+  assert.doesNotMatch(stripped, /^# zedkit setup map$/m);
+  assert.throws(() => stripLeadingMarkdownH1("no heading\n"), /expected a leading `# ` heading/);
 });

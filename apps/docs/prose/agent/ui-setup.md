@@ -15,7 +15,7 @@ Read the host before any write. Branch on evidence.
 1. **Package manager** — `pnpm-lock.yaml` / `pnpm-workspace.yaml` vs `package-lock.json` vs `yarn.lock`.
 2. **React + Tailwind** — `package.json` lists `react` 19.x and `tailwindcss` 4.x (or a Tailwind v4 PostCSS plugin). If either is missing: skip this setup, report why, stop. Do not add React or Tailwind.
 3. **Framework** — Next.js App Router (`src/app/` or `app/` with `layout.tsx`) vs Vite (`vite.config.*` plus `src/index.css` or `src/App.tsx`) vs neither.
-4. **Existing pin** — `package.json` already has `@zedtech/zedkit-ui` at exactly `2.0.1`.
+4. **Existing pin** — `package.json` already has `@zedtech/zedkit-ui` exactly at 2.0.1.
 5. **Existing CSS** — host stylesheet already has `@import "@zedtech/zedkit-ui/styles.css"` and a matching `@source` line.
 6. **Copy path** — `components.json` exists (shadcn). Use the registry/copy path only when that file exists or the user named copy. Do not run `shadcn init` unless they asked.
 7. **Identity** — `<html>` already has `data-identity`. Keep that value.
@@ -32,33 +32,40 @@ Default is the npm path.
    pnpm add --save-exact @zedtech/zedkit-ui@2.0.1 @fontsource-variable/inter @fontsource-variable/space-grotesk
    ```
 
-   When **`pnpm-workspace.yaml`** exists at the repo root, add `-w`. Use `npm install --save-exact` when the repo has no pnpm lockfile.
+   When **`pnpm-workspace.yaml`** exists at the repo root, add `-w`. Use `yarn add --exact` when the repo has `yarn.lock`. Otherwise use `npm install --save-exact` when the repo has no pnpm lockfile.
 
-   `--save-exact` matters: without it the manager records a caret range (`^2.0.1`) that floats on later installs.
+   `--save-exact` / `--exact` matters: without it the manager records a caret range (`^2.0.1`) that floats on later installs. Only `@zedtech/zedkit-ui` is version-pinned; fontsource packages float at first install by design (then lock to whatever exact resolved).
 
-2. **Wire CSS.** `@source` is relative to the CSS file: `../node_modules/…` from `app/globals.css` or Vite `src/index.css`, and `../../node_modules/…` from Next.js `src/app/globals.css`. Append only the missing lines. Keep every line the host already has.
+2. **Wire CSS.** `@source` is relative to the CSS file. Append only the missing lines. Keep every line the host already has.
 
-   Vite: `src/index.css`. Next.js App Router: `src/app/globals.css` (the layout import loads that file).
+   **Vite `src/index.css` or Next.js `app/globals.css`** (`../node_modules/…`):
 
    ```css
    @import "tailwindcss";
    @import "@zedtech/zedkit-ui/styles.css";
    @source "../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
-   @source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
    @source not "../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
+   ```
+
+   **Next.js `src/app/globals.css`** (`../../node_modules/…`; the layout import loads that file):
+
+   ```css
+   @import "tailwindcss";
+   @import "@zedtech/zedkit-ui/styles.css";
+   @source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";
    @source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";
    ```
 
-   Keep the `@source` path that matches this CSS file's depth. Drop the other when it would miss `node_modules`.
+   Paste the block that matches this CSS file's depth. Do not paste both.
 
-3. **Next.js fonts and layout** (Vite: skip this step). If `src/app/fonts.ts` is missing, add:
+3. **Next.js fonts and layout** (Vite: skip this step). If `src/app/fonts.ts` (or `app/fonts.ts` when Detect found `app/`) is missing, add:
 
    ```ts
    import "@fontsource-variable/inter";
    import "@fontsource-variable/space-grotesk";
    ```
 
-   If `src/app/layout.tsx` exists, keep its contents. Ensure it imports `./globals.css` and `./fonts`. Add `data-identity="glass"` on `<html>` only when no `data-identity` is set.
+   If `src/app/layout.tsx` (or `app/layout.tsx`) exists, keep its contents. Ensure it imports `./globals.css` and `./fonts`. Add `data-identity="glass"` on `<html>` only when no `data-identity` is set.
 
    ```tsx
    import "./globals.css";
@@ -112,7 +119,7 @@ Skip when the exact pin `@zedtech/zedkit-ui@2.0.1` and the CSS wiring are alread
 
 All of these hold:
 
-1. `package.json` pins `@zedtech/zedkit-ui` at exactly `2.0.1`.
+1. `package.json` pins `@zedtech/zedkit-ui` exactly at 2.0.1.
 2. The host stylesheet contains `@import "@zedtech/zedkit-ui/styles.css"` and an `@source` line that resolves to `@zedtech/zedkit-ui/src`.
 3. If the host has a `typecheck` script, run it and record the exit code. There is no `zedkit-ui validate` command.
 

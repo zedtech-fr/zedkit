@@ -13,8 +13,8 @@ This walkthrough targets `@zedtech/zedkit-nest` **1.1.1** (the current published
 Read the host before any write. Branch on evidence.
 
 1. **Package manager** — `pnpm-lock.yaml` / `pnpm-workspace.yaml` vs `package-lock.json` vs `yarn.lock`.
-2. **Nest** — `package.json` lists `@nestjs/core`, or `src/main.ts` (or the host boot file) calls `NestFactory`. If the host is not a Nest app and the user did not ask to start one: skip, report why, stop.
-3. **Existing pin** — `package.json` already has `@zedtech/zedkit-nest` at exactly `1.1.1`.
+2. **Nest** — `package.json` lists `@nestjs/core`, or `src/main.ts` (or the host boot file) calls `NestFactory`. If the host is not a Nest app: skip, report why, stop. If they asked to start one, point at the canonical human walkthrough (this setup does not scaffold a new app).
+3. **Existing pin** — `package.json` already has `@zedtech/zedkit-nest` exactly at 1.1.1.
 4. **Existing factory** — a boot file already imports `createNestApp` from `@zedtech/zedkit-nest`.
 5. **Existing module and env** — `AppModule` (or the host root module) and any env schema class already in the tree.
 
@@ -31,9 +31,9 @@ Completion: a written branch (wire existing Nest / skip) with file evidence.
      reflect-metadata
    ```
 
-   When **`pnpm-workspace.yaml`** exists at the repo root, add `-w`. Use `npm install --save-exact` when the repo has no pnpm lockfile.
+   When **`pnpm-workspace.yaml`** exists at the repo root, add `-w`. Use `yarn add --exact` when the repo has `yarn.lock`. Otherwise use `npm install --save-exact` when the repo has no pnpm lockfile.
 
-   `--save-exact` matters: without it the manager records a caret range (`^1.1.1`) that floats on later installs. Peers are the list from the package README, required for Nest DI.
+   `--save-exact` / `--exact` matters: without it the manager records a caret range (`^1.1.1`) that floats on later installs. Only `@zedtech/zedkit-nest` is version-pinned. Peers float by design (the README list, no version suffix; required for Nest DI) and then lock to whatever exact resolved.
 
 2. **Wrap the bootstrap** when the boot file still uses raw `NestFactory`. Skip if `createNestApp` is already imported.
 
@@ -48,10 +48,10 @@ Completion: a written branch (wire existing Nest / skip) with file evidence.
      envSchema: AppEnv,
      docs: { title: "My API", version: "v1" },
    });
-   await app.listen(3000);
+   await app.listen(existingPort);
    ```
 
-   If the host has no env schema class, omit `envSchema` (it is optional). Do not invent a schema. Keep the existing listen port and module name.
+   If the host has no env schema class, omit `envSchema` (it is optional). Do not invent a schema. Keep the existing listen port and module name (`existingPort` stands in for whatever the host already uses — do not switch it to 3000).
 
    Completion: the boot file imports `createNestApp`; `AppModule` is unchanged.
 
@@ -76,7 +76,7 @@ Skip when the exact pin `@zedtech/zedkit-nest@1.1.1` is present and `createNestA
 
 All of these hold:
 
-1. `package.json` pins `@zedtech/zedkit-nest` at exactly `1.1.1`.
+1. `package.json` pins `@zedtech/zedkit-nest` exactly at 1.1.1.
 2. The boot file imports `createNestApp` from `@zedtech/zedkit-nest`.
 3. If the host has a `typecheck` script, run it and record the exit code.
 

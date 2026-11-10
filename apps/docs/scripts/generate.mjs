@@ -28,6 +28,7 @@ import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import {
   readAgentOnboardingMarkdown,
   readAgentProseMarkdown,
+  stripLeadingMarkdownH1,
   writeAiSetupPublicAssets,
 } from "../lib/ai-setup-onboarding.mjs";
 
@@ -596,7 +597,7 @@ export function generate(outDir) {
   const llmsFull = buildLlmsFull([
     { title: "Install or copy", body: installOrCopyBody },
     { title: "Set up zedkit AI", body: readAgentOnboardingMarkdown() },
-    { title: "zedkit setup map", body: readAgentProseMarkdown("map.md").replace(/^# [^\n]+\n+/, "") },
+    { title: "zedkit setup map", body: stripLeadingMarkdownH1(readAgentProseMarkdown("map.md")) },
     { title: "Documentation index", body: llmsBody },
   ]);
   writeFileSync(join(publicDir, "llms-full.txt"), `${llmsFull}\n`);

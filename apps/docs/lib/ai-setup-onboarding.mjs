@@ -21,7 +21,17 @@ export const NEST_SETUP_MINI_PROMPT = "Set up zedkit Nest on this repo following
 export const MAP_SETUP_MINI_PROMPT = "Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md";
 export const SUGGEST_MINI_PROMPT = "Suggest which zedkit setup this repo needs following https://zedkit.app/suggest.md";
 
-/** Docs-owned agent markdown copied into `public/` (AI setup stays kit-owned). */
+/** Docs-owned agent markdown copied into `public/` (AI setup stays kit-owned).
+ * Adding a fourth setup-able package — update all of these:
+ * 1. prose/agent/<name>-setup.md and map.md / suggest.md prompts
+ * 2. this COPIES table (src + public dest)
+ * 3. AGENT_SETUP_PUBLIC_FILES and LLMS_AGENT_MARKDOWN_URLS (check-seo-export.mjs)
+ * 4. PINNED_FILES in scripts/doc-pins.mjs (prose and public copies)
+ * 5. *_MINI_PROMPT consts here plus generate.mjs llms Install-or-copy links
+ * 6. agent-setup-markdown.test.mjs (COPIES, prompts, contract headings)
+ * 7. writeAiSetupPublicAssets dest under public/ (run generate)
+ * Skip any of those and the new file is unpublished, unpinned, or unindexed.
+ */
 export const AGENT_PROSE_PUBLIC_COPIES = [
   { src: "map.md", dest: "map.md" },
   { src: "suggest.md", dest: "suggest.md" },
@@ -39,6 +49,15 @@ export function readAgentOnboardingMarkdown() {
 
 export function readAgentProseMarkdown(name) {
   return readFileSync(join(AGENT_PROSE, name), "utf8").trimEnd();
+}
+
+/** Strip a leading ATX H1 so llms-full can wrap the body in its own title. Throws if the first line is not `# …`. */
+export function stripLeadingMarkdownH1(text) {
+  const next = text.replace(/^# [^\n]+\n+/, "");
+  if (next === text) {
+    throw new Error("stripLeadingMarkdownH1: expected a leading `# ` heading");
+  }
+  return next;
 }
 
 /** What `/setup-ai` writes after the install, as the kit's own template table names them. */
