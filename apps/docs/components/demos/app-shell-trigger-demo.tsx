@@ -14,7 +14,7 @@ export function AppShellTriggerDemo() {
     <AppShell
       className={cn(
         "h-frame pane-shrink overflow-hidden rounded-lg border",
-        mobile && "[&>aside]:hidden [&_[data-slot=app-shell-menu]]:flex",
+        mobile && "[&_[data-slot=app-shell-menu]]:flex [&>aside]:hidden",
       )}
       sidebarTrigger={<Button variant="outline">{appShellMobileDrawerCopy.menuTrigger}</Button>}
       sidebar={
