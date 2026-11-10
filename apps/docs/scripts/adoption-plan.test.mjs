@@ -58,6 +58,8 @@ test("Button: install package is install, load styles, pick a look, fonts, impor
     '@import "tailwindcss";\n@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";\n',
   );
   assert.equal(identity[0].path, "src/app/layout.tsx");
+  assert.match(identity[0].code, /^import "\.\/globals\.css";$/m);
+  assert.match(identity[0].code, /^import "\.\/fonts";$/m);
   assert.match(identity[0].code, /data-identity="glass"/);
   assert.equal(fonts[0].path, "src/app/fonts.ts");
   assert.match(fonts[0].code, /@fontsource-variable\/inter/);

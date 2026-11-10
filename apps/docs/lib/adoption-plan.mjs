@@ -325,6 +325,19 @@ function importSnippet(adoption) {
 /** Fonts the Glass identity needs; the site self-hosts them in `apps/docs/app/fonts.ts`. */
 const GLASS_FONTS = ["@fontsource-variable/inter", "@fontsource-variable/space-grotesk"];
 
+/** Next.js root layout the package path writes. `globals.css` is how Next loads the styles step; `./fonts` loads the font packages. */
+const GLASS_LAYOUT = `import "./globals.css";
+import "./fonts";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" data-identity="glass">
+      <body>{children}</body>
+    </html>
+  );
+}
+`;
+
 /** @returns {Mode} */
 function packageMode({ need, packageName, example }) {
   const adoption = need.adoption;
@@ -358,7 +371,7 @@ function packageMode({ need, packageName, example }) {
           kind: "file",
           path: "src/app/layout.tsx",
           lang: "tsx",
-          code: `export default function RootLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang="en" data-identity="glass">\n      <body>{children}</body>\n    </html>\n  );\n}\n`,
+          code: GLASS_LAYOUT,
           action: "replace",
         },
       ],

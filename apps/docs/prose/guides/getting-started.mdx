@@ -32,7 +32,7 @@ Pick one path below. Coding agents ends with `validate` in the terminal; UI butt
 
 <a id="ui-button" />
 
-### Coding agents — about two minutes
+### Coding agents
 
 In your repo root:
 
@@ -41,7 +41,7 @@ In your repo root:
 {{snippet:ai-init.sh}}
 ```
 
-Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts). Then:
+Those two commands take about two minutes. Ask your agent to run the `setup-ai` skill (it fills `AGENTS.md` from repo facts; 15 to 45 minutes for a typical app repo). Then:
 
 ```sh
 {{snippet:ai-validate.sh}}
@@ -57,26 +57,25 @@ In a React 19 + Tailwind v4 app. `@source` is relative to the CSS file: `../node
 {{snippet:ui-add.sh}}
 ```
 
-```sh
-pnpm add @fontsource-variable/inter @fontsource-variable/space-grotesk
-```
-
 Wire Tailwind and kit CSS in `src/index.css`:
 
 ```css title="src/index.css"
 {{snippet:npm-globals.css}}
 ```
 
-Load the fonts in `src/app/fonts.ts` (self-hosted, same as the site):
+Next.js App Router: load the fonts in `src/app/fonts.ts` (self-hosted, same as the site):
 
 ```ts title="src/app/fonts.ts"
 import "@fontsource-variable/inter";
 import "@fontsource-variable/space-grotesk";
 ```
 
-Pick a look in `src/app/layout.tsx` so the finished app matches the site:
+Next.js App Router: pick a look in `src/app/layout.tsx` so the finished app matches the site:
 
-```tsx title="src/app/layout.tsx"
+```tsx title="src/app/layout.tsx" no-preview="Next.js root layout; not a renderable demo"
+import "./globals.css";
+import "./fonts";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" data-identity="glass">
@@ -105,7 +104,7 @@ Initialize shadcn with the Radix preset (`npx shadcn@latest init -y --base radix
 
 Import the copied component:
 
-```tsx title="src/App.tsx" no-preview="copied Button source; same Save control as Path B"
+```tsx title="src/App.tsx" no-preview="copied Button source; same Save control as the npm path above"
 {{snippet:registry-page.tsx}}
 ```
 

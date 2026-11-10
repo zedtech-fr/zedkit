@@ -44,7 +44,7 @@ test.describe("identity editor page", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description).toBe(
-      "Try spacing, colour, and type tokens in the browser. Demo only — not a shipped docs feature.",
+      "Try spacing, color, and type tokens in the browser. Demo only — not a shipped docs feature.",
     );
     await expect(
       page.getByRole("paragraph").filter({ hasText: "Tune tokens and preview them on a card" }),
@@ -55,7 +55,7 @@ test.describe("identity editor page", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     const fields = page.locator('[data-slot="identity-editor-fields"]');
     await expect(fields).toBeVisible();
-    await expect(fields).toHaveClass(/gap-5/);
+    await expect(fields).toHaveClass(/gap-prose/);
   });
 
   test("writes spacing onto the draft card and into the URL", async ({ page }) => {

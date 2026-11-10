@@ -37,7 +37,7 @@ function readCopyFiles() {
   return files;
 }
 
-test("visible copy uses US spelling for color and organisation", () => {
+test("listed copy files use US spelling for color and organisation", () => {
   const banned = BRITISH_SPELLINGS;
   const errors = [];
   for (const { rel, content } of readCopyFiles()) {

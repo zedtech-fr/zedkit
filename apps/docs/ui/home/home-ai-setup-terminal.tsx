@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- Scrollable command block is keyboard-reachable (scrollable-region-focusable). */
 import { Stack, Surface, Text } from "@zedtech/zedkit-ui";
 import { AI_SETUP_KIT } from "@/lib/ai-setup-onboarding.generated";
 import { homeAiSetupCopy } from "@/ui/home/i18n/home-ai-setup-copy";
@@ -56,8 +57,9 @@ export function HomeAiSetupTerminal({ className }: { className?: string | undefi
       <Stack gap="md" className="surface-pad-md">
         <pre
           role="region"
+          tabIndex={0}
           aria-label={terminal.regionLabel}
-          className="trim-margin font-mono text-zk-type-small whitespace-pre"
+          className="trim-margin content-shrink overflow-x-auto font-mono text-zk-type-small whitespace-pre"
         >
           <code>
             <Prompt>{terminal.installCommand}</Prompt>

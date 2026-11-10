@@ -53,7 +53,7 @@ every package. No placeholders: a package exists only when real code backs it.
 **UI** (Node ≥ 22):
 
 ```sh
-pnpm add @zedtech/zedkit-ui
+pnpm add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk
 ```
 
 ```tsx
@@ -64,10 +64,6 @@ export default () => <Button>Ship it</Button>;
 
 Pick a look, then fonts (so the finished app matches the site):
 
-```sh
-pnpm add @fontsource-variable/inter @fontsource-variable/space-grotesk
-```
-
 ```tsx
 // src/app/fonts.ts
 import "@fontsource-variable/inter";
@@ -76,6 +72,8 @@ import "@fontsource-variable/space-grotesk";
 
 ```tsx
 // src/app/layout.tsx
+import "./fonts";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" data-identity="glass">

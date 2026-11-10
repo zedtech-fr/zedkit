@@ -32,10 +32,14 @@ test.describe("home adoption panel", () => {
     const steps = (name: string) => panel.locator(`[data-adoption-step="${name}"]`);
     await expect(panel).toContainText("You get");
     await expect(panel).toContainText("You need");
-    await expect(panel.locator("[data-adoption-step]")).toHaveCount(3);
-    await expect(steps("install")).toContainText("pnpm add @zedtech/zedkit-ui");
+    await expect(panel.locator("[data-adoption-step]")).toHaveCount(5);
+    await expect(steps("install")).toContainText(
+      "pnpm add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk",
+    );
     await expect(steps("styles")).toContainText('@import "@zedtech/zedkit-ui/styles.css";');
     await expect(steps("styles")).toContainText("@source");
+    await expect(steps("identity")).toContainText('data-identity="glass"');
+    await expect(steps("fonts")).toContainText("@fontsource-variable/inter");
     await expect(steps("render")).toContainText('import { Button } from "@zedtech/zedkit-ui";');
 
     await panel.getByRole("tab", { name: "Copy source" }).click();
@@ -123,7 +127,9 @@ test.describe("home adoption panel", () => {
     const panel = await openHome(page);
     const block = panel.locator('[data-adoption-step="install"] figure').first();
     await block.getByRole("button", { name: /^Copy/ }).click();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("pnpm add @zedtech/zedkit-ui");
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      "pnpm add @zedtech/zedkit-ui @fontsource-variable/inter @fontsource-variable/space-grotesk",
+    );
     await expect(block.getByRole("status")).toHaveText("Copied");
     await expect(block.getByRole("status")).toHaveText("", { timeout: 4000 });
 
