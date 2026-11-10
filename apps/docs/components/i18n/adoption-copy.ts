@@ -52,7 +52,10 @@ export const adoptionCopy = {
           note: "Tailwind does not scan node_modules, so the @source line points it at the kit's class names. The path is relative to this file.",
         };
       case "identity":
-        return { title: 'Pick a look', note: 'Set data-identity="glass" on <html> so the finished app matches the site.' };
+        return {
+          title: "Pick a look",
+          note: 'Set data-identity="glass" on <html> so the finished app matches the site. Fresh app: replace src/app/layout.tsx. Existing app: merge, and keep ThemeProvider and other providers.',
+        };
       case "fonts":
         return { title: "Load the fonts", note: "The Glass look uses Inter and Space Grotesk; these imports self-host them." };
       case "extend":

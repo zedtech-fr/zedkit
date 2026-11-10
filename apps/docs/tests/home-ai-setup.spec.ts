@@ -29,8 +29,9 @@ test.describe("home AI setup section", () => {
     await page.getByRole("button", { name: "Copy AI setup prompt" }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(PROMPT);
 
-    const terminal = aiSetup.getByRole("region", { name: "Files the AI setup creates" });
+    const terminal = aiSetup.getByRole("region", { name: "AI setup commands" });
     await expect(terminal).toContainText("npx @zedtech/zedkit-ai setup --provider cursor");
+    await expect(terminal).toContainText("/setup-ai — install alone is not done");
     await expect(aiSetup.locator("[data-home-ai-counters]")).toBeVisible();
     await expect(aiSetup.locator("[data-home-ai-counters]")).toContainText("skills");
     await expect(aiSetup.locator("[data-home-ai-counters]")).toContainText("agents");
@@ -82,7 +83,7 @@ test.describe("home AI setup section", () => {
   test("terminal region is keyboard reachable and wide screens show it beside the prompt", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    const terminal = page.locator("#ai-setup").getByRole("region", { name: "Files the AI setup creates" });
+    const terminal = page.locator("#ai-setup").getByRole("region", { name: "AI setup commands" });
     await focusWithKeyboard(terminal);
     await expect(terminal).toBeFocused();
     const focus = await terminal.evaluate((el) => {

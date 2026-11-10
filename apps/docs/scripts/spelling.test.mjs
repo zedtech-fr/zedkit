@@ -25,15 +25,16 @@ const BRITISH_SPELLINGS = ["colour", "colours", "Colour", "Colours", "organisati
 
 function readCopyFiles() {
   const files = [];
+  const missing = [];
   for (const rel of COPY_FILE_RELATIVE) {
     const path = join(APP, rel);
-    if (!existsSync(path)) continue;
-    // copy files live under components/i18n etc., lib files are not visible copy but we still check visible ones
-    // For lib, only comments that are user-facing should not count; we limit to i18n + editor-fields for now
-    // but keep list extendable
+    if (!existsSync(path)) {
+      missing.push(rel);
+      continue;
+    }
     files.push({ rel, content: readFileSync(path, "utf8") });
   }
-  // Include all i18n copy files
+  assert.deepEqual(missing, [], `listed copy files missing:\n${missing.join("\n")}`);
   return files;
 }
 

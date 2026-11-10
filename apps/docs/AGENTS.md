@@ -100,7 +100,9 @@ scripts inside `pnpm catalog:check`. The UI package install is
 fonts-inclusive (`prose/guides/snippets/ui-add.sh`, matching
 `home-quickstart/snippets/install.sh`); a consumer `layout.tsx` must
 keep `import "./globals.css"` (Next.js loads the styles step from the
-layout) and `import "./fonts"` so those packages load. Do not add a
+layout) and `import "./fonts"` so those packages load. A need whose
+`exampleFile` is `src/app/layout.tsx` folds Glass into that one write;
+do not also replace the path in the identity step. Do not add a
 second fonts `pnpm add` next to that snippet.
 
 ## Identity editor and creator

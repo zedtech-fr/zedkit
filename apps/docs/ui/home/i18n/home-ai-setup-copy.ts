@@ -46,12 +46,19 @@ export const homeAiSetupCopy = {
     providers: "Cursor, Claude Code, Codex and Muse read the same .agents folder. npx @zedtech/zedkit-ai validate checks it.",
   },
   terminal: {
-    regionLabel: "Files the AI setup creates",
+    regionLabel: "AI setup commands",
+    asideLabel: "AI setup command preview",
     title: "your-repo",
     installCommand: "npx @zedtech/zedkit-ai setup --provider cursor",
+    setupAiComment: "/setup-ai — install alone is not done",
     writtenComment: "then /setup-ai writes",
     validateCommand: "npx @zedtech/zedkit-ai validate",
     validateResult:
       "ok — structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate",
+    counters: {
+      skills: "skills",
+      agents: "agents",
+      files: "files",
+    },
   },
 } as const;

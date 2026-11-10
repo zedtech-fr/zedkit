@@ -21,8 +21,8 @@ export function HomeHeroLead({ className }: { className?: string }) {
       </Text>
       <SecretField
         value={AI_SETUP_MINI_PROMPT}
-        aria-label="One-prompt AI setup"
-        copyLabel="Copy prompt"
+        aria-label={homeCopy.hero.promptAriaLabel}
+        copyLabel={homeCopy.hero.promptCopyLabel}
         data-home-hero-prompt=""
       />
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">

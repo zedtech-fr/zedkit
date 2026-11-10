@@ -117,7 +117,7 @@ export function HomeAiSetupSection() {
               <HomeAiSetupWhatYouGet />
             </Stack>
           </StickyAside.Main>
-          <StickyAside.Aside>
+          <StickyAside.Aside aria-label={homeAiSetupCopy.terminal.asideLabel}>
             <Animate on={{ appear: "fade-in" }} delay={120}>
               <HomeAiSetupTerminal />
             </Animate>

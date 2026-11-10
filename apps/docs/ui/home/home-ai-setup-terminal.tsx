@@ -25,15 +25,15 @@ function ManifestCounters() {
     <Stack direction="horizontal" gap="md" className="flex-wrap" data-home-ai-counters="">
       <Stack gap="tight">
         <Text typeRole="lead" as="span" className="text-foreground">{skills}</Text>
-        <Text variant="muted" typeRole="label">skills</Text>
+        <Text variant="muted" typeRole="label">{terminal.counters.skills}</Text>
       </Stack>
       <Stack gap="tight">
         <Text typeRole="lead" as="span" className="text-foreground">{agents}</Text>
-        <Text variant="muted" typeRole="label">agents</Text>
+        <Text variant="muted" typeRole="label">{terminal.counters.agents}</Text>
       </Stack>
       <Stack gap="tight">
         <Text typeRole="lead" as="span" className="text-foreground">{files}</Text>
-        <Text variant="muted" typeRole="label">files</Text>
+        <Text variant="muted" typeRole="label">{terminal.counters.files}</Text>
       </Stack>
     </Stack>
   );
@@ -63,6 +63,8 @@ export function HomeAiSetupTerminal({ className }: { className?: string | undefi
         >
           <code>
             <Prompt>{terminal.installCommand}</Prompt>
+            {"\n"}
+            <span className="text-muted-foreground"># {terminal.setupAiComment}</span>
             {"\n"}
             <Prompt>{terminal.validateCommand}</Prompt>
             {"\n"}

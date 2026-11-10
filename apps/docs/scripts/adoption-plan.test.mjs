@@ -8,6 +8,9 @@ import { fileURLToPath } from "node:url";
 import {
   FEATURED_EXAMPLE,
   CSS_PATH,
+  GLASS_FONTS,
+  GLASS_LAYOUT,
+  LAYOUT_PATH,
   allBlocks,
   buildAdoptionPlan,
   loadRegistry,
@@ -57,13 +60,10 @@ test("Button: install package is install, load styles, pick a look, fonts, impor
     styles[0].code,
     '@import "tailwindcss";\n@import "@zedtech/zedkit-ui/styles.css";\n@source "../../node_modules/@zedtech/zedkit-ui/src/**/*.{ts,tsx}";\n@source not "../../node_modules/@zedtech/zedkit-ui/src/**/*.test.*";\n',
   );
-  assert.equal(identity[0].path, "src/app/layout.tsx");
-  assert.match(identity[0].code, /^import "\.\/globals\.css";$/m);
-  assert.match(identity[0].code, /^import "\.\/fonts";$/m);
-  assert.match(identity[0].code, /data-identity="glass"/);
+  assert.equal(identity[0].path, LAYOUT_PATH);
+  assert.equal(identity[0].code, GLASS_LAYOUT);
   assert.equal(fonts[0].path, "src/app/fonts.ts");
-  assert.match(fonts[0].code, /@fontsource-variable\/inter/);
-  assert.match(fonts[0].code, /@fontsource-variable\/space-grotesk/);
+  assert.equal(fonts[0].code, `${GLASS_FONTS.map((name) => `import "${name}";`).join("\n")}\n`);
   assert.equal(render[0].path, "src/app/page.tsx");
   assert.match(render[0].code, /^import \{ Button \} from "@zedtech\/zedkit-ui";/m);
   assert.match(render[0].code, /export default function Page\(\)/);
@@ -82,10 +82,46 @@ test("Theme: a stylesheet is a CSS import, never a JavaScript import", () => {
   assert.match(css.code, /^@import "tailwindcss";$/m);
   assert.match(css.code, /^@import "@zedtech\/zedkit-ui\/styles\.css";$/m);
   assert.match(css.code, /^@source ".*node_modules\/@zedtech\/zedkit-ui\/src\/.*";$/m);
-  const example = pkg.steps.at(-1).blocks[0];
-  assert.equal(example.path, "src/app/layout.tsx");
-  assert.match(example.code, /ThemeProvider/);
-  assert.doesNotMatch(example.code, /pnpm add/, "the install command is a step, not a comment");
+  const layoutWrites = allBlocks(pkg).filter((block) => block.kind === "file" && block.path === LAYOUT_PATH);
+  assert.equal(layoutWrites.length, 1, "layout.tsx is written once");
+  assert.match(layoutWrites[0].code, /ThemeProvider/);
+  assert.match(layoutWrites[0].code, /^import "\.\/globals\.css";$/m);
+  assert.match(layoutWrites[0].code, /^import "\.\/fonts";$/m);
+  assert.match(layoutWrites[0].code, /data-identity="glass"/);
+  assert.ok(!pkg.steps.some((step) => step.id === "identity"));
+  assert.ok(pkg.steps.some((step) => step.id === "fonts"));
+  assert.doesNotMatch(layoutWrites[0].code, /pnpm add/, "the install command is a step, not a comment");
+});
+
+test("a package plan never writes the same path twice", () => {
+  for (const [packageName, entry] of Object.entries(catalog.packages)) {
+    for (const found of entry.needs) {
+      if (!found.adoption) continue;
+      const built = buildAdoptionPlan({ need: found, packageName, siteUrl: SITE }, { registry });
+      const pkg = built.modes.find((item) => item.id === "package");
+      const paths = allBlocks(pkg)
+        .filter((block) => block.kind === "file")
+        .map((block) => block.path);
+      assert.equal(new Set(paths).size, paths.length, `${found.need}: ${paths.join(", ")}`);
+    }
+  }
+});
+
+test("README and getting-started keep the Glass layout imports that the plan writes", () => {
+  const readme = readFileSync(join(ROOT, "README.md"), "utf8");
+  const guide = readFileSync(join(ROOT, "apps/docs/prose/guides/getting-started.mdx"), "utf8");
+  for (const [name, source] of [
+    ["README", readme],
+    ["getting-started", guide],
+  ]) {
+    assert.match(source, /^import "\.\/globals\.css";$/m, `${name} imports ./globals.css`);
+    assert.match(source, /^import "\.\/fonts";$/m, `${name} imports ./fonts`);
+    assert.match(source, /data-identity="glass"/, `${name} sets data-identity=glass`);
+    assert.match(source, /@fontsource-variable\/inter/, `${name} loads Inter`);
+    assert.match(source, /@fontsource-variable\/space-grotesk/, `${name} loads Space Grotesk`);
+  }
+  assert.match(GLASS_LAYOUT, /^import "\.\/globals\.css";$/m);
+  assert.match(GLASS_LAYOUT, /^import "\.\/fonts";$/m);
 });
 
 test("Motion: utilities are class names, and the example is a complete component", () => {

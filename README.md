@@ -72,6 +72,7 @@ import "@fontsource-variable/space-grotesk";
 
 ```tsx
 // src/app/layout.tsx
+import "./globals.css";
 import "./fonts";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

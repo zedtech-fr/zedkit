@@ -57,9 +57,9 @@ In a React 19 + Tailwind v4 app. `@source` is relative to the CSS file: `../node
 {{snippet:ui-add.sh}}
 ```
 
-Wire Tailwind and kit CSS in `src/index.css`:
+Vite: wire Tailwind and kit CSS in `src/index.css`. Next.js App Router: put the same lines in `src/app/globals.css` (the layout import below loads that file).
 
-```css title="src/index.css"
+```css title="Vite: src/index.css"
 {{snippet:npm-globals.css}}
 ```
 
@@ -87,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 Render a button from the package:
 
-```tsx title="src/App.tsx" no-preview="Vite app entry; styled Save is shown in the npm variants demo below"
+```tsx title="Vite: src/App.tsx" no-preview="Vite app entry; styled Save is shown in the npm variants demo below"
 {{snippet:npm-page.tsx}}
 ```
 
@@ -104,7 +104,7 @@ Initialize shadcn with the Radix preset (`npx shadcn@latest init -y --base radix
 
 Import the copied component:
 
-```tsx title="src/App.tsx" no-preview="copied Button source; same Save control as the npm path above"
+```tsx title="Vite: src/App.tsx" no-preview="copied Button source; same Save control as the npm path above"
 {{snippet:registry-page.tsx}}
 ```
 
