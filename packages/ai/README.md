@@ -119,9 +119,10 @@ run one review workflow, and check done-ness without loading the whole kit.
 `domain-modeling`, `persona-review`, `compose-ui`, `code-review`,
 `ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
 `plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
-`research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`, and
-`handoff` (durable deliverables: persist plans and handoffs so a fresh session recovers scope),
-and subagents
+`research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
+`handoff` (durable deliverables: persist plans and handoffs so a fresh session recovers scope), and
+`triage` (issue inbox: roles, verification, agent-ready briefs),
+plus subagents
 `product-director`, `ui-designer`, `copywriter`, `skeptic`, `researcher`,
 `implementer`, `reviewer`, `domain-guardian`, `event-contracts`, and
 `test-runner` (starter already ships `explorer`, `verifier`, and
@@ -257,7 +258,7 @@ per-folder rules. When to call which subagent: the
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
 `handoff`, `audit`, `orchestrate`, `research`, `improve-config`, `from-audit`,
-`to-audit`, `fix`, `improve-from-review`, `quick-wins`) are 3-6 line files: each runs its skill on the command arguments
+`to-audit`, `fix`, `improve-from-review`, `quick-wins`, `triage`) are 3-6 line files: each runs its skill on the command arguments
 (or the current context). Both tools also list skills as `/` commands
 nowadays; the files stay as the explicit one-keystroke path and as fallback
 when the skills link is not followed.

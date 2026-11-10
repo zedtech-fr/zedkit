@@ -57,6 +57,7 @@ On every message, pick depth first (root `AGENTS.md`). A search or inventory is 
 | `/fix` | One defect, inline, with its check. Does not go through `orchestrate`. |
 | `/improve-from-review` | Apply a review punchlist, then encode a reusable miss. |
 | `/quick-wins` | `audit <scope>` finds small wins (read-only); `implement <findings or topic>` ships them. |
+| `/triage` | Issue inbox: category and state roles, then an agent-ready brief. |
 
 ## Always-on vs globbed
 

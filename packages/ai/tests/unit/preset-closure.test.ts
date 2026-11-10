@@ -75,6 +75,7 @@ describe("preset closure", () => {
       "improve-from-review",
       "quick-wins",
       "handoff",
+      "triage",
     ]);
     expect(agentsForPreset(manifest.value, "setup")).toEqual([
       "explorer",
@@ -105,6 +106,7 @@ describe("preset closure", () => {
       "fix",
       "improve-from-review",
       "quick-wins",
+      "triage",
     ]);
   });
 
@@ -435,7 +437,8 @@ describe("preset closure", () => {
     expect(existsSync(join(dest, ".agents/commands/from-audit.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/commands/to-audit.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/commands/challenge.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/skills/triage"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/skills/triage/SKILL.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/triage.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
     expect(validateKit(join(dest, ".agents"))).toEqual([]);
   });

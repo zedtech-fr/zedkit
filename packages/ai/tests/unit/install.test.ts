@@ -481,7 +481,7 @@ describe("installKit", () => {
     expect(existsSync(join(starter, ".agents/skills/triage"))).toBe(false);
     const core = tempDir();
     install(core, { preset: "core" });
-    expect(existsSync(join(core, ".agents/skills/triage"))).toBe(false);
+    expect(existsSync(join(core, ".agents/skills/triage/SKILL.md"))).toBe(true);
     const full = tempDir();
     install(full, { preset: "full" });
     expect(existsSync(join(full, ".agents/skills/triage/SKILL.md"))).toBe(true);
@@ -1277,7 +1277,8 @@ describe("installKit", () => {
     // 27 for `compose-ui` (persona chain brief before composing UI).
     // 29 for `from-audit` / `to-audit` (orchestrate-first audit entrypoints).
     // 32 for `fix`, `improve-from-review` and `quick-wins` (short path, review punchlist, two-mode topic).
-    expect(core.length).toBeLessThanOrEqual(32);
+    // 33 for `triage` (issue inbox on setup and core, not only full).
+    expect(core.length).toBeLessThanOrEqual(33);
   });
 
   it("core-installed skills only name skills and agents that core installs", () => {

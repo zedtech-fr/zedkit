@@ -40,7 +40,8 @@
       "fix",
       "improve-from-review",
       "quick-wins",
-      "handoff"
+      "handoff",
+      "triage"
     ],
     "core": [
       "ponytail",
@@ -74,7 +75,8 @@
       "to-audit",
       "fix",
       "improve-from-review",
-      "quick-wins"
+      "quick-wins",
+      "triage"
     ],
     "full": "*"
   },
@@ -119,7 +121,8 @@
     "to-audit",
     "fix",
     "improve-from-review",
-    "quick-wins"
+    "quick-wins",
+    "triage"
   ],
   "presetAgents": {
     "starter": ["explorer", "verifier", "orchestrator"],
@@ -154,7 +157,8 @@
       "to-audit",
       "fix",
       "improve-from-review",
-      "quick-wins"
+      "quick-wins",
+      "triage"
     ]
   }
 }
