@@ -59,7 +59,7 @@ the cell for the call (kind x stakes) decides.
 
 - Edit the `model` (a base id, no thinking suffix) and `effort` of a cell in
   the frontmatter above. On Cursor, `route` encodes the pair into the listed
-  id (`max` prints as `xhigh`); composer, Muse and Claude stay bare.
+  id (`max` prints as `xhigh`); bare families (composer, Muse) and the Claude tool stay as written.
 - Models are named only in the `providers` block of that frontmatter. This
   prose may explain why a model was chosen.
 - Stakes are the main lever. A bug on a payment button is `critical` even if
@@ -88,6 +88,6 @@ Cursor is the parent. Each cell holds a base `model` and an `effort`; the
 printed id may still be rejected by the session's Task allowlist, which is not
 the cell. The table floor is medium; runtime `low` exists only for
 `reasoning=low` on cheap check. Grok and sensitive Sonnet cells use `max`; Opus keeps its listed id. Muse uses
-Ember on trivial and standard build and check, Spark elsewhere, Wonder on
+Ember on trivial and standard build and check (the cheap Muse model; back to Spark if Ember fails a gate on real work), Spark elsewhere, Wonder on
 decide sensitive, and Wonder Full on decide critical, design critical, and
 check critical. Codex and Claude stay on shipped defaults.

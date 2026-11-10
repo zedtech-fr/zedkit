@@ -1,5 +1,5 @@
 // Original work by the same author.
-import type { Effort } from "./tokenomics.js";
+import type { Effort, PolicyProvider } from "./tokenomics.js";
 
 // Cursor Task lists thinking variants as `<base>-<level>`. Families that have
 // none (composer) stay bare. Prefix rows are data: add a family here.
@@ -13,7 +13,7 @@ const HAS_LEVEL = /-(?:low|medium|high|xhigh)$/;
  * else. An id that already ends in a level is a legacy cell and is kept.
  * Providers with no verified per-agent effort spelling get the id unchanged.
  */
-export function encodeModel(provider: string, model: string, effort: Effort): string {
+export function encodeModel(provider: PolicyProvider, model: string, effort: Effort): string {
   if (provider !== "cursor" || HAS_LEVEL.test(model)) return model;
   if (!CURSOR_THINKING_PREFIXES.some((prefix) => model.startsWith(prefix))) return model;
   return `${model}-${CURSOR_LEVEL[effort]}`;

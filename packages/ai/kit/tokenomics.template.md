@@ -9,7 +9,7 @@ schema: 1
 # providers:
 #   cursor:
 #     build:
-#       standard: { model: <a model id or alias your tool lists>, effort: medium }
+#       standard: { model: <base model id, no thinking suffix>, effort: medium }
 #
 # kind:   decide | design | build | check (how an agent is used for one call)
 # stakes: trivial | standard | sensitive | critical (how much is at risk)
@@ -24,11 +24,15 @@ the cell for the call (kind x stakes) decides.
 
 ## How to change it
 
-- Edit the `model` of a cell in the frontmatter above, nothing else.
+- Edit the `model` (a base id, no thinking suffix such as `-high`) and the
+  `effort` of a cell in the frontmatter above. On Cursor, `route` encodes the
+  pair into the id the tool lists (`max` prints as `xhigh`). An id that already
+  ends in a level is kept as written and its `effort` is not applied.
 - Models are named only in the `providers` block of that frontmatter. This
   prose may explain why a model was chosen.
 - Stakes are the main lever. A bug on a payment button is `critical` even if
-  the fix is one line. Needs (reasoning, context) only nudge within the stakes.
+  the fix is one line. Needs (reasoning, context) can shift the column one
+  step toward `sensitive`.
 
 ## Rules that hold
 
