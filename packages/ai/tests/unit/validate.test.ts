@@ -228,9 +228,18 @@ describe("validateKit", () => {
 
   it("treats a user file shadowing a kit name as user prose, and satisfies refs from the sidecar", () => {
     const root = tempDir();
-    put(root, "skills/review/SKILL.md", `${SKILL("review")}\nMy own notes on the \`plan\` phase and ladder.\n`);
+    put(root, "skills/review/SKILL.md", `${SKILL("review")}\nMy own notes on the \`plan\` phase.\n`);
     put(root, "skills/zk-review/SKILL.md", `${SKILL("zk-review")}\nladder\n`);
     expect(validateKit(root)).toEqual([]);
+  });
+
+  it("accepts a preserved custom review skill that never mentions the ladder", () => {
+    const root = tempDir();
+    const userReview = `${SKILL("review")}\nHouse rules for our own review pass.\n`;
+    put(root, "skills/review/SKILL.md", userReview);
+    put(root, "skills/zk-review/SKILL.md", `${SKILL("zk-review")}\nladder\n`);
+    expect(validateKit(root)).toEqual([]);
+    expect(readFileSync(join(root, "skills/review/SKILL.md"), "utf8")).toBe(userReview);
   });
 
   it("flags a personas.md naming a kit skill the tree does not install", () => {
@@ -694,6 +703,17 @@ providers:
     expect(found.some((m) => m.includes("skills/plan/SKILL.md"))).toBe(true);
     expect(found.some((m) => m.includes("AGENTS.template.md"))).toBe(true);
     expect(found.some((m) => m.includes("skills/implement/SKILL.md"))).toBe(false);
+  });
+
+  it("flags a kit review sidecar that lost the ladder and leaves the user file alone", () => {
+    const root = tempDir();
+    put(root, "skills/review/SKILL.md", `${SKILL("review")}\nHouse rules for our own review pass.\n`);
+    put(root, "skills/zk-review/SKILL.md", SKILL("zk-review"));
+    const found = messages(root);
+    expect(found).toContainEqual(
+      "skills/zk-review/SKILL.md: must state the ponytail ladder (regression: the 7 questions vanished)",
+    );
+    expect(found.some((m) => m.includes("skills/review/SKILL.md"))).toBe(false);
   });
 
   it("ignores the ladder check for layouts without those files", () => {
