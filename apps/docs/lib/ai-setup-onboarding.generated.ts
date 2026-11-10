@@ -34,7 +34,8 @@ export const AI_SETUP_KIT = {
     "fix",
     "improve-from-review",
     "quick-wins",
-    "handoff"
+    "handoff",
+    "triage"
   ],
   "agents": [
     "explorer",
@@ -64,7 +65,8 @@ export const AI_SETUP_KIT = {
     "to-audit",
     "fix",
     "improve-from-review",
-    "quick-wins"
+    "quick-wins",
+    "triage"
   ],
   "installed": [
     {
@@ -196,7 +198,11 @@ export const AI_SETUP_KIT = {
       "kind": "dir"
     },
     {
-      "text": "│  │  └─ handoff/",
+      "text": "│  │  ├─ handoff/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  └─ triage/",
       "kind": "dir"
     },
     {
@@ -308,7 +314,11 @@ export const AI_SETUP_KIT = {
       "kind": "file"
     },
     {
-      "text": "│  │  └─ quick-wins.md",
+      "text": "│  │  ├─ quick-wins.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  └─ triage.md",
       "kind": "file"
     },
     {

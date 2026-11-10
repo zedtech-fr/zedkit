@@ -396,17 +396,32 @@ function checkLinks(root: string, kit: string, issues: Issue[]): void {
 
 const LADDER_SKILLS = ["plan", "implement", "review", "ponytail-review"];
 
-// The ponytail ladder must survive in the skills that ask it and in the
-// template every setup inherits. Only checked where the file exists, so
-// minimal or foreign layouts are unaffected.
+const LADDER_GONE =
+  "must state the ponytail ladder (regression: the 7 questions vanished)";
+
+// The ponytail ladder must survive in kit-owned copies of the skills that
+// ask it, and in the template every setup inherits. A `zk-<name>` sidecar
+// is the kit copy (same shadowing signal as skill-refs); the file it
+// shadows is user prose and is not checked. Folder name is not ownership.
+// Only checked where the file exists, so minimal or foreign layouts are
+// unaffected.
 function checkLadder(root: string, issues: Issue[]): void {
   for (const name of LADDER_SKILLS) {
     const file = join(root, "skills", name, "SKILL.md");
+    const sidecar = join(root, "skills", `zk-${name}`, "SKILL.md");
+    if (existsSync(sidecar)) {
+      if (!read(sidecar).toLowerCase().includes("ladder")) {
+        issues.push({
+          path: relative(root, sidecar),
+          message: LADDER_GONE,
+        });
+      }
+      continue;
+    }
     if (existsSync(file) && !read(file).toLowerCase().includes("ladder")) {
       issues.push({
         path: relative(root, file),
-        message:
-          "must state the ponytail ladder (regression: the 7 questions vanished)",
+        message: LADDER_GONE,
       });
     }
   }
