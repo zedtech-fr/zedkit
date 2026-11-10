@@ -1315,18 +1315,18 @@ const [query, setQuery] = useState("");
 ## Lay out an admin page (sidebar + topbar + header)
 
 - Import: `@zedtech/zedkit-ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`
-- Wraps: none (theme tokens only)
+- Wraps: `vaul` (via Drawer)
 - Status: stable
 - Short name: AppShell
 - Audience: Teams scaffolding a consistent admin layout.
-- Purpose: Sidebar + topbar shell with page header (title, description, actions).
+- Purpose: Sidebar + topbar shell with a mobile drawer, optional fixed-height scrollports, and page header (title, description, actions).
 - When to use: As the frame of every admin page.
 - When not to use: For public marketing pages — use your site layout instead.
-- A11y: Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
+- A11y: Landmark structure (`aside`/`header`/`main`) comes free; below `md` the menu opens a left Drawer titled from `messages.mainNavigation` (focus trap and return-focus come from Drawer). Sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.
 - See also: `Group content in a card section`
-- Examples: Simple, Without topbar
+- Examples: Simple, Without topbar, Mobile drawer
 - Registry: app-shell
-- Troubleshooting: Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.
+- Troubleshooting: Below `md`, the built-in menu (or `sidebarTrigger`) opens the sidebar in a Drawer; pass `sidebarTrigger={null}` to hide it on small screens. The sidebar node mounts twice (aside + drawer) — keep it presentational. `fixedHeight` makes sidebar and main independent scrollports; `mainRef` is the scrolling `<main>`. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.
 
 ```ts
 import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
@@ -1339,6 +1339,13 @@ import { AppShell, PageHeader } from "@zedtech/zedkit-ui";
 import { AppShell } from "@zedtech/zedkit-ui";
 <AppShell sidebar={<nav aria-label="Primary"><a href="#">Overview</a></nav>}> {/* topbar is optional */}
   <p>Content.</p>
+</AppShell>
+```
+
+```ts
+import { AppShell } from "@zedtech/zedkit-ui";
+<AppShell sidebar={<nav aria-label="Runs">Runs</nav>} fixedHeight>
+  <p>Live transcript.</p>
 </AppShell>
 ```
 

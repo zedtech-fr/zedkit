@@ -2705,12 +2705,33 @@
     {
       "name": "app-shell",
       "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
+        "@zedkit/drawer",
+        "@zedkit/icon-button",
         "utils"
       ],
       "files": [
         {
           "path": "registry/ui/app-shell.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/app-shell-drawer.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
           "type": "registry:ui"
         }
       ],

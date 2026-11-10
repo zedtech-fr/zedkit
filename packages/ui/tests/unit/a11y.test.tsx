@@ -335,6 +335,19 @@ describe("a11y", () => {
     await expectNoViolations(container);
   });
 
+  it("app shell mobile drawer when open", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    const { container } = render(
+      <AppShell sidebar={<nav>Nav</nav>}>
+        <PageHeader title="Items" />
+      </AppShell>,
+    );
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    await expectNoViolations(container);
+    stubDrawerJsdom();
+  });
+
   it("detailPanel", async () => {
     const { container } = render(<DetailPanel items={[{ label: "Name", value: "Ada" }]} />);
     await expectNoViolations(container);

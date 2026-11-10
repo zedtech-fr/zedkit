@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { AppShell, PageHeader } from "#index.js";
+import { stubDrawerJsdom } from "./drawer-fixture.js";
 
 describe("AppShell", () => {
   it("renders sidebar, topbar, and main slots", () => {
@@ -51,6 +53,70 @@ describe("AppShell", () => {
     expect(classes).toContain("max-md:hidden");
     expect(classes).not.toContain("hidden");
     expect(classes).not.toContain("md:block");
+  });
+
+  it("opens the sidebar in a left drawer from the menu on a narrow viewport", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    render(
+      <AppShell sidebar={<nav>Nav</nav>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    const dialog = screen.getByRole("dialog", { name: "Main navigation" });
+    expect(dialog.textContent).toContain("Nav");
+    expect(dialog.getAttribute("data-vaul-drawer-direction")).toBe("left");
+    stubDrawerJsdom();
+  });
+
+  it("omits the drawer trigger when sidebarTrigger is null", () => {
+    render(
+      <AppShell sidebar={<nav>Nav</nav>} sidebarTrigger={null}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("uses a custom sidebarTrigger in place of the default menu button", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    render(
+      <AppShell sidebar={<nav>Nav</nav>} sidebarTrigger={<button type="button">Runs</button>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    expect(screen.queryByRole("button", { name: "Menu" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Runs" }));
+    expect(screen.getByRole("dialog", { name: "Main navigation" }).textContent).toContain("Nav");
+    stubDrawerJsdom();
+  });
+
+  it("makes sidebar and main independent scrollports when fixedHeight is set", () => {
+    const { container } = render(
+      <AppShell sidebar={<nav>Nav</nav>} fixedHeight>
+        <p>Content</p>
+      </AppShell>,
+    );
+    const root = container.querySelector("[data-slot='app-shell']");
+    expect(root?.className).toContain("h-svh");
+    expect(root?.className).toContain("overflow-hidden");
+    expect(container.querySelector("aside")?.className).toContain("pane-shrink");
+    expect(container.querySelector("aside")?.className).toContain("overflow-y-auto");
+    expect(container.querySelector("main")?.className).toContain("pane-shrink");
+    expect(container.querySelector("main")?.className).toContain("overflow-y-auto");
+  });
+
+  it("attaches mainRef to the scrolling main", () => {
+    const mainRef = { current: null as HTMLElement | null };
+    render(
+      <AppShell sidebar={<nav>Nav</nav>} mainRef={mainRef}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    expect(mainRef.current?.tagName).toBe("MAIN");
   });
 });
 
