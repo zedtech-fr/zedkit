@@ -13,6 +13,9 @@
  * - Appearance / ThemeScope frame stays — because: this section remains the identity testing ground.
  * - Empty state says public issues will show up here — because: the visitor always has a next thought.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
+ * - List has no search or state/verdict filter — because: the public list is short enough to scan.
+ * - Views stay client components — because: ReviewAppearanceFrame takes render-function children.
+ * - Retired /reviews/pr/64|79|80 stubs are export-only; run-level retired URLs 404 — because: run ids are unknowable once retired.
  */
 
 import { notFound, redirect } from "next/navigation";
@@ -21,6 +24,8 @@ import { createSnapshotReviewPort } from "./adapters/snapshot";
 import { reviewsCopy } from "./i18n/reviews-copy";
 import { parsePrNumber } from "./model/pr-number";
 import {
+  linkedPrFallbackPath,
+  linkedPrRunFallbackPath,
   listIssueParamsFrom,
   listIssueRunParamsFrom,
   listReviewPrParamsFrom,
@@ -53,8 +58,11 @@ export async function ReviewIssueFeature({ n }: { n: string }) {
 export async function ReviewUnlinkedFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
   const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
-  if (pullRequest === null) notFound();
-  return <UnlinkedPrView pullRequest={pullRequest} copy={reviewsCopy} />;
+  if (pullRequest !== null) return <UnlinkedPrView pullRequest={pullRequest} copy={reviewsCopy} />;
+  const resolved = number === null ? null : await port.resolvePr(number);
+  const fallback = linkedPrFallbackPath(resolved?.issueNumber ?? null);
+  if (fallback !== null) redirect(fallback);
+  notFound();
 }
 
 export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }) {
@@ -69,8 +77,15 @@ export async function ReviewUnlinkedRunFeature({ n, id }: { n: string; id: strin
   const number = parsePrNumber(n);
   const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
   const run = number === null ? null : await port.getUnlinkedRun(number, id);
-  if (pullRequest === null || run === null) notFound();
-  return <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />;
+  if (pullRequest !== null && run !== null) {
+    return <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />;
+  }
+  const resolved = number === null ? null : await port.resolvePr(number);
+  if (resolved !== null && resolved.runIds.includes(id)) {
+    const fallback = linkedPrRunFallbackPath(resolved.issueNumber, id);
+    if (fallback !== null) redirect(fallback);
+  }
+  notFound();
 }
 
 export async function redirectReviewsIndex() {

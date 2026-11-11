@@ -1,4 +1,4 @@
-import type { BadgeProps, StatusLabelTone } from "@zedtech/zedkit-ui";
+import type { BadgeProps } from "@zedtech/zedkit-ui";
 
 import type { LatestStatus, ReviewVerdict, TimelineEntryStatus } from "../ports/review-port";
 
@@ -8,11 +8,8 @@ export const VERDICT_BADGE: Record<ReviewVerdict, BadgeProps["variant"]> = {
   comment: "secondary",
 };
 
-export const STATUS_TONE: Record<Extract<TimelineEntryStatus, "running">, StatusLabelTone> = {
-  running: "loading",
-};
-
-export const STATUS_BADGE: Record<Exclude<TimelineEntryStatus, "running">, BadgeProps["variant"]> = {
+export const STATUS_BADGE: Record<TimelineEntryStatus, BadgeProps["variant"]> = {
+  running: "secondary",
   completed: "success",
   failed: "destructive",
 };

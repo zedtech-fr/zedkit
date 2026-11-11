@@ -169,7 +169,3 @@ export function createComposedReviewPort(
     },
   };
 }
-
-export function createPortFromIndex(index: PublicIssueIndex): ReviewPort {
-  return createComposedReviewPort(index);
-}

@@ -173,6 +173,18 @@ function asString(value: unknown, label: string): Result<string, Error> {
   return ok(value);
 }
 
+/** Path-safe run ids only: no `..`, slashes, or spaces. */
+const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+
+function asRunId(value: unknown, label: string): Result<string, Error> {
+  const text = asString(value, label);
+  if (!text.ok) return text;
+  if (!RUN_ID_PATTERN.test(text.value)) {
+    return fail(`${label} must be a run id`);
+  }
+  return ok(text.value);
+}
+
 function asOneOf<T extends string>(
   value: unknown,
   allowed: readonly T[],
@@ -435,7 +447,7 @@ function parseItem(value: unknown, index: number): Result<LiveItemDetail, Error>
 function parseRunInfo(value: unknown, label: string): Result<LiveRunInfo, Error> {
   const obj = exactObject(value, RUN_KEYS, label, RUN_OPTIONAL_KEYS);
   if (!obj.ok) return obj;
-  const runId = asString(obj.value.run_id, `${label}.run_id`);
+  const runId = asRunId(obj.value.run_id, `${label}.run_id`);
   if (!runId.ok) return runId;
   const status = asString(obj.value.status, `${label}.status`);
   if (!status.ok) return status;
@@ -604,7 +616,7 @@ function parseRelated(value: unknown, index: number): Result<LiveRelatedRun, Err
   const label = `related[${index}]`;
   const obj = exactObject(value, RELATED_KEYS, label, RELATED_OPTIONAL_KEYS);
   if (!obj.ok) return obj;
-  const runId = asString(obj.value.run_id, `${label}.run_id`);
+  const runId = asRunId(obj.value.run_id, `${label}.run_id`);
   if (!runId.ok) return runId;
   const related: LiveRelatedRun = { run_id: runId.value };
   const strings: Array<"mode" | "status" | "sha"> = ["mode", "status", "sha"];
@@ -713,7 +725,7 @@ function parseIndexEntry(value: unknown, index: number, label: string): Result<T
   if (!obj.ok) return obj;
   const id = asString(obj.value.id, `${path}.id`);
   if (!id.ok) return id;
-  const runId = asString(obj.value.runId, `${path}.runId`);
+  const runId = asRunId(obj.value.runId, `${path}.runId`);
   if (!runId.ok) return runId;
   const type = asOneOf<TimelineEntryType>(obj.value.type, ENTRY_TYPES, `${path}.type`);
   if (!type.ok) return type;
@@ -756,12 +768,12 @@ function parseNumberList(value: unknown, label: string): Result<number[], Error>
   return ok(out);
 }
 
-function parseStringList(value: unknown, label: string): Result<string[], Error> {
+function parseRunIdList(value: unknown, label: string): Result<string[], Error> {
   const raw = asArray(value, label);
   if (!raw.ok) return raw;
   const out: string[] = [];
   for (let index = 0; index < raw.value.length; index += 1) {
-    const item = asString(raw.value[index], `${label}[${index}]`);
+    const item = asRunId(raw.value[index], `${label}[${index}]`);
     if (!item.ok) return item;
     out.push(item.value);
   }
@@ -811,7 +823,7 @@ function parsePullRequest(value: unknown, index: number): Result<GatedPullReques
     asSafeInteger(inner, `${label}.issueNumber`),
   );
   if (!issueNumber.ok) return issueNumber;
-  const runIds = parseStringList(obj.value.runIds, `${label}.runIds`);
+  const runIds = parseRunIdList(obj.value.runIds, `${label}.runIds`);
   if (!runIds.ok) return runIds;
   let entries: TimelineEntry[] = [];
   if (obj.value.entries !== undefined) {
@@ -874,7 +886,7 @@ export function isLiveSnapshot(value: ParsedPublicReviewSnapshot): value is Publ
   return Array.isArray(value);
 }
 
-/** Parse a version-1 live-run snapshot or issue-centric index. */
+/** Parse a version-1 live-run snapshot or issue-centric index. See SNAPSHOT.md. */
 export function parsePublicReviewSnapshot(value: unknown): Result<ParsedPublicReviewSnapshot, Error> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return fail("snapshot must be an object");

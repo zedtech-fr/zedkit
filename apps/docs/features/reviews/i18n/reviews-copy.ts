@@ -23,7 +23,8 @@ export const reviewsCopy = {
     },
     unlinkedMissing: {
       title: "Unlinked pull request not found",
-      description: "This unlinked pull request is not on the public list.",
+      description:
+        "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
     },
     runMissing: {
       title: "Run not found",
@@ -44,10 +45,13 @@ export const reviewsCopy = {
     unlinkedDescription:
       "These runs are not joined to a GitHub issue yet. They stay reachable here and from old review URLs.",
     openUnlinked: "Open unlinked pull request",
+    run: "run",
+    runs: "runs",
   },
   issue: {
     back: "All issues",
     timeline: "Timeline",
+    // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
     openRun: "Open this run",
     missing: "This issue is not on the public list.",
@@ -55,7 +59,8 @@ export const reviewsCopy = {
   unlinked: {
     back: "All issues",
     title: "Unlinked pull request",
-    missing: "This unlinked pull request is not on the public list.",
+    missing: "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
+    // Defensive: zero-entry PRs are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this pull request.",
   },
   run: {

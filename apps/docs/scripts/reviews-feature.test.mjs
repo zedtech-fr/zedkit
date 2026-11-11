@@ -28,6 +28,8 @@ import {
   toPublicReviews,
 } from "../features/reviews/model/public-review.ts";
 import {
+  linkedPrFallbackPath,
+  linkedPrRunFallbackPath,
   listIssueParamsFrom,
   listIssueRunParamsFrom,
   listIssueSitemapPathsFrom,
@@ -36,6 +38,7 @@ import {
   listReviewRunParamsFrom,
   listReviewSitemapPathsFrom,
   listUnlinkedPrParamsFrom,
+  listUnlinkedRunParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
   RETIRED_REVIEW_PR_NUMBERS,
@@ -196,6 +199,27 @@ test("a version-1 snapshot parses issues and pull requests", () => {
     [108],
   );
   assert.equal(parsed.value.pullRequests[0].issueNumber, 108);
+});
+
+test("a hybrid snapshot with issues and reviews is parsed as an index", () => {
+  const parsed = parsePublicReviewSnapshot({
+    ...wrapper([issue()]),
+    reviews: [liveSample()],
+  });
+  assert.equal(parsed.ok, true);
+  assert.equal(Array.isArray(parsed.value), false);
+  assert.equal(parsed.value.issues[0].number, 108);
+});
+
+test("run ids that are not a safe path segment fail closed", () => {
+  const traversal = parsePublicReviewSnapshot(
+    wrapper([issue({ entries: [entry({ runId: "../etc/passwd" })] })]),
+  );
+  assert.equal(traversal.ok, false);
+  const live = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, run_id: "../../x" } })]),
+  );
+  assert.equal(live.ok, false);
 });
 
 test("an empty snapshot is valid", () => {
@@ -371,8 +395,19 @@ test("an empty snapshot lists nothing and keeps the sitemap root at /issues", as
   assert.deepEqual(await port.listIssues(), []);
   assert.deepEqual(await listIssueParamsFrom(port), [{ n: "0" }]);
   assert.deepEqual(await listIssueRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
   assert.deepEqual(await listIssueSitemapPaths(path), ["/issues"]);
+});
+
+test("an all-linked snapshot still emits unlinked static placeholders", async () => {
+  const port = createSnapshotReviewPort(writeSnapshot([issue()], [pr()]));
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "133" }]);
 });
 
 test("a malformed snapshot fails closed", () => {
@@ -438,6 +473,10 @@ test("redirect map: linked PR goes to the issue; unlinked PR uses /issues/pr/:n"
   assert.equal(redirectPathForPr(null, 54), "/issues/pr/54");
   assert.equal(redirectPathForPrRun(108, 133, "run-108-impl"), "/issues/108/runs/run-108-impl");
   assert.equal(redirectPathForPrRun(null, 54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
+  assert.equal(linkedPrFallbackPath(108), "/issues/108");
+  assert.equal(linkedPrFallbackPath(null), null);
+  assert.equal(linkedPrRunFallbackPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(linkedPrRunFallbackPath(null, "run-108-impl"), null);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "133" }, { n: "54" }]);
   assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "54" }]);
   const redirects = await listReviewRedirectsFrom(port);
@@ -509,6 +548,7 @@ test("the checked-in public snapshot is live-shaped, under 200KB, and sitemaps /
   }
   const bytes = statSync(join(reviewsRoot, "adapters/public-reviews.json")).size;
   assert.ok(bytes < 200 * 1024);
+  assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
   const sitemap = await listIssueSitemapPaths();
   assert.equal(sitemap[0], "/issues");
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
@@ -525,6 +565,11 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.type.improve, "Improve from review");
   assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
+  assert.equal(reviewsCopy.list.runs, "runs");
+  assert.equal(
+    reviewsCopy.unlinked.missing,
+    "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
+  );
   assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
@@ -658,6 +703,9 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.match(list, /copy\.list\.unlinkedTitle/);
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
   assert.match(list, /copy\.type\[last\.type\]/);
+  assert.match(list, /aria-label=\{copy\.list\.title\}/);
+  assert.match(list, /aria-labelledby=\{unlinkedHeadingId\}/);
+  assert.match(list, /runCountLabel/);
   assert.match(timeline, /copy\.type/);
   assert.match(timeline, /entry\.runId/);
   assert.match(timeline, /aria-labelledby/);
@@ -669,12 +717,13 @@ test("list and timeline views read from issue records, not a PR console", () => 
 test("verdict and status tones live in one shared module", () => {
   const badges = readFileSync(join(reviewsRoot, "ui/review-badges.ts"), "utf8");
   assert.match(badges, /export const VERDICT_BADGE/);
-  assert.match(badges, /export const STATUS_TONE/);
   assert.match(badges, /export const STATUS_BADGE/);
+  assert.match(badges, /running: "secondary"/);
+  assert.doesNotMatch(badges, /STATUS_TONE/);
   const status = readFileSync(join(reviewsRoot, "ui/issue-status.tsx"), "utf8");
   assert.match(status, /from "\.\/review-badges"/);
-  assert.match(status, /mark\.status === "running"/);
   assert.match(status, /STATUS_BADGE/);
+  assert.doesNotMatch(status, /StatusLabel/);
   for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.match(source, /from "\.\/issue-status"/);
@@ -831,8 +880,33 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
 test("a payload that still has a home path or token is rejected", () => {
   assert.throws(() => assertPubliclySafe({ notes: "from /home/alice/kit" }));
   assert.throws(() => assertPubliclySafe({ notes: "Bearer abcDEF123._~+/=" }));
+  assert.throws(() => assertPubliclySafe({ notes: "bearer abcDEF123._~+/=" }));
   assert.throws(() => assertPubliclySafe({ notes: String.raw`C:\Users\bob\token` }));
   assert.doesNotThrow(() => assertPubliclySafe({ notes: "Bearer [redacted] at [path]" }));
+});
+
+test("toPublicIndex fails closed when a home path survives scrub", () => {
+  assert.throws(() => toPublicIndex(parsedIndex([issue({ title: "notes from /home/" })])));
+});
+
+test("zero-entry issues and unlinked PRs are dropped before the list", () => {
+  const gated = toPublicIndex(
+    parsedIndex(
+      [issue({ number: 1, entries: [] }), issue()],
+      [
+        pr({ number: 10, issueNumber: null, runIds: [], entries: [] }),
+        pr(),
+      ],
+    ),
+  );
+  assert.deepEqual(
+    gated.issues.map((row) => row.number),
+    [108],
+  );
+  assert.deepEqual(
+    gated.pullRequests.map((row) => row.number),
+    [133],
+  );
 });
 
 test("a public live review is kept with its list fields", () => {
@@ -1015,8 +1089,10 @@ test("an empty live snapshot lists nothing and keeps the /reviews helper root", 
   const path = writeLiveSnapshot([]);
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.list(), []);
-  assert.deepEqual(await listReviewPrParamsFrom(port), []);
-  assert.deepEqual(await listReviewRunParamsFrom(port), []);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewSitemapPathsFrom(port), ["/reviews"]);
   assert.deepEqual(await listReviewSitemapPaths(path), ["/reviews"]);
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import Link from "next/link";
 import {
   Badge,
@@ -14,13 +15,17 @@ import {
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { latestEntry, latestStatus } from "../model/latest-status";
-import { issuePath, unlinkedPrPath } from "../model/review-routes";
+import { issuePath, uniqueRunIds, unlinkedPrPath } from "../model/review-routes";
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
   return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
+}
+
+function runCountLabel(count: number, copy: ReviewsCopy): string {
+  return `${count} ${count === 1 ? copy.list.run : copy.list.runs}`;
 }
 
 function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
@@ -57,6 +62,7 @@ function UnlinkedRow({
 }) {
   const status = latestStatus(entry.entries);
   const last = latestEntry(entry.entries);
+  const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
   return (
     <Stack gap="sm" className="border-b border-border py-section-sm">
       <Button asChild variant="link" className="min-h-target w-fit">
@@ -71,6 +77,9 @@ function UnlinkedRow({
           </Text>
         ) : null}
         {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+        <Text variant="muted" typeRole="caption">
+          {runCountLabel(runCount, copy)}
+        </Text>
         <UpdatedAgo date={new Date(entry.lastRunAt)} />
       </Stack>
     </Stack>
@@ -86,6 +95,7 @@ export function ReviewListView({
   unlinked: readonly UnlinkedPullRequest[];
   copy: ReviewsCopy;
 }) {
+  const unlinkedHeadingId = useId();
   return (
     <ReviewAppearanceFrame copy={copy}>
       {(panel) => (
@@ -95,7 +105,7 @@ export function ReviewListView({
           {issues.length === 0 ? (
             <EmptyState description={copy.list.empty} />
           ) : (
-            <ul>
+            <ul aria-label={copy.list.title}>
               {issues.map((issue) => (
                 <li key={issue.number}>
                   <IssueRow issue={issue} copy={copy} />
@@ -105,11 +115,11 @@ export function ReviewListView({
           )}
           {unlinked.length > 0 ? (
             <Stack gap="sm">
-              <Heading level={2} typeRole="section">
+              <Heading level={2} typeRole="section" id={unlinkedHeadingId}>
                 {copy.list.unlinkedTitle}
               </Heading>
               <Text variant="muted">{copy.list.unlinkedDescription}</Text>
-              <ul>
+              <ul aria-labelledby={unlinkedHeadingId}>
                 {unlinked.map((entry) => (
                   <li key={entry.number}>
                     <UnlinkedRow entry={entry} copy={copy} />

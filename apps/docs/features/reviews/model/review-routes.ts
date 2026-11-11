@@ -31,47 +31,69 @@ export function uniqueRunIds(runIds: readonly string[]): string[] {
   return out;
 }
 
+function orPlaceholder<T>(params: T[], placeholder: T): T[] {
+  return params.length > 0 ? params : [placeholder];
+}
+
+function prParams(rows: readonly { number: number }[]): { n: string }[] {
+  return rows.map((row) => ({ n: String(row.number) }));
+}
+
+function runParams<T extends { number: number }>(
+  rows: readonly T[],
+  runIdsOf: (row: T) => readonly string[],
+): { n: string; id: string }[] {
+  return rows.flatMap((row) =>
+    uniqueRunIds(runIdsOf(row)).map((id) => ({ n: String(row.number), id })),
+  );
+}
+
+function pushRunTree(
+  paths: string[],
+  rows: readonly { number: number; entries: readonly { runId: string }[] }[],
+  itemPath: (n: number) => string,
+  runPath: (n: number, id: string) => string,
+): void {
+  for (const row of rows) {
+    paths.push(itemPath(row.number));
+    for (const id of uniqueRunIds(row.entries.map((entry) => entry.runId))) {
+      paths.push(runPath(row.number, id));
+    }
+  }
+}
+
 export async function listIssueParamsFrom(port: ReviewPort) {
-  const issues = await port.listIssues();
-  if (issues.length === 0) return [ISSUE_STATIC_PLACEHOLDER];
-  return issues.map((issue) => ({ n: String(issue.number) }));
+  return orPlaceholder(prParams(await port.listIssues()), ISSUE_STATIC_PLACEHOLDER);
 }
 
 export async function listIssueRunParamsFrom(port: ReviewPort) {
-  const issues = await port.listIssues();
-  const params = issues.flatMap((issue) =>
-    uniqueRunIds(issue.entries.map((entry) => entry.runId)).map((id) => ({
-      n: String(issue.number),
-      id,
-    })),
+  return orPlaceholder(
+    runParams(await port.listIssues(), (issue) => issue.entries.map((entry) => entry.runId)),
+    ISSUE_RUN_STATIC_PLACEHOLDER,
   );
-  return params.length > 0 ? params : [ISSUE_RUN_STATIC_PLACEHOLDER];
 }
 
 export async function listUnlinkedPrParamsFrom(port: ReviewPort) {
-  const unlinked = await port.listUnlinkedPullRequests();
-  return unlinked.map((entry) => ({ n: String(entry.number) }));
+  return orPlaceholder(prParams(await port.listUnlinkedPullRequests()), ISSUE_STATIC_PLACEHOLDER);
 }
 
 export async function listUnlinkedRunParamsFrom(port: ReviewPort) {
-  const unlinked = await port.listUnlinkedPullRequests();
-  return unlinked.flatMap((entry) =>
-    uniqueRunIds(entry.entries.map((item) => item.runId)).map((id) => ({
-      n: String(entry.number),
-      id,
-    })),
+  return orPlaceholder(
+    runParams(await port.listUnlinkedPullRequests(), (entry) =>
+      entry.entries.map((item) => item.runId),
+    ),
+    ISSUE_RUN_STATIC_PLACEHOLDER,
   );
 }
 
 export async function listReviewPrParamsFrom(port: ReviewPort) {
-  const pullRequests = await port.listPullRequests();
-  return pullRequests.map((entry) => ({ n: String(entry.number) }));
+  return orPlaceholder(prParams(await port.listPullRequests()), ISSUE_STATIC_PLACEHOLDER);
 }
 
 export async function listReviewRunParamsFrom(port: ReviewPort) {
-  const pullRequests = await port.listPullRequests();
-  return pullRequests.flatMap((entry) =>
-    uniqueRunIds(entry.runIds).map((id) => ({ n: String(entry.number), id })),
+  return orPlaceholder(
+    runParams(await port.listPullRequests(), (entry) => entry.runIds),
+    ISSUE_RUN_STATIC_PLACEHOLDER,
   );
 }
 
@@ -87,22 +109,21 @@ export function redirectPathForPrRun(
   return issueNumber === null ? unlinkedRunPath(prNumber, runId) : issueRunPath(issueNumber, runId);
 }
 
+/** `/issues/pr/:n` for a linked PR should send the visitor to the issue, not a 404. */
+export function linkedPrFallbackPath(issueNumber: number | null): string | null {
+  return issueNumber === null ? null : issuePath(issueNumber);
+}
+
+export function linkedPrRunFallbackPath(issueNumber: number | null, runId: string): string | null {
+  return issueNumber === null ? null : issueRunPath(issueNumber, runId);
+}
+
 export async function listIssueSitemapPathsFrom(port: ReviewPort) {
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
   const paths = ["/issues"];
-  for (const issue of issues) {
-    paths.push(issuePath(issue.number));
-    for (const runId of uniqueRunIds(issue.entries.map((entry) => entry.runId))) {
-      paths.push(issueRunPath(issue.number, runId));
-    }
-  }
-  for (const entry of unlinked) {
-    paths.push(unlinkedPrPath(entry.number));
-    for (const runId of uniqueRunIds(entry.entries.map((item) => item.runId))) {
-      paths.push(unlinkedRunPath(entry.number, runId));
-    }
-  }
+  pushRunTree(paths, issues, issuePath, issueRunPath);
+  pushRunTree(paths, unlinked, unlinkedPrPath, unlinkedRunPath);
   return paths;
 }
 
@@ -127,7 +148,11 @@ export type ReviewRedirect = {
   readonly to: string;
 };
 
-/** Pre-issue-centric public PR numbers; stub so old /reviews/pr/:n links do not 404. */
+/**
+ * Pre-issue-centric public PR numbers; stub so old `/reviews/pr/:n` links do not 404.
+ * Run-level retired URLs (`/reviews/pr/:n/runs/:id`) stay 404: run ids are unknowable once retired.
+ * Dev/server runtime has no stubs; only the static-export HTML files redirect.
+ */
 export const RETIRED_REVIEW_PR_NUMBERS = [64, 79, 80] as const;
 
 export async function listReviewRedirectsFrom(port: ReviewPort): Promise<ReviewRedirect[]> {

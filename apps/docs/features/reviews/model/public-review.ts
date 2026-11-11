@@ -18,7 +18,7 @@ const AUTH_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi;
 const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/g;
 const LIVE_URL_SECRET_QUERY = /(token|password|passwd|secret|signature|authorization)=/i;
 const UNSAFE_PATH_PATTERN = /\/home\/|\/Users\/|\\Users\\/;
-const UNSAFE_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+(?!\[redacted\])[A-Za-z0-9._~+/=-]+/;
+const UNSAFE_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+(?!\[redacted\])[A-Za-z0-9._~+/=-]+/i;
 
 /** `/g` keeps lastIndex; a match must not let the next .test() skip. */
 function testReset(pattern: RegExp, value: string): boolean {
@@ -123,12 +123,14 @@ export function toPublicIndex(index: GatedIndex): PublicIssueIndex {
       return keptIssueNumbers.has(entry.issueNumber);
     })
     .map(stripPullRequest);
-  return {
+  const out: PublicIssueIndex = {
     version: 1,
     kind: scrubbed.kind,
     issues,
     pullRequests,
   };
+  assertPubliclySafe(out);
+  return out;
 }
 
 /** Fail closed if a public payload still contains a home path or auth token. */
