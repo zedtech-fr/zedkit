@@ -13,8 +13,10 @@ export type AssistantStreamStage = (typeof ASSISTANT_STREAM_STAGES)[number];
 
 const STAGES = new Set<string>(ASSISTANT_STREAM_STAGES);
 
-export function isAssistantStreamStage(value: string): value is AssistantStreamStage {
-  return STAGES.has(value);
+export function isAssistantStreamStage(value: string): value is AssistantStreamStage;
+export function isAssistantStreamStage(value: string, stages: readonly string[]): boolean;
+export function isAssistantStreamStage(value: string, stages?: readonly string[]): boolean {
+  return (stages === undefined ? STAGES : new Set(stages)).has(value);
 }
 
 export type SseFrame = { event: string; data: string };
@@ -81,13 +83,23 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 }
 
 /** One named assistant event from an SSE frame, or nothing if the frame is not one. */
-export function readAssistantStreamEvent(frame: SseFrame): AssistantStreamEvent | null {
+export function readAssistantStreamEvent(frame: SseFrame): AssistantStreamEvent | null;
+export function readAssistantStreamEvent(
+  frame: SseFrame,
+  stages: readonly string[],
+): Exclude<AssistantStreamEvent, { type: "status" }> | { type: "status"; stage: string } | null;
+export function readAssistantStreamEvent(
+  frame: SseFrame,
+  stages?: readonly string[],
+): Exclude<AssistantStreamEvent, { type: "status" }> | { type: "status"; stage: string } | null {
   const parsed = tryCatch(() => JSON.parse(frame.data) as unknown);
   const data = parsed.ok ? asRecord(parsed.value) : null;
   if (!data) return null;
   if (frame.event === "status") {
     const stage = typeof data.stage === "string" ? data.stage : "";
-    return isAssistantStreamStage(stage) ? { type: "status", stage } : null;
+    const allowed =
+      stages === undefined ? isAssistantStreamStage(stage) : isAssistantStreamStage(stage, stages);
+    return allowed ? { type: "status", stage } : null;
   }
   if (frame.event === "text") {
     return typeof data.delta === "string" && data.delta.length > 0 ? { type: "text", delta: data.delta } : null;
