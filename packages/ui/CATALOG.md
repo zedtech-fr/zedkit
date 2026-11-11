@@ -681,7 +681,7 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - See also: `Stamp data with its age`
 - Examples: Loading operation, Saved and error states, Offline state
 - Registry: status-label
-- Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.
+- Troubleshooting: Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check. Unknown stream stage names are dropped unless you pass `stages` to `readAssistantStreamEvent` / `isAssistantStreamStage`; `StreamStatus` only words the default list — pass `label` for any other name.
 
 ```ts
 import { StatusLabel } from "@zedtech/zedkit-ui";

@@ -3679,7 +3679,7 @@
           },
           "registry": "status-label",
           "a11y": "`role=status` announces the named operation; icon/text gap is `gap-icon`.",
-          "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check.",
+          "troubleshooting": "Announcement spam — one live label per operation; unmount or repurpose it when done. Wrong tone icon — `loading`/`updating`/`syncing` share the active dot; only `saved` shows the check. Unknown stream stage names are dropped unless you pass `stages` to `readAssistantStreamEvent` / `isAssistantStreamStage`; `StreamStatus` only words the default list — pass `label` for any other name.",
           "seeAlso": [
             "Stamp data with its age"
           ]

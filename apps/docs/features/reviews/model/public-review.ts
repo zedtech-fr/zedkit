@@ -1,9 +1,11 @@
-import type { ReviewRecord } from "../ports/review-port";
+import type { PublicLiveRun } from "../ports/review-port";
 
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
 const AUTH_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi;
 const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/g;
+const UNSAFE_PATH_PATTERN = /\/home\/|\/Users\/|\\Users\\/;
+const UNSAFE_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+(?!\[redacted\])[A-Za-z0-9._~+/=-]+/;
 
 function scrubString(value: string): string {
   return value
@@ -23,9 +25,18 @@ function scrub(value: unknown, key?: string): unknown {
   return out;
 }
 
-/** Public reviews only; secret-like keys, tokens, and home paths are scrubbed. */
-export function toPublicReviews(records: readonly ReviewRecord[]): ReviewRecord[] {
-  return records
-    .filter((record) => record.visibility === "public")
-    .map((record) => scrub(structuredClone(record)) as ReviewRecord);
+/** Fail closed if a public payload still contains a home path or auth token. */
+export function assertPubliclySafe(value: unknown): void {
+  const text = JSON.stringify(value);
+  if (UNSAFE_PATH_PATTERN.test(text) || UNSAFE_TOKEN_PATTERN.test(text)) {
+    throw new Error("public review snapshot: unredacted token or machine path");
+  }
+}
+
+/** Public live runs only; secret-like keys, tokens, and home paths are scrubbed. */
+export function toPublicReviews(records: readonly PublicLiveRun[]): PublicLiveRun[] {
+  const publicRows = records.filter((record) => record.visibility === "public");
+  const scrubbed = publicRows.map((record) => scrub(structuredClone(record)) as PublicLiveRun);
+  assertPubliclySafe(scrubbed);
+  return scrubbed;
 }

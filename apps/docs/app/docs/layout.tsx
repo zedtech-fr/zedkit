@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { source } from "#source";
-import { featuredPackageChangelogUrl, featuredPackageReleasesUrl, featuredPackageVersion } from "@/content/gallery";
+import { featuredPackageReleasesUrl, featuredPackageVersion } from "@/content/gallery";
 import { SiteBrand } from "@/ui/site-brand";
 import { siteHeaderLinks } from "@/lib/site-header-links";
 import { KitVersionLabel } from "@/ui/kit-version-label";
@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         ),
       }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
-      links={siteHeaderLinks(featuredPackageChangelogUrl)}
+      links={siteHeaderLinks()}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: true }}
       slots={{ ...docsChromeSlots, header: DocsSiteHeader }}

@@ -24,6 +24,7 @@ import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
 import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
 import { componentPageSections } from "../lib/component-page-sections.mjs";
+import { uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import {
   readAgentOnboardingMarkdown,
@@ -508,12 +509,12 @@ export function generate(outDir) {
     mkdirSync(dir, { recursive: true });
     folders.push(folder);
     const version = packageVersion(folder);
-    const slugs = [];
+    const published = [];
     llms.push(`## ${pkg}`, "");
     for (const need of entry.needs) {
       if (docsOmitNeed(need.need)) continue;
       const { slug } = placementByNeed.get(need.need);
-      slugs.push(slug);
+      published.push({ need: need.need, slug });
       slugsByNeed.set(`${pkg} ${need.need}`, { folder, slug });
       const spec = rich[need.need];
       let richBlock = null;
@@ -557,7 +558,16 @@ export function generate(outDir) {
       llms.push(`- [${need.need}](https://zedkit.app/docs/${folder}/${slug}) — ${metaDescription(need, folder)}`);
     }
     llms.push("");
-    writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: slugs }, null, 2)}\n`);
+    let metaPages = published.map((item) => item.slug);
+    if (folder === "ui") {
+      const sourceByNeed = {};
+      for (const item of published) {
+        const source = rich[item.need]?.source;
+        if (typeof source === "string") sourceByNeed[item.need] = source;
+      }
+      metaPages = uiSidebarPages({ needs: published, sourceByNeed });
+    }
+    writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: metaPages }, null, 2)}\n`);
   }
   writeAiSetupPublicAssets(APP);
   const guidePages = writeGuidePages(outDir);
