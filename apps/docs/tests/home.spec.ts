@@ -10,7 +10,7 @@ test("home explains the product and four entry areas", async ({ page }) => {
   await expect(page.locator("[data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(
     page.getByRole("heading", {
-      name: "Years of production setup. One prompt.",
+      name: "Code that's checked. Screens that match.",
       level: 1,
     }),
   ).toBeVisible();
@@ -31,28 +31,34 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero offers get started first with catalog and demo links (#1038)", async ({ page }) => {
+test("home hero offers Setup first with get started and catalog (#111)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
 
   const heroActions = page.locator("[data-home-hero-actions] a");
   await expect(heroActions).toHaveCount(3);
-  await expect(heroActions.nth(0)).toHaveText("Get started");
-  await expect(heroActions.nth(0)).toHaveAttribute("href", "#get-started");
-  await expect(heroActions.nth(1)).toHaveText("Set up AI");
-  await expect(heroActions.nth(1)).toHaveAttribute("href", "#ai-setup");
+  await expect(heroActions.nth(0)).toHaveText("Setup");
+  await expect(heroActions.nth(0)).toHaveAttribute("href", "#ai-setup");
+  await expect(heroActions.nth(1)).toHaveText("Get started");
+  await expect(heroActions.nth(1)).toHaveAttribute("href", "#get-started");
   await expect(heroActions.nth(2)).toHaveText("Browse catalog");
   await expect(heroActions.nth(2)).toHaveAttribute("href", "/catalog");
+  for (const index of [0, 1, 2]) {
+    await expect(heroActions.nth(index)).not.toHaveAttribute("target");
+    await expect(heroActions.nth(index)).not.toHaveAttribute("rel");
+  }
 
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
-    "Installs in 2 seconds. Then the agent reads your repo once — about 15 to 45 minutes.",
+    "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
   );
   await expect(page.getByRole("textbox", { name: "One-prompt AI setup" })).toBeVisible();
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
   await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Years of production setup. One prompt.",
+      name: "Code that's checked. Screens that match.",
       level: 1,
     }),
   ).toBeVisible();

@@ -2,9 +2,9 @@ export const homeHeroCopy = {
   hero: {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
     titleCategory: "zedkit · open source, MIT",
-    title: "Years of production setup. One prompt.",
-    /** What the window is, and the first thing to look at in it. */
-    sub: "Installs in 2 seconds. Then the agent reads your repo once — about 15 to 45 minutes.",
+    title: "Code that's checked. Screens that match.",
+    /** One intro paragraph (visual `lead` role). */
+    sub: "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
     promptAriaLabel: "One-prompt AI setup",
     promptCopyLabel: "Copy prompt",
     facts: "What you see installs from npm or copies as source · MIT · React 19 · Tailwind 4",
@@ -16,7 +16,7 @@ export const homeHeroCopy = {
   },
   heroActions: {
     getStarted: "Get started",
-    setupAi: "Set up AI",
+    setup: "Setup",
     browseCatalog: "Browse catalog",
   },
   /** The hero is one small product. Its pages are the examples; the sidebar is how a visitor moves between them. */
