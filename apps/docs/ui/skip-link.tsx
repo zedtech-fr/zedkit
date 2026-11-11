@@ -1,5 +1,7 @@
 "use client";
 
+import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+
 /**
  * First tab stop on every page: jumps keyboard focus to `#main-content`,
  * past header, nav, and search chrome. The id is in the SSR HTML so native
@@ -25,7 +27,7 @@ export function SkipLink() {
       }}
       className="sr-only focus:not-sr-only focus:absolute! focus:top-float focus:left-float focus:z-overlay focus:inline-flex focus:min-h-overlay-touch-target focus:items-center focus:rounded-md focus:bg-foreground focus:px-touch focus:text-background"
     >
-      Skip to content
+      {siteChromeCopy.skipToContent}
     </a>
   );
 }

@@ -105,10 +105,11 @@ test("a hairline ring fails", async ({ page }) => {
 
 test.describe("the kit's own button", () => {
   const PAGE = "/docs/ui/trigger-actions-with-buttons";
+  // Preview Display/Full/Site are kit Buttons (`data-slot=button`); the specimen is on the stage.
 
   test("paints a real indicator on keyboard focus", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    const button = page.locator("[data-component-preview] [data-slot='button']").first();
+    const button = page.locator("[data-preview-surface] [data-slot='button']").first();
     await focusWithKeyboard(button);
     await assertFocusVisibleRing(button);
   });
@@ -116,7 +117,7 @@ test.describe("the kit's own button", () => {
   test("fails once its indicator is removed", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.addStyleTag({ content: "[data-slot='button']:focus-visible{outline:none!important;box-shadow:none!important}" });
-    const button = page.locator("[data-component-preview] [data-slot='button']").first();
+    const button = page.locator("[data-preview-surface] [data-slot='button']").first();
     await focusWithKeyboard(button);
     await expect(assertFocusVisibleRing(button)).rejects.toThrow();
   });
@@ -167,7 +168,7 @@ test.describe("controls whose own styles used to hide the ring", () => {
   test("forced colors keep drawing the focus outline", async ({ page }) => {
     await page.emulateMedia({ forcedColors: "active" });
     await page.goto("/docs/ui/trigger-actions-with-buttons", { waitUntil: "networkidle" });
-    const button = page.locator("[data-component-preview] [data-slot='button']").first();
+    const button = page.locator("[data-preview-surface] [data-slot='button']").first();
     await focusWithKeyboard(button);
     const outline = await button.evaluate((el) => {
       const style = getComputedStyle(el);
