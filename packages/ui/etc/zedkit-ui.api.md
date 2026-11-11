@@ -1114,6 +1114,9 @@ export type InputProps = React_2.ComponentProps<"input">;
 // @public (undocumented)
 export function isAssistantStreamStage(value: string): value is AssistantStreamStage;
 
+// @public (undocumented)
+export function isAssistantStreamStage(value: string, stages: readonly string[]): boolean;
+
 // @public
 export function isMotionReduced(): boolean;
 
@@ -1375,6 +1378,14 @@ export function pullSseFrames(buffer: string): {
 
 // @public
 export function readAssistantStreamEvent(frame: SseFrame): AssistantStreamEvent | null;
+
+// @public (undocumented)
+export function readAssistantStreamEvent(frame: SseFrame, stages: readonly string[]): Exclude<AssistantStreamEvent, {
+    type: "status";
+}> | {
+    type: "status";
+    stage: string;
+} | null;
 
 // @public
 export function RouteModal(input: RouteModalProps): React_2.JSX.Element;
