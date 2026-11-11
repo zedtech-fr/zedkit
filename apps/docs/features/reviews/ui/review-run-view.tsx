@@ -1,24 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Button,
-  PageHeader,
-  Stack,
-  StatusLabel,
-  UpdatedAgo,
-  type StatusLabelTone,
-} from "@zedtech/zedkit-ui";
+import { Button, PageHeader, Stack } from "@zedtech/zedkit-ui";
 
 import type { ReviewRecord, ReviewRun } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-
-const STATUS_TONE: Record<ReviewRun["status"], StatusLabelTone> = {
-  running: "loading",
-  done: "saved",
-  error: "error",
-};
+import { ReviewConsole } from "./review-console";
 
 export function ReviewRunView({
   record,
@@ -47,9 +35,8 @@ export function ReviewRunView({
               </Stack>
             }
           />
-          <StatusLabel tone={STATUS_TONE[run.status]}>{copy.status[run.status]}</StatusLabel>
-          <UpdatedAgo date={new Date(run.startedAt)} />
           {panel}
+          <ReviewConsole record={record} run={run} copy={copy} />
         </>
       )}
     </ReviewAppearanceFrame>
