@@ -103,19 +103,21 @@ function EditorFields({
   scheme,
   onPatch,
   afterShape,
+  idPrefix = "identity-editor",
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
   onPatch: (key: string, value: string) => void;
   /** Rendered right after the first group: what you do once the first adjustment has shown its effect. */
   afterShape?: ReactNode;
+  idPrefix?: string;
 }) {
   const pair = tokens[scheme];
   const scalar = (keys: readonly (typeof SCALAR_KEYS)[number][] | readonly (typeof FONT_KEYS)[number][]) =>
     keys.map((key) => (
       <TokenField
         key={key}
-        id={`identity-editor-${key}`}
+        id={`${idPrefix}-${key}`}
         label={identityTokenCssVars[key]}
         value={tokens[key]}
         onChange={(value) => onPatch(key, value)}
@@ -132,7 +134,7 @@ function EditorFields({
         {LIGHT_KEYS.map((key) => (
           <TokenField
             key={key}
-            id={`identity-editor-${key}`}
+            id={`${idPrefix}-${key}`}
             label={identityTokenCssVars[key]}
             value={pair[key]}
             swatch

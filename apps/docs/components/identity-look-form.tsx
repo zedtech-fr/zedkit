@@ -8,6 +8,7 @@ import {
   FieldSet,
   Stack,
   Tabs,
+  Text,
   TabsContent,
   TabsList,
   TabsTrigger,
@@ -27,29 +28,31 @@ import {
   hexToHslTriplet,
 } from "@/lib/identity-simple-value";
 
-const SIMPLE_COLORS = ["background", "foreground", "primary", "accent"] as const;
+const SIMPLE_COLORS = ["background", "foreground", "primary", "primaryForeground", "accent", "border", "mutedForeground"] as const;
 
 function ColorInput({
   tokenKey,
   value,
   scheme,
+  idPrefix,
   onPatch,
 }: {
   tokenKey: (typeof SIMPLE_COLORS)[number];
   value: string;
   scheme: "light" | "dark";
+  idPrefix: string;
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
 }) {
-  const id = `identity-editor-simple-${tokenKey}`;
+  const id = `${idPrefix}-simple-${tokenKey}`;
   const hex = colorInputHex(value);
   return (
-    <Field className="content-shrink">
+    <Field orientation="horizontal" className="content-shrink items-center justify-between">
       <FieldLabel htmlFor={id}>{identityEditorCopy.simple[tokenKey]}</FieldLabel>
       <input
         id={id}
         type="color"
         value={hex}
-        className="h-control-height min-h-target w-full min-w-target cursor-pointer rounded-md border border-input bg-transparent focus-ring-control"
+        className="size-control-height shrink-0 cursor-pointer rounded-md border border-input bg-transparent focus-ring-control"
         onChange={(event) => {
           const hsl = hexToHslTriplet(event.target.value);
           if (hsl) onPatch(tokenKey, hsl, scheme);
@@ -66,6 +69,7 @@ function RangeInput({
   min,
   max,
   zeroAsPx,
+  idPrefix,
   onPatch,
 }: {
   tokenKey: "radius" | "spacing";
@@ -74,9 +78,10 @@ function RangeInput({
   min: number;
   max: number;
   zeroAsPx?: boolean;
+  idPrefix: string;
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
 }) {
-  const id = `identity-editor-simple-${tokenKey}`;
+  const id = `${idPrefix}-simple-${tokenKey}`;
   const shown = clampedCssLengthRem(value, min, max);
   return (
     <Field className="content-shrink">
@@ -103,10 +108,12 @@ function RangeInput({
 function SimpleFields({
   tokens,
   scheme,
+  idPrefix,
   onPatch,
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
+  idPrefix: string;
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
 }) {
   const copy = identityEditorCopy.simple;
@@ -114,6 +121,9 @@ function SimpleFields({
     <Stack gap="md" className="text-dense">
       <FieldSet>
         <FieldLegend>{copy.palette}</FieldLegend>
+        <Text variant="muted" typeRole="label">
+          {copy.paletteHint}
+        </Text>
         <Stack className="grid content-shrink gap-stack-lg sm:grid-pair">
           {SIMPLE_COLORS.map((key) => (
             <ColorInput
@@ -121,6 +131,7 @@ function SimpleFields({
               tokenKey={key}
               value={tokens[scheme][key]}
               scheme={scheme}
+              idPrefix={idPrefix}
               onPatch={onPatch}
             />
           ))}
@@ -134,6 +145,7 @@ function SimpleFields({
           min={RADIUS_MIN}
           max={RADIUS_MAX}
           zeroAsPx
+          idPrefix={idPrefix}
           onPatch={onPatch}
         />
         <RangeInput
@@ -142,6 +154,7 @@ function SimpleFields({
           value={tokens.spacing}
           min={SPACING_MIN}
           max={SPACING_MAX}
+          idPrefix={idPrefix}
           onPatch={onPatch}
         />
       </Stack>
@@ -156,6 +169,8 @@ function IdentityLookForm({
   onPatch,
   afterForm,
   afterShape,
+  idPrefix = "identity-editor",
+  stickyTabs = false,
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
@@ -163,20 +178,24 @@ function IdentityLookForm({
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
   afterForm?: ReactNode;
   afterShape?: ReactNode;
+  /** Field ids are prefixed per host so the dock and the editor page never share an id. */
+  idPrefix?: string;
+  /** Keep the Classic/Expert tabs pinned while the host scrolls (dock drawer). */
+  stickyTabs?: boolean;
 }) {
   const copy = identityEditorCopy.modes;
   return (
     <Stack gap="md">
       <Tabs defaultValue={defaultMode}>
-        <TabsList aria-label={copy.label}>
+        <TabsList aria-label={copy.label} className={stickyTabs ? "sticky pin-top z-header" : undefined}>
           <TabsTrigger value="simple">{copy.simple}</TabsTrigger>
           <TabsTrigger value="expert">{copy.expert}</TabsTrigger>
         </TabsList>
         <TabsContent value="simple">
-          <SimpleFields tokens={tokens} scheme={scheme} onPatch={onPatch} />
+          <SimpleFields tokens={tokens} scheme={scheme} idPrefix={idPrefix} onPatch={onPatch} />
         </TabsContent>
         <TabsContent value="expert">
-          <EditorFields tokens={tokens} scheme={scheme} onPatch={onPatch} afterShape={afterShape} />
+          <EditorFields tokens={tokens} scheme={scheme} idPrefix={idPrefix} onPatch={onPatch} afterShape={afterShape} />
         </TabsContent>
       </Tabs>
       {afterForm}

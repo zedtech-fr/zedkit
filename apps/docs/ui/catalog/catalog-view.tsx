@@ -8,7 +8,6 @@ import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 
 import { AREAS } from "@/ui/catalog/catalog-filter-constants";
 import { CatalogFiltersToolbar, catalogResultsStatusLine } from "@/ui/catalog/catalog-filters";
-import { CatalogIdentity } from "@/ui/catalog/catalog-identity";
 import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
 
 const CatalogResultsBodyLazy = dynamic(
@@ -90,14 +89,12 @@ export function CatalogView({
         </Stack>
       </Section>
       <Container width="wide" className="pt-start pb-section-lg">
-        <CatalogIdentity>
-          <Stack gap="md">
-            <div id="catalog-results-heading" data-catalog-results-heading="">
-              {catalogResultsStatusLine(filtered.length)}
-            </div>
-            <CatalogResultsBodyLazy filtered={filtered} />
-          </Stack>
-        </CatalogIdentity>
+        <Stack gap="md">
+          <div id="catalog-results-heading" data-catalog-results-heading="">
+            {catalogResultsStatusLine(filtered.length)}
+          </div>
+          <CatalogResultsBodyLazy filtered={filtered} />
+        </Stack>
       </Container>
     </>
   );

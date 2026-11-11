@@ -34,18 +34,26 @@ export const identityEditorCopy = {
     },
   },
   modes: {
-    label: "Simple or expert",
-    simple: "Simple",
+    label: "Classic or expert",
+    simple: "Classic",
     expert: "Expert",
   },
   simple: {
     palette: "Palette",
+    paletteHint: "Colours for this look in light; the dark side follows. Change spacing first, then watch the preview.",
     background: "Background",
     foreground: "Foreground",
     primary: "Primary",
+    primaryForeground: "Text on primary",
     accent: "Accent",
+    border: "Border",
+    mutedForeground: "Muted text",
     radius: "Radius",
     spacing: "Spacing",
+    contrast: "Colour checker",
+    contrastHint:
+      "Text needs 4.5:1 contrast on its background, accents and borders 3:1. Fix moves only that colour to the nearest passing shade.",
+    contrastOk: "Every checked colour pair passes.",
   },
   fields: {
     groups: {
