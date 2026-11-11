@@ -277,7 +277,7 @@ test.describe("the assistant in the editor", () => {
     expect(await page.locator("[data-slot='identity-editor-preview']").evaluate((node) => getComputedStyle(node).borderRadius)).toBe(draftBefore);
     await proposal.getByRole("button", { name: "Use this look" }).click();
     await expect(page.locator("[data-assistant-proposal]")).toHaveCount(0);
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.25rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.25rem");
     await expect(page.locator("#identity-assistant-brief")).toBeFocused();
     await expect(page.locator("[data-assistant-thread]")).toContainText("Warmer paper");
     // A follow-up is a refinement and carries the exchange so far.
@@ -318,7 +318,7 @@ test.describe("the assistant in the editor", () => {
     release();
     await page.waitForTimeout(600);
     await expect(page.locator("[data-assistant-proposal]")).toHaveCount(0);
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.5rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.5rem");
   });
 
   test("the last proposal stays while the next one fails, and a quota refusal says when to retry without promising an allowance", async ({ page }) => {
@@ -343,7 +343,7 @@ test.describe("the assistant in the editor", () => {
     await page.getByRole("button", { name: "Generate" }).click();
     await expect(page.locator("[data-assistant-notice]")).toContainText("could not be used, so nothing changed");
     await expect(page.locator("[data-assistant-proposal]")).toHaveCount(0);
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.5rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.5rem");
   });
 
   test("when the assistant is off, it says so and the presets and fields still work", async ({ page }) => {
@@ -354,10 +354,10 @@ test.describe("the assistant in the editor", () => {
     await expect(page.locator("[data-assistant-unavailable]")).toContainText("not set up here yet");
     await brief(page, "A ceramics shop");
     await expect(page.getByRole("button", { name: "Generate" })).toBeDisabled();
-    await page.getByLabel("Spacing", { exact: true }).fill("0.3rem");
-    await expect(page.getByLabel("Spacing", { exact: true })).toHaveValue("0.3rem");
+    await page.getByLabel("--spacing", { exact: true }).fill("0.3rem");
+    await expect(page.getByLabel("--spacing", { exact: true })).toHaveValue("0.3rem");
     await page.getByLabel("Look").selectOption("press");
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0px");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0px");
     expect(posts).toHaveLength(0);
   });
 
@@ -365,7 +365,7 @@ test.describe("the assistant in the editor", () => {
     await page.route(`${SERVICE}/status`, (route) => route.fulfill({ status: 404, body: "" }));
     await page.goto(OPEN, { waitUntil: "networkidle" });
     await expect(page.locator("[data-assistant-unavailable]")).toContainText("not available here");
-    await expect(page.getByLabel("Radius", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("--radius", { exact: true })).toBeVisible();
   });
 });
 
@@ -387,7 +387,7 @@ test.describe("saved on this device", () => {
     await expect(page.getByText("Saved on this device as “Atelier”.")).toBeVisible();
     await page.reload({ waitUntil: "networkidle" });
     await page.getByLabel("Look").selectOption({ label: "Atelier" });
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.25rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.25rem");
     expect(await page.evaluate(() => (JSON.parse(localStorage.getItem("zk-identity-library") ?? "{}") as { version: number }).version)).toBe(2);
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-library"))).toContain("Cormorant");
   });
@@ -397,7 +397,7 @@ test.describe("saved on this device", () => {
     await page.getByLabel("Name", { exact: true }).fill("Atelier");
     await page.getByRole("button", { name: "Save look" }).click();
     await expect(page.getByText("Saved on this device as “Atelier”.")).toBeVisible();
-    await page.getByLabel("Radius", { exact: true }).fill("2px");
+    await page.getByLabel("--radius", { exact: true }).fill("2px");
     await page.getByLabel("Name", { exact: true }).fill("atelier");
     await page.getByRole("button", { name: "Save look" }).click();
     const clash = page.locator("[data-slot='identity-editor-clash']");
@@ -426,13 +426,13 @@ test.describe("saved on this device", () => {
     await page.addInitScript(() => localStorage.setItem("zk-identity-library", "{not json"));
     await page.goto(EDITOR, { waitUntil: "networkidle" });
     await expect(page.getByText("Saved looks on this device could not be read")).toBeVisible();
-    await expect(page.getByLabel("Radius", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("--radius", { exact: true })).toBeVisible();
   });
 
   test("applying to the whole site is explicit, and removing it puts the site back", async ({ page }) => {
     await page.goto(EDITOR, { waitUntil: "networkidle" });
     const before = await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim());
-    await page.getByLabel("Background", { exact: true }).fill("0 80% 70%");
+    await page.getByLabel("--background", { exact: true }).fill("0 80% 70%");
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe(before);
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe("0 80% 70%");

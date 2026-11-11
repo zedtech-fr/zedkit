@@ -18,7 +18,7 @@ test.describe("identity editor undo and apply confirmation", () => {
   test("Undo restores the last draft after Reset", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.getByRole("button", { name: "Undo" })).toBeDisabled();
-    await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
+    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
     await expect.poll(() => spacingOnDraft(page)).toBe("0.4rem");
     await page.getByRole("button", { name: "Reset" }).click();
     await expect.poll(() => spacingOnDraft(page)).toBe("0.25rem");
@@ -30,10 +30,10 @@ test.describe("identity editor undo and apply confirmation", () => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
-    await page.getByLabel("Background").fill("120 40% 20%");
+    await page.getByLabel("--background", { exact: true }).fill("120 40% 20%");
     await page.getByRole("button", { name: "Undo" }).click();
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
-    await page.getByLabel("Background").fill("0 0% 95%");
+    await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await siteDark(page);
     await expect
@@ -47,11 +47,11 @@ test.describe("identity editor undo and apply confirmation", () => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
-    await page.getByLabel("Background").fill("120 40% 20%");
+    await page.getByLabel("--background", { exact: true }).fill("120 40% 20%");
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
-    await page.getByLabel("Background").fill("0 0% 95%");
+    await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
     await page.getByRole("button", { name: "Undo" }).click();
-    await page.getByLabel("Background").fill("0 0% 90%");
+    await page.getByLabel("--background", { exact: true }).fill("0 0% 90%");
     await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await siteDark(page);
     await expect
