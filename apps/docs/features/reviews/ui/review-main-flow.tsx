@@ -13,9 +13,12 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { reviewMainFlow, type ReviewMainFlow as ReviewMainFlowModel } from "../model/main-flow";
-import type { ReviewFindingDisposition, ReviewRecord } from "../ports/review-port";
+import type { ReviewFindingDisposition, ReviewRecord, ReviewRun } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import { AgentDetail, type ReviewAgentsReveal } from "./review-agent-list";
 import { VERDICT_BADGE } from "./review-badges";
+
+export type { ReviewAgentsReveal };
 
 const DISPOSITION_BADGE: Record<ReviewFindingDisposition, BadgeProps["variant"]> = {
   kept: "warning",
@@ -97,6 +100,31 @@ function MustChange({
   );
 }
 
+function Findings({
+  findings,
+  copy,
+}: {
+  findings: ReviewMainFlowModel["findings"];
+  copy: ReviewsCopy;
+}) {
+  return (
+    <ReviewBlock title={copy.pr.findings} empty={copy.pr.findingsEmpty} hasItems={findings.length > 0}>
+      <ul className="flex flex-col gap-stack-sm">
+        {findings.map((finding, index) => (
+          <li key={`${finding.id}:${index}`}>
+            <Stack direction="horizontal" gap="sm" className="flex-wrap">
+              <Text typeRole="body">{finding.summary}</Text>
+              <Badge variant={DISPOSITION_BADGE[finding.disposition]}>
+                {copy.disposition[finding.disposition]}
+              </Badge>
+            </Stack>
+          </li>
+        ))}
+      </ul>
+    </ReviewBlock>
+  );
+}
+
 function FirstPass({
   findings,
   copy,
@@ -174,31 +202,28 @@ function RunHistory({
   );
 }
 
-function AgentDetail({ copy }: { copy: ReviewsCopy }) {
-  return (
-    <details>
-      <summary className={DISCLOSURE_SUMMARY}>{copy.pr.agentDetail}</summary>
-      <EmptyState description={copy.pr.agentDetailEmpty} />
-    </details>
-  );
-}
-
 function FlowSection({
   id,
   record,
+  run,
   flow,
   copy,
+  agentsReveal,
 }: {
   id: ReviewMainFlowModel["sections"][number];
   record: ReviewRecord;
+  run: ReviewRun;
   flow: ReviewMainFlowModel;
   copy: ReviewsCopy;
+  agentsReveal: ReviewAgentsReveal;
 }) {
   switch (id) {
     case "decision":
       return null;
     case "must-change":
       return <MustChange blockers={flow.blockers} copy={copy} />;
+    case "findings":
+      return <Findings findings={flow.findings} copy={copy} />;
     case "first-pass":
       return flow.firstPass === null ? null : <FirstPass findings={flow.firstPass.findings} copy={copy} />;
     case "notes":
@@ -208,23 +233,35 @@ function FlowSection({
     case "run-history":
       return <RunHistory record={record} runs={flow.runs} copy={copy} />;
     case "agent-detail":
-      return <AgentDetail copy={copy} />;
+      return <AgentDetail agents={run.agents} copy={copy} reveal={agentsReveal} />;
   }
 }
 
 function FlowSections({
   record,
+  run,
   flow,
   copy,
+  agentsReveal,
 }: {
   record: ReviewRecord;
+  run: ReviewRun;
   flow: ReviewMainFlowModel;
   copy: ReviewsCopy;
+  agentsReveal: ReviewAgentsReveal;
 }) {
   return (
     <>
       {flow.sections.map((id) => (
-        <FlowSection key={id} id={id} record={record} flow={flow} copy={copy} />
+        <FlowSection
+          key={id}
+          id={id}
+          record={record}
+          run={run}
+          flow={flow}
+          copy={copy}
+          agentsReveal={agentsReveal}
+        />
       ))}
     </>
   );
@@ -232,20 +269,24 @@ function FlowSections({
 
 export function ReviewMainFlow({
   record,
+  run,
   copy,
   panel,
   decisionMeta,
+  agentsReveal = "disclosure",
 }: {
   record: ReviewRecord;
+  run: ReviewRun;
   copy: ReviewsCopy;
   panel: ReactNode;
   decisionMeta?: ReactNode;
+  agentsReveal?: ReviewAgentsReveal;
 }) {
   const flow = reviewMainFlow(record);
   return (
     <>
       <DecisionBand decision={flow.decision} copy={copy} extra={decisionMeta} />
-      <FlowSections record={record} flow={flow} copy={copy} />
+      <FlowSections record={record} run={run} flow={flow} copy={copy} agentsReveal={agentsReveal} />
       {panel}
     </>
   );

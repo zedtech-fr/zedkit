@@ -1,5 +1,6 @@
 import type {
   ReviewAction,
+  ReviewFinding,
   ReviewFirstPassFinding,
   ReviewRecord,
   ReviewRun,
@@ -9,6 +10,7 @@ import type {
 export type ReviewMainFlowSectionId =
   | "decision"
   | "must-change"
+  | "findings"
   | "first-pass"
   | "notes"
   | "evidence"
@@ -23,6 +25,7 @@ export type ReviewMainFlow = {
     readonly summary: string;
   };
   readonly blockers: readonly ReviewAction[];
+  readonly findings: readonly ReviewFinding[];
   readonly firstPass: {
     readonly findings: readonly ReviewFirstPassFinding[];
   } | null;
@@ -43,12 +46,14 @@ function clampConfidence(value: number): number {
 export function reviewMainFlow(record: ReviewRecord): ReviewMainFlow {
   const summary = trimmed(record.summary);
   const evidenceText = trimmed(record.evidence);
-  const findings = record.firstPass?.findings ?? [];
+  const firstPassFindings = record.firstPass?.findings ?? [];
   const blockers = record.actions;
-  const firstPass = findings.length > 0 ? { findings } : null;
+  const findings = record.findings;
+  const firstPass = firstPassFindings.length > 0 ? { findings: firstPassFindings } : null;
 
   const sections: ReviewMainFlowSectionId[] = ["decision"];
   if (blockers.length > 0) sections.push("must-change");
+  if (findings.length > 0) sections.push("findings");
   if (firstPass !== null) sections.push("first-pass");
   sections.push("notes");
   if (evidenceText.length > 0) sections.push("evidence");
@@ -62,6 +67,7 @@ export function reviewMainFlow(record: ReviewRecord): ReviewMainFlow {
       summary,
     },
     blockers,
+    findings,
     firstPass,
     notes: record.notes,
     evidence: evidenceText.length > 0 ? evidenceText : null,

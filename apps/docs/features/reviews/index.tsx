@@ -6,8 +6,11 @@
  * UI decisions:
  * - Final adjudicated decision first (verdict, confidence, short summary) — because: hurried reader needs the outcome before evidence.
  * - Must change only when remaining blockers exist; no blockers, no heading — because: leftover-work chrome must not appear when nothing remains to change.
+ * - Reconciled findings after must-change, each with kept / downgraded / dismissed — because: the hurried reader must see what adjudication did, not only leftover blockers or an outdated first pass.
  * - First pass folded and labelled outdated, with kept / downgraded / dismissed on each finding — because: a superseded pass is history, not the decision.
  * - Notes, evidence, run history after that; lenses / second pass / transcripts on demand — because: the first screen is the decision, not the transcript.
+ * - Agent-detail disclosure lists the current run’s agents (id, name, kind, status, model when present) — because: the disclosure is who ran; lenses stay on-demand in the console pane.
+ * - Run page shows that list as a visible section — because: opening a run is to see that run’s agents without unfolding PR leftover chrome.
  * - Shared main flow on PR and run pages — because: opening a run must not strand the same hurried reader.
  * - Side panel plus selected pane on desktop — because: customer = hurried visitor scanning the run while reading one item.
  * - Main flow selected by default — because: first screen is the outcome, not an empty pane.

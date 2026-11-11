@@ -458,6 +458,17 @@ test("copy has a Must change heading and no Required actions string", () => {
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
 });
 
+test("copy names findings, agent fields, and empty agents on this run", () => {
+  assert.equal(reviewsCopy.pr.findings, "Findings");
+  assert.equal(reviewsCopy.pr.findingsEmpty, "No findings on this review.");
+  assert.equal(reviewsCopy.pr.agentDetailEmpty, "No agents on this run.");
+  assert.equal(reviewsCopy.run.agents, "Agents");
+  assert.equal(reviewsCopy.agent.id, "Id");
+  assert.equal(reviewsCopy.agent.name, "Name");
+  assert.equal(reviewsCopy.agent.kind, "Kind");
+  assert.equal(reviewsCopy.agent.model, "Model");
+});
+
 test("empty actions omit Must change even on COMMENT and running reviews", () => {
   const flow = reviewMainFlow(sample({ verdict: "comment", status: "running", actions: [] }));
   assert.equal(flow.sections.includes("must-change"), false);
@@ -558,11 +569,70 @@ test("production superseded fixture labels mixed first-pass dispositions", async
   assert.equal(flow.sections[0], "decision");
   assert.equal(flow.sections[1], "must-change");
   assert.equal(flow.sections[2], "first-pass");
+  assert.equal(flow.sections.includes("findings"), false);
+  assert.deepEqual(flow.findings, []);
   assert.ok(flow.firstPass);
   assert.deepEqual(
     flow.firstPass?.findings.map((finding) => finding.disposition),
     ["kept", "downgraded", "dismissed"],
   );
+});
+
+test("empty reconciled findings omit the findings section", () => {
+  const flow = reviewMainFlow(sample());
+  assert.equal(flow.sections.includes("findings"), false);
+  assert.deepEqual(flow.findings, []);
+});
+
+test("reconciled findings sit after must-change and keep authored dispositions", () => {
+  const flow = reviewMainFlow(
+    sample({
+      findings: [
+        { id: "dup", summary: "Keep contrast", disposition: "kept" },
+        { id: "dup", summary: "Note the empty state", disposition: "downgraded" },
+        { id: "skip", summary: "Skip a sidebar", disposition: "dismissed" },
+      ],
+      firstPass: {
+        findings: [{ title: "Old", detail: "History", disposition: "kept" }],
+      },
+    }),
+  );
+  assert.deepEqual(flow.sections.slice(0, 4), ["decision", "must-change", "findings", "first-pass"]);
+  assert.deepEqual(
+    flow.findings.map((finding) => finding.disposition),
+    ["kept", "downgraded", "dismissed"],
+  );
+  assert.deepEqual(
+    flow.findings.map((finding) => finding.summary),
+    ["Keep contrast", "Note the empty state", "Skip a sidebar"],
+  );
+  assert.deepEqual(
+    flow.blockers.map((blocker) => blocker.title),
+    ["Name empty states"],
+  );
+});
+
+test("reconciled findings follow the decision when there are no blockers", () => {
+  const flow = reviewMainFlow(
+    sample({
+      actions: [],
+      findings: [{ id: "a", summary: "One leftover finding", disposition: "kept" }],
+    }),
+  );
+  assert.equal(flow.sections[0], "decision");
+  assert.equal(flow.sections[1], "findings");
+  assert.equal(flow.sections.includes("must-change"), false);
+});
+
+test("production snapshot PR 80 maps reconciled findings including a non-kept row", async () => {
+  const listed = await createSnapshotReviewPort().list();
+  const record = listed.find((row) => row.number === 80);
+  assert.ok(record);
+  const flow = reviewMainFlow(record);
+  assert.equal(flow.sections.includes("findings"), true);
+  assert.ok(flow.findings.some((finding) => finding.disposition !== "kept"));
+  assert.equal(flow.sections.indexOf("findings"), flow.sections.indexOf("must-change") + 1);
+  assert.equal(flow.sections.includes("first-pass"), false);
 });
 
 test("decision summary is trimmed and empty whitespace becomes an empty string", () => {
@@ -623,6 +693,7 @@ test("verdict and status tones live in one shared module", () => {
     "review-pr-view.tsx",
     "review-run-view.tsx",
     "review-main-flow.tsx",
+    "review-agent-list.tsx",
     "review-console.tsx",
   ]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
@@ -861,6 +932,38 @@ test("PR and run views render the same console and drop the agent-detail stub", 
   assert.doesNotMatch(pr, /agentDetail/);
   assert.doesNotMatch(pr, /<details/);
   assert.doesNotMatch(run, /<details/);
+});
+
+test("findings and agent lists use copy keys and keep the empty-state pattern", () => {
+  const main = readFileSync(join(reviewsRoot, "ui/review-main-flow.tsx"), "utf8");
+  const agents = readFileSync(join(reviewsRoot, "ui/review-agent-list.tsx"), "utf8");
+  const flowUi = `${main}\n${agents}`;
+  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
+  const pr = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  const consoleSrc = readFileSync(join(reviewsRoot, "ui/review-console.tsx"), "utf8");
+  assert.match(main, /copy\.pr\.findings\}/);
+  assert.match(main, /copy\.pr\.findingsEmpty/);
+  assert.match(main, /copy\.disposition/);
+  assert.match(main, /finding\.id/);
+  assert.match(main, /run\.agents/);
+  assert.match(agents, /copy\.agent\.id/);
+  assert.match(agents, /copy\.agent\.name/);
+  assert.match(agents, /copy\.agent\.kind/);
+  assert.match(agents, /copy\.agent\.model/);
+  assert.match(agents, /copy\.run\.agents/);
+  assert.match(agents, /copy\.pr\.agentDetailEmpty/);
+  assert.match(agents, /EmptyState/);
+  assert.match(agents, /<details>/);
+  assert.doesNotMatch(agents, /<details\s+open/);
+  assert.match(main, /<details>/);
+  assert.doesNotMatch(main, /<details\s+open/);
+  assert.match(consoleSrc, /agentsReveal/);
+  assert.match(run, /agentsReveal=/);
+  assert.doesNotMatch(run, /agentsReveal=["']disclosure["']/);
+  assert.doesNotMatch(pr, /agentsReveal/);
+  for (const source of [flowUi, run, pr, consoleSrc]) {
+    assert.doesNotMatch(source, /"(Kept|Downgraded|Dismissed|Id|Name|Kind|Model)"/);
+  }
 });
 
 test("appearance share write keeps the selection hash", () => {

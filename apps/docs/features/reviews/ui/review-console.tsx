@@ -30,7 +30,7 @@ import {
 } from "../model/selection";
 import type { ReviewConsoleItem, ReviewRecord, ReviewRun } from "../ports/review-port";
 import { STATUS_TONE, VERDICT_BADGE } from "./review-badges";
-import { ReviewMainFlow } from "./review-main-flow";
+import { ReviewMainFlow, type ReviewAgentsReveal } from "./review-main-flow";
 
 function useLocationHash() {
   const [hash, setHash] = useState("");
@@ -59,22 +59,33 @@ function writeSelection(id: string, defaultId: string): string {
 
 function ConsolePane({
   record,
+  run,
   item,
   copy,
   panel,
   decisionMeta,
+  agentsReveal,
 }: {
   record: ReviewRecord;
+  run: ReviewRun;
   item: ReviewConsoleItem;
   copy: ReviewsCopy;
   panel: ReactNode;
   decisionMeta?: ReactNode;
+  agentsReveal: ReviewAgentsReveal;
 }) {
   return (
     <div className="pane-shrink flex-1 p-app-shell-padding md:p-app-shell-padding-md">
       {item.kind === "flow" ? (
         <Stack gap="lg">
-          <ReviewMainFlow record={record} copy={copy} panel={panel} decisionMeta={decisionMeta} />
+          <ReviewMainFlow
+            record={record}
+            run={run}
+            copy={copy}
+            panel={panel}
+            decisionMeta={decisionMeta}
+            agentsReveal={agentsReveal}
+          />
         </Stack>
       ) : (
         <Stack gap="lg">
@@ -195,26 +206,29 @@ function ConsoleList({
   );
 }
 
+type ReviewConsoleProps = {
+  record: ReviewRecord;
+  run: ReviewRun;
+  copy: ReviewsCopy;
+  panel: ReactNode;
+  decisionMeta?: ReactNode;
+  agentsReveal?: ReviewAgentsReveal;
+};
+
 export function ReviewConsole({
   record,
   run,
   copy,
   panel,
   decisionMeta,
-}: {
-  record: ReviewRecord;
-  run: ReviewRun;
-  copy: ReviewsCopy;
-  panel: ReactNode;
-  decisionMeta?: ReactNode;
-}) {
+  agentsReveal = "disclosure",
+}: ReviewConsoleProps) {
   const items = reviewConsoleItems(run, copy.console.flow);
   const defaultId = defaultReviewSelection(items);
   const [hash, setHash] = useLocationHash();
   const [open, setOpen] = useState(false);
   const selectedId = parseReviewSelection(hash, items);
   const selected = items.find((item) => item.id === selectedId) ?? items[0];
-
   function onSelect(id: string) {
     setHash(writeSelection(id, defaultId));
     setOpen(false);
@@ -236,10 +250,12 @@ export function ReviewConsole({
           </DrawerTrigger>
           <ConsolePane
             record={record}
+            run={run}
             item={selected}
             copy={copy}
             panel={panel}
             decisionMeta={decisionMeta}
+            agentsReveal={agentsReveal}
           />
         </div>
       </div>

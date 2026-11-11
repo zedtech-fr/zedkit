@@ -39,6 +39,8 @@ export const reviewsCopy = {
     confidence: "Confidence",
     confidenceUnit: "%",
     mustChange: "Must change before merge",
+    findings: "Findings",
+    findingsEmpty: "No findings on this review.",
     firstPass: "First pass",
     outdated: "Outdated",
     evidence: "Evidence",
@@ -48,7 +50,7 @@ export const reviewsCopy = {
     runsEmpty: "No runs on this review.",
     openRun: "Open this run",
     agentDetail: "Agent detail",
-    agentDetailEmpty: "Lenses, second pass, and transcripts will load here on demand.",
+    agentDetailEmpty: "No agents on this run.",
     missing: "This review is not on the public list.",
   },
   console: {
@@ -67,7 +69,14 @@ export const reviewsCopy = {
     backToPr: "Back to the pull request",
     backToList: "All reviews",
     title: "Run",
+    agents: "Agents",
     missing: "This run is not on the public list.",
+  },
+  agent: {
+    id: "Id",
+    name: "Name",
+    kind: "Kind",
+    model: "Model",
   },
   appearance: {
     legend: "Preview look",
