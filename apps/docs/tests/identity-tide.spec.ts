@@ -40,14 +40,17 @@ test.describe("tide identity", () => {
     });
   }
 
-  test("keeps UI changelog on one line at 1280", async ({ page }) => {
+  test("keeps primary nav labels on one line at 1280", async ({ page }) => {
     await persistDocsSiteLook(page, "tide", "light");
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(HOME, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    const link = page.locator("#nd-nav").getByRole("link", { name: "UI changelog" });
-    const lines = await link.evaluate((el) => el.getClientRects().length);
-    expect(lines).toBe(1);
+    const header = page.locator("#nd-nav");
+    for (const name of ["AI", "UI", "Docs", "Catalog"] as const) {
+      const link = header.getByRole("link", { name, exact: true });
+      const lines = await link.evaluate((el) => el.getClientRects().length);
+      expect(lines, name).toBe(1);
+    }
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );

@@ -94,9 +94,9 @@ function NavDrawerLink({
   );
 }
 
-function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: string; onNavigate: () => void }) {
+function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
-  const primary = sitePrimaryNavLinks(changelogHref);
+  const primary = sitePrimaryNavLinks();
 
   return (
     <div data-shell-nav-drawer className="flex flex-col gap-stack-lg overflow-y-auto px-drawer-chrome-padding pb-sheet">
@@ -143,11 +143,9 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
 function SiteNavDrawer({
   open,
   onOpenChange,
-  changelogHref,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  changelogHref: string;
 }) {
   const close = () => onOpenChange(false);
 
@@ -159,13 +157,13 @@ function SiteNavDrawer({
           <DrawerTitle>Menu</DrawerTitle>
           <DrawerDescription>Site navigation</DrawerDescription>
         </DrawerHeader>
-        <SiteNavDrawerBody changelogHref={changelogHref} onNavigate={close} />
+        <SiteNavDrawerBody onNavigate={close} />
       </DrawerContent>
     </Drawer>
   );
 }
 
-function HomeMenuButton({ changelogHref }: { changelogHref: string }) {
+function HomeMenuButton() {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -178,7 +176,7 @@ function HomeMenuButton({ changelogHref }: { changelogHref: string }) {
       >
         <Menu aria-hidden="true" className="size-icon" />
       </button>
-      <SiteNavDrawer open={open} onOpenChange={setOpen} changelogHref={changelogHref} />
+      <SiteNavDrawer open={open} onOpenChange={setOpen} />
     </>
   );
 }
@@ -192,13 +190,11 @@ export function MobileHeader({
   className,
   version,
   releasesHref,
-  changelogHref,
 }: {
   mode: "home" | "docs";
   className?: string;
   version: string;
   releasesHref: string;
-  changelogHref: string;
 }) {
   return (
     <>
@@ -228,7 +224,7 @@ export function MobileHeader({
           <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
             <GithubIcon className="size-icon" />
           </a>
-          {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton changelogHref={changelogHref} />}
+          {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton />}
         </div>
       </header>
     </>

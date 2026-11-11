@@ -8,7 +8,7 @@ test("the phone menu keeps a quiet hover and a stronger current page", async ({ 
   await page.getByRole("button", { name: "Open menu" }).click();
   const menu = page.locator("[data-shell-nav-drawer]");
   const current = menu.getByRole("link", { name: "Catalog", exact: true });
-  const other = menu.getByRole("link", { name: "Documentation", exact: true });
+  const other = menu.getByRole("link", { name: "Docs", exact: true });
   await expect(current).toBeVisible();
   const read = async (link: typeof current, amount: string) =>
     link.evaluate((node, percent) => {
