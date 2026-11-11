@@ -6,7 +6,6 @@ import { Stack } from "@zedtech/zedkit-ui";
 
 import { docsPageCopy } from "@/app/i18n/docs-page-copy";
 import { JsonLd } from "@/components/json-ld";
-import { featuredPackageChangelogUrl } from "@/content/gallery";
 import { mergeComponentPageToc } from "@/lib/component-page-toc";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
@@ -82,9 +81,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
             <MDX components={getMDXComponents()} />
           </DocsBody>
         )}
-        <Stack className="mt-section-md">
-          <SiteMaintainerFooter changelogHref={featuredPackageChangelogUrl} embeddedInMain />
-        </Stack>
+        <SiteMaintainerFooter embeddedInMain />
       </DocsPage>
     </>
   );

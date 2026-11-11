@@ -1,20 +1,18 @@
 import Link from "next/link";
-import { Container, Separator, Stack, Text } from "@zedtech/zedkit-ui";
+import { Container, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
-const linkClassName = "inline-flex min-h-floor items-center rounded-sm text-dense text-muted-foreground link-offset hover:underline focus-ring";
+const linkClassName = "inline-flex min-h-target items-center rounded-sm text-dense text-muted-foreground link-offset hover:underline focus-ring";
 
-/** Discreet maintainer block — same on home, docs, and 404. */
+/** Slim credit row — same on home, docs, and 404. */
 export function SiteMaintainerFooter({
-  changelogHref,
   embeddedInMain,
 }: {
-  changelogHref: string;
   /** Docs pages: footer sits inside `<main>` — omit top-level contentinfo landmark. */
   embeddedInMain?: boolean;
 }) {
-  const links = siteFooterLinkSpecs(changelogHref);
+  const links = siteFooterLinkSpecs();
 
   return (
     <footer
@@ -22,21 +20,20 @@ export function SiteMaintainerFooter({
       className="mt-auto border-t border-border"
     >
       <Container width="wide">
-        <Stack gap="lg" className="py-section-sm">
-          <Text variant="muted" as="p">{siteChromeCopy.footer.maintainer}</Text>
-          <Separator />
-          <Stack direction="horizontal" gap="lg" className="flex-wrap">
-            {links.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={linkClassName}
-                {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
-              >
-                {siteChromeCopy.footer.links[item.copyKey]}
-              </Link>
-            ))}
-          </Stack>
+        <Stack direction="horizontal" gap="lg" className="flex-wrap py-section-sm">
+          <Text variant="muted" as="span" className="me-auto">
+            {siteChromeCopy.brand.name}, {siteChromeCopy.footer.credit}
+          </Text>
+          {links.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={linkClassName}
+              {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
+            >
+              {siteChromeCopy.footer.links[item.copyKey]}
+            </Link>
+          ))}
         </Stack>
       </Container>
     </footer>
