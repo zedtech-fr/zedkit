@@ -82,7 +82,10 @@ import { a } from "@zedtech/zedkit-core";
 - **Short name** is the compact display name (doc sidebar, cards).
 - **Audience**, **Purpose**, **When to use**, **When not to use** feed the
   "what is this for" block on the doc page; all four are required and CI
-  fails when one is missing.
+  fails when one is missing. **Purpose** is also the generated page
+  `description`. Non-registry pages run it through `truncateDescription`;
+  registry/component pages do not, so Purpose must be ≤160 characters
+  (`SEO_DESCRIPTION_MAX`) or `catalog:check` fails.
 - **See also** is optional; each backticked target must name a real
   catalog need heading (any package) — CI fails on unknown targets.
 - The example is TypeScript, about five lines, copy-paste runnable.

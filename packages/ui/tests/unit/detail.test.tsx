@@ -20,6 +20,7 @@ describe("DetailPanel", () => {
   it("styles rows from design tokens", () => {
     const { container } = render(<DetailPanel items={[{ label: "Name", value: "Ada" }]} />);
     const row = container.querySelector("dl > div");
+    expect(row?.getAttribute("data-slot")).toBe("detail-panel-row");
     expect(row?.classList.contains("gap-detail-panel-gap")).toBe(true);
     expect(row?.classList.contains("px-detail-panel-inline")).toBe(true);
     expect(row?.className).toContain("py-detail-panel-block");
@@ -30,6 +31,8 @@ describe("DetailPanel", () => {
     const { container } = render(<DetailPanel items={[{ label: "Name", value: "Ada" }]} />);
     const panel = container.querySelector("dl");
     expect(panel?.classList.contains("divide-y")).toBe(true);
+    expect(panel?.classList.contains("border")).toBe(true);
+    expect(panel?.classList.contains("rounded-lg")).toBe(true);
     expect(panel?.getAttribute("data-variant")).toBe("list");
   });
 
@@ -55,10 +58,17 @@ describe("DetailPanel", () => {
     expect(panel?.classList.contains("sm:grid-pair")).toBe(true);
     expect(panel?.classList.contains("gap-stack-md")).toBe(true);
     expect(panel?.classList.contains("divide-y")).toBe(false);
+    expect(panel?.classList.contains("border")).toBe(false);
+    expect(panel?.classList.contains("rounded-lg")).toBe(false);
     expect(panel?.getAttribute("data-variant")).toBe("grid");
+    const cell = panel?.querySelector('[data-slot="detail-panel-cell"]');
+    expect(cell?.classList.contains("content-shrink")).toBe(true);
+    expect(panel?.querySelector('[data-slot="detail-panel-row"]')).toBeNull();
     expect(screen.getByText("Requests").tagName).toBe("DT");
+    expect(screen.getByText("Requests").classList.contains("text-dense")).toBe(true);
     expect(screen.getByText("12,480").tagName).toBe("DD");
     expect(screen.getByText("12,480").classList.contains("text-stat")).toBe(true);
+    expect(screen.getByText("12,480").classList.contains("tabular-nums")).toBe(true);
   });
 
   it("renders an empty definition list when items is empty", () => {
@@ -66,10 +76,12 @@ describe("DetailPanel", () => {
     expect(container.querySelector("dl")).not.toBeNull();
   });
 
-  it("renders one grid cell as a definition pair", () => {
-    render(<DetailPanel variant="grid" items={[{ label: "Uptime", value: "99.9%" }]} />);
-    expect(screen.getByText("Uptime").tagName).toBe("DT");
-    expect(screen.getByText("99.9%").tagName).toBe("DD");
+  it("renders an empty grid definition list when items is empty", () => {
+    const { container } = render(<DetailPanel variant="grid" items={[]} />);
+    const panel = container.querySelector("dl");
+    expect(panel).not.toBeNull();
+    expect(panel?.getAttribute("data-variant")).toBe("grid");
+    expect(panel?.querySelector('[data-slot="detail-panel-cell"]')).toBeNull();
   });
 
   it("keeps unbreakable grid values inside the cell", () => {
@@ -80,6 +92,8 @@ describe("DetailPanel", () => {
     expect(value.tagName).toBe("DD");
     expect(value.classList.contains("content-shrink")).toBe(true);
     expect(value.classList.contains("break-words")).toBe(true);
+    expect(value.parentElement?.getAttribute("data-slot")).toBe("detail-panel-cell");
+    expect(value.parentElement?.classList.contains("content-shrink")).toBe(true);
   });
 
   it("puts a ReactNode value in the grid definition", () => {

@@ -45,7 +45,7 @@ export function DetailPanel({ items, className, variant = "list" }: DetailPanelP
     >
       {isGrid
         ? items.map((item, index) => (
-            <div key={index} data-slot="detail-panel-row">
+            <div key={index} data-slot="detail-panel-cell" className="content-shrink">
               <dt className="text-dense text-muted-foreground">{item.label}</dt>
               <dd className="content-shrink text-stat break-words tabular-nums">{item.value}</dd>
             </div>

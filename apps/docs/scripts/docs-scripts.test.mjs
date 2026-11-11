@@ -224,6 +224,21 @@ test("checkGeneratedPage fails when install tabs or description are missing", ()
   );
 });
 
+test("checkGeneratedPage fails when the description exceeds 160 characters", () => {
+  const errors = [];
+  const long = "A".repeat(161);
+  checkGeneratedPage(
+    "ui/too-long.mdx",
+    `---\ntitle: "Too long"\ndescription: ${JSON.stringify(long)}\n---\n\n## At a glance\n\n- **Who:** Who\n- **What:** What\n- **Use when:** When\n- **Avoid when:** Avoid\n\n<Tabs groupId="package-manager" persist items={["pnpm"]}>\n  <Tab value="pnpm">pnpm add @zedtech/zedkit-ui</Tab>\n</Tabs>\n`,
+    { seoMax: 160, descriptionsSeen: new Map() },
+    errors,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("description exceeds 160 characters")),
+    true,
+  );
+});
+
 test("checkGeneratedPage reports a duplicate description", () => {
   const seen = new Map();
   const errors = [];
