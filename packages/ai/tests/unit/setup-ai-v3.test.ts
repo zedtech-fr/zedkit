@@ -107,6 +107,24 @@ describe("setup-ai v3: domain, identity and nested rules", () => {
     );
   });
 
+  it("keeps host numeric class rules unless the owner recorded a yes", () => {
+    const raw = read("SKILL.md");
+    const phaseC = raw.slice(
+      raw.indexOf("## Phase C"),
+      raw.indexOf("### Nested AGENTS"),
+    );
+    expect(phaseC).toContain("Keep a host rule that tells authors");
+    expect(phaseC).toContain("recorded a yes");
+    expect(phaseC).toContain("semantic-only");
+    expect(phaseC).toContain("kit-owned files");
+    expect(phaseC).not.toContain("Supersede it with");
+    expect(phaseC).not.toContain("is not kept");
+    expect(raw).toContain("writing a kit-owned styling rule");
+    expect(raw).toContain("Keep a host class convention");
+    expect(raw).not.toContain("writing or keeping a styling rule");
+    expect(raw).not.toContain("--semantic");
+  });
+
   it("improve mode extends existing nested files in place instead of leaving stubs alone", () => {
     const raw = read("SKILL.md");
     expect(raw).toMatch(
