@@ -144,6 +144,7 @@ export { StatusLabel, type StatusLabelProps, type StatusLabelTone } from "./feed
 export { StreamStatus, type StreamStatusProps } from "./feedback/stream-status.js";
 export { StreamText, type StreamTextProps } from "./feedback/stream-text.js";
 export { ASSISTANT_STREAM_STAGES, consumeSseStream, isAssistantStreamStage, pullSseFrames, readAssistantStreamEvent, type AssistantStreamEvent, type AssistantStreamStage, type SseFrame } from "./assistant-stream.js";
+export { formatDuration } from "./feedback/format-duration.js";
 export { UpdatedAgo, type UpdatedAgoProps } from "./feedback/updated-ago.js";
 export { OfflineNote, type OfflineNoteProps } from "./feedback/offline-note.js";
 export { EmptyState, type EmptyStateProps } from "./feedback/empty-state.js";

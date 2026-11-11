@@ -54,6 +54,7 @@ const SKIP = new Set([
   "pullSseFrames",
   "readAssistantStreamEvent",
   "consumeSseStream",
+  "formatDuration",
   // Portal passthroughs: children render into the container with no host node of their own (a host div
   // here would only exist to carry the slot, so the slot lives on the overlay/panel children instead).
   "DialogPortal",
