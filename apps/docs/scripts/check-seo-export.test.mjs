@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { join } from "node:path";
-import { SITE_CHANGELOG_URL, siteFooterLinkSpecs } from "../lib/site-links.mjs";
+import { siteFooterLinkSpecs } from "../lib/site-links.mjs";
 import {
   checkHtmlRegistryLinks,
   checkLlms,
@@ -19,7 +19,7 @@ import {
 } from "./check-seo-export.mjs";
 
 const base = "https://zedkit.app";
-const footerSpecs = siteFooterLinkSpecs(SITE_CHANGELOG_URL);
+const footerSpecs = siteFooterLinkSpecs();
 
 function pageHtml({ canonical = `${base}/`, jsonLd = true, extras = "" } = {}) {
   const json = jsonLd ? '<script type="application/ld+json">{}</script>' : "";
@@ -31,7 +31,7 @@ function pageHtml({ canonical = `${base}/`, jsonLd = true, extras = "" } = {}) {
     '<meta property="og:url">',
     '<meta name="twitter:card">',
     json,
-    "Maintained by ZED TECH",
+    "by Zed Tech · MIT",
     ...footerSpecs.map((link) => `href="${link.href}"`),
     'href="/docs"',
     extras,
@@ -190,7 +190,7 @@ test("checkSiteShell is silent when footer text, footer hrefs and /docs are pres
 
 test("checkSiteShell names the missing footer text, link and docs nav", () => {
   assert.deepEqual(checkSiteShell("<html></html>", "404.html", footerSpecs), [
-    "404.html: missing maintainer footer text",
+    "404.html: missing footer credit text",
     ...footerSpecs.map((link) => `404.html: missing footer link ${link.copyKey} (${link.href})`),
     "404.html: missing Documentation nav link",
   ]);

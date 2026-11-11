@@ -15,16 +15,13 @@ export const siteChromeCopy = {
     opensInNewTab: "opens in a new tab",
   },
   footer: {
-    maintainer: "Maintained by ZED TECH",
+    credit: "by Zed Tech · MIT",
     links: {
-      documentation: "Documentation",
+      docs: "Docs",
       catalog: "Catalog",
-      startWithoutWritingCode: "Start without writing code",
-      mitLicense: "MIT License",
-      sourceRepository: "Source repository",
-      npmOrganisation: "npm organization",
-      reportABug: "Report a bug",
-      uiChangelog: "UI changelog",
+      github: "GitHub",
+      npm: "npm",
+      company: "zedtech.fr",
     },
   },
   version: {

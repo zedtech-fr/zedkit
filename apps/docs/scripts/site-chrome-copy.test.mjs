@@ -3,7 +3,12 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { siteFooterLinkSpecs } from "../lib/site-links.mjs";
+import {
+  SITE_COMPANY_URL,
+  SITE_GITHUB_URL,
+  SITE_NPM_ORG_URL,
+  siteFooterLinkSpecs,
+} from "../lib/site-links.mjs";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { siteChromeCopy } = await import("../ui/i18n/site-chrome-copy.ts");
@@ -40,31 +45,39 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.nav.github, "GitHub");
   assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
   assert.equal(siteChromeCopy.getStarted, "Get started");
-  assert.equal(siteChromeCopy.footer.maintainer, "Maintained by ZED TECH");
-  assert.equal(siteChromeCopy.footer.links.documentation, "Documentation");
+  assert.equal(siteChromeCopy.footer.credit, "by Zed Tech · MIT");
+  assert.equal("maintainer" in siteChromeCopy.footer, false);
+  assert.equal(siteChromeCopy.footer.links.docs, "Docs");
   assert.equal(siteChromeCopy.footer.links.catalog, "Catalog");
-  assert.equal(siteChromeCopy.footer.links.startWithoutWritingCode, "Start without writing code");
-  assert.equal(siteChromeCopy.footer.links.mitLicense, "MIT License");
-  assert.equal(siteChromeCopy.footer.links.sourceRepository, "Source repository");
-  assert.equal(siteChromeCopy.footer.links.npmOrganisation, "npm organization");
-  assert.equal(siteChromeCopy.footer.links.reportABug, "Report a bug");
-  assert.equal(siteChromeCopy.footer.links.uiChangelog, "UI changelog");
+  assert.equal(siteChromeCopy.footer.links.github, "GitHub");
+  assert.equal(siteChromeCopy.footer.links.npm, "npm");
+  assert.equal(siteChromeCopy.footer.links.company, "zedtech.fr");
+  assert.deepEqual(Object.keys(siteChromeCopy.footer.links), ["docs", "catalog", "github", "npm", "company"]);
   assert.equal(siteChromeCopy.version.latest, "Latest");
   assert.equal(siteChromeCopy.version.releasesAriaLabel("1.2.3"), "v1.2.3 (releases)");
   assert.equal(siteChromeCopy.version.shell("1.2.3"), "v1.2.3");
 });
 
-test("footer link specs carry copy keys, not English labels", () => {
-  const specs = siteFooterLinkSpecs("/changelog");
+test("footer link specs are the mockup short list from shared URL constants", () => {
+  assert.equal(siteFooterLinkSpecs.length, 0);
+  const specs = siteFooterLinkSpecs();
   assert.deepEqual(
     specs.map((item) => item.copyKey),
     Object.keys(siteChromeCopy.footer.links),
   );
+  assert.deepEqual(
+    specs.map((item) => item.href),
+    ["/docs", "/catalog", SITE_GITHUB_URL, SITE_NPM_ORG_URL, SITE_COMPANY_URL],
+  );
+  assert.deepEqual(
+    specs.map((item) => item.external),
+    [false, false, true, true, true],
+  );
   for (const item of specs) {
     assert.equal("label" in item, false);
-    assert.equal(typeof item.href, "string");
-    assert.equal(typeof item.external, "boolean");
+    assert.equal(item.copyKey in siteChromeCopy.footer.links, true);
   }
+  assert.equal(SITE_COMPANY_URL, "https://zedtech.fr");
   const links = read("lib/site-links.mjs");
   assert.doesNotMatch(links, /label:\s*"/);
   assert.doesNotMatch(links, /Documentation|npm organisation|MIT License|Source repository/);
@@ -94,8 +107,12 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
   assert.match(homeActions, /siteChromeCopy\.getStarted/);
   assert.match(siteHeaders, /siteChromeCopy\.brand\.homeAriaLabel/);
-  assert.match(footer, /siteChromeCopy\.footer\.maintainer/);
+  assert.match(footer, /siteChromeCopy\.brand\.name/);
+  assert.match(footer, /siteChromeCopy\.footer\.credit/);
   assert.match(footer, /siteChromeCopy\.footer\.links\[item\.copyKey\]/);
+  assert.match(footer, /embeddedInMain \? \{\} : \{ role: "contentinfo" \}/);
+  assert.doesNotMatch(footer, /https:\/\//);
+  assert.doesNotMatch(footer, /changelogHref/);
   assert.match(skip, /siteChromeCopy\.skipToContent/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
   assert.match(search, /siteChromeCopy\.search\.triggerAriaLabel/);
@@ -118,7 +135,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
     .map(read)
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
-  assert.doesNotMatch(consumers, /"Search the documentation"|"zedkit home"|"Maintained by ZED TECH"|"Get started"/);
+  assert.doesNotMatch(consumers, /"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"/);
   assert.doesNotMatch(consumers, /"opens in a new tab"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
@@ -133,9 +150,9 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(skip, /IconButton|<Button[\s>]/);
 });
 
-test("SEO export still scans the catalog maintainer string", () => {
+test("SEO export still scans the catalog footer credit string", () => {
   const seo = read("scripts/check-seo-export.mjs");
-  assert.match(seo, /Maintained by ZED TECH/);
-  assert.equal(siteChromeCopy.footer.maintainer, "Maintained by ZED TECH");
+  assert.match(seo, /by Zed Tech · MIT/);
+  assert.equal(siteChromeCopy.footer.credit, "by Zed Tech · MIT");
   assert.match(seo, /copyKey/);
 });
