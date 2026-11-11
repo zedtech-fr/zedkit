@@ -5,6 +5,7 @@ const PAGE = "/docs/set-up-your-coding-agents";
 test("coding agents guide lists what gets installed", async ({ page }) => {
   await page.goto(PAGE, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "What gets installed", level: 2 })).toBeVisible();
+  await expect(page.locator('main a[href="/docs/getting-started#quickstart"]')).toHaveCount(1);
 });
 
 test("coding agents tutorial documents validate output", async ({ page }) => {

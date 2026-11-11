@@ -66,7 +66,9 @@ test("home below-hero order is same-idea, paste, identities, families, secondary
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-terminal.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-get-started-section.tsx")), false);
   assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField/);
-  assert.match(sameIdeaCopy, /title: "Same idea, two places"/);
+  assert.match(sameIdeaCopy, /title: "Same idea, three places"/);
+  assert.match(sameIdeaCopy, /Nest \(API\)/);
+  assert.match(sameIdeaCopy, /One map prompt covers/);
   assert.match(sameIdeaCopy, /\bai:/);
   assert.match(sameIdeaCopy, /\bui:/);
   assert.match(sameIdeaCopy, /\btogether:/);
@@ -79,8 +81,10 @@ test("home below-hero order is same-idea, paste, identities, families, secondary
   assert.match(paste, /id="paste"/);
   assert.match(paste, /id="ai-setup"/);
   assert.match(paste, /id="get-started"/);
+  assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
   assert.match(paste, /homePasteCopy\.fullStepsHref/);
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
+  assert.match(pasteCopy, /Nest \(API\)/);
   assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
 });
 

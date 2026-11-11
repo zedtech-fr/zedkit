@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- hash scroll targets must take focus (WCAG 2.4.3). */
 import { Button, Section, Stack } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
 import { SetupEntryPrompt } from "@/components/setup-entry-prompt";
@@ -32,8 +33,8 @@ export function HomePasteSection() {
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack id="ai-setup" data-scroll-anchor="" gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
-        <Stack id="get-started" data-scroll-anchor="" gap={HOME_SECTION_CONTENT_GAP} data-home-paste="">
+      <Stack id="ai-setup" tabIndex={-1} data-scroll-anchor="" gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
+        <Stack id="get-started" tabIndex={-1} data-scroll-anchor="" gap={HOME_SECTION_CONTENT_GAP} data-home-paste="">
           <SetupEntryPrompt id="combined" />
           <Button asChild variant="ghost" size="sm" className="min-h-target w-fit" data-home-full-steps="">
             <HomeLink href={homePasteCopy.fullStepsHref}>

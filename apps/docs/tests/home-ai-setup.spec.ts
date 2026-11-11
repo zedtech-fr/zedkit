@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 import { MAP_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
+import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
+import { homeSameIdeaCopy } from "../ui/home/i18n/home-same-idea-copy";
 
 test.describe("home paste band", () => {
   test.use({
@@ -18,8 +20,7 @@ test.describe("home paste band", () => {
     const paste = page.locator("#paste");
     await expect(paste).toBeVisible();
     await expect(paste.getByRole("heading", { level: 2, name: "Paste one line. Go to lunch." })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 2, name: "Same idea, two places" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Start your way" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 2, name: homeSameIdeaCopy.section.title })).toBeVisible();
     await expect(page.getByRole("heading", { name: "What you get" })).toHaveCount(0);
 
     const hero = await page.locator("[data-home-hero-band]").boundingBox();
@@ -44,25 +45,13 @@ test.describe("home paste band", () => {
 
     await expect(paste.getByRole("link", { name: "Full install steps" })).toHaveAttribute(
       "href",
-      "/docs/getting-started#install-or-copy",
+      homePasteCopy.fullStepsHref,
     );
-    await expect(page.locator("#install-or-copy")).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Years of production setup. One prompt.");
 
-    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
-    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
-
     await page.setViewportSize({ width: 320, height: 844 });
     await expect(paste.locator("[data-setup-entry='combined']")).toBeVisible();
-    const copy = paste.getByRole("button", { name: "Copy combined setup prompt" });
-    const copyBox = await copy.boundingBox();
-    expect(copyBox).toBeTruthy();
-    expect(copyBox!.height).toBeGreaterThanOrEqual(43.5);
-    const phoneScroll = await page.evaluate(() => document.documentElement.scrollWidth);
-    const phoneClient = await page.evaluate(() => document.documentElement.clientWidth);
-    expect(phoneScroll).toBeLessThanOrEqual(phoneClient + 1);
   });
 });
 

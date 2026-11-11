@@ -1,8 +1,8 @@
 /** English copy for the home same-idea band. Keys only; no markup. */
 export const homeSameIdeaCopy = {
   section: {
-    title: "Same idea, two places",
-    description: "The UI kit and the AI setup are one product. Use either, or both.",
+    title: "Same idea, three places",
+    description: "The UI kit, the AI setup, and Nest (API) are one product. Use one, or all three.",
   },
   columns: {
     ai: {
@@ -15,7 +15,7 @@ export const homeSameIdeaCopy = {
     },
     together: {
       title: "Together",
-      body: "One map covers AI, UI and Nest. You do not pick a kit before you start.",
+      body: "One map prompt covers AI, UI and Nest. You do not pick a kit before you start.",
     },
   },
 } as const;
