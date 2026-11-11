@@ -3,7 +3,8 @@ import test from "node:test";
 
 import { identityPresets, parseIdentityTokens } from "@zedtech/zedkit-ui";
 
-import { patchTokens } from "../lib/identity-editor-patch.ts";
+import { acceptedIdentityTokens, patchTokens } from "../lib/identity-editor-patch.ts";
+import { isLightKey } from "../lib/identity-editor-search.ts";
 
 const TOKENS = identityPresets.mist;
 
@@ -49,4 +50,43 @@ test("a light primary patch is still a full IdentityTokens the parser accepts", 
   assert.equal(next.light.primary, "10 60% 30%");
   assert.ok(next.dark);
   assert.ok(next.fontSans);
+});
+
+test("a dark background patch writes dark and leaves light unchanged", () => {
+  const next = patchTokens(TOKENS, "background", "220 14% 10%", "dark", []);
+  assert.equal(next.dark.background, "220 14% 10%");
+  assert.equal(next.light.background, TOKENS.light.background);
+});
+
+test("a light patch of a kept-dark key leaves dark alone", () => {
+  const darkened = patchTokens(TOKENS, "background", "10 20% 10%", "dark", []);
+  const next = patchTokens(darkened, "background", "220 60% 97%", "light", ["background"]);
+  assert.equal(next.light.background, "220 60% 97%");
+  assert.equal(next.dark.background, darkened.dark.background);
+});
+
+test("isLightKey is the one palette-key check", () => {
+  assert.equal(isLightKey("background"), true);
+  assert.equal(isLightKey("spacing"), false);
+  assert.equal(isLightKey(""), false);
+});
+
+test("acceptedIdentityTokens returns schema-clean tokens", () => {
+  const accepted = acceptedIdentityTokens(TOKENS);
+  assert.equal(parseIdentityTokens(accepted).success, true);
+  assert.equal(accepted.spacing, TOKENS.spacing);
+});
+
+test("acceptedIdentityTokens refuses an illegal radius", () => {
+  assert.equal(acceptedIdentityTokens({ ...TOKENS, radius: "}" }), undefined);
+});
+
+test("acceptedIdentityTokens refuses a non-HSL background", () => {
+  assert.equal(
+    acceptedIdentityTokens({
+      ...TOKENS,
+      light: { ...TOKENS.light, background: "red" },
+    }),
+    undefined,
+  );
 });

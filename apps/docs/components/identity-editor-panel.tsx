@@ -3,14 +3,12 @@
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   applyIdentity,
-  applyIdentityTokenSheet,
   discardCustomIdentity,
   IDENTITY_CHANGE_EVENT,
   identities,
   identityContrastWarnings,
   identityPresets,
   isNamedIdentityId,
-  isPresetId,
   Stack,
   Text,
   type IdentityContrastWarning,
@@ -25,19 +23,17 @@ import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "@/components/identity-editor-toolbar";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 import { IDENTITY_EDITOR_DRAFT_APPLY } from "@/lib/identity-editor-draft-apply";
-import { useDraftTokens } from "@/lib/identity-editor-draft";
+import { useDraftTokens, useIdentityTokenSheet } from "@/lib/identity-editor-draft";
+import { bindLookLibrary } from "@/lib/identity-look-bind";
+import { tokensForLook } from "@/lib/identity-look";
 import {
-  deleteNamedIdentity,
   namedIdentityOptions,
   readLibrarySnapshot,
   readNamedIdentities,
-  renameNamedIdentity,
-  saveNamedIdentity,
   subscribeNamedIdentities,
   type NamedIdentity,
 } from "@/lib/named-identities";
-import { freeLabel } from "@/lib/identity-library";
-import { saveStatus, type SaveStatus } from "@/lib/identity-save-status";
+import { type SaveStatus } from "@/lib/identity-save-status";
 import { clearDocsSiteIdentity } from "@/lib/site-identity-storage";
 import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "@/lib/identity-editor-search";
 
@@ -68,11 +64,6 @@ type EditorBodyProps = {
   appliedSite: boolean;
 };
 
-function tokensForLook(id: string, named: NamedIdentity[]): IdentityTokens | undefined {
-  if (isPresetId(id)) return identityPresets[id];
-  return named.find((item) => item.id === id)?.tokens;
-}
-
 function bindNamedLooks(
   named: NamedIdentity[],
   identity: string,
@@ -84,42 +75,28 @@ function bindNamedLooks(
   setStatus: (status: SaveStatus | null) => void,
   detachSite: () => void,
 ) {
-  const save = (label: string, replace: boolean) => {
-    const result = saveNamedIdentity(label, tokens, { replace });
-    setStatus(saveStatus(result, named));
-    if (!result.ok) return;
-    setIdentity(result.item.id);
-    setName(result.item.label);
-  };
-  return {
-    looks: [...identities, ...namedIdentityOptions(named)],
-    namedSelected: isNamedIdentityId(identity),
-    onIdentity(id: string) {
-      setIdentity(id);
-      setStatus(null);
-      const next = tokensForLook(id, named);
-      if (next) remember(next, []);
-      setName(named.find((item) => item.id === id)?.label ?? name);
-    },
-    onSave: (replace = false) => save(name, replace),
-    // A name that is taken is never replaced silently: the visitor chose "save as new", so it gets a free one.
-    onSaveAsNew: () => save(freeLabel(named, name), false),
-    onRename() {
-      const result = renameNamedIdentity(identity, name);
-      setStatus(saveStatus(result, named, "renamed"));
-      if (result.ok) setName(result.item.label);
-    },
-    onDelete() {
-      deleteNamedIdentity(identity);
-      setStatus(null);
-      setIdentity("mist");
-      remember(identityPresets.mist, []);
-      setName("");
-      if (document.documentElement.getAttribute("data-identity") === identity) {
+  const keep = bindLookLibrary({
+    named,
+    identity,
+    name,
+    tokens,
+    setIdentity,
+    setName,
+    setStatus,
+    replaceDraft: remember,
+    fallbackIdentity: "mist",
+    fallbackTokens: identityPresets.mist,
+    onDeleted(id) {
+      if (document.documentElement.getAttribute("data-identity") === id) {
         discardCustomIdentity();
         applyIdentity(DEFAULT_IDENTITY);
       }
     },
+  });
+  return {
+    looks: [...identities, ...namedIdentityOptions(named)],
+    namedSelected: isNamedIdentityId(identity),
+    ...keep,
     onReset() {
       remember(tokensForLook(identity, named) ?? identityPresets.mist, []);
     },
@@ -268,15 +245,13 @@ function IdentityEditorPanel() {
     return () => window.removeEventListener(IDENTITY_EDITOR_DRAFT_APPLY, onApply);
   }, [applySuggest]);
 
+  useIdentityTokenSheet(tokens, DRAFT_SELECTOR, ready);
+
   useLayoutEffect(() => {
     if (!ready) return;
-    const sheet = applyIdentityTokenSheet(tokens, DRAFT_SELECTOR);
     const query = serializeIdentityEditorSearch(identity, tokens, darkPreview, darkKept);
     const create = window.location.hash === "#create" ? "#create" : "";
     window.history.replaceState(null, "", `${window.location.pathname}?${query}${create}`);
-    return () => {
-      sheet.remove();
-    };
   }, [darkKept, darkPreview, identity, ready, tokens]);
 
   return (

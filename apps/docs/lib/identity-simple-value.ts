@@ -95,11 +95,24 @@ function formatCssLengthRem(value: number, options: { zeroAsPx?: boolean } = {})
   return `${compactNumber(value)}rem`;
 }
 
+/** Native `input type=color` needs a hex; unparseable triplets render black rather than crashing the control. */
+function colorInputHex(value: string): string {
+  return hslTripletToHex(value) ?? "#000000";
+}
+
+function clampedCssLengthRem(value: string, min: number, max: number): number {
+  const parsed = parseCssLengthRem(value);
+  if (parsed === undefined) return min;
+  return Math.min(max, Math.max(min, parsed));
+}
+
 export {
   RADIUS_MAX,
   RADIUS_MIN,
   SPACING_MAX,
   SPACING_MIN,
+  clampedCssLengthRem,
+  colorInputHex,
   formatCssLengthRem,
   hexToHslTriplet,
   hslTripletToHex,

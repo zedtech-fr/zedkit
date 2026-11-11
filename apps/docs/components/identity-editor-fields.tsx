@@ -9,6 +9,8 @@ import {
   Button,
   Field,
   FieldLabel,
+  FieldLegend,
+  FieldSet,
   Heading,
   Input,
   Stack,
@@ -45,9 +47,11 @@ function TokenField({
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
   const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
+  const invalidSwatch = Boolean(swatch) && !HSL_TRIPLET.test(draft.trim());
+  const formatId = `${id}-format`;
   return (
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
-    <Field className="content-shrink">
+    <Field className="content-shrink" data-invalid={invalidSwatch ? true : undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap="sm" className="content-shrink">
         {swatch ? (
@@ -64,22 +68,29 @@ function TokenField({
           value={draft}
           className="content-shrink flex-1"
           data-editor-scroll=""
+          aria-invalid={invalidSwatch || undefined}
+          aria-describedby={invalidSwatch ? formatId : undefined}
           onChange={(event) => {
             setDraft(event.target.value);
             onChange(event.target.value);
           }}
         />
       </Stack>
+      {invalidSwatch ? (
+        <span id={formatId} className="sr-only">
+          {identityEditorCopy.fields.hslFormat}
+        </span>
+      ) : null}
     </Field>
   );
 }
 
 function FieldGroup({ legend, className, children }: { legend: string; className?: string; children: ReactNode }) {
   return (
-    <fieldset className={cn("trim-margin content-shrink flush", className)}>
-      <legend className="mb-field-legend-bottom font-semibold text-foreground">{legend}</legend>
+    <FieldSet className={cn("trim-margin content-shrink flush", className)}>
+      <FieldLegend className="font-semibold text-foreground">{legend}</FieldLegend>
       <Stack className="grid content-shrink gap-stack-lg sm:grid-pair">{children}</Stack>
-    </fieldset>
+    </FieldSet>
   );
 }
 

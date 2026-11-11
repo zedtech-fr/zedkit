@@ -125,6 +125,10 @@ second fonts `pnpm add` next to that snippet.
 - Saved looks are local recipes (`lib/named-identities.ts`): re-validated on
   every read, no server copy. Changing the stored shape needs a version and a
   migration.
+- Simple and Expert share `IdentityLookForm`. Simple colour fields read and
+  patch `tokens[scheme]` (the preview), never always-light. A Radix
+  `SelectTrigger` is a button: `htmlFor` cannot name it — set `aria-label`
+  (catalog filters). After deleting a look, focus `[data-identity-look-control]`.
 - Applying a look to the whole site is the visitor's explicit choice and
   reversible (`lib/site-identity-storage.ts`: opt-in key, `clearDocsSiteIdentity`).
   Quotas, references and cost controls are server rules; the client never

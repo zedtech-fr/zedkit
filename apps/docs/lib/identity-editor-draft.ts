@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState } from "react";
 import {
   applyCustomIdentity,
+  applyIdentityTokenSheet,
   keepIdentityDarkKeys,
   parseIdentityTokens,
   withIdentityDarkPair,
@@ -8,14 +9,12 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { LIGHT_KEYS } from "@/lib/identity-editor-search";
-import { patchTokens, withKeptDark } from "@/lib/identity-editor-patch";
+import { LIGHT_KEYS, isLightKey } from "@/lib/identity-editor-search";
+import { acceptedIdentityTokens, patchTokens, withKeptDark } from "@/lib/identity-editor-patch";
 import {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
   setDocsSiteIdentityOptIn,
 } from "@/lib/site-identity-storage";
-
-const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
 
 function withSuggestedDark(
   next: IdentityTokens,
@@ -60,7 +59,7 @@ function useDraftTokens(present: IdentityTokens, look: string) {
   }
 
   function patch(key: string, value: string, scheme: "light" | "dark") {
-    const keep = scheme === "dark" && LIGHT_KEY_SET.has(key) ? nextDarkKept(darkKept, key) : darkKept;
+    const keep = scheme === "dark" && isLightKey(key) ? nextDarkKept(darkKept, key) : darkKept;
     remember(patchTokens(tokens, key, value, scheme, keep), keep);
   }
 
@@ -87,7 +86,9 @@ function useDraftTokens(present: IdentityTokens, look: string) {
   }
 
   function load(next: IdentityTokens, keep: readonly string[] = []) {
-    setTokens(next);
+    const accepted = acceptedIdentityTokens(next);
+    if (!accepted) return;
+    setTokens(accepted);
     setDarkKept([...keep]);
     setPast([]);
   }
@@ -116,4 +117,14 @@ function useDraftTokens(present: IdentityTokens, look: string) {
   };
 }
 
-export { useDraftTokens };
+function useIdentityTokenSheet(tokens: IdentityTokens, selector: string, enabled = true) {
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    const sheet = applyIdentityTokenSheet(tokens, selector);
+    return () => {
+      sheet.remove();
+    };
+  }, [enabled, selector, tokens]);
+}
+
+export { useDraftTokens, useIdentityTokenSheet };

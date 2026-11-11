@@ -34,6 +34,7 @@ export const identityEditorCopy = {
     },
   },
   modes: {
+    label: "Simple or expert",
     simple: "Simple",
     expert: "Expert",
   },
@@ -77,6 +78,7 @@ export const identityEditorCopy = {
     contrastBadge: (scheme: string, label: string, ratio: number, min: number) =>
       `${scheme} ${label} ${ratio}:1 (need ${min}:1)`,
     fix: (scheme: string, label: string) => `Fix ${scheme} ${label}`,
+    hslFormat: "Enter a color as H S% L%, for example 220 14% 96%.",
   },
   panel: {
     hint: "Change spacing first, then watch the card. Preview dark changes the card only.",

@@ -21,10 +21,10 @@ import {
   RADIUS_MIN,
   SPACING_MAX,
   SPACING_MIN,
+  clampedCssLengthRem,
+  colorInputHex,
   formatCssLengthRem,
   hexToHslTriplet,
-  hslTripletToHex,
-  parseCssLengthRem,
 } from "@/lib/identity-simple-value";
 
 const SIMPLE_COLORS = ["background", "foreground", "primary", "accent"] as const;
@@ -32,14 +32,16 @@ const SIMPLE_COLORS = ["background", "foreground", "primary", "accent"] as const
 function ColorInput({
   tokenKey,
   value,
+  scheme,
   onPatch,
 }: {
   tokenKey: (typeof SIMPLE_COLORS)[number];
   value: string;
+  scheme: "light" | "dark";
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
 }) {
   const id = `identity-editor-simple-${tokenKey}`;
-  const hex = hslTripletToHex(value) ?? "#000000";
+  const hex = colorInputHex(value);
   return (
     <Field className="content-shrink">
       <FieldLabel htmlFor={id}>{identityEditorCopy.simple[tokenKey]}</FieldLabel>
@@ -50,7 +52,7 @@ function ColorInput({
         className="h-control-height min-h-target w-full min-w-target cursor-pointer rounded-md border border-input bg-transparent focus-ring-control"
         onChange={(event) => {
           const hsl = hexToHslTriplet(event.target.value);
-          if (hsl) onPatch(tokenKey, hsl, "light");
+          if (hsl) onPatch(tokenKey, hsl, scheme);
         }}
       />
     </Field>
@@ -75,8 +77,7 @@ function RangeInput({
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
 }) {
   const id = `identity-editor-simple-${tokenKey}`;
-  const parsed = parseCssLengthRem(value);
-  const shown = parsed === undefined ? min : Math.min(max, Math.max(min, parsed));
+  const shown = clampedCssLengthRem(value, min, max);
   return (
     <Field className="content-shrink">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
@@ -101,9 +102,11 @@ function RangeInput({
 
 function SimpleFields({
   tokens,
+  scheme,
   onPatch,
 }: {
   tokens: IdentityTokens;
+  scheme: "light" | "dark";
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
 }) {
   const copy = identityEditorCopy.simple;
@@ -113,7 +116,13 @@ function SimpleFields({
         <FieldLegend>{copy.palette}</FieldLegend>
         <Stack className="grid content-shrink gap-stack-lg sm:grid-pair">
           {SIMPLE_COLORS.map((key) => (
-            <ColorInput key={key} tokenKey={key} value={tokens.light[key]} onPatch={onPatch} />
+            <ColorInput
+              key={key}
+              tokenKey={key}
+              value={tokens[scheme][key]}
+              scheme={scheme}
+              onPatch={onPatch}
+            />
           ))}
         </Stack>
       </FieldSet>
@@ -145,32 +154,32 @@ function IdentityLookForm({
   scheme,
   defaultMode,
   onPatch,
-  afterSimple,
+  afterForm,
   afterShape,
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
   defaultMode: "simple" | "expert";
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
-  afterSimple?: ReactNode;
+  afterForm?: ReactNode;
   afterShape?: ReactNode;
 }) {
   const copy = identityEditorCopy.modes;
   return (
     <Stack gap="md">
       <Tabs defaultValue={defaultMode}>
-        <TabsList>
+        <TabsList aria-label={copy.label}>
           <TabsTrigger value="simple">{copy.simple}</TabsTrigger>
           <TabsTrigger value="expert">{copy.expert}</TabsTrigger>
         </TabsList>
         <TabsContent value="simple">
-          <SimpleFields tokens={tokens} onPatch={onPatch} />
+          <SimpleFields tokens={tokens} scheme={scheme} onPatch={onPatch} />
         </TabsContent>
         <TabsContent value="expert">
           <EditorFields tokens={tokens} scheme={scheme} onPatch={onPatch} afterShape={afterShape} />
         </TabsContent>
       </Tabs>
-      {afterSimple}
+      {afterForm}
     </Stack>
   );
 }

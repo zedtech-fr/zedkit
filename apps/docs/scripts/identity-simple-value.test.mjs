@@ -4,6 +4,12 @@ import test from "node:test";
 import { identityPresets, parseIdentityTokens } from "@zedtech/zedkit-ui";
 
 import {
+  RADIUS_MAX,
+  RADIUS_MIN,
+  SPACING_MAX,
+  SPACING_MIN,
+  clampedCssLengthRem,
+  colorInputHex,
   formatCssLengthRem,
   hexToHslTriplet,
   hslTripletToHex,
@@ -65,4 +71,20 @@ test("unparseable length stays undefined", () => {
   assert.equal(parseCssLengthRem("nope"), undefined);
   assert.equal(parseCssLengthRem(""), undefined);
   assert.equal(parseCssLengthRem("NaN"), undefined);
+});
+
+test("unparseable colour triplets render as black on the native picker", () => {
+  assert.equal(colorInputHex(""), "#000000");
+  assert.equal(colorInputHex("not-a-triplet"), "#000000");
+  assert.equal(colorInputHex("220 60 97"), "#000000");
+  assert.equal(colorInputHex("0 0% 0%"), "#000000");
+  assert.equal(colorInputHex("0 0% 100%"), "#ffffff");
+});
+
+test("range shown value clamps to min and max and falls back to min", () => {
+  assert.equal(clampedCssLengthRem("nope", SPACING_MIN, SPACING_MAX), SPACING_MIN);
+  assert.equal(clampedCssLengthRem("", RADIUS_MIN, RADIUS_MAX), RADIUS_MIN);
+  assert.equal(clampedCssLengthRem("-1rem", RADIUS_MIN, RADIUS_MAX), RADIUS_MIN);
+  assert.equal(clampedCssLengthRem("9rem", RADIUS_MIN, RADIUS_MAX), RADIUS_MAX);
+  assert.equal(clampedCssLengthRem("0.25rem", SPACING_MIN, SPACING_MAX), 0.25);
 });

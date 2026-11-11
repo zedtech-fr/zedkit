@@ -34,6 +34,7 @@ function LookSelect({
       </FieldLabel>
       <select
         id="identity-editor-look"
+        data-identity-look-control=""
         className="h-control-height w-full rounded-md border border-input bg-background px-field-pad text-control text-foreground focus-ring-control"
         value={identity}
         onChange={(event) => onIdentity(event.target.value)}
@@ -144,7 +145,7 @@ function DeleteLook({
         // land on the Look select instead of the page body (after the dialog's exit has finished).
         window.setTimeout(() => {
           if (document.activeElement === document.body)
-            document.getElementById("identity-editor-look")?.focus();
+            document.querySelector<HTMLElement>("[data-identity-look-control]")?.focus();
         }, 400);
       }}
     />
