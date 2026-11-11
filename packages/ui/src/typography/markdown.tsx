@@ -4,7 +4,12 @@ import rehypeSanitize from "rehype-sanitize";
 
 import { cn } from "../utils.js";
 
+/**
+ * Closed on purpose: `children` is Markdown source, not a React node, and
+ * callers cannot pass rehype plugins or skip sanitize.
+ */
 export type MarkdownProps = {
+  /** CommonMark source string. */
   children: string;
   className?: string;
 };
@@ -19,6 +24,7 @@ function omitNode<T extends ExtraProps>(props: T): Omit<T, "node"> {
 
 function MarkdownAnchor(props: ComponentProps<"a"> & ExtraProps) {
   const { className, children, ...rest } = omitNode(props);
+  // Same tab (`rel` is defense-in-depth). Info, not primary: references, not CTAs.
   return (
     <a className={cn("text-info underline link-offset", className)} {...rest} rel="noopener noreferrer">
       {children}
@@ -27,21 +33,23 @@ function MarkdownAnchor(props: ComponentProps<"a"> & ExtraProps) {
 }
 
 function MarkdownPre(props: ComponentProps<"pre"> & ExtraProps) {
-  const { className, ...rest } = omitNode(props);
+  const { className, children, ...rest } = omitNode(props);
   return (
     <pre
       className={cn(
-        "content-shrink overflow-x-auto rounded-md bg-muted px-control-inline py-control-block font-mono text-dense",
+        "content-shrink rounded-md bg-muted px-control-inline py-control-block font-mono text-dense whitespace-pre-wrap",
         className,
       )}
       {...rest}
-    />
+    >
+      {children}
+    </pre>
   );
 }
 
 function MarkdownCode(props: ComponentProps<"code"> & ExtraProps) {
   const { className, ...rest } = omitNode(props);
-  return <code className={cn("rounded-md bg-muted font-mono text-dense", className)} {...rest} />;
+  return <code className={cn("rounded-md bg-muted px-badge-inline font-mono text-dense", className)} {...rest} />;
 }
 
 const markdownComponents = {

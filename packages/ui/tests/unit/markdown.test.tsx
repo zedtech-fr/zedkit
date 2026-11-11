@@ -27,8 +27,11 @@ const fence = "ok";
     expect(screen.getByText("A paragraph.")).toBeTruthy();
     expect(screen.getByText("item").closest("li")).toBeTruthy();
     expect(container.querySelector("p code")?.textContent).toBe("token");
+    expect(container.querySelector("p code")?.className).toContain("px-badge-inline");
     const fence = container.querySelector("pre > code");
     expect(fence?.textContent).toContain('const fence = "ok";');
+    expect(container.querySelector("pre")?.className).toContain("whitespace-pre-wrap");
+    expect(container.querySelector("pre")?.className).not.toContain("overflow-x-auto");
     expect(container.querySelector("script")).toBeNull();
   });
 
@@ -37,6 +40,7 @@ const fence = "ok";
     const link = screen.getByRole("link", { name: "docs" });
     expect(link.getAttribute("href")).toBe("https://example.com");
     expect(link.getAttribute("rel")).toBe("noopener noreferrer");
+    expect(link.getAttribute("target")).toBeNull();
     expect(link.className).toContain("text-info");
     expect(link.className).toContain("link-offset");
     expect(link.className).not.toContain("text-primary");
@@ -52,19 +56,31 @@ const fence = "ok";
     expect(container.querySelector("[onerror]")).toBeNull();
   });
 
-  it("does not keep a javascript: href", () => {
-    const { container } = render(<Markdown>{"[x](javascript:alert(1))"}</Markdown>);
+  it.each([
+    ["javascript:", "[x](javascript:alert(1))", /^javascript:/i],
+    ["data:", "[x](data:text/html,<script>alert(1)</script>)", /^data:/i],
+    ["padded mixed-case javascript:", "[x](< JaVaScRiPt:alert(1)>)", /^javascript:/i],
+    ["padded mixed-case data:", "[x](< DaTa:text/html,<script>alert(1)</script>)", /^data:/i],
+  ])("does not keep a %s href", (_label, source, banned) => {
+    const { container } = render(<Markdown>{source}</Markdown>);
     for (const anchor of container.querySelectorAll("a")) {
-      expect(anchor.getAttribute("href") ?? "").not.toMatch(/^javascript:/i);
+      expect(anchor.getAttribute("href") ?? "").not.toMatch(banned);
     }
   });
 
-  it("does not keep a data: href", () => {
+  it("keeps an https markdown image src", () => {
+    const { container } = render(<Markdown>{"![diagram](https://example.com/a.png)"}</Markdown>);
+    const img = container.querySelector("img");
+    expect(img?.getAttribute("src")).toBe("https://example.com/a.png");
+    expect(img?.getAttribute("alt")).toBe("diagram");
+  });
+
+  it("does not keep a data: markdown image src", () => {
     const { container } = render(
-      <Markdown>{"[x](data:text/html,<script>alert(1)</script>)"}</Markdown>,
+      <Markdown>{"![x](data:image/gif;base64,R0lGODlhAQABAAAAACw=)"}</Markdown>,
     );
-    for (const anchor of container.querySelectorAll("a")) {
-      expect(anchor.getAttribute("href") ?? "").not.toMatch(/^data:/i);
+    for (const img of container.querySelectorAll("img")) {
+      expect(img.getAttribute("src") ?? "").not.toMatch(/^data:/i);
     }
   });
 

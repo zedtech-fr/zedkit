@@ -1162,7 +1162,7 @@ export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "
 // @public
 export function Markdown(input: MarkdownProps): JSX.Element;
 
-// @public (undocumented)
+// @public
 export type MarkdownProps = {
     children: string;
     className?: string;

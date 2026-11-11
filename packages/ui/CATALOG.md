@@ -1646,15 +1646,16 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Short name: Markdown
 - Audience: App authors rendering untrusted notes or README-like copy as React.
 - Purpose: Turn CommonMark into React elements with sanitized HTML, info-coloured links, and fenced code that does not execute.
-- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links).
+- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). CommonMark images with `http`/`https` src still render as `<img>`; pair that with CSP. `data:` image src is stripped.
 - When not to use: For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.
 - See also: `Render headings and body text without raw tags`
+- A11y: Headings come from the source (one `h1` per page). Links open in the same tab (`rel="noopener noreferrer"` is defense-in-depth). Fenced code wraps. Info colour marks references, not primary actions.
 
 ```ts
 import { Markdown } from "@zedtech/zedkit-ui";
 
 <Markdown>
-  {`# Note
+  {`## Note
 
 A [docs](https://example.com) link and \`code\`.`}
 </Markdown>

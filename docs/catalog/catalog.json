@@ -5077,14 +5077,14 @@
           "shortName": "Markdown",
           "audience": "App authors rendering untrusted notes or README-like copy as React.",
           "purpose": "Turn CommonMark into React elements with sanitized HTML, info-coloured links, and fenced code that does not execute.",
-          "whenToUse": "When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links).",
+          "whenToUse": "When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). CommonMark images with `http`/`https` src still render as `<img>`; pair that with CSP. `data:` image src is stripped.",
           "whenNotToUse": "For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.",
           "derivedFrom": null,
-          "example": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`# Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>",
+          "example": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`## Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`# Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>"
+              "code": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`## Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>"
             }
           ],
           "adoption": {
@@ -5099,6 +5099,7 @@
               }
             ]
           },
+          "a11y": "Headings come from the source (one `h1` per page). Links open in the same tab (`rel=\"noopener noreferrer\"` is defense-in-depth). Fenced code wraps. Info colour marks references, not primary actions.",
           "seeAlso": [
             "Render headings and body text without raw tags"
           ]
