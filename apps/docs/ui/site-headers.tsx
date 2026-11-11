@@ -2,7 +2,6 @@
 
 import { Header } from "fumadocs-ui/layouts/home/slots/header";
 import {
-  featuredPackageChangelogUrl,
   featuredPackageReleasesUrl,
   featuredPackageVersion,
 } from "@/content/gallery";
@@ -16,7 +15,6 @@ export function MarketingSiteHeader() {
         mode="home"
         version={featuredPackageVersion}
         releasesHref={featuredPackageReleasesUrl}
-        changelogHref={featuredPackageChangelogUrl}
       />
       <Header className="max-md:hidden" />
     </>
@@ -30,7 +28,6 @@ export function DocsSiteHeader() {
       mode="docs"
       version={featuredPackageVersion}
       releasesHref={featuredPackageReleasesUrl}
-      changelogHref={featuredPackageChangelogUrl}
       className="sticky top-(--fd-docs-row-1) flex h-phone-bar items-center justify-between gap-stack-sm border-b px-control-tight backdrop-blur-sm [grid-area:header] md:hidden"
     />
   );
