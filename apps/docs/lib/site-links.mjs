@@ -40,7 +40,7 @@ export function siteFooterLinkSpecs(changelogHref) {
     { label: "Start without writing code", href: "/docs/start-without-writing-code", external: false },
     { label: "MIT License", href: SITE_LICENSE_URL, external: true },
     { label: "Source repository", href: SITE_GITHUB_URL, external: true },
-    { label: "npm organisation", href: SITE_NPM_ORG_URL, external: true },
+    { label: "npm organization", href: SITE_NPM_ORG_URL, external: true },
     { label: "Report a bug", href: SITE_BUG_REPORT_URL, external: true },
     { label: "UI changelog", href: changelogHref, external: true },
   ];
