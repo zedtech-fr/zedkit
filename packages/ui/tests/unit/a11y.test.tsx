@@ -430,14 +430,28 @@ describe("a11y", () => {
 
   it("sidebar nav item, active item, and group", async () => {
     const { container } = render(
-      <>
-        <SidebarNavItem>Nightly</SidebarNavItem>
-        <SidebarNavItem active>Staging</SidebarNavItem>
-        <SidebarNavGroup label="Runs">
-          <SidebarNavItem>Nightly</SidebarNavItem>
-          <SidebarNavItem>Staging</SidebarNavItem>
-        </SidebarNavGroup>
-      </>,
+      <nav aria-label="Runs">
+        <ul>
+          <li>
+            <SidebarNavItem>Nightly</SidebarNavItem>
+          </li>
+          <li>
+            <SidebarNavItem active>Staging</SidebarNavItem>
+          </li>
+          <li>
+            <SidebarNavGroup label="Runs">
+              <ul>
+                <li>
+                  <SidebarNavItem>Nightly</SidebarNavItem>
+                </li>
+                <li>
+                  <SidebarNavItem>Staging</SidebarNavItem>
+                </li>
+              </ul>
+            </SidebarNavGroup>
+          </li>
+        </ul>
+      </nav>,
     );
     await expectNoViolations(container);
   });

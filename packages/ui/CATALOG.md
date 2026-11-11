@@ -1399,15 +1399,21 @@ import { AppShell } from "@zedtech/zedkit-ui";
 - When not to use: For site chrome or marketing nav — use `Faq` or header links; for the page frame — use AppShell.
 - See also: `Lay out an admin page (sidebar + topbar + header)`, `Indicate status with a dot`, `Show a status or count badge`
 - Examples: Simple, Active, Group
-- A11y: Default host is a native `button` (`type="button"`) with `min-h-target` (44px on a phone); for navigation, pass `asChild` with a link. `asChild` merges onto a single host element (a string, Fragment, or several children fall back to a button). `active` sets `aria-current="page"` on a link host and `aria-current="true"` on the button host (override via props). The title is the accessible name; status and trail stay `aria-hidden` by design — put those facts in the title if they must be announced. Item titles and group labels truncate. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks and list structure (`nav` wrapping `ul`/`li`).
+- A11y: Default host is a native `button` (`type="button"`) with `min-h-target` (44px on a phone); for navigation, pass `asChild` with a link. `asChild` merges onto a single host element (a string, Fragment, or several children fall back to a button). `active` sets `aria-current="page"` on a link host and `aria-current="true"` on the button host (override via props). The title is the accessible name; status and trail stay `aria-hidden` by design — put those facts in the title if they must be announced. Item titles and group labels truncate. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks and list structure (`nav` wrapping `ul`/`li`). Disabled `asChild` hosts keep href and tab order; click, Enter, and Space are cancelled.
 - Registry: sidebar-nav
-- Troubleshooting: `asChild` needs one host element (a link for navigation) — a string, Fragment, or several children fall back to a button, they do not throw. `disabled` on `asChild` becomes `aria-disabled` and is not leaked onto anchors. Status/meta/count wrappers omit when those props are missing (`count={0}` still renders). `meta` is recency or secondary text; `count` is a quantity; both sit in one trail. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep `nav`/`ul`/`li` on the caller.
+- Troubleshooting: `asChild` needs one host element (a link for navigation) — a string, Fragment, or several children fall back to a button, they do not throw. `disabled` on `asChild` becomes `aria-disabled` (not `disabled` or `type`) and cancels click/Enter/Space; href and tab order stay. Status/meta/count wrappers omit when those props are missing (`status={0}` and `count={0}` still render). `meta` is recency or secondary text; `count` is a quantity; both sit in one trail as separate spans. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep `nav`/`ul`/`li` on the caller.
 
 ```ts
 import { SidebarNavItem, StatusDot } from "@zedtech/zedkit-ui";
-<SidebarNavItem status={<StatusDot tone="success" />} meta="2m ago" count="3">
-  Nightly
-</SidebarNavItem>
+<nav aria-label="Runs">
+  <ul>
+    <li>
+      <SidebarNavItem status={<StatusDot tone="success" />} meta="2m ago" count="3">
+        Nightly
+      </SidebarNavItem>
+    </li>
+  </ul>
+</nav>
 ```
 
 ```ts

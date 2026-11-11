@@ -16,6 +16,11 @@ export interface SidebarNavGroupProps extends React.ComponentProps<"details"> {
   label: React.ReactNode;
 }
 
+type ButtonRest = Omit<
+  React.ComponentProps<"button">,
+  "className" | "children" | "disabled" | "type"
+>;
+
 type AsChildHostProps = {
   className?: string;
   children?: React.ReactNode;
@@ -23,10 +28,45 @@ type AsChildHostProps = {
   "aria-disabled"?: React.AriaAttributes["aria-disabled"] | undefined;
   "data-slot"?: string;
   "data-active"?: string | undefined;
-} & Omit<React.ComponentProps<"button">, "className" | "children" | "disabled">;
+} & ButtonRest;
 
 function isElementHost(node: React.ReactNode): node is React.ReactElement<AsChildHostProps> {
   return React.isValidElement(node) && node.type !== React.Fragment;
+}
+
+function isHandlerKey(key: string): boolean {
+  return /^on[A-Z]/.test(key);
+}
+
+function composeHandler(childHandler: unknown, restHandler: unknown): unknown {
+  if (typeof childHandler !== "function") return restHandler;
+  if (typeof restHandler !== "function") return childHandler;
+  return (event: { defaultPrevented: boolean }) => {
+    (childHandler as (event: { defaultPrevented: boolean }) => void)(event);
+    if (!event.defaultPrevented) {
+      (restHandler as (event: { defaultPrevented: boolean }) => void)(event);
+    }
+  };
+}
+
+function mergeAsChildRest(childProps: AsChildHostProps, rest: ButtonRest): ButtonRest {
+  const merged: Record<string, unknown> = { ...rest };
+  for (const key of Object.keys(rest)) {
+    if (!isHandlerKey(key)) continue;
+    merged[key] = composeHandler(
+      childProps[key as keyof AsChildHostProps],
+      rest[key as keyof ButtonRest],
+    );
+  }
+  return merged as ButtonRest;
+}
+
+function warnInvalidAsChild(children: React.ReactNode) {
+  if (React.Children.toArray(children).some((node) => React.isValidElement(node))) {
+    console.warn(
+      "SidebarNavItem asChild needs a single host element; falling back to a button.",
+    );
+  }
 }
 
 function itemSlots(
@@ -37,7 +77,7 @@ function itemSlots(
 ) {
   return (
     <>
-      {status ? (
+      {status != null ? (
         <span data-slot="sidebar-nav-item-status" className="shrink-0" aria-hidden>
           {status}
         </span>
@@ -51,8 +91,8 @@ function itemSlots(
           className="ml-auto flex shrink-0 items-center gap-stack-tight text-caption text-muted-foreground"
           aria-hidden
         >
-          {meta}
-          {count}
+          {meta != null ? <span data-slot="sidebar-nav-item-meta">{meta}</span> : null}
+          {count != null ? <span data-slot="sidebar-nav-item-count">{count}</span> : null}
         </span>
       ) : null}
     </>
@@ -63,12 +103,13 @@ function itemClassName(
   active: boolean,
   disabled: boolean | undefined,
   className: string | undefined,
+  asChild = false,
 ) {
   return cn(
     "flex min-h-target w-full cursor-pointer items-center gap-stack-sm rounded-md px-control-inline text-left text-dense focus-ring-control disabled:pointer-events-none disabled:cursor-not-allowed disabled:fade-disabled",
     !active && "hover:ghost-hover",
     active && "muted-wash font-medium",
-    disabled && "pointer-events-none cursor-not-allowed fade-disabled",
+    asChild && disabled && "pointer-events-none cursor-not-allowed fade-disabled",
     className,
   );
 }
@@ -81,15 +122,31 @@ function SidebarNavItem({
   count,
   className,
   children,
-  ...props
+  disabled,
+  type = "button",
+  ...rest
 }: SidebarNavItemProps) {
-  const { disabled, ...rest } = props;
-
   if (asChild && isElementHost(children)) {
+    let hostProps = mergeAsChildRest(children.props, rest);
+    if (disabled) {
+      const prevClick = hostProps.onClick ?? children.props.onClick;
+      const prevKeyDown = hostProps.onKeyDown ?? children.props.onKeyDown;
+      hostProps = {
+        ...hostProps,
+        onClick: (event) => {
+          prevClick?.(event);
+          event.preventDefault();
+        },
+        onKeyDown: (event) => {
+          prevKeyDown?.(event);
+          if (event.key === "Enter" || event.key === " ") event.preventDefault();
+        },
+      };
+    }
     return React.cloneElement(children, {
       "aria-current": active ? "page" : undefined,
-      ...rest,
-      className: itemClassName(active, disabled, cn(children.props.className, className)),
+      ...hostProps,
+      className: itemClassName(active, disabled, cn(children.props.className, className), true),
       "data-slot": "sidebar-nav-item",
       "data-active": active ? "" : undefined,
       "aria-disabled": disabled ? true : undefined,
@@ -97,9 +154,11 @@ function SidebarNavItem({
     });
   }
 
+  if (asChild) warnInvalidAsChild(children);
+
   return (
     <button
-      type="button"
+      type={type}
       data-slot="sidebar-nav-item"
       data-active={active ? "" : undefined}
       aria-current={active ? "true" : undefined}

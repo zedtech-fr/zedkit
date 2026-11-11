@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { SidebarNavGroup, SidebarNavItem } from "#index.js";
 
@@ -32,6 +32,8 @@ describe("SidebarNavItem", () => {
     expect(text.indexOf("ok")).toBeLessThan(text.indexOf("Nightly"));
     expect(text.indexOf("Nightly")).toBeLessThan(text.indexOf("2m ago"));
     expect(text.indexOf("2m ago")).toBeLessThan(text.indexOf("3"));
+    expect(row.querySelector('[data-slot="sidebar-nav-item-meta"]')?.textContent).toBe("2m ago");
+    expect(row.querySelector('[data-slot="sidebar-nav-item-count"]')?.textContent).toBe("3");
   });
 
   it("renders a meta-only trail, a count-only trail, and a zero count", () => {
@@ -40,7 +42,9 @@ describe("SidebarNavItem", () => {
     rerender(<SidebarNavItem count="3">Nightly</SidebarNavItem>);
     expect(container.querySelector('[data-slot="sidebar-nav-item-trail"]')?.textContent).toBe("3");
     rerender(<SidebarNavItem count={0}>Nightly</SidebarNavItem>);
-    expect(container.querySelector('[data-slot="sidebar-nav-item-trail"]')?.textContent).toBe("0");
+    expect(container.querySelector('[data-slot="sidebar-nav-item-count"]')?.textContent).toBe("0");
+    rerender(<SidebarNavItem status={0}>Nightly</SidebarNavItem>);
+    expect(container.querySelector('[data-slot="sidebar-nav-item-status"]')?.textContent).toBe("0");
   });
 
   it("marks an active button with aria-current true and a non-color cue, without hover wash", () => {
@@ -65,17 +69,18 @@ describe("SidebarNavItem", () => {
     const { rerender } = render(<SidebarNavItem disabled>Nightly</SidebarNavItem>);
     const row = screen.getByRole("button", { name: "Nightly" });
     expect(row).toHaveProperty("disabled", true);
-    expect(row.className).toContain("disabled:fade-disabled");
-    expect(row.className).toContain("fade-disabled");
+    expect(row.className.split(/\s+/)).toContain("disabled:fade-disabled");
+    expect(row.className.split(/\s+/)).not.toContain("fade-disabled");
     rerender(
-      <SidebarNavItem asChild disabled>
+      <SidebarNavItem asChild disabled type="submit">
         <a href="/runs/1">Nightly</a>
       </SidebarNavItem>,
     );
     const link = screen.getByRole("link", { name: "Nightly" });
     expect(link.getAttribute("disabled")).toBeNull();
+    expect(link.getAttribute("type")).toBeNull();
     expect(link.getAttribute("aria-disabled")).toBe("true");
-    expect(link.className).toContain("fade-disabled");
+    expect(link.className.split(/\s+/)).toContain("fade-disabled");
   });
 
   it("merges asChild onto a link and injects slots inside the anchor", () => {
@@ -96,8 +101,10 @@ describe("SidebarNavItem", () => {
   });
 
   it("falls back to a button when asChild is given a string, a Fragment, or several children", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const { rerender, container } = render(<SidebarNavItem asChild>Nightly</SidebarNavItem>);
     expect(screen.getByRole("button", { name: "Nightly" }).tagName).toBe("BUTTON");
+    expect(warn).not.toHaveBeenCalled();
     rerender(
       <SidebarNavItem asChild>
         <>
@@ -106,6 +113,7 @@ describe("SidebarNavItem", () => {
       </SidebarNavItem>,
     );
     expect(container.querySelector('[data-slot="sidebar-nav-item"]')?.tagName).toBe("BUTTON");
+    expect(warn).toHaveBeenCalledTimes(1);
     rerender(
       <SidebarNavItem asChild>
         <a href="/runs/1">Nightly</a>
@@ -113,6 +121,59 @@ describe("SidebarNavItem", () => {
       </SidebarNavItem>,
     );
     expect(container.querySelector('[data-slot="sidebar-nav-item"]')?.tagName).toBe("BUTTON");
+    expect(warn).toHaveBeenCalledTimes(2);
+    warn.mockRestore();
+  });
+
+  it("runs the child handler before the item handler on asChild", async () => {
+    const user = userEvent.setup();
+    const order: string[] = [];
+    render(
+      <SidebarNavItem asChild onClick={() => order.push("item")}>
+        <a href="/runs/1" onClick={() => order.push("child")}>
+          Nightly
+        </a>
+      </SidebarNavItem>,
+    );
+    await user.click(screen.getByRole("link", { name: "Nightly" }));
+    expect(order).toEqual(["child", "item"]);
+  });
+
+  it("skips the item handler when the asChild host already called preventDefault", async () => {
+    const user = userEvent.setup();
+    const itemClick = vi.fn();
+    render(
+      <SidebarNavItem asChild onClick={itemClick}>
+        <a
+          href="/runs/1"
+          onClick={(event) => {
+            event.preventDefault();
+          }}
+        >
+          Nightly
+        </a>
+      </SidebarNavItem>,
+    );
+    await user.click(screen.getByRole("link", { name: "Nightly" }));
+    expect(itemClick).not.toHaveBeenCalled();
+  });
+
+  it("cancels click and Enter/Space on a disabled asChild link without dropping href", () => {
+    const childClick = vi.fn();
+    render(
+      <SidebarNavItem asChild disabled>
+        <a href="/runs/1" onClick={childClick}>
+          Nightly
+        </a>
+      </SidebarNavItem>,
+    );
+    const link = screen.getByRole("link", { name: "Nightly" });
+    expect(link.getAttribute("href")).toBe("/runs/1");
+    expect(link.getAttribute("tabindex")).toBeNull();
+    expect(fireEvent.click(link)).toBe(false);
+    expect(childClick).toHaveBeenCalledTimes(1);
+    expect(fireEvent.keyDown(link, { key: "Enter" })).toBe(false);
+    expect(fireEvent.keyDown(link, { key: " " })).toBe(false);
   });
 });
 
