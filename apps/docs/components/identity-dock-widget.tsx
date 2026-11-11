@@ -84,7 +84,7 @@ function IdentityDockWidget() {
   const identityId = useIdentity(DEFAULT_IDENTITY);
   const baseTokens = useMemo(() => readSiteTokens(identityId), [identityId]);
   const { expanded, setExpanded, setBrief } = useIdentityAssistantStore();
-  const { workingTokens, setPreviewTokens } = useIdentityDockPreview(baseTokens, identityId);
+  const { workingTokens, setPreviewTokens, resetPreview } = useIdentityDockPreview(baseTokens, identityId);
   const triggerRef = useIdentityDockKeyboard(expanded, setExpanded);
 
   useEditorDockAutoOpen(onEditor, pathname, setBrief, setExpanded);
@@ -119,11 +119,7 @@ function IdentityDockWidget() {
         >
           <DrawerHandle data-dock-handle="" className="trim-bottom w-handle shrink-0" aria-label="Drag to resize" />
           <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
-            <IdentityDockAssistantPanel
-              previewTokens={workingTokens}
-              onPreviewTokens={setPreviewTokens}
-              viewSwitchAlways={!onEditor}
-            />
+            <IdentityDockAssistantPanel previewTokens={workingTokens} onPreviewTokens={setPreviewTokens} onResetPreview={resetPreview} />
           </Stack>
         </DrawerContent>
       </Drawer>
