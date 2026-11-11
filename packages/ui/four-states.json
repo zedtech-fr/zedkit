@@ -102,6 +102,7 @@
     "IdentitySwitcher",
     "IdentityTokens",
     "Input",
+    "JumpToLatest",
     "Label",
     "MultiSelect",
     "LivePulse",

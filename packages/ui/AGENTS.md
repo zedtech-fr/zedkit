@@ -70,7 +70,9 @@ Rules:
   is only for a file plus an adjacent artifact; Button is `src/button/`.
 - Kit chrome strings come from `ZedkitUiProvider` (English default, `zedkitUiMessagesFr`
   for French). A label prop on the host wins. Do not hard-code
-  `aria-label` / `title` / `placeholder` literals in `src/`.
+  `aria-label` / `title` / `placeholder` literals in `src/`. A new required
+  `ZedkitUiMessages` key is a `minor` changeset plus a custom-bundles
+  migration note.
 - No `any`, no `ts-ignore`; no eslint-disable except with a cited
   upstream reason in the comment (one exists: TanStack's own
   `ColumnDef<TData, any>` for mixed-value columns).

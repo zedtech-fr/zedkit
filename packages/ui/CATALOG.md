@@ -1221,6 +1221,40 @@ import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
 </RouteModal>
 ```
 
+## Follow a growing log to the latest
+
+- Import: `@zedtech/zedkit-ui` — `useStickToBottom`, `StickToBottomOptions`, `JumpToLatest`, `JumpToLatestProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: JumpToLatest
+- Audience: Developers building a chat, log, or console that grows while the reader watches.
+- Purpose: Follow the newest line until the reader scrolls up; a named button jumps back and resumes following. `offset` defaults to 8px; `behavior` defaults to `"auto"` (instant jump).
+- When to use: On any overflowing scroll parent (`AppShell` `mainRef` or a custom pane) with content that appends.
+- When not to use: For route-change scroll-to-top — use `Reset scroll on route change`. CSS `overflow-anchor` cannot expose a latch for the button.
+- Examples: Log pane with jump control
+- A11y: Hidden while latched (not in the tab order). Visible control is a real `button` with the kit 44px phone target; empty `label` falls back to kit chrome (that visible text is the accessible name — do not pass a conflicting `aria-label`). `jumpToLatest` moves focus to the scroller. A custom pane needs `tabIndex={0}`, `role="region"`, `aria-label`, and a visible focus ring (`AppShell` `main` already does this). Jumps instantly by default and always when motion is reduced (OS or `html[data-motion=reduce]`). `behavior="smooth"` while a log is still growing is a continuous animation — keep `"auto"` when the reader may be motion-sensitive. Not a live region: in chat, pair with `StreamText`; a plain log or console should add `aria-live` or `role="status"` if new lines must be announced.
+- Composition: `JumpToLatest` does not call the hook; the parent passes `stuck` and `onClick`. The hook takes a `RefObject` to the overflowing node, not `window`. The control is unpositioned: overlay it (`absolute pin-bottom pin-x` on a `relative` parent) so mount/unmount does not shift in-flow layout, or the caller owns position.
+- See also: `Reset scroll on route change`, `Lay out an admin page (sidebar + topbar + header)`, `Localize kit chrome in English or French`
+- Troubleshooting: Custom `messages` objects must keep every key (`jumpToLatest` included) — see `Localize kit chrome in English or French`. The button is absent while `stuck` is true. ResizeObserver watches the scroller box, not content size — image or font loads that grow `scrollHeight` without a DOM edit do not re-pin; wrap the content so the box changes, or call `jumpToLatest` after load. Starts latched and pins on mount — restore a saved `scrollTop` after mount on a resume journey.
+
+```ts
+"use client";
+import { useRef, type ReactNode } from "react";
+import { JumpToLatest, useStickToBottom } from "@zedtech/zedkit-ui";
+export function LogPane({ children }: { children: ReactNode }) {
+  const scroller = useRef<HTMLDivElement>(null);
+  const { isStuck, jumpToLatest } = useStickToBottom(scroller);
+  return (
+    <div className="relative pane-shrink">
+      <div ref={scroller} tabIndex={0} role="region" aria-label="Log" className="h-full overflow-y-auto focus-ring">
+        {children}
+      </div>
+      <JumpToLatest className="absolute pin-bottom pin-x" stuck={isStuck} onClick={jumpToLatest} />
+    </div>
+  );
+}
+```
+
 ## Reset scroll on route change
 
 - Import: `@zedtech/zedkit-ui` — `ScrollReset`, `ScrollResetProps`, `useScrollReset`, `ScrollResetOptions`

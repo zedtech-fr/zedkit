@@ -252,6 +252,12 @@ export {
   type ScrollResetProps,
 } from "./scroll-reset.js";
 export {
+  JumpToLatest,
+  useStickToBottom,
+  type JumpToLatestProps,
+  type StickToBottomOptions,
+} from "./layout/stick-to-bottom.js";
+export {
   RouteModal,
   type RouteModalDirection,
   type RouteModalProps,
