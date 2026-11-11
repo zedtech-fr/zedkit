@@ -4,6 +4,8 @@ import type {
   FindingDisposition,
   ReviewAction,
   ReviewAgentSummary,
+  ReviewConsoleItem,
+  ReviewConsoleKind,
   ReviewFinding,
   ReviewPrState,
   ReviewRecord,
@@ -33,11 +35,14 @@ const ACTION_KEYS = ["title", "detail"] as const;
 const FINDING_KEYS = ["id", "summary", "disposition"] as const;
 const AGENT_KEYS = ["id", "name", "kind", "status", "model"] as const;
 const RUN_KEYS = ["id", "status", "startedAt", "agents"] as const;
+const RUN_OPTIONAL_KEYS = ["items"] as const;
+const CONSOLE_ITEM_KEYS = ["id", "kind", "title", "status"] as const;
 const VERDICTS = ["approve", "request-changes", "comment", "error"] as const;
 const RUN_STATUSES = ["running", "done", "error"] as const;
 const PR_STATES = ["open", "merged"] as const;
 const VISIBILITIES = ["public", "private"] as const;
 const DISPOSITIONS = ["kept", "downgraded", "dismissed"] as const;
+const CONSOLE_KINDS = ["flow", "agent", "workflow"] as const;
 
 function fail(message: string): Result<never, Error> {
   return err(new Error(message));
@@ -47,13 +52,15 @@ function exactObject(
   value: unknown,
   keys: readonly string[],
   label: string,
+  optional: readonly string[] = [],
 ): Result<Record<string, unknown>, Error> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return fail(`${label} must be an object`);
   }
   const record = value as Record<string, unknown>;
   const actual = Object.keys(record);
-  const extra = actual.filter((key) => !keys.includes(key));
+  const allowed = [...keys, ...optional];
+  const extra = actual.filter((key) => !allowed.includes(key));
   if (extra.length > 0) return fail(`${label} has unknown keys: ${extra.join(", ")}`);
   const missing = keys.filter((key) => !actual.includes(key));
   if (missing.length > 0) return fail(`${label} is missing ${missing.join(", ")}`);
@@ -145,9 +152,29 @@ function parseAgent(value: unknown, index: number): Result<ReviewAgentSummary, E
   });
 }
 
+function parseConsoleItem(value: unknown, index: number): Result<ReviewConsoleItem, Error> {
+  const label = `items[${index}]`;
+  const obj = exactObject(value, CONSOLE_ITEM_KEYS, label);
+  if (!obj.ok) return obj;
+  const id = asString(obj.value.id, `${label}.id`);
+  if (!id.ok) return id;
+  const kind = asOneOf<ReviewConsoleKind>(obj.value.kind, CONSOLE_KINDS, `${label}.kind`);
+  if (!kind.ok) return kind;
+  const title = asString(obj.value.title, `${label}.title`);
+  if (!title.ok) return title;
+  const status = asOneOf<ReviewRunStatus>(obj.value.status, RUN_STATUSES, `${label}.status`);
+  if (!status.ok) return status;
+  return ok({
+    id: id.value,
+    kind: kind.value,
+    title: title.value,
+    status: status.value,
+  });
+}
+
 function parseRun(value: unknown, index: number): Result<ReviewRun, Error> {
   const label = `runs[${index}]`;
-  const obj = exactObject(value, RUN_KEYS, label);
+  const obj = exactObject(value, RUN_KEYS, label, RUN_OPTIONAL_KEYS);
   if (!obj.ok) return obj;
   const id = asString(obj.value.id, `${label}.id`);
   if (!id.ok) return id;
@@ -159,12 +186,18 @@ function parseRun(value: unknown, index: number): Result<ReviewRun, Error> {
   if (!agentsRaw.ok) return agentsRaw;
   const agents = mapItems(agentsRaw.value, parseAgent);
   if (!agents.ok) return agents;
-  return ok({
+  const run: ReviewRun = {
     id: id.value,
     status: status.value,
     startedAt: startedAt.value,
     agents: agents.value,
-  });
+  };
+  if (obj.value.items === undefined) return ok(run);
+  const itemsRaw = asArray(obj.value.items, `${label}.items`);
+  if (!itemsRaw.ok) return itemsRaw;
+  const items = mapItems(itemsRaw.value, parseConsoleItem);
+  if (!items.ok) return items;
+  return ok({ ...run, items: items.value });
 }
 
 function parseRecordCore(

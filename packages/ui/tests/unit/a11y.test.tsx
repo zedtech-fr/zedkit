@@ -1,12 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
 import { RegionSelect, stubSelectJsdom } from "./select-fixture.js";
 
 beforeAll(() => {
   stubSelectJsdom();
+  stubDrawerJsdom();
+});
+
+afterEach(() => {
   stubDrawerJsdom();
 });
 
@@ -333,6 +337,18 @@ describe("a11y", () => {
       </AppShell>,
     );
     await expectNoViolations(container);
+  });
+
+  it("app shell mobile drawer when open", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    render(
+      <AppShell sidebar={<nav>Nav</nav>}>
+        <PageHeader title="Items" />
+      </AppShell>,
+    );
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    await expectNoViolations(document.body);
   });
 
   it("detailPanel", async () => {

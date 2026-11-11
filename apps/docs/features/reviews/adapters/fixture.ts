@@ -21,11 +21,32 @@ const FIXTURES: readonly ReviewRecord[] = [
       },
       {
         title: "Lead with the verdict",
-        detail: "Actions and notes come next. Agent detail stays behind a disclosure.",
+        detail: "Actions and notes come next. Open an agent from the run list for its pane.",
       },
     ],
     findings: [],
-    runs: [{ id: "run-71", status: "done", startedAt: "2026-11-09T14:50:00.000Z", agents: [] }],
+    runs: [
+      {
+        id: "run-71",
+        status: "done",
+        startedAt: "2026-11-09T14:50:00.000Z",
+        agents: [],
+        items: [
+          { id: "flow", kind: "flow", title: "Main flow", status: "done" },
+          { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
+        ],
+      },
+      {
+        id: "run-71-earlier",
+        status: "done",
+        startedAt: "2026-11-09T13:00:00.000Z",
+        agents: [],
+        items: [
+          { id: "flow", kind: "flow", title: "Main flow", status: "done" },
+          { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
+        ],
+      },
+    ],
   },
   {
     number: 42,
@@ -46,7 +67,18 @@ const FIXTURES: readonly ReviewRecord[] = [
       },
     ],
     findings: [],
-    runs: [{ id: "run-42", status: "error", startedAt: "2026-11-08T09:10:00.000Z", agents: [] }],
+    runs: [
+      {
+        id: "run-42",
+        status: "error",
+        startedAt: "2026-11-08T09:10:00.000Z",
+        agents: [],
+        items: [
+          { id: "flow", kind: "flow", title: "Main flow", status: "error" },
+          { id: "workflow-contrast", kind: "workflow", title: "Contrast check", status: "error" },
+        ],
+      },
+    ],
   },
   {
     number: 18,
@@ -62,7 +94,18 @@ const FIXTURES: readonly ReviewRecord[] = [
       "A running review still belongs on the list. Status is a named wait, not a spinner. This fixture does not update after deploy.",
     actions: [],
     findings: [],
-    runs: [{ id: "run-18", status: "running", startedAt: "2026-11-10T08:00:00.000Z", agents: [] }],
+    runs: [
+      {
+        id: "run-18",
+        status: "running",
+        startedAt: "2026-11-10T08:00:00.000Z",
+        agents: [],
+        items: [
+          { id: "flow", kind: "flow", title: "Main flow", status: "running" },
+          { id: "agent-docs", kind: "agent", title: "Docs agent", status: "running" },
+        ],
+      },
+    ],
   },
   {
     number: 99,
@@ -77,7 +120,15 @@ const FIXTURES: readonly ReviewRecord[] = [
     notes: "Gated. Not for the public site.",
     actions: [],
     findings: [],
-    runs: [{ id: "run-99", status: "done", startedAt: "2026-11-01T00:00:00.000Z", agents: [] }],
+    runs: [
+      {
+        id: "run-99",
+        status: "done",
+        startedAt: "2026-11-01T00:00:00.000Z",
+        agents: [],
+        items: [{ id: "agent-private", kind: "agent", title: "secret agent", status: "done" }],
+      },
+    ],
   },
 ];
 
@@ -102,4 +153,3 @@ export function createFixtureReviewPort(seed: readonly ReviewRecord[] = FIXTURES
     },
   };
 }
-

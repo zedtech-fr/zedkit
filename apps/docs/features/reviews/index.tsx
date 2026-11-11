@@ -4,11 +4,14 @@
  * Customers: app teams who install @zedtech/zedkit-* or copy UI via the registry.
  * Customer personas: hurried visitor on a phone scanning a real review; maintainer reproducing a look via share link.
  * UI decisions:
- * - Verdict first, then actions, then details — because: hurried reader needs the outcome before evidence.
+ * - Side panel plus selected pane on desktop — because: customer = hurried visitor scanning the run while reading one item.
+ * - Main flow selected by default — because: first screen is the outcome, not an empty pane.
+ * - Kit Drawer with a labelled 44px trigger below md — because: phone users must reach the list; the column must not stay hidden.
+ * - Selection in the URL hash, Appearance in the query — because: a maintainer must copy a look and an item without breaking either share.
+ * - Actions and notes as the flow placeholder — because: the sibling ticket owns the decision body; layout and selection ship first.
+ * - Button rows, not a local nav primitive — because: generic console rows belong in the kit, not this feature.
  * - List at the section root with a useful empty state — because: the visitor always has a next click.
  * - Quiet Appearance panel inside ThemeScope — because: identities serve reading; site chrome must not jump.
- * - Stacked rows, not a wide table — because: phone users at 320–390px compose by priority.
- * - Share link encodes appearance only — because: a visual issue must round-trip without token drafts.
  */
 
 import { notFound } from "next/navigation";

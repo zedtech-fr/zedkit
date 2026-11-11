@@ -43,6 +43,10 @@
               "status": "done",
               "model": ""
             }
+          ],
+          "items": [
+            { "id": "flow", "kind": "flow", "title": "Main flow", "status": "done" },
+            { "id": "check-79", "kind": "agent", "title": "Docs review", "status": "done" }
           ]
         }
       ]
@@ -84,6 +88,10 @@
               "status": "done",
               "model": ""
             }
+          ],
+          "items": [
+            { "id": "flow", "kind": "flow", "title": "Main flow", "status": "done" },
+            { "id": "check-64", "kind": "agent", "title": "Docs review", "status": "done" }
           ]
         }
       ]
@@ -130,6 +138,10 @@
               "status": "done",
               "model": ""
             }
+          ],
+          "items": [
+            { "id": "flow", "kind": "flow", "title": "Main flow", "status": "done" },
+            { "id": "check-80-a", "kind": "agent", "title": "First pass", "status": "done" }
           ]
         },
         {
@@ -144,6 +156,10 @@
               "status": "done",
               "model": ""
             }
+          ],
+          "items": [
+            { "id": "flow", "kind": "flow", "title": "Main flow", "status": "done" },
+            { "id": "check-80-b", "kind": "agent", "title": "Reconciled pass", "status": "done" }
           ]
         }
       ]

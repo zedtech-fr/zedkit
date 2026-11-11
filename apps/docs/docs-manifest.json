@@ -247,7 +247,9 @@
       "source": "layout/app-shell.tsx",
       "demo": "AppShellDemo",
       "examples": {
-        "Without topbar": "AppShellNoTopbarDemo"
+        "Without topbar": "AppShellNoTopbarDemo",
+        "Fixed height": "AppShellMobileDrawerDemo",
+        "Custom trigger": "AppShellTriggerDemo"
       }
     },
     "Guide a multi-step flow with selectable option cards": {

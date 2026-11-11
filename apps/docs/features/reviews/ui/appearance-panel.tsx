@@ -31,6 +31,7 @@ import {
   type ReviewAppearance,
 } from "@/lib/review-appearance";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import { mergeReviewShareUrl } from "../model/selection";
 
 const looks = identities.filter((item) =>
   (REVIEW_IDENTITIES as readonly string[]).includes(item.id),
@@ -38,8 +39,15 @@ const looks = identities.filter((item) =>
 
 function writeShareUrl(appearance: ReviewAppearance) {
   const query = serializeReviewAppearance(appearance);
-  const path = window.location.pathname;
-  window.history.replaceState(null, "", query === "" ? path : `${path}?${query}`);
+  window.history.replaceState(
+    null,
+    "",
+    mergeReviewShareUrl({
+      pathname: window.location.pathname,
+      search: query,
+      hash: window.location.hash,
+    }),
+  );
 }
 
 function IdentitySelect({

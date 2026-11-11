@@ -6,6 +6,7 @@ import {
   checkHtmlRegistryLinks,
   checkLlms,
   checkLlmsFull,
+  LLMS_AGENT_MARKDOWN_URLS,
   LLMS_FULL_SCOPE_LINE,
   llmsFullDocumentationIndexBody,
   checkMeta,
@@ -92,12 +93,20 @@ test("checkSitemap reports too few URLs, an off-site loc, and missing home or /d
   ]);
 });
 
+function llmsIndex() {
+  return ["# zedkit docs", "", "## Install or copy", "", ...LLMS_AGENT_MARKDOWN_URLS.map((url) => `- ${url}`)].join("\n");
+}
+
 test("checkLlms accepts the generated header and rejects anything else", () => {
-  assert.deepEqual(checkLlms("# zedkit docs\n\n## Install or copy\n"), []);
-  assert.deepEqual(checkLlms("# zedkit docs\n"), ["llms.txt: missing ## Install or copy section"]);
+  assert.deepEqual(checkLlms(llmsIndex()), []);
+  assert.deepEqual(checkLlms("# zedkit docs\n"), [
+    "llms.txt: missing ## Install or copy section",
+    ...LLMS_AGENT_MARKDOWN_URLS.map((url) => `llms.txt: missing ${url}`),
+  ]);
   assert.deepEqual(checkLlms("# other"), [
     "llms.txt: expected generated zedkit docs header",
     "llms.txt: missing ## Install or copy section",
+    ...LLMS_AGENT_MARKDOWN_URLS.map((url) => `llms.txt: missing ${url}`),
   ]);
 });
 
@@ -113,6 +122,10 @@ test("checkLlmsFull accepts buildLlmsFull sections", () => {
     "",
     "steps",
     "",
+    "# zedkit setup map",
+    "",
+    "order",
+    "",
     "# Documentation index",
     "",
     "- [Home](https://zedkit.app/)",
@@ -125,7 +138,7 @@ test("checkLlmsFull accepts buildLlmsFull sections", () => {
   assert.match(llmsFullDocumentationIndexBody(body) ?? "", /^- \[/m);
   assert.deepEqual(
     checkLlmsFull(
-      ["# Install or copy", "", LLMS_FULL_SCOPE_LINE, "", "# Set up zedkit AI", "", "x", "", "# Documentation index", "", "(empty index, no links)"].join(
+      ["# Install or copy", "", LLMS_FULL_SCOPE_LINE, "", "# Set up zedkit AI", "", "x", "", "# zedkit setup map", "", "y", "", "# Documentation index", "", "(empty index, no links)"].join(
         "\n",
       ),
     ),
@@ -136,6 +149,7 @@ test("checkLlmsFull accepts buildLlmsFull sections", () => {
     "llms-full.txt: missing scope statement for agents",
     "llms-full.txt: missing # Documentation index section",
     "llms-full.txt: missing # Set up zedkit AI section",
+    "llms-full.txt: missing # zedkit setup map section",
   ]);
 });
 
