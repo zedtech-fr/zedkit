@@ -31,6 +31,16 @@ pnpm add @zedtech/zedkit-ui
 Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 `.dark` class strategy for dark mode (`next-themes` recommended).
 
+### Agent: one paste
+
+Docs walkthrough: [zedkit.app/docs/getting-started](https://zedkit.app/docs/getting-started). Agent steps (raw markdown): [zedkit.app/ui/setup.md](https://zedkit.app/ui/setup.md).
+
+Paste this single message in a new chat at the repo root:
+
+```text
+Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md
+```
+
 ## Usage
 
 Adopt in 3 lines:
