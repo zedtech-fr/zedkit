@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -36,7 +36,7 @@ test("home hero lead prioritizes get started then catalog (#ZK-09)", () => {
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
   assert.match(lead, /HomeHeroLeadActions/);
   assert.match(actions, /from "@\/ui\/home\/home-link"/);
-  // Primary first, then Set up AI, then the quiet catalog link.
+  // Primary first, then Set up AI, then the quiet catalog link. Aliases stay on the paste band (#119).
   assert.match(actions, /<Button asChild>\s*\n\s*<HomeLink href="#get-started">\{homeCopy\.heroActions\.getStarted\}/);
   assert.match(actions, /<HomeLink href="#ai-setup">\{homeCopy\.heroActions\.setupAi\}/);
   assert.match(actions, /variant="link"[^>]*>\s*\n\s*<HomeLink href="\/catalog">\{homeCopy\.heroActions\.browseCatalog\}/);
@@ -47,6 +47,35 @@ test("home hero lead prioritizes get started then catalog (#ZK-09)", () => {
   assert.match(copy, /setupAi: "Set up AI"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
   assert.doesNotMatch(actions + copy, /Browse components/);
+});
+
+test("home below-hero order is same-idea, paste, identities, families, secondary (#119)", () => {
+  const src = readFileSync(join(app, "ui/home/home-below-hero.tsx"), "utf8");
+  const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
+  const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
+  const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
+  const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
+  const order = [...src.matchAll(/<Home(SameIdea|Paste|Identities|ComponentFamilies|Secondary)Section/g)].map(
+    (match) => match[1],
+  );
+  assert.deepEqual(order, ["SameIdea", "Paste", "Identities", "ComponentFamilies", "Secondary"]);
+  assert.doesNotMatch(src, /HomeAiSetupSection|HomeGetStartedSection|featuredPackage/);
+  assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/home-ai-setup-terminal.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/home-get-started-section.tsx")), false);
+  assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField/);
+  assert.match(sameIdeaCopy, /title: "Same idea, two places"/);
+  assert.match(sameIdeaCopy, /\bai:/);
+  assert.match(sameIdeaCopy, /\bui:/);
+  assert.match(sameIdeaCopy, /\btogether:/);
+  assert.match(paste, /<SetupEntryPrompt id="combined"/);
+  assert.doesNotMatch(paste, /<SetupEntryPrompt id="(ai|ui|suggest)"/);
+  assert.match(paste, /id="paste"/);
+  assert.match(paste, /id="ai-setup"/);
+  assert.match(paste, /id="get-started"/);
+  assert.match(paste, /homePasteCopy\.fullStepsHref/);
+  assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
+  assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
 });
 
 test("drawer demo save closes and toasts", () => {
