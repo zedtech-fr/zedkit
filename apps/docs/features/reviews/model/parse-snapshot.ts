@@ -7,6 +7,9 @@ import type {
   ReviewConsoleItem,
   ReviewConsoleKind,
   ReviewFinding,
+  ReviewFindingDisposition,
+  ReviewFirstPass,
+  ReviewFirstPassFinding,
   ReviewPrState,
   ReviewRecord,
   ReviewRun,
@@ -31,8 +34,11 @@ const RECORD_KEYS = [
   "findings",
   "runs",
 ] as const;
+const RECORD_OPTIONAL_KEYS = ["summary", "evidence", "firstPass"] as const;
 const ACTION_KEYS = ["title", "detail"] as const;
 const FINDING_KEYS = ["id", "summary", "disposition"] as const;
+const FIRST_PASS_KEYS = ["findings"] as const;
+const FIRST_PASS_FINDING_KEYS = ["title", "detail", "disposition"] as const;
 const AGENT_KEYS = ["id", "name", "kind", "status", "model"] as const;
 const RUN_KEYS = ["id", "status", "startedAt", "agents"] as const;
 const RUN_OPTIONAL_KEYS = ["items"] as const;
@@ -127,6 +133,58 @@ function parseFinding(value: unknown, index: number): Result<ReviewFinding, Erro
   );
   if (!disposition.ok) return disposition;
   return ok({ id: id.value, summary: summary.value, disposition: disposition.value });
+}
+
+function parseFirstPassFinding(
+  value: unknown,
+  index: number,
+): Result<ReviewFirstPassFinding, Error> {
+  const label = `firstPass.findings[${index}]`;
+  const obj = exactObject(value, FIRST_PASS_FINDING_KEYS, label);
+  if (!obj.ok) return obj;
+  const title = asString(obj.value.title, `${label}.title`);
+  if (!title.ok) return title;
+  const detail = asString(obj.value.detail, `${label}.detail`);
+  if (!detail.ok) return detail;
+  const disposition = asOneOf<ReviewFindingDisposition>(
+    obj.value.disposition,
+    DISPOSITIONS,
+    `${label}.disposition`,
+  );
+  if (!disposition.ok) return disposition;
+  return ok({ title: title.value, detail: detail.value, disposition: disposition.value });
+}
+
+function parseFirstPass(value: unknown, label: string): Result<ReviewFirstPass, Error> {
+  const obj = exactObject(value, FIRST_PASS_KEYS, `${label}.firstPass`);
+  if (!obj.ok) return obj;
+  const findingsRaw = asArray(obj.value.findings, `${label}.firstPass.findings`);
+  if (!findingsRaw.ok) return findingsRaw;
+  const findings = mapItems(findingsRaw.value, parseFirstPassFinding);
+  if (!findings.ok) return findings;
+  return ok({ findings: findings.value });
+}
+
+function parseRecordDecision(
+  obj: Record<string, unknown>,
+  label: string,
+): Result<Pick<ReviewRecord, "summary" | "evidence" | "firstPass">, Error> {
+  let summary = "";
+  if (obj.summary !== undefined) {
+    const parsed = asString(obj.summary, `${label}.summary`);
+    if (!parsed.ok) return parsed;
+    summary = parsed.value;
+  }
+  let evidence = "";
+  if (obj.evidence !== undefined) {
+    const parsed = asString(obj.evidence, `${label}.evidence`);
+    if (!parsed.ok) return parsed;
+    evidence = parsed.value;
+  }
+  if (obj.firstPass === undefined) return ok({ summary, evidence });
+  const firstPass = parseFirstPass(obj.firstPass, label);
+  if (!firstPass.ok) return firstPass;
+  return ok({ summary, evidence, firstPass: firstPass.value });
 }
 
 function parseAgent(value: unknown, index: number): Result<ReviewAgentSummary, Error> {
@@ -280,13 +338,15 @@ function parseRecordLists(
 
 function parseRecord(value: unknown, index: number): Result<ReviewRecord, Error> {
   const label = `reviews[${index}]`;
-  const obj = exactObject(value, RECORD_KEYS, label);
+  const obj = exactObject(value, RECORD_KEYS, label, RECORD_OPTIONAL_KEYS);
   if (!obj.ok) return obj;
   const core = parseRecordCore(obj.value, label);
   if (!core.ok) return core;
   const lists = parseRecordLists(obj.value, label);
   if (!lists.ok) return lists;
-  return ok({ ...core.value, ...lists.value });
+  const decision = parseRecordDecision(obj.value, label);
+  if (!decision.ok) return decision;
+  return ok({ ...core.value, ...lists.value, ...decision.value });
 }
 
 /** Parse a version-1 public review snapshot. Fail closed on unknown shape. */

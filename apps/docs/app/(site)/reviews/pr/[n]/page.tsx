@@ -1,4 +1,4 @@
-import { listReviewPrParams, ReviewPrFeature, reviewsCopy } from "@/features/reviews";
+import { listReviewPrParams, parsePrNumber, ReviewPrFeature, reviewsCopy } from "@/features/reviews";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
@@ -8,8 +8,12 @@ export const generateStaticParams = listReviewPrParams;
 
 export async function generateMetadata({ params }: { params: Promise<{ n: string }> }) {
   const { n } = await params;
-  return docsPageMetadata(`/reviews/pr/${n}`, {
-    title: `${reviewsCopy.metadata.pr.title} #${n}`,
+  const number = parsePrNumber(n);
+  if (number === null) {
+    return docsPageMetadata("/reviews", reviewsCopy.metadata.missing, { index: false });
+  }
+  return docsPageMetadata(`/reviews/pr/${number}`, {
+    title: `${reviewsCopy.metadata.pr.title} #${number}`,
     description: reviewsCopy.metadata.pr.description,
   });
 }

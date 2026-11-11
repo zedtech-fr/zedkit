@@ -19,27 +19,13 @@ import {
   StatusLabel,
   Text,
   UpdatedAgo,
-  type BadgeProps,
-  type StatusLabelTone,
 } from "@zedtech/zedkit-ui";
 
 import { filterReviewList, type ReviewListQuery } from "../model/list-filter";
 import type { ReviewPrState, ReviewRecord, ReviewVerdict } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-
-const VERDICT_BADGE: Record<ReviewVerdict, BadgeProps["variant"]> = {
-  approve: "success",
-  "request-changes": "warning",
-  comment: "secondary",
-  error: "destructive",
-};
-
-const STATUS_TONE: Record<ReviewRecord["status"], StatusLabelTone> = {
-  running: "loading",
-  done: "saved",
-  error: "error",
-};
+import { STATUS_TONE, VERDICT_BADGE } from "./review-badges";
 
 type FilterState = {
   prState: "all" | ReviewPrState;
@@ -67,7 +53,7 @@ function ReviewRow({ record, copy }: { record: ReviewRecord; copy: ReviewsCopy }
       <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Badge variant={VERDICT_BADGE[record.verdict]}>{copy.verdict[record.verdict]}</Badge>
         <Text variant="muted" typeRole="caption">
-          {copy.pr.confidence} {record.confidence}
+          {`${copy.pr.confidence} ${record.confidence}${copy.pr.confidenceUnit}`}
         </Text>
         <StatusLabel tone={STATUS_TONE[record.status]}>{copy.status[record.status]}</StatusLabel>
         <Badge variant="outline">{copy.prState[record.prState]}</Badge>

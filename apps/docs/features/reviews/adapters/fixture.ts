@@ -13,17 +13,10 @@ const FIXTURES: readonly ReviewRecord[] = [
     prState: "open",
     visibility: "public",
     notes:
-      "The section root is the list, never a blank landing. Verdict, confidence, and run status stay readable in a dense page of notes, links, and a short table of required actions. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
-    actions: [
-      {
-        title: "Keep the empty state useful",
-        detail: "When there are no reviews yet, say what will appear and that the page is still the list.",
-      },
-      {
-        title: "Lead with the verdict",
-        detail: "Actions and notes come next. Open an agent from the run list for its pane.",
-      },
-    ],
+      "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
+    summary: "The public review section is ready to merge.",
+    evidence: "",
+    actions: [],
     findings: [],
     runs: [
       {
@@ -60,6 +53,8 @@ const FIXTURES: readonly ReviewRecord[] = [
     visibility: "public",
     notes:
       "Dark Press must keep caption contrast on the list and the PR page. The run failed while checking the compact preview; open the run for the log excerpt.",
+    summary: "Dark Press caption contrast still fails on the list and the PR page.",
+    evidence: "",
     actions: [
       {
         title: "Raise muted text on dark Press",
@@ -92,6 +87,8 @@ const FIXTURES: readonly ReviewRecord[] = [
     visibility: "public",
     notes:
       "A running review still belongs on the list. Status is a named wait, not a spinner. This fixture does not update after deploy.",
+    summary: "A running review still belongs on the list; this fixture does not update after deploy.",
+    evidence: "",
     actions: [],
     findings: [],
     runs: [
@@ -108,6 +105,59 @@ const FIXTURES: readonly ReviewRecord[] = [
     ],
   },
   {
+    number: 83,
+    title: "Supersede a first-pass review",
+    verdict: "request-changes",
+    confidence: 72,
+    status: "done",
+    headSha: "cafe00abc123def4567890aaabbbcccdddeeefff",
+    lastRunAt: "2026-11-10T11:00:00.000Z",
+    prState: "open",
+    visibility: "public",
+    notes:
+      "The first pass over-called. One finding stayed a merge blocker; one became a note; one was out of scope.",
+    summary: "The first pass is outdated. One merge blocker remains.",
+    evidence: "",
+    actions: [
+      {
+        title: "Keep the list empty state useful",
+        detail: "When there are no reviews yet, say what will appear and that the page is still the list.",
+      },
+    ],
+    findings: [],
+    firstPass: {
+      findings: [
+        {
+          title: "Keep the list empty state useful",
+          detail: "The empty list still needs a next click. This stays a merge blocker.",
+          disposition: "kept",
+        },
+        {
+          title: "Rename the section root",
+          detail: "The list-as-root rule is now a note, not a blocker.",
+          disposition: "downgraded",
+        },
+        {
+          title: "Add a sidebar for lenses",
+          detail: "On-demand disclosure already covers lenses. Out of scope for this review.",
+          disposition: "dismissed",
+        },
+      ],
+    },
+    runs: [
+      {
+        id: "run-83",
+        status: "done",
+        startedAt: "2026-11-10T10:50:00.000Z",
+        agents: [],
+        items: [
+          { id: "flow", kind: "flow", title: "Main flow", status: "done" },
+          { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
+        ],
+      },
+    ],
+  },
+  {
     number: 99,
     title: "Private fixture that must never appear",
     verdict: "comment",
@@ -118,6 +168,8 @@ const FIXTURES: readonly ReviewRecord[] = [
     prState: "open",
     visibility: "private",
     notes: "Gated. Not for the public site.",
+    summary: "Gated.",
+    evidence: "",
     actions: [],
     findings: [],
     runs: [
