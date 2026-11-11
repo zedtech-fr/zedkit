@@ -12,13 +12,13 @@ import type {
   ReviewFirstPassFinding,
   ReviewRecord,
   ReviewRun,
+  ReviewRecordVerdict,
   ReviewRunStatus,
-  ReviewVerdict,
 } from "../ports/review-port";
 
 const DISPOSITIONS = new Set<FindingDisposition>(["kept", "downgraded", "dismissed"]);
 
-function mapVerdict(value: string | null | undefined): ReviewVerdict {
+function mapVerdict(value: string | null | undefined): ReviewRecordVerdict {
   const normalized = String(value ?? "")
     .trim()
     .toLowerCase()

@@ -1,53 +1,163 @@
 "use client";
 
+import { useId } from "react";
 import Link from "next/link";
 import {
   Badge,
   Button,
+  EmptyState,
+  Heading,
   PageHeader,
-  StatusLabel,
+  Stack,
+  Text,
   UpdatedAgo,
+  formatDuration,
 } from "@zedtech/zedkit-ui";
 
-import type { ReviewRecord } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { latestReviewRun } from "../model/selection";
+import { issueRunPath, unlinkedRunPath } from "../model/review-routes";
+import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { STATUS_TONE } from "./review-badges";
-import { ReviewConsole } from "./review-console";
+import { LatestStatusMark } from "./issue-status";
 
-export function ReviewPrView({ record, copy }: { record: ReviewRecord; copy: ReviewsCopy }) {
-  const run = latestReviewRun(record.runs);
+function TimelineRow({
+  entry,
+  href,
+  copy,
+}: {
+  entry: TimelineEntry;
+  href: string;
+  copy: ReviewsCopy;
+}) {
+  return (
+    <Stack gap="sm" className="border-b border-border py-section-sm">
+      <Button asChild variant="link" className="min-h-target w-fit">
+        <Link href={href} aria-label={`${copy.issue.openRun}: ${copy.type[entry.type]} ${entry.runId}`}>
+          {copy.type[entry.type]}
+        </Link>
+      </Button>
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
+        {entry.verdict !== null ? (
+          <LatestStatusMark status={entry.verdict} copy={copy} />
+        ) : (
+          <LatestStatusMark status={entry.status} copy={copy} />
+        )}
+        {entry.models.length > 0 ? (
+          <Text variant="muted" typeRole="caption">
+            {entry.models.join(", ")}
+          </Text>
+        ) : null}
+        {entry.durationMs !== null ? (
+          <Text variant="muted" typeRole="caption">
+            {formatDuration(entry.durationMs)}
+          </Text>
+        ) : null}
+        <UpdatedAgo date={new Date(entry.startedAt)} />
+      </Stack>
+    </Stack>
+  );
+}
+
+function Timeline({
+  entries,
+  hrefFor,
+  copy,
+  empty,
+}: {
+  entries: readonly TimelineEntry[];
+  hrefFor: (entry: TimelineEntry) => string;
+  copy: ReviewsCopy;
+  empty: string;
+}) {
+  const headingId = useId();
+  return (
+    <Stack gap="sm">
+      <Heading level={2} typeRole="section" id={headingId}>
+        {copy.issue.timeline}
+      </Heading>
+      {entries.length === 0 ? (
+        <EmptyState description={empty} />
+      ) : (
+        <ul aria-labelledby={headingId}>
+          {entries.map((entry) => (
+            <li key={entry.id}>
+              <TimelineRow entry={entry} href={hrefFor(entry)} copy={copy} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </Stack>
+  );
+}
+
+export function ReviewPrView({
+  issue,
+  copy,
+}: {
+  issue: IssueRecord;
+  copy: ReviewsCopy;
+}) {
   return (
     <ReviewAppearanceFrame copy={copy}>
       {(panel) => (
         <>
           <PageHeader
-            title={`#${record.number} ${record.title}`}
+            title={`#${issue.number} ${issue.title}`}
             back={
-              <Button asChild variant="link" size="sm">
-                <Link href="/reviews">{copy.pr.back}</Link>
+              <Button asChild variant="link" size="sm" className="min-h-target">
+                <Link href="/issues">{copy.issue.back}</Link>
               </Button>
             }
           />
-          {run ? (
-            <ReviewConsole
-              record={record}
-              run={run}
-              copy={copy}
-              panel={panel}
-              decisionMeta={
-                <>
-                  <StatusLabel tone={STATUS_TONE[record.status]}>{copy.status[record.status]}</StatusLabel>
-                  <Badge variant="outline">{copy.prState[record.prState]}</Badge>
-                  <Badge variant="meta" title={record.headSha}>
-                    {record.headSha.slice(0, 7)}
-                  </Badge>
-                  <UpdatedAgo date={new Date(record.lastRunAt)} />
-                </>
-              }
-            />
-          ) : null}
+          {panel}
+          <Stack direction="horizontal" gap="sm" className="flex-wrap">
+            <Badge variant="outline">{copy.state[issue.state]}</Badge>
+            {issue.pullRequests.length > 0 ? (
+              <Text variant="muted" typeRole="caption">
+                {`${issue.pullRequests.length === 1 ? copy.list.linkedPr : copy.list.linkedPrs} ${issue.pullRequests
+                  .map((n) => `#${n}`)
+                  .join(", ")}`}
+              </Text>
+            ) : null}
+          </Stack>
+          <Timeline
+            entries={issue.entries}
+            hrefFor={(entry) => issueRunPath(issue.number, entry.runId)}
+            copy={copy}
+            empty={copy.issue.timelineEmpty}
+          />
+        </>
+      )}
+    </ReviewAppearanceFrame>
+  );
+}
+
+export function UnlinkedPrView({
+  pullRequest,
+  copy,
+}: {
+  pullRequest: UnlinkedPullRequest;
+  copy: ReviewsCopy;
+}) {
+  return (
+    <ReviewAppearanceFrame copy={copy}>
+      {(panel) => (
+        <>
+          <PageHeader
+            title={`${copy.unlinked.title} #${pullRequest.number}`}
+            back={
+              <Button asChild variant="link" size="sm" className="min-h-target">
+                <Link href="/issues">{copy.unlinked.back}</Link>
+              </Button>
+            }
+          />
+          {panel}
+          <Timeline
+            entries={pullRequest.entries}
+            hrefFor={(entry) => unlinkedRunPath(pullRequest.number, entry.runId)}
+            copy={copy}
+            empty={copy.unlinked.timelineEmpty}
+          />
         </>
       )}
     </ReviewAppearanceFrame>

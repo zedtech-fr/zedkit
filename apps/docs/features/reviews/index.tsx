@@ -2,66 +2,124 @@
  * Métier: zedkit publishes a public TypeScript UI/AI kit and a docs site.
  * Client personas: integrating developers evaluating the kit; maintainers filing visual bugs.
  * Customers: app teams who install @zedtech/zedkit-* or copy UI via the registry.
- * Customer personas: hurried visitor on a phone scanning a real review; maintainer reproducing a look via share link.
+ * Customer personas: hurried visitor on a phone scanning real issue work; maintainer reproducing a look via share link.
  * UI decisions:
- * - Final adjudicated decision first (verdict, confidence, short summary) — because: hurried reader needs the outcome before evidence.
- * - Must change only when remaining blockers exist; no blockers, no heading — because: leftover-work chrome must not appear when nothing remains to change.
- * - Reconciled findings after must-change, each with kept / downgraded / dismissed — because: the hurried reader must see what adjudication did, not only leftover blockers or an outdated first pass.
- * - First pass folded and labelled outdated, with kept / downgraded / dismissed on each finding — because: a superseded pass is history, not the decision.
- * - Notes, evidence, run history after that; lenses / second pass / transcripts on demand — because: the first screen is the decision, not the transcript.
- * - Agent-detail disclosure lists the current run’s agents (id, name, kind, status, model when present) — because: the disclosure is who ran; lenses stay on-demand in the console pane.
- * - Run page shows that list as a visible section — because: opening a run is to see that run’s agents without unfolding PR leftover chrome.
- * - Shared main flow on PR and run pages — because: opening a run must not strand the same hurried reader.
- * - Side panel plus selected pane on desktop — because: customer = hurried visitor scanning the run while reading one item.
- * - Main flow selected by default — because: first screen is the outcome, not an empty pane.
- * - Kit Drawer with a labelled 44px trigger below md — because: phone users must reach the list; the column must not stay hidden.
- * - Selection in the URL hash, Appearance in the query — because: a maintainer must copy a look and an item without breaking either share.
- * - Appearance panel after the main flow, still ThemeScope chrome — because: decision-to-blockers reading order comes first.
- * - Button rows, not a local nav primitive — because: generic console rows belong in the kit, not this feature.
- * - List at the section root with a useful empty state — because: the visitor always has a next click.
- * - Stacked rows, not a wide table — because: phone users at 320–390px compose by priority.
- * - Quiet Appearance panel inside ThemeScope — because: identities serve reading; site chrome must not jump.
+ * - Issue list at /issues with title, state, linked PRs, and latest status first — because: hurried visitor scans work without opening every issue.
+ * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
+ * - Stacked rows, not a wide table — because: phone users at 390px compose by priority.
+ * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
+ * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
+ * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
+ * - Appearance / ThemeScope frame stays — because: this section remains the identity testing ground.
+ * - Empty state says public issues will show up here — because: the visitor always has a next thought.
+ * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
+ * - List has no search or state/verdict filter — because: the public list is short enough to scan.
+ * - Views stay client components — because: ReviewAppearanceFrame takes render-function children.
+ * - Retired /reviews/pr/64|79|80 stubs are export-only; run-level retired URLs 404 — because: run ids are unknowable once retired.
  */
 
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { createSnapshotReviewPort } from "./adapters/snapshot";
 import { reviewsCopy } from "./i18n/reviews-copy";
 import { parsePrNumber } from "./model/pr-number";
 import {
+  linkedPrFallbackPath,
+  linkedPrRunFallbackPath,
+  listIssueParamsFrom,
+  listIssueRunParamsFrom,
   listReviewPrParamsFrom,
   listReviewRunParamsFrom,
+  listUnlinkedPrParamsFrom,
+  listUnlinkedRunParamsFrom,
+  redirectPathForPr,
+  redirectPathForPrRun,
 } from "./model/review-routes";
-import { toReviewRecord } from "./model/to-review-record";
+import { isRunRecord } from "./ports/review-port";
 import { ReviewListView } from "./ui/review-list-view";
-import { ReviewPrView } from "./ui/review-pr-view";
-import { ReviewRunView } from "./ui/review-run-view";
+import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
+import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
 
 const port = createSnapshotReviewPort();
 
 export async function ReviewListFeature() {
-  const lives = await port.list();
-  const records = lives.map((row) => toReviewRecord(row, lives));
-  return <ReviewListView records={records} copy={reviewsCopy} />;
+  const issues = await port.listIssues();
+  const unlinked = await port.listUnlinkedPullRequests();
+  return <ReviewListView issues={issues} unlinked={unlinked} copy={reviewsCopy} />;
 }
 
-export async function ReviewPrFeature({ n }: { n: string }) {
+export async function ReviewIssueFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
-  const live = number === null ? null : await port.getByPr(number);
-  if (live === null) notFound();
-  const lives = await port.list();
-  return <ReviewPrView record={toReviewRecord(live, lives)} copy={reviewsCopy} />;
+  const issue = number === null ? null : await port.getIssue(number);
+  if (issue === null) notFound();
+  return <ReviewPrView issue={issue} copy={reviewsCopy} />;
 }
 
-export async function ReviewRunFeature({ n, id }: { n: string; id: string }) {
+export async function ReviewUnlinkedFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
-  const live = number === null ? null : await port.getRun(number, id);
-  if (live === null) notFound();
-  const lives = await port.list();
-  const record = toReviewRecord(live, lives);
-  const run = record.runs.find((item) => item.id === id);
-  if (run === undefined) notFound();
-  return <ReviewRunView record={record} run={run} copy={reviewsCopy} />;
+  const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
+  if (pullRequest !== null) return <UnlinkedPrView pullRequest={pullRequest} copy={reviewsCopy} />;
+  const resolved = number === null ? null : await port.resolvePr(number);
+  const fallback = linkedPrFallbackPath(resolved?.issueNumber ?? null);
+  if (fallback !== null) redirect(fallback);
+  notFound();
+}
+
+export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }) {
+  const number = parsePrNumber(n);
+  const issue = number === null ? null : await port.getIssue(number);
+  const run = number === null ? null : await port.getRun(number, id);
+  if (issue === null || run === null || !isRunRecord(run)) notFound();
+  return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
+}
+
+export async function ReviewUnlinkedRunFeature({ n, id }: { n: string; id: string }) {
+  const number = parsePrNumber(n);
+  const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
+  const run = number === null ? null : await port.getUnlinkedRun(number, id);
+  if (pullRequest !== null && run !== null) {
+    return <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />;
+  }
+  const resolved = number === null ? null : await port.resolvePr(number);
+  if (resolved !== null && resolved.runIds.includes(id)) {
+    const fallback = linkedPrRunFallbackPath(resolved.issueNumber, id);
+    if (fallback !== null) redirect(fallback);
+  }
+  notFound();
+}
+
+export async function redirectReviewsIndex() {
+  redirect("/issues");
+}
+
+export async function redirectReviewsPr({ n }: { n: string }) {
+  const number = parsePrNumber(n);
+  const resolved = number === null ? null : await port.resolvePr(number);
+  if (number === null || resolved === null) notFound();
+  redirect(redirectPathForPr(resolved.issueNumber, number));
+}
+
+export async function redirectReviewsPrRun({ n, id }: { n: string; id: string }) {
+  const number = parsePrNumber(n);
+  const resolved = number === null ? null : await port.resolvePr(number);
+  if (number === null || resolved === null || !resolved.runIds.includes(id)) notFound();
+  redirect(redirectPathForPrRun(resolved.issueNumber, number, id));
+}
+
+export async function listIssueParams() {
+  return listIssueParamsFrom(port);
+}
+
+export async function listIssueRunParams() {
+  return listIssueRunParamsFrom(port);
+}
+
+export async function listUnlinkedPrParams() {
+  return listUnlinkedPrParamsFrom(port);
+}
+
+export async function listUnlinkedRunParams() {
+  return listUnlinkedRunParamsFrom(port);
 }
 
 export async function listReviewPrParams() {

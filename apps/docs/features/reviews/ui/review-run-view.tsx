@@ -1,21 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { Button, PageHeader, Stack, StatusLabel, UpdatedAgo } from "@zedtech/zedkit-ui";
+import {
+  Badge,
+  Button,
+  PageHeader,
+  Stack,
+  Text,
+  UpdatedAgo,
+  formatDuration,
+} from "@zedtech/zedkit-ui";
 
-import type { ReviewRecord, ReviewRun } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import { issuePath, unlinkedPrPath } from "../model/review-routes";
+import type { IssueRecord, RunRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { STATUS_TONE } from "./review-badges";
-import { ReviewConsole } from "./review-console";
+import { LatestStatusMark } from "./issue-status";
 
-export function ReviewRunView({
-  record,
+function RunBody({
   run,
   copy,
 }: {
-  record: ReviewRecord;
-  run: ReviewRun;
+  run: RunRecord;
+  copy: ReviewsCopy;
+}) {
+  const types = [...new Set(run.entries.map((entry) => entry.type))];
+  return (
+    <Stack gap="md">
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
+        {types.map((type) => (
+          <Badge key={type} variant="outline">
+            {copy.type[type]}
+          </Badge>
+        ))}
+        {run.verdict !== null ? (
+          <LatestStatusMark status={run.verdict} copy={copy} />
+        ) : (
+          <LatestStatusMark status={run.status} copy={copy} />
+        )}
+        {run.models.length > 0 ? (
+          <Text variant="muted" typeRole="caption">
+            {run.models.join(", ")}
+          </Text>
+        ) : null}
+        {run.durationMs !== null ? (
+          <Text variant="muted" typeRole="caption">
+            {formatDuration(run.durationMs)}
+          </Text>
+        ) : null}
+        <UpdatedAgo date={new Date(run.startedAt)} />
+      </Stack>
+      {run.liveUrl !== null ? (
+        <Button asChild className="min-h-target w-fit">
+          <a href={run.liveUrl} target="_blank" rel="noreferrer">
+            {copy.run.openLive}
+          </a>
+        </Button>
+      ) : (
+        <Text variant="muted">{copy.run.noLive}</Text>
+      )}
+    </Stack>
+  );
+}
+
+export function ReviewRunView({
+  issue,
+  run,
+  copy,
+}: {
+  issue: IssueRecord;
+  run: RunRecord;
   copy: ReviewsCopy;
 }) {
   return (
@@ -23,32 +77,56 @@ export function ReviewRunView({
       {(panel) => (
         <>
           <PageHeader
-            title={`${copy.run.title} ${run.id}`}
-            description={`#${record.number} ${record.title}`}
+            title={`${copy.run.title} ${run.runId}`}
+            description={`#${issue.number} ${issue.title}`}
             back={
               <Stack direction="horizontal" gap="sm" className="flex-wrap">
-                <Button asChild variant="link" size="sm">
-                  <Link href={`/reviews/pr/${record.number}`}>{copy.run.backToPr}</Link>
+                <Button asChild variant="link" size="sm" className="min-h-target">
+                  <Link href={issuePath(issue.number)}>{copy.run.backToIssue}</Link>
                 </Button>
-                <Button asChild variant="link" size="sm">
-                  <Link href="/reviews">{copy.run.backToList}</Link>
+                <Button asChild variant="link" size="sm" className="min-h-target">
+                  <Link href="/issues">{copy.run.backToList}</Link>
                 </Button>
               </Stack>
             }
           />
-          <ReviewConsole
-            record={record}
-            run={run}
-            copy={copy}
-            panel={panel}
-            agentsReveal="section"
-            decisionMeta={
-              <>
-                <StatusLabel tone={STATUS_TONE[run.status]}>{copy.status[run.status]}</StatusLabel>
-                <UpdatedAgo date={new Date(run.startedAt)} />
-              </>
+          {panel}
+          <RunBody run={run} copy={copy} />
+        </>
+      )}
+    </ReviewAppearanceFrame>
+  );
+}
+
+export function UnlinkedRunView({
+  pullRequest,
+  run,
+  copy,
+}: {
+  pullRequest: UnlinkedPullRequest;
+  run: RunRecord;
+  copy: ReviewsCopy;
+}) {
+  return (
+    <ReviewAppearanceFrame copy={copy}>
+      {(panel) => (
+        <>
+          <PageHeader
+            title={`${copy.run.title} ${run.runId}`}
+            description={`${copy.unlinked.title} #${pullRequest.number}`}
+            back={
+              <Stack direction="horizontal" gap="sm" className="flex-wrap">
+                <Button asChild variant="link" size="sm" className="min-h-target">
+                  <Link href={unlinkedPrPath(pullRequest.number)}>{copy.run.backToUnlinked}</Link>
+                </Button>
+                <Button asChild variant="link" size="sm" className="min-h-target">
+                  <Link href="/issues">{copy.run.backToList}</Link>
+                </Button>
+              </Stack>
             }
           />
+          {panel}
+          <RunBody run={run} copy={copy} />
         </>
       )}
     </ReviewAppearanceFrame>

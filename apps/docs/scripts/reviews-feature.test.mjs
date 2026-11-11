@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -13,54 +13,724 @@ import {
 import { createFixtureReviewPort } from "../features/reviews/adapters/fixture.ts";
 import {
   createSnapshotReviewPort,
+  listIssueSitemapPaths,
   listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
-import { filterReviewList } from "../features/reviews/model/list-filter.ts";
-import { reviewMainFlow } from "../features/reviews/model/main-flow.ts";
+import { latestStatus } from "../features/reviews/model/latest-status.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
-import { assertPubliclySafe, toPublicReviews } from "../features/reviews/model/public-review.ts";
 import {
+  assertPubliclySafe,
+  isExportableVisibility,
+  sanitizeLiveUrl,
+  toPublicIndex,
+  toPublicReviews,
+} from "../features/reviews/model/public-review.ts";
+import {
+  linkedPrFallbackPath,
+  linkedPrRunFallbackPath,
+  listIssueParamsFrom,
+  listIssueRunParamsFrom,
+  listIssueSitemapPathsFrom,
   listReviewPrParamsFrom,
+  listReviewRedirectsFrom,
   listReviewRunParamsFrom,
   listReviewSitemapPathsFrom,
+  listUnlinkedPrParamsFrom,
+  listUnlinkedRunParamsFrom,
+  redirectPathForPr,
+  redirectPathForPrRun,
+  RETIRED_REVIEW_PR_NUMBERS,
 } from "../features/reviews/model/review-routes.ts";
 import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
-import {
-  latestReviewRun,
-  mergeReviewShareUrl,
-  parseReviewSelection,
-  reviewConsoleItems,
-  selectionHash,
-} from "../features/reviews/model/selection.ts";
-
-const FEATURE = join(dirname(fileURLToPath(import.meta.url)), "..", "features", "reviews");
+import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
 const reviewsAppRoot = join(here, "../app/(site)/reviews");
+const issuesAppRoot = join(here, "../app/(site)/issues");
 
-function viewSample(overrides = {}) {
+function entry(overrides = {}) {
   return {
-    number: 71,
-    title: "Add a public review section",
-    verdict: "approve",
-    confidence: 86,
-    status: "done",
-    headSha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    lastRunAt: "2026-11-09T15:00:00.000Z",
-    prState: "open",
-    visibility: "public",
-    notes: "The list leads. The verdict is readable.",
-    summary: "The public review section is ready to merge.",
-    evidence: "",
-    actions: [{ title: "Name empty states", detail: "The list still needs a next click." }],
-    findings: [],
-    runs: [{ id: "run-71", status: "done", startedAt: "2026-11-09T14:50:00.000Z", agents: [] }],
+    id: "108-plan",
+    runId: "run-108-impl",
+    type: "plan",
+    status: "completed",
+    startedAt: "2026-11-10T16:00:00.000Z",
+    durationMs: 420000,
+    models: ["cursor-grok-4.6-high"],
+    verdict: null,
+    liveUrl: "https://example.test/live/run-108-impl",
     ...overrides,
   };
 }
+
+function issue(overrides = {}) {
+  return {
+    number: 108,
+    title: "Ship the public issues section",
+    state: "closed",
+    pullRequests: [133],
+    lastRunAt: "2026-11-10T16:00:00.000Z",
+    entries: [entry()],
+    ...overrides,
+  };
+}
+
+function pr(overrides = {}) {
+  return {
+    number: 133,
+    issueNumber: 108,
+    runIds: ["run-108-impl"],
+    ...overrides,
+  };
+}
+
+function wrapper(issues, pullRequests = [pr()], extra = {}) {
+  return { version: 1, kind: "public-stand-in", issues, pullRequests, ...extra };
+}
+
+function parsedIndex(issues, pullRequests, extra) {
+  const parsed = parsePublicReviewSnapshot(wrapper(issues, pullRequests, extra));
+  assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
+  return parsed.value;
+}
+
+test("public-repo visibility: missing, null, and public are exportable; only private is dropped", () => {
+  assert.equal(isExportableVisibility(undefined), true);
+  assert.equal(isExportableVisibility(null), true);
+  assert.equal(isExportableVisibility("public"), true);
+  assert.equal(isExportableVisibility("team"), true);
+  assert.equal(isExportableVisibility("private"), false);
+  const gated = toPublicIndex(
+    parsedIndex([
+      issue({ number: 99, visibility: "private", title: "secret" }),
+      issue({ number: 98, visibility: "team", title: "unknown flag" }),
+      issue({ number: 97, title: "no flag" }),
+      issue({ number: 96, visibility: null, title: "null flag" }),
+      issue({ number: 95, visibility: "public", title: "marked public" }),
+    ]),
+  );
+  assert.deepEqual(
+    gated.issues.map((row) => row.number),
+    [98, 97, 96, 95],
+  );
+});
+
+test("secret-like keys, bearer tokens, and home paths do not survive the public gate", () => {
+  const parsed = parsedIndex([
+    issue({
+      title: "Call with Bearer abcDEF123._~+/=- from /home/alice/kit/token",
+      entries: [
+        entry({
+          models: [
+            "Bearer xyzTOKEN789._~+/=- lives in /home/bob/kit",
+            "Authorization: Basic dXNlcjpwYXNz lives in /Users/alice/.config",
+          ],
+          liveUrl: "https://example.test/live/run-108-impl",
+        }),
+      ],
+    }),
+  ]);
+  const dirty = {
+    ...parsed,
+    issues: parsed.issues.map((row) => ({
+      ...row,
+      token: "super-secret",
+      token_hash: "abc",
+      prompt: "do not ship",
+    })),
+  };
+  const [clean] = toPublicIndex(dirty).issues;
+  assert.equal(clean.token, "[redacted]");
+  assert.equal(clean.token_hash, "[redacted]");
+  assert.equal(clean.prompt, "[redacted]");
+  assert.match(clean.title, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.title, /abcDEF123/);
+  assert.match(clean.title, /\[path\]/);
+  assert.doesNotMatch(clean.title, /\/home\/alice/);
+  assert.match(clean.entries[0].models[0], /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.entries[0].models[0], /xyzTOKEN789/);
+  assert.doesNotMatch(clean.entries[0].models[0], /\/home\/bob/);
+  assert.match(clean.entries[0].models[1], /Basic \[redacted\]/);
+  assert.doesNotMatch(clean.entries[0].models[1], /dXNlcjpwYXNz/);
+  assert.doesNotMatch(clean.entries[0].models[1], /\/Users\/alice/);
+});
+
+test("liveUrl with a secret-like query is dropped; https URLs are kept", () => {
+  assert.equal(sanitizeLiveUrl("https://example.test/live/abc"), "https://example.test/live/abc");
+  assert.equal(sanitizeLiveUrl("http://example.test/live/abc"), null);
+  assert.equal(sanitizeLiveUrl("https://example.test/live/abc?token=secret"), null);
+  assert.equal(sanitizeLiveUrl("https://user:pass@example.test/live/abc"), null);
+  assert.equal(sanitizeLiveUrl(null), null);
+  const gated = toPublicIndex(
+    parsedIndex([
+      issue({
+        entries: [
+          entry({ liveUrl: "https://example.test/live/ok" }),
+          entry({
+            id: "secret-url",
+            liveUrl: "https://example.test/live/no?token=abc",
+          }),
+        ],
+      }),
+    ]),
+  );
+  assert.equal(gated.issues[0].entries[0].liveUrl, "https://example.test/live/ok");
+  assert.equal(gated.issues[0].entries[1].liveUrl, null);
+});
+
+test("sanitizeLiveUrl drops home-path URLs on every call", () => {
+  const home = "https://example.test/home/alice/secret";
+  const users = "https://example.test/Users/bob/kit";
+  assert.equal(sanitizeLiveUrl(home), null);
+  assert.equal(sanitizeLiveUrl(home), null);
+  assert.equal(sanitizeLiveUrl(home), null);
+  assert.equal(sanitizeLiveUrl(users), null);
+  assert.equal(sanitizeLiveUrl(users), null);
+});
+
+test("a version-1 snapshot parses issues and pull requests", () => {
+  const parsed = parsePublicReviewSnapshot(wrapper([issue()]));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(
+    parsed.value.issues.map((row) => row.number),
+    [108],
+  );
+  assert.equal(parsed.value.pullRequests[0].issueNumber, 108);
+});
+
+test("a hybrid snapshot with issues and reviews is parsed as an index", () => {
+  const parsed = parsePublicReviewSnapshot({
+    ...wrapper([issue()]),
+    reviews: [liveSample()],
+  });
+  assert.equal(parsed.ok, true);
+  assert.equal(Array.isArray(parsed.value), false);
+  assert.equal(parsed.value.issues[0].number, 108);
+});
+
+test("run ids that are not a safe path segment fail closed", () => {
+  const traversal = parsePublicReviewSnapshot(
+    wrapper([issue({ entries: [entry({ runId: "../etc/passwd" })] })]),
+  );
+  assert.equal(traversal.ok, false);
+  const live = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, run_id: "../../x" } })]),
+  );
+  assert.equal(live.ok, false);
+});
+
+test("an empty snapshot is valid", () => {
+  const parsed = parsePublicReviewSnapshot(wrapper([], []));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(parsed.value.issues, []);
+  assert.deepEqual(parsed.value.pullRequests, []);
+});
+
+test("an unknown snapshot kind is accepted when version is 1", () => {
+  const parsed = parsePublicReviewSnapshot(wrapper([issue()], [pr()], { kind: "redacted-export" }));
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value.kind, "redacted-export");
+});
+
+test("version 2 snapshots are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(wrapper([issue()], [pr()], { version: 2 }));
+  assert.equal(parsed.ok, false);
+});
+
+test("extra keys on the wrapper, issues, pull requests, and entries are ignored", () => {
+  const parsed = parsePublicReviewSnapshot(
+    wrapper(
+      [
+        issue({
+          denseLive: { agents: [] },
+          entries: [entry({ lens_model: "x", second_pass_model: "y" })],
+        }),
+      ],
+      [pr({ hostedPath: "/ignored" })],
+      { exporter: "out-of-repo", token: "x" },
+    ),
+  );
+  assert.equal(parsed.ok, true);
+  assert.equal("denseLive" in parsed.value.issues[0], false);
+  assert.equal("lens_model" in parsed.value.issues[0].entries[0], false);
+  assert.equal("hostedPath" in parsed.value.pullRequests[0], false);
+  assert.equal("exporter" in parsed.value, false);
+});
+
+test("a snapshot with a missing required field is rejected", () => {
+  const rest = issue();
+  delete rest.title;
+  const parsed = parsePublicReviewSnapshot(wrapper([rest]));
+  assert.equal(parsed.ok, false);
+});
+
+test("wrong types in a snapshot are rejected", () => {
+  assert.equal(parsePublicReviewSnapshot(wrapper([issue({ number: "108" })])).ok, false);
+  assert.equal(parsePublicReviewSnapshot(null).ok, false);
+  assert.equal(parsePublicReviewSnapshot([]).ok, false);
+});
+
+test("private visibility is kept by parse so the public gate can drop it", () => {
+  const parsed = parsePublicReviewSnapshot(wrapper([issue({ number: 99, visibility: "private" })]));
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value.issues[0].visibility, "private");
+});
+
+test("plan and implement phases share a runId and stay two timeline entries", () => {
+  const parsed = parsedIndex([
+    issue({
+      entries: [
+        entry({ id: "plan", type: "plan", startedAt: "2026-11-10T16:00:00.000Z" }),
+        entry({
+          id: "implement",
+          type: "implement",
+          startedAt: "2026-11-10T16:10:00.000Z",
+        }),
+      ],
+    }),
+  ]);
+  assert.equal(parsed.issues[0].entries.length, 2);
+  assert.equal(parsed.issues[0].entries[0].runId, parsed.issues[0].entries[1].runId);
+  assert.deepEqual(
+    parsed.issues[0].entries.map((row) => row.type),
+    ["plan", "implement"],
+  );
+});
+
+test("latest status uses the last entry; a review verdict wins", () => {
+  const reviewLast = [
+    entry({ type: "implement", status: "completed", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "rev",
+      runId: "run-rev",
+      type: "review",
+      status: "completed",
+      startedAt: "2026-11-10T17:00:00.000Z",
+      verdict: "approve",
+    }),
+  ];
+  assert.equal(latestStatus(reviewLast), "approve");
+  assert.equal(
+    latestStatus([entry({ type: "implement", status: "failed", verdict: null })]),
+    "failed",
+  );
+  assert.equal(
+    latestStatus([entry({ type: "implement", status: "running", durationMs: null })]),
+    "running",
+  );
+  assert.equal(latestStatus([]), null);
+});
+
+function writeSnapshot(issues, pullRequests, extra = {}) {
+  const dir = mkdtempSync(join(tmpdir(), "public-issues-"));
+  const path = join(dir, "public-reviews.json");
+  writeFileSync(path, JSON.stringify(wrapper(issues, pullRequests, extra)));
+  return path;
+}
+
+test("the fixture port lists only exportable copies and isolates mutations", async () => {
+  const port = createFixtureReviewPort(
+    wrapper([
+      issue(),
+      issue({ number: 99, visibility: "private", title: "hidden", pullRequests: [] }),
+    ]),
+  );
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed.map((row) => row.number),
+    [108],
+  );
+  listed[0].title = "mutated";
+  const again = await port.listIssues();
+  assert.equal(again[0].title, "Ship the public issues section");
+  assert.equal(await port.getIssue(99), null);
+  assert.equal(await port.getRun(99, "run-108-impl"), null);
+  const run = await port.getRun(108, "run-108-impl");
+  assert.equal(run?.status, "completed");
+});
+
+test("the fixture test double covers linked, unlinked, running, and failed rows", async () => {
+  const port = createFixtureReviewPort();
+  const listed = await port.listIssues();
+  const statuses = new Set(listed.map((row) => latestStatus(row.entries)));
+  const states = new Set(listed.map((row) => row.state));
+  assert.ok(listed.length >= 3);
+  assert.ok(states.has("open"));
+  assert.ok(states.has("closed"));
+  assert.ok(statuses.has("approve") || statuses.has("completed"));
+  assert.ok(statuses.has("running"));
+  assert.ok(statuses.has("failed"));
+  assert.ok(!listed.some((row) => row.number === 99));
+  const unlinked = await port.listUnlinkedPullRequests();
+  assert.ok(unlinked.some((row) => row.number === 54));
+  assert.ok(!unlinked.some((row) => row.number === 50));
+});
+
+test("the snapshot port lists only exportable copies and isolates mutations", async () => {
+  const path = writeSnapshot([
+    issue(),
+    issue({ number: 99, visibility: "private", title: "hidden", pullRequests: [] }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed.map((row) => row.number),
+    [108],
+  );
+  listed[0].title = "mutated";
+  const again = await port.listIssues();
+  assert.equal(again[0].title, "Ship the public issues section");
+  assert.equal(await port.getIssue(99), null);
+  assert.equal(await port.getRun(108, "missing"), null);
+  const run = await port.getRun(108, "run-108-impl");
+  assert.equal(run?.status, "completed");
+});
+
+test("an empty snapshot lists nothing and keeps the sitemap root at /issues", async () => {
+  const path = writeSnapshot([], []);
+  const port = createSnapshotReviewPort(path);
+  assert.deepEqual(await port.listIssues(), []);
+  assert.deepEqual(await listIssueParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listIssueRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
+  assert.deepEqual(await listIssueSitemapPaths(path), ["/issues"]);
+});
+
+test("an all-linked snapshot still emits unlinked static placeholders", async () => {
+  const port = createSnapshotReviewPort(writeSnapshot([issue()], [pr()]));
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "133" }]);
+});
+
+test("a malformed snapshot fails closed", () => {
+  const dir = mkdtempSync(join(tmpdir(), "public-issues-bad-"));
+  const invalidJson = join(dir, "invalid.json");
+  writeFileSync(invalidJson, "{");
+  assert.throws(() => createSnapshotReviewPort(invalidJson));
+  const missing = join(dir, "missing.json");
+  assert.throws(() => createSnapshotReviewPort(missing));
+  const wrongVersion = writeSnapshot([issue()], [pr()], { version: 2 });
+  assert.throws(() => createSnapshotReviewPort(wrongVersion));
+});
+
+test("same runId from plan and implement opens one run record", async () => {
+  const port = createSnapshotReviewPort(
+    writeSnapshot([
+      issue({
+        entries: [
+          entry({ id: "plan", type: "plan", startedAt: "2026-11-10T16:00:00.000Z" }),
+          entry({
+            id: "implement",
+            type: "implement",
+            startedAt: "2026-11-10T16:10:00.000Z",
+            durationMs: 1000,
+          }),
+        ],
+      }),
+    ]),
+  );
+  const run = await port.getRun(108, "run-108-impl");
+  assert.equal(run?.runId, "run-108-impl");
+  assert.equal(run?.entries.length, 2);
+  assert.deepEqual(
+    (await listIssueRunParamsFrom(port)).map((row) => row.id),
+    ["run-108-impl"],
+  );
+});
+
+test("redirect map: linked PR goes to the issue; unlinked PR uses /issues/pr/:n", async () => {
+  const port = createSnapshotReviewPort(
+    writeSnapshot(
+      [issue()],
+      [
+        pr(),
+        {
+          number: 54,
+          issueNumber: null,
+          runIds: ["run-54-review"],
+          entries: [
+            entry({
+              id: "54-review",
+              runId: "run-54-review",
+              type: "review",
+              verdict: "comment",
+              liveUrl: "https://example.test/live/run-54-review",
+            }),
+          ],
+        },
+      ],
+    ),
+  );
+  assert.equal(redirectPathForPr(108, 133), "/issues/108");
+  assert.equal(redirectPathForPr(null, 54), "/issues/pr/54");
+  assert.equal(redirectPathForPrRun(108, 133, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(redirectPathForPrRun(null, 54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
+  assert.equal(linkedPrFallbackPath(108), "/issues/108");
+  assert.equal(linkedPrFallbackPath(null), null);
+  assert.equal(linkedPrRunFallbackPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(linkedPrRunFallbackPath(null, "run-108-impl"), null);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "133" }, { n: "54" }]);
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "54" }]);
+  const redirects = await listReviewRedirectsFrom(port);
+  assert.deepEqual(redirects[0], { from: "/reviews", to: "/issues" });
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
+  assert.ok(
+    redirects.some(
+      (row) =>
+        row.from === "/reviews/pr/133/runs/run-108-impl" && row.to === "/issues/108/runs/run-108-impl",
+    ),
+  );
+  assert.equal(await port.resolvePr(404), null);
+});
+
+test("retired review PR numbers keep redirect stubs to /issues", async () => {
+  const port = createSnapshotReviewPort(writeSnapshot([], []));
+  const redirects = await listReviewRedirectsFrom(port);
+  for (const n of RETIRED_REVIEW_PR_NUMBERS) {
+    assert.ok(
+      redirects.some((row) => row.from === `/reviews/pr/${n}` && row.to === "/issues"),
+      `missing stub for /reviews/pr/${n}`,
+    );
+  }
+});
+
+test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => {
+  const path = writeSnapshot(
+    [issue()],
+    [
+      pr(),
+      {
+        number: 54,
+        issueNumber: null,
+        runIds: ["run-54-review"],
+        entries: [entry({ id: "54-review", runId: "run-54-review", type: "review" })],
+      },
+    ],
+  );
+  const sitemap = await listIssueSitemapPaths(path);
+  assert.equal(sitemap[0], "/issues");
+  assert.ok(sitemap.includes("/issues/108"));
+  assert.ok(sitemap.includes("/issues/108/runs/run-108-impl"));
+  assert.ok(sitemap.includes("/issues/pr/54"));
+  assert.ok(sitemap.includes("/issues/pr/54/runs/run-54-review"));
+  assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
+});
+
+test("the checked-in public snapshot is live-shaped, under 200KB, and sitemaps /issues", async () => {
+  const listed = await createSnapshotReviewPort().list();
+  assert.ok(listed.length >= 1);
+  const row = listed.find((record) => record.run.run_id === "20261111T065452Z-bc07a1a9") ?? listed[0];
+  assert.equal(row.visibility, "public");
+  assert.equal(typeof row.run.pr, "number");
+  assert.ok(String(row.run.sha ?? "").length > 0);
+  assert.ok(row.run.engine_label.length > 0);
+  assert.equal(typeof row.run.elapsed_s, "number");
+  assert.ok(String(row.run.verdict ?? "").length > 0);
+  assert.equal(typeof row.run.confidence_score, "number");
+  const kinds = new Set(row.items.map((item) => item.kind));
+  assert.ok(kinds.has("main"));
+  assert.ok(row.decision);
+  const unlinked = await createSnapshotReviewPort().listUnlinkedPullRequests();
+  assert.ok(unlinked.length >= 1);
+  for (const entry of unlinked) {
+    for (const item of entry.entries) {
+      assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
+    }
+  }
+  const bytes = statSync(join(reviewsRoot, "adapters/public-reviews.json")).size;
+  assert.ok(bytes < 200 * 1024);
+  assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
+  const sitemap = await listIssueSitemapPaths();
+  assert.equal(sitemap[0], "/issues");
+  assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
+  const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
+  assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
+});
+
+test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
+  assert.equal(
+    reviewsCopy.list.empty,
+    "Public issues will show up here when the first exportable run exists.",
+  );
+  assert.equal(reviewsCopy.type.improve, "Improve from review");
+  assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
+  assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
+  assert.equal(reviewsCopy.list.runs, "runs");
+  assert.equal(
+    reviewsCopy.unlinked.missing,
+    "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
+  );
+  assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
+  assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
+});
+
+test("parsePrNumber accepts decimal integers and rejects the rest", () => {
+  assert.equal(parsePrNumber("71"), 71);
+  assert.equal(parsePrNumber("0"), 0);
+  assert.equal(parsePrNumber(""), null);
+  assert.equal(parsePrNumber("-1"), null);
+  assert.equal(parsePrNumber("12a"), null);
+  assert.equal(parsePrNumber("1.2"), null);
+  assert.equal(parsePrNumber("<script>"), null);
+});
+
+test("appearance round-trips identity, dark preview, and compact density", () => {
+  const appearance = { identity: "volt", mode: "dark", density: "compact" };
+  const query = serializeReviewAppearance(appearance);
+  assert.equal(query, "identity=volt&preview=dark&density=compact");
+  assert.deepEqual(parseReviewAppearance(`?${query}`), appearance);
+});
+
+test("canonical form omits glass, light, and default density", () => {
+  assert.equal(serializeReviewAppearance(DEFAULT_REVIEW_APPEARANCE), "");
+  assert.deepEqual(parseReviewAppearance(""), DEFAULT_REVIEW_APPEARANCE);
+  assert.deepEqual(parseReviewAppearance("identity=glass&preview=light&density=default"), DEFAULT_REVIEW_APPEARANCE);
+  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=glass&preview=dark")), "preview=dark");
+});
+
+test("preview=dark and legacy theme=dark both parse as dark", () => {
+  assert.equal(parseReviewAppearance("preview=dark").mode, "dark");
+  assert.equal(parseReviewAppearance("theme=dark").mode, "dark");
+});
+
+test("unknown identity and hostile query values fall back without throwing", () => {
+  assert.equal(parseReviewAppearance("identity=n-custom").identity, "glass");
+  assert.equal(parseReviewAppearance("identity=<script>").identity, "glass");
+  assert.equal(parseReviewAppearance("density=comfortable").density, "default");
+  assert.equal(parseReviewAppearance("preview=DARK").mode, "light");
+  assert.doesNotThrow(() => parseReviewAppearance(`identity=${"x".repeat(4000)}&preview=${"\0"}`));
+  assert.deepEqual(parseReviewAppearance("identity=tide&bogus=1&density=compact"), {
+    identity: "tide",
+    mode: "light",
+    density: "compact",
+  });
+});
+
+test("share URL merge keeps appearance query and hash together", () => {
+  assert.equal(
+    mergeReviewShareUrl({
+      pathname: "/issues/108",
+      search: "identity=volt&preview=dark",
+      hash: "",
+    }),
+    "/issues/108?identity=volt&preview=dark",
+  );
+  assert.equal(
+    mergeReviewShareUrl({ pathname: "/issues/108", search: "", hash: "" }),
+    "/issues/108",
+  );
+});
+
+test("appearance codec still ignores unknown keys including item", () => {
+  assert.deepEqual(parseReviewAppearance("identity=volt&item=agent-review"), {
+    identity: "volt",
+    mode: "light",
+    density: "default",
+  });
+  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=volt&item=agent-review")), "identity=volt");
+});
+
+test("appearance share write keeps the selection hash", () => {
+  const src = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
+  assert.match(src, /mergeReviewShareUrl/);
+  assert.match(src, /window\.location\.hash/);
+});
+
+test("issue pages use generateStaticParams; review pages redirect", () => {
+  const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  for (const source of [issuePage, issueRun, unlinked, unlinkedRun]) {
+    assert.match(source, /generateStaticParams/);
+    assert.match(source, /dynamicParams = false/);
+  }
+  const reviews = readFileSync(join(reviewsAppRoot, "page.tsx"), "utf8");
+  const reviewPr = readFileSync(join(reviewsAppRoot, "pr/[n]/page.tsx"), "utf8");
+  const reviewRun = readFileSync(join(reviewsAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  assert.match(reviews, /redirectReviewsIndex/);
+  assert.match(reviewPr, /redirectReviewsPr/);
+  assert.match(reviewRun, /redirectReviewsPrRun/);
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(feature, /redirect\("/);
+  assert.match(feature, /redirect\(redirectPathForPr/);
+});
+
+test("not-found segments use per-tree copy through one shared body", () => {
+  const body = readFileSync(join(reviewsRoot, "ui/review-not-found-view.tsx"), "utf8");
+  assert.match(body, /href="\/issues"/);
+  const issue = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
+  assert.match(issue, /metadata\.missing/);
+  assert.match(issue, /issue\.missing/);
+  const run = readFileSync(join(issuesAppRoot, "[n]/runs/not-found.tsx"), "utf8");
+  assert.match(run, /run\.missing/);
+  const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
+  assert.match(unlinked, /unlinked\.missing/);
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
+  assert.match(unlinkedRun, /run\.missing/);
+  const reviews = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
+  assert.match(reviews, /metadata\.reviewsMissing/);
+  assert.doesNotMatch(reviews, /metadata\.missing\.title/);
+});
+
+test("provisional run page links out and does not render a console", () => {
+  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
+  assert.match(run, /copy\.run\.openLive/);
+  assert.match(run, /copy\.run\.noLive/);
+  assert.match(run, /target="_blank"/);
+  assert.doesNotMatch(run, /ReviewConsole/);
+  assert.doesNotMatch(run, /reviewMainFlow/);
+  assert.doesNotMatch(run, /ReviewAgentList/);
+  assert.doesNotMatch(run, /<iframe/);
+});
+
+test("list and timeline views read from issue records, not a PR console", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.match(list, /issuePath/);
+  assert.match(list, /copy\.list\.unlinkedTitle/);
+  assert.doesNotMatch(list, /copy\.list\.openIssue/);
+  assert.match(list, /copy\.type\[last\.type\]/);
+  assert.match(list, /aria-label=\{copy\.list\.title\}/);
+  assert.match(list, /aria-labelledby=\{unlinkedHeadingId\}/);
+  assert.match(list, /runCountLabel/);
+  assert.match(timeline, /copy\.type/);
+  assert.match(timeline, /entry\.runId/);
+  assert.match(timeline, /aria-labelledby/);
+  assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
+  assert.doesNotMatch(list, /ReviewConsole/);
+  assert.doesNotMatch(timeline, /ReviewConsole/);
+});
+
+test("verdict and status tones live in one shared module", () => {
+  const badges = readFileSync(join(reviewsRoot, "ui/review-badges.ts"), "utf8");
+  assert.match(badges, /export const VERDICT_BADGE/);
+  assert.match(badges, /export const STATUS_BADGE/);
+  assert.match(badges, /running: "secondary"/);
+  assert.doesNotMatch(badges, /STATUS_TONE/);
+  const status = readFileSync(join(reviewsRoot, "ui/issue-status.tsx"), "utf8");
+  assert.match(status, /from "\.\/review-badges"/);
+  assert.match(status, /STATUS_BADGE/);
+  assert.doesNotMatch(status, /StatusLabel/);
+  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
+    const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
+    assert.match(source, /from "\.\/issue-status"/);
+    assert.doesNotMatch(source, /const VERDICT_BADGE/);
+    assert.doesNotMatch(source, /const STATUS_TONE/);
+  }
+});
 
 function liveItem(overrides = {}) {
   return {
@@ -126,13 +796,18 @@ function liveSample(overrides = {}) {
   };
 }
 
-function wrapper(reviews, extra = {}) {
+function liveWrapper(reviews, extra = {}) {
   return { version: 1, kind: "public-live-runs", reviews, ...extra };
 }
 
-const sample = viewSample;
+function writeLiveSnapshot(reviews, extra = {}) {
+  const dir = mkdtempSync(join(tmpdir(), "public-live-reviews-"));
+  const path = join(dir, "public-reviews.json");
+  writeFileSync(path, JSON.stringify(liveWrapper(reviews, extra)));
+  return path;
+}
 
-test("private and unknown visibility never survive the public gate", () => {
+test("private and unknown live visibility never survive the public gate", () => {
   const privateRecord = liveSample({
     visibility: "private",
     run: { ...liveSample().run, pr: 99, issue_title: "secret review" },
@@ -152,7 +827,7 @@ test("private and unknown visibility never survive the public gate", () => {
   );
 });
 
-test("secret-like keys, bearer tokens, and home paths do not survive the public gate", () => {
+test("live secret-like keys, bearer tokens, and home paths do not survive the public gate", () => {
   const base = liveSample();
   const dirty = liveSample({
     token: "super-secret",
@@ -205,11 +880,36 @@ test("secret-like keys, bearer tokens, and home paths do not survive the public 
 test("a payload that still has a home path or token is rejected", () => {
   assert.throws(() => assertPubliclySafe({ notes: "from /home/alice/kit" }));
   assert.throws(() => assertPubliclySafe({ notes: "Bearer abcDEF123._~+/=" }));
+  assert.throws(() => assertPubliclySafe({ notes: "bearer abcDEF123._~+/=" }));
   assert.throws(() => assertPubliclySafe({ notes: String.raw`C:\Users\bob\token` }));
   assert.doesNotThrow(() => assertPubliclySafe({ notes: "Bearer [redacted] at [path]" }));
 });
 
-test("a public review is kept with its list fields", () => {
+test("toPublicIndex fails closed when a home path survives scrub", () => {
+  assert.throws(() => toPublicIndex(parsedIndex([issue({ title: "notes from /home/" })])));
+});
+
+test("zero-entry issues and unlinked PRs are dropped before the list", () => {
+  const gated = toPublicIndex(
+    parsedIndex(
+      [issue({ number: 1, entries: [] }), issue()],
+      [
+        pr({ number: 10, issueNumber: null, runIds: [], entries: [] }),
+        pr(),
+      ],
+    ),
+  );
+  assert.deepEqual(
+    gated.issues.map((row) => row.number),
+    [108],
+  );
+  assert.deepEqual(
+    gated.pullRequests.map((row) => row.number),
+    [133],
+  );
+});
+
+test("a public live review is kept with its list fields", () => {
   const [kept] = toPublicReviews([liveSample()]);
   assert.equal(kept.visibility, "public");
   assert.equal(kept.run.verdict, "APPROVE");
@@ -220,8 +920,8 @@ test("a public review is kept with its list fields", () => {
   assert.equal(kept.items[0].kind, "main");
 });
 
-test("a version-1 snapshot parses its reviews", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()]));
+test("a version-1 live snapshot parses its reviews", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()]));
   assert.equal(parsed.ok, true);
   assert.deepEqual(
     parsed.value.map((record) => record.run.pr),
@@ -230,36 +930,36 @@ test("a version-1 snapshot parses its reviews", () => {
   assert.equal(parsed.value[0].decision.verdict, "APPROVE");
 });
 
-test("an empty snapshot is valid", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([]));
+test("an empty live snapshot is valid", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([]));
   assert.equal(parsed.ok, true);
   assert.deepEqual(parsed.value, []);
 });
 
-test("an unknown snapshot kind is accepted when version is 1", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()], { kind: "redacted-export" }));
+test("an unknown live snapshot kind is accepted when version is 1", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { kind: "redacted-export" }));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.length, 1);
 });
 
-test("version 2 snapshots are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()], { version: 2 }));
+test("version 2 live snapshots are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { version: 2 }));
   assert.equal(parsed.ok, false);
 });
 
-test("unknown keys on a snapshot record are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([{ ...liveSample(), apiKey: "x" }]));
+test("unknown keys on a live snapshot record are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([{ ...liveSample(), apiKey: "x" }]));
   assert.equal(parsed.ok, false);
 });
 
-test("unknown keys on nested snapshot objects are rejected", () => {
+test("unknown keys on nested live snapshot objects are rejected", () => {
   const parsed = parsePublicReviewSnapshot(
-    wrapper([liveSample({ run: { ...liveSample().run, token: "x" } })]),
+    liveWrapper([liveSample({ run: { ...liveSample().run, token: "x" } })]),
   );
   assert.equal(parsed.ok, false);
   assert.equal(
     parsePublicReviewSnapshot(
-      wrapper([
+      liveWrapper([
         liveSample({
           items: [liveItem({ entries: [{ type: "message", text: "x", token: "x" }] })],
         }),
@@ -269,40 +969,40 @@ test("unknown keys on nested snapshot objects are rejected", () => {
   );
 });
 
-test("unknown keys on the snapshot wrapper are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()], { token: "x" }));
+test("unknown keys on the live snapshot wrapper are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { token: "x" }));
   assert.equal(parsed.ok, false);
 });
 
-test("a snapshot with a missing required field is rejected", () => {
+test("a live snapshot with a missing required field is rejected", () => {
   const rest = liveSample();
   delete rest.run;
-  const parsed = parsePublicReviewSnapshot(wrapper([rest]));
+  const parsed = parsePublicReviewSnapshot(liveWrapper([rest]));
   assert.equal(parsed.ok, false);
 });
 
-test("wrong types in a snapshot are rejected", () => {
+test("wrong types in a live snapshot are rejected", () => {
   assert.equal(
-    parsePublicReviewSnapshot(wrapper([liveSample({ run: { ...liveSample().run, created_at: "71" } })])).ok,
+    parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, created_at: "71" } })])).ok,
     false,
   );
   assert.equal(parsePublicReviewSnapshot(null).ok, false);
   assert.equal(parsePublicReviewSnapshot([]).ok, false);
 });
 
-test("unknown visibility in a snapshot is rejected", () => {
-  assert.equal(parsePublicReviewSnapshot(wrapper([liveSample({ visibility: "team" })])).ok, false);
+test("unknown visibility in a live snapshot is rejected", () => {
+  assert.equal(parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "team" })])).ok, false);
 });
 
-test("omitted visibility is rejected at parse and dropped at the public gate", () => {
+test("omitted live visibility is rejected at parse and dropped at the public gate", () => {
   const omitted = liveSample();
   delete omitted.visibility;
-  assert.equal(parsePublicReviewSnapshot(wrapper([omitted])).ok, false);
+  assert.equal(parsePublicReviewSnapshot(liveWrapper([omitted])).ok, false);
   assert.deepEqual(toPublicReviews([omitted]).map((row) => row.run.pr), []);
 });
 
-test("private visibility is kept by parse so the public gate can drop it", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([liveSample({ visibility: "private" })]));
+test("private live visibility is kept by parse so the public gate can drop it", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "private" })]));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value[0].visibility, "private");
 });
@@ -310,20 +1010,20 @@ test("private visibility is kept by parse so the public gate can drop it", () =>
 test("an item without entries still parses", () => {
   const item = liveItem();
   delete item.entries;
-  const parsed = parsePublicReviewSnapshot(wrapper([liveSample({ items: [item] })]));
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample({ items: [item] })]));
   assert.equal(parsed.ok, true);
   assert.deepEqual(parsed.value[0].items[0].entries, []);
 });
 
 test("verdict_json extra keys are accepted", () => {
   const parsed = parsePublicReviewSnapshot(
-    wrapper([liveSample({ verdict_json: { verdict: "APPROVE", extra_flag: true, blocking: [] } })]),
+    liveWrapper([liveSample({ verdict_json: { verdict: "APPROVE", extra_flag: true, blocking: [] } })]),
   );
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value[0].verdict_json.extra_flag, true);
 });
 
-test("the fixture port lists only public copies", async () => {
+test("the live fixture port lists only public copies", async () => {
   const port = createFixtureReviewPort([
     liveSample(),
     liveSample({
@@ -345,7 +1045,7 @@ test("the fixture port lists only public copies", async () => {
   assert.equal(run?.run.status, "done");
 });
 
-test("the fixture test double covers more than one verdict and run status", async () => {
+test("the live fixture test double covers more than one verdict and run status", async () => {
   const listed = await createFixtureReviewPort().list();
   assert.ok(listed.length >= 2);
   const verdicts = new Set(listed.map((record) => record.run.verdict));
@@ -357,82 +1057,8 @@ test("the fixture test double covers more than one verdict and run status", asyn
   assert.ok(!listed.some((record) => record.run.pr === 99));
 });
 
-test("appearance round-trips identity, dark preview, and compact density", () => {
-  const appearance = { identity: "volt", mode: "dark", density: "compact" };
-  const query = serializeReviewAppearance(appearance);
-  assert.equal(query, "identity=volt&preview=dark&density=compact");
-  assert.deepEqual(parseReviewAppearance(`?${query}`), appearance);
-});
-
-test("canonical form omits glass, light, and default density", () => {
-  assert.equal(serializeReviewAppearance(DEFAULT_REVIEW_APPEARANCE), "");
-  assert.deepEqual(parseReviewAppearance(""), DEFAULT_REVIEW_APPEARANCE);
-  assert.deepEqual(parseReviewAppearance("identity=glass&preview=light&density=default"), DEFAULT_REVIEW_APPEARANCE);
-  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=glass&preview=dark")), "preview=dark");
-});
-
-test("preview=dark and legacy theme=dark both parse as dark", () => {
-  assert.equal(parseReviewAppearance("preview=dark").mode, "dark");
-  assert.equal(parseReviewAppearance("theme=dark").mode, "dark");
-});
-
-test("unknown identity and hostile query values fall back without throwing", () => {
-  assert.equal(parseReviewAppearance("identity=n-custom").identity, "glass");
-  assert.equal(parseReviewAppearance("identity=<script>").identity, "glass");
-  assert.equal(parseReviewAppearance("density=comfortable").density, "default");
-  assert.equal(parseReviewAppearance("preview=DARK").mode, "light");
-  assert.doesNotThrow(() => parseReviewAppearance(`identity=${"x".repeat(4000)}&preview=${"\0"}`));
-  assert.deepEqual(parseReviewAppearance("identity=tide&bogus=1&density=compact"), {
-    identity: "tide",
-    mode: "light",
-    density: "compact",
-  });
-});
-
-test("list filter matches state, verdict, and search over title, number, and SHA", () => {
-  const records = [
-    viewSample(),
-    viewSample({
-      number: 42,
-      title: "Tighten contrast on Press",
-      verdict: "request-changes",
-      prState: "merged",
-      headSha: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-    }),
-  ];
-  assert.deepEqual(
-    filterReviewList(records, { prState: "open" }).map((record) => record.number),
-    [71],
-  );
-  assert.deepEqual(
-    filterReviewList(records, { verdict: "request-changes" }).map((record) => record.number),
-    [42],
-  );
-  assert.deepEqual(
-    filterReviewList(records, { search: "contrast" }).map((record) => record.number),
-    [42],
-  );
-  assert.deepEqual(
-    filterReviewList(records, { search: "71" }).map((record) => record.number),
-    [71],
-  );
-  assert.deepEqual(
-    filterReviewList(records, { search: "bbbbbbb" }).map((record) => record.number),
-    [42],
-  );
-  assert.deepEqual(filterReviewList(records, { prState: "open", verdict: "request-changes" }), []);
-  assert.equal(filterReviewList(records, {}).length, 2);
-});
-
-function writeSnapshot(reviews, extra = {}) {
-  const dir = mkdtempSync(join(tmpdir(), "public-reviews-"));
-  const path = join(dir, "public-reviews.json");
-  writeFileSync(path, JSON.stringify(wrapper(reviews, extra)));
-  return path;
-}
-
-test("the snapshot port lists only public copies and isolates mutations", async () => {
-  const path = writeSnapshot([
+test("the live snapshot port lists only public copies and isolates mutations", async () => {
+  const path = writeLiveSnapshot([
     liveSample(),
     liveSample({
       visibility: "private",
@@ -459,29 +1085,31 @@ test("the snapshot port lists only public copies and isolates mutations", async 
   assert.equal(run?.items[0].kind, "main");
 });
 
-test("an empty snapshot lists nothing and keeps the sitemap root", async () => {
-  const path = writeSnapshot([]);
+test("an empty live snapshot lists nothing and keeps the /reviews helper root", async () => {
+  const path = writeLiveSnapshot([]);
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.list(), []);
-  assert.deepEqual(await listReviewPrParamsFrom(port), []);
-  assert.deepEqual(await listReviewRunParamsFrom(port), []);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
+  assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewSitemapPathsFrom(port), ["/reviews"]);
   assert.deepEqual(await listReviewSitemapPaths(path), ["/reviews"]);
 });
 
-test("a malformed snapshot fails closed", () => {
-  const dir = mkdtempSync(join(tmpdir(), "public-reviews-bad-"));
+test("a malformed live snapshot fails closed", () => {
+  const dir = mkdtempSync(join(tmpdir(), "public-live-reviews-bad-"));
   const invalidJson = join(dir, "invalid.json");
   writeFileSync(invalidJson, "{");
   assert.throws(() => createSnapshotReviewPort(invalidJson));
   const missing = join(dir, "missing.json");
   assert.throws(() => createSnapshotReviewPort(missing));
-  const wrongVersion = writeSnapshot([liveSample()], { version: 2 });
+  const wrongVersion = writeLiveSnapshot([liveSample()], { version: 2 });
   assert.throws(() => createSnapshotReviewPort(wrongVersion));
 });
 
-test("static params and sitemap come from public snapshot records only", async () => {
-  const path = writeSnapshot([
+test("static params and live sitemap come from public snapshot records only", async () => {
+  const path = writeLiveSnapshot([
     liveSample(),
     liveSample({
       run: { ...liveSample().run, run_id: "run-64-a", pr: 64, issue_title: "Presentation blockers" },
@@ -512,513 +1140,6 @@ test("static params and sitemap come from public snapshot records only", async (
     "/reviews/pr/64/runs/run-64-a",
     "/reviews/pr/64/runs/run-64-b",
   ]);
-});
-
-test("the checked-in public snapshot is a live-shaped recorded run", async () => {
-  const listed = await createSnapshotReviewPort().list();
-  assert.ok(listed.length >= 1);
-  const row = listed.find((record) => record.run.run_id === "20261111T065452Z-bc07a1a9") ?? listed[0];
-  assert.equal(row.visibility, "public");
-  assert.equal(typeof row.run.pr, "number");
-  assert.ok(String(row.run.sha ?? "").length > 0);
-  assert.ok(row.run.engine_label.length > 0);
-  assert.equal(typeof row.run.elapsed_s, "number");
-  assert.ok(String(row.run.verdict ?? "").length > 0);
-  assert.equal(typeof row.run.confidence_score, "number");
-  assert.ok(String(row.run.review_size ?? "").length > 0);
-  const kinds = new Set(row.items.map((item) => item.kind));
-  assert.ok(kinds.has("main"));
-  assert.ok(kinds.has("lens") || kinds.has("gate"));
-  assert.ok(kinds.has("second_pass"));
-  for (const kind of ["main", "lens", "second_pass"]) {
-    const item = row.items.find((entry) => (kind === "lens" ? entry.kind === "lens" || entry.kind === "gate" : entry.kind === kind));
-    if (kind === "lens" && item === undefined) continue;
-    assert.ok(item, `missing ${kind}`);
-    assert.ok(item.model.length > 0);
-    assert.equal(typeof item.duration_s, "number");
-    assert.equal(typeof item.tool_count, "number");
-    assert.ok(String(item.status).length > 0);
-  }
-  assert.ok(row.decision);
-  assert.ok(row.decision.first_pass);
-  assert.ok(row.decision.second_pass);
-  assert.equal(typeof row.decision.posted, "boolean");
-  assert.ok(Array.isArray(row.decision.must));
-  assert.ok(Array.isArray(row.decision.notes));
-  assert.ok(Array.isArray(row.decision.dismissed));
-  const dispositions = [];
-  for (const item of [...(row.verdict_json?.blocking ?? []), ...(row.verdict_json?.notes ?? [])]) {
-    if (item && typeof item === "object" && typeof item._disposition === "string") {
-      dispositions.push(item._disposition);
-    }
-  }
-  for (const note of row.decision.notes) {
-    if (note.tag) dispositions.push(note.tag);
-  }
-  assert.ok(dispositions.includes("kept"));
-  const transcript = row.items.find((item) => {
-    const types = new Set((item.entries ?? []).map((entry) => entry.type));
-    return types.has("tool") && types.has("message");
-  });
-  assert.ok(transcript);
-  assert.ok(
-    transcript.started_ms != null || transcript.duration_s != null,
-  );
-  assert.equal(typeof transcript.tool_count, "number");
-  assert.ok(transcript.tokens_in != null || transcript.tokens_out != null);
-  assert.ok(transcript.last_activity_ms != null);
-  const snapshotText = readFileSync(join(FEATURE, "adapters", "public-reviews.json"), "utf8");
-  assert.doesNotMatch(snapshotText, /\/home\//);
-  assert.doesNotMatch(snapshotText, /\/Users\//);
-  assert.doesNotMatch(snapshotText, /Bearer (?!\[redacted\])/);
-  assert.doesNotMatch(snapshotText, /Basic (?!\[redacted\])/);
-  const featureIndex = readFileSync(join(FEATURE, "index.tsx"), "utf8");
-  assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
-  assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
-  const params = await listReviewPrParamsFrom(createSnapshotReviewPort());
-  assert.ok(params.some((row) => row.n === String(listed[0].run.pr)));
-  const sitemap = await listReviewSitemapPaths();
-  assert.equal(sitemap[0], "/reviews");
-  for (const record of listed) {
-    assert.ok(sitemap.includes(`/reviews/pr/${record.run.pr}`));
-    assert.ok(sitemap.includes(`/reviews/pr/${record.run.pr}/runs/${record.run.run_id}`));
-  }
-});
-
-test("copy has a Must change heading and no Required actions string", () => {
-  assert.equal(reviewsCopy.pr.decision, "Decision");
-  assert.equal(reviewsCopy.pr.mustChange, "Must change before merge");
-  assert.equal(reviewsCopy.pr.firstPass, "First pass");
-  assert.equal(reviewsCopy.pr.outdated, "Outdated");
-  assert.equal(reviewsCopy.pr.confidenceUnit, "%");
-  assert.equal(reviewsCopy.status.running, "Running at publish");
-  assert.equal(reviewsCopy.disposition.kept, "Kept");
-  assert.equal(reviewsCopy.disposition.downgraded, "Downgraded");
-  assert.equal(reviewsCopy.disposition.dismissed, "Dismissed");
-  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
-});
-
-test("copy names findings, agent fields, and empty agents on this run", () => {
-  assert.equal(reviewsCopy.pr.findings, "Findings");
-  assert.equal(reviewsCopy.pr.findingsEmpty, "No findings on this review.");
-  assert.equal(reviewsCopy.pr.agentDetailEmpty, "No agents on this run.");
-  assert.equal(reviewsCopy.run.agents, "Agents");
-  assert.equal(reviewsCopy.agent.id, "Id");
-  assert.equal(reviewsCopy.agent.name, "Name");
-  assert.equal(reviewsCopy.agent.kind, "Kind");
-  assert.equal(reviewsCopy.agent.model, "Model");
-});
-
-test("empty actions omit Must change even on COMMENT and running reviews", () => {
-  const flow = reviewMainFlow(sample({ verdict: "comment", status: "running", actions: [] }));
-  assert.equal(flow.sections.includes("must-change"), false);
-  assert.deepEqual(flow.blockers, []);
-});
-
-test("Must change follows remaining actions, not an approve verdict", () => {
-  const flow = reviewMainFlow(
-    sample({
-      verdict: "approve",
-      actions: [{ title: "Leftover blocker", detail: "Still listed." }],
-    }),
-  );
-  assert.equal(flow.sections[0], "decision");
-  assert.equal(flow.sections[1], "must-change");
-  assert.deepEqual(
-    flow.blockers.map((blocker) => blocker.title),
-    ["Leftover blocker"],
-  );
-});
-
-test("absent first pass and empty findings omit the first-pass section", () => {
-  assert.equal(reviewMainFlow(sample()).firstPass, null);
-  assert.equal(reviewMainFlow(sample()).sections.includes("first-pass"), false);
-  const emptyFindings = reviewMainFlow(sample({ firstPass: { findings: [] } }));
-  assert.equal(emptyFindings.firstPass, null);
-  assert.equal(emptyFindings.sections.includes("first-pass"), false);
-});
-
-test("a superseded first pass is folded and keeps authored dispositions", () => {
-  const flow = reviewMainFlow(
-    sample({
-      firstPass: {
-        findings: [
-          { title: "Keep contrast", detail: "Still blocks.", disposition: "kept" },
-          { title: "Rename the empty state", detail: "Became a note.", disposition: "downgraded" },
-          { title: "Invent a sidebar", detail: "Out of scope.", disposition: "dismissed" },
-        ],
-      },
-    }),
-  );
-  assert.equal(flow.sections.includes("first-pass"), true);
-  assert.ok(flow.firstPass);
-  assert.deepEqual(
-    flow.firstPass?.findings.map((finding) => finding.disposition),
-    ["kept", "downgraded", "dismissed"],
-  );
-  assert.equal(flow.decision.verdict, "approve");
-});
-
-test("empty evidence is omitted; non-empty evidence follows notes", () => {
-  assert.equal(reviewMainFlow(sample({ evidence: "" })).sections.includes("evidence"), false);
-  assert.equal(reviewMainFlow(sample({ evidence: "   " })).evidence, null);
-  const flow = reviewMainFlow(sample({ evidence: "Contrast log from the compact preview." }));
-  const notesAt = flow.sections.indexOf("notes");
-  assert.ok(notesAt >= 0);
-  assert.equal(flow.sections[notesAt + 1], "evidence");
-  assert.equal(flow.evidence, "Contrast log from the compact preview.");
-});
-
-test("production COMMENT running fixture has no Must change section", async () => {
-  const lives = await createFixtureReviewPort().list();
-  const comment = toReviewRecord(lives.find((record) => record.run.pr === 18));
-  assert.equal(comment?.verdict, "comment");
-  assert.equal(comment?.status, "running");
-  assert.deepEqual(comment?.actions, []);
-  assert.equal(reviewMainFlow(comment).sections.includes("must-change"), false);
-});
-
-test("production APPROVE fixture has no Must change section", async () => {
-  const lives = await createFixtureReviewPort().list();
-  const approve = toReviewRecord(lives.find((record) => record.run.pr === 71));
-  assert.equal(approve?.verdict, "approve");
-  assert.deepEqual(approve?.actions, []);
-  const flow = reviewMainFlow(approve);
-  assert.equal(flow.sections.includes("must-change"), false);
-  assert.equal(flow.firstPass, null);
-});
-
-test("production REQUEST_CHANGES fixture lists blockers after the decision", async () => {
-  const lives = await createFixtureReviewPort().list();
-  const request = toReviewRecord(lives.find((record) => record.run.pr === 42));
-  assert.equal(request?.verdict, "request-changes");
-  const flow = reviewMainFlow(request);
-  assert.equal(flow.sections[0], "decision");
-  assert.equal(flow.sections[1], "must-change");
-  assert.deepEqual(
-    flow.blockers.map((blocker) => blocker.title),
-    ["Raise muted text on dark Press"],
-  );
-});
-
-test("production superseded fixture labels mixed first-pass dispositions", async () => {
-  const lives = await createFixtureReviewPort().list();
-  const superseded = toReviewRecord(lives.find((record) => record.run.pr === 83));
-  assert.ok(superseded);
-  const flow = reviewMainFlow(superseded);
-  assert.equal(flow.sections[0], "decision");
-  assert.equal(flow.sections[1], "must-change");
-  assert.equal(flow.sections[2], "findings");
-  assert.equal(flow.sections[3], "first-pass");
-  assert.deepEqual(
-    flow.findings.map((finding) => finding.disposition),
-    ["kept", "downgraded", "dismissed"],
-  );
-  assert.ok(flow.firstPass);
-  assert.deepEqual(
-    flow.firstPass?.findings.map((finding) => finding.disposition),
-    ["kept", "downgraded", "dismissed"],
-  );
-});
-
-test("empty reconciled findings omit the findings section", () => {
-  const flow = reviewMainFlow(sample());
-  assert.equal(flow.sections.includes("findings"), false);
-  assert.deepEqual(flow.findings, []);
-});
-
-test("reconciled findings sit after must-change and keep authored dispositions", () => {
-  const flow = reviewMainFlow(
-    sample({
-      findings: [
-        { id: "dup", summary: "Keep contrast", disposition: "kept" },
-        { id: "dup", summary: "Note the empty state", disposition: "downgraded" },
-        { id: "skip", summary: "Skip a sidebar", disposition: "dismissed" },
-      ],
-      firstPass: {
-        findings: [{ title: "Old", detail: "History", disposition: "kept" }],
-      },
-    }),
-  );
-  assert.deepEqual(flow.sections.slice(0, 4), ["decision", "must-change", "findings", "first-pass"]);
-  assert.deepEqual(
-    flow.findings.map((finding) => finding.disposition),
-    ["kept", "downgraded", "dismissed"],
-  );
-  assert.deepEqual(
-    flow.findings.map((finding) => finding.summary),
-    ["Keep contrast", "Note the empty state", "Skip a sidebar"],
-  );
-  assert.deepEqual(
-    flow.blockers.map((blocker) => blocker.title),
-    ["Name empty states"],
-  );
-});
-
-test("reconciled findings follow the decision when there are no blockers", () => {
-  const flow = reviewMainFlow(
-    sample({
-      actions: [],
-      findings: [{ id: "a", summary: "One leftover finding", disposition: "kept" }],
-    }),
-  );
-  assert.equal(flow.sections[0], "decision");
-  assert.equal(flow.sections[1], "findings");
-  assert.equal(flow.sections.includes("must-change"), false);
-});
-
-test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
-  const lives = await createSnapshotReviewPort().list();
-  const live = lives[0];
-  assert.ok(live);
-  const record = toReviewRecord(live, lives);
-  const flow = reviewMainFlow(record);
-  assert.equal(flow.sections[0], "decision");
-  assert.equal(flow.sections.includes("must-change"), true);
-  assert.ok(flow.findings.some((finding) => finding.disposition === "kept"));
-  assert.equal(flow.sections.includes("first-pass"), true);
-});
-
-test("decision summary is trimmed and empty whitespace becomes an empty string", () => {
-  assert.equal(
-    reviewMainFlow(sample({ summary: "  Ready to merge.  " })).decision.summary,
-    "Ready to merge.",
-  );
-  assert.equal(reviewMainFlow(sample({ summary: "\n\t  \n" })).decision.summary, "");
-  assert.equal(
-    reviewMainFlow(sample({ summary: "The public review section is ready to merge." })).decision.summary,
-    "The public review section is ready to merge.",
-  );
-});
-
-test("confidence is clamped to 0-100 at the main-flow boundary", () => {
-  assert.equal(reviewMainFlow(sample({ confidence: -4 })).decision.confidence, 0);
-  assert.equal(reviewMainFlow(sample({ confidence: 140 })).decision.confidence, 100);
-  assert.equal(reviewMainFlow(sample({ confidence: 86 })).decision.confidence, 86);
-  assert.equal(reviewMainFlow(sample({ confidence: Number.NaN })).decision.confidence, 0);
-  assert.equal(reviewMainFlow(sample({ confidence: Number.POSITIVE_INFINITY })).decision.confidence, 0);
-});
-
-test("parsePrNumber accepts decimal integers and rejects the rest", () => {
-  assert.equal(parsePrNumber("71"), 71);
-  assert.equal(parsePrNumber("0"), 0);
-  assert.equal(parsePrNumber(""), null);
-  assert.equal(parsePrNumber("-1"), null);
-  assert.equal(parsePrNumber("12a"), null);
-  assert.equal(parsePrNumber("1.2"), null);
-  assert.equal(parsePrNumber("<script>"), null);
-});
-
-test("main flow UI leads with the decision, then blockers, then appearance", () => {
-  const source = readFileSync(join(reviewsRoot, "ui/review-main-flow.tsx"), "utf8");
-  const decisionAt = source.indexOf("<DecisionBand");
-  const sectionsAt = source.indexOf("<FlowSections");
-  const panelAt = source.indexOf("{panel}");
-  assert.ok(decisionAt >= 0);
-  assert.ok(sectionsAt > decisionAt);
-  assert.ok(panelAt > sectionsAt);
-  assert.match(source, /copy\.pr\.decision/);
-  assert.match(source, /copy\.pr\.confidenceUnit/);
-  assert.match(source, /min-h-target/);
-  assert.match(source, /focus-ring-control/);
-  assert.doesNotMatch(source, /key=\{blocker\.title\}/);
-  assert.doesNotMatch(source, /key=\{finding\.title\}/);
-  assert.match(source, /<details>/);
-  assert.doesNotMatch(source, /<details\s+open/);
-  assert.doesNotMatch(source, /\bopen:\s*false/);
-});
-
-test("verdict and status tones live in one shared module", () => {
-  const badges = readFileSync(join(reviewsRoot, "ui/review-badges.ts"), "utf8");
-  assert.match(badges, /export const VERDICT_BADGE/);
-  assert.match(badges, /export const STATUS_TONE/);
-  for (const file of [
-    "review-list-view.tsx",
-    "review-pr-view.tsx",
-    "review-run-view.tsx",
-    "review-main-flow.tsx",
-    "review-agent-list.tsx",
-    "review-console.tsx",
-  ]) {
-    const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
-    assert.match(source, /from "\.\/review-badges"/);
-    assert.doesNotMatch(source, /const VERDICT_BADGE/);
-    assert.doesNotMatch(source, /const STATUS_TONE/);
-  }
-});
-
-test("invalid PR metadata falls back to missing copy instead of the raw param", () => {
-  const prPage = readFileSync(join(reviewsAppRoot, "pr/[n]/page.tsx"), "utf8");
-  const runPage = readFileSync(join(reviewsAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
-  for (const source of [prPage, runPage]) {
-    assert.match(source, /parsePrNumber/);
-    assert.match(source, /reviewsCopy\.metadata\.missing/);
-    assert.doesNotMatch(source, /`\/reviews\/pr\/\$\{n\}`/);
-  }
-});
-
-test("reviews not-found uses missing copy and links back to the list", () => {
-  const source = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
-  assert.match(source, /reviewsCopy\.metadata\.missing\.title/);
-  assert.match(source, /href="\/reviews"/);
-  assert.match(source, /reviewsCopy\.pr\.back/);
-});
-
-const CONSOLE_ITEMS = [
-  { id: "flow", kind: "flow", title: "Main flow", status: "done" },
-  { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
-  { id: "workflow-check", kind: "workflow", title: "Contrast check", status: "error" },
-];
-
-test("empty or omitted selection hash selects the main flow", () => {
-  assert.equal(parseReviewSelection("", CONSOLE_ITEMS), "flow");
-  assert.equal(parseReviewSelection("#", CONSOLE_ITEMS), "flow");
-});
-
-test("an item hash selects that agent or workflow", () => {
-  assert.equal(parseReviewSelection("#item-agent-review", CONSOLE_ITEMS), "agent-review");
-  assert.equal(parseReviewSelection("#item-workflow-check", CONSOLE_ITEMS), "workflow-check");
-});
-
-test("unknown, hostile, and skip-link hashes fall back to the main flow", () => {
-  assert.equal(parseReviewSelection("#item-missing", CONSOLE_ITEMS), "flow");
-  assert.equal(parseReviewSelection("#item-<script>", CONSOLE_ITEMS), "flow");
-  assert.equal(parseReviewSelection("#javascript:alert(1)", CONSOLE_ITEMS), "flow");
-  assert.equal(parseReviewSelection("#main-content", CONSOLE_ITEMS), "flow");
-  assert.equal(parseReviewSelection("#item-", CONSOLE_ITEMS), "flow");
-  assert.equal(parseReviewSelection(`#item-${"x".repeat(4000)}`, CONSOLE_ITEMS), "flow");
-});
-
-test("duplicate item ids resolve to the first match", () => {
-  const duplicated = [
-    { id: "agent-review", kind: "agent", title: "First", status: "done" },
-    { id: "flow", kind: "flow", title: "Main flow", status: "done" },
-    { id: "agent-review", kind: "agent", title: "Second", status: "error" },
-  ];
-  assert.equal(parseReviewSelection("#item-agent-review", duplicated), "agent-review");
-});
-
-test("empty items still default to the synthesised flow id", () => {
-  assert.equal(parseReviewSelection("", []), "flow");
-  assert.equal(parseReviewSelection("#item-agent-review", []), "flow");
-});
-
-test("canonical default selection omits the hash", () => {
-  assert.equal(selectionHash("flow", "flow"), "");
-  assert.equal(selectionHash("agent-review", "flow"), "#item-agent-review");
-});
-
-test("share URL merge keeps appearance query and selection hash together", () => {
-  assert.equal(
-    mergeReviewShareUrl({
-      pathname: "/reviews/pr/71",
-      search: "identity=volt&preview=dark",
-      hash: "#item-agent-review",
-    }),
-    "/reviews/pr/71?identity=volt&preview=dark#item-agent-review",
-  );
-  assert.equal(
-    mergeReviewShareUrl({
-      pathname: "/reviews/pr/71",
-      search: "?density=compact",
-      hash: "item-agent-review",
-    }),
-    "/reviews/pr/71?density=compact#item-agent-review",
-  );
-  assert.equal(
-    mergeReviewShareUrl({ pathname: "/reviews/pr/71", search: "", hash: "" }),
-    "/reviews/pr/71",
-  );
-  assert.equal(
-    mergeReviewShareUrl({ pathname: "/reviews/pr/71", search: "?", hash: "#" }),
-    "/reviews/pr/71",
-  );
-  assert.equal(
-    mergeReviewShareUrl({
-      pathname: "/reviews/pr/71",
-      search: "preview=dark",
-      hash: "",
-    }),
-    "/reviews/pr/71?preview=dark",
-  );
-  assert.equal(
-    mergeReviewShareUrl({
-      pathname: "/reviews/pr/71",
-      search: "",
-      hash: "#item-agent-review",
-    }),
-    "/reviews/pr/71#item-agent-review",
-  );
-});
-
-test("appearance codec still ignores unknown keys including item", () => {
-  assert.deepEqual(parseReviewAppearance("identity=volt&item=agent-review"), {
-    identity: "volt",
-    mode: "light",
-    density: "default",
-  });
-  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=volt&item=agent-review")), "identity=volt");
-});
-
-test("a run with no items synthesises one flow row from its status", () => {
-  assert.deepEqual(
-    reviewConsoleItems({ id: "run-71", status: "error", startedAt: "2026-11-09T14:50:00.000Z" }, "Main flow"),
-    [{ id: "flow", kind: "flow", title: "Main flow", status: "error" }],
-  );
-});
-
-test("items without a flow row get a synthesised flow prepended", () => {
-  assert.deepEqual(
-    reviewConsoleItems(
-      {
-        id: "run-71",
-        status: "done",
-        startedAt: "2026-11-09T14:50:00.000Z",
-        items: [{ id: "agent-review", kind: "agent", title: "Review agent", status: "done" }],
-      },
-      "Main flow",
-    ),
-    [
-      { id: "flow", kind: "flow", title: "Main flow", status: "done" },
-      { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
-    ],
-  );
-});
-
-test("the latest run is the newest startedAt, and a tie keeps the first", () => {
-  const older = { id: "run-a", status: "done", startedAt: "2026-11-09T13:00:00.000Z" };
-  const newer = { id: "run-b", status: "done", startedAt: "2026-11-09T15:00:00.000Z" };
-  assert.equal(latestReviewRun([older, newer])?.id, "run-b");
-  assert.equal(latestReviewRun([newer, older])?.id, "run-b");
-  assert.equal(latestReviewRun([older, { ...newer, id: "run-c", startedAt: older.startedAt }])?.id, "run-a");
-  assert.equal(latestReviewRun([]), undefined);
-});
-
-test("public fixtures expose a main flow plus an agent, and a workflow somewhere", async () => {
-  const lives = await createFixtureReviewPort().list();
-  const listed = lives.map((row) => toReviewRecord(row, lives));
-  const kinds = new Set();
-  let flowWithAgent = false;
-  for (const record of listed) {
-    for (const run of record.runs) {
-      const kindsHere = new Set((run.items ?? []).map((item) => item.kind));
-      for (const kind of kindsHere) kinds.add(kind);
-      if (kindsHere.has("flow") && kindsHere.has("agent")) flowWithAgent = true;
-    }
-  }
-  assert.equal(flowWithAgent, true);
-  assert.ok(kinds.has("workflow"));
-});
-
-test("a private record with agent titles never appears", async () => {
-  const port = createFixtureReviewPort([
-    liveSample({
-      visibility: "private",
-      run: { ...liveSample().run, pr: 99, issue_title: "hidden" },
-      items: [liveItem({ id: "agent-x", name: "secret agent", kind: "lens" })],
-    }),
-  ]);
-  assert.deepEqual(await port.list(), []);
 });
 
 test("item titles go through the public scrubber", () => {
@@ -1071,66 +1192,12 @@ test("the temporary mapper turns live rows into the current view-model", () => {
   );
 });
 
-test("the review console uses a kit drawer below md and hides the desktop column", () => {
-  const src = readFileSync(join(FEATURE, "ui", "review-console.tsx"), "utf8");
-  assert.match(src, /DrawerTrigger/);
-  assert.match(src, /DrawerTitle/);
-  assert.match(src, /min-h-target/);
-  assert.match(src, /md:hidden/);
-  assert.match(src, /max-md:hidden/);
-  assert.match(src, /direction="left"/);
-  assert.match(src, /mobile="sheet"/);
-  assert.match(src, /copy\.console\.openList/);
-  assert.doesNotMatch(src, /<main[\s>]/);
-  assert.doesNotMatch(src, /AppShell/);
-  assert.doesNotMatch(src, /SidebarNavItem/);
-  assert.doesNotMatch(src, /id=["']item-/);
-});
-
-test("PR and run views render the same console and drop the agent-detail stub", () => {
-  const pr = readFileSync(join(FEATURE, "ui", "review-pr-view.tsx"), "utf8");
-  const run = readFileSync(join(FEATURE, "ui", "review-run-view.tsx"), "utf8");
-  assert.match(pr, /ReviewConsole/);
-  assert.match(run, /ReviewConsole/);
-  assert.doesNotMatch(pr, /agentDetail/);
-  assert.doesNotMatch(pr, /<details/);
-  assert.doesNotMatch(run, /<details/);
-});
-
-test("findings and agent lists use copy keys and keep the empty-state pattern", () => {
-  const main = readFileSync(join(reviewsRoot, "ui/review-main-flow.tsx"), "utf8");
-  const agents = readFileSync(join(reviewsRoot, "ui/review-agent-list.tsx"), "utf8");
-  const flowUi = `${main}\n${agents}`;
-  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
-  const pr = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  const consoleSrc = readFileSync(join(reviewsRoot, "ui/review-console.tsx"), "utf8");
-  assert.match(main, /copy\.pr\.findings\}/);
-  assert.match(main, /copy\.pr\.findingsEmpty/);
-  assert.match(main, /copy\.disposition/);
-  assert.match(main, /finding\.id/);
-  assert.match(main, /run\.agents/);
-  assert.match(agents, /copy\.agent\.id/);
-  assert.match(agents, /copy\.agent\.name/);
-  assert.match(agents, /copy\.agent\.kind/);
-  assert.match(agents, /copy\.agent\.model/);
-  assert.match(agents, /copy\.run\.agents/);
-  assert.match(agents, /copy\.pr\.agentDetailEmpty/);
-  assert.match(agents, /EmptyState/);
-  assert.match(agents, /<details>/);
-  assert.doesNotMatch(agents, /<details\s+open/);
-  assert.match(main, /<details>/);
-  assert.doesNotMatch(main, /<details\s+open/);
-  assert.match(consoleSrc, /agentsReveal/);
-  assert.match(run, /agentsReveal=/);
-  assert.doesNotMatch(run, /agentsReveal=["']disclosure["']/);
-  assert.doesNotMatch(pr, /agentsReveal/);
-  for (const source of [flowUi, run, pr, consoleSrc]) {
-    assert.doesNotMatch(source, /"(Kept|Downgraded|Dismissed|Id|Name|Kind|Model)"/);
-  }
-});
-
-test("appearance share write keeps the selection hash", () => {
-  const src = readFileSync(join(FEATURE, "ui", "appearance-panel.tsx"), "utf8");
-  assert.match(src, /mergeReviewShareUrl/);
-  assert.match(src, /window\.location\.hash/);
+test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
+  const lives = await createSnapshotReviewPort().list();
+  const live = lives[0];
+  assert.ok(live);
+  const record = toReviewRecord(live, lives);
+  assert.ok(record.actions.length > 0);
+  assert.ok(record.findings.some((finding) => finding.disposition === "kept"));
+  assert.ok(record.firstPass);
 });
