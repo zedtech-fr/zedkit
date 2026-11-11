@@ -173,7 +173,7 @@ for (const width of [1280, 1600] as const) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/", { waitUntil: "networkidle" });
     await page.waitForFunction(() => {
-      const bandIds = ["same-idea", "paste", "identities", "components", "entry-points"] as const;
+      const bandIds = ["same-idea", "six-sentences", "paste", "identities", "components", "entry-points"] as const;
       const hero = document.querySelector("[data-home-hero-band]");
       const heroReady =
         hero?.querySelector("[data-slot='container']") != null ||
@@ -197,6 +197,7 @@ for (const width of [1280, 1600] as const) {
 
       const heroBand = document.querySelector("[data-home-hero-band]");
       const sameIdea = document.getElementById("same-idea");
+      const sixSentences = document.getElementById("six-sentences");
       const paste = document.getElementById("paste");
       const identities = document.getElementById("identities");
       const components = document.getElementById("components");
@@ -204,6 +205,7 @@ for (const width of [1280, 1600] as const) {
       const boxes = [
         containerBox(heroBand),
         containerBox(sameIdea),
+        containerBox(sixSentences),
         containerBox(paste),
         containerBox(identities),
         containerBox(components),
@@ -224,7 +226,8 @@ for (const width of [1280, 1600] as const) {
       const bandTop = (el: Element | null) => el?.getBoundingClientRect().top ?? Number.NaN;
       const gaps = [
         bandTop(sameIdea) - bandBottom(heroBand),
-        bandTop(paste) - bandBottom(sameIdea),
+        bandTop(sixSentences) - bandBottom(sameIdea),
+        bandTop(paste) - bandBottom(sixSentences),
         bandTop(identities) - bandBottom(paste),
         bandTop(components) - bandBottom(identities),
         bandTop(entryPoints) - bandBottom(components),

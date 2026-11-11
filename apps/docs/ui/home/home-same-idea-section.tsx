@@ -8,15 +8,16 @@ import {
 } from "@/ui/home/home-rhythm";
 import { homeSameIdeaCopy } from "@/ui/home/i18n/home-same-idea-copy";
 
-const COLUMN_IDS = ["ai", "ui", "together"] as const;
+const COLUMN_IDS = ["ui", "ai"] as const;
 
 /**
- * Right after the hero: AI, UI, and Together as one idea, before the paste.
+ * Right after the hero: UI and AI as one idea, before the facts and the paste.
  *
- * Compose-UI: three short columns, no paste fields, because the visitor
- * just saw a hero paste and needs the joint idea, not four more copy buttons.
+ * Compose-UI: two short columns, no paste fields, because: client =
+ * integrating developer who just saw a hero paste and needs the joint idea,
+ * not more copy buttons. Nest stays in paste copy, not a third column.
  * Section H2, column H3, persuasion body, because one marketing H1 already
- * sits in the hero. Mobile stacks, lg three columns, because compose by
+ * sits in the hero. Mobile stacks, lg two columns, because compose by
  * priority, not a squeezed desktop row. No glass slab, because violet stays
  * in high-value panels and the hero window already has Glass material.
  */

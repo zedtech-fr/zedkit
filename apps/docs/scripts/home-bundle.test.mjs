@@ -81,30 +81,57 @@ test("home hero lead is the joint title, one Setup entry, no kit tabs (#111)", (
   assert.doesNotMatch(nav, /text: "Issues"/);
 });
 
-test("home below-hero order is same-idea, paste, identities, families, secondary (#119)", () => {
+test("home below-hero order is same-idea, six-sentences, paste, identities, families, secondary (#119)", () => {
   const src = readFileSync(join(app, "ui/home/home-below-hero.tsx"), "utf8");
   const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
+  const sixSentences = readFileSync(join(app, "ui/home/home-six-sentences-section.tsx"), "utf8");
   const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
   const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
+  const sixSentencesCopy = readFileSync(join(app, "ui/home/i18n/home-six-sentences-copy.ts"), "utf8");
   const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
-  const order = [...src.matchAll(/<Home(SameIdea|Paste|Identities|ComponentFamilies|Secondary)Section/g)].map(
-    (match) => match[1],
-  );
-  assert.deepEqual(order, ["SameIdea", "Paste", "Identities", "ComponentFamilies", "Secondary"]);
+  const order = [
+    ...src.matchAll(/<Home(SameIdea|SixSentences|Paste|Identities|ComponentFamilies|Secondary)Section/g),
+  ].map((match) => match[1]);
+  assert.deepEqual(order, [
+    "SameIdea",
+    "SixSentences",
+    "Paste",
+    "Identities",
+    "ComponentFamilies",
+    "Secondary",
+  ]);
   assert.doesNotMatch(src, /HomeAiSetupSection|HomeGetStartedSection|featuredPackage/);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-terminal.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-get-started-section.tsx")), false);
   assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField/);
-  assert.match(sameIdeaCopy, /title: "Same idea, three places"/);
-  assert.match(sameIdeaCopy, /Nest \(API\)/);
-  assert.match(sameIdeaCopy, /One map prompt covers/);
-  assert.match(sameIdeaCopy, /\bai:/);
+  assert.match(sameIdeaCopy, /title: "Same idea, two places"/);
+  assert.doesNotMatch(sameIdeaCopy, /three places/);
+  assert.doesNotMatch(sameIdeaCopy, /\btogether:/);
   assert.match(sameIdeaCopy, /\bui:/);
-  assert.match(sameIdeaCopy, /\btogether:/);
+  assert.match(sameIdeaCopy, /\bai:/);
+  assert.match(sameIdea, /COLUMN_IDS = \["ui", "ai"\]/);
   assert.match(sameIdea, /HOME_SAME_IDEA_GRID/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.match(rhythm, /export const HOME_SAME_IDEA_GRID/);
+  assert.match(rhythm, /lg:grid-pair/);
+  assert.doesNotMatch(rhythm, /HOME_SAME_IDEA_GRID[\s\S]*lg:grid-trio/);
+  assert.doesNotMatch(sixSentences, /FeatureGrid|SetupEntryPrompt|SecretField/);
+  assert.match(sixSentences, /id="six-sentences"/);
+  assert.match(sixSentences, /from "@zedtech\/zedkit-ui"/);
+  assert.match(
+    sixSentencesCopy,
+    /Paste one prompt in the agent you already use\. It reads the repo and writes the setup\./,
+  );
+  assert.match(sixSentencesCopy, /The combined prompt covers AI, UI and Nest \(API\)\./);
+  assert.match(sixSentencesCopy, /Install from npm or copy the source\. Same components either way\./);
+  assert.match(sixSentencesCopy, /What you see is MIT, React 19, Tailwind 4\./);
+  assert.match(sixSentencesCopy, /A look sets type, shape, density and color together\./);
+  assert.match(
+    sixSentencesCopy,
+    /This is packages and a docs site, not a hosted app with accounts\./,
+  );
+  assert.equal([...sixSentencesCopy.matchAll(/"[^"]+\."/g)].length, 6);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);

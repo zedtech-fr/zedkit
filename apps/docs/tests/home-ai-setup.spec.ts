@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { MAP_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
 import { homeSameIdeaCopy } from "../ui/home/i18n/home-same-idea-copy";
+import { homeSixSentencesCopy } from "../ui/home/i18n/home-six-sentences-copy";
 
 test.describe("home paste band", () => {
   test.use({
@@ -21,15 +22,21 @@ test.describe("home paste band", () => {
     await expect(paste).toBeVisible();
     await expect(paste.getByRole("heading", { level: 2, name: "Paste one line. Go to lunch." })).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: homeSameIdeaCopy.section.title })).toBeVisible();
+    await expect(page.locator("[data-home-same-idea-column]")).toHaveCount(2);
+    await expect(page.locator("[data-home-same-idea-column='together']")).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 2, name: homeSixSentencesCopy.section.title })).toBeVisible();
+    await expect(page.locator("[data-home-six-sentences] li")).toHaveCount(6);
     await expect(page.getByRole("heading", { name: "What you get" })).toHaveCount(0);
 
     const hero = await page.locator("[data-home-hero-band]").boundingBox();
     const sameIdea = await page.locator("#same-idea").boundingBox();
+    const sixSentences = await page.locator("#six-sentences").boundingBox();
     const pasteBox = await paste.boundingBox();
     const identities = await page.locator("#identities").boundingBox();
-    expect(hero && sameIdea && pasteBox && identities).toBeTruthy();
+    expect(hero && sameIdea && sixSentences && pasteBox && identities).toBeTruthy();
     expect(sameIdea!.y).toBeGreaterThan(hero!.y);
-    expect(pasteBox!.y).toBeGreaterThan(sameIdea!.y);
+    expect(sixSentences!.y).toBeGreaterThan(sameIdea!.y);
+    expect(pasteBox!.y).toBeGreaterThan(sixSentences!.y);
     expect(pasteBox!.y).toBeLessThan(identities!.y);
 
     await expect(page.locator("#ai-setup")).toBeVisible();
