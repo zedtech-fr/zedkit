@@ -16,6 +16,10 @@ export function unlinkedRunPath(n: number, runId: string): string {
   return `/issues/pr/${n}/runs/${runId}`;
 }
 
+/** Next `output: export` requires ≥1 `generateStaticParams` entry; unknown ids 404 (`dynamicParams = false`). */
+export const ISSUE_STATIC_PLACEHOLDER = { n: "0" } as const;
+export const ISSUE_RUN_STATIC_PLACEHOLDER = { n: "0", id: "_placeholder" } as const;
+
 export function uniqueRunIds(runIds: readonly string[]): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
@@ -29,17 +33,19 @@ export function uniqueRunIds(runIds: readonly string[]): string[] {
 
 export async function listIssueParamsFrom(port: ReviewPort) {
   const issues = await port.listIssues();
+  if (issues.length === 0) return [ISSUE_STATIC_PLACEHOLDER];
   return issues.map((issue) => ({ n: String(issue.number) }));
 }
 
 export async function listIssueRunParamsFrom(port: ReviewPort) {
   const issues = await port.listIssues();
-  return issues.flatMap((issue) =>
+  const params = issues.flatMap((issue) =>
     uniqueRunIds(issue.entries.map((entry) => entry.runId)).map((id) => ({
       n: String(issue.number),
       id,
     })),
   );
+  return params.length > 0 ? params : [ISSUE_RUN_STATIC_PLACEHOLDER];
 }
 
 export async function listUnlinkedPrParamsFrom(port: ReviewPort) {

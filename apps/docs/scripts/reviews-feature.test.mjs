@@ -369,8 +369,8 @@ test("an empty snapshot lists nothing and keeps the sitemap root at /issues", as
   const path = writeSnapshot([], []);
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.listIssues(), []);
-  assert.deepEqual(await listIssueParamsFrom(port), []);
-  assert.deepEqual(await listIssueRunParamsFrom(port), []);
+  assert.deepEqual(await listIssueParamsFrom(port), [{ n: "0" }]);
+  assert.deepEqual(await listIssueRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
   assert.deepEqual(await listIssueSitemapPaths(path), ["/issues"]);
 });
