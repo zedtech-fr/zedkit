@@ -6,7 +6,7 @@ import { setupEntryPrompt, type SetupEntryId } from "@/lib/setup-entry-prompts";
 export function SetupEntryPrompt({ id }: { id: SetupEntryId }) {
   const entry = setupEntryPrompt(id);
   const fieldId = `setup-entry-${entry.id}`;
-  const peer = entry.role === "peer";
+  const labelled = entry.role !== "quiet";
 
   return (
     <Stack
@@ -20,7 +20,7 @@ export function SetupEntryPrompt({ id }: { id: SetupEntryId }) {
         "not-prose"
       }
     >
-      {peer ? (
+      {labelled ? (
         <Label htmlFor={fieldId}>{entry.label}</Label>
       ) : (
         <Text as="span" variant="muted" typeRole="caption">
@@ -31,8 +31,8 @@ export function SetupEntryPrompt({ id }: { id: SetupEntryId }) {
         id={fieldId}
         multiline
         value={entry.value}
-        aria-label={entry.ariaLabel}
         copyLabel={entry.copyLabel}
+        {...(labelled ? {} : { "aria-label": entry.ariaLabel })}
       />
     </Stack>
   );

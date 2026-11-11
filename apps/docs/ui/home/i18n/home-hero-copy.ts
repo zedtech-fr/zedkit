@@ -5,7 +5,7 @@ export const homeHeroCopy = {
     title: "Years of production setup. One prompt.",
     /** What the window is, and the first thing to look at in it. */
     sub: "Installs in 2 seconds. Then the agent reads your repo once — about 15 to 45 minutes.",
-    promptAriaLabel: "One-prompt AI setup",
+    promptLabel: "AI only",
     promptCopyLabel: "Copy prompt",
     facts: "What you see installs from npm or copies as source · MIT · React 19 · Tailwind 4",
   },

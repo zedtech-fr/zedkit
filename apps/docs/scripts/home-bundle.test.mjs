@@ -46,6 +46,8 @@ test("home hero lead prioritizes get started then catalog (#ZK-09)", () => {
   assert.match(copy, /getStarted: "Get started"/);
   assert.match(copy, /setupAi: "Set up AI"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
+  assert.match(copy, /promptLabel: "AI only"/);
+  assert.match(lead, /<Label htmlFor="home-hero-ai-prompt">\{homeCopy\.hero\.promptLabel\}<\/Label>/);
   assert.doesNotMatch(actions + copy, /Browse components/);
 });
 
@@ -68,8 +70,12 @@ test("home below-hero order is same-idea, paste, identities, families, secondary
   assert.match(sameIdeaCopy, /\bai:/);
   assert.match(sameIdeaCopy, /\bui:/);
   assert.match(sameIdeaCopy, /\btogether:/);
-  assert.match(paste, /<SetupEntryPrompt id="combined"/);
-  assert.doesNotMatch(paste, /<SetupEntryPrompt id="(ai|ui|suggest)"/);
+  assert.match(sameIdea, /HOME_SAME_IDEA_GRID/);
+  const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  assert.match(rhythm, /export const HOME_SAME_IDEA_GRID/);
+  const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
+  assert.doesNotMatch(tokens, /data-home-install-choice/);
+  assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /id="ai-setup"/);
   assert.match(paste, /id="get-started"/);

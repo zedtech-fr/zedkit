@@ -60,4 +60,9 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   assert.match(homeBand, /<SetupEntryPrompt id="combined"/);
   assert.doesNotMatch(homeBand, /<SetupEntryPrompt id="(ai|ui|suggest)"/);
   assert.doesNotMatch(homeBand, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+
+  const wrapper = read("components/setup-entry-prompt.tsx");
+  assert.match(wrapper, /const labelled = entry\.role !== "quiet"/);
+  assert.match(wrapper, /<Label htmlFor=\{fieldId\}>\{entry\.label\}<\/Label>/);
+  assert.match(wrapper, /\{\.\.\.\(labelled \? \{\} : \{ "aria-label": entry\.ariaLabel \}\)\}/);
 });

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const WIDTHS = [375, 390, 768, 1280] as const;
 
-const SECTION_IDS = ["identities", "get-started", "components", "entry-points"];
+const SECTION_IDS = ["same-idea", "paste", "identities", "components", "entry-points"];
 const MIN_SECTION_PADDING_PX = 32;
 const MIN_CARD_PADDING_PX = 16;
 

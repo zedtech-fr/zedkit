@@ -2,6 +2,7 @@ import { Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
+  HOME_SAME_IDEA_GRID,
   HOME_SECTION_CONTENT_GAP,
   HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
@@ -33,7 +34,7 @@ export function HomeSameIdeaSection() {
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset" data-home-same-idea="">
-        <ul className="trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio">
+        <ul className={HOME_SAME_IDEA_GRID}>
           {COLUMN_IDS.map((id) => (
             <li key={id} data-home-same-idea-column={id}>
               <Stack gap="tight">

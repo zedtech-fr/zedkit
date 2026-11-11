@@ -47,7 +47,7 @@ test("home hero offers get started first with catalog and demo links (#1038)", a
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
     "Installs in 2 seconds. Then the agent reads your repo once — about 15 to 45 minutes.",
   );
-  await expect(page.getByRole("textbox", { name: "One-prompt AI setup" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "AI only" })).toBeVisible();
   // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
   await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(

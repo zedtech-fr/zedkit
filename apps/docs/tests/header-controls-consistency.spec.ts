@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { readComputedContrast } from "./a11y-helpers";
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
-import { homeCopy } from "../ui/home/i18n/home-copy";
+import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
 import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
 
 const SHOTS = process.env.HOME_LINK_SHOTS;
@@ -49,7 +49,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.locator("#get-started").scrollIntoViewIfNeeded();
       const fullSteps = page.locator("a[data-home-full-steps]");
       await expect(fullSteps).toBeVisible();
-      await expect(fullSteps).toHaveAttribute("href", homeCopy.getStarted.quickStart.fullStepsHref);
+      await expect(fullSteps).toHaveAttribute("href", homePasteCopy.fullStepsHref);
       const padding = await fullSteps.evaluate((el) => {
         const style = getComputedStyle(el);
         return {

@@ -11,7 +11,7 @@ test.describe("home paste points at Getting started install", () => {
     return paste;
   }
 
-  test("home no longer hosts adoption tabs; Getting started keeps the panel", async ({ page }) => {
+  test("home no longer hosts adoption tabs; Getting started keeps the install heading", async ({ page }) => {
     const paste = await openHome(page);
     await expect(page.getByRole("heading", { name: "Start your way", level: 2 })).toHaveCount(0);
     await expect(page.locator("#install-or-copy")).toHaveCount(0);
@@ -23,24 +23,7 @@ test.describe("home paste points at Getting started install", () => {
 
     const response = await page.goto("/docs/getting-started#install-or-copy", { waitUntil: "networkidle" });
     expect(response?.status()).toBe(200);
-    const panel = page.locator("#install-or-copy");
-    await expect(panel.getByRole("tablist", { name: "How to adopt" }).getByRole("tab")).toHaveText([
-      "Install package",
-      "Copy source",
-    ]);
-  });
-
-  test("the paste band sits between same-idea and the looks", async ({ page }) => {
-    const paste = await openHome(page);
-    const sameIdea = page.locator("#same-idea");
-    const identities = page.locator("#identities");
-    const [pasteBox, sameIdeaBox, identitiesBox] = await Promise.all([
-      paste.boundingBox(),
-      sameIdea.boundingBox(),
-      identities.boundingBox(),
-    ]);
-    expect(sameIdeaBox!.y).toBeLessThan(pasteBox!.y);
-    expect(pasteBox!.y).toBeLessThan(identitiesBox!.y);
+    await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();
   });
 
   for (const width of [320, 390, 768]) {

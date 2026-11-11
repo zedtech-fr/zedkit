@@ -33,7 +33,7 @@ Install from npm or copy the source through the shadcn registry.
 agent installs `zedkit-ai`, interviews you about the repo, and writes rules that
 match it. Cursor, Claude Code, Codex and friends share one set of skills,
 subagents, review and definition-of-done checks, validated in CI.
-([Prompt and file tree](https://zedkit.app/#ai-setup).)
+([Combined setup prompt](https://zedkit.app/#paste).)
 
 **🧱 The boring parts, done right** — SEO metadata, server helpers, storage,
 flags, i18n, observability: small, typed, dependency-light packages.
