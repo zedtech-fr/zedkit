@@ -17,6 +17,38 @@ import {
   type AgentConsoleRun,
 } from "./agent-console-model.js";
 
+function ConsoleRunMeta({
+  run,
+  copy,
+  locale,
+}: {
+  run: AgentConsoleRun;
+  copy: AgentConsoleCopy;
+  locale: string;
+}) {
+  const reviewHref = httpHref(run.postedReviewHref);
+  return (
+    <Stack data-slot="agent-console-run" gap="sm">
+      <div className="flex flex-wrap items-center gap-stack-tight">
+        {run.pr != null ? <Badge variant="meta">{formatMessage(copy.pr, { n: run.pr })}</Badge> : null}
+        {run.sha ? <Badge variant="meta">{shortSha(run.sha)}</Badge> : null}
+        {run.reviewSize ? <Badge variant="meta">{run.reviewSize}</Badge> : null}
+        {run.verdict ? <Badge variant="meta">{run.verdict}</Badge> : null}
+        {run.confidence != null ? (
+          <Badge variant="meta">{formatMessage(copy.confidence, { n: run.confidence })}</Badge>
+        ) : null}
+      </div>
+      <Text typeRole="small">{run.engineLabel}</Text>
+      <Text typeRole="caption">{durationText(run.durationMs, locale)}</Text>
+      {reviewHref ? (
+        <Button variant="link" size="sm" asChild>
+          <a href={reviewHref}>{copy.postedReview}</a>
+        </Button>
+      ) : null}
+    </Stack>
+  );
+}
+
 export function ConsoleSidebar({
   run,
   items,
@@ -32,27 +64,9 @@ export function ConsoleSidebar({
   locale: string;
   onSelect: (id: string) => void;
 }) {
-  const reviewHref = httpHref(run.postedReviewHref);
   return (
     <nav aria-label={copy.agentsNav} className="flex flex-col gap-stack-sm surface-pad-md">
-      <Stack data-slot="agent-console-run" gap="sm">
-        <div className="flex flex-wrap items-center gap-stack-tight">
-          {run.pr != null ? <Badge variant="meta">{formatMessage(copy.pr, { n: run.pr })}</Badge> : null}
-          {run.sha ? <Badge variant="meta">{shortSha(run.sha)}</Badge> : null}
-          {run.reviewSize ? <Badge variant="meta">{run.reviewSize}</Badge> : null}
-          {run.verdict ? <Badge variant="meta">{run.verdict}</Badge> : null}
-          {run.confidence != null ? (
-            <Badge variant="meta">{formatMessage(copy.confidence, { n: run.confidence })}</Badge>
-          ) : null}
-        </div>
-        <Text typeRole="small">{run.engineLabel}</Text>
-        <Text typeRole="caption">{durationText(run.durationMs, locale)}</Text>
-        {reviewHref ? (
-          <Button variant="link" size="sm" asChild>
-            <a href={reviewHref}>{copy.postedReview}</a>
-          </Button>
-        ) : null}
-      </Stack>
+      <ConsoleRunMeta run={run} copy={copy} locale={locale} />
       {groupConsoleItems(items).map((group) => (
         <SidebarNavGroup key={group.kind} label={groupLabel(group.kind, copy)} open>
           <ul className="flex list-none flex-col gap-stack-tight">
