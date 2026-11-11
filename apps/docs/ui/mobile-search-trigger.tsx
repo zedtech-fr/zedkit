@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 import { useSearchContext } from "fumadocs-ui/contexts/search";
+import { IconButton } from "@zedtech/zedkit-ui";
+import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
 const iconButtonClassName =
   "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
@@ -21,15 +23,16 @@ export function MobileSearchTrigger({ className }: { className?: string }) {
   }, []);
 
   return (
-    <button
+    <IconButton
       ref={triggerRef}
-      type="button"
-      aria-label="Search the documentation"
+      label={siteChromeCopy.search.triggerAriaLabel}
+      variant="ghost"
+      size="icon"
       data-mobile-search=""
       className={className ?? iconButtonClassName}
       onClick={() => setOpenSearch(true)}
     >
       <Search aria-hidden="true" className="size-icon" />
-    </button>
+    </IconButton>
   );
 }
