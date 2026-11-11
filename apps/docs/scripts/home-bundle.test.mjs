@@ -71,7 +71,9 @@ test("home hero lead is the joint title, one Setup entry, no kit tabs (#111)", (
   assert.match(copy, /getStarted: "Get started"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
   assert.doesNotMatch(actions + copy, /Browse components/);
-  assert.match(nav, /text: "Documentation"/);
+  assert.match(nav, /text: "AI"/);
+  assert.match(nav, /text: "UI"/);
+  assert.match(nav, /text: "Docs"/);
   assert.match(nav, /text: "Catalog"/);
   assert.doesNotMatch(nav, /text: "Reviews"/);
   assert.doesNotMatch(nav, /text: "Issues"/);
