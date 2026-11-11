@@ -39,6 +39,7 @@ import {
   ScrollScenesPricingDemo,
 } from "./scroll-scenes-demo";
 import { PromptInputCompleteDemo, PromptInputDemo } from "./prompt-input-demo";
+import { TranscriptRowsBurstDemo, TranscriptRowsDemo } from "./transcript-rows-demo";
 import { StickyAsideDemo, StickyAsideDocStepsDemo } from "./sticky-aside-demo";
 import { CalendarDemo } from "./calendar-demo";
 import { CardDemo } from "./card-demo";
@@ -270,6 +271,8 @@ export const demoRegistry = {
   ScrollScenesPricingDemo: { Demo: ScrollScenesPricingDemo, file: "scroll-scenes-demo.tsx", pinned: true },
   PromptInputCompleteDemo: { Demo: PromptInputCompleteDemo, file: "prompt-input-demo.tsx" },
   PromptInputDemo: { Demo: PromptInputDemo, file: "prompt-input-demo.tsx" },
+  TranscriptRowsBurstDemo: { Demo: TranscriptRowsBurstDemo, file: "transcript-rows-demo.tsx" },
+  TranscriptRowsDemo: { Demo: TranscriptRowsDemo, file: "transcript-rows-demo.tsx" },
   StickyAsideDemo: { Demo: StickyAsideDemo, file: "sticky-aside-demo.tsx" },
   StickyAsideDocStepsDemo: { Demo: StickyAsideDocStepsDemo, file: "sticky-aside-demo.tsx" },
   ToasterDemo: { Demo: ToasterDemo, file: "toaster-demo.tsx", center: true },

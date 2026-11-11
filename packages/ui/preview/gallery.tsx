@@ -3,6 +3,7 @@ import {
   AlertDescription,
   AlertTitle,
   AppShell,
+  AssistantMessage,
   Badge,
   Button,
   Calendar,
@@ -80,10 +81,13 @@ import {
   TabsTrigger,
   Text,
   Textarea,
+  ThinkingRow,
   Toaster,
+  ToolCallRow,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  TranscriptBurst,
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
@@ -228,6 +232,29 @@ const ok = true;
 const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 \`\`\`
 `}</Markdown>
+            <ThinkingRow text="Checking open invoices." />
+            <ToolCallRow name="listInvoices">{`{"status":"open"}`}</ToolCallRow>
+            <ToolCallRow name="searchDocs" open>
+              {`query: refunds`}
+            </ToolCallRow>
+            <ToolCallRow
+              name="listInvoices"
+              status={<StatusLabel tone="saved">Done</StatusLabel>}
+              duration="1m 04s"
+            >
+              {`{"status":"open"}`}
+            </ToolCallRow>
+            <ToolCallRow
+              name="searchDocs"
+              status={<StatusLabel tone="loading">Running searchDocs…</StatusLabel>}
+            >
+              {`query: refunds`}
+            </ToolCallRow>
+            <AssistantMessage>{"Found **three** open invoices."}</AssistantMessage>
+            <TranscriptBurst aria-label="Tool calls">
+              <ToolCallRow name="searchDocs">{`query: refunds`}</ToolCallRow>
+              <ToolCallRow name="readFile">{`path: refunds.md`}</ToolCallRow>
+            </TranscriptBurst>
           </div>
         </GallerySection>
 

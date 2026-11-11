@@ -121,6 +121,7 @@ kit packages.
   work by the same author.
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards, or pick-one with `multiple={false}`).
 - Detail: `DetailPanel` (key-value rows, or `variant="grid"` stats), `LivePulse` (live indicator).
+- Transcript: `ToolCallRow`, `ThinkingRow`, `AssistantMessage`, `TranscriptBurst`, `groupToolCallBursts`.
 - Marketing (`@zedtech/zedkit-ui/marketing`, separate entry): `GlassSurface`.
 
 ## Provenance

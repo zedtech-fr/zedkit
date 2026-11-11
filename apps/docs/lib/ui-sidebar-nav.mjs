@@ -14,6 +14,7 @@ const SOURCE_SEGMENT_GROUP = {
   feedback: "Data and states",
   "data-table": "Data and states",
   surfaces: "Data and states",
+  transcript: "Data and states",
 };
 
 const NEED_GROUP_OVERRIDE = {

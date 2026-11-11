@@ -1732,7 +1732,7 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Short name: Markdown
 - Audience: App authors rendering untrusted notes or README-like copy as React.
 - Purpose: Turn CommonMark into React elements with sanitized, inert HTML and script vectors, info-coloured links, and wrapping fences.
-- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). The host CSP is what stops CommonMark `http`/`https` images from loading unexpected content; this wrapper still renders those as `<img>`. `data:` image src is stripped.
+- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). The host CSP is what stops CommonMark `http`/`https` images from loading unexpected content; this wrapper still renders those as `<img>` with `referrerPolicy=no-referrer` and `loading=lazy`. `data:` image src is stripped.
 - When not to use: For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.
 - See also: `Render headings and body text without raw tags`
 - A11y: Headings come from the source (one `h1` per page). Links open in the same tab (`rel="noopener noreferrer"` is defense-in-depth) and use `focus-ring`. Only `a`, `pre`, `code`, and `img` carry extra classes. Fenced code wraps (`wrap-anywhere`). Info colour marks references, not primary actions.
@@ -1746,6 +1746,55 @@ import { Markdown } from "@zedtech/zedkit-ui";
 
 A [docs](https://example.com) link and \`code\`.`}
 </Markdown>
+```
+
+## Render a live assistant transcript from rows
+
+- Import: `@zedtech/zedkit-ui` — `ToolCallRow`, `ToolCallRowProps`, `ThinkingRow`, `ThinkingRowProps`, `AssistantMessage`, `AssistantMessageProps`, `TranscriptBurst`, `TranscriptBurstProps`, `groupToolCallBursts`, `TranscriptGroupData`
+- Wraps: `lucide-react`, `react-markdown`, `rehype-sanitize`
+- Status: alpha
+- Short name: ToolCallRow
+- Audience: App authors wiring a live assistant transcript from kit rows.
+- Purpose: Render a live assistant log from collapsed tool-call rows, thinking text, finished markdown, and grouped consecutive tool calls.
+- When to use: When the caller already has a log of tool calls, thinking, and finished assistant turns and needs rows, not a host.
+- When not to use: For a prompt composer — use `Compose a chat prompt`. For a full chat shell — compose `Lay out an admin page (sidebar + topbar + header)` with `Follow a growing log to the latest`. For unsanitized HTML.
+- See also: `Name an operation in progress`, `Render Markdown without raw HTML`, `Follow a growing log to the latest`, `Format a compact duration`, `Show a status or count badge`
+- Examples: Simple, Burst
+- A11y: ToolCallRow is native `details`/`summary` (Enter/Space, find-in-page), collapsed by default. The tool name is the summary's accessible name; status and duration stay in the tree so a nested StatusLabel `role=status` can announce. Summary is `min-h-target` (44px on a phone). The chevron is `aria-hidden`. Truncation uses `title={name}` for sighted hover. ThinkingRow reuses StreamText (polite live region, `aria-atomic=false`); pass `live={false}` when a parent already announces. AssistantMessage is sanitized Markdown (same-tab info links). TranscriptBurst is a presentational `role=group` slot matching `Stack gap="sm"`; pass `aria-label` to name the group.
+- Registry: transcript-rows
+- Troubleshooting: A parent live log already announces — pass `live={false}` on ThinkingRow (Simple leaves the default). Status and duration are slots; this module does not import StatusLabel, Badge, or formatDuration. `duration` is a string (for example `formatDuration` output). Consecutive `kind === "tool"` items group only at length ≥ 2; a single tool stays an item. `kind` is case-sensitive (`"Tool"` is not a tool). Key rows by a stable `id`, not `name`. Pass a non-empty `name`; empty still renders an unnamed disclosure. `name` is the summary label, not HTML `details` accordion grouping. No kit chrome strings — the caller owns the tool name. Do not add a border on TranscriptBurst.
+
+```ts
+import { AssistantMessage, StatusLabel, ThinkingRow, ToolCallRow } from "@zedtech/zedkit-ui";
+<ThinkingRow text="Checking open invoices." />
+<ToolCallRow name="listInvoices" status={<StatusLabel tone="saved">Done</StatusLabel>} duration="1m 04s">
+  {`{"status":"open"}`}
+</ToolCallRow>
+<ToolCallRow name="searchDocs" status={<StatusLabel tone="loading">Running searchDocs…</StatusLabel>}>
+  {`query: refunds`}
+</ToolCallRow>
+<AssistantMessage>{"Found three open invoices."}</AssistantMessage>
+```
+
+```ts
+import { AssistantMessage, ToolCallRow, TranscriptBurst, groupToolCallBursts } from "@zedtech/zedkit-ui";
+const items = [
+  { kind: "tool", id: "searchDocs", name: "searchDocs", body: "query: refunds" },
+  { kind: "tool", id: "readFile", name: "readFile", body: "path: refunds.md" },
+  { kind: "assistant", id: "reply", body: "Refunds take 5 to 7 days." },
+  { kind: "tool", id: "listRefunds", name: "listRefunds", body: "status: open" },
+];
+{groupToolCallBursts(items).map((group) =>
+  group.type === "burst" ? (
+    <TranscriptBurst key={group.items.map((row) => row.id).join("-")} aria-label="Tool calls">
+      {group.items.map((row) => <ToolCallRow key={row.id} name={row.name}>{row.body}</ToolCallRow>)}
+    </TranscriptBurst>
+  ) : group.item.kind === "tool" ? (
+    <ToolCallRow key={group.item.id} name={group.item.name}>{group.item.body}</ToolCallRow>
+  ) : (
+    <AssistantMessage key={group.item.id}>{group.item.body}</AssistantMessage>
+  ),
+)}
 ```
 
 ## Call out a notice or an error state

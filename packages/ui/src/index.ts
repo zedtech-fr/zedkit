@@ -240,6 +240,18 @@ export {
 } from "./typography/typography.js";
 export { WordRoll, type WordRollProps } from "./typography/word-roll.js";
 export { Markdown, type MarkdownProps } from "./typography/markdown.js";
+export {
+  AssistantMessage,
+  ThinkingRow,
+  ToolCallRow,
+  TranscriptBurst,
+  groupToolCallBursts,
+  type AssistantMessageProps,
+  type ThinkingRowProps,
+  type ToolCallRowProps,
+  type TranscriptBurstProps,
+  type TranscriptGroupData,
+} from "./transcript/transcript-rows.js";
 export { cn } from "./utils.js";
 export { CardSkeleton, type CardSkeletonProps } from "./surfaces/card-skeleton.js";
 export { DataTableSkeleton, type DataTableSkeletonProps } from "./data-table/data-table-skeleton.js";

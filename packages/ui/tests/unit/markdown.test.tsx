@@ -102,6 +102,8 @@ const fence = "ok";
     expect(img).toBeTruthy();
     expect(img?.getAttribute("src")).toBe("https://example.com/a.png");
     expect(img?.getAttribute("alt")).toBe("diagram");
+    expect(img?.getAttribute("referrerpolicy")).toBe("no-referrer");
+    expect(img?.getAttribute("loading")).toBe("lazy");
     expect(img?.className).toContain("max-w-full");
     expect(img?.className).toContain("h-auto");
   });
