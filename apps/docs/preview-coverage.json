@@ -22,7 +22,8 @@
     "Reset scroll on route change::Next.js root": "Renders nothing; the docs site itself runs it on every page change.",
     "Add depth with parallax layers::Hero with far background": "Scroll-driven CSS needs a real viewport; covered by package tests until the docs lot.",
     "Add depth with parallax layers::Named depth layer": "Scroll-driven CSS needs a real viewport; covered by package tests until the docs lot.",
-    "Cycle a word in a clipped slot::Inline in a heading": "Live on the AI setup guide H1; the catalog snippet is copy-paste, not a second demo."
+    "Cycle a word in a clipped slot::Inline in a heading": "Live on the AI setup guide H1; the catalog snippet is copy-paste, not a second demo.",
+    "Render Markdown without raw HTML::Simple": "Catalog snippet is copy-paste, not a live demo; UI gallery specimen covers the look."
   },
   "pending": []
 }

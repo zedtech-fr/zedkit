@@ -2,4 +2,4 @@
 "@zedtech/zedkit-ui": minor
 ---
 
-Add `react-markdown` and `rehype-sanitize` as dependencies of the UI package for the sanitized Markdown renderer.
+Add a sanitized `Markdown` host wrapping `react-markdown` and `rehype-sanitize`: CommonMark to React, no raw HTML, info-coloured links with `rel="noopener noreferrer"`.

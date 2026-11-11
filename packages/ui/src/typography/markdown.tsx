@@ -1,0 +1,66 @@
+import type { ComponentProps } from "react";
+import ReactMarkdown, { type ExtraProps } from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
+
+import { cn } from "../utils.js";
+
+export type MarkdownProps = {
+  children: string;
+  className?: string;
+};
+
+const rehypePlugins = [rehypeSanitize];
+
+function omitNode<T extends ExtraProps>(props: T): Omit<T, "node"> {
+  const rest = { ...props };
+  delete rest.node;
+  return rest;
+}
+
+function MarkdownAnchor(props: ComponentProps<"a"> & ExtraProps) {
+  const { className, children, ...rest } = omitNode(props);
+  return (
+    <a className={cn("text-info underline link-offset", className)} {...rest} rel="noopener noreferrer">
+      {children}
+    </a>
+  );
+}
+
+function MarkdownPre(props: ComponentProps<"pre"> & ExtraProps) {
+  const { className, ...rest } = omitNode(props);
+  return (
+    <pre
+      className={cn(
+        "content-shrink overflow-x-auto rounded-md bg-muted px-control-inline py-control-block font-mono text-dense",
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+function MarkdownCode(props: ComponentProps<"code"> & ExtraProps) {
+  const { className, ...rest } = omitNode(props);
+  return <code className={cn("rounded-md bg-muted font-mono text-dense", className)} {...rest} />;
+}
+
+const markdownComponents = {
+  a: MarkdownAnchor,
+  pre: MarkdownPre,
+  code: MarkdownCode,
+};
+
+/**
+ * CommonMark to React. Raw HTML stays text; plugins and URL policy stay inside.
+ */
+function Markdown({ children, className }: MarkdownProps) {
+  return (
+    <div data-slot="markdown" className={cn(className)}>
+      <ReactMarkdown rehypePlugins={rehypePlugins} components={markdownComponents}>
+        {children}
+      </ReactMarkdown>
+    </div>
+  );
+}
+
+export { Markdown };

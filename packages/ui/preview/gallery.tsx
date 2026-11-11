@@ -40,6 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Heading,
+  Markdown,
   Input,
   Label,
   LivePulse,
@@ -213,6 +214,15 @@ export function Gallery() {
             <Heading level={2}>Section title</Heading>
             <Text>Body copy for paragraphs.</Text>
             <Text variant="muted">Muted secondary copy.</Text>
+            {/* Markdown specimen — kit for app authors; their readers need links as references, not primary actions. Info colour + unhighlighted fences because they are copy, not CTAs, and highlighters would need innerHTML. */}
+            <Markdown>{`## Note
+
+A [docs](https://example.com) link and \`token\`.
+
+\`\`\`
+const ok = true;
+\`\`\`
+`}</Markdown>
           </div>
         </GallerySection>
 

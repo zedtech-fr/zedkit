@@ -1606,7 +1606,7 @@ import { Container, Section } from "@zedtech/zedkit-ui";
 - Audience: Developers writing kit pages with consistent type.
 - Purpose: Heading levels and Text variants with theme-aware styles; visual roles decouple size from semantic level (`typeRole` / `typeRoleClass`).
 - When to use: For every heading and paragraph in kit UI.
-- When not to use: For raw HTML emails or markdown — style those separately.
+- When not to use: For Markdown source — use `Render Markdown without raw HTML`. For raw HTML emails — style those separately.
 - See also: `Stack content and group titled sections`
 - Examples: Simple, Heading styles on a link (asChild)
 - A11y: Keep one `h1` per page; `asChild` merges styles onto the child — keep the outline meaningful.
@@ -1636,6 +1636,28 @@ import { Heading } from "@zedtech/zedkit-ui";
 <Heading level={2} asChild>
   <a href="#section">Section title as a link</a>
 </Heading>
+```
+
+## Render Markdown without raw HTML
+
+- Import: `@zedtech/zedkit-ui` — `Markdown`, `MarkdownProps`
+- Wraps: `react-markdown`, `rehype-sanitize`
+- Status: alpha
+- Short name: Markdown
+- Audience: App authors rendering untrusted notes or README-like copy as React.
+- Purpose: Turn CommonMark into React elements with sanitized HTML, info-coloured links, and fenced code that does not execute.
+- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links).
+- When not to use: For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.
+- See also: `Render headings and body text without raw tags`
+
+```ts
+import { Markdown } from "@zedtech/zedkit-ui";
+
+<Markdown>
+  {`# Note
+
+A [docs](https://example.com) link and \`code\`.`}
+</Markdown>
 ```
 
 ## Call out a notice or an error state

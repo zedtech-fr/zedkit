@@ -1159,6 +1159,15 @@ export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "
     title?: string;
 }
 
+// @public
+export function Markdown(input: MarkdownProps): JSX.Element;
+
+// @public (undocumented)
+export type MarkdownProps = {
+    children: string;
+    className?: string;
+};
+
 // @public (undocumented)
 export const MOTION_CHANGE_EVENT = "zk-motion-change";
 
