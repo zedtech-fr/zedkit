@@ -5170,7 +5170,7 @@
           "shortName": "Markdown",
           "audience": "App authors rendering untrusted notes or README-like copy as React.",
           "purpose": "Turn CommonMark into React elements with sanitized, inert HTML and script vectors, info-coloured links, and wrapping fences.",
-          "whenToUse": "When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). The host CSP is what stops CommonMark `http`/`https` images from loading unexpected content; this wrapper still renders those as `<img>`. `data:` image src is stripped.",
+          "whenToUse": "When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). The host CSP is what stops CommonMark `http`/`https` images from loading unexpected content; this wrapper still renders those as `<img>` with `referrerPolicy=no-referrer` and `loading=lazy`. `data:` image src is stripped.",
           "whenNotToUse": "For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.",
           "derivedFrom": null,
           "example": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`## Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>",
@@ -5201,7 +5201,7 @@
         {
           "need": "Render a live assistant transcript from rows",
           "import": "`@zedtech/zedkit-ui` — `ToolCallRow`, `ToolCallRowProps`, `ThinkingRow`, `ThinkingRowProps`, `AssistantMessage`, `AssistantMessageProps`, `TranscriptBurst`, `TranscriptBurstProps`, `groupToolCallBursts`, `TranscriptGroupData`",
-          "wraps": "`lucide-react`",
+          "wraps": "`lucide-react`, `react-markdown`, `rehype-sanitize`",
           "status": "alpha",
           "shortName": "ToolCallRow",
           "audience": "App authors wiring a live assistant transcript from kit rows.",
@@ -5209,15 +5209,15 @@
           "whenToUse": "When the caller already has a log of tool calls, thinking, and finished assistant turns and needs rows, not a host.",
           "whenNotToUse": "For a prompt composer — use `Compose a chat prompt`. For a full chat shell — compose `Lay out an admin page (sidebar + topbar + header)` with `Follow a growing log to the latest`. For unsanitized HTML.",
           "derivedFrom": null,
-          "example": "import { AssistantMessage, StatusLabel, ThinkingRow, ToolCallRow } from \"@zedtech/zedkit-ui\";\n<ThinkingRow text=\"Checking open invoices.\" live={false} />\n<ToolCallRow name=\"listInvoices\" status={<StatusLabel tone=\"saved\">Done</StatusLabel>} duration=\"4s\">\n  {`{\"status\":\"open\"}`}\n</ToolCallRow>\n<AssistantMessage>{\"Found three open invoices.\"}</AssistantMessage>",
+          "example": "import { AssistantMessage, StatusLabel, ThinkingRow, ToolCallRow } from \"@zedtech/zedkit-ui\";\n<ThinkingRow text=\"Checking open invoices.\" />\n<ToolCallRow name=\"listInvoices\" status={<StatusLabel tone=\"saved\">Done</StatusLabel>} duration=\"1m 04s\">\n  {`{\"status\":\"open\"}`}\n</ToolCallRow>\n<ToolCallRow name=\"searchDocs\" status={<StatusLabel tone=\"loading\">Running searchDocs…</StatusLabel>}>\n  {`query: refunds`}\n</ToolCallRow>\n<AssistantMessage>{\"Found three open invoices.\"}</AssistantMessage>",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { AssistantMessage, StatusLabel, ThinkingRow, ToolCallRow } from \"@zedtech/zedkit-ui\";\n<ThinkingRow text=\"Checking open invoices.\" live={false} />\n<ToolCallRow name=\"listInvoices\" status={<StatusLabel tone=\"saved\">Done</StatusLabel>} duration=\"4s\">\n  {`{\"status\":\"open\"}`}\n</ToolCallRow>\n<AssistantMessage>{\"Found three open invoices.\"}</AssistantMessage>"
+              "code": "import { AssistantMessage, StatusLabel, ThinkingRow, ToolCallRow } from \"@zedtech/zedkit-ui\";\n<ThinkingRow text=\"Checking open invoices.\" />\n<ToolCallRow name=\"listInvoices\" status={<StatusLabel tone=\"saved\">Done</StatusLabel>} duration=\"1m 04s\">\n  {`{\"status\":\"open\"}`}\n</ToolCallRow>\n<ToolCallRow name=\"searchDocs\" status={<StatusLabel tone=\"loading\">Running searchDocs…</StatusLabel>}>\n  {`query: refunds`}\n</ToolCallRow>\n<AssistantMessage>{\"Found three open invoices.\"}</AssistantMessage>"
             },
             {
               "title": "Burst",
-              "code": "import { AssistantMessage, ToolCallRow, TranscriptBurst, groupToolCallBursts } from \"@zedtech/zedkit-ui\";\nconst groups = groupToolCallBursts([\n  { kind: \"tool\", name: \"searchDocs\" },\n  { kind: \"tool\", name: \"readFile\" },\n]);\n<TranscriptBurst>{groups[0].type === \"burst\" ? groups[0].items.map((row) => <ToolCallRow key={row.name} name={row.name} />) : null}</TranscriptBurst>\n<AssistantMessage>{\"Refunds take 5 to 7 days.\"}</AssistantMessage>"
+              "code": "import { AssistantMessage, ToolCallRow, TranscriptBurst, groupToolCallBursts } from \"@zedtech/zedkit-ui\";\nconst items = [\n  { kind: \"tool\", id: \"searchDocs\", name: \"searchDocs\", body: \"query: refunds\" },\n  { kind: \"tool\", id: \"readFile\", name: \"readFile\", body: \"path: refunds.md\" },\n  { kind: \"assistant\", id: \"reply\", body: \"Refunds take 5 to 7 days.\" },\n  { kind: \"tool\", id: \"listRefunds\", name: \"listRefunds\", body: \"status: open\" },\n];\n{groupToolCallBursts(items).map((group) =>\n  group.type === \"burst\" ? (\n    <TranscriptBurst key={group.items.map((row) => row.id).join(\"-\")} aria-label=\"Tool calls\">\n      {group.items.map((row) => <ToolCallRow key={row.id} name={row.name}>{row.body}</ToolCallRow>)}\n    </TranscriptBurst>\n  ) : group.item.kind === \"tool\" ? (\n    <ToolCallRow key={group.item.id} name={group.item.name}>{group.item.body}</ToolCallRow>\n  ) : (\n    <AssistantMessage key={group.item.id}>{group.item.body}</AssistantMessage>\n  ),\n)}"
             }
           ],
           "adoption": {
@@ -5241,8 +5241,8 @@
             ]
           },
           "registry": "transcript-rows",
-          "a11y": "ToolCallRow is native `details`/`summary` (Enter/Space, find-in-page), collapsed by default. The tool name is the summary's accessible name; status and duration slots are `aria-hidden`. Summary is `min-h-target` (44px on a phone). The chevron is `aria-hidden`. ThinkingRow reuses StreamText (polite live region, `aria-atomic=false`); pass `live={false}` when a parent already announces. AssistantMessage is sanitized Markdown (same-tab info links). TranscriptBurst is a grouping host with no extra disclosure.",
-          "troubleshooting": "A parent live log already announces — pass `live={false}` on ThinkingRow. Status and duration are slots; this module does not import StatusLabel, Badge, or formatDuration. Consecutive `kind === \"tool\"` items group only at length ≥ 2; a single tool stays an item. `kind` is case-sensitive (`\"Tool\"` is not a tool). Empty `name` still renders a details row. No kit chrome strings — the caller owns the tool name. Do not add a border on TranscriptBurst.",
+          "a11y": "ToolCallRow is native `details`/`summary` (Enter/Space, find-in-page), collapsed by default. The tool name is the summary's accessible name; status and duration stay in the tree so a nested StatusLabel `role=status` can announce. Summary is `min-h-target` (44px on a phone). The chevron is `aria-hidden`. Truncation uses `title={name}` for sighted hover. ThinkingRow reuses StreamText (polite live region, `aria-atomic=false`); pass `live={false}` when a parent already announces. AssistantMessage is sanitized Markdown (same-tab info links). TranscriptBurst is a presentational `role=group` slot matching `Stack gap=\"sm\"`; pass `aria-label` to name the group.",
+          "troubleshooting": "A parent live log already announces — pass `live={false}` on ThinkingRow (Simple leaves the default). Status and duration are slots; this module does not import StatusLabel, Badge, or formatDuration. `duration` is a string (for example `formatDuration` output). Consecutive `kind === \"tool\"` items group only at length ≥ 2; a single tool stays an item. `kind` is case-sensitive (`\"Tool\"` is not a tool). Key rows by a stable `id`, not `name`. Pass a non-empty `name`; empty still renders an unnamed disclosure. `name` is the summary label, not HTML `details` accordion grouping. No kit chrome strings — the caller owns the tool name. Do not add a border on TranscriptBurst.",
           "seeAlso": [
             "Name an operation in progress",
             "Render Markdown without raw HTML",

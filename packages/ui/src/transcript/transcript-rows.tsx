@@ -9,6 +9,12 @@ export type TranscriptGroupData<T extends { kind: string }> =
   | { type: "burst"; items: T[] }
   | { type: "item"; item: T };
 
+/**
+ * Groups consecutive items whose `kind` is exactly `"tool"` into a burst when
+ * the run is length ≥ 2. Other `kind` values stay as items (case-sensitive:
+ * `"Tool"` is not a tool). Extra fields on `T` are preserved; key lists by a
+ * stable `id`, not `name`.
+ */
 export function groupToolCallBursts<T extends { kind: string }>(
   items: readonly T[],
 ): TranscriptGroupData<T>[] {
@@ -38,9 +44,14 @@ export function groupToolCallBursts<T extends { kind: string }>(
 }
 
 export type ToolCallRowProps = React.ComponentProps<"details"> & {
+  /**
+   * Tool label on the summary. Not HTML `details` `name` (native accordion
+   * grouping is not forwarded). Pass a non-empty string.
+   */
   name: string;
   status?: React.ReactNode;
-  duration?: React.ReactNode;
+  /** Compact caption (for example `formatDuration` output). */
+  duration?: string;
 };
 
 function ToolCallRow({ name, status, duration, className, children, ...props }: ToolCallRowProps) {
@@ -50,18 +61,16 @@ function ToolCallRow({ name, status, duration, className, children, ...props }: 
         data-slot="tool-call-row-trigger"
         className="flex min-h-target cursor-pointer list-none items-center gap-stack-sm rounded-md px-control-inline text-dense focus-ring-control [&::-webkit-details-marker]:hidden"
       >
-        <span className="content-shrink flex-1 truncate">{name}</span>
+        <span className="content-shrink flex-1 truncate" title={name}>
+          {name}
+        </span>
         {status != null ? (
-          <span data-slot="tool-call-row-status" className="shrink-0" aria-hidden>
+          <span data-slot="tool-call-row-status" className="shrink-0">
             {status}
           </span>
         ) : null}
         {duration != null ? (
-          <span
-            data-slot="tool-call-row-duration"
-            className="shrink-0 text-caption text-muted-foreground"
-            aria-hidden
-          >
+          <span data-slot="tool-call-row-duration" className="shrink-0 text-caption text-muted-foreground">
             {duration}
           </span>
         ) : null}
@@ -77,34 +86,36 @@ function ToolCallRow({ name, status, duration, className, children, ...props }: 
   );
 }
 
-export type ThinkingRowProps = {
+export type ThinkingRowProps = Omit<React.ComponentProps<"div">, "children"> & {
   text: string;
   /**
    * When true (default), StreamText is a polite live region. Pass false when a
    * parent already announces the log.
    */
   live?: boolean | undefined;
-  className?: string | undefined;
 };
 
-function ThinkingRow({ text, live = true, className }: ThinkingRowProps) {
+function ThinkingRow({ text, live = true, className, ...props }: ThinkingRowProps) {
   if (!text) return null;
   return (
-    <div data-slot="thinking-row" className={cn("text-dense text-muted-foreground", className)}>
+    <div
+      data-slot="thinking-row"
+      className={cn("text-dense text-muted-foreground", className)}
+      {...props}
+    >
       <StreamText text={text} live={live} />
     </div>
   );
 }
 
-export type AssistantMessageProps = {
+export type AssistantMessageProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** CommonMark source string. */
   children: string;
-  className?: string | undefined;
 };
 
-function AssistantMessage({ children, className }: AssistantMessageProps) {
+function AssistantMessage({ children, className, ...props }: AssistantMessageProps) {
   return (
-    <div data-slot="assistant-message" className={cn("content-shrink", className)}>
+    <div data-slot="assistant-message" className={cn(className)} {...props}>
       <Markdown>{children}</Markdown>
     </div>
   );
@@ -112,10 +123,12 @@ function AssistantMessage({ children, className }: AssistantMessageProps) {
 
 export type TranscriptBurstProps = React.ComponentProps<"div">;
 
+/** Presentational slot matching `Stack gap="sm"`; pass `aria-label` to name the group. */
 function TranscriptBurst({ className, ...props }: TranscriptBurstProps) {
   return (
     <div
       data-slot="transcript-burst"
+      role="group"
       className={cn("flex flex-col gap-stack-sm", className)}
       {...props}
     />

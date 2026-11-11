@@ -139,9 +139,8 @@ export const ASSISTANT_STREAM_STAGES: readonly ["reading-reference", "picking-pa
 export function AssistantMessage(input: AssistantMessageProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export type AssistantMessageProps = {
+export type AssistantMessageProps = Omit<React_2.ComponentProps<"div">, "children"> & {
     children: string;
-    className?: string | undefined;
 };
 
 // @public (undocumented)
@@ -744,7 +743,7 @@ export type FormSubmitProps = Omit<ButtonProps, "type"> & {
     pendingLabel?: React_2.ReactNode;
 };
 
-// @public (undocumented)
+// @public
 export function groupToolCallBursts<T extends {
     kind: string;
 }>(items: readonly T[]): TranscriptGroupData<T>[];
@@ -1859,10 +1858,9 @@ export type ThemeScopeProps = React_2.ComponentProps<"div"> & {
 export function ThinkingRow(input: ThinkingRowProps): React_2.JSX.Element | null;
 
 // @public (undocumented)
-export type ThinkingRowProps = {
+export type ThinkingRowProps = Omit<React_2.ComponentProps<"div">, "children"> & {
     text: string;
     live?: boolean | undefined;
-    className?: string | undefined;
 };
 
 export { toast }
@@ -1885,7 +1883,7 @@ export function ToolCallRow(input: ToolCallRowProps): React_2.JSX.Element;
 export type ToolCallRowProps = React_2.ComponentProps<"details"> & {
     name: string;
     status?: React_2.ReactNode;
-    duration?: React_2.ReactNode;
+    duration?: string;
 };
 
 // @public (undocumented)
@@ -1903,7 +1901,7 @@ export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrim
 // @public (undocumented)
 export function TooltipTrigger(input: React_2.ComponentProps<typeof TooltipPrimitive.Trigger>): React_2.JSX.Element;
 
-// @public (undocumented)
+// @public
 export function TranscriptBurst(input: TranscriptBurstProps): React_2.JSX.Element;
 
 // @public (undocumented)

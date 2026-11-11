@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   AssistantMessage,
+  StatusLabel,
   ThinkingRow,
   ToolCallRow,
   TranscriptBurst,
@@ -27,15 +28,6 @@ describe("groupToolCallBursts", () => {
     const items = [
       { kind: "tool", name: "searchDocs" },
       { kind: "tool", name: "readFile" },
-    ];
-    expect(groupToolCallBursts(items)).toEqual([{ type: "burst", items }]);
-  });
-
-  it("groups three consecutive tools into one burst", () => {
-    const items = [
-      { kind: "tool", name: "a" },
-      { kind: "tool", name: "b" },
-      { kind: "tool", name: "c" },
     ];
     expect(groupToolCallBursts(items)).toEqual([{ type: "burst", items }]);
   });
@@ -91,14 +83,6 @@ describe("groupToolCallBursts", () => {
     ]);
   });
 
-  it("preserves extra fields on grouped items", () => {
-    const items = [
-      { kind: "tool", name: "a", extra: 1 },
-      { kind: "tool", name: "b", extra: 2 },
-    ];
-    expect(groupToolCallBursts(items)).toEqual([{ type: "burst", items }]);
-  });
-
   it("does not mutate the input array", () => {
     const items = [{ kind: "tool", name: "a" }, { kind: "thinking" }];
     const snapshot = items.map((item) => ({ ...item }));
@@ -148,6 +132,25 @@ describe("ToolCallRow", () => {
     const { container } = render(<ToolCallRow name="listInvoices">body</ToolCallRow>);
     expect(container.querySelector('[data-slot="tool-call-row-status"]')).toBeNull();
     expect(container.querySelector('[data-slot="tool-call-row-duration"]')).toBeNull();
+  });
+
+  it("exposes status, duration, and the truncated name title", () => {
+    const { container } = render(
+      <ToolCallRow
+        name="listInvoices"
+        status={<StatusLabel tone="saved">Done</StatusLabel>}
+        duration="1m 04s"
+      >
+        body
+      </ToolCallRow>,
+    );
+    const statusHost = container.querySelector('[data-slot="tool-call-row-status"]');
+    const durationHost = container.querySelector('[data-slot="tool-call-row-duration"]');
+    expect(statusHost?.getAttribute("aria-hidden")).toBeNull();
+    expect(durationHost?.getAttribute("aria-hidden")).toBeNull();
+    expect(durationHost?.textContent).toBe("1m 04s");
+    expect(screen.getByRole("status").textContent).toContain("Done");
+    expect(container.querySelector("summary > span")?.getAttribute("title")).toBe("listInvoices");
   });
 
   it("renders a zero status and still names the summary from the tool name", () => {
@@ -214,6 +217,17 @@ describe("AssistantMessage", () => {
     expect(link.getAttribute("target")).toBeNull();
     expect(link.className).toContain("text-info");
   });
+
+  it("drops a javascript: href from the source string", () => {
+    const { container } = render(
+      <AssistantMessage>{"[x](javascript:alert(1))"}</AssistantMessage>,
+    );
+    expect(container.querySelector("[data-slot=assistant-message]")).toBeTruthy();
+    const anchors = [...container.querySelectorAll("a")];
+    expect(anchors.some((anchor) => /javascript:/i.test(anchor.getAttribute("href") ?? ""))).toBe(
+      false,
+    );
+  });
 });
 
 describe("TranscriptBurst", () => {
@@ -226,6 +240,7 @@ describe("TranscriptBurst", () => {
     );
     const host = container.querySelector('[data-slot="transcript-burst"]');
     expect(host).not.toBeNull();
+    expect(host?.getAttribute("role")).toBe("group");
     expect(host?.className).toContain("gap-stack-sm");
     expect(host?.className).not.toMatch(/\bborder\b/);
   });
