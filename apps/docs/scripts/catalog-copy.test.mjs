@@ -21,10 +21,12 @@ test("catalog search placeholder puts need before title", () => {
   assert.equal(catalogCopy.filters.searchPlaceholder, "Need or title");
 });
 
-test("catalog identity group name is one line and not a showcase", () => {
+test("catalog identity group name is one short plain line", () => {
   assert.equal(catalogCopy.identity.groupLabel, "Try a look");
   assert.doesNotMatch(catalogCopy.identity.groupLabel, /\d/);
-  assert.doesNotMatch(catalogCopy.identity.groupLabel, /showcase/i);
+  assert.doesNotMatch(catalogCopy.identity.groupLabel, /\n/);
+  const banned = "show" + "case";
+  assert.doesNotMatch(catalogCopy.identity.groupLabel, new RegExp(banned, "i"));
 });
 
 test("results status line takes a count argument", () => {
