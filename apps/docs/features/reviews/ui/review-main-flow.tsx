@@ -13,21 +13,18 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { reviewMainFlow, type ReviewMainFlow as ReviewMainFlowModel } from "../model/main-flow";
-import type { ReviewFindingDisposition, ReviewRecord, ReviewVerdict } from "../ports/review-port";
+import type { ReviewFindingDisposition, ReviewRecord } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-
-const VERDICT_BADGE: Record<ReviewVerdict, BadgeProps["variant"]> = {
-  approve: "success",
-  "request-changes": "warning",
-  comment: "secondary",
-  error: "destructive",
-};
+import { VERDICT_BADGE } from "./review-badges";
 
 const DISPOSITION_BADGE: Record<ReviewFindingDisposition, BadgeProps["variant"]> = {
   kept: "warning",
   downgraded: "secondary",
   dismissed: "outline",
 };
+
+const DISCLOSURE_SUMMARY =
+  "flex min-h-target cursor-pointer list-none items-center gap-stack-sm focus-ring-control [&::-webkit-details-marker]:hidden";
 
 function DecisionBand({
   decision,
@@ -40,10 +37,13 @@ function DecisionBand({
 }) {
   return (
     <Stack gap="sm">
+      <Heading level={2} typeRole="section">
+        {copy.pr.decision}
+      </Heading>
       <Stack direction="horizontal" gap="sm" className="flex-wrap">
         <Badge variant={VERDICT_BADGE[decision.verdict]}>{copy.verdict[decision.verdict]}</Badge>
         <Text typeRole="body">
-          {copy.pr.confidence} {decision.confidence}
+          {`${copy.pr.confidence} ${decision.confidence}${copy.pr.confidenceUnit}`}
         </Text>
         {extra}
       </Stack>
@@ -86,8 +86,8 @@ function MustChange({
         {copy.pr.mustChange}
       </Heading>
       <ul className="flex flex-col gap-stack-sm">
-        {blockers.map((blocker) => (
-          <li key={blocker.title}>
+        {blockers.map((blocker, index) => (
+          <li key={`${blocker.title}:${index}`}>
             <Text typeRole="body">{blocker.title}</Text>
             <Text variant="muted">{blocker.detail}</Text>
           </li>
@@ -106,15 +106,15 @@ function FirstPass({
 }) {
   return (
     <details>
-      <summary className="text-zk-type-label">
+      <summary className={DISCLOSURE_SUMMARY}>
         {copy.pr.firstPass}{" "}
         <Badge asChild variant="meta">
           <span>{copy.pr.outdated}</span>
         </Badge>
       </summary>
       <ul className="flex flex-col gap-stack-sm">
-        {findings.map((finding) => (
-          <li key={finding.title}>
+        {findings.map((finding, index) => (
+          <li key={`${finding.title}:${index}`}>
             <Stack direction="horizontal" gap="sm" className="flex-wrap">
               <Text typeRole="body">{finding.title}</Text>
               <Badge variant={DISPOSITION_BADGE[finding.disposition]}>
@@ -177,7 +177,7 @@ function RunHistory({
 function AgentDetail({ copy }: { copy: ReviewsCopy }) {
   return (
     <details>
-      <summary className="text-zk-type-label">{copy.pr.agentDetail}</summary>
+      <summary className={DISCLOSURE_SUMMARY}>{copy.pr.agentDetail}</summary>
       <EmptyState description={copy.pr.agentDetailEmpty} />
     </details>
   );
@@ -245,8 +245,8 @@ export function ReviewMainFlow({
   return (
     <>
       <DecisionBand decision={flow.decision} copy={copy} extra={decisionMeta} />
-      {panel}
       <FlowSections record={record} flow={flow} copy={copy} />
+      {panel}
     </>
   );
 }

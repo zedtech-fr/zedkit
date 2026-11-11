@@ -7,19 +7,13 @@ import {
   Stack,
   StatusLabel,
   UpdatedAgo,
-  type StatusLabelTone,
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewRecord, ReviewRun } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { ReviewAppearanceFrame } from "./appearance-panel";
+import { STATUS_TONE } from "./review-badges";
 import { ReviewMainFlow } from "./review-main-flow";
-
-const STATUS_TONE: Record<ReviewRun["status"], StatusLabelTone> = {
-  running: "loading",
-  done: "saved",
-  error: "error",
-};
 
 export function ReviewRunView({
   record,

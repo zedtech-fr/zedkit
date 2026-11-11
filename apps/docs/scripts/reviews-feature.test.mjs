@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import {
   DEFAULT_REVIEW_APPEARANCE,
@@ -10,7 +13,12 @@ import { createFixtureReviewPort } from "../features/reviews/adapters/fixture.ts
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
 import { filterReviewList } from "../features/reviews/model/list-filter.ts";
 import { reviewMainFlow } from "../features/reviews/model/main-flow.ts";
+import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import { toPublicReviews } from "../features/reviews/model/public-review.ts";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const reviewsRoot = join(here, "../features/reviews");
+const reviewsAppRoot = join(here, "../app/(site)/reviews");
 
 function sample(overrides = {}) {
   return {
@@ -197,9 +205,12 @@ test("list filter matches state, verdict, and search over title, number, and SHA
 });
 
 test("copy has a Must change heading and no Required actions string", () => {
+  assert.equal(reviewsCopy.pr.decision, "Decision");
   assert.equal(reviewsCopy.pr.mustChange, "Must change before merge");
   assert.equal(reviewsCopy.pr.firstPass, "First pass");
   assert.equal(reviewsCopy.pr.outdated, "Outdated");
+  assert.equal(reviewsCopy.pr.confidenceUnit, "%");
+  assert.equal(reviewsCopy.status.running, "Running at publish");
   assert.equal(reviewsCopy.disposition.kept, "Kept");
   assert.equal(reviewsCopy.disposition.downgraded, "Downgraded");
   assert.equal(reviewsCopy.disposition.dismissed, "Dismissed");
@@ -248,7 +259,7 @@ test("a superseded first pass is folded and keeps authored dispositions", () => 
     }),
   );
   assert.equal(flow.sections.includes("first-pass"), true);
-  assert.equal(flow.firstPass?.open, false);
+  assert.ok(flow.firstPass);
   assert.deepEqual(
     flow.firstPass?.findings.map((finding) => finding.disposition),
     ["kept", "downgraded", "dismissed"],
@@ -306,9 +317,87 @@ test("production superseded fixture labels mixed first-pass dispositions", async
   assert.equal(flow.sections[0], "decision");
   assert.equal(flow.sections[1], "must-change");
   assert.equal(flow.sections[2], "first-pass");
-  assert.equal(flow.firstPass?.open, false);
+  assert.ok(flow.firstPass);
   assert.deepEqual(
     flow.firstPass?.findings.map((finding) => finding.disposition),
     ["kept", "downgraded", "dismissed"],
   );
+});
+
+test("decision summary is trimmed and empty whitespace becomes an empty string", () => {
+  assert.equal(
+    reviewMainFlow(sample({ summary: "  Ready to merge.  " })).decision.summary,
+    "Ready to merge.",
+  );
+  assert.equal(reviewMainFlow(sample({ summary: "\n\t  \n" })).decision.summary, "");
+  assert.equal(
+    reviewMainFlow(sample({ summary: "The public review section is ready to merge." })).decision.summary,
+    "The public review section is ready to merge.",
+  );
+});
+
+test("confidence is clamped to 0-100 at the main-flow boundary", () => {
+  assert.equal(reviewMainFlow(sample({ confidence: -4 })).decision.confidence, 0);
+  assert.equal(reviewMainFlow(sample({ confidence: 140 })).decision.confidence, 100);
+  assert.equal(reviewMainFlow(sample({ confidence: 86 })).decision.confidence, 86);
+  assert.equal(reviewMainFlow(sample({ confidence: Number.NaN })).decision.confidence, 0);
+  assert.equal(reviewMainFlow(sample({ confidence: Number.POSITIVE_INFINITY })).decision.confidence, 0);
+});
+
+test("parsePrNumber accepts decimal integers and rejects the rest", () => {
+  assert.equal(parsePrNumber("71"), 71);
+  assert.equal(parsePrNumber("0"), 0);
+  assert.equal(parsePrNumber(""), null);
+  assert.equal(parsePrNumber("-1"), null);
+  assert.equal(parsePrNumber("12a"), null);
+  assert.equal(parsePrNumber("1.2"), null);
+  assert.equal(parsePrNumber("<script>"), null);
+});
+
+test("main flow UI leads with the decision, then blockers, then appearance", () => {
+  const source = readFileSync(join(reviewsRoot, "ui/review-main-flow.tsx"), "utf8");
+  const decisionAt = source.indexOf("<DecisionBand");
+  const sectionsAt = source.indexOf("<FlowSections");
+  const panelAt = source.indexOf("{panel}");
+  assert.ok(decisionAt >= 0);
+  assert.ok(sectionsAt > decisionAt);
+  assert.ok(panelAt > sectionsAt);
+  assert.match(source, /copy\.pr\.decision/);
+  assert.match(source, /copy\.pr\.confidenceUnit/);
+  assert.match(source, /min-h-target/);
+  assert.match(source, /focus-ring-control/);
+  assert.doesNotMatch(source, /key=\{blocker\.title\}/);
+  assert.doesNotMatch(source, /key=\{finding\.title\}/);
+  assert.match(source, /<details>/);
+  assert.doesNotMatch(source, /<details\s+open/);
+  assert.doesNotMatch(source, /\bopen:\s*false/);
+});
+
+test("verdict and status tones live in one shared module", () => {
+  const badges = readFileSync(join(reviewsRoot, "ui/review-badges.ts"), "utf8");
+  assert.match(badges, /export const VERDICT_BADGE/);
+  assert.match(badges, /export const STATUS_TONE/);
+  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx", "review-main-flow.tsx"]) {
+    const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
+    assert.match(source, /from "\.\/review-badges"/);
+    assert.doesNotMatch(source, /const VERDICT_BADGE/);
+    assert.doesNotMatch(source, /const STATUS_TONE/);
+  }
+});
+
+test("invalid PR metadata falls back to missing copy instead of the raw param", () => {
+  const prPage = readFileSync(join(reviewsAppRoot, "pr/[n]/page.tsx"), "utf8");
+  const runPage = readFileSync(join(reviewsAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  for (const source of [prPage, runPage]) {
+    assert.match(source, /parsePrNumber/);
+    assert.match(source, /reviewsCopy\.metadata\.missing/);
+    assert.doesNotMatch(source, /`\/reviews\/pr\/\$\{n\}`/);
+  }
+});
+
+test("reviews not-found uses missing copy and links back to the list", () => {
+  const source = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
+  assert.match(source, /reviewsCopy\.metadata\.missing\.title/);
+  assert.match(source, /href="\/reviews"/);
+  assert.match(source, /reviewsCopy\.pr\.back/);
 });

@@ -5,11 +5,11 @@
  * Customer personas: hurried visitor on a phone scanning a real review; maintainer reproducing a look via share link.
  * UI decisions:
  * - Final adjudicated decision first (verdict, confidence, short summary) — because: hurried reader needs the outcome before evidence.
- * - Must change only when remaining blockers exist; APPROVE has no such heading — because: an approval must not look like leftover work.
+ * - Must change only when remaining blockers exist; no blockers, no heading — because: leftover-work chrome must not appear when nothing remains to change.
  * - First pass folded and labelled outdated, with kept / downgraded / dismissed on each finding — because: a superseded pass is history, not the decision.
  * - Notes, evidence, run history after that; lenses / second pass / transcripts on demand — because: the first screen is the decision, not the transcript.
  * - Shared main flow on PR and run pages — because: opening a run must not strand the same hurried reader.
- * - Appearance panel stays preview chrome inside ThemeScope — because: identities serve reading; site chrome must not jump.
+ * - Appearance panel after the main flow, still ThemeScope chrome — because: decision-to-blockers reading order comes first.
  * - List at the section root with a useful empty state — because: the visitor always has a next click.
  * - Stacked rows, not a wide table — because: phone users at 320–390px compose by priority.
  * - Share link encodes appearance only — because: a visual issue must round-trip without token drafts.
@@ -19,17 +19,12 @@ import { notFound } from "next/navigation";
 
 import { createFixtureReviewPort } from "./adapters/fixture";
 import { reviewsCopy } from "./i18n/reviews-copy";
+import { parsePrNumber } from "./model/pr-number";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView } from "./ui/review-pr-view";
 import { ReviewRunView } from "./ui/review-run-view";
 
 const port = createFixtureReviewPort();
-
-function parsePrNumber(value: string): number | null {
-  if (!/^[0-9]+$/.test(value)) return null;
-  const n = Number(value);
-  return Number.isSafeInteger(n) ? n : null;
-}
 
 export async function ReviewListFeature() {
   const records = await port.list();
@@ -63,4 +58,4 @@ export async function listReviewRunParams() {
   );
 }
 
-export { reviewsCopy };
+export { parsePrNumber, reviewsCopy };

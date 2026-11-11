@@ -35,7 +35,9 @@ export const reviewsCopy = {
   },
   pr: {
     back: "All reviews",
+    decision: "Decision",
     confidence: "Confidence",
+    confidenceUnit: "%",
     mustChange: "Must change before merge",
     firstPass: "First pass",
     outdated: "Outdated",
@@ -73,7 +75,7 @@ export const reviewsCopy = {
     error: "Error",
   },
   status: {
-    running: "Running",
+    running: "Running at publish",
     done: "Done",
     error: "Error",
   },

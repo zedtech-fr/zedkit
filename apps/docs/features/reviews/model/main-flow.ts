@@ -24,7 +24,6 @@ export type ReviewMainFlow = {
   };
   readonly blockers: readonly ReviewAction[];
   readonly firstPass: {
-    readonly open: false;
     readonly findings: readonly ReviewFinding[];
   } | null;
   readonly notes: string;
@@ -36,12 +35,17 @@ function trimmed(value: string | undefined): string {
   return value?.trim() ?? "";
 }
 
+function clampConfidence(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, value));
+}
+
 export function reviewMainFlow(record: ReviewRecord): ReviewMainFlow {
   const summary = trimmed(record.summary);
   const evidenceText = trimmed(record.evidence);
   const findings = record.firstPass?.findings ?? [];
   const blockers = record.actions;
-  const firstPass = findings.length > 0 ? ({ open: false as const, findings }) : null;
+  const firstPass = findings.length > 0 ? { findings } : null;
 
   const sections: ReviewMainFlowSectionId[] = ["decision"];
   if (blockers.length > 0) sections.push("must-change");
@@ -54,7 +58,7 @@ export function reviewMainFlow(record: ReviewRecord): ReviewMainFlow {
     sections,
     decision: {
       verdict: record.verdict,
-      confidence: record.confidence,
+      confidence: clampConfidence(record.confidence),
       summary,
     },
     blockers,
