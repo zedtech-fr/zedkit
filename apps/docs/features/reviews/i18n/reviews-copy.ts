@@ -7,7 +7,7 @@ export const reviewsCopy = {
     },
     pr: {
       title: "Review",
-      description: "Final verdict, required actions, and run history for a public pull request.",
+      description: "Final decision, remaining merge blockers when they exist, and run history for a public pull request.",
     },
     run: {
       title: "Review run",
@@ -35,12 +35,20 @@ export const reviewsCopy = {
   },
   pr: {
     back: "All reviews",
+    decision: "Decision",
     confidence: "Confidence",
-    actions: "Required actions",
-    actionsEmpty: "No required actions on this review.",
+    confidenceUnit: "%",
+    mustChange: "Must change before merge",
+    firstPass: "First pass",
+    outdated: "Outdated",
+    evidence: "Evidence",
     notes: "Notes",
     notesEmpty: "No notes on this review.",
+    runs: "Run history",
+    runsEmpty: "No runs on this review.",
     openRun: "Open this run",
+    agentDetail: "Agent detail",
+    agentDetailEmpty: "Lenses, second pass, and transcripts will load here on demand.",
     missing: "This review is not on the public list.",
   },
   console: {
@@ -79,13 +87,18 @@ export const reviewsCopy = {
     error: "Error",
   },
   status: {
-    running: "Running",
+    running: "Running at publish",
     done: "Done",
     error: "Error",
   },
   prState: {
     open: "Open",
     merged: "Merged",
+  },
+  disposition: {
+    kept: "Kept",
+    downgraded: "Downgraded",
+    dismissed: "Dismissed",
   },
 } as const;
 

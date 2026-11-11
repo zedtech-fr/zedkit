@@ -17,10 +17,7 @@ import {
   Heading,
   Stack,
   StatusLabel,
-  Text,
   UpdatedAgo,
-  type BadgeProps,
-  type StatusLabelTone,
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
@@ -31,25 +28,9 @@ import {
   reviewConsoleItems,
   selectionHash,
 } from "../model/selection";
-import type {
-  ReviewConsoleItem,
-  ReviewRecord,
-  ReviewRun,
-  ReviewVerdict,
-} from "../ports/review-port";
-
-const VERDICT_BADGE: Record<ReviewVerdict, BadgeProps["variant"]> = {
-  approve: "success",
-  "request-changes": "warning",
-  comment: "secondary",
-  error: "destructive",
-};
-
-const STATUS_TONE: Record<ReviewRun["status"], StatusLabelTone> = {
-  running: "loading",
-  done: "saved",
-  error: "error",
-};
+import type { ReviewConsoleItem, ReviewRecord, ReviewRun } from "../ports/review-port";
+import { STATUS_TONE, VERDICT_BADGE } from "./review-badges";
+import { ReviewMainFlow } from "./review-main-flow";
 
 function useLocationHash() {
   const [hash, setHash] = useState("");
@@ -76,62 +57,30 @@ function writeSelection(id: string, defaultId: string): string {
   return hash;
 }
 
-function ReviewBlock({
-  title,
-  empty,
-  hasItems,
-  children,
-}: {
-  title: string;
-  empty: string;
-  hasItems: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <Stack gap="sm">
-      <Heading level={2} typeRole="section">
-        {title}
-      </Heading>
-      {hasItems ? children : <EmptyState description={empty} />}
-    </Stack>
-  );
-}
-
-function FlowBody({ record, copy }: { record: ReviewRecord; copy: ReviewsCopy }) {
-  return (
-    <Stack gap="lg">
-      <ReviewBlock title={copy.pr.actions} empty={copy.pr.actionsEmpty} hasItems={record.actions.length > 0}>
-        <ul className="flex flex-col gap-stack-sm">
-          {record.actions.map((action) => (
-            <li key={action.title}>
-              <Text typeRole="body">{action.title}</Text>
-              <Text variant="muted">{action.detail}</Text>
-            </li>
-          ))}
-        </ul>
-      </ReviewBlock>
-      <ReviewBlock title={copy.pr.notes} empty={copy.pr.notesEmpty} hasItems={record.notes.trim().length > 0}>
-        <Text typeRole="prose">{record.notes}</Text>
-      </ReviewBlock>
-    </Stack>
-  );
-}
-
 function ConsolePane({
   record,
   item,
   copy,
+  panel,
+  decisionMeta,
 }: {
   record: ReviewRecord;
   item: ReviewConsoleItem;
   copy: ReviewsCopy;
+  panel: ReactNode;
+  decisionMeta?: ReactNode;
 }) {
   return (
     <div className="pane-shrink flex-1 p-app-shell-padding md:p-app-shell-padding-md">
       {item.kind === "flow" ? (
-        <FlowBody record={record} copy={copy} />
+        <Stack gap="lg">
+          <ReviewMainFlow record={record} copy={copy} panel={panel} decisionMeta={decisionMeta} />
+        </Stack>
       ) : (
-        <EmptyState description={copy.console.itemEmpty} />
+        <Stack gap="lg">
+          <EmptyState description={copy.console.itemEmpty} />
+          {panel}
+        </Stack>
       )}
     </div>
   );
@@ -250,10 +199,14 @@ export function ReviewConsole({
   record,
   run,
   copy,
+  panel,
+  decisionMeta,
 }: {
   record: ReviewRecord;
   run: ReviewRun;
   copy: ReviewsCopy;
+  panel: ReactNode;
+  decisionMeta?: ReactNode;
 }) {
   const items = reviewConsoleItems(run, copy.console.flow);
   const defaultId = defaultReviewSelection(items);
@@ -281,7 +234,13 @@ export function ReviewConsole({
               {copy.console.openList}
             </Button>
           </DrawerTrigger>
-          <ConsolePane record={record} item={selected} copy={copy} />
+          <ConsolePane
+            record={record}
+            item={selected}
+            copy={copy}
+            panel={panel}
+            decisionMeta={decisionMeta}
+          />
         </div>
       </div>
       <DrawerContent>
