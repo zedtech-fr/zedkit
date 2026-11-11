@@ -11,12 +11,10 @@ import { MarketingSiteHeader } from "@/ui/site-headers";
 export function SiteLayout({
   children,
   version,
-  changelogHref,
   releasesHref,
 }: {
   children: ReactNode;
   version: string;
-  changelogHref: string;
   releasesHref: string;
 }) {
   return (
@@ -33,7 +31,7 @@ export function SiteLayout({
         themeSwitch={{ enabled: true }}
         slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
       >
-        <SitePageShell changelogHref={changelogHref}>{children}</SitePageShell>
+        <SitePageShell>{children}</SitePageShell>
       </HomeLayout>
   );
 }

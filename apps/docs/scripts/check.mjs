@@ -56,7 +56,6 @@ import { checkGeneratedPage } from "./page-checks.mjs";
 import { checkRawLayoutFile } from "./raw-layout.mjs";
 import { relativeMarkdownLinkErrors } from "./relative-markdown-links.mjs";
 import {
-  SITE_CHANGELOG_URL,
   SITE_HEADER_INTERNAL_PATHS,
   siteFooterLinkSpecs,
 } from "../lib/site-links.mjs";
@@ -710,7 +709,7 @@ if (nextConfig.includes('output: "export"')) {
   }
 }
 
-for (const { href, external } of siteFooterLinkSpecs(SITE_CHANGELOG_URL)) {
+for (const { href, external } of siteFooterLinkSpecs()) {
   if (external && !href.startsWith("https://")) {
     errors.push(`site-footer: ${href} must be an https URL.`);
   }
