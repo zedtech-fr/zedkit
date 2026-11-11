@@ -11,8 +11,8 @@ test.describe("site type hierarchy (P0)", () => {
       const s = getComputedStyle(el);
       return { size: Number.parseFloat(s.fontSize), weight: s.fontWeight };
     });
-    expect(h1.size).toBeGreaterThanOrEqual(32);
-    expect(h1.weight).toBe("600");
+    expect(h1.size).toBeGreaterThanOrEqual(48);
+    expect(h1.weight).toBe("500");
 
     const size = (selector: string) =>
       page.locator(selector).first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));

@@ -39,13 +39,18 @@ html.dark[data-identity] #home-page [data-slot="tabs-trigger"][data-state="activ
 
 /*
  * Shell layout rhythm: the docs article keeps mobile gutters from the
- * page-gutter token (fumadocs' px-4 shrinks to 14.4px under Volt), and
- * the catalog shell caps its band on the 1160px marketing container
- * with a section rhythm that drops to the mobile band. Home keeps its
- * own rhythm (pinned exactly by other lanes' tests).
+ * page-gutter token (fumadocs' px-4 shrinks to 14.4px under Volt).
+ * Marketing bands share a 1200px measure (home wide + catalog default).
  */
-[data-catalog-shell] {
-  --zk-container-default: 72.5rem;
+html[data-docs-shell][data-identity] {
+  --zk-site-page: 0 0% 100%;
+  --zk-site-band: 0 0% 98%;
+  --zk-site-action: 240 5.9% 10%;
+  --zk-site-action-foreground: 0 0% 98%;
+  --zk-site-action-hover: 240 5% 26%;
+  --zk-container-default: 75rem;
+  --zk-container-wide: 75rem;
+  --zk-page-gutter: 1.5rem;
 }
 
 /*
@@ -127,14 +132,44 @@ html.dark[data-identity] #home-page [data-slot="tabs-trigger"][data-state="activ
 }
 
 /*
- * Calm shell surfaces: identities dress the page (Volt draws a grid
- * under the prose). Docs and catalog shells keep a flat reading
- * surface in light mode; dark ambiance and the home page are
- * untouched. Specificity beats the unlayered identity body rule.
+ * Calm shell surfaces: every site route is a flat reading surface.
+ * Light page fill is white; dark keeps the identity colour. Specimens
+ * re-declare their look on ThemeScope. Specificity beats the unlayered
+ * identity body rule.
  */
-html:not(.dark):root[data-identity] body:has(#nd-docs-layout),
-html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
+html[data-docs-shell]:not(.dark) body {
   background-image: none;
+  background-color: hsl(var(--zk-site-page));
+}
+
+html[data-docs-shell].dark body {
+  background-image: none;
+}
+
+html[data-docs-shell]:not(.dark) {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --muted-foreground: 240 5% 32%;
+}
+
+/*
+ * Near-black site action (header/hero/footer tickets apply the class).
+ * Pins stock --primary so Glass indigo does not dress chrome CTAs.
+ */
+.site-action,
+[data-site-action] {
+  --primary: var(--zk-site-action, 240 5.9% 10%);
+  --primary-foreground: var(--zk-site-action-foreground, 0 0% 98%);
+  border-radius: 0.5rem;
+  background-image: none;
+  box-shadow: none;
+}
+
+.site-action:hover,
+[data-site-action]:hover {
+  --primary: var(--zk-site-action-hover, 240 5% 26%);
+  background-image: none;
+  box-shadow: none;
 }
 
 /*
