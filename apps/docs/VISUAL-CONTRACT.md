@@ -56,7 +56,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 - A border exists where two regions meet or a control is interactive. Divider (quiet) and control border (clear) are different strengths. Grouping alone is never a reason for a border.
 - Shadow only on overlays and genuinely raised controls. Sections, fields, code wells and cards in a grid are flat.
 - Radius: controls 8, specimens and overlays 12, pills only for compact status/selection.
-- Color: one action accent, explicit success/warning/danger. Active text 4.5:1, large 3:1. Dark is a paired hierarchy, not an inversion.
+- Color: one action accent per view or high-value panel, explicit success/warning/danger. Active text 4.5:1, large 3:1. Dark is a paired hierarchy, not an inversion.
 - Docs chrome color: indigo/violet are not page fill or body text. Page is a neutral reading surface; body text is zinc-neutral. Glass indigo/violet stay specimen and accent roles.
 - Glass (the default look) may carry decorative colour halos and a lit rim: it is a material, defined in [signature.md](../../docs/design/signature.md#glass-material). No other look and no other surface gets decorative gradients.
 

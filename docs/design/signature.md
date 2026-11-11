@@ -28,7 +28,7 @@ Implementation: `packages/ui/src/shared-type-scale.css` (tokens), `packages/ui/s
 
 ## Composition grid
 
-Based on the docs [visual contract](../apps/docs/VISUAL-CONTRACT.md):
+Based on the docs [visual contract](../../apps/docs/VISUAL-CONTRACT.md):
 
 - **Widths**: marketing content max ~1200px; docs shell 1440px; article 720–800px.
 - **Gutters**: 16px mobile, 24px tablet, 32px desktop (`--zk-page-gutter`).
@@ -38,12 +38,9 @@ Based on the docs [visual contract](../apps/docs/VISUAL-CONTRACT.md):
 
 ### Docs chrome color
 
-Docs chrome (header, sidebar, prose, home, preview frames) follows two rules owned by [VISUAL-CONTRACT.md](../apps/docs/VISUAL-CONTRACT.md) Surfaces and Controls. Do not copy that owner table here.
+Docs chrome (header, sidebar, prose, home, preview frames) follows two rules owned by [VISUAL-CONTRACT.md](../../apps/docs/VISUAL-CONTRACT.md) Surfaces and Controls. Do not copy that owner table here.
 
-- indigo/violet are not page fill or body text.
-- site chrome actions are not Glass `--primary` unless inside a high-value panel.
-
-Page fill is a neutral reading surface; body text is zinc-neutral. Default site actions use stock near-black `--primary`. Violet/glass stay panel and chip accents.
+Page fill is a neutral reading surface; body text is zinc-neutral. Default site actions use stock near-black `--primary`. Violet/glass stay high-value panel accents (including chips).
 
 ## Motion vocabulary
 

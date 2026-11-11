@@ -18,7 +18,11 @@
 //   9. the gallery stats match the catalog counts;
 //  10. home scenarios resolve to catalog needs and current doc slugs;
 //  11. prose files match live pages, avoid generated section titles,
-//      and their first section appears in the merged output.
+//      and their first section appears in the merged output;
+//  12. guide MDX files include the required `##` sections (`guideRequiredSections`);
+//  13. VISUAL-CONTRACT.md pins the two chrome-rule sentences; signature.md
+//      points at that owner; relative markdown links in those files resolve;
+//  14. foundations.mdx links VISUAL-CONTRACT.md and does not copy the owner table.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -46,6 +50,7 @@ import {
 } from "./generate.mjs";
 import { countPublishedCatalogNeeds, docsOmitNeed } from "./docs-omitted-needs.mjs";
 import { checkGeneratedPage } from "./page-checks.mjs";
+import { relativeMarkdownLinkErrors } from "./relative-markdown-links.mjs";
 import {
   SITE_CHANGELOG_URL,
   SITE_HEADER_INTERNAL_PATHS,
@@ -227,17 +232,25 @@ const CHROME_PAGE_FILL = "indigo/violet are not page fill or body text";
 const CHROME_SITE_ACTIONS =
   "site chrome actions are not Glass `--primary` unless inside a high-value panel";
 const OWNER_TABLE_HEADER = "Layer | Owns | Lives in | Fix here when";
-const visualContractText = readFileSync(join(APP, "VISUAL-CONTRACT.md"), "utf8");
-const signatureText = readFileSync(join(ROOT, "docs", "design", "signature.md"), "utf8");
-for (const [label, text] of [
-  ["VISUAL-CONTRACT.md", visualContractText],
-  ["docs/design/signature.md", signatureText],
+const visualContractPath = join(APP, "VISUAL-CONTRACT.md");
+const signaturePath = join(ROOT, "docs", "design", "signature.md");
+const visualContractText = readFileSync(visualContractPath, "utf8");
+const signatureText = readFileSync(signaturePath, "utf8");
+if (!visualContractText.includes(CHROME_PAGE_FILL)) {
+  errors.push(`VISUAL-CONTRACT.md: missing chrome rule "${CHROME_PAGE_FILL}".`);
+}
+if (!visualContractText.includes(CHROME_SITE_ACTIONS)) {
+  errors.push(`VISUAL-CONTRACT.md: missing chrome rule "${CHROME_SITE_ACTIONS}".`);
+}
+if (!signatureText.includes("VISUAL-CONTRACT.md")) {
+  errors.push("docs/design/signature.md: must point at VISUAL-CONTRACT.md as the chrome-rule owner.");
+}
+for (const [label, filePath, text] of [
+  ["docs/design/signature.md", signaturePath, signatureText],
+  ["VISUAL-CONTRACT.md", visualContractPath, visualContractText],
 ]) {
-  if (!text.includes(CHROME_PAGE_FILL)) {
-    errors.push(`${label}: missing chrome rule "${CHROME_PAGE_FILL}".`);
-  }
-  if (!text.includes(CHROME_SITE_ACTIONS)) {
-    errors.push(`${label}: missing chrome rule "${CHROME_SITE_ACTIONS}".`);
+  for (const error of relativeMarkdownLinkErrors(filePath, text)) {
+    errors.push(error.replace(filePath, label));
   }
 }
 const foundationsGuidePath = join(guidesDir, "foundations.mdx");
