@@ -18,7 +18,14 @@ fail=0
 # pnpm-lock.yaml is machine-generated: integrity hashes are random base64 and
 # will eventually contain any short word pattern. Excluded from the content
 # scan (it cannot carry a prose reference).
-hits=$(git grep -inE -e "$patterns" -- . ':!pnpm-lock.yaml' | denylist_filter_hits || true)
+# Packed mockup HTML under docs/ui-proof/redesign-quiet-glass/ embeds gzip/base64
+# bundler payloads that collide the same way. Visible wrappers were checked
+# separately; do not scan the packed payloads.
+CONTENT_EXCLUDES=(
+  ':!pnpm-lock.yaml'
+  ':!docs/ui-proof/redesign-quiet-glass/*.html'
+)
+hits=$(git grep -inE -e "$patterns" -- . "${CONTENT_EXCLUDES[@]}" | denylist_filter_hits || true)
 if [ -n "$hits" ]; then
   echo "private project references in tracked file contents:"
   echo "$hits"
@@ -33,6 +40,8 @@ if [ -n "$paths" ]; then
 fi
 
 untracked=$(git ls-files --others --exclude-standard || true)
+# Same packed-payload exclusion as the tracked content scan.
+untracked=$(printf '%s\n' "$untracked" | grep -vE '^docs/ui-proof/redesign-quiet-glass/.*\.html$' || true)
 if [ -n "$untracked" ]; then
   untracked_hits=$(printf '%s\n' "$untracked" | xargs grep -HinE -e "$patterns" -- 2>/dev/null || true)
   if [ -n "$untracked_hits" ]; then

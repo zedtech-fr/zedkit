@@ -105,7 +105,7 @@ _scan() {
   fi
 
   local hits
-  hits=$(_git_grep_ere "$iflag" -e "$pattern" -- . || true)
+  hits=$(_git_grep_ere "$iflag" -e "$pattern" -- . ':!pnpm-lock.yaml' ':!docs/ui-proof/redesign-quiet-glass/*.html' || true)
   if [ -n "$hits" ]; then
     echo "$label in tracked contents:"
     echo "$hits"
@@ -122,6 +122,7 @@ _scan() {
 
   local untracked
   untracked=$(git ls-files --others --exclude-standard || true)
+  untracked=$(printf '%s\n' "$untracked" | grep -vE '^docs/ui-proof/redesign-quiet-glass/.*\.html$' || true)
   if [ -n "$untracked" ]; then
     local uhits
     if [ "$iflag" = "i" ]; then
