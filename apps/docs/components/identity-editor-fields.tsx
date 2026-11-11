@@ -77,9 +77,9 @@ function TokenField({
         />
       </Stack>
       {invalidSwatch ? (
-        <span id={formatId} className="sr-only">
+        <Text as="span" id={formatId} className="sr-only">
           {identityEditorCopy.fields.hslFormat}
-        </span>
+        </Text>
       ) : null}
     </Field>
   );
