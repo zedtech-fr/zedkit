@@ -6,6 +6,7 @@ const SKIP = new Set([
   "toast",
   "closeRoute",
   "useScrollReset",
+  "useStickToBottom",
   "ScrollReset",
   "observeAnimate",
   "AnimateObserver",

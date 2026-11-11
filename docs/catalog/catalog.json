@@ -4419,6 +4419,50 @@
           ]
         },
         {
+          "need": "Follow a growing log to the latest",
+          "import": "`@zedtech/zedkit-ui` — `useStickToBottom`, `StickToBottomOptions`, `JumpToLatest`, `JumpToLatestProps`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "JumpToLatest",
+          "audience": "Developers building a chat, log, or console that grows while the reader watches.",
+          "purpose": "Follow the newest line until the reader scrolls up; a named button jumps back and resumes following.",
+          "whenToUse": "On any overflowing scroll parent (`AppShell` `mainRef` or a custom pane) with content that appends.",
+          "whenNotToUse": "For route-change scroll-to-top — use `Reset scroll on route change`. CSS `overflow-anchor` cannot expose a latch for the button.",
+          "derivedFrom": null,
+          "example": "\"use client\";\nimport { useRef } from \"react\";\nimport { useStickToBottom } from \"@zedtech/zedkit-ui\";\nconst scroller = useRef<HTMLElement | null>(null);\nconst { isStuck, jumpToLatest } = useStickToBottom(scroller);",
+          "examples": [
+            {
+              "title": "Hook on a scroll parent",
+              "code": "\"use client\";\nimport { useRef } from \"react\";\nimport { useStickToBottom } from \"@zedtech/zedkit-ui\";\nconst scroller = useRef<HTMLElement | null>(null);\nconst { isStuck, jumpToLatest } = useStickToBottom(scroller);"
+            },
+            {
+              "title": "Jump to latest button",
+              "code": "import { JumpToLatest } from \"@zedtech/zedkit-ui\";\n<JumpToLatest stuck={isStuck} onClick={jumpToLatest} />"
+            }
+          ],
+          "adoption": {
+            "kind": "js",
+            "modules": [
+              {
+                "from": "@zedtech/zedkit-ui",
+                "exports": [
+                  "useStickToBottom",
+                  "StickToBottomOptions",
+                  "JumpToLatest",
+                  "JumpToLatestProps"
+                ]
+              }
+            ]
+          },
+          "a11y": "Hidden while latched (not in the tab order). Visible control is a real `button` with the kit 44px phone target. Jumps instantly by default and always when motion is reduced (OS or `html[data-motion=reduce]`). Does not move focus and is not a live region — StreamText already announces a streaming answer.",
+          "troubleshooting": "Custom `messages` objects must keep every key (`jumpToLatest` included) — see `Localize kit chrome in English or French`. The button is absent while `stuck` is true.",
+          "seeAlso": [
+            "Reset scroll on route change",
+            "Lay out an admin page (sidebar + topbar + header)",
+            "Localize kit chrome in English or French"
+          ]
+        },
+        {
           "need": "Reset scroll on route change",
           "import": "`@zedtech/zedkit-ui` — `ScrollReset`, `ScrollResetProps`, `useScrollReset`, `ScrollResetOptions`",
           "wraps": "`(none)`",

@@ -1221,6 +1221,35 @@ import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
 </RouteModal>
 ```
 
+## Follow a growing log to the latest
+
+- Import: `@zedtech/zedkit-ui` — `useStickToBottom`, `StickToBottomOptions`, `JumpToLatest`, `JumpToLatestProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: JumpToLatest
+- Audience: Developers building a chat, log, or console that grows while the reader watches.
+- Purpose: Follow the newest line until the reader scrolls up; a named button jumps back and resumes following.
+- When to use: On any overflowing scroll parent (`AppShell` `mainRef` or a custom pane) with content that appends.
+- When not to use: For route-change scroll-to-top — use `Reset scroll on route change`. CSS `overflow-anchor` cannot expose a latch for the button.
+- Examples: Hook on a scroll parent, Jump to latest button
+- A11y: Hidden while latched (not in the tab order). Visible control is a real `button` with the kit 44px phone target. Jumps instantly by default and always when motion is reduced (OS or `html[data-motion=reduce]`). Does not move focus and is not a live region — StreamText already announces a streaming answer.
+- Composition: `JumpToLatest` does not call the hook; the parent passes `stuck` and `onClick`. The hook takes a `RefObject` to the overflowing node, not `window`.
+- See also: `Reset scroll on route change`, `Lay out an admin page (sidebar + topbar + header)`, `Localize kit chrome in English or French`
+- Troubleshooting: Custom `messages` objects must keep every key (`jumpToLatest` included) — see `Localize kit chrome in English or French`. The button is absent while `stuck` is true.
+
+```ts
+"use client";
+import { useRef } from "react";
+import { useStickToBottom } from "@zedtech/zedkit-ui";
+const scroller = useRef<HTMLElement | null>(null);
+const { isStuck, jumpToLatest } = useStickToBottom(scroller);
+```
+
+```ts
+import { JumpToLatest } from "@zedtech/zedkit-ui";
+<JumpToLatest stuck={isStuck} onClick={jumpToLatest} />
+```
+
 ## Reset scroll on route change
 
 - Import: `@zedtech/zedkit-ui` — `ScrollReset`, `ScrollResetProps`, `useScrollReset`, `ScrollResetOptions`
