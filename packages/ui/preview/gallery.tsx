@@ -69,6 +69,8 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  SidebarNavGroup,
+  SidebarNavItem,
   Skeleton,
   Switch,
   Tabs,
@@ -333,6 +335,15 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
+          <DetailPanel
+            variant="grid"
+            items={[
+              { label: "Requests", value: "12,480" },
+              { label: "Uptime", value: "99.9%" },
+              { label: "Latency", value: "42 ms" },
+              { label: "Errors", value: "0.12%" },
+            ]}
+          />
           <Tabs defaultValue="one" data-example-width="">
             <TabsList>
               <TabsTrigger value="one">First</TabsTrigger>
@@ -366,6 +377,46 @@ export function Gallery() {
             <LivePulse />
             <LivePulse active={false} />
           </div>
+          <nav aria-label="Runs" data-example-width="">
+            <ul className="flex list-none flex-col gap-stack-tight">
+              <li>
+                <SidebarNavItem
+                  asChild
+                  active
+                  status={<StatusDot tone="success" />}
+                  meta="2m ago"
+                  count={<Badge variant="meta">3</Badge>}
+                >
+                  <a href="#nightly">Nightly</a>
+                </SidebarNavItem>
+              </li>
+              <li>
+                <SidebarNavGroup label="Scheduled" open>
+                  <ul className="flex list-none flex-col gap-stack-tight">
+                    <li>
+                      <SidebarNavItem status={<StatusDot tone="idle" />} meta="1h ago">
+                        Staging
+                      </SidebarNavItem>
+                    </li>
+                  </ul>
+                </SidebarNavGroup>
+              </li>
+              <li>
+                <SidebarNavGroup label="Queued">
+                  <ul className="flex list-none flex-col gap-stack-tight">
+                    <li>
+                      <SidebarNavItem status={<StatusDot tone="idle" />}>Canary</SidebarNavItem>
+                    </li>
+                  </ul>
+                </SidebarNavGroup>
+              </li>
+              <li>
+                <SidebarNavItem asChild disabled status={<StatusDot tone="idle" />} meta="archived">
+                  <a href="#archived">Archived</a>
+                </SidebarNavItem>
+              </li>
+            </ul>
+          </nav>
         </GallerySection>
 
         <GallerySection id="sizing" title="Container sizing">

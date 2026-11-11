@@ -352,7 +352,7 @@ export const specimenMessagesEn: {
             readonly duration: "45 min";
         }, {
             readonly id: "color";
-            readonly label: "Colour";
+            readonly label: "Color";
             readonly duration: "90 min";
         }];
         readonly slotsAriaLabel: "Available times";

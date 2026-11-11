@@ -652,7 +652,7 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - Examples: In Suspense, Standalone
 - A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
 - Registry: card-skeleton
-- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts.
+- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
 
 ```ts
 import { Suspense } from "react";
@@ -1387,6 +1387,50 @@ import { AppShell } from "@zedtech/zedkit-ui";
 // Opt out of the mobile menu: sidebarTrigger={null}
 ```
 
+## List sidebar rows with status, title, meta, and count
+
+- Import: `@zedtech/zedkit-ui` — `SidebarNavItem`, `SidebarNavItemProps`, `SidebarNavGroup`, `SidebarNavGroupProps`
+- Wraps: `lucide-react` (group chevron); native `details`
+- Status: alpha
+- Short name: SidebarNavItem
+- Audience: Developers rendering a sidebar run list, inbox, or queue.
+- Purpose: One row for status, title, recency (`meta`), quantity (`count`), and active; groups collapse with native disclosure.
+- When to use: Inside `AppShell` sidebar (or any list) when each row needs status + title + optional meta/count. For a destination, pass `asChild` with a link.
+- When not to use: For site chrome or marketing nav — use `Faq` or header links; for the page frame — use AppShell.
+- See also: `Lay out an admin page (sidebar + topbar + header)`, `Indicate status with a dot`, `Show a status or count badge`
+- Examples: Simple, Active, Group
+- A11y: Default host is a native `button` (`type="button"`) with `min-h-target` (44px on a phone); for navigation, pass `asChild` with a link. `asChild` merges onto a single host element (a string, Fragment, or several children fall back to a button). `active` sets `aria-current="page"` on a link host and `aria-current="true"` on the button host (override via props). The title is the accessible name; status and trail stay `aria-hidden` by design — put those facts in the title if they must be announced. Item titles and group labels truncate. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks and list structure (`nav` wrapping `ul`/`li`). Disabled `asChild` hosts keep href and tab order; click, Enter, and Space are cancelled.
+- Registry: sidebar-nav
+- Troubleshooting: `asChild` needs one host element (a link for navigation) — a string, Fragment, or several children fall back to a button, they do not throw. `disabled` on `asChild` becomes `aria-disabled` (not `disabled` or `type`) and cancels click/Enter/Space; href and tab order stay. Status/meta/count wrappers omit when those props are missing (`status={0}` and `count={0}` still render). `meta` is recency or secondary text; `count` is a quantity; both sit in one trail as separate spans. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep `nav`/`ul`/`li` on the caller.
+
+```ts
+import { SidebarNavItem, StatusDot } from "@zedtech/zedkit-ui";
+<nav aria-label="Runs">
+  <ul>
+    <li>
+      <SidebarNavItem status={<StatusDot tone="success" />} meta="2m ago" count="3">
+        Nightly
+      </SidebarNavItem>
+    </li>
+  </ul>
+</nav>
+```
+
+```ts
+import { SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavItem asChild active>
+  <a href="/runs/1">Nightly</a>
+</SidebarNavItem>
+```
+
+```ts
+import { SidebarNavGroup, SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavGroup label="Runs">
+  <SidebarNavItem>Nightly</SidebarNavItem>
+  <SidebarNavItem>Staging</SidebarNavItem>
+</SidebarNavGroup>
+```
+
 ## Guide a multi-step flow with selectable option cards
 
 - Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`
@@ -1438,14 +1482,14 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
-- Purpose: Key-value detail lists plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.
-- When to use: For read-only record summaries next to the list.
+- Purpose: Key-value details as boxed rows or `variant="grid"` stats, plus a live pulse. Idle copy is `inactiveLabel`; `label` only overrides Live.
+- When to use: For read-only record summaries next to the list. Use `variant="grid"` for dashboard-style stats (large value, quiet label).
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
-- Examples: Simple, Composed rows
-- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
+- Examples: Simple, Composed rows, Stat grid
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. Grid wraps each pair so a two-column layout does not interleave terms and definitions. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Grid is `items[]` only — there is no composed-cell export. Grid reading order — each item is one wrapped `dt`/`dd` pair, not flattened grid children. Boxed look on a grid — wrap in Card (`<Card><DetailPanel variant="grid" items={items} /></Card>`); `className` also works; grid drops list chrome. Grid loading — `DetailPanelSkeleton` is the boxed-list shape only. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -1458,6 +1502,14 @@ import { DetailPanelRow } from "@zedtech/zedkit-ui";
 <dl>
   <DetailPanelRow label="Region" value="eu" />
 </dl>
+```
+
+```ts
+import { DetailPanel } from "@zedtech/zedkit-ui";
+<DetailPanel
+  variant="grid"
+  items={[{ label: "Requests", value: "12,480" }, { label: "Uptime", value: "99.9%" }]}
+/>
 ```
 
 ## Build validated forms with labels, errors, and pending state

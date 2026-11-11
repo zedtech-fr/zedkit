@@ -44,7 +44,9 @@
 //     at this path, not a fragment the page wraps in a component)
 //   - Short name: ShortName (compact display: sidebars, cards)
 //   - Audience: Who the need is for, in plain words.
-//   - Purpose: The problem it solves, in one sentence.
+//   - Purpose: The problem it solves, in one sentence (also the
+//     generated page description; registry/component pages are not
+//     truncated — keep ≤160 chars, SEO_DESCRIPTION_MAX).
 //   - When to use: When to reach for it.
 //   - When not to use: When to avoid it (+ the alternative).
 //   - See also: `Other need`, `Another need` (optional; must name

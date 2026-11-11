@@ -82,17 +82,6 @@
   text-underline-offset: 2px;
 }
 
-/* AI setup. The benefits column stays at most 30rem while the file tree scrolls. */
-[data-home-ai-setup] {
-  --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
-}
-
-/* The file list scrolls. The focus ring sits inside it, so the clip does not hide the ring. */
-[data-home-ai-terminal] pre:focus-visible {
-  outline: var(--ring-width) solid hsl(var(--ring));
-  outline-offset: calc(var(--ring-offset-width) * -1);
-}
-
 /* The draft card stays above the form while it sticks. */
 [data-slot="identity-editor-preview"] {
   z-index: 20;

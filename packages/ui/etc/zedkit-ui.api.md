@@ -483,6 +483,8 @@ export interface DetailPanelProps {
     className?: string;
     // (undocumented)
     items: DetailItem[];
+    // (undocumented)
+    variant?: "list" | "grid";
 }
 
 // @public
@@ -1526,6 +1528,31 @@ export function Separator(input: SeparatorProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export type SeparatorProps = React_2.ComponentProps<typeof SeparatorPrimitive.Root>;
+
+// @public (undocumented)
+export function SidebarNavGroup(input: SidebarNavGroupProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface SidebarNavGroupProps extends React_2.ComponentProps<"details"> {
+    label: React_2.ReactNode;
+}
+
+// @public (undocumented)
+export function SidebarNavItem(input: SidebarNavItemProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface SidebarNavItemProps extends React_2.ComponentProps<"button"> {
+    // (undocumented)
+    active?: boolean;
+    // (undocumented)
+    asChild?: boolean;
+    // (undocumented)
+    count?: React_2.ReactNode;
+    // (undocumented)
+    meta?: React_2.ReactNode;
+    // (undocumented)
+    status?: React_2.ReactNode;
+}
 
 // @public (undocumented)
 export type SignatureMotion = keyof typeof signatureMotionClass;

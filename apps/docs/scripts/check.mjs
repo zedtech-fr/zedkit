@@ -53,6 +53,7 @@ import {
 } from "./generate.mjs";
 import { countPublishedCatalogNeeds, docsOmitNeed } from "./docs-omitted-needs.mjs";
 import { checkGeneratedPage } from "./page-checks.mjs";
+import { checkRawLayoutFile } from "./raw-layout.mjs";
 import { relativeMarkdownLinkErrors } from "./relative-markdown-links.mjs";
 import {
   SITE_CHANGELOG_URL,
@@ -686,11 +687,7 @@ for (const dir of ["app", "ui"]) {
 
 for (const file of tsxFiles(join(APP, "components"))) {
   const rel = file.slice(APP.length + 1);
-  for (const line of readFileSync(file, "utf8").split("\n")) {
-    if (/<(div|span)[\s>/]/.test(line)) {
-      errors.push(`${rel}: raw <${/<(div|span)[\s>/]/.exec(line)[1]}> is banned; use kit Stack/Text/Section/Heading.`);
-    }
-  }
+  errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
 }
 
 const nextConfig = readFileSync(join(APP, "next.config.mjs"), "utf8");
