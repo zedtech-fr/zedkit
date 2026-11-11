@@ -4,15 +4,18 @@ import { readComputedContrast } from "./a11y-helpers";
 import { useIdentity } from "./identity-helpers";
 
 test.describe("site header navigation (#1034)", () => {
-  test("desktop header links to the catalog and the UI changelog", async ({ page }) => {
+  test("desktop header links AI, UI, Docs, and Catalog", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
 
     const header = page.locator("#nd-nav");
+    await expect(header.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
+    await expect(header.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
+    await expect(header.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
     await expect(
       header.getByRole("link", { name: "Catalog", exact: true }),
     ).toHaveAttribute("href", "/catalog");
-    await expect(header.getByRole("link", { name: "UI changelog" })).toBeVisible();
+    await expect(header.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
     await expect(page.getByLabel("Try another identity")).toHaveCount(0);
   });
 
@@ -40,15 +43,16 @@ test.describe("site header navigation (#1034)", () => {
       ["Add SEO to a Next.js app", "/docs/add-seo-to-nextjs"],
       ["zedkit and shadcn/ui", "/docs/zedkit-and-shadcn"],
       ["Maturity and compatibility", "/docs/maturity-and-compatibility"],
-      ["UI foundations", "/docs/foundations"],
       ["Note list example", "/examples/note-list"],
     ] as const;
     for (const [name, href] of guides) {
       await expect(header.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
     }
 
-    // "Documentation" is the only header entry that may point at /docs.
+    await expect(header.getByRole("link", { name: "UI foundations", exact: true })).toHaveCount(0);
+    // Docs and UI each own one URL; Guides must not duplicate them.
     await expect(header.locator('a[href="/docs"]')).toHaveCount(1);
+    await expect(header.locator('a[href="/docs/foundations"]')).toHaveCount(1);
     await expect(header.getByRole("link", { name: /Tutorials & catalog/ })).toHaveCount(0);
   });
 
@@ -125,17 +129,21 @@ test.describe("site header navigation (#1034)", () => {
     expect(contrast).toBeGreaterThanOrEqual(4.5);
   });
 
-  test("phone menu lists the catalog", async ({ page }) => {
+  test("phone menu lists AI, UI, Docs, and Catalog", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.goto("/", { waitUntil: "networkidle" });
 
     await page.getByRole("button", { name: "Open menu" }).click();
     const menu = page.getByRole("navigation", { name: "Menu" });
+    await expect(menu.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
+    await expect(menu.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
+    await expect(menu.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
     await expect(
       menu.getByRole("link", { name: "Catalog", exact: true }),
     ).toHaveAttribute("href", "/catalog");
-    await expect(menu.getByRole("link", { name: "UI changelog" })).toBeVisible();
+    await expect(menu.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
     await expect(menu.getByText("Guides", { exact: true })).toBeVisible();
     await expect(menu.getByRole("link", { name: "Getting started", exact: true })).toBeVisible();
+    await expect(menu.getByRole("link", { name: "UI foundations", exact: true })).toHaveCount(0);
   });
 });

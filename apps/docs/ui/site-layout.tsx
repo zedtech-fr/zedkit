@@ -28,7 +28,7 @@ export function SiteLayout({
           children: <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />,
         }}
         githubUrl="https://github.com/zedtech-fr/zedkit"
-        links={siteHeaderLinks(changelogHref)}
+        links={siteHeaderLinks()}
         searchToggle={{ enabled: true }}
         themeSwitch={{ enabled: true }}
         slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
