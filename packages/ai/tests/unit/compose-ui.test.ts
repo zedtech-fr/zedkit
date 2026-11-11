@@ -63,6 +63,14 @@ describe("compose-ui skill", () => {
     expect(read("skills/setup-ai/design-policy.md")).toContain("min-width: 0");
     expect(read("skills/setup-ai/design-policy.md")).toContain("may share one value");
     expect(read("skills/setup-ai/design-policy.md")).toContain("named, authorized removal");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("kit-owned files");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("recorded a yes");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("semantic-only");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("source: owner");
+    expect(read("skills/setup-ai/design-policy.md")).toContain("no CLI flag");
+    expect(read("skills/setup-ai/design-policy.md")).not.toContain("Supersede it with this file");
+    expect(read("skills/setup-ai/design-policy.md")).not.toContain("do not keep that rule");
+    expect(read("skills/setup-ai/design-policy.md")).not.toContain("--semantic");
     expect(read("skills/setup-ai/design-policy.md")).not.toContain("One name per shared value");
     expect(read("skills/setup-ai/design-policy.md")).not.toContain("above zero");
     expect(read("skills/setup-ai/design-policy.md")).not.toContain("report that constraint and stop");
