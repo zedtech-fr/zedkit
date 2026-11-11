@@ -82,7 +82,8 @@ const fence = "ok";
     ["javascript:", "[x](javascript:alert(1))", /javascript:/i],
     ["data:", "[x](data:text/html,<script>alert(1)</script>)", /data:/i],
     ["padded mixed-case javascript:", "[x](< JaVaScRiPt:alert(1)>)", /javascript:/i],
-    ["padded mixed-case data:", "[x](< DaTa:text/html,<script>alert(1)</script>)", /data:/i],
+    // Enclosed destinations cannot contain `>` (CommonMark), so no nested tags.
+    ["padded mixed-case data:", "[x](< DaTa:text/html,alert(1)>)", /data:/i],
     ["tab-in-scheme javascript:", "[x](<java\tscript:alert(1)>)", /javascript:/i],
     ["vbscript:", "[x](vbscript:msgbox(1))", /vbscript:/i],
     ["entity-encoded javascript:", "[x](javascript&#58;alert(1))", /javascript:/i],
