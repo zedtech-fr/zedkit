@@ -499,5 +499,18 @@ describe("overlays", () => {
       expect(container.querySelector("svg")?.className.baseVal ?? "").toContain("size-icon");
       expect(container.querySelector("svg")?.className.baseVal ?? "").not.toContain("size-icon-control");
     });
+
+    it("keeps the copy control from shrinking in the flex row", () => {
+      render(
+        <SecretField
+          multiline
+          aria-label="Setup prompt"
+          value="Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md"
+        />,
+      );
+      const button = screen.getByRole("button", { name: "Copy to clipboard" });
+      expect(button.className).toContain("shrink-0");
+      expect(button.className).toContain("size-control-height");
+    });
   });
 });

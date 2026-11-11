@@ -70,8 +70,8 @@ function MarkdownCode(props: React.ComponentProps<"code"> & ExtraProps) {
 }
 
 function MarkdownImage(props: React.ComponentProps<"img"> & ExtraProps) {
-  const { className, ...rest } = omitNode(props);
-  return <img className={cn("max-w-full h-auto", className)} {...rest} />;
+  const { className, alt, ...rest } = omitNode(props);
+  return <img className={cn("h-auto max-w-full", className)} alt={alt ?? ""} {...rest} />;
 }
 
 const markdownComponents = {

@@ -177,6 +177,12 @@ export {
   SelectValue,
 } from "./forms/select.js";
 export { Separator, type SeparatorProps } from "./layout/separator.js";
+export {
+  SidebarNavGroup,
+  SidebarNavItem,
+  type SidebarNavGroupProps,
+  type SidebarNavItemProps,
+} from "./layout/sidebar-nav.js";
 export { Surface, surfaceVariants, surfaceGlassPanelClass, applySurfaceGlassPanel, type SurfaceProps } from "./surfaces/surface.js";
 export { SCROLL_SCENES_MAX, ScrollScenes, type ScrollScene, type ScrollScenesProps } from "./layout/scroll-scenes.js";
 export {
@@ -246,6 +252,12 @@ export {
   type ScrollResetOptions,
   type ScrollResetProps,
 } from "./scroll-reset.js";
+export {
+  JumpToLatest,
+  useStickToBottom,
+  type JumpToLatestProps,
+  type StickToBottomOptions,
+} from "./layout/stick-to-bottom.js";
 export {
   RouteModal,
   type RouteModalDirection,

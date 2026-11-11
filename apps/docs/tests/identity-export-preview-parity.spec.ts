@@ -98,9 +98,9 @@ async function mockSuggest(page: Page) {
 
 test("exported CSS on a clean fixture computes the same tokens as the preview", async ({ page, context }) => {
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  await page.getByLabel("Spacing", { exact: true }).fill("0.4rem");
-  await page.getByLabel("Radius", { exact: true }).fill("0.75rem");
-  await page.getByLabel("Primary", { exact: true }).fill("10 60% 30%");
+  await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
+  await page.getByLabel("--radius", { exact: true }).fill("0.75rem");
+  await page.getByLabel("--primary", { exact: true }).fill("10 60% 30%");
 
   const preview = page.locator('[data-slot="identity-editor-preview"]');
   const lightPreview = await readTokens(preview, LIGHT);

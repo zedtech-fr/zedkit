@@ -9,6 +9,8 @@ import {
   Button,
   Field,
   FieldLabel,
+  FieldLegend,
+  FieldSet,
   Heading,
   Input,
   Stack,
@@ -20,7 +22,8 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
+import { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
+import { identityTokenCssVars } from "@/lib/identity-token-css-vars";
 
 const DRAFT_ID = "draft";
 const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
@@ -44,9 +47,11 @@ function TokenField({
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
   const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
+  const invalidSwatch = Boolean(swatch) && !HSL_TRIPLET.test(draft.trim());
+  const formatId = `${id}-format`;
   return (
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
-    <Field className="content-shrink">
+    <Field className="content-shrink" data-invalid={invalidSwatch ? true : undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap="sm" className="content-shrink">
         {swatch ? (
@@ -63,22 +68,29 @@ function TokenField({
           value={draft}
           className="content-shrink flex-1"
           data-editor-scroll=""
+          aria-invalid={invalidSwatch || undefined}
+          aria-describedby={invalidSwatch ? formatId : undefined}
           onChange={(event) => {
             setDraft(event.target.value);
             onChange(event.target.value);
           }}
         />
       </Stack>
+      {invalidSwatch ? (
+        <Text as="span" id={formatId} className="sr-only">
+          {identityEditorCopy.fields.hslFormat}
+        </Text>
+      ) : null}
     </Field>
   );
 }
 
 function FieldGroup({ legend, className, children }: { legend: string; className?: string; children: ReactNode }) {
   return (
-    <fieldset className={cn("trim-margin content-shrink flush", className)}>
-      <legend className="mb-field-legend-bottom font-semibold text-foreground">{legend}</legend>
+    <FieldSet className={cn("trim-margin content-shrink flush", className)}>
+      <FieldLegend className="font-semibold text-foreground">{legend}</FieldLegend>
       <Stack className="grid content-shrink gap-stack-lg sm:grid-pair">{children}</Stack>
-    </fieldset>
+    </FieldSet>
   );
 }
 
@@ -91,20 +103,22 @@ function EditorFields({
   scheme,
   onPatch,
   afterShape,
+  idPrefix = "identity-editor",
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
-  onPatch: (key: string, value: string) => void;
+  onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
   /** Rendered right after the first group: what you do once the first adjustment has shown its effect. */
   afterShape?: ReactNode;
+  idPrefix?: string;
 }) {
   const pair = tokens[scheme];
-  const scalar = (keys: readonly (typeof SCALAR_KEYS)[number][]) =>
+  const scalar = (keys: readonly (typeof SCALAR_KEYS)[number][] | readonly (typeof FONT_KEYS)[number][]) =>
     keys.map((key) => (
       <TokenField
         key={key}
-        id={`identity-editor-${key}`}
-        label={identityEditorCopy.fields.scalar[key]}
+        id={`${idPrefix}-${key}`}
+        label={identityTokenCssVars[key]}
         value={tokens[key]}
         onChange={(value) => onPatch(key, value)}
       />
@@ -114,16 +128,17 @@ function EditorFields({
       <FieldGroup legend={identityEditorCopy.fields.groups.shape}>{scalar(SHAPE_KEYS)}</FieldGroup>
       {afterShape}
       <FieldGroup legend={identityEditorCopy.fields.groups.type}>{scalar(TYPE_KEYS)}</FieldGroup>
+      <FieldGroup legend={identityEditorCopy.fields.groups.fonts}>{scalar(FONT_KEYS)}</FieldGroup>
       <FieldGroup legend={identityEditorCopy.fields.groups.depth}>{scalar(DEPTH_KEYS)}</FieldGroup>
       <FieldGroup legend={identityEditorCopy.fields.groups.color(scheme)}>
         {LIGHT_KEYS.map((key) => (
           <TokenField
             key={key}
-            id={`identity-editor-${key}`}
-            label={identityEditorCopy.fields.light[key]}
+            id={`${idPrefix}-${key}`}
+            label={identityTokenCssVars[key]}
             value={pair[key]}
             swatch
-            onChange={(value) => onPatch(key, value)}
+            onChange={(value) => onPatch(key, value, scheme)}
           />
         ))}
       </FieldGroup>

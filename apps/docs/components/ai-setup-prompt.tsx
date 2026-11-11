@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button, Stack, Text } from "@zedtech/zedkit-ui";
 import { adoptionCopy } from "@/components/i18n/adoption-copy";
+import { aiSetupCopy } from "@/components/i18n/ai-setup-copy";
 import {
   AI_SETUP_DOCS_PATH,
   AI_SETUP_LLMS_URL,
@@ -32,7 +33,7 @@ function CopyPromptButton({ text }: { text: string }) {
     );
   }
 
-  const label = adoptionCopy.copyLabel("Agent setup prompt");
+  const label = adoptionCopy.copyLabel(aiSetupCopy.prompt.copyWhat);
 
   return (
     <>
@@ -66,11 +67,11 @@ export function AiSetupPrompt() {
       }
     >
       <Text as="p" variant="muted" className="trim-margin">
-        Paste this as the only message in a new chat at the repo root (Cursor, Muse, Claude Code, or your tool — agents should fetch{" "}
+        {aiSetupCopy.prompt.pasteBefore}{" "}
         <a href={AI_SETUP_LLMS_URL} className="underline">
           {AI_SETUP_LLMS_URL}
         </a>
-        ):
+        {aiSetupCopy.prompt.pasteAfter}
       </Text>
       <Stack gap="sm" className="content-shrink sm:flex-row sm:items-start sm:justify-between">
         <pre className="content-shrink flex-1 overflow-x-auto rounded-md bg-background px-control-inline surface-pad-block-sm font-mono text-dense break-words whitespace-pre-wrap">
@@ -79,7 +80,7 @@ export function AiSetupPrompt() {
         <CopyPromptButton text={AI_SETUP_MINI_PROMPT} />
       </Stack>
       <Text as="p" variant="muted" className="trim-margin">
-        Full walkthrough:{" "}
+        {aiSetupCopy.prompt.walkthroughLead}{" "}
         <a href={AI_SETUP_DOCS_PATH} className="underline">
           {AI_SETUP_DOCS_PATH}
         </a>

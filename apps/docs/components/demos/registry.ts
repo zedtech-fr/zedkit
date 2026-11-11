@@ -56,6 +56,7 @@ import { DataTablePaginationDemo } from "./data-table-pagination-demo";
 import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
+import { DetailsStatGridDemo } from "./details-stat-grid-demo";
 import { DialogDemo } from "./dialog-demo";
 import { DialogTallDemo } from "./dialog-tall-demo";
 import { DropdownMenuDemo } from "./dropdown-menu-demo";
@@ -81,6 +82,9 @@ import { SelectDemo } from "./select-demo";
 import { ComboboxDemo } from "./combobox-demo";
 import { MultiSelectDemo } from "./multi-select-demo";
 import { SeparatorDemo } from "./separator-demo";
+import { SidebarNavActiveDemo } from "./sidebar-nav-active-demo";
+import { SidebarNavItemDemo } from "./sidebar-nav-demo";
+import { SidebarNavGroupDemo } from "./sidebar-nav-group-demo";
 import { SkeletonDemo } from "./skeleton-demo";
 import { StackDemo } from "./stack-demo";
 import { StatusDotDemo } from "./status-dot-demo";
@@ -217,6 +221,7 @@ export const demoRegistry = {
   DataTableToolbarDemo: { Demo: DataTableToolbarDemo, file: "data-table-toolbar-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
+  DetailsStatGridDemo: { Demo: DetailsStatGridDemo, file: "details-stat-grid-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx" },
   DialogTallDemo: { Demo: DialogTallDemo, file: "dialog-tall-demo.tsx", center: true },
   DropdownMenuDemo: { Demo: DropdownMenuDemo, file: "dropdown-menu-demo.tsx", center: true },
@@ -243,6 +248,9 @@ export const demoRegistry = {
   ComboboxDemo: { Demo: ComboboxDemo, file: "combobox-demo.tsx" },
   MultiSelectDemo: { Demo: MultiSelectDemo, file: "multi-select-demo.tsx" },
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },
+  SidebarNavActiveDemo: { Demo: SidebarNavActiveDemo, file: "sidebar-nav-active-demo.tsx" },
+  SidebarNavGroupDemo: { Demo: SidebarNavGroupDemo, file: "sidebar-nav-group-demo.tsx" },
+  SidebarNavItemDemo: { Demo: SidebarNavItemDemo, file: "sidebar-nav-demo.tsx" },
   SkeletonDemo: { Demo: SkeletonDemo, file: "skeleton-demo.tsx" },
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
   ContainerDemo: { Demo: ContainerDemo, file: "container-demo.tsx" },

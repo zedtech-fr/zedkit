@@ -111,7 +111,7 @@ async function assertLinkGhostHoverCalm(page: Page) {
 }
 
 async function assertInstallSection(page: Page) {
-  await page.goto(HOME, { waitUntil: "networkidle" });
+  await page.goto(DIALOG_PAGE, { waitUntil: "networkidle" });
   const section = page.locator("#install-or-copy");
   // Two adoption paths (install, copy), the install command first, with its copy button.
   await expect(section.getByRole("tablist", { name: "How to adopt" }).getByRole("tab")).toHaveCount(2);

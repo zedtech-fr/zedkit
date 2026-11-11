@@ -77,7 +77,7 @@ function SecretField({ id, value, copyLabel, multiline = false, "aria-label": ar
       ) : (
         <Input id={id} readOnly value={value} className="font-mono" aria-label={ariaLabel} />
       )}
-      <Button type="button" variant="outline" size="icon" aria-label={copyLabel ?? messages.copyToClipboard} onClick={copy}>
+      <Button type="button" variant="outline" size="icon" className="shrink-0" aria-label={copyLabel ?? messages.copyToClipboard} onClick={copy}>
         {copied ? <Check className="size-icon" /> : <Copy className="size-icon" />}
       </Button>
       <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">

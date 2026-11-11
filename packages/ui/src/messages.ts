@@ -47,6 +47,8 @@ export type ZedkitUiMessages = {
   mainNavigation: string;
   /** Accessible name of the language switch. */
   language: string;
+  /** Visible label of the Jump to latest control. */
+  jumpToLatest: string;
   locale: "en" | "fr";
   /** Named steps while an assistant answer is still being written. */
   streamStatus: {
@@ -97,6 +99,7 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   menu: "Menu",
   mainNavigation: "Main navigation",
   language: "Language",
+  jumpToLatest: "Jump to latest",
   locale: "en",
   streamStatus: {
     "reading-reference": "Reading the site",
@@ -146,6 +149,7 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   menu: "Menu",
   mainNavigation: "Navigation principale",
   language: "Langue",
+  jumpToLatest: "Aller au plus récent",
   locale: "fr",
   streamStatus: {
     "reading-reference": "Lecture du site",

@@ -652,7 +652,7 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - Examples: In Suspense, Standalone
 - A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
 - Registry: card-skeleton
-- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts.
+- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
 
 ```ts
 import { Suspense } from "react";
@@ -1221,6 +1221,40 @@ import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
 </RouteModal>
 ```
 
+## Follow a growing log to the latest
+
+- Import: `@zedtech/zedkit-ui` — `useStickToBottom`, `StickToBottomOptions`, `JumpToLatest`, `JumpToLatestProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: JumpToLatest
+- Audience: Developers building a chat, log, or console that grows while the reader watches.
+- Purpose: Follow the newest line until the reader scrolls up; a named button jumps back and resumes following. `offset` defaults to 8px; `behavior` defaults to `"auto"` (instant jump).
+- When to use: On any overflowing scroll parent (`AppShell` `mainRef` or a custom pane) with content that appends.
+- When not to use: For route-change scroll-to-top — use `Reset scroll on route change`. CSS `overflow-anchor` cannot expose a latch for the button.
+- Examples: Log pane with jump control
+- A11y: Hidden while latched (not in the tab order). Visible control is a real `button` with the kit 44px phone target; empty `label` falls back to kit chrome (that visible text is the accessible name — do not pass a conflicting `aria-label`). `jumpToLatest` moves focus to the scroller. A custom pane needs `tabIndex={0}`, `role="region"`, `aria-label`, and a visible focus ring (`AppShell` `main` already does this). Jumps instantly by default and always when motion is reduced (OS or `html[data-motion=reduce]`). `behavior="smooth"` while a log is still growing is a continuous animation — keep `"auto"` when the reader may be motion-sensitive. Not a live region: in chat, pair with `StreamText`; a plain log or console should add `aria-live` or `role="status"` if new lines must be announced.
+- Composition: `JumpToLatest` does not call the hook; the parent passes `stuck` and `onClick`. The hook takes a `RefObject` to the overflowing node, not `window`. The control is unpositioned: overlay it (`absolute pin-bottom pin-x` on a `relative` parent) so mount/unmount does not shift in-flow layout, or the caller owns position.
+- See also: `Reset scroll on route change`, `Lay out an admin page (sidebar + topbar + header)`, `Localize kit chrome in English or French`
+- Troubleshooting: Custom `messages` objects must keep every key (`jumpToLatest` included) — see `Localize kit chrome in English or French`. The button is absent while `stuck` is true. ResizeObserver watches the scroller box, not content size — image or font loads that grow `scrollHeight` without a DOM edit do not re-pin; wrap the content so the box changes, or call `jumpToLatest` after load. Starts latched and pins on mount — restore a saved `scrollTop` after mount on a resume journey.
+
+```ts
+"use client";
+import { useRef, type ReactNode } from "react";
+import { JumpToLatest, useStickToBottom } from "@zedtech/zedkit-ui";
+export function LogPane({ children }: { children: ReactNode }) {
+  const scroller = useRef<HTMLDivElement>(null);
+  const { isStuck, jumpToLatest } = useStickToBottom(scroller);
+  return (
+    <div className="relative pane-shrink">
+      <div ref={scroller} tabIndex={0} role="region" aria-label="Log" className="h-full overflow-y-auto focus-ring">
+        {children}
+      </div>
+      <JumpToLatest className="absolute pin-bottom pin-x" stuck={isStuck} onClick={jumpToLatest} />
+    </div>
+  );
+}
+```
+
 ## Reset scroll on route change
 
 - Import: `@zedtech/zedkit-ui` — `ScrollReset`, `ScrollResetProps`, `useScrollReset`, `ScrollResetOptions`
@@ -1387,6 +1421,50 @@ import { AppShell } from "@zedtech/zedkit-ui";
 // Opt out of the mobile menu: sidebarTrigger={null}
 ```
 
+## List sidebar rows with status, title, meta, and count
+
+- Import: `@zedtech/zedkit-ui` — `SidebarNavItem`, `SidebarNavItemProps`, `SidebarNavGroup`, `SidebarNavGroupProps`
+- Wraps: `lucide-react` (group chevron); native `details`
+- Status: alpha
+- Short name: SidebarNavItem
+- Audience: Developers rendering a sidebar run list, inbox, or queue.
+- Purpose: One row for status, title, recency (`meta`), quantity (`count`), and active; groups collapse with native disclosure.
+- When to use: Inside `AppShell` sidebar (or any list) when each row needs status + title + optional meta/count. For a destination, pass `asChild` with a link.
+- When not to use: For site chrome or marketing nav — use `Faq` or header links; for the page frame — use AppShell.
+- See also: `Lay out an admin page (sidebar + topbar + header)`, `Indicate status with a dot`, `Show a status or count badge`
+- Examples: Simple, Active, Group
+- A11y: Default host is a native `button` (`type="button"`) with `min-h-target` (44px on a phone); for navigation, pass `asChild` with a link. `asChild` merges onto a single host element (a string, Fragment, or several children fall back to a button). `active` sets `aria-current="page"` on a link host and `aria-current="true"` on the button host (override via props). The title is the accessible name; status and trail stay `aria-hidden` by design — put those facts in the title if they must be announced. Item titles and group labels truncate. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks and list structure (`nav` wrapping `ul`/`li`). Disabled `asChild` hosts keep href and tab order; click, Enter, and Space are cancelled.
+- Registry: sidebar-nav
+- Troubleshooting: `asChild` needs one host element (a link for navigation) — a string, Fragment, or several children fall back to a button, they do not throw. `disabled` on `asChild` becomes `aria-disabled` (not `disabled` or `type`) and cancels click/Enter/Space; href and tab order stay. Status/meta/count wrappers omit when those props are missing (`status={0}` and `count={0}` still render). `meta` is recency or secondary text; `count` is a quantity; both sit in one trail as separate spans. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep `nav`/`ul`/`li` on the caller.
+
+```ts
+import { SidebarNavItem, StatusDot } from "@zedtech/zedkit-ui";
+<nav aria-label="Runs">
+  <ul>
+    <li>
+      <SidebarNavItem status={<StatusDot tone="success" />} meta="2m ago" count="3">
+        Nightly
+      </SidebarNavItem>
+    </li>
+  </ul>
+</nav>
+```
+
+```ts
+import { SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavItem asChild active>
+  <a href="/runs/1">Nightly</a>
+</SidebarNavItem>
+```
+
+```ts
+import { SidebarNavGroup, SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavGroup label="Runs">
+  <SidebarNavItem>Nightly</SidebarNavItem>
+  <SidebarNavItem>Staging</SidebarNavItem>
+</SidebarNavGroup>
+```
+
 ## Guide a multi-step flow with selectable option cards
 
 - Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`
@@ -1438,14 +1516,14 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
-- Purpose: Key-value detail lists plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.
-- When to use: For read-only record summaries next to the list.
+- Purpose: Key-value details as boxed rows or `variant="grid"` stats, plus a live pulse. Idle copy is `inactiveLabel`; `label` only overrides Live.
+- When to use: For read-only record summaries next to the list. Use `variant="grid"` for dashboard-style stats (large value, quiet label).
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
-- Examples: Simple, Composed rows
-- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
+- Examples: Simple, Composed rows, Stat grid
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. Grid wraps each pair so a two-column layout does not interleave terms and definitions. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Grid is `items[]` only — there is no composed-cell export. Grid reading order — each item is one wrapped `dt`/`dd` pair, not flattened grid children. Boxed look on a grid — wrap in Card (`<Card><DetailPanel variant="grid" items={items} /></Card>`); `className` also works; grid drops list chrome. Grid loading — `DetailPanelSkeleton` is the boxed-list shape only. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -1458,6 +1536,14 @@ import { DetailPanelRow } from "@zedtech/zedkit-ui";
 <dl>
   <DetailPanelRow label="Region" value="eu" />
 </dl>
+```
+
+```ts
+import { DetailPanel } from "@zedtech/zedkit-ui";
+<DetailPanel
+  variant="grid"
+  items={[{ label: "Requests", value: "12,480" }, { label: "Uptime", value: "99.9%" }]}
+/>
 ```
 
 ## Build validated forms with labels, errors, and pending state

@@ -383,11 +383,17 @@
         "@utility gap-stack-sm": {
           "gap": "var(--zk-gap-sm)"
         },
+        "@utility gap-stack-tight": {
+          "gap": "var(--spacing)"
+        },
         "@utility ghost-hover": {
           "background-color": "color-mix(in oklab, hsl(var(--muted)) 80%, transparent)"
         },
         "@utility ghost-pressed": {
           "background-color": "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)"
+        },
+        "@utility grid-pair": {
+          "grid-template-columns": "repeat(2, minmax(0, 1fr))"
         },
         "@utility grid-trio": {
           "grid-template-columns": "repeat(3, minmax(0, 1fr))"
@@ -487,6 +493,10 @@
           "line-height": "1",
           "font-weight": "600",
           "letter-spacing": "-0.02em"
+        },
+        "@utility text-stat": {
+          "font-size": "var(--text-2xl)",
+          "font-weight": "600"
         },
         "@utility text-zk-type-band": {
           "font-size": "var(--zk-type-h3-size)",
@@ -2988,6 +2998,22 @@
       "files": [
         {
           "path": "registry/ui/icon-label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-nav",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/sidebar-nav.tsx",
           "type": "registry:ui"
         }
       ]

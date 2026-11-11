@@ -27,7 +27,7 @@ import type { LucideIcon } from 'lucide-react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as React_2 from 'react';
 import type { ReactNode } from 'react';
-import type { RefObject } from 'react';
+import { RefObject } from 'react';
 import { Result } from '@zedtech/zedkit-core';
 import { RowData } from '@tanstack/react-table';
 import { RowModel } from '@tanstack/react-table';
@@ -483,6 +483,8 @@ export interface DetailPanelProps {
     className?: string;
     // (undocumented)
     items: DetailItem[];
+    // (undocumented)
+    variant?: "list" | "grid";
 }
 
 // @public
@@ -1127,6 +1129,15 @@ export function isNamedIdentityId(id: string): boolean;
 export function isPresetId(id: string): id is IdentityId;
 
 // @public
+export function JumpToLatest(input: JumpToLatestProps): JSX.Element | null;
+
+// @public (undocumented)
+export interface JumpToLatestProps extends Omit<ButtonProps, "children" | "asChild" | "type" | "aria-label"> {
+    label?: string;
+    stuck: boolean;
+}
+
+// @public
 export function keepIdentityDarkKeys(tokens: IdentityTokens, source: IdentityTokens, keys: readonly string[]): IdentityTokens;
 
 // @public (undocumented)
@@ -1537,6 +1548,31 @@ export function Separator(input: SeparatorProps): React_2.JSX.Element;
 export type SeparatorProps = React_2.ComponentProps<typeof SeparatorPrimitive.Root>;
 
 // @public (undocumented)
+export function SidebarNavGroup(input: SidebarNavGroupProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface SidebarNavGroupProps extends React_2.ComponentProps<"details"> {
+    label: React_2.ReactNode;
+}
+
+// @public (undocumented)
+export function SidebarNavItem(input: SidebarNavItemProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface SidebarNavItemProps extends React_2.ComponentProps<"button"> {
+    // (undocumented)
+    active?: boolean;
+    // (undocumented)
+    asChild?: boolean;
+    // (undocumented)
+    count?: React_2.ReactNode;
+    // (undocumented)
+    meta?: React_2.ReactNode;
+    // (undocumented)
+    status?: React_2.ReactNode;
+}
+
+// @public (undocumented)
 export type SignatureMotion = keyof typeof signatureMotionClass;
 
 // @public
@@ -1615,6 +1651,12 @@ export interface StatusLabelProps {
 
 // @public (undocumented)
 export type StatusLabelTone = "loading" | "updating" | "syncing" | "saved" | "retry" | "error" | "offline";
+
+// @public (undocumented)
+export interface StickToBottomOptions {
+    behavior?: "auto" | "smooth";
+    offset?: number;
+}
 
 // @public
 export function StickyAside(input: StickyAsideProps): React_2.JSX.Element;
@@ -1888,6 +1930,12 @@ export function usePortalContainer(): HTMLElement | undefined;
 // @public
 export function useScrollReset(routeKey: string, options?: ScrollResetOptions): void;
 
+// @public
+export function useStickToBottom(scroller: RefObject<HTMLElement | null>, options?: StickToBottomOptions): {
+    isStuck: boolean;
+    jumpToLatest: () => void;
+};
+
 // @public (undocumented)
 export function useUiMessages(): ZedkitUiMessages;
 
@@ -1993,6 +2041,7 @@ export type ZedkitUiMessages = {
     menu: string;
     mainNavigation: string;
     language: string;
+    jumpToLatest: string;
     locale: "en" | "fr";
     streamStatus: {
         "reading-reference": string;

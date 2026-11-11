@@ -54,6 +54,8 @@ export const identityAssistantCopy = {
     proposalReady: "A proposed look is ready.",
     waitingSuffix: ", a proposal is ready",
     draftNow: "This is your draft as it is now. A proposal appears here, in light and dark.",
+    customize: "Customize this look",
+    customizeHint: "Adjust the fields below; the preview above and the specimens on the page follow.",
   },
   cancelled: "Cancelled. Nothing changed.",
   thread: "What you asked for so far",

@@ -183,9 +183,9 @@ export function checkSiteShell(html, label, footerSpecs) {
   if (!html.includes("Maintained by ZED TECH")) {
     errors.push(`${label}: missing maintainer footer text`);
   }
-  for (const { label: linkLabel, href } of footerSpecs) {
+  for (const { copyKey, href } of footerSpecs) {
     if (!html.includes(href)) {
-      errors.push(`${label}: missing footer link ${linkLabel} (${href})`);
+      errors.push(`${label}: missing footer link ${copyKey} (${href})`);
     }
   }
   if (!html.includes('href="/docs"')) {

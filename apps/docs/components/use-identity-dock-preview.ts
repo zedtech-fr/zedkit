@@ -23,5 +23,11 @@ export function useIdentityDockPreview(baseTokens: IdentityTokens, identityId: s
     applyWidgetSpecimenPreview(baseTokens);
   }, [identityId, baseTokens, setPreviewTokens, setPreviewDomain]);
 
-  return { workingTokens: previewTokens ?? baseTokens, setPreviewTokens };
+  function resetPreview() {
+    setPreviewTokens(null);
+    setPreviewDomain(null);
+    applyWidgetSpecimenPreview(baseTokens);
+  }
+
+  return { workingTokens: previewTokens ?? baseTokens, setPreviewTokens, resetPreview };
 }

@@ -68,7 +68,7 @@ export const specimenMessagesEn = {
     servicesAriaLabel: "Services",
     services: [
       { id: "cut", label: "Haircut", duration: "45 min" },
-      { id: "color", label: "Colour", duration: "90 min" },
+      { id: "color", label: "Color", duration: "90 min" },
     ],
     slotsAriaLabel: "Available times",
     slots: ["09:00", "11:30", "14:00", "16:30"],
