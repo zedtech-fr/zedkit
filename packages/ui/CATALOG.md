@@ -1645,11 +1645,12 @@ import { Heading } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: Markdown
 - Audience: App authors rendering untrusted notes or README-like copy as React.
-- Purpose: Turn CommonMark into React elements with sanitized HTML, info-coloured links, and fenced code that does not execute.
-- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). CommonMark images with `http`/`https` src still render as `<img>`; pair that with CSP. `data:` image src is stripped.
+- Purpose: Turn CommonMark into React elements with sanitized, inert HTML and script vectors, info-coloured links, and wrapping fences.
+- When to use: When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). The host CSP is what stops CommonMark `http`/`https` images from loading unexpected content; this wrapper still renders those as `<img>`. `data:` image src is stripped.
 - When not to use: For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.
 - See also: `Render headings and body text without raw tags`
-- A11y: Headings come from the source (one `h1` per page). Links open in the same tab (`rel="noopener noreferrer"` is defense-in-depth). Fenced code wraps. Info colour marks references, not primary actions.
+- A11y: Headings come from the source (one `h1` per page). Links open in the same tab (`rel="noopener noreferrer"` is defense-in-depth) and use `focus-ring`. Only `a`, `pre`, `code`, and `img` carry extra classes. Fenced code wraps (`wrap-anywhere`). Info colour marks references, not primary actions.
+- Troubleshooting: `children` is the Markdown source string, not a React node. Callers cannot pass rehype plugins or skip sanitize.
 
 ```ts
 import { Markdown } from "@zedtech/zedkit-ui";
