@@ -5,8 +5,6 @@ export const SITE_NPM_ORG_URL = "https://www.npmjs.com/org/zedtech";
 export const SITE_LICENSE_URL = "https://github.com/zedtech-fr/zedkit/blob/main/LICENSE";
 export const SITE_BUG_REPORT_URL =
   "https://github.com/zedtech-fr/zedkit/issues/new?template=bug_report.md";
-export const SITE_CHANGELOG_URL =
-  "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
 export const SITE_COMPANY_URL = "https://zedtech.fr";
 
 /** Demo-only identity editor (not a catalog docs page). */

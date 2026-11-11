@@ -7,10 +7,10 @@ test.describe("site shell", () => {
   test("home footer and header links", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
     await expect(page.getByText("zedkit, by Zed Tech · MIT")).toBeVisible();
-    await expect(footerLink(page, "GitHub")).toBeVisible();
+    await expect(footerLink(page, "GitHub (opens in a new tab)")).toBeVisible();
     const header = page.locator("#nd-nav");
     await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
-    await expect(header.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
     await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Guides" })).toHaveCount(0);
   });
@@ -51,6 +51,6 @@ test.describe("site shell", () => {
     await expect(page.getByText("zedkit, by Zed Tech · MIT")).toBeVisible();
     await page.goto("/missing-page", { waitUntil: "networkidle" });
     await expect(page.getByText("zedkit, by Zed Tech · MIT")).toBeVisible();
-    await expect(footerLink(page, "zedtech.fr")).toBeVisible();
+    await expect(footerLink(page, "zedtech.fr (opens in a new tab)")).toBeVisible();
   });
 });

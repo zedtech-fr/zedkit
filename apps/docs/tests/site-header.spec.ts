@@ -32,7 +32,9 @@ test.describe("site header navigation (#1034)", () => {
     const header = page.locator("#nd-nav");
     await expect(header.getByRole("button", { name: "Guides" })).toHaveCount(0);
     await expect(header.getByRole("link", { name: "Guides", exact: true })).toHaveCount(0);
-    await expect(header.getByRole("link", { name: "GitHub", exact: true })).toHaveAttribute(
+    await expect(header.getByRole("link", { name: "Reviews" })).toHaveCount(0);
+    await expect(header.getByRole("link", { name: "Issues", exact: true })).toHaveCount(0);
+    await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toHaveAttribute(
       "href",
       "https://github.com/zedtech-fr/zedkit",
     );
@@ -62,7 +64,7 @@ test.describe("site header navigation (#1034)", () => {
     await expect(menu.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
     await expect(menu.getByText("Guides", { exact: true })).toHaveCount(0);
     await expect(menu.getByRole("link", { name: "Getting started", exact: true })).toHaveCount(0);
-    await expect(page.getByRole("dialog").getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(page.getByRole("dialog").getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
     await expect(page.getByRole("dialog").getByRole("link", { name: "Get started", exact: true })).toHaveAttribute(
       "href",
       "#get-started",

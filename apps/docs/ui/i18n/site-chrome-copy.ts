@@ -12,6 +12,7 @@ export const siteChromeCopy = {
     siteNavigation: "Site navigation",
     guides: "Guides",
     github: "GitHub",
+    opensInNewTab: "opens in a new tab",
   },
   footer: {
     credit: "by Zed Tech · MIT",

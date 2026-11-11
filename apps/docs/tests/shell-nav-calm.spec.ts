@@ -45,7 +45,7 @@ test.describe("shell nav calm guards", () => {
     const shell = page.locator("#nd-nav");
     await expect(shell.locator("select")).toHaveCount(0);
     await expect(shell.getByText(VERSION_LABEL)).toHaveCount(0);
-    await expect(shell.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(shell.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
     await expect(shell.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
   });
 
@@ -56,7 +56,7 @@ test.describe("shell nav calm guards", () => {
     await expect(mobile.getByLabel("Try another identity")).toHaveCount(0);
     await expect(mobile.locator("select")).toHaveCount(0);
     await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(0);
-    await expect(mobile.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(mobile.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
     await expect(mobile.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
     const dialog = page.getByRole("dialog");

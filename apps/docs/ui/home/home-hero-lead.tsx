@@ -1,10 +1,12 @@
 import { Heading, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
 import { MAP_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
+import { publicIssueHref } from "@/features/reviews/compose";
 import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
 import { HomeHeroLeadActions } from "@/ui/home/home-hero-lead-actions";
 
-export function HomeHeroLead({ className }: { className?: string }) {
+export async function HomeHeroLead({ className }: { className?: string }) {
+  const issuesHref = await publicIssueHref();
   return (
     <Stack gap="blocks" className={`content-shrink items-start ${className ?? ""}`} data-home-hero-lead="">
       <Stack gap="sm" className="content-shrink items-start">
@@ -30,7 +32,7 @@ export function HomeHeroLead({ className }: { className?: string }) {
             {homeCopy.hero.promptCaption}
           </Text>
         </Stack>
-        <HomeHeroLeadActions />
+        <HomeHeroLeadActions issuesHref={issuesHref} />
         <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
           {homeCopy.hero.facts}
         </Text>

@@ -2,8 +2,9 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { DocsAppLink } from "@/ui/docs-app-link";
+import { OffPathLink } from "@/ui/off-path-link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { GithubIcon } from "@/ui/github-icon";
 import { useTheme } from "next-themes";
 import { useSidebar } from "fumadocs-ui/components/sidebar/base";
@@ -80,16 +81,15 @@ function NavDrawerLink({
   className: string;
 }) {
   const active = isSiteNavLinkActive(pathname, link);
+  const itemClassName = `${className}${active ? " menu-current text-foreground" : ""}`;
   return (
     <DocsAppLink
       href={link.href}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
-      className={`${className}${active ? " menu-current text-foreground" : ""}`}
-      {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
+      className={itemClassName}
     >
       <span className="content-shrink flex-1">{link.text}</span>
-      {link.external ? <ExternalLink aria-hidden="true" data-external-mark="" className="size-icon shrink-0" /> : null}
     </DocsAppLink>
   );
 }
@@ -124,15 +124,13 @@ function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
         </div>
       ) : (
         <div data-shell-drawer-foot="" className="flex items-center justify-between gap-stack-md border-t content-offset">
-          <a
+          <OffPathLink
             href={SITE_GITHUB_URL}
-            target="_blank"
-            rel="noreferrer"
             className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-stack-sm text-muted-foreground`}
           >
             <GithubIcon className="size-icon shrink-0" />
             {siteChromeCopy.nav.github}
-          </a>
+          </OffPathLink>
           <ThemeButton />
         </div>
       )}
@@ -233,9 +231,9 @@ export function MobileHeader({
             <>
               <MobileSearchTrigger className={iconButtonClassName} />
               <ThemeButton />
-              <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
+              <OffPathLink href={SITE_GITHUB_URL} aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
                 <GithubIcon className="size-icon" />
-              </a>
+              </OffPathLink>
               {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton />}
             </>
           )}
