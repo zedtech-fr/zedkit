@@ -40,7 +40,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.footer.links.startWithoutWritingCode, "Start without writing code");
   assert.equal(siteChromeCopy.footer.links.mitLicense, "MIT License");
   assert.equal(siteChromeCopy.footer.links.sourceRepository, "Source repository");
-  assert.equal(siteChromeCopy.footer.links.npmOrganisation, "npm organisation");
+  assert.equal(siteChromeCopy.footer.links.npmOrganisation, "npm organization");
   assert.equal(siteChromeCopy.footer.links.reportABug, "Report a bug");
   assert.equal(siteChromeCopy.footer.links.uiChangelog, "UI changelog");
   assert.equal(siteChromeCopy.version.latest, "Latest");

@@ -48,7 +48,7 @@ test.describe("home paste band", () => {
       homePasteCopy.fullStepsHref,
     );
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Years of production setup. One prompt.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Code that's checked. Screens that match.");
 
     await page.setViewportSize({ width: 320, height: 844 });
     await expect(paste.locator("[data-setup-entry='combined']")).toBeVisible();

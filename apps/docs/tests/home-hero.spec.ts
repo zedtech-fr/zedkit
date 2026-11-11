@@ -176,7 +176,7 @@ test("on load the lead rises block by block and the window assembles, then every
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  // Three blocks (name and title, sentence, actions), each one beat after the one before.
+  // Three blocks (title stack, paragraph, setup cluster), each one beat after the one before.
   const beats = await page.evaluate(() =>
     [...document.querySelectorAll("[data-home-hero-lead] > *")].map((block) => {
       const style = getComputedStyle(block);
