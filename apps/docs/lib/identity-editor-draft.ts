@@ -63,6 +63,10 @@ function useDraftTokens(present: IdentityTokens, look: string) {
     remember(patchTokens(tokens, key, value, scheme, keep), keep);
   }
 
+  function patchMany(entries: readonly (readonly [string, string])[]) {
+    remember(entries.reduce((acc, [key, value]) => patchTokens(acc, key, value, "light", darkKept), tokens));
+  }
+
   function fix(warning: IdentityContrastWarning) {
     const parsed = parseIdentityTokens({
       ...tokens,
@@ -112,6 +116,7 @@ function useDraftTokens(present: IdentityTokens, look: string) {
     detachSite: () => setAppliedSite(false),
     load,
     patch,
+    patchMany,
     fix,
     applySuggest,
   };

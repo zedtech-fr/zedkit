@@ -56,6 +56,7 @@ type EditorBodyProps = {
   onDark: () => void;
   onReset: () => void;
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
+  onPatchMany: (entries: readonly (readonly [string, string])[]) => void;
   onFix: (warning: IdentityContrastWarning) => void;
   onUndo: () => void;
   onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void;
@@ -142,6 +143,7 @@ function IdentityEditorBody(props: EditorBodyProps) {
             scheme={scheme}
             defaultMode="expert"
             onPatch={props.onPatch}
+            onPatchMany={props.onPatchMany}
             afterShape={
               <IdentityEditorKeepBar
                 name={props.name}
@@ -221,7 +223,7 @@ function IdentityEditorPanel() {
   const [status, setStatus] = useState<SaveStatus | null>(null);
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
-  const { tokens, darkKept, remember, undo, applySite, detachSite, appliedSite, past, load, patch, fix, applySuggest } = draft;
+  const { tokens, darkKept, remember, undo, applySite, detachSite, appliedSite, past, load, patch, patchMany, fix, applySuggest } = draft;
   const bound = bindNamedLooks(named, identity, name, tokens, setIdentity, setName, remember, setStatus, detachSite);
 
   useLayoutEffect(() => {
@@ -264,6 +266,7 @@ function IdentityEditorPanel() {
       onName={setName}
       onDark={() => setDarkPreview(!darkPreview)}
       onPatch={(key, value, palette) => patch(key, value, palette ?? (darkPreview ? "dark" : "light"))}
+      onPatchMany={patchMany}
       onFix={fix}
       saveStatus={status}
       libraryProblem={libraryProblem}

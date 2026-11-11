@@ -11,7 +11,7 @@ function read(rel) {
 }
 
 test("Simple fields patch the preview scheme, not always light", () => {
-  const form = read("components/identity-look-form.tsx");
+  const form = read("components/identity-classic-fields.tsx");
   assert.match(form, /value=\{tokens\[scheme\]\[key\]\}/);
   assert.match(form, /onPatch\(tokenKey, hsl, scheme\)/);
   assert.doesNotMatch(form, /onPatch\(tokenKey, hsl, "light"\)/);
@@ -19,7 +19,7 @@ test("Simple fields patch the preview scheme, not always light", () => {
 });
 
 test("Classic offers every palette colour the schema has, as small pickers", () => {
-  const form = read("components/identity-look-form.tsx");
+  const form = read("components/identity-classic-fields.tsx");
   const copy = read("components/i18n/identity-editor-copy.ts");
   for (const key of ["background", "foreground", "primary", "primaryForeground", "accent", "border", "mutedForeground"]) {
     assert.match(form, new RegExp(`"${key}"`));
@@ -42,9 +42,10 @@ test("the classic (simple) mode is labelled Classic, not Simple", () => {
 
 test("field ids default to the editor prefix and can be re-prefixed per host", () => {
   const form = read("components/identity-look-form.tsx");
+  const classic = read("components/identity-classic-fields.tsx");
   const fields = read("components/identity-editor-fields.tsx");
   assert.match(form, /idPrefix = "identity-editor"/);
-  assert.match(form, /`\$\{idPrefix\}-simple-\$\{tokenKey\}`/);
+  assert.match(classic, /`\$\{idPrefix\}-simple-\$\{tokenKey\}`/);
   assert.match(fields, /idPrefix = "identity-editor"/);
   assert.match(fields, /`\$\{idPrefix\}-\$\{key\}`/);
 });
@@ -54,4 +55,14 @@ test("look form tabs are named and KeepBar sits after both modes", () => {
   assert.match(form, /TabsList aria-label=\{copy\.label\}/);
   assert.match(form, /afterForm/);
   assert.doesNotMatch(form, /afterSimple/);
+});
+
+test("Classic groups colour, shape, type and depth; each colour row is one label", () => {
+  const form = read("components/identity-classic-fields.tsx");
+  for (const section of ["ColourSection", "ShapeSection", "TypeSection", "DepthSection"]) {
+    assert.match(form, new RegExp(`<${section} `));
+  }
+  assert.match(form, /<label\s+htmlFor=\{id\}/);
+  // Multi-token choices are one edit, not two patches from the same stale draft.
+  assert.match(form, /onPatchMany\(\[/);
 });

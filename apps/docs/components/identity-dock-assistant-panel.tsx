@@ -17,11 +17,10 @@ import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 function patchDockPreview(
   previewTokens: IdentityTokens,
   onPreviewTokens: (tokens: IdentityTokens) => void,
-  key: string,
-  value: string,
+  entries: readonly (readonly [string, string])[],
   palette?: "light" | "dark",
 ) {
-  const next = patchTokens(previewTokens, key, value, palette ?? "light", []);
+  const next = entries.reduce((acc, [key, value]) => patchTokens(acc, key, value, palette ?? "light", []), previewTokens);
   if (next === previewTokens) return false;
   onPreviewTokens(next);
   applyWidgetSpecimenPreview(next);
@@ -53,7 +52,8 @@ export function IdentityDockAssistantPanel({
       <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-start">
         <IdentityDockCustomize
           tokens={previewTokens}
-          onPatchPreview={(key, value, palette) => patchDockPreview(previewTokens, onPreviewTokens, key, value, palette)}
+          onPatchPreview={(key, value, palette) => patchDockPreview(previewTokens, onPreviewTokens, [[key, value]], palette)}
+          onPatchPreviewMany={(entries) => patchDockPreview(previewTokens, onPreviewTokens, entries)}
         />
       </Stack>
       <IdentityDockActionBar

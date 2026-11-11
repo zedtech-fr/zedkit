@@ -35,7 +35,11 @@ function DockContrastChecker(props: { tokens: IdentityTokens; onPatchPreview: Pa
 }
 
 /** The dock drawer body: Classic (default) / Expert customize form plus the colour checker. No AI conversation. */
-function IdentityDockCustomize(props: { tokens: IdentityTokens; onPatchPreview: PatchPreview }) {
+function IdentityDockCustomize(props: {
+  tokens: IdentityTokens;
+  onPatchPreview: PatchPreview;
+  onPatchPreviewMany: (entries: readonly (readonly [string, string])[]) => void;
+}) {
   return (
     <Stack gap="md" data-dock-customize="">
       <Stack gap="tight">
@@ -46,7 +50,7 @@ function IdentityDockCustomize(props: { tokens: IdentityTokens; onPatchPreview: 
           {copy.views.customizeHint}
         </Text>
       </Stack>
-      <IdentityLookForm tokens={props.tokens} scheme="light" defaultMode="simple" idPrefix="identity-dock" stickyTabs onPatch={props.onPatchPreview} />
+      <IdentityLookForm tokens={props.tokens} scheme="light" defaultMode="simple" idPrefix="identity-dock" stickyTabs onPatch={props.onPatchPreview} onPatchMany={props.onPatchPreviewMany} />
       <DockContrastChecker tokens={props.tokens} onPatchPreview={props.onPatchPreview} />
     </Stack>
   );
