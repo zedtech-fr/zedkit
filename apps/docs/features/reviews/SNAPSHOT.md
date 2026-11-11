@@ -56,6 +56,11 @@ An empty `issues` / `reviews` array is valid. Static export still needs
 a placeholder `generateStaticParams` entry; that is a site concern, not
 an exporter concern.
 
+Plan and implement phases of one implement ticket run are **two**
+timeline entries (distinct `id`, shared `runId`). The generated run
+index emits both. `liveRunsToIndex` still maps one live row to one
+entry; do not split live phases in this parser.
+
 Public-repo visibility on the **index**: only the string `"private"` is
 dropped. Missing, `null`, and `"public"` stay. Live `list()` still keeps
 only `visibility: "public"` (dense console gate). A live-shaped export
@@ -77,3 +82,21 @@ index; `reviews` is ignored. Do not rely on that: emit one shape.
 
 `run_id` / `runId` / `runIds[]` must match `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`.
 Path segments, spaces, and `..` fail closed.
+
+## Staging ingest
+
+`deploy-dev.yml` may replace `adapters/public-reviews.json` **before**
+the docs build. Set repository variable `PUBLIC_REVIEWS_SNAPSHOT` to a
+runner-local path. Optionally set `PUBLIC_REVIEWS_SNAPSHOT_REMOTE` to
+`scp` that file from the existing staging SSH host (`zed-dev`) into the
+local path first. Do not commit a host filesystem path.
+
+- Unset or missing file: keep the checked-in stand-in and continue
+  (fail-open).
+- Present but fails parse, scrub, or `assertPubliclySafe`: fail the
+  deploy (fail-closed). Secrets must not ship.
+
+`apps/docs/scripts/copy-public-reviews-snapshot.mjs <source> <dest>`
+is the gate. The CLI requires both paths; the workflow skips the CLI
+when the local path env is unset. Epic preview and production deploys
+do not ingest.
