@@ -1,3 +1,5 @@
+import { tryCatch } from "@zedtech/zedkit-core";
+
 const MS_PER_SECOND = 1_000;
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;
@@ -16,6 +18,11 @@ function durationMs(input: number | { start: number | Date; end: number | Date }
   return Number.NaN;
 }
 
+function resolveLocale(locale: string): string {
+  const supported = tryCatch(() => Intl.NumberFormat.supportedLocalesOf([locale])[0]);
+  return supported.ok && supported.value ? supported.value : "en";
+}
+
 function formatDigits(value: number, locale: string, pad: boolean): string {
   return new Intl.NumberFormat(locale, {
     maximumFractionDigits: 0,
@@ -24,19 +31,20 @@ function formatDigits(value: number, locale: string, pad: boolean): string {
   }).format(value);
 }
 
-/** Compact elapsed time: `6m 17s` under an hour, `1h 02m` from an hour up. */
+/** Compact elapsed time: `6m 17s` under an hour, `1h 02m` from an hour up. Digits follow `locale`; unit letters stay Latin. */
 export function formatDuration(
   input: number | { start: number | Date; end: number | Date },
   locale = "en",
 ): string {
+  const tag = resolveLocale(locale);
   const ms = durationMs(input);
   const totalSeconds = Number.isFinite(ms) && ms > 0 ? Math.floor(ms / MS_PER_SECOND) : 0;
   const hours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
   if (hours >= 1) {
     const minutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-    return `${formatDigits(hours, locale, false)}h ${formatDigits(minutes, locale, true)}m`;
+    return `${formatDigits(hours, tag, false)}h ${formatDigits(minutes, tag, true)}m`;
   }
   const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
   const seconds = totalSeconds % SECONDS_PER_MINUTE;
-  return `${formatDigits(minutes, locale, false)}m ${formatDigits(seconds, locale, true)}s`;
+  return `${formatDigits(minutes, tag, false)}m ${formatDigits(seconds, tag, true)}s`;
 }

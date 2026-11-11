@@ -40,6 +40,12 @@ describe("formatDuration", () => {
   it("uses the locale for digits and keeps h/m/s letters", () => {
     expect(formatDuration(1_000, "en")).toBe("0m 01s");
     expect(formatDuration(3_720_000, "fr")).toBe("1h 02m");
+    expect(formatDuration(1_000, "ar-EG")).toBe("٠m ٠١s");
+  });
+
+  it("falls back to English digits when the locale tag is invalid", () => {
+    expect(formatDuration(1_000, "!!!")).toBe("0m 01s");
+    expect(formatDuration(1_000, "")).toBe("0m 01s");
   });
 
   it("drops leftover seconds once hours show, and keeps hours past a day", () => {

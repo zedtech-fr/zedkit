@@ -723,17 +723,18 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: formatDuration
 - Audience: Developers showing elapsed time next to live status or logs.
-- Purpose: Turn a millisecond span or two instants into compact `6m 17s` / `1h 02m` text.
+- Purpose: Turn a millisecond span or two instants into compact `6m 17s` / `1h 02m` text. Digits follow the locale argument; unit letters stay Latin.
 - When to use: For dense elapsed-time labels beside a live indicator or timestamp.
 - When not to use: For relative "3 minutes ago" — use `UpdatedAgo`. For absolute times — render a `<time dateTime>`.
 - See also: `Stamp data with its age`
-- A11y: Returns a plain string. The caller owns the host; this is not a live region.
+- A11y: Returns a plain string. Digits follow the locale; `h`/`m`/`s` stay Latin. The caller owns the host — this is not a live region; place it next to a live indicator, not inside one.
+- Troubleshooting: Hours drop leftover seconds (`3_721_000` is `1h 02m`). Spans past a day stay in hours (`25h 00m`). Negative, inverted, non-finite, and sub-second values clamp to `0m 00s`. Invalid locale tags fall back to English digits.
 
 ```ts
 import { formatDuration } from "@zedtech/zedkit-ui";
 formatDuration(377_000); // "6m 17s"
 formatDuration(3_720_000); // "1h 02m"
-formatDuration({ start: 0, end: 377_000 }, "fr");
+formatDuration({ start: 0, end: 377_000 }, "fr"); // "6m 17s"
 ```
 
 ## Flag offline state with a live note
@@ -1428,18 +1429,18 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
-- Purpose: Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word.
+- Purpose: Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word. Empty `inactiveLabel` hides the idle word (dot only).
 - When to use: For read-only record summaries next to the list.
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
 - Examples: Simple, Composed rows
-- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role="status"`; `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle).
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
-<PageHeader title="Server" actions={<LivePulse inactiveLabel="Paused" />} />
+<PageHeader title="Server" actions={<LivePulse active={false} inactiveLabel="Paused" />} />
 <DetailPanel items={[{ label: "Region", value: "eu" }]} />
 ```
 

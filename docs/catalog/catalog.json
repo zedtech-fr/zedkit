@@ -3728,15 +3728,15 @@
           "status": "alpha",
           "shortName": "formatDuration",
           "audience": "Developers showing elapsed time next to live status or logs.",
-          "purpose": "Turn a millisecond span or two instants into compact `6m 17s` / `1h 02m` text.",
+          "purpose": "Turn a millisecond span or two instants into compact `6m 17s` / `1h 02m` text. Digits follow the locale argument; unit letters stay Latin.",
           "whenToUse": "For dense elapsed-time labels beside a live indicator or timestamp.",
           "whenNotToUse": "For relative \"3 minutes ago\" — use `UpdatedAgo`. For absolute times — render a `<time dateTime>`.",
           "derivedFrom": null,
-          "example": "import { formatDuration } from \"@zedtech/zedkit-ui\";\nformatDuration(377_000); // \"6m 17s\"\nformatDuration(3_720_000); // \"1h 02m\"\nformatDuration({ start: 0, end: 377_000 }, \"fr\");",
+          "example": "import { formatDuration } from \"@zedtech/zedkit-ui\";\nformatDuration(377_000); // \"6m 17s\"\nformatDuration(3_720_000); // \"1h 02m\"\nformatDuration({ start: 0, end: 377_000 }, \"fr\"); // \"6m 17s\"",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { formatDuration } from \"@zedtech/zedkit-ui\";\nformatDuration(377_000); // \"6m 17s\"\nformatDuration(3_720_000); // \"1h 02m\"\nformatDuration({ start: 0, end: 377_000 }, \"fr\");"
+              "code": "import { formatDuration } from \"@zedtech/zedkit-ui\";\nformatDuration(377_000); // \"6m 17s\"\nformatDuration(3_720_000); // \"1h 02m\"\nformatDuration({ start: 0, end: 377_000 }, \"fr\"); // \"6m 17s\""
             }
           ],
           "adoption": {
@@ -3750,7 +3750,8 @@
               }
             ]
           },
-          "a11y": "Returns a plain string. The caller owns the host; this is not a live region.",
+          "a11y": "Returns a plain string. Digits follow the locale; `h`/`m`/`s` stay Latin. The caller owns the host — this is not a live region; place it next to a live indicator, not inside one.",
+          "troubleshooting": "Hours drop leftover seconds (`3_721_000` is `1h 02m`). Spans past a day stay in hours (`25h 00m`). Negative, inverted, non-finite, and sub-second values clamp to `0m 00s`. Invalid locale tags fall back to English digits.",
           "seeAlso": [
             "Stamp data with its age"
           ]
@@ -4711,15 +4712,15 @@
           "status": "stable",
           "shortName": "DetailPanel",
           "audience": "Developers rendering record details (drawers, side panels, headers).",
-          "purpose": "Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word.",
+          "purpose": "Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word. Empty `inactiveLabel` hides the idle word (dot only).",
           "whenToUse": "For read-only record summaries next to the list.",
           "whenNotToUse": "For editable records — use Form instead.",
           "derivedFrom": null,
-          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
+          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse active={false} inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+              "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse active={false} inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
             },
             {
               "title": "Composed rows",
@@ -4744,8 +4745,8 @@
             ]
           },
           "registry": "detail-panel",
-          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role=\"status\"`; `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle).",
-          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`.",
+          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role=\"status\"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

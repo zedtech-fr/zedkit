@@ -87,11 +87,29 @@ describe("LivePulse", () => {
     expect(screen.getByRole("status", { name: "Inactif" }).textContent).toContain("Inactif");
   });
 
-  it("honors an empty inactiveLabel as no idle word", () => {
+  it("hides an empty inactiveLabel visually and keeps the idle accessible name", () => {
     render(<LivePulse active={false} inactiveLabel="" />);
-    const status = screen.getByRole("status");
+    const status = screen.getByRole("status", { name: "Idle" });
     expect(status.textContent).not.toContain("Idle");
-    expect(status.getAttribute("aria-label")).toBe("");
+    expect(status.getAttribute("aria-label")).toBe("Idle");
+  });
+
+  it("treats whitespace-only inactiveLabel as a hidden idle word", () => {
+    render(<LivePulse active={false} inactiveLabel=" " />);
+    const status = screen.getByRole("status", { name: "Idle" });
+    expect(status.textContent).not.toContain("Idle");
+    expect(status.getAttribute("aria-label")).toBe("Idle");
+  });
+
+  it("keeps the French idle name when the idle word is hidden", () => {
+    render(
+      <ZedkitUiProvider messages={zedkitUiMessagesFr}>
+        <LivePulse active={false} inactiveLabel="" />
+      </ZedkitUiProvider>,
+    );
+    const status = screen.getByRole("status", { name: "Inactif" });
+    expect(status.textContent).not.toContain("Inactif");
+    expect(status.getAttribute("aria-label")).toBe("Inactif");
   });
 
   it("uses the canonical scale gap with no arbitrary values", () => {
