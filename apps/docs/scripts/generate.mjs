@@ -9,7 +9,8 @@
 //   resolves the demo through components/demos/registry.ts) and a props
 //   table resolved at build by fumadocs-typescript AutoTypeTable
 //   (via components/props-table.tsx, inherited props expanded).
-// - Also writes public/llms.txt and public/llms-full.txt (same source, always current).
+// - Also writes public/llms.txt and public/llms-full.txt (same source, always current)
+//   plus public/{map,suggest}.md and public/{ai,ui,nest}/setup.md for agents.
 //
 // Catalog fields drive the fixed sections; optional prose under
 // `prose/<folder>/<slug>.mdx` is merged after Example (see PAGE-TEMPLATE.md).
@@ -24,7 +25,12 @@ import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
 import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
 import { componentPageSections } from "../lib/component-page-sections.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
-import { readAgentOnboardingMarkdown, writeAiSetupPublicAssets } from "../lib/ai-setup-onboarding.mjs";
+import {
+  readAgentOnboardingMarkdown,
+  readAgentProseMarkdown,
+  stripLeadingMarkdownH1,
+  writeAiSetupPublicAssets,
+} from "../lib/ai-setup-onboarding.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -485,6 +491,10 @@ export function generate(outDir) {
     "- [Getting started](https://zedkit.app/docs/getting-started) — choose a package and reach a first result",
     "- [Set up your coding agents](https://zedkit.app/docs/set-up-your-coding-agents) — zedkit-ai init and validate",
     "- [Set up zedkit AI](https://zedkit.app/docs/ai/setup) — one paste prompt; agent steps at https://zedkit.app/ai/setup.md",
+    "- [Set up zedkit UI](https://zedkit.app/ui/setup.md) — one paste prompt; agent steps for the UI package",
+    "- [Set up zedkit Nest](https://zedkit.app/nest/setup.md) — one paste prompt; agent steps for the Nest package",
+    "- [zedkit setup map](https://zedkit.app/map.md) — what each setup-able package gives, order, combined setup",
+    "- [Suggest a zedkit setup](https://zedkit.app/suggest.md) — inspect the repo, recommend a combo, leave the tree unchanged",
     "- [Maturity and compatibility](https://zedkit.app/docs/maturity-and-compatibility) — badge legend link and package matrix",
     "- [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
     "- [Add SEO to a Next.js app](https://zedkit.app/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
@@ -585,10 +595,11 @@ export function generate(outDir) {
     "",
     "Guide: https://zedkit.app/docs/zedkit-and-shadcn",
   ].join("\n");
-  // llms-full.txt scope: install + AI setup prose + the same index links as llms.txt (not full MDX page bodies).
+  // llms-full.txt scope: install + AI setup prose + short map + the same index links as llms.txt (not full MDX page bodies).
   const llmsFull = buildLlmsFull([
     { title: "Install or copy", body: installOrCopyBody },
     { title: "Set up zedkit AI", body: readAgentOnboardingMarkdown() },
+    { title: "zedkit setup map", body: stripLeadingMarkdownH1(readAgentProseMarkdown("map.md")) },
     { title: "Documentation index", body: llmsBody },
   ]);
   writeFileSync(join(publicDir, "llms-full.txt"), `${llmsFull}\n`);

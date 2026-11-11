@@ -51,6 +51,18 @@ export const reviewsCopy = {
     agentDetailEmpty: "Lenses, second pass, and transcripts will load here on demand.",
     missing: "This review is not on the public list.",
   },
+  console: {
+    openList: "Open the run list",
+    listTitle: "This run",
+    navLabel: "Items in this run",
+    flow: "Main flow",
+    itemEmpty: "Lenses and transcripts will load here on demand.",
+    relatedRuns: "Related runs",
+    pullRequest: "Pull request",
+    sha: "SHA",
+    status: "Status",
+    verdict: "Verdict",
+  },
   run: {
     backToPr: "Back to the pull request",
     backToList: "All reviews",

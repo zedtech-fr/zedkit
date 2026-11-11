@@ -122,8 +122,11 @@ export interface AppShellProps {
     children: React_2.ReactNode;
     // (undocumented)
     className?: string;
+    fixedHeight?: boolean;
+    mainRef?: React_2.Ref<HTMLElement>;
     // (undocumented)
     sidebar: React_2.ReactNode;
+    sidebarTrigger?: React_2.ReactElement | null;
     // (undocumented)
     topbar?: React_2.ReactNode;
 }
@@ -161,7 +164,7 @@ export interface BadgeProps extends React_2.ComponentProps<"div">, VariantProps<
 
 // @public (undocumented)
 export const badgeVariants: (props?: ({
-    variant?: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" | "meta" | null | undefined;
+    variant?: "default" | "destructive" | "meta" | "outline" | "secondary" | "success" | "warning" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -215,14 +218,13 @@ export type CardProps = React_2.ComponentProps<"div"> & {
 };
 
 // @public
-export function CardSkeleton(input: CardSkeletonProps): JSX.Element;
+export function CardSkeleton(input: CardSkeletonProps): React_2.JSX.Element;
 
 // @public (undocumented)
-export interface CardSkeletonProps {
-    // (undocumented)
-    className?: string;
+export interface CardSkeletonProps extends React_2.ComponentProps<"div"> {
     // (undocumented)
     label?: string;
+    size?: "sm" | "lg" | undefined;
 }
 
 // @public (undocumented)
@@ -392,6 +394,7 @@ export interface DataTableProps<TData extends RowData> {
     noResultsMessage?: string;
     // (undocumented)
     pageSize?: number;
+    scrollAriaLabel?: string;
 }
 
 // @public
@@ -739,7 +742,7 @@ export type HeadingProps = React_2.ComponentProps<"h1"> & VariantProps<typeof he
 
 // @public (undocumented)
 export const headingVariants: (props?: ({
-    typeRole?: "caption" | "display" | "small" | "body" | "label" | "nav" | "section" | "title" | "heading" | "band" | "cardTitle" | "lead" | "prose" | null | undefined;
+    typeRole?: "small" | "caption" | "display" | "body" | "label" | "nav" | "section" | "title" | "heading" | "band" | "cardTitle" | "lead" | "prose" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1550,8 +1553,8 @@ export type StackProps = React_2.ComponentProps<"div"> & VariantProps<typeof sta
 
 // @public (undocumented)
 export const stackVariants: (props?: ({
-    direction?: "vertical" | "horizontal" | null | undefined;
-    gap?: "tight" | "sm" | "md" | "lg" | "prose" | "list" | "blocks" | null | undefined;
+    direction?: "horizontal" | "vertical" | null | undefined;
+    gap?: "list" | "sm" | "lg" | "md" | "prose" | "tight" | "blocks" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1756,7 +1759,7 @@ export type TextProps = React_2.ComponentProps<"p"> & VariantProps<typeof textVa
 // @public (undocumented)
 export const textVariants: (props?: ({
     variant?: "body" | "muted" | null | undefined;
-    typeRole?: "caption" | "small" | "body" | "label" | "lead" | "prose" | null | undefined;
+    typeRole?: "small" | "caption" | "body" | "label" | "lead" | "prose" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1986,7 +1989,7 @@ export function ZedkitUiProvider(input: {
 
 // Warnings were encountered during analysis:
 //
-// src/identity-contrast.ts:10:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
+// src/identity/identity-contrast.ts:10:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

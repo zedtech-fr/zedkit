@@ -20,10 +20,20 @@ export type ReviewFirstPass = {
   readonly findings: readonly ReviewFinding[];
 };
 
+export type ReviewConsoleKind = "flow" | "agent" | "workflow";
+
+export type ReviewConsoleItem = {
+  readonly id: string;
+  readonly kind: ReviewConsoleKind;
+  readonly title: string;
+  readonly status: ReviewRunStatus;
+};
+
 export type ReviewRun = {
   readonly id: string;
   readonly status: ReviewRunStatus;
   readonly startedAt: string;
+  readonly items?: readonly ReviewConsoleItem[];
 };
 
 export type ReviewRecord = {

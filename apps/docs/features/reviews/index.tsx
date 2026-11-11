@@ -9,10 +9,15 @@
  * - First pass folded and labelled outdated, with kept / downgraded / dismissed on each finding — because: a superseded pass is history, not the decision.
  * - Notes, evidence, run history after that; lenses / second pass / transcripts on demand — because: the first screen is the decision, not the transcript.
  * - Shared main flow on PR and run pages — because: opening a run must not strand the same hurried reader.
+ * - Side panel plus selected pane on desktop — because: customer = hurried visitor scanning the run while reading one item.
+ * - Main flow selected by default — because: first screen is the outcome, not an empty pane.
+ * - Kit Drawer with a labelled 44px trigger below md — because: phone users must reach the list; the column must not stay hidden.
+ * - Selection in the URL hash, Appearance in the query — because: a maintainer must copy a look and an item without breaking either share.
  * - Appearance panel after the main flow, still ThemeScope chrome — because: decision-to-blockers reading order comes first.
+ * - Button rows, not a local nav primitive — because: generic console rows belong in the kit, not this feature.
  * - List at the section root with a useful empty state — because: the visitor always has a next click.
  * - Stacked rows, not a wide table — because: phone users at 320–390px compose by priority.
- * - Share link encodes appearance only — because: a visual issue must round-trip without token drafts.
+ * - Quiet Appearance panel inside ThemeScope — because: identities serve reading; site chrome must not jump.
  */
 
 import { notFound } from "next/navigation";

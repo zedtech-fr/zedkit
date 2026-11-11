@@ -14,6 +14,12 @@ export const PINNED_FILES = [
   "apps/docs/prose/guides/ai/setup.mdx",
   "apps/docs/public/ai/setup.md",
   "packages/ai/kit/cursor-onboarding.md",
+  "apps/docs/prose/agent/ui-setup.md",
+  "apps/docs/prose/agent/nest-setup.md",
+  "apps/docs/prose/agent/map.md",
+  "apps/docs/public/ui/setup.md",
+  "apps/docs/public/nest/setup.md",
+  "apps/docs/public/map.md",
 ];
 
 const QUALIFIED_SOURCE = String.raw`@zedtech/zedkit-([a-z0-9-]+)@(\d+\.\d+\.\d+)`;
