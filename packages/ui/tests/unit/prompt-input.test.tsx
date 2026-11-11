@@ -153,4 +153,97 @@ describe("PromptInput", () => {
     expect(field.className).toContain("max-h-prompt-input-sm");
     expect(field.className).toContain("overflow-y-auto");
   });
+
+  it("enables Send on the catalog starter default and submits on click", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput
+        sendLabel="Send"
+        defaultValue="Summarize this page"
+        onSubmit={onSubmit}
+        placeholder="Ask anything"
+        aria-label="Message"
+      />,
+    );
+    const send = screen.getByRole("button", { name: "Send" }) as HTMLButtonElement;
+    expect(send.disabled).toBe(false);
+    await user.click(send);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("submits the catalog starter on Enter", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput
+        sendLabel="Send"
+        defaultValue="Summarize this page"
+        onSubmit={onSubmit}
+        placeholder="Ask anything"
+        aria-label="Message"
+      />,
+    );
+    await user.type(screen.getByLabelText("Message"), "{Enter}");
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Shift+Enter as a newline on the catalog starter", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput
+        sendLabel="Send"
+        defaultValue="Summarize this page"
+        onSubmit={onSubmit}
+        placeholder="Ask anything"
+        aria-label="Message"
+      />,
+    );
+    await user.type(screen.getByLabelText("Message"), "{Shift>}{Enter}{/Shift}");
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("ignores whitespace-only text on the catalog starter", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput
+        sendLabel="Send"
+        defaultValue="Summarize this page"
+        onSubmit={onSubmit}
+        placeholder="Ask anything"
+        aria-label="Message"
+      />,
+    );
+    const field = screen.getByLabelText("Message");
+    const send = screen.getByRole("button", { name: "Send" }) as HTMLButtonElement;
+    await user.clear(field);
+    await user.type(field, "   ");
+    expect(send.disabled).toBe(true);
+    await user.click(send);
+    await user.type(field, "{Enter}");
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("still sends after editing the catalog starter defaultValue", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput
+        sendLabel="Send"
+        defaultValue="Summarize this page"
+        onSubmit={onSubmit}
+        placeholder="Ask anything"
+        aria-label="Message"
+      />,
+    );
+    const field = screen.getByLabelText("Message");
+    const send = screen.getByRole("button", { name: "Send" }) as HTMLButtonElement;
+    await user.clear(field);
+    await user.type(field, "Rewrite the heading");
+    expect(send.disabled).toBe(false);
+    await user.click(send);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
 });

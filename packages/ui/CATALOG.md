@@ -508,7 +508,7 @@ import { StatusDot } from "@zedtech/zedkit-ui";
 - See also: `Collect multi-line text input`, `Icon-only actions with a visible name`
 - Examples: Simple, Complete
 - A11y: Pass `sendLabel` (and `cancelLabel` when using cancel); the field keeps a visible label via `aria-label` or associated `FieldLabel`. Send and cancel use `size="icon"` tap targets aligned with `--spacing-control-height`.
-- Troubleshooting: Send stays disabled — value is trimmed; whitespace-only counts as empty. Field does not grow past `maxRows` (default 8) — it scrolls inside the composer. Consumers need `field-sizing-content` (Tailwind v4) on the stylesheet.
+- Troubleshooting: Send stays disabled — live text is trimmed (controlled `value`, or uncontrolled `defaultValue` with no `value`); whitespace-only counts as empty. Field does not grow past `maxRows` (default 8) — it scrolls inside the composer. Consumers need `field-sizing-content` (Tailwind v4) on the stylesheet.
 
 ```ts
 import { PromptInput } from "@zedtech/zedkit-ui";
