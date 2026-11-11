@@ -1,12 +1,12 @@
 "use client";
 
 import { ArrowUp } from "lucide-react";
-import type * as React from "react";
+import { useState, type ComponentProps } from "react";
 import { IconButton } from "../actions/icon-button.js";
 import { cn } from "../utils.js";
 
 export type PromptInputProps = Omit<
-  React.ComponentProps<"textarea">,
+  ComponentProps<"textarea">,
   "onSubmit"
 > & {
   /** Accessible name for the send control (and native tooltip). */
@@ -80,24 +80,29 @@ function promptInputTrySubmit(
 }
 
 /** Chat-style composer: one rounded surface, auto-growing field, send affordance inside at bottom-right. */
-export function PromptInput({
-  sendLabel,
-  onSubmit,
-  onCancel,
-  cancelLabel,
-  busy,
-  sendDisabled: sendBlocked,
-  allowEmptySubmit = false,
-  maxRows = 8,
-  className,
-  value,
-  disabled,
-  onKeyDown,
-  rows = 1,
-  ref,
-  ...props
-}: PromptInputProps) {
-  const empty = String(value ?? "").trim() === "" && !allowEmptySubmit;
+export function PromptInput(input: PromptInputProps) {
+  const {
+    sendLabel,
+    onSubmit,
+    onCancel,
+    cancelLabel,
+    busy,
+    sendDisabled: sendBlocked,
+    allowEmptySubmit = false,
+    maxRows = 8,
+    className,
+    value,
+    defaultValue,
+    disabled,
+    onKeyDown,
+    onChange,
+    rows = 1,
+    ref,
+    ...props
+  } = input;
+  const isControlled = "value" in input;
+  const [inner, setInner] = useState(defaultValue == null ? "" : String(defaultValue));
+  const empty = String((isControlled ? value : inner) ?? "").trim() === "" && !allowEmptySubmit;
   const blocked = disabled === true || busy === true || sendBlocked === true;
   const showCancel = busy === true && onCancel !== undefined && cancelLabel !== undefined;
 
@@ -105,17 +110,14 @@ export function PromptInput({
     <form
       data-slot="prompt-input"
       data-actions={showCancel ? "two" : undefined}
-      className={cn(
-        "relative w-full rounded-md border border-input bg-background shadow-sm focus-within:focus-ring-control",
-        className,
-      )}
+      className={cn("relative w-full rounded-md border border-input bg-background shadow-sm focus-within:focus-ring-control", className)}
       onSubmit={(event) => promptInputTrySubmit(event, empty, blocked, onSubmit)}
     >
       <textarea
         ref={ref}
         data-slot="prompt-input-field"
         rows={rows}
-        value={value}
+        {...props}
         disabled={disabled}
         readOnly={busy}
         className={cn(
@@ -123,11 +125,9 @@ export function PromptInput({
           "disabled:cursor-not-allowed disabled:fade-disabled",
           promptInputMaxHeightClass(maxRows),
         )}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" && !event.shiftKey) promptInputTrySubmit(event, empty, blocked, onSubmit);
-          onKeyDown?.(event);
-        }}
-        {...props}
+        value={isControlled ? value : inner}
+        onChange={(event) => { if (!isControlled) setInner(event.target.value); onChange?.(event); }}
+        onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) promptInputTrySubmit(event, empty, blocked, onSubmit); onKeyDown?.(event); }}
       />
       <PromptInputActions
         sendLabel={sendLabel}
