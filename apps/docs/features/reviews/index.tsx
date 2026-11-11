@@ -30,6 +30,7 @@ import {
   redirectPathForPr,
   redirectPathForPrRun,
 } from "./model/review-routes";
+import { isRunRecord } from "./ports/review-port";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
@@ -60,7 +61,7 @@ export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
   const run = number === null ? null : await port.getRun(number, id);
-  if (issue === null || run === null) notFound();
+  if (issue === null || run === null || !isRunRecord(run)) notFound();
   return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
 }
 

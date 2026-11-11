@@ -14,15 +14,18 @@ import { createFixtureReviewPort } from "../features/reviews/adapters/fixture.ts
 import {
   createSnapshotReviewPort,
   listIssueSitemapPaths,
+  listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
 import { latestStatus } from "../features/reviews/model/latest-status.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
+  assertPubliclySafe,
   isExportableVisibility,
   sanitizeLiveUrl,
   toPublicIndex,
+  toPublicReviews,
 } from "../features/reviews/model/public-review.ts";
 import {
   listIssueParamsFrom,
@@ -30,11 +33,14 @@ import {
   listIssueSitemapPathsFrom,
   listReviewPrParamsFrom,
   listReviewRedirectsFrom,
+  listReviewRunParamsFrom,
+  listReviewSitemapPathsFrom,
   listUnlinkedPrParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
   RETIRED_REVIEW_PR_NUMBERS,
 } from "../features/reviews/model/review-routes.ts";
+import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
 import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -480,22 +486,24 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
-test("the checked-in stand-in is dense enough and stays under 200KB", async () => {
-  const listed = await createSnapshotReviewPort().listIssues();
-  assert.ok(listed.length >= 3);
-  const dense = listed.find((row) => {
-    const types = new Set(row.entries.map((item) => item.type));
-    return types.has("plan") && types.has("implement") && types.has("review") && types.has("improve");
-  });
-  assert.ok(dense);
-  assert.ok(listed.some((row) => latestStatus(row.entries) === "running"));
-  assert.ok(listed.some((row) => latestStatus(row.entries) === "failed"));
+test("the checked-in public snapshot is live-shaped, under 200KB, and sitemaps /issues", async () => {
+  const listed = await createSnapshotReviewPort().list();
+  assert.ok(listed.length >= 1);
+  const row = listed.find((record) => record.run.run_id === "20261111T065452Z-bc07a1a9") ?? listed[0];
+  assert.equal(row.visibility, "public");
+  assert.equal(typeof row.run.pr, "number");
+  assert.ok(String(row.run.sha ?? "").length > 0);
+  assert.ok(row.run.engine_label.length > 0);
+  assert.equal(typeof row.run.elapsed_s, "number");
+  assert.ok(String(row.run.verdict ?? "").length > 0);
+  assert.equal(typeof row.run.confidence_score, "number");
+  const kinds = new Set(row.items.map((item) => item.kind));
+  assert.ok(kinds.has("main"));
+  assert.ok(row.decision);
   const unlinked = await createSnapshotReviewPort().listUnlinkedPullRequests();
   assert.ok(unlinked.length >= 1);
-  const numbers = listed.map((row) => row.number);
-  assert.ok(!numbers.every((n) => n === 64 || n === 79 || n === 80));
-  for (const row of listed) {
-    for (const item of row.entries) {
+  for (const entry of unlinked) {
+    for (const item of entry.entries) {
       assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
     }
   }
@@ -504,6 +512,9 @@ test("the checked-in stand-in is dense enough and stays under 200KB", async () =
   const sitemap = await listIssueSitemapPaths();
   assert.equal(sitemap[0], "/issues");
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
+  const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
+  assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
 });
 
 test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
@@ -670,4 +681,447 @@ test("verdict and status tones live in one shared module", () => {
     assert.doesNotMatch(source, /const VERDICT_BADGE/);
     assert.doesNotMatch(source, /const STATUS_TONE/);
   }
+});
+
+function liveItem(overrides = {}) {
+  return {
+    id: "main",
+    name: "Main flow",
+    kind: "main",
+    engine: "test",
+    engine_label: "test",
+    model: "test-model",
+    status: "done",
+    duration_s: 12,
+    tool_count: 2,
+    message_count: 1,
+    tokens_in: 10,
+    tokens_out: 4,
+    started_ms: 1_762_698_500_000,
+    last_activity_ms: 1_762_698_600_000,
+    entries: [
+      { type: "message", text: "hello" },
+      { type: "tool", tool: "read", label: "Read", status: "done", output_chars: 12 },
+    ],
+    prompt: "review this",
+    final_text: "approve",
+    ...overrides,
+  };
+}
+
+function liveSample(overrides = {}) {
+  return {
+    visibility: "public",
+    decision: {
+      posted: true,
+      must: [{ text: "Name empty states" }],
+      notes: [{ text: "The list leads. The verdict is readable." }],
+      dismissed: [],
+      degraded: false,
+      enforcement_reasons: [],
+      first_pass: { verdict: "APPROVE", confidence_score: 8.6 },
+      second_pass: { kept: 0, dropped: 0, adjusted: 0, confirmed_blockers: 0, status: "ran" },
+      verdict: "APPROVE",
+      confidence_score: 8.6,
+      summary: "The public review section is ready to merge.",
+    },
+    run: {
+      run_id: "run-71",
+      pr: 71,
+      sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      status: "done",
+      engine: "test",
+      engine_label: "test",
+      created_at: 1_762_698_600,
+      server_now: 1_762_698_600,
+      elapsed_s: 12,
+      verdict: "APPROVE",
+      confidence_score: 8.6,
+      review_size: "full",
+      issue_title: "Add a public review section",
+    },
+    items: [liveItem()],
+    verdict_json: { verdict: "APPROVE", blocking: [], notes: [] },
+    related: [],
+    ...overrides,
+  };
+}
+
+function liveWrapper(reviews, extra = {}) {
+  return { version: 1, kind: "public-live-runs", reviews, ...extra };
+}
+
+function writeLiveSnapshot(reviews, extra = {}) {
+  const dir = mkdtempSync(join(tmpdir(), "public-live-reviews-"));
+  const path = join(dir, "public-reviews.json");
+  writeFileSync(path, JSON.stringify(liveWrapper(reviews, extra)));
+  return path;
+}
+
+test("private and unknown live visibility never survive the public gate", () => {
+  const privateRecord = liveSample({
+    visibility: "private",
+    run: { ...liveSample().run, pr: 99, issue_title: "secret review" },
+  });
+  const unknown = liveSample({
+    visibility: "team",
+    run: { ...liveSample().run, pr: 98, issue_title: "mistyped" },
+  });
+  const missing = liveSample({
+    run: { ...liveSample().run, pr: 97, issue_title: "no flag" },
+  });
+  delete missing.visibility;
+  const kept = toPublicReviews([privateRecord, unknown, missing, liveSample()]);
+  assert.deepEqual(
+    kept.map((record) => record.run.pr),
+    [71],
+  );
+});
+
+test("live secret-like keys, bearer tokens, and home paths do not survive the public gate", () => {
+  const base = liveSample();
+  const dirty = liveSample({
+    token: "super-secret",
+    decision: {
+      ...base.decision,
+      summary: "Bearer xyzTOKEN789._~+/=- lives in /home/bob/kit",
+      notes: [{ text: "Call with Bearer abcDEF123._~+/=- from /home/alice/kit/token" }],
+      must: [
+        {
+          text: "Authorization: Basic dXNlcjpwYXNz lives in /Users/alice/.config",
+        },
+      ],
+    },
+    items: [
+      liveItem({
+        entries: [
+          {
+            type: "tool",
+            tool: "read",
+            label: "Read",
+            status: "done",
+            output: "Bearer firstPassSecret._~+/=- in /home/carol/review",
+            output_chars: 40,
+          },
+        ],
+        prompt: "Authorization: Basic eHl6OnBhc3M from /Users/bob/.config",
+      }),
+    ],
+  });
+  const [clean] = toPublicReviews([dirty]);
+  assert.equal(clean.token, "[redacted]");
+  assert.match(clean.decision.notes[0].text, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.decision.notes[0].text, /abcDEF123/);
+  assert.match(clean.decision.notes[0].text, /\[path\]/);
+  assert.doesNotMatch(clean.decision.notes[0].text, /\/home\/alice/);
+  assert.match(clean.decision.must[0].text, /Basic \[redacted\]/);
+  assert.doesNotMatch(clean.decision.must[0].text, /dXNlcjpwYXNz/);
+  assert.doesNotMatch(clean.decision.must[0].text, /\/Users\/alice/);
+  assert.match(clean.decision.summary, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.decision.summary, /xyzTOKEN789/);
+  assert.doesNotMatch(clean.decision.summary, /\/home\/bob/);
+  assert.match(clean.items[0].prompt, /Basic \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].prompt, /eHl6OnBhc3M/);
+  assert.doesNotMatch(clean.items[0].prompt, /\/Users\/bob/);
+  assert.match(clean.items[0].entries[0].output, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].entries[0].output, /firstPassSecret/);
+  assert.doesNotMatch(clean.items[0].entries[0].output, /\/home\/carol/);
+});
+
+test("a payload that still has a home path or token is rejected", () => {
+  assert.throws(() => assertPubliclySafe({ notes: "from /home/alice/kit" }));
+  assert.throws(() => assertPubliclySafe({ notes: "Bearer abcDEF123._~+/=" }));
+  assert.throws(() => assertPubliclySafe({ notes: String.raw`C:\Users\bob\token` }));
+  assert.doesNotThrow(() => assertPubliclySafe({ notes: "Bearer [redacted] at [path]" }));
+});
+
+test("a public live review is kept with its list fields", () => {
+  const [kept] = toPublicReviews([liveSample()]);
+  assert.equal(kept.visibility, "public");
+  assert.equal(kept.run.verdict, "APPROVE");
+  assert.equal(kept.run.confidence_score, 8.6);
+  assert.equal(kept.run.status, "done");
+  assert.equal(kept.run.sha, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  assert.deepEqual(kept.related, []);
+  assert.equal(kept.items[0].kind, "main");
+});
+
+test("a version-1 live snapshot parses its reviews", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()]));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(
+    parsed.value.map((record) => record.run.pr),
+    [71],
+  );
+  assert.equal(parsed.value[0].decision.verdict, "APPROVE");
+});
+
+test("an empty live snapshot is valid", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([]));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(parsed.value, []);
+});
+
+test("an unknown live snapshot kind is accepted when version is 1", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { kind: "redacted-export" }));
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value.length, 1);
+});
+
+test("version 2 live snapshots are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { version: 2 }));
+  assert.equal(parsed.ok, false);
+});
+
+test("unknown keys on a live snapshot record are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([{ ...liveSample(), apiKey: "x" }]));
+  assert.equal(parsed.ok, false);
+});
+
+test("unknown keys on nested live snapshot objects are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, token: "x" } })]),
+  );
+  assert.equal(parsed.ok, false);
+  assert.equal(
+    parsePublicReviewSnapshot(
+      liveWrapper([
+        liveSample({
+          items: [liveItem({ entries: [{ type: "message", text: "x", token: "x" }] })],
+        }),
+      ]),
+    ).ok,
+    false,
+  );
+});
+
+test("unknown keys on the live snapshot wrapper are rejected", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { token: "x" }));
+  assert.equal(parsed.ok, false);
+});
+
+test("a live snapshot with a missing required field is rejected", () => {
+  const rest = liveSample();
+  delete rest.run;
+  const parsed = parsePublicReviewSnapshot(liveWrapper([rest]));
+  assert.equal(parsed.ok, false);
+});
+
+test("wrong types in a live snapshot are rejected", () => {
+  assert.equal(
+    parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, created_at: "71" } })])).ok,
+    false,
+  );
+  assert.equal(parsePublicReviewSnapshot(null).ok, false);
+  assert.equal(parsePublicReviewSnapshot([]).ok, false);
+});
+
+test("unknown visibility in a live snapshot is rejected", () => {
+  assert.equal(parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "team" })])).ok, false);
+});
+
+test("omitted live visibility is rejected at parse and dropped at the public gate", () => {
+  const omitted = liveSample();
+  delete omitted.visibility;
+  assert.equal(parsePublicReviewSnapshot(liveWrapper([omitted])).ok, false);
+  assert.deepEqual(toPublicReviews([omitted]).map((row) => row.run.pr), []);
+});
+
+test("private live visibility is kept by parse so the public gate can drop it", () => {
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "private" })]));
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value[0].visibility, "private");
+});
+
+test("an item without entries still parses", () => {
+  const item = liveItem();
+  delete item.entries;
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample({ items: [item] })]));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(parsed.value[0].items[0].entries, []);
+});
+
+test("verdict_json extra keys are accepted", () => {
+  const parsed = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ verdict_json: { verdict: "APPROVE", extra_flag: true, blocking: [] } })]),
+  );
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value[0].verdict_json.extra_flag, true);
+});
+
+test("the live fixture port lists only public copies", async () => {
+  const port = createFixtureReviewPort([
+    liveSample(),
+    liveSample({
+      visibility: "private",
+      run: { ...liveSample().run, pr: 99, issue_title: "hidden" },
+    }),
+  ]);
+  const listed = await port.list();
+  assert.deepEqual(
+    listed.map((record) => record.run.pr),
+    [71],
+  );
+  listed[0].run.issue_title = "mutated";
+  const again = await port.list();
+  assert.equal(again[0].run.issue_title, "Add a public review section");
+  assert.equal(await port.getByPr(99), null);
+  assert.equal(await port.getRun(99, "run-71"), null);
+  const run = await port.getRun(71, "run-71");
+  assert.equal(run?.run.status, "done");
+});
+
+test("the live fixture test double covers more than one verdict and run status", async () => {
+  const listed = await createFixtureReviewPort().list();
+  assert.ok(listed.length >= 2);
+  const verdicts = new Set(listed.map((record) => record.run.verdict));
+  const statuses = new Set(listed.map((record) => record.run.status));
+  assert.ok(verdicts.size >= 2);
+  assert.ok(statuses.has("done"));
+  assert.ok(statuses.has("running") || statuses.has("error"));
+  assert.ok(listed.every((record) => record.visibility === "public"));
+  assert.ok(!listed.some((record) => record.run.pr === 99));
+});
+
+test("the live snapshot port lists only public copies and isolates mutations", async () => {
+  const path = writeLiveSnapshot([
+    liveSample(),
+    liveSample({
+      visibility: "private",
+      run: { ...liveSample().run, pr: 99, issue_title: "hidden" },
+    }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.list();
+  assert.deepEqual(
+    listed.map((record) => record.run.pr),
+    [71],
+  );
+  listed[0].run.issue_title = "mutated";
+  listed[0].items = [];
+  const again = await port.list();
+  assert.equal(again[0].run.issue_title, "Add a public review section");
+  assert.equal(again[0].items[0].id, "main");
+  assert.equal(await port.getByPr(99), null);
+  assert.equal(await port.getRun(99, "run-71"), null);
+  assert.equal(await port.getByPr(404), null);
+  assert.equal(await port.getRun(71, "missing"), null);
+  const run = await port.getRun(71, "run-71");
+  assert.equal(run?.run.status, "done");
+  assert.equal(run?.items[0].kind, "main");
+});
+
+test("an empty live snapshot lists nothing and keeps the /reviews helper root", async () => {
+  const path = writeLiveSnapshot([]);
+  const port = createSnapshotReviewPort(path);
+  assert.deepEqual(await port.list(), []);
+  assert.deepEqual(await listReviewPrParamsFrom(port), []);
+  assert.deepEqual(await listReviewRunParamsFrom(port), []);
+  assert.deepEqual(await listReviewSitemapPathsFrom(port), ["/reviews"]);
+  assert.deepEqual(await listReviewSitemapPaths(path), ["/reviews"]);
+});
+
+test("a malformed live snapshot fails closed", () => {
+  const dir = mkdtempSync(join(tmpdir(), "public-live-reviews-bad-"));
+  const invalidJson = join(dir, "invalid.json");
+  writeFileSync(invalidJson, "{");
+  assert.throws(() => createSnapshotReviewPort(invalidJson));
+  const missing = join(dir, "missing.json");
+  assert.throws(() => createSnapshotReviewPort(missing));
+  const wrongVersion = writeLiveSnapshot([liveSample()], { version: 2 });
+  assert.throws(() => createSnapshotReviewPort(wrongVersion));
+});
+
+test("static params and live sitemap come from public snapshot records only", async () => {
+  const path = writeLiveSnapshot([
+    liveSample(),
+    liveSample({
+      run: { ...liveSample().run, run_id: "run-64-a", pr: 64, issue_title: "Presentation blockers" },
+    }),
+    liveSample({
+      run: {
+        ...liveSample().run,
+        run_id: "run-64-b",
+        pr: 64,
+        created_at: 1_762_698_700,
+        issue_title: "Presentation blockers",
+      },
+    }),
+    liveSample({ visibility: "private", run: { ...liveSample().run, pr: 99 } }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "71" }, { n: "64" }]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [
+    { n: "71", id: "run-71" },
+    { n: "64", id: "run-64-a" },
+    { n: "64", id: "run-64-b" },
+  ]);
+  assert.deepEqual(await listReviewSitemapPathsFrom(port), [
+    "/reviews",
+    "/reviews/pr/71",
+    "/reviews/pr/71/runs/run-71",
+    "/reviews/pr/64",
+    "/reviews/pr/64/runs/run-64-a",
+    "/reviews/pr/64/runs/run-64-b",
+  ]);
+});
+
+test("item titles go through the public scrubber", () => {
+  const [clean] = toPublicReviews([
+    liveSample({
+      items: [liveItem({ name: "Call with Bearer abcDEF123._~+/=" })],
+    }),
+  ]);
+  assert.match(clean.items[0].name, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].name, /abcDEF123/);
+});
+
+test("the temporary mapper turns live rows into the current view-model", () => {
+  const live = liveSample({
+    decision: {
+      ...liveSample().decision,
+      verdict: "REQUEST_CHANGES",
+      confidence_score: 7.2,
+      must: [{ text: "Fix the link" }],
+    },
+    run: { ...liveSample().run, status: "completed", verdict: "REQUEST_CHANGES", sha: "abc" },
+    verdict_json: {
+      blocking: [{ _disposition: "kept", text: "Keep this" }],
+      notes: [{ _disposition: "downgraded", text: "Note this" }],
+    },
+    items: [
+      liveItem({ id: "main", kind: "main", name: "Main flow", status: "ran" }),
+      liveItem({ id: "lens-1", kind: "lens", name: "code", status: "done" }),
+    ],
+  });
+  const record = toReviewRecord(live);
+  assert.equal(record.number, 71);
+  assert.equal(record.verdict, "request-changes");
+  assert.equal(record.confidence, 72);
+  assert.equal(record.status, "done");
+  assert.equal(record.headSha, "abc");
+  assert.equal(record.prState, "open");
+  assert.deepEqual(
+    record.actions.map((action) => action.title),
+    ["Fix the link"],
+  );
+  assert.deepEqual(
+    record.findings.map((finding) => finding.disposition),
+    ["kept", "downgraded"],
+  );
+  assert.equal(record.runs[0].id, "run-71");
+  assert.deepEqual(
+    record.runs[0].items?.map((item) => item.kind),
+    ["flow", "agent"],
+  );
+});
+
+test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
+  const lives = await createSnapshotReviewPort().list();
+  const live = lives[0];
+  assert.ok(live);
+  const record = toReviewRecord(live, lives);
+  assert.ok(record.actions.length > 0);
+  assert.ok(record.findings.some((finding) => finding.disposition === "kept"));
+  assert.ok(record.firstPass);
 });

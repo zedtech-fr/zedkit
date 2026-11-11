@@ -100,6 +100,22 @@ export async function listIssueSitemapPathsFrom(port: ReviewPort) {
   return paths;
 }
 
+export async function listReviewSitemapPathsFrom(port: ReviewPort) {
+  const records = await port.list();
+  const paths = ["/reviews"];
+  const prs = new Set<number>();
+  for (const record of records) {
+    const pr = record.run.pr;
+    if (typeof pr !== "number") continue;
+    if (!prs.has(pr)) {
+      prs.add(pr);
+      paths.push(`/reviews/pr/${pr}`);
+    }
+    paths.push(`/reviews/pr/${pr}/runs/${record.run.run_id}`);
+  }
+  return paths;
+}
+
 export type ReviewRedirect = {
   readonly from: string;
   readonly to: string;

@@ -191,7 +191,7 @@ test("checkSiteShell is silent when footer text, footer hrefs and /docs are pres
 test("checkSiteShell names the missing footer text, link and docs nav", () => {
   assert.deepEqual(checkSiteShell("<html></html>", "404.html", footerSpecs), [
     "404.html: missing maintainer footer text",
-    ...footerSpecs.map((link) => `404.html: missing footer link ${link.label} (${link.href})`),
+    ...footerSpecs.map((link) => `404.html: missing footer link ${link.copyKey} (${link.href})`),
     "404.html: missing Documentation nav link",
   ]);
 });

@@ -1,6 +1,7 @@
 import type {
   IssueRecord,
   PublicIssueIndex,
+  PublicLiveRun,
   ReviewPort,
   RunRecord,
   TimelineEntry,
@@ -78,7 +79,23 @@ function toUnlinked(entry: PublicIssueIndex["pullRequests"][number]): UnlinkedPu
   };
 }
 
-export function createPortFromIndex(index: PublicIssueIndex): ReviewPort {
+function copyLive(record: PublicLiveRun): PublicLiveRun {
+  return structuredClone(record);
+}
+
+function latestForPr(records: readonly PublicLiveRun[], n: number): PublicLiveRun | undefined {
+  let latest: PublicLiveRun | undefined;
+  for (const record of records) {
+    if (record.run.pr !== n) continue;
+    if (latest === undefined || record.run.created_at > latest.run.created_at) latest = record;
+  }
+  return latest;
+}
+
+export function createComposedReviewPort(
+  index: PublicIssueIndex,
+  lives: readonly PublicLiveRun[] = [],
+): ReviewPort {
   const issues = [...index.issues]
     .filter((issue) => issue.entries.length > 0)
     .map((issue) => ({ ...issue, entries: sortEntries(issue.entries) }))
@@ -120,9 +137,12 @@ export function createPortFromIndex(index: PublicIssueIndex): ReviewPort {
     getRun(issueNumber: number, runId: string) {
       if (!Number.isInteger(issueNumber)) return Promise.resolve(null);
       const issue = issues.find((item) => item.number === issueNumber);
-      if (issue === undefined) return Promise.resolve(null);
-      const run = runRecordFromEntries(runId, issue.entries);
-      return Promise.resolve(run === null ? null : structuredClone(run));
+      if (issue !== undefined) {
+        const run = runRecordFromEntries(runId, issue.entries);
+        if (run !== null) return Promise.resolve(structuredClone(run));
+      }
+      const live = lives.find((item) => item.run.pr === issueNumber && item.run.run_id === runId);
+      return Promise.resolve(live === undefined ? null : copyLive(live));
     },
     getUnlinkedRun(prNumber: number, runId: string) {
       if (!Number.isInteger(prNumber)) return Promise.resolve(null);
@@ -140,5 +160,16 @@ export function createPortFromIndex(index: PublicIssueIndex): ReviewPort {
         runIds: [...entry.runIds],
       });
     },
+    list() {
+      return Promise.resolve(lives.map(copyLive));
+    },
+    getByPr(n: number) {
+      const record = Number.isInteger(n) ? latestForPr(lives, n) : undefined;
+      return Promise.resolve(record === undefined ? null : copyLive(record));
+    },
   };
+}
+
+export function createPortFromIndex(index: PublicIssueIndex): ReviewPort {
+  return createComposedReviewPort(index);
 }
