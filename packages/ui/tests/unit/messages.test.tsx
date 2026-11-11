@@ -59,6 +59,12 @@ const KIT_ENGLISH = [
   '"Final decision"',
   '"No agents"',
   '"Does not block merge"',
+  '"Posted review"',
+  '"Must change"',
+  '"Main flow"',
+  '"Review lenses"',
+  '"First pass"',
+  '"This run has no items yet."',
   '"Jump to latest"',
 ];
 

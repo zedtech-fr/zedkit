@@ -452,7 +452,7 @@ const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 </SidebarNavGroup>
               </li>
               <li>
-                  <SidebarNavItem asChild disabled status={<StatusDot tone="idle" />} meta="archived">
+                <SidebarNavItem asChild disabled status={<StatusDot tone="idle" />} meta="archived">
                   <a href="#archived">Archived</a>
                 </SidebarNavItem>
               </li>

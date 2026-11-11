@@ -10,6 +10,7 @@ import {
   durationText,
   groupConsoleItems,
   groupLabel,
+  httpHref,
   shortSha,
   type AgentConsoleCopy,
   type AgentConsoleItem,
@@ -31,6 +32,7 @@ export function ConsoleSidebar({
   locale: string;
   onSelect: (id: string) => void;
 }) {
+  const reviewHref = httpHref(run.postedReviewHref);
   return (
     <nav aria-label={copy.agentsNav} className="flex flex-col gap-stack-sm surface-pad-md">
       <Stack data-slot="agent-console-run" gap="sm">
@@ -38,16 +40,16 @@ export function ConsoleSidebar({
           {run.pr != null ? <Badge variant="meta">{formatMessage(copy.pr, { n: run.pr })}</Badge> : null}
           {run.sha ? <Badge variant="meta">{shortSha(run.sha)}</Badge> : null}
           {run.reviewSize ? <Badge variant="meta">{run.reviewSize}</Badge> : null}
-          {run.verdict ? <Badge variant="soft-success">{run.verdict}</Badge> : null}
+          {run.verdict ? <Badge variant="meta">{run.verdict}</Badge> : null}
           {run.confidence != null ? (
             <Badge variant="meta">{formatMessage(copy.confidence, { n: run.confidence })}</Badge>
           ) : null}
         </div>
         <Text typeRole="small">{run.engineLabel}</Text>
         <Text typeRole="caption">{durationText(run.durationMs, locale)}</Text>
-        {run.postedReviewHref ? (
+        {reviewHref ? (
           <Button variant="link" size="sm" asChild>
-            <a href={run.postedReviewHref}>{copy.postedReview}</a>
+            <a href={reviewHref}>{copy.postedReview}</a>
           </Button>
         ) : null}
       </Stack>
@@ -59,7 +61,12 @@ export function ConsoleSidebar({
                 <SidebarNavItem
                   type="button"
                   active={row.id === selectedId}
-                  status={<StatusDot tone={row.running ? "active" : "idle"} pulse={row.running} />}
+                  status={
+                    <StatusDot
+                      tone={row.running ? "active" : row.status === "failed" ? "danger" : "idle"}
+                      pulse={row.running}
+                    />
+                  }
                   meta={`${row.status} · ${row.model} · ${durationText(row.durationMs, locale)}`}
                   count={row.toolCount}
                   onClick={() => onSelect(row.id)}

@@ -1,5 +1,8 @@
+import { ChevronDown } from "lucide-react";
+
 import { formatMessage } from "@zedtech/zedkit-i18n";
 
+import { Button } from "../button/button.js";
 import { Badge } from "../feedback/badge.js";
 import { EmptyState } from "../feedback/empty-state.js";
 import { formatDuration } from "../feedback/format-duration.js";
@@ -23,6 +26,7 @@ import {
   dispositionLabel,
   durationText,
   formatStarted,
+  httpHref,
   type AgentConsoleCopy,
   type AgentConsoleDecision,
   type AgentConsoleEntry,
@@ -56,9 +60,15 @@ function FirstPass({
   copy: AgentConsoleCopy;
 }) {
   return (
-    <details>
-      <summary className="min-h-target cursor-pointer text-dense focus-ring-control">
-        {copy.firstPass} · {copy.superseded} · {copy.outdated}
+    <details className="group">
+      <summary className="flex min-h-target cursor-pointer list-none items-center gap-stack-sm text-dense focus-ring-control [&::-webkit-details-marker]:hidden">
+        <span className="content-shrink flex-1">
+          {copy.firstPass} · {copy.superseded} · {copy.outdated}
+        </span>
+        <ChevronDown
+          aria-hidden="true"
+          className="size-icon shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
+        />
       </summary>
       <Stack gap="sm">
         {firstPass.verdict ? <Text>{firstPass.verdict}</Text> : null}
@@ -120,8 +130,10 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
             {copy.mustChange}
           </Heading>
           <ul className="flex list-none flex-col gap-stack-tight">
-            {decision.mustChange.map((row) => (
-              <li key={row.text}>{row.text}</li>
+            {decision.mustChange.map((row, index) => (
+              <li key={`${index}-${row.text}`}>
+                <Text as="span">{row.text}</Text>
+              </li>
             ))}
           </ul>
         </Stack>
@@ -132,8 +144,8 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
             {copy.notes}
           </Heading>
           <ul className="flex list-none flex-col gap-stack-tight">
-            {decision.notes.map((note) => (
-              <li key={note.text} className="flex flex-wrap items-center gap-stack-sm">
+            {decision.notes.map((note, index) => (
+              <li key={`${index}-${note.text}`} className="flex flex-wrap items-center gap-stack-sm">
                 {note.tag === "downgraded" ? <Badge variant="soft-warning">{copy.downgraded}</Badge> : null}
                 {note.tag === "approved" ? <Badge variant="soft-success">{copy.approved}</Badge> : null}
                 <Text as="span">{note.text}</Text>
@@ -148,8 +160,10 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
             {copy.dismissed}
           </Heading>
           <ul className="flex list-none flex-col gap-stack-tight">
-            {decision.dismissed.map((row) => (
-              <li key={row}>{row}</li>
+            {decision.dismissed.map((row, index) => (
+              <li key={`${index}-${row}`}>
+                <Text as="span">{row}</Text>
+              </li>
             ))}
           </ul>
         </Stack>
@@ -159,6 +173,7 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
 }
 
 export function DecisionCard({ decision, copy }: { decision: AgentConsoleDecision; copy: AgentConsoleCopy }) {
+  const reviewHref = httpHref(decision.postedReviewHref);
   return (
     <Card data-slot="agent-console-decision">
       <CardHeader className="flex flex-row flex-wrap items-center gap-stack-sm">
@@ -168,10 +183,15 @@ export function DecisionCard({ decision, copy }: { decision: AgentConsoleDecisio
         {decision.confidence != null ? (
           <Badge variant="meta">{formatMessage(copy.confidence, { n: decision.confidence })}</Badge>
         ) : null}
-        {decision.verdict ? <Badge>{decision.verdict}</Badge> : null}
+        {decision.verdict ? <Badge variant="meta">{decision.verdict}</Badge> : null}
         <Badge variant={decision.posted ? "soft-success" : "soft-neutral"}>
           {decision.posted ? copy.posted : copy.decided}
         </Badge>
+        {reviewHref ? (
+          <Button variant="link" size="sm" asChild>
+            <a href={reviewHref}>{copy.postedReview}</a>
+          </Button>
+        ) : null}
       </CardHeader>
       <CardContent>
         <Stack gap="md">

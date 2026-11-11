@@ -215,8 +215,8 @@ describe("AgentConsole", () => {
     expect(screen.queryByText("Final decision")).toBeNull();
   });
 
-  it("leads the main flow with a folded final-decision card", () => {
-    renderConsole();
+  it("leads the main flow with a folded first-pass", () => {
+    const { container } = renderConsole();
     expect(screen.getByText("Final decision")).not.toBeNull();
     expect(screen.getAllByText("9/10").length).toBeGreaterThan(0);
     expect(screen.queryByText("90")).toBeNull();
@@ -232,9 +232,16 @@ describe("AgentConsole", () => {
     const firstPass = screen.getByText(/Superseded/).closest("details");
     expect(firstPass).toBeInstanceOf(HTMLDetailsElement);
     expect((firstPass as HTMLDetailsElement).open).toBe(false);
-    expect(
-      screen.getAllByRole("link", { name: "Posted review" })[0]?.getAttribute("href"),
-    ).toBe("https://example.com/review/42");
+    const card = container.querySelector("[data-slot='agent-console-decision']");
+    if (!(card instanceof HTMLElement)) throw new Error("missing decision card");
+    expect(within(card).getByRole("link", { name: "Posted review" }).getAttribute("href")).toBe(
+      "https://example.com/review/42",
+    );
+    const run = container.querySelector("[data-slot='agent-console-run']");
+    if (!(run instanceof HTMLElement)) throw new Error("missing run");
+    expect(within(run).getByRole("link", { name: "Posted review" }).getAttribute("href")).toBe(
+      "https://example.com/review/42",
+    );
   });
 
   it("shows stats and a tool burst on the selected item", () => {
@@ -298,6 +305,76 @@ describe("AgentConsole", () => {
     );
     rerender(<AgentConsole run={RUN} items={extra} decision={DECISION} />);
     expect(screen.getByText("A later line landed.")).not.toBeNull();
+  });
+
+  it("keeps a controlled selectedId and reports clicks", async () => {
+    const user = userEvent.setup();
+    const onSelectedIdChange = vi.fn();
+    const { container, rerender } = renderConsole({
+      selectedId: "lens-1",
+      onSelectedIdChange,
+    });
+    expect(screen.getByText("Lens started the docs pass.")).not.toBeNull();
+    expect(screen.queryByText("Final decision")).toBeNull();
+    await user.click(within(asideOf(container)).getByRole("button", { name: "Coordinator" }));
+    expect(onSelectedIdChange).toHaveBeenCalledWith("main-1");
+    expect(screen.getByText("Lens started the docs pass.")).not.toBeNull();
+    expect(screen.queryByText("Final decision")).toBeNull();
+    rerender(
+      <AgentConsole
+        run={RUN}
+        items={ITEMS}
+        decision={DECISION}
+        selectedId="main-1"
+        onSelectedIdChange={onSelectedIdChange}
+      />,
+    );
+    expect(screen.getByText("Final decision")).not.toBeNull();
+  });
+
+  it("falls back when defaultSelectedId is missing from items", () => {
+    renderConsole({ defaultSelectedId: "ghost" });
+    expect(screen.getByText("The console can mount from mapped props.")).not.toBeNull();
+    expect(screen.getByText("Final decision")).not.toBeNull();
+  });
+
+  it("does not show a passed decision when no main item is selected", () => {
+    renderConsole({
+      items: [
+        item({
+          id: "lens-1",
+          name: "Docs agent",
+          kind: "lens",
+          entries: [{ id: "lens-msg", kind: "message", text: "Lens started the docs pass." }],
+        }),
+      ],
+    });
+    expect(screen.queryByText("Final decision")).toBeNull();
+    expect(screen.getByText("Lens started the docs pass.")).not.toBeNull();
+  });
+
+  it("does not keep a javascript: postedReviewHref", () => {
+    const { container } = renderConsole({
+      run: { ...RUN, postedReviewHref: "javascript:alert(1)" },
+      decision: { ...DECISION, postedReviewHref: "javascript:alert(1)" },
+    });
+    const hrefs = [...container.querySelectorAll("a")].map((node) => node.getAttribute("href") ?? "");
+    expect(hrefs.some((href) => /javascript:/i.test(href))).toBe(false);
+    expect(screen.queryByRole("link", { name: "Posted review" })).toBeNull();
+  });
+
+  it("does not paint a blocking verdict as success", () => {
+    const { container } = renderConsole({ run: { ...RUN, verdict: "request changes" } });
+    const run = container.querySelector("[data-slot='agent-console-run']");
+    if (!(run instanceof HTMLElement)) throw new Error("missing run");
+    expect(within(run).getByText("request changes").className).not.toContain("badge-soft-success");
+  });
+
+  it("uses a danger status dot for a failed item", () => {
+    const { container } = renderConsole({
+      items: [item({ id: "main-1", name: "Coordinator", kind: "main", status: "failed" })],
+    });
+    expect(asideOf(container).innerHTML).toContain("bg-destructive");
   });
 
   it("uses French chrome and keeps fixture item names", () => {

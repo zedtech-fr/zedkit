@@ -1,3 +1,5 @@
+import { tryCatch } from "@zedtech/zedkit-core";
+
 import { formatDuration } from "../feedback/format-duration.js";
 import type { ZedkitUiMessages } from "../messages.js";
 
@@ -51,6 +53,7 @@ export type AgentConsoleRun = {
   durationMs: number | null;
   reviewSize: string | null;
   verdict: string | null;
+  /** Already a /10 score; do not multiply. */
   confidence: number | null;
   postedReviewHref: string | null;
 };
@@ -74,10 +77,11 @@ export type AgentConsoleCopy = ZedkitUiMessages["agentConsole"];
 
 export const MISSING = "–";
 
-const TICKET_KIND_ORDER = ["main", "lens", "second_pass", "workflow", "helper", "observer"] as const;
+const KIND_ORDER = ["main", "lens", "second_pass", "workflow", "helper", "observer"] as const;
 const SHA_SHORT = 7;
+const HTTP_PROTOCOL = /^https?:$/i;
 
-const GROUP_LABEL: Record<(typeof TICKET_KIND_ORDER)[number] | "gate", keyof AgentConsoleCopy> = {
+const GROUP_LABEL: Record<(typeof KIND_ORDER)[number] | "gate", keyof AgentConsoleCopy> = {
   main: "groupMain",
   lens: "groupLens",
   second_pass: "groupSecondPass",
@@ -95,7 +99,7 @@ export function groupConsoleItems(items: readonly AgentConsoleItem[]): AgentCons
     else buckets.set(item.kind, [item]);
   }
   const groups: AgentConsoleGroup[] = [];
-  for (const kind of TICKET_KIND_ORDER) {
+  for (const kind of KIND_ORDER) {
     const list = buckets.get(kind);
     if (!list) continue;
     groups.push({ kind, items: list });
@@ -127,6 +131,15 @@ export function groupLabel(kind: string, copy: AgentConsoleCopy): string {
 
 export function durationText(ms: number | null, locale: string): string {
   return ms == null ? MISSING : formatDuration(ms, locale);
+}
+
+/** Host-supplied href for a posted review. Only `http:` / `https:` render. */
+export function httpHref(value: string | null | undefined): string | undefined {
+  if (value == null) return undefined;
+  const href = value.trim();
+  const parsed = tryCatch(() => new URL(href));
+  if (!parsed.ok || !HTTP_PROTOCOL.test(parsed.value.protocol)) return undefined;
+  return href;
 }
 
 export function shortSha(sha: string): string {
