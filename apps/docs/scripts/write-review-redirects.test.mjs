@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 import { createSnapshotReviewPort } from "../features/reviews/adapters/snapshot.ts";
+import { RETIRED_REVIEW_PR_NUMBERS } from "../features/reviews/model/review-routes.ts";
 import { writeReviewRedirectStubs } from "./write-review-redirects.mjs";
 
 test("writes stub html for /reviews and every snapshot pull request URL", async () => {
@@ -28,4 +29,9 @@ test("writes stub html for /reviews and every snapshot pull request URL", async 
   }
   const root = readFileSync(join(dir, "reviews.html"), "utf8");
   assert.match(root, /\/issues/);
+  for (const n of RETIRED_REVIEW_PR_NUMBERS) {
+    const retired = readFileSync(join(dir, `reviews/pr/${n}.html`), "utf8");
+    assert.match(retired, /\/issues/);
+    assert.match(retired, /location\.replace/);
+  }
 });

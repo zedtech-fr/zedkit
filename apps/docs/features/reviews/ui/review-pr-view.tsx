@@ -1,10 +1,12 @@
 "use client";
 
+import { useId } from "react";
 import Link from "next/link";
 import {
   Badge,
   Button,
   EmptyState,
+  Heading,
   PageHeader,
   Stack,
   Text,
@@ -30,7 +32,7 @@ function TimelineRow({
   return (
     <Stack gap="sm" className="border-b border-border py-section-sm">
       <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={href} aria-label={`${copy.issue.openRun}: ${copy.type[entry.type]}`}>
+        <Link href={href} aria-label={`${copy.issue.openRun}: ${copy.type[entry.type]} ${entry.runId}`}>
           {copy.type[entry.type]}
         </Link>
       </Button>
@@ -60,20 +62,31 @@ function Timeline({
   entries,
   hrefFor,
   copy,
+  empty,
 }: {
   entries: readonly TimelineEntry[];
   hrefFor: (entry: TimelineEntry) => string;
   copy: ReviewsCopy;
+  empty: string;
 }) {
-  if (entries.length === 0) return <EmptyState description={copy.issue.timelineEmpty} />;
+  const headingId = useId();
   return (
-    <ul aria-label={copy.issue.timeline}>
-      {entries.map((entry) => (
-        <li key={entry.id}>
-          <TimelineRow entry={entry} href={hrefFor(entry)} copy={copy} />
-        </li>
-      ))}
-    </ul>
+    <Stack gap="sm">
+      <Heading level={2} typeRole="section" id={headingId}>
+        {copy.issue.timeline}
+      </Heading>
+      {entries.length === 0 ? (
+        <EmptyState description={empty} />
+      ) : (
+        <ul aria-labelledby={headingId}>
+          {entries.map((entry) => (
+            <li key={entry.id}>
+              <TimelineRow entry={entry} href={hrefFor(entry)} copy={copy} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </Stack>
   );
 }
 
@@ -111,6 +124,7 @@ export function ReviewPrView({
             entries={issue.entries}
             hrefFor={(entry) => issueRunPath(issue.number, entry.runId)}
             copy={copy}
+            empty={copy.issue.timelineEmpty}
           />
         </>
       )}
@@ -142,6 +156,7 @@ export function UnlinkedPrView({
             entries={pullRequest.entries}
             hrefFor={(entry) => unlinkedRunPath(pullRequest.number, entry.runId)}
             copy={copy}
+            empty={copy.unlinked.timelineEmpty}
           />
         </>
       )}

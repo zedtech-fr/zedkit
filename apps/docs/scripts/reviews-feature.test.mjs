@@ -33,6 +33,7 @@ import {
   listUnlinkedPrParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
+  RETIRED_REVIEW_PR_NUMBERS,
 } from "../features/reviews/model/review-routes.ts";
 import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
 
@@ -169,6 +170,16 @@ test("liveUrl with a secret-like query is dropped; https URLs are kept", () => {
   );
   assert.equal(gated.issues[0].entries[0].liveUrl, "https://example.test/live/ok");
   assert.equal(gated.issues[0].entries[1].liveUrl, null);
+});
+
+test("sanitizeLiveUrl drops home-path URLs on every call", () => {
+  const home = "https://example.test/home/alice/secret";
+  const users = "https://example.test/Users/bob/kit";
+  assert.equal(sanitizeLiveUrl(home), null);
+  assert.equal(sanitizeLiveUrl(home), null);
+  assert.equal(sanitizeLiveUrl(home), null);
+  assert.equal(sanitizeLiveUrl(users), null);
+  assert.equal(sanitizeLiveUrl(users), null);
 });
 
 test("a version-1 snapshot parses issues and pull requests", () => {
@@ -436,6 +447,17 @@ test("redirect map: linked PR goes to the issue; unlinked PR uses /issues/pr/:n"
   assert.equal(await port.resolvePr(404), null);
 });
 
+test("retired review PR numbers keep redirect stubs to /issues", async () => {
+  const port = createSnapshotReviewPort(writeSnapshot([], []));
+  const redirects = await listReviewRedirectsFrom(port);
+  for (const n of RETIRED_REVIEW_PR_NUMBERS) {
+    assert.ok(
+      redirects.some((row) => row.from === `/reviews/pr/${n}` && row.to === "/issues"),
+      `missing stub for /reviews/pr/${n}`,
+    );
+  }
+});
+
 test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => {
   const path = writeSnapshot(
     [issue()],
@@ -490,7 +512,9 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
     "Public issues will show up here when the first exportable run exists.",
   );
   assert.equal(reviewsCopy.type.improve, "Improve from review");
-  assert.equal(reviewsCopy.run.openLive, "Open the hosted live console");
+  assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
+  assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
+  assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
@@ -588,17 +612,28 @@ test("issue pages use generateStaticParams; review pages redirect", () => {
   assert.match(feature, /redirect\(redirectPathForPr/);
 });
 
-test("issues not-found uses missing copy and links back to the list", () => {
-  const source = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
-  assert.match(source, /reviewsCopy\.metadata\.missing\.title/);
-  assert.match(source, /href="\/issues"/);
-  assert.match(source, /reviewsCopy\.issue\.back/);
+test("not-found segments use per-tree copy through one shared body", () => {
+  const body = readFileSync(join(reviewsRoot, "ui/review-not-found-view.tsx"), "utf8");
+  assert.match(body, /href="\/issues"/);
+  const issue = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
+  assert.match(issue, /metadata\.missing/);
+  assert.match(issue, /issue\.missing/);
+  const run = readFileSync(join(issuesAppRoot, "[n]/runs/not-found.tsx"), "utf8");
+  assert.match(run, /run\.missing/);
+  const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
+  assert.match(unlinked, /unlinked\.missing/);
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
+  assert.match(unlinkedRun, /run\.missing/);
+  const reviews = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
+  assert.match(reviews, /metadata\.reviewsMissing/);
+  assert.doesNotMatch(reviews, /metadata\.missing\.title/);
 });
 
 test("provisional run page links out and does not render a console", () => {
   const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
   assert.match(run, /copy\.run\.openLive/);
   assert.match(run, /copy\.run\.noLive/);
+  assert.match(run, /target="_blank"/);
   assert.doesNotMatch(run, /ReviewConsole/);
   assert.doesNotMatch(run, /reviewMainFlow/);
   assert.doesNotMatch(run, /ReviewAgentList/);
@@ -610,7 +645,12 @@ test("list and timeline views read from issue records, not a PR console", () => 
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
   assert.match(list, /issuePath/);
   assert.match(list, /copy\.list\.unlinkedTitle/);
+  assert.doesNotMatch(list, /copy\.list\.openIssue/);
+  assert.match(list, /copy\.type\[last\.type\]/);
   assert.match(timeline, /copy\.type/);
+  assert.match(timeline, /entry\.runId/);
+  assert.match(timeline, /aria-labelledby/);
+  assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
   assert.doesNotMatch(list, /ReviewConsole/);
   assert.doesNotMatch(timeline, /ReviewConsole/);
 });
@@ -619,8 +659,11 @@ test("verdict and status tones live in one shared module", () => {
   const badges = readFileSync(join(reviewsRoot, "ui/review-badges.ts"), "utf8");
   assert.match(badges, /export const VERDICT_BADGE/);
   assert.match(badges, /export const STATUS_TONE/);
+  assert.match(badges, /export const STATUS_BADGE/);
   const status = readFileSync(join(reviewsRoot, "ui/issue-status.tsx"), "utf8");
   assert.match(status, /from "\.\/review-badges"/);
+  assert.match(status, /mark\.status === "running"/);
+  assert.match(status, /STATUS_BADGE/);
   for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.match(source, /from "\.\/issue-status"/);

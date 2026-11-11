@@ -52,7 +52,7 @@ function RunBody({
       </Stack>
       {run.liveUrl !== null ? (
         <Button asChild className="min-h-target w-fit">
-          <a href={run.liveUrl} rel="noreferrer">
+          <a href={run.liveUrl} target="_blank" rel="noreferrer">
             {copy.run.openLive}
           </a>
         </Button>

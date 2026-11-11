@@ -8,10 +8,13 @@ export const VERDICT_BADGE: Record<ReviewVerdict, BadgeProps["variant"]> = {
   comment: "secondary",
 };
 
-export const STATUS_TONE: Record<TimelineEntryStatus, StatusLabelTone> = {
+export const STATUS_TONE: Record<Extract<TimelineEntryStatus, "running">, StatusLabelTone> = {
   running: "loading",
-  completed: "saved",
-  failed: "error",
+};
+
+export const STATUS_BADGE: Record<Exclude<TimelineEntryStatus, "running">, BadgeProps["variant"]> = {
+  completed: "success",
+  failed: "destructive",
 };
 
 export function latestStatusBadge(status: LatestStatus): {

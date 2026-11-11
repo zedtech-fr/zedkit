@@ -105,10 +105,15 @@ export type ReviewRedirect = {
   readonly to: string;
 };
 
+/** Pre-issue-centric public PR numbers; stub so old /reviews/pr/:n links do not 404. */
+export const RETIRED_REVIEW_PR_NUMBERS = [64, 79, 80] as const;
+
 export async function listReviewRedirectsFrom(port: ReviewPort): Promise<ReviewRedirect[]> {
   const pullRequests = await port.listPullRequests();
   const redirects: ReviewRedirect[] = [{ from: "/reviews", to: "/issues" }];
+  const covered = new Set<number>();
   for (const entry of pullRequests) {
+    covered.add(entry.number);
     redirects.push({
       from: `/reviews/pr/${entry.number}`,
       to: redirectPathForPr(entry.issueNumber, entry.number),
@@ -119,6 +124,10 @@ export async function listReviewRedirectsFrom(port: ReviewPort): Promise<ReviewR
         to: redirectPathForPrRun(entry.issueNumber, entry.number, runId),
       });
     }
+  }
+  for (const n of RETIRED_REVIEW_PR_NUMBERS) {
+    if (covered.has(n)) continue;
+    redirects.push({ from: `/reviews/pr/${n}`, to: "/issues" });
   }
   return redirects;
 }

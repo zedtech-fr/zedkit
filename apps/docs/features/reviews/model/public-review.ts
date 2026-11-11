@@ -8,6 +8,12 @@ const AUTH_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi;
 const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/g;
 const LIVE_URL_SECRET_QUERY = /(token|password|passwd|secret|signature|authorization)=/i;
 
+/** `/g` keeps lastIndex; a match must not let the next .test() skip. */
+function testReset(pattern: RegExp, value: string): boolean {
+  pattern.lastIndex = 0;
+  return pattern.test(value);
+}
+
 export type VisibilityField = string | null | undefined;
 
 /** Public-repo rule: only the string "private" is dropped; missing, null, and "public" stay. */
@@ -42,8 +48,8 @@ export function sanitizeLiveUrl(value: string | null): string | null {
   if (url.protocol !== "https:") return null;
   if (url.username !== "" || url.password !== "") return null;
   const haystack = `${url.search} ${url.hash}`;
-  if (LIVE_URL_SECRET_QUERY.test(haystack) || AUTH_TOKEN_PATTERN.test(haystack)) return null;
-  if (HOME_PATH_PATTERN.test(url.pathname)) return null;
+  if (LIVE_URL_SECRET_QUERY.test(haystack) || testReset(AUTH_TOKEN_PATTERN, haystack)) return null;
+  if (testReset(HOME_PATH_PATTERN, url.pathname)) return null;
   return url.toString();
 }
 

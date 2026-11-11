@@ -13,7 +13,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { latestStatus } from "../model/latest-status";
+import { latestEntry, latestStatus } from "../model/latest-status";
 import { issuePath, unlinkedPrPath } from "../model/review-routes";
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
@@ -28,7 +28,7 @@ function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
   return (
     <Stack gap="sm" className="border-b border-border py-section-sm">
       <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={issuePath(issue.number)} aria-label={`${copy.list.openIssue} #${issue.number}`}>
+        <Link href={issuePath(issue.number)}>
           #{issue.number} {issue.title}
         </Link>
       </Button>
@@ -56,6 +56,7 @@ function UnlinkedRow({
   copy: ReviewsCopy;
 }) {
   const status = latestStatus(entry.entries);
+  const last = latestEntry(entry.entries);
   return (
     <Stack gap="sm" className="border-b border-border py-section-sm">
       <Button asChild variant="link" className="min-h-target w-fit">
@@ -64,6 +65,11 @@ function UnlinkedRow({
         </Link>
       </Button>
       <Stack direction="horizontal" gap="sm" className="flex-wrap">
+        {last ? (
+          <Text variant="muted" typeRole="caption">
+            {copy.type[last.type]}
+          </Text>
+        ) : null}
         {status ? <LatestStatusMark status={status} copy={copy} /> : null}
         <UpdatedAgo date={new Date(entry.lastRunAt)} />
       </Stack>

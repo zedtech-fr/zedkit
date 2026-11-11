@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ n: string
   const { n } = await params;
   const number = parsePrNumber(n);
   if (number === null) {
-    return docsPageMetadata("/issues", reviewsCopy.metadata.missing, { index: false });
+    return docsPageMetadata("/issues", reviewsCopy.metadata.unlinkedMissing, { index: false });
   }
   return docsPageMetadata(`/issues/pr/${number}`, {
     title: `${reviewsCopy.metadata.unlinked.title} #${number}`,
