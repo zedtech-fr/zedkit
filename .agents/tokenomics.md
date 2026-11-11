@@ -30,13 +30,13 @@ providers:
     decide:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: high }
-      sensitive: { model: muse-wonder-1.0, effort: high }
+      sensitive: { model: muse-wonder-1.0, effort: medium }
       critical: { model: muse-wonder-full-1.0, effort: high }
     design:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: high }
       sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-wonder-full-1.0, effort: high }
+      critical: { model: muse-wonder-full-1.0, effort: medium }
     build:
       trivial: { model: muse-ember-1.0, effort: medium }
       standard: { model: muse-ember-1.0, effort: medium }
