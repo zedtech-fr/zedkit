@@ -51,7 +51,9 @@ test("home hero offers Setup first with get started and catalog (#111)", async (
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
     "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
   );
-  await expect(page.getByRole("textbox", { name: "One-prompt AI setup" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Setup prompt" })).toBeVisible();
+  await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
+  await expect(page.getByText("Name the kits you want, Nest included. The map knows the order.")).toBeVisible();
   await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
@@ -389,9 +391,11 @@ test("home has no nested interactive elements", async ({ page }) => {
   expect(nested).toEqual([]);
 });
 
-test("home get-started hash lands on the combined paste, not an install panel", async ({ page }) => {
+test("home get-started hash lands on the paste band, not an install panel", async ({ page }) => {
   await page.goto(`#get-started`, { waitUntil: "networkidle" });
-  await expect(page.locator("#get-started [data-setup-entry='combined']")).toBeVisible();
+  await expect(page.locator("#get-started")).toBeVisible();
+  await expect(page.locator("#get-started [data-setup-entry]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
   await expect(page.locator("#install-or-copy")).toHaveCount(0);
   await expect(page.locator("#get-started [data-home-ai-setup]")).toHaveCount(0);
   await expect(page.locator("#get-started [data-home-way]")).toHaveCount(0);
