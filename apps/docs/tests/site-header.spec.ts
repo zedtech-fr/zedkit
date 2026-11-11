@@ -40,6 +40,7 @@ test.describe("site header navigation (#1034)", () => {
       ["Add SEO to a Next.js app", "/docs/add-seo-to-nextjs"],
       ["zedkit and shadcn/ui", "/docs/zedkit-and-shadcn"],
       ["Maturity and compatibility", "/docs/maturity-and-compatibility"],
+      ["UI foundations", "/docs/foundations"],
       ["Note list example", "/examples/note-list"],
     ] as const;
     for (const [name, href] of guides) {

@@ -36,6 +36,15 @@ Based on the docs [visual contract](../apps/docs/VISUAL-CONTRACT.md):
 - **One focal point per band**; neighbours differ in shape (not a uniform card grid).
 - **Three surface roles**: page (reading), specimen stage, overlay. Borders only at region edges or on interactive controls; shadows only on overlays and raised controls (Glass sheen is the exception for site chrome cards, not specimen grids).
 
+### Docs chrome color
+
+Docs chrome (header, sidebar, prose, home, preview frames) follows two rules owned by [VISUAL-CONTRACT.md](../apps/docs/VISUAL-CONTRACT.md) Surfaces and Controls. Do not copy that owner table here.
+
+- indigo/violet are not page fill or body text.
+- site chrome actions are not Glass `--primary` unless inside a high-value panel.
+
+Page fill is a neutral reading surface; body text is zinc-neutral. Default site actions use stock near-black `--primary`. Violet/glass stay panel and chip accents.
+
 ## Motion vocabulary
 
 Five named motions (tokens in `signature-motion.css`; utilities `motion-*`). Identities tune duration/ease via `--zk-reveal-*` and `--motion-*`; apps reference names only.

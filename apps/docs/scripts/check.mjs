@@ -199,6 +199,16 @@ const guideRequiredSections = {
     "Next steps",
   ],
   "maturity-and-compatibility.mdx": ["Next steps"],
+  "foundations.mdx": [
+    "Who this is for",
+    "Color and surfaces",
+    "Type",
+    "Buttons: site vs kit",
+    "Chips, cards, and rhythm",
+    "Motion",
+    "Owner",
+    "Next steps",
+  ],
 };
 for (const [file, sections] of Object.entries(guideRequiredSections)) {
   const sourcePath = join(guidesDir, file);
@@ -211,6 +221,33 @@ for (const [file, sections] of Object.entries(guideRequiredSections)) {
     if (!expanded.includes(`## ${section}`)) {
       errors.push(`guides: ${file} must include "## ${section}".`);
     }
+  }
+}
+const CHROME_PAGE_FILL = "indigo/violet are not page fill or body text";
+const CHROME_SITE_ACTIONS =
+  "site chrome actions are not Glass `--primary` unless inside a high-value panel";
+const OWNER_TABLE_HEADER = "Layer | Owns | Lives in | Fix here when";
+const visualContractText = readFileSync(join(APP, "VISUAL-CONTRACT.md"), "utf8");
+const signatureText = readFileSync(join(ROOT, "docs", "design", "signature.md"), "utf8");
+for (const [label, text] of [
+  ["VISUAL-CONTRACT.md", visualContractText],
+  ["docs/design/signature.md", signatureText],
+]) {
+  if (!text.includes(CHROME_PAGE_FILL)) {
+    errors.push(`${label}: missing chrome rule "${CHROME_PAGE_FILL}".`);
+  }
+  if (!text.includes(CHROME_SITE_ACTIONS)) {
+    errors.push(`${label}: missing chrome rule "${CHROME_SITE_ACTIONS}".`);
+  }
+}
+const foundationsGuidePath = join(guidesDir, "foundations.mdx");
+if (existsSync(foundationsGuidePath)) {
+  const foundations = expandGuideSnippets(readFileSync(foundationsGuidePath, "utf8"));
+  if (!foundations.includes("VISUAL-CONTRACT.md")) {
+    errors.push("guides: foundations.mdx must link VISUAL-CONTRACT.md.");
+  }
+  if (foundations.includes(OWNER_TABLE_HEADER)) {
+    errors.push("guides: foundations.mdx must not copy the owner-table header row.");
   }
 }
 if (existsSync(snippetsDir)) {
