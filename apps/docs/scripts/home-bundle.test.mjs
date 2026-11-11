@@ -30,7 +30,7 @@ test("search dialog is lazy and not preloaded on every page", () => {
   assert.doesNotMatch(src, /from ["']\.\.\/components\/search["']/);
 });
 
-test("home hero lead is the joint title, one Setup entry, no kit tabs (#111)", () => {
+test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111, #114)", () => {
   const lead = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
   const actions = readFileSync(join(app, "ui/home/home-hero-lead-actions.tsx"), "utf8");
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
@@ -45,15 +45,18 @@ test("home hero lead is the joint title, one Setup entry, no kit tabs (#111)", (
   assert.match(lead, /HomeHeroLeadActions/);
   assert.match(lead, /typeRole="lead"/);
   assert.match(lead, /data-home-hero-sub/);
-  assert.match(lead, /AI_SETUP_MINI_PROMPT/);
-  assert.doesNotMatch(lead, /MAP_SETUP_MINI_PROMPT/);
+  assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
+  assert.doesNotMatch(lead, /AI_SETUP_MINI_PROMPT/);
+  assert.match(lead, /\bmultiline\b/);
+  assert.match(lead, /data-home-hero-prompt/);
   assert.doesNotMatch(lead + actions, /\bTabs\b/);
   assert.doesNotMatch(lead + actions, /SetupEntryPrompt/);
   assert.doesNotMatch(lead + actions, /\/issues\//);
   assert.doesNotMatch(lead + actions, /target="_blank"/);
+  assert.doesNotMatch(lead + actions + copy, /\bAI \+ UI\b/);
   assert.match(
     lead,
-    /<SecretField[\s\S]*<HomeHeroLeadActions \/>[\s\S]*homeCopy\.hero\.facts/,
+    /<SecretField[\s\S]*homeCopy\.hero\.promptCaption[\s\S]*<HomeHeroLeadActions \/>[\s\S]*homeCopy\.hero\.facts/,
   );
   assert.match(actions, /from "@\/ui\/home\/home-link"/);
   // Primary Setup, then Get started outline, then the quiet catalog link. Hashes land on the paste band (#119).
@@ -70,7 +73,12 @@ test("home hero lead is the joint title, one Setup entry, no kit tabs (#111)", (
   assert.match(homeLink, /prefetch=\{false\}/);
   assert.match(copy, /getStarted: "Get started"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
-  assert.match(copy, /promptAriaLabel: "One-prompt AI setup"/);
+  assert.match(copy, /promptAriaLabel: "Setup prompt"/);
+  assert.doesNotMatch(copy, /One-prompt AI setup/);
+  assert.match(
+    copy,
+    /promptCaption: "Name the kits you want, Nest included\. The map knows the order\."/,
+  );
   assert.match(lead, /aria-label=\{homeCopy\.hero\.promptAriaLabel\}/);
   assert.doesNotMatch(actions + copy, /Browse components/);
   assert.match(nav, /text: "AI"/);
@@ -140,8 +148,9 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, fami
   assert.match(paste, /id="get-started"/);
   assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
   assert.match(paste, /homePasteCopy\.fullStepsHref/);
+  assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
-  assert.match(pasteCopy, /Nest \(API\)/);
+  assert.doesNotMatch(pasteCopy, /combined prompt|copy field|SecretField/);
   assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
 });
 

@@ -15,7 +15,7 @@ const COLUMN_IDS = ["ui", "ai"] as const;
  *
  * Compose-UI: two short columns, no paste fields, because: client =
  * integrating developer who just saw a hero paste and needs the joint idea,
- * not more copy buttons. Nest stays in paste copy, not a third column.
+ * not more copy buttons. Nest stays in the hero prompt, not a third column.
  * Section H2, column H3, persuasion body, because one marketing H1 already
  * sits in the hero. Mobile stacks, lg two columns, because compose by
  * priority, not a squeezed desktop row. No glass slab, because violet stays

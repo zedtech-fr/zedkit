@@ -2,7 +2,7 @@
 export const homePasteCopy = {
   section: {
     title: "Paste one line. Go to lunch.",
-    description: "The combined prompt covers AI, UI and Nest (API). Full install steps stay on Getting started.",
+    description: "The setup prompt is in the hero. Full install steps stay on Getting started.",
   },
   fullSteps: "Full install steps",
   fullStepsHref: "/docs/getting-started#install-or-copy",
