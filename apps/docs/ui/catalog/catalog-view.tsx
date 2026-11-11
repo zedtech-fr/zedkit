@@ -5,8 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Container, Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
+import { CATALOG_AREAS, catalogFilterView } from "@/lib/catalog-filter.mjs";
 
-import { AREAS } from "@/ui/catalog/catalog-filter-constants";
 import { CatalogFiltersToolbar, catalogResultsStatusLine } from "@/ui/catalog/catalog-filters";
 import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
 
@@ -30,7 +30,9 @@ function readFilter(
   entries: CatalogIndexEntry[],
 ): { area: CatalogArea | "all"; status: string; q: string } {
   const areaParam = searchParams.get("area") ?? "all";
-  const area = AREAS.some((row) => row.id === areaParam) ? (areaParam as CatalogArea | "all") : "all";
+  const area = CATALOG_AREAS.some((row) => row.id === areaParam)
+    ? (areaParam as CatalogArea)
+    : "all";
   const statusParam = searchParams.get("status") ?? "all";
   const statuses = new Set(entries.map((entry) => entry.status));
   const status = statusParam === "all" || statuses.has(statusParam) ? statusParam : "all";
@@ -51,18 +53,10 @@ export function CatalogView({
   q?: string;
   onFilters?: (next: { area?: string; status?: string; q?: string }) => void;
 }) {
-  const statuses = useMemo(() => [...new Set(entries.map((entry) => entry.status))].sort(), [entries]);
-
-  const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    return entries.filter((entry) => {
-      if (area !== "all" && entry.area !== area) return false;
-      if (status !== "all" && entry.status !== status) return false;
-      if (needle.length === 0) return true;
-      const hay = `${entry.title} ${entry.need} ${entry.package}`.toLowerCase();
-      return hay.includes(needle);
-    });
-  }, [entries, area, status, q]);
+  const { countsByArea, visible, areaTotal } = useMemo(
+    () => catalogFilterView(entries, { area, status, q }),
+    [entries, area, status, q],
+  );
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
     onFilters?.(next);
@@ -83,17 +77,17 @@ export function CatalogView({
             area={area}
             status={status}
             q={q}
-            statuses={statuses}
+            countsByArea={countsByArea}
             onFilters={setFilters}
           />
         </Stack>
       </Section>
       <Container width="wide" className="pt-start pb-section-lg">
         <Stack gap="md">
-          <div id="catalog-results-heading" data-catalog-results-heading="">
-            {catalogResultsStatusLine(filtered.length)}
-          </div>
-          <CatalogResultsBodyLazy filtered={filtered} />
+          <CatalogResultsBodyLazy filtered={visible} />
+          <Stack id="catalog-results-heading" data-catalog-results-heading="">
+            {catalogResultsStatusLine(visible.length, areaTotal)}
+          </Stack>
         </Stack>
       </Container>
     </>
