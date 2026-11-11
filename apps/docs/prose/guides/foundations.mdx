@@ -3,6 +3,14 @@ title: UI foundations
 description: "How this docs site's chrome is meant to look: color, type, site vs kit buttons, chips, cards, rhythm, and motion."
 ---
 
+import { FoundationsButtons } from "@/components/foundations-buttons";
+import { FoundationsCards } from "@/components/foundations-cards";
+import { FoundationsChips } from "@/components/foundations-chips";
+import { FoundationsColor } from "@/components/foundations-color";
+import { FoundationsMotion } from "@/components/foundations-motion";
+import { FoundationsRhythm } from "@/components/foundations-rhythm";
+import { FoundationsType } from "@/components/foundations-type";
+
 These rules describe how the docs site frame is meant to look. The live site can still use Glass tokens in places; this page is the target look, not a claim that every page already matches.
 
 ## Who this is for
@@ -11,37 +19,33 @@ Visitors reading the docs, and anyone about to restyle the site frame (header, s
 
 ## Color and surfaces
 
-Page fill is a neutral reading surface. Body text is zinc-neutral — indigo/violet are not page fill or body text.
-
-Default site actions use stock near-black `--primary` ([`packages/ui/src/styles.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/styles.css)). Those site chrome actions are not Glass `--primary` unless inside a high-value panel. Glass `--primary` lives in [`packages/ui/src/identities/glass.css`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/src/identities/glass.css).
-
-A high-value panel is a Glass-material site-owned overlay or marketing card (Guides menu panel, glass header chips, raised marketing code wells). It is not the page, not body copy, and not default header or hero CTAs.
-
-Violet/glass are high-value panel accents (Glass `--accent` / glass material), not reading color.
+<FoundationsColor />
 
 ## Type
 
-One docs title per page (the docs H1; no second display size). Prose is 15px (long-form reading, 64–72ch). Body copy is 14px (UI and marketing persuasion). Dense UI (controls, tabs, nav) has a 13px floor: nothing a person must read to act goes below that. Controls, tabs, and nav use 44×44 CSS px touch targets on phones; inline prose links are exempt.
-
-Token names and the owner table stay in [VISUAL-CONTRACT.md](https://github.com/zedtech-fr/zedkit/blob/main/apps/docs/VISUAL-CONTRACT.md).
+<FoundationsType />
 
 ## Buttons: site vs kit
 
-Site chrome buttons are the docs shell's actions (header, hero, footer, guide nav). They follow the chrome rules above: near-black by default, not Glass indigo, unless they sit inside a high-value panel. Apply `.site-action` (documented in the visual contract) when restyling those default actions.
-
-Kit [`Button`](/docs/ui/trigger-actions-with-buttons) is for specimens and apps. Its default variant follows the specimen identity, including Glass indigo. Copy that pattern into your app; do not copy it onto this site's frame.
+<FoundationsButtons />
 
 ## Chips, cards, and rhythm
 
-Chips are compact status or selection controls (pills). They are a high-value panel when they take violet/glass as an accent.
+### Chips and status
 
-Cards: site-owned glass cards may take sheen. Specimen grids stay flat.
+<FoundationsChips />
 
-Rhythm: 4px base. Gaps between groups are 32–48px. Marketing bands are 64–96px. Numbers live in [VISUAL-CONTRACT.md](https://github.com/zedtech-fr/zedkit/blob/main/apps/docs/VISUAL-CONTRACT.md); this page restates the visitor meaning.
+### Cards and fields
+
+<FoundationsCards />
+
+### Rhythm
+
+<FoundationsRhythm />
 
 ## Motion
 
-Chrome uses named motions only (`reveal`, `settle`, `emphasis`, `glide`, `feedback` in [signature.md](https://github.com/zedtech-fr/zedkit/blob/main/docs/design/signature.md)). It does not invent durations. `prefers-reduced-motion` removes displacement and loops.
+<FoundationsMotion />
 
 ## Owner
 
