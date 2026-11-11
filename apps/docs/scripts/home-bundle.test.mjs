@@ -83,7 +83,7 @@ test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111,
   assert.match(homeLink, /prefetch=\{false\}/);
   assert.match(copy, /getStarted: "Get started"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
-  assert.match(copy, /seeARealIssue: "See a real issue, end to end →"/);
+  assert.match(copy, /seeARealIssue: "See a real issue, end to end"/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.doesNotMatch(copy, /One-prompt AI setup/);
   assert.match(
