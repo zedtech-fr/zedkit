@@ -20,7 +20,7 @@ export const siteChromeCopy = {
       startWithoutWritingCode: "Start without writing code",
       mitLicense: "MIT License",
       sourceRepository: "Source repository",
-      npmOrganisation: "npm organisation",
+      npmOrganisation: "npm organization",
       reportABug: "Report a bug",
       uiChangelog: "UI changelog",
     },
