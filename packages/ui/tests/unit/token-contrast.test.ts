@@ -119,6 +119,43 @@ describe("theme token contrast (WCAG AA, downstream axe scans depend on it)", ()
     expect(ratio).toBeGreaterThanOrEqual(4.5);
   });
 
+  it.each(["light", "dark"] as const)("info ink on surfaces, %s", (theme) => {
+    const info = token(theme, "info");
+    for (const surface of ["background", "card", "muted"] as const) {
+      expect(contrast(info, token(theme, surface)), `${theme} info on ${surface}`).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(contrast(token(theme, "info-foreground"), info), `${theme} info-foreground`).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("keeps dark --info low-chroma", () => {
+    const [, saturation] = token("dark", "info");
+    expect(saturation).toBeLessThanOrEqual(30);
+  });
+
+  it("does not put --info on identity palettes", () => {
+    const files = readdirSync(identityDir)
+      .filter((file) => file.endsWith(".css"))
+      .map((file) => join(identityDir, file));
+    for (const file of files) {
+      const css = readFileSync(file, "utf8");
+      expect(css, file).not.toMatch(/--info:/);
+      expect(css, file).not.toMatch(/--info-foreground:/);
+    }
+  });
+
+  it("declares 15% badge-soft fills and info theme aliases", () => {
+    const css = readFileSync(stylesPath, "utf8");
+    for (const name of ["success", "warning", "destructive", "info"] as const) {
+      expect(css).toMatch(
+        new RegExp(
+          `@utility badge-soft-${name}\\s*\\{[\\s\\S]*?color-mix\\(in oklab, hsl\\(var\\(--${name}\\)\\) 15%, transparent\\)`,
+        ),
+      );
+    }
+    expect(css).toMatch(/--color-info:\s*hsl\(var\(--info\)\)/);
+    expect(css).toMatch(/--color-info-foreground:\s*hsl\(var\(--info-foreground\)\)/);
+  });
+
   it("the scoped mist light success fill keeps the same contrast as the stock theme", () => {
     const css = readFileSync(identitiesPath, "utf8");
     const block = css.split(/^\[data-identity-scope\]\[data-identity="mist"\]\s*\{/m).map((part) => part.split(/^\}/m)[0] ?? "").find((part) => part.includes("--success:")) ?? "";

@@ -21,6 +21,16 @@ const badgeVariants = cva(
         outline: "px-badge-inline py-badge-block font-semibold text-foreground",
         /** Quiet metadata (a version, a count): caption size, muted, mono tabular numerals, no surface. */
         meta: "rounded-sm border-transparent bg-transparent px-meta flush-block font-mono font-normal text-muted-foreground tabular-nums shadow-none hover:text-foreground",
+        "soft-success":
+          "border-transparent badge-soft-success px-badge-inline py-badge-block font-semibold text-success",
+        "soft-warning":
+          "border-transparent badge-soft-warning px-badge-inline py-badge-block font-semibold text-warning-foreground",
+        "soft-danger":
+          "border-transparent badge-soft-destructive px-badge-inline py-badge-block font-semibold text-destructive",
+        "soft-info":
+          "border-transparent badge-soft-info px-badge-inline py-badge-block font-semibold text-info",
+        "soft-neutral":
+          "border-transparent muted-wash px-badge-inline py-badge-block font-semibold text-muted-foreground",
       },
     },
     defaultVariants: { variant: "default" },

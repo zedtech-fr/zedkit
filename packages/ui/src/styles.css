@@ -55,6 +55,8 @@
   --success-foreground: 0 0% 98%;
   --warning: 32 95% 44%;
   --warning-foreground: 240 10% 3.9%;
+  --info: 215 55% 38%;
+  --info-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 60%;
   /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
@@ -108,6 +110,8 @@
   --success-foreground: 240 10% 3.9%;
   --warning: 32 95% 32%;
   --warning-foreground: 0 0% 98%;
+  --info: 215 25% 70%;
+  --info-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 37.9%;
   /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
@@ -182,6 +186,8 @@
   --color-success-foreground: hsl(var(--success-foreground));
   --color-warning: hsl(var(--warning));
   --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
   --color-overlay: hsl(var(--overlay));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -698,6 +704,19 @@ ol[data-sonner-toaster] {
 }
 @utility badge-warning-hover {
   background-color: color-mix(in oklab, hsl(var(--warning)) 90%, transparent);
+}
+/* Soft status badges. A 15% wash of the status colour, not a filled pill. */
+@utility badge-soft-success {
+  background-color: color-mix(in oklab, hsl(var(--success)) 15%, transparent);
+}
+@utility badge-soft-warning {
+  background-color: color-mix(in oklab, hsl(var(--warning)) 15%, transparent);
+}
+@utility badge-soft-destructive {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 15%, transparent);
+}
+@utility badge-soft-info {
+  background-color: color-mix(in oklab, hsl(var(--info)) 15%, transparent);
 }
 /* The dim layer behind a dialog. Glass replaces this with its own scrim. */
 @utility dialog-scrim {
