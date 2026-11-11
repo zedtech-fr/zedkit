@@ -51,28 +51,39 @@ test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111,
   assert.match(lead, /data-home-hero-prompt/);
   assert.doesNotMatch(lead + actions, /\bTabs\b/);
   assert.doesNotMatch(lead + actions, /SetupEntryPrompt/);
-  assert.doesNotMatch(lead + actions, /\/issues\//);
-  assert.doesNotMatch(lead + actions, /target="_blank"/);
+  assert.doesNotMatch(lead + actions, /\/issues\/108/);
   assert.doesNotMatch(lead + actions + copy, /\bAI \+ UI\b/);
   assert.match(
     lead,
-    /<SecretField[\s\S]*homeCopy\.hero\.promptCaption[\s\S]*<HomeHeroLeadActions \/>[\s\S]*homeCopy\.hero\.facts/,
+    /<SecretField[\s\S]*homeCopy\.hero\.promptCaption[\s\S]*<HomeHeroLeadActions issuesHref=\{issuesHref\} \/>[\s\S]*homeCopy\.hero\.facts/,
   );
+  assert.match(lead, /publicIssueHref/);
+  assert.match(lead, /issuesHref=\{issuesHref\}/);
   assert.match(actions, /from "@\/ui\/home\/home-link"/);
-  // Primary Setup, then Get started outline, then the quiet catalog link. Hashes land on the paste band (#119).
-  assert.match(actions, /<Button asChild>\s*\n\s*<HomeLink href="#ai-setup">\{homeCopy\.heroActions\.setup\}/);
+  assert.match(actions, /from "@\/ui\/off-path-link"/);
+  // Primary Setup (near-black site-action), Get started outline site-action, quiet catalog, then off-path issues.
   assert.match(
     actions,
-    /variant="outline"[^>]*>\s*\n\s*<HomeLink href="#get-started">\{homeCopy\.heroActions\.getStarted\}/,
+    /<Button asChild data-site-action="">\s*\n\s*<HomeLink href="#ai-setup">\{homeCopy\.heroActions\.setup\}/,
+  );
+  assert.match(
+    actions,
+    /variant="outline"[^>]*data-site-action[^>]*>\s*\n\s*<HomeLink href="#get-started">\{homeCopy\.heroActions\.getStarted\}/,
   );
   assert.match(actions, /variant="link"[^>]*>\s*\n\s*<HomeLink href="\/catalog">\{homeCopy\.heroActions\.browseCatalog\}/);
+  assert.match(
+    actions,
+    /variant="link"[^>]*>\s*\n\s*<OffPathLink href=\{issuesHref\}>\{homeCopy\.heroActions\.seeARealIssue\}/,
+  );
   assert.equal((actions.match(/<HomeLink[\s>]/g) ?? []).length, 3);
-  assert.doesNotMatch(actions, /\btarget=/);
-  assert.doesNotMatch(actions, /\brel=/);
+  assert.equal((actions.match(/<OffPathLink[\s>]/g) ?? []).length, 1);
+  assert.doesNotMatch(actions, /<HomeLink[^>]*\btarget=/);
+  assert.doesNotMatch(actions, /<HomeLink[^>]*\brel=/);
   const homeLink = readFileSync(join(app, "ui/home/home-link.tsx"), "utf8");
   assert.match(homeLink, /prefetch=\{false\}/);
   assert.match(copy, /getStarted: "Get started"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
+  assert.match(copy, /seeARealIssue: "See a real issue, end to end →"/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.doesNotMatch(copy, /One-prompt AI setup/);
   assert.match(

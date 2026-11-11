@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Container, Separator, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { OffPathLink } from "@/ui/off-path-link";
 
 const linkClassName = "inline-flex min-h-floor items-center rounded-sm text-dense text-muted-foreground link-offset hover:underline focus-ring";
 
@@ -26,16 +27,17 @@ export function SiteMaintainerFooter({
           <Text variant="muted" as="p">{siteChromeCopy.footer.maintainer}</Text>
           <Separator />
           <Stack direction="horizontal" gap="lg" className="flex-wrap">
-            {links.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={linkClassName}
-                {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
-              >
-                {siteChromeCopy.footer.links[item.copyKey]}
-              </Link>
-            ))}
+            {links.map((item) =>
+              item.external ? (
+                <OffPathLink key={item.href} href={item.href} className={linkClassName}>
+                  {siteChromeCopy.footer.links[item.copyKey]}
+                </OffPathLink>
+              ) : (
+                <Link key={item.href} href={item.href} className={linkClassName}>
+                  {siteChromeCopy.footer.links[item.copyKey]}
+                </Link>
+              ),
+            )}
           </Stack>
         </Stack>
       </Container>

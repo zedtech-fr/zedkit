@@ -16,6 +16,8 @@ const CONSUMERS = [
   "ui/site-brand.tsx",
   "ui/mobile-search-trigger.tsx",
   "ui/kit-version-label.tsx",
+  "ui/off-path-link.tsx",
+  "ui/site-chrome-a11y.tsx",
 ];
 
 function read(rel) {
@@ -34,6 +36,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.nav.siteNavigation, "Site navigation");
   assert.equal(siteChromeCopy.nav.guides, "Guides");
   assert.equal(siteChromeCopy.nav.github, "GitHub");
+  assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
   assert.equal(siteChromeCopy.footer.maintainer, "Maintained by ZED TECH");
   assert.equal(siteChromeCopy.footer.links.documentation, "Documentation");
   assert.equal(siteChromeCopy.footer.links.catalog, "Catalog");
@@ -92,12 +95,24 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(version, /siteChromeCopy\.version\.latest/);
   assert.match(version, /siteChromeCopy\.version\.releasesAriaLabel\(version\)/);
   assert.match(version, /siteChromeCopy\.version\.shell\(version\)/);
+  const offPath = read("ui/off-path-link.tsx");
+  const a11y = read("ui/site-chrome-a11y.tsx");
+  assert.match(offPath, /siteChromeCopy\.nav\.opensInNewTab/);
+  assert.match(offPath, /target="_blank"/);
+  assert.match(offPath, /rel="noopener noreferrer"/);
+  assert.match(offPath, /data-external-mark/);
+  assert.match(a11y, /siteChromeCopy\.nav\.opensInNewTab/);
+  assert.match(footer, /OffPathLink/);
+  assert.match(header, /OffPathLink/);
+  assert.doesNotMatch(footer, /rel="noreferrer"/);
+  assert.doesNotMatch(header, /rel="noreferrer"/);
 
   const consumers = CONSUMERS.filter((rel) => rel !== "lib/site-links.mjs")
     .map(read)
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
   assert.doesNotMatch(consumers, /"Search the documentation"|"zedkit home"|"Maintained by ZED TECH"/);
+  assert.doesNotMatch(consumers, /"opens in a new tab"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
   assert.doesNotMatch(header, /<p[\s>]/);

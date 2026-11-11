@@ -28,6 +28,12 @@ test("primary nav is AI, UI, Docs, Catalog with those hrefs", () => {
   );
 });
 
+test("primary nav texts do not include Reviews or Issues", () => {
+  const texts = sitePrimaryNavLinks().map((link) => link.text);
+  assert.equal(texts.includes("Reviews"), false);
+  assert.equal(texts.includes("Issues"), false);
+});
+
 test("changelog is not a primary or desktop header item", () => {
   const texts = [
     ...sitePrimaryNavLinks().map((link) => link.text),

@@ -19,6 +19,7 @@ export const homeHeroCopy = {
     getStarted: "Get started",
     setup: "Setup",
     browseCatalog: "Browse catalog",
+    seeARealIssue: "See a real issue, end to end →",
   },
   /** The hero is one small product. Its pages are the examples; the sidebar is how a visitor moves between them. */
   heroApp: {

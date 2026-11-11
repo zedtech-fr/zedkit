@@ -31,22 +31,40 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero offers Setup first with get started and catalog (#111)", async ({ page }) => {
+test("home hero offers Setup first with get started, catalog, and a discreet issues link (#111, #117)", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
 
   const heroActions = page.locator("[data-home-hero-actions] a");
-  await expect(heroActions).toHaveCount(3);
+  await expect(heroActions).toHaveCount(4);
   await expect(heroActions.nth(0)).toHaveText("Setup");
   await expect(heroActions.nth(0)).toHaveAttribute("href", "#ai-setup");
+  await expect(heroActions.nth(0)).toHaveAttribute("data-site-action");
   await expect(heroActions.nth(1)).toHaveText("Get started");
   await expect(heroActions.nth(1)).toHaveAttribute("href", "#get-started");
+  await expect(heroActions.nth(1)).toHaveAttribute("data-site-action");
   await expect(heroActions.nth(2)).toHaveText("Browse catalog");
   await expect(heroActions.nth(2)).toHaveAttribute("href", "/catalog");
+  await expect(heroActions.nth(2)).not.toHaveAttribute("data-site-action");
   for (const index of [0, 1, 2]) {
     await expect(heroActions.nth(index)).not.toHaveAttribute("target");
     await expect(heroActions.nth(index)).not.toHaveAttribute("rel");
   }
+  const issues = heroActions.nth(3);
+  await expect(issues).toHaveAttribute("target", "_blank");
+  await expect(issues).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(issues).toHaveAccessibleName(/opens in a new tab/i);
+  await expect(issues).toContainText("See a real issue, end to end");
+  const issuesHref = await issues.getAttribute("href");
+  expect(issuesHref).toMatch(/^\/issues(?:\/|$)/);
+  expect(issuesHref).not.toBe("/issues/0");
+  await expect(issues).not.toHaveAttribute("data-site-action");
+
+  const header = page.locator("#nd-nav");
+  await expect(header.getByRole("link", { name: "Reviews" })).toHaveCount(0);
+  await expect(header.getByRole("link", { name: "Issues", exact: true })).toHaveCount(0);
 
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
     "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",

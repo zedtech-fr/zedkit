@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { applySurfaceGlassPanel } from "@zedtech/zedkit-ui";
+import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
 /** Fumadocs renders the Guides viewport with no prop seam: apply kit glass Surface chrome. */
 const GUIDES_PANEL_SELECTOR = ".flex.w-full.justify-center > *";
@@ -28,8 +29,9 @@ export function SiteHeaderSurfacePatch() {
 /** Adds native tooltips where Fumadocs chrome only sets `aria-label` (#396). */
 export function SiteChromeA11yPatch() {
   useEffect(() => {
+    const opens = siteChromeCopy.nav.opensInNewTab;
     const titles: Record<string, string> = {
-      GitHub: "View zedkit repository on GitHub",
+      GitHub: `View zedkit repository on GitHub (${opens})`,
       "Toggle Menu": "Open site menu",
       "Open Sidebar": "Open navigation sidebar",
       "Close Sidebar": "Close navigation sidebar",
@@ -38,6 +40,7 @@ export function SiteChromeA11yPatch() {
     for (const [ariaLabel, title] of Object.entries(titles)) {
       for (const el of document.querySelectorAll(`[aria-label="${ariaLabel}"]`)) {
         if (!el.getAttribute("title")) el.setAttribute("title", title);
+        if (ariaLabel === "GitHub") el.setAttribute("aria-label", `GitHub (${opens})`);
       }
     }
   }, []);
