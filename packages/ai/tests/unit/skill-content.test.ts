@@ -119,6 +119,31 @@ describe("skill content conventions", () => {
     expect(review).not.toContain("may only drop or demote");
   });
 
+  it("review merge writes one post-second-pass final-decision record with superseded labels", () => {
+    const skill = readFileSync(
+      join(kitDir(), "skills", "review", "SKILL.md"),
+      "utf8",
+    );
+    const decision = readFileSync(
+      join(kitDir(), "skills", "review", "decision.md"),
+      "utf8",
+    );
+    const pointer = skill.indexOf("decision.md");
+    expect(pointer).toBeGreaterThan(-1);
+    expect(skill.indexOf("## 4. Merge")).toBeLessThan(pointer);
+    expect(skill.indexOf("second independent")).toBeLessThan(pointer);
+    expect(skill.split("\n").length).toBeLessThan(60);
+    expect(decision).toContain("After the second pass");
+    expect(decision).toContain("final");
+    expect(decision).toContain("superseded");
+    expect(decision).toContain("Dropped or recast");
+    expect(decision).toContain("must-change");
+    expect(skill).toContain("second independent `check` spawn");
+    expect(skill).toContain("adjust its severity either way");
+    expect(skill).toContain("absence does not drop blockers");
+    expect(skill).not.toContain("may only drop or demote");
+  });
+
   it("definition of done warns on file-count growth and separates a scope change", () => {
     const dod = readFileSync(
       join(kitDir(), "skills", "definition-of-done", "SKILL.md"),

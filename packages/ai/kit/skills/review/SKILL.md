@@ -25,6 +25,8 @@ One subagent per lens, in parallel (`parallel-work`) in waves of at most 6; inli
 
 Dedupe, rank by severity, one verdict: ship, fix-then-ship (list blockers), or rework. Open with the lenses-run table (every lens: ran or skipped + reason; a `planned` runner reports skipped-planned with its reason, never a blocker and never silent; a preset that omits a runner is a product choice to record, not an automatic blocker; cross-check the PR description and drop accusations the second pass already recalibrated). Then a second independent `check` spawn (not the synthesizer) verifies each ranked finding against the same pinned commit. It may keep a finding, drop it, or adjust its severity either way, and it says why. It stays inside the synthesis. A finding it drops is not a blocker. If that pass cannot run, say so: its absence does not drop blockers.
 
+After the second pass, write the one final-decision record per [`decision.md`](decision.md).
+
 ## 5. Turn the miss into a rule
 
 Every miss becomes a rule: lint rule, a test, or an AGENTS.md line; file it or add it in this change when trivial. A fix without its rule is incomplete until the rule exists or is filed. Carry `Stakes:` from the plan.
