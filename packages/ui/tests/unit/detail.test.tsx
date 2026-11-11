@@ -1,7 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { DetailPanel, DetailPanelRow, LivePulse } from "#index.js";
+import {
+  DetailPanel,
+  DetailPanelRow,
+  LivePulse,
+  ZedkitUiProvider,
+  zedkitUiMessagesFr,
+} from "#index.js";
 
 describe("DetailPanel", () => {
   it("renders label/value rows", () => {
@@ -51,7 +57,41 @@ describe("LivePulse", () => {
 
   it("shows idle when inactive", () => {
     render(<LivePulse active={false} />);
-    expect(screen.getByRole("status").textContent).toContain("Idle");
+    expect(screen.getByRole("status", { name: "Idle" }).textContent).toContain("Idle");
+  });
+
+  it("uses inactiveLabel when idle", () => {
+    render(<LivePulse active={false} inactiveLabel="Paused" />);
+    expect(screen.getByRole("status", { name: "Paused" }).textContent).toContain("Paused");
+    expect(screen.queryByText("Idle")).toBeNull();
+  });
+
+  it("ignores inactiveLabel while active", () => {
+    render(<LivePulse inactiveLabel="Paused" />);
+    expect(screen.getByRole("status", { name: "Live" }).textContent).toContain("Live");
+    expect(screen.queryByText("Paused")).toBeNull();
+  });
+
+  it("keeps label as the live word only", () => {
+    render(<LivePulse active={false} label="Latest" />);
+    expect(screen.getByRole("status", { name: "Idle" }).textContent).toContain("Idle");
+    expect(screen.queryByText("Latest")).toBeNull();
+  });
+
+  it("uses French idle chrome until inactiveLabel is passed", () => {
+    render(
+      <ZedkitUiProvider messages={zedkitUiMessagesFr}>
+        <LivePulse active={false} />
+      </ZedkitUiProvider>,
+    );
+    expect(screen.getByRole("status", { name: "Inactif" }).textContent).toContain("Inactif");
+  });
+
+  it("honors an empty inactiveLabel as no idle word", () => {
+    render(<LivePulse active={false} inactiveLabel="" />);
+    const status = screen.getByRole("status");
+    expect(status.textContent).not.toContain("Idle");
+    expect(status.getAttribute("aria-label")).toBe("");
   });
 
   it("uses the canonical scale gap with no arbitrary values", () => {

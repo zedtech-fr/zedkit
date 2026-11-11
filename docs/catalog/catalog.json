@@ -3722,6 +3722,40 @@
           ]
         },
         {
+          "need": "Format a compact duration",
+          "import": "`@zedtech/zedkit-ui` — `formatDuration`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "formatDuration",
+          "audience": "Developers showing elapsed time next to live status or logs.",
+          "purpose": "Turn a millisecond span or two instants into compact `6m 17s` / `1h 02m` text.",
+          "whenToUse": "For dense elapsed-time labels beside a live indicator or timestamp.",
+          "whenNotToUse": "For relative \"3 minutes ago\" — use `UpdatedAgo`. For absolute times — render a `<time dateTime>`.",
+          "derivedFrom": null,
+          "example": "import { formatDuration } from \"@zedtech/zedkit-ui\";\nformatDuration(377_000); // \"6m 17s\"\nformatDuration(3_720_000); // \"1h 02m\"\nformatDuration({ start: 0, end: 377_000 }, \"fr\");",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { formatDuration } from \"@zedtech/zedkit-ui\";\nformatDuration(377_000); // \"6m 17s\"\nformatDuration(3_720_000); // \"1h 02m\"\nformatDuration({ start: 0, end: 377_000 }, \"fr\");"
+            }
+          ],
+          "adoption": {
+            "kind": "js",
+            "modules": [
+              {
+                "from": "@zedtech/zedkit-ui",
+                "exports": [
+                  "formatDuration"
+                ]
+              }
+            ]
+          },
+          "a11y": "Returns a plain string. The caller owns the host; this is not a live region.",
+          "seeAlso": [
+            "Stamp data with its age"
+          ]
+        },
+        {
           "need": "Flag offline state with a live note",
           "import": "`@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`",
           "wraps": "`(none)`",
@@ -4677,15 +4711,15 @@
           "status": "stable",
           "shortName": "DetailPanel",
           "audience": "Developers rendering record details (drawers, side panels, headers).",
-          "purpose": "Key-value detail lists plus an optional live pulse.",
+          "purpose": "Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word.",
           "whenToUse": "For read-only record summaries next to the list.",
           "whenNotToUse": "For editable records — use Form instead.",
           "derivedFrom": null,
-          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
+          "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
+              "code": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />"
             },
             {
               "title": "Composed rows",
@@ -4710,8 +4744,8 @@
             ]
           },
           "registry": "detail-panel",
-          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order.",
-          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`.",
+          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role=\"status\"`; `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle).",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

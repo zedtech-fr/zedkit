@@ -716,6 +716,26 @@ import { UpdatedAgo } from "@zedtech/zedkit-ui";
 <UpdatedAgo date={syncedAt} prefix="Synced" />
 ```
 
+## Format a compact duration
+
+- Import: `@zedtech/zedkit-ui` — `formatDuration`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: formatDuration
+- Audience: Developers showing elapsed time next to live status or logs.
+- Purpose: Turn a millisecond span or two instants into compact `6m 17s` / `1h 02m` text.
+- When to use: For dense elapsed-time labels beside a live indicator or timestamp.
+- When not to use: For relative "3 minutes ago" — use `UpdatedAgo`. For absolute times — render a `<time dateTime>`.
+- See also: `Stamp data with its age`
+- A11y: Returns a plain string. The caller owns the host; this is not a live region.
+
+```ts
+import { formatDuration } from "@zedtech/zedkit-ui";
+formatDuration(377_000); // "6m 17s"
+formatDuration(3_720_000); // "1h 02m"
+formatDuration({ start: 0, end: 377_000 }, "fr");
+```
+
 ## Flag offline state with a live note
 
 - Import: `@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`
@@ -1408,18 +1428,18 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
-- Purpose: Key-value detail lists plus an optional live pulse.
+- Purpose: Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word.
 - When to use: For read-only record summaries next to the list.
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
 - Examples: Simple, Composed rows
-- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order.
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role="status"`; `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle).
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
-<PageHeader title="Server" actions={<LivePulse />} />
+<PageHeader title="Server" actions={<LivePulse inactiveLabel="Paused" />} />
 <DetailPanel items={[{ label: "Region", value: "eu" }]} />
 ```
 

@@ -10,6 +10,7 @@ import { ClassProp } from 'class-variance-authority/types';
 import { ClassValue } from 'clsx';
 import { ColumnDef } from '@tanstack/react-table';
 import { ColumnHelper } from '@tanstack/react-table';
+import { ComponentProps } from 'react';
 import { ControllerProps } from 'react-hook-form';
 import type { DateRange } from 'react-day-picker';
 import { DayPickerProps } from 'react-day-picker';
@@ -697,6 +698,12 @@ export function FieldTitle(input: React_2.ComponentProps<"div">): React_2.JSX.El
 // @public (undocumented)
 export const Form: <TFieldValues extends FieldValues, TContext = any, TTransformedValues = TFieldValues>(input: FormProviderProps<TFieldValues, TContext, TTransformedValues>) => React_2.JSX.Element;
 
+// @public
+export function formatDuration(input: number | {
+    start: number | Date;
+    end: number | Date;
+}, locale?: string): string;
+
 // @public (undocumented)
 export function FormControl(input: React_2.ComponentProps<typeof Slot>): React_2.JSX.Element;
 
@@ -1136,6 +1143,7 @@ export interface LivePulseProps {
     active?: boolean;
     // (undocumented)
     className?: string;
+    inactiveLabel?: string;
     // (undocumented)
     label?: string;
 }
@@ -1345,10 +1353,10 @@ export interface ProgressBarProps {
 }
 
 // @public
-export function PromptInput(input: PromptInputProps): React_2.JSX.Element;
+export function PromptInput(input: PromptInputProps): JSX.Element;
 
 // @public (undocumented)
-export type PromptInputProps = Omit<React_2.ComponentProps<"textarea">, "onSubmit"> & {
+export type PromptInputProps = Omit<ComponentProps<"textarea">, "onSubmit"> & {
     sendLabel: string;
     onSubmit: () => void;
     onCancel?: () => void;
