@@ -25,10 +25,16 @@ test("catalog copy carries no inline identity form", () => {
   assert.equal("identity" in catalogCopy, false);
 });
 
-test("results status line takes a count argument", () => {
-  assert.equal(catalogCopy.results.statusLine(0), "0 entries");
-  assert.equal(catalogCopy.results.statusLine(1), "1 entry");
-  assert.equal(catalogCopy.results.statusLine(2), "2 entries");
+test("chip labels use a middle dot and a live count", () => {
+  assert.equal(catalogCopy.filters.chipLabel("UI", 68), "UI · 68");
+  assert.equal(catalogCopy.filters.chipLabel("Core & server", 53), "Core & server · 53");
+});
+
+test("results status line shows visible of area total plus the stable legend", () => {
+  assert.equal(catalogCopy.results.statusLine(0, 0), "Showing 0 of 0.");
+  assert.equal(catalogCopy.results.statusLine(1, 3), "Showing 1 of 3.");
+  assert.equal(catalogCopy.results.statusLine(18, 68), "Showing 18 of 68.");
+  assert.equal(catalogCopy.results.stableLegend, "Entries with no label are stable.");
 });
 
 test("catalog UI has no counters module", () => {
@@ -43,7 +49,7 @@ test("catalog view keeps the quiet filtered count and the copy lead", () => {
   const view = readFileSync(join(app, "ui/catalog/catalog-view.tsx"), "utf8");
   const page = readFileSync(join(app, "app/(site)/catalog/page.tsx"), "utf8");
   assert.match(view, /\{catalogCopy\.header\.lead\}/);
-  assert.match(view, /catalogResultsStatusLine\(filtered\.length\)/);
+  assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
   assert.match(page, /entries=\{catalogIndex\}/);
   assert.doesNotMatch(view, /catalogStats/);
   assert.doesNotMatch(page, /catalogStats/);
