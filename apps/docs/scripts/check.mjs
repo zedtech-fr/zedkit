@@ -22,7 +22,10 @@
 //  12. guide MDX files include the required `##` sections (`guideRequiredSections`);
 //  13. VISUAL-CONTRACT.md pins the two chrome-rule sentences; signature.md
 //      points at that owner; relative markdown links in those files resolve;
-//  14. foundations.mdx links VISUAL-CONTRACT.md and does not copy the owner table.
+//  14. foundations.mdx links VISUAL-CONTRACT.md and does not copy the owner table;
+//  15. ui/meta.json lists every published UI slug once under Fumadocs separators
+//      (Actions / Forms / Overlays / Data and states / More); other package
+//      meta.json files stay a flat slug list with no nested paths.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -330,6 +333,67 @@ if (existsSync(llmsPath)) {
     }
   }
 }
+const FUMADOCS_SEPARATOR = /^---(?<name>.+)---$/;
+const UI_SIDEBAR_LABELS = ["Actions", "Forms", "Overlays", "Data and states", "More"];
+const publishedUiSlugs = [...livePageKeys]
+  .filter((key) => key.startsWith("ui/"))
+  .map((key) => key.slice("ui/".length));
+const uiMetaPath = join(tmp, "ui", "meta.json");
+if (!existsSync(uiMetaPath)) {
+  errors.push("ui/meta.json missing after generate.");
+} else {
+  const uiMeta = JSON.parse(readFileSync(uiMetaPath, "utf8"));
+  const uiSlugs = [];
+  const uiLabels = [];
+  for (const entry of uiMeta.pages ?? []) {
+    const sep = FUMADOCS_SEPARATOR.exec(entry);
+    if (sep) {
+      uiLabels.push(sep.groups.name);
+      continue;
+    }
+    if (entry.includes("/")) {
+      errors.push(`ui/meta.json: nested path "${entry}" (URLs must stay /docs/ui/<slug>).`);
+    }
+    uiSlugs.push(entry);
+  }
+  if (new Set(uiSlugs).size !== uiSlugs.length) {
+    errors.push("ui/meta.json: duplicate slug in pages.");
+  }
+  for (const slug of publishedUiSlugs) {
+    if (!uiSlugs.includes(slug)) errors.push(`ui/meta.json: missing published slug "${slug}".`);
+    if (!existsSync(join(tmp, "ui", `${slug}.mdx`))) {
+      errors.push(`generator: missing flat page /docs/ui/${slug}.`);
+    }
+  }
+  for (const slug of uiSlugs) {
+    if (!publishedUiSlugs.includes(slug)) errors.push(`ui/meta.json: extra slug "${slug}".`);
+  }
+  let lastIdx = -1;
+  for (const label of uiLabels) {
+    const idx = UI_SIDEBAR_LABELS.indexOf(label);
+    if (idx === -1) {
+      errors.push(`ui/meta.json: unknown separator "${label}".`);
+      continue;
+    }
+    if (idx <= lastIdx) errors.push(`ui/meta.json: separator "${label}" out of order.`);
+    lastIdx = idx;
+  }
+}
+for (const entry of readdirSync(tmp, { withFileTypes: true })) {
+  if (!entry.isDirectory() || entry.name === "ui") continue;
+  const metaPath = join(tmp, entry.name, "meta.json");
+  if (!existsSync(metaPath)) continue;
+  const meta = JSON.parse(readFileSync(metaPath, "utf8"));
+  for (const page of meta.pages ?? []) {
+    if (FUMADOCS_SEPARATOR.test(page)) {
+      errors.push(`${entry.name}/meta.json: unexpected separator "${page}".`);
+    }
+    if (page.includes("/")) {
+      errors.push(`${entry.name}/meta.json: nested path "${page}".`);
+    }
+  }
+}
+
 const llmsFullPath = join(APP, "public", "llms-full.txt");
 if (!existsSync(llmsFullPath)) {
   errors.push("public/llms-full.txt missing (run docs:generate).");
