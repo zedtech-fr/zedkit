@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 export const EXTRA_SITEMAP_ROUTES = [
   "/features/identity-editor",
   "/features/identity-kit-demos",
-  "/reviews",
+  "/issues",
 ];
 
 function sitemapCandidates(): string[] {

@@ -1,77 +1,73 @@
-export type ReviewVerdict = "approve" | "request-changes" | "comment" | "error";
-export type ReviewRunStatus = "running" | "done" | "error";
-export type ReviewPrState = "open" | "merged";
-export type ReviewVisibility = "public" | "private";
-export type FindingDisposition = "kept" | "downgraded" | "dismissed";
-export type ReviewFindingDisposition = FindingDisposition;
+export type IssueState = "open" | "closed";
+export type TimelineEntryType = "plan" | "implement" | "review" | "improve" | "dry-run";
+export type TimelineEntryStatus = "running" | "completed" | "failed";
+export type ReviewVerdict = "approve" | "request-changes" | "comment";
+export type LatestStatus = TimelineEntryStatus | ReviewVerdict;
 
-export type ReviewAction = {
-  readonly title: string;
-  readonly detail: string;
-};
-
-export type ReviewFinding = {
+export type TimelineEntry = {
   readonly id: string;
-  readonly summary: string;
-  readonly disposition: FindingDisposition;
-};
-
-export type ReviewFirstPassFinding = {
-  readonly title: string;
-  readonly detail: string;
-  readonly disposition: ReviewFindingDisposition;
-};
-
-export type ReviewAgentSummary = {
-  readonly id: string;
-  readonly name: string;
-  readonly kind: string;
-  readonly status: string;
-  readonly model: string;
-};
-
-export type ReviewFirstPass = {
-  readonly findings: readonly ReviewFirstPassFinding[];
-};
-
-export type ReviewConsoleKind = "flow" | "agent" | "workflow";
-
-export type ReviewConsoleItem = {
-  readonly id: string;
-  readonly kind: ReviewConsoleKind;
-  readonly title: string;
-  readonly status: ReviewRunStatus;
-};
-
-export type ReviewRun = {
-  readonly id: string;
-  readonly status: ReviewRunStatus;
+  readonly runId: string;
+  readonly type: TimelineEntryType;
+  readonly status: TimelineEntryStatus;
   readonly startedAt: string;
-  readonly agents: readonly ReviewAgentSummary[];
-  readonly items?: readonly ReviewConsoleItem[];
+  readonly durationMs: number | null;
+  readonly models: readonly string[];
+  readonly verdict: ReviewVerdict | null;
+  readonly liveUrl: string | null;
 };
 
-export type ReviewRecord = {
+export type IssueRecord = {
   readonly number: number;
   readonly title: string;
-  readonly verdict: ReviewVerdict;
-  readonly confidence: number;
-  readonly status: ReviewRunStatus;
-  readonly headSha: string;
+  readonly state: IssueState;
+  readonly pullRequests: readonly number[];
   readonly lastRunAt: string;
-  readonly prState: ReviewPrState;
-  readonly visibility: ReviewVisibility;
-  readonly notes: string;
-  readonly summary: string;
-  readonly evidence: string;
-  readonly actions: readonly ReviewAction[];
-  readonly findings: readonly ReviewFinding[];
-  readonly firstPass?: ReviewFirstPass;
-  readonly runs: readonly ReviewRun[];
+  readonly entries: readonly TimelineEntry[];
+};
+
+export type PullRequestIndexEntry = {
+  readonly number: number;
+  readonly issueNumber: number | null;
+  readonly runIds: readonly string[];
+  readonly entries: readonly TimelineEntry[];
+};
+
+export type PublicIssueIndex = {
+  readonly version: 1;
+  readonly kind: string;
+  readonly issues: readonly IssueRecord[];
+  readonly pullRequests: readonly PullRequestIndexEntry[];
+};
+
+export type UnlinkedPullRequest = {
+  readonly number: number;
+  readonly lastRunAt: string;
+  readonly entries: readonly TimelineEntry[];
+};
+
+export type RunRecord = {
+  readonly runId: string;
+  readonly entries: readonly TimelineEntry[];
+  readonly status: TimelineEntryStatus;
+  readonly verdict: ReviewVerdict | null;
+  readonly models: readonly string[];
+  readonly durationMs: number | null;
+  readonly liveUrl: string | null;
+  readonly startedAt: string;
+};
+
+export type PrResolve = {
+  readonly issueNumber: number | null;
+  readonly runIds: readonly string[];
 };
 
 export type ReviewPort = {
-  list(): Promise<ReviewRecord[]>;
-  getByPr(n: number): Promise<ReviewRecord | null>;
-  getRun(n: number, id: string): Promise<ReviewRun | null>;
+  listIssues(): Promise<IssueRecord[]>;
+  listUnlinkedPullRequests(): Promise<UnlinkedPullRequest[]>;
+  listPullRequests(): Promise<PullRequestIndexEntry[]>;
+  getIssue(n: number): Promise<IssueRecord | null>;
+  getUnlinkedPullRequest(n: number): Promise<UnlinkedPullRequest | null>;
+  getRun(issueNumber: number, runId: string): Promise<RunRecord | null>;
+  getUnlinkedRun(prNumber: number, runId: string): Promise<RunRecord | null>;
+  resolvePr(n: number): Promise<PrResolve | null>;
 };

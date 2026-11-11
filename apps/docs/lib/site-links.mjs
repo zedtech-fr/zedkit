@@ -25,7 +25,7 @@ export const SITE_HEADER_INTERNAL_PATHS = [
   "/docs/maturity-and-compatibility",
   "/docs/foundations",
   "/examples/note-list",
-  "/reviews",
+  "/issues",
   IDENTITY_EDITOR_HREF,
 ];
 

@@ -3,56 +3,41 @@ import { readFileSync } from "node:fs";
 import { tryCatch } from "@zedtech/zedkit-core";
 
 import { parsePublicReviewSnapshot } from "../model/parse-snapshot.ts";
-import { toPublicReviews } from "../model/public-review.ts";
-import { listReviewSitemapPathsFrom } from "../model/review-routes.ts";
-import type { ReviewPort, ReviewRecord, ReviewRun } from "../ports/review-port";
+import { createPortFromIndex } from "../model/port-from-index.ts";
+import { toPublicIndex } from "../model/public-review.ts";
+import { listIssueSitemapPathsFrom } from "../model/review-routes.ts";
+import type { PublicIssueIndex, ReviewPort } from "../ports/review-port";
 import defaultSnapshot from "./public-reviews.json" with { type: "json" };
 
-function copyRecord(record: ReviewRecord): ReviewRecord {
-  return structuredClone(record);
-}
-
-function recordsFromUnknown(value: unknown): ReviewRecord[] {
+function indexFromUnknown(value: unknown): PublicIssueIndex {
   const parsed = parsePublicReviewSnapshot(value);
   if (!parsed.ok) {
-    throw new Error(`public review snapshot: ${parsed.error.message}`, { cause: parsed.error });
+    throw new Error(`public issue index: ${parsed.error.message}`, { cause: parsed.error });
   }
-  return toPublicReviews(parsed.value);
+  return toPublicIndex(parsed.value);
 }
 
-function loadPublicReviews(snapshotPath: string): ReviewRecord[] {
+function loadPublicIndex(snapshotPath: string): PublicIssueIndex {
   const text = tryCatch(() => readFileSync(snapshotPath, "utf8"));
   if (!text.ok) {
-    throw new Error("public review snapshot: cannot read file", { cause: text.error });
+    throw new Error("public issue index: cannot read file", { cause: text.error });
   }
   const json = tryCatch(() => JSON.parse(text.value) as unknown);
   if (!json.ok) {
-    throw new Error("public review snapshot: invalid JSON", { cause: json.error });
+    throw new Error("public issue index: invalid JSON", { cause: json.error });
   }
-  return recordsFromUnknown(json.value);
+  return indexFromUnknown(json.value);
 }
 
 export function createSnapshotReviewPort(snapshotPath?: string): ReviewPort {
   // shortcut: Next 16 turbopack fileURLToPath rejects URL objects; keep the
   // JSON import until that bundler accepts a string path from import.meta.url.
-  const records =
-    snapshotPath === undefined ? recordsFromUnknown(defaultSnapshot) : loadPublicReviews(snapshotPath);
-  return {
-    list() {
-      return Promise.resolve(records.map(copyRecord));
-    },
-    getByPr(n: number) {
-      const record = Number.isInteger(n) ? records.find((item) => item.number === n) : undefined;
-      return Promise.resolve(record === undefined ? null : copyRecord(record));
-    },
-    getRun(n: number, id: string) {
-      const record = Number.isInteger(n) ? records.find((item) => item.number === n) : undefined;
-      const run = record?.runs.find((item) => item.id === id);
-      return Promise.resolve(run === undefined ? null : (structuredClone(run) as ReviewRun));
-    },
-  };
+  // Out-of-repo exporter overwrites this JSON before a staging docs build.
+  const index =
+    snapshotPath === undefined ? indexFromUnknown(defaultSnapshot) : loadPublicIndex(snapshotPath);
+  return createPortFromIndex(index);
 }
 
-export function listReviewSitemapPaths(snapshotPath?: string): Promise<string[]> {
-  return listReviewSitemapPathsFrom(createSnapshotReviewPort(snapshotPath));
+export function listIssueSitemapPaths(snapshotPath?: string): Promise<string[]> {
+  return listIssueSitemapPathsFrom(createSnapshotReviewPort(snapshotPath));
 }

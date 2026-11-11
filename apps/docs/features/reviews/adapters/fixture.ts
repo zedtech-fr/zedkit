@@ -1,207 +1,177 @@
-import { toPublicReviews } from "../model/public-review.ts";
-import type { ReviewPort, ReviewRecord, ReviewRun } from "../ports/review-port";
+import { parsePublicReviewSnapshot } from "../model/parse-snapshot.ts";
+import { createPortFromIndex } from "../model/port-from-index.ts";
+import { toPublicIndex } from "../model/public-review.ts";
+import type { ReviewPort } from "../ports/review-port";
 
-const FIXTURES: readonly ReviewRecord[] = [
-  {
-    number: 71,
-    title: "Add a public review section",
-    verdict: "approve",
-    confidence: 86,
-    status: "done",
-    headSha: "c0ffeeabc123def4567890aaabbbcccdddeeefff",
-    lastRunAt: "2026-11-09T15:00:00.000Z",
-    prState: "open",
-    visibility: "public",
-    notes:
-      "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
-    summary: "The public review section is ready to merge.",
-    evidence: "",
-    actions: [],
-    findings: [],
-    runs: [
-      {
-        id: "run-71",
-        status: "done",
-        startedAt: "2026-11-09T14:50:00.000Z",
-        agents: [],
-        items: [
-          { id: "flow", kind: "flow", title: "Main flow", status: "done" },
-          { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
-        ],
-      },
-      {
-        id: "run-71-earlier",
-        status: "done",
-        startedAt: "2026-11-09T13:00:00.000Z",
-        agents: [],
-        items: [
-          { id: "flow", kind: "flow", title: "Main flow", status: "done" },
-          { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
-        ],
-      },
-    ],
-  },
-  {
-    number: 42,
-    title: "Tighten contrast on Press",
-    verdict: "request-changes",
-    confidence: 64,
-    status: "error",
-    headSha: "bada55abc123def4567890aaabbbcccdddeeefff",
-    lastRunAt: "2026-11-08T09:12:00.000Z",
-    prState: "merged",
-    visibility: "public",
-    notes:
-      "Dark Press must keep caption contrast on the list and the PR page. The run failed while checking the compact preview; open the run for the log excerpt.",
-    summary: "Dark Press caption contrast still fails on the list and the PR page.",
-    evidence: "",
-    actions: [
-      {
-        title: "Raise muted text on dark Press",
-        detail: "List metadata (SHA, last run) must stay at the 13px floor and 4.5:1 against the page.",
-      },
-    ],
-    findings: [],
-    runs: [
-      {
-        id: "run-42",
-        status: "error",
-        startedAt: "2026-11-08T09:10:00.000Z",
-        agents: [],
-        items: [
-          { id: "flow", kind: "flow", title: "Main flow", status: "error" },
-          { id: "workflow-contrast", kind: "workflow", title: "Contrast check", status: "error" },
-        ],
-      },
-    ],
-  },
-  {
-    number: 18,
-    title: "Document ThemeScope on a dense page",
-    verdict: "comment",
-    confidence: 51,
-    status: "running",
-    headSha: "defaceabc123def4567890aaabbbcccdddeeefff",
-    lastRunAt: "2026-11-10T08:00:00.000Z",
-    prState: "open",
-    visibility: "public",
-    notes:
-      "A running review still belongs on the list. Status is a named wait, not a spinner. This fixture does not update after deploy.",
-    summary: "A running review still belongs on the list; this fixture does not update after deploy.",
-    evidence: "",
-    actions: [],
-    findings: [],
-    runs: [
-      {
-        id: "run-18",
-        status: "running",
-        startedAt: "2026-11-10T08:00:00.000Z",
-        agents: [],
-        items: [
-          { id: "flow", kind: "flow", title: "Main flow", status: "running" },
-          { id: "agent-docs", kind: "agent", title: "Docs agent", status: "running" },
-        ],
-      },
-    ],
-  },
-  {
-    number: 83,
-    title: "Supersede a first-pass review",
-    verdict: "request-changes",
-    confidence: 72,
-    status: "done",
-    headSha: "cafe00abc123def4567890aaabbbcccdddeeefff",
-    lastRunAt: "2026-11-10T11:00:00.000Z",
-    prState: "open",
-    visibility: "public",
-    notes:
-      "The first pass over-called. One finding stayed a merge blocker; one became a note; one was out of scope.",
-    summary: "The first pass is outdated. One merge blocker remains.",
-    evidence: "",
-    actions: [
-      {
-        title: "Keep the list empty state useful",
-        detail: "When there are no reviews yet, say what will appear and that the page is still the list.",
-      },
-    ],
-    findings: [],
-    firstPass: {
-      findings: [
+const FIXTURE_INDEX = {
+  version: 1 as const,
+  kind: "fixture",
+  issues: [
+    {
+      number: 108,
+      title: "Add a public issues section",
+      state: "closed" as const,
+      pullRequests: [133],
+      lastRunAt: "2026-11-10T18:40:00.000Z",
+      entries: [
         {
-          title: "Keep the list empty state useful",
-          detail: "The empty list still needs a next click. This stays a merge blocker.",
-          disposition: "kept",
+          id: "108-plan",
+          runId: "run-108-impl",
+          type: "plan" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-10T16:00:00.000Z",
+          durationMs: 420000,
+          models: ["cursor-grok-4.6-high"],
+          verdict: null,
+          liveUrl: "https://example.test/live/run-108-impl",
         },
         {
-          title: "Rename the section root",
-          detail: "The list-as-root rule is now a note, not a blocker.",
-          disposition: "downgraded",
+          id: "108-implement",
+          runId: "run-108-impl",
+          type: "implement" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-10T16:10:00.000Z",
+          durationMs: 2400000,
+          models: ["cursor-grok-4.6-high"],
+          verdict: null,
+          liveUrl: "https://example.test/live/run-108-impl",
         },
         {
-          title: "Add a sidebar for lenses",
-          detail: "On-demand disclosure already covers lenses. Out of scope for this review.",
-          disposition: "dismissed",
+          id: "108-review",
+          runId: "run-108-review",
+          type: "review" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-10T17:20:00.000Z",
+          durationMs: 900000,
+          models: ["cursor-grok-4.6-high"],
+          verdict: "approve" as const,
+          liveUrl: "https://example.test/live/run-108-review",
+        },
+        {
+          id: "108-improve",
+          runId: "run-108-improve",
+          type: "improve" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-10T18:40:00.000Z",
+          durationMs: 780000,
+          models: ["cursor-grok-4.6-high"],
+          verdict: null,
+          liveUrl: "https://example.test/live/run-108-improve",
         },
       ],
     },
-    runs: [
-      {
-        id: "run-83",
-        status: "done",
-        startedAt: "2026-11-10T10:50:00.000Z",
-        agents: [],
-        items: [
-          { id: "flow", kind: "flow", title: "Main flow", status: "done" },
-          { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
-        ],
-      },
-    ],
-  },
-  {
-    number: 99,
-    title: "Private fixture that must never appear",
-    verdict: "comment",
-    confidence: 10,
-    status: "done",
-    headSha: "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-    lastRunAt: "2026-11-01T00:00:00.000Z",
-    prState: "open",
-    visibility: "private",
-    notes: "Gated. Not for the public site.",
-    summary: "Gated.",
-    evidence: "",
-    actions: [],
-    findings: [],
-    runs: [
-      {
-        id: "run-99",
-        status: "done",
-        startedAt: "2026-11-01T00:00:00.000Z",
-        agents: [],
-        items: [{ id: "agent-private", kind: "agent", title: "secret agent", status: "done" }],
-      },
-    ],
-  },
-];
+    {
+      number: 93,
+      title: "Failed implement with no opened pull request",
+      state: "open" as const,
+      pullRequests: [],
+      lastRunAt: "2026-11-08T09:15:00.000Z",
+      entries: [
+        {
+          id: "93-implement",
+          runId: "run-93-impl",
+          type: "implement" as const,
+          status: "failed" as const,
+          startedAt: "2026-11-08T09:15:00.000Z",
+          durationMs: 300000,
+          models: ["cursor-grok-4.6-high"],
+          verdict: null,
+          liveUrl: null,
+        },
+      ],
+    },
+    {
+      number: 110,
+      title: "Running implement still in progress",
+      state: "open" as const,
+      pullRequests: [],
+      lastRunAt: "2026-11-11T08:00:00.000Z",
+      entries: [
+        {
+          id: "110-implement",
+          runId: "run-110-impl",
+          type: "implement" as const,
+          status: "running" as const,
+          startedAt: "2026-11-11T08:00:00.000Z",
+          durationMs: null,
+          models: ["cursor-grok-4.6-high"],
+          verdict: null,
+          liveUrl: "https://example.test/live/run-110-impl",
+        },
+      ],
+    },
+    {
+      number: 99,
+      title: "Private fixture that must never appear",
+      state: "open" as const,
+      pullRequests: [],
+      lastRunAt: "2026-11-01T00:00:00.000Z",
+      visibility: "private",
+      entries: [
+        {
+          id: "99-review",
+          runId: "run-99",
+          type: "review" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-01T00:00:00.000Z",
+          durationMs: 1000,
+          models: ["secret-model"],
+          verdict: "comment" as const,
+          liveUrl: "https://example.test/live/run-99",
+        },
+      ],
+    },
+  ],
+  pullRequests: [
+    {
+      number: 133,
+      issueNumber: 108,
+      runIds: ["run-108-impl", "run-108-review", "run-108-improve"],
+    },
+    {
+      number: 54,
+      issueNumber: null,
+      runIds: ["run-54-review"],
+      entries: [
+        {
+          id: "54-review",
+          runId: "run-54-review",
+          type: "review" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-07T14:00:00.000Z",
+          durationMs: 480000,
+          models: ["cursor-grok-4.6-high"],
+          verdict: "comment" as const,
+          liveUrl: "https://example.test/live/run-54-review",
+        },
+      ],
+    },
+    {
+      number: 50,
+      issueNumber: null,
+      runIds: ["run-50"],
+      visibility: "private",
+      entries: [
+        {
+          id: "50-review",
+          runId: "run-50",
+          type: "review" as const,
+          status: "completed" as const,
+          startedAt: "2026-11-01T00:00:00.000Z",
+          durationMs: 1000,
+          models: [],
+          verdict: "comment" as const,
+          liveUrl: null,
+        },
+      ],
+    },
+  ],
+};
 
-function copyRecord(record: ReviewRecord): ReviewRecord {
-  return structuredClone(record);
-}
-
-export function createFixtureReviewPort(seed: readonly ReviewRecord[] = FIXTURES): ReviewPort {
-  const records = toPublicReviews(seed);
-  return {
-    list() {
-      return Promise.resolve(records.map(copyRecord));
-    },
-    getByPr(n: number) {
-      const record = Number.isInteger(n) ? records.find((item) => item.number === n) : undefined;
-      return Promise.resolve(record === undefined ? null : copyRecord(record));
-    },
-    getRun(n: number, id: string) {
-      const record = Number.isInteger(n) ? records.find((item) => item.number === n) : undefined;
-      const run = record?.runs.find((item) => item.id === id);
-      return Promise.resolve(run === undefined ? null : structuredClone(run) as ReviewRun);
-    },
-  };
+export function createFixtureReviewPort(seed: unknown = FIXTURE_INDEX): ReviewPort {
+  const parsed = parsePublicReviewSnapshot(seed);
+  if (!parsed.ok) {
+    throw new Error(`fixture issue index: ${parsed.error.message}`, { cause: parsed.error });
+  }
+  return createPortFromIndex(toPublicIndex(parsed.value));
 }

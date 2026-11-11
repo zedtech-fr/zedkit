@@ -1,185 +1,117 @@
 "use client";
 
-import { useId, useState } from "react";
 import Link from "next/link";
 import {
   Badge,
   Button,
   EmptyState,
-  Field,
-  FieldLabel,
-  Input,
+  Heading,
   PageHeader,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Stack,
-  StatusLabel,
   Text,
   UpdatedAgo,
 } from "@zedtech/zedkit-ui";
 
-import { filterReviewList, type ReviewListQuery } from "../model/list-filter";
-import type { ReviewPrState, ReviewRecord, ReviewVerdict } from "../ports/review-port";
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import { latestStatus } from "../model/latest-status";
+import { issuePath, unlinkedPrPath } from "../model/review-routes";
+import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { STATUS_TONE, VERDICT_BADGE } from "./review-badges";
+import { LatestStatusMark } from "./issue-status";
 
-type FilterState = {
-  prState: "all" | ReviewPrState;
-  verdict: "all" | ReviewVerdict;
-  search: string;
-};
-
-function toQuery(filters: FilterState): ReviewListQuery {
-  return {
-    ...(filters.prState === "all" ? {} : { prState: filters.prState }),
-    ...(filters.verdict === "all" ? {} : { verdict: filters.verdict }),
-    search: filters.search,
-  };
+function linkedPrLabel(count: number, copy: ReviewsCopy): string {
+  return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
 }
 
-function ReviewRow({ record, copy }: { record: ReviewRecord; copy: ReviewsCopy }) {
-  const run = record.runs[0];
+function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
+  const status = latestStatus(issue.entries);
   return (
     <Stack gap="sm" className="border-b border-border py-section-sm">
-      <Button asChild variant="link" className="w-fit">
-        <Link href={`/reviews/pr/${record.number}`} aria-label={`${copy.list.openPr} #${record.number}`}>
-          #{record.number} {record.title}
+      <Button asChild variant="link" className="min-h-target w-fit">
+        <Link href={issuePath(issue.number)} aria-label={`${copy.list.openIssue} #${issue.number}`}>
+          #{issue.number} {issue.title}
         </Link>
       </Button>
       <Stack direction="horizontal" gap="sm" className="flex-wrap">
-        <Badge variant={VERDICT_BADGE[record.verdict]}>{copy.verdict[record.verdict]}</Badge>
-        <Text variant="muted" typeRole="caption">
-          {`${copy.pr.confidence} ${record.confidence}${copy.pr.confidenceUnit}`}
-        </Text>
-        <StatusLabel tone={STATUS_TONE[record.status]}>{copy.status[record.status]}</StatusLabel>
-        <Badge variant="outline">{copy.prState[record.prState]}</Badge>
-      </Stack>
-      <Stack direction="horizontal" gap="sm" className="flex-wrap">
-        <Badge variant="meta" title={record.headSha}>
-          {record.headSha.slice(0, 7)}
-        </Badge>
-        <UpdatedAgo date={new Date(record.lastRunAt)} />
-        {run ? (
-          <Button asChild variant="link" size="sm">
-            <Link href={`/reviews/pr/${record.number}/runs/${run.id}`}>{copy.list.runHistory}</Link>
-          </Button>
+        <Badge variant="outline">{copy.state[issue.state]}</Badge>
+        {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+        {issue.pullRequests.length > 0 ? (
+          <Text variant="muted" typeRole="caption">
+            {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
+              .map((n) => `#${n}`)
+              .join(", ")}`}
+          </Text>
         ) : null}
+        <UpdatedAgo date={new Date(issue.lastRunAt)} />
       </Stack>
     </Stack>
   );
 }
 
-function SearchField({
+function UnlinkedRow({
+  entry,
   copy,
-  filters,
-  onFilters,
 }: {
+  entry: UnlinkedPullRequest;
   copy: ReviewsCopy;
-  filters: FilterState;
-  onFilters: (next: FilterState) => void;
 }) {
-  const searchId = useId();
+  const status = latestStatus(entry.entries);
   return (
-    <Field className="w-full flex-1 sm:w-look">
-      <FieldLabel htmlFor={searchId}>{copy.list.search}</FieldLabel>
-      <Input
-        id={searchId}
-        type="search"
-        value={filters.search}
-        onChange={(event) => onFilters({ ...filters, search: event.target.value })}
-        placeholder={copy.list.search}
-      />
-    </Field>
-  );
-}
-
-function ReviewFilters({
-  copy,
-  filters,
-  onFilters,
-}: {
-  copy: ReviewsCopy;
-  filters: FilterState;
-  onFilters: (next: FilterState) => void;
-}) {
-  const stateId = useId();
-  const verdictId = useId();
-  return (
-    <Stack direction="horizontal" gap="sm" className="flex-wrap items-end">
-      <Field className="w-full sm:w-look">
-        <FieldLabel htmlFor={stateId}>{copy.list.state}</FieldLabel>
-        <Select
-          value={filters.prState}
-          onValueChange={(prState) => onFilters({ ...filters, prState: prState as FilterState["prState"] })}
-        >
-          <SelectTrigger id={stateId} className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{copy.list.stateAll}</SelectItem>
-            <SelectItem value="open">{copy.list.stateOpen}</SelectItem>
-            <SelectItem value="merged">{copy.list.stateMerged}</SelectItem>
-          </SelectContent>
-        </Select>
-      </Field>
-      <Field className="w-full sm:w-look">
-        <FieldLabel htmlFor={verdictId}>{copy.list.verdict}</FieldLabel>
-        <Select
-          value={filters.verdict}
-          onValueChange={(verdict) => onFilters({ ...filters, verdict: verdict as FilterState["verdict"] })}
-        >
-          <SelectTrigger id={verdictId} className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{copy.list.verdictAll}</SelectItem>
-            <SelectItem value="approve">{copy.verdict.approve}</SelectItem>
-            <SelectItem value="request-changes">{copy.verdict["request-changes"]}</SelectItem>
-            <SelectItem value="comment">{copy.verdict.comment}</SelectItem>
-            <SelectItem value="error">{copy.verdict.error}</SelectItem>
-          </SelectContent>
-        </Select>
-      </Field>
-      <SearchField copy={copy} filters={filters} onFilters={onFilters} />
+    <Stack gap="sm" className="border-b border-border py-section-sm">
+      <Button asChild variant="link" className="min-h-target w-fit">
+        <Link href={unlinkedPrPath(entry.number)} aria-label={`${copy.list.openUnlinked} #${entry.number}`}>
+          #{entry.number}
+        </Link>
+      </Button>
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
+        {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+        <UpdatedAgo date={new Date(entry.lastRunAt)} />
+      </Stack>
     </Stack>
-  );
-}
-
-function ReviewResults({ records, visible, copy }: { records: readonly ReviewRecord[]; visible: ReviewRecord[]; copy: ReviewsCopy }) {
-  if (records.length === 0) return <EmptyState description={copy.list.empty} />;
-  if (visible.length === 0) return <EmptyState description={copy.list.noneMatch} />;
-  return (
-    <ul>
-      {visible.map((record) => (
-        <li key={record.number}>
-          <ReviewRow record={record} copy={copy} />
-        </li>
-      ))}
-    </ul>
   );
 }
 
 export function ReviewListView({
-  records,
+  issues,
+  unlinked,
   copy,
 }: {
-  records: readonly ReviewRecord[];
+  issues: readonly IssueRecord[];
+  unlinked: readonly UnlinkedPullRequest[];
   copy: ReviewsCopy;
 }) {
-  const [filters, setFilters] = useState<FilterState>({ prState: "all", verdict: "all", search: "" });
-  const visible = filterReviewList(records, toQuery(filters));
   return (
     <ReviewAppearanceFrame copy={copy}>
       {(panel) => (
         <>
           <PageHeader title={copy.list.title} description={copy.list.description} />
           {panel}
-          <ReviewFilters copy={copy} filters={filters} onFilters={setFilters} />
-          <ReviewResults records={records} visible={visible} copy={copy} />
+          {issues.length === 0 ? (
+            <EmptyState description={copy.list.empty} />
+          ) : (
+            <ul>
+              {issues.map((issue) => (
+                <li key={issue.number}>
+                  <IssueRow issue={issue} copy={copy} />
+                </li>
+              ))}
+            </ul>
+          )}
+          {unlinked.length > 0 ? (
+            <Stack gap="sm">
+              <Heading level={2} typeRole="section">
+                {copy.list.unlinkedTitle}
+              </Heading>
+              <Text variant="muted">{copy.list.unlinkedDescription}</Text>
+              <ul>
+                {unlinked.map((entry) => (
+                  <li key={entry.number}>
+                    <UnlinkedRow entry={entry} copy={copy} />
+                  </li>
+                ))}
+              </ul>
+            </Stack>
+          ) : null}
         </>
       )}
     </ReviewAppearanceFrame>

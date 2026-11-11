@@ -1,73 +1,49 @@
 import { err, ok, type Result } from "@zedtech/zedkit-core";
 
 import type {
-  FindingDisposition,
-  ReviewAction,
-  ReviewAgentSummary,
-  ReviewConsoleItem,
-  ReviewConsoleKind,
-  ReviewFinding,
-  ReviewFindingDisposition,
-  ReviewFirstPass,
-  ReviewFirstPassFinding,
-  ReviewPrState,
-  ReviewRecord,
-  ReviewRun,
-  ReviewRunStatus,
+  IssueRecord,
+  IssueState,
+  PullRequestIndexEntry,
   ReviewVerdict,
-  ReviewVisibility,
+  TimelineEntry,
+  TimelineEntryStatus,
+  TimelineEntryType,
 } from "../ports/review-port";
+import type { GatedIndex, GatedIssue, GatedPullRequest, VisibilityField } from "./public-review";
 
-const WRAPPER_KEYS = ["version", "kind", "reviews"] as const;
-const RECORD_KEYS = [
-  "number",
-  "title",
-  "verdict",
-  "confidence",
+const WRAPPER_KEYS = ["version", "kind", "issues", "pullRequests"] as const;
+const ISSUE_KEYS = ["number", "title", "state", "pullRequests", "lastRunAt", "entries"] as const;
+const ENTRY_KEYS = [
+  "id",
+  "runId",
+  "type",
   "status",
-  "headSha",
-  "lastRunAt",
-  "prState",
-  "visibility",
-  "notes",
-  "actions",
-  "findings",
-  "runs",
+  "startedAt",
+  "durationMs",
+  "models",
+  "verdict",
+  "liveUrl",
 ] as const;
-const RECORD_OPTIONAL_KEYS = ["summary", "evidence", "firstPass"] as const;
-const ACTION_KEYS = ["title", "detail"] as const;
-const FINDING_KEYS = ["id", "summary", "disposition"] as const;
-const FIRST_PASS_KEYS = ["findings"] as const;
-const FIRST_PASS_FINDING_KEYS = ["title", "detail", "disposition"] as const;
-const AGENT_KEYS = ["id", "name", "kind", "status", "model"] as const;
-const RUN_KEYS = ["id", "status", "startedAt", "agents"] as const;
-const RUN_OPTIONAL_KEYS = ["items"] as const;
-const CONSOLE_ITEM_KEYS = ["id", "kind", "title", "status"] as const;
-const VERDICTS = ["approve", "request-changes", "comment", "error"] as const;
-const RUN_STATUSES = ["running", "done", "error"] as const;
-const PR_STATES = ["open", "merged"] as const;
-const VISIBILITIES = ["public", "private"] as const;
-const DISPOSITIONS = ["kept", "downgraded", "dismissed"] as const;
-const CONSOLE_KINDS = ["flow", "agent", "workflow"] as const;
+const PR_KEYS = ["number", "issueNumber", "runIds"] as const;
+const ISSUE_STATES = ["open", "closed"] as const;
+const ENTRY_TYPES = ["plan", "implement", "review", "improve", "dry-run"] as const;
+const ENTRY_STATUSES = ["running", "completed", "failed"] as const;
+const VERDICTS = ["approve", "request-changes", "comment"] as const;
 
 function fail(message: string): Result<never, Error> {
   return err(new Error(message));
 }
 
-function exactObject(
+function requiredObject(
   value: unknown,
   keys: readonly string[],
   label: string,
-  optional: readonly string[] = [],
 ): Result<Record<string, unknown>, Error> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return fail(`${label} must be an object`);
   }
   const record = value as Record<string, unknown>;
   const actual = Object.keys(record);
-  const allowed = [...keys, ...optional];
-  const extra = actual.filter((key) => !allowed.includes(key));
-  if (extra.length > 0) return fail(`${label} has unknown keys: ${extra.join(", ")}`);
   const missing = keys.filter((key) => !actual.includes(key));
   if (missing.length > 0) return fail(`${label} is missing ${missing.join(", ")}`);
   return ok(record);
@@ -94,6 +70,21 @@ function asArray(value: unknown, label: string): Result<unknown[], Error> {
   return ok(value);
 }
 
+function asSafeInteger(value: unknown, label: string): Result<number, Error> {
+  if (typeof value !== "number" || !Number.isSafeInteger(value)) {
+    return fail(`${label} must be a safe integer`);
+  }
+  return ok(value);
+}
+
+function asNullOr<T>(
+  value: unknown,
+  parseValue: (value: unknown) => Result<T, Error>,
+): Result<T | null, Error> {
+  if (value === null) return ok(null);
+  return parseValue(value);
+}
+
 function mapItems<T>(
   items: unknown[],
   parseItem: (item: unknown, index: number) => Result<T, Error>,
@@ -107,256 +98,191 @@ function mapItems<T>(
   return ok(out);
 }
 
-function parseAction(value: unknown, index: number): Result<ReviewAction, Error> {
-  const label = `actions[${index}]`;
-  const obj = exactObject(value, ACTION_KEYS, label);
-  if (!obj.ok) return obj;
-  const title = asString(obj.value.title, `${label}.title`);
-  if (!title.ok) return title;
-  const detail = asString(obj.value.detail, `${label}.detail`);
-  if (!detail.ok) return detail;
-  return ok({ title: title.value, detail: detail.value });
+function parseVisibility(value: unknown, label: string): Result<VisibilityField, Error> {
+  if (value === undefined || value === null) return ok(value);
+  if (typeof value !== "string") return fail(`${label}.visibility must be a string or null`);
+  return ok(value);
 }
 
-function parseFinding(value: unknown, index: number): Result<ReviewFinding, Error> {
-  const label = `findings[${index}]`;
-  const obj = exactObject(value, FINDING_KEYS, label);
-  if (!obj.ok) return obj;
-  const id = asString(obj.value.id, `${label}.id`);
-  if (!id.ok) return id;
-  const summary = asString(obj.value.summary, `${label}.summary`);
-  if (!summary.ok) return summary;
-  const disposition = asOneOf<FindingDisposition>(
-    obj.value.disposition,
-    DISPOSITIONS,
-    `${label}.disposition`,
-  );
-  if (!disposition.ok) return disposition;
-  return ok({ id: id.value, summary: summary.value, disposition: disposition.value });
-}
-
-function parseFirstPassFinding(
-  value: unknown,
-  index: number,
-): Result<ReviewFirstPassFinding, Error> {
-  const label = `firstPass.findings[${index}]`;
-  const obj = exactObject(value, FIRST_PASS_FINDING_KEYS, label);
-  if (!obj.ok) return obj;
-  const title = asString(obj.value.title, `${label}.title`);
-  if (!title.ok) return title;
-  const detail = asString(obj.value.detail, `${label}.detail`);
-  if (!detail.ok) return detail;
-  const disposition = asOneOf<ReviewFindingDisposition>(
-    obj.value.disposition,
-    DISPOSITIONS,
-    `${label}.disposition`,
-  );
-  if (!disposition.ok) return disposition;
-  return ok({ title: title.value, detail: detail.value, disposition: disposition.value });
-}
-
-function parseFirstPass(value: unknown, label: string): Result<ReviewFirstPass, Error> {
-  const obj = exactObject(value, FIRST_PASS_KEYS, `${label}.firstPass`);
-  if (!obj.ok) return obj;
-  const findingsRaw = asArray(obj.value.findings, `${label}.firstPass.findings`);
-  if (!findingsRaw.ok) return findingsRaw;
-  const findings = mapItems(findingsRaw.value, parseFirstPassFinding);
-  if (!findings.ok) return findings;
-  return ok({ findings: findings.value });
-}
-
-function parseRecordDecision(
-  obj: Record<string, unknown>,
-  label: string,
-): Result<Pick<ReviewRecord, "summary" | "evidence" | "firstPass">, Error> {
-  let summary = "";
-  if (obj.summary !== undefined) {
-    const parsed = asString(obj.summary, `${label}.summary`);
-    if (!parsed.ok) return parsed;
-    summary = parsed.value;
-  }
-  let evidence = "";
-  if (obj.evidence !== undefined) {
-    const parsed = asString(obj.evidence, `${label}.evidence`);
-    if (!parsed.ok) return parsed;
-    evidence = parsed.value;
-  }
-  if (obj.firstPass === undefined) return ok({ summary, evidence });
-  const firstPass = parseFirstPass(obj.firstPass, label);
-  if (!firstPass.ok) return firstPass;
-  return ok({ summary, evidence, firstPass: firstPass.value });
-}
-
-function parseAgent(value: unknown, index: number): Result<ReviewAgentSummary, Error> {
-  const label = `agents[${index}]`;
-  const obj = exactObject(value, AGENT_KEYS, label);
-  if (!obj.ok) return obj;
-  const id = asString(obj.value.id, `${label}.id`);
-  if (!id.ok) return id;
-  const name = asString(obj.value.name, `${label}.name`);
-  if (!name.ok) return name;
-  const kind = asString(obj.value.kind, `${label}.kind`);
-  if (!kind.ok) return kind;
-  const status = asString(obj.value.status, `${label}.status`);
-  if (!status.ok) return status;
-  const model = asString(obj.value.model, `${label}.model`);
-  if (!model.ok) return model;
-  return ok({
-    id: id.value,
-    name: name.value,
-    kind: kind.value,
-    status: status.value,
-    model: model.value,
+function parseDurationMs(value: unknown, label: string): Result<number | null, Error> {
+  return asNullOr(value, (inner) => {
+    if (typeof inner !== "number" || !Number.isFinite(inner) || inner < 0) {
+      return fail(`${label}.durationMs must be a finite number >= 0 or null`);
+    }
+    return ok(inner);
   });
 }
 
-function parseConsoleItem(value: unknown, index: number): Result<ReviewConsoleItem, Error> {
-  const label = `items[${index}]`;
-  const obj = exactObject(value, CONSOLE_ITEM_KEYS, label);
-  if (!obj.ok) return obj;
-  const id = asString(obj.value.id, `${label}.id`);
-  if (!id.ok) return id;
-  const kind = asOneOf<ReviewConsoleKind>(obj.value.kind, CONSOLE_KINDS, `${label}.kind`);
-  if (!kind.ok) return kind;
-  const title = asString(obj.value.title, `${label}.title`);
-  if (!title.ok) return title;
-  const status = asOneOf<ReviewRunStatus>(obj.value.status, RUN_STATUSES, `${label}.status`);
-  if (!status.ok) return status;
-  return ok({
-    id: id.value,
-    kind: kind.value,
-    title: title.value,
-    status: status.value,
+function parseLiveUrl(value: unknown, label: string): Result<string | null, Error> {
+  return asNullOr(value, (inner) => {
+    const text = asString(inner, `${label}.liveUrl`);
+    if (!text.ok) return text;
+    return ok(text.value);
   });
 }
 
-function parseRun(value: unknown, index: number): Result<ReviewRun, Error> {
-  const label = `runs[${index}]`;
-  const obj = exactObject(value, RUN_KEYS, label, RUN_OPTIONAL_KEYS);
+function parseModels(value: unknown, label: string): Result<string[], Error> {
+  const raw = asArray(value, `${label}.models`);
+  if (!raw.ok) return raw;
+  const models: string[] = [];
+  for (let index = 0; index < raw.value.length; index += 1) {
+    const item = asString(raw.value[index], `${label}.models[${index}]`);
+    if (!item.ok) return item;
+    if (item.value !== "") models.push(item.value);
+  }
+  return ok(models);
+}
+
+function parseEntry(value: unknown, index: number, label: string): Result<TimelineEntry, Error> {
+  const path = `${label}[${index}]`;
+  const obj = requiredObject(value, ENTRY_KEYS, path);
   if (!obj.ok) return obj;
-  const id = asString(obj.value.id, `${label}.id`);
+  const id = asString(obj.value.id, `${path}.id`);
   if (!id.ok) return id;
-  const status = asOneOf<ReviewRunStatus>(obj.value.status, RUN_STATUSES, `${label}.status`);
+  const runId = asString(obj.value.runId, `${path}.runId`);
+  if (!runId.ok) return runId;
+  const type = asOneOf<TimelineEntryType>(obj.value.type, ENTRY_TYPES, `${path}.type`);
+  if (!type.ok) return type;
+  const status = asOneOf<TimelineEntryStatus>(obj.value.status, ENTRY_STATUSES, `${path}.status`);
   if (!status.ok) return status;
-  const startedAt = asString(obj.value.startedAt, `${label}.startedAt`);
+  const startedAt = asString(obj.value.startedAt, `${path}.startedAt`);
   if (!startedAt.ok) return startedAt;
-  const agentsRaw = asArray(obj.value.agents, `${label}.agents`);
-  if (!agentsRaw.ok) return agentsRaw;
-  const agents = mapItems(agentsRaw.value, parseAgent);
-  if (!agents.ok) return agents;
-  const run: ReviewRun = {
+  const durationMs = parseDurationMs(obj.value.durationMs, path);
+  if (!durationMs.ok) return durationMs;
+  const models = parseModels(obj.value.models, path);
+  if (!models.ok) return models;
+  const verdict = asNullOr(obj.value.verdict, (inner) =>
+    asOneOf<ReviewVerdict>(inner, VERDICTS, `${path}.verdict`),
+  );
+  if (!verdict.ok) return verdict;
+  const liveUrl = parseLiveUrl(obj.value.liveUrl, path);
+  if (!liveUrl.ok) return liveUrl;
+  return ok({
     id: id.value,
+    runId: runId.value,
+    type: type.value,
     status: status.value,
     startedAt: startedAt.value,
-    agents: agents.value,
-  };
-  if (obj.value.items === undefined) return ok(run);
-  const itemsRaw = asArray(obj.value.items, `${label}.items`);
-  if (!itemsRaw.ok) return itemsRaw;
-  const items = mapItems(itemsRaw.value, parseConsoleItem);
-  if (!items.ok) return items;
-  return ok({ ...run, items: items.value });
-}
-
-function parseRecordCore(
-  obj: Record<string, unknown>,
-  label: string,
-): Result<
-  Pick<
-    ReviewRecord,
-    | "number"
-    | "title"
-    | "verdict"
-    | "confidence"
-    | "status"
-    | "headSha"
-    | "lastRunAt"
-    | "prState"
-    | "visibility"
-    | "notes"
-  >,
-  Error
-> {
-  if (typeof obj.number !== "number" || !Number.isSafeInteger(obj.number)) {
-    return fail(`${label}.number must be a safe integer`);
-  }
-  const title = asString(obj.title, `${label}.title`);
-  if (!title.ok) return title;
-  const verdict = asOneOf<ReviewVerdict>(obj.verdict, VERDICTS, `${label}.verdict`);
-  if (!verdict.ok) return verdict;
-  if (typeof obj.confidence !== "number" || !Number.isFinite(obj.confidence)) {
-    return fail(`${label}.confidence must be a finite number`);
-  }
-  const status = asOneOf<ReviewRunStatus>(obj.status, RUN_STATUSES, `${label}.status`);
-  if (!status.ok) return status;
-  const headSha = asString(obj.headSha, `${label}.headSha`);
-  if (!headSha.ok) return headSha;
-  const lastRunAt = asString(obj.lastRunAt, `${label}.lastRunAt`);
-  if (!lastRunAt.ok) return lastRunAt;
-  const prState = asOneOf<ReviewPrState>(obj.prState, PR_STATES, `${label}.prState`);
-  if (!prState.ok) return prState;
-  const visibility = asOneOf<ReviewVisibility>(
-    obj.visibility,
-    VISIBILITIES,
-    `${label}.visibility`,
-  );
-  if (!visibility.ok) return visibility;
-  const notes = asString(obj.notes, `${label}.notes`);
-  if (!notes.ok) return notes;
-  return ok({
-    number: obj.number,
-    title: title.value,
+    durationMs: durationMs.value,
+    models: models.value,
     verdict: verdict.value,
-    confidence: obj.confidence,
-    status: status.value,
-    headSha: headSha.value,
-    lastRunAt: lastRunAt.value,
-    prState: prState.value,
-    visibility: visibility.value,
-    notes: notes.value,
+    liveUrl: liveUrl.value,
   });
 }
 
-function parseRecordLists(
-  obj: Record<string, unknown>,
-  label: string,
-): Result<Pick<ReviewRecord, "actions" | "findings" | "runs">, Error> {
-  const actionsRaw = asArray(obj.actions, `${label}.actions`);
-  if (!actionsRaw.ok) return actionsRaw;
-  const actions = mapItems(actionsRaw.value, parseAction);
-  if (!actions.ok) return actions;
-  const findingsRaw = asArray(obj.findings, `${label}.findings`);
-  if (!findingsRaw.ok) return findingsRaw;
-  const findings = mapItems(findingsRaw.value, parseFinding);
-  if (!findings.ok) return findings;
-  const runsRaw = asArray(obj.runs, `${label}.runs`);
-  if (!runsRaw.ok) return runsRaw;
-  const runs = mapItems(runsRaw.value, parseRun);
-  if (!runs.ok) return runs;
-  return ok({ actions: actions.value, findings: findings.value, runs: runs.value });
+function parseNumberList(value: unknown, label: string): Result<number[], Error> {
+  const raw = asArray(value, label);
+  if (!raw.ok) return raw;
+  const out: number[] = [];
+  for (let index = 0; index < raw.value.length; index += 1) {
+    const item = asSafeInteger(raw.value[index], `${label}[${index}]`);
+    if (!item.ok) return item;
+    out.push(item.value);
+  }
+  return ok(out);
 }
 
-function parseRecord(value: unknown, index: number): Result<ReviewRecord, Error> {
-  const label = `reviews[${index}]`;
-  const obj = exactObject(value, RECORD_KEYS, label, RECORD_OPTIONAL_KEYS);
+function parseStringList(value: unknown, label: string): Result<string[], Error> {
+  const raw = asArray(value, label);
+  if (!raw.ok) return raw;
+  const out: string[] = [];
+  for (let index = 0; index < raw.value.length; index += 1) {
+    const item = asString(raw.value[index], `${label}[${index}]`);
+    if (!item.ok) return item;
+    out.push(item.value);
+  }
+  return ok(out);
+}
+
+function parseIssue(value: unknown, index: number): Result<GatedIssue, Error> {
+  const label = `issues[${index}]`;
+  const obj = requiredObject(value, ISSUE_KEYS, label);
   if (!obj.ok) return obj;
-  const core = parseRecordCore(obj.value, label);
-  if (!core.ok) return core;
-  const lists = parseRecordLists(obj.value, label);
-  if (!lists.ok) return lists;
-  const decision = parseRecordDecision(obj.value, label);
-  if (!decision.ok) return decision;
-  return ok({ ...core.value, ...lists.value, ...decision.value });
+  const number = asSafeInteger(obj.value.number, `${label}.number`);
+  if (!number.ok) return number;
+  const title = asString(obj.value.title, `${label}.title`);
+  if (!title.ok) return title;
+  const state = asOneOf<IssueState>(obj.value.state, ISSUE_STATES, `${label}.state`);
+  if (!state.ok) return state;
+  const pullRequests = parseNumberList(obj.value.pullRequests, `${label}.pullRequests`);
+  if (!pullRequests.ok) return pullRequests;
+  const lastRunAt = asString(obj.value.lastRunAt, `${label}.lastRunAt`);
+  if (!lastRunAt.ok) return lastRunAt;
+  const entriesRaw = asArray(obj.value.entries, `${label}.entries`);
+  if (!entriesRaw.ok) return entriesRaw;
+  const entries = mapItems(entriesRaw.value, (item, entryIndex) =>
+    parseEntry(item, entryIndex, `${label}.entries`),
+  );
+  if (!entries.ok) return entries;
+  const visibility = parseVisibility(obj.value.visibility, label);
+  if (!visibility.ok) return visibility;
+  const issue: IssueRecord = {
+    number: number.value,
+    title: title.value,
+    state: state.value,
+    pullRequests: pullRequests.value,
+    lastRunAt: lastRunAt.value,
+    entries: entries.value,
+  };
+  return ok(
+    visibility.value === undefined ? issue : { ...issue, visibility: visibility.value },
+  );
 }
 
-/** Parse a version-1 public review snapshot. Fail closed on unknown shape. */
-export function parsePublicReviewSnapshot(value: unknown): Result<ReviewRecord[], Error> {
-  const wrapper = exactObject(value, WRAPPER_KEYS, "snapshot");
+function parsePullRequest(value: unknown, index: number): Result<GatedPullRequest, Error> {
+  const label = `pullRequests[${index}]`;
+  const obj = requiredObject(value, PR_KEYS, label);
+  if (!obj.ok) return obj;
+  const number = asSafeInteger(obj.value.number, `${label}.number`);
+  if (!number.ok) return number;
+  const issueNumber = asNullOr(obj.value.issueNumber, (inner) =>
+    asSafeInteger(inner, `${label}.issueNumber`),
+  );
+  if (!issueNumber.ok) return issueNumber;
+  const runIds = parseStringList(obj.value.runIds, `${label}.runIds`);
+  if (!runIds.ok) return runIds;
+  let entries: TimelineEntry[] = [];
+  if (obj.value.entries !== undefined) {
+    const entriesRaw = asArray(obj.value.entries, `${label}.entries`);
+    if (!entriesRaw.ok) return entriesRaw;
+    const parsed = mapItems(entriesRaw.value, (item, entryIndex) =>
+      parseEntry(item, entryIndex, `${label}.entries`),
+    );
+    if (!parsed.ok) return parsed;
+    entries = parsed.value;
+  } else if (issueNumber.value === null) {
+    return fail(`${label}.entries is required when issueNumber is null`);
+  }
+  const visibility = parseVisibility(obj.value.visibility, label);
+  if (!visibility.ok) return visibility;
+  const row: PullRequestIndexEntry = {
+    number: number.value,
+    issueNumber: issueNumber.value,
+    runIds: runIds.value,
+    entries,
+  };
+  return ok(visibility.value === undefined ? row : { ...row, visibility: visibility.value });
+}
+
+/** Parse a version-1 issue↔PR↔run index. Extra keys are ignored so a denser payload can sit in the same file. */
+export function parsePublicReviewSnapshot(value: unknown): Result<GatedIndex, Error> {
+  const wrapper = requiredObject(value, WRAPPER_KEYS, "snapshot");
   if (!wrapper.ok) return wrapper;
   if (wrapper.value.version !== 1) return fail("snapshot.version must be 1");
   const kind = asString(wrapper.value.kind, "snapshot.kind");
   if (!kind.ok) return kind;
-  const reviewsRaw = asArray(wrapper.value.reviews, "snapshot.reviews");
-  if (!reviewsRaw.ok) return reviewsRaw;
-  return mapItems(reviewsRaw.value, parseRecord);
+  const issuesRaw = asArray(wrapper.value.issues, "snapshot.issues");
+  if (!issuesRaw.ok) return issuesRaw;
+  const issues = mapItems(issuesRaw.value, parseIssue);
+  if (!issues.ok) return issues;
+  const pullRequestsRaw = asArray(wrapper.value.pullRequests, "snapshot.pullRequests");
+  if (!pullRequestsRaw.ok) return pullRequestsRaw;
+  const pullRequests = mapItems(pullRequestsRaw.value, parsePullRequest);
+  if (!pullRequests.ok) return pullRequests;
+  return ok({
+    version: 1,
+    kind: kind.value,
+    issues: issues.value,
+    pullRequests: pullRequests.value,
+  });
 }
