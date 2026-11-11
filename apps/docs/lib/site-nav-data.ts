@@ -16,6 +16,7 @@ export const SITE_GUIDE_LINKS: SiteNavLink[] = [
   { text: "Add SEO to a Next.js app", href: "/docs/add-seo-to-nextjs", active: "url" },
   { text: "zedkit and shadcn/ui", href: "/docs/zedkit-and-shadcn", active: "url" },
   { text: "Maturity and compatibility", href: "/docs/maturity-and-compatibility", active: "url" },
+  { text: "UI foundations", href: "/docs/foundations", active: "url" },
   { text: "Note list example", href: "/examples/note-list", active: "url" },
 ];
 

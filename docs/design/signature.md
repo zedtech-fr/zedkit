@@ -28,13 +28,19 @@ Implementation: `packages/ui/src/shared-type-scale.css` (tokens), `packages/ui/s
 
 ## Composition grid
 
-Based on the docs [visual contract](../apps/docs/VISUAL-CONTRACT.md):
+Based on the docs [visual contract](../../apps/docs/VISUAL-CONTRACT.md):
 
 - **Widths**: marketing content max ~1200px; docs shell 1440px; article 720–800px.
 - **Gutters**: 16px mobile, 24px tablet, 32px desktop (`--zk-page-gutter`).
 - **Spacing steps**: 4px base; groups 32–48px; marketing bands 64–96px via section spacing.
 - **One focal point per band**; neighbours differ in shape (not a uniform card grid).
 - **Three surface roles**: page (reading), specimen stage, overlay. Borders only at region edges or on interactive controls; shadows only on overlays and raised controls (Glass sheen is the exception for site chrome cards, not specimen grids).
+
+### Docs chrome color
+
+Docs chrome (header, sidebar, prose, home, preview frames) follows two rules owned by [VISUAL-CONTRACT.md](../../apps/docs/VISUAL-CONTRACT.md) Surfaces and Controls. Do not copy that owner table here.
+
+Page fill is a neutral reading surface; body text is zinc-neutral. Default site actions use stock near-black `--primary`. Violet/glass stay high-value panel accents (including chips).
 
 ## Motion vocabulary
 

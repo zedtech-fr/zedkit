@@ -23,6 +23,7 @@ export const SITE_HEADER_INTERNAL_PATHS = [
   "/docs/add-seo-to-nextjs",
   "/docs/zedkit-and-shadcn",
   "/docs/maturity-and-compatibility",
+  "/docs/foundations",
   "/examples/note-list",
   "/reviews",
   IDENTITY_EDITOR_HREF,
