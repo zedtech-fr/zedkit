@@ -73,7 +73,20 @@ test.describe("glass identity", () => {
     const body = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
     expect(body.startsWith('"Inter Variable"')).toBe(true);
     const heading = await page.evaluate(() => getComputedStyle(document.querySelector("h1")!).fontFamily);
-    expect(heading.startsWith('"Space Grotesk Variable"')).toBe(true);
+    expect(heading.startsWith('"Inter Variable"')).toBe(true);
+    const specimenHeading = await page.evaluate(() => {
+      const scope = document.createElement("div");
+      scope.setAttribute("data-identity-scope", "");
+      scope.setAttribute("data-identity", "glass");
+      const h = document.createElement("h1");
+      h.textContent = "Probe";
+      scope.appendChild(h);
+      document.querySelector("main")!.appendChild(scope);
+      const family = getComputedStyle(h).fontFamily;
+      scope.remove();
+      return family;
+    });
+    expect(specimenHeading.startsWith('"Space Grotesk Variable"')).toBe(true);
   });
 
   test("keeps a scope with another identity solid inside a glass page", async ({ page }) => {

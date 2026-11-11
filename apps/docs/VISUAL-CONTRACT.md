@@ -39,16 +39,16 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 
 | Role | Rule |
 |---|---|
-| Marketing H1 | `--zk-type-h1-size`: 32px up to 44px (`clamp`), 32px at 390px and below, weight 600, one per page. No second display size. |
-| Docs H1 | `--zk-type-doc-h1-size`: 2rem, 1.75rem below 48rem (not the marketing clamp). H2 `--zk-type-h2-size` 22-26px, H3 18px, weight 600. Linked headings inherit size and weight. |
+| Marketing H1 | `--zk-type-h1-size`: 48px (3rem) at 1440 and at 390, Inter 500, tracking `-0.035em`, leading 1.08, one per page. No second display size. Section H2: `--zk-type-h2-size` 30px (1.875rem), Inter 500, tracking `-0.025em`, leading 1.15. |
+| Docs H1 | `--zk-type-doc-h1-size`: 2rem, 1.75rem below 48rem (not the marketing display). H2 `--zk-type-h2-size` 22-26px, H3 18px, weight 600. Linked headings inherit size and weight. |
 | Prose | 15/1.6 (`--zk-type-prose-size`), 64-72ch. Lead paragraph `--zk-type-lead-size` 16-18px, once. |
 | Body and dense UI | Body 14/1.55. Dense UI (controls, tabs, example links, table cells, nav) is `text-dense`: 13px, line about 18.6px (`--text-sm`). Nothing a person must read to act is below 13px. |
 | Metadata | Captions, badges and timestamps are `text-caption`: 12px, 16px line. Eyebrow labels use the label role: 12/1.4, weight 500. Never essential copy or a link people need. |
 | Code | Mono family of the identity, 13/21 in blocks, inline code follows its sentence. |
 | Dense looks | Density is rhythm (row height, gaps, rules), not smaller type. Volt's activity rows are 13px: the event is what a person reads to act. Only the timestamp column may be metadata. Decision, 2 Nov 2026: the 13px floor wins over a 12px mono row. |
-| Widths | Marketing 1200 max. Docs shell 1440 max, nav 240, article 720-800, TOC 180 only if it fits. |
+| Widths | Marketing 1200 max (`--zk-container-default` / `--zk-container-wide`: 75rem on the docs shell). Docs cluster at 1440 unchanged; nav 240, article 720-800, TOC 180 only if it fits. |
 | Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. Class names are roles; the numbers stay in the token values (`packages/ai/kit/skills/setup-ai/design-policy.md`). |
-| Gutters | 16 mobile, 24 tablet, 32 desktop. |
+| Gutters | 24 at every width, including 390 (`--zk-page-gutter: 1.5rem` on the docs shell). |
 
 ## Surfaces, borders, elevation
 
@@ -63,7 +63,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 ## Controls and hierarchy
 
 - One primary action per view. Secondary is outlined or quiet. Tertiary is a link.
-- Site chrome: site chrome actions are not Glass `--primary` unless inside a high-value panel. Default site actions use stock near-black `--primary`. A high-value panel is a Glass-material site-owned overlay or marketing card (Guides menu panel, glass header chips, raised marketing code wells) — not the page, not body copy, not default header/hero CTAs.
+- Site chrome: site chrome actions are not Glass `--primary` unless inside a high-value panel. Default site actions use stock near-black `--primary`. `.site-action` is the class for those default actions (near-black, flat, 8px radius). A high-value panel is a Glass-material site-owned overlay or marketing card (Guides menu panel, glass header chips, raised marketing code wells) — not the page, not body copy, not default header/hero CTAs.
 - Destructive: the trigger is outlined (destructive colour on the text or icon) and sits apart from Save and Discard, below a divider or at the end of the row. The solid destructive button appears only inside its confirmation. Anything simulated says so in its outcome message.
 - Preview frame: one stage, one quiet toolbar. Stage height follows content. Appearance choices (identity, mode, width) sit in one row under "Display", current values visible, subordinate to the example.
 - Touch targets 44px on mobile, separate from the visible control size.

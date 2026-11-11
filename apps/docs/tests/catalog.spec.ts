@@ -40,6 +40,7 @@ test("catalog intro bleeds full width and the filters sit in a narrower column",
   expect(introBox).not.toBeNull();
   expect(columnBox).not.toBeNull();
   expect(introBox!.width).toBeGreaterThan(columnBox!.width + 40);
+  expect(columnBox!.width).toBeLessThanOrEqual(1200);
   await page.waitForFunction(() => document.querySelector("[data-catalog-toolbar]"));
   await expect(page.locator("[data-catalog-toolbar]")).toBeVisible();
   const resultsWide = page
@@ -47,7 +48,8 @@ test("catalog intro bleeds full width and the filters sit in a narrower column",
     .filter({ has: page.locator("[data-catalog-results-root]") });
   await expect(resultsWide).toBeVisible();
   const resultsBox = await resultsWide.boundingBox();
-  expect(resultsBox!.width).toBeGreaterThan(columnBox!.width);
+  expect(resultsBox!.width).toBeLessThanOrEqual(1200);
+  expect(Math.abs(resultsBox!.width - columnBox!.width)).toBeLessThan(8);
 });
 
 test("catalog runs wide with two alphabetical columns per group at 2560 (#1063)", async ({ page }) => {
@@ -59,7 +61,8 @@ test("catalog runs wide with two alphabetical columns per group at 2560 (#1063)"
     .filter({ has: page.locator("[data-catalog-results-root]") })
     .boundingBox();
   expect(container).not.toBeNull();
-  expect(container!.width).toBeGreaterThanOrEqual(1400);
+  expect(container!.width).toBeGreaterThanOrEqual(1150);
+  expect(container!.width).toBeLessThanOrEqual(1200);
   const links = await resultLinkGeometry(page, "ui");
   expect(links.length).toBeGreaterThan(20);
   const lefts = [...new Set(links.map((l) => l.left))].sort((a, b) => a - b);
