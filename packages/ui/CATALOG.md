@@ -1429,7 +1429,7 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
-- Purpose: Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word. Empty `inactiveLabel` hides the idle word (dot only).
+- Purpose: Key-value detail lists plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.
 - When to use: For read-only record summaries next to the list.
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`

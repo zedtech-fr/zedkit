@@ -4712,7 +4712,7 @@
           "status": "stable",
           "shortName": "DetailPanel",
           "audience": "Developers rendering record details (drawers, side panels, headers).",
-          "purpose": "Key-value detail lists plus an optional live pulse. Pass `inactiveLabel` to replace Idle when the pulse is off; `label` still only overrides the live word. Empty `inactiveLabel` hides the idle word (dot only).",
+          "purpose": "Key-value detail lists plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.",
           "whenToUse": "For read-only record summaries next to the list.",
           "whenNotToUse": "For editable records — use Form instead.",
           "derivedFrom": null,
