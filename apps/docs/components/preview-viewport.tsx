@@ -150,9 +150,10 @@ export function PreviewFrame({
         data-preview-frame=""
         className={cn("content-shrink rounded-lg border border-border", pinned ? "overflow-clip" : "overflow-hidden")}
       >
-        <TabsContent value="preview" className="trim-top">
+        <TabsContent value="preview" className="trim-top" data-preview-stage="">
           <ThemeScope
             data-preview-surface=""
+            {...(center ? { "data-preview-center": "" } : {})}
             data-frame={mobile ? "phone" : undefined}
             identity={demoStyle.look}
             mode={dark ? "dark" : "light"}

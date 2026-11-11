@@ -95,7 +95,7 @@ export async function ComponentPage({
   });
 
   return (
-    <Stack gap="blocks">
+    <Stack gap="blocks" data-component-page="">
       <Stack gap="sm" data-component-page-header="">
         <Text className="text-purpose text-muted-foreground">{header.purpose}</Text>
         <Stack direction="horizontal" gap="md" className="flex-wrap text-dense text-muted-foreground">

@@ -1,6 +1,7 @@
 /*
  * GitHub-light/dark Shiki tokens remapped toward 4.5:1 on code block backgrounds
- * (mist #f1f1f1 light, identity card tones dark), checked by hand, not by a test.
+ * (mist #f1f1f1 light, identity card tones dark, component-page wells `--zk-code-well`).
+ * Dark pairs are pinned in `scripts/docs-component-page.test.mjs`.
  * Matches inline --shiki-* hex values: re-verify after a Shiki upgrade.
  */
 
@@ -70,80 +71,179 @@ figure.shiki span[style*="484851"] {
   color: hsl(240 6% 30%) !important;
 }
 
-/* --- dark mode --- */
-html.dark figure.shiki span[style*="e1e4e8"],
-html.dark figure.shiki span[style*="E1E4E8"] {
+/*
+ * Dark syntax: html.dark pages, Preview islands (`figure.shiki.dark`), and
+ * registry component-page usage / Preview Code wells on a light page.
+ */
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+) code span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style);
+}
+
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="e1e4e8"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="E1E4E8"] {
   --shiki-dark: hsl(220 12% 90%) !important;
   color: hsl(220 12% 90%) !important;
 }
 
-html.dark figure.shiki span[style*="6a737d"],
-html.dark figure.shiki span[style*="6A737D"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="6a737d"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="6A737D"] {
   --shiki-dark: hsl(240 5% 72%) !important;
   color: hsl(240 5% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="79b8ff"],
-html.dark figure.shiki span[style*="79B8FF"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="79b8ff"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="79B8FF"] {
   --shiki-dark: hsl(210 90% 78%) !important;
   color: hsl(210 90% 78%) !important;
 }
 
-html.dark figure.shiki span[style*="9ecbff"],
-html.dark figure.shiki span[style*="9ECBFF"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="9ecbff"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="9ECBFF"] {
   --shiki-dark: hsl(210 95% 82%) !important;
   color: hsl(210 95% 82%) !important;
 }
 
-html.dark figure.shiki span[style*="85e89d"],
-html.dark figure.shiki span[style*="85E89D"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="85e89d"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="85E89D"] {
   --shiki-dark: hsl(140 55% 72%) !important;
   color: hsl(140 55% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="b392f0"],
-html.dark figure.shiki span[style*="B392F0"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="b392f0"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="B392F0"] {
   --shiki-dark: hsl(270 70% 78%) !important;
   color: hsl(270 70% 78%) !important;
 }
 
-html.dark figure.shiki span[style*="f97583"],
-html.dark figure.shiki span[style*="F97583"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="f97583"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="F97583"] {
   --shiki-dark: hsl(350 75% 72%) !important;
   color: hsl(350 75% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="ffab70"],
-html.dark figure.shiki span[style*="FFAB70"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="ffab70"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="FFAB70"] {
   --shiki-dark: hsl(28 90% 72%) !important;
   color: hsl(28 90% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="b4b4bb"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="b4b4bb"] {
   --shiki-dark: hsl(240 5% 72%) !important;
   color: hsl(240 5% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="ed8294"],
-html.dark figure.shiki span[style*="ED8294"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="ed8294"],
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="ED8294"] {
   --shiki-dark: hsl(350 75% 72%) !important;
   color: hsl(350 75% 72%) !important;
 }
 
-html.dark figure.shiki span[style*="f7b264"] {
+:is(
+  html.dark figure.shiki,
+  figure.shiki.dark,
+  [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki
+)
+  span[style*="f7b264"] {
   --shiki-dark: hsl(32 90% 68%) !important;
   color: hsl(32 90% 68%) !important;
-}
-
-/* Preview islands scoped `.dark` without `html.dark` */
-figure.shiki.dark span[style*="e1e4e8"],
-figure.shiki.dark span[style*="E1E4E8"] {
-  --shiki-dark: hsl(220 12% 90%) !important;
-  color: hsl(220 12% 90%) !important;
-}
-
-figure.shiki.dark span[style*="6a737d"],
-figure.shiki.dark span[style*="6A737D"] {
-  --shiki-dark: hsl(240 5% 72%) !important;
-  color: hsl(240 5% 72%) !important;
 }
