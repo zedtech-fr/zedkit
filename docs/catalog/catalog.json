@@ -4716,8 +4716,8 @@
           "status": "stable",
           "shortName": "DetailPanel",
           "audience": "Developers rendering record details (drawers, side panels, headers).",
-          "purpose": "Key-value detail lists plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.",
-          "whenToUse": "For read-only record summaries next to the list.",
+          "purpose": "Key-value detail lists (boxed rows, or `variant=\"grid\"` stats) plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.",
+          "whenToUse": "For read-only record summaries next to the list. Use `variant=\"grid\"` for dashboard-style stats (large value, quiet label).",
           "whenNotToUse": "For editable records — use Form instead.",
           "derivedFrom": null,
           "example": "import { DetailPanel, LivePulse, PageHeader } from \"@zedtech/zedkit-ui\";\n<PageHeader title=\"Server\" actions={<LivePulse active={false} inactiveLabel=\"Paused\" />} />\n<DetailPanel items={[{ label: \"Region\", value: \"eu\" }]} />",
@@ -4729,6 +4729,10 @@
             {
               "title": "Composed rows",
               "code": "import { DetailPanelRow } from \"@zedtech/zedkit-ui\";\n<dl>\n  <DetailPanelRow label=\"Region\" value=\"eu\" />\n</dl>"
+            },
+            {
+              "title": "Stat grid",
+              "code": "import { DetailPanel } from \"@zedtech/zedkit-ui\";\n<DetailPanel\n  variant=\"grid\"\n  items={[{ label: \"Requests\", value: \"12,480\" }, { label: \"Uptime\", value: \"99.9%\" }]}\n/>"
             }
           ],
           "adoption": {
@@ -4749,8 +4753,8 @@
             ]
           },
           "registry": "detail-panel",
-          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role=\"status\"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).",
-          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.",
+          "a11y": "Native `dl`/`dt`/`dd` semantics; rows read in order. Grid wraps each pair so a two-column layout does not interleave terms and definitions. `LivePulse` is `role=\"status\"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).",
+          "troubleshooting": "Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Grid reading order — each item is one wrapped `dt`/`dd` pair, not flattened grid children. Boxed look on a grid — pass `className` or wrap in Card; grid drops list chrome. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.",
           "seeAlso": [
             "Show a sortable, filterable, paginated data table",
             "Slide in a drawer panel"

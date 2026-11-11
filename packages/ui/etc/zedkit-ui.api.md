@@ -483,6 +483,8 @@ export interface DetailPanelProps {
     className?: string;
     // (undocumented)
     items: DetailItem[];
+    // (undocumented)
+    variant?: "list" | "grid";
 }
 
 // @public

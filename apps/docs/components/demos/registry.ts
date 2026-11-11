@@ -56,6 +56,7 @@ import { DataTablePaginationDemo } from "./data-table-pagination-demo";
 import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
+import { DetailsStatGridDemo } from "./details-stat-grid-demo";
 import { DialogDemo } from "./dialog-demo";
 import { DialogTallDemo } from "./dialog-tall-demo";
 import { DropdownMenuDemo } from "./dropdown-menu-demo";
@@ -217,6 +218,7 @@ export const demoRegistry = {
   DataTableToolbarDemo: { Demo: DataTableToolbarDemo, file: "data-table-toolbar-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
+  DetailsStatGridDemo: { Demo: DetailsStatGridDemo, file: "details-stat-grid-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx" },
   DialogTallDemo: { Demo: DialogTallDemo, file: "dialog-tall-demo.tsx", center: true },
   DropdownMenuDemo: { Demo: DropdownMenuDemo, file: "dropdown-menu-demo.tsx", center: true },
