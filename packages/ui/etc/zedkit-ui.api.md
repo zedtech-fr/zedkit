@@ -165,7 +165,7 @@ export interface BadgeProps extends React_2.ComponentProps<"div">, VariantProps<
 
 // @public (undocumented)
 export const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "meta" | "outline" | "secondary" | "success" | "warning" | null | undefined;
+    variant?: "default" | "destructive" | "meta" | "outline" | "secondary" | "success" | "warning" | "soft-success" | "soft-warning" | "soft-danger" | "soft-info" | "soft-neutral" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public

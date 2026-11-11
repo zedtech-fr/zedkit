@@ -323,7 +323,7 @@ import { IconButton } from "@zedtech/zedkit-ui";
 - When to use: For short labels next to the thing they describe.
 - When not to use: For long text or actions — use Text or Button instead.
 - See also: `Indicate status with a dot`
-- Examples: Simple, Variants, In a table row, As a link (asChild)
+- Examples: Simple, Variants, In a table row, As a link (asChild), Soft status
 - A11y: Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short. Corners follow identity `--radius-md` via `rounded-md`; identity label tracking already keys off `px-badge-inline`.
 - Troubleshooting: Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.
 
@@ -351,6 +351,15 @@ import { Badge } from "@zedtech/zedkit-ui";
 <Badge asChild variant="secondary">
   <a href="/status">all systems go</a>
 </Badge>
+```
+
+```ts
+import { Badge } from "@zedtech/zedkit-ui";
+<Badge variant="soft-success">passed</Badge>
+<Badge variant="soft-warning">retry</Badge>
+<Badge variant="soft-danger">failed</Badge>
+<Badge variant="soft-info">notice</Badge>
+<Badge variant="soft-neutral">queued</Badge>
 ```
 
 ## Label a form control

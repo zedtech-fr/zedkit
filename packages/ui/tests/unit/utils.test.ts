@@ -57,6 +57,10 @@ describe("cn", () => {
     expect(cn("aria-pressed:bg-card", "aria-pressed:ghost-pressed")).toBe("aria-pressed:ghost-pressed");
     expect(cn("hover:bg-card", "hover:badge-primary-hover")).toBe("hover:badge-primary-hover");
     expect(cn("hover:badge-warning-hover", "hover:bg-card")).toBe("hover:bg-card");
+    expect(cn("bg-card", "badge-soft-success")).toBe("badge-soft-success");
+    expect(cn("badge-soft-warning", "bg-card")).toBe("bg-card");
+    expect(cn("bg-card", "badge-soft-destructive")).toBe("badge-soft-destructive");
+    expect(cn("bg-card", "badge-soft-info")).toBe("badge-soft-info");
     expect(cn("bg-card", "dialog-scrim")).toBe("dialog-scrim");
     expect(cn("dialog-scrim", "bg-card")).toBe("bg-card");
     expect(cn("dialog-scrim", "drawer-scrim")).toBe("drawer-scrim");

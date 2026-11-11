@@ -3173,6 +3173,10 @@
             {
               "title": "As a link (asChild)",
               "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge asChild variant=\"secondary\">\n  <a href=\"/status\">all systems go</a>\n</Badge>"
+            },
+            {
+              "title": "Soft status",
+              "code": "import { Badge } from \"@zedtech/zedkit-ui\";\n<Badge variant=\"soft-success\">passed</Badge>\n<Badge variant=\"soft-warning\">retry</Badge>\n<Badge variant=\"soft-danger\">failed</Badge>\n<Badge variant=\"soft-info\">notice</Badge>\n<Badge variant=\"soft-neutral\">queued</Badge>"
             }
           ],
           "adoption": {

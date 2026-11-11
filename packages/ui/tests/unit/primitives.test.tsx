@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Badge } from "#index.js";
+import { Badge, badgeVariants } from "#index.js";
 import { Alert, AlertDescription, AlertTitle } from "#index.js";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardSkeleton, CardTitle } from "#index.js";
 import { cn } from "#index.js";
@@ -52,6 +52,65 @@ describe("primitives", () => {
     const link = screen.getByRole("link", { name: "docs" });
     expect(link.className).toContain("bg-secondary");
     expect(link.getAttribute("href")).toBe("/docs");
+  });
+
+  it("keeps the seven existing variant paints", () => {
+    expect(badgeVariants({ variant: "default" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors border-transparent bg-primary px-badge-inline py-badge-block font-semibold text-primary-foreground shadow hover:badge-primary-hover",
+    );
+    expect(badgeVariants({ variant: "secondary" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors border-transparent bg-secondary px-badge-inline py-badge-block font-semibold text-secondary-foreground hover:badge-secondary-hover",
+    );
+    expect(badgeVariants({ variant: "destructive" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors border-transparent bg-destructive px-badge-inline py-badge-block font-semibold text-destructive-foreground shadow hover:badge-destructive-hover",
+    );
+    expect(badgeVariants({ variant: "success" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors border-transparent bg-success px-badge-inline py-badge-block font-semibold text-success-foreground shadow hover:badge-success-hover",
+    );
+    expect(badgeVariants({ variant: "warning" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors border-transparent bg-warning px-badge-inline py-badge-block font-semibold text-warning-foreground shadow hover:badge-warning-hover",
+    );
+    expect(badgeVariants({ variant: "outline" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors px-badge-inline py-badge-block font-semibold text-foreground",
+    );
+    expect(badgeVariants({ variant: "meta" })).toBe(
+      "inline-flex items-center rounded-md border text-caption focus-ring transition-colors rounded-sm border-transparent bg-transparent px-meta flush-block font-mono font-normal text-muted-foreground tabular-nums shadow-none hover:text-foreground",
+    );
+  });
+
+  it.each([
+    ["soft-success", "badge-soft-success", "text-success"],
+    ["soft-warning", "badge-soft-warning", "text-warning-foreground"],
+    ["soft-danger", "badge-soft-destructive", "text-destructive"],
+    ["soft-info", "badge-soft-info", "text-info"],
+    ["soft-neutral", "muted-wash", "text-muted-foreground"],
+  ] as const)("%s paints a tinted wash with readable ink", (variant, fill, ink) => {
+    render(<Badge variant={variant}>{variant}</Badge>);
+    const badge = screen.getByText(variant);
+    expect(badge.tagName).toBe("DIV");
+    expect(badge.getAttribute("data-slot")).toBe("badge");
+    expect(badge.className).toContain(fill);
+    expect(badge.className).toContain(ink);
+    expect(badge.className).toContain("border-transparent");
+    expect(badge.className).toContain("px-badge-inline");
+    expect(badge.className).toContain("focus-ring");
+    expect(badge.className.split(/\s+/)).not.toContain("shadow");
+    expect(badge.className).not.toMatch(/bg-[a-z-]+\/\d+/);
+    expect(badge.className.split(/\s+/)).not.toContain("text-warning");
+  });
+
+  it("merges soft-info onto asChild link", () => {
+    render(
+      <Badge asChild variant="soft-info">
+        <a href="/status">notice</a>
+      </Badge>,
+    );
+    const link = screen.getByRole("link", { name: "notice" });
+    expect(link.tagName).toBe("A");
+    expect(link.className).toContain("badge-soft-info");
+    expect(link.className).toContain("text-info");
+    expect(link.className).toContain("focus-ring");
+    expect(link.getAttribute("href")).toBe("/status");
   });
 
   it("links a label to its input", () => {

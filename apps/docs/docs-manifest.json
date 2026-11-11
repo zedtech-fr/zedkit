@@ -59,7 +59,8 @@
       "examples": {
         "Variants": "BadgeVariantsDemo",
         "In a table row": "BadgeTableRowDemo",
-        "As a link (asChild)": "BadgeLinkDemo"
+        "As a link (asChild)": "BadgeLinkDemo",
+        "Soft status": "BadgeSoftStatusDemo"
       }
     },
     "Label a form control": {

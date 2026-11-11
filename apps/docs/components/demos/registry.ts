@@ -6,6 +6,7 @@ import { AlertDemo } from "./alert-demo";
 import { BadgeVariantsDemo } from "./badge-variants-demo";
 import { BadgeTableRowDemo } from "./badge-table-row-demo";
 import { BadgeLinkDemo } from "./badge-link-demo";
+import { BadgeSoftStatusDemo } from "./badge-soft-status-demo";
 import { SeparatorVerticalDemo } from "./separator-vertical-demo";
 import { SkeletonTextDemo } from "./skeleton-text-demo";
 import { StatusDotTonesDemo } from "./status-dot-tones-demo";
@@ -160,6 +161,7 @@ export const demoRegistry = {
   BadgeVariantsDemo: { Demo: BadgeVariantsDemo, file: "badge-variants-demo.tsx" },
   BadgeTableRowDemo: { Demo: BadgeTableRowDemo, file: "badge-table-row-demo.tsx" },
   BadgeLinkDemo: { Demo: BadgeLinkDemo, file: "badge-link-demo.tsx" },
+  BadgeSoftStatusDemo: { Demo: BadgeSoftStatusDemo, file: "badge-soft-status-demo.tsx" },
   SeparatorVerticalDemo: { Demo: SeparatorVerticalDemo, file: "separator-vertical-demo.tsx" },
   SkeletonTextDemo: { Demo: SkeletonTextDemo, file: "skeleton-text-demo.tsx" },
   StatusDotTonesDemo: { Demo: StatusDotTonesDemo, file: "status-dot-tones-demo.tsx" },
