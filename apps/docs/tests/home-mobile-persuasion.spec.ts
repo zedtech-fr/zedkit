@@ -22,8 +22,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
         return { fontSize, lineHeight };
       };
 
-      const getStarted = document.querySelector("#get-started");
-      const startCopy = getStarted?.querySelector("#install-or-copy [data-adoption-mode] dd");
+      const sameIdeaCopy = document.querySelector("#same-idea .text-home-persuasion");
 
       const components = document.querySelector("#components");
       const componentsCopy = components?.querySelector(
@@ -36,7 +35,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       return {
         heroLead: read(document.querySelector("[data-home-hero-sub]")),
         heroProof: read(document.querySelector("[data-home-hero-lead] .home-metadata-copy")),
-        startCopy: read(startCopy),
+        sameIdeaCopy: read(sameIdeaCopy),
         componentsCopy: read(componentsCopy),
         useCaseWhy: read(useCaseWhy),
       };
@@ -52,7 +51,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
     expect(readings.heroProof!.fontSize).toBeLessThanOrEqual(14);
 
     for (const [label, value] of Object.entries({
-      startCopy: readings.startCopy,
+      sameIdeaCopy: readings.sameIdeaCopy,
       componentsCopy: readings.componentsCopy,
       useCaseWhy: readings.useCaseWhy,
     })) {
