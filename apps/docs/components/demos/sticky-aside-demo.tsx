@@ -1,12 +1,9 @@
 "use client";
 
 import { Button, Card, CardContent, Heading, StickyAside, Stack, Text } from "@zedtech/zedkit-ui";
+import { stickyAsideCopy } from "@/components/demos/i18n/sticky-aside-copy";
 
-const steps = [
-  { title: "Install the package", body: "Add the UI kit to your app." },
-  { title: "Import the styles", body: "Pull in the kit CSS once in your globals." },
-  { title: "Render a control", body: "Use a primitive in your page." },
-];
+const steps = stickyAsideCopy.example.steps;
 
 export function StickyAsideDemo() {
   return (
@@ -17,7 +14,7 @@ export function StickyAsideDemo() {
             <li key={step.title} className="content-shrink">
               <Stack gap="tight">
                 <Text variant="muted" className="text-caption">
-                  Step {index + 1}
+                  {stickyAsideCopy.example.stepLabel(index + 1)}
                 </Text>
                 <Heading level={3}>{step.title}</Heading>
                 <Text variant="muted">{step.body}</Text>
@@ -29,9 +26,11 @@ export function StickyAsideDemo() {
       <StickyAside.Aside asChild>
         <Card>
           <CardContent className="pt-card-padding">
-            <Stack gap="sm" role="group" aria-label="Rendered example">
-              <Text className="text-caption font-medium text-muted-foreground">Rendered example</Text>
-              <Button>Save</Button>
+            <Stack gap="sm" role="group" aria-label={stickyAsideCopy.example.renderedExample}>
+              <Text className="text-caption font-medium text-muted-foreground">
+                {stickyAsideCopy.example.renderedExample}
+              </Text>
+              <Button>{stickyAsideCopy.example.save}</Button>
             </Stack>
           </CardContent>
         </Card>
@@ -45,16 +44,14 @@ export function StickyAsideDocStepsDemo() {
     <StickyAside side="left" from="md" ratio="2/5" scrollable>
       <StickyAside.Main>
         <Stack gap="md">
-          <Heading level={3}>Write the guide</Heading>
-          <Text variant="muted">Steps stay in the main column for reading order.</Text>
+          <Heading level={3}>{stickyAsideCopy.docSteps.title}</Heading>
+          <Text variant="muted">{stickyAsideCopy.docSteps.body}</Text>
         </Stack>
       </StickyAside.Main>
       <StickyAside.Aside>
         <Card>
           <CardContent className="pt-card-padding">
-            <Text variant="muted">
-              Summary or preview — sticks while the section scrolls; pass scrollable when this block is taller than the viewport.
-            </Text>
+            <Text variant="muted">{stickyAsideCopy.docSteps.summary}</Text>
           </CardContent>
         </Card>
       </StickyAside.Aside>
