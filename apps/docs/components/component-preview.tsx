@@ -13,7 +13,7 @@ interface ComponentPreviewProps {
   demo: string;
   /** Whether the page renders a Props section to link to. */
   hasProps: boolean;
-  /** Scope a11y gates to this preview (hero on component pages). */
+  /** Scope a11y gates and the violet primary stage to this preview (hero on component pages). */
   a11yRoot?: boolean;
 }
 

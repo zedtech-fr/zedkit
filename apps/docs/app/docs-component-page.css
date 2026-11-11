@@ -40,8 +40,9 @@
   }
 }
 
-[data-component-preview="primary"] [data-preview-stage] {
-  overflow: hidden;
+[data-component-page] [data-component-preview="primary"] [data-preview-stage] {
+  /* clip, not hidden: pinned sticky heroes must not sit under a scroll container. */
+  overflow: clip;
   padding-block: var(--zk-preview-stage-inset-block);
   padding-inline: var(--zk-preview-stage-inset-inline);
   background-color: hsl(var(--zk-preview-stage-via));
@@ -49,18 +50,19 @@
   background-repeat: no-repeat;
 }
 
-[data-component-preview="primary"] [data-preview-surface] {
+[data-component-page] [data-component-preview="primary"] [data-preview-surface] {
   border-radius: var(--radius-lg);
 }
 
-[data-component-preview="primary"] [data-preview-surface][data-preview-center] {
+/* #nd-page #example beats docs-typography.css `#example [data-preview-surface]{width:100%}` (2,1,0) at ≥48rem. */
+#nd-page #example [data-component-preview="primary"] [data-preview-surface][data-preview-center] {
   width: fit-content;
   max-width: 100%;
   margin-inline: auto;
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  [data-component-preview="primary"] [data-preview-stage] {
+  [data-component-page] [data-component-preview="primary"] [data-preview-stage] {
     background-image: var(--zk-preview-stage-fill);
   }
 }

@@ -54,22 +54,35 @@ function tokenValue(css, name) {
   return match[1].trim();
 }
 
-function shikiDarkColours(css, selectorNeedle) {
-  const colours = [];
+function* eachBlock(css) {
   const re = /([^{}]+)\{([^{}]+)\}/g;
   let block;
   while ((block = re.exec(css))) {
-    const selector = block[1];
+    yield { selector: block[1], body: block[2] };
+  }
+}
+
+function shikiDarkColours(css, selectorNeedle) {
+  const colours = [];
+  for (const { selector, body } of eachBlock(css)) {
     if (!selector.includes(selectorNeedle)) continue;
-    for (const decl of block[2].matchAll(/--shiki-dark:\s*(hsl\([^)]+\))/g)) {
+    for (const decl of body.matchAll(/--shiki-dark:\s*(hsl\([^)]+\))/g)) {
       colours.push(decl[1]);
     }
   }
   return colours;
 }
 
+function colourCounts(colours) {
+  const counts = {};
+  for (const colour of colours) {
+    counts[colour] = (counts[colour] ?? 0) + 1;
+  }
+  return counts;
+}
+
 test("primary preview stage uses pinned gradient tokens", () => {
-  const css = read("app/docs-component-page.css");
+  const css = stripComments(read("app/docs-component-page.css"));
   assert.match(css, /\[data-component-preview="primary"\]/);
   assert.match(css, /\[data-preview-stage\]/);
   assert.match(css, /--zk-preview-stage-from:/);
@@ -78,6 +91,46 @@ test("primary preview stage uses pinned gradient tokens", () => {
   assert.match(css, /linear-gradient/);
   assert.match(css, /\[data-component-page\]/);
   assert.doesNotMatch(css, /#[0-9A-Fa-f]{3,8}\b/);
+
+  let sawStage = false;
+  for (const { selector, body } of eachBlock(css)) {
+    if (!selector.includes('[data-component-preview="primary"]')) continue;
+    if (!selector.includes("[data-preview-stage]")) continue;
+    if (selector.includes("prefers-reduced-transparency")) continue;
+    if (!body.includes("overflow:")) continue;
+    sawStage = true;
+    assert.match(selector, /\[data-component-page\]/, `stage rule must be page-scoped: ${selector.trim()}`);
+    assert.match(body, /overflow:\s*clip/);
+    assert.doesNotMatch(body, /overflow:\s*hidden/);
+  }
+  assert.equal(sawStage, true, "expected a primary stage overflow rule");
+});
+
+test("primary centered surface is #example-qualified so it beats width:100%", () => {
+  const css = stripComments(read("app/docs-component-page.css"));
+  let sawCenter = false;
+  for (const { selector, body } of eachBlock(css)) {
+    if (!selector.includes("[data-preview-center]")) continue;
+    sawCenter = true;
+    assert.match(selector, /#nd-page/, `centering must include #nd-page: ${selector.trim()}`);
+    assert.match(selector, /#example/, `centering must include #example: ${selector.trim()}`);
+    assert.match(selector, /\[data-component-preview="primary"\]/);
+    assert.match(body, /width:\s*fit-content/);
+    assert.match(body, /margin-inline:\s*auto/);
+  }
+  assert.equal(sawCenter, true, "expected a primary centered surface rule");
+});
+
+test("primary stage hooks are emitted by the page and preview", () => {
+  const page = read("components/component-page.tsx");
+  const preview = read("components/component-preview.tsx");
+  const viewport = read("components/preview-viewport.tsx");
+  assert.match(page, /data-component-page=/);
+  assert.match(page, /id="example"/);
+  assert.match(preview, /data-component-preview=\{a11yRoot \? "primary" : true\}/);
+  assert.match(viewport, /data-preview-stage=/);
+  assert.match(viewport, /data-preview-surface=/);
+  assert.match(viewport, /"data-preview-center":/);
 });
 
 test("component-page usage and preview code wells are dark and scoped", () => {
@@ -85,24 +138,18 @@ test("component-page usage and preview code wells are dark and scoped", () => {
   assert.match(css, /--zk-code-well:/);
   assert.match(css, /#usage-and-states/);
   assert.match(css, /\[data-preview-code-panel\]/);
-  const re = /([^{}]+)\{([^{}]+)\}/g;
   let sawWell = false;
-  let block;
-  while ((block = re.exec(css))) {
-    if (!block[2].includes("var(--zk-code-well)")) continue;
+  for (const { selector, body } of eachBlock(css)) {
+    if (!body.includes("var(--zk-code-well)")) continue;
     sawWell = true;
-    assert.match(block[1], /\[data-component-page\]/, `code-well rule must be scoped: ${block[1].trim()}`);
+    assert.match(selector, /\[data-component-page\]/, `code-well rule must be scoped: ${selector.trim()}`);
   }
   assert.equal(sawWell, true, "expected a code-well background on the component page");
 });
 
 test("component-page stage CSS does not restyle specimens with !important", () => {
   const css = stripComments(read("app/docs-component-page.css"));
-  const re = /([^{}]+)\{([^{}]+)\}/g;
-  let block;
-  while ((block = re.exec(css))) {
-    const selector = block[1];
-    const body = block[2];
+  for (const { selector, body } of eachBlock(css)) {
     if (!body.includes("!important")) continue;
     assert.match(
       selector,
@@ -113,9 +160,13 @@ test("component-page stage CSS does not restyle specimens with !important", () =
 });
 
 test("reduced-transparency drops stage halos", () => {
-  const css = read("app/docs-component-page.css");
-  assert.match(css, /prefers-reduced-transparency:\s*reduce/);
-  assert.doesNotMatch(css, /@keyframes|animation-name:/);
+  const css = stripComments(read("app/docs-component-page.css"));
+  const media = css.match(/@media\s*\(prefers-reduced-transparency:\s*reduce\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(media, "expected a reduced-transparency media block");
+  assert.match(media[1], /\[data-preview-stage\]/);
+  assert.match(media[1], /background-image:\s*var\(--zk-preview-stage-fill\)/);
+  assert.doesNotMatch(media[1], /--zk-preview-stage-halos/);
+  assert.doesNotMatch(media[1], /@keyframes|animation-name:/);
 });
 
 test("dark syntax remaps on component-page wells meet WCAG AA against the well", () => {
@@ -126,8 +177,8 @@ test("dark syntax remaps on component-page wells meet WCAG AA against the well",
   const islandDark = shikiDarkColours(syntax, "figure.shiki.dark");
   const pageDark = shikiDarkColours(syntax, "[data-component-page]");
   assert.ok(htmlDark.length >= 8, "html.dark remaps every syntax role");
-  assert.deepEqual(new Set(islandDark), new Set(htmlDark));
-  assert.deepEqual(new Set(pageDark), new Set(htmlDark));
+  assert.deepEqual(colourCounts(islandDark), colourCounts(htmlDark));
+  assert.deepEqual(colourCounts(pageDark), colourCounts(htmlDark));
   for (const colour of htmlDark) {
     const ratio = contrastRatio(parseHsl(colour), well);
     assert.ok(ratio >= 4.5, `${colour} on code well is ${ratio.toFixed(2)}:1`);
