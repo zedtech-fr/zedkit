@@ -81,6 +81,9 @@ import { SelectDemo } from "./select-demo";
 import { ComboboxDemo } from "./combobox-demo";
 import { MultiSelectDemo } from "./multi-select-demo";
 import { SeparatorDemo } from "./separator-demo";
+import { SidebarNavActiveDemo } from "./sidebar-nav-active-demo";
+import { SidebarNavItemDemo } from "./sidebar-nav-demo";
+import { SidebarNavGroupDemo } from "./sidebar-nav-group-demo";
 import { SkeletonDemo } from "./skeleton-demo";
 import { StackDemo } from "./stack-demo";
 import { StatusDotDemo } from "./status-dot-demo";
@@ -243,6 +246,9 @@ export const demoRegistry = {
   ComboboxDemo: { Demo: ComboboxDemo, file: "combobox-demo.tsx" },
   MultiSelectDemo: { Demo: MultiSelectDemo, file: "multi-select-demo.tsx" },
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },
+  SidebarNavActiveDemo: { Demo: SidebarNavActiveDemo, file: "sidebar-nav-active-demo.tsx" },
+  SidebarNavGroupDemo: { Demo: SidebarNavGroupDemo, file: "sidebar-nav-group-demo.tsx" },
+  SidebarNavItemDemo: { Demo: SidebarNavItemDemo, file: "sidebar-nav-demo.tsx" },
   SkeletonDemo: { Demo: SkeletonDemo, file: "skeleton-demo.tsx" },
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
   ContainerDemo: { Demo: ContainerDemo, file: "container-demo.tsx" },

@@ -69,6 +69,8 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  SidebarNavGroup,
+  SidebarNavItem,
   Skeleton,
   Switch,
   Tabs,
@@ -366,6 +368,16 @@ export function Gallery() {
             <LivePulse />
             <LivePulse active={false} />
           </div>
+          <nav aria-label="Runs" data-example-width="">
+            <SidebarNavItem active status={<StatusDot tone="success" />} meta="2m ago" count={<Badge variant="meta">3</Badge>}>
+              Nightly
+            </SidebarNavItem>
+            <SidebarNavGroup label="Scheduled" open>
+              <SidebarNavItem status={<StatusDot tone="idle" />} meta="1h ago">
+                Staging
+              </SidebarNavItem>
+            </SidebarNavGroup>
+          </nav>
         </GallerySection>
 
         <GallerySection id="sizing" title="Container sizing">

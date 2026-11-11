@@ -66,6 +66,8 @@ import {
   SecretField,
   Section,
   Separator,
+  SidebarNavGroup,
+  SidebarNavItem,
   Skeleton,
   Stack,
   Switch,
@@ -422,6 +424,20 @@ describe("a11y", () => {
           </Field>
         </FieldGroup>
       </FieldSet>,
+    );
+    await expectNoViolations(container);
+  });
+
+  it("sidebar nav item, active item, and group", async () => {
+    const { container } = render(
+      <>
+        <SidebarNavItem>Nightly</SidebarNavItem>
+        <SidebarNavItem active>Staging</SidebarNavItem>
+        <SidebarNavGroup label="Runs">
+          <SidebarNavItem>Nightly</SidebarNavItem>
+          <SidebarNavItem>Staging</SidebarNavItem>
+        </SidebarNavGroup>
+      </>,
     );
     await expectNoViolations(container);
   });

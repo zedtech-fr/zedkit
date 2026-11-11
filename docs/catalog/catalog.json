@@ -4651,6 +4651,55 @@
           ]
         },
         {
+          "need": "List sidebar rows with status, title, meta, and count",
+          "import": "`@zedtech/zedkit-ui` — `SidebarNavItem`, `SidebarNavItemProps`, `SidebarNavGroup`, `SidebarNavGroupProps`",
+          "wraps": "`@radix-ui/react-slot` (asChild); `lucide-react` (group chevron); native `details`",
+          "status": "alpha",
+          "shortName": "SidebarNavItem",
+          "audience": "Developers rendering a sidebar run list, inbox, or queue.",
+          "purpose": "One row for status, title, meta, count, and active; groups collapse with native disclosure.",
+          "whenToUse": "Inside `AppShell` sidebar (or any list) when each row needs status + title + optional meta/count.",
+          "whenNotToUse": "For site chrome or marketing nav — use `Faq` or header links; for the page frame — use AppShell.",
+          "derivedFrom": null,
+          "example": "import { SidebarNavItem, StatusDot } from \"@zedtech/zedkit-ui\";\n<SidebarNavItem status={<StatusDot tone=\"success\" />} meta=\"2m ago\" count=\"3\">\n  Nightly\n</SidebarNavItem>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { SidebarNavItem, StatusDot } from \"@zedtech/zedkit-ui\";\n<SidebarNavItem status={<StatusDot tone=\"success\" />} meta=\"2m ago\" count=\"3\">\n  Nightly\n</SidebarNavItem>"
+            },
+            {
+              "title": "Active",
+              "code": "import { SidebarNavItem } from \"@zedtech/zedkit-ui\";\n<SidebarNavItem asChild active>\n  <a href=\"/runs/1\">Nightly</a>\n</SidebarNavItem>"
+            },
+            {
+              "title": "Group",
+              "code": "import { SidebarNavGroup, SidebarNavItem } from \"@zedtech/zedkit-ui\";\n<SidebarNavGroup label=\"Runs\">\n  <SidebarNavItem>Nightly</SidebarNavItem>\n  <SidebarNavItem>Staging</SidebarNavItem>\n</SidebarNavGroup>"
+            }
+          ],
+          "adoption": {
+            "kind": "js",
+            "modules": [
+              {
+                "from": "@zedtech/zedkit-ui",
+                "exports": [
+                  "SidebarNavItem",
+                  "SidebarNavItemProps",
+                  "SidebarNavGroup",
+                  "SidebarNavGroupProps"
+                ]
+              }
+            ]
+          },
+          "registry": "sidebar-nav",
+          "a11y": "Default host is a native `button` (`type=\"button\"`) with `min-h-target` (44px on a phone). `asChild` merges onto a single element (a link). `active` sets `aria-current=\"page\"` (override via props). The title is the accessible name; status and trail are decorative wrappers around caller nodes. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks (`nav`/`ul`).",
+          "troubleshooting": "`asChild` needs one element child — a string falls back to a button, it does not throw. Status/meta/count wrappers omit when those props are missing. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep that on the caller.",
+          "seeAlso": [
+            "Lay out an admin page (sidebar + topbar + header)",
+            "Indicate status with a dot",
+            "Show a status or count badge"
+          ]
+        },
+        {
           "need": "Guide a multi-step flow with selectable option cards",
           "import": "`@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`",
           "wraps": "none (native inputs + theme tokens)",

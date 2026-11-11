@@ -382,6 +382,9 @@
         "@utility gap-stack-sm": {
           "gap": "var(--zk-gap-sm)"
         },
+        "@utility gap-stack-tight": {
+          "gap": "var(--spacing)"
+        },
         "@utility ghost-hover": {
           "background-color": "color-mix(in oklab, hsl(var(--muted)) 80%, transparent)"
         },
@@ -2987,6 +2990,23 @@
       "files": [
         {
           "path": "registry/ui/icon-label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-nav",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/sidebar-nav.tsx",
           "type": "registry:ui"
         }
       ]

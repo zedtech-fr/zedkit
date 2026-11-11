@@ -1387,6 +1387,44 @@ import { AppShell } from "@zedtech/zedkit-ui";
 // Opt out of the mobile menu: sidebarTrigger={null}
 ```
 
+## List sidebar rows with status, title, meta, and count
+
+- Import: `@zedtech/zedkit-ui` — `SidebarNavItem`, `SidebarNavItemProps`, `SidebarNavGroup`, `SidebarNavGroupProps`
+- Wraps: `@radix-ui/react-slot` (asChild); `lucide-react` (group chevron); native `details`
+- Status: alpha
+- Short name: SidebarNavItem
+- Audience: Developers rendering a sidebar run list, inbox, or queue.
+- Purpose: One row for status, title, meta, count, and active; groups collapse with native disclosure.
+- When to use: Inside `AppShell` sidebar (or any list) when each row needs status + title + optional meta/count.
+- When not to use: For site chrome or marketing nav — use `Faq` or header links; for the page frame — use AppShell.
+- See also: `Lay out an admin page (sidebar + topbar + header)`, `Indicate status with a dot`, `Show a status or count badge`
+- Examples: Simple, Active, Group
+- A11y: Default host is a native `button` (`type="button"`) with `min-h-target` (44px on a phone). `asChild` merges onto a single element (a link). `active` sets `aria-current="page"` (override via props). The title is the accessible name; status and trail are decorative wrappers around caller nodes. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks (`nav`/`ul`).
+- Registry: sidebar-nav
+- Troubleshooting: `asChild` needs one element child — a string falls back to a button, it does not throw. Status/meta/count wrappers omit when those props are missing. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep that on the caller.
+
+```ts
+import { SidebarNavItem, StatusDot } from "@zedtech/zedkit-ui";
+<SidebarNavItem status={<StatusDot tone="success" />} meta="2m ago" count="3">
+  Nightly
+</SidebarNavItem>
+```
+
+```ts
+import { SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavItem asChild active>
+  <a href="/runs/1">Nightly</a>
+</SidebarNavItem>
+```
+
+```ts
+import { SidebarNavGroup, SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavGroup label="Runs">
+  <SidebarNavItem>Nightly</SidebarNavItem>
+  <SidebarNavItem>Staging</SidebarNavItem>
+</SidebarNavGroup>
+```
+
 ## Guide a multi-step flow with selectable option cards
 
 - Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`
