@@ -19,7 +19,8 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { ContrastChips, DRAFT_SELECTOR, DraftCard, EditorFields } from "@/components/identity-editor-fields";
+import { ContrastChips, DRAFT_SELECTOR, DraftCard } from "@/components/identity-editor-fields";
+import { IdentityLookForm } from "@/components/identity-look-form";
 import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "@/components/identity-editor-toolbar";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
@@ -58,7 +59,7 @@ type EditorBodyProps = {
   libraryProblem: "unavailable" | "corrupt" | undefined;
   onDark: () => void;
   onReset: () => void;
-  onPatch: (key: string, value: string) => void;
+  onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
   onFix: (warning: IdentityContrastWarning) => void;
   onUndo: () => void;
   onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void;
@@ -159,9 +160,10 @@ function IdentityEditorBody(props: EditorBodyProps) {
           <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
         </Stack>
         <Stack data-editor-section="fields">
-          <EditorFields
+          <IdentityLookForm
             tokens={props.tokens}
             scheme={scheme}
+            defaultMode="expert"
             onPatch={props.onPatch}
             afterShape={
               <IdentityEditorKeepBar
@@ -286,7 +288,7 @@ function IdentityEditorPanel() {
       {...bound}
       onName={setName}
       onDark={() => setDarkPreview(!darkPreview)}
-      onPatch={(key, value) => patch(key, value, darkPreview ? "dark" : "light")}
+      onPatch={(key, value, palette) => patch(key, value, palette ?? (darkPreview ? "dark" : "light"))}
       onFix={fix}
       saveStatus={status}
       libraryProblem={libraryProblem}

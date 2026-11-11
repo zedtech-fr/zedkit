@@ -20,7 +20,8 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
+import { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
+import { identityTokenCssVars } from "@/lib/identity-token-css-vars";
 
 const DRAFT_ID = "draft";
 const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
@@ -99,12 +100,12 @@ function EditorFields({
   afterShape?: ReactNode;
 }) {
   const pair = tokens[scheme];
-  const scalar = (keys: readonly (typeof SCALAR_KEYS)[number][]) =>
+  const scalar = (keys: readonly (typeof SCALAR_KEYS)[number][] | readonly (typeof FONT_KEYS)[number][]) =>
     keys.map((key) => (
       <TokenField
         key={key}
         id={`identity-editor-${key}`}
-        label={identityEditorCopy.fields.scalar[key]}
+        label={identityTokenCssVars[key]}
         value={tokens[key]}
         onChange={(value) => onPatch(key, value)}
       />
@@ -114,13 +115,14 @@ function EditorFields({
       <FieldGroup legend={identityEditorCopy.fields.groups.shape}>{scalar(SHAPE_KEYS)}</FieldGroup>
       {afterShape}
       <FieldGroup legend={identityEditorCopy.fields.groups.type}>{scalar(TYPE_KEYS)}</FieldGroup>
+      <FieldGroup legend={identityEditorCopy.fields.groups.fonts}>{scalar(FONT_KEYS)}</FieldGroup>
       <FieldGroup legend={identityEditorCopy.fields.groups.depth}>{scalar(DEPTH_KEYS)}</FieldGroup>
       <FieldGroup legend={identityEditorCopy.fields.groups.color(scheme)}>
         {LIGHT_KEYS.map((key) => (
           <TokenField
             key={key}
             id={`identity-editor-${key}`}
-            label={identityEditorCopy.fields.light[key]}
+            label={identityTokenCssVars[key]}
             value={pair[key]}
             swatch
             onChange={(value) => onPatch(key, value)}

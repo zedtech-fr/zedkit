@@ -21,6 +21,12 @@ test("catalog search placeholder puts need before title", () => {
   assert.equal(catalogCopy.filters.searchPlaceholder, "Need or title");
 });
 
+test("catalog identity group name is one line and not a showcase", () => {
+  assert.equal(catalogCopy.identity.groupLabel, "Try a look");
+  assert.doesNotMatch(catalogCopy.identity.groupLabel, /\d/);
+  assert.doesNotMatch(catalogCopy.identity.groupLabel, /showcase/i);
+});
+
 test("results status line takes a count argument", () => {
   assert.equal(catalogCopy.results.statusLine(0), "0 entries");
   assert.equal(catalogCopy.results.statusLine(1), "1 entry");

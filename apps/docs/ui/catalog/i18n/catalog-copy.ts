@@ -5,6 +5,9 @@ export const catalogCopy = {
     lead: "Search by need. Filter by area or maturity if you want — share or reload keeps the URL.",
     loadingResults: "Loading results…",
   },
+  identity: {
+    groupLabel: "Try a look",
+  },
   filters: {
     toolbarAriaLabel: "Catalog filters",
     searchLabel: "Catalog search",
