@@ -28,7 +28,7 @@ export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPr
   const { Demo } = entry;
   return (
     <Stack gap="sm" className="w-full content-shrink">
-      <div
+      <Stack
         className="w-full content-shrink"
         data-component-preview={a11yRoot ? "primary" : true}
         {...(a11yRoot ? { "data-a11y-preview-root": "" } : {})}
@@ -44,7 +44,7 @@ export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPr
         >
           <Demo />
         </PreviewFrame>
-      </div>
+      </Stack>
       {hasProps ? (
         <Link href="#props" className="inline-flex min-h-floor w-fit items-center text-dense text-primary underline link-offset hover:no-underline">
           {componentPreviewCopy.viewPropsTable}
