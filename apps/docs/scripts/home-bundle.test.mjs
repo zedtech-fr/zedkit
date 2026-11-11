@@ -161,11 +161,20 @@ test("admin dashboard guide demo wires save and delete to state", () => {
   assert.doesNotMatch(src, /h-96 min-h-0 overflow-hidden/);
 });
 
-test("mobile header keeps search in the phone chrome", () => {
+test("docs phone chrome keeps search; home chrome does not", () => {
   const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const siteHeaders = readFileSync(join(app, "ui/site-headers.tsx"), "utf8");
+  const actions = readFileSync(join(app, "ui/home-header-actions.tsx"), "utf8");
   const trigger = readFileSync(join(app, "ui/mobile-search-trigger.tsx"), "utf8");
   assert.match(header, /MobileSearchTrigger/);
+  assert.match(header, /isHomePath/);
   assert.doesNotMatch(header, /SearchPill/);
   assert.doesNotMatch(header, /DocsIdentityPicker/);
+  assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
+  assert.match(siteHeaders, /isHomePath/);
+  assert.match(actions, /#get-started/);
+  assert.match(actions, /data-site-action/);
+  assert.match(actions, /SITE_GITHUB_URL/);
+  assert.doesNotMatch(actions, /<GithubIcon|aria-label=\{siteChromeCopy\.nav\.github\}/);
   assert.doesNotMatch(trigger, /fumadocs-core\/search\/client/);
 });

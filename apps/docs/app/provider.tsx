@@ -8,7 +8,7 @@ import { CustomIdentityBar } from "@/components/custom-identity-bar";
 import { IdentityDockGate } from "@/components/identity-dock-gate";
 import { IdentityAssistantStoreProvider } from "@/lib/identity-assistant-store";
 import { purgeLegacyIdentityStorage } from "@/lib/site-identity-storage";
-import { SiteChromeA11yPatch, SiteHeaderSurfacePatch } from "@/ui/site-chrome-a11y";
+import { SiteChromeA11yPatch } from "@/ui/site-chrome-a11y";
 import { ThemeColorMeta } from "@/ui/theme-color-meta";
 import { RouteScrollReset } from "@/ui/route-scroll-reset";
 import { DocsAppLink } from "@/ui/docs-app-link";
@@ -32,7 +32,6 @@ export function Provider({ children }: { children: ReactNode }) {
   return (
     <RootProvider search={{ SearchDialog: StaticSearchDialog, preload: false }} components={{ Link: DocsAppLink }}>
       <SiteChromeA11yPatch />
-      <SiteHeaderSurfacePatch />
       <ThemeColorMeta />
       <RouteScrollReset />
       <AnimateObserver />

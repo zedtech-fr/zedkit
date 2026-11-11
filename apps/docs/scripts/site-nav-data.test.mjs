@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  isHomePath,
   isSiteNavLinkActive,
-  SITE_GUIDE_LINKS,
   siteHeaderLinks,
   sitePrimaryNavLinks,
 } from "../lib/site-nav-data.ts";
@@ -42,26 +42,36 @@ test("changelog is not a primary or desktop header item", () => {
   );
 });
 
-test("desktop header links are the primary list plus a Guides menu", () => {
+test("desktop header links are the primary list only", () => {
   assert.match(source, /function siteHeaderLinks\(\)/);
   assert.match(source, /sitePrimaryNavLinks\(\)/);
+  assert.doesNotMatch(source, /SITE_GUIDE_LINKS|type:\s*"menu"|text:\s*"Guides"/);
   const header = siteHeaderLinks();
-  const menus = header.filter((item) => item.type === "menu");
-  const mains = header.filter((item) => item.type !== "menu");
   assert.deepEqual(
-    mains.map((item) => ({ text: item.text, url: item.url, active: item.active })),
+    header.map((item) => item.text),
+    ["AI", "UI", "Docs", "Catalog"],
+  );
+  assert.deepEqual(
+    header.map((item) => ({ text: item.text, url: item.url, active: item.active })),
     sitePrimaryNavLinks().map((item) => ({ text: item.text, url: item.href, active: item.active })),
   );
-  assert.equal(menus.length, 1);
-  assert.equal(menus[0].text, "Guides");
   assert.equal(
-    (menus[0].items ?? []).some((item) => item.text === "UI foundations" || item.url === "/docs/foundations"),
+    header.some((item) => item.type === "menu"),
     false,
   );
-  assert.equal(
-    SITE_GUIDE_LINKS.some((item) => item.text === "UI foundations" || item.href === "/docs/foundations"),
-    false,
-  );
+  const blob = JSON.stringify(header);
+  assert.equal(/guides/i.test(blob), false);
+  assert.equal(/github/i.test(blob), false);
+  assert.equal(/get started/i.test(blob), false);
+  assert.equal(blob.includes("#get-started"), false);
+});
+
+test("isHomePath is only the site root", () => {
+  assert.equal(isHomePath("/"), true);
+  assert.equal(isHomePath(""), true);
+  assert.equal(isHomePath("/catalog"), false);
+  assert.equal(isHomePath("/docs"), false);
+  assert.equal(isHomePath("/docs/getting-started"), false);
 });
 
 test("exact url matching does not current-state Docs on an AI or UI page", () => {

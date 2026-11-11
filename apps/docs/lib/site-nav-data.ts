@@ -7,17 +7,9 @@ export type SiteNavLink = {
   active?: "url" | "nested-url";
 };
 
-/** Guide entries shared by the desktop Guides menu and the phone nav drawer. */
-export const SITE_GUIDE_LINKS: SiteNavLink[] = [
-  { text: "Getting started", href: "/docs/getting-started", active: "url" },
-  { text: "Start without writing code", href: "/docs/start-without-writing-code", active: "url" },
-  { text: "Build an admin dashboard", href: "/docs/build-an-admin-dashboard", active: "url" },
-  { text: "Set up your coding agents", href: "/docs/set-up-your-coding-agents", active: "url" },
-  { text: "Add SEO to a Next.js app", href: "/docs/add-seo-to-nextjs", active: "url" },
-  { text: "zedkit and shadcn/ui", href: "/docs/zedkit-and-shadcn", active: "url" },
-  { text: "Maturity and compatibility", href: "/docs/maturity-and-compatibility", active: "url" },
-  { text: "Note list example", href: "/examples/note-list", active: "url" },
-];
+export function isHomePath(pathname: string): boolean {
+  return pathname === "/" || pathname === "";
+}
 
 export function sitePrimaryNavLinks(): SiteNavLink[] {
   return [
@@ -38,21 +30,10 @@ export function isSiteNavLinkActive(pathname: string, link: SiteNavLink): boolea
 
 /** Fumadocs header link model (desktop chrome). */
 export function siteHeaderLinks(): LinkItemType[] {
-  return [
-    ...sitePrimaryNavLinks().map((item) => ({
-      text: item.text,
-      url: item.href,
-      ...(item.active ? { active: item.active } : {}),
-      ...(item.external ? { external: true } : {}),
-    })),
-    {
-      type: "menu",
-      text: "Guides",
-      items: SITE_GUIDE_LINKS.map((item) => ({
-        text: item.text,
-        url: item.href,
-        active: item.active ?? "url",
-      })),
-    },
-  ];
+  return sitePrimaryNavLinks().map((item) => ({
+    text: item.text,
+    url: item.href,
+    ...(item.active ? { active: item.active } : {}),
+    ...(item.external ? { external: true } : {}),
+  }));
 }

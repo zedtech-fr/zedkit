@@ -7,7 +7,7 @@ for (const width of DESKTOP_WIDTHS) {
   test(`header search clears theme toggle at ${width}px light`, async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
+    await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {

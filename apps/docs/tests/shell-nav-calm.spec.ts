@@ -31,9 +31,7 @@ for (const theme of ["light", "dark"] as const) {
       } else {
         // The kit version label changes with every release, so only that one element is masked; the rest of the
         // header stays pixel-checked, and the label's text is still asserted in the guards below.
-        await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`, {
-          mask: [page.locator("#nd-nav [data-kit-version]")],
-        });
+        await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`);
       }
     });
   }
@@ -46,8 +44,9 @@ test.describe("shell nav calm guards", () => {
     await expect(page.getByLabel("Try another identity")).toHaveCount(0);
     const shell = page.locator("#nd-nav");
     await expect(shell.locator("select")).toHaveCount(0);
-    await expect(shell.getByText(VERSION_LABEL)).toHaveCount(1);
-    await expect(shell.getByRole("link", { name: VERSION_LABEL })).toHaveCount(0);
+    await expect(shell.getByText(VERSION_LABEL)).toHaveCount(0);
+    await expect(shell.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(shell.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
   });
 
   test("phone header and drawer have no identity control or native select", async ({ page }) => {
@@ -56,13 +55,15 @@ test.describe("shell nav calm guards", () => {
     const mobile = page.locator("#nd-mobile-nav");
     await expect(mobile.getByLabel("Try another identity")).toHaveCount(0);
     await expect(mobile.locator("select")).toHaveCount(0);
-    await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(1);
-    await expect(mobile.getByRole("link", { name: VERSION_LABEL })).toHaveCount(0);
+    await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(0);
+    await expect(mobile.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(mobile.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByLabel("Try another identity")).toHaveCount(0);
     await expect(dialog.locator("select")).toHaveCount(0);
     await expect(dialog.getByRole("navigation", { name: "Menu" }).getByRole("link", { name: "Guides", exact: true })).toHaveCount(0);
-    await expect(dialog.getByText("Guides", { exact: true })).toBeVisible();
+    await expect(dialog.getByText("Guides", { exact: true })).toHaveCount(0);
+    await expect(dialog.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
   });
 });
