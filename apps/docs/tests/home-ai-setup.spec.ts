@@ -10,7 +10,7 @@ test.describe("home paste band", () => {
     permissions: ["clipboard-read", "clipboard-write"],
   });
 
-  test("sits after the same-idea band, copies the combined prompt, links Getting started", async ({
+  test("sits after the same-idea band, links Getting started; hero copies the map prompt", async ({
     page,
     context,
   }) => {
@@ -41,13 +41,12 @@ test.describe("home paste band", () => {
 
     await expect(page.locator("#ai-setup")).toBeVisible();
     await expect(page.locator("#get-started")).toBeVisible();
-    await expect(paste.locator("[data-setup-entry='combined']")).toBeVisible();
-    await expect(paste.locator("[data-setup-entry='ai']")).toHaveCount(0);
-    await expect(paste.locator("[data-setup-entry='ui']")).toHaveCount(0);
-    await expect(paste.locator("[data-setup-entry='suggest']")).toHaveCount(0);
-    await expect(paste.getByRole("button", { name: /Copy/ })).toHaveCount(1);
+    await expect(paste.locator("[data-setup-entry]")).toHaveCount(0);
+    await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
+    await expect(page.locator("[data-home-hero-lead] [data-setup-entry]")).toHaveCount(0);
+    await expect(page.locator("[data-home-hero-prompt]").getByRole("button", { name: /Copy/ })).toHaveCount(1);
 
-    await paste.getByRole("button", { name: "Copy combined setup prompt" }).click();
+    await page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt" }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_SETUP_MINI_PROMPT);
 
     await expect(paste.getByRole("link", { name: "Full install steps" })).toHaveAttribute(
@@ -58,7 +57,10 @@ test.describe("home paste band", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Code that's checked. Screens that match.");
 
     await page.setViewportSize({ width: 320, height: 844 });
-    await expect(paste.locator("[data-setup-entry='combined']")).toBeVisible();
+    await expect(page.locator("#paste")).toBeVisible();
+    await expect(page.locator("#ai-setup")).toBeVisible();
+    await expect(page.locator("#get-started")).toBeVisible();
+    await expect(paste.locator("[data-setup-entry]")).toHaveCount(0);
   });
 });
 

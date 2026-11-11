@@ -13,8 +13,8 @@ export type HomeBelowHeroProps = {
 
 /**
  * Marketing sections below the hero, in the order a visitor decides: two
- * places, six facts, one map paste, then the same task in three looks, then
- * where to look next.
+ * places, six facts, hash landing plus Getting started, then the same task
+ * in three looks, then where to look next.
  * Kept in the main home payload (not dynamically imported) so section anchors stay in the live layout on first paint.
  *
  * Compose-UI brief:

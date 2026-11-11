@@ -1,5 +1,5 @@
 import { Heading, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
-import { AI_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
+import { MAP_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
 import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
 import { HomeHeroLeadActions } from "@/ui/home/home-hero-lead-actions";
@@ -19,12 +19,17 @@ export function HomeHeroLead({ className }: { className?: string }) {
         {homeCopy.hero.sub}
       </Text>
       <Stack gap={HOME_CARD_CONTENT_GAP} className="items-start">
-        <SecretField
-          value={AI_SETUP_MINI_PROMPT}
-          aria-label={homeCopy.hero.promptAriaLabel}
-          copyLabel={homeCopy.hero.promptCopyLabel}
-          data-home-hero-prompt=""
-        />
+        <Stack gap="sm" className="w-full items-start" data-home-hero-prompt="">
+          <SecretField
+            multiline
+            value={MAP_SETUP_MINI_PROMPT}
+            aria-label={homeCopy.hero.promptAriaLabel}
+            copyLabel={homeCopy.hero.promptCopyLabel}
+          />
+          <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
+            {homeCopy.hero.promptCaption}
+          </Text>
+        </Stack>
         <HomeHeroLeadActions />
         <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
           {homeCopy.hero.facts}

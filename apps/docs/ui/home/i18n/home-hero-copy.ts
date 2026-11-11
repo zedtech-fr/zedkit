@@ -5,8 +5,9 @@ export const homeHeroCopy = {
     title: "Code that's checked. Screens that match.",
     /** One intro paragraph (visual `lead` role). */
     sub: "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
-    promptAriaLabel: "One-prompt AI setup",
+    promptAriaLabel: "Setup prompt",
     promptCopyLabel: "Copy prompt",
+    promptCaption: "Name the kits you want, Nest included. The map knows the order.",
     facts: "What you see installs from npm or copies as source · MIT · React 19 · Tailwind 4",
   },
   /** The tour is the cursor that clicks through the example. It can be paused, and replayed on purpose. */
