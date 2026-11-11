@@ -369,13 +369,22 @@ export function Gallery() {
             <LivePulse active={false} />
           </div>
           <nav aria-label="Runs" data-example-width="">
-            <SidebarNavItem active status={<StatusDot tone="success" />} meta="2m ago" count={<Badge variant="meta">3</Badge>}>
-              Nightly
+            <SidebarNavItem
+              asChild
+              active
+              status={<StatusDot tone="success" />}
+              meta="2m ago"
+              count={<Badge variant="meta">3</Badge>}
+            >
+              <a href="#nightly">Nightly</a>
             </SidebarNavItem>
             <SidebarNavGroup label="Scheduled" open>
               <SidebarNavItem status={<StatusDot tone="idle" />} meta="1h ago">
                 Staging
               </SidebarNavItem>
+            </SidebarNavGroup>
+            <SidebarNavGroup label="Queued">
+              <SidebarNavItem status={<StatusDot tone="idle" />}>Canary</SidebarNavItem>
             </SidebarNavGroup>
           </nav>
         </GallerySection>

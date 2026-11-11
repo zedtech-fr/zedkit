@@ -2998,7 +2998,6 @@
       "name": "sidebar-nav",
       "type": "registry:ui",
       "dependencies": [
-        "@radix-ui/react-slot",
         "lucide-react"
       ],
       "registryDependencies": [
