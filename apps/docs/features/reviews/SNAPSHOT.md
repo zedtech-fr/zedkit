@@ -4,6 +4,11 @@ The docs site reads one JSON file (`adapters/public-reviews.json`). The
 out-of-repo exporter must emit **one** of the two version-1 shapes below.
 Do not emit both `issues` and `reviews` on the same object.
 
+The public run history page is fed by the **issue index**. A live-shaped
+file of every hosted run cannot live in git (one dense row is already near
+the 200KB cap). Live-shaped input remains valid so a denser payload can
+land later without a parser rewrite.
+
 ## Version
 
 Both shapes require `"version": 1`. Any other version fails closed.
@@ -20,7 +25,7 @@ row fail closed (`exactObject`).
 Production overwrites this file with hosted `Payload` + `visibility`.
 There is no `selected` field.
 
-## Issue-centric index (fixture / denser payload)
+## Issue index (public run history page)
 
 Required keys: `version`, `kind`, `issues`, `pullRequests`. Extra keys
 on the wrapper are ignored (`requiredObject`) so a denser payload can
