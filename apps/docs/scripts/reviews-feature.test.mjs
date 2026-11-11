@@ -92,6 +92,19 @@ function wrapper(issues, pullRequests = [pr()], extra = {}) {
   return { version: 1, kind: "public-stand-in", issues, pullRequests, ...extra };
 }
 
+function collectKeys(value, keys = []) {
+  if (value === null || typeof value !== "object") return keys;
+  if (Array.isArray(value)) {
+    for (const item of value) collectKeys(item, keys);
+    return keys;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    keys.push(key);
+    collectKeys(child, keys);
+  }
+  return keys;
+}
+
 function parsedIndex(issues, pullRequests, extra) {
   const parsed = parsePublicReviewSnapshot(wrapper(issues, pullRequests, extra));
   assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
@@ -526,30 +539,62 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
-test("the checked-in public snapshot is version 1, under 200KB, and sitemaps /issues", async () => {
-  const raw = JSON.parse(readFileSync(join(reviewsRoot, "adapters/public-reviews.json"), "utf8"));
+test("the checked-in public snapshot is a version-1 run index with exportable issues and no secrets", async () => {
+  const snapshotPath = join(reviewsRoot, "adapters/public-reviews.json");
+  const raw = JSON.parse(readFileSync(snapshotPath, "utf8"));
   assert.equal(raw.version, 1);
+  assert.ok(Array.isArray(raw.issues));
+  assert.ok(Array.isArray(raw.pullRequests));
+  assert.equal("reviews" in raw, false);
   const parsed = parsePublicReviewSnapshot(raw);
   assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
+  assert.equal(Array.isArray(parsed.value), false);
+  const keys = collectKeys(raw);
+  assert.equal(keys.includes("prompt"), false);
+  assert.equal(keys.includes("token"), false);
+  assert.equal(keys.includes("token_hash"), false);
+  assertPubliclySafe(raw);
+
   const port = createSnapshotReviewPort();
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
-  const lives = await port.list();
-  assert.ok(issues.length + unlinked.length >= 1);
-  const hasIssueJoin = lives.some((row) => typeof row.run.issue === "number");
-  if (lives.length > 0 && !hasIssueJoin) {
-    assert.ok(unlinked.length >= 1);
-  }
+  assert.ok(issues.length > 0);
+  const issue108 = issues.find((row) => row.number === 108);
+  assert.ok(issue108);
+  assert.equal(issue108.state, "closed");
+  assert.deepEqual(issue108.pullRequests, [133]);
+  const plan = issue108.entries.find((row) => row.type === "plan");
+  const implement = issue108.entries.find((row) => row.type === "implement");
+  assert.ok(plan);
+  assert.ok(implement);
+  assert.equal(plan.runId, implement.runId);
+  assert.ok(issues.some((row) => row.number === 93));
+  assert.ok(issues.some((row) => row.number === 110));
+  assert.ok(!issues.some((row) => row.number === 99));
+  assert.ok(unlinked.some((row) => row.number === 54));
+  assert.ok(!unlinked.some((row) => row.number === 50));
+
+  const redirects = await listReviewRedirectsFrom(port);
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
+  assert.ok(
+    redirects.some(
+      (row) =>
+        row.from === "/reviews/pr/133/runs/run-108-impl" && row.to === "/issues/108/runs/run-108-impl",
+    ),
+  );
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
+
   for (const row of [...issues, ...unlinked]) {
     for (const item of row.entries) {
       assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
     }
   }
-  const bytes = statSync(join(reviewsRoot, "adapters/public-reviews.json")).size;
+  const bytes = statSync(snapshotPath).size;
   assert.ok(bytes < 200 * 1024);
   assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
   const sitemap = await listIssueSitemapPaths();
   assert.equal(sitemap[0], "/issues");
+  assert.ok(sitemap.includes("/issues/108"));
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
@@ -993,6 +1038,7 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
           },
         ],
         prompt: "Authorization: Basic eHl6OnBhc3M from /Users/bob/.config",
+        final_text: "Bearer leftoverPrompt._~+/=- in /home/dave/notes",
       }),
     ],
   });
@@ -1008,9 +1054,8 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
   assert.match(clean.decision.summary, /Bearer \[redacted\]/);
   assert.doesNotMatch(clean.decision.summary, /xyzTOKEN789/);
   assert.doesNotMatch(clean.decision.summary, /\/home\/bob/);
-  assert.match(clean.items[0].prompt, /Basic \[redacted\]/);
-  assert.doesNotMatch(clean.items[0].prompt, /eHl6OnBhc3M/);
-  assert.doesNotMatch(clean.items[0].prompt, /\/Users\/bob/);
+  assert.equal(clean.items[0].prompt, "[redacted]");
+  assert.equal(clean.items[0].final_text, "[redacted]");
   assert.match(clean.items[0].entries[0].output, /Bearer \[redacted\]/);
   assert.doesNotMatch(clean.items[0].entries[0].output, /firstPassSecret/);
   assert.doesNotMatch(clean.items[0].entries[0].output, /\/home\/carol/);
