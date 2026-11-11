@@ -1127,7 +1127,7 @@ export function isPresetId(id: string): id is IdentityId;
 export function JumpToLatest(input: JumpToLatestProps): JSX.Element | null;
 
 // @public (undocumented)
-export interface JumpToLatestProps extends Omit<ButtonProps, "children"> {
+export interface JumpToLatestProps extends Omit<ButtonProps, "children" | "asChild" | "type" | "aria-label"> {
     label?: string;
     stuck: boolean;
 }

@@ -68,12 +68,19 @@ function mountHook(options?: StickToBottomOptions, metrics?: Metrics) {
 }
 
 describe("useStickToBottom", () => {
+  let originalResizeObserver: typeof window.ResizeObserver;
+  let originalMutationObserver: typeof window.MutationObserver;
+
   beforeEach(() => {
     setMotion(false);
     document.documentElement.removeAttribute("data-motion");
+    originalResizeObserver = window.ResizeObserver;
+    originalMutationObserver = window.MutationObserver;
   });
 
   afterEach(() => {
+    window.ResizeObserver = originalResizeObserver;
+    window.MutationObserver = originalMutationObserver;
     document.body.replaceChildren();
     document.documentElement.removeAttribute("data-motion");
   });
@@ -167,6 +174,40 @@ describe("useStickToBottom", () => {
     expect(result.current.isStuck).toBe(false);
   });
 
+  it("keeps the latch during a smooth pin until the scroller reaches the end", async () => {
+    const { el, metrics, result, scrollTo } = mountHook({ behavior: "smooth" });
+    act(() => {
+      el.dispatchEvent(new Event("scrollend"));
+    });
+    await flushFrame();
+    metrics.scrollTop = 100;
+    act(() => {
+      el.dispatchEvent(new Event("scroll"));
+    });
+    expect(result.current.isStuck).toBe(false);
+    scrollTo.mockImplementation(() => {});
+    act(() => {
+      result.current.jumpToLatest();
+    });
+    expect(result.current.isStuck).toBe(true);
+    await flushFrame();
+    metrics.scrollTop = 400;
+    act(() => {
+      el.dispatchEvent(new Event("scroll"));
+    });
+    expect(result.current.isStuck).toBe(true);
+    metrics.scrollTop = 800;
+    act(() => {
+      el.dispatchEvent(new Event("scrollend"));
+    });
+    expect(result.current.isStuck).toBe(true);
+    metrics.scrollTop = 100;
+    act(() => {
+      el.dispatchEvent(new Event("scroll"));
+    });
+    expect(result.current.isStuck).toBe(false);
+  });
+
   it("treats a 4px shortfall as still latched at the default offset", async () => {
     const { el, metrics, result } = mountHook();
     await flushFrame();
@@ -187,34 +228,104 @@ describe("useStickToBottom", () => {
     expect(result.current.isStuck).toBe(false);
   });
 
-  it("uses smooth scrolling when asked and motion is allowed", () => {
-    const { scrollTo } = mountHook({ behavior: "smooth" });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: "smooth" });
+  it("treats a negative offset as 0", async () => {
+    const { el, metrics, result } = mountHook({ offset: -4 });
+    await flushFrame();
+    metrics.scrollTop = 796;
+    act(() => {
+      el.dispatchEvent(new Event("scroll"));
+    });
+    expect(result.current.isStuck).toBe(false);
   });
 
-  it("forces instant jumps when the OS asks to reduce motion", () => {
-    setMotion(true);
-    const { scrollTo } = mountHook({ behavior: "smooth" });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: "instant" });
+  it("treats a NaN offset as the default", async () => {
+    const { el, metrics, result } = mountHook({ offset: Number.NaN });
+    await flushFrame();
+    metrics.scrollTop = 796;
+    act(() => {
+      el.dispatchEvent(new Event("scroll"));
+    });
+    expect(result.current.isStuck).toBe(true);
   });
 
-  it("forces instant jumps when html data-motion is reduce", () => {
-    document.documentElement.setAttribute("data-motion", "reduce");
-    const { scrollTo } = mountHook({ behavior: "smooth" });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: "instant" });
-  });
-
-  it("jumps instantly by default", () => {
-    const { scrollTo } = mountHook();
-    expect(scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: "instant" });
+  it.each([
+    {
+      name: "uses smooth scrolling when asked and motion is allowed",
+      reduce: false,
+      attr: false,
+      options: { behavior: "smooth" as const },
+      want: "smooth",
+    },
+    {
+      name: "forces instant jumps when the OS asks to reduce motion",
+      reduce: true,
+      attr: false,
+      options: { behavior: "smooth" as const },
+      want: "instant",
+    },
+    {
+      name: "forces instant jumps when html data-motion is reduce",
+      reduce: false,
+      attr: true,
+      options: { behavior: "smooth" as const },
+      want: "instant",
+    },
+    {
+      name: "jumps instantly by default",
+      reduce: false,
+      attr: false,
+      options: undefined,
+      want: "instant",
+    },
+  ])("$name", ({ reduce, attr, options, want }) => {
+    if (reduce) setMotion(true);
+    if (attr) document.documentElement.setAttribute("data-motion", "reduce");
+    const { scrollTo } = mountHook(options);
+    expect(scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: want });
   });
 
   it("does not throw when ResizeObserver is missing", () => {
-    const original = window.ResizeObserver;
     // @ts-expect-error -- jsdom may still define it; the hook must tolerate absence.
     delete window.ResizeObserver;
     expect(() => mountHook()).not.toThrow();
-    window.ResizeObserver = original;
+  });
+
+  it("does not throw when MutationObserver is missing", () => {
+    // @ts-expect-error -- jsdom may still define it; the hook must tolerate absence.
+    delete window.MutationObserver;
+    expect(() => mountHook()).not.toThrow();
+  });
+
+  it("stops pinning after unmount", async () => {
+    const { el, metrics, scrollTo, unmount } = mountHook();
+    await flushFrame();
+    scrollTo.mockClear();
+    unmount();
+    metrics.scrollHeight = 1200;
+    el.append("more");
+    await flushGrowth();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("follows the current scroller after a ref swap", async () => {
+    const first = mockScroller();
+    const second = mockScroller({ scrollTop: 0, scrollHeight: 500, clientHeight: 200 });
+    const ref = { current: first.el };
+    const hook = renderHook(() => useStickToBottom(ref));
+    await flushFrame();
+    ref.current = second.el;
+    hook.rerender();
+    await flushFrame();
+    first.scrollTo.mockClear();
+    second.scrollTo.mockClear();
+    first.metrics.scrollHeight = 1500;
+    first.el.append("more");
+    await flushGrowth();
+    expect(first.scrollTo).not.toHaveBeenCalled();
+    second.metrics.scrollHeight = 800;
+    second.el.append("more");
+    await flushGrowth();
+    expect(second.scrollTo).toHaveBeenCalledWith({ top: 600, left: 0, behavior: "instant" });
   });
 });
 
@@ -233,6 +344,27 @@ describe("JumpToLatest", () => {
     const button = screen.getByRole("button", { name: "Jump to latest" });
     expect(button.getAttribute("data-slot")).toBe("jump-to-latest");
     expect(button.getAttribute("type")).toBe("button");
+  });
+
+  it("keeps type and data-slot when callers pass overrides", () => {
+    render(
+      <JumpToLatest
+        stuck={false}
+        onClick={() => {}}
+        data-slot="other"
+        {...({ type: "submit" } as object)}
+      />,
+    );
+    const button = screen.getByRole("button", { name: "Jump to latest" });
+    expect(button.getAttribute("type")).toBe("button");
+    expect(button.getAttribute("data-slot")).toBe("jump-to-latest");
+  });
+
+  it("falls back to kit chrome when label is empty or whitespace", () => {
+    const { rerender } = render(<JumpToLatest stuck={false} label="" onClick={() => {}} />);
+    expect(screen.getByRole("button", { name: "Jump to latest" })).not.toBeNull();
+    rerender(<JumpToLatest stuck={false} label="   " onClick={() => {}} />);
+    expect(screen.getByRole("button", { name: "Jump to latest" })).not.toBeNull();
   });
 
   it("lets label win over the French bundle", () => {
@@ -260,5 +392,23 @@ describe("JumpToLatest", () => {
     render(<JumpToLatest stuck={false} onClick={onClick} />);
     await user.click(screen.getByRole("button", { name: "Jump to latest" }));
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("moves focus to the scroller when JumpToLatest is activated", async () => {
+    const user = userEvent.setup();
+    const scroller = mockScroller();
+    scroller.el.tabIndex = 0;
+    function Harness() {
+      const { isStuck, jumpToLatest } = useStickToBottom({ current: scroller.el });
+      return <JumpToLatest stuck={isStuck} onClick={jumpToLatest} />;
+    }
+    render(<Harness />);
+    await flushFrame();
+    scroller.metrics.scrollTop = 100;
+    act(() => {
+      scroller.el.dispatchEvent(new Event("scroll"));
+    });
+    await user.click(screen.getByRole("button", { name: "Jump to latest" }));
+    expect(document.activeElement).toBe(scroller.el);
   });
 });

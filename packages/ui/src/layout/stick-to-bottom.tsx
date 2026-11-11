@@ -5,12 +5,14 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObje
 import { Button, type ButtonProps } from "../button/button.js";
 import { isMotionReduced } from "../motion/motion-preference.js";
 import { useUiMessages } from "../ui-provider.js";
-import { cn } from "../utils.js";
 
 export interface StickToBottomOptions {
   /** Distance from the end (px) that still counts as latched. Defaults to 8. */
   offset?: number;
-  /** Scroll behaviour when motion is allowed. Defaults to `"auto"` (jump). */
+  /**
+   * Scroll behaviour when motion is allowed. Defaults to `"auto"` (jump).
+   * `"smooth"` while content keeps growing is a continuous animation.
+   */
   behavior?: "auto" | "smooth";
 }
 
@@ -28,6 +30,53 @@ function scrollMode(behavior: "auto" | "smooth"): ScrollBehavior {
   return isMotionReduced() || behavior !== "smooth" ? "instant" : "smooth";
 }
 
+function latchOffset(value: number | undefined): number {
+  return Math.max(0, value != null && Number.isFinite(value) ? value : 8);
+}
+
+type PinGuard = {
+  frame: number | null;
+  node: HTMLElement | null;
+  onEnd: (() => void) | null;
+};
+
+function releasePinGuard(guard: PinGuard, programmaticRef: { current: boolean }): void {
+  if (guard.frame != null) cancelAnimationFrame(guard.frame);
+  if (guard.node && guard.onEnd) guard.node.removeEventListener("scrollend", guard.onEnd);
+  guard.frame = null;
+  guard.node = null;
+  guard.onEnd = null;
+  programmaticRef.current = false;
+}
+
+function pinScrollerToEnd(
+  el: HTMLElement,
+  behavior: "auto" | "smooth",
+  offset: number,
+  guard: PinGuard,
+  programmaticRef: { current: boolean },
+  setStuck: (next: boolean) => void,
+): void {
+  releasePinGuard(guard, programmaticRef);
+  programmaticRef.current = true;
+  const mode = scrollMode(behavior);
+  el.scrollTo({ top: endTop(el), left: 0, behavior: mode });
+  if (mode !== "smooth") {
+    guard.frame = requestAnimationFrame(() => {
+      guard.frame = null;
+      programmaticRef.current = false;
+    });
+    return;
+  }
+  const onEnd = () => {
+    releasePinGuard(guard, programmaticRef);
+    setStuck(atBottom(el, offset));
+  };
+  guard.node = el;
+  guard.onEnd = onEnd;
+  el.addEventListener("scrollend", onEnd);
+}
+
 function observeScroller(
   node: HTMLElement,
   offset: number,
@@ -35,9 +84,13 @@ function observeScroller(
   stuckRef: { current: boolean },
   setStuck: (next: boolean) => void,
   pinToEnd: () => void,
+  releasePinGuard: () => void,
 ): () => void {
   const onScroll = () => {
-    if (programmaticRef.current) return;
+    if (programmaticRef.current) {
+      if (!atBottom(node, offset)) return;
+      releasePinGuard();
+    }
     setStuck(atBottom(node, offset));
   };
   let frame: number | null = null;
@@ -59,6 +112,7 @@ function observeScroller(
     mutation?.disconnect();
     resize?.disconnect();
     if (frame != null) cancelAnimationFrame(frame);
+    releasePinGuard();
   };
 }
 
@@ -70,10 +124,12 @@ export function useStickToBottom(
   scroller: RefObject<HTMLElement | null>,
   options: StickToBottomOptions = {},
 ): { isStuck: boolean; jumpToLatest: () => void } {
-  const { offset = 8, behavior = "auto" } = options;
+  const { behavior = "auto" } = options;
+  const offset = latchOffset(options.offset);
   const [isStuck, setIsStuck] = useState(true);
   const stuckRef = useRef(true);
   const programmaticRef = useRef(false);
+  const pinGuard = useRef<PinGuard>({ frame: null, node: null, onEnd: null });
   const [node, setNode] = useState<HTMLElement | null>(null);
 
   const setStuck = useCallback((next: boolean) => {
@@ -81,20 +137,21 @@ export function useStickToBottom(
     setIsStuck(next);
   }, []);
 
+  const releaseGuard = useCallback(() => {
+    releasePinGuard(pinGuard.current, programmaticRef);
+  }, []);
+
   const pinToEnd = useCallback(() => {
     const el = scroller.current;
     if (!el) return;
-    programmaticRef.current = true;
-    el.scrollTo({ top: endTop(el), left: 0, behavior: scrollMode(behavior) });
-    requestAnimationFrame(() => {
-      programmaticRef.current = false;
-    });
-  }, [scroller, behavior]);
+    pinScrollerToEnd(el, behavior, offset, pinGuard.current, programmaticRef, setStuck);
+  }, [scroller, behavior, offset, setStuck]);
 
   const jumpToLatest = useCallback(() => {
     setStuck(true);
     pinToEnd();
-  }, [pinToEnd, setStuck]);
+    scroller.current?.focus({ preventScroll: true });
+  }, [pinToEnd, setStuck, scroller]);
 
   useIsomorphicLayoutEffect(() => {
     setNode((prev) => (prev === scroller.current ? prev : scroller.current));
@@ -102,16 +159,16 @@ export function useStickToBottom(
 
   useEffect(() => {
     if (!node) return undefined;
-    return observeScroller(node, offset, programmaticRef, stuckRef, setStuck, pinToEnd);
-  }, [node, offset, pinToEnd, setStuck]);
+    return observeScroller(node, offset, programmaticRef, stuckRef, setStuck, pinToEnd, releaseGuard);
+  }, [node, offset, pinToEnd, setStuck, releaseGuard]);
 
   return { isStuck, jumpToLatest };
 }
 
-export interface JumpToLatestProps extends Omit<ButtonProps, "children"> {
+export interface JumpToLatestProps extends Omit<ButtonProps, "children" | "asChild" | "type" | "aria-label"> {
   /** Hide the control while the reader is still following the end. */
   stuck: boolean;
-  /** Visible label; kit chrome is the default. */
+  /** Visible label; kit chrome is the default. Empty or whitespace falls back to kit chrome. */
   label?: string;
 }
 
@@ -125,15 +182,16 @@ export function JumpToLatest({
 }: JumpToLatestProps) {
   const messages = useUiMessages();
   if (stuck) return null;
+  const text = label?.trim() ? label : messages.jumpToLatest;
   return (
     <Button
+      variant={variant}
+      className={className}
+      {...props}
       data-slot="jump-to-latest"
       type="button"
-      variant={variant}
-      className={cn(className)}
-      {...props}
     >
-      {label ?? messages.jumpToLatest}
+      {text}
     </Button>
   );
 }
