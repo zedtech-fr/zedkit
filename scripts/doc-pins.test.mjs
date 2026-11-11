@@ -136,6 +136,13 @@ test("this repo's pins match package versions", () => {
   assert.equal(result.stdout.trim(), "ok");
 });
 
+test("pinned walkthroughs use covered unqualified forms (exactly at X, not at exactly `X`)", () => {
+  for (const rel of PINNED_FILES) {
+    const text = readFileSync(join(repo, rel), "utf8");
+    assert.equal(text.includes("at exactly `"), false, rel);
+  }
+});
+
 test("changeset:version rewrites pins after catalog build", () => {
   const pkg = JSON.parse(readFileSync(join(repo, "package.json"), "utf8"));
   assert.equal(
