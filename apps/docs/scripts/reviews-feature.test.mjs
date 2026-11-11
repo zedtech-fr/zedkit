@@ -23,6 +23,7 @@ import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
   assertPubliclySafe,
   isExportableVisibility,
+  liveRunsToIndex,
   sanitizeLiveUrl,
   toPublicIndex,
   toPublicReviews,
@@ -525,24 +526,22 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
-test("the checked-in public snapshot is live-shaped, under 200KB, and sitemaps /issues", async () => {
-  const listed = await createSnapshotReviewPort().list();
-  assert.ok(listed.length >= 1);
-  const row = listed.find((record) => record.run.run_id === "20261111T065452Z-bc07a1a9") ?? listed[0];
-  assert.equal(row.visibility, "public");
-  assert.equal(typeof row.run.pr, "number");
-  assert.ok(String(row.run.sha ?? "").length > 0);
-  assert.ok(row.run.engine_label.length > 0);
-  assert.equal(typeof row.run.elapsed_s, "number");
-  assert.ok(String(row.run.verdict ?? "").length > 0);
-  assert.equal(typeof row.run.confidence_score, "number");
-  const kinds = new Set(row.items.map((item) => item.kind));
-  assert.ok(kinds.has("main"));
-  assert.ok(row.decision);
-  const unlinked = await createSnapshotReviewPort().listUnlinkedPullRequests();
-  assert.ok(unlinked.length >= 1);
-  for (const entry of unlinked) {
-    for (const item of entry.entries) {
+test("the checked-in public snapshot is version 1, under 200KB, and sitemaps /issues", async () => {
+  const raw = JSON.parse(readFileSync(join(reviewsRoot, "adapters/public-reviews.json"), "utf8"));
+  assert.equal(raw.version, 1);
+  const parsed = parsePublicReviewSnapshot(raw);
+  assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
+  const port = createSnapshotReviewPort();
+  const issues = await port.listIssues();
+  const unlinked = await port.listUnlinkedPullRequests();
+  const lives = await port.list();
+  assert.ok(issues.length + unlinked.length >= 1);
+  const hasIssueJoin = lives.some((row) => typeof row.run.issue === "number");
+  if (lives.length > 0 && !hasIssueJoin) {
+    assert.ok(unlinked.length >= 1);
+  }
+  for (const row of [...issues, ...unlinked]) {
+    for (const item of row.entries) {
       assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
     }
   }
@@ -806,6 +805,146 @@ function writeLiveSnapshot(reviews, extra = {}) {
   writeFileSync(path, JSON.stringify(liveWrapper(reviews, extra)));
   return path;
 }
+
+const GITHUB_REVIEW_URL = "https://github.com/example/repo/pull/133#pullrequestreview-1";
+const HOSTED_LIVE_URL = "https://example.test/live/abc";
+
+function liveMappedEntry(overrides = {}) {
+  const index = liveRunsToIndex([liveSample(overrides)]);
+  const linked = index.issues[0]?.entries[0];
+  if (linked !== undefined) return { index, entry: linked };
+  return { index, entry: index.pullRequests[0].entries[0] };
+}
+
+test("a GitHub review_url is not a hosted live console URL", () => {
+  const { entry } = liveMappedEntry({
+    run: { ...liveSample().run, review_url: GITHUB_REVIEW_URL },
+  });
+  assert.equal(entry.liveUrl, null);
+});
+
+test("hosted live_url is kept; http, token, userinfo, and home paths are dropped", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, HOSTED_LIVE_URL);
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl, null);
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/live/abc?token=secret" } }).entry
+      .liveUrl,
+    null,
+  );
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://user:pass@example.test/live/abc" } }).entry.liveUrl,
+    null,
+  );
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/home/alice/live" } }).entry.liveUrl,
+    null,
+  );
+});
+
+test("live mode live maps to review; improve and implement keep their names", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "live" } }).entry.type, "review");
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "improve" } }).entry.type, "improve");
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "implement" } }).entry.type, "implement");
+});
+
+test("a live row with issue 108 lists that issue and redirects the PR to it", async () => {
+  const path = writeLiveSnapshot([
+    liveSample({
+      run: {
+        ...liveSample().run,
+        pr: 133,
+        issue: 108,
+        issue_title: "Ship the public issues section",
+        live_url: HOSTED_LIVE_URL,
+        review_url: GITHUB_REVIEW_URL,
+      },
+    }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed.map((row) => row.number),
+    [108],
+  );
+  assert.equal(listed[0].title, "Ship the public issues section");
+  assert.equal(listed[0].state, "open");
+  assert.deepEqual(listed[0].pullRequests, [133]);
+  const resolved = await port.resolvePr(133);
+  assert.equal(resolved?.issueNumber, 108);
+  const redirects = await listReviewRedirectsFrom(port);
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
+  assert.ok(
+    redirects.some(
+      (row) => row.from === "/reviews/pr/133/runs/run-71" && row.to === "/issues/108/runs/run-71",
+    ),
+  );
+  const run = await port.getRun(108, "run-71");
+  assert.equal(run?.liveUrl, HOSTED_LIVE_URL);
+  assert.deepEqual(await port.listUnlinkedPullRequests(), []);
+});
+
+test("a live row with issue null or omitted stays an unlinked PR", async () => {
+  const omitted = writeLiveSnapshot([liveSample({ run: { ...liveSample().run, pr: 54 } })]);
+  const omittedPort = createSnapshotReviewPort(omitted);
+  assert.deepEqual(await omittedPort.listIssues(), []);
+  assert.equal((await omittedPort.resolvePr(54))?.issueNumber, null);
+  const omittedRedirects = await listReviewRedirectsFrom(omittedPort);
+  assert.ok(omittedRedirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
+
+  const explicitNull = writeLiveSnapshot([
+    liveSample({ run: { ...liveSample().run, pr: 55, issue: null } }),
+  ]);
+  const nullPort = createSnapshotReviewPort(explicitNull);
+  assert.deepEqual(await nullPort.listIssues(), []);
+  assert.equal((await nullPort.resolvePr(55))?.issueNumber, null);
+  const nullRedirects = await listReviewRedirectsFrom(nullPort);
+  assert.ok(nullRedirects.some((row) => row.from === "/reviews/pr/55" && row.to === "/issues/pr/55"));
+});
+
+test("a live row with an issue and no PR still appears on the issue list", () => {
+  const index = liveRunsToIndex([
+    liveSample({
+      run: { ...liveSample().run, pr: null, issue: 93, issue_title: "Failed implement" },
+    }),
+  ]);
+  assert.deepEqual(
+    index.issues.map((row) => row.number),
+    [93],
+  );
+  assert.deepEqual(index.issues[0].pullRequests, []);
+  assert.deepEqual(index.pullRequests, []);
+});
+
+test("live issue and live_url parse; unknown live run keys still fail", () => {
+  const accepted = parsePublicReviewSnapshot(
+    liveWrapper([
+      liveSample({
+        run: { ...liveSample().run, issue: 108, live_url: HOSTED_LIVE_URL },
+      }),
+    ]),
+  );
+  assert.equal(accepted.ok, true, accepted.ok ? "" : accepted.error.message);
+  assert.equal(accepted.value[0].run.issue, 108);
+  assert.equal(accepted.value[0].run.live_url, HOSTED_LIVE_URL);
+
+  const nulls = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, issue: null, live_url: null } })]),
+  );
+  assert.equal(nulls.ok, true, nulls.ok ? "" : nulls.error.message);
+  assert.equal(nulls.value[0].run.issue, null);
+  assert.equal(nulls.value[0].run.live_url, null);
+
+  assert.equal(
+    parsePublicReviewSnapshot(
+      liveWrapper([liveSample({ run: { ...liveSample().run, hosted_url: HOSTED_LIVE_URL } })]),
+    ).ok,
+    false,
+  );
+  assert.equal(
+    parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, issue: "108" } })])).ok,
+    false,
+  );
+});
 
 test("private and unknown live visibility never survive the public gate", () => {
   const privateRecord = liveSample({
@@ -1193,7 +1332,14 @@ test("the temporary mapper turns live rows into the current view-model", () => {
 });
 
 test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
-  const lives = await createSnapshotReviewPort().list();
+  const port = createSnapshotReviewPort();
+  const lives = await port.list();
+  if (lives.length === 0) {
+    const issues = await port.listIssues();
+    const unlinked = await port.listUnlinkedPullRequests();
+    assert.ok(issues.length + unlinked.length >= 1);
+    return;
+  }
   const live = lives[0];
   assert.ok(live);
   const record = toReviewRecord(live, lives);

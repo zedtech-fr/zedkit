@@ -63,6 +63,8 @@ const RUN_OPTIONAL_KEYS = [
   "branch",
   "opened_pr_url",
   "issue_title",
+  "issue",
+  "live_url",
 ] as const;
 const ITEM_KEYS = [
   "id",
@@ -473,6 +475,15 @@ function parseRunInfo(value: unknown, label: string): Result<LiveRunInfo, Error>
     }
     Object.assign(run, { pr: obj.value.pr });
   }
+  if (obj.value.issue !== undefined) {
+    if (
+      obj.value.issue !== null &&
+      (typeof obj.value.issue !== "number" || !Number.isSafeInteger(obj.value.issue))
+    ) {
+      return fail(`${label}.issue must be a safe integer or null`);
+    }
+    Object.assign(run, { issue: obj.value.issue });
+  }
   const optionals: Array<[string, (v: unknown, l: string) => Result<unknown, Error>]> = [
     ["sha", asNullableString],
     ["repo", asString],
@@ -489,6 +500,7 @@ function parseRunInfo(value: unknown, label: string): Result<LiveRunInfo, Error>
     ["branch", asNullableString],
     ["opened_pr_url", asNullableString],
     ["issue_title", asNullableString],
+    ["live_url", asNullableString],
   ];
   for (const [key, parse] of optionals) {
     if (obj.value[key] === undefined) continue;
