@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const PAGES = ["/", "/docs/getting-started"];
+const SEARCH_PAGES = ["/docs/getting-started"];
 
 test("the phone menu keeps a quiet hover and a stronger current page", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -76,6 +77,12 @@ for (const path of PAGES) {
       const box = await mark.boundingBox();
       expect(box?.height ?? 0).toBeGreaterThan(0);
     });
+  });
+}
+
+for (const path of SEARCH_PAGES) {
+  test.describe(`phone header search on ${path}`, () => {
+    test.use({ viewport: { width: 390, height: 844 } });
 
     test("search lives in the header and opens the dialog without a floating button", async ({ page }) => {
       await page.goto(path);

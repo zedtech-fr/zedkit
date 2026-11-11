@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const PAGES = ["/", "/docs/getting-started"] as const;
+const PAGES = ["/docs/getting-started"] as const;
 const SIZES = [
   { width: 360, height: 640 },
   { width: 390, height: 844 },
@@ -56,7 +56,7 @@ test("Shift+Tab stays inside the phone search dialog", async ({ page }) => {
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
   test("search dialog opens without travel animations", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/docs/getting-started");
     await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     expect(await page.evaluate(() => document.querySelector("[data-search-bar]")?.getAnimations().length ?? 0)).toBe(0);

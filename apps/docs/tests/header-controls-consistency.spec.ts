@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-import { readComputedContrast } from "./a11y-helpers";
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
 import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
@@ -22,28 +21,11 @@ for (const theme of ["light", "dark"] as const) {
       if (width >= 768) {
         const header = page.locator("#nd-nav");
         await header.screenshot({ path: shotPath(`consistency-after-${name}-${theme}.png`), animations: "disabled" });
-        // fumadocs renders the slots twice (desktop bar + collapsed menu); assert the visible ones.
-        const toggle = header.locator("[data-theme-toggle]").filter({ visible: true }).first();
-        const search = header
-          .locator('[data-search], [aria-label="Search documentation"]')
-          .filter({ visible: true })
-          .first();
-        const github = header.locator('a[aria-label*="GitHub"]').first();
-        await expect(toggle).toBeVisible();
-        await expect(search).toBeVisible();
-        await expect(github).toBeVisible();
-        const heights = await page.evaluate(() => {
-          const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
-          const nav = document.querySelector("#nd-nav nav");
-          return {
-            toggle: measure(nav?.querySelector("[data-theme-toggle]") ?? null),
-            search: measure(nav?.querySelector("[data-search]") ?? null),
-            github: measure(nav?.querySelector('a[aria-label*="GitHub"]') ?? null),
-          };
-        });
-        expect(Math.max(heights.toggle, heights.search, heights.github)).toBeLessThanOrEqual(
-          Math.min(heights.toggle, heights.search, heights.github) + 2,
-        );
+        await expect(header.locator("[data-theme-toggle]").filter({ visible: true })).toHaveCount(0);
+        await expect(header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true })).toHaveCount(0);
+        await expect(header.locator('a[aria-label*="GitHub"]')).toHaveCount(0);
+        await expect(header.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+        await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
       }
 
       await page.locator("#get-started").scrollIntoViewIfNeeded();
@@ -96,10 +78,15 @@ for (const theme of ["light", "dark"] as const) {
   }
 }
 
-test("shell version label is caption text, not a link", async ({ page }) => {
+test("catalog header keeps search, theme, and a version caption", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const version = page.locator("#nd-nav [data-kit-version]");
+  await page.goto("/catalog", { waitUntil: "networkidle" });
+  const header = page.locator("#nd-nav");
+  await expect(header.locator("[data-theme-toggle]").filter({ visible: true }).first()).toBeVisible();
+  await expect(
+    header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true }).first(),
+  ).toBeVisible();
+  const version = header.locator("[data-kit-version]");
   await expect(version).toBeVisible();
   const style = await version.evaluate((el) => {
     const s = getComputedStyle(el);
@@ -108,35 +95,29 @@ test("shell version label is caption text, not a link", async ({ page }) => {
   expect(style.tag).toBe("SPAN");
   expect(parseFloat(style.fontSize)).toBeLessThanOrEqual(13);
   expect(style.cursor).not.toBe("pointer");
+  const heights = await page.evaluate(() => {
+    const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
+    const nav = document.querySelector("#nd-nav nav");
+    return {
+      toggle: measure(nav?.querySelector("[data-theme-toggle]") ?? null),
+      search: measure(nav?.querySelector("[data-search]") ?? null),
+      github: measure(nav?.querySelector('a[aria-label*="GitHub"]') ?? null),
+    };
+  });
+  expect(Math.max(heights.toggle, heights.search, heights.github)).toBeLessThanOrEqual(
+    Math.min(heights.toggle, heights.search, heights.github) + 2,
+  );
 });
 
 for (const theme of ["light", "dark"] as const) {
-  test(`guides menu glass panel at 1440 ${theme}`, async ({ page }) => {
+  test(`home header has no Guides panel at 1440 ${theme}`, async ({ page }) => {
     await persistDocsSiteLook(page, DEFAULT_IDENTITY, theme);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
     await waitForAppliedLook(page, DEFAULT_IDENTITY, theme);
     const header = page.locator("#nd-nav");
-    await header.getByRole("button", { name: "Guides" }).hover();
-    const panel = header.locator(".flex.w-full.justify-center > *");
-    await expect(panel).toBeVisible();
-    const link = header.getByRole("link", { name: "Getting started", exact: true });
-    await expect(link).toBeVisible();
-    const panelStyle = await panel.evaluate((el) => {
-      const s = getComputedStyle(el);
-      const bg = s.backgroundColor;
-      const alpha = Number(/rgba\([^)]*,\s*([\d.]+)\)/.exec(bg)?.[1] ?? 1);
-      return {
-        alpha,
-        filter: s.backdropFilter || s.getPropertyValue("-webkit-backdrop-filter"),
-      };
-    });
-    expect(panelStyle.alpha).toBeGreaterThanOrEqual(0.6);
-    expect(panelStyle.alpha).toBeLessThanOrEqual(0.8);
-    expect(panelStyle.filter).toContain("blur(24px");
-    const contrast = await readComputedContrast(page, link);
-    expect(contrast).toBeGreaterThanOrEqual(4.5);
-    await panel.screenshot({ path: shotPath(`guides-menu-after-1440-${theme}.png`) });
+    await expect(header.getByRole("button", { name: "Guides" })).toHaveCount(0);
+    await expect(header.getByRole("link", { name: "Getting started", exact: true })).toHaveCount(0);
   });
 }
 

@@ -10,6 +10,8 @@ const { siteChromeCopy } = await import("../ui/i18n/site-chrome-copy.ts");
 
 const CONSUMERS = [
   "ui/mobile-header.tsx",
+  "ui/site-headers.tsx",
+  "ui/home-header-actions.tsx",
   "ui/site-footer.tsx",
   "lib/site-links.mjs",
   "ui/skip-link.tsx",
@@ -34,6 +36,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.nav.siteNavigation, "Site navigation");
   assert.equal(siteChromeCopy.nav.guides, "Guides");
   assert.equal(siteChromeCopy.nav.github, "GitHub");
+  assert.equal(siteChromeCopy.getStarted, "Get started");
   assert.equal(siteChromeCopy.footer.maintainer, "Maintained by ZED TECH");
   assert.equal(siteChromeCopy.footer.links.documentation, "Documentation");
   assert.equal(siteChromeCopy.footer.links.catalog, "Catalog");
@@ -70,6 +73,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(catalog, /<[a-zA-Z]/);
 
   const header = read("ui/mobile-header.tsx");
+  const siteHeaders = read("ui/site-headers.tsx");
+  const homeActions = read("ui/home-header-actions.tsx");
   const footer = read("ui/site-footer.tsx");
   const skip = read("ui/skip-link.tsx");
   const brand = read("ui/site-brand.tsx");
@@ -81,9 +86,11 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(header, /siteChromeCopy\.nav\.openMenu/);
   assert.match(header, /siteChromeCopy\.nav\.menu/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
-  assert.match(header, /siteChromeCopy\.nav\.guides/);
   assert.match(header, /siteChromeCopy\.nav\.github/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
+  assert.match(homeActions, /siteChromeCopy\.nav\.github/);
+  assert.match(homeActions, /siteChromeCopy\.getStarted/);
+  assert.match(siteHeaders, /siteChromeCopy\.brand\.homeAriaLabel/);
   assert.match(footer, /siteChromeCopy\.footer\.maintainer/);
   assert.match(footer, /siteChromeCopy\.footer\.links\[item\.copyKey\]/);
   assert.match(skip, /siteChromeCopy\.skipToContent/);
@@ -97,7 +104,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
     .map(read)
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
-  assert.doesNotMatch(consumers, /"Search the documentation"|"zedkit home"|"Maintained by ZED TECH"/);
+  assert.doesNotMatch(consumers, /"Search the documentation"|"zedkit home"|"Maintained by ZED TECH"|"Get started"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
   assert.doesNotMatch(header, /<p[\s>]/);
