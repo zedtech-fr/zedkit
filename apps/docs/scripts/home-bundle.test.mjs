@@ -57,8 +57,8 @@ test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111,
     lead,
     /<SecretField[\s\S]*homeCopy\.hero\.promptCaption[\s\S]*<HomeHeroLeadActions issuesHref=\{issuesHref\} \/>[\s\S]*homeCopy\.hero\.facts/,
   );
+  assert.match(lead, /from "@\/features\/reviews\/compose"/);
   assert.match(lead, /publicIssueHref/);
-  assert.match(lead, /issuesHref=\{issuesHref\}/);
   assert.match(actions, /from "@\/ui\/home\/home-link"/);
   assert.match(actions, /from "@\/ui\/off-path-link"/);
   // Primary Setup (near-black site-action), Get started outline site-action, quiet catalog, then off-path issues.
@@ -195,6 +195,8 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(actions, /#get-started/);
   assert.match(actions, /data-site-action/);
   assert.match(actions, /SITE_GITHUB_URL/);
+  assert.match(actions, /OffPathLink/);
   assert.doesNotMatch(actions, /<GithubIcon|aria-label=\{siteChromeCopy\.nav\.github\}/);
+  assert.doesNotMatch(actions, /target="_blank"/);
   assert.doesNotMatch(trigger, /fumadocs-core\/search\/client/);
 });

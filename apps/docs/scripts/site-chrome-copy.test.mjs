@@ -125,9 +125,16 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(offPath, /target="_blank"/);
   assert.match(offPath, /rel="noopener noreferrer"/);
   assert.match(offPath, /data-external-mark/);
+  assert.match(offPath, /inline-flex items-center gap-icon/);
+  assert.match(offPath, /` \(\$\{opens\}\)`/);
+  assert.match(offPath, /labelled === undefined/);
   assert.match(a11y, /siteChromeCopy\.nav\.opensInNewTab/);
   assert.match(footer, /OffPathLink/);
   assert.match(header, /OffPathLink/);
+  assert.doesNotMatch(header, /if \(link\.external\)/);
+  assert.match(homeActions, /OffPathLink/);
+  assert.doesNotMatch(homeActions, /target="_blank"/);
+  assert.doesNotMatch(homeActions, /\brel=/);
   assert.doesNotMatch(footer, /rel="noreferrer"/);
   assert.doesNotMatch(header, /rel="noreferrer"/);
 
@@ -148,6 +155,15 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(search, /variant="ghost"/);
   assert.match(skip, /href="#main-content"/);
   assert.doesNotMatch(skip, /IconButton|<Button[\s>]/);
+});
+
+test("smoke footer names include the off-path suffix", () => {
+  const spec = read("tests/site-shell.spec.ts");
+  assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
+  assert.match(spec, /GitHub \(opens in a new tab\)/);
+  assert.match(spec, /zedtech\.fr \(opens in a new tab\)/);
+  assert.doesNotMatch(spec, /footerLink\(page, "GitHub"\)/);
+  assert.doesNotMatch(spec, /footerLink\(page, "zedtech\.fr"\)/);
 });
 
 test("SEO export still scans the catalog footer credit string", () => {

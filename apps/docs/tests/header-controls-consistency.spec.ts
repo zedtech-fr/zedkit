@@ -24,7 +24,7 @@ for (const theme of ["light", "dark"] as const) {
         await expect(header.locator("[data-theme-toggle]").filter({ visible: true })).toHaveCount(0);
         await expect(header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true })).toHaveCount(0);
         await expect(header.locator('a[aria-label*="GitHub"]')).toHaveCount(0);
-        await expect(header.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+        await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
         await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
       }
 

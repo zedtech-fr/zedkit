@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import { ExternalLink } from "lucide-react";
-import { Text } from "@zedtech/zedkit-ui";
+import { cn, Text } from "@zedtech/zedkit-ui";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
 type OffPathLinkProps = Omit<ComponentProps<typeof Link>, "target" | "rel" | "prefetch">;
@@ -12,6 +12,7 @@ export function OffPathLink({
   children,
   className,
   "aria-label": ariaLabel,
+  title,
   ...props
 }: OffPathLinkProps) {
   const opens = siteChromeCopy.nav.opensInNewTab;
@@ -23,15 +24,18 @@ export function OffPathLink({
       prefetch={false}
       target="_blank"
       rel="noopener noreferrer"
-      className={className}
+      className={cn("inline-flex items-center gap-icon", className)}
       aria-label={labelled}
+      title={title ?? labelled}
     >
       {children}
-      <ExternalLink aria-hidden="true" data-external-mark="" className="size-icon shrink-0" />
       {labelled === undefined ? (
-        <Text as="span" className="sr-only">
-          {opens}
-        </Text>
+        <>
+          <ExternalLink aria-hidden="true" data-external-mark="" className="size-icon shrink-0" />
+          <Text as="span" className="sr-only">
+            {` (${opens})`}
+          </Text>
+        </>
       ) : null}
     </Link>
   );

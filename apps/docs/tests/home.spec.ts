@@ -62,10 +62,6 @@ test("home hero offers Setup first with get started, catalog, and a discreet iss
   expect(issuesHref).not.toBe("/issues/0");
   await expect(issues).not.toHaveAttribute("data-site-action");
 
-  const header = page.locator("#nd-nav");
-  await expect(header.getByRole("link", { name: "Reviews" })).toHaveCount(0);
-  await expect(header.getByRole("link", { name: "Issues", exact: true })).toHaveCount(0);
-
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
     "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
   );

@@ -82,18 +82,6 @@ function NavDrawerLink({
 }) {
   const active = isSiteNavLinkActive(pathname, link);
   const itemClassName = `${className}${active ? " menu-current text-foreground" : ""}`;
-  if (link.external) {
-    return (
-      <OffPathLink
-        href={link.href}
-        onClick={onNavigate}
-        aria-current={active ? "page" : undefined}
-        className={itemClassName}
-      >
-        <span className="content-shrink flex-1">{link.text}</span>
-      </OffPathLink>
-    );
-  }
   return (
     <DocsAppLink
       href={link.href}

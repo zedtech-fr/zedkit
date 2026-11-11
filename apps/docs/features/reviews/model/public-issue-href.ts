@@ -1,5 +1,4 @@
-import { createSnapshotReviewPort } from "../features/reviews/adapters/snapshot.ts";
-import { issuePath, unlinkedPrPath } from "../features/reviews/model/review-routes.ts";
+import { issuePath, unlinkedPrPath } from "./review-routes.ts";
 
 export type PublicIssueHrefPort = {
   listIssues(): Promise<readonly { readonly number: number }[]>;
@@ -7,7 +6,7 @@ export type PublicIssueHrefPort = {
 };
 
 function firstPositiveNumber(rows: readonly { readonly number: number }[]): number | undefined {
-  return rows.find((row) => row.number > 0)?.number;
+  return rows.find((row) => Number.isSafeInteger(row.number) && row.number > 0)?.number;
 }
 
 /** Snapshot-backed public run-history URL for the home hero. Never `/issues/0`. */
@@ -17,8 +16,4 @@ export async function publicIssueHrefFrom(port: PublicIssueHrefPort): Promise<st
   const prNumber = firstPositiveNumber(await port.listUnlinkedPullRequests());
   if (prNumber !== undefined) return unlinkedPrPath(prNumber);
   return "/issues";
-}
-
-export async function publicIssueHref(): Promise<string> {
-  return publicIssueHrefFrom(createSnapshotReviewPort());
 }
