@@ -4563,11 +4563,11 @@
         {
           "need": "Lay out an admin page (sidebar + topbar + header)",
           "import": "`@zedtech/zedkit-ui` — `AppShell`, `AppShellProps`, `PageHeader`, `PageHeaderProps`",
-          "wraps": "none (theme tokens only)",
+          "wraps": "`vaul` (via Drawer)",
           "status": "stable",
           "shortName": "AppShell",
           "audience": "Teams scaffolding a consistent admin layout.",
-          "purpose": "Sidebar + topbar shell with page header (title, description, actions).",
+          "purpose": "Sidebar + topbar shell with a mobile drawer, optional fixed-height scrollports, and page header (title, description, actions).",
           "whenToUse": "As the frame of every admin page.",
           "whenNotToUse": "For public marketing pages — use your site layout instead.",
           "derivedFrom": null,
@@ -4580,6 +4580,14 @@
             {
               "title": "Without topbar",
               "code": "import { AppShell } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<nav aria-label=\"Primary\"><a href=\"#\">Overview</a></nav>}> {/* topbar is optional */}\n  <p>Content.</p>\n</AppShell>"
+            },
+            {
+              "title": "Fixed height",
+              "code": "import { AppShell } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<nav aria-label=\"Runs\">Runs</nav>} fixedHeight>\n  <p>Live transcript.</p>\n</AppShell>"
+            },
+            {
+              "title": "Custom trigger",
+              "code": "import { AppShell } from \"@zedtech/zedkit-ui\";\n<AppShell sidebar={<nav aria-label=\"Runs\">Runs</nav>} sidebarTrigger={<button type=\"button\">Runs</button>}>\n  <p>Content.</p>\n</AppShell>\n// Opt out of the mobile menu: sidebarTrigger={null}"
             }
           ],
           "adoption": {
@@ -4597,8 +4605,8 @@
             ]
           },
           "registry": "app-shell",
-          "a11y": "Landmark structure (`aside`/`header`/`main`) comes free; sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.",
-          "troubleshooting": "Sidebar missing on narrow screens — it renders from the `md` breakpoint up by design. Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.",
+          "a11y": "Landmark structure (`aside`/`header`/`main`) comes free; below `md` the menu opens a left Drawer titled from `messages.mainNavigation` (focus trap and return-focus come from Drawer). A custom `sidebarTrigger` must be a focusable button or link with an accessible name. `main` (always) and the aside (when `fixedHeight`) take `tabIndex={0}` so the overflow scrollports are keyboard reachable. Sidebar width and main padding come from `--spacing-app-shell-*` theme tokens.",
+          "troubleshooting": "Below `md`, the built-in menu (or `sidebarTrigger`) opens the sidebar in a Drawer; pass `sidebarTrigger={null}` to hide it on small screens. A custom `sidebarTrigger` must be a focusable button or link with an accessible name. The sidebar node mounts twice (aside + drawer) — keep it presentational: no ids, no aria references, no effects (duplicate-id risk). `fixedHeight` makes sidebar and main independent scrollports. `mainRef` is the scrolling `<main>` and needs a client parent (AppShell stays a server module). Cramped content — main padding is `p-app-shell-padding` / `md:p-app-shell-padding-md`.",
           "seeAlso": [
             "Group content in a card section"
           ]
