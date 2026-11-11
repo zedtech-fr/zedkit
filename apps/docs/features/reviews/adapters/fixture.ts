@@ -13,15 +13,17 @@ const FIXTURES: readonly ReviewRecord[] = [
     prState: "open",
     visibility: "public",
     notes:
-      "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes and run history. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
+      "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
     summary: "The public review section is ready to merge.",
     evidence: "",
     actions: [],
+    findings: [],
     runs: [
       {
         id: "run-71",
         status: "done",
         startedAt: "2026-11-09T14:50:00.000Z",
+        agents: [],
         items: [
           { id: "flow", kind: "flow", title: "Main flow", status: "done" },
           { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
@@ -31,6 +33,7 @@ const FIXTURES: readonly ReviewRecord[] = [
         id: "run-71-earlier",
         status: "done",
         startedAt: "2026-11-09T13:00:00.000Z",
+        agents: [],
         items: [
           { id: "flow", kind: "flow", title: "Main flow", status: "done" },
           { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
@@ -58,11 +61,13 @@ const FIXTURES: readonly ReviewRecord[] = [
         detail: "List metadata (SHA, last run) must stay at the 13px floor and 4.5:1 against the page.",
       },
     ],
+    findings: [],
     runs: [
       {
         id: "run-42",
         status: "error",
         startedAt: "2026-11-08T09:10:00.000Z",
+        agents: [],
         items: [
           { id: "flow", kind: "flow", title: "Main flow", status: "error" },
           { id: "workflow-contrast", kind: "workflow", title: "Contrast check", status: "error" },
@@ -85,11 +90,13 @@ const FIXTURES: readonly ReviewRecord[] = [
     summary: "A running review still belongs on the list; this fixture does not update after deploy.",
     evidence: "",
     actions: [],
+    findings: [],
     runs: [
       {
         id: "run-18",
         status: "running",
         startedAt: "2026-11-10T08:00:00.000Z",
+        agents: [],
         items: [
           { id: "flow", kind: "flow", title: "Main flow", status: "running" },
           { id: "agent-docs", kind: "agent", title: "Docs agent", status: "running" },
@@ -117,6 +124,7 @@ const FIXTURES: readonly ReviewRecord[] = [
         detail: "When there are no reviews yet, say what will appear and that the page is still the list.",
       },
     ],
+    findings: [],
     firstPass: {
       findings: [
         {
@@ -141,6 +149,7 @@ const FIXTURES: readonly ReviewRecord[] = [
         id: "run-83",
         status: "done",
         startedAt: "2026-11-10T10:50:00.000Z",
+        agents: [],
         items: [
           { id: "flow", kind: "flow", title: "Main flow", status: "done" },
           { id: "agent-review", kind: "agent", title: "Review agent", status: "done" },
@@ -162,11 +171,13 @@ const FIXTURES: readonly ReviewRecord[] = [
     summary: "Gated.",
     evidence: "",
     actions: [],
+    findings: [],
     runs: [
       {
         id: "run-99",
         status: "done",
         startedAt: "2026-11-01T00:00:00.000Z",
+        agents: [],
         items: [{ id: "agent-private", kind: "agent", title: "secret agent", status: "done" }],
       },
     ],
@@ -193,16 +204,4 @@ export function createFixtureReviewPort(seed: readonly ReviewRecord[] = FIXTURES
       return Promise.resolve(run === undefined ? null : structuredClone(run) as ReviewRun);
     },
   };
-}
-
-export async function listReviewSitemapPaths(): Promise<string[]> {
-  const records = await createFixtureReviewPort().list();
-  const paths = ["/reviews"];
-  for (const record of records) {
-    paths.push(`/reviews/pr/${record.number}`);
-    for (const run of record.runs) {
-      paths.push(`/reviews/pr/${record.number}/runs/${run.id}`);
-    }
-  }
-  return paths;
 }

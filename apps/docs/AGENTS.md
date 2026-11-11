@@ -60,6 +60,9 @@ reject dead `/r/<name>.json` links.
   `pnpm --filter @zedtech/zedkit-docs build` has been run and read.
   Typecheck does not load the router. A file inside a catch-all segment
   (`[[...slug]]`) is a child route; that segment must stay last.
+  Checked-in JSON read at build: import the file (`with { type: "json" }`).
+  Next 16 turbopack's `fileURLToPath` rejects a URL from
+  `new URL(..., import.meta.url)`.
 - **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
   component page, getting-started). Unit tests, `catalog:check`, the SEO
   export check and the first-load budget cover the rest. `pnpm e2e` is

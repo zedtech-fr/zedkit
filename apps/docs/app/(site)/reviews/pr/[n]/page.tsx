@@ -2,6 +2,7 @@ import { listReviewPrParams, parsePrNumber, ReviewPrFeature, reviewsCopy } from 
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
+export const dynamicParams = false;
 
 export const generateStaticParams = listReviewPrParams;
 

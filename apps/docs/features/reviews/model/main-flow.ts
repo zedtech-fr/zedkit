@@ -1,6 +1,6 @@
 import type {
   ReviewAction,
-  ReviewFinding,
+  ReviewFirstPassFinding,
   ReviewRecord,
   ReviewRun,
   ReviewVerdict,
@@ -24,7 +24,7 @@ export type ReviewMainFlow = {
   };
   readonly blockers: readonly ReviewAction[];
   readonly firstPass: {
-    readonly findings: readonly ReviewFinding[];
+    readonly findings: readonly ReviewFirstPassFinding[];
   } | null;
   readonly notes: string;
   readonly evidence: string | null;
