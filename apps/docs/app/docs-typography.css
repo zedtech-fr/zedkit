@@ -178,8 +178,7 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   color: hsl(var(--muted-foreground));
 }
 
-[data-catalog-shell] h2[data-slot="heading"],
-[data-catalog-shell] [data-catalog-toolbar] {
+[data-catalog-shell] h2[data-slot="heading"] {
   font-size: var(--zk-type-h2-size);
   font-weight: var(--zk-type-h2-weight);
   line-height: var(--zk-type-h2-leading);

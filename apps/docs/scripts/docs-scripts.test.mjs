@@ -5,7 +5,6 @@ import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } 
 import { componentPageHeaderMeta, componentPageSections } from "../lib/component-page-sections.mjs";
 import { declarationOrigin } from "../lib/declared-props.mjs";
 import { partitionPropsEntries } from "../lib/props-priority.mjs";
-import { groupCatalogResults } from "../lib/catalog-result-groups.mjs";
 import { uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
 
 const page = `---
@@ -29,23 +28,6 @@ status: beta
 <Button>Save</Button>
 \`\`\`
 `;
-
-test("groupCatalogResults uses the same area labels as catalog filters", () => {
-  const groups = groupCatalogResults([
-    { area: "ui", package: "ui", href: "/docs/ui/a", title: "Button", need: "n", status: "stable" },
-    { area: "backend", package: "core", href: "/docs/core/a", title: "tryCatch", need: "n", status: "stable" },
-    { area: "backend", package: "quality", href: "/docs/quality/a", title: "lint", need: "n", status: "stable" },
-    { area: "agents", package: "ai", href: "/docs/ai/a", title: "setup-ai", need: "n", status: "stable" },
-  ]);
-  assert.deepEqual(
-    groups.map((group) => [group.id, group.label, group.entries.length]),
-    [
-      ["ui", "UI", 1],
-      ["backend", "Core & server", 2],
-      ["agents", "Agents", 1],
-    ],
-  );
-});
 
 test("partitionPropsEntries surfaces variant and size before inherited attrs", () => {
   const entries = [

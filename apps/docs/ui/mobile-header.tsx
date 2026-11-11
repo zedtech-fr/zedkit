@@ -16,23 +16,19 @@ import {
   DrawerHeader,
   DrawerTitle,
   IconButton,
-  Text,
 } from "@zedtech/zedkit-ui";
+import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
 import { MobileSearchTrigger } from "@/ui/mobile-search-trigger";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { KitVersionLabel } from "@/ui/kit-version-label";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
+import { SHELL_NAV_PRIMARY_ITEM_CLASS } from "@/lib/shell-nav-classes";
 import {
-  SHELL_NAV_GUIDE_ITEM_CLASS,
-  SHELL_NAV_GUIDE_LABEL_CLASS,
-  SHELL_NAV_PRIMARY_ITEM_CLASS,
-} from "@/lib/shell-nav-classes";
-import {
+  isHomePath,
   isSiteNavLinkActive,
   sitePrimaryNavLinks,
-  SITE_GUIDE_LINKS,
   type SiteNavLink,
 } from "@/lib/site-nav-data";
 
@@ -112,13 +108,16 @@ function NavDrawerLink({
 
 function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
+  const home = isHomePath(pathname);
   const primary = sitePrimaryNavLinks();
 
   return (
     <div data-shell-nav-drawer className="flex flex-col gap-stack-lg overflow-y-auto px-drawer-chrome-padding pb-sheet">
-      <div className="w-full [&_[data-search]]:w-full">
-        <SiteFullSearchTrigger className="w-full max-w-none" />
-      </div>
+      {home ? null : (
+        <div className="w-full [&_[data-search]]:w-full">
+          <SiteFullSearchTrigger className="w-full max-w-none" />
+        </div>
+      )}
       <nav aria-label={siteChromeCopy.nav.menu} className="flex flex-col gap-stack-tight">
         {primary.map((link) => (
           <NavDrawerLink
@@ -129,29 +128,24 @@ function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
             className={SHELL_NAV_PRIMARY_ITEM_CLASS}
           />
         ))}
-        <Text className={SHELL_NAV_GUIDE_LABEL_CLASS} data-nav-group="">
-          {siteChromeCopy.nav.guides}
-        </Text>
-        {SITE_GUIDE_LINKS.map((link) => (
-          <NavDrawerLink
-            key={link.href}
-            link={link}
-            pathname={pathname}
-            onNavigate={onNavigate}
-            className={SHELL_NAV_GUIDE_ITEM_CLASS}
-          />
-        ))}
       </nav>
-      <div data-shell-drawer-foot="" className="flex items-center justify-between gap-stack-md border-t content-offset">
-        <OffPathLink
-          href={SITE_GITHUB_URL}
-          className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-stack-sm text-muted-foreground`}
-        >
-          <GithubIcon className="size-icon shrink-0" />
-          {siteChromeCopy.nav.github}
-        </OffPathLink>
-        <ThemeButton />
-      </div>
+      {home ? (
+        <div data-shell-drawer-foot="" className="flex flex-col gap-stack-md border-t content-offset">
+          <HomeGitHubLink className={SHELL_NAV_PRIMARY_ITEM_CLASS} />
+          <HomeGetStartedAction onClick={onNavigate} />
+        </div>
+      ) : (
+        <div data-shell-drawer-foot="" className="flex items-center justify-between gap-stack-md border-t content-offset">
+          <OffPathLink
+            href={SITE_GITHUB_URL}
+            className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-stack-sm text-muted-foreground`}
+          >
+            <GithubIcon className="size-icon shrink-0" />
+            {siteChromeCopy.nav.github}
+          </OffPathLink>
+          <ThemeButton />
+        </div>
+      )}
     </div>
   );
 }
@@ -199,8 +193,8 @@ function HomeMenuButton() {
 }
 
 /**
- * Phone header (< md): brand and version at the left; menu, theme, and GitHub at the right.
- * Search opens from the header on phone (top bar + results sheet).
+ * Phone header (< md): brand at the left; remaining chrome at the right.
+ * Home `/` is brand, GitHub text, Get started, and the menu — no search, theme, or version.
  */
 export function MobileHeader({
   mode,
@@ -213,6 +207,7 @@ export function MobileHeader({
   version: string;
   releasesHref: string;
 }) {
+  const home = isHomePath(usePathname());
   return (
     <>
       <header
@@ -231,17 +226,29 @@ export function MobileHeader({
           >
             <SiteBrand />
           </DocsAppLink>
-          <span className="hidden sm:inline-flex">
-            <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />
-          </span>
+          {home ? null : (
+            <span className="hidden sm:inline-flex">
+              <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />
+            </span>
+          )}
         </div>
         <div className="flex shrink-0 items-center">
-          <MobileSearchTrigger className={iconButtonClassName} />
-          <ThemeButton />
-          <OffPathLink href={SITE_GITHUB_URL} aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
-            <GithubIcon className="size-icon" />
-          </OffPathLink>
-          {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton />}
+          {home ? (
+            <>
+              <HomeGitHubLink className="px-touch" />
+              <HomeGetStartedAction />
+              <HomeMenuButton />
+            </>
+          ) : (
+            <>
+              <MobileSearchTrigger className={iconButtonClassName} />
+              <ThemeButton />
+              <OffPathLink href={SITE_GITHUB_URL} aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
+                <GithubIcon className="size-icon" />
+              </OffPathLink>
+              {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton />}
+            </>
+          )}
         </div>
       </header>
     </>

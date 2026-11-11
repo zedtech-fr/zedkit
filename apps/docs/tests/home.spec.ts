@@ -368,7 +368,7 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const hero = page.getByRole("link", { name: "Get started" }).first();
+      const hero = page.locator("[data-home-hero-actions]").getByRole("link", { name: "Get started" });
       await hero.scrollIntoViewIfNeeded();
       await expect(hero).toBeVisible();
       await hero.screenshot({ path: `test-results/home-hero-docs-cta-${mode}.png` });

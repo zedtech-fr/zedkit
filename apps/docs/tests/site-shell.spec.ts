@@ -8,8 +8,11 @@ test.describe("site shell", () => {
     await page.goto("/", { waitUntil: "networkidle" });
     await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
     await expect(footerLink(page, "MIT License")).toBeVisible();
-    await expect(page.locator("header").getByRole("link", { name: "Docs", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Guides" })).toBeVisible();
+    const header = page.locator("#nd-nav");
+    await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: "GitHub", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Guides" })).toHaveCount(0);
   });
 
   test("founder door: footer entry opens the honest no-code-first guide (#1078)", async ({ page }) => {

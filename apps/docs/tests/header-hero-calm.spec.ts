@@ -11,11 +11,11 @@ for (const viewport of [
   test.describe(`hero calm (${viewport.name}px)`, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
-    test("hero has one visible version caption in the header (not a link)", async ({ page }) => {
+    test("hero has no version caption in the header", async ({ page }) => {
       await page.goto("/", { waitUntil: "networkidle" });
       const shell = viewport.width < 768 ? page.locator("#nd-mobile-nav") : page.locator("#nd-nav");
-      await expect(shell.getByText(new RegExp(`^v${featuredPackageVersion}$`))).toHaveCount(1);
-      await expect(shell.getByRole("link", { name: new RegExp(`v${featuredPackageVersion}`) })).toHaveCount(0);
+      await expect(shell.getByText(new RegExp(`^v${featuredPackageVersion}$`))).toHaveCount(0);
+      await expect(shell.locator("[data-kit-version]")).toHaveCount(0);
     });
 
     test("hero has no stray markup line and demo style stays scoped", async ({ page }) => {

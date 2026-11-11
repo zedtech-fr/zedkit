@@ -15,7 +15,7 @@ test("catalog view reads as a catalog: lead, filters, results, no identity form"
   assert.match(view, /\{catalogCopy\.header\.lead\}/);
   assert.match(view, /CatalogFiltersToolbar/);
   assert.match(view, /CatalogResultsBodyLazy/);
-  assert.match(view, /catalogResultsStatusLine\(filtered\.length\)/);
+  assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
   assert.doesNotMatch(view, /CatalogIdentity/);
   assert.doesNotMatch(view, /IdentityLookForm/);
   assert.doesNotMatch(view, /bindLookLibrary/);
@@ -23,10 +23,12 @@ test("catalog view reads as a catalog: lead, filters, results, no identity form"
   assert.doesNotMatch(view, /ThemeScope/);
   const leadAt = view.indexOf("{catalogCopy.header.lead}");
   const toolbarAt = view.indexOf("<CatalogFiltersToolbar");
-  const resultsAt = view.indexOf("catalogResultsStatusLine(filtered.length)");
-  assert.equal(leadAt >= 0 && toolbarAt >= 0 && resultsAt >= 0, true);
+  const resultsAt = view.indexOf("<CatalogResultsBodyLazy");
+  const statusAt = view.indexOf("catalogResultsStatusLine(visible.length, areaTotal)");
+  assert.equal(leadAt >= 0 && toolbarAt >= 0 && resultsAt >= 0 && statusAt >= 0, true);
   assert.equal(leadAt < toolbarAt, true);
   assert.equal(toolbarAt < resultsAt, true);
+  assert.equal(resultsAt < statusAt, true);
 });
 
 test("catalog ships no identity host module", () => {
