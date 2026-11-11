@@ -79,7 +79,7 @@ test.describe("home AI setup section", () => {
     await expect(aiSetup.getByRole("link", { name: "Read the AI setup guide" })).toHaveAttribute("href", "/docs/ai/setup");
     await expect(aiSetup.getByRole("link", { name: "UI setup on Getting started" })).toHaveAttribute("href", "/docs/getting-started#ui-button");
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Years of production setup. One prompt.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Code that's checked. Screens that match.");
 
     await page.setViewportSize({ width: 320, height: 844 });
     await expect(aiField).toBeVisible();

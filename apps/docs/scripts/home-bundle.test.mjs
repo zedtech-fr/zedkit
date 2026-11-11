@@ -30,23 +30,51 @@ test("search dialog is lazy and not preloaded on every page", () => {
   assert.doesNotMatch(src, /from ["']\.\.\/components\/search["']/);
 });
 
-test("home hero lead prioritizes get started then catalog (#ZK-09)", () => {
+test("home hero lead is the joint title, one Setup entry, no kit tabs (#111)", () => {
   const lead = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
   const actions = readFileSync(join(app, "ui/home/home-hero-lead-actions.tsx"), "utf8");
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
+  const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
+  assert.match(copy, /title: "Code that's checked\. Screens that match\."/);
+  assert.match(
+    copy,
+    /sub: "Paste one prompt in the agent you already use\. It reads the repo and writes the setup\."/,
+  );
+  assert.match(copy, /setup: "Setup"/);
+  assert.doesNotMatch(copy, /setupAi: "Set up AI"/);
   assert.match(lead, /HomeHeroLeadActions/);
+  assert.match(lead, /typeRole="lead"/);
+  assert.match(lead, /data-home-hero-sub/);
+  assert.match(lead, /AI_SETUP_MINI_PROMPT/);
+  assert.doesNotMatch(lead, /MAP_SETUP_MINI_PROMPT/);
+  assert.doesNotMatch(lead + actions, /\bTabs\b/);
+  assert.doesNotMatch(lead + actions, /SetupEntryPrompt/);
+  assert.doesNotMatch(lead + actions, /\/issues\//);
+  assert.doesNotMatch(lead + actions, /target="_blank"/);
+  assert.match(
+    lead,
+    /<SecretField[\s\S]*<HomeHeroLeadActions \/>[\s\S]*homeCopy\.hero\.facts/,
+  );
   assert.match(actions, /from "@\/ui\/home\/home-link"/);
-  // Primary first, then Set up AI, then the quiet catalog link.
-  assert.match(actions, /<Button asChild>\s*\n\s*<HomeLink href="#get-started">\{homeCopy\.heroActions\.getStarted\}/);
-  assert.match(actions, /<HomeLink href="#ai-setup">\{homeCopy\.heroActions\.setupAi\}/);
+  // Primary Setup, then Get started outline, then the quiet catalog link.
+  assert.match(actions, /<Button asChild>\s*\n\s*<HomeLink href="#ai-setup">\{homeCopy\.heroActions\.setup\}/);
+  assert.match(
+    actions,
+    /variant="outline"[^>]*>\s*\n\s*<HomeLink href="#get-started">\{homeCopy\.heroActions\.getStarted\}/,
+  );
   assert.match(actions, /variant="link"[^>]*>\s*\n\s*<HomeLink href="\/catalog">\{homeCopy\.heroActions\.browseCatalog\}/);
   assert.equal((actions.match(/<HomeLink[\s>]/g) ?? []).length, 3);
+  assert.doesNotMatch(actions, /\btarget=/);
+  assert.doesNotMatch(actions, /\brel=/);
   const homeLink = readFileSync(join(app, "ui/home/home-link.tsx"), "utf8");
   assert.match(homeLink, /prefetch=\{false\}/);
   assert.match(copy, /getStarted: "Get started"/);
-  assert.match(copy, /setupAi: "Set up AI"/);
   assert.match(copy, /browseCatalog: "Browse catalog"/);
   assert.doesNotMatch(actions + copy, /Browse components/);
+  assert.match(nav, /text: "Documentation"/);
+  assert.match(nav, /text: "Catalog"/);
+  assert.doesNotMatch(nav, /text: "Reviews"/);
+  assert.doesNotMatch(nav, /text: "Issues"/);
 });
 
 test("drawer demo save closes and toasts", () => {
