@@ -41,6 +41,7 @@ export function ReviewRunView({
             run={run}
             copy={copy}
             panel={panel}
+            agentsReveal="section"
             decisionMeta={
               <>
                 <StatusLabel tone={STATUS_TONE[run.status]}>{copy.status[run.status]}</StatusLabel>
