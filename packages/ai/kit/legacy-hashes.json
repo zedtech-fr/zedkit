@@ -180,10 +180,13 @@
     "codebase-design/SKILL.md": ["2c20617f87ec8af6"],
     "codebase-design/agents/openai.yaml": ["edebc9e4fcfe1021"],
     "compose-ui/SKILL.md": [
+      "2102f17d7f5afd0b",
       "46dfc02523348361",
       "4943823dd21ab19a",
+      "5668bfa9e2e8af9a",
       "8a7d5ed2e759bc94",
       "8fc79d72c84f30f3",
+      "cf5fad9a62e72d84",
       "f57895d079f1b1f6",
       "fdb2a150f415429b"
     ],
@@ -332,13 +335,16 @@
     "retro/agents/openai.yaml": ["cb6fb9d7e6b4be59"],
     "review/SKILL.md": [
       "0e172acaade560ea",
+      "100dbfa199210619",
       "182eaccccd7aa7b1",
       "1efde90565804fd0",
+      "22abeaaa9bedced6",
       "23c08d748be94ca5",
       "2f33201c838e8123",
       "310e8c06e17309ce",
       "36a8b0217808d2a7",
       "5fc1d449b3745bf4",
+      "6190f1c5f6b2ad87",
       "61f97e0f3fb6c869",
       "7af669be331478e4",
       "7bae42004350e36c",
@@ -353,6 +359,7 @@
       "c26db6a7db112ac6",
       "c2d243bdc40ffe55",
       "c313c2f6395f2fe2",
+      "c6fd4f7c4648fc99",
       "ca96dca0565344b1",
       "d2f72d4864807d82",
       "e01aeb73dd55f442",
@@ -578,6 +585,7 @@
     "wayfinder/agents/openai.yaml": ["88bc81a11a6d52ac"],
     "writing-for-agents/SKILL-MECHANICS.md": ["c768e6307c7c1072"],
     "writing-for-agents/SKILL.md": ["551adca942227b44"],
-    "writing-for-agents/agents/openai.yaml": ["eacb24b2a618cfb8"]
+    "writing-for-agents/agents/openai.yaml": ["eacb24b2a618cfb8"],
+    "review/decision.md": ["4568db6278832da6"]
   }
 }
