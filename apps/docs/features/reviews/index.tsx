@@ -32,6 +32,7 @@ import {
   listReviewPrParamsFrom,
   listReviewRunParamsFrom,
 } from "./model/review-routes";
+import { toReviewRecord } from "./model/to-review-record";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView } from "./ui/review-pr-view";
 import { ReviewRunView } from "./ui/review-run-view";
@@ -39,22 +40,27 @@ import { ReviewRunView } from "./ui/review-run-view";
 const port = createSnapshotReviewPort();
 
 export async function ReviewListFeature() {
-  const records = await port.list();
+  const lives = await port.list();
+  const records = lives.map((row) => toReviewRecord(row, lives));
   return <ReviewListView records={records} copy={reviewsCopy} />;
 }
 
 export async function ReviewPrFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
-  const record = number === null ? null : await port.getByPr(number);
-  if (record === null) notFound();
-  return <ReviewPrView record={record} copy={reviewsCopy} />;
+  const live = number === null ? null : await port.getByPr(number);
+  if (live === null) notFound();
+  const lives = await port.list();
+  return <ReviewPrView record={toReviewRecord(live, lives)} copy={reviewsCopy} />;
 }
 
 export async function ReviewRunFeature({ n, id }: { n: string; id: string }) {
   const number = parsePrNumber(n);
-  const record = number === null ? null : await port.getByPr(number);
-  const run = number === null ? null : await port.getRun(number, id);
-  if (record === null || run === null) notFound();
+  const live = number === null ? null : await port.getRun(number, id);
+  if (live === null) notFound();
+  const lives = await port.list();
+  const record = toReviewRecord(live, lives);
+  const run = record.runs.find((item) => item.id === id);
+  if (run === undefined) notFound();
   return <ReviewRunView record={record} run={run} copy={reviewsCopy} />;
 }
 

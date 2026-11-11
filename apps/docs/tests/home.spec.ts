@@ -10,7 +10,7 @@ test("home explains the product and four entry areas", async ({ page }) => {
   await expect(page.locator("[data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(
     page.getByRole("heading", {
-      name: "Years of production setup. One prompt.",
+      name: "Code that's checked. Screens that match.",
       level: 1,
     }),
   ).toBeVisible();
@@ -31,28 +31,34 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero offers get started first with catalog and demo links (#1038)", async ({ page }) => {
+test("home hero offers Setup first with get started and catalog (#111)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
 
   const heroActions = page.locator("[data-home-hero-actions] a");
   await expect(heroActions).toHaveCount(3);
-  await expect(heroActions.nth(0)).toHaveText("Get started");
-  await expect(heroActions.nth(0)).toHaveAttribute("href", "#get-started");
-  await expect(heroActions.nth(1)).toHaveText("Set up AI");
-  await expect(heroActions.nth(1)).toHaveAttribute("href", "#ai-setup");
+  await expect(heroActions.nth(0)).toHaveText("Setup");
+  await expect(heroActions.nth(0)).toHaveAttribute("href", "#ai-setup");
+  await expect(heroActions.nth(1)).toHaveText("Get started");
+  await expect(heroActions.nth(1)).toHaveAttribute("href", "#get-started");
   await expect(heroActions.nth(2)).toHaveText("Browse catalog");
   await expect(heroActions.nth(2)).toHaveAttribute("href", "/catalog");
+  for (const index of [0, 1, 2]) {
+    await expect(heroActions.nth(index)).not.toHaveAttribute("target");
+    await expect(heroActions.nth(index)).not.toHaveAttribute("rel");
+  }
 
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
-    "Installs in 2 seconds. Then the agent reads your repo once — about 15 to 45 minutes.",
+    "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
   );
   await expect(page.getByRole("textbox", { name: "One-prompt AI setup" })).toBeVisible();
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
   await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Years of production setup. One prompt.",
+      name: "Code that's checked. Screens that match.",
       level: 1,
     }),
   ).toBeVisible();
@@ -268,11 +274,11 @@ test.describe("home entry-point links light/dark (#753)", () => {
   }
 });
 
-test("home docs CTAs keep a decorative icon on phone (get started band)", async ({ page }) => {
+test("home docs CTAs keep a decorative icon on phone (paste band)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("#get-started [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(0);
-  await expect(page.locator("#ai-setup [data-docs-ctas] svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.locator("#paste [data-home-full-steps] svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.locator("#ai-setup [data-docs-ctas]")).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => (document.querySelector("#home-page")?.scrollWidth ?? 0) <= document.documentElement.clientWidth + 1,
@@ -305,10 +311,10 @@ test.describe("home docs CTAs light/dark (#748)", () => {
       await entry.scrollIntoViewIfNeeded();
       await expect(entry.getByRole("link", { name: "Start with buttons" })).toBeVisible();
       await entry.screenshot({ path: `test-results/home-cta-entry-${mode}.png` });
-      const ai = page.locator("#ai-setup [data-docs-ctas]");
-      await ai.scrollIntoViewIfNeeded();
-      await expect(ai.getByRole("link", { name: "Read the AI setup guide" })).toBeVisible();
-      await ai.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
+      const paste = page.locator("#paste").getByRole("link", { name: "Full install steps" });
+      await paste.scrollIntoViewIfNeeded();
+      await expect(paste).toBeVisible();
+      await paste.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
     });
   }
 });
@@ -323,11 +329,11 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const install = page.locator("#ai-setup [data-docs-ctas]");
-      await install.scrollIntoViewIfNeeded();
-      await expect(install.getByRole("link", { name: "Read the AI setup guide" })).toBeVisible();
-      await install.screenshot({ path: `test-results/home-section-cta-install-${mode}.png` });
-      await install.screenshot({ path: `test-results/home-section-cta-ai-${mode}.png` });
+      const paste = page.locator("#paste").getByRole("link", { name: "Full install steps" });
+      await paste.scrollIntoViewIfNeeded();
+      await expect(paste).toBeVisible();
+      await paste.screenshot({ path: `test-results/home-section-cta-install-${mode}.png` });
+      await paste.screenshot({ path: `test-results/home-section-cta-ai-${mode}.png` });
     });
   }
 });
@@ -383,25 +389,23 @@ test("home has no nested interactive elements", async ({ page }) => {
   expect(nested).toEqual([]);
 });
 
-test("home get-started opens on the package install command", async ({ page }) => {
+test("home get-started hash lands on the combined paste, not an install panel", async ({ page }) => {
   await page.goto(`#get-started`, { waitUntil: "networkidle" });
-  await expect(page.locator("#install-or-copy [data-adoption-step='install']").getByRole("region", { name: "Terminal" })).toContainText(
-    "pnpm add @zedtech/zedkit-ui",
-  );
-  // asChild puts data-home-ai-setup on the <a> itself.
-  await expect(page.locator("#get-started [data-home-ai-setup]")).toHaveAttribute("href", "#ai-setup");
-  await expect(page.locator("#get-started [data-home-ai-setup]")).toHaveText("Set up AI");
-  await expect(page.locator("#get-started [data-home-way]")).toHaveCount(2);
-  await expect(page.locator("#get-started").getByRole("link", { name: "Start without writing code" })).toHaveAttribute(
+  await expect(page.locator("#get-started [data-setup-entry='combined']")).toBeVisible();
+  await expect(page.locator("#install-or-copy")).toHaveCount(0);
+  await expect(page.locator("#get-started [data-home-ai-setup]")).toHaveCount(0);
+  await expect(page.locator("#get-started [data-home-way]")).toHaveCount(0);
+  await expect(page.locator("#get-started").getByRole("link", { name: "Full install steps" })).toHaveAttribute(
     "href",
-    "/docs/start-without-writing-code",
+    "/docs/getting-started#install-or-copy",
   );
 });
 
-test("home install section has no registry brick grid; catalog link lives in families", async ({ page }) => {
+test("home has no registry brick grid; catalog link lives in families", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`#install-or-copy`, { waitUntil: "networkidle" });
-  await expect(page.locator("#install-or-copy [data-registry-bricks]")).toHaveCount(0);
+  await page.goto(`#paste`, { waitUntil: "networkidle" });
+  await expect(page.locator("#install-or-copy")).toHaveCount(0);
+  await expect(page.locator("[data-registry-bricks]")).toHaveCount(0);
   const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
   await catalog.scrollIntoViewIfNeeded();
   await expect(catalog).toHaveAttribute("href", "/catalog?area=ui");

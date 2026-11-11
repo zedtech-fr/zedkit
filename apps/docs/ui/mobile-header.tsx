@@ -14,11 +14,14 @@ import {
   DrawerHandle,
   DrawerHeader,
   DrawerTitle,
+  IconButton,
+  Text,
 } from "@zedtech/zedkit-ui";
 import { MobileSearchTrigger } from "@/ui/mobile-search-trigger";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { KitVersionLabel } from "@/ui/kit-version-label";
+import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 import {
   SHELL_NAV_GUIDE_ITEM_CLASS,
@@ -42,29 +45,30 @@ function ThemeButton({ className }: { className?: string }) {
   const mounted = useSyncExternalStore(noop, () => true, () => false);
   const dark = mounted && resolvedTheme === "dark";
   return (
-    <button
-      type="button"
-      aria-label="Toggle theme"
+    <IconButton
+      label={siteChromeCopy.theme.toggleAriaLabel}
+      variant="ghost"
+      size="icon"
       className={className ?? iconButtonClassName}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >
       {dark ? <Moon aria-hidden="true" className="size-icon" /> : <Sun aria-hidden="true" className="size-icon" />}
-    </button>
+    </IconButton>
   );
 }
 
 function DocsMenuButton() {
   const sidebar = useSidebar();
   return (
-    <button
-      type="button"
-      aria-label="Open navigation"
-      title="Open navigation"
+    <IconButton
+      label={siteChromeCopy.nav.openNavigation}
+      variant="ghost"
+      size="icon"
       className={iconButtonClassName}
       onClick={() => sidebar.setOpen(true)}
     >
       <Menu aria-hidden="true" className="size-icon" />
-    </button>
+    </IconButton>
   );
 }
 
@@ -94,16 +98,16 @@ function NavDrawerLink({
   );
 }
 
-function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: string; onNavigate: () => void }) {
+function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
-  const primary = sitePrimaryNavLinks(changelogHref);
+  const primary = sitePrimaryNavLinks();
 
   return (
     <div data-shell-nav-drawer className="flex flex-col gap-stack-lg overflow-y-auto px-drawer-chrome-padding pb-sheet">
       <div className="w-full [&_[data-search]]:w-full">
         <SiteFullSearchTrigger className="w-full max-w-none" />
       </div>
-      <nav aria-label="Menu" className="flex flex-col gap-stack-tight">
+      <nav aria-label={siteChromeCopy.nav.menu} className="flex flex-col gap-stack-tight">
         {primary.map((link) => (
           <NavDrawerLink
             key={link.href}
@@ -113,7 +117,9 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
             className={SHELL_NAV_PRIMARY_ITEM_CLASS}
           />
         ))}
-        <p className={SHELL_NAV_GUIDE_LABEL_CLASS} data-nav-group="">Guides</p>
+        <Text className={SHELL_NAV_GUIDE_LABEL_CLASS} data-nav-group="">
+          {siteChromeCopy.nav.guides}
+        </Text>
         {SITE_GUIDE_LINKS.map((link) => (
           <NavDrawerLink
             key={link.href}
@@ -132,7 +138,7 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
           className={`${SHELL_NAV_PRIMARY_ITEM_CLASS} inline-flex w-auto gap-stack-sm text-muted-foreground`}
         >
           <GithubIcon className="size-icon shrink-0" />
-          GitHub
+          {siteChromeCopy.nav.github}
         </a>
         <ThemeButton />
       </div>
@@ -143,11 +149,9 @@ function SiteNavDrawerBody({ changelogHref, onNavigate }: { changelogHref: strin
 function SiteNavDrawer({
   open,
   onOpenChange,
-  changelogHref,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  changelogHref: string;
 }) {
   const close = () => onOpenChange(false);
 
@@ -156,29 +160,30 @@ function SiteNavDrawer({
       <DrawerContent>
         <DrawerHandle />
         <DrawerHeader className="sr-only">
-          <DrawerTitle>Menu</DrawerTitle>
-          <DrawerDescription>Site navigation</DrawerDescription>
+          <DrawerTitle>{siteChromeCopy.nav.menu}</DrawerTitle>
+          <DrawerDescription>{siteChromeCopy.nav.siteNavigation}</DrawerDescription>
         </DrawerHeader>
-        <SiteNavDrawerBody changelogHref={changelogHref} onNavigate={close} />
+        <SiteNavDrawerBody onNavigate={close} />
       </DrawerContent>
     </Drawer>
   );
 }
 
-function HomeMenuButton({ changelogHref }: { changelogHref: string }) {
+function HomeMenuButton() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button
-        type="button"
-        aria-label="Open menu"
+      <IconButton
+        label={siteChromeCopy.nav.openMenu}
+        variant="ghost"
+        size="icon"
         aria-haspopup="dialog"
         className={iconButtonClassName}
         onClick={() => setOpen(true)}
       >
         <Menu aria-hidden="true" className="size-icon" />
-      </button>
-      <SiteNavDrawer open={open} onOpenChange={setOpen} changelogHref={changelogHref} />
+      </IconButton>
+      <SiteNavDrawer open={open} onOpenChange={setOpen} />
     </>
   );
 }
@@ -192,13 +197,11 @@ export function MobileHeader({
   className,
   version,
   releasesHref,
-  changelogHref,
 }: {
   mode: "home" | "docs";
   className?: string;
   version: string;
   releasesHref: string;
-  changelogHref: string;
 }) {
   return (
     <>
@@ -213,7 +216,7 @@ export function MobileHeader({
         <div className="flex content-shrink items-center gap-icon">
           <DocsAppLink
             href="/"
-            aria-label="zedkit home"
+            aria-label={siteChromeCopy.brand.homeAriaLabel}
             className="inline-flex min-h-overlay-touch-target items-center rounded-md px-touch text-foreground focus-ring-control"
           >
             <SiteBrand />
@@ -225,10 +228,10 @@ export function MobileHeader({
         <div className="flex shrink-0 items-center">
           <MobileSearchTrigger className={iconButtonClassName} />
           <ThemeButton />
-          <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconButtonClassName}>
+          <a href={SITE_GITHUB_URL} target="_blank" rel="noreferrer" aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
             <GithubIcon className="size-icon" />
           </a>
-          {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton changelogHref={changelogHref} />}
+          {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton />}
         </div>
       </header>
     </>

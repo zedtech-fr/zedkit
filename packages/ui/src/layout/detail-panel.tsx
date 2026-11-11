@@ -10,6 +10,7 @@ export interface DetailItem {
 export interface DetailPanelProps {
   items: DetailItem[];
   className?: string;
+  variant?: "list" | "grid";
 }
 
 export interface DetailPanelRowProps {
@@ -31,12 +32,25 @@ export function DetailPanelRow({ label, value, className }: DetailPanelRowProps)
   );
 }
 
-export function DetailPanel({ items, className }: DetailPanelProps) {
+export function DetailPanel({ items, className, variant = "list" }: DetailPanelProps) {
+  const isGrid = variant === "grid";
   return (
-    <dl data-slot="detail-panel" className={cn("divide-y divide-border rounded-lg border", className)}>
-      {items.map((item, index) => (
-        <DetailPanelRow key={index} label={item.label} value={item.value} />
-      ))}
+    <dl
+      data-slot="detail-panel"
+      data-variant={variant}
+      className={cn(
+        isGrid ? "grid content-shrink gap-stack-md sm:grid-pair" : "divide-y divide-border rounded-lg border",
+        className,
+      )}
+    >
+      {isGrid
+        ? items.map((item, index) => (
+            <div key={index} data-slot="detail-panel-cell" className="content-shrink">
+              <dt className="text-dense text-muted-foreground">{item.label}</dt>
+              <dd className="content-shrink text-stat break-words tabular-nums">{item.value}</dd>
+            </div>
+          ))
+        : items.map((item, index) => <DetailPanelRow key={index} label={item.label} value={item.value} />)}
     </dl>
   );
 }

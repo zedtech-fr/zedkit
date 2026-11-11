@@ -1,12 +1,11 @@
 "use client";
 
-import { Label, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
+import { Label, SecretField, Stack } from "@zedtech/zedkit-ui";
 import { setupEntryPrompt, type SetupEntryId } from "@/lib/setup-entry-prompts";
 
 export function SetupEntryPrompt({ id }: { id: SetupEntryId }) {
   const entry = setupEntryPrompt(id);
   const fieldId = `setup-entry-${entry.id}`;
-  const peer = entry.role === "peer";
 
   return (
     <Stack
@@ -20,18 +19,11 @@ export function SetupEntryPrompt({ id }: { id: SetupEntryId }) {
         "not-prose"
       }
     >
-      {peer ? (
-        <Label htmlFor={fieldId}>{entry.label}</Label>
-      ) : (
-        <Text as="span" variant="muted" typeRole="caption">
-          {entry.label}
-        </Text>
-      )}
+      <Label htmlFor={fieldId}>{entry.label}</Label>
       <SecretField
         id={fieldId}
         multiline
         value={entry.value}
-        aria-label={entry.ariaLabel}
         copyLabel={entry.copyLabel}
       />
     </Stack>

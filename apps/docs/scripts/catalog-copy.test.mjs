@@ -21,6 +21,10 @@ test("catalog search placeholder puts need before title", () => {
   assert.equal(catalogCopy.filters.searchPlaceholder, "Need or title");
 });
 
+test("catalog copy carries no inline identity form", () => {
+  assert.equal("identity" in catalogCopy, false);
+});
+
 test("results status line takes a count argument", () => {
   assert.equal(catalogCopy.results.statusLine(0), "0 entries");
   assert.equal(catalogCopy.results.statusLine(1), "1 entry");

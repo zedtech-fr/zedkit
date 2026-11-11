@@ -16,15 +16,15 @@ export const SITE_GUIDE_LINKS: SiteNavLink[] = [
   { text: "Add SEO to a Next.js app", href: "/docs/add-seo-to-nextjs", active: "url" },
   { text: "zedkit and shadcn/ui", href: "/docs/zedkit-and-shadcn", active: "url" },
   { text: "Maturity and compatibility", href: "/docs/maturity-and-compatibility", active: "url" },
-  { text: "UI foundations", href: "/docs/foundations", active: "url" },
   { text: "Note list example", href: "/examples/note-list", active: "url" },
 ];
 
-export function sitePrimaryNavLinks(changelogHref: string): SiteNavLink[] {
+export function sitePrimaryNavLinks(): SiteNavLink[] {
   return [
-    { text: "Documentation", href: "/docs", active: "nested-url" },
+    { text: "AI", href: "/docs/ai/setup", active: "url" },
+    { text: "UI", href: "/docs/foundations", active: "url" },
+    { text: "Docs", href: "/docs", active: "url" },
     { text: "Catalog", href: "/catalog", active: "url" },
-    { text: "UI changelog", href: changelogHref, external: true },
   ];
 }
 
@@ -33,14 +33,18 @@ export function isSiteNavLinkActive(pathname: string, link: SiteNavLink): boolea
   if (link.active === "nested-url") {
     return pathname === link.href || pathname.startsWith(`${link.href}/`);
   }
-  return pathname === link.href || pathname.startsWith(`${link.href}/`);
+  return pathname === link.href;
 }
 
 /** Fumadocs header link model (desktop chrome). */
-export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
+export function siteHeaderLinks(): LinkItemType[] {
   return [
-    { text: "Documentation", url: "/docs", active: "nested-url" },
-    { text: "Catalog", url: "/catalog", active: "url" },
+    ...sitePrimaryNavLinks().map((item) => ({
+      text: item.text,
+      url: item.href,
+      ...(item.active ? { active: item.active } : {}),
+      ...(item.external ? { external: true } : {}),
+    })),
     {
       type: "menu",
       text: "Guides",
@@ -50,6 +54,5 @@ export function siteHeaderLinks(changelogHref: string): LinkItemType[] {
         active: item.active ?? "url",
       })),
     },
-    { text: "UI changelog", url: changelogHref, external: true },
   ];
 }

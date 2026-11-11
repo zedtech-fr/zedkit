@@ -43,6 +43,10 @@ function clonePreset(id: IdentityId): IdentityTokens {
 
 const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
 
+function isLightKey(key: string): key is (typeof LIGHT_KEYS)[number] {
+  return LIGHT_KEY_SET.has(key);
+}
+
 type IdentityEditorSearch = {
   identity: string;
   tokens: IdentityTokens;
@@ -54,7 +58,7 @@ function parseDarkKept(raw: string | null): string[] {
   if (!raw) return [];
   const keys: string[] = [];
   for (const key of raw.split(",")) {
-    if (!LIGHT_KEY_SET.has(key) || keys.includes(key)) continue;
+    if (!isLightKey(key) || keys.includes(key)) continue;
     keys.push(key);
   }
   return keys;
@@ -129,4 +133,13 @@ function serializeIdentityEditorSearch(
   return params.toString();
 }
 
-export { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS, VALUE_KEYS, inferKeptDark, parseIdentityEditorSearch, serializeIdentityEditorSearch };
+export {
+  FONT_KEYS,
+  LIGHT_KEYS,
+  SCALAR_KEYS,
+  VALUE_KEYS,
+  inferKeptDark,
+  isLightKey,
+  parseIdentityEditorSearch,
+  serializeIdentityEditorSearch,
+};

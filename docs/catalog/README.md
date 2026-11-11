@@ -75,14 +75,19 @@ import { a } from "@zedtech/zedkit-core";
   `ErrorState`. A missing entry fails with a pointer to
   `packages/ui/tests/unit/four-states.fixture.tsx`.
 - **Wraps** names the mature npm package underneath, or `(none)` when the
-  module is dependency-free by design.
+  module is dependency-free by design. List only packages the source
+  imports (hand-rolled `asChild` is not `@radix-ui/react-slot`). Registry
+  `dependencies` must match the same list.
 - **Status** is one of `planned | alpha | beta | stable | deprecated`
   (CI validates the value; see Maturity below). A deprecated entry also
   carries `- Replaced by: ...` naming the replacement.
 - **Short name** is the compact display name (doc sidebar, cards).
 - **Audience**, **Purpose**, **When to use**, **When not to use** feed the
   "what is this for" block on the doc page; all four are required and CI
-  fails when one is missing.
+  fails when one is missing. **Purpose** is also the generated page
+  `description`. Non-registry pages run it through `truncateDescription`;
+  registry/component pages do not, so Purpose must be ≤160 characters
+  (`SEO_DESCRIPTION_MAX`) or `catalog:check` fails.
 - **See also** is optional; each backticked target must name a real
   catalog need heading (any package) — CI fails on unknown targets.
 - The example is TypeScript, about five lines, copy-paste runnable.

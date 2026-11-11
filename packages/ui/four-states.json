@@ -151,6 +151,8 @@
     "SelectTrigger",
     "SelectValue",
     "Separator",
+    "SidebarNavGroup",
+    "SidebarNavItem",
     "SseFrame",
     "Surface",
     "SignatureMotion",

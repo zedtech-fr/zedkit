@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState } from "react";
 import {
   applyCustomIdentity,
+  applyIdentityTokenSheet,
   keepIdentityDarkKeys,
   parseIdentityTokens,
   withIdentityDarkPair,
@@ -8,17 +9,12 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { LIGHT_KEYS } from "@/lib/identity-editor-search";
+import { LIGHT_KEYS, isLightKey } from "@/lib/identity-editor-search";
+import { acceptedIdentityTokens, patchTokens, withKeptDark } from "@/lib/identity-editor-patch";
 import {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
   setDocsSiteIdentityOptIn,
 } from "@/lib/site-identity-storage";
-
-const LIGHT_KEY_SET = new Set<string>(LIGHT_KEYS);
-
-function withKeptDark(tokens: IdentityTokens, previous: IdentityTokens, keep: readonly string[]): IdentityTokens {
-  return keepIdentityDarkKeys(withIdentityDarkPair(tokens, previous), previous, keep);
-}
 
 function withSuggestedDark(
   next: IdentityTokens,
@@ -33,21 +29,6 @@ function withSuggestedDark(
   }
   const merged = keepIdentityDarkKeys(keepIdentityDarkKeys(generated, next, aiKeep), previous, userKeep);
   return { tokens: merged, keep };
-}
-
-function patchTokens(
-  tokens: IdentityTokens,
-  key: string,
-  value: string,
-  scheme: "light" | "dark",
-  keep: readonly string[],
-): IdentityTokens {
-  const next = LIGHT_KEY_SET.has(key)
-    ? { ...tokens, [scheme]: { ...tokens[scheme], [key]: value } }
-    : { ...tokens, [key]: value };
-  const parsed = parseIdentityTokens(next);
-  if (!parsed.success) return tokens;
-  return scheme === "light" && LIGHT_KEY_SET.has(key) ? withKeptDark(parsed.data, tokens, keep) : parsed.data;
 }
 
 type DraftSnap = { tokens: IdentityTokens; darkKept: string[] };
@@ -78,8 +59,12 @@ function useDraftTokens(present: IdentityTokens, look: string) {
   }
 
   function patch(key: string, value: string, scheme: "light" | "dark") {
-    const keep = scheme === "dark" && LIGHT_KEY_SET.has(key) ? nextDarkKept(darkKept, key) : darkKept;
+    const keep = scheme === "dark" && isLightKey(key) ? nextDarkKept(darkKept, key) : darkKept;
     remember(patchTokens(tokens, key, value, scheme, keep), keep);
+  }
+
+  function patchMany(entries: readonly (readonly [string, string])[]) {
+    remember(entries.reduce((acc, [key, value]) => patchTokens(acc, key, value, "light", darkKept), tokens));
   }
 
   function fix(warning: IdentityContrastWarning) {
@@ -105,7 +90,9 @@ function useDraftTokens(present: IdentityTokens, look: string) {
   }
 
   function load(next: IdentityTokens, keep: readonly string[] = []) {
-    setTokens(next);
+    const accepted = acceptedIdentityTokens(next);
+    if (!accepted) return;
+    setTokens(accepted);
     setDarkKept([...keep]);
     setPast([]);
   }
@@ -129,9 +116,20 @@ function useDraftTokens(present: IdentityTokens, look: string) {
     detachSite: () => setAppliedSite(false),
     load,
     patch,
+    patchMany,
     fix,
     applySuggest,
   };
 }
 
-export { useDraftTokens };
+function useIdentityTokenSheet(tokens: IdentityTokens, selector: string, enabled = true) {
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    const sheet = applyIdentityTokenSheet(tokens, selector);
+    return () => {
+      sheet.remove();
+    };
+  }, [enabled, selector, tokens]);
+}
+
+export { useDraftTokens, useIdentityTokenSheet };

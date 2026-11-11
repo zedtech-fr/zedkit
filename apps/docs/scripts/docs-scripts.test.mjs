@@ -6,6 +6,7 @@ import { componentPageHeaderMeta, componentPageSections } from "../lib/component
 import { declarationOrigin } from "../lib/declared-props.mjs";
 import { partitionPropsEntries } from "../lib/props-priority.mjs";
 import { groupCatalogResults } from "../lib/catalog-result-groups.mjs";
+import { uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -224,6 +225,21 @@ test("checkGeneratedPage fails when install tabs or description are missing", ()
   );
 });
 
+test("checkGeneratedPage fails when the description exceeds 160 characters", () => {
+  const errors = [];
+  const long = "A".repeat(161);
+  checkGeneratedPage(
+    "ui/too-long.mdx",
+    `---\ntitle: "Too long"\ndescription: ${JSON.stringify(long)}\n---\n\n## At a glance\n\n- **Who:** Who\n- **What:** What\n- **Use when:** When\n- **Avoid when:** Avoid\n\n<Tabs groupId="package-manager" persist items={["pnpm"]}>\n  <Tab value="pnpm">pnpm add @zedtech/zedkit-ui</Tab>\n</Tabs>\n`,
+    { seoMax: 160, descriptionsSeen: new Map() },
+    errors,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("description exceeds 160 characters")),
+    true,
+  );
+});
+
 test("checkGeneratedPage reports a duplicate description", () => {
   const seen = new Map();
   const errors = [];
@@ -233,4 +249,121 @@ test("checkGeneratedPage reports a duplicate description", () => {
     errors.some((entry) => entry.includes("duplicate description on ui/b.mdx and ui/a.mdx")),
     true,
   );
+});
+
+function slugsOf(pages) {
+  return pages.filter((entry) => !/^---.+---$/.test(entry));
+}
+
+test("uiSidebarPages groups Badge, Toaster, and DetailPanel with home-example order", () => {
+  const pages = uiSidebarPages({
+    needs: [
+      { need: "Show a status or count badge", slug: "show-a-status-or-count-badge" },
+      { need: "Trigger actions with buttons", slug: "trigger-actions-with-buttons" },
+      { need: "Collect text input with a label", slug: "collect-text-input-with-a-label" },
+      { need: "Open modal dialogs", slug: "open-modal-dialogs" },
+      { need: "Slide in a drawer panel", slug: "slide-in-a-drawer-panel" },
+      { need: "Show toast notifications", slug: "show-toast-notifications" },
+      { need: "Show key-value details and a live indicator", slug: "show-key-value-details-and-a-live-indicator" },
+      { need: "Lay out an admin page (sidebar + topbar + header)", slug: "lay-out-an-admin-page-sidebar-topbar-header" },
+    ],
+    sourceByNeed: {
+      "Show a status or count badge": "feedback/badge.tsx",
+      "Trigger actions with buttons": "button/button.tsx",
+      "Collect text input with a label": "forms/input.tsx",
+      "Open modal dialogs": "overlays/dialog.tsx",
+      "Slide in a drawer panel": "drawer/drawer.tsx",
+      "Show toast notifications": "feedback/sonner.tsx",
+      "Show key-value details and a live indicator": "layout/detail-panel.tsx",
+      "Lay out an admin page (sidebar + topbar + header)": "layout/app-shell.tsx",
+    },
+  });
+  assert.deepEqual(pages, [
+    "---Actions---",
+    "trigger-actions-with-buttons",
+    "show-a-status-or-count-badge",
+    "show-toast-notifications",
+    "---Forms---",
+    "collect-text-input-with-a-label",
+    "---Overlays---",
+    "open-modal-dialogs",
+    "slide-in-a-drawer-panel",
+    "---Data and states---",
+    "show-key-value-details-and-a-live-indicator",
+    "---More---",
+    "lay-out-an-admin-page-sidebar-topbar-header",
+  ]);
+});
+
+test("uiSidebarPages drops omitted identity needs and sends unknown source to More", () => {
+  const pages = uiSidebarPages({
+    needs: [
+      { need: "Design your identity", slug: "design-your-identity" },
+      { need: "Switch the visual identity with one attribute", slug: "switch-the-visual-identity-with-one-attribute" },
+      { need: "A need with no source", slug: "a-need-with-no-source" },
+      { need: "Brand the header", slug: "brand-the-header" },
+    ],
+    sourceByNeed: {
+      "Brand the header": "brand/brand-logo.tsx",
+    },
+  });
+  assert.deepEqual(pages, [
+    "---More---",
+    "a-need-with-no-source",
+    "brand-the-header",
+  ]);
+  assert.equal(pages.includes("design-your-identity"), false);
+  assert.equal(pages.includes("switch-the-visual-identity-with-one-attribute"), false);
+});
+
+test("uiSidebarPages skips an empty group and lists every published slug once", () => {
+  const needs = [
+    { need: "Collect text input with a label", slug: "collect-text-input-with-a-label" },
+    { need: "Lay out an admin page (sidebar + topbar + header)", slug: "lay-out-an-admin-page-sidebar-topbar-header" },
+  ];
+  const pages = uiSidebarPages({
+    needs,
+    sourceByNeed: {
+      "Collect text input with a label": "forms/input.tsx",
+      "Lay out an admin page (sidebar + topbar + header)": "layout/app-shell.tsx",
+    },
+  });
+  assert.deepEqual(pages, [
+    "---Forms---",
+    "collect-text-input-with-a-label",
+    "---More---",
+    "lay-out-an-admin-page-sidebar-topbar-header",
+  ]);
+  assert.equal(pages.includes("---Actions---"), false);
+  assert.deepEqual(slugsOf(pages).sort(), needs.map((item) => item.slug).sort());
+  assert.equal(new Set(slugsOf(pages)).size, slugsOf(pages).length);
+  assert.equal(
+    slugsOf(pages).some((slug) => slug.includes("/")),
+    false,
+  );
+});
+
+test("uiSidebarPages throws on a duplicate slug", () => {
+  assert.throws(
+    () =>
+      uiSidebarPages({
+        needs: [
+          { need: "Trigger actions with buttons", slug: "shared" },
+          { need: "Collect text input with a label", slug: "shared" },
+        ],
+        sourceByNeed: {
+          "Trigger actions with buttons": "button/button.tsx",
+          "Collect text input with a label": "forms/input.tsx",
+        },
+      }),
+    /duplicate slug "shared"/,
+  );
+});
+
+test("uiSidebarPages does not throw for a new source folder", () => {
+  const pages = uiSidebarPages({
+    needs: [{ need: "Motion helper", slug: "motion-helper" }],
+    sourceByNeed: { "Motion helper": "motion.css" },
+  });
+  assert.deepEqual(pages, ["---More---", "motion-helper"]);
 });

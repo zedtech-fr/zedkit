@@ -30,7 +30,7 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   const surfaces = [
     ["catalog", catalog],
     ["wrapper", read("components/setup-entry-prompt.tsx")],
-    ["home band", read("ui/home/home-ai-setup-section.tsx")],
+    ["home band", read("ui/home/home-paste-section.tsx")],
     ["getting started", read("prose/guides/getting-started.mdx")],
     ["home smoke", read("tests/home-ai-setup.spec.ts")],
     ["getting started smoke", read("tests/getting-started.spec.ts")],
@@ -54,4 +54,14 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
 
   const ids = [...catalog.matchAll(/id: "(ai|ui|combined|suggest)"/g)].map((match) => match[1]);
   assert.deepEqual(ids, ["ai", "ui", "combined", "suggest"]);
+
+  const homeBand = read("ui/home/home-paste-section.tsx");
+  assert.match(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|<SetupEntryPrompt id="combined"/);
+  assert.match(homeBand, /<SetupEntryPrompt id="combined"/);
+  assert.doesNotMatch(homeBand, /<SetupEntryPrompt id="(ai|ui|suggest)"/);
+  assert.doesNotMatch(homeBand, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+
+  const wrapper = read("components/setup-entry-prompt.tsx");
+  assert.match(wrapper, /<Label htmlFor=\{fieldId\}>\{entry\.label\}<\/Label>/);
+  assert.doesNotMatch(wrapper, /labelled|aria-label/);
 });

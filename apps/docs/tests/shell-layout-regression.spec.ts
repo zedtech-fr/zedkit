@@ -138,9 +138,9 @@ test("install code on a docs page scrolls horizontally with a focusable region",
   expect(metrics, JSON.stringify(metrics)).toMatchObject({ ok: true });
 });
 
-test("home get-started install commands scroll horizontally at 390px", async ({ page }) => {
+test("component-page install commands scroll horizontally at 390px", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/#get-started", { waitUntil: "networkidle" });
+  await page.goto("/docs/ui/slide-in-a-drawer-panel#install-or-copy", { waitUntil: "networkidle" });
   const block = page.locator("#install-or-copy [data-adoption-step='install'] figure").first();
   const region = block.getByRole("region", { name: "Terminal", exact: true });
   await block.scrollIntoViewIfNeeded();
@@ -173,11 +173,18 @@ for (const width of [1280, 1600] as const) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/", { waitUntil: "networkidle" });
     await page.waitForFunction(() => {
-      const bandIds = ["ai-setup", "identities", "get-started", "components", "entry-points"] as const;
-      return bandIds.every((id) => {
-        const section = document.getElementById(id);
-        return section?.querySelector("[data-slot='container']") != null;
-      });
+      const bandIds = ["same-idea", "paste", "identities", "components", "entry-points"] as const;
+      const hero = document.querySelector("[data-home-hero-band]");
+      const heroReady =
+        hero?.querySelector("[data-slot='container']") != null ||
+        hero?.matches("[data-slot='container']") === true;
+      return (
+        heroReady &&
+        bandIds.every((id) => {
+          const section = document.getElementById(id);
+          return section?.querySelector("[data-slot='container']") != null;
+        })
+      );
     });
 
     const metrics = await page.evaluate(() => {
@@ -189,16 +196,16 @@ for (const width of [1280, 1600] as const) {
       };
 
       const heroBand = document.querySelector("[data-home-hero-band]");
-      const aiSetup = document.getElementById("ai-setup");
+      const sameIdea = document.getElementById("same-idea");
+      const paste = document.getElementById("paste");
       const identities = document.getElementById("identities");
-      const getStarted = document.getElementById("get-started");
       const components = document.getElementById("components");
       const entryPoints = document.getElementById("entry-points");
       const boxes = [
         containerBox(heroBand),
-        containerBox(aiSetup),
+        containerBox(sameIdea),
+        containerBox(paste),
         containerBox(identities),
-        containerBox(getStarted),
         containerBox(components),
         containerBox(entryPoints),
       ];
@@ -216,10 +223,10 @@ for (const width of [1280, 1600] as const) {
       const bandBottom = (el: Element | null) => el?.getBoundingClientRect().bottom ?? Number.NaN;
       const bandTop = (el: Element | null) => el?.getBoundingClientRect().top ?? Number.NaN;
       const gaps = [
-        bandTop(aiSetup) - bandBottom(heroBand),
-        bandTop(identities) - bandBottom(aiSetup),
-        bandTop(getStarted) - bandBottom(identities),
-        bandTop(components) - bandBottom(getStarted),
+        bandTop(sameIdea) - bandBottom(heroBand),
+        bandTop(paste) - bandBottom(sameIdea),
+        bandTop(identities) - bandBottom(paste),
+        bandTop(components) - bandBottom(identities),
         bandTop(entryPoints) - bandBottom(components),
       ];
 
