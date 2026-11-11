@@ -50,6 +50,49 @@ export type ZedkitUiMessages = {
   /** Visible label of the Jump to latest control. */
   jumpToLatest: string;
   locale: "en" | "fr";
+  /** Chrome for the composed live agent console. */
+  agentConsole: {
+    sidebarTrigger: string;
+    agentsNav: string;
+    groupMain: string;
+    groupLens: string;
+    groupSecondPass: string;
+    groupWorkflow: string;
+    groupHelper: string;
+    groupObserver: string;
+    groupGate: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    finalDecision: string;
+    firstPass: string;
+    superseded: string;
+    outdated: string;
+    secondPass: string;
+    blocksMerge: string;
+    allowsMerge: string;
+    posted: string;
+    decided: string;
+    summary: string;
+    mustChange: string;
+    notes: string;
+    dismissed: string;
+    kept: string;
+    downgraded: string;
+    approved: string;
+    /** Template with `{n}`. */
+    confidence: string;
+    postedReview: string;
+    /** Template with `{n}`. */
+    pr: string;
+    started: string;
+    duration: string;
+    toolCalls: string;
+    tokens: string;
+    /** Template with `{in}` and `{out}`. */
+    tokensInOut: string;
+    lastActivity: string;
+    toolBurst: string;
+  };
   /** Named steps while an assistant answer is still being written. */
   streamStatus: {
     "reading-reference": string;
@@ -101,6 +144,45 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
   language: "Language",
   jumpToLatest: "Jump to latest",
   locale: "en",
+  agentConsole: {
+    sidebarTrigger: "Agents",
+    agentsNav: "Agents",
+    groupMain: "Main flow",
+    groupLens: "Review lenses",
+    groupSecondPass: "Second pass",
+    groupWorkflow: "Workflows",
+    groupHelper: "Helpers",
+    groupObserver: "Observers",
+    groupGate: "Gates",
+    emptyTitle: "No agents",
+    emptyDescription: "This run has no items yet.",
+    finalDecision: "Final decision",
+    firstPass: "First pass",
+    superseded: "Superseded",
+    outdated: "Outdated",
+    secondPass: "Second pass",
+    blocksMerge: "Blocks merge",
+    allowsMerge: "Does not block merge",
+    posted: "Posted",
+    decided: "Decided",
+    summary: "Summary",
+    mustChange: "Must change",
+    notes: "Notes",
+    dismissed: "Dismissed",
+    kept: "Kept",
+    downgraded: "Downgraded",
+    approved: "Approved",
+    confidence: "{n}/10",
+    postedReview: "Posted review",
+    pr: "PR {n}",
+    started: "Started",
+    duration: "Duration",
+    toolCalls: "Tool calls",
+    tokens: "Tokens",
+    tokensInOut: "{in} in / {out} out",
+    lastActivity: "Last activity",
+    toolBurst: "Tool calls",
+  },
   streamStatus: {
     "reading-reference": "Reading the site",
     "picking-palette": "Choosing a palette",
@@ -151,6 +233,45 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
   language: "Langue",
   jumpToLatest: "Aller au plus récent",
   locale: "fr",
+  agentConsole: {
+    sidebarTrigger: "Agents",
+    agentsNav: "Agents",
+    groupMain: "Flux principal",
+    groupLens: "Revues",
+    groupSecondPass: "Second passage",
+    groupWorkflow: "Workflows",
+    groupHelper: "Assistants",
+    groupObserver: "Observateurs",
+    groupGate: "Contrôles",
+    emptyTitle: "Aucun agent",
+    emptyDescription: "Cette exécution n'a pas encore d'éléments.",
+    finalDecision: "Décision finale",
+    firstPass: "Premier passage",
+    superseded: "Remplacé",
+    outdated: "Obsolète",
+    secondPass: "Second passage",
+    blocksMerge: "Bloque la fusion",
+    allowsMerge: "Ne bloque pas la fusion",
+    posted: "Publié",
+    decided: "Décidé",
+    summary: "Résumé",
+    mustChange: "À changer",
+    notes: "Notes",
+    dismissed: "Écarté",
+    kept: "Conservé",
+    downgraded: "Rétrogradé",
+    approved: "Approuvé",
+    confidence: "{n}/10",
+    postedReview: "Revue publiée",
+    pr: "PR {n}",
+    started: "Début",
+    duration: "Durée",
+    toolCalls: "Appels d'outils",
+    tokens: "Jetons",
+    tokensInOut: "{in} entrants / {out} sortants",
+    lastActivity: "Dernière activité",
+    toolBurst: "Appels d'outils",
+  },
   streamStatus: {
     "reading-reference": "Lecture du site",
     "picking-palette": "Choix de la palette",

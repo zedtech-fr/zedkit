@@ -2,6 +2,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  AgentConsole,
   AppShell,
   AssistantMessage,
   Badge,
@@ -451,12 +452,82 @@ const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 </SidebarNavGroup>
               </li>
               <li>
-                <SidebarNavItem asChild disabled status={<StatusDot tone="idle" />} meta="archived">
+                  <SidebarNavItem asChild disabled status={<StatusDot tone="idle" />} meta="archived">
                   <a href="#archived">Archived</a>
                 </SidebarNavItem>
               </li>
             </ul>
           </nav>
+          <AgentConsole
+            className="max-h-log"
+            run={{
+              pr: 12,
+              sha: "abc1234def",
+              engineLabel: "kit-engine",
+              durationMs: 377_000,
+              reviewSize: "8 files",
+              verdict: "approve",
+              confidence: 9,
+              postedReviewHref: null,
+            }}
+            items={[
+              {
+                id: "main",
+                name: "Coordinator",
+                kind: "main",
+                status: "done",
+                model: "docs",
+                durationMs: 120_000,
+                toolCount: 2,
+                startedAt: Date.now() - 120_000,
+                lastActivityAt: Date.now() - 60 * 60_000,
+                tokensIn: 12,
+                tokensOut: 4,
+                running: false,
+                entries: [
+                  { id: "tool-a", kind: "tool", name: "searchDocs", body: "query: console" },
+                  { id: "tool-b", kind: "tool", name: "readFile", body: "path: catalog.md" },
+                  { id: "msg-1", kind: "message", text: "The console mounts from mapped props." },
+                ],
+              },
+              {
+                id: "lens",
+                name: "Docs agent",
+                kind: "lens",
+                status: "running",
+                model: "docs",
+                durationMs: 64_000,
+                toolCount: 1,
+                startedAt: Date.now() - 64_000,
+                lastActivityAt: Date.now() - 60 * 60_000,
+                tokensIn: 6,
+                tokensOut: 2,
+                running: true,
+                streamLabel: "Writing the note",
+                entries: [{ id: "lens-msg", kind: "message", text: "Reading the catalog." }],
+              },
+            ]}
+            decision={{
+              verdict: "approve",
+              confidence: 9,
+              posted: true,
+              postedReviewHref: null,
+              summary: "Ship the console as mapped props.",
+              mustChange: [{ text: "Keep duration in milliseconds." }],
+              notes: [{ text: "Tone down the export warning.", tag: "downgraded" }],
+              dismissed: ["Old lint warning"],
+              firstPass: {
+                verdict: "request changes",
+                confidence: 6,
+                findings: [
+                  { id: "keep-1", text: "Name the empty pane.", disposition: "kept" },
+                  { id: "down-1", text: "Tone down the export warning.", disposition: "downgraded" },
+                  { id: "drop-1", text: "Drop the style nit.", disposition: "dismissed" },
+                ],
+              },
+              secondPass: { model: "docs-reviewer", blocksMerge: false, summary: "No merge block." },
+            }}
+          />
         </GallerySection>
 
         <GallerySection id="sizing" title="Container sizing">
