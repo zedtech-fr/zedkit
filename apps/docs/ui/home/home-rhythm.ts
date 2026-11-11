@@ -18,13 +18,12 @@ export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-
 export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-trio";
 export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-quad";
 /**
- * Same-idea columns: one column until `lg`, then three. Not
- * `HOME_CARD_GRID_THREE_COL` (sm pair / xl trio), because a two-column
- * mid-size would leave a dangling third column, and mobile must stack
- * by priority.
+ * Same-idea and six-sentence lists: one column until `lg`, then two. Not
+ * `HOME_CARD_GRID_TWO_COL` (`md` pair), because mobile must stack by
+ * priority through the tablet step.
  */
 export const HOME_SAME_IDEA_GRID =
-  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio";
+  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;
