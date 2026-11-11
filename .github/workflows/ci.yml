@@ -14,11 +14,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# Same-repo PRs into `dev` run checks, registry and docs-build on the
-# self-hosted zedkit runner (persistent /runner-cache + TURBO_CACHE_DIR).
-# Docs Playwright smoke and UI gallery checks always run on
+# Default runner is ubuntu-latest (GitHub-hosted, 4 vCPU / 16 GB) with
+# pnpm, Turbo, .next/cache and Playwright caches. Set the repository
+# variable CI_RUNNER=self-hosted to fall back to the Dedibox
+# [self-hosted, zedkit] runners (persistent /runner-cache + TURBO_CACHE_DIR)
+# without a PR. Docs Playwright smoke and UI gallery checks always run on
 # ubuntu-latest (GitHub-hosted Chromium; Dedibox uses a different revision).
-# Forks, PRs into `main`, and pushes stay on ubuntu-latest.
 # Release/deploy workflows are separate and untouched.
 
 jobs:
@@ -128,8 +129,10 @@ jobs:
       - run: bash scripts/check-changeset-packages.sh
 
   checks:
-    runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
-    timeout-minutes: 30
+    # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
+    # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
+    runs-on: ${{ vars.CI_RUNNER == 'self-hosted' && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
+    timeout-minutes: 40
     needs: changes
     if: needs.changes.outputs.workflow_only != 'true'
     env:
@@ -190,6 +193,7 @@ jobs:
           path: |
             .turbo
             .eslintcache
+            apps/docs/.next/cache
           key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
           restore-keys: |
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
@@ -286,11 +290,12 @@ jobs:
           path: coverage/
           if-no-files-found: ignore
           retention-days: 14
-      # test:registry imports built dists (ui via the docs identity tests,
-      # seo via docs generate/check helpers) but runs on every affected
-      # scope — including ones that skip both Build steps above. Build
-      # exactly that set here, unconditionally; turbo ^build pulls their
-      # deps, and the turbo cache makes it a no-op when already built.
+      # test:registry imports built dists (ui via the docs identity tests
+      # and deploy token parity, seo via docs generate/check helpers,
+      # server via deploy hostname-guard parity) but runs on every
+      # affected scope — including ones that skip both Build steps above.
+      # Build exactly that set here, unconditionally; turbo ^build pulls
+      # their deps, and the turbo cache makes it a no-op when already built.
       - name: Build (registry deps)
         run: |
           extra=()
@@ -300,6 +305,7 @@ jobs:
           pnpm exec turbo run build \
             --filter=@zedtech/zedkit-seo \
             --filter=@zedtech/zedkit-ui \
+            --filter=@zedtech/zedkit-server \
             "${extra[@]}"
       # deploy/* needs Docker + rsync; Self-hosted runners drop privileges and
       # do not mount docker.sock — keep those tests on github-hosted only.
@@ -357,8 +363,10 @@ jobs:
       - run: pnpm --filter @zedtech/zedkit-ui smoke
 
   registry-smoke:
-    runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
-    timeout-minutes: 15
+    # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
+    # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
+    runs-on: ${{ vars.CI_RUNNER == 'self-hosted' && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
+    timeout-minutes: 20
     needs: changes
     if: needs.changes.outputs.registry == 'true' && needs.changes.outputs.workflow_only != 'true'
     steps:
@@ -394,6 +402,13 @@ jobs:
       - name: pnpm install (store + nm archive)
         if: runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh install
+      - uses: actions/cache@v6
+        if: runner.environment != 'self-hosted'
+        with:
+          path: .turbo
+          key: turbo-ui-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-ui-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       - run: pnpm registry:build
       # The pack closure ships prebuilt dist (not rebuildable by the
       # consumer): build the UI closure once before the parallel cells pack it.
@@ -424,8 +439,10 @@ jobs:
 
   # Vite + registry Button consumer. In ci-required when registry is selected.
   quickstart-smoke:
-    runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
-    timeout-minutes: 15
+    # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
+    # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
+    runs-on: ${{ vars.CI_RUNNER == 'self-hosted' && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
+    timeout-minutes: 20
     needs: changes
     if: needs.changes.outputs.registry == 'true' && needs.changes.outputs.workflow_only != 'true'
     steps:
@@ -459,6 +476,15 @@ jobs:
       - name: pnpm install (store + nm archive)
         if: runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh install
+      - uses: actions/cache@v6
+        if: runner.environment != 'self-hosted'
+        with:
+          path: |
+            .turbo
+            ~/.cache/ms-playwright
+          key: turbo-ui-pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-ui-pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       - name: Build UI
         run: |
           extra=()
@@ -485,7 +511,9 @@ jobs:
   # getting-started package adds, plus a negative control that must fail. In ci-required when registry is
   # selected so a Version PR cannot merge while unpublished workspace deps break consumer install.
   adoption-smoke:
-    runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
+    # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
+    # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
+    runs-on: ${{ vars.CI_RUNNER == 'self-hosted' && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: changes
     if: needs.changes.outputs.registry == 'true' && needs.changes.outputs.workflow_only != 'true'
@@ -536,8 +564,10 @@ jobs:
   # One Next export for Playwright smoke, SEO and the first-load budget.
   # Smoke downloads `apps/docs/out` instead of exporting again.
   docs-build:
-    runs-on: ${{ (github.event_name == 'pull_request' && github.base_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
-    timeout-minutes: 20
+    # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
+    # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
+    runs-on: ${{ vars.CI_RUNNER == 'self-hosted' && fromJSON('["self-hosted","zedkit"]') || 'ubuntu-latest' }}
+    timeout-minutes: 25
     needs: changes
     if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
     steps:
@@ -574,7 +604,9 @@ jobs:
       - uses: actions/cache@v6
         if: runner.environment != 'self-hosted'
         with:
-          path: .turbo
+          path: |
+            .turbo
+            apps/docs/.next/cache
           key: turbo-docs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
           restore-keys: |
             turbo-docs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
