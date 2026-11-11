@@ -253,6 +253,18 @@
         "Custom trigger": "AppShellTriggerDemo"
       }
     },
+    "List sidebar rows with status, title, meta, and count": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "SidebarNavItem",
+      "registry": "sidebar-nav",
+      "props": "SidebarNavItemProps",
+      "source": "layout/sidebar-nav.tsx",
+      "demo": "SidebarNavItemDemo",
+      "examples": {
+        "Active": "SidebarNavActiveDemo",
+        "Group": "SidebarNavGroupDemo"
+      }
+    },
     "Guide a multi-step flow with selectable option cards": {
       "package": "@zedtech/zedkit-ui",
       "component": "WizardSteps",

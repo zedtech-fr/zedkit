@@ -1387,6 +1387,50 @@ import { AppShell } from "@zedtech/zedkit-ui";
 // Opt out of the mobile menu: sidebarTrigger={null}
 ```
 
+## List sidebar rows with status, title, meta, and count
+
+- Import: `@zedtech/zedkit-ui` — `SidebarNavItem`, `SidebarNavItemProps`, `SidebarNavGroup`, `SidebarNavGroupProps`
+- Wraps: `lucide-react` (group chevron); native `details`
+- Status: alpha
+- Short name: SidebarNavItem
+- Audience: Developers rendering a sidebar run list, inbox, or queue.
+- Purpose: One row for status, title, recency (`meta`), quantity (`count`), and active; groups collapse with native disclosure.
+- When to use: Inside `AppShell` sidebar (or any list) when each row needs status + title + optional meta/count. For a destination, pass `asChild` with a link.
+- When not to use: For site chrome or marketing nav — use `Faq` or header links; for the page frame — use AppShell.
+- See also: `Lay out an admin page (sidebar + topbar + header)`, `Indicate status with a dot`, `Show a status or count badge`
+- Examples: Simple, Active, Group
+- A11y: Default host is a native `button` (`type="button"`) with `min-h-target` (44px on a phone); for navigation, pass `asChild` with a link. `asChild` merges onto a single host element (a string, Fragment, or several children fall back to a button). `active` sets `aria-current="page"` on a link host and `aria-current="true"` on the button host (override via props). The title is the accessible name; status and trail stay `aria-hidden` by design — put those facts in the title if they must be announced. Item titles and group labels truncate. Group is native `details`/`summary` (Enter/Space, find-in-page). The chevron is `aria-hidden`. Callers own landmarks and list structure (`nav` wrapping `ul`/`li`). Disabled `asChild` hosts keep href and tab order; click, Enter, and Space are cancelled.
+- Registry: sidebar-nav
+- Troubleshooting: `asChild` needs one host element (a link for navigation) — a string, Fragment, or several children fall back to a button, they do not throw. `disabled` on `asChild` becomes `aria-disabled` (not `disabled` or `type`) and cancels click/Enter/Space; href and tab order stay. Status/meta/count wrappers omit when those props are missing (`status={0}` and `count={0}` still render). `meta` is recency or secondary text; `count` is a quantity; both sit in one trail as separate spans. Groups start closed; pass `open` to expand. Pass `StatusDot` / `Badge` in; this module does not import them. Do not wrap rows in a kit `<nav>` — keep `nav`/`ul`/`li` on the caller.
+
+```ts
+import { SidebarNavItem, StatusDot } from "@zedtech/zedkit-ui";
+<nav aria-label="Runs">
+  <ul>
+    <li>
+      <SidebarNavItem status={<StatusDot tone="success" />} meta="2m ago" count="3">
+        Nightly
+      </SidebarNavItem>
+    </li>
+  </ul>
+</nav>
+```
+
+```ts
+import { SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavItem asChild active>
+  <a href="/runs/1">Nightly</a>
+</SidebarNavItem>
+```
+
+```ts
+import { SidebarNavGroup, SidebarNavItem } from "@zedtech/zedkit-ui";
+<SidebarNavGroup label="Runs">
+  <SidebarNavItem>Nightly</SidebarNavItem>
+  <SidebarNavItem>Staging</SidebarNavItem>
+</SidebarNavGroup>
+```
+
 ## Guide a multi-step flow with selectable option cards
 
 - Import: `@zedtech/zedkit-ui` — `WizardSteps`, `WizardStepsProps`, `Wizard`, `WizardProps`, `WizardStep`, `WizardStepProps`, `WizardStepState`, `OptionCards`, `OptionCardsProps`, `OptionCard`, `OptionCardProps`, `OptionCardData`

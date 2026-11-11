@@ -75,7 +75,9 @@ import { a } from "@zedtech/zedkit-core";
   `ErrorState`. A missing entry fails with a pointer to
   `packages/ui/tests/unit/four-states.fixture.tsx`.
 - **Wraps** names the mature npm package underneath, or `(none)` when the
-  module is dependency-free by design.
+  module is dependency-free by design. List only packages the source
+  imports (hand-rolled `asChild` is not `@radix-ui/react-slot`). Registry
+  `dependencies` must match the same list.
 - **Status** is one of `planned | alpha | beta | stable | deprecated`
   (CI validates the value; see Maturity below). A deprecated entry also
   carries `- Replaced by: ...` naming the replacement.
