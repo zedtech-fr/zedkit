@@ -143,7 +143,7 @@ function ChoiceSelect({
     <Field className="content-shrink">
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger id={id} className="w-full">
+        <SelectTrigger id={id} className="w-full" aria-label={label}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

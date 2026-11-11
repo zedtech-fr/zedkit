@@ -107,7 +107,7 @@ function EditorFields({
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
-  onPatch: (key: string, value: string) => void;
+  onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
   /** Rendered right after the first group: what you do once the first adjustment has shown its effect. */
   afterShape?: ReactNode;
   idPrefix?: string;
@@ -138,7 +138,7 @@ function EditorFields({
             label={identityTokenCssVars[key]}
             value={pair[key]}
             swatch
-            onChange={(value) => onPatch(key, value)}
+            onChange={(value) => onPatch(key, value, scheme)}
           />
         ))}
       </FieldGroup>

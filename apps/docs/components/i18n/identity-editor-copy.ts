@@ -39,7 +39,7 @@ export const identityEditorCopy = {
     expert: "Expert",
   },
   simple: {
-    palette: "Colour",
+    palette: "Color",
     paletteHint: "Pick a swatch to change it. The dark side follows the light one.",
     groups: {
       surface: "Surfaces and text",
@@ -65,10 +65,10 @@ export const identityEditorCopy = {
     mutedForeground: "Muted text",
     radius: "Radius",
     spacing: "Spacing",
-    contrast: "Colour checker",
+    contrast: "Color checker",
     contrastHint:
-      "Text needs 4.5:1 contrast on its background, accents and borders 3:1. Fix moves only that colour to the nearest passing shade.",
-    contrastOk: "Every checked colour pair passes.",
+      "Text needs 4.5:1 contrast on its background, accents and borders 3:1. Fix moves only that color to the nearest passing shade.",
+    contrastOk: "Every checked color pair passes.",
   },
   fields: {
     groups: {

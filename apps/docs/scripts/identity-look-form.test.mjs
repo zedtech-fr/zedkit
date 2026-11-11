@@ -50,6 +50,17 @@ test("field ids default to the editor prefix and can be re-prefixed per host", (
   assert.match(fields, /`\$\{idPrefix\}-\$\{key\}`/);
 });
 
+test("Classic ChoiceSelect trigger is named with aria-label (htmlFor cannot name a Radix button)", () => {
+  const form = read("components/identity-classic-fields.tsx");
+  assert.match(form, /<SelectTrigger id=\{id\} className="w-full" aria-label=\{label\}>/);
+});
+
+test("Expert color fields patch the preview scheme, not the host default", () => {
+  const fields = read("components/identity-editor-fields.tsx");
+  assert.match(fields, /value=\{pair\[key\]\}/);
+  assert.match(fields, /onPatch\(key, value, scheme\)/);
+});
+
 test("look form tabs are named and KeepBar sits after both modes", () => {
   const form = read("components/identity-look-form.tsx");
   assert.match(form, /TabsList aria-label=\{copy\.label\}/);
