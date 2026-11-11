@@ -136,6 +136,15 @@ export interface AppShellProps {
 export const ASSISTANT_STREAM_STAGES: readonly ["reading-reference", "picking-palette", "picking-typography", "picking-spacing", "building-preview"];
 
 // @public (undocumented)
+export function AssistantMessage(input: AssistantMessageProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type AssistantMessageProps = {
+    children: string;
+    className?: string | undefined;
+};
+
+// @public (undocumented)
 export type AssistantStreamEvent = {
     type: "status";
     stage: AssistantStreamStage;
@@ -736,6 +745,11 @@ export type FormSubmitProps = Omit<ButtonProps, "type"> & {
 };
 
 // @public (undocumented)
+export function groupToolCallBursts<T extends {
+    kind: string;
+}>(items: readonly T[]): TranscriptGroupData<T>[];
+
+// @public (undocumented)
 export function Heading(input: HeadingProps): React_2.JSX.Element;
 
 // @public
@@ -1171,7 +1185,7 @@ export interface LogoProps extends Omit<BrandLogoProps, "children" | "title" | "
 }
 
 // @public
-export function Markdown(input: MarkdownProps): JSX.Element;
+export function Markdown(input: MarkdownProps): React_2.JSX.Element;
 
 // @public
 export type MarkdownProps = {
@@ -1841,6 +1855,16 @@ export type ThemeScopeProps = React_2.ComponentProps<"div"> & {
     mode?: "light" | "dark" | undefined;
 };
 
+// @public (undocumented)
+export function ThinkingRow(input: ThinkingRowProps): React_2.JSX.Element | null;
+
+// @public (undocumented)
+export type ThinkingRowProps = {
+    text: string;
+    live?: boolean | undefined;
+    className?: string | undefined;
+};
+
 export { toast }
 
 // @public
@@ -1853,6 +1877,16 @@ export function tokensToCss(tokens: IdentityTokens, selector: string): string;
 
 // @public (undocumented)
 export function tokensToCssVars(tokens: IdentityTokens): Record<string, string>;
+
+// @public (undocumented)
+export function ToolCallRow(input: ToolCallRowProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type ToolCallRowProps = React_2.ComponentProps<"details"> & {
+    name: string;
+    status?: React_2.ReactNode;
+    duration?: React_2.ReactNode;
+};
 
 // @public (undocumented)
 export function Tooltip(input: TooltipProps): React_2.JSX.Element;
@@ -1868,6 +1902,23 @@ export function TooltipProvider(input: React_2.ComponentProps<typeof TooltipPrim
 
 // @public (undocumented)
 export function TooltipTrigger(input: React_2.ComponentProps<typeof TooltipPrimitive.Trigger>): React_2.JSX.Element;
+
+// @public (undocumented)
+export function TranscriptBurst(input: TranscriptBurstProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type TranscriptBurstProps = React_2.ComponentProps<"div">;
+
+// @public (undocumented)
+export type TranscriptGroupData<T extends {
+    kind: string;
+}> = {
+    type: "burst";
+    items: T[];
+} | {
+    type: "item";
+    item: T;
+};
 
 // @public (undocumented)
 export type TypeRole = keyof typeof typeRoleClass;

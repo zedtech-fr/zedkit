@@ -41,6 +41,7 @@ import {
   DropdownMenuTrigger,
   Heading,
   Markdown,
+  ToolCallRow,
   Input,
   Label,
   LivePulse,
@@ -228,6 +229,10 @@ const ok = true;
 const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 \`\`\`
 `}</Markdown>
+            <ToolCallRow name="listInvoices">{`{"status":"open"}`}</ToolCallRow>
+            <ToolCallRow name="searchDocs" open>
+              {`query: refunds`}
+            </ToolCallRow>
           </div>
         </GallerySection>
 

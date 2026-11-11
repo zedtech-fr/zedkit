@@ -603,6 +603,18 @@
         "Complete": "PromptInputCompleteDemo"
       }
     },
+    "Render a live assistant transcript from rows": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ToolCallRow",
+      "registry": "transcript-rows",
+      "props": "ToolCallRowProps",
+      "source": "transcript/transcript-rows.tsx",
+      "demo": "TranscriptRowsDemo",
+      "examples": {
+        "Simple": "TranscriptRowsDemo",
+        "Burst": "TranscriptRowsBurstDemo"
+      }
+    },
     "Keep a side panel in view": {
       "package": "@zedtech/zedkit-ui",
       "component": "StickyAside",

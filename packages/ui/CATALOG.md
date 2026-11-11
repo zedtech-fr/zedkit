@@ -1748,6 +1748,41 @@ A [docs](https://example.com) link and \`code\`.`}
 </Markdown>
 ```
 
+## Render a live assistant transcript from rows
+
+- Import: `@zedtech/zedkit-ui` — `ToolCallRow`, `ToolCallRowProps`, `ThinkingRow`, `ThinkingRowProps`, `AssistantMessage`, `AssistantMessageProps`, `TranscriptBurst`, `TranscriptBurstProps`, `groupToolCallBursts`, `TranscriptGroupData`
+- Wraps: `lucide-react`
+- Status: alpha
+- Short name: ToolCallRow
+- Audience: App authors wiring a live assistant transcript from kit rows.
+- Purpose: Render a live assistant log from collapsed tool-call rows, thinking text, finished markdown, and grouped consecutive tool calls.
+- When to use: When the caller already has a log of tool calls, thinking, and finished assistant turns and needs rows, not a host.
+- When not to use: For a prompt composer — use `Compose a chat prompt`. For a full chat shell — compose `Lay out an admin page (sidebar + topbar + header)` with `Follow a growing log to the latest`. For unsanitized HTML.
+- See also: `Name an operation in progress`, `Render Markdown without raw HTML`, `Follow a growing log to the latest`, `Format a compact duration`, `Show a status or count badge`
+- Examples: Simple, Burst
+- A11y: ToolCallRow is native `details`/`summary` (Enter/Space, find-in-page), collapsed by default. The tool name is the summary's accessible name; status and duration slots are `aria-hidden`. Summary is `min-h-target` (44px on a phone). The chevron is `aria-hidden`. ThinkingRow reuses StreamText (polite live region, `aria-atomic=false`); pass `live={false}` when a parent already announces. AssistantMessage is sanitized Markdown (same-tab info links). TranscriptBurst is a grouping host with no extra disclosure.
+- Registry: transcript-rows
+- Troubleshooting: A parent live log already announces — pass `live={false}` on ThinkingRow. Status and duration are slots; this module does not import StatusLabel, Badge, or formatDuration. Consecutive `kind === "tool"` items group only at length ≥ 2; a single tool stays an item. `kind` is case-sensitive (`"Tool"` is not a tool). Empty `name` still renders a details row. No kit chrome strings — the caller owns the tool name. Do not add a border on TranscriptBurst.
+
+```ts
+import { AssistantMessage, StatusLabel, ThinkingRow, ToolCallRow } from "@zedtech/zedkit-ui";
+<ThinkingRow text="Checking open invoices." live={false} />
+<ToolCallRow name="listInvoices" status={<StatusLabel tone="saved">Done</StatusLabel>} duration="4s">
+  {`{"status":"open"}`}
+</ToolCallRow>
+<AssistantMessage>{"Found three open invoices."}</AssistantMessage>
+```
+
+```ts
+import { AssistantMessage, ToolCallRow, TranscriptBurst, groupToolCallBursts } from "@zedtech/zedkit-ui";
+const groups = groupToolCallBursts([
+  { kind: "tool", name: "searchDocs" },
+  { kind: "tool", name: "readFile" },
+]);
+<TranscriptBurst>{groups[0].type === "burst" ? groups[0].items.map((row) => <ToolCallRow key={row.name} name={row.name} />) : null}</TranscriptBurst>
+<AssistantMessage>{"Refunds take 5 to 7 days."}</AssistantMessage>
+```
+
 ## Call out a notice or an error state
 
 - Import: `@zedtech/zedkit-ui` — `Alert`, `AlertTitle`, `AlertDescription`, `alertVariants`, `AlertProps`
