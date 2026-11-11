@@ -253,6 +253,13 @@
         "Custom trigger": "AppShellTriggerDemo"
       }
     },
+    "Compose a live agent console from a run": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "AgentConsole",
+      "props": "AgentConsoleProps",
+      "source": "layout/agent-console.tsx",
+      "demo": "AgentConsoleDemo"
+    },
     "List sidebar rows with status, title, meta, and count": {
       "package": "@zedtech/zedkit-ui",
       "component": "SidebarNavItem",

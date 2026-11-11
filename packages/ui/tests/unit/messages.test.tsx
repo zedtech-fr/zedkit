@@ -20,6 +20,7 @@ import { stubDrawerJsdom } from "./drawer-fixture.js";
 
 beforeAll(() => {
   stubDrawerJsdom();
+  Element.prototype.scrollTo = function scrollTo() {};
 });
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "../../src");
@@ -55,6 +56,16 @@ const KIT_ENGLISH = [
   '"Remove {label}"',
   '"Main navigation"',
   '"Language"',
+  '"Final decision"',
+  '"No agents"',
+  '"Does not block merge"',
+  '"Posted review"',
+  '"Must change"',
+  '"Main flow"',
+  '"Review lenses"',
+  '"First pass"',
+  '"This run has no items yet."',
+  '"Jump to latest"',
 ];
 
 function walk(dir: string): string[] {

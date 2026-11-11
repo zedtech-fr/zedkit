@@ -60,8 +60,14 @@ function pinScrollerToEnd(
   releasePinGuard(guard, programmaticRef);
   programmaticRef.current = true;
   const mode = scrollMode(behavior);
-  el.scrollTo({ top: endTop(el), left: 0, behavior: mode });
-  if (mode !== "smooth") {
+  const top = endTop(el);
+  const canScrollTo = typeof el.scrollTo === "function";
+  if (canScrollTo) {
+    el.scrollTo({ top, left: 0, behavior: mode });
+  } else {
+    el.scrollTop = top;
+  }
+  if (mode !== "smooth" || !canScrollTo) {
     guard.frame = requestAnimationFrame(() => {
       guard.frame = null;
       programmaticRef.current = false;
