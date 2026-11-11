@@ -1,14 +1,11 @@
 /** English copy for the home AI setup band. Counts and file names come from the kit manifest, not from here. */
 export const homeAiSetupCopy = {
   section: {
-    title: "One prompt, and your agent knows your repo",
+    title: "Set up AI or UI with a prompt",
     description:
-      "Paste it in a new chat at your repo root (Cursor, Muse, Claude Code, or similar). The agent installs the kit, reads your code, docs and CI, asks up to eight questions, then writes rules that match your repo.",
+      "Paste one in a new chat at your repo root (Cursor, Muse, Claude Code, or similar). Combined covers AI, UI and Nest. Suggest asks which this repo needs.",
   },
   prompt: {
-    label: "Your prompt",
-    ariaLabel: "AI setup prompt",
-    copyLabel: "Copy AI setup prompt",
     hintBefore: "Another agent? Run",
     hintCommand: "npx @zedtech/zedkit-ai setup",
     hintMiddle: ", then",
@@ -17,6 +14,8 @@ export const homeAiSetupCopy = {
   },
   cta: {
     guide: "Read the AI setup guide",
+    uiWalkthrough: "UI setup on Getting started",
+    uiWalkthroughHref: "/docs/getting-started#ui-button",
   },
   whatYouGet: {
     title: "What you get",

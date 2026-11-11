@@ -1,8 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import {
+  AI_SETUP_MINI_PROMPT,
+  MAP_SETUP_MINI_PROMPT,
+  SUGGEST_MINI_PROMPT,
+  UI_SETUP_MINI_PROMPT,
+} from "../lib/ai-setup-onboarding.generated";
 import { focusWithKeyboard } from "./a11y-helpers";
-
-const PROMPT = "Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md";
 
 test.describe("home AI setup section", () => {
   test.use({
@@ -16,7 +20,7 @@ test.describe("home AI setup section", () => {
 
     const aiSetup = page.locator("#ai-setup");
     await expect(aiSetup).toBeVisible();
-    await expect(aiSetup.getByRole("heading", { level: 2, name: "One prompt, and your agent knows your repo" })).toBeVisible();
+    await expect(aiSetup.getByRole("heading", { level: 2, name: "Set up AI or UI with a prompt" })).toBeVisible();
     await expect(aiSetup.getByRole("heading", { level: 3, name: "What you get" })).toBeVisible();
 
     const hero = await page.locator("[data-home-hero-band]").boundingBox();
@@ -26,8 +30,39 @@ test.describe("home AI setup section", () => {
     expect(aiBox!.y).toBeGreaterThan(hero!.y);
     expect(aiBox!.y).toBeLessThan(identities!.y);
 
-    await page.getByRole("button", { name: "Copy AI setup prompt" }).click();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(PROMPT);
+    const aiField = aiSetup.locator("[data-setup-entry='ai']");
+    const uiField = aiSetup.locator("[data-setup-entry='ui']");
+    await expect(aiField).toBeVisible();
+    await expect(uiField).toBeVisible();
+    const aiLabel = aiField.locator("[data-slot='label']");
+    const uiLabel = uiField.locator("[data-slot='label']");
+    const [aiType, uiType, suggestType] = await Promise.all([
+      aiLabel.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return { fontSize: style.fontSize, fontWeight: style.fontWeight };
+      }),
+      uiLabel.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return { fontSize: style.fontSize, fontWeight: style.fontWeight };
+      }),
+      aiSetup.locator("[data-setup-entry='suggest'] [data-slot='text']").evaluate((el) => {
+        const style = getComputedStyle(el);
+        return { fontSize: style.fontSize, fontWeight: style.fontWeight };
+      }),
+    ]);
+    expect(aiType).toEqual(uiType);
+    expect(suggestType.fontSize).not.toEqual("");
+    expect(Number.parseFloat(suggestType.fontSize)).toBeLessThanOrEqual(Number.parseFloat(aiType.fontSize));
+
+    for (const [name, value] of [
+      ["Copy AI setup prompt", AI_SETUP_MINI_PROMPT],
+      ["Copy UI setup prompt", UI_SETUP_MINI_PROMPT],
+      ["Copy combined setup prompt", MAP_SETUP_MINI_PROMPT],
+      ["Copy suggest prompt", SUGGEST_MINI_PROMPT],
+    ] as const) {
+      await aiSetup.getByRole("button", { name }).click();
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(value);
+    }
 
     const terminal = aiSetup.getByRole("region", { name: "AI setup commands" });
     await expect(terminal).toContainText("npx @zedtech/zedkit-ai setup --provider cursor");
@@ -42,7 +77,16 @@ test.describe("home AI setup section", () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 
     await expect(aiSetup.getByRole("link", { name: "Read the AI setup guide" })).toHaveAttribute("href", "/docs/ai/setup");
+    await expect(aiSetup.getByRole("link", { name: "UI setup on Getting started" })).toHaveAttribute("href", "/docs/getting-started#ui-button");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Years of production setup. One prompt.");
+
+    await page.setViewportSize({ width: 320, height: 844 });
+    await expect(aiField).toBeVisible();
+    await expect(uiField).toBeVisible();
+    const phoneScroll = await page.evaluate(() => document.documentElement.scrollWidth);
+    const phoneClient = await page.evaluate(() => document.documentElement.clientWidth);
+    expect(phoneScroll).toBeLessThanOrEqual(phoneClient + 1);
   });
 
   test("the guide route exists", async ({ page }) => {
@@ -102,7 +146,7 @@ test.describe("home AI setup section", () => {
     expect(focus.outlineStyle).toBe("solid");
     expect(focus.outlineWidth).toBe(focus.ringWidth);
     expect(focus.outlineOffset).toBe(`-${focus.ringOffset}`);
-    const prompt = await page.locator("#ai-setup textarea").boundingBox();
+    const prompt = await page.locator("#ai-setup [data-setup-entry='ai'] textarea").boundingBox();
     const tree = await terminal.boundingBox();
     expect(prompt && tree).toBeTruthy();
     expect(tree!.x).toBeGreaterThan(prompt!.x + prompt!.width);

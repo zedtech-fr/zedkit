@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import {
+  AI_SETUP_MINI_PROMPT,
+  MAP_SETUP_MINI_PROMPT,
+  SUGGEST_MINI_PROMPT,
+  UI_SETUP_MINI_PROMPT,
+} from "../lib/ai-setup-onboarding.generated";
+
 test("docs index and guides carry no production memo in visitor copy (#1096)", async ({ page }) => {
   const leaks = [
     "hand-written",
@@ -296,4 +303,56 @@ test("getting started links to a catalog page", async ({ page }) => {
     .click();
   await page.waitForURL("**/docs/ai/**", { timeout: 10000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test.describe("getting started setup prompts", () => {
+  test.use({
+    permissions: ["clipboard-read", "clipboard-write"],
+  });
+
+  test("copies the four generated prompts next to the manual paths", async ({ page, context }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
+
+    const main = page.getByRole("main");
+    const quickstart = main.getByRole("heading", { name: "Quickstart", level: 2 });
+    const coding = main.getByRole("heading", { name: "Coding agents", level: 3 });
+    const uiButton = main.getByRole("heading", { name: "UI button (npm package)", level: 3 });
+    const ai = main.locator("[data-setup-entry='ai']");
+    const ui = main.locator("[data-setup-entry='ui']");
+    const combined = main.locator("[data-setup-entry='combined']");
+    const suggest = main.locator("[data-setup-entry='suggest']");
+
+    await expect(ai).toBeVisible();
+    await expect(ui).toBeVisible();
+    await expect(combined).toBeVisible();
+    await expect(suggest).toBeVisible();
+
+    const boxes = await Promise.all([
+      quickstart.boundingBox(),
+      combined.boundingBox(),
+      suggest.boundingBox(),
+      coding.boundingBox(),
+      ai.boundingBox(),
+      uiButton.boundingBox(),
+      ui.boundingBox(),
+    ]);
+    expect(boxes.every(Boolean)).toBe(true);
+    expect(boxes[1]!.y).toBeGreaterThan(boxes[0]!.y);
+    expect(boxes[2]!.y).toBeGreaterThan(boxes[1]!.y);
+    expect(boxes[3]!.y).toBeGreaterThan(boxes[2]!.y);
+    expect(boxes[4]!.y).toBeGreaterThan(boxes[3]!.y);
+    expect(boxes[5]!.y).toBeGreaterThan(boxes[4]!.y);
+    expect(boxes[6]!.y).toBeGreaterThan(boxes[5]!.y);
+
+    for (const [host, name, value] of [
+      [ai, "Copy AI setup prompt", AI_SETUP_MINI_PROMPT],
+      [ui, "Copy UI setup prompt", UI_SETUP_MINI_PROMPT],
+      [combined, "Copy combined setup prompt", MAP_SETUP_MINI_PROMPT],
+      [suggest, "Copy suggest prompt", SUGGEST_MINI_PROMPT],
+    ] as const) {
+      await host.getByRole("button", { name }).click();
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(value);
+    }
+  });
 });

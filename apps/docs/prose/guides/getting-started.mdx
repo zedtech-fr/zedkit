@@ -30,9 +30,14 @@ See [zedkit and shadcn/ui](/docs/zedkit-and-shadcn) for registry vs npm trade-of
 
 Pick one path below. Coding agents ends with `validate` in the terminal; UI button paths with a visible **Save** button; backend and API paths with the linked catalog or tutorial page.
 
+<SetupEntryPrompt id="combined" />
+<SetupEntryPrompt id="suggest" />
+
 <a id="ui-button" />
 
 ### Coding agents
+
+<SetupEntryPrompt id="ai" />
 
 In your repo root:
 
@@ -50,6 +55,8 @@ Those two commands take about two minutes. Ask your agent to run the `setup-ai` 
 **First result:** the validate command prints an `ok` line naming its structural-only scope. If it does not, see [Troubleshooting](#troubleshooting).
 
 ### UI button (npm package)
+
+<SetupEntryPrompt id="ui" />
 
 In a React 19 + Tailwind v4 app. `@source` is relative to the CSS file: `../node_modules/…` from `app/globals.css` or Vite `src/index.css`, and `../../node_modules/…` from Next.js `src/app/globals.css`. The snippet includes both.
 

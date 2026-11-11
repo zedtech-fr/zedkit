@@ -1,7 +1,8 @@
 import { HomeLink } from "@/ui/home/home-link";
-import { Animate, Button, Heading, SecretField, Section, Stack, StickyAside, Text } from "@zedtech/zedkit-ui";
+import { Animate, Button, Heading, Section, Stack, StickyAside, Text } from "@zedtech/zedkit-ui";
 import { DocsActionLabel } from "@/components/docs-action-label";
-import { AI_SETUP_DOCS_PATH, AI_SETUP_KIT, AI_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
+import { SetupEntryPrompt } from "@/components/setup-entry-prompt";
+import { AI_SETUP_DOCS_PATH, AI_SETUP_KIT } from "@/lib/ai-setup-onboarding.generated";
 import { HomeAiSetupTerminal } from "@/ui/home/home-ai-setup-terminal";
 import {
   HOME_MARKETING_ROOT_PROPS,
@@ -71,7 +72,16 @@ function HomeAiSetupWhatYouGet() {
   );
 }
 
-/** Right after the hero: the one-prompt AI setup, what it installs, and the files it leaves in the repo. */
+/**
+ * Right after the hero: equal AI and UI pastes, quieter combined and suggest,
+ * then what the AI kit installs and the files it leaves.
+ *
+ * Compose-UI: stacked AI+UI SecretFields, both visible, because the visitor
+ * may want either paste and combined exists so the choice is not exclusive.
+ * Combined muted, suggest caption, because one primary / quiet tertiary.
+ * Section H2 and hero H1, because one marketing H1. One outline guide CTA,
+ * UI as a tertiary link, because UI walkthrough is Getting started.
+ */
 export function HomeAiSetupSection() {
   return (
     <Section
@@ -96,16 +106,17 @@ export function HomeAiSetupSection() {
           <StickyAside.Main>
             <Stack gap={HOME_SECTION_CONTENT_GAP}>
               <Stack gap="md" data-setup-prompt="">
-                <SecretField
-                  multiline
-                  value={AI_SETUP_MINI_PROMPT}
-                  aria-label={prompt.ariaLabel}
-                  copyLabel={prompt.copyLabel}
-                />
+                <SetupEntryPrompt id="ai" />
                 <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
                   {prompt.hintBefore} <HomeAiSetupMono>{prompt.hintCommand}</HomeAiSetupMono>
                   {prompt.hintMiddle} <HomeAiSetupMono>{prompt.hintSlash}</HomeAiSetupMono> {prompt.hintAfter}
                 </Text>
+                <SetupEntryPrompt id="ui" />
+                <Button asChild variant="link" className="min-h-target w-fit px-control-tight">
+                  <HomeLink href={homeAiSetupCopy.cta.uiWalkthroughHref}>{homeAiSetupCopy.cta.uiWalkthrough}</HomeLink>
+                </Button>
+                <SetupEntryPrompt id="combined" />
+                <SetupEntryPrompt id="suggest" />
                 <Stack direction="horizontal" className="flex-wrap" data-docs-ctas="">
                   <Button asChild variant="outline" className="w-fit">
                     <HomeLink href={AI_SETUP_DOCS_PATH}>
