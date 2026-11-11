@@ -333,6 +333,15 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
+          <DetailPanel
+            variant="grid"
+            items={[
+              { label: "Requests", value: "12,480" },
+              { label: "Uptime", value: "99.9%" },
+              { label: "Latency", value: "42 ms" },
+              { label: "Errors", value: "0.12%" },
+            ]}
+          />
           <Tabs defaultValue="one" data-example-width="">
             <TabsList>
               <TabsTrigger value="one">First</TabsTrigger>

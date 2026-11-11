@@ -119,7 +119,7 @@ kit packages.
   (`ParallaxSection`, `ParallaxLayer`; CSS scroll-driven, 0 JS). Original
   work by the same author.
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards, or pick-one with `multiple={false}`).
-- Detail: `DetailPanel` (key-value rows), `LivePulse` (live indicator).
+- Detail: `DetailPanel` (key-value rows, or `variant="grid"` stats), `LivePulse` (live indicator).
 - Marketing (`@zedtech/zedkit-ui/marketing`, separate entry): `GlassSurface`.
 
 ## Provenance

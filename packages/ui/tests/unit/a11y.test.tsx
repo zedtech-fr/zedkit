@@ -356,6 +356,20 @@ describe("a11y", () => {
     await expectNoViolations(container);
   });
 
+  it("detailPanel grid", async () => {
+    const { container } = render(
+      <DetailPanel
+        variant="grid"
+        items={[
+          { label: "Requests", value: "12,480" },
+          { label: "Uptime", value: "99.9%" },
+          { label: "Latency", value: "42 ms" },
+        ]}
+      />,
+    );
+    await expectNoViolations(container);
+  });
+
   it("card with header, content, and footer", async () => {
     const { container } = render(
       <Card>

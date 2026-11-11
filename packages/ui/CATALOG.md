@@ -652,7 +652,7 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - Examples: In Suspense, Standalone
 - A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
 - Registry: card-skeleton
-- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts.
+- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
 
 ```ts
 import { Suspense } from "react";
@@ -1438,14 +1438,14 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Status: stable
 - Short name: DetailPanel
 - Audience: Developers rendering record details (drawers, side panels, headers).
-- Purpose: Key-value detail lists plus an optional live pulse. `inactiveLabel` replaces or hides Idle when off (dot only if empty); `label` only overrides the live word.
-- When to use: For read-only record summaries next to the list.
+- Purpose: Key-value details as boxed rows or `variant="grid"` stats, plus a live pulse. Idle copy is `inactiveLabel`; `label` only overrides Live.
+- When to use: For read-only record summaries next to the list. Use `variant="grid"` for dashboard-style stats (large value, quiet label).
 - When not to use: For editable records — use Form instead.
 - See also: `Show a sortable, filterable, paginated data table`, `Slide in a drawer panel`
-- Examples: Simple, Composed rows
-- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
+- Examples: Simple, Composed rows, Stat grid
+- A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. Grid wraps each pair so a two-column layout does not interleave terms and definitions. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Grid is `items[]` only — there is no composed-cell export. Grid reading order — each item is one wrapped `dt`/`dd` pair, not flattened grid children. Boxed look on a grid — wrap in Card (`<Card><DetailPanel variant="grid" items={items} /></Card>`); `className` also works; grid drops list chrome. Grid loading — `DetailPanelSkeleton` is the boxed-list shape only. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -1458,6 +1458,14 @@ import { DetailPanelRow } from "@zedtech/zedkit-ui";
 <dl>
   <DetailPanelRow label="Region" value="eu" />
 </dl>
+```
+
+```ts
+import { DetailPanel } from "@zedtech/zedkit-ui";
+<DetailPanel
+  variant="grid"
+  items={[{ label: "Requests", value: "12,480" }, { label: "Uptime", value: "99.9%" }]}
+/>
 ```
 
 ## Build validated forms with labels, errors, and pending state
