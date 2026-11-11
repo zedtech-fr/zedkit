@@ -43,23 +43,23 @@ function EntryColumns({ entries }: { entries: CatalogIndexEntry[] }) {
 
 function resultsStatusLine(filtered: CatalogIndexEntry[]) {
   return (
-    <span role="status" aria-live="polite">
+    <Text as="span" role="status" aria-live="polite">
       {catalogCopy.results.statusLine(filtered.length)}
-    </span>
+    </Text>
   );
 }
 
 /** Results title row — lives in the default-width filters band for column alignment. */
 export function CatalogResultsHeader({ filtered }: { filtered: CatalogIndexEntry[] }) {
   return (
-    <div className="flex items-start justify-between gap-stack-lg" data-catalog-results-heading="">
-      <div>
+    <Stack className="flex-row items-start justify-between" data-catalog-results-heading="">
+      <Stack className="gap-flush">
         <Heading level={2} id="catalog-results-heading">
           {catalogCopy.results.heading}
         </Heading>
         <Text variant="muted">{resultsStatusLine(filtered)}</Text>
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   );
 }
 

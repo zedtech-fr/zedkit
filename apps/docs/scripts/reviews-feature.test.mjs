@@ -20,12 +20,13 @@ import { filterReviewList } from "../features/reviews/model/list-filter.ts";
 import { reviewMainFlow } from "../features/reviews/model/main-flow.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
-import { toPublicReviews } from "../features/reviews/model/public-review.ts";
+import { assertPubliclySafe, toPublicReviews } from "../features/reviews/model/public-review.ts";
 import {
   listReviewPrParamsFrom,
   listReviewRunParamsFrom,
   listReviewSitemapPathsFrom,
 } from "../features/reviews/model/review-routes.ts";
+import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
 import {
   latestReviewRun,
   mergeReviewShareUrl,
@@ -40,7 +41,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
 const reviewsAppRoot = join(here, "../app/(site)/reviews");
 
-function sample(overrides = {}) {
+function viewSample(overrides = {}) {
   return {
     number: 71,
     title: "Add a public review section",
@@ -61,83 +62,172 @@ function sample(overrides = {}) {
   };
 }
 
-function wrapper(reviews, extra = {}) {
-  return { version: 1, kind: "public-stand-in", reviews, ...extra };
+function liveItem(overrides = {}) {
+  return {
+    id: "main",
+    name: "Main flow",
+    kind: "main",
+    engine: "test",
+    engine_label: "test",
+    model: "test-model",
+    status: "done",
+    duration_s: 12,
+    tool_count: 2,
+    message_count: 1,
+    tokens_in: 10,
+    tokens_out: 4,
+    started_ms: 1_762_698_500_000,
+    last_activity_ms: 1_762_698_600_000,
+    entries: [
+      { type: "message", text: "hello" },
+      { type: "tool", tool: "read", label: "Read", status: "done", output_chars: 12 },
+    ],
+    prompt: "review this",
+    final_text: "approve",
+    ...overrides,
+  };
 }
 
+function liveSample(overrides = {}) {
+  return {
+    visibility: "public",
+    decision: {
+      posted: true,
+      must: [{ text: "Name empty states" }],
+      notes: [{ text: "The list leads. The verdict is readable." }],
+      dismissed: [],
+      degraded: false,
+      enforcement_reasons: [],
+      first_pass: { verdict: "APPROVE", confidence_score: 8.6 },
+      second_pass: { kept: 0, dropped: 0, adjusted: 0, confirmed_blockers: 0, status: "ran" },
+      verdict: "APPROVE",
+      confidence_score: 8.6,
+      summary: "The public review section is ready to merge.",
+    },
+    run: {
+      run_id: "run-71",
+      pr: 71,
+      sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      status: "done",
+      engine: "test",
+      engine_label: "test",
+      created_at: 1_762_698_600,
+      server_now: 1_762_698_600,
+      elapsed_s: 12,
+      verdict: "APPROVE",
+      confidence_score: 8.6,
+      review_size: "full",
+      issue_title: "Add a public review section",
+    },
+    items: [liveItem()],
+    verdict_json: { verdict: "APPROVE", blocking: [], notes: [] },
+    related: [],
+    ...overrides,
+  };
+}
+
+function wrapper(reviews, extra = {}) {
+  return { version: 1, kind: "public-live-runs", reviews, ...extra };
+}
+
+const sample = viewSample;
+
 test("private and unknown visibility never survive the public gate", () => {
-  const privateRecord = sample({ number: 99, visibility: "private", title: "secret review" });
-  const unknown = sample({ number: 98, visibility: "team", title: "mistyped" });
-  const missing = sample({ number: 97, title: "no flag", visibility: undefined });
-  const kept = toPublicReviews([privateRecord, unknown, missing, sample()]);
+  const privateRecord = liveSample({
+    visibility: "private",
+    run: { ...liveSample().run, pr: 99, issue_title: "secret review" },
+  });
+  const unknown = liveSample({
+    visibility: "team",
+    run: { ...liveSample().run, pr: 98, issue_title: "mistyped" },
+  });
+  const missing = liveSample({
+    run: { ...liveSample().run, pr: 97, issue_title: "no flag" },
+  });
+  delete missing.visibility;
+  const kept = toPublicReviews([privateRecord, unknown, missing, liveSample()]);
   assert.deepEqual(
-    kept.map((record) => record.number),
+    kept.map((record) => record.run.pr),
     [71],
   );
 });
 
 test("secret-like keys, bearer tokens, and home paths do not survive the public gate", () => {
-  const dirty = sample({
-    notes: "Call with Bearer abcDEF123._~+/=- from /home/alice/kit/token",
-    summary: "Bearer xyzTOKEN789._~+/=- lives in /home/bob/kit",
-    evidence: "Authorization: Basic eHl6OnBhc3M from /Users/bob/.config",
+  const base = liveSample();
+  const dirty = liveSample({
     token: "super-secret",
-    actions: [
-      {
-        title: "Drop the key",
-        detail: "Authorization: Basic dXNlcjpwYXNz lives in /Users/alice/.config",
-      },
-    ],
-    firstPass: {
-      findings: [
+    decision: {
+      ...base.decision,
+      summary: "Bearer xyzTOKEN789._~+/=- lives in /home/bob/kit",
+      notes: [{ text: "Call with Bearer abcDEF123._~+/=- from /home/alice/kit/token" }],
+      must: [
         {
-          title: "Drop the first-pass secret",
-          detail: "Bearer firstPassSecret._~+/=- in /home/carol/review",
-          disposition: "kept",
+          text: "Authorization: Basic dXNlcjpwYXNz lives in /Users/alice/.config",
         },
       ],
     },
+    items: [
+      liveItem({
+        entries: [
+          {
+            type: "tool",
+            tool: "read",
+            label: "Read",
+            status: "done",
+            output: "Bearer firstPassSecret._~+/=- in /home/carol/review",
+            output_chars: 40,
+          },
+        ],
+        prompt: "Authorization: Basic eHl6OnBhc3M from /Users/bob/.config",
+      }),
+    ],
   });
   const [clean] = toPublicReviews([dirty]);
   assert.equal(clean.token, "[redacted]");
-  assert.match(clean.notes, /Bearer \[redacted\]/);
-  assert.doesNotMatch(clean.notes, /abcDEF123/);
-  assert.match(clean.notes, /\[path\]/);
-  assert.doesNotMatch(clean.notes, /\/home\/alice/);
-  assert.match(clean.actions[0].detail, /Basic \[redacted\]/);
-  assert.doesNotMatch(clean.actions[0].detail, /dXNlcjpwYXNz/);
-  assert.doesNotMatch(clean.actions[0].detail, /\/Users\/alice/);
-  assert.match(clean.summary, /Bearer \[redacted\]/);
-  assert.doesNotMatch(clean.summary, /xyzTOKEN789/);
-  assert.doesNotMatch(clean.summary, /\/home\/bob/);
-  assert.match(clean.evidence, /Basic \[redacted\]/);
-  assert.doesNotMatch(clean.evidence, /eHl6OnBhc3M/);
-  assert.doesNotMatch(clean.evidence, /\/Users\/bob/);
-  assert.match(clean.firstPass.findings[0].detail, /Bearer \[redacted\]/);
-  assert.doesNotMatch(clean.firstPass.findings[0].detail, /firstPassSecret/);
-  assert.doesNotMatch(clean.firstPass.findings[0].detail, /\/home\/carol/);
+  assert.match(clean.decision.notes[0].text, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.decision.notes[0].text, /abcDEF123/);
+  assert.match(clean.decision.notes[0].text, /\[path\]/);
+  assert.doesNotMatch(clean.decision.notes[0].text, /\/home\/alice/);
+  assert.match(clean.decision.must[0].text, /Basic \[redacted\]/);
+  assert.doesNotMatch(clean.decision.must[0].text, /dXNlcjpwYXNz/);
+  assert.doesNotMatch(clean.decision.must[0].text, /\/Users\/alice/);
+  assert.match(clean.decision.summary, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.decision.summary, /xyzTOKEN789/);
+  assert.doesNotMatch(clean.decision.summary, /\/home\/bob/);
+  assert.match(clean.items[0].prompt, /Basic \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].prompt, /eHl6OnBhc3M/);
+  assert.doesNotMatch(clean.items[0].prompt, /\/Users\/bob/);
+  assert.match(clean.items[0].entries[0].output, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].entries[0].output, /firstPassSecret/);
+  assert.doesNotMatch(clean.items[0].entries[0].output, /\/home\/carol/);
+});
+
+test("a payload that still has a home path or token is rejected", () => {
+  assert.throws(() => assertPubliclySafe({ notes: "from /home/alice/kit" }));
+  assert.throws(() => assertPubliclySafe({ notes: "Bearer abcDEF123._~+/=" }));
+  assert.throws(() => assertPubliclySafe({ notes: String.raw`C:\Users\bob\token` }));
+  assert.doesNotThrow(() => assertPubliclySafe({ notes: "Bearer [redacted] at [path]" }));
 });
 
 test("a public review is kept with its list fields", () => {
-  const [kept] = toPublicReviews([sample()]);
+  const [kept] = toPublicReviews([liveSample()]);
   assert.equal(kept.visibility, "public");
-  assert.equal(kept.verdict, "approve");
-  assert.equal(kept.confidence, 86);
-  assert.equal(kept.status, "done");
-  assert.equal(kept.headSha, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-  assert.equal(kept.prState, "open");
-  assert.deepEqual(kept.findings, []);
-  assert.deepEqual(kept.runs[0].agents, []);
+  assert.equal(kept.run.verdict, "APPROVE");
+  assert.equal(kept.run.confidence_score, 8.6);
+  assert.equal(kept.run.status, "done");
+  assert.equal(kept.run.sha, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  assert.deepEqual(kept.related, []);
+  assert.equal(kept.items[0].kind, "main");
 });
 
 test("a version-1 snapshot parses its reviews", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([sample()]));
+  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()]));
   assert.equal(parsed.ok, true);
   assert.deepEqual(
-    parsed.value.map((record) => record.number),
+    parsed.value.map((record) => record.run.pr),
     [71],
   );
-  assert.equal(parsed.value[0].verdict, "approve");
+  assert.equal(parsed.value[0].decision.verdict, "APPROVE");
 });
 
 test("an empty snapshot is valid", () => {
@@ -147,43 +237,31 @@ test("an empty snapshot is valid", () => {
 });
 
 test("an unknown snapshot kind is accepted when version is 1", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([sample()], { kind: "redacted-export" }));
+  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()], { kind: "redacted-export" }));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.length, 1);
 });
 
 test("version 2 snapshots are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([sample()], { version: 2 }));
+  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()], { version: 2 }));
   assert.equal(parsed.ok, false);
 });
 
 test("unknown keys on a snapshot record are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([{ ...sample(), apiKey: "x" }]));
+  const parsed = parsePublicReviewSnapshot(wrapper([{ ...liveSample(), apiKey: "x" }]));
   assert.equal(parsed.ok, false);
 });
 
 test("unknown keys on nested snapshot objects are rejected", () => {
   const parsed = parsePublicReviewSnapshot(
-    wrapper([
-      sample({
-        findings: [{ id: "f1", summary: "x", disposition: "kept", token: "x" }],
-      }),
-    ]),
+    wrapper([liveSample({ run: { ...liveSample().run, token: "x" } })]),
   );
   assert.equal(parsed.ok, false);
   assert.equal(
     parsePublicReviewSnapshot(
       wrapper([
-        sample({
-          runs: [
-            {
-              id: "run-71",
-              status: "done",
-              startedAt: "2026-11-09T14:50:00.000Z",
-              agents: [],
-              items: [{ id: "flow", kind: "flow", title: "Main flow", status: "done", token: "x" }],
-            },
-          ],
+        liveSample({
+          items: [liveItem({ entries: [{ type: "message", text: "x", token: "x" }] })],
         }),
       ]),
     ).ok,
@@ -192,65 +270,91 @@ test("unknown keys on nested snapshot objects are rejected", () => {
 });
 
 test("unknown keys on the snapshot wrapper are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([sample()], { token: "x" }));
+  const parsed = parsePublicReviewSnapshot(wrapper([liveSample()], { token: "x" }));
   assert.equal(parsed.ok, false);
 });
 
 test("a snapshot with a missing required field is rejected", () => {
-  const rest = sample();
-  delete rest.notes;
+  const rest = liveSample();
+  delete rest.run;
   const parsed = parsePublicReviewSnapshot(wrapper([rest]));
   assert.equal(parsed.ok, false);
 });
 
 test("wrong types in a snapshot are rejected", () => {
-  assert.equal(parsePublicReviewSnapshot(wrapper([sample({ number: "71" })])).ok, false);
+  assert.equal(
+    parsePublicReviewSnapshot(wrapper([liveSample({ run: { ...liveSample().run, created_at: "71" } })])).ok,
+    false,
+  );
   assert.equal(parsePublicReviewSnapshot(null).ok, false);
   assert.equal(parsePublicReviewSnapshot([]).ok, false);
 });
 
 test("unknown visibility in a snapshot is rejected", () => {
-  assert.equal(parsePublicReviewSnapshot(wrapper([sample({ visibility: "team" })])).ok, false);
+  assert.equal(parsePublicReviewSnapshot(wrapper([liveSample({ visibility: "team" })])).ok, false);
+});
+
+test("omitted visibility is rejected at parse and dropped at the public gate", () => {
+  const omitted = liveSample();
+  delete omitted.visibility;
+  assert.equal(parsePublicReviewSnapshot(wrapper([omitted])).ok, false);
+  assert.deepEqual(toPublicReviews([omitted]).map((row) => row.run.pr), []);
 });
 
 test("private visibility is kept by parse so the public gate can drop it", () => {
-  const parsed = parsePublicReviewSnapshot(wrapper([sample({ number: 99, visibility: "private" })]));
+  const parsed = parsePublicReviewSnapshot(wrapper([liveSample({ visibility: "private" })]));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value[0].visibility, "private");
 });
 
+test("an item without entries still parses", () => {
+  const item = liveItem();
+  delete item.entries;
+  const parsed = parsePublicReviewSnapshot(wrapper([liveSample({ items: [item] })]));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(parsed.value[0].items[0].entries, []);
+});
+
+test("verdict_json extra keys are accepted", () => {
+  const parsed = parsePublicReviewSnapshot(
+    wrapper([liveSample({ verdict_json: { verdict: "APPROVE", extra_flag: true, blocking: [] } })]),
+  );
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value[0].verdict_json.extra_flag, true);
+});
+
 test("the fixture port lists only public copies", async () => {
   const port = createFixtureReviewPort([
-    sample(),
-    sample({ number: 99, visibility: "private", title: "hidden" }),
+    liveSample(),
+    liveSample({
+      visibility: "private",
+      run: { ...liveSample().run, pr: 99, issue_title: "hidden" },
+    }),
   ]);
   const listed = await port.list();
   assert.deepEqual(
-    listed.map((record) => record.number),
+    listed.map((record) => record.run.pr),
     [71],
   );
-  listed[0].title = "mutated";
+  listed[0].run.issue_title = "mutated";
   const again = await port.list();
-  assert.equal(again[0].title, "Add a public review section");
+  assert.equal(again[0].run.issue_title, "Add a public review section");
   assert.equal(await port.getByPr(99), null);
   assert.equal(await port.getRun(99, "run-71"), null);
   const run = await port.getRun(71, "run-71");
-  assert.equal(run?.status, "done");
+  assert.equal(run?.run.status, "done");
 });
 
-test("the fixture test double covers open, merged, and more than one run status", async () => {
+test("the fixture test double covers more than one verdict and run status", async () => {
   const listed = await createFixtureReviewPort().list();
   assert.ok(listed.length >= 2);
-  const states = new Set(listed.map((record) => record.prState));
-  const verdicts = new Set(listed.map((record) => record.verdict));
-  const statuses = new Set(listed.map((record) => record.status));
-  assert.ok(states.has("open"));
-  assert.ok(states.has("merged"));
+  const verdicts = new Set(listed.map((record) => record.run.verdict));
+  const statuses = new Set(listed.map((record) => record.run.status));
   assert.ok(verdicts.size >= 2);
   assert.ok(statuses.has("done"));
   assert.ok(statuses.has("running") || statuses.has("error"));
   assert.ok(listed.every((record) => record.visibility === "public"));
-  assert.ok(!listed.some((record) => record.number === 99));
+  assert.ok(!listed.some((record) => record.run.pr === 99));
 });
 
 test("appearance round-trips identity, dark preview, and compact density", () => {
@@ -287,8 +391,8 @@ test("unknown identity and hostile query values fall back without throwing", () 
 
 test("list filter matches state, verdict, and search over title, number, and SHA", () => {
   const records = [
-    sample(),
-    sample({
+    viewSample(),
+    viewSample({
       number: 42,
       title: "Tighten contrast on Press",
       verdict: "request-changes",
@@ -329,27 +433,30 @@ function writeSnapshot(reviews, extra = {}) {
 
 test("the snapshot port lists only public copies and isolates mutations", async () => {
   const path = writeSnapshot([
-    sample(),
-    sample({ number: 99, visibility: "private", title: "hidden" }),
+    liveSample(),
+    liveSample({
+      visibility: "private",
+      run: { ...liveSample().run, pr: 99, issue_title: "hidden" },
+    }),
   ]);
   const port = createSnapshotReviewPort(path);
   const listed = await port.list();
   assert.deepEqual(
-    listed.map((record) => record.number),
+    listed.map((record) => record.run.pr),
     [71],
   );
-  listed[0].title = "mutated";
-  listed[0].findings = [{ id: "x", summary: "no", disposition: "kept" }];
+  listed[0].run.issue_title = "mutated";
+  listed[0].items = [];
   const again = await port.list();
-  assert.equal(again[0].title, "Add a public review section");
-  assert.deepEqual(again[0].findings, []);
+  assert.equal(again[0].run.issue_title, "Add a public review section");
+  assert.equal(again[0].items[0].id, "main");
   assert.equal(await port.getByPr(99), null);
   assert.equal(await port.getRun(99, "run-71"), null);
   assert.equal(await port.getByPr(404), null);
   assert.equal(await port.getRun(71, "missing"), null);
   const run = await port.getRun(71, "run-71");
-  assert.equal(run?.status, "done");
-  assert.deepEqual(run?.agents, []);
+  assert.equal(run?.run.status, "done");
+  assert.equal(run?.items[0].kind, "main");
 });
 
 test("an empty snapshot lists nothing and keeps the sitemap root", async () => {
@@ -369,23 +476,26 @@ test("a malformed snapshot fails closed", () => {
   assert.throws(() => createSnapshotReviewPort(invalidJson));
   const missing = join(dir, "missing.json");
   assert.throws(() => createSnapshotReviewPort(missing));
-  const wrongVersion = writeSnapshot([sample()], { version: 2 });
+  const wrongVersion = writeSnapshot([liveSample()], { version: 2 });
   assert.throws(() => createSnapshotReviewPort(wrongVersion));
 });
 
 test("static params and sitemap come from public snapshot records only", async () => {
   const path = writeSnapshot([
-    sample(),
-    sample({
-      number: 64,
-      title: "Presentation blockers",
-      verdict: "request-changes",
-      runs: [
-        { id: "run-64-a", status: "done", startedAt: "2026-11-10T14:00:00.000Z", agents: [] },
-        { id: "run-64-b", status: "done", startedAt: "2026-11-10T14:10:00.000Z", agents: [] },
-      ],
+    liveSample(),
+    liveSample({
+      run: { ...liveSample().run, run_id: "run-64-a", pr: 64, issue_title: "Presentation blockers" },
     }),
-    sample({ number: 99, visibility: "private" }),
+    liveSample({
+      run: {
+        ...liveSample().run,
+        run_id: "run-64-b",
+        pr: 64,
+        created_at: 1_762_698_700,
+        issue_title: "Presentation blockers",
+      },
+    }),
+    liveSample({ visibility: "private", run: { ...liveSample().run, pr: 99 } }),
   ]);
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "71" }, { n: "64" }]);
@@ -404,44 +514,74 @@ test("static params and sitemap come from public snapshot records only", async (
   ]);
 });
 
-test("the checked-in public snapshot is dense enough for identity testing", async () => {
+test("the checked-in public snapshot is a live-shaped recorded run", async () => {
   const listed = await createSnapshotReviewPort().list();
-  assert.ok(listed.length >= 3);
-  const verdicts = new Set(listed.map((record) => record.verdict));
-  assert.ok(verdicts.has("approve"));
-  assert.ok(verdicts.has("request-changes"));
-  const superseded = listed.some(
-    (record) =>
-      record.runs.length >= 2 && record.findings.some((finding) => finding.disposition !== "kept"),
-  );
-  assert.ok(superseded);
-  const shas = listed.map((record) => record.headSha.toLowerCase());
-  assert.ok(shas.every((sha) => sha.length === 40));
-  assert.ok(shas.every((sha) => !/c0ffee|bada55|deface/.test(sha)));
-  assert.ok(listed.every((record) => record.visibility === "public"));
-  assert.ok(!listed.some((record) => record.number === 99));
+  assert.ok(listed.length >= 1);
+  const row = listed.find((record) => record.run.run_id === "20261111T065452Z-bc07a1a9") ?? listed[0];
+  assert.equal(row.visibility, "public");
+  assert.equal(typeof row.run.pr, "number");
+  assert.ok(String(row.run.sha ?? "").length > 0);
+  assert.ok(row.run.engine_label.length > 0);
+  assert.equal(typeof row.run.elapsed_s, "number");
+  assert.ok(String(row.run.verdict ?? "").length > 0);
+  assert.equal(typeof row.run.confidence_score, "number");
+  assert.ok(String(row.run.review_size ?? "").length > 0);
+  const kinds = new Set(row.items.map((item) => item.kind));
+  assert.ok(kinds.has("main"));
+  assert.ok(kinds.has("lens") || kinds.has("gate"));
+  assert.ok(kinds.has("second_pass"));
+  for (const kind of ["main", "lens", "second_pass"]) {
+    const item = row.items.find((entry) => (kind === "lens" ? entry.kind === "lens" || entry.kind === "gate" : entry.kind === kind));
+    if (kind === "lens" && item === undefined) continue;
+    assert.ok(item, `missing ${kind}`);
+    assert.ok(item.model.length > 0);
+    assert.equal(typeof item.duration_s, "number");
+    assert.equal(typeof item.tool_count, "number");
+    assert.ok(String(item.status).length > 0);
+  }
+  assert.ok(row.decision);
+  assert.ok(row.decision.first_pass);
+  assert.ok(row.decision.second_pass);
+  assert.equal(typeof row.decision.posted, "boolean");
+  assert.ok(Array.isArray(row.decision.must));
+  assert.ok(Array.isArray(row.decision.notes));
+  assert.ok(Array.isArray(row.decision.dismissed));
+  const dispositions = [];
+  for (const item of [...(row.verdict_json?.blocking ?? []), ...(row.verdict_json?.notes ?? [])]) {
+    if (item && typeof item === "object" && typeof item._disposition === "string") {
+      dispositions.push(item._disposition);
+    }
+  }
+  for (const note of row.decision.notes) {
+    if (note.tag) dispositions.push(note.tag);
+  }
+  assert.ok(dispositions.includes("kept"));
+  const transcript = row.items.find((item) => {
+    const types = new Set((item.entries ?? []).map((entry) => entry.type));
+    return types.has("tool") && types.has("message");
+  });
+  assert.ok(transcript);
   assert.ok(
-    listed.every((record) =>
-      record.runs.every((run) => (run.items ?? []).some((item) => item.kind === "flow")),
-    ),
+    transcript.started_ms != null || transcript.duration_s != null,
   );
-  assert.ok(
-    listed.some((record) =>
-      record.runs.some((run) => (run.items ?? []).some((item) => item.kind === "agent")),
-    ),
-  );
+  assert.equal(typeof transcript.tool_count, "number");
+  assert.ok(transcript.tokens_in != null || transcript.tokens_out != null);
+  assert.ok(transcript.last_activity_ms != null);
+  const snapshotText = readFileSync(join(FEATURE, "adapters", "public-reviews.json"), "utf8");
+  assert.doesNotMatch(snapshotText, /\/home\//);
+  assert.doesNotMatch(snapshotText, /\/Users\//);
+  assert.doesNotMatch(snapshotText, /Bearer (?!\[redacted\])/);
+  assert.doesNotMatch(snapshotText, /Basic (?!\[redacted\])/);
+  const featureIndex = readFileSync(join(FEATURE, "index.tsx"), "utf8");
+  assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
+  assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
   const params = await listReviewPrParamsFrom(createSnapshotReviewPort());
-  assert.deepEqual(
-    params.map((row) => row.n),
-    listed.map((record) => String(record.number)),
-  );
+  assert.ok(params.some((row) => row.n === String(listed[0].run.pr)));
   const sitemap = await listReviewSitemapPaths();
   assert.equal(sitemap[0], "/reviews");
   for (const record of listed) {
-    assert.ok(sitemap.includes(`/reviews/pr/${record.number}`));
-    for (const run of record.runs) {
-      assert.ok(sitemap.includes(`/reviews/pr/${record.number}/runs/${run.id}`));
-    }
+    assert.ok(sitemap.includes(`/reviews/pr/${record.run.pr}`));
+    assert.ok(sitemap.includes(`/reviews/pr/${record.run.pr}/runs/${record.run.run_id}`));
   }
 });
 
@@ -530,8 +670,8 @@ test("empty evidence is omitted; non-empty evidence follows notes", () => {
 });
 
 test("production COMMENT running fixture has no Must change section", async () => {
-  const listed = await createFixtureReviewPort().list();
-  const comment = listed.find((record) => record.number === 18);
+  const lives = await createFixtureReviewPort().list();
+  const comment = toReviewRecord(lives.find((record) => record.run.pr === 18));
   assert.equal(comment?.verdict, "comment");
   assert.equal(comment?.status, "running");
   assert.deepEqual(comment?.actions, []);
@@ -539,8 +679,8 @@ test("production COMMENT running fixture has no Must change section", async () =
 });
 
 test("production APPROVE fixture has no Must change section", async () => {
-  const listed = await createFixtureReviewPort().list();
-  const approve = listed.find((record) => record.number === 71);
+  const lives = await createFixtureReviewPort().list();
+  const approve = toReviewRecord(lives.find((record) => record.run.pr === 71));
   assert.equal(approve?.verdict, "approve");
   assert.deepEqual(approve?.actions, []);
   const flow = reviewMainFlow(approve);
@@ -549,8 +689,8 @@ test("production APPROVE fixture has no Must change section", async () => {
 });
 
 test("production REQUEST_CHANGES fixture lists blockers after the decision", async () => {
-  const listed = await createFixtureReviewPort().list();
-  const request = listed.find((record) => record.number === 42);
+  const lives = await createFixtureReviewPort().list();
+  const request = toReviewRecord(lives.find((record) => record.run.pr === 42));
   assert.equal(request?.verdict, "request-changes");
   const flow = reviewMainFlow(request);
   assert.equal(flow.sections[0], "decision");
@@ -562,15 +702,18 @@ test("production REQUEST_CHANGES fixture lists blockers after the decision", asy
 });
 
 test("production superseded fixture labels mixed first-pass dispositions", async () => {
-  const listed = await createFixtureReviewPort().list();
-  const superseded = listed.find((record) => record.number === 83);
+  const lives = await createFixtureReviewPort().list();
+  const superseded = toReviewRecord(lives.find((record) => record.run.pr === 83));
   assert.ok(superseded);
   const flow = reviewMainFlow(superseded);
   assert.equal(flow.sections[0], "decision");
   assert.equal(flow.sections[1], "must-change");
-  assert.equal(flow.sections[2], "first-pass");
-  assert.equal(flow.sections.includes("findings"), false);
-  assert.deepEqual(flow.findings, []);
+  assert.equal(flow.sections[2], "findings");
+  assert.equal(flow.sections[3], "first-pass");
+  assert.deepEqual(
+    flow.findings.map((finding) => finding.disposition),
+    ["kept", "downgraded", "dismissed"],
+  );
   assert.ok(flow.firstPass);
   assert.deepEqual(
     flow.firstPass?.findings.map((finding) => finding.disposition),
@@ -624,15 +767,16 @@ test("reconciled findings follow the decision when there are no blockers", () =>
   assert.equal(flow.sections.includes("must-change"), false);
 });
 
-test("production snapshot PR 80 maps reconciled findings including a non-kept row", async () => {
-  const listed = await createSnapshotReviewPort().list();
-  const record = listed.find((row) => row.number === 80);
-  assert.ok(record);
+test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
+  const lives = await createSnapshotReviewPort().list();
+  const live = lives[0];
+  assert.ok(live);
+  const record = toReviewRecord(live, lives);
   const flow = reviewMainFlow(record);
-  assert.equal(flow.sections.includes("findings"), true);
-  assert.ok(flow.findings.some((finding) => finding.disposition !== "kept"));
-  assert.equal(flow.sections.indexOf("findings"), flow.sections.indexOf("must-change") + 1);
-  assert.equal(flow.sections.includes("first-pass"), false);
+  assert.equal(flow.sections[0], "decision");
+  assert.equal(flow.sections.includes("must-change"), true);
+  assert.ok(flow.findings.some((finding) => finding.disposition === "kept"));
+  assert.equal(flow.sections.includes("first-pass"), true);
 });
 
 test("decision summary is trimmed and empty whitespace becomes an empty string", () => {
@@ -851,7 +995,8 @@ test("the latest run is the newest startedAt, and a tie keeps the first", () => 
 });
 
 test("public fixtures expose a main flow plus an agent, and a workflow somewhere", async () => {
-  const listed = await createFixtureReviewPort().list();
+  const lives = await createFixtureReviewPort().list();
+  const listed = lives.map((row) => toReviewRecord(row, lives));
   const kinds = new Set();
   let flowWithAgent = false;
   for (const record of listed) {
@@ -867,18 +1012,10 @@ test("public fixtures expose a main flow plus an agent, and a workflow somewhere
 
 test("a private record with agent titles never appears", async () => {
   const port = createFixtureReviewPort([
-    sample({
-      number: 99,
+    liveSample({
       visibility: "private",
-      title: "hidden",
-      runs: [
-        {
-          id: "run-99",
-          status: "done",
-          startedAt: "2026-11-01T00:00:00.000Z",
-          items: [{ id: "agent-x", kind: "agent", title: "secret agent", status: "done" }],
-        },
-      ],
+      run: { ...liveSample().run, pr: 99, issue_title: "hidden" },
+      items: [liveItem({ id: "agent-x", name: "secret agent", kind: "lens" })],
     }),
   ]);
   assert.deepEqual(await port.list(), []);
@@ -886,26 +1023,52 @@ test("a private record with agent titles never appears", async () => {
 
 test("item titles go through the public scrubber", () => {
   const [clean] = toPublicReviews([
-    sample({
-      runs: [
-        {
-          id: "run-71",
-          status: "done",
-          startedAt: "2026-11-09T14:50:00.000Z",
-          items: [
-            {
-              id: "agent-x",
-              kind: "agent",
-              title: "Call with Bearer abcDEF123._~+/=-",
-              status: "done",
-            },
-          ],
-        },
-      ],
+    liveSample({
+      items: [liveItem({ name: "Call with Bearer abcDEF123._~+/=" })],
     }),
   ]);
-  assert.match(clean.runs[0].items[0].title, /Bearer \[redacted\]/);
-  assert.doesNotMatch(clean.runs[0].items[0].title, /abcDEF123/);
+  assert.match(clean.items[0].name, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].name, /abcDEF123/);
+});
+
+test("the temporary mapper turns live rows into the current view-model", () => {
+  const live = liveSample({
+    decision: {
+      ...liveSample().decision,
+      verdict: "REQUEST_CHANGES",
+      confidence_score: 7.2,
+      must: [{ text: "Fix the link" }],
+    },
+    run: { ...liveSample().run, status: "completed", verdict: "REQUEST_CHANGES", sha: "abc" },
+    verdict_json: {
+      blocking: [{ _disposition: "kept", text: "Keep this" }],
+      notes: [{ _disposition: "downgraded", text: "Note this" }],
+    },
+    items: [
+      liveItem({ id: "main", kind: "main", name: "Main flow", status: "ran" }),
+      liveItem({ id: "lens-1", kind: "lens", name: "code", status: "done" }),
+    ],
+  });
+  const record = toReviewRecord(live);
+  assert.equal(record.number, 71);
+  assert.equal(record.verdict, "request-changes");
+  assert.equal(record.confidence, 72);
+  assert.equal(record.status, "done");
+  assert.equal(record.headSha, "abc");
+  assert.equal(record.prState, "open");
+  assert.deepEqual(
+    record.actions.map((action) => action.title),
+    ["Fix the link"],
+  );
+  assert.deepEqual(
+    record.findings.map((finding) => finding.disposition),
+    ["kept", "downgraded"],
+  );
+  assert.equal(record.runs[0].id, "run-71");
+  assert.deepEqual(
+    record.runs[0].items?.map((item) => item.kind),
+    ["flow", "agent"],
+  );
 });
 
 test("the review console uses a kit drawer below md and hides the desktop column", () => {

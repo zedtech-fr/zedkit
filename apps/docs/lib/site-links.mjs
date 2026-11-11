@@ -30,18 +30,19 @@ export const SITE_HEADER_INTERNAL_PATHS = [
 ];
 
 /**
+ * Footer hrefs and catalog keys. Labels live in `siteChromeCopy.footer.links`.
  * @param {string} changelogHref
- * @returns {{ label: string; href: string; external: boolean }[]}
+ * @returns {Array<{ copyKey: "documentation" | "catalog" | "startWithoutWritingCode" | "mitLicense" | "sourceRepository" | "npmOrganisation" | "reportABug" | "uiChangelog"; href: string; external: boolean }>}
  */
 export function siteFooterLinkSpecs(changelogHref) {
   return [
-    { label: "Documentation", href: "/docs", external: false },
-    { label: "Catalog", href: "/catalog", external: false },
-    { label: "Start without writing code", href: "/docs/start-without-writing-code", external: false },
-    { label: "MIT License", href: SITE_LICENSE_URL, external: true },
-    { label: "Source repository", href: SITE_GITHUB_URL, external: true },
-    { label: "npm organization", href: SITE_NPM_ORG_URL, external: true },
-    { label: "Report a bug", href: SITE_BUG_REPORT_URL, external: true },
-    { label: "UI changelog", href: changelogHref, external: true },
+    { copyKey: "documentation", href: "/docs", external: false },
+    { copyKey: "catalog", href: "/catalog", external: false },
+    { copyKey: "startWithoutWritingCode", href: "/docs/start-without-writing-code", external: false },
+    { copyKey: "mitLicense", href: SITE_LICENSE_URL, external: true },
+    { copyKey: "sourceRepository", href: SITE_GITHUB_URL, external: true },
+    { copyKey: "npmOrganisation", href: SITE_NPM_ORG_URL, external: true },
+    { copyKey: "reportABug", href: SITE_BUG_REPORT_URL, external: true },
+    { copyKey: "uiChangelog", href: changelogHref, external: true },
   ];
 }

@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
   Stack,
+  Text,
 } from "@zedtech/zedkit-ui";
 import { areaIconFor } from "@/lib/domain-icons";
 import type { CatalogArea } from "@/content/catalog-index";
@@ -175,11 +176,11 @@ export function CatalogFiltersToolbar({
 
   return (
     <Stack gap="md" data-catalog-toolbar="" aria-label={catalogCopy.filters.toolbarAriaLabel}>
-      <div className="flex flex-col gap-stack-md sm:flex-row sm:items-end" data-catalog-filter-row="">
+      <Stack gap="md" className="sm:flex-row sm:items-end" data-catalog-filter-row="">
         <CatalogSearchField q={q} onFilters={onFilters} />
         <CatalogAreaSelect area={area} onFilters={onFilters} />
         <CatalogMaturitySelect status={status} statuses={statuses} onFilters={onFilters} />
-      </div>
+      </Stack>
       {hasActiveFilters ? (
         <CatalogActiveFilterChips
           area={area}
@@ -195,8 +196,8 @@ export function CatalogFiltersToolbar({
 
 export function catalogResultsStatusLine(count: number) {
   return (
-    <span role="status" aria-live="polite" className="text-dense text-muted-foreground">
+    <Text as="span" variant="muted" role="status" aria-live="polite">
       {catalogCopy.results.statusLine(count)}
-    </span>
+    </Text>
   );
 }

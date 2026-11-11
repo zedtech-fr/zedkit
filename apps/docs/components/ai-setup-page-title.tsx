@@ -2,16 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Heading, Text, useMotionPreference, WordRoll } from "@zedtech/zedkit-ui";
-
-const WORDS = ["Cursor", "Muse", "Claude", "your choice"] as const;
-
-/** Stable accessible name: the rotating segment is decorative (`aria-hidden` on the slot). */
-export const AI_SETUP_PAGE_H1_LABEL = "Set up zedkit AI in Cursor, Muse, Claude, or your choice";
+import { aiSetupCopy } from "@/components/i18n/ai-setup-copy";
 
 const ROTATE_MS = 2800;
 const ROLL_DWELL_MS = 300;
-
-const LEAD = "Give your coding agent one prompt to set up zedkit AI in your project.";
 
 /** Accent the rolling word only; inherit Heading weight/size — no type size on the slot. */
 const ROLL_ACCENT =
@@ -20,7 +14,8 @@ const ROLL_ACCENT =
 /**
  * Page H1 for the AI setup guide. SSR and the client paint the same tree
  * (first word + WordRoll) so hydration does not swap a long title for a short
- * one. The interval only starts when motion is allowed.
+ * one. The interval only starts when motion is allowed. The accessible name
+ * is stable: the rotating segment is decorative (`aria-hidden` on the slot).
  */
 export function AiSetupPageTitle() {
   const motion = useMotionPreference();
@@ -30,21 +25,21 @@ export function AiSetupPageTitle() {
   useEffect(() => {
     if (!motionOk) return;
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % WORDS.length);
+      setIndex((i) => (i + 1) % aiSetupCopy.title.words.length);
     }, ROTATE_MS);
     return () => window.clearInterval(id);
   }, [motionOk]);
 
-  const word = WORDS[index] ?? WORDS[0];
+  const word = aiSetupCopy.title.words[index] ?? aiSetupCopy.title.words[0];
 
   return (
     <>
-      <Heading level={1} typeRole="title" className="mb-stack text-balance" aria-label={AI_SETUP_PAGE_H1_LABEL}>
-        Set up zedkit AI in{" "}
-        <WordRoll words={WORDS} value={word} dwellMs={ROLL_DWELL_MS} className={ROLL_ACCENT} data-setup-word="" aria-hidden />
+      <Heading level={1} typeRole="title" className="mb-stack text-balance" aria-label={aiSetupCopy.title.h1Label}>
+        {aiSetupCopy.title.prefix}{" "}
+        <WordRoll words={aiSetupCopy.title.words} value={word} dwellMs={ROLL_DWELL_MS} className={ROLL_ACCENT} data-setup-word="" aria-hidden />
       </Heading>
       <Text as="p" variant="muted" className="mb-lead text-balance">
-        {LEAD}
+        {aiSetupCopy.title.lead}
       </Text>
     </>
   );

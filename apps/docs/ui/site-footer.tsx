@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container, Separator, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
+import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
 const linkClassName = "inline-flex min-h-floor items-center rounded-sm text-dense text-muted-foreground link-offset hover:underline focus-ring";
 
@@ -22,7 +23,7 @@ export function SiteMaintainerFooter({
     >
       <Container width="wide">
         <Stack gap="lg" className="py-section-sm">
-          <Text variant="muted" as="p">Maintained by ZED TECH</Text>
+          <Text variant="muted" as="p">{siteChromeCopy.footer.maintainer}</Text>
           <Separator />
           <Stack direction="horizontal" gap="lg" className="flex-wrap">
             {links.map((item) => (
@@ -32,7 +33,7 @@ export function SiteMaintainerFooter({
                 className={linkClassName}
                 {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
               >
-                {item.label}
+                {siteChromeCopy.footer.links[item.copyKey]}
               </Link>
             ))}
           </Stack>

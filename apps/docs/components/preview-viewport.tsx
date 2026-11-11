@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useId, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
-import { Stack, Tabs, TabsContent, TabsList, TabsTrigger, ThemeScope, cn } from "@zedtech/zedkit-ui";
+import { Button, Stack, Tabs, TabsContent, TabsList, TabsTrigger, ThemeScope, cn } from "@zedtech/zedkit-ui";
 import { DemoStyleSelect, usePinnedLook } from "@/components/demo-style-scope";
 import { previewViewportCopy } from "@/components/i18n/preview-viewport-copy";
 
@@ -45,15 +45,16 @@ function Segment({
   children: ReactNode;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       aria-pressed={pressed}
       onClick={onClick}
       data-preview-segment=""
-      className="min-h-target rounded text-dense text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-segment"
+      className="h-auto min-h-target rounded flush text-dense font-normal text-muted-foreground focus-ring-control transition-colors hover:bg-transparent hover:text-foreground aria-pressed:bg-muted aria-pressed:font-medium aria-pressed:text-foreground md:min-h-segment"
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -102,16 +103,17 @@ export function PreviewFrame({
         </TabsList>
         {tab === previewViewportCopy.tabs.preview ? (
           <>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               aria-expanded={displayOpen}
               aria-controls={displayId}
               onClick={() => setDisplayOpen(!displayOpen)}
               data-preview-segment=""
-              className="min-h-target rounded text-dense text-muted-foreground focus-ring-control transition-colors hover:text-foreground aria-expanded:text-foreground md:hidden"
+              className="h-auto min-h-target rounded flush text-dense font-normal text-muted-foreground focus-ring-control transition-colors hover:bg-transparent hover:text-foreground aria-expanded:text-foreground md:hidden"
             >
               {previewViewportCopy.display}
-            </button>
+            </Button>
             <Stack
               direction="horizontal"
               id={displayId}
