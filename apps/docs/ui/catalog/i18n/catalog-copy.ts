@@ -2,13 +2,13 @@
 export const catalogCopy = {
   header: {
     title: "Catalog",
-    lead: "Filter by area, maturity, or search — share or reload keeps filters in the URL.",
+    lead: "Search by need. Filter by area or maturity if you want — share or reload keeps the URL.",
     loadingResults: "Loading results…",
   },
   filters: {
     toolbarAriaLabel: "Catalog filters",
     searchLabel: "Catalog search",
-    searchPlaceholder: "Title or need",
+    searchPlaceholder: "Need or title",
     areaLabel: "Area",
     areaAriaLabel: "Area",
     areaPlaceholder: "All areas",
