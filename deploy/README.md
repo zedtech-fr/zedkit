@@ -33,6 +33,11 @@ worktree, and it does not restart Caddy, Compose, or the suggest service.
 Each deploy stamps `dev-build.txt` (branch, commit, UTC build time); check
 it at `https://dev.zedkit.app/dev-build.txt`.
 
+`.github/workflows/deploy-epic-preview.yml` is the same static path for
+`epic/73-redesign`, rsyncing to `/data/srv/zedkit-epic-73`. Check
+`https://epic-73.dev.zedkit.app/dev-build.txt`. The Dedibox Caddy vhost
+for that name is configured on the host, not in this repo.
+
 Production (`deploy-docs.yml` / `deploy.sh`) still defaults to `/srv/app`.
 That path is not the staging static root; this repo has not verified the
 live production layout. Do not assume they match.
@@ -116,7 +121,8 @@ How it holds, and where to look:
 ## Requirements on the VM
 
 Docker with Compose, `rsync`, ports 80/443 open (443 UDP for HTTP/3), and
-`zedkit.app`, `www.zedkit.app`, and `dev.zedkit.app` resolving to the VM.
+`zedkit.app`, `www.zedkit.app`, `dev.zedkit.app`, and
+`epic-73.dev.zedkit.app` resolving to the VM.
 
 Other static files (for example registry JSON under `/r/`) are served from
 the same site directory with the content type derived from their extension.
