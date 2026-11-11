@@ -125,6 +125,7 @@
           "container-wide": "var(--zk-container-wide)",
           "spacing-badge-inline": "calc(var(--spacing) * 2.5)",
           "spacing-badge-block": "calc(var(--spacing) * 0.5)",
+          "spacing-code-inline": "calc(var(--spacing) * 2.5)",
           "spacing-control-height": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
           "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8))",
           "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10))",

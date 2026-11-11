@@ -198,7 +198,8 @@
     --tw-shadow: var(--zk-shadow-xl);
   }
 
-  /* Badges and table heads read as labels */
+  /* Badges and table heads read as labels.
+     Substring match: do not reuse px-badge-inline for other padding. */
   [class*="px-badge-inline"],
   th {
     text-transform: var(--zk-label-transform);

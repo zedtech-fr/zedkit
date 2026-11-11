@@ -40,6 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Heading,
+  Markdown,
   Input,
   Label,
   LivePulse,
@@ -215,6 +216,18 @@ export function Gallery() {
             <Heading level={2}>Section title</Heading>
             <Text>Body copy for paragraphs.</Text>
             <Text variant="muted">Muted secondary copy.</Text>
+            {/* Markdown specimen (info links, wrapping fences, a list). */}
+            <Markdown>{`## Note
+
+A [docs](https://example.com) link and \`token\`.
+
+- first item
+
+\`\`\`
+const ok = true;
+const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+\`\`\`
+`}</Markdown>
           </div>
         </GallerySection>
 

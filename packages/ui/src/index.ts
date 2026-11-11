@@ -239,6 +239,7 @@ export {
   type SignatureMotion,
 } from "./typography/typography.js";
 export { WordRoll, type WordRollProps } from "./typography/word-roll.js";
+export { Markdown, type MarkdownProps } from "./typography/markdown.js";
 export { cn } from "./utils.js";
 export { CardSkeleton, type CardSkeletonProps } from "./surfaces/card-skeleton.js";
 export { DataTableSkeleton, type DataTableSkeletonProps } from "./data-table/data-table-skeleton.js";

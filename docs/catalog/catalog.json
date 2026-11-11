@@ -5121,7 +5121,7 @@
           "audience": "Developers writing kit pages with consistent type.",
           "purpose": "Heading levels and Text variants with theme-aware styles; visual roles decouple size from semantic level (`typeRole` / `typeRoleClass`).",
           "whenToUse": "For every heading and paragraph in kit UI.",
-          "whenNotToUse": "For raw HTML emails or markdown — style those separately.",
+          "whenNotToUse": "For Markdown source — use `Render Markdown without raw HTML`. For raw HTML emails — style those separately.",
           "derivedFrom": null,
           "example": "import {\n  Heading,\n  Text,\n  typeRoleClass,\n  signatureMotionClass,\n  headingLevelDefaultRole,\n  type TypeRole,\n  type SignatureMotion,\n} from \"@zedtech/zedkit-ui\";\n<Heading level={1} typeRole=\"display\">Page title</Heading>\n<Heading level={2} typeRole=\"title\">Section title</Heading>\n<Heading level={3} typeRole=\"heading\">Band heading</Heading>\n<Text typeRole=\"body\">Body copy.</Text>\n<Text typeRole=\"caption\">Caption</Text>",
           "examples": [
@@ -5160,6 +5160,42 @@
           "troubleshooting": "Wrong tag in the outline — `level` picks the size but `as` picks the tag; set both when they differ. Anchor hidden under a sticky header — heading scroll margin comes from the `--spacing-heading-scroll` theme token.",
           "seeAlso": [
             "Stack content and group titled sections"
+          ]
+        },
+        {
+          "need": "Render Markdown without raw HTML",
+          "import": "`@zedtech/zedkit-ui` — `Markdown`, `MarkdownProps`",
+          "wraps": "`react-markdown`, `rehype-sanitize`",
+          "status": "alpha",
+          "shortName": "Markdown",
+          "audience": "App authors rendering untrusted notes or README-like copy as React.",
+          "purpose": "Turn CommonMark into React elements with sanitized, inert HTML and script vectors, info-coloured links, and wrapping fences.",
+          "whenToUse": "When the source is Markdown and must stay safe under a strict CSP (no raw HTML, no `javascript:` links). The host CSP is what stops CommonMark `http`/`https` images from loading unexpected content; this wrapper still renders those as `<img>`. `data:` image src is stripped.",
+          "whenNotToUse": "For page titles and kit body copy you control — use `Render headings and body text without raw tags`. For GFM tables or highlighted code — those are out of this wrapper.",
+          "derivedFrom": null,
+          "example": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`## Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { Markdown } from \"@zedtech/zedkit-ui\";\n\n<Markdown>\n  {`## Note\n\nA [docs](https://example.com) link and \\`code\\`.`}\n</Markdown>"
+            }
+          ],
+          "adoption": {
+            "kind": "js",
+            "modules": [
+              {
+                "from": "@zedtech/zedkit-ui",
+                "exports": [
+                  "Markdown",
+                  "MarkdownProps"
+                ]
+              }
+            ]
+          },
+          "a11y": "Headings come from the source (one `h1` per page). Links open in the same tab (`rel=\"noopener noreferrer\"` is defense-in-depth) and use `focus-ring`. Only `a`, `pre`, `code`, and `img` carry extra classes. Fenced code wraps (`wrap-anywhere`). Info colour marks references, not primary actions.",
+          "troubleshooting": "`children` is the Markdown source string, not a React node. Callers cannot pass rehype plugins or skip sanitize.",
+          "seeAlso": [
+            "Render headings and body text without raw tags"
           ]
         },
         {

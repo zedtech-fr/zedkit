@@ -73,6 +73,8 @@ Rules:
   `aria-label` / `title` / `placeholder` literals in `src/`. A new required
   `ZedkitUiMessages` key is a `minor` changeset plus a custom-bundles
   migration note.
+- A node with `overflow-x-auto` is a named keyboard-focusable region
+  (`tabIndex={0}` + `role=region` + a chrome message, see `table.tsx`) or it wraps.
 - No `any`, no `ts-ignore`; no eslint-disable except with a cited
   upstream reason in the comment (one exists: TanStack's own
   `ColumnDef<TData, any>` for mixed-value columns).
