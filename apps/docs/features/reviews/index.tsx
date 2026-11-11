@@ -13,13 +13,17 @@
 
 import { notFound } from "next/navigation";
 
-import { createFixtureReviewPort } from "./adapters/fixture";
+import { createSnapshotReviewPort } from "./adapters/snapshot";
 import { reviewsCopy } from "./i18n/reviews-copy";
+import {
+  listReviewPrParamsFrom,
+  listReviewRunParamsFrom,
+} from "./model/review-routes";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView } from "./ui/review-pr-view";
 import { ReviewRunView } from "./ui/review-run-view";
 
-const port = createFixtureReviewPort();
+const port = createSnapshotReviewPort();
 
 function parsePrNumber(value: string): number | null {
   if (!/^[0-9]+$/.test(value)) return null;
@@ -48,15 +52,11 @@ export async function ReviewRunFeature({ n, id }: { n: string; id: string }) {
 }
 
 export async function listReviewPrParams() {
-  const records = await port.list();
-  return records.map((record) => ({ n: String(record.number) }));
+  return listReviewPrParamsFrom(port);
 }
 
 export async function listReviewRunParams() {
-  const records = await port.list();
-  return records.flatMap((record) =>
-    record.runs.map((run) => ({ n: String(record.number), id: run.id })),
-  );
+  return listReviewRunParamsFrom(port);
 }
 
 export { reviewsCopy };

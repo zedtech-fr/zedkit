@@ -2,16 +2,32 @@ export type ReviewVerdict = "approve" | "request-changes" | "comment" | "error";
 export type ReviewRunStatus = "running" | "done" | "error";
 export type ReviewPrState = "open" | "merged";
 export type ReviewVisibility = "public" | "private";
+export type FindingDisposition = "kept" | "downgraded" | "dismissed";
 
 export type ReviewAction = {
   readonly title: string;
   readonly detail: string;
 };
 
+export type ReviewFinding = {
+  readonly id: string;
+  readonly summary: string;
+  readonly disposition: FindingDisposition;
+};
+
+export type ReviewAgentSummary = {
+  readonly id: string;
+  readonly name: string;
+  readonly kind: string;
+  readonly status: string;
+  readonly model: string;
+};
+
 export type ReviewRun = {
   readonly id: string;
   readonly status: ReviewRunStatus;
   readonly startedAt: string;
+  readonly agents: readonly ReviewAgentSummary[];
 };
 
 export type ReviewRecord = {
@@ -26,6 +42,7 @@ export type ReviewRecord = {
   readonly visibility: ReviewVisibility;
   readonly notes: string;
   readonly actions: readonly ReviewAction[];
+  readonly findings: readonly ReviewFinding[];
   readonly runs: readonly ReviewRun[];
 };
 

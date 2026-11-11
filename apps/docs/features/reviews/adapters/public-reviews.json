@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "kind": "public-stand-in",
+  "reviews": [
+    {
+      "number": 79,
+      "title": "Add a public review section as identity testing ground",
+      "verdict": "approve",
+      "confidence": 88,
+      "status": "done",
+      "headSha": "7d971ab75ccd6f7889f7fcef207e7131d5a7ae33",
+      "lastRunAt": "2026-11-10T22:03:49.000Z",
+      "prState": "merged",
+      "visibility": "public",
+      "notes": "Public stand-in. The section root is the list, never a blank landing. Verdict, confidence, and run status stay readable next to notes, links, and required actions. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
+      "actions": [
+        {
+          "title": "Keep the empty state useful",
+          "detail": "When there are no reviews yet, say what will appear and that the page is still the list."
+        },
+        {
+          "title": "Lead with the verdict",
+          "detail": "Actions and notes come next. Agent detail stays behind a disclosure."
+        }
+      ],
+      "findings": [
+        {
+          "id": "f-list-root",
+          "summary": "The section root must be the list, never a blank landing.",
+          "disposition": "kept"
+        }
+      ],
+      "runs": [
+        {
+          "id": "run-79",
+          "status": "done",
+          "startedAt": "2026-11-10T21:50:00.000Z",
+          "agents": [
+            {
+              "id": "check-79",
+              "name": "Docs review",
+              "kind": "check",
+              "status": "done",
+              "model": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 64,
+      "title": "Presentation blockers (pick a look, one promise, stability)",
+      "verdict": "request-changes",
+      "confidence": 71,
+      "status": "done",
+      "headSha": "694d0bfd1dab8a176c9d6b542a1c97ed82213560",
+      "lastRunAt": "2026-11-10T14:12:18.000Z",
+      "prState": "merged",
+      "visibility": "public",
+      "notes": "Public stand-in. The home must pick a look before the kit pitch, keep one promise in the lead, and hold first-load stability. Caption contrast on dense notes still needs a follow-up.",
+      "actions": [
+        {
+          "title": "Pick a look before the pitch",
+          "detail": "The identity chooser has to come before the kit promise so a visitor can judge the page in a real look."
+        }
+      ],
+      "findings": [
+        {
+          "id": "f-look-first",
+          "summary": "The home must pick a look before the kit pitch.",
+          "disposition": "kept"
+        }
+      ],
+      "runs": [
+        {
+          "id": "run-64",
+          "status": "done",
+          "startedAt": "2026-11-10T14:00:00.000Z",
+          "agents": [
+            {
+              "id": "check-64",
+              "name": "Docs review",
+              "kind": "check",
+              "status": "done",
+              "model": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 80,
+      "title": "Lead component pages with usage before install",
+      "verdict": "approve",
+      "confidence": 82,
+      "status": "done",
+      "headSha": "0ce9f6d9bbb034bd6db34c6bed270db087a69eaf",
+      "lastRunAt": "2026-11-10T22:10:17.000Z",
+      "prState": "merged",
+      "visibility": "public",
+      "notes": "Public stand-in. First pass asked to keep maturity in the catalog badge. Reconciliation kept the usage-before-install order and dismissed the badge move. The reconciled decision is Approve.",
+      "actions": [
+        {
+          "title": "Show usage before install",
+          "detail": "A component page leads with how to use the brick, then how to install it."
+        }
+      ],
+      "findings": [
+        {
+          "id": "f-usage-order",
+          "summary": "Install sat above usage on the component page.",
+          "disposition": "kept"
+        },
+        {
+          "id": "f-header-meta",
+          "summary": "Stable maturity belonged in the catalog badge, not the page header.",
+          "disposition": "dismissed"
+        }
+      ],
+      "runs": [
+        {
+          "id": "run-80-1",
+          "status": "done",
+          "startedAt": "2026-11-10T21:40:00.000Z",
+          "agents": [
+            {
+              "id": "check-80-a",
+              "name": "First pass",
+              "kind": "check",
+              "status": "done",
+              "model": ""
+            }
+          ]
+        },
+        {
+          "id": "run-80-2",
+          "status": "done",
+          "startedAt": "2026-11-10T22:05:00.000Z",
+          "agents": [
+            {
+              "id": "check-80-b",
+              "name": "Reconciled pass",
+              "kind": "check",
+              "status": "done",
+              "model": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

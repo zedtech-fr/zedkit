@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { buildSitemapEntries } from "@zedtech/zedkit-seo";
 
-import { listReviewSitemapPaths } from "@/features/reviews/adapters/fixture";
+import { listReviewSitemapPaths } from "@/features/reviews/adapters/snapshot";
 import { docsSite } from "@/lib/site";
 import { source } from "#source";
 
