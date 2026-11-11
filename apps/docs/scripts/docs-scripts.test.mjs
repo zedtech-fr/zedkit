@@ -93,10 +93,15 @@ test("componentPageSections lists a section only when it has content", () => {
   const sections = componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" });
   assert.deepEqual(sections, always);
   assert.ok(sections.indexOf("usage-and-states") < sections.indexOf("install-or-copy"));
-  assert.deepEqual(
-    componentPageSections({ hasProps: true, a11y: "Name it.", related: [{ title: "x" }], troubleshooting: "Wire the CSS." }),
-    [...always, "props", "accessibility", "related", "troubleshooting"],
-  );
+  const withProps = componentPageSections({
+    hasProps: true,
+    a11y: "Name it.",
+    related: [{ title: "x" }],
+    troubleshooting: "Wire the CSS.",
+  });
+  assert.deepEqual(withProps, [...always, "props", "accessibility", "related", "troubleshooting"]);
+  assert.ok(withProps.indexOf("usage-and-states") < withProps.indexOf("install-or-copy"));
+  assert.ok(withProps.indexOf("install-or-copy") < withProps.indexOf("props"));
   assert.deepEqual(componentPageSections({ hasProps: false, a11y: "Name it." }), [...always, "accessibility"]);
 });
 

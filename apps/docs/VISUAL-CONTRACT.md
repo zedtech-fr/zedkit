@@ -63,7 +63,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 ## Controls and hierarchy
 
 - One primary action per view. Secondary is outlined or quiet. Tertiary is a link.
-- Site chrome: site chrome actions are not Glass `--primary` unless inside a high-value panel. Default site actions use stock near-black `--primary`. `.site-action` is the class for those default actions (near-black, flat, 8px radius). A high-value panel is a Glass-material site-owned overlay or marketing card (Guides menu panel, glass header chips, raised marketing code wells) — not the page, not body copy, not default header/hero CTAs.
+- Site chrome: site chrome actions are not Glass `--primary` unless inside a high-value panel. Default site actions use stock near-black `--primary`. `.site-action` is the class for those default actions (near-black, flat, 8px radius). A high-value panel is a Glass-material site-owned overlay or marketing card (Guides menu panel, glass header chips, raised marketing code wells) — not the page, not body copy, not default header/hero CTAs. On a registry component page, the primary Preview stage is also a high-value panel: the one place violet is allowed on that page.
 - Destructive: the trigger is outlined (destructive colour on the text or icon) and sits apart from Save and Discard, below a divider or at the end of the row. The solid destructive button appears only inside its confirmation. Anything simulated says so in its outcome message.
 - Preview frame: one stage, one quiet toolbar. Stage height follows content. Appearance choices (identity, mode, width) sit in one row under "Display", current values visible, subordinate to the example.
 - Touch targets 44px on mobile, separate from the visible control size.
