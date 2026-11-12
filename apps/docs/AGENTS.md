@@ -69,7 +69,9 @@ reject dead `/r/<name>.json` links.
   local-only, never a merge gate. A new spec must be listed in the
   `smoke` or `e2e` script; specs must not embed `127.0.0.1` or
   `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
-  `test-results/`.
+  `test-results/`. Home smoke exact-text must quote a string from
+  `ui/home/i18n/*-copy.ts` or `ui/i18n/site-chrome-copy.ts`; do not
+  invent a sentence in the spec.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set
   `DOCS_E2E_BASE_URL` to the port `serve` actually bound:

@@ -31,6 +31,7 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
     ["catalog", catalog],
     ["wrapper", read("components/setup-entry-prompt.tsx")],
     ["home lead", read("ui/home/home-hero-lead.tsx")],
+    ["home illustration", read("ui/home/home-hero-illustration.tsx")],
     ["home band", read("ui/home/home-paste-section.tsx")],
     ["home closing", read("ui/home/home-closing-section.tsx")],
     ["getting started", read("prose/guides/getting-started.mdx")],
@@ -61,6 +62,8 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   const homeBand = read("ui/home/home-paste-section.tsx");
   const homeClosing = read("ui/home/home-closing-section.tsx");
   assert.match(homeLead, /\bMAP_SETUP_MINI_PROMPT\b/);
+  assert.match(homeLead, /\bAI_SETUP_MINI_PROMPT\b/);
+  assert.match(homeLead, /\bUI_SETUP_MINI_PROMPT\b/);
   assert.doesNotMatch(homeLead, /SetupEntryPrompt/);
   assert.equal((homeLead.match(/data-home-hero-prompt/g) ?? []).length, 1);
   assert.doesNotMatch(homeBand, /SetupEntryPrompt|SecretField|data-setup-entry/);

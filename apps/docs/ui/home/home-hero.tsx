@@ -1,7 +1,6 @@
-import { Container, Stack, signatureMotionClass } from "@zedtech/zedkit-ui";
+import { Container, signatureMotionClass } from "@zedtech/zedkit-ui";
+import { publicIssueHref } from "@/features/reviews/compose";
 import { HomeHeroLead } from "@/ui/home/home-hero-lead";
-import { HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
-import { HomeHeroPreview } from "@/ui/home/home-hero-preview";
 
 /**
  * Colour behind the window and the cards over its edges: glass has nothing to refract without it. Glass only (CSS).
@@ -17,15 +16,13 @@ function HeroShapes() {
   );
 }
 
-/** Hero band: the proposition, and one working example the visitor can switch and try beside it. */
-export function HomeHero() {
+/** Hero band: the proposition, kit pills, and a static glass illustration of one run. */
+export async function HomeHero() {
+  const issuesHref = await publicIssueHref();
   return (
     <Container width="wide" data-home-hero-band="" className={`relative ${signatureMotionClass.settle}`}>
       <HeroShapes />
-      <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-shrink" data-home-hero="">
-        <HomeHeroLead className="content-shrink" />
-        <HomeHeroPreview />
-      </Stack>
+      <HomeHeroLead issuesHref={issuesHref} />
     </Container>
   );
 }
