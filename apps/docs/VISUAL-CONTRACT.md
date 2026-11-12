@@ -79,7 +79,7 @@ Only to explain a change or keep context (overlay in/out, panel following focus,
 
 The home page has one scene that is allowed to do more, because it is the first impression and each motion shows the kit working:
 
-- **Hero window** (`app/home-hero.css`): the window assembles on load (frame, sidebar, page blocks), each page rebuilds the same way when shown, a guided cursor uses the real controls until the visitor touches the frame (it also presses the Display row to show the same app in Glass and Maison; a new look fades in, opacity only), and two decorative cards over the window's edges follow the pointer and drift with the scroll. Entrances are finite (460-640ms, `backwards` fill, nothing left applied); only the decorative cards loop or follow the page.
+- **Hero window** (`app/home-hero.css`): the window assembles on load (frame, sidebar, page blocks), each page rebuilds the same way when shown, a guided cursor uses the real controls until the visitor touches the frame (it also presses the Display row to show the same app in Glass and Maison; a new look fades in, opacity only), and two decorative cards over the window's edges follow the pointer and drift with the scroll. Entrances are finite (460-640ms, `backwards` fill, nothing left applied); loops stay on those decorative cards and one interior panel blob, never on the page fill.
 
 It obeys reduced motion completely (no animation, no tour, final numbers), never takes over scrolling, and never put a running transform, filter or mask on anything that holds a toast, a dialog or a portaled menu (see the traps).
 
