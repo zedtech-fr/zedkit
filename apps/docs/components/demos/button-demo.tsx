@@ -15,6 +15,7 @@ export function ButtonDemo() {
         <Button variant="ghost" onClick={() => toast(buttonCopy.cancelled)}>
           {buttonCopy.cancel}
         </Button>
+        {/* Kit has no outline-destructive; solid destructive is the shipped Delete. The mockup's light+red-text treatment is superseded. */}
         <Button variant="destructive" onClick={() => toast(buttonCopy.deleted)}>
           {buttonCopy.delete}
         </Button>

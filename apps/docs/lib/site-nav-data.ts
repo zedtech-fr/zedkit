@@ -18,7 +18,7 @@ export function isCatalogPath(pathname: string): boolean {
 /**
  * Phone (and policy) chrome: which actions a path may mount.
  * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
- * The page tree is in-flow, so `docsTreeOpener` stays off.
+ * The page tree is in-flow below the header (DocsContainer + docs-shell-tokens.css).
  */
 export function siteHeaderChrome(pathname: string) {
   const home = isHomePath(pathname);
@@ -26,7 +26,6 @@ export function siteHeaderChrome(pathname: string) {
     links: sitePrimaryNavLinks(),
     search: !home,
     getStarted: home,
-    docsTreeOpener: false,
   };
 }
 

@@ -22,6 +22,8 @@ test("button demo shows sizes and disabled states (#1065)", async ({ page }) => 
   await expect(usage.getByRole("button", { name: "Default", exact: true })).toBeVisible();
   await expect(usage.getByRole("button", { name: "Large" })).toBeVisible();
   await expect(usage.getByRole("button", { name: "Saving…" })).toBeDisabled();
+  await expect(usage.getByRole("button", { name: "Add item" })).toBeVisible();
+  await expect(usage.getByRole("link", { name: "Docs link" })).toBeVisible();
 });
 
 test("button page renders catalog accessibility guidance (#1082)", async ({ page }) => {

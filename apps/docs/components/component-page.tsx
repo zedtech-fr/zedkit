@@ -186,14 +186,16 @@ export async function ComponentPage({
         </Stack>
       </Section>
 
-      <dl id="guidance" data-term-row="" className="trim-margin grid gap-x-meta gap-y-stack-sm text-dense text-muted-foreground sm:items-baseline">
-        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
-        <dd className="trim-margin content-shrink">{audience}</dd>
-        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
-        <dd className="trim-margin content-shrink">{whenToUse}</dd>
-        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
-        <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
-      </dl>
+      <Section title={componentPageCopy.sections.guidance} id="guidance">
+        <dl data-term-row="" className="trim-margin grid gap-x-meta gap-y-stack-sm text-dense text-muted-foreground sm:items-baseline">
+          <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
+          <dd className="trim-margin content-shrink">{audience}</dd>
+          <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
+          <dd className="trim-margin content-shrink">{whenToUse}</dd>
+          <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
+          <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
+        </dl>
+      </Section>
       <ComponentWrapsLine wraps={header.wraps} />
 
       {sections.includes("props") ? (

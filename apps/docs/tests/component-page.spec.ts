@@ -399,6 +399,7 @@ test("guidance answers the reader's questions and sits between install and props
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   const guidance = page.locator("#guidance");
+  await expect(page.getByRole("heading", { name: "Guidance", level: 2 })).toBeVisible();
   await expect(guidance.getByText("Who is it for?")).toBeVisible();
   await expect(guidance.getByText("When should I use it?")).toBeVisible();
   await expect(guidance.getByText("When should I pick something else?")).toBeVisible();

@@ -335,7 +335,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(header, /HomeGitHubLink/);
   assert.doesNotMatch(header, /chrome\.github/);
   assert.match(header, /HomeGetStartedAction/);
-  assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
+  assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation|DocsMenuButton/);
   assert.match(header, /data-header-actions/);
   assert.match(header, /gap-icon/);
   assert.match(header, /<ul className=/);

@@ -5,6 +5,7 @@
  * the site pins a calmer unit, a compact header (bands keep the shared container).
  */
 :root[data-identity] {
+  /* 56px; mockup 60px declined so home / catalog / docs share one bar. */
   --zk-site-header-height: 3.5rem;
   /* Two 44px rows + 24px wrap gap, plus a few px of border (~112px laid out). */
   --zk-site-header-height-wrapped: 7.5rem;

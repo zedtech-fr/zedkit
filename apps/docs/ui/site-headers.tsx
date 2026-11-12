@@ -97,10 +97,10 @@ function HomeDesktopHeader() {
  * Customer personas: hunting a component on `/catalog`, often at 1440, hurried.
  * UI decisions: catalog header is brand + primary nav + Search ⌘K + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started.
  */
-function CatalogDesktopHeader() {
+function SearchGitHubDesktopHeader({ mark }: { mark: "catalog" | "docs" }) {
   return (
     <MarketingDesktopNav
-      mark="catalog"
+      mark={mark}
       actions={
         <>
           <SiteFullSearchTrigger />
@@ -109,6 +109,10 @@ function CatalogDesktopHeader() {
       }
     />
   );
+}
+
+function CatalogDesktopHeader() {
+  return <SearchGitHubDesktopHeader mark="catalog" />;
 }
 
 /** Marketing header slot: phone header below md. Home and Catalog use the mockup desktop chrome; other routes keep fumadocs Header. */
@@ -135,17 +139,7 @@ export function MarketingSiteHeader() {
  * UI decisions: docs header is brand + primary nav + Search ⌘K + GitHub text, because the customer already uses that bar on Home and Catalog.
  */
 export function DocsDesktopHeader() {
-  return (
-    <MarketingDesktopNav
-      mark="docs"
-      actions={
-        <>
-          <SiteFullSearchTrigger />
-          <HomeGitHubLink />
-        </>
-      }
-    />
-  );
+  return <SearchGitHubDesktopHeader mark="docs" />;
 }
 
 /** Docs layout phone header. Desktop docs chrome is DocsDesktopHeader, above the shell. */

@@ -91,7 +91,7 @@ Identity examples sell what the kit builds, not how many identities it ships: no
 
 ## Component page
 
-Title, purpose (role), maturity including Stable, package, source, preview, usage, then install (npm or source, both when available), kit props first, inherited attributes collapsed, related. Contents list every section. Full order: [COMPONENT-PAGE.md](./COMPONENT-PAGE.md).
+Title, purpose (role), maturity including Stable, package, source, preview, usage, then install (npm or source, both when available), guidance, kit props first, inherited attributes collapsed, related. Contents list every section. Full order: [COMPONENT-PAGE.md](./COMPONENT-PAGE.md). Desktop chrome bar is 56px (`--zk-site-header-height`), not the mockup 60px, so home, catalog, and docs stay one height.
 
 ## Mobile
 

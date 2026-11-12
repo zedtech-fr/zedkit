@@ -24,12 +24,14 @@ test("catalog desktop header is marketing chrome: search and GitHub, no version 
   assert.doesNotMatch(headers, /KitVersionLabel/);
   assert.doesNotMatch(headers, /ThemeSwitch|SiteThemeSwitch|data-theme-toggle/);
 
+  const shared = functionSource(headers, "SearchGitHubDesktopHeader");
+  assert.match(shared, /SiteFullSearchTrigger/);
+  assert.match(shared, /HomeGitHubLink/);
+  assert.doesNotMatch(shared, /HomeGetStartedAction/);
+  assert.doesNotMatch(shared, /KitVersionLabel/);
+  assert.doesNotMatch(shared, /ThemeSwitch/);
   const catalog = functionSource(headers, "CatalogDesktopHeader");
-  assert.match(catalog, /SiteFullSearchTrigger/);
-  assert.match(catalog, /HomeGitHubLink/);
-  assert.doesNotMatch(catalog, /HomeGetStartedAction/);
-  assert.doesNotMatch(catalog, /KitVersionLabel/);
-  assert.doesNotMatch(catalog, /ThemeSwitch/);
+  assert.match(catalog, /mark="catalog"/);
 });
 
 test("home desktop header still has Get started and no docs search", () => {
@@ -52,8 +54,7 @@ test("docs desktop header is the marketing pattern: search and GitHub, no versio
   const headers = read("ui/site-headers.tsx");
   assert.match(headers, /data-docs-header/);
   const docs = functionSource(headers, "DocsDesktopHeader");
-  assert.match(docs, /SiteFullSearchTrigger/);
-  assert.match(docs, /HomeGitHubLink/);
+  assert.match(docs, /mark="docs"/);
   assert.doesNotMatch(docs, /HomeGetStartedAction/);
   assert.doesNotMatch(docs, /KitVersionLabel/);
   assert.doesNotMatch(docs, /ThemeSwitch|SiteThemeSwitch|data-theme-toggle/);

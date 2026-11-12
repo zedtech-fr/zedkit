@@ -6,7 +6,6 @@ export const siteChromeCopy = {
   search: { triggerAriaLabel: "Search documentation" },
   theme: { toggleAriaLabel: "Toggle theme" },
   nav: {
-    openNavigation: "Open navigation",
     siteNavigation: "Site navigation",
     github: "GitHub",
     opensInNewTab: "opens in a new tab",
