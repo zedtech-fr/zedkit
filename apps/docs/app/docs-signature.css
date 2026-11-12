@@ -250,10 +250,9 @@
   border-color: color-mix(in oklab, hsl(var(--border)) 35%, transparent);
 }
 
-/* Identity dock + inline assistant: type roles via tokens (not Tailwind text-*). */
+/* Identity dock: type roles via tokens (not Tailwind text-*). */
 [data-testid="identity-dock"] [data-assistant-status],
-[data-testid="identity-dock"] [data-assistant-feedback],
-[data-slot="identity-assistant"] [data-assistant-status] {
+[data-testid="identity-dock"] [data-assistant-feedback] {
   font-size: var(--zk-type-label-size);
   font-weight: var(--zk-type-label-weight);
   line-height: var(--zk-type-label-leading);
@@ -261,8 +260,7 @@
 
 [data-testid="identity-dock"] [data-assistant-pane="conversation"] li,
 [data-testid="identity-dock"] [data-assistant-reference-report],
-[data-testid="identity-dock"] [data-assistant-link-report],
-[data-slot="identity-assistant"] [data-assistant-pane="conversation"] li {
+[data-testid="identity-dock"] [data-assistant-link-report] {
   font-size: var(--zk-type-body-size);
   font-weight: var(--zk-type-body-weight);
   line-height: var(--zk-type-body-leading);

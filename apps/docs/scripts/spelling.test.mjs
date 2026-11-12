@@ -14,7 +14,6 @@ const ROOT = join(APP, "..", "..");
 const COPY_FILE_RELATIVE = [
   "components/i18n/adoption-copy.ts",
   "components/i18n/identity-assistant-copy.ts",
-  "components/i18n/identity-brief-copy.ts",
   "components/i18n/identity-editor-copy.ts",
   "app/i18n/identity-editor-copy.ts",
   "components/demos/i18n/brand-logo-copy.ts",
@@ -22,7 +21,6 @@ const COPY_FILE_RELATIVE = [
   "components/identity-editor-fields.tsx",
   "lib/identity-editor-search.ts",
   "lib/maturity-status.ts",
-  "lib/identity-refinement-chips.ts",
 ];
 
 const BRITISH_SPELLINGS = ["colour", "colours", "Colour", "Colours", "organisation", "organised", "behaviour", "behavioural"];
