@@ -185,7 +185,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(paste, /homePasteCopy\.nestLands/);
   assert.match(paste, /Object\.keys\(homePasteCopy\.lands\)/);
   assert.doesNotMatch(paste, /LANDS_IDS = \["ai", "ui"\]/);
-  assert.equal((paste.match(/role="list"/g) ?? []).length, 3);
+  assert.doesNotMatch(paste, /role="list"/);
   assert.match(paste, /data-home-paste-lands/);
   assert.match(paste, /HOME_PASTE_LANDS_GRID/);
   assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
