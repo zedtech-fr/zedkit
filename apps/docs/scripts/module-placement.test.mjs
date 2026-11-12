@@ -151,6 +151,30 @@ describe("checkPlacement fixtures", () => {
     ]);
   });
 
+  it("passes a docs feature imported from mdx-components.tsx", () => {
+    const result = checkPlacement(
+      {
+        files: ["mdx-components.tsx", "features/docs/mdx/ui/agent-name.tsx"],
+        edges: [{ from: "mdx-components.tsx", to: "features/docs/mdx/ui/agent-name.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+  });
+
+  it("fails a reviews feature imported from mdx-components.tsx", () => {
+    const result = checkPlacement(
+      {
+        files: ["mdx-components.tsx", "features/reviews/ui/view.tsx"],
+        edges: [{ from: "mdx-components.tsx", to: "features/reviews/ui/view.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(ids(result.newViolations), [
+      "cross-feature:mdx-components.tsx->features/reviews/ui/view.tsx",
+    ]);
+  });
+
   it("does not treat prose/guides → features/docs as required debt", () => {
     assert.equal(
       REQUIRED_EDGES.filter(
@@ -259,6 +283,19 @@ describe("live docs tree", () => {
       "See apps/docs/AGENTS.md File placement; baseline apps/docs/scripts/module-placement.baseline.json. Move the file; never extend the baseline.";
     assert.deepEqual(ids(result.newViolations), [], `new: ${ids(result.newViolations).join("\n")}\n${hint}`);
     assert.deepEqual(ids(result.stale), [], `stale: ${ids(result.stale).join("\n")}\n${hint}`);
+  });
+
+  it("imports MDX tags from features/docs and keeps MdxPre in components", () => {
+    const mdx = readFileSync(join(docsRoot, "mdx-components.tsx"), "utf8");
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/agent-name"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/docs-area-label"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/docs-prose-table"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/docs-kit-name-list"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/ai-setup-prompt"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/setup-entry-prompt"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/ai-setup-page-title"/);
+    assert.match(mdx, /from "@\/components\/mdx-pre"/);
+    assert.doesNotMatch(mdx, /from "@\/components\/(?:agent-name|docs-area-label|docs-prose-table|docs-kit-name-list|ai-setup-prompt|setup-entry-prompt|ai-setup-page-title)"/);
   });
 
   it("imports the maturity guide view from features/docs", () => {

@@ -26,10 +26,10 @@ function exportedString(source, name) {
 
 test("setup entry catalog lists four generated prompts and no Nest-only paste", () => {
   const generated = read("lib/ai-setup-onboarding.generated.ts");
-  const catalog = read("lib/setup-entry-prompts.ts");
+  const catalog = read("features/docs/setup-entry-prompts.ts");
   const surfaces = [
     ["catalog", catalog],
-    ["wrapper", read("components/setup-entry-prompt.tsx")],
+    ["wrapper", read("features/docs/mdx/ui/setup-entry-prompt.tsx")],
     ["home lead", read("ui/home/home-hero-lead.tsx")],
     ["home illustration", read("ui/home/home-hero-illustration.tsx")],
     ["home band", read("ui/home/home-paste-section.tsx")],
@@ -73,7 +73,7 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   assert.match(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b/);
   assert.doesNotMatch(homeClosing, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
 
-  const wrapper = read("components/setup-entry-prompt.tsx");
+  const wrapper = read("features/docs/mdx/ui/setup-entry-prompt.tsx");
   assert.match(wrapper, /<Label htmlFor=\{fieldId\}>\{entry\.label\}<\/Label>/);
   assert.doesNotMatch(wrapper, /labelled|aria-label/);
 });

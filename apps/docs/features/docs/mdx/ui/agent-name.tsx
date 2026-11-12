@@ -2,7 +2,7 @@
 
 import { IconLabel } from "@zedtech/zedkit-ui";
 
-import { agentIconFor } from "@/lib/agent-icons";
+import { agentIconFor } from "@/features/docs/agent-icons";
 
 export function AgentName({ name }: { name: string }) {
   const Icon = agentIconFor(name);
