@@ -9,7 +9,8 @@
  * - Wrapping scan rows (title then status), not a wide table — because: phone users at 390px compose by priority and a hurried reader scans one band per run.
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
- * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
+ * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
+ * - Index-only runs keep the hosted-console link (or placeholder) — because: failed or in-progress rows without a console body still resolve.
  * - Appearance / ThemeScope frame stays — because: this section remains the identity testing ground.
  * - Empty state says public issues will show up here — because: the visitor always has a next thought.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
@@ -37,7 +38,9 @@ import {
   redirectPathForPr,
   redirectPathForPrRun,
 } from "./model/review-routes";
+import { toAgentConsole } from "./model/to-agent-console";
 import { isRunRecord } from "./ports/review-port";
+import { ReviewConsoleView } from "./ui/review-console-view";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
@@ -71,8 +74,20 @@ export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
   const run = number === null ? null : await port.getRun(number, id);
-  if (issue === null || run === null || !isRunRecord(run)) notFound();
-  return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
+  if (issue === null || run === null) notFound();
+  if (isRunRecord(run)) {
+    return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
+  }
+  const mapped = toAgentConsole(run);
+  return (
+    <ReviewConsoleView
+      issueNumber={issue.number}
+      run={mapped.run}
+      items={mapped.items}
+      decision={mapped.decision ?? null}
+      copy={reviewsCopy}
+    />
+  );
 }
 
 export async function ReviewUnlinkedRunFeature({ n, id }: { n: string; id: string }) {
