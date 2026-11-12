@@ -25,6 +25,7 @@ export function HomeLimitsSection() {
       spacing="md"
       containerWidth="wide"
       id="limits"
+      aria-labelledby="limits-heading"
       snap="none"
       {...HOME_MARKETING_ROOT_PROPS}
     >
@@ -35,7 +36,7 @@ export function HomeLimitsSection() {
         {...HOME_READING_REVEAL_PROPS}
       >
         <Stack gap="tight" className="lg:flex-row lg:items-baseline lg:justify-between">
-          <Heading level={2} typeRole="title">
+          <Heading id="limits-heading" level={2} typeRole="title">
             {homeLimitsCopy.section.title}
           </Heading>
           <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>

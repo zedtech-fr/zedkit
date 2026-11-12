@@ -7,8 +7,8 @@ import type { ComponentProps, FC } from "react";
 type DocsAppLinkProps = ComponentProps<"a"> & { prefetch?: boolean };
 
 /**
- * Fumadocs chrome uses this as its framework `Link`. On `/`, turn off App Router prefetch so
- * the hero tour agent lap does not record RSC requests after networkidle.
+ * Fumadocs chrome uses this as its framework `Link`. On `/`, skip App Router prefetch so
+ * header links do not queue RSC payloads during home first paint.
  */
 export const DocsAppLink: FC<DocsAppLinkProps> = ({ prefetch, href, children, ...props }) => {
   const onHome = usePathname() === "/";

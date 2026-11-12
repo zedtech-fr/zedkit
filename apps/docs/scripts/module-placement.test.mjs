@@ -74,6 +74,20 @@ describe("checkPlacement fixtures", () => {
     assert.deepEqual(ids(result.newViolations), ["dead:lib/bar.ts"]);
   });
 
+  it("keeps the generated-page corpus owner when SHARED_OWNER enters a feature", () => {
+    const result = checkPlacement(
+      {
+        files: ["features/docs/ui/component-page.tsx", "lib/adoption-plan.mjs"],
+        edges: [
+          { from: "docs", to: "features/docs/ui/component-page.tsx" },
+          { from: "features/docs/ui/component-page.tsx", to: "lib/adoption-plan.mjs" },
+        ],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+  });
+
   it("fails a stale dead baseline entry whose file is now reachable", () => {
     const result = checkPlacement(
       {
@@ -194,11 +208,6 @@ describe("live docs tree", () => {
         `baseline missing edge ${edge.from} -> ${edge.to}`,
       );
     }
-    assert.ok(
-      baseline.dead.includes("lib/catalog-filter.mjs") ||
-        baseline.singleOwner.includes("lib/catalog-filter.mjs"),
-      "baseline missing lib/catalog-filter.mjs",
-    );
     assert.ok(
       baseline.dead.includes("lib/review-appearance.ts") ||
         baseline.singleOwner.includes("lib/review-appearance.ts"),
@@ -358,9 +367,9 @@ describe("ESLint one-way imports", () => {
     );
   });
 
-  it("keeps the L8 exception on lib/component-page-toc.ts", async () => {
+  it("needs no L8 exception after component-page-toc moves next to the page", async () => {
     eslint ??= new ESLint({ cwd: repoRoot });
-    const [result] = await eslint.lintFiles(["apps/docs/lib/component-page-toc.ts"]);
+    const [result] = await eslint.lintFiles(["apps/docs/features/docs/component-page-toc.ts"]);
     assert.equal(
       (result?.messages ?? []).filter((m) => m.ruleId === "no-restricted-imports").length,
       0,

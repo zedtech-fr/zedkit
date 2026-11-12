@@ -5,7 +5,7 @@ import { publicIssueHrefFrom, type PublicIssueHrefPort } from "./model/public-is
 
 export { publicIssueHrefFrom, type PublicIssueHrefPort } from "./model/public-issue-href.ts";
 
-/** Public run-history URL for the home hero. Falls back to `/issues`. */
+/** Public run-history URL. Falls back to `/issues`. */
 export async function publicIssueHref(
   createPort: () => PublicIssueHrefPort = createSiteReviewPort,
 ): Promise<string> {
