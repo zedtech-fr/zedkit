@@ -2,10 +2,6 @@
 
 import { Header } from "fumadocs-ui/layouts/home/slots/header";
 import { usePathname } from "next/navigation";
-import {
-  featuredPackageReleasesUrl,
-  featuredPackageVersion,
-} from "@/content/gallery";
 import { cn } from "@zedtech/zedkit-ui";
 import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
@@ -71,11 +67,7 @@ export function MarketingSiteHeader() {
   const home = isHomePath(usePathname());
   return (
     <>
-      <MobileHeader
-        mode="home"
-        version={featuredPackageVersion}
-        releasesHref={featuredPackageReleasesUrl}
-      />
+      <MobileHeader mode="home" />
       {home ? <HomeDesktopHeader /> : <Header className="max-md:hidden" />}
     </>
   );
@@ -86,9 +78,7 @@ export function DocsSiteHeader() {
   return (
     <MobileHeader
       mode="docs"
-      version={featuredPackageVersion}
-      releasesHref={featuredPackageReleasesUrl}
-      className="sticky top-(--fd-docs-row-1) flex h-phone-bar items-center justify-between gap-stack-sm border-b px-control-tight backdrop-blur-sm [grid-area:header] md:hidden"
+      className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center gap-stack-lg border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
     />
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { notFoundPageCopy } from "@/app/i18n/not-found-page-copy";
-import { featuredPackageReleasesUrl, featuredPackageVersion } from "@/content/gallery";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { NotFoundView } from "@/ui/not-found/not-found-view";
 import { SiteLayout } from "@/ui/site-layout";
@@ -17,10 +16,7 @@ export const metadata: Metadata = docsPageMetadata(
 
 export default function NotFound() {
   return (
-    <SiteLayout
-      version={featuredPackageVersion}
-      releasesHref={featuredPackageReleasesUrl}
-    >
+    <SiteLayout>
       <NotFoundView />
     </SiteLayout>
   );

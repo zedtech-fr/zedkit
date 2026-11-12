@@ -3,34 +3,18 @@ import { expect, test } from "@playwright/test";
 const PAGES = ["/", "/docs/getting-started"];
 const SEARCH_PAGES = ["/docs/getting-started"];
 
-test("the phone menu keeps a quiet hover and a stronger current page", async ({ page }) => {
+test("the phone header lists AI, UI, Docs, and Catalog with Catalog current", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/catalog");
-  await page.getByRole("button", { name: "Open menu" }).click();
-  const menu = page.locator("[data-shell-nav-drawer]");
-  const current = menu.getByRole("link", { name: "Catalog", exact: true });
-  const other = menu.getByRole("link", { name: "Docs", exact: true });
+  const header = page.locator("#nd-mobile-nav");
+  const current = header.getByRole("link", { name: "Catalog", exact: true });
   await expect(current).toBeVisible();
-  const read = async (link: typeof current, amount: string) =>
-    link.evaluate((node, percent) => {
-      const probe = document.createElement("div");
-      probe.style.backgroundColor = `color-mix(in oklab, hsl(var(--muted)) ${percent}, transparent)`;
-      node.append(probe);
-      const expected = getComputedStyle(probe).backgroundColor;
-      const background = getComputedStyle(node).backgroundColor;
-      const height = node.getBoundingClientRect().height;
-      probe.remove();
-      return { background, expected, height, numeric: node.className.includes("bg-muted/") };
-    }, amount);
-  const here = await read(current, "80%");
-  expect(here.background).toBe(here.expected);
-  expect(here.height).toBeGreaterThanOrEqual(44);
-  expect(here.numeric).toBe(false);
-  await other.hover();
-  await expect.poll(async () => {
-    const hover = await read(other, "60%");
-    return hover.background === hover.expected && !hover.numeric;
-  }).toBe(true);
+  await expect(current).toHaveAttribute("aria-current", "page");
+  await expect(header.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+  await expect(header.getByRole("link", { name: "UI", exact: true })).toBeVisible();
+  await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+  await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+  expect((await current.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
 });
 
 test("the docs phone bar keeps a painted fill without an 80% background class", async ({ page }) => {
@@ -57,12 +41,25 @@ for (const path of PAGES) {
       expect(overflow).toBeLessThanOrEqual(0);
       const home = header.getByRole("link", { name: "zedkit home" });
       await expect(home).toBeVisible();
-      expect((await home.boundingBox())?.x ?? 99).toBeLessThan(24);
-      await expect(header.getByRole("button", { name: /Open (menu|navigation)/ })).toBeVisible();
-      for (const button of await header.locator("a, button").filter({ visible: true }).all()) {
-        const box = await button.boundingBox();
+      expect((await home.boundingBox())?.x ?? 99).toBeLessThanOrEqual(24);
+      await expect(header.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+      await expect(header.getByRole("link", { name: "UI", exact: true })).toBeVisible();
+      await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+      await expect(header.getByRole("link", { name: "Catalog", exact: true })).toBeVisible();
+      if (path === "/") {
+        await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+        await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+      } else {
+        await expect(header.getByRole("button", { name: "Open navigation" })).toBeVisible();
+      }
+      const primaryNav = new Set(["AI", "UI", "Docs", "Catalog"]);
+      for (const control of await header.locator("a, button").filter({ visible: true }).all()) {
+        const box = await control.boundingBox();
         expect(box?.height ?? 0).toBeGreaterThanOrEqual(43.5);
-        expect(box?.width ?? 0).toBeGreaterThanOrEqual(43.5);
+        const label = ((await control.textContent()) ?? "").trim();
+        if (!primaryNav.has(label)) {
+          expect(box?.width ?? 0).toBeGreaterThanOrEqual(43.5);
+        }
       }
     });
 
@@ -87,7 +84,7 @@ for (const path of SEARCH_PAGES) {
     test("search lives in the header and opens the dialog without a floating button", async ({ page }) => {
       await page.goto(path);
       const header = page.locator("#nd-mobile-nav");
-      const headerSearch = header.getByRole("button", { name: "Search the documentation" });
+      const headerSearch = header.getByRole("button", { name: /Search (the )?documentation/ });
       await expect(headerSearch).toBeVisible();
       const headerBox = await headerSearch.boundingBox();
       expect(headerBox?.height ?? 0).toBeGreaterThanOrEqual(43.5);

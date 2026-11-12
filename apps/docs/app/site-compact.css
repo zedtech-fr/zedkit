@@ -24,13 +24,16 @@
   backdrop-filter: none;
 }
 
-/* Header: fixed compact height, nav aligned to the content width. */
+/* Header: fixed compact height on desktop; phone bar may wrap. */
 #nd-nav,
 #nd-nav > div,
-#nd-nav nav,
-#nd-mobile-nav {
+#nd-nav nav {
   height: var(--zk-site-header-height);
   min-height: 0;
+}
+#nd-mobile-nav {
+  height: auto;
+  min-height: var(--zk-site-header-height);
 }
 #nd-nav,
 #nd-nav > div {
@@ -160,6 +163,29 @@
   border: none;
   box-shadow: none;
   background-image: none;
+}
+/* Phone header: same wrap as the mockup — text links, not glass chips. */
+:root[data-identity] #nd-mobile-nav {
+  gap: 1.5rem;
+}
+:root[data-identity] #nd-mobile-nav nav {
+  gap: 1.5rem;
+}
+:root[data-identity] #nd-mobile-nav .ms-auto {
+  gap: 1rem;
+}
+:root[data-identity] #nd-mobile-nav a:not([data-slot="button"]) {
+  border-radius: 0;
+  padding-inline: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  background-image: none;
+}
+#nd-mobile-nav a:not([data-slot="badge"]):not(.site-action):not([data-site-action]) {
+  font-size: var(--zk-type-nav-size);
+  font-weight: var(--zk-type-nav-weight);
+  line-height: var(--zk-type-nav-leading);
 }
 
 /* The hero example in Glass: the same calmer unit as the site, so its pages share one frame height. */

@@ -4,17 +4,17 @@ import { openHeroPage } from "./hero-helpers";
 const DESKTOP_WIDTHS = [1280, 1440] as const;
 
 for (const width of DESKTOP_WIDTHS) {
-  test(`header search clears theme toggle at ${width}px light`, async ({ page }) => {
+  test(`header search clears GitHub at ${width}px light`, async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const search = document.querySelector("#nd-nav button[class*='max-w']");
-      const toggle = document.querySelector("[data-theme-toggle]");
-      if (!search || !toggle) return null;
-      const toggleLeft = toggle.getBoundingClientRect().left;
+      const search = document.querySelector("#nd-nav [data-search], #nd-nav button[class*='max-w']");
+      const github = document.querySelector('#nd-nav a[aria-label*="GitHub"], #nd-nav a[href*="github"]');
+      if (!search || !github) return null;
+      const githubLeft = github.getBoundingClientRect().left;
       const nodes = [search, ...search.querySelectorAll("*")];
       let maxRight = Number.NEGATIVE_INFINITY;
       const offenders: { tag: string; right: number }[] = [];
@@ -22,14 +22,14 @@ for (const width of DESKTOP_WIDTHS) {
         const r = node.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;
         maxRight = Math.max(maxRight, r.right);
-        if (r.right > toggleLeft + 0.5) {
+        if (r.right > githubLeft + 0.5) {
           offenders.push({ tag: node.tagName.toLowerCase(), right: r.right });
         }
       }
       return {
-        gap: toggleLeft - maxRight,
+        gap: githubLeft - maxRight,
         offenders,
-        toggleLeft,
+        githubLeft,
         maxRight,
       };
     });

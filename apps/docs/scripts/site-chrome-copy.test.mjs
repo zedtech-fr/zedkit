@@ -21,7 +21,6 @@ const CONSUMERS = [
   "lib/site-links.mjs",
   "ui/skip-link.tsx",
   "ui/site-brand.tsx",
-  "ui/mobile-search-trigger.tsx",
   "ui/kit-version-label.tsx",
   "ui/off-path-link.tsx",
   "ui/site-chrome-a11y.tsx",
@@ -94,15 +93,10 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   const footer = read("ui/site-footer.tsx");
   const skip = read("ui/skip-link.tsx");
   const brand = read("ui/site-brand.tsx");
-  const search = read("ui/mobile-search-trigger.tsx");
   const version = read("ui/kit-version-label.tsx");
 
-  assert.match(header, /siteChromeCopy\.theme\.toggleAriaLabel/);
   assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
-  assert.match(header, /siteChromeCopy\.nav\.openMenu/);
-  assert.match(header, /siteChromeCopy\.nav\.menu/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
-  assert.match(header, /siteChromeCopy\.nav\.github/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
   assert.match(homeActions, /siteChromeCopy\.getStarted/);
@@ -115,7 +109,6 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(footer, /changelogHref/);
   assert.match(skip, /siteChromeCopy\.skipToContent/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
-  assert.match(search, /siteChromeCopy\.search\.triggerAriaLabel/);
   assert.match(version, /siteChromeCopy\.version\.latest/);
   assert.match(version, /siteChromeCopy\.version\.releasesAriaLabel\(version\)/);
   assert.match(version, /siteChromeCopy\.version\.shell\(version\)/);
@@ -130,7 +123,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(offPath, /labelled === undefined/);
   assert.match(a11y, /siteChromeCopy\.nav\.opensInNewTab/);
   assert.match(footer, /OffPathLink/);
-  assert.match(header, /OffPathLink/);
+  assert.doesNotMatch(header, /OffPathLink/);
   assert.doesNotMatch(header, /if \(link\.external\)/);
   assert.match(homeActions, /OffPathLink/);
   assert.doesNotMatch(homeActions, /target="_blank"/);
@@ -147,12 +140,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
   assert.doesNotMatch(header, /<p[\s>]/);
-  assert.doesNotMatch(search, /<button[\s>]/);
-  assert.doesNotMatch(search, /<p[\s>]/);
   assert.match(header, /IconButton/);
   assert.match(header, /variant="ghost"/);
-  assert.match(search, /IconButton/);
-  assert.match(search, /variant="ghost"/);
   assert.match(skip, /href="#main-content"/);
   assert.doesNotMatch(skip, /IconButton|<Button[\s>]/);
 });

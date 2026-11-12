@@ -7,6 +7,7 @@ import test from "node:test";
 import {
   isHomePath,
   isSiteNavLinkActive,
+  siteHeaderChrome,
   siteHeaderLinks,
   sitePrimaryNavLinks,
 } from "../lib/site-nav-data.ts";
@@ -82,6 +83,66 @@ test("isHomePath is only the site root", () => {
   assert.equal(isHomePath("/catalog"), false);
   assert.equal(isHomePath("/docs"), false);
   assert.equal(isHomePath("/docs/getting-started"), false);
+});
+
+const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];
+
+test("home phone chrome exposes the four links, GitHub, and Get started — no search, theme, version, or site-nav disclosure", () => {
+  const chrome = siteHeaderChrome("/", "home");
+  assert.deepEqual(
+    chrome.links.map((link) => ({ text: link.text, href: link.href })),
+    [
+      { text: "AI", href: "/docs/ai/setup" },
+      { text: "UI", href: "/docs/foundations" },
+      { text: "Docs", href: "/docs" },
+      { text: "Catalog", href: "/catalog" },
+    ],
+  );
+  assert.equal(chrome.search, false);
+  assert.equal(chrome.getStarted, true);
+  assert.equal(chrome.github, true);
+  assert.equal(chrome.docsTreeOpener, false);
+  assert.equal(chrome.theme, false);
+  assert.equal(chrome.version, false);
+  assert.equal(chrome.siteNavDisclosure, false);
+  assert.equal(
+    chrome.links.some((link) => PRIMARY_LINK_TEXTS.includes(link.text) === false),
+    false,
+  );
+  assert.equal(
+    chrome.links.some((link) => /reviews|issues/i.test(link.text)),
+    false,
+  );
+});
+
+test("catalog and docs phone chrome keep search and GitHub; docs keeps the page-tree opener", () => {
+  const catalog = siteHeaderChrome("/catalog", "home");
+  assert.deepEqual(
+    catalog.links.map((link) => link.text),
+    PRIMARY_LINK_TEXTS,
+  );
+  assert.equal(catalog.search, true);
+  assert.equal(catalog.getStarted, false);
+  assert.equal(catalog.github, true);
+  assert.equal(catalog.docsTreeOpener, false);
+  assert.equal(catalog.theme, false);
+  assert.equal(catalog.version, false);
+  assert.equal(catalog.siteNavDisclosure, false);
+
+  const docs = siteHeaderChrome("/docs", "docs");
+  assert.equal(docs.search, true);
+  assert.equal(docs.getStarted, false);
+  assert.equal(docs.github, true);
+  assert.equal(docs.docsTreeOpener, true);
+  assert.equal(docs.siteNavDisclosure, false);
+  assert.equal(docs.theme, false);
+  assert.equal(docs.version, false);
+
+  const foundations = siteHeaderChrome("/docs/foundations", "docs");
+  assert.equal(foundations.search, true);
+  assert.equal(foundations.getStarted, false);
+  assert.equal(foundations.docsTreeOpener, true);
+  assert.equal(foundations.siteNavDisclosure, false);
 });
 
 test("exact url matching does not current-state Docs on an AI or UI page", () => {
