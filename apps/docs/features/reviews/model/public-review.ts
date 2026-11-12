@@ -1,6 +1,7 @@
 import { tryCatch } from "@zedtech/zedkit-core";
 
 import type {
+  IssueRecord,
   LiveRelatedRun,
   PublicIssueIndex,
   PublicLiveRun,
@@ -13,7 +14,7 @@ import type {
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
 const INDEX_SECRET_KEY_PATTERN =
-  /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials|prompt)/i;
+  /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials|prompt|final[_-]?text)/i;
 const AUTH_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi;
 const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/g;
 const LIVE_URL_SECRET_QUERY = /(token|password|passwd|secret|signature|authorization)=/i;
@@ -144,7 +145,9 @@ export function assertPubliclySafe(value: unknown): void {
 /** Public live runs only; secret-like keys, tokens, and home paths are scrubbed. */
 export function toPublicReviews(records: readonly PublicLiveRun[]): PublicLiveRun[] {
   const publicRows = records.filter((record) => record.visibility === "public");
-  const scrubbed = publicRows.map((record) => scrub(structuredClone(record)) as PublicLiveRun);
+  const scrubbed = publicRows.map(
+    (record) => scrub(structuredClone(record), undefined, INDEX_SECRET_KEY_PATTERN) as PublicLiveRun,
+  );
   assertPubliclySafe(scrubbed);
   return scrubbed;
 }
@@ -197,7 +200,7 @@ function entryFromLive(live: PublicLiveRun): TimelineEntry {
     durationMs,
     models,
     verdict: mapLiveVerdict(live.decision?.verdict ?? live.run.verdict),
-    liveUrl: sanitizeLiveUrl(live.run.review_url ?? null),
+    liveUrl: sanitizeLiveUrl(live.run.live_url ?? null),
   };
 }
 
@@ -219,46 +222,147 @@ function entryFromRelated(related: LiveRelatedRun): TimelineEntry {
   };
 }
 
+function liveIssueNumber(value: number | null | undefined): number | null {
+  if (typeof value !== "number" || !Number.isSafeInteger(value)) return null;
+  return value;
+}
+
+function livePrNumber(value: number | null | undefined): number | null {
+  if (typeof value !== "number" || !Number.isInteger(value)) return null;
+  return value;
+}
+
+function fallbackIssueTitle(number: number): string {
+  return `Issue #${number}`;
+}
+
+function laterIso(left: string, right: string): string {
+  return left < right ? right : left;
+}
+
+function collectLiveEntries(runs: readonly PublicLiveRun[]): {
+  entries: TimelineEntry[];
+  runIds: string[];
+  issueNumber: number | null;
+  title: string | null;
+} {
+  const entries: TimelineEntry[] = [];
+  const runIds: string[] = [];
+  const seen = new Set<string>();
+  const sorted = [...runs].sort((a, b) => a.run.created_at - b.run.created_at);
+  let issueNumber: number | null = null;
+  let title: string | null = null;
+  for (const live of sorted) {
+    if (issueNumber === null) issueNumber = liveIssueNumber(live.run.issue);
+    if (title === null) {
+      const trimmed = live.run.issue_title?.trim() ?? "";
+      if (trimmed !== "") title = trimmed;
+    }
+    if (!seen.has(live.run.run_id)) {
+      seen.add(live.run.run_id);
+      runIds.push(live.run.run_id);
+    }
+    entries.push(entryFromLive(live));
+    for (const related of live.related) {
+      if (seen.has(related.run_id)) continue;
+      seen.add(related.run_id);
+      runIds.push(related.run_id);
+      entries.push(entryFromRelated(related));
+    }
+  }
+  return { entries, runIds, issueNumber, title };
+}
+
+function lastStartedAt(entries: readonly TimelineEntry[]): string {
+  let latest = entries[0]?.startedAt ?? new Date(0).toISOString();
+  for (const entry of entries) {
+    latest = laterIso(latest, entry.startedAt);
+  }
+  return latest;
+}
+
+function addIssueEntries(
+  issues: Map<number, IssueRecord>,
+  number: number,
+  title: string,
+  entries: readonly TimelineEntry[],
+  prNumber: number | null,
+): void {
+  const existing = issues.get(number);
+  const lastRunAt = lastStartedAt(entries);
+  if (existing === undefined) {
+    issues.set(number, {
+      number,
+      title,
+      state: "open",
+      pullRequests: prNumber === null ? [] : [prNumber],
+      lastRunAt,
+      entries: [...entries],
+    });
+    return;
+  }
+  const fallback = fallbackIssueTitle(number);
+  issues.set(number, {
+    ...existing,
+    title: existing.title === fallback && title !== fallback ? title : existing.title,
+    pullRequests:
+      prNumber === null || existing.pullRequests.includes(prNumber)
+        ? existing.pullRequests
+        : [...existing.pullRequests, prNumber],
+    lastRunAt: laterIso(existing.lastRunAt, lastRunAt),
+    entries: [...existing.entries, ...entries],
+  });
+}
+
 /** Map public live rows onto the issue-centric index (PRs without an issue number stay unlinked). */
 export function liveRunsToIndex(records: readonly PublicLiveRun[]): PublicIssueIndex {
   const byPr = new Map<number, PublicLiveRun[]>();
+  const issueOnly: PublicLiveRun[] = [];
   for (const record of records) {
-    const pr = record.run.pr;
-    if (typeof pr !== "number" || !Number.isInteger(pr)) continue;
-    const existing = byPr.get(pr) ?? [];
-    existing.push(record);
-    byPr.set(pr, existing);
+    const pr = livePrNumber(record.run.pr);
+    if (pr !== null) {
+      const existing = byPr.get(pr) ?? [];
+      existing.push(record);
+      byPr.set(pr, existing);
+      continue;
+    }
+    if (liveIssueNumber(record.run.issue) !== null) issueOnly.push(record);
   }
+  const issues = new Map<number, IssueRecord>();
   const pullRequests: PublicIssueIndex["pullRequests"][number][] = [];
   for (const [number, runs] of byPr) {
-    const entries: TimelineEntry[] = [];
-    const runIds: string[] = [];
-    const seen = new Set<string>();
-    const sorted = [...runs].sort((a, b) => a.run.created_at - b.run.created_at);
-    for (const live of sorted) {
-      if (!seen.has(live.run.run_id)) {
-        seen.add(live.run.run_id);
-        runIds.push(live.run.run_id);
-      }
-      entries.push(entryFromLive(live));
-      for (const related of live.related) {
-        if (seen.has(related.run_id)) continue;
-        seen.add(related.run_id);
-        runIds.push(related.run_id);
-        entries.push(entryFromRelated(related));
-      }
-    }
+    const collected = collectLiveEntries(runs);
     pullRequests.push({
       number,
-      issueNumber: null,
-      runIds,
-      entries,
+      issueNumber: collected.issueNumber,
+      runIds: collected.runIds,
+      entries: collected.entries,
     });
+    if (collected.issueNumber !== null) {
+      addIssueEntries(
+        issues,
+        collected.issueNumber,
+        collected.title ?? fallbackIssueTitle(collected.issueNumber),
+        collected.entries,
+        number,
+      );
+    }
+  }
+  for (const live of issueOnly) {
+    const collected = collectLiveEntries([live]);
+    if (collected.issueNumber === null) continue;
+    addIssueEntries(
+      issues,
+      collected.issueNumber,
+      collected.title ?? fallbackIssueTitle(collected.issueNumber),
+      collected.entries,
+      null,
+    );
   }
   return {
     version: 1,
     kind: "public-live-runs",
-    issues: [],
+    issues: [...issues.values()],
     pullRequests,
   };
 }
