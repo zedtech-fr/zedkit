@@ -1488,7 +1488,7 @@ test("list and timeline rows use row padding, not section padding", () => {
 test("list stays in the shared wide frame and stacks title then meta below md", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
-  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*ReviewSampleNotice[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.doesNotMatch(list, /ReviewSampleNotice/);
   assert.match(list, /<ReviewAppearanceFrame>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
   assert.match(list, /<ReviewAppearanceFrame>[\s\S]*copy\.list\.unlinkedTitle[\s\S]*<\/ReviewAppearanceFrame>/);
   assert.match(frame, /width="wide"/);

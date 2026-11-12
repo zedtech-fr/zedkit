@@ -178,7 +178,20 @@ test("GitHub catalog fails closed on 403, 429, 5xx, malformed JSON, and empty su
 test("GitHub catalog times out without echoing the token", async () => {
   const fetchImpl = async (_input, init) =>
     new Promise((_, reject) => {
-      init.signal?.addEventListener("abort", () => reject(init.signal.reason ?? new Error("aborted")));
+      const signal = init?.signal;
+      const onAbort = () => reject(signal?.reason ?? new Error("aborted"));
+      // AbortSignal.timeout does not keep the event loop alive on its own.
+      const keepAlive = setTimeout(() => reject(new Error("signal never aborted")), 5_000);
+      const finish = (err) => {
+        clearTimeout(keepAlive);
+        onAbort();
+      };
+      if (signal === undefined) return;
+      if (signal.aborted) {
+        finish();
+        return;
+      }
+      signal.addEventListener("abort", finish, { once: true });
     });
   const result = await fetchGithubCatalog({
     fetch: fetchImpl,
