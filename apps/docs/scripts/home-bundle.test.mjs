@@ -69,6 +69,10 @@ test("retired interactive home hero cluster is gone (#265)", () => {
   assert.doesNotMatch(goneCss, /data-hero-window/);
   assert.doesNotMatch(goneCss, /data-admin-dashboard-demo/);
   assert.doesNotMatch(goneCss, /data-home-gallery-preview/);
+  assert.doesNotMatch(goneCss, /data-hero-demo-display/);
+  assert.doesNotMatch(goneCss, /data-hero-activity/);
+  assert.doesNotMatch(goneCss, /\[data-hero-nav\]/);
+  assert.doesNotMatch(goneCss, /#demo\b/);
 });
 
 test("search dialog is lazy and not preloaded on every page", () => {

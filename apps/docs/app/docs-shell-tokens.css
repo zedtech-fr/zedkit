@@ -389,10 +389,6 @@ html[data-docs-shell][data-identity] {
   }
 }
 
-#home-page [data-hero-demo-display] [data-slot="select-trigger"] {
-  box-shadow: none;
-}
-
 @media (width < 48rem) {
   #nd-page {
     padding-inline: var(--zk-page-gutter);

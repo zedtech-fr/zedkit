@@ -270,9 +270,7 @@
 }
 
 /* One-off insets. The step matches another role; the job does not, so the number stays a literal here. */
-[data-dock-scroll],
-[data-hero-activity],
-[data-hero-nav] {
+[data-dock-scroll] {
   padding-bottom: calc(var(--spacing) * 2);
 }
 

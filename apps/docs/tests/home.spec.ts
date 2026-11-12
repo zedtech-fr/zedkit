@@ -189,7 +189,7 @@ test("home catalog link in the site header opens the catalog", async ({ page }) 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("home gallery shows no maturity badges", async ({ page }) => {
+test("home shows no maturity badges", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.locator("a[data-badge-link]")).toHaveCount(0);
