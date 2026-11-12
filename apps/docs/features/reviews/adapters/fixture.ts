@@ -252,7 +252,7 @@ const FIXTURES: readonly PublicLiveRun[] = [
       summary: "The public review section is ready to merge.",
       notes: [
         {
-          text: "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
+          text: "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history.",
         },
       ],
     }),

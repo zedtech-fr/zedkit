@@ -54,3 +54,18 @@ index; `reviews` is ignored. Do not rely on that: emit one shape.
 
 `run_id` / `runId` / `runIds[]` must match `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`.
 Path segments, spaces, and `..` fail closed.
+
+## Share URL (site, not exporter)
+
+Issue pages pin a local `ThemeScope` from these query keys. The exporter does not emit them. An empty query inherits the site look (the identity dock is enough). Do not restore an inline preview form.
+
+| Key | Pins |
+| --- | --- |
+| `identity` | shipped kit preset: `mist`, `press`, `tide`, `volt`, `maison`, `glass` |
+| `preview` | `dark` |
+| `theme` | legacy alias of `preview` (`theme=dark` still parses) |
+| `density` | `compact` |
+
+Any listed key pins the whole appearance. Missing, empty, or unknown values use codec defaults (glass, light, default density); they do not inherit the site look. `serializeReviewAppearance` in `apps/docs/lib/review-appearance.ts` is the canonical writer (omit glass, light, default density).
+
+Pinned URLs read `window.location.search` after mount (static export). The first paint may show the unpinned site look; that flash is accepted.
