@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Text, useUiMessages } from "@zedtech/zedkit-ui";
+import { Button, Text, useUiMessages } from "@zedtech/zedkit-ui";
 import { homeCopyCommandCopy } from "@/ui/home/i18n/home-copy-command-copy";
 
 /**
- * Attached single-line command field with a solid black Copy.
+ * Attached wrapping command field with a solid black Copy.
  *
  * Métier:           zedkit publishes npm packages and a docs site, not a hosted app.
  * Client personas:  Integrating developers and coding agents who adopt from home; they want one paste.
  * Customers:        The developer's own users — this page does not sell to them.
  * Customer personas: Rushed on 1440 or 390. Assumed from existing home briefs, not interviews.
- * UI decisions:     Docs-owned Input + site-action Copy, because: the kit shown-once secret
+ * UI decisions:     Docs-owned wrapping kit Text + site-action Copy, because: the kit shown-once secret
  *                   (icon, outline, optional wrap) must stay that on catalog/setup; the mockup
  *                   control is a site action on a command line. Visible Copy/Copied with caller
  *                   aria-label (Copied while copied), because: smoke needs "Copy prompt" ≠
  *                   "Copy closing prompt", and WCAG 2.5.3 needs the name to match the visible word.
- *                   Single-line overflow inside the input, because: wrapping is today's defect and
- *                   the ticket asks to truncate or scroll on 390.
+ *                   Wrapping value + attached site-action Copy, because: the mockup wraps and
+ *                   visitors must read the sentence they paste.
  */
 export function HomeCopyCommandField({
   value,
@@ -56,15 +56,15 @@ export function HomeCopyCommandField({
 
   return (
     <div data-home-copy-command="">
-      <Input
-        readOnly
-        value={value}
-        spellCheck={false}
-        autoComplete="off"
-        className="content-shrink font-mono"
+      <Text
+        as="span"
+        data-home-copy-command-value=""
+        className="content-shrink px-field-pad py-control-block font-mono"
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
-      />
+      >
+        {value}
+      </Text>
       <Button
         type="button"
         variant="default"

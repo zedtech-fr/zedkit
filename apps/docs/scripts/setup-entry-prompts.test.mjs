@@ -61,17 +61,28 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   const homeLead = read("ui/home/home-hero-lead.tsx");
   const homeBand = read("ui/home/home-paste-section.tsx");
   const homeClosing = read("ui/home/home-closing-section.tsx");
-  assert.match(homeLead, /\bMAP_SETUP_MINI_PROMPT\b/);
-  assert.doesNotMatch(homeLead, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b/);
+  const homePrompt = exportedString(generated, "MAP_AI_UI_SETUP_MINI_PROMPT");
+  assert.equal(homePrompt.includes("\n"), false);
+  assert.match(homeLead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeLead, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b/);
   assert.doesNotMatch(homeLead, /SetupEntryPrompt/);
   assert.equal((homeLead.match(/data-home-hero-prompt/g) ?? []).length, 1);
   assert.doesNotMatch(homeBand, /SetupEntryPrompt|SecretField|data-setup-entry/);
-  assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bMAP_AI_UI_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
   assert.doesNotMatch(homeClosing, /SetupEntryPrompt|data-setup-entry/);
   assert.match(homeClosing, /HomeCopyCommandField/);
   assert.doesNotMatch(homeClosing, /SecretField/);
-  assert.match(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b/);
-  assert.doesNotMatch(homeClosing, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+  assert.match(homeClosing, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+
+  for (const [label, source] of [
+    ["home lead", homeLead],
+    ["home closing", homeClosing],
+    ["home smoke", read("tests/home.spec.ts")],
+    ["home paste smoke", read("tests/home-ai-setup.spec.ts")],
+  ]) {
+    assert.equal(source.includes(homePrompt), false, `${label} must not literal-copy MAP_AI_UI_SETUP_MINI_PROMPT`);
+  }
 
   const wrapper = read("components/setup-entry-prompt.tsx");
   assert.match(wrapper, /<Label htmlFor=\{fieldId\}>\{entry\.label\}<\/Label>/);

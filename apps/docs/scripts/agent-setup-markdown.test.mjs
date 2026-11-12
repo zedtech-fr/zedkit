@@ -68,7 +68,11 @@ test("writeAiSetupPublicAssets copies agent markdown and mini prompts", (t) => {
   assert.ok(generated.includes(`export const UI_SETUP_MINI_PROMPT = ${JSON.stringify(UI_PROMPT)};`));
   assert.ok(generated.includes(`export const NEST_SETUP_MINI_PROMPT = ${JSON.stringify(NEST_PROMPT)};`));
   assert.ok(generated.includes(`export const MAP_SETUP_MINI_PROMPT = ${JSON.stringify(MAP_PROMPT)};`));
+  assert.ok(generated.includes(`export const MAP_AI_UI_SETUP_MINI_PROMPT = ${JSON.stringify(MAP_AI_UI_PROMPT)};`));
   assert.ok(generated.includes(`export const SUGGEST_MINI_PROMPT = ${JSON.stringify(SUGGEST_PROMPT)};`));
+  assert.equal(MAP_PROMPT.includes("Nest"), true);
+  assert.equal(MAP_AI_UI_PROMPT.includes("Nest"), false);
+  assert.equal(MAP_AI_UI_PROMPT.includes("\n"), false);
 });
 
 test("UI and Nest setup.md share the contract headings and pin the published version", () => {

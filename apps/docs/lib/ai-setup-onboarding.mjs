@@ -19,6 +19,7 @@ export const AI_SETUP_DOCS_PATH = "/docs/ai/setup";
 export const UI_SETUP_MINI_PROMPT = "Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md";
 export const NEST_SETUP_MINI_PROMPT = "Set up zedkit Nest on this repo following https://zedkit.app/nest/setup.md";
 export const MAP_SETUP_MINI_PROMPT = "Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md";
+export const MAP_AI_UI_SETUP_MINI_PROMPT = "Set up zedkit AI and UI on this repo following https://zedkit.app/map.md";
 export const SUGGEST_MINI_PROMPT = "Suggest which zedkit setup this repo needs following https://zedkit.app/suggest.md";
 
 /** Docs-owned agent markdown copied into `public/` (AI setup stays kit-owned).
@@ -148,6 +149,7 @@ export function writeAiSetupPublicAssets(appDir) {
       `export const UI_SETUP_MINI_PROMPT = ${JSON.stringify(UI_SETUP_MINI_PROMPT)};`,
       `export const NEST_SETUP_MINI_PROMPT = ${JSON.stringify(NEST_SETUP_MINI_PROMPT)};`,
       `export const MAP_SETUP_MINI_PROMPT = ${JSON.stringify(MAP_SETUP_MINI_PROMPT)};`,
+      `export const MAP_AI_UI_SETUP_MINI_PROMPT = ${JSON.stringify(MAP_AI_UI_SETUP_MINI_PROMPT)};`,
       `export const SUGGEST_MINI_PROMPT = ${JSON.stringify(SUGGEST_MINI_PROMPT)};`,
       `export const AI_SETUP_LLMS_URL = ${JSON.stringify(`https://zedkit.app${AI_SETUP_LLMS_PATH}`)};`,
       `export const AI_SETUP_DOCS_PATH = ${JSON.stringify(AI_SETUP_DOCS_PATH)};`,
