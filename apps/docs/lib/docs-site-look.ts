@@ -5,6 +5,7 @@ import {
   applyIdentity,
   discardCustomIdentity,
   identityPresets,
+  isNamedIdentityId,
   isPresetId,
   parseIdentityTokens,
   type IdentityTokens,
@@ -12,6 +13,7 @@ import {
 
 import { DEFAULT_IDENTITY } from "./default-identity.ts";
 import { docsSiteDefaultTokens, docsSiteTokensEqual } from "./docs-site-default-tokens.ts";
+import { readNamedIdentities } from "./named-identities.ts";
 import {
   clearDocsSiteIdentity,
   DOCS_SITE_IDENTITY_STORAGE_KEY,
@@ -23,6 +25,10 @@ function readDockSiteTokens(identityId: string): IdentityTokens {
   const stored = readDocsSiteTokens();
   if (stored) return stored;
   if (isPresetId(identityId) && identityId !== DEFAULT_IDENTITY) return identityPresets[identityId];
+  if (isNamedIdentityId(identityId)) {
+    const saved = readNamedIdentities().find((item) => item.id === identityId);
+    if (saved) return saved.tokens;
+  }
   return docsSiteDefaultTokens();
 }
 

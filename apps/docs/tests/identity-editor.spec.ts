@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { assertA11yGate } from "./a11y-helpers";
+import { livePaintDockExpert } from "./identity-helpers";
 
 const PAGE = "/features/identity-editor";
 /** The site's own light/dark switch (header), which is separate from the editor's Preview dark. */
@@ -146,47 +147,46 @@ test.describe("identity editor page", () => {
 test.describe("identity editor on a phone", () => {
   test.use({ viewport: { width: 360, height: 800 } });
 
-  test("keeps Apply on screen at 360px", async ({ page }) => {
+  test("keeps the dock trigger on screen at 360px", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.locator('[data-slot="identity-editor"]').screenshot({ path: "test-results/identity-editor-360.png" });
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
-    const apply = page.getByRole("button", { name: "Apply to the whole site" });
-    await apply.scrollIntoViewIfNeeded();
-    const box = await apply.boundingBox();
+    const trigger = page.getByRole("button", { name: "And yours?" });
+    await trigger.scrollIntoViewIfNeeded();
+    const box = await trigger.boundingBox();
     expect(box).toBeTruthy();
     expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(361);
     const look = await page.getByLabel("Look").boundingBox();
     expect(look?.width ?? 0).toBeGreaterThan(80);
   });
 
-  test("Press Apply stays on screen at 360px", async ({ page }) => {
+  test("dock Reset stays on screen at 360px after a live paint", async ({ page }) => {
     await page.goto(`${PAGE}?identity=press`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
     await page.locator('[data-slot="identity-editor"]').screenshot({ path: "test-results/identity-editor-press-360.png" });
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
-    const apply = page.getByRole("button", { name: "Apply to the whole site" });
-    await apply.scrollIntoViewIfNeeded();
-    const box = await apply.boundingBox();
+    const reset = page.locator("[data-slot=identity-dock-panel]").getByRole("button", { name: "Reset" });
+    await reset.scrollIntoViewIfNeeded();
+    const box = await reset.boundingBox();
     expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(361);
   });
 
-  test("Apply then Dark keeps a custom look on the site", async ({ page }) => {
+  test("a dock paint then Dark keeps a custom look on the site", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
     await siteDark(page);
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
-    await page.getByLabel("--background", { exact: true }).fill("120 40% 20%");
+    await livePaintDockExpert(page, "--background", "120 40% 20%");
     await expect
       .poll(() =>
         page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
@@ -195,46 +195,15 @@ test.describe("identity editor on a phone", () => {
   });
 });
 
-test.describe("identity editor apply to site", () => {
-  test("paints sidebar and page on Apply, with before/after site captures", async ({ page }) => {
+test.describe("identity editor and dock live-apply", () => {
+  test("paints sidebar and page from a dock edit, with before/after site captures", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.route("**/api/identity/suggest/status", (route) => route.fulfill({ status: 200, contentType: "application/json", json: { available: true } }));
-    await page.route("**/api/identity/suggest", async (route) => {
-      const posted = route.request().postDataJSON() as { requestId: string; current: Record<string, unknown> };
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        json: {
-          requestId: posted.requestId,
-          summary: "A warm pink page.",
-          changed: ["light.background"],
-          references: [],
-          tokens: {
-            ...posted.current,
-            light: {
-              background: "0 80% 70%",
-              foreground: "0 0% 10%",
-              primary: "0 0% 10%",
-              accent: "0 70% 40%",
-              border: "0 40% 40%",
-            },
-          },
-        },
-      });
-    });
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     const beforeSidebar = await sidebarBg(page);
     const beforeBackground = await htmlVar(page, "--background");
     await page.screenshot({ path: "test-results/identity-editor-site-before.png", fullPage: true });
-    await page.goto(`${PAGE}#create`, { waitUntil: "networkidle" });
-    await page.getByLabel("Your product and brand").fill("warm ivory boutique");
-    await page.getByRole("button", { name: "Generate" }).click();
-    await page.getByRole("button", { name: "Use this look" }).click();
-    // Using a look changes the draft only: the site is untouched until the visitor says so.
-    await expect.poll(() => htmlVar(page, "--background")).toBe(beforeBackground);
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await livePaintDockExpert(page, "--background", "0 80% 70%");
     await expect.poll(() => htmlVar(page, "--background")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
@@ -246,54 +215,48 @@ test.describe("identity editor apply to site", () => {
     await page.screenshot({ path: "test-results/identity-editor-site-after-docs.png", fullPage: true });
   });
 
-  test("toolbar Apply paints sidebar from Background", async ({ page }) => {
+  test("dock Background paints sidebar immediately", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--background", { exact: true }).fill("0 80% 70%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
+    await livePaintDockExpert(page, "--background", "0 80% 70%");
     await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
     await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
   });
 
-  test("applies the draft to the whole site without a reload", async ({ page }) => {
+  test("a dock edit paints the site without a reload", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
     await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
   });
 
-  test("keeps the site in step with later draft edits", async ({ page }) => {
+  test("editor draft edits leave the site until the dock paints", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     const before = await spacingOnHtml(page);
     await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
     await expect.poll(() => spacingOnDraft(page)).toBe("0.4rem");
     await expect.poll(() => spacingOnHtml(page)).toBe(before);
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
-    await page.getByLabel("--spacing", { exact: true }).fill("0.5rem");
+    await livePaintDockExpert(page, "--spacing", "0.5rem");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.5rem");
-    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
   });
 
   test("keeps the custom identity after navigation", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
     await expect.poll(() => spacingOnHtml(page)).toBe("0.4rem");
   });
 
   test("resets to the default identity and clears storage", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await page.getByRole("button", { name: "Back to default" }).click();
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
+    await page.locator("[data-slot=custom-identity-bar]").getByRole("button", { name: "Reset" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     await expect.poll(() => spacingOnHtml(page)).toMatch(/^0?\.26rem$/);
-    await expect(page.getByRole("button", { name: "Back to default" })).toHaveCount(0);
+    await expect(page.locator("[data-slot=custom-identity-bar]")).toHaveCount(0);
     expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toBeNull();
   });
 
@@ -301,9 +264,8 @@ test.describe("identity editor apply to site", () => {
   test("a header preset switch parks applied custom work instead of wiping it", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(`${PAGE}?identity=mist`, { waitUntil: "networkidle" });
-    await page.getByLabel("--radius", { exact: true }).fill("2rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
+    await livePaintDockExpert(page, "--radius", "2rem");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
     await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
     const parked = await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY);
     expect(parked).toContain("2rem");
@@ -331,10 +293,8 @@ test.describe("identity editor apply to site", () => {
     expect(new URL(page.url()).searchParams.get("identity")).toBe("press");
 
     // Applied draft: fields and URL resync to the header's new look.
-    await page.getByLabel("--radius", { exact: true }).fill("2rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--radius", "2rem");
     await expect.poll(() => htmlVar(page, "--radius")).toBe("2rem");
-    await expect(page.getByText("Applied to the whole site.")).toBeVisible();
     await chooser.selectOption("mist");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect(page.getByLabel("Look")).toHaveValue("mist");
@@ -343,7 +303,7 @@ test.describe("identity editor apply to site", () => {
     expect(new URL(page.url()).searchParams.get("radius")).toBeNull();
 
     // Detached: further edits no longer drive the site.
-    await expect(page.getByText("Applied to the whole site.")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Apply to the whole site" })).toHaveCount(0);
     await page.getByLabel("--radius", { exact: true }).fill("3rem");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "mist");
     await expect.poll(() => htmlVar(page, "--radius")).not.toBe("3rem");
@@ -362,24 +322,20 @@ test.describe("identity editor apply to site", () => {
   });
   });
 
-  test("Apply Press replaces the site look in light and dark", async ({ page }) => {
+  test("Look Press updates the draft only; the dock paints the site", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     await page.getByLabel("Look").selectOption("press");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "press");
+    await expect.poll(() => spacingOnDraft(page)).toBe("0.2rem");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
+    await livePaintDockExpert(page, "--radius", "0px");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", "custom");
     await expect
       .poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--radius").trim()))
       .toBe("0px");
     await siteDark(page);
-    await page.getByRole("button", { name: "Preview dark", exact: true }).click();
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toBe("0 0% 6%");
-    await page.getByLabel("--background", { exact: true }).fill("120 40% 20%");
+    await livePaintDockExpert(page, "--background", "120 40% 20%");
     await expect
       .poll(() =>
         page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
@@ -387,19 +343,18 @@ test.describe("identity editor apply to site", () => {
       .toBe("120 40% 20%");
   });
 
-  test("an old URL without darkKept still keeps a dark override", async ({ page }) => {
+  test("an old URL without darkKept still keeps a dark override on the draft", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(`${PAGE}?identity=mist&dark-background=${encodeURIComponent("120 40% 20%")}`, {
       waitUntil: "networkidle",
     });
     await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await siteDark(page);
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toBe("120 40% 20%");
+    await page.getByRole("button", { name: "Preview dark", exact: true }).click();
+    await expect.poll(() =>
+      page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+        getComputedStyle(node).getPropertyValue("--background").trim(),
+      ),
+    ).toBe("120 40% 20%");
   });
 
   test("a URL-loaded dark color stays kept after a light edit", async ({ page }) => {
@@ -412,64 +367,49 @@ test.describe("identity editor apply to site", () => {
     await expect.poll(() => new URL(page.url()).searchParams.get("darkKept")).toBe("background");
     await page.reload({ waitUntil: "networkidle" });
     await page.getByLabel("--background", { exact: true }).fill("0 0% 90%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await siteDark(page);
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toBe("120 40% 20%");
+    await page.getByRole("button", { name: "Preview dark", exact: true }).click();
+    await expect.poll(() =>
+      page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+        getComputedStyle(node).getPropertyValue("--background").trim(),
+      ),
+    ).toBe("120 40% 20%");
   });
 
-  test("a manual dark color survives a later light edit", async ({ page }) => {
+  test("a manual dark color survives a later light edit on the draft", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
     await page.getByLabel("--background", { exact: true }).fill("120 40% 20%");
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
     await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await siteDark(page);
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toBe("120 40% 20%");
+    await page.getByRole("button", { name: "Preview dark", exact: true }).click();
+    await expect.poll(() =>
+      page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+        getComputedStyle(node).getPropertyValue("--background").trim(),
+      ),
+    ).toBe("120 40% 20%");
   });
 
-  test("a light color edit writes an AA dark pair onto the site", async ({ page }) => {
-    await page.addInitScript(() => localStorage.setItem("theme", "light"));
-    await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await siteDark(page);
-    await expect(page.getByRole("button", { name: /^Fix dark / })).toHaveCount(0);
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toMatch(/^0 0% 5(\.0)?%$/);
-  });
-
-  test("applies dark tokens while the site is dark", async ({ page }) => {
+  test("Preview dark changes the card, not the site, while the site is dark", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "dark"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+    const before = await htmlVar(page, "--background");
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
     await page.getByLabel("--background", { exact: true }).fill("120 40% 20%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
     await expect.poll(() =>
-      page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
+      page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+        getComputedStyle(node).getPropertyValue("--background").trim(),
+      ),
     ).toBe("120 40% 20%");
-    await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
+    await expect.poll(() => htmlVar(page, "--background")).toBe(before);
   });
 
   test.describe.skip("header Identity control (removed from site shell, D3)", () => {
-  test("header Identity control parks Custom after Apply to the whole site; Reset discards it", async ({ page }) => {
+  test("header Identity control parks Custom after a dock paint; Reset discards it", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
     const chooser = page.getByRole("combobox", { name: "Identity" }).first();
     await expect(chooser).toHaveValue("mist");
     await chooser.selectOption("press");
@@ -482,10 +422,10 @@ test.describe("identity editor apply to site", () => {
     // Parked, not wiped: the applied work is still stored and the explicit
     // reset remains the way to drop it.
     expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toContain("0.4rem");
-    await page.getByRole("button", { name: "Back to default" }).click();
+    await page.locator("[data-slot=custom-identity-bar]").getByRole("button", { name: "Reset" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     expect(await page.evaluate((key) => localStorage.getItem(key), DOCS_CUSTOM_STORAGE_KEY)).toBeNull();
-    await expect(page.getByRole("button", { name: "Back to default" })).toHaveCount(0);
+    await expect(page.locator("[data-slot=custom-identity-bar]")).toHaveCount(0);
   });
 
   test("header Identity control parks Custom in dark mode", async ({ page }) => {
@@ -493,10 +433,9 @@ test.describe("identity editor apply to site", () => {
     await page.addInitScript(() => localStorage.setItem("theme", "dark"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
-    await page.getByLabel("--spacing", { exact: true }).fill("0.4rem");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--spacing", "0.4rem");
     const chooser = page.getByRole("combobox", { name: "Identity" }).first();
-    await expect(chooser).toHaveValue("mist");
+    await expect(chooser).toHaveValue("custom");
     await chooser.selectOption("tide");
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
@@ -517,10 +456,12 @@ test.describe("identity editor named looks", () => {
     await expect(page.getByLabel("Look")).toHaveValue("n-coral");
     const look = page.getByLabel("Look", { exact: true });
     await look.selectOption("n-coral");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
-    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
-    await expect.poll(() => htmlVar(page, "--card")).toBe("0 80% 70%");
+    await expect.poll(() =>
+      page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+        getComputedStyle(node).getPropertyValue("--background").trim(),
+      ),
+    ).toBe("0 80% 70%");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
     await page.getByLabel("Name").fill("Sunset");
     await page.getByRole("button", { name: "Rename" }).click();
     await expect(look).toHaveValue("n-coral");
@@ -529,7 +470,7 @@ test.describe("identity editor named looks", () => {
     await expect(look).toHaveValue("n-coral");
     await page.getByRole("button", { name: "Delete", exact: true }).click();
     await page.getByRole("button", { name: "Delete look" }).click();
-    await expect(page.getByLabel("Look", { exact: true })).toHaveValue(DEFAULT_IDENTITY);
+    await expect(page.getByLabel("Look", { exact: true })).not.toHaveValue("n-coral");
     await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   });
 
@@ -538,12 +479,15 @@ test.describe("identity editor named looks", () => {
     await page.getByLabel("--background", { exact: true }).fill("0 80% 70%");
     await page.getByLabel("Name").fill("Coral");
     await page.getByRole("button", { name: "Save look" }).click();
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
-    await page.reload({ waitUntil: "networkidle" });
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "n-coral");
-    await expect.poll(() => htmlVar(page, "--sidebar")).toBe("0 80% 70%");
     await expect(page.getByLabel("Look")).toHaveValue("n-coral");
+    await page.reload({ waitUntil: "networkidle" });
+    await expect(page.getByLabel("Look")).toHaveValue("n-coral");
+    await expect.poll(() =>
+      page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+        getComputedStyle(node).getPropertyValue("--background").trim(),
+      ),
+    ).toBe("0 80% 70%");
+    await expect(page.locator("html")).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   });
 });
 
@@ -571,7 +515,8 @@ test.describe("identity editor: choose, see, adjust, then keep", () => {
     // Saving and applying come after the first adjustment, and are still on the page, not folded away.
     expect(boxes.keep!.top).toBeGreaterThan(boxes.spacing!.bottom);
     await expect(page.getByRole("button", { name: "Save look" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Apply to the whole site" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply to the whole site" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
   });
 
   test("desktop rows line up on their bottom edge whatever the hint text under them", async ({ page }) => {

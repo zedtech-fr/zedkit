@@ -69,6 +69,8 @@ export const identityEditorCopy = {
     contrastHint:
       "Text needs 4.5:1 contrast on its background, accents and borders 3:1. Fix moves only that color to the nearest passing shade.",
     contrastOk: "Every checked color pair passes.",
+    contrastNeedFix: (n: number) =>
+      n === 1 ? "One color pair needs a fix." : `${n} color pairs need a fix.`,
   },
   fields: {
     groups: {
@@ -102,6 +104,7 @@ export const identityEditorCopy = {
       `${scheme} ${label} ${ratio}:1 (need ${min}:1)`,
     fix: (scheme: string, label: string) => `Fix ${scheme} ${label}`,
     hslFormat: "Enter a color as H S% L%, for example 220 14% 96%.",
+    invalidValue: "This value is not valid, so nothing was updated.",
   },
   panel: {
     hint: "Change spacing first, then watch the card. Preview dark changes the card only.",

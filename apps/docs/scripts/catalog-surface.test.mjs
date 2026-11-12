@@ -183,6 +183,7 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   assert.match(panel, /IdentityDockActionBar/);
   assert.match(bar, /data-dock-action-bar/);
   assert.match(bar, /toolbar\.reset/);
+  assert.match(bar, /aria-live="polite"/);
   assert.doesNotMatch(bar, /toolbar\.applySite/);
   assert.doesNotMatch(bar, /dockCopy\.preview/);
   assert.doesNotMatch(bar, /removeFromSite/);
@@ -193,6 +194,9 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   assert.doesNotMatch(editorCopy, /applyHint:/);
   assert.doesNotMatch(editorCopy, /applied:/);
   assert.doesNotMatch(bar, /Textarea|PromptInput|BriefForm/);
+  const widget = read("components/identity-dock-widget.tsx");
+  assert.match(widget, /panelRef\.current\?\.focus\(\)/);
+  assert.doesNotMatch(widget, /aria-label="Drag to resize"/);
 });
 
 test("the custom identity bar is Reset when the look differs, not a separate apply step", () => {

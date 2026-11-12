@@ -18,8 +18,8 @@ import {
   type LibraryRead,
   type SaveResult,
   type SavedIdentity,
-} from "@/lib/identity-library";
-import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "@/lib/site-identity-storage";
+} from "./identity-library.ts";
+import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "./site-identity-storage.ts";
 
 /**
  * The saved identities as the editor and the header read them: a live view over the versioned library

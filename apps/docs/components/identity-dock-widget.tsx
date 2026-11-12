@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -80,9 +80,16 @@ function IdentityDockWidget() {
   const [tokens, setTokens] = useDockSiteTokens();
   const { expanded, setExpanded, setBrief } = useIdentityAssistantStore();
   const triggerRef = useIdentityDockKeyboard(expanded, setExpanded);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEditorDockAutoOpen(onEditor, pathname, setBrief, setExpanded);
   useIdentityDockOpenRequest(setBrief, setExpanded);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const id = requestAnimationFrame(() => panelRef.current?.focus());
+    return () => cancelAnimationFrame(id);
+  }, [expanded]);
 
   return (
     <>
@@ -104,6 +111,7 @@ function IdentityDockWidget() {
       </IdentityDock>
       <Drawer open={expanded} onOpenChange={setExpanded} direction="right" mobile="sheet" modal={false} handleOnly noBodyStyles>
         <DrawerContent
+          ref={panelRef}
           size="lg"
           modal={false}
           aria-label={identityDockCopy.panelTitle}
@@ -111,7 +119,7 @@ function IdentityDockWidget() {
           data-state={expanded ? "open" : "closed"}
           className="flex pane-shrink flex-col gap-flush flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-flush"
         >
-          <DrawerHandle data-dock-handle="" className="trim-bottom w-handle shrink-0" aria-label="Drag to resize" />
+          <DrawerHandle data-dock-handle="" className="trim-bottom w-handle shrink-0" />
           <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
             <IdentityDockAssistantPanel tokens={tokens} onTokens={setTokens} />
           </Stack>

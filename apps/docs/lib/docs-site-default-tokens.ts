@@ -16,30 +16,6 @@ const DOCS_SITE_SHADOW_MD = "0 2px 6px hsl(var(--zk-shadow-color) / 0.08)";
 /** `:root[data-identity="glass"]` in site-compact.css. */
 const DOCS_SITE_SPACING = "0.26rem";
 
-const COLOUR_KEYS = [
-  "background",
-  "foreground",
-  "primary",
-  "primaryForeground",
-  "accent",
-  "border",
-  "mutedForeground",
-] as const;
-
-const TOKEN_KEYS = [
-  "spacing",
-  "borderWidth",
-  "radius",
-  "bodyLeading",
-  "headingLeading",
-  "headingTracking",
-  "labelTracking",
-  "fontSans",
-  "fontDisplay",
-  "shadowSm",
-  "shadowMd",
-] as const;
-
 /**
  * Kit Glass as the docs chrome wears it: shell remaps for the fields the
  * site actually pins, everything else the Glass preset.
@@ -64,14 +40,8 @@ function docsSiteDefaultTokens(): IdentityTokens {
   return parsed.success ? parsed.data : base;
 }
 
-function colourPairEqual(a: IdentityTokens["light"], b: IdentityTokens["light"]): boolean {
-  return COLOUR_KEYS.every((key) => a[key] === b[key]);
-}
-
 function docsSiteTokensEqual(a: IdentityTokens, b: IdentityTokens): boolean {
-  return (
-    TOKEN_KEYS.every((key) => a[key] === b[key]) && colourPairEqual(a.light, b.light) && colourPairEqual(a.dark, b.dark)
-  );
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 export { docsSiteDefaultTokens, docsSiteTokensEqual };

@@ -1,11 +1,29 @@
 import { expect, type Page } from "@playwright/test";
 
-/** Opt-in docs site look before navigation (replaces legacy `zk-identity` for shell tests). */
+const DOCK_PANEL = "[data-slot=identity-dock-panel]";
+
+/** Opens the identity dock and returns the panel locator. */
+export async function openIdentityDock(page: Page) {
+  const panel = page.locator(DOCK_PANEL);
+  if (!(await panel.isVisible())) {
+    await page.getByRole("button", { name: "And yours?" }).click();
+  }
+  await expect(panel).toBeVisible();
+  return panel;
+}
+
+/** Expert field in the dock: a fill here paints the whole site. */
+export async function livePaintDockExpert(page: Page, label: string, value: string) {
+  const panel = await openIdentityDock(page);
+  await panel.getByRole("tab", { name: "Expert" }).click();
+  await panel.getByLabel(label, { exact: true }).fill(value);
+}
+
+/** Persist a docs site look before navigation (replaces legacy `zk-identity` for shell tests). */
 export async function persistDocsSiteLook(page: Page, identity: string, theme: "light" | "dark") {
   await page.addInitScript(
     ({ id, mode }) => {
       localStorage.setItem("zk-docs-site-identity", id);
-      localStorage.setItem("zk-docs-site-identity-opt-in", "1");
       localStorage.setItem("theme", mode);
     },
     { id: identity, mode: theme },

@@ -1,10 +1,13 @@
 "use client";
 
-import { Stack, type IdentityTokens } from "@zedtech/zedkit-ui";
+import { useEffect, useState } from "react";
+import { identityContrastWarnings, Stack, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { IdentityDockActionBar } from "@/components/identity-dock-action-bar";
 import { IdentityDockCustomize } from "@/components/identity-dock-customize";
 import { IdentityDockPanelToolbar } from "@/components/identity-dock-panel-toolbar";
+import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { docsSiteDefaultTokens } from "@/lib/docs-site-default-tokens";
 import { applyDocsSiteLook, resetDocsSiteLook } from "@/lib/docs-site-look";
 import { dispatchIdentityEditorDraftApply } from "@/lib/identity-editor-draft-apply";
@@ -41,6 +44,17 @@ export function IdentityDockAssistantPanel({
   onTokens: (tokens: IdentityTokens) => void;
 }) {
   const { setExpanded } = useIdentityAssistantStore();
+  const [status, setStatus] = useState("");
+  const warningCount = identityContrastWarnings(tokens).length;
+
+  useEffect(() => {
+    const message =
+      warningCount === 0
+        ? identityEditorCopy.simple.contrastOk
+        : identityEditorCopy.simple.contrastNeedFix(warningCount);
+    const id = window.setTimeout(() => setStatus(message), 400);
+    return () => window.clearTimeout(id);
+  }, [warningCount]);
 
   return (
     <Stack className="pane-shrink flex-1 gap-flush overflow-hidden" data-slot="identity-dock-body">
@@ -53,9 +67,11 @@ export function IdentityDockAssistantPanel({
         />
       </Stack>
       <IdentityDockActionBar
+        status={status}
         onReset={() => {
           resetDocsSiteLook();
           onTokens(docsSiteDefaultTokens());
+          setStatus(identityDockCopy.statusRestored);
         }}
       />
     </Stack>

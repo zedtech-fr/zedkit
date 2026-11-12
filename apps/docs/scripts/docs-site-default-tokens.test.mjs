@@ -79,3 +79,10 @@ test("docsSiteTokensEqual is value equality, not object identity", () => {
   assert.equal(docsSiteTokensEqual(a, { ...a, radius: "1rem" }), false);
   assert.equal(docsSiteTokensEqual(a, { ...a, light: { ...a.light, background: "220 60% 97%" } }), false);
 });
+
+test("docsSiteTokensEqual uses JSON.stringify so a new kit key is not silently ignored", () => {
+  const src = read("lib/docs-site-default-tokens.ts");
+  assert.match(src, /JSON\.stringify\(a\) === JSON\.stringify\(b\)/);
+  assert.doesNotMatch(src, /COLOUR_KEYS/);
+  assert.doesNotMatch(src, /TOKEN_KEYS/);
+});

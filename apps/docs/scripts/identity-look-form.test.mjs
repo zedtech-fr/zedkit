@@ -61,6 +61,14 @@ test("Expert color fields patch the preview scheme, not the host default", () =>
   assert.match(fields, /onPatch\(key, value, scheme\)/);
 });
 
+test("invalid Expert drafts show a visible FieldError, not an sr-only swatch hint", () => {
+  const fields = read("components/identity-editor-fields.tsx");
+  assert.match(fields, /FieldError/);
+  assert.match(fields, /fields\.invalidValue/);
+  assert.match(fields, /fields\.hslFormat/);
+  assert.doesNotMatch(fields, /className="sr-only"/);
+});
+
 test("look form tabs are named and KeepBar sits after both modes", () => {
   const form = read("components/identity-look-form.tsx");
   assert.match(form, /TabsList aria-label=\{copy\.label\}/);

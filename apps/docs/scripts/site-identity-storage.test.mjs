@@ -4,19 +4,24 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-import { CUSTOM_IDENTITY_ID } from "@zedtech/zedkit-ui";
+import { CUSTOM_IDENTITY_ID, identityPresets } from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "../lib/default-identity.ts";
 import { docsSiteDefaultTokens } from "../lib/docs-site-default-tokens.ts";
+
+import { LIBRARY_KEY } from "../lib/identity-library.ts";
 import {
   applyDocsSiteLook,
+  readDockSiteTokens,
   resetDocsSiteLook,
 } from "../lib/docs-site-look.ts";
 import {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
+  LEGACY_IDENTITY_KEYS,
   docsSiteCustomStorageKey,
   docsSiteLookDiffersFromDefaults,
   docsSiteTokensStorageKey,
+  purgeLegacyIdentityStorage,
   readDocsSiteTokens,
   writeDocsSiteTokens,
   clearDocsSiteIdentity,
@@ -131,9 +136,10 @@ test("opt-in key and helpers are gone from storage and the root layout", () => {
   const storage = read("lib/site-identity-storage.ts");
   const layout = read("app/layout.tsx");
   assert.doesNotMatch(storage, /OPT_IN/);
-  assert.doesNotMatch(storage, /opt-in/);
   assert.doesNotMatch(storage, /isDocsSiteIdentityOptIn/);
   assert.doesNotMatch(storage, /setDocsSiteIdentityOptIn/);
+  assert.match(storage, /zk-docs-site-identity-opt-in/);
+  assert.ok(LEGACY_IDENTITY_KEYS.includes("zk-docs-site-identity-opt-in"));
   assert.doesNotMatch(layout, /optInStorageKey/);
   assert.doesNotMatch(layout, /OPT_IN/);
 });
@@ -195,5 +201,62 @@ test("Reset restores Glass and clears custom CSS and JSON", () => {
   assert.equal(browser.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY), DEFAULT_IDENTITY);
   assert.equal(browser.localStorage.getItem(docsSiteTokensStorageKey()), null);
   assert.equal(browser.localStorage.getItem(docsSiteCustomStorageKey()), null);
+  browser.restore();
+});
+
+test("purgeLegacyIdentityStorage drops the retired opt-in key", () => {
+  const browser = installBrowser();
+  browser.localStorage.setItem("zk-docs-site-identity-opt-in", "1");
+  purgeLegacyIdentityStorage();
+  assert.equal(browser.localStorage.getItem("zk-docs-site-identity-opt-in"), null);
+  browser.restore();
+});
+
+test("blocked storage does not throw from write, clear, or differs", () => {
+  const browser = installBrowser();
+  const boom = () => {
+    throw new Error("blocked");
+  };
+  browser.localStorage.getItem = boom;
+  browser.localStorage.setItem = boom;
+  browser.localStorage.removeItem = boom;
+  assert.doesNotThrow(() => writeDocsSiteTokens({ ...docsSiteDefaultTokens(), radius: "1rem" }));
+  assert.doesNotThrow(() => docsSiteLookDiffersFromDefaults());
+  assert.doesNotThrow(() => clearDocsSiteIdentity());
+  assert.doesNotThrow(() => purgeLegacyIdentityStorage());
+  browser.restore();
+});
+
+test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, then docs defaults", () => {
+  const browser = installBrowser();
+  const defaults = docsSiteDefaultTokens();
+  const stored = { ...defaults, radius: "1.25rem" };
+  writeDocsSiteTokens(stored);
+  assert.equal(readDockSiteTokens(DEFAULT_IDENTITY).radius, "1.25rem");
+
+  clearDocsSiteIdentity();
+  assert.equal(readDockSiteTokens("press").radius, identityPresets.press.radius);
+
+  const named = { ...defaults, radius: "2rem" };
+  browser.localStorage.setItem(
+    LIBRARY_KEY,
+    JSON.stringify({
+      version: 2,
+      items: [
+        {
+          id: "n-coral",
+          label: "Coral",
+          tokens: named,
+          createdAt: 1,
+          updatedAt: 1,
+          source: "editor",
+        },
+      ],
+    }),
+  );
+  assert.equal(readDockSiteTokens("n-coral").radius, "2rem");
+
+  assert.deepEqual(readDockSiteTokens(DEFAULT_IDENTITY), defaults);
+  assert.deepEqual(readDockSiteTokens("n-missing"), defaults);
   browser.restore();
 });
