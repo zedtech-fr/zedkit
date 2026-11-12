@@ -122,7 +122,7 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 test("the theme switch keeps a quiet border", async ({ page }) => {
-  await page.goto("/docs/getting-started");
+  await page.goto("/catalog");
   const toggle = page.locator("[data-theme-toggle] button").filter({ visible: true }).first();
   await expect(toggle).toBeVisible();
   const line = await toggle.evaluate((node) => {

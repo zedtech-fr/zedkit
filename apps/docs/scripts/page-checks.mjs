@@ -49,7 +49,16 @@ export function checkGeneratedPage(rel, text, { seoMax, descriptionsSeen, a11yBy
       descriptionsSeen.set(description, rel);
     }
   }
-  if (text.includes("<ComponentPage")) {
+    if (text.includes("<ComponentPage")) {
+    if (!text.includes("hidePageTitle: true")) {
+      errors.push(`generator: ${rel} ComponentPage must hide the fumadocs title.`);
+    }
+    if (!text.includes("sourceFile={")) {
+      errors.push(`generator: ${rel} ComponentPage lacks sourceFile for the Source link.`);
+    }
+    if (!text.includes("navGroup={")) {
+      errors.push(`generator: ${rel} ComponentPage lacks navGroup for the breadcrumb.`);
+    }
     for (const label of GUIDANCE_BULLETS) {
       const prop =
         label === "- **Who:**"

@@ -204,15 +204,10 @@ test("button reference page surfaces variant and size in props without search (#
   expect(colors.numeric).toBe(false);
 });
 
-test("component page TOC lists the live sections", async ({ page }) => {
+test("component page has no TOC chrome", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
-  const toc = page.locator("#nd-toc");
-  await expect(toc.getByRole("link", { name: "Preview" })).toHaveAttribute("href", "#example");
-  await expect(toc.getByRole("link", { name: "Guidance" })).toHaveAttribute("href", "#guidance");
-  await expect(toc.getByRole("link", { name: "Use it" })).toHaveAttribute("href", "#usage-and-states");
-  await expect(toc.getByRole("link", { name: "Kit not installed yet?" })).toHaveAttribute("href", "#install-or-copy");
-  await expect(toc.getByRole("link", { name: "Props" })).toHaveAttribute("href", "#props");
+  await expect(page.locator("#nd-toc")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "At a glance" })).toHaveCount(0);
 });
 
