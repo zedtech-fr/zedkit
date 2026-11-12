@@ -55,14 +55,16 @@ function IdentitySelect({
   copy,
   appearance,
   onChange,
+  dense,
 }: {
   id: string;
   copy: ReviewsCopy["appearance"];
   appearance: ReviewAppearance;
   onChange: (next: ReviewAppearance) => void;
+  dense: boolean;
 }) {
   return (
-    <Field className="w-full sm:w-look">
+    <Field className={dense ? "w-look" : "w-full sm:w-look"}>
       <FieldLabel htmlFor={id}>{copy.identity}</FieldLabel>
       <Select
         value={appearance.identity}
@@ -90,14 +92,16 @@ function DensitySelect({
   copy,
   appearance,
   onChange,
+  dense,
 }: {
   id: string;
   copy: ReviewsCopy["appearance"];
   appearance: ReviewAppearance;
   onChange: (next: ReviewAppearance) => void;
+  dense: boolean;
 }) {
   return (
-    <Field className="w-full sm:w-look">
+    <Field className={dense ? "w-look" : "w-full sm:w-look"}>
       <FieldLabel htmlFor={id}>{copy.density}</FieldLabel>
       <Select
         value={appearance.density}
@@ -121,16 +125,18 @@ function LookField({
   copy,
   appearance,
   onChange,
+  dense,
 }: {
   copy: ReviewsCopy["appearance"];
   appearance: ReviewAppearance;
   onChange: (next: ReviewAppearance) => void;
+  dense: boolean;
 }) {
   const identityId = useId();
   const densityId = useId();
   return (
     <Stack direction="horizontal" gap="sm" className="flex-wrap items-end">
-      <IdentitySelect id={identityId} copy={copy} appearance={appearance} onChange={onChange} />
+      <IdentitySelect id={identityId} copy={copy} appearance={appearance} onChange={onChange} dense={dense} />
       <Button
         type="button"
         variant="outline"
@@ -139,7 +145,7 @@ function LookField({
       >
         {copy.mode}
       </Button>
-      <DensitySelect id={densityId} copy={copy} appearance={appearance} onChange={onChange} />
+      <DensitySelect id={densityId} copy={copy} appearance={appearance} onChange={onChange} dense={dense} />
       <Button type="button" variant="outline" onClick={() => onChange(DEFAULT_REVIEW_APPEARANCE)}>
         {copy.reset}
       </Button>
@@ -154,28 +160,26 @@ export function ReviewAppearancePanel({
   copy,
   appearance,
   onChange,
+  dense,
 }: {
   copy: ReviewsCopy["appearance"];
   appearance: ReviewAppearance;
   onChange: (next: ReviewAppearance) => void;
+  dense?: boolean;
 }) {
   return (
     <Stack gap="sm" role="group" aria-label={copy.legend}>
-      <Text variant="muted" typeRole="label">
-        {copy.hint}
-      </Text>
-      <LookField copy={copy} appearance={appearance} onChange={onChange} />
+      {dense ? null : (
+        <Text variant="muted" typeRole="label">
+          {copy.hint}
+        </Text>
+      )}
+      <LookField copy={copy} appearance={appearance} onChange={onChange} dense={dense === true} />
     </Stack>
   );
 }
 
-export function ReviewAppearanceFrame({
-  copy,
-  children,
-}: {
-  copy: ReviewsCopy;
-  children: (panel: ReactNode) => ReactNode;
-}) {
+function useReviewAppearance() {
   const scopeRef = useRef<HTMLDivElement>(null);
   const [appearance, setAppearance] = useState(DEFAULT_REVIEW_APPEARANCE);
   useEffect(() => {
@@ -197,6 +201,17 @@ export function ReviewAppearanceFrame({
     writeShareUrl(next);
   }
 
+  return { scopeRef, appearance, onChange };
+}
+
+export function ReviewAppearanceFrame({
+  copy,
+  children,
+}: {
+  copy: ReviewsCopy;
+  children: (panel: ReactNode) => ReactNode;
+}) {
+  const { scopeRef, appearance, onChange } = useReviewAppearance();
   const panel = (
     <ReviewAppearancePanel copy={copy.appearance} appearance={appearance} onChange={onChange} />
   );
@@ -211,6 +226,30 @@ export function ReviewAppearanceFrame({
       <Container width="wide" className="py-section-sm">
         <Stack gap="md">{children(panel)}</Stack>
       </Container>
+    </ThemeScope>
+  );
+}
+
+export function ReviewConsoleAppearanceFrame({
+  copy,
+  children,
+}: {
+  copy: ReviewsCopy;
+  children: (panel: ReactNode) => ReactNode;
+}) {
+  const { scopeRef, appearance, onChange } = useReviewAppearance();
+  const panel = (
+    <ReviewAppearancePanel copy={copy.appearance} appearance={appearance} onChange={onChange} dense />
+  );
+
+  return (
+    <ThemeScope
+      ref={scopeRef}
+      identity={appearance.identity}
+      mode={appearance.mode}
+      className="flex h-svh flex-col overflow-hidden bg-background text-foreground"
+    >
+      {children(panel)}
     </ThemeScope>
   );
 }

@@ -1,10 +1,11 @@
 # Public review snapshot (exporter contract)
 
 The docs site reads one JSON file (`adapters/public-reviews.json`).
-The out-of-repo exporter must emit **one** version-1 shape: the
-**generated run index** (`issues` + `pullRequests`). That is the
-production feed for the public run history page. Do not emit both
-`issues` and `reviews` on the same object.
+The out-of-repo exporter must emit the **generated run index**
+(`issues` + `pullRequests`). That is the production feed for the
+public run history page. Extra `reviews` on an index file are optional
+console bodies, joined by `run_id`; they do not replace the list. The
+exporter may omit them. Invalid `reviews` fail closed.
 
 A live-shaped file of every hosted run cannot live in git (one dense
 row is already near the 200KB artefact cap). Live-shaped input remains
@@ -131,10 +132,10 @@ omit when unknown):
 - `issue` — GitHub issue number. When it is a safe integer, the mapper
   builds an issue row. When it is missing or null, the PR stays
   unlinked (`/issues/pr/:n`).
-- `live_url` — HTTPS URL of the existing hosted live console. This is
-  the only field that becomes the provisional page's outbound link.
-  `review_url` is a GitHub review link and is **not** a hosted console
-  URL; the mapper never copies it to `liveUrl`.
+- `live_url` — HTTPS URL of the existing hosted live console. Index-only
+  run pages still use this as the outbound link when no live row
+  exists. `review_url` is a GitHub review link and is **not** a hosted
+  console URL; the mapper never copies it to `liveUrl`.
 - `issue_title`, `opened_pr_url` — already accepted. Title falls back
   to `Issue #N` when `issue_title` is empty. Issue `state` is `open`
   unless the generated run index sends `state`.
@@ -152,7 +153,10 @@ parse.
 3. Otherwise → error.
 
 A hybrid object that has both `issues` and `reviews` is parsed as an
-index; `reviews` is ignored. Do not rely on that: emit one shape.
+index (`parsePublicReviewSnapshot`). After that parse, optional
+`reviews` feed the console (`partsFromUnknown`). The exporter may omit
+them; the checked-in stand-in may keep one public-safe live row so a
+recorded run can render the shared console.
 
 ## Run ids
 
