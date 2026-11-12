@@ -4,7 +4,8 @@
     "a11y-auditor": [
       "410a0b0e48efc20a",
       "4463f52e65857b23",
-      "64d6862cc1ca4e2c"
+      "64d6862cc1ca4e2c",
+      "cb278e032afca9e2"
     ],
     "architect": [
       "2fd74ea50b55e177",
@@ -100,10 +101,12 @@
       "5c2768dc5ceeb832",
       "5fba8044f8969ed0",
       "604fc1cc13b4e435",
+      "68cfd5ba67de3cfd",
       "705e5d484e8fd882",
       "7d92c3dd1aa7f8f6",
       "7e40cd7d51fe0d51",
       "9fd0c01276a1f6a7",
+      "a44c1c96c4111cf9",
       "a7ae6ed3d8c19590",
       "a851c71e3eacb7e2",
       "b1b6da436cc2fbba",
@@ -116,10 +119,12 @@
       "d0ead18319839063",
       "d36425b38b356bcb",
       "e30caf684acfdbef",
+      "f6d4ecc1cc39d433",
       "fac881d204a830c5"
     ],
     "verifier": [
       "05f1813e041359f7",
+      "1b75a333e4c4d5e6",
       "21b10c39e702fee6",
       "306d31748a3b9e59",
       "311c2614711d2c0f",
@@ -130,8 +135,10 @@
       "7bf242da54dcebfe",
       "7e50be97b6e287ea",
       "805ea7bcc90a538a",
+      "977a0afda8b02e05",
       "a6456fae90a917a0",
       "b4ae417302ad248a",
+      "bbda6be620e2fc4b",
       "c793c1ff89083015",
       "cab10c777e44194e",
       "ef42139731101601",
@@ -144,9 +151,12 @@
     "reviewer": [
       "072877c4b9a33b63",
       "195647d90ee0ec05",
+      "27ce9c89b13de45c",
+      "5a23e6ea024a4950",
       "92ff701749328206",
       "9fd327052984721a",
       "a5a78b296162e1ec",
+      "f6bb87e699cdbf18",
       "fd7c66aeafd45326"
     ],
     "test-runner": ["7dede3a37254ad3e", "9b0f3818b406ffa2"]
@@ -225,6 +235,7 @@
       "91413e9003bdb17f",
       "935975acef71d885",
       "a651711c3b3f8c49",
+      "ba1a647473887fd4",
       "be70e283fd3c0282",
       "c0bbb75e2a9cccf9",
       "c7703ad9afc009f8",
@@ -232,7 +243,9 @@
       "e8e97d84c3f27e1e",
       "ef0cfcf4b0577dff",
       "f59fd8052972e9f0",
-      "f6efe0128a197aa0"
+      "f6efe0128a197aa0",
+      "f985a45db2887566",
+      "fe3cd4f8cc872618"
     ],
     "diagnosing-bugs/SKILL.md": ["849198df88cdb65f"],
     "diagnosing-bugs/agents/openai.yaml": ["3e430dbe4334a875"],
@@ -265,6 +278,7 @@
       "0df85bb150754119",
       "19558e50a5d22b8d",
       "21096de7585ca248",
+      "255b76fd938691aa",
       "3c3c7c54d7049552",
       "4f7bede57e49e454",
       "55b5b90a63bbe93a",
@@ -283,6 +297,8 @@
       "a8d40781e9560018",
       "aa4e9422820f83a6",
       "b3e4b0a8a7c4e27a",
+      "c276db5b2d326f6a",
+      "ca6b53df52c6aeec",
       "ce8125c0a6eda1f6",
       "d1ebb19a98ae8ce4",
       "ed65d4395d501870",
@@ -406,6 +422,7 @@
       "08d39fd76a53068e",
       "0b582bfc199a949b",
       "2249d5c1c9d4b317",
+      "3f86d268bc0c733d",
       "433fa97e057360d2",
       "44a3e5fce7668db8",
       "46d7fd7aab1eef1d",
@@ -413,6 +430,7 @@
       "4aa98cf6673c66be",
       "5f9096c3f1d2b70f",
       "66344fe97c596bcd",
+      "6db1369a664a7207",
       "6fa876cfe0ea7206",
       "70c8829af9fe1025",
       "79f06f54fc73ca12",
@@ -424,6 +442,7 @@
       "b0984e9b8ccf51fd",
       "b8745b03def39b26",
       "b8c0e3b7e1fbf021",
+      "ba6558009df1d5a6",
       "bc32539cb28d18b7",
       "bc466753fa9ed946",
       "be8282fd8caab281",
@@ -608,7 +627,11 @@
     ],
     "to-spec/SKILL.md": ["e0d0fb617a013f28"],
     "to-spec/agents/openai.yaml": ["1c5b4d1e3d8e5228"],
-    "to-tickets/SKILL.md": ["03d0e801051abaab", "07783b32cdd436a2"],
+    "to-tickets/SKILL.md": [
+      "03d0e801051abaab",
+      "07783b32cdd436a2",
+      "cb63c28718269580"
+    ],
     "to-tickets/agents/openai.yaml": ["21bc6215fffcd761"],
     "triage/AGENT-BRIEF.md": ["7f5f87fed3033df1"],
     "triage/OUT-OF-SCOPE.md": ["1fbf9b432130c638"],
@@ -621,6 +644,10 @@
     "writing-for-agents/SKILL-MECHANICS.md": ["c768e6307c7c1072"],
     "writing-for-agents/SKILL.md": ["551adca942227b44"],
     "writing-for-agents/agents/openai.yaml": ["eacb24b2a618cfb8"],
-    "review/decision.md": ["4568db6278832da6", "f7fd4c59787acde1"]
+    "review/decision.md": [
+      "4568db6278832da6",
+      "7f3f91ae7fe433a3",
+      "f7fd4c59787acde1"
+    ]
   }
 }

@@ -15,7 +15,9 @@ You review; you do not edit. Pin the diff once. Emit a punchlist. The caller<!--
    - Pass 1 — correctness and boundaries: logic, edge cases, null/empty, module boundaries, contract compatibility, retries.
    - Pass 2 — maintainability and risk: a newcomer can follow it, hidden coupling, untested error paths, leaks, what pass 1 waved through.
 4. Check each finding against the cited line and the enclosing function. Drop or downgrade anything the code does not support.
-5. On a UI surface, apply `definition-of-done` Visual work. Cite one observation per required width and mode, or UNSEEN (that caps Confidence at 6). A missing manifest or a failing blocking measure is not ship; a host GitHub review event is at most COMMENT. No ship without examined evidence.
+5. On a UI surface, apply `definition-of-done` Visual work and
+   `review/decision.md` (partial-UNSEEN caps Confidence at 6; missing
+   evidence or a failing blocking measure is not ship).
 6. Return the punchlist. Do not run the full gate unless the brief says to; that is `verifier` / `test-runner`.
 
 ## Output

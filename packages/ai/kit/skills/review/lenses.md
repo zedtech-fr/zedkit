@@ -19,9 +19,9 @@ exists IS a blocker.
 | adversarial-tests | agent `test-writer` (method: skill `adversarial-tests`)                         | exists | logic, handlers, endpoints, state machines                                                            | when triggered | edge cases + missing tests                                                                                                           |
 | security          | agent `security-reviewer`                                                       | exists | auth, secrets, tenancy, user data, external calls, crypto                                             | when triggered | threats + fixes, file:line                                                                                                           |
 | skeptic           | agent `skeptic` (angle per brief: plan, ui/ux, security, scope, data/ops, copy) | exists | plans, specs, ADRs, estimates, product/UI/scope decisions                                             | when triggered | pre-mortem + ranked objections                                                                                                       |
-| ui                | agent `ui-designer`                                                             | exists | `packages/ui/**`, `**/*.tsx`, styles, preview/gallery                                                 | when triggered | kit/composition/hierarchy/state findings + examined screenshots + persona(lazy client)                                               |
-| evidence          | skill `review`                                                                  | exists | `packages/ui/**`, `**/*.tsx`, `**/*.css`, `apps/docs/**` (except tests), tokens/looks, rendered pages | when triggered | one observation per required width × mode (or `UNSEEN`); `Confidence` cap; no `ship` if manifest missing or a blocking measure fails |
-| copy              | agent `copywriter`                                                              | exists | user-visible strings, messages, errors, CTAs, UI surfaces (`**/*.tsx`, styles, preview/gallery)       | when triggered | keys + FR/EN proposals                                                                                                               |
+| ui                | agent `ui-designer`                                                             | exists | UI package sources, `**/*.tsx`, styles, preview/gallery                                               | when triggered | kit/composition/hierarchy/state findings + examined screenshots + persona(lazy client)                                               |
+| evidence          | skill `review`                                                                  | exists | UI package sources, `**/*.tsx`, `**/*.css`, docs/preview (except tests), tokens/looks, rendered pages | when triggered | one observation per required width × mode (or `UNSEEN`); `Confidence` cap; no `ship` if missing evidence or a blocking measure fails |
+| copy              | agent `copywriter`                                                              | exists | user-visible strings, messages, errors, CTAs                                                          | when triggered | keys + FR/EN proposals                                                                                                               |
 | a11y              | agent `a11y-auditor`                                                            | exists | `**/*.tsx`, components, forms, tables                                                                 | when triggered | WCAG findings + fixes, file:line                                                                                                     |
 | seo               | agent `seo-auditor`                                                             | exists | `packages/seo/**`, pages, metadata, sitemap, redirects                                                | when triggered | rule findings + fixes                                                                                                                |
 | dependencies      | agent `dependency-auditor`                                                      | exists | `package.json`, lockfiles, catalogs, `Dockerfile`                                                     | when triggered | need/size/license/maintenance/duplicates                                                                                             |
@@ -73,9 +73,10 @@ and `Human validation:` lines before merge. A `check` call that changed
    skeletons match the real content shape, retry keeps state. A page or
    example with no wait has no loading state.
    Example refusal: a spinner with no label on a slow save.
-8. A defect in a token, primitive, or shared component is fixed there
-   with a component test. A docs-side CSS override of a kit component is
-   a blocking `ui` finding unless it is a documented one-off.
+8. A docs-side CSS override of a kit component is a blocking `ui`
+   finding unless it is a documented local one-off the kit cannot yet
+   express. Fix a defect in a token, primitive, or shared component at
+   that layer (`ui-designer` Owner) with a component test.
 
 <!-- if:skill=compose-ui -->
 

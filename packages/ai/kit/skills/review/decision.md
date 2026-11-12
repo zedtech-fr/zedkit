@@ -9,9 +9,12 @@ First-pass synthesis is not the posted artifact. This file ships in the
 
 **Verdict:** `ship` | `fix-then-ship` (list remaining blockers) | `rework`.
 
-**Confidence:** 0-10. `UNSEEN` on a required screenshot caps Confidence at 6.
-A missing evidence manifest or a failing blocking measure forbids `ship`;
-when the host posts a GitHub review, the event is at most COMMENT.
+**Confidence:** 0-10. `UNSEEN` on a required screenshot caps Confidence at 6
+and does not by itself forbid `ship`. Missing evidence
+(definition-of-done Visual work) or a failing blocking measure forbids
+`ship`. When the host posts a GitHub review, the event is at most COMMENT.
+Advisory mappings: GitLab Note, Linear comment; on a local tracker, write
+the record without a review event.
 
 **Remaining blockers:** findings the second pass still rates as blockers.
 Dropped or recast findings are not unchecked must-change items.

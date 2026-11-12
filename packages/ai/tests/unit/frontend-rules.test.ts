@@ -8,7 +8,7 @@ function kitText(path: string): string {
 }
 
 describe("frontend rules", () => {
-  it("keeps the five demo and doc rules in the ui lens", () => {
+  it("keeps demo and doc rules 1-5 of the 8 ui-lens frontend rules", () => {
     const text = kitText("skills/review/lenses.md");
     expect(text).toContain("one demo = one file");
     expect(text).toContain("one shared frame");

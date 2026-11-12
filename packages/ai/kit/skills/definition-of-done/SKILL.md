@@ -55,10 +55,24 @@ Estimate files created or modified (exclude lockfiles and generated files) befor
 
 ## Visual work
 
-Applies when the diff touches a rendered surface: `**/*.tsx`, `**/*.css`,
-`packages/ui/**`, `apps/docs/**` (except tests), tokens/looks, or a rendered
-page. Proportion to **visual risk**, not diff size. Exception: a non-visual
-change (N/A).
+Applies when the diff touches a rendered surface: `**/*.tsx`, `**/*.css`, a
+UI package, a docs or preview app (except tests), tokens/looks, or a
+rendered page. Proportion to **visual risk**, not diff size:
+
+- No render change (logic-only or copy-only with the same layout, tokens,
+  and states): N/A.
+- One route or component: the matrix on those **touched routes** only
+  (pages that render a changed file — follow the diff to the route or
+  entry that mounts it).
+- A shared token, primitive, or identity sheet: the full looks grid.
+
+**Host baseline:** this host's last green axe (or equivalent) run. On
+bootstrap or first-run with none, this run is the baseline (0 new means
+0 serious or critical).
+**Contact sheet:** the required screenshots (each matrix cell, plus
+`States:`) opened and described, one sentence per width and per mode.
+**Evidence:** that matrix (or `UNSEEN` per cell), the blocking-measure
+results, and the described contact sheet.
 
 <!-- if:skill=compose-ui -->
 
@@ -67,9 +81,31 @@ change (N/A).
 <!-- /if -->
 
 - [ ] The cheap loop and an opened render are necessary, not sufficient. A rendered-page critique names the strongest remaining weaknesses (composition, hierarchy, type roles, density, rhythm). A self-assigned score is not done.
-- [ ] Evidence matrix on the touched routes, after the last change: **375, 809 and 1440 × light and dark**. Full looks grid (every shipped look × both modes) only when a shared token, primitive, or identity sheet changes. Required states come from the ticket's `States:` line when present.
-- [ ] Blocking measures on those routes: axe `wcag2a` / `wcag2aa` / `wcag21aa` / `wcag22aa` with **0 new** serious or critical vs the host baseline (contrast ≥ 4.5, or 3:1 for large text); no horizontal overflow (`scrollWidth` ≤ `innerWidth` / `clientWidth`); no clipped text (`scrollWidth` > `clientWidth` on the text node, or an unintended ellipsis); zero console errors and zero `pageerror`; a single `h1`; hit targets ≥ 24px (a host may be stricter); selected and focus states meet the contrast floor. Hero size is judged on the opened screenshots. If the host documents a visual-verify command, run it after the last change; otherwise perform the same checks on opened renders and record `UNSEEN` / `UNVERIFIED` where a capture is missing.
-- [ ] Contact sheet opened and described (one sentence per width and per mode). `UNSEEN` if not looked at. Generated-but-unread shots do not count. Screenshots count only when the stylesheet and fonts are confirmed loaded.
+- [ ] Evidence matrix on the touched routes, after the last change:
+  **375 (phone), 809 (tablet / split-view), and 1440 (desktop) × light
+  and dark**. Full looks grid (every shipped look × both modes) only when
+  a shared token, primitive, or identity sheet changes. Required states
+  come from the ticket's `States:` line: an explicit list, or
+  `no transient states`.
+- [ ] Blocking measures on those routes: axe `wcag2a` / `wcag2aa` /
+  `wcag21aa` / `wcag22aa` (axe tags are not hierarchical: keep the A
+  tags; add `wcag21a` / `wcag22a` when the host's axe lists them) with
+  **0 new** serious or critical vs the host baseline (text contrast ≥
+  4.5, or 3:1 for large text — 18pt/24px or 14pt/~19px bold, SC 1.4.3);
+  no horizontal overflow (`scrollWidth` ≤ `innerWidth` / `clientWidth`);
+  no clipped text (`scrollWidth` > `clientWidth` on the text node, or an
+  unintended ellipsis); zero console errors and zero `pageerror`; a
+  single `h1`; hit targets ≥ 24px except SC 2.5.8 exceptions (inline,
+  equivalent, essential, user-agent; a host may be stricter); selected
+  and focus text 4.5:1, selected and focus chrome 3:1 (SC 1.4.11). Hero
+  size is judged on the opened screenshots. If the host `AGENTS.md`
+  names a command for these checks, run it after the last change;
+  otherwise perform the same checks on opened renders and record
+  `UNSEEN` / `UNVERIFIED` where a capture is missing.
+- [ ] Contact sheet opened and described (one sentence per width and per
+  mode). `UNSEEN` if not looked at. Generated-but-unread shots do not
+  count. Screenshots count only when the stylesheet and fonts are
+  confirmed loaded.
 
 <!-- if:agent=ui-designer -->
 

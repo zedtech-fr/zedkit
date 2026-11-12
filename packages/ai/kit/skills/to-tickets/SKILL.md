@@ -76,7 +76,7 @@ Do NOT close or modify any parent issue.
 
 **Status:** ready-for-agent
 
-**States:** N/A, or the UI states to capture (drawer open, selected segment, Copied).
+**States:** an explicit list of UI states to capture (drawer open, selected segment, Copied — the clipboard-success confirmation), or `no transient states`.
 
 - [ ] Acceptance criterion 1
 - [ ] Acceptance criterion 2
@@ -98,7 +98,7 @@ The end-to-end behaviour this ticket makes work, from the user's perspective, no
 - [ ] Criterion 1
 - [ ] Criterion 2
 
-**States:** N/A, or the UI states to capture (drawer open, selected segment, Copied).
+**States:** an explicit list of UI states to capture (drawer open, selected segment, Copied — the clipboard-success confirmation), or `no transient states`.
 
 ## Blocked by
 
@@ -106,6 +106,7 @@ The end-to-end behaviour this ticket makes work, from the user's perspective, no
 
 </issue-template>
 
-UI tickets carry a `States:` line so those states are captured.
+UI tickets carry a `States:` line (explicit states, or `no transient
+states`) so those states are captured.
 
 In either form, avoid specific file paths or code snippets: they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.

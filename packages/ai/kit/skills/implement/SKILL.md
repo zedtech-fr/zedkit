@@ -31,8 +31,7 @@ client business → personas → the client's customers → their personas → U
 choices. Do not edit UI until that brief exists.
 <!-- /if -->
 
-UI tickets carry a `States:` line (drawer open, selected segment, Copied) so
-those states are captured.
+UI tickets carry a `States:` line (`to-tickets`); capture those states.
 
 Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
