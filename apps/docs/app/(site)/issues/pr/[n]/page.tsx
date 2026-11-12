@@ -1,4 +1,5 @@
 import {
+  issuesIndexRobots,
   listUnlinkedPrParams,
   parsePrNumber,
   ReviewUnlinkedFeature,
@@ -17,10 +18,14 @@ export async function generateMetadata({ params }: { params: Promise<{ n: string
   if (number === null) {
     return docsPageMetadata("/issues", reviewsCopy.metadata.unlinkedMissing, { index: false });
   }
-  return docsPageMetadata(`/issues/pr/${number}`, {
-    title: `${reviewsCopy.metadata.unlinked.title} #${number}`,
-    description: reviewsCopy.metadata.unlinked.description,
-  });
+  return docsPageMetadata(
+    `/issues/pr/${number}`,
+    {
+      title: `${reviewsCopy.metadata.unlinked.title} #${number}`,
+      description: reviewsCopy.metadata.unlinked.description,
+    },
+    await issuesIndexRobots(),
+  );
 }
 
 export default async function UnlinkedPrPage({ params }: { params: Promise<{ n: string }> }) {

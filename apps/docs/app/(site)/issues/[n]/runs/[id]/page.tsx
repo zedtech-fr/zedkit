@@ -1,4 +1,5 @@
 import {
+  issuesIndexRobots,
   listIssueRunParams,
   parsePrNumber,
   ReviewIssueRunFeature,
@@ -17,10 +18,14 @@ export async function generateMetadata({ params }: { params: Promise<{ n: string
   if (number === null) {
     return docsPageMetadata("/issues", reviewsCopy.metadata.runMissing, { index: false });
   }
-  return docsPageMetadata(`/issues/${number}/runs/${id}`, {
-    title: `${reviewsCopy.metadata.run.title} ${id}`,
-    description: reviewsCopy.metadata.run.description,
-  });
+  return docsPageMetadata(
+    `/issues/${number}/runs/${id}`,
+    {
+      title: `${reviewsCopy.metadata.run.title} ${id}`,
+      description: reviewsCopy.metadata.run.description,
+    },
+    await issuesIndexRobots(),
+  );
 }
 
 export default async function IssueRunPage({

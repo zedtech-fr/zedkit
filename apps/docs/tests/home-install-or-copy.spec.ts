@@ -1,9 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
 import { assertA11yGate } from "./a11y-helpers";
 
-test.describe("home paste points at Getting started install", () => {
+const GETTING_STARTED_INSTALL = "/docs/getting-started#install-or-copy";
+
+test.describe("home paste no longer points at Getting started install", () => {
   async function openHome(page: Page, width = 1280) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
@@ -17,12 +18,10 @@ test.describe("home paste points at Getting started install", () => {
     await expect(page.getByRole("heading", { name: "Start your way", level: 2 })).toHaveCount(0);
     await expect(page.locator("#install-or-copy")).toHaveCount(0);
     await expect(page.getByRole("tablist", { name: "How to adopt" })).toHaveCount(0);
-    await expect(paste.getByRole("link", { name: "Full install steps" })).toHaveAttribute(
-      "href",
-      homePasteCopy.fullStepsHref,
-    );
+    await expect(paste.locator("[data-home-full-steps]")).toHaveCount(0);
+    await expect(paste.locator("[data-home-paste-lands]")).toBeVisible();
 
-    const response = await page.goto(homePasteCopy.fullStepsHref, { waitUntil: "networkidle" });
+    const response = await page.goto(GETTING_STARTED_INSTALL, { waitUntil: "networkidle" });
     expect(response?.status()).toBe(200);
     await expect(page.getByRole("heading", { name: "Install or copy", level: 2 })).toBeVisible();
   });

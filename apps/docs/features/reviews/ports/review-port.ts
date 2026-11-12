@@ -287,4 +287,5 @@ export type ReviewPort = {
   resolvePr(n: number): Promise<PrResolve | null>;
   list(): Promise<PublicLiveRun[]>;
   getByPr(n: number): Promise<PublicLiveRun | null>;
+  isPublicStandIn(): Promise<boolean>;
 };

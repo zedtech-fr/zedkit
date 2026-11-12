@@ -19,7 +19,13 @@ import type {
   TimelineEntryStatus,
   TimelineEntryType,
 } from "../ports/review-port";
-import type { GatedIndex, GatedIssue, GatedPullRequest, VisibilityField } from "./public-review";
+import {
+  RUN_ID_PATTERN,
+  type GatedIndex,
+  type GatedIssue,
+  type GatedPullRequest,
+  type VisibilityField,
+} from "./public-review.ts";
 
 export type ParsedPublicReviewSnapshot = GatedIndex | PublicLiveRun[];
 
@@ -174,9 +180,6 @@ function asString(value: unknown, label: string): Result<string, Error> {
   if (typeof value !== "string") return fail(`${label} must be a string`);
   return ok(value);
 }
-
-/** Path-safe run ids only: no `..`, slashes, or spaces. */
-const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 
 function asRunId(value: unknown, label: string): Result<string, Error> {
   const text = asString(value, label);

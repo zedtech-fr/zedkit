@@ -57,35 +57,7 @@ jobs:
         env:
           PUBLIC_REVIEWS_SNAPSHOT: ${{ vars.PUBLIC_REVIEWS_SNAPSHOT }}
           PUBLIC_REVIEWS_SNAPSHOT_REMOTE: ${{ vars.PUBLIC_REVIEWS_SNAPSHOT_REMOTE }}
-        run: |
-          if [ -z "${PUBLIC_REVIEWS_SNAPSHOT:-}" ]; then
-            echo "PUBLIC_REVIEWS_SNAPSHOT unset; keeping stand-in"
-            exit 0
-          fi
-          case "${PUBLIC_REVIEWS_SNAPSHOT}" in
-            -*) echo "PUBLIC_REVIEWS_SNAPSHOT must not start with -" >&2; exit 1 ;;
-          esac
-          if [ -n "${PUBLIC_REVIEWS_SNAPSHOT_REMOTE:-}" ]; then
-            case "${PUBLIC_REVIEWS_SNAPSHOT_REMOTE}" in
-              -*) echo "PUBLIC_REVIEWS_SNAPSHOT_REMOTE must not start with -" >&2; exit 1 ;;
-            esac
-            scp "zed-dev:${PUBLIC_REVIEWS_SNAPSHOT_REMOTE}" "${PUBLIC_REVIEWS_SNAPSHOT}"
-            scp_status=$?
-            if [ "$scp_status" -ne 0 ]; then
-              echo "generated run index scp failed (exit ${scp_status}); keeping stand-in"
-              if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-                echo "generated run index scp failed (exit ${scp_status}); keeping stand-in" >> "$GITHUB_STEP_SUMMARY"
-              fi
-              exit 0
-            fi
-          fi
-          if [ ! -f "${PUBLIC_REVIEWS_SNAPSHOT}" ]; then
-            echo "generated run index missing; keeping stand-in"
-            exit 0
-          fi
-          node apps/docs/scripts/copy-public-reviews-snapshot.mjs \
-            "${PUBLIC_REVIEWS_SNAPSHOT}" \
-            apps/docs/features/reviews/adapters/public-reviews.json
+        run: bash deploy/ingest-public-reviews.sh
       - run: pnpm --filter @zedtech/zedkit-docs build
       - name: Publish static export
         run: bash deploy/publish-dev-static.sh zed-dev

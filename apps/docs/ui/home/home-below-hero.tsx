@@ -8,7 +8,7 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
 
 /**
  * Marketing sections below the hero, in the order a visitor decides: the
- * three-card same-idea band, six quote/reply cards, hash landing plus Getting started, then the same task
+ * three-card same-idea band, six quote/reply cards, hash landing, then the same task
  * in four looks, then limits, manifesto, closing ask.
  * Kept in the main home payload (not dynamically imported) so section anchors stay in the live layout on first paint.
  *

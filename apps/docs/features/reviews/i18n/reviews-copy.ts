@@ -60,6 +60,11 @@ export const reviewsCopy = {
     // Defensive: zero-entry PRs are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this pull request.",
   },
+  sampleNotice: {
+    title: "Sample data",
+    description:
+      "These rows are samples, not real public runs, and they stay until a generated run index is loaded.",
+  },
   run: {
     backToIssue: "Back to the issue",
     backToUnlinked: "Back to the pull request",
