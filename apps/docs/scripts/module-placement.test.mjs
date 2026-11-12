@@ -195,11 +195,6 @@ describe("live docs tree", () => {
       );
     }
     assert.ok(
-      baseline.dead.includes("lib/catalog-filter.mjs") ||
-        baseline.singleOwner.includes("lib/catalog-filter.mjs"),
-      "baseline missing lib/catalog-filter.mjs",
-    );
-    assert.ok(
       baseline.dead.includes("lib/review-appearance.ts") ||
         baseline.singleOwner.includes("lib/review-appearance.ts"),
       "baseline missing lib/review-appearance.ts",

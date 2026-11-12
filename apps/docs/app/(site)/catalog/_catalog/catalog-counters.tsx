@@ -1,6 +1,6 @@
 import { Stack, Surface, Text } from "@zedtech/zedkit-ui";
-import { catalogCounterItems } from "@/lib/catalog-filter.mjs";
-import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
+import { catalogCounterItems } from "./catalog-filter.mjs";
+import { catalogCopy } from "./i18n/catalog-copy";
 
 export function CatalogCounters({
   counts,

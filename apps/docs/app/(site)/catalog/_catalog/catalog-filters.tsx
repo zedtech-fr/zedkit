@@ -2,8 +2,8 @@
 
 import { Button, Checkbox, Input, Label, Stack, Text, cn } from "@zedtech/zedkit-ui";
 import type { CatalogArea } from "@/content/catalog-index";
-import { CATALOG_AREAS } from "@/lib/catalog-filter.mjs";
-import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
+import { CATALOG_AREAS } from "./catalog-filter.mjs";
+import { catalogCopy } from "./i18n/catalog-copy";
 
 function CatalogSearchField({
   q,

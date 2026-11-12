@@ -10,9 +10,9 @@ import {
   filterCatalogEntries,
   parseCatalogArea,
   readCatalogFilters,
-} from "../lib/catalog-filter.mjs";
+} from "./catalog-filter.mjs";
 
-/** @param {Partial<import("../content/catalog-index").CatalogIndexEntry> & { title: string }} overrides */
+/** @param {Partial<import("@/content/catalog-index").CatalogIndexEntry> & { title: string }} overrides */
 const row = (overrides) => ({
   href: `/docs/${overrides.package ?? "ui"}/${overrides.title}`,
   need: overrides.need ?? overrides.title,
