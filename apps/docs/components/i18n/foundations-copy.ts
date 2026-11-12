@@ -12,7 +12,7 @@ export const foundationsCopy = {
     cards: "Site-owned glass cards may take sheen. Specimen grids stay flat.",
     rhythm: "4px base. Gaps between groups are 32–48px. Marketing bands are 64–96px.",
     motion:
-      "Chrome uses named motions only. It does not invent durations. Reduced motion removes displacement and loops. Animations land in the motion ticket.",
+      "Chrome uses named motions only. It does not invent durations. One hero entrance, one pausable tour. Reduced motion shows the final state with no movement.",
   },
   swatches: {
     page: "Page",

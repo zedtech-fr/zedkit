@@ -1,14 +1,8 @@
-import { useSyncExternalStore } from "react";
+"use client";
 
-const QUERY = "(prefers-reduced-motion: no-preference)";
-
-function subscribe(onChange: () => void) {
-  const list = window.matchMedia(QUERY);
-  list.addEventListener("change", onChange);
-  return () => list.removeEventListener("change", onChange);
-}
+import { useMotionPreference } from "@zedtech/zedkit-ui";
 
 /** True once the visitor allows motion. False on the server and before hydration, so the static page is the baseline. */
 export function useMotionOk(): boolean {
-  return useSyncExternalStore(subscribe, () => window.matchMedia(QUERY).matches, () => false);
+  return useMotionPreference() === "no-preference";
 }

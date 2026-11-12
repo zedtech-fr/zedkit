@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type Ref } from "react";
 import { ThemeScope, cn } from "@zedtech/zedkit-ui";
 import { HeroDemoStyleControl } from "@/components/hero-demo-style-control";
 import { HeroTourControl } from "@/components/hero-tour-control";
@@ -71,6 +71,46 @@ function HeroPreviewFooter({
   );
 }
 
+/** Colored wash inside the specimen panel. Decorative; kit `animate-float` is still under reduced motion. */
+function HeroPanelDrift() {
+  return (
+    <span
+      aria-hidden="true"
+      data-hero-panel-drift=""
+      inert
+      className="pointer-events-none absolute pin-fill overflow-clip rounded-t-xl"
+    >
+      <span data-hero-panel-drift-blob="" className="animate-float" />
+    </span>
+  );
+}
+
+/** ThemeScope for the window, satellite cards, and interior drift. */
+function HeroSpecimenStage({
+  look,
+  dark,
+  scopeRef,
+  children,
+}: {
+  look: string;
+  dark: boolean;
+  scopeRef: Ref<HTMLDivElement>;
+  children: ReactNode;
+}) {
+  return (
+    <ThemeScope
+      ref={scopeRef}
+      identity={look}
+      mode={dark ? "dark" : "light"}
+      className="relative pane-shrink content-shrink rounded-t-xl bg-background"
+      data-home-hero-visuals=""
+    >
+      <HeroPanelDrift />
+      {children}
+    </ThemeScope>
+  );
+}
+
 /**
  * Hero specimen: one small product the visitor can use, in a frame with a Display row under it.
  *
@@ -109,13 +149,7 @@ export function HomeHeroPreview() {
         "relative flex max-w-full content-shrink flex-col rounded-xl border border-border bg-card",
       )}
     >
-      <ThemeScope
-        ref={scope}
-        identity={look}
-        mode={dark ? "dark" : "light"}
-        className="relative pane-shrink content-shrink rounded-t-xl bg-background"
-        data-home-hero-visuals=""
-      >
+      <HeroSpecimenStage look={look} dark={dark} scopeRef={scope}>
         <HomeHeroApp
           page={page}
           onPage={setPage}
@@ -126,7 +160,7 @@ export function HomeHeroPreview() {
           tour={{ available: tour.available, playing: tour.playing, onTakeover: tour.takeover }}
         />
         <HomeHeroSatellites />
-      </ThemeScope>
+      </HeroSpecimenStage>
       <HeroPreviewFooter
         look={look}
         modePin={modePin}

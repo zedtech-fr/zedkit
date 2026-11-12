@@ -5,17 +5,18 @@
  * is pinned, faded or clipped, so overlays raised inside the example (toasts, menus, dialogs) land where they say.
  * Below `lg` the lead comes first and the example follows at the full measure.
  *
- * Motion has four parts, and every one of them is off under `prefers-reduced-motion`:
+ * Motion has five parts, and every one of them is off under `prefers-reduced-motion` and `data-motion="reduce"`:
  *   1. load: the lead rises block by block, then the window assembles (frame, sidebar, page blocks, cards);
  *   2. pages: each page rebuilds the same way when it is shown;
  *   3. pointer: the two cards over the window's edges drift toward the cursor (see `use-pointer-parallax.ts`);
- *   4. scroll: the same cards drift a little as the page scrolls (scroll-driven, where the browser supports it).
+ *   4. scroll: the same cards drift a little as the page scrolls (scroll-driven, where the browser supports it);
+ *   5. interior: one decorative blob inside the specimen panel floats (`animate-float`); never `[data-hero-shapes]`.
  * A guided cursor tours the pages until the visitor touches the window (see `use-hero-tour.ts`).
  *
  * Rules the motion keeps, because the window holds toasts and portaled menus that are positioned against the
  * viewport: the window and its pages only ever run finite entrance animations (a transform that is still running
  * would become the containing block of a toast), and everything that loops or follows the page lives on the
- * decorative cards, which wrap nothing interactive.
+ * decorative cards or the interior panel blob, which wrap nothing interactive.
  */
 #home-page [data-home-hero] {
   min-width: 0;
@@ -181,7 +182,8 @@
   display: block;
 }
 
-#home-page [data-hero-shapes] > span {
+#home-page [data-hero-shapes] > span,
+#home-page [data-hero-panel-drift-blob] {
   position: absolute;
   border-radius: 9999px;
   aspect-ratio: 1;
@@ -209,6 +211,25 @@
   background: hsl(var(--ring) / 0.35);
 }
 
+/*
+ * One colored wash inside the specimen panel (mockup `zk-drift`). Clipped to the panel; it wraps nothing
+ * interactive. The loop is kit `animate-float`, gated with the rest of motion.css.
+ */
+#home-page [data-hero-panel-drift] {
+  z-index: 0;
+}
+
+#home-page [data-hero-window] {
+  z-index: 1;
+}
+
+#home-page [data-hero-panel-drift-blob] {
+  top: 8%;
+  right: 4%;
+  width: min(14rem, 55%);
+  background: hsl(var(--primary) / 0.35);
+}
+
 @media (max-width: 47.999rem) {
   #home-page [data-hero-shapes] > [data-shape="3"] {
     display: none;
@@ -223,6 +244,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="reduce"]) {
   /* 1. Load: the lead, one block at a time. Opacity and a short rise; `backwards`, so nothing is left applied. */
   #home-page [data-home-hero] [data-home-hero-lead] > * {
     animation: zk-home-hero-rise 360ms var(--zk-home-ease) backwards;
@@ -340,15 +362,18 @@
       zk-home-float 7s ease-in-out infinite;
     animation-delay: calc(1100ms + var(--b, 0) * 180ms), calc(1700ms + var(--b, 0) * 900ms);
   }
+  }
 }
 
 /* 4. Scroll: the middle layer drifts as the page leaves the top. */
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduce"]) {
     #home-page [data-hero-drift] {
       animation: zk-home-drift linear both;
       animation-timeline: scroll(root block);
       animation-range: 0 70vh;
+    }
     }
   }
 }
