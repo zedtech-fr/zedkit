@@ -297,7 +297,7 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   assert.doesNotMatch(tabs, /homeIdentityLooksCopy\.products/);
   assert.match(tabs, /HOME_IDENTITY_FACTS\[id\]\.label/);
   assert.doesNotMatch(tabs, /[Gg]lass/);
-  assert.match(facts, /IDENTITY_IDS = \["mist", "press", "maison"\]/);
+  assert.match(facts, /IDENTITY_IDS = \["glass", "mist", "press", "maison"\]/);
   assert.match(copy, /title: "Every screen, the same product\."/);
   assert.match(copy, /tabsAriaLabel: "Looks"/);
 });

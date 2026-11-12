@@ -84,5 +84,5 @@ test("identity looks has one example tab per product screen", async ({ page }) =
   await page.goto("/");
   const looks = page.locator("[data-home-identity-looks]");
   await looks.scrollIntoViewIfNeeded();
-  await expect(looks.getByRole("tab")).toHaveCount(3);
+  await expect(looks.getByRole("tab")).toHaveCount(4);
 });

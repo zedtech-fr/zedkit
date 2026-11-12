@@ -64,7 +64,7 @@ export function CatalogView({
 
   return (
     <>
-      <Section bleed tone="muted" spacing="sm" containerWidth="default">
+      <Section bleed spacing="sm" containerWidth="default">
         <Stack gap="lg">
           <Stack gap="sm">
             <Heading level={1}>{catalogCopy.header.title}</Heading>

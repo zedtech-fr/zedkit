@@ -11,6 +11,10 @@ export function isHomePath(pathname: string): boolean {
   return pathname === "/" || pathname === "";
 }
 
+export function isCatalogPath(pathname: string): boolean {
+  return pathname === "/catalog";
+}
+
 export function sitePrimaryNavLinks(): SiteNavLink[] {
   return [
     { text: "AI", href: "/docs/ai/setup", active: "url" },

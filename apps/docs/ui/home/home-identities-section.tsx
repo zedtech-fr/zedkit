@@ -7,14 +7,14 @@ import {
 } from "@/ui/home/home-rhythm";
 
 /**
- * Comparison: a different product in each look, after paste and before limits.
+ * Comparison: the same product screen in four looks, after paste and before limits.
  *
  * Compose-UI: two columns from lg (specimen | title + look-name pills +
  * data-identity caption), because: client = hurried integrator; one focal
- * specimen, controls recede. Three live product screens, not one settings
- * card, because a look is type+shape+density+color together. Copy+pills
- * first on a phone, because the first control must stay reachable. Glass
- * stays on the page and hero, not a fourth pill.
+ * specimen, controls recede. One compact Project settings screen restyled
+ * as Glass, Mist, Press, Maison, because a look is type+shape+density+color
+ * together. Copy+pills first on a phone, because the first control must
+ * stay reachable. No identity form here: the dock owns customization.
  */
 export function HomeIdentitiesSection() {
   return (

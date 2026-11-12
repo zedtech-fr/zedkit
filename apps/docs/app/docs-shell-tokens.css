@@ -74,6 +74,16 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
+ * Looks specimen stage: Glass may paint its page texture so the glass card
+ * has color behind it. Other looks stay on `bg-primary` only.
+ */
+#home-page [data-home-identity-stage][data-identity="glass"] {
+  background-image: var(--zk-bg-pattern);
+  background-size: var(--zk-bg-size);
+  background-repeat: var(--zk-bg-repeat);
+}
+
+/*
  * Home hero specimen: one frame (toolbar + stage). Hide table chrome that
  * duplicates the Display row or adds noise in the compact hero preview.
  */
