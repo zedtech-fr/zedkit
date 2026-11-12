@@ -4,11 +4,11 @@ export const homeHeroCopy = {
   hero: {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
     titleCategory: "Open source · MIT · by Zed Tech",
-    title: "Code that's checked. Screens that match.",
+    title: "Code that’s checked. Screens that match.",
     titleClause: "From the agent you already use.",
     subLead: "zedkit is a set of kits your coding agent installs itself.",
     subAiName: "AI",
-    subAi: "gives your coding agent a team's habits: a plan, a second pair of eyes, a definition of done.",
+    subAi: "gives your coding agent a team’s habits: a plan, a second pair of eyes, a definition of done.",
     subUiName: "UI",
     subUi: "gives it the components and the look, so what it builds is your product.",
     promptAriaLabel: "Setup prompt",
@@ -63,7 +63,6 @@ export const homeHeroCopy = {
     getStarted: "Get started",
     setup: "Setup",
     browseCatalog: "Browse catalog",
-    seeARealIssue: "See a real issue, end to end",
   },
   /** The hero is one small product. Its pages are the examples; the sidebar is how a visitor moves between them. */
   heroApp: {
