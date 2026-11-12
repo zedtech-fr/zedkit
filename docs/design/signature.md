@@ -86,7 +86,7 @@ New UI in apps/docs uses type roles and motion utilities from `@zedtech/zedkit-u
 
 Glass is the default look, so its material is a token layer (`packages/ui/src/identities/glass.css`), not a site patch. Real glass needs three things, and a blur alone is none of them:
 
-- **Something behind it.** Saturated colour halos (`--zk-bg-pattern`) and, on the home hero, a few soft shapes at the window edges. Blurring a flat pastel shows nothing.
+- **Something behind it.** Saturated colour halos (`--zk-bg-pattern`) and, on the home hero, the purple illustration stage behind the glass card. Blurring a flat pastel shows nothing.
 - **A lit edge.** `--zk-glass-highlight`: bright top-left rim, soft bottom-right rim, inner glow. Every `--zk-shadow-*` carries it, so cards, popovers, dialogs and drawers share it.
 - **A clear fill with light on it.** `--zk-glass-alpha` (floor 0.54 light, 0.7 dark so text keeps its contrast), `--zk-glass-sheen` (slanted light, plain cards only), and `blur + saturate + brightness`.
 

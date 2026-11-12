@@ -4,8 +4,8 @@ import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
+  HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
-  HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
 import { homeClosingCopy } from "@/ui/home/i18n/home-closing-copy";
 
@@ -28,13 +28,13 @@ export function HomeClosingSection() {
       id="closing"
       aria-labelledby="closing-heading"
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack
         gap={HOME_SECTION_CONTENT_GAP}
         className="mx-auto w-full max-w-reading items-center content-offset text-center"
         data-home-closing=""
+        {...HOME_READING_REVEAL_PROPS}
       >
         <Heading id="closing-heading" level={2} typeRole="title">
           {homeClosingCopy.section.title}

@@ -1,7 +1,123 @@
+import { readdirSync } from "node:fs";
+import { posix } from "node:path";
+import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 import { defineLayers, uiPreset } from "@zedtech/zedkit-quality";
+
+const docsFeatureNames = new Set(
+  readdirSync(fileURLToPath(new URL("./apps/docs/features", import.meta.url)), {
+    withFileTypes: true,
+  })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name),
+);
+
+// `@/` plus every `../` depth through 4. `../folder/**` does not match
+// `../../folder/x`; `../../*` is a single segment and cannot either.
+function docsLayerGroup(folder) {
+  const bases = [
+    `@/${folder}`,
+    ...["..", "../..", "../../..", "../../../.."].map((rel) => `${rel}/${folder}`),
+  ];
+  return bases.flatMap((base) => [base, `${base}/*`, `${base}/**`]);
+}
+
+const docsAppGroup = docsLayerGroup("app");
+const docsFeatureGroup = docsLayerGroup("features");
+const docsUiGroup = docsLayerGroup("ui");
+const docsComponentsGroup = docsLayerGroup("components");
+
+const docsAppFeatureBan = {
+  group: [...docsAppGroup, ...docsFeatureGroup],
+  message:
+    "One-way imports: composed UI and lib may not import app or features. Compose in the route and pass props.",
+};
+
+const docsFeatureAppBan = {
+  group: docsAppGroup,
+  message: "One-way imports: a feature may not import app. Compose in the route and pass props.",
+};
+
+// `#*` is a gitignore comment, so hash subpaths need `regex` (not `group`).
+const docsHashImportBan = {
+  regex: "^#",
+  message: docsAppFeatureBan.message,
+};
+const docsFeatureHashImportBan = {
+  regex: "^#",
+  message: docsFeatureAppBan.message,
+};
+
+const docsLibUiBan = {
+  group: [...docsComponentsGroup, ...docsUiGroup],
+  message: "One-way imports: lib may not import composed UI.",
+};
+
+function docsFeatureFromPath(filename) {
+  const match = posixPath(filename).match(/(?:^|\/)apps\/docs\/features\/([^/]+)\//);
+  return match && docsFeatureNames.has(match[1]) ? match[1] : null;
+}
+
+function posixPath(file) {
+  return file.split("\\").join("/");
+}
+
+function importedDocsFeature(filename, spec) {
+  if (spec.startsWith("@/features/")) {
+    const name = spec.slice("@/features/".length).split("/")[0];
+    return docsFeatureNames.has(name) ? name : null;
+  }
+  if (spec.startsWith(".")) {
+    const from = posixPath(filename);
+    const resolved = posix.normalize(posix.join(from.slice(0, from.lastIndexOf("/")), spec));
+    const match = resolved.match(/(?:^|\/)apps\/docs\/features\/([^/]+)\//);
+    return match && docsFeatureNames.has(match[1]) ? match[1] : null;
+  }
+  return null;
+}
+
+const docsPlacementPlugin = {
+  rules: {
+    "no-cross-feature-import": {
+      meta: {
+        type: "problem",
+        docs: { description: "A docs feature may not import another feature." },
+        schema: [],
+      },
+      create(context) {
+        const fromFeat = docsFeatureFromPath(context.filename);
+        if (!fromFeat) return {};
+        function check(sourceNode) {
+          const spec = sourceNode.value;
+          if (typeof spec !== "string") return;
+          const toFeat = importedDocsFeature(context.filename, spec);
+          if (toFeat && toFeat !== fromFeat) {
+            context.report({
+              node: sourceNode,
+              message: `One-way: feature "${fromFeat}" may not import feature "${toFeat}". Compose in the route and pass props.`,
+            });
+          }
+        }
+        return {
+          ImportDeclaration(node) {
+            check(node.source);
+          },
+          ImportExpression(node) {
+            if (node.source?.type === "Literal") check(node.source);
+          },
+          ExportNamedDeclaration(node) {
+            if (node.source) check(node.source);
+          },
+          ExportAllDeclaration(node) {
+            if (node.source) check(node.source);
+          },
+        };
+      },
+    },
+  },
+};
 
 const deepRelativeImport = {
   group: ["../..", "../../*", "../../../*"],
@@ -64,6 +180,7 @@ export default tseslint.config(
       "apps/docs/next.config.mjs",
       "scripts/**/*.mjs",
       "apps/docs/scripts/*.mjs",
+      "apps/docs/{app,features,components,lib}/**/*.test.mjs",
       "packages/ai/scripts/*.mjs",
       "packages/quality/src/bin/**/*.mjs",
       "packages/ui/preview/*.mjs",
@@ -129,12 +246,100 @@ export default tseslint.config(
     kitPackage: "@zedtech/zedkit-ui",
     featureRoot: "apps/docs/features",
     extraPatterns: {
-      kitScope: [deepRelativeImport],
-      viewData: [deepRelativeImport],
-      dataUi: [deepRelativeImport],
-      model: [deepRelativeImport],
+      kitScope: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
+      viewData: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
+      dataUi: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
+      model: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
     },
   }),
+  {
+    // docs-placement: different rule id so this stacks with defineLayers.
+    name: "docs/no-cross-feature-import",
+    files: ["apps/docs/features/**/*.{ts,tsx,mjs,js,jsx}"],
+    plugins: { "docs-placement": docsPlacementPlugin },
+    rules: { "docs-placement/no-cross-feature-import": "error" },
+  },
+  {
+    // defineLayers ignores compose files; they still must not import app.
+    name: "docs/one-way-features-compose-no-app",
+    files: [
+      "apps/docs/features/*/index.ts",
+      "apps/docs/features/*/index.tsx",
+      "apps/docs/features/*/compose.ts",
+      "apps/docs/features/*/compose.tsx",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { patterns: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan] },
+      ],
+    },
+  },
+  {
+    name: "docs/one-way-composed-ui",
+    files: [
+      "apps/docs/components/**/*.{ts,tsx,mjs,js,jsx}",
+      "apps/docs/lib/**/*.{ts,tsx,mjs,js,jsx}",
+      "apps/docs/ui/**/*.{ts,tsx,mjs,js,jsx}",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { patterns: [deepRelativeImport, docsAppFeatureBan, docsHashImportBan] },
+      ],
+    },
+  },
+  {
+    name: "docs/one-way-lib",
+    files: ["apps/docs/lib/**/*.{ts,tsx,mjs,js,jsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { patterns: [deepRelativeImport, docsAppFeatureBan, docsHashImportBan, docsLibUiBan] },
+      ],
+    },
+  },
+  {
+    // L5: lift the reviews href to the home route, then drop this block.
+    name: "docs/one-way-exception-l5-home-hero",
+    files: ["apps/docs/ui/home/home-hero.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            deepRelativeImport,
+            {
+              group: docsAppGroup,
+              message: docsAppFeatureBan.message,
+            },
+            docsHashImportBan,
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // L8: move component-page-toc next to the page, then drop this block.
+    name: "docs/one-way-exception-l8-component-page-toc",
+    files: ["apps/docs/lib/component-page-toc.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            deepRelativeImport,
+            docsAppFeatureBan,
+            docsHashImportBan,
+            {
+              group: docsUiGroup,
+              message: docsLibUiBan.message,
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     // After uiPreset so other production checks stay. Tests keep the root ban.
     files: ["packages/ui/src/**/*.{ts,tsx}"],

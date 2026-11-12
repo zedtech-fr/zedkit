@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
+
+const homeHeroHeading = `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`;
+
 test("home explains the product without preview-only extra bands (#210)", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
@@ -8,7 +12,7 @@ test("home explains the product without preview-only extra bands (#210)", async 
   await expect(page.locator("[data-home-hero-category]")).toHaveText("Open source · MIT · by Zed Tech");
   await expect(
     page.getByRole("heading", {
-      name: "Code that's checked. Screens that match. From the agent you already use.",
+      name: homeHeroHeading,
       level: 1,
     }),
   ).toBeVisible();
@@ -30,7 +34,7 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero matches the mockup first screen: clause, pills, prompt, glass card, issues link (#118)", async ({
+test("home hero matches the mockup first screen: clause, prompt, glass card (#118, #247, #258)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -46,22 +50,13 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
     "",
   );
 
-  const tabs = page.locator("[data-home-hero-lead]").getByRole("tablist");
-  await expect(tabs).toHaveCount(1);
-  await expect(page.getByRole("tab", { name: "AI", exact: true })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "UI", exact: true })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tab")).toHaveCount(0);
 
-  const issues = page.locator("[data-home-hero-actions] a");
-  await expect(issues).toHaveCount(1);
-  await expect(issues).toHaveAttribute("target", "_blank");
-  await expect(issues).toHaveAttribute("rel", "noopener noreferrer");
-  await expect(issues).toHaveAccessibleName(/opens in a new tab/i);
-  await expect(issues).toContainText("See a real issue, end to end");
-  const issuesHref = await issues.getAttribute("href");
-  expect(issuesHref).toMatch(/^\/issues(?:\/|$)/);
-  expect(issuesHref).not.toBe("/issues/0");
-  await expect(issues).not.toHaveAttribute("data-site-action");
+  await expect(page.locator("[data-home-hero-actions]")).toHaveCount(0);
+  await expect(page.locator("[data-hero-shapes]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link")).toHaveCount(0);
+  await expect(page.getByText("See a real issue, end to end")).toHaveCount(0);
 
   await expect(page.locator("[data-home-hero-sub]")).toContainText(
     "zedkit is a set of kits your coding agent installs itself.",
@@ -77,7 +72,7 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
-  await expect(page.getByText("Name the kits you want, Nest included. The map knows the order.")).toBeVisible();
+  await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
   await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();
   await expect(page.getByText("An illustration of one run, not a recording.")).toBeVisible();
   await expect(page.locator("[data-hero-run-stage]")).toBeVisible();
@@ -88,7 +83,7 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   );
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Code that's checked. Screens that match. From the agent you already use.",
+      name: homeHeroHeading,
       level: 1,
     }),
   ).toBeVisible();
@@ -128,7 +123,9 @@ test("home hero has no facts line; same-idea holds MIT and React 19 proof (#118)
     page.locator("[data-home-hero-lead]").getByText(/React 19/),
   ).toHaveCount(0);
   await expect(page.locator("[data-home-same-idea-lands]").getByText("MIT", { exact: true })).toBeVisible();
-  await expect(page.getByText("React 19 and Tailwind CSS 4, from npm or as source")).toBeVisible();
+  const stackLine = page.getByText("React 19 and Tailwind CSS 4, from npm or as source");
+  await stackLine.scrollIntoViewIfNeeded();
+  await expect(stackLine).toBeVisible();
   await expect(page.getByText("What you see is MIT, React 19, Tailwind 4.")).toHaveCount(0);
   await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
@@ -158,7 +155,8 @@ test("home hero at 390 is headline-first; the glass card follows (#118)", async 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toBeVisible();
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
   const order = await page.evaluate(() => {
     const lead = document.querySelector("[data-home-hero-lead]");
     const stage = document.querySelector("[data-hero-run-stage]");

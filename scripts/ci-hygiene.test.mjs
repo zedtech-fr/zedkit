@@ -86,6 +86,45 @@ describe("test:registry globs", () => {
       checks.split(/- name: test:registry \(exclude deploy\/\*\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
     assert.doesNotMatch(registryStep, /node --test/, "inline node --test file list");
   });
+
+  it("checks job runs pnpm knip", () => {
+    const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.match(checks, /^\s+- name: knip\n\s+run: pnpm knip$/m);
+  });
+
+  it("knip script is exact-pinned (no floating major)", () => {
+    assert.match(pkg.scripts.knip, /^pnpm dlx knip@\d+\.\d+\.\d+$/);
+  });
+});
+
+function knipJsonc() {
+  const text = readFileSync(join(root, "knip.jsonc"), "utf8").replace(/^\s*\/\/.*$/gm, "");
+  return JSON.parse(text);
+}
+
+function knipIgnoreGlobs(config) {
+  /** @type {Array<{ cwd: string, pattern: string }>} */
+  const globs = (config.ignore ?? []).map((pattern) => ({ cwd: root, pattern }));
+  for (const [workspace, body] of Object.entries(config.workspaces ?? {})) {
+    const cwd = workspace === "." ? root : join(root, workspace);
+    for (const pattern of body.ignore ?? []) globs.push({ cwd, pattern });
+  }
+  return globs;
+}
+
+describe("knip ignore paths", () => {
+  it("every ignore path still matches a tracked file", () => {
+    const tracked = new Set(
+      execSync("git ls-files", { cwd: root, encoding: "utf8" }).trim().split("\n").filter(Boolean),
+    );
+    const missing = [];
+    for (const { cwd, pattern } of knipIgnoreGlobs(knipJsonc())) {
+      const prefix = cwd === root ? "" : `${cwd.slice(root.length + 1).split("\\").join("/")}/`;
+      const hits = globSync(pattern, { cwd }).map((file) => `${prefix}${file.split("\\").join("/")}`);
+      if (!hits.some((file) => tracked.has(file))) missing.push(pattern);
+    }
+    assert.deepEqual(missing, [], `knip ignore matches nothing tracked: ${missing.join(", ")}`);
+  });
 });
 
 describe("pr template", () => {

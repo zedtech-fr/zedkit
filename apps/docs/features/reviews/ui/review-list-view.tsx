@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import Link from "next/link";
 import {
   Badge,
@@ -35,32 +35,57 @@ function runCountLabel(count: number, copy: ReviewsCopy): string {
   return `${count} ${count === 1 ? copy.list.run : copy.list.runs}`;
 }
 
+function ListScanRow({ title, meta }: { title: ReactNode; meta: ReactNode }) {
+  return (
+    <Stack
+      direction="horizontal"
+      gap="sm"
+      className="flex-wrap items-center border-b border-border py-row max-md:flex-col max-md:items-stretch"
+    >
+      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+        {title}
+      </Stack>
+      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+        {meta}
+      </Stack>
+    </Stack>
+  );
+}
+
 function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
   const status = latestStatus(issue.entries);
   const last = latestEntry(issue.entries);
   return (
-    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center border-b border-border py-row">
-      <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={last ? issueRunPath(issue.number, last.runId) : issuePath(issue.number)}>
-          #{issue.number} {issue.title}
-        </Link>
-      </Button>
-      {last ? (
-        <Button asChild variant="link" className="min-h-target w-fit">
-          <Link href={issuePath(issue.number)}>{copy.issue.timeline}</Link>
-        </Button>
-      ) : null}
-      <Badge variant="outline">{copy.state[issue.state]}</Badge>
-      {status ? <LatestStatusMark status={status} copy={copy} /> : null}
-      {issue.pullRequests.length > 0 ? (
-        <Text variant="muted" typeRole="caption">
-          {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
-            .map((n) => `#${n}`)
-            .join(", ")}`}
-        </Text>
-      ) : null}
-      <UpdatedAgo date={new Date(issue.lastRunAt)} />
-    </Stack>
+    <ListScanRow
+      title={
+        <>
+          <Button asChild variant="link" className="min-h-target w-fit">
+            <Link href={last ? issueRunPath(issue.number, last.runId) : issuePath(issue.number)}>
+              #{issue.number} {issue.title}
+            </Link>
+          </Button>
+          {last ? (
+            <Button asChild variant="link" className="min-h-target w-fit">
+              <Link href={issuePath(issue.number)}>{copy.issue.timeline}</Link>
+            </Button>
+          ) : null}
+        </>
+      }
+      meta={
+        <>
+          <Badge variant="outline">{copy.state[issue.state]}</Badge>
+          {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+          {issue.pullRequests.length > 0 ? (
+            <Text variant="muted" typeRole="caption">
+              {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
+                .map((n) => `#${n}`)
+                .join(", ")}`}
+            </Text>
+          ) : null}
+          <UpdatedAgo date={new Date(issue.lastRunAt)} />
+        </>
+      }
+    />
   );
 }
 
@@ -75,28 +100,36 @@ function UnlinkedRow({
   const last = latestEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
   return (
-    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center border-b border-border py-row">
-      <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={last ? unlinkedRunPath(entry.number, last.runId) : unlinkedPrPath(entry.number)}>
-          #{entry.number}
-        </Link>
-      </Button>
-      {last ? (
-        <Button asChild variant="link" className="min-h-target w-fit">
-          <Link href={unlinkedPrPath(entry.number)}>{copy.issue.timeline}</Link>
-        </Button>
-      ) : null}
-      {last ? (
-        <Text variant="muted" typeRole="caption">
-          {copy.type[last.type]}
-        </Text>
-      ) : null}
-      {status ? <LatestStatusMark status={status} copy={copy} /> : null}
-      <Text variant="muted" typeRole="caption">
-        {runCountLabel(runCount, copy)}
-      </Text>
-      <UpdatedAgo date={new Date(entry.lastRunAt)} />
-    </Stack>
+    <ListScanRow
+      title={
+        <>
+          <Button asChild variant="link" className="min-h-target w-fit">
+            <Link href={last ? unlinkedRunPath(entry.number, last.runId) : unlinkedPrPath(entry.number)}>
+              #{entry.number}
+            </Link>
+          </Button>
+          {last ? (
+            <Button asChild variant="link" className="min-h-target w-fit">
+              <Link href={unlinkedPrPath(entry.number)}>{copy.issue.timeline}</Link>
+            </Button>
+          ) : null}
+        </>
+      }
+      meta={
+        <>
+          {last ? (
+            <Text variant="muted" typeRole="caption">
+              {copy.type[last.type]}
+            </Text>
+          ) : null}
+          {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+          <Text variant="muted" typeRole="caption">
+            {runCountLabel(runCount, copy)}
+          </Text>
+          <UpdatedAgo date={new Date(entry.lastRunAt)} />
+        </>
+      }
+    />
   );
 }
 

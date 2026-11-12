@@ -1,10 +1,8 @@
 "use client";
 
-import { HomeLink } from "@/ui/home/home-link";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import {
-  Button,
   Heading,
   Stack,
   Tabs,
@@ -12,7 +10,6 @@ import {
   Text,
   ThemeScope,
 } from "@zedtech/zedkit-ui";
-import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 import { isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
 import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 import { HomeIdentityExampleMist } from "@/ui/home/home-identity-example-mist";
@@ -20,6 +17,7 @@ import { HomeIdentityLooksTabs } from "@/ui/home/home-identity-looks-tabs";
 import {
   HOME_LOOKS_GRID,
   HOME_METADATA_TEXT_CLASS,
+  HOME_PARALLAX_SCROLL_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 import { useLookFade } from "@/ui/home/use-look-fade";
@@ -38,6 +36,7 @@ const noop = () => () => {};
  *   specimen | copy from lg, copy+pills first on a phone, because: client is hurried; the look control must stay reachable.
  *   Glass included as a pill, because: the mockup and #208 name four looks and the caption.
  *   no identity form in the band, because: dock (#110) owns customization.
+ *   no extra links row under the specimen, because: the mockup section ends at the caption; destinations already live (dock, docs, editor, kit-demos URL).
  */
 
 /** One stage, one compact Project settings screen. The look restyles it; the page scrolls normally. */
@@ -79,7 +78,7 @@ export function HomeIdentityLooks() {
           </Text>
         </Stack>
         <TabsContent value={identity} className="trim-top content-shrink lg:col-start-first lg:row-start-first">
-          <Stack className="content-shrink rounded-xl" data-identity-frame-stage="">
+          <Stack className="content-shrink rounded-xl" data-identity-frame-stage="" {...HOME_PARALLAX_SCROLL_PROPS}>
             <ThemeScope
               ref={stageRef}
               identity={identity}
@@ -92,23 +91,6 @@ export function HomeIdentityLooks() {
           </Stack>
         </TabsContent>
       </Tabs>
-      <HomeIdentityLooksLinks />
-    </Stack>
-  );
-}
-
-function HomeIdentityLooksLinks() {
-  return (
-    <Stack direction="horizontal" gap="sm" className="flex-wrap">
-      <Button asChild variant="outline" size="sm" className="w-fit">
-        <HomeLink href={`${IDENTITY_EDITOR_HREF}#create`}>{homeIdentityLooksCopy.openEditor}</HomeLink>
-      </Button>
-      <Button asChild variant="link" size="sm" className="w-fit">
-        <HomeLink href="/features/identity-kit-demos">{homeIdentityLooksCopy.seeInComponents}</HomeLink>
-      </Button>
-      <Button asChild variant="link" size="sm" className="w-fit">
-        <HomeLink href="/docs/start-without-writing-code">{homeIdentityLooksCopy.startWithoutCode}</HomeLink>
-      </Button>
     </Stack>
   );
 }

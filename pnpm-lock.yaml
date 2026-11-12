@@ -453,6 +453,9 @@ importers:
       '@zedtech/zedkit-quality':
         specifier: workspace:*
         version: link:../../packages/quality
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.5(jiti@2.7.0)
       postcss:
         specifier: 'catalog:'
         version: 8.5.32

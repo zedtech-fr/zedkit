@@ -83,6 +83,18 @@ function copyLive(record: PublicLiveRun): PublicLiveRun {
   return structuredClone(record);
 }
 
+function liveBelongsToIssue(
+  live: PublicLiveRun,
+  issueNumber: number,
+  issue: IssueRecord | undefined,
+  runId: string,
+): boolean {
+  if (live.run.run_id !== runId) return false;
+  if (live.run.issue === issueNumber) return true;
+  if (issue !== undefined && issue.entries.some((entry) => entry.runId === runId)) return true;
+  return live.run.issue == null && live.run.pr === issueNumber;
+}
+
 function latestForPr(records: readonly PublicLiveRun[], n: number): PublicLiveRun | undefined {
   let latest: PublicLiveRun | undefined;
   for (const record of records) {
@@ -138,12 +150,11 @@ export function createComposedReviewPort(
     getRun(issueNumber: number, runId: string) {
       if (!Number.isInteger(issueNumber)) return Promise.resolve(null);
       const issue = issues.find((item) => item.number === issueNumber);
-      if (issue !== undefined) {
-        const run = runRecordFromEntries(runId, issue.entries);
-        if (run !== null) return Promise.resolve(structuredClone(run));
-      }
-      const live = lives.find((item) => item.run.pr === issueNumber && item.run.run_id === runId);
-      return Promise.resolve(live === undefined ? null : copyLive(live));
+      const live = lives.find((item) => liveBelongsToIssue(item, issueNumber, issue, runId));
+      if (live !== undefined) return Promise.resolve(copyLive(live));
+      if (issue === undefined) return Promise.resolve(null);
+      const run = runRecordFromEntries(runId, issue.entries);
+      return Promise.resolve(run === null ? null : structuredClone(run));
     },
     getUnlinkedRun(prNumber: number, runId: string) {
       if (!Number.isInteger(prNumber)) return Promise.resolve(null);

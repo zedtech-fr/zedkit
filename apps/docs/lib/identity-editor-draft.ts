@@ -1,6 +1,5 @@
 import { useLayoutEffect, useState } from "react";
 import {
-  applyCustomIdentity,
   applyIdentityTokenSheet,
   keepIdentityDarkKeys,
   parseIdentityTokens,
@@ -11,10 +10,6 @@ import {
 
 import { LIGHT_KEYS, isLightKey } from "@/lib/identity-editor-search";
 import { acceptedIdentityTokens, patchTokens, withKeptDark } from "@/lib/identity-editor-patch";
-import {
-  DOCS_SITE_IDENTITY_STORAGE_KEY,
-  setDocsSiteIdentityOptIn,
-} from "@/lib/site-identity-storage";
 
 function withSuggestedDark(
   next: IdentityTokens,
@@ -37,10 +32,9 @@ function nextDarkKept(keep: string[], key: string): string[] {
   return keep.includes(key) ? keep : [...keep, key];
 }
 
-function useDraftTokens(present: IdentityTokens, look: string) {
+function useDraftTokens(present: IdentityTokens) {
   const [tokens, setTokens] = useState(present);
   const [past, setPast] = useState<DraftSnap[]>([]);
-  const [appliedSite, setAppliedSite] = useState(false);
   const [darkKept, setDarkKept] = useState<string[]>([]);
 
   function remember(next: IdentityTokens, nextKeep: readonly string[] = darkKept) {
@@ -80,13 +74,9 @@ function useDraftTokens(present: IdentityTokens, look: string) {
     remember(withKeptDark(parsed.data, tokens, darkKept));
   }
 
-  function applySuggest(next: IdentityTokens, toSite: boolean) {
+  function applySuggest(next: IdentityTokens) {
     const suggested = withSuggestedDark(next, tokens, darkKept);
     remember(suggested.tokens, suggested.keep);
-    if (toSite) {
-      setDocsSiteIdentityOptIn(true);
-      setAppliedSite(true);
-    }
   }
 
   function load(next: IdentityTokens, keep: readonly string[] = []) {
@@ -97,23 +87,12 @@ function useDraftTokens(present: IdentityTokens, look: string) {
     setPast([]);
   }
 
-  useLayoutEffect(() => {
-    if (!appliedSite) return;
-    applyCustomIdentity(tokens, look, DOCS_SITE_IDENTITY_STORAGE_KEY);
-  }, [appliedSite, look, tokens]);
-
   return {
     tokens,
     darkKept,
     past,
-    appliedSite,
     remember,
     undo,
-    applySite: () => {
-      setDocsSiteIdentityOptIn(true);
-      setAppliedSite(true);
-    },
-    detachSite: () => setAppliedSite(false),
     load,
     patch,
     patchMany,

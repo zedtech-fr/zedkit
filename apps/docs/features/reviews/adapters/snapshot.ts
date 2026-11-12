@@ -8,6 +8,27 @@ import { liveRunsToIndex, toPublicIndex, toPublicReviews } from "../model/public
 import { listIssueSitemapPathsFrom, listReviewSitemapPathsFrom } from "../model/review-routes.ts";
 import type { PublicIssueIndex, PublicLiveRun, ReviewPort } from "../ports/review-port";
 
+function liveRowsFromReviews(reviews: unknown): PublicLiveRun[] {
+  const parsed = parsePublicReviewSnapshot({
+    version: 1,
+    kind: "public-live-runs",
+    reviews,
+  });
+  if (!parsed.ok) {
+    throw new Error(`public review snapshot: ${parsed.error.message}`, { cause: parsed.error });
+  }
+  if (!isLiveSnapshot(parsed.value)) {
+    throw new Error("public review snapshot: reviews did not parse as live rows");
+  }
+  return toPublicReviews(parsed.value);
+}
+
+function livesFromIndexRaw(value: unknown): PublicLiveRun[] {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return [];
+  if (!("reviews" in value)) return [];
+  return liveRowsFromReviews((value as { reviews: unknown }).reviews);
+}
+
 function partsFromUnknown(value: unknown): { index: PublicIssueIndex; lives: PublicLiveRun[] } {
   const parsed = parsePublicReviewSnapshot(value);
   if (!parsed.ok) {
@@ -17,7 +38,7 @@ function partsFromUnknown(value: unknown): { index: PublicIssueIndex; lives: Pub
     const lives = toPublicReviews(parsed.value);
     return { lives, index: liveRunsToIndex(lives) };
   }
-  return { index: toPublicIndex(parsed.value), lives: [] };
+  return { index: toPublicIndex(parsed.value), lives: livesFromIndexRaw(value) };
 }
 
 function loadPublicParts(snapshotPath: string): { index: PublicIssueIndex; lives: PublicLiveRun[] } {

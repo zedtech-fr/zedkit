@@ -105,13 +105,88 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
   assert.match(css, /@keyframes zk-home-run-check/);
   assert.match(css, /@keyframes zk-home-run-fix/);
   assert.match(css, /@keyframes zk-home-run-done/);
-  assert.match(rhythm, /"data-animate": "fade-up"/);
   assert.match(illustration, /data-hero-run-stage/);
   assert.match(illustration, /data-hero-run-step/);
   assert.match(css, /animation-play-state:\s*paused/);
   assert.doesNotMatch(live, /@keyframes zk-(?:up|in|drift|s[1-5])\b/);
   assert.doesNotMatch(live, /\bzk-s[1-5]\b/);
   assert.doesNotMatch(css, /\[data-hero-shapes\][^{]*\{[^}]*animation\s*:/);
+  assert.doesNotMatch(stripComments(css), /\[data-hero-shapes\]/);
+});
+
+const HOME_SECTIONS = [
+  "ui/home/home-same-idea-section.tsx",
+  "ui/home/home-six-sentences-section.tsx",
+  "ui/home/home-paste-section.tsx",
+  "ui/home/home-identities-section.tsx",
+  "ui/home/home-limits-section.tsx",
+  "ui/home/home-manifesto-section.tsx",
+  "ui/home/home-closing-section.tsx",
+];
+
+test("home-rhythm names distinct appears instead of one section fade", () => {
+  const rhythm = readApp("ui/home/home-rhythm.ts");
+  assert.doesNotMatch(rhythm, /HOME_SECTION_REVEAL_PROPS/);
+  assert.match(rhythm, /HOME_CARD_GRID_REVEAL_PROPS/);
+  assert.match(rhythm, /HOME_PASTE_TIMELINE_REVEAL_PROPS/);
+  assert.match(rhythm, /HOME_READING_REVEAL_PROPS/);
+  assert.match(rhythm, /HOME_PARALLAX_SCROLL_PROPS/);
+  assert.match(rhythm, /"data-animate": "fade-up"/);
+  assert.match(rhythm, /"data-animate": "fade-down"/);
+  assert.match(rhythm, /"data-animate": "fade-in"/);
+  assert.match(rhythm, /"data-animate-stagger": ""/);
+  assert.match(rhythm, /"data-animate-scroll": "parallax"/);
+});
+
+test("each home band has one appear or scroll, never on Section", () => {
+  const sameIdea = readApp("ui/home/home-same-idea-section.tsx");
+  const six = readApp("ui/home/home-six-sentences-section.tsx");
+  const paste = readApp("ui/home/home-paste-section.tsx");
+  const identities = readApp("ui/home/home-identities-section.tsx");
+  const looks = readApp("ui/home/home-identity-looks.tsx");
+  const limits = readApp("ui/home/home-limits-section.tsx");
+  const manifesto = readApp("ui/home/home-manifesto-section.tsx");
+  const closing = readApp("ui/home/home-closing-section.tsx");
+  const illustration = readApp("ui/home/home-hero-illustration.tsx");
+  const mist = readApp("ui/home/home-identity-example-mist.tsx");
+  for (const rel of HOME_SECTIONS) {
+    const src = readApp(rel);
+    assert.doesNotMatch(src, /HOME_SECTION_REVEAL_PROPS/);
+    const start = src.indexOf("<Section");
+    assert.notEqual(start, -1, rel);
+    const end = src.indexOf(">", start);
+    const open = src.slice(start, end + 1);
+    assert.doesNotMatch(open, /data-animate|HOME_\w*REVEAL|HOME_PARALLAX/);
+  }
+  assert.match(sameIdea, /HOME_CARD_GRID_REVEAL_PROPS/);
+  assert.match(six, /HOME_CARD_GRID_REVEAL_PROPS/);
+  assert.match(paste, /HOME_PASTE_TIMELINE_REVEAL_PROPS/);
+  assert.match(limits, /HOME_READING_REVEAL_PROPS/);
+  assert.match(manifesto, /HOME_READING_REVEAL_PROPS/);
+  assert.match(closing, /HOME_READING_REVEAL_PROPS/);
+  assert.doesNotMatch(identities, /data-animate|HOME_\w*REVEAL|HOME_PARALLAX/);
+  assert.match(looks, /data-identity-frame-stage=/);
+  assert.match(looks, /HOME_PARALLAX_SCROLL_PROPS|data-animate-scroll="parallax"/);
+  assert.match(illustration, /HOME_PARALLAX_SCROLL_PROPS|data-animate-scroll="parallax"/);
+  assert.doesNotMatch(
+    illustration,
+    /data-hero-run-stage=""[^>]*data-animate-scroll|data-animate-scroll[^>]*data-hero-run-stage/,
+  );
+  assert.match(sameIdea, /<Card className="[^"]*hover-lift/);
+  assert.match(six, /hover-lift/);
+  // Plain six-sentences cards have no focusables: hover-lift is mouse-only delight.
+  assert.match(six, /data-home-six-sentences-card=\{featured \? "featured" : "plain"\}/);
+  assert.doesNotMatch(mist, /hover-lift/);
+  assert.doesNotMatch(limits, /hover-lift/);
+});
+
+test("docs CSS does not use the mockup star reduced-motion kill", () => {
+  const hero = readApp("app/home-hero.css");
+  const compact = readApp("app/site-compact.css");
+  const catalog = readApp("app/catalog-shell.css");
+  for (const css of [hero, compact, catalog]) {
+    assert.doesNotMatch(css, /\*\s*\{[^{}]*animation:\s*none[^{}]*transition:\s*none/);
+  }
 });
 
 test("illustration drift is decorative and does not wrap the glass card", () => {
@@ -119,6 +194,11 @@ test("illustration drift is decorative and does not wrap the glass card", () => 
   const css = readApp("app/home-hero.css");
   assert.match(illustration, /data-hero-run-drift/);
   assert.match(illustration, /aria-hidden="true"/);
+  const parallaxOpen = illustration.indexOf("{...HOME_PARALLAX_SCROLL_PROPS}");
+  assert.notEqual(parallaxOpen, -1);
+  const parallaxBlock = illustration.slice(parallaxOpen, illustration.indexOf("{kit ==="));
+  assert.match(parallaxBlock, /aria-hidden="true"/);
+  assert.doesNotMatch(parallaxBlock, /<Button\b/);
   assert.doesNotMatch(illustration, /<(?:input)\b/);
   assert.equal(illustration.includes("data-hero-shapes"), false);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole/);

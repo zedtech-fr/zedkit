@@ -20,6 +20,45 @@ the generator embeds demos by key; the docs check fails on drift
 (missing demo, renamed need). Demos render the REAL workspace
 components (same import a consumer writes), inside one shared frame.
 
+## File placement
+
+Where a new docs-site file goes. Enforced by
+`apps/docs/scripts/module-placement.test.mjs` (owners, private folders,
+cross-feature, shrink-only baseline) and ESLint one-way rules.
+
+- Used by exactly one route: next to that route in one private folder
+  `app/<route>/_<name>/` (view, `sections/`, hooks, `i18n/`, page CSS
+  imported by the page, unit tests, fixtures). Home is a route group:
+  `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
+  `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
+  today's in-flight lots still live under `ui/home/**`, `ui/catalog/**`,
+  and `ui/docs-main-content.tsx`.
+- Used by two or more routes of one domain: `features/<domain>/` (current:
+  reviews, note-list). Ports/adapters/model only where there is I/O.
+- Docs-site composed UI used by two or more domains, with no domain words:
+  `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
+  is dissolving; do not add a fifth home there. Directory globs in
+  `REQUIRED_GLOBS` (`ui/home/**`, `ui/catalog/**`,
+  `ui/docs-main-content.tsx`) silently absorb new files; do not add under
+  them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order: move
+  the files, regen, drop the glob, regen again.
+- Pure helpers used by two or more domains (and `.mjs` shared with
+  `scripts/generate.mjs`): `lib/`.
+- Domain-free code: a zedkit package (check zedkit first).
+- One-way imports: `app → features → components/ui → lib`. A feature does
+  not import another feature or app (compose in the route and pass props).
+  A `_<name>` folder is imported only from its own route subtree.
+  Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features;
+  L8 `lib/component-page-toc.ts` may import `@/components`.
+- Kit previews stay in `components/demos/` (the placement checker skips
+  dead and single-owner there). Unit tests live beside their module,
+  including under `app/`; Playwright stays in `tests/`.
+- Baseline `apps/docs/scripts/module-placement.baseline.json` may only
+  shrink. Move the file; never extend the baseline.
+  `node apps/docs/scripts/module-placement.mjs --write-baseline`
+  regenerates from the live tree and refuses growth; it drops stale
+  entries after a move — do not add entries by hand.
+
 ## Demo rules (blocking — the `ui` lens fails the review otherwise)
 
 The rules are Frontend rules 1-5 in `packages/ai/kit/skills/review/lenses.md`
@@ -52,7 +91,8 @@ reject dead `/r/<name>.json` links.
 - **Local loop** (every edit): reuse :3100 if it is up
   (`pnpm --filter @zedtech/zedkit-docs dev`, or root `pnpm dev`). Then
   `pnpm --filter @zedtech/zedkit-docs typecheck &&
-  pnpm --filter @zedtech/zedkit-docs lint` and the Playwright
+  pnpm --filter @zedtech/zedkit-docs lint` and
+  `node --test apps/docs/scripts/module-placement.test.mjs` and the Playwright
   spec that covers the files you touched, against that :3100 (relative
   paths; origin is `baseURL` in `playwright.config.ts`). One foreground
   command. A new or moved App Router file (`page`, `layout`, `route`,
@@ -135,20 +175,16 @@ second fonts `pnpm add` next to that snippet.
   `[data-identity-look-control]`. User-facing editor copy is US spelling
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `i18n/identity-editor-copy.ts`.
-- Applying a look to the whole site is the visitor's explicit choice and
-  reversible (`lib/site-identity-storage.ts`: opt-in key, `clearDocsSiteIdentity`).
+- Classic edits in the floating dock restyle the whole site immediately and
+  persist in `lib/site-identity-storage.ts`. Reset restores the site default
+  look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
+  has no Apply or Preview step and no opt-in key. The editor page still has
+  Preview dark (card only) and Suggest Apply (draft only).
   Quotas, references and cost controls are server rules; the client never
   works around them.
-- Secondary states (idle, loading, success, error, quota, resume) stay on
-  screen at 320, 390 and 1440. Quota copy names a real retry time, never a
-  daily allowance. An unfinished brief is kept in `zk-identity-dock-v2`
-  (`lib/identity-dock-persist.ts`) so a reload restores it. The floating dock
-  opens with Control or Meta+I, closes with Escape, and on a phone is a bottom
-  sheet. Using a look
-  from the dock paints demo specimens only, never the site chrome. Brief-routed
-  specimens are commerce, saas-dashboard, editorial and service-booking.
-  Proof: `tests/identity-state-matrix.spec.ts`. Export CSS applied to a blank
-  page matches the editor specimen and the dock proposal:
+- The floating dock opens with Control or Meta+I, closes with Escape, and on
+  a phone is a bottom sheet. Demo specimens keep their own ThemeScope look.
+  Export CSS applied to a blank page matches the editor specimen:
   `tests/identity-export-preview-parity.spec.ts`.
 
 ## ZedKit art direction (Product Atelier)
@@ -157,7 +193,7 @@ Read [VISUAL-CONTRACT.md](./VISUAL-CONTRACT.md) before changing home,
 chrome, previews or specimens (traps included). Type, motion,
 composition and elevation: [docs/design/signature.md](../../docs/design/signature.md)
 (named type roles and motions, not raw `font-size` or duration). Identity
-states: the matrix above. Skill `use-signature`.
+states: proof `tests/identity-state-matrix.spec.ts`, skill `use-signature`.
 
 Scope: this docs site and its specimens. Exception: a specimen that
 must match a kit primitive's own look.

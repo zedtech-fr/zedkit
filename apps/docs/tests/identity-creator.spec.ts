@@ -1,6 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 
 import { assertA11yGate, assertFocusUnclipped, assertFocusVisibleRing, focusWithKeyboard } from "./a11y-helpers";
+import { livePaintDockExpert } from "./identity-helpers";
 
 const EDITOR = "/features/identity-editor";
 /** `#create` is how a visitor arrives to create: the assistant opens, with focus in its form. */
@@ -61,14 +62,10 @@ test.describe("home identity entry (#210)", () => {
     expect(posts).toHaveLength(0);
   });
 
-  test("the looks band still links to the demo editor and back to #identities", async ({ page }) => {
+  test("the demo editor still links back to #identities", async ({ page }) => {
     await service(page, (_p, route) => route.abort());
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    const section = page.locator("#identities");
-    await section.scrollIntoViewIfNeeded();
-    await section.getByRole("link", { name: "Try the demo editor" }).click();
-    await page.waitForURL("**/features/identity-editor**");
+    await page.goto("/features/identity-editor#create", { waitUntil: "networkidle" });
     await page.getByRole("link", { name: "← Back to the examples" }).click();
     await page.waitForURL("**/#identities");
   });
@@ -387,14 +384,14 @@ test.describe("saved on this device", () => {
     await expect(page.getByLabel("--radius", { exact: true })).toBeVisible();
   });
 
-  test("applying to the whole site is explicit, and removing it puts the site back", async ({ page }) => {
+  test("editor draft edits leave the site; a dock edit paints, and Reset puts it back", async ({ page }) => {
     await page.goto(EDITOR, { waitUntil: "networkidle" });
     const before = await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim());
     await page.getByLabel("--background", { exact: true }).fill("0 80% 70%");
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe(before);
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--background", "0 80% 70%");
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe("0 80% 70%");
-    await page.getByRole("button", { name: "Remove from the whole site" }).click();
+    await page.locator("[data-slot=custom-identity-bar]").getByRole("button", { name: "Reset" }).click();
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe(before);
     expect(await page.evaluate(() => localStorage.getItem("zk-docs-site-identity-opt-in"))).toBeNull();
   });

@@ -3,8 +3,8 @@ import {
   HOME_LIMITS_GRID,
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
+  HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
-  HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
 import { homeLimitsCopy } from "@/ui/home/i18n/home-limits-copy";
 
@@ -26,10 +26,14 @@ export function HomeLimitsSection() {
       containerWidth="wide"
       id="limits"
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
-      <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset" data-home-limits="">
+      <Stack
+        gap={HOME_SECTION_CONTENT_GAP}
+        className="content-offset"
+        data-home-limits=""
+        {...HOME_READING_REVEAL_PROPS}
+      >
         <Stack gap="tight" className="lg:flex-row lg:items-baseline lg:justify-between">
           <Heading level={2} typeRole="title">
             {homeLimitsCopy.section.title}

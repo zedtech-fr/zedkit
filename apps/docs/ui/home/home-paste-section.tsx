@@ -3,8 +3,8 @@ import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PASTE_LANDS_GRID,
   HOME_PASTE_TIMELINE_GRID,
+  HOME_PASTE_TIMELINE_REVEAL_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
-  HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
 import { homePasteCopy } from "@/ui/home/i18n/home-paste-copy";
 import { homeSameIdeaCopy } from "@/ui/home/i18n/home-same-idea-copy";
@@ -13,7 +13,7 @@ const LANDS_IDS = Object.keys(homePasteCopy.lands) as Array<keyof typeof homePas
 
 const PASTE_KIT_BADGE = {
   ai: "border-transparent bg-primary-foreground text-primary shadow-none hover:bg-primary-foreground",
-  ui: "border-transparent bg-primary-foreground text-accent shadow-none hover:bg-primary-foreground",
+  ui: "border-transparent bg-primary-foreground text-accent-foreground shadow-none hover:bg-primary-foreground",
 } as const;
 
 function pasteFileNote(
@@ -113,13 +113,12 @@ export function HomePasteSection() {
       title={homePasteCopy.section.title}
       description={homePasteCopy.section.description}
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
       data-home-paste=""
     >
       <Stack id="ai-setup" tabIndex={-1} data-scroll-anchor="" gap="blocks" className="content-offset">
         <Stack id="get-started" tabIndex={-1} data-scroll-anchor="" gap="blocks">
-          <ul className={HOME_PASTE_TIMELINE_GRID}>
+          <ul className={HOME_PASTE_TIMELINE_GRID} {...HOME_PASTE_TIMELINE_REVEAL_PROPS}>
             {homePasteCopy.timeline.map((item) => (
               <li key={item.label} className="border-t content-offset">
                 <Stack gap="tight">

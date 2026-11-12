@@ -2,7 +2,6 @@ export type IssueState = "open" | "closed";
 export type TimelineEntryType = "plan" | "implement" | "review" | "improve" | "dry-run";
 export type TimelineEntryStatus = "running" | "completed" | "failed";
 export type ReviewVerdict = "approve" | "request-changes" | "comment";
-export type ReviewRecordVerdict = ReviewVerdict | "error";
 export type LatestStatus = TimelineEntryStatus | ReviewVerdict;
 
 export type TimelineEntry = {
@@ -64,77 +63,7 @@ export type PrResolve = {
   readonly runIds: readonly string[];
 };
 
-export type ReviewRunStatus = "running" | "done" | "error";
-export type ReviewPrState = "open" | "merged";
 export type ReviewVisibility = "public" | "private";
-export type FindingDisposition = "kept" | "downgraded" | "dismissed";
-export type ReviewFindingDisposition = FindingDisposition;
-
-export type ReviewAction = {
-  readonly title: string;
-  readonly detail: string;
-};
-
-export type ReviewFinding = {
-  readonly id: string;
-  readonly summary: string;
-  readonly disposition: FindingDisposition;
-};
-
-export type ReviewFirstPassFinding = {
-  readonly title: string;
-  readonly detail: string;
-  readonly disposition: ReviewFindingDisposition;
-};
-
-export type ReviewAgentSummary = {
-  readonly id: string;
-  readonly name: string;
-  readonly kind: string;
-  readonly status: string;
-  readonly model: string;
-};
-
-export type ReviewFirstPass = {
-  readonly findings: readonly ReviewFirstPassFinding[];
-};
-
-export type ReviewConsoleKind = "flow" | "agent" | "workflow";
-
-export type ReviewConsoleItem = {
-  readonly id: string;
-  readonly kind: ReviewConsoleKind;
-  readonly title: string;
-  readonly status: ReviewRunStatus;
-};
-
-export type ReviewRun = {
-  readonly id: string;
-  readonly status: ReviewRunStatus;
-  readonly startedAt: string;
-  readonly agents: readonly ReviewAgentSummary[];
-  readonly items?: readonly ReviewConsoleItem[];
-};
-
-/** Temporary view-model for live rows. Deleted when pages consume live rows directly. */
-export type ReviewRecord = {
-  readonly number: number;
-  readonly title: string;
-  readonly verdict: ReviewRecordVerdict;
-  readonly confidence: number;
-  readonly status: ReviewRunStatus;
-  readonly headSha: string;
-  readonly lastRunAt: string;
-  readonly prState: ReviewPrState;
-  readonly visibility: ReviewVisibility;
-  readonly notes: string;
-  readonly summary: string;
-  readonly evidence: string;
-  readonly actions: readonly ReviewAction[];
-  readonly findings: readonly ReviewFinding[];
-  readonly firstPass?: ReviewFirstPass;
-  readonly runs: readonly ReviewRun[];
-};
 
 export type LiveStatus = string;
 export type LiveItemKind = string;

@@ -38,20 +38,23 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
   const firstScreen = hero + lead + illustration;
-  // #118 supersedes #111/#114: kit tabs and the third title clause are the first screen, not one Setup row.
+  // #258: one map prompt, no kit tablist. #118 still owns the third title clause vs one Setup row.
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
-  assert.match(hero, /HeroShapes/);
-  assert.match(hero, /publicIssueHref/);
-  assert.match(lead, /\bTabs\b/);
-  assert.match(lead, /TabsList/);
-  assert.match(lead, /TabsTrigger/);
-  assert.match(lead, /defaultValue="combined"|value=\{kit\}/);
-  assert.match(copy, /title: "Code that's checked\. Screens that match\."/);
+  assert.doesNotMatch(hero, /HeroShapes|data-hero-shapes|publicIssueHref|issuesHref/);
+  assert.doesNotMatch(firstScreen, /data-hero-shapes/);
+  assert.doesNotMatch(lead, /\bTabs\b|TabsList|TabsTrigger|TabsContent|useState|HeroKitId|isHeroKit|heroKits/);
+  assert.match(lead, /data-home-hero=/);
+  assert.match(lead, /<HomeHeroIllustration\s*\/>/);
+  assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
+  assert.match(
+    copy,
+    /subAi: "gives your coding agent a team\u2019s habits: a plan, a second pair of eyes, a definition of done\."/,
+  );
   assert.match(copy, /titleClause: "From the agent you already use\."/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
-  assert.match(copy, /combined: "AI \+ UI"/);
+  assert.doesNotMatch(copy, /heroKits:|promptCaptionSingle:|HeroKitId|dueDatesTitle:|aiPlan:|settingsTitle:/);
   assert.match(copy, /emptyStateTitle: "Add an empty state to the tasks list"/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
@@ -62,28 +65,35 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
   assert.match(lead, /homeCopy\.hero\.titleClause/);
+  assert.doesNotMatch(lead, /^["']use client["']/m);
   assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
-  assert.match(lead, /AI_SETUP_MINI_PROMPT/);
-  assert.match(lead, /UI_SETUP_MINI_PROMPT/);
+  assert.doesNotMatch(lead, /AI_SETUP_MINI_PROMPT|UI_SETUP_MINI_PROMPT/);
   assert.match(lead, /HomeCopyCommandField/);
+  assert.equal((lead.match(/<HomeCopyCommandField/g) ?? []).length, 1);
   assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
+  assert.equal((lead.match(/data-home-hero-prompt/g) ?? []).length, 1);
   assert.doesNotMatch(lead, /SetupEntryPrompt/);
-  assert.doesNotMatch(lead, /\/issues\/108/);
+  assert.doesNotMatch(lead, /\/issues/);
   assert.doesNotMatch(firstScreen, /data-site-action/);
   assert.doesNotMatch(lead, /heroActions\.setup|heroActions\.getStarted|heroActions\.browseCatalog|#ai-setup|#get-started|\/catalog/);
-  assert.match(lead, /OffPathLink/);
-  assert.match(lead, /heroActions\.seeARealIssue/);
+  assert.doesNotMatch(lead, /OffPathLink|heroActions\.seeARealIssue|data-home-hero-actions/);
   assert.equal((lead.match(/<HomeLink[\s>]/g) ?? []).length, 0);
-  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 1);
-  assert.match(copy, /seeARealIssue: "See a real issue, end to end"/);
-  assert.doesNotMatch(copy, /seeARealIssue: ".*→/);
+  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 0);
+  assert.doesNotMatch(copy, /seeARealIssue/);
+  assert.match(illustration, /data-hero-run-blob/);
+  assert.match(illustration, /data-hero-run-drift/);
+  assert.doesNotMatch(illustration, /SettingsCard|AI_STEPS|HeroKitId|kit ===/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
-    /promptCaption: "Name the kits you want, Nest included\. The map knows the order\."/,
+    /promptCaption: "Name the kits you want\. The agent installs only those, in map\.md order\."/,
   );
   assert.match(lead, /aria-label=\{homeCopy\.hero\.promptAriaLabel\}/);
+  assert.match(lead, /aria-describedby="home-hero-prompt-caption"/);
+  assert.match(lead, /id="home-hero-prompt-caption"/);
+  assert.match(lead, /homeCopy\.hero\.promptCaption/);
+  assert.doesNotMatch(lead, /promptCaptionSingle/);
   assert.doesNotMatch(copy, /facts:/);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole|ThemeScope/);
   assert.match(illustration, /data-hero-run-stage/);
@@ -336,7 +346,11 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(paste, /<Badge /);
   assert.match(paste, /bg-primary-foreground/);
   assert.match(paste, /text-primary/);
-  assert.match(paste, /text-accent/);
+  assert.match(
+    paste,
+    /ui: "border-transparent bg-primary-foreground text-accent-foreground shadow-none hover:bg-primary-foreground"/,
+  );
+  assert.match(paste, /accent \? "font-mono text-accent" : "font-mono"/);
   assert.doesNotMatch(paste, /<Badge>/);
   assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
@@ -348,10 +362,12 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(tokens, /background-color:\s*hsl\(var\(--zk-site-action\)\)/);
   assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
   assert.match(
     tokens,
     /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
   );
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
   assert.match(tokens, /\[data-home-same-idea-lands\]/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
@@ -513,6 +529,9 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   assert.match(facts, /IDENTITY_IDS = \["glass", "mist", "press", "maison"\]/);
   assert.match(copy, /title: "Every screen, the same product\."/);
   assert.match(copy, /tabsAriaLabel: "Looks"/);
+  assert.match(looks, /HomeIdentityLooksTabs/);
+  assert.doesNotMatch(looks, /HomeIdentityLooksLinks/);
+  assert.doesNotMatch(copy, /openEditor|seeInComponents|startWithoutCode/);
 });
 
 test("drawer demo save closes and toasts", () => {
@@ -621,4 +640,44 @@ test("phone header is one compact row with a kit Drawer site menu", () => {
     /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-nav\[data-docs-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
   );
   assert.doesNotMatch(compact, /--zk-site-header-height-wrapped/);
+});
+
+function walkTsx(dir, relBase = "") {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name === ".next" || entry.name === "out") continue;
+    const rel = relBase ? `${relBase}/${entry.name}` : entry.name;
+    const abs = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkTsx(abs, rel));
+    else if (entry.name.endsWith(".tsx")) out.push({ abs, rel });
+  }
+  return out;
+}
+
+test("docs home uses native document scroll; SectionScroll is not mounted (#262)", () => {
+  const view = readFileSync(join(app, "ui/home/home-view.tsx"), "utf8");
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  assert.doesNotMatch(view, /\bSectionScroll\b/);
+  assert.doesNotMatch(view, /data-slot=["']section-scroll["']/);
+  assert.match(
+    view,
+    /\{\.\.\.HOME_MARKETING_ROOT_PROPS\}[\s\S]*id=["']home-page["'][\s\S]*className=["']content-shrink["']/,
+  );
+
+  const importers = [];
+  for (const file of walkTsx(join(app, "ui/home"))) {
+    const src = readFileSync(file.abs, "utf8");
+    if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
+  }
+  assert.deepEqual(importers, []);
+
+  assert.doesNotMatch(compact, /#nd-home-layout/);
+  assert.match(
+    compact,
+    /#home-page section\[id\]\s*\{[^}]*scroll-margin-top:\s*calc\(var\(--zk-header-height\) \+ 1rem\)/,
+  );
+  assert.match(
+    compact,
+    /\[data-scroll-anchor\]\s*\{[^}]*scroll-margin-top:\s*max\(calc\(var\(--spacing\) \* 24\), calc\(var\(--zk-header-height\) \+ 1rem\)\)/,
+  );
 });

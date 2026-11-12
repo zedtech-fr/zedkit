@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState, type Ref, type RefObject } from "react";
 import { Button, PromptInput, Stack, Text, cn, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { identityAssistantCopy as copy } from "@/components/i18n/identity-assistant-copy";
-import { ProposalSiteApply, type ApplySiteTokenHandlers } from "@/components/identity-apply-site-row";
 import { ProposalBeforeAfter } from "@/components/identity-proposal-compare";
 import { ReferenceReportList } from "@/components/identity-references";
 import type { Unavailable, Turn } from "@/lib/identity-assistant";
@@ -283,8 +282,6 @@ type ProposalCardProps = {
   "data-proposal-inset"?: "";
   /** Pin the apply row to the bottom of the card; set when the card scrolls inside a height cap. */
   pinApply?: boolean;
-  /** When set, show Apply to the whole site under Use this look (dock Preview tab). */
-  siteApply?: ApplySiteTokenHandlers;
 };
 
 /** A proposal to look at, in light and dark, with what changed and why. Using it is the only thing that changes the draft. */
@@ -298,7 +295,6 @@ export function ProposalCard({
   className,
   "data-proposal-inset": proposalInset,
   pinApply,
-  siteApply,
 }: ProposalCardProps) {
   // Readable text is a promise of the kit, so a proposal that misses it is nudged by arithmetic, and the page says so.
   const repaired = useMemo(() => repairContrast(proposal.tokens), [proposal.tokens]);
@@ -323,7 +319,6 @@ export function ProposalCard({
       <ProposalBeforeAfter current={current} proposed={repaired.tokens} requestId={proposal.requestId} domain={domain} />
       <ProposalChangeList rows={rows} />
       <ProposalApplyRow busy={busy} tokens={repaired.tokens} onUse={onUse} onDiscard={onDiscard} pinned={pinApply === true} />
-      {siteApply ? <ProposalSiteApply siteApply={siteApply} tokens={repaired.tokens} /> : null}
       <Text variant="muted" typeRole="body">
         {copy.proposal.note}
       </Text>

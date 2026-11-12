@@ -64,6 +64,18 @@ test("press, maison, members and drawer example files are gone", () => {
   }
 });
 
+test("identities band has heading, look tabs and caption, and no extra links row", () => {
+  const looks = readHome("home-identity-looks.tsx");
+  const copy = readHome("home-identity-looks-copy.ts");
+  assert.doesNotMatch(looks, /HomeIdentityLooksLinks/);
+  assert.doesNotMatch(looks, /openEditor|seeInComponents|startWithoutCode/);
+  assert.doesNotMatch(looks, /IDENTITY_EDITOR_HREF|#create|identity-kit-demos|start-without-writing-code/);
+  assert.doesNotMatch(copy, /openEditor|seeInComponents|startWithoutCode/);
+  assert.match(looks, /<Heading/);
+  assert.match(looks, /HomeIdentityLooksTabs/);
+  assert.match(looks, /data-identity="\$\{identity\}"/);
+});
+
 test("specimen copy is the compact panel, not members, billing or other products", () => {
   const copy = readHome("home-identity-examples-copy.ts");
   assert.match(copy, /heading: "Project settings"/);

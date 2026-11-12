@@ -1,10 +1,6 @@
 import { Section, Stack } from "@zedtech/zedkit-ui";
 import { HomeIdentityLooks } from "@/ui/home/home-identity-looks";
-import {
-  HOME_MARKETING_ROOT_PROPS,
-  HOME_SECTION_CONTENT_GAP,
-  HOME_SECTION_REVEAL_PROPS,
-} from "@/ui/home/home-rhythm";
+import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
 
 /**
  * Comparison: the same product screen in four looks, after paste and before limits.
@@ -15,6 +11,8 @@ import {
  * as Glass, Mist, Press, Maison, because a look is type+shape+density+color
  * together. Copy+pills first on a phone, because the first control must
  * stay reachable. No identity form here: the dock owns customization.
+ * No extra links row under the specimen, because the mockup section ends
+ * at the caption and those destinations already live elsewhere.
  */
 export function HomeIdentitiesSection() {
   return (
@@ -25,7 +23,6 @@ export function HomeIdentitiesSection() {
       id="identities"
       aria-labelledby="identities-heading"
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack id="use-cases" gap={HOME_SECTION_CONTENT_GAP} data-scroll-anchor="">
