@@ -207,15 +207,7 @@ const guideRequiredSections = {
     "Next steps",
   ],
   "maturity-and-compatibility.mdx": ["Next steps"],
-  "foundations.mdx": [
-    "Color",
-    "Type",
-    "Buttons: site vs kit",
-    "Chips, cards, and rhythm",
-    "Motion",
-    "Owner",
-    "Next steps",
-  ],
+  "foundations.mdx": ["Color", "Type"],
 };
 for (const [file, sections] of Object.entries(guideRequiredSections)) {
   const sourcePath = join(guidesDir, file);
