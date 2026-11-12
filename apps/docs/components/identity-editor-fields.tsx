@@ -33,6 +33,30 @@ const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
 /** `H S% L%` triplets, the format the color tokens use. */
 const HSL_TRIPLET = /^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%$/;
 
+type TokenFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  tokens: IdentityTokens;
+  tokenKey: string;
+  scheme: "light" | "dark";
+  onChange: (value: string) => void;
+  swatch?: boolean;
+};
+
+function TokenFieldSwatch({ draft }: { draft: string }) {
+  const color = HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
+  return (
+    <svg
+      aria-hidden="true"
+      data-token-swatch=""
+      className="size-control-height shrink-0 rounded-md border border-border"
+    >
+      <rect width="100%" height="100%" fill={color ?? "none"} />
+    </svg>
+  );
+}
+
 function TokenField({
   id,
   label,
@@ -42,19 +66,9 @@ function TokenField({
   scheme,
   onChange,
   swatch,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  tokens: IdentityTokens;
-  tokenKey: string;
-  scheme: "light" | "dark";
-  onChange: (value: string) => void;
-  swatch?: boolean;
-}) {
+}: TokenFieldProps) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
-  const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
   const next = isLightKey(tokenKey)
     ? { ...tokens, [scheme]: { ...tokens[scheme], [tokenKey]: draft } }
     : { ...tokens, [tokenKey]: draft };
@@ -65,15 +79,7 @@ function TokenField({
     <Field className="content-shrink" data-invalid={invalid ? true : undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap="sm" className="content-shrink">
-        {swatch ? (
-          <svg
-            aria-hidden="true"
-            data-token-swatch=""
-            className="size-control-height shrink-0 rounded-md border border-border"
-          >
-            <rect width="100%" height="100%" fill={color ?? "none"} />
-          </svg>
-        ) : null}
+        {swatch ? <TokenFieldSwatch draft={draft} /> : null}
         <Input
           id={id}
           value={draft}

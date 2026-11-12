@@ -838,7 +838,11 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   assert.equal(raw.version, 1);
   assert.ok(Array.isArray(raw.issues));
   assert.ok(Array.isArray(raw.pullRequests));
-  assert.equal("reviews" in raw, false);
+  assert.equal("reviews" in raw, true);
+  assert.ok(Array.isArray(raw.reviews));
+  assert.equal(raw.reviews.length, 1);
+  assert.equal(raw.reviews[0]?.run?.run_id, "20261111T065452Z-bc07a1a9");
+  assert.equal(raw.reviews[0]?.run?.issue, 108);
   const parsed = parsePublicReviewSnapshot(raw);
   assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
   assert.equal(Array.isArray(parsed.value), false);
@@ -1473,7 +1477,7 @@ test("issues views drop the inline preview form and keep the shared frame", () =
 
 test("issue pages use generateStaticParams; review pages redirect", () => {
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
-  const issueRun = readFileSync(join(issuesAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
   const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [issuePage, issueRun, unlinked, unlinkedRun]) {
@@ -1497,7 +1501,7 @@ test("not-found segments use per-tree copy through one shared body", () => {
   const issue = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
   assert.match(issue, /metadata\.missing/);
   assert.match(issue, /issue\.missing/);
-  const run = readFileSync(join(issuesAppRoot, "[n]/runs/not-found.tsx"), "utf8");
+  const run = readFileSync(join(issuesRunAppRoot, "[n]/runs/not-found.tsx"), "utf8");
   assert.match(run, /run\.missing/);
   const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
   assert.match(unlinked, /unlinked\.missing/);
@@ -1527,7 +1531,7 @@ test("list, issue, unlinked, and run views show the sample notice only when flag
 test("found /issues pages pass issuesIndexRobots", () => {
   const list = readFileSync(join(issuesAppRoot, "page.tsx"), "utf8");
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
-  const issueRun = readFileSync(join(issuesAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
   const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [list, issuePage, issueRun, unlinked, unlinkedRun]) {
@@ -1776,7 +1780,9 @@ test("a live row with issue 108 lists that issue and redirects the PR to it", as
     ),
   );
   const run = await port.getRun(108, "run-71");
-  assert.equal(run?.liveUrl, HOSTED_LIVE_URL);
+  assert.ok(run && "items" in run);
+  assert.equal(run.run.run_id, "run-71");
+  assert.equal(run.run.live_url, HOSTED_LIVE_URL);
   assert.deepEqual(await port.listUnlinkedPullRequests(), []);
   assert.equal(await port.isPublicStandIn(), false);
 });
@@ -2236,9 +2242,13 @@ test("share URL merge keeps appearance query and hash together", () => {
 });
 
 test("appearance share write keeps the selection hash", () => {
-  const src = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
+  const src = readFileSync(join(reviewsRoot, "ui", "review-console-appearance.tsx"), "utf8");
   assert.match(src, /mergeReviewShareUrl/);
   assert.match(src, /window\.location\.hash/);
+  assert.doesNotMatch(
+    readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8"),
+    /mergeReviewShareUrl/,
+  );
 });
 
 test("live-backed issue runs mount AgentConsole; index-only runs still link out", () => {
@@ -2390,7 +2400,10 @@ test("optional reviews on an index snapshot feed getRun for that run id", async 
   assert.equal(liveRun.run.run_id, recordedId);
   const indexRun = await port.getRun(108, "run-108-impl");
   assert.equal(indexRun && "runId" in indexRun ? indexRun.runId : null, "run-108-impl");
-  assert.equal(indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null, "https://example.test/live/run-108-impl");
+  assert.equal(
+    indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null,
+    `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
+  );
   assert.equal(await port.getRun(99, recordedId), null);
   assert.equal(await port.getRun(133, recordedId), null);
 });

@@ -9,11 +9,16 @@ export const SHARED_OWNER = "docs";
 export const REQUIRED_GLOBS = [
   "ui/home/**",
   "ui/catalog/**",
-  "ui/not-found/**",
   "ui/docs-main-content.tsx",
 ];
 
-export const REQUIRED_EDGES = [{ from: "ui/home/home-hero.tsx", to: "features/reviews/compose.ts" }];
+// Current cross-feature debt (guides still import feature-local UI). Shrink-only.
+export const REQUIRED_EDGES = [
+  { from: "prose/guides/foundations.mdx", to: "features/docs/guides/foundations/ui/foundations-color.tsx" },
+  { from: "prose/guides/foundations.mdx", to: "features/docs/guides/foundations/ui/foundations-hero.tsx" },
+  { from: "prose/guides/foundations.mdx", to: "features/docs/guides/foundations/ui/foundations-type.tsx" },
+  { from: "prose/guides/zedkit-and-shadcn.mdx", to: "features/docs/guides/zedkit-and-shadcn/ui/zedkit-shadcn-faq.tsx" },
+];
 
 const GRAPH_DIRS = ["app", "features", "components", "lib", "ui"];
 const SOURCE_EXT = new Set([".ts", ".tsx", ".mjs", ".js", ".jsx", ".mdx"]);
