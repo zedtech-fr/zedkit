@@ -89,6 +89,17 @@ test("catalog header keeps search and GitHub text, not theme or version", async 
   ).toBeVisible();
   await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
   await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
+  const heights = await page.evaluate(() => {
+    const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
+    const nav = document.querySelector("#nd-nav nav");
+    const github =
+      [...(nav?.querySelectorAll("a") ?? [])].find((a) => (a.textContent ?? "").includes("GitHub")) ?? null;
+    return {
+      search: measure(nav?.querySelector("[data-search]") ?? null),
+      github: measure(github),
+    };
+  });
+  expect(Math.abs(heights.search - heights.github)).toBeLessThanOrEqual(2);
 });
 
 for (const theme of ["light", "dark"] as const) {

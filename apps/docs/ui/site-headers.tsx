@@ -3,10 +3,6 @@
 import type { ReactNode } from "react";
 import { Header } from "fumadocs-ui/layouts/home/slots/header";
 import { usePathname } from "next/navigation";
-import {
-  featuredPackageReleasesUrl,
-  featuredPackageVersion,
-} from "@/content/gallery";
 import { cn } from "@zedtech/zedkit-ui";
 import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
@@ -33,7 +29,7 @@ function MarketingDesktopNav({
       <div>
         <nav
           aria-label={siteChromeCopy.nav.siteNavigation}
-          className="mx-auto flex w-full max-w-(--fd-layout-width) items-center gap-stack-lg px-page-gutter"
+          className="mx-auto flex w-full max-w-(--fd-layout-width) items-center px-page-gutter"
         >
           <DocsAppLink
             href="/"
@@ -42,7 +38,7 @@ function MarketingDesktopNav({
           >
             <SiteBrand />
           </DocsAppLink>
-          <ul className="flex list-none items-center gap-stack-lg flush">
+          <ul className="flex list-none items-center flush">
             {sitePrimaryNavLinks().map((link) => {
               const active = isSiteNavLinkActive(pathname, link);
               return (
@@ -61,7 +57,7 @@ function MarketingDesktopNav({
               );
             })}
           </ul>
-          <div className="ms-auto flex items-center gap-stack-md">
+          <div data-header-actions="" className="ms-auto flex items-center">
             {actions}
           </div>
         </nav>
@@ -116,11 +112,7 @@ export function MarketingSiteHeader() {
   const catalog = isCatalogPath(pathname);
   return (
     <>
-      <MobileHeader
-        mode="home"
-        version={featuredPackageVersion}
-        releasesHref={featuredPackageReleasesUrl}
-      />
+      <MobileHeader mode="home" />
       {home ? (
         <HomeDesktopHeader />
       ) : catalog ? (
@@ -137,9 +129,7 @@ export function DocsSiteHeader() {
   return (
     <MobileHeader
       mode="docs"
-      version={featuredPackageVersion}
-      releasesHref={featuredPackageReleasesUrl}
-      className="sticky top-(--fd-docs-row-1) flex h-phone-bar items-center justify-between gap-stack-sm border-b px-control-tight backdrop-blur-sm [grid-area:header] md:hidden"
+      className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
     />
   );
 }

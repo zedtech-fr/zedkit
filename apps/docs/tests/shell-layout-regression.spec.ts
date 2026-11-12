@@ -11,13 +11,30 @@ for (const width of DESKTOP_WIDTHS) {
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const search = document.querySelector("#nd-nav [data-search], #nd-nav [data-search-full]");
+      const search = document.querySelector(
+        "#nd-nav [data-search], #nd-nav [data-search-full], #nd-nav button[class*='max-w']",
+      );
       const github = [...document.querySelectorAll("#nd-nav a")].find((a) =>
         (a.textContent ?? "").includes("GitHub"),
       );
       if (!search || !github) return null;
+      const githubLeft = github.getBoundingClientRect().left;
+      const nodes = [search, ...search.querySelectorAll("*")];
+      let maxRight = Number.NEGATIVE_INFINITY;
+      const offenders: { tag: string; right: number }[] = [];
+      for (const node of nodes) {
+        const r = node.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        maxRight = Math.max(maxRight, r.right);
+        if (r.right > githubLeft + 0.5) {
+          offenders.push({ tag: node.tagName.toLowerCase(), right: r.right });
+        }
+      }
       return {
-        gap: github.getBoundingClientRect().left - search.getBoundingClientRect().right,
+        gap: githubLeft - maxRight,
+        offenders,
+        githubLeft,
+        maxRight,
         searchHeight: search.getBoundingClientRect().height,
         themeToggle: document.querySelector("#nd-nav [data-theme-toggle]"),
       };
@@ -25,6 +42,7 @@ for (const width of DESKTOP_WIDTHS) {
     expect(layout).not.toBeNull();
     expect(layout!.searchHeight).toBeGreaterThan(0);
     expect(layout!.themeToggle).toBeNull();
+    expect(layout!.offenders).toEqual([]);
     expect(layout!.gap).toBeGreaterThanOrEqual(8);
   });
 

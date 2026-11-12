@@ -8,6 +8,7 @@ import {
   isCatalogPath,
   isHomePath,
   isSiteNavLinkActive,
+  siteHeaderChrome,
   siteHeaderLinks,
   sitePrimaryNavLinks,
 } from "../lib/site-nav-data.ts";
@@ -83,6 +84,62 @@ test("isHomePath is only the site root", () => {
   assert.equal(isHomePath("/catalog"), false);
   assert.equal(isHomePath("/docs"), false);
   assert.equal(isHomePath("/docs/getting-started"), false);
+});
+
+const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];
+
+test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav disclosure never", () => {
+  assert.match(source, /GitHub is always mounted/);
+  assert.match(source, /Theme, version, and a site-nav disclosure are never on/);
+  assert.doesNotMatch(source, /github:\s*true|theme:\s*false|siteNavDisclosure:\s*false/);
+});
+
+test("home phone chrome exposes the four links, GitHub, and Get started — no search, theme, version, or site-nav disclosure", () => {
+  const chrome = siteHeaderChrome("/", "home");
+  assert.deepEqual(
+    chrome.links.map((link) => ({ text: link.text, href: link.href })),
+    [
+      { text: "AI", href: "/docs/ai/setup" },
+      { text: "UI", href: "/docs/foundations" },
+      { text: "Docs", href: "/docs" },
+      { text: "Catalog", href: "/catalog" },
+    ],
+  );
+  assert.equal(chrome.search, false);
+  assert.equal(chrome.getStarted, true);
+  assert.equal(chrome.docsTreeOpener, false);
+  assert.deepEqual(Object.keys(chrome).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
+  assert.equal(
+    chrome.links.some((link) => PRIMARY_LINK_TEXTS.includes(link.text) === false),
+    false,
+  );
+  assert.equal(
+    chrome.links.some((link) => /reviews|issues/i.test(link.text)),
+    false,
+  );
+});
+
+test("catalog and docs phone chrome keep search and GitHub; docs keeps the page-tree opener", () => {
+  const catalog = siteHeaderChrome("/catalog", "home");
+  assert.deepEqual(
+    catalog.links.map((link) => link.text),
+    PRIMARY_LINK_TEXTS,
+  );
+  assert.equal(catalog.search, true);
+  assert.equal(catalog.getStarted, false);
+  assert.equal(catalog.docsTreeOpener, false);
+  assert.deepEqual(Object.keys(catalog).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
+
+  const docs = siteHeaderChrome("/docs", "docs");
+  assert.equal(docs.search, true);
+  assert.equal(docs.getStarted, false);
+  assert.equal(docs.docsTreeOpener, true);
+  assert.deepEqual(Object.keys(docs).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
+
+  const foundations = siteHeaderChrome("/docs/foundations", "docs");
+  assert.equal(foundations.search, true);
+  assert.equal(foundations.getStarted, false);
+  assert.equal(foundations.docsTreeOpener, true);
 });
 
 test("isCatalogPath is only the catalog route", () => {

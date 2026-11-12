@@ -6,6 +6,8 @@
  */
 :root[data-identity] {
   --zk-site-header-height: 3.5rem;
+  /* Two 44px rows + 24px wrap gap, plus a few px of border (~112px laid out). */
+  --zk-site-header-height-wrapped: 7.5rem;
   --zk-header-height: var(--zk-site-header-height);
 }
 :root[data-identity="glass"] {
@@ -24,14 +26,18 @@
   backdrop-filter: none;
 }
 
-/* Header: fixed compact height, nav aligned to the content width. */
+/* Header: fixed compact height on desktop; phone bar may wrap. */
 #nd-nav,
 #nd-nav > div,
-#nd-nav nav,
-#nd-mobile-nav {
+#nd-nav nav {
   height: var(--zk-site-header-height);
   min-height: 0;
 }
+#nd-mobile-nav {
+  height: auto;
+  min-height: var(--zk-site-header-height);
+}
+/* Fumadocs inner bar clips overflowing children; wrapping header links must stay visible. */
 #nd-nav,
 #nd-nav > div {
   overflow: visible;
@@ -75,9 +81,20 @@
   min-width: var(--spacing-control-height-sm);
 }
 
-/* Scroll targets clear the compact header. */
+/* Scroll targets clear the compact header (desktop) or the wrapped phone bar. */
 #nd-home-layout section[id] {
   scroll-margin-top: calc(var(--zk-header-height) + 1rem);
+}
+[data-scroll-anchor] {
+  scroll-margin-top: max(calc(var(--spacing) * 24), calc(var(--zk-header-height) + 1rem));
+}
+@media (width < 48rem) {
+  :root[data-identity] {
+    --zk-header-height: var(--zk-site-header-height-wrapped);
+  }
+  #nd-docs-layout {
+    --zk-docs-scroll-offset: calc(var(--fd-docs-row-1, 0px) + var(--zk-site-header-height-wrapped));
+  }
 }
 
 /*
@@ -143,23 +160,29 @@
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
   box-shadow: var(--zk-shadow-sm);
 }
-/* Home and Catalog mockup headers: text links, not glass chips. Get started keeps the site-action look. */
-:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav {
+/* Home/Catalog mockup headers + phone: text links, mockup 24px/16px gaps (not identity stack gaps). */
+:root[data-identity] :is(#nd-nav[data-home-header] nav, #nd-nav[data-catalog-header] nav, #nd-mobile-nav, #nd-mobile-nav nav ul) {
   gap: 1.5rem;
 }
-:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav ul {
+:root[data-identity] :is(#nd-nav[data-home-header] nav ul, #nd-nav[data-catalog-header] nav ul) {
   gap: 1.5rem;
 }
-:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav .ms-auto {
+:root[data-identity] :is(#nd-nav[data-home-header], #nd-nav[data-catalog-header], #nd-mobile-nav) [data-header-actions] {
   gap: 1rem;
 }
-:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav a:not([data-slot="button"]) {
+:root[data-identity] :is(#nd-nav[data-home-header] nav, #nd-nav[data-catalog-header] nav, #nd-mobile-nav) a:not([data-slot="button"]) {
   border-radius: 0;
-  padding-inline: 0;
   background: none;
   border: none;
   box-shadow: none;
   background-image: none;
+}
+#nd-nav:is([data-home-header], [data-catalog-header]) nav a:not([data-slot="button"]) {
+  padding-inline: 0;
+}
+#nd-mobile-nav nav a:not([data-slot="button"]) {
+  /* Transparent hit padding so short labels (AI/UI) clear the 24px pointer floor. */
+  padding-inline: calc(var(--spacing) * 1.5);
 }
 
 /* The hero example in Glass: the same calmer unit as the site, so its pages share one frame height. */

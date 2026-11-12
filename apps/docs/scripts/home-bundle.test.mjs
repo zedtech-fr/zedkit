@@ -313,18 +313,51 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
   const siteHeaders = readFileSync(join(app, "ui/site-headers.tsx"), "utf8");
   const actions = readFileSync(join(app, "ui/home-header-actions.tsx"), "utf8");
-  const trigger = readFileSync(join(app, "ui/mobile-search-trigger.tsx"), "utf8");
-  assert.match(header, /MobileSearchTrigger/);
-  assert.match(header, /isHomePath/);
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  const layout = readFileSync(join(app, "ui/site-layout.tsx"), "utf8");
+  assert.match(header, /siteHeaderChrome/);
+  assert.match(header, /id="nd-mobile-nav"/);
+  assert.match(header, /aria-label=\{siteChromeCopy\.nav\.siteNavigation\}/);
+  assert.match(header, /flex-wrap/);
+  assert.match(header, /min-h-phone-bar/);
+  assert.match(header, /px-page-gutter/);
+  assert.match(header, /ms-auto/);
+  assert.match(header, /SiteFullSearchTrigger/);
+  assert.match(header, /HomeGitHubLink/);
+  assert.doesNotMatch(header, /chrome\.github/);
+  assert.match(header, /HomeGetStartedAction/);
+  assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
+  assert.match(header, /data-header-actions/);
+  assert.match(header, /gap-icon/);
+  assert.match(header, /<ul className=/);
+  assert.doesNotMatch(header, /MobileSearchTrigger/);
+  assert.doesNotMatch(header, /HomeMenuButton|SiteNavDrawer|ThemeButton|KitVersionLabel/);
   assert.doesNotMatch(header, /SearchPill/);
   assert.doesNotMatch(header, /DocsIdentityPicker/);
   assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
   assert.match(siteHeaders, /isHomePath/);
+  assert.match(siteHeaders, /min-h-phone-bar/);
+  assert.match(siteHeaders, /data-header-actions/);
   assert.match(actions, /#get-started/);
   assert.match(actions, /data-site-action/);
   assert.match(actions, /SITE_GITHUB_URL/);
   assert.match(actions, /OffPathLink/);
   assert.doesNotMatch(actions, /<GithubIcon|aria-label=\{siteChromeCopy\.nav\.github\}/);
   assert.doesNotMatch(actions, /target="_blank"/);
-  assert.doesNotMatch(trigger, /fumadocs-core\/search\/client/);
+  assert.match(
+    compact,
+    /#nd-mobile-nav\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*var\(--zk-site-header-height\)/,
+  );
+  assert.match(
+    compact,
+    /#nd-nav,\s*\n#nd-nav > div,\s*\n#nd-nav nav\s*\{[^}]*height:\s*var\(--zk-site-header-height\)/,
+  );
+  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
+  assert.match(compact, /\[data-header-actions\]/);
+  assert.match(compact, /width < 48rem/);
+  assert.match(compact, /--zk-docs-scroll-offset:\s*calc\(var\(--fd-docs-row-1, 0px\) \+ var\(--zk-site-header-height-wrapped\)\)/);
+  const globals = readFileSync(join(app, "app/globals.css"), "utf8");
+  assert.match(globals, /#nd-sidebar\s*\{[^}]*background-color:\s*hsl\(var\(--sidebar\)/);
+  assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
+  assert.doesNotMatch(layout, /KitVersionLabel/);
 });
