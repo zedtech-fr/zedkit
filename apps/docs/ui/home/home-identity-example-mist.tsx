@@ -2,13 +2,9 @@
 
 import { useId, useState } from "react";
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
   Badge,
   Button,
   Card,
-  ConfirmDialog,
   CardContent,
   CardHeader,
   Heading,
@@ -17,13 +13,12 @@ import {
 } from "@zedtech/zedkit-ui";
 import { homeIdentityExamplesCopy } from "@/ui/home/home-identity-examples-copy";
 import { HomeIdentityExampleMistControls } from "@/ui/home/home-identity-example-mist-controls";
-import { HomeIdentityExampleMistMembers } from "@/ui/home/home-identity-example-mist-members";
 
 const copy = homeIdentityExamplesCopy.mist;
 
-type Settings = { workspace: string; region: string; alerts: boolean };
+type Settings = { workspace: string; region: string };
 
-const INITIAL: Settings = { workspace: copy.workspaceValue, region: copy.regionValue, alerts: true };
+const INITIAL: Settings = { workspace: copy.workspaceValue, region: copy.regionValue };
 
 /** Editable settings with a saved baseline: Save keeps them, Discard returns to the last save. */
 function useProjectSettings() {
@@ -49,7 +44,7 @@ function useProjectSettings() {
   };
 }
 
-/** Save is the one primary action; Discard is its quiet pair. Deleting lives apart (see `DeleteProject`). */
+/** Save is the one primary action; Discard is its quiet pair. */
 function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: () => void }) {
   return (
     <Stack direction="horizontal" gap="sm" className="flex-wrap">
@@ -63,37 +58,10 @@ function ProjectActions({ onSave, onDiscard }: { onSave: () => void; onDiscard: 
   );
 }
 
-/** The destructive action sits below a divider, outlined, and confirms before it does anything. */
-function DeleteProject({ deleted, onDeleted }: { deleted: boolean; onDeleted: (value: boolean) => void }) {
-  return (
-    <div className="border-t border-border content-offset">
-      {deleted ? (
-        <Button type="button" variant="outline" onClick={() => onDeleted(false)}>
-          {copy.restore}
-        </Button>
-      ) : (
-        <ConfirmDialog
-          trigger={
-            <Button type="button" variant="outline" className="text-destructive">
-              {copy.destroy}
-            </Button>
-          }
-          title={copy.deleteTitle}
-          description={copy.deleteDescription}
-          confirmLabel={copy.deleteConfirm}
-          onConfirm={() => onDeleted(true)}
-        />
-      )}
-    </div>
-  );
-}
-
 export function HomeIdentityExampleMist() {
   const workspaceId = useId();
   const regionId = useId();
-  const alertsId = useId();
   const settings = useProjectSettings();
-  const [deleted, setDeleted] = useState(false);
 
   return (
     <Card className="content-shrink">
@@ -105,7 +73,7 @@ export function HomeIdentityExampleMist() {
             </Heading>
             <Text variant="muted">{copy.description}</Text>
           </Stack>
-          <Badge variant={deleted ? "secondary" : "success"}>{deleted ? copy.deleted : copy.status}</Badge>
+          <Badge variant="success">{copy.status}</Badge>
         </Stack>
       </CardHeader>
       <CardContent>
@@ -113,24 +81,15 @@ export function HomeIdentityExampleMist() {
           <HomeIdentityExampleMistControls
             workspaceId={workspaceId}
             regionId={regionId}
-            alertsId={alertsId}
             workspace={settings.current.workspace}
             region={settings.current.region}
-            alerts={settings.current.alerts}
             onWorkspace={settings.edit("workspace")}
             onRegion={settings.edit("region")}
-            onAlerts={settings.edit("alerts")}
           />
           <ProjectActions onSave={settings.save} onDiscard={settings.discard} />
           <Text variant="muted" role="status" data-home-identity-status="">
-            {deleted ? copy.deletedMessage : settings.message}
+            {settings.message}
           </Text>
-          <HomeIdentityExampleMistMembers />
-          <Alert>
-            <AlertTitle>{copy.alertTitle}</AlertTitle>
-            <AlertDescription>{copy.alertBody}</AlertDescription>
-          </Alert>
-          <DeleteProject deleted={deleted} onDeleted={setDeleted} />
         </Stack>
       </CardContent>
     </Card>
