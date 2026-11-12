@@ -19,6 +19,7 @@ export const foundationsSwatchAllowlist = [
 
 export type FoundationsSwatchToken = (typeof foundationsSwatchAllowlist)[number];
 
+/** Four chrome swatches (#73 vs mockup eight: Band/Hairline/Body-text/Ink/Action cut, no hex). */
 export const foundationsSwatches = [
   { id: "page", tokenClass: "bg-background", scope: "page" },
   { id: "text", tokenClass: "bg-foreground", scope: "page" },

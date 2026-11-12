@@ -10,21 +10,23 @@ import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { isCatalogPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
+import { isCatalogPath, isFoundationsPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
 function MarketingDesktopNav({
   mark,
   actions,
+  className,
 }: {
   mark: "home" | "catalog";
   actions: ReactNode;
+  className?: string;
 }) {
   const pathname = usePathname();
   return (
     <header
       id="nd-nav"
       {...(mark === "home" ? { "data-home-header": "" } : { "data-catalog-header": "" })}
-      className="sticky pin-top z-header max-md:hidden"
+      className={cn("sticky pin-top z-header max-md:hidden", className)}
     >
       <div>
         <nav
@@ -105,6 +107,29 @@ function CatalogDesktopHeader() {
   );
 }
 
+/**
+ * Customer personas: reading `/docs/foundations` as a marketing-style guide, not a docs article.
+ * UI decisions: home-style bar plus Search ⌘K; no version, theme, sidebar, or TOC.
+ * Search is on this bar because the 7-section guide has no in-page nav (#73); the quiet-glass mockup has zero search hits.
+ * Reuses mark="home" so the bar shares home chrome CSS (`data-home-header`); it is not the home route.
+ * Desktop Get started is the home-style bar; phone follows siteHeaderChrome (`getStarted: home` only).
+ */
+function FoundationsDesktopHeader() {
+  return (
+    <MarketingDesktopNav
+      mark="home"
+      className="[grid-area:header]"
+      actions={
+        <>
+          <SiteFullSearchTrigger />
+          <HomeGitHubLink />
+          <HomeGetStartedAction />
+        </>
+      }
+    />
+  );
+}
+
 /** Marketing header slot: phone header below md. Home and Catalog use the mockup desktop chrome; other routes keep fumadocs Header. */
 export function MarketingSiteHeader() {
   const pathname = usePathname();
@@ -124,12 +149,16 @@ export function MarketingSiteHeader() {
   );
 }
 
-/** Docs layout phone header (desktop docs chrome has no top bar). */
+/** Docs layout phone header (desktop docs chrome has no top bar, except foundations). */
 export function DocsSiteHeader() {
+  const foundations = isFoundationsPath(usePathname());
   return (
-    <MobileHeader
-      mode="docs"
-      className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
-    />
+    <>
+      <MobileHeader
+        mode="docs"
+        className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
+      />
+      {foundations ? <FoundationsDesktopHeader /> : null}
+    </>
   );
 }

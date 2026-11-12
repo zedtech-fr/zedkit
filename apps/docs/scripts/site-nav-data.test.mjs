@@ -6,6 +6,7 @@ import test from "node:test";
 
 import {
   isCatalogPath,
+  isFoundationsPath,
   isHomePath,
   isSiteNavLinkActive,
   siteHeaderChrome,
@@ -86,6 +87,16 @@ test("isHomePath is only the site root", () => {
   assert.equal(isHomePath("/docs/getting-started"), false);
 });
 
+test("isFoundationsPath is only the foundations guide URL", () => {
+  assert.equal(isFoundationsPath("/docs/foundations"), true);
+  assert.equal(isFoundationsPath("/docs/foundations/"), true);
+  assert.equal(isFoundationsPath(""), false);
+  assert.equal(isFoundationsPath("/"), false);
+  assert.equal(isFoundationsPath("/docs"), false);
+  assert.equal(isFoundationsPath("/docs/foundations/extra"), false);
+  assert.equal(isFoundationsPath("/catalog"), false);
+});
+
 const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];
 
 test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav disclosure never", () => {
@@ -139,7 +150,7 @@ test("catalog and docs phone chrome keep search and GitHub; docs keeps the page-
   const foundations = siteHeaderChrome("/docs/foundations", "docs");
   assert.equal(foundations.search, true);
   assert.equal(foundations.getStarted, false);
-  assert.equal(foundations.docsTreeOpener, true);
+  assert.equal(foundations.docsTreeOpener, false);
 });
 
 test("isCatalogPath is only the catalog route", () => {

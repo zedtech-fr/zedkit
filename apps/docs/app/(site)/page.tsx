@@ -5,6 +5,7 @@ import {
 } from "@zedtech/zedkit-seo";
 
 import { JsonLd } from "@/components/json-ld";
+import { uiGalleryStats } from "@/content/gallery";
 import { PUBLIC_SITE_URL, homePage, pageUrl } from "@/lib/site";
 import { HomeView } from "@/ui/home/home-view";
 
@@ -34,7 +35,7 @@ export default function Home() {
       <JsonLd data={jsonLd} />
       <JsonLd data={organizationJsonLd} />
       <JsonLd data={softwareJsonLd} />
-      <HomeView />
+      <HomeView uiGalleryStats={uiGalleryStats} />
     </>
   );
 }

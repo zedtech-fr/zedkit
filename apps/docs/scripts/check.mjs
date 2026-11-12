@@ -208,8 +208,7 @@ const guideRequiredSections = {
   ],
   "maturity-and-compatibility.mdx": ["Next steps"],
   "foundations.mdx": [
-    "Who this is for",
-    "Color and surfaces",
+    "Color",
     "Type",
     "Buttons: site vs kit",
     "Chips, cards, and rhythm",

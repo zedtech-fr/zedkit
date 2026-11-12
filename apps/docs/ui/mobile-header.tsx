@@ -32,7 +32,7 @@ function DocsMenuButton() {
 /**
  * Phone header (< md): wordmark, wrapping primary links, then ms-auto actions.
  * Home: GitHub text + Get started, no search. Else: Search ⌘K + GitHub text.
- * Docs mode keeps the page-tree opener. Never theme, version, or a site-nav disclosure.
+ * Docs mode keeps the page-tree opener except foundations. Never theme, version, or a site-nav disclosure.
  */
 export function MobileHeader({
   mode,

@@ -1,10 +1,14 @@
 /** English copy for the foundations specimen page. Keys only; no markup. */
 export const foundationsCopy = {
-  who: "Visitors reading the docs, and anyone about to restyle the site frame (header, sidebar, prose, home, preview frames). Kit specimens keep their own look.",
+  hero: {
+    title: "Site foundations",
+    intro:
+      "White pages, zinc text, black actions. Color lives in panels, and glass sits on top of them.",
+  },
   rules: {
     color:
-      "Page fill is a neutral reading surface. Body text is zinc-neutral — indigo and violet are not page fill or body text. Site actions use stock near-black, not Glass primary, unless they sit inside a high-value panel. Indigo and violet appear inside panels and as small chips.",
-    type: "One docs title per page (the docs H1, 2rem — not the marketing display). Prose is 15px at 64–72ch. Body is 14px. Dense UI has a 13px floor. Phone controls use 44px targets.",
+      "Indigo and violet are the kit's own Glass tokens. On the site they appear inside panels and as small chips, never as page background or body text.",
+    type: "Display is the site title. Docs articles stay on the docs H1. Prose is 15px at 64–72ch. Body is 14px. Dense UI has a 13px floor.",
     buttons:
       "Site chrome buttons are near-black by default. Apply .site-action when restyling those actions. Kit Button follows the specimen identity, including Glass indigo. Copy that pattern into your app; do not copy it onto this site's frame.",
     chips:
@@ -19,7 +23,6 @@ export const foundationsCopy = {
     text: "Text",
     indigo: "Indigo",
     violet: "Violet",
-    siteAction: "Site action",
     panelTitle: "Glass goes on a panel",
     panelBody: "Never on the white page. It needs color behind it to show.",
   },
