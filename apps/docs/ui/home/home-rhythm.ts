@@ -42,7 +42,7 @@ export const HOME_LIMITS_GRID =
 export const HOME_PASTE_TIMELINE_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush sm:grid-pair xl:grid-quad";
 /**
- * Paste "what lands" listing: one column until `lg`, then UI | AI.
+ * Paste file listing: one column until `lg`, then AI | UI.
  * Gap is the hairline divider; padding lives on each column.
  */
 export const HOME_PASTE_LANDS_GRID =

@@ -5,8 +5,6 @@ export const homePasteCopy = {
     description:
       "Name the kits. The agent follows the map, installs them in order and validates once at the end.",
   },
-  fullSteps: "Full install steps",
-  fullStepsHref: "/docs/getting-started#install-or-copy",
   timeline: [
     { label: "2 seconds", body: "The agent has the kits you named and starts the map." },
     {
@@ -19,27 +17,26 @@ export const homePasteCopy = {
     },
     { label: "Any time after", body: "Run the prompt again to add a kit. It is safe to repeat." },
   ],
-  landsHeading: "What lands",
-  nestLands: "Nest (API) lands with UI: the package pin and the boot file.",
+  skillsAgents: (skills: number, agents: number) => `${skills} · agents/ ${agents}`,
   lands: {
-    ui: {
-      kit: "UI",
-      when: "during the run",
-      files: [
-        { path: "package.json", note: "the UI package" },
-        { path: "globals.css", note: "kit styles" },
-        { path: "layout.tsx", note: "Glass on the document" },
-        { path: ".agents/design.md", note: "which components to use" },
-      ],
-    },
     ai: {
       kit: "AI",
       when: "after lunch",
       files: [
         { path: "AGENTS.md" },
         { path: ".agents/product.md", note: "what the product does" },
-        { path: ".agents/domain/", note: "per-domain notes" },
-        { path: ".agents/skills/", note: "the skills to follow" },
+        { path: ".agents/domain/tasks.md", note: "its rules" },
+        { path: ".agents/skills/" },
+      ],
+    },
+    ui: {
+      kit: "UI",
+      when: "same run",
+      files: [
+        { path: "package.json", note: "@zedtech/zedkit-ui" },
+        { path: "src/app/globals.css", note: "kit styles" },
+        { path: "src/app/layout.tsx", note: 'data-identity="glass"', accent: true },
+        { path: ".agents/design.md", note: "which components to use" },
       ],
     },
   },

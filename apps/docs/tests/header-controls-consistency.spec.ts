@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
-import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
 import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
 
 const SHOTS = process.env.HOME_LINK_SHOTS;
@@ -29,26 +28,9 @@ for (const theme of ["light", "dark"] as const) {
       }
 
       await page.locator("#get-started").scrollIntoViewIfNeeded();
-      const fullSteps = page.locator("a[data-home-full-steps]");
-      await expect(fullSteps).toBeVisible();
-      await expect(fullSteps).toHaveAttribute("href", homePasteCopy.fullStepsHref);
-      const padding = await fullSteps.evaluate((el) => {
-        const style = getComputedStyle(el);
-        return {
-          left: parseFloat(style.paddingLeft),
-          right: parseFloat(style.paddingRight),
-          top: parseFloat(style.paddingTop),
-          bottom: parseFloat(style.paddingBottom),
-          cursor: style.cursor,
-        };
-      });
-      expect(padding.left).toBeGreaterThanOrEqual(10);
-      expect(padding.right).toBeGreaterThanOrEqual(10);
-      expect(padding.top).toBeGreaterThanOrEqual(4);
-      expect(padding.bottom).toBeGreaterThanOrEqual(4);
-      expect(padding.cursor).not.toBe("default");
-
-      await fullSteps.screenshot({ path: shotPath(`consistency-after-full-steps-${name}-${theme}.png`) });
+      await expect(page.locator("#get-started")).toBeVisible();
+      await expect(page.locator("a[data-home-full-steps]")).toHaveCount(0);
+      await expect(page.locator("#paste [data-home-paste-lands]")).toBeVisible();
     });
   }
 }
