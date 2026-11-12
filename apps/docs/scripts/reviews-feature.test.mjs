@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   DEFAULT_REVIEW_APPEARANCE,
+  compactPreviewSpacing,
   hasReviewAppearanceQuery,
   parseReviewAppearance,
   serializeReviewAppearance,
@@ -646,12 +647,42 @@ test("hasReviewAppearanceQuery is true only when an appearance key is present", 
   assert.equal(hasReviewAppearanceQuery("foo=1&density=default"), true);
 });
 
+test("a single appearance key pins the rest to codec defaults", () => {
+  assert.equal(hasReviewAppearanceQuery("identity="), true);
+  assert.deepEqual(parseReviewAppearance("identity="), DEFAULT_REVIEW_APPEARANCE);
+  assert.deepEqual(parseReviewAppearance("density=compact"), {
+    identity: "glass",
+    mode: "light",
+    density: "compact",
+  });
+});
+
+test("compactPreviewSpacing scales Nunit tokens and keeps unparsed input", () => {
+  assert.equal(compactPreviewSpacing("1rem"), "0.85rem");
+  assert.equal(compactPreviewSpacing("0.25rem"), `${0.25 * 0.85}rem`);
+  assert.equal(compactPreviewSpacing("var(--spacing)"), "var(--spacing)");
+  assert.equal(compactPreviewSpacing("1"), "1");
+});
+
+test("SNAPSHOT.md documents share-URL keys and is not an exporter field", () => {
+  const snapshot = readFileSync(join(reviewsRoot, "SNAPSHOT.md"), "utf8");
+  assert.match(snapshot, /## Share URL \(site, not exporter\)/);
+  assert.match(snapshot, /`identity`/);
+  assert.match(snapshot, /`preview`/);
+  assert.match(snapshot, /`theme`/);
+  assert.match(snapshot, /`density`/);
+  assert.doesNotMatch(snapshot, /Appearance panel/);
+});
+
 test("issues views drop the inline preview form and keep the shared frame", () => {
   const frame = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
   const list = readFileSync(join(reviewsRoot, "ui", "review-list-view.tsx"), "utf8");
   const issue = readFileSync(join(reviewsRoot, "ui", "review-pr-view.tsx"), "utf8");
   const run = readFileSync(join(reviewsRoot, "ui", "review-run-view.tsx"), "utf8");
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  const fixture = readFileSync(join(reviewsRoot, "adapters", "fixture.ts"), "utf8");
+  assert.doesNotMatch(fixture, /Appearance panel/);
+  assert.doesNotMatch(fixture, /preview look/);
   for (const source of [frame, list, issue, run]) {
     assert.doesNotMatch(source, /ReviewAppearancePanel/);
     assert.doesNotMatch(source, /Preview look/);
@@ -670,6 +701,7 @@ test("issues views drop the inline preview form and keep the shared frame", () =
   assert.match(frame, /hasReviewAppearanceQuery/);
   assert.match(frame, /identity=\{pin \? appearance\.identity : undefined\}/);
   assert.match(frame, /mode=\{pin \? appearance\.mode : undefined\}/);
+  assert.match(frame, /identityPresets\[appearance\.identity\] \?\? identityPresets\.glass/);
   assert.doesNotMatch(feature, /identity testing ground/);
   assert.doesNotMatch(feature, /render-function children/);
   assert.match(feature, /share-URL pin/);

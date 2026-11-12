@@ -17,10 +17,9 @@ export function ReviewAppearanceFrame({ children }: { children: ReactNode }) {
   }, []);
   const appearance = parseReviewAppearance(search);
   const pin = hasReviewAppearanceQuery(search);
+  const tokens = identityPresets[appearance.identity] ?? identityPresets.glass;
   const compact =
-    appearance.density === "compact"
-      ? compactPreviewSpacing(identityPresets[appearance.identity].spacing)
-      : undefined;
+    appearance.density === "compact" ? compactPreviewSpacing(tokens.spacing) : undefined;
   useEffect(() => {
     const node = scopeRef.current;
     if (!node) return;
