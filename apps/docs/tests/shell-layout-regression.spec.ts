@@ -173,7 +173,17 @@ for (const width of [1280, 1600] as const) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/", { waitUntil: "networkidle" });
     await page.waitForFunction(() => {
-      const bandIds = ["same-idea", "six-sentences", "paste", "identities", "components", "entry-points"] as const;
+      const bandIds = [
+        "same-idea",
+        "six-sentences",
+        "paste",
+        "identities",
+        "limits",
+        "manifesto",
+        "closing",
+        "components",
+        "entry-points",
+      ] as const;
       const hero = document.querySelector("[data-home-hero-band]");
       const heroReady =
         hero?.querySelector("[data-slot='container']") != null ||
@@ -200,6 +210,9 @@ for (const width of [1280, 1600] as const) {
       const sixSentences = document.getElementById("six-sentences");
       const paste = document.getElementById("paste");
       const identities = document.getElementById("identities");
+      const limits = document.getElementById("limits");
+      const manifesto = document.getElementById("manifesto");
+      const closing = document.getElementById("closing");
       const components = document.getElementById("components");
       const entryPoints = document.getElementById("entry-points");
       const boxes = [
@@ -208,6 +221,9 @@ for (const width of [1280, 1600] as const) {
         containerBox(sixSentences),
         containerBox(paste),
         containerBox(identities),
+        containerBox(limits),
+        containerBox(manifesto),
+        containerBox(closing),
         containerBox(components),
         containerBox(entryPoints),
       ];
@@ -229,7 +245,10 @@ for (const width of [1280, 1600] as const) {
         bandTop(sixSentences) - bandBottom(sameIdea),
         bandTop(paste) - bandBottom(sixSentences),
         bandTop(identities) - bandBottom(paste),
-        bandTop(components) - bandBottom(identities),
+        bandTop(limits) - bandBottom(identities),
+        bandTop(manifesto) - bandBottom(limits),
+        bandTop(closing) - bandBottom(manifesto),
+        bandTop(components) - bandBottom(closing),
         bandTop(entryPoints) - bandBottom(components),
       ];
 

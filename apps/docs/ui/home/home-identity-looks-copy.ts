@@ -1,8 +1,8 @@
 /** English copy for the home identity examples (section chrome only). Keys only; no markup. */
 
 export const homeIdentityLooksCopy = {
-  title: "Looks like your product",
-  body: "A console, a newsroom and a shop, built from the same components. Each look sets type, shape, density and color together.",
+  title: "Every screen, the same product.",
+  body: "Agents are very good at inventing components. That is the problem. A look sets type, shape, density and color together, and one attribute switches it.",
   liveNote: "Live components, not screenshots.",
   tabsAriaLabel: "Examples",
   /** One line under the example: what the look is made of. */
