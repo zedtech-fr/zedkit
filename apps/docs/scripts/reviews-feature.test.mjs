@@ -52,13 +52,15 @@ import {
   unlinkedPrPath,
   unlinkedRunPath,
 } from "../features/reviews/model/review-routes.ts";
-import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
+import { toAgentConsole } from "../features/reviews/model/to-agent-console.ts";
+import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
 import { copyPublicReviewsSnapshot } from "./copy-public-reviews-snapshot.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
 const reviewsAppRoot = join(here, "../app/(site)/reviews");
 const issuesAppRoot = join(here, "../app/(site)/issues");
+const issuesRunAppRoot = join(here, "../app/(run-console)/issues");
 
 function entry(overrides = {}) {
   return {
@@ -1533,17 +1535,6 @@ test("found /issues pages pass issuesIndexRobots", () => {
   }
 });
 
-test("provisional run page links out and does not render a console", () => {
-  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
-  assert.match(run, /copy\.run\.openLive/);
-  assert.match(run, /copy\.run\.noLive/);
-  assert.match(run, /target="_blank"/);
-  assert.doesNotMatch(run, /ReviewConsole/);
-  assert.doesNotMatch(run, /AgentConsole/);
-  assert.doesNotMatch(run, /reviewMainFlow/);
-  assert.doesNotMatch(run, /ReviewAgentList/);
-  assert.doesNotMatch(run, /<iframe/);
-});
 
 test("list and timeline views read from issue records, not a PR console", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
@@ -2227,59 +2218,183 @@ test("item titles go through the public scrubber", () => {
   assert.doesNotMatch(clean.items[0].name, /abcDEF123/);
 });
 
-test("the temporary mapper turns live rows into the current view-model", () => {
-  const live = liveSample({
-    decision: {
-      ...liveSample().decision,
-      verdict: "REQUEST_CHANGES",
-      confidence_score: 7.2,
-      must: [{ text: "Fix the link" }],
-    },
-    run: { ...liveSample().run, status: "completed", verdict: "REQUEST_CHANGES", sha: "abc" },
-    verdict_json: {
-      blocking: [{ _disposition: "kept", text: "Keep this" }],
-      notes: [{ _disposition: "downgraded", text: "Note this" }],
-    },
-    items: [
-      liveItem({ id: "main", kind: "main", name: "Main flow", status: "ran" }),
-      liveItem({ id: "lens-1", kind: "lens", name: "code", status: "done" }),
-    ],
-  });
-  const record = toReviewRecord(live);
-  assert.equal(record.number, 71);
-  assert.equal(record.verdict, "request-changes");
-  assert.equal(record.confidence, 72);
-  assert.equal(record.status, "done");
-  assert.equal(record.headSha, "abc");
-  assert.equal(record.prState, "open");
-  assert.deepEqual(
-    record.actions.map((action) => action.title),
-    ["Fix the link"],
+
+
+test("share URL merge keeps appearance query and hash together", () => {
+  assert.equal(
+    mergeReviewShareUrl({
+      pathname: "/issues/108",
+      search: "identity=volt&preview=dark",
+      hash: "",
+    }),
+    "/issues/108?identity=volt&preview=dark",
   );
-  assert.deepEqual(
-    record.findings.map((finding) => finding.disposition),
-    ["kept", "downgraded"],
-  );
-  assert.equal(record.runs[0].id, "run-71");
-  assert.deepEqual(
-    record.runs[0].items?.map((item) => item.kind),
-    ["flow", "agent"],
+  assert.equal(
+    mergeReviewShareUrl({ pathname: "/issues/108", search: "", hash: "" }),
+    "/issues/108",
   );
 });
 
-test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
-  const port = createSnapshotReviewPort();
-  const lives = await port.list();
-  if (lives.length === 0) {
-    const issues = await port.listIssues();
-    const unlinked = await port.listUnlinkedPullRequests();
-    assert.ok(issues.length + unlinked.length >= 1);
-    return;
-  }
-  const live = lives[0];
-  assert.ok(live);
-  const record = toReviewRecord(live, lives);
-  assert.ok(record.actions.length > 0);
-  assert.ok(record.findings.some((finding) => finding.disposition === "kept"));
-  assert.ok(record.firstPass);
+test("appearance share write keeps the selection hash", () => {
+  const src = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
+  assert.match(src, /mergeReviewShareUrl/);
+  assert.match(src, /window\.location\.hash/);
+});
+
+test("live-backed issue runs mount AgentConsole; index-only runs still link out", () => {
+  const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
+  const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
+  const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
+  assert.match(consoleView, /AgentConsole/);
+  assert.match(feature, /toAgentConsole/);
+  assert.match(feature, /ReviewConsoleView/);
+  assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);
+  assert.match(run, /copy\.run\.openLive/);
+  assert.match(run, /copy\.run\.noLive/);
+  assert.match(run, /target="_blank"/);
+  assert.doesNotMatch(run, /ReviewConsole/);
+  assert.doesNotMatch(run, /AgentConsole/);
+  assert.doesNotMatch(run, /reviewMainFlow/);
+  assert.doesNotMatch(run, /ReviewAgentList/);
+  assert.doesNotMatch(run, /<iframe/);
+  assert.doesNotMatch(layout, /SiteLayout/);
+  assert.match(siteLayout, /SiteLayout/);
+});
+
+test("toAgentConsole keeps confidence on /10 and converts durations to milliseconds", () => {
+  const mapped = toAgentConsole(
+    liveSample({
+      run: { ...liveSample().run, elapsed_s: 12, confidence_score: 8.6 },
+      items: [liveItem({ duration_s: 12 })],
+    }),
+  );
+  assert.equal(mapped.run.confidence, 8.6);
+  assert.equal(mapped.decision?.confidence, 8.6);
+  assert.equal(mapped.run.durationMs, 12_000);
+  assert.equal(mapped.items[0].durationMs, 12_000);
+  assert.equal(mapped.items[0].startedAt, 1_762_698_500_000);
+  assert.equal(mapped.items[0].lastActivityAt, 1_762_698_600_000);
+});
+
+test("toAgentConsole maps tool, message, and reasoning entries and omits prompts", () => {
+  const mapped = toAgentConsole(
+    liveSample({
+      items: [
+        liveItem({
+          id: "main",
+          entries: [
+            { type: "message", text: "hello", id: "m1" },
+            { type: "tool", tool: "read", label: "Read file", status: "done", output: "ok", duration_ms: 4 },
+            { type: "reasoning", text: "thinking", live: true },
+            { type: "tool", tool: "write", output: null },
+          ],
+          prompt: "secret prompt",
+          final_text: "secret final",
+        }),
+      ],
+    }),
+  );
+  const entries = mapped.items[0].entries;
+  assert.deepEqual(
+    entries.map((entry) => entry.kind),
+    ["message", "tool", "reasoning", "tool"],
+  );
+  assert.equal(entries[1].kind, "tool");
+  assert.equal(entries[1].name, "Read file");
+  assert.equal(entries[1].body, "ok");
+  assert.equal(entries[3].kind, "tool");
+  assert.equal(entries[3].name, "write");
+  assert.equal(entries[3].body, undefined);
+  assert.equal(entries[2].id, "main-2");
+  const blob = JSON.stringify(mapped);
+  assert.doesNotMatch(blob, /secret prompt/);
+  assert.doesNotMatch(blob, /secret final/);
+  assert.equal("prompt" in mapped.items[0], false);
+  assert.equal("final_text" in mapped.items[0], false);
+});
+
+test("toAgentConsole maps first-pass findings from verdict_json and second_pass.blocks_merge", () => {
+  const mapped = toAgentConsole(
+    liveSample({
+      decision: {
+        ...liveSample().decision,
+        first_pass: { verdict: "REQUEST_CHANGES", confidence_score: 7.2 },
+        second_pass: { model: "docs-reviewer", blocks_merge: true, summary: "Block" },
+        review_url: "javascript:alert(1)",
+      },
+      verdict_json: {
+        blocking: [{ _disposition: "kept", text: "Keep this" }],
+        notes: [{ _disposition: "downgraded", text: "Note this" }, { _disposition: null, text: "skip" }],
+      },
+    }),
+  );
+  assert.equal(mapped.decision?.firstPass?.verdict, "REQUEST_CHANGES");
+  assert.equal(mapped.decision?.firstPass?.confidence, 7.2);
+  assert.deepEqual(
+    mapped.decision?.firstPass?.findings.map((finding) => finding.disposition),
+    ["kept", "downgraded"],
+  );
+  assert.equal(mapped.decision?.secondPass?.blocksMerge, true);
+  assert.equal(mapped.decision?.secondPass?.model, "docs-reviewer");
+  assert.equal(mapped.decision?.postedReviewHref, "javascript:alert(1)");
+});
+
+test("toAgentConsole still folds first pass when findings are empty", () => {
+  const mapped = toAgentConsole(liveSample());
+  assert.equal(mapped.decision?.firstPass?.verdict, "APPROVE");
+  assert.equal(mapped.decision?.firstPass?.confidence, 8.6);
+  assert.deepEqual(mapped.decision?.firstPass?.findings, []);
+});
+
+test("toAgentConsole marks running items from live status and ignores live_url as a review href", () => {
+  const mapped = toAgentConsole(
+    liveSample({
+      run: { ...liveSample().run, live_url: "https://example.test/live/abc", review_url: null },
+      decision: { ...liveSample().decision, review_url: null },
+      items: [
+        liveItem({ status: "starting" }),
+        liveItem({ id: "lens-1", status: "running" }),
+        liveItem({ id: "done-1", status: "done" }),
+      ],
+    }),
+  );
+  assert.deepEqual(
+    mapped.items.map((item) => item.running),
+    [true, true, false],
+  );
+  assert.equal(mapped.run.postedReviewHref, null);
+  assert.equal(mapped.decision?.postedReviewHref, null);
+});
+
+test("optional reviews on an index snapshot feed getRun for that run id", async () => {
+  const recordedId = "20261111T065452Z-bc07a1a9";
+  const live = liveSample({
+    run: { ...liveSample().run, run_id: recordedId, pr: 133, issue: 108 },
+  });
+  const path = writeSnapshot(
+    [
+      issue({
+        entries: [entry(), entry({ id: "108-recorded", runId: recordedId, type: "review", liveUrl: null })],
+      }),
+    ],
+    [pr({ runIds: ["run-108-impl", recordedId] })],
+    { reviews: [live] },
+  );
+  const port = createSnapshotReviewPort(path);
+  const issues = await port.listIssues();
+  assert.equal(issues[0]?.number, 108);
+  const liveRun = await port.getRun(108, recordedId);
+  assert.ok(liveRun && "items" in liveRun);
+  assert.equal(liveRun.run.run_id, recordedId);
+  const indexRun = await port.getRun(108, "run-108-impl");
+  assert.equal(indexRun && "runId" in indexRun ? indexRun.runId : null, "run-108-impl");
+  assert.equal(indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null, "https://example.test/live/run-108-impl");
+  assert.equal(await port.getRun(99, recordedId), null);
+  assert.equal(await port.getRun(133, recordedId), null);
+});
+
+test("invalid reviews on an index snapshot fail closed", () => {
+  assert.throws(() => createSnapshotReviewPort(writeSnapshot([issue()], [pr()], { reviews: "nope" })));
 });
