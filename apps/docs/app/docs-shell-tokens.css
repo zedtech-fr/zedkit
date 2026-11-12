@@ -257,7 +257,9 @@ html[data-docs-shell][data-identity] {
 }
 
 #home-page #manifesto[data-slot="section"]::before,
-#home-page #manifesto[data-slot="section"]::after {
+#home-page #manifesto[data-slot="section"]::after,
+#home-page [data-home-six-sentences-card="featured"]::before,
+#home-page [data-home-six-sentences-card="featured"]::after {
   content: "";
   position: absolute;
   pointer-events: none;
@@ -281,16 +283,10 @@ html[data-docs-shell][data-identity] {
   background-color: hsl(var(--primary-foreground) / 0.06);
 }
 
-#home-page #manifesto[data-slot="section"] > * {
+#home-page #manifesto[data-slot="section"] > *,
+#home-page [data-home-six-sentences-card="featured"] > * {
   position: relative;
   z-index: 1;
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  #home-page #manifesto[data-slot="section"]::before,
-  #home-page #manifesto[data-slot="section"]::after {
-    background-color: hsl(var(--primary-foreground) / 0.06);
-  }
 }
 
 /*
@@ -326,6 +322,7 @@ html[data-docs-shell][data-identity] {
 
 #home-page [data-home-copy-command] [data-slot="button"] {
   flex-shrink: 0;
+  min-width: 88px;
   height: auto;
   border-radius: 0;
 }
@@ -372,20 +369,13 @@ html[data-docs-shell][data-identity] {
   color: hsl(var(--primary-foreground));
 }
 
-#home-page [data-home-six-sentences-card="featured"]::before,
-#home-page [data-home-six-sentences-card="featured"]::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  background-color: hsl(var(--primary-foreground) / 0.1);
-}
-
 #home-page [data-home-six-sentences-card="featured"]::before {
   top: -4.5rem;
   right: -4rem;
   width: 15rem;
   height: 15rem;
   border-radius: 50%;
+  background-color: hsl(var(--primary-foreground) / 0.1);
 }
 
 #home-page [data-home-six-sentences-card="featured"]::after {
@@ -395,11 +385,6 @@ html[data-docs-shell][data-identity] {
   height: 180%;
   transform: rotate(24deg);
   background-color: hsl(var(--primary-foreground) / 0.08);
-}
-
-#home-page [data-home-six-sentences-card="featured"] > * {
-  position: relative;
-  z-index: 1;
 }
 
 #home-page [data-home-six-sentences-card="featured"] [data-slot="badge"] {
@@ -416,6 +401,8 @@ html[data-docs-shell][data-identity] {
 }
 
 @media (prefers-reduced-transparency: reduce) {
+  #home-page #manifesto[data-slot="section"]::before,
+  #home-page #manifesto[data-slot="section"]::after,
   #home-page [data-home-six-sentences-card="featured"]::before,
   #home-page [data-home-six-sentences-card="featured"]::after {
     background-color: hsl(var(--primary-foreground) / 0.06);

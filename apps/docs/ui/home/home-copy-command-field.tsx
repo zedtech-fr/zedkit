@@ -14,7 +14,8 @@ import { homeCopyCommandCopy } from "@/ui/home/i18n/home-copy-command-copy";
  * UI decisions:     Docs-owned Input + site-action Copy, because: the kit shown-once secret
  *                   (icon, outline, optional wrap) must stay that on catalog/setup; the mockup
  *                   control is a site action on a command line. Visible Copy/Copied with caller
- *                   aria-label, because: smoke needs "Copy prompt" ≠ "Copy closing prompt".
+ *                   aria-label (Copied while copied), because: smoke needs "Copy prompt" ≠
+ *                   "Copy closing prompt", and WCAG 2.5.3 needs the name to match the visible word.
  *                   Single-line overflow inside the input, because: wrapping is today's defect and
  *                   the ticket asks to truncate or scroll on 390.
  */
@@ -30,6 +31,7 @@ export function HomeCopyCommandField({
   const messages = useUiMessages();
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
+  // shortcut: clipboard copy/fail is SecretField verbatim; extract a shared hook when a third caller appears.
   const copy = (): void => {
     const clipboard = navigator.clipboard;
     if (!clipboard) {
@@ -65,7 +67,7 @@ export function HomeCopyCommandField({
         variant="default"
         data-site-action=""
         className="min-h-target shrink-0"
-        aria-label={copyLabel}
+        aria-label={copied ? homeCopyCommandCopy.copied : copyLabel}
         onClick={copy}
       >
         {copied ? homeCopyCommandCopy.copied : homeCopyCommandCopy.copy}

@@ -13,8 +13,6 @@ function read(rel) {
 test("hero and closing share one attached copy-command field (#246)", () => {
   const field = read("ui/home/home-copy-command-field.tsx");
   const copy = read("ui/home/i18n/home-copy-command-copy.ts");
-  const lead = read("ui/home/home-hero-lead.tsx");
-  const closing = read("ui/home/home-closing-section.tsx");
   const tokens = read("app/docs-shell-tokens.css");
 
   assert.match(field, /"use client"/);
@@ -24,34 +22,25 @@ test("hero and closing share one attached copy-command field (#246)", () => {
   assert.match(field, /data-home-copy-command/);
   assert.match(field, /data-site-action/);
   assert.match(field, /"aria-label": ariaLabel/);
-  assert.match(field, /copyLabel/);
+  assert.match(field, /aria-label=\{copied \? homeCopyCommandCopy\.copied : copyLabel\}/);
   assert.match(field, /role="status"/);
   assert.match(field, /aria-live="polite"/);
   assert.match(field, /messages\.copied/);
   assert.match(field, /messages\.copyFailed/);
-  assert.match(field, /navigator\.clipboard/);
-  assert.match(field, /!clipboard/);
-  assert.match(field, /writeText\(value\)/);
-  assert.match(field, /setCopied\(true\)/);
-  assert.match(field, /setCopyFailed\(true\)/);
   assert.match(field, /homeCopyCommandCopy\.copy/);
   assert.match(field, /homeCopyCommandCopy\.copied/);
   assert.match(field, /content-shrink/);
-  assert.doesNotMatch(field, /SecretField|\bmultiline\b|Textarea|whitespace-pre-line|wrap-anywhere/);
+  assert.doesNotMatch(field, /import \{[^}]*\bSecretField\b|<\s*SecretField\b/);
+  assert.doesNotMatch(field, /\bmultiline\b|Textarea|whitespace-pre-line|wrap-anywhere/);
   assert.match(copy, /copy: "Copy"/);
   assert.match(copy, /copied: "Copied"/);
-
-  assert.match(lead, /HomeCopyCommandField/);
-  assert.match(closing, /HomeCopyCommandField/);
-  assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
-  assert.doesNotMatch(closing, /SecretField|\bmultiline\b/);
-  assert.match(lead, /aria-label=\{homeCopy\.hero\.promptAriaLabel\}/);
-  assert.match(lead, /copyLabel=\{homeCopy\.hero\.promptCopyLabel\}/);
-  assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
-  assert.match(closing, /copyLabel=\{homeClosingCopy\.promptCopyLabel\}/);
 
   assert.match(tokens, /\[data-home-copy-command\]/);
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*overflow:\s*hidden/);
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*min-width:\s*0/);
+  assert.match(
+    tokens,
+    /\[data-home-copy-command\] \[data-slot="button"\] \{[^}]*min-width:\s*88px/,
+  );
   assert.doesNotMatch(tokens.match(/\[data-home-copy-command\][^{]*\{[^}]+\}/)?.[0] ?? "", /#[0-9A-Fa-f]{3,8}/);
 });

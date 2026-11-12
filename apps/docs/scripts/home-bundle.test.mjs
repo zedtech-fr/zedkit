@@ -284,6 +284,22 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(manifestoCss, /isolation:\s*isolate/);
   assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]::before/);
   assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]::after/);
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\]::before,\s*#home-page #manifesto\[data-slot="section"\]::after,\s*#home-page \[data-home-six-sentences-card="featured"\]::before,\s*#home-page \[data-home-six-sentences-card="featured"\]::after/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] > \*,\s*#home-page \[data-home-six-sentences-card="featured"\] > \*/,
+  );
+  const glassReduced = [
+    ...tokens.matchAll(/@media \(prefers-reduced-transparency: reduce\) \{[\s\S]*?\n\}/g),
+  ]
+    .map((match) => match[0])
+    .filter((block) => block.includes("#manifesto") || block.includes("six-sentences-card"));
+  assert.equal(glassReduced.length, 1, "manifesto and featured share one reduced-transparency rule");
+  assert.match(glassReduced[0], /#manifesto/);
+  assert.match(glassReduced[0], /six-sentences-card="featured"/);
   assert.match(manifestoCss, /hsl\(var\(--primary-foreground\) \//);
   assert.match(manifestoCss, /rotate\(24deg\)/);
   assert.doesNotMatch(manifestoCss, /#[0-9A-Fa-f]{3,8}/);
