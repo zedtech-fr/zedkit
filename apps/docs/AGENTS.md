@@ -19,10 +19,11 @@ Rules:
   wraps) live in `features/docs/`. Guide UI lives under
   `features/docs/guides/<guide>/`. Stay out of the feature:
   `preview-viewport.tsx` (kit demos cannot import a feature), `mdx-pre.tsx`
-  (`mdx-components.tsx` must not import a feature), `maturity-badge.tsx`
+  (generic fence wrapper; stay in `components/`), `maturity-badge.tsx`
   (catalog + generated pages), `lib/maturity-status.ts` (shared badge
-  mapping), `components/i18n/adoption-copy.ts` (`AiSetupPrompt` is an MDX
-  registry entry).
+  mapping), `components/i18n/adoption-copy.ts` (generated pages plus MDX).
+  MDX tags live under `features/docs/mdx/ui/` (kit/React views); their
+  docs-only copy lives under `features/docs/i18n/`.
 
 ## Mental model
 
@@ -60,8 +61,9 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   not import another feature or app (compose in the route and pass props).
   A `_<name>` folder is imported only from its own route subtree.
   `prose/guides/` may import `features/docs` (docs-domain guides composing
-  docs-feature UI). Do not import other features from prose, and do not
-  import `features/docs` from `mdx-components.tsx`.
+  docs-feature UI). `mdx-components.tsx` may import `features/docs` MDX
+  blocks only. Do not import other features from prose or from
+  `mdx-components.tsx`.
   Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features.
 - Kit previews stay in `components/demos/` (the placement checker skips
   dead and single-owner there). Unit tests live beside their module,

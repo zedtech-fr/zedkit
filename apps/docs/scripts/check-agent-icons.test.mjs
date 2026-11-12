@@ -82,6 +82,6 @@ test("the live kit.json mapping has no agent-icon errors", () => {
   const require = createRequire(join(APP, "package.json"));
   const liveLucide = require("lucide-react");
   const kit = JSON.parse(readFileSync(join(ROOT, "packages", "ai", "kit", "kit.json"), "utf8"));
-  const source = readFileSync(join(APP, "lib", "agent-icons.ts"), "utf8");
+  const source = readFileSync(join(APP, "features", "docs", "agent-icons.ts"), "utf8");
   assert.deepEqual(checkAgentIcons({ agents: kit.agents, source, lucide: liveLucide }), []);
 });

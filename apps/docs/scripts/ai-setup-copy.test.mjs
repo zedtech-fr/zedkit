@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
-const { aiSetupCopy } = await import("../components/i18n/ai-setup-copy.ts");
+const { aiSetupCopy } = await import("../features/docs/i18n/ai-setup-copy.ts");
 
-const TITLE = join(app, "components/ai-setup-page-title.tsx");
-const PROMPT = join(app, "components/ai-setup-prompt.tsx");
+const TITLE = join(app, "features/docs/mdx/ui/ai-setup-page-title.tsx");
+const PROMPT = join(app, "features/docs/mdx/ui/ai-setup-prompt.tsx");
 
 test("AI setup copy pins today's English", () => {
   assert.equal(aiSetupCopy.title.prefix, "Set up zedkit AI in");

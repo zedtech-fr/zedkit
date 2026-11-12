@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Heading, Text, useMotionPreference, WordRoll } from "@zedtech/zedkit-ui";
-import { aiSetupCopy } from "@/components/i18n/ai-setup-copy";
+import { aiSetupCopy } from "@/features/docs/i18n/ai-setup-copy";
 
 const ROTATE_MS = 2800;
 const ROLL_DWELL_MS = 300;

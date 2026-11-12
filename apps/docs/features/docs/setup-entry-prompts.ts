@@ -3,7 +3,7 @@ import {
   MAP_SETUP_MINI_PROMPT,
   SUGGEST_MINI_PROMPT,
   UI_SETUP_MINI_PROMPT,
-} from "./ai-setup-onboarding.generated";
+} from "@/lib/ai-setup-onboarding.generated";
 
 export const SETUP_ENTRY_IDS = ["ai", "ui", "combined", "suggest"] as const;
 

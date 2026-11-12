@@ -1,7 +1,7 @@
 "use client";
 
 import { Label, SecretField, Stack } from "@zedtech/zedkit-ui";
-import { setupEntryPrompt, type SetupEntryId } from "@/lib/setup-entry-prompts";
+import { setupEntryPrompt, type SetupEntryId } from "@/features/docs/setup-entry-prompts";
 
 export function SetupEntryPrompt({ id }: { id: SetupEntryId }) {
   const entry = setupEntryPrompt(id);
