@@ -9,7 +9,7 @@ export function FoundationsBand({
   children,
 }: {
   id: FoundationsBandId;
-  rule: string;
+  rule?: string;
   children: ReactNode;
 }) {
   return (
@@ -24,9 +24,11 @@ export function FoundationsBand({
       }
     >
       {children}
-      <Text typeRole="prose" variant="muted">
-        {rule}
-      </Text>
+      {rule ? (
+        <Text typeRole="prose" variant="muted">
+          {rule}
+        </Text>
+      ) : null}
     </Stack>
   );
 }

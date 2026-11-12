@@ -2,37 +2,53 @@ import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
 import { FoundationsBand } from "@/components/foundations-band";
 import { foundationsCopy as copy } from "@/components/i18n/foundations-copy";
-import { foundationsTypeRoles, type FoundationsTypeRole } from "@/lib/foundations-swatches";
+import { foundationsTypeRows, type FoundationsTypeRow } from "@/lib/foundations-swatches";
 
-const HEADING_ROLES = ["display", "section", "band", "cardTitle", "nav"] as const;
-type HeadingRole = (typeof HEADING_ROLES)[number];
+const HEADING_TREATMENTS = ["display", "section", "band"] as const;
+type HeadingTreatment = (typeof HEADING_TREATMENTS)[number];
 
-function isHeadingRole(role: FoundationsTypeRole): role is HeadingRole {
-  return (HEADING_ROLES as readonly string[]).includes(role);
+function isHeadingTreatment(treatment: FoundationsTypeRow["treatment"]): treatment is HeadingTreatment {
+  return (HEADING_TREATMENTS as readonly string[]).includes(treatment);
 }
 
-function TypeSample({ role }: { role: FoundationsTypeRole }) {
-  const sample = copy.typeSamples[role];
-  if (isHeadingRole(role)) {
+function TypeSpecimen({ row }: { row: FoundationsTypeRow }) {
+  const sample = copy.typeRows[row.id].sample;
+  if (row.treatment === "quote") {
+    return <Text data-type-quote="">{sample}</Text>;
+  }
+  if (row.treatment === "mono") {
     return (
-      <Heading as="div" typeRole={role}>
+      <Text typeRole="small" className="font-mono">
+        {sample}
+      </Text>
+    );
+  }
+  if (isHeadingTreatment(row.treatment)) {
+    return (
+      <Heading as="div" typeRole={row.treatment}>
         {sample}
       </Heading>
     );
   }
-  return <Text typeRole={role}>{sample}</Text>;
+  return <Text typeRole={row.treatment}>{sample}</Text>;
 }
 
 export function FoundationsType() {
   return (
-    <FoundationsBand id="type" rule={copy.rules.type}>
-      <Stack gap="sm" className="border-b border-border">
-        {foundationsTypeRoles.map((role) => (
-          <Stack key={role} gap="tight" className="border-t border-border py-control-block-lg">
-            <Text typeRole="small" variant="muted">
-              {copy.typeLabels[role]}
+    <FoundationsBand id="type">
+      <Stack className="border-b border-border">
+        {foundationsTypeRows.map((row) => (
+          <Stack
+            key={row.id}
+            direction="horizontal"
+            gap="md"
+            data-foundations-type-row={row.id}
+            className="flex-wrap items-baseline border-t border-border py-control-block-lg"
+          >
+            <Text typeRole="small" variant="muted" data-type-spec="">
+              {copy.typeRows[row.id].spec}
             </Text>
-            <TypeSample role={role} />
+            <TypeSpecimen row={row} />
           </Stack>
         ))}
       </Stack>

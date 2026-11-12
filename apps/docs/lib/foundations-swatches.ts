@@ -1,59 +1,32 @@
-export const foundationsBandIds = [
-  "color",
-  "type",
-  "buttons",
-  "chips",
-  "cards",
-  "rhythm",
-  "motion",
-] as const;
+export const foundationsBandIds = ["color", "type"] as const;
 
 export type FoundationsBandId = (typeof foundationsBandIds)[number];
 
-export const foundationsSwatchAllowlist = [
-  "bg-background",
-  "bg-foreground",
-  "bg-primary",
-  "bg-accent",
-] as const;
-
-export type FoundationsSwatchToken = (typeof foundationsSwatchAllowlist)[number];
-
-/** Four chrome swatches (#73 vs mockup eight: Band/Hairline/Body-text/Ink/Action cut, no hex). */
 export const foundationsSwatches = [
-  { id: "page", tokenClass: "bg-background", scope: "page" },
-  { id: "text", tokenClass: "bg-foreground", scope: "page" },
-  { id: "indigo", tokenClass: "bg-primary", scope: "panel" },
-  { id: "violet", tokenClass: "bg-accent", scope: "panel" },
+  { id: "page", token: "--zk-site-page", hex: "#FFFFFF", scope: "page" },
+  { id: "band", token: "--zk-site-band", hex: "#FAFAFA", scope: "page" },
+  { id: "hairline", token: "--zk-site-hairline", hex: "#E4E4E7", scope: "page" },
+  { id: "body", token: "--muted-foreground", hex: "#4E4E56", scope: "page" },
+  { id: "ink", token: "--foreground", hex: "#09090B", scope: "page" },
+  { id: "action", token: "--zk-site-action", hex: "#18181B", scope: "page" },
+  { id: "indigo", token: "--primary", hex: "#2B23C7", scope: "panel" },
+  { id: "violet", token: "--accent", hex: "#A171F4", scope: "panel" },
 ] as const satisfies ReadonlyArray<{
   id: string;
-  tokenClass: FoundationsSwatchToken;
+  token: `--${string}`;
+  hex: `#${string}`;
   scope: "page" | "panel";
 }>;
 
 export type FoundationsSwatch = (typeof foundationsSwatches)[number];
 
-export const foundationsTypeRoles = [
-  "display",
-  "section",
-  "band",
-  "cardTitle",
-  "lead",
-  "prose",
-  "body",
-  "small",
-  "label",
-  "nav",
+export const foundationsTypeRows = [
+  { id: "display", treatment: "display" },
+  { id: "section", treatment: "section" },
+  { id: "band", treatment: "band" },
+  { id: "lead", treatment: "lead" },
+  { id: "quote", treatment: "quote" },
+  { id: "mono", treatment: "mono" },
 ] as const;
 
-export type FoundationsTypeRole = (typeof foundationsTypeRoles)[number];
-
-export const foundationsMotionNames = [
-  "reveal",
-  "settle",
-  "emphasis",
-  "glide",
-  "feedback",
-] as const;
-
-export type FoundationsMotionName = (typeof foundationsMotionNames)[number];
+export type FoundationsTypeRow = (typeof foundationsTypeRows)[number];
