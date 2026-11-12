@@ -33,6 +33,12 @@ export const HOME_LIMITS_GRID =
 /** Paste timeline: pair from `sm`, four across from `xl`. */
 export const HOME_PASTE_TIMELINE_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush sm:grid-pair xl:grid-quad";
+/**
+ * Paste "what lands" listing: one column until `lg`, then UI | AI.
+ * Gap is the hairline divider; padding lives on each column.
+ */
+export const HOME_PASTE_LANDS_GRID =
+  "trim-margin grid content-shrink list-none flush lg:grid-pair";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;

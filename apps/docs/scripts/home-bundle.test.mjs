@@ -174,22 +174,65 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
   assert.match(tokens, /\[data-home-manifesto-panel\]/);
   assert.match(paste, /id="paste"/);
+  assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
   assert.match(paste, /id="get-started"/);
   assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
   assert.match(paste, /homePasteCopy\.fullStepsHref/);
   assert.match(paste, /homePasteCopy\.timeline/);
+  assert.match(paste, /homePasteCopy\.lands/);
+  assert.match(paste, /homePasteCopy\.landsHeading/);
+  assert.match(paste, /homePasteCopy\.nestLands/);
+  assert.match(paste, /Object\.keys\(homePasteCopy\.lands\)/);
+  assert.doesNotMatch(paste, /LANDS_IDS = \["ai", "ui"\]/);
+  assert.equal((paste.match(/role="list"/g) ?? []).length, 3);
+  assert.match(paste, /data-home-paste-lands/);
+  assert.match(paste, /HOME_PASTE_LANDS_GRID/);
+  assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
+  assert.match(
+    rhythm,
+    /export const HOME_PASTE_LANDS_GRID =\s*"trim-margin grid content-shrink list-none flush lg:grid-pair"/,
+  );
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\]/);
+  assert.match(tokens, /background-color:\s*hsl\(var\(--zk-site-action\)\)/);
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
+  assert.match(
+    tokens,
+    /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
+  );
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
   assert.match(
     pasteCopy,
     /Name the kits\. The agent follows the map, installs them in order and validates once at the end\./,
   );
   assert.match(pasteCopy, /"2 seconds"/);
+  assert.match(pasteCopy, /The agent has the kits you named and starts the map\./);
+  assert.doesNotMatch(pasteCopy, /land in your repo/);
   assert.match(pasteCopy, /"15 to 45 min"/);
   assert.match(pasteCopy, /"Same run"/);
   assert.match(pasteCopy, /"Any time after"/);
+  assert.match(pasteCopy, /landsHeading: "What lands"/);
+  assert.match(pasteCopy, /Nest \(API\) lands with UI: the package pin and the boot file\./);
+  assert.match(pasteCopy, /lands: \{\s*ui:/);
+  assert.match(pasteCopy, /when: "during the run"/);
+  assert.match(pasteCopy, /when: "after lunch"/);
+  assert.match(pasteCopy, /AGENTS\.md/);
+  assert.match(pasteCopy, /\.agents\/product\.md/);
+  assert.match(pasteCopy, /\.agents\/domain\//);
+  assert.match(pasteCopy, /per-domain notes/);
+  assert.match(pasteCopy, /\.agents\/skills\//);
+  assert.match(pasteCopy, /package\.json/);
+  assert.match(pasteCopy, /the UI package/);
+  assert.match(pasteCopy, /globals\.css/);
+  assert.match(pasteCopy, /layout\.tsx/);
+  assert.match(pasteCopy, /Glass on the document/);
+  assert.match(pasteCopy, /\.agents\/design\.md/);
+  assert.doesNotMatch(pasteCopy, /data-identity=/);
+  assert.doesNotMatch(pasteCopy, /@zedtech\/zedkit-ui/);
   assert.doesNotMatch(pasteCopy, /combined prompt|copy field|SecretField/);
+  assert.doesNotMatch(pasteCopy, /30 skills|13 agents|68 components|6 looks|tasks\.md/);
   assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
   assert.match(looksCopy, /title: "Every screen, the same product\."/);
   assert.match(looksCopy, /A look sets type, shape, density and color together/);

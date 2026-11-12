@@ -95,6 +95,42 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
+ * Paste is a dark stock-zinc band (not Glass indigo as page fill).
+ * Tokens only: site-action zinc. Muted copy keeps contrast via alpha.
+ * Ghost hover/press read --muted/--secondary: pin them to inverted zinc
+ * (light-mode leftovers are ~1.6:1 on this band).
+ */
+#home-page #paste[data-slot="section"] {
+  --foreground: var(--zk-site-action-foreground);
+  --muted-foreground: var(--zk-site-action-foreground);
+  --muted: var(--zk-site-action-hover);
+  --secondary: var(--zk-site-action-hover);
+  --secondary-foreground: var(--zk-site-action-foreground);
+  --background: var(--zk-site-action);
+  --border: var(--zk-site-action-hover);
+  --card: var(--zk-site-action);
+  background-color: hsl(var(--zk-site-action));
+  color: hsl(var(--zk-site-action-foreground));
+}
+
+#home-page #paste[data-slot="section"] .text-muted-foreground {
+  color: hsl(var(--zk-site-action-foreground) / 0.72);
+}
+
+/* Gap is the hairline divider; padding lives on each column. */
+#home-page [data-home-paste-lands] {
+  gap: var(--zk-border-width, 1px);
+  overflow: hidden;
+  border: var(--zk-border-width, 1px) solid hsl(var(--zk-site-action-foreground) / 0.18);
+  border-radius: var(--radius-lg);
+  background-color: hsl(var(--zk-site-action-foreground) / 0.18);
+}
+
+#home-page [data-home-paste-lands] > li {
+  background-color: hsl(var(--zk-site-action));
+}
+
+/*
  * Manifesto is an inner high-value panel on the neutral page (not indigo
  * as page fill). Tokens only: Glass primary stays the panel accent.
  */
