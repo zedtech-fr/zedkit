@@ -106,6 +106,8 @@ html[data-docs-shell][data-identity] {
   --background: var(--zk-site-action);
   --border: var(--zk-site-action-hover);
   --card: var(--zk-site-action);
+  /* Glass light --accent: keep the highlighted file note ≥4.5 on zinc in page dark. */
+  --accent: 262 85% 70%;
   background-color: hsl(var(--zk-site-action));
   color: hsl(var(--zk-site-action-foreground));
 }

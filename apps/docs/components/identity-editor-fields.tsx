@@ -44,6 +44,19 @@ type TokenFieldProps = {
   swatch?: boolean;
 };
 
+function TokenFieldSwatch({ draft }: { draft: string }) {
+  const color = HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
+  return (
+    <svg
+      aria-hidden="true"
+      data-token-swatch=""
+      className="size-control-height shrink-0 rounded-md border border-border"
+    >
+      <rect width="100%" height="100%" fill={color ?? "none"} />
+    </svg>
+  );
+}
+
 function TokenField({
   id,
   label,
@@ -56,7 +69,6 @@ function TokenField({
 }: TokenFieldProps) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
-  const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
   const next = isLightKey(tokenKey)
     ? { ...tokens, [scheme]: { ...tokens[scheme], [tokenKey]: draft } }
     : { ...tokens, [tokenKey]: draft };
@@ -67,15 +79,7 @@ function TokenField({
     <Field className="content-shrink" data-invalid={invalid ? true : undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap="sm" className="content-shrink">
-        {swatch ? (
-          <svg
-            aria-hidden="true"
-            data-token-swatch=""
-            className="size-control-height shrink-0 rounded-md border border-border"
-          >
-            <rect width="100%" height="100%" fill={color ?? "none"} />
-          </svg>
-        ) : null}
+        {swatch ? <TokenFieldSwatch draft={draft} /> : null}
         <Input
           id={id}
           value={draft}
