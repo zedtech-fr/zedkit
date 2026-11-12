@@ -11,6 +11,8 @@ import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/h
  * as Glass, Mist, Press, Maison, because a look is type+shape+density+color
  * together. Copy+pills first on a phone, because the first control must
  * stay reachable. No identity form here: the dock owns customization.
+ * No extra links row under the specimen, because the mockup section ends
+ * at the caption and those destinations already live elsewhere.
  */
 export function HomeIdentitiesSection() {
   return (

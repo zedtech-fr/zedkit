@@ -111,6 +111,7 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
   assert.doesNotMatch(live, /@keyframes zk-(?:up|in|drift|s[1-5])\b/);
   assert.doesNotMatch(live, /\bzk-s[1-5]\b/);
   assert.doesNotMatch(css, /\[data-hero-shapes\][^{]*\{[^}]*animation\s*:/);
+  assert.doesNotMatch(stripComments(css), /\[data-hero-shapes\]/);
 });
 
 const HOME_SECTIONS = [
@@ -205,15 +206,15 @@ test("illustration drift is decorative and does not wrap the glass card", () => 
   assert.doesNotMatch(css, /hsl\(0 0% 100%/);
 });
 
-test("foundations motion copy states the live rule, not a later ticket", () => {
-  const copy = readApp("components/i18n/foundations-copy.ts");
-  assert.match(copy, /motion:\s*"Chrome uses named motions only\./);
-  assert.match(copy, /does not invent durations/);
-  assert.match(copy, /One hero entrance/);
-  assert.match(copy, /one pausable illustration/);
-  assert.doesNotMatch(copy, /pausable (?:loop|tour)/);
-  assert.match(copy, /Reduced motion shows the final state/);
-  assert.doesNotMatch(copy, /motion ticket/);
+test("visual contract states the chrome motion rule, not a later ticket", () => {
+  const contract = readApp("VISUAL-CONTRACT.md");
+  assert.match(contract, /named motions only/);
+  assert.match(contract, /does not invent durations/);
+  assert.match(contract, /One hero entrance/);
+  assert.match(contract, /one pausable illustration/);
+  assert.doesNotMatch(contract, /pausable (?:loop|tour)/);
+  assert.match(contract, /Reduced motion shows the final state/);
+  assert.doesNotMatch(contract, /motion ticket/);
 });
 
 test("visual contract allows illustration motion, not page-fill motion", () => {

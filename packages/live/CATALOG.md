@@ -1,8 +1,8 @@
 # Catalog — @zedtech/zedkit-live
 
-- Keywords: realtime, websocket, polling, reconnect, typescript, browser
+- Keywords: realtime, websocket, polling, reconnect, fetch, typescript, browser
 - Audience: Apps that refresh data when something changes on a server, in any framework or none.
-- Purpose: A small LiveSource interface plus polling and WebSocket implementations with reconnect and polling backup, with no framework code.
+- Purpose: A small LiveSource interface plus polling and WebSocket implementations with reconnect and polling backup, and JSON fetch with timeout and retry, with no framework code.
 - Attribution: Original work by the same author.
 
 ## Share one live feed between subscribers
@@ -37,7 +37,7 @@ const stop = ticks.subscribe((t) => console.log(t));
 - Purpose: Poll on an interval without overlap, back off on failure, abort on stop, and skip unchanged values.
 - When to use: Dashboards and lists that tolerate a few seconds of delay.
 - When not to use: Sub-second updates; use a push transport.
-- See also: `Receive WebSocket messages with reconnect and polling backup`
+- See also: `Receive WebSocket messages with reconnect and polling backup`, `Fetch JSON with timeout and retry`
 
 ```ts
 import { pollingSource } from "@zedtech/zedkit-live";
@@ -69,4 +69,26 @@ const events = wsSource<{ type: string }>({
   fallback: pollingSource({ intervalMs: 10_000, poll: () => fetchLatest() }),
 });
 const stop = events.subscribe((event) => refresh(event));
+```
+
+## Fetch JSON with timeout and retry
+
+- Import: `@zedtech/zedkit-live` — `fetchJson`, `FetchJsonOptions`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: fetchJson
+- Audience: Apps that GET JSON from the browser or Node 22 and need a Result, not a thrown stack.
+- Purpose: GET JSON with timeout, retry transient failures, honor Retry-After, and return a Result without echoing request headers.
+- When to use: One-shot or build-time JSON GETs that must survive 429, 403, 5xx, and timeouts.
+- When not to use: A repeating live feed; use pollingSource.
+- See also: `Poll an endpoint as a live source`
+
+```ts
+import { fetchJson } from "@zedtech/zedkit-live";
+
+const result = await fetchJson("https://example.com/api/runs", {
+  timeoutMs: 10_000,
+  retries: 2,
+});
+if (!result.ok) throw result.error;
 ```
