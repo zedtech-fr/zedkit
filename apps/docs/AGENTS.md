@@ -20,6 +20,34 @@ the generator embeds demos by key; the docs check fails on drift
 (missing demo, renamed need). Demos render the REAL workspace
 components (same import a consumer writes), inside one shared frame.
 
+## File placement
+
+Where a new docs-site file goes. Enforced by `scripts/module-placement.test.mjs`
+(owners, private folders, cross-feature, shrink-only baseline) and ESLint
+one-way rules.
+
+- Used by exactly one route: next to that route in one private folder
+  `app/<route>/_<screen>/` (view, `sections/`, hooks, `i18n/`, page CSS
+  imported by the page, unit tests, fixtures). Home is a route group:
+  `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
+  `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
+  today's home screen code still lives in `ui/home/**`, catalog in
+  `ui/catalog/**`, not-found in `ui/not-found/**`.
+- Used by two or more routes of one domain: `features/<domain>/` (reviews,
+  identity, docs). Ports/adapters/model only where there is I/O.
+- Docs-site composed UI used by two or more domains, with no domain words:
+  `components/` (chrome in `components/site-chrome/`). `ui/` is dissolving;
+  do not add a fifth home there.
+- Pure helpers used by two or more domains (and `.mjs` shared with
+  `scripts/generate.mjs`): `lib/`.
+- Domain-free code: a zedkit package (check zedkit first).
+- One-way imports: `app → features → components → lib`. A feature does not
+  import another feature (compose in the route and pass props). A `_private`
+  folder is imported only from its own route subtree.
+- Kit previews stay in `components/demos/` (the placement checker skips
+  dead and single-owner there). Unit tests live beside their module,
+  including under `app/`; Playwright stays in `tests/`.
+
 ## Demo rules (blocking — the `ui` lens fails the review otherwise)
 
 The rules are Frontend rules 1-5 in `packages/ai/kit/skills/review/lenses.md`

@@ -31,5 +31,9 @@
     "postcss.config.mjs",
     "prose/guides/snippets/**/*.tsx"
   ],
-  "exclude": ["prose/guides/snippets/registry-page.tsx"]
+  "exclude": [
+    "prose/guides/snippets/registry-page.tsx",
+    // Colocated unit tests run under node --test, not tsc.
+    "**/*.test.mjs"
+  ]
 }
