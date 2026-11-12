@@ -1,8 +1,9 @@
 # Public review snapshot (exporter contract)
 
-The docs site reads one JSON file (`adapters/public-reviews.json`). The
-out-of-repo exporter must emit **one** of the two version-1 shapes below.
-Do not emit both `issues` and `reviews` on the same object.
+The docs site reads one JSON file (`adapters/public-reviews.json`). Use
+that file as the field-level template (required keys, type/status/verdict
+enums). The out-of-repo exporter must emit **one** of the two version-1
+shapes below. Do not emit both `issues` and `reviews` on the same object.
 
 The public run history page is fed by the **generated run index**
 (`issues` + `pullRequests`). A live-shaped file of every hosted run
@@ -56,6 +57,11 @@ An empty `issues` / `reviews` array is valid. Static export still needs
 a placeholder `generateStaticParams` entry; that is a site concern, not
 an exporter concern.
 
+Plan and implement phases of one implement ticket run are **two**
+timeline entries (distinct `id`, shared `runId`). The generated run
+index emits both. `liveRunsToIndex` emits one primary entry plus one
+per related run; it does not split phases.
+
 Public-repo visibility on the **index**: only the string `"private"` is
 dropped. Missing, `null`, and `"public"` stay. Live `list()` still keeps
 only `visibility: "public"` (dense console gate). A live-shaped export
@@ -92,3 +98,29 @@ Issue pages pin a local `ThemeScope` from these query keys. The exporter does no
 Any listed key pins the whole appearance. Missing, empty, or unknown values use codec defaults (glass, light, default density); they do not inherit the site look. `serializeReviewAppearance` in `apps/docs/lib/review-appearance.ts` is the canonical writer (omit glass, light, default density).
 
 Pinned URLs read `window.location.search` after mount (static export). The first paint may show the unpinned site look; that flash is accepted.
+
+## Staging ingest
+
+`deploy-dev.yml` may replace `adapters/public-reviews.json` **before**
+the docs build. The ingest gate imports dist-only `@zedtech/zedkit-core`,
+so the workflow builds core first. Set repository variable
+`PUBLIC_REVIEWS_SNAPSHOT` (Settings → Secrets and variables → Actions →
+Variables) to a runner-local path such as `/tmp/public-reviews.json`.
+Today that file is only produced by `scp` from
+`PUBLIC_REVIEWS_SNAPSHOT_REMOTE` (a path on `zed-dev`, for example
+`exports/public-reviews.json`). Without REMOTE, a fresh runner has no
+local file and always fail-opens. Do not commit a host filesystem path.
+
+- Unset `PUBLIC_REVIEWS_SNAPSHOT` or missing local file: keep the
+  checked-in stand-in and continue (fail-open).
+- `PUBLIC_REVIEWS_SNAPSHOT_REMOTE` set and `scp` fails (any exit code:
+  absent file, auth, or transport): keep the stand-in and continue
+  (fail-open). The log names the scp exit code.
+- Present but fails parse, scrub, or `assertPubliclySafe`: fail the
+  deploy (fail-closed). Secrets must not ship.
+
+`node apps/docs/scripts/copy-public-reviews-snapshot.mjs <source> <dest>`
+is the gate. The CLI requires both paths; the workflow skips the CLI
+when the local path env is unset. Epic preview and production deploys
+do not ingest.
+

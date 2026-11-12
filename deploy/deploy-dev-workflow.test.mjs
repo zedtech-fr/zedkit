@@ -24,6 +24,36 @@ test("deploy-dev rsyncs a CI-built export to /data/srv/zedkit and does not touch
   assert.doesNotMatch(dev, /docker compose/);
 });
 
+test("deploy-dev copies a generated run index before the docs build when env is set", () => {
+  const sshIdx = dev.indexOf("Configure SSH to deploy host");
+  const coreIdx = dev.indexOf("pnpm --filter @zedtech/zedkit-core build");
+  const copyIdx = dev.indexOf("copy-public-reviews-snapshot.mjs");
+  const buildIdx = dev.indexOf("pnpm --filter @zedtech/zedkit-docs build");
+  assert.ok(sshIdx > 0 && coreIdx > sshIdx && copyIdx > coreIdx && buildIdx > copyIdx);
+  assert.match(dev, /PUBLIC_REVIEWS_SNAPSHOT/);
+  assert.match(dev, /PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
+  assert.match(dev, /keeping stand-in/);
+  assert.match(dev, /scp failed \(exit /);
+  assert.match(dev, /must not start with -/);
+  assert.doesNotMatch(dev, /remote file absent/);
+  assert.doesNotMatch(dev, /\/home\//);
+  assert.doesNotMatch(dev, /\/Users\//);
+  const ingestBlock = dev.slice(
+    dev.indexOf("name: Ingest generated run index"),
+    buildIdx,
+  );
+  const gate = ingestBlock.match(
+    /node apps\/docs\/scripts\/copy-public-reviews-snapshot\.mjs[\s\S]*?public-reviews\.json[^\n]*/,
+  );
+  assert.ok(gate, "ingest gate invocation");
+  assert.doesNotMatch(gate[0], /\|\|/);
+  assert.doesNotMatch(gate[0], /exit 0/);
+  assert.doesNotMatch(epic, /copy-public-reviews-snapshot/);
+  assert.doesNotMatch(prod, /copy-public-reviews-snapshot/);
+  assert.doesNotMatch(epic, /PUBLIC_REVIEWS_SNAPSHOT/);
+  assert.doesNotMatch(prod, /PUBLIC_REVIEWS_SNAPSHOT/);
+});
+
 test("publish-dev-static allowlists dests and never talks to docker", () => {
   assert.match(publish, /zed-dev\) remote="\/data\/srv\/zedkit"/);
   assert.match(publish, /zed-epic-73\) remote="\/data\/srv\/zedkit-epic-73"/);
