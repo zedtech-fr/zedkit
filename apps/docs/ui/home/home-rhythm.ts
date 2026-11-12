@@ -57,13 +57,6 @@ export const HOME_LOOKS_GRID = "grid content-shrink gap-stack-lg lg:grid-pair";
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;
 
-/** Min-height hero preview slot while the demo chunk loads; grows with the specimen (no fixed clip). */
-export const HOME_HERO_PREVIEW_SHELL_CLASS = "pane-shrink w-full content-shrink";
-
-/** Bounded live preview inside home gallery cards (min height reserves space while lazy chunks load). */
-export const HOME_GALLERY_PREVIEW_SHELL_CLASS =
-  "w-full content-shrink overflow-hidden rounded-md border bg-background surface-pad-compact";
-
 /** Persuasion copy on the home page (maps to `--zk-type-body-*`). */
 export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 
@@ -75,9 +68,6 @@ export const HOME_CARD_TITLE_CLASS = DOCS_TYPE_H3_CLASS;
 
 /** Factual micro-proof under CTAs (maps to `--zk-type-small-*`). */
 export const HOME_SMALL_TEXT_CLASS = "text-zk-type-small";
-
-/** Audit L2d: interactive demo should begin within ~1.5 phone screens of the home top. */
-export const HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX = 760;
 
 /** Audit L2 mobile: home page scroll height budget at 390px width (40% shorter vs audit baseline). */
 export const HOME_MOBILE_PAGE_MAX_SCROLL_PX = 8000;

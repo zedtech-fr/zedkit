@@ -17,7 +17,6 @@ const sizeBudgetOverFile = [
   "packages/ui/preview/gallery.tsx",
 ];
 const sizeBudgetOverFunction = [
-  "apps/docs/components/admin-dashboard-demo-app.tsx",
   "apps/docs/components/component-page.tsx",
   "apps/docs/components/demos/drawer-demo.tsx",
   "apps/docs/components/demos/tabs-demo.tsx",

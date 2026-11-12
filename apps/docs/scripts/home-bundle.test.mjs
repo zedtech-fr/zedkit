@@ -7,21 +7,53 @@ import test from "node:test";
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 const root = join(app, "../..");
 
-test("home hero dashboard loads the admin demo through next/dynamic", () => {
-  const src = readFileSync(join(app, "ui/home/home-hero-app.tsx"), "utf8");
-  assert.match(src, /from "next\/dynamic"/);
-  assert.match(src, /components\/demos\/registry/);
-  assert.doesNotMatch(src, /from ["']@\/components\/demos\/home-admin-dashboard-demo["']/);
-  assert.doesNotMatch(src, /from ["']@\/components\/home-gallery-demos["']/);
-});
-
-test("home gallery loads overlay demos through next/dynamic", () => {
-  const src = readFileSync(join(app, "components/home-gallery-demos.tsx"), "utf8");
-  assert.match(src, /from "next\/dynamic"/);
-  assert.doesNotMatch(src, /from ["']@\/components\/demos\/confirm-dialog-demo["']/);
-  assert.doesNotMatch(src, /from ["']@\/components\/demos\/drawer-demo["']/);
-  assert.match(src, /home-gallery-preview/);
-  assert.doesNotMatch(src, /home-admin-dashboard-demo/);
+test("retired interactive home hero cluster is gone (#265)", () => {
+  const gone = [
+    "ui/home/home-hero-preview.tsx",
+    "ui/home/home-hero-app.tsx",
+    "ui/home/home-hero-agent-panel.tsx",
+    "ui/home/home-hero-calendar.tsx",
+    "ui/home/home-hero-data.ts",
+    "ui/home/home-hero-overview.tsx",
+    "ui/home/home-hero-satellites.tsx",
+    "ui/home/home-hero-settings.tsx",
+    "ui/home/home-hero-shell-parts.tsx",
+    "ui/home/home-hero-team.tsx",
+    "ui/home/home-gallery-preview.tsx",
+    "ui/home/use-hero-agent.ts",
+    "ui/home/use-hero-tour.ts",
+    "ui/home/use-pointer-parallax.ts",
+    "ui/home/i18n/home-gallery-copy.ts",
+    "components/hero-demo-style-control.tsx",
+    "components/hero-demo-style-fields.tsx",
+    "components/hero-tour-control.tsx",
+    "components/home-gallery-demos.tsx",
+    "components/home-area-title.tsx",
+    "components/home-scenario-title.tsx",
+    "components/i18n/hero-demo-style-copy.ts",
+    "components/admin-dashboard-demo-types.ts",
+    "components/admin-dashboard-demo-app.tsx",
+    "components/admin-dashboard-demo-columns.tsx",
+    "components/admin-dashboard-demo-drawer-fields.tsx",
+    "components/admin-dashboard-demo-drawer.tsx",
+    "components/admin-dashboard-demo-form.ts",
+    "components/demos/home-admin-dashboard-demo.tsx",
+    "components/i18n/admin-dashboard-demo-copy.ts",
+  ];
+  for (const rel of gone) {
+    assert.equal(existsSync(join(app, rel)), false, rel);
+  }
+  const registry = readFileSync(join(app, "components/demos/registry.ts"), "utf8");
+  assert.doesNotMatch(registry, /HomeAdminDashboardDemo/);
+  assert.match(registry, /AdminDashboardGuideDemo/);
+  const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
+  assert.doesNotMatch(copy, /\bheroApp:|\bheroTour:|\bHeroPageId\b/);
+  const homeCopy = readFileSync(join(app, "ui/home/i18n/home-copy.ts"), "utf8");
+  assert.doesNotMatch(homeCopy, /galleryPreview|homeGalleryPreviewCopy/);
+  const identity = readFileSync(join(app, "lib/default-identity.ts"), "utf8");
+  assert.doesNotMatch(identity, /HERO_TOUR_LOOK/);
+  const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  assert.doesNotMatch(rhythm, /HOME_HERO_PREVIEW_SHELL_CLASS|HOME_GALLERY_PREVIEW_SHELL_CLASS|HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX/);
 });
 
 test("search dialog is lazy and not preloaded on every page", () => {
