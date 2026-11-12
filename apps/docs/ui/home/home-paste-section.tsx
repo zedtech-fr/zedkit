@@ -19,7 +19,7 @@ function PasteLandsListing() {
       <Heading level={3} typeRole="heading">
         {homePasteCopy.landsHeading}
       </Heading>
-      <ul className={HOME_PASTE_LANDS_GRID} data-home-paste-lands="" role="list">
+      <ul className={HOME_PASTE_LANDS_GRID} data-home-paste-lands="">
         {LANDS_IDS.map((id) => {
           const column = homePasteCopy.lands[id];
           return (
@@ -33,7 +33,7 @@ function PasteLandsListing() {
                     {column.when}
                   </Text>
                 </Stack>
-                <ul className="trim-margin flex list-none flex-col flush font-mono text-dense" role="list">
+                <ul className="trim-margin flex list-none flex-col flush font-mono text-dense">
                   {column.files.map((file) => (
                     <li key={file.path}>
                       <Text as="span" className="font-mono text-dense">
@@ -94,7 +94,7 @@ export function HomePasteSection() {
     >
       <Stack id="ai-setup" tabIndex={-1} data-scroll-anchor="" gap={HOME_SECTION_CONTENT_GAP} className="content-offset">
         <Stack id="get-started" tabIndex={-1} data-scroll-anchor="" gap={HOME_SECTION_CONTENT_GAP}>
-          <ul className={HOME_PASTE_TIMELINE_GRID} role="list">
+          <ul className={HOME_PASTE_TIMELINE_GRID}>
             {homePasteCopy.timeline.map((item) => (
               <li key={item.label} className="border-t content-offset">
                 <Stack gap="tight">
