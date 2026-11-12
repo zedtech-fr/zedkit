@@ -74,6 +74,20 @@ describe("checkPlacement fixtures", () => {
     assert.deepEqual(ids(result.newViolations), ["dead:lib/bar.ts"]);
   });
 
+  it("keeps the generated-page corpus owner when SHARED_OWNER enters a feature", () => {
+    const result = checkPlacement(
+      {
+        files: ["features/docs/ui/component-page.tsx", "lib/adoption-plan.mjs"],
+        edges: [
+          { from: "docs", to: "features/docs/ui/component-page.tsx" },
+          { from: "features/docs/ui/component-page.tsx", to: "lib/adoption-plan.mjs" },
+        ],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+  });
+
   it("fails a stale dead baseline entry whose file is now reachable", () => {
     const result = checkPlacement(
       {

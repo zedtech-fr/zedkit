@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button, Stack, Text } from "@zedtech/zedkit-ui";
-import { adoptionCopy } from "@/features/docs/i18n/adoption-copy";
+import { adoptionCopy } from "@/components/i18n/adoption-copy";
 import { aiSetupCopy } from "@/components/i18n/ai-setup-copy";
 import {
   AI_SETUP_DOCS_PATH,

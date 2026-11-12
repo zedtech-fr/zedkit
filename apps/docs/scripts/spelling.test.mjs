@@ -12,7 +12,7 @@ const ROOT = join(APP, "..", "..");
 // catalog:check gate (JSX text and visible-attribute literals outside catalogs).
 
 const COPY_FILE_RELATIVE = [
-  "features/docs/i18n/adoption-copy.ts",
+  "components/i18n/adoption-copy.ts",
   "components/i18n/identity-assistant-copy.ts",
   "components/i18n/identity-brief-copy.ts",
   "components/i18n/identity-editor-copy.ts",
