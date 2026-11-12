@@ -1,10 +1,12 @@
 zedkit-ai <command>
 
-  setup [dir] [--provider ...] [--preset starter|setup|core|full] [--dry-run] [--allow-fast]
+  setup [dir] [--provider ...] [--preset starter|setup|core|full] [--kit <dir>] [--dry-run] [--allow-fast]
       One-shot onboarding: preset setup by default (override with --preset);
       same as init --adopt (keeps your existing agent files on collision).
       Then run /setup-ai in your agent.
-  init [dir] [--preset starter|setup|core|full] [--provider ...] [--adopt] [--dry-run] [--allow-fast]
+      --kit is a local kit directory (omit = bundled kit). Pass it again on
+      later sync and validate; it is not remembered.
+  init [dir] [--preset starter|setup|core|full] [--provider ...] [--kit <dir>] [--adopt] [--dry-run] [--allow-fast]
       Copy skills, subagents, commands and an AGENTS.md template into dir
       (default .), then wire the providers (default all). Never overwrites
       existing files (an existing AGENTS.md without the ladder gets the
@@ -12,7 +14,7 @@ zedkit-ai <command>
       writes the kit version beside it (review.kit.md or zk-review).
       --provider takes cursor,claude,codex,muse,all; --target is an alias
       of --provider.
-  validate [dir] [--setup] [--plan <file>] [--allow-fast]
+  validate [dir] [--setup] [--plan <file>] [--kit <dir>] [--allow-fast]
       Check skills, subagents and commands, plus provider-copy drift
       (default dir: .agents; a project root is accepted too), and flags
       model names written outside .agents/tokenomics.md. Exit 1
@@ -48,7 +50,7 @@ zedkit-ai <command>
       needs a `Stakes raised: a -> b: <reason>` line. A critical file also
       needs `Second review:` and `Human validation:` lines. Exit 1 on
       problems, 2 on a bad flag, an unreadable file or a bad ref.
-  sync [dir] [--provider cursor,claude,codex,muse,all] [--check] [--dry-run] [--prune] [--no-prune] [--quiet] [--allow-fast]
+  sync [dir] [--provider cursor,claude,codex,muse,all] [--check] [--dry-run] [--prune] [--no-prune] [--quiet] [--kit <dir>] [--allow-fast]
       Write each tool's agent files from .agents/agents and
       .agents/tokenomics.md: .cursor/agents and .claude/agents get one
       generated copy per agent, and Muse writes native marked files in
