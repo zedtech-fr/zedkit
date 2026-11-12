@@ -1,7 +1,7 @@
 /*
- * Section scroll: smooth paging and proximity snap. Opt in with
- * `SectionScroll`. Not animation — motion lives in signature-motion /
- * scroll-scenes.
+ * Section scroll: smooth scrolling and proximity snap. Opt in with
+ * `SectionScroll`. Page-wide: the `html:has` rule styles the document.
+ * Not animation — motion lives in signature-motion / scroll-scenes.
  */
 @media (prefers-reduced-motion: no-preference) {
   html:has([data-slot="section-scroll"]) {
