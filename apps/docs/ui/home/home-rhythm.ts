@@ -12,18 +12,18 @@ export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-
 /**
  * The two-step grids step at `sm`, not `md`: fumadocs' prebuilt CSS defines
  * its own `md:grid-cols-2` later in the shared utilities layer, which would
- * shadow the `xl` step on any element carrying both. Track counts are pinned
- * by the "home bands" e2e test in tests/home-layout.spec.ts.
+ * shadow the `xl` step on any element carrying both. Class strings are pinned
+ * by apps/docs/scripts/home-bundle.test.mjs.
  */
 export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-trio";
 export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-quad";
 /**
- * Same-idea list: one column until `lg`, then two. Not
- * `HOME_CARD_GRID_TWO_COL` (`md` pair), because mobile must stack by
- * priority through the tablet step.
+ * Same-idea cards: one column until `lg`, then three. Not
+ * `HOME_CARD_GRID_TWO_COL` (`md` pair) and not `HOME_CARD_GRID_THREE_COL`
+ * (`sm` pair / `xl` trio), because a phone must stack all three cards.
  */
-export const HOME_SAME_IDEA_GRID =
-  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair";
+export const HOME_SAME_IDEA_CARDS_GRID =
+  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio";
 /**
  * Six-sentences cards: one column until `lg`, then four. Featured cards
  * take `lg:span-rest` (two of four) so 1440 is featured | small | small,
