@@ -314,6 +314,91 @@ test("plan and implement phases share a runId and stay two timeline entries", ()
   );
 });
 
+test("index models on implement, review, and improve survive parse and the snapshot port", async () => {
+  const path = writeSnapshot([
+    issue({
+      entries: [
+        entry({
+          id: "plan",
+          type: "plan",
+          models: ["cursor-grok-4.6-high"],
+        }),
+        entry({
+          id: "implement",
+          type: "implement",
+          startedAt: "2026-11-10T16:10:00.000Z",
+          models: ["cursor-grok-4.6-high"],
+        }),
+        entry({
+          id: "review",
+          runId: "run-108-review",
+          type: "review",
+          startedAt: "2026-11-10T17:20:00.000Z",
+          models: ["lens-model", "second-pass-model"],
+          verdict: "approve",
+          liveUrl: "https://example.test/live/run-108-review",
+        }),
+        entry({
+          id: "improve",
+          runId: "run-108-improve",
+          type: "improve",
+          startedAt: "2026-11-10T18:40:00.000Z",
+          models: ["improve-model"],
+          liveUrl: "https://example.test/live/run-108-improve",
+        }),
+      ],
+    }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.listIssues();
+  assert.equal(listed.length, 1);
+  const byType = Object.fromEntries(listed[0].entries.map((row) => [row.type, [...row.models]]));
+  assert.deepEqual(byType.plan, ["cursor-grok-4.6-high"]);
+  assert.deepEqual(byType.implement, ["cursor-grok-4.6-high"]);
+  assert.deepEqual(byType.review, ["lens-model", "second-pass-model"]);
+  assert.deepEqual(byType.improve, ["improve-model"]);
+  assert.deepEqual((await port.getRun(108, "run-108-review"))?.models, [
+    "lens-model",
+    "second-pass-model",
+  ]);
+  assert.deepEqual((await port.getRun(108, "run-108-impl"))?.models, ["cursor-grok-4.6-high"]);
+});
+
+test("unlinked pull request without entries fails closed", () => {
+  const parsed = parsePublicReviewSnapshot(
+    wrapper([], [{ number: 54, issueNumber: null, runIds: ["run-54-review"] }]),
+  );
+  assert.equal(parsed.ok, false);
+});
+
+test("empty model strings are skipped", () => {
+  const parsed = parsedIndex([issue({ entries: [entry({ models: ["", "kept-model", ""] })] })]);
+  assert.deepEqual(parsed.issues[0].entries[0].models, ["kept-model"]);
+});
+
+test("dry-run type is kept on the generated run index", () => {
+  const parsed = parsedIndex([
+    issue({
+      entries: [entry({ id: "dry", runId: "run-dry", type: "dry-run", liveUrl: null })],
+    }),
+  ]);
+  assert.equal(parsed.issues[0].entries[0].type, "dry-run");
+});
+
+test("durationMs of 0 is kept", () => {
+  assert.equal(
+    parsedIndex([issue({ entries: [entry({ durationMs: 0 })] })]).issues[0].entries[0].durationMs,
+    0,
+  );
+});
+
+test("negative durationMs fails closed", () => {
+  assert.equal(
+    parsePublicReviewSnapshot(wrapper([issue({ entries: [entry({ durationMs: -1 })] })])).ok,
+    false,
+  );
+});
+
 test("latest status uses the last entry; a review verdict wins", () => {
   const reviewLast = [
     entry({ type: "implement", status: "completed", startedAt: "2026-11-10T16:00:00.000Z" }),
