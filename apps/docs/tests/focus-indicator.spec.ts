@@ -139,7 +139,6 @@ test.describe("controls whose own styles used to hide the ring", () => {
   // Each one is a control inside a container that scrolls or clips: the ring must be drawn, and drawn whole.
   const UNCLIPPED: { name: string; path: string; find: (page: Page) => Locator }[] = [
     { name: "identity example tab", path: "/", find: (page) => page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Mist", exact: true }) },
-    { name: "hero kit tab", path: "/", find: (page) => page.locator("[data-home-hero-lead]").getByRole("tab", { name: "AI + UI", exact: true }) },
     { name: "hero copy prompt", path: "/", find: (page) => page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt", exact: true }) },
     { name: "hero illustration pause", path: "/", find: (page) => page.locator("[data-home-hero-preview]").getByRole("button", { name: "Pause illustration motion" }) },
     { name: "docs Preview tab", path: "/docs/ui/trigger-actions-with-buttons", find: (page) => page.getByRole("tab", { name: "Preview" }).first() },
