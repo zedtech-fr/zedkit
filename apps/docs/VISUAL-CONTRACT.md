@@ -121,7 +121,7 @@ These broke real previews. Check them before changing home, chrome, specimens or
 - **The pointer is part of a screenshot.** The click that opens an overlay leaves the pointer where the trigger was; the overlay opens under it and whichever button lands there is painted hovered. Park the pointer before capturing a surface; test hover on its own.
 - **Dates and the reader's zone.** A `Date` built in a server component is a UTC instant fixed on the build host. Build dates where they are shown (a client component), or format with an explicit time zone. Hydration error #418 is the symptom, and CI (UTC to UTC) cannot show it: the test reads the page from other zones.
 - **Identity probes.** Site chrome pins radii/shadows on `:root`. A probe in `main` does not prove a look. Resolve tokens on `[data-identity-scope]`.
-- **Inverted home bands pin ghost fills.** A dark band that only sets `--foreground` / `--muted-foreground` leaves light-mode `--muted` / `--secondary` in place; ghost hover is then ~1.6:1. Pin `--muted`, `--secondary`, and `--secondary-foreground` with the fill (`#paste` uses `--zk-site-action-hover`).
+- **Inverted home bands pin ghost fills.** A dark band that only sets `--foreground` / `--muted-foreground` leaves light-mode `--muted` / `--secondary` in place; ghost hover is then ~1.6:1. Pin `--muted`, `--secondary`, and `--secondary-foreground` with the fill (`#paste` uses `--zk-site-action-hover`). A focusable control on that band also needs `--ring` pinned to the inverted foreground: Glass `--ring` is `--primary`, so the outline disappears on a `--primary` fill (`#manifesto`).
 
 ## Verifying the render
 
