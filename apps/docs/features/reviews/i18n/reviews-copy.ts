@@ -51,7 +51,6 @@ export const reviewsCopy = {
     timeline: "Timeline",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
-    openRun: "Open this run",
     missing: "This issue is not on the public list.",
   },
   unlinked: {

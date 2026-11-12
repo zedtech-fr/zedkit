@@ -30,30 +30,28 @@ function TimelineRow({
   copy: ReviewsCopy;
 }) {
   return (
-    <Stack gap="sm" className="border-b border-border py-section-sm">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center border-b border-border py-row">
       <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={href} aria-label={`${copy.issue.openRun}: ${copy.type[entry.type]} ${entry.runId}`}>
+        <Link href={href}>
           {copy.type[entry.type]}
         </Link>
       </Button>
-      <Stack direction="horizontal" gap="sm" className="flex-wrap">
-        {entry.verdict !== null ? (
-          <LatestStatusMark status={entry.verdict} copy={copy} />
-        ) : (
-          <LatestStatusMark status={entry.status} copy={copy} />
-        )}
-        {entry.models.length > 0 ? (
-          <Text variant="muted" typeRole="caption">
-            {entry.models.join(", ")}
-          </Text>
-        ) : null}
-        {entry.durationMs !== null ? (
-          <Text variant="muted" typeRole="caption">
-            {formatDuration(entry.durationMs)}
-          </Text>
-        ) : null}
-        <UpdatedAgo date={new Date(entry.startedAt)} />
-      </Stack>
+      {entry.verdict !== null ? (
+        <LatestStatusMark status={entry.verdict} copy={copy} />
+      ) : (
+        <LatestStatusMark status={entry.status} copy={copy} />
+      )}
+      {entry.models.length > 0 ? (
+        <Text variant="muted" typeRole="caption">
+          {entry.models.join(", ")}
+        </Text>
+      ) : null}
+      {entry.durationMs !== null ? (
+        <Text variant="muted" typeRole="caption">
+          {formatDuration(entry.durationMs)}
+        </Text>
+      ) : null}
+      <UpdatedAgo date={new Date(entry.startedAt)} />
     </Stack>
   );
 }

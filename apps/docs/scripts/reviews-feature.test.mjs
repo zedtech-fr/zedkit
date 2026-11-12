@@ -51,6 +51,8 @@ import {
   unlinkedRunPath,
 } from "../features/reviews/model/review-routes.ts";
 import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
+import { copyPublicReviewsSnapshot } from "./copy-public-reviews-snapshot.mjs";
+
 const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
 const reviewsAppRoot = join(here, "../app/(site)/reviews");
@@ -122,17 +124,39 @@ test("public-repo visibility: missing, null, and public are exportable; only pri
   assert.equal(isExportableVisibility("team"), true);
   assert.equal(isExportableVisibility("private"), false);
   const gated = toPublicIndex(
-    parsedIndex([
-      issue({ number: 99, visibility: "private", title: "secret" }),
-      issue({ number: 98, visibility: "team", title: "unknown flag" }),
-      issue({ number: 97, title: "no flag" }),
-      issue({ number: 96, visibility: null, title: "null flag" }),
-      issue({ number: 95, visibility: "public", title: "marked public" }),
-    ]),
+    parsedIndex(
+      [
+        issue({ number: 99, visibility: "private", title: "secret" }),
+        issue({ number: 98, visibility: "team", title: "unknown flag" }),
+        issue({ number: 97, title: "no flag" }),
+        issue({ number: 96, visibility: null, title: "null flag" }),
+        issue({ number: 95, visibility: "public", title: "marked public" }),
+      ],
+      [
+        pr({
+          number: 50,
+          issueNumber: null,
+          runIds: ["run-50"],
+          visibility: "private",
+          entries: [entry({ id: "50-review", runId: "run-50" })],
+        }),
+        pr({
+          number: 51,
+          issueNumber: null,
+          runIds: ["run-51"],
+          visibility: "public",
+          entries: [entry({ id: "51-review", runId: "run-51" })],
+        }),
+      ],
+    ),
   );
   assert.deepEqual(
     gated.issues.map((row) => row.number),
     [98, 97, 96, 95],
+  );
+  assert.deepEqual(
+    gated.pullRequests.map((row) => row.number),
+    [51],
   );
 });
 
@@ -315,6 +339,102 @@ test("plan and implement phases share a runId and stay two timeline entries", ()
   assert.deepEqual(
     parsed.issues[0].entries.map((row) => row.type),
     ["plan", "implement"],
+  );
+});
+
+test("index models on implement, review, and improve survive parse and the snapshot port", async () => {
+  const path = writeSnapshot([
+    issue({
+      entries: [
+        entry({
+          id: "plan",
+          type: "plan",
+          models: ["cursor-grok-4.6-high"],
+        }),
+        entry({
+          id: "implement",
+          type: "implement",
+          startedAt: "2026-11-10T16:10:00.000Z",
+          models: ["cursor-grok-4.6-high"],
+        }),
+        entry({
+          id: "review",
+          runId: "run-108-review",
+          type: "review",
+          startedAt: "2026-11-10T17:20:00.000Z",
+          models: ["lens-model", "second-pass-model"],
+          verdict: "approve",
+          liveUrl: "https://example.test/live/run-108-review",
+        }),
+        entry({
+          id: "improve",
+          runId: "run-108-improve",
+          type: "improve",
+          startedAt: "2026-11-10T18:40:00.000Z",
+          models: ["improve-model"],
+          liveUrl: "https://example.test/live/run-108-improve",
+        }),
+      ],
+    }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.listIssues();
+  assert.equal(listed.length, 1);
+  const byType = Object.fromEntries(listed[0].entries.map((row) => [row.type, [...row.models]]));
+  assert.deepEqual(byType.plan, ["cursor-grok-4.6-high"]);
+  assert.deepEqual(byType.implement, ["cursor-grok-4.6-high"]);
+  assert.deepEqual(byType.review, ["lens-model", "second-pass-model"]);
+  assert.deepEqual(byType.improve, ["improve-model"]);
+  assert.deepEqual((await port.getRun(108, "run-108-review"))?.models, [
+    "lens-model",
+    "second-pass-model",
+  ]);
+  assert.deepEqual((await port.getRun(108, "run-108-impl"))?.models, ["cursor-grok-4.6-high"]);
+});
+
+test("unlinked pull request without entries fails closed", () => {
+  const parsed = parsePublicReviewSnapshot(
+    wrapper([], [{ number: 54, issueNumber: null, runIds: ["run-54-review"] }]),
+  );
+  assert.equal(parsed.ok, false);
+});
+
+test("linked PR entries stay on the PR row and are not merged into the issue", async () => {
+  const extra = entry({ id: "pr-only", runId: "run-pr-only", type: "review" });
+  const path = writeSnapshot([issue()], [pr({ entries: [extra] })]);
+  const port = createSnapshotReviewPort(path);
+  const issues = await port.listIssues();
+  assert.ok(!issues[0].entries.some((row) => row.id === "pr-only"));
+  assert.equal(await port.getRun(108, "run-pr-only"), null);
+  const prs = await port.listPullRequests();
+  assert.equal(prs[0].entries[0].id, "pr-only");
+});
+
+test("empty model strings are skipped", () => {
+  const parsed = parsedIndex([issue({ entries: [entry({ models: ["", "kept-model", ""] })] })]);
+  assert.deepEqual(parsed.issues[0].entries[0].models, ["kept-model"]);
+});
+
+test("dry-run type is kept on the generated run index", () => {
+  const parsed = parsedIndex([
+    issue({
+      entries: [entry({ id: "dry", runId: "run-dry", type: "dry-run", liveUrl: null })],
+    }),
+  ]);
+  assert.equal(parsed.issues[0].entries[0].type, "dry-run");
+});
+
+test("durationMs of 0 is kept", () => {
+  assert.equal(
+    parsedIndex([issue({ entries: [entry({ durationMs: 0 })] })]).issues[0].entries[0].durationMs,
+    0,
+  );
+});
+
+test("negative durationMs fails closed", () => {
+  assert.equal(
+    parsePublicReviewSnapshot(wrapper([issue({ entries: [entry({ durationMs: -1 })] })])).ok,
+    false,
   );
 });
 
@@ -646,7 +766,23 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   }
   const bytes = statSync(snapshotPath).size;
   assert.ok(bytes < 200 * 1024);
+  const contract = readFileSync(join(reviewsRoot, "SNAPSHOT.md"), "utf8");
   assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
+  assert.match(contract, /`opened_pr_url`/);
+  assert.doesNotMatch(contract, /pr_url_opened/);
+  assert.match(contract, /index parser does not invent a title/);
+  assert.match(contract, /live mapper fallback/);
+  assert.match(
+    contract,
+    /Each `pullRequests\[\]` object:[\s\S]*`visibility` \| Optional\. Same rule as issue rows/,
+  );
+  assert.match(contract, /Exception: `verdict_json` is any object or null/);
+  assert.match(contract, /Index extras are dropped at parse/);
+  assert.match(contract, /Live extras fail closed/);
+  assert.match(contract, /do not rely on it for\s+unknown keys/);
+  assert.match(contract, /Plan, implement, and dry-run: engine model/);
+  assert.match(contract, /Required array \(may be empty\)/);
+  assert.match(contract, /not merged into the issue timeline/);
   const sitemap = await listIssueSitemapPaths();
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
@@ -654,6 +790,407 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
   assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
+});
+
+const INVENTORY_ISSUES = [
+  66, 69, 70, 71, 73, 81, 82, 83, 87, 88, 89, 90, 91, 92, 93, 95, 96, 104, 105, 106, 107, 108, 109, 110, 137,
+];
+const INVENTORY_ISSUE_LIST_ORDER = [
+  137, 110, 109, 108, 107, 106, 105, 104, 96, 95, 93, 92, 91, 90, 89, 88, 87, 83, 82, 81, 73, 71, 70, 69, 66,
+];
+const INVENTORY_UNLINKED_PRS = [45, 46, 47, 50, 51, 53, 54, 55, 64];
+const INVENTORY_LINKED_PRS = [
+  266, 267, 269, 270, 271, 273, 281, 282, 283, 287, 288, 289, 290, 291, 292, 295, 296, 304, 305, 306, 307, 308,
+  309,
+];
+
+function inventoryIso(issueNumber, extraSeconds = 0) {
+  return new Date(Date.UTC(2026, 10, 1, 12, 0, issueNumber * 10 + extraSeconds)).toISOString();
+}
+
+function inventoryLinkedPrs(n) {
+  if (n === 93 || n === 110 || n === 137) return [];
+  if (n === 66) return [266, 267];
+  return [200 + n];
+}
+
+function inventoryImplEntries(n) {
+  const runId = `run-${n}-impl`;
+  const liveUrl = `https://example.test/live/${runId}`;
+  const models = ["cursor-grok-4.6-high"];
+  const plan = entry({
+    id: `${n}-plan`,
+    runId,
+    type: "plan",
+    status: "completed",
+    startedAt: inventoryIso(n, 0),
+    durationMs: 1000,
+    models,
+    liveUrl,
+  });
+  const implementStatus = n === 93 ? "failed" : n === 110 || n === 137 ? "running" : "completed";
+  const implement = entry({
+    id: `${n}-implement`,
+    runId,
+    type: "implement",
+    status: implementStatus,
+    startedAt: inventoryIso(n, 1),
+    durationMs: implementStatus === "running" ? null : 2000,
+    models,
+    liveUrl,
+  });
+  if (n === 66) {
+    return [
+      plan,
+      implement,
+      entry({
+        id: `${n}-review`,
+        runId: `run-${n}-review`,
+        type: "review",
+        status: "completed",
+        startedAt: inventoryIso(n, 2),
+        durationMs: 3000,
+        models: ["lens-model", "second-pass-model"],
+        verdict: "approve",
+        liveUrl: `https://example.test/live/run-${n}-review`,
+      }),
+    ];
+  }
+  if (n === 108) {
+    return [
+      entry({
+        id: `${n}-improve`,
+        runId: `run-${n}-improve`,
+        type: "improve",
+        status: "completed",
+        startedAt: inventoryIso(n, 3),
+        durationMs: 4000,
+        models: ["improve-model"],
+        liveUrl: `https://example.test/live/run-${n}-improve`,
+      }),
+      entry({
+        id: `${n}-review`,
+        runId: `run-${n}-review`,
+        type: "review",
+        status: "completed",
+        startedAt: inventoryIso(n, 2),
+        durationMs: 3000,
+        models: ["lens-model", "second-pass-model"],
+        verdict: "request-changes",
+        liveUrl: `https://example.test/live/run-${n}-review`,
+      }),
+      implement,
+      plan,
+    ];
+  }
+  return [plan, implement];
+}
+
+function inventoryUnlinkedPr(n) {
+  const type = n === 45 || n === 46 ? "dry-run" : n === 47 ? "improve" : "review";
+  const runId = `run-${n}-${type === "dry-run" ? "dry" : type}`;
+  return {
+    number: n,
+    issueNumber: null,
+    runIds: [runId],
+    entries: [
+      entry({
+        id: `${n}-${type}`,
+        runId,
+        type,
+        status: "completed",
+        startedAt: inventoryIso(n, 0),
+        durationMs: 1000,
+        models: type === "review" ? ["lens-model"] : ["cursor-grok-4.6-high"],
+        verdict: type === "review" ? "comment" : null,
+        liveUrl: `https://example.test/live/${runId}`,
+      }),
+    ],
+  };
+}
+
+function inventoryLinkedPrRow(prNumber, issueNumber) {
+  const runIds = [];
+  for (const row of inventoryImplEntries(issueNumber)) {
+    if (runIds.includes(row.runId)) continue;
+    runIds.push(row.runId);
+  }
+  return { number: prNumber, issueNumber, runIds };
+}
+
+function inventoryIndex() {
+  const issues = INVENTORY_ISSUES.map((n) => {
+    const extras = {};
+    if (n === 69) extras.visibility = null;
+    if (n === 70) extras.visibility = "public";
+    if (n === 108) extras.denseLive = { agents: [] };
+    return issue({
+      number: n,
+      title: `Issue ${n} exportable run`,
+      state: n === 110 || n === 137 ? "open" : "closed",
+      pullRequests: inventoryLinkedPrs(n),
+      lastRunAt: inventoryIso(n, n === 108 ? 3 : n === 66 ? 2 : 1),
+      entries: inventoryImplEntries(n),
+      ...extras,
+    });
+  });
+  issues.push(
+    issue({
+      number: 99,
+      title: "private issue",
+      state: "open",
+      pullRequests: [299],
+      lastRunAt: inventoryIso(99, 1),
+      visibility: "private",
+      entries: inventoryImplEntries(99),
+    }),
+    issue({
+      number: 1,
+      title: "empty issue",
+      state: "open",
+      pullRequests: [],
+      lastRunAt: inventoryIso(1, 0),
+      entries: [],
+    }),
+  );
+  const pullRequests = [];
+  for (const n of INVENTORY_ISSUES) {
+    for (const prNumber of inventoryLinkedPrs(n)) {
+      pullRequests.push(inventoryLinkedPrRow(prNumber, n));
+    }
+  }
+  for (const n of INVENTORY_UNLINKED_PRS) pullRequests.push(inventoryUnlinkedPr(n));
+  pullRequests.push(
+    { number: 299, issueNumber: 99, runIds: ["run-99-impl"] },
+    {
+      number: 999,
+      issueNumber: null,
+      runIds: ["run-999-review"],
+      visibility: "private",
+      entries: [entry({ id: "999-review", runId: "run-999-review", type: "review" })],
+    },
+  );
+  return wrapper([...issues].reverse(), pullRequests, {
+    kind: "generated-run-index",
+    generatedAt: "2026-11-11T00:00:00.000Z",
+    exporterNote: "out-of-repo",
+  });
+}
+
+function writeInventorySnapshot() {
+  const payload = inventoryIndex();
+  const dir = mkdtempSync(join(tmpdir(), "public-issues-inventory-"));
+  const path = join(dir, "public-reviews.json");
+  writeFileSync(path, JSON.stringify(payload));
+  return { path, payload, dest: join(dir, "dest.json") };
+}
+
+test("inventory-scale generated run index lists every exportable issue and drops private and empty rows", async () => {
+  const { path } = writeInventorySnapshot();
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed.map((row) => row.number),
+    INVENTORY_ISSUE_LIST_ORDER,
+  );
+  assert.equal(listed.length, 25);
+  assert.equal(listed.find((row) => row.number === 69)?.title, "Issue 69 exportable run");
+  assert.equal(listed.find((row) => row.number === 70)?.state, "closed");
+  assert.deepEqual(listed.find((row) => row.number === 66)?.pullRequests, [266, 267]);
+  assert.equal(latestStatus(listed.find((row) => row.number === 66).entries), "approve");
+  assert.equal(latestStatus(listed.find((row) => row.number === 93).entries), "failed");
+  assert.equal(latestStatus(listed.find((row) => row.number === 110).entries), "running");
+  assert.equal(latestStatus(listed.find((row) => row.number === 108).entries), "completed");
+  assert.equal(await port.getIssue(99), null);
+  assert.equal(await port.getIssue(1), null);
+  assert.equal(await port.resolvePr(299), null);
+});
+
+test("inventory-scale timeline keeps plan and implement as two rows of one run", async () => {
+  const { path } = writeInventorySnapshot();
+  const port = createSnapshotReviewPort(path);
+  const issue108 = await port.getIssue(108);
+  assert.deepEqual(
+    issue108.entries.map((row) => row.type),
+    ["plan", "implement", "review", "improve"],
+  );
+  assert.equal(issue108.entries[0].runId, "run-108-impl");
+  assert.equal(issue108.entries[1].runId, "run-108-impl");
+  assert.equal(issue108.entries[0].id, "108-plan");
+  assert.equal(issue108.entries[1].id, "108-implement");
+  assert.deepEqual([...issue108.entries[0].models], ["cursor-grok-4.6-high"]);
+  assert.deepEqual([...issue108.entries[2].models], ["lens-model", "second-pass-model"]);
+  assert.deepEqual([...issue108.entries[3].models], ["improve-model"]);
+  const run = await port.getRun(108, "run-108-impl");
+  assert.equal(run?.runId, "run-108-impl");
+  assert.equal(run?.entries.length, 2);
+  assert.equal(run?.liveUrl, "https://example.test/live/run-108-impl");
+  assert.equal(await port.getRun(108, "missing-run"), null);
+});
+
+test("inventory-scale unlinked pull requests stay reachable", async () => {
+  const { path } = writeInventorySnapshot();
+  const port = createSnapshotReviewPort(path);
+  const unlinked = await port.listUnlinkedPullRequests();
+  assert.deepEqual(
+    unlinked.map((row) => row.number),
+    INVENTORY_UNLINKED_PRS,
+  );
+  assert.equal((await port.getUnlinkedPullRequest(64))?.entries[0].type, "review");
+  assert.equal((await port.getUnlinkedPullRequest(45))?.entries[0].type, "dry-run");
+  assert.equal((await port.getUnlinkedPullRequest(47))?.entries[0].type, "improve");
+  assert.equal((await port.getUnlinkedRun(64, "run-64-review"))?.runId, "run-64-review");
+  assert.equal(await port.getUnlinkedPullRequest(999), null);
+  assert.equal(await port.getUnlinkedRun(64, "missing-run"), null);
+});
+
+test("inventory-scale redirects cover every PR and run; unknown n is absent; retired stubs only when missing", async () => {
+  const { path } = writeInventorySnapshot();
+  const port = createSnapshotReviewPort(path);
+  const redirects = await listReviewRedirectsFrom(port);
+  assert.deepEqual(redirects[0], { from: "/reviews", to: "/issues" });
+  const froms = redirects.map((row) => row.from);
+  assert.ok(froms.includes("/reviews/pr/266"));
+  assert.ok(froms.includes("/reviews/pr/308"));
+  assert.ok(froms.includes("/reviews/pr/64"));
+  assert.ok(froms.includes("/reviews/pr/45"));
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/266")?.to,
+    "/issues/66",
+  );
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/308")?.to,
+    "/issues/108",
+  );
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/64")?.to,
+    "/issues/pr/64",
+  );
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/308/runs/run-108-impl")?.to,
+    "/issues/108/runs/run-108-impl",
+  );
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/64/runs/run-64-review")?.to,
+    "/issues/pr/64/runs/run-64-review",
+  );
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/266/runs/run-66-impl")?.to,
+    "/issues/66/runs/run-66-impl",
+  );
+  assert.equal(froms.includes("/reviews/pr/404"), false);
+  assert.equal(froms.includes("/reviews/pr/299"), false);
+  assert.equal(await port.resolvePr(404), null);
+  assert.equal((await port.resolvePr(266))?.issueNumber, 66);
+  assert.equal((await port.resolvePr(64))?.issueNumber, null);
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/79")?.to,
+    "/issues",
+  );
+  assert.equal(
+    redirects.find((row) => row.from === "/reviews/pr/80")?.to,
+    "/issues",
+  );
+  assert.equal(froms.includes("/reviews/pr/79/runs/run-108-impl"), false);
+  const prLevel = redirects.filter((row) => /^\/reviews\/pr\/\d+$/.test(row.from));
+  assert.equal(prLevel.length, INVENTORY_LINKED_PRS.length + INVENTORY_UNLINKED_PRS.length + 2);
+  assert.equal(redirects.length, 71);
+});
+
+test("inventory-scale static params and sitemap stay on /issues paths", async () => {
+  const { path } = writeInventorySnapshot();
+  const port = createSnapshotReviewPort(path);
+  assert.deepEqual(
+    await listIssueParamsFrom(port),
+    INVENTORY_ISSUE_LIST_ORDER.map((n) => ({ n: String(n) })),
+  );
+  const issueRuns = await listIssueRunParamsFrom(port);
+  assert.ok(issueRuns.some((row) => row.n === "108" && row.id === "run-108-impl"));
+  assert.equal(
+    issueRuns.filter((row) => row.n === "108").length,
+    3,
+  );
+  assert.equal(
+    issueRuns.filter((row) => row.id === "run-108-impl").length,
+    1,
+  );
+  assert.deepEqual(
+    await listUnlinkedPrParamsFrom(port),
+    INVENTORY_UNLINKED_PRS.map((n) => ({ n: String(n) })),
+  );
+  const reviewPrs = await listReviewPrParamsFrom(port);
+  assert.equal(reviewPrs.length, INVENTORY_LINKED_PRS.length + INVENTORY_UNLINKED_PRS.length);
+  assert.equal(
+    reviewPrs.some((row) => row.n === "0"),
+    false,
+  );
+  assert.equal(
+    reviewPrs.some((row) => row.n === "79"),
+    false,
+  );
+  assert.ok(reviewPrs.some((row) => row.n === "64"));
+  assert.ok(reviewPrs.some((row) => row.n === "266"));
+  const sitemap = await listIssueSitemapPathsFrom(port);
+  assert.equal(sitemap[0], "/issues");
+  assert.ok(sitemap.includes("/issues/108"));
+  assert.ok(sitemap.includes("/issues/108/runs/run-108-impl"));
+  assert.ok(sitemap.includes("/issues/93"));
+  assert.ok(sitemap.includes("/issues/pr/64"));
+  assert.ok(sitemap.includes("/issues/pr/64/runs/run-64-review"));
+  assert.equal(sitemap.includes("/issues/99"), false);
+  assert.equal(
+    sitemap.some((item) => item.startsWith("/reviews")),
+    false,
+  );
+});
+
+test("inventory-scale generated run index stays under 200KB and extra keys are ignored", () => {
+  const payload = inventoryIndex();
+  const bytes = Buffer.byteLength(JSON.stringify(payload), "utf8");
+  assert.ok(bytes < 200 * 1024, `payload is ${bytes} bytes`);
+  const parsed = parsePublicReviewSnapshot(payload);
+  assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
+  assert.equal("generatedAt" in parsed.value, false);
+  assert.equal("exporterNote" in parsed.value, false);
+  assert.equal(parsed.value.kind, "generated-run-index");
+  const issue108 = parsed.value.issues.find((row) => row.number === 108);
+  assert.equal("denseLive" in issue108, false);
+});
+
+test("inventory-scale ingest succeeds; an unredacted home path still fails closed", () => {
+  const { path, dest } = writeInventorySnapshot();
+  writeFileSync(dest, "KEEP");
+  copyPublicReviewsSnapshot(path, dest);
+  const written = JSON.parse(readFileSync(dest, "utf8"));
+  assert.equal(written.kind, "generated-run-index");
+  assert.deepEqual(
+    written.issues.map((row) => row.number).sort((a, b) => a - b),
+    [...INVENTORY_ISSUES],
+  );
+  assert.equal(
+    written.issues.some((row) => row.number === 99),
+    false,
+  );
+  assert.equal(
+    written.pullRequests.some((row) => row.number === 999),
+    false,
+  );
+  assert.ok(statSync(dest).size < 200 * 1024);
+
+  const dirtyDir = mkdtempSync(join(tmpdir(), "public-issues-inventory-dirty-"));
+  const dirtySource = join(dirtyDir, "source.json");
+  const dirtyDest = join(dirtyDir, "dest.json");
+  const dirty = inventoryIndex();
+  dirty.issues = dirty.issues.map((row) =>
+    row.number === 66 ? { ...row, title: "notes from /home/" } : row,
+  );
+  writeFileSync(dirtySource, JSON.stringify(dirty));
+  writeFileSync(dirtyDest, "KEEP");
+  assert.throws(
+    () => copyPublicReviewsSnapshot(dirtySource, dirtyDest),
+    /unredacted token or machine path/,
+  );
+  assert.equal(readFileSync(dirtyDest, "utf8"), "KEEP");
 });
 
 test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
@@ -851,6 +1388,7 @@ test("provisional run page links out and does not render a console", () => {
   assert.match(run, /copy\.run\.noLive/);
   assert.match(run, /target="_blank"/);
   assert.doesNotMatch(run, /ReviewConsole/);
+  assert.doesNotMatch(run, /AgentConsole/);
   assert.doesNotMatch(run, /reviewMainFlow/);
   assert.doesNotMatch(run, /ReviewAgentList/);
   assert.doesNotMatch(run, /<iframe/);
@@ -884,6 +1422,30 @@ test("list title href is the latest run; Timeline is the labelled secondary", ()
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /\/runs\/`/);
   assert.doesNotMatch(list, /\/runs\/\$\{/);
+});
+
+test("unlinked and timeline links take their accessible name from visible title text", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.match(list, /<Link href=\{last \? unlinkedRunPath\(entry\.number, last\.runId\) : unlinkedPrPath\(entry\.number\)\}>\s*#\{entry\.number\}/);
+  assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
+  assert.doesNotMatch(list, /<Link[^>]*aria-label/);
+  assert.doesNotMatch(list, /<Button[^>]*aria-label/);
+  assert.match(timeline, /<Link href=\{href\}>\s*\{copy\.type\[entry\.type\]\}/);
+  assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
+});
+
+test("list and timeline rows use row padding, not section padding", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
+  assert.match(list, /flex-wrap items-center border-b border-border py-row/);
+  assert.match(timeline, /flex-wrap items-center border-b border-border py-row/);
+  assert.doesNotMatch(list, /py-section-sm/);
+  assert.doesNotMatch(timeline, /py-section-sm/);
+  assert.match(frame, /<Stack gap="lg">\{children\}<\/Stack>/);
+  assert.doesNotMatch(frame, /children\(panel\)/);
 });
 
 test("verdict and status tones live in one shared module", () => {
@@ -1117,6 +1679,35 @@ test("live issue and live_url parse; unknown live run keys still fail", () => {
     parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, issue: "108" } })])).ok,
     false,
   );
+});
+
+test("opened_pr_url is accepted; pr_url_opened fails closed", () => {
+  const opened = "https://example.test/pr/71";
+  const accepted = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, opened_pr_url: opened } })]),
+  );
+  assert.equal(accepted.ok, true, accepted.ok ? "" : accepted.error.message);
+  assert.equal(accepted.value[0].run.opened_pr_url, opened);
+  assert.equal(
+    parsePublicReviewSnapshot(
+      liveWrapper([liveSample({ run: { ...liveSample().run, pr_url_opened: opened } })]),
+    ).ok,
+    false,
+  );
+});
+
+test("live mapper falls back to Issue #N when issue_title is empty; index parse requires title", () => {
+  const empty = liveRunsToIndex([
+    liveSample({ run: { ...liveSample().run, pr: 133, issue: 108, issue_title: "" } }),
+  ]);
+  assert.equal(empty.issues[0].title, "Issue #108");
+  const omittedTitle = { ...liveSample().run, pr: 133, issue: 108 };
+  delete omittedTitle.issue_title;
+  const omitted = liveRunsToIndex([liveSample({ run: omittedTitle })]);
+  assert.equal(omitted.issues[0].title, "Issue #108");
+  const rest = issue();
+  delete rest.title;
+  assert.equal(parsePublicReviewSnapshot(wrapper([rest])).ok, false);
 });
 
 test("private and unknown live visibility never survive the public gate", () => {
