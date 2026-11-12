@@ -1,6 +1,6 @@
-import { SectionScroll } from "@zedtech/zedkit-ui";
 import { HomeBelowHero } from "@/ui/home/home-below-hero";
 import { HomeHero } from "@/ui/home/home-hero";
+import { HOME_MARKETING_ROOT_PROPS } from "@/ui/home/home-rhythm";
 
 export function HomeView({
   uiGalleryStats,
@@ -8,9 +8,9 @@ export function HomeView({
   uiGalleryStats: { components: number; livePreviews: number };
 }) {
   return (
-    <SectionScroll id="home-page" className="content-shrink" data-home-marketing="">
+    <div id="home-page" className="content-shrink" {...HOME_MARKETING_ROOT_PROPS}>
       <HomeHero />
       <HomeBelowHero uiGalleryStats={uiGalleryStats} />
-    </SectionScroll>
+    </div>
   );
 }

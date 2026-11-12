@@ -77,18 +77,16 @@ test.describe("home layout rhythm (#387)", () => {
     }
   });
 
-  test("proximity snap on the home scroll root; the looks band is not snapped", async ({ page }) => {
+  test("native document scroll on home; the looks band is not snapped", async ({ page }) => {
     const readSnap = () =>
       page.evaluate(() => {
         const html = getComputedStyle(document.documentElement);
-        const root = document.querySelector("[data-slot='section-scroll']");
         const identities = document.getElementById("identities");
         const snap = (el: Element | null) => (el ? getComputedStyle(el).scrollSnapAlign : "");
         return {
           htmlType: html.scrollSnapType,
           htmlBehavior: html.scrollBehavior,
-          htmlPaddingTop: html.scrollPaddingTop,
-          rootType: root ? getComputedStyle(root).scrollSnapType : "",
+          sectionScroll: document.querySelector("[data-slot='section-scroll']"),
           identitiesAlign: snap(identities),
           identitiesSnap: identities?.getAttribute("data-snap"),
         };
@@ -98,11 +96,10 @@ test.describe("home layout rhythm (#387)", () => {
       await page.setViewportSize({ width, height: width === 375 ? 812 : 900 });
       await page.goto("/", { waitUntil: "networkidle" });
       const metrics = await readSnap();
-      expect(metrics.htmlType, `${width}`).toMatch(/^y(\s+proximity)?$/);
-      expect(metrics.htmlType, `${width}`).not.toMatch(/mandatory/);
-      expect(metrics.rootType, `${width}`).toMatch(/^y(\s+proximity)?$/);
-      expect(metrics.htmlBehavior, `${width}`).toBe("smooth");
-      expect(Number.parseFloat(metrics.htmlPaddingTop), `${width}`).toBeGreaterThanOrEqual(48);
+      const type = metrics.htmlType.replace(/\s+/g, " ").trim();
+      expect(type, `${width}`).toMatch(/^(none(\s+none)?)?$/);
+      expect(metrics.htmlBehavior, `${width}`).toMatch(/^(auto|normal)$/);
+      expect(metrics.sectionScroll, `${width}`).toBeNull();
       expect(metrics.identitiesSnap, `${width}`).toBe("none");
       expect(metrics.identitiesAlign, `${width}`).toBe("none");
     }

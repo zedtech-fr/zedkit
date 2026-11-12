@@ -1674,9 +1674,9 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Audience: Developers laying out kit pages without raw divs.
 - Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.
 - When to use: For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.
-- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.
-- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
-- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap and smooth scrolling apply only when `prefers-reduced-motion` is `no-preference`.
+- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`. Do not wrap a native-scrolling page: `SectionScroll` applies `scroll-behavior: smooth` and `scroll-snap-type: y proximity` to `html` via `:has`. For node-scoped scroll-linked effects use `ScrollScenes` or `ParallaxSection`.
+- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`, `Pin a stage and change scene as the page scrolls`, `Add depth with parallax layers`
+- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap (`scroll-snap-type: y proximity`) and smooth scrolling (`scroll-behavior: smooth`) apply to `html` via `:has([data-slot="section-scroll"])` only when `prefers-reduced-motion` is `no-preference`.
 
 ```ts
 import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
