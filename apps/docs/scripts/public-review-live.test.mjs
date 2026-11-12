@@ -329,6 +329,24 @@ test("merge uses GitHub verdict and score only on review entries with a null ver
   assert.equal(fromRun.issues[0].entries[0].score, 3);
 });
 
+test("merge fills each null GitHub fallback field on a completed review", () => {
+  const fallbacks = [{ prNumber: 250, verdict: "approve", score: 8 }];
+  const verdictSet = mergePublicIndex({
+    github: { issues: [githubIssue()], pullRequests: [githubPull()] },
+    runs: [runRow({ kind: "review", phase: "review", verdict: "comment", score: null })],
+    fallbacks,
+  });
+  assert.equal(verdictSet.issues[0].entries[0].verdict, "comment");
+  assert.equal(verdictSet.issues[0].entries[0].score, 8);
+  const scoreSet = mergePublicIndex({
+    github: { issues: [githubIssue()], pullRequests: [githubPull()] },
+    runs: [runRow({ kind: "review", phase: "review", verdict: null, score: 3 })],
+    fallbacks,
+  });
+  assert.equal(scoreSet.issues[0].entries[0].verdict, "approve");
+  assert.equal(scoreSet.issues[0].entries[0].score, 3);
+});
+
 test("merge does not stamp GitHub fallback onto a failed or running review with a null verdict", () => {
   const fallbacks = [{ prNumber: 250, verdict: "approve", score: 8 }];
   const failed = mergePublicIndex({
@@ -440,6 +458,21 @@ test("factory fails closed when GitHub or the runs API is down", async () => {
   });
   assert.deepEqual(await runsDown.listIssues(), []);
   assert.equal(await runsDown.hasLoadError(), true);
+});
+
+test("factory fails closed when GitHub review fallbacks are down", async () => {
+  const down = createPublicReviewPort({
+    fetch: fetchFrom([
+      ...githubAndRuns({ runs: [runRow()] }),
+      { includes: "/reviews", status: 503, body: { error: "no" } },
+    ]).fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    githubToken: TOKEN,
+    runsBase: RUNS_BASE,
+  });
+  assert.deepEqual(await down.listIssues(), []);
+  assert.equal(await down.hasLoadError(), true);
 });
 
 test("unset runs base is not an error and yields an empty list", async () => {

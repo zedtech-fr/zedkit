@@ -117,7 +117,7 @@ function exportedAsync(source, name) {
 }
 
 function pinsLoadErrorBeforeNotFound(body) {
-  const loadErrorAt = body.search(/reviewLoadErrorView\(\)/);
+  const loadErrorAt = body.search(/reviewLoadErrorView\(/);
   const notFoundAt = body.search(/\bnotFound\(\)/);
   assert.notEqual(loadErrorAt, -1, "missing reviewLoadErrorView");
   assert.notEqual(notFoundAt, -1, "missing notFound");
@@ -876,6 +876,7 @@ test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API so
   assert.match(contract, /ErrorState with no Retry/);
   assert.match(contract, /10 pages × 100/);
   assert.match(contract, /Join order for the live merge/);
+  assert.match(contract, /fills\s+each null field/);
   assert.doesNotMatch(contract, /later client refresh/);
   assert.doesNotMatch(contract, /ingest-public-reviews/);
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
@@ -1362,9 +1363,11 @@ test("compactPreviewSpacing scales Nunit tokens and keeps unparsed input", () =>
   assert.equal(compactPreviewSpacing("1"), "1");
 });
 
-test("DATA-SOURCES.md documents share-URL keys and is not an exporter field", () => {
+test("DATA-SOURCES.md documents share-URL keys and is not a merge field", () => {
   const snapshot = readFileSync(join(reviewsRoot, "DATA-SOURCES.md"), "utf8");
-  assert.match(snapshot, /## Share URL \(site, not exporter\)/);
+  assert.match(snapshot, /## Share URL \(site, not merge\)/);
+  assert.match(snapshot, /The merge does not emit them/);
+  assert.doesNotMatch(snapshot, /exporter/);
   assert.match(snapshot, /`identity`/);
   assert.match(snapshot, /`preview`/);
   assert.match(snapshot, /`theme`/);
@@ -1433,7 +1436,9 @@ test("not-found segments use per-tree copy through one shared body", () => {
   assert.match(issue, /metadata\.missing/);
   assert.match(issue, /issue\.missing/);
   const run = readFileSync(join(issuesRunAppRoot, "[n]/runs/not-found.tsx"), "utf8");
+  assert.match(run, /ReviewMissingFeature/);
   assert.match(run, /run\.missing/);
+  assert.doesNotMatch(run, /features\/reviews\/ui\/review-not-found-view/);
   const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
   assert.match(unlinked, /ReviewMissingFeature/);
   assert.match(unlinked, /unlinked\.missing/);
@@ -1444,6 +1449,26 @@ test("not-found segments use per-tree copy through one shared body", () => {
   assert.match(reviews, /ReviewMissingFeature/);
   assert.match(reviews, /metadata\.reviewsMissing/);
   assert.doesNotMatch(reviews, /metadata\.missing\.title/);
+});
+
+test("load error view uses the route header and an All issues action, never reload", () => {
+  const view = readFileSync(join(reviewsRoot, "ui/review-load-error-view.tsx"), "utf8");
+  assert.match(view, /title=\{title\}/);
+  assert.match(view, /description=\{description\}/);
+  assert.match(view, /copy\.issue\.back/);
+  assert.match(view, /href="\/issues"/);
+  assert.match(view, /actions=/);
+  assert.doesNotMatch(view, /window\.location\.reload/);
+  assert.doesNotMatch(view, /copy\.list\.title/);
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(exportedAsync(feature, "ReviewListFeature"), /reviewsCopy\.list\.title/);
+  assert.match(exportedAsync(feature, "ReviewIssueFeature"), /reviewsCopy\.metadata\.issue\.title/);
+  assert.match(exportedAsync(feature, "ReviewUnlinkedFeature"), /reviewsCopy\.metadata\.unlinked\.title/);
+  assert.match(exportedAsync(feature, "ReviewIssueRunFeature"), /reviewsCopy\.metadata\.run\.title/);
+  assert.match(exportedAsync(feature, "ReviewUnlinkedRunFeature"), /reviewsCopy\.metadata\.run\.title/);
+  assert.match(exportedAsync(feature, "redirectReviewsPr"), /reviewsCopy\.metadata\.reviewsMissing\.title/);
+  const missing = exportedAsync(feature, "ReviewMissingFeature");
+  assert.match(missing, /reviewLoadErrorView\(\{\s*title,\s*description: body/);
 });
 
 test("list view shows a static load error and does not ship a sample notice", () => {
@@ -1462,7 +1487,7 @@ test("list view shows a static load error and does not ship a sample notice", ()
   assert.match(feature, /ReviewLoadErrorView/);
   assert.match(feature, /reviewLoadErrorView/);
   const listFeature = exportedAsync(feature, "ReviewListFeature");
-  assert.match(listFeature, /reviewLoadErrorView\(\)/);
+  assert.match(listFeature, /reviewLoadErrorView\(/);
   assert.doesNotMatch(listFeature, /loadError=\{/);
   pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewIssueFeature"));
   pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewUnlinkedFeature"));
@@ -1471,7 +1496,7 @@ test("list view shows a static load error and does not ship a sample notice", ()
   pinsLoadErrorBeforeNotFound(exportedAsync(feature, "redirectReviewsPr"));
   pinsLoadErrorBeforeNotFound(exportedAsync(feature, "redirectReviewsPrRun"));
   const missing = exportedAsync(feature, "ReviewMissingFeature");
-  const loadErrorAt = missing.search(/reviewLoadErrorView\(\)/);
+  const loadErrorAt = missing.search(/reviewLoadErrorView\(/);
   const notFoundViewAt = missing.search(/ReviewNotFoundView/);
   assert.notEqual(loadErrorAt, -1);
   assert.notEqual(notFoundViewAt, -1);
@@ -2223,6 +2248,7 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
   assert.doesNotMatch(run, /ReviewAgentList/);
   assert.doesNotMatch(run, /<iframe/);
   assert.doesNotMatch(layout, /SiteLayout/);
+  assert.match(layout, /<main id="main-content"/);
   assert.match(siteLayout, /SiteLayout/);
 });
 

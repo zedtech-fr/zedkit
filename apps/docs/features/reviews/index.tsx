@@ -14,7 +14,7 @@
  * - Index-only runs keep the hosted-console link (or a placeholder) — because: failed or in-progress rows without a console body still resolve, and this is not a second console.
  * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground. The console uses `ReviewConsoleAppearanceFrame` (dense strip) only.
  * - Empty state says no public runs yet — because: the visitor always has a next thought.
- * - Load error shows kit ErrorState without Retry — because: the HTML is baked at build time, so a reload would serve the same page.
+ * - Load error uses the route PageHeader plus kit ErrorState with an All issues link and no Retry — because: a nested URL must not keep the list heading (WCAG 2.4.6), the HTML is baked at build time so a reload would serve the same page, and the visitor still needs a way off the dead-end.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
  * - Unlinked and timeline links use the visible title as the accessible name — because: speech-control users say the title they see (WCAG 2.5.3).
@@ -52,9 +52,15 @@ import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
 
 const port = createSiteReviewPort();
 
-async function reviewLoadErrorView() {
+async function reviewLoadErrorView(header: { title: string; description: string }) {
   if (await port.hasLoadError()) {
-    return <ReviewLoadErrorView copy={reviewsCopy} />;
+    return (
+      <ReviewLoadErrorView
+        copy={reviewsCopy}
+        title={header.title}
+        description={header.description}
+      />
+    );
   }
   return null;
 }
@@ -68,7 +74,7 @@ export async function ReviewMissingFeature({
   body: string;
   backLabel: string;
 }) {
-  const loadError = await reviewLoadErrorView();
+  const loadError = await reviewLoadErrorView({ title, description: body });
   if (loadError !== null) return loadError;
   return <ReviewNotFoundView title={title} body={body} backLabel={backLabel} />;
 }
@@ -78,7 +84,10 @@ export async function issuesIndexRobots() {
 }
 
 export async function ReviewListFeature() {
-  const loadError = await reviewLoadErrorView();
+  const loadError = await reviewLoadErrorView({
+    title: reviewsCopy.list.title,
+    description: reviewsCopy.list.description,
+  });
   if (loadError !== null) return loadError;
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
@@ -86,7 +95,10 @@ export async function ReviewListFeature() {
 }
 
 export async function ReviewIssueFeature({ n }: { n: string }) {
-  const loadError = await reviewLoadErrorView();
+  const loadError = await reviewLoadErrorView({
+    title: reviewsCopy.metadata.issue.title,
+    description: reviewsCopy.metadata.issue.description,
+  });
   if (loadError !== null) return loadError;
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
@@ -104,7 +116,10 @@ export async function ReviewUnlinkedFeature({ n }: { n: string }) {
   const resolved = number === null ? null : await port.resolvePr(number);
   const fallback = linkedPrFallbackPath(resolved?.issueNumber ?? null);
   if (fallback !== null) redirect(fallback);
-  const loadError = await reviewLoadErrorView();
+  const loadError = await reviewLoadErrorView({
+    title: reviewsCopy.metadata.unlinked.title,
+    description: reviewsCopy.metadata.unlinked.description,
+  });
   if (loadError !== null) return loadError;
   notFound();
 }
@@ -120,7 +135,10 @@ export async function ReviewIssueRunFeature({
   const issue = number === null ? null : await port.getIssue(number);
   const run = number === null ? null : await port.getRun(number, id);
   if (issue === null || run === null) {
-    const loadError = await reviewLoadErrorView();
+    const loadError = await reviewLoadErrorView({
+      title: reviewsCopy.metadata.run.title,
+      description: reviewsCopy.metadata.run.description,
+    });
     if (loadError !== null) return loadError;
     notFound();
   }
@@ -160,7 +178,10 @@ export async function ReviewUnlinkedRunFeature({
     const fallback = linkedPrRunFallbackPath(resolved.issueNumber, id);
     if (fallback !== null) redirect(fallback);
   }
-  const loadError = await reviewLoadErrorView();
+  const loadError = await reviewLoadErrorView({
+    title: reviewsCopy.metadata.run.title,
+    description: reviewsCopy.metadata.run.description,
+  });
   if (loadError !== null) return loadError;
   notFound();
 }
@@ -173,7 +194,10 @@ export async function redirectReviewsPr({ n }: { n: string }) {
   const number = parsePrNumber(n);
   const resolved = number === null ? null : await port.resolvePr(number);
   if (number === null || resolved === null) {
-    const loadError = await reviewLoadErrorView();
+    const loadError = await reviewLoadErrorView({
+      title: reviewsCopy.metadata.reviewsMissing.title,
+      description: reviewsCopy.metadata.reviewsMissing.description,
+    });
     if (loadError !== null) return loadError;
     notFound();
   }
@@ -190,7 +214,10 @@ export async function redirectReviewsPrRun({
   const number = parsePrNumber(n);
   const resolved = number === null ? null : await port.resolvePr(number);
   if (number === null || resolved === null || !resolved.runIds.includes(id)) {
-    const loadError = await reviewLoadErrorView();
+    const loadError = await reviewLoadErrorView({
+      title: reviewsCopy.metadata.reviewsMissing.title,
+      description: reviewsCopy.metadata.reviewsMissing.description,
+    });
     if (loadError !== null) return loadError;
     notFound();
   }

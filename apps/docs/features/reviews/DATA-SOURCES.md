@@ -19,7 +19,7 @@ behind `ReviewPort`, merged at docs build into a version-1
 Build-time fetch fills the static export. There is no client refresh.
 If GitHub or an attempted runs fetch fails after retries, the page
 renders ErrorState with no Retry — recovery is the next site publish —
-never sample rows.
+never sample rows. The ErrorState links to All issues.
 
 `kind: public-github-runs` is the production merge. Fixture JSON for
 the snapshot parser (`public-stand-in`, `generated-run-index`) lives
@@ -132,10 +132,14 @@ Unjoined review / improve / dry-run PRs stay in `pullRequests` with
 
 Join order for the live merge: GitHub closing references (`Fixes #N`
 in the PR body) first; then runs-API `issue` / `pr`; remainder
-unlinked. GitHub review fallback (verdict + Confidence score) stamps
-only a **completed** `review` entry whose verdict is still null. A
+unlinked. GitHub review fallback (verdict + Confidence score) fills
+each null field on a **completed** `review` entry. A completed review
+with a verdict and a null score still receives the GitHub score. A
 failed or running review keeps `verdict: null` so Failed / Running
-stays visible.
+stays visible. Fallback parse keeps the newest GitHub review that has
+both a mapped state and a `Confidence: N/10` line; a human APPROVED
+review without that line does not stamp. Each fallback fetch is one
+unpaginated request (GitHub default page size).
 
 ### Visibility (index)
 
@@ -208,9 +212,9 @@ index; `reviews` is ignored. Do not rely on that: emit one shape.
 `run_id` / `runId` / `runIds[]` must match `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`.
 Path segments, spaces, and `..` fail closed.
 
-## Share URL (site, not exporter)
+## Share URL (site, not merge)
 
-Issue pages pin a local `ThemeScope` from these query keys. The exporter does not emit them. An empty query inherits the site look (the identity dock is enough). Do not restore an inline preview form.
+Issue pages pin a local `ThemeScope` from these query keys. The merge does not emit them. An empty query inherits the site look (the identity dock is enough). Do not restore an inline preview form.
 
 | Key | Pins |
 | --- | --- |
