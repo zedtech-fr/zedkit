@@ -120,16 +120,14 @@ async function assertInstallSection(page: Page) {
   await expect(section.getByRole("button", { name: "Copy terminal" })).toBeVisible();
 }
 
-async function assertMobileDrawerCoherent(page: Page) {
+async function assertMobileHeaderCoherent(page: Page) {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(HOME, { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Open menu" }).click();
-  const menu = page.getByRole("dialog");
-  await expect(menu).toBeVisible();
-  await expect(menu.locator("select")).toHaveCount(0);
-  await expect(menu.getByLabel("Try another identity")).toHaveCount(0);
-  await page.keyboard.press("Escape");
-  await expect(menu).toBeHidden();
+  const header = page.locator("#nd-mobile-nav");
+  await expect(header.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+  await expect(header.locator("select")).toHaveCount(0);
+  await expect(header.getByLabel("Try another identity")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Open menu" })).toHaveCount(0);
 }
 
 for (const theme of ["light", "dark"] as const) {
@@ -173,8 +171,8 @@ test("install section layout at 390px", async ({ page }) => {
   await assertInstallSection(page);
 });
 
-test("mobile shell drawer has no identity control", async ({ page }) => {
-  await assertMobileDrawerCoherent(page);
+test("mobile shell header has no identity control or site-nav disclosure", async ({ page }) => {
+  await assertMobileHeaderCoherent(page);
 });
 
 test("drawer demo opens on mobile", async ({ page }) => {

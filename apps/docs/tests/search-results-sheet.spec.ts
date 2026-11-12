@@ -9,7 +9,7 @@ for (const phone of PHONES) {
   test(`search dialog stays on screen when the keyboard is open (${phone.name})`, async ({ page }) => {
     await page.setViewportSize({ width: phone.width, height: phone.height });
     await page.goto("/docs");
-    await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" }).click();
+    await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search documentation", exact: true }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     const input = dialog.locator("input").first();

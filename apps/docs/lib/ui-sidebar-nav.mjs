@@ -66,8 +66,12 @@ function firstSourceSegment(source) {
   return slash === -1 ? source : source.slice(0, slash);
 }
 
-function groupForNeed(need, source) {
+export function uiSidebarGroupFor(need, source) {
   return NEED_GROUP_OVERRIDE[need] ?? SOURCE_SEGMENT_GROUP[firstSourceSegment(source)] ?? "More";
+}
+
+function groupForNeed(need, source) {
+  return uiSidebarGroupFor(need, source);
 }
 
 /**

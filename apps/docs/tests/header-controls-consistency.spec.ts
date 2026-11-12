@@ -49,64 +49,32 @@ for (const theme of ["light", "dark"] as const) {
       expect(padding.cursor).not.toBe("default");
 
       await fullSteps.screenshot({ path: shotPath(`consistency-after-full-steps-${name}-${theme}.png`) });
-
-      await page.locator("#entry-points").scrollIntoViewIfNeeded();
-      const entryCtas = [
-        "Start with buttons",
-        "Start with the Nest bootstrap",
-        "Open SEO docs",
-        "Open agent setup docs",
-        "Read the AI setup guide",
-      ] as const;
-      for (const label of entryCtas) {
-        const link = page.getByRole("link", { name: label });
-        await expect(link).toBeVisible();
-        const pad = await link.evaluate((el) => {
-          const style = getComputedStyle(el);
-          return {
-            left: parseFloat(style.paddingLeft),
-            right: parseFloat(style.paddingRight),
-          };
-        });
-        expect(pad.left, label).toBeGreaterThan(0);
-        expect(pad.right, label).toBeGreaterThan(0);
-      }
-      await page
-        .locator("#entry-points [data-home-secondary-links]")
-        .screenshot({ path: shotPath(`consistency-after-more-in-kit-${name}-${theme}.png`) });
     });
   }
 }
 
-test("catalog header keeps search, theme, and a version caption", async ({ page }) => {
+test("catalog header keeps search and GitHub text, not theme or version", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/catalog", { waitUntil: "networkidle" });
   const header = page.locator("#nd-nav");
-  await expect(header.locator("[data-theme-toggle]").filter({ visible: true }).first()).toBeVisible();
+  await expect(header.locator("[data-theme-toggle]").filter({ visible: true })).toHaveCount(0);
+  await expect(header.locator("[data-kit-version]")).toHaveCount(0);
   await expect(
     header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true }).first(),
   ).toBeVisible();
-  const version = header.locator("[data-kit-version]");
-  await expect(version).toBeVisible();
-  const style = await version.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { fontSize: s.fontSize, cursor: s.cursor, tag: el.tagName };
-  });
-  expect(style.tag).toBe("SPAN");
-  expect(parseFloat(style.fontSize)).toBeLessThanOrEqual(13);
-  expect(style.cursor).not.toBe("pointer");
+  await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+  await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
   const heights = await page.evaluate(() => {
     const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
     const nav = document.querySelector("#nd-nav nav");
+    const github =
+      [...(nav?.querySelectorAll("a") ?? [])].find((a) => (a.textContent ?? "").includes("GitHub")) ?? null;
     return {
-      toggle: measure(nav?.querySelector("[data-theme-toggle]") ?? null),
       search: measure(nav?.querySelector("[data-search]") ?? null),
-      github: measure(nav?.querySelector('a[aria-label*="GitHub"]') ?? null),
+      github: measure(github),
     };
   });
-  expect(Math.max(heights.toggle, heights.search, heights.github)).toBeLessThanOrEqual(
-    Math.min(heights.toggle, heights.search, heights.github) + 2,
-  );
+  expect(Math.abs(heights.search - heights.github)).toBeLessThanOrEqual(2);
 });
 
 for (const theme of ["light", "dark"] as const) {
@@ -122,7 +90,7 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 test("the theme switch keeps a quiet border", async ({ page }) => {
-  await page.goto("/docs/getting-started");
+  await page.goto("/catalog");
   const toggle = page.locator("[data-theme-toggle] button").filter({ visible: true }).first();
   await expect(toggle).toBeVisible();
   const line = await toggle.evaluate((node) => {

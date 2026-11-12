@@ -48,8 +48,16 @@ async function openOverlay(page: Page, path: string, trigger: string, identity: 
   // Overlays mount in the nearest ThemeScope, so pin the look on the specimen itself.
   const preview = page.locator("[data-component-preview]").first();
   await revealPreviewDisplay(preview);
-  if (identity) await preview.getByRole("combobox", { name: "Style of this demo" }).selectOption(identity);
-  await preview.getByRole("button", { name: theme === "light" ? "Light" : "Dark", exact: true }).click();
+  if (identity) await preview.getByRole("combobox", { name: /^(Look|Style of this demo)$/ }).selectOption(identity);
+  const light = preview.getByRole("button", { name: "Light", exact: true });
+  if ((await light.count()) > 0) {
+    await preview.getByRole("button", { name: theme === "light" ? "Light" : "Dark", exact: true }).click();
+  } else {
+    const dark = preview.getByRole("button", { name: "Dark", exact: true });
+    const pressed = await dark.getAttribute("aria-pressed");
+    if (theme === "dark" && pressed !== "true") await dark.click();
+    if (theme === "light" && pressed === "true") await dark.click();
+  }
   await page.getByRole("button", { name: trigger }).click();
   const panel = page.getByRole("dialog");
   await expect(panel).toBeVisible({ timeout: 10_000 });
@@ -151,7 +159,7 @@ test.describe("glass overlay surfaces", () => {
     await useIdentity(page, "glass", "light");
     const preview = page.locator("[data-component-preview]").first();
     await revealPreviewDisplay(preview);
-    await preview.getByRole("combobox", { name: "Style of this demo" }).selectOption("glass");
+    await preview.getByRole("combobox", { name: /^(Look|Style of this demo)$/ }).selectOption("glass");
     await page.getByRole("combobox", { name: "Pick a region" }).first().click();
     const list = page.getByRole("listbox");
     await expect(list).toBeVisible();

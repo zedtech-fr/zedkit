@@ -6,7 +6,7 @@ import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
 
 function CatalogCell({ entry }: { entry: CatalogIndexEntry }) {
   return (
-    <Stack gap="tight" data-catalog-cell="" className="content-shrink surface-pad-md">
+    <Stack gap="tight" data-catalog-cell="" className="content-shrink surface-pad-compact">
       <Stack direction="horizontal" gap="sm" className="items-start justify-between">
         <Link href={entry.href} className="content-shrink font-medium link-offset hover:underline">
           {entry.title}
@@ -21,7 +21,7 @@ function CatalogCell({ entry }: { entry: CatalogIndexEntry }) {
 /** Result cells — separate chunk so filters + shell hydrate first (#618). */
 export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[] }) {
   return (
-    <Stack gap="lg" data-catalog-results-root="">
+    <Stack gap="md" data-catalog-results-root="">
       <section data-slot="section" aria-label={catalogCopy.results.sectionAriaLabel}>
         {filtered.length === 0 ? (
           <Stack gap="sm">
