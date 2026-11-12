@@ -100,7 +100,7 @@ test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111,
   assert.doesNotMatch(nav, /text: "Issues"/);
 });
 
-test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing, families, secondary (#119)", () => {
+test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing (#210)", () => {
   const src = readFileSync(join(app, "ui/home/home-below-hero.tsx"), "utf8");
   const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
   const sixSentences = readFileSync(join(app, "ui/home/home-six-sentences-section.tsx"), "utf8");
@@ -115,6 +115,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const manifestoCopy = readFileSync(join(app, "ui/home/i18n/home-manifesto-copy.ts"), "utf8");
   const closingCopy = readFileSync(join(app, "ui/home/i18n/home-closing-copy.ts"), "utf8");
   const looksCopy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
+  const dockCopy = readFileSync(join(app, "components/i18n/identity-dock-copy.ts"), "utf8");
   const order = [
     ...src.matchAll(
       /<Home(SameIdea|SixSentences|Paste|Identities|Limits|Manifesto|Closing|ComponentFamilies|Secondary)Section/g,
@@ -128,9 +129,17 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     "Limits",
     "Manifesto",
     "Closing",
-    "ComponentFamilies",
-    "Secondary",
   ]);
+  assert.doesNotMatch(src, /HomeYoursScene|HomeComponentFamiliesSection|HomeSecondarySection/);
+  assert.doesNotMatch(src, /uiGalleryStats|entryPoints|HomeEntryPoint/);
+  assert.equal(existsSync(join(app, "ui/home/home-yours-scene.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/home-component-families-section.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/home-secondary-section.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-yours-copy.ts")), false);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-component-families-copy.ts")), false);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-marketing-sections-copy.ts")), false);
+  assert.match(dockCopy, /pillLabel: "And yours\?"/);
+  assert.doesNotMatch(dockCopy, /homeYoursCopy/);
   assert.doesNotMatch(src, /HomeAiSetupSection|HomeGetStartedSection|featuredPackage/);
   assert.doesNotMatch(src + limits + manifesto + closing + paste, /@zedtech\/zedkit-ui\/marketing/);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
@@ -272,7 +281,7 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.doesNotMatch(section, /\btitle=\{/);
   assert.doesNotMatch(section, /\bdescription=\{/);
-  assert.match(section, /HomeYoursScene/);
+  assert.doesNotMatch(section, /HomeYoursScene|#your-identity|data-home-yours/);
   assert.match(looks, /HOME_LOOKS_GRID/);
   assert.match(looks, /<Heading/);
   assert.match(looks, /lg:col-start-first/);

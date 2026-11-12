@@ -181,8 +181,6 @@ for (const width of [1280, 1600] as const) {
         "limits",
         "manifesto",
         "closing",
-        "components",
-        "entry-points",
       ] as const;
       const hero = document.querySelector("[data-home-hero-band]");
       const heroReady =
@@ -213,8 +211,6 @@ for (const width of [1280, 1600] as const) {
       const limits = document.getElementById("limits");
       const manifesto = document.getElementById("manifesto");
       const closing = document.getElementById("closing");
-      const components = document.getElementById("components");
-      const entryPoints = document.getElementById("entry-points");
       const boxes = [
         containerBox(heroBand),
         containerBox(sameIdea),
@@ -224,8 +220,6 @@ for (const width of [1280, 1600] as const) {
         containerBox(limits),
         containerBox(manifesto),
         containerBox(closing),
-        containerBox(components),
-        containerBox(entryPoints),
       ];
       if (boxes.some((box) => !box)) return null;
 
@@ -248,8 +242,6 @@ for (const width of [1280, 1600] as const) {
         bandTop(limits) - bandBottom(identities),
         bandTop(manifesto) - bandBottom(limits),
         bandTop(closing) - bandBottom(manifesto),
-        bandTop(components) - bandBottom(closing),
-        bandTop(entryPoints) - bandBottom(components),
       ];
 
       const bands = boxes as DOMRect[];
