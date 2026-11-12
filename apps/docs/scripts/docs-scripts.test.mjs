@@ -91,10 +91,12 @@ test("declarationOrigin follows where a property is declared", () => {
 });
 
 test("componentPageSections lists a section only when it has content", () => {
-  const always = ["example", "guidance", "usage-and-states", "install-or-copy"];
+  const always = ["example", "usage-and-states", "install-or-copy", "guidance"];
   const sections = componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" });
   assert.deepEqual(sections, always);
+  assert.ok(sections.indexOf("example") < sections.indexOf("usage-and-states"));
   assert.ok(sections.indexOf("usage-and-states") < sections.indexOf("install-or-copy"));
+  assert.ok(sections.indexOf("install-or-copy") < sections.indexOf("guidance"));
   const withProps = componentPageSections({
     hasProps: true,
     a11y: "Name it.",
@@ -103,7 +105,8 @@ test("componentPageSections lists a section only when it has content", () => {
   });
   assert.deepEqual(withProps, [...always, "props", "accessibility", "related", "troubleshooting"]);
   assert.ok(withProps.indexOf("usage-and-states") < withProps.indexOf("install-or-copy"));
-  assert.ok(withProps.indexOf("install-or-copy") < withProps.indexOf("props"));
+  assert.ok(withProps.indexOf("install-or-copy") < withProps.indexOf("guidance"));
+  assert.ok(withProps.indexOf("guidance") < withProps.indexOf("props"));
   assert.deepEqual(componentPageSections({ hasProps: false, a11y: "Name it." }), [...always, "accessibility"]);
 });
 

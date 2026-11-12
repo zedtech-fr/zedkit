@@ -19,21 +19,18 @@ export function isCatalogPath(pathname: string): boolean {
   return pathname === "/catalog";
 }
 
-export type SiteHeaderChromeMode = "home" | "docs";
-
 /**
  * Phone (and policy) chrome: which actions a path may mount.
  * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
- * Foundations keeps search and drops the docs page-tree opener.
+ * The page tree is in-flow below the header (DocsSidebar always mounts `#nd-sidebar`; DocsContainer omits inline gridTemplate so docs-shell-tokens.css can restack).
+ * Foundations keeps search and has no page tree (sidebar off in the docs layout).
  */
-export function siteHeaderChrome(pathname: string, mode: SiteHeaderChromeMode) {
+export function siteHeaderChrome(pathname: string) {
   const home = isHomePath(pathname);
-  const foundations = isFoundationsPath(pathname);
   return {
     links: sitePrimaryNavLinks(),
     search: !home,
     getStarted: home,
-    docsTreeOpener: mode === "docs" && !foundations,
   };
 }
 

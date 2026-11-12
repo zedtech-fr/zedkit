@@ -1,33 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
-import { cn, IconButton } from "@zedtech/zedkit-ui";
-import { useSidebar } from "fumadocs-ui/components/sidebar/base";
+import { cn } from "@zedtech/zedkit-ui";
 import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { isSiteNavLinkActive, siteHeaderChrome } from "@/lib/site-nav-data";
-
-const iconButtonClassName =
-  "inline-flex min-h-overlay-touch-target min-w-overlay-touch-target items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-ring-control";
-
-function DocsMenuButton() {
-  const sidebar = useSidebar();
-  return (
-    <IconButton
-      label={siteChromeCopy.nav.openNavigation}
-      variant="ghost"
-      size="icon"
-      className={iconButtonClassName}
-      onClick={() => sidebar.setOpen(true)}
-    >
-      <Menu aria-hidden="true" className="size-icon" />
-    </IconButton>
-  );
-}
 
 /**
  * Métier: public TypeScript kit documentation site.
@@ -38,21 +18,16 @@ function DocsMenuButton() {
  *
  * Phone header (< md): wordmark + nowrap primary links, then a full-width actions row.
  * Home: GitHub text + Get started, no search. Else: Search ⌘K + GitHub text.
- * Docs mode keeps the page-tree opener except foundations. Never theme, version, or a site-nav disclosure.
+ * Docs routes do not open a page-tree drawer: the list is in the page. Foundations has no page tree. Never theme, version, or a site-nav disclosure.
  */
-export function MobileHeader({
-  mode,
-  className,
-}: {
-  mode: "home" | "docs";
-  className?: string;
-}) {
+export function MobileHeader({ className }: { className?: string }) {
   const pathname = usePathname();
-  const chrome = siteHeaderChrome(pathname, mode);
+  const chrome = siteHeaderChrome(pathname);
+  const docsPhoneBar = pathname === "/docs" || pathname.startsWith("/docs/");
   return (
     <header
       id="nd-mobile-nav"
-      {...(mode === "docs" ? { "data-docs-phone-bar": "" } : {})}
+      {...(docsPhoneBar ? { "data-docs-phone-bar": "" } : {})}
       className={
         className ??
         "sticky pin-top z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter md:hidden"
@@ -90,7 +65,6 @@ export function MobileHeader({
         {chrome.search ? <SiteFullSearchTrigger className="min-h-overlay-touch-target" /> : null}
         <HomeGitHubLink />
         {chrome.getStarted ? <HomeGetStartedAction /> : null}
-        {chrome.docsTreeOpener ? <DocsMenuButton /> : null}
       </div>
     </header>
   );

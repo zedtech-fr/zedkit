@@ -15,9 +15,9 @@
 export function componentPageSections({ hasProps, a11y, related, troubleshooting }) {
   return [
     "example",
-    "guidance",
     "usage-and-states",
     "install-or-copy",
+    "guidance",
     ...(hasProps ? ["props"] : []),
     ...(a11y ? ["accessibility"] : []),
     ...(related && related.length > 0 ? ["related"] : []),

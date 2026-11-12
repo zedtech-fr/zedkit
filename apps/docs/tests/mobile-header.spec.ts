@@ -63,17 +63,16 @@ test("the docs phone bar keeps a painted fill without an 80% background class", 
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
 
-test("docs phone Open navigation opens the page tree", async ({ page }) => {
+test("docs phone page tree is in the page without Open navigation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/docs/getting-started");
-  await page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" }).click();
-  const drawer = page
-    .getByRole("dialog")
-    .or(page.locator("#nd-sidebar"))
-    .or(page.locator("#nd-sidebar-mobile"));
-  await expect(drawer).toBeVisible();
-  await expect(drawer.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
-  const background = await drawer.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
+  const tree = page.locator("#nd-sidebar");
+  const title = page.getByRole("heading", { name: "Getting started", level: 1 });
+  await expect(tree).toBeVisible();
+  await expect(tree.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+  expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
+  const background = await tree.evaluate((node) => getComputedStyle(node).backgroundColor);
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
 
@@ -122,7 +121,7 @@ for (const path of PAGES) {
         await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
         await expect(header.getByRole("button", { name: SEARCH_NAME, exact: true })).toBeVisible();
       } else {
-        await expect(header.getByRole("button", { name: "Open navigation" })).toBeVisible();
+        await expect(header.getByRole("button", { name: "Open navigation" })).toHaveCount(0);
         await expect(header.getByRole("button", { name: SEARCH_NAME, exact: true })).toBeVisible();
       }
       const brandBox = await home.boundingBox();

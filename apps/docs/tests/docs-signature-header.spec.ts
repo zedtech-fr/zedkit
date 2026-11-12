@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-/** Persona proof for docs signature slice: the mobile docs header and the desktop docs sidebar (desktop /docs/* has no top header). */
+/** Persona proof for docs signature slice: the mobile docs header and the desktop docs sidebar (desktop /docs/* keeps the site header above the shell). */
 test.describe("docs signature header elevation", () => {
   test("390px docs mobile header", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

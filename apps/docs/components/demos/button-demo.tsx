@@ -1,50 +1,24 @@
 "use client";
 
-import { Plus } from "lucide-react";
-import { Button, Stack, Text, Toaster, toast } from "@zedtech/zedkit-ui";
+import { Button, Stack, Toaster, toast } from "@zedtech/zedkit-ui";
 import { buttonCopy } from "@/components/demos/i18n/button-copy";
 
 export function ButtonDemo() {
   return (
     <>
       <Toaster />
-      <Stack id="button-demo" gap="lg">
-        <Text variant="muted" className="text-caption">
-          {buttonCopy.hint}
-        </Text>
-        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
-          <Button onClick={() => toast(buttonCopy.created)}>{buttonCopy.createApp}</Button>
-          <Button variant="secondary" onClick={() => toast(buttonCopy.cancelled)}>
-            {buttonCopy.cancel}
-          </Button>
-          <Button variant="outline" onClick={() => toast(buttonCopy.openedDetails)}>
-            {buttonCopy.details}
-          </Button>
-          <Button variant="destructive" onClick={() => toast(buttonCopy.deleted)}>
-            {buttonCopy.delete}
-          </Button>
-          <Button asChild variant="ghost">
-            <a href="#button-demo" className="text-foreground">
-              {buttonCopy.docsLink}
-            </a>
-          </Button>
-        </Stack>
-        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
-          <Button size="sm" onClick={() => toast(buttonCopy.created)}>
-            {buttonCopy.small}
-          </Button>
-          <Button onClick={() => toast(buttonCopy.created)}>{buttonCopy.default}</Button>
-          <Button size="lg" onClick={() => toast(buttonCopy.created)}>
-            {buttonCopy.large}
-          </Button>
-          <Button size="icon" aria-label={buttonCopy.addItemAriaLabel} onClick={() => toast(buttonCopy.added)}>
-            <Plus />
-          </Button>
-        </Stack>
-        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
-          <Button disabled>{buttonCopy.disabled}</Button>
-          <Button disabled>{buttonCopy.saving}</Button>
-        </Stack>
+      <Stack id="button-demo" direction="horizontal" gap="sm" className="flex-wrap items-center">
+        <Button onClick={() => toast(buttonCopy.created)}>{buttonCopy.createApp}</Button>
+        <Button variant="outline" onClick={() => toast(buttonCopy.openedDetails)}>
+          {buttonCopy.details}
+        </Button>
+        <Button variant="ghost" onClick={() => toast(buttonCopy.cancelled)}>
+          {buttonCopy.cancel}
+        </Button>
+        {/* Kit has no outline-destructive; solid destructive is the shipped Delete. The mockup's light+red-text treatment is superseded. */}
+        <Button variant="destructive" onClick={() => toast(buttonCopy.deleted)}>
+          {buttonCopy.delete}
+        </Button>
       </Stack>
     </>
   );

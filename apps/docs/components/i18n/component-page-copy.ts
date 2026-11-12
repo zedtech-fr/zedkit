@@ -14,6 +14,7 @@ export const componentPageCopy = {
   sections: {
     installOrCopy: "Kit not installed yet?",
     usageAndStates: "Use it",
+    guidance: "Guidance",
     props: "Props",
     accessibility: "Accessibility",
     related: "Related",

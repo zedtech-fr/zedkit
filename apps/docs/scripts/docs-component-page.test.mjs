@@ -167,11 +167,99 @@ function docsLayoutSource() {
 test("desktop docs chrome has search and GitHub and no version or theme toggle", () => {
   const { source } = docsLayoutSource();
   assert.match(source, /searchToggle=\{\{\s*enabled:\s*true/);
-  assert.match(source, /githubUrl=/);
+  assert.doesNotMatch(source, /githubUrl=/);
+  assert.doesNotMatch(source, /links=\{/);
   assert.match(source, /themeSwitch=\{\{\s*enabled:\s*false/);
+  assert.match(source, /collapsible:\s*false/);
+  assert.match(source, /DocsDesktopHeader/);
+  assert.match(source, /DocsSiteHeader/);
   assert.doesNotMatch(source, /KitVersionLabel/);
   assert.doesNotMatch(source, /data-kit-version/);
   assert.doesNotMatch(source, /MobileHeader/);
+});
+
+test("ComponentPage first-screen order is example, Use it, install, then guidance", () => {
+  const page = read("components/component-page.tsx");
+  const example = page.indexOf('id="example"');
+  const usage = page.indexOf('id="usage-and-states"');
+  const install = page.indexOf('id="install-or-copy"');
+  const guidance = page.indexOf('id="guidance"');
+  const props = page.indexOf('id="props"');
+  assert.ok(example >= 0 && usage > example, "Use it must follow the preview");
+  assert.ok(install > usage, "install must follow Use it");
+  assert.ok(guidance > install, "guidance must follow install");
+  assert.ok(props > guidance, "props must follow guidance");
+  assert.match(page, /sections\.guidance/);
+});
+
+test("primary Button well is the four-action row", () => {
+  const demo = read("components/demos/button-demo.tsx");
+  assert.match(demo, /buttonCopy\.createApp/);
+  assert.match(demo, /variant="outline"/);
+  assert.match(demo, /buttonCopy\.details/);
+  assert.match(demo, /variant="ghost"/);
+  assert.match(demo, /buttonCopy\.cancel/);
+  assert.match(demo, /variant="destructive"/);
+  assert.match(demo, /buttonCopy\.delete/);
+  assert.doesNotMatch(demo, /buttonCopy\.hint/);
+  assert.doesNotMatch(demo, /buttonCopy\.docsLink/);
+  assert.doesNotMatch(demo, /buttonCopy\.small/);
+  assert.doesNotMatch(demo, /buttonCopy\.disabled/);
+  assert.doesNotMatch(demo, /buttonCopy\.saving/);
+  assert.doesNotMatch(demo, /size="sm"|size="lg"|size="icon"/);
+});
+
+test("button copy drops hint, disabled, and added after the well trim", () => {
+  const copy = read("components/demos/i18n/button-copy.ts");
+  assert.doesNotMatch(copy, /\bhint:/);
+  assert.doesNotMatch(copy, /\bdisabled:/);
+  assert.doesNotMatch(copy, /\badded:/);
+});
+
+test("Look select shows the resolved look name when unpinned", () => {
+  const source = read("components/demo-style-scope.tsx");
+  assert.match(source, /demoStyleScopeCopy\.followSite/);
+  assert.match(source, /identities\.find\(\(item\) => item\.id === look\)\?\.label/);
+});
+
+test("ButtonSizesDemo still documents extra sizes, icon, asChild, and saving", () => {
+  const demo = read("components/demos/button-sizes-demo.tsx");
+  assert.match(demo, /buttonCopy\.small/);
+  assert.match(demo, /buttonCopy\.large/);
+  assert.match(demo, /buttonCopy\.saving/);
+  assert.match(demo, /size="icon"/);
+  assert.match(demo, /asChild/);
+  assert.match(demo, /buttonCopy\.docsLink/);
+});
+
+test("docs chrome keeps header search and does not duplicate it in a fumadocs slot", () => {
+  const slots = read("ui/site-chrome-slots.ts");
+  const docsStart = slots.indexOf("export const docsChromeSlots");
+  assert.notEqual(docsStart, -1, "missing docsChromeSlots");
+  const docs = slots.slice(docsStart);
+  assert.doesNotMatch(docs, /searchTrigger/);
+  assert.doesNotMatch(docs, /themeSwitch/);
+  assert.match(docs, /container:\s*DocsContainer/);
+  assert.match(docs, /root:\s*DocsSidebar/);
+});
+
+test("phone docs page tree is in-flow in the shell, not a max-md drawer", () => {
+  const css = read("app/docs-shell-tokens.css");
+  const container = read("ui/docs-container.tsx");
+  const sidebar = read("ui/docs-sidebar.tsx");
+  assert.doesNotMatch(container, /gridTemplate\s*:/);
+  assert.doesNotMatch(container, /grid-template\s*:/);
+  assert.doesNotMatch(container, /\bstyle=/);
+  assert.doesNotMatch(container, /useSidebar/);
+  assert.match(sidebar, /id="nd-sidebar"/);
+  assert.doesNotMatch(sidebar, /max-md:hidden/);
+  assert.doesNotMatch(sidebar, /<SidebarDrawer|<SidebarContent/);
+  assert.match(css, /\[data-sidebar-placeholder\]/);
+  assert.match(css, /#nd-sidebar/);
+  assert.match(css, /width < 48rem/);
+  assert.match(css, /--fd-sidebar-width:\s*100%/);
+  assert.match(css, /Fumadocs 16\.17\.10/);
+  assert.doesNotMatch(css, /Cmd\/Ctrl\+B|data-sidebar-panel/);
 });
 
 test("docs layout on UI routes uses the job-grouped tree helper", () => {

@@ -1,6 +1,5 @@
 "use client";
 
-import type { ComponentProps } from "react";
 import { Search } from "lucide-react";
 import { useSearchContext } from "fumadocs-ui/contexts/search";
 import {
@@ -9,7 +8,6 @@ import {
   type SearchTriggerProps,
 } from "fumadocs-ui/layouts/shared/slots/search-trigger";
 import { ThemeSwitch, type ThemeSwitchProps } from "fumadocs-ui/layouts/shared/slots/theme-switch";
-import { SidebarTrigger, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
 import { IconButton, cn } from "@zedtech/zedkit-ui";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
@@ -47,8 +45,3 @@ export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchP
   );
 }
 
-export function SiteSidebarTrigger(props: ComponentProps<"button">) {
-  const { open } = useSidebar();
-  const label = open ? "Close navigation sidebar" : "Open navigation sidebar";
-  return <SidebarTrigger title={label} {...props} />;
-}

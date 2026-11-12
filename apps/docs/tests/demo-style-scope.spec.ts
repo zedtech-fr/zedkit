@@ -12,6 +12,7 @@ test("Look on the primary preview restyles the specimen only", async ({ page }) 
   await expect(html).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
   const preview = page.locator("[data-component-preview]").first();
   await preview.scrollIntoViewIfNeeded();
+  await expect(preview.getByRole("combobox", { name: "Look" }).locator("option:checked")).toHaveText("Glass");
   const rootSans = () =>
     html.evaluate((node) => getComputedStyle(node).getPropertyValue("--font-sans"));
   const before = await rootSans();

@@ -54,7 +54,11 @@ function DemoStyleSelect({
         onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
         className="h-control-height-sm max-w-scope rounded-md border border-input bg-background px-control-tight text-control text-foreground focus-ring-control"
       >
-        <option value="follow-site">{demoStyleScopeCopy.followSite}</option>
+        <option value="follow-site">
+          {pinned
+            ? demoStyleScopeCopy.followSite
+            : (identities.find((item) => item.id === look)?.label ?? demoStyleScopeCopy.followSite)}
+        </option>
         {identities.map((item) => (
           <option key={item.id} value={item.id}>
             {item.label}

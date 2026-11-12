@@ -106,7 +106,7 @@ test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav d
 });
 
 test("home phone chrome exposes the four links, GitHub, and Get started — no search, theme, version, or site-nav disclosure", () => {
-  const chrome = siteHeaderChrome("/", "home");
+  const chrome = siteHeaderChrome("/");
   assert.deepEqual(
     chrome.links.map((link) => ({ text: link.text, href: link.href })),
     [
@@ -118,8 +118,7 @@ test("home phone chrome exposes the four links, GitHub, and Get started — no s
   );
   assert.equal(chrome.search, false);
   assert.equal(chrome.getStarted, true);
-  assert.equal(chrome.docsTreeOpener, false);
-  assert.deepEqual(Object.keys(chrome).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
+  assert.deepEqual(Object.keys(chrome).sort(), ["getStarted", "links", "search"]);
   assert.equal(
     chrome.links.some((link) => PRIMARY_LINK_TEXTS.includes(link.text) === false),
     false,
@@ -130,27 +129,24 @@ test("home phone chrome exposes the four links, GitHub, and Get started — no s
   );
 });
 
-test("catalog and docs phone chrome keep search and GitHub; docs keeps the page-tree opener", () => {
-  const catalog = siteHeaderChrome("/catalog", "home");
+test("catalog and docs phone chrome keep search and GitHub; the page tree is in-flow so the opener stays off", () => {
+  const catalog = siteHeaderChrome("/catalog");
   assert.deepEqual(
     catalog.links.map((link) => link.text),
     PRIMARY_LINK_TEXTS,
   );
   assert.equal(catalog.search, true);
   assert.equal(catalog.getStarted, false);
-  assert.equal(catalog.docsTreeOpener, false);
-  assert.deepEqual(Object.keys(catalog).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
+  assert.deepEqual(Object.keys(catalog).sort(), ["getStarted", "links", "search"]);
 
-  const docs = siteHeaderChrome("/docs", "docs");
+  const docs = siteHeaderChrome("/docs");
   assert.equal(docs.search, true);
   assert.equal(docs.getStarted, false);
-  assert.equal(docs.docsTreeOpener, true);
-  assert.deepEqual(Object.keys(docs).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
+  assert.deepEqual(Object.keys(docs).sort(), ["getStarted", "links", "search"]);
 
-  const foundations = siteHeaderChrome("/docs/foundations", "docs");
+  const foundations = siteHeaderChrome("/docs/foundations");
   assert.equal(foundations.search, true);
   assert.equal(foundations.getStarted, false);
-  assert.equal(foundations.docsTreeOpener, false);
 });
 
 test("isCatalogPath is only the catalog route", () => {

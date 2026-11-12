@@ -149,16 +149,6 @@ export async function ComponentPage({
         <ComponentPreview demo={demo} hasProps={hasProps} a11yRoot />
       </Stack>
 
-      <dl id="guidance" data-term-row="" className="trim-margin grid gap-x-meta gap-y-stack-sm text-dense text-muted-foreground sm:items-baseline">
-        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
-        <dd className="trim-margin content-shrink">{audience}</dd>
-        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
-        <dd className="trim-margin content-shrink">{whenToUse}</dd>
-        <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
-        <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
-      </dl>
-      <ComponentWrapsLine wraps={header.wraps} />
-
       <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
         <Stack gap="lg">
           {copyable ? (
@@ -195,6 +185,18 @@ export async function ComponentPage({
           </Text>
         </Stack>
       </Section>
+
+      <Section title={componentPageCopy.sections.guidance} id="guidance">
+        <dl data-term-row="" className="trim-margin grid gap-x-meta gap-y-stack-sm text-dense text-muted-foreground sm:items-baseline">
+          <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.who}</dt>
+          <dd className="trim-margin content-shrink">{audience}</dd>
+          <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.useWhen}</dt>
+          <dd className="trim-margin content-shrink">{whenToUse}</dd>
+          <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
+          <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
+        </dl>
+      </Section>
+      <ComponentWrapsLine wraps={header.wraps} />
 
       {sections.includes("props") ? (
         <Section title={componentPageCopy.sections.props} id="props">
