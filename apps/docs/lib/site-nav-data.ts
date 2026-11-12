@@ -15,6 +15,28 @@ export function isFoundationsPath(pathname: string): boolean {
   return pathname === "/docs/foundations" || pathname === "/docs/foundations/";
 }
 
+export function isCatalogPath(pathname: string): boolean {
+  return pathname === "/catalog";
+}
+
+export type SiteHeaderChromeMode = "home" | "docs";
+
+/**
+ * Phone (and policy) chrome: which actions a path may mount.
+ * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
+ * Foundations keeps search and drops the docs page-tree opener.
+ */
+export function siteHeaderChrome(pathname: string, mode: SiteHeaderChromeMode) {
+  const home = isHomePath(pathname);
+  const foundations = isFoundationsPath(pathname);
+  return {
+    links: sitePrimaryNavLinks(),
+    search: !home,
+    getStarted: home,
+    docsTreeOpener: mode === "docs" && !foundations,
+  };
+}
+
 export function sitePrimaryNavLinks(): SiteNavLink[] {
   return [
     { text: "AI", href: "/docs/ai/setup", active: "url" },

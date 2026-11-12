@@ -24,7 +24,7 @@ import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
 import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
 import { componentPageSections } from "../lib/component-page-sections.mjs";
-import { uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
+import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import {
   readAgentOnboardingMarkdown,
@@ -243,6 +243,7 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     `description: ${JSON.stringify(purpose)}`,
     ...maturity.frontmatterStatus,
     "componentPage: true",
+    "hidePageTitle: true",
     `componentSections: ${JSON.stringify(sections)}`,
     "---",
     "",
@@ -268,6 +269,8 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     `  adoption={${JSON.stringify(need.adoption)}}`,
     ...(need.exampleFile ? [`  exampleFile={${JSON.stringify(need.exampleFile)}}`] : []),
     `  wraps={${JSON.stringify(need.wraps)}}`,
+    ...(spec.source ? [`  sourceFile={${JSON.stringify(spec.source)}}`] : []),
+    `  navGroup={${JSON.stringify(uiSidebarGroupFor(need.need, spec.source))}}`,
     `  registry={${JSON.stringify(registryBrick)}}`,
     `  demo={${JSON.stringify(spec.demo)}}`,
     `  propsFile={${JSON.stringify(spec.propsFile)}}`,
@@ -522,6 +525,7 @@ export function generate(outDir) {
         richBlock = {
           demo: spec.demo,
           examples: spec.examples ?? null,
+          source: spec.source ?? null,
           propsFile: spec.source ?? null,
           propsName: spec.props ?? null,
           registry: spec.registry ?? null,

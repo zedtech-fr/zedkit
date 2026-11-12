@@ -51,8 +51,15 @@ function docsPageChrome(opts: {
       "data-foundations-page": "",
     };
   }
+  if (opts.componentPage) {
+    return {
+      toc: mergeComponentPageToc(opts.toc, opts.sections),
+      tableOfContent: { enabled: false },
+      tableOfContentPopover: { enabled: false },
+    };
+  }
   return {
-    toc: opts.componentPage ? mergeComponentPageToc(opts.toc, opts.sections) : opts.toc,
+    toc: opts.toc,
     tableOfContentPopover: {
       trigger: {
         "aria-label": docsPageCopy.tableOfContents,

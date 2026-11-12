@@ -21,7 +21,6 @@ const CONSUMERS = [
   "lib/site-links.mjs",
   "ui/skip-link.tsx",
   "ui/site-brand.tsx",
-  "ui/mobile-search-trigger.tsx",
   "ui/kit-version-label.tsx",
   "ui/off-path-link.tsx",
   "ui/site-chrome-a11y.tsx",
@@ -35,13 +34,13 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.skipToContent, "Skip to content");
   assert.equal(siteChromeCopy.brand.name, "zedkit");
   assert.equal(siteChromeCopy.brand.homeAriaLabel, "zedkit home");
-  assert.equal(siteChromeCopy.search.triggerAriaLabel, "Search the documentation");
+  assert.equal(siteChromeCopy.search.triggerAriaLabel, "Search documentation");
   assert.equal(siteChromeCopy.theme.toggleAriaLabel, "Toggle theme");
   assert.equal(siteChromeCopy.nav.openNavigation, "Open navigation");
-  assert.equal(siteChromeCopy.nav.openMenu, "Open menu");
-  assert.equal(siteChromeCopy.nav.menu, "Menu");
+  assert.equal("openMenu" in siteChromeCopy.nav, false);
+  assert.equal("menu" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.siteNavigation, "Site navigation");
-  assert.equal(siteChromeCopy.nav.guides, "Guides");
+  assert.equal("guides" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.github, "GitHub");
   assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
   assert.equal(siteChromeCopy.getStarted, "Get started");
@@ -94,16 +93,14 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   const footer = read("ui/site-footer.tsx");
   const skip = read("ui/skip-link.tsx");
   const brand = read("ui/site-brand.tsx");
-  const search = read("ui/mobile-search-trigger.tsx");
   const version = read("ui/kit-version-label.tsx");
 
-  assert.match(header, /siteChromeCopy\.theme\.toggleAriaLabel/);
   assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
-  assert.match(header, /siteChromeCopy\.nav\.openMenu/);
-  assert.match(header, /siteChromeCopy\.nav\.menu/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
-  assert.match(header, /siteChromeCopy\.nav\.github/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
+  const searchTrigger = read("ui/site-chrome.tsx");
+  assert.match(searchTrigger, /siteChromeCopy\.search\.triggerAriaLabel/);
+  assert.doesNotMatch(searchTrigger, /"Search documentation"|"Search the documentation"/);
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
   assert.match(homeActions, /siteChromeCopy\.getStarted/);
   assert.match(siteHeaders, /siteChromeCopy\.brand\.homeAriaLabel/);
@@ -115,7 +112,6 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(footer, /changelogHref/);
   assert.match(skip, /siteChromeCopy\.skipToContent/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
-  assert.match(search, /siteChromeCopy\.search\.triggerAriaLabel/);
   assert.match(version, /siteChromeCopy\.version\.latest/);
   assert.match(version, /siteChromeCopy\.version\.releasesAriaLabel\(version\)/);
   assert.match(version, /siteChromeCopy\.version\.shell\(version\)/);
@@ -130,7 +126,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(offPath, /labelled === undefined/);
   assert.match(a11y, /siteChromeCopy\.nav\.opensInNewTab/);
   assert.match(footer, /OffPathLink/);
-  assert.match(header, /OffPathLink/);
+  assert.doesNotMatch(header, /OffPathLink/);
   assert.doesNotMatch(header, /if \(link\.external\)/);
   assert.match(homeActions, /OffPathLink/);
   assert.doesNotMatch(homeActions, /target="_blank"/);
@@ -142,17 +138,13 @@ test("listed chrome files read catalog keys instead of English literals", () => 
     .map(read)
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
-  assert.doesNotMatch(consumers, /"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"/);
+  assert.doesNotMatch(consumers, /"Search documentation"|"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"/);
   assert.doesNotMatch(consumers, /"opens in a new tab"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
   assert.doesNotMatch(header, /<p[\s>]/);
-  assert.doesNotMatch(search, /<button[\s>]/);
-  assert.doesNotMatch(search, /<p[\s>]/);
   assert.match(header, /IconButton/);
   assert.match(header, /variant="ghost"/);
-  assert.match(search, /IconButton/);
-  assert.match(search, /variant="ghost"/);
   assert.match(skip, /href="#main-content"/);
   assert.doesNotMatch(skip, /IconButton|<Button[\s>]/);
 });

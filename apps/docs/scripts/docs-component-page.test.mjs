@@ -159,6 +159,93 @@ test("component-page stage CSS does not restyle specimens with !important", () =
   }
 });
 
+function docsLayoutSource() {
+  const nested = "app/docs/[[...slug]]/layout.tsx";
+  return { path: nested, source: read(nested) };
+}
+
+test("desktop docs chrome has search and GitHub and no version or theme toggle", () => {
+  const { source } = docsLayoutSource();
+  assert.match(source, /searchToggle=\{\{\s*enabled:\s*true/);
+  assert.match(source, /githubUrl=/);
+  assert.match(source, /themeSwitch=\{\{\s*enabled:\s*false/);
+  assert.doesNotMatch(source, /KitVersionLabel/);
+  assert.doesNotMatch(source, /data-kit-version/);
+  assert.doesNotMatch(source, /MobileHeader/);
+});
+
+test("docs layout on UI routes uses the job-grouped tree helper", () => {
+  const { source } = docsLayoutSource();
+  assert.match(source, /docsLayoutTree/);
+  assert.match(source, /source\.pageTree/);
+});
+
+test("component pages turn off the TOC and the TOC popover", () => {
+  const page = read("app/docs/[[...slug]]/page.tsx");
+  assert.match(page, /page\.data\.componentPage/);
+  assert.match(page, /tableOfContent:\s*\{\s*enabled:\s*false/);
+  assert.match(page, /tableOfContentPopover:\s*\{\s*enabled:\s*false/);
+});
+
+test("component-page title tokens are 2.5rem / 500 without a raw 40px font-size", () => {
+  const css = stripComments(read("app/docs-component-page.css"));
+  assert.match(css, /\[data-component-page\]/);
+  assert.match(css, /--zk-type-doc-h1-size:\s*2\.5rem/);
+  assert.match(css, /--zk-type-doc-h1-weight:\s*500/);
+  assert.match(css, /--zk-type-doc-h1-leading:\s*1\.12/);
+  assert.match(css, /--zk-type-doc-h1-tracking:\s*-0\.03em/);
+  assert.doesNotMatch(css, /font-size:\s*40px/);
+  const typography = stripComments(read("app/docs-typography.css"));
+  assert.match(typography, /#nd-page h1[\s\S]*font-size:\s*var\(--zk-type-doc-h1-size\)/);
+  assert.match(typography, /#nd-page h1[\s\S]*font-weight:\s*var\(--zk-type-doc-h1-weight\)/);
+  assert.match(
+    css,
+    /#nd-page \[data-component-page\] h1\[data-slot="heading"\][\s\S]*font-size:\s*var\(--zk-type-doc-h1-size\)/,
+  );
+});
+
+test("component-page section H2 tokens are 22px / 500", () => {
+  const css = stripComments(read("app/docs-component-page.css"));
+  assert.match(css, /--zk-type-h2-size:\s*1\.375rem/);
+  assert.match(css, /--zk-type-h2-weight:\s*500/);
+});
+
+test("component page owns breadcrumb, H1, lead, Source; wraps is off the header meta row", () => {
+  const page = read("components/component-page.tsx");
+  const header = page.split("data-component-page-header")[1]?.split("id=\"example\"")[0] ?? "";
+  assert.match(header, /data-component-page-breadcrumb/);
+  assert.match(header, /<Heading level=\{1\}/);
+  assert.match(header, /typeRole="lead"/);
+  assert.match(header, /header\.source/);
+  assert.doesNotMatch(header, /ComponentWrapsLine/);
+  assert.match(page, /ComponentWrapsLine/);
+});
+
+test("generator hides the fumadocs title and passes source plus nav group", () => {
+  const generate = read("scripts/generate.mjs");
+  assert.match(generate, /hidePageTitle:\s*true/);
+  assert.match(generate, /source:\s*spec\.source/);
+  assert.match(generate, /sourceFile=\{\$\{JSON\.stringify\(spec\.source\)\}/);
+  assert.match(generate, /uiSidebarGroupFor\(need\.need, spec\.source\)/);
+});
+
+test("primary preview toolbar is Preview, Code, Look, Dark inside the frame", () => {
+  const viewport = read("components/preview-viewport.tsx");
+  const preview = read("components/component-preview.tsx");
+  assert.match(preview, /quiet=\{Boolean\(a11yRoot\)\}/);
+  const start = viewport.indexOf("function QuietPreviewToolbar");
+  const end = viewport.indexOf("export function PreviewFrame");
+  assert.ok(start >= 0 && end > start, "expected QuietPreviewToolbar before PreviewFrame");
+  const quietFn = viewport.slice(start, end);
+  assert.match(quietFn, /previewViewportCopy\.look/);
+  assert.match(quietFn, /previewViewportCopy\.dark/);
+  assert.doesNotMatch(quietFn, /previewViewportCopy\.full/);
+  assert.doesNotMatch(quietFn, /previewViewportCopy\.mobile/);
+  assert.doesNotMatch(quietFn, /previewViewportCopy\.site/);
+  assert.doesNotMatch(quietFn, /previewViewportCopy\.light/);
+  assert.match(viewport, /data-preview-frame=/);
+});
+
 test("reduced-transparency drops stage halos", () => {
   const css = stripComments(read("app/docs-component-page.css"));
   const media = css.match(/@media\s*\(prefers-reduced-transparency:\s*reduce\)\s*\{([\s\S]*?)\n\}/);

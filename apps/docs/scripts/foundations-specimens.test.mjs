@@ -175,25 +175,27 @@ test("hero is display H1 plus intro and the glass callout", () => {
 
 test("foundations chrome skips docs article chrome and keeps search", () => {
   const page = readApp("app/docs/[[...slug]]/page.tsx");
-  const layout = readApp("app/docs/layout.tsx");
-  const docsLayout = readApp("ui/docs-layout-branch.tsx");
+  const layout = readApp("app/docs/[[...slug]]/layout.tsx");
   const headers = readApp("ui/site-headers.tsx");
   const mobile = readApp("ui/mobile-header.tsx");
+  const nav = readApp("lib/site-nav-data.ts");
   const mdxComponents = readApp("mdx-components.tsx");
   assert.match(page, /isFoundationsPath/);
   assert.match(page, /DocsBody/);
-  assert.match(layout, /DocsLayoutBranch/);
-  assert.match(docsLayout, /isFoundationsPath/);
+  assert.match(layout, /docsLayoutTree/);
+  assert.match(layout, /isFoundationsPath/);
+  assert.match(nav, /isFoundationsPath/);
   assert.match(headers, /isFoundationsPath/);
-  assert.match(mobile, /isFoundationsPath/);
+  assert.match(headers, /FoundationsDesktopHeader/);
   assert.match(mdxComponents, /FoundationsHero/);
-  assert.match(docsLayout, /sidebar=\{\{\s*enabled:\s*!foundations\s*\}\}/);
-  assert.match(docsLayout, /themeSwitch=\{\{\s*enabled:\s*!foundations\s*\}\}/);
-  assert.match(docsLayout, /searchToggle=\{\{\s*enabled:\s*true\s*\}\}/);
+  assert.match(layout, /sidebar=\{\{\s*enabled:\s*!isFoundationsPath\(pathname\)\s*\}\}/);
+  assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
+  assert.match(layout, /searchToggle=\{\{\s*enabled:\s*true\s*\}\}/);
   assert.match(page, /tableOfContent: \{ enabled: false as const \}/);
   assert.match(page, /tableOfContentPopover: \{ enabled: false as const \}/);
   assert.match(page, /skipDocsBody/);
-  assert.match(mobile, /MobileSearchTrigger/);
+  assert.match(mobile, /SiteFullSearchTrigger/);
+  assert.match(mobile, /siteHeaderChrome/);
   assert.match(headers, /HomeDesktopHeader/);
 });
 

@@ -49,23 +49,23 @@ test.describe("site header navigation (#1034)", () => {
     await expect(page.getByRole("heading", { name: "Getting started" })).toBeVisible();
   });
 
-  test("phone menu lists AI, UI, Docs, and Catalog", async ({ page }) => {
+  test("phone header lists AI, UI, Docs, and Catalog", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.goto("/", { waitUntil: "networkidle" });
 
-    await page.getByRole("button", { name: "Open menu" }).click();
-    const menu = page.getByRole("navigation", { name: "Menu" });
-    await expect(menu.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
-    await expect(menu.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
-    await expect(menu.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
+    const header = page.locator("#nd-mobile-nav");
+    await expect(header.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
+    await expect(header.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
+    await expect(header.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
     await expect(
-      menu.getByRole("link", { name: "Catalog", exact: true }),
+      header.getByRole("link", { name: "Catalog", exact: true }),
     ).toHaveAttribute("href", "/catalog");
-    await expect(menu.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
-    await expect(menu.getByText("Guides", { exact: true })).toHaveCount(0);
-    await expect(menu.getByRole("link", { name: "Getting started", exact: true })).toHaveCount(0);
-    await expect(page.getByRole("dialog").getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
-    await expect(page.getByRole("dialog").getByRole("link", { name: "Get started", exact: true })).toHaveAttribute(
+    await expect(header.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
+    await expect(header.getByText("Guides", { exact: true })).toHaveCount(0);
+    await expect(header.getByRole("link", { name: "Getting started", exact: true })).toHaveCount(0);
+    await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+    await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveAttribute(
       "href",
       "#get-started",
     );

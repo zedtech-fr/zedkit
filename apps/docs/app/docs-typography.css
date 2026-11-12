@@ -38,6 +38,9 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 /* Doc page title stays 2rem / 1.75rem — not the marketing H1. */
 #nd-page {
   --zk-type-doc-h1-size: 2rem;
+  --zk-type-doc-h1-weight: 600;
+  --zk-type-doc-h1-leading: 2.375rem;
+  --zk-type-doc-h1-tracking: var(--zk-heading-tracking, -0.02em);
   --zk-type-h2-size: var(--text-2xl);
   --zk-type-h2-weight: 600;
   --zk-type-h2-leading: 1.2;
@@ -45,9 +48,9 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 
 #nd-page h1 {
   font-size: var(--zk-type-doc-h1-size);
-  font-weight: 600;
-  line-height: 2.375rem;
-  letter-spacing: var(--zk-heading-tracking, -0.02em);
+  font-weight: var(--zk-type-doc-h1-weight);
+  line-height: var(--zk-type-doc-h1-leading);
+  letter-spacing: var(--zk-type-doc-h1-tracking);
 }
 
 /* Foundations keeps the marketing display scale; do not change #nd-page h1 globally. */
@@ -78,10 +81,7 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 @media (width < 48rem) {
   #nd-page {
     --zk-type-doc-h1-size: 1.75rem;
-  }
-
-  #nd-page h1 {
-    line-height: 2.125rem;
+    --zk-type-doc-h1-leading: 2.125rem;
   }
 }
 

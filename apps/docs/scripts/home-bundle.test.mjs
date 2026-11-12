@@ -100,7 +100,7 @@ test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111,
   assert.doesNotMatch(nav, /text: "Issues"/);
 });
 
-test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing, families, secondary (#119)", () => {
+test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing (#210)", () => {
   const src = readFileSync(join(app, "ui/home/home-below-hero.tsx"), "utf8");
   const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
   const sixSentences = readFileSync(join(app, "ui/home/home-six-sentences-section.tsx"), "utf8");
@@ -115,6 +115,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const manifestoCopy = readFileSync(join(app, "ui/home/i18n/home-manifesto-copy.ts"), "utf8");
   const closingCopy = readFileSync(join(app, "ui/home/i18n/home-closing-copy.ts"), "utf8");
   const looksCopy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
+  const dockCopy = readFileSync(join(app, "components/i18n/identity-dock-copy.ts"), "utf8");
   const order = [
     ...src.matchAll(
       /<Home(SameIdea|SixSentences|Paste|Identities|Limits|Manifesto|Closing|ComponentFamilies|Secondary)Section/g,
@@ -128,9 +129,18 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     "Limits",
     "Manifesto",
     "Closing",
-    "ComponentFamilies",
-    "Secondary",
   ]);
+  assert.doesNotMatch(src, /HomeYoursScene|HomeComponentFamiliesSection|HomeSecondarySection/);
+  assert.doesNotMatch(src, /entryPoints|HomeEntryPoint/);
+  assert.match(src, /from "@\/content\/gallery"/);
+  assert.equal(existsSync(join(app, "ui/home/home-yours-scene.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/home-component-families-section.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/home-secondary-section.tsx")), false);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-yours-copy.ts")), false);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-component-families-copy.ts")), false);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-marketing-sections-copy.ts")), false);
+  assert.match(dockCopy, /pillLabel: "And yours\?"/);
+  assert.doesNotMatch(dockCopy, /homeYoursCopy/);
   assert.doesNotMatch(src, /HomeAiSetupSection|HomeGetStartedSection|featuredPackage/);
   assert.doesNotMatch(src + limits + manifesto + closing + paste, /@zedtech\/zedkit-ui\/marketing/);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
@@ -154,22 +164,62 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     /export const HOME_LIMITS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,
   );
   assert.doesNotMatch(sixSentences, /FeatureGrid|SetupEntryPrompt|SecretField/);
+  assert.doesNotMatch(sixSentences, /@zedtech\/zedkit-ui\/marketing/);
+  assert.doesNotMatch(sixSentences, /col-span-2|grid-cols-4/);
   assert.match(sixSentences, /id="six-sentences"/);
   assert.match(sixSentences, /from "@zedtech\/zedkit-ui"/);
+  assert.match(sixSentences, /tone="muted"/);
+  assert.match(sixSentences, /HOME_SIX_SENTENCES_GRID/);
+  assert.match(sixSentences, /<Badge/);
+  assert.match(sixSentences, /<blockquote/);
+  assert.match(sixSentences, /lg:span-rest/);
+  assert.match(sixSentences, /data-home-six-sentences-card=\{featured \? "featured" : "plain"\}/);
+  assert.match(sixSentences, /id === "quality" \|\| id === "consistency"/);
+  assert.match(sixSentences, /card\.replyBody\(componentCount\)/);
+  assert.match(src, /HomeSixSentencesSection componentCount=\{uiGalleryStats\.components\}/);
+  assert.match(
+    rhythm,
+    /export const HOME_SIX_SENTENCES_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-quad"/,
+  );
+  assert.doesNotMatch(sixSentencesCopy, /What the kit is/);
+  assert.match(sixSentencesCopy, /title: "Six sentences you stop hearing\."/);
+  assert.match(sixSentencesCopy, /description: "Three about how the agent works\. Three about what it draws\."/);
+  assert.match(sixSentencesCopy, /id: "quality"/);
+  assert.match(sixSentencesCopy, /id: "time"/);
+  assert.match(sixSentencesCopy, /id: "fewer-bugs"/);
+  assert.match(sixSentencesCopy, /id: "brand"/);
+  assert.match(sixSentencesCopy, /id: "finish"/);
+  assert.match(sixSentencesCopy, /id: "consistency"/);
+  assert.match(sixSentencesCopy, /label: "Quality"/);
+  assert.match(sixSentencesCopy, /label: "Time"/);
+  assert.match(sixSentencesCopy, /label: "Fewer bugs"/);
+  assert.match(sixSentencesCopy, /label: "Brand"/);
+  assert.match(sixSentencesCopy, /label: "Finish"/);
+  assert.match(sixSentencesCopy, /label: "Consistency"/);
+  assert.match(sixSentencesCopy, /“Looks good to me\.”/);
+  assert.match(sixSentencesCopy, /“Let me first explore the codebase\.”/);
+  assert.match(sixSentencesCopy, /“Done!”/);
+  assert.match(sixSentencesCopy, /“I went with a clean, modern blue\.”/);
+  assert.match(sixSentencesCopy, /“The happy path works\.”/);
+  assert.match(sixSentencesCopy, /“I created a new Button component\.”/);
+  assert.match(sixSentencesCopy, /Said the agent that wrote it\./);
+  assert.match(sixSentencesCopy, /The one who writes never checks\./);
+  assert.match(sixSentencesCopy, /It learns your repo once\./);
+  assert.match(sixSentencesCopy, /Done has a definition\./);
+  assert.match(sixSentencesCopy, /A look is one attribute\./);
+  assert.match(sixSentencesCopy, /The boring states already exist\./);
+  assert.match(sixSentencesCopy, /One way to do each thing\./);
   assert.match(
     sixSentencesCopy,
-    /Paste one prompt in the agent you already use\. It reads the repo and writes the setup\./,
+    /replyBody: \(componentCount: number\) =>\s*`\$\{componentCount\} components that already agree with each other\. The agent reaches for them instead of inventing\.`/,
   );
-  assert.match(sixSentencesCopy, /The combined prompt covers AI, UI and Nest \(API\)\./);
-  assert.match(sixSentencesCopy, /Install from npm or copy the source\. Same components either way\./);
-  assert.match(sixSentencesCopy, /What you see is MIT, React 19, Tailwind 4\./);
-  assert.match(sixSentencesCopy, /A look sets type, shape, density and color together\./);
-  assert.match(
-    sixSentencesCopy,
-    /This is packages and a docs site, not a hosted app with accounts\./,
-  );
-  assert.equal([...sixSentencesCopy.matchAll(/"[^"]+\."/g)].length, 6);
+  assert.doesNotMatch(sixSentencesCopy, /\d+ components that already agree/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
+  assert.match(tokens, /\[data-home-six-sentences/);
+  assert.match(tokens, /\[data-home-six-sentences-card="featured"\]/);
+  assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ai"\]/);
+  assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ui"\]/);
+  assert.doesNotMatch(tokens, /#1B1764|#2B23C7|#4B3FD9|#3B1F8F|#5B34B5|#7C5CE6/);
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
   assert.match(tokens, /\[data-home-manifesto-panel\]/);
@@ -272,7 +322,7 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.doesNotMatch(section, /\btitle=\{/);
   assert.doesNotMatch(section, /\bdescription=\{/);
-  assert.match(section, /HomeYoursScene/);
+  assert.doesNotMatch(section, /HomeYoursScene|#your-identity|data-home-yours/);
   assert.match(looks, /HOME_LOOKS_GRID/);
   assert.match(looks, /<Heading/);
   assert.match(looks, /lg:col-start-first/);
@@ -313,18 +363,51 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
   const siteHeaders = readFileSync(join(app, "ui/site-headers.tsx"), "utf8");
   const actions = readFileSync(join(app, "ui/home-header-actions.tsx"), "utf8");
-  const trigger = readFileSync(join(app, "ui/mobile-search-trigger.tsx"), "utf8");
-  assert.match(header, /MobileSearchTrigger/);
-  assert.match(header, /isHomePath/);
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  const layout = readFileSync(join(app, "ui/site-layout.tsx"), "utf8");
+  assert.match(header, /siteHeaderChrome/);
+  assert.match(header, /id="nd-mobile-nav"/);
+  assert.match(header, /aria-label=\{siteChromeCopy\.nav\.siteNavigation\}/);
+  assert.match(header, /flex-wrap/);
+  assert.match(header, /min-h-phone-bar/);
+  assert.match(header, /px-page-gutter/);
+  assert.match(header, /ms-auto/);
+  assert.match(header, /SiteFullSearchTrigger/);
+  assert.match(header, /HomeGitHubLink/);
+  assert.doesNotMatch(header, /chrome\.github/);
+  assert.match(header, /HomeGetStartedAction/);
+  assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
+  assert.match(header, /data-header-actions/);
+  assert.match(header, /gap-icon/);
+  assert.match(header, /<ul className=/);
+  assert.doesNotMatch(header, /MobileSearchTrigger/);
+  assert.doesNotMatch(header, /HomeMenuButton|SiteNavDrawer|ThemeButton|KitVersionLabel/);
   assert.doesNotMatch(header, /SearchPill/);
   assert.doesNotMatch(header, /DocsIdentityPicker/);
   assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
   assert.match(siteHeaders, /isHomePath/);
+  assert.match(siteHeaders, /min-h-phone-bar/);
+  assert.match(siteHeaders, /data-header-actions/);
   assert.match(actions, /#get-started/);
   assert.match(actions, /data-site-action/);
   assert.match(actions, /SITE_GITHUB_URL/);
   assert.match(actions, /OffPathLink/);
   assert.doesNotMatch(actions, /<GithubIcon|aria-label=\{siteChromeCopy\.nav\.github\}/);
   assert.doesNotMatch(actions, /target="_blank"/);
-  assert.doesNotMatch(trigger, /fumadocs-core\/search\/client/);
+  assert.match(
+    compact,
+    /#nd-mobile-nav\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*var\(--zk-site-header-height\)/,
+  );
+  assert.match(
+    compact,
+    /#nd-nav,\s*\n#nd-nav > div,\s*\n#nd-nav nav\s*\{[^}]*height:\s*var\(--zk-site-header-height\)/,
+  );
+  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
+  assert.match(compact, /\[data-header-actions\]/);
+  assert.match(compact, /width < 48rem/);
+  assert.match(compact, /--zk-docs-scroll-offset:\s*calc\(var\(--fd-docs-row-1, 0px\) \+ var\(--zk-site-header-height-wrapped\)\)/);
+  const globals = readFileSync(join(app, "app/globals.css"), "utf8");
+  assert.match(globals, /#nd-sidebar\s*\{[^}]*background-color:\s*hsl\(var\(--sidebar\)/);
+  assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
+  assert.doesNotMatch(layout, /KitVersionLabel/);
 });

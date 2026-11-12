@@ -40,7 +40,7 @@ test("catalog intro bleeds full width and the filters sit in a narrower column",
   const intro = page.locator("[data-slot='section']").filter({
     has: page.getByRole("heading", { name: "Catalog", level: 1 }),
   });
-  await expect(intro).toHaveClass(/bg-muted/);
+  await expect(intro).not.toHaveClass(/bg-muted/);
   const introBox = await intro.boundingBox();
   const introColumn = intro.locator("[data-slot='container']");
   await expect(introColumn).toHaveClass(/max-w-default/);
@@ -244,7 +244,35 @@ test("catalog first viewport shows several result rows at 1440", async ({ page }
   await gotoCatalogQuiet(page);
   await expect(page.locator("[data-catalog-results]")).toBeVisible();
   const visible = await visibleResultLinks(page);
-  expect(visible).toBeGreaterThanOrEqual(6);
+  expect(visible).toBeGreaterThanOrEqual(9);
+});
+
+test("catalog desktop header has docs search and GitHub text, no version or theme", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await gotoCatalogQuiet(page);
+  const header = page.locator("#nd-nav");
+  await expect(
+    header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true }).first(),
+  ).toBeVisible();
+  await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+  await expect(header.locator("[data-theme-toggle]").filter({ visible: true })).toHaveCount(0);
+  await expect(header.locator("[data-kit-version]")).toHaveCount(0);
+  await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
+});
+
+test("catalog title is 40px at 1440 and 390", async ({ page }) => {
+  for (const size of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ] as const) {
+    await page.setViewportSize(size);
+    await gotoCatalogQuiet(page);
+    const fontSize = await page.getByRole("heading", { name: "Catalog", level: 1 }).evaluate((el) =>
+      Number.parseFloat(getComputedStyle(el).fontSize),
+    );
+    expect(fontSize, `${size.width}px`).toBeGreaterThanOrEqual(39);
+    expect(fontSize, `${size.width}px`).toBeLessThanOrEqual(41);
+  }
 });
 
 test("catalog first viewport shows result rows at 390", async ({ page }) => {
@@ -275,21 +303,20 @@ test("catalog filter chips use quiet fill not primary accent", async ({ page }) 
   expect(usesPrimaryBg).toBe(false);
 });
 
-test("home links to catalog with component families", async ({ page }) => {
+test("home links to catalog from the hero (#210)", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
+  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
   await expect(catalog).toBeVisible();
-  await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
-  const rows = page.locator("[data-home-component-families] [data-family-title]");
-  expect(await rows.count()).toBeGreaterThanOrEqual(4);
+  await expect(catalog).toHaveAttribute("href", "/catalog");
+  await expect(page.locator("#components, [data-home-component-families]")).toHaveCount(0);
 });
 
-test("catalog CTA keeps a decorative icon at phone width", async ({ page }) => {
+test("catalog CTA from the hero stays visible at phone width", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto("/", { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
+  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
   await catalog.scrollIntoViewIfNeeded();
-  await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(catalog).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -306,8 +333,7 @@ test.describe("catalog CTA light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
-  await catalog.scrollIntoViewIfNeeded();
+      const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
       await catalog.scrollIntoViewIfNeeded();
       await expect(catalog).toBeVisible();
       await catalog.screenshot({ path: `test-results/home-catalog-cta-${mode}.png` });

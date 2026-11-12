@@ -18,12 +18,20 @@ export const HOME_CARD_GRID_TWO_COL = "grid content-shrink gap-stack-lg md:grid-
 export const HOME_CARD_GRID_THREE_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-trio";
 export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid-pair xl:grid-quad";
 /**
- * Same-idea and six-sentence lists: one column until `lg`, then two. Not
+ * Same-idea list: one column until `lg`, then two. Not
  * `HOME_CARD_GRID_TWO_COL` (`md` pair), because mobile must stack by
  * priority through the tablet step.
  */
 export const HOME_SAME_IDEA_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair";
+/**
+ * Six-sentences cards: one column until `lg`, then four. Featured cards
+ * take `lg:span-rest` (two of four) so 1440 is featured | small | small,
+ * then small | small | featured. Not `HOME_CARD_GRID_FOUR_COL` (`sm` pair
+ * / `xl` quad), because a phone must stack all six.
+ */
+export const HOME_SIX_SENTENCES_GRID =
+  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-quad";
 /**
  * Limits: one column until `lg`, then three. Not `HOME_CARD_GRID_THREE_COL`
  * (`sm` pair / `xl` trio), because a phone must stack all three items.

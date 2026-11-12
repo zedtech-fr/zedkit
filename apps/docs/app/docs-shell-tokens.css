@@ -153,6 +153,98 @@ html[data-docs-shell][data-identity] {
   padding: var(--zk-section-md);
 }
 
+/*
+ * Six-sentences: Quality and Consistency are primary high-value panels.
+ * Snapshot ink so the nested glass reply can restore readable type.
+ * Blobs are tokenised primary-foreground, not mockup hex.
+ */
+#home-page [data-home-six-sentences] {
+  --home-six-sentences-ink: var(--foreground);
+  --home-six-sentences-muted: var(--muted-foreground);
+}
+
+#home-page [data-home-six-sentences-quote] {
+  margin: 0;
+  font-style: italic;
+}
+
+#home-page [data-home-six-sentences-card="plain"] [data-home-six-sentences-kit="ai"] {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 15%, transparent);
+  color: hsl(var(--primary));
+}
+
+#home-page [data-home-six-sentences-card="plain"] [data-home-six-sentences-kit="ui"] {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+#home-page [data-home-six-sentences-card="plain"] [data-home-six-sentences-reply] {
+  margin-top: auto;
+  padding-top: calc(var(--spacing) * 4);
+  border-top: var(--zk-border-width, 1px) solid hsl(var(--border));
+}
+
+#home-page [data-home-six-sentences-card="featured"] {
+  --foreground: var(--primary-foreground);
+  --muted-foreground: var(--primary-foreground);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: transparent;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+#home-page [data-home-six-sentences-card="featured"]::before,
+#home-page [data-home-six-sentences-card="featured"]::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  background-color: hsl(var(--primary-foreground) / 0.1);
+}
+
+#home-page [data-home-six-sentences-card="featured"]::before {
+  top: -4.5rem;
+  right: -4rem;
+  width: 15rem;
+  height: 15rem;
+  border-radius: 50%;
+}
+
+#home-page [data-home-six-sentences-card="featured"]::after {
+  top: -40%;
+  right: 22%;
+  width: 5.5rem;
+  height: 180%;
+  transform: rotate(24deg);
+  background-color: hsl(var(--primary-foreground) / 0.08);
+}
+
+#home-page [data-home-six-sentences-card="featured"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+#home-page [data-home-six-sentences-card="featured"] [data-slot="badge"] {
+  background-color: hsl(var(--primary-foreground));
+  color: hsl(var(--primary));
+}
+
+#home-page [data-home-six-sentences-card="featured"] [data-home-six-sentences-reply] {
+  --foreground: var(--home-six-sentences-ink);
+  --muted-foreground: var(--home-six-sentences-muted);
+  align-self: start;
+  max-width: min(100%, var(--zk-container-narrow));
+  color: hsl(var(--home-six-sentences-ink));
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  #home-page [data-home-six-sentences-card="featured"]::before,
+  #home-page [data-home-six-sentences-card="featured"]::after {
+    background-color: hsl(var(--primary-foreground) / 0.06);
+  }
+}
+
 #home-page [data-hero-demo-display] [data-slot="select-trigger"] {
   box-shadow: none;
 }

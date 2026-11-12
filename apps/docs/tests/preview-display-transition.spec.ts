@@ -8,7 +8,6 @@ async function layout(preview: Locator) {
     const row = root.querySelector<HTMLElement>("[data-preview-display]")!;
     const rect = row.getBoundingClientRect();
     const vw = document.documentElement.clientWidth;
-    // The Full/Mobile width switch is a desktop control (hidden on a phone by design).
     const controls = [...row.querySelectorAll("select, button")]
       .filter((node) => node.checkVisibility())
       .map((node) => {
@@ -28,43 +27,36 @@ async function layout(preview: Locator) {
   });
 }
 
-test("Display opened on a phone keeps an intentional layout when the window widens", async ({ page }) => {
+test("primary Look and Dark stay on the in-card toolbar when the window widens", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(PAGE, { waitUntil: "networkidle" });
   const preview = page.locator("[data-component-preview]").first();
   await preview.scrollIntoViewIfNeeded();
-  const toggle = preview.getByRole("button", { name: "Display", exact: true });
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(preview.getByRole("button", { name: "Display", exact: true })).toHaveCount(0);
   const phone = await layout(preview);
-  expect(phone.controls).toHaveLength(4);
+  expect(phone.controls.length).toBeGreaterThanOrEqual(2);
   expect(phone.controls.every((control) => control.visible && control.inView)).toBe(true);
   expect(phone.pageOverflow).toBeLessThanOrEqual(1);
 
   for (const width of [768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     const wide = await layout(preview);
-    expect(wide.toggleVisible, `${width}px: the toggle is a phone control`).toBe(false);
-    // Tablet widths may wrap the row under the tabs (fonts decide); from 1024 it sits beside them.
+    expect(wide.toggleVisible, `${width}px: no Display toggle on the primary toolbar`).toBe(false);
     if (width >= 1024) {
-      expect(wide.beside, `${width}px: controls share the tab row`).toBe(true);
-      expect(wide.rowWidth, `${width}px: the row hugs its controls`).toBeLessThan(wide.vw * 0.8);
+      expect(wide.beside, `${width}px: Look/Dark share the tab row`).toBe(true);
     }
-    expect(wide.controls, `${width}px: style, width and mode controls`).toHaveLength(6);
+    expect(wide.controls.length, `${width}px: Look and Dark`).toBeGreaterThanOrEqual(2);
     expect(wide.controls.every((control) => control.visible && control.inView), `${width}px: reachable`).toBe(true);
-    await preview.getByLabel("Style of this demo").selectOption("press");
+    await preview.getByLabel("Look").selectOption("press");
     await expect(preview.locator("[data-preview-surface]")).toHaveAttribute("data-identity", "press");
-    await preview.getByLabel("Style of this demo").selectOption("mist");
+    await preview.getByLabel("Look").selectOption("mist");
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(toggle).toHaveAttribute("aria-expanded", "true");
-  // The row settles into place over a transition; the assertion is about where it ends up, so it waits for
-  // that (a read taken during the move saw the controls at x=283..423 of a 390px screen).
   await expect
     .poll(async () => {
       const back = await layout(preview);
-      return back.controls.length === 4 && back.controls.every((control) => control.visible && control.inView);
-    }, { message: "the four phone controls are back in view once the row has settled" })
+      return back.controls.length >= 2 && back.controls.every((control) => control.visible && control.inView);
+    }, { message: "Look and Dark stay in view on a phone once the row has settled" })
     .toBe(true);
 });

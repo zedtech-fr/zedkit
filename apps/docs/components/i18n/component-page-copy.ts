@@ -3,6 +3,8 @@ export const componentPageCopy = {
   packageVersionLine: (version: string) => `Package version ${version}.`,
   header: {
     stable: "Stable",
+    source: "Source",
+    breadcrumb: (group: string) => `UI / ${group}`,
   },
   guidance: {
     who: "Who is it for?",
