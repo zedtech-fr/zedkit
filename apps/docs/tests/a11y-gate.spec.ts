@@ -85,6 +85,9 @@ test.describe("a11y gate (#396)", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
     await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
-    await expect(page.locator("#nd-sidebar").getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+    const tree = page.locator("#nd-sidebar");
+    const title = page.getByRole("heading", { name: "Getting started", level: 1 });
+    await expect(tree.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+    expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
   });
 });

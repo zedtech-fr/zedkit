@@ -473,8 +473,10 @@ html[data-docs-shell]:not(.dark) {
  * Fumadocs 16.17.10 Docs Container writes this grid inline; DocsContainer
  * omits that so these rules can restack at 390. Desktop template matches
  * fumadocs; phone is one column with the page tree in-flow below the header.
+ * `--fd-sidebar-width` is 16.75rem (fumadocs 268px) on desktop; 100% at 390.
  */
 #nd-docs-layout {
+  --fd-sidebar-width: 16.75rem;
   grid-template:
     "sidebar sidebar header toc toc"
     "sidebar sidebar toc-popover toc toc"
@@ -485,6 +487,20 @@ html[data-docs-shell]:not(.dark) {
       calc(var(--fd-layout-width, 97rem) - var(--fd-sidebar-width) - var(--fd-toc-width))
     )
     var(--fd-toc-width) minmax(min-content, 1fr);
+}
+
+#nd-docs-layout [data-sidebar-placeholder] {
+  height: calc(var(--fd-docs-height) - var(--fd-docs-row-1));
+}
+
+#nd-docs-layout #nd-sidebar {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0;
+}
+
+#nd-docs-layout #nd-sidebar > * {
+  width: var(--fd-sidebar-width);
 }
 
 @media (width < 48rem) {
@@ -523,16 +539,3 @@ html[data-docs-shell]:not(.dark) {
   }
 }
 
-/*
- * Brand, search, and collapse live in the site header; the sidebar is the page
- * tree. Selectors pin fumadocs 16.17.10 internals (`:first-child` / `:last-child`
- * chrome, `[data-sidebar-panel]` re-expand). Removing that chrome is intended:
- * Cmd/Ctrl+B still collapses with no visible re-expand control.
- */
-#nd-docs-layout #nd-sidebar > :first-child:not([data-radix-scroll-area-root]),
-#nd-docs-layout #nd-sidebar > :last-child:not([data-radix-scroll-area-root]) {
-  display: none;
-}
-#nd-docs-layout [data-sidebar-panel] {
-  display: none;
-}

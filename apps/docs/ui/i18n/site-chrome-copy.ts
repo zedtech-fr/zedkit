@@ -4,7 +4,6 @@ export const siteChromeCopy = {
   getStarted: "Get started",
   brand: { name: "zedkit", homeAriaLabel: "zedkit home" },
   search: { triggerAriaLabel: "Search documentation" },
-  theme: { toggleAriaLabel: "Toggle theme" },
   nav: {
     siteNavigation: "Site navigation",
     github: "GitHub",

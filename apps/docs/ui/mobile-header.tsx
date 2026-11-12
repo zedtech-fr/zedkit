@@ -18,21 +18,16 @@ import { isSiteNavLinkActive, siteHeaderChrome } from "@/lib/site-nav-data";
  *
  * Phone header (< md): wordmark + nowrap primary links, then a full-width actions row.
  * Home: GitHub text + Get started, no search. Else: Search ⌘K + GitHub text.
- * Docs mode does not open a page-tree drawer: the list is in the page. Foundations has no page tree. Never theme, version, or a site-nav disclosure.
+ * Docs routes do not open a page-tree drawer: the list is in the page. Foundations has no page tree. Never theme, version, or a site-nav disclosure.
  */
-export function MobileHeader({
-  mode,
-  className,
-}: {
-  mode: "home" | "docs";
-  className?: string;
-}) {
+export function MobileHeader({ className }: { className?: string }) {
   const pathname = usePathname();
   const chrome = siteHeaderChrome(pathname);
+  const docsPhoneBar = pathname === "/docs" || pathname.startsWith("/docs/");
   return (
     <header
       id="nd-mobile-nav"
-      {...(mode === "docs" ? { "data-docs-phone-bar": "" } : {})}
+      {...(docsPhoneBar ? { "data-docs-phone-bar": "" } : {})}
       className={
         className ??
         "sticky pin-top z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter md:hidden"

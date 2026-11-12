@@ -48,9 +48,11 @@ test("button reference page keeps the component list in flow at 390 (#230)", asy
   await expect(page.getByRole("heading", { name: "Button", level: 1 })).toBeVisible();
   await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
   const tree = page.locator("#nd-sidebar");
+  const title = page.getByRole("heading", { name: "Button", level: 1 });
   await expect(tree).toBeVisible();
   await expect(tree.getByRole("link", { name: "Button" }).first()).toBeVisible();
   await expect(tree.getByText("Actions")).toBeVisible();
+  expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
 });
 
 test("the secondary button keeps a quieter fill on hover", async ({ page }) => {

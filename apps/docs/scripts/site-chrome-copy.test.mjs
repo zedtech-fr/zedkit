@@ -35,7 +35,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.brand.name, "zedkit");
   assert.equal(siteChromeCopy.brand.homeAriaLabel, "zedkit home");
   assert.equal(siteChromeCopy.search.triggerAriaLabel, "Search documentation");
-  assert.equal(siteChromeCopy.theme.toggleAriaLabel, "Toggle theme");
+  assert.equal("theme" in siteChromeCopy, false);
   assert.equal("openNavigation" in siteChromeCopy.nav, false);
   assert.equal("openMenu" in siteChromeCopy.nav, false);
   assert.equal("menu" in siteChromeCopy.nav, false);

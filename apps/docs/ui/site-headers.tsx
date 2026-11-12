@@ -12,26 +12,26 @@ import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { isCatalogPath, isFoundationsPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
+const HEADER_MARK = {
+  home: { "data-home-header": "" },
+  catalog: { "data-catalog-header": "" },
+  docs: { "data-docs-header": "" },
+} as const;
+
 function MarketingDesktopNav({
   mark,
   actions,
   className,
 }: {
-  mark: "home" | "catalog" | "docs";
+  mark: keyof typeof HEADER_MARK;
   actions: ReactNode;
   className?: string;
 }) {
   const pathname = usePathname();
-  const markAttr =
-    mark === "home"
-      ? { "data-home-header": "" }
-      : mark === "catalog"
-        ? { "data-catalog-header": "" }
-        : { "data-docs-header": "" };
   return (
     <header
       id="nd-nav"
-      {...markAttr}
+      {...HEADER_MARK[mark]}
       className={cn("sticky pin-top z-header max-md:hidden", className)}
     >
       <div>
@@ -147,7 +147,7 @@ export function MarketingSiteHeader() {
   const catalog = isCatalogPath(pathname);
   return (
     <>
-      <MobileHeader mode="home" />
+      <MobileHeader />
       {home ? (
         <HomeDesktopHeader />
       ) : catalog ? (
@@ -172,10 +172,7 @@ export function DocsSiteHeader() {
   const foundations = isFoundationsPath(usePathname());
   return (
     <>
-      <MobileHeader
-        mode="docs"
-        className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
-      />
+      <MobileHeader className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden" />
       {foundations ? <FoundationsDesktopHeader /> : null}
     </>
   );

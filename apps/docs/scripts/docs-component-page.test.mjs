@@ -167,8 +167,10 @@ function docsLayoutSource() {
 test("desktop docs chrome has search and GitHub and no version or theme toggle", () => {
   const { source } = docsLayoutSource();
   assert.match(source, /searchToggle=\{\{\s*enabled:\s*true/);
-  assert.match(source, /githubUrl=/);
+  assert.doesNotMatch(source, /githubUrl=/);
+  assert.doesNotMatch(source, /links=\{/);
   assert.match(source, /themeSwitch=\{\{\s*enabled:\s*false/);
+  assert.match(source, /collapsible:\s*false/);
   assert.match(source, /DocsDesktopHeader/);
   assert.match(source, /DocsSiteHeader/);
   assert.doesNotMatch(source, /KitVersionLabel/);
@@ -238,18 +240,26 @@ test("docs chrome keeps header search and does not duplicate it in a fumadocs sl
   assert.doesNotMatch(docs, /searchTrigger/);
   assert.doesNotMatch(docs, /themeSwitch/);
   assert.match(docs, /container:\s*DocsContainer/);
+  assert.match(docs, /root:\s*DocsSidebar/);
 });
 
 test("phone docs page tree is in-flow in the shell, not a max-md drawer", () => {
   const css = read("app/docs-shell-tokens.css");
   const container = read("ui/docs-container.tsx");
+  const sidebar = read("ui/docs-sidebar.tsx");
   assert.doesNotMatch(container, /gridTemplate\s*:/);
   assert.doesNotMatch(container, /grid-template\s*:/);
+  assert.doesNotMatch(container, /\bstyle=/);
+  assert.doesNotMatch(container, /useSidebar/);
+  assert.match(sidebar, /id="nd-sidebar"/);
+  assert.doesNotMatch(sidebar, /max-md:hidden/);
+  assert.doesNotMatch(sidebar, /<SidebarDrawer|<SidebarContent/);
   assert.match(css, /\[data-sidebar-placeholder\]/);
   assert.match(css, /#nd-sidebar/);
   assert.match(css, /width < 48rem/);
   assert.match(css, /--fd-sidebar-width:\s*100%/);
   assert.match(css, /Fumadocs 16\.17\.10/);
+  assert.doesNotMatch(css, /Cmd\/Ctrl\+B|data-sidebar-panel/);
 });
 
 test("docs layout on UI routes uses the job-grouped tree helper", () => {

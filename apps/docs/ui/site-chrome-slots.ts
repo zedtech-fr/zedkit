@@ -1,4 +1,6 @@
+import { SidebarProvider, SidebarTrigger, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
 import { DocsContainer } from "@/ui/docs-container";
+import { DocsSidebar } from "@/ui/docs-sidebar";
 import {
   SiteFullSearchTrigger,
   SiteSearchTrigger,
@@ -24,4 +26,10 @@ export const siteChromeSlots = {
  */
 export const docsChromeSlots = {
   container: DocsContainer,
+  sidebar: {
+    provider: SidebarProvider,
+    root: DocsSidebar,
+    trigger: SidebarTrigger,
+    useSidebar,
+  },
 } as const;

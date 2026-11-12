@@ -68,8 +68,10 @@ test("docs phone page tree is in the page without Open navigation", async ({ pag
   await page.goto("/docs/getting-started");
   await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
   const tree = page.locator("#nd-sidebar");
+  const title = page.getByRole("heading", { name: "Getting started", level: 1 });
   await expect(tree).toBeVisible();
   await expect(tree.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+  expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
   const background = await tree.evaluate((node) => getComputedStyle(node).backgroundColor);
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
