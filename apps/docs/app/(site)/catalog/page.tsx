@@ -1,12 +1,13 @@
 import { Suspense } from "react";
 import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
 
-import { catalogCopy } from "@/app/i18n/catalog-copy";
+import "./_catalog/catalog-shell.css";
+import { catalogCopy } from "./_catalog/i18n/catalog-copy";
 import { JsonLd } from "@/components/json-ld";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
-import { CatalogViewFromUrl } from "@/ui/catalog/catalog-view";
+import { CatalogViewFromUrl } from "./_catalog/catalog-view";
 
 export const dynamic = "force-static";
 

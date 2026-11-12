@@ -8,7 +8,6 @@ export const SHARED_OWNER = "docs";
 // Drop a glob from this list when that lot moves. File paths are exact.
 export const REQUIRED_GLOBS = [
   "ui/home/**",
-  "ui/catalog/**",
   "ui/docs-main-content.tsx",
 ];
 
