@@ -91,6 +91,10 @@ describe("test:registry globs", () => {
     const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.match(checks, /^\s+- name: knip\n\s+run: pnpm knip$/m);
   });
+
+  it("knip script is exact-pinned (no floating major)", () => {
+    assert.match(pkg.scripts.knip, /^pnpm dlx knip@\d+\.\d+\.\d+$/);
+  });
 });
 
 function knipJsonc() {

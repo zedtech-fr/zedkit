@@ -22,31 +22,40 @@ components (same import a consumer writes), inside one shared frame.
 
 ## File placement
 
-Where a new docs-site file goes. Enforced by `scripts/module-placement.test.mjs`
-(owners, private folders, cross-feature, shrink-only baseline) and ESLint
-one-way rules.
+Where a new docs-site file goes. Enforced by
+`apps/docs/scripts/module-placement.test.mjs` (owners, private folders,
+cross-feature, shrink-only baseline) and ESLint one-way rules.
 
 - Used by exactly one route: next to that route in one private folder
-  `app/<route>/_<screen>/` (view, `sections/`, hooks, `i18n/`, page CSS
+  `app/<route>/_<name>/` (view, `sections/`, hooks, `i18n/`, page CSS
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
   `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
-  today's home screen code still lives in `ui/home/**`, catalog in
-  `ui/catalog/**`, not-found in `ui/not-found/**`.
+  today's in-flight lots still live under `ui/home/**`, `ui/catalog/**`,
+  `ui/not-found/**`, and `ui/docs-main-content.tsx`.
 - Used by two or more routes of one domain: `features/<domain>/` (reviews,
   identity, docs). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome in `components/site-chrome/`). `ui/` is dissolving;
-  do not add a fifth home there.
+  do not add a fifth home there. Directory globs in `REQUIRED_GLOBS`
+  (`ui/home/**`, `ui/catalog/**`, `ui/not-found/**`) silently absorb new
+  files; do not add under them. Drop a glob from `REQUIRED_GLOBS` when that
+  lot moves.
 - Pure helpers used by two or more domains (and `.mjs` shared with
   `scripts/generate.mjs`): `lib/`.
 - Domain-free code: a zedkit package (check zedkit first).
-- One-way imports: `app → features → components → lib`. A feature does not
-  import another feature (compose in the route and pass props). A `_private`
-  folder is imported only from its own route subtree.
+- One-way imports: `app → features → components/ui → lib`. A feature does
+  not import another feature or app (compose in the route and pass props).
+  A `_<name>` folder is imported only from its own route subtree.
+  Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features;
+  L8 `lib/component-page-toc.ts` may import `@/components`.
 - Kit previews stay in `components/demos/` (the placement checker skips
   dead and single-owner there). Unit tests live beside their module,
   including under `app/`; Playwright stays in `tests/`.
+- Baseline `apps/docs/scripts/module-placement.baseline.json` may only
+  shrink. Move the file; never extend the baseline. `--write-baseline`
+  regenerates from the live tree and refuses growth; it drops stale
+  entries after a move — do not add entries by hand.
 
 ## Demo rules (blocking — the `ui` lens fails the review otherwise)
 
@@ -80,7 +89,8 @@ reject dead `/r/<name>.json` links.
 - **Local loop** (every edit): reuse :3100 if it is up
   (`pnpm --filter @zedtech/zedkit-docs dev`, or root `pnpm dev`). Then
   `pnpm --filter @zedtech/zedkit-docs typecheck &&
-  pnpm --filter @zedtech/zedkit-docs lint` and the Playwright
+  pnpm --filter @zedtech/zedkit-docs lint` and
+  `node --test apps/docs/scripts/module-placement.test.mjs` and the Playwright
   spec that covers the files you touched, against that :3100 (relative
   paths; origin is `baseURL` in `playwright.config.ts`). One foreground
   command. A new or moved App Router file (`page`, `layout`, `route`,

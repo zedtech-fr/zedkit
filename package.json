@@ -35,7 +35,7 @@
     "adoption:smoke": "node scripts/adoption-smoke.mjs",
     "test:registry:nodeploy": "node --test \"scripts/*.test.mjs\" \"scripts/registry/*.test.mjs\" \"apps/docs/scripts/*.test.mjs\" \"apps/docs/{app,features,components,lib}/**/*.test.mjs\" \"packages/ai/scripts/*.test.mjs\"",
     "test:registry": "pnpm test:registry:nodeploy && node --test \"deploy/*.test.mjs\" \"deploy/suggest/*.test.mjs\"",
-    "knip": "pnpm dlx knip@5",
+    "knip": "pnpm dlx knip@5.88.0",
     "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {

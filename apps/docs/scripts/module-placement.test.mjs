@@ -7,6 +7,7 @@ import { ESLint } from "eslint";
 import {
   REQUIRED_EDGES,
   REQUIRED_GLOBS,
+  baselineGrowth,
   buildDocsGraph,
   checkPlacement,
 } from "./module-placement.mjs";
@@ -115,6 +116,20 @@ describe("checkPlacement fixtures", () => {
     assert.deepEqual(result.newViolations, []);
   });
 
+  it("passes a feature imported from a route private folder", () => {
+    const result = checkPlacement(
+      {
+        files: ["app/x/page.tsx", "app/x/_screen/view.tsx", "features/a/compose.ts"],
+        edges: [
+          { from: "app/x/page.tsx", to: "app/x/_screen/view.tsx" },
+          { from: "app/x/_screen/view.tsx", to: "features/a/compose.ts" },
+        ],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+  });
+
   it("fails a private folder imported from another route", () => {
     const result = checkPlacement(
       {
@@ -190,8 +205,42 @@ describe("live docs tree", () => {
       "baseline missing lib/review-appearance.ts",
     );
     const result = checkPlacement(graph, baseline);
-    assert.deepEqual(ids(result.newViolations), [], `new: ${ids(result.newViolations).join("\n")}`);
-    assert.deepEqual(ids(result.stale), [], `stale: ${ids(result.stale).join("\n")}`);
+    const hint =
+      "See apps/docs/AGENTS.md File placement; baseline apps/docs/scripts/module-placement.baseline.json. Move the file; never extend the baseline.";
+    assert.deepEqual(ids(result.newViolations), [], `new: ${ids(result.newViolations).join("\n")}\n${hint}`);
+    assert.deepEqual(ids(result.stale), [], `stale: ${ids(result.stale).join("\n")}\n${hint}`);
+  });
+});
+
+describe("baselineGrowth", () => {
+  it("refuses new dead, single-owner, glob, and edge entries", () => {
+    assert.deepEqual(
+      baselineGrowth(
+        { dead: ["lib/a.ts"], singleOwner: [], globs: ["ui/home/**"], edges: [] },
+        {
+          dead: ["lib/a.ts", "lib/b.ts"],
+          singleOwner: ["lib/c.ts"],
+          globs: ["ui/home/**", "ui/new/**"],
+          edges: [{ from: "features/a/x.ts", to: "features/b/y.ts" }],
+        },
+      ),
+      ["dead:lib/b.ts", "single-owner:lib/c.ts", "glob:ui/new/**", "edge:features/a/x.ts->features/b/y.ts"],
+    );
+  });
+
+  it("allows shrink", () => {
+    assert.deepEqual(
+      baselineGrowth(
+        {
+          dead: ["lib/a.ts", "lib/b.ts"],
+          singleOwner: ["lib/c.ts"],
+          globs: ["ui/home/**"],
+          edges: [{ from: "features/a/x.ts", to: "features/b/y.ts" }],
+        },
+        { dead: ["lib/a.ts"], singleOwner: [], globs: ["ui/home/**"], edges: [] },
+      ),
+      [],
+    );
   });
 });
 
@@ -205,10 +254,26 @@ describe("ESLint one-way imports", () => {
     return result?.messages ?? [];
   }
 
+  it("declares the eslint import used by this file", () => {
+    const pkg = JSON.parse(readFileSync(join(docsRoot, "package.json"), "utf8"));
+    assert.ok(pkg.devDependencies?.eslint, "apps/docs must declare eslint (knip unlisted-dep)");
+  });
+
   it("fails a new lib file importing @/components/", async () => {
     const messages = await lintText(
       join(repoRoot, "apps/docs/lib/placement-probe.ts"),
       'import { x } from "@/components/maturity-badge";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /lib may not import/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a new lib file importing ../components/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/lib/placement-probe.ts"),
+      'import { x } from "../components/maturity-badge";\n',
     );
     assert.ok(
       messages.some((m) => m.ruleId === "no-restricted-imports" && /lib may not import/i.test(m.message)),
@@ -223,6 +288,50 @@ describe("ESLint one-way imports", () => {
     );
     assert.ok(
       messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a new components file importing ../app/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/components/placement-probe.tsx"),
+      'import { x } from "../app/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a new lib file importing a multi-segment # subpath", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/lib/placement-probe.ts"),
+      'import { x } from "#docs/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a feature file importing @/app/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/features/reviews/ui/placement-probe.tsx"),
+      'import { x } from "@/app/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /feature may not import app/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a feature compose file importing @/app/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/features/reviews/compose.ts"),
+      'import { x } from "@/app/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /feature may not import app/i.test(m.message)),
       messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
     );
   });

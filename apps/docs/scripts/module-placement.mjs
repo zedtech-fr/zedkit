@@ -4,6 +4,8 @@ import ts from "typescript";
 
 export const SHARED_OWNER = "docs";
 
+// Directory globs absorb new dead/single-owner files. Do not add under them.
+// Drop a glob from this list when that lot moves. File paths are exact.
 export const REQUIRED_GLOBS = [
   "ui/home/**",
   "ui/catalog/**",
@@ -157,7 +159,7 @@ function currentViolations(graph) {
     const feat = featureOf(to);
     if (!feat) continue;
     const fromFeat = featureOf(from);
-    if (fromFeat === feat || isRouteFile(from) || from === SHARED_OWNER) continue;
+    if (fromFeat === feat || from.startsWith("app/") || from === SHARED_OWNER) continue;
     if (fromFeat !== feat) {
       violations.push({ kind: "cross-feature", from, to, file: from });
     }
@@ -321,6 +323,25 @@ export function landTimeBaseline(graph) {
   return { dead, singleOwner, globs, edges };
 }
 
+export function baselineGrowth(committed, next) {
+  const extra = [];
+  for (const file of next.dead ?? []) {
+    if (!(committed.dead ?? []).includes(file)) extra.push(`dead:${file}`);
+  }
+  for (const file of next.singleOwner ?? []) {
+    if (!(committed.singleOwner ?? []).includes(file)) extra.push(`single-owner:${file}`);
+  }
+  for (const glob of next.globs ?? []) {
+    if (!(committed.globs ?? []).includes(glob)) extra.push(`glob:${glob}`);
+  }
+  for (const edge of next.edges ?? []) {
+    if (!(committed.edges ?? []).some((e) => sameEdge(e, edge))) {
+      extra.push(`edge:${edge.from}->${edge.to}`);
+    }
+  }
+  return extra;
+}
+
 export function writeLandTimeBaseline(docsRoot, baselinePath) {
   const graph = buildDocsGraph(docsRoot);
   const baseline = landTimeBaseline(graph);
@@ -334,6 +355,15 @@ export function writeLandTimeBaseline(docsRoot, baselinePath) {
   for (const edge of REQUIRED_EDGES) {
     if (!baseline.edges.some((e) => sameEdge(e, edge))) {
       throw new Error(`placement walk missed required edge ${edge.from} -> ${edge.to}`);
+    }
+  }
+  if (existsSync(baselinePath)) {
+    const committed = JSON.parse(readFileSync(baselinePath, "utf8"));
+    const growth = baselineGrowth(committed, baseline);
+    if (growth.length > 0) {
+      throw new Error(
+        `placement baseline may only shrink; --write-baseline refuses:\n${growth.join("\n")}\nMove the file; never extend the baseline.`,
+      );
     }
   }
   writeFileSync(baselinePath, `${JSON.stringify(baseline, null, 2)}\n`);

@@ -14,14 +14,55 @@ const docsFeatureNames = new Set(
     .map((entry) => entry.name),
 );
 
+const docsAppGroup = [
+  "@/app",
+  "@/app/*",
+  "@/app/**",
+  "../app",
+  "../app/*",
+  "../app/**",
+];
+const docsFeatureGroup = [
+  "@/features",
+  "@/features/*",
+  "@/features/**",
+  "../features",
+  "../features/*",
+  "../features/**",
+];
+const docsUiGroup = ["@/ui", "@/ui/*", "@/ui/**", "../ui", "../ui/*", "../ui/**"];
+const docsComponentsGroup = [
+  "@/components",
+  "@/components/*",
+  "@/components/**",
+  "../components",
+  "../components/*",
+  "../components/**",
+];
+
 const docsAppFeatureBan = {
-  group: ["@/app", "@/app/*", "@/app/**", "#*", "@/features", "@/features/*", "@/features/**"],
+  group: [...docsAppGroup, ...docsFeatureGroup],
   message:
     "One-way imports: composed UI and lib may not import app or features. Compose in the route and pass props.",
 };
 
+const docsFeatureAppBan = {
+  group: docsAppGroup,
+  message: "One-way imports: a feature may not import app. Compose in the route and pass props.",
+};
+
+// `#*` is a gitignore comment, so hash subpaths need `regex` (not `group`).
+const docsHashImportBan = {
+  regex: "^#",
+  message: docsAppFeatureBan.message,
+};
+const docsFeatureHashImportBan = {
+  regex: "^#",
+  message: docsFeatureAppBan.message,
+};
+
 const docsLibUiBan = {
-  group: ["@/components", "@/components/*", "@/components/**", "@/ui", "@/ui/*", "@/ui/**"],
+  group: [...docsComponentsGroup, ...docsUiGroup],
   message: "One-way imports: lib may not import composed UI.",
 };
 
@@ -215,10 +256,10 @@ export default tseslint.config(
     kitPackage: "@zedtech/zedkit-ui",
     featureRoot: "apps/docs/features",
     extraPatterns: {
-      kitScope: [deepRelativeImport],
-      viewData: [deepRelativeImport],
-      dataUi: [deepRelativeImport],
-      model: [deepRelativeImport],
+      kitScope: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
+      viewData: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
+      dataUi: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
+      model: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan],
     },
   }),
   {
@@ -227,6 +268,22 @@ export default tseslint.config(
     files: ["apps/docs/features/**/*.{ts,tsx,mjs,js,jsx}"],
     plugins: { "docs-placement": docsPlacementPlugin },
     rules: { "docs-placement/no-cross-feature-import": "error" },
+  },
+  {
+    // defineLayers ignores compose files; they still must not import app.
+    name: "docs/one-way-features-compose-no-app",
+    files: [
+      "apps/docs/features/*/index.ts",
+      "apps/docs/features/*/index.tsx",
+      "apps/docs/features/*/compose.ts",
+      "apps/docs/features/*/compose.tsx",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { patterns: [deepRelativeImport, docsFeatureAppBan, docsFeatureHashImportBan] },
+      ],
+    },
   },
   {
     name: "docs/one-way-composed-ui",
@@ -238,7 +295,7 @@ export default tseslint.config(
     rules: {
       "no-restricted-imports": [
         "error",
-        { patterns: [deepRelativeImport, docsAppFeatureBan] },
+        { patterns: [deepRelativeImport, docsAppFeatureBan, docsHashImportBan] },
       ],
     },
   },
@@ -248,7 +305,7 @@ export default tseslint.config(
     rules: {
       "no-restricted-imports": [
         "error",
-        { patterns: [deepRelativeImport, docsAppFeatureBan, docsLibUiBan] },
+        { patterns: [deepRelativeImport, docsAppFeatureBan, docsHashImportBan, docsLibUiBan] },
       ],
     },
   },
@@ -263,9 +320,10 @@ export default tseslint.config(
           patterns: [
             deepRelativeImport,
             {
-              group: ["@/app", "@/app/*", "@/app/**", "#*"],
+              group: docsAppGroup,
               message: docsAppFeatureBan.message,
             },
+            docsHashImportBan,
           ],
         },
       ],
@@ -282,8 +340,9 @@ export default tseslint.config(
           patterns: [
             deepRelativeImport,
             docsAppFeatureBan,
+            docsHashImportBan,
             {
-              group: ["@/ui", "@/ui/*", "@/ui/**"],
+              group: docsUiGroup,
               message: docsLibUiBan.message,
             },
           ],
