@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   CATALOG_AREAS,
+  catalogCounterItems,
   catalogFilterView,
   countCatalogByArea,
   filterCatalogEntries,
@@ -161,4 +162,72 @@ test("whitespace-only search is no search", () => {
 test("empty visible list is an empty array, not a throw", () => {
   assert.deepEqual(filterCatalogEntries(MIXED, { area: "seo", status: "stable", q: "nope" }), []);
   assert.doesNotThrow(() => catalogFilterView([], { area: "ui", status: "stable", q: "x" }));
+});
+
+const COUNTER_LABELS = { ui: "UI", backend: "Core", seo: "SEO", agents: "Agents" };
+
+test("catalogCounterItems keeps chip order with short labels, not Core & server", () => {
+  const items = catalogCounterItems(countCatalogByArea(MIXED), COUNTER_LABELS);
+  assert.deepEqual(
+    items.map((item) => [item.id, item.label, item.count]),
+    [
+      ["ui", "UI", 3],
+      ["backend", "Core", 1],
+      ["seo", "SEO", 1],
+      ["agents", "Agents", 1],
+    ],
+  );
+  assert.equal(CATALOG_AREAS[1].label, "Core & server");
+});
+
+test("catalogCounterItems fills a missing area with 0 and drops extra keys", () => {
+  const items = catalogCounterItems(
+    { backend: 2, seo: 0, leftover: 99, mystery: 4 },
+    COUNTER_LABELS,
+  );
+  assert.deepEqual(
+    items.map((item) => [item.id, item.count]),
+    [
+      ["ui", 0],
+      ["backend", 2],
+      ["seo", 0],
+      ["agents", 0],
+    ],
+  );
+});
+
+test("catalogCounterItems on an empty index is four zeros", () => {
+  const items = catalogCounterItems(countCatalogByArea([]), COUNTER_LABELS);
+  assert.deepEqual(
+    items.map((item) => item.count),
+    [0, 0, 0, 0],
+  );
+});
+
+test("catalogCounterItems treats non-finite and missing counts as 0", () => {
+  const items = catalogCounterItems(
+    { ui: Number.NaN, backend: Number.POSITIVE_INFINITY, agents: 4 },
+    COUNTER_LABELS,
+  );
+  assert.deepEqual(
+    items.map((item) => item.count),
+    [0, 0, 0, 4],
+  );
+  const fromNull = catalogCounterItems(null, COUNTER_LABELS);
+  assert.deepEqual(
+    fromNull.map((item) => item.count),
+    [0, 0, 0, 0],
+  );
+});
+
+test("catalogCounterItems keeps a large count and ignores filters on the source object", () => {
+  const { countsByArea } = catalogFilterView(MIXED, {
+    area: "ui",
+    status: "stable",
+    q: "Alert",
+  });
+  const items = catalogCounterItems({ ...countsByArea, ui: 10000 }, COUNTER_LABELS);
+  assert.equal(items[0].count, 10000);
+  assert.equal(items[1].count, 1);
+  assert.equal(countsByArea.ui, 3);
 });

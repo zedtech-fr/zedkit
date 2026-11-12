@@ -27,6 +27,23 @@ export function countCatalogByArea(entries) {
 }
 
 /**
+ * Four labelled counts for the Catalog glass card. Order follows CATALOG_AREAS.
+ * Missing or non-finite values become 0; keys outside the four areas are dropped.
+ *
+ * @param {Partial<Record<CatalogChipArea["id"], number>> | null | undefined} counts
+ * @param {Record<CatalogChipArea["id"], string>} labels
+ * @returns {readonly { id: CatalogChipArea["id"]; label: string; count: number }[]}
+ */
+export function catalogCounterItems(counts, labels) {
+  const source = counts ?? {};
+  return CATALOG_AREAS.map((area) => {
+    const raw = source[area.id];
+    const count = typeof raw === "number" && Number.isFinite(raw) ? raw : 0;
+    return { id: area.id, label: labels[area.id], count };
+  });
+}
+
+/**
  * @param {CatalogIndexEntry[]} entries
  * @param {{ area?: string; status?: string; q?: string }} [filters]
  */

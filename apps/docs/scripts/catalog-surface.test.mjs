@@ -10,9 +10,10 @@ function read(rel) {
   return readFileSync(join(app, rel), "utf8");
 }
 
-test("catalog view reads as a catalog: lead, filters, results, no identity form", () => {
+test("catalog view reads as a catalog: lead, counters, filters, results, no identity form", () => {
   const view = read("ui/catalog/catalog-view.tsx");
   assert.match(view, /\{catalogCopy\.header\.lead\}/);
+  assert.match(view, /CatalogCounters/);
   assert.match(view, /CatalogFiltersToolbar/);
   assert.match(view, /CatalogResultsBodyLazy/);
   assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
@@ -22,11 +23,16 @@ test("catalog view reads as a catalog: lead, filters, results, no identity form"
   assert.doesNotMatch(view, /useDraftTokens/);
   assert.doesNotMatch(view, /ThemeScope/);
   const leadAt = view.indexOf("{catalogCopy.header.lead}");
+  const countersAt = view.indexOf("<CatalogCounters");
   const toolbarAt = view.indexOf("<CatalogFiltersToolbar");
   const resultsAt = view.indexOf("<CatalogResultsBodyLazy");
   const statusAt = view.indexOf("catalogResultsStatusLine(visible.length, areaTotal)");
-  assert.equal(leadAt >= 0 && toolbarAt >= 0 && resultsAt >= 0 && statusAt >= 0, true);
-  assert.equal(leadAt < toolbarAt, true);
+  assert.equal(
+    leadAt >= 0 && countersAt >= 0 && toolbarAt >= 0 && resultsAt >= 0 && statusAt >= 0,
+    true,
+  );
+  assert.equal(leadAt < countersAt, true);
+  assert.equal(countersAt < toolbarAt, true);
   assert.equal(toolbarAt < resultsAt, true);
   assert.equal(resultsAt < statusAt, true);
 });
