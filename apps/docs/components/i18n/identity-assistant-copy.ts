@@ -1,7 +1,4 @@
-import type { Unavailable } from "@/lib/identity-assistant";
-import { identityBriefCopy } from "./identity-brief-copy.ts";
-
-/** English copy for the identity assistant, its references and its proposal. Keys only; no markup. */
+/** English copy the identity dock and suggest-client tests still read. Keys only; no markup. */
 
 const minutes = (seconds: number) => Math.max(1, Math.ceil(seconds / 60));
 const MINUTE_MS = 60_000;
@@ -35,97 +32,11 @@ export function retryText(seconds: number | undefined, now: Date = new Date()): 
 }
 
 export const identityAssistantCopy = {
-  title: "Create an identity",
-  intro: "Describe your product in a few plain sentences. The assistant proposes a look; you review it before anything changes.",
-  briefLabel: identityBriefCopy.briefLabel,
-  followUpLabel: "What should change?",
-  generate: "Generate",
-  refine: "Refine",
-  cancel: "Cancel",
-  charsLeft: (left: number) => `${left} characters left`,
-  open: "Create an identity from a description",
   detailedEditorLink: "Open the detailed editor",
-  working: "Working on it. Your current look is unchanged.",
-  /** On a phone the conversation and the preview take turns; from a wide screen both are shown. */
   views: {
-    label: "Conversation or preview",
-    conversation: "Conversation",
-    preview: "Preview",
-    proposalReady: "A proposed look is ready.",
-    waitingSuffix: ", a proposal is ready",
-    draftNow: "This is your draft as it is now. A proposal appears here, in light and dark.",
     customize: "Customize this look",
-    customizeHint: "Adjust the fields below; the preview above and the specimens on the page follow.",
+    customizeHint: "Adjust the fields below; the page and its specimens follow.",
   },
-  cancelled: "Cancelled. Nothing changed.",
-  thread: "What you asked for so far",
-  you: "You",
-  assistant: "Assistant",
-  proposal: {
-    title: "Proposed look",
-    summaryLabel: "What changed",
-    showChanges: "Show every change",
-    changes: (count: number) => (count === 0 ? "No value changed" : `${count} ${count === 1 ? "value" : "values"} changed`),
-    lightLabel: "Light",
-    darkLabel: "Dark",
-    preview: "Preview of the proposal in light and dark",
-    beforeLabel: "Before",
-    afterLabel: "After",
-    compare: "Your current look and the proposal side by side.",
-    apply: "Use this look",
-    discard: "Discard",
-    contrastAdjusted: (count: number) => `${count} ${count === 1 ? "color was" : "colors were"} adjusted so text stays readable.`,
-    contrastOk: "Text and controls keep their contrast in light and dark.",
-    contrastUnresolved: (count: number) =>
-      `${count} ${count === 1 ? "pair still misses" : "pairs still miss"} the contrast target after adjustment; check them before applying.`,
-    note: "Applies to demo specimens on this site only, not the docs chrome. Saved looks and the site default are not changed until you export or save elsewhere.",
-  },
-  /** Sample content the proposal is shown in: a small shop, so type, color, shape and density have something to act on. */
-  preview: {
-    brand: "Atelier Lune",
-    nav: ["Shop", "Journal", "About"],
-    headline: "Quiet pieces for slow mornings",
-    body: "Hand-thrown stoneware, made in small batches and fired twice. Each piece is a little different.",
-    badge: "In stock",
-    price: "€48",
-    emailLabel: "Email",
-    emailPlaceholder: "you@example.com",
-    primary: "Join the list",
-    secondary: "Browse the shop",
-  },
-  /** Links are written in the brief itself; the page only shows which ones it found and lets a visitor drop one. */
-  refineChips: {
-    label: "Quick refinements",
-    group: "Quick refinements",
-    hint: "Or describe the change in your own words below.",
-  },
-  refinePlaceholder: "Calmer, more contrast, a serif for the headings\u2026",
-  placeholder: identityBriefCopy.placeholder,
-  /** Example prompts the chat composer rotates through, until reduced motion or a follow-up asks for stillness. */
-  composerPlaceholders: [
-    "A small online shop selling hand-thrown ceramics…",
-    "A calm newsroom site, dense but readable…",
-    "A SaaS dashboard for a team of ten…",
-    "A booking page for a bike repair shop…",
-  ],
-  links: identityBriefCopy.links,
-  references: {
-    textOnly: "Read as text only. Pictures and layout are not analysed.",
-    styles: (signals: string) => (signals ? `Styles and text read: ${signals}.` : "Styles and text read. No distinct colors or fonts found."),
-    radius: (value: string) => `radius ${value}`,
-    failed: (reason: string) => `Could not be used: ${referenceReason(reason)}.`,
-    report: "What happened to your links",
-    used: "Used",
-    notUsed: "Not used",
-  },
-  unavailable: (reason: Unavailable) =>
-    ({
-      disabled: "The assistant is off on this site. The looks and the fields below still work.",
-      "not-configured": "The assistant is not set up here yet. The looks and the fields below still work.",
-      unavailable: "The assistant cannot be reached right now. The looks and the fields below still work.",
-      killed: "The assistant has been paused. The looks and the fields below still work.",
-      unreachable: "The assistant is not available here. The looks and the fields below still work.",
-    })[reason],
   failure: {
     quota: (seconds?: number) => `The assistant limit has been reached. ${retryText(seconds)}`,
     rate: (seconds?: number) => `That was a lot of requests in a short time. ${retryText(seconds)}`,

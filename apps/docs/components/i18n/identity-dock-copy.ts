@@ -2,7 +2,6 @@
 export const identityDockCopy = {
   pillLabel: "And yours?",
   panelTitle: "Make it yours",
-  close: "Close",
   closeLabel: "Close identity assistant",
   shortcutHint: "Open the identity assistant (Ctrl+I or ⌘I)",
   statusRestored: "Site look restored to the default.",
