@@ -17,8 +17,8 @@ import { OffPathLink } from "@/ui/off-path-link";
  * differ in shape; the inset card was the 12 Nov defect.
  * Token `--primary` fill, because: #73 forbids decorative gradients except
  * Glass material and forbids indigo/violet as page fill.
- * Quote as section title + OffPathLink, because: one focal point; the dest
- * leaves the adoption path.
+ * Sr-only Manifesto H2 + blockquote, because: the rotor needs a short
+ * section name; the quote must not occupy the heading list.
  * Centered reading measure, because: mockup centers both bands; a full-wide
  * quote fights the limits grid.
  */
@@ -29,6 +29,7 @@ export function HomeManifestoSection() {
       spacing="md"
       containerWidth="wide"
       id="manifesto"
+      aria-labelledby="manifesto-heading"
       snap="none"
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
@@ -36,11 +37,16 @@ export function HomeManifestoSection() {
       <Stack
         gap={HOME_SECTION_CONTENT_GAP}
         className="mx-auto max-w-reading items-center content-offset text-center"
-        data-home-manifesto-panel=""
+        data-home-manifesto=""
       >
-        <Heading level={2} typeRole="title">
-          {homeManifestoCopy.quote}
+        <Heading id="manifesto-heading" level={2} className="sr-only">
+          {homeManifestoCopy.sectionLabel}
         </Heading>
+        <blockquote className="trim-margin not-italic">
+          <Heading as="div" typeRole="title">
+            {homeManifestoCopy.quote}
+          </Heading>
+        </blockquote>
         <Text className={HOME_PERSUASION_TEXT_CLASS}>{homeManifestoCopy.attribution}</Text>
         <OffPathLink
           href={SITE_COMPANY_URL}

@@ -4,6 +4,6 @@ export const homeClosingCopy = {
     title: "Next time it says done, it will be.",
     description: "And it will look like the rest of your product.",
   },
-  promptAriaLabel: "Setup prompt",
+  promptAriaLabel: "Closing setup prompt",
   promptCopyLabel: "Copy prompt",
 } as const;

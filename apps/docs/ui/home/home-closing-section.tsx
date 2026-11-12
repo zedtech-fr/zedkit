@@ -15,7 +15,8 @@ import { homeClosingCopy } from "@/ui/home/i18n/home-closing-copy";
  * ask is copy-and-go; the kit already copies and announces; a third labelled
  * Copy widget would be a parallel control.
  * Centered reading measure, because: mockup centers both bands; a full-wide
- * quote fights the limits grid.
+ * prompt fights the limits grid. The field wraps `text-left` so the centered
+ * stack does not inherit into the prompt box.
  */
 export function HomeClosingSection() {
   return (
@@ -24,6 +25,7 @@ export function HomeClosingSection() {
       spacing="md"
       containerWidth="wide"
       id="closing"
+      aria-labelledby="closing-heading"
       snap="none"
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
@@ -33,18 +35,20 @@ export function HomeClosingSection() {
         className="mx-auto w-full max-w-reading items-center content-offset text-center"
         data-home-closing=""
       >
-        <Heading level={2} typeRole="title">
+        <Heading id="closing-heading" level={2} typeRole="title">
           {homeClosingCopy.section.title}
         </Heading>
         <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
           {homeClosingCopy.section.description}
         </Text>
-        <SecretField
-          multiline
-          value={MAP_SETUP_MINI_PROMPT}
-          aria-label={homeClosingCopy.promptAriaLabel}
-          copyLabel={homeClosingCopy.promptCopyLabel}
-        />
+        <div className="w-full text-left">
+          <SecretField
+            multiline
+            value={MAP_SETUP_MINI_PROMPT}
+            aria-label={homeClosingCopy.promptAriaLabel}
+            copyLabel={homeClosingCopy.promptCopyLabel}
+          />
+        </div>
       </Stack>
     </Section>
   );

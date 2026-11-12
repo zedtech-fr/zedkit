@@ -198,6 +198,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const manifestoCss = tokens.match(/#home-page #manifesto\[data-slot="section"\] \{[^}]+\}/);
   assert.ok(manifestoCss, "manifesto section fill rule");
   assert.doesNotMatch(manifestoCss[0], /#[0-9A-Fa-f]{3,8}/);
+  assert.doesNotMatch(manifestoCss[0], /border-radius/);
+  assert.doesNotMatch(manifestoCss[0], /padding:/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
@@ -271,7 +273,11 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(limitsCopy, /Not every component is finished\./);
   assert.equal((limitsCopy.match(/title: "/g) ?? []).length, 4);
   assert.match(manifesto, /id="manifesto"/);
-  assert.match(manifesto, /data-home-manifesto-panel/);
+  assert.match(manifesto, /aria-labelledby="manifesto-heading"/);
+  assert.match(manifesto, /data-home-manifesto=/);
+  assert.doesNotMatch(manifesto, /data-home-manifesto-panel/);
+  assert.match(manifesto, /className="sr-only"/);
+  assert.match(manifesto, /<blockquote className="trim-margin not-italic">/);
   assert.match(manifesto, /from "@\/ui\/off-path-link"/);
   assert.match(manifesto, /from "@\/lib\/site-links\.mjs"/);
   assert.match(manifesto, /href=\{SITE_COMPANY_URL\}/);
@@ -284,18 +290,24 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     /If nobody else can pick up what was built, that isn't expertise\. It's lock-in\./,
   );
   assert.match(manifestoCopy, /From the Zed Tech manifesto/);
+  assert.match(manifestoCopy, /sectionLabel: "Manifesto"/);
   assert.match(manifestoCopy, /readLink: "Read the manifesto"/);
   assert.doesNotMatch(manifestoCopy, /→/);
   assert.doesNotMatch(manifestoCopy, /https:\/\/zedtech\.fr/);
   assert.match(closing, /id="closing"/);
+  assert.match(closing, /aria-labelledby="closing-heading"/);
+  assert.match(closing, /data-home-closing=/);
   assert.match(closing, /SecretField/);
+  assert.match(closing, /\bmultiline\b/);
+  assert.match(closing, /w-full text-left/);
   assert.match(closing, /MAP_SETUP_MINI_PROMPT/);
   assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
   assert.match(closing, /copyLabel=\{homeClosingCopy\.promptCopyLabel\}/);
   assert.doesNotMatch(closing, /SetupEntryPrompt|data-setup-entry|homeClosingCopy\.actionHref/);
   assert.match(closingCopy, /Next time it says done, it will be\./);
   assert.match(closingCopy, /And it will look like the rest of your product\./);
-  assert.match(closingCopy, /promptAriaLabel: "Setup prompt"/);
+  assert.match(closingCopy, /promptAriaLabel: "Closing setup prompt"/);
+  assert.doesNotMatch(closingCopy, /promptAriaLabel: "Setup prompt"/);
   assert.match(closingCopy, /promptCopyLabel: "Copy prompt"/);
   assert.doesNotMatch(closingCopy, /action: "Setup"/);
   assert.doesNotMatch(closingCopy, /actionHref: "#ai-setup"/);
