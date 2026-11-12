@@ -4,37 +4,27 @@ import { openHeroPage } from "./hero-helpers";
 const DESKTOP_WIDTHS = [1280, 1440] as const;
 
 for (const width of DESKTOP_WIDTHS) {
-  test(`header search clears theme toggle at ${width}px light`, async ({ page }) => {
+  test(`header search sits beside GitHub at ${width}px light`, async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const search = document.querySelector("#nd-nav button[class*='max-w']");
-      const toggle = document.querySelector("[data-theme-toggle]");
-      if (!search || !toggle) return null;
-      const toggleLeft = toggle.getBoundingClientRect().left;
-      const nodes = [search, ...search.querySelectorAll("*")];
-      let maxRight = Number.NEGATIVE_INFINITY;
-      const offenders: { tag: string; right: number }[] = [];
-      for (const node of nodes) {
-        const r = node.getBoundingClientRect();
-        if (r.width === 0 || r.height === 0) continue;
-        maxRight = Math.max(maxRight, r.right);
-        if (r.right > toggleLeft + 0.5) {
-          offenders.push({ tag: node.tagName.toLowerCase(), right: r.right });
-        }
-      }
+      const search = document.querySelector("#nd-nav [data-search], #nd-nav [data-search-full]");
+      const github = [...document.querySelectorAll("#nd-nav a")].find((a) =>
+        (a.textContent ?? "").includes("GitHub"),
+      );
+      if (!search || !github) return null;
       return {
-        gap: toggleLeft - maxRight,
-        offenders,
-        toggleLeft,
-        maxRight,
+        gap: github.getBoundingClientRect().left - search.getBoundingClientRect().right,
+        searchHeight: search.getBoundingClientRect().height,
+        themeToggle: document.querySelector("#nd-nav [data-theme-toggle]"),
       };
     });
     expect(layout).not.toBeNull();
-    expect(layout!.offenders, JSON.stringify(layout!.offenders)).toEqual([]);
+    expect(layout!.searchHeight).toBeGreaterThan(0);
+    expect(layout!.themeToggle).toBeNull();
     expect(layout!.gap).toBeGreaterThanOrEqual(8);
   });
 

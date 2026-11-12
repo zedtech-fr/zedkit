@@ -143,17 +143,17 @@
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
   box-shadow: var(--zk-shadow-sm);
 }
-/* Home mockup header: text links, not glass chips. Get started keeps the site-action look. */
-:root[data-identity] #nd-nav[data-home-header] nav {
+/* Home and Catalog mockup headers: text links, not glass chips. Get started keeps the site-action look. */
+:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav {
   gap: 1.5rem;
 }
-:root[data-identity] #nd-nav[data-home-header] nav ul {
+:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav ul {
   gap: 1.5rem;
 }
-:root[data-identity] #nd-nav[data-home-header] nav .ms-auto {
+:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav .ms-auto {
   gap: 1rem;
 }
-:root[data-identity] #nd-nav[data-home-header] nav a:not([data-slot="button"]) {
+:root[data-identity] #nd-nav:is([data-home-header], [data-catalog-header]) nav a:not([data-slot="button"]) {
   border-radius: 0;
   padding-inline: 0;
   background: none;
