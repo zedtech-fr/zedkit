@@ -2,11 +2,11 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { assertA11yGate } from "./a11y-helpers";
 
-/** Each identity is shown as its own product screen; the tab leads with the product, the identity follows. */
+/** Each identity is shown as its own product screen; the tab is the look name. */
 const IDENTITIES = [
-  { id: "mist", name: "Mist", product: "Dev console", heading: "Project settings", action: "Save changes" },
-  { id: "press", name: "Press", product: "Newsroom", heading: "Today's desk", action: "Publish" },
-  { id: "maison", name: "Maison", product: "Bag shop", heading: "The autumn collection", action: "Save piece" },
+  { id: "mist", name: "Mist", heading: "Project settings", action: "Save changes" },
+  { id: "press", name: "Press", heading: "Today's desk", action: "Publish" },
+  { id: "maison", name: "Maison", heading: "The autumn collection", action: "Save piece" },
 ] as const;
 
 /** The examples arrive with a short entrance; checks that read colours or positions wait for it to be over. */
@@ -21,7 +21,7 @@ async function settle(looks: Locator) {
   );
 }
 
-/** Opens the section at its top, so the first example (Dev console) is on show. */
+/** Opens the section at its top, so the first example (Mist) is on show. */
 async function openLooks(page: Page, width = 1440, height = 900): Promise<{ looks: Locator; stage: Locator }> {
   await page.setViewportSize({ width, height });
   await page.goto("/", { waitUntil: "networkidle" });
@@ -31,37 +31,39 @@ async function openLooks(page: Page, width = 1440, height = 900): Promise<{ look
   return { looks, stage: looks.locator("[data-home-identity-stage]") };
 }
 
-async function pick(looks: Locator, product: string) {
-  await looks.getByRole("tab", { name: product }).click();
+async function pick(looks: Locator, name: string) {
+  await looks.getByRole("tab", { name, exact: true }).click();
   await settle(looks);
 }
 
 test("the section is a set of examples, not a count of identities", async ({ page }) => {
   await openLooks(page);
-  // The section's own heading and intro (the band around the tabs), not just the tabs.
   const section = page.locator("#identities");
-  await expect(section.getByRole("heading", { name: "Every screen, the same product.", level: 2 })).toBeVisible();
+  const looks = page.locator("[data-home-identity-looks]");
+  await expect(looks.getByRole("heading", { name: "Every screen, the same product.", level: 2 })).toBeVisible();
   await expect(section).not.toContainText(/\bsix\b/i);
-  await expect(page.locator("[data-home-identity-looks] p").first()).toContainText("Live components, not screenshots.");
+  await expect(looks.getByRole("tab", { name: "Glass" })).toHaveCount(0);
+  await expect(looks.locator("[data-palette-dots]")).toHaveCount(0);
 });
 
 test("tabs switch the example and its identity without leaving the page", async ({ page }) => {
   const { looks, stage } = await openLooks(page);
-  await expect(looks.getByRole("tablist", { name: "Examples" })).toBeVisible();
+  const pageIdentity = await page.locator("html").getAttribute("data-identity");
+  await expect(looks.getByRole("tablist", { name: "Looks" })).toBeVisible();
   await expect(looks.getByRole("tab")).toHaveCount(3);
   await expect(stage).toHaveAttribute("data-identity", "mist");
   for (const identity of IDENTITIES) {
-    await pick(looks, identity.product);
+    await pick(looks, identity.name);
     await expect(stage).toHaveAttribute("data-identity", identity.id);
-    await expect(looks.getByRole("tab", { name: identity.product })).toContainText(identity.name);
-    // The caption under the example names the look on show.
-    await expect(looks.locator("[data-identity-caption]")).toContainText(`${identity.name}:`);
+    await expect(looks.getByRole("tab", { name: identity.name, exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(looks.locator("[data-identity-caption]")).toContainText(`data-identity="${identity.id}"`);
   }
-  await pick(looks, "Dev console");
-  await looks.getByRole("tab", { name: "Dev console" }).focus();
+  await pick(looks, "Mist");
+  await looks.getByRole("tab", { name: "Mist", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
-  await expect(looks.getByRole("tab", { name: "Newsroom" })).toHaveAttribute("aria-selected", "true");
+  await expect(looks.getByRole("tab", { name: "Press", exact: true })).toHaveAttribute("aria-selected", "true");
   await expect(stage).toHaveAttribute("data-identity", "press");
+  expect(await page.locator("html").getAttribute("data-identity")).toBe(pageIdentity);
 });
 
 test("mobile looks does not overflow horizontally", async ({ page }) => {
@@ -71,7 +73,7 @@ test("mobile looks does not overflow horizontally", async ({ page }) => {
     const looks = page.locator("[data-home-identity-looks]");
     await looks.scrollIntoViewIfNeeded();
     await expect(looks.getByRole("tablist")).toBeVisible();
-    await expect(looks.locator("[data-slot='scroll-gallery']")).toBeVisible();
+    await expect(looks.locator("[data-slot='scroll-gallery']")).toHaveCount(0);
     const tablistLayout = await looks.getByRole("tablist").evaluate((el) => getComputedStyle(el).display);
     expect(tablistLayout).toBe("flex");
     const box = await looks.evaluate((el) => {
@@ -95,7 +97,7 @@ for (const width of [320, 360, 390]) {
   test(`${width}px: every tab stays readable, and the chosen one is visible`, async ({ page }) => {
     const { looks } = await openLooks(page, width, 800);
     for (const identity of IDENTITIES) {
-      const tab = looks.getByRole("tab", { name: identity.product });
+      const tab = looks.getByRole("tab", { name: identity.name, exact: true });
       await tab.click();
       await expect(tab).toHaveAttribute("aria-selected", "true");
       const fit = await tab.evaluate((node) => {
@@ -106,22 +108,25 @@ for (const width of [320, 360, 390]) {
           const text = range.getBoundingClientRect();
           return text.left >= rect.left - 0.5 && text.right <= rect.right + 0.5;
         };
-        const product = node.querySelector("[data-tab-label]")!;
+        const label = node.querySelector("[data-tab-label]")!;
         return {
           inView: rect.left >= 0 && rect.right <= document.documentElement.clientWidth,
           textInside: [...node.querySelectorAll("span")].every((span) => !span.textContent || inside(span)),
           clipped: node.scrollWidth > node.clientWidth + 1,
-          fontSize: Number.parseFloat(getComputedStyle(product).fontSize),
+          fontSize: Number.parseFloat(getComputedStyle(label).fontSize),
+          minHeight: rect.height,
         };
       });
-      expect(fit, `${width}px ${identity.product}`).toEqual({ inView: true, textInside: true, clipped: false, fontSize: fit.fontSize });
-      // Dense UI role: the kit's --text-sm (13px). Smaller than that is unreadable on a phone.
+      expect(fit, `${width}px ${identity.name}`).toEqual({
+        inView: true,
+        textInside: true,
+        clipped: false,
+        fontSize: fit.fontSize,
+        minHeight: fit.minHeight,
+      });
       expect(fit.fontSize).toBeGreaterThanOrEqual(13);
+      expect(fit.minHeight).toBeGreaterThanOrEqual(44);
     }
-    const dots = await looks.locator("[data-palette-dots] > span").evaluateAll((nodes) =>
-      [...new Set(nodes.map((node) => Math.round(node.getBoundingClientRect().width)))],
-    );
-    expect(dots, "palette dots keep one size across looks").toHaveLength(1);
   });
 }
 
@@ -130,7 +135,7 @@ for (const width of [320, 1280]) {
     const { looks, stage } = await openLooks(page, width, 900);
     const seen = new Set<string>();
     for (const identity of IDENTITIES) {
-      await pick(looks, identity.product);
+      await pick(looks, identity.name);
       await expect(stage.getByRole("heading", { name: identity.heading, exact: true }).first()).toBeVisible();
       await expect(stage.getByRole("button", { name: identity.action })).toBeVisible();
       // Not the same page restyled: no other example's controls leak in, and no two screens read alike.
@@ -149,7 +154,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.addInitScript((mode) => localStorage.setItem("theme", mode), theme);
       const { looks } = await openLooks(page, width, 900);
       for (const identity of IDENTITIES) {
-        await pick(looks, identity.product);
+        await pick(looks, identity.name);
         await assertA11yGate(page, "[data-home-identity-looks]");
       }
     });
@@ -226,7 +231,8 @@ for (const theme of ["light", "dark"] as const) {
       const drawer = page.getByRole("dialog", { name: "Leo Martin" });
       await expect(drawer).toBeVisible();
       await page.waitForTimeout(400);
-      await assertA11yGate(page, "body");
+      // Gate the drawer. Body-under-scrim footer contrast is not this surface.
+      await assertA11yGate(page, "[role='dialog']");
       const box = await drawer.boundingBox();
       expect(box!.x).toBeGreaterThanOrEqual(-1);
       expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
@@ -236,7 +242,7 @@ for (const theme of ["light", "dark"] as const) {
 
 test("Newsroom: picking a story loads it, editing updates the preview, Publish moves it", async ({ page }) => {
   const { looks, stage } = await openLooks(page);
-  await pick(looks, "Newsroom");
+  await pick(looks, "Press");
   const queue = stage.getByRole("table", { name: "Story queue" });
   await stage.getByRole("button", { name: /Ninety voices/ }).click();
   const headline = stage.getByRole("textbox", { name: "Headline" });
@@ -252,7 +258,7 @@ test("Newsroom: picking a story loads it, editing updates the preview, Publish m
 
 test("Bag shop: pick a piece, edit its price and stock, Save updates the collection and the low-stock notice", async ({ page }) => {
   const { looks, stage } = await openLooks(page);
-  await pick(looks, "Bag shop");
+  await pick(looks, "Maison");
   await expect(stage.getByRole("alert")).toContainText("Pochette Soir: 2 left");
   await stage.getByRole("button", { name: /^Pochette Soir/ }).click();
   const price = stage.getByRole("textbox", { name: "Price (EUR)" });

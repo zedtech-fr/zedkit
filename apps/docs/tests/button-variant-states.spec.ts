@@ -36,14 +36,14 @@ test("Link-variant button stays underline-only on hover (no accent block)", asyn
   await expect(link).toHaveCSS("text-decoration-line", /underline/);
 });
 
-test("selected identity tab avoids primary fill when active", async ({ page }) => {
+test("selected look pill uses the foreground fill, not accent", async ({ page }) => {
   await page.goto("/");
-  const mist = page.locator("#use-cases").getByRole("tab", { name: "Mist" });
+  const mist = page.locator("#use-cases").getByRole("tab", { name: "Mist", exact: true });
   await mist.click();
   await expect(mist).toHaveAttribute("aria-selected", "true");
-  const primaryBg = await page.evaluate(() => {
+  const foregroundBg = await page.evaluate(() => {
     const probe = document.createElement("button");
-    probe.className = "bg-primary text-primary-foreground";
+    probe.className = "bg-foreground";
     probe.style.position = "fixed";
     probe.style.left = "-9999px";
     document.body.appendChild(probe);
@@ -52,7 +52,8 @@ test("selected identity tab avoids primary fill when active", async ({ page }) =
     return color;
   });
   const tabBg = await mist.evaluate((el) => getComputedStyle(el).backgroundColor);
-  expect(tabBg).not.toEqual(primaryBg);
+  expect(tabBg).toEqual(foregroundBg);
+  expect(await isAccentFill(page, mist)).toBe(false);
 });
 
 for (const identity of IDENTITIES) {

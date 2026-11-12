@@ -56,6 +56,13 @@ test("home ships exactly the three looks in IDENTITY_IDS", () => {
   assert.deepEqual(SHIPPED, ["mist", "press", "maison"]);
 });
 
+test("home look labels are Mist, Press, Maison; Glass is not a home look", () => {
+  assert.equal(field(factsRecord("mist"), "label"), "Mist");
+  assert.equal(field(factsRecord("press"), "label"), "Press");
+  assert.equal(field(factsRecord("maison"), "label"), "Maison");
+  assert.doesNotMatch(factsSrc, /glass/i);
+});
+
 test("every home identity id has facts and identity-data", () => {
   const dataIds = [...identityData.matchAll(/id: "([a-z]+)"/g)].map((match) => match[1]);
   for (const id of SHIPPED) {

@@ -39,6 +39,12 @@ export const HOME_PASTE_TIMELINE_GRID =
  */
 export const HOME_PASTE_LANDS_GRID =
   "trim-margin grid content-shrink list-none flush lg:grid-pair";
+/**
+ * Looks switcher: one column until `lg`, then specimen | copy.
+ * Copy sits first in the DOM (pills reachable on a phone); `lg:col-start-*`
+ * places the specimen on the left from `lg`.
+ */
+export const HOME_LOOKS_GRID = "grid content-shrink gap-stack-lg lg:grid-pair";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;

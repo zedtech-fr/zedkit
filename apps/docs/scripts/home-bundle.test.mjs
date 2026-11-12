@@ -263,6 +263,36 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closingCopy, /actionHref: "#ai-setup"/);
 });
 
+test("home looks band is specimen | look-name pills, not a Section header or palette-dot tabs (#119)", () => {
+  const section = readFileSync(join(app, "ui/home/home-identities-section.tsx"), "utf8");
+  const looks = readFileSync(join(app, "ui/home/home-identity-looks.tsx"), "utf8");
+  const tabs = readFileSync(join(app, "ui/home/home-identity-looks-tabs.tsx"), "utf8");
+  const copy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
+  const facts = readFileSync(join(app, "ui/home/home-identity-facts.ts"), "utf8");
+  const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  assert.doesNotMatch(section, /\btitle=\{/);
+  assert.doesNotMatch(section, /\bdescription=\{/);
+  assert.match(section, /HomeYoursScene/);
+  assert.match(looks, /HOME_LOOKS_GRID/);
+  assert.match(looks, /<Heading/);
+  assert.match(looks, /lg:col-start-first/);
+  assert.match(looks, /lg:col-start-next/);
+  assert.match(
+    rhythm,
+    /export const HOME_LOOKS_GRID =\s*"grid content-shrink gap-stack-lg lg:grid-pair"/,
+  );
+  assert.match(looks, /data-identity=/);
+  assert.doesNotMatch(looks, /liveNote/);
+  assert.doesNotMatch(looks + tabs + section, /SetupEntryPrompt|SecretField/);
+  assert.doesNotMatch(tabs, /HomeIdentityPaletteDots|data-palette-dots|ScrollGallery/);
+  assert.doesNotMatch(tabs, /homeIdentityLooksCopy\.products/);
+  assert.match(tabs, /HOME_IDENTITY_FACTS\[id\]\.label/);
+  assert.doesNotMatch(tabs, /[Gg]lass/);
+  assert.match(facts, /IDENTITY_IDS = \["mist", "press", "maison"\]/);
+  assert.match(copy, /title: "Every screen, the same product\."/);
+  assert.match(copy, /tabsAriaLabel: "Looks"/);
+});
+
 test("drawer demo save closes and toasts", () => {
   const src = readFileSync(join(app, "components/demos/drawer-demo.tsx"), "utf8");
   assert.match(src, /DrawerClose asChild/);
