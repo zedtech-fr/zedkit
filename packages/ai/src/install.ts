@@ -873,6 +873,7 @@ function generationAgentNames(dest: string, preset: readonly string[]): string[]
 // Each tool's agent files are generated from `.agents/agents` and the policy,
 // the same way `zedkit-ai sync` does. A project policy that does not parse
 // must not stop an install, so the shipped defaults stand in and a note says so.
+// Broken kit defaults still fail: agents cannot be generated without them.
 function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: readonly string[]): void {
   const names = generationAgentNames(ctx.dest, content.agents);
   const agentsDir = join(ctx.dest, ".agents");
@@ -881,7 +882,7 @@ function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: r
     ctx.actions.push({ kind: "skip", path: join(".agents", "tokenomics.md"), note: `${policy.error.message}; models inherit until it is fixed` });
     policy = loadDefaults(ctx.kit);
   }
-  if (!policy.ok) return;
+  if (!policy.ok) throw policy.error;
   syncAgents(
     {
       dest: ctx.dest,
@@ -1003,6 +1004,7 @@ export function installKit(options: InstallOptions): Result<Action[]> {
         agentsDir,
         names: generationAgentNames(ctx.dest, content.agents),
         providers: chosen,
+        kit,
         ...(ctx.allowFast && { allowFast: true }),
       });
     }

@@ -160,10 +160,10 @@ function resolveKitFlag(
     return err(new Error("--kit needs a local directory"));
   }
   const dir = resolve(value);
-  if (!existsSync(dir)) return err(new Error(`no such directory: ${dir}`));
+  if (!existsSync(dir)) return err(new Error(`--kit: no such directory: ${dir}`));
   const st = tryCatch(() => statSync(dir));
   if (!st.ok || !st.value.isDirectory()) {
-    return err(new Error(`not a directory: ${dir}`));
+    return err(new Error(`--kit: not a directory: ${dir}`));
   }
   return ok(dir);
 }

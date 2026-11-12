@@ -117,6 +117,25 @@ describe("--kit <dir>", () => {
     expect(readFileSync(join(dest, ".cursor/agents/explorer.md"), "utf8")).toContain(SENTINEL_AGENT);
   });
 
+  it("refuses a custom-kit agent header before writing", () => {
+    const kit = patchedKit();
+    const metaPath = join(kit, "agents.meta.json");
+    const meta = JSON.parse(readFileSync(metaPath, "utf8")) as Record<string, Record<string, unknown>>;
+    const explorer = meta.explorer;
+    if (explorer === undefined) throw new Error("bundled kit must ship explorer");
+    delete explorer.default_kind;
+    explorer.kinds = ["check"];
+    writeFileSync(metaPath, `${JSON.stringify(meta, null, 2)}\n`);
+    const dest = tempDir();
+    const result = installKit({ dest, kit, providers: ["cursor"] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.message).toContain("explorer");
+      expect(result.error.message).toContain("cannot be invoked as build");
+    }
+    expect(existsSync(join(dest, "AGENTS.md"))).toBe(false);
+  });
+
   it("library defaults still use the bundled kit", () => {
     const dest = tempDir();
     const installed = installKit({ dest, providers: ["cursor"] });
@@ -137,6 +156,7 @@ describe("--kit <dir>", () => {
     const missing = run("setup", missingDest, "--kit", missingKit, "--provider", "cursor");
     expect(missing.code).toBe(2);
     expect(missing.errors).toContain("error:");
+    expect(missing.errors).toContain("--kit");
     expect(missing.errors).toContain(missingKit);
     expect(existsSync(join(missingDest, "AGENTS.md"))).toBe(false);
 
@@ -146,6 +166,7 @@ describe("--kit <dir>", () => {
     const asFile = run("setup", fileDest, "--kit", fileKit, "--provider", "cursor");
     expect(asFile.code).toBe(2);
     expect(asFile.errors).toContain("error:");
+    expect(asFile.errors).toContain("--kit");
     expect(asFile.errors).toContain(fileKit);
     expect(existsSync(join(fileDest, "AGENTS.md"))).toBe(false);
   });
