@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Header } from "fumadocs-ui/layouts/home/slots/header";
 import { usePathname } from "next/navigation";
 import { cn } from "@zedtech/zedkit-ui";
@@ -7,20 +8,24 @@ import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
 import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
+import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
+import { isCatalogPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
-/**
- * Métier: public TypeScript kit documentation site.
- * Client personas: integrating developers who own the consuming app.
- * Customers: those same developers (this site is the product surface).
- * Customer personas: first visit on `/` — next action is Get started or Docs, not search or a version chip.
- * UI decisions: home header is brand + AI/UI/Docs/Catalog + GitHub text + Get started, because customer = first-visit integrator on `/`.
- */
-function HomeDesktopHeader() {
+function MarketingDesktopNav({
+  mark,
+  actions,
+}: {
+  mark: "home" | "catalog";
+  actions: ReactNode;
+}) {
   const pathname = usePathname();
   return (
-    <header id="nd-nav" data-home-header="" className="sticky pin-top z-header max-md:hidden">
+    <header
+      id="nd-nav"
+      {...(mark === "home" ? { "data-home-header": "" } : { "data-catalog-header": "" })}
+      className="sticky pin-top z-header max-md:hidden"
+    >
       <div>
         <nav
           aria-label={siteChromeCopy.nav.siteNavigation}
@@ -53,8 +58,7 @@ function HomeDesktopHeader() {
             })}
           </ul>
           <div data-header-actions="" className="ms-auto flex items-center">
-            <HomeGitHubLink />
-            <HomeGetStartedAction />
+            {actions}
           </div>
         </nav>
       </div>
@@ -62,13 +66,60 @@ function HomeDesktopHeader() {
   );
 }
 
-/** Marketing header slot: phone header below md, stock desktop header from md up. Home `/` uses the mockup allowlist. */
+/**
+ * Métier: public TypeScript kit documentation site.
+ * Client personas: integrating developers who own the consuming app.
+ * Customers: those same developers (this site is the product surface).
+ * Customer personas: first visit on `/` — next action is Get started or Docs, not search or a version chip.
+ * UI decisions: home header is brand + AI/UI/Docs/Catalog + GitHub text + Get started, because customer = first-visit integrator on `/`.
+ */
+function HomeDesktopHeader() {
+  return (
+    <MarketingDesktopNav
+      mark="home"
+      actions={
+        <>
+          <HomeGitHubLink />
+          <HomeGetStartedAction />
+        </>
+      }
+    />
+  );
+}
+
+/**
+ * Customer personas: hunting a component on `/catalog`, often at 1440, hurried.
+ * UI decisions: catalog header is brand + primary nav + Search ⌘K + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started.
+ */
+function CatalogDesktopHeader() {
+  return (
+    <MarketingDesktopNav
+      mark="catalog"
+      actions={
+        <>
+          <SiteFullSearchTrigger />
+          <HomeGitHubLink />
+        </>
+      }
+    />
+  );
+}
+
+/** Marketing header slot: phone header below md. Home and Catalog use the mockup desktop chrome; other routes keep fumadocs Header. */
 export function MarketingSiteHeader() {
-  const home = isHomePath(usePathname());
+  const pathname = usePathname();
+  const home = isHomePath(pathname);
+  const catalog = isCatalogPath(pathname);
   return (
     <>
       <MobileHeader mode="home" />
-      {home ? <HomeDesktopHeader /> : <Header className="max-md:hidden" />}
+      {home ? (
+        <HomeDesktopHeader />
+      ) : catalog ? (
+        <CatalogDesktopHeader />
+      ) : (
+        <Header className="max-md:hidden" />
+      )}
     </>
   );
 }

@@ -4,15 +4,19 @@ import { openHeroPage } from "./hero-helpers";
 const DESKTOP_WIDTHS = [1280, 1440] as const;
 
 for (const width of DESKTOP_WIDTHS) {
-  test(`header search clears GitHub at ${width}px light`, async ({ page }) => {
+  test(`header search sits beside GitHub at ${width}px light`, async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const search = document.querySelector("#nd-nav [data-search], #nd-nav button[class*='max-w']");
-      const github = document.querySelector('#nd-nav a[aria-label*="GitHub"], #nd-nav a[href*="github"]');
+      const search = document.querySelector(
+        "#nd-nav [data-search], #nd-nav [data-search-full], #nd-nav button[class*='max-w']",
+      );
+      const github = [...document.querySelectorAll("#nd-nav a")].find((a) =>
+        (a.textContent ?? "").includes("GitHub"),
+      );
       if (!search || !github) return null;
       const githubLeft = github.getBoundingClientRect().left;
       const nodes = [search, ...search.querySelectorAll("*")];
@@ -31,10 +35,14 @@ for (const width of DESKTOP_WIDTHS) {
         offenders,
         githubLeft,
         maxRight,
+        searchHeight: search.getBoundingClientRect().height,
+        themeToggle: document.querySelector("#nd-nav [data-theme-toggle]"),
       };
     });
     expect(layout).not.toBeNull();
-    expect(layout!.offenders, JSON.stringify(layout!.offenders)).toEqual([]);
+    expect(layout!.searchHeight).toBeGreaterThan(0);
+    expect(layout!.themeToggle).toBeNull();
+    expect(layout!.offenders).toEqual([]);
     expect(layout!.gap).toBeGreaterThanOrEqual(8);
   });
 

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  isCatalogPath,
   isHomePath,
   isSiteNavLinkActive,
   siteHeaderChrome,
@@ -139,6 +140,15 @@ test("catalog and docs phone chrome keep search and GitHub; docs keeps the page-
   assert.equal(foundations.search, true);
   assert.equal(foundations.getStarted, false);
   assert.equal(foundations.docsTreeOpener, true);
+});
+
+test("isCatalogPath is only the catalog route", () => {
+  assert.equal(isCatalogPath("/catalog"), true);
+  assert.equal(isCatalogPath("/"), false);
+  assert.equal(isCatalogPath(""), false);
+  assert.equal(isCatalogPath("/docs"), false);
+  assert.equal(isCatalogPath("/catalog/nope"), false);
+  assert.equal(isCatalogPath("/catalog/"), false);
 });
 
 test("exact url matching does not current-state Docs on an AI or UI page", () => {

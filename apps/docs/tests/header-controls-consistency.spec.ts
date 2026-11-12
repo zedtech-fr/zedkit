@@ -78,7 +78,7 @@ for (const theme of ["light", "dark"] as const) {
   }
 }
 
-test("catalog header keeps search and has no theme toggle or version caption", async ({ page }) => {
+test("catalog header keeps search and GitHub text, not theme or version", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/catalog", { waitUntil: "networkidle" });
   const header = page.locator("#nd-nav");
@@ -87,12 +87,16 @@ test("catalog header keeps search and has no theme toggle or version caption", a
   await expect(
     header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true }).first(),
   ).toBeVisible();
+  await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+  await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
   const heights = await page.evaluate(() => {
     const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
     const nav = document.querySelector("#nd-nav nav");
+    const github =
+      [...(nav?.querySelectorAll("a") ?? [])].find((a) => (a.textContent ?? "").includes("GitHub")) ?? null;
     return {
       search: measure(nav?.querySelector("[data-search]") ?? null),
-      github: measure(nav?.querySelector('a[aria-label*="GitHub"]') ?? null),
+      github: measure(github),
     };
   });
   expect(Math.abs(heights.search - heights.github)).toBeLessThanOrEqual(2);

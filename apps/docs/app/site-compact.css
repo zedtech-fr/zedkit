@@ -160,21 +160,24 @@
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
   box-shadow: var(--zk-shadow-sm);
 }
-/* Home desktop + phone: text links, mockup 24px/16px gaps (not identity stack gaps). */
-:is(#nd-nav[data-home-header] nav, #nd-nav[data-home-header] nav ul, #nd-mobile-nav, #nd-mobile-nav nav ul) {
+/* Home/Catalog mockup headers + phone: text links, mockup 24px/16px gaps (not identity stack gaps). */
+:root[data-identity] :is(#nd-nav[data-home-header] nav, #nd-nav[data-catalog-header] nav, #nd-mobile-nav, #nd-mobile-nav nav ul) {
   gap: 1.5rem;
 }
-:is(#nd-nav[data-home-header], #nd-mobile-nav) [data-header-actions] {
+:root[data-identity] :is(#nd-nav[data-home-header] nav ul, #nd-nav[data-catalog-header] nav ul) {
+  gap: 1.5rem;
+}
+:root[data-identity] :is(#nd-nav[data-home-header], #nd-nav[data-catalog-header], #nd-mobile-nav) [data-header-actions] {
   gap: 1rem;
 }
-:is(#nd-nav[data-home-header] nav, #nd-mobile-nav) a:not([data-slot="button"]) {
+:root[data-identity] :is(#nd-nav[data-home-header] nav, #nd-nav[data-catalog-header] nav, #nd-mobile-nav) a:not([data-slot="button"]) {
   border-radius: 0;
   background: none;
   border: none;
   box-shadow: none;
   background-image: none;
 }
-#nd-nav[data-home-header] nav a:not([data-slot="button"]) {
+#nd-nav:is([data-home-header], [data-catalog-header]) nav a:not([data-slot="button"]) {
   padding-inline: 0;
 }
 #nd-mobile-nav nav a:not([data-slot="button"]) {

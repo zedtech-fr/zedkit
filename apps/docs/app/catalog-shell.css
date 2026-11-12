@@ -1,3 +1,8 @@
+[data-catalog-shell] {
+  --zk-catalog-title-size: 2.5rem;
+  --zk-type-h1-size: var(--zk-catalog-title-size);
+}
+
 [data-catalog-shell] [data-catalog-filter-search] {
   box-shadow: none;
   color: hsl(var(--foreground));

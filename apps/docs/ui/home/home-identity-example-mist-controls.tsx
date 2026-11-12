@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stack, Switch } from "@zedtech/zedkit-ui";
+import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stack } from "@zedtech/zedkit-ui";
 import { homeIdentityExamplesCopy } from "@/ui/home/home-identity-examples-copy";
 
 const copy = homeIdentityExamplesCopy.mist;
@@ -8,23 +8,17 @@ const copy = homeIdentityExamplesCopy.mist;
 export function HomeIdentityExampleMistControls({
   workspaceId,
   regionId,
-  alertsId,
   workspace,
   region,
-  alerts,
   onWorkspace,
   onRegion,
-  onAlerts,
 }: {
   workspaceId: string;
   regionId: string;
-  alertsId: string;
   workspace: string;
   region: string;
-  alerts: boolean;
   onWorkspace: (value: string) => void;
   onRegion: (value: string) => void;
-  onAlerts: (value: boolean) => void;
 }) {
   return (
     <Stack gap="md" className="content-shrink sm:flex-row sm:flex-wrap sm:items-end">
@@ -50,10 +44,6 @@ export function HomeIdentityExampleMistControls({
             ))}
           </SelectContent>
         </Select>
-      </Stack>
-      <Stack direction="horizontal" gap="sm" className="min-h-target items-center">
-        <Switch id={alertsId} checked={alerts} onCheckedChange={onAlerts} />
-        <Label htmlFor={alertsId}>{copy.alertsLabel}</Label>
       </Stack>
     </Stack>
   );

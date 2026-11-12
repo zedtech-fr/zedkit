@@ -11,6 +11,10 @@ export function isHomePath(pathname: string): boolean {
   return pathname === "/" || pathname === "";
 }
 
+export function isCatalogPath(pathname: string): boolean {
+  return pathname === "/catalog";
+}
+
 export type SiteHeaderChromeMode = "home" | "docs";
 
 /**
