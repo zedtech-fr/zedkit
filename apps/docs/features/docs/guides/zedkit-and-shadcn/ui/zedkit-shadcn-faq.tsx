@@ -1,10 +1,10 @@
 import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
-import { zedkitShadcnFaqCopy } from "@/components/i18n/zedkit-shadcn-faq-copy";
+import { JsonLd } from "@/components/json-ld";
 import { registryBrickNames } from "@/content/registry-site";
-import { zedkitShadcnFaq } from "@/lib/zedkit-shadcn-faq";
 
-import { JsonLd } from "./json-ld";
+import { zedkitShadcnFaqCopy } from "../i18n/zedkit-shadcn-faq-copy";
+import { zedkitShadcnFaq } from "../zedkit-shadcn-faq";
 
 export function ZedkitShadcnFaq() {
   const entries = zedkitShadcnFaq(registryBrickNames.length);

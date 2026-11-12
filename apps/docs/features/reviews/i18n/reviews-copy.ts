@@ -14,7 +14,8 @@ export const reviewsCopy = {
     },
     run: {
       title: "Run",
-      description: "One exportable run, with a link to the hosted live console when a URL exists.",
+      description:
+        "One exportable run. Live-backed runs open the shared console; others link to the hosted live console when a URL exists.",
     },
     missing: {
       title: "Issue not found",

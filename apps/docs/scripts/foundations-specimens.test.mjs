@@ -10,10 +10,26 @@ const { hslTripletToHex } = await import("../lib/identity-simple-value.ts");
 const APP = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT = join(APP, "../..");
 
-const { foundationsCopy } = await import("../components/i18n/foundations-copy.ts");
+const FOUNDATIONS = "features/docs/guides/foundations";
+const FOUNDATIONS_UI = `${FOUNDATIONS}/ui`;
+const ZEDKIT_SHADCN = "features/docs/guides/zedkit-and-shadcn";
+
+const { foundationsCopy } = await import(`../${FOUNDATIONS}/i18n/foundations-copy.ts`);
 const { foundationsBandIds, foundationsSwatches, foundationsTypeRows } = await import(
-  "../lib/foundations-swatches.ts"
+  `../${FOUNDATIONS}/foundations-swatches.ts`
 );
+
+const OLD_GUIDE_PATHS = [
+  "components/foundations-band.tsx",
+  "components/foundations-color.tsx",
+  "components/foundations-hero.tsx",
+  "components/foundations-type.tsx",
+  "components/i18n/foundations-copy.ts",
+  "lib/foundations-swatches.ts",
+  "components/zedkit-shadcn-faq.tsx",
+  "components/i18n/zedkit-shadcn-faq-copy.ts",
+  "lib/zedkit-shadcn-faq.ts",
+];
 
 const REQUIRED_BANDS = ["color", "type"];
 const PAGE_FORBIDDEN_TOKENS = new Set(["--primary", "--accent"]);
@@ -120,7 +136,7 @@ test("palette is eight mockup swatches with hex proven from tokens", () => {
 
 test("type rows are the six mockup spec/specimen pairs", () => {
   assert.equal(foundationsTypeRows.length, MOCKUP_TYPE_SPECS.length);
-  const typeSource = readApp("components/foundations-type.tsx");
+  const typeSource = readApp(`${FOUNDATIONS_UI}/foundations-type.tsx`);
   for (const [index, spec] of MOCKUP_TYPE_SPECS.entries()) {
     const row = foundationsTypeRows[index];
     assert.equal(foundationsCopy.typeRows[row.id].spec, spec);
@@ -144,7 +160,7 @@ test("copy strings are non-empty and the band layout is kit-only", () => {
   for (const value of strings) {
     assert.ok(value.length > 0);
   }
-  const band = readApp("components/foundations-band.tsx");
+  const band = readApp(`${FOUNDATIONS_UI}/foundations-band.tsx`);
   assert.match(band, /not-prose/);
   assert.match(band, /data-foundations-band/);
   assert.doesNotMatch(band, /sm:grid-pair/);
@@ -155,7 +171,10 @@ test("copy strings are non-empty and the band layout is kit-only", () => {
 test("guide wires Color and Type only and does not import dropped bands", () => {
   const mdx = readApp("prose/guides/foundations.mdx");
   for (const name of ["FoundationsColor", "FoundationsType", "FoundationsHero"]) {
-    assert.match(mdx, new RegExp(`import \\{ ${name} \\} from "@/components/foundations-`));
+    assert.match(
+      mdx,
+      new RegExp(`import \\{ ${name} \\} from "@/${FOUNDATIONS_UI}/foundations-`),
+    );
     assert.match(mdx, new RegExp(`<${name} />`));
   }
   for (const name of [
@@ -170,7 +189,7 @@ test("guide wires Color and Type only and does not import dropped bands", () => 
   for (const file of DELETED_BANDS) {
     assert.equal(existsSync(join(APP, "components", file)), false, `${file} should be deleted`);
   }
-  const color = readApp("components/foundations-color.tsx");
+  const color = readApp(`${FOUNDATIONS_UI}/foundations-color.tsx`);
   assert.doesNotMatch(color, /data-site-action/);
   assert.match(color, /ThemeScope identity="glass"/);
   assert.doesNotMatch(color, /variant="glass"/);
@@ -183,7 +202,7 @@ test("guide title is Site foundations with Color and Type only", () => {
   const mdx = readApp("prose/guides/foundations.mdx");
   assert.match(mdx, /^title:\s*Site foundations\s*$/m);
   assert.match(mdx, /^hidePageTitle:\s*true\s*$/m);
-  assert.match(mdx, /import \{ FoundationsHero \} from "@\/components\/foundations-hero"/);
+  assert.match(mdx, /import \{ FoundationsHero \} from "@\/features\/docs\/guides\/foundations\/ui\/foundations-hero"/);
   assert.match(mdx, /<FoundationsHero \/>/);
   assert.doesNotMatch(
     mdx,
@@ -204,8 +223,8 @@ test("guide title is Site foundations with Color and Type only", () => {
 });
 
 test("hero is a grey band with 40px title overlay, intro, and glass callout", () => {
-  const hero = readApp("components/foundations-hero.tsx");
-  const copy = readApp("components/i18n/foundations-copy.ts");
+  const hero = readApp(`${FOUNDATIONS_UI}/foundations-hero.tsx`);
+  const copy = readApp(`${FOUNDATIONS}/i18n/foundations-copy.ts`);
   const typography = readApp("app/docs-typography.css");
   const tokens = readApp("app/docs-shell-tokens.css");
   assert.match(copy, /title:\s*"Site foundations"/);
@@ -271,4 +290,16 @@ test("docs index and llms label say Site foundations without extra bands", () =>
   assert.doesNotMatch(generate, /\[UI foundations\]/);
   assert.doesNotMatch(generate, /site vs kit buttons/);
   assert.doesNotMatch(generate, /rhythm, motion/);
+});
+
+test("guide-only modules left components/ and lib/", () => {
+  for (const rel of OLD_GUIDE_PATHS) {
+    assert.equal(existsSync(join(APP, rel)), false, `${rel} should be gone`);
+  }
+  const faqMdx = readApp("prose/guides/zedkit-and-shadcn.mdx");
+  assert.match(
+    faqMdx,
+    new RegExp(`import \\{ ZedkitShadcnFaq \\} from "@/${ZEDKIT_SHADCN}/ui/zedkit-shadcn-faq"`),
+  );
+  assert.match(faqMdx, /<ZedkitShadcnFaq \/>/);
 });

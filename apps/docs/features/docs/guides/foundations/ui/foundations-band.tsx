@@ -1,7 +1,7 @@
 import { Stack, Text } from "@zedtech/zedkit-ui";
 import type { ReactNode } from "react";
 
-import type { FoundationsBandId } from "@/lib/foundations-swatches";
+import type { FoundationsBandId } from "../foundations-swatches";
 
 export function FoundationsBand({
   id,

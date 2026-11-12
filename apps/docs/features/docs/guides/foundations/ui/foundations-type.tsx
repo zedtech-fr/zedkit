@@ -1,8 +1,8 @@
 import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
-import { FoundationsBand } from "@/components/foundations-band";
-import { foundationsCopy as copy } from "@/components/i18n/foundations-copy";
-import { foundationsTypeRows, type FoundationsTypeRow } from "@/lib/foundations-swatches";
+import { foundationsTypeRows, type FoundationsTypeRow } from "../foundations-swatches";
+import { foundationsCopy as copy } from "../i18n/foundations-copy";
+import { FoundationsBand } from "./foundations-band";
 
 const HEADING_TREATMENTS = ["display", "section", "band"] as const;
 type HeadingTreatment = (typeof HEADING_TREATMENTS)[number];
