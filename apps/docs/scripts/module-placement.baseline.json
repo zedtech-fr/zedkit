@@ -54,7 +54,6 @@
     "components/use-creator-handoff.ts",
     "components/use-identity-dock-keyboard.ts",
     "lib/brief-specimen-domain.ts",
-    "lib/component-page-toc.ts",
     "lib/creator-handoff.ts",
     "lib/creator-session-brief.ts",
     "lib/docs-layout-tree.mjs",

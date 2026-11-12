@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Stack, Text } from "@zedtech/zedkit-ui";
-import { inheritedPropsCopy } from "@/components/i18n/inherited-props-copy";
+import { inheritedPropsCopy } from "../i18n/inherited-props-copy";
 
 const MDN_HTML_ATTRS = "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes";
 

@@ -13,6 +13,12 @@ packages; owns no component logic. Out of scope: kit components
 themselves (live in `packages/ui`), catalog content (lives in each
 package `CATALOG.md`).
 
+Rules:
+
+- Docs-page views (`ComponentPage`, `ComponentPreview`, props, adoption,
+  wraps) live in `features/docs/`. `preview-viewport.tsx` stays in
+  `components/` because kit demos cannot import a feature.
+
 ## Mental model
 
 Manifest-driven: `docs-manifest.json` maps catalog needs to demos;
@@ -48,8 +54,7 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
 - One-way imports: `app → features → components/ui → lib`. A feature does
   not import another feature or app (compose in the route and pass props).
   A `_<name>` folder is imported only from its own route subtree.
-  Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features;
-  L8 `lib/component-page-toc.ts` may import `@/components`.
+  Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features.
 - Kit previews stay in `components/demos/` (the placement checker skips
   dead and single-owner there). Unit tests live beside their module,
   including under `app/`; Playwright stays in `tests/`.
