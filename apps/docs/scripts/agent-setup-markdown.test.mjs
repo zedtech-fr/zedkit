@@ -179,8 +179,10 @@ test("map.md orders UI then Nest then AI, requested-only, suggest when unchosen"
   assert.ok(map.includes("https://zedkit.app/ai/setup.md"));
   assert.ok(map.includes(UI_PROMPT));
   assert.ok(map.includes(NEST_PROMPT));
+  assert.ok(map.includes(MAP_AI_UI_PROMPT));
   assert.ok(map.includes(MAP_PROMPT));
   assert.ok(map.includes(SUGGEST_PROMPT));
+  assert.match(map, /The AI and UI prompt means those two only/);
   assert.match(map, /one combined/i);
   assert.match(map, /npx @zedtech\/zedkit-ai@\d+\.\d+\.\d+ validate/);
   assert.doesNotMatch(map, /`zedkit-ai validate`/);

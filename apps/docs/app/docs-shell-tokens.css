@@ -318,14 +318,7 @@ html[data-docs-shell][data-identity] {
 
 #home-page [data-home-copy-command] [data-home-copy-command-value] {
   flex: 1 1 auto;
-  min-width: 0;
   min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
-  height: auto;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
 }
 
 #home-page [data-home-copy-command] [data-slot="button"]:focus-visible {
@@ -333,7 +326,6 @@ html[data-docs-shell][data-identity] {
 }
 
 #home-page [data-home-copy-command] [data-slot="button"] {
-  flex-shrink: 0;
   min-width: 88px;
   height: auto;
   border-radius: 0;

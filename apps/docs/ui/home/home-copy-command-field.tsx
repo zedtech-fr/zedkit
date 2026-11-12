@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Text, useUiMessages } from "@zedtech/zedkit-ui";
 import { homeCopyCommandCopy } from "@/ui/home/i18n/home-copy-command-copy";
 
@@ -16,8 +16,9 @@ import { homeCopyCommandCopy } from "@/ui/home/i18n/home-copy-command-copy";
  *                   control is a site action on a command line. Visible Copy/Copied with caller
  *                   aria-label (Copied while copied), because: smoke needs "Copy prompt" ≠
  *                   "Copy closing prompt", and WCAG 2.5.3 needs the name to match the visible word.
- *                   Wrapping value + attached site-action Copy, because: the mockup wraps and
- *                   visitors must read the sentence they paste.
+ *                   Name/describe the field `role=group`, because a generic Text span cannot be
+ *                   named (WCAG 4.1.2). Wrapping value + attached site-action Copy, because: the
+ *                   mockup wraps and visitors must read the sentence they paste.
  */
 export function HomeCopyCommandField({
   value,
@@ -33,6 +34,8 @@ export function HomeCopyCommandField({
   const messages = useUiMessages();
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(copiedTimer.current), []);
   // shortcut: clipboard copy/fail is SecretField verbatim; extract a shared hook when a third caller appears.
   const copy = (): void => {
     const clipboard = navigator.clipboard;
@@ -45,7 +48,8 @@ export function HomeCopyCommandField({
       () => {
         setCopyFailed(false);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        clearTimeout(copiedTimer.current);
+        copiedTimer.current = setTimeout(() => setCopied(false), 2000);
       },
       () => {
         setCopied(false);
@@ -55,13 +59,16 @@ export function HomeCopyCommandField({
   };
 
   return (
-    <div data-home-copy-command="">
+    <div
+      data-home-copy-command=""
+      role="group"
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
+    >
       <Text
         as="span"
         data-home-copy-command-value=""
-        className="content-shrink px-field-pad py-control-block font-mono"
-        aria-label={ariaLabel}
-        aria-describedby={ariaDescribedBy}
+        className="content-shrink wrap-anywhere whitespace-pre-wrap px-field-pad py-control-block font-mono"
       >
         {value}
       </Text>

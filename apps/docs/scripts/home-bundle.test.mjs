@@ -138,7 +138,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
-    /promptCaption: "Name the kits you want, Nest included\. The map knows the order\."/,
+    /promptCaption: "Edit the prompt to name the kits you want — Nest included\. The map knows the order\."/,
   );
   assert.match(lead, /aria-label=\{homeHeroCopy\.hero\.promptAriaLabel\}/);
   assert.match(lead, /aria-describedby="home-hero-prompt-caption"/);

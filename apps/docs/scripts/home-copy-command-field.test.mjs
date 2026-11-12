@@ -24,7 +24,14 @@ test("hero and closing share one wrapping copy-command field (#298)", () => {
   assert.match(field, /data-site-action/);
   assert.match(field, /"aria-label": ariaLabel/);
   assert.match(field, /"aria-describedby": ariaDescribedBy/);
+  assert.match(field, /role="group"/);
+  assert.match(field, /aria-label=\{ariaLabel\}/);
   assert.match(field, /aria-describedby=\{ariaDescribedBy\}/);
+  assert.doesNotMatch(
+    field,
+    /data-home-copy-command-value=""[\s\S]{0,200}aria-label=\{ariaLabel\}/,
+    "generic value span cannot be named (WCAG 4.1.2)",
+  );
   assert.match(field, /aria-label=\{copied \? homeCopyCommandCopy\.copied : copyLabel\}/);
   assert.match(field, /role="status"/);
   assert.match(field, /aria-live="polite"/);
@@ -33,26 +40,35 @@ test("hero and closing share one wrapping copy-command field (#298)", () => {
   assert.match(field, /homeCopyCommandCopy\.copy/);
   assert.match(field, /homeCopyCommandCopy\.copied/);
   assert.match(field, /content-shrink/);
+  assert.match(field, /shrink-0/);
+  assert.match(field, /wrap-anywhere/);
+  assert.match(field, /whitespace-pre-wrap/);
   assert.match(field, /font-mono/);
   assert.match(field, /px-field-pad/);
   assert.match(field, /py-control-block/);
   assert.match(field, /writeText\(value\)/);
   assert.match(field, /if \(!clipboard\)/);
   assert.match(field, /setCopyFailed\(true\)/);
+  assert.match(field, /copiedTimer/);
+  assert.match(field, /clearTimeout\(copiedTimer\.current\)/);
+  assert.match(field, /useEffect\(\(\) => \(\) => clearTimeout\(copiedTimer\.current\), \[\]\)/);
   assert.doesNotMatch(field, /import \{[^}]*\bInput\b|<\s*Input\b/);
   assert.doesNotMatch(field, /import \{[^}]*\bSecretField\b|<\s*SecretField\b/);
-  assert.doesNotMatch(field, /\bmultiline\b|Textarea|whitespace-pre-line|wrap-anywhere/);
+  assert.doesNotMatch(field, /\bmultiline\b|Textarea|whitespace-pre-line/);
   assert.doesNotMatch(field, /role="textbox"/);
   assert.match(copy, /copy: "Copy"/);
   assert.match(copy, /copied: "Copied"/);
 
   const valueRule =
     tokens.match(/\[data-home-copy-command-value\][^{]*\{[^}]+\}/)?.[0] ?? "";
-  assert.match(valueRule, /white-space:\s*pre-line/);
-  assert.match(valueRule, /overflow-wrap:\s*anywhere/);
   assert.match(valueRule, /flex:\s*1 1 auto/);
-  assert.match(valueRule, /min-width:\s*0/);
-  assert.match(valueRule, /height:\s*auto/);
+  assert.doesNotMatch(valueRule, /min-width:\s*0/);
+  assert.doesNotMatch(valueRule, /height:\s*auto/);
+  assert.doesNotMatch(valueRule, /white-space:/);
+  assert.doesNotMatch(valueRule, /overflow-wrap:/);
+  assert.doesNotMatch(valueRule, /border:\s*0/);
+  assert.doesNotMatch(valueRule, /border-radius:\s*0/);
+  assert.doesNotMatch(valueRule, /box-shadow:\s*none/);
   assert.doesNotMatch(valueRule, /text-overflow:\s*ellipsis/);
   assert.doesNotMatch(valueRule, /#[0-9A-Fa-f]{3,8}/);
 
@@ -64,14 +80,11 @@ test("hero and closing share one wrapping copy-command field (#298)", () => {
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*overflow:\s*hidden/);
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*min-width:\s*0/);
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*align-items:\s*stretch/);
-  assert.match(
-    tokens,
-    /\[data-home-copy-command\] \[data-slot="button"\] \{[^}]*min-width:\s*88px/,
-  );
-  assert.match(
-    tokens,
-    /\[data-home-copy-command\] \[data-slot="button"\] \{[^}]*height:\s*auto/,
-  );
+  const buttonRule =
+    tokens.match(/\[data-home-copy-command\] \[data-slot="button"\] \{[^}]+\}/)?.[0] ?? "";
+  assert.match(buttonRule, /min-width:\s*88px/);
+  assert.match(buttonRule, /height:\s*auto/);
+  assert.doesNotMatch(buttonRule, /flex-shrink/);
   assert.doesNotMatch(tokens, /\[data-home-copy-command\][^\n]*\[data-slot="input"\]/);
   assert.doesNotMatch(tokens.match(/\[data-home-copy-command\][^{]*\{[^}]+\}/)?.[0] ?? "", /#[0-9A-Fa-f]{3,8}/);
 });
