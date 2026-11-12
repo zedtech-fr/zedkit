@@ -25,6 +25,7 @@ import {
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
+import { ReviewSampleNotice } from "./review-sample-notice";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
   return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
@@ -103,14 +104,17 @@ export function ReviewListView({
   issues,
   unlinked,
   copy,
+  showSampleNotice = false,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
   copy: ReviewsCopy;
+  showSampleNotice?: boolean;
 }) {
   const unlinkedHeadingId = useId();
   return (
     <ReviewAppearanceFrame>
+      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader title={copy.list.title} description={copy.list.description} />
       {issues.length === 0 ? (
         <EmptyState description={copy.list.empty} />

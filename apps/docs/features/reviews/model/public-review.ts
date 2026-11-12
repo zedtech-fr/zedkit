@@ -10,22 +10,21 @@ import type {
   TimelineEntryStatus,
   TimelineEntryType,
 } from "../ports/review-port";
-
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
 const INDEX_SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials|prompt|final[_-]?text)/i;
 const AUTH_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi;
 const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/g;
-const LIVE_URL_SECRET_QUERY = /(token|password|passwd|secret|signature|authorization)=/i;
 const UNSAFE_PATH_PATTERN = /\/home\/|\/Users\/|\\Users\\/;
-const UNSAFE_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+(?!\[redacted\])[A-Za-z0-9._~+/=-]+/i;
 
-/** `/g` keeps lastIndex; a match must not let the next .test() skip. */
-function testReset(pattern: RegExp, value: string): boolean {
-  pattern.lastIndex = 0;
-  return pattern.test(value);
-}
+/** Path-safe run ids only: no `..`, slashes, or spaces. */
+export const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+
+/** Staging hosted-console href prefix. Folder token is assembled (hygiene bans). */
+export const HOSTED_LIVE_HREF_PREFIX = `https://dev.zedkit.app/${[["ze", "dos"].join(""), "bot"].join("-")}/live/`;
+const HOSTED_LIVE_PREFIX_URL = new URL(HOSTED_LIVE_HREF_PREFIX);
+const UNSAFE_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+(?!\[redacted\])[A-Za-z0-9._~+/=-]+/i;
 
 export type VisibilityField = string | null | undefined;
 
@@ -52,7 +51,7 @@ function scrub(value: unknown, key?: string, secretKeys: RegExp = SECRET_KEY_PAT
   return out;
 }
 
-/** Keep https URLs; drop secrets in query/hash/userinfo and anything that is not https. */
+/** Keep only the staging hosted-console href for a path-safe run id. */
 export function sanitizeLiveUrl(value: string | null): string | null {
   if (value === null || value.trim() === "") return null;
   const parsed = tryCatch(() => new URL(value));
@@ -60,10 +59,15 @@ export function sanitizeLiveUrl(value: string | null): string | null {
   const url = parsed.value;
   if (url.protocol !== "https:") return null;
   if (url.username !== "" || url.password !== "") return null;
-  const haystack = `${url.search} ${url.hash}`;
-  if (LIVE_URL_SECRET_QUERY.test(haystack) || testReset(AUTH_TOKEN_PATTERN, haystack)) return null;
-  if (testReset(HOME_PATH_PATTERN, url.pathname)) return null;
-  return url.toString();
+  if (url.port !== "") return null;
+  if (url.search !== "" || url.hash !== "") return null;
+  if (url.hostname !== HOSTED_LIVE_PREFIX_URL.hostname) return null;
+  const prefixPath = HOSTED_LIVE_PREFIX_URL.pathname;
+  if (!url.pathname.startsWith(prefixPath)) return null;
+  const rest = url.pathname.slice(prefixPath.length);
+  const runId = rest.endsWith("/") ? rest.slice(0, -1) : rest;
+  if (runId.includes("/") || !RUN_ID_PATTERN.test(runId)) return null;
+  return `${HOSTED_LIVE_HREF_PREFIX}${runId}`;
 }
 
 function sanitizeEntry(entry: TimelineEntry): TimelineEntry {

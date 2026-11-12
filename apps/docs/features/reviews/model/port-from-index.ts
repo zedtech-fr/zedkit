@@ -167,5 +167,8 @@ export function createComposedReviewPort(
       const record = Number.isInteger(n) ? latestForPr(lives, n) : undefined;
       return Promise.resolve(record === undefined ? null : copyLive(record));
     },
+    isPublicStandIn() {
+      return Promise.resolve(index.kind === "public-stand-in");
+    },
   };
 }

@@ -64,7 +64,7 @@ Each `entries[]` object (issue or unlinked PR):
 | `durationMs` | Finite number ≥ 0, or `null` (running). |
 | `models` | String array. Skip empty strings. Plan, implement, and dry-run: engine model. Review: lens and second-pass models. Improve: improve model. |
 | `verdict` | `approve` \| `request-changes` \| `comment`, or `null`. |
-| `liveUrl` | HTTPS URL of the hosted live console, or `null`. Never a GitHub `review_url`. Never `token=` query, userinfo, `http:`, or a home path. The gate drops those. |
+| `liveUrl` | Allowlisted hosted-console href (`HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id) or `null`. Never a GitHub `review_url`. Never a reserved host, other host, other path, query, hash, userinfo, `http:`, non-empty port, or a home path. The public gate drops those. |
 
 Plan and implement phases of one implement ticket run are **two**
 timeline entries (distinct `id`, shared `runId`). The generated run
@@ -131,10 +131,11 @@ omit when unknown):
 - `issue` — GitHub issue number. When it is a safe integer, the mapper
   builds an issue row. When it is missing or null, the PR stays
   unlinked (`/issues/pr/:n`).
-- `live_url` — HTTPS URL of the existing hosted live console. This is
-  the only field that becomes the provisional page's outbound link.
-  `review_url` is a GitHub review link and is **not** a hosted console
-  URL; the mapper never copies it to `liveUrl`.
+- `live_url` — hosted live console URL. The public gate keeps it only
+  when it matches `HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id;
+  otherwise the provisional page gets `null`. `review_url` is a GitHub
+  review link and is **not** a hosted console URL; the mapper never
+  copies it to `liveUrl`.
 - `issue_title`, `opened_pr_url` — already accepted. Title falls back
   to `Issue #N` when `issue_title` is empty. Issue `state` is `open`
   unless the generated run index sends `state`.

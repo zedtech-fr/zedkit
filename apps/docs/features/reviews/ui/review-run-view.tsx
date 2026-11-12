@@ -16,6 +16,7 @@ import { issuePath, unlinkedPrPath } from "../model/review-routes";
 import type { IssueRecord, RunRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
+import { ReviewSampleNotice } from "./review-sample-notice";
 
 function RunBody({
   run,
@@ -67,13 +68,16 @@ export function ReviewRunView({
   issue,
   run,
   copy,
+  showSampleNotice = false,
 }: {
   issue: IssueRecord;
   run: RunRecord;
   copy: ReviewsCopy;
+  showSampleNotice?: boolean;
 }) {
   return (
     <ReviewAppearanceFrame>
+      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader
         title={`${copy.run.title} ${run.runId}`}
         description={`#${issue.number} ${issue.title}`}
@@ -97,13 +101,16 @@ export function UnlinkedRunView({
   pullRequest,
   run,
   copy,
+  showSampleNotice = false,
 }: {
   pullRequest: UnlinkedPullRequest;
   run: RunRecord;
   copy: ReviewsCopy;
+  showSampleNotice?: boolean;
 }) {
   return (
     <ReviewAppearanceFrame>
+      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader
         title={`${copy.run.title} ${run.runId}`}
         description={`${copy.unlinked.title} #${pullRequest.number}`}
