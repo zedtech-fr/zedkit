@@ -1,5 +1,6 @@
-import { Heading, Section, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
+import { Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { MAP_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
+import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
@@ -11,9 +12,9 @@ import { homeClosingCopy } from "@/ui/home/i18n/home-closing-copy";
 /**
  * After manifesto: one ask that copies the same map setup prompt as the hero.
  *
- * Compose-UI: closing SecretField with the map prompt, because: the last
- * ask is copy-and-go; the kit already copies and announces; a second labelled
- * Copy widget would be a parallel control.
+ * Compose-UI: shared copy-command field with the map prompt, because: the
+ * last ask is copy-and-go and must match the hero field; the kit shown-once
+ * secret is the wrong chrome for this site action.
  * Centered reading measure, because: mockup centers both bands; a full-wide
  * prompt fights the limits grid. The field wraps `text-left` so the centered
  * stack does not inherit into the prompt box.
@@ -42,8 +43,7 @@ export function HomeClosingSection() {
           {homeClosingCopy.section.description}
         </Text>
         <div className="w-full text-left">
-          <SecretField
-            multiline
+          <HomeCopyCommandField
             value={MAP_SETUP_MINI_PROMPT}
             aria-label={homeClosingCopy.promptAriaLabel}
             copyLabel={homeClosingCopy.promptCopyLabel}

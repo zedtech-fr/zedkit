@@ -40,7 +40,11 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Setup" })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Get started" })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Browse catalog" })).toHaveCount(0);
-  await expect(page.locator("[data-home-hero-lead] [data-site-action]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead] a[data-site-action]")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveAttribute(
+    "data-site-action",
+    "",
+  );
 
   const tabs = page.locator("[data-home-hero-lead]").getByRole("tablist");
   await expect(tabs).toHaveCount(1);
