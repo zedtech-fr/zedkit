@@ -81,12 +81,10 @@ test.describe("a11y gate (#396)", () => {
     }
   }
 
-  test("docs sidebar trigger name matches native tooltip (#396)", async ({ page }) => {
+  test("docs phone page tree is named in the page, not behind Open navigation (#396)", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-    const trigger = page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" });
-    await expect(trigger).toBeVisible();
-    await expect(trigger).toHaveAttribute("title", "Open navigation");
-    await expect(trigger).toHaveAttribute("aria-label", "Open navigation");
+    await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
+    await expect(page.locator("#nd-sidebar").getByRole("link", { name: "Getting started" }).first()).toBeVisible();
   });
 });

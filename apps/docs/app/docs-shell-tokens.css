@@ -275,3 +275,59 @@ html[data-docs-shell]:not(.dark) {
 [data-palette-dots] {
   --spacing: 0.25rem;
 }
+
+/* Site header sits above the docs shell; sidebar sticks under it. */
+@media (min-width: 48rem) {
+  #nd-docs-layout [data-sidebar-placeholder] {
+    top: var(--zk-site-header-height);
+    height: calc(var(--fd-docs-height) - var(--zk-site-header-height));
+  }
+}
+
+/*
+ * Phone: the page tree is in-flow below the header, not a drawer.
+ * Fumadocs mounts #nd-sidebar with max-md:hidden; unhide that node and restack.
+ */
+@media (width < 48rem) {
+  #nd-docs-layout {
+    grid-template:
+      "header"
+      "sidebar"
+      "toc-popover"
+      "tabs"
+      "main"
+      / minmax(0, 1fr);
+  }
+  #nd-docs-layout [data-sidebar-placeholder] {
+    display: block;
+    position: static;
+    height: auto;
+    pointer-events: auto;
+  }
+  #nd-docs-layout #nd-sidebar {
+    position: static;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    border-inline-end-width: 0;
+  }
+  #nd-docs-layout #nd-sidebar [data-radix-scroll-area-root],
+  #nd-docs-layout #nd-sidebar [data-radix-scroll-area-viewport] {
+    display: block;
+    height: auto;
+    min-height: min-content;
+    flex: none;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* Brand, search, and collapse live in the site header; the sidebar is the page tree. */
+#nd-docs-layout #nd-sidebar > :first-child:not([data-radix-scroll-area-root]),
+#nd-docs-layout #nd-sidebar > :last-child:not([data-radix-scroll-area-root]) {
+  display: none;
+}
+#nd-docs-layout [data-sidebar-panel] {
+  display: none;
+}

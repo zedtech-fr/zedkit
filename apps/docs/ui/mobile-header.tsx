@@ -32,7 +32,7 @@ function DocsMenuButton() {
 /**
  * Phone header (< md): wordmark, wrapping primary links, then ms-auto actions.
  * Home: GitHub text + Get started, no search. Else: Search ⌘K + GitHub text.
- * Docs mode keeps the page-tree opener. Never theme, version, or a site-nav disclosure.
+ * Docs mode does not open a page-tree drawer: the list is in the page. Never theme, version, or a site-nav disclosure.
  */
 export function MobileHeader({
   mode,
@@ -42,7 +42,7 @@ export function MobileHeader({
   className?: string;
 }) {
   const pathname = usePathname();
-  const chrome = siteHeaderChrome(pathname, mode);
+  const chrome = siteHeaderChrome(pathname);
   return (
     <header
       id="nd-mobile-nav"

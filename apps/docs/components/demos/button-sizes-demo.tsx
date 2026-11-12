@@ -11,6 +11,7 @@ export function ButtonSizesDemo() {
         <Button size="lg">{buttonCopy.large}</Button>
       </Stack>
       <Stack direction="horizontal" gap="sm">
+        <Button variant="secondary">{buttonCopy.cancel}</Button>
         <Button disabled>{buttonCopy.saving}</Button>
       </Stack>
     </Stack>

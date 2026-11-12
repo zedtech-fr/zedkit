@@ -48,6 +48,19 @@ test("issues and other marketing routes keep the fumadocs Header", () => {
   assert.match(marketing, /<Header className="max-md:hidden" \/>/);
 });
 
+test("docs desktop header is the marketing pattern: search and GitHub, no version, theme, or Get started", () => {
+  const headers = read("ui/site-headers.tsx");
+  assert.match(headers, /data-docs-header/);
+  const docs = functionSource(headers, "DocsDesktopHeader");
+  assert.match(docs, /SiteFullSearchTrigger/);
+  assert.match(docs, /HomeGitHubLink/);
+  assert.doesNotMatch(docs, /HomeGetStartedAction/);
+  assert.doesNotMatch(docs, /KitVersionLabel/);
+  assert.doesNotMatch(docs, /ThemeSwitch|SiteThemeSwitch|data-theme-toggle/);
+  const compact = read("app/site-compact.css");
+  assert.match(compact, /data-docs-header/);
+});
+
 test("catalog title size is a page token on the catalog shell", () => {
   const css = read("app/catalog-shell.css");
   assert.match(css, /--zk-catalog-title-size:\s*2\.5rem/);

@@ -16,14 +16,20 @@ function MarketingDesktopNav({
   mark,
   actions,
 }: {
-  mark: "home" | "catalog";
+  mark: "home" | "catalog" | "docs";
   actions: ReactNode;
 }) {
   const pathname = usePathname();
+  const markAttr =
+    mark === "home"
+      ? { "data-home-header": "" }
+      : mark === "catalog"
+        ? { "data-catalog-header": "" }
+        : { "data-docs-header": "" };
   return (
     <header
       id="nd-nav"
-      {...(mark === "home" ? { "data-home-header": "" } : { "data-catalog-header": "" })}
+      {...markAttr}
       className="sticky pin-top z-header max-md:hidden"
     >
       <div>
@@ -124,7 +130,25 @@ export function MarketingSiteHeader() {
   );
 }
 
-/** Docs layout phone header (desktop docs chrome has no top bar). */
+/**
+ * Customer personas: integrating developer on a docs page at 1440, hurried.
+ * UI decisions: docs header is brand + primary nav + Search ⌘K + GitHub text, because the customer already uses that bar on Home and Catalog.
+ */
+export function DocsDesktopHeader() {
+  return (
+    <MarketingDesktopNav
+      mark="docs"
+      actions={
+        <>
+          <SiteFullSearchTrigger />
+          <HomeGitHubLink />
+        </>
+      }
+    />
+  );
+}
+
+/** Docs layout phone header. Desktop docs chrome is DocsDesktopHeader, above the shell. */
 export function DocsSiteHeader() {
   return (
     <MobileHeader

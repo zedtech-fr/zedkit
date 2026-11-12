@@ -169,9 +169,64 @@ test("desktop docs chrome has search and GitHub and no version or theme toggle",
   assert.match(source, /searchToggle=\{\{\s*enabled:\s*true/);
   assert.match(source, /githubUrl=/);
   assert.match(source, /themeSwitch=\{\{\s*enabled:\s*false/);
+  assert.match(source, /DocsDesktopHeader/);
+  assert.match(source, /DocsSiteHeader/);
   assert.doesNotMatch(source, /KitVersionLabel/);
   assert.doesNotMatch(source, /data-kit-version/);
   assert.doesNotMatch(source, /MobileHeader/);
+});
+
+test("ComponentPage first-screen order is example, Use it, install, then guidance", () => {
+  const page = read("components/component-page.tsx");
+  const example = page.indexOf('id="example"');
+  const usage = page.indexOf('id="usage-and-states"');
+  const install = page.indexOf('id="install-or-copy"');
+  const guidance = page.indexOf('id="guidance"');
+  const props = page.indexOf('id="props"');
+  assert.ok(example >= 0 && usage > example, "Use it must follow the preview");
+  assert.ok(install > usage, "install must follow Use it");
+  assert.ok(guidance > install, "guidance must follow install");
+  assert.ok(props > guidance, "props must follow guidance");
+});
+
+test("primary Button well is the four-action row", () => {
+  const demo = read("components/demos/button-demo.tsx");
+  assert.match(demo, /buttonCopy\.createApp/);
+  assert.match(demo, /variant="outline"/);
+  assert.match(demo, /buttonCopy\.details/);
+  assert.match(demo, /variant="ghost"/);
+  assert.match(demo, /buttonCopy\.cancel/);
+  assert.match(demo, /variant="destructive"/);
+  assert.match(demo, /buttonCopy\.delete/);
+  assert.doesNotMatch(demo, /buttonCopy\.hint/);
+  assert.doesNotMatch(demo, /buttonCopy\.docsLink/);
+  assert.doesNotMatch(demo, /buttonCopy\.small/);
+  assert.doesNotMatch(demo, /buttonCopy\.disabled/);
+  assert.doesNotMatch(demo, /buttonCopy\.saving/);
+  assert.doesNotMatch(demo, /size="sm"|size="lg"|size="icon"/);
+});
+
+test("ButtonSizesDemo still documents extra sizes and saving", () => {
+  const demo = read("components/demos/button-sizes-demo.tsx");
+  assert.match(demo, /buttonCopy\.small/);
+  assert.match(demo, /buttonCopy\.large/);
+  assert.match(demo, /buttonCopy\.saving/);
+});
+
+test("docs chrome keeps header search and does not duplicate it in the sidebar slot", () => {
+  const slots = read("ui/site-chrome-slots.ts");
+  const docsStart = slots.indexOf("export const docsChromeSlots");
+  assert.notEqual(docsStart, -1, "missing docsChromeSlots");
+  const docs = slots.slice(docsStart);
+  assert.doesNotMatch(docs, /searchTrigger/);
+  assert.match(docs, /sidebar:/);
+});
+
+test("phone docs page tree is in-flow in the shell, not a max-md drawer", () => {
+  const css = read("app/docs-shell-tokens.css");
+  assert.match(css, /\[data-sidebar-placeholder\]/);
+  assert.match(css, /#nd-sidebar/);
+  assert.match(css, /width < 48rem/);
 });
 
 test("docs layout on UI routes uses the job-grouped tree helper", () => {

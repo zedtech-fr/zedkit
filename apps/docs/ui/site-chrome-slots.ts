@@ -20,7 +20,7 @@ export const siteChromeSlots = {
 } as const;
 
 export const docsChromeSlots = {
-  ...siteChromeSlots,
+  themeSwitch: SiteThemeSwitch,
   sidebar: {
     provider: SidebarProvider,
     root: Sidebar,

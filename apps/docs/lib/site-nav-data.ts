@@ -15,19 +15,18 @@ export function isCatalogPath(pathname: string): boolean {
   return pathname === "/catalog";
 }
 
-export type SiteHeaderChromeMode = "home" | "docs";
-
 /**
  * Phone (and policy) chrome: which actions a path may mount.
  * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
+ * The page tree is in-flow, so `docsTreeOpener` stays off.
  */
-export function siteHeaderChrome(pathname: string, mode: SiteHeaderChromeMode) {
+export function siteHeaderChrome(pathname: string) {
   const home = isHomePath(pathname);
   return {
     links: sitePrimaryNavLinks(),
     search: !home,
     getStarted: home,
-    docsTreeOpener: mode === "docs",
+    docsTreeOpener: false,
   };
 }
 
