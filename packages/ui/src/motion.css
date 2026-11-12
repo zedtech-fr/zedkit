@@ -310,13 +310,21 @@
 @utility hover-lift {
   transition:
     translate var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease),
-    box-shadow var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease);
+    box-shadow var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease),
+    border-color var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease);
   /* Literal :hover, so guard it like the hover variant: no stuck lift after a tap. */
   @media (hover: hover) {
     &:hover {
       translate: var(--zk-lift-translate, 0 -2px);
       box-shadow: var(--zk-lift-shadow, var(--shadow-md));
+      border-color: hsl(var(--primary) / 0.45);
     }
+  }
+  &:focus-visible,
+  &:focus-within {
+    translate: var(--zk-lift-translate, 0 -2px);
+    box-shadow: var(--zk-lift-shadow, var(--shadow-md));
+    border-color: hsl(var(--primary) / 0.45);
   }
   &:active {
     translate: none;
@@ -373,6 +381,8 @@
     transition: none !important;
   }
   .hover-lift:hover,
+  .hover-lift:focus-visible,
+  .hover-lift:focus-within,
   .hover-press:active {
     translate: none !important;
   }
@@ -408,6 +418,8 @@
   transition: none !important;
 }
 :root[data-motion="reduce"] .hover-lift:hover,
+:root[data-motion="reduce"] .hover-lift:focus-visible,
+:root[data-motion="reduce"] .hover-lift:focus-within,
 :root[data-motion="reduce"] .hover-press:active {
   translate: none !important;
 }

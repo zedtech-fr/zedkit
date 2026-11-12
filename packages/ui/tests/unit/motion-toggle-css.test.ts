@@ -28,3 +28,61 @@ describe("in-app motion toggle CSS", () => {
     expect(sticky).toBeGreaterThan(gate);
   });
 });
+
+function utilityBlock(css: string, name: string): string {
+  const start = css.indexOf(`@utility ${name}`);
+  expect(start).toBeGreaterThan(-1);
+  const next = css.indexOf("@utility ", start + 1);
+  return css.slice(start, next === -1 ? undefined : next);
+}
+
+function reduceMedia(css: string): string {
+  const start = css.indexOf("@media (prefers-reduced-motion: reduce)");
+  expect(start).toBeGreaterThan(-1);
+  const nextRoot = css.indexOf(':root[data-motion="reduce"]', start);
+  return css.slice(start, nextRoot === -1 ? undefined : nextRoot);
+}
+
+describe("hover-lift focus parity", () => {
+  const css = read("motion.css");
+  const lift = utilityBlock(css, "hover-lift");
+  const catalog = readFileSync(join(src, "..", "CATALOG.md"), "utf8");
+
+  it("uses the same lift, shadow, and primary-tinted border on hover, focus-visible, and focus-within", () => {
+    expect(lift).toMatch(/@media\s*\(\s*hover:\s*hover\s*\)/);
+    expect(lift).toContain(":focus-visible");
+    expect(lift).toContain(":focus-within");
+    expect(lift).toContain("hsl(var(--primary) / 0.45)");
+    expect(lift).toMatch(/border-color\s+var\(--zk-lift-duration/);
+    for (const selector of [":hover", ":focus-visible", ":focus-within"] as const) {
+      const from = lift.indexOf(selector);
+      expect(from).toBeGreaterThan(-1);
+      const body = lift.slice(from, from + 280);
+      expect(body).toContain("var(--zk-lift-translate");
+      expect(body).toContain("var(--zk-lift-shadow");
+      expect(body).toContain("hsl(var(--primary) / 0.45)");
+    }
+  });
+
+  it("keeps border and shadow under reduced motion and only kills translate", () => {
+    const media = reduceMedia(css);
+    const dataMotion = css.slice(css.indexOf(':root[data-motion="reduce"] .hover-lift'));
+    for (const block of [media, dataMotion] as const) {
+      expect(block).toMatch(/\.hover-lift:hover/);
+      expect(block).toMatch(/\.hover-lift:focus-visible/);
+      expect(block).toMatch(/\.hover-lift:focus-within/);
+      expect(block).toMatch(/\.hover-lift[^{]*\{[^}]*translate:\s*none/s);
+      expect(block).not.toMatch(/\.hover-lift[^{.,]*\{[^}]*box-shadow:\s*none/s);
+      expect(block).not.toMatch(/\.hover-lift[^{.,]*\{[^}]*border-color:\s*(?:none|inherit|unset|revert|initial)/s);
+    }
+    expect(media).toContain("[data-animate-scroll]");
+    expect(media).toContain("translate: none !important");
+  });
+
+  it("documents keyboard focus-within on the catalog motion need", () => {
+    const need = catalog.slice(catalog.indexOf("## Animate entrances and hover feedback with CSS utilities"));
+    const a11y = need.slice(need.indexOf("- A11y:"), need.indexOf("\n- Troubleshooting"));
+    expect(a11y).toContain("focus-within");
+    expect(a11y).toMatch(/border/);
+  });
+});
