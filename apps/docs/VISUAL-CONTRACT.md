@@ -39,7 +39,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 
 | Role | Rule |
 |---|---|
-| Marketing H1 | `--zk-type-h1-size`: 48px (3rem) at 1440 and at 390, Inter 500, tracking `-0.035em`, leading 1.08, one per page. No second display size. Section H2: `--zk-type-h2-size` 30px (1.875rem), Inter 500, tracking `-0.025em`, leading 1.15. |
+| Marketing H1 | `--zk-type-h1-size`: 48px (3rem) at 1440 and at 390, Inter 500, tracking `-0.035em`, leading 1.08, one per page. Catalog is the documented overlay: `--zk-catalog-title-size` 2.5rem on `[data-catalog-shell]` (`apps/docs/app/catalog-shell.css`). Section H2: `--zk-type-h2-size` 30px (1.875rem), Inter 500, tracking `-0.025em`, leading 1.15. |
 | Docs H1 | `--zk-type-doc-h1-size`: 2rem, 1.75rem below 48rem (not the marketing display). H2 `--zk-type-h2-size` 22-26px, H3 18px, weight 600. Linked headings inherit size and weight. |
 | Prose | 15/1.6 (`--zk-type-prose-size`), 64-72ch. Lead paragraph `--zk-type-lead-size` 16-18px, once. |
 | Body and dense UI | Body 14/1.55. Dense UI (controls, tabs, example links, table cells, nav) is `text-dense`: 13px, line about 18.6px (`--text-sm`). Nothing a person must read to act is below 13px. |

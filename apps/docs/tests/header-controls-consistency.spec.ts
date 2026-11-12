@@ -78,35 +78,17 @@ for (const theme of ["light", "dark"] as const) {
   }
 }
 
-test("catalog header keeps search, theme, and a version caption", async ({ page }) => {
+test("catalog header keeps search and GitHub text, not theme or version", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/catalog", { waitUntil: "networkidle" });
   const header = page.locator("#nd-nav");
-  await expect(header.locator("[data-theme-toggle]").filter({ visible: true }).first()).toBeVisible();
+  await expect(header.locator("[data-theme-toggle]").filter({ visible: true })).toHaveCount(0);
+  await expect(header.locator("[data-kit-version]")).toHaveCount(0);
   await expect(
     header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true }).first(),
   ).toBeVisible();
-  const version = header.locator("[data-kit-version]");
-  await expect(version).toBeVisible();
-  const style = await version.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { fontSize: s.fontSize, cursor: s.cursor, tag: el.tagName };
-  });
-  expect(style.tag).toBe("SPAN");
-  expect(parseFloat(style.fontSize)).toBeLessThanOrEqual(13);
-  expect(style.cursor).not.toBe("pointer");
-  const heights = await page.evaluate(() => {
-    const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
-    const nav = document.querySelector("#nd-nav nav");
-    return {
-      toggle: measure(nav?.querySelector("[data-theme-toggle]") ?? null),
-      search: measure(nav?.querySelector("[data-search]") ?? null),
-      github: measure(nav?.querySelector('a[aria-label*="GitHub"]') ?? null),
-    };
-  });
-  expect(Math.max(heights.toggle, heights.search, heights.github)).toBeLessThanOrEqual(
-    Math.min(heights.toggle, heights.search, heights.github) + 2,
-  );
+  await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+  await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
 });
 
 for (const theme of ["light", "dark"] as const) {
