@@ -13,7 +13,7 @@ const CARD_IDS = ["ai", "ui", "together"] as const;
 type SameIdeaCardId = (typeof CARD_IDS)[number];
 
 const WINDOW_CHIP =
-  "rounded-md bg-primary-foreground/20 px-badge-inline py-badge-block font-mono text-caption text-primary-foreground";
+  "rounded-md bg-primary-foreground/20 px-code-inline py-badge-block font-mono text-caption text-primary-foreground";
 const WINDOW_SAVE =
   "rounded-md bg-primary-foreground px-button-pad py-badge-block font-semibold text-caption text-primary";
 
@@ -25,7 +25,10 @@ function SameIdeaWindow({ id }: { id: SameIdeaCardId }) {
       direction="horizontal"
       gap="sm"
       data-home-same-idea-window={id}
-      className={cn("pointer-events-none", id === "ui" ? "bg-accent" : "bg-primary")}
+      className={cn(
+        "pointer-events-none text-primary-foreground",
+        id === "ui" ? "bg-accent" : "bg-primary",
+      )}
     >
       {id === "ai" ? (
         <>
@@ -132,7 +135,9 @@ function SameIdeaLands({ componentCount }: { componentCount: number }) {
       data-home-same-idea-lands=""
       className="flex-wrap justify-between"
     >
-      <Text as="span">{lands.heading}</Text>
+      <Heading level={3} typeRole="body">
+        {lands.heading}
+      </Heading>
       <Stack direction="horizontal" gap="lg" className="flex-wrap font-mono text-dense">
         {items.map((item) => (
           <Text as="span" key={item.label}>

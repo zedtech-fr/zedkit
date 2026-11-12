@@ -165,16 +165,19 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sameIdea, /CARD_IDS = \["ai", "ui", "together"\]/);
   assert.match(sameIdea, /HOME_SAME_IDEA_CARDS_GRID/);
   assert.doesNotMatch(sameIdea, /HOME_SAME_IDEA_GRID/);
+  assert.doesNotMatch(sameIdea, /px-badge-inline/);
+  assert.match(sameIdea, /WINDOW_CHIP =\s*"rounded-md bg-primary-foreground\/20 px-code-inline/);
+  assert.match(sameIdea, /pointer-events-none text-primary-foreground/);
+  assert.match(sameIdea, /<Heading level=\{3\} typeRole="body">\s*\{lands\.heading\}/);
   assert.match(sameIdea, /data-home-same-idea-lands/);
   assert.match(sameIdea, /data-home-same-idea-window/);
   assert.match(sameIdea, /aria-hidden/);
   assert.match(sameIdea, /HomeLink/);
   assert.match(src, /HomeSameIdeaSection componentCount=\{uiGalleryStats\.components\}/);
+  const page = readFileSync(join(app, "app/(site)/page.tsx"), "utf8");
+  assert.match(page, /import \{ uiGalleryStats \} from ["']@\/content\/gallery["']/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
-  assert.match(
-    rhythm,
-    /export const HOME_SAME_IDEA_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair"/,
-  );
+  assert.doesNotMatch(rhythm, /HOME_SAME_IDEA_GRID/);
   assert.match(
     rhythm,
     /export const HOME_SAME_IDEA_CARDS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,

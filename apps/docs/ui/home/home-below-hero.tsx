@@ -7,8 +7,8 @@ import { HomeSameIdeaSection } from "@/ui/home/home-same-idea-section";
 import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
 
 /**
- * Marketing sections below the hero, in the order a visitor decides: two
- * places, six quote/reply cards, hash landing plus Getting started, then the same task
+ * Marketing sections below the hero, in the order a visitor decides: the
+ * three-card same-idea band, six quote/reply cards, hash landing plus Getting started, then the same task
  * in four looks, then limits, manifesto, closing ask.
  * Kept in the main home payload (not dynamically imported) so section anchors stay in the live layout on first paint.
  *
@@ -18,7 +18,7 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
  * Customers: the developer's own users — this page does not sell to them.
  * Customer personas: n/a on the docs home.
  * UI decisions:
- *   two-place same-idea then six quote/reply cards then one paste, because:
+ *   three-card same-idea then six quote/reply cards then one paste, because:
  *   client = integrating developer who just saw a hero paste and needs the
  *   joint idea before another command, and still hears agent excuses.
  *   lg three-card same-idea grid plus a lands bar, because: mobile stacks
