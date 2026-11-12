@@ -162,8 +162,9 @@ second fonts `pnpm add` next to that snippet.
   suggest service ([deploy/AGENTS.md](../../deploy/AGENTS.md)).
   The page's client is `lib/identity-assistant.ts`: it parses whatever the
   service returns and turns every failure into a named outcome (`unavailable`
-  with its reason, shown by `UnavailableBanner`). There is no silent keyword
-  fallback: a failed generation says so and leaves the draft untouched.
+  with its reason). The floating dock is manual customize only and does not
+  render those outcomes. There is no silent keyword fallback: a failed
+  generation says so and leaves the draft untouched.
 - Saved looks are local recipes (`lib/named-identities.ts`): re-validated on
   every read, no server copy. Changing the stored shape needs a version and a
   migration.
