@@ -33,14 +33,15 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
   today's in-flight lots still live under `ui/home/**`, `ui/catalog/**`,
   `ui/not-found/**`, and `ui/docs-main-content.tsx`.
-- Used by two or more routes of one domain: `features/<domain>/` (reviews,
-  identity, docs). Ports/adapters/model only where there is I/O.
+- Used by two or more routes of one domain: `features/<domain>/` (current:
+  reviews, note-list). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
-  `components/` (chrome in `components/site-chrome/`). `ui/` is dissolving;
-  do not add a fifth home there. Directory globs in `REQUIRED_GLOBS`
-  (`ui/home/**`, `ui/catalog/**`, `ui/not-found/**`) silently absorb new
-  files; do not add under them. Drop a glob from `REQUIRED_GLOBS` when that
-  lot moves.
+  `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
+  is dissolving; do not add a fifth home there. Directory globs in
+  `REQUIRED_GLOBS` (`ui/home/**`, `ui/catalog/**`, `ui/not-found/**`,
+  `ui/docs-main-content.tsx`) silently absorb new files; do not add under
+  them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order: move
+  the files, regen, drop the glob, regen again.
 - Pure helpers used by two or more domains (and `.mjs` shared with
   `scripts/generate.mjs`): `lib/`.
 - Domain-free code: a zedkit package (check zedkit first).
@@ -53,7 +54,8 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   dead and single-owner there). Unit tests live beside their module,
   including under `app/`; Playwright stays in `tests/`.
 - Baseline `apps/docs/scripts/module-placement.baseline.json` may only
-  shrink. Move the file; never extend the baseline. `--write-baseline`
+  shrink. Move the file; never extend the baseline.
+  `node apps/docs/scripts/module-placement.mjs --write-baseline`
   regenerates from the live tree and refuses growth; it drops stale
   entries after a move — do not add entries by hand.
 

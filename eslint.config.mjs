@@ -14,31 +14,20 @@ const docsFeatureNames = new Set(
     .map((entry) => entry.name),
 );
 
-const docsAppGroup = [
-  "@/app",
-  "@/app/*",
-  "@/app/**",
-  "../app",
-  "../app/*",
-  "../app/**",
-];
-const docsFeatureGroup = [
-  "@/features",
-  "@/features/*",
-  "@/features/**",
-  "../features",
-  "../features/*",
-  "../features/**",
-];
-const docsUiGroup = ["@/ui", "@/ui/*", "@/ui/**", "../ui", "../ui/*", "../ui/**"];
-const docsComponentsGroup = [
-  "@/components",
-  "@/components/*",
-  "@/components/**",
-  "../components",
-  "../components/*",
-  "../components/**",
-];
+// `@/` plus every `../` depth through 4. `../folder/**` does not match
+// `../../folder/x`; `../../*` is a single segment and cannot either.
+function docsLayerGroup(folder) {
+  const bases = [
+    `@/${folder}`,
+    ...["..", "../..", "../../..", "../../../.."].map((rel) => `${rel}/${folder}`),
+  ];
+  return bases.flatMap((base) => [base, `${base}/*`, `${base}/**`]);
+}
+
+const docsAppGroup = docsLayerGroup("app");
+const docsFeatureGroup = docsLayerGroup("features");
+const docsUiGroup = docsLayerGroup("ui");
+const docsComponentsGroup = docsLayerGroup("components");
 
 const docsAppFeatureBan = {
   group: [...docsAppGroup, ...docsFeatureGroup],

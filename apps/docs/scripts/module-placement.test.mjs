@@ -303,6 +303,28 @@ describe("ESLint one-way imports", () => {
     );
   });
 
+  it("fails a nested ui file importing ../../app/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/ui/home/placement-probe.tsx"),
+      'import { x } from "../../app/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a nested feature file importing ../../../app/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/features/reviews/ui/placement-probe.tsx"),
+      'import { x } from "../../../app/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /feature may not import app/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
   it("fails a new lib file importing a multi-segment # subpath", async () => {
     const messages = await lintText(
       join(repoRoot, "apps/docs/lib/placement-probe.ts"),
