@@ -24,6 +24,15 @@ export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid
  */
 export const HOME_SAME_IDEA_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair";
+/**
+ * Limits: one column until `lg`, then three. Not `HOME_CARD_GRID_THREE_COL`
+ * (`sm` pair / `xl` trio), because a phone must stack all three items.
+ */
+export const HOME_LIMITS_GRID =
+  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio";
+/** Paste timeline: pair from `sm`, four across from `xl`. */
+export const HOME_PASTE_TIMELINE_GRID =
+  "trim-margin grid content-shrink list-none gap-stack-lg flush sm:grid-pair xl:grid-quad";
 
 /** Soft enter on scroll; static without JS and under reduced motion. */
 export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;

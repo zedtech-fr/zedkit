@@ -40,7 +40,7 @@ test("the section is a set of examples, not a count of identities", async ({ pag
   await openLooks(page);
   // The section's own heading and intro (the band around the tabs), not just the tabs.
   const section = page.locator("#identities");
-  await expect(section.getByRole("heading", { name: "Looks like your product", level: 2 })).toBeVisible();
+  await expect(section.getByRole("heading", { name: "Every screen, the same product.", level: 2 })).toBeVisible();
   await expect(section).not.toContainText(/\bsix\b/i);
   await expect(page.locator("[data-home-identity-looks] p").first()).toContainText("Live components, not screenshots.");
 });

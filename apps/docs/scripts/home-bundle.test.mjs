@@ -100,26 +100,39 @@ test("home hero lead is the joint title, one map Setup entry, no kit tabs (#111,
   assert.doesNotMatch(nav, /text: "Issues"/);
 });
 
-test("home below-hero order is same-idea, six-sentences, paste, identities, families, secondary (#119)", () => {
+test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing, families, secondary (#119)", () => {
   const src = readFileSync(join(app, "ui/home/home-below-hero.tsx"), "utf8");
   const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
   const sixSentences = readFileSync(join(app, "ui/home/home-six-sentences-section.tsx"), "utf8");
   const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
+  const limits = readFileSync(join(app, "ui/home/home-limits-section.tsx"), "utf8");
+  const manifesto = readFileSync(join(app, "ui/home/home-manifesto-section.tsx"), "utf8");
+  const closing = readFileSync(join(app, "ui/home/home-closing-section.tsx"), "utf8");
   const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
   const sixSentencesCopy = readFileSync(join(app, "ui/home/i18n/home-six-sentences-copy.ts"), "utf8");
   const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
+  const limitsCopy = readFileSync(join(app, "ui/home/i18n/home-limits-copy.ts"), "utf8");
+  const manifestoCopy = readFileSync(join(app, "ui/home/i18n/home-manifesto-copy.ts"), "utf8");
+  const closingCopy = readFileSync(join(app, "ui/home/i18n/home-closing-copy.ts"), "utf8");
+  const looksCopy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
   const order = [
-    ...src.matchAll(/<Home(SameIdea|SixSentences|Paste|Identities|ComponentFamilies|Secondary)Section/g),
+    ...src.matchAll(
+      /<Home(SameIdea|SixSentences|Paste|Identities|Limits|Manifesto|Closing|ComponentFamilies|Secondary)Section/g,
+    ),
   ].map((match) => match[1]);
   assert.deepEqual(order, [
     "SameIdea",
     "SixSentences",
     "Paste",
     "Identities",
+    "Limits",
+    "Manifesto",
+    "Closing",
     "ComponentFamilies",
     "Secondary",
   ]);
   assert.doesNotMatch(src, /HomeAiSetupSection|HomeGetStartedSection|featuredPackage/);
+  assert.doesNotMatch(src + limits + manifesto + closing + paste, /@zedtech\/zedkit-ui\/marketing/);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-terminal.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-get-started-section.tsx")), false);
@@ -132,9 +145,14 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, fami
   assert.match(sameIdea, /COLUMN_IDS = \["ui", "ai"\]/);
   assert.match(sameIdea, /HOME_SAME_IDEA_GRID/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
-  assert.match(rhythm, /export const HOME_SAME_IDEA_GRID/);
-  assert.match(rhythm, /lg:grid-pair/);
-  assert.doesNotMatch(rhythm, /HOME_SAME_IDEA_GRID[\s\S]*lg:grid-trio/);
+  assert.match(
+    rhythm,
+    /export const HOME_SAME_IDEA_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair"/,
+  );
+  assert.match(
+    rhythm,
+    /export const HOME_LIMITS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,
+  );
   assert.doesNotMatch(sixSentences, /FeatureGrid|SetupEntryPrompt|SecretField/);
   assert.match(sixSentences, /id="six-sentences"/);
   assert.match(sixSentences, /from "@zedtech\/zedkit-ui"/);
@@ -154,15 +172,52 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, fami
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
+  assert.match(tokens, /\[data-home-manifesto-panel\]/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /id="ai-setup"/);
   assert.match(paste, /id="get-started"/);
   assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
   assert.match(paste, /homePasteCopy\.fullStepsHref/);
+  assert.match(paste, /homePasteCopy\.timeline/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
+  assert.match(
+    pasteCopy,
+    /Name the kits\. The agent follows the map, installs them in order and validates once at the end\./,
+  );
+  assert.match(pasteCopy, /"2 seconds"/);
+  assert.match(pasteCopy, /"15 to 45 min"/);
+  assert.match(pasteCopy, /"Same run"/);
+  assert.match(pasteCopy, /"Any time after"/);
   assert.doesNotMatch(pasteCopy, /combined prompt|copy field|SecretField/);
   assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
+  assert.match(looksCopy, /title: "Every screen, the same product\."/);
+  assert.match(looksCopy, /A look sets type, shape, density and color together/);
+  assert.doesNotMatch(looksCopy, /Looks like your product/);
+  assert.match(limits, /id="limits"/);
+  assert.match(limits, /HOME_LIMITS_GRID/);
+  assert.doesNotMatch(limits, /FeatureGrid|SetupEntryPrompt|SecretField/);
+  assert.match(limitsCopy, /What it doesn't do\./);
+  assert.match(limitsCopy, /It won't make your code bug-free\./);
+  assert.match(limitsCopy, /It won't test your product in a browser\./);
+  assert.match(limitsCopy, /Not every component is finished\./);
+  assert.equal((limitsCopy.match(/title: "/g) ?? []).length, 4);
+  assert.match(manifesto, /id="manifesto"/);
+  assert.match(manifesto, /data-home-manifesto-panel/);
+  assert.doesNotMatch(manifesto, /FeatureGrid|SetupEntryPrompt|SecretField|bg-primary/);
+  assert.match(
+    manifestoCopy,
+    /If nobody else can pick up what was built, that isn't expertise\. It's lock-in\./,
+  );
+  assert.match(manifestoCopy, /From the Zed Tech manifesto/);
+  assert.doesNotMatch(manifestoCopy, /Read the manifesto/);
+  assert.match(closing, /id="closing"/);
+  assert.match(closing, /homeClosingCopy\.actionHref/);
+  assert.doesNotMatch(closing, /SetupEntryPrompt|SecretField|data-setup-entry/);
+  assert.match(closingCopy, /Next time it says done, it will be\./);
+  assert.match(closingCopy, /And it will look like the rest of your product\./);
+  assert.match(closingCopy, /action: "Setup"/);
+  assert.match(closingCopy, /actionHref: "#ai-setup"/);
 });
 
 test("drawer demo save closes and toasts", () => {
