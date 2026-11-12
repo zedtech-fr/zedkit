@@ -12,6 +12,7 @@
  */
 #home-page [data-home-hero] {
   min-width: 0;
+  --zk-home-hero-stack: 4rem;
 }
 
 /* Hero title line, then the sentence under it. Wide enough for the grey third clause. */
@@ -23,18 +24,21 @@
 }
 
 /*
- * Home hero band: tight top padding. Below-hero full-bleed bands use Section
- * spacing="md". Hash aliases #ai-setup / #get-started live inside #paste.
+ * Home hero band: section tokens (88px top / 96px bottom), same at 390 and
+ * 1440. Inner padding-block on the grid used to stack with this and miss
+ * the 142px heading offset. Hash aliases #ai-setup / #get-started live
+ * inside #paste.
  */
 #home-page [data-home-hero-band] {
-  padding-top: 2.5rem;
-  padding-bottom: 0;
+  padding-top: var(--zk-section-md);
+  padding-bottom: var(--zk-section-lg);
 }
 
 @media (width < 64rem) {
-  #home-page [data-home-hero-band] {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
+  #home-page [data-home-hero] {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--zk-home-hero-stack);
   }
 }
 
@@ -512,7 +516,6 @@
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     align-items: center;
-    column-gap: 3rem;
-    padding-block: 3.5rem 4rem;
+    column-gap: var(--zk-home-hero-stack);
   }
 }

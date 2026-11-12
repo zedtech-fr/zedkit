@@ -16,7 +16,7 @@ import {
   maturityCounts,
   workspaceToolchain,
 } from "@/content/maturity-compatibility";
-import { maturityCompatibilityCopy } from "@/components/i18n/maturity-compatibility-copy";
+import { maturityCompatibilityCopy } from "../i18n/maturity-compatibility-copy";
 import { maturityBadgeClass, maturityBadgeVariant } from "@/lib/maturity-status";
 
 // Same limits as docs/catalog/README.md#maturity. Wording lives in the copy module.

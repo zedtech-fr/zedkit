@@ -91,16 +91,28 @@ export function readSidecar(root: string): Result<Record<string, Record<string, 
  * project's own sidecar does not mention, so an existing install needs no
  * refresh. Loaded once; a broken file is a package bug and yields no table.
  */
-export const KIT_HEADERS: Readonly<Record<string, AgentHeader>> = loadKitHeaders();
+export const KIT_HEADERS: Readonly<Record<string, AgentHeader>> = loadKitHeaders(kitDir());
 
-function loadKitHeaders(): Record<string, AgentHeader> {
-  const raw = readSidecar(kitDir());
+const headerTables = new Map<string, Readonly<Record<string, AgentHeader>>>();
+
+function loadKitHeaders(dir: string): Record<string, AgentHeader> {
+  const raw = readSidecar(dir);
   const table: Record<string, AgentHeader> = {};
   if (!raw.ok) return table;
   for (const [name, entry] of Object.entries(raw.value)) {
     const parsed = parseAgentHeader(entry, true);
     if (parsed.header) table[name] = parsed.header;
   }
+  return table;
+}
+
+/** Header table of a kit directory. The bundled snapshot stays `KIT_HEADERS`. */
+export function kitHeaders(kit: string = kitDir()): Readonly<Record<string, AgentHeader>> {
+  if (kit === kitDir()) return KIT_HEADERS;
+  const cached = headerTables.get(kit);
+  if (cached) return cached;
+  const table = loadKitHeaders(kit);
+  headerTables.set(kit, table);
   return table;
 }
 
@@ -222,12 +234,16 @@ function optionalEnum<T extends string>(list: readonly T[], value: unknown, key:
  * that fails to parse falls back the same way; `validate` reports the
  * problems separately.
  */
-export function readAgentHeader(name: string, entry: Record<string, unknown> | undefined): ReadHeader {
+export function readAgentHeader(
+  name: string,
+  entry: Record<string, unknown> | undefined,
+  kit: string = kitDir(),
+): ReadHeader {
   if (entry) {
     const parsed = parseAgentHeader(entry, true);
     if (parsed.header) return { header: parsed.header, source: "sidecar" };
   }
-  const shipped = KIT_HEADERS[name];
+  const shipped = kitHeaders(kit)[name];
   if (shipped) return { header: shipped, source: "table" };
   return {
     header: { role: "custom agent", default_needs: DEFAULT_NEEDS },

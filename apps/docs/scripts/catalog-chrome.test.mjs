@@ -64,7 +64,7 @@ test("docs desktop header is the marketing pattern: search and GitHub, no versio
 
 test("catalog title size is a page token on the catalog shell", () => {
   const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
-  assert.match(css, /--zk-catalog-title-size:\s*2\.5rem/);
+  assert.match(css, /--zk-catalog-title-size:\s*clamp\(2rem,\s*1\.7rem \+ 1\.2vw,\s*2\.5rem\)/);
   assert.match(css, /--zk-type-h1-size:\s*var\(--zk-catalog-title-size\)/);
   assert.doesNotMatch(css, /font-size:\s*40px/);
 });

@@ -15,7 +15,7 @@ Resolve the fixed point (commit, branch, tag, `HEAD~N`; ask when missing) and ca
 
 ## 2. Pick the lenses (route over `lenses.md`)
 
-Read `lenses.md` (same folder). Minimum on every review: `code`<!-- if:skill=ponytail -->, `ponytail`<!-- /if -->, `persona`, `quality gate`. Add each lens whose Trigger matches the pinned diff. A `planned` runner reports skipped-planned (not a blocker); skipping a mandatory lens whose runner exists IS a blocker. UI class names: open `../setup-ai/design-policy.md`. Do not restate it.
+Read `lenses.md` (same folder). Minimum on every review: `code`<!-- if:skill=ponytail -->, `ponytail`<!-- /if -->, `persona`, `quality gate`. Add each lens whose Trigger matches the pinned diff (`lenses.md` owns each trigger). For `evidence`, the synthesizer opens the sheet; do not spawn `review` for it. A `planned` runner reports skipped-planned (not a blocker); skipping a mandatory lens whose runner exists IS a blocker. UI class names: open `../setup-ai/design-policy.md`. Do not restate it.
 
 ## 3. Fan out
 

@@ -31,6 +31,8 @@ client business → personas → the client's customers → their personas → U
 choices. Do not edit UI until that brief exists.
 <!-- /if -->
 
+UI tickets carry a `States:` line (`to-tickets`); capture those states.
+
 Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
 Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it. When the diff adds or moves a routed or entry file, also run the area **build** from that area's AGENTS.md (`definition-of-done` names the cases). Typecheck does not load it. When shortening a check's output with a pipe, preserve its exit status (`set -o pipefail` under bash, or run the check through the `gate` wrapper and inspect its captured log): a passing pipeline must never mask a failing check — piping inside the gate does not itself preserve the status.

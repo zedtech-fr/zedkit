@@ -1,5 +1,5 @@
 [data-catalog-shell] {
-  --zk-catalog-title-size: 2.5rem;
+  --zk-catalog-title-size: clamp(2rem, 1.7rem + 1.2vw, 2.5rem);
   --zk-type-h1-size: var(--zk-catalog-title-size);
 }
 
