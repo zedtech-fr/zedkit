@@ -4,7 +4,7 @@
  * Customers: app teams who install @zedtech/zedkit-* or copy UI via the registry.
  * Customer personas: hurried visitor on a phone scanning real issue work; maintainer reproducing a look via share link.
  * UI decisions:
- * - Issue list at /issues with title, state, linked PRs, and latest status first — because: hurried visitor scans work without opening every issue.
+ * - Issue list at /issues with title, state, linked PRs, and latest status first; the title opens the latest run and Timeline is a labelled secondary — because: hurried visitor scans work and reaches a run in one click.
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
  * - Stacked rows, not a wide table — because: phone users at 390px compose by priority.
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.

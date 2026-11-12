@@ -43,7 +43,6 @@ export const reviewsCopy = {
     unlinkedTitle: "Unlinked pull requests",
     unlinkedDescription:
       "These runs are not joined to a GitHub issue yet. They stay reachable here and from old review URLs.",
-    openUnlinked: "Open unlinked pull request",
     run: "run",
     runs: "runs",
   },
