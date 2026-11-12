@@ -17,6 +17,7 @@ const LISTED = [
   "components/component-preview.tsx",
   "ui/catalog/catalog-results.tsx",
   "ui/catalog/catalog-filters.tsx",
+  "ui/catalog/catalog-counters.tsx",
   "components/preview-viewport.tsx",
 ];
 
