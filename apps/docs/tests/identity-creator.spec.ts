@@ -61,14 +61,10 @@ test.describe("home identity entry (#210)", () => {
     expect(posts).toHaveLength(0);
   });
 
-  test("the looks band still links to the demo editor and back to #identities", async ({ page }) => {
+  test("the demo editor still links back to #identities", async ({ page }) => {
     await service(page, (_p, route) => route.abort());
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    const section = page.locator("#identities");
-    await section.scrollIntoViewIfNeeded();
-    await section.getByRole("link", { name: "Try the demo editor" }).click();
-    await page.waitForURL("**/features/identity-editor**");
+    await page.goto("/features/identity-editor#create", { waitUntil: "networkidle" });
     await page.getByRole("link", { name: "← Back to the examples" }).click();
     await page.waitForURL("**/#identities");
   });

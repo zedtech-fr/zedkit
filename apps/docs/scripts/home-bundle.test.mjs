@@ -513,6 +513,9 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   assert.match(facts, /IDENTITY_IDS = \["glass", "mist", "press", "maison"\]/);
   assert.match(copy, /title: "Every screen, the same product\."/);
   assert.match(copy, /tabsAriaLabel: "Looks"/);
+  assert.match(looks, /HomeIdentityLooksTabs/);
+  assert.doesNotMatch(looks, /HomeIdentityLooksLinks/);
+  assert.doesNotMatch(copy, /openEditor|seeInComponents|startWithoutCode/);
 });
 
 test("drawer demo save closes and toasts", () => {
