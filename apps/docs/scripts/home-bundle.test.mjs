@@ -512,3 +512,37 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
   assert.doesNotMatch(layout, /KitVersionLabel/);
 });
+
+test("phone header wrap is two rows: nowrap nav list, 24px labels, actions take the second row", () => {
+  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  assert.match(header, /id="nd-mobile-nav"/);
+  assert.match(header, /flex min-h-phone-bar flex-wrap items-center/);
+  assert.match(header, /<ul className="flex list-none items-center flush">/);
+  assert.doesNotMatch(header, /<ul className="[^"]*flex-wrap/);
+  assert.match(
+    compact,
+    /#nd-mobile-nav nav a:not\(\[data-slot="button"\]\)\s*\{[^}]*min-width:\s*1\.5rem/,
+  );
+  assert.doesNotMatch(
+    compact,
+    /#nd-mobile-nav nav a:not\(\[data-slot="button"\]\)\s*\{[^}]*padding-inline:/,
+  );
+  assert.match(
+    compact,
+    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*flex-basis:\s*100%/,
+  );
+  assert.match(
+    compact,
+    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*justify-content:\s*flex-end/,
+  );
+  assert.match(
+    compact,
+    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*flex-wrap:\s*nowrap/,
+  );
+  assert.match(
+    compact,
+    /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
+  );
+  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
+});
