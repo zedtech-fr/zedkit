@@ -6,7 +6,6 @@ import {
   Badge,
   Button,
   EmptyState,
-  ErrorState,
   Heading,
   PageHeader,
   Stack,
@@ -25,6 +24,7 @@ import {
 } from "../model/review-routes";
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
+import { ReviewLoadErrorView } from "./review-load-error-view";
 import { LatestStatusMark } from "./issue-status";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
@@ -60,7 +60,13 @@ function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
       title={
         <>
           <Button asChild variant="link" className="min-h-target w-fit">
-            <Link href={last ? issueRunPath(issue.number, last.runId) : issuePath(issue.number)}>
+            <Link
+              href={
+                last
+                  ? issueRunPath(issue.number, last.runId)
+                  : issuePath(issue.number)
+              }
+            >
               #{issue.number} {issue.title}
             </Link>
           </Button>
@@ -104,13 +110,21 @@ function UnlinkedRow({
       title={
         <>
           <Button asChild variant="link" className="min-h-target w-fit">
-            <Link href={last ? unlinkedRunPath(entry.number, last.runId) : unlinkedPrPath(entry.number)}>
+            <Link
+              href={
+                last
+                  ? unlinkedRunPath(entry.number, last.runId)
+                  : unlinkedPrPath(entry.number)
+              }
+            >
               #{entry.number}
             </Link>
           </Button>
           {last ? (
             <Button asChild variant="link" className="min-h-target w-fit">
-              <Link href={unlinkedPrPath(entry.number)}>{copy.issue.timeline}</Link>
+              <Link href={unlinkedPrPath(entry.number)}>
+                {copy.issue.timeline}
+              </Link>
             </Button>
           ) : null}
         </>
@@ -145,20 +159,13 @@ export function ReviewListView({
   loadError?: boolean;
 }) {
   const unlinkedHeadingId = useId();
+  if (loadError) {
+    return <ReviewLoadErrorView copy={copy} />;
+  }
   return (
     <ReviewAppearanceFrame>
       <PageHeader title={copy.list.title} description={copy.list.description} />
-      {loadError ? (
-        <ErrorState
-          title={copy.loadError.title}
-          description={copy.loadError.description}
-          actions={
-            <Button type="button" variant="outline" onClick={() => window.location.reload()}>
-              {copy.loadError.retry}
-            </Button>
-          }
-        />
-      ) : issues.length === 0 && unlinked.length === 0 ? (
+      {issues.length === 0 && unlinked.length === 0 ? (
         <EmptyState description={copy.list.empty} />
       ) : issues.length === 0 ? null : (
         <ul aria-label={copy.list.title}>
@@ -169,7 +176,7 @@ export function ReviewListView({
           ))}
         </ul>
       )}
-      {!loadError && unlinked.length > 0 ? (
+      {unlinked.length > 0 ? (
         <Stack gap="sm">
           <Heading level={2} typeRole="section" id={unlinkedHeadingId}>
             {copy.list.unlinkedTitle}

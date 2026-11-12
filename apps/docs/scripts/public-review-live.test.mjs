@@ -13,7 +13,11 @@ import {
   createPublicReviewPort,
   readGithubToken,
 } from "../features/reviews/adapters/live.ts";
-import { fetchRunsIndex, parseRunsEnvelope, runsListUrl } from "../features/reviews/adapters/runs-api.ts";
+import {
+  fetchRunsIndex,
+  parseRunsEnvelope,
+  runsListUrl,
+} from "../features/reviews/adapters/runs-api.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
 import { mergePublicIndex } from "../features/reviews/model/merge-public-index.ts";
 import { HOSTED_LIVE_HREF_PREFIX } from "../features/reviews/model/public-review.ts";
@@ -48,7 +52,13 @@ function fetchFrom(routes, calls = []) {
 }
 
 function githubIssue(overrides = {}) {
-  return { number: 241, title: "Ship ingest", state: "open", labels: [{ name: "ready" }], ...overrides };
+  return {
+    number: 241,
+    title: "Ship ingest",
+    state: "open",
+    labels: [{ name: "ready" }],
+    ...overrides,
+  };
 }
 
 function githubPull(overrides = {}) {
@@ -86,21 +96,38 @@ function runRow(overrides = {}) {
 }
 
 function runsEnvelope(runs, extra = {}) {
-  return { version: 1, generatedAt: "2026-11-12T15:40:00Z", nextCursor: null, runs, ...extra };
+  return {
+    version: 1,
+    generatedAt: "2026-11-12T15:40:00Z",
+    nextCursor: null,
+    runs,
+    ...extra,
+  };
 }
 
-function githubAndRuns({ issues = [githubIssue()], pulls = [githubPull()], runs = [runRow()], reviews } = {}) {
+function githubAndRuns({
+  issues = [githubIssue()],
+  pulls = [githubPull()],
+  runs = [runRow()],
+  reviews,
+} = {}) {
   const routes = [
     { includes: "/issues?", body: issues },
     { includes: "/pulls?", body: pulls },
     { includes: "/api/runs", body: runsEnvelope(runs) },
   ];
-  if (reviews !== undefined) routes.push({ includes: "/reviews", body: reviews });
+  if (reviews !== undefined)
+    routes.push({ includes: "/reviews", body: reviews });
   return routes;
 }
 
 test("closing keywords collect unique issue numbers and ignore other hashes", () => {
-  assert.deepEqual(parseClosingIssueNumbers("Fixes #241 and closes #241.\nThis resolves #250."), [241, 250]);
+  assert.deepEqual(
+    parseClosingIssueNumbers(
+      "Fixes #241 and closes #241.\nThis resolves #250.",
+    ),
+    [241, 250],
+  );
   assert.deepEqual(parseClosingIssueNumbers("see #12"), []);
   assert.deepEqual(parseClosingIssueNumbers(null), []);
 });
@@ -109,13 +136,28 @@ test("GitHub catalog drops pull-request rows from the issues list", async () => 
   const { fetchImpl, calls } = fetchFrom([
     {
       includes: "/issues?",
-      body: [githubIssue(), { ...githubIssue(), number: 250, pull_request: { url: "https://example.test" } }],
+      body: [
+        githubIssue(),
+        {
+          ...githubIssue(),
+          number: 250,
+          pull_request: { url: "https://example.test" },
+        },
+      ],
     },
     { includes: "/pulls?", body: [githubPull()] },
   ]);
-  const result = await fetchGithubCatalog({ fetch: fetchImpl, sleep: noSleep, retries: 0, token: TOKEN });
+  const result = await fetchGithubCatalog({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    token: TOKEN,
+  });
   assert.equal(result.ok, true);
-  assert.deepEqual(result.value.issues.map((row) => row.number), [241]);
+  assert.deepEqual(
+    result.value.issues.map((row) => row.number),
+    [241],
+  );
   assert.deepEqual(result.value.pullRequests[0].closingIssueNumbers, [241]);
   assert.equal(calls[0].init.headers.Authorization, `Bearer ${TOKEN}`);
   assert.equal(JSON.stringify(result.value).includes(TOKEN), false);
@@ -126,31 +168,53 @@ test("GitHub catalog omits the Authorization header when no token is passed", as
     { includes: "/issues?", body: [] },
     { includes: "/pulls?", body: [] },
   ]);
-  const result = await fetchGithubCatalog({ fetch: fetchImpl, sleep: noSleep, retries: 0 });
+  const result = await fetchGithubCatalog({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+  });
   assert.equal(result.ok, true);
   assert.equal(calls[0].init.headers.Authorization, undefined);
   assert.equal(calls[0].init.headers["User-Agent"], "zedkit-docs");
 });
 
 test("GitHub catalog paginates until a short page", async () => {
-  const page1 = Array.from({ length: 100 }, (_, i) => githubIssue({ number: i + 1, title: `Issue ${i + 1}` }));
+  const page1 = Array.from({ length: 100 }, (_, i) =>
+    githubIssue({ number: i + 1, title: `Issue ${i + 1}` }),
+  );
   const { fetchImpl, calls } = fetchFrom([
     {
       includes: "/issues?",
       respond: (url) =>
-        jsonResponse(200, /[?&]page=1(?:&|$)/.test(url) ? page1 : [githubIssue({ number: 101 })]),
+        jsonResponse(
+          200,
+          /[?&]page=1(?:&|$)/.test(url)
+            ? page1
+            : [githubIssue({ number: 101 })],
+        ),
     },
     { includes: "/pulls?", body: [] },
   ]);
-  const result = await fetchGithubCatalog({ fetch: fetchImpl, sleep: noSleep, retries: 0 });
+  const result = await fetchGithubCatalog({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+  });
   assert.equal(result.ok, true);
   assert.equal(result.value.issues.length, 101);
   assert.equal(calls.filter((row) => row.url.includes("/issues?")).length, 2);
 });
 
 async function assertGithubFailure(status, body, headers) {
-  const { fetchImpl } = fetchFrom([{ includes: "/issues?", status, body: body ?? { message: "no" }, headers }]);
-  const result = await fetchGithubCatalog({ fetch: fetchImpl, sleep: noSleep, retries: 0, token: TOKEN });
+  const { fetchImpl } = fetchFrom([
+    { includes: "/issues?", status, body: body ?? { message: "no" }, headers },
+  ]);
+  const result = await fetchGithubCatalog({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    token: TOKEN,
+  });
   assert.equal(result.ok, false);
   assert.doesNotMatch(result.error.message, new RegExp(TOKEN));
 }
@@ -160,7 +224,12 @@ test("GitHub catalog fails closed on 403, 429, 5xx, malformed JSON, and empty su
   await assertGithubFailure(429, { message: "rate" }, { "Retry-After": "1" });
   await assertGithubFailure(500);
   const { fetchImpl } = fetchFrom([{ includes: "/issues?", body: "{" }]);
-  const malformed = await fetchGithubCatalog({ fetch: fetchImpl, sleep: noSleep, retries: 0, token: TOKEN });
+  const malformed = await fetchGithubCatalog({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    token: TOKEN,
+  });
   assert.equal(malformed.ok, false);
   assert.doesNotMatch(malformed.error.message, new RegExp(TOKEN));
   const empty = await fetchGithubCatalog({
@@ -181,7 +250,10 @@ test("GitHub catalog times out without echoing the token", async () => {
       const signal = init?.signal;
       const onAbort = () => reject(signal?.reason ?? new Error("aborted"));
       // AbortSignal.timeout does not keep the event loop alive on its own.
-      const keepAlive = setTimeout(() => reject(new Error("signal never aborted")), 5_000);
+      const keepAlive = setTimeout(
+        () => reject(new Error("signal never aborted")),
+        5_000,
+      );
       const finish = () => {
         clearTimeout(keepAlive);
         onAbort();
@@ -205,21 +277,23 @@ test("GitHub catalog times out without echoing the token", async () => {
 });
 
 test("GitHub review fallback reads Confidence and state from the latest matching review", async () => {
-  const result = await fetchGithubReviewFallbacks(
-    [250],
-    {
-      fetch: fetchFrom([
-        {
-          includes: "/reviews",
-          body: [githubReview({ state: "COMMENTED", body: "Confidence: 2/10" }), githubReview()],
-        },
-      ]).fetchImpl,
-      sleep: noSleep,
-      retries: 0,
-    },
-  );
+  const result = await fetchGithubReviewFallbacks([250], {
+    fetch: fetchFrom([
+      {
+        includes: "/reviews",
+        body: [
+          githubReview({ state: "COMMENTED", body: "Confidence: 2/10" }),
+          githubReview(),
+        ],
+      },
+    ]).fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+  });
   assert.equal(result.ok, true);
-  assert.deepEqual(result.value, [{ prNumber: 250, verdict: "approve", score: 8 }]);
+  assert.deepEqual(result.value, [
+    { prNumber: 250, verdict: "approve", score: 8 },
+  ]);
 });
 
 test("runs list URL assembles the live-service path from the base", () => {
@@ -230,12 +304,22 @@ test("runs list URL assembles the live-service path from the base", () => {
 });
 
 test("runs envelope accepts the v1 fixture and drops a disallowed live URL", () => {
-  const parsed = parseRunsEnvelope(runsEnvelope([runRow({ liveUrl: "https://github.com/zedtech-fr/zedkit/pull/250" })]));
+  const parsed = parseRunsEnvelope(
+    runsEnvelope([
+      runRow({ liveUrl: "https://github.com/zedtech-fr/zedkit/pull/250" }),
+    ]),
+  );
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.runs[0].liveUrl, null);
-  assert.equal(parseRunsEnvelope(runsEnvelope([runRow()], { version: 2 })).ok, false);
+  assert.equal(
+    parseRunsEnvelope(runsEnvelope([runRow()], { version: 2 })).ok,
+    false,
+  );
   assert.equal(parseRunsEnvelope({ version: 1 }).ok, false);
-  assert.equal(parseRunsEnvelope(runsEnvelope([runRow({ status: "done" })])).ok, false);
+  assert.equal(
+    parseRunsEnvelope(runsEnvelope([runRow({ status: "done" })])).ok,
+    false,
+  );
 });
 
 test("runs adapter paginates on nextCursor and fails closed on the error matrix", async () => {
@@ -253,25 +337,60 @@ test("runs adapter paginates on nextCursor and fails closed on the error matrix"
         ),
     },
   ]);
-  const listed = await fetchRunsIndex({ fetch: fetchImpl, sleep: noSleep, retries: 0, runsBase: RUNS_BASE });
+  const listed = await fetchRunsIndex({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    runsBase: RUNS_BASE,
+  });
   assert.equal(listed.ok, true);
-  assert.deepEqual(listed.value.map((row) => row.runId), ["run-a", "run-b"]);
+  assert.deepEqual(
+    listed.value.map((row) => row.runId),
+    ["run-a", "run-b"],
+  );
   assert.equal(calls.length, 2);
 
-  const { fetchImpl: failFetch } = fetchFrom([{ includes: "/api/runs", status: 503, body: { error: "unavailable" } }]);
-  const failed = await fetchRunsIndex({ fetch: failFetch, sleep: noSleep, retries: 0, runsBase: RUNS_BASE });
+  const { fetchImpl: failFetch } = fetchFrom([
+    { includes: "/api/runs", status: 503, body: { error: "unavailable" } },
+  ]);
+  const failed = await fetchRunsIndex({
+    fetch: failFetch,
+    sleep: noSleep,
+    retries: 0,
+    runsBase: RUNS_BASE,
+  });
   assert.equal(failed.ok, false);
 });
 
 test("merge links PRs from runs and from closing keywords; unlinked PRs stay unlinked", () => {
   const github = {
-    issues: [githubIssue(), githubIssue({ number: 108, title: "Public issues", state: "closed" })],
-    pullRequests: [githubPull(), githubPull({ number: 54, body: "no closing ref" })],
+    issues: [
+      githubIssue(),
+      githubIssue({ number: 108, title: "Public issues", state: "closed" }),
+    ],
+    pullRequests: [
+      githubPull(),
+      githubPull({ number: 54, body: "no closing ref" }),
+    ],
   };
   const runs = [
     runRow(),
-    runRow({ runId: "run-54", issue: null, pr: 54, kind: "review", phase: null, liveUrl: null }),
-    runRow({ runId: "run-108", issue: 108, pr: null, kind: "implement", phase: null, liveUrl: null }),
+    runRow({
+      runId: "run-54",
+      issue: null,
+      pr: 54,
+      kind: "review",
+      phase: null,
+      liveUrl: null,
+    }),
+    runRow({
+      runId: "run-108",
+      issue: 108,
+      pr: null,
+      kind: "implement",
+      phase: null,
+      liveUrl: null,
+    }),
   ];
   const index = mergePublicIndex({ github, runs });
   const issue241 = index.issues.find((row) => row.number === 241);
@@ -290,8 +409,17 @@ test("merge splits plan and implement that share a runId", () => {
   const index = mergePublicIndex({
     github: { issues: [githubIssue()], pullRequests: [githubPull()] },
     runs: [
-      runRow({ kind: "implement", phase: "plan", startedAt: "2026-11-12T14:00:00Z", durationMs: 1000 }),
-      runRow({ kind: "implement", phase: "implement", startedAt: "2026-11-12T14:10:00Z" }),
+      runRow({
+        kind: "implement",
+        phase: "plan",
+        startedAt: "2026-11-12T14:00:00Z",
+        durationMs: 1000,
+      }),
+      runRow({
+        kind: "implement",
+        phase: "implement",
+        startedAt: "2026-11-12T14:10:00Z",
+      }),
     ],
   });
   const entries = index.issues[0].entries;
@@ -303,18 +431,29 @@ test("merge splits plan and implement that share a runId", () => {
   assert.equal(entries[1].type, "implement");
 });
 
-test("merge uses GitHub verdict and score only when the run leaves them null", () => {
+test("merge uses GitHub verdict and score only on review entries with a null verdict", () => {
   const fallbacks = [{ prNumber: 250, verdict: "approve", score: 8 }];
-  const fromGithub = mergePublicIndex({
+  const mixed = mergePublicIndex({
     github: { issues: [githubIssue()], pullRequests: [githubPull()] },
-    runs: [runRow()],
+    runs: [
+      runRow({ runId: "run-impl", kind: "implement", phase: "implement" }),
+      runRow({ runId: "run-rev", kind: "review", phase: "review" }),
+    ],
     fallbacks,
   });
-  assert.equal(fromGithub.issues[0].entries[0].verdict, "approve");
-  assert.equal(fromGithub.issues[0].entries[0].score, 8);
+  const implement = mixed.issues[0].entries.find(
+    (row) => row.type === "implement",
+  );
+  const review = mixed.issues[0].entries.find((row) => row.type === "review");
+  assert.equal(implement.verdict, null);
+  assert.equal(implement.score, null);
+  assert.equal(review.verdict, "approve");
+  assert.equal(review.score, 8);
   const fromRun = mergePublicIndex({
     github: { issues: [githubIssue()], pullRequests: [githubPull()] },
-    runs: [runRow({ verdict: "comment", score: 3 })],
+    runs: [
+      runRow({ kind: "review", phase: "review", verdict: "comment", score: 3 }),
+    ],
     fallbacks,
   });
   assert.equal(fromRun.issues[0].entries[0].verdict, "comment");
@@ -327,9 +466,15 @@ test("merge keeps allowlisted live URLs and drops others; GitHub-only issues sta
       issues: [githubIssue(), githubIssue({ number: 1, title: "No runs" })],
       pullRequests: [githubPull()],
     },
-    runs: [runRow({ liveUrl: "https://example.test/live/nope" }), runRow({ liveUrl: HOSTED, runId: "run-ok" })],
+    runs: [
+      runRow({ liveUrl: "https://example.test/live/nope" }),
+      runRow({ liveUrl: HOSTED, runId: "run-ok" }),
+    ],
   });
-  assert.equal(index.issues.some((row) => row.number === 1), false);
+  assert.equal(
+    index.issues.some((row) => row.number === 1),
+    false,
+  );
   const urls = index.issues[0].entries.map((row) => row.liveUrl);
   assert.ok(urls.includes(null));
   assert.ok(urls.includes(HOSTED));
@@ -347,7 +492,15 @@ test("merge titles a missing GitHub issue as Issue #N", () => {
 
 test("factory lists real-shaped rows when both endpoints are up", async () => {
   const port = createPublicReviewPort({
-    fetch: fetchFrom(githubAndRuns({ reviews: [githubReview()] })).fetchImpl,
+    fetch: fetchFrom(
+      githubAndRuns({
+        reviews: [githubReview()],
+        runs: [
+          runRow(),
+          runRow({ runId: "run-rev", kind: "review", phase: "review" }),
+        ],
+      }),
+    ).fetchImpl,
     sleep: noSleep,
     retries: 0,
     githubToken: TOKEN,
@@ -358,13 +511,20 @@ test("factory lists real-shaped rows when both endpoints are up", async () => {
   assert.equal(issues.length, 1);
   assert.equal(issues[0].number, 241);
   assert.equal(issues[0].title, "Ship ingest");
-  assert.equal(issues[0].entries[0].verdict, "approve");
+  const reviewEntry = issues[0].entries.find((row) => row.type === "review");
+  const implementEntry = issues[0].entries.find(
+    (row) => row.type === "implement",
+  );
+  assert.equal(implementEntry && implementEntry.verdict, null);
+  assert.equal(reviewEntry && reviewEntry.verdict, "approve");
   assert.equal(JSON.stringify(issues).includes(TOKEN), false);
 });
 
 test("factory fails closed when GitHub or the runs API is down", async () => {
   const down = createPublicReviewPort({
-    fetch: fetchFrom([{ includes: "api.github.com", status: 503, body: { error: "no" } }]).fetchImpl,
+    fetch: fetchFrom([
+      { includes: "api.github.com", status: 503, body: { error: "no" } },
+    ]).fetchImpl,
     sleep: noSleep,
     retries: 0,
     githubToken: TOKEN,
@@ -372,7 +532,10 @@ test("factory fails closed when GitHub or the runs API is down", async () => {
   });
   assert.deepEqual(await down.listIssues(), []);
   assert.equal(await down.hasLoadError(), true);
-  assert.doesNotMatch(JSON.stringify(await down.listIssues()), new RegExp(TOKEN));
+  assert.doesNotMatch(
+    JSON.stringify(await down.listIssues()),
+    new RegExp(TOKEN),
+  );
   const runsDown = createPublicReviewPort({
     fetch: fetchFrom([
       { includes: "/issues?", body: [githubIssue()] },
@@ -402,9 +565,15 @@ test("unset runs base is not an error and yields an empty list", async () => {
 });
 
 test("readGithubToken prefers the dedicated env and ignores blanks", () => {
-  assert.equal(readGithubToken({ ZEDKIT_GITHUB_READ_TOKEN: TOKEN, GITHUB_TOKEN: "other" }), TOKEN);
+  assert.equal(
+    readGithubToken({ ZEDKIT_GITHUB_READ_TOKEN: TOKEN, GITHUB_TOKEN: "other" }),
+    TOKEN,
+  );
   assert.equal(readGithubToken({ GITHUB_TOKEN: TOKEN }), TOKEN);
-  assert.equal(readGithubToken({ ZEDKIT_GITHUB_READ_TOKEN: "  ", GITHUB_TOKEN: "" }), undefined);
+  assert.equal(
+    readGithubToken({ ZEDKIT_GITHUB_READ_TOKEN: "  ", GITHUB_TOKEN: "" }),
+    undefined,
+  );
 });
 
 test("site factory assembles the runs-API origin env name", () => {
@@ -426,17 +595,27 @@ test("client review files never mention GitHub token env names", () => {
   }
 });
 
-test("list view copy and error retry are wired through kit states", () => {
+test("list view copy and load error are wired through kit states", () => {
   assert.equal(reviewsCopy.list.empty, "No public runs yet");
-  assert.equal(reviewsCopy.loadError.retry, "Retry");
-  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
-  assert.match(list, /ErrorState/);
-  assert.match(list, /copy\.loadError\.retry/);
+  assert.equal(
+    reviewsCopy.loadError.description,
+    "GitHub or the runs API did not answer. This page updates when the site is next published.",
+  );
+  assert.equal("retry" in reviewsCopy.loadError, false);
+  const list = readFileSync(
+    join(reviewsRoot, "ui/review-list-view.tsx"),
+    "utf8",
+  );
+  assert.match(list, /ReviewLoadErrorView/);
+  assert.doesNotMatch(list, /window\.location\.reload/);
   assert.match(list, /issues\.length === 0 && unlinked\.length === 0/);
   assert.match(list, /EmptyState description=\{copy\.list\.empty\}/);
   assert.doesNotMatch(list, /ReviewSampleNotice/);
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(feature, /createSiteReviewPort/);
   assert.doesNotMatch(feature, /createSnapshotReviewPort/);
-  assert.doesNotMatch(readFileSync(join(reviewsRoot, "adapters/snapshot.ts"), "utf8"), /public-reviews\.json/);
+  assert.doesNotMatch(
+    readFileSync(join(reviewsRoot, "adapters/snapshot.ts"), "utf8"),
+    /public-reviews\.json/,
+  );
 });

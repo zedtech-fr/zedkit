@@ -90,7 +90,10 @@ function runCounts(runs: readonly RunsApiRun[]): Map<string, number> {
 function toEntry(run: RunsApiRun, split: boolean): TimelineEntry {
   const type = entryType(run);
   return {
-    id: split && run.phase !== null && run.phase !== "" ? `${run.runId}:${run.phase}` : run.runId,
+    id:
+      split && run.phase !== null && run.phase !== ""
+        ? `${run.runId}:${run.phase}`
+        : run.runId,
     runId: run.runId,
     type,
     status: run.status,
@@ -108,7 +111,7 @@ function applyFallback(
   entry: TimelineEntry,
   fallback: GithubReviewFallback | undefined,
 ): TimelineEntry {
-  if (fallback === undefined) return entry;
+  if (fallback === undefined || entry.type !== "review") return entry;
   return {
     ...entry,
     verdict: entry.verdict ?? fallback.verdict,
@@ -129,10 +132,15 @@ export function mergePublicIndex(input: {
   const fallbackByPr = new Map(
     (input.fallbacks ?? []).map((row) => [row.prNumber, row] as const),
   );
-  const githubIssues = new Map(input.github.issues.map((row) => [row.number, row] as const));
+  const githubIssues = new Map(
+    input.github.issues.map((row) => [row.number, row] as const),
+  );
   const issueEntries = new Map<number, TimelineEntry[]>();
   const issuePrs = new Map<number, number[]>();
-  const prEntries = new Map<number, { issueNumber: number | null; runIds: string[]; entries: TimelineEntry[] }>();
+  const prEntries = new Map<
+    number,
+    { issueNumber: number | null; runIds: string[]; entries: TimelineEntry[] }
+  >();
 
   for (const pull of input.github.pullRequests) {
     for (const issueNumber of pull.closingIssueNumbers) {
@@ -150,10 +158,18 @@ export function mergePublicIndex(input: {
 
   for (const run of input.runs) {
     const split = (counts.get(run.runId) ?? 0) > 1;
-    const entry = applyFallback(toEntry(run, split), run.pr === null ? undefined : fallbackByPr.get(run.pr));
+    const entry = applyFallback(
+      toEntry(run, split),
+      run.pr === null ? undefined : fallbackByPr.get(run.pr),
+    );
     if (run.pr !== null) {
-      const existing = prEntries.get(run.pr) ?? { issueNumber: run.issue, runIds: [], entries: [] };
-      if (existing.issueNumber === null && run.issue !== null) existing.issueNumber = run.issue;
+      const existing = prEntries.get(run.pr) ?? {
+        issueNumber: run.issue,
+        runIds: [],
+        entries: [],
+      };
+      if (existing.issueNumber === null && run.issue !== null)
+        existing.issueNumber = run.issue;
       if (!existing.runIds.includes(run.runId)) existing.runIds.push(run.runId);
       existing.entries.push(entry);
       prEntries.set(run.pr, existing);
@@ -163,7 +179,9 @@ export function mergePublicIndex(input: {
         issuePrs.set(existing.issueNumber, list);
       }
     }
-    const issueNumber = run.issue ?? (run.pr === null ? null : (prEntries.get(run.pr)?.issueNumber ?? null));
+    const issueNumber =
+      run.issue ??
+      (run.pr === null ? null : (prEntries.get(run.pr)?.issueNumber ?? null));
     if (issueNumber !== null) {
       const list = issueEntries.get(issueNumber) ?? [];
       list.push(entry);
@@ -171,24 +189,28 @@ export function mergePublicIndex(input: {
     }
   }
 
-  const issues: IssueRecord[] = [...issueEntries.entries()].map(([number, entries]) => {
-    const github = githubIssues.get(number);
-    return {
-      number,
-      title: github?.title ?? fallbackTitle(number),
-      state: github?.state ?? "open",
-      pullRequests: issuePrs.get(number) ?? [],
-      lastRunAt: lastStartedAt(entries),
-      entries,
-    };
-  });
+  const issues: IssueRecord[] = [...issueEntries.entries()].map(
+    ([number, entries]) => {
+      const github = githubIssues.get(number);
+      return {
+        number,
+        title: github?.title ?? fallbackTitle(number),
+        state: github?.state ?? "open",
+        pullRequests: issuePrs.get(number) ?? [],
+        lastRunAt: lastStartedAt(entries),
+        entries,
+      };
+    },
+  );
 
-  const pullRequests: PullRequestIndexEntry[] = [...prEntries.entries()].map(([number, row]) => ({
-    number,
-    issueNumber: row.issueNumber,
-    runIds: row.runIds,
-    entries: row.entries,
-  }));
+  const pullRequests: PullRequestIndexEntry[] = [...prEntries.entries()].map(
+    ([number, row]) => ({
+      number,
+      issueNumber: row.issueNumber,
+      runIds: row.runIds,
+      entries: row.entries,
+    }),
+  );
 
   return { version: 1, kind: PUBLIC_INDEX_KIND, issues, pullRequests };
 }

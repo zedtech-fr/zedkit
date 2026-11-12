@@ -14,7 +14,7 @@
  * - Index-only runs keep the hosted-console link (or a placeholder) — because: failed or in-progress rows without a console body still resolve, and this is not a second console.
  * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground. The console uses `ReviewConsoleAppearanceFrame` (dense strip) only.
  * - Empty state says no public runs yet — because: the visitor always has a next thought.
- * - Load error shows kit ErrorState with Retry — because: a dead GitHub or runs API must be obvious and recoverable.
+ * - Load error shows kit ErrorState without Retry — because: the HTML is baked at build time, so a reload would serve the same page.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
  * - Unlinked and timeline links use the visible title as the accessible name — because: speech-control users say the title they see (WCAG 2.5.3).
@@ -44,11 +44,34 @@ import {
 import { toAgentConsole } from "./model/to-agent-console";
 import { isRunRecord } from "./ports/review-port";
 import { ReviewConsoleView } from "./ui/review-console-view";
+import { ReviewLoadErrorView } from "./ui/review-load-error-view";
+import { ReviewNotFoundView } from "./ui/review-not-found-view";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
 
 const port = createSiteReviewPort();
+
+async function reviewLoadErrorView() {
+  if (await port.hasLoadError()) {
+    return <ReviewLoadErrorView copy={reviewsCopy} />;
+  }
+  return null;
+}
+
+export async function ReviewMissingFeature({
+  title,
+  body,
+  backLabel,
+}: {
+  title: string;
+  body: string;
+  backLabel: string;
+}) {
+  const loadError = await reviewLoadErrorView();
+  if (loadError !== null) return loadError;
+  return <ReviewNotFoundView title={title} body={body} backLabel={backLabel} />;
+}
 
 export async function issuesIndexRobots() {
   return issueIndexRobotsFrom(port);
@@ -69,6 +92,8 @@ export async function ReviewListFeature() {
 }
 
 export async function ReviewIssueFeature({ n }: { n: string }) {
+  const loadError = await reviewLoadErrorView();
+  if (loadError !== null) return loadError;
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
   if (issue === null) notFound();
@@ -77,21 +102,34 @@ export async function ReviewIssueFeature({ n }: { n: string }) {
 
 export async function ReviewUnlinkedFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
-  const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
+  const pullRequest =
+    number === null ? null : await port.getUnlinkedPullRequest(number);
   if (pullRequest !== null) {
     return <UnlinkedPrView pullRequest={pullRequest} copy={reviewsCopy} />;
   }
   const resolved = number === null ? null : await port.resolvePr(number);
   const fallback = linkedPrFallbackPath(resolved?.issueNumber ?? null);
   if (fallback !== null) redirect(fallback);
+  const loadError = await reviewLoadErrorView();
+  if (loadError !== null) return loadError;
   notFound();
 }
 
-export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }) {
+export async function ReviewIssueRunFeature({
+  n,
+  id,
+}: {
+  n: string;
+  id: string;
+}) {
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
   const run = number === null ? null : await port.getRun(number, id);
-  if (issue === null || run === null) notFound();
+  if (issue === null || run === null) {
+    const loadError = await reviewLoadErrorView();
+    if (loadError !== null) return loadError;
+    notFound();
+  }
   if (isRunRecord(run)) {
     return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
   }
@@ -107,18 +145,29 @@ export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }
   );
 }
 
-export async function ReviewUnlinkedRunFeature({ n, id }: { n: string; id: string }) {
+export async function ReviewUnlinkedRunFeature({
+  n,
+  id,
+}: {
+  n: string;
+  id: string;
+}) {
   const number = parsePrNumber(n);
-  const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
+  const pullRequest =
+    number === null ? null : await port.getUnlinkedPullRequest(number);
   const run = number === null ? null : await port.getUnlinkedRun(number, id);
   if (pullRequest !== null && run !== null) {
-    return <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />;
+    return (
+      <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />
+    );
   }
   const resolved = number === null ? null : await port.resolvePr(number);
   if (resolved !== null && resolved.runIds.includes(id)) {
     const fallback = linkedPrRunFallbackPath(resolved.issueNumber, id);
     if (fallback !== null) redirect(fallback);
   }
+  const loadError = await reviewLoadErrorView();
+  if (loadError !== null) return loadError;
   notFound();
 }
 
@@ -129,14 +178,28 @@ export async function redirectReviewsIndex() {
 export async function redirectReviewsPr({ n }: { n: string }) {
   const number = parsePrNumber(n);
   const resolved = number === null ? null : await port.resolvePr(number);
-  if (number === null || resolved === null) notFound();
+  if (number === null || resolved === null) {
+    const loadError = await reviewLoadErrorView();
+    if (loadError !== null) return loadError;
+    notFound();
+  }
   redirect(redirectPathForPr(resolved.issueNumber, number));
 }
 
-export async function redirectReviewsPrRun({ n, id }: { n: string; id: string }) {
+export async function redirectReviewsPrRun({
+  n,
+  id,
+}: {
+  n: string;
+  id: string;
+}) {
   const number = parsePrNumber(n);
   const resolved = number === null ? null : await port.resolvePr(number);
-  if (number === null || resolved === null || !resolved.runIds.includes(id)) notFound();
+  if (number === null || resolved === null || !resolved.runIds.includes(id)) {
+    const loadError = await reviewLoadErrorView();
+    if (loadError !== null) return loadError;
+    notFound();
+  }
   redirect(redirectPathForPrRun(resolved.issueNumber, number, id));
 }
 

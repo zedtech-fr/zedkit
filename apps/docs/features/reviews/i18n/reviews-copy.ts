@@ -57,14 +57,15 @@ export const reviewsCopy = {
   unlinked: {
     back: "All issues",
     title: "Unlinked pull request",
-    missing: "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
+    missing:
+      "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
     // Defensive: zero-entry PRs are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this pull request.",
   },
   loadError: {
     title: "Could not load public runs",
-    description: "GitHub or the runs API did not answer. Try again.",
-    retry: "Retry",
+    description:
+      "GitHub or the runs API did not answer. This page updates when the site is next published.",
   },
   run: {
     backToIssue: "Back to the issue",
