@@ -22,11 +22,27 @@ function isPositive(value) {
   return Number.isSafeInteger(value) && value > 0;
 }
 
-/** Independent of ReviewPort: first public positive issue, else first public PR. */
+function lastStartedAt(row) {
+  const entries = Array.isArray(row?.entries) ? row.entries : [];
+  let latest = "";
+  for (const entry of entries) {
+    const startedAt = typeof entry?.startedAt === "string" ? entry.startedAt : "";
+    if (startedAt > latest) latest = startedAt;
+  }
+  return latest;
+}
+
+/** Independent of ReviewPort: same order as listIssues (latest run first), else first public PR. */
 function firstPositiveHrefFromRaw(raw) {
   const issues = Array.isArray(raw?.issues) ? raw.issues : [];
   const issueNumber = issues
-    .filter((row) => row?.visibility !== "private")
+    .filter((row) => row?.visibility !== "private" && Array.isArray(row?.entries) && row.entries.length > 0)
+    .slice()
+    .sort((a, b) => {
+      const byTime = lastStartedAt(b).localeCompare(lastStartedAt(a));
+      if (byTime !== 0) return byTime;
+      return (b?.number ?? 0) - (a?.number ?? 0);
+    })
     .map((row) => row?.number)
     .find(isPositive);
   if (issueNumber !== undefined) return `/issues/${issueNumber}`;

@@ -26,6 +26,10 @@ export function isReviewIdentity(id: string): id is ReviewAppearance["identity"]
   return (REVIEW_IDENTITIES as readonly string[]).includes(id);
 }
 
+export function isReviewDensity(value: string): value is ReviewDensity {
+  return value === "default" || value === "compact";
+}
+
 export function parseReviewAppearance(search: string): ReviewAppearance {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   const rawId = params.get("identity") ?? DEFAULT_IDENTITY;
