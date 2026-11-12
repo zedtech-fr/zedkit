@@ -38,6 +38,12 @@ export function parseReviewAppearance(search: string): ReviewAppearance {
   };
 }
 
+/** True when the share URL pins this section; empty query inherits the site look. */
+export function hasReviewAppearanceQuery(search: string): boolean {
+  const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
+  return params.has("identity") || params.has("preview") || params.has("theme") || params.has("density");
+}
+
 export function serializeReviewAppearance(appearance: ReviewAppearance): string {
   const params = new URLSearchParams();
   if (appearance.identity !== DEFAULT_IDENTITY) params.set("identity", appearance.identity);

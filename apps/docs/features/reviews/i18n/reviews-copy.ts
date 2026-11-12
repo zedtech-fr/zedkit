@@ -2,8 +2,7 @@ export const reviewsCopy = {
   metadata: {
     list: {
       title: "Issues",
-      description:
-        "Public issues with exportable runs on zedkit. Switch identity, light or dark, and density on the page.",
+      description: "Public issues with exportable runs on zedkit.",
     },
     issue: {
       title: "Issue",
@@ -37,7 +36,7 @@ export const reviewsCopy = {
   },
   list: {
     title: "Issues",
-    description: "Public issues with at least one exportable run. The preview look stays on this section.",
+    description: "Public issues with at least one exportable run.",
     empty: "Public issues will show up here when the first exportable run exists.",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
@@ -71,17 +70,6 @@ export const reviewsCopy = {
     openLive: "Open the hosted live console (new tab)",
     noLive: "No hosted live console URL is available for this run.",
     missing: "This run is not on the public list.",
-  },
-  appearance: {
-    legend: "Preview look",
-    hint: "This changes the issues preview, not the site.",
-    identity: "Identity",
-    mode: "Dark preview",
-    density: "Density",
-    densityDefault: "Default",
-    densityCompact: "Compact",
-    reset: "Reset",
-    advanced: "Advanced token editor",
   },
   type: {
     plan: "Plan",

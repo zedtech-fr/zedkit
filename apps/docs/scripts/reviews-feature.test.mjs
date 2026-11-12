@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   DEFAULT_REVIEW_APPEARANCE,
+  hasReviewAppearanceQuery,
   parseReviewAppearance,
   serializeReviewAppearance,
 } from "../lib/review-appearance.ts";
@@ -44,8 +45,6 @@ import {
   RETIRED_REVIEW_PR_NUMBERS,
 } from "../features/reviews/model/review-routes.ts";
 import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
-import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
-
 const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
 const reviewsAppRoot = join(here, "../app/(site)/reviews");
@@ -572,8 +571,15 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   );
   assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
+  assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
+  assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Preview look/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Dark preview/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Advanced token editor/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /preview look/);
+  assert.equal("appearance" in reviewsCopy, false);
 });
 
 test("parsePrNumber accepts decimal integers and rejects the rest", () => {
@@ -618,21 +624,6 @@ test("unknown identity and hostile query values fall back without throwing", () 
   });
 });
 
-test("share URL merge keeps appearance query and hash together", () => {
-  assert.equal(
-    mergeReviewShareUrl({
-      pathname: "/issues/108",
-      search: "identity=volt&preview=dark",
-      hash: "",
-    }),
-    "/issues/108?identity=volt&preview=dark",
-  );
-  assert.equal(
-    mergeReviewShareUrl({ pathname: "/issues/108", search: "", hash: "" }),
-    "/issues/108",
-  );
-});
-
 test("appearance codec still ignores unknown keys including item", () => {
   assert.deepEqual(parseReviewAppearance("identity=volt&item=agent-review"), {
     identity: "volt",
@@ -642,10 +633,46 @@ test("appearance codec still ignores unknown keys including item", () => {
   assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=volt&item=agent-review")), "identity=volt");
 });
 
-test("appearance share write keeps the selection hash", () => {
-  const src = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
-  assert.match(src, /mergeReviewShareUrl/);
-  assert.match(src, /window\.location\.hash/);
+test("hasReviewAppearanceQuery is true only when an appearance key is present", () => {
+  assert.equal(hasReviewAppearanceQuery(""), false);
+  assert.equal(hasReviewAppearanceQuery("?"), false);
+  assert.equal(hasReviewAppearanceQuery("item=agent-review"), false);
+  assert.equal(hasReviewAppearanceQuery("foo=1&bar=2"), false);
+  assert.equal(hasReviewAppearanceQuery("identity=volt"), true);
+  assert.equal(hasReviewAppearanceQuery("preview=dark"), true);
+  assert.equal(hasReviewAppearanceQuery("theme=dark"), true);
+  assert.equal(hasReviewAppearanceQuery("density=compact"), true);
+  assert.equal(hasReviewAppearanceQuery("?identity=glass"), true);
+  assert.equal(hasReviewAppearanceQuery("foo=1&density=default"), true);
+});
+
+test("issues views drop the inline preview form and keep the shared frame", () => {
+  const frame = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
+  const list = readFileSync(join(reviewsRoot, "ui", "review-list-view.tsx"), "utf8");
+  const issue = readFileSync(join(reviewsRoot, "ui", "review-pr-view.tsx"), "utf8");
+  const run = readFileSync(join(reviewsRoot, "ui", "review-run-view.tsx"), "utf8");
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  for (const source of [frame, list, issue, run]) {
+    assert.doesNotMatch(source, /ReviewAppearancePanel/);
+    assert.doesNotMatch(source, /Preview look/);
+    assert.doesNotMatch(source, /copy\.appearance/);
+    assert.doesNotMatch(source, /\(panel\)/);
+    assert.doesNotMatch(source, /\{panel\}/);
+    assert.doesNotMatch(source, /history\.replaceState/);
+    assert.doesNotMatch(source, /writeShareUrl/);
+    assert.doesNotMatch(source, /mergeReviewShareUrl/);
+    assert.match(source, /ReviewAppearanceFrame/);
+  }
+  assert.match(frame, /ThemeScope/);
+  assert.match(frame, /width="wide"/);
+  assert.match(frame, /parseReviewAppearance\(/);
+  assert.match(frame, /window\.location\.search/);
+  assert.match(frame, /hasReviewAppearanceQuery/);
+  assert.match(frame, /identity=\{pin \? appearance\.identity : undefined\}/);
+  assert.match(frame, /mode=\{pin \? appearance\.mode : undefined\}/);
+  assert.doesNotMatch(feature, /identity testing ground/);
+  assert.doesNotMatch(feature, /render-function children/);
+  assert.match(feature, /share-URL pin/);
 });
 
 test("issue pages use generateStaticParams; review pages redirect", () => {

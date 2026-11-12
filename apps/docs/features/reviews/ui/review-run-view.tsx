@@ -73,27 +73,22 @@ export function ReviewRunView({
   copy: ReviewsCopy;
 }) {
   return (
-    <ReviewAppearanceFrame copy={copy}>
-      {(panel) => (
-        <>
-          <PageHeader
-            title={`${copy.run.title} ${run.runId}`}
-            description={`#${issue.number} ${issue.title}`}
-            back={
-              <Stack direction="horizontal" gap="sm" className="flex-wrap">
-                <Button asChild variant="link" size="sm" className="min-h-target">
-                  <Link href={issuePath(issue.number)}>{copy.run.backToIssue}</Link>
-                </Button>
-                <Button asChild variant="link" size="sm" className="min-h-target">
-                  <Link href="/issues">{copy.run.backToList}</Link>
-                </Button>
-              </Stack>
-            }
-          />
-          {panel}
-          <RunBody run={run} copy={copy} />
-        </>
-      )}
+    <ReviewAppearanceFrame>
+      <PageHeader
+        title={`${copy.run.title} ${run.runId}`}
+        description={`#${issue.number} ${issue.title}`}
+        back={
+          <Stack direction="horizontal" gap="sm" className="flex-wrap">
+            <Button asChild variant="link" size="sm" className="min-h-target">
+              <Link href={issuePath(issue.number)}>{copy.run.backToIssue}</Link>
+            </Button>
+            <Button asChild variant="link" size="sm" className="min-h-target">
+              <Link href="/issues">{copy.run.backToList}</Link>
+            </Button>
+          </Stack>
+        }
+      />
+      <RunBody run={run} copy={copy} />
     </ReviewAppearanceFrame>
   );
 }
@@ -108,27 +103,22 @@ export function UnlinkedRunView({
   copy: ReviewsCopy;
 }) {
   return (
-    <ReviewAppearanceFrame copy={copy}>
-      {(panel) => (
-        <>
-          <PageHeader
-            title={`${copy.run.title} ${run.runId}`}
-            description={`${copy.unlinked.title} #${pullRequest.number}`}
-            back={
-              <Stack direction="horizontal" gap="sm" className="flex-wrap">
-                <Button asChild variant="link" size="sm" className="min-h-target">
-                  <Link href={unlinkedPrPath(pullRequest.number)}>{copy.run.backToUnlinked}</Link>
-                </Button>
-                <Button asChild variant="link" size="sm" className="min-h-target">
-                  <Link href="/issues">{copy.run.backToList}</Link>
-                </Button>
-              </Stack>
-            }
-          />
-          {panel}
-          <RunBody run={run} copy={copy} />
-        </>
-      )}
+    <ReviewAppearanceFrame>
+      <PageHeader
+        title={`${copy.run.title} ${run.runId}`}
+        description={`${copy.unlinked.title} #${pullRequest.number}`}
+        back={
+          <Stack direction="horizontal" gap="sm" className="flex-wrap">
+            <Button asChild variant="link" size="sm" className="min-h-target">
+              <Link href={unlinkedPrPath(pullRequest.number)}>{copy.run.backToUnlinked}</Link>
+            </Button>
+            <Button asChild variant="link" size="sm" className="min-h-target">
+              <Link href="/issues">{copy.run.backToList}</Link>
+            </Button>
+          </Stack>
+        }
+      />
+      <RunBody run={run} copy={copy} />
     </ReviewAppearanceFrame>
   );
 }

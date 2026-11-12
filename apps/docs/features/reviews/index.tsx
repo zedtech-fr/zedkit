@@ -10,11 +10,11 @@
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
- * - Appearance / ThemeScope frame stays — because: this section remains the identity testing ground.
+ * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground.
  * - Empty state says public issues will show up here — because: the visitor always has a next thought.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
- * - Views stay client components — because: ReviewAppearanceFrame takes render-function children.
+ * - Views stay client components — because: the frame is a client component that reads the share URL on mount.
  * - Retired /reviews/pr/64|79|80 stubs are export-only; run-level retired URLs 404 — because: run ids are unknowable once retired.
  */
 
