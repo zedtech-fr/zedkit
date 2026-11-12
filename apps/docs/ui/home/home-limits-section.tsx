@@ -15,7 +15,7 @@ import { homeLimitsCopy } from "@/ui/home/i18n/home-limits-copy";
  * client = integrating developer who needs limits before adopting, and a
  * feature-card grid would look like a sell. Section H2, item H3,
  * persuasion body. Muted band, because neighbours (looks stage, manifesto
- * panel) already occupy the high-value surfaces.
+ * band) already occupy the high-value surfaces.
  */
 export function HomeLimitsSection() {
   return (

@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const root = join(app, "../..");
 
 test("home hero dashboard loads the admin demo through next/dynamic", () => {
   const src = readFileSync(join(app, "ui/home/home-hero-app.tsx"), "utf8");
@@ -131,7 +132,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     "Closing",
   ]);
   assert.doesNotMatch(src, /HomeYoursScene|HomeComponentFamiliesSection|HomeSecondarySection/);
-  assert.doesNotMatch(src, /uiGalleryStats|entryPoints|HomeEntryPoint/);
+  assert.doesNotMatch(src, /entryPoints|HomeEntryPoint/);
   assert.equal(existsSync(join(app, "ui/home/home-yours-scene.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-component-families-section.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-secondary-section.tsx")), false);
@@ -145,43 +146,124 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-terminal.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-get-started-section.tsx")), false);
-  assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField/);
-  assert.match(sameIdeaCopy, /title: "Same idea, two places"/);
-  assert.doesNotMatch(sameIdeaCopy, /three places/);
-  assert.doesNotMatch(sameIdeaCopy, /\btogether:/);
-  assert.match(sameIdeaCopy, /\bui:/);
-  assert.match(sameIdeaCopy, /\bai:/);
-  assert.match(sameIdea, /COLUMN_IDS = \["ui", "ai"\]/);
-  assert.match(sameIdea, /HOME_SAME_IDEA_GRID/);
+  assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField|FeatureGrid|OffPathLink|@zedtech\/zedkit-ui\/marketing/);
+  assert.match(sameIdeaCopy, /title: "Same idea, two places\."/);
+  assert.match(
+    sameIdeaCopy,
+    /description: "Tell the agent once what a good team already knows, and keep it in the repo\."/,
+  );
+  assert.match(sameIdeaCopy, /title: "zedkit AI"/);
+  assert.match(sameIdeaCopy, /title: "zedkit UI"/);
+  assert.match(sameIdeaCopy, /title: "Together"/);
+  assert.match(sameIdeaCopy, /href: "\/docs\/ai\/setup"/);
+  assert.match(sameIdeaCopy, /href: "\/catalog"/);
+  assert.match(sameIdeaCopy, /href: "\/map\.md"/);
+  assert.match(sameIdeaCopy, /heading: "What lands in your repo"/);
+  assert.match(sameIdeaCopy, /link: "AI setup guide"/);
+  assert.match(sameIdeaCopy, /link: "Browse the catalog"/);
+  assert.match(sameIdeaCopy, /link: "Read map\.md"/);
+  assert.match(sameIdea, /CARD_IDS = \["ai", "ui", "together"\]/);
+  assert.match(sameIdea, /HOME_SAME_IDEA_CARDS_GRID/);
+  assert.doesNotMatch(sameIdea, /HOME_SAME_IDEA_GRID/);
+  assert.doesNotMatch(sameIdea, /px-badge-inline/);
+  assert.match(sameIdea, /WINDOW_CHIP =\s*"rounded-md bg-primary-foreground\/20 px-code-inline/);
+  assert.match(sameIdea, /pointer-events-none text-primary-foreground/);
+  assert.match(sameIdea, /<Heading level=\{3\} typeRole="body">\s*\{lands\.heading\}/);
+  assert.match(sameIdea, /data-home-same-idea-lands/);
+  assert.match(sameIdea, /data-home-same-idea-window/);
+  assert.match(sameIdea, /aria-hidden/);
+  assert.match(sameIdea, /HomeLink/);
+  assert.match(src, /HomeSameIdeaSection componentCount=\{uiGalleryStats\.components\}/);
+  const page = readFileSync(join(app, "app/(site)/page.tsx"), "utf8");
+  assert.match(page, /import \{ uiGalleryStats \} from ["']@\/content\/gallery["']/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  assert.doesNotMatch(rhythm, /HOME_SAME_IDEA_GRID/);
   assert.match(
     rhythm,
-    /export const HOME_SAME_IDEA_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair"/,
+    /export const HOME_SAME_IDEA_CARDS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,
   );
   assert.match(
     rhythm,
     /export const HOME_LIMITS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,
   );
   assert.doesNotMatch(sixSentences, /FeatureGrid|SetupEntryPrompt|SecretField/);
+  assert.doesNotMatch(sixSentences, /@zedtech\/zedkit-ui\/marketing/);
+  assert.doesNotMatch(sixSentences, /col-span-2|grid-cols-4/);
   assert.match(sixSentences, /id="six-sentences"/);
   assert.match(sixSentences, /from "@zedtech\/zedkit-ui"/);
+  assert.match(sixSentences, /tone="muted"/);
+  assert.match(sixSentences, /HOME_SIX_SENTENCES_GRID/);
+  assert.match(sixSentences, /<Badge/);
+  assert.match(sixSentences, /<blockquote/);
+  assert.match(sixSentences, /lg:span-rest/);
+  assert.match(sixSentences, /data-home-six-sentences-card=\{featured \? "featured" : "plain"\}/);
+  assert.match(sixSentences, /id === "quality" \|\| id === "consistency"/);
+  assert.match(sixSentences, /card\.replyBody\(componentCount\)/);
+  assert.match(src, /HomeSixSentencesSection componentCount=\{uiGalleryStats\.components\}/);
+  assert.match(
+    rhythm,
+    /export const HOME_SIX_SENTENCES_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-quad"/,
+  );
+  assert.doesNotMatch(sixSentencesCopy, /What the kit is/);
+  assert.match(sixSentencesCopy, /title: "Six sentences you stop hearing\."/);
+  assert.match(sixSentencesCopy, /description: "Three about how the agent works\. Three about what it draws\."/);
+  assert.match(sixSentencesCopy, /id: "quality"/);
+  assert.match(sixSentencesCopy, /id: "time"/);
+  assert.match(sixSentencesCopy, /id: "fewer-bugs"/);
+  assert.match(sixSentencesCopy, /id: "brand"/);
+  assert.match(sixSentencesCopy, /id: "finish"/);
+  assert.match(sixSentencesCopy, /id: "consistency"/);
+  assert.match(sixSentencesCopy, /label: "Quality"/);
+  assert.match(sixSentencesCopy, /label: "Time"/);
+  assert.match(sixSentencesCopy, /label: "Fewer bugs"/);
+  assert.match(sixSentencesCopy, /label: "Brand"/);
+  assert.match(sixSentencesCopy, /label: "Finish"/);
+  assert.match(sixSentencesCopy, /label: "Consistency"/);
+  assert.match(sixSentencesCopy, /“Looks good to me\.”/);
+  assert.match(sixSentencesCopy, /“Let me first explore the codebase\.”/);
+  assert.match(sixSentencesCopy, /“Done!”/);
+  assert.match(sixSentencesCopy, /“I went with a clean, modern blue\.”/);
+  assert.match(sixSentencesCopy, /“The happy path works\.”/);
+  assert.match(sixSentencesCopy, /“I created a new Button component\.”/);
+  assert.match(sixSentencesCopy, /Said the agent that wrote it\./);
+  assert.match(sixSentencesCopy, /The one who writes never checks\./);
+  assert.match(sixSentencesCopy, /It learns your repo once\./);
+  assert.match(sixSentencesCopy, /Done has a definition\./);
+  assert.match(sixSentencesCopy, /A look is one attribute\./);
+  assert.match(sixSentencesCopy, /The boring states already exist\./);
+  assert.match(sixSentencesCopy, /One way to do each thing\./);
   assert.match(
     sixSentencesCopy,
-    /Paste one prompt in the agent you already use\. It reads the repo and writes the setup\./,
+    /replyBody: \(componentCount: number\) =>\s*`\$\{componentCount\} components that already agree with each other\. The agent reaches for them instead of inventing\.`/,
   );
-  assert.match(sixSentencesCopy, /The combined prompt covers AI, UI and Nest \(API\)\./);
-  assert.match(sixSentencesCopy, /Install from npm or copy the source\. Same components either way\./);
-  assert.match(sixSentencesCopy, /What you see is MIT, React 19, Tailwind 4\./);
-  assert.match(sixSentencesCopy, /A look sets type, shape, density and color together\./);
-  assert.match(
-    sixSentencesCopy,
-    /This is packages and a docs site, not a hosted app with accounts\./,
-  );
-  assert.equal([...sixSentencesCopy.matchAll(/"[^"]+\."/g)].length, 6);
+  assert.doesNotMatch(sixSentencesCopy, /\d+ components that already agree/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
+  assert.match(tokens, /\[data-home-six-sentences/);
+  assert.match(tokens, /\[data-home-six-sentences-card="featured"\]/);
+  assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ai"\]/);
+  assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ui"\]/);
+  assert.doesNotMatch(tokens, /#1B1764|#2B23C7|#4B3FD9|#3B1F8F|#5B34B5|#7C5CE6/);
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
-  assert.match(tokens, /\[data-home-manifesto-panel\]/);
+  assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]/);
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] \{[^}]*background-color:\s*hsl\(var\(--primary\)\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] \{[^}]*--foreground:\s*var\(--primary-foreground\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] \{[^}]*--ring:\s*var\(--primary-foreground\)/,
+  );
+  assert.doesNotMatch(tokens, /linear-gradient/);
+  const manifestoCss = tokens.match(/#home-page #manifesto\[data-slot="section"\] \{[^}]+\}/);
+  assert.ok(manifestoCss, "manifesto section fill rule");
+  assert.doesNotMatch(manifestoCss[0], /#[0-9A-Fa-f]{3,8}/);
+  assert.doesNotMatch(manifestoCss[0], /border-radius/);
+  assert.doesNotMatch(manifestoCss[0], /padding:/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
@@ -210,6 +292,13 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(
     tokens,
     /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
+  );
+  assert.match(tokens, /\[data-home-same-idea-lands\]/);
+  assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
+  assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
+  assert.match(
+    tokens,
+    /#home-page \[data-home-same-idea-lands\] \{[^}]*background-color:\s*hsl\(var\(--zk-site-action\)\)/,
   );
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
   assert.match(
@@ -255,21 +344,74 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(limitsCopy, /Not every component is finished\./);
   assert.equal((limitsCopy.match(/title: "/g) ?? []).length, 4);
   assert.match(manifesto, /id="manifesto"/);
-  assert.match(manifesto, /data-home-manifesto-panel/);
+  assert.match(manifesto, /aria-labelledby="manifesto-heading"/);
+  assert.match(manifesto, /data-home-manifesto=/);
+  assert.doesNotMatch(manifesto, /data-home-manifesto-panel/);
+  assert.match(manifesto, /className="sr-only"/);
+  assert.match(manifesto, /<blockquote className="trim-margin not-italic" aria-describedby="manifesto-attribution">/);
+  assert.match(manifesto, /id="manifesto-attribution"/);
+  assert.match(manifesto, /from "@\/ui\/off-path-link"/);
+  assert.match(manifesto, /from "@\/lib\/site-links\.mjs"/);
+  assert.match(manifesto, /href=\{SITE_COMPANY_URL\}/);
+  assert.match(manifesto, /\{homeManifestoCopy\.readLink\}/);
+  assert.doesNotMatch(manifesto, /<OffPathLink[^>]*\btarget=/);
+  assert.doesNotMatch(manifesto, /<OffPathLink[^>]*\brel=/);
   assert.doesNotMatch(manifesto, /FeatureGrid|SetupEntryPrompt|SecretField|bg-primary/);
   assert.match(
     manifestoCopy,
-    /If nobody else can pick up what was built, that isn't expertise\. It's lock-in\./,
+    /\\u201cIf nobody else can pick up what was built, that isn't expertise\. It's lock-in\.\\u201d/,
   );
   assert.match(manifestoCopy, /From the Zed Tech manifesto/);
-  assert.doesNotMatch(manifestoCopy, /Read the manifesto/);
+  assert.match(manifestoCopy, /sectionLabel: "Manifesto"/);
+  assert.match(manifestoCopy, /readLink: "Read the manifesto"/);
+  assert.doesNotMatch(manifestoCopy, /→/);
+  assert.doesNotMatch(manifestoCopy, /https:\/\/zedtech\.fr/);
   assert.match(closing, /id="closing"/);
-  assert.match(closing, /homeClosingCopy\.actionHref/);
-  assert.doesNotMatch(closing, /SetupEntryPrompt|SecretField|data-setup-entry/);
+  assert.match(closing, /aria-labelledby="closing-heading"/);
+  assert.match(closing, /data-home-closing=/);
+  assert.match(closing, /SecretField/);
+  assert.match(closing, /\bmultiline\b/);
+  assert.match(closing, /w-full text-left/);
+  assert.match(closing, /MAP_SETUP_MINI_PROMPT/);
+  assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
+  assert.match(closing, /copyLabel=\{homeClosingCopy\.promptCopyLabel\}/);
+  assert.doesNotMatch(closing, /SetupEntryPrompt|data-setup-entry|homeClosingCopy\.actionHref/);
   assert.match(closingCopy, /Next time it says done, it will be\./);
   assert.match(closingCopy, /And it will look like the rest of your product\./);
-  assert.match(closingCopy, /action: "Setup"/);
-  assert.match(closingCopy, /actionHref: "#ai-setup"/);
+  assert.match(closingCopy, /promptAriaLabel: "Closing setup prompt"/);
+  assert.doesNotMatch(closingCopy, /promptAriaLabel: "Setup prompt"/);
+  assert.match(closingCopy, /promptCopyLabel: "Copy closing prompt"/);
+  assert.doesNotMatch(closingCopy, /promptCopyLabel: "Copy prompt"/);
+  const smoke = readFileSync(join(app, "tests/home.spec.ts"), "utf8");
+  assert.match(smoke, /getByRole\("textbox", \{ name: "Setup prompt", exact: true \}\)/);
+  assert.match(smoke, /getByRole\("button", \{ name: "Copy prompt", exact: true \}\)/);
+  assert.match(smoke, /getByRole\("button", \{ name: "Copy closing prompt", exact: true \}\)/);
+  assert.doesNotMatch(closingCopy, /action: "Setup"/);
+  assert.doesNotMatch(closingCopy, /actionHref: "#ai-setup"/);
+});
+
+test("same-idea lands counts match kit dirs, gallery components, and six identity sheets (#209)", () => {
+  const skillsDir = join(root, "packages/ai/kit/skills");
+  const agentsDir = join(root, "packages/ai/kit/agents");
+  const identitiesDir = join(root, "packages/ui/src/identities");
+  const skills = readdirSync(skillsDir, { withFileTypes: true }).filter(
+    (entry) => entry.isDirectory() && existsSync(join(skillsDir, entry.name, "SKILL.md")),
+  ).length;
+  const agents = readdirSync(agentsDir).filter((name) => name.endsWith(".md")).length;
+  const looks = 1 + readdirSync(identitiesDir).filter((name) => name.endsWith(".css")).length;
+  const gallery = readFileSync(join(app, "content/gallery.ts"), "utf8");
+  const componentsMatch = gallery.match(/uiGalleryStats[^=]*=\s*\{[^}]*"components":\s*(\d+)/);
+  const components = Number(componentsMatch?.[1]);
+  const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
+  const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
+  assert.equal(looks, 6);
+  assert.match(sameIdeaCopy, new RegExp(`skills:\\s*${skills}`));
+  assert.match(sameIdeaCopy, new RegExp(`agents:\\s*${agents}`));
+  assert.match(sameIdeaCopy, new RegExp(`looks:\\s*${looks}`));
+  assert.match(sameIdeaCopy, /Six looks, or one made for your brand/);
+  assert.equal(Number.isInteger(components) && components > 0, true);
+  assert.match(sameIdea, /componentCount/);
+  assert.doesNotMatch(sameIdeaCopy, /30 skills|13 agents|68 components/);
 });
 
 test("home looks band is specimen | look-name pills, not a Section header or palette-dot tabs (#119)", () => {
@@ -369,4 +511,38 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(globals, /#nd-sidebar\s*\{[^}]*background-color:\s*hsl\(var\(--sidebar\)/);
   assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
   assert.doesNotMatch(layout, /KitVersionLabel/);
+});
+
+test("phone header wrap is two rows: nowrap nav list, 24px labels, actions take the second row", () => {
+  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  assert.match(header, /id="nd-mobile-nav"/);
+  assert.match(header, /flex min-h-phone-bar flex-wrap items-center/);
+  assert.match(header, /<ul className="flex list-none items-center flush">/);
+  assert.doesNotMatch(header, /<ul className="[^"]*flex-wrap/);
+  assert.match(
+    compact,
+    /#nd-mobile-nav nav a:not\(\[data-slot="button"\]\)\s*\{[^}]*min-width:\s*1\.5rem/,
+  );
+  assert.doesNotMatch(
+    compact,
+    /#nd-mobile-nav nav a:not\(\[data-slot="button"\]\)\s*\{[^}]*padding-inline:/,
+  );
+  assert.match(
+    compact,
+    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*flex-basis:\s*100%/,
+  );
+  assert.match(
+    compact,
+    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*justify-content:\s*flex-end/,
+  );
+  assert.match(
+    compact,
+    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*flex-wrap:\s*nowrap/,
+  );
+  assert.match(
+    compact,
+    /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-nav\[data-docs-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
+  );
+  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
 });

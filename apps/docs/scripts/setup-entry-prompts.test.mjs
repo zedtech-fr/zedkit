@@ -65,8 +65,10 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   assert.equal((homeLead.match(/data-home-hero-prompt/g) ?? []).length, 1);
   assert.doesNotMatch(homeBand, /SetupEntryPrompt|SecretField|data-setup-entry/);
   assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
-  assert.doesNotMatch(homeClosing, /SetupEntryPrompt|SecretField|data-setup-entry/);
-  assert.doesNotMatch(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeClosing, /SetupEntryPrompt|data-setup-entry/);
+  assert.match(homeClosing, /SecretField/);
+  assert.match(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeClosing, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
 
   const wrapper = read("components/setup-entry-prompt.tsx");
   assert.match(wrapper, /<Label htmlFor=\{fieldId\}>\{entry\.label\}<\/Label>/);

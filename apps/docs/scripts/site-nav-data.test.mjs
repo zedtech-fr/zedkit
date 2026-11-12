@@ -6,6 +6,7 @@ import test from "node:test";
 
 import {
   isCatalogPath,
+  isFoundationsPath,
   isHomePath,
   isSiteNavLinkActive,
   siteHeaderChrome,
@@ -84,6 +85,16 @@ test("isHomePath is only the site root", () => {
   assert.equal(isHomePath("/catalog"), false);
   assert.equal(isHomePath("/docs"), false);
   assert.equal(isHomePath("/docs/getting-started"), false);
+});
+
+test("isFoundationsPath is only the foundations guide URL", () => {
+  assert.equal(isFoundationsPath("/docs/foundations"), true);
+  assert.equal(isFoundationsPath("/docs/foundations/"), true);
+  assert.equal(isFoundationsPath(""), false);
+  assert.equal(isFoundationsPath("/"), false);
+  assert.equal(isFoundationsPath("/docs"), false);
+  assert.equal(isFoundationsPath("/docs/foundations/extra"), false);
+  assert.equal(isFoundationsPath("/catalog"), false);
 });
 
 const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];

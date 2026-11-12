@@ -11,6 +11,10 @@ export function isHomePath(pathname: string): boolean {
   return pathname === "/" || pathname === "";
 }
 
+export function isFoundationsPath(pathname: string): boolean {
+  return pathname === "/docs/foundations" || pathname === "/docs/foundations/";
+}
+
 export function isCatalogPath(pathname: string): boolean {
   return pathname === "/catalog";
 }
@@ -19,6 +23,7 @@ export function isCatalogPath(pathname: string): boolean {
  * Phone (and policy) chrome: which actions a path may mount.
  * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
  * The page tree is in-flow below the header (DocsContainer + docs-shell-tokens.css).
+ * Foundations keeps search and has no page tree (sidebar off in the docs layout).
  */
 export function siteHeaderChrome(pathname: string) {
   const home = isHomePath(pathname);
