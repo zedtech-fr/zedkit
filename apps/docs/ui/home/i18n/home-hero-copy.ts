@@ -1,5 +1,3 @@
-export type HeroKitId = "ai" | "ui" | "combined";
-
 export const homeHeroCopy = {
   hero: {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
@@ -14,13 +12,6 @@ export const homeHeroCopy = {
     promptAriaLabel: "Setup prompt",
     promptCopyLabel: "Copy prompt",
     promptCaption: "Name the kits you want, Nest included. The map knows the order.",
-    promptCaptionSingle: "Paste at your repo root in Cursor, Claude Code, Codex or Muse.",
-  },
-  heroKits: {
-    ariaLabel: "Setup kits",
-    ai: "AI",
-    ui: "UI",
-    combined: "AI + UI",
   },
   heroIllustration: {
     pause: "Pause",
@@ -30,7 +21,6 @@ export const homeHeroCopy = {
     caption: "An illustration of one run, not a recording.",
     issueBadge: "1 issue",
     emptyStateTitle: "Add an empty state to the tasks list",
-    dueDatesTitle: "Due dates shift by a day",
     stepPlan: "Plan",
     stepBuild: "Build",
     stepCheck: "Check",
@@ -41,18 +31,6 @@ export const homeHeroCopy = {
     combinedCheck: "The verifier spots a hand-made button.",
     combinedFix: "Swapped for the kit Button. Same tokens as every screen.",
     combinedDone: "Gates pass, second review clean.",
-    aiPlan: "Coordinator briefs two specialists.",
-    aiBuild: "Three files changed, tests written.",
-    aiCheck: "The date is still read in local time.",
-    aiFix: "Read as UTC. The rule is saved for next time.",
-    aiDone: "Gates pass, second review clean.",
-    settingsTitle: "Project settings",
-    settingsDescription: "Name, region, and who gets incident mail.",
-    settingsActive: "Active",
-    settingsWorkspace: "Workspace",
-    settingsWorkspaceValue: "Harbor Console",
-    settingsRegion: "Region",
-    settingsRegionValue: "Europe",
   },
   /** The tour is the cursor that clicks through the example. It can be paused, and replayed on purpose. */
   heroTour: {
