@@ -36,6 +36,7 @@ export async function ComponentPreview({ demo, hasProps, a11yRoot }: ComponentPr
         <PreviewFrame
           center={entry.center ?? false}
           pinned={entry.pinned ?? false}
+          quiet={Boolean(a11yRoot)}
           codePanel={
             <CodeBlock title={entry.file} allowCopy>
               {highlighted}

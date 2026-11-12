@@ -11,6 +11,8 @@ import { AdoptionPanelView, adoptionPlanFor } from "./adoption-panel-view";
 import { highlightedTs } from "./highlighted-code";
 import { componentPageCopy } from "@/components/i18n/component-page-copy";
 import type { AdoptionPlan } from "@/lib/adoption-types";
+import { kitUiSourceUrl } from "@/lib/site-links.mjs";
+import { OffPathLink } from "@/ui/off-path-link";
 
 export interface CatalogExample {
   title: string;
@@ -40,6 +42,10 @@ export interface ComponentPageProps {
   whenToUse: string;
   whenNotToUse: string;
   wraps: string;
+  /** Manifest source path under packages/ui/src, for the first-screen Source link. */
+  sourceFile?: string | null;
+  /** Sidebar job group (Actions / Forms / …) for the breadcrumb. */
+  navGroup?: string;
   registry: string;
   demo: string;
   propsFile: string | null;
@@ -60,6 +66,13 @@ function inlineCode(text: string) {
   return text.split(/`([^`]+)`/).map((part, index) => (index % 2 === 1 ? <code key={index}>{part}</code> : part));
 }
 
+/**
+ * Métier: public TypeScript kit documentation.
+ * Client personas: integrating developers who own the consuming app.
+ * Customers: those same developers.
+ * Customer personas: hurried, on a component page to see a live control and copy it.
+ * UI decisions: breadcrumb + 40/500 title + lead + Stable/package/Source, because customer = pick a component not a package.
+ */
 export async function ComponentPage({
   needName,
   shortName,
@@ -73,6 +86,8 @@ export async function ComponentPage({
   whenToUse,
   whenNotToUse,
   wraps,
+  sourceFile,
+  navGroup,
   registry,
   demo,
   propsFile,
@@ -88,6 +103,7 @@ export async function ComponentPage({
   const hasProps = Boolean(propsFile && propsName);
   const sections = componentPageSections({ hasProps, a11y, related, troubleshooting });
   const header = componentPageHeaderMeta({ status, purpose, packageName, wraps });
+  const sourceHref = kitUiSourceUrl(sourceFile ?? "");
   const copyable = registry.length > 0 && registryBrickNames.includes(registry);
   const plan: AdoptionPlan = adoptionPlanFor({
     need: { need: needName, shortName, adoption, examples, registry: copyable ? registry : "", ...(exampleFile ? { exampleFile } : {}) },
@@ -97,7 +113,19 @@ export async function ComponentPage({
   return (
     <Stack gap="blocks" data-component-page="">
       <Stack gap="sm" data-component-page-header="">
-        <Text className="text-purpose text-muted-foreground">{header.purpose}</Text>
+        {navGroup ? (
+          <Text
+            as="p"
+            data-component-page-breadcrumb=""
+            className="font-mono text-dense text-muted-foreground"
+          >
+            {componentPageCopy.header.breadcrumb(navGroup)}
+          </Text>
+        ) : null}
+        <Heading level={1}>{shortName}</Heading>
+        <Text typeRole="lead" className="text-muted-foreground">
+          {header.purpose}
+        </Text>
         <Stack direction="horizontal" gap="md" className="flex-wrap text-dense text-muted-foreground">
           <Text as="span" data-component-maturity={header.maturity}>
             {header.maturity.toLowerCase() === "stable" ? (
@@ -109,8 +137,12 @@ export async function ComponentPage({
           <Text as="span" data-component-package="" className="font-mono text-foreground">
             {header.packageName}
           </Text>
+          {sourceHref ? (
+            <OffPathLink href={sourceHref} aria-label={componentPageCopy.header.source} className="font-medium">
+              {componentPageCopy.header.source}
+            </OffPathLink>
+          ) : null}
         </Stack>
-        <ComponentWrapsLine wraps={header.wraps} />
       </Stack>
 
       <Stack id="example">
@@ -125,6 +157,7 @@ export async function ComponentPage({
         <dt className="trim-margin font-normal text-foreground">{componentPageCopy.guidance.avoidWhen}</dt>
         <dd className="trim-margin content-shrink">{whenNotToUse}</dd>
       </dl>
+      <ComponentWrapsLine wraps={header.wraps} />
 
       <Section title={componentPageCopy.sections.usageAndStates} id="usage-and-states" className="space-y-stack-md">
         <Stack gap="lg">
