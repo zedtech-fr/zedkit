@@ -2,10 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   CATALOG_AREAS,
+  CATALOG_DEFAULT_FILTERS,
   catalogCounterItems,
+  catalogFilterSearchParams,
   catalogFilterView,
   countCatalogByArea,
   filterCatalogEntries,
+  parseCatalogArea,
+  readCatalogFilters,
 } from "../lib/catalog-filter.mjs";
 
 /** @param {Partial<import("../content/catalog-index").CatalogIndexEntry> & { title: string }} overrides */
@@ -32,7 +36,7 @@ test("CATALOG_AREAS is the four known chip ids with catalog area labels", () => 
     CATALOG_AREAS.map((area) => [area.id, area.label]),
     [
       ["ui", "UI"],
-      ["backend", "Core & server"],
+      ["backend", "Core and server"],
       ["seo", "SEO"],
       ["agents", "Agents"],
     ],
@@ -177,7 +181,85 @@ test("catalogCounterItems keeps chip order with short labels, not Core & server"
       ["agents", "Agents", 1],
     ],
   );
-  assert.equal(CATALOG_AREAS[1].label, "Core & server");
+  assert.equal(CATALOG_AREAS[1].label, "Core and server");
+});
+
+test("omitted area query selects UI and lists that area", () => {
+  assert.equal(parseCatalogArea(undefined), "ui");
+  assert.equal(parseCatalogArea(null), "ui");
+  assert.equal(parseCatalogArea(""), "ui");
+  const { visible } = catalogFilterView(MIXED);
+  assert.deepEqual(
+    visible.map((entry) => entry.title),
+    ["Alert", "Animate", "Button"],
+  );
+  assert.equal(CATALOG_DEFAULT_FILTERS.area, "ui");
+  assert.equal(CATALOG_DEFAULT_FILTERS.status, "all");
+  assert.equal(CATALOG_DEFAULT_FILTERS.q, "");
+});
+
+test("empty and missing area query strings select UI", () => {
+  assert.equal(readCatalogFilters("").area, "ui");
+  assert.equal(readCatalogFilters("q=").area, "ui");
+  assert.equal(readCatalogFilters("area=").area, "ui");
+  assert.equal(readCatalogFilters("area=ui").area, "ui");
+  assert.equal(readCatalogFilters("?area=ui").area, "ui");
+  assert.equal(readCatalogFilters(new URLSearchParams()).area, "ui");
+});
+
+test("area=all is the mixed list; other known areas win", () => {
+  assert.equal(readCatalogFilters("area=all").area, "all");
+  assert.equal(readCatalogFilters("?area=all").area, "all");
+  assert.equal(readCatalogFilters(new URLSearchParams("area=seo")).area, "seo");
+  assert.equal(readCatalogFilters("area=seo").area, "seo");
+  const mixed = catalogFilterView(MIXED, { area: "all" });
+  assert.equal(mixed.areaTotal, MIXED.length);
+  assert.deepEqual(
+    mixed.visible.map((entry) => entry.title),
+    MIXED.map((entry) => entry.title),
+  );
+  const seo = catalogFilterView(MIXED, { area: "seo" });
+  assert.deepEqual(
+    seo.visible.map((entry) => entry.title),
+    ["JsonLd"],
+  );
+});
+
+test("unknown area query falls back to UI, not the mixed list", () => {
+  assert.equal(parseCatalogArea("mystery"), "ui");
+  assert.equal(parseCatalogArea("UI"), "ui");
+  assert.equal(readCatalogFilters("area=mystery").area, "ui");
+  const { visible } = catalogFilterView(MIXED, { area: "mystery" });
+  assert.deepEqual(
+    visible.map((entry) => entry.title),
+    ["Alert", "Animate", "Button"],
+  );
+});
+
+test("status and q defaults stay all and empty when omitted", () => {
+  const empty = readCatalogFilters("");
+  assert.equal(empty.status, "all");
+  assert.equal(empty.q, "");
+  const both = readCatalogFilters("status=stable&q=date");
+  assert.equal(both.status, "stable");
+  assert.equal(both.q, "date");
+  assert.equal(both.area, "ui");
+});
+
+test("URL write omits default UI, writes area=all, and keeps other areas", () => {
+  assert.equal(catalogFilterSearchParams({ area: "ui", status: "all", q: "" }).toString(), "");
+  assert.equal(
+    catalogFilterSearchParams({ area: "all", status: "all", q: "" }).toString(),
+    "area=all",
+  );
+  assert.equal(
+    catalogFilterSearchParams({ area: "seo", status: "all", q: "" }).toString(),
+    "area=seo",
+  );
+  assert.equal(
+    catalogFilterSearchParams({ area: "ui", status: "stable", q: "pick" }).toString(),
+    "status=stable&q=pick",
+  );
 });
 
 test("catalogCounterItems fills a missing area with 0 and drops extra keys", () => {

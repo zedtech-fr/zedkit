@@ -5,7 +5,12 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Container, Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
-import { CATALOG_AREAS, catalogFilterView } from "@/lib/catalog-filter.mjs";
+import {
+  CATALOG_DEFAULT_FILTERS,
+  catalogFilterSearchParams,
+  catalogFilterView,
+  readCatalogFilters,
+} from "@/lib/catalog-filter.mjs";
 
 import { CatalogCounters } from "@/ui/catalog/catalog-counters";
 import { CatalogFiltersToolbar, catalogResultsStatusLine } from "@/ui/catalog/catalog-filters";
@@ -24,21 +29,14 @@ const CatalogResultsBodyLazy = dynamic(
   },
 );
 
-export const CATALOG_DEFAULT_FILTERS = { area: "all" as const, status: "all", q: "" };
-
 function readFilter(
   searchParams: URLSearchParams,
   entries: CatalogIndexEntry[],
 ): { area: CatalogArea | "all"; status: string; q: string } {
-  const areaParam = searchParams.get("area") ?? "all";
-  const area = CATALOG_AREAS.some((row) => row.id === areaParam)
-    ? (areaParam as CatalogArea)
-    : "all";
-  const statusParam = searchParams.get("status") ?? "all";
+  const parsed = readCatalogFilters(searchParams);
   const statuses = new Set(entries.map((entry) => entry.status));
-  const status = statusParam === "all" || statuses.has(statusParam) ? statusParam : "all";
-  const q = searchParams.get("q") ?? "";
-  return { area, status, q };
+  const status = parsed.status === "all" || statuses.has(parsed.status) ? parsed.status : "all";
+  return { area: parsed.area, status, q: parsed.q };
 }
 
 export function CatalogView({
@@ -65,31 +63,36 @@ export function CatalogView({
 
   return (
     <>
-      <Section bleed spacing="sm" containerWidth="default">
-        <Stack gap="lg">
-          <Stack data-catalog-intro="">
-            <Stack gap="sm">
-              <Heading level={1}>{catalogCopy.header.title}</Heading>
-              <Text variant="muted" typeRole="lead" className="text-muted-foreground">
-                {catalogCopy.header.lead}
-              </Text>
-            </Stack>
-            <CatalogCounters counts={countsByArea} />
+      <Section
+        bleed
+        tone="muted"
+        spacing="sm"
+        containerWidth="default"
+        data-catalog-header-band=""
+      >
+        <Stack data-catalog-intro="">
+          <Stack gap="sm">
+            <Heading level={1}>{catalogCopy.header.title}</Heading>
+            <Text variant="muted" typeRole="lead" className="text-muted-foreground">
+              {catalogCopy.header.lead(entries.length)}
+            </Text>
           </Stack>
-
-          <CatalogFiltersToolbar
-            area={area}
-            status={status}
-            q={q}
-            countsByArea={countsByArea}
-            onFilters={setFilters}
-          />
+          <CatalogCounters counts={countsByArea} />
         </Stack>
+      </Section>
+      <Section bleed spacing="sm" containerWidth="default">
+        <CatalogFiltersToolbar
+          area={area}
+          status={status}
+          q={q}
+          countsByArea={countsByArea}
+          onFilters={setFilters}
+        />
       </Section>
       <Container width="wide" className="pt-start pb-section-lg">
         <Stack gap="md">
           <CatalogResultsBodyLazy filtered={visible} />
-          <Stack id="catalog-results-heading" data-catalog-results-heading="">
+          <Stack data-catalog-results-heading="">
             {catalogResultsStatusLine(visible.length, areaTotal)}
           </Stack>
         </Stack>
@@ -117,20 +120,13 @@ export function CatalogViewFromUrl({ entries }: { entries: CatalogIndexEntry[] }
   }, [entries, searchParams]);
 
   function pushFilterUrl(parsed: ReturnType<typeof readFilter>) {
-    const params = new URLSearchParams();
-    if (parsed.area !== "all") params.set("area", parsed.area);
-    if (parsed.status !== "all") params.set("status", parsed.status);
-    if (parsed.q) params.set("q", parsed.q);
-    const query = params.toString();
+    const query = catalogFilterSearchParams(parsed).toString();
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
 
   function setFilters(next: { area?: string; status?: string; q?: string }) {
     const merged = { ...filtersRef.current, ...next };
-    const params = new URLSearchParams();
-    if (merged.area !== "all") params.set("area", merged.area);
-    if (merged.status !== "all") params.set("status", merged.status);
-    if (merged.q) params.set("q", merged.q);
+    const params = catalogFilterSearchParams(merged);
     const parsed = readFilter(params, entries);
     filtersRef.current = parsed;
     setFilterState(parsed);
