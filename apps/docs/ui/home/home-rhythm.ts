@@ -38,7 +38,7 @@ export const HOME_SIX_SENTENCES_GRID =
  */
 export const HOME_LIMITS_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio";
-/** Paste timeline: pair from `sm`, four across from `xl`. */
+/** Paste timeline: pair from `sm`, four across from `xl`. Own grid (single caller), kept next to the fade-down reveal. */
 export const HOME_PASTE_TIMELINE_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush sm:grid-pair xl:grid-quad";
 /**
@@ -54,22 +54,35 @@ export const HOME_PASTE_LANDS_GRID =
  */
 export const HOME_LOOKS_GRID = "grid content-shrink gap-stack-lg lg:grid-pair";
 
-/** Card grids: fade-up children in order. Apply on the `ul`, never the Section. */
+/**
+ * Card grids: fade-up children in order. Apply on the `ul`, never the Section.
+ * Rise because a card grid should arrive in reading order, not drop into the band.
+ */
 export const HOME_CARD_GRID_REVEAL_PROPS = {
   "data-animate": "fade-up",
   "data-animate-stagger": "",
 } as const;
 
-/** Paste timeline: slide from above. Apply on the timeline `ul` only. */
+/**
+ * Paste timeline: slide from above. Apply on the timeline `ul` only.
+ * Descend because these are facts under the heading, not a rising card grid.
+ * Own constant (single caller) so the gate can pin fade-down against fade-up.
+ */
 export const HOME_PASTE_TIMELINE_REVEAL_PROPS = {
   "data-animate": "fade-down",
   "data-animate-stagger": "",
 } as const;
 
-/** Reading bands: opacity only. Apply on the inner stack, never the Section. */
+/**
+ * Reading bands: opacity only. Apply on the inner stack, never the Section.
+ * Fade-in because manifesto/limits/closing are reading; displacement fights the copy.
+ */
 export const HOME_READING_REVEAL_PROPS = { "data-animate": "fade-in" } as const;
 
-/** Hero glass and looks specimen: scroll-linked drift on a node that is not already entering. */
+/**
+ * Hero glass wash and looks specimen: scroll-linked drift on a node that is not already entering.
+ * Decorative-only: never an ancestor of a focusable control (hero pause stays still).
+ */
 export const HOME_PARALLAX_SCROLL_PROPS = { "data-animate-scroll": "parallax" } as const;
 
 /** Min-height hero preview slot while the demo chunk loads; grows with the specimen (no fixed clip). */

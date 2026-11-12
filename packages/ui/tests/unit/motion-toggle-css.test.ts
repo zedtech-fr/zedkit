@@ -43,6 +43,22 @@ function reduceMedia(css: string): string {
   return css.slice(start, nextRoot === -1 ? undefined : nextRoot);
 }
 
+function nestedRule(block: string, selector: string): string {
+  const from = block.indexOf(selector);
+  expect(from).toBeGreaterThan(-1);
+  const brace = block.indexOf("{", from);
+  expect(brace).toBeGreaterThan(from);
+  let depth = 0;
+  for (let i = brace; i < block.length; i += 1) {
+    if (block[i] === "{") depth += 1;
+    else if (block[i] === "}") {
+      depth -= 1;
+      if (depth === 0) return block.slice(brace, i + 1);
+    }
+  }
+  throw new Error(`unclosed ${selector}`);
+}
+
 describe("hover-lift focus parity", () => {
   const css = read("motion.css");
   const lift = utilityBlock(css, "hover-lift");
@@ -54,10 +70,8 @@ describe("hover-lift focus parity", () => {
     expect(lift).toContain(":focus-within");
     expect(lift).toContain("hsl(var(--primary) / 0.45)");
     expect(lift).toMatch(/border-color\s+var\(--zk-lift-duration/);
-    for (const selector of [":hover", ":focus-visible", ":focus-within"] as const) {
-      const from = lift.indexOf(selector);
-      expect(from).toBeGreaterThan(-1);
-      const body = lift.slice(from, from + 280);
+    for (const selector of ["&:hover", "&:focus-visible", "&:focus-within"] as const) {
+      const body = nestedRule(lift, selector);
       expect(body).toContain("var(--zk-lift-translate");
       expect(body).toContain("var(--zk-lift-shadow");
       expect(body).toContain("hsl(var(--primary) / 0.45)");
@@ -84,5 +98,8 @@ describe("hover-lift focus parity", () => {
     const a11y = need.slice(need.indexOf("- A11y:"), need.indexOf("\n- Troubleshooting"));
     expect(a11y).toContain("focus-within");
     expect(a11y).toMatch(/border/);
+    expect(a11y).toMatch(/:hover[\s\S]*never sticks after a tap/);
+    expect(a11y).toMatch(/:focus-within[\s\S]*until blur/);
+    expect(a11y).toMatch(/bordered host/);
   });
 });

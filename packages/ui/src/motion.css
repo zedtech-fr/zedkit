@@ -152,25 +152,38 @@
   }
 }
 
-/* data-animate: appear (pending → in), then held / progress triggers. */
+/* data-animate: appear (pending → in), then held / progress triggers.
+ * Stagger children follow the host preset: fade-up rises (default), fade-down
+ * descends, fade-in / pop-in stay in place. visibility:hidden keeps pending
+ * children out of the tab order. */
 [data-animate="fade-up"][data-animate-state="pending"],
-[data-animate-appear="fade-up"][data-animate-state="pending"],
-[data-animate-stagger][data-animate-state="pending"] > * {
+[data-animate-appear="fade-up"][data-animate-state="pending"] {
   opacity: 0;
   translate: 0 var(--zk-reveal-distance, 0.75rem);
 }
+[data-animate-stagger][data-animate-state="pending"] > * {
+  opacity: 0;
+  translate: 0 var(--zk-reveal-distance, 0.75rem);
+  visibility: hidden;
+}
 [data-animate="fade-in"][data-animate-state="pending"],
-[data-animate-appear="fade-in"][data-animate-state="pending"] {
+[data-animate-appear="fade-in"][data-animate-state="pending"],
+[data-animate="fade-in"][data-animate-stagger][data-animate-state="pending"] > *,
+[data-animate-appear="fade-in"][data-animate-stagger][data-animate-state="pending"] > * {
   opacity: 0;
   translate: none;
 }
 [data-animate="fade-down"][data-animate-state="pending"],
-[data-animate-appear="fade-down"][data-animate-state="pending"] {
+[data-animate-appear="fade-down"][data-animate-state="pending"],
+[data-animate="fade-down"][data-animate-stagger][data-animate-state="pending"] > *,
+[data-animate-appear="fade-down"][data-animate-stagger][data-animate-state="pending"] > * {
   opacity: 0;
   translate: 0 calc(var(--zk-reveal-distance, 0.75rem) * -1);
 }
 [data-animate="pop-in"][data-animate-state="pending"],
-[data-animate-appear="pop-in"][data-animate-state="pending"] {
+[data-animate-appear="pop-in"][data-animate-state="pending"],
+[data-animate="pop-in"][data-animate-stagger][data-animate-state="pending"] > *,
+[data-animate-appear="pop-in"][data-animate-stagger][data-animate-state="pending"] > * {
   opacity: 0;
   translate: none;
   scale: 0.96;
@@ -180,6 +193,7 @@
   opacity: 1;
   translate: none;
   scale: none;
+  visibility: visible;
   transition-property: opacity, translate, scale;
   transition-duration: var(--zk-reveal-duration, 300ms);
   transition-timing-function: var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1));
@@ -364,6 +378,7 @@
     opacity: 1 !important;
     translate: none !important;
     scale: none !important;
+    visibility: visible !important;
     animation: none !important;
     transition: none !important;
   }
@@ -410,6 +425,7 @@
   opacity: 1 !important;
   translate: none !important;
   scale: none !important;
+  visibility: visible !important;
   animation: none !important;
   transition: none !important;
 }

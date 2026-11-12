@@ -137,6 +137,8 @@ test("catalog result cells lift on hover and focus; counters stay still", () => 
   assert.match(cell, /data-catalog-cell=/);
   assert.match(cell, /hover-lift/);
   assert.match(cell, /focus-ring/);
+  // Shared Surface grid: cells are borderless, so hover-lift is lift/shadow only.
+  assert.doesNotMatch(cell, /<Card|<Surface/);
   assert.doesNotMatch(counters, /hover-lift/);
 });
 

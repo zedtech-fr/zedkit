@@ -87,8 +87,8 @@ function sameIdeaBullets(id: SameIdeaCardId, componentCount: number): readonly s
 function SameIdeaCard({ id, componentCount }: { id: SameIdeaCardId; componentCount: number }) {
   const card = homeSameIdeaCopy.cards[id];
   return (
-    <li data-home-same-idea-column={id} className="hover-lift rounded-xl">
-      <Card className="flex h-full flex-col overflow-hidden shadow-none">
+    <li data-home-same-idea-column={id}>
+      <Card className="flex h-full flex-col overflow-hidden shadow-none hover-lift">
         <SameIdeaWindow id={id} />
         <Stack gap="lg" className="flex-1 surface-pad-md">
           <Stack gap="tight">

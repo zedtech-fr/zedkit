@@ -130,24 +130,28 @@ export function HomeHeroIllustration({ kit }: { kit: HeroKitId }) {
   const [paused, setPaused] = useState(false);
 
   return (
-    <div {...HOME_PARALLAX_SCROLL_PROPS}>
+    <div
+      role="group"
+      aria-label={copy.caption}
+      data-home-hero-preview=""
+      data-hero-run-stage=""
+      data-paused={motionOk && paused ? "" : undefined}
+      className="relative content-shrink overflow-clip"
+    >
       <div
-        role="group"
-        aria-label={copy.caption}
-        data-home-hero-preview=""
-        data-hero-run-stage=""
-        data-paused={motionOk && paused ? "" : undefined}
-        className="relative content-shrink overflow-clip"
+        {...HOME_PARALLAX_SCROLL_PROPS}
+        aria-hidden="true"
+        className="pointer-events-none absolute pin-fill"
       >
-        <span aria-hidden="true" data-hero-run-blob="1" className="pointer-events-none" />
-        <span aria-hidden="true" data-hero-run-drift="" className="pointer-events-none" />
-        <span aria-hidden="true" data-hero-run-blob="2" className="pointer-events-none" />
-        {kit === "ui" ? (
-          <SettingsCard />
-        ) : (
-          <RunCard kit={kit} motionOk={motionOk} paused={paused} onToggle={() => setPaused((value) => !value)} />
-        )}
+        <span data-hero-run-blob="1" />
+        <span data-hero-run-drift="" />
+        <span data-hero-run-blob="2" />
       </div>
+      {kit === "ui" ? (
+        <SettingsCard />
+      ) : (
+        <RunCard kit={kit} motionOk={motionOk} paused={paused} onToggle={() => setPaused((value) => !value)} />
+      )}
     </div>
   );
 }

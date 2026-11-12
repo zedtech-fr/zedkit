@@ -171,8 +171,10 @@ test("each home band has one appear or scroll, never on Section", () => {
     illustration,
     /data-hero-run-stage=""[^>]*data-animate-scroll|data-animate-scroll[^>]*data-hero-run-stage/,
   );
-  assert.match(sameIdea, /hover-lift/);
-  assert.match(six, /featured \? "h-full" : "h-full hover-lift"/);
+  assert.match(sameIdea, /<Card className="[^"]*hover-lift/);
+  assert.match(six, /hover-lift/);
+  // Plain six-sentences cards have no focusables: hover-lift is mouse-only delight.
+  assert.match(six, /data-home-six-sentences-card=\{featured \? "featured" : "plain"\}/);
   assert.doesNotMatch(mist, /hover-lift/);
   assert.doesNotMatch(limits, /hover-lift/);
 });
@@ -191,6 +193,11 @@ test("illustration drift is decorative and does not wrap the glass card", () => 
   const css = readApp("app/home-hero.css");
   assert.match(illustration, /data-hero-run-drift/);
   assert.match(illustration, /aria-hidden="true"/);
+  const parallaxOpen = illustration.indexOf("{...HOME_PARALLAX_SCROLL_PROPS}");
+  assert.notEqual(parallaxOpen, -1);
+  const parallaxBlock = illustration.slice(parallaxOpen, illustration.indexOf("{kit ==="));
+  assert.match(parallaxBlock, /aria-hidden="true"/);
+  assert.doesNotMatch(parallaxBlock, /<Button\b/);
   assert.doesNotMatch(illustration, /<(?:input)\b/);
   assert.equal(illustration.includes("data-hero-shapes"), false);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole/);

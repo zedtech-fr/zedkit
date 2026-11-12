@@ -49,7 +49,10 @@ test.describe("home paste no longer points at Getting started install", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`passes the a11y gate on the paste band (${mode})`, async ({ page }) => {
       await page.addInitScript((theme) => localStorage.setItem("theme", theme), mode);
-      await openHome(page);
+      const paste = await openHome(page);
+      const timeline = paste.locator("[data-animate-stagger]");
+      await expect(timeline).toHaveAttribute("data-animate-state", "in");
+      await expect(timeline.locator(":scope > li").last()).toHaveCSS("opacity", "1");
       await assertA11yGate(page, "#paste");
       await page.screenshot({ path: `test-results/home-paste-${mode}.png` });
     });
