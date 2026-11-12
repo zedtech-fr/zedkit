@@ -96,8 +96,6 @@ html[data-docs-shell][data-identity] {
  * (light-mode leftovers are ~1.6:1 on this band).
  */
 #home-page #paste[data-slot="section"] {
-  /* Glass light accent: file-note text-accent stays ≥ 4.5 on this zinc band in page dark. */
-  --accent: 262 85% 70%;
   --foreground: var(--zk-site-action-foreground);
   --muted-foreground: var(--zk-site-action-foreground);
   --muted: var(--zk-site-action-hover);
@@ -106,8 +104,6 @@ html[data-docs-shell][data-identity] {
   --background: var(--zk-site-action);
   --border: var(--zk-site-action-hover);
   --card: var(--zk-site-action);
-  /* Glass light --accent: keep the highlighted file note ≥4.5 on zinc in page dark. */
-  --accent: 262 85% 70%;
   background-color: hsl(var(--zk-site-action));
   color: hsl(var(--zk-site-action-foreground));
 }
@@ -127,6 +123,26 @@ html[data-docs-shell][data-identity] {
 
 #home-page [data-home-paste-lands] > li {
   background-color: hsl(var(--zk-site-action));
+}
+
+/*
+ * Kit badges on the inverted band: identity --primary-foreground in page
+ * dark is near zinc (~1:1 vs the band). Pin fill and ink to the same
+ * site-action pair the band already uses.
+ */
+#home-page [data-home-paste-lands] [data-slot="badge"] {
+  --primary: var(--zk-site-action);
+  --primary-foreground: var(--zk-site-action-foreground);
+  --accent-foreground: var(--zk-site-action);
+}
+
+/*
+ * Looks caption sits on the page, not zinc. .home-metadata-copy still
+ * paints leftover light --zk-subtle-foreground; muted-foreground is the
+ * kit 4.5:1 text pair (light = docs-shell remap, dark = identity).
+ */
+#home-page [data-identity-caption] {
+  color: hsl(var(--muted-foreground));
 }
 
 /*

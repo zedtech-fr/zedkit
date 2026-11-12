@@ -37,6 +37,7 @@ const noop = () => () => {};
  *   Glass included as a pill, because: the mockup and #208 name four looks and the caption.
  *   no identity form in the band, because: dock (#110) owns customization.
  *   no extra links row under the specimen, because: the mockup section ends at the caption; destinations already live (dock, docs, editor, kit-demos URL).
+ *   caption colour is --muted-foreground (shell CSS), because: a reader in any dock look or dark mode must still read the attribute at 4.5:1; accent and leftover --zk-subtle-foreground do not.
  */
 
 /** One stage, one compact Project settings screen. The look restyles it; the page scrolls normally. */
