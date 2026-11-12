@@ -1,6 +1,6 @@
 import { Heading, Stack, Surface, Text, ThemeScope } from "@zedtech/zedkit-ui";
 
-import { foundationsCopy as copy } from "@/components/i18n/foundations-copy";
+import { foundationsCopy as copy } from "../i18n/foundations-copy";
 
 /**
  * Métier: public TypeScript kit; this site is the reading surface for the packages.
