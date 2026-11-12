@@ -5,7 +5,9 @@ import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } 
 import { componentPageHeaderMeta, componentPageSections } from "../lib/component-page-sections.mjs";
 import { declarationOrigin } from "../lib/declared-props.mjs";
 import { partitionPropsEntries } from "../lib/props-priority.mjs";
-import { uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
+import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
+import { docsLayoutTree } from "../lib/docs-layout-tree.mjs";
+import { kitUiSourceUrl, SITE_GITHUB_URL } from "../lib/site-links.mjs";
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -189,6 +191,14 @@ test("checkGeneratedPage fails when a component page lacks the guidance block", 
     true,
   );
   assert.equal(
+    errors.some((entry) => entry.includes("lacks sourceFile")),
+    true,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks navGroup")),
+    true,
+  );
+  assert.equal(
     errors.some((entry) => entry.includes("lacks install tabs")),
     false,
   );
@@ -353,4 +363,56 @@ test("uiSidebarPages does not throw for a new source folder", () => {
     sourceByNeed: { "Motion helper": "motion.css" },
   });
   assert.deepEqual(pages, ["---More---", "motion-helper"]);
+});
+
+test("uiSidebarGroupFor maps Button to Actions", () => {
+  assert.equal(uiSidebarGroupFor("Trigger actions with buttons", "button/button.tsx"), "Actions");
+  assert.equal(uiSidebarGroupFor("Show a status or count badge", "feedback/badge.tsx"), "Actions");
+  assert.equal(uiSidebarGroupFor("Unknown need", "mystery/x.tsx"), "More");
+});
+
+test("docsLayoutTree on a UI slug is the job-grouped folder, not package folders", () => {
+  const root = {
+    name: "Docs",
+    children: [
+      { type: "page", name: "Getting started", url: "/docs/getting-started" },
+      {
+        type: "folder",
+        $id: "ui",
+        name: "@zedtech/zedkit-ui",
+        children: [
+          { type: "separator", name: "Actions" },
+          { type: "page", name: "Button", url: "/docs/ui/trigger-actions-with-buttons" },
+          { type: "separator", name: "Forms" },
+        ],
+      },
+      {
+        type: "folder",
+        $id: "ai",
+        name: "@zedtech/zedkit-ai",
+        children: [{ type: "page", name: "Setup", url: "/docs/ai/setup" }],
+      },
+    ],
+  };
+  const ui = docsLayoutTree(root, ["ui", "trigger-actions-with-buttons"]);
+  assert.deepEqual(
+    ui.children.map((node) => node.name),
+    ["Actions", "Button", "Forms"],
+  );
+  assert.equal(
+    ui.children.some((node) => node.name === "Getting started" || node.$id === "ai"),
+    false,
+  );
+  const guides = docsLayoutTree(root, ["getting-started"]);
+  assert.equal(guides, root);
+  assert.equal(docsLayoutTree(root, []), root);
+});
+
+test("kitUiSourceUrl points at the kit file on GitHub", () => {
+  assert.equal(
+    kitUiSourceUrl("button/button.tsx"),
+    `${SITE_GITHUB_URL}/blob/main/packages/ui/src/button/button.tsx`,
+  );
+  assert.equal(kitUiSourceUrl(""), null);
+  assert.equal(kitUiSourceUrl("../secret"), null);
 });

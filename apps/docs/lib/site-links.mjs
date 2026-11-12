@@ -1,6 +1,12 @@
 /** Shared site URLs for nav, footer, and CI link checks (import from TS and scripts). */
 
 export const SITE_GITHUB_URL = "https://github.com/zedtech-fr/zedkit";
+
+/** Kit file on GitHub for a docs-manifest `source` path under `packages/ui/src`. */
+export function kitUiSourceUrl(source) {
+  if (typeof source !== "string" || source.length === 0 || source.includes("..")) return null;
+  return `${SITE_GITHUB_URL}/blob/main/packages/ui/src/${source}`;
+}
 export const SITE_NPM_ORG_URL = "https://www.npmjs.com/org/zedtech";
 export const SITE_LICENSE_URL = "https://github.com/zedtech-fr/zedkit/blob/main/LICENSE";
 export const SITE_BUG_REPORT_URL =

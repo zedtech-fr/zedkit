@@ -62,12 +62,16 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         toc={page.data.componentPage
           ? mergeComponentPageToc(page.data.toc, page.data.componentSections ?? [])
           : page.data.toc}
-        tableOfContentPopover={{
-          trigger: {
-            "aria-label": docsPageCopy.tableOfContents,
-            title: docsPageCopy.tableOfContents,
-          },
-        }}
+        {...(page.data.componentPage
+          ? { tableOfContent: { enabled: false }, tableOfContentPopover: { enabled: false } }
+          : {
+              tableOfContentPopover: {
+                trigger: {
+                  "aria-label": docsPageCopy.tableOfContents,
+                  title: docsPageCopy.tableOfContents,
+                },
+              },
+            })}
       >
         {hidePageTitle ? null : <DocsTitle>{page.data.title}</DocsTitle>}
         {page.data.componentPage || hidePageTitle ? null : <DocsDescription>{page.data.description}</DocsDescription>}

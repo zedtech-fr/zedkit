@@ -11,11 +11,12 @@ import {
 import { ThemeSwitch, type ThemeSwitchProps } from "fumadocs-ui/layouts/shared/slots/theme-switch";
 import { SidebarTrigger, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
 import { IconButton, cn } from "@zedtech/zedkit-ui";
+import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 
 export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerProps) {
   const { setOpenSearch, enabled } = useSearchContext();
   if (hideIfDisabled && !enabled) return null;
-  const label = "Search documentation";
+  const label = siteChromeCopy.search.triggerAriaLabel;
   return (
     <IconButton
       label={label}
@@ -31,7 +32,7 @@ export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerPr
 }
 
 export function SiteFullSearchTrigger(props: FullSearchTriggerProps) {
-  const label = "Search documentation";
+  const label = siteChromeCopy.search.triggerAriaLabel;
   return <FullSearchTrigger {...props} title={label} aria-label={label} data-search="" />;
 }
 

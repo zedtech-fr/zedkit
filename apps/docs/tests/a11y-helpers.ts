@@ -32,8 +32,17 @@ export async function pinDemoLook(
 ): Promise<Locator> {
   await preview.scrollIntoViewIfNeeded();
   await revealPreviewDisplay(preview);
-  await preview.getByLabel("Style of this demo").selectOption(identity);
-  await preview.getByRole("button", { name: mode === "light" ? "Light" : "Dark", exact: true }).click();
+  const look = preview.getByRole("combobox", { name: /^(Look|Style of this demo)$/ });
+  await look.selectOption(identity);
+  const light = preview.getByRole("button", { name: "Light", exact: true });
+  if ((await light.count()) > 0) {
+    await preview.getByRole("button", { name: mode === "light" ? "Light" : "Dark", exact: true }).click();
+  } else {
+    const dark = preview.getByRole("button", { name: "Dark", exact: true });
+    const pressed = await dark.getAttribute("aria-pressed");
+    if (mode === "dark" && pressed !== "true") await dark.click();
+    if (mode === "light" && pressed === "true") await dark.click();
+  }
   const surface = preview.locator("[data-preview-surface]");
   await expect(surface).toHaveAttribute("data-identity", identity);
   await expect(surface).toHaveAttribute("data-identity-scope", "");

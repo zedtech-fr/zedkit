@@ -54,8 +54,16 @@ const IDENTITY_SANS: Record<DocsShippedIdentity, string> = {
 
 async function pinSpecimen(preview: Locator, identity: DocsShippedIdentity, mode: "light" | "dark") {
   await preview.scrollIntoViewIfNeeded();
-  await preview.getByRole("combobox", { name: "Style of this demo" }).selectOption(identity);
-  await preview.getByRole("button", { name: mode === "light" ? "Light" : "Dark", exact: true }).click();
+  await preview.getByRole("combobox", { name: /^(Look|Style of this demo)$/ }).selectOption(identity);
+  const light = preview.getByRole("button", { name: "Light", exact: true });
+  if ((await light.count()) > 0) {
+    await preview.getByRole("button", { name: mode === "light" ? "Light" : "Dark", exact: true }).click();
+  } else {
+    const dark = preview.getByRole("button", { name: "Dark", exact: true });
+    const pressed = await dark.getAttribute("aria-pressed");
+    if (mode === "dark" && pressed !== "true") await dark.click();
+    if (mode === "light" && pressed === "true") await dark.click();
+  }
   const surface = preview.locator("[data-preview-surface]");
   await expect(surface).toHaveAttribute("data-identity", identity);
   await expect.poll(() => surface.evaluate((node) => node.classList.contains("dark"))).toBe(mode === "dark");
@@ -101,12 +109,11 @@ test.describe("identity+mode nearest-scope contract", () => {
     const preview = page.locator("[data-component-preview]").first();
     await preview.scrollIntoViewIfNeeded();
     await expect(preview.getByRole("button", { name: "Create app" })).toBeInViewport();
-    await expect(preview.getByRole("combobox", { name: "Style of this demo" })).toBeHidden();
-    await preview.getByRole("button", { name: "Display", exact: true }).click();
-    await expect(preview.getByRole("combobox", { name: "Style of this demo" })).toBeVisible();
-    await expect(preview.getByRole("button", { name: "Site", exact: true })).toBeVisible();
-    await expect(preview.getByRole("button", { name: "Light", exact: true })).toBeVisible();
+    await expect(preview.getByRole("combobox", { name: "Look" })).toBeVisible();
     await expect(preview.getByRole("button", { name: "Dark", exact: true })).toBeVisible();
+    await expect(preview.getByRole("button", { name: "Display", exact: true })).toHaveCount(0);
+    await expect(preview.getByRole("button", { name: "Site", exact: true })).toHaveCount(0);
+    await expect(preview.getByRole("button", { name: "Light", exact: true })).toHaveCount(0);
   });
 
   for (const identity of DOCS_SHIPPED_IDENTITIES) {
