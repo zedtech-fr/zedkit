@@ -889,6 +889,7 @@
         "websocket",
         "polling",
         "reconnect",
+        "fetch",
         "typescript",
         "browser"
       ],
@@ -960,7 +961,8 @@
             ]
           },
           "seeAlso": [
-            "Receive WebSocket messages with reconnect and polling backup"
+            "Receive WebSocket messages with reconnect and polling backup",
+            "Fetch JSON with timeout and retry"
           ]
         },
         {
@@ -990,6 +992,40 @@
                   "wsSource",
                   "WsSourceOptions",
                   "WsReconnectOptions"
+                ]
+              }
+            ]
+          },
+          "seeAlso": [
+            "Poll an endpoint as a live source"
+          ]
+        },
+        {
+          "need": "Fetch JSON with timeout and retry",
+          "import": "`@zedtech/zedkit-live` — `fetchJson`, `FetchJsonOptions`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "fetchJson",
+          "audience": "Apps that GET JSON from the browser or Node 22 and need a Result, not a thrown stack.",
+          "purpose": "GET JSON with timeout, retry transient failures, honor Retry-After, and return a Result without echoing request headers.",
+          "whenToUse": "One-shot or build-time JSON GETs that must survive 429, 403, 5xx, and timeouts.",
+          "whenNotToUse": "A repeating live feed; use pollingSource.",
+          "derivedFrom": null,
+          "example": "import { fetchJson } from \"@zedtech/zedkit-live\";\n\nconst result = await fetchJson(\"https://example.com/api/runs\", {\n  timeoutMs: 10_000,\n  retries: 2,\n});\nif (!result.ok) throw result.error;",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { fetchJson } from \"@zedtech/zedkit-live\";\n\nconst result = await fetchJson(\"https://example.com/api/runs\", {\n  timeoutMs: 10_000,\n  retries: 2,\n});\nif (!result.ok) throw result.error;"
+            }
+          ],
+          "adoption": {
+            "kind": "js",
+            "modules": [
+              {
+                "from": "@zedtech/zedkit-live",
+                "exports": [
+                  "fetchJson",
+                  "FetchJsonOptions"
                 ]
               }
             ]
