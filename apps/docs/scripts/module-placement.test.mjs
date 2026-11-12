@@ -372,9 +372,9 @@ describe("ESLint one-way imports", () => {
     );
   });
 
-  it("keeps the L8 exception on lib/component-page-toc.ts", async () => {
+  it("needs no L8 exception after component-page-toc moves next to the page", async () => {
     eslint ??= new ESLint({ cwd: repoRoot });
-    const [result] = await eslint.lintFiles(["apps/docs/lib/component-page-toc.ts"]);
+    const [result] = await eslint.lintFiles(["apps/docs/features/docs/component-page-toc.ts"]);
     assert.equal(
       (result?.messages ?? []).filter((m) => m.ruleId === "no-restricted-imports").length,
       0,

@@ -319,27 +319,6 @@ export default tseslint.config(
     },
   },
   {
-    // L8: move component-page-toc next to the page, then drop this block.
-    name: "docs/one-way-exception-l8-component-page-toc",
-    files: ["apps/docs/lib/component-page-toc.ts"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            deepRelativeImport,
-            docsAppFeatureBan,
-            docsHashImportBan,
-            {
-              group: docsUiGroup,
-              message: docsLibUiBan.message,
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     // After uiPreset so other production checks stay. Tests keep the root ban.
     files: ["packages/ui/src/**/*.{ts,tsx}"],
     ignores: ["packages/ui/src/**/*.{test,spec}.*"],
