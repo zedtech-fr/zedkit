@@ -96,6 +96,8 @@ html[data-docs-shell][data-identity] {
  * (light-mode leftovers are ~1.6:1 on this band).
  */
 #home-page #paste[data-slot="section"] {
+  /* Glass light accent: file-note text-accent stays ≥ 4.5 on this zinc band in page dark. */
+  --accent: 262 85% 70%;
   --foreground: var(--zk-site-action-foreground);
   --muted-foreground: var(--zk-site-action-foreground);
   --muted: var(--zk-site-action-hover);
@@ -104,6 +106,8 @@ html[data-docs-shell][data-identity] {
   --background: var(--zk-site-action);
   --border: var(--zk-site-action-hover);
   --card: var(--zk-site-action);
+  /* Glass light --accent: keep the highlighted file note ≥4.5 on zinc in page dark. */
+  --accent: 262 85% 70%;
   background-color: hsl(var(--zk-site-action));
   color: hsl(var(--zk-site-action-foreground));
 }

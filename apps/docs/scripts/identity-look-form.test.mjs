@@ -66,6 +66,7 @@ test("invalid Expert drafts show a visible FieldError, not an sr-only swatch hin
   assert.match(fields, /FieldError/);
   assert.match(fields, /fields\.invalidValue/);
   assert.match(fields, /fields\.hslFormat/);
+  assert.match(fields, /data-token-swatch=/);
   assert.doesNotMatch(fields, /className="sr-only"/);
 });
 

@@ -126,7 +126,9 @@ test("home hero has no facts line; same-idea holds MIT and React 19 proof (#118)
     page.locator("[data-home-hero-lead]").getByText(/React 19/),
   ).toHaveCount(0);
   await expect(page.locator("[data-home-same-idea-lands]").getByText("MIT", { exact: true })).toBeVisible();
-  await expect(page.getByText("React 19 and Tailwind CSS 4, from npm or as source")).toBeVisible();
+  const stackLine = page.getByText("React 19 and Tailwind CSS 4, from npm or as source");
+  await stackLine.scrollIntoViewIfNeeded();
+  await expect(stackLine).toBeVisible();
   await expect(page.getByText("What you see is MIT, React 19, Tailwind 4.")).toHaveCount(0);
   await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
