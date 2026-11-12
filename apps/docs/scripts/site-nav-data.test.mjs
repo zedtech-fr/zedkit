@@ -101,6 +101,7 @@ const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];
 
 test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav disclosure never", () => {
   assert.match(source, /GitHub is always mounted/);
+  assert.match(source, /phone site menu/);
   assert.match(source, /Theme, version, and a site-nav disclosure are never on/);
   assert.doesNotMatch(source, /github:\s*true|theme:\s*false|siteNavDisclosure:\s*false/);
 });

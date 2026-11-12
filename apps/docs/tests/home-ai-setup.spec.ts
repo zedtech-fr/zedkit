@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MAP_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
+import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
 import { homeSameIdeaCopy } from "../ui/home/i18n/home-same-idea-copy";
 import { homeSixSentencesCopy } from "../ui/home/i18n/home-six-sentences-copy";
 
@@ -57,7 +58,7 @@ test.describe("home paste band", () => {
     await expect(paste.locator("[data-home-paste-lands]")).toBeVisible();
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Code that's checked. Screens that match. From the agent you already use.",
+      `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`,
     );
     await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toHaveAttribute("aria-selected", "true");
 

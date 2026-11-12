@@ -5,12 +5,13 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "A small LiveSource interface plus polling and WebSocket implementations with reconnect and polling backup, with no framework code. Original work by the same author.",
+  "description": "A small LiveSource interface plus polling and WebSocket implementations with reconnect and polling backup, and JSON fetch with timeout and retry, with no framework code. Original work by the same author.",
   "keywords": [
     "realtime",
     "websocket",
     "polling",
     "reconnect",
+    "fetch",
     "typescript",
     "browser"
   ],

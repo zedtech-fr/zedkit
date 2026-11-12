@@ -4,6 +4,8 @@
 
 ```ts
 
+import { Result } from '@zedtech/zedkit-core';
+
 // @public
 export function createLiveSource<T = void>(start: (host: LiveHost<T>) => () => void, options?: CreateLiveSourceOptions): LiveSource<T>;
 
@@ -11,6 +13,19 @@ export function createLiveSource<T = void>(start: (host: LiveHost<T>) => () => v
 export interface CreateLiveSourceOptions {
     onError?: ((error: Error) => void) | undefined;
 }
+
+// @public
+export function fetchJson(input: RequestInfo | URL, options?: FetchJsonOptions): Promise<Result<unknown, Error>>;
+
+// @public (undocumented)
+export type FetchJsonOptions = RequestInit & {
+    fetch?: typeof globalThis.fetch;
+    sleep?: (ms: number) => Promise<void>;
+    timeoutMs?: number;
+    retries?: number;
+    intervalMs?: number;
+    maxBackoffMs?: number;
+};
 
 // @public
 export interface LiveHost<T> {

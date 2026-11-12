@@ -25,11 +25,14 @@ for (const theme of ["light", "dark"] as const) {
       await waitForAppliedLook(page, DEFAULT_IDENTITY, theme);
       if (width < 768) {
         const mobile = page.locator("#nd-mobile-nav");
-        await expect(mobile.getByRole("link", { name: "AI", exact: true })).toBeVisible();
-        await expect(mobile.getByRole("link", { name: "UI", exact: true })).toBeVisible();
-        await expect(mobile.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
-        await expect(mobile.getByRole("link", { name: "Catalog", exact: true })).toBeVisible();
+        await expect(mobile.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
         await expect(page.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+        await mobile.getByRole("button", { name: "Menu", exact: true }).click();
+        const dialog = page.getByRole("dialog", { name: "Site navigation" });
+        await expect(dialog.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+        await expect(dialog.getByRole("link", { name: "UI", exact: true })).toBeVisible();
+        await expect(dialog.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+        await expect(dialog.getByRole("link", { name: "Catalog", exact: true })).toBeVisible();
       } else {
         // The kit version label changes with every release, so only that one element is masked; the rest of the
         // header stays pixel-checked, and the label's text is still asserted in the guards below.
@@ -58,10 +61,13 @@ test.describe("shell nav calm guards", () => {
     await expect(mobile.getByLabel("Try another identity")).toHaveCount(0);
     await expect(mobile.locator("select")).toHaveCount(0);
     await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(0);
-    await expect(mobile.getByRole("link", { name: "AI", exact: true })).toBeVisible();
-    await expect(mobile.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+    await expect(mobile.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
     await expect(mobile.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
     await expect(mobile.getByRole("button", { name: "Open menu" })).toHaveCount(0);
     await expect(page.getByRole("dialog")).toHaveCount(0);
+    await mobile.getByRole("button", { name: "Menu", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Site navigation" });
+    await expect(dialog.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
   });
 });

@@ -172,7 +172,7 @@ export function DocsSiteHeader() {
   const foundations = isFoundationsPath(usePathname());
   return (
     <>
-      <MobileHeader className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden" />
+      <MobileHeader className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-nowrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden" />
       {foundations ? <FoundationsDesktopHeader /> : null}
     </>
   );

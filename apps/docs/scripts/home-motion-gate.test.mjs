@@ -112,6 +112,7 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
   assert.doesNotMatch(live, /@keyframes zk-(?:up|in|drift|s[1-5])\b/);
   assert.doesNotMatch(live, /\bzk-s[1-5]\b/);
   assert.doesNotMatch(css, /\[data-hero-shapes\][^{]*\{[^}]*animation\s*:/);
+  assert.doesNotMatch(stripComments(css), /\[data-hero-shapes\]/);
 });
 
 test("illustration drift is decorative and does not wrap the glass card", () => {

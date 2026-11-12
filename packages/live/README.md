@@ -1,6 +1,6 @@
 # @zedtech/zedkit-live
 
-Framework-free live data sources for the browser and Node 22+: one small `LiveSource` interface, a `pollingSource`, and a `wsSource` that reconnects and can fall back to polling while the socket is down. No React, no DOM beyond the global `WebSocket` (overridable).
+Framework-free live data sources for the browser and Node 22+: one small `LiveSource` interface, a `pollingSource`, a `wsSource` that reconnects and can fall back to polling while the socket is down, and `fetchJson` for one-shot JSON GETs with timeout and retry. No React, no DOM beyond the global `WebSocket` and `fetch` (both overridable).
 
 See [CATALOG.md](./CATALOG.md) for exports and examples.
 
@@ -23,6 +23,15 @@ const source = wsSource<{ id: string }>({
 const stop = source.subscribe((message) => refresh(message));
 source.onStatus((status) => console.log(status)); // connecting | live | retrying | idle
 stop();
+```
+
+One-shot JSON (timeout, retry, `Retry-After`, `Result` — request headers never appear in errors):
+
+```ts
+import { fetchJson } from "@zedtech/zedkit-live";
+
+const result = await fetchJson("/api/runs", { timeoutMs: 10_000, retries: 2 });
+if (!result.ok) throw result.error;
 ```
 
 A source starts on its first subscriber and stops on its last unsubscribe. `getStatus` plus `onStatus` fit `useSyncExternalStore` or any store:
