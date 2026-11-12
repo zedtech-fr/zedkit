@@ -9,6 +9,8 @@ const dev = readFileSync(join(root, ".github/workflows/deploy-dev.yml"), "utf8")
 const epic = readFileSync(join(root, ".github/workflows/deploy-epic-preview.yml"), "utf8");
 const prod = readFileSync(join(root, ".github/workflows/deploy-docs.yml"), "utf8");
 const publish = readFileSync(join(root, "deploy/publish-dev-static.sh"), "utf8");
+const ingest = readFileSync(join(root, "deploy/ingest-public-reviews.sh"), "utf8");
+const snapshot = readFileSync(join(root, "apps/docs/features/reviews/SNAPSHOT.md"), "utf8");
 
 test("deploy-dev rsyncs a CI-built export to /data/srv/zedkit and does not touch host compose", () => {
   assert.match(dev, /pnpm --filter @zedtech\/zedkit-docs build/);
@@ -24,34 +26,43 @@ test("deploy-dev rsyncs a CI-built export to /data/srv/zedkit and does not touch
   assert.doesNotMatch(dev, /docker compose/);
 });
 
-test("deploy-dev copies a generated run index before the docs build when env is set", () => {
-  const sshIdx = dev.indexOf("Configure SSH to deploy host");
-  const coreIdx = dev.indexOf("pnpm --filter @zedtech/zedkit-core build");
-  const copyIdx = dev.indexOf("copy-public-reviews-snapshot.mjs");
-  const buildIdx = dev.indexOf("pnpm --filter @zedtech/zedkit-docs build");
-  assert.ok(sshIdx > 0 && coreIdx > sshIdx && copyIdx > coreIdx && buildIdx > copyIdx);
-  assert.match(dev, /PUBLIC_REVIEWS_SNAPSHOT/);
-  assert.match(dev, /PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
-  assert.match(dev, /keeping stand-in/);
-  assert.match(dev, /scp failed \(exit /);
-  assert.match(dev, /must not start with -/);
-  assert.doesNotMatch(dev, /remote file absent/);
-  assert.doesNotMatch(dev, /\/home\//);
-  assert.doesNotMatch(dev, /\/Users\//);
-  const ingestBlock = dev.slice(
-    dev.indexOf("name: Ingest generated run index"),
-    buildIdx,
-  );
-  const gate = ingestBlock.match(
-    /node apps\/docs\/scripts\/copy-public-reviews-snapshot\.mjs[\s\S]*?public-reviews\.json[^\n]*/,
-  );
-  assert.ok(gate, "ingest gate invocation");
-  assert.doesNotMatch(gate[0], /\|\|/);
-  assert.doesNotMatch(gate[0], /exit 0/);
-  assert.doesNotMatch(epic, /copy-public-reviews-snapshot/);
+function ingestOrder(yaml) {
+  const sshIdx = yaml.indexOf("Configure SSH to deploy host");
+  const coreIdx = yaml.indexOf("pnpm --filter @zedtech/zedkit-core build");
+  const ingestIdx = yaml.indexOf("bash deploy/ingest-public-reviews.sh");
+  const buildIdx = yaml.indexOf("pnpm --filter @zedtech/zedkit-docs build");
+  assert.ok(sshIdx >= 0 && coreIdx > sshIdx && ingestIdx > coreIdx && buildIdx > ingestIdx);
+}
+
+test("staging deploys ingest a generated run index before the docs build", () => {
+  ingestOrder(dev);
+  ingestOrder(epic);
+  assert.match(dev, /vars\.PUBLIC_REVIEWS_SNAPSHOT/);
+  assert.match(dev, /vars\.PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
+  assert.match(epic, /vars\.PUBLIC_REVIEWS_SNAPSHOT/);
+  assert.match(epic, /vars\.PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
+  assert.match(ingest, /keeping stand-in/);
+  assert.match(ingest, /scp failed \(exit /);
+  assert.match(ingest, /\|\| scp_status=\$\?/);
+  assert.match(ingest, /must not start with -/);
+  assert.doesNotMatch(ingest, /remote file absent/);
+  assert.doesNotMatch(ingest, /\/home\//);
+  assert.doesNotMatch(ingest, /\/Users\//);
+  assert.doesNotMatch(ingest, /set \+e/);
+  const gateTail = ingest.slice(ingest.indexOf("copy-public-reviews-snapshot.mjs"));
+  assert.ok(gateTail.length > 0, "ingest gate invocation");
+  assert.doesNotMatch(gateTail, /\|\|/);
+  assert.doesNotMatch(gateTail, /exit 0/);
+  assert.doesNotMatch(prod, /ingest-public-reviews/);
   assert.doesNotMatch(prod, /copy-public-reviews-snapshot/);
-  assert.doesNotMatch(epic, /PUBLIC_REVIEWS_SNAPSHOT/);
   assert.doesNotMatch(prod, /PUBLIC_REVIEWS_SNAPSHOT/);
+  const staging = snapshot.slice(snapshot.indexOf("## Staging ingest"));
+  assert.match(staging, /deploy-epic-preview/);
+  assert.match(staging, /ingest-public-reviews\.sh/);
+  assert.match(staging, /PUBLIC_REVIEWS_SNAPSHOT/);
+  assert.match(staging, /PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
+  assert.match(staging, /epic preview ingest/);
+  assert.match(staging, /Production deploys do not ingest/);
 });
 
 test("publish-dev-static allowlists dests and never talks to docker", () => {
