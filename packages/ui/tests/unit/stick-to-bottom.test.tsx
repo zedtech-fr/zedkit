@@ -91,6 +91,13 @@ describe("useStickToBottom", () => {
     expect(result.current.isStuck).toBe(true);
   });
 
+  it("pins with scrollTop when scrollTo is missing", () => {
+    const scroller = mockScroller();
+    Object.defineProperty(scroller.el, "scrollTo", { configurable: true, value: undefined });
+    expect(() => renderHook(() => useStickToBottom({ current: scroller.el }))).not.toThrow();
+    expect(scroller.metrics.scrollTop).toBe(800);
+  });
+
   it("starts latched and pins overflowing content to the end on mount", () => {
     const { scrollTo, result } = mountHook();
     expect(result.current.isStuck).toBe(true);

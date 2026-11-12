@@ -49,6 +49,103 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // @public (undocumented)
+export function AgentConsole(input: AgentConsoleProps): JSX.Element;
+
+// @public (undocumented)
+export type AgentConsoleDecision = {
+    verdict: string | null;
+    confidence: number | null;
+    posted: boolean;
+    postedReviewHref: string | null;
+    summary: string | null;
+    mustChange: readonly {
+        text: string;
+    }[];
+    notes: readonly {
+        text: string;
+        tag?: "downgraded" | "approved" | null;
+    }[];
+    dismissed: readonly string[];
+    firstPass: {
+        verdict: string | null;
+        confidence: number | null;
+        findings: readonly {
+            id: string;
+            text: string;
+            disposition: AgentConsoleFindingDisposition;
+        }[];
+    } | null;
+    secondPass: {
+        model: string | null;
+        blocksMerge: boolean | null;
+        summary: string | null;
+    } | null;
+};
+
+// @public (undocumented)
+export type AgentConsoleEntry = {
+    id: string;
+    kind: "tool";
+    name: string;
+    body?: string;
+    status?: string;
+    durationMs?: number | null;
+} | {
+    id: string;
+    kind: "message";
+    text: string;
+} | {
+    id: string;
+    kind: "reasoning";
+    text: string;
+    live?: boolean;
+};
+
+// @public (undocumented)
+export type AgentConsoleFindingDisposition = "kept" | "downgraded" | "dismissed";
+
+// @public (undocumented)
+export type AgentConsoleItem = {
+    id: string;
+    name: string;
+    kind: string;
+    status: string;
+    model: string;
+    durationMs: number | null;
+    toolCount: number;
+    startedAt: number | null;
+    lastActivityAt: number | null;
+    tokensIn: number;
+    tokensOut: number;
+    running: boolean;
+    streamLabel?: string | null;
+    entries: readonly AgentConsoleEntry[];
+};
+
+// @public (undocumented)
+export type AgentConsoleProps = {
+    run: AgentConsoleRun;
+    items: readonly AgentConsoleItem[];
+    decision?: AgentConsoleDecision | null;
+    selectedId?: string;
+    defaultSelectedId?: string;
+    onSelectedIdChange?: (id: string) => void;
+    className?: string;
+};
+
+// @public (undocumented)
+export type AgentConsoleRun = {
+    pr: number | null;
+    sha: string | null;
+    engineLabel: string;
+    durationMs: number | null;
+    reviewSize: string | null;
+    verdict: string | null;
+    confidence: number | null;
+    postedReviewHref: string | null;
+};
+
+// @public (undocumented)
 export function Alert(input: AlertProps): React_2.JSX.Element;
 
 // @public (undocumented)
@@ -2092,6 +2189,45 @@ export type ZedkitUiMessages = {
     language: string;
     jumpToLatest: string;
     locale: "en" | "fr";
+    agentConsole: {
+        sidebarTrigger: string;
+        agentsNav: string;
+        groupMain: string;
+        groupLens: string;
+        groupSecondPass: string;
+        groupWorkflow: string;
+        groupHelper: string;
+        groupObserver: string;
+        groupGate: string;
+        emptyTitle: string;
+        emptyDescription: string;
+        finalDecision: string;
+        firstPass: string;
+        superseded: string;
+        outdated: string;
+        secondPass: string;
+        blocksMerge: string;
+        allowsMerge: string;
+        posted: string;
+        decided: string;
+        summary: string;
+        mustChange: string;
+        notes: string;
+        dismissed: string;
+        kept: string;
+        downgraded: string;
+        approved: string;
+        confidence: string;
+        postedReview: string;
+        pr: string;
+        started: string;
+        duration: string;
+        toolCalls: string;
+        tokens: string;
+        tokensInOut: string;
+        lastActivity: string;
+        toolBurst: string;
+    };
     streamStatus: {
         "reading-reference": string;
         "picking-palette": string;

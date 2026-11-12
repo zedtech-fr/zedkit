@@ -25,6 +25,7 @@ import { AppShellTriggerDemo } from "./app-shell-trigger-demo";
 import { GuideSaveRowDemo } from "./guide-save-row-demo";
 import { AdminDashboardGuideDemo } from "./admin-dashboard-guide-demo";
 import { RevealOnScrollDemo } from "./reveal-on-scroll-demo";
+import { AgentConsoleDemo } from "./agent-console-demo";
 import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
@@ -155,6 +156,7 @@ export interface DemoEntry {
 
 export const demoRegistry = {
   AlertDemo: { Demo: AlertDemo, file: "alert-demo.tsx" },
+  AgentConsoleDemo: { Demo: AgentConsoleDemo, file: "agent-console-demo.tsx" },
   AppShellDemo: { Demo: AppShellDemo, file: "app-shell-demo.tsx" },
   BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx", center: true },
   ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx", center: true },

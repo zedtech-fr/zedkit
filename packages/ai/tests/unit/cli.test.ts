@@ -452,7 +452,7 @@ describe("cli", () => {
       );
       expect(code).toBe(0);
       expect(text).toContain("provider: muse");
-      expect(text).toContain("model: muse-wonder-1.0");
+      expect(text).toContain("model: muse-spark-1.3-contributor");
     });
 
     it("reads the project's tokenomics.md and its default_provider", () => {

@@ -166,3 +166,22 @@ test("surface demo imports its catalog and drops leftover English", () => {
     "Widget trigger",
   ]);
 });
+
+test("agent console demo is a mobile-aware fixture with capped mock updates", () => {
+  const source = readFileSync(join(demos, "agent-console-demo.tsx"), "utf8");
+  assert.match(source, /"use client"/);
+  assert.match(source, /usePreviewMobile/);
+  assert.match(source, /\[&_\[data-slot=app-shell-menu\]\]:flex/);
+  assert.match(source, /\[&_\[data-slot=app-shell\]>aside\]:hidden/);
+  assert.match(source, /max-h-log/);
+  assert.match(source, /kind: "main"/);
+  assert.match(source, /kind: "lens"/);
+  assert.match(source, /disposition: "kept"/);
+  assert.match(source, /disposition: "downgraded"/);
+  assert.match(source, /disposition: "dismissed"/);
+  assert.match(source, /streamLabel/);
+  assert.match(source, /setInterval/);
+  assert.match(source, /MOCK_TICK_CAP\s*=\s*[1-9]\d?/);
+  assert.doesNotMatch(source, /Date\.now\(/);
+  assert.doesNotMatch(source, /\bfetch\s*\(/);
+});

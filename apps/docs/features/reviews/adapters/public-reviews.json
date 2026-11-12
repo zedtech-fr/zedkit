@@ -16,7 +16,9 @@
           "status": "running",
           "startedAt": "2026-11-11T08:00:00.000Z",
           "durationMs": null,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": null,
           "liveUrl": "https://example.test/live/run-110-impl"
         }
@@ -26,7 +28,9 @@
       "number": 108,
       "title": "Add a public issues section",
       "state": "closed",
-      "pullRequests": [133],
+      "pullRequests": [
+        133
+      ],
       "lastRunAt": "2026-11-10T18:40:00.000Z",
       "entries": [
         {
@@ -36,7 +40,9 @@
           "status": "completed",
           "startedAt": "2026-11-10T16:00:00.000Z",
           "durationMs": 420000,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": null,
           "liveUrl": "https://example.test/live/run-108-impl"
         },
@@ -47,7 +53,9 @@
           "status": "completed",
           "startedAt": "2026-11-10T16:10:00.000Z",
           "durationMs": 2400000,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": null,
           "liveUrl": "https://example.test/live/run-108-impl"
         },
@@ -58,7 +66,9 @@
           "status": "completed",
           "startedAt": "2026-11-10T17:20:00.000Z",
           "durationMs": 900000,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": "approve",
           "liveUrl": "https://example.test/live/run-108-review"
         },
@@ -69,7 +79,9 @@
           "status": "completed",
           "startedAt": "2026-11-10T18:40:00.000Z",
           "durationMs": 780000,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": null,
           "liveUrl": "https://example.test/live/run-108-improve"
         }
@@ -89,7 +101,9 @@
           "status": "failed",
           "startedAt": "2026-11-08T09:15:00.000Z",
           "durationMs": 300000,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": null,
           "liveUrl": null
         }
@@ -100,12 +114,18 @@
     {
       "number": 133,
       "issueNumber": 108,
-      "runIds": ["run-108-impl", "run-108-review", "run-108-improve"]
+      "runIds": [
+        "run-108-impl",
+        "run-108-review",
+        "run-108-improve"
+      ]
     },
     {
       "number": 54,
       "issueNumber": null,
-      "runIds": ["run-54-review"],
+      "runIds": [
+        "run-54-review"
+      ],
       "entries": [
         {
           "id": "54-review",
@@ -114,7 +134,9 @@
           "status": "completed",
           "startedAt": "2026-11-07T14:00:00.000Z",
           "durationMs": 480000,
-          "models": ["cursor-grok-4.6-high"],
+          "models": [
+            "cursor-grok-4.6-high"
+          ],
           "verdict": "comment",
           "liveUrl": "https://example.test/live/run-54-review"
         }

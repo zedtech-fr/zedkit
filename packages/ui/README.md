@@ -113,7 +113,8 @@ kit packages.
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`,
   `Stack`, `Section`, `SectionScroll`, `Container` (named widths + full-bleed bands),
-  `SidebarNavItem` / `SidebarNavGroup` (sidebar run-list rows).
+  `SidebarNavItem` / `SidebarNavGroup` (sidebar run-list rows),
+  `AgentConsole` (live agent run: sidebar, decision, transcript).
 - Motion: `Animate`, `AnimateObserver`, `observeAnimate` (`data-animate`
   appear / scroll / press / longpress / hover / focus), `WordRoll`, `MotionScript`,
   `useMotionPreference`. Parallax layers live on `@zedtech/zedkit-ui/motion`

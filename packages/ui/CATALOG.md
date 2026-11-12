@@ -94,7 +94,7 @@ export function DarkThemeButton() {
 - When not to use: For app copy (page titles, form labels, empty-state stories) — keep those in your own messages.
 - See also: `Confirm destructive actions`, `Show a sortable, filterable, paginated data table`
 - Examples: French bundle, Override one string
-- Troubleshooting: English still shows — the provider is missing above that host, or a label prop is set. A custom bundle must keep every key (`locale` included) so `UpdatedAgo` can pick `Intl.RelativeTimeFormat`.
+- Troubleshooting: English still shows — the provider is missing above that host, or a label prop is set. A custom bundle must keep every key (`locale` and `agentConsole` included) so `UpdatedAgo` can pick `Intl.RelativeTimeFormat`.
 
 ```ts
 import { Button, ZedkitUiProvider, zedkitUiMessagesFr } from "@zedtech/zedkit-ui";
@@ -1419,6 +1419,30 @@ import { AppShell } from "@zedtech/zedkit-ui";
   <p>Content.</p>
 </AppShell>
 // Opt out of the mobile menu: sidebarTrigger={null}
+```
+
+## Compose a live agent console from a run
+
+- Import: `@zedtech/zedkit-ui` — `AgentConsole`, `AgentConsoleProps`, `AgentConsoleRun`, `AgentConsoleItem`, `AgentConsoleEntry`, `AgentConsoleDecision`, `AgentConsoleFindingDisposition`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: AgentConsole
+- Audience: Developers mounting a live agent run (sidebar of items plus one transcript) from host-mapped props.
+- Purpose: Compose a live agent console (sidebar, decision card, transcript) from host-mapped props. Mobile drawer and stick-to-bottom; no fetch.
+- When to use: When the host already has a run, items, and an optional decision and needs the kit shell, grouping, and transcript wiring.
+- When not to use: For polling or snapshot parsing — keep those in the host. For a page frame only — use AppShell. For a registry copy of this screen — there is none; import from npm.
+- See also: `Lay out an admin page (sidebar + topbar + header)`, `List sidebar rows with status, title, meta, and count`, `Follow a growing log to the latest`, `Render a live assistant transcript from rows`, `Render Markdown without raw HTML`, `Show key-value details and a live indicator`, `Show an empty zone with a next step`, `Localize kit chrome in English or French`
+- Examples: Simple
+- A11y: Labelled mobile drawer trigger (not the icon-only menu). Sidebar is presentational (no ids; AppShell mounts it twice). Rows are buttons; groups are native `details` and start open. First pass is a folded native `details`. Jump to latest overlays the main pane and is hidden while latched. EmptyState when `items` is empty. Confidence is announced as n/10.
+- Troubleshooting: Pass milliseconds for duration fields. Confidence is already /10 (do not multiply). Unknown item kinds still render, after the ticket groups. Custom `messages` bundles must add `agentConsole` — see `Localize kit chrome in English or French`. Host owns loading and error; this module does not fetch. The decision card renders only while the selected item is `kind: "main"` — a passed `decision` is ignored on lens and other views. Do not mount until the first `items` payload exists, or EmptyState flashes. `postedReviewHref` (run and decision) must be `http:` or `https:`; other schemes are omitted. Agent message entries render Markdown, including remote `http(s)` images (`referrerPolicy=no-referrer`); strip images in the host if that is too much trust.
+
+```ts
+"use client";
+import { AgentConsole } from "@zedtech/zedkit-ui";
+<AgentConsole
+  run={{ pr: 12, sha: "abc1234", engineLabel: "kit-engine", durationMs: 377000, reviewSize: "8 files", verdict: "approve", confidence: 9, postedReviewHref: null }}
+  items={[{ id: "main", name: "Coordinator", kind: "main", status: "done", model: "docs", durationMs: 120000, toolCount: 2, startedAt: Date.now(), lastActivityAt: Date.now(), tokensIn: 12, tokensOut: 4, running: false, entries: [] }]}
+/>
 ```
 
 ## List sidebar rows with status, title, meta, and count

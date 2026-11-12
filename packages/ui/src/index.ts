@@ -2,6 +2,15 @@ export { zedkitUiMessagesEn, zedkitUiMessagesFr, type ZedkitUiMessages } from ".
 export { ZedkitUiProvider, useUiMessages } from "./ui-provider.js";
 export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./feedback/alert.js";
 export { AppShell, type AppShellProps } from "./layout/app-shell.js";
+export {
+  AgentConsole,
+  type AgentConsoleDecision,
+  type AgentConsoleEntry,
+  type AgentConsoleFindingDisposition,
+  type AgentConsoleItem,
+  type AgentConsoleProps,
+  type AgentConsoleRun,
+} from "./layout/agent-console.js";
 export { Badge, badgeVariants, type BadgeProps } from "./feedback/badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button/button.js";
 export { Calendar, type CalendarProps } from "./calendar/calendar.js";
