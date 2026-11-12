@@ -159,9 +159,10 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.doesNotMatch(panel, /IdentityDockComposerFooter/);
   assert.doesNotMatch(panel, /BriefForm/);
   assert.doesNotMatch(panel, /useIdentityDockAssistantPanel/);
-  // The form itself: Classic/Expert IdentityLookForm, patching the dock preview tokens.
+  // The form itself: Classic/Expert IdentityLookForm, patching the live site look.
   assert.match(panel, /patchTokens/);
-  assert.match(panel, /applyWidgetSpecimenPreview/);
+  assert.match(panel, /applyDocsSiteLook/);
+  assert.doesNotMatch(panel, /applyWidgetSpecimenPreview/);
   assert.match(customize, /IdentityLookForm/);
   assert.match(customize, /defaultMode="simple"/);
   assert.match(customize, /data-dock-customize/);
@@ -174,18 +175,39 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(customize, /data-dock-contrast/);
 });
 
-test("the dock footer is Preview / Reset / Apply CTAs, not a text input", () => {
+test("the dock footer is Reset only, not Apply or Preview", () => {
   const panel = read("components/identity-dock-assistant-panel.tsx");
   const bar = read("components/identity-dock-action-bar.tsx");
-  const widget = read("components/identity-dock-widget.tsx");
-  const hook = read("components/use-identity-dock-preview.ts");
+  const copy = read("components/i18n/identity-dock-copy.ts");
+  const editorCopy = read("components/i18n/identity-editor-copy.ts");
   assert.match(panel, /IdentityDockActionBar/);
   assert.match(bar, /data-dock-action-bar/);
-  assert.match(bar, /toolbar\.applySite/);
   assert.match(bar, /toolbar\.reset/);
-  assert.match(bar, /dockCopy\.preview/);
+  assert.match(bar, /aria-live="polite"/);
+  assert.doesNotMatch(bar, /toolbar\.applySite/);
+  assert.doesNotMatch(bar, /dockCopy\.preview/);
+  assert.doesNotMatch(bar, /removeFromSite/);
+  assert.doesNotMatch(bar, /onApplySite|onPreview|onRemoveFromSite/);
+  assert.doesNotMatch(copy, /preview:/);
+  assert.doesNotMatch(editorCopy, /applySite:/);
+  assert.doesNotMatch(editorCopy, /removeFromSite:/);
+  assert.doesNotMatch(editorCopy, /applyHint:/);
+  assert.doesNotMatch(editorCopy, /applied:/);
   assert.doesNotMatch(bar, /Textarea|PromptInput|BriefForm/);
-  assert.match(hook, /resetPreview/);
-  assert.match(widget, /onResetPreview/);
-  assert.match(panel, /onResetPreview/);
+  const widget = read("components/identity-dock-widget.tsx");
+  assert.match(widget, /panelRef\.current\?\.focus\(\)/);
+  assert.doesNotMatch(widget, /aria-label="Drag to resize"/);
+});
+
+test("the custom identity bar is Reset when the look differs, not a separate apply step", () => {
+  const copy = read("components/i18n/custom-identity-bar-copy.ts");
+  const bar = read("components/custom-identity-bar.tsx");
+  assert.match(copy, /badge: "Custom identity active"/);
+  assert.match(copy, /reset: "Reset"/);
+  assert.doesNotMatch(copy, /You applied/);
+  assert.doesNotMatch(copy, /to the whole site/);
+  assert.match(bar, /docsSiteLookDiffersFromDefaults/);
+  assert.match(bar, /resetDocsSiteLook/);
+  assert.doesNotMatch(bar, /isDocsSiteIdentityOptIn/);
+  assert.doesNotMatch(bar, /optIn/);
 });

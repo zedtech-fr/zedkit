@@ -34,7 +34,6 @@ import {
   type NamedIdentity,
 } from "@/lib/named-identities";
 import { type SaveStatus } from "@/lib/identity-save-status";
-import { clearDocsSiteIdentity } from "@/lib/site-identity-storage";
 import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "@/lib/identity-editor-search";
 
 type EditorBodyProps = {
@@ -50,7 +49,6 @@ type EditorBodyProps = {
   onSaveAsNew: () => void;
   onRename: () => void;
   onDelete: () => void;
-  onRemoveFromSite: () => void;
   saveStatus: SaveStatus | null;
   libraryProblem: "unavailable" | "corrupt" | undefined;
   onDark: () => void;
@@ -60,9 +58,7 @@ type EditorBodyProps = {
   onFix: (warning: IdentityContrastWarning) => void;
   onUndo: () => void;
   onLoad: (tokens: IdentityTokens, darkKept: readonly string[]) => void;
-  onApplySite: () => void;
   canUndo: boolean;
-  appliedSite: boolean;
 };
 
 function bindNamedLooks(
@@ -74,7 +70,6 @@ function bindNamedLooks(
   setName: (label: string) => void,
   remember: (next: IdentityTokens, keep?: readonly string[]) => void,
   setStatus: (status: SaveStatus | null) => void,
-  detachSite: () => void,
 ) {
   const keep = bindLookLibrary({
     named,
@@ -101,13 +96,6 @@ function bindNamedLooks(
     onReset() {
       remember(tokensForLook(identity, named) ?? identityPresets.mist, []);
     },
-    /** Undo "apply to the whole site": the site goes back to its own look, and this editor stops driving it. */
-    onRemoveFromSite() {
-      clearDocsSiteIdentity();
-      discardCustomIdentity();
-      applyIdentity(DEFAULT_IDENTITY);
-      detachSite();
-    },
   };
 }
 
@@ -132,7 +120,6 @@ function IdentityEditorBody(props: EditorBodyProps) {
         />
         <Stack gap="sm" data-editor-section="hint">
           <Text>{identityEditorCopy.panel.hint}</Text>
-          {props.appliedSite ? <Text role="status">{identityEditorCopy.panel.applied}</Text> : null}
         </Stack>
         <Stack className="empty:hidden" data-editor-section="contrast">
           <ContrastChips warnings={identityContrastWarnings(props.tokens)} onFix={props.onFix} />
@@ -153,9 +140,6 @@ function IdentityEditorBody(props: EditorBodyProps) {
                 onSaveAsNew={props.onSaveAsNew}
                 onRename={props.onRename}
                 onDelete={props.onDelete}
-                onApplySite={props.onApplySite}
-                onRemoveFromSite={props.onRemoveFromSite}
-                appliedSite={props.appliedSite}
                 status={props.saveStatus}
                 problem={props.libraryProblem}
               />
@@ -178,8 +162,6 @@ type FollowSiteIdentityArgs = {
   darkKept: readonly string[];
   named: NamedIdentity[];
   onIdentity: (id: string) => void;
-  appliedSite: boolean;
-  detachSite: () => void;
 };
 
 // Follow identity switches made outside the editor (header chooser,
@@ -199,9 +181,8 @@ function useFollowSiteIdentity(args: FollowSiteIdentityArgs) {
       if (first || applied === args.identity) return;
       const clean = [...new URLSearchParams(serializeIdentityEditorSearch(args.identity, args.tokens, args.darkPreview, args.darkKept)).keys()]
         .every((key) => key === "identity" || key === "theme");
-      if (!clean && !args.appliedSite) return;
+      if (!clean) return;
       if (tokensForLook(applied, args.named)) args.onIdentity(applied);
-      if (args.appliedSite) args.detachSite();
     };
     sync();
     window.addEventListener(IDENTITY_CHANGE_EVENT, sync);
@@ -218,13 +199,13 @@ function IdentityEditorPanel() {
   // Read as a store, with no server value: what storage holds is only known in the browser, so the first paint agrees.
   const libraryProblem = useSyncExternalStore(subscribeNamedIdentities, () => readLibrarySnapshot().problem, () => undefined);
   const [identity, setIdentity] = useState("mist");
-  const draft = useDraftTokens(identityPresets.mist, identity);
+  const draft = useDraftTokens(identityPresets.mist);
   const [name, setName] = useState("");
   const [status, setStatus] = useState<SaveStatus | null>(null);
   const [darkPreview, setDarkPreview] = useState(false);
   const [ready, setReady] = useState(false);
-  const { tokens, darkKept, remember, undo, applySite, detachSite, appliedSite, past, load, patch, patchMany, fix, applySuggest } = draft;
-  const bound = bindNamedLooks(named, identity, name, tokens, setIdentity, setName, remember, setStatus, detachSite);
+  const { tokens, darkKept, remember, undo, past, load, patch, patchMany, fix, applySuggest } = draft;
+  const bound = bindNamedLooks(named, identity, name, tokens, setIdentity, setName, remember, setStatus);
 
   useLayoutEffect(() => {
     const parsed = parseIdentityEditorSearch(window.location.search);
@@ -236,12 +217,12 @@ function IdentityEditorPanel() {
     setReady(true);
   }, []);
 
-  useFollowSiteIdentity({ ready, identity, tokens, darkPreview, darkKept, named, onIdentity: bound.onIdentity, appliedSite, detachSite });
+  useFollowSiteIdentity({ ready, identity, tokens, darkPreview, darkKept, named, onIdentity: bound.onIdentity });
 
   useLayoutEffect(() => {
     const onApply = (event: Event) => {
       const detail = (event as CustomEvent<IdentityTokens>).detail;
-      if (detail) applySuggest(detail, false);
+      if (detail) applySuggest(detail);
     };
     window.addEventListener(IDENTITY_EDITOR_DRAFT_APPLY, onApply);
     return () => window.removeEventListener(IDENTITY_EDITOR_DRAFT_APPLY, onApply);
@@ -272,9 +253,7 @@ function IdentityEditorPanel() {
       libraryProblem={libraryProblem}
       onUndo={undo}
       onLoad={remember}
-      onApplySite={applySite}
       canUndo={past.length > 0}
-      appliedSite={appliedSite}
     />
   );
 }

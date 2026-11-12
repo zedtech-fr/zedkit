@@ -14,7 +14,6 @@ import {
   type IdentityOption,
 } from "@zedtech/zedkit-ui";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { ApplySiteRow } from "@/components/identity-apply-site-row";
 import type { SaveStatus } from "@/lib/identity-save-status";
 
 function LookSelect({
@@ -160,9 +159,6 @@ type KeepBarProps = {
   onSaveAsNew: () => void;
   onRename: () => void;
   onDelete: () => void;
-  onApplySite?: () => void;
-  onRemoveFromSite?: () => void;
-  appliedSite?: boolean;
   status: SaveStatus | null;
   problem: "unavailable" | "corrupt" | undefined;
   className?: string;
@@ -235,7 +231,7 @@ function LibraryHeading({
   );
 }
 
-/** Name, save, rename or delete a look, and apply it to this site: what you do once you like the card. */
+/** Name, save, rename or delete a look: what you do once you like the card. */
 function IdentityEditorKeepBar({
   name,
   namedSelected,
@@ -244,9 +240,6 @@ function IdentityEditorKeepBar({
   onSaveAsNew,
   onRename,
   onDelete,
-  onApplySite,
-  onRemoveFromSite,
-  appliedSite,
   status,
   problem,
   className,
@@ -298,14 +291,6 @@ function IdentityEditorKeepBar({
         {name.trim() === "" ? copy.nameHint : null}
       </Text>
       <SaveFeedback status={status} onSave={onSave} onSaveAsNew={onSaveAsNew} />
-      {onApplySite && onRemoveFromSite ? (
-        <ApplySiteRow
-          appliedSite={appliedSite ?? false}
-          onApplySite={onApplySite}
-          onRemoveFromSite={onRemoveFromSite}
-          hint
-        />
-      ) : null}
     </Stack>
   );
 }
