@@ -315,6 +315,10 @@ jobs:
       - name: test:registry (exclude deploy/*)
         if: runner.environment == 'self-hosted'
         run: pnpm test:registry:nodeploy
+      # Shrink-only unused-file/dep scan. A lot that starts using an ignored
+      # file must drop that ignore in the same PR (`knip.jsonc`).
+      - name: knip
+        run: pnpm knip
       # Versioning dry-run only: proves the Changesets metadata is sane.
       # Skipped on the Version PR itself: it consumed the changesets, so
       # `status` always reports "changed packages, no changesets" there.
