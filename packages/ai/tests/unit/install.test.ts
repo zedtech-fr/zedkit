@@ -20,6 +20,7 @@ import {
 } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
 import {
+  AGENT,
   COMMAND,
   firstPartySkills,
   markdownFiles,
@@ -27,6 +28,8 @@ import {
   SKILL,
   tempDir,
 } from "./helpers.js";
+
+const STUB_DEFAULTS = "---\nschema: 1\n---\n";
 
 function install(
   dest: string,
@@ -432,6 +435,7 @@ describe("installKit", () => {
     put(kit, "skills/beta/SKILL.md", SKILL("beta"));
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     const result = installKit({ dest, kit, preset: "tiny", providers: [] });
     expect(result.ok).toBe(false);
@@ -532,6 +536,7 @@ describe("installKit", () => {
     put(v1, "skills/alpha/SKILL.md", "v1\n");
     put(v1, "AGENTS.template.md", "t");
     put(v1, "THIRD_PARTY_NOTICES.md", "n");
+    put(v1, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     install(dest, { kit: v1, preset: "core" });
     writeFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "edited\n");
@@ -545,6 +550,7 @@ describe("installKit", () => {
     put(v2, "skills/beta/SKILL.md", "new\n");
     put(v2, "AGENTS.template.md", "t");
     put(v2, "THIRD_PARTY_NOTICES.md", "n");
+    put(v2, "tokenomics.defaults.md", STUB_DEFAULTS);
     const again = install(dest, { kit: v2, preset: "core" });
     expect(
       readFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "utf8"),
@@ -590,6 +596,7 @@ describe("installKit", () => {
     put(kit, "skills/alpha/SKILL.md", "x");
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     put(dest, "AGENTS.md", "mine\n");
     const actions = install(dest, { kit, preset: "core" });
@@ -784,6 +791,7 @@ describe("installKit", () => {
     put(kit, "skills/alpha/SKILL.md", "x");
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     install(dest, { kit, preset: "core" });
     expect(existsSync(join(dest, ".agents/commands"))).toBe(false);
@@ -845,6 +853,24 @@ describe("installKit", () => {
       expect(badResult.error.message).toContain("must be a string list");
   });
 
+  it("fails when custom-kit defaults are missing, without generating provider agents", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({ presets: { starter: ["alpha"] }, agents: ["explorer"] }),
+    );
+    put(kit, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(kit, "agents/explorer.md", AGENT("explorer"));
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    const result = installKit({ dest, kit, providers: ["cursor"] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.message).toContain("tokenomics.defaults.md");
+    expect(existsSync(join(dest, ".cursor/agents/explorer.md"))).toBe(false);
+  });
+
   it("still generates provider agents when project tokenomics does not parse, and notes inherit", () => {
     const dest = tempDir();
     put(dest, ".agents/tokenomics.md", "---\nschema: [broken\n---\n");
@@ -896,6 +922,7 @@ describe("installKit", () => {
     put(kit, "personas.template.md", 'Call the Skill tool with "ghost".\n');
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const result = installKit({
       dest: tempDir(),
       kit,
@@ -916,6 +943,7 @@ describe("installKit", () => {
     put(kit, "personas.template.md", "v1 personas\n");
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     const result = installKit({ dest, kit, preset: "setup", providers: [] });
     expect(result.ok).toBe(true);

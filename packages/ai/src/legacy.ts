@@ -51,13 +51,15 @@ export function readLegacyHashFile(filePath: string): LegacyHashFileSnapshot {
   return { status: "ok", map };
 }
 
-let cached: Hashes | undefined;
+const cache = new Map<string, Hashes>();
 
-function load(): Hashes {
-  if (cached) return cached;
-  const snapshot = readLegacyHashFile(join(kitDir(), "legacy-hashes.json"));
-  cached = snapshot.status === "ok" ? snapshot.map : { agents: {}, commands: {} };
-  return cached;
+function load(kit: string = kitDir()): Hashes {
+  const hit = cache.get(kit);
+  if (hit) return hit;
+  const snapshot = readLegacyHashFile(join(kit, "legacy-hashes.json"));
+  const hashes = snapshot.status === "ok" ? snapshot.map : { agents: {}, commands: {} };
+  cache.set(kit, hashes);
+  return hashes;
 }
 
 /** The short content hash `kit/legacy-hashes.json` uses: sha256 of the LF text, first 16 hex digits. */
@@ -107,10 +109,16 @@ export function legacyHashMergeIssues(prior: LegacyHashMap, merged: LegacyHashMa
   return issues;
 }
 
-export function isKitCopy(kind: "agents" | "commands", name: string, text: string, source: string | undefined): boolean {
+export function isKitCopy(
+  kind: "agents" | "commands",
+  name: string,
+  text: string,
+  source: string | undefined,
+  kit: string = kitDir(),
+): boolean {
   const normalized = text.replace(/\r\n/g, "\n");
   if (source !== undefined && normalized === source.replace(/\r\n/g, "\n")) return true;
-  const known = load()[kind][name];
+  const known = load(kit)[kind][name];
   return known !== undefined && known.includes(shortHash(normalized));
 }
 
@@ -119,7 +127,7 @@ export function isKitCopy(kind: "agents" | "commands", name: string, text: strin
  * Keys are `<skill>/<posix-rel-path>`; the caller compares current-kit bytes
  * separately, so no `source` parameter: anything not recorded is user work.
  */
-export function isKitSkillCopy(skillFileKey: string, text: string): boolean {
-  const known = load().skills?.[skillFileKey];
+export function isKitSkillCopy(skillFileKey: string, text: string, kit: string = kitDir()): boolean {
+  const known = load(kit).skills?.[skillFileKey];
   return known !== undefined && known.includes(shortHash(text.replace(/\r\n/g, "\n")));
 }

@@ -101,12 +101,13 @@ Advanced / CI paths:
 
 ```sh
 npx @zedtech/zedkit-ai init . --provider cursor --adopt   # adopt on the starter preset; setup uses the setup preset
+npx @zedtech/zedkit-ai setup . --provider cursor --kit /path/to/kit  # local kit directory; omit = bundled; pass --kit on sync/validate too
 npx @zedtech/zedkit-ai validate                           # success: exit 0; final line starts with ok (long scope line)
 npx @zedtech/zedkit-ai validate --setup [--plan file]     # opt-in: PLAN covers git changes, setup went deep (D1-D4)
 npx @zedtech/zedkit-ai scan [dir]                         # repo size and one slice per read-only reader
 npx @zedtech/zedkit-ai route verifier --kind check --stakes sensitive   # model and effort for one call (--allow-fast only if the user asked)
 npx @zedtech/zedkit-ai stakes PLAN.md --base origin/main  # stakes, kind, needs and gates of a plan, ticket or PR body
-npx @zedtech/zedkit-ai sync --provider cursor,claude       # write each tool's agent files, model from tokenomics.md (--check in CI)
+npx @zedtech/zedkit-ai sync --provider cursor,claude --kit /path/to/kit  # local kit; omit = bundled; --check in CI
 ```
 
 **Starter (default for `init`):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
@@ -157,7 +158,7 @@ the binary directly: `pnpm --filter @zedtech/zedkit-ai build`, then
 `node packages/ai/dist/bin.js init <dir>`.
 
 `init` options: `--preset starter|setup|core|full`, `--provider cursor,claude,codex,all`
-(`--target` is an alias; `--help` lists every provider id), `--adopt`, `--dry-run`.
+(`--target` is an alias; `--help` lists every provider id), `--adopt`, `--dry-run`, `--kit <dir>`.
 **`setup`** runs the same install with **`--preset setup` by default** (override with
 `--preset starter|setup|core|full`), **`--adopt` enabled**, and the same file rules as
 `init`. It copies files (you own them
