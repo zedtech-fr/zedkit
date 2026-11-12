@@ -7,7 +7,7 @@ import { ModeView, type Highlighted } from "./adoption-steps";
 import { adoptionCopy } from "@/components/i18n/adoption-copy";
 import type { AdoptionMode, AdoptionPlan } from "@/lib/adoption-types";
 import { createStoredChoice } from "@/lib/use-stored-choice";
-import { usePackageManager } from "@/lib/use-package-manager";
+import { usePackageManager } from "../use-package-manager";
 
 const groupChoice = createStoredChoice("zk-adoption-group", ["package", "copy"] as const);
 const methodChoice = createStoredChoice("zk-adoption-method", ["cli", "manual"] as const);
