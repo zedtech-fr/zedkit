@@ -154,22 +154,56 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     /export const HOME_LIMITS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,
   );
   assert.doesNotMatch(sixSentences, /FeatureGrid|SetupEntryPrompt|SecretField/);
+  assert.doesNotMatch(sixSentences, /@zedtech\/zedkit-ui\/marketing/);
+  assert.doesNotMatch(sixSentences, /col-span-2|grid-cols-4/);
   assert.match(sixSentences, /id="six-sentences"/);
   assert.match(sixSentences, /from "@zedtech\/zedkit-ui"/);
+  assert.match(sixSentences, /tone="muted"/);
+  assert.match(sixSentences, /HOME_SIX_SENTENCES_GRID/);
+  assert.match(sixSentences, /<Badge/);
+  assert.match(sixSentences, /<blockquote/);
+  assert.match(sixSentences, /lg:span-rest/);
+  assert.match(sixSentences, /data-home-six-sentences-card=\{featured \? "featured" : "plain"\}/);
+  assert.match(
+    rhythm,
+    /export const HOME_SIX_SENTENCES_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-quad"/,
+  );
+  assert.doesNotMatch(sixSentencesCopy, /What the kit is/);
+  assert.match(sixSentencesCopy, /title: "Six sentences you stop hearing\."/);
+  assert.match(sixSentencesCopy, /description: "Three about how the agent works\. Three about what it draws\."/);
+  assert.match(sixSentencesCopy, /id: "quality"/);
+  assert.match(sixSentencesCopy, /id: "time"/);
+  assert.match(sixSentencesCopy, /id: "fewer-bugs"/);
+  assert.match(sixSentencesCopy, /id: "brand"/);
+  assert.match(sixSentencesCopy, /id: "finish"/);
+  assert.match(sixSentencesCopy, /id: "consistency"/);
+  assert.match(sixSentencesCopy, /label: "Quality"/);
+  assert.match(sixSentencesCopy, /label: "Time"/);
+  assert.match(sixSentencesCopy, /label: "Fewer bugs"/);
+  assert.match(sixSentencesCopy, /label: "Brand"/);
+  assert.match(sixSentencesCopy, /label: "Finish"/);
+  assert.match(sixSentencesCopy, /label: "Consistency"/);
+  assert.match(sixSentencesCopy, /“Looks good to me\.”/);
+  assert.match(sixSentencesCopy, /“Let me first explore the codebase\.”/);
+  assert.match(sixSentencesCopy, /“Done!”/);
+  assert.match(sixSentencesCopy, /“I went with a clean, modern blue\.”/);
+  assert.match(sixSentencesCopy, /“The happy path works\.”/);
+  assert.match(sixSentencesCopy, /“I created a new Button component\.”/);
+  assert.match(sixSentencesCopy, /Said the agent that wrote it\./);
+  assert.match(sixSentencesCopy, /The one who writes never checks\./);
+  assert.match(sixSentencesCopy, /It learns your repo once\./);
+  assert.match(sixSentencesCopy, /Done has a definition\./);
+  assert.match(sixSentencesCopy, /A look is one attribute\./);
+  assert.match(sixSentencesCopy, /The boring states already exist\./);
+  assert.match(sixSentencesCopy, /One way to do each thing\./);
   assert.match(
     sixSentencesCopy,
-    /Paste one prompt in the agent you already use\. It reads the repo and writes the setup\./,
+    /68 components that already agree with each other\. The agent reaches for them instead of inventing\./,
   );
-  assert.match(sixSentencesCopy, /The combined prompt covers AI, UI and Nest \(API\)\./);
-  assert.match(sixSentencesCopy, /Install from npm or copy the source\. Same components either way\./);
-  assert.match(sixSentencesCopy, /What you see is MIT, React 19, Tailwind 4\./);
-  assert.match(sixSentencesCopy, /A look sets type, shape, density and color together\./);
-  assert.match(
-    sixSentencesCopy,
-    /This is packages and a docs site, not a hosted app with accounts\./,
-  );
-  assert.equal([...sixSentencesCopy.matchAll(/"[^"]+\."/g)].length, 6);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
+  assert.match(tokens, /\[data-home-six-sentences/);
+  assert.match(tokens, /\[data-home-six-sentences-card="featured"\]/);
+  assert.doesNotMatch(tokens, /#1B1764|#2B23C7|#4B3FD9|#3B1F8F|#5B34B5|#7C5CE6/);
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
   assert.match(tokens, /\[data-home-manifesto-panel\]/);
