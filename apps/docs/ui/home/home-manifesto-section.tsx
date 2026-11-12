@@ -42,12 +42,14 @@ export function HomeManifestoSection() {
         <Heading id="manifesto-heading" level={2} className="sr-only">
           {homeManifestoCopy.sectionLabel}
         </Heading>
-        <blockquote className="trim-margin not-italic">
+        <blockquote className="trim-margin not-italic" aria-describedby="manifesto-attribution">
           <Heading as="div" typeRole="title">
             {homeManifestoCopy.quote}
           </Heading>
         </blockquote>
-        <Text className={HOME_PERSUASION_TEXT_CLASS}>{homeManifestoCopy.attribution}</Text>
+        <Text id="manifesto-attribution" className={HOME_PERSUASION_TEXT_CLASS}>
+          {homeManifestoCopy.attribution}
+        </Text>
         <OffPathLink
           href={SITE_COMPANY_URL}
           className="min-h-target text-foreground underline link-offset focus-ring"

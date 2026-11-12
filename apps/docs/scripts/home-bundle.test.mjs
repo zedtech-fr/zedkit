@@ -318,7 +318,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(manifesto, /data-home-manifesto=/);
   assert.doesNotMatch(manifesto, /data-home-manifesto-panel/);
   assert.match(manifesto, /className="sr-only"/);
-  assert.match(manifesto, /<blockquote className="trim-margin not-italic">/);
+  assert.match(manifesto, /<blockquote className="trim-margin not-italic" aria-describedby="manifesto-attribution">/);
+  assert.match(manifesto, /id="manifesto-attribution"/);
   assert.match(manifesto, /from "@\/ui\/off-path-link"/);
   assert.match(manifesto, /from "@\/lib\/site-links\.mjs"/);
   assert.match(manifesto, /href=\{SITE_COMPANY_URL\}/);
@@ -328,7 +329,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.doesNotMatch(manifesto, /FeatureGrid|SetupEntryPrompt|SecretField|bg-primary/);
   assert.match(
     manifestoCopy,
-    /If nobody else can pick up what was built, that isn't expertise\. It's lock-in\./,
+    /\\u201cIf nobody else can pick up what was built, that isn't expertise\. It's lock-in\.\\u201d/,
   );
   assert.match(manifestoCopy, /From the Zed Tech manifesto/);
   assert.match(manifestoCopy, /sectionLabel: "Manifesto"/);
@@ -349,7 +350,12 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closingCopy, /And it will look like the rest of your product\./);
   assert.match(closingCopy, /promptAriaLabel: "Closing setup prompt"/);
   assert.doesNotMatch(closingCopy, /promptAriaLabel: "Setup prompt"/);
-  assert.match(closingCopy, /promptCopyLabel: "Copy prompt"/);
+  assert.match(closingCopy, /promptCopyLabel: "Copy closing prompt"/);
+  assert.doesNotMatch(closingCopy, /promptCopyLabel: "Copy prompt"/);
+  const smoke = readFileSync(join(app, "tests/home.spec.ts"), "utf8");
+  assert.match(smoke, /getByRole\("textbox", \{ name: "Setup prompt", exact: true \}\)/);
+  assert.match(smoke, /getByRole\("button", \{ name: "Copy prompt", exact: true \}\)/);
+  assert.match(smoke, /getByRole\("button", \{ name: "Copy closing prompt", exact: true \}\)/);
   assert.doesNotMatch(closingCopy, /action: "Setup"/);
   assert.doesNotMatch(closingCopy, /actionHref: "#ai-setup"/);
 });

@@ -12,7 +12,7 @@ import { homeClosingCopy } from "@/ui/home/i18n/home-closing-copy";
  * After manifesto: one ask that copies the same map setup prompt as the hero.
  *
  * Compose-UI: closing SecretField with the map prompt, because: the last
- * ask is copy-and-go; the kit already copies and announces; a third labelled
+ * ask is copy-and-go; the kit already copies and announces; a second labelled
  * Copy widget would be a parallel control.
  * Centered reading measure, because: mockup centers both bands; a full-wide
  * prompt fights the limits grid. The field wraps `text-left` so the centered
