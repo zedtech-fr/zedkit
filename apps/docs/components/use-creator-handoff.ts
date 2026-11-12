@@ -19,6 +19,6 @@ export function useCreatorHandoff(onArrive: (brief: string | null) => void) {
     }
     const saved = readCreatorSessionBrief(storage);
     if (saved || window.location.hash === "#create") onArrive(saved);
-    // Once, on arrival: the form is filled and focused a single time.
+    // Once, on arrival: the brief is stored (not shown) and the panel is focused a single time.
   }, []);
 }

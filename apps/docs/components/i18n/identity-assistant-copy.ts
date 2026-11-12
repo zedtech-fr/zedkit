@@ -35,7 +35,7 @@ export const identityAssistantCopy = {
   detailedEditorLink: "Open the detailed editor",
   views: {
     customize: "Customize this look",
-    customizeHint: "Adjust the fields below; the preview above and the specimens on the page follow.",
+    customizeHint: "Adjust the fields below; the page and its specimens follow.",
   },
   failure: {
     quota: (seconds?: number) => `The assistant limit has been reached. ${retryText(seconds)}`,

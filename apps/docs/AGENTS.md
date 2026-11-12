@@ -184,8 +184,9 @@ second fonts `pnpm add` next to that snippet.
 - Classic edits in the floating dock restyle the whole site immediately and
   persist in `lib/site-identity-storage.ts`. Reset restores the site default
   look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
-  has no Apply or Preview step and no opt-in key. The editor page still has
-  Preview dark (card only) and Suggest Apply (draft only).
+  has no Apply or Preview step and no opt-in key. Dock customize copy must
+  not name a preview; the page and its specimens follow. The editor page
+  still has Preview dark (card only) and Suggest Apply (draft only).
   Quotas, references and cost controls are server rules; the client never
   works around them.
 - The floating dock opens with Control or Meta+I, closes with Escape, and on
