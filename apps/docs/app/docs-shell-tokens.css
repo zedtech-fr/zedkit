@@ -131,16 +131,18 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
- * Manifesto is an inner high-value panel on the neutral page (not indigo
- * as page fill). Tokens only: Glass primary stays the panel accent.
+ * Manifesto is a full-bleed high-value band (not an inner inset card,
+ * still not indigo page fill). Tokens only: Glass primary stays the
+ * section accent. Quote, attribution, and the off-path link inherit
+ * the inverted foreground. `--ring` is pinned so the link focus outline
+ * is not Glass `--primary` on `--primary`.
  */
-#home-page [data-home-manifesto-panel] {
+#home-page #manifesto[data-slot="section"] {
   --foreground: var(--primary-foreground);
   --muted-foreground: var(--primary-foreground);
+  --ring: var(--primary-foreground);
   background-color: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
-  border-radius: var(--radius-lg);
-  padding: var(--zk-section-md);
 }
 
 #home-page [data-hero-demo-display] [data-slot="select-trigger"] {

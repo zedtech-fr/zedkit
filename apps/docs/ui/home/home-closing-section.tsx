@@ -1,5 +1,5 @@
-import { Button, Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
-import { HomeLink } from "@/ui/home/home-link";
+import { Heading, Section, SecretField, Stack, Text } from "@zedtech/zedkit-ui";
+import { MAP_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
@@ -9,12 +9,13 @@ import {
 import { homeClosingCopy } from "@/ui/home/i18n/home-closing-copy";
 
 /**
- * After manifesto: one ask that sends the visitor back to the paste hashes.
+ * After manifesto: one ask that copies the same map setup prompt as the hero.
  *
- * Compose-UI: title, subtitle, one Setup action to #ai-setup, because a
- * third copy field repeats the hero. Centered reading measure, because
- * neighbours (manifesto panel, family index) already use wide grids.
- * Site-action, because this is a chrome CTA, not a high-value panel.
+ * Compose-UI: closing SecretField with the map prompt, because: the last
+ * ask is copy-and-go; the kit already copies and announces; a third labelled
+ * Copy widget would be a parallel control.
+ * Centered reading measure, because: mockup centers both bands; a full-wide
+ * quote fights the limits grid.
  */
 export function HomeClosingSection() {
   return (
@@ -29,7 +30,7 @@ export function HomeClosingSection() {
     >
       <Stack
         gap={HOME_SECTION_CONTENT_GAP}
-        className="mx-auto max-w-reading items-center content-offset text-center"
+        className="mx-auto w-full max-w-reading items-center content-offset text-center"
         data-home-closing=""
       >
         <Heading level={2} typeRole="title">
@@ -38,9 +39,12 @@ export function HomeClosingSection() {
         <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
           {homeClosingCopy.section.description}
         </Text>
-        <Button asChild data-site-action="" className="min-h-target w-fit">
-          <HomeLink href={homeClosingCopy.actionHref}>{homeClosingCopy.action}</HomeLink>
-        </Button>
+        <SecretField
+          multiline
+          value={MAP_SETUP_MINI_PROMPT}
+          aria-label={homeClosingCopy.promptAriaLabel}
+          copyLabel={homeClosingCopy.promptCopyLabel}
+        />
       </Stack>
     </Section>
   );
