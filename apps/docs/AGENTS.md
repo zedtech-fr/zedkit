@@ -31,14 +31,14 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
   `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
-  today's in-flight lots still live under `ui/home/**`, `ui/catalog/**`,
-  `ui/not-found/**`, and `ui/docs-main-content.tsx`.
+  today's in-flight lots still live under `ui/home/**` and
+  `ui/docs-main-content.tsx`.
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
   is dissolving; do not add a fifth home there. Directory globs in
-  `REQUIRED_GLOBS` (`ui/home/**`, `ui/catalog/**`, `ui/not-found/**`,
+  `REQUIRED_GLOBS` (`ui/home/**`,
   `ui/docs-main-content.tsx`) silently absorb new files; do not add under
   them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order: move
   the files, regen, drop the glob, regen again.

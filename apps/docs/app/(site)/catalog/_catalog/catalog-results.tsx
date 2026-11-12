@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Stack, Surface, Text } from "@zedtech/zedkit-ui";
 import { MaturityBadge } from "@/components/maturity-badge";
 import type { CatalogIndexEntry } from "@/content/catalog-index";
-import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
+import { catalogCopy } from "./i18n/catalog-copy";
 
 function CatalogCell({ entry }: { entry: CatalogIndexEntry }) {
   return (

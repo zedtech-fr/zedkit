@@ -66,7 +66,6 @@
     "components/use-identity-dock-preview.ts",
     "components/zedkit-shadcn-faq.tsx",
     "lib/brief-specimen-domain.ts",
-    "lib/catalog-filter.mjs",
     "lib/component-page-toc.ts",
     "lib/creator-handoff.ts",
     "lib/creator-session-brief.ts",
@@ -97,8 +96,6 @@
   ],
   "globs": [
     "ui/home/**",
-    "ui/catalog/**",
-    "ui/not-found/**",
     "ui/docs-main-content.tsx"
   ],
   "edges": [
