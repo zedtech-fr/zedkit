@@ -14,6 +14,30 @@
   min-width: 0;
 }
 
+/* Hero title line, then the sentence under it. Wide enough for the grey third clause. */
+#home-page [data-home-hero-lead] h1 {
+  max-width: 48rem;
+}
+#home-page [data-home-hero-sub] {
+  max-width: 32.5rem;
+}
+
+/*
+ * Home hero band: tight top padding. Below-hero full-bleed bands use Section
+ * spacing="md". Hash aliases #ai-setup / #get-started live inside #paste.
+ */
+#home-page [data-home-hero-band] {
+  padding-top: 2.5rem;
+  padding-bottom: 0;
+}
+
+@media (width < 64rem) {
+  #home-page [data-home-hero-band] {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+}
+
 #home-page [data-home-hero] [data-home-hero-lead],
 #home-page [data-home-hero] [data-home-hero-preview] {
   min-width: 0;
@@ -262,7 +286,7 @@
   right: -2.5rem;
   top: -3.75rem;
   width: 16.25rem;
-  background: hsl(0 0% 100% / 0.1);
+  background: hsl(var(--primary-foreground) / 0.1);
 }
 
 #home-page [data-hero-run-blob="2"] {

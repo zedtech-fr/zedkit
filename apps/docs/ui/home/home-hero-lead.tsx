@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  Button,
   Heading,
   SecretField,
   Stack,
@@ -18,9 +19,9 @@ import {
 } from "@/lib/ai-setup-onboarding.generated";
 import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { HomeHeroIllustration } from "@/ui/home/home-hero-illustration";
-import { HomeHeroLeadActions } from "@/ui/home/home-hero-lead-actions";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
 import type { HeroKitId } from "@/ui/home/i18n/home-hero-copy";
+import { OffPathLink } from "@/ui/off-path-link";
 
 const PROMPTS = {
   ai: AI_SETUP_MINI_PROMPT,
@@ -74,7 +75,7 @@ export function HomeHeroLead({ issuesHref }: { issuesHref: string }) {
             <TabsTrigger value="ui">{kits.ui}</TabsTrigger>
             <TabsTrigger value="combined">{kits.combined}</TabsTrigger>
           </TabsList>
-          <div className="w-full" data-home-hero-prompt="">
+          <Stack className="w-full" data-home-hero-prompt="">
             {(["ai", "ui", "combined"] as const).map((id) => (
               <TabsContent key={id} value={id}>
                 <SecretField
@@ -85,11 +86,15 @@ export function HomeHeroLead({ issuesHref }: { issuesHref: string }) {
                 />
               </TabsContent>
             ))}
-          </div>
+          </Stack>
           <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
             {caption}
           </Text>
-          <HomeHeroLeadActions issuesHref={issuesHref} />
+          <span data-home-hero-actions="">
+            <Button asChild variant="link" className="min-h-target px-control-tight">
+              <OffPathLink href={issuesHref}>{homeCopy.heroActions.seeARealIssue}</OffPathLink>
+            </Button>
+          </span>
         </Stack>
       </Stack>
       <HomeHeroIllustration kit={kit} />

@@ -42,14 +42,6 @@
   min-height: calc(var(--spacing) * 32);
 }
 
-/* Hero title line, then the sentence under it. Wide enough for the grey third clause. */
-[data-home-hero-lead] h1 {
-  max-width: 48rem;
-}
-[data-home-hero-sub] {
-  max-width: 32.5rem;
-}
-
 /* Chat turn. Stays inside the thread, with a little of the other side showing. */
 [data-assistant-log] > li {
   max-width: 90%;

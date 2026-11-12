@@ -116,11 +116,14 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
 
 test("illustration drift is decorative and does not wrap the glass card", () => {
   const illustration = readApp("ui/home/home-hero-illustration.tsx");
+  const css = readApp("app/home-hero.css");
   assert.match(illustration, /data-hero-run-drift/);
   assert.match(illustration, /aria-hidden="true"/);
   assert.doesNotMatch(illustration, /<(?:input)\b/);
   assert.equal(illustration.includes("data-hero-shapes"), false);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole/);
+  assert.match(css, /hsl\(var\(--primary-foreground\) \/ 0\.1\)/);
+  assert.doesNotMatch(css, /hsl\(0 0% 100%/);
 });
 
 test("foundations motion copy states the live rule, not a later ticket", () => {

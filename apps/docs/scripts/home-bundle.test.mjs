@@ -34,12 +34,12 @@ test("search dialog is lazy and not preloaded on every page", () => {
 test("home hero first screen is the mockup lead and glass illustration, not the live window (#118)", () => {
   const hero = readFileSync(join(app, "ui/home/home-hero.tsx"), "utf8");
   const lead = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
-  const actions = readFileSync(join(app, "ui/home/home-hero-lead-actions.tsx"), "utf8");
   const illustration = readFileSync(join(app, "ui/home/home-hero-illustration.tsx"), "utf8");
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
-  const firstScreen = hero + lead + actions + illustration;
+  const firstScreen = hero + lead + illustration;
   // #118 supersedes #111/#114: kit tabs and the third title clause are the first screen, not one Setup row.
+  assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
   assert.match(hero, /HeroShapes/);
@@ -67,14 +67,14 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /UI_SETUP_MINI_PROMPT/);
   assert.match(lead, /\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
-  assert.doesNotMatch(lead + actions, /SetupEntryPrompt/);
-  assert.doesNotMatch(lead + actions, /\/issues\/108/);
+  assert.doesNotMatch(lead, /SetupEntryPrompt/);
+  assert.doesNotMatch(lead, /\/issues\/108/);
   assert.doesNotMatch(firstScreen, /data-site-action/);
-  assert.doesNotMatch(actions, /heroActions\.setup|heroActions\.getStarted|heroActions\.browseCatalog|#ai-setup|#get-started|\/catalog/);
-  assert.match(actions, /OffPathLink/);
-  assert.match(actions, /heroActions\.seeARealIssue/);
-  assert.equal((actions.match(/<HomeLink[\s>]/g) ?? []).length, 0);
-  assert.equal((actions.match(/<OffPathLink[\s>]/g) ?? []).length, 1);
+  assert.doesNotMatch(lead, /heroActions\.setup|heroActions\.getStarted|heroActions\.browseCatalog|#ai-setup|#get-started|\/catalog/);
+  assert.match(lead, /OffPathLink/);
+  assert.match(lead, /heroActions\.seeARealIssue/);
+  assert.equal((lead.match(/<HomeLink[\s>]/g) ?? []).length, 0);
+  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 1);
   assert.match(copy, /seeARealIssue: "See a real issue, end to end"/);
   assert.doesNotMatch(copy, /seeARealIssue: ".*→/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
@@ -87,6 +87,11 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole|ThemeScope/);
   assert.match(illustration, /data-hero-run-stage/);
   assert.match(illustration, /useMotionOk/);
+  assert.match(illustration, /role="group"/);
+  assert.match(illustration, /aria-pressed=\{paused\}/);
+  assert.match(copy, /pauseMotion: "Pause illustration motion"/);
+  assert.match(copy, /playMotion: "Play illustration motion"/);
+  assert.doesNotMatch(illustration, /<span className="inline-flex flex-wrap items-center gap-icon">/);
   assert.match(nav, /text: "AI"/);
   assert.match(nav, /text: "UI"/);
   assert.match(nav, /text: "Docs"/);
@@ -231,7 +236,20 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     /replyBody: \(componentCount: number\) =>\s*`\$\{componentCount\} components that already agree with each other\. The agent reaches for them instead of inventing\.`/,
   );
   assert.doesNotMatch(sixSentencesCopy, /\d+ components that already agree/);
+  assert.match(sameIdeaCopy, /stack: "React 19 and Tailwind CSS 4, from npm or as source"/);
+  assert.match(sameIdeaCopy, /mit: "MIT"/);
+  assert.doesNotMatch(sixSentencesCopy, /What you see is MIT/);
+  const heroCss = readFileSync(join(app, "app/home-hero.css"), "utf8");
+  const signatureCss = readFileSync(join(app, "app/docs-signature.css"), "utf8");
+  assert.match(heroCss, /#home-page \[data-home-hero-lead\] h1/);
+  assert.match(heroCss, /max-width:\s*48rem/);
+  assert.match(heroCss, /#home-page \[data-home-hero-sub\]/);
+  assert.match(heroCss, /max-width:\s*32\.5rem/);
+  assert.match(heroCss, /#home-page \[data-home-hero-band\]/);
+  assert.match(heroCss, /padding-top:\s*2\.5rem/);
+  assert.doesNotMatch(signatureCss, /\[data-home-hero-lead\] h1/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
+  assert.doesNotMatch(tokens, /\[data-home-hero-band\]/);
   assert.match(tokens, /\[data-home-six-sentences/);
   assert.match(tokens, /\[data-home-six-sentences-card="featured"\]/);
   assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ai"\]/);

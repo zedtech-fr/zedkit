@@ -33,12 +33,12 @@ function RunRows({ steps }: { steps: typeof COMBINED_STEPS | typeof AI_STEPS }) 
           <Text as="span" className="font-semibold">
             {step.label}
           </Text>
-          <span className="inline-flex flex-wrap items-center gap-icon">
+          <div className="inline-flex flex-wrap items-center gap-icon">
             {step.issue ? <Badge variant="soft-info">{copy.issueBadge}</Badge> : null}
             <Text as="span" variant="muted">
               {step.text}
             </Text>
-          </span>
+          </div>
         </li>
       ))}
     </ol>
@@ -71,6 +71,8 @@ function RunCard({
           className={motionOk ? "min-h-target w-fit" : "pointer-events-none invisible min-h-target w-fit"}
           tabIndex={motionOk ? undefined : -1}
           aria-hidden={motionOk ? undefined : true}
+          aria-label={paused ? copy.playMotion : copy.pauseMotion}
+          aria-pressed={paused}
           onClick={motionOk ? onToggle : undefined}
         >
           {control}
@@ -129,6 +131,8 @@ export function HomeHeroIllustration({ kit }: { kit: HeroKitId }) {
 
   return (
     <div
+      role="group"
+      aria-label={copy.caption}
       data-home-hero-preview=""
       data-hero-run-stage=""
       data-paused={motionOk && paused ? "" : undefined}

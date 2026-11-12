@@ -93,16 +93,39 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByText(/Latest in v/)).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead] [data-install-command]")).toHaveCount(0);
+
+  const pause = page.getByRole("button", { name: "Pause illustration motion" });
+  await expect(pause).toBeVisible();
+  await expect(pause).toHaveAttribute("aria-pressed", "false");
+  await pause.click();
+  await expect(page.getByRole("button", { name: "Play illustration motion" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute("role", "group");
+  await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute(
+    "aria-label",
+    "An illustration of one run, not a recording.",
+  );
+  const badgeInSpan = await page.evaluate(
+    () =>
+      [...document.querySelectorAll("[data-hero-run-stage] span")].some((node) =>
+        node.querySelector('[data-slot="badge"]'),
+      ),
+  );
+  expect(badgeInSpan).toBe(false);
 });
 
-test("home hero has no facts line; six-sentences holds MIT proof (#118)", async ({ page }) => {
+test("home hero has no facts line; same-idea holds MIT and React 19 proof (#118)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  // #118 drops the hero facts line; #1057's proofs band stays gone; six-sentences already states MIT / React 19.
+  // #118 drops the hero facts line; #1057's proofs band stays gone; MIT / React 19 live in same-idea.
   await expect(
     page.locator("[data-home-hero-lead]").getByText(/React 19/),
   ).toHaveCount(0);
-  await expect(page.getByText("What you see is MIT, React 19, Tailwind 4.")).toBeVisible();
+  await expect(page.locator("[data-home-same-idea-lands]").getByText("MIT", { exact: true })).toBeVisible();
+  await expect(page.getByText("React 19 and Tailwind CSS 4, from npm or as source")).toBeVisible();
+  await expect(page.getByText("What you see is MIT, React 19, Tailwind 4.")).toHaveCount(0);
   await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
 });
@@ -223,7 +246,7 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
   }
 });
 
-test.describe("home hero and proofs docs CTAs light/dark", () => {
+test.describe("home header Get started CTA light/dark", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -233,14 +256,10 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const hero = page.getByRole("link", { name: "Get started" }).first();
-      await hero.scrollIntoViewIfNeeded();
-      await expect(hero).toBeVisible();
-      await hero.screenshot({ path: `test-results/home-hero-docs-cta-${mode}.png` });
-      const catalog = page.getByRole("link", { name: "Catalog", exact: true }).first();
-      await catalog.scrollIntoViewIfNeeded();
-      await expect(catalog).toBeVisible();
-      await catalog.screenshot({ path: `test-results/home-proofs-theme-cta-${mode}.png` });
+      const getStarted = page.getByRole("link", { name: "Get started" }).first();
+      await getStarted.scrollIntoViewIfNeeded();
+      await expect(getStarted).toBeVisible();
+      await getStarted.screenshot({ path: `test-results/home-header-docs-cta-${mode}.png` });
     });
   }
 });

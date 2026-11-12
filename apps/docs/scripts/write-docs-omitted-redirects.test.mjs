@@ -4,8 +4,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { DOCS_OMITTED_REDIRECTS } from "./docs-omitted-needs.mjs";
+import { DOCS_OMITTED_REDIRECTS, hrefForOmittedNeed, IDENTITY_EDITOR_HREF } from "./docs-omitted-needs.mjs";
 import { writeDocsOmittedRedirectStubs } from "./write-docs-omitted-redirects.mjs";
+
+test("omitted identity-switch need lands on the looks band, not a dead #demo", () => {
+  assert.equal(hrefForOmittedNeed("Switch the visual identity with one attribute"), "/#identities");
+  assert.equal(hrefForOmittedNeed("Design your identity"), IDENTITY_EDITOR_HREF);
+  assert.equal(hrefForOmittedNeed("unknown"), null);
+});
 
 test("writes one stub html per omitted docs redirect", () => {
   const dir = mkdtempSync(join(tmpdir(), "docs-redir-"));
