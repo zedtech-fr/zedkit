@@ -26,14 +26,13 @@ function capture(css, pattern, label) {
 test("docsSiteDefaultTokens overlays every Classic field the docs shell pins, and keeps kit Glass for the rest", () => {
   const shell = read("app/docs-shell-tokens.css");
   const compact = read("app/site-compact.css");
-  const glassCss = read("packages/ui/src/identities/glass.css");
   const glass = identityPresets[DEFAULT_IDENTITY];
   const docs = docsSiteDefaultTokens();
 
   const background = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--background:\s*([^;]+)/, "light --background");
   const foreground = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--foreground:\s*([^;]+)/, "light --foreground");
   const muted = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--muted-foreground:\s*([^;]+)/, "light --muted-foreground");
-  const sidebarBorder = capture(glassCss, /:root\[data-identity="glass"\][^{]*\{[\s\S]*?--sidebar-border:\s*([^;]+)/, "Glass --sidebar-border");
+  const sidebarBorder = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--sidebar-border:\s*([^;]+)/, "light --sidebar-border");
   const radius = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--radius:\s*([^;]+)/, "chrome --radius");
   const borderWidth = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--zk-border-width:\s*([^;]+)/, "chrome --zk-border-width");
   const shadowSm = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--zk-shadow-sm:\s*([^;]+)/, "chrome --zk-shadow-sm");
@@ -68,7 +67,7 @@ test("Classic colour defaults match the measured site hexes", () => {
   assert.equal(colorInputHex(docs.light.foreground), "#09090b");
   assert.equal(colorInputHex(docs.light.primary), "#2b23c7");
   assert.equal(colorInputHex(docs.light.accent), "#a171f4");
-  assert.equal(colorInputHex(docs.light.border), "#cbd4e6");
+  assert.equal(colorInputHex(docs.light.border), "#e4e4e7");
 });
 
 test("docsSiteTokensEqual is value equality, not object identity", () => {

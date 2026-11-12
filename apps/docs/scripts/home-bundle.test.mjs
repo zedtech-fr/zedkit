@@ -257,7 +257,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(heroCss, /#home-page \[data-home-hero-sub\]/);
   assert.match(heroCss, /max-width:\s*32\.5rem/);
   assert.match(heroCss, /#home-page \[data-home-hero-band\]/);
-  assert.match(heroCss, /padding-top:\s*2\.5rem/);
+  assert.match(heroCss, /padding-top:\s*var\(--zk-section-md\)/);
   assert.doesNotMatch(signatureCss, /\[data-home-hero-lead\] h1/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.doesNotMatch(tokens, /\[data-home-hero-band\]/);

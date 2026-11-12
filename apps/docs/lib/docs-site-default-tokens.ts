@@ -6,8 +6,8 @@ import { DEFAULT_IDENTITY } from "./default-identity.ts";
 const DOCS_SITE_LIGHT_BACKGROUND = "0 0% 100%";
 const DOCS_SITE_LIGHT_FOREGROUND = "240 10% 3.9%";
 const DOCS_SITE_LIGHT_MUTED_FOREGROUND = "240 5% 32%";
-/** Glass `--sidebar-border`; chrome sets `--border: var(--sidebar-border)`. */
-const DOCS_SITE_LIGHT_BORDER = "220 35% 85%";
+/** Stock zinc hairline; chrome `--border` follows the light shell remap. */
+const DOCS_SITE_LIGHT_BORDER = "240 5.9% 90%";
 /** `:root[data-identity]` chrome pin. */
 const DOCS_SITE_RADIUS = "0.5rem";
 const DOCS_SITE_BORDER_WIDTH = "1px";
