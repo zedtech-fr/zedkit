@@ -98,36 +98,31 @@ export function ReviewPrView({
   copy: ReviewsCopy;
 }) {
   return (
-    <ReviewAppearanceFrame copy={copy}>
-      {(panel) => (
-        <>
-          <PageHeader
-            title={`#${issue.number} ${issue.title}`}
-            back={
-              <Button asChild variant="link" size="sm" className="min-h-target">
-                <Link href="/issues">{copy.issue.back}</Link>
-              </Button>
-            }
-          />
-          {panel}
-          <Stack direction="horizontal" gap="sm" className="flex-wrap">
-            <Badge variant="outline">{copy.state[issue.state]}</Badge>
-            {issue.pullRequests.length > 0 ? (
-              <Text variant="muted" typeRole="caption">
-                {`${issue.pullRequests.length === 1 ? copy.list.linkedPr : copy.list.linkedPrs} ${issue.pullRequests
-                  .map((n) => `#${n}`)
-                  .join(", ")}`}
-              </Text>
-            ) : null}
-          </Stack>
-          <Timeline
-            entries={issue.entries}
-            hrefFor={(entry) => issueRunPath(issue.number, entry.runId)}
-            copy={copy}
-            empty={copy.issue.timelineEmpty}
-          />
-        </>
-      )}
+    <ReviewAppearanceFrame>
+      <PageHeader
+        title={`#${issue.number} ${issue.title}`}
+        back={
+          <Button asChild variant="link" size="sm" className="min-h-target">
+            <Link href="/issues">{copy.issue.back}</Link>
+          </Button>
+        }
+      />
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
+        <Badge variant="outline">{copy.state[issue.state]}</Badge>
+        {issue.pullRequests.length > 0 ? (
+          <Text variant="muted" typeRole="caption">
+            {`${issue.pullRequests.length === 1 ? copy.list.linkedPr : copy.list.linkedPrs} ${issue.pullRequests
+              .map((n) => `#${n}`)
+              .join(", ")}`}
+          </Text>
+        ) : null}
+      </Stack>
+      <Timeline
+        entries={issue.entries}
+        hrefFor={(entry) => issueRunPath(issue.number, entry.runId)}
+        copy={copy}
+        empty={copy.issue.timelineEmpty}
+      />
     </ReviewAppearanceFrame>
   );
 }
@@ -140,26 +135,21 @@ export function UnlinkedPrView({
   copy: ReviewsCopy;
 }) {
   return (
-    <ReviewAppearanceFrame copy={copy}>
-      {(panel) => (
-        <>
-          <PageHeader
-            title={`${copy.unlinked.title} #${pullRequest.number}`}
-            back={
-              <Button asChild variant="link" size="sm" className="min-h-target">
-                <Link href="/issues">{copy.unlinked.back}</Link>
-              </Button>
-            }
-          />
-          {panel}
-          <Timeline
-            entries={pullRequest.entries}
-            hrefFor={(entry) => unlinkedRunPath(pullRequest.number, entry.runId)}
-            copy={copy}
-            empty={copy.unlinked.timelineEmpty}
-          />
-        </>
-      )}
+    <ReviewAppearanceFrame>
+      <PageHeader
+        title={`${copy.unlinked.title} #${pullRequest.number}`}
+        back={
+          <Button asChild variant="link" size="sm" className="min-h-target">
+            <Link href="/issues">{copy.unlinked.back}</Link>
+          </Button>
+        }
+      />
+      <Timeline
+        entries={pullRequest.entries}
+        hrefFor={(entry) => unlinkedRunPath(pullRequest.number, entry.runId)}
+        copy={copy}
+        empty={copy.unlinked.timelineEmpty}
+      />
     </ReviewAppearanceFrame>
   );
 }

@@ -97,39 +97,34 @@ export function ReviewListView({
 }) {
   const unlinkedHeadingId = useId();
   return (
-    <ReviewAppearanceFrame copy={copy}>
-      {(panel) => (
-        <>
-          <PageHeader title={copy.list.title} description={copy.list.description} />
-          {panel}
-          {issues.length === 0 ? (
-            <EmptyState description={copy.list.empty} />
-          ) : (
-            <ul aria-label={copy.list.title}>
-              {issues.map((issue) => (
-                <li key={issue.number}>
-                  <IssueRow issue={issue} copy={copy} />
-                </li>
-              ))}
-            </ul>
-          )}
-          {unlinked.length > 0 ? (
-            <Stack gap="sm">
-              <Heading level={2} typeRole="section" id={unlinkedHeadingId}>
-                {copy.list.unlinkedTitle}
-              </Heading>
-              <Text variant="muted">{copy.list.unlinkedDescription}</Text>
-              <ul aria-labelledby={unlinkedHeadingId}>
-                {unlinked.map((entry) => (
-                  <li key={entry.number}>
-                    <UnlinkedRow entry={entry} copy={copy} />
-                  </li>
-                ))}
-              </ul>
-            </Stack>
-          ) : null}
-        </>
+    <ReviewAppearanceFrame>
+      <PageHeader title={copy.list.title} description={copy.list.description} />
+      {issues.length === 0 ? (
+        <EmptyState description={copy.list.empty} />
+      ) : (
+        <ul aria-label={copy.list.title}>
+          {issues.map((issue) => (
+            <li key={issue.number}>
+              <IssueRow issue={issue} copy={copy} />
+            </li>
+          ))}
+        </ul>
       )}
+      {unlinked.length > 0 ? (
+        <Stack gap="sm">
+          <Heading level={2} typeRole="section" id={unlinkedHeadingId}>
+            {copy.list.unlinkedTitle}
+          </Heading>
+          <Text variant="muted">{copy.list.unlinkedDescription}</Text>
+          <ul aria-labelledby={unlinkedHeadingId}>
+            {unlinked.map((entry) => (
+              <li key={entry.number}>
+                <UnlinkedRow entry={entry} copy={copy} />
+              </li>
+            ))}
+          </ul>
+        </Stack>
+      ) : null}
     </ReviewAppearanceFrame>
   );
 }

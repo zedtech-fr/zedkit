@@ -7,11 +7,13 @@ export type ReviewDensity = "default" | "compact";
 export const REVIEW_IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"] as const;
 
 export type ReviewAppearance = {
-  identity: (typeof REVIEW_IDENTITIES)[number] | typeof DEFAULT_IDENTITY;
+  /** Shipped `identityPresets` key only (`DEFAULT_IDENTITY` must stay in `REVIEW_IDENTITIES`). */
+  identity: (typeof REVIEW_IDENTITIES)[number];
   mode: ReviewPreviewMode;
   density: ReviewDensity;
 };
 
+/** Codec default when a share URL pins but a key is missing or unknown. Canonical share-URL spec with `serializeReviewAppearance`. */
 export const DEFAULT_REVIEW_APPEARANCE: ReviewAppearance = {
   identity: DEFAULT_IDENTITY,
   mode: "light",
@@ -24,10 +26,6 @@ export function isReviewIdentity(id: string): id is ReviewAppearance["identity"]
   return (REVIEW_IDENTITIES as readonly string[]).includes(id);
 }
 
-export function isReviewDensity(value: string): value is ReviewDensity {
-  return value === "default" || value === "compact";
-}
-
 export function parseReviewAppearance(search: string): ReviewAppearance {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   const rawId = params.get("identity") ?? DEFAULT_IDENTITY;
@@ -38,6 +36,13 @@ export function parseReviewAppearance(search: string): ReviewAppearance {
   };
 }
 
+/** True when the share URL pins this section; empty query inherits the site look. */
+export function hasReviewAppearanceQuery(search: string): boolean {
+  const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
+  return params.has("identity") || params.has("preview") || params.has("theme") || params.has("density");
+}
+
+/** Canonical share-URL writer: omit glass, light, and default density. The frame reads URLs; it does not write them. */
 export function serializeReviewAppearance(appearance: ReviewAppearance): string {
   const params = new URLSearchParams();
   if (appearance.identity !== DEFAULT_IDENTITY) params.set("identity", appearance.identity);
@@ -49,6 +54,7 @@ export function serializeReviewAppearance(appearance: ReviewAppearance): string 
 /** Compact preview multiplies the identity `--spacing`; default leaves the token alone. */
 export function compactPreviewSpacing(spacing: string): string {
   const match = /^(\d+(?:\.\d+)?)([a-z%]+)$/i.exec(spacing.trim());
+  // Unparsed tokens keep the input (would pin full `--spacing`). Shipped presets are `Nrem`.
   if (!match) return spacing;
   return `${Number(match[1]) * COMPACT_SPACING}${match[2]}`;
 }
