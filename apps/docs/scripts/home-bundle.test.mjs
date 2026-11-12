@@ -340,7 +340,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(paste, /<Badge /);
   assert.match(paste, /bg-primary-foreground/);
   assert.match(paste, /text-primary/);
-  assert.match(paste, /text-accent/);
+  assert.match(paste, /text-accent-foreground/);
+  assert.match(paste, /accent \? "font-mono text-accent" : "font-mono"/);
   assert.doesNotMatch(paste, /<Badge>/);
   assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
@@ -356,6 +357,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     tokens,
     /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
   );
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
   assert.match(tokens, /\[data-home-same-idea-lands\]/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);

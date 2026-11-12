@@ -83,6 +83,11 @@
         "scripts/**/*.mjs",
         "components/component-page.tsx",
         "components/maturity-compatibility-view.tsx",
+        // Guide MDX imports these; knip does not follow .mdx.
+        "features/docs/guides/foundations/ui/foundations-color.tsx",
+        "features/docs/guides/foundations/ui/foundations-hero.tsx",
+        "features/docs/guides/foundations/ui/foundations-type.tsx",
+        "features/docs/guides/zedkit-and-shadcn/ui/zedkit-shadcn-faq.tsx",
         "home-quickstart/snippets/**",
         "prose/guides/snippets/**",
         "fixtures/**/*.mjs"
