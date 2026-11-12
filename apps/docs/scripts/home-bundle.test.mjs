@@ -65,7 +65,8 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
   assert.match(lead, /AI_SETUP_MINI_PROMPT/);
   assert.match(lead, /UI_SETUP_MINI_PROMPT/);
-  assert.match(lead, /\bmultiline\b/);
+  assert.match(lead, /HomeCopyCommandField/);
+  assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
   assert.doesNotMatch(lead, /SetupEntryPrompt/);
   assert.doesNotMatch(lead, /\/issues\/108/);
@@ -270,12 +271,46 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     tokens,
     /#home-page #manifesto\[data-slot="section"\] \{[^}]*--ring:\s*var\(--primary-foreground\)/,
   );
-  assert.doesNotMatch(tokens, /linear-gradient/);
-  const manifestoCss = tokens.match(/#home-page #manifesto\[data-slot="section"\] \{[^}]+\}/);
-  assert.ok(manifestoCss, "manifesto section fill rule");
-  assert.doesNotMatch(manifestoCss[0], /#[0-9A-Fa-f]{3,8}/);
-  assert.doesNotMatch(manifestoCss[0], /border-radius/);
-  assert.doesNotMatch(manifestoCss[0], /padding:/);
+  const manifestoRules = [
+    ...tokens.matchAll(/#home-page #manifesto\[data-slot="section"\][^{]*\{[^}]+\}/g),
+  ].map((match) => match[0]);
+  assert.ok(manifestoRules.length >= 3, "manifesto fill plus circle and stripe rules");
+  const manifestoCss = manifestoRules.join("\n");
+  assert.match(
+    manifestoCss,
+    /linear-gradient\(\s*135deg[\s\S]*var\(--primary\)[\s\S]*var\(--accent\)/,
+  );
+  assert.match(manifestoCss, /overflow:\s*hidden/);
+  assert.match(manifestoCss, /isolation:\s*isolate/);
+  assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]::before/);
+  assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]::after/);
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\]::before,\s*#home-page #manifesto\[data-slot="section"\]::after,\s*#home-page \[data-home-six-sentences-card="featured"\]::before,\s*#home-page \[data-home-six-sentences-card="featured"\]::after/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] > \*,\s*#home-page \[data-home-six-sentences-card="featured"\] > \*/,
+  );
+  const glassReduced = [
+    ...tokens.matchAll(/@media \(prefers-reduced-transparency: reduce\) \{[\s\S]*?\n\}/g),
+  ]
+    .map((match) => match[0])
+    .filter((block) => block.includes("#manifesto") || block.includes("six-sentences-card"));
+  assert.equal(glassReduced.length, 1, "manifesto and featured share one reduced-transparency rule");
+  assert.match(glassReduced[0], /#manifesto/);
+  assert.match(glassReduced[0], /six-sentences-card="featured"/);
+  assert.match(manifestoCss, /hsl\(var\(--primary-foreground\) \//);
+  assert.match(manifestoCss, /rotate\(24deg\)/);
+  assert.doesNotMatch(manifestoCss, /#[0-9A-Fa-f]{3,8}/);
+  assert.doesNotMatch(manifestoCss, /@keyframes|animation:/);
+  assert.doesNotMatch(manifestoRules[0], /border-radius/);
+  assert.doesNotMatch(manifestoRules[0], /padding:/);
+  const tokensWithoutManifesto = tokens.replace(
+    /#home-page #manifesto\[data-slot="section"\][^{]*\{[^}]+\}/g,
+    "",
+  );
+  assert.doesNotMatch(tokensWithoutManifesto, /linear-gradient/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
@@ -373,6 +408,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(limitsCopy, /Not every component is finished\./);
   assert.equal((limitsCopy.match(/title: "/g) ?? []).length, 4);
   assert.match(manifesto, /id="manifesto"/);
+  assert.match(manifesto, /spacing="lg"/);
   assert.match(manifesto, /aria-labelledby="manifesto-heading"/);
   assert.match(manifesto, /data-home-manifesto=/);
   assert.doesNotMatch(manifesto, /data-home-manifesto-panel/);
@@ -398,8 +434,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closing, /id="closing"/);
   assert.match(closing, /aria-labelledby="closing-heading"/);
   assert.match(closing, /data-home-closing=/);
-  assert.match(closing, /SecretField/);
-  assert.match(closing, /\bmultiline\b/);
+  assert.match(closing, /HomeCopyCommandField/);
+  assert.doesNotMatch(closing, /SecretField|\bmultiline\b/);
   assert.match(closing, /w-full text-left/);
   assert.match(closing, /MAP_SETUP_MINI_PROMPT/);
   assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
