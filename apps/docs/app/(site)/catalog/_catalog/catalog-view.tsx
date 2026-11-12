@@ -10,14 +10,14 @@ import {
   catalogFilterSearchParams,
   catalogFilterView,
   readCatalogFilters,
-} from "@/lib/catalog-filter.mjs";
+} from "./catalog-filter.mjs";
 
-import { CatalogCounters } from "@/ui/catalog/catalog-counters";
-import { CatalogFiltersToolbar, catalogResultsStatusLine } from "@/ui/catalog/catalog-filters";
-import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
+import { CatalogCounters } from "./catalog-counters";
+import { CatalogFiltersToolbar, catalogResultsStatusLine } from "./catalog-filters";
+import { catalogCopy } from "./i18n/catalog-copy";
 
 const CatalogResultsBodyLazy = dynamic(
-  () => import("@/ui/catalog/catalog-results").then((mod) => ({ default: mod.CatalogResultsBody })),
+  () => import("./catalog-results").then((mod) => ({ default: mod.CatalogResultsBody })),
   {
     loading: () => (
       <Stack gap="lg" data-catalog-results-root="">

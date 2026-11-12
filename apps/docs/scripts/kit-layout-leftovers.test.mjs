@@ -15,9 +15,9 @@ const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const LISTED = [
   "components/component-preview.tsx",
-  "ui/catalog/catalog-results.tsx",
-  "ui/catalog/catalog-filters.tsx",
-  "ui/catalog/catalog-counters.tsx",
+  "app/(site)/catalog/_catalog/catalog-results.tsx",
+  "app/(site)/catalog/_catalog/catalog-filters.tsx",
+  "app/(site)/catalog/_catalog/catalog-counters.tsx",
   "components/preview-viewport.tsx",
 ];
 

@@ -350,7 +350,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     paste,
     /ui: "border-transparent bg-primary-foreground text-accent-foreground shadow-none hover:bg-primary-foreground"/,
   );
-  assert.match(paste, /accent \? "font-mono text-accent" : "font-mono"/);
+  assert.match(paste, /className="font-mono"/);
+  assert.doesNotMatch(paste, /font-mono text-accent/);
   assert.doesNotMatch(paste, /<Badge>/);
   assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
@@ -362,12 +363,25 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(tokens, /background-color:\s*hsl\(var\(--zk-site-action\)\)/);
   assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
-  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
+  assert.doesNotMatch(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
+  assert.doesNotMatch(tokens, /262 85% 70%/);
   assert.match(
     tokens,
     /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
   );
-  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
+  assert.match(
+    tokens,
+    /#home-page \[data-home-paste-lands\] \[data-slot="badge"\] \{[^}]*--primary:\s*var\(--zk-site-action\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page \[data-home-paste-lands\] \[data-slot="badge"\] \{[^}]*--primary-foreground:\s*var\(--zk-site-action-foreground\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page \[data-home-paste-lands\] \[data-slot="badge"\] \{[^}]*--accent-foreground:\s*var\(--zk-site-action\)/,
+  );
+  assert.match(tokens, /#home-page \[data-identity-caption\] \{[^}]*color:\s*hsl\(var\(--muted-foreground\)\)/);
   assert.match(tokens, /\[data-home-same-idea-lands\]/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);

@@ -7,10 +7,10 @@ import {
   catalogCounterItems,
   catalogFilterView,
   countCatalogByArea,
-} from "../lib/catalog-filter.mjs";
-import { catalogCopy } from "../ui/catalog/i18n/catalog-copy.ts";
+} from "./catalog-filter.mjs";
+import { catalogCopy } from "./i18n/catalog-copy.ts";
 
-const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const app = join(dirname(fileURLToPath(import.meta.url)), "../../../..");
 
 function read(rel) {
   return readFileSync(join(app, rel), "utf8");
@@ -21,7 +21,7 @@ const COUNTER_LABELS = catalogCopy.counters.labels;
 test("counter labels are UI, Core, SEO, Agents — not Core and server", () => {
   assert.deepEqual(Object.values(COUNTER_LABELS), ["UI", "Core", "SEO", "Agents"]);
   assert.equal(Object.values(COUNTER_LABELS).includes("Core and server"), false);
-  const card = read("ui/catalog/catalog-counters.tsx");
+  const card = read("app/(site)/catalog/_catalog/catalog-counters.tsx");
   assert.match(card, /catalogCopy\.counters\.labels/);
   assert.doesNotMatch(card, /Core and server/);
 });
@@ -51,9 +51,9 @@ test("an empty index yields four zeros from countCatalogByArea", () => {
 });
 
 test("card totals come from countsByArea, not mockup integers or catalogStats", () => {
-  const card = read("ui/catalog/catalog-counters.tsx");
-  const view = read("ui/catalog/catalog-view.tsx");
-  const filter = read("lib/catalog-filter.mjs");
+  const card = read("app/(site)/catalog/_catalog/catalog-counters.tsx");
+  const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
+  const filter = read("app/(site)/catalog/_catalog/catalog-filter.mjs");
   const page = read("app/(site)/catalog/page.tsx");
   assert.match(card, /catalogCounterItems/);
   assert.match(view, /countsByArea/);
@@ -80,9 +80,9 @@ test("filters do not shrink the four card totals", () => {
 });
 
 test("the view wraps title and card; CSS owns 1440 beside / 390 stacked", () => {
-  const view = read("ui/catalog/catalog-view.tsx");
-  const card = read("ui/catalog/catalog-counters.tsx");
-  const css = read("app/catalog-shell.css");
+  const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
+  const card = read("app/(site)/catalog/_catalog/catalog-counters.tsx");
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
   assert.match(view, /data-catalog-intro/);
   assert.match(card, /data-catalog-counters/);
   assert.match(card, /data-catalog-counters-panel/);
