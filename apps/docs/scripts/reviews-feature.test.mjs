@@ -1591,12 +1591,32 @@ test("list and timeline rows use row padding, not section padding", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
-  assert.match(list, /flex-wrap items-center border-b border-border py-row/);
+  assert.match(list, /flex-wrap items-center border-b border-border py-row max-md:flex-col/);
   assert.match(timeline, /flex-wrap items-center border-b border-border py-row/);
+  assert.doesNotMatch(timeline, /max-md:flex-col/);
   assert.doesNotMatch(list, /py-section-sm/);
   assert.doesNotMatch(timeline, /py-section-sm/);
   assert.match(frame, /<Stack gap="lg">\{children\}<\/Stack>/);
   assert.doesNotMatch(frame, /children\(panel\)/);
+});
+
+test("list stays in the shared wide frame and stacks title then meta below md", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
+  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*ReviewSampleNotice[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*copy\.list\.unlinkedTitle[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(frame, /width="wide"/);
+  assert.doesNotMatch(frame, /width="full"/);
+  assert.doesNotMatch(list, /width="full"/);
+  assert.doesNotMatch(list, /MarketingSiteHeader|MobileHeader|pathname/);
+  assert.doesNotMatch(frame, /pathname/);
+  assert.equal([...list.matchAll(/<ListScanRow/g)].length, 2);
+  assert.match(list, /<ListScanRow[\s\S]*title=\{[\s\S]*copy\.issue\.timeline/);
+  assert.match(list, /<ListScanRow[\s\S]*meta=\{[\s\S]*UpdatedAgo/);
+  assert.match(list, /last \? \(/);
+  assert.doesNotMatch(list, /<Link[^>]*aria-label/);
+  assert.doesNotMatch(list, /<Button[^>]*aria-label/);
 });
 
 test("verdict and status tones live in one shared module", () => {

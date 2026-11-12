@@ -6,7 +6,8 @@
  * UI decisions:
  * - Issue list at /issues with title, state, linked PRs, and latest status first; the title opens the latest run and Timeline is a labelled secondary — because: hurried visitor scans work and reaches a run in one click.
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
- * - Wrapping scan rows (title then status), not a wide table — because: phone users at 390px compose by priority and a hurried reader scans one band per run.
+ * - Public run history list stays in the shared appearance-frame Container (width wide) — because: a hurried visitor at 1440 expects the same centered column as an issue detail page.
+ * - Issue and unlinked rows are two bands below md (title plus Timeline, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per run without chasing wrapped fragments.
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
