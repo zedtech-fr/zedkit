@@ -138,7 +138,7 @@ const sizeBudgetOverFunction = [
   "apps/docs/components/demos/drawer-demo.tsx",
   "apps/docs/components/demos/tabs-demo.tsx",
   "apps/docs/components/preview-viewport.tsx",
-  "apps/docs/ui/catalog/catalog-view.tsx",
+  "apps/docs/app/(site)/catalog/_catalog/catalog-view.tsx",
   "packages/ui/src/data-table/data-table.tsx",
   "packages/ui/src/identity/identity-picker.tsx",
   "packages/ui/src/overlays/route-modal.tsx",
@@ -234,7 +234,7 @@ export default tseslint.config(
   {
     files: [
       "apps/docs/ui/home/home-hero-lead.tsx",
-      "apps/docs/ui/catalog/catalog-view.tsx",
+      "apps/docs/app/(site)/catalog/_catalog/catalog-view.tsx",
     ],
     rules: {
       "better-tailwindcss/no-unknown-classes": "off",

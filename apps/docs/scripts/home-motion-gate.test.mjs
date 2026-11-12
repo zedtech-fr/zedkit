@@ -183,7 +183,7 @@ test("each home band has one appear or scroll, never on Section", () => {
 test("docs CSS does not use the mockup star reduced-motion kill", () => {
   const hero = readApp("app/home-hero.css");
   const compact = readApp("app/site-compact.css");
-  const catalog = readApp("app/catalog-shell.css");
+  const catalog = readApp("app/(site)/catalog/_catalog/catalog-shell.css");
   for (const css of [hero, compact, catalog]) {
     assert.doesNotMatch(css, /\*\s*\{[^{}]*animation:\s*none[^{}]*transition:\s*none/);
   }
