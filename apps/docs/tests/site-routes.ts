@@ -8,7 +8,7 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Nested-interactive + link names without axe (home until layout axe is stable). */
   linkAndInteractiveAudit?: boolean;
-  /** Nested live preview to skip in page-level axe (same idea as `[data-home-dashboard-card]`). */
+  /** Nested live preview to skip in page-level axe (kit specimen). */
   axeExclude?: string;
   /** Extra axe rules off for this route (nested landmarks in a live preview). */
   extraAxeOff?: string[];

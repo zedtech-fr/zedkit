@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Badge, Button, Stack, Surface, Text } from "@zedtech/zedkit-ui";
 import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "@/ui/home/home-rhythm";
-import { homeCopy } from "@/ui/home/i18n/home-copy";
+import { homeHeroCopy } from "@/ui/home/i18n/home-hero-copy";
 import { useMotionOk } from "@/ui/home/use-motion-ok";
 
-const copy = homeCopy.heroIllustration;
+const copy = homeHeroCopy.heroIllustration;
 
 const COMBINED_STEPS = [
   { beat: "plan", label: copy.stepPlan, text: copy.combinedPlan, issue: false },

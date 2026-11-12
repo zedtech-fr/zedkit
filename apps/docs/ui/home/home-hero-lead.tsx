@@ -3,7 +3,7 @@ import { MAP_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
 import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
 import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { HomeHeroIllustration } from "@/ui/home/home-hero-illustration";
-import { homeCopy } from "@/ui/home/i18n/home-copy";
+import { homeHeroCopy } from "@/ui/home/i18n/home-hero-copy";
 
 /**
  * Métier:           Public TypeScript kit: npm packages plus a docs site, not a hosted app with accounts.
@@ -18,25 +18,25 @@ export function HomeHeroLead() {
       <Stack gap="list" className="content-shrink items-start" data-home-hero-lead="">
         <Stack gap="sm" className="content-shrink items-start">
           <Text typeRole="label" className={`text-muted-foreground ${HOME_METADATA_TEXT_CLASS}`} data-home-hero-category="">
-            {homeCopy.hero.titleCategory}
+            {homeHeroCopy.hero.titleCategory}
           </Text>
           <Heading level={1} typeRole="display">
-            {homeCopy.hero.title}{" "}
-            <span className="text-muted-foreground">{homeCopy.hero.titleClause}</span>
+            {homeHeroCopy.hero.title}{" "}
+            <span className="text-muted-foreground">{homeHeroCopy.hero.titleClause}</span>
           </Heading>
         </Stack>
         <Text variant="muted" typeRole="lead" data-home-hero-sub="">
-          {homeCopy.hero.subLead}{" "}
-          <span className="font-semibold text-foreground">{homeCopy.hero.subAiName}</span> {homeCopy.hero.subAi}{" "}
-          <span className="font-semibold text-foreground">{homeCopy.hero.subUiName}</span> {homeCopy.hero.subUi}
+          {homeHeroCopy.hero.subLead}{" "}
+          <span className="font-semibold text-foreground">{homeHeroCopy.hero.subAiName}</span> {homeHeroCopy.hero.subAi}{" "}
+          <span className="font-semibold text-foreground">{homeHeroCopy.hero.subUiName}</span> {homeHeroCopy.hero.subUi}
         </Text>
         <Stack gap={HOME_CARD_CONTENT_GAP} className="w-full items-start">
           <Stack className="w-full" data-home-hero-prompt="">
             <HomeCopyCommandField
               value={MAP_SETUP_MINI_PROMPT}
-              aria-label={homeCopy.hero.promptAriaLabel}
+              aria-label={homeHeroCopy.hero.promptAriaLabel}
               aria-describedby="home-hero-prompt-caption"
-              copyLabel={homeCopy.hero.promptCopyLabel}
+              copyLabel={homeHeroCopy.hero.promptCopyLabel}
             />
           </Stack>
           <Text
@@ -45,7 +45,7 @@ export function HomeHeroLead() {
             typeRole="caption"
             className={HOME_METADATA_TEXT_CLASS}
           >
-            {homeCopy.hero.promptCaption}
+            {homeHeroCopy.hero.promptCaption}
           </Text>
         </Stack>
       </Stack>

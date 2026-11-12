@@ -66,7 +66,6 @@ import { DrawerBottomSheetDemo } from "./drawer-bottom-sheet-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { DrawerSideMenuDemo } from "./drawer-side-menu-demo";
 import { FieldDemo } from "./field-demo";
-import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { PopoverDemo } from "./popover-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
@@ -233,7 +232,6 @@ export const demoRegistry = {
   DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
-  HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LabelDemo: { Demo: LabelDemo, file: "label-demo.tsx" },
   LabelNativeDemo: { Demo: LabelNativeDemo, file: "label-native-demo.tsx" },
