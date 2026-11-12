@@ -101,6 +101,7 @@ Advanced / CI paths:
 
 ```sh
 npx @zedtech/zedkit-ai init . --provider cursor --adopt   # adopt on the starter preset; setup uses the setup preset
+npx @zedtech/zedkit-ai setup . --provider cursor --kit /path/to/kit  # local kit directory; omit = bundled; pass --kit on sync/validate too
 npx @zedtech/zedkit-ai validate                           # success: exit 0; final line starts with ok (long scope line)
 npx @zedtech/zedkit-ai validate --setup [--plan file]     # opt-in: PLAN covers git changes, setup went deep (D1-D4)
 npx @zedtech/zedkit-ai scan [dir]                         # repo size and one slice per read-only reader

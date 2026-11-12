@@ -61,7 +61,7 @@ export type InstallOptions = {
    * it (`review.kit.md` for files, `zk-review` for skill folders).
    */
   adopt?: boolean;
-  /** Custom kit directory (default: the bundled kit). */
+  /** Custom kit directory (default: the bundled kit). Same directory as CLI `--kit`. */
   kit?: string;
   /**
    * Write a fast model id from the project's tokenomics. Only when the user
@@ -232,7 +232,7 @@ function legacyOwnsSkillDir(ctx: Ctx, name: string, destDir: string): boolean {
       const lensed = file === "lenses.md" ? setLensStatus(kitRaw.value, installed) : kitRaw.value;
       if (resolveIfNeeded(lensed, ctx.avail) === raw.value) continue;
     }
-    if (isKitSkillCopy(`${name}/${file}`, raw.value)) continue;
+    if (isKitSkillCopy(`${name}/${file}`, raw.value, ctx.kit)) continue;
     return false;
   }
   return true;
@@ -308,7 +308,7 @@ function layerSidecarKitOwned(ctx: Ctx, kitName: string, sidecarRel: string, ins
     const raw = tryCatch(() => readFileSync(join(ctx.dest, sidecarRel, ...file.split("/")), "utf8"));
     if (!raw.ok) return false;
     const text = file === "SKILL.md" ? (withSidecarSkillName(raw.value, kitName) ?? raw.value) : raw.value;
-    return isKitSkillCopy(`${kitName}/${file}`, text);
+    return isKitSkillCopy(`${kitName}/${file}`, text, ctx.kit);
   });
 }
 
@@ -473,7 +473,7 @@ function copyFile(ctx: Ctx, from: string, rel: string): void {
       const prior = ctx.priorManifest.status === "ok" ? ctx.priorManifest.manifest.files[manifestKey(rel)] : undefined;
       const ownedByRecord = prior !== undefined && prior === shortHash(current.value);
       const legacyFile = legacyAgentOrCommand(rel);
-      const ownedByLegacy = legacyFile !== undefined && isKitCopy(legacyFile.kind, legacyFile.name, current.value, text);
+      const ownedByLegacy = legacyFile !== undefined && isKitCopy(legacyFile.kind, legacyFile.name, current.value, text, ctx.kit);
       // Generated files carry a marker and stay syncFile's job: rewriting the
       // kit text over them only churns (syncFile regenerates or skips itself).
       if ((ownedByRecord || ownedByLegacy) && hasMarker(current.value)) {
@@ -876,17 +876,18 @@ function generationAgentNames(dest: string, preset: readonly string[]): string[]
 function generateAgents(ctx: Ctx, content: ReturnType<typeof plan>, providers: readonly string[]): void {
   const names = generationAgentNames(ctx.dest, content.agents);
   const agentsDir = join(ctx.dest, ".agents");
-  let policy = loadPolicy(agentsDir);
+  let policy = loadPolicy(agentsDir, ctx.kit);
   if (!policy.ok) {
     ctx.actions.push({ kind: "skip", path: join(".agents", "tokenomics.md"), note: `${policy.error.message}; models inherit until it is fixed` });
-    policy = loadDefaults();
+    policy = loadDefaults(ctx.kit);
   }
-  if (!policy.ok) throw policy.error;
+  if (!policy.ok) return;
   syncAgents(
     {
       dest: ctx.dest,
       write: !ctx.dryRun,
       providers,
+      kit: ctx.kit,
       policy: policy.value,
       agentsDir,
       names,
@@ -995,7 +996,7 @@ export function installKit(options: InstallOptions): Result<Action[]> {
     };
     const chosen = (options.providers ?? options.targets ?? ALL_PROVIDERS) as WireProvider[];
     const agentsDir = join(ctx.dest, ".agents");
-    const policy = loadPolicy(agentsDir);
+    const policy = loadPolicy(agentsDir, kit);
     if (policy.ok) {
       assertAgentRoutes({
         policy: policy.value,

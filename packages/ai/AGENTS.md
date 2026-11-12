@@ -46,6 +46,9 @@
    fail before writing. The install check uses the same agent names generation
    will write: the preset plus agents already on disk. Pass it only when the
    user asked for fast mode in this request.
+   `--kit <dir>` is accepted by `setup`, `init`, `sync` and `validate` (a local
+   kit directory; omit uses the bundled kit). Pass it on each of those commands;
+   it is not remembered.
 9. An agent with `executes: true` in `agents.meta.json` must run a command.
    Muse keeps `bash` and still denies `write_file` and `edit_file`. Cursor
    does not set `readonly`. `test-runner` is that agent. Bash can still

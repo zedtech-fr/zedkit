@@ -28,7 +28,7 @@ if (!result.ok) throw result.error;
 for (const action of result.value) console.log(action.kind, action.path);
 ```
 
-CLI equivalent: `zedkit-ai setup . --provider cursor` (onboarding: **`--preset setup` by default**, same as `init --preset setup --adopt`) or `zedkit-ai init .` (`--provider cursor,claude,codex,all`; `--target` is an alias; `--adopt` keeps colliding user files and skips identical kit copies; run `--help` for every provider id)
+CLI equivalent: `zedkit-ai setup . --provider cursor` (onboarding: **`--preset setup` by default**, same as `init --preset setup --adopt`) or `zedkit-ai init .` (`--provider cursor,claude,codex,all`; `--target` is an alias; `--adopt` keeps colliding user files and skips identical kit copies; `--kit <dir>` is a local kit directory, same as `InstallOptions.kit`, omit = bundled, pass it again on sync/validate; run `--help` for every provider id)
 
 Presets: `starter` (onboard + review + test-first; default), `setup` (starter plus domain,
 review lenses, retro, rules-upkeep, product/UI/copy subagents, and setup-ai
@@ -59,7 +59,7 @@ const issues = [...validateKit(".agents"), ...checkDrift(".", ".agents")];
 for (const issue of issues) console.error(`${issue.path}: ${issue.message}`);
 ```
 
-CLI equivalent: `zedkit-ai validate` (accepts a project root too; reports drift). Opt-in `--setup` / `--plan <file>`: PLAN must cover every git-changed path; setup-log gate logs must be well-formed; and the setup must have gone deep: a reading log (D1), domain rules with evidence, plus Identity rules when there is a UI (D2), a nested `AGENTS.md` that links them or a stated reason (D3), `.agents/tokenomics.md` with a real model on `build.standard` and `decide.sensitive`, pointed at from `AGENTS.md` (D4).
+CLI equivalent: `zedkit-ai validate` (accepts a project root too; reports drift; `--kit <dir>` is a local kit directory, omit = bundled). Opt-in `--setup` / `--plan <file>`: PLAN must cover every git-changed path; setup-log gate logs must be well-formed; and the setup must have gone deep: a reading log (D1), domain rules with evidence, plus Identity rules when there is a UI (D2), a nested `AGENTS.md` that links them or a stated reason (D3), `.agents/tokenomics.md` with a real model on `build.standard` and `decide.sensitive`, pointed at from `AGENTS.md` (D4).
 
 Need: size a repo and cut it for parallel read-only readers. CLI: `zedkit-ai scan [dir]` prints the size class (small, medium, large), the reader count (1-5, 6-10, 11-20) and one slice per reader.
 
@@ -143,4 +143,4 @@ if (!actions.ok) throw actions.error;
 if (!inSync(actions.value)) process.exitCode = 1;
 ```
 
-CLI equivalent: `zedkit-ai sync --provider cursor,claude --check`.
+CLI equivalent: `zedkit-ai sync --provider cursor,claude --check` (`--kit <dir>` is a local kit directory, omit = bundled).
