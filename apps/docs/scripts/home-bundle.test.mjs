@@ -489,7 +489,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(header, /HomeGitHubLink/);
   assert.doesNotMatch(header, /chrome\.github/);
   assert.match(header, /HomeGetStartedAction/);
-  assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
+  assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation|DocsMenuButton/);
   assert.match(header, /data-header-actions/);
   assert.match(header, /gap-icon/);
   assert.match(header, /<ul className=/);
@@ -554,7 +554,7 @@ test("phone header wrap is two rows: nowrap nav list, 24px labels, actions take 
   );
   assert.match(
     compact,
-    /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
+    /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-nav\[data-docs-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
   );
   assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
 });

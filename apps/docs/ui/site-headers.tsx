@@ -12,12 +12,18 @@ import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { isCatalogPath, isFoundationsPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
+const HEADER_MARK = {
+  home: { "data-home-header": "" },
+  catalog: { "data-catalog-header": "" },
+  docs: { "data-docs-header": "" },
+} as const;
+
 function MarketingDesktopNav({
   mark,
   actions,
   className,
 }: {
-  mark: "home" | "catalog";
+  mark: keyof typeof HEADER_MARK;
   actions: ReactNode;
   className?: string;
 }) {
@@ -25,7 +31,7 @@ function MarketingDesktopNav({
   return (
     <header
       id="nd-nav"
-      {...(mark === "home" ? { "data-home-header": "" } : { "data-catalog-header": "" })}
+      {...HEADER_MARK[mark]}
       className={cn("sticky pin-top z-header max-md:hidden", className)}
     >
       <div>
@@ -93,10 +99,10 @@ function HomeDesktopHeader() {
  * Customer personas: hunting a component on `/catalog`, often at 1440, hurried.
  * UI decisions: catalog header is brand + primary nav + Search ⌘K + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started.
  */
-function CatalogDesktopHeader() {
+function SearchGitHubDesktopHeader({ mark }: { mark: "catalog" | "docs" }) {
   return (
     <MarketingDesktopNav
-      mark="catalog"
+      mark={mark}
       actions={
         <>
           <SiteFullSearchTrigger />
@@ -105,6 +111,10 @@ function CatalogDesktopHeader() {
       }
     />
   );
+}
+
+function CatalogDesktopHeader() {
+  return <SearchGitHubDesktopHeader mark="catalog" />;
 }
 
 /**
@@ -137,7 +147,7 @@ export function MarketingSiteHeader() {
   const catalog = isCatalogPath(pathname);
   return (
     <>
-      <MobileHeader mode="home" />
+      <MobileHeader />
       {home ? (
         <HomeDesktopHeader />
       ) : catalog ? (
@@ -149,15 +159,20 @@ export function MarketingSiteHeader() {
   );
 }
 
-/** Docs layout phone header (desktop docs chrome has no top bar, except foundations). */
+/**
+ * Customer personas: integrating developer on a docs page at 1440, hurried.
+ * UI decisions: docs header is brand + primary nav + Search ⌘K + GitHub text, because the customer already uses that bar on Home and Catalog.
+ */
+export function DocsDesktopHeader() {
+  return <SearchGitHubDesktopHeader mark="docs" />;
+}
+
+/** Docs layout phone header. Desktop docs chrome is DocsDesktopHeader above the shell, except foundations. */
 export function DocsSiteHeader() {
   const foundations = isFoundationsPath(usePathname());
   return (
     <>
-      <MobileHeader
-        mode="docs"
-        className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
-      />
+      <MobileHeader className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden" />
       {foundations ? <FoundationsDesktopHeader /> : null}
     </>
   );

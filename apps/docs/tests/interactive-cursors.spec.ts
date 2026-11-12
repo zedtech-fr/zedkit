@@ -10,7 +10,9 @@ test.describe("interactive cursors on docs previews", () => {
     const preview = page.locator("[data-component-preview]").first();
     await preview.scrollIntoViewIfNeeded();
     await expectCursor(preview.getByRole("button", { name: "Create app" }), "pointer");
-    await expectCursor(preview.getByRole("button", { name: "Disabled" }), "not-allowed");
+    const usage = page.locator("#usage-and-states");
+    await usage.scrollIntoViewIfNeeded();
+    await expectCursor(usage.getByRole("button", { name: "Saving…" }), "not-allowed");
   });
 
   test("text field uses text cursor", async ({ page }) => {

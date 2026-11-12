@@ -177,9 +177,10 @@ Pinned URLs read `window.location.search` after mount (static export). The first
 
 ## Staging ingest
 
-`deploy-dev.yml` may replace `adapters/public-reviews.json` **before**
-the docs build. The ingest gate imports dist-only `@zedtech/zedkit-core`,
-so the workflow builds core first. Set repository variable
+`deploy-dev.yml` and `deploy-epic-preview.yml` may replace
+`adapters/public-reviews.json` **before** the docs build. Both call
+`deploy/ingest-public-reviews.sh` after building `@zedtech/zedkit-core`
+(the ingest gate imports dist-only core). Set repository variable
 `PUBLIC_REVIEWS_SNAPSHOT` (Settings → Secrets and variables → Actions →
 Variables) to a runner-local path such as `/tmp/public-reviews.json`.
 Today that file is only produced by `scp` from
@@ -196,7 +197,7 @@ local file and always fail-opens. Do not commit a host filesystem path.
   deploy (fail-closed). Secrets must not ship.
 
 `node apps/docs/scripts/copy-public-reviews-snapshot.mjs <source> <dest>`
-is the gate. The CLI requires both paths; the workflow skips the CLI
-when the local path env is unset. Epic preview and production deploys
-do not ingest.
+is the gate. The CLI requires both paths; the shared script skips the CLI
+when the local path env is unset. The epic preview ingest uses the same
+script and the same two repository variables. Production deploys do not ingest.
 

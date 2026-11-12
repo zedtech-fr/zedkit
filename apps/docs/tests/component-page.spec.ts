@@ -42,21 +42,22 @@ test("confirm-dialog preview precedes install (#R2 template)", async ({ page }) 
   expect((await usage.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
 });
 
-test("button reference page shows a full button before scroll at 390 (#R2)", async ({ page }) => {
+test("button reference page keeps the component list in flow at 390 (#230)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Button", level: 1 })).toBeVisible();
-  const preview = page.locator("[data-component-preview]").first();
-  const create = preview.getByRole("button", { name: "Create app" });
-  await expect(create).toBeVisible();
-  const box = await create.boundingBox();
-  expect(box).not.toBeNull();
-  expect(box!.y + box!.height).toBeLessThanOrEqual(844);
+  await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
+  const tree = page.locator("#nd-sidebar");
+  const title = page.getByRole("heading", { name: "Button", level: 1 });
+  await expect(tree).toBeVisible();
+  await expect(tree.getByRole("link", { name: "Button" }).first()).toBeVisible();
+  await expect(tree.getByText("Actions")).toBeVisible();
+  expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
 });
 
 test("the secondary button keeps a quieter fill on hover", async ({ page }) => {
   await page.goto(BUTTON_DOC);
-  const cancel = page.locator("[data-component-preview]").first().getByRole("button", { name: "Cancel" });
+  const cancel = page.locator("#usage-and-states").getByRole("button", { name: "Cancel" });
   await expect(cancel).toBeVisible();
   const rest = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
   await cancel.hover();
@@ -119,12 +120,12 @@ test("the primary button keeps a quieter fill on hover", async ({ page }) => {
 
 test("the ghost button keeps a muted tint on hover and a secondary fill when pressed", async ({ page }) => {
   await page.goto(BUTTON_DOC);
-  const link = page.locator("[data-component-preview]").first().getByRole("link", { name: "Docs link" });
-  await expect(link).toBeVisible();
-  const rest = await link.evaluate((node) => getComputedStyle(node).backgroundColor);
-  await link.hover();
+  const cancel = page.locator("[data-component-preview]").first().getByRole("button", { name: "Cancel" });
+  await expect(cancel).toBeVisible();
+  const rest = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await cancel.hover();
   await expect.poll(async () =>
-    link.evaluate((node) => {
+    cancel.evaluate((node) => {
       const probe = document.createElement("div");
       probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--muted)) 80%, transparent)";
       node.append(probe);
@@ -134,12 +135,12 @@ test("the ghost button keeps a muted tint on hover and a secondary fill when pre
       return background === expected && !node.className.includes("bg-muted/");
     }),
   ).toBe(true);
-  const hover = await link.evaluate((node) => getComputedStyle(node).backgroundColor);
+  const hover = await cancel.evaluate((node) => getComputedStyle(node).backgroundColor);
   expect(hover).not.toBe(rest);
   await page.mouse.move(0, 0);
-  await link.evaluate((node) => node.setAttribute("aria-pressed", "true"));
+  await cancel.evaluate((node) => node.setAttribute("aria-pressed", "true"));
   await expect.poll(async () =>
-    link.evaluate((node) => {
+    cancel.evaluate((node) => {
       const probe = document.createElement("div");
       probe.style.backgroundColor = "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)";
       node.append(probe);
@@ -396,17 +397,23 @@ for (const mode of ["light", "dark"] as const) {
   });
 }
 
-test("guidance answers the reader's questions and sits right after the example", async ({ page }) => {
+test("guidance answers the reader's questions and sits between install and props", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
   const guidance = page.locator("#guidance");
+  await expect(page.getByRole("heading", { name: "Guidance", level: 2 })).toBeVisible();
   await expect(guidance.getByText("Who is it for?")).toBeVisible();
   await expect(guidance.getByText("When should I use it?")).toBeVisible();
   await expect(guidance.getByText("When should I pick something else?")).toBeVisible();
   const example = await page.locator("#example").boundingBox();
+  const usage = await page.locator("#usage-and-states").boundingBox();
+  const install = await page.locator("#install-or-copy").boundingBox();
   const props = await page.locator("#props").boundingBox();
   const box = await guidance.boundingBox();
   expect(box!.y).toBeGreaterThan(example!.y);
+  expect(usage!.y).toBeGreaterThan(example!.y);
+  expect(install!.y).toBeGreaterThan(usage!.y);
+  expect(box!.y).toBeGreaterThan(install!.y);
   expect(box!.y).toBeLessThan(props!.y);
 });
 

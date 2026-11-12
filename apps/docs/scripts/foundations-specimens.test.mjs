@@ -195,7 +195,7 @@ test("foundations chrome skips docs article chrome and keeps search", () => {
   assert.match(headers, /isFoundationsPath/);
   assert.match(headers, /FoundationsDesktopHeader/);
   assert.doesNotMatch(mdxComponents, /FoundationsHero/);
-  assert.match(layout, /sidebar=\{\{\s*enabled:\s*!isFoundationsPath\(pathname\)\s*\}\}/);
+  assert.match(layout, /sidebar=\{\{\s*enabled:\s*!isFoundationsPath\(pathname\),\s*collapsible:\s*false\s*\}\}/);
   assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
   assert.match(layout, /searchToggle=\{\{\s*enabled:\s*true\s*\}\}/);
   assert.match(page, /tableOfContent: \{ enabled: false as const \}/);

@@ -1,8 +1,9 @@
-import { Sidebar, SidebarProvider, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
+import { SidebarProvider, SidebarTrigger, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
+import { DocsContainer } from "@/ui/docs-container";
+import { DocsSidebar } from "@/ui/docs-sidebar";
 import {
   SiteFullSearchTrigger,
   SiteSearchTrigger,
-  SiteSidebarTrigger,
   SiteThemeSwitch,
 } from "@/ui/site-chrome";
 
@@ -19,12 +20,16 @@ export const siteChromeSlots = {
   },
 } as const;
 
+/**
+ * Docs shell search lives in DocsDesktopHeader / MobileHeader, not a fumadocs
+ * header slot. Theme switch is off (`themeSwitch.enabled: false` on the layout).
+ */
 export const docsChromeSlots = {
-  ...siteChromeSlots,
+  container: DocsContainer,
   sidebar: {
     provider: SidebarProvider,
-    root: Sidebar,
-    trigger: SiteSidebarTrigger,
+    root: DocsSidebar,
+    trigger: SidebarTrigger,
     useSidebar,
   },
 } as const;

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 /*
  * D5: site/docs nav chrome keeps a hairline edge only — drop shadow reserved
- * for overlays. Desktop docs has no top bar (D3); assert on the phone docs header.
+ * for overlays. Phone docs header is the wrap surface; desktop docs keeps the site bar.
  */
 test("docs nav has no drop shadow at a mid desktop width", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });

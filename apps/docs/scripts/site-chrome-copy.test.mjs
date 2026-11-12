@@ -35,8 +35,8 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.brand.name, "zedkit");
   assert.equal(siteChromeCopy.brand.homeAriaLabel, "zedkit home");
   assert.equal(siteChromeCopy.search.triggerAriaLabel, "Search documentation");
-  assert.equal(siteChromeCopy.theme.toggleAriaLabel, "Toggle theme");
-  assert.equal(siteChromeCopy.nav.openNavigation, "Open navigation");
+  assert.equal("theme" in siteChromeCopy, false);
+  assert.equal("openNavigation" in siteChromeCopy.nav, false);
   assert.equal("openMenu" in siteChromeCopy.nav, false);
   assert.equal("menu" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.siteNavigation, "Site navigation");
@@ -95,7 +95,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   const brand = read("ui/site-brand.tsx");
   const version = read("ui/kit-version-label.tsx");
 
-  assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
+  assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
   const searchTrigger = read("ui/site-chrome.tsx");
@@ -143,8 +143,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
   assert.doesNotMatch(header, /<p[\s>]/);
-  assert.match(header, /IconButton/);
-  assert.match(header, /variant="ghost"/);
+  assert.doesNotMatch(header, /IconButton|DocsMenuButton/);
   assert.match(skip, /href="#main-content"/);
   assert.doesNotMatch(skip, /IconButton|<Button[\s>]/);
 });
