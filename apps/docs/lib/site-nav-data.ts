@@ -13,18 +13,17 @@ export function isHomePath(pathname: string): boolean {
 
 export type SiteHeaderChromeMode = "home" | "docs";
 
-/** Phone (and policy) chrome: which actions a path may mount. Theme, version, and a site-nav disclosure are never on. */
+/**
+ * Phone (and policy) chrome: which actions a path may mount.
+ * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
+ */
 export function siteHeaderChrome(pathname: string, mode: SiteHeaderChromeMode) {
   const home = isHomePath(pathname);
   return {
     links: sitePrimaryNavLinks(),
     search: !home,
     getStarted: home,
-    github: true,
     docsTreeOpener: mode === "docs",
-    theme: false,
-    version: false,
-    siteNavDisclosure: false,
   };
 }
 

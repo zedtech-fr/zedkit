@@ -324,8 +324,12 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(header, /ms-auto/);
   assert.match(header, /SiteFullSearchTrigger/);
   assert.match(header, /HomeGitHubLink/);
+  assert.doesNotMatch(header, /chrome\.github/);
   assert.match(header, /HomeGetStartedAction/);
   assert.match(header, /siteChromeCopy\.nav\.openNavigation/);
+  assert.match(header, /data-header-actions/);
+  assert.match(header, /gap-icon/);
+  assert.match(header, /<ul className=/);
   assert.doesNotMatch(header, /MobileSearchTrigger/);
   assert.doesNotMatch(header, /HomeMenuButton|SiteNavDrawer|ThemeButton|KitVersionLabel/);
   assert.doesNotMatch(header, /SearchPill/);
@@ -333,6 +337,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
   assert.match(siteHeaders, /isHomePath/);
   assert.match(siteHeaders, /min-h-phone-bar/);
+  assert.match(siteHeaders, /data-header-actions/);
   assert.match(actions, /#get-started/);
   assert.match(actions, /data-site-action/);
   assert.match(actions, /SITE_GITHUB_URL/);
@@ -347,6 +352,12 @@ test("docs phone chrome keeps search; home chrome does not", () => {
     compact,
     /#nd-nav,\s*\n#nd-nav > div,\s*\n#nd-nav nav\s*\{[^}]*height:\s*var\(--zk-site-header-height\)/,
   );
+  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
+  assert.match(compact, /\[data-header-actions\]/);
+  assert.match(compact, /width < 48rem/);
+  assert.match(compact, /--zk-docs-scroll-offset:\s*calc\(var\(--fd-docs-row-1, 0px\) \+ var\(--zk-site-header-height-wrapped\)\)/);
+  const globals = readFileSync(join(app, "app/globals.css"), "utf8");
+  assert.match(globals, /#nd-sidebar\s*\{[^}]*background-color:\s*hsl\(var\(--sidebar\)/);
   assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
   assert.doesNotMatch(layout, /KitVersionLabel/);
 });

@@ -1,7 +1,30 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/** Phone tap target is 44px. Subpixel layout can measure 43.5. */
+const TAP = 44;
+const TAP_MEASURED = TAP - 0.5;
+/** Page gutter and WCAG 2.5.8 minimum pointer size share 24px. */
+const GUTTER = 24;
+const SEARCH_NAME = "Search documentation";
 
 const PAGES = ["/", "/docs/getting-started"];
 const SEARCH_PAGES = ["/docs/getting-started"];
+
+async function pageOverflow(page: Page) {
+  return page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+}
+
+async function assertHashClearsPhoneHeader(page: Page, target: string) {
+  const header = page.locator("#nd-mobile-nav");
+  await expect(header).toBeVisible();
+  const el = page.locator(target);
+  await expect(el).toBeVisible();
+  const headerBox = await header.boundingBox();
+  const targetBox = await el.boundingBox();
+  expect(targetBox?.y ?? 0).toBeGreaterThanOrEqual((headerBox?.y ?? 0) + (headerBox?.height ?? 0) - 1);
+}
 
 test("the phone header lists AI, UI, Docs, and Catalog with Catalog current", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -10,11 +33,13 @@ test("the phone header lists AI, UI, Docs, and Catalog with Catalog current", as
   const current = header.getByRole("link", { name: "Catalog", exact: true });
   await expect(current).toBeVisible();
   await expect(current).toHaveAttribute("aria-current", "page");
+  await expect(current).toHaveCSS("text-decoration-line", "underline");
   await expect(header.getByRole("link", { name: "AI", exact: true })).toBeVisible();
   await expect(header.getByRole("link", { name: "UI", exact: true })).toBeVisible();
   await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+  await expect(header.getByRole("listitem")).toHaveCount(4);
   await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
-  expect((await current.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+  expect((await current.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(TAP);
 });
 
 test("the docs phone bar keeps a painted fill without an 80% background class", async ({ page }) => {
@@ -27,6 +52,33 @@ test("the docs phone bar keeps a painted fill without an 80% background class", 
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
 
+test("docs phone Open navigation opens the page tree", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/docs/getting-started");
+  await page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" }).click();
+  const drawer = page.getByRole("dialog").or(page.locator("#nd-sidebar"));
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+  const background = await drawer.evaluate((node) => getComputedStyle(node).backgroundColor);
+  expect(background).not.toBe("rgba(0, 0, 0, 0)");
+});
+
+test("phone #get-started and docs heading hashes clear the wrapped header", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#get-started", { waitUntil: "networkidle" });
+  await assertHashClearsPhoneHeader(page, "#get-started");
+  await page.goto("/docs/getting-started#install-or-copy", { waitUntil: "networkidle" });
+  await assertHashClearsPhoneHeader(page, "#install-or-copy");
+});
+
+test("360px phone header does not overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.goto("/");
+  expect(await pageOverflow(page)).toBeLessThanOrEqual(0);
+  await page.goto("/docs/getting-started");
+  expect(await pageOverflow(page)).toBeLessThanOrEqual(0);
+});
+
 for (const path of PAGES) {
   test.describe(`phone header on ${path}`, () => {
     test.use({ viewport: { width: 390, height: 844 } });
@@ -35,13 +87,10 @@ for (const path of PAGES) {
       await page.goto(path);
       const header = page.locator("#nd-mobile-nav");
       await expect(header).toBeVisible();
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      );
-      expect(overflow).toBeLessThanOrEqual(0);
+      expect(await pageOverflow(page)).toBeLessThanOrEqual(0);
       const home = header.getByRole("link", { name: "zedkit home" });
       await expect(home).toBeVisible();
-      expect((await home.boundingBox())?.x ?? 99).toBeLessThanOrEqual(24);
+      expect((await home.boundingBox())?.x ?? 99).toBeLessThanOrEqual(GUTTER);
       await expect(header.getByRole("link", { name: "AI", exact: true })).toBeVisible();
       await expect(header.getByRole("link", { name: "UI", exact: true })).toBeVisible();
       await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
@@ -55,10 +104,12 @@ for (const path of PAGES) {
       const primaryNav = new Set(["AI", "UI", "Docs", "Catalog"]);
       for (const control of await header.locator("a, button").filter({ visible: true }).all()) {
         const box = await control.boundingBox();
-        expect(box?.height ?? 0).toBeGreaterThanOrEqual(43.5);
+        expect(box?.height ?? 0).toBeGreaterThanOrEqual(TAP_MEASURED);
         const label = ((await control.textContent()) ?? "").trim();
-        if (!primaryNav.has(label)) {
-          expect(box?.width ?? 0).toBeGreaterThanOrEqual(43.5);
+        if (primaryNav.has(label)) {
+          expect(box?.width ?? 0).toBeGreaterThanOrEqual(GUTTER);
+        } else {
+          expect(box?.width ?? 0).toBeGreaterThanOrEqual(TAP_MEASURED);
         }
       }
     });
@@ -73,6 +124,10 @@ for (const path of PAGES) {
       await expect(home).toContainText("zedkit");
       const box = await mark.boundingBox();
       expect(box?.height ?? 0).toBeGreaterThan(0);
+      const name = home.getByText("zedkit", { exact: true });
+      const markBox = await mark.boundingBox();
+      const nameBox = await name.boundingBox();
+      expect((nameBox?.x ?? 0) - ((markBox?.x ?? 0) + (markBox?.width ?? 0))).toBeGreaterThan(0);
     });
   });
 }
@@ -84,11 +139,19 @@ for (const path of SEARCH_PAGES) {
     test("search lives in the header and opens the dialog without a floating button", async ({ page }) => {
       await page.goto(path);
       const header = page.locator("#nd-mobile-nav");
-      const headerSearch = header.getByRole("button", { name: /Search (the )?documentation/ });
+      const headerSearch = header.getByRole("button", { name: SEARCH_NAME, exact: true });
       await expect(headerSearch).toBeVisible();
       const headerBox = await headerSearch.boundingBox();
-      expect(headerBox?.height ?? 0).toBeGreaterThanOrEqual(43.5);
-      expect((headerBox?.y ?? 0) + (headerBox?.height ?? 0)).toBeLessThan(80);
+      expect(headerBox?.height ?? 0).toBeGreaterThanOrEqual(TAP_MEASURED);
+      const brand = header.getByRole("link", { name: "zedkit home" });
+      const brandBox = await brand.boundingBox();
+      expect(headerBox?.y ?? 0).toBeGreaterThan((brandBox?.y ?? 0) + (brandBox?.height ?? 0) / 2);
+      const searchBottom = (headerBox?.y ?? 0) + (headerBox?.height ?? 0);
+      expect(searchBottom).toBeGreaterThanOrEqual(100);
+      expect(searchBottom).toBeLessThan(140);
+      const navBox = await header.boundingBox();
+      expect(navBox?.height ?? 0).toBeGreaterThanOrEqual(100);
+      expect(navBox?.height ?? 0).toBeLessThan(140);
       await expect(page.locator("[data-search-pill]")).toHaveCount(0);
       await headerSearch.click();
       const dialog = page.getByRole("dialog");

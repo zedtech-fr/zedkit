@@ -24,7 +24,7 @@ function HomeDesktopHeader() {
       <div>
         <nav
           aria-label={siteChromeCopy.nav.siteNavigation}
-          className="mx-auto flex w-full max-w-(--fd-layout-width) items-center gap-stack-lg px-page-gutter"
+          className="mx-auto flex w-full max-w-(--fd-layout-width) items-center px-page-gutter"
         >
           <DocsAppLink
             href="/"
@@ -33,7 +33,7 @@ function HomeDesktopHeader() {
           >
             <SiteBrand />
           </DocsAppLink>
-          <ul className="flex list-none items-center gap-stack-lg flush">
+          <ul className="flex list-none items-center flush">
             {sitePrimaryNavLinks().map((link) => {
               const active = isSiteNavLinkActive(pathname, link);
               return (
@@ -52,7 +52,7 @@ function HomeDesktopHeader() {
               );
             })}
           </ul>
-          <div className="ms-auto flex items-center gap-stack-md">
+          <div data-header-actions="" className="ms-auto flex items-center">
             <HomeGitHubLink />
             <HomeGetStartedAction />
           </div>
@@ -78,7 +78,7 @@ export function DocsSiteHeader() {
   return (
     <MobileHeader
       mode="docs"
-      className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center gap-stack-lg border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
+      className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
     />
   );
 }

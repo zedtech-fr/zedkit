@@ -30,12 +30,6 @@ function DocsMenuButton() {
 }
 
 /**
- * Métier: public TypeScript kit documentation site.
- * Client personas: integrating developers who own the consuming app.
- * Customers: those same developers (this site is the product surface).
- * Customer personas: hurried first visit on a 390-wide phone — next action is a named kit area or Get started, not a menu.
- * UI decisions: wrapping text nav in the phone header, because customer = first-visit integrator who should see AI/UI/Docs/Catalog without a disclosure.
- *
  * Phone header (< md): wordmark, wrapping primary links, then ms-auto actions.
  * Home: GitHub text + Get started, no search. Else: Search ⌘K + GitHub text.
  * Docs mode keeps the page-tree opener. Never theme, version, or a site-nav disclosure.
@@ -55,40 +49,40 @@ export function MobileHeader({
       {...(mode === "docs" ? { "data-docs-phone-bar": "" } : {})}
       className={
         className ??
-        "sticky pin-top z-header flex min-h-phone-bar flex-wrap items-center gap-stack-lg border-b bg-background px-page-gutter md:hidden"
+        "sticky pin-top z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter md:hidden"
       }
     >
       <DocsAppLink
         href="/"
         aria-label={siteChromeCopy.brand.homeAriaLabel}
-        className="inline-flex min-h-overlay-touch-target items-center rounded-md text-foreground focus-ring-control"
+        className="inline-flex min-h-overlay-touch-target items-center gap-icon rounded-md text-foreground focus-ring-control"
       >
         <SiteBrand />
       </DocsAppLink>
-      <nav
-        aria-label={siteChromeCopy.nav.siteNavigation}
-        className="flex flex-wrap items-center gap-stack-lg"
-      >
-        {chrome.links.map((link) => {
-          const active = isSiteNavLinkActive(pathname, link);
-          return (
-            <DocsAppLink
-              key={link.href}
-              href={link.href}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "inline-flex min-h-overlay-touch-target items-center text-muted-foreground hover:text-foreground",
-                active && "text-foreground",
-              )}
-            >
-              {link.text}
-            </DocsAppLink>
-          );
-        })}
+      <nav aria-label={siteChromeCopy.nav.siteNavigation}>
+        <ul className="flex list-none flex-wrap items-center flush">
+          {chrome.links.map((link) => {
+            const active = isSiteNavLinkActive(pathname, link);
+            return (
+              <li key={link.href}>
+                <DocsAppLink
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "inline-flex min-h-overlay-touch-target items-center text-zk-type-nav text-muted-foreground hover:text-foreground",
+                    active && "text-foreground underline link-offset",
+                  )}
+                >
+                  {link.text}
+                </DocsAppLink>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
-      <div className="ms-auto flex flex-wrap items-center gap-stack-md">
+      <div data-header-actions="" className="ms-auto flex flex-wrap items-center">
         {chrome.search ? <SiteFullSearchTrigger className="min-h-overlay-touch-target" /> : null}
-        {chrome.github ? <HomeGitHubLink /> : null}
+        <HomeGitHubLink />
         {chrome.getStarted ? <HomeGetStartedAction /> : null}
         {chrome.docsTreeOpener ? <DocsMenuButton /> : null}
       </div>

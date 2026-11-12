@@ -87,6 +87,12 @@ test("isHomePath is only the site root", () => {
 
 const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];
 
+test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav disclosure never", () => {
+  assert.match(source, /GitHub is always mounted/);
+  assert.match(source, /Theme, version, and a site-nav disclosure are never on/);
+  assert.doesNotMatch(source, /github:\s*true|theme:\s*false|siteNavDisclosure:\s*false/);
+});
+
 test("home phone chrome exposes the four links, GitHub, and Get started — no search, theme, version, or site-nav disclosure", () => {
   const chrome = siteHeaderChrome("/", "home");
   assert.deepEqual(
@@ -100,11 +106,8 @@ test("home phone chrome exposes the four links, GitHub, and Get started — no s
   );
   assert.equal(chrome.search, false);
   assert.equal(chrome.getStarted, true);
-  assert.equal(chrome.github, true);
   assert.equal(chrome.docsTreeOpener, false);
-  assert.equal(chrome.theme, false);
-  assert.equal(chrome.version, false);
-  assert.equal(chrome.siteNavDisclosure, false);
+  assert.deepEqual(Object.keys(chrome).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
   assert.equal(
     chrome.links.some((link) => PRIMARY_LINK_TEXTS.includes(link.text) === false),
     false,
@@ -123,26 +126,19 @@ test("catalog and docs phone chrome keep search and GitHub; docs keeps the page-
   );
   assert.equal(catalog.search, true);
   assert.equal(catalog.getStarted, false);
-  assert.equal(catalog.github, true);
   assert.equal(catalog.docsTreeOpener, false);
-  assert.equal(catalog.theme, false);
-  assert.equal(catalog.version, false);
-  assert.equal(catalog.siteNavDisclosure, false);
+  assert.deepEqual(Object.keys(catalog).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
 
   const docs = siteHeaderChrome("/docs", "docs");
   assert.equal(docs.search, true);
   assert.equal(docs.getStarted, false);
-  assert.equal(docs.github, true);
   assert.equal(docs.docsTreeOpener, true);
-  assert.equal(docs.siteNavDisclosure, false);
-  assert.equal(docs.theme, false);
-  assert.equal(docs.version, false);
+  assert.deepEqual(Object.keys(docs).sort(), ["docsTreeOpener", "getStarted", "links", "search"]);
 
   const foundations = siteHeaderChrome("/docs/foundations", "docs");
   assert.equal(foundations.search, true);
   assert.equal(foundations.getStarted, false);
   assert.equal(foundations.docsTreeOpener, true);
-  assert.equal(foundations.siteNavDisclosure, false);
 });
 
 test("exact url matching does not current-state Docs on an AI or UI page", () => {
