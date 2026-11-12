@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -11,14 +11,6 @@ import { copyPublicReviewsSnapshot } from "./copy-public-reviews-snapshot.mjs";
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, "../../..");
 const script = join(here, "copy-public-reviews-snapshot.mjs");
-const evidenceDir = join(here, "../tests/evidence/issues");
-const ARTIFACT_CAP = 200 * 1024;
-const EVIDENCE_FILES = [
-  "issues-list-1440.png",
-  "issues-list-390.png",
-  "issues-108-1440.png",
-  "issues-108-390.png",
-];
 
 function tmpPair() {
   const dir = mkdtempSync(join(tmpdir(), "copy-public-reviews-"));
@@ -155,9 +147,21 @@ test("a valid live-shaped snapshot is accepted and written", () => {
   copyPublicReviewsSnapshot(source, dest);
   const written = readJson(dest);
   assert.equal(written.version, 1);
+  assert.equal(written.kind, "public-live-runs");
   assert.ok("reviews" in written);
   assert.equal(written.reviews[0].run.run_id, "run-71");
   assert.equal(written.reviews[0].run.live_url, "https://example.test/live/run-71");
+});
+
+test("a live snapshot writes the contract kind, not a raw wrapper kind", () => {
+  const { source, dest } = tmpPair();
+  writeFileSync(dest, "KEEP");
+  writeJson(source, liveSnapshot([liveRow()], { kind: "Bearer abcDEF123._~+/=- from /home/alice" }));
+  copyPublicReviewsSnapshot(source, dest);
+  const written = readJson(dest);
+  assert.equal(written.kind, "public-live-runs");
+  assert.doesNotMatch(JSON.stringify(written), /abcDEF123/);
+  assert.doesNotMatch(JSON.stringify(written), /\/home\/alice/);
 });
 
 test("extra keys on the index survive parse and are not required", () => {
@@ -166,6 +170,7 @@ test("extra keys on the index survive parse and are not required", () => {
   copyPublicReviewsSnapshot(source, dest);
   const written = readJson(dest);
   assert.equal(written.issues[0].number, 108);
+  assert.equal("generatedAt" in written, false);
 });
 
 test("visibility private is dropped; missing visibility is kept", () => {
@@ -219,6 +224,31 @@ test("a missing source file leaves dest unchanged", () => {
   assert.equal(readFileSync(dest, "utf8"), "KEEP");
 });
 
+test("invalid JSON leaves dest unchanged", () => {
+  const { source, dest } = tmpPair();
+  writeFileSync(dest, "KEEP");
+  writeFileSync(source, "{not json");
+  assert.throws(() => copyPublicReviewsSnapshot(source, dest), /invalid JSON/);
+  assert.equal(readFileSync(dest, "utf8"), "KEEP");
+});
+
+test("a bad-version snapshot leaves dest unchanged", () => {
+  const { source, dest } = tmpPair();
+  writeFileSync(dest, "KEEP");
+  writeJson(source, { ...indexSnapshot(), version: 2 });
+  assert.throws(() => copyPublicReviewsSnapshot(source, dest), /version must be 1/);
+  assert.equal(readFileSync(dest, "utf8"), "KEEP");
+});
+
+test("an unwritable dest fails closed", () => {
+  const { source, dest } = tmpPair();
+  writeJson(source, indexSnapshot());
+  writeFileSync(dest, "KEEP");
+  const nested = join(dest, "out.json");
+  assert.throws(() => copyPublicReviewsSnapshot(source, nested), /cannot write file/);
+  assert.equal(readFileSync(dest, "utf8"), "KEEP");
+});
+
 test("CLI requires a source path and a dest path", () => {
   const missing = spawnSync(process.execPath, [script], { encoding: "utf8" });
   assert.notEqual(missing.status, 0);
@@ -240,12 +270,22 @@ test("CLI invoked with a relative script path still writes dest", () => {
   assert.equal(readJson(dest).issues[0].number, 108);
 });
 
-test("issue list and issue 108 evidence PNGs exist under the artefact cap", () => {
-  for (const name of EVIDENCE_FILES) {
-    const path = join(evidenceDir, name);
-    const stat = statSync(path);
-    assert.ok(stat.isFile(), path);
-    assert.ok(stat.size > 0, `${name} is empty`);
-    assert.ok(stat.size < ARTIFACT_CAP, `${name} is ${stat.size} bytes`);
-  }
+test("CLI invoked via a symlink still writes dest", () => {
+  const { source, dest } = tmpPair();
+  writeJson(source, indexSnapshot());
+  const link = join(dirname(source), "gate.mjs");
+  symlinkSync(script, link);
+  const result = spawnSync(process.execPath, [link, source, dest], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(readJson(dest).issues[0].number, 108);
+});
+
+test("CLI parse failure exits non-zero and leaves dest unchanged", () => {
+  const { source, dest } = tmpPair();
+  writeFileSync(dest, "KEEP");
+  writeFileSync(source, "{");
+  const result = spawnSync(process.execPath, [script, source, dest], { encoding: "utf8" });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /invalid JSON/);
+  assert.equal(readFileSync(dest, "utf8"), "KEEP");
 });

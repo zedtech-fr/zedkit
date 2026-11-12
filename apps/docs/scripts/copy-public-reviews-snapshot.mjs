@@ -1,11 +1,11 @@
-import { readFileSync, renameSync, writeFileSync } from "node:fs";
+import { readFileSync, realpathSync, renameSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { tryCatch } from "@zedtech/zedkit-core";
 
 import { isLiveSnapshot, parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
-import { toPublicIndex, toPublicReviews } from "../features/reviews/model/public-review.ts";
+import { assertPubliclySafe, toPublicIndex, toPublicReviews } from "../features/reviews/model/public-review.ts";
 
 function readSource(sourcePath) {
   const text = tryCatch(() => readFileSync(sourcePath, "utf8"));
@@ -25,11 +25,13 @@ function gatedPayload(value) {
     throw new Error(`public review snapshot: ${parsed.error.message}`, { cause: parsed.error });
   }
   if (isLiveSnapshot(parsed.value)) {
-    const reviews = toPublicReviews(parsed.value);
-    const kind = typeof value === "object" && value !== null && "kind" in value && typeof value.kind === "string"
-      ? value.kind
-      : "public-live-runs";
-    return { version: 1, kind, reviews };
+    const payload = {
+      version: 1,
+      kind: "public-live-runs",
+      reviews: toPublicReviews(parsed.value),
+    };
+    assertPubliclySafe(payload);
+    return payload;
   }
   return toPublicIndex(parsed.value);
 }
@@ -52,7 +54,9 @@ export function copyPublicReviewsSnapshot(sourcePath, destPath) {
   writeDest(destPath, payload);
 }
 
-const invoked = process.argv[1] ? resolve(process.argv[1]) === fileURLToPath(import.meta.url) : false;
+const invokedPath = process.argv[1] ? tryCatch(() => realpathSync(resolve(process.argv[1]))) : { ok: false };
+const selfPath = tryCatch(() => realpathSync(fileURLToPath(import.meta.url)));
+const invoked = invokedPath.ok && selfPath.ok && invokedPath.value === selfPath.value;
 if (invoked) {
   const sourcePath = process.argv[2];
   const destPath = process.argv[3];
