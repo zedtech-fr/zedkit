@@ -709,11 +709,11 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
 - When to use: Under data that refreshes (polling, SWR, manual refetch).
 - When not to use: For absolute timestamps — render a `<time dateTime>` instead.
-- A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-caption text-muted-foreground` only.
+- A11y: Static text (not a live region) — screen readers meet it while reading; the post-mount swap is not announced as a status update. Re-render when the data refreshes. Styled with `text-caption text-muted-foreground` only.
 - See also: `Name an operation in progress`
 - Examples: Simple, Custom prefix
 - Registry: updated-ago
-- Troubleshooting: Stamp never changes — it renders once per render; re-render from your polling tick or SWR refresh. Future dates read as “just now” (clamped, never “in 5 minutes”).
+- Troubleshooting: First paint is a UTC medium date (`timeZone: "UTC"`) so static HTML hydrates; after mount the stamp becomes the live relative string. Stamp never ticks on its own — re-render from your polling tick or SWR refresh. Future dates read as “just now” (clamped, never “in 5 minutes”).
 
 ```ts
 import { UpdatedAgo } from "@zedtech/zedkit-ui";
