@@ -26,7 +26,6 @@
     "lib/brief-specimen-domain.ts",
     "lib/creator-handoff.ts",
     "lib/creator-session-brief.ts",
-    "lib/docs-layout-tree.mjs",
     "lib/docs-search-ranking.mjs",
     "lib/docs-site-look.ts",
     "lib/identity-assistant-limits.ts",
@@ -54,8 +53,7 @@
     "ui/theme-color-meta.tsx"
   ],
   "globs": [
-    "ui/home/**",
-    "ui/docs-main-content.tsx"
+    "ui/home/**"
   ],
   "edges": []
 }

@@ -6,7 +6,7 @@ import { componentPageHeaderMeta, componentPageSections } from "../features/docs
 import { declarationOrigin } from "../features/docs/declared-props.mjs";
 import { partitionPropsEntries } from "../features/docs/props-priority.mjs";
 import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
-import { docsLayoutTree } from "../lib/docs-layout-tree.mjs";
+import { docsLayoutTree } from "../features/docs/docs-layout-tree.mjs";
 import { kitUiSourceUrl, SITE_GITHUB_URL } from "../lib/site-links.mjs";
 
 const page = `---
