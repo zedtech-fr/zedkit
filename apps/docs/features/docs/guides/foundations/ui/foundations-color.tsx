@@ -1,8 +1,8 @@
 import { Stack, Text, ThemeScope } from "@zedtech/zedkit-ui";
 
-import { FoundationsBand } from "@/components/foundations-band";
-import { foundationsCopy as copy } from "@/components/i18n/foundations-copy";
-import { foundationsSwatches, type FoundationsSwatch } from "@/lib/foundations-swatches";
+import { foundationsSwatches, type FoundationsSwatch } from "../foundations-swatches";
+import { foundationsCopy as copy } from "../i18n/foundations-copy";
+import { FoundationsBand } from "./foundations-band";
 
 function SwatchMark({ swatch }: { swatch: FoundationsSwatch }) {
   const mark = (
